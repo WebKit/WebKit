@@ -28,7 +28,7 @@
 #if WK_API_ENABLED
 
 @interface WKWebViewConfiguration (TestWebKitAPIExtras)
-+ (instancetype)testwebkitapi_configurationWithTestPlugInClassName:(NSString *)className;
++ (instancetype)_test_configurationWithTestPlugInClassName:(NSString *)className;
 @end
 
 #endif // WK_API_ENABLED

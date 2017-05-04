@@ -543,7 +543,7 @@ TEST(DataInteractionTests, OverrideDataInteractionOperation)
 
 TEST(DataInteractionTests, AttachmentElementItemProviders)
 {
-    RetainPtr<WKWebViewConfiguration> configuration = [WKWebViewConfiguration testwebkitapi_configurationWithTestPlugInClassName:@"BundleEditingDelegatePlugIn"];
+    RetainPtr<WKWebViewConfiguration> configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"BundleEditingDelegatePlugIn"];
     [configuration _setAttachmentElementEnabled:YES];
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get()]);
     [webView synchronouslyLoadTestPageNamed:@"attachment-element"];

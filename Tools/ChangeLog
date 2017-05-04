@@ -1,3 +1,37 @@
+2017-05-04  Andy Estes  <aestes@apple.com>
+
+        Give +testwebkitapi_configurationWithTestPlugInClassName: a shorter name
+        https://bugs.webkit.org/show_bug.cgi?id=171673
+
+        Reviewed by Dan Bernstein.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/AdditionalReadAccessAllowedURLs.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKit2Cocoa/BundleEditingDelegate.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKit2Cocoa/BundleParameters.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKit2Cocoa/BundleRangeHandle.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKit2Cocoa/CancelFontSubresource.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKit2Cocoa/ContentFiltering.mm:
+        (configurationWithContentFilterSettings):
+        (-[LazilyLoadPlatformFrameworksController init]):
+        * TestWebKitAPI/Tests/WebKit2Cocoa/RemoteObjectRegistry.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKit2Cocoa/RenderedImageWithOptions.mm:
+        (runTestWithWidth):
+        * TestWebKitAPI/Tests/WebKit2Cocoa/UserContentWorld.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/ios/DataInteractionTests.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/WKWebViewConfigurationExtras.h:
+        * TestWebKitAPI/WKWebViewConfigurationExtras.mm:
+        (+[WKWebViewConfiguration _test_configurationWithTestPlugInClassName:]):
+        (+[WKWebViewConfiguration testwebkitapi_configurationWithTestPlugInClassName:]): Renamed to
+        +_test_configurationWithTestPlugInClassName:
+
 2017-05-04  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Allow host application to enable/disable media capture

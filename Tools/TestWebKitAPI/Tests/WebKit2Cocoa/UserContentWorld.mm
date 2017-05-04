@@ -137,7 +137,7 @@ TEST(UserContentWorld, IsolatedWorldPlugIn)
 {
     NSString * const testPlugInClassName = @"UserContentWorldPlugIn";
 
-    RetainPtr<WKWebViewConfiguration> configuration = retainPtr([WKWebViewConfiguration testwebkitapi_configurationWithTestPlugInClassName:testPlugInClassName]);
+    RetainPtr<WKWebViewConfiguration> configuration = retainPtr([WKWebViewConfiguration _test_configurationWithTestPlugInClassName:testPlugInClassName]);
     
     RetainPtr<_WKUserContentWorld> isolatedWorld = [_WKUserContentWorld worldWithName:@"TestWorld"];
     RetainPtr<WKUserScript> userScript = adoptNS([[WKUserScript alloc] _initWithSource:@"window.setFromUserScript = true;" injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:YES legacyWhitelist:@[] legacyBlacklist:@[] userContentWorld:isolatedWorld.get()]);

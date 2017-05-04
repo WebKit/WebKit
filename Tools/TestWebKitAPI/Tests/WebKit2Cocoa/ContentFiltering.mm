@@ -91,7 +91,7 @@ static bool isDone;
 
 static RetainPtr<WKWebViewConfiguration> configurationWithContentFilterSettings(Decision decision, DecisionPoint decisionPoint)
 {
-    auto configuration = retainPtr([WKWebViewConfiguration testwebkitapi_configurationWithTestPlugInClassName:@"ContentFilteringPlugIn"]);
+    auto configuration = retainPtr([WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"ContentFilteringPlugIn"]);
     auto contentFilterEnabler = adoptNS([[MockContentFilterEnabler alloc] initWithDecision:decision decisionPoint:decisionPoint]);
     [[configuration processPool] _setObject:contentFilterEnabler.get() forBundleParameter:NSStringFromClass([MockContentFilterEnabler class])];
     return configuration;
@@ -340,7 +340,7 @@ TEST(ContentFiltering, LoadAlternateAfterFinishedAddingDataWK2)
     if (!(self = [super init]))
         return nil;
 
-    WKWebViewConfiguration *configuration = [WKWebViewConfiguration testwebkitapi_configurationWithTestPlugInClassName:@"ContentFilteringPlugIn"];
+    WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"ContentFilteringPlugIn"];
     _webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
     [_webView setNavigationDelegate:self];
 

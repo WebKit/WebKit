@@ -64,7 +64,7 @@ static bool didGetBodyInnerHTMLAfterDetectingData;
 // FIXME: Re-enable this test once webkit.org/b/167594 is fixed.
 TEST(WebKit2, DISABLED_WKWebProcessPlugInRangeHandle)
 {
-    RetainPtr<WKWebViewConfiguration> configuration = retainPtr([WKWebViewConfiguration testwebkitapi_configurationWithTestPlugInClassName:@"BundleRangeHandlePlugIn"]);
+    RetainPtr<WKWebViewConfiguration> configuration = retainPtr([WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"BundleRangeHandlePlugIn"]);
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
     RetainPtr<BundleRangeHandleRemoteObject> object = adoptNS([[BundleRangeHandleRemoteObject alloc] init]);

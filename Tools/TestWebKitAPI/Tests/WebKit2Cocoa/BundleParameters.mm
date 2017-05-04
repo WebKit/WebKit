@@ -39,7 +39,7 @@ TEST(WebKit2, BundleParameters)
 {
     @autoreleasepool {
         NSString * const testPlugInClassName = @"BundleParametersPlugIn";
-        auto configuration = retainPtr([WKWebViewConfiguration testwebkitapi_configurationWithTestPlugInClassName:testPlugInClassName]);
+        auto configuration = retainPtr([WKWebViewConfiguration _test_configurationWithTestPlugInClassName:testPlugInClassName]);
         auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
 
         [webView evaluateJavaScript:TestWebKitAPI::Util::TestPlugInClassNameParameter completionHandler:^(id result, NSError *error) {

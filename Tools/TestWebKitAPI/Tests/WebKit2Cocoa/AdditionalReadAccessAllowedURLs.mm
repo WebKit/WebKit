@@ -43,7 +43,7 @@ static bool done;
 
 TEST(WebKit2, AdditionalReadAccessAllowedURLs)
 {
-    RetainPtr<WKWebViewConfiguration> configuration = retainPtr([WKWebViewConfiguration testwebkitapi_configurationWithTestPlugInClassName:@"AdditionalReadAccessAllowedURLsPlugIn"]);
+    RetainPtr<WKWebViewConfiguration> configuration = retainPtr([WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"AdditionalReadAccessAllowedURLsPlugIn"]);
 
     _WKProcessPoolConfiguration *processPoolConfiguration = [configuration processPool]._configuration;
 

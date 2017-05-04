@@ -41,7 +41,7 @@ using namespace TestWebKitAPI;
 
 static void runTestWithWidth(NSNumber *width, CGSize expectedSize)
 {
-    WKWebViewConfiguration *configuration = [WKWebViewConfiguration testwebkitapi_configurationWithTestPlugInClassName:@"RenderedImageWithOptionsPlugIn"];
+    WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"RenderedImageWithOptionsPlugIn"];
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
 
     _WKRemoteObjectInterface *interface = [_WKRemoteObjectInterface remoteObjectInterfaceWithProtocol:@protocol(RenderedImageWithOptionsProtocol)];

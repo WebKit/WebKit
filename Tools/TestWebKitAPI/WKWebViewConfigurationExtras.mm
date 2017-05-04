@@ -35,7 +35,7 @@
 
 @implementation WKWebViewConfiguration (TestWebKitAPIExtras)
 
-+ (instancetype)testwebkitapi_configurationWithTestPlugInClassName:(NSString *)className
++ (instancetype)_test_configurationWithTestPlugInClassName:(NSString *)className
 {
     auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
     [processPoolConfiguration setInjectedBundleURL:[[NSBundle mainBundle] URLForResource:@"TestWebKitAPI" withExtension:@"wkbundle"]];
