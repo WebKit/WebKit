@@ -84,7 +84,7 @@ void LoadableClassicScript::notifyFinished(CachedResource& resource)
     }
 
 #if ENABLE(NOSNIFF)
-    if (!m_error && !m_cachedScript->mimeTypeAllowedByNosniff()) {
+    if (!m_error && !isScriptAllowedByNosniff(m_cachedScript->response())) {
         m_error = Error {
             ErrorType::Nosniff,
             ConsoleMessage {

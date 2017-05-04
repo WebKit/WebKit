@@ -1,3 +1,29 @@
+2017-05-04  Daniel Bates  <dabates@apple.com>
+
+        Cleanup: Extract CachedScript::mimeTypeAllowedByNosniff() into a common function
+        https://bugs.webkit.org/show_bug.cgi?id=171678
+
+        Reviewed by Andy Estes.
+
+        Extract CachedScript::mimeTypeAllowedByNosniff() into a common function that can
+        be shared by LoadableClassicScript and WorkerScriptLoader.
+
+        No functionality was changed. So, no new tests.
+
+        * dom/LoadableClassicScript.cpp:
+        (WebCore::LoadableClassicScript::notifyFinished): Modified to use WebCore::isScriptAllowedByNosniff().
+        * loader/cache/CachedScript.cpp:
+        (WebCore::CachedScript::mimeType): Deleted; incorporated into WebCore::isScriptAllowedByNosniff().
+        (WebCore::CachedScript::mimeTypeAllowedByNosniff): Deleted; incorporated into WebCore::isScriptAllowedByNosniff().
+        * loader/cache/CachedScript.h:
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::isScriptAllowedByNosniff): Added. Note that it is sufficient to extract the MIME type
+        as-is and query the MIME type registry because the MIME type registry performs look ups case-insensitively.
+        * platform/network/ResourceResponseBase.h:
+        * workers/WorkerScriptLoader.cpp:
+        (WebCore::WorkerScriptLoader::didReceiveResponse): Modified to use WebCore::isScriptAllowedByNosniff().
+        (WebCore::mimeTypeAllowedByNosniff): Deleted.
+
 2017-05-04  Sam Weinig  <sam@webkit.org>
 
         Make the [EnabledBySetting] extended attribute work for any attribute or operation on a prototype

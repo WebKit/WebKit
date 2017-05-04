@@ -28,8 +28,6 @@
 #include "WorkerScriptLoader.h"
 
 #include "ContentSecurityPolicy.h"
-#include "HTTPParsers.h"
-#include "MIMETypeRegistry.h"
 #include "ResourceResponse.h"
 #include "ScriptExecutionContext.h"
 #include "TextResourceDecoder.h"
@@ -113,14 +111,6 @@ std::unique_ptr<ResourceRequest> WorkerScriptLoader::createResourceRequest(const
     return request;
 }
 
-#if ENABLE(NOSNIFF)
-static bool mimeTypeAllowedByNosniff(const ResourceResponse& response)
-{
-    String mimeType = extractMIMETypeFromMediaType(response.httpHeaderField(HTTPHeaderName::ContentType));
-    return parseContentTypeOptionsHeader(response.httpHeaderField(HTTPHeaderName::XContentTypeOptions)) != ContentTypeOptionsNosniff || MIMETypeRegistry::isSupportedJavaScriptMIMEType(mimeType);
-}
-#endif
-
 void WorkerScriptLoader::didReceiveResponse(unsigned long identifier, const ResourceResponse& response)
 {
     if (response.httpStatusCode() / 100 != 2 && response.httpStatusCode()) {
@@ -129,7 +119,7 @@ void WorkerScriptLoader::didReceiveResponse(unsigned long identifier, const Reso
     }
 
 #if ENABLE(NOSNIFF)
-    if (!mimeTypeAllowedByNosniff(response)) {
+    if (!isScriptAllowedByNosniff(response)) {
         m_failed = true;
         return;
     }

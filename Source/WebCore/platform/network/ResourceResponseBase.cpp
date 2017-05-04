@@ -30,6 +30,7 @@
 #include "CacheValidation.h"
 #include "HTTPHeaderNames.h"
 #include "HTTPParsers.h"
+#include "MIMETypeRegistry.h"
 #include "ParsedContentRange.h"
 #include "ResourceResponse.h"
 #include <wtf/CurrentTime.h>
@@ -38,6 +39,16 @@
 #include <wtf/text/StringView.h>
 
 namespace WebCore {
+
+#if ENABLE(NOSNIFF)
+bool isScriptAllowedByNosniff(const ResourceResponse& response)
+{
+    if (parseContentTypeOptionsHeader(response.httpHeaderField(HTTPHeaderName::XContentTypeOptions)) != ContentTypeOptionsNosniff)
+        return true;
+    String mimeType = extractMIMETypeFromMediaType(response.httpHeaderField(HTTPHeaderName::ContentType));
+    return MIMETypeRegistry::isSupportedJavaScriptMIMEType(mimeType);
+}
+#endif
 
 ResourceResponseBase::ResourceResponseBase()
     : m_isNull(true)

@@ -39,13 +39,7 @@ public:
     StringView script();
     unsigned scriptHash();
 
-#if ENABLE(NOSNIFF)
-    bool mimeTypeAllowedByNosniff() const;
-#endif
-
 private:
-    String mimeType() const;
-
     bool mayTryReplaceEncodedData() const final { return true; }
 
     bool shouldIgnoreHTTPStatusCodeErrors() const final;
