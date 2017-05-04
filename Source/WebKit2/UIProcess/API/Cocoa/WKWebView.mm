@@ -4473,6 +4473,16 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     _page->setMuted(WebCore::MediaProducer::CaptureDevicesAreMuted);
 }
 
+- (void)_setMediaCaptureEnabled:(BOOL)enabled
+{
+    _page->setMediaCaptureEnabled(enabled);
+}
+
+- (BOOL)_mediaCaptureEnabled
+{
+    return _page->mediaCaptureEnabled();
+}
+
 - (void)_setPageMuted:(_WKMediaMutedState)mutedState
 {
     WebCore::MediaProducer::MutedStateFlags coreState = WebCore::MediaProducer::NoneMuted;

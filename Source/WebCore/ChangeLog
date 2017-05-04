@@ -1,3 +1,48 @@
+2017-05-04  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Allow host application to enable/disable media capture
+        https://bugs.webkit.org/show_bug.cgi?id=171292
+        <rdar://problem/31821492>
+
+        Reviewed by Jer Noble.
+
+        No new layout tests, added an API test instead.
+
+        * Modules/mediastream/MediaStream.cpp:
+        (WebCore::MediaStream::endStream): New, stop all tracks.
+        * Modules/mediastream/MediaStream.h:
+
+        * Modules/mediastream/MediaStreamRegistry.cpp:
+        (WebCore::MediaStreamRegistry::unregisterStream): Minor cleanup.
+        (WebCore::MediaStreamRegistry::forEach): New, call the lambda with each stream.
+        (WebCore::MediaStreamRegistry::MediaStreamRegistry): Deleted, unused.
+        * Modules/mediastream/MediaStreamRegistry.h:
+
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        (WebCore::MediaStreamTrack::stopTrack): Add parameter so caller can specify if an 'ended' 
+        event should be sent or not.
+        (WebCore::MediaStreamTrack::trackMutedChanged): Don't post an event if the track has ended.
+        * Modules/mediastream/MediaStreamTrack.h:
+
+        * dom/Document.cpp:
+        (WebCore::Document::stopMediaCapture): Stop all streams in the document.
+        * dom/Document.h:
+
+        * page/Page.cpp:
+        (WebCore::Page::stopMediaCapture): Stop all streams.
+        * page/Page.h:
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::currentDisplayMode): Display a black frame
+        when the stream ends.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::activeStatusChanged): Signal a characteristics
+        change to HTMLMediaElement refresh state.
+        * platform/mediastream/MediaStreamPrivate.h:
+
+        * platform/mediastream/mac/AVMediaCaptureSource.mm:
+        (WebCore::AVMediaCaptureSource::stopProducingData): Don't return early if the session isn't 
+        running, we always need to clear m_session on iOS.
+
 2017-05-04  Zalan Bujtas  <zalan@apple.com>
 
         Should never hit layout while updating the render tree.
