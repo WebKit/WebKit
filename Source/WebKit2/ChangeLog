@@ -1,3 +1,14 @@
+2017-05-04  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] -[WKWebsiteDataStore httpCookieStore] is declared in the main @interface but implemented in a category
+        https://bugs.webkit.org/show_bug.cgi?id=171657
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore httpCookieStore]): Moved from the WKPrivate category into the main
+          @implementation block.
+
 2017-05-04  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Add an optional width parameter to -[WKWebProcessPlugInNodeHandle renderedImageWithOptions:]

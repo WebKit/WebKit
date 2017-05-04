@@ -96,6 +96,11 @@
     return allWebsiteDataTypes;
 }
 
+- (WKHTTPCookieStore *)httpCookieStore
+{
+    return WebKit::wrapper(_websiteDataStore->httpCookieStore());
+}
+
 static std::chrono::system_clock::time_point toSystemClockTime(NSDate *date)
 {
     ASSERT(date);
@@ -195,11 +200,6 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 - (void)_setResourceLoadStatisticsEnabled:(BOOL)enabled
 {
     _websiteDataStore->websiteDataStore().setResourceLoadStatisticsEnabled(enabled);
-}
-
-- (WKHTTPCookieStore *)httpCookieStore
-{
-    return WebKit::wrapper(_websiteDataStore->httpCookieStore());
 }
 
 @end
