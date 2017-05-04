@@ -1,3 +1,13 @@
+2017-05-03  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: aria-rowspan value should be ignored if td/th rowspan value is provided
+        https://bugs.webkit.org/show_bug.cgi?id=171214
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/aria-cellspans-with-native-cellspans-expected.txt: Added.
+        * accessibility/aria-cellspans-with-native-cellspans.html: Added.
+
 2017-05-03  Matt Lewis  <jlewis3@apple.com>
 
         Mark http/tests/xmlhttprequest/methods.html as flaky.

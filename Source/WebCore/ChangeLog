@@ -1,3 +1,30 @@
+2017-05-03  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: aria-rowspan value should be ignored if td/th rowspan value is provided
+        https://bugs.webkit.org/show_bug.cgi?id=171214
+
+        Reviewed by Chris Fleizach.
+
+        Return -1 in AccessibilityTableCell::ariaColumnSpan() and ariaRowSpan() if the
+        cell element has an explicit value for the native host language's span attribute.
+        Add checks to AccessibilityTableCell::columnIndexRange() and rowIndexRange() so
+        that we prefer an author-provided ARIA span value over an implicit host-language
+        span value. Similarly, add checks to AccessibilityARIAGridCell::columnIndexRange()
+        and rowIndexRange() so that we fall back on implicit host-language span values
+        when there is no author-provided ARIA span value and the ARIA cell is associated
+        with a cell element.
+
+        Test: accessibility/aria-cellspans-with-native-cellspans.html
+
+        * accessibility/AccessibilityARIAGridCell.cpp:
+        (WebCore::AccessibilityARIAGridCell::ariaRowSpanWithRowIndex):
+        (WebCore::AccessibilityARIAGridCell::columnIndexRange):
+        * accessibility/AccessibilityTableCell.cpp:
+        (WebCore::AccessibilityTableCell::rowIndexRange):
+        (WebCore::AccessibilityTableCell::columnIndexRange):
+        (WebCore::AccessibilityTableCell::ariaColumnSpan):
+        (WebCore::AccessibilityTableCell::ariaRowSpan):
+
 2017-05-03  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r216160 and r216161.
