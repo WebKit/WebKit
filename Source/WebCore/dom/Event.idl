@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2009, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2009, 2011, 2017 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -29,34 +29,33 @@ typedef unsigned long long DOMTimeStamp;
     Exposed=(Window,Worker),
     JSCustomHeader,
 ] interface Event {
-    // PhaseType
+    readonly attribute DOMString type;
+    readonly attribute EventTarget? target;
+    readonly attribute EventTarget? currentTarget;
+    [EnabledAtRuntime=ShadowDOM] sequence<EventTarget> composedPath();
+
     const unsigned short NONE = 0;
     const unsigned short CAPTURING_PHASE = 1;
     const unsigned short AT_TARGET = 2;
     const unsigned short BUBBLING_PHASE = 3;
-
-    readonly attribute DOMString type;
-    readonly attribute EventTarget target;
-    readonly attribute EventTarget currentTarget;
     readonly attribute unsigned short eventPhase;
-    readonly attribute boolean bubbles;
-    readonly attribute boolean cancelable;
-    [EnabledAtRuntime=ShadowDOM] readonly attribute boolean composed;
-    readonly attribute DOMTimeStamp timeStamp;
-
-    [EnabledAtRuntime=ShadowDOM] sequence<Node> composedPath();
 
     void stopPropagation();
-    void preventDefault();
-
-    void initEvent(DOMString type, optional boolean bubbles = false, optional boolean cancelable = false);
-
-    readonly attribute boolean defaultPrevented;
+    attribute boolean cancelBubble; // historical alias of .stopPropagation.
     void stopImmediatePropagation();
 
-    [Unforgeable] readonly attribute boolean isTrusted;
+    readonly attribute boolean bubbles;
+    readonly attribute boolean cancelable;
+    void preventDefault();
+    readonly attribute boolean defaultPrevented;
+    [EnabledAtRuntime=ShadowDOM] readonly attribute boolean composed;
 
+    [Unforgeable] readonly attribute boolean isTrusted;
+    readonly attribute DOMTimeStamp timeStamp;
+
+    void initEvent(DOMString type, optional boolean bubbles = false, optional boolean cancelable = false); // Historical.
+
+    // IE extensions that may get standardized (https://github.com/whatwg/dom/issues/334).
     readonly attribute EventTarget srcElement;
     [ImplementedAs=legacyReturnValue] attribute boolean returnValue;
-    attribute boolean cancelBubble;
 };

@@ -235,14 +235,14 @@ DISPLAYABLE PROPERTIES:
     target
     currentTarget
     eventPhase
+    cancelBubble
     bubbles
     cancelable
+    defaultPrevented
     composed
     timeStamp
-    defaultPrevented
     srcElement
     returnValue
-    cancelBubble
     __proto__
 
 ALL PROPERTIES:
@@ -252,19 +252,19 @@ ALL PROPERTIES:
     target
     currentTarget
     eventPhase
+    cancelBubble
     bubbles
     cancelable
+    defaultPrevented
     composed
     timeStamp
-    defaultPrevented
     srcElement
     returnValue
-    cancelBubble
     composedPath
     stopPropagation
+    stopImmediatePropagation
     preventDefault
     initEvent
-    stopImmediatePropagation
     NONE
     CAPTURING_PHASE
     AT_TARGET
