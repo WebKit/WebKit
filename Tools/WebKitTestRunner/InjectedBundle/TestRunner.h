@@ -364,6 +364,7 @@ public:
     void setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(bool);
     void setStatisticsMinimumTimeBetweeenDataRecordsRemoval(double);
     void statisticsClearInMemoryAndPersistentStore();
+    void statisticsClearInMemoryAndPersistentStoreModifiedSinceHours(unsigned hours);
     void statisticsResetToConsistentState();
 
     // Open panel

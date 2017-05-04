@@ -55,6 +55,7 @@ public:
     static void setShouldClassifyResourcesBeforeDataRecordsRemoval(bool value);
     static void setMinimumTimeBetweeenDataRecordsRemoval(double seconds);
     static void clearInMemoryAndPersistentStore();
+    static void clearInMemoryAndPersistentStoreModifiedSinceHours(unsigned);
     static void resetToConsistentState();
 
 private:

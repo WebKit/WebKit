@@ -76,9 +76,9 @@ void ResourceLoadObserver::clearInMemoryAndPersistentStore()
 
 void ResourceLoadObserver::clearInMemoryAndPersistentStore(std::chrono::system_clock::time_point modifiedSince)
 {
-    auto then = std::chrono::system_clock::to_time_t(modifiedSince);
-    if (then <= 0)
-        clearInMemoryAndPersistentStore();
+    // For now, be conservative and clear everything regardless of modifiedSince
+    UNUSED_PARAM(modifiedSince);
+    clearInMemoryAndPersistentStore();
 }
 
 static inline bool is3xxRedirect(const ResourceResponse& response)

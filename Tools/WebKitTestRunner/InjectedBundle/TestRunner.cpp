@@ -1398,7 +1398,14 @@ void TestRunner::statisticsClearInMemoryAndPersistentStore()
     WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("StatisticsClearInMemoryAndPersistentStore"));
     WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), 0, nullptr);
 }
-    
+
+void TestRunner::statisticsClearInMemoryAndPersistentStoreModifiedSinceHours(unsigned hours)
+{
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("StatisticsClearInMemoryAndPersistentStoreModifiedSinceHours"));
+    WKRetainPtr<WKTypeRef> messageBody(AdoptWK, WKUInt64Create(hours));
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
+}
+
 void TestRunner::statisticsResetToConsistentState()
 {
     WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("StatisticsResetToConsistentState"));

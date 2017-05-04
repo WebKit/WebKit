@@ -116,6 +116,11 @@ void WKResourceLoadStatisticsManagerClearInMemoryAndPersistentStore()
     WebResourceLoadStatisticsManager::clearInMemoryAndPersistentStore();
 }
 
+void WKResourceLoadStatisticsManagerClearInMemoryAndPersistentStoreModifiedSinceHours(unsigned hours)
+{
+    WebResourceLoadStatisticsManager::clearInMemoryAndPersistentStoreModifiedSinceHours(hours);
+}
+
 void WKResourceLoadStatisticsManagerResetToConsistentState()
 {
     WebResourceLoadStatisticsManager::resetToConsistentState();

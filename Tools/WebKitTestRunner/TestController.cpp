@@ -2268,6 +2268,11 @@ void TestController::statisticsClearInMemoryAndPersistentStore()
     WKResourceLoadStatisticsManagerClearInMemoryAndPersistentStore();
 }
 
+void TestController::statisticsClearInMemoryAndPersistentStoreModifiedSinceHours(unsigned hours)
+{
+    WKResourceLoadStatisticsManagerClearInMemoryAndPersistentStoreModifiedSinceHours(hours);
+}
+    
 void TestController::statisticsResetToConsistentState()
 {
     WKResourceLoadStatisticsManagerResetToConsistentState();

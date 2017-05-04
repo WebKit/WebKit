@@ -124,6 +124,11 @@ void WebResourceLoadStatisticsManager::clearInMemoryAndPersistentStore()
     WebCore::ResourceLoadObserver::sharedObserver().clearInMemoryAndPersistentStore();
 }
 
+void WebResourceLoadStatisticsManager::clearInMemoryAndPersistentStoreModifiedSinceHours(unsigned hours)
+{
+    WebCore::ResourceLoadObserver::sharedObserver().clearInMemoryAndPersistentStore(std::chrono::system_clock::now() - std::chrono::hours(hours));
+}
+    
 void WebResourceLoadStatisticsManager::resetToConsistentState()
 {
     WebCore::ResourceLoadObserver::sharedObserver().setTimeToLiveUserInteraction(2592000);

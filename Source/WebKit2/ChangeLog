@@ -1,3 +1,20 @@
+2017-05-03  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Remove all statistics for modifiedSince website data removals
+        https://bugs.webkit.org/show_bug.cgi?id=171584
+        <rdar://problem/24702576>
+
+        Reviewed by Brent Fulgham.
+
+        These are all test infrastructure changes.
+
+        * UIProcess/API/C/WKResourceLoadStatisticsManager.cpp:
+        (WKResourceLoadStatisticsManagerClearInMemoryAndPersistentStoreModifiedSinceHours):
+        * UIProcess/API/C/WKResourceLoadStatisticsManager.h:
+        * UIProcess/WebResourceLoadStatisticsManager.cpp:
+        (WebKit::WebResourceLoadStatisticsManager::clearInMemoryAndPersistentStoreModifiedSinceHours):
+        * UIProcess/WebResourceLoadStatisticsManager.h:
+
 2017-05-03  Timothy Horton  <timothy_horton@apple.com>
 
         Maintain interaction information imageURL as a URL, not a string

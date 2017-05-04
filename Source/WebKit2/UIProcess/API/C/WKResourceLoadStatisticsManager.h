@@ -49,6 +49,7 @@ extern "C" {
     WK_EXPORT void WKResourceLoadStatisticsManagerSetShouldClassifyResourcesBeforeDataRecordsRemoval(bool value);
     WK_EXPORT void WKResourceLoadStatisticsManagerSetMinimumTimeBetweeenDataRecordsRemoval(double seconds);
     WK_EXPORT void WKResourceLoadStatisticsManagerClearInMemoryAndPersistentStore();
+    WK_EXPORT void WKResourceLoadStatisticsManagerClearInMemoryAndPersistentStoreModifiedSinceHours(unsigned);
     WK_EXPORT void WKResourceLoadStatisticsManagerResetToConsistentState();
 
 #ifdef __cplusplus

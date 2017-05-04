@@ -165,6 +165,7 @@ public:
     void setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(bool);
     void setStatisticsMinimumTimeBetweeenDataRecordsRemoval(double);
     void statisticsClearInMemoryAndPersistentStore();
+    void statisticsClearInMemoryAndPersistentStoreModifiedSinceHours(unsigned);
     void statisticsResetToConsistentState();
 
     WKArrayRef openPanelFileURLs() const { return m_openPanelFileURLs.get(); }

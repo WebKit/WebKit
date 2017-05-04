@@ -1059,6 +1059,13 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return nullptr;
     }
     
+    if (WKStringIsEqualToUTF8CString(messageName, "StatisticsClearInMemoryAndPersistentStoreModifiedSinceHours")) {
+        ASSERT(WKGetTypeID(messageBody) == WKUInt64GetTypeID());
+        WKUInt64Ref hours = static_cast<WKUInt64Ref>(messageBody);
+        TestController::singleton().statisticsClearInMemoryAndPersistentStoreModifiedSinceHours(WKUInt64GetValue(hours));
+        return nullptr;
+    }
+    
     if (WKStringIsEqualToUTF8CString(messageName, "StatisticsResetToConsistentState")) {
         TestController::singleton().statisticsResetToConsistentState();
         return nullptr;

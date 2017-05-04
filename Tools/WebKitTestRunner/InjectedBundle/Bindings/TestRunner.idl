@@ -266,6 +266,7 @@ interface TestRunner {
     void setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(boolean value);
     void setStatisticsMinimumTimeBetweeenDataRecordsRemoval(double seconds);
     void statisticsClearInMemoryAndPersistentStore();
+    void statisticsClearInMemoryAndPersistentStoreModifiedSinceHours(unsigned long hours);
     void statisticsResetToConsistentState();
 
     // Open panel
