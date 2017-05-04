@@ -197,8 +197,9 @@ void ChildProcess::initializeSandbox(const ChildProcessInitializationParameters&
 {
 }
 
-void ChildProcess::didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference, IPC::StringReference)
+void ChildProcess::didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference messageReceiverName, IPC::StringReference messageName)
 {
+    WTFLogAlways("Received invalid message: '%s::%s'", messageReceiverName.toString().data(), messageName.toString().data());
     CRASH();
 }
 #endif
