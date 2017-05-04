@@ -1714,7 +1714,9 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
         if (token && /\blink\b/.test(token.type)) {
             let url = token.string;
             let baseURL = sourceCodeLocation ? sourceCodeLocation.sourceCode.url : this._style.node.ownerDocument.documentURL;
-            WebInspector.openURL(absoluteURL(url, baseURL), options);
+
+            const frame = null;
+            WebInspector.openURL(absoluteURL(url, baseURL), frame, options);
             return;
         }
 
