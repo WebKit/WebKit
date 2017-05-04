@@ -4277,7 +4277,7 @@ static bool isAssistableInputType(InputType type)
     if (canShowLinkPreview) {
         *type = UIPreviewItemTypeLink;
         if (useImageURLForLink)
-            dataForPreview[UIPreviewDataLink] = [NSURL _web_URLWithWTFString:_positionInformation.imageURL];
+            dataForPreview[UIPreviewDataLink] = (NSURL *)_positionInformation.imageURL;
         else
             dataForPreview[UIPreviewDataLink] = (NSURL *)linkURL;
         if (_positionInformation.isDataDetectorLink) {
@@ -4306,7 +4306,7 @@ static bool isAssistableInputType(InputType type)
         }
     } else if (canShowImagePreview) {
         *type = UIPreviewItemTypeImage;
-        dataForPreview[UIPreviewDataLink] = [NSURL _web_URLWithWTFString:_positionInformation.imageURL];
+        dataForPreview[UIPreviewDataLink] = (NSURL *)_positionInformation.imageURL;
     } else if (canShowAttachmentPreview) {
 #if __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000
         *type = UIPreviewItemTypeAttachment;
@@ -4440,10 +4440,10 @@ static NSString *previewIdentifierForElementAction(_WKElementAction *action)
     id <WKUIDelegatePrivate> uiDelegate = static_cast<id <WKUIDelegatePrivate>>([_webView UIDelegate]);
     if ([_previewItemController type] == UIPreviewItemTypeImage) {
         if ([uiDelegate respondsToSelector:@selector(_webView:commitPreviewedImageWithURL:)]) {
-            String absoluteImageURL = _positionInformation.imageURL;
-            if (absoluteImageURL.isEmpty() || !(WebCore::protocolIsInHTTPFamily(absoluteImageURL) || WebCore::protocolIs(absoluteImageURL, "data")))
+            const URL& imageURL = _positionInformation.imageURL;
+            if (imageURL.isEmpty() || !(imageURL.protocolIsInHTTPFamily() || imageURL.protocolIs("data")))
                 return;
-            [uiDelegate _webView:_webView commitPreviewedImageWithURL:[NSURL _web_URLWithWTFString:absoluteImageURL]];
+            [uiDelegate _webView:_webView commitPreviewedImageWithURL:(NSURL *)imageURL];
             return;
         }
         return;

@@ -58,7 +58,7 @@ struct InteractionInformationAtPosition {
 #endif
     WebCore::FloatPoint adjustedPointForNodeRespondingToClickEvents;
     WebCore::URL url;
-    String imageURL;
+    WebCore::URL imageURL;
     String title;
     String idAttribute;
     WebCore::IntRect bounds;

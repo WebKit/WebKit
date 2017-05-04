@@ -1,3 +1,17 @@
+2017-05-03  Timothy Horton  <timothy_horton@apple.com>
+
+        Maintain interaction information imageURL as a URL, not a string
+        https://bugs.webkit.org/show_bug.cgi?id=171639
+
+        Reviewed by Sam Weinig.
+
+        * Shared/ios/InteractionInformationAtPosition.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _dataForPreviewItemController:atPosition:type:]):
+        (-[WKContentView _previewItemController:commitPreview:]):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getPositionInformation):
+
 2017-05-03  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r216160 and r216161.

@@ -2499,7 +2499,7 @@ void WebPage::getPositionInformation(const InteractionInformationRequest& reques
                     if (renderImage.cachedImage() && !renderImage.cachedImage()->errorOccurred()) {
                         if (Image* image = renderImage.cachedImage()->imageForRenderer(&renderImage)) {
                             if (image->width() > 1 && image->height() > 1) {
-                                info.imageURL = [(NSURL *)element->document().completeURL(renderImage.cachedImage()->url()) absoluteString];
+                                info.imageURL = element->document().completeURL(renderImage.cachedImage()->url());
                                 info.isAnimatedImage = image->isAnimated();
 
                                 if (request.includeSnapshot) {
