@@ -61,7 +61,7 @@ size_t WKStringGetCharacters(WKStringRef stringRef, WKChar* buffer, size_t buffe
     unsigned unsignedBufferLength = std::min<size_t>(bufferLength, std::numeric_limits<unsigned>::max());
     auto substring = toImpl(stringRef)->stringView().substring(0, unsignedBufferLength);
 
-    substring.getCharactersWithUpconvert(static_cast<UChar*>(buffer));
+    substring.getCharactersWithUpconvert(reinterpret_cast<UChar*>(buffer));
     return substring.length();
 }
 

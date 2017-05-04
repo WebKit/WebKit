@@ -1,3 +1,17 @@
+2017-05-04  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Fix compilation with ICU 59.1
+        https://bugs.webkit.org/show_bug.cgi?id=171612
+
+        Reviewed by Mark Lam.
+
+        ICU 59.1 has broken source compatibility. Now it defines UChar as
+        char16_t, which does not allow automatic type conversion from unsigned
+        short in C++ code.
+
+        * Shared/API/c/WKString.cpp:
+        (WKStringGetCharacters):
+
 2017-05-04  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] -[WKWebsiteDataStore httpCookieStore] is declared in the main @interface but implemented in a category
