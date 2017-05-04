@@ -1,3 +1,19 @@
+2017-05-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [Threaded Compositor] SHOULD NEVER BE REACHED in WebKit::CompositingRunLoop::updateCompleted
+        https://bugs.webkit.org/show_bug.cgi?id=171336
+
+        Reviewed by Michael Catanzaro.
+
+        We are assuming that all calls to ThreadedCompositor::renderLayerTree() happen because of an scheduled update,
+        but that's not true in the case of ThreadedCompositor::forceRepaint(). In that case we never want to call
+        CompositingRunLoop::updateCompleted().
+
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        (WebKit::ThreadedCompositor::forceRepaint):
+        (WebKit::ThreadedCompositor::sceneUpdateFinished):
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.h:
+
 2017-05-04  David Kilzer  <ddkilzer@apple.com>
 
         check-webkit-style exits with an error while parsing Source/WebKit2/Scripts/webkit/ directory: KeyError: 'st'
