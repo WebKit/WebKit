@@ -1,3 +1,0 @@
-This tests that notification permission requests during page reload do not cause a crash.
-
-PASS: Test passed if we saw no crash.

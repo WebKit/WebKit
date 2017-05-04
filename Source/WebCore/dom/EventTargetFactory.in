@@ -23,7 +23,7 @@ MediaStream conditional=MEDIA_STREAM
 MediaStreamTrack conditional=MEDIA_STREAM
 MessagePort
 Node
-Notification conditional=NOTIFICATIONS|LEGACY_NOTIFICATIONS
+Notification conditional=NOTIFICATIONS
 Performance conditional=WEB_TIMING
 RTCDataChannel conditional=WEB_RTC
 RTCDTMFSender conditional=WEB_RTC_DTMF

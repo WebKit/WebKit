@@ -32,7 +32,7 @@
 #include <WebCore/Notification.h>
 #include <WebCore/NotificationClient.h>
 
-#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS)
 
 interface IWebDesktopNotificationPresenter;
 
@@ -50,12 +50,7 @@ public:
     virtual void cancel(WebCore::Notification* object);
     virtual void notificationObjectDestroyed(WebCore::Notification* object);
     virtual void notificationControllerDestroyed();
-#if ENABLE(LEGACY_NOTIFICATIONS)
-    virtual void requestPermission(WebCore::SecurityOrigin*, RefPtr<WebCore::VoidCallback>&&);
-#endif
-#if ENABLE(NOTIFICATIONS)
     virtual void requestPermission(WebCore::SecurityOrigin*, RefPtr<WebCore::NotificationPermissionCallback>&&);
-#endif
     bool hasPendingPermissionRequests(WebCore::ScriptExecutionContext*) const override;
     virtual void cancelRequestsForPermission(WebCore::ScriptExecutionContext*);
     virtual WebCore::NotificationClient::Permission checkPermission(const URL&);

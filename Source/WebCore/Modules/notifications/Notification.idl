@@ -30,36 +30,38 @@
  */
 
 [
-    Conditional=NOTIFICATIONS|LEGACY_NOTIFICATIONS,
+    Conditional=NOTIFICATIONS,
     ActiveDOMObject,
     ExportMacro=WEBCORE_EXPORT,
-#if defined(ENABLE_NOTIFICATIONS) && ENABLE_NOTIFICATIONS
     Constructor(DOMString title, optional NotificationOptions options),
     ConstructorCallWith=Document,
-#endif
 ] interface Notification : EventTarget {
     void show();
-    [Conditional=LEGACY_NOTIFICATIONS, ImplementedAs=close] void cancel();
-    [Conditional=NOTIFICATIONS] void close();
+    void close();
 
-    [Conditional=NOTIFICATIONS, CallWith=Document] static readonly attribute DOMString permission;
-    [Conditional=NOTIFICATIONS, CallWith=Document] static void requestPermission(optional NotificationPermissionCallback? callback);
+    [CallWith=Document] static readonly attribute DOMString permission;
+    [CallWith=Document] static void requestPermission(optional NotificationPermissionCallback? callback);
 
     attribute EventHandler onclick;
+    attribute EventHandler onerror;
     attribute EventHandler onclose;
     [ImplementedAs=onshow] attribute EventHandler ondisplay;
-    attribute EventHandler onerror;
     attribute EventHandler onshow;
 
-    [Conditional=LEGACY_NOTIFICATIONS] attribute DOMString dir;
-    [Conditional=LEGACY_NOTIFICATIONS] attribute DOMString replaceId;
-
-    [Conditional=NOTIFICATIONS] attribute DOMString tag;
+    attribute DOMString tag;
 };
 
-[Conditional=NOTIFICATIONS] enum NotificationDirection { "auto", "ltr", "rtl" };
+[
+    Conditional=NOTIFICATIONS
+] enum NotificationDirection {
+    "auto",
+    "ltr",
+    "rtl"
+};
 
-[Conditional=NOTIFICATIONS] dictionary NotificationOptions {
+[
+    Conditional=NOTIFICATIONS
+] dictionary NotificationOptions {
     NotificationDirection dir = "auto";
     DOMString lang = "";
     DOMString body = "";

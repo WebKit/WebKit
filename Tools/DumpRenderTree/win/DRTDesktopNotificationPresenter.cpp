@@ -125,7 +125,7 @@ HRESULT DRTDesktopNotificationPresenter::checkNotificationPermission(_In_ BSTR /
 
     *result = 0;
 
-#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS)
     JSStringRef jsOrigin = JSStringCreateWithBSTR(origin);
     bool allowed = ::gTestRunner->checkDesktopNotificationPermission(jsOrigin);
 
