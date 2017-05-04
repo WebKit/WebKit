@@ -4206,6 +4206,18 @@ void WebPageProxy::setMuted(WebCore::MediaProducer::MutedStateFlags state)
     activityStateDidChange(ActivityState::IsAudible | ActivityState::IsCapturingMedia);
 }
 
+void WebPageProxy::setMediaCaptureEnabled(bool enabled)
+{
+    m_mediaCaptureEnabled = enabled;
+
+    if (!isValid())
+        return;
+
+#if ENABLE(MEDIA_STREAM)
+    UserMediaProcessManager::singleton().setCaptureEnabled(enabled);
+#endif
+}
+
 #if ENABLE(MEDIA_SESSION)
 void WebPageProxy::handleMediaEvent(MediaEventType eventType)
 {
@@ -5768,13 +5780,6 @@ void WebPageProxy::enumerateMediaDevicesForFrame(uint64_t userMediaID, uint64_t 
     UNUSED_PARAM(frameID);
     UNUSED_PARAM(userMediaDocumentOriginIdentifier);
     UNUSED_PARAM(topLevelDocumentOriginIdentifier);
-#endif
-}
-
-void WebPageProxy::clearUserMediaState()
-{
-#if ENABLE(MEDIA_STREAM)
-    userMediaPermissionRequestManager().clearCachedState();
 #endif
 }
 

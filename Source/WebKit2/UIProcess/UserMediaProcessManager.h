@@ -39,6 +39,12 @@ public:
 
     void startedCaptureSession(UserMediaPermissionRequestManagerProxy&);
     void endedCaptureSession(UserMediaPermissionRequestManagerProxy&);
+
+    void setCaptureEnabled(bool);
+    bool captureEnabled() const { return m_captureEnabled; }
+
+private:
+    bool m_captureEnabled { true };
 };
 
 } // namespace WebKit

@@ -17,14 +17,15 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef UserMediaPermissionRequestManagerProxy_h
-#define UserMediaPermissionRequestManagerProxy_h
+#pragma once
 
 #include "UserMediaPermissionCheckProxy.h"
 #include "UserMediaPermissionRequestProxy.h"
 #include <WebCore/SecurityOrigin.h>
+#include <WebCore/Timer.h>
 #include <WebCore/UserMediaRequest.h>
 #include <wtf/HashMap.h>
+#include <wtf/Seconds.h>
 
 namespace WebCore {
 class CaptureDevice;
@@ -57,7 +58,7 @@ public:
 
     WebPageProxy& page() const { return m_page; }
 
-    void invalidateRequests();
+    void invalidatePendingRequests();
 
     void requestUserMediaPermissionForFrame(uint64_t userMediaID, uint64_t frameID, String userMediaDocumentOriginIdentifier, String topLevelDocumentOriginIdentifier, const WebCore::MediaConstraintsData& audioConstraintsData, const WebCore::MediaConstraintsData& videoConstraintsData);
 
@@ -69,7 +70,9 @@ public:
 
     void didCompleteUserMediaPermissionCheck(uint64_t, const String&, bool allow);
 
-    void clearCachedState();
+    void stopCapture();
+    void scheduleNextRejection();
+    void rejectionTimerFired();
 
     void startedCaptureSession();
     void endedCaptureSession();
@@ -85,8 +88,10 @@ private:
     HashMap<uint64_t, std::unique_ptr<FrameAuthorizationState>> m_frameStates;
 
     WebPageProxy& m_page;
+
+    WebCore::Timer m_rejectionTimer;
+    Vector<uint64_t> m_pendingRejections;
 };
 
 } // namespace WebKit
 
-#endif // UserMediaPermissionRequestManagerProxy_h
