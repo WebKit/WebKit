@@ -54,11 +54,10 @@ public:
     void unregisterStream(MediaStream&);
 
     MediaStream* lookUp(const URL&) const;
-
-    void forEach(std::function<void(MediaStream&)>) const;
+    MediaStream* lookUp(const MediaStreamPrivate&) const;
 
 private:
-    MediaStreamRegistry() = default;
+    MediaStreamRegistry();
     HashMap<String, RefPtr<MediaStream>> m_mediaStreams;
 };
 

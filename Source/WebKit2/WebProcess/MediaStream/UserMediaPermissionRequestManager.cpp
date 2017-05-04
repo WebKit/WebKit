@@ -56,15 +56,6 @@ UserMediaPermissionRequestManager::~UserMediaPermissionRequestManager()
         sandboxExtension.value->revoke();
 }
 
-void UserMediaPermissionRequestManager::cancelPendingRequests()
-{
-    for (auto& request : m_idToUserMediaRequestMap.values())
-        cancelUserMediaRequest(*request);
-
-    for (auto& request : m_idToMediaDevicesEnumerationRequestMap.values())
-        cancelMediaDevicesEnumeration(*request);
-}
-
 void UserMediaPermissionRequestManager::startUserMediaRequest(UserMediaRequest& request)
 {
     Document* document = request.document();
@@ -113,8 +104,6 @@ void UserMediaPermissionRequestManager::cancelUserMediaRequest(UserMediaRequest&
     uint64_t requestID = m_userMediaRequestToIDMap.take(&request);
     if (!requestID)
         return;
-
-    request.deny(UserMediaRequest::OtherFailure, emptyString());
     m_idToUserMediaRequestMap.remove(requestID);
     removeMediaRequestFromMaps(request);
 }
@@ -201,7 +190,6 @@ void UserMediaPermissionRequestManager::cancelMediaDevicesEnumeration(WebCore::M
     uint64_t requestID = m_mediaDevicesEnumerationRequestToIDMap.take(&request);
     if (!requestID)
         return;
-    request.setDeviceInfo(Vector<CaptureDevice>(), emptyString(), false);
     m_idToMediaDevicesEnumerationRequestMap.remove(requestID);
 }
 

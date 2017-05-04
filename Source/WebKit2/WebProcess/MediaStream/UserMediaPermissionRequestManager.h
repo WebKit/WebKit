@@ -55,8 +55,6 @@ public:
     void grantUserMediaDeviceSandboxExtensions(const MediaDeviceSandboxExtensions&);
     void revokeUserMediaDeviceSandboxExtensions(const Vector<String>&);
 
-    void cancelPendingRequests();
-
 private:
     void sendUserMediaRequest(WebCore::UserMediaRequest&);
 

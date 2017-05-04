@@ -338,7 +338,6 @@ messages -> WebPage LegacyReceiver {
     SetMediaVolume(float volume)
     SetMuted(WebCore::MediaProducer::MutedStateFlags muted)
     SetMayStartMediaWhenInWindow(bool mayStartMedia)
-    StopMediaCapture()
 
 #if ENABLE(MEDIA_SESSION)
     HandleMediaEvent(uint32_t eventType)

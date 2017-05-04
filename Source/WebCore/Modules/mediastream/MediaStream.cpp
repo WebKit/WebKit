@@ -314,12 +314,6 @@ void MediaStream::stopProducingData()
     m_private->stopProducingData();
 }
 
-void MediaStream::endStream()
-{
-    for (auto& track : m_trackSet.values())
-        track->stopTrack(MediaStreamTrack::StopMode::PostEvent);
-}
-
 void MediaStream::pageMutedStateDidChange()
 {
     if (!m_isActive)

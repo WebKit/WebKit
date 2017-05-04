@@ -91,8 +91,6 @@ public:
     void startProducingData();
     void stopProducingData();
 
-    void endStream();
-
     // EventTarget
     EventTargetInterface eventTargetInterface() const final { return MediaStreamEventTargetInterfaceType; }
     ScriptExecutionContext* scriptExecutionContext() const final { return ContextDestructionObserver::scriptExecutionContext(); }
@@ -107,8 +105,6 @@ public:
     void removeObserver(Observer*);
 
     void addTrackFromPlatform(Ref<MediaStreamTrack>&&);
-
-    Document* document() const;
 
 protected:
     MediaStream(ScriptExecutionContext&, const MediaStreamTrackVector&);
@@ -161,6 +157,8 @@ private:
     void activityEventTimerFired();
     void setIsActive(bool);
     void statusDidChange();
+
+    Document* document() const;
 
     MediaStreamTrackVector trackVectorForType(RealtimeMediaSource::Type) const;
 

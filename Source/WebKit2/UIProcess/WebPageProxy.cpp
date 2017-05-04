@@ -4206,18 +4206,6 @@ void WebPageProxy::setMuted(WebCore::MediaProducer::MutedStateFlags state)
     activityStateDidChange(ActivityState::IsAudible | ActivityState::IsCapturingMedia);
 }
 
-void WebPageProxy::setMediaCaptureEnabled(bool enabled)
-{
-    m_mediaCaptureEnabled = enabled;
-
-    if (!isValid())
-        return;
-
-#if ENABLE(MEDIA_STREAM)
-    UserMediaProcessManager::singleton().setCaptureEnabled(enabled);
-#endif
-}
-
 #if ENABLE(MEDIA_SESSION)
 void WebPageProxy::handleMediaEvent(MediaEventType eventType)
 {

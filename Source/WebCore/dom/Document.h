@@ -1277,7 +1277,6 @@ public:
     bool hasHadActiveMediaStreamTrack() const { return m_hasHadActiveMediaStreamTrack; }
     void setDeviceIDHashSalt(const String& salt) { m_idHashSalt = salt; }
     String deviceIDHashSalt() const { return m_idHashSalt; }
-    void stopMediaCapture();
 #endif
 
 // FIXME: Find a better place for this functionality.

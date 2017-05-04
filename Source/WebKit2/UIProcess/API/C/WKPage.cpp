@@ -2677,16 +2677,6 @@ void WKPageSetMuted(WKPageRef page, WKMediaMutedState muted)
     toImpl(page)->setMuted(muted);
 }
 
-void WKPageSetMediaCaptureEnabled(WKPageRef page, bool enabled)
-{
-    toImpl(page)->setMediaCaptureEnabled(enabled);
-}
-
-bool WKPageGetMediaCaptureEnabled(WKPageRef page)
-{
-    return toImpl(page)->mediaCaptureEnabled();
-}
-
 void WKPageDidAllowPointerLock(WKPageRef page)
 {
 #if ENABLE(POINTER_LOCK)
