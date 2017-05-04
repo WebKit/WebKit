@@ -32,12 +32,14 @@
     SkipVTableValidation
 ] interface MutationRecord {
     readonly attribute DOMString type;
-    readonly attribute Node target;
 
+    // FIXME: The following attributes should be [SameObject] once we support it.
+    readonly attribute Node target;
     readonly attribute NodeList addedNodes;
     readonly attribute NodeList removedNodes;
-    readonly attribute Node previousSibling;
-    readonly attribute Node nextSibling;
+
+    readonly attribute Node? previousSibling;
+    readonly attribute Node? nextSibling;
 
     readonly attribute DOMString? attributeName;
     readonly attribute DOMString? attributeNamespace;
