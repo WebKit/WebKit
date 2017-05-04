@@ -940,31 +940,52 @@ void Heap::sweepSynchronously()
     }
 }
 
-void Heap::collectAllGarbage()
+void Heap::collect(Synchronousness synchronousness, GCRequest request)
 {
-    if (!m_isSafeToCollect)
+    switch (synchronousness) {
+    case Async:
+        collectAsync(request);
         return;
-    
-    collectSync(CollectionScope::Full);
-
-    DeferGCForAWhile deferGC(*this);
-    if (UNLIKELY(Options::useImmortalObjects()))
-        sweeper()->stopSweeping();
-
-    bool alreadySweptInCollectSync = Options::sweepSynchronously();
-    if (!alreadySweptInCollectSync) {
-        if (Options::logGC())
-            dataLog("[GC<", RawPointer(this), ">: ");
-        sweepSynchronously();
-        if (Options::logGC())
-            dataLog("]\n");
+    case Sync:
+        collectSync(request);
+        return;
     }
-    m_objectSpace.assertNoUnswept();
-
-    sweepAllLogicallyEmptyWeakBlocks();
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
-void Heap::collectAsync(std::optional<CollectionScope> scope)
+void Heap::collectNow(Synchronousness synchronousness, GCRequest request)
+{
+    switch (synchronousness) {
+    case Async: {
+        collectAsync(request);
+        stopIfNecessary();
+        return;
+    }
+        
+    case Sync: {
+        collectSync(request);
+        
+        DeferGCForAWhile deferGC(*this);
+        if (UNLIKELY(Options::useImmortalObjects()))
+            sweeper().stopSweeping();
+        
+        bool alreadySweptInCollectSync = Options::sweepSynchronously();
+        if (!alreadySweptInCollectSync) {
+            if (Options::logGC())
+                dataLog("[GC<", RawPointer(this), ">: ");
+            sweepSynchronously();
+            if (Options::logGC())
+                dataLog("]\n");
+        }
+        m_objectSpace.assertNoUnswept();
+        
+        sweepAllLogicallyEmptyWeakBlocks();
+        return;
+    } }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+void Heap::collectAsync(GCRequest request)
 {
     if (!m_isSafeToCollect)
         return;
@@ -972,38 +993,25 @@ void Heap::collectAsync(std::optional<CollectionScope> scope)
     bool alreadyRequested = false;
     {
         LockHolder locker(*m_threadLock);
-        for (std::optional<CollectionScope> request : m_requests) {
-            if (scope) {
-                if (scope == CollectionScope::Eden) {
-                    alreadyRequested = true;
-                    break;
-                } else {
-                    RELEASE_ASSERT(scope == CollectionScope::Full);
-                    if (request == CollectionScope::Full) {
-                        alreadyRequested = true;
-                        break;
-                    }
-                }
-            } else {
-                if (!request || request == CollectionScope::Full) {
-                    alreadyRequested = true;
-                    break;
-                }
+        for (const GCRequest& previousRequest : m_requests) {
+            if (request.subsumedBy(previousRequest)) {
+                alreadyRequested = true;
+                break;
             }
         }
     }
     if (alreadyRequested)
         return;
 
-    requestCollection(scope);
+    requestCollection(request);
 }
 
-void Heap::collectSync(std::optional<CollectionScope> scope)
+void Heap::collectSync(GCRequest request)
 {
     if (!m_isSafeToCollect)
         return;
     
-    waitForCollection(requestCollection(scope));
+    waitForCollection(requestCollection(request));
 }
 
 bool Heap::shouldCollectInCollectorThread(const AbstractLocker&)
@@ -1108,12 +1116,11 @@ NEVER_INLINE bool Heap::runNotRunningPhase(GCConductor conn)
 NEVER_INLINE bool Heap::runBeginPhase(GCConductor conn)
 {
     m_currentGCStartTime = MonotonicTime::now();
-        
-    std::optional<CollectionScope> scope;
+    
     {
         LockHolder locker(*m_threadLock);
         RELEASE_ASSERT(!m_requests.isEmpty());
-        scope = m_requests.first();
+        m_currentRequest = m_requests.first();
     }
         
     if (Options::logGC())
@@ -1125,8 +1132,8 @@ NEVER_INLINE bool Heap::runBeginPhase(GCConductor conn)
         dataLog("Collection scope already set during GC: ", *m_collectionScope, "\n");
         RELEASE_ASSERT_NOT_REACHED();
     }
-        
-    willStartCollection(scope);
+    
+    willStartCollection();
         
     if (UNLIKELY(m_verifier)) {
         // Verify that live objects from the last GC cycle haven't been corrupted by
@@ -1394,7 +1401,10 @@ NEVER_INLINE bool Heap::runEndPhase(GCConductor conn)
     }
 
     didFinishCollection();
-
+    
+    if (m_currentRequest.didFinishEndPhase)
+        m_currentRequest.didFinishEndPhase->run();
+    
     if (false) {
         dataLog("Heap state after GC:\n");
         m_objectSpace.dumpBits();
@@ -1956,7 +1966,7 @@ void Heap::finalize()
     }
 }
 
-Heap::Ticket Heap::requestCollection(std::optional<CollectionScope> scope)
+Heap::Ticket Heap::requestCollection(GCRequest request)
 {
     stopIfNecessary();
     
@@ -1974,7 +1984,7 @@ Heap::Ticket Heap::requestCollection(std::optional<CollectionScope> scope)
         m_worldState.exchangeOr(mutatorHasConnBit);
     }
     
-    m_requests.append(scope);
+    m_requests.append(request);
     m_lastGrantedTicket++;
     if (!(m_worldState.load() & mutatorHasConnBit))
         m_threadCondition->notifyOne(locker);
@@ -2005,12 +2015,12 @@ void Heap::suspendCompilerThreads()
 #endif
 }
 
-void Heap::willStartCollection(std::optional<CollectionScope> scope)
+void Heap::willStartCollection()
 {
     if (Options::logGC())
         dataLog("=> ");
     
-    if (shouldDoFullCollection(scope)) {
+    if (shouldDoFullCollection()) {
         m_collectionScope = CollectionScope::Full;
         m_shouldDoFullCollection = false;
         if (Options::logGC())
@@ -2229,9 +2239,9 @@ GCActivityCallback* Heap::edenActivityCallback()
     return m_edenActivityCallback.get();
 }
 
-IncrementalSweeper* Heap::sweeper()
+IncrementalSweeper& Heap::sweeper()
 {
-    return m_sweeper.get();
+    return *m_sweeper;
 }
 
 void Heap::setGarbageCollectionTimerEnabled(bool enable)
@@ -2284,31 +2294,31 @@ void Heap::addExecutable(ExecutableBase* executable)
     m_executables.append(executable);
 }
 
-void Heap::collectAllGarbageIfNotDoneRecently()
+void Heap::collectNowFullIfNotDoneRecently(Synchronousness synchronousness)
 {
     if (!m_fullActivityCallback) {
-        collectAllGarbage();
+        collectNow(synchronousness, CollectionScope::Full);
         return;
     }
 
-    if (m_fullActivityCallback->didSyncGCRecently()) {
+    if (m_fullActivityCallback->didGCRecently()) {
         // A synchronous GC was already requested recently so we merely accelerate next collection.
         reportAbandonedObjectGraph();
         return;
     }
 
-    m_fullActivityCallback->setDidSyncGCRecently();
-    collectAllGarbage();
+    m_fullActivityCallback->setDidGCRecently();
+    collectNow(synchronousness, CollectionScope::Full);
 }
 
-bool Heap::shouldDoFullCollection(std::optional<CollectionScope> scope) const
+bool Heap::shouldDoFullCollection() const
 {
     if (!Options::useGenerationalGC())
         return true;
 
-    if (!scope)
+    if (!m_currentRequest.scope)
         return m_shouldDoFullCollection || webAssemblyFastMemoriesThisCycleAtThreshold();
-    return *scope == CollectionScope::Full;
+    return *m_currentRequest.scope == CollectionScope::Full;
 }
 
 void Heap::addLogicallyEmptyWeakBlock(WeakBlock* block)

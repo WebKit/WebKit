@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,32 +25,34 @@
 
 #pragma once
 
-#include "JSRunLoopTimer.h"
-#include <wtf/Vector.h>
+#include "CollectionScope.h"
+#include <wtf/Optional.h>
+#include <wtf/PrintStream.h>
+#include <wtf/RefPtr.h>
+#include <wtf/SharedTask.h>
 
 namespace JSC {
 
-class Heap;
-class MarkedAllocator;
-
-class IncrementalSweeper : public JSRunLoopTimer {
-public:
-    using Base = JSRunLoopTimer;
-    JS_EXPORT_PRIVATE explicit IncrementalSweeper(Heap*);
-
-    JS_EXPORT_PRIVATE void startSweeping();
-    void freeFastMallocMemoryAfterSweeping() { m_shouldFreeFastMallocMemoryAfterSweeping = true; }
-
-    JS_EXPORT_PRIVATE void doWork() override;
-    bool sweepNextBlock();
-    JS_EXPORT_PRIVATE void stopSweeping();
-
-private:
-    void doSweep(MonotonicTime startTime);
-    void scheduleTimer();
+struct GCRequest {
+    GCRequest() { }
     
-    MarkedAllocator* m_currentAllocator;
-    bool m_shouldFreeFastMallocMemoryAfterSweeping { false };
+    GCRequest(CollectionScope scope)
+        : scope(scope)
+    {
+    }
+    
+    GCRequest(std::optional<CollectionScope> scope)
+        : scope(scope)
+    {
+    }
+    
+    bool subsumedBy(const GCRequest& other) const;
+    
+    void dump(PrintStream&) const;
+    
+    std::optional<CollectionScope> scope;
+    RefPtr<SharedTask<void()>> didFinishEndPhase;
 };
 
 } // namespace JSC
+

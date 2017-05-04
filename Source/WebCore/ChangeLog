@@ -1,3 +1,19 @@
+2017-05-04  Filip Pizlo  <fpizlo@apple.com>
+
+        JSC::Heap should expose a richer API for requesting GCs
+        https://bugs.webkit.org/show_bug.cgi?id=171690
+
+        Reviewed by Geoffrey Garen.
+
+        No new tests because this is just a refactoring.
+        
+        Change some function calls now that some JSC::Heap APIs got renamed.
+
+        * bindings/js/GCController.cpp:
+        (WebCore::collect):
+        (WebCore::GCController::garbageCollectNow):
+        (WebCore::GCController::garbageCollectNowIfNotDoneRecently):
+
 2017-05-04  Mark Lam  <mark.lam@apple.com>
 
         NeverDestroyed<String>(ASCIILiteral(...)) is not thread safe.

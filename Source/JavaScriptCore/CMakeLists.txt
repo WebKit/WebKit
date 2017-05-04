@@ -502,6 +502,7 @@ set(JavaScriptCore_SOURCES
     heap/GCActivityCallback.cpp
     heap/GCConductor.cpp
     heap/GCLogging.cpp
+    heap/GCRequest.cpp
     heap/HandleSet.cpp
     heap/HandleStack.cpp
     heap/Heap.cpp
@@ -528,6 +529,7 @@ set(JavaScriptCore_SOURCES
     heap/StopIfNecessaryTimer.cpp
     heap/Subspace.cpp
     heap/SynchronousStopTheWorldMutatorScheduler.cpp
+    heap/Synchronousness.cpp
     heap/VisitRaceKey.cpp
     heap/Weak.cpp
     heap/WeakBlock.cpp

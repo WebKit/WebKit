@@ -41,7 +41,7 @@ namespace WebCore {
 static void collect(void*)
 {
     JSLockHolder lock(commonVM());
-    commonVM().heap.collectAllGarbage();
+    commonVM().heap.collectNow(Sync, CollectionScope::Full);
 }
 
 GCController& GCController::singleton()
@@ -83,7 +83,7 @@ void GCController::garbageCollectNow()
 {
     JSLockHolder lock(commonVM());
     if (!commonVM().heap.isCurrentThreadBusy()) {
-        commonVM().heap.collectAllGarbage();
+        commonVM().heap.collectNow(Sync, CollectionScope::Full);
         WTF::releaseFastMallocFreeMemory();
     }
 }
@@ -93,7 +93,7 @@ void GCController::garbageCollectNowIfNotDoneRecently()
 #if USE(CF) || USE(GLIB)
     JSLockHolder lock(commonVM());
     if (!commonVM().heap.isCurrentThreadBusy())
-        commonVM().heap.collectAllGarbageIfNotDoneRecently();
+        commonVM().heap.collectNowFullIfNotDoneRecently(Sync);
 #else
     garbageCollectSoon();
 #endif

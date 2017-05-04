@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,32 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "Synchronousness.h"
 
-#include "GCActivityCallback.h"
+#include <wtf/PrintStream.h>
 
-namespace JSC {
+using namespace JSC;
 
-class JS_EXPORT_PRIVATE FullGCActivityCallback : public GCActivityCallback {
-public:
-    FullGCActivityCallback(Heap*);
+namespace WTF {
 
-    void doCollection() override;
-
-    bool didGCRecently() const { return m_didGCRecently; }
-    void setDidGCRecently() { m_didGCRecently = true; }
-
-protected:
-    Seconds lastGCLength() override;
-    double gcTimeSlice(size_t bytes) override;
-    double deathRate() override;
-
-    bool m_didGCRecently { false };
-};
-
-inline RefPtr<FullGCActivityCallback> GCActivityCallback::createFullTimer(Heap* heap)
+void printInternal(PrintStream& out, Synchronousness synchronousness)
 {
-    return s_shouldCreateGCTimer ? adoptRef(new FullGCActivityCallback(heap)) : nullptr;
+    switch (synchronousness) {
+    case Async:
+        out.print("Async");
+        return;
+    case Sync:
+        out.print("Sync");
+        return;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
-} // namespace JSC
+} // namespace WTF
+

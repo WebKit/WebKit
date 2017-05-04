@@ -42,7 +42,7 @@ FullGCActivityCallback::FullGCActivityCallback(Heap* heap)
 void FullGCActivityCallback::doCollection()
 {
     Heap& heap = m_vm->heap;
-    m_didSyncGCRecently = false;
+    m_didGCRecently = false;
 
 #if !PLATFORM(IOS)
     double startTime = WTF::monotonicallyIncreasingTime();

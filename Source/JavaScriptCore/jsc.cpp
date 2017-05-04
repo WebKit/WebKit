@@ -2025,7 +2025,7 @@ EncodedJSValue JSC_HOST_CALL functionSetImpureGetterDelegate(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL functionGCAndSweep(ExecState* exec)
 {
     JSLockHolder lock(exec);
-    exec->heap()->collectAllGarbage();
+    exec->heap()->collectNow(Sync, CollectionScope::Full);
     return JSValue::encode(jsNumber(exec->heap()->sizeAfterLastFullCollection()));
 }
 
@@ -3858,7 +3858,7 @@ int runJSC(CommandLine options, const Func& func)
     if (Options::gcAtEnd()) {
         // We need to hold the API lock to do a GC.
         JSLockHolder locker(&vm);
-        vm.heap.collectAllGarbage();
+        vm.heap.collectNow(Sync, CollectionScope::Full);
     }
 
     if (options.m_dumpSamplingProfilerData) {

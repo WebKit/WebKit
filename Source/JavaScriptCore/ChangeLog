@@ -1,3 +1,74 @@
+2017-05-04  Filip Pizlo  <fpizlo@apple.com>
+
+        JSC::Heap should expose a richer API for requesting GCs
+        https://bugs.webkit.org/show_bug.cgi?id=171690
+
+        Reviewed by Geoffrey Garen.
+        
+        I want to stop WebCore from requesting synchronous GCs. But various parts of that work
+        may cause regressions, so I'd like to land it separately from the functionality that is
+        needed on the JSC side. This change is mostly a JSC-side refactoring that does not
+        change behavior. In the future I'll land the behavior changes (i.e. not requesting sync
+        GCs).
+        
+        This change allows you to enumerate over synchronousness, so that we can make all APIs
+        take synchronousness as an argument. It replaces the collectAllGarbage API with a
+        collectNow(Synchronousness, GCRequest) API. GCRequest is a new concept, which subsumes
+        std::optional<CollectionScope> and gives us the ability to register callbacks along
+        with a GC. So, you can ask for an async GC and get a callback when it's done.
+        
+        Also adds ability to request that fastMalloc memory be released after the incremental
+        sweeper finishes.
+        
+        * API/JSBase.cpp:
+        (JSSynchronousGarbageCollectForDebugging):
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * heap/FullGCActivityCallback.cpp:
+        (JSC::FullGCActivityCallback::doCollection):
+        * heap/FullGCActivityCallback.h:
+        * heap/GCRequest.cpp: Added.
+        (JSC::GCRequest::subsumedBy):
+        (JSC::GCRequest::dump):
+        * heap/GCRequest.h: Added.
+        (JSC::GCRequest::GCRequest):
+        * heap/Heap.cpp:
+        (JSC::Heap::collect):
+        (JSC::Heap::collectNow):
+        (JSC::Heap::collectAsync):
+        (JSC::Heap::collectSync):
+        (JSC::Heap::runBeginPhase):
+        (JSC::Heap::runEndPhase):
+        (JSC::Heap::requestCollection):
+        (JSC::Heap::willStartCollection):
+        (JSC::Heap::sweeper):
+        (JSC::Heap::collectNowFullIfNotDoneRecently):
+        (JSC::Heap::shouldDoFullCollection):
+        (JSC::Heap::collectAllGarbage): Deleted.
+        (JSC::Heap::collectAllGarbageIfNotDoneRecently): Deleted.
+        * heap/Heap.h:
+        * heap/HeapSnapshotBuilder.cpp:
+        (JSC::HeapSnapshotBuilder::buildSnapshot):
+        * heap/IncrementalSweeper.cpp:
+        (JSC::IncrementalSweeper::doSweep):
+        * heap/IncrementalSweeper.h:
+        (JSC::IncrementalSweeper::freeFastMallocMemoryAfterSweeping):
+        * heap/MarkedAllocator.cpp:
+        (JSC::MarkedAllocator::doTestCollectionsIfNeeded):
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::sweep):
+        * heap/Synchronousness.cpp: Added.
+        (WTF::printInternal):
+        * heap/Synchronousness.h: Added.
+        * inspector/agents/InspectorHeapAgent.cpp:
+        (Inspector::InspectorHeapAgent::gc):
+        * jsc.cpp:
+        (functionGCAndSweep):
+        (runJSC):
+        * tools/JSDollarVMPrototype.cpp:
+        (JSC::JSDollarVMPrototype::gc):
+        * wasm/WasmMemory.cpp:
+
 2017-05-04  Mark Lam  <mark.lam@apple.com>
 
         NeverDestroyed<String>(ASCIILiteral(...)) is not thread safe.

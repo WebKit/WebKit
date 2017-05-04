@@ -633,6 +633,8 @@
 		0F96303C1D4192CD005609D9 /* DestructionMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9630381D4192C3005609D9 /* DestructionMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F963B3813FC6FE90002D9B2 /* ValueProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F963B3613FC6FDE0002D9B2 /* ValueProfile.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F96EBB316676EF6008BADE3 /* CodeBlockWithJITType.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F96EBB116676EF4008BADE3 /* CodeBlockWithJITType.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F9715301EB28BEB00A1645D /* GCRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F97152E1EB28BE900A1645D /* GCRequest.cpp */; };
+		0F9715311EB28BEE00A1645D /* GCRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F97152F1EB28BE900A1645D /* GCRequest.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F9749711687ADE400A4FF6A /* JSCellInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F97496F1687ADE200A4FF6A /* JSCellInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F978B3B1AAEA71D007C7369 /* ConstantMode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F978B3A1AAEA71D007C7369 /* ConstantMode.cpp */; };
 		0F98206016BFE38100240D02 /* PreciseJumpTargets.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F98205D16BFE37F00240D02 /* PreciseJumpTargets.cpp */; };
@@ -785,6 +787,8 @@
 		0FD3E40C1B618B6600C80E1E /* ObjectPropertyConditionSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD3E4061B618B6600C80E1E /* ObjectPropertyConditionSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FD3E40D1B618B6600C80E1E /* PropertyCondition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FD3E4071B618B6600C80E1E /* PropertyCondition.cpp */; };
 		0FD3E40E1B618B6600C80E1E /* PropertyCondition.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD3E4081B618B6600C80E1E /* PropertyCondition.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FD79A2D1EBBBDBB00DA88D3 /* Synchronousness.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD79A2C1EBBBDB200DA88D3 /* Synchronousness.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FD79A2E1EBBBDC000DA88D3 /* Synchronousness.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FD79A2B1EBBBDB200DA88D3 /* Synchronousness.cpp */; };
 		0FD81AD3154FB4F000983E72 /* DFGDominators.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD81AD0154FB4EB00983E72 /* DFGDominators.h */; };
 		0FD82E2114172CE300179C94 /* DFGCapabilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FD82E1E14172C2F00179C94 /* DFGCapabilities.cpp */; };
 		0FD82E39141AB14D00179C94 /* CompactJITCodeMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD82E37141AB14200179C94 /* CompactJITCodeMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3192,6 +3196,8 @@
 		0F9630381D4192C3005609D9 /* DestructionMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DestructionMode.h; sourceTree = "<group>"; };
 		0F963B3613FC6FDE0002D9B2 /* ValueProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ValueProfile.h; sourceTree = "<group>"; };
 		0F96EBB116676EF4008BADE3 /* CodeBlockWithJITType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeBlockWithJITType.h; sourceTree = "<group>"; };
+		0F97152E1EB28BE900A1645D /* GCRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GCRequest.cpp; sourceTree = "<group>"; };
+		0F97152F1EB28BE900A1645D /* GCRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCRequest.h; sourceTree = "<group>"; };
 		0F97496F1687ADE200A4FF6A /* JSCellInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCellInlines.h; sourceTree = "<group>"; };
 		0F978B3A1AAEA71D007C7369 /* ConstantMode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConstantMode.cpp; sourceTree = "<group>"; };
 		0F98205D16BFE37F00240D02 /* PreciseJumpTargets.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PreciseJumpTargets.cpp; sourceTree = "<group>"; };
@@ -3357,6 +3363,8 @@
 		0FD3E4071B618B6600C80E1E /* PropertyCondition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PropertyCondition.cpp; sourceTree = "<group>"; };
 		0FD3E4081B618B6600C80E1E /* PropertyCondition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PropertyCondition.h; sourceTree = "<group>"; };
 		0FD5652216AB780A00197653 /* DFGBasicBlockInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGBasicBlockInlines.h; path = dfg/DFGBasicBlockInlines.h; sourceTree = "<group>"; };
+		0FD79A2B1EBBBDB200DA88D3 /* Synchronousness.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Synchronousness.cpp; sourceTree = "<group>"; };
+		0FD79A2C1EBBBDB200DA88D3 /* Synchronousness.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Synchronousness.h; sourceTree = "<group>"; };
 		0FD81AD0154FB4EB00983E72 /* DFGDominators.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGDominators.h; path = dfg/DFGDominators.h; sourceTree = "<group>"; };
 		0FD82E1E14172C2F00179C94 /* DFGCapabilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGCapabilities.cpp; path = dfg/DFGCapabilities.cpp; sourceTree = "<group>"; };
 		0FD82E1F14172C2F00179C94 /* DFGCapabilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGCapabilities.h; path = dfg/DFGCapabilities.h; sourceTree = "<group>"; };
@@ -5999,6 +6007,8 @@
 				0F2B66AB17B6B53D00A7AE3F /* GCIncomingRefCountedSetInlines.h */,
 				2ADFA26218EF3540004F9FCC /* GCLogging.cpp */,
 				2AABCDE618EF294200002096 /* GCLogging.h */,
+				0F97152E1EB28BE900A1645D /* GCRequest.cpp */,
+				0F97152F1EB28BE900A1645D /* GCRequest.h */,
 				2A343F7418A1748B0039B085 /* GCSegmentedArray.h */,
 				2A343F7718A1749D0039B085 /* GCSegmentedArrayInlines.h */,
 				0F86A26E1D6F7B3100CB0C92 /* GCTypeMap.h */,
@@ -6079,6 +6089,8 @@
 				0F7DF1321E2970D50095951B /* Subspace.h */,
 				0F7DF1331E2970D50095951B /* SubspaceInlines.h */,
 				0FD0E5ED1E468A540006AB08 /* SweepingScope.h */,
+				0FD79A2B1EBBBDB200DA88D3 /* Synchronousness.cpp */,
+				0FD79A2C1EBBBDB200DA88D3 /* Synchronousness.h */,
 				0F1FB38A1E173A6200A9BE50 /* SynchronousStopTheWorldMutatorScheduler.cpp */,
 				0F1FB38B1E173A6200A9BE50 /* SynchronousStopTheWorldMutatorScheduler.h */,
 				141448CC13A1783700F5BA1A /* TinyBloomFilter.h */,
@@ -8659,6 +8671,7 @@
 				0F63943F15C75F19006A597C /* DFGTypeCheckHoistingPhase.h in Headers */,
 				0FBE0F7716C1DB120082C5E8 /* DFGUnificationPhase.h in Headers */,
 				0F34B14A16D42013001CDA5A /* DFGUseKind.h in Headers */,
+				0F9715311EB28BEE00A1645D /* GCRequest.h in Headers */,
 				0F3B3A2C15475002003ED0FF /* DFGValidate.h in Headers */,
 				0F2BDC481522802900CD8910 /* DFGValueSource.h in Headers */,
 				0F0123331944EA1B00843A0C /* DFGValueStrength.h in Headers */,
@@ -9357,6 +9370,7 @@
 				A55D93A6185012A800400DED /* ScriptFunctionCall.h in Headers */,
 				A54CF2FA184EAEDA00237F19 /* ScriptObject.h in Headers */,
 				A55165D51BDF135A003B75C1 /* ScriptProfilingScope.h in Headers */,
+				0FD79A2D1EBBBDBB00DA88D3 /* Synchronousness.h in Headers */,
 				A54CF2F6184EAB2400237F19 /* ScriptValue.h in Headers */,
 				A7299DA617D12858005F5FF9 /* SetConstructor.h in Headers */,
 				A790DD6E182F499700588807 /* SetIteratorPrototype.h in Headers */,
@@ -10106,6 +10120,7 @@
 				0FEC85901BDACDC70080FF74 /* AirValidate.cpp in Sources */,
 				0F9630391D4192C6005609D9 /* AllocatorAttributes.cpp in Sources */,
 				147F39BD107EC37600427A48 /* ArgList.cpp in Sources */,
+				0F9715301EB28BEB00A1645D /* GCRequest.cpp in Sources */,
 				79A228351D35D71E00D8E067 /* ArithProfile.cpp in Sources */,
 				0F743BAA16B88249009F9277 /* ARM64Disassembler.cpp in Sources */,
 				86D3B2C310156BDE002865E7 /* ARMAssembler.cpp in Sources */,
@@ -10810,6 +10825,7 @@
 				DC605B5D1CE26EA000593718 /* ProfilerEvent.cpp in Sources */,
 				0F190CAC189D82F6000AE5F0 /* ProfilerJettisonReason.cpp in Sources */,
 				0FF729B3166AD35C000F5BA3 /* ProfilerOrigin.cpp in Sources */,
+				0FD79A2E1EBBBDC000DA88D3 /* Synchronousness.cpp in Sources */,
 				0FF729B4166AD35C000F5BA3 /* ProfilerOriginStack.cpp in Sources */,
 				0FB1058B1675483100F8AB6E /* ProfilerOSRExit.cpp in Sources */,
 				0FB1058D1675483700F8AB6E /* ProfilerOSRExitSite.cpp in Sources */,

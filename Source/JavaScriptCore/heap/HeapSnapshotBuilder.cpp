@@ -58,7 +58,7 @@ void HeapSnapshotBuilder::buildSnapshot()
     m_snapshot = std::make_unique<HeapSnapshot>(m_profiler.mostRecentSnapshot());
     {
         m_profiler.setActiveSnapshotBuilder(this);
-        m_profiler.vm().heap.collectAllGarbage();
+        m_profiler.vm().heap.collectNow(Sync, CollectionScope::Full);
         m_profiler.setActiveSnapshotBuilder(nullptr);
     }
     m_snapshot->finalize();

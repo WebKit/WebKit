@@ -91,7 +91,7 @@ void InspectorHeapAgent::gc(ErrorString&)
     VM& vm = m_environment.vm();
     JSLockHolder lock(vm);
     sanitizeStackForVM(&vm);
-    vm.heap.collectAllGarbage();
+    vm.heap.collectNow(Sync, CollectionScope::Full);
 }
 
 void InspectorHeapAgent::snapshot(ErrorString&, double* timestamp, String* snapshotData)

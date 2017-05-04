@@ -28,6 +28,7 @@
 #include "DeleteAllCodeEffort.h"
 #include "GCConductor.h"
 #include "GCIncomingRefCountedSet.h"
+#include "GCRequest.h"
 #include "HandleSet.h"
 #include "HandleStack.h"
 #include "HeapObserver.h"
@@ -38,6 +39,7 @@
 #include "MutatorState.h"
 #include "Options.h"
 #include "StructureIDTable.h"
+#include "Synchronousness.h"
 #include "TinyBloomFilter.h"
 #include "UnconditionalFinalizer.h"
 #include "VisitRaceKey.h"
@@ -146,7 +148,7 @@ public:
     JS_EXPORT_PRIVATE GCActivityCallback* edenActivityCallback();
     JS_EXPORT_PRIVATE void setGarbageCollectionTimerEnabled(bool);
 
-    JS_EXPORT_PRIVATE IncrementalSweeper* sweeper();
+    JS_EXPORT_PRIVATE IncrementalSweeper& sweeper();
 
     void addObserver(HeapObserver* observer) { m_observers.append(observer); }
     void removeObserver(HeapObserver* observer) { m_observers.removeFirst(observer); }
@@ -169,8 +171,6 @@ public:
 
     JS_EXPORT_PRIVATE bool isHeapSnapshotting() const;
 
-    JS_EXPORT_PRIVATE void collectAllGarbageIfNotDoneRecently();
-    JS_EXPORT_PRIVATE void collectAllGarbage();
     JS_EXPORT_PRIVATE void sweepSynchronously();
 
     bool shouldCollectHeuristic();
@@ -180,14 +180,22 @@ public:
     // and std::nullopt collections are stronger than Eden collections. std::nullopt means that the GC can
     // choose Eden or Full. This implies that if you request a GC while that GC is ongoing, nothing
     // will happen.
-    JS_EXPORT_PRIVATE void collectAsync(std::optional<CollectionScope> = std::nullopt);
+    JS_EXPORT_PRIVATE void collectAsync(GCRequest = GCRequest());
     
     // Queue up a collection and wait for it to complete. This won't return until you get your own
     // complete collection. For example, if there was an ongoing asynchronous collection at the time
     // you called this, then this would wait for that one to complete and then trigger your
     // collection and then return. In weird cases, there could be multiple GC requests in the backlog
     // and this will wait for that backlog before running its GC and returning.
-    JS_EXPORT_PRIVATE void collectSync(std::optional<CollectionScope> = std::nullopt);
+    JS_EXPORT_PRIVATE void collectSync(GCRequest = GCRequest());
+    
+    JS_EXPORT_PRIVATE void collect(Synchronousness, GCRequest = GCRequest());
+    
+    // Like collect(), but in the case of Async this will stopIfNecessary() and in the case of
+    // Sync this will sweep synchronously.
+    JS_EXPORT_PRIVATE void collectNow(Synchronousness, GCRequest = GCRequest());
+    
+    JS_EXPORT_PRIVATE void collectNowFullIfNotDoneRecently(Synchronousness);
     
     void collectIfNecessaryOrDefer(GCDeferralContext* = nullptr);
 
@@ -438,7 +446,7 @@ private:
     bool stopTheMutator();
     void resumeTheMutator();
     
-    void stopIfNecessarySlow();
+    JS_EXPORT_PRIVATE void stopIfNecessarySlow();
     bool stopIfNecessarySlow(unsigned extraStateBits);
     
     template<typename Func>
@@ -465,11 +473,11 @@ private:
     void notifyThreadStopping(const AbstractLocker&);
     
     typedef uint64_t Ticket;
-    Ticket requestCollection(std::optional<CollectionScope>);
+    Ticket requestCollection(GCRequest);
     void waitForCollection(Ticket);
     
     void suspendCompilerThreads();
-    void willStartCollection(std::optional<CollectionScope>);
+    void willStartCollection();
     void prepareForMarking();
     
     void gatherStackRoots(ConservativeRoots&);
@@ -503,7 +511,7 @@ private:
     void sweepAllLogicallyEmptyWeakBlocks();
     bool sweepNextLogicallyEmptyWeakBlock();
 
-    bool shouldDoFullCollection(std::optional<CollectionScope> requestedCollectionScope) const;
+    bool shouldDoFullCollection() const;
 
     void incrementDeferralDepth();
     void decrementDeferralDepth();
@@ -664,7 +672,8 @@ private:
     MonotonicTime m_afterGC;
     MonotonicTime m_stopTime;
     
-    Deque<std::optional<CollectionScope>> m_requests;
+    Deque<GCRequest> m_requests;
+    GCRequest m_currentRequest;
     Ticket m_lastServedTicket { 0 };
     Ticket m_lastGrantedTicket { 0 };
     CollectorPhase m_currentPhase { CollectorPhase::NotRunning };

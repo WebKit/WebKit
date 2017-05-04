@@ -182,7 +182,7 @@ ALWAYS_INLINE void MarkedAllocator::doTestCollectionsIfNeeded(GCDeferralContext*
             if (deferralContext)
                 deferralContext->m_shouldGC = true;
             else
-                m_heap->collectAllGarbage();
+                m_heap->collectNow(Sync, CollectionScope::Full);
         }
     }
     if (++allocationCount >= Options::slowPathAllocsBetweenGCs())

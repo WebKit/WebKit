@@ -66,6 +66,10 @@ void IncrementalSweeper::doSweep(MonotonicTime sweepBeginTime)
         return;
     }
 
+    if (m_shouldFreeFastMallocMemoryAfterSweeping) {
+        WTF::releaseFastMallocFreeMemory();
+        m_shouldFreeFastMallocMemoryAfterSweeping = false;
+    }
     cancelTimer();
 }
 

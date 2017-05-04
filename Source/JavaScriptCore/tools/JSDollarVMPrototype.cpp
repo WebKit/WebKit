@@ -118,7 +118,7 @@ void JSDollarVMPrototype::gc(ExecState* exec)
 {
     if (!ensureCurrentThreadOwnsJSLock(exec))
         return;
-    exec->heap()->collectAllGarbage();
+    exec->heap()->collectNow(Sync, CollectionScope::Full);
 }
     
 static EncodedJSValue JSC_HOST_CALL functionGC(ExecState* exec)

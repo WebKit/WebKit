@@ -151,9 +151,9 @@ void* tryGetFastMemory(VM& vm)
             dataLogLnIf(verbose, "tryGetFastMemory re-using ", RawPointer(memory));
         else if (currentlyAllocatedFastMemories.load(std::memory_order_acquire) >= 1) {
             // No memory was available in the cache, but we know there's at least one currently live. Maybe GC will find a free one.
-            // FIXME collectSync(Full) and custom eager destruction of wasm memories could be better. For now use collectAllGarbage. Also, nothing tells us the current VM is holding onto fast memories. https://bugs.webkit.org/show_bug.cgi?id=170748
+            // FIXME collectSync(Full) and custom eager destruction of wasm memories could be better. For now use collectNow. Also, nothing tells us the current VM is holding onto fast memories. https://bugs.webkit.org/show_bug.cgi?id=170748
             dataLogLnIf(verbose, "tryGetFastMemory waiting on GC and retrying");
-            vm.heap.collectAllGarbage();
+            vm.heap.collectNow(Sync, CollectionScope::Full);
             memory = tryGetCachedFastMemory();
             dataLogLnIf(verbose, "tryGetFastMemory waited on GC and retried ", memory? "successfully" : "unseccessfully");
         }

@@ -157,7 +157,7 @@ void JSSynchronousGarbageCollectForDebugging(JSContextRef ctx)
 
     ExecState* exec = toJS(ctx);
     JSLockHolder locker(exec);
-    exec->vm().heap.collectAllGarbage();
+    exec->vm().heap.collectNow(Sync, CollectionScope::Full);
 }
 
 void JSSynchronousEdenCollectForDebugging(JSContextRef ctx)
