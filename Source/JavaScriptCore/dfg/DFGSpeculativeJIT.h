@@ -2818,8 +2818,6 @@ public:
     void compileMakeRope(Node*);
     void compileArithAbs(Node*);
     void compileArithClz32(Node*);
-    void compileArithCos(Node*);
-    void compileArithTan(Node*);
     void compileArithSub(Node*);
     void compileArithNegate(Node*);
     void compileArithMul(Node*);
@@ -2829,9 +2827,8 @@ public:
     void compileArithPow(Node*);
     void compileArithRounding(Node*);
     void compileArithRandom(Node*);
-    void compileArithSin(Node*);
+    void compileArithUnary(Node*);
     void compileArithSqrt(Node*);
-    void compileArithLog(Node*);
     void compileConstantStoragePointer(Node*);
     void compileGetIndexedPropertyStorage(Node*);
     JITCompiler::Jump jumpForTypedArrayOutOfBounds(Node*, GPRReg baseGPR, GPRReg indexGPR);

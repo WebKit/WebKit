@@ -545,15 +545,6 @@ private:
         case ArithAbs:
             compileArithAbs();
             break;
-        case ArithSin:
-            compileArithSin();
-            break;
-        case ArithCos:
-            compileArithCos();
-            break;
-        case ArithTan:
-            compileArithTan();
-            break;
         case ArithPow:
             compileArithPow();
             break;
@@ -575,14 +566,14 @@ private:
         case ArithSqrt:
             compileArithSqrt();
             break;
-        case ArithLog:
-            compileArithLog();
-            break;
         case ArithFRound:
             compileArithFRound();
             break;
         case ArithNegate:
             compileArithNegate();
+            break;
+        case ArithUnary:
+            compileArithUnary();
             break;
         case DFG::BitAnd:
             compileBitAnd();
@@ -2210,36 +2201,14 @@ private:
         }
     }
 
-    void compileArithSin()
+    void compileArithUnary()
     {
         if (m_node->child1().useKind() == DoubleRepUse) {
-            setDouble(m_out.doubleSin(lowDouble(m_node->child1())));
+            setDouble(m_out.doubleUnary(m_node->arithUnaryType(), lowDouble(m_node->child1())));
             return;
         }
         LValue argument = lowJSValue(m_node->child1());
-        LValue result = vmCall(Double, m_out.operation(operationArithSin), m_callFrame, argument);
-        setDouble(result);
-    }
-
-    void compileArithCos()
-    {
-        if (m_node->child1().useKind() == DoubleRepUse) {
-            setDouble(m_out.doubleCos(lowDouble(m_node->child1())));
-            return;
-        }
-        LValue argument = lowJSValue(m_node->child1());
-        LValue result = vmCall(Double, m_out.operation(operationArithCos), m_callFrame, argument);
-        setDouble(result);
-    }
-
-    void compileArithTan()
-    {
-        if (m_node->child1().useKind() == DoubleRepUse) {
-            setDouble(m_out.doubleTan(lowDouble(m_node->child1())));
-            return;
-        }
-        LValue argument = lowJSValue(m_node->child1());
-        LValue result = vmCall(Double, m_out.operation(operationArithTan), m_callFrame, argument);
+        LValue result = vmCall(Double, m_out.operation(DFG::arithUnaryOperation(m_node->arithUnaryType())), m_callFrame, argument);
         setDouble(result);
     }
 
@@ -2527,17 +2496,6 @@ private:
         setDouble(result);
     }
 
-    void compileArithLog()
-    {
-        if (m_node->child1().useKind() == DoubleRepUse) {
-            setDouble(m_out.doubleLog(lowDouble(m_node->child1())));
-            return;
-        }
-        LValue argument = lowJSValue(m_node->child1());
-        LValue result = vmCall(Double, m_out.operation(operationArithLog), m_callFrame, argument);
-        setDouble(result);
-    }
-    
     void compileArithFRound()
     {
         if (m_node->child1().useKind() == DoubleRepUse) {

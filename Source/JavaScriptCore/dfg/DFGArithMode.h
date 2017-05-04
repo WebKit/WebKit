@@ -27,7 +27,12 @@
 
 #if ENABLE(DFG_JIT)
 
-namespace JSC { namespace DFG {
+namespace JSC {
+
+class ExecState;
+using EncodedJSValue = int64_t;
+
+namespace DFG {
 
 // Arith::Mode describes the mode of an arithmetic operation that speculates integer.
 // Note that not all modes are valid for all operations.
@@ -46,6 +51,38 @@ enum class RoundingMode {
     Int32WithNegativeZeroCheck, // The round operation produces a integer and checks for -0.
     Double // The round operation produce a double. The result can be -0, NaN or (+/-)Infinity.
 };
+
+
+// This macro defines a set of information about all known arith unary generic node.
+#define FOR_EACH_DFG_ARITH_UNARY_OP(macro) \
+    macro(Sin, sin) \
+    macro(Sinh, sinh) \
+    macro(Cos, cos) \
+    macro(Cosh, cosh) \
+    macro(Tan, tan) \
+    macro(Tanh, tanh) \
+    macro(ASin, asin) \
+    macro(ASinh, asinh) \
+    macro(ACos, acos) \
+    macro(ACosh, acosh) \
+    macro(ATan, atan) \
+    macro(ATanh, atanh) \
+    macro(Log, log) \
+    macro(Log10, log10) \
+    macro(Log1p, log1p) \
+    macro(Log2, log2) \
+    macro(Cbrt, cbrt) \
+    macro(Exp, exp) \
+    macro(Expm1, expm1) \
+
+enum class UnaryType : uint32_t {
+#define DFG_ARITH_UNARY_ENUM(capitalizedName, lowerName) capitalizedName,
+    FOR_EACH_DFG_ARITH_UNARY_OP(DFG_ARITH_UNARY_ENUM)
+#undef DFG_ARITH_UNARY_ENUM
+};
+
+typedef double (*UnaryFunction)(double);
+typedef double (*UnaryOperation)(ExecState*, EncodedJSValue);
 
 } // namespace Arith
 
@@ -139,6 +176,9 @@ inline bool shouldCheckNegativeZero(Arith::RoundingMode mode)
     return mode == Arith::RoundingMode::Int32WithNegativeZeroCheck;
 }
 
+Arith::UnaryFunction arithUnaryFunction(Arith::UnaryType);
+Arith::UnaryOperation arithUnaryOperation(Arith::UnaryType);
+
 } } // namespace JSC::DFG
 
 namespace WTF {
@@ -146,6 +186,7 @@ namespace WTF {
 class PrintStream;
 void printInternal(PrintStream&, JSC::DFG::Arith::Mode);
 void printInternal(PrintStream&, JSC::DFG::Arith::RoundingMode);
+void printInternal(PrintStream&, JSC::DFG::Arith::UnaryType);
 
 } // namespace WTF
 

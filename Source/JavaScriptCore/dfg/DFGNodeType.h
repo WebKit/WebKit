@@ -159,10 +159,7 @@ namespace JSC { namespace DFG {
     macro(ArithCeil, NodeResultNumber | NodeMustGenerate) \
     macro(ArithTrunc, NodeResultNumber | NodeMustGenerate) \
     macro(ArithSqrt, NodeResultDouble | NodeMustGenerate) \
-    macro(ArithSin, NodeResultDouble | NodeMustGenerate) \
-    macro(ArithCos, NodeResultDouble | NodeMustGenerate) \
-    macro(ArithTan, NodeResultDouble | NodeMustGenerate) \
-    macro(ArithLog, NodeResultDouble | NodeMustGenerate) \
+    macro(ArithUnary, NodeResultDouble | NodeMustGenerate) \
     \
     /* Add of values may either be arithmetic, or result in string concatenation. */\
     macro(ValueAdd, NodeResultJS | NodeMustGenerate) \

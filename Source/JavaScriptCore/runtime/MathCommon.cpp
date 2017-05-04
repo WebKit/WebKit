@@ -521,4 +521,14 @@ double jsMod(double x, double y)
 #endif
 } // extern "C"
 
+namespace Math {
+
+double JIT_OPERATION log1p(double value)
+{
+    if (value == 0.0)
+        return value;
+    return std::log1p(value);
+}
+
+} // namespace Math
 } // namespace JSC

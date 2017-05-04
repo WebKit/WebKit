@@ -969,20 +969,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         executeDoubleUnaryOpEffects(node, [](double value) -> double { return static_cast<float>(value); });
         break;
         
-    case ArithSin:
-        executeDoubleUnaryOpEffects(node, sin);
-        break;
-    
-    case ArithCos:
-        executeDoubleUnaryOpEffects(node, cos);
-        break;
-
-    case ArithTan:
-        executeDoubleUnaryOpEffects(node, tan);
-        break;
-
-    case ArithLog:
-        executeDoubleUnaryOpEffects(node, log);
+    case ArithUnary:
+        executeDoubleUnaryOpEffects(node, arithUnaryFunction(node->arithUnaryType()));
         break;
             
     case LogicalNot: {

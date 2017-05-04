@@ -289,22 +289,10 @@ LValue Output::doubleTrunc(LValue value)
     return callWithoutSideEffects(Double, truncDouble, value);
 }
 
-LValue Output::doubleSin(LValue value)
+LValue Output::doubleUnary(DFG::Arith::UnaryType type, LValue value)
 {
-    double (*sinDouble)(double) = sin;
-    return callWithoutSideEffects(B3::Double, sinDouble, value);
-}
-
-LValue Output::doubleCos(LValue value)
-{
-    double (*cosDouble)(double) = cos;
-    return callWithoutSideEffects(B3::Double, cosDouble, value);
-}
-
-LValue Output::doubleTan(LValue value)
-{
-    double (*tanDouble)(double) = tan;
-    return callWithoutSideEffects(B3::Double, tanDouble, value);
+    double (*unaryFunction)(double) = DFG::arithUnaryFunction(type);
+    return callWithoutSideEffects(B3::Double, unaryFunction, value);
 }
 
 LValue Output::doublePow(LValue xOperand, LValue yOperand)
@@ -326,12 +314,6 @@ LValue Output::doublePowi(LValue x, LValue y)
 LValue Output::doubleSqrt(LValue value)
 {
     return m_block->appendNew<B3::Value>(m_proc, B3::Sqrt, origin(), value);
-}
-
-LValue Output::doubleLog(LValue value)
-{
-    double (*logDouble)(double) = log;
-    return callWithoutSideEffects(B3::Double, logDouble, value);
 }
 
 LValue Output::doubleToInt(LValue value)

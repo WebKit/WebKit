@@ -1892,6 +1892,17 @@ public:
         ASSERT(hasArithRoundingMode());
         m_opInfo = static_cast<uint32_t>(mode);
     }
+
+    bool hasArithUnaryType()
+    {
+        return op() == ArithUnary;
+    }
+
+    Arith::UnaryType arithUnaryType()
+    {
+        ASSERT(hasArithUnaryType());
+        return static_cast<Arith::UnaryType>(m_opInfo.as<uint32_t>());
+    }
     
     bool hasVirtualRegister()
     {

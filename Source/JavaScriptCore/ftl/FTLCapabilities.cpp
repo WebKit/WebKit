@@ -94,9 +94,6 @@ inline CapabilityLevel canCompile(Node* node)
     case ArithMin:
     case ArithMax:
     case ArithAbs:
-    case ArithSin:
-    case ArithCos:
-    case ArithTan:
     case ArithPow:
     case ArithRandom:
     case ArithRound:
@@ -104,9 +101,9 @@ inline CapabilityLevel canCompile(Node* node)
     case ArithCeil:
     case ArithTrunc:
     case ArithSqrt:
-    case ArithLog:
     case ArithFRound:
     case ArithNegate:
+    case ArithUnary:
     case UInt32ToNumber:
     case Jump:
     case ForceOSRExit:

@@ -2174,12 +2174,34 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, int resultOperand, Intrin
     case MaxIntrinsic:
         return handleMinMax(resultOperand, ArithMax, registerOffset, argumentCountIncludingThis, insertChecks);
 
-    case CosIntrinsic:
+#define DFG_ARITH_UNARY(capitalizedName, lowerName) \
+    case capitalizedName##Intrinsic:
+    FOR_EACH_DFG_ARITH_UNARY_OP(DFG_ARITH_UNARY)
+#undef DFG_ARITH_UNARY
+    {
+        if (argumentCountIncludingThis == 1) {
+            insertChecks();
+            set(VirtualRegister(resultOperand), addToGraph(JSConstant, OpInfo(m_constantNaN)));
+            return true;
+        }
+        Arith::UnaryType type = Arith::UnaryType::Sin;
+        switch (intrinsic) {
+#define DFG_ARITH_UNARY(capitalizedName, lowerName) \
+        case capitalizedName##Intrinsic: \
+            type = Arith::UnaryType::capitalizedName; \
+            break;
+    FOR_EACH_DFG_ARITH_UNARY_OP(DFG_ARITH_UNARY)
+#undef DFG_ARITH_UNARY
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+        insertChecks();
+        set(VirtualRegister(resultOperand), addToGraph(ArithUnary, OpInfo(static_cast<std::underlying_type<Arith::UnaryType>::type>(type)), get(virtualRegisterForArgument(1, registerOffset))));
+        return true;
+    }
+
     case FRoundIntrinsic:
-    case LogIntrinsic:
-    case SinIntrinsic:
-    case SqrtIntrinsic:
-    case TanIntrinsic: {
+    case SqrtIntrinsic: {
         if (argumentCountIncludingThis == 1) {
             insertChecks();
             set(VirtualRegister(resultOperand), addToGraph(JSConstant, OpInfo(m_constantNaN)));
@@ -2188,23 +2210,11 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, int resultOperand, Intrin
 
         NodeType nodeType = Unreachable;
         switch (intrinsic) {
-        case CosIntrinsic:
-            nodeType = ArithCos;
-            break;
         case FRoundIntrinsic:
             nodeType = ArithFRound;
             break;
-        case LogIntrinsic:
-            nodeType = ArithLog;
-            break;
-        case SinIntrinsic:
-            nodeType = ArithSin;
-            break;
         case SqrtIntrinsic:
             nodeType = ArithSqrt;
-            break;
-        case TanIntrinsic:
-            nodeType = ArithTan;
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();

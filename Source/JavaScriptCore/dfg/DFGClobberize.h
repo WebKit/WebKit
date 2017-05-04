@@ -190,12 +190,17 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         }
         return;
         
-    case ArithCos:
+    case ArithUnary:
+        if (node->child1().useKind() == DoubleRepUse)
+            def(PureValue(node, static_cast<std::underlying_type<Arith::UnaryType>::type>(node->arithUnaryType())));
+        else {
+            read(World);
+            write(Heap);
+        }
+        return;
+
     case ArithFRound:
-    case ArithLog:
-    case ArithSin:
     case ArithSqrt:
-    case ArithTan:
         if (node->child1().useKind() == DoubleRepUse)
             def(PureValue(node));
         else {

@@ -26,8 +26,8 @@ function isIdentical(result, expected)
     if (expected === expected) {
         if (result !== expected)
             return false;
-        if (!expected && 1 / expected === -Infinity && 1 / result !== -Infinity)
-            return false;
+        if (!expected)
+            return (1 / expected) === (1 / result);
 
         return true;
     }

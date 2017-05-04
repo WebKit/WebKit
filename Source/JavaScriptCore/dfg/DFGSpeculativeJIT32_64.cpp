@@ -2479,20 +2479,8 @@ void SpeculativeJIT::compile(Node* node)
         compileArithRounding(node);
         break;
 
-    case ArithSin:
-        compileArithSin(node);
-        break;
-
-    case ArithCos:
-        compileArithCos(node);
-        break;
-
-    case ArithTan:
-        compileArithTan(node);
-        break;
-
-    case ArithLog:
-        compileArithLog(node);
+    case ArithUnary:
+        compileArithUnary(node);
         break;
 
     case LogicalNot:

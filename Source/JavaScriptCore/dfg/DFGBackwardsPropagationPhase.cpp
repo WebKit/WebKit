@@ -411,7 +411,7 @@ private:
             RELEASE_ASSERT_NOT_REACHED();
             break;
             
-        // Note: ArithSqrt, ArithSin, and ArithCos and other math intrinsics don't have special
+        // Note: ArithSqrt, ArithUnary and other math intrinsics don't have special
         // rules in here because they are always followed by Phantoms to signify that if the
         // method call speculation fails, the bytecode may use the arguments in arbitrary ways.
         // This corresponds to that possibility of someone doing something like:

@@ -1,3 +1,108 @@
+2017-05-04  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Math unary functions should be handled by DFG
+        https://bugs.webkit.org/show_bug.cgi?id=171269
+
+        Reviewed by Saam Barati.
+
+        ArithSin, ArithCos, and ArithLog are just calling a C runtime function.
+        While handling them in DFG is not very effective for performance, they
+        can drop some type checks & value conversions and mark them as pure
+        operations. It is effective if they are involved in some complex
+        optimization phase. Actually, ArithLog is effective in kraken.
+
+        While a few of Math functions have DFG nodes, basically math functions
+        are pure. And large part of these functions are just calling a C runtime
+        function. This patch generalizes these nodes in DFG as ArithUnary. And
+        we annotate many unary math functions with Intrinsics and convert them
+        to ArithUnary in DFG. It also cleans up duplicate code in ArithSin,
+        ArithCos, and ArithLog. If your math function has some good DFG / FTL
+        optimization rather than calling a C runtime function, you should add
+        a specialized DFG node, like ArithSqrt.
+
+        We also create a new namespace JSC::Math. Inside it, we collect math functions.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGArithMode.cpp:
+        (JSC::DFG::arithUnaryFunction):
+        (JSC::DFG::arithUnaryOperation):
+        (WTF::printInternal):
+        * dfg/DFGArithMode.h:
+        * dfg/DFGBackwardsPropagationPhase.cpp:
+        (JSC::DFG::BackwardsPropagationPhase::propagate):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasArithUnaryType):
+        (JSC::DFG::Node::arithUnaryType):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileArithUnary):
+        (JSC::DFG::SpeculativeJIT::compileArithCos): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileArithTan): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileArithSin): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileArithLog): Deleted.
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithUnary):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithSin): Deleted.
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithCos): Deleted.
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithTan): Deleted.
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithLog): Deleted.
+        * ftl/FTLOutput.cpp:
+        (JSC::FTL::Output::doubleUnary):
+        (JSC::FTL::Output::doubleSin): Deleted.
+        (JSC::FTL::Output::doubleCos): Deleted.
+        (JSC::FTL::Output::doubleTan): Deleted.
+        (JSC::FTL::Output::doubleLog): Deleted.
+        * ftl/FTLOutput.h:
+        * runtime/Intrinsic.h:
+        * runtime/MathCommon.cpp:
+        (JSC::Math::log1p):
+        * runtime/MathCommon.h:
+        * runtime/MathObject.cpp:
+        (JSC::MathObject::finishCreation):
+        (JSC::mathProtoFuncACos):
+        (JSC::mathProtoFuncASin):
+        (JSC::mathProtoFuncATan):
+        (JSC::mathProtoFuncCos):
+        (JSC::mathProtoFuncExp):
+        (JSC::mathProtoFuncLog):
+        (JSC::mathProtoFuncSin):
+        (JSC::mathProtoFuncTan):
+        (JSC::mathProtoFuncACosh):
+        (JSC::mathProtoFuncASinh):
+        (JSC::mathProtoFuncATanh):
+        (JSC::mathProtoFuncCbrt):
+        (JSC::mathProtoFuncCosh):
+        (JSC::mathProtoFuncExpm1):
+        (JSC::mathProtoFuncLog1p):
+        (JSC::mathProtoFuncLog10):
+        (JSC::mathProtoFuncLog2):
+        (JSC::mathProtoFuncSinh):
+        (JSC::mathProtoFuncTanh):
+
 2017-05-03  Saam Barati  <sbarati@apple.com>
 
         How we build polymorphic cases is wrong when making a call from Wasm

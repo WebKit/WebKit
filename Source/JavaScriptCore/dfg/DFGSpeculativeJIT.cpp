@@ -4151,16 +4151,6 @@ void SpeculativeJIT::compileArithDoubleUnaryOp(Node* node, double (*doubleFuncti
     doubleResult(result.fpr(), node);
 }
 
-void SpeculativeJIT::compileArithCos(Node* node)
-{
-    compileArithDoubleUnaryOp(node, cos, operationArithCos);
-}
-
-void SpeculativeJIT::compileArithTan(Node* node)
-{
-    compileArithDoubleUnaryOp(node, tan, operationArithTan);
-}
-
 void SpeculativeJIT::compileArithSub(Node* node)
 {
     switch (node->binaryUseKind()) {
@@ -5313,9 +5303,9 @@ void SpeculativeJIT::compileArithRounding(Node* node)
     jsValueResult(resultRegs, node);
 }
 
-void SpeculativeJIT::compileArithSin(Node* node)
+void SpeculativeJIT::compileArithUnary(Node* node)
 {
-    compileArithDoubleUnaryOp(node, sin, operationArithSin);
+    compileArithDoubleUnaryOp(node, arithUnaryFunction(node->arithUnaryType()), arithUnaryOperation(node->arithUnaryType()));
 }
 
 void SpeculativeJIT::compileArithSqrt(Node* node)
@@ -5492,11 +5482,6 @@ void SpeculativeJIT::compileArithPow(Node* node)
     callOperation(operationMathPow, resultFpr, xOperandfpr, yOperandfpr);
     skipFallback.link(&m_jit);
     doubleResult(resultFpr, node);
-}
-
-void SpeculativeJIT::compileArithLog(Node* node)
-{
-    compileArithDoubleUnaryOp(node, log, operationArithLog);
 }
 
 // Returns true if the compare is fused with a subsequent branch.

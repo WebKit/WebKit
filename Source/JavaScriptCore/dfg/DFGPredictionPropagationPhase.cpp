@@ -567,10 +567,7 @@ private:
             break;
                 
         case ArithSqrt:
-        case ArithCos:
-        case ArithSin:
-        case ArithTan:
-        case ArithLog:
+        case ArithUnary:
             if (node->child1()->shouldSpeculateNumber())
                 m_graph.voteNode(node->child1(), VoteDouble, weight);
             else
@@ -788,10 +785,7 @@ private:
         case ArithPow:
         case ArithSqrt:
         case ArithFRound:
-        case ArithSin:
-        case ArithCos:
-        case ArithTan:
-        case ArithLog: {
+        case ArithUnary: {
             setPrediction(SpecBytecodeDouble);
             break;
         }

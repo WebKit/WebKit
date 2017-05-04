@@ -427,12 +427,9 @@ private:
             break;
         }
 
-        case ArithCos:
         case ArithFRound:
-        case ArithLog:
-        case ArithSin:
         case ArithSqrt:
-        case ArithTan: {
+        case ArithUnary: {
             Edge& child1 = node->child1();
             if (child1->shouldSpeculateNotCell()) {
                 fixDoubleOrBooleanEdge(child1);

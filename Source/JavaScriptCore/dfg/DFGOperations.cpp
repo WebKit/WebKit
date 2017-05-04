@@ -384,18 +384,6 @@ int32_t JIT_OPERATION operationArithClz32(ExecState* exec, EncodedJSValue encode
     return clz32(value);
 }
 
-double JIT_OPERATION operationArithCos(ExecState* exec, EncodedJSValue encodedOp1)
-{
-    VM* vm = &exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
-    auto scope = DECLARE_THROW_SCOPE(*vm);
-
-    JSValue op1 = JSValue::decode(encodedOp1);
-    double a = op1.toNumber(exec);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    return cos(a);
-}
-
 double JIT_OPERATION operationArithFRound(ExecState* exec, EncodedJSValue encodedOp1)
 {
     VM* vm = &exec->vm();
@@ -408,29 +396,19 @@ double JIT_OPERATION operationArithFRound(ExecState* exec, EncodedJSValue encode
     return static_cast<float>(a);
 }
 
-double JIT_OPERATION operationArithLog(ExecState* exec, EncodedJSValue encodedOp1)
-{
-    VM* vm = &exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
-    auto scope = DECLARE_THROW_SCOPE(*vm);
-
-    JSValue op1 = JSValue::decode(encodedOp1);
-    double a = op1.toNumber(exec);
-    RETURN_IF_EXCEPTION(scope, PNaN);
-    return log(a);
+#define DFG_ARITH_UNARY(capitalizedName, lowerName) \
+double JIT_OPERATION operationArith##capitalizedName(ExecState* exec, EncodedJSValue encodedOp1) \
+{ \
+    VM* vm = &exec->vm(); \
+    NativeCallFrameTracer tracer(vm, exec); \
+    auto scope = DECLARE_THROW_SCOPE(*vm); \
+    JSValue op1 = JSValue::decode(encodedOp1); \
+    double result = op1.toNumber(exec); \
+    RETURN_IF_EXCEPTION(scope, PNaN); \
+    return JSC::Math::lowerName(result); \
 }
-
-double JIT_OPERATION operationArithSin(ExecState* exec, EncodedJSValue encodedOp1)
-{
-    VM* vm = &exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
-    auto scope = DECLARE_THROW_SCOPE(*vm);
-
-    JSValue op1 = JSValue::decode(encodedOp1);
-    double a = op1.toNumber(exec);
-    RETURN_IF_EXCEPTION(scope, PNaN);
-    return sin(a);
-}
+    FOR_EACH_DFG_ARITH_UNARY_OP(DFG_ARITH_UNARY)
+#undef DFG_ARITH_UNARY
 
 double JIT_OPERATION operationArithSqrt(ExecState* exec, EncodedJSValue encodedOp1)
 {
@@ -442,18 +420,6 @@ double JIT_OPERATION operationArithSqrt(ExecState* exec, EncodedJSValue encodedO
     double a = op1.toNumber(exec);
     RETURN_IF_EXCEPTION(scope, PNaN);
     return sqrt(a);
-}
-
-double JIT_OPERATION operationArithTan(ExecState* exec, EncodedJSValue encodedOp1)
-{
-    VM* vm = &exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
-    auto scope = DECLARE_THROW_SCOPE(*vm);
-
-    JSValue op1 = JSValue::decode(encodedOp1);
-    double a = op1.toNumber(exec);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    return tan(a);
 }
 
 EncodedJSValue JIT_OPERATION operationArithRound(ExecState* exec, EncodedJSValue encodedArgument)
