@@ -58,7 +58,7 @@ bool setJSTestNodeConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::Encoded
 class JSTestNodePrototype : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
-    static JSTestNodePrototype* create(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
+    static JSTestNodePrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
         JSTestNodePrototype* ptr = new (NotNull, JSC::allocateCell<JSTestNodePrototype>(vm.heap)) JSTestNodePrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
@@ -100,7 +100,7 @@ template<> JSValue JSTestNodeConstructor::prototypeForStructure(JSC::VM& vm, con
 
 template<> void JSTestNodeConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    putDirect(vm, vm.propertyNames->prototype, JSTestNode::prototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
+    putDirect(vm, vm.propertyNames->prototype, JSTestNode::prototype(vm, globalObject), DontDelete | ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral("TestNode"))), ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
 }
@@ -164,12 +164,12 @@ void JSTestNode::finishCreation(VM& vm)
 
 }
 
-JSObject* JSTestNode::createPrototype(VM& vm, JSGlobalObject* globalObject)
+JSObject* JSTestNode::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    return JSTestNodePrototype::create(vm, globalObject, JSTestNodePrototype::createStructure(vm, globalObject, JSNode::prototype(vm, globalObject)));
+    return JSTestNodePrototype::create(vm, &globalObject, JSTestNodePrototype::createStructure(vm, &globalObject, JSNode::prototype(vm, globalObject)));
 }
 
-JSObject* JSTestNode::prototype(VM& vm, JSGlobalObject* globalObject)
+JSObject* JSTestNode::prototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
     return getDOMPrototype<JSTestNode>(vm, globalObject);
 }

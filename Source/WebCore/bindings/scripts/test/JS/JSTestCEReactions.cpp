@@ -56,7 +56,7 @@ bool setJSTestCEReactionsConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::
 class JSTestCEReactionsPrototype : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
-    static JSTestCEReactionsPrototype* create(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
+    static JSTestCEReactionsPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
         JSTestCEReactionsPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestCEReactionsPrototype>(vm.heap)) JSTestCEReactionsPrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
@@ -88,7 +88,7 @@ template<> JSValue JSTestCEReactionsConstructor::prototypeForStructure(JSC::VM& 
 
 template<> void JSTestCEReactionsConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    putDirect(vm, vm.propertyNames->prototype, JSTestCEReactions::prototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
+    putDirect(vm, vm.propertyNames->prototype, JSTestCEReactions::prototype(vm, globalObject), DontDelete | ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral("TestCEReactions"))), ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
 }
@@ -128,12 +128,12 @@ void JSTestCEReactions::finishCreation(VM& vm)
 
 }
 
-JSObject* JSTestCEReactions::createPrototype(VM& vm, JSGlobalObject* globalObject)
+JSObject* JSTestCEReactions::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    return JSTestCEReactionsPrototype::create(vm, globalObject, JSTestCEReactionsPrototype::createStructure(vm, globalObject, globalObject->objectPrototype()));
+    return JSTestCEReactionsPrototype::create(vm, &globalObject, JSTestCEReactionsPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
 }
 
-JSObject* JSTestCEReactions::prototype(VM& vm, JSGlobalObject* globalObject)
+JSObject* JSTestCEReactions::prototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
     return getDOMPrototype<JSTestCEReactions>(vm, globalObject);
 }

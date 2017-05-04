@@ -41,7 +41,7 @@ bool setJSTestCustomConstructorWithNoInterfaceObjectConstructor(JSC::ExecState*,
 class JSTestCustomConstructorWithNoInterfaceObjectPrototype : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
-    static JSTestCustomConstructorWithNoInterfaceObjectPrototype* create(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
+    static JSTestCustomConstructorWithNoInterfaceObjectPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
         JSTestCustomConstructorWithNoInterfaceObjectPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestCustomConstructorWithNoInterfaceObjectPrototype>(vm.heap)) JSTestCustomConstructorWithNoInterfaceObjectPrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
@@ -79,7 +79,7 @@ template<> JSValue JSTestCustomConstructorWithNoInterfaceObjectConstructor::prot
 
 template<> void JSTestCustomConstructorWithNoInterfaceObjectConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    putDirect(vm, vm.propertyNames->prototype, JSTestCustomConstructorWithNoInterfaceObject::prototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
+    putDirect(vm, vm.propertyNames->prototype, JSTestCustomConstructorWithNoInterfaceObject::prototype(vm, globalObject), DontDelete | ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral("TestCustomConstructorWithNoInterfaceObject"))), ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
 }
@@ -115,12 +115,12 @@ void JSTestCustomConstructorWithNoInterfaceObject::finishCreation(VM& vm)
 
 }
 
-JSObject* JSTestCustomConstructorWithNoInterfaceObject::createPrototype(VM& vm, JSGlobalObject* globalObject)
+JSObject* JSTestCustomConstructorWithNoInterfaceObject::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    return JSTestCustomConstructorWithNoInterfaceObjectPrototype::create(vm, globalObject, JSTestCustomConstructorWithNoInterfaceObjectPrototype::createStructure(vm, globalObject, globalObject->objectPrototype()));
+    return JSTestCustomConstructorWithNoInterfaceObjectPrototype::create(vm, &globalObject, JSTestCustomConstructorWithNoInterfaceObjectPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
 }
 
-JSObject* JSTestCustomConstructorWithNoInterfaceObject::prototype(VM& vm, JSGlobalObject* globalObject)
+JSObject* JSTestCustomConstructorWithNoInterfaceObject::prototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
     return getDOMPrototype<JSTestCustomConstructorWithNoInterfaceObject>(vm, globalObject);
 }

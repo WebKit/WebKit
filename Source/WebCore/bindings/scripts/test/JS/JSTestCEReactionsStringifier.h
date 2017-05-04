@@ -36,8 +36,8 @@ public:
         return ptr;
     }
 
-    static JSC::JSObject* createPrototype(JSC::VM&, JSC::JSGlobalObject*);
-    static JSC::JSObject* prototype(JSC::VM&, JSC::JSGlobalObject*);
+    static JSC::JSObject* createPrototype(JSC::VM&, JSDOMGlobalObject&);
+    static JSC::JSObject* prototype(JSC::VM&, JSDOMGlobalObject&);
     static TestCEReactionsStringifier* toWrapped(JSC::VM&, JSC::JSValue);
     static void destroy(JSC::JSCell*);
 

@@ -86,7 +86,7 @@ bool setJSTestTypedefsConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::Enc
 class JSTestTypedefsPrototype : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
-    static JSTestTypedefsPrototype* create(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
+    static JSTestTypedefsPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
         JSTestTypedefsPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestTypedefsPrototype>(vm.heap)) JSTestTypedefsPrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
@@ -158,7 +158,7 @@ template<> JSValue JSTestTypedefsConstructor::prototypeForStructure(JSC::VM& vm,
 
 template<> void JSTestTypedefsConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    putDirect(vm, vm.propertyNames->prototype, JSTestTypedefs::prototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
+    putDirect(vm, vm.propertyNames->prototype, JSTestTypedefs::prototype(vm, globalObject), DontDelete | ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral("TestTypedefs"))), ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(3), ReadOnly | DontEnum);
     reifyStaticProperties(vm, JSTestTypedefsConstructorTableValues, *this);
@@ -218,12 +218,12 @@ void JSTestTypedefs::finishCreation(VM& vm)
 
 }
 
-JSObject* JSTestTypedefs::createPrototype(VM& vm, JSGlobalObject* globalObject)
+JSObject* JSTestTypedefs::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    return JSTestTypedefsPrototype::create(vm, globalObject, JSTestTypedefsPrototype::createStructure(vm, globalObject, globalObject->objectPrototype()));
+    return JSTestTypedefsPrototype::create(vm, &globalObject, JSTestTypedefsPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
 }
 
-JSObject* JSTestTypedefs::prototype(VM& vm, JSGlobalObject* globalObject)
+JSObject* JSTestTypedefs::prototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
     return getDOMPrototype<JSTestTypedefs>(vm, globalObject);
 }

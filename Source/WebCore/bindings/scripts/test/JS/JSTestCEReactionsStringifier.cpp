@@ -50,7 +50,7 @@ bool setJSTestCEReactionsStringifierConstructor(JSC::ExecState*, JSC::EncodedJSV
 class JSTestCEReactionsStringifierPrototype : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
-    static JSTestCEReactionsStringifierPrototype* create(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
+    static JSTestCEReactionsStringifierPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
         JSTestCEReactionsStringifierPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestCEReactionsStringifierPrototype>(vm.heap)) JSTestCEReactionsStringifierPrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
@@ -82,7 +82,7 @@ template<> JSValue JSTestCEReactionsStringifierConstructor::prototypeForStructur
 
 template<> void JSTestCEReactionsStringifierConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    putDirect(vm, vm.propertyNames->prototype, JSTestCEReactionsStringifier::prototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
+    putDirect(vm, vm.propertyNames->prototype, JSTestCEReactionsStringifier::prototype(vm, globalObject), DontDelete | ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral("TestCEReactionsStringifier"))), ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
 }
@@ -120,12 +120,12 @@ void JSTestCEReactionsStringifier::finishCreation(VM& vm)
 
 }
 
-JSObject* JSTestCEReactionsStringifier::createPrototype(VM& vm, JSGlobalObject* globalObject)
+JSObject* JSTestCEReactionsStringifier::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    return JSTestCEReactionsStringifierPrototype::create(vm, globalObject, JSTestCEReactionsStringifierPrototype::createStructure(vm, globalObject, globalObject->objectPrototype()));
+    return JSTestCEReactionsStringifierPrototype::create(vm, &globalObject, JSTestCEReactionsStringifierPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
 }
 
-JSObject* JSTestCEReactionsStringifier::prototype(VM& vm, JSGlobalObject* globalObject)
+JSObject* JSTestCEReactionsStringifier::prototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
     return getDOMPrototype<JSTestCEReactionsStringifier>(vm, globalObject);
 }

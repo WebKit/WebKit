@@ -1,3 +1,119 @@
+2017-05-04  Sam Weinig  <sam@webkit.org>
+
+        Make the [EnabledBySetting] extended attribute work for any attribute or operation on a prototype
+        https://bugs.webkit.org/show_bug.cgi?id=171588
+
+        Reviewed by Dean Jackson.
+
+        * bindings/js/JSDOMIterator.h:
+        (WebCore::JSDOMIterator::createPrototype):
+        * bindings/js/JSDOMWindowShell.cpp:
+        (WebCore::JSDOMWindowShell::setWindow):
+        * bindings/js/JSDOMWrapperCache.h:
+        (WebCore::getDOMStructure):
+        (WebCore::getDOMPrototype):
+        * bindings/js/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::initScript):
+        Update to account for createPrototype and prototype taking the global object by reference.
+        
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (NeedsSettingsCheckForPrototypeProperty):
+        Add predicate to determine if an interface has any settings enabled properties on the prototype,
+        needed to determine if we should pass the global object to finishCreation.
+
+        (GenerateHeader):
+        Update signature of both createPrototype and prototype to take JSDOMGlobalObject& rather than
+        a JSC::JSGlobalObject*, this allows us to pass the more specific type to the prototype constructor,
+        and access the ScriptExecutionContext for the Settings.
+
+        (GeneratePropertiesHashTable):
+        Update to return, via out parameter, arrays with the attributes and operations that specify EnabledBySetting. This
+        mimics the model used for RuntimeEnabledFeatures.
+
+        (GenerateImplementation):
+        In {Class}Prototype::finishCreation, add code to check settings to see if an attribute or operation should be enabled,
+        and if it shouldn't remove it from the object. This, again, is modeled on RuntimeEnabledFeatures.
+
+        (GeneratePrototypeDeclaration):
+        Update signatures to take JSDOMGlobalObject& and specialize finishCreation to take one if there are any properties
+        that require settings to enable.
+
+        (GenerateConstructorHelperMethods):
+        Update for new signature of prototype(...).
+
+        * bindings/scripts/test/JS/JSInterfaceName.cpp:
+        * bindings/scripts/test/JS/JSInterfaceName.h:
+        * bindings/scripts/test/JS/JSMapLike.cpp:
+        * bindings/scripts/test/JS/JSMapLike.h:
+        * bindings/scripts/test/JS/JSReadOnlyMapLike.cpp:
+        * bindings/scripts/test/JS/JSReadOnlyMapLike.h:
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.h:
+        * bindings/scripts/test/JS/JSTestCEReactions.cpp:
+        * bindings/scripts/test/JS/JSTestCEReactions.h:
+        * bindings/scripts/test/JS/JSTestCEReactionsStringifier.cpp:
+        * bindings/scripts/test/JS/JSTestCEReactionsStringifier.h:
+        * bindings/scripts/test/JS/JSTestClassWithJSBuiltinConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestClassWithJSBuiltinConstructor.h:
+        * bindings/scripts/test/JS/JSTestCustomConstructorWithNoInterfaceObject.cpp:
+        * bindings/scripts/test/JS/JSTestCustomConstructorWithNoInterfaceObject.h:
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.cpp:
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.h:
+        * bindings/scripts/test/JS/JSTestDOMJIT.cpp:
+        * bindings/scripts/test/JS/JSTestDOMJIT.h:
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestEventConstructor.h:
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        * bindings/scripts/test/JS/JSTestEventTarget.h:
+        * bindings/scripts/test/JS/JSTestException.cpp:
+        * bindings/scripts/test/JS/JSTestException.h:
+        * bindings/scripts/test/JS/JSTestGenerateIsReachable.cpp:
+        * bindings/scripts/test/JS/JSTestGenerateIsReachable.h:
+        * bindings/scripts/test/JS/JSTestGlobalObject.h:
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        * bindings/scripts/test/JS/JSTestInterface.h:
+        * bindings/scripts/test/JS/JSTestInterfaceLeadingUnderscore.cpp:
+        * bindings/scripts/test/JS/JSTestInterfaceLeadingUnderscore.h:
+        * bindings/scripts/test/JS/JSTestIterable.cpp:
+        * bindings/scripts/test/JS/JSTestIterable.h:
+        * bindings/scripts/test/JS/JSTestJSBuiltinConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestJSBuiltinConstructor.h:
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.h:
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestNamedConstructor.h:
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        * bindings/scripts/test/JS/JSTestNode.h:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.h:
+        * bindings/scripts/test/JS/JSTestOverloadedConstructorsWithSequence.cpp:
+        * bindings/scripts/test/JS/JSTestOverloadedConstructorsWithSequence.h:
+        * bindings/scripts/test/JS/JSTestOverrideBuiltins.cpp:
+        * bindings/scripts/test/JS/JSTestOverrideBuiltins.h:
+        * bindings/scripts/test/JS/JSTestSerialization.cpp:
+        * bindings/scripts/test/JS/JSTestSerialization.h:
+        * bindings/scripts/test/JS/JSTestSerializationInherit.cpp:
+        * bindings/scripts/test/JS/JSTestSerializationInherit.h:
+        * bindings/scripts/test/JS/JSTestSerializationInheritFinal.cpp:
+        * bindings/scripts/test/JS/JSTestSerializationInheritFinal.h:
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.h:
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        * bindings/scripts/test/JS/JSTestTypedefs.h:
+        Update test results for new test values and changes in signatures to pass JSDOMGlobalObject.
+
+        * bindings/scripts/test/TestObj.idl:
+        Add tests for [EnableBySetting] for attributes and operations.
+
+        * bridge/objc/objc_runtime.h:
+        * bridge/runtime_array.h:
+        * bridge/runtime_method.h:
+        * bridge/runtime_object.h:
+        * inspector/CommandLineAPIHost.cpp:
+        Update createPrototype function to take the global object by reference.
+
 2017-05-04  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Allow host application to enable/disable media capture

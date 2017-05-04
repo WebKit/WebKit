@@ -43,7 +43,7 @@ bool setJSTestInterfaceLeadingUnderscoreConstructor(JSC::ExecState*, JSC::Encode
 class JSTestInterfaceLeadingUnderscorePrototype : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
-    static JSTestInterfaceLeadingUnderscorePrototype* create(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
+    static JSTestInterfaceLeadingUnderscorePrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
         JSTestInterfaceLeadingUnderscorePrototype* ptr = new (NotNull, JSC::allocateCell<JSTestInterfaceLeadingUnderscorePrototype>(vm.heap)) JSTestInterfaceLeadingUnderscorePrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
@@ -75,7 +75,7 @@ template<> JSValue JSTestInterfaceLeadingUnderscoreConstructor::prototypeForStru
 
 template<> void JSTestInterfaceLeadingUnderscoreConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    putDirect(vm, vm.propertyNames->prototype, JSTestInterfaceLeadingUnderscore::prototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
+    putDirect(vm, vm.propertyNames->prototype, JSTestInterfaceLeadingUnderscore::prototype(vm, globalObject), DontDelete | ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral("TestInterfaceLeadingUnderscore"))), ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
 }
@@ -112,12 +112,12 @@ void JSTestInterfaceLeadingUnderscore::finishCreation(VM& vm)
 
 }
 
-JSObject* JSTestInterfaceLeadingUnderscore::createPrototype(VM& vm, JSGlobalObject* globalObject)
+JSObject* JSTestInterfaceLeadingUnderscore::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    return JSTestInterfaceLeadingUnderscorePrototype::create(vm, globalObject, JSTestInterfaceLeadingUnderscorePrototype::createStructure(vm, globalObject, globalObject->objectPrototype()));
+    return JSTestInterfaceLeadingUnderscorePrototype::create(vm, &globalObject, JSTestInterfaceLeadingUnderscorePrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
 }
 
-JSObject* JSTestInterfaceLeadingUnderscore::prototype(VM& vm, JSGlobalObject* globalObject)
+JSObject* JSTestInterfaceLeadingUnderscore::prototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
     return getDOMPrototype<JSTestInterfaceLeadingUnderscore>(vm, globalObject);
 }

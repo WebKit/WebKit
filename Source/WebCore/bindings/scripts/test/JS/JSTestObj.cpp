@@ -1109,6 +1109,9 @@ template<> TestObj::ConditionalDictionaryC convertDictionary<TestObj::Conditiona
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionEnabledAtRuntimeOperation(JSC::ExecState*);
 #endif
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWorldSpecificMethod(JSC::ExecState*);
+#if ENABLE(TEST_FEATURE)
+JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionEnabledBySettingOperation(JSC::ExecState*);
+#endif
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVoidMethod(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVoidMethodWithArgs(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionByteMethod(JSC::ExecState*);
@@ -1358,6 +1361,10 @@ bool setJSTestObjReflectedCustomURLAttr(JSC::ExecState*, JSC::EncodedJSValue, JS
 JSC::EncodedJSValue jsTestObjEnabledAtRuntimeAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestObjEnabledAtRuntimeAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 #endif
+#if ENABLE(TEST_FEATURE)
+JSC::EncodedJSValue jsTestObjEnabledBySettingAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
+bool setJSTestObjEnabledBySettingAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+#endif
 JSC::EncodedJSValue jsTestObjTypedArrayAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestObjTypedArrayAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjAttributeWithGetterException(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
@@ -1462,10 +1469,10 @@ bool setJSTestObjConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJ
 class JSTestObjPrototype : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
-    static JSTestObjPrototype* create(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
+    static JSTestObjPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
         JSTestObjPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestObjPrototype>(vm.heap)) JSTestObjPrototype(vm, globalObject, structure);
-        ptr->finishCreation(vm);
+        ptr->finishCreation(vm, *globalObject);
         return ptr;
     }
 
@@ -1481,7 +1488,7 @@ private:
     {
     }
 
-    void finishCreation(JSC::VM&);
+    void finishCreation(JSC::VM&, JSDOMGlobalObject&);
 };
 
 using JSTestObjConstructor = JSDOMConstructor<JSTestObj>;
@@ -1617,7 +1624,7 @@ template<> JSValue JSTestObjConstructor::prototypeForStructure(JSC::VM& vm, cons
 
 template<> void JSTestObjConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    putDirect(vm, vm.propertyNames->prototype, JSTestObj::prototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
+    putDirect(vm, vm.propertyNames->prototype, JSTestObj::prototype(vm, globalObject), DontDelete | ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral("TestObject"))), ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(2), ReadOnly | DontEnum);
     reifyStaticProperties(vm, JSTestObjConstructorTableValues, *this);
@@ -1676,6 +1683,11 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "reflectedCustomURLAttr", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjReflectedCustomURLAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjReflectedCustomURLAttr) } },
 #if ENABLE(TEST_FEATURE)
     { "enabledAtRuntimeAttribute", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjEnabledAtRuntimeAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjEnabledAtRuntimeAttribute) } },
+#else
+    { 0, 0, NoIntrinsic, { 0, 0 } },
+#endif
+#if ENABLE(TEST_FEATURE)
+    { "enabledBySettingAttribute", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjEnabledBySettingAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjEnabledBySettingAttribute) } },
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
@@ -1752,6 +1764,11 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
     { "worldSpecificMethod", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionWorldSpecificMethod), (intptr_t) (1) } },
+#if ENABLE(TEST_FEATURE)
+    { "enabledBySettingOperation", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionEnabledBySettingOperation), (intptr_t) (1) } },
+#else
+    { 0, 0, NoIntrinsic, { 0, 0 } },
+#endif
     { "voidMethod", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionVoidMethod), (intptr_t) (0) } },
     { "voidMethodWithArgs", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionVoidMethodWithArgs), (intptr_t) (3) } },
     { "byteMethod", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionByteMethod), (intptr_t) (0) } },
@@ -1928,7 +1945,7 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
 
 const ClassInfo JSTestObjPrototype::s_info = { "TestObjectPrototype", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestObjPrototype) };
 
-void JSTestObjPrototype::finishCreation(VM& vm)
+void JSTestObjPrototype::finishCreation(VM& vm, JSDOMGlobalObject& globalObject)
 {
     Base::finishCreation(vm);
     reifyStaticProperties(vm, JSTestObjPrototypeTableValues, *this);
@@ -1949,6 +1966,22 @@ void JSTestObjPrototype::finishCreation(VM& vm)
         Identifier propertyName = Identifier::fromString(&vm, reinterpret_cast<const LChar*>("enabledAtRuntimeAttribute"), strlen("enabledAtRuntimeAttribute"));
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         JSObject::deleteProperty(this, globalObject()->globalExec(), propertyName);
+    }
+#endif
+    auto* context = globalObject.scriptExecutionContext();
+    ASSERT(!context || context->isDocument());
+#if ENABLE(TEST_FEATURE)
+    if (!context || !downcast<Document>(*context).settings().testSettingEnabled()) {
+        Identifier propertyName = Identifier::fromString(&vm, reinterpret_cast<const LChar*>("enabledBySettingOperation"), strlen("enabledBySettingOperation"));
+        VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
+        JSObject::deleteProperty(this, globalObject.globalExec(), propertyName);
+    }
+#endif
+#if ENABLE(TEST_FEATURE)
+    if (!context || !downcast<Document>(*context).settings().testSettingEnabled()) {
+        Identifier propertyName = Identifier::fromString(&vm, reinterpret_cast<const LChar*>("enabledBySettingAttribute"), strlen("enabledBySettingAttribute"));
+        VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
+        JSObject::deleteProperty(this, globalObject.globalExec(), propertyName);
     }
 #endif
     putDirect(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames().privateMethodPrivateName(), JSFunction::create(vm, globalObject(), 0, String(), jsTestObjPrototypeFunctionPrivateMethod), ReadOnly | DontEnum);
@@ -1975,12 +2008,12 @@ void JSTestObj::finishCreation(VM& vm)
 
 }
 
-JSObject* JSTestObj::createPrototype(VM& vm, JSGlobalObject* globalObject)
+JSObject* JSTestObj::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    return JSTestObjPrototype::create(vm, globalObject, JSTestObjPrototype::createStructure(vm, globalObject, globalObject->objectPrototype()));
+    return JSTestObjPrototype::create(vm, &globalObject, JSTestObjPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
 }
 
-JSObject* JSTestObj::prototype(VM& vm, JSGlobalObject* globalObject)
+JSObject* JSTestObj::prototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
     return getDOMPrototype<JSTestObj>(vm, globalObject);
 }
@@ -2833,6 +2866,25 @@ static inline JSValue jsTestObjEnabledAtRuntimeAttributeGetter(ExecState& state,
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
     JSValue result = toJS<IDLDOMString>(state, impl.enabledAtRuntimeAttribute());
+    return result;
+}
+
+#endif
+
+#if ENABLE(TEST_FEATURE)
+static inline JSValue jsTestObjEnabledBySettingAttributeGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
+
+EncodedJSValue jsTestObjEnabledBySettingAttribute(ExecState* state, EncodedJSValue thisValue, PropertyName)
+{
+    return BindingCaller<JSTestObj>::attribute<jsTestObjEnabledBySettingAttributeGetter>(state, thisValue, "enabledBySettingAttribute");
+}
+
+static inline JSValue jsTestObjEnabledBySettingAttributeGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
+{
+    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    auto& impl = thisObject.wrapped();
+    JSValue result = toJS<IDLDOMString>(state, impl.enabledBySettingAttribute());
     return result;
 }
 
@@ -4490,6 +4542,27 @@ static inline bool setJSTestObjEnabledAtRuntimeAttributeFunction(ExecState& stat
 
 #endif
 
+#if ENABLE(TEST_FEATURE)
+static inline bool setJSTestObjEnabledBySettingAttributeFunction(ExecState&, JSTestObj&, JSValue, ThrowScope&);
+
+bool setJSTestObjEnabledBySettingAttribute(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+{
+    return BindingCaller<JSTestObj>::setAttribute<setJSTestObjEnabledBySettingAttributeFunction>(state, thisValue, encodedValue, "enabledBySettingAttribute");
+}
+
+static inline bool setJSTestObjEnabledBySettingAttributeFunction(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
+    UNUSED_PARAM(throwScope);
+    auto& impl = thisObject.wrapped();
+    auto nativeValue = convert<IDLDOMString>(state, value);
+    RETURN_IF_EXCEPTION(throwScope, false);
+    impl.setEnabledBySettingAttribute(WTFMove(nativeValue));
+    return true;
+}
+
+#endif
+
 static inline bool setJSTestObjTypedArrayAttrFunction(ExecState&, JSTestObj&, JSValue, ThrowScope&);
 
 bool setJSTestObjTypedArrayAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -5315,6 +5388,29 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWorldSpecificMethodC
     impl.worldSpecificMethod(WTFMove(testParam));
     return JSValue::encode(jsUndefined());
 }
+
+#if ENABLE(TEST_FEATURE)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionEnabledBySettingOperationCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
+EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionEnabledBySettingOperation(ExecState* state)
+{
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionEnabledBySettingOperationCaller>(state, "enabledBySettingOperation");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionEnabledBySettingOperationCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
+    UNUSED_PARAM(throwScope);
+    auto& impl = castedThis->wrapped();
+    if (UNLIKELY(state->argumentCount() < 1))
+        return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
+    auto testParam = convert<IDLDOMString>(*state, state->uncheckedArgument(0));
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    impl.enabledBySettingOperation(WTFMove(testParam));
+    return JSValue::encode(jsUndefined());
+}
+
+#endif
 
 static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionVoidMethodCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
 

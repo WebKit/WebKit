@@ -99,9 +99,9 @@ public:
         return instance;
     }
 
-    static Prototype* createPrototype(JSC::VM& vm, JSC::JSGlobalObject* globalObject)
+    static Prototype* createPrototype(JSC::VM& vm, JSC::JSGlobalObject& globalObject)
     {
-        return Prototype::create(vm, globalObject, Prototype::createStructure(vm, globalObject, globalObject->iteratorPrototype()));
+        return Prototype::create(vm, &globalObject, Prototype::createStructure(vm, &globalObject, globalObject.iteratorPrototype()));
     }
 
     JSC::JSValue next(JSC::ExecState&);

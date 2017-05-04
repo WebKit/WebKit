@@ -50,7 +50,7 @@ bool setJSTestSerializationInheritFinalConstructor(JSC::ExecState*, JSC::Encoded
 class JSTestSerializationInheritFinalPrototype : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
-    static JSTestSerializationInheritFinalPrototype* create(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
+    static JSTestSerializationInheritFinalPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
         JSTestSerializationInheritFinalPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestSerializationInheritFinalPrototype>(vm.heap)) JSTestSerializationInheritFinalPrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
@@ -81,7 +81,7 @@ template<> JSValue JSTestSerializationInheritFinalConstructor::prototypeForStruc
 
 template<> void JSTestSerializationInheritFinalConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    putDirect(vm, vm.propertyNames->prototype, JSTestSerializationInheritFinal::prototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
+    putDirect(vm, vm.propertyNames->prototype, JSTestSerializationInheritFinal::prototype(vm, globalObject), DontDelete | ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral("TestSerializationInheritFinal"))), ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
 }
@@ -120,12 +120,12 @@ void JSTestSerializationInheritFinal::finishCreation(VM& vm)
 
 }
 
-JSObject* JSTestSerializationInheritFinal::createPrototype(VM& vm, JSGlobalObject* globalObject)
+JSObject* JSTestSerializationInheritFinal::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    return JSTestSerializationInheritFinalPrototype::create(vm, globalObject, JSTestSerializationInheritFinalPrototype::createStructure(vm, globalObject, JSTestSerializationInherit::prototype(vm, globalObject)));
+    return JSTestSerializationInheritFinalPrototype::create(vm, &globalObject, JSTestSerializationInheritFinalPrototype::createStructure(vm, &globalObject, JSTestSerializationInherit::prototype(vm, globalObject)));
 }
 
-JSObject* JSTestSerializationInheritFinal::prototype(VM& vm, JSGlobalObject* globalObject)
+JSObject* JSTestSerializationInheritFinal::prototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
     return getDOMPrototype<JSTestSerializationInheritFinal>(vm, globalObject);
 }

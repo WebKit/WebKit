@@ -48,9 +48,9 @@ public:
 
     DECLARE_INFO;
 
-    static FunctionPrototype* createPrototype(VM&, JSGlobalObject* globalObject)
+    static FunctionPrototype* createPrototype(VM&, JSGlobalObject& globalObject)
     {
-        return globalObject->functionPrototype();
+        return globalObject.functionPrototype();
     }
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)

@@ -48,7 +48,7 @@ bool setJSTestMediaQueryListListenerConstructor(JSC::ExecState*, JSC::EncodedJSV
 class JSTestMediaQueryListListenerPrototype : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
-    static JSTestMediaQueryListListenerPrototype* create(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
+    static JSTestMediaQueryListListenerPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
         JSTestMediaQueryListListenerPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestMediaQueryListListenerPrototype>(vm.heap)) JSTestMediaQueryListListenerPrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
@@ -80,7 +80,7 @@ template<> JSValue JSTestMediaQueryListListenerConstructor::prototypeForStructur
 
 template<> void JSTestMediaQueryListListenerConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    putDirect(vm, vm.propertyNames->prototype, JSTestMediaQueryListListener::prototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
+    putDirect(vm, vm.propertyNames->prototype, JSTestMediaQueryListListener::prototype(vm, globalObject), DontDelete | ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral("TestMediaQueryListListener"))), ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
 }
@@ -117,12 +117,12 @@ void JSTestMediaQueryListListener::finishCreation(VM& vm)
 
 }
 
-JSObject* JSTestMediaQueryListListener::createPrototype(VM& vm, JSGlobalObject* globalObject)
+JSObject* JSTestMediaQueryListListener::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    return JSTestMediaQueryListListenerPrototype::create(vm, globalObject, JSTestMediaQueryListListenerPrototype::createStructure(vm, globalObject, globalObject->objectPrototype()));
+    return JSTestMediaQueryListListenerPrototype::create(vm, &globalObject, JSTestMediaQueryListListenerPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
 }
 
-JSObject* JSTestMediaQueryListListener::prototype(VM& vm, JSGlobalObject* globalObject)
+JSObject* JSTestMediaQueryListListener::prototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
     return getDOMPrototype<JSTestMediaQueryListListener>(vm, globalObject);
 }

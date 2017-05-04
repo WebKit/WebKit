@@ -47,7 +47,7 @@ bool setJSTestCustomNamedGetterConstructor(JSC::ExecState*, JSC::EncodedJSValue,
 class JSTestCustomNamedGetterPrototype : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
-    static JSTestCustomNamedGetterPrototype* create(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
+    static JSTestCustomNamedGetterPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
         JSTestCustomNamedGetterPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestCustomNamedGetterPrototype>(vm.heap)) JSTestCustomNamedGetterPrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
@@ -79,7 +79,7 @@ template<> JSValue JSTestCustomNamedGetterConstructor::prototypeForStructure(JSC
 
 template<> void JSTestCustomNamedGetterConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    putDirect(vm, vm.propertyNames->prototype, JSTestCustomNamedGetter::prototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
+    putDirect(vm, vm.propertyNames->prototype, JSTestCustomNamedGetter::prototype(vm, globalObject), DontDelete | ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral("TestCustomNamedGetter"))), ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
 }
@@ -116,12 +116,12 @@ void JSTestCustomNamedGetter::finishCreation(VM& vm)
 
 }
 
-JSObject* JSTestCustomNamedGetter::createPrototype(VM& vm, JSGlobalObject* globalObject)
+JSObject* JSTestCustomNamedGetter::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    return JSTestCustomNamedGetterPrototype::create(vm, globalObject, JSTestCustomNamedGetterPrototype::createStructure(vm, globalObject, globalObject->objectPrototype()));
+    return JSTestCustomNamedGetterPrototype::create(vm, &globalObject, JSTestCustomNamedGetterPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
 }
 
-JSObject* JSTestCustomNamedGetter::prototype(VM& vm, JSGlobalObject* globalObject)
+JSObject* JSTestCustomNamedGetter::prototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
     return getDOMPrototype<JSTestCustomNamedGetter>(vm, globalObject);
 }

@@ -50,7 +50,7 @@ bool setJSTestJSBuiltinConstructorConstructor(JSC::ExecState*, JSC::EncodedJSVal
 class JSTestJSBuiltinConstructorPrototype : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
-    static JSTestJSBuiltinConstructorPrototype* create(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
+    static JSTestJSBuiltinConstructorPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
         JSTestJSBuiltinConstructorPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestJSBuiltinConstructorPrototype>(vm.heap)) JSTestJSBuiltinConstructorPrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
@@ -82,7 +82,7 @@ template<> JSValue JSTestJSBuiltinConstructorConstructor::prototypeForStructure(
 
 template<> void JSTestJSBuiltinConstructorConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    putDirect(vm, vm.propertyNames->prototype, JSTestJSBuiltinConstructor::prototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
+    putDirect(vm, vm.propertyNames->prototype, JSTestJSBuiltinConstructor::prototype(vm, globalObject), DontDelete | ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral("TestJSBuiltinConstructor"))), ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
 }
@@ -126,12 +126,12 @@ void JSTestJSBuiltinConstructor::finishCreation(VM& vm)
 
 }
 
-JSObject* JSTestJSBuiltinConstructor::createPrototype(VM& vm, JSGlobalObject* globalObject)
+JSObject* JSTestJSBuiltinConstructor::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    return JSTestJSBuiltinConstructorPrototype::create(vm, globalObject, JSTestJSBuiltinConstructorPrototype::createStructure(vm, globalObject, globalObject->objectPrototype()));
+    return JSTestJSBuiltinConstructorPrototype::create(vm, &globalObject, JSTestJSBuiltinConstructorPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
 }
 
-JSObject* JSTestJSBuiltinConstructor::prototype(VM& vm, JSGlobalObject* globalObject)
+JSObject* JSTestJSBuiltinConstructor::prototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
     return getDOMPrototype<JSTestJSBuiltinConstructor>(vm, globalObject);
 }

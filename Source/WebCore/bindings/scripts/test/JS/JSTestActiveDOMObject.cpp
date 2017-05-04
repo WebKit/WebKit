@@ -51,7 +51,7 @@ bool setJSTestActiveDOMObjectConstructor(JSC::ExecState*, JSC::EncodedJSValue, J
 class JSTestActiveDOMObjectPrototype : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
-    static JSTestActiveDOMObjectPrototype* create(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
+    static JSTestActiveDOMObjectPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
         JSTestActiveDOMObjectPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestActiveDOMObjectPrototype>(vm.heap)) JSTestActiveDOMObjectPrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
@@ -97,7 +97,7 @@ template<> JSValue JSTestActiveDOMObjectConstructor::prototypeForStructure(JSC::
 
 template<> void JSTestActiveDOMObjectConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    putDirect(vm, vm.propertyNames->prototype, JSTestActiveDOMObject::prototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
+    putDirect(vm, vm.propertyNames->prototype, JSTestActiveDOMObject::prototype(vm, globalObject), DontDelete | ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral("TestActiveDOMObject"))), ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
 }
@@ -135,12 +135,12 @@ void JSTestActiveDOMObject::finishCreation(VM& vm)
 
 }
 
-JSObject* JSTestActiveDOMObject::createPrototype(VM& vm, JSGlobalObject* globalObject)
+JSObject* JSTestActiveDOMObject::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    return JSTestActiveDOMObjectPrototype::create(vm, globalObject, JSTestActiveDOMObjectPrototype::createStructure(vm, globalObject, globalObject->objectPrototype()));
+    return JSTestActiveDOMObjectPrototype::create(vm, &globalObject, JSTestActiveDOMObjectPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
 }
 
-JSObject* JSTestActiveDOMObject::prototype(VM& vm, JSGlobalObject* globalObject)
+JSObject* JSTestActiveDOMObject::prototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
     return getDOMPrototype<JSTestActiveDOMObject>(vm, globalObject);
 }

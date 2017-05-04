@@ -41,7 +41,7 @@ bool setJSTestGenerateIsReachableConstructor(JSC::ExecState*, JSC::EncodedJSValu
 class JSTestGenerateIsReachablePrototype : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
-    static JSTestGenerateIsReachablePrototype* create(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
+    static JSTestGenerateIsReachablePrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
         JSTestGenerateIsReachablePrototype* ptr = new (NotNull, JSC::allocateCell<JSTestGenerateIsReachablePrototype>(vm.heap)) JSTestGenerateIsReachablePrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
@@ -73,7 +73,7 @@ template<> JSValue JSTestGenerateIsReachableConstructor::prototypeForStructure(J
 
 template<> void JSTestGenerateIsReachableConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    putDirect(vm, vm.propertyNames->prototype, JSTestGenerateIsReachable::prototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
+    putDirect(vm, vm.propertyNames->prototype, JSTestGenerateIsReachable::prototype(vm, globalObject), DontDelete | ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral("TestGenerateIsReachable"))), ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
 }
@@ -109,12 +109,12 @@ void JSTestGenerateIsReachable::finishCreation(VM& vm)
 
 }
 
-JSObject* JSTestGenerateIsReachable::createPrototype(VM& vm, JSGlobalObject* globalObject)
+JSObject* JSTestGenerateIsReachable::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    return JSTestGenerateIsReachablePrototype::create(vm, globalObject, JSTestGenerateIsReachablePrototype::createStructure(vm, globalObject, globalObject->objectPrototype()));
+    return JSTestGenerateIsReachablePrototype::create(vm, &globalObject, JSTestGenerateIsReachablePrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
 }
 
-JSObject* JSTestGenerateIsReachable::prototype(VM& vm, JSGlobalObject* globalObject)
+JSObject* JSTestGenerateIsReachable::prototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
     return getDOMPrototype<JSTestGenerateIsReachable>(vm, globalObject);
 }

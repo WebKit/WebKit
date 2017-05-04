@@ -88,7 +88,7 @@ void WorkerScriptController::initScript()
         ASSERT(structure->globalObject() == m_workerGlobalScopeWrapper);
         ASSERT(m_workerGlobalScopeWrapper->structure()->globalObject() == m_workerGlobalScopeWrapper);
         dedicatedContextPrototype->structure()->setGlobalObject(*m_vm, m_workerGlobalScopeWrapper.get());
-        dedicatedContextPrototype->structure()->setPrototypeWithoutTransition(*m_vm, JSWorkerGlobalScope::prototype(*m_vm, m_workerGlobalScopeWrapper.get()));
+        dedicatedContextPrototype->structure()->setPrototypeWithoutTransition(*m_vm, JSWorkerGlobalScope::prototype(*m_vm, *m_workerGlobalScopeWrapper.get()));
 
         proxy->setTarget(*m_vm, m_workerGlobalScopeWrapper.get());
         proxy->structure()->setGlobalObject(*m_vm, m_workerGlobalScopeWrapper.get());

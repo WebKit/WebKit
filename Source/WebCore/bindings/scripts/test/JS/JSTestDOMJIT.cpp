@@ -129,7 +129,7 @@ static const JSC::DOMJIT::Signature DOMJITSignatureForTestDOMJITGetElementsByNam
 class JSTestDOMJITPrototype : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
-    static JSTestDOMJITPrototype* create(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
+    static JSTestDOMJITPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
         JSTestDOMJITPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestDOMJITPrototype>(vm.heap)) JSTestDOMJITPrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
@@ -160,7 +160,7 @@ template<> JSValue JSTestDOMJITConstructor::prototypeForStructure(JSC::VM& vm, c
 
 template<> void JSTestDOMJITConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    putDirect(vm, vm.propertyNames->prototype, JSTestDOMJIT::prototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
+    putDirect(vm, vm.propertyNames->prototype, JSTestDOMJIT::prototype(vm, globalObject), DontDelete | ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral("TestDOMJIT"))), ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
 }
@@ -236,12 +236,12 @@ void JSTestDOMJIT::finishCreation(VM& vm)
 
 }
 
-JSObject* JSTestDOMJIT::createPrototype(VM& vm, JSGlobalObject* globalObject)
+JSObject* JSTestDOMJIT::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    return JSTestDOMJITPrototype::create(vm, globalObject, JSTestDOMJITPrototype::createStructure(vm, globalObject, JSNode::prototype(vm, globalObject)));
+    return JSTestDOMJITPrototype::create(vm, &globalObject, JSTestDOMJITPrototype::createStructure(vm, &globalObject, JSNode::prototype(vm, globalObject)));
 }
 
-JSObject* JSTestDOMJIT::prototype(VM& vm, JSGlobalObject* globalObject)
+JSObject* JSTestDOMJIT::prototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
     return getDOMPrototype<JSTestDOMJIT>(vm, globalObject);
 }

@@ -113,6 +113,10 @@ enum TestConfidence { "high", "kinda-low" };
 
     [EnabledForWorld=someWorld] void worldSpecificMethod(long testParam);
 
+    // [EnabledBySetting] attributes and operations.
+    [Conditional=TEST_FEATURE, EnabledBySetting=TestSetting] attribute DOMString enabledBySettingAttribute;
+    [Conditional=TEST_FEATURE, EnabledBySetting=TestSetting] void enabledBySettingOperation(DOMString testParam);
+
     // TypedArray attribute
     attribute Float32Array typedArrayAttr;
 

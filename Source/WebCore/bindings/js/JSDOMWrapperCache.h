@@ -84,7 +84,7 @@ template<typename WrapperClass> inline JSC::Structure* getDOMStructure(JSC::VM& 
 {
     if (JSC::Structure* structure = getCachedDOMStructure(globalObject, WrapperClass::info()))
         return structure;
-    return cacheDOMStructure(globalObject, WrapperClass::createStructure(vm, &globalObject, WrapperClass::createPrototype(vm, &globalObject)), WrapperClass::info());
+    return cacheDOMStructure(globalObject, WrapperClass::createStructure(vm, &globalObject, WrapperClass::createPrototype(vm, globalObject)), WrapperClass::info());
 }
 
 template<typename WrapperClass> inline JSC::Structure* deprecatedGetDOMStructure(JSC::ExecState* exec)
@@ -93,9 +93,9 @@ template<typename WrapperClass> inline JSC::Structure* deprecatedGetDOMStructure
     return getDOMStructure<WrapperClass>(exec->vm(), *deprecatedGlobalObjectForPrototype(exec));
 }
 
-template<typename WrapperClass> inline JSC::JSObject* getDOMPrototype(JSC::VM& vm, JSC::JSGlobalObject* globalObject)
+template<typename WrapperClass> inline JSC::JSObject* getDOMPrototype(JSC::VM& vm, JSDOMGlobalObject& globalObject)
 {
-    return JSC::jsCast<JSC::JSObject*>(asObject(getDOMStructure<WrapperClass>(vm, *JSC::jsCast<JSDOMGlobalObject*>(globalObject))->storedPrototype()));
+    return JSC::jsCast<JSC::JSObject*>(asObject(getDOMStructure<WrapperClass>(vm, globalObject)->storedPrototype()));
 }
 
 inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld& world, JSC::ArrayBuffer*)

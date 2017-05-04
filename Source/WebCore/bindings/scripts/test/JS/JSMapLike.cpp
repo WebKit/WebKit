@@ -57,7 +57,7 @@ bool setJSMapLikeConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJ
 class JSMapLikePrototype : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
-    static JSMapLikePrototype* create(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
+    static JSMapLikePrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
         JSMapLikePrototype* ptr = new (NotNull, JSC::allocateCell<JSMapLikePrototype>(vm.heap)) JSMapLikePrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
@@ -89,7 +89,7 @@ template<> JSValue JSMapLikeConstructor::prototypeForStructure(JSC::VM& vm, cons
 
 template<> void JSMapLikeConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    putDirect(vm, vm.propertyNames->prototype, JSMapLike::prototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
+    putDirect(vm, vm.propertyNames->prototype, JSMapLike::prototype(vm, globalObject), DontDelete | ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral("MapLike"))), ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
 }
@@ -137,12 +137,12 @@ void JSMapLike::finishCreation(VM& vm)
     synchronizeBackingMap(*globalObject()->globalExec(), *globalObject(), *this);
 }
 
-JSObject* JSMapLike::createPrototype(VM& vm, JSGlobalObject* globalObject)
+JSObject* JSMapLike::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    return JSMapLikePrototype::create(vm, globalObject, JSMapLikePrototype::createStructure(vm, globalObject, globalObject->objectPrototype()));
+    return JSMapLikePrototype::create(vm, &globalObject, JSMapLikePrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
 }
 
-JSObject* JSMapLike::prototype(VM& vm, JSGlobalObject* globalObject)
+JSObject* JSMapLike::prototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
     return getDOMPrototype<JSMapLike>(vm, globalObject);
 }

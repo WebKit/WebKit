@@ -68,9 +68,9 @@ public:
 
     DECLARE_INFO;
 
-    static ArrayPrototype* createPrototype(VM&, JSGlobalObject* globalObject)
+    static ArrayPrototype* createPrototype(VM&, JSGlobalObject& globalObject)
     {
-        return globalObject->arrayPrototype();
+        return globalObject.arrayPrototype();
     }
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)

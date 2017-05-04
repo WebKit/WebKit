@@ -44,7 +44,7 @@ bool setJSTestNamedConstructorConstructor(JSC::ExecState*, JSC::EncodedJSValue, 
 class JSTestNamedConstructorPrototype : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
-    static JSTestNamedConstructorPrototype* create(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
+    static JSTestNamedConstructorPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
         JSTestNamedConstructorPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestNamedConstructorPrototype>(vm.heap)) JSTestNamedConstructorPrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
@@ -77,7 +77,7 @@ template<> JSValue JSTestNamedConstructorConstructor::prototypeForStructure(JSC:
 
 template<> void JSTestNamedConstructorConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    putDirect(vm, vm.propertyNames->prototype, JSTestNamedConstructor::prototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
+    putDirect(vm, vm.propertyNames->prototype, JSTestNamedConstructor::prototype(vm, globalObject), DontDelete | ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral("TestNamedConstructor"))), ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
 }
@@ -111,7 +111,7 @@ template<> JSValue JSTestNamedConstructorNamedConstructor::prototypeForStructure
 
 template<> void JSTestNamedConstructorNamedConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    putDirect(vm, vm.propertyNames->prototype, JSTestNamedConstructor::prototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
+    putDirect(vm, vm.propertyNames->prototype, JSTestNamedConstructor::prototype(vm, globalObject), DontDelete | ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral("Audio"))), ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
 }
@@ -147,12 +147,12 @@ void JSTestNamedConstructor::finishCreation(VM& vm)
 
 }
 
-JSObject* JSTestNamedConstructor::createPrototype(VM& vm, JSGlobalObject* globalObject)
+JSObject* JSTestNamedConstructor::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    return JSTestNamedConstructorPrototype::create(vm, globalObject, JSTestNamedConstructorPrototype::createStructure(vm, globalObject, globalObject->objectPrototype()));
+    return JSTestNamedConstructorPrototype::create(vm, &globalObject, JSTestNamedConstructorPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
 }
 
-JSObject* JSTestNamedConstructor::prototype(VM& vm, JSGlobalObject* globalObject)
+JSObject* JSTestNamedConstructor::prototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
     return getDOMPrototype<JSTestNamedConstructor>(vm, globalObject);
 }

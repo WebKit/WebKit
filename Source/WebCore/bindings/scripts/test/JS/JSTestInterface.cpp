@@ -127,7 +127,7 @@ bool setJSTestInterfaceConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::En
 class JSTestInterfacePrototype : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
-    static JSTestInterfacePrototype* create(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
+    static JSTestInterfacePrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
         JSTestInterfacePrototype* ptr = new (NotNull, JSC::allocateCell<JSTestInterfacePrototype>(vm.heap)) JSTestInterfacePrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
@@ -248,7 +248,7 @@ template<> JSValue JSTestInterfaceConstructor::prototypeForStructure(JSC::VM& vm
 
 template<> void JSTestInterfaceConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    putDirect(vm, vm.propertyNames->prototype, JSTestInterface::prototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
+    putDirect(vm, vm.propertyNames->prototype, JSTestInterface::prototype(vm, globalObject), DontDelete | ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral("TestInterface"))), ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(1), ReadOnly | DontEnum);
     reifyStaticProperties(vm, JSTestInterfaceConstructorTableValues, *this);
@@ -385,12 +385,12 @@ void JSTestInterface::finishCreation(VM& vm)
 
 }
 
-JSObject* JSTestInterface::createPrototype(VM& vm, JSGlobalObject* globalObject)
+JSObject* JSTestInterface::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    return JSTestInterfacePrototype::create(vm, globalObject, JSTestInterfacePrototype::createStructure(vm, globalObject, globalObject->objectPrototype()));
+    return JSTestInterfacePrototype::create(vm, &globalObject, JSTestInterfacePrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
 }
 
-JSObject* JSTestInterface::prototype(VM& vm, JSGlobalObject* globalObject)
+JSObject* JSTestInterface::prototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
     return getDOMPrototype<JSTestInterface>(vm, globalObject);
 }

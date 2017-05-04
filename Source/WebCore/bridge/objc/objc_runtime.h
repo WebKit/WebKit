@@ -108,9 +108,9 @@ public:
 
     const String& propertyName() const { return m_item; }
 
-    static ObjectPrototype* createPrototype(VM&, JSGlobalObject* globalObject)
+    static ObjectPrototype* createPrototype(VM&, JSGlobalObject& globalObject)
     {
-        return globalObject->objectPrototype();
+        return globalObject.objectPrototype();
     }
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)

@@ -48,7 +48,7 @@ bool setJSTestEventTargetConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::
 class JSTestEventTargetPrototype : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
-    static JSTestEventTargetPrototype* create(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
+    static JSTestEventTargetPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
         JSTestEventTargetPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestEventTargetPrototype>(vm.heap)) JSTestEventTargetPrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
@@ -79,7 +79,7 @@ template<> JSValue JSTestEventTargetConstructor::prototypeForStructure(JSC::VM& 
 
 template<> void JSTestEventTargetConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    putDirect(vm, vm.propertyNames->prototype, JSTestEventTarget::prototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
+    putDirect(vm, vm.propertyNames->prototype, JSTestEventTarget::prototype(vm, globalObject), DontDelete | ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral("TestEventTarget"))), ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
 }
@@ -116,12 +116,12 @@ void JSTestEventTarget::finishCreation(VM& vm)
 
 }
 
-JSObject* JSTestEventTarget::createPrototype(VM& vm, JSGlobalObject* globalObject)
+JSObject* JSTestEventTarget::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    return JSTestEventTargetPrototype::create(vm, globalObject, JSTestEventTargetPrototype::createStructure(vm, globalObject, JSEventTarget::prototype(vm, globalObject)));
+    return JSTestEventTargetPrototype::create(vm, &globalObject, JSTestEventTargetPrototype::createStructure(vm, &globalObject, JSEventTarget::prototype(vm, globalObject)));
 }
 
-JSObject* JSTestEventTarget::prototype(VM& vm, JSGlobalObject* globalObject)
+JSObject* JSTestEventTarget::prototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
     return getDOMPrototype<JSTestEventTarget>(vm, globalObject);
 }

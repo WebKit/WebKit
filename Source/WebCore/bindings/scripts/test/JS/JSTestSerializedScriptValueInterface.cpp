@@ -61,7 +61,7 @@ bool setJSTestSerializedScriptValueInterfaceConstructor(JSC::ExecState*, JSC::En
 class JSTestSerializedScriptValueInterfacePrototype : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
-    static JSTestSerializedScriptValueInterfacePrototype* create(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
+    static JSTestSerializedScriptValueInterfacePrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
         JSTestSerializedScriptValueInterfacePrototype* ptr = new (NotNull, JSC::allocateCell<JSTestSerializedScriptValueInterfacePrototype>(vm.heap)) JSTestSerializedScriptValueInterfacePrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
@@ -93,7 +93,7 @@ template<> JSValue JSTestSerializedScriptValueInterfaceConstructor::prototypeFor
 
 template<> void JSTestSerializedScriptValueInterfaceConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    putDirect(vm, vm.propertyNames->prototype, JSTestSerializedScriptValueInterface::prototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
+    putDirect(vm, vm.propertyNames->prototype, JSTestSerializedScriptValueInterface::prototype(vm, globalObject), DontDelete | ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral("TestSerializedScriptValueInterface"))), ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
 }
@@ -136,12 +136,12 @@ void JSTestSerializedScriptValueInterface::finishCreation(VM& vm)
 
 }
 
-JSObject* JSTestSerializedScriptValueInterface::createPrototype(VM& vm, JSGlobalObject* globalObject)
+JSObject* JSTestSerializedScriptValueInterface::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    return JSTestSerializedScriptValueInterfacePrototype::create(vm, globalObject, JSTestSerializedScriptValueInterfacePrototype::createStructure(vm, globalObject, globalObject->objectPrototype()));
+    return JSTestSerializedScriptValueInterfacePrototype::create(vm, &globalObject, JSTestSerializedScriptValueInterfacePrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
 }
 
-JSObject* JSTestSerializedScriptValueInterface::prototype(VM& vm, JSGlobalObject* globalObject)
+JSObject* JSTestSerializedScriptValueInterface::prototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
     return getDOMPrototype<JSTestSerializedScriptValueInterface>(vm, globalObject);
 }

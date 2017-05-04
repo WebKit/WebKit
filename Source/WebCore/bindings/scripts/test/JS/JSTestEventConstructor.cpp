@@ -94,7 +94,7 @@ bool setJSTestEventConstructorConstructor(JSC::ExecState*, JSC::EncodedJSValue, 
 class JSTestEventConstructorPrototype : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
-    static JSTestEventConstructorPrototype* create(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
+    static JSTestEventConstructorPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
         JSTestEventConstructorPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestEventConstructorPrototype>(vm.heap)) JSTestEventConstructorPrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
@@ -142,7 +142,7 @@ template<> JSValue JSTestEventConstructorConstructor::prototypeForStructure(JSC:
 
 template<> void JSTestEventConstructorConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    putDirect(vm, vm.propertyNames->prototype, JSTestEventConstructor::prototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
+    putDirect(vm, vm.propertyNames->prototype, JSTestEventConstructor::prototype(vm, globalObject), DontDelete | ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral("TestEventConstructor"))), ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(1), ReadOnly | DontEnum);
 }
@@ -185,12 +185,12 @@ void JSTestEventConstructor::finishCreation(VM& vm)
 
 }
 
-JSObject* JSTestEventConstructor::createPrototype(VM& vm, JSGlobalObject* globalObject)
+JSObject* JSTestEventConstructor::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    return JSTestEventConstructorPrototype::create(vm, globalObject, JSTestEventConstructorPrototype::createStructure(vm, globalObject, JSEvent::prototype(vm, globalObject)));
+    return JSTestEventConstructorPrototype::create(vm, &globalObject, JSTestEventConstructorPrototype::createStructure(vm, &globalObject, JSEvent::prototype(vm, globalObject)));
 }
 
-JSObject* JSTestEventConstructor::prototype(VM& vm, JSGlobalObject* globalObject)
+JSObject* JSTestEventConstructor::prototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
     return getDOMPrototype<JSTestEventConstructor>(vm, globalObject);
 }

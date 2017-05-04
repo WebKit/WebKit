@@ -43,7 +43,7 @@ bool setJSTestExceptionConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::En
 class JSTestExceptionPrototype : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
-    static JSTestExceptionPrototype* create(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
+    static JSTestExceptionPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
         JSTestExceptionPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestExceptionPrototype>(vm.heap)) JSTestExceptionPrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
@@ -89,7 +89,7 @@ template<> JSValue JSTestExceptionConstructor::prototypeForStructure(JSC::VM& vm
 
 template<> void JSTestExceptionConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    putDirect(vm, vm.propertyNames->prototype, JSTestException::prototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
+    putDirect(vm, vm.propertyNames->prototype, JSTestException::prototype(vm, globalObject), DontDelete | ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral("TestException"))), ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
 }
@@ -125,12 +125,12 @@ void JSTestException::finishCreation(VM& vm)
 
 }
 
-JSObject* JSTestException::createPrototype(VM& vm, JSGlobalObject* globalObject)
+JSObject* JSTestException::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    return JSTestExceptionPrototype::create(vm, globalObject, JSTestExceptionPrototype::createStructure(vm, globalObject, globalObject->errorPrototype()));
+    return JSTestExceptionPrototype::create(vm, &globalObject, JSTestExceptionPrototype::createStructure(vm, &globalObject, globalObject.errorPrototype()));
 }
 
-JSObject* JSTestException::prototype(VM& vm, JSGlobalObject* globalObject)
+JSObject* JSTestException::prototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
     return getDOMPrototype<JSTestException>(vm, globalObject);
 }

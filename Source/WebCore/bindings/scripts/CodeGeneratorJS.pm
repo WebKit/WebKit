@@ -983,6 +983,24 @@ sub NeedsRuntimeCheck
         || $interface->extendedAttributes->{EnabledForWorld};
 }
 
+sub NeedsSettingsCheckForPrototypeProperty
+{
+    my $interface = shift;
+
+    foreach my $function (@{$interface->functions}) {
+        next if OperationShouldBeOnInstance($interface, $function);
+
+        return 1 if $function->extendedAttributes->{EnabledBySetting};
+    }
+
+    foreach my $attribute (@{$interface->attributes}) {
+        next if AttributeShouldBeOnInstance($interface, $attribute);
+        return 1 if $attribute->extendedAttributes->{EnabledBySetting};
+    }
+
+    return 0;
+}
+
 # https://heycam.github.io/webidl/#es-operations
 sub OperationShouldBeOnInstance
 {
@@ -1803,8 +1821,8 @@ sub GenerateHeader
 
     # Prototype
     unless (ShouldUseGlobalObjectPrototype($interface)) {
-        push(@headerContent, "    static JSC::JSObject* createPrototype(JSC::VM&, JSC::JSGlobalObject*);\n");
-        push(@headerContent, "    static JSC::JSObject* prototype(JSC::VM&, JSC::JSGlobalObject*);\n");
+        push(@headerContent, "    static JSC::JSObject* createPrototype(JSC::VM&, JSDOMGlobalObject&);\n");
+        push(@headerContent, "    static JSC::JSObject* prototype(JSC::VM&, JSDOMGlobalObject&);\n");
     }
 
     # JSValue to implementation type
@@ -2269,7 +2287,7 @@ sub GenerateHeader
 
 sub GeneratePropertiesHashTable
 {
-    my ($object, $interface, $isInstance, $hashKeys, $hashSpecials, $hashValue1, $hashValue2, $conditionals, $runtimeEnabledFunctions, $runtimeEnabledAttributes) = @_;
+    my ($object, $interface, $isInstance, $hashKeys, $hashSpecials, $hashValue1, $hashValue2, $conditionals, $runtimeEnabledFunctions, $runtimeEnabledAttributes, $settingsEnabledFunctions, $settingsEnabledAttributes) = @_;
 
     # FIXME: These should be functions on $interface.
     my $interfaceName = $interface->type->name;
@@ -2331,6 +2349,10 @@ sub GeneratePropertiesHashTable
         if (NeedsRuntimeCheck($attribute)) {
             push(@$runtimeEnabledAttributes, $attribute);
         }
+
+        if ($attribute->extendedAttributes->{EnabledBySetting}) {
+            push(@$settingsEnabledAttributes, $attribute);
+        }
     }
 
     my @functions = @{$interface->functions};
@@ -2371,6 +2393,10 @@ sub GeneratePropertiesHashTable
 
         if (NeedsRuntimeCheck($function)) {
             push(@$runtimeEnabledFunctions, $function);
+        }
+
+        if ($function->extendedAttributes->{EnabledBySetting}) {
+            push(@$settingsEnabledFunctions, $function);
         }
     }
 
@@ -3189,12 +3215,16 @@ sub GenerateImplementation
     my $hashName = $className . "Table";
     my @runtimeEnabledFunctions = ();
     my @runtimeEnabledAttributes = ();
+    my @settingsEnabledFunctions = ();
+    my @settingsEnabledAttributes = ();
 
     # Generate hash table for properties on the instance.
     my $numInstanceProperties = GeneratePropertiesHashTable($object, $interface, 1,
         \@hashKeys, \@hashSpecials,
         \@hashValue1, \@hashValue2,
-        \%conditionals, \@runtimeEnabledFunctions, \@runtimeEnabledAttributes);
+        \%conditionals,
+        \@runtimeEnabledFunctions, \@runtimeEnabledAttributes,
+        \@settingsEnabledFunctions, \@settingsEnabledAttributes);
 
     $object->GenerateHashTable($hashName, $numInstanceProperties,
         \@hashKeys, \@hashSpecials,
@@ -3312,12 +3342,17 @@ sub GenerateImplementation
     %conditionals = ();
     @runtimeEnabledFunctions = ();
     @runtimeEnabledAttributes = ();
+    @settingsEnabledFunctions = ();
+    @settingsEnabledAttributes = ();
 
     # Generate hash table for properties on the prototype.
     my $numPrototypeProperties = GeneratePropertiesHashTable($object, $interface, 0,
         \@hashKeys, \@hashSpecials,
         \@hashValue1, \@hashValue2,
-        \%conditionals, \@runtimeEnabledFunctions, \@runtimeEnabledAttributes);
+        \%conditionals,
+        \@runtimeEnabledFunctions, \@runtimeEnabledAttributes,
+        \@settingsEnabledFunctions, \@settingsEnabledAttributes);
+
     my $hashSize = $numPrototypeProperties;
 
     foreach my $constant (@{$interface->constants}) {
@@ -3348,7 +3383,13 @@ sub GenerateImplementation
     }
 
     if (PrototypeHasStaticPropertyTable($interface) && !IsGlobalOrPrimaryGlobalInterface($interface)) {
-        push(@implContent, "void ${className}Prototype::finishCreation(VM& vm)\n");
+        my $needsGlobalObjectInFinishCreation = NeedsSettingsCheckForPrototypeProperty($interface);
+
+        if ($needsGlobalObjectInFinishCreation) {
+            push(@implContent, "void ${className}Prototype::finishCreation(VM& vm, JSDOMGlobalObject& globalObject)\n");
+        } else {
+            push(@implContent, "void ${className}Prototype::finishCreation(VM& vm)\n");
+        }
         push(@implContent, "{\n");
         push(@implContent, "    Base::finishCreation(vm);\n");
         push(@implContent, "    reifyStaticProperties(vm, ${className}PrototypeTableValues, *this);\n");
@@ -3367,6 +3408,30 @@ sub GenerateImplementation
             push(@implContent, "        JSObject::deleteProperty(this, globalObject()->globalExec(), propertyName);\n");
             push(@implContent, "    }\n");
             push(@implContent, "#endif\n") if $conditionalString;
+        }
+
+        my @settingsEnabledProperties = @settingsEnabledFunctions;
+        push(@settingsEnabledProperties, @settingsEnabledAttributes);
+        if (scalar(@settingsEnabledProperties)) {
+            AddToImplIncludes("Settings.h");
+            push(@implContent, "    auto* context = globalObject.scriptExecutionContext();\n");
+            push(@implContent, "    ASSERT(!context || context->isDocument());\n");
+            
+            foreach my $functionOrAttribute (@settingsEnabledProperties) {
+                my $conditionalString = $codeGenerator->GenerateConditionalString($functionOrAttribute);
+                push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
+
+                my $enableFunction = ToMethodName($functionOrAttribute->extendedAttributes->{EnabledBySetting}) . "Enabled";
+                my $name = $functionOrAttribute->name;
+
+                push(@implContent, "    if (!context || !downcast<Document>(*context).settings().${enableFunction}()) {\n");
+                push(@implContent, "        Identifier propertyName = Identifier::fromString(&vm, reinterpret_cast<const LChar*>(\"$name\"), strlen(\"$name\"));\n");
+                push(@implContent, "        VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);\n");
+                push(@implContent, "        JSObject::deleteProperty(this, globalObject.globalExec(), propertyName);\n");
+                push(@implContent, "    }\n");
+
+                push(@implContent, "#endif\n") if $conditionalString;
+            }
         }
 
         foreach my $function (@{$interface->functions}) {
@@ -3522,18 +3587,18 @@ sub GenerateImplementation
     push(@implContent, "}\n\n");
 
     unless (ShouldUseGlobalObjectPrototype($interface)) {
-        push(@implContent, "JSObject* ${className}::createPrototype(VM& vm, JSGlobalObject* globalObject)\n");
+        push(@implContent, "JSObject* ${className}::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)\n");
         push(@implContent, "{\n");
         if ($interface->parentType) {
             my $parentClassNameForPrototype = "JS" . $interface->parentType->name;
-            push(@implContent, "    return ${className}Prototype::create(vm, globalObject, ${className}Prototype::createStructure(vm, globalObject, ${parentClassNameForPrototype}::prototype(vm, globalObject)));\n");
+            push(@implContent, "    return ${className}Prototype::create(vm, &globalObject, ${className}Prototype::createStructure(vm, &globalObject, ${parentClassNameForPrototype}::prototype(vm, globalObject)));\n");
         } else {
             my $prototype = $interface->isException ? "errorPrototype" : "objectPrototype";
-            push(@implContent, "    return ${className}Prototype::create(vm, globalObject, ${className}Prototype::createStructure(vm, globalObject, globalObject->${prototype}()));\n");
+            push(@implContent, "    return ${className}Prototype::create(vm, &globalObject, ${className}Prototype::createStructure(vm, &globalObject, globalObject.${prototype}()));\n");
         }
         push(@implContent, "}\n\n");
 
-        push(@implContent, "JSObject* ${className}::prototype(VM& vm, JSGlobalObject* globalObject)\n");
+        push(@implContent, "JSObject* ${className}::prototype(VM& vm, JSDOMGlobalObject& globalObject)\n");
         push(@implContent, "{\n");
         push(@implContent, "    return getDOMPrototype<${className}>(vm, globalObject);\n");
         push(@implContent, "}\n\n");
@@ -6002,25 +6067,32 @@ sub GeneratePrototypeDeclaration
 
     my $prototypeClassName = "${className}Prototype";
 
+    my $needsGlobalObjectInFinishCreation = NeedsSettingsCheckForPrototypeProperty($interface);
+
     my %structureFlags = ();
     push(@$outputArray, "class ${prototypeClassName} : public JSC::JSNonFinalObject {\n");
     push(@$outputArray, "public:\n");
     push(@$outputArray, "    using Base = JSC::JSNonFinalObject;\n");
 
-    push(@$outputArray, "    static ${prototypeClassName}* create(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)\n");
+    push(@$outputArray, "    static ${prototypeClassName}* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)\n");
     push(@$outputArray, "    {\n");
     push(@$outputArray, "        ${className}Prototype* ptr = new (NotNull, JSC::allocateCell<${className}Prototype>(vm.heap)) ${className}Prototype(vm, globalObject, structure);\n");
-    push(@$outputArray, "        ptr->finishCreation(vm);\n");
+
+    if ($needsGlobalObjectInFinishCreation) {
+        push(@$outputArray, "        ptr->finishCreation(vm, *globalObject);\n");
+    } else {
+        push(@$outputArray, "        ptr->finishCreation(vm);\n");
+    }
+
     push(@$outputArray, "        return ptr;\n");
     push(@$outputArray, "    }\n\n");
 
     push(@$outputArray, "    DECLARE_INFO;\n");
 
-    push(@$outputArray,
-        "    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)\n" .
-        "    {\n" .
-        "        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());\n" .
-        "    }\n");
+    push(@$outputArray, "    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)\n");
+    push(@$outputArray, "    {\n");
+    push(@$outputArray, "        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());\n");
+    push(@$outputArray, "    }\n");
 
     push(@$outputArray, "\nprivate:\n");
     push(@$outputArray, "    ${prototypeClassName}(JSC::VM& vm, JSC::JSGlobalObject*, JSC::Structure* structure)\n");
@@ -6033,7 +6105,11 @@ sub GeneratePrototypeDeclaration
             $structureFlags{"JSC::HasStaticPropertyTable"} = 1;
         } else {
             push(@$outputArray, "\n");
-            push(@$outputArray, "    void finishCreation(JSC::VM&);\n");
+            if ($needsGlobalObjectInFinishCreation) {
+                push(@$outputArray, "    void finishCreation(JSC::VM&, JSDOMGlobalObject&);\n");
+            } else {
+                push(@$outputArray, "    void finishCreation(JSC::VM&);\n");
+            }
         }
     }
 
@@ -6233,7 +6309,7 @@ sub GenerateConstructorHelperMethods
     } elsif ($interface->isCallback) {
         push(@$outputArray, "    UNUSED_PARAM(globalObject);\n");
     } else {
-        push(@$outputArray, "    putDirect(vm, vm.propertyNames->prototype, ${className}::prototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);\n");
+        push(@$outputArray, "    putDirect(vm, vm.propertyNames->prototype, ${className}::prototype(vm, globalObject), DontDelete | ReadOnly | DontEnum);\n");
     }
 
     push(@$outputArray, "    putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral(\"$visibleInterfaceName\"))), ReadOnly | DontEnum);\n");

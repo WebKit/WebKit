@@ -45,7 +45,7 @@ bool setJSTestOverloadedConstructorsWithSequenceConstructor(JSC::ExecState*, JSC
 class JSTestOverloadedConstructorsWithSequencePrototype : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
-    static JSTestOverloadedConstructorsWithSequencePrototype* create(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
+    static JSTestOverloadedConstructorsWithSequencePrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
         JSTestOverloadedConstructorsWithSequencePrototype* ptr = new (NotNull, JSC::allocateCell<JSTestOverloadedConstructorsWithSequencePrototype>(vm.heap)) JSTestOverloadedConstructorsWithSequencePrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
@@ -125,7 +125,7 @@ template<> JSValue JSTestOverloadedConstructorsWithSequenceConstructor::prototyp
 
 template<> void JSTestOverloadedConstructorsWithSequenceConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    putDirect(vm, vm.propertyNames->prototype, JSTestOverloadedConstructorsWithSequence::prototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
+    putDirect(vm, vm.propertyNames->prototype, JSTestOverloadedConstructorsWithSequence::prototype(vm, globalObject), DontDelete | ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral("TestOverloadedConstructorsWithSequence"))), ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
 }
@@ -161,12 +161,12 @@ void JSTestOverloadedConstructorsWithSequence::finishCreation(VM& vm)
 
 }
 
-JSObject* JSTestOverloadedConstructorsWithSequence::createPrototype(VM& vm, JSGlobalObject* globalObject)
+JSObject* JSTestOverloadedConstructorsWithSequence::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    return JSTestOverloadedConstructorsWithSequencePrototype::create(vm, globalObject, JSTestOverloadedConstructorsWithSequencePrototype::createStructure(vm, globalObject, globalObject->objectPrototype()));
+    return JSTestOverloadedConstructorsWithSequencePrototype::create(vm, &globalObject, JSTestOverloadedConstructorsWithSequencePrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
 }
 
-JSObject* JSTestOverloadedConstructorsWithSequence::prototype(VM& vm, JSGlobalObject* globalObject)
+JSObject* JSTestOverloadedConstructorsWithSequence::prototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
     return getDOMPrototype<JSTestOverloadedConstructorsWithSequence>(vm, globalObject);
 }

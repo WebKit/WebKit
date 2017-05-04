@@ -41,7 +41,7 @@ bool setJSInterfaceNameConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::En
 class JSInterfaceNamePrototype : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
-    static JSInterfaceNamePrototype* create(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
+    static JSInterfaceNamePrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
         JSInterfaceNamePrototype* ptr = new (NotNull, JSC::allocateCell<JSInterfaceNamePrototype>(vm.heap)) JSInterfaceNamePrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
@@ -73,7 +73,7 @@ template<> JSValue JSInterfaceNameConstructor::prototypeForStructure(JSC::VM& vm
 
 template<> void JSInterfaceNameConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    putDirect(vm, vm.propertyNames->prototype, JSInterfaceName::prototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
+    putDirect(vm, vm.propertyNames->prototype, JSInterfaceName::prototype(vm, globalObject), DontDelete | ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral("InterfaceName"))), ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
 }
@@ -109,12 +109,12 @@ void JSInterfaceName::finishCreation(VM& vm)
 
 }
 
-JSObject* JSInterfaceName::createPrototype(VM& vm, JSGlobalObject* globalObject)
+JSObject* JSInterfaceName::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    return JSInterfaceNamePrototype::create(vm, globalObject, JSInterfaceNamePrototype::createStructure(vm, globalObject, globalObject->objectPrototype()));
+    return JSInterfaceNamePrototype::create(vm, &globalObject, JSInterfaceNamePrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
 }
 
-JSObject* JSInterfaceName::prototype(VM& vm, JSGlobalObject* globalObject)
+JSObject* JSInterfaceName::prototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
     return getDOMPrototype<JSInterfaceName>(vm, globalObject);
 }

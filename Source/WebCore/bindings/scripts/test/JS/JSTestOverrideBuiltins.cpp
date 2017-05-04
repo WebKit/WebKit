@@ -48,7 +48,7 @@ bool setJSTestOverrideBuiltinsConstructor(JSC::ExecState*, JSC::EncodedJSValue, 
 class JSTestOverrideBuiltinsPrototype : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
-    static JSTestOverrideBuiltinsPrototype* create(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
+    static JSTestOverrideBuiltinsPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
         JSTestOverrideBuiltinsPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestOverrideBuiltinsPrototype>(vm.heap)) JSTestOverrideBuiltinsPrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
@@ -80,7 +80,7 @@ template<> JSValue JSTestOverrideBuiltinsConstructor::prototypeForStructure(JSC:
 
 template<> void JSTestOverrideBuiltinsConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    putDirect(vm, vm.propertyNames->prototype, JSTestOverrideBuiltins::prototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
+    putDirect(vm, vm.propertyNames->prototype, JSTestOverrideBuiltins::prototype(vm, globalObject), DontDelete | ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral("TestOverrideBuiltins"))), ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
 }
@@ -117,12 +117,12 @@ void JSTestOverrideBuiltins::finishCreation(VM& vm)
 
 }
 
-JSObject* JSTestOverrideBuiltins::createPrototype(VM& vm, JSGlobalObject* globalObject)
+JSObject* JSTestOverrideBuiltins::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    return JSTestOverrideBuiltinsPrototype::create(vm, globalObject, JSTestOverrideBuiltinsPrototype::createStructure(vm, globalObject, globalObject->objectPrototype()));
+    return JSTestOverrideBuiltinsPrototype::create(vm, &globalObject, JSTestOverrideBuiltinsPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
 }
 
-JSObject* JSTestOverrideBuiltins::prototype(VM& vm, JSGlobalObject* globalObject)
+JSObject* JSTestOverrideBuiltins::prototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
     return getDOMPrototype<JSTestOverrideBuiltins>(vm, globalObject);
 }

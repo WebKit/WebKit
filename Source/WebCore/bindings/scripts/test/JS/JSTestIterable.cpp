@@ -50,7 +50,7 @@ bool setJSTestIterableConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::Enc
 class JSTestIterablePrototype : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
-    static JSTestIterablePrototype* create(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
+    static JSTestIterablePrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
         JSTestIterablePrototype* ptr = new (NotNull, JSC::allocateCell<JSTestIterablePrototype>(vm.heap)) JSTestIterablePrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
@@ -82,7 +82,7 @@ template<> JSValue JSTestIterableConstructor::prototypeForStructure(JSC::VM& vm,
 
 template<> void JSTestIterableConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    putDirect(vm, vm.propertyNames->prototype, JSTestIterable::prototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
+    putDirect(vm, vm.propertyNames->prototype, JSTestIterable::prototype(vm, globalObject), DontDelete | ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral("TestIterable"))), ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
 }
@@ -123,12 +123,12 @@ void JSTestIterable::finishCreation(VM& vm)
 
 }
 
-JSObject* JSTestIterable::createPrototype(VM& vm, JSGlobalObject* globalObject)
+JSObject* JSTestIterable::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    return JSTestIterablePrototype::create(vm, globalObject, JSTestIterablePrototype::createStructure(vm, globalObject, globalObject->objectPrototype()));
+    return JSTestIterablePrototype::create(vm, &globalObject, JSTestIterablePrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
 }
 
-JSObject* JSTestIterable::prototype(VM& vm, JSGlobalObject* globalObject)
+JSObject* JSTestIterable::prototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
     return getDOMPrototype<JSTestIterable>(vm, globalObject);
 }

@@ -84,7 +84,7 @@ inline JSC::JSValue toJSNewlyCreated(JSC::ExecState* state, JSDOMGlobalObject* g
 class JSTestGlobalObjectPrototype : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
-    static JSTestGlobalObjectPrototype* create(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
+    static JSTestGlobalObjectPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
         JSTestGlobalObjectPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestGlobalObjectPrototype>(vm.heap)) JSTestGlobalObjectPrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);

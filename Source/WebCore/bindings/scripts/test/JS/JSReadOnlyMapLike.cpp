@@ -54,7 +54,7 @@ bool setJSReadOnlyMapLikeConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::
 class JSReadOnlyMapLikePrototype : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
-    static JSReadOnlyMapLikePrototype* create(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
+    static JSReadOnlyMapLikePrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
         JSReadOnlyMapLikePrototype* ptr = new (NotNull, JSC::allocateCell<JSReadOnlyMapLikePrototype>(vm.heap)) JSReadOnlyMapLikePrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
@@ -86,7 +86,7 @@ template<> JSValue JSReadOnlyMapLikeConstructor::prototypeForStructure(JSC::VM& 
 
 template<> void JSReadOnlyMapLikeConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    putDirect(vm, vm.propertyNames->prototype, JSReadOnlyMapLike::prototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
+    putDirect(vm, vm.propertyNames->prototype, JSReadOnlyMapLike::prototype(vm, globalObject), DontDelete | ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral("ReadOnlyMapLike"))), ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
 }
@@ -131,12 +131,12 @@ void JSReadOnlyMapLike::finishCreation(VM& vm)
     synchronizeBackingMap(*globalObject()->globalExec(), *globalObject(), *this);
 }
 
-JSObject* JSReadOnlyMapLike::createPrototype(VM& vm, JSGlobalObject* globalObject)
+JSObject* JSReadOnlyMapLike::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    return JSReadOnlyMapLikePrototype::create(vm, globalObject, JSReadOnlyMapLikePrototype::createStructure(vm, globalObject, globalObject->objectPrototype()));
+    return JSReadOnlyMapLikePrototype::create(vm, &globalObject, JSReadOnlyMapLikePrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
 }
 
-JSObject* JSReadOnlyMapLike::prototype(VM& vm, JSGlobalObject* globalObject)
+JSObject* JSReadOnlyMapLike::prototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
     return getDOMPrototype<JSReadOnlyMapLike>(vm, globalObject);
 }
