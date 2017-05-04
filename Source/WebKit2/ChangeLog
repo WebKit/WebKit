@@ -1,5 +1,25 @@
 2017-05-04  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        [WK2] Image action sheets sometimes do not dismiss when beginning data interaction
+        https://bugs.webkit.org/show_bug.cgi?id=171687
+        <rdar://problem/31996534>
+
+        Reviewed by Beth Dakin.
+
+        When presenting an image sheet using WKActionSheetAssistant, we may present the popover asynchronously. In this
+        case, even if -cleanupSheet is invoked after -showImageSheet, the popover will still be presented. To fix this,
+        add a flag, _hasPendingActionSheet, that is set to true when an image action sheet will be presented in the
+        future.
+
+        In cleanupSheet, we revert this flag to NO, and in the sheet presentation block, we first check to see if there
+        is a pending action sheet. If there is not, then simply do not invoke the image sheet presentation block.
+
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (-[WKActionSheetAssistant showImageSheet]):
+        (-[WKActionSheetAssistant cleanupSheet]):
+
+2017-05-04  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         [WK2] Add support for keeping the selection in a focused editable element when dragging begins
         https://bugs.webkit.org/show_bug.cgi?id=171585
         <rdar://problem/31544320>

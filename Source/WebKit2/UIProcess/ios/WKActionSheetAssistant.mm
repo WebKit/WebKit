@@ -91,6 +91,7 @@ static LSAppLink *appLinkForURL(NSURL *url)
     UIView *_view;
     BOOL _needsLinkIndicator;
     BOOL _isPresentingDDUserInterface;
+    BOOL _hasPendingActionSheet;
 }
 
 - (id <WKActionSheetAssistantDelegate>)delegate
@@ -365,7 +366,13 @@ static const CGFloat presentationElementRectPadding = 15;
     if (positionInformation.url.isEmpty() && positionInformation.image && [delegate respondsToSelector:@selector(actionSheetAssistant:getAlternateURLForImage:completion:)]) {
         RetainPtr<UIImage> uiImage = adoptNS([[UIImage alloc] initWithCGImage:positionInformation.image->makeCGImageCopy().get()]);
 
+        _hasPendingActionSheet = YES;
+        RetainPtr<WKActionSheetAssistant> retainedSelf(self);
         [delegate actionSheetAssistant:self getAlternateURLForImage:uiImage.get() completion:^(NSURL *alternateURL, NSDictionary *userInfo) {
+            if (!retainedSelf->_hasPendingActionSheet)
+                return;
+
+            retainedSelf->_hasPendingActionSheet = NO;
             showImageSheetWithAlternateURLBlock(alternateURL, userInfo);
         }];
         return;
@@ -597,6 +604,7 @@ static const CGFloat presentationElementRectPadding = 15;
     _elementInfo = nil;
     _needsLinkIndicator = NO;
     _isPresentingDDUserInterface = NO;
+    _hasPendingActionSheet = NO;
 }
 
 @end
