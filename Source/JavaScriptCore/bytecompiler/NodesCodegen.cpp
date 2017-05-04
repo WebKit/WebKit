@@ -1187,7 +1187,7 @@ RegisterID* FunctionCallDotNode::emitBytecode(BytecodeGenerator& generator, Regi
     return ret;
 }
 
-static constexpr size_t maxDistanceToInnermostCallOrApply = 4;
+static constexpr size_t maxDistanceToInnermostCallOrApply = 2;
 
 RegisterID* CallFunctionCallDotNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {

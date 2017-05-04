@@ -1,3 +1,20 @@
+2017-05-04  Saam Barati  <sbarati@apple.com>
+
+        stress/call-apply-exponential-bytecode-size.js.no-llint failing on 32-bit debug for OOM on executable memory
+        https://bugs.webkit.org/show_bug.cgi?id=171008
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch lowers the threshold for .call/.apply recursion
+        in an attempt to emit less code and not impact perf.
+        We're currently failing tests on x86-32 by running out
+        of executable memory. If perf gets impacted because of this,
+        then I'll apply a stricter change just to 32-bit platforms.
+        However, if this doesn't negatively impact perf, it's all around
+        better than all platforms emit less bytecode.
+
+        * bytecompiler/NodesCodegen.cpp:
+
 2017-05-04  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Math unary functions should be handled by DFG
