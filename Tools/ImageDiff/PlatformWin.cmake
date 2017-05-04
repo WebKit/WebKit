@@ -1,0 +1,5 @@
+if (${WTF_PLATFORM_WIN_CAIRO})
+    include(Cairo.cmake)
+else ()
+    include(PlatformMac.cmake)
+endif ()

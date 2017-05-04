@@ -1,3 +1,30 @@
+2017-05-03  Jonathan Bedard  <jbedard@apple.com>
+
+        Make ImageDiff stand-alone
+        https://bugs.webkit.org/show_bug.cgi?id=168939
+
+        Reviewed by David Kilzer.
+
+        Create ImageDiff without dependencies on bmalloc and WTF so that it exists as a
+        stand-alone project. Note that this change does not eliminate the ImageDiff inside
+        the DumpRenderTree project.
+
+        * ImageDiff/ImageDiff.xcodeproj: Added.
+        * ImageDiff/ImageDiff.xcodeproj/project.pbxproj: Added.
+        * ImageDiff/Makefile: Use ImageDiff project.
+        * ImageDiff/PlatformMac.cmake: Added.
+        * ImageDiff/PlatformWin.cmake: Added.
+        * ImageDiff/cg: Added.
+        * ImageDiff/cg/Configurations: Added.
+        * ImageDiff/cg/Configurations/Base.xcconfig: Copied from Tools/DumpRenderTree/mac/Configurations/Base.xcconfig.
+        * ImageDiff/cg/Configurations/DebugRelease.xcconfig: Copied from Tools/DumpRenderTree/mac/Configurations/DebugRelease.xcconfig.
+        * ImageDiff/cg/Configurations/ImageDiff.xcconfig: Copied from Tools/DumpRenderTree/mac/Configurations/ImageDiff.xcconfig.
+        * ImageDiff/cg/ImageDiff.cpp: Copied from Tools/DumpRenderTree/cg/ImageDiffCG.cpp.
+        (createImageFromStdin): Stop using RetainPtr.
+        (createDifferenceImage): Ditto.
+        (main): Ditto.
+        * Scripts/build-imagediff: Stop building WTF and bmalloc.
+
 2017-05-04  Sam Weinig  <sam@webkit.org>
 
         Remove support for legacy Notifications
