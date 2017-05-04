@@ -1,3 +1,13 @@
+2017-05-04  Brady Eidson  <beidson@apple.com>
+
+        [ios-simulator] API test WebKit2.WebsiteDataStoreCustomPaths is failing.
+        https://bugs.webkit.org/show_bug.cgi?id=171513
+
+        Unreviewed gardening.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/WebsiteDataStoreCustomPaths.mm:
+        (TEST): Skip the failing parts of the test on iOS for now.
+
 2017-05-03  Jonathan Bedard  <jbedard@apple.com>
 
         Make ImageDiff stand-alone
