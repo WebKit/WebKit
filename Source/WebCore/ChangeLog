@@ -1,3 +1,13 @@
+2017-05-03  Andy Estes  <aestes@apple.com>
+
+        Try to fix the macOS Public SDK build
+        https://bugs.webkit.org/show_bug.cgi?id=171635
+        <rdar://problem/31812751>
+
+        Unreviewed because the commit queue told me to say this.
+
+        * platform/spi/cocoa/AVKitSPI.h:
+
 2017-05-03  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: aria-rowspan value should be ignored if td/th rowspan value is provided
