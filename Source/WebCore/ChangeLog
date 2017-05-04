@@ -1,3 +1,15 @@
+2017-05-04  Jeremy Jones  <jeremyj@apple.com>
+
+        Crash when pointer lock element is removed before pointer lock allowed arrives.
+        https://bugs.webkit.org/show_bug.cgi?id=171642
+
+        Reviewed by Jer Noble.
+
+        Make sure there a pending lock before attempting to complete pointer lock.
+
+        * page/PointerLockController.cpp:
+        (WebCore::PointerLockController::didAcquirePointerLock):
+
 2017-05-04  Chris Dumez  <cdumez@apple.com>
 
         Reformat / Clean up Node.idl to match the specification

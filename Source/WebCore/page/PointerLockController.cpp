@@ -140,6 +140,11 @@ Element* PointerLockController::element() const
 
 void PointerLockController::didAcquirePointerLock()
 {
+    if (!m_lockPending)
+        return;
+    
+    ASSERT(m_element);
+    
     enqueueEvent(eventNames().pointerlockchangeEvent, m_element.get());
     m_lockPending = false;
     m_forceCursorVisibleUponUnlock = false;
