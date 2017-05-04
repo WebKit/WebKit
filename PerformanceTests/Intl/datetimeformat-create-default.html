@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<body>
+<script src="../resources/runner.js"></script>
+<script>
+var count = 0;
+PerfTestRunner.measureRunsPerSecond({run() {
+    new Intl.DateTimeFormat();
+    count++;
+}});
+</script>
+</body>

@@ -1,3 +1,23 @@
+2017-05-04  Andy VanWagoner  <thetalecrafter@gmail.com>
+
+        [INTL] Add PerformanceTests for Intl objects
+        https://bugs.webkit.org/show_bug.cgi?id=171695
+
+        Reviewed by Benjamin Poulain.
+
+        * Intl/collator-compare-all-options.html: Added.
+        * Intl/collator-compare-default.html: Added.
+        * Intl/collator-create-all-options.html: Added.
+        * Intl/collator-create-default.html: Added.
+        * Intl/datetimeformat-create-all-options.html: Added.
+        * Intl/datetimeformat-create-default.html: Added.
+        * Intl/datetimeformat-format-all-options.html: Added.
+        * Intl/datetimeformat-format-default.html: Added.
+        * Intl/numberformat-create-all-options.html: Added.
+        * Intl/numberformat-create-default.html: Added.
+        * Intl/numberformat-format-all-options.html: Added.
+        * Intl/numberformat-format-default.html: Added.
+
 2017-04-27  Michael Saboff  <msaboff@apple.com>
 
         Add back tests inadvertently deleted in r205032.
