@@ -115,12 +115,8 @@ void UserMediaProcessManager::willEnableMediaStreamInPage(WebPageProxy& pageStar
     for (auto& state : stateMap()) {
         for (auto& manager : state.value->managers()) {
 
-            if (&manager->page() == &pageStartingCapture) {
-#if PLATFORM(IOS)
-                manager->page().stopMediaCapture();
-#endif
+            if (&manager->page() == &pageStartingCapture)
                 continue;
-            }
 
             manager->page().setMuted(WebCore::MediaProducer::CaptureDevicesAreMuted);
         }
@@ -232,22 +228,6 @@ void UserMediaProcessManager::endedCaptureSession(UserMediaPermissionRequestMana
     state.setSandboxExtensionsGranted(currentExtensions);
     proxy.page().process().send(Messages::WebPage::RevokeUserMediaDeviceSandboxExtensions(params), proxy.page().pageID());
 #endif
-}
-
-void UserMediaProcessManager::setCaptureEnabled(bool enabled)
-{
-    if (enabled == m_captureEnabled)
-        return;
-
-    m_captureEnabled = enabled;
-
-    if (enabled)
-        return;
-
-    for (auto& state : stateMap()) {
-        for (auto& manager : state.value->managers())
-            manager->stopCapture();
-    }
 }
 
 } // namespace WebKit

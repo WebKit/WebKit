@@ -271,11 +271,6 @@
 #include "XSLTProcessor.h"
 #endif
 
-#if ENABLE(MEDIA_STREAM)
-#include "MediaStream.h"
-#include "MediaStreamRegistry.h"
-#endif
-
 using namespace WTF;
 using namespace Unicode;
 
@@ -6976,15 +6971,5 @@ void Document::orientationChanged(int orientation)
     dispatchWindowEvent(Event::create(eventNames().orientationchangeEvent, false, false));
     m_orientationNotifier.orientationChanged(orientation);
 }
-
-#if ENABLE(MEDIA_STREAM)
-void Document::stopMediaCapture()
-{
-    MediaStreamRegistry::shared().forEach([this](MediaStream& stream) {
-        if (stream.document() == this)
-            stream.endStream();
-    });
-}
-#endif
 
 } // namespace WebCore

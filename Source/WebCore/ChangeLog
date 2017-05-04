@@ -1,3 +1,18 @@
+2017-05-04  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r216172.
+        https://bugs.webkit.org/show_bug.cgi?id=171654
+
+        FTBFS for iOS due to missing WebPageProxy::stopMediaCapture()
+        implementation. (Requested by ddkilzer on #webkit).
+
+        Reverted changeset:
+
+        "[MediaStream] Allow host application to enable/disable media
+        capture"
+        https://bugs.webkit.org/show_bug.cgi?id=171292
+        http://trac.webkit.org/changeset/216172
+
 2017-05-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r215686): Incremental reads from SharedBuffer are wrong after r215686

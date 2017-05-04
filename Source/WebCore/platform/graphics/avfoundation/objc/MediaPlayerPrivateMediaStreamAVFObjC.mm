@@ -580,21 +580,21 @@ PlatformLayer* MediaPlayerPrivateMediaStreamAVFObjC::backgroundLayer()
 
 MediaPlayerPrivateMediaStreamAVFObjC::DisplayMode MediaPlayerPrivateMediaStreamAVFObjC::currentDisplayMode() const
 {
-    if (m_intrinsicSize.isEmpty() || !metaDataAvailable() || !m_sampleBufferDisplayLayer)
+    if (m_ended || m_intrinsicSize.isEmpty() || !metaDataAvailable() || !m_sampleBufferDisplayLayer)
         return None;
 
     if (auto* track = m_mediaStreamPrivate->activeVideoTrack()) {
-        if (!track->enabled() || track->muted() || track->ended())
+        if (!track->enabled() || track->muted())
             return PaintItBlack;
     }
 
-    if (playing() && !m_ended) {
+    if (playing()) {
         if (!m_mediaStreamPrivate->isProducingData())
             return PausedImage;
         return LivePreview;
     }
 
-    if (m_playbackState == PlaybackState::None || m_ended)
+    if (m_playbackState == PlaybackState::None)
         return PaintItBlack;
 
     return PausedImage;
@@ -768,10 +768,8 @@ void MediaPlayerPrivateMediaStreamAVFObjC::activeStatusChanged()
 
         if (ended != m_ended) {
             m_ended = ended;
-            if (m_player) {
+            if (m_player)
                 m_player->timeChanged();
-                m_player->characteristicChanged();
-            }
         }
     });
 }

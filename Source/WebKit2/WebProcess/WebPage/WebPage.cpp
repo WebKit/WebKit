@@ -4556,13 +4556,6 @@ void WebPage::setMuted(MediaProducer::MutedStateFlags state)
     m_page->setMuted(state);
 }
 
-void WebPage::stopMediaCapture()
-{
-#if ENABLE(MEDIA_STREAM)
-    m_page->stopMediaCapture();
-#endif
-}
-
 #if ENABLE(MEDIA_SESSION)
 void WebPage::handleMediaEvent(uint32_t eventType)
 {

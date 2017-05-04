@@ -71,9 +71,7 @@ public:
     bool ended() const;
 
     Ref<MediaStreamTrack> clone();
-
-    enum class StopMode { Silently, PostEvent };
-    void stopTrack(StopMode = StopMode::Silently);
+    void stopTrack();
 
     bool isCaptureTrack() const;
 
