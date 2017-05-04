@@ -2,6 +2,12 @@
 
         Unreviewed: Replace Windows line ending (CRLF) by Unix line ending (CR).
 
+        * plugins/windowless_plugin_paint_test.html:
+
+2017-05-04  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Unreviewed: Replace Windows line ending (CRLF) by Unix line ending (CR).
+
         * compositing/video/video-with-invalid-source.html:
 
 2017-05-04  Ryan Haddad  <ryanhaddad@apple.com>
