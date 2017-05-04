@@ -97,9 +97,10 @@ void TextTrackLoader::processNewCueData(CachedResource& resource)
             bytesToSkip -= segment->size();
             continue;
         }
-        m_cueParser->parseBytes(segment->data() + bytesToSkip, segment->size() - bytesToSkip);
+        auto bytesToUse = segment->size() - bytesToSkip;
+        m_cueParser->parseBytes(segment->data() + bytesToSkip, bytesToUse);
         bytesToSkip = 0;
-        m_parseOffset += segment->size();
+        m_parseOffset += bytesToUse;
     }
 }
 

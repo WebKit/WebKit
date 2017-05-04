@@ -1,3 +1,22 @@
+2017-05-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r215686): Incremental reads from SharedBuffer are wrong after r215686
+        https://bugs.webkit.org/show_bug.cgi?id=171602
+
+        Reviewed by Michael Catanzaro.
+
+        In TextTrackLoader::processNewCueData() and PNGImageReader::decode() we changed the patter to read data from a
+        SharedBuffer at a given offset. The new pattern is not correct, because it assumes the whole segment is always
+        read, and the new offset is not correct when that's not the case. This has broken the rendering of png images in
+        the GTK+ port, only the first bytes are correctly decoded and drawn, but not the rest of the image.
+
+        Fixes: editing/pasteboard/paste-image-using-image-data.html
+
+        * loader/TextTrackLoader.cpp:
+        (WebCore::TextTrackLoader::processNewCueData):
+        * platform/image-decoders/png/PNGImageDecoder.cpp:
+        (WebCore::PNGImageReader::decode):
+
 2017-05-03  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Allow host application to enable/disable media capture

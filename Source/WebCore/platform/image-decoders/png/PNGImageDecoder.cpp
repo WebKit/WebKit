@@ -163,9 +163,10 @@ public:
                 bytesToSkip -= segment->size();
                 continue;
             }
-            m_readOffset += segment->size();
+            auto bytesToUse = segment->size() - bytesToSkip;
+            m_readOffset += bytesToUse;
             m_currentBufferSize = m_readOffset;
-            png_process_data(m_png, m_info, reinterpret_cast<png_bytep>(const_cast<char*>(segment->data() + bytesToSkip)), segment->size() - bytesToSkip);
+            png_process_data(m_png, m_info, reinterpret_cast<png_bytep>(const_cast<char*>(segment->data() + bytesToSkip)), bytesToUse);
             bytesToSkip = 0;
             // We explicitly specify the superclass encodedDataStatus() because we
             // merely want to check if we've managed to set the size, not
