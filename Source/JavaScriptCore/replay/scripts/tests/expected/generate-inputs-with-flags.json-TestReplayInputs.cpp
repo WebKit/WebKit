@@ -59,7 +59,7 @@ ScalarInput2::~ScalarInput2()
 namespace JSC {
 const String& InputTraits<Test::ScalarInput1>::type()
 {
-    static NeverDestroyed<const String> type(ASCIILiteral("ScalarInput1"));
+    static NeverDestroyed<const String> type(MAKE_STATIC_STRING_IMPL("ScalarInput1"));
     return type;
 }
 
@@ -80,7 +80,7 @@ bool InputTraits<Test::ScalarInput1>::decode(EncodedValue& encodedValue, std::un
 
 const String& InputTraits<Test::ScalarInput2>::type()
 {
-    static NeverDestroyed<const String> type(ASCIILiteral("ScalarInput2"));
+    static NeverDestroyed<const String> type(MAKE_STATIC_STRING_IMPL("ScalarInput2"));
     return type;
 }
 

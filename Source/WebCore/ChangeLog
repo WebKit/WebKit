@@ -1,3 +1,130 @@
+2017-05-04  Mark Lam  <mark.lam@apple.com>
+
+        NeverDestroyed<String>(ASCIILiteral(...)) is not thread safe.
+        https://bugs.webkit.org/show_bug.cgi?id=171586
+        <rdar://problem/31873190>
+
+        Reviewed by Yusuke Suzuki.
+
+        No new tests because we're just converting uses of ASCIILiteral (in the
+        instantiation of NeverDestroyed<String> and NeverDestroyed<const String>) to
+        MAKE_STATIC_STRING_IMPL.
+
+        The correctness of using MAKE_STATIC_STRING_IMPL is tested in the newly added
+        API test in this patch.
+
+        Also changed "static NeverDestroyed<ASCIILiteral>" instances in
+        SQLiteIDBBackingStore.cpp to "static const char* const" because they are only
+        ever used to get the underlying const char*.
+
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::cachedStatementForGetAllObjectStoreRecords):
+        * Modules/mediastream/MediaEndpointSessionDescription.cpp:
+        * Modules/mediastream/RTCRtpTransceiver.cpp:
+        * Modules/mediastream/SDPProcessor.cpp:
+        * Modules/navigatorcontentutils/NavigatorContentUtils.cpp:
+        (WebCore::customHandlersStateString):
+        (WebCore::NavigatorContentUtils::isProtocolHandlerRegistered):
+        * Modules/speech/SpeechSynthesis.cpp:
+        (WebCore::SpeechSynthesis::boundaryEventOccurred):
+        * accessibility/AccessibilityMediaControls.cpp:
+        (WebCore::AccessibilityMediaControl::controlTypeName):
+        (WebCore::AccessibilityMediaControl::title):
+        (WebCore::AccessibilityMediaControlsContainer::elementTypeName):
+        (WebCore::AccessibilityMediaTimeline::helpText):
+        (WebCore::AccessibilityMediaTimeDisplay::accessibilityDescription):
+        * bindings/js/JSLazyEventListener.cpp:
+        (WebCore::eventParameterName):
+        * contentextensions/ContentExtensionsBackend.cpp:
+        (WebCore::ContentExtensions::ContentExtensionsBackend::displayNoneCSSRule):
+        * css/CSSDefaultStyleSheets.cpp:
+        (WebCore::screenEval):
+        (WebCore::printEval):
+        * css/MediaList.cpp:
+        (WebCore::addResolutionWarningMessageToConsole):
+        * css/StyleSheetContents.cpp:
+        (WebCore::StyleSheetContents::parseAuthorStyleSheet):
+        * dom/Document.cpp:
+        (WebCore::Document::readyState):
+        * dom/LoadableClassicScript.cpp:
+        (WebCore::LoadableClassicScript::notifyFinished):
+        * dom/PseudoElement.cpp:
+        (WebCore::PseudoElement::pseudoElementNameForEvents):
+        * editing/MarkupAccumulator.cpp:
+        (WebCore::MarkupAccumulator::shouldAddNamespaceElement):
+        * editing/cocoa/DataDetection.mm:
+        (WebCore::DataDetection::dataDetectorURLProtocol):
+        * editing/markup.cpp:
+        (WebCore::StyledMarkupAccumulator::styleNodeCloseTag):
+        (WebCore::createMarkupInternal):
+        * html/FormController.cpp:
+        (WebCore::formStateSignature):
+        * html/ImageInputType.cpp:
+        (WebCore::ImageInputType::appendFormData):
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::realizeSaves):
+        (WebCore::CanvasRenderingContext2D::getImageData):
+        * html/parser/XSSAuditor.cpp:
+        (WebCore::XSSAuditor::init):
+        (WebCore::XSSAuditor::eraseDangerousAttributesIfInjected):
+        * html/track/VTTCue.cpp:
+        (WebCore::startKeyword):
+        (WebCore::middleKeyword):
+        (WebCore::endKeyword):
+        (WebCore::leftKeyword):
+        (WebCore::rightKeyword):
+        (WebCore::verticalGrowingLeftKeyword):
+        (WebCore::verticalGrowingRightKeyword):
+        (WebCore::VTTCue::determineTextDirection):
+        (WebCore::VTTCue::markFutureAndPastNodes):
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::computePseudoClassMask):
+        * inspector/InspectorIndexedDBAgent.cpp:
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::sourceMapURLForResource):
+        * inspector/PageDebuggerAgent.cpp:
+        (WebCore::PageDebuggerAgent::sourceMapURLForScript):
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::notifyFinished):
+        * loader/TextTrackLoader.cpp:
+        (WebCore::TextTrackLoader::corsPolicyPreventedLoad):
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::defaultDatabaseFilename):
+        * page/CaptionUserPreferencesMediaAF.cpp:
+        (WebCore::CaptionUserPreferencesMediaAF::captionsTextEdgeCSS):
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::urlWithUniqueSecurityOrigin):
+        * page/UserContentURLPattern.cpp:
+        (WebCore::UserContentURLPattern::parse):
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::defaultMIMEType):
+        * platform/animation/Animation.cpp:
+        (WebCore::Animation::initialName):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::engineDescription):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::engineDescription):
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::FontCache::similarFont):
+        * platform/gtk/UserAgentGtk.cpp:
+        (WebCore::platformVersionForUAString):
+        * platform/mock/mediasource/MockBox.cpp:
+        (WebCore::MockTrackBox::type):
+        (WebCore::MockInitializationBox::type):
+        (WebCore::MockSampleBox::type):
+        * platform/network/HTTPHeaderValues.cpp:
+        (WebCore::HTTPHeaderValues::textPlainContentType):
+        (WebCore::HTTPHeaderValues::formURLEncodedContentType):
+        (WebCore::HTTPHeaderValues::noCache):
+        (WebCore::HTTPHeaderValues::maxAge0):
+        * platform/network/HTTPParsers.cpp:
+        (WebCore::parseXSSProtectionHeader):
+        * replay/MemoizedDOMResult.cpp:
+        (JSC::InputTraits<MemoizedDOMResultBase>::type):
+        * svg/SVGTransformValue.cpp:
+        (WebCore::SVGTransformValue::transformTypePrefixForParsing):
+
 2017-05-04  Jeremy Jones  <jeremyj@apple.com>
 
         Add muted to WebPlaybackSessionModel.

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Google Inc. All rights reserved.
  * Copyright (C) 2012 Samsung Electronics. All rights reserved.
  *
@@ -65,8 +65,8 @@ bool ImageInputType::appendFormData(FormDataList& encoding, bool) const
         return true;
     }
 
-    static NeverDestroyed<String> dotXString(ASCIILiteral(".x"));
-    static NeverDestroyed<String> dotYString(ASCIILiteral(".y"));
+    static NeverDestroyed<String> dotXString(MAKE_STATIC_STRING_IMPL(".x"));
+    static NeverDestroyed<String> dotYString(MAKE_STATIC_STRING_IMPL(".y"));
     encoding.appendData(name + dotXString.get(), m_clickLocation.x());
     encoding.appendData(name + dotYString.get(), m_clickLocation.y());
 

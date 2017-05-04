@@ -51,7 +51,7 @@ SavedMouseButton::~SavedMouseButton()
 namespace JSC {
 const String& InputTraits<Test::SavedMouseButton>::type()
 {
-    static NeverDestroyed<const String> type(ASCIILiteral("SavedMouseButton"));
+    static NeverDestroyed<const String> type(MAKE_STATIC_STRING_IMPL("SavedMouseButton"));
     return type;
 }
 

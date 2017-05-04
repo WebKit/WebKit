@@ -26,6 +26,7 @@
 #include "config.h"
 
 #include <wtf/Hasher.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/SymbolImpl.h>
 #include <wtf/text/WTFString.h>
 
@@ -624,6 +625,54 @@ TEST(WTF, StringImplConstexprHasher)
 TEST(WTF, StringImplEmpty)
 {
     ASSERT_FALSE(StringImpl::empty()->length());
+}
+
+static const String& neverDestroyedString()
+{
+    static NeverDestroyed<String> str(StaticStringImpl("NeverDestroyedString"));
+    return str;
+};
+
+static const String& getNeverDestroyedStringAtStackDepth(int i)
+{
+    if (--i)
+        return getNeverDestroyedStringAtStackDepth(i);
+    return neverDestroyedString();
+};
+
+TEST(WTF, StaticStringImpl)
+{
+    // Construct using MAKE_STATIC_STRING_IMPL.
+    String hello(MAKE_STATIC_STRING_IMPL("hello"));
+    String world(MAKE_STATIC_STRING_IMPL("world"));
+    String longer(MAKE_STATIC_STRING_IMPL("longer"));
+    String hello2(MAKE_STATIC_STRING_IMPL("hello"));
+
+    ASSERT_EQ(strlen("hello"), hello.length());
+    ASSERT_EQ(strlen("world"), world.length());
+    ASSERT_EQ(strlen("longer"), longer.length());
+    ASSERT_EQ(strlen("hello"), hello2.length());
+
+    ASSERT_TRUE(equal(hello, "hello"));
+    ASSERT_TRUE(equal(world, "world"));
+    ASSERT_TRUE(equal(longer, "longer"));
+    ASSERT_TRUE(equal(hello2, "hello"));
+
+    // Each StaticStringImpl* returned by MAKE_STATIC_STRING_IMPL should be unique.
+    ASSERT_NE(hello.impl(), hello2.impl());
+
+    // Test that MAKE_STATIC_STRING_IMPL isn't allocating a StaticStringImpl on the stack.
+    const String& str1 = getNeverDestroyedStringAtStackDepth(10);
+    ASSERT_EQ(strlen("NeverDestroyedString"), str1.length());
+    ASSERT_TRUE(equal(str1, "NeverDestroyedString"));
+
+    const String& str2 = getNeverDestroyedStringAtStackDepth(20);
+    ASSERT_EQ(strlen("NeverDestroyedString"), str2.length());
+    ASSERT_TRUE(equal(str2, "NeverDestroyedString"));
+
+    ASSERT_TRUE(equal(str1, str2));
+    ASSERT_EQ(&str1, &str2);
+    ASSERT_EQ(str1.impl(), str2.impl());
 }
 
 } // namespace TestWebKitAPI

@@ -1137,9 +1137,9 @@ ExceptionOr<Ref<Element>> Document::createElementNS(const AtomicString& namespac
 
 String Document::readyState() const
 {
-    static NeverDestroyed<const String> loading(ASCIILiteral("loading"));
-    static NeverDestroyed<const String> interactive(ASCIILiteral("interactive"));
-    static NeverDestroyed<const String> complete(ASCIILiteral("complete"));
+    static NeverDestroyed<const String> loading(MAKE_STATIC_STRING_IMPL("loading"));
+    static NeverDestroyed<const String> interactive(MAKE_STATIC_STRING_IMPL("interactive"));
+    static NeverDestroyed<const String> complete(MAKE_STATIC_STRING_IMPL("complete"));
 
     switch (m_readyState) {
     case Loading:

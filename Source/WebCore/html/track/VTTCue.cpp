@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011, 2013 Google Inc.  All rights reserved.
- * Copyright (C) 2011-2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -74,31 +74,31 @@ COMPILE_ASSERT(WTF_ARRAY_LENGTH(displayAlignmentMap) == VTTCue::NumberOfAlignmen
 
 static const String& startKeyword()
 {
-    static NeverDestroyed<const String> start(ASCIILiteral("start"));
+    static NeverDestroyed<const String> start(MAKE_STATIC_STRING_IMPL("start"));
     return start;
 }
 
 static const String& middleKeyword()
 {
-    static NeverDestroyed<const String> middle(ASCIILiteral("middle"));
+    static NeverDestroyed<const String> middle(MAKE_STATIC_STRING_IMPL("middle"));
     return middle;
 }
 
 static const String& endKeyword()
 {
-    static NeverDestroyed<const String> end(ASCIILiteral("end"));
+    static NeverDestroyed<const String> end(MAKE_STATIC_STRING_IMPL("end"));
     return end;
 }
 
 static const String& leftKeyword()
 {
-    static NeverDestroyed<const String> left("left");
+    static NeverDestroyed<const String> left(MAKE_STATIC_STRING_IMPL("left"));
     return left;
 }
 
 static const String& rightKeyword()
 {
-    static NeverDestroyed<const String> right("right");
+    static NeverDestroyed<const String> right(MAKE_STATIC_STRING_IMPL("right"));
     return right;
 }
 
@@ -109,13 +109,13 @@ static const String& horizontalKeyword()
 
 static const String& verticalGrowingLeftKeyword()
 {
-    static NeverDestroyed<const String> verticalrl(ASCIILiteral("rl"));
+    static NeverDestroyed<const String> verticalrl(MAKE_STATIC_STRING_IMPL("rl"));
     return verticalrl;
 }
 
 static const String& verticalGrowingRightKeyword()
 {
-    static NeverDestroyed<const String> verticallr(ASCIILiteral("lr"));
+    static NeverDestroyed<const String> verticallr(MAKE_STATIC_STRING_IMPL("lr"));
     return verticallr;
 }
 
@@ -609,7 +609,7 @@ static bool isCueParagraphSeparator(UChar character)
 
 void VTTCue::determineTextDirection()
 {
-    static NeverDestroyed<const String> rtTag(ASCIILiteral("rt"));
+    static NeverDestroyed<const String> rtTag(MAKE_STATIC_STRING_IMPL("rt"));
     createWebVTTNodeTree();
     if (!m_webVTTNodeTree)
         return;
@@ -753,7 +753,7 @@ void VTTCue::calculateDisplayParameters()
     
 void VTTCue::markFutureAndPastNodes(ContainerNode* root, const MediaTime& previousTimestamp, const MediaTime& movieTime)
 {
-    static NeverDestroyed<const String> timestampTag(ASCIILiteral("timestamp"));
+    static NeverDestroyed<const String> timestampTag(MAKE_STATIC_STRING_IMPL("timestamp"));
     
     bool isPastNode = true;
     MediaTime currentTimestamp = previousTimestamp;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -80,7 +80,7 @@ MockTrackBox::MockTrackBox(ArrayBuffer* data)
 
 const String& MockTrackBox::type()
 {
-    static NeverDestroyed<String> trak(ASCIILiteral("trak"));
+    static NeverDestroyed<String> trak(MAKE_STATIC_STRING_IMPL("trak"));
     return trak;
 }
 
@@ -109,7 +109,7 @@ MockInitializationBox::MockInitializationBox(ArrayBuffer* data)
 
 const String& MockInitializationBox::type()
 {
-    static NeverDestroyed<String> init(ASCIILiteral("init"));
+    static NeverDestroyed<String> init(MAKE_STATIC_STRING_IMPL("init"));
     return init;
 }
 
@@ -137,7 +137,7 @@ MockSampleBox::MockSampleBox(ArrayBuffer* data)
 
 const String& MockSampleBox::type()
 {
-    static NeverDestroyed<String> smpl(ASCIILiteral("smpl"));
+    static NeverDestroyed<String> smpl(MAKE_STATIC_STRING_IMPL("smpl"));
     return smpl;
 }
 

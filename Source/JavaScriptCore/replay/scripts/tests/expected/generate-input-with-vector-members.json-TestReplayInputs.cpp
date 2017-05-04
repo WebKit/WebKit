@@ -63,7 +63,7 @@ SavedHistory::~SavedHistory()
 namespace JSC {
 const String& InputTraits<Test::ArrayOfThings>::type()
 {
-    static NeverDestroyed<const String> type(ASCIILiteral("ArrayOfThings"));
+    static NeverDestroyed<const String> type(MAKE_STATIC_STRING_IMPL("ArrayOfThings"));
     return type;
 }
 
@@ -94,7 +94,7 @@ bool InputTraits<Test::ArrayOfThings>::decode(EncodedValue& encodedValue, std::u
 
 const String& InputTraits<Test::SavedHistory>::type()
 {
-    static NeverDestroyed<const String> type(ASCIILiteral("SavedHistory"));
+    static NeverDestroyed<const String> type(MAKE_STATIC_STRING_IMPL("SavedHistory"));
     return type;
 }
 

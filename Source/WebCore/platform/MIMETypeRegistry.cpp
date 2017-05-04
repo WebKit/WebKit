@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2016 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2017 Apple Inc.  All rights reserved.
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -697,7 +697,7 @@ HashSet<String, ASCIICaseInsensitiveHash>& MIMETypeRegistry::getUnsupportedTextM
 
 const String& defaultMIMEType()
 {
-    static NeverDestroyed<const String> defaultMIMEType(ASCIILiteral("application/octet-stream"));
+    static NeverDestroyed<const String> defaultMIMEType(MAKE_STATIC_STRING_IMPL("application/octet-stream"));
     return defaultMIMEType;
 }
 

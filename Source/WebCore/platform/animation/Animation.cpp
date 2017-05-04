@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -165,7 +165,7 @@ bool Animation::animationsMatch(const Animation& other, bool matchPlayStates) co
 
 const String& Animation::initialName()
 {
-    static NeverDestroyed<String> initialValue(ASCIILiteral("none"));
+    static NeverDestroyed<String> initialValue(MAKE_STATIC_STRING_IMPL("none"));
     return initialValue;
 }
 

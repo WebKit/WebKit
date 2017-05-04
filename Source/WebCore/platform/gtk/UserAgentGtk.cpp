@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012, 2014, 2016 Igalia S.L.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -64,7 +65,7 @@ static const String platformVersionForUAString()
     // OS X or anything on ARM triggers mobile versions of some websites.
     //
     // FIXME: The final result should include OS version, e.g. "Intel Mac OS X 10_8_4".
-    static NeverDestroyed<const String> uaOSVersion(ASCIILiteral("Intel Mac OS X"));
+    static NeverDestroyed<const String> uaOSVersion(MAKE_STATIC_STRING_IMPL("Intel Mac OS X"));
     return uaOSVersion;
 #endif
 }

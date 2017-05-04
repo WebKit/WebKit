@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -77,10 +77,10 @@ enum ForcePseudoClassFlags {
 
 static unsigned computePseudoClassMask(const InspectorArray& pseudoClassArray)
 {
-    static NeverDestroyed<String> active(ASCIILiteral("active"));
-    static NeverDestroyed<String> hover(ASCIILiteral("hover"));
-    static NeverDestroyed<String> focus(ASCIILiteral("focus"));
-    static NeverDestroyed<String> visited(ASCIILiteral("visited"));
+    static NeverDestroyed<String> active(MAKE_STATIC_STRING_IMPL("active"));
+    static NeverDestroyed<String> hover(MAKE_STATIC_STRING_IMPL("hover"));
+    static NeverDestroyed<String> focus(MAKE_STATIC_STRING_IMPL("focus"));
+    static NeverDestroyed<String> visited(MAKE_STATIC_STRING_IMPL("visited"));
     if (!pseudoClassArray.length())
         return PseudoClassNone;
 

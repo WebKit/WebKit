@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,8 +44,8 @@ BuiltinExecutables::BuiltinExecutables(VM& vm)
 
 UnlinkedFunctionExecutable* BuiltinExecutables::createDefaultConstructor(ConstructorKind constructorKind, const Identifier& name)
 {
-    static NeverDestroyed<const String> baseConstructorCode(ASCIILiteral("(function () { })"));
-    static NeverDestroyed<const String> derivedConstructorCode(ASCIILiteral("(function (...args) { super(...args); })"));
+    static NeverDestroyed<const String> baseConstructorCode(MAKE_STATIC_STRING_IMPL("(function () { })"));
+    static NeverDestroyed<const String> derivedConstructorCode(MAKE_STATIC_STRING_IMPL("(function (...args) { super(...args); })"));
 
     switch (constructorKind) {
     case ConstructorKind::None:

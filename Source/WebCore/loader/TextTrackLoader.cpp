@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc.  All rights reserved.
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -117,7 +117,7 @@ void TextTrackLoader::deprecatedDidReceiveCachedResource(CachedResource& resourc
 
 void TextTrackLoader::corsPolicyPreventedLoad()
 {
-    static NeverDestroyed<String> consoleMessage(ASCIILiteral("Cross-origin text track load denied by Cross-Origin Resource Sharing policy."));
+    static NeverDestroyed<String> consoleMessage(MAKE_STATIC_STRING_IMPL("Cross-origin text track load denied by Cross-Origin Resource Sharing policy."));
     Document* document = downcast<Document>(m_scriptExecutionContext);
     document->addConsoleMessage(MessageSource::Security, MessageLevel::Error, consoleMessage);
     m_state = Failed;

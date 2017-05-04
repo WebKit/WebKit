@@ -1,6 +1,6 @@
 /*
  * (C) 1999 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -114,8 +114,11 @@ public:
     String(Ref<AtomicStringImpl>&&);
     String(RefPtr<AtomicStringImpl>&&);
 
+    String(StaticStringImpl&);
+    String(StaticStringImpl*);
+
     // Construct a string from a constant string literal.
-    WTF_EXPORT_STRING_API String(ASCIILiteral characters);
+    WTF_EXPORT_STRING_API String(ASCIILiteral);
 
     // Construct a string from a constant string literal.
     // This constructor is the "big" version, as it put the length in the function call and generate bigger code.
@@ -489,6 +492,8 @@ private:
     RefPtr<StringImpl> m_impl;
 };
 
+static_assert(sizeof(String) == sizeof(void*), "String should effectively be a pointer to a StringImpl, and efficient to pass by value");
+
 inline bool operator==(const String& a, const String& b) { return equal(a.impl(), b.impl()); }
 inline bool operator==(const String& a, const LChar* b) { return equal(a.impl(), b); }
 inline bool operator==(const String& a, const char* b) { return equal(a.impl(), reinterpret_cast<const LChar*>(b)); }
@@ -555,6 +560,16 @@ inline String::String(Ref<AtomicStringImpl>&& impl)
 
 inline String::String(RefPtr<AtomicStringImpl>&& impl)
     : m_impl(WTFMove(impl))
+{
+}
+
+inline String::String(StaticStringImpl& impl)
+    : m_impl(reinterpret_cast<StringImpl*>(&impl))
+{
+}
+
+inline String::String(StaticStringImpl* impl)
+    : m_impl(reinterpret_cast<StringImpl*>(impl))
 {
 }
 
@@ -728,7 +743,7 @@ template<> struct IntegerToStringConversionTrait<String> {
     static String flush(LChar* characters, unsigned length, void*) { return { characters, length }; }
 };
 
-}
+} // namespace WTF
 
 using WTF::CString;
 using WTF::KeepTrailingZeros;

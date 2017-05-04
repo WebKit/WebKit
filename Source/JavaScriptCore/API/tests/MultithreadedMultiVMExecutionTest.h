@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,26 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebPreferencesKeys.h"
+#pragma once
 
-#include <wtf/NeverDestroyed.h>
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-namespace WebKit {
-namespace WebPreferencesKey {
+extern void startMultithreadedMultiVMExecutionTest();
 
-#define DEFINE_KEY_GETTERS(KeyUpper, KeyLower, TypeName, Type, DefaultValue, HumanReadableName, HumanReadableDescription) \
-        const String& KeyLower##Key() \
-        { \
-            static NeverDestroyed<String> key(MAKE_STATIC_STRING_IMPL(#KeyUpper)); \
-            return key; \
-        }
+/* Returns 1 if failures were encountered.  Else, returns 0. */
+extern int finalizeMultithreadedMultiVMExecutionTest();
 
-FOR_EACH_WEBKIT_PREFERENCE(DEFINE_KEY_GETTERS)
-FOR_EACH_WEBKIT_DEBUG_PREFERENCE(DEFINE_KEY_GETTERS)
-FOR_EACH_WEBKIT_EXPERIMENTAL_FEATURE_PREFERENCE(DEFINE_KEY_GETTERS)
-
-#undef DEFINE_KEY_GETTERS
-
-} // namespace WebPreferencesKey
-} // namespace WebKit
+#ifdef __cplusplus
+} /* extern "C" */
+#endif

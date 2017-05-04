@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,25 +34,25 @@ namespace HTTPHeaderValues {
 
 const String& textPlainContentType()
 {
-    static NeverDestroyed<const String> contentType(ASCIILiteral("text/plain;charset=UTF-8"));
+    static NeverDestroyed<const String> contentType(MAKE_STATIC_STRING_IMPL("text/plain;charset=UTF-8"));
     return contentType;
 }
 
 const String& formURLEncodedContentType()
 {
-    static NeverDestroyed<const String> contentType(ASCIILiteral("application/x-www-form-urlencoded;charset=UTF-8"));
+    static NeverDestroyed<const String> contentType(MAKE_STATIC_STRING_IMPL("application/x-www-form-urlencoded;charset=UTF-8"));
     return contentType;
 }
 
 const String& noCache()
 {
-    static NeverDestroyed<const String> value(ASCIILiteral("no-cache"));
+    static NeverDestroyed<const String> value(MAKE_STATIC_STRING_IMPL("no-cache"));
     return value;
 }
 
 const String& maxAge0()
 {
-    static NeverDestroyed<const String> value(ASCIILiteral("max-age=0"));
+    static NeverDestroyed<const String> value(MAKE_STATIC_STRING_IMPL("max-age=0"));
     return value;
 }
 

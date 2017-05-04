@@ -535,7 +535,7 @@ bool SecurityOrigin::isSameSchemeHostPort(const SecurityOrigin& other) const
 URL SecurityOrigin::urlWithUniqueSecurityOrigin()
 {
     ASSERT(isMainThread());
-    static NeverDestroyed<URL> uniqueSecurityOriginURL(ParsedURLString, ASCIILiteral("data:,"));
+    static NeverDestroyed<URL> uniqueSecurityOriginURL(ParsedURLString, MAKE_STATIC_STRING_IMPL("data:,"));
     return uniqueSecurityOriginURL;
 }
 

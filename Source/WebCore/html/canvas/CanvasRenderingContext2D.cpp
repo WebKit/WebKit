@@ -352,7 +352,7 @@ void CanvasRenderingContext2D::realizeSaves()
         realizeSavesLoop();
 
     if (m_unrealizedSaveCount) {
-        static NeverDestroyed<String> consoleMessage(ASCIILiteral("CanvasRenderingContext2D.save() has been called without a matching restore() too many times. Ignoring save()."));
+        static NeverDestroyed<String> consoleMessage(MAKE_STATIC_STRING_IMPL("CanvasRenderingContext2D.save() has been called without a matching restore() too many times. Ignoring save()."));
         canvas().document().addConsoleMessage(MessageSource::Rendering, MessageLevel::Error, consoleMessage);
     }
 }
@@ -1981,7 +1981,7 @@ ExceptionOr<RefPtr<ImageData>> CanvasRenderingContext2D::webkitGetImageDataHD(fl
 ExceptionOr<RefPtr<ImageData>> CanvasRenderingContext2D::getImageData(ImageBuffer::CoordinateSystem coordinateSystem, float sx, float sy, float sw, float sh) const
 {
     if (!canvas().originClean()) {
-        static NeverDestroyed<String> consoleMessage(ASCIILiteral("Unable to get image data from canvas because the canvas has been tainted by cross-origin data."));
+        static NeverDestroyed<String> consoleMessage(MAKE_STATIC_STRING_IMPL("Unable to get image data from canvas because the canvas has been tainted by cross-origin data."));
         canvas().document().addConsoleMessage(MessageSource::Security, MessageLevel::Error, consoleMessage);
         return Exception { SECURITY_ERR };
     }

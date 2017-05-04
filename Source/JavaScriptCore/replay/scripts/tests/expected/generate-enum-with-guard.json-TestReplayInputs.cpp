@@ -52,7 +52,7 @@ HandleWheelEvent::~HandleWheelEvent()
 namespace JSC {
 const String& InputTraits<Test::HandleWheelEvent>::type()
 {
-    static NeverDestroyed<const String> type(ASCIILiteral("HandleWheelEvent"));
+    static NeverDestroyed<const String> type(MAKE_STATIC_STRING_IMPL("HandleWheelEvent"));
     return type;
 }
 

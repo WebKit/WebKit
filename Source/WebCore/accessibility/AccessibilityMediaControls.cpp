@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -83,21 +83,21 @@ MediaControlElementType AccessibilityMediaControl::controlType() const
 
 const String& AccessibilityMediaControl::controlTypeName() const
 {
-    static NeverDestroyed<const String> mediaEnterFullscreenButtonName(ASCIILiteral("EnterFullscreenButton"));
-    static NeverDestroyed<const String> mediaExitFullscreenButtonName(ASCIILiteral("ExitFullscreenButton"));
-    static NeverDestroyed<const String> mediaMuteButtonName(ASCIILiteral("MuteButton"));
-    static NeverDestroyed<const String> mediaPlayButtonName(ASCIILiteral("PlayButton"));
-    static NeverDestroyed<const String> mediaSeekBackButtonName(ASCIILiteral("SeekBackButton"));
-    static NeverDestroyed<const String> mediaSeekForwardButtonName(ASCIILiteral("SeekForwardButton"));
-    static NeverDestroyed<const String> mediaRewindButtonName(ASCIILiteral("RewindButton"));
-    static NeverDestroyed<const String> mediaReturnToRealtimeButtonName(ASCIILiteral("ReturnToRealtimeButton"));
-    static NeverDestroyed<const String> mediaUnMuteButtonName(ASCIILiteral("UnMuteButton"));
-    static NeverDestroyed<const String> mediaPauseButtonName(ASCIILiteral("PauseButton"));
-    static NeverDestroyed<const String> mediaStatusDisplayName(ASCIILiteral("StatusDisplay"));
-    static NeverDestroyed<const String> mediaCurrentTimeDisplay(ASCIILiteral("CurrentTimeDisplay"));
-    static NeverDestroyed<const String> mediaTimeRemainingDisplay(ASCIILiteral("TimeRemainingDisplay"));
-    static NeverDestroyed<const String> mediaShowClosedCaptionsButtonName(ASCIILiteral("ShowClosedCaptionsButton"));
-    static NeverDestroyed<const String> mediaHideClosedCaptionsButtonName(ASCIILiteral("HideClosedCaptionsButton"));
+    static NeverDestroyed<const String> mediaEnterFullscreenButtonName(MAKE_STATIC_STRING_IMPL("EnterFullscreenButton"));
+    static NeverDestroyed<const String> mediaExitFullscreenButtonName(MAKE_STATIC_STRING_IMPL("ExitFullscreenButton"));
+    static NeverDestroyed<const String> mediaMuteButtonName(MAKE_STATIC_STRING_IMPL("MuteButton"));
+    static NeverDestroyed<const String> mediaPlayButtonName(MAKE_STATIC_STRING_IMPL("PlayButton"));
+    static NeverDestroyed<const String> mediaSeekBackButtonName(MAKE_STATIC_STRING_IMPL("SeekBackButton"));
+    static NeverDestroyed<const String> mediaSeekForwardButtonName(MAKE_STATIC_STRING_IMPL("SeekForwardButton"));
+    static NeverDestroyed<const String> mediaRewindButtonName(MAKE_STATIC_STRING_IMPL("RewindButton"));
+    static NeverDestroyed<const String> mediaReturnToRealtimeButtonName(MAKE_STATIC_STRING_IMPL("ReturnToRealtimeButton"));
+    static NeverDestroyed<const String> mediaUnMuteButtonName(MAKE_STATIC_STRING_IMPL("UnMuteButton"));
+    static NeverDestroyed<const String> mediaPauseButtonName(MAKE_STATIC_STRING_IMPL("PauseButton"));
+    static NeverDestroyed<const String> mediaStatusDisplayName(MAKE_STATIC_STRING_IMPL("StatusDisplay"));
+    static NeverDestroyed<const String> mediaCurrentTimeDisplay(MAKE_STATIC_STRING_IMPL("CurrentTimeDisplay"));
+    static NeverDestroyed<const String> mediaTimeRemainingDisplay(MAKE_STATIC_STRING_IMPL("TimeRemainingDisplay"));
+    static NeverDestroyed<const String> mediaShowClosedCaptionsButtonName(MAKE_STATIC_STRING_IMPL("ShowClosedCaptionsButton"));
+    static NeverDestroyed<const String> mediaHideClosedCaptionsButtonName(MAKE_STATIC_STRING_IMPL("HideClosedCaptionsButton"));
 
     switch (controlType()) {
     case MediaEnterFullscreenButton:
@@ -156,7 +156,7 @@ void AccessibilityMediaControl::accessibilityText(Vector<AccessibilityText>& tex
 
 String AccessibilityMediaControl::title() const
 {
-    static NeverDestroyed<const String> controlsPanel(ASCIILiteral("ControlsPanel"));
+    static NeverDestroyed<const String> controlsPanel(MAKE_STATIC_STRING_IMPL("ControlsPanel"));
 
     if (controlType() == MediaControlsPanel)
         return localizedMediaControlElementString(controlsPanel);
@@ -245,8 +245,8 @@ bool AccessibilityMediaControlsContainer::controllingVideoElement() const
 
 const String& AccessibilityMediaControlsContainer::elementTypeName() const
 {
-    static NeverDestroyed<const String> videoElement(ASCIILiteral("VideoElement"));
-    static NeverDestroyed<const String> audioElement(ASCIILiteral("AudioElement"));
+    static NeverDestroyed<const String> videoElement(MAKE_STATIC_STRING_IMPL("VideoElement"));
+    static NeverDestroyed<const String> audioElement(MAKE_STATIC_STRING_IMPL("AudioElement"));
 
     if (controllingVideoElement())
         return videoElement;
@@ -283,7 +283,7 @@ String AccessibilityMediaTimeline::valueDescription() const
 
 String AccessibilityMediaTimeline::helpText() const
 {
-    static NeverDestroyed<const String> slider(ASCIILiteral("Slider"));
+    static NeverDestroyed<const String> slider(MAKE_STATIC_STRING_IMPL("Slider"));
     return localizedMediaControlElementHelpText(slider);
 }
 
@@ -314,8 +314,8 @@ bool AccessibilityMediaTimeDisplay::computeAccessibilityIsIgnored() const
 
 String AccessibilityMediaTimeDisplay::accessibilityDescription() const
 {
-    static NeverDestroyed<const String> currentTimeDisplay(ASCIILiteral("CurrentTimeDisplay"));
-    static NeverDestroyed<const String> timeRemainingDisplay(ASCIILiteral("TimeRemainingDisplay"));
+    static NeverDestroyed<const String> currentTimeDisplay(MAKE_STATIC_STRING_IMPL("CurrentTimeDisplay"));
+    static NeverDestroyed<const String> timeRemainingDisplay(MAKE_STATIC_STRING_IMPL("TimeRemainingDisplay"));
 
     if (controlType() == MediaCurrentTimeDisplay)
         return localizedMediaControlElementString(currentTimeDisplay);

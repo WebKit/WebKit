@@ -52,7 +52,7 @@ FormCombo::~FormCombo()
 namespace JSC {
 const String& InputTraits<Test::FormCombo>::type()
 {
-    static NeverDestroyed<const String> type(ASCIILiteral("FormCombo"));
+    static NeverDestroyed<const String> type(MAKE_STATIC_STRING_IMPL("FormCombo"));
     return type;
 }
 

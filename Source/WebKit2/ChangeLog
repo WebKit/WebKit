@@ -1,3 +1,27 @@
+2017-05-04  Mark Lam  <mark.lam@apple.com>
+
+        NeverDestroyed<String>(ASCIILiteral(...)) is not thread safe.
+        https://bugs.webkit.org/show_bug.cgi?id=171586
+        <rdar://problem/31873190>
+
+        Reviewed by Yusuke Suzuki.
+
+        * Shared/API/APIError.cpp:
+        (API::Error::webKitErrorDomain):
+        (API::Error::webKitNetworkErrorDomain):
+        (API::Error::webKitPolicyErrorDomain):
+        (API::Error::webKitPluginErrorDomain):
+        (API::Error::webKitDownloadErrorDomain):
+        (API::Error::webKitPrintErrorDomain):
+        * Shared/WebPreferencesKeys.cpp:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::executeEditCommand):
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::didBeginEditing):
+        (WebKit::WebEditorClient::respondToChangedContents):
+        (WebKit::WebEditorClient::respondToChangedSelection):
+        (WebKit::WebEditorClient::didEndEditing):
+
 2017-05-04  Jeremy Jones  <jeremyj@apple.com>
 
         Add mute to WebPlaybackSessionModel.

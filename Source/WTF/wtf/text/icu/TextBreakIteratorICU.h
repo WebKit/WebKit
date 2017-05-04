@@ -31,7 +31,7 @@ namespace WTF {
 #if USE_ICU_CARET_ITERATOR
 static String caretRules()
 {
-    return ASCIILiteral(
+    static StaticStringImpl caretRuleString(
         // This rule set is based on character-break iterator rules of ICU 57
         // <http://source.icu-project.org/repos/icu/icu/tags/release-57-1/source/data/brkitr/>.
         // The major differences from the original ones are listed below:
@@ -128,6 +128,7 @@ static String caretRules()
         "$RI $RI+;"
         "$EmojiForMods [$EmojiVar $EmojiMods]+;"
     );
+    return caretRuleString;
 }
 #endif
 

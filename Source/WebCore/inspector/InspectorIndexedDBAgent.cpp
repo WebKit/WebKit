@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2012 Google Inc. All rights reserved.
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -274,10 +274,10 @@ static RefPtr<IDBKey> idbKeyFromInspectorObject(InspectorObject* key)
     if (!key->getString("type", type))
         return nullptr;
 
-    static NeverDestroyed<const String> numberType(ASCIILiteral("number"));
-    static NeverDestroyed<const String> stringType(ASCIILiteral("string"));
-    static NeverDestroyed<const String> dateType(ASCIILiteral("date"));
-    static NeverDestroyed<const String> arrayType(ASCIILiteral("array"));
+    static NeverDestroyed<const String> numberType(MAKE_STATIC_STRING_IMPL("number"));
+    static NeverDestroyed<const String> stringType(MAKE_STATIC_STRING_IMPL("string"));
+    static NeverDestroyed<const String> dateType(MAKE_STATIC_STRING_IMPL("date"));
+    static NeverDestroyed<const String> arrayType(MAKE_STATIC_STRING_IMPL("array"));
 
     RefPtr<IDBKey> idbKey;
     if (type == numberType) {

@@ -41,7 +41,7 @@ namespace WebCore {
 #define STRING_FUNCTION(name) \
     static const String& name##String() \
     { \
-        static NeverDestroyed<const String> name { ASCIILiteral(#name) }; \
+        static NeverDestroyed<const String> name(MAKE_STATIC_STRING_IMPL(#name)); \
         return name; \
     }
 

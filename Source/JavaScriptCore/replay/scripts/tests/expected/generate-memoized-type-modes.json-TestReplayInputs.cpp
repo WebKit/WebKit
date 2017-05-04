@@ -59,7 +59,7 @@ MapInput::~MapInput()
 namespace JSC {
 const String& InputTraits<Test::ScalarInput>::type()
 {
-    static NeverDestroyed<const String> type(ASCIILiteral("ScalarInput"));
+    static NeverDestroyed<const String> type(MAKE_STATIC_STRING_IMPL("ScalarInput"));
     return type;
 }
 
@@ -80,7 +80,7 @@ bool InputTraits<Test::ScalarInput>::decode(EncodedValue& encodedValue, std::uni
 
 const String& InputTraits<Test::MapInput>::type()
 {
-    static NeverDestroyed<const String> type(ASCIILiteral("MapInput"));
+    static NeverDestroyed<const String> type(MAKE_STATIC_STRING_IMPL("MapInput"));
     return type;
 }
 

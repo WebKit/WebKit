@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2016 Apple Inc. All Rights Reserved.
+ *  Copyright (C) 2003-2017 Apple Inc. All Rights Reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -139,8 +139,8 @@ JSObject* JSLazyEventListener::initializeJSFunction(ScriptExecutionContext* exec
 
 static const String& eventParameterName(bool isSVGEvent)
 {
-    static NeverDestroyed<const String> eventString(ASCIILiteral("event"));
-    static NeverDestroyed<const String> evtString(ASCIILiteral("evt"));
+    static NeverDestroyed<const String> eventString(MAKE_STATIC_STRING_IMPL("event"));
+    static NeverDestroyed<const String> evtString(MAKE_STATIC_STRING_IMPL("evt"));
     return isSVGEvent ? evtString : eventString;
 }
 

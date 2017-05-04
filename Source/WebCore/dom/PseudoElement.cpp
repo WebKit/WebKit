@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -44,8 +45,8 @@ const QualifiedName& pseudoElementTagName()
 
 String PseudoElement::pseudoElementNameForEvents(PseudoId pseudoId)
 {
-    static NeverDestroyed<const String> after(ASCIILiteral("::after"));
-    static NeverDestroyed<const String> before(ASCIILiteral("::before"));
+    static NeverDestroyed<const String> after(MAKE_STATIC_STRING_IMPL("::after"));
+    static NeverDestroyed<const String> before(MAKE_STATIC_STRING_IMPL("::before"));
     switch (pseudoId) {
     case AFTER:
         return after;

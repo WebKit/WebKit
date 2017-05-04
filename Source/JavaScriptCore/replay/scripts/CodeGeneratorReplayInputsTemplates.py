@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # Copyright (c) 2011 Google Inc. All rights reserved.
 # Copyright (c) 2012 Intel Corporation. All rights reserved.
-# Copyright (c) 2013, 2014, 2016 Apple Inc. All rights reserved.
+# Copyright (c) 2013-2017 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -150,7 +150,7 @@ ${enumerableTypeTraitImplementations}
     InputTraitsImplementation = (
     """const String& InputTraits<${qualifiedInputName}>::type()
 {
-    static NeverDestroyed<const String> type(ASCIILiteral(${inputNameStringLiteral}));
+    static NeverDestroyed<const String> type(MAKE_STATIC_STRING_IMPL(${inputNameStringLiteral}));
     return type;
 }
 

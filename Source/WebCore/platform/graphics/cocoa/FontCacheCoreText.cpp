@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -671,9 +671,9 @@ RefPtr<Font> FontCache::similarFont(const FontDescription& description, const At
     }
 #endif
 
-    static NeverDestroyed<String> arabic(ASCIILiteral("Arabic"));
-    static NeverDestroyed<String> pashto(ASCIILiteral("Pashto"));
-    static NeverDestroyed<String> urdu(ASCIILiteral("Urdu"));
+    static NeverDestroyed<String> arabic(MAKE_STATIC_STRING_IMPL("Arabic"));
+    static NeverDestroyed<String> pashto(MAKE_STATIC_STRING_IMPL("Pashto"));
+    static NeverDestroyed<String> urdu(MAKE_STATIC_STRING_IMPL("Urdu"));
     static String* matchWords[3] = { &arabic.get(), &pashto.get(), &urdu.get() };
     static NeverDestroyed<AtomicString> geezaPlain("GeezaPro", AtomicString::ConstructFromLiteral);
     static NeverDestroyed<AtomicString> geezaBold("GeezaPro-Bold", AtomicString::ConstructFromLiteral);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2009, 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -257,7 +257,7 @@ bool MarkupAccumulator::shouldAddNamespaceElement(const Element& element)
     if (prefix.isEmpty())
         return !element.hasAttribute(xmlnsAtom);
 
-    static NeverDestroyed<String> xmlnsWithColon(ASCIILiteral("xmlns:"));
+    static NeverDestroyed<String> xmlnsWithColon(MAKE_STATIC_STRING_IMPL("xmlns:"));
     return !element.hasAttribute(xmlnsWithColon.get() + prefix);
 }
 

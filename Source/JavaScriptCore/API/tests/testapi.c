@@ -47,6 +47,7 @@
 #include "FunctionOverridesTest.h"
 #include "GlobalContextWithFinalizerTest.h"
 #include "JSONParseTest.h"
+#include "MultithreadedMultiVMExecutionTest.h"
 #include "PingPongStackOverflowTest.h"
 #include "TypedArrayCTest.h"
 
@@ -1190,6 +1191,7 @@ int main(int argc, char* argv[])
 #endif
 
     testCompareAndSwap();
+    startMultithreadedMultiVMExecutionTest();
 
 #if JSC_OBJC_API_ENABLED
     testObjectiveCAPI();
@@ -2007,6 +2009,8 @@ int main(int argc, char* argv[])
     customGlobalObjectClassTest();
     globalObjectSetPrototypeTest();
     globalObjectPrivatePropertyTest();
+
+    failed = finalizeMultithreadedMultiVMExecutionTest() || failed;
 
     if (failed) {
         printf("FAIL: Some tests failed.\n");

@@ -1,3 +1,48 @@
+2017-05-04  Mark Lam  <mark.lam@apple.com>
+
+        NeverDestroyed<String>(ASCIILiteral(...)) is not thread safe.
+        https://bugs.webkit.org/show_bug.cgi?id=171586
+        <rdar://problem/31873190>
+
+        Reviewed by Yusuke Suzuki.
+
+        StaticStringImpl is meant to be thread-safe.  However, it has a bug: it did not
+        set the s_hashFlagDidReportCost flag.  As a result, if cost() is called on it,
+        different threads may try to change its flags bits at the same time.  This patch
+        changes StaticStringImpl to always set the s_hashFlagDidReportCost flag.
+
+        Also factored out StringImplShape and made StringImpl and StaticStringImpl extend
+        it.  This makes it more clear that the 2 are intended to have the same shape.
+        Note: there is already a static_assert that the 2 have the same size.  This
+        change also ensures that they both have the same shape, which is a requirement in
+        order for StaticStringImpl to work.
+
+        Introduced the MAKE_STATIC_STRING_IMPL macro as a convenient way to instantiate
+        StaticStringImpls from literal strings.  This allows us to trivially change
+
+            NeverDestroyed<String> myString(ASCIILiteral("myString"));
+
+        to ...
+
+            NeverDestroyed<String> myString(MAKE_STATIC_STRING_IMPL("myString"));
+
+        and by so doing, make it thread-safe.
+
+        MAKE_STATIC_STRING_IMPL instantiates a lambda function to create the static
+        StaticStringImpls.
+
+        * wtf/text/StringImpl.h:
+        (WTF::StringImplShape::StringImplShape):
+        (WTF::StringImpl::StringImpl):
+        (WTF::StringImpl::cost):
+        (WTF::StringImpl::setHash):
+        (WTF::StringImpl::StaticStringImpl::StaticStringImpl):
+        (WTF::StringImpl::StaticStringImpl::operator StringImpl&):
+        * wtf/text/WTFString.h:
+        (WTF::String::String):
+        * wtf/text/icu/TextBreakIteratorICU.h:
+        (WTF::caretRules):
+
 2017-05-04  Sam Weinig  <sam@webkit.org>
 
         Remove support for legacy Notifications

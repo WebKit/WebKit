@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -558,7 +558,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::prepareForRendering()
 
 String MediaPlayerPrivateMediaSourceAVFObjC::engineDescription() const
 {
-    static NeverDestroyed<String> description(ASCIILiteral("AVFoundation MediaSource Engine"));
+    static NeverDestroyed<String> description(MAKE_STATIC_STRING_IMPL("AVFoundation MediaSource Engine"));
     return description;
 }
 

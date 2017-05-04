@@ -1059,7 +1059,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::acceleratedRenderingStateChanged()
 
 String MediaPlayerPrivateMediaStreamAVFObjC::engineDescription() const
 {
-    static NeverDestroyed<String> description(ASCIILiteral("AVFoundation MediaStream Engine"));
+    static NeverDestroyed<String> description(MAKE_STATIC_STRING_IMPL("AVFoundation MediaStream Engine"));
     return description;
 }
 

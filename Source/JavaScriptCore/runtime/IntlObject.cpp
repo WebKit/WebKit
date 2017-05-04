@@ -853,18 +853,23 @@ Vector<String> numberingSystemsForLocale(const String& locale)
 {
     static NeverDestroyed<Vector<String>> cachedNumberingSystems;
     Vector<String>& availableNumberingSystems = cachedNumberingSystems.get();
-    if (availableNumberingSystems.isEmpty()) {
-        UErrorCode status = U_ZERO_ERROR;
-        UEnumeration* numberingSystemNames = unumsys_openAvailableNames(&status);
-        ASSERT(U_SUCCESS(status));
 
-        int32_t resultLength;
-        // Numbering system names are always ASCII, so use char[].
-        while (const char* result = uenum_next(numberingSystemNames, &resultLength, &status)) {
+    if (UNLIKELY(availableNumberingSystems.isEmpty())) {
+        static StaticLock cachedNumberingSystemsMutex;
+        std::lock_guard<StaticLock> lock(cachedNumberingSystemsMutex);
+        if (availableNumberingSystems.isEmpty()) {
+            UErrorCode status = U_ZERO_ERROR;
+            UEnumeration* numberingSystemNames = unumsys_openAvailableNames(&status);
             ASSERT(U_SUCCESS(status));
-            availableNumberingSystems.append(String(result, resultLength));
+
+            int32_t resultLength;
+            // Numbering system names are always ASCII, so use char[].
+            while (const char* result = uenum_next(numberingSystemNames, &resultLength, &status)) {
+                ASSERT(U_SUCCESS(status));
+                availableNumberingSystems.append(String(result, resultLength));
+            }
+            uenum_close(numberingSystemNames);
         }
-        uenum_close(numberingSystemNames);
     }
 
     UErrorCode status = U_ZERO_ERROR;

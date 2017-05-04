@@ -1,3 +1,79 @@
+2017-05-04  Mark Lam  <mark.lam@apple.com>
+
+        NeverDestroyed<String>(ASCIILiteral(...)) is not thread safe.
+        https://bugs.webkit.org/show_bug.cgi?id=171586
+        <rdar://problem/31873190>
+
+        Reviewed by Yusuke Suzuki.
+
+        JavaScriptCore allows multiple VMs to be instantiated, and each of these should
+        be able to run concurrently on different threads.  There is code in the VM that
+        allocates NeverDestroyed<String>(ASCIILiteral(...)) to defined immortal strings
+        meant to be shared by all VMs.
+
+        However, NeverDestroyed<String>(ASCIILiteral(...)) is not thread-safe because
+        each thread will ref and deref the underlying StringImpl.  Since this ref and
+        deref is not done in a thread-safe way, the NeverDestroyed<String> may get
+        destroyed due to the ref/deref races.  Additionally, each thread may modify the
+        StringImpl by setting its hash and also twiddling its flags.
+
+        The fix is to use the StaticStringImpl class which is safe for ref/derefing
+        concurrently from different threads.  StaticStringImpl is also pre-set with a
+        hash on construction, and its flags are set in such a way as to prevent twiddling
+        at runtime.  Hence, we will be able to share a NeverDestroyed<String> between
+        VMs, as long as it is backed by a StaticStringImpl.
+
+        An alternative solution would be to change all the uses of NeverDestroyed<String>
+        to use per-VM strings.  However, this solution is cumbersome, and makes it harder
+        to allocate the intended shared string.  It also uses more memory and takes more
+        CPU time because it requires allocating the same string for each VM instance.
+        The StaticStringImpl solution wins out because it is more efficient and is easier
+        to use.
+
+        The StaticStringImpl solution also can be used in WTF without a layer violation.
+        See Source/WTF/wtf/text/icu/TextBreakIteratorICU.h for an example.
+
+        Also added the MultithreadedMultiVMExecutionTest which runs multiple VMs in
+        multiple threads, all banging on the BuiltinExecutable's baseConstructorCode
+        NeverDestroyed<String>.  The test will manifest the issue reliably (before this
+        fix) if run on an ASAN build.
+
+        * API/tests/MultithreadedMultiVMExecutionTest.cpp: Added.
+        (threadsList):
+        (startMultithreadedMultiVMExecutionTest):
+        (finalizeMultithreadedMultiVMExecutionTest):
+        * API/tests/MultithreadedMultiVMExecutionTest.h: Added.
+        * API/tests/testapi.c:
+        (main):
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * builtins/BuiltinExecutables.cpp:
+        (JSC::BuiltinExecutables::createDefaultConstructor):
+        * inspector/agents/InspectorDebuggerAgent.cpp:
+        (Inspector::objectGroupForBreakpointAction):
+        * replay/scripts/CodeGeneratorReplayInputsTemplates.py:
+        * replay/scripts/tests/expected/generate-enum-encoding-helpers-with-guarded-values.json-TestReplayInputs.cpp:
+        (JSC::InputTraits<Test::SavedMouseButton>::type):
+        * replay/scripts/tests/expected/generate-enum-encoding-helpers.json-TestReplayInputs.cpp:
+        (JSC::InputTraits<Test::SavedMouseButton>::type):
+        * replay/scripts/tests/expected/generate-enum-with-guard.json-TestReplayInputs.cpp:
+        (JSC::InputTraits<Test::HandleWheelEvent>::type):
+        * replay/scripts/tests/expected/generate-enums-with-same-base-name.json-TestReplayInputs.cpp:
+        (JSC::InputTraits<Test::FormCombo>::type):
+        * replay/scripts/tests/expected/generate-input-with-guard.json-TestReplayInputs.cpp:
+        (JSC::InputTraits<Test::GetCurrentTime>::type):
+        (JSC::InputTraits<Test::SetRandomSeed>::type):
+        * replay/scripts/tests/expected/generate-input-with-vector-members.json-TestReplayInputs.cpp:
+        (JSC::InputTraits<Test::ArrayOfThings>::type):
+        (JSC::InputTraits<Test::SavedHistory>::type):
+        * replay/scripts/tests/expected/generate-inputs-with-flags.json-TestReplayInputs.cpp:
+        (JSC::InputTraits<Test::ScalarInput1>::type):
+        (JSC::InputTraits<Test::ScalarInput2>::type):
+        * replay/scripts/tests/expected/generate-memoized-type-modes.json-TestReplayInputs.cpp:
+        (JSC::InputTraits<Test::ScalarInput>::type):
+        (JSC::InputTraits<Test::MapInput>::type):
+        * runtime/IntlObject.cpp:
+        (JSC::numberingSystemsForLocale):
+
 2017-05-04  Sam Weinig  <sam@webkit.org>
 
         Remove support for legacy Notifications

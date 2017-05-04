@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple, Inc.  All rights reserved.
+ * Copyright (C) 2014-2017 Apple, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -662,7 +662,7 @@ NSArray *DataDetection::detectContentInRange(RefPtr<Range>&, DataDetectorTypes, 
 
 const String& DataDetection::dataDetectorURLProtocol()
 {
-    static NeverDestroyed<String> protocol(ASCIILiteral("x-apple-data-detectors"));
+    static NeverDestroyed<String> protocol(MAKE_STATIC_STRING_IMPL("x-apple-data-detectors"));
     return protocol;
 }
 

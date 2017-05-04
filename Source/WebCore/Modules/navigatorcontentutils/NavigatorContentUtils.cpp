@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2011, Google Inc. All rights reserved.
  * Copyright (C) 2012, Samsung Electronics. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -117,9 +118,9 @@ ExceptionOr<void> NavigatorContentUtils::registerProtocolHandler(Navigator& navi
 
 static String customHandlersStateString(const NavigatorContentUtilsClient::CustomHandlersState state)
 {
-    static NeverDestroyed<String> newHandler(ASCIILiteral("new"));
-    static NeverDestroyed<String> registeredHandler(ASCIILiteral("registered"));
-    static NeverDestroyed<String> declinedHandler(ASCIILiteral("declined"));
+    static NeverDestroyed<String> newHandler(MAKE_STATIC_STRING_IMPL("new"));
+    static NeverDestroyed<String> registeredHandler(MAKE_STATIC_STRING_IMPL("registered"));
+    static NeverDestroyed<String> declinedHandler(MAKE_STATIC_STRING_IMPL("declined"));
 
     switch (state) {
     case NavigatorContentUtilsClient::CustomHandlersNew:
@@ -136,7 +137,7 @@ static String customHandlersStateString(const NavigatorContentUtilsClient::Custo
 
 ExceptionOr<String> NavigatorContentUtils::isProtocolHandlerRegistered(Navigator& navigator, const String& scheme, const String& url)
 {
-    static NeverDestroyed<String> declined(ASCIILiteral("declined"));
+    static NeverDestroyed<String> declined(MAKE_STATIC_STRING_IMPL("declined"));
 
     if (!navigator.frame())
         return String { declined };
