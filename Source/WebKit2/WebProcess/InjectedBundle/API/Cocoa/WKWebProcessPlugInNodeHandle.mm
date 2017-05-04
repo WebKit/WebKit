@@ -68,7 +68,16 @@ using namespace WebKit;
 #if PLATFORM(IOS)
 - (UIImage *)renderedImageWithOptions:(WKSnapshotOptions)options
 {
-    RefPtr<WebImage> image = _nodeHandle->renderedImage(toSnapshotOptions(options), options & kWKSnapshotOptionsExcludeOverflow);
+    return [self renderedImageWithOptions:options width:nil];
+}
+
+- (UIImage *)renderedImageWithOptions:(WKSnapshotOptions)options width:(NSNumber *)width
+{
+    std::optional<float> optionalWidth;
+    if (width)
+        optionalWidth = width.floatValue;
+
+    RefPtr<WebImage> image = _nodeHandle->renderedImage(toSnapshotOptions(options), options & kWKSnapshotOptionsExcludeOverflow, optionalWidth);
     if (!image)
         return nil;
 
@@ -79,7 +88,16 @@ using namespace WebKit;
 #if PLATFORM(MAC)
 - (NSImage *)renderedImageWithOptions:(WKSnapshotOptions)options
 {
-    RefPtr<WebImage> image = _nodeHandle->renderedImage(toSnapshotOptions(options), options & kWKSnapshotOptionsExcludeOverflow);
+    return [self renderedImageWithOptions:options width:nil];
+}
+
+- (NSImage *)renderedImageWithOptions:(WKSnapshotOptions)options width:(NSNumber *)width
+{
+    std::optional<float> optionalWidth;
+    if (width)
+        optionalWidth = width.floatValue;
+
+    RefPtr<WebImage> image = _nodeHandle->renderedImage(toSnapshotOptions(options), options & kWKSnapshotOptionsExcludeOverflow, optionalWidth);
     if (!image)
         return nil;
 

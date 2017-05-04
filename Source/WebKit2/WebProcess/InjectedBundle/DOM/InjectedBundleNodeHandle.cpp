@@ -134,18 +134,36 @@ IntRect InjectedBundleNodeHandle::renderRect(bool* isReplaced)
     return m_node->pixelSnappedRenderRect(isReplaced);
 }
 
-static RefPtr<WebImage> imageForRect(FrameView* frameView, const IntRect& rect, SnapshotOptions options)
+static RefPtr<WebImage> imageForRect(FrameView* frameView, const IntRect& paintingRect, const std::optional<float>& bitmapWidth, SnapshotOptions options)
 {
-    IntSize bitmapSize = rect.size();
-    float scaleFactor = frameView->frame().page()->deviceScaleFactor();
-    bitmapSize.scale(scaleFactor);
+    if (paintingRect.isEmpty())
+        return nullptr;
+
+    float bitmapScaleFactor;
+    IntSize bitmapSize;
+    if (bitmapWidth) {
+        bitmapScaleFactor = bitmapWidth.value() / paintingRect.width();
+        bitmapSize = roundedIntSize(FloatSize(bitmapWidth.value(), paintingRect.height() * bitmapScaleFactor));
+    } else {
+        bitmapScaleFactor = 1;
+        bitmapSize = paintingRect.size();
+    }
+
+    float deviceScaleFactor = frameView->frame().page()->deviceScaleFactor();
+    bitmapSize.scale(deviceScaleFactor);
+
+    if (bitmapSize.isEmpty())
+        return nullptr;
 
     auto snapshot = WebImage::create(bitmapSize, snapshotOptionsToImageOptions(options));
+    if (!snapshot)
+        return nullptr;
 
     auto graphicsContext = snapshot->bitmap().createGraphicsContext();
     graphicsContext->clearRect(IntRect(IntPoint(), bitmapSize));
-    graphicsContext->applyDeviceScaleFactor(scaleFactor);
-    graphicsContext->translate(-rect.x(), -rect.y());
+    graphicsContext->applyDeviceScaleFactor(deviceScaleFactor);
+    graphicsContext->scale(bitmapScaleFactor);
+    graphicsContext->translate(-paintingRect.x(), -paintingRect.y());
 
     FrameView::SelectionInSnapshot shouldPaintSelection = FrameView::IncludeSelection;
     if (options & SnapshotOptionsExcludeSelectionHighlighting)
@@ -159,13 +177,13 @@ static RefPtr<WebImage> imageForRect(FrameView* frameView, const IntRect& rect, 
 
     PaintBehavior oldPaintBehavior = frameView->paintBehavior();
     frameView->setPaintBehavior(paintBehavior);
-    frameView->paintContentsForSnapshot(*graphicsContext.get(), rect, shouldPaintSelection, FrameView::DocumentCoordinates);
+    frameView->paintContentsForSnapshot(*graphicsContext.get(), paintingRect, shouldPaintSelection, FrameView::DocumentCoordinates);
     frameView->setPaintBehavior(oldPaintBehavior);
 
     return snapshot;
 }
 
-RefPtr<WebImage> InjectedBundleNodeHandle::renderedImage(SnapshotOptions options, bool shouldExcludeOverflow)
+RefPtr<WebImage> InjectedBundleNodeHandle::renderedImage(SnapshotOptions options, bool shouldExcludeOverflow, const std::optional<float>& bitmapWidth)
 {
     Frame* frame = m_node->document().frame();
     if (!frame)
@@ -190,7 +208,7 @@ RefPtr<WebImage> InjectedBundleNodeHandle::renderedImage(SnapshotOptions options
     }
 
     frameView->setNodeToDraw(m_node.ptr());
-    auto image = imageForRect(frameView, paintingRect, options);
+    auto image = imageForRect(frameView, paintingRect, bitmapWidth, options);
     frameView->setNodeToDraw(0);
 
     return image;

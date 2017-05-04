@@ -24,5 +24,5 @@
  */
 
 @protocol RenderedImageWithOptionsProtocol
-- (void)didRenderImageWithSize:(CGSize)size;
+- (void)renderImageWithWidth:(NSNumber *)width completionHandler:(void (^)(CGSize imageSize))completionHandler;
 @end

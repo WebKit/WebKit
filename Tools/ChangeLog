@@ -1,3 +1,21 @@
+2017-05-04  Andy Estes  <aestes@apple.com>
+
+        [Cocoa] Add an optional width parameter to -[WKWebProcessPlugInNodeHandle renderedImageWithOptions:]
+        https://bugs.webkit.org/show_bug.cgi?id=171646
+        <rdar://problem/30306321>
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/RenderedImageWithOptions.mm:
+        (runTestWithWidth):
+        (TEST):
+        (-[RenderedImageWithOptionsObject didRenderImageWithSize:]): Deleted.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/RenderedImageWithOptionsPlugIn.mm:
+        (-[RenderedImageWithOptionsPlugIn webProcessPlugIn:didCreateBrowserContextController:]):
+        (-[RenderedImageWithOptionsPlugIn webProcessPlugInBrowserContextController:didFinishLoadForFrame:]):
+        (-[RenderedImageWithOptionsPlugIn renderImageWithWidth:completionHandler:]):
+        * TestWebKitAPI/Tests/WebKit2Cocoa/RenderedImageWithOptionsProtocol.h:
+
 2017-05-04  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK] Fontconfig 2.11.2 in JHBuild does not build with glibc 2.25+ or gperf 3.1+

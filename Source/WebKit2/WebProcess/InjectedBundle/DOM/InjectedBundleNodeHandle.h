@@ -29,6 +29,7 @@
 #include "ImageOptions.h"
 #include <JavaScriptCore/JSBase.h>
 #include <wtf/Forward.h>
+#include <wtf/Optional.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -61,7 +62,7 @@ public:
     // Note: These should only be operations that are not exposed to JavaScript.
     WebCore::IntRect elementBounds();
     WebCore::IntRect renderRect(bool*);
-    RefPtr<WebImage> renderedImage(SnapshotOptions, bool shouldExcludeOverflow);
+    RefPtr<WebImage> renderedImage(SnapshotOptions, bool shouldExcludeOverflow, const std::optional<float>& bitmapWidth = std::nullopt);
     RefPtr<InjectedBundleRangeHandle> visibleRange();
     void setHTMLInputElementValueForUser(const String&);
     void setHTMLInputElementSpellcheckEnabled(bool);

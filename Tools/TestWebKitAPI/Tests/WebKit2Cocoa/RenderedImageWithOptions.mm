@@ -28,6 +28,7 @@
 #if WK_API_ENABLED
 
 #import "RenderedImageWithOptionsProtocol.h"
+#import "TestNavigationDelegate.h"
 #import "Utilities.h"
 #import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKWebViewPrivate.h>
@@ -38,39 +39,46 @@
 
 using namespace TestWebKitAPI;
 
-static bool testFinished;
-
-@interface RenderedImageWithOptionsObject : NSObject <RenderedImageWithOptionsProtocol>
-@end
-
-@implementation RenderedImageWithOptionsObject
-
-- (void)didRenderImageWithSize:(CGSize)size
-{
-#if PLATFORM(IOS)
-    CGFloat scale = [UIScreen mainScreen].scale;
-#elif PLATFORM(MAC)
-    CGFloat scale = [NSScreen mainScreen].backingScaleFactor;
-#endif
-    EXPECT_EQ(720, size.width / scale);
-    EXPECT_EQ(540, size.height / scale);
-    testFinished = true;
-}
-
-@end
-
-TEST(WebKit2, RenderedImageExcludingOverflow)
+static void runTestWithWidth(NSNumber *width, CGSize expectedSize)
 {
     WKWebViewConfiguration *configuration = [WKWebViewConfiguration testwebkitapi_configurationWithTestPlugInClassName:@"RenderedImageWithOptionsPlugIn"];
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
 
-    auto object = adoptNS([[RenderedImageWithOptionsObject alloc] init]);
     _WKRemoteObjectInterface *interface = [_WKRemoteObjectInterface remoteObjectInterfaceWithProtocol:@protocol(RenderedImageWithOptionsProtocol)];
-    [[webView _remoteObjectRegistry] registerExportedObject:object.get() interface:interface];
+    auto remoteObject = retainPtr([[webView _remoteObjectRegistry] remoteObjectProxyWithInterface:interface]);
 
     [webView loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"rendered-image-excluding-overflow" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+    [webView _test_waitForDidFinishNavigation];
+
+    __block bool testFinished = false;
+    [remoteObject renderImageWithWidth:width completionHandler:^(CGSize imageSize) {
+#if PLATFORM(IOS)
+        CGFloat scale = [UIScreen mainScreen].scale;
+#elif PLATFORM(MAC)
+        CGFloat scale = [NSScreen mainScreen].backingScaleFactor;
+#endif
+        EXPECT_EQ(expectedSize.width, imageSize.width / scale);
+        EXPECT_EQ(expectedSize.height, imageSize.height / scale);
+        testFinished = true;
+    }];
 
     Util::run(&testFinished);
+}
+
+TEST(WebKit2, NodeHandleRenderedImageExcludingOverflow)
+{
+    runTestWithWidth(nil, { 720, 540 });
+}
+
+TEST(WebKit2, NodeHandleRenderedImageWithWidth)
+{
+    runTestWithWidth(@(-1), { 0, 0 });
+    runTestWithWidth(@0, { 0, 0 });
+    runTestWithWidth(@1, { 1, 1 });
+    runTestWithWidth(@360, { 360, 270 });
+    runTestWithWidth(@719, { 719, 539 });
+    runTestWithWidth(@720, { 720, 540 });
+    runTestWithWidth(@721, { 721, 541 });
 }
 
 #endif // WK_API_ENABLED

@@ -39,11 +39,11 @@
 #import <WebKit/_WKRemoteObjectRegistry.h>
 #import <wtf/RetainPtr.h>
 
-@interface RenderedImageWithOptionsPlugIn : NSObject <WKWebProcessPlugIn, WKWebProcessPlugInLoadDelegate>
+@interface RenderedImageWithOptionsPlugIn : NSObject <WKWebProcessPlugIn, WKWebProcessPlugInLoadDelegate, RenderedImageWithOptionsProtocol>
 @end
 
 @implementation RenderedImageWithOptionsPlugIn {
-    RetainPtr<id <RenderedImageWithOptionsProtocol>> _remoteObject;
+    RetainPtr<WKWebProcessPlugInFrame> _frame;
 }
 
 - (void)webProcessPlugIn:(WKWebProcessPlugInController *)plugInController didCreateBrowserContextController:(WKWebProcessPlugInBrowserContextController *)browserContextController
@@ -51,20 +51,25 @@
     browserContextController.loadDelegate = self;
 
     _WKRemoteObjectInterface *interface = [_WKRemoteObjectInterface remoteObjectInterfaceWithProtocol:@protocol(RenderedImageWithOptionsProtocol)];
-    _remoteObject = [browserContextController._remoteObjectRegistry remoteObjectProxyWithInterface:interface];
+    [browserContextController._remoteObjectRegistry registerExportedObject:self interface:interface];
 }
 
 - (void)webProcessPlugInBrowserContextController:(WKWebProcessPlugInBrowserContextController *)controller didFinishLoadForFrame:(WKWebProcessPlugInFrame *)frame
 {
-    JSContext *context = [frame jsContextForWorld:[WKWebProcessPlugInScriptWorld normalWorld]];
+    _frame = frame;
+}
+
+- (void)renderImageWithWidth:(NSNumber *)width completionHandler:(void (^)(CGSize))completionHandler
+{
+    JSContext *context = [_frame jsContextForWorld:[WKWebProcessPlugInScriptWorld normalWorld]];
     JSValue *containerValue = [context evaluateScript:@"document.querySelector('.container')"];
     WKWebProcessPlugInNodeHandle *containerNode = [WKWebProcessPlugInNodeHandle nodeHandleWithJSValue:containerValue inContext:context];
 #if PLATFORM(IOS)
-    UIImage *image = [containerNode renderedImageWithOptions:kWKSnapshotOptionsExcludeOverflow];
+    UIImage *image = [containerNode renderedImageWithOptions:kWKSnapshotOptionsExcludeOverflow width:width];
 #elif PLATFORM(MAC)
-    NSImage *image = [containerNode renderedImageWithOptions:kWKSnapshotOptionsExcludeOverflow];
+    NSImage *image = [containerNode renderedImageWithOptions:kWKSnapshotOptionsExcludeOverflow width:width];
 #endif
-    [_remoteObject didRenderImageWithSize:image.size];
+    completionHandler(image.size);
 }
 
 @end
