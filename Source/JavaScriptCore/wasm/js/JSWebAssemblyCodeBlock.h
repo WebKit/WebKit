@@ -51,7 +51,7 @@ public:
     typedef JSCell Base;
     static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
-    static JSWebAssemblyCodeBlock* create(VM&, Ref<Wasm::CodeBlock>, const Wasm::ModuleInformation&);
+    static JSWebAssemblyCodeBlock* create(VM&, Ref<Wasm::CodeBlock>, JSWebAssemblyModule*);
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
         return Structure::create(vm, globalObject, prototype, TypeInfo(CellType, StructureFlags), info());
@@ -61,6 +61,8 @@ public:
     JSWebAssemblyModule* module() const { return m_module.get(); }
 
     bool isSafeToRun(JSWebAssemblyMemory*) const;
+
+    void finishCreation(VM&, JSWebAssemblyModule*);
 
     // These two callee getters are only valid once the callees have been populated.
 

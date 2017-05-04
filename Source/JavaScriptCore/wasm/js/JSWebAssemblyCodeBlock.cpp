@@ -41,10 +41,11 @@ namespace JSC {
 
 const ClassInfo JSWebAssemblyCodeBlock::s_info = { "WebAssemblyCodeBlock", nullptr, 0, CREATE_METHOD_TABLE(JSWebAssemblyCodeBlock) };
 
-JSWebAssemblyCodeBlock* JSWebAssemblyCodeBlock::create(VM& vm, Ref<Wasm::CodeBlock> codeBlock, const Wasm::ModuleInformation& moduleInformation)
+JSWebAssemblyCodeBlock* JSWebAssemblyCodeBlock::create(VM& vm, Ref<Wasm::CodeBlock> codeBlock, JSWebAssemblyModule* module)
 {
+    const Wasm::ModuleInformation& moduleInformation = module->module().moduleInformation();
     auto* result = new (NotNull, allocateCell<JSWebAssemblyCodeBlock>(vm.heap, allocationSize(moduleInformation.importFunctionCount()))) JSWebAssemblyCodeBlock(vm, WTFMove(codeBlock), moduleInformation);
-    result->finishCreation(vm);
+    result->finishCreation(vm, module);
     return result;
 }
 
@@ -60,6 +61,12 @@ JSWebAssemblyCodeBlock::JSWebAssemblyCodeBlock(VM& vm, Ref<Wasm::CodeBlock>&& co
         m_wasmToJSExitStubs.uncheckedAppend(Wasm::wasmToJs(&vm, m_callLinkInfos, signatureIndex, importIndex));
         importWasmToJSStub(importIndex) = m_wasmToJSExitStubs[importIndex].code().executableAddress();
     }
+}
+
+void JSWebAssemblyCodeBlock::finishCreation(VM& vm, JSWebAssemblyModule* module)
+{
+    Base::finishCreation(vm);
+    m_module.set(vm, this, module);
 }
 
 void JSWebAssemblyCodeBlock::destroy(JSCell* cell)

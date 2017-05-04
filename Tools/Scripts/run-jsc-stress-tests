@@ -1200,6 +1200,8 @@ def runWebAssembly
     prepareExtraRelativeFiles(modules.map { |f| "../" + f }, $collection)
     run("default-wasm", "-m", *FTL_OPTIONS)
     run("wasm-no-cjit", "-m", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
+    run("wasm-eager-jettison", "-m", "--forceCodeBlockToJettisonDueToOldAge=true", *FTL_OPTIONS)
+    run("wasm-no-call-ic", "-m", "--useCallICsForWebAssemblyToJSCalls=false", *FTL_OPTIONS)
 end
 
 def runWebAssemblyEmscripten(mode)
@@ -1213,6 +1215,8 @@ def runWebAssemblyEmscripten(mode)
     prepareExtraRelativeFiles([Pathname('..') + wasm], $collection)
     run("default-wasm", *FTL_OPTIONS)
     run("wasm-no-cjit", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
+    run("wasm-eager-jettison", "--forceCodeBlockToJettisonDueToOldAge=true", *FTL_OPTIONS)
+    run("wasm-no-call-ic", "--useCallICsForWebAssemblyToJSCalls=false", *FTL_OPTIONS)
 end
 
 def runWebAssemblySpecTest(mode)
@@ -1233,6 +1237,8 @@ def runWebAssemblySpecTest(mode)
 
     runWithOutputHandler("default-wasm", noisyOutputHandler, "../spec-harness.js", *FTL_OPTIONS)
     runWithOutputHandler("wasm-no-cjit", noisyOutputHandler, "../spec-harness.js", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
+    runWithOutputHandler("wasm-eager-jettison", noisyOutputHandler, "../spec-harness.js", "--forceCodeBlockToJettisonDueToOldAge=true", *FTL_OPTIONS)
+    runWithOutputHandler("wasm-no-call-ic", noisyOutputHandler, "../spec-harness.js", "--useCallICsForWebAssemblyToJSCalls=false", *FTL_OPTIONS)
 end
 
 def runChakra(mode, exception, baselineFile, extraFiles)

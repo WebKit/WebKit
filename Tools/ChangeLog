@@ -1,3 +1,12 @@
+2017-05-03  Saam Barati  <sbarati@apple.com>
+
+        How we build polymorphic cases is wrong when making a call from Wasm
+        https://bugs.webkit.org/show_bug.cgi?id=171527
+
+        Reviewed by JF Bastien.
+
+        * Scripts/run-jsc-stress-tests:
+
 2017-05-03  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Allow host application to enable/disable media capture

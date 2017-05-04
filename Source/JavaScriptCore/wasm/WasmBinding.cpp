@@ -125,6 +125,186 @@ MacroAssemblerCodeRef wasmToJs(VM* vm, Bag<CallLinkInfo>& callLinkInfos, Signatu
     missingCalleeSaves.exclude(jsCC.m_calleeSaveRegisters);
     ASSERT(missingCalleeSaves.isEmpty());
 
+    if (!Options::useCallICsForWebAssemblyToJSCalls()) {
+        ScratchBuffer* scratchBuffer = vm->scratchBufferForSize(argCount * sizeof(uint64_t));
+        char* buffer = argCount ? static_cast<char*>(scratchBuffer->dataBuffer()) : nullptr;
+        unsigned marshalledGPRs = 0;
+        unsigned marshalledFPRs = 0;
+        unsigned bufferOffset = 0;
+        unsigned frOffset = CallFrame::headerSizeInRegisters * static_cast<int>(sizeof(Register));
+        const GPRReg scratchGPR = GPRInfo::regCS0;
+        jit.subPtr(MacroAssembler::TrustedImm32(WTF::roundUpToMultipleOf(stackAlignmentBytes(), sizeof(Register))), MacroAssembler::stackPointerRegister);
+        jit.storePtr(scratchGPR, MacroAssembler::Address(MacroAssembler::stackPointerRegister));
+
+        for (unsigned argNum = 0; argNum < argCount; ++argNum) {
+            Type argType = signature.argument(argNum);
+            switch (argType) {
+            case Void:
+            case Func:
+            case Anyfunc:
+            case I64:
+                RELEASE_ASSERT_NOT_REACHED();
+            case I32: {
+                GPRReg gprReg;
+                if (marshalledGPRs < wasmCC.m_gprArgs.size())
+                    gprReg = wasmCC.m_gprArgs[marshalledGPRs].gpr();
+                else {
+                    // We've already spilled all arguments, these registers are available as scratch.
+                    gprReg = GPRInfo::argumentGPR0;
+                    jit.load64(JIT::Address(GPRInfo::callFrameRegister, frOffset), gprReg);
+                    frOffset += sizeof(Register);
+                }
+                jit.zeroExtend32ToPtr(gprReg, gprReg);
+                jit.store64(gprReg, buffer + bufferOffset);
+                ++marshalledGPRs;
+                break;
+            }
+            case F32: {
+                FPRReg fprReg;
+                if (marshalledFPRs < wasmCC.m_fprArgs.size())
+                    fprReg = wasmCC.m_fprArgs[marshalledFPRs].fpr();
+                else {
+                    // We've already spilled all arguments, these registers are available as scratch.
+                    fprReg = FPRInfo::argumentFPR0;
+                    jit.loadFloat(JIT::Address(GPRInfo::callFrameRegister, frOffset), fprReg);
+                    frOffset += sizeof(Register);
+                }
+                jit.convertFloatToDouble(fprReg, fprReg);
+                jit.moveDoubleTo64(fprReg, scratchGPR);
+                jit.store64(scratchGPR, buffer + bufferOffset);
+                ++marshalledFPRs;
+                break;
+            }
+            case F64: {
+                FPRReg fprReg;
+                if (marshalledFPRs < wasmCC.m_fprArgs.size())
+                    fprReg = wasmCC.m_fprArgs[marshalledFPRs].fpr();
+                else {
+                    // We've already spilled all arguments, these registers are available as scratch.
+                    fprReg = FPRInfo::argumentFPR0;
+                    jit.loadDouble(JIT::Address(GPRInfo::callFrameRegister, frOffset), fprReg);
+                    frOffset += sizeof(Register);
+                }
+                jit.moveDoubleTo64(fprReg, scratchGPR);
+                jit.store64(scratchGPR, buffer + bufferOffset);
+                ++marshalledFPRs;
+                break;
+            }
+            }
+
+            bufferOffset += sizeof(Register);
+        }
+        jit.loadPtr(MacroAssembler::Address(MacroAssembler::stackPointerRegister), scratchGPR);
+        if (argCount) {
+            // The GC should not look at this buffer at all, these aren't JSValues.
+            jit.move(CCallHelpers::TrustedImmPtr(scratchBuffer->activeLengthPtr()), GPRInfo::argumentGPR0);
+            jit.storePtr(CCallHelpers::TrustedImmPtr(0), GPRInfo::argumentGPR0);
+        }
+
+        uint64_t (*callFunc)(ExecState*, JSObject*, SignatureIndex, uint64_t*) =
+            [] (ExecState* exec, JSObject* callee, SignatureIndex signatureIndex, uint64_t* buffer) -> uint64_t { 
+                VM* vm = &exec->vm();
+                NativeCallFrameTracer tracer(vm, exec);
+                auto throwScope = DECLARE_THROW_SCOPE(*vm);
+                const Signature& signature = SignatureInformation::get(signatureIndex);
+                MarkedArgumentBuffer args;
+                for (unsigned argNum = 0; argNum < signature.argumentCount(); ++argNum) {
+                    Type argType = signature.argument(argNum);
+                    JSValue arg;
+                    switch (argType) {
+                    case Void:
+                    case Func:
+                    case Anyfunc:
+                    case I64:
+                        RELEASE_ASSERT_NOT_REACHED();
+                    case I32:
+                        arg = jsNumber(static_cast<int32_t>(buffer[argNum]));
+                        break;
+                    case F32:
+                    case F64:
+                        arg = jsNumber(bitwise_cast<double>(buffer[argNum]));
+                        break;
+                    }
+                    args.append(arg);
+                }
+
+                CallData callData;
+                CallType callType = callee->methodTable(*vm)->getCallData(callee, callData);
+                RELEASE_ASSERT(callType != CallType::None);
+                JSValue result = call(exec, callee, callType, callData, jsUndefined(), args);
+                RETURN_IF_EXCEPTION(throwScope, 0);
+
+                uint64_t realResult;
+                switch (signature.returnType()) {
+                case Func:
+                case Anyfunc:
+                case I64:
+                    RELEASE_ASSERT_NOT_REACHED();
+                    break;
+                case Void:
+                    break;
+                case I32: {
+                    realResult = static_cast<uint64_t>(static_cast<uint32_t>(result.toInt32(exec)));
+                    break;
+                }
+                case F64:
+                case F32: {
+                    realResult = bitwise_cast<uint64_t>(result.toNumber(exec));
+                    break;
+                }
+                }
+
+                RETURN_IF_EXCEPTION(throwScope, 0);
+                return realResult;
+            };
+        
+        jit.loadWasmContext(GPRInfo::argumentGPR0);
+        jit.loadPtr(CCallHelpers::Address(GPRInfo::argumentGPR0, JSWebAssemblyInstance::offsetOfCallee()), GPRInfo::argumentGPR0);
+        jit.storePtr(GPRInfo::argumentGPR0, JIT::Address(GPRInfo::callFrameRegister, CallFrameSlot::callee * static_cast<int>(sizeof(Register))));
+        
+        materializeImportJSCell(jit, importIndex, GPRInfo::argumentGPR1);
+        static_assert(GPRInfo::numberOfArgumentRegisters >= 4, "We rely on this with the call below.");
+        jit.setupArgumentsWithExecState(GPRInfo::argumentGPR1, CCallHelpers::TrustedImm32(signatureIndex), CCallHelpers::TrustedImmPtr(buffer));
+        auto call = jit.call();
+        auto noException = jit.emitExceptionCheck(*vm, AssemblyHelpers::InvertedExceptionCheck);
+
+        // exception here.
+        jit.copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(*vm);
+        jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+        void (*doUnwinding)(ExecState*) = [] (ExecState* exec) -> void {
+            VM* vm = &exec->vm();
+            NativeCallFrameTracer tracer(vm, exec);
+            genericUnwind(vm, exec);
+            ASSERT(!!vm->callFrameForCatch);
+        };
+        auto exceptionCall = jit.call();
+        jit.jumpToExceptionHandler(*vm);
+
+        noException.link(&jit);
+        switch (signature.returnType()) {
+        case F64: {
+            jit.move64ToDouble(GPRInfo::returnValueGPR, FPRInfo::returnValueFPR);
+            break;
+        }
+        case F32: {
+            jit.move64ToDouble(GPRInfo::returnValueGPR, FPRInfo::returnValueFPR);
+            jit.convertDoubleToFloat(FPRInfo::returnValueFPR, FPRInfo::returnValueFPR);
+            break;
+        }
+        default:
+            break;
+        }
+
+        jit.emitFunctionEpilogue();
+        jit.ret();
+
+        LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID);
+        linkBuffer.link(call, callFunc);
+        linkBuffer.link(exceptionCall, doUnwinding);
+
+        return FINALIZE_CODE(linkBuffer, ("WebAssembly->JavaScript import[%i] %s", importIndex, signature.toString().ascii().data()));
+    }
+
     // FIXME perform a stack check before updating SP. https://bugs.webkit.org/show_bug.cgi?id=165546
 
     const unsigned numberOfParameters = argCount + 1; // There is a "this" argument.

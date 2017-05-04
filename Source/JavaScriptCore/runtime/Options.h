@@ -446,7 +446,8 @@ typedef const char* optionString;
     v(unsigned, webAssemblyFastMemoryRedzonePages, 128, Normal, "WebAssembly fast memories use 4GiB virtual allocations, plus a redzone (counted as multiple of 64KiB WebAssembly pages) at the end to catch reg+imm accesses which exceed 32-bit, anything beyond the redzone is explicitly bounds-checked") \
     v(bool, crashIfWebAssemblyCantFastMemory, false, Normal, "If true, we will crash if we can't obtain fast memory for wasm.") \
     v(unsigned, webAssemblyFastMemoryPreallocateCount, 0, Normal, "WebAssembly fast memories can be pre-allocated at program startup and remain cached to avoid fragmentation leading to bounds-checked memory. This number is an upper bound on initial allocation as well as total count of fast memories. Zero means no pre-allocation, no caching, and no limit to the number of runtime allocations.") \
-    v(bool, useWebAssemblyFastTLS, true, Normal, "If true, we will try to use fast thread-local storage if available on the current platform.")
+    v(bool, useWebAssemblyFastTLS, true, Normal, "If true, we will try to use fast thread-local storage if available on the current platform.") \
+    v(bool, useCallICsForWebAssemblyToJSCalls, true, Normal, "If true, we will use CallLinkInfo to inline cache Wasm to JS calls.")
 
 
 enum OptionEquivalence {

@@ -762,7 +762,7 @@ void linkPolymorphicCall(
     // Figure out what our cases are.
     for (CallVariant variant : list) {
         CodeBlock* codeBlock;
-        if (isWebAssembly || variant.executable()->isHostFunction())
+        if (variant.executable()->isHostFunction())
             codeBlock = nullptr;
         else {
             ExecutableBase* executable = variant.executable();
