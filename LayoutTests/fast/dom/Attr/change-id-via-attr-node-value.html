@@ -46,146 +46,33 @@ shouldBe('document.getElementById("f")', 'document.body');
 shouldBe('document.body.id', '"f"');
 shouldBe('document.body.getAttribute("id")', '"f"');
 shouldBe('attrNode.textContent', '"f"');
-shouldBe('attrNode.childNodes.length', '1');
+shouldBe('attrNode.childNodes.length', '0');
 
-// Firefox doesn't support these for Attr nodes.
-debug("\n7. Attr.replaceChild().");
-try {
-    attrNode.replaceChild(document.createTextNode("g"), attrNode.firstChild);
-    shouldBe('document.getElementById("f")', 'null');
-    shouldBe('document.getElementById("g")', 'document.body');
-    shouldBe('document.body.id', '"g"');
-    shouldBe('document.body.getAttribute("id")', '"g"');
-    shouldBe('attrNode.textContent', '"g"');
-    shouldBe('attrNode.childNodes.length', '1');
-} catch (ex) {
-    debug(ex);
-}
-
-debug("\n8. Attr.insertBefore().");
-try {
-    attrNode.insertBefore(document.createTextNode("0"), attrNode.firstChild);
-    shouldBe('document.getElementById("g")', 'null');
-    shouldBe('document.getElementById("0g")', 'document.body');
-    shouldBe('document.body.id', '"0g"');
-    shouldBe('document.body.getAttribute("id")', '"0g"');
-    shouldBe('attrNode.textContent', '"0g"');
-    shouldBe('attrNode.childNodes.length', '2');
-} catch (ex) {
-    debug(ex);
-}
-
-debug("\n9. attr.appendChild().");
-try {
-    attrNode.appendChild(document.createTextNode("2"));
-    shouldBe('document.getElementById("0g")', 'null');
-    shouldBe('document.getElementById("0g2")', 'document.body');
-    shouldBe('document.body.id', '"0g2"');
-    shouldBe('document.body.getAttribute("id")', '"0g2"');
-    shouldBe('attrNode.textContent', '"0g2"');
-    shouldBe('attrNode.childNodes.length', '3');
-} catch (ex) {
-    debug(ex);
-}
-
-debug("\n10. Attr.removeChild()");
-attrNode.nodeValue = "h";
-attrNode.removeChild(attrNode.firstChild);
-shouldBe('document.body.getAttributeNode("id").childNodes.length', '0');
-shouldBe('document.getElementById("h")', 'null');
-shouldBe('document.getElementById("")', 'null');
-shouldBe('document.body.id', '""');
-shouldBe('document.body.getAttribute("id")', '""');
-shouldBe('document.body.getAttributeNode("id").textContent', '""');
-
-debug("\n11. Changing Text.nodeValue.");
-attrNode.nodeValue = "h";
-attrNode.firstChild.nodeValue = "i";
-shouldBe('attrNode.firstChild.nodeValue', '"i"');
-shouldBe('document.getElementById("i")', 'document.body');
-shouldBe('document.body.id', '"i"');
-shouldBe('document.body.getAttribute("id")', '"i"');
-shouldBe('attrNode.textContent', '"i"');
-shouldBe('attrNode.childNodes.length', '1');
-
-debug("\n12. Chnaging Attr.textContent.");
+debug("\n7. Changing Attr.textContent.");
 attrNode.textContent = "hi";
 shouldBe('document.getElementById("i")', 'null');
 shouldBe('document.getElementById("hi")', 'document.body');
 shouldBe('document.body.id', '"hi"');
 shouldBe('document.body.getAttribute("id")', '"hi"');
 shouldBe('attrNode.textContent', '"hi"');
-shouldBe('attrNode.childNodes.length', '1');
+shouldBe('attrNode.childNodes.length', '0');
 
-debug("\n13. Text.splitText().");
-attrNode.firstChild.splitText(1);
-shouldBe('document.getElementById("hi")', 'document.body');
-shouldBe('document.body.id', '"hi"');
-shouldBe('document.body.getAttribute("id")', '"hi"');
-shouldBe('document.body.getAttributeNode("id").textContent', '"hi"');
-shouldBe('document.body.getAttributeNode("id").childNodes.length', '2');
-
-debug("\n14. Node.normalize(), joining text nodes.");
+debug("\n8. Node.normalize(), joining text nodes.");
 attrNode.normalize();
 shouldBe('document.getElementById("hi")', 'document.body');
 shouldBe('document.body.id', '"hi"');
 shouldBe('document.body.getAttribute("id")', '"hi"');
 shouldBe('document.body.getAttributeNode("id").textContent', '"hi"');
-shouldBe('document.body.getAttributeNode("id").childNodes.length', '1');
+shouldBe('document.body.getAttributeNode("id").childNodes.length', '0');
 
-debug("\n16. Changing Text.data.");
-attrNode.firstChild.data = "k";
-shouldBe('document.getElementById("j")', 'null');
-shouldBe('document.getElementById("k")', 'document.body');
-shouldBe('document.body.id', '"k"');
-shouldBe('document.body.getAttribute("id")', '"k"');
-shouldBe('attrNode.textContent', '"k"');
-shouldBe('attrNode.childNodes.length', '1');
-
-debug("\n17. Changing text child with appendData().");
-attrNode.firstChild.appendData("l");
-shouldBe('document.getElementById("k")', 'null');
-shouldBe('document.getElementById("kl")', 'document.body');
-shouldBe('document.body.id', '"kl"');
-shouldBe('document.body.getAttribute("id")', '"kl"');
-shouldBe('attrNode.textContent', '"kl"');
-shouldBe('attrNode.childNodes.length', '1');
-
-debug("\n18. Changing text child with insertData().");
-attrNode.firstChild.insertData(1, "1");
-shouldBe('document.getElementById("kl")', 'null');
-shouldBe('document.getElementById("k1l")', 'document.body');
-shouldBe('document.body.id', '"k1l"');
-shouldBe('document.body.getAttribute("id")', '"k1l"');
-shouldBe('attrNode.textContent', '"k1l"');
-shouldBe('attrNode.childNodes.length', '1');
-
-debug("\n19. Changing text child with deleteData().");
-attrNode.firstChild.deleteData(0, 2);
-shouldBe('document.getElementById("k1l")', 'null');
-shouldBe('document.getElementById("l")', 'document.body');
-shouldBe('document.body.id', '"l"');
-shouldBe('document.body.getAttribute("id")', '"l"');
-shouldBe('attrNode.textContent', '"l"');
-shouldBe('attrNode.childNodes.length', '1');
-
-debug("\n20. Changing text child with replaceData().");
-attrNode.firstChild.replaceData(0, 1, "mn");
-shouldBe('document.getElementById("l")', 'null');
-shouldBe('document.getElementById("mn")', 'document.body');
-shouldBe('document.body.id', '"mn"');
-shouldBe('document.body.getAttribute("id")', '"mn"');
-shouldBe('attrNode.textContent', '"mn"');
-shouldBe('attrNode.childNodes.length', '1');
-
-debug("\n21. Remove an Attr node.");
+debug("\n9. Remove an Attr node.");
 document.body.removeAttributeNode(attrNode);
 shouldBe('document.body.id', '""');
 shouldBe('document.getElementById("mn")', 'null');
 shouldBe('document.body.getAttribute("id")', 'null');
 shouldBe('document.body.getAttributeNode("id")', 'null');
 
-debug("\n22. Add an Attr node.");
+debug("\n10. Add an Attr node.");
 var attrNode = document.createAttribute("id");
 attrNode.value = "o";
 document.body.setAttributeNode(attrNode);
@@ -193,7 +80,7 @@ shouldBe('document.getElementById("o")', 'document.body');
 shouldBe('document.body.id', '"o"');
 shouldBe('document.body.getAttribute("id")', '"o"');
 
-debug("\n23. Add an Attr node over an existing one.");
+debug("\n11. Add an Attr node over an existing one.");
 var attrNode = document.createAttribute("id");
 attrNode.value = "p";
 document.body.setAttributeNode(attrNode);

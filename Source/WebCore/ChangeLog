@@ -1,3 +1,51 @@
+2017-05-05  Chris Dumez  <cdumez@apple.com>
+
+        Attr Nodes should not have children
+        https://bugs.webkit.org/show_bug.cgi?id=171688
+        <rdar://problem/31998412>
+
+        Reviewed by Andreas Kling.
+
+        Attr Nodes should not have children as per the latest DOM specification:
+        - https://dom.spec.whatwg.org/#interface-attr
+        - https://dom.spec.whatwg.org/#dom-attr-value
+        - https://dom.spec.whatwg.org/#concept-node-ensure-pre-insertion-validity (Step 1)
+
+        Firefox and Chrome both have been matching the DOM specification for a while so I think
+        we should do the same. This aligns us with other browsers, simplifies the code, is
+        more efficient and the code being removed has been prone to security bugs.
+
+        Test: fast/dom/Attr/cannot-have-children.html
+
+        * dom/Attr.cpp:
+        (WebCore::Attr::Attr):
+        (WebCore::Attr::create):
+        (WebCore::Attr::setValue):
+        (WebCore::Attr::cloneNodeInternal):
+        * dom/Attr.h:
+        - Have Attr subclass Node instead of ContainerNode as it can no longer have children.
+        - Drop logic to dealing with children / creating a Text child.
+
+        * dom/CharacterData.cpp:
+        (WebCore::CharacterData::notifyParentAfterChange):
+        Drop useless check found by the compiler. parentNode() can no longer be an Attr node.
+
+        * dom/Node.cpp:
+        (WebCore::appendTextContent):
+        appendTextContent() is called by Node.TextContent(). For Attr Nodes, we should no longer traverse
+        its subtree to gather Text Nodes. Instead, we now return Attr.value, as per the specification:
+        - https://dom.spec.whatwg.org/#dom-node-textcontent
+
+        * dom/Range.cpp:
+        (WebCore::lengthOfContentsInNode):
+        As per https://dom.spec.whatwg.org/#concept-node-length, we should return the number of children
+        for Attr Nodes, which will always be 0.
+
+        * xml/XPathUtil.cpp:
+        (WebCore::XPath::isValidContextNode):
+        Always return true for TEXT_NODE as the !(node->parentNode() && node->parentNode()->isAttributeNode())
+        check will also with true now. This is because a parentNode() cannot be an Attribute Node.
+
 2017-05-05  Brian Burg  <bburg@apple.com>
 
         [Cocoa] Converting from WebCore::Cookie to NSHTTPCookie always marks cookies as secure

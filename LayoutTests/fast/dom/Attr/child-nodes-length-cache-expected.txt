@@ -1,3 +1,0 @@
-Test for bug 19759: ChildNodeList for an attribute node is not properly invalidated after appending a child.
-
-Passed!!

@@ -28,8 +28,7 @@ window.addEventListener("load", function() {
     c.setAttributeNS("urn:foo-ns", "foo:name", "one");
     c.setAttributeNS("urn:bar-ns", "bar:name", "two");
     var attr = d.createAttributeNS(null, "name");
-    var text = d.createTextNode("three");
-    attr.appendChild(text);
+    attr.value += "three";
     c.setAttributeNode(attr);
     
     window.alert("foo:name is " + c.getAttributeNS("urn:foo-ns", "name") + " and should be one");

@@ -33,13 +33,7 @@ class Attribute;
 class CSSStyleDeclaration;
 class MutableStyleProperties;
 
-// Attr can have Text children
-// therefore it has to be a fullblown Node. The plan
-// is to dynamically allocate a textchild and store the
-// resulting nodevalue in the attribute upon
-// destruction. however, this is not yet implemented.
-
-class Attr final : public ContainerNode {
+class Attr final : public Node {
 public:
     static Ref<Attr> create(Element&, const QualifiedName&);
     static Ref<Attr> create(Document&, const QualifiedName&, const AtomicString& value);
@@ -69,8 +63,6 @@ private:
     Attr(Element&, const QualifiedName&);
     Attr(Document&, const QualifiedName&, const AtomicString& value);
 
-    void createTextChild();
-
     String nodeName() const final { return name(); }
     NodeType nodeType() const final { return ATTRIBUTE_NODE; }
 
@@ -82,9 +74,6 @@ private:
     Ref<Node> cloneNodeInternal(Document&, CloningOperation) final;
 
     bool isAttributeNode() const final { return true; }
-    bool childTypeAllowed(NodeType) const final;
-
-    void childrenChanged(const ChildChange&) final;
 
     Attribute& elementAttribute();
 
@@ -95,7 +84,6 @@ private:
     AtomicString m_standaloneValue;
 
     RefPtr<MutableStyleProperties> m_style;
-    unsigned m_ignoreChildrenChanged { 0 };
 };
 
 } // namespace WebCore

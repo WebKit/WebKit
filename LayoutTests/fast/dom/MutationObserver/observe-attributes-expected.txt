@@ -190,13 +190,6 @@ PASS mutations[0].type is "attributes"
 PASS mutations[0].attributeName is "data-test"
 PASS mutations[0].oldValue is "foo"
 
-Test that mutating an attribute by attaching a child to an attr node delivers mutation records
-PASS mutations.length is 1
-PASS mutations[0].target is div
-PASS mutations[0].type is "attributes"
-PASS mutations[0].attributeName is "data-test"
-PASS mutations[0].oldValue is "foo"
-
 Test that mutating via setAttributeNode delivers mutation records
 PASS mutations.length is 3
 PASS mutations[0].target is div

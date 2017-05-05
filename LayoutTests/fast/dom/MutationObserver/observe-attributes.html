@@ -803,40 +803,6 @@ function testMutateThroughAttrNodeValue() {
     start();
 }
 
-function testMutateThroughAttrNodeChild() {
-    var observer;
-
-    function start() {
-        debug('Test that mutating an attribute by attaching a child to an attr node delivers mutation records');
-
-        mutations = null;
-        observer = new MutationObserver(function(mutations) {
-            window.mutations = mutations;
-        });
-
-        div = document.createElement('div');
-        div.setAttribute('data-test', 'foo');
-        observer.observe(div, { attributes: true, attributeOldValue: true });
-        div.attributes['data-test'].appendChild(document.createTextNode('bar'));
-
-        setTimeout(finish, 0);
-    }
-
-    function finish() {
-        shouldBe('mutations.length', '1');
-        shouldBe('mutations[0].target', 'div');
-        shouldBe('mutations[0].type', '"attributes"');
-        shouldBe('mutations[0].attributeName', '"data-test"');
-        shouldBe('mutations[0].oldValue', '"foo"');
-
-        observer.disconnect();
-        debug('');
-        runNextTest();
-    }
-
-    start();
-}
-
 function testSetAndRemoveAttributeNode() {
     var observer;
 
@@ -983,7 +949,6 @@ var tests = [
     testStyleAttributePropertyAccessOldValue,
     testStyleAttributePropertyAccessIgnoreNoop,
     testMutateThroughAttrNodeValue,
-    testMutateThroughAttrNodeChild,
     testSetAndRemoveAttributeNode,
     testMixedNodeAndElementOperations,
     testNamedNodeMapOperations

@@ -1,0 +1,82 @@
+Tests that Attr Nodes cannot have children.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS idAttr.__proto__ is Attr.prototype
+PASS idAttr.ownerElement is document.body
+PASS idAttr.name is "id"
+PASS idAttr.localName is "id"
+PASS idAttr.parentNode is null
+PASS idAttr.firstChild is null
+PASS idAttr.lastChild is null
+PASS idAttr.hasChildNodes() is false
+PASS idAttr.childNodes.length is 0
+PASS idAttr.value is "test"
+PASS idAttr.nodeValue is "test"
+PASS idAttr.textContent is "test"
+PASS idAttr.appendChild(text) threw exception HierarchyRequestError (DOM Exception 3): The operation would yield an incorrect node tree..
+PASS idAttr.insertBefore(text, null) threw exception HierarchyRequestError (DOM Exception 3): The operation would yield an incorrect node tree..
+
+PASS detachedAttr.name is "foo"
+PASS detachedAttr.localName is "foo"
+PASS detachedAttr.value is ""
+PASS detachedAttr.nodeValue is ""
+PASS detachedAttr.textContent is ""
+PASS detachedAttr.ownerElement is null
+PASS detachedAttr.parentNode is null
+PASS detachedAttr.firstChild is null
+PASS detachedAttr.lastChild is null
+PASS detachedAttr.hasChildNodes() is false
+PASS detachedAttr.childNodes.length is 0
+PASS detachedAttr.appendChild(text) threw exception HierarchyRequestError (DOM Exception 3): The operation would yield an incorrect node tree..
+PASS detachedAttr.insertBefore(text, null) threw exception HierarchyRequestError (DOM Exception 3): The operation would yield an incorrect node tree..
+
+detachedAttr.value = 'bar'
+PASS detachedAttr.value is "bar"
+PASS detachedAttr.nodeValue is "bar"
+PASS detachedAttr.textContent is "bar"
+PASS detachedAttr.firstChild is null
+PASS detachedAttr.lastChild is null
+PASS detachedAttr.hasChildNodes() is false
+PASS detachedAttr.childNodes.length is 0
+
+detachedAttr.nodeValue = 'bar2'
+PASS detachedAttr.value is "bar2"
+PASS detachedAttr.nodeValue is "bar2"
+PASS detachedAttr.textContent is "bar2"
+
+detachedAttr.textContent = 'bar3'
+PASS detachedAttr.value is "bar3"
+PASS detachedAttr.nodeValue is "bar3"
+PASS detachedAttr.textContent is "bar3"
+
+detachedAttr.value = null
+PASS detachedAttr.value is "null"
+
+detachedAttr.nodeValue = null
+PASS detachedAttr.value is ""
+
+detachedAttr.textContent = null
+PASS detachedAttr.value is ""
+
+detachedAttr.value = 'bar'
+document.body.setAttributeNode(detachedAttr)
+PASS fooAttr.ownerElement is document.body
+PASS document.body.getAttributeNode('foo') is fooAttr
+PASS document.body.getAttribute('foo') is "bar"
+PASS fooAttr.value is "bar"
+PASS document.body.attributes.foo is fooAttr
+PASS document.body.attributes['foo'] is fooAttr
+PASS document.body.attributes[1] is fooAttr
+PASS fooAttr.firstChild is null
+PASS fooAttr.lastChild is null
+PASS fooAttr.hasChildNodes() is false
+PASS fooAttr.childNodes.length is 0
+PASS fooAttr.appendChild(text) threw exception HierarchyRequestError (DOM Exception 3): The operation would yield an incorrect node tree..
+PASS fooAttr.insertBefore(text, null) threw exception HierarchyRequestError (DOM Exception 3): The operation would yield an incorrect node tree..
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

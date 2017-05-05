@@ -6,7 +6,6 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS Before load event handled for original link element.
 PASS Before load event handled for original link element.
 PASS Before load event handled for original link element.
-PASS Before load event handled for original link element.
 PASS successfullyParsed is true
 
 TEST COMPLETE

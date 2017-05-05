@@ -17,52 +17,8 @@
 testReflectAttribute('webkitdropzone', 'webkitdropzone', 'copy', 'move', 'dropzone on HTMLElement');
 
 testAttributeMutator(function (element, name, value) {
-    element.attributes[name].firstChild.data = value;
+    element.attributes[name].value = value;
 }, 'data on CharacterData');
-
-test(function () {
-    var element = define_new_custom_element(['title']);
-    var instance = document.createElement(element.name);
-    instance.setAttribute('title', 'hello');
-    assert_array_equals(element.takeLog().types(), ['constructed', 'attributeChanged']);
-    instance.attributes.title.firstChild.appendData(' world');
-    var logEntries = element.takeLog();
-    assert_array_equals(logEntries.types(), ['attributeChanged']);
-    assert_attribute_log_entry(logEntries.last(), {name: 'title', oldValue: 'hello', newValue: 'hello world', namespace: null});
-}, 'appendData on CharacterData must enqueue an attributeChangedCallback when mutating an existing attribute');
-
-test(function () {
-    var element = define_new_custom_element(['title']);
-    var instance = document.createElement(element.name);
-    instance.setAttribute('title', 'foo');
-    assert_array_equals(element.takeLog().types(), ['constructed', 'attributeChanged']);
-    instance.attributes.title.firstChild.insertData(2, 'bar');
-    var logEntries = element.takeLog();
-    assert_array_equals(logEntries.types(), ['attributeChanged']);
-    assert_attribute_log_entry(logEntries.last(), {name: 'title', oldValue: 'foo', newValue: 'fobaro', namespace: null});
-}, 'insertData on CharacterData must enqueue an attributeChangedCallback when mutating an existing attribute');
-
-test(function () {
-    var element = define_new_custom_element(['title']);
-    var instance = document.createElement(element.name);
-    instance.setAttribute('title', 'hello world');
-    assert_array_equals(element.takeLog().types(), ['constructed', 'attributeChanged']);
-    instance.attributes.title.firstChild.deleteData(5, 100);
-    var logEntries = element.takeLog();
-    assert_array_equals(logEntries.types(), ['attributeChanged']);
-    assert_attribute_log_entry(logEntries.last(), {name: 'title', oldValue: 'hello world', newValue: 'hello', namespace: null});
-}, 'deleteData on CharacterData must enqueue an attributeChangedCallback when mutating an existing attribute');
-
-test(function () {
-    var element = define_new_custom_element(['title']);
-    var instance = document.createElement(element.name);
-    instance.setAttribute('title', 'hello');
-    assert_array_equals(element.takeLog().types(), ['constructed', 'attributeChanged']);
-    instance.attributes.title.firstChild.replaceData(1, 4, 'i');
-    var logEntries = element.takeLog();
-    assert_array_equals(logEntries.types(), ['attributeChanged']);
-    assert_attribute_log_entry(logEntries.last(), {name: 'title', oldValue: 'hello', newValue: 'hi', namespace: null});
-}, 'replaceData on CharacterData must enqueue an attributeChangedCallback when mutating an existing attribute');
 
 test_with_window(function (contentWindow) {
     const element = define_custom_element_in_window(contentWindow, 'custom-element', []);

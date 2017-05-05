@@ -5,7 +5,12 @@
 description("This test passes if it does not crash.");
  
 var testDiv = document.getElementById("testDiv");
-testDiv.attributes[0].appendChild(new Text("test"));
+
+try {
+    testDiv.attributes[0].appendChild(new Text("test"));
+} catch (e) {
+}
+
 testDiv.cloneNode(false);
 gc();
 testDiv.normalize();

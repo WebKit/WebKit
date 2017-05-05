@@ -20,7 +20,10 @@ function handler()
 }
 
 elem.setAttribute("b", "a");
-elem.attributes[0].appendChild(document.createTextNode("hi"));
+try {
+    elem.attributes[0].appendChild(document.createTextNode("hi"));
+} catch(e) {
+}
 elem.attributes[0].addEventListener("DOMSubtreeModified", handler,  false);
 elem.normalize();
 </script>

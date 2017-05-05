@@ -28,11 +28,7 @@ function test()
     var origLink = document.getElementById('link');
 
     var relAttr = origLink.getAttributeNode('rel');
-    var textNode = relAttr.childNodes[0];
-
-    var newTextNode = document.createTextNode("author");
-
-    relAttr.replaceChild(newTextNode, textNode);
+    relAttr.value = "author";
 
     setTimeout(step2, 0);
 }

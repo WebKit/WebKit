@@ -209,10 +209,6 @@ void CharacterData::setDataAndUpdate(const String& newData, unsigned offsetOfRep
 
 void CharacterData::notifyParentAfterChange(ContainerNode::ChildChangeSource source)
 {
-#if !ASSERT_DISABLED
-    auto assertNoEventDispatch = std::make_unique<NoEventDispatchAssertion>();
-#endif
-
     document().incDOMTreeVersion();
 
     if (!parentNode())
@@ -224,12 +220,6 @@ void CharacterData::notifyParentAfterChange(ContainerNode::ChildChangeSource sou
         ElementTraversal::nextSibling(*this),
         source
     };
-
-#if !ASSERT_DISABLED
-    // Attribute CharacterData is expected to fire events.
-    if (is<Attr>(*parentNode()))
-        assertNoEventDispatch = nullptr;
-#endif
 
     parentNode()->childrenChanged(change);
 }

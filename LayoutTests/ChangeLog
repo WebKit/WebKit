@@ -1,3 +1,53 @@
+2017-05-05  Chris Dumez  <cdumez@apple.com>
+
+        Attr Nodes should not have children
+        https://bugs.webkit.org/show_bug.cgi?id=171688
+        <rdar://problem/31998412>
+
+        Reviewed by Andreas Kling.
+
+        * fast/dom/Attr/cannot-have-children-expected.txt: Added.
+        * fast/dom/Attr/cannot-have-children.html: Added.
+        Add layout test coverage. I have verified that this test passes in both
+        Firefox and Chrome.
+
+        * dom/html/level1/*: Removed legacy / outdated tests.
+        * dom/xhtml/level1/*: Removed legacy / outdated tests.
+
+        * fast/dom/Attr/child-nodes-cache-expected.txt: Removed.
+        * fast/dom/Attr/child-nodes-cache.html: Removed.
+        * fast/dom/Attr/child-nodes-length-cache-expected.txt: Removed.
+        * fast/dom/Attr/child-nodes-length-cache.html: Removed.
+        * fast/dom/Attr/invalidate-nodelist-after-attr-setvalue-expected.txt: Removed.
+        * fast/dom/Attr/invalidate-nodelist-after-attr-setvalue.html: Removed.
+        * fast/dom/attribute-change-on-mutate-expected.txt: Removed.
+        * fast/dom/attribute-change-on-mutate.html: Removed.
+        * svg/custom/image-with-attr-change-after-delete-crash-expected.txt: Removed.
+        * svg/custom/image-with-attr-change-after-delete-crash.html: Removed.
+        * traversal/moz-bug590771-expected.txt: Removed.
+        * traversal/moz-bug590771.html: Removed.
+        Removed some outdated tests.
+
+        * fast/custom-elements/reactions-for-webkit-extensions-expected.txt:
+        * fast/custom-elements/reactions-for-webkit-extensions.html:
+        * fast/dom/Attr/change-id-via-attr-node-value-expected.txt:
+        * fast/dom/Attr/change-id-via-attr-node-value.html:
+        * fast/dom/Element/normalize-crash.html:
+        * fast/dom/Element/normalize-crash2.html:
+        * fast/dom/HTMLLinkElement/event-while-removing-attribute-expected.txt:
+        * fast/dom/HTMLLinkElement/event-while-removing-attribute.html:
+        * fast/dom/MutationObserver/observe-attributes-expected.txt:
+        * fast/dom/MutationObserver/observe-attributes.html:
+        * fast/dom/import-attribute-node.html:
+        * fast/dom/insertedIntoDocument-child.html:
+        * fast/dom/insertedIntoDocument-sibling.html:
+        * fast/dom/no-assert-for-malformed-js-url-attribute-expected.txt:
+        * fast/dom/no-assert-for-malformed-js-url-attribute.html:
+        * fast/dom/normalize-attributes-mutation-event-crash.html:
+        * fast/dom/serialize-nodes.xhtml:
+        * http/tests/security/xss-DENIED-iframe-src-alias-expected.txt:
+        Update existing tests so they stop relying on Attr Node having Text children.
+
 2017-05-05  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark w3c test persisted-user-state-restoration/scroll-restoration-fragment-scrolling-cross-origin.html as flaky on mac-wk1.

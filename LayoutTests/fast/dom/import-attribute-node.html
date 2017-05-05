@@ -12,8 +12,8 @@ try {
   var dstElem = xmld2.documentElement;
 
   var importedNode = xmld2.importNode(srcElem.attributes["test"], false);
-  if (importedNode.firstChild.nodeValue != "baz")
-    throw "wrong imported attribute child: '" + importedNode.firstChild.nodeValue + "'";
+  if (importedNode.nodeValue != "baz")
+    throw "wrong imported attribute child: '" + importedNode.nodeValue + "'";
 
   dstElem.setAttributeNode(importedNode);
   if (dstElem.getAttribute("test") != "baz")

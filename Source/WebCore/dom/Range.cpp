@@ -536,6 +536,7 @@ static inline unsigned lengthOfContentsInNode(Node& node)
     // This switch statement must be consistent with that of Range::processContentsBetweenOffsets.
     switch (node.nodeType()) {
     case Node::DOCUMENT_TYPE_NODE:
+    case Node::ATTRIBUTE_NODE:
         return 0;
     case Node::TEXT_NODE:
     case Node::CDATA_SECTION_NODE:
@@ -543,7 +544,6 @@ static inline unsigned lengthOfContentsInNode(Node& node)
     case Node::PROCESSING_INSTRUCTION_NODE:
         return downcast<CharacterData>(node).length();
     case Node::ELEMENT_NODE:
-    case Node::ATTRIBUTE_NODE:
     case Node::DOCUMENT_NODE:
     case Node::DOCUMENT_FRAGMENT_NODE:
         return downcast<ContainerNode>(node).countChildNodes();

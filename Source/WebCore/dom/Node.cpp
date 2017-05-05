@@ -1469,14 +1469,19 @@ static void appendTextContent(const Node* node, bool convertBRsToNewlines, bool&
     case Node::CDATA_SECTION_NODE:
     case Node::COMMENT_NODE:
         isNullString = false;
-        content.append(static_cast<const CharacterData*>(node)->data());
+        content.append(downcast<CharacterData>(*node).data());
         break;
 
     case Node::PROCESSING_INSTRUCTION_NODE:
         isNullString = false;
-        content.append(static_cast<const ProcessingInstruction*>(node)->data());
+        content.append(downcast<ProcessingInstruction>(*node).data());
         break;
     
+    case Node::ATTRIBUTE_NODE:
+        isNullString = false;
+        content.append(downcast<Attr>(*node).value());
+        break;
+
     case Node::ELEMENT_NODE:
         if (node->hasTagName(brTag) && convertBRsToNewlines) {
             isNullString = false;
@@ -1484,7 +1489,6 @@ static void appendTextContent(const Node* node, bool convertBRsToNewlines, bool&
             break;
         }
         FALLTHROUGH;
-    case Node::ATTRIBUTE_NODE:
     case Node::DOCUMENT_FRAGMENT_NODE:
         isNullString = false;
         for (Node* child = node->firstChild(); child; child = child->nextSibling()) {

@@ -65,12 +65,11 @@ bool isValidContextNode(Node* node)
         case Node::DOCUMENT_NODE:
         case Node::ELEMENT_NODE:
         case Node::PROCESSING_INSTRUCTION_NODE:
+        case Node::TEXT_NODE:
             return true;
         case Node::DOCUMENT_FRAGMENT_NODE:
         case Node::DOCUMENT_TYPE_NODE:
             return false;
-        case Node::TEXT_NODE:
-            return !(node->parentNode() && node->parentNode()->isAttributeNode());
     }
     ASSERT_NOT_REACHED();
     return false;

@@ -11,10 +11,10 @@ if (window.testRunner)
 function runTest()
 {
     var testFrame1 = document.getElementById('testFrame1');
-    testFrame1.getAttributeNode("src").firstChild.appendData("missingFunction(this) orem ipsum dosolorem");
+    testFrame1.getAttributeNode("src").value += "missingFunction(this) orem ipsum dosolorem";
 
     var testFrame2 = document.getElementById('testFrame2');
-    testFrame2.getAttributeNode("src").firstChild.appendData("javascript:missingFunction(this) orem ipsum dosolorem");
+    testFrame2.getAttributeNode("src").value += "javascript:missingFunction(this) orem ipsum dosolorem";
 }
 </script>
 </head>
