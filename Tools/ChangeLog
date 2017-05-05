@@ -1,3 +1,16 @@
+2017-05-05  Brian Burg  <bburg@apple.com>
+
+        [Cocoa] Converting from WebCore::Cookie to NSHTTPCookie always marks cookies as session cookies
+        https://bugs.webkit.org/show_bug.cgi?id=171748
+        <rdar://problem/32027327>
+
+        Reviewed by Michael Catanzaro.
+
+        Remove temporary workaround now that the assertion failure is fixed.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/WKHTTPCookieStore.mm:
+        (TEST):
+
 2017-05-05  Simon Fraser  <simon.fraser@apple.com>
 
         Make it possible to test rotation in iOS WebKitTestRunner

@@ -1,3 +1,25 @@
+2017-05-05  Brian Burg  <bburg@apple.com>
+
+        [Cocoa] Converting from WebCore::Cookie to NSHTTPCookie always marks cookies as session cookies
+        https://bugs.webkit.org/show_bug.cgi?id=171748
+        <rdar://problem/32027327>
+
+        Reviewed by Michael Catanzaro.
+
+        The function that we use to convert from WebCore::Cookie to NSHTTPCookie was
+        also misusing the NSHTTPCookieDiscard property. If any value is provided for
+        this key, even @NO, CFNetwork interprets that to mean that the cookie has the
+        "session" flag.
+
+        This is known to affect cookies set via WebCookieManager, WKHTTPCookieStore,
+        and WebAutomationSession.
+
+        This is covered by existing test WebKit2.WKHTTPCookieStore.
+
+        * platform/network/cocoa/CookieCocoa.mm:
+        (WebCore::Cookie::operator NSHTTPCookie *):
+        Don't include the property if the cookie is not a session cookie.
+
 2017-05-05  Youenn Fablet  <youenn@apple.com>
 
         TURNS gathering is not working properly
