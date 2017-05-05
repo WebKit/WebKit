@@ -1,3 +1,16 @@
+2017-05-05  Tim Horton  <timothy_horton@apple.com>
+
+        Link drag images for apple.com front page links have a lot of spurious whitespace
+        https://bugs.webkit.org/show_bug.cgi?id=171719
+        <rdar://problem/32010854>
+
+        Reviewed by Wenson Hsieh.
+
+        * page/DragController.cpp:
+        (WebCore::DragController::startDrag):
+        Use the white-space-simplified string that we put on the pasteboard
+        for the drag image, too!
+
 2017-05-04  Mark Lam  <mark.lam@apple.com>
 
         DRT's setAudioResultCallback() and IDBRequest::setResult() need to acquire the JSLock.
