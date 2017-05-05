@@ -1,0 +1,7 @@
+DESKTOP NOTIFICATION: icon , title New E-mail, text Meet me tonight at 8!
+DESKTOP NOTIFICATION CLOSED: New E-mail
+Sending notifications with permission...
+
+PASS: display event invoked.
+PASS: close event invoked.
+

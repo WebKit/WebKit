@@ -46,6 +46,7 @@
 #include "DOMTokenList.h"
 #include "DOMURL.h"
 #include "DOMWindowExtension.h"
+#include "DOMWindowNotifications.h"
 #include "DeviceMotionController.h"
 #include "DeviceOrientationController.h"
 #include "Document.h"

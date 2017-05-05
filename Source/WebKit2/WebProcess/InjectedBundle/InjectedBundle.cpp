@@ -79,7 +79,8 @@
 #include <WebCore/UserScript.h>
 #include <WebCore/UserStyleSheet.h>
 
-#if ENABLE(NOTIFICATIONS)
+
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 #include "WebNotificationManager.h"
 #endif
 
@@ -539,7 +540,7 @@ void InjectedBundle::setUserStyleSheetLocation(WebPageGroupProxy* pageGroup, con
 
 void InjectedBundle::setWebNotificationPermission(WebPage* page, const String& originString, bool allowed)
 {
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     page->notificationPermissionRequestManager()->setPermissionLevelForTesting(originString, allowed);
 #else
     UNUSED_PARAM(page);
@@ -550,7 +551,7 @@ void InjectedBundle::setWebNotificationPermission(WebPage* page, const String& o
 
 void InjectedBundle::removeAllWebNotificationPermissions(WebPage* page)
 {
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     page->notificationPermissionRequestManager()->removeAllPermissionsForTesting();
 #else
     UNUSED_PARAM(page);
@@ -559,7 +560,7 @@ void InjectedBundle::removeAllWebNotificationPermissions(WebPage* page)
 
 uint64_t InjectedBundle::webNotificationID(JSContextRef jsContext, JSValueRef jsNotification)
 {
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     WebCore::Notification* notification = JSNotification::toWrapped(toJS(jsContext)->vm(), toJS(toJS(jsContext), jsNotification));
     if (!notification)
         return 0;

@@ -52,6 +52,9 @@ public:
 #if ENABLE(NOTIFICATIONS)
     void startRequest(WebCore::SecurityOrigin*, RefPtr<WebCore::NotificationPermissionCallback>&&);
 #endif
+#if ENABLE(LEGACY_NOTIFICATIONS)
+    void startRequest(WebCore::SecurityOrigin*, RefPtr<WebCore::VoidCallback>&&);
+#endif
     void cancelRequest(WebCore::SecurityOrigin*);
     bool hasPendingPermissionRequests(WebCore::SecurityOrigin*) const;
     
@@ -69,10 +72,13 @@ private:
 #if ENABLE(NOTIFICATIONS)
     HashMap<uint64_t, RefPtr<WebCore::NotificationPermissionCallback>> m_idToCallbackMap;
 #endif
+#if ENABLE(LEGACY_NOTIFICATIONS)
+    HashMap<uint64_t, RefPtr<WebCore::VoidCallback>> m_idToVoidCallbackMap;
+#endif
     HashMap<RefPtr<WebCore::SecurityOrigin>, uint64_t> m_originToIDMap;
     HashMap<uint64_t, RefPtr<WebCore::SecurityOrigin>> m_idToOriginMap;
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     WebPage* m_page;
 #endif
 };

@@ -162,8 +162,18 @@ webkit.org/b/98927 fast/dom/DeviceMotion [ Skip ]
 webkit.org/b/98927 fast/dom/DeviceOrientation [ Skip ]
 
 # https://bugs.webkit.org/show_bug.cgi?id=81697 Skip file:// based notifications tests
+fast/notifications
 fast/history/page-cache-notification-non-suspendable.html
 fast/history/page-cache-notification-suspendable.html
+
+# we do not enable legacy notifications
+http/tests/notifications/legacy/window-show-on-click.html
+http/tests/notifications/legacy/request.html
+http/tests/notifications/legacy/request-no-callback.html
+http/tests/notifications/legacy/events.html
+http/tests/notifications/legacy/show.html
+http/tests/notifications/legacy/double-show.html
+http/tests/notifications/legacy/notification-request-permission-then-navigate.html
 
 # Datalist is not yet enabled.
 webkit.org/b/98934 fast/forms/datalist [ Skip ]

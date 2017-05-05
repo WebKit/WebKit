@@ -31,32 +31,77 @@
 
 #include "config.h"
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 
 #include "Notification.h"
 
+#include "DOMWindow.h"
+#include "DOMWindowNotifications.h"
 #include "Document.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
+#include "NotificationCenter.h"
 #include "NotificationController.h"
 #include "NotificationPermissionCallback.h"
+#include "VoidCallback.h"
 #include "WindowFocusAllowedIndicator.h"
 
 namespace WebCore {
+
+#if ENABLE(LEGACY_NOTIFICATIONS)
+
+Notification::Notification(const String& title, const String& body, URL&& iconURL, ScriptExecutionContext& context, NotificationCenter& notificationCenter)
+    : ActiveDOMObject(&context)
+    , m_icon(WTFMove(iconURL))
+    , m_title(title)
+    , m_body(body)
+    , m_notificationCenter(&notificationCenter)
+{
+}
+
+#endif
+
+#if ENABLE(NOTIFICATIONS)
 
 Notification::Notification(Document& document, const String& title)
     : ActiveDOMObject(&document)
     , m_title(title)
     , m_state(Idle)
+    , m_notificationCenter(DOMWindowNotifications::webkitNotifications(*document.domWindow()))
     , m_taskTimer(std::make_unique<Timer>([this] () { show(); }))
 {
+    // FIXME: Seems that m_notificationCenter can be null so should not be changed from RefPtr to Ref.
+    // But the rest of the code in this class isn't trying to handle that case.
+    ASSERT(m_notificationCenter->client());
     m_taskTimer->startOneShot(0_s);
 }
+
+#endif
 
 Notification::~Notification() 
 {
 }
+
+#if ENABLE(LEGACY_NOTIFICATIONS)
+
+ExceptionOr<Ref<Notification>> Notification::create(const String& title, const String& body, const String& iconURL, ScriptExecutionContext& context, NotificationCenter& provider)
+{ 
+    if (provider.checkPermission() != NotificationClient::PermissionAllowed)
+        return Exception { SECURITY_ERR };
+
+    URL completedIconURL = iconURL.isEmpty() ? URL() : context.completeURL(iconURL);
+    if (!completedIconURL.isEmpty() && !completedIconURL.isValid())
+        return Exception { SYNTAX_ERR };
+
+    auto notification = adoptRef(*new Notification(title, body, WTFMove(completedIconURL), context, provider));
+    notification.get().suspendIfNeeded();
+    return WTFMove(notification);
+}
+
+#endif
+
+#if ENABLE(NOTIFICATIONS)
 
 static String directionString(Notification::Direction direction)
 {
@@ -77,38 +122,38 @@ static String directionString(Notification::Direction direction)
 Ref<Notification> Notification::create(Document& context, const String& title, const Options& options)
 {
     auto notification = adoptRef(*new Notification(context, title));
-    notification->m_body = options.body;
-    notification->m_tag = options.tag;
-    notification->m_lang = options.lang;
-    notification->m_direction = directionString(options.dir);
+    notification.get().m_body = options.body;
+    notification.get().m_tag = options.tag;
+    notification.get().m_lang = options.lang;
+    notification.get().m_direction = directionString(options.dir);
     if (!options.icon.isEmpty()) {
         auto iconURL = context.completeURL(options.icon);
         if (iconURL.isValid())
-            notification->m_icon = iconURL;
+            notification.get().m_icon = iconURL;
     }
-    notification->suspendIfNeeded();
+    notification.get().suspendIfNeeded();
     return notification;
 }
+
+#endif
 
 void Notification::show() 
 {
     // prevent double-showing
-    if (m_state != Idle)
-        return;
-
-    auto* page = downcast<Document>(*scriptExecutionContext()).page();
-    if (!page)
-        return;
-
-    auto& client = NotificationController::from(page)->client();
-
-    if (client.checkPermission(scriptExecutionContext()) != NotificationClient::PermissionAllowed) {
-        dispatchErrorEvent();
-        return;
-    }
-    if (client.show(this)) {
-        m_state = Showing;
-        setPendingActivity(this);
+    if (m_state == Idle && m_notificationCenter->client()) {
+#if ENABLE(NOTIFICATIONS)
+        auto* page = downcast<Document>(*scriptExecutionContext()).page();
+        if (!page)
+            return;
+        if (NotificationController::from(page)->client().checkPermission(scriptExecutionContext()) != NotificationClient::PermissionAllowed) {
+            dispatchErrorEvent();
+            return;
+        }
+#endif
+        if (m_notificationCenter->client()->show(this)) {
+            m_state = Showing;
+            setPendingActivity(this);
+        }
     }
 }
 
@@ -117,12 +162,10 @@ void Notification::close()
     switch (m_state) {
     case Idle:
         break;
-    case Showing: {
-        auto* page = downcast<Document>(*scriptExecutionContext()).page();
-        if (page)
-            NotificationController::from(page)->client().cancel(this);
+    case Showing:
+        if (m_notificationCenter->client())
+            m_notificationCenter->client()->cancel(this);
         break;
-    }
     case Closed:
         break;
     }
@@ -131,10 +174,8 @@ void Notification::close()
 void Notification::contextDestroyed()
 {
     ActiveDOMObject::contextDestroyed();
-
-    auto* page = downcast<Document>(*scriptExecutionContext()).page();
-    if (page)
-        NotificationController::from(page)->client().notificationObjectDestroyed(this);
+    if (m_notificationCenter->client())
+        m_notificationCenter->client()->notificationObjectDestroyed(this);
 }
 
 const char* Notification::activeDOMObjectName() const
@@ -178,6 +219,8 @@ void Notification::dispatchErrorEvent()
     dispatchEvent(Event::create(eventNames().errorEvent, false, false));
 }
 
+#if ENABLE(NOTIFICATIONS)
+
 String Notification::permission(Document& document)
 {
     return permissionString(NotificationController::from(document.page())->client().checkPermission(&document));
@@ -202,6 +245,8 @@ void Notification::requestPermission(Document& document, RefPtr<NotificationPerm
     NotificationController::from(document.page())->client().requestPermission(&document, WTFMove(callback));
 }
 
+#endif
+
 } // namespace WebCore
 
-#endif // ENABLE(NOTIFICATIONS)
+#endif // ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)

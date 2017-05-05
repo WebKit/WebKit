@@ -432,7 +432,7 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
 #if ENABLE(GEOLOCATION)
     WebCore::provideGeolocationTo(m_page.get(), new WebGeolocationClient(this));
 #endif
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     WebCore::provideNotification(m_page.get(), new WebNotificationClient(this));
 #endif
 #if ENABLE(VIBRATION)
@@ -3198,7 +3198,7 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     settings.setShouldDisplayTextDescriptions(store.getBoolValueForKey(WebPreferencesKey::shouldDisplayTextDescriptionsKey()));
 #endif
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     settings.setNotificationsEnabled(store.getBoolValueForKey(WebPreferencesKey::notificationsEnabledKey()));
 #endif
 

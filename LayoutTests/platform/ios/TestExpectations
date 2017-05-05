@@ -48,6 +48,7 @@ fast/events/constructors/device-proximity-event-constructor.html
 printing
 
 # Web Notifications are not supported on iOS.
+fast/notifications
 http/tests/notifications
 fast/history/page-cache-notification-non-suspendable.html
 fast/history/page-cache-notification-suspendable.html

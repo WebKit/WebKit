@@ -1572,7 +1572,11 @@
 		33503C9A10179A74003B47E1 /* NotificationClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 33503C9910179A74003B47E1 /* NotificationClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		33503CA310179AD7003B47E1 /* JSNotification.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33503C9F10179AD7003B47E1 /* JSNotification.cpp */; };
 		33503CA410179AD7003B47E1 /* JSNotification.h in Headers */ = {isa = PBXBuildFile; fileRef = 33503CA010179AD7003B47E1 /* JSNotification.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		33503CA510179AD7003B47E1 /* JSNotificationCenter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33503CA110179AD7003B47E1 /* JSNotificationCenter.cpp */; };
+		33503CA610179AD7003B47E1 /* JSNotificationCenter.h in Headers */ = {isa = PBXBuildFile; fileRef = 33503CA210179AD7003B47E1 /* JSNotificationCenter.h */; };
 		33503CC71017A1B1003B47E1 /* Notification.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33503CC61017A1B1003B47E1 /* Notification.cpp */; };
+		3390CA550FFC157B00921962 /* NotificationCenter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3390CA510FFC157B00921962 /* NotificationCenter.cpp */; };
+		3390CA560FFC157B00921962 /* NotificationCenter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3390CA520FFC157B00921962 /* NotificationCenter.h */; };
 		339B5B63131DAA3200F48D02 /* CookiesStrategy.h in Headers */ = {isa = PBXBuildFile; fileRef = 339B5B62131DAA3200F48D02 /* CookiesStrategy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		33D0212D131DB37B004091A8 /* CookieStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = E13F01EA1270E10D00DFBA71 /* CookieStorage.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3571883EEF618793751E4089 /* RenderMathMLMenclose.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3662F984047CEDBE5DDDAFAA /* RenderMathMLMenclose.cpp */; };
@@ -4043,6 +4047,8 @@
 		97AABD2714FA09D5007457AE /* WebSocketHandshake.h in Headers */ = {isa = PBXBuildFile; fileRef = 97AABD0C14FA09D5007457AE /* WebSocketHandshake.h */; };
 		97AABD2C14FA09D5007457AE /* WorkerThreadableWebSocketChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97AABD1114FA09D5007457AE /* WorkerThreadableWebSocketChannel.cpp */; };
 		97AABD2D14FA09D5007457AE /* WorkerThreadableWebSocketChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 97AABD1214FA09D5007457AE /* WorkerThreadableWebSocketChannel.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		97B38E27151C4271004622E9 /* DOMWindowNotifications.h in Headers */ = {isa = PBXBuildFile; fileRef = 97B38E24151C4264004622E9 /* DOMWindowNotifications.h */; };
+		97B38E28151C4273004622E9 /* DOMWindowNotifications.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97B38E23151C4264004622E9 /* DOMWindowNotifications.cpp */; };
 		97B8FFD116AE7F960038388D /* CharacterReferenceParserInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 97B8FFCF16AE7F920038388D /* CharacterReferenceParserInlines.h */; };
 		97BC69DC1505F076001B74AC /* ChangeVersionWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97BC69D81505F076001B74AC /* ChangeVersionWrapper.cpp */; };
 		97BC69DD1505F076001B74AC /* ChangeVersionWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC69D91505F076001B74AC /* ChangeVersionWrapper.h */; };
@@ -4091,6 +4097,8 @@
 		97DCE20210807C750057D394 /* HistoryController.h in Headers */ = {isa = PBXBuildFile; fileRef = 97DCE20010807C750057D394 /* HistoryController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		97E4028F13A696ED00913D67 /* IconController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97E4028D13A696ED00913D67 /* IconController.cpp */; };
 		97E4029013A696ED00913D67 /* IconController.h in Headers */ = {isa = PBXBuildFile; fileRef = 97E4028E13A696ED00913D67 /* IconController.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		97F8E665151D4A4B00D2D181 /* WorkerGlobalScopeNotifications.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97F8E661151D4A3F00D2D181 /* WorkerGlobalScopeNotifications.cpp */; };
+		97F8E666151D4A4E00D2D181 /* WorkerGlobalScopeNotifications.h in Headers */ = {isa = PBXBuildFile; fileRef = 97F8E662151D4A3F00D2D181 /* WorkerGlobalScopeNotifications.h */; };
 		9831AE4A154225C900FE2644 /* ReferrerPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = 9831AE49154225A200FE2644 /* ReferrerPolicy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		984264F112D5280A000D88A4 /* LinkLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 984264EF12D5280A000D88A4 /* LinkLoaderClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		985BB96D13A94058007A0B69 /* LinkRelAttribute.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 985BB96B13A94058007A0B69 /* LinkRelAttribute.cpp */; };
@@ -9184,7 +9192,12 @@
 		33503C9910179A74003B47E1 /* NotificationClient.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = NotificationClient.h; sourceTree = "<group>"; };
 		33503C9F10179AD7003B47E1 /* JSNotification.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSNotification.cpp; sourceTree = "<group>"; };
 		33503CA010179AD7003B47E1 /* JSNotification.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSNotification.h; sourceTree = "<group>"; };
+		33503CA110179AD7003B47E1 /* JSNotificationCenter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSNotificationCenter.cpp; sourceTree = "<group>"; };
+		33503CA210179AD7003B47E1 /* JSNotificationCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSNotificationCenter.h; sourceTree = "<group>"; };
 		33503CC61017A1B1003B47E1 /* Notification.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Notification.cpp; sourceTree = "<group>"; };
+		3390CA510FFC157B00921962 /* NotificationCenter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NotificationCenter.cpp; sourceTree = "<group>"; };
+		3390CA520FFC157B00921962 /* NotificationCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NotificationCenter.h; sourceTree = "<group>"; };
+		3390CA530FFC157B00921962 /* NotificationCenter.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NotificationCenter.idl; sourceTree = "<group>"; };
 		339B5B62131DAA3200F48D02 /* CookiesStrategy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CookiesStrategy.h; sourceTree = "<group>"; };
 		3662F984047CEDBE5DDDAFAA /* RenderMathMLMenclose.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderMathMLMenclose.cpp; sourceTree = "<group>"; };
 		3717D7E517ECC3A6003C276D /* extract-localizable-strings.pl */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = "extract-localizable-strings.pl"; sourceTree = "<group>"; };
@@ -12163,6 +12176,9 @@
 		97AABD0C14FA09D5007457AE /* WebSocketHandshake.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSocketHandshake.h; sourceTree = "<group>"; };
 		97AABD1114FA09D5007457AE /* WorkerThreadableWebSocketChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkerThreadableWebSocketChannel.cpp; sourceTree = "<group>"; };
 		97AABD1214FA09D5007457AE /* WorkerThreadableWebSocketChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerThreadableWebSocketChannel.h; sourceTree = "<group>"; };
+		97B38E23151C4264004622E9 /* DOMWindowNotifications.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMWindowNotifications.cpp; sourceTree = "<group>"; };
+		97B38E24151C4264004622E9 /* DOMWindowNotifications.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMWindowNotifications.h; sourceTree = "<group>"; };
+		97B38E25151C4264004622E9 /* DOMWindowNotifications.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DOMWindowNotifications.idl; sourceTree = "<group>"; };
 		97B8FFCF16AE7F920038388D /* CharacterReferenceParserInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CharacterReferenceParserInlines.h; sourceTree = "<group>"; };
 		97BC69D81505F076001B74AC /* ChangeVersionWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChangeVersionWrapper.cpp; sourceTree = "<group>"; };
 		97BC69D91505F076001B74AC /* ChangeVersionWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChangeVersionWrapper.h; sourceTree = "<group>"; };
@@ -12227,6 +12243,9 @@
 		97E4028E13A696ED00913D67 /* IconController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IconController.h; sourceTree = "<group>"; };
 		97E9EC8B15DC492F004F2E71 /* JSVoidCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSVoidCallback.cpp; sourceTree = "<group>"; };
 		97E9EC8C15DC492F004F2E71 /* JSVoidCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSVoidCallback.h; sourceTree = "<group>"; };
+		97F8E661151D4A3F00D2D181 /* WorkerGlobalScopeNotifications.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkerGlobalScopeNotifications.cpp; sourceTree = "<group>"; };
+		97F8E662151D4A3F00D2D181 /* WorkerGlobalScopeNotifications.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerGlobalScopeNotifications.h; sourceTree = "<group>"; };
+		97F8E663151D4A3F00D2D181 /* WorkerGlobalScopeNotifications.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WorkerGlobalScopeNotifications.idl; sourceTree = "<group>"; };
 		9831AE49154225A200FE2644 /* ReferrerPolicy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReferrerPolicy.h; sourceTree = "<group>"; };
 		984264EF12D5280A000D88A4 /* LinkLoaderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LinkLoaderClient.h; sourceTree = "<group>"; };
 		985BB96B13A94058007A0B69 /* LinkRelAttribute.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LinkRelAttribute.cpp; sourceTree = "<group>"; };
@@ -17463,14 +17482,23 @@
 		333F703D0FB49C16008E12A6 /* notifications */ = {
 			isa = PBXGroup;
 			children = (
+				97B38E23151C4264004622E9 /* DOMWindowNotifications.cpp */,
+				97B38E24151C4264004622E9 /* DOMWindowNotifications.h */,
+				97B38E25151C4264004622E9 /* DOMWindowNotifications.idl */,
 				33503CC61017A1B1003B47E1 /* Notification.cpp */,
 				333F704F0FB49CA2008E12A6 /* Notification.h */,
 				333F704E0FB49CA2008E12A6 /* Notification.idl */,
+				3390CA510FFC157B00921962 /* NotificationCenter.cpp */,
+				3390CA520FFC157B00921962 /* NotificationCenter.h */,
+				3390CA530FFC157B00921962 /* NotificationCenter.idl */,
 				33503C9910179A74003B47E1 /* NotificationClient.h */,
 				3128CA67147331520074C72A /* NotificationController.cpp */,
 				3128CA6A147331630074C72A /* NotificationController.h */,
 				31EC1DAC14FF26EA00C94662 /* NotificationPermissionCallback.h */,
 				31EC1D5014FEFD0800C94662 /* NotificationPermissionCallback.idl */,
+				97F8E661151D4A3F00D2D181 /* WorkerGlobalScopeNotifications.cpp */,
+				97F8E662151D4A3F00D2D181 /* WorkerGlobalScopeNotifications.h */,
+				97F8E663151D4A3F00D2D181 /* WorkerGlobalScopeNotifications.idl */,
 			);
 			path = notifications;
 			sourceTree = "<group>";
@@ -17480,6 +17508,8 @@
 			children = (
 				33503C9F10179AD7003B47E1 /* JSNotification.cpp */,
 				33503CA010179AD7003B47E1 /* JSNotification.h */,
+				33503CA110179AD7003B47E1 /* JSNotificationCenter.cpp */,
+				33503CA210179AD7003B47E1 /* JSNotificationCenter.h */,
 				31EC1E2614FF60EE00C94662 /* JSNotificationPermissionCallback.cpp */,
 				31EC1E2714FF60EE00C94662 /* JSNotificationPermissionCallback.h */,
 			);
@@ -26969,6 +26999,7 @@
 				1403B99709EB13AF00797C7F /* DOMWindow.h in Headers */,
 				51FA2D78152132B300C1BA0B /* DOMWindowExtension.h in Headers */,
 				5185FC751BB4C4E80012898F /* DOMWindowIndexedDatabase.h in Headers */,
+				97B38E27151C4271004622E9 /* DOMWindowNotifications.h in Headers */,
 				97D2AD0414B823A60093DF32 /* DOMWindowProperty.h in Headers */,
 				89F60B11157F686E0075E157 /* DOMWindowQuota.h in Headers */,
 				AA2A5AD616A4861600975A25 /* DOMWindowSpeechSynthesis.h in Headers */,
@@ -27924,6 +27955,7 @@
 				BCD9C2C30C17B69E005C90A2 /* JSNodeList.h in Headers */,
 				AD20B18D18E9D237005A8083 /* JSNodeListCustom.h in Headers */,
 				33503CA410179AD7003B47E1 /* JSNotification.h in Headers */,
+				33503CA610179AD7003B47E1 /* JSNotificationCenter.h in Headers */,
 				31EC1E2914FF60EE00C94662 /* JSNotificationPermissionCallback.h in Headers */,
 				7E46F6FB1627A2CA00062223 /* JSOESElementIndexUint.h in Headers */,
 				9001788112E0370700648462 /* JSOESStandardDerivatives.h in Headers */,
@@ -28571,6 +28603,7 @@
 				9382AAB40D8C386100F357A6 /* NodeWithIndex.h in Headers */,
 				E46B41F91CB24E70008F11DE /* NoEventDispatchAssertion.h in Headers */,
 				312C0C41146DC6CC0016C911 /* Notification.h in Headers */,
+				3390CA560FFC157B00921962 /* NotificationCenter.h in Headers */,
 				33503C9A10179A74003B47E1 /* NotificationClient.h in Headers */,
 				3128CA6B147331630074C72A /* NotificationController.h in Headers */,
 				31FE6DFA15004C2A0004EBC4 /* NotificationPermissionCallback.h in Headers */,
@@ -29970,6 +30003,7 @@
 				A3E2643114748991005A8588 /* WorkerEventQueue.h in Headers */,
 				2E4346490F546A8200B0F1BA /* WorkerGlobalScope.h in Headers */,
 				5185FCB41BB4C4E80012898F /* WorkerGlobalScopeIndexedDatabase.h in Headers */,
+				97F8E666151D4A4E00D2D181 /* WorkerGlobalScopeNotifications.h in Headers */,
 				2E43464B0F546A8200B0F1BA /* WorkerGlobalScopeProxy.h in Headers */,
 				A54A0C621DB7F8C10017A90B /* WorkerInspectorController.h in Headers */,
 				A54A0C6C1DB831F90017A90B /* WorkerInspectorProxy.h in Headers */,
@@ -30958,6 +30992,7 @@
 				517FBA1E151AB17C00B57959 /* DOMWindowExtension.cpp in Sources */,
 				418C39561C8DAC7F0051C8A3 /* DOMWindowFetch.cpp in Sources */,
 				5185FC741BB4C4E80012898F /* DOMWindowIndexedDatabase.cpp in Sources */,
+				97B38E28151C4273004622E9 /* DOMWindowNotifications.cpp in Sources */,
 				97D2AD0314B823A60093DF32 /* DOMWindowProperty.cpp in Sources */,
 				AA2A5AD716A4861A00975A25 /* DOMWindowSpeechSynthesis.cpp in Sources */,
 				A8CCBB48151F831600AB7CE9 /* DOMWindowWebDatabase.cpp in Sources */,
@@ -31905,6 +31940,7 @@
 				BCD9C2C20C17B69E005C90A2 /* JSNodeList.cpp in Sources */,
 				BCD9C2650C17AA67005C90A2 /* JSNodeListCustom.cpp in Sources */,
 				33503CA310179AD7003B47E1 /* JSNotification.cpp in Sources */,
+				33503CA510179AD7003B47E1 /* JSNotificationCenter.cpp in Sources */,
 				31EC1E2814FF60EE00C94662 /* JSNotificationPermissionCallback.cpp in Sources */,
 				7E46F6FA1627A2CA00062223 /* JSOESElementIndexUint.cpp in Sources */,
 				9001788012E0370700648462 /* JSOESStandardDerivatives.cpp in Sources */,
@@ -32556,6 +32592,7 @@
 				4FFC022B1643B710004E1638 /* NodeRareData.cpp in Sources */,
 				E43105B816750F0C00DB2FB8 /* NodeTraversal.cpp in Sources */,
 				33503CC71017A1B1003B47E1 /* Notification.cpp in Sources */,
+				3390CA550FFC157B00921962 /* NotificationCenter.cpp in Sources */,
 				3128CA68147331520074C72A /* NotificationController.cpp in Sources */,
 				E1513D511677F08800149FCB /* NotImplemented.cpp in Sources */,
 				1A569D0A0D7E2B82007C3983 /* NP_jsobject.cpp in Sources */,
@@ -33667,6 +33704,7 @@
 				2E4346480F546A8200B0F1BA /* WorkerGlobalScope.cpp in Sources */,
 				418C395A1C8DD6990051C8A3 /* WorkerGlobalScopeFetch.cpp in Sources */,
 				5185FCB31BB4C4E80012898F /* WorkerGlobalScopeIndexedDatabase.cpp in Sources */,
+				97F8E665151D4A4B00D2D181 /* WorkerGlobalScopeNotifications.cpp in Sources */,
 				A54A0C611DB7F8C10017A90B /* WorkerInspectorController.cpp in Sources */,
 				A54A0C6B1DB831F90017A90B /* WorkerInspectorProxy.cpp in Sources */,
 				2E43464C0F546A8200B0F1BA /* WorkerLocation.cpp in Sources */,

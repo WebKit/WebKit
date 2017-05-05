@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script type="text/javascript">
+        function log(message)
+        {
+            document.getElementById("result").innerHTML += message + "<br>";
+        }
+        
+        function runTests()
+        {
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+            }
+
+            if (!window.Notification) {
+                log("FAIL: No Notification interface!");
+            }
+            
+            var N = window.Notification.requestPermission(
+                function() { log("PASS: Permission callback invoked."); }
+            );
+        }
+    </script>
+</head>
+<body>
+    <p>Requesting notification permission...</p>
+    
+<div id="result"></div>    
+<script type="text/javascript">
+runTests();
+</script>
+
+
+</body>
+</html>

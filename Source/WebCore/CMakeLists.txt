@@ -261,8 +261,11 @@ set(WebCore_NON_SVG_IDL_FILES
 
     Modules/navigatorcontentutils/NavigatorContentUtils.idl
 
+    Modules/notifications/DOMWindowNotifications.idl
     Modules/notifications/Notification.idl
+    Modules/notifications/NotificationCenter.idl
     Modules/notifications/NotificationPermissionCallback.idl
+    Modules/notifications/WorkerGlobalScopeNotifications.idl
 
     Modules/proximity/DeviceProximityEvent.idl
 
@@ -979,8 +982,11 @@ set(WebCore_SOURCES
 
     Modules/navigatorcontentutils/NavigatorContentUtils.cpp
 
+    Modules/notifications/DOMWindowNotifications.cpp
     Modules/notifications/Notification.cpp
+    Modules/notifications/NotificationCenter.cpp
     Modules/notifications/NotificationController.cpp
+    Modules/notifications/WorkerGlobalScopeNotifications.cpp
 
     Modules/proximity/DeviceProximityController.cpp
     Modules/proximity/DeviceProximityEvent.cpp

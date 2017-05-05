@@ -144,7 +144,7 @@ public:
     void exitVideoFullscreenForVideoElement(WebCore::HTMLVideoElement&) final;
 #endif
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     WebCore::NotificationClient* notificationPresenter() const final { return reinterpret_cast<WebCore::NotificationClient*>(m_notificationsDelegate.get()); }
 #endif
 
@@ -176,7 +176,7 @@ private:
 
     WebView* m_webView;
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     std::unique_ptr<WebDesktopNotificationsDelegate> m_notificationsDelegate;
 #endif
 };

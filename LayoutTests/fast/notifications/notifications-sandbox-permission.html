@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.dumpChildFramesAsText();
+            testRunner.grantWebNotificationPermission("file://");
+        }
+    </script>
+</head>
+<body>
+    <p>Normal iframe. Should inherit permissions.</p>
+    <iframe src="resources/notifications-iframe.html"></iframe>
+
+    <p>Sandboxed iframe, with allow-same-origin. Should inherit permissions.</p>
+    <iframe sandbox="allow-scripts allow-same-origin"
+            src="resources/notifications-iframe.html"></iframe>
+
+    <p>Sandboxed iframe, without allow-same-origin. Should not inherit permissions.</p>
+    <iframe sandbox="allow-scripts"
+            src="resources/notifications-iframe.html"></iframe>
+</body>
+</html>

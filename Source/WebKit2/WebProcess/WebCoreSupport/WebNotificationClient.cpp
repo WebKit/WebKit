@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WebNotificationClient.h"
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 
 #include "NotificationPermissionRequestManager.h"
 #include "WebNotificationManager.h"
@@ -72,10 +72,19 @@ void WebNotificationClient::notificationControllerDestroyed()
     delete this;
 }
 
+#if ENABLE(LEGACY_NOTIFICATIONS)
+void WebNotificationClient::requestPermission(ScriptExecutionContext* context, RefPtr<WebCore::VoidCallback>&& callback)
+{
+    m_page->notificationPermissionRequestManager()->startRequest(context->securityOrigin(), WTFMove(callback));
+}
+#endif
+
+#if ENABLE(NOTIFICATIONS)
 void WebNotificationClient::requestPermission(ScriptExecutionContext* context, RefPtr<NotificationPermissionCallback>&& callback)
 {
     m_page->notificationPermissionRequestManager()->startRequest(context->securityOrigin(), WTFMove(callback));
 }
+#endif
 
 bool WebNotificationClient::hasPendingPermissionRequests(ScriptExecutionContext* context) const
 {
@@ -96,4 +105,4 @@ NotificationClient::Permission WebNotificationClient::checkPermission(ScriptExec
 
 } // namespace WebKit
 
-#endif // ENABLE(NOTIFICATIONS)
+#endif // ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)

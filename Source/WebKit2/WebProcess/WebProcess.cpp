@@ -128,7 +128,7 @@
 #include "WebToDatabaseProcessConnection.h"
 #endif
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 #include "WebNotificationManager.h"
 #endif
 
@@ -182,7 +182,7 @@ WebProcess::WebProcess()
     addSupplement<WebCookieManager>();
     addSupplement<AuthenticationManager>();
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     addSupplement<WebNotificationManager>();
 #endif
 

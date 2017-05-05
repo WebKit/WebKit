@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 
 #include "Page.h"
 #include <wtf/Forward.h>
@@ -52,4 +52,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(NOTIFICATIONS)
+#endif // ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)

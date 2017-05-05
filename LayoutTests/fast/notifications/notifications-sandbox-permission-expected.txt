@@ -1,0 +1,24 @@
+Normal iframe. Should inherit permissions.
+
+
+Sandboxed iframe, with allow-same-origin. Should inherit permissions.
+
+
+Sandboxed iframe, without allow-same-origin. Should not inherit permissions.
+
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+Allowed
+
+--------
+Frame: '<!--framePath //<!--frame1-->-->'
+--------
+Allowed
+
+--------
+Frame: '<!--framePath //<!--frame2-->-->'
+--------
+Denied

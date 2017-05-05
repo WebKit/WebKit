@@ -35,7 +35,7 @@
 #include <WebCore/Document.h>
 #include <WebCore/URL.h>
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 
 using namespace WebCore;
 
@@ -223,4 +223,4 @@ COMPtr<IWebDesktopNotificationsDelegate> WebDesktopNotificationsDelegate::notifi
     return delegate;
 }
 
-#endif // ENABLE(NOTIFICATIONS)
+#endif // ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)

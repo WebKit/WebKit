@@ -709,7 +709,7 @@ WebProcessProxy& WebProcessPool::createNewWebProcess(WebsiteDataStore& websiteDa
 
     parameters.defaultRequestTimeoutInterval = API::URLRequest::defaultTimeoutInterval();
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     // FIXME: There should be a generic way for supplements to add to the intialization parameters.
     supplement<WebNotificationManagerProxy>()->populateCopyOfNotificationPermissions(parameters.notificationPermissions);
 #endif

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script type="text/javascript">
+        function log(message)
+        {
+            document.getElementById("result").innerHTML += message + "<br>";
+        }
+
+        function runTests()
+        {
+            if (window.testRunner) {
+                testRunner.grantWebNotificationPermission("file://");
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
+                testRunner.setCanOpenWindows();
+                testRunner.setCloseRemainingWindowsWhenComplete();
+            }
+
+            if (!window.webkitNotifications) {
+                log("FAIL: No webkitNotifications interface!");
+            }
+
+            // Open a new window, so we don't have the focus.
+            var W = window.open("about:blank");
+            W.focus();
+
+            window.onfocus = function() { log("PASS: focus event fired."); }
+
+            var N = window.webkitNotifications.createNotification("", "New E-mail", "Meet me tonight at 8!");
+            N.onclick = function() { log("PASS: click event fired."); window.focus(); N.cancel();  }
+            N.show();
+
+            if (window.testRunner) {
+                testRunner.simulateLegacyWebNotificationClick("New E-mail");
+                testRunner.notifyDone();
+            }
+        }
+    </script>
+</head>
+<body>
+<p>Check that window.focus() is not restricted during notification click events.</p>
+
+<p>To exercise manually, disable pop-up blocking, grant notification permissions and load this page, then click on the notification.  You should see two "PASS" messages and this window should be focused.</p>
+<div id="result"></div>
+
+<script type="text/javascript">
+runTests();
+</script>
+</body>
+</html>
