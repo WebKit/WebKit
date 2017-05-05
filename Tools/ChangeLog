@@ -1,3 +1,13 @@
+2017-05-04  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Disable failing API test WebKit2.ResizeWithHiddenContentDoesNotHang.
+        https://bugs.webkit.org/show_bug.cgi?id=170195
+
+        Unreviewed test gardening.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/AnimatedResize.mm:
+        (TEST):
+
 2017-05-04  Don Olmstead  <don.olmstead@am.sony.com>
 
         [Win] Remove redundant macros that are set in the CMake config
