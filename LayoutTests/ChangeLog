@@ -1,3 +1,12 @@
+2017-05-05  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Mark http/tests/loading/resourceLoadStatistics/prevalent-resource-without-user-interaction.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=171756
+
+        Unreviewed test gardening.
+
+        * platform/wk2/TestExpectations:
+
 2017-05-05  Matt Lewis  <jlewis3@apple.com>
 
         Mark test http/tests/security/module-correct-mime-types.html slow.
