@@ -3012,6 +3012,7 @@ void webkit_settings_set_enable_media_stream(WebKitSettings* settings, gboolean 
     if (currentValue == enabled)
         return;
 
+    priv->preferences->setMediaDevicesEnabled(enabled);
     priv->preferences->setMediaStreamEnabled(enabled);
     priv->preferences->setPeerConnectionEnabled(enabled);
     g_object_notify(G_OBJECT(settings), "enable-media-stream");

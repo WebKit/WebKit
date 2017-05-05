@@ -1,3 +1,19 @@
+2017-05-05  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Enable runtime flag for MediaDevices with enable-media-stream property.
+        https://bugs.webkit.org/show_bug.cgi?id=171730
+
+        Reviewed by Michael Catanzaro.
+
+        After r215939 the MediaDevices runtime setting has to be enabled
+        also to use MediaStream / WebRTC.
+
+        Enable it as part of the enable-media-stream property of the
+        WebKitGTK+ API.
+
+        * UIProcess/API/gtk/WebKitSettings.cpp:
+        (webkit_settings_set_enable_media_stream):
+
 2017-05-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Assertion failure in Inspector::RemoteInspector::setRemoteInspectorClient when disposing WebKitWebContext
