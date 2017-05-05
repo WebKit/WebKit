@@ -99,7 +99,9 @@ enum JSType : uint8_t {
 
     WebAssemblyFunctionType,
 
-    LastJSCObjectType = WebAssemblyFunctionType,
+    ClonedArgumentsType,
+
+    LastJSCObjectType = ClonedArgumentsType,
     MaxJSType = 0b11111111,
 };
 
