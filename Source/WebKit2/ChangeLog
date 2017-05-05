@@ -1,3 +1,23 @@
+2017-05-05  Brian Burg  <bburg@apple.com>
+
+        Web Automation: cookie-related commands don't work correctly
+        https://bugs.webkit.org/show_bug.cgi?id=171713
+        <rdar://problem/29829930>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Commands that use WebCookieManager directly should complete when
+        the manager's completion handler is called. Otherwise, this will race
+        with subsequent accesses to cookies via the web process (document.cookie).
+
+        Also, these commands need to use the active browsing context's session ID.
+        They currently use the process pool's storage session, which is wrong
+        since we specially configure automation instances with an ephemeral store.
+
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::addSingleCookie):
+        (WebKit::WebAutomationSession::deleteAllCookies):
+
 2017-05-05  Chris Dumez  <cdumez@apple.com>
 
         Rename webProcessDidCrashWithReason callback to webProcessDidTerminate and stop calling webProcessDidCrash for client terminations

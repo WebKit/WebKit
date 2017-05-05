@@ -819,9 +819,12 @@ void WebAutomationSession::addSingleCookie(ErrorString& errorString, const Strin
 
     // FIXME: Using activeURL here twice is basically saying "this is always in the context of the main document"
     // which probably isn't accurate.
-    cookieManager->setCookies(WebCore::SessionID::defaultSessionID(), { cookie }, activeURL, activeURL, [](CallbackBase::Error){});
-
-    callback->sendSuccess();
+    cookieManager->setCookies(page->websiteDataStore().sessionID(), { cookie }, activeURL, activeURL, [callback = callback.copyRef()](CallbackBase::Error error) {
+        if (error == CallbackBase::Error::None)
+            callback->sendSuccess();
+        else
+            callback->sendFailure(STRING_FOR_PREDEFINED_ERROR_NAME(InternalError));
+    });
 }
 
 void WebAutomationSession::deleteAllCookies(ErrorString& errorString, const String& browsingContextHandle)
@@ -834,7 +837,7 @@ void WebAutomationSession::deleteAllCookies(ErrorString& errorString, const Stri
     ASSERT(activeURL.isValid());
 
     WebCookieManagerProxy* cookieManager = m_processPool->supplement<WebCookieManagerProxy>();
-    cookieManager->deleteCookiesForHostname(WebCore::SessionID::defaultSessionID(), activeURL.host());
+    cookieManager->deleteCookiesForHostname(page->websiteDataStore().sessionID(), activeURL.host());
 }
 
 #if USE(APPKIT) || PLATFORM(GTK)
