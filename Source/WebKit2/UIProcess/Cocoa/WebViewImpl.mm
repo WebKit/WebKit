@@ -674,6 +674,9 @@ static const NSUInteger orderedListSegment = 2;
         colorPickerItem.target = self;
         colorPickerItem.action = @selector(_wkChangeColor:);
         colorPickerItem.showsAlpha = NO;
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+        colorPickerItem.allowedColorSpaces = @[ [NSColorSpace sRGBColorSpace] ];
+#endif
     }
 
     return item;

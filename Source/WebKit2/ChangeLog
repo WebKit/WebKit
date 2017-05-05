@@ -1,3 +1,15 @@
+2017-05-05  Beth Dakin  <bdakin@apple.com>
+
+        Ensure NSColorPickerTouchBarItem only uses sRGB colors
+        https://bugs.webkit.org/show_bug.cgi?id=171758
+        -and corresponding-
+        rdar://problem/28314183
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (-[WKTextTouchBarItemController itemForIdentifier:]):
+
 2017-05-05  Brent Fulgham  <bfulgham@apple.com>
 
         [WK2][iOS][macOS] Expand sandbox to access vm.footprint_suspend 
