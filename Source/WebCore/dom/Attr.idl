@@ -23,15 +23,13 @@
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
 ] interface Attr : Node {
-    readonly attribute DOMString? name;
-
-    readonly attribute boolean specified;
-
-    [CEReactions, ImplementedAs=valueForBindings] attribute DOMString value;
-
-    readonly attribute Element ownerElement;
-
     readonly attribute DOMString? namespaceURI;
     readonly attribute DOMString? prefix;
     readonly attribute DOMString localName;
+    readonly attribute DOMString name;
+    [CEReactions, ImplementedAs=valueForBindings] attribute DOMString value;
+
+    readonly attribute Element? ownerElement;
+
+    readonly attribute boolean specified; // Useless; always returns true.
 };

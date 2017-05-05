@@ -1,3 +1,18 @@
+2017-05-05  Chris Dumez  <cdumez@apple.com>
+
+        Clean up Attr.idl
+        https://bugs.webkit.org/show_bug.cgi?id=171691
+
+        Reviewed by Andreas Kling.
+
+        Clean up Attr.idl to match the spec:
+        - https://dom.spec.whatwg.org/#interface-attr
+
+        No Web-facing behavior change except for Attr properties being enumerated
+        in a slightly different order.
+
+        * dom/Attr.idl:
+
 2017-05-05  Antti Koivisto  <antti@apple.com>
 
         ASSERTION FAILED: !frame().document()->inRenderTreeUpdate() in WebCore::FrameView::layout(bool)
