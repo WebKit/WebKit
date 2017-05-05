@@ -1,3 +1,52 @@
+2017-05-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Make it possible to test rotation in iOS WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=171755
+
+        Reviewed by Tim Horton.
+
+        Add to UIScriptController:
+            void simulateRotation(DeviceOrientation orientation, object callback);
+            void simulateRotationLikeSafari(DeviceOrientation orientation, object callback);
+
+        The former just does a view resize, as a simple WKWebView app would do. The second does
+        animation more like MobileSafari, using _begin/_endAnimatedResize. and associated override
+        layout size and interface orientation. The two behaviors produce different resize and
+        orientationchange events and sizes, and both need to be tested.
+
+        Rotation is initiated by a call on UIDevice, and responded to by the root view controller,
+        which is now a custom subclass (PlatformWebViewController).
+
+        * DumpRenderTree/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::simulateRotation):
+        (WTR::UIScriptController::simulateRotationLikeSafari):
+        * DumpRenderTree/mac/UIScriptControllerMac.mm:
+        (WTR::UIScriptController::simulateRotation):
+        (WTR::UIScriptController::simulateRotationLikeSafari):
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptController.cpp:
+        (WTR::toDeviceOrientation):
+        (WTR::UIScriptController::simulateRotation):
+        (WTR::UIScriptController::simulateRotationLikeSafari):
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.h:
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.mm:
+        (-[TestRunnerWKWebView dealloc]):
+        (-[TestRunnerWKWebView _didEndRotation]):
+        * WebKitTestRunner/ios/PlatformWebViewIOS.mm:
+        (-[PlatformWebViewController viewWillTransitionToSize:withTransitionCoordinator:]):
+        (WTR::PlatformWebView::PlatformWebView):
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::platformResetStateToConsistentValues):
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::toUIDeviceOrientation):
+        (WTR::UIScriptController::simulateRotation):
+        (WTR::UIScriptController::simulateRotationLikeSafari):
+        (WTR::UIScriptController::platformClearAllCallbacks):
+        * WebKitTestRunner/mac/UIScriptControllerMac.mm:
+        (WTR::UIScriptController::simulateRotation):
+        (WTR::UIScriptController::simulateRotationLikeSafari):
+
 2017-05-05  Jonathan Bedard  <jbedard@apple.com>
 
         Use ImageDiff built by host SDK and remove ImageDiff from DumpRenderTree

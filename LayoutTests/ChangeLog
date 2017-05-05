@@ -1,3 +1,19 @@
+2017-05-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Make it possible to test rotation in iOS WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=171755
+
+        Reviewed by Tim Horton.
+
+        Two rotation tests and one that comes last to ensure that the device was not left in a rotated state.
+
+        * fast/events/ios/rotation/basic-rotation-expected.txt: Added.
+        * fast/events/ios/rotation/basic-rotation.html: Added.
+        * fast/events/ios/rotation/safari-like-rotation-expected.txt: Added.
+        * fast/events/ios/rotation/safari-like-rotation.html: Added.
+        * fast/events/ios/rotation/zz-no-rotation-expected.txt: Added.
+        * fast/events/ios/rotation/zz-no-rotation.html: Added.
+
 2017-05-05  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark http/tests/loading/resourceLoadStatistics/prevalent-resource-without-user-interaction.html as flaky.

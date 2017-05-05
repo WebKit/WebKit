@@ -22,6 +22,13 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
+ 
+enum DeviceOrientation {
+    "portrait",
+    "portrait-upsidedown",
+    "landscape-left",
+    "landscape-right"
+};
 
 interface UIScriptController {
 
@@ -226,6 +233,9 @@ interface UIScriptController {
 
     void retrieveSpeakSelectionContent(object callback);
     readonly attribute DOMString accessibilitySpeakSelectionContent;
+    
+    void simulateRotation(DeviceOrientation orientation, object callback);
+    void simulateRotationLikeSafari(DeviceOrientation orientation, object callback);
 
     // Unparent and parent the web view, simulating, for example, tab switching.
     void removeViewFromWindow(object callback);

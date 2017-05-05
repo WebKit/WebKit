@@ -222,7 +222,6 @@ void UIScriptController::setStableStateOverride(std::optional<bool>)
 {
 }
 
-
 JSObjectRef UIScriptController::contentVisibleRect() const
 {
     CGRect contentVisibleRect = [gWebBrowserView documentVisibleRect];
@@ -306,6 +305,14 @@ void UIScriptController::retrieveSpeakSelectionContent(JSValueRef)
 JSRetainPtr<JSStringRef> UIScriptController::accessibilitySpeakSelectionContent() const
 {
     return nullptr;
+}
+
+void UIScriptController::simulateRotation(DeviceOrientation*, JSValueRef)
+{
+}
+
+void UIScriptController::simulateRotationLikeSafari(DeviceOrientation*, JSValueRef)
+{
 }
 
 void UIScriptController::removeViewFromWindow(JSValueRef)

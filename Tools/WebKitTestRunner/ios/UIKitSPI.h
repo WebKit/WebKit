@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef UIKitSPI_h
-#define UIKitSPI_h
+#pragma once
 
 #import <wtf/Platform.h>
 
@@ -38,6 +37,7 @@
 #import <UIKit/UIKeyboard.h>
 #import <UIKit/UIView_Private.h>
 #import <UIKit/UIWindow_Private.h>
+#import <UIKit/UIDevice_Private.h>
 
 @interface UIKeyboardPredictionView : UIView
 + (UIKeyboardPredictionView *)activeInstance;
@@ -65,6 +65,10 @@
 - (void)_removeAllAnimations:(BOOL)includeSubviews;
 @end
 
+@interface UIDevice ()
+- (void)setOrientation:(UIDeviceOrientation)orientation animated:(BOOL)animated;
+ @end
+ 
 #endif // USE(APPLE_INTERNAL_SDK)
 
 #if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
@@ -75,4 +79,3 @@
 
 #endif // PLATFORM(IOS)
 
-#endif // UIKitSPI_h

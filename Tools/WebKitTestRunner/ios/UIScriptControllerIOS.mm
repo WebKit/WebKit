@@ -553,6 +553,57 @@ JSObjectRef UIScriptController::propertiesOfLayerWithID(uint64_t layerID) const
     return JSValueToObject(m_context->jsContext(), [JSValue valueWithObject:[TestController::singleton().mainWebView()->platformView() _propertiesOfLayerWithID:layerID] inContext:[JSContext contextWithJSGlobalContextRef:m_context->jsContext()]].JSValueRef, nullptr);
 }
 
+static UIDeviceOrientation toUIDeviceOrientation(DeviceOrientation* orientation)
+{
+    if (!orientation)
+        return UIDeviceOrientationPortrait;
+        
+    switch (*orientation) {
+    case DeviceOrientation::Portrait:
+        return UIDeviceOrientationPortrait;
+    case DeviceOrientation::PortraitUpsideDown:
+        return UIDeviceOrientationPortraitUpsideDown;
+    case DeviceOrientation::LandscapeLeft:
+        return UIDeviceOrientationLandscapeLeft;
+    case DeviceOrientation::LandscapeRight:
+        return UIDeviceOrientationLandscapeRight;
+    }
+    
+    return UIDeviceOrientationPortrait;
+}
+
+void UIScriptController::simulateRotation(DeviceOrientation* orientation, JSValueRef callback)
+{
+    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
+    webView.usesSafariLikeRotation = NO;
+    
+    unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
+    
+    webView.rotationDidEndCallback = ^{
+        if (!m_context)
+            return;
+        m_context->asyncTaskComplete(callbackID);
+    };
+    
+    [[UIDevice currentDevice] setOrientation:toUIDeviceOrientation(orientation) animated:YES];
+}
+
+void UIScriptController::simulateRotationLikeSafari(DeviceOrientation* orientation, JSValueRef callback)
+{
+    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
+    webView.usesSafariLikeRotation = YES;
+    
+    unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
+    
+    webView.rotationDidEndCallback = ^{
+        if (!m_context)
+            return;
+        m_context->asyncTaskComplete(callbackID);
+    };
+    
+    [[UIDevice currentDevice] setOrientation:toUIDeviceOrientation(orientation) animated:YES];
+}
+
 void UIScriptController::removeViewFromWindow(JSValueRef callback)
 {
     TestController::singleton().mainWebView()->removeFromWindow();
@@ -666,6 +717,7 @@ void UIScriptController::platformClearAllCallbacks()
     webView.didHideKeyboardCallback = nil;
     webView.didShowKeyboardCallback = nil;
     webView.didEndScrollingCallback = nil;
+    webView.rotationDidEndCallback = nil;
 }
 
 void UIScriptController::setSafeAreaInsets(double top, double right, double bottom, double left)

@@ -156,6 +156,14 @@ void UIScriptController::overridePreference(JSStringRef preferenceRef, JSStringR
 #endif
 }
 
+void UIScriptController::simulateRotation(DeviceOrientation*, JSValueRef)
+{
+}
+
+void UIScriptController::simulateRotationLikeSafari(DeviceOrientation*, JSValueRef)
+{
+}
+
 void UIScriptController::removeViewFromWindow(JSValueRef callback)
 {
 #if WK_API_ENABLED

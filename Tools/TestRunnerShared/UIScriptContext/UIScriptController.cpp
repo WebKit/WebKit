@@ -29,8 +29,34 @@
 #include "JSUIScriptController.h"
 #include "UIScriptContext.h"
 #include <JavaScriptCore/JSValueRef.h>
+#include <JavaScriptCore/OpaqueJSString.h>
 
 namespace WTR {
+
+DeviceOrientation* toDeviceOrientation(JSContextRef context, JSValueRef value)
+{
+    static DeviceOrientation values[] = {
+        DeviceOrientation::Portrait,
+        DeviceOrientation::PortraitUpsideDown,
+        DeviceOrientation::LandscapeLeft,
+        DeviceOrientation::LandscapeRight
+    };
+
+    JSRetainPtr<JSStringRef> option(Adopt, JSValueToStringCopy(context, value, nullptr));
+    if (option.get()->string() == "portrait")
+        return &values[0];
+        
+    if (option.get()->string() == "portrait-upsidedown")
+        return &values[1];
+        
+    if (option.get()->string() == "landscape-left")
+        return &values[2];
+        
+    if (option.get()->string() == "landscape-right")
+        return &values[3];
+        
+    return nullptr;
+}
 
 UIScriptController::UIScriptController(UIScriptContext& context)
     : m_context(&context)
@@ -406,6 +432,14 @@ void UIScriptController::setSafeAreaInsets(double top, double right, double bott
 #endif
 
 #if !PLATFORM(COCOA)
+
+void UIScriptController::simulateRotation(DeviceOrientation*, JSValueRef callback)
+{
+}
+
+void UIScriptController::simulateRotationLikeSafari(DeviceOrientation*, JSValueRef callback)
+{
+}
 
 void UIScriptController::removeViewFromWindow(JSValueRef)
 {

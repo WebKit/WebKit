@@ -91,6 +91,7 @@
     self.didShowKeyboardCallback = nil;
     self.didHideKeyboardCallback = nil;
     self.didEndScrollingCallback = nil;
+    self.rotationDidEndCallback = nil;
 
     self.zoomToScaleCompletionHandler = nil;
     self.showKeyboardCompletionHandler = nil;
@@ -189,6 +190,12 @@
 {
     m_stableStateOverride = overrideBoolean;
     [self _scheduleVisibleContentRectUpdate];
+}
+
+- (void)_didEndRotation
+{
+    if (self.rotationDidEndCallback)
+        self.rotationDidEndCallback();
 }
 
 - (void)_accessibilityDidGetSpeakSelectionContent:(NSString *)content

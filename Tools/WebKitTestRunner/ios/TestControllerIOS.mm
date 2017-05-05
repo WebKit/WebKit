@@ -80,8 +80,11 @@ void TestController::platformResetStateToConsistentValues()
 {
     cocoaResetStateToConsistentValues();
 
+    [[UIDevice currentDevice] setOrientation:UIDeviceOrientationPortrait animated:NO];
+    
     if (PlatformWebView* webView = mainWebView()) {
         webView->platformView()._stableStateOverride = nil;
+        webView->platformView().usesSafariLikeRotation = NO;
         UIScrollView *scrollView = webView->platformView().scrollView;
         [scrollView _removeAllAnimations:YES];
         [scrollView setZoomScale:1 animated:NO];

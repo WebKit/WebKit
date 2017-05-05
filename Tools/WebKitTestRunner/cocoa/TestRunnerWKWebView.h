@@ -40,12 +40,16 @@
 @property (nonatomic, copy) void (^didShowKeyboardCallback)(void);
 @property (nonatomic, copy) void (^didHideKeyboardCallback)(void);
 @property (nonatomic, copy) void (^didEndScrollingCallback)(void);
+@property (nonatomic, copy) void (^rotationDidEndCallback)(void);
 @property (nonatomic, copy) NSString *accessibilitySpeakSelectionContent;
 
 - (void)zoomToScale:(double)scale animated:(BOOL)animated completionHandler:(void (^)(void))completionHandler;
 - (void)accessibilityRetrieveSpeakSelectionContentWithCompletionHandler:(void (^)(void))completionHandler;
+- (void)_didEndRotation;
 
 @property (nonatomic, assign) UIEdgeInsets overrideSafeAreaInsets;
+
+@property (nonatomic, assign) BOOL usesSafariLikeRotation;
 
 #endif
 

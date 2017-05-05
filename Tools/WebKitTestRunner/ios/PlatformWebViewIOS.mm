@@ -28,6 +28,7 @@
 
 #import "TestController.h"
 #import "TestRunnerWKWebView.h"
+#import "UIKitSPI.h"
 #import <WebCore/QuartzCoreSPI.h>
 #import <WebKit/WKImageCG.h>
 #import <WebKit/WKPreferencesPrivate.h>
@@ -107,6 +108,41 @@ static Vector<WebKitTestRunnerWindow*> allWindows;
 
 @end
 
+@interface PlatformWebViewController : UIViewController
+@end
+
+@implementation PlatformWebViewController
+
+- (void)viewWillTransitionToSize:(CGSize)toSize withTransitionCoordinator:(id <UIViewControllerTransitionCoordinator>)coordinator
+{
+    [super viewWillTransitionToSize:toSize withTransitionCoordinator:coordinator];
+    
+    TestRunnerWKWebView *webView = WTR::TestController::singleton().mainWebView()->platformView();
+    
+    if (webView.usesSafariLikeRotation)
+        [webView _setInterfaceOrientationOverride:[[UIApplication sharedApplication] statusBarOrientation]];
+        
+    [coordinator animateAlongsideTransition: ^(id<UIViewControllerTransitionCoordinatorContext> context) {
+        if (webView.usesSafariLikeRotation) {
+            [webView _beginAnimatedResizeWithUpdates:^{
+                auto size = self.view.bounds.size;
+                webView.frame = self.view.bounds;
+                [webView _overrideLayoutParametersWithMinimumLayoutSize:size maximumUnobscuredSizeOverride:size];
+                [webView _setInterfaceOrientationOverride:[[UIApplication sharedApplication] statusBarOrientation]];
+            }];
+        } else
+            webView.frame = self.view.bounds;
+    } completion:^(id<UIViewControllerTransitionCoordinatorContext> context) {
+        webView.frame = self.view.bounds;
+        if (webView.usesSafariLikeRotation)
+            [webView _endAnimatedResize];
+            
+        [webView _didEndRotation];
+    }];
+}
+
+@end
+
 namespace WTR {
 
 enum class WebViewSizingMode {
@@ -130,7 +166,7 @@ PlatformWebView::PlatformWebView(WKWebViewConfiguration* configuration, const Te
     m_window.backgroundColor = [UIColor lightGrayColor];
     m_window.platformWebView = this;
 
-    UIViewController *viewController = [[UIViewController alloc] init];
+    UIViewController *viewController = [[PlatformWebViewController alloc] init];
     [m_window setRootViewController:viewController];
     [viewController release];
 

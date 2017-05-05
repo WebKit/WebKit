@@ -108,6 +108,14 @@ void UIScriptController::overridePreference(JSStringRef preferenceRef, JSStringR
         preferences.minimumFontSize = [(NSString *)value.get() doubleValue];
 }
 
+void UIScriptController::simulateRotation(DeviceOrientation*, JSValueRef)
+{
+}
+
+void UIScriptController::simulateRotationLikeSafari(DeviceOrientation*, JSValueRef)
+{
+}
+
 void UIScriptController::removeViewFromWindow(JSValueRef callback)
 {
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);

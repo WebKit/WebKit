@@ -39,6 +39,15 @@ namespace WTR {
 
 class UIScriptContext;
 
+enum class DeviceOrientation {
+    Portrait,
+    PortraitUpsideDown,
+    LandscapeLeft,
+    LandscapeRight
+};
+
+DeviceOrientation* toDeviceOrientation(JSContextRef, JSValueRef);
+
 class UIScriptController : public JSWrappable {
 public:
     static Ref<UIScriptController> create(UIScriptContext& context)
@@ -151,6 +160,9 @@ public:
     
     void retrieveSpeakSelectionContent(JSValueRef);
     JSRetainPtr<JSStringRef> accessibilitySpeakSelectionContent() const;
+    
+    void simulateRotation(DeviceOrientation*, JSValueRef);
+    void simulateRotationLikeSafari(DeviceOrientation*, JSValueRef);
 
     // These use a callback to allow the client to know when view visibility state updates get to the web process.
     void removeViewFromWindow(JSValueRef);
