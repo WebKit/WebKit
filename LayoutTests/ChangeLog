@@ -1,3 +1,11 @@
+2017-05-05  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unskip media/click-placeholder-not-pausing.html.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2017-05-05  Joseph Pecoraro  <pecoraro@apple.com>
 
         REGRESSION: LayoutTest streams/reference-implementation/readable-stream-templated.html is a flaky failure
