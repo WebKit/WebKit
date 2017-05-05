@@ -29,7 +29,6 @@ import subprocess
 import time
 
 from webkitpy.common.memoized import memoized
-from webkitpy.port import image_diff
 from webkitpy.port.device import Device
 from webkitpy.port.ios import IOSPort
 from webkitpy.xcode.simulator import Simulator, Runtime, DeviceType
@@ -327,18 +326,6 @@ class IOSSimulatorPort(IOSPort):
 
     def get_simulator_path(self, suffix=""):
         return os.path.join(self.SIMULATOR_DIRECTORY, "Simulator" + str(suffix) + ".app")
-
-    def diff_image(self, expected_contents, actual_contents, tolerance=None):
-        if not actual_contents and not expected_contents:
-            return (None, 0, None)
-        if not actual_contents or not expected_contents:
-            return (True, 0, None)
-        if not self._image_differ:
-            self._image_differ = image_diff.IOSSimulatorImageDiffer(self)
-        self.set_option_default('tolerance', 0.1)
-        if tolerance is None:
-            tolerance = self.get_option('tolerance')
-        return self._image_differ.diff_image(expected_contents, actual_contents, tolerance)
 
     def reset_preferences(self):
         _log.debug("reset_preferences")

@@ -1,3 +1,28 @@
+2017-05-05  Jonathan Bedard  <jbedard@apple.com>
+
+        Use ImageDiff built by host SDK and remove ImageDiff from DumpRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=168945
+        <rdar://problem/30745695>
+
+        Reviewed by David Kilzer.
+
+        Use ImageDiff built with the host machine's SDK and stop building ImageDiff with the
+        target SDK. These two changes must happen simultaneously because some archives will
+        clobber the ImageDiff from the host SDK with the ImageDiff from the target SDK.
+
+        * DumpRenderTree/mac/Configurations/ImageDiff.xcconfig: Remove ImageDiff from project.
+        * DumpRenderTree/PlatformWin.cmake: Remove ImageDiff. Note that the CMakeLists.txt in the
+        tools directory still includes ImageDiff.
+        * DumpRenderTree/cg/ImageDiffCG.cpp: Removed.
+        * DumpRenderTree/mac/Configurations/DumpRenderTree.xcconfig: Removed.
+        * Scripts/webkitpy/port/darwin.py: 
+        (DarwinPort._path_to_image_diff): Return the correct path to ImageDiff when building
+        locally or when running archives.
+        * Scripts/webkitpy/port/image_diff.py:
+        (IOSSimulatorImageDiffer): Deleted.
+        * Scripts/webkitpy/port/ios_simulator.py:
+        (IOSSimulatorPort.diff_image): Deleted.
+
 2017-05-05  Brian Burg  <bburg@apple.com>
 
         [Cocoa] Converting from WebCore::Cookie to NSHTTPCookie always marks cookies as secure
