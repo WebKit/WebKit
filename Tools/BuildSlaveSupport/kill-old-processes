@@ -112,6 +112,8 @@ def main():
     if sys.platform == 'darwin':
         for task in tasksToKill + tasksToKillMac:
             os.system("killall -9 -v -m " + task)
+        # Shutdown any simulators
+        os.system("xcrun simctl shutdown booted")
         # Kill all instances of python executing run-webkit-tests
         os.system("ps aux | grep -E '.+/Python .+(run_webkit_tests|run-webkit-tests|mod_pywebsocket)' | grep -v grep | awk '{print $2}' | xargs kill")
     elif sys.platform == 'cygwin' or sys.platform == 'win32':

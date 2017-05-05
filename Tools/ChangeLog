@@ -1,3 +1,17 @@
+2017-05-05  Jonathan Bedard  <jbedard@apple.com>
+
+        buildbot: Cleanup simulators after running tests
+        https://bugs.webkit.org/show_bug.cgi?id=171679
+        <rdar://problem/31994361>
+
+        Reviewed by Aakash Jain.
+
+        We shutdown the simulator process between tests, but in some cases, this is not
+        sufficient. Explicitly shutdown every booted simulator.
+
+        * BuildSlaveSupport/kill-old-processes:
+        (main): Shutdown all booted simulators.
+
 2017-05-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Assertion failure in Inspector::RemoteInspector::setRemoteInspectorClient when disposing WebKitWebContext
