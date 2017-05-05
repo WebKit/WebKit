@@ -39,7 +39,8 @@
         "hw.availcpu"
         "hw.ncpu"
         "hw.model"
-        "kern.memorystatus_level"))
+        "kern.memorystatus_level"
+        "vm.footprint_suspend"))
 
 (deny iokit-get-properties)
 (allow iokit-get-properties

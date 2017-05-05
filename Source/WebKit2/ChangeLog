@@ -1,3 +1,21 @@
+2017-05-05  Brent Fulgham  <bfulgham@apple.com>
+
+        [WK2][iOS][macOS] Expand sandbox to access vm.footprint_suspend 
+        https://bugs.webkit.org/show_bug.cgi?id=171749
+        <rdar://problem/32019494>
+
+        Reviewed by Geoffrey Garen.
+
+        The 'sysctl' whitelist needs to be extended to support an additional VM-related feature.
+
+        * DatabaseProcess/mac/com.apple.WebKit.Databases.sb.in:
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+        * PluginProcess/mac/com.apple.WebKit.plugin-common.sb.in:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Databases.sb:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2017-05-05  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Don't cover in-memory and disk caches during website data removal
