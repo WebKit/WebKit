@@ -1,3 +1,19 @@
+2017-05-04  Mark Lam  <mark.lam@apple.com>
+
+        API test WTF.StaticStringImpl crashing in TestWebKitAPI::WTF_StaticStringImpl_Test::TestBody() + 3188
+        https://bugs.webkit.org/show_bug.cgi?id=171702
+
+        Reviewed by Filip Pizlo.
+
+        The test was supposed to use the MAKE_STATIC_STRING_IMPL macro.  I had previously
+        changed it to instantiate an automatic StaticStringImpl (i.e. stack allocated) to
+        confirm that the test will detect a regression.  Unfortunately, I forgot to
+        change it back to using MAKE_STATIC_STRING_IMPL before I landed the test.
+        This patch fixes that.
+
+        * TestWebKitAPI/Tests/WTF/StringImpl.cpp:
+        (TestWebKitAPI::neverDestroyedString):
+
 2017-05-04  Ryan Haddad  <ryanhaddad@apple.com>
 
         Disable failing API test WebKit2.ResizeWithHiddenContentDoesNotHang.

@@ -629,7 +629,7 @@ TEST(WTF, StringImplEmpty)
 
 static const String& neverDestroyedString()
 {
-    static NeverDestroyed<String> str(StaticStringImpl("NeverDestroyedString"));
+    static NeverDestroyed<String> str(MAKE_STATIC_STRING_IMPL("NeverDestroyedString"));
     return str;
 };
 
