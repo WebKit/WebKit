@@ -1,3 +1,27 @@
+2017-05-04  Jeremy Jones  <jeremyj@apple.com>
+
+        Use if instead of return early for 13 places in WebAVPlayerController
+        https://bugs.webkit.org/show_bug.cgi?id=171692
+
+        Reviewed by Jer Noble.
+
+        No new tests because no behavior change.
+
+        * platform/ios/WebAVPlayerController.mm:
+        (-[WebAVPlayerController play:]):
+        (-[WebAVPlayerController pause:]):
+        (-[WebAVPlayerController togglePlayback:]):
+        (-[WebAVPlayerController beginScrubbing:]):
+        (-[WebAVPlayerController endScrubbing:]):
+        (-[WebAVPlayerController seekToTime:]):
+        (-[WebAVPlayerController beginScanningForward:]):
+        (-[WebAVPlayerController endScanningForward:]):
+        (-[WebAVPlayerController beginScanningBackward:]):
+        (-[WebAVPlayerController endScanningBackward:]):
+        (-[WebAVPlayerController seekToBeginning:]):
+        (-[WebAVPlayerController seekToEnd:]):
+        (-[WebAVPlayerController toggleMuted:]):
+
 2017-05-04  Filip Pizlo  <fpizlo@apple.com>
 
         JSC::Heap should expose a richer API for requesting GCs

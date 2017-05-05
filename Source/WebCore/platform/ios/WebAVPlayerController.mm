@@ -88,25 +88,22 @@ using namespace WebCore;
 - (void)play:(id)sender
 {
     UNUSED_PARAM(sender);
-    if (!self.delegate)
-        return;
-    self.delegate->play();
+    if (self.delegate)
+        self.delegate->play();
 }
 
 - (void)pause:(id)sender
 {
     UNUSED_PARAM(sender);
-    if (!self.delegate)
-        return;
-    self.delegate->pause();
+    if (self.delegate)
+        self.delegate->pause();
 }
 
 - (void)togglePlayback:(id)sender
 {
     UNUSED_PARAM(sender);
-    if (!self.delegate)
-        return;
-    self.delegate->togglePlayState();
+    if (self.delegate)
+        self.delegate->togglePlayState();
 }
 
 - (void)togglePlaybackEvenWhenInBackground:(id)sender
@@ -137,24 +134,21 @@ using namespace WebCore;
 - (void)beginScrubbing:(id)sender
 {
     UNUSED_PARAM(sender);
-    if (!self.delegate)
-        return;
-    self.delegate->beginScrubbing();
+    if (self.delegate)
+        self.delegate->beginScrubbing();
 }
 
 - (void)endScrubbing:(id)sender
 {
     UNUSED_PARAM(sender);
-    if (!self.delegate)
-        return;
-    self.delegate->endScrubbing();
+    if (self.delegate)
+        self.delegate->endScrubbing();
 }
 
 - (void)seekToTime:(NSTimeInterval)time
 {
-    if (!self.delegate)
-        return;
-    self.delegate->fastSeek(time);
+    if (self.delegate)
+        self.delegate->fastSeek(time);
 }
 
 - (NSTimeInterval)currentTimeWithinEndTimes
@@ -231,33 +225,29 @@ using namespace WebCore;
 - (void)beginScanningForward:(id)sender
 {
     UNUSED_PARAM(sender);
-    if (!self.delegate)
-        return;
-    self.delegate->beginScanningForward();
+    if (self.delegate)
+        self.delegate->beginScanningForward();
 }
 
 - (void)endScanningForward:(id)sender
 {
     UNUSED_PARAM(sender);
-    if (!self.delegate)
-        return;
-    self.delegate->endScanning();
+    if (self.delegate)
+        self.delegate->endScanning();
 }
 
 - (void)beginScanningBackward:(id)sender
 {
     UNUSED_PARAM(sender);
-    if (!self.delegate)
-        return;
-    self.delegate->beginScanningBackward();
+    if (self.delegate)
+        self.delegate->beginScanningBackward();
 }
 
 - (void)endScanningBackward:(id)sender
 {
     UNUSED_PARAM(sender);
-    if (!self.delegate)
-        return;
-    self.delegate->endScanning();
+    if (self.delegate)
+        self.delegate->endScanning();
 }
 
 - (BOOL)canSeekToBeginning
@@ -278,9 +268,8 @@ using namespace WebCore;
 - (void)seekToBeginning:(id)sender
 {
     UNUSED_PARAM(sender);
-    if (!self.delegate)
-        return;
-    self.delegate->seekToTime(-INFINITY);
+    if (self.delegate)
+        self.delegate->seekToTime(-INFINITY);
 }
 
 - (void)seekChapterBackward:(id)sender
@@ -306,9 +295,8 @@ using namespace WebCore;
 - (void)seekToEnd:(id)sender
 {
     UNUSED_PARAM(sender);
-    if (!self.delegate)
-        return;
-    self.delegate->seekToTime(INFINITY);
+    if (self.delegate)
+        self.delegate->seekToTime(INFINITY);
 }
 
 - (void)seekChapterForward:(id)sender
@@ -428,9 +416,8 @@ using namespace WebCore;
 - (void)toggleMuted:(id)sender
 {
     UNUSED_PARAM(sender);
-    if (!self.delegate)
-        return;
-    self.delegate->toggleMuted();
+    if (self.delegate)
+        self.delegate->toggleMuted();
 }
 
 @end
