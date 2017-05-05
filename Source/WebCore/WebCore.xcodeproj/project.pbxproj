@@ -1189,6 +1189,7 @@
 		2D481F02146B5C5500AA7834 /* CrossfadeGeneratedImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D2FC0551460CD6F00263633 /* CrossfadeGeneratedImage.h */; };
 		2D481F03146B5C6500AA7834 /* GradientImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D2FC0561460CD6F00263633 /* GradientImage.cpp */; };
 		2D481F04146B5C6B00AA7834 /* GradientImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D2FC0571460CD6F00263633 /* GradientImage.h */; };
+		2D4AEA031EBC0FE900C4A93A /* LinkPresentationSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D4AEA021EBC0FE900C4A93A /* LinkPresentationSPI.h */; };
 		2D4F96F51A1ECC240098BF88 /* TextIndicator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D4F96F11A1ECC240098BF88 /* TextIndicator.cpp */; };
 		2D4F96F61A1ECC240098BF88 /* TextIndicator.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D4F96F21A1ECC240098BF88 /* TextIndicator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2D4F96F71A1ECC240098BF88 /* TextIndicatorWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D4F96F31A1ECC240098BF88 /* TextIndicatorWindow.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8699,6 +8700,7 @@
 		2D413F601A187A3F0041A521 /* LookupSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LookupSPI.h; sourceTree = "<group>"; };
 		2D46F04D17B96FBD005647F0 /* IntPoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntPoint.cpp; sourceTree = "<group>"; };
 		2D46F04F17B96FD2005647F0 /* IntSize.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntSize.cpp; sourceTree = "<group>"; };
+		2D4AEA021EBC0FE900C4A93A /* LinkPresentationSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LinkPresentationSPI.h; sourceTree = "<group>"; };
 		2D4F96F11A1ECC240098BF88 /* TextIndicator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextIndicator.cpp; sourceTree = "<group>"; };
 		2D4F96F21A1ECC240098BF88 /* TextIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextIndicator.h; sourceTree = "<group>"; };
 		2D4F96F31A1ECC240098BF88 /* TextIndicatorWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextIndicatorWindow.h; sourceTree = "<group>"; };
@@ -18656,6 +18658,7 @@
 				44DEF6421A6FF92700D45EEC /* IOReturnSPI.h */,
 				44DFF6421A6FF92700D45EEC /* IOSurfaceSPI.h */,
 				44EFF6421A6FF92700D45EEC /* IOTypesSPI.h */,
+				2D4AEA021EBC0FE900C4A93A /* LinkPresentationSPI.h */,
 				CE12524E1A1A78D200864480 /* MachVMSPI.h */,
 				A19D93441A9FEC7200B46C24 /* NEFilterSourceSPI.h */,
 				9BB737641B41C03500AE13EB /* NSAttributedStringSPI.h */,
@@ -28497,6 +28500,7 @@
 				CE1252491A16C3BC00864480 /* MobileGestaltSPI.h in Headers */,
 				CDF2B0111820540600F2B424 /* MockBox.h in Headers */,
 				CDF4B7241E03BF8100E235A2 /* MockCDMFactory.h in Headers */,
+				2D4AEA031EBC0FE900C4A93A /* LinkPresentationSPI.h in Headers */,
 				CDF4B7201E03BF6F00E235A2 /* MockCDMFactory.idl in Headers */,
 				51058AE01D67C229009A538C /* MockGamepad.h in Headers */,
 				51058AE21D67C229009A538C /* MockGamepadProvider.h in Headers */,
