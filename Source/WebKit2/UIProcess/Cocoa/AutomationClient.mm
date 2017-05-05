@@ -46,12 +46,12 @@ AutomationClient::AutomationClient(WKProcessPool *processPool, id <_WKAutomation
     m_delegateMethods.allowsRemoteAutomation = [delegate respondsToSelector:@selector(_processPoolAllowsRemoteAutomation:)];
     m_delegateMethods.requestAutomationSession = [delegate respondsToSelector:@selector(_processPool:didRequestAutomationSessionWithIdentifier:)];
 
-    RemoteInspector::singleton().setRemoteInspectorClient(this);
+    RemoteInspector::singleton().setClient(this);
 }
 
 AutomationClient::~AutomationClient()
 {
-    RemoteInspector::singleton().setRemoteInspectorClient(nullptr);
+    RemoteInspector::singleton().setClient(nullptr);
 }
 
 void AutomationClient::didRequestAutomationSession(WebKit::WebProcessPool*, const String& sessionIdentifier)

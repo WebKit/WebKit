@@ -248,6 +248,14 @@ static void testAutomationSessionRequestSession(AutomationTest* test, gconstpoin
 
     webkit_web_context_set_automation_allowed(test->m_webContext.get(), TRUE);
     g_assert(webkit_web_context_is_automation_allowed(test->m_webContext.get()));
+
+    // There can't be more than one context with automation enabled
+    GRefPtr<WebKitWebContext> otherContext = adoptGRef(webkit_web_context_new());
+    test->removeLogFatalFlag(G_LOG_LEVEL_WARNING);
+    webkit_web_context_set_automation_allowed(otherContext.get(), TRUE);
+    test->addLogFatalFlag(G_LOG_LEVEL_WARNING);
+    g_assert(!webkit_web_context_is_automation_allowed(otherContext.get()));
+
     session = test->requestSession(sessionID.utf8().data());
     g_assert_cmpstr(webkit_automation_session_get_id(session), ==, sessionID.utf8().data());
     g_assert_cmpuint(test->m_target.id, >, 0);

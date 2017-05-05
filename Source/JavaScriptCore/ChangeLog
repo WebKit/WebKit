@@ -1,3 +1,19 @@
+2017-05-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Assertion failure in Inspector::RemoteInspector::setRemoteInspectorClient when disposing WebKitWebContext
+        https://bugs.webkit.org/show_bug.cgi?id=171644
+
+        Reviewed by Michael Catanzaro.
+
+        Fix ASSERT that requires given client to be a valid pointer, since it's valid to pass nullptr to unset the
+        client. The ASSERT now ensures that client is set or unset. I also renamed the function to setClient because
+        setRemoteInspectorClient is redundant for a class named RemoteInspector. And added a getter too, to check if the
+        remote inspector has a client.
+
+        * inspector/remote/RemoteInspector.cpp:
+        (Inspector::RemoteInspector::setClient):
+        * inspector/remote/RemoteInspector.h:
+
 2017-05-04  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r216206.

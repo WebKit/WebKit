@@ -140,10 +140,9 @@ void RemoteInspector::updateClientCapabilities()
     }
 }
 
-void RemoteInspector::setRemoteInspectorClient(RemoteInspector::Client* client)
+void RemoteInspector::setClient(RemoteInspector::Client* client)
 {
-    ASSERT_ARG(client, client);
-    ASSERT(!m_client);
+    ASSERT((m_client && !client) || (!m_client && client));
 
     {
         std::lock_guard<Lock> lock(m_mutex);

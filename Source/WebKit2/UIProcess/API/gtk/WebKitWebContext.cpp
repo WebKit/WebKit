@@ -189,7 +189,6 @@ struct _WebKitWebContextPrivate {
     std::unique_ptr<RemoteInspectorProtocolHandler> remoteInspectorProtocolHandler;
     std::unique_ptr<WebKitAutomationClient> automationClient;
     GRefPtr<WebKitAutomationSession> automationSession;
-    bool automationAllowed;
 #endif
 };
 
@@ -201,16 +200,16 @@ public:
     explicit WebKitAutomationClient(WebKitWebContext* context)
         : m_webContext(context)
     {
-        Inspector::RemoteInspector::singleton().setRemoteInspectorClient(this);
+        Inspector::RemoteInspector::singleton().setClient(this);
     }
 
     ~WebKitAutomationClient()
     {
-        Inspector::RemoteInspector::singleton().setRemoteInspectorClient(nullptr);
+        Inspector::RemoteInspector::singleton().setClient(nullptr);
     }
 
 private:
-    bool remoteAutomationAllowed() const override { return m_webContext->priv->automationAllowed; }
+    bool remoteAutomationAllowed() const override { return true; }
 
     void requestAutomationSession(const String& sessionIdentifier) override
     {
@@ -333,7 +332,6 @@ static void webkitWebContextConstructed(GObject* object)
 #endif
 #if ENABLE(REMOTE_INSPECTOR)
     priv->remoteInspectorProtocolHandler = std::make_unique<RemoteInspectorProtocolHandler>(webContext);
-    priv->automationClient = std::make_unique<WebKitAutomationClient>(webContext);
 #endif
 }
 
@@ -605,7 +603,11 @@ gboolean webkit_web_context_is_automation_allowed(WebKitWebContext* context)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_CONTEXT(context), FALSE);
 
-    return context->priv->automationAllowed;
+#if ENABLE(REMOTE_INSPECTOR)
+    return !!context->priv->automationClient;
+#else
+    return FALSE;
+#endif
 }
 
 /**
@@ -619,17 +621,26 @@ gboolean webkit_web_context_is_automation_allowed(WebKitWebContext* context)
  * Automation is disabled by default, so you need to explicitly call this method passing %TRUE
  * to enable it.
  *
+ * Note that only one #WebKitWebContext can have automation enabled, so this will do nothing
+ * if there's another #WebKitWebContext with automation already enabled.
+ *
  * Since: 2.18
  */
 void webkit_web_context_set_automation_allowed(WebKitWebContext* context, gboolean allowed)
 {
     g_return_if_fail(WEBKIT_IS_WEB_CONTEXT(context));
 
-    if (context->priv->automationAllowed == allowed)
+    if (webkit_web_context_is_automation_allowed(context) == allowed)
         return;
-    context->priv->automationAllowed = allowed;
 #if ENABLE(REMOTE_INSPECTOR)
-    Inspector::RemoteInspector::singleton().clientCapabilitiesDidChange();
+    if (allowed) {
+        if (Inspector::RemoteInspector::singleton().client()) {
+            g_warning("Not enabling automation on WebKitWebContext because there's another context with automation enabled, only one is allowed");
+            return;
+        }
+        context->priv->automationClient = std::make_unique<WebKitAutomationClient>(context);
+    } else
+        context->priv->automationClient = nullptr;
 #endif
 }
 

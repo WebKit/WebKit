@@ -82,7 +82,8 @@ public:
     void updateTarget(RemoteControllableTarget*);
     void sendMessageToRemote(unsigned targetIdentifier, const String& message);
 
-    void setRemoteInspectorClient(RemoteInspector::Client*);
+    RemoteInspector::Client* client() const { return m_client; }
+    void setClient(RemoteInspector::Client*);
     void clientCapabilitiesDidChange();
 
     void setupFailed(unsigned targetIdentifier);

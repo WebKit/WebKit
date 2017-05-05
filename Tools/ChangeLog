@@ -1,5 +1,17 @@
 2017-05-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Assertion failure in Inspector::RemoteInspector::setRemoteInspectorClient when disposing WebKitWebContext
+        https://bugs.webkit.org/show_bug.cgi?id=171644
+
+        Reviewed by Michael Catanzaro.
+
+        Check that only one WebKitWebContext can have automation enabled.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestAutomationSession.cpp:
+        (testAutomationSessionRequestSession):
+
+2017-05-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] TestController timeout source callback should return G_SOURCE_REMOVE
         https://bugs.webkit.org/show_bug.cgi?id=171724
 
