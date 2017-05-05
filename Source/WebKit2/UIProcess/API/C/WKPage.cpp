@@ -422,7 +422,7 @@ void WKPageSetCustomTextEncodingName(WKPageRef pageRef, WKStringRef encodingName
 
 void WKPageTerminate(WKPageRef pageRef)
 {
-    toImpl(pageRef)->terminateProcess();
+    toImpl(pageRef)->process().requestTermination(ProcessTerminationReason::RequestedByClient);
 }
 
 WKStringRef WKPageGetSessionHistoryURLValueType()
@@ -2400,13 +2400,15 @@ void WKPageSetPageNavigationClient(WKPageRef pageRef, const WKPageNavigationClie
             m_client.didReceiveAuthenticationChallenge(toAPI(&page), toAPI(authenticationChallenge), m_client.base.clientInfo);
         }
 
-        void processDidCrash(WebPageProxy& page, WebKit::ProcessCrashReason reason) override
+        void processDidTerminate(WebPageProxy& page, WebKit::ProcessTerminationReason reason) override
         {
-            if (m_client.webProcessDidCrash)
-                m_client.webProcessDidCrash(toAPI(&page), m_client.base.clientInfo);
+            if (m_client.webProcessDidTerminate) {
+                m_client.webProcessDidTerminate(toAPI(&page), toAPI(reason), m_client.base.clientInfo);
+                return;
+            }
 
-            if (m_client.webProcessDidCrashWithReason)
-                m_client.webProcessDidCrashWithReason(toAPI(&page), toAPI(reason), m_client.base.clientInfo);
+            if (m_client.webProcessDidCrash && reason != WebKit::ProcessTerminationReason::RequestedByClient)
+                m_client.webProcessDidCrash(toAPI(&page), m_client.base.clientInfo);
         }
 
         RefPtr<API::Data> webCryptoMasterKey(WebPageProxy& page) override

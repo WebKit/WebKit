@@ -25,13 +25,20 @@
 
 #pragma once
 
-namespace WebKit {
+#include <stdint.h>
 
-enum class ProcessCrashReason {
-    TerminationDueToMemoryUsage,
-    TerminationDueToCPUUsage,
-    TerminationRequestedByClient,
-    Other
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+enum {
+    kWKProcessTerminationReasonExceededMemoryLimit = 0,
+    kWKProcessTerminationReasonExceededCPULimit,
+    kWKProcessTerminationReasonRequestedByClient,
+    kWKProcessTerminationReasonCrash,
 };
+typedef uint32_t WKProcessTerminationReason;
 
+#ifdef __cplusplus
 }
+#endif

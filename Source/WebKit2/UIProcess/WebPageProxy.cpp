@@ -2410,16 +2410,6 @@ void WebPageProxy::setCustomTextEncodingName(const String& encodingName)
     m_process->send(Messages::WebPage::SetCustomTextEncodingName(encodingName), m_pageID);
 }
 
-void WebPageProxy::terminateProcess()
-{
-    // NOTE: This uses a check of m_isValid rather than calling isValid() since
-    // we want this to run even for pages being closed or that already closed.
-    if (!m_isValid)
-        return;
-
-    m_process->requestTermination();
-}
-
 SessionState WebPageProxy::sessionState(const std::function<bool (WebBackForwardListItem&)>& filter) const
 {
     SessionState sessionState;
@@ -5320,7 +5310,7 @@ void WebPageProxy::didChangeProcessIsResponsive()
     m_pageLoadState.didChangeProcessIsResponsive();
 }
 
-void WebPageProxy::processDidCrash(ProcessCrashReason reason)
+void WebPageProxy::processDidTerminate(ProcessTerminationReason reason)
 {
     ASSERT(m_isValid);
 
@@ -5343,8 +5333,8 @@ void WebPageProxy::processDidCrash(ProcessCrashReason reason)
     navigationState().clearAllNavigations();
 
     if (m_navigationClient)
-        m_navigationClient->processDidCrash(*this, reason);
-    else
+        m_navigationClient->processDidTerminate(*this, reason);
+    else if (reason != ProcessTerminationReason::RequestedByClient)
         m_loaderClient->processDidCrash(*this);
 
     if (m_controlledByAutomation) {

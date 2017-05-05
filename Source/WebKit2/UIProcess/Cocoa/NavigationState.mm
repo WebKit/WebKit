@@ -710,7 +710,7 @@ void NavigationState::NavigationClient::didReceiveAuthenticationChallenge(WebPag
     [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate.get()) _webView:m_navigationState.m_webView didReceiveAuthenticationChallenge:wrapper(*authenticationChallenge)];
 }
 
-void NavigationState::NavigationClient::processDidCrash(WebKit::WebPageProxy& page, WebKit::ProcessCrashReason)
+void NavigationState::NavigationClient::processDidTerminate(WebKit::WebPageProxy& page, WebKit::ProcessTerminationReason)
 {
     if (!m_navigationState.m_navigationDelegateMethods.webViewWebContentProcessDidTerminate && !m_navigationState.m_navigationDelegateMethods.webViewWebProcessDidCrash)
         return;

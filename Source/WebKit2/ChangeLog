@@ -1,3 +1,50 @@
+2017-05-05  Chris Dumez  <cdumez@apple.com>
+
+        Rename webProcessDidCrashWithReason callback to webProcessDidTerminate and stop calling webProcessDidCrash for client terminations
+        https://bugs.webkit.org/show_bug.cgi?id=171624
+
+        Reviewed by Dan Bernstein.
+
+        Follow-up fixes after r216129 based on feedback I have received:
+        - Rename webProcessDidCrashWithReason callback function to webProcessDidTerminate given that this is called
+          for non-crashes (e.g. terminations requested by the client).
+        - Rename WKProcessCrashReason / ProcessCrashReason to WKProcessTerminationReason / ProcessTerminationReason
+          for consistency with the new naming.
+        - Stop calling processDidCrash / webProcessDidCrash for terminations requested by the client, to maintain
+          pre-r216129 behavior. Those are not crashes (The client used an API such as WKPageTerminateProcess()).
+          webProcessDidTerminate will still be called though.
+        - Fix a bug where - for terminations due to resource limits - WebPageProxy::processDidCrash() was getting
+          called twice: First by WebProcessProxy::requestTermination() with reason "RequestedByClient" then a
+          second time by WebProcessProxy::terminateProcessDueToResourceLimits() with the proper reason.
+
+        * Shared/ProcessTerminationReason.h: Renamed from Source/WebKit2/Shared/ProcessCrashReason.h.
+        * UIProcess/API/APINavigationClient.h:
+        (API::NavigationClient::processDidTerminate):
+        * UIProcess/API/C/WKAPICast.h:
+        (WebKit::toAPI):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageTerminate):
+        (WKPageSetPageNavigationClient):
+        * UIProcess/API/C/WKPageNavigationClient.h:
+        * UIProcess/API/C/WKProcessTerminationReason.h: Renamed from Source/WebKit2/UIProcess/API/C/WKProcessCrashReason.h.
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _killWebContentProcessAndResetState]):
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::NavigationClient::processDidTerminate):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::processDidTerminate):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didClose):
+        (WebKit::WebProcessProxy::requestTermination):
+        (WebKit::WebProcessProxy::logDiagnosticMessageForResourceLimitTermination):
+        (WebKit::WebProcessProxy::didExceedActiveMemoryLimit):
+        (WebKit::WebProcessProxy::didExceedInactiveMemoryLimit):
+        (WebKit::WebProcessProxy::didExceedBackgroundCPULimit):
+        * UIProcess/WebProcessProxy.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2017-05-05  Derek Schuff  <dschuff@chromium.org>
 
         Mac cmake buildfix after r216037

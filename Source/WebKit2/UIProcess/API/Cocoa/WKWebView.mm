@@ -3772,7 +3772,7 @@ WEBCORE_COMMAND(yankAndSelect)
 
 - (void)_killWebContentProcessAndResetState
 {
-    _page->terminateProcess();
+    _page->process().requestTermination(WebKit::ProcessTerminationReason::RequestedByClient);
 }
 
 #if PLATFORM(MAC)

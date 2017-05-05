@@ -30,7 +30,7 @@
 #include <WebKit/WKPageLoadTypes.h>
 #include <WebKit/WKPageRenderingProgressEvents.h>
 #include <WebKit/WKPluginLoadPolicy.h>
-#include <WebKit/WKProcessCrashReason.h>
+#include <WebKit/WKProcessTerminationReason.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -66,7 +66,7 @@ typedef void (*WKPageNavigationDidReceiveAuthenticationChallengeCallback)(WKPage
 
 typedef void (*WKPageNavigationWebProcessDidCrashCallback)(WKPageRef page, const void* clientInfo);
 
-typedef void (*WKPageNavigationWebProcessDidCrashWithReasonCallback)(WKPageRef page, WKProcessCrashReason reason, const void* clientInfo);
+typedef void (*WKPageNavigationWebProcessDidTerminateCallback)(WKPageRef page, WKProcessTerminationReason reason, const void* clientInfo);
 
 typedef WKDataRef (*WKPageNavigationCopyWebCryptoMasterKeyCallback)(WKPageRef page, const void* clientInfo);
     
@@ -140,7 +140,7 @@ typedef struct WKPageNavigationClientV1 {
     WKPageNavigationDidRemoveNavigationGestureSnapshot didRemoveNavigationGestureSnapshot;
 
     // Version 1.
-    WKPageNavigationWebProcessDidCrashWithReasonCallback webProcessDidCrashWithReason;
+    WKPageNavigationWebProcessDidTerminateCallback webProcessDidTerminate;
 } WKPageNavigationClientV1;
 
 #ifdef __cplusplus

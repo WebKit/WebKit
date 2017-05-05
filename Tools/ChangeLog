@@ -1,3 +1,18 @@
+2017-05-05  Chris Dumez  <cdumez@apple.com>
+
+        Rename webProcessDidCrashWithReason callback to webProcessDidTerminate and stop calling webProcessDidCrash for client terminations
+        https://bugs.webkit.org/show_bug.cgi?id=171624
+
+        Reviewed by Dan Bernstein.
+
+        Extend API test coverage to cover crashes in addition to terminations requested by the client.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2/ProcessDidTerminate.cpp: Renamed from Tools/TestWebKitAPI/Tests/WebKit2/ProcessDidCrashWithReason.cpp.
+        (TestWebKitAPI::webProcessWasTerminatedByClient):
+        (TestWebKitAPI::webProcessCrashed):
+        (TestWebKitAPI::TEST):
+
 2017-05-04  Mark Lam  <mark.lam@apple.com>
 
         DRT's setAudioResultCallback() and IDBRequest::setResult() need to acquire the JSLock.
