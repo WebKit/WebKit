@@ -6,6 +6,13 @@ include_directories(
     include/KHR
 )
 
+if (WIN32)
+    # FIXME: DX11 support will not compile if this preprocessor definition is set
+    # DirectX Documentation is setting that version to 0x700 but there is no
+    # corresponding value in sdkddkver.h
+    remove_definitions(-D_WIN32_WINNT=0x601)
+endif ()
+
 set(ANGLEEGL_SOURCES
     src/libEGL/libEGL.cpp
 )

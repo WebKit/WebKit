@@ -44,10 +44,6 @@
 
 #elif PLATFORM(WIN)
 
-#ifndef NOMINMAX
-#define NOMINMAX
-#endif
-
 #if PLATFORM(WIN_CAIRO)
 #undef USE_CG
 #define USE_CAIRO 1

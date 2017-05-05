@@ -1,3 +1,14 @@
+2017-05-04  Don Olmstead  <don.olmstead@am.sony.com>
+
+        [Win] Remove redundant macros that are set in the CMake config
+        https://bugs.webkit.org/show_bug.cgi?id=171571
+
+        Reviewed by Brent Fulgham.
+
+        * DumpRenderTree/config.h:
+        * MiniBrowser/win/stdafx.h:
+        * TestWebKitAPI/config.h:
+
 2017-05-04  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Add testRunner.display() to force displaying the web page for testing

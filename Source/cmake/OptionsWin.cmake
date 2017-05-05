@@ -1,4 +1,11 @@
-add_definitions(-DNOMINMAX -DUNICODE -D_UNICODE -D_WINDOWS -DWINVER=0x601)
+# Define minimum supported Windows version
+# https://msdn.microsoft.com/en-us/library/6sehtctf.aspx
+#
+# Currently set to Windows 7
+add_definitions(-D_WINDOWS -DWINVER=0x601 -D_WIN32_WINNT=0x601)
+
+add_definitions(-DNOMINMAX)
+add_definitions(-DUNICODE -D_UNICODE)
 
 WEBKIT_OPTION_BEGIN()
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_3D_TRANSFORMS PUBLIC ON)

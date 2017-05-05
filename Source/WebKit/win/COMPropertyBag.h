@@ -26,9 +26,6 @@
 #ifndef COMPropertyBag_h
 #define COMPropertyBag_h
 
-#ifndef NOMINMAX
-#define NOMINMAX
-#endif
 #include <ocidl.h>
 #include <unknwn.h>
 

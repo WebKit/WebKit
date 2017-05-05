@@ -29,25 +29,6 @@
 #include "JSExportMacros.h"
 #endif
 
-#if OS(WINDOWS)
-
-#ifndef _WIN32_WINNT
-#define _WIN32_WINNT 0x601
-#endif
-
-#ifndef WINVER
-#define WINVER 0x0601
-#endif
-
-#if !COMPILER(MSVC7_OR_LOWER)
-// We need to define this before the first #include of stdlib.h or it won't contain rand_s.
-#ifndef _CRT_RAND_S
-#define _CRT_RAND_S
-#endif
-#endif // !COMPILER(MSVC7_OR_LOWER
-
-#endif // OS(WINDOWS)
-
 #ifdef __cplusplus
 #undef new
 #undef delete
@@ -61,4 +42,3 @@
 #else
 #define SKIP_STATIC_CONSTRUCTORS_ON_GCC 1
 #endif
-

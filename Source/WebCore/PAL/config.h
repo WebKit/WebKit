@@ -27,22 +27,6 @@
 
 #include <wtf/ExportMacros.h>
 
-#ifdef __APPLE__
-#define HAVE_FUNC_USLEEP 1
-#endif /* __APPLE__ */
-
-#if OS(WINDOWS)
-
-#ifndef _WIN32_WINNT
-#define _WIN32_WINNT 0x601
-#endif
-
-#ifndef WINVER
-#define WINVER 0x0601
-#endif
-
-#endif /* OS(WINDOWS) */
-
 #ifdef __cplusplus
 
 // These undefs match up with defines in WebCorePrefix.h for Mac OS X.

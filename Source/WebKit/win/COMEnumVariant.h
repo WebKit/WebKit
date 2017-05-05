@@ -26,11 +26,7 @@
 #ifndef COMEnumVariant_h
 #define COMEnumVariant_h
 
-#ifndef NOMINMAX
-#define NOMINMAX
-#endif
 #include <unknwn.h>
-
 
 #include "COMVariantSetter.h"
 

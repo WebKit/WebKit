@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WindowsTouch_h
-#define WindowsTouch_h
+#pragma once
 
 /*
  * The following constants are used to determine multitouch and gesture behavior
@@ -70,47 +69,3 @@
 // Press and tap Configuration Flags
 #define GC_PRESSANDTAP 0x00000001
 #define GC_ROLLOVER GC_PRESSANDTAP
-
-#if WINVER < 0x0601
-
-// GESTUREINFO struct definition
-typedef struct tagGESTUREINFO {
-    UINT cbSize;                    // size, in bytes, of this structure (including variable length Args field)
-    DWORD dwFlags;                  // see GF_* flags
-    DWORD dwID;                     // gesture ID, see GID_* defines
-    HWND hwndTarget;                // handle to window targeted by this gesture
-    POINTS ptsLocation;             // current location of this gesture
-    DWORD dwInstanceID;             // internally used
-    DWORD dwSequenceID;             // internally used
-    ULONGLONG ullArguments;         // arguments for gestures whose arguments fit in 8 BYTES
-    UINT cbExtraArgs;               // size, in bytes, of extra arguments, if any, that accompany this gesture
-} GESTUREINFO, *PGESTUREINFO;
-typedef GESTUREINFO const * PCGESTUREINFO;
-
-// GESTURECONFIG struct defintion
-typedef struct tagGESTURECONFIG {
-    DWORD dwID;                     // gesture ID
-    DWORD dwWant;                   // settings related to gesture ID that are to be turned on
-    DWORD dwBlock;                  // settings related to gesture ID that are to be turned off
-} GESTURECONFIG, *PGESTURECONFIG;
-
-/*
- * Gesture notification structure
- *   - The WM_GESTURENOTIFY message lParam contains a pointer to this structure.
- *   - The WM_GESTURENOTIFY message notifies a window that gesture recognition is
- *     in progress and a gesture will be generated if one is recognized under the
- *     current gesture settings.
- */
-typedef struct tagGESTURENOTIFYSTRUCT {
-    UINT cbSize;                    // size, in bytes, of this structure
-    DWORD dwFlags;                  // unused
-    HWND hwndTarget;                // handle to window targeted by the gesture
-    POINTS ptsLocation;             // starting location
-    DWORD dwInstanceID;             // internally used
-} GESTURENOTIFYSTRUCT, *PGESTURENOTIFYSTRUCT;
-
-DECLARE_HANDLE(HGESTUREINFO);
-
-#endif
-
-#endif

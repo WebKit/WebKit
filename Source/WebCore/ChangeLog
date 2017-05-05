@@ -1,3 +1,18 @@
+2017-05-04  Don Olmstead  <don.olmstead@am.sony.com>
+
+        [Win] Remove redundant macros that are set in the CMake config
+        https://bugs.webkit.org/show_bug.cgi?id=171571
+
+        Reviewed by Brent Fulgham.
+
+        No new tests. No change in behavior.
+
+        * WebCorePrefix.h:
+        * config.h:
+        * platform/win/COMPtr.h:
+        * platform/win/WindowsTouch.h:
+        * testing/js/WebCoreTestSupportPrefix.h:
+
 2017-05-04  Tim Horton  <timothy_horton@apple.com>
 
         [Mac] Modernize image for dragged link

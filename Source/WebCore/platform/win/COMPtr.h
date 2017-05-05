@@ -26,10 +26,6 @@
 #ifndef COMPtr_h
 #define COMPtr_h
 
-#ifndef NOMINMAX
-#define NOMINMAX
-#endif
-
 #include <unknwn.h>
 #include <wtf/Assertions.h>
 #include <wtf/HashTraits.h>
