@@ -250,6 +250,11 @@ JSStringRef TestRunner::copyEncodedHostName(JSStringRef name)
     return JSStringCreateWithCFString((CFStringRef)[nameNS _web_encodeHostName]);
 }
 
+void TestRunner::display()
+{
+    displayWebView();
+}
+
 void TestRunner::displayAndTrackRepaints()
 {
     displayAndTrackRepaintsWebView();

@@ -1,3 +1,26 @@
+2017-05-04  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Add testRunner.display() to force displaying the web page for testing
+        https://bugs.webkit.org/show_bug.cgi?id=171694
+
+        Reviewed by Simon Fraser.
+
+        Unlike testRunner.displayAndTrackRepaints(), this new function forces 
+        drawing the web page but without track repaints.
+
+        * DumpRenderTree/TestRunner.cpp:
+        (displayCallback):
+        (TestRunner::staticFunctions):
+        * DumpRenderTree/TestRunner.h:
+        * DumpRenderTree/mac/TestRunnerMac.mm:
+        (TestRunner::display):
+        * DumpRenderTree/win/TestRunnerWin.cpp:
+        (TestRunner::display):
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::display):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+
 2017-05-04  Mark Lam  <mark.lam@apple.com>
 
         NeverDestroyed<String>(ASCIILiteral(...)) is not thread safe.

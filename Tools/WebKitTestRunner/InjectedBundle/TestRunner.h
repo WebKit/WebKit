@@ -140,6 +140,7 @@ public:
     // Repaint testing.
     void testRepaint() { m_testRepaint = true; }
     void repaintSweepHorizontally() { m_testRepaintSweepHorizontally = true; }
+    void display();
     void displayAndTrackRepaints();
 
     // UserContent testing.
