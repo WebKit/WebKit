@@ -1,3 +1,15 @@
+2017-05-05  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Don't cover in-memory and disk caches during website data removal
+        https://bugs.webkit.org/show_bug.cgi?id=171741
+        <rdar://problem/32020691>
+
+        Reviewed by Brent Fulgham.
+
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::removeDataRecords):
+            No longer removes WebsiteDataType::DiskCache or WebsiteDataType::MemoryCache.
+
 2017-05-05  Brian Burg  <bburg@apple.com>
 
         CrashTracer: [USER] com.apple.WebKit.WebContent.Development at com.apple.WebCore: WebCore::commonVMSlow + 57

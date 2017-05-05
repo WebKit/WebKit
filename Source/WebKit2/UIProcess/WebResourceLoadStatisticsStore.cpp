@@ -108,8 +108,6 @@ void WebResourceLoadStatisticsStore::removeDataRecords()
 
     if (dataTypesToRemove.isEmpty()) {
         dataTypesToRemove |= WebsiteDataType::Cookies;
-        dataTypesToRemove |= WebsiteDataType::DiskCache;
-        dataTypesToRemove |= WebsiteDataType::MemoryCache;
         dataTypesToRemove |= WebsiteDataType::OfflineWebApplicationCache;
         dataTypesToRemove |= WebsiteDataType::SessionStorage;
         dataTypesToRemove |= WebsiteDataType::LocalStorage;
