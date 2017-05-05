@@ -1,5 +1,23 @@
 2017-05-05  Joseph Pecoraro  <pecoraro@apple.com>
 
+        REGRESSION: LayoutTest streams/reference-implementation/readable-stream-templated.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=171580
+        <rdar://problem/32009647>
+
+        Rubber-stamped by Alexey Proskuryakov.
+
+        * TestExpectations:
+        * streams/reference-implementation/pipe-to-expected.txt:
+        Rebaseline expectations. This test was previously flakey so the results were
+        missed unless the test was run with --force.
+
+        * streams/reference-implementation/readable-stream-templated-expected.txt:
+        * streams/reference-implementation/readable-stream-templated.html:
+        Silence unhandled rejections. This test did not expect unhandled promise
+        rejections to affect test results, so ignore them.
+
+2017-05-05  Joseph Pecoraro  <pecoraro@apple.com>
+
         [macOS Sierra] LayoutTest http/tests/inspector/network/resource-request-headers.html is a flaky failure
         https://bugs.webkit.org/show_bug.cgi?id=170702
         <rdar://problem/31616643>

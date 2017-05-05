@@ -1,4 +1,11 @@
 <!DOCTYPE html>
+<script>
+// Silence unhandled rejection messages.
+window.addEventListener("unhandledrejection", function(event) {
+    event.stopImmediatePropagation();
+    event.preventDefault();
+});
+</script>
 <script src='../../resources/testharness.js'></script>
 <script src='../../resources/testharnessreport.js'></script>
 <script src='resources/streams-utils.js'></script>

@@ -843,7 +843,7 @@ fast/css/appearance-apple-pay-button.html [ ImageOnlyFailure ]
 
 webkit.org/b/150598 fast/repaint/table-hover-on-link.html [ Pass Failure ]
 
-webkit.org/b/151949 streams/reference-implementation/pipe-to.html [ Failure ]
+webkit.org/b/151949 streams/reference-implementation/pipe-to.html [ Pass Failure ]
 webkit.org/b/154687 streams/pipe-to.html [ Slow ]
 
 webkit.org/b/52185 fast/css/vertical-align-baseline-rowspan-010.html [ ImageOnlyFailure ]
