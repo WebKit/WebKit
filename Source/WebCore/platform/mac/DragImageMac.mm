@@ -31,29 +31,22 @@
 #import "BitmapImage.h"
 #import "CoreGraphicsSPI.h"
 #import "Element.h"
-#import "FloatRoundedRect.h"
 #import "FontCascade.h"
 #import "FontDescription.h"
 #import "FontSelector.h"
 #import "GraphicsContext.h"
 #import "Image.h"
-#import "SoftLinking.h"
+#import "URL.h"
 #import "StringTruncator.h"
 #import "TextIndicator.h"
 #import "TextRun.h"
-#import "URL.h"
 #import <wtf/NeverDestroyed.h>
-
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
-#import <LinkPresentation/LPNSURLExtras.h>
-SOFT_LINK_PRIVATE_FRAMEWORK(LinkPresentation)
-#endif
 
 namespace WebCore {
 
 IntSize dragImageSize(RetainPtr<NSImage> image)
 {
-    return (IntSize)[image size];
+    return (IntSize)[image.get() size];
 }
 
 void deleteDragImage(RetainPtr<NSImage>)
@@ -64,15 +57,15 @@ void deleteDragImage(RetainPtr<NSImage>)
 
 RetainPtr<NSImage> scaleDragImage(RetainPtr<NSImage> image, FloatSize scale)
 {
-    NSSize originalSize = [image size];
+    NSSize originalSize = [image.get() size];
     NSSize newSize = NSMakeSize((originalSize.width * scale.width()), (originalSize.height * scale.height()));
     newSize.width = roundf(newSize.width);
     newSize.height = roundf(newSize.height);
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    [image setScalesWhenResized:YES];
+    [image.get() setScalesWhenResized:YES];
 #pragma clang diagnostic pop
-    [image setSize:newSize];
+    [image.get() setSize:newSize];
     return image;
 }
     
@@ -81,11 +74,11 @@ RetainPtr<NSImage> dissolveDragImageToFraction(RetainPtr<NSImage> image, float d
     if (!image)
         return nil;
 
-    RetainPtr<NSImage> dissolvedImage = adoptNS([[NSImage alloc] initWithSize:[image size]]);
+    RetainPtr<NSImage> dissolvedImage = adoptNS([[NSImage alloc] initWithSize:[image.get() size]]);
     
-    [dissolvedImage lockFocus];
-    [image drawAtPoint:NSZeroPoint fromRect:NSMakeRect(0, 0, [image size].width, [image size].height) operation:NSCompositingOperationCopy fraction:delta];
-    [dissolvedImage unlockFocus];
+    [dissolvedImage.get() lockFocus];
+    [image.get() drawAtPoint:NSZeroPoint fromRect:NSMakeRect(0, 0, [image size].width, [image size].height) operation:NSCompositingOperationCopy fraction:delta];
+    [dissolvedImage.get() unlockFocus];
 
     return dissolvedImage;
 }
@@ -107,7 +100,7 @@ RetainPtr<NSImage> createDragImageFromImage(Image* image, ImageOrientationDescri
             FloatRect destRect(FloatPoint(), sizeRespectingOrientation);
 
             RetainPtr<NSImage> rotatedDragImage = adoptNS([[NSImage alloc] initWithSize:(NSSize)(sizeRespectingOrientation)]);
-            [rotatedDragImage lockFocus];
+            [rotatedDragImage.get() lockFocus];
 
             // ImageOrientation uses top-left coordinates, need to flip to bottom-left, apply...
             CGAffineTransform transform = CGAffineTransformMakeTranslation(0, destRect.height());
@@ -122,19 +115,19 @@ RetainPtr<NSImage> createDragImageFromImage(Image* image, ImageOrientationDescri
             transform = CGAffineTransformScale(transform, 1, -1);
 
             RetainPtr<NSAffineTransform> cocoaTransform = adoptNS([[NSAffineTransform alloc] init]);
-            [cocoaTransform setTransformStruct:*(NSAffineTransformStruct*)&transform];
-            [cocoaTransform concat];
+            [cocoaTransform.get() setTransformStruct:*(NSAffineTransformStruct*)&transform];
+            [cocoaTransform.get() concat];
 
             [image->snapshotNSImage() drawInRect:destRect fromRect:NSMakeRect(0, 0, size.width(), size.height()) operation:NSCompositingOperationSourceOver fraction:1.0];
 
-            [rotatedDragImage unlockFocus];
+            [rotatedDragImage.get() unlockFocus];
 
             return rotatedDragImage;
         }
     }
 
     auto dragImage = image->snapshotNSImage();
-    [dragImage setSize:(NSSize)size];
+    [dragImage.get() setSize:(NSSize)size];
     return dragImage;
 }
     
@@ -154,152 +147,200 @@ RetainPtr<NSImage> createDragImageIconForCachedImageFilename(const String& filen
 }
 
 
-const CGFloat linkImagePadding = 10; // Keep in sync with DragController::LinkDragBorderInset.
-const CGFloat linkImageDomainBaselineToTitleBaseline = 18;
-const CGFloat linkImageCornerRadius = 5;
-const CGFloat linkImageMaximumWidth = 400;
-const CGFloat linkImageFontSize = 11;
-const CFIndex linkImageTitleMaximumLineCount = 2;
+const float DragLabelBorderX = 4;
+//Keep border_y in synch with DragController::LinkDragBorderInset
+const float DragLabelBorderY = 2;
+const float DragLabelRadius = 5;
+const float LabelBorderYOffset = 2;
 
-struct LinkImageLayout {
-    LinkImageLayout(URL&, const String& title);
+const float MinDragLabelWidthBeforeClip = 120;
+const float MaxDragLabelWidth = 320;
 
-    struct LabelLine {
-        FloatPoint origin;
-        RetainPtr<CTLineRef> line;
-    };
-    Vector<LabelLine> lines;
+const float DragLinkLabelFontsize = 11;
+const float DragLinkUrlFontSize = 10;
 
-    FloatRect boundingRect;
-
-private:
-    void addLine(CTLineRef, Vector<CGPoint>& origins, CFIndex lineIndex, CGFloat x, CGFloat& y, CGFloat& maximumUsedTextWidth, bool isLastLine);
-};
-
-LinkImageLayout::LinkImageLayout(URL& url, const String& titleString)
+// FIXME - we should move all the functionality of NSString extras to WebCore
+    
+static FontCascade& fontFromNSFont(NSFont *font)
 {
-    NSString *title = nsStringNilIfEmpty(titleString);
-    NSURL *cocoaURL = url;
-    NSString *absoluteURLString = [cocoaURL absoluteString];
-
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
-    LinkPresentationLibrary();
-    NSString *domain = [cocoaURL _lp_simplifiedDisplayString];
-#else
-    NSString *domain = absoluteURLString;
-#endif
-
-    if ([title isEqualToString:absoluteURLString])
-        title = nil;
-
-    NSFont *titleFont = [NSFont boldSystemFontOfSize:linkImageFontSize];
-    NSFont *domainFont = [NSFont systemFontOfSize:linkImageFontSize];
-
-    NSColor *titleColor = [NSColor labelColor];
-    NSColor *domainColor = [NSColor secondaryLabelColor];
-
-    CGFloat maximumAvailableWidth = linkImageMaximumWidth - linkImagePadding * 2;
-
-    CGFloat currentY = linkImagePadding;
-    CGFloat maximumUsedTextWidth = 0;
-
-    auto buildLines = [this, maximumAvailableWidth, &maximumUsedTextWidth, &currentY] (NSString *text, NSColor *color, NSFont *font, CFIndex maximumLines, CTLineTruncationType truncationType) {
-        NSDictionary *textAttributes = @{
-            (id)kCTFontAttributeName: font,
-            (id)kCTForegroundColorAttributeName: color
-        };
-        RetainPtr<NSAttributedString> attributedText = adoptNS([[NSAttributedString alloc] initWithString:text attributes:textAttributes]);
-        RetainPtr<CTFramesetterRef> textFramesetter = adoptCF(CTFramesetterCreateWithAttributedString((CFAttributedStringRef)attributedText.get()));
-
-        CFRange fitRange;
-        CGSize textSize = CTFramesetterSuggestFrameSizeWithConstraints(textFramesetter.get(), CFRangeMake(0, 0), nullptr, CGSizeMake(maximumAvailableWidth, CGFLOAT_MAX), &fitRange);
-
-        RetainPtr<CGPathRef> textPath = adoptCF(CGPathCreateWithRect(CGRectMake(0, 0, textSize.width, textSize.height), nullptr));
-        RetainPtr<CTFrameRef> textFrame = adoptCF(CTFramesetterCreateFrame(textFramesetter.get(), fitRange, textPath.get(), nullptr));
-
-        CFArrayRef ctLines = CTFrameGetLines(textFrame.get());
-        CFIndex lineCount = CFArrayGetCount(ctLines);
-        if (!lineCount)
-            return;
-
-        Vector<CGPoint> origins(lineCount);
-        CTFrameGetLineOrigins(textFrame.get(), CFRangeMake(0, 0), origins.data());
-
-        // Lay out and record the first (maximumLines - 1) lines.
-        CFIndex lineIndex = 0;
-        for (; lineIndex < std::min(maximumLines - 1, lineCount); ++lineIndex) {
-            CTLineRef line = (CTLineRef)CFArrayGetValueAtIndex(ctLines, lineIndex);
-            addLine(line, origins, lineIndex, linkImagePadding, currentY, maximumUsedTextWidth, lineIndex == lineCount - 1);
-        }
-
-        if (lineIndex == lineCount)
-            return;
-
-        // We had text that didn't fit in the first (maximumLines - 1) lines.
-        // Combine it into one last line, and truncate it.
-        CTLineRef firstRemainingLine = (CTLineRef)CFArrayGetValueAtIndex(ctLines, lineIndex);
-        CFIndex remainingRangeStart = CTLineGetStringRange(firstRemainingLine).location;
-        NSRange remainingRange = NSMakeRange(remainingRangeStart, [attributedText length] - remainingRangeStart);
-        NSAttributedString *remainingString = [attributedText attributedSubstringFromRange:remainingRange];
-        RetainPtr<CTLineRef> remainingLine = adoptCF(CTLineCreateWithAttributedString((CFAttributedStringRef)remainingString));
-        RetainPtr<NSAttributedString> ellipsisString = adoptNS([[NSAttributedString alloc] initWithString:@"\u2026" attributes:textAttributes]);
-        RetainPtr<CTLineRef> ellipsisLine = adoptCF(CTLineCreateWithAttributedString((CFAttributedStringRef)ellipsisString.get()));
-        RetainPtr<CTLineRef> truncatedLine = adoptCF(CTLineCreateTruncatedLine(remainingLine.get(), maximumAvailableWidth, truncationType, ellipsisLine.get()));
-        
-        if (!truncatedLine)
-            truncatedLine = remainingLine;
-        
-        addLine(truncatedLine.get(), origins, lineIndex, linkImagePadding, currentY, maximumUsedTextWidth, true);
-    };
-
-    if (title)
-        buildLines(title, titleColor, titleFont, linkImageTitleMaximumLineCount, kCTLineTruncationEnd);
-
-    if (title && domain)
-        currentY += linkImageDomainBaselineToTitleBaseline - (domainFont.ascender - domainFont.descender);
-
-    if (domain)
-        buildLines(domain, domainColor, domainFont, 1, kCTLineTruncationMiddle);
-
-    currentY += linkImagePadding;
-
-    boundingRect = FloatRect(0, 0, maximumUsedTextWidth + linkImagePadding * 2, currentY);
+    ASSERT(font);
+    static NSFont *currentFont;
+    static NeverDestroyed<FontCascade> currentRenderer;
+    
+    if ([font isEqual:currentFont])
+        return currentRenderer;
+    if (currentFont)
+        CFRelease(currentFont);
+    currentFont = font;
+    CFRetain(currentFont);
+    currentRenderer.get() = FontCascade(FontPlatformData(toCTFont(font), [font pointSize]));
+    return currentRenderer;
 }
 
-void LinkImageLayout::addLine(CTLineRef ctLine, Vector<CGPoint>& origins, CFIndex lineIndex, CGFloat x, CGFloat& y, CGFloat& maximumUsedTextWidth, bool isLastLine)
+static bool canUseFastRenderer(const UniChar* buffer, unsigned length)
 {
-    CGRect lineBounds = CTLineGetBoundsWithOptions(ctLine, 0);
-    CGFloat trailingWhitespaceWidth = CTLineGetTrailingWhitespaceWidth(ctLine);
-    CGFloat lineWidthIgnoringTrailingWhitespace = lineBounds.size.width - trailingWhitespaceWidth;
-    maximumUsedTextWidth = std::max(maximumUsedTextWidth, lineWidthIgnoringTrailingWhitespace);
+    unsigned i;
+    for (i = 0; i < length; i++) {
+        UCharDirection direction = u_charDirection(buffer[i]);
+        if (direction == U_RIGHT_TO_LEFT || direction > U_OTHER_NEUTRAL)
+            return false;
+    }
+    return true;
+}
+    
+static float widthWithFont(NSString *string, NSFont *font)
+{
+    if (!font)
+        return 0;
 
-    if (lineIndex)
-        y += origins[lineIndex - 1].y - origins[lineIndex].y;
+    unsigned length = [string length];
+    Vector<UniChar, 2048> buffer(length);
+    
+    [string getCharacters:buffer.data()];
+    
+    if (canUseFastRenderer(buffer.data(), length)) {
+        FontCascade webCoreFont(FontPlatformData(toCTFont(font), [font pointSize]));
+        TextRun run(StringView(buffer.data(), length));
+        return webCoreFont.width(run);
+    }
+    
+    return [string sizeWithAttributes:[NSDictionary dictionaryWithObjectsAndKeys:font, NSFontAttributeName, nil]].width;
+}
+    
+static void drawAtPoint(NSString *string, NSPoint point, NSFont *font, NSColor *textColor)
+{
+    if (!font)
+        return;
 
-    LinkImageLayout::LabelLine line;
-    line.line = ctLine;
-    line.origin = FloatPoint(x, y);
-    lines.append(line);
+    unsigned length = [string length];
+    Vector<UniChar, 2048> buffer(length);
+    
+    [string getCharacters:buffer.data()];
+    
+    if (canUseFastRenderer(buffer.data(), length)) {
+        // The following is a half-assed attempt to match AppKit's rounding rules for drawAtPoint.
+        // It's probably incorrect for high DPI.
+        // If you change this, be sure to test all the text drawn this way in Safari, including
+        // the status bar, bookmarks bar, tab bar, and activity window.
+        point.y = CGCeiling(point.y);
+        
+        NSGraphicsContext *nsContext = [NSGraphicsContext currentContext];
+        CGContextRef cgContext = static_cast<CGContextRef>([nsContext graphicsPort]);
+        GraphicsContext graphicsContext(cgContext);    
+        
+        // Safari doesn't flip the NSGraphicsContext before calling WebKit, yet WebCore requires a flipped graphics context.
+        BOOL flipped = [nsContext isFlipped];
+        if (!flipped)
+            CGContextScaleCTM(cgContext, 1, -1);
 
-    if (isLastLine)
-        y += lineBounds.size.height;
+        FontCascade webCoreFont(FontPlatformData(toCTFont(font), [font pointSize]), Antialiased);
+        TextRun run(StringView(buffer.data(), length));
+
+        CGFloat red;
+        CGFloat green;
+        CGFloat blue;
+        CGFloat alpha;
+        [[textColor colorUsingColorSpaceName:NSDeviceRGBColorSpace] getRed:&red green:&green blue:&blue alpha:&alpha];
+        graphicsContext.setFillColor(makeRGBA(red * 255, green * 255, blue * 255, alpha * 255));
+        
+        webCoreFont.drawText(graphicsContext, run, FloatPoint(point.x, (flipped ? point.y : (-1 * point.y))));
+        
+        if (!flipped)
+            CGContextScaleCTM(cgContext, 1, -1);
+    } else {
+        // The given point is on the baseline.
+        if ([[NSView focusView] isFlipped])
+            point.y -= [font ascender];
+        else
+            point.y += [font descender];
+                
+        [string drawAtPoint:point withAttributes:[NSDictionary dictionaryWithObjectsAndKeys:font, NSFontAttributeName, textColor, NSForegroundColorAttributeName, nil]];
+    }
+}
+    
+static void drawDoubledAtPoint(NSString *string, NSPoint textPoint, NSColor *topColor, NSColor *bottomColor, NSFont *font)
+{
+        // turn off font smoothing so translucent text draws correctly (Radar 3118455)
+        drawAtPoint(string, textPoint, font, bottomColor);
+        
+        textPoint.y += 1;
+        drawAtPoint(string, textPoint, font, topColor);
 }
 
 DragImageRef createDragImageForLink(Element&, URL& url, const String& title, TextIndicatorData&, FontRenderingMode, float)
 {
-    LinkImageLayout layout(url, title);
+    NSString *label = nsStringNilIfEmpty(title);
+    NSURL *cocoaURL = url;
+    NSString *urlString = [cocoaURL absoluteString];
 
-    RetainPtr<NSImage> dragImage = adoptNS([[NSImage alloc] initWithSize:layout.boundingRect.size()]);
+    BOOL drawURLString = YES;
+    BOOL clipURLString = NO;
+    BOOL clipLabelString = NO;
+
+    if (!label) {
+        drawURLString = NO;
+        label = urlString;
+    }
+
+    NSFont *labelFont = [[NSFontManager sharedFontManager] convertFont:[NSFont systemFontOfSize:DragLinkLabelFontsize]
+                                                           toHaveTrait:NSBoldFontMask];
+    NSFont *urlFont = [NSFont systemFontOfSize:DragLinkUrlFontSize];
+
+    ASSERT(labelFont);
+    ASSERT(urlFont);
+
+    NSSize labelSize;
+    labelSize.width = widthWithFont(label, labelFont);
+    labelSize.height = [labelFont ascender] - [labelFont descender];
+    if (labelSize.width > MaxDragLabelWidth){
+        labelSize.width = MaxDragLabelWidth;
+        clipLabelString = YES;
+    }
+
+    NSSize imageSize;
+    imageSize.width = labelSize.width + DragLabelBorderX * 2;
+    imageSize.height = labelSize.height + DragLabelBorderY * 2;
+    if (drawURLString) {
+        NSSize urlStringSize;
+        urlStringSize.width = widthWithFont(urlString, urlFont);
+        urlStringSize.height = [urlFont ascender] - [urlFont descender];
+        imageSize.height += urlStringSize.height;
+        if (urlStringSize.width > MaxDragLabelWidth) {
+            imageSize.width = std::max(MaxDragLabelWidth + DragLabelBorderY * 2, MinDragLabelWidthBeforeClip);
+            clipURLString = YES;
+        } else
+            imageSize.width = std::max(labelSize.width + DragLabelBorderX * 2, urlStringSize.width + DragLabelBorderX * 2);
+    }
+    NSImage *dragImage = [[[NSImage alloc] initWithSize: imageSize] autorelease];
     [dragImage lockFocus];
 
-    GraphicsContext context((CGContextRef)[NSGraphicsContext currentContext].graphicsPort);
-    context.fillRoundedRect(FloatRoundedRect(layout.boundingRect, FloatRoundedRect::Radii(linkImageCornerRadius)), Color::white);
+    [[NSColor colorWithDeviceRed: 0.7f green: 0.7f blue: 0.7f alpha: 0.8f] set];
 
-    for (const auto& line : layout.lines) {
-        GraphicsContextStateSaver saver(context);
-        context.translate(line.origin.x(), layout.boundingRect.height() - line.origin.y() - linkImagePadding);
-        CGContextSetTextPosition(context.platformContext(), 0, 0);
-        CTLineDraw(line.line.get(), context.platformContext());
+    // Drag a rectangle with rounded corners
+    NSBezierPath *path = [NSBezierPath bezierPath];
+    [path appendBezierPathWithOvalInRect: NSMakeRect(0, 0, DragLabelRadius * 2, DragLabelRadius * 2)];
+    [path appendBezierPathWithOvalInRect: NSMakeRect(0, imageSize.height - DragLabelRadius * 2, DragLabelRadius * 2, DragLabelRadius * 2)];
+    [path appendBezierPathWithOvalInRect: NSMakeRect(imageSize.width - DragLabelRadius * 2, imageSize.height - DragLabelRadius * 2, DragLabelRadius * 2, DragLabelRadius * 2)];
+    [path appendBezierPathWithOvalInRect: NSMakeRect(imageSize.width - DragLabelRadius * 2, 0, DragLabelRadius * 2, DragLabelRadius * 2)];
+
+    [path appendBezierPathWithRect: NSMakeRect(DragLabelRadius, 0, imageSize.width - DragLabelRadius * 2, imageSize.height)];
+    [path appendBezierPathWithRect: NSMakeRect(0, DragLabelRadius, DragLabelRadius + 10, imageSize.height - 2 * DragLabelRadius)];
+    [path appendBezierPathWithRect: NSMakeRect(imageSize.width - DragLabelRadius - 20, DragLabelRadius, DragLabelRadius + 20, imageSize.height - 2 * DragLabelRadius)];
+    [path fill];
+
+    NSColor *topColor = [NSColor colorWithDeviceWhite:0.0f alpha:0.75f];
+    NSColor *bottomColor = [NSColor colorWithDeviceWhite:1.0f alpha:0.5f];
+    if (drawURLString && urlFont) {
+        if (clipURLString)
+            urlString = StringTruncator::centerTruncate(urlString, imageSize.width - (DragLabelBorderX * 2), fontFromNSFont(urlFont));
+
+       drawDoubledAtPoint(urlString, NSMakePoint(DragLabelBorderX, DragLabelBorderY - [urlFont descender]), topColor, bottomColor, urlFont);
+    }
+
+    if (labelFont) {
+        if (clipLabelString)
+            label = StringTruncator::rightTruncate(label, imageSize.width - (DragLabelBorderX * 2), fontFromNSFont(labelFont));
+        drawDoubledAtPoint(label, NSMakePoint(DragLabelBorderX, imageSize.height - LabelBorderYOffset - [labelFont pointSize]), topColor, bottomColor, labelFont);
     }
 
     [dragImage unlockFocus];
