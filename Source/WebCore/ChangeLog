@@ -1,3 +1,15 @@
+2017-05-05  Antti Koivisto  <antti@apple.com>
+
+        ASSERTION FAILED: !frame().document()->inRenderTreeUpdate() in WebCore::FrameView::layout(bool)
+        https://bugs.webkit.org/show_bug.cgi?id=171717
+
+        Reviewed by Brent Fulgham.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::checkCompleted):
+
+            Don't allow frame load to complete in the middle of a render tree update. Instead delay the check.
+
 2017-05-05  Chris Dumez  <cdumez@apple.com>
 
         Refactor / Clean up Element.idl

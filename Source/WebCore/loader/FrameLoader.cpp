@@ -793,6 +793,13 @@ void FrameLoader::checkCompleted()
     if (m_isComplete)
         return;
 
+    // FIXME: It would be better if resource loads were kicked off after render tree update (or didn't complete synchronously).
+    //        https://bugs.webkit.org/show_bug.cgi?id=171729
+    if (m_frame.document()->inRenderTreeUpdate()) {
+        scheduleCheckCompleted();
+        return;
+    }
+
     // Are we still parsing?
     if (m_frame.document()->parsing())
         return;
