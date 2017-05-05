@@ -1,0 +1,7 @@
+Test repaint-only style changes in non-visible elements don't trigger repaints.
+(repaint rects
+  (rect 10 27 100 100)
+  (rect 10 27 100 100)
+  (rect 10 27 100 100)
+)
+
