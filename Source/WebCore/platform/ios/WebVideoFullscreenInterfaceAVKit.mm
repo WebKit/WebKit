@@ -75,6 +75,11 @@ SOFT_LINK_CLASS(UIKit, UIViewController)
 SOFT_LINK_CLASS(UIKit, UIColor)
 SOFT_LINK_CONSTANT(UIKit, UIRemoteKeyboardLevel, UIWindowLevel)
 
+static UIColor *clearUIColor()
+{
+    return (UIColor *)[getUIColorClass() clearColor];
+}
+
 #if !LOG_DISABLED
 static const char* boolString(bool val)
 {
@@ -602,7 +607,7 @@ void WebVideoFullscreenInterfaceAVKit::setupFullscreen(UIView& videoView, const 
     if (![[parentView window] _isHostedInAnotherProcess]) {
         if (!m_window)
             m_window = adoptNS([allocUIWindowInstance() initWithFrame:[[getUIScreenClass() mainScreen] bounds]]);
-        [m_window setBackgroundColor:[getUIColorClass() clearColor]];
+        [m_window setBackgroundColor:clearUIColor()];
         if (!m_viewController)
             m_viewController = adoptNS([allocUIViewControllerInstance() init]);
         [[m_viewController view] setFrame:[m_window bounds]];
@@ -615,7 +620,7 @@ void WebVideoFullscreenInterfaceAVKit::setupFullscreen(UIView& videoView, const 
     if (!m_playerLayerView)
         m_playerLayerView = adoptNS([[getWebAVPlayerLayerViewClass() alloc] init]);
     [m_playerLayerView setHidden:[playerController() isExternalPlaybackActive]];
-    [m_playerLayerView setBackgroundColor:[getUIColorClass() clearColor]];
+    [m_playerLayerView setBackgroundColor:clearUIColor()];
 
     if (!isInPictureInPictureMode) {
         [m_playerLayerView setVideoView:&videoView];
@@ -646,7 +651,7 @@ void WebVideoFullscreenInterfaceAVKit::setupFullscreen(UIView& videoView, const 
 
     [m_playerViewController view].frame = [parentView convertRect:initialRect toView:[m_playerViewController view].superview];
 
-    [[m_playerViewController view] setBackgroundColor:[getUIColorClass() clearColor]];
+    [[m_playerViewController view] setBackgroundColor:clearUIColor()];
     [[m_playerViewController view] setAutoresizingMask:(UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleRightMargin)];
 
     [[m_playerViewController view] setNeedsLayout];
@@ -748,8 +753,8 @@ void WebVideoFullscreenInterfaceAVKit::exitFullscreen(const WebCore::IntRect& fi
 
             [CATransaction begin];
             [CATransaction setDisableActions:YES];
-            [m_playerLayerView setBackgroundColor:[getUIColorClass() clearColor]];
-            [[m_playerViewController view] setBackgroundColor:[getUIColorClass() clearColor]];
+            [m_playerLayerView setBackgroundColor:clearUIColor()];
+            [[m_playerViewController view] setBackgroundColor:clearUIColor()];
             [CATransaction commit];
 
             dispatch_async(dispatch_get_main_queue(), [protectedThis, this]() {
@@ -930,8 +935,8 @@ void WebVideoFullscreenInterfaceAVKit::didStopPictureInPicture()
 
     m_exitCompleted = true;
 
-    [m_playerLayerView setBackgroundColor:[getUIColorClass() clearColor]];
-    [[m_playerViewController view] setBackgroundColor:[getUIColorClass() clearColor]];
+    [m_playerLayerView setBackgroundColor:clearUIColor()];
+    [[m_playerViewController view] setBackgroundColor:clearUIColor()];
 
     clearMode(HTMLMediaElementEnums::VideoFullscreenModePictureInPicture);
     
