@@ -1,3 +1,18 @@
+2017-05-04  Chris Dumez  <cdumez@apple.com>
+
+        Element.slot should be marked as [Unscopable]
+        https://bugs.webkit.org/show_bug.cgi?id=171683
+
+        Reviewed by Darin Adler.
+
+        Element.slot should be marked as [Unscopable]:
+        - https://dom.spec.whatwg.org/#interface-element
+        - https://heycam.github.io/webidl/#Unscopable
+
+        Test: fast/shadow-dom/Element-slot-unscopable.html
+
+        * dom/Element.idl:
+
 2017-05-04  Don Olmstead  <don.olmstead@am.sony.com>
 
         [Win] Remove redundant macros that are set in the CMake config

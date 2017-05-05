@@ -132,7 +132,7 @@
     // Shadow DOM API
     [EnabledAtRuntime=ShadowDOM, MayThrowException] ShadowRoot attachShadow(ShadowRootInit init);
     [EnabledAtRuntime=ShadowDOM, ImplementedAs=shadowRootForBindings, CallWith=ScriptState] readonly attribute ShadowRoot shadowRoot;
-    [CEReactions, EnabledAtRuntime=ShadowDOM, Reflect] attribute DOMString slot;
+    [CEReactions, EnabledAtRuntime=ShadowDOM, Reflect, Unscopable] attribute DOMString slot;
 
     // Event Handlers
 
