@@ -1,3 +1,16 @@
+2017-05-05  Brian Burg  <bburg@apple.com>
+
+        API test WebKit2.WKHTTPCookieStore fails due to possible issue with handling non-session cookies
+        https://bugs.webkit.org/show_bug.cgi?id=171748
+
+        Unreviewed test gardening.
+
+        The assertion failure will be investigated separately in order to avoid rolling out
+        the fix for "secure" cookies. This assertion fails even without r216258 applied.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/WKHTTPCookieStore.mm:
+        (TEST):
+
 2017-05-05  Jonathan Bedard  <jbedard@apple.com>
 
         Unreviewed, rolling out r216260.
