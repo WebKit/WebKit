@@ -1,3 +1,23 @@
+2017-05-04  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Change the asynchronous image decoding tests to use the event webkitImageFrameReady
+        https://bugs.webkit.org/show_bug.cgi?id=171634
+
+        Reviewed by Simon Fraser.
+
+        To test the async image decoding reliably we need to do the following:
+
+        -- Make sure to load the image before setting its src to the element.
+        -- Call document.body.offsetHeight to force layout.
+        -- Call testRunner.display() to force the first paint.
+        -- Use the webkitImageFrameReady to reliably know when an image frame is ready.
+        -- When webkitImageFrameReady is fired call testRunner.notifyDone(). This
+           will force the second paint.
+
+        * fast/images/async-image-background-image-repeated.html:
+        * fast/images/async-image-background-image.html:
+        * fast/images/sprite-sheet-image-draw.html:
+
 2017-05-04  Matt Lewis  <jlewis3@apple.com>
 
         Mark webrtc/libwebrtc/descriptionGetters.html as flaky.
