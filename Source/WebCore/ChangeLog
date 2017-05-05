@@ -1,3 +1,20 @@
+2017-05-04  Mark Lam  <mark.lam@apple.com>
+
+        DRT's setAudioResultCallback() and IDBRequest::setResult() need to acquire the JSLock.
+        https://bugs.webkit.org/show_bug.cgi?id=171716
+        <rdar://problem/30878027>
+
+        Reviewed by Saam Barati.
+
+        No new tests.  This issue was caught by existing tests.
+
+        IDBRequest::setResult() needs to acquire the JSLock before calling toJS() (which
+        does JS conversion and therefore, potentially JS allocations).
+
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::setResult):
+        (WebCore::IDBRequest::setResultToStructuredClone):
+
 2017-05-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GStreamer] Do not report more errors after the first one
