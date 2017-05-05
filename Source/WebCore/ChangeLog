@@ -1,3 +1,20 @@
+2017-05-05  Chris Dumez  <cdumez@apple.com>
+
+        Refactor / Clean up Element.idl
+        https://bugs.webkit.org/show_bug.cgi?id=171734
+
+        Reviewed by Sam Weinig.
+
+        Refactor / Clean up Element.idl to match the latest specification:
+        - https://dom.spec.whatwg.org/#interface-element
+
+        There is no Web-facing behavior change in this patch besides the Element properties
+        being enumerated in a slightly different order. Things that do not match the
+        specification have merely been annotated with FIXME comments for now. This makes
+        it much more obvious what's standard, what's not and what needs fixing.
+
+        * dom/Element.idl:
+
 2017-05-05  Tim Horton  <timothy_horton@apple.com>
 
         Link drag images for apple.com front page links have a lot of spurious whitespace

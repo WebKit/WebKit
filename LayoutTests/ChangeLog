@@ -1,3 +1,16 @@
+2017-05-05  Chris Dumez  <cdumez@apple.com>
+
+        Refactor / Clean up Element.idl
+        https://bugs.webkit.org/show_bug.cgi?id=171734
+
+        Reviewed by Sam Weinig.
+
+        Rebaseline a couple of tests due to Element properties being enumerated in a slightly
+        different order and because exception messages have changed slightly.
+
+        * fast/dom/Element/attr-param-typechecking-expected.txt:
+        * js/dom/dom-static-property-for-in-iteration-expected.txt:
+
 2017-05-05  Jeremy Jones  <jeremyj@apple.com>
 
         REGRESSION (r215951): LayoutTest media/modern-media-controls/placard-support/placard-support-pip.html is a flaky crash
