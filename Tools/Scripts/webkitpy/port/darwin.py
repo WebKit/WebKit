@@ -174,26 +174,6 @@ class DarwinPort(ApplePort):
                     sample_files[test_name] = spindump_file
         return sample_files
 
-    def _path_to_image_diff(self):
-        # ImageDiff for DarwinPorts is a little complicated. It will either be in
-        # a directory named ../mac relative to the port build directory, in a directory
-        # named ../<build-type> relative to the port build directory or in the port build directory
-        _image_diff_in_build_path = super(DarwinPort, self)._path_to_image_diff()
-        _port_build_dir = self.host.filesystem.dirname(_image_diff_in_build_path)
-
-        # Test ../mac
-        _path_to_test = self.host.filesystem.join(_port_build_dir, '..', 'mac', 'ImageDiff')
-        if self.host.filesystem.exists(_path_to_test):
-            return _path_to_test
-
-        # Test ../<build-type>
-        _build_type = self.host.filesystem.basename(_port_build_dir).split('-')[0]
-        _path_to_test = self.host.filesystem.join(_port_build_dir, '..', _build_type, 'ImageDiff')
-        if self.host.filesystem.exists(_path_to_test):
-            return _path_to_test
-
-        return _image_diff_in_build_path
-
     def make_command(self):
         return self.xcrun_find('make', '/usr/bin/make')
 

@@ -58,6 +58,16 @@ list(APPEND TestNetscapePlugIn_LIBRARIES
     WebKit
 )
 
+set(ImageDiff_SOURCES
+    win/ImageDiffWin.cpp
+)
+
+set(ImageDiff_LIBRARIES
+   JavaScriptCore
+   WTF
+   WebKit
+)
+
 list(APPEND DumpRenderTree_INCLUDE_DIRECTORIES
     win
     TestNetscapePlugIn
@@ -90,6 +100,12 @@ if (${WTF_PLATFORM_WIN_CAIRO})
     list(APPEND DumpRenderTreeLib_SOURCES
         cairo/PixelDumpSupportCairo.cpp
     )
+    list(APPEND ImageDiff_SOURCES
+        win/ImageDiffCairo.cpp
+    )
+    list(APPEND ImageDiff_LIBRARIES
+        ${CAIRO_LIBRARIES}
+    )
 else ()
     list(APPEND DumpRenderTree_INCLUDE_DIRECTORIES
         cg
@@ -102,6 +118,14 @@ else ()
         CoreGraphics
         CoreText
     )
+    list(APPEND ImageDiff_SOURCES
+        cg/ImageDiffCG.cpp
+    )
+    list(APPEND ImageDiff_LIBRARIES
+       CoreFoundation
+       CoreGraphics
+       CoreText
+    )
 endif ()
 
 ADD_PRECOMPILED_HEADER("DumpRenderTreePrefix.h" "win/DumpRenderTreePrefix.cpp" DumpRenderTreeLib_SOURCES)
@@ -110,5 +134,14 @@ add_definitions(-DUSE_CONSOLE_ENTRY_POINT)
 
 add_library(DumpRenderTreeLib SHARED ${DumpRenderTreeLib_SOURCES})
 target_link_libraries(DumpRenderTreeLib ${DumpRenderTreeLib_LIBRARIES})
+
+add_executable(ImageDiff ${TOOLS_DIR}/win/DLLLauncher/DLLLauncherMain.cpp)
+target_link_libraries(ImageDiff shlwapi)
+set_target_properties(ImageDiff PROPERTIES OUTPUT_NAME "ImageDiff")
+
+add_library(ImageDiffLib SHARED ${ImageDiff_SOURCES})
+target_link_libraries(ImageDiffLib ${ImageDiff_LIBRARIES})
+
+add_dependencies(ImageDiff ImageDiffLib)
 
 add_definitions(-D_UNICODE)

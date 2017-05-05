@@ -27,6 +27,7 @@
 				CEB754D41BBDA26D009F0401 /* PBXTargetDependency */,
 				2D403F211508736C005358D2 /* PBXTargetDependency */,
 				A134E52D188FC09200901D06 /* PBXTargetDependency */,
+				A84F608F08B1370E00E9745F /* PBXTargetDependency */,
 				141BF238096A451E00E0753C /* PBXTargetDependency */,
 			);
 			name = All;
@@ -79,7 +80,7 @@
 		2D403F1B15087209005358D2 /* LayoutTestHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D403EA215087142005358D2 /* LayoutTestHelper.m */; };
 		2DA2E3A51E1BA54100A3BBD0 /* DumpRenderTreeSpellChecker.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DA2E3A41E1BA54100A3BBD0 /* DumpRenderTreeSpellChecker.mm */; };
 		31117B3D15D9A56A00163BC8 /* MockWebNotificationProvider.mm in Sources */ = {isa = PBXBuildFile; fileRef = 31117B3B15D9A56A00163BC8 /* MockWebNotificationProvider.mm */; };
-		312943F91E71F2B4001EE2CC /* IOSLayoutTestCommunication.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3148A0551E6F90F400D3B316 /* IOSLayoutTestCommunication.cpp */; };
+		312943F91E71F2B4001EE2CC /* IOOSLayoutTestCommunication.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3148A0551E6F90F400D3B316 /* IOSLayoutTestCommunication.cpp */; };
 		4464CABE1C20A08B00E5BB55 /* DumpRenderTreeAppMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4464CABD1C20A07000E5BB55 /* DumpRenderTreeAppMain.mm */; };
 		4AD6A11413C8124000EA9737 /* FormValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4AD6A11313C8124000EA9737 /* FormValue.cpp */; };
 		5106803E15CC7B10001A8A23 /* SlowNPPNew.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5106803D15CC7B10001A8A23 /* SlowNPPNew.cpp */; };
@@ -138,6 +139,7 @@
 		BCA18C470C9B5B9400114369 /* DumpRenderTree.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCA18C460C9B5B9400114369 /* DumpRenderTree.mm */; settings = {COMPILER_FLAGS = "-Wno-deprecated-declarations"; }; };
 		BCB284CD0CFA83C8007E533E /* PixelDumpSupportCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB284880CFA8202007E533E /* PixelDumpSupportCG.cpp */; };
 		BCB284D60CFA83D1007E533E /* PixelDumpSupportMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCB2848C0CFA8221007E533E /* PixelDumpSupportMac.mm */; };
+		BCB284F60CFA84F8007E533E /* ImageDiffCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB284F30CFA84F2007E533E /* ImageDiffCG.cpp */; };
 		BCD08B3A0E1057EF00A7D0C1 /* AccessibilityController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCD08B390E1057EF00A7D0C1 /* AccessibilityController.cpp */; };
 		BCD08B710E1059D200A7D0C1 /* AccessibilityControllerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCD08B700E1059D200A7D0C1 /* AccessibilityControllerMac.mm */; };
 		BCF6C6500C98E9C000AC063E /* GCController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCF6C64F0C98E9C000AC063E /* GCController.cpp */; };
@@ -193,6 +195,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = A1321C9D188F9A3600125434;
 			remoteInfo = "DumpRenderTree (Library)";
+		};
+		A84F608E08B1370E00E9745F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B5A7525A08AF4A4A00138E45;
+			remoteInfo = ImageDiff;
 		};
 		CEB754D31BBDA26D009F0401 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -348,6 +357,7 @@
 		AA5A15EE16E15CD000F7C561 /* AccessibilityUIElementIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AccessibilityUIElementIOS.mm; path = ios/AccessibilityUIElementIOS.mm; sourceTree = "<group>"; };
 		AA7F10C20CB3C1030003BDC9 /* AHEM____.TTF */ = {isa = PBXFileReference; lastKnownFileType = file; name = "AHEM____.TTF"; path = "fonts/AHEM____.TTF"; sourceTree = "<group>"; };
 		AE8257EF08D22389000507AB /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
+		B5A7526708AF4A4A00138E45 /* ImageDiff */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ImageDiff; sourceTree = BUILT_PRODUCTS_DIR; };
 		B5A752A108AF5D1F00138E45 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = /System/Library/Frameworks/QuartzCore.framework; sourceTree = "<absolute>"; };
 		BC0131D80C9772010087317D /* TestRunner.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = TestRunner.cpp; sourceTree = "<group>"; };
 		BC0131D90C9772010087317D /* TestRunner.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TestRunner.h; sourceTree = "<group>"; };
@@ -392,6 +402,7 @@
 		BCB281EE0CFA713D007E533E /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xcconfig; name = Base.xcconfig; path = mac/Configurations/Base.xcconfig; sourceTree = "<group>"; };
 		BCB281F00CFA713D007E533E /* DumpRenderTree.xcconfig */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xcconfig; name = DumpRenderTree.xcconfig; path = mac/Configurations/DumpRenderTree.xcconfig; sourceTree = "<group>"; };
 		BCB282F40CFA7450007E533E /* DebugRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xcconfig; name = DebugRelease.xcconfig; path = mac/Configurations/DebugRelease.xcconfig; sourceTree = "<group>"; };
+		BCB283D80CFA7AFD007E533E /* ImageDiff.xcconfig */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xcconfig; name = ImageDiff.xcconfig; path = mac/Configurations/ImageDiff.xcconfig; sourceTree = "<group>"; };
 		BCB283DE0CFA7C20007E533E /* TestNetscapePlugIn.xcconfig */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xcconfig; name = TestNetscapePlugIn.xcconfig; path = mac/Configurations/TestNetscapePlugIn.xcconfig; sourceTree = "<group>"; };
 		BCB284880CFA8202007E533E /* PixelDumpSupportCG.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = PixelDumpSupportCG.cpp; path = cg/PixelDumpSupportCG.cpp; sourceTree = "<group>"; };
 		BCB284890CFA8202007E533E /* PixelDumpSupportCG.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = PixelDumpSupportCG.h; path = cg/PixelDumpSupportCG.h; sourceTree = "<group>"; };
@@ -447,6 +458,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				1CB67420195BAE7B000F35B5 /* CoreText.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B5A7525F08AF4A4A00138E45 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -703,6 +721,7 @@
 			isa = PBXGroup;
 			children = (
 				9340995408540CAF007F3BC8 /* DumpRenderTree */,
+				B5A7526708AF4A4A00138E45 /* ImageDiff */,
 				2D403F19150871F9005358D2 /* LayoutTestHelper */,
 				A1158D7F18927E7A0088C17B /* DumpRenderTree.app */,
 				A1321C9E188F9A3600125434 /* libDumpRenderTree.a */,
@@ -793,6 +812,7 @@
 				BCB281F00CFA713D007E533E /* DumpRenderTree.xcconfig */,
 				A19317FD18928738001C52B1 /* DumpRenderTreeApp.xcconfig */,
 				A134E5391890671C00901D06 /* DumpRenderTreeLibrary.xcconfig */,
+				BCB283D80CFA7AFD007E533E /* ImageDiff.xcconfig */,
 				A1103B5B1892498F00738C87 /* LayoutTestHelper.xcconfig */,
 				BCB283DE0CFA7C20007E533E /* TestNetscapePlugIn.xcconfig */,
 			);
@@ -841,6 +861,13 @@
 				141BF453096A45EB00E0753C /* PluginObject.h in Headers */,
 				1A215A8211F2609C008AD0F5 /* PluginTest.h in Headers */,
 				1A8F02E80BB9B4EC008CFA34 /* TestObject.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B5A7525B08AF4A4A00138E45 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -935,6 +962,24 @@
 			productReference = A1321C9E188F9A3600125434 /* libDumpRenderTree.a */;
 			productType = "com.apple.product-type.library.static";
 		};
+		B5A7525A08AF4A4A00138E45 /* ImageDiff */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B5A7526408AF4A4A00138E45 /* Build configuration list for PBXNativeTarget "ImageDiff" */;
+			buildPhases = (
+				B5A7525B08AF4A4A00138E45 /* Headers */,
+				B5A7525D08AF4A4A00138E45 /* Sources */,
+				B5A7525F08AF4A4A00138E45 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ImageDiff;
+			productInstallPath = "$(HOME)/bin";
+			productName = DumpRenderTree;
+			productReference = B5A7526708AF4A4A00138E45 /* ImageDiff */;
+			productType = "com.apple.product-type.tool";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -966,6 +1011,7 @@
 				A1321C9D188F9A3600125434 /* DumpRenderTree (Library) */,
 				9340994A08540CAE007F3BC8 /* DumpRenderTree */,
 				A1158D7E18927E7A0088C17B /* DumpRenderTree.app */,
+				B5A7525A08AF4A4A00138E45 /* ImageDiff */,
 				141BF21E096A441D00E0753C /* TestNetscapePlugIn */,
 				2D403EB2150871F9005358D2 /* LayoutTestHelper */,
 			);
@@ -1134,6 +1180,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B5A7525D08AF4A4A00138E45 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BCB284F60CFA84F8007E533E /* ImageDiffCG.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -1166,6 +1220,11 @@
 			isa = PBXTargetDependency;
 			target = A1321C9D188F9A3600125434 /* DumpRenderTree (Library) */;
 			targetProxy = A193180118928C10001C52B1 /* PBXContainerItemProxy */;
+		};
+		A84F608F08B1370E00E9745F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B5A7525A08AF4A4A00138E45 /* ImageDiff */;
+			targetProxy = A84F608E08B1370E00E9745F /* PBXContainerItemProxy */;
 		};
 		CEB754D41BBDA26D009F0401 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -1293,6 +1352,15 @@
 			};
 			name = Production;
 		};
+		90CBC3530F748B1300A712B7 /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BCB283D80CFA7AFD007E533E /* ImageDiff.xcconfig */;
+			buildSettings = {
+				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Frameworks/$(WEBKIT_FRAMEWORK_RESOURCES_PATH)";
+				SKIP_INSTALL = NO;
+			};
+			name = Production;
+		};
 		90CBC3540F748B1300A712B7 /* Production */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BCB283DE0CFA7C20007E533E /* TestNetscapePlugIn.xcconfig */;
@@ -1384,6 +1452,20 @@
 			};
 			name = Release;
 		};
+		B5A7526508AF4A4A00138E45 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BCB283D80CFA7AFD007E533E /* ImageDiff.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		B5A7526608AF4A4A00138E45 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BCB283D80CFA7AFD007E533E /* ImageDiff.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1463,6 +1545,16 @@
 				A84F609308B1371400E9745F /* Debug */,
 				A84F609408B1371400E9745F /* Release */,
 				90CBC3510F748B1300A712B7 /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		B5A7526408AF4A4A00138E45 /* Build configuration list for PBXNativeTarget "ImageDiff" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B5A7526508AF4A4A00138E45 /* Debug */,
+				B5A7526608AF4A4A00138E45 /* Release */,
+				90CBC3530F748B1300A712B7 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;
