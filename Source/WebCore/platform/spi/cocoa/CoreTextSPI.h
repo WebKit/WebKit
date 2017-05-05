@@ -83,6 +83,7 @@ CTFontDescriptorRef CTFontDescriptorCreateCopyWithSymbolicTraits(CTFontDescripto
 CFBitVectorRef CTFontCopyGlyphCoverageForFeature(CTFontRef, CFDictionaryRef feature);
 
 CTFontDescriptorRef CTFontDescriptorCreateWithAttributesAndOptions(CFDictionaryRef attributes, CTFontDescriptorOptions);
+CTFontDescriptorRef CTFontDescriptorCreateLastResort();
 
 extern const CFStringRef kCTFontCSSWeightAttribute;
 extern const CFStringRef kCTFontCSSWidthAttribute;

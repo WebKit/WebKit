@@ -1,3 +1,14 @@
+2017-05-05  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] CTFontDescriptorCreateMatchingFontDescriptor() is not case insensitive
+        https://bugs.webkit.org/show_bug.cgi?id=171636
+        <rdar://problem/30811218>
+
+        Reviewed by Dean Jackson.
+
+        * fast/text/lastResort-expected.html: Added.
+        * fast/text/lastResort.html: Added.
+
 2017-05-05  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unskip media/click-placeholder-not-pausing.html.
