@@ -1,3 +1,17 @@
+2017-05-05  Dean Jackson  <dino@apple.com>
+
+        Restrict SVG filters to accessible security origins
+        https://bugs.webkit.org/show_bug.cgi?id=118689
+        <rdar://problem/27362159>
+
+        Reviewed by Brent Fulgham.
+
+        Update parameter lists.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::paint):
+        * WebProcess/Plugins/PluginView.h:
+
 2017-05-05  Beth Dakin  <bdakin@apple.com>
 
         Ensure NSColorPickerTouchBarItem only uses sRGB colors

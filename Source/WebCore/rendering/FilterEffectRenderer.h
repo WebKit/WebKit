@@ -84,6 +84,7 @@ public:
     void apply();
 
     bool hasFilterThatMovesPixels() const { return m_hasFilterThatMovesPixels; }
+    bool hasFilterThatShouldBeRestrictedBySecurityOrigin() const { return m_hasFilterThatShouldBeRestrictedBySecurityOrigin; }
 
 private:
     FilterEffectRenderer();
@@ -115,6 +116,7 @@ private:
 
     bool m_graphicsBufferAttached { false };
     bool m_hasFilterThatMovesPixels { false };
+    bool m_hasFilterThatShouldBeRestrictedBySecurityOrigin { false };
 };
 
 inline FilterEffectRendererHelper::FilterEffectRendererHelper(bool haveFilterEffect, GraphicsContext& targetContext)
