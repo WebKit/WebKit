@@ -41,9 +41,9 @@
 
 namespace WTR {
 
-void computeMD5HashStringForCairoSurface(cairo_surface_t* surface, char hashString[33])
+static void computeMD5HashStringForCairoSurface(cairo_surface_t* surface, char hashString[33])
 {
-    ASSERT(cairo_image_surface_get_format(surface) == CAIRO_FORMAT_ARGB32); // ImageDiff assumes 32 bit RGBA, we must as well.
+    ASSERT(cairo_image_surface_get_format(surface) == CAIRO_FORMAT_ARGB32 || cairo_image_surface_get_format(surface) == CAIRO_FORMAT_RGB24);
 
     size_t pixelsHigh = cairo_image_surface_get_height(surface);
     size_t pixelsWide = cairo_image_surface_get_width(surface);

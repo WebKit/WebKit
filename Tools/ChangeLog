@@ -1,3 +1,13 @@
+2017-05-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix wrong assert after r215176.
+
+        Cairo surface received by computeMD5HashStringForCairoSurface() doesn't need to be ARGB32 since r215176, it
+        could also be RGB24 when created from a web view snapshot.
+
+        * WebKitTestRunner/cairo/TestInvocationCairo.cpp:
+        (WTR::computeMD5HashStringForCairoSurface):
+
 2017-05-04  Brian Burg  <bburg@apple.com>
 
         lldb_webkit.py should provide a type summary for WebCore::URL
