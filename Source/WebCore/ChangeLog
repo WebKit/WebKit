@@ -1,3 +1,11 @@
+2017-05-04  Daniel Bates  <dabates@apple.com>
+
+        Fix misspelled word "interrupt" as pointed out by Darin Adler
+        in <https://bugs.webkit.org/show_bug.cgi?id=171577>.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::transitionToCommitted):
+
 2017-05-04  Jeremy Jones  <jeremyj@apple.com>
 
         UIColor +whiteColor and +clearColor are ambiguous and need to be casted when soft linked.

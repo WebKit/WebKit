@@ -1917,7 +1917,7 @@ void FrameLoader::transitionToCommitted(CachedPage* cachedPage)
         return;
     setProvisionalDocumentLoader(nullptr);
 
-    // Nothing else can interupt this commit - set the Provisional->Committed transition in stone
+    // Nothing else can interrupt this commit - set the Provisional->Committed transition in stone
     setState(FrameStateCommittedPage);
 
     // Handle adding the URL to the back/forward list.
