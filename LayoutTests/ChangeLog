@@ -1,3 +1,15 @@
+2017-05-05  Jeremy Jones  <jeremyj@apple.com>
+
+        REGRESSION (r215951): LayoutTest media/modern-media-controls/placard-support/placard-support-pip.html is a flaky crash
+        https://bugs.webkit.org/show_bug.cgi?id=171610
+        <rdar://problem/31976820>
+
+        Reviewed by Eric Carlson.
+
+        enable test: media/modern-media-controls/pip-support/pip-support-click.html
+
+        * platform/mac-wk1/TestExpectations:
+
 2017-05-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed GTK+ gardening. Update expectations of tests failing after GST upgrade to 1.10.4.

@@ -974,6 +974,13 @@ void WebChromeClient::exitVideoFullscreenForVideoElement(WebCore::HTMLVideoEleme
     END_BLOCK_OBJC_EXCEPTIONS;    
 }
 
+void WebChromeClient::exitVideoFullscreenToModeWithoutAnimation(HTMLVideoElement& videoElement, HTMLMediaElementEnums::VideoFullscreenMode targetMode)
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    [m_webView _exitVideoFullscreen];
+    END_BLOCK_OBJC_EXCEPTIONS;
+}
+
 #endif // ENABLE(VIDEO)
 
 #if ENABLE(VIDEO) && PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
