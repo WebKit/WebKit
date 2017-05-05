@@ -1,5 +1,17 @@
 2017-05-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] TestController timeout source callback should return G_SOURCE_REMOVE
+        https://bugs.webkit.org/show_bug.cgi?id=171724
+
+        Reviewed by Michael Catanzaro.
+
+        It's currently returning CONTINUE which causes it to be called again even if the run loop has been stopped.
+
+        * WebKitTestRunner/gtk/TestControllerGtk.cpp:
+        (WTR::timeoutSource):
+
+2017-05-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Fix wrong assert after r215176.
 
         Cairo surface received by computeMD5HashStringForCairoSurface() doesn't need to be ARGB32 since r215176, it
