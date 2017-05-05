@@ -44,7 +44,7 @@ SimplifyMarkupCommand::SimplifyMarkupCommand(Document& document, Node* firstNode
 void SimplifyMarkupCommand::doApply()
 {
     Node* rootNode = m_firstNode->parentNode();
-    Vector<RefPtr<Node>> nodesToRemove;
+    Vector<Ref<Node>> nodesToRemove;
     
     document().updateLayoutIgnorePendingStylesheets();
 
@@ -64,7 +64,7 @@ void SimplifyMarkupCommand::doApply()
         Node* topNodeWithStartingStyle = nullptr;
         while (currentNode != rootNode) {
             if (currentNode->parentNode() != rootNode && isRemovableBlock(currentNode))
-                nodesToRemove.append(currentNode);
+                nodesToRemove.append(*currentNode);
             
             currentNode = currentNode->parentNode();
             if (!currentNode)
@@ -85,8 +85,8 @@ void SimplifyMarkupCommand::doApply()
             
         }
         if (topNodeWithStartingStyle) {
-            for (Node* node = startingNode; node != topNodeWithStartingStyle; node = node->parentNode())
-                nodesToRemove.append(node);
+            for (Node* node = startingNode; node && node != topNodeWithStartingStyle; node = node->parentNode())
+                nodesToRemove.append(*node);
         }
     }
 
@@ -101,17 +101,17 @@ void SimplifyMarkupCommand::doApply()
     }
 }
 
-int SimplifyMarkupCommand::pruneSubsequentAncestorsToRemove(Vector<RefPtr<Node>>& nodesToRemove, size_t startNodeIndex)
+int SimplifyMarkupCommand::pruneSubsequentAncestorsToRemove(Vector<Ref<Node>>& nodesToRemove, size_t startNodeIndex)
 {
     size_t pastLastNodeToRemove = startNodeIndex + 1;
     for (; pastLastNodeToRemove < nodesToRemove.size(); ++pastLastNodeToRemove) {
-        if (nodesToRemove[pastLastNodeToRemove - 1]->parentNode() != nodesToRemove[pastLastNodeToRemove])
+        if (nodesToRemove[pastLastNodeToRemove - 1]->parentNode() != nodesToRemove[pastLastNodeToRemove].ptr())
             break;
         if (nodesToRemove[pastLastNodeToRemove]->firstChild() != nodesToRemove[pastLastNodeToRemove]->lastChild())
             break;
     }
 
-    Node* highestAncestorToRemove = nodesToRemove[pastLastNodeToRemove - 1].get();
+    Node* highestAncestorToRemove = nodesToRemove[pastLastNodeToRemove - 1].ptr();
     RefPtr<ContainerNode> parent = highestAncestorToRemove->parentNode();
     if (!parent) // Parent has already been removed.
         return -1;
@@ -120,8 +120,8 @@ int SimplifyMarkupCommand::pruneSubsequentAncestorsToRemove(Vector<RefPtr<Node>>
         return 0;
 
     removeNode(nodesToRemove[startNodeIndex], AssumeContentIsAlwaysEditable);
-    insertNodeBefore(*nodesToRemove[startNodeIndex], *highestAncestorToRemove, AssumeContentIsAlwaysEditable);
-    removeNode(highestAncestorToRemove, AssumeContentIsAlwaysEditable);
+    insertNodeBefore(nodesToRemove[startNodeIndex].copyRef(), *highestAncestorToRemove, AssumeContentIsAlwaysEditable);
+    removeNode(*highestAncestorToRemove, AssumeContentIsAlwaysEditable);
 
     return pastLastNodeToRemove - startNodeIndex - 1;
 }

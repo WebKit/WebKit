@@ -33,13 +33,13 @@ class Text;
 
 class SplitTextNodeCommand : public SimpleEditCommand {
 public:
-    static Ref<SplitTextNodeCommand> create(PassRefPtr<Text> node, int offset)
+    static Ref<SplitTextNodeCommand> create(Ref<Text>&& node, int offset)
     {
-        return adoptRef(*new SplitTextNodeCommand(node, offset));
+        return adoptRef(*new SplitTextNodeCommand(WTFMove(node), offset));
     }
 
 private:
-    SplitTextNodeCommand(PassRefPtr<Text>, int offset);
+    SplitTextNodeCommand(Ref<Text>&&, int offset);
 
     void doApply() override;
     void doUnapply() override;
@@ -51,7 +51,7 @@ private:
 #endif
 
     RefPtr<Text> m_text1;
-    RefPtr<Text> m_text2;
+    Ref<Text> m_text2;
     unsigned m_offset;
 };
 

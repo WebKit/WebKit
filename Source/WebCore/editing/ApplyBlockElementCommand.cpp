@@ -212,7 +212,8 @@ void ApplyBlockElementCommand::rangeForParagraphSplittingTextNodesIfNeeded(const
         if (!startStyle->collapseWhiteSpace() && start.offsetInContainerNode() > 0) {
             int startOffset = start.offsetInContainerNode();
             Text* startText = start.containerText();
-            splitTextNode(startText, startOffset);
+            ASSERT(startText);
+            splitTextNode(*startText, startOffset);
             start = firstPositionInNode(startText);
             if (isStartAndEndOnSameNode) {
                 ASSERT(end.offsetInContainerNode() >= startOffset);
@@ -239,7 +240,7 @@ void ApplyBlockElementCommand::rangeForParagraphSplittingTextNodesIfNeeded(const
         // If end is in the middle of a text node and the text node is editable, split.
         if (endStyle->userModify() != READ_ONLY && !endStyle->collapseWhiteSpace() && end.offsetInContainerNode() && end.offsetInContainerNode() < end.containerNode()->maxCharacterOffset()) {
             RefPtr<Text> endContainer = end.containerText();
-            splitTextNode(endContainer, end.offsetInContainerNode());
+            splitTextNode(*endContainer, end.offsetInContainerNode());
             if (isStartAndEndOnSameNode)
                 start = firstPositionInOrBeforeNode(endContainer->previousSibling());
             if (isEndAndEndOfLastParagraphOnSameNode) {
@@ -268,7 +269,7 @@ VisiblePosition ApplyBlockElementCommand::endOfNextParagraphSplittingTextNodesIf
     // \n at the beginning of the text node immediately following the current paragraph is trimmed by moveParagraphWithClones.
     // If endOfNextParagraph was pointing at this same text node, endOfNextParagraph will be shifted by one paragraph.
     // Avoid this by splitting "\n"
-    splitTextNode(text, 1);
+    splitTextNode(*text, 1);
 
     if (text == start.containerNode() && is<Text>(text->previousSibling())) {
         ASSERT(start.offsetInContainerNode() < position.offsetInContainerNode());

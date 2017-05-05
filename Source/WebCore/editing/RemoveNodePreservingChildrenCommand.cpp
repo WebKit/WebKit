@@ -31,12 +31,11 @@
 
 namespace WebCore {
 
-RemoveNodePreservingChildrenCommand::RemoveNodePreservingChildrenCommand(PassRefPtr<Node> node, ShouldAssumeContentIsAlwaysEditable shouldAssumeContentIsAlwaysEditable, EditAction editingAction)
+RemoveNodePreservingChildrenCommand::RemoveNodePreservingChildrenCommand(Ref<Node>&& node, ShouldAssumeContentIsAlwaysEditable shouldAssumeContentIsAlwaysEditable, EditAction editingAction)
     : CompositeEditCommand(node->document(), editingAction)
-    , m_node(node)
+    , m_node(WTFMove(node))
     , m_shouldAssumeContentIsAlwaysEditable(shouldAssumeContentIsAlwaysEditable)
 {
-    ASSERT(m_node);
 }
 
 void RemoveNodePreservingChildrenCommand::doApply()
@@ -48,8 +47,8 @@ void RemoveNodePreservingChildrenCommand::doApply()
     size_t size = children.size();
     for (size_t i = 0; i < size; ++i) {
         auto child = WTFMove(children[i]);
-        removeNode(child.ptr(), m_shouldAssumeContentIsAlwaysEditable);
-        insertNodeBefore(WTFMove(child), *m_node, m_shouldAssumeContentIsAlwaysEditable);
+        removeNode(child, m_shouldAssumeContentIsAlwaysEditable);
+        insertNodeBefore(WTFMove(child), m_node, m_shouldAssumeContentIsAlwaysEditable);
     }
     removeNode(m_node, m_shouldAssumeContentIsAlwaysEditable);
 }

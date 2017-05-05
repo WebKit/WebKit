@@ -40,7 +40,7 @@ private:
     SimplifyMarkupCommand(Document&, Node* firstNode, Node* nodeAfterLast);
 
     void doApply() override;
-    int pruneSubsequentAncestorsToRemove(Vector<RefPtr<Node>>& nodesToRemove, size_t startNodeIndex);
+    int pruneSubsequentAncestorsToRemove(Vector<Ref<Node>>& nodesToRemove, size_t startNodeIndex);
 
     RefPtr<Node> m_firstNode;
     RefPtr<Node> m_nodeAfterLast;

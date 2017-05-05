@@ -112,7 +112,7 @@ void BreakBlockquoteCommand::doApply()
             startNode = NodeTraversal::next(*startNode);
             ASSERT(startNode);
         } else if (pos.deprecatedEditingOffset() > 0)
-            splitTextNode(&textNode, pos.deprecatedEditingOffset());
+            splitTextNode(textNode, pos.deprecatedEditingOffset());
     } else if (pos.deprecatedEditingOffset() > 0) {
         Node* childAtOffset = startNode->traverseToChildAt(pos.deprecatedEditingOffset());
         startNode = childAtOffset ? childAtOffset : NodeTraversal::next(*startNode);
@@ -149,14 +149,14 @@ void BreakBlockquoteCommand::doApply()
             while (listChildNode && !listChildNode->hasTagName(liTag))
                 listChildNode = listChildNode->nextSibling();
             if (listChildNode && is<RenderListItem>(listChildNode->renderer()))
-                setNodeAttribute(clonedChild.ptr(), startAttr, AtomicString::number(downcast<RenderListItem>(*listChildNode->renderer()).value()));
+                setNodeAttribute(clonedChild, startAttr, AtomicString::number(downcast<RenderListItem>(*listChildNode->renderer()).value()));
         }
             
         appendNode(clonedChild.copyRef(), clonedAncestor.releaseNonNull());
         clonedAncestor = WTFMove(clonedChild);
     }
 
-    moveRemainingSiblingsToNewParent(startNode, 0, clonedAncestor);
+    moveRemainingSiblingsToNewParent(startNode, 0, *clonedAncestor);
 
     if (!ancestors.isEmpty()) {
         // Split the tree up the ancestor chain until the topBlockquote
@@ -168,12 +168,12 @@ void BreakBlockquoteCommand::doApply()
         for (ancestor = ancestors.first(), clonedParent = clonedAncestor->parentElement();
              ancestor && ancestor != topBlockquote;
              ancestor = ancestor->parentElement(), clonedParent = clonedParent->parentElement())
-            moveRemainingSiblingsToNewParent(ancestor->nextSibling(), 0, clonedParent);
+            moveRemainingSiblingsToNewParent(ancestor->nextSibling(), 0, *clonedParent);
 
         // If the startNode's original parent is now empty, remove it
         Node* originalParent = ancestors.first().get();
         if (!originalParent->hasChildNodes())
-            removeNode(originalParent);
+            removeNode(*originalParent);
     }
     
     // Make sure the cloned block quote renders.

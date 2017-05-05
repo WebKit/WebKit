@@ -31,13 +31,13 @@ namespace WebCore {
 
 class SplitElementCommand : public SimpleEditCommand {
 public:
-    static Ref<SplitElementCommand> create(PassRefPtr<Element> element, PassRefPtr<Node> splitPointChild)
+    static Ref<SplitElementCommand> create(Ref<Element>&& element, Ref<Node>&& splitPointChild)
     {
-        return adoptRef(*new SplitElementCommand(element, splitPointChild));
+        return adoptRef(*new SplitElementCommand(WTFMove(element), WTFMove(splitPointChild)));
     }
 
 private:
-    SplitElementCommand(PassRefPtr<Element>, PassRefPtr<Node> splitPointChild);
+    SplitElementCommand(Ref<Element>&&, Ref<Node>&& splitPointChild);
 
     void doApply() override;
     void doUnapply() override;
@@ -49,8 +49,8 @@ private:
 #endif
 
     RefPtr<Element> m_element1;
-    RefPtr<Element> m_element2;
-    RefPtr<Node> m_atChild;
+    Ref<Element> m_element2;
+    Ref<Node> m_atChild;
 };
 
 } // namespace WebCore

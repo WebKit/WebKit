@@ -58,7 +58,7 @@ HTMLElement* InsertListCommand::fixOrphanedListChild(Node& node)
 {
     auto listElement = HTMLUListElement::create(document());
     insertNodeBefore(listElement.copyRef(), node);
-    removeNode(&node);
+    removeNode(node);
     appendNode(node, listElement.copyRef());
     m_listElement = listElement.copyRef();
     return listElement.ptr();
@@ -238,7 +238,7 @@ void InsertListCommand::doApplyForSingleParagraph(bool forceCreateList, const HT
             // See the bug 33668 and editing/execCommand/insert-list-orphaned-item-with-nested-lists.html.
             // FIXME: This might be a bug in moveParagraphWithClones or deleteSelection.
             if (listNode && listNode->isConnected())
-                removeNode(listNode);
+                removeNode(*listNode);
 
             newList = mergeWithNeighboringLists(newList);
 
@@ -300,7 +300,7 @@ void InsertListCommand::unlistifyParagraph(const VisiblePosition& originalStart,
         // FIXME: We appear to split at nextListChild as opposed to listChildNode so that when we remove
         // listChildNode below in moveParagraphs, previousListChild will be removed along with it if it is 
         // unrendered. But we ought to remove nextListChild too, if it is unrendered.
-        splitElement(listNode, splitTreeToNode(nextListChild, listNode));
+        splitElement(*listNode, *splitTreeToNode(nextListChild, listNode));
         insertNodeBefore(nodeToInsert.releaseNonNull(), *listNode);
     } else if (nextListChild || listChildNode->parentNode() != listNode) {
         // Just because listChildNode has no previousListChild doesn't mean there isn't any content
@@ -308,7 +308,7 @@ void InsertListCommand::unlistifyParagraph(const VisiblePosition& originalStart,
         // between it and listNode. So, we split up to listNode before inserting the placeholder
         // where we're about to move listChildNode to.
         if (listChildNode->parentNode() != listNode)
-            splitElement(listNode, splitTreeToNode(listChildNode, listNode).get());
+            splitElement(*listNode, *splitTreeToNode(listChildNode, listNode).get());
         insertNodeBefore(nodeToInsert.releaseNonNull(), *listNode);
     } else
         insertNodeAfter(nodeToInsert.releaseNonNull(), *listNode);

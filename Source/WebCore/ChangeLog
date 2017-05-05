@@ -1,3 +1,154 @@
+2017-05-04  Chris Dumez  <cdumez@apple.com>
+
+        Drop remaining uses of PassRefPtr from CompositeEditCommand
+        https://bugs.webkit.org/show_bug.cgi?id=171645
+
+        Reviewed by Darin Adler.
+
+        Drop remaining uses of PassRefPtr from CompositeEditCommand.
+
+        * editing/ApplyBlockElementCommand.cpp:
+        (WebCore::ApplyBlockElementCommand::rangeForParagraphSplittingTextNodesIfNeeded):
+        (WebCore::ApplyBlockElementCommand::endOfNextParagraphSplittingTextNodesIfNeeded):
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyRelativeFontStyleChange):
+        (WebCore::ApplyStyleCommand::cleanupUnstyledAppleStyleSpans):
+        (WebCore::ApplyStyleCommand::splitAncestorsWithUnicodeBidi):
+        (WebCore::ApplyStyleCommand::removeEmbeddingUpToEnclosingBlock):
+        (WebCore::ApplyStyleCommand::applyInlineStyleToNodeRange):
+        (WebCore::ApplyStyleCommand::removeInlineStyleFromElement):
+        (WebCore::ApplyStyleCommand::replaceWithSpanOrRemoveIfWithoutAttributes):
+        (WebCore::ApplyStyleCommand::removeImplicitlyStyledElement):
+        (WebCore::ApplyStyleCommand::removeCSSStyle):
+        (WebCore::ApplyStyleCommand::applyInlineStyleToPushDown):
+        (WebCore::ApplyStyleCommand::splitTextAtStart):
+        (WebCore::ApplyStyleCommand::splitTextAtEnd):
+        (WebCore::ApplyStyleCommand::splitTextElementAtStart):
+        (WebCore::ApplyStyleCommand::splitTextElementAtEnd):
+        (WebCore::ApplyStyleCommand::surroundNodeRangeWithElement):
+        (WebCore::ApplyStyleCommand::addBlockStyle):
+        (WebCore::ApplyStyleCommand::addInlineStyleIfNeeded):
+        (WebCore::ApplyStyleCommand::applyInlineStyleChange):
+        (WebCore::ApplyStyleCommand::joinChildTextNodes):
+        * editing/BreakBlockquoteCommand.cpp:
+        (WebCore::BreakBlockquoteCommand::doApply):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::applyCommand):
+        (WebCore::CompositeEditCommand::insertNodeAt):
+        (WebCore::CompositeEditCommand::removeChildrenInRange):
+        (WebCore::CompositeEditCommand::removeNode):
+        (WebCore::CompositeEditCommand::removeNodePreservingChildren):
+        (WebCore::CompositeEditCommand::removeNodeAndPruneAncestors):
+        (WebCore::CompositeEditCommand::moveRemainingSiblingsToNewParent):
+        (WebCore::CompositeEditCommand::replaceElementWithSpanPreservingChildrenAndAttributes):
+        (WebCore::CompositeEditCommand::prune):
+        (WebCore::CompositeEditCommand::splitTextNode):
+        (WebCore::CompositeEditCommand::splitElement):
+        (WebCore::CompositeEditCommand::mergeIdenticalElements):
+        (WebCore::CompositeEditCommand::splitTextNodeContainingElement):
+        (WebCore::CompositeEditCommand::positionOutsideTabSpan):
+        (WebCore::CompositeEditCommand::removeNodeAttribute):
+        (WebCore::CompositeEditCommand::setNodeAttribute):
+        (WebCore::CompositeEditCommand::deleteInsignificantText):
+        (WebCore::CompositeEditCommand::removePlaceholderAt):
+        (WebCore::CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessary):
+        (WebCore::CompositeEditCommand::pushAnchorElementDown):
+        (WebCore::CompositeEditCommand::cleanupAfterDeletion):
+        (WebCore::CompositeEditCommand::moveParagraphs):
+        * editing/CompositeEditCommand.h:
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::handleSpecialCaseBRDelete):
+        (WebCore::DeleteSelectionCommand::removeNodeUpdatingStates):
+        (WebCore::DeleteSelectionCommand::removeNode):
+        (WebCore::DeleteSelectionCommand::makeStylingElementsDirectChildrenOfEditableRootToPreventStyleLoss):
+        (WebCore::DeleteSelectionCommand::handleGeneralDelete):
+        (WebCore::DeleteSelectionCommand::mergeParagraphs):
+        (WebCore::DeleteSelectionCommand::removePreviouslySelectedEmptyTableRows):
+        (WebCore::DeleteSelectionCommand::removeRedundantBlocks):
+        * editing/DeleteSelectionCommand.h:
+        * editing/Editor.cpp:
+        (WebCore::ClearTextCommand::CreateAndApply):
+        (WebCore::Editor::replaceSelectionWithFragment):
+        (WebCore::Editor::handleAcceptedCandidate):
+        * editing/EditorCommand.cpp:
+        (WebCore::executeFormatBlock):
+        * editing/IndentOutdentCommand.cpp:
+        (WebCore::IndentOutdentCommand::outdentParagraph):
+        * editing/InsertLineBreakCommand.cpp:
+        (WebCore::InsertLineBreakCommand::doApply):
+        * editing/InsertListCommand.cpp:
+        (WebCore::InsertListCommand::fixOrphanedListChild):
+        (WebCore::InsertListCommand::doApplyForSingleParagraph):
+        (WebCore::InsertListCommand::unlistifyParagraph):
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::doApply):
+        * editing/InsertTextCommand.cpp:
+        (WebCore::InsertTextCommand::insertTab):
+        * editing/ModifySelectionListLevel.cpp:
+        (WebCore::ModifySelectionListLevelCommand::insertSiblingNodeRangeBefore):
+        (WebCore::ModifySelectionListLevelCommand::insertSiblingNodeRangeAfter):
+        (WebCore::ModifySelectionListLevelCommand::appendSiblingNodeRange):
+        (WebCore::DecreaseSelectionListLevelCommand::doApply):
+        * editing/RemoveNodePreservingChildrenCommand.cpp:
+        (WebCore::RemoveNodePreservingChildrenCommand::RemoveNodePreservingChildrenCommand):
+        (WebCore::RemoveNodePreservingChildrenCommand::doApply):
+        * editing/RemoveNodePreservingChildrenCommand.h:
+        (WebCore::RemoveNodePreservingChildrenCommand::create):
+        * editing/ReplaceNodeWithSpanCommand.cpp:
+        (WebCore::ReplaceNodeWithSpanCommand::ReplaceNodeWithSpanCommand):
+        (WebCore::ReplaceNodeWithSpanCommand::doApply):
+        (WebCore::ReplaceNodeWithSpanCommand::doUnapply):
+        (WebCore::ReplaceNodeWithSpanCommand::getNodesInCommand):
+        * editing/ReplaceNodeWithSpanCommand.h:
+        (WebCore::ReplaceNodeWithSpanCommand::create):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplacementFragment::removeNodePreservingChildren):
+        (WebCore::ReplacementFragment::removeInterchangeNodes):
+        (WebCore::ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline):
+        (WebCore::ReplaceSelectionCommand::makeInsertedContentRoundTrippableWithHTMLTreeBuilder):
+        (WebCore::ReplaceSelectionCommand::moveNodeOutOfAncestor):
+        (WebCore::ReplaceSelectionCommand::removeUnrenderedTextNodesAtEnds):
+        (WebCore::handleStyleSpansBeforeInsertion):
+        (WebCore::ReplaceSelectionCommand::handleStyleSpans):
+        (WebCore::ReplaceSelectionCommand::doApply):
+        (WebCore::ReplaceSelectionCommand::mergeTextNodesAroundPosition):
+        (WebCore::ReplaceSelectionCommand::insertAsListItems):
+        (WebCore::ReplaceSelectionCommand::performTrivialReplace):
+        * editing/SetNodeAttributeCommand.cpp:
+        (WebCore::SetNodeAttributeCommand::SetNodeAttributeCommand):
+        (WebCore::SetNodeAttributeCommand::getNodesInCommand):
+        * editing/SetNodeAttributeCommand.h:
+        (WebCore::SetNodeAttributeCommand::create):
+        * editing/SimplifyMarkupCommand.cpp:
+        (WebCore::SimplifyMarkupCommand::doApply):
+        (WebCore::SimplifyMarkupCommand::pruneSubsequentAncestorsToRemove):
+        * editing/SimplifyMarkupCommand.h:
+        * editing/SplitElementCommand.cpp:
+        (WebCore::SplitElementCommand::SplitElementCommand):
+        (WebCore::SplitElementCommand::executeApply):
+        (WebCore::SplitElementCommand::getNodesInCommand):
+        * editing/SplitElementCommand.h:
+        (WebCore::SplitElementCommand::create):
+        * editing/SplitTextNodeCommand.cpp:
+        (WebCore::SplitTextNodeCommand::SplitTextNodeCommand):
+        (WebCore::SplitTextNodeCommand::doApply):
+        (WebCore::SplitTextNodeCommand::doUnapply):
+        (WebCore::SplitTextNodeCommand::doReapply):
+        (WebCore::SplitTextNodeCommand::insertText1AndTrimText2):
+        * editing/SplitTextNodeCommand.h:
+        (WebCore::SplitTextNodeCommand::create):
+        * editing/SplitTextNodeContainingElementCommand.cpp:
+        (WebCore::SplitTextNodeContainingElementCommand::SplitTextNodeContainingElementCommand):
+        (WebCore::SplitTextNodeContainingElementCommand::doApply):
+        * editing/SplitTextNodeContainingElementCommand.h:
+        (WebCore::SplitTextNodeContainingElementCommand::create):
+        * editing/TextInsertionBaseCommand.cpp:
+        (WebCore::TextInsertionBaseCommand::applyTextInsertionCommand):
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::makeEditableRootEmpty):
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::contextMenuItemSelected):
+
 2017-05-04  Daniel Bates  <dabates@apple.com>
 
         Fix misspelled word "interrupt" as pointed out by Darin Adler

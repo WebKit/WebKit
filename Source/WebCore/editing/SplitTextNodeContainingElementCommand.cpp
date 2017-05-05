@@ -33,21 +33,19 @@
 
 namespace WebCore {
 
-SplitTextNodeContainingElementCommand::SplitTextNodeContainingElementCommand(PassRefPtr<Text> text, int offset)
+SplitTextNodeContainingElementCommand::SplitTextNodeContainingElementCommand(Ref<Text>&& text, int offset)
     : CompositeEditCommand(text->document())
-    , m_text(text)
+    , m_text(WTFMove(text))
     , m_offset(offset)
 {
-    ASSERT(m_text);
     ASSERT(m_text->length() > 0);
 }
 
 void SplitTextNodeContainingElementCommand::doApply()
 {
-    ASSERT(m_text);
     ASSERT(m_offset > 0);
 
-    splitTextNode(m_text.get(), m_offset);
+    splitTextNode(m_text, m_offset);
 
     Element* parent = m_text->parentElement();
     if (!parent || !parent->parentElement() || !parent->parentElement()->hasEditableStyle())
@@ -62,7 +60,7 @@ void SplitTextNodeContainingElementCommand::doApply()
         parent = downcast<Element>(firstChild);
     }
 
-    splitElement(parent, m_text);
+    splitElement(*parent, m_text);
 }
 
 }

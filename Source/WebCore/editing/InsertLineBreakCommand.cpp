@@ -115,7 +115,7 @@ void InsertLineBreakCommand::doApply()
     } else if (is<Text>(*position.deprecatedNode())) {
         // Split a text node
         Text& textNode = downcast<Text>(*position.deprecatedNode());
-        splitTextNode(&textNode, position.deprecatedEditingOffset());
+        splitTextNode(textNode, position.deprecatedEditingOffset());
         insertNodeBefore(*nodeToInsert, textNode);
         Position endingPosition = firstPositionInNode(&textNode);
         

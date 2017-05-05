@@ -36,11 +36,10 @@
 
 namespace WebCore {
 
-ReplaceNodeWithSpanCommand::ReplaceNodeWithSpanCommand(PassRefPtr<HTMLElement> element)
+ReplaceNodeWithSpanCommand::ReplaceNodeWithSpanCommand(Ref<HTMLElement>&& element)
     : SimpleEditCommand(element->document())
-    , m_elementToReplace(element)
+    , m_elementToReplace(WTFMove(element))
 {
-    ASSERT(m_elementToReplace);
 }
 
 static void swapInNodePreservingAttributesAndChildren(HTMLElement& newNode, HTMLElement& nodeToReplace)
@@ -65,20 +64,20 @@ void ReplaceNodeWithSpanCommand::doApply()
         return;
     if (!m_spanElement)
         m_spanElement = HTMLSpanElement::create(m_elementToReplace->document());
-    swapInNodePreservingAttributesAndChildren(*m_spanElement, *m_elementToReplace);
+    swapInNodePreservingAttributesAndChildren(*m_spanElement, m_elementToReplace);
 }
 
 void ReplaceNodeWithSpanCommand::doUnapply()
 {
     if (!m_spanElement->isConnected())
         return;
-    swapInNodePreservingAttributesAndChildren(*m_elementToReplace, *m_spanElement);
+    swapInNodePreservingAttributesAndChildren(m_elementToReplace, *m_spanElement);
 }
 
 #ifndef NDEBUG
 void ReplaceNodeWithSpanCommand::getNodesInCommand(HashSet<Node*>& nodes)
 {
-    addNodeAndDescendants(m_elementToReplace.get(), nodes);
+    addNodeAndDescendants(m_elementToReplace.ptr(), nodes);
     addNodeAndDescendants(m_spanElement.get(), nodes);
 }
 #endif

@@ -152,7 +152,7 @@ void IndentOutdentCommand::outdentParagraph()
         visibleEndOfParagraph == endOfEnclosingBlock) {
         // The blockquote doesn't contain anything outside the paragraph, so it can be totally removed.
         Node* splitPoint = enclosingNode->nextSibling();
-        removeNodePreservingChildren(enclosingNode);
+        removeNodePreservingChildren(*enclosingNode);
         // outdentRegion() assumes it is operating on the first paragraph of an enclosing blockquote, but if there are multiply nested blockquotes and we've
         // just removed one, then this assumption isn't true. By splitting the next containing blockquote after this node, we keep this assumption true
         if (splitPoint) {
@@ -160,7 +160,7 @@ void IndentOutdentCommand::outdentParagraph()
                 if (splitPointParent->hasTagName(blockquoteTag)
                     && !splitPoint->hasTagName(blockquoteTag)
                     && splitPointParent->parentNode()->hasEditableStyle()) // We can't outdent if there is no place to go!
-                    splitElement(downcast<Element>(splitPointParent), splitPoint);
+                    splitElement(downcast<Element>(*splitPointParent), *splitPoint);
             }
         }
 
@@ -183,7 +183,7 @@ void IndentOutdentCommand::outdentParagraph()
     else {
         // We split the blockquote at where we start outdenting.
         auto* highestInlineNode = highestEnclosingNodeOfType(visibleStartOfParagraph.deepEquivalent(), isInline, CannotCrossEditingBoundary, enclosingBlockFlow);
-        splitElement(enclosingNode, highestInlineNode ? highestInlineNode : visibleStartOfParagraph.deepEquivalent().deprecatedNode());
+        splitElement(*enclosingNode, highestInlineNode ? *highestInlineNode : *visibleStartOfParagraph.deepEquivalent().deprecatedNode());
     }
     auto placeholder = HTMLBRElement::create(document());
     auto* placeholderPtr = placeholder.ptr();

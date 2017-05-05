@@ -161,21 +161,21 @@ protected:
     bool shouldRebalanceLeadingWhitespaceFor(const String&) const;
     void removeNodeAttribute(Element&, const QualifiedName& attribute);
     void removeChildrenInRange(Node&, unsigned from, unsigned to);
-    virtual void removeNode(PassRefPtr<Node>, ShouldAssumeContentIsAlwaysEditable = DoNotAssumeContentIsAlwaysEditable);
-    HTMLElement* replaceElementWithSpanPreservingChildrenAndAttributes(PassRefPtr<HTMLElement>);
-    void removeNodePreservingChildren(PassRefPtr<Node>, ShouldAssumeContentIsAlwaysEditable = DoNotAssumeContentIsAlwaysEditable);
-    void removeNodeAndPruneAncestors(PassRefPtr<Node>);
-    void moveRemainingSiblingsToNewParent(Node*, Node* pastLastNodeToMove, PassRefPtr<Element> prpNewParent);
+    virtual void removeNode(Node&, ShouldAssumeContentIsAlwaysEditable = DoNotAssumeContentIsAlwaysEditable);
+    HTMLElement* replaceElementWithSpanPreservingChildrenAndAttributes(HTMLElement&);
+    void removeNodePreservingChildren(Node&, ShouldAssumeContentIsAlwaysEditable = DoNotAssumeContentIsAlwaysEditable);
+    void removeNodeAndPruneAncestors(Node&);
+    void moveRemainingSiblingsToNewParent(Node*, Node* pastLastNodeToMove, Element& newParent);
     void updatePositionForNodeRemovalPreservingChildren(Position&, Node&);
-    void prune(PassRefPtr<Node>);
+    void prune(Node*);
     void replaceTextInNode(Text&, unsigned offset, unsigned count, const String& replacementText);
     Position replaceSelectedTextInNode(const String&);
     void replaceTextInNodePreservingMarkers(Text&, unsigned offset, unsigned count, const String& replacementText);
     Position positionOutsideTabSpan(const Position&);
-    void setNodeAttribute(PassRefPtr<Element>, const QualifiedName& attribute, const AtomicString& value);
-    void splitElement(PassRefPtr<Element>, PassRefPtr<Node> atChild);
-    void splitTextNode(PassRefPtr<Text>, unsigned offset);
-    void splitTextNodeContainingElement(PassRefPtr<Text>, unsigned offset);
+    void setNodeAttribute(Element&, const QualifiedName& attribute, const AtomicString& value);
+    void splitElement(Element&, Node& atChild);
+    void splitTextNode(Text&, unsigned offset);
+    void splitTextNodeContainingElement(Text&, unsigned offset);
     void wrapContentsInDummySpan(Element&);
 
     void deleteInsignificantText(Text&, unsigned start, unsigned end);
@@ -214,8 +214,6 @@ private:
 
     RefPtr<EditCommandComposition> m_composition;
 };
-    
-void applyCommand(PassRefPtr<CompositeEditCommand>);
 
 inline CompositeEditCommand* toCompositeEditCommand(EditCommand* command)
 {

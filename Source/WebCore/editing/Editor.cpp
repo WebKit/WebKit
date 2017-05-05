@@ -176,7 +176,7 @@ void ClearTextCommand::CreateAndApply(const RefPtr<Frame> frame)
     frame->selection().selectAll();
     auto clearCommand = adoptRef(*new ClearTextCommand(*frame->document()));
     clearCommand->setStartingSelection(oldSelection);
-    applyCommand(WTFMove(clearCommand));
+    clearCommand->apply();
 }
 
 using namespace HTMLNames;
@@ -414,7 +414,7 @@ void Editor::deleteSelectionWithSmartDelete(bool smartDelete, EditAction editing
     if (m_frame.selection().isNone())
         return;
 
-    applyCommand(DeleteSelectionCommand::create(document(), smartDelete, true, false, false, true, editingAction));
+    DeleteSelectionCommand::create(document(), smartDelete, true, false, false, true, editingAction)->apply();
 }
 
 void Editor::clearText()
@@ -506,7 +506,7 @@ void Editor::replaceSelectionWithFragment(DocumentFragment& fragment, bool selec
         options |= ReplaceSelectionCommand::IgnoreMailBlockquote;
 
     auto command = ReplaceSelectionCommand::create(document(), &fragment, options, editingAction);
-    applyCommand(command.ptr());
+    command->apply();
     revealSelectionAfterEditingOperation();
 
     selection = m_frame.selection().selection();
@@ -729,7 +729,7 @@ void Editor::decreaseSelectionListLevel()
 
 void Editor::removeFormattingAndStyle()
 {
-    applyCommand(RemoveFormatCommand::create(document()));
+    RemoveFormatCommand::create(document())->apply();
 }
 
 void Editor::clearLastEditCommand() 
@@ -808,7 +808,7 @@ void Editor::applyStyle(RefPtr<EditingStyle>&& style, EditAction editingAction)
         computeAndSetTypingStyle(*style, editingAction);
         break;
     case VisibleSelection::RangeSelection:
-        applyCommand(ApplyStyleCommand::create(document(), style.get(), editingAction));
+        ApplyStyleCommand::create(document(), style.get(), editingAction)->apply();
         break;
     default:
         break;
@@ -839,7 +839,7 @@ void Editor::applyParagraphStyle(StyleProperties* style, EditAction editingActio
     if (element && !dispatchBeforeInputEvent(*element, inputTypeName, inputEventData))
         return;
 
-    applyCommand(ApplyStyleCommand::create(document(), EditingStyle::create(style).ptr(), editingAction, ApplyStyleCommand::ForceBlockProperties));
+    ApplyStyleCommand::create(document(), EditingStyle::create(style).ptr(), editingAction, ApplyStyleCommand::ForceBlockProperties)->apply();
     client()->didApplyStyle();
     if (element)
         dispatchInputEvent(*element, inputTypeName, inputEventData);
@@ -901,12 +901,12 @@ String Editor::selectionStartCSSPropertyValue(CSSPropertyID propertyID)
 
 void Editor::indent()
 {
-    applyCommand(IndentOutdentCommand::create(document(), IndentOutdentCommand::Indent));
+    IndentOutdentCommand::create(document(), IndentOutdentCommand::Indent)->apply();
 }
 
 void Editor::outdent()
 {
-    applyCommand(IndentOutdentCommand::create(document(), IndentOutdentCommand::Outdent));
+    IndentOutdentCommand::create(document(), IndentOutdentCommand::Outdent)->apply();
 }
 
 static void notifyTextFromControls(Element* startRoot, Element* endRoot)
@@ -1331,7 +1331,7 @@ void Editor::simplifyMarkup(Node* startNode, Node* endNode)
             return;
     }
     
-    applyCommand(SimplifyMarkupCommand::create(document(), startNode, endNode ? NodeTraversal::next(*endNode) : nullptr));
+    SimplifyMarkupCommand::create(document(), startNode, endNode ? NodeTraversal::next(*endNode) : nullptr)->apply();
 }
 
 void Editor::copyURL(const URL& url, const String& title)
@@ -2446,7 +2446,7 @@ static void correctSpellcheckingPreservingTextCheckingParagraph(TextCheckingPara
     size_t paragraphLength;
     TextIterator::getLocationAndLengthFromRange(&scope, &paragraph.paragraphRange(), paragraphLocation, paragraphLength);
 
-    applyCommand(SpellingCorrectionCommand::create(rangeToReplace, replacement));
+    SpellingCorrectionCommand::create(rangeToReplace, replacement)->apply();
 
     // TextCheckingParagraph may be orphaned after SpellingCorrectionCommand mutated DOM.
     // See <rdar://10305315>, http://webkit.org/b/89526.
@@ -2575,7 +2575,7 @@ void Editor::markAndReplaceFor(PassRefPtr<SpellCheckRequest> request, const Vect
                 selectionChanged = true;
                 restoreSelectionAfterChange = false;
                 if (canEditRichly())
-                    applyCommand(CreateLinkCommand::create(document(), replacement));
+                    CreateLinkCommand::create(document(), replacement)->apply();
             } else if (canEdit() && shouldInsertText(replacement, rangeToReplace.ptr(), EditorInsertAction::Typed)) {
                 correctSpellcheckingPreservingTextCheckingParagraph(paragraph, rangeToReplace, replacement, resultLocation, resultLength);
 
@@ -3038,7 +3038,7 @@ void Editor::computeAndSetTypingStyle(EditingStyle& style, EditAction editingAct
     // Handle block styles, substracting these from the typing style.
     RefPtr<EditingStyle> blockStyle = typingStyle->extractAndRemoveBlockProperties();
     if (!blockStyle->isEmpty())
-        applyCommand(ApplyStyleCommand::create(document(), blockStyle.get(), editingAction));
+        ApplyStyleCommand::create(document(), blockStyle.get(), editingAction)->apply();
 
     // Set the remaining style as the typing style.
     m_frame.selection().setTypingStyle(WTFMove(typingStyle));
@@ -3619,10 +3619,8 @@ void Editor::handleAcceptedCandidate(TextCheckingResult acceptedCandidate)
     m_isHandlingAcceptedCandidate = true;
 
     if (auto range = rangeForTextCheckingResult(acceptedCandidate)) {
-        if (shouldInsertText(acceptedCandidate.replacement, range.get(), EditorInsertAction::Typed)) {
-            Ref<ReplaceRangeWithTextCommand> replaceCommand = ReplaceRangeWithTextCommand::create(range.get(), acceptedCandidate.replacement);
-            applyCommand(replaceCommand.ptr());
-        }
+        if (shouldInsertText(acceptedCandidate.replacement, range.get(), EditorInsertAction::Typed))
+            ReplaceRangeWithTextCommand::create(range.get(), acceptedCandidate.replacement)->apply();
     } else
         insertText(acceptedCandidate.replacement, nullptr);
 

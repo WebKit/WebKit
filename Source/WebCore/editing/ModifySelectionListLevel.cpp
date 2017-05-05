@@ -94,7 +94,7 @@ void ModifySelectionListLevelCommand::insertSiblingNodeRangeBefore(Node* startNo
     Node* node = startNode;
     while (1) {
         Node* next = node->nextSibling();
-        removeNode(node);
+        removeNode(*node);
         insertNodeBefore(*node, *refNode);
 
         if (node == endNode)
@@ -109,7 +109,7 @@ void ModifySelectionListLevelCommand::insertSiblingNodeRangeAfter(Node* startNod
     Node* node = startNode;
     while (1) {
         Node* next = node->nextSibling();
-        removeNode(node);
+        removeNode(*node);
         insertNodeAfter(*node, *refNode);
 
         if (node == endNode)
@@ -125,7 +125,7 @@ void ModifySelectionListLevelCommand::appendSiblingNodeRange(Node* startNode, No
     Node* node = startNode;
     while (1) {
         Node* next = node->nextSibling();
-        removeNode(node);
+        removeNode(*node);
         appendNode(*node, *newParent);
 
         if (node == endNode)
@@ -267,14 +267,14 @@ void DecreaseSelectionListLevelCommand::doApply()
         // at start of sublist, move the child(ren) to before the sublist
         insertSiblingNodeRangeBefore(startListChild, endListChild, listNode);
         // if that was the whole sublist we moved, remove the sublist node
-        if (!nextItem)
-            removeNode(listNode);
+        if (!nextItem && listNode)
+            removeNode(*listNode);
     } else if (!nextItem) {
         // at end of list, move the child(ren) to after the sublist
         insertSiblingNodeRangeAfter(startListChild, endListChild, listNode);    
     } else if (listNode) {
         // in the middle of list, split the list and move the children to the divide
-        splitElement(listNode, startListChild);
+        splitElement(*listNode, *startListChild);
         insertSiblingNodeRangeBefore(startListChild, endListChild, listNode);
     }
 }
@@ -290,7 +290,7 @@ void DecreaseSelectionListLevelCommand::decreaseSelectionListLevel(Document* doc
 {
     ASSERT(document);
     ASSERT(document->frame());
-    applyCommand(create(*document));
+    create(*document)->apply();
 }
 
 }

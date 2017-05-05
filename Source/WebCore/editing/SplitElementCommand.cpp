@@ -32,29 +32,27 @@
 
 namespace WebCore {
 
-SplitElementCommand::SplitElementCommand(PassRefPtr<Element> element, PassRefPtr<Node> atChild)
+SplitElementCommand::SplitElementCommand(Ref<Element>&& element, Ref<Node>&& atChild)
     : SimpleEditCommand(element->document())
-    , m_element2(element)
-    , m_atChild(atChild)
+    , m_element2(WTFMove(element))
+    , m_atChild(WTFMove(atChild))
 {
-    ASSERT(m_element2);
-    ASSERT(m_atChild);
-    ASSERT(m_atChild->parentNode() == m_element2);
+    ASSERT(m_atChild->parentNode() == m_element2.ptr());
 }
 
 void SplitElementCommand::executeApply()
 {
-    if (m_atChild->parentNode() != m_element2)
+    if (m_atChild->parentNode() != m_element2.ptr())
         return;
     
     Vector<Ref<Node>> children;
-    for (Node* node = m_element2->firstChild(); node != m_atChild; node = node->nextSibling())
+    for (Node* node = m_element2->firstChild(); node != m_atChild.ptr(); node = node->nextSibling())
         children.append(*node);
 
     auto* parent = m_element2->parentNode();
     if (!parent || !parent->hasEditableStyle())
         return;
-    if (parent->insertBefore(*m_element1, m_element2.get()).hasException())
+    if (parent->insertBefore(*m_element1, m_element2.ptr()).hasException())
         return;
 
     // Delete id attribute from the second element because the same id cannot be used for more than one element
@@ -105,8 +103,8 @@ void SplitElementCommand::doReapply()
 void SplitElementCommand::getNodesInCommand(HashSet<Node*>& nodes)
 {
     addNodeAndDescendants(m_element1.get(), nodes);
-    addNodeAndDescendants(m_element2.get(), nodes);
-    addNodeAndDescendants(m_atChild.get(), nodes);
+    addNodeAndDescendants(m_element2.ptr(), nodes);
+    addNodeAndDescendants(m_atChild.ptr(), nodes);
 }
 #endif
     

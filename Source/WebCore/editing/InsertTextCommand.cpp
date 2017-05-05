@@ -267,7 +267,7 @@ Position InsertTextCommand::insertTab(const Position& pos)
             // second node in the split, so we need to
             // insert the span before it.
             if (offset > 0)
-                splitTextNode(textNode.ptr(), offset);
+                splitTextNode(textNode, offset);
             insertNodeBefore(WTFMove(spanNode), textNode);
         }
     }

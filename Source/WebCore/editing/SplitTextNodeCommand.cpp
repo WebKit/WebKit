@@ -33,16 +33,15 @@
 
 namespace WebCore {
 
-SplitTextNodeCommand::SplitTextNodeCommand(PassRefPtr<Text> text, int offset)
+SplitTextNodeCommand::SplitTextNodeCommand(Ref<Text>&& text, int offset)
     : SimpleEditCommand(text->document())
-    , m_text2(text)
+    , m_text2(WTFMove(text))
     , m_offset(offset)
 {
     // NOTE: Various callers rely on the fact that the original node becomes
     // the second node (i.e. the new node is inserted before the existing one).
     // That is not a fundamental dependency (i.e. it could be re-coded), but
     // rather is based on how this code happens to work.
-    ASSERT(m_text2);
     ASSERT(m_text2->length() > 0);
     ASSERT(m_offset > 0);
     ASSERT(m_offset < m_text2->length());
@@ -63,7 +62,7 @@ void SplitTextNodeCommand::doApply()
 
     m_text1 = Text::create(document(), WTFMove(prefixText));
     ASSERT(m_text1);
-    document().markers().copyMarkers(m_text2.get(), 0, m_offset, m_text1.get(), 0);
+    document().markers().copyMarkers(m_text2.ptr(), 0, m_offset, m_text1.get(), 0);
 
     insertText1AndTrimText2();
 }
@@ -79,13 +78,13 @@ void SplitTextNodeCommand::doUnapply()
 
     m_text2->insertData(0, prefixText);
 
-    document().markers().copyMarkers(m_text1.get(), 0, prefixText.length(), m_text2.get(), 0);
+    document().markers().copyMarkers(m_text1.get(), 0, prefixText.length(), m_text2.ptr(), 0);
     m_text1->remove();
 }
 
 void SplitTextNodeCommand::doReapply()
 {
-    if (!m_text1 || !m_text2)
+    if (!m_text1)
         return;
 
     ContainerNode* parent = m_text2->parentNode();
@@ -97,7 +96,7 @@ void SplitTextNodeCommand::doReapply()
 
 void SplitTextNodeCommand::insertText1AndTrimText2()
 {
-    if (m_text2->parentNode()->insertBefore(*m_text1, m_text2.get()).hasException())
+    if (m_text2->parentNode()->insertBefore(*m_text1, m_text2.ptr()).hasException())
         return;
     m_text2->deleteData(0, m_offset);
 }
@@ -107,7 +106,7 @@ void SplitTextNodeCommand::insertText1AndTrimText2()
 void SplitTextNodeCommand::getNodesInCommand(HashSet<Node*>& nodes)
 {
     addNodeAndDescendants(m_text1.get(), nodes);
-    addNodeAndDescendants(m_text2.get(), nodes);
+    addNodeAndDescendants(m_text2.ptr(), nodes);
 }
 
 #endif

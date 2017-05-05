@@ -279,7 +279,7 @@ void TypingCommand::insertLineBreak(Document& document, Options options)
         return;
     }
 
-    applyCommand(TypingCommand::create(document, InsertLineBreak, emptyString(), options));
+    TypingCommand::create(document, InsertLineBreak, emptyString(), options)->apply();
 }
 
 void TypingCommand::insertParagraphSeparatorInQuotedContent(Document& document)
@@ -291,7 +291,7 @@ void TypingCommand::insertParagraphSeparatorInQuotedContent(Document& document)
         return;
     }
 
-    applyCommand(TypingCommand::create(document, InsertParagraphSeparatorInQuotedContent));
+    TypingCommand::create(document, InsertParagraphSeparatorInQuotedContent)->apply();
 }
 
 void TypingCommand::insertParagraphSeparator(Document& document, Options options)
@@ -304,7 +304,7 @@ void TypingCommand::insertParagraphSeparator(Document& document, Options options
         return;
     }
 
-    applyCommand(TypingCommand::create(document, InsertParagraphSeparator, emptyString(), options));
+    TypingCommand::create(document, InsertParagraphSeparator, emptyString(), options)->apply();
 }
 
 RefPtr<TypingCommand> TypingCommand::lastTypingCommandIfStillOpenForTyping(Frame& frame)
@@ -632,7 +632,7 @@ bool TypingCommand::makeEditableRootEmpty()
     }
 
     while (Node* child = root->firstChild())
-        removeNode(child);
+        removeNode(*child);
 
     addBlockPlaceholderIfNeeded(root);
     setEndingSelection(VisibleSelection(firstPositionInNode(root), DOWNSTREAM, endingSelection().isDirectional()));

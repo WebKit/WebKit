@@ -31,13 +31,12 @@
 
 namespace WebCore {
 
-SetNodeAttributeCommand::SetNodeAttributeCommand(PassRefPtr<Element> element, const QualifiedName& attribute, const AtomicString& value)
+SetNodeAttributeCommand::SetNodeAttributeCommand(Ref<Element>&& element, const QualifiedName& attribute, const AtomicString& value)
     : SimpleEditCommand(element->document())
-    , m_element(element)
+    , m_element(WTFMove(element))
     , m_attribute(attribute)
     , m_value(value)
 {
-    ASSERT(m_element);
 }
 
 void SetNodeAttributeCommand::doApply()
@@ -56,7 +55,7 @@ void SetNodeAttributeCommand::doUnapply()
 #ifndef NDEBUG
 void SetNodeAttributeCommand::getNodesInCommand(HashSet<Node*>& nodes)
 {
-    addNodeAndDescendants(m_element.get(), nodes);
+    addNodeAndDescendants(m_element.ptr(), nodes);
 }
 #endif
 
