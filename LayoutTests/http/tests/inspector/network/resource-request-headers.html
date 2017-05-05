@@ -52,8 +52,9 @@ function test()
                 Promise.all([
                     WebInspector.Frame.awaitEvent(WebInspector.Frame.Event.ResourceWasAdded),
                     WebInspector.Resource.awaitEvent(WebInspector.Resource.Event.ResponseReceived),
+                    WebInspector.Resource.awaitEvent(WebInspector.Resource.Event.LoadingDidFinish),
                     InspectorTest.awaitEvent("LoadComplete"),
-                ]).then(([resourceWasAddedEvent, responseReceivedEvent, loadCompleteEvent]) => {
+                ]).then(([resourceWasAddedEvent, responseReceivedEvent, loadingDidFinish, loadCompleteEvent]) => {
                     let resource = resourceWasAddedEvent.data.resource;
                     InspectorTest.expectThat(resource instanceof WebInspector.Resource, "Resource should be created.");
                     InspectorTest.expectEqual(resource, responseReceivedEvent.target, "Resource should receive a Response.");
