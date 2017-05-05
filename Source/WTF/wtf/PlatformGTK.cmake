@@ -2,10 +2,10 @@ set(WTF_LIBRARY_TYPE STATIC)
 set(WTF_OUTPUT_NAME WTFGTK)
 
 list(APPEND WTF_SOURCES
+    generic/MainThreadGeneric.cpp
     generic/WorkQueueGeneric.cpp
     glib/GLibUtilities.cpp
     glib/GRefPtr.cpp
-    glib/MainThreadGLib.cpp
     glib/RunLoopGLib.cpp
 
     linux/CurrentProcessMemoryStatus.cpp

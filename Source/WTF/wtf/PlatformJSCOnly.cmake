@@ -1,6 +1,7 @@
 list(APPEND WTF_SOURCES
     PlatformUserPreferredLanguagesUnix.cpp
 
+    generic/MainThreadGeneric.cpp
     generic/WorkQueueGeneric.cpp
 )
 
@@ -19,7 +20,6 @@ endif ()
 if (LOWERCASE_EVENT_LOOP_TYPE STREQUAL "glib")
     list(APPEND WTF_SOURCES
         glib/GRefPtr.cpp
-        glib/MainThreadGLib.cpp
         glib/RunLoopGLib.cpp
     )
     list(APPEND WTF_SYSTEM_INCLUDE_DIRECTORIES
@@ -32,7 +32,6 @@ if (LOWERCASE_EVENT_LOOP_TYPE STREQUAL "glib")
     )
 else ()
     list(APPEND WTF_SOURCES
-        generic/MainThreadGeneric.cpp
         generic/RunLoopGeneric.cpp
     )
 endif ()

@@ -41,7 +41,7 @@
 namespace WTF {
 
 static bool callbacksPaused; // This global variable is only accessed from main thread.
-#if !PLATFORM(COCOA) && !USE(GLIB)
+#if !PLATFORM(COCOA)
 static ThreadIdentifier mainThreadIdentifier;
 #endif
 
@@ -53,60 +53,52 @@ static Deque<Function<void ()>>& functionQueue()
     return functionQueue;
 }
 
-#if PLATFORM(COCOA) || USE(GLIB)
-static pthread_once_t initializeMainThreadKeyOnce = PTHREAD_ONCE_INIT;
-
-static void initializeMainThreadOnce()
-{
-    initializeThreading();
-    initializeMainThreadPlatform();
-    initializeGCThreads();
-}
-
+// Share this initializeKey with initializeMainThread and initializeMainThreadToProcessMainThread.
+static std::once_flag initializeKey;
 void initializeMainThread()
 {
-    pthread_once(&initializeMainThreadKeyOnce, initializeMainThreadOnce);
+    std::call_once(initializeKey, [] {
+        initializeThreading();
+#if !PLATFORM(COCOA)
+        mainThreadIdentifier = currentThread();
+#endif
+        initializeMainThreadPlatform();
+        initializeGCThreads();
+    });
 }
 
-#if !USE(WEB_THREAD) && !USE(GLIB)
-static void initializeMainThreadToProcessMainThreadOnce()
+#if !PLATFORM(COCOA)
+bool isMainThread()
 {
-    initializeThreading();
-    initializeMainThreadToProcessMainThreadPlatform();
-    initializeGCThreads();
+    return currentThread() == mainThreadIdentifier;
 }
+#endif
 
+#if PLATFORM(COCOA)
+#if !USE(WEB_THREAD)
 void initializeMainThreadToProcessMainThread()
 {
-    pthread_once(&initializeMainThreadKeyOnce, initializeMainThreadToProcessMainThreadOnce);
+    std::call_once(initializeKey, [] {
+        initializeThreading();
+        initializeMainThreadToProcessMainThreadPlatform();
+        initializeGCThreads();
+    });
 }
-#elif !USE(GLIB)
-static pthread_once_t initializeWebThreadKeyOnce = PTHREAD_ONCE_INIT;
-
-static void initializeWebThreadOnce()
-{
-    initializeWebThreadPlatform();
-}
-
+#else
 void initializeWebThread()
 {
-    pthread_once(&initializeWebThreadKeyOnce, initializeWebThreadOnce);
+    static std::once_flag initializeKey;
+    std::call_once(initializeKey, [] {
+        initializeWebThreadPlatform();
+    });
 }
 #endif // !USE(WEB_THREAD)
+#endif // PLATFORM(COCOA)
 
-#else
-void initializeMainThread()
+#if !USE(WEB_THREAD)
+bool canAccessThreadLocalDataForThread(ThreadIdentifier threadId)
 {
-    static bool initializedMainThread;
-    if (initializedMainThread)
-        return;
-    initializedMainThread = true;
-
-    initializeThreading();
-    mainThreadIdentifier = currentThread();
-
-    initializeMainThreadPlatform();
-    initializeGCThreads();
+    return threadId == currentThread();
 }
 #endif
 
@@ -177,20 +169,6 @@ void setMainThreadCallbacksPaused(bool paused)
     if (!callbacksPaused)
         scheduleDispatchFunctionsOnMainThread();
 }
-
-#if !PLATFORM(COCOA) && !USE(GLIB)
-bool isMainThread()
-{
-    return currentThread() == mainThreadIdentifier;
-}
-#endif
-
-#if !USE(WEB_THREAD)
-bool canAccessThreadLocalDataForThread(ThreadIdentifier threadId)
-{
-    return threadId == currentThread();
-}
-#endif
 
 static ThreadSpecific<std::optional<GCThreadType>, CanBeGCThread::True>* isGCThread;
 
