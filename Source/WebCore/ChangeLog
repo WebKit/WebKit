@@ -1,3 +1,20 @@
+2017-05-04  Jeremy Jones  <jeremyj@apple.com>
+
+        UIColor +whiteColor and +clearColor are ambiguous and need to be casted when soft linked.
+        https://bugs.webkit.org/show_bug.cgi?id=171704
+
+        Reviewed by Jer Noble.
+
+        No new tests because no behavior change.
+
+        Fix build by casting result of +clearColor to UIColor.
+
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (clearUIColor):
+        (WebVideoFullscreenInterfaceAVKit::setupFullscreen):
+        (WebVideoFullscreenInterfaceAVKit::exitFullscreen):
+        (WebVideoFullscreenInterfaceAVKit::didStopPictureInPicture):
+
 2017-05-04  Chris Dumez  <cdumez@apple.com>
 
         Element.slot should be marked as [Unscopable]

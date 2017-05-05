@@ -1877,7 +1877,7 @@ static Vector<FloatRect> floatRectsForCGRectArray(NSArray<NSValue *> *rectValues
 
     // FIXME: This should match the background color of the text, or if the background cannot be captured as a single color, we should fall back
     // to a default representation, e.g. black text on a white background.
-    CGContextSetFillColorWithColor(newContext, [[getUIColorClass() whiteColor] CGColor]);
+    CGContextSetFillColorWithColor(newContext, [(UIColor *)[getUIColorClass() whiteColor] CGColor]);
     for (auto textBoundingRect : scaledClippingRects)
         CGContextFillRect(newContext, textBoundingRect);
 
