@@ -360,10 +360,7 @@ inline void CachedImage::clearImage()
         m_imageObserver->remove(*this);
         m_imageObserver = nullptr;
     }
-    if (m_image) {
-        m_image->setImageObserver(nullptr);
-        m_image = nullptr;
-    }
+    m_image = nullptr;
 }
 
 void CachedImage::addIncrementalDataBuffer(SharedBuffer& data)

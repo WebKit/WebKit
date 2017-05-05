@@ -1,3 +1,16 @@
+2017-05-05  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r216273.
+
+        This change caused an assertion failure on WK1.
+
+        Reverted changeset:
+
+        "Crash in ImageFrameCache::decodedSizeChanged() after image
+        load cancellation"
+        https://bugs.webkit.org/show_bug.cgi?id=171736
+        http://trac.webkit.org/changeset/216273
+
 2017-05-05  Brian Burg  <bburg@apple.com>
 
         [Cocoa] Converting from WebCore::Cookie to NSHTTPCookie always marks cookies as session cookies
