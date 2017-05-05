@@ -55,11 +55,11 @@ TEST_F(GPU, FunctionAccessByName)
 
     auto vertexFunction = library->functionWithName("vertex_main");
     EXPECT_NOT_NULL(vertexFunction);
-    EXPECT_TRUE(vertexFunction->name() == "vertex_main");
+    EXPECT_EQ("vertex_main", vertexFunction->name());
 
     auto fragmentFunction = library->functionWithName("fragment_main");
     EXPECT_NOT_NULL(fragmentFunction);
-    EXPECT_TRUE(fragmentFunction->name() == "fragment_main");
+    EXPECT_EQ("fragment_main", fragmentFunction->name());
 
     auto nonExistentFunction = library->functionWithName("name_that_is_not_in_library");
     EXPECT_NULL(nonExistentFunction);

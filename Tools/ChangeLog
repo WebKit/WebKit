@@ -1,3 +1,23 @@
+2017-05-05  Daniel Bates  <dabates@apple.com>
+
+        Use EXPECT_EQ() when comparing strings in TestWebKitAPI tests
+        https://bugs.webkit.org/show_bug.cgi?id=171698
+
+        Reviewed by Darin Adler.
+
+        We should use EXPECT_EQ() instead of EXPECT_TRUE() to compare WTF::String() objects
+        so that we get pretty diff output when the actual string differs from the expected
+        string as opposed to seeing a boolean result. The former makes makes it straightforward
+        to diagnose a regression without reading the code for the test or instrumenting it to
+        determine the actual string that was compared.
+
+        * TestWebKitAPI/Tests/WTF/WTFString.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebCore/mac/GPUFunction.mm:
+        (TestWebKitAPI::TEST_F):
+        * TestWebKitAPI/Tests/WebCore/mac/GPULibrary.mm:
+        (TestWebKitAPI::TEST_F):
+
 2017-05-05  Chris Dumez  <cdumez@apple.com>
 
         Rename webProcessDidCrashWithReason callback to webProcessDidTerminate and stop calling webProcessDidCrash for client terminations

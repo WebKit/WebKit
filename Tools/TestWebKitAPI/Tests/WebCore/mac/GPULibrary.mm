@@ -62,7 +62,7 @@ TEST_F(GPU, LibrarySetLabel)
     EXPECT_NOT_NULL(library);
 
     library->setLabel("TestLabel");
-    EXPECT_TRUE(library->label() == "TestLabel");
+    EXPECT_EQ("TestLabel", library->label());
 }
 
 TEST_F(GPU, LibraryFunctionNames)
@@ -76,8 +76,8 @@ TEST_F(GPU, LibraryFunctionNames)
 
     auto functionNames = library->functionNames();
     EXPECT_EQ(functionNames.size(), static_cast<unsigned long>(2));
-    EXPECT_TRUE(functionNames[0] == "vertex_main");
-    EXPECT_TRUE(functionNames[1] == "fragment_main");
+    EXPECT_EQ("vertex_main", functionNames[0]);
+    EXPECT_EQ("fragment_main", functionNames[1]);
 }
 
 } // namespace TestWebKitAPI

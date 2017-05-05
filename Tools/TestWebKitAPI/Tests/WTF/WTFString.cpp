@@ -25,6 +25,7 @@
 
 #include "config.h"
 
+#include "WTFStringUtilities.h"
 #include <limits>
 #include <wtf/MathExtras.h>
 #include <wtf/text/CString.h>
@@ -316,33 +317,33 @@ TEST(WTF, StringUnicodeEqualUCharArray)
 TEST(WTF, StringRightBasic)
 {
     auto reference = String::fromUTF8("Cappuccino");
-    EXPECT_TRUE(reference.right(0) == String::fromUTF8(""));
-    EXPECT_TRUE(reference.right(1) == String::fromUTF8("o"));
-    EXPECT_TRUE(reference.right(2) == String::fromUTF8("no"));
-    EXPECT_TRUE(reference.right(3) == String::fromUTF8("ino"));
-    EXPECT_TRUE(reference.right(4) == String::fromUTF8("cino"));
-    EXPECT_TRUE(reference.right(5) == String::fromUTF8("ccino"));
-    EXPECT_TRUE(reference.right(6) == String::fromUTF8("uccino"));
-    EXPECT_TRUE(reference.right(7) == String::fromUTF8("puccino"));
-    EXPECT_TRUE(reference.right(8) == String::fromUTF8("ppuccino"));
-    EXPECT_TRUE(reference.right(9) == String::fromUTF8("appuccino"));
-    EXPECT_TRUE(reference.right(10) == String::fromUTF8("Cappuccino"));
+    EXPECT_EQ(String::fromUTF8(""), reference.right(0));
+    EXPECT_EQ(String::fromUTF8("o"), reference.right(1));
+    EXPECT_EQ(String::fromUTF8("no"), reference.right(2));
+    EXPECT_EQ(String::fromUTF8("ino"), reference.right(3));
+    EXPECT_EQ(String::fromUTF8("cino"), reference.right(4));
+    EXPECT_EQ(String::fromUTF8("ccino"), reference.right(5));
+    EXPECT_EQ(String::fromUTF8("uccino"), reference.right(6));
+    EXPECT_EQ(String::fromUTF8("puccino"), reference.right(7));
+    EXPECT_EQ(String::fromUTF8("ppuccino"), reference.right(8));
+    EXPECT_EQ(String::fromUTF8("appuccino"), reference.right(9));
+    EXPECT_EQ(String::fromUTF8("Cappuccino"), reference.right(10));
 }
 
 TEST(WTF, StringLeftBasic)
 {
     auto reference = String::fromUTF8("Cappuccino");
-    EXPECT_TRUE(reference.left(0) == String::fromUTF8(""));
-    EXPECT_TRUE(reference.left(1) == String::fromUTF8("C"));
-    EXPECT_TRUE(reference.left(2) == String::fromUTF8("Ca"));
-    EXPECT_TRUE(reference.left(3) == String::fromUTF8("Cap"));
-    EXPECT_TRUE(reference.left(4) == String::fromUTF8("Capp"));
-    EXPECT_TRUE(reference.left(5) == String::fromUTF8("Cappu"));
-    EXPECT_TRUE(reference.left(6) == String::fromUTF8("Cappuc"));
-    EXPECT_TRUE(reference.left(7) == String::fromUTF8("Cappucc"));
-    EXPECT_TRUE(reference.left(8) == String::fromUTF8("Cappucci"));
-    EXPECT_TRUE(reference.left(9) == String::fromUTF8("Cappuccin"));
-    EXPECT_TRUE(reference.left(10) == String::fromUTF8("Cappuccino"));
+    EXPECT_EQ(String::fromUTF8(""), reference.left(0));
+    EXPECT_EQ(String::fromUTF8("C"), reference.left(1));
+    EXPECT_EQ(String::fromUTF8("Ca"), reference.left(2));
+    EXPECT_EQ(String::fromUTF8("Cap"), reference.left(3));
+    EXPECT_EQ(String::fromUTF8("Capp"), reference.left(4));
+    EXPECT_EQ(String::fromUTF8("Cappu"), reference.left(5));
+    EXPECT_EQ(String::fromUTF8("Cappuc"), reference.left(6));
+    EXPECT_EQ(String::fromUTF8("Cappucc"), reference.left(7));
+    EXPECT_EQ(String::fromUTF8("Cappucci"), reference.left(8));
+    EXPECT_EQ(String::fromUTF8("Cappuccin"), reference.left(9));
+    EXPECT_EQ(String::fromUTF8("Cappuccino"), reference.left(10));
 }
 
 TEST(WTF, StringReverseFindBasic)
