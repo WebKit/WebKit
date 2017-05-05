@@ -1,3 +1,13 @@
+2017-05-05  Guillaume Emont  <guijemont@igalia.com>
+
+        [JSC] include JSCInlines.h in ObjectInitializationScope.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=171744
+
+        Reviewed by Mark Lam.
+
+        * runtime/ObjectInitializationScope.cpp:
+
+
 2017-05-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Assertion failure in Inspector::RemoteInspector::setRemoteInspectorClient when disposing WebKitWebContext

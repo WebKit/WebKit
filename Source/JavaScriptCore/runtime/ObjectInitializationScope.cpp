@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ObjectInitializationScope.h"
 
+#include "JSCInlines.h"
 #include "JSObject.h"
 #include "Operations.h"
 
