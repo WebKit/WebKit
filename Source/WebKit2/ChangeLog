@@ -1,5 +1,26 @@
 2017-05-05  Brian Burg  <bburg@apple.com>
 
+        CrashTracer: [USER] com.apple.WebKit.WebContent.Development at com.apple.WebCore: WebCore::commonVMSlow + 57
+        https://bugs.webkit.org/show_bug.cgi?id=171669
+        <rdar://problem/31967684>
+
+        Reviewed by Mark Lam.
+
+        safaridriver's AutomaticInspection capability causes us to call WebInspectorProxy::connect()
+        underneath the Automation.inspectBrowsingContext command. This fires a NeedDebuggerBreak
+        interrupt for the web content's VM, but this is racy because the web content process may
+        not yet be fully initialized when this interrupt is handled.
+
+        To work around this, just don't deliver any interrupts if the VM singleton is still null.
+        This is a reliable signal that the web content process is not fully initialized yet. Not delivering
+        is harmless; the interrupt only exists to break out of infinite loops in JS code, but there
+        could not be any such infinite loop yet if the web content process is not fully initialized.
+
+        * WebProcess/WebPage/WebInspectorInterruptDispatcher.cpp:
+        (WebKit::WebInspectorInterruptDispatcher::notifyNeedDebuggerBreak):
+
+2017-05-05  Brian Burg  <bburg@apple.com>
+
         Web Automation: cookie-related commands don't work correctly
         https://bugs.webkit.org/show_bug.cgi?id=171713
         <rdar://problem/29829930>

@@ -1,3 +1,15 @@
+2017-05-05  Brian Burg  <bburg@apple.com>
+
+        CrashTracer: [USER] com.apple.WebKit.WebContent.Development at com.apple.WebCore: WebCore::commonVMSlow + 57
+        https://bugs.webkit.org/show_bug.cgi?id=171669
+        <rdar://problem/31967684>
+
+        Reviewed by Mark Lam.
+
+        * bindings/js/CommonVM.h:
+        (WebCore::commonVMOrNull):
+        Add an inline accessor function to expose the global variable.
+
 2017-05-05  Filip Pizlo  <fpizlo@apple.com>
 
         GCController.cpp's collect() should be Async

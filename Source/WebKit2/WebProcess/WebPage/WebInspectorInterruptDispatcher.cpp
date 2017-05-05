@@ -32,7 +32,7 @@
 #include <wtf/WorkQueue.h>
 
 namespace WebKit {
-    
+
 Ref<WebInspectorInterruptDispatcher> WebInspectorInterruptDispatcher::create()
 {
     return adoptRef(*new WebInspectorInterruptDispatcher);
@@ -54,6 +54,11 @@ void WebInspectorInterruptDispatcher::initializeConnection(IPC::Connection* conn
 
 void WebInspectorInterruptDispatcher::notifyNeedDebuggerBreak()
 {
+    // If the web process has not been fully initialized yet, then there
+    // is no VM to be notified and thus no infinite loop to break. Bail out.
+    if (!WebCore::commonVMOrNull())
+        return;
+
     JSC::VM& vm = WebCore::commonVM();
     vm.notifyNeedDebuggerBreak();
 }
