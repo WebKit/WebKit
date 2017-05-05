@@ -61,7 +61,8 @@ BitmapImage::BitmapImage(NativeImagePtr&& image, ImageObserver* observer)
 BitmapImage::~BitmapImage()
 {
     invalidatePlatformData();
-    stopAnimation();
+    clearTimer();
+    m_source.stopAsyncDecodingQueue();
 }
 
 void BitmapImage::updateFromSettings(const Settings& settings)
