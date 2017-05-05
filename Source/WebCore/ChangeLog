@@ -1,3 +1,18 @@
+2017-05-05  Filip Pizlo  <fpizlo@apple.com>
+
+        GCController.cpp's collect() should be Async
+        https://bugs.webkit.org/show_bug.cgi?id=171708
+
+        Reviewed by Saam Barati.
+
+        No new tests because no change in behavior.
+        
+        This is one step towards not requesting sync GCs in WebCore. I'm landing this incrementally to
+        make bisecting super easy.
+
+        * bindings/js/GCController.cpp:
+        (WebCore::collect):
+
 2017-05-05  Chris Dumez  <cdumez@apple.com>
 
         Attr Nodes should not have children
