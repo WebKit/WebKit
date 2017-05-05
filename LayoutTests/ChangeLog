@@ -1,5 +1,11 @@
 2017-05-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed GTK+ gardening. Update expectations of tests failing after GST upgrade to 1.10.4.
+
+        * platform/gtk/TestExpectations:
+
+2017-05-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed GTK+ gardening. Rebaseline several tests.
 
         * platform/gtk/editing/simple-line-layout-caret-is-gone-expected.txt: Added.

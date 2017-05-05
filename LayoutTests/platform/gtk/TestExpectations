@@ -3684,6 +3684,11 @@ webkit.org/b/171492 platform/gtk/fast/forms/menulist-typeahead-find.html [ Failu
 
 webkit.org/b/171598 accessibility/gtk/menu-list-unfocused-notifications.html [ Failure ]
 
+webkit.org/b/171726 imported/w3c/web-platform-tests/media-source/mediasource-redundant-seek.html [ Failure ]
+webkit.org/b/171726 imported/w3c/web-platform-tests/media-source/mediasource-removesourcebuffer.html [ Failure ]
+webkit.org/b/171726 imported/w3c/web-platform-tests/media-source/mediasource-seek-beyond-duration.html [ Failure ]
+webkit.org/b/171726 imported/w3c/web-platform-tests/media-source/mediasource-seek-during-pending-seek.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
