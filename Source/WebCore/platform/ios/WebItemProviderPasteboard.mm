@@ -422,6 +422,11 @@ static NSURL *temporaryFileURLForDataInteractionContent(NSString *fileExtension,
 
 - (void)doAfterLoadingProvidedContentIntoFileURLs:(WebItemProviderFileLoadBlock)action
 {
+    [self doAfterLoadingProvidedContentIntoFileURLs:action synchronousTimeout:0];
+}
+
+- (void)doAfterLoadingProvidedContentIntoFileURLs:(WebItemProviderFileLoadBlock)action synchronousTimeout:(NSTimeInterval)synchronousTimeout
+{
     auto changeCountBeforeLoading = _changeCount;
     auto typeToFileURLMaps = adoptNS([[NSMutableArray alloc] initWithCapacity:[_itemProviders count]]);
 
@@ -464,6 +469,8 @@ static NSURL *temporaryFileURLForDataInteractionContent(NSString *fileExtension,
         return;
     }
 
+    auto setFileURLsLock = adoptNS([[NSLock alloc] init]);
+    auto synchronousFileLoadingGroup = adoptOSObject(dispatch_group_create());
     auto fileLoadingGroup = adoptOSObject(dispatch_group_create());
     for (NSUInteger index = 0; index < [itemProvidersWithFiles count]; ++index) {
         RetainPtr<UIItemProvider> itemProvider = [itemProvidersWithFiles objectAtIndex:index];
@@ -471,20 +478,19 @@ static NSURL *temporaryFileURLForDataInteractionContent(NSString *fileExtension,
         NSUInteger indexInItemProviderArray = [[indicesOfItemProvidersWithFiles objectAtIndex:index] unsignedIntegerValue];
         RetainPtr<NSString> suggestedName = [itemProvider suggestedName];
         dispatch_group_enter(fileLoadingGroup.get());
-        [itemProvider loadFileRepresentationForTypeIdentifier:typeIdentifier.get() completionHandler:[indexInItemProviderArray, suggestedName, typeIdentifier, typeToFileURLMaps, fileLoadingGroup] (NSURL *url, NSError *error) {
+        dispatch_group_enter(synchronousFileLoadingGroup.get());
+        [itemProvider loadFileRepresentationForTypeIdentifier:typeIdentifier.get() completionHandler:[synchronousFileLoadingGroup, setFileURLsLock, indexInItemProviderArray, suggestedName, typeIdentifier, typeToFileURLMaps, fileLoadingGroup] (NSURL *url, NSError *error) {
             // After executing this completion block, UIKit removes the file at the given URL. However, we need this data to persist longer for the web content process.
             // To address this, we hard link the given URL to a new temporary file in the temporary directory. This follows the same flow as regular file upload, in
             // WKFileUploadPanel.mm. The temporary files are cleaned up by the system at a later time.
-            RetainPtr<NSURL> destinationURL = temporaryFileURLForDataInteractionContent(url.pathExtension, suggestedName.get());
-            if (!destinationURL || error || ![[NSFileManager defaultManager] linkItemAtURL:url toURL:destinationURL.get() error:nil]) {
-                dispatch_group_leave(fileLoadingGroup.get());
-                return;
-            }
-
-            dispatch_async(dispatch_get_main_queue(), [indexInItemProviderArray, typeIdentifier, destinationURL, typeToFileURLMaps, fileLoadingGroup] {
+            RetainPtr<NSURL> destinationURL = temporaryFileURLForDataInteractionContent(url.pathExtension, suggestedName.get() ?: url.lastPathComponent);
+            if (destinationURL && !error && [[NSFileManager defaultManager] linkItemAtURL:url toURL:destinationURL.get() error:nil]) {
+                [setFileURLsLock lock];
                 [typeToFileURLMaps setObject:[NSDictionary dictionaryWithObject:destinationURL.get() forKey:typeIdentifier.get()] atIndexedSubscript:indexInItemProviderArray];
-                dispatch_group_leave(fileLoadingGroup.get());
-            });
+                [setFileURLsLock unlock];
+            }
+            dispatch_group_leave(fileLoadingGroup.get());
+            dispatch_group_leave(synchronousFileLoadingGroup.get());
         }];
     }
 
@@ -495,6 +501,9 @@ static NSURL *temporaryFileURLForDataInteractionContent(NSString *fileExtension,
 
         completionBlock([retainedSelf fileURLsForDataInteraction]);
     });
+
+    if (synchronousTimeout > 0)
+        dispatch_group_wait(synchronousFileLoadingGroup.get(), dispatch_time(DISPATCH_TIME_NOW, synchronousTimeout * NSEC_PER_SEC));
 }
 
 - (WebItemProviderRegistrationInfoList *)registrationInfoAtIndex:(NSUInteger)index

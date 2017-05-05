@@ -1,3 +1,26 @@
+2017-05-05  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add SPI to WebItemProviderPasteboard to synchronously load data with a given timeout
+        https://bugs.webkit.org/show_bug.cgi?id=171725
+        <rdar://problem/32014052>
+
+        Reviewed by Beth Dakin.
+
+        Adds a synchronousTimeout: argument to doAfterLoadingProvidedContentIntoFileURLs:. If a positive timeout
+        interval is specified by the client, then we will block the main thread for at most that amount of time after
+        beginning to load from the item providers.
+
+        To do this, we introduce another `dispatch_group_t` in parallel to the `fileLoadingGroup` that is entered and
+        left in the same places. However, instead of attaching a handler block, we simply perform a synchronous wait for
+        either the time limit to be reached, or the item providers to finish loading.
+
+        No new tests -- no change in behavior yet.
+
+        * platform/ios/WebItemProviderPasteboard.h:
+        * platform/ios/WebItemProviderPasteboard.mm:
+        (-[WebItemProviderPasteboard doAfterLoadingProvidedContentIntoFileURLs:]):
+        (-[WebItemProviderPasteboard doAfterLoadingProvidedContentIntoFileURLs:synchronousTimeout:]):
+
 2017-05-05  Chris Dumez  <cdumez@apple.com>
 
         Clean up Attr.idl
