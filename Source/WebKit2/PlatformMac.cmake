@@ -212,7 +212,7 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/Cocoa/WKScriptMessage.mm
     UIProcess/API/Cocoa/WKSecurityOrigin.mm
     UIProcess/API/Cocoa/WKTypeRefWrapper.mm
-    UIProcess/API/Cocoa/WKURLSchemeHandlerTask.mm
+    UIProcess/API/Cocoa/WKURLSchemeTask.mm
     UIProcess/API/Cocoa/WKUserContentController.mm
     UIProcess/API/Cocoa/WKUserScript.mm
     UIProcess/API/Cocoa/WKWebView.mm
