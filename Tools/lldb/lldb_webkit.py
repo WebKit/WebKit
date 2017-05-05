@@ -1,4 +1,4 @@
-# Copyright (C) 2012 Apple. All rights reserved.
+# Copyright (C) 2012-2017 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -46,6 +46,7 @@ def __lldb_init_module(debugger, dict):
     debugger.HandleCommand('type summary add -F lldb_webkit.WebCoreLayoutUnit_SummaryProvider WebCore::LayoutUnit')
     debugger.HandleCommand('type summary add -F lldb_webkit.WebCoreLayoutSize_SummaryProvider WebCore::LayoutSize')
     debugger.HandleCommand('type summary add -F lldb_webkit.WebCoreLayoutPoint_SummaryProvider WebCore::LayoutPoint')
+    debugger.HandleCommand('type summary add -F lldb_webkit.WebCoreURL_SummaryProvider WebCore::URL')
 
 def WTFString_SummaryProvider(valobj, dict):
     provider = WTFStringProvider(valobj, dict)
@@ -86,6 +87,11 @@ def WTFMediaTime_SummaryProvider(valobj, dict):
     if provider.hasDoubleValue():
         return "{ %f }" % (provider.timeValueAsDouble())
     return "{ %d/%d, %f }" % (provider.timeValue(), provider.timeScale(), float(provider.timeValue()) / provider.timeScale())
+
+
+def WebCoreURL_SummaryProvider(valobj, dict):
+    provider = WebCoreURLProvider(valobj, dict)
+    return "{ %s }" % provider.to_string()
 
 
 def WebCoreLayoutUnit_SummaryProvider(valobj, dict):
@@ -155,7 +161,6 @@ def btjs(debugger, command, result, internal_dict):
 # FIXME: Provide support for the following types:
 # def WTFVector_SummaryProvider(valobj, dict):
 # def WTFCString_SummaryProvider(valobj, dict):
-# def WebCoreKURLGooglePrivate_SummaryProvider(valobj, dict):
 # def WebCoreQualifiedName_SummaryProvider(valobj, dict):
 # def JSCIdentifier_SummaryProvider(valobj, dict):
 # def JSCJSString_SummaryProvider(valobj, dict):
@@ -303,6 +308,14 @@ class WebCoreLayoutPointProvider:
     def get_y(self):
         return WebCoreLayoutUnitProvider(self.valobj.GetChildMemberWithName('m_y'), dict).to_string()
 
+
+class WebCoreURLProvider:
+    "Print a WebCore::URL"
+    def __init__(self, valobj, dict):
+        self.valobj = valobj
+
+    def to_string(self):
+        return WTFStringProvider(self.valobj.GetChildMemberWithName('m_string'), dict).to_string()
 
 class WTFVectorProvider:
     def __init__(self, valobj, internal_dict):
