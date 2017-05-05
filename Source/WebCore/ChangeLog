@@ -1,3 +1,16 @@
+2017-05-05  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r216275.
+
+        This change broke internal builds.
+
+        Reverted changeset:
+
+        "[Cocoa] CTFontDescriptorCreateMatchingFontDescriptor() is not
+        case insensitive"
+        https://bugs.webkit.org/show_bug.cgi?id=171636
+        http://trac.webkit.org/changeset/216275
+
 2017-05-05  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] CTFontDescriptorCreateMatchingFontDescriptor() is not case insensitive
