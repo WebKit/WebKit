@@ -1,3 +1,12 @@
+2017-05-06  Bill Ming  <mbbill@gmail.com>
+
+        Fix 32bit Windows build by giving correct parameters to MASM
+        https://bugs.webkit.org/show_bug.cgi?id=170833
+
+        Reviewed by Alex Christensen.
+
+        * CMakeLists.txt:
+
 2017-05-06  Oleksandr Skachkov  <gskachkov@gmail.com>
 
         [ES6] Arrow function. Issue in access to this after eval('super()') within constructor

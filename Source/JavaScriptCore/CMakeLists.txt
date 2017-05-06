@@ -1201,15 +1201,20 @@ add_custom_command(
 # since it is used in the add_library() call at the end of this file.
 if (MSVC)
     enable_language(ASM_MASM)
-    list(APPEND JavaScriptCore_SOURCES
-        ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/LowLevelInterpreterWin.asm
-    )
-    # Win32 needs /safeseh with assembly, but Win64 does not.
     if (CMAKE_SIZEOF_VOID_P EQUAL 4)
-        set_source_files_properties(${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/LowLevelInterpreterWin.asm
-            PROPERTIES COMPILE_FLAGS  "/safeseh"
-        )
+        # Win32 needs /safeseh with assembly, but Win64 does not.
+        set(MASM_EXECUTABLE ml)
+        set(LLINT_MASM_FLAGS /safeseh /c /Fo)
+    else ()
+        set(MASM_EXECUTABLE ml64)
+        set(LLINT_MASM_FLAGS /c /Fo)
     endif ()
+    add_custom_command(
+        OUTPUT ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/LowLevelInterpreterWin.obj
+        DEPENDS ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/LowLevelInterpreterWin.asm
+        COMMAND ${MASM_EXECUTABLE} ${LLINT_MASM_FLAGS} ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/LowLevelInterpreterWin.obj ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/LowLevelInterpreterWin.asm
+        VERBATIM)
+    list(APPEND JavaScriptCore_SOURCES ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/LowLevelInterpreterWin.obj)
 else ()
     list(APPEND JavaScriptCore_HEADERS
         ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/LLIntAssembly.h
