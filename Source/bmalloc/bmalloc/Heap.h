@@ -42,6 +42,10 @@
 #include <array>
 #include <mutex>
 
+#if BOS(DARWIN)
+#include <dispatch/dispatch.h>
+#endif
+
 namespace bmalloc {
 
 class BeginTag;
@@ -128,6 +132,7 @@ private:
     VMHeap m_vmHeap;
 
 #if BOS(DARWIN)
+    dispatch_source_t m_pressureHandlerDispatchSource;
     qos_class_t m_requestedScavengerThreadQOSClass { QOS_CLASS_UNSPECIFIED };
 #endif
 };

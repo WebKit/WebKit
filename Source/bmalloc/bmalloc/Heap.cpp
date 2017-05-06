@@ -30,11 +30,11 @@
 #include "PerProcess.h"
 #include "SmallLine.h"
 #include "SmallPage.h"
+#include <thread>
+
 #if BOS(DARWIN)
 #include "bmalloc.h"
-#include <dispatch/dispatch.h>
 #endif
-#include <thread>
 
 namespace bmalloc {
 
@@ -54,11 +54,12 @@ Heap::Heap(std::lock_guard<StaticMutex>&)
 
 #if BOS(DARWIN)
     auto queue = dispatch_queue_create("WebKit Malloc Memory Pressure Handler", DISPATCH_QUEUE_SERIAL);
-    auto source = dispatch_source_create(DISPATCH_SOURCE_TYPE_MEMORYPRESSURE, 0, DISPATCH_MEMORYPRESSURE_CRITICAL, queue);
-    dispatch_source_set_event_handler(source, ^{
+    m_pressureHandlerDispatchSource = dispatch_source_create(DISPATCH_SOURCE_TYPE_MEMORYPRESSURE, 0, DISPATCH_MEMORYPRESSURE_CRITICAL, queue);
+    dispatch_source_set_event_handler(m_pressureHandlerDispatchSource, ^{
         api::scavenge();
     });
-    dispatch_resume(source);
+    dispatch_resume(m_pressureHandlerDispatchSource);
+    dispatch_release(queue);
 #endif
 }
 
