@@ -26,12 +26,12 @@
 #import "config.h"
 #import "TestRunnerWKWebView.h"
 
-#import "UIKitSPI.h"
 #import "WebKitTestRunnerDraggingInfo.h"
 #import <wtf/Assertions.h>
 #import <wtf/RetainPtr.h>
 
 #if PLATFORM(IOS)
+#import "UIKitSPI.h"
 #import <WebKit/WKWebViewPrivate.h>
 @interface WKWebView ()
 

@@ -1,3 +1,12 @@
+2017-05-06  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Mac][cmake] Buildfix after r216047
+        https://bugs.webkit.org/show_bug.cgi?id=171769
+
+        Unreviewed buildfix.
+
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.mm:
+
 2017-05-05  Brady Eidson  <beidson@apple.com>
 
         API test WebKit2.WebsiteDataStoreCustomPaths is failing on ios-simulator.
