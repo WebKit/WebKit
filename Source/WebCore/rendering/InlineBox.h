@@ -280,16 +280,16 @@ public:
     float expansion() const { return m_expansion; }
 
 private:
-    InlineBox* m_next; // The next element on the same line as us.
-    InlineBox* m_prev; // The previous element on the same line as us.
+    InlineBox* m_next { nullptr }; // The next element on the same line as us.
+    InlineBox* m_prev { nullptr }; // The previous element on the same line as us.
 
-    InlineFlowBox* m_parent; // The box that contains us.
+    InlineFlowBox* m_parent { nullptr }; // The box that contains us.
 
     RenderObject& m_renderer;
 
 public:
     FloatPoint m_topLeft;
-    float m_logicalWidth;
+    float m_logicalWidth { 0 };
 
 #define ADD_BOOLEAN_BITFIELD(name, Name) \
     private:\
@@ -368,21 +368,12 @@ public:
 #undef ADD_BOOLEAN_BITFIELD
 
 private:
-    float m_expansion;
+    float m_expansion { 0 };
     InlineBoxBitfields m_bitfields;
 
 protected:
     explicit InlineBox(RenderObject& renderer)
-        : m_next(nullptr)
-        , m_prev(nullptr)
-        , m_parent(nullptr)
-        , m_renderer(renderer)
-        , m_logicalWidth(0)
-        , m_expansion(0)
-#if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
-        , m_deletionSentinel(deletionSentinelNotDeletedValue)
-        , m_hasBadParent(false)
-#endif
+        : m_renderer(renderer)
     {
     }
 
@@ -393,12 +384,7 @@ protected:
         , m_renderer(renderer)
         , m_topLeft(topLeft)
         , m_logicalWidth(logicalWidth)
-        , m_expansion(0)
         , m_bitfields(firstLine, constructed, dirty, extracted, isHorizontal)
-#if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
-        , m_deletionSentinel(deletionSentinelNotDeletedValue)
-        , m_hasBadParent(false)
-#endif
     {
     }
 
@@ -427,10 +413,10 @@ protected:
 
 #if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
 private:
-    static const unsigned deletionSentinelNotDeletedValue = 0xF0F0F0F0U;
-    static const unsigned deletionSentinelDeletedValue = 0xF0DEADF0U;
-    unsigned m_deletionSentinel;
-    bool m_hasBadParent;
+    static constexpr unsigned deletionSentinelNotDeletedValue = 0xF0F0F0F0U;
+    static constexpr unsigned deletionSentinelDeletedValue = 0xF0DEADF0U;
+    unsigned m_deletionSentinel { deletionSentinelNotDeletedValue };
+    bool m_hasBadParent { false };
 #endif
 };
 
