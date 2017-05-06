@@ -1,3 +1,12 @@
+2017-05-05  Dean Jackson  <dino@apple.com>
+
+        ...and now the GTK and Windows builds.
+
+        * platform/gtk/WidgetGtk.cpp:
+        (WebCore::Widget::paint):
+        * platform/win/WidgetWin.cpp:
+        (WebCore::Widget::paint):
+
 2017-05-05  Brady Eidson  <beidson@apple.com>
 
         API test WebKit2.WebsiteDataStoreCustomPaths is failing on ios-simulator.
