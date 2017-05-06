@@ -1,3 +1,14 @@
+2017-05-06  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        REGERSSION(r213499): Emoji with Fitzpatrick modifiers are drawn as two separate glyphs
+        https://bugs.webkit.org/show_bug.cgi?id=171750
+        <rdar://problem/31122612>
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/text/fitzpatrick-combination-expected.html: Added.
+        * fast/text/fitzpatrick-combination.html: Added.
+
 2017-05-05  Zalan Bujtas  <zalan@apple.com>
 
         Renderers being destroyed should not be added to AX's deferred list.
