@@ -26,7 +26,7 @@
 #include "config.h"
 #include "PluginControllerProxy.h"
 
-#if ENABLE(PLUGIN_PROCESS)
+#if ENABLE(NETSCAPE_PLUGIN_API)
 
 #include <WebCore/NotImplemented.h>
 
@@ -51,4 +51,4 @@ void PluginControllerProxy::platformGeometryDidChange()
 
 } // namespace WebKit
 
-#endif // ENABLE(PLUGIN_PROCESS)
+#endif // ENABLE(NETSCAPE_PLUGIN_API)
