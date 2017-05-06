@@ -10,8 +10,8 @@ PASS '_'.link(0x2A) is "<a href=\"42\">_</a>"
 PASS '_'.link('"') is "<a href=\"&quot;\">_</a>"
 PASS '_'.link('" target="_blank') is "<a href=\"&quot; target=&quot;_blank\">_</a>"
 PASS String.prototype.link.call(0x2A, 0x2A) is "<a href=\"42\">42</a>"
-PASS String.prototype.link.call(undefined) threw exception TypeError: Type error.
-PASS String.prototype.link.call(null) threw exception TypeError: Type error.
+PASS String.prototype.link.call(undefined) threw exception TypeError: String.prototype.link requires that |this| not be null or undefined.
+PASS String.prototype.link.call(null) threw exception TypeError: String.prototype.link requires that |this| not be null or undefined.
 PASS String.prototype.link.length is 1
 PASS successfullyParsed is true
 

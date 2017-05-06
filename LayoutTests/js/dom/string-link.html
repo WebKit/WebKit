@@ -31,10 +31,10 @@ shouldBe("'_'.link('\" target=\"_blank')", '"<a href=\\"&quot; target=&quot;_bla
 shouldBe("String.prototype.link.call(0x2A, 0x2A)", '"<a href=\\"42\\">42</a>"');
 
 // Generic use on non-coercible object `undefined`.
-shouldThrow("String.prototype.link.call(undefined)", '"TypeError: Type error"');
+shouldThrowErrorName("String.prototype.link.call(undefined)", 'TypeError');
 
 // Generic use on non-coercible object `null`.
-shouldThrow("String.prototype.link.call(null)", '"TypeError: Type error"');
+shouldThrowErrorName("String.prototype.link.call(null)", 'TypeError');
 
 // Check link.length.
 shouldBe("String.prototype.link.length", "1");

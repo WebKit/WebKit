@@ -28,10 +28,10 @@ shouldBe("'_'.fontcolor('\" size=\"2px')", '"<font color=\\"&quot; size=&quot;2p
 shouldBe("String.prototype.fontcolor.call(0x2A, 0x2A)", '"<font color=\\"42\\">42</font>"');
 
 // Generic use on non-coercible object `undefined`.
-shouldThrow("String.prototype.fontcolor.call(undefined)", '"TypeError: Type error"');
+shouldThrowErrorName("String.prototype.fontcolor.call(undefined)", 'TypeError');
 
 // Generic use on non-coercible object `null`.
-shouldThrow("String.prototype.fontcolor.call(null)", '"TypeError: Type error"');
+shouldThrowErrorName("String.prototype.fontcolor.call(null)", 'TypeError');
 
 // Check fontcolor.length.
 shouldBe("String.prototype.fontcolor.length", "1");

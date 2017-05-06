@@ -28,10 +28,10 @@ shouldBe("'_'.anchor('\" href=\"http://www.evil.com')", '"<a name=\\"&quot; href
 shouldBe("String.prototype.anchor.call(0x2A, 0x2A)", '"<a name=\\"42\\">42</a>"');
 
 // Generic use on non-coercible object `undefined`.
-shouldThrow("String.prototype.anchor.call(undefined)", '"TypeError: Type error"');
+shouldThrowErrorName("String.prototype.anchor.call(undefined)", 'TypeError');
 
 // Generic use on non-coercible object `null`.
-shouldThrow("String.prototype.anchor.call(null)", '"TypeError: Type error"');
+shouldThrowErrorName("String.prototype.anchor.call(null)", 'TypeError');
 
 // Check anchor.length.
 shouldBe("String.prototype.anchor.length", "1");

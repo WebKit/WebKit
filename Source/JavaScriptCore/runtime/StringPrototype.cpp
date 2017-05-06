@@ -76,19 +76,6 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncToUpperCase(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncLocaleCompare(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncToLocaleLowerCase(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncToLocaleUpperCase(ExecState*);
-EncodedJSValue JSC_HOST_CALL stringProtoFuncBig(ExecState*);
-EncodedJSValue JSC_HOST_CALL stringProtoFuncSmall(ExecState*);
-EncodedJSValue JSC_HOST_CALL stringProtoFuncBlink(ExecState*);
-EncodedJSValue JSC_HOST_CALL stringProtoFuncBold(ExecState*);
-EncodedJSValue JSC_HOST_CALL stringProtoFuncFixed(ExecState*);
-EncodedJSValue JSC_HOST_CALL stringProtoFuncItalics(ExecState*);
-EncodedJSValue JSC_HOST_CALL stringProtoFuncStrike(ExecState*);
-EncodedJSValue JSC_HOST_CALL stringProtoFuncSub(ExecState*);
-EncodedJSValue JSC_HOST_CALL stringProtoFuncSup(ExecState*);
-EncodedJSValue JSC_HOST_CALL stringProtoFuncFontcolor(ExecState*);
-EncodedJSValue JSC_HOST_CALL stringProtoFuncFontsize(ExecState*);
-EncodedJSValue JSC_HOST_CALL stringProtoFuncAnchor(ExecState*);
-EncodedJSValue JSC_HOST_CALL stringProtoFuncLink(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncTrim(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncTrimLeft(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncTrimRight(ExecState*);
@@ -115,6 +102,19 @@ const ClassInfo StringPrototype::s_info = { "String", &StringObject::s_info, &st
     replace   JSBuiltin    DontEnum|Function 2
     search    JSBuiltin    DontEnum|Function 1
     split     JSBuiltin    DontEnum|Function 1
+    anchor    JSBuiltin    DontEnum|Function 1
+    big       JSBuiltin    DontEnum|Function 0
+    bold      JSBuiltin    DontEnum|Function 0
+    blink     JSBuiltin    DontEnum|Function 0
+    fixed     JSBuiltin    DontEnum|Function 0
+    fontcolor JSBuiltin    DontEnum|Function 1
+    fontsize  JSBuiltin    DontEnum|Function 1
+    italics   JSBuiltin    DontEnum|Function 0
+    link      JSBuiltin    DontEnum|Function 1
+    small     JSBuiltin    DontEnum|Function 0
+    strike    JSBuiltin    DontEnum|Function 0
+    sub       JSBuiltin    DontEnum|Function 0
+    sup       JSBuiltin    DontEnum|Function 0
 @end
 */
 
@@ -153,19 +153,6 @@ void StringPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject, JSStr
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("toLocaleLowerCase", stringProtoFuncToLowerCase, DontEnum, 0);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("toLocaleUpperCase", stringProtoFuncToUpperCase, DontEnum, 0);
 #endif
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("big", stringProtoFuncBig, DontEnum, 0);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("small", stringProtoFuncSmall, DontEnum, 0);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("blink", stringProtoFuncBlink, DontEnum, 0);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("bold", stringProtoFuncBold, DontEnum, 0);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("fixed", stringProtoFuncFixed, DontEnum, 0);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("italics", stringProtoFuncItalics, DontEnum, 0);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("strike", stringProtoFuncStrike, DontEnum, 0);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("sub", stringProtoFuncSub, DontEnum, 0);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("sup", stringProtoFuncSup, DontEnum, 0);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("fontcolor", stringProtoFuncFontcolor, DontEnum, 1);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("fontsize", stringProtoFuncFontsize, DontEnum, 1);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("anchor", stringProtoFuncAnchor, DontEnum, 1);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("link", stringProtoFuncLink, DontEnum, 1);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("trim", stringProtoFuncTrim, DontEnum, 0);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("trimLeft", stringProtoFuncTrimLeft, DontEnum, 0);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("trimRight", stringProtoFuncTrimRight, DontEnum, 0);
@@ -1568,268 +1555,6 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncToLocaleUpperCase(ExecState* state)
     return toLocaleCase(state, u_strToUpper);
 }
 #endif // ENABLE(INTL)
-
-EncodedJSValue JSC_HOST_CALL stringProtoFuncBig(ExecState* exec)
-{
-    VM& vm = exec->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    JSValue thisValue = exec->thisValue();
-    if (!checkObjectCoercible(thisValue))
-        return throwVMTypeError(exec, scope);
-    String s = thisValue.toWTFString(exec);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    scope.release();
-    return JSValue::encode(jsMakeNontrivialString(exec, "<big>", s, "</big>"));
-}
-
-EncodedJSValue JSC_HOST_CALL stringProtoFuncSmall(ExecState* exec)
-{
-    VM& vm = exec->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    JSValue thisValue = exec->thisValue();
-    if (!checkObjectCoercible(thisValue))
-        return throwVMTypeError(exec, scope);
-    String s = thisValue.toWTFString(exec);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    scope.release();
-    return JSValue::encode(jsMakeNontrivialString(exec, "<small>", s, "</small>"));
-}
-
-EncodedJSValue JSC_HOST_CALL stringProtoFuncBlink(ExecState* exec)
-{
-    VM& vm = exec->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    JSValue thisValue = exec->thisValue();
-    if (!checkObjectCoercible(thisValue))
-        return throwVMTypeError(exec, scope);
-    String s = thisValue.toWTFString(exec);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    scope.release();
-    return JSValue::encode(jsMakeNontrivialString(exec, "<blink>", s, "</blink>"));
-}
-
-EncodedJSValue JSC_HOST_CALL stringProtoFuncBold(ExecState* exec)
-{
-    VM& vm = exec->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    JSValue thisValue = exec->thisValue();
-    if (!checkObjectCoercible(thisValue))
-        return throwVMTypeError(exec, scope);
-    String s = thisValue.toWTFString(exec);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    scope.release();
-    return JSValue::encode(jsMakeNontrivialString(exec, "<b>", s, "</b>"));
-}
-
-EncodedJSValue JSC_HOST_CALL stringProtoFuncFixed(ExecState* exec)
-{
-    VM& vm = exec->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    JSValue thisValue = exec->thisValue();
-    if (!checkObjectCoercible(thisValue))
-        return throwVMTypeError(exec, scope);
-    String s = thisValue.toWTFString(exec);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    scope.release();
-    return JSValue::encode(jsMakeNontrivialString(exec, "<tt>", s, "</tt>"));
-}
-
-EncodedJSValue JSC_HOST_CALL stringProtoFuncItalics(ExecState* exec)
-{
-    VM& vm = exec->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    JSValue thisValue = exec->thisValue();
-    if (!checkObjectCoercible(thisValue))
-        return throwVMTypeError(exec, scope);
-    String s = thisValue.toWTFString(exec);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    scope.release();
-    return JSValue::encode(jsMakeNontrivialString(exec, "<i>", s, "</i>"));
-}
-
-EncodedJSValue JSC_HOST_CALL stringProtoFuncStrike(ExecState* exec)
-{
-    VM& vm = exec->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    JSValue thisValue = exec->thisValue();
-    if (!checkObjectCoercible(thisValue))
-        return throwVMTypeError(exec, scope);
-    String s = thisValue.toWTFString(exec);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    scope.release();
-    return JSValue::encode(jsMakeNontrivialString(exec, "<strike>", s, "</strike>"));
-}
-
-EncodedJSValue JSC_HOST_CALL stringProtoFuncSub(ExecState* exec)
-{
-    VM& vm = exec->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    JSValue thisValue = exec->thisValue();
-    if (!checkObjectCoercible(thisValue))
-        return throwVMTypeError(exec, scope);
-    String s = thisValue.toWTFString(exec);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    scope.release();
-    return JSValue::encode(jsMakeNontrivialString(exec, "<sub>", s, "</sub>"));
-}
-
-EncodedJSValue JSC_HOST_CALL stringProtoFuncSup(ExecState* exec)
-{
-    VM& vm = exec->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    JSValue thisValue = exec->thisValue();
-    if (!checkObjectCoercible(thisValue))
-        return throwVMTypeError(exec, scope);
-    String s = thisValue.toWTFString(exec);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    scope.release();
-    return JSValue::encode(jsMakeNontrivialString(exec, "<sup>", s, "</sup>"));
-}
-
-EncodedJSValue JSC_HOST_CALL stringProtoFuncFontcolor(ExecState* exec)
-{
-    VM& vm = exec->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    JSValue thisValue = exec->thisValue();
-    if (!checkObjectCoercible(thisValue))
-        return throwVMTypeError(exec, scope);
-    String s = thisValue.toWTFString(exec);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
-
-    JSValue a0 = exec->argument(0);
-    String color = a0.toWTFString(exec);
-    color.replaceWithLiteral('"', "&quot;");
-
-    scope.release();
-    return JSValue::encode(jsMakeNontrivialString(exec, "<font color=\"", color, "\">", s, "</font>"));
-}
-
-EncodedJSValue JSC_HOST_CALL stringProtoFuncFontsize(ExecState* exec)
-{
-    VM& vm = exec->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    JSValue thisValue = exec->thisValue();
-    if (!checkObjectCoercible(thisValue))
-        return throwVMTypeError(exec, scope);
-    String s = thisValue.toWTFString(exec);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
-
-    JSValue a0 = exec->argument(0);
-
-    uint32_t smallInteger;
-    if (a0.getUInt32(smallInteger) && smallInteger <= 9) {
-        unsigned stringSize = s.length();
-        unsigned bufferSize = 22 + stringSize;
-        // FIXME: Should we have an 8-bit version of this code path too? Or maybe only an 8-bit version?
-        UChar* buffer;
-        auto impl = StringImpl::tryCreateUninitialized(bufferSize, buffer);
-        if (!impl)
-            return JSValue::encode(jsUndefined());
-        buffer[0] = '<';
-        buffer[1] = 'f';
-        buffer[2] = 'o';
-        buffer[3] = 'n';
-        buffer[4] = 't';
-        buffer[5] = ' ';
-        buffer[6] = 's';
-        buffer[7] = 'i';
-        buffer[8] = 'z';
-        buffer[9] = 'e';
-        buffer[10] = '=';
-        buffer[11] = '"';
-        buffer[12] = '0' + smallInteger;
-        buffer[13] = '"';
-        buffer[14] = '>';
-        StringView(s).getCharactersWithUpconvert(&buffer[15]);
-        buffer[15 + stringSize] = '<';
-        buffer[16 + stringSize] = '/';
-        buffer[17 + stringSize] = 'f';
-        buffer[18 + stringSize] = 'o';
-        buffer[19 + stringSize] = 'n';
-        buffer[20 + stringSize] = 't';
-        buffer[21 + stringSize] = '>';
-        return JSValue::encode(jsNontrivialString(exec, WTFMove(impl)));
-    }
-
-    String fontSize = a0.toWTFString(exec);
-    fontSize.replaceWithLiteral('"', "&quot;");
-
-    scope.release();
-    return JSValue::encode(jsMakeNontrivialString(exec, "<font size=\"", fontSize, "\">", s, "</font>"));
-}
-
-EncodedJSValue JSC_HOST_CALL stringProtoFuncAnchor(ExecState* exec)
-{
-    VM& vm = exec->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    JSValue thisValue = exec->thisValue();
-    if (!checkObjectCoercible(thisValue))
-        return throwVMTypeError(exec, scope);
-    String s = thisValue.toWTFString(exec);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
-
-    JSValue a0 = exec->argument(0);
-    String anchor = a0.toWTFString(exec);
-    anchor.replaceWithLiteral('"', "&quot;");
-
-    scope.release();
-    return JSValue::encode(jsMakeNontrivialString(exec, "<a name=\"", anchor, "\">", s, "</a>"));
-}
-
-EncodedJSValue JSC_HOST_CALL stringProtoFuncLink(ExecState* exec)
-{
-    VM& vm = exec->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    JSValue thisValue = exec->thisValue();
-    if (!checkObjectCoercible(thisValue))
-        return throwVMTypeError(exec, scope);
-    String s = thisValue.toWTFString(exec);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
-
-    JSValue a0 = exec->argument(0);
-    String linkText = a0.toWTFString(exec);
-    linkText.replaceWithLiteral('"', "&quot;");
-
-    unsigned linkTextSize = linkText.length();
-    unsigned stringSize = s.length();
-    unsigned bufferSize = 15 + linkTextSize + stringSize;
-    // FIXME: Should we have an 8-bit version of this code path too? Or maybe only an 8-bit version?
-    UChar* buffer;
-    auto impl = StringImpl::tryCreateUninitialized(bufferSize, buffer);
-    if (!impl)
-        return JSValue::encode(jsUndefined());
-    buffer[0] = '<';
-    buffer[1] = 'a';
-    buffer[2] = ' ';
-    buffer[3] = 'h';
-    buffer[4] = 'r';
-    buffer[5] = 'e';
-    buffer[6] = 'f';
-    buffer[7] = '=';
-    buffer[8] = '"';
-    StringView(linkText).getCharactersWithUpconvert(&buffer[9]);
-    buffer[9 + linkTextSize] = '"';
-    buffer[10 + linkTextSize] = '>';
-    StringView(s).getCharactersWithUpconvert(&buffer[11 + linkTextSize]);
-    buffer[11 + linkTextSize + stringSize] = '<';
-    buffer[12 + linkTextSize + stringSize] = '/';
-    buffer[13 + linkTextSize + stringSize] = 'a';
-    buffer[14 + linkTextSize + stringSize] = '>';
-    return JSValue::encode(jsNontrivialString(exec, WTFMove(impl)));
-}
 
 enum {
     TrimLeft = 1,

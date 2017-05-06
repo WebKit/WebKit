@@ -1,3 +1,21 @@
+2017-05-05  Oliver Hunt  <oliver@apple.com>
+
+        Move trivial String prototype functions to JS builtins
+        https://bugs.webkit.org/show_bug.cgi?id=171737
+
+        Reviewed by Saam Barati.
+
+        Updated output
+
+        * js/dom/string-anchor-expected.txt:
+        * js/dom/string-anchor.html:
+        * js/dom/string-fontcolor-expected.txt:
+        * js/dom/string-fontcolor.html:
+        * js/dom/string-fontsize-expected.txt:
+        * js/dom/string-fontsize.html:
+        * js/dom/string-link-expected.txt:
+        * js/dom/string-link.html:
+
 2017-05-05  Dean Jackson  <dino@apple.com>
 
         Restrict SVG filters to accessible security origins

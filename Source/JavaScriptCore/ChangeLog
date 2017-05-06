@@ -1,3 +1,46 @@
+2017-05-05  Oliver Hunt  <oliver@apple.com>
+
+        Move trivial String prototype functions to JS builtins
+        https://bugs.webkit.org/show_bug.cgi?id=171737
+
+        Reviewed by Saam Barati.
+
+        Super simple change to migrate all of the old school
+        html-ifying string operations to builtin JS.
+
+        Core implementation is basically a 1-for-1 match to the spec.
+
+        * builtins/StringPrototype.js:
+        (globalPrivate.createHTML):
+        (anchor):
+        (big):
+        (blink):
+        (bold):
+        (fixed):
+        (fontcolor):
+        (fontsize):
+        (italics):
+        (link):
+        (small):
+        (strike):
+        (sub):
+        (sup):
+        * runtime/StringPrototype.cpp:
+        (JSC::StringPrototype::finishCreation):
+        (JSC::stringProtoFuncBig): Deleted.
+        (JSC::stringProtoFuncSmall): Deleted.
+        (JSC::stringProtoFuncBlink): Deleted.
+        (JSC::stringProtoFuncBold): Deleted.
+        (JSC::stringProtoFuncFixed): Deleted.
+        (JSC::stringProtoFuncItalics): Deleted.
+        (JSC::stringProtoFuncStrike): Deleted.
+        (JSC::stringProtoFuncSub): Deleted.
+        (JSC::stringProtoFuncSup): Deleted.
+        (JSC::stringProtoFuncFontcolor): Deleted.
+        (JSC::stringProtoFuncFontsize): Deleted.
+        (JSC::stringProtoFuncAnchor): Deleted.
+        (JSC::stringProtoFuncLink): Deleted.
+
 2017-05-05  Don Olmstead  <don.olmstead@am.sony.com>
 
         [JSC] Remove export from Intrinsic

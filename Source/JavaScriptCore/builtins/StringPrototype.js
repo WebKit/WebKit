@@ -304,3 +304,100 @@ function split(separator, limit)
     
     return @stringSplitFast.@call(this, separator, limit);
 }
+
+@globalPrivate
+function createHTML(func, string, tag, attribute, value)
+{
+    "use strict";
+    if (string == null)
+        @throwTypeError(`${func} requires that |this| not be null or undefined`);
+    let S = @toString(string);
+    let p1 = "<" + tag;
+    if (attribute) {
+        let V = @toString(value);
+        let escapedV = V.@replaceUsingRegExp(/"/g, '&quot;');
+        p1 = p1 + " " + @toString(attribute) + '="' + escapedV + '"'
+    }
+    let p2 = p1 + ">"
+    let p3 = p2 + S;
+    let p4 = p3 + "</" + tag + ">";
+    return p4;
+}
+
+function anchor(url)
+{
+    "use strict";
+    return @createHTML("String.prototype.link", this, "a", "name", url)
+}
+
+function big()
+{
+    "use strict";
+    return @createHTML("String.prototype.big", this, "big", "", "");
+}
+
+function blink()
+{
+    "use strict";
+    return @createHTML("String.prototype.blink", this, "blink", "", "");
+}
+
+function bold()
+{
+    "use strict";
+    return @createHTML("String.prototype.bold", this, "b", "", "");
+}
+
+function fixed()
+{
+    "use strict";
+    return @createHTML("String.prototype.fixed", this, "tt", "", "");
+}
+
+function fontcolor(color)
+{
+    "use strict";
+    return @createHTML("String.prototype.fontcolor", this, "font", "color", color);
+}
+
+function fontsize(size)
+{
+    "use strict";
+    return @createHTML("String.prototype.fontsize", this, "font", "size", size);
+}
+
+function italics()
+{
+    "use strict";
+    return @createHTML("String.prototype.italics", this, "i", "", "");
+}
+
+function link(url)
+{
+    "use strict";
+    return @createHTML("String.prototype.link", this, "a", "href", url)
+}
+
+function small()
+{
+    "use strict";
+    return @createHTML("String.prototype.small", this, "small", "", "");
+}
+
+function strike()
+{
+    "use strict";
+    return @createHTML("String.prototype.strike", this, "strike", "", "");
+}
+
+function sub()
+{
+    "use strict";
+    return @createHTML("String.prototype.sub", this, "sub", "", "");
+}
+
+function sup()
+{
+    "use strict";
+    return @createHTML("String.prototype.sup", this, "sup", "", "");
+}
