@@ -1,3 +1,23 @@
+2017-05-05  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Crash in ImageFrameCache::decodedSizeChanged() after image load cancellation
+        https://bugs.webkit.org/show_bug.cgi?id=171736
+
+        Reviewed by Tim Horton.
+
+        Tests: Covered by run-webkit-tests fast/images/image-formats-support.html
+        --guard-malloc.
+
+        Because an image format is not supported, the ImageObserver of the Image
+        is deleted then the Image itself is deleted. In BitmapImage destructor,
+        we make a call which ends up accessing the deleted ImageObserver.
+
+        To fix this, we need to change the BitImage destructor to avoid calling 
+        ImageFrameCache::decodedSizeChanged() since it is not really needed.
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::~BitmapImage):
+
 2017-05-05  Timothy Horton  <timothy_horton@apple.com>
 
         [Mac] Adjust cursor position for dragged link (and stop it from moving based on how fast you are dragging)
