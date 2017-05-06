@@ -28,6 +28,7 @@
 #if ENABLE(B3_JIT)
 
 #include "CPU.h"
+#include "GPRInfo.h"
 #include "JSExportMacros.h"
 #include "Options.h"
 #include <wtf/Optional.h>
@@ -181,6 +182,8 @@ inline unsigned defaultOptLevel()
     // components will deliberately set the optLevel.
     return Options::defaultB3OptLevel();
 }
+
+std::optional<GPRReg> pinnedExtendedOffsetAddrRegister();
 
 } } // namespace JSC::B3
 

@@ -75,6 +75,7 @@ public:
         // (UseAddr) addresses.
         SimpleAddr,
         Addr,
+        ExtendedOffsetAddr,
         Stack,
         CallArg,
         Index,
@@ -546,6 +547,16 @@ public:
         return result;
     }
 
+    template<typename Int, typename = Value::IsLegalOffset<Int>>
+    static Arg extendedOffsetAddr(Int offsetFromFP)
+    {
+        Arg result;
+        result.m_kind = ExtendedOffsetAddr;
+        result.m_base = Air::Tmp(MacroAssembler::framePointerRegister);
+        result.m_offset = offsetFromFP;
+        return result;
+    }
+
     static Arg addr(Air::Tmp base)
     {
         return addr(base, 0);
@@ -573,12 +584,6 @@ public:
         result.m_kind = CallArg;
         result.m_offset = offset;
         return result;
-    }
-
-    template<typename Int, typename = Value::IsLegalOffset<Int>>
-    static Arg stackAddr(Int offsetFromFP, unsigned frameSize, Width width)
-    {
-        return stackAddrImpl(offsetFromFP, frameSize, width);
     }
 
     // If you don't pass a Width, this optimistically assumes that you're using the right width.
@@ -759,6 +764,11 @@ public:
         return kind() == Addr;
     }
 
+    bool isExtendedOffsetAddr() const
+    {
+        return kind() == ExtendedOffsetAddr;
+    }
+
     bool isStack() const
     {
         return kind() == Stack;
@@ -779,6 +789,7 @@ public:
         switch (kind()) {
         case SimpleAddr:
         case Addr:
+        case ExtendedOffsetAddr:
         case Stack:
         case CallArg:
         case Index:
@@ -792,6 +803,7 @@ public:
     // stack references. The following idioms are recognized:
     // - the Stack kind
     // - the CallArg kind
+    // - the ExtendedOffsetAddr kind
     // - the Addr kind with the base being either SP or FP
     // Callers of this function are allowed to expect that if it returns true, then it must be one of
     // these easy-to-recognize kinds. So, making this function recognize more kinds could break things.
@@ -943,7 +955,7 @@ public:
 
     Air::Tmp base() const
     {
-        ASSERT(kind() == SimpleAddr || kind() == Addr || kind() == Index);
+        ASSERT(kind() == SimpleAddr || kind() == Addr || kind() == ExtendedOffsetAddr || kind() == Index);
         return m_base;
     }
 
@@ -953,7 +965,7 @@ public:
     {
         if (kind() == Stack)
             return static_cast<Value::OffsetType>(m_scale);
-        ASSERT(kind() == Addr || kind() == CallArg || kind() == Index);
+        ASSERT(kind() == Addr || kind() == ExtendedOffsetAddr || kind() == CallArg || kind() == Index);
         return static_cast<Value::OffsetType>(m_offset);
     }
 
@@ -1012,6 +1024,7 @@ public:
         case BitImm64:
         case SimpleAddr:
         case Addr:
+        case ExtendedOffsetAddr:
         case Index:
         case Stack:
         case CallArg:
@@ -1047,6 +1060,7 @@ public:
             return false;
         case SimpleAddr:
         case Addr:
+        case ExtendedOffsetAddr:
         case Index:
         case Stack:
         case CallArg:
@@ -1222,6 +1236,7 @@ public:
         case BitImm64:
             return isValidBitImm64Form(value());
         case SimpleAddr:
+        case ExtendedOffsetAddr:
             return true;
         case Addr:
         case Stack:
@@ -1247,6 +1262,7 @@ public:
         case Tmp:
         case SimpleAddr:
         case Addr:
+        case ExtendedOffsetAddr:
             functor(m_base);
             break;
         case Index:
@@ -1288,6 +1304,7 @@ public:
             break;
         case SimpleAddr:
         case Addr:
+        case ExtendedOffsetAddr:
             functor(m_base, Use, GP, argRole == UseAddr ? argWidth : pointerWidth());
             break;
         case Index:
@@ -1326,7 +1343,7 @@ public:
     {
         if (isSimpleAddr())
             return MacroAssembler::Address(m_base.gpr());
-        ASSERT(isAddr());
+        ASSERT(isAddr() || isExtendedOffsetAddr());
         return MacroAssembler::Address(m_base.gpr(), static_cast<Value::OffsetType>(m_offset));
     }
 
@@ -1438,8 +1455,6 @@ public:
     }
 
 private:
-    static Arg stackAddrImpl(int32_t, unsigned, Width);
-
     int64_t m_offset { 0 };
     Kind m_kind { Invalid };
     int32_t m_scale { 1 };

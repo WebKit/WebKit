@@ -130,6 +130,11 @@ bool PatchpointSpecial::admitsStack(Inst& inst, unsigned argIndex)
     return admitsStackImpl(0, 2, inst, argIndex);
 }
 
+bool PatchpointSpecial::admitsExtendedOffsetAddr(Inst& inst, unsigned argIndex)
+{
+    return admitsStack(inst, argIndex);
+}
+
 CCallHelpers::Jump PatchpointSpecial::generate(
     Inst& inst, CCallHelpers& jit, GenerationContext& context)
 {

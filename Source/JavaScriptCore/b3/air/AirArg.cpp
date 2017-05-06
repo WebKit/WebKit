@@ -41,25 +41,13 @@
 
 namespace JSC { namespace B3 { namespace Air {
 
-Arg Arg::stackAddrImpl(int32_t offsetFromFP, unsigned frameSize, Width width)
-{
-    Arg result = Arg::addr(Air::Tmp(GPRInfo::callFrameRegister), offsetFromFP);
-    if (!result.isValidForm(width)) {
-        result = Arg::addr(
-            Air::Tmp(MacroAssembler::stackPointerRegister),
-            offsetFromFP + frameSize);
-        if (!result.isValidForm(width))
-            result = Arg();
-    }
-    return result;
-}
-
 bool Arg::isStackMemory() const
 {
     switch (kind()) {
     case Addr:
         return base() == Air::Tmp(GPRInfo::callFrameRegister)
             || base() == Air::Tmp(MacroAssembler::stackPointerRegister);
+    case ExtendedOffsetAddr:
     case Stack:
     case CallArg:
         return true;
@@ -128,6 +116,7 @@ unsigned Arg::jsHash() const
         result += m_base.internalValue();
         break;
     case Addr:
+    case ExtendedOffsetAddr:
         result += m_offset;
         result += m_base.internalValue();
         break;
@@ -171,6 +160,7 @@ void Arg::dump(PrintStream& out) const
         out.print("(", base(), ")");
         return;
     case Addr:
+    case ExtendedOffsetAddr:
         if (offset())
             out.print(offset());
         out.print("(", base(), ")");
@@ -248,6 +238,9 @@ void printInternal(PrintStream& out, Arg::Kind kind)
         return;
     case Arg::Addr:
         out.print("Addr");
+        return;
+    case Arg::ExtendedOffsetAddr:
+        out.print("ExtendedOffsetAddr");
         return;
     case Arg::Stack:
         out.print("Stack");

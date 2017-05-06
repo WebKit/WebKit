@@ -56,6 +56,11 @@ bool PrintSpecial::admitsStack(Inst&, unsigned)
     return false;
 }
 
+bool PrintSpecial::admitsExtendedOffsetAddr(Inst&, unsigned)
+{
+    return false;
+}
+
 void PrintSpecial::reportUsedRegisters(Inst&, const RegisterSet&)
 {
 }
@@ -71,6 +76,7 @@ CCallHelpers::Jump PrintSpecial::generate(Inst& inst, CCallHelpers& jit, Generat
                 term = Printer::Printer<MacroAssembler::RegisterID>(arg.gpr());
                 break;
             case Arg::Addr:
+            case Arg::ExtendedOffsetAddr:
                 term = Printer::Printer<MacroAssembler::Address>(arg.asAddress());
                 break;
             default:

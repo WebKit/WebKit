@@ -46,6 +46,7 @@
 #include "AirReportUsedRegisters.h"
 #include "AirSimplifyCFG.h"
 #include "AirValidate.h"
+#include "AllowMacroScratchRegisterUsageIf.h"
 #include "B3Common.h"
 #include "B3Procedure.h"
 #include "B3TimingScope.h"
@@ -216,8 +217,10 @@ void generate(Code& code, CCallHelpers& jit)
                 disassembler->startEntrypoint(jit); 
 
             jit.emitFunctionPrologue();
-            if (code.frameSize())
+            if (code.frameSize()) {
+                AllowMacroScratchRegisterUsageIf allowScratch(jit, isARM64());
                 jit.addPtr(CCallHelpers::TrustedImm32(-code.frameSize()), MacroAssembler::stackPointerRegister);
+            }
             
             for (const RegisterAtOffset& entry : code.calleeSaveRegisterAtOffsetList()) {
                 if (entry.reg().isGPR())

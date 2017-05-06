@@ -1,3 +1,123 @@
+2017-05-05  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: Air::Inst::generate crashes on large binary on A64
+        https://bugs.webkit.org/show_bug.cgi?id=170215
+
+        Reviewed by Filip Pizlo.
+
+        ARM can't encode all offsets in a single instruction. We usualy
+        handle this type of detail early, or the macro assembler uses a
+        scratch register to take care of the large immediate. After
+        register allocation we assumed that we would never get large
+        offsets, and asserted this was the case. That was a fine
+        assumption with JavaScript, but WebAssembly ends up generating
+        stack frames which are too big to encode.
+
+        There are two places that needed to be fixed:
+            1. AirGenerate
+            2. AirLowerStackArgs
+
+        We now unconditionally pin the dataTempRegister on ARM64, and use
+        it when immediates don't fit.
+
+        Number 1. is easy: we're just incrementing SP, make sure we can
+        use a scratch register when that happens.
+
+        Number 2. is more complex: not all Inst can receive a stack
+        argument whose base register isn't SP or FP. Specifically,
+        Patchpoints and Stackmaps get very sad because they just want to
+        know the offset value, but when we materialize the offset as
+        follows:
+
+            Move (spill337), (spill201), %r0, @8735
+
+        Becomes (where %r16 is dataTempRegister):
+            Move $1404, %r16, @8736
+            Add64 %sp, %r16, @8736
+            Move (%r16), 2032(%sp), %r0, @8736
+
+        The code currently doesn't see through our little dance. To work
+        around this issue we introduce a new Air Arg kind:
+        ExtendedOffsetAddr. This is the same as a regular Addr, but with
+        an offset which may be too big to encode. Opcodes then declare
+        whether their arguments can handle such inputs, and if so we
+        generate them, otherwise we generate Addr as shown above.
+
+        None of this affects x86 because it can always encode large
+        immediates.
+
+        This patch also drive-by converts some uses of `override` to
+        `final`. It makes the code easier to grok, and maybe helps the
+        optimizer sometimes but really that doens't matter.
+
+        * assembler/MacroAssembler.h:
+        * assembler/MacroAssemblerARM64.h:
+        * b3/B3CheckSpecial.cpp:
+        (JSC::B3::CheckSpecial::admitsExtendedOffsetAddr):
+        * b3/B3CheckSpecial.h:
+        * b3/B3Common.cpp:
+        (JSC::B3::pinnedExtendedOffsetAddrRegister): keep the CPU-specific
+        pinning information in a cpp file
+        * b3/B3Common.h:
+        * b3/B3PatchpointSpecial.cpp:
+        (JSC::B3::PatchpointSpecial::admitsExtendedOffsetAddr):
+        * b3/B3PatchpointSpecial.h:
+        * b3/B3StackmapSpecial.cpp:
+        (JSC::B3::StackmapSpecial::isArgValidForRep):
+        (JSC::B3::StackmapSpecial::repForArg):
+        * b3/B3StackmapSpecial.h:
+        * b3/air/AirArg.cpp:
+        (JSC::B3::Air::Arg::isStackMemory):
+        (JSC::B3::Air::Arg::jsHash):
+        (JSC::B3::Air::Arg::dump):
+        (WTF::printInternal):
+        (JSC::B3::Air::Arg::stackAddrImpl): Deleted. There was only one
+        use of this (in AirLowerStackArgs) and it was now confusing to
+        split the logic up between these two. Inline the code that used to
+        be here into its one usepoint instead.
+        * b3/air/AirArg.h:
+        (JSC::B3::Air::Arg::extendedOffsetAddr):
+        (JSC::B3::Air::Arg::isExtendedOffsetAddr):
+        (JSC::B3::Air::Arg::isMemory):
+        (JSC::B3::Air::Arg::base):
+        (JSC::B3::Air::Arg::offset):
+        (JSC::B3::Air::Arg::isGP):
+        (JSC::B3::Air::Arg::isFP):
+        (JSC::B3::Air::Arg::isValidForm):
+        (JSC::B3::Air::Arg::forEachTmpFast):
+        (JSC::B3::Air::Arg::forEachTmp):
+        (JSC::B3::Air::Arg::asAddress):
+        (JSC::B3::Air::Arg::stackAddr): Deleted.
+        * b3/air/AirCCallSpecial.cpp:
+        (JSC::B3::Air::CCallSpecial::isValid):
+        (JSC::B3::Air::CCallSpecial::admitsExtendedOffsetAddr):
+        (JSC::B3::Air::CCallSpecial::generate):
+        * b3/air/AirCCallSpecial.h:
+        * b3/air/AirCode.cpp:
+        (JSC::B3::Air::Code::Code):
+        (JSC::B3::Air::Code::pinRegister): Check that the register wasn't
+        pinned before pinning it. It's likely a bug to pin the same
+        register twice.
+        * b3/air/AirCustom.h:
+        (JSC::B3::Air::PatchCustom::admitsExtendedOffsetAddr):
+        (JSC::B3::Air::CCallCustom::admitsExtendedOffsetAddr):
+        (JSC::B3::Air::ShuffleCustom::admitsExtendedOffsetAddr):
+        (JSC::B3::Air::EntrySwitchCustom::admitsExtendedOffsetAddr):
+        (JSC::B3::Air::WasmBoundsCheckCustom::admitsExtendedOffsetAddr):
+        * b3/air/AirGenerate.cpp:
+        (JSC::B3::Air::generate):
+        * b3/air/AirInst.h:
+        * b3/air/AirInstInlines.h:
+        (JSC::B3::Air::Inst::admitsExtendedOffsetAddr):
+        * b3/air/AirLowerStackArgs.cpp:
+        (JSC::B3::Air::lowerStackArgs):
+        * b3/air/AirPrintSpecial.cpp:
+        (JSC::B3::Air::PrintSpecial::admitsExtendedOffsetAddr):
+        (JSC::B3::Air::PrintSpecial::generate):
+        * b3/air/AirPrintSpecial.h:
+        * b3/air/AirSpecial.h:
+        * b3/air/opcode_generator.rb:
+
 2017-05-05  Oliver Hunt  <oliver@apple.com>
 
         Move trivial String prototype functions to JS builtins

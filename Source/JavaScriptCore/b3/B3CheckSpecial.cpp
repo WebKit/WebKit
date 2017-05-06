@@ -140,6 +140,13 @@ bool CheckSpecial::admitsStack(Inst& inst, unsigned argIndex)
     return admitsStackImpl(numB3Args(inst), m_numCheckArgs + 1, inst, argIndex);
 }
 
+bool CheckSpecial::admitsExtendedOffsetAddr(Inst& inst, unsigned argIndex)
+{
+    if (argIndex >= 1 && argIndex < 1 + m_numCheckArgs)
+        return false;
+    return admitsStack(inst, argIndex);
+}
+
 std::optional<unsigned> CheckSpecial::shouldTryAliasingDef(Inst& inst)
 {
     if (std::optional<unsigned> branchDef = hiddenBranch(inst).shouldTryAliasingDef())

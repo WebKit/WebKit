@@ -120,18 +120,19 @@ protected:
     // Constructs and returns the Inst representing the branch that this will use.
     Air::Inst hiddenBranch(const Air::Inst&) const;
 
-    void forEachArg(Air::Inst&, const ScopedLambda<Air::Inst::EachArgCallback>&) override;
-    bool isValid(Air::Inst&) override;
-    bool admitsStack(Air::Inst&, unsigned argIndex) override;
-    std::optional<unsigned> shouldTryAliasingDef(Air::Inst&) override;
+    void forEachArg(Air::Inst&, const ScopedLambda<Air::Inst::EachArgCallback>&) final;
+    bool isValid(Air::Inst&) final;
+    bool admitsStack(Air::Inst&, unsigned argIndex) final;
+    bool admitsExtendedOffsetAddr(Air::Inst&, unsigned) final;
+    std::optional<unsigned> shouldTryAliasingDef(Air::Inst&) final;
 
     // NOTE: the generate method will generate the hidden branch and then register a LatePath that
     // generates the stackmap. Super crazy dude!
 
-    CCallHelpers::Jump generate(Air::Inst&, CCallHelpers&, Air::GenerationContext&) override;
+    CCallHelpers::Jump generate(Air::Inst&, CCallHelpers&, Air::GenerationContext&) final;
 
-    void dumpImpl(PrintStream&) const override;
-    void deepDumpImpl(PrintStream&) const override;
+    void dumpImpl(PrintStream&) const final;
+    void deepDumpImpl(PrintStream&) const final;
 
 private:
     Air::Kind m_checkKind;

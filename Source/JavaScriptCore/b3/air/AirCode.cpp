@@ -62,6 +62,9 @@ Code::Code(Procedure& proc)
                 });
             setRegsInPriorityOrder(bank, result);
         });
+
+    if (auto reg = pinnedExtendedOffsetAddrRegister())
+        pinRegister(*reg);
 }
 
 Code::~Code()
@@ -82,6 +85,7 @@ void Code::setRegsInPriorityOrder(Bank bank, const Vector<Reg>& regs)
 void Code::pinRegister(Reg reg)
 {
     Vector<Reg>& regs = regsInPriorityOrderImpl(Arg(Tmp(reg)).bank());
+    ASSERT(regs.contains(reg));
     regs.removeFirst(reg);
     m_mutableRegs.clear(reg);
     ASSERT(!regs.contains(reg));

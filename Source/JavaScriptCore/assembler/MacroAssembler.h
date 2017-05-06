@@ -821,7 +821,7 @@ public:
         return MacroAssemblerBase::branchTest8(cond, Address(address.base, address.offset), mask);
     }
 
-#else // !CPU(X86_64)
+#else // !CPU(X86_64) && !CPU(ARM64)
 
     void addPtr(RegisterID src, RegisterID dest)
     {

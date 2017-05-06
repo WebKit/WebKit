@@ -252,7 +252,7 @@ bool StackmapSpecial::isArgValidForRep(Air::Code& code, const Air::Arg& arg, con
     case ValueRep::StackArgument:
         if (arg == Arg::callArg(rep.offsetFromSP()))
             return true;
-        if (arg.isAddr() && code.frameSize()) {
+        if ((arg.isAddr() || arg.isExtendedOffsetAddr()) && code.frameSize()) {
             if (arg.base() == Tmp(GPRInfo::callFrameRegister)
                 && arg.offset() == rep.offsetFromSP() - code.frameSize())
                 return true;
@@ -277,6 +277,9 @@ ValueRep StackmapSpecial::repForArg(Code& code, const Arg& arg)
     case Arg::BigImm:
         return ValueRep::constant(arg.value());
         break;
+    case Arg::ExtendedOffsetAddr:
+        ASSERT(arg.base() == Tmp(GPRInfo::callFrameRegister));
+        FALLTHROUGH;
     case Arg::Addr:
         if (arg.base() == Tmp(GPRInfo::callFrameRegister))
             return ValueRep::stack(arg.offset());

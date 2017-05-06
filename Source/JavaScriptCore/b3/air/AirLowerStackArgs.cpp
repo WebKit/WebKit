@@ -63,27 +63,49 @@ void lowerStackArgs(Code& code)
     // transformation since we can search the StackSlots array to figure out which StackSlot any
     // offset-from-FP refers to.
 
-    // FIXME: This may produce addresses that aren't valid if we end up with a ginormous stack frame.
-    // We would have to scavenge for temporaries if this happened. Fortunately, this case will be
-    // extremely rare so we can do crazy things when it arises.
-    // https://bugs.webkit.org/show_bug.cgi?id=152530
-
     InsertionSet insertionSet(code);
     for (BasicBlock* block : code) {
+        // FIXME We can keep track of the last large offset which was materialized in this block, and reuse the register
+        // if it hasn't been clobbered instead of renetating imm+add+addr every time. https://bugs.webkit.org/show_bug.cgi?id=171387
+
         for (unsigned instIndex = 0; instIndex < block->size(); ++instIndex) {
             Inst& inst = block->at(instIndex);
+            bool isPatch = inst.kind.opcode == Patch;
+
             inst.forEachArg(
                 [&] (Arg& arg, Arg::Role role, Bank, Width width) {
-                    auto stackAddr = [&] (Value::OffsetType offset) -> Arg {
-                        Arg result = Arg::stackAddr(offset, code.frameSize(), width);
-                        if (!result) {
-                            dataLog("FATAL: Could not create stack reference for offset = ", offset, " and width = ", width, "\n");
-                            dataLog("Code:\n");
-                            dataLog(code);
-                            dataLog("FATAL: Could not create stack reference for offset = ", offset, " and width = ", width, "\n");
-                            RELEASE_ASSERT_NOT_REACHED();
+                    auto stackAddr = [&] (Value::OffsetType offsetFromFP) -> Arg {
+                        int32_t offsetFromSP = offsetFromFP + code.frameSize();
+
+                        if (isPatch && inst.admitsExtendedOffsetAddr(arg)) {
+                            // Stackmaps and patchpoints expect addr inputs relative to SP or FP only. We might as well
+                            // not even bother generating an addr with valid form for these opcodes since extended offset
+                            // addr is always valid.
+                            return Arg::extendedOffsetAddr(offsetFromFP);
                         }
+
+                        Arg result = Arg::addr(Air::Tmp(GPRInfo::callFrameRegister), offsetFromFP);
+                        if (result.isValidForm(width))
+                            return result;
+
+                        result = Arg::addr(Air::Tmp(MacroAssembler::stackPointerRegister), offsetFromSP);
+                        if (result.isValidForm(width))
+                            return result;
+#if CPU(ARM64)
+                        ASSERT(pinnedExtendedOffsetAddrRegister());
+                        Air::Tmp tmp = Air::Tmp(*pinnedExtendedOffsetAddrRegister());
+
+                        Arg largeOffset = Arg::isValidImmForm(offsetFromSP) ? Arg::imm(offsetFromSP) : Arg::bigImm(offsetFromSP);
+                        insertionSet.insert(instIndex, Move, inst.origin, largeOffset, tmp);
+                        insertionSet.insert(instIndex, Add64, inst.origin, Air::Tmp(MacroAssembler::stackPointerRegister), tmp);
+                        result = Arg::addr(tmp, 0);
                         return result;
+#elif CPU(X86_64)
+                        // Can't happen on x86: immediates are always big enough for frame size.
+                        RELEASE_ASSERT_NOT_REACHED();
+#else
+#error Unhandled architecture.
+#endif
                     };
                     
                     switch (arg.kind()) {

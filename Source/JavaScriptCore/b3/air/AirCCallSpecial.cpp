@@ -82,6 +82,7 @@ bool CCallSpecial::isValid(Inst& inst)
             return false;
         case Arg::Tmp:
         case Arg::Addr:
+        case Arg::ExtendedOffsetAddr:
         case Arg::Stack:
         case Arg::CallArg:
             break;
@@ -118,6 +119,11 @@ bool CCallSpecial::admitsStack(Inst&, unsigned argIndex)
     return false;
 }
 
+bool CCallSpecial::admitsExtendedOffsetAddr(Inst& inst, unsigned argIndex)
+{
+    return admitsStack(inst, argIndex);
+}
+
 void CCallSpecial::reportUsedRegisters(Inst&, const RegisterSet&)
 {
 }
@@ -134,6 +140,7 @@ CCallHelpers::Jump CCallSpecial::generate(Inst& inst, CCallHelpers& jit, Generat
         jit.call(inst.args[calleeArgOffset].gpr());
         break;
     case Arg::Addr:
+    case Arg::ExtendedOffsetAddr:
         jit.call(inst.args[calleeArgOffset].asAddress());
         break;
     default:

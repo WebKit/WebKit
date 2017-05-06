@@ -229,7 +229,7 @@ def isGF(token)
 end
 
 def isKind(token)
-    token =~ /\A((Tmp)|(Imm)|(BigImm)|(BitImm)|(BitImm64)|(SimpleAddr)|(Addr)|(Index)|(RelCond)|(ResCond)|(DoubleCond)|(StatusCond))\Z/
+    token =~ /\A((Tmp)|(Imm)|(BigImm)|(BitImm)|(BitImm64)|(SimpleAddr)|(Addr)|(ExtendedOffsetAddr)|(Index)|(RelCond)|(ResCond)|(DoubleCond)|(StatusCond))\Z/
 end
 
 def isArch(token)
@@ -303,7 +303,7 @@ class Parser
 
     def consumeKind
         result = token.string
-        parseError("Expected kind (Imm, BigImm, BitImm, BitImm64, Tmp, SimpleAddr, Addr, Index, RelCond, ResCond, DoubleCond, or StatusCond)") unless isKind(result)
+        parseError("Expected kind (Imm, BigImm, BitImm, BitImm64, Tmp, SimpleAddr, Addr, ExtendedOffsetAddr, Index, RelCond, ResCond, DoubleCond, or StatusCond)") unless isKind(result)
         advance
         result
     end
@@ -908,9 +908,13 @@ writeH("OpcodeGenerated") {
                         outp.puts "if (args[#{index}].isStack() && args[#{index}].stackSlot()->isSpill())"
                         outp.puts "OPGEN_RETURN(false);"
                     end
-                    
                     outp.puts "if (!Arg::isValidAddrForm(args[#{index}].offset()))"
                     outp.puts "OPGEN_RETURN(false);"
+                when "ExtendedOffsetAddr"
+                    if arg.role == "UA"
+                        outp.puts "if (args[#{index}].isStack() && args[#{index}].stackSlot()->isSpill())"
+                        outp.puts "OPGEN_RETURN(false);"
+                    end
                 when "Index"
                     outp.puts "if (!Arg::isValidIndexForm(args[#{index}].scale(), args[#{index}].offset(), #{arg.widthCode}))"
                     outp.puts "OPGEN_RETURN(false);"
@@ -1076,6 +1080,24 @@ writeH("OpcodeGenerated") {
     outp.puts "return false;"
     outp.puts "}"
 
+    outp.puts "bool Inst::admitsExtendedOffsetAddr(unsigned argIndex)"
+    outp.puts "{"
+    outp.puts "switch (kind.opcode) {"
+    $opcodes.values.each {
+        | opcode |
+        if opcode.custom
+            outp.puts "case Opcode::#{opcode.name}:"
+            outp.puts "OPGEN_RETURN(#{opcode.name}Custom::admitsExtendedOffsetAddr(*this, argIndex));"
+            outp.puts "break;"
+        end
+    }
+    outp.puts "default:"
+    outp.puts "break;"
+    outp.puts "}"
+    outp.puts "return false;"
+    outp.puts "}"
+
+
     outp.puts "bool Inst::isTerminal()"
     outp.puts "{"
     outp.puts "switch (kind.opcode) {"
@@ -1195,7 +1217,7 @@ writeH("OpcodeGenerated") {
                     outp.print "args[#{index}].asTrustedImm32()"
                 when "BigImm", "BitImm64"
                     outp.print "args[#{index}].asTrustedImm64()"
-                when "SimpleAddr", "Addr"
+                when "SimpleAddr", "Addr", "ExtendedOffsetAddr"
                     outp.print "args[#{index}].asAddress()"
                 when "Index"
                     outp.print "args[#{index}].asBaseIndex()"

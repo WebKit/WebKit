@@ -111,6 +111,11 @@ inline bool Inst::admitsStack(Arg& arg)
     return admitsStack(&arg - &args[0]);
 }
 
+inline bool Inst::admitsExtendedOffsetAddr(Arg& arg)
+{
+    return admitsExtendedOffsetAddr(&arg - &args[0]);
+}
+
 inline std::optional<unsigned> Inst::shouldTryAliasingDef()
 {
     if (!isX86())
