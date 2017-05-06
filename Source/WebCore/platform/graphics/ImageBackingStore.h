@@ -151,7 +151,7 @@ public:
         }
 
         if (!m_premultiplyAlpha)
-            *dest = makePremultipliedRGBA(redChannel(*dest), greenChannel(*dest), blueChannel(*dest), alphaChannel(*dest));
+            *dest = makePremultipliedRGBA(redChannel(*dest), greenChannel(*dest), blueChannel(*dest), alphaChannel(*dest), false);
 
         unsigned d = 255 - a;
 
@@ -207,7 +207,7 @@ private:
             return 0;
 
         if (m_premultiplyAlpha && a < 255)
-            return makePremultipliedRGBA(r, g, b, a);
+            return makePremultipliedRGBA(r, g, b, a, false);
 
         return makeRGBA(r, g, b, a);
     }
