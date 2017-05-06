@@ -27,7 +27,7 @@
 
 namespace JSC {
 
-enum JS_EXPORT_PRIVATE Intrinsic {
+enum Intrinsic {
     // Call intrinsics.
     NoIntrinsic,
     AbsIntrinsic,

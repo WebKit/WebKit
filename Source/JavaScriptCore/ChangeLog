@@ -1,3 +1,12 @@
+2017-05-05  Don Olmstead  <don.olmstead@am.sony.com>
+
+        [JSC] Remove export from Intrinsic
+        https://bugs.webkit.org/show_bug.cgi?id=171752
+
+        Reviewed by Alexey Proskuryakov.
+
+        * runtime/Intrinsic.h:
+
 2017-05-05  Saam Barati  <sbarati@apple.com>
 
         putDirectIndex does not properly do defineOwnProperty
