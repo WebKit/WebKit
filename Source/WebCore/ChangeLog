@@ -1,3 +1,25 @@
+2017-05-05  Zalan Bujtas  <zalan@apple.com>
+
+        Renderers being destroyed should not be added to AX's deferred list.
+        https://bugs.webkit.org/show_bug.cgi?id=171768
+        <rdar://problem/31955660>
+
+        Reviewed by Simon Fraser.
+
+        In certain cases, when custom scrollbars are present, while destroying the scrollbars' block parent, we
+          - first remove the block from the AX's deferred list (AXObjectCache::remove)
+          - destroy the render layer that owns the custom scrollbars (RenderLayer::destroyLayer) 
+          - detach the scrollbars from the parent (block) (RenderObject::removeFromParent)
+            - clean up the block's lines (RenderBlock::deleteLines)
+              - push the block back to the AX's deferred list (AXObjectCache::recomputeDeferredIsIgnored)
+        At this point no one will remove the current block from AX's deferred list.
+
+        Test: accessibility/crash-when-renderers-are-added-back-to-deferred-list.html
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::recomputeDeferredIsIgnored):
+        (WebCore::AXObjectCache::deferTextChanged):
+
 2017-05-05  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Crash in ImageFrameCache::decodedSizeChanged() after image load cancellation
