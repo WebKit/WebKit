@@ -199,7 +199,7 @@ void DatabaseProcess::fetchWebsiteData(SessionID sessionID, OptionSet<WebsiteDat
 
     if (websiteDataTypes.contains(WebsiteDataType::IndexedDBDatabases)) {
         // FIXME: Pick the right database store based on the session ID.
-        postDatabaseTask(CrossThreadTask([this, websiteDataTypes, completionHandler = WTFMove(completionHandler), path = WTFMove(path)]() mutable {
+        postDatabaseTask(CrossThreadTask([this, completionHandler = WTFMove(completionHandler), path = WTFMove(path)]() mutable {
             RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), securityOrigins = indexedDatabaseOrigins(path)] {
                 WebsiteData websiteData;
                 for (const auto& securityOrigin : securityOrigins)
