@@ -125,14 +125,9 @@ TEST(WebKit2, WebsiteDataStoreCustomPaths)
     EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:idbPath.path]);
     EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:defaultIDBPath.path]);
 
-    // FIXME (https://bugs.webkit.org/show_bug.cgi?id=171513)
-    // Checking the following 3 files on iOS is too flakey when running tests in the iOS-sim.
-    // (For the cookie file, at least, it's because we can't sync it to disk)
-#if PLATFORM(MAC)
-
-    // FIXME: We currently don't have a reliable way to force sync on newer SDKs, so we can't test this on them.
-#if (__MAC_OS_X_VERSION_MIN_REQUIRED < 101300)
     [[[webView configuration] processPool] _syncNetworkProcessCookies];
+
+#if PLATFORM(IOS) || (__MAC_OS_X_VERSION_MIN_REQUIRED < 101300)
     EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:cookieStorageFile.path]);
 
     // Note: The format of the cookie file on disk is proprietary and opaque, so this is fragile to future changes.
@@ -144,6 +139,8 @@ TEST(WebKit2, WebsiteDataStoreCustomPaths)
     auto result = [data rangeOfData:cookieKeyData.get() options:0 range:NSMakeRange(0, data.get().length)];
     EXPECT_NE((const long)result.location, NSNotFound);
 #endif
+
+#if PLATFORM(MAC)
     // FIXME: The default SQL and LocalStorage paths are being used for something, but they shouldn't be. (theses should be false, not true)
     EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:defaultSQLPath.path]);
     EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:defaultLocalStoragePath.path]);
