@@ -1366,7 +1366,6 @@ private:
     void loadEventDelayTimerFired();
 
     void pendingTasksTimerFired();
-    bool isCookieAverse() const;
 
     template<CollectionType> Ref<HTMLCollection> ensureCachedCollection();
 
