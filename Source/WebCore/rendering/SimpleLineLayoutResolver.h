@@ -98,6 +98,7 @@ public:
     RunResolver(const RenderBlockFlow&, const Layout&);
 
     const RenderBlockFlow& flow() const { return m_flowRenderer; }
+    const FlowContents& flowContents() const { return m_flowContents; }
     Iterator begin() const;
     Iterator end() const;
 
@@ -125,8 +126,6 @@ private:
 
 class LineResolver {
 public:
-    class Iterator;
-
     class Iterator {
     public:
         explicit Iterator(RunResolver::Iterator);
@@ -135,11 +134,12 @@ public:
         bool operator==(const Iterator&) const;
         bool operator!=(const Iterator&) const;
 
-        const FloatRect operator*() const;
+        FloatRect operator*() const;
+        // FIXME: Use a list to support multiple renderers per line.
+        const RenderObject& renderer() const;
 
     private:
         RunResolver::Iterator m_runIterator;
-        LayoutRect m_rect;
     };
 
     LineResolver(const RenderBlockFlow&, const Layout&);
