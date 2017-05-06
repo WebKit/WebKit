@@ -1,3 +1,15 @@
+2017-05-05  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Use memoryFootprint for MemoryUsage retrieval in Linux
+        https://bugs.webkit.org/show_bug.cgi?id=171757
+
+        Reviewed by Michael Catanzaro.
+
+        This patch leverages memoryFootprint() to retrieve physical footprint in Linux.
+
+        * wtf/linux/MemoryPressureHandlerLinux.cpp:
+        (WTF::MemoryPressureHandler::ReliefLogger::platformMemoryUsage):
+
 2017-05-05  Don Olmstead  <don.olmstead@am.sony.com>
 
         [WTF] Do not export deleted constructor in StringView

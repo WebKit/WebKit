@@ -38,6 +38,7 @@
 #include <unistd.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
+#include <wtf/MemoryFootprint.h>
 #include <wtf/linux/CurrentProcessMemoryStatus.h>
 #include <wtf/text/WTFString.h>
 
@@ -311,7 +312,11 @@ void MemoryPressureHandler::platformReleaseMemory(Critical)
 
 std::optional<MemoryPressureHandler::ReliefLogger::MemoryUsage> MemoryPressureHandler::ReliefLogger::platformMemoryUsage()
 {
-    return MemoryUsage {processMemoryUsage(), 0};
+    size_t physical = 0;
+    auto footprint = memoryFootprint();
+    if (footprint)
+        physical = footprint.value();
+    return MemoryUsage {processMemoryUsage(), physical};
 }
 
 void MemoryPressureHandler::setMemoryPressureMonitorHandle(int fd)
