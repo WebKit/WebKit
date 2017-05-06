@@ -697,7 +697,7 @@ private:
 
 class StringView::GraphemeClusters::Iterator {
 public:
-    WTF_EXPORT_PRIVATE Iterator() = delete;
+    Iterator() = delete;
     WTF_EXPORT_PRIVATE Iterator(const StringView&, unsigned index);
     WTF_EXPORT_PRIVATE ~Iterator();
 
