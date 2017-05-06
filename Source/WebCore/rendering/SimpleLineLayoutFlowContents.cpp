@@ -68,14 +68,15 @@ FlowContents::FlowContents(const RenderBlockFlow& flow)
 
 unsigned FlowContents::segmentIndexForRunSlow(unsigned start, unsigned end) const
 {
-    auto it = std::lower_bound(m_segments.begin(), m_segments.end(), start, [](const Segment& segment, unsigned start) {
-        return segment.end <= start;
+    auto isEmptyRange = start == end;
+    auto it = std::lower_bound(m_segments.begin(), m_segments.end(), start, [isEmptyRange](const Segment& segment, unsigned start) {
+        // FIXME: This always find the first empty run (.vs subsequent <br> elements)
+        return (isEmptyRange && segment.start == segment.end) ? segment.start < start : segment.end <= start;
     });
     ASSERT(it != m_segments.end());
-    ASSERT_UNUSED(end, end <= it->end);
-    auto index = it - m_segments.begin();
-    m_lastSegmentIndex = index;
-    return index;
+    ASSERT(end <= it->end);
+    m_lastSegmentIndex = it - m_segments.begin();
+    return m_lastSegmentIndex;
 }
 
 }
