@@ -276,11 +276,11 @@ body[dir=rtl] .details-section > .content > .group > .row.simple > .value {
 }
 
 body[dir=ltr] .details-section > .content > .group > .row.simple > .value .go-to-arrow {
-    margin-right: var(--details-section-content-group-row-simple-value-go-to-margin-start);
+    margin-left: var(--details-section-content-group-row-simple-value-go-to-margin-start);
 }
 
 body[dir=rtl] .details-section > .content > .group > .row.simple > .value .go-to-arrow {
-    margin-left: var(--details-section-content-group-row-simple-value-go-to-margin-start);
+    margin-right: var(--details-section-content-group-row-simple-value-go-to-margin-start);
 }
 
 .details-section > .content > .group > .row.simple.data > .value {

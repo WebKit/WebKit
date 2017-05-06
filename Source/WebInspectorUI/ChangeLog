@@ -1,3 +1,15 @@
+2017-05-05  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        REGRESSION (r212998): Web Inspector: bad spacing of go-to arrow for HTTP POST request data
+        https://bugs.webkit.org/show_bug.cgi?id=171674
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/DetailsSection.css:
+        (body[dir=ltr] .details-section > .content > .group > .row.simple > .value .go-to-arrow):
+        (body[dir=rtl] .details-section > .content > .group > .row.simple > .value .go-to-arrow):
+        Swap margin-left and margin-right. This regressed when RTL support was added.
+
 2017-05-03  Devin Rousso  <webkit@devinrousso.com>
 
         REGRESSION (r215630): Web Inspector: Option-Click on URL in Styles sidebar does not work
