@@ -154,12 +154,26 @@ RetainPtr<NSImage> createDragImageIconForCachedImageFilename(const String& filen
 }
 
 
-const CGFloat linkImagePadding = 10; // Keep in sync with DragController::LinkDragBorderInset.
+const CGFloat linkImagePadding = 10;
 const CGFloat linkImageDomainBaselineToTitleBaseline = 18;
 const CGFloat linkImageCornerRadius = 5;
 const CGFloat linkImageMaximumWidth = 400;
 const CGFloat linkImageFontSize = 11;
 const CFIndex linkImageTitleMaximumLineCount = 2;
+const int linkImageDragCornerOutsetX = 6;
+const int linkImageDragCornerOutsetY = 10;
+
+IntPoint dragOffsetForLinkDragImage(DragImageRef dragImage)
+{
+    IntSize size = dragImageSize(dragImage);
+    return { linkImageDragCornerOutsetX, size.height() + linkImageDragCornerOutsetY };
+}
+
+FloatPoint anchorPointForLinkDragImage(DragImageRef dragImage)
+{
+    IntSize size = dragImageSize(dragImage);
+    return { -static_cast<float>(linkImageDragCornerOutsetX) / size.width(), -static_cast<float>(linkImageDragCornerOutsetY) / size.height() };
+}
 
 struct LinkImageLayout {
     LinkImageLayout(URL&, const String& title);

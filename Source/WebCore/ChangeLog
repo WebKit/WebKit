@@ -1,3 +1,40 @@
+2017-05-05  Timothy Horton  <timothy_horton@apple.com>
+
+        [Mac] Adjust cursor position for dragged link (and stop it from moving based on how fast you are dragging)
+        https://bugs.webkit.org/show_bug.cgi?id=171764
+        <rdar://problem/32005865>
+
+        Reviewed by Simon Fraser.
+
+        * page/DragController.cpp:
+        (WebCore::DragController::startDrag):
+        Compute dragImageAnchorPoint only if it is needed.
+        Don't compute a random unused imageRect.
+        Factor link drag image offset computation out into DragImage functions
+        for platforms to override.
+
+        Pass dragOrigin (the mouseDown point), not mouseDraggedPoint, to
+        doSystemDrag, just like all the other drag types. This plus the
+        WebKit2 change makes the link stable vs. the cursor, instead of
+        positioned based on how fast you move after the mouse down.
+
+        * page/DragController.h:
+        * page/gtk/DragControllerGtk.cpp:
+        * page/mac/DragControllerMac.mm:
+        * page/win/DragControllerWin.cpp:
+        Move LinkDragBorderInset into DragImage, and share between the non-Mac platforms.
+
+        * platform/DragImage.cpp:
+        (WebCore::dragOffsetForLinkDragImage):
+        (WebCore::anchorPointForLinkDragImage):
+        * platform/DragImage.h:
+        As previously mentioned, move the computation of drag image offset here.
+
+        * platform/mac/DragImageMac.mm:
+        (WebCore::dragOffsetForLinkDragImage):
+        (WebCore::anchorPointForLinkDragImage):
+        Put the new drag image to the bottom right of the cursor.
+
 2017-05-05  Dean Jackson  <dino@apple.com>
 
         ...and now the GTK and Windows builds.

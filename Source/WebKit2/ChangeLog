@@ -1,3 +1,21 @@
+2017-05-05  Timothy Horton  <timothy_horton@apple.com>
+
+        [Mac] Adjust cursor position for dragged link (and stop it from moving based on how fast you are dragging)
+        https://bugs.webkit.org/show_bug.cgi?id=171764
+        <rdar://problem/32005865>
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::dragImageForView):
+        Always use the last mouse down event to originate the drag; this was a 2004 hack
+        to work around a seemingly-fixed macOS bug that somehow propagated into WebKit2.
+        With WebKit2, this would cause trouble because currentEvent could move on
+        during the bounce to the Web Content process and back, causing the delta between
+        clientPoint and the mouse point to be dependent on timing, and thus causing the
+        link to sit at timing-dependent distance from the cursor, instead of exactly
+        where dragOffsetForLinkDragImage placed it.
+
 2017-05-05  Brady Eidson  <beidson@apple.com>
 
         API test WebKit2.WebsiteDataStoreCustomPaths is failing on ios-simulator.

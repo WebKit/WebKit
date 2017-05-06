@@ -226,6 +226,22 @@ DragImageRef createDragImageForLink(Element&, URL&, const String&, FontRendering
 }
 #endif
 
+#if !PLATFORM(MAC)
+const int linkDragBorderInset = 2;
+
+IntPoint dragOffsetForLinkDragImage(DragImageRef dragImage)
+{
+    IntSize size = dragImageSize(dragImage);
+    return { -size.width() / 2, -linkDragBorderInset };
+}
+
+FloatPoint anchorPointForLinkDragImage(DragImageRef dragImage)
+{
+    IntSize size = dragImageSize(dragImage);
+    return { 0.5, static_cast<float>((size.height() - linkDragBorderInset) / size.height()) };
+}
+#endif
+
 DragImage::DragImage()
     : m_dragImageRef { nullptr }
 {

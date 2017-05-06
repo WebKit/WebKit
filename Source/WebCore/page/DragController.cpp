@@ -864,7 +864,6 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
     m_sourceDragOperation = srcOp;
 
     DragImage dragImage;
-    FloatPoint dragImageAnchorPoint;
     IntPoint dragLoc(0, 0);
     IntPoint dragImageOffset(0, 0);
 
@@ -946,7 +945,6 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
             if (textIndicator.contentImage)
                 dragImage.setIndicatorData(textIndicator);
             dragLoc = dragLocForSelectionDrag(src);
-            dragImageAnchorPoint = dragImageAnchorPointForSelectionDrag(src, mouseDraggedPoint);
             m_dragOffset = IntPoint(dragOrigin.x() - dragLoc.x(), dragOrigin.y() - dragLoc.y());
         }
 
@@ -959,8 +957,8 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
         }
 
         DragItem dragItem;
+        dragItem.imageAnchorPoint = dragImageAnchorPointForSelectionDrag(src, mouseDraggedPoint);
         dragItem.image = WTFMove(dragImage);
-        dragItem.imageAnchorPoint = dragImageAnchorPoint;
         dragItem.data = WTFMove(pasteboardWriterData);
 
         beginDrag(WTFMove(dragItem), src, dragOrigin, mouseDraggedPoint, dataTransfer, DragSourceActionSelection);
@@ -986,11 +984,9 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
 
         m_client.willPerformDragSourceAction(DragSourceActionImage, dragOrigin, dataTransfer);
 
-        if (!dragImage) {
-            IntRect imageRect = hitTestResult.imageRect();
-            imageRect.setLocation(m_page.mainFrame().view()->rootViewToContents(src.view()->contentsToRootView(imageRect.location())));
+        if (!dragImage)
             doImageDrag(element, dragOrigin, hitTestResult.imageRect(), dataTransfer, src, m_dragOffset);
-        } else {
+        else {
             // DHTML defined drag image
             doSystemDrag(WTFMove(dragImage), dragLoc, dragOrigin, { }, dataTransfer, src, DragSourceActionImage);
         }
@@ -1035,24 +1031,22 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
             TextIndicatorData textIndicator;
             dragImage = DragImage { createDragImageForLink(element, linkURL, textContentWithSimplifiedWhiteSpace, textIndicator, src.settings().fontRenderingMode(), m_page.deviceScaleFactor()) };
             if (dragImage) {
-                IntSize size = dragImageSize(dragImage.get());
-                m_dragOffset = IntPoint(-size.width() / 2, -LinkDragBorderInset);
-                dragLoc = IntPoint(mouseDraggedPoint.x() + m_dragOffset.x(), mouseDraggedPoint.y() + m_dragOffset.y());
+                m_dragOffset = dragOffsetForLinkDragImage(dragImage.get());
+                dragLoc = IntPoint(dragOrigin.x() + m_dragOffset.x(), dragOrigin.y() + m_dragOffset.y());
                 dragImage = DragImage { platformAdjustDragImageForDeviceScaleFactor(dragImage.get(), m_page.deviceScaleFactor()) };
                 if (textIndicator.contentImage)
                     dragImage.setIndicatorData(textIndicator);
-                dragImageAnchorPoint = FloatPoint { 0.5, static_cast<float>((size.height() - LinkDragBorderInset) / size.height()) };
             }
         }
 
         if (mustUseLegacyDragClient) {
-            doSystemDrag(WTFMove(dragImage), dragLoc, mouseDraggedPoint, { }, dataTransfer, src, DragSourceActionLink);
+            doSystemDrag(WTFMove(dragImage), dragLoc, dragOrigin, { }, dataTransfer, src, DragSourceActionLink);
             return true;
         }
 
         DragItem dragItem;
+        dragItem.imageAnchorPoint = dragImage ? anchorPointForLinkDragImage(dragImage.get()) : FloatPoint();
         dragItem.image = WTFMove(dragImage);
-        dragItem.imageAnchorPoint = dragImageAnchorPoint;
         dragItem.data = WTFMove(pasteboardWriterData);
 
         beginDrag(WTFMove(dragItem), src, dragOrigin, mouseDraggedPoint, dataTransfer, DragSourceActionSelection);

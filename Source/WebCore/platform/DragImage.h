@@ -92,6 +92,9 @@ DragImageRef createDragImageForImage(Frame&, Node&, IntRect& imageRect, IntRect&
 DragImageRef createDragImageForLink(Element&, URL&, const String& label, TextIndicatorData&, FontRenderingMode, float deviceScaleFactor);
 void deleteDragImage(DragImageRef);
 
+IntPoint dragOffsetForLinkDragImage(DragImageRef);
+FloatPoint anchorPointForLinkDragImage(DragImageRef);
+
 class DragImage final {
 public:
     DragImage();

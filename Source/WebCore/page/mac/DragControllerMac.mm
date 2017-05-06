@@ -50,8 +50,6 @@
 
 namespace WebCore {
 
-const int DragController::LinkDragBorderInset = -10;
-
 const int DragController::MaxOriginalImageArea = 1500 * 1500;
 const int DragController::DragIconRightInset = 7;
 const int DragController::DragIconBottomInset = 3;
