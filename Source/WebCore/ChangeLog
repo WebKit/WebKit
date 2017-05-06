@@ -1,5 +1,12 @@
 2017-05-05  Dean Jackson  <dino@apple.com>
 
+        Try to fix iOS build.
+
+        * platform/ios/WidgetIOS.mm:
+        (WebCore::Widget::paint):
+
+2017-05-05  Dean Jackson  <dino@apple.com>
+
         Restrict SVG filters to accessible security origins
         https://bugs.webkit.org/show_bug.cgi?id=118689
         <rdar://problem/27362159>
