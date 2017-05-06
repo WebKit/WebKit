@@ -27,14 +27,14 @@
 #include "WebPage.h"
 
 #include "ArgumentCoders.h"
+#include "Decoder.h"
 #include "HandleMessage.h"
-#include "MessageDecoder.h"
 #include "WebPageMessages.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
-void WebPage::didReceiveMessage(IPC::Connection* connection, IPC::Decoder& decoder)
+void WebPage::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     if (decoder.messageName() == Messages::WebPage::LoadURL::name()) {
         IPC::handleMessage<Messages::WebPage::LoadURL>(decoder, this, &WebPage::loadURL);

@@ -30,6 +30,7 @@
 
 #include "ArgumentCoders.h"
 #include "Connection.h"
+#include "Decoder.h"
 #if ENABLE(DEPRECATED_FEATURE) || ENABLE(EXPERIMENTAL_FEATURE)
 #include "DummyType.h"
 #endif
@@ -37,7 +38,6 @@
 #if PLATFORM(MAC)
 #include "MachPort.h"
 #endif
-#include "Decoder.h"
 #include "Plugin.h"
 #include "WebCoreArgumentCoders.h"
 #if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION && SOME_OTHER_MESSAGE_CONDITION)) || (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION || SOME_OTHER_MESSAGE_CONDITION))
@@ -59,8 +59,8 @@ namespace Messages {
 
 namespace WebPage {
 
-GetPluginProcessConnection::DelayedReply::DelayedReply(PassRefPtr<IPC::Connection> connection, std::unique_ptr<IPC::Encoder> encoder)
-    : m_connection(connection)
+GetPluginProcessConnection::DelayedReply::DelayedReply(Ref<IPC::Connection>&& connection, std::unique_ptr<IPC::Encoder> encoder)
+    : m_connection(WTFMove(connection))
     , m_encoder(WTFMove(encoder))
 {
 }
@@ -79,8 +79,8 @@ bool GetPluginProcessConnection::DelayedReply::send(const IPC::Connection::Handl
     return _result;
 }
 
-TestMultipleAttributes::DelayedReply::DelayedReply(PassRefPtr<IPC::Connection> connection, std::unique_ptr<IPC::Encoder> encoder)
-    : m_connection(connection)
+TestMultipleAttributes::DelayedReply::DelayedReply(Ref<IPC::Connection>&& connection, std::unique_ptr<IPC::Encoder> encoder)
+    : m_connection(WTFMove(connection))
     , m_encoder(WTFMove(encoder))
 {
 }
@@ -104,7 +104,7 @@ bool TestMultipleAttributes::DelayedReply::send()
 
 namespace WebKit {
 
-void WebPage::didReceiveMessage(IPC::Connection* connection, IPC::Decoder& decoder)
+void WebPage::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     if (decoder.messageName() == Messages::WebPage::LoadURL::name()) {
         IPC::handleMessage<Messages::WebPage::LoadURL>(decoder, this, &WebPage::loadURL);
@@ -189,7 +189,7 @@ void WebPage::didReceiveMessage(IPC::Connection* connection, IPC::Decoder& decod
     ASSERT_NOT_REACHED();
 }
 
-void WebPage::didReceiveSyncMessage(IPC::Connection* connection, IPC::Decoder& decoder, std::unique_ptr<IPC::Encoder>& replyEncoder)
+void WebPage::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, std::unique_ptr<IPC::Encoder>& replyEncoder)
 {
     if (decoder.messageName() == Messages::WebPage::CreatePlugin::name()) {
         IPC::handleMessage<Messages::WebPage::CreatePlugin>(decoder, *replyEncoder, this, &WebPage::createPlugin);

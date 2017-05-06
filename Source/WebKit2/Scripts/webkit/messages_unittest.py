@@ -21,6 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os
+import re
 import sys
 import unittest
 from StringIO import StringIO
@@ -29,38 +30,24 @@ sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 from webkit import messages
 from webkit import parser
 
-print os.getcwd()
-
 script_directory = os.path.dirname(os.path.realpath(__file__))
 
-with open(os.path.join(script_directory, 'test-messages.in')) as file:
-    _messages_file_contents = file.read()
+with open(os.path.join(script_directory, 'test-messages.in')) as in_file:
+    _messages_file_contents = in_file.read()
 
-with open(os.path.join(script_directory, 'test-legacy-messages.in')) as file:
-    _legacy_messages_file_contents = file.read()
+with open(os.path.join(script_directory, 'test-legacy-messages.in')) as in_file:
+    _legacy_messages_file_contents = in_file.read()
 
-with open(os.path.join(script_directory, 'test-superclass-messages.in')) as file:
-    _superclass_messages_file_contents = file.read()
+with open(os.path.join(script_directory, 'test-superclass-messages.in')) as in_file:
+    _superclass_messages_file_contents = in_file.read()
 
+_expected_receiver_header_file_name = 'Messages-expected.h'
+_expected_legacy_receiver_header_file_name = 'LegacyMessages-expected.h'
+_expected_superclass_receiver_header_file_name = 'MessagesSuperclass-expected.h'
 
-with open(os.path.join(script_directory, 'Messages-expected.h')) as file:
-    _expected_receiver_header = file.read()
-
-with open(os.path.join(script_directory, 'LegacyMessages-expected.h')) as file:
-    _expected_legacy_receiver_header = file.read()
-
-with open(os.path.join(script_directory, 'MessagesSuperclass-expected.h')) as file:
-    _expected_superclass_receiver_header = file.read()
-
-
-with open(os.path.join(script_directory, 'MessageReceiver-expected.cpp')) as file:
-    _expected_receiver_implementation = file.read()
-
-with open(os.path.join(script_directory, 'LegacyMessageReceiver-expected.cpp')) as file:
-    _expected_legacy_receiver_implementation = file.read()
-
-with open(os.path.join(script_directory, 'MessageReceiverSuperclass-expected.cpp')) as file:
-    _expected_superclass_receiver_implementation = file.read()
+_expected_receiver_implementation_file_name = 'MessageReceiver-expected.cpp'
+_expected_legacy_receiver_implementation_file_name = 'LegacyMessageReceiver-expected.cpp'
+_expected_superclass_receiver_implementation_file_name = 'MessageReceiverSuperclass-expected.cpp'
 
 _expected_results = {
     'name': 'WebPage',
@@ -280,7 +267,7 @@ class ParsingTest(MessagesTest):
                     self.assertTrue(parameter.has_attribute(attribute))
             else:
                 self.assertEquals(parameter.attributes, frozenset())
-        if message.reply_parameters != None:
+        if message.reply_parameters is not None:
             for index, parameter in enumerate(message.reply_parameters):
                 self.assertEquals(parameter.type, expected_message['reply_parameters'][index][0])
                 self.assertEquals(parameter.name, expected_message['reply_parameters'][index][1])
@@ -310,38 +297,49 @@ class ParsingTest(MessagesTest):
 
 
 class GeneratedFileContentsTest(unittest.TestCase):
-    def assertGeneratedFileContentsEqual(self, first, second):
-        first_list = first.split('\n')
-        second_list = second.split('\n')
+    def assertGeneratedFileContentsEqual(self, actual_file_contents, expected_file_name):
+        if reset_results:
+            with open(os.path.join(script_directory, expected_file_name), mode='w') as out_file:
+                out_file.write(actual_file_contents)
+            return
 
-        for index, first_line in enumerate(first_list):
-            self.assertEquals(first_line, second_list[index])
+        with open(os.path.join(script_directory, expected_file_name), mode='r') as in_file:
+            expected_file_contents = in_file.read()
+        actual_line_list = actual_file_contents.splitlines(False)
+        expected_line_list = expected_file_contents.splitlines(False)
 
-        self.assertEquals(len(first_list), len(second_list))
+        for index, actual_line in enumerate(actual_line_list):
+            self.assertEquals(actual_line, expected_line_list[index])
+
+        self.assertEquals(len(actual_line_list), len(expected_line_list))
+
+    def assertHeaderEqual(self, input_messages_file_contents, expected_file_name):
+        actual_file_contents = messages.generate_messages_header(StringIO(input_messages_file_contents))
+        self.assertGeneratedFileContentsEqual(actual_file_contents, expected_file_name)
+
+    def assertImplementationEqual(self, input_messages_file_contents, expected_file_name):
+        actual_file_contents = messages.generate_message_handler(StringIO(input_messages_file_contents))
+        self.assertGeneratedFileContentsEqual(actual_file_contents, expected_file_name)
 
 
 class HeaderTest(GeneratedFileContentsTest):
-    def test_header(self):
-        file_contents = messages.generate_messages_header(StringIO(_messages_file_contents))
-        self.assertGeneratedFileContentsEqual(file_contents, _expected_receiver_header)
-
-        legacy_file_contents = messages.generate_messages_header(StringIO(_legacy_messages_file_contents))
-        self.assertGeneratedFileContentsEqual(legacy_file_contents, _expected_legacy_receiver_header)
-
-        superclass_file_contents = messages.generate_messages_header(StringIO(_superclass_messages_file_contents))
-        self.assertGeneratedFileContentsEqual(superclass_file_contents, _expected_superclass_receiver_header)
+    def test_receiver_headers(self):
+        self.assertHeaderEqual(_messages_file_contents,
+                               _expected_receiver_header_file_name)
+        self.assertHeaderEqual(_legacy_messages_file_contents,
+                               _expected_legacy_receiver_header_file_name)
+        self.assertHeaderEqual(_superclass_messages_file_contents,
+                               _expected_superclass_receiver_header_file_name)
 
 
 class ReceiverImplementationTest(GeneratedFileContentsTest):
-    def test_receiver_implementation(self):
-        file_contents = messages.generate_message_handler(StringIO(_messages_file_contents))
-        self.assertGeneratedFileContentsEqual(file_contents, _expected_receiver_implementation)
-
-        legacy_file_contents = messages.generate_message_handler(StringIO(_legacy_messages_file_contents))
-        self.assertGeneratedFileContentsEqual(legacy_file_contents, _expected_legacy_receiver_implementation)
-
-        superclass_file_contents = messages.generate_message_handler(StringIO(_superclass_messages_file_contents))
-        self.assertGeneratedFileContentsEqual(superclass_file_contents, _expected_superclass_receiver_implementation)
+    def test_receiver_implementations(self):
+        self.assertImplementationEqual(_messages_file_contents,
+                                       _expected_receiver_implementation_file_name)
+        self.assertImplementationEqual(_legacy_messages_file_contents,
+                                       _expected_legacy_receiver_implementation_file_name)
+        self.assertImplementationEqual(_superclass_messages_file_contents,
+                                       _expected_superclass_receiver_implementation_file_name)
 
 
 class UnsupportedPrecompilerDirectiveTest(unittest.TestCase):
@@ -354,5 +352,38 @@ class UnsupportedPrecompilerDirectiveTest(unittest.TestCase):
             messages.generate_message_handler(StringIO("asd\n#elif bla\nfoo"))
 
 
+def add_reset_results_to_unittest_help():
+    script_name = os.path.basename(__file__)
+    reset_results_help = '''
+Custom Options:
+  -r, --reset-results  Reset expected results for {0}
+'''.format(script_name)
+
+    options_regex = re.compile('^Usage:')
+    lines = unittest.TestProgram.USAGE.splitlines(True)
+    index = 0
+    for index, line in enumerate(lines):
+        if options_regex.match(line) and index + 1 < len(lines):
+            lines.insert(index + 1, reset_results_help)
+            break
+
+    if index == (len(lines) - 1):
+        lines.append(reset_results_help)
+
+    unittest.TestProgram.USAGE = ''.join(lines)
+
+
+def parse_sys_argv():
+    global reset_results
+    for index, arg in enumerate(sys.argv[1:]):
+        if arg in ('-r', '--r', '--reset', '--reset-results') or '--reset-results'.startswith(arg):
+            reset_results = True
+            del sys.argv[index + 1]
+            break
+
+
 if __name__ == '__main__':
+    reset_results = False
+    add_reset_results_to_unittest_help()
+    parse_sys_argv()
     unittest.main()

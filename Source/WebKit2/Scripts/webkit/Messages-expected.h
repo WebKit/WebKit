@@ -22,16 +22,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebPageMessages_h
-#define WebPageMessages_h
+#pragma once
 
 #if (ENABLE(WEBKIT2) && (NESTED_MASTER_CONDITION || MASTER_OR && MASTER_AND))
 
-#include "Arguments.h"
+#include "ArgumentCoders.h"
 #include "Connection.h"
-#include "Encoder.h"
 #include "Plugin.h"
-#include "StringReference.h"
 #include <WebCore/GraphicsLayer.h>
 #include <WebCore/KeyboardEvent.h>
 #include <WebCore/PluginData.h>
@@ -42,9 +39,9 @@
 #include <wtf/text/WTFString.h>
 
 namespace IPC {
+    class MachPort;
     class Connection;
     class DummyType;
-    class MachPort;
 }
 
 namespace WTF {
@@ -52,8 +49,8 @@ namespace WTF {
 }
 
 namespace WebKit {
-    struct WebPreferencesStore;
     class WebTouchEvent;
+    class WebPreferencesStore;
 }
 
 namespace Messages {
@@ -66,7 +63,7 @@ static inline IPC::StringReference messageReceiverName()
 
 class LoadURL {
 public:
-    typedef std::tuple<String> DecodeType;
+    typedef std::tuple<const String&> Arguments;
 
     static IPC::StringReference receiverName() { return messageReceiverName(); }
     static IPC::StringReference name() { return IPC::StringReference("LoadURL"); }
@@ -77,19 +74,19 @@ public:
     {
     }
 
-    const std::tuple<const String&>& arguments() const
+    const Arguments& arguments() const
     {
         return m_arguments;
     }
 
 private:
-    std::tuple<const String&> m_arguments;
+    Arguments m_arguments;
 };
 
 #if ENABLE(TOUCH_EVENTS)
 class LoadSomething {
 public:
-    typedef std::tuple<String> DecodeType;
+    typedef std::tuple<const String&> Arguments;
 
     static IPC::StringReference receiverName() { return messageReceiverName(); }
     static IPC::StringReference name() { return IPC::StringReference("LoadSomething"); }
@@ -100,20 +97,20 @@ public:
     {
     }
 
-    const std::tuple<const String&>& arguments() const
+    const Arguments& arguments() const
     {
         return m_arguments;
     }
 
 private:
-    std::tuple<const String&> m_arguments;
+    Arguments m_arguments;
 };
 #endif
 
 #if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION || SOME_OTHER_MESSAGE_CONDITION))
 class TouchEvent {
 public:
-    typedef std::tuple<WebKit::WebTouchEvent> DecodeType;
+    typedef std::tuple<const WebKit::WebTouchEvent&> Arguments;
 
     static IPC::StringReference receiverName() { return messageReceiverName(); }
     static IPC::StringReference name() { return IPC::StringReference("TouchEvent"); }
@@ -124,20 +121,20 @@ public:
     {
     }
 
-    const std::tuple<const WebKit::WebTouchEvent&>& arguments() const
+    const Arguments& arguments() const
     {
         return m_arguments;
     }
 
 private:
-    std::tuple<const WebKit::WebTouchEvent&> m_arguments;
+    Arguments m_arguments;
 };
 #endif
 
 #if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION && SOME_OTHER_MESSAGE_CONDITION))
 class AddEvent {
 public:
-    typedef std::tuple<WebKit::WebTouchEvent> DecodeType;
+    typedef std::tuple<const WebKit::WebTouchEvent&> Arguments;
 
     static IPC::StringReference receiverName() { return messageReceiverName(); }
     static IPC::StringReference name() { return IPC::StringReference("AddEvent"); }
@@ -148,20 +145,20 @@ public:
     {
     }
 
-    const std::tuple<const WebKit::WebTouchEvent&>& arguments() const
+    const Arguments& arguments() const
     {
         return m_arguments;
     }
 
 private:
-    std::tuple<const WebKit::WebTouchEvent&> m_arguments;
+    Arguments m_arguments;
 };
 #endif
 
 #if ENABLE(TOUCH_EVENTS)
 class LoadSomethingElse {
 public:
-    typedef std::tuple<String> DecodeType;
+    typedef std::tuple<const String&> Arguments;
 
     static IPC::StringReference receiverName() { return messageReceiverName(); }
     static IPC::StringReference name() { return IPC::StringReference("LoadSomethingElse"); }
@@ -172,19 +169,19 @@ public:
     {
     }
 
-    const std::tuple<const String&>& arguments() const
+    const Arguments& arguments() const
     {
         return m_arguments;
     }
 
 private:
-    std::tuple<const String&> m_arguments;
+    Arguments m_arguments;
 };
 #endif
 
 class DidReceivePolicyDecision {
 public:
-    typedef std::tuple<uint64_t, uint64_t, uint32_t> DecodeType;
+    typedef std::tuple<uint64_t, uint64_t, uint32_t> Arguments;
 
     static IPC::StringReference receiverName() { return messageReceiverName(); }
     static IPC::StringReference name() { return IPC::StringReference("DidReceivePolicyDecision"); }
@@ -195,35 +192,35 @@ public:
     {
     }
 
-    const std::tuple<uint64_t, uint64_t, uint32_t>& arguments() const
+    const Arguments& arguments() const
     {
         return m_arguments;
     }
 
 private:
-    std::tuple<uint64_t, uint64_t, uint32_t> m_arguments;
+    Arguments m_arguments;
 };
 
 class Close {
 public:
-    typedef std::tuple<> DecodeType;
+    typedef std::tuple<> Arguments;
 
     static IPC::StringReference receiverName() { return messageReceiverName(); }
     static IPC::StringReference name() { return IPC::StringReference("Close"); }
     static const bool isSync = false;
 
-    const std::tuple<>& arguments() const
+    const Arguments& arguments() const
     {
         return m_arguments;
     }
 
 private:
-    std::tuple<> m_arguments;
+    Arguments m_arguments;
 };
 
 class PreferencesDidChange {
 public:
-    typedef std::tuple<WebKit::WebPreferencesStore> DecodeType;
+    typedef std::tuple<const WebKit::WebPreferencesStore&> Arguments;
 
     static IPC::StringReference receiverName() { return messageReceiverName(); }
     static IPC::StringReference name() { return IPC::StringReference("PreferencesDidChange"); }
@@ -234,18 +231,18 @@ public:
     {
     }
 
-    const std::tuple<const WebKit::WebPreferencesStore&>& arguments() const
+    const Arguments& arguments() const
     {
         return m_arguments;
     }
 
 private:
-    std::tuple<const WebKit::WebPreferencesStore&> m_arguments;
+    Arguments m_arguments;
 };
 
 class SendDoubleAndFloat {
 public:
-    typedef std::tuple<double, float> DecodeType;
+    typedef std::tuple<double, float> Arguments;
 
     static IPC::StringReference receiverName() { return messageReceiverName(); }
     static IPC::StringReference name() { return IPC::StringReference("SendDoubleAndFloat"); }
@@ -256,18 +253,18 @@ public:
     {
     }
 
-    const std::tuple<double, float>& arguments() const
+    const Arguments& arguments() const
     {
         return m_arguments;
     }
 
 private:
-    std::tuple<double, float> m_arguments;
+    Arguments m_arguments;
 };
 
 class SendInts {
 public:
-    typedef std::tuple<Vector<uint64_t>, Vector<Vector<uint64_t>>> DecodeType;
+    typedef std::tuple<const Vector<uint64_t>&, const Vector<Vector<uint64_t>>&> Arguments;
 
     static IPC::StringReference receiverName() { return messageReceiverName(); }
     static IPC::StringReference name() { return IPC::StringReference("SendInts"); }
@@ -278,94 +275,94 @@ public:
     {
     }
 
-    const std::tuple<const Vector<uint64_t>&, const Vector<Vector<uint64_t>>&>& arguments() const
+    const Arguments& arguments() const
     {
         return m_arguments;
     }
 
 private:
-    std::tuple<const Vector<uint64_t>&, const Vector<Vector<uint64_t>>&> m_arguments;
+    Arguments m_arguments;
 };
 
 class CreatePlugin {
 public:
-    typedef std::tuple<uint64_t, WebKit::Plugin::Parameters> DecodeType;
+    typedef std::tuple<uint64_t, const WebKit::Plugin::Parameters&> Arguments;
 
     static IPC::StringReference receiverName() { return messageReceiverName(); }
     static IPC::StringReference name() { return IPC::StringReference("CreatePlugin"); }
     static const bool isSync = true;
 
-    typedef IPC::Arguments<bool&> Reply;
+    typedef std::tuple<bool&> Reply;
     CreatePlugin(uint64_t pluginInstanceID, const WebKit::Plugin::Parameters& parameters)
         : m_arguments(pluginInstanceID, parameters)
     {
     }
 
-    const std::tuple<uint64_t, const WebKit::Plugin::Parameters&>& arguments() const
+    const Arguments& arguments() const
     {
         return m_arguments;
     }
 
 private:
-    std::tuple<uint64_t, const WebKit::Plugin::Parameters&> m_arguments;
+    Arguments m_arguments;
 };
 
 class RunJavaScriptAlert {
 public:
-    typedef std::tuple<uint64_t, String> DecodeType;
+    typedef std::tuple<uint64_t, const String&> Arguments;
 
     static IPC::StringReference receiverName() { return messageReceiverName(); }
     static IPC::StringReference name() { return IPC::StringReference("RunJavaScriptAlert"); }
     static const bool isSync = true;
 
-    typedef IPC::Arguments<> Reply;
+    typedef std::tuple<> Reply;
     RunJavaScriptAlert(uint64_t frameID, const String& message)
         : m_arguments(frameID, message)
     {
     }
 
-    const std::tuple<uint64_t, const String&>& arguments() const
+    const Arguments& arguments() const
     {
         return m_arguments;
     }
 
 private:
-    std::tuple<uint64_t, const String&> m_arguments;
+    Arguments m_arguments;
 };
 
 class GetPlugins {
 public:
-    typedef std::tuple<bool> DecodeType;
+    typedef std::tuple<bool> Arguments;
 
     static IPC::StringReference receiverName() { return messageReceiverName(); }
     static IPC::StringReference name() { return IPC::StringReference("GetPlugins"); }
     static const bool isSync = true;
 
-    typedef IPC::Arguments<Vector<WebCore::PluginInfo>&> Reply;
+    typedef std::tuple<Vector<WebCore::PluginInfo>&> Reply;
     explicit GetPlugins(bool refresh)
         : m_arguments(refresh)
     {
     }
 
-    const std::tuple<bool>& arguments() const
+    const Arguments& arguments() const
     {
         return m_arguments;
     }
 
 private:
-    std::tuple<bool> m_arguments;
+    Arguments m_arguments;
 };
 
 class GetPluginProcessConnection {
 public:
-    typedef std::tuple<String> DecodeType;
+    typedef std::tuple<const String&> Arguments;
 
     static IPC::StringReference receiverName() { return messageReceiverName(); }
     static IPC::StringReference name() { return IPC::StringReference("GetPluginProcessConnection"); }
     static const bool isSync = true;
 
     struct DelayedReply : public ThreadSafeRefCounted<DelayedReply> {
-        DelayedReply(PassRefPtr<IPC::Connection>, std::unique_ptr<IPC::Encoder>);
+        DelayedReply(Ref<IPC::Connection>&&, std::unique_ptr<IPC::Encoder>);
         ~DelayedReply();
 
         bool send(const IPC::Connection::Handle& connectionHandle);
@@ -375,31 +372,31 @@ public:
         std::unique_ptr<IPC::Encoder> m_encoder;
     };
 
-    typedef IPC::Arguments<IPC::Connection::Handle&> Reply;
+    typedef std::tuple<IPC::Connection::Handle&> Reply;
     explicit GetPluginProcessConnection(const String& pluginPath)
         : m_arguments(pluginPath)
     {
     }
 
-    const std::tuple<const String&>& arguments() const
+    const Arguments& arguments() const
     {
         return m_arguments;
     }
 
 private:
-    std::tuple<const String&> m_arguments;
+    Arguments m_arguments;
 };
 
 class TestMultipleAttributes {
 public:
-    typedef std::tuple<> DecodeType;
+    typedef std::tuple<> Arguments;
 
     static IPC::StringReference receiverName() { return messageReceiverName(); }
     static IPC::StringReference name() { return IPC::StringReference("TestMultipleAttributes"); }
     static const bool isSync = true;
 
     struct DelayedReply : public ThreadSafeRefCounted<DelayedReply> {
-        DelayedReply(PassRefPtr<IPC::Connection>, std::unique_ptr<IPC::Encoder>);
+        DelayedReply(Ref<IPC::Connection>&&, std::unique_ptr<IPC::Encoder>);
         ~DelayedReply();
 
         bool send();
@@ -409,19 +406,19 @@ public:
         std::unique_ptr<IPC::Encoder> m_encoder;
     };
 
-    typedef IPC::Arguments<> Reply;
-    const std::tuple<>& arguments() const
+    typedef std::tuple<> Reply;
+    const Arguments& arguments() const
     {
         return m_arguments;
     }
 
 private:
-    std::tuple<> m_arguments;
+    Arguments m_arguments;
 };
 
 class TestParameterAttributes {
 public:
-    typedef std::tuple<uint64_t, double, double> DecodeType;
+    typedef std::tuple<uint64_t, double, double> Arguments;
 
     static IPC::StringReference receiverName() { return messageReceiverName(); }
     static IPC::StringReference name() { return IPC::StringReference("TestParameterAttributes"); }
@@ -432,18 +429,18 @@ public:
     {
     }
 
-    const std::tuple<uint64_t, double, double>& arguments() const
+    const Arguments& arguments() const
     {
         return m_arguments;
     }
 
 private:
-    std::tuple<uint64_t, double, double> m_arguments;
+    Arguments m_arguments;
 };
 
 class TemplateTest {
 public:
-    typedef std::tuple<HashMap<String, std::pair<String, uint64_t>>> DecodeType;
+    typedef std::tuple<const HashMap<String, std::pair<String, uint64_t>>&> Arguments;
 
     static IPC::StringReference receiverName() { return messageReceiverName(); }
     static IPC::StringReference name() { return IPC::StringReference("TemplateTest"); }
@@ -454,18 +451,18 @@ public:
     {
     }
 
-    const std::tuple<const HashMap<String, std::pair<String, uint64_t>>&>& arguments() const
+    const Arguments& arguments() const
     {
         return m_arguments;
     }
 
 private:
-    std::tuple<const HashMap<String, std::pair<String, uint64_t>>&> m_arguments;
+    Arguments m_arguments;
 };
 
 class SetVideoLayerID {
 public:
-    typedef std::tuple<WebCore::GraphicsLayer::PlatformLayerID> DecodeType;
+    typedef std::tuple<const WebCore::GraphicsLayer::PlatformLayerID&> Arguments;
 
     static IPC::StringReference receiverName() { return messageReceiverName(); }
     static IPC::StringReference name() { return IPC::StringReference("SetVideoLayerID"); }
@@ -476,19 +473,19 @@ public:
     {
     }
 
-    const std::tuple<const WebCore::GraphicsLayer::PlatformLayerID&>& arguments() const
+    const Arguments& arguments() const
     {
         return m_arguments;
     }
 
 private:
-    std::tuple<const WebCore::GraphicsLayer::PlatformLayerID&> m_arguments;
+    Arguments m_arguments;
 };
 
 #if PLATFORM(MAC)
 class DidCreateWebProcessConnection {
 public:
-    typedef std::tuple<IPC::MachPort> DecodeType;
+    typedef std::tuple<const IPC::MachPort&> Arguments;
 
     static IPC::StringReference receiverName() { return messageReceiverName(); }
     static IPC::StringReference name() { return IPC::StringReference("DidCreateWebProcessConnection"); }
@@ -499,45 +496,45 @@ public:
     {
     }
 
-    const std::tuple<const IPC::MachPort&>& arguments() const
+    const Arguments& arguments() const
     {
         return m_arguments;
     }
 
 private:
-    std::tuple<const IPC::MachPort&> m_arguments;
+    Arguments m_arguments;
 };
 #endif
 
 #if PLATFORM(MAC)
 class InterpretKeyEvent {
 public:
-    typedef std::tuple<uint32_t> DecodeType;
+    typedef std::tuple<uint32_t> Arguments;
 
     static IPC::StringReference receiverName() { return messageReceiverName(); }
     static IPC::StringReference name() { return IPC::StringReference("InterpretKeyEvent"); }
     static const bool isSync = true;
 
-    typedef IPC::Arguments<Vector<WebCore::KeypressCommand>&> Reply;
+    typedef std::tuple<Vector<WebCore::KeypressCommand>&> Reply;
     explicit InterpretKeyEvent(uint32_t type)
         : m_arguments(type)
     {
     }
 
-    const std::tuple<uint32_t>& arguments() const
+    const Arguments& arguments() const
     {
         return m_arguments;
     }
 
 private:
-    std::tuple<uint32_t> m_arguments;
+    Arguments m_arguments;
 };
 #endif
 
 #if ENABLE(DEPRECATED_FEATURE)
 class DeprecatedOperation {
 public:
-    typedef std::tuple<IPC::DummyType> DecodeType;
+    typedef std::tuple<const IPC::DummyType&> Arguments;
 
     static IPC::StringReference receiverName() { return messageReceiverName(); }
     static IPC::StringReference name() { return IPC::StringReference("DeprecatedOperation"); }
@@ -548,20 +545,20 @@ public:
     {
     }
 
-    const std::tuple<const IPC::DummyType&>& arguments() const
+    const Arguments& arguments() const
     {
         return m_arguments;
     }
 
 private:
-    std::tuple<const IPC::DummyType&> m_arguments;
+    Arguments m_arguments;
 };
 #endif
 
 #if ENABLE(EXPERIMENTAL_FEATURE)
 class ExperimentalOperation {
 public:
-    typedef std::tuple<IPC::DummyType> DecodeType;
+    typedef std::tuple<const IPC::DummyType&> Arguments;
 
     static IPC::StringReference receiverName() { return messageReceiverName(); }
     static IPC::StringReference name() { return IPC::StringReference("ExperimentalOperation"); }
@@ -572,13 +569,13 @@ public:
     {
     }
 
-    const std::tuple<const IPC::DummyType&>& arguments() const
+    const Arguments& arguments() const
     {
         return m_arguments;
     }
 
 private:
-    std::tuple<const IPC::DummyType&> m_arguments;
+    Arguments m_arguments;
 };
 #endif
 
@@ -586,5 +583,3 @@ private:
 } // namespace Messages
 
 #endif // (ENABLE(WEBKIT2) && (NESTED_MASTER_CONDITION || MASTER_OR && MASTER_AND))
-
-#endif // WebPageMessages_h

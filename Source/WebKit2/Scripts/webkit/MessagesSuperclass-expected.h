@@ -22,12 +22,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebPageMessages_h
-#define WebPageMessages_h
+#pragma once
 
-#include "Arguments.h"
-#include "MessageEncoder.h"
-#include "StringReference.h"
+#include "ArgumentCoders.h"
 
 namespace WTF {
     class String;
@@ -43,7 +40,7 @@ static inline IPC::StringReference messageReceiverName()
 
 class LoadURL {
 public:
-    typedef std::tuple<String> DecodeType;
+    typedef std::tuple<const String&> Arguments;
 
     static IPC::StringReference receiverName() { return messageReceiverName(); }
     static IPC::StringReference name() { return IPC::StringReference("LoadURL"); }
@@ -54,16 +51,14 @@ public:
     {
     }
 
-    const std::tuple<const String&>& arguments() const
+    const Arguments& arguments() const
     {
         return m_arguments;
     }
 
 private:
-    std::tuple<const String&> m_arguments;
+    Arguments m_arguments;
 };
 
 } // namespace WebPage
 } // namespace Messages
-
-#endif // WebPageMessages_h

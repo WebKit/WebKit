@@ -1,3 +1,62 @@
+2017-05-06  David Kilzer  <ddkilzer@apple.com>
+
+        messages_unittest.py should support a [-r|--reset-results] switch
+        <https://webkit.org/b/171627>
+
+        Reviewed by Daniel Bates.
+
+        This change adds support for a [-r|--reset-results] switch when
+        running messages_unittest.py to make it easy to update the
+        expected file results.
+
+        This also cleans up a lot of duplicate code in
+        messages_unittest.py by extracting common code into new methods
+        and by pushing code down into methods where it's actually used.
+
+        * Scripts/webkit/LegacyMessageReceiver-expected.cpp:
+        * Scripts/webkit/LegacyMessages-expected.h:
+        * Scripts/webkit/MessageReceiver-expected.cpp:
+        * Scripts/webkit/MessageReceiverSuperclass-expected.cpp:
+        * Scripts/webkit/Messages-expected.h:
+        * Scripts/webkit/MessagesSuperclass-expected.h:
+        - Update expected files using the new --reset-results switch.
+
+        * Scripts/webkit/messages_unittest.py:
+        - Remove what appears to be a debugging print statement.
+        - Replace the code that reads in expected files with variables
+          that contain the expected file names.  The code to read in the
+          contents moved into
+          GeneratedFileContentsTest.assertGeneratedFileContentsEqual().
+        (ParsingTest.check_message):
+        - Drive-by fix to change "!= None" to "is not None".
+        (GeneratedFileContentsTest.assertGeneratedFileContentsEqual):
+        - Add support for [-r|--reset-results] switch here.  This will
+          write out updated expected file contents when the switch is
+          used.
+        - Push down most of the global code that reads in file contents
+          into this method.
+        - Change use of split('\n') into splitlines(False).
+        (GeneratedFileContentsTest.assertHeaderEqual): Add.
+        - Extracts common code from test_receiver_headers().
+        (GeneratedFileContentsTest.assertImplementationEqual): Add.
+        - Extracts common code from test_receiver_implementations().
+        (HeaderTest):
+        (HeaderTest.test_receiver_headers):
+        - Rename from HeaderTest.test_header().
+        - Simplify by calling assertHeaderEqual().
+        (ReceiverImplementationTest):
+        (ReceiverImplementationTest.test_receiver_implementations):
+        - Rename from
+          ReceiverImplementationTest.test_receiver_implementation().
+        - Simplify by calling assertImplementationEqual().
+        (add_reset_results_to_unittest_help): Add.
+        - Inserts help text for [-r|--reset-results] switch.
+        (parse_sys_argv): Add.
+        - Parses [-r|--reset-results] switch, and then removes it from
+          sys.argv.  We do this instead of using argparse so that the
+          original help for the unittest module is still shown when
+          using --help.
+
 2017-05-05  Timothy Horton  <timothy_horton@apple.com>
 
         [Mac] Adjust cursor position for dragged link (and stop it from moving based on how fast you are dragging)
