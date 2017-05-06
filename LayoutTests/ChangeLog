@@ -1,3 +1,16 @@
+2017-05-06  Chris Dumez  <cdumez@apple.com>
+
+        Implement the concept of cookie-averse document
+        https://bugs.webkit.org/show_bug.cgi?id=171746
+        <rdar://problem/32004466>
+
+        Reviewed by Sam Weinig.
+
+        Add layout test coverage.
+
+        * fast/cookies/cookie-averse-document-expected.txt: Added.
+        * fast/cookies/cookie-averse-document.html: Added.
+
 2017-05-06  Myles C. Maxfield  <mmaxfield@apple.com>
 
         REGERSSION(r213499): Emoji with Fitzpatrick modifiers are drawn as two separate glyphs
