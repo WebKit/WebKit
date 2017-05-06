@@ -1,3 +1,12 @@
+2017-05-05  Matt Lewis  <jlewis3@apple.com>
+
+        Mark compositing/tiling/non-active-window-tiles-size.html as flaky
+        https://bugs.webkit.org/show_bug.cgi?id=171763
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2017-05-05  Oliver Hunt  <oliver@apple.com>
 
         Move trivial String prototype functions to JS builtins
