@@ -191,7 +191,7 @@ static const uint8_t characterClassTable[256] = {
     0, // '$'
     ForbiddenHost, // '%'
     0, // '&'
-    0, // '''
+    QueryPercent, // '''
     0, // '('
     0, // ')'
     0, // '*'
