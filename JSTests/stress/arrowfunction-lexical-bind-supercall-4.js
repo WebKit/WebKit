@@ -5,6 +5,7 @@ var testCase = function (actual, expected, message) {
 };
 
 var testValue  = 'test-value';
+var testIdValue  = 'test-id-value';
 
 var A = class A {
     constructor() {
@@ -160,3 +161,38 @@ testCase(ic.idValue, testValue, 'Error: not correct binding superProperty&this i
 for (var i=0; i < 1000; i++) {
     testException(I, false, i);
 }
+
+class J extends A {
+    constructor (beforeSuper) {
+      if (beforeSuper) {
+        const arr = () => { eval('super()');  this._id = testIdValue; };
+        arr();
+      }
+      testCase(this.idValue, testValue, "Error: super() should create this and put value into idValue property");
+    }
+};
+
+let jc = new J(true);
+testCase(jc.idValue, testValue, 'Error: not correct binding superProperty&this in constructor');
+
+for (var i=0; i < 1000; i++) {
+    testException(J, false, i);
+}
+
+class K extends A {
+    constructor (beforeSuper) {
+      if (beforeSuper) {
+        const arr = () => { (() => () => eval('super()'))()();  (() => { this._id = testIdValue; })(); };
+        arr();
+      }
+        testCase(this.idValue, testValue, "Error: super() should create this and put value into idValue property");
+    }
+};
+
+let kc = new K(true);
+testCase(kc.idValue, testValue, 'Error: not correct binding superProperty&this in constructor');
+
+for (var i=0; i < 1000; i++) {
+    testException(K, false, i);
+}
+

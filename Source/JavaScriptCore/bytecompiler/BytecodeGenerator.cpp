@@ -4603,7 +4603,7 @@ RegisterID* BytecodeGenerator::emitLoadDerivedConstructorFromArrowFunctionLexica
 
 RegisterID* BytecodeGenerator::ensureThis()
 {
-    if (constructorKind() == ConstructorKind::Extends && needsToUpdateArrowFunctionContext() && isSuperCallUsedInInnerArrowFunction())
+    if ((constructorKind() == ConstructorKind::Extends || isDerivedConstructorContext())  && needsToUpdateArrowFunctionContext() && isSuperCallUsedInInnerArrowFunction())
         emitLoadThisFromArrowFunctionLexicalEnvironment();
 
     if (constructorKind() == ConstructorKind::Extends || isDerivedConstructorContext())
