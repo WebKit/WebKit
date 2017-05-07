@@ -1,3 +1,23 @@
+2017-05-06  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] CTFontDescriptorCreateMatchingFontDescriptor() is not case insensitive
+        https://bugs.webkit.org/show_bug.cgi?id=171636
+        <rdar://problem/30811218>
+
+        Reviewed by Dean Jackson.
+
+        LastResort is the only name which needs to be looked up case-sensitively. We can handle
+        this in our existing function which handles special font names (like -apple-system) to
+        make sure that we always do the right thing.
+
+        Test: fast/text/lastResort.html
+
+        * platform/graphics/ios/FontCacheIOS.mm:
+        (WebCore::platformFontWithFamilySpecialCase):
+        * platform/graphics/mac/FontCacheMac.mm:
+        (WebCore::platformFontWithFamilySpecialCase):
+        * platform/spi/cocoa/CoreTextSPI.h:
+
 2017-05-06  Chris Dumez  <cdumez@apple.com>
 
         Implement the concept of cookie-averse document

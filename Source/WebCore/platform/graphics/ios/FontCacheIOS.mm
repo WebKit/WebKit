@@ -33,10 +33,16 @@
 #import "CoreTextSPI.h"
 #import "FontCascade.h"
 #import "RenderThemeIOS.h"
+#import "SoftLinking.h"
 #import <wtf/HashSet.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/CString.h>
+
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
+SOFT_LINK_FRAMEWORK(CoreText);
+SOFT_LINK_MAY_FAIL(CoreText, CTFontDescriptorCreateLastResort, CTFontDescriptorRef, (), ());
+#endif
 
 namespace WebCore {
 
@@ -162,6 +168,18 @@ RetainPtr<CTFontRef> platformFontWithFamilySpecialCase(const AtomicString& famil
         RetainPtr<CTFontDescriptorRef> systemFontDescriptor = adoptCF(CTFontDescriptorCreateForUIType(kCTFontUIFontSystem, size, nullptr));
         RetainPtr<CTFontDescriptorRef> monospaceFontDescriptor = adoptCF(CTFontDescriptorCreateCopyWithFeature(systemFontDescriptor.get(), (CFNumberRef)@(kNumberSpacingType), (CFNumberRef)@(kMonospacedNumbersSelector)));
         return adoptCF(CTFontCreateWithFontDescriptor(monospaceFontDescriptor.get(), size, nullptr));
+    }
+
+    if (equalLettersIgnoringASCIICase(family, "lastresort")) {
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
+        if (canLoadCTFontDescriptorCreateLastResort()) {
+            static NeverDestroyed<RetainPtr<CTFontDescriptorRef>> lastResort = adoptCF(CTFontDescriptorCreateLastResort());
+            return adoptCF(CTFontCreateWithFontDescriptor(lastResort.get().get(), size, nullptr));
+        }
+#endif
+        // LastResort is special, so it's important to look this exact string up, and not some case-folded version.
+        // We handle this here so any caching and case folding we do in our general text codepath is bypassed.
+        return adoptCF(CTFontCreateWithName(CFSTR("LastResort"), size, nullptr));
     }
 
     return nullptr;

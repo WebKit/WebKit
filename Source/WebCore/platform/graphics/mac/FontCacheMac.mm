@@ -48,6 +48,13 @@
 #import <wtf/text/AtomicStringHash.h>
 #endif
 
+#import "SoftLinking.h"
+
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+SOFT_LINK_FRAMEWORK(CoreText);
+SOFT_LINK_MAY_FAIL(CoreText, CTFontDescriptorCreateLastResort, CTFontDescriptorRef, (), ());
+#endif
+
 namespace WebCore {
 
 #if PLATFORM(MAC)
@@ -110,6 +117,18 @@ RetainPtr<CTFontRef> platformFontWithFamilySpecialCase(const AtomicString& famil
 
     if (equalLettersIgnoringASCIICase(family, "-apple-status-bar"))
         return toCTFont([NSFont labelFontOfSize:size]);
+
+    if (equalLettersIgnoringASCIICase(family, "lastresort")) {
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+        if (canLoadCTFontDescriptorCreateLastResort()) {
+            static NeverDestroyed<RetainPtr<CTFontDescriptorRef>> lastResort = adoptCF(CTFontDescriptorCreateLastResort());
+            return adoptCF(CTFontCreateWithFontDescriptor(lastResort.get().get(), size, nullptr));
+        }
+#endif
+        // LastResort is special, so it's important to look this exact string up, and not some case-folded version.
+        // We handle this here so any caching and case folding we do in our general text codepath is bypassed.
+        return adoptCF(CTFontCreateWithName(CFSTR("LastResort"), size, nullptr));
+    }
 
     return nullptr;
 }
