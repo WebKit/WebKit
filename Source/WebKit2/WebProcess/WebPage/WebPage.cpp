@@ -586,6 +586,18 @@ void WebPage::enableICECandidateFiltering()
 {
     m_page->rtcController().disableICECandidateFiltering();
 }
+
+#if USE(LIBWEBRTC)
+void WebPage::disableEnumeratingAllNetworkInterfaces()
+{
+    m_page->libWebRTCProvider().disableEnumeratingAllNetworkInterfaces();
+}
+
+void WebPage::enableEnumeratingAllNetworkInterfaces()
+{
+    m_page->libWebRTCProvider().enableEnumeratingAllNetworkInterfaces();
+}
+#endif
 #endif
 
 void WebPage::reinitializeWebPage(WebPageCreationParameters&& parameters)
@@ -2720,7 +2732,7 @@ void WebPage::setSessionID(SessionID sessionID)
     m_page->setSessionID(sessionID);
 }
 
-void WebPage::didReceivePolicyDecision(uint64_t frameID, uint64_t listenerID, uint32_t policyAction, uint64_t navigationID, DownloadID downloadID)
+void WebPage::didReceivePolicyDecision(uint64_t frameID, uint64_t listenerID, uint32_t policyAction, uint64_t navigationID, const DownloadID& downloadID)
 {
     WebFrame* frame = WebProcess::singleton().webFrame(frameID);
     if (!frame)

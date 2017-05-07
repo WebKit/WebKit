@@ -37,6 +37,7 @@
 #include "WebProcess.h"
 #include "WindowsKeyboardCodes.h"
 #include <WebCore/BackForwardController.h>
+#include <WebCore/Editor.h>
 #include <WebCore/EventHandler.h>
 #include <WebCore/FocusController.h>
 #include <WebCore/Frame.h>
@@ -46,6 +47,7 @@
 #include <WebCore/PasteboardHelper.h>
 #include <WebCore/PlatformKeyboardEvent.h>
 #include <WebCore/Settings.h>
+#include <WebCore/SharedBuffer.h>
 #include <WebCore/UserAgent.h>
 #include <wtf/glib/GUniquePtr.h>
 

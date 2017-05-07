@@ -34,6 +34,7 @@
 #include "DrawingArea.h"
 #include "EventDispatcher.h"
 #include "InjectedBundle.h"
+#include "LibWebRTCNetwork.h"
 #include "Logging.h"
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkProcessConnection.h"

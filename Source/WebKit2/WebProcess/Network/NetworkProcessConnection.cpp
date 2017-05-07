@@ -27,6 +27,7 @@
 #include "NetworkProcessConnection.h"
 
 #include "DataReference.h"
+#include "LibWebRTCNetwork.h"
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebLoaderStrategy.h"

@@ -32,6 +32,7 @@
 #import "WebPage.h"
 #import "WebPageProxyMessages.h"
 #import <WebCore/DictionaryLookup.h>
+#import <WebCore/Editor.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/MainFrame.h>
 #import <WebCore/Page.h>

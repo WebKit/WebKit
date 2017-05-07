@@ -33,6 +33,7 @@
 #include "WebContextMenuItemData.h"
 #include "WebPage.h"
 #include <WebCore/ContextMenu.h>
+#include <WebCore/Editor.h>
 #include <WebCore/Event.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/MainFrame.h>

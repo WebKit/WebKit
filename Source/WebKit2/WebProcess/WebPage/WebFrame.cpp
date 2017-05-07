@@ -53,6 +53,7 @@
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/Chrome.h>
 #include <WebCore/DocumentLoader.h>
+#include <WebCore/Editor.h>
 #include <WebCore/EventHandler.h>
 #include <WebCore/File.h>
 #include <WebCore/Frame.h>

@@ -28,6 +28,7 @@
 
 #if USE(LIBWEBRTC)
 
+#include "LibWebRTCNetwork.h"
 #include "WebProcess.h"
 #include <webrtc/pc/peerconnectionfactory.h>
 

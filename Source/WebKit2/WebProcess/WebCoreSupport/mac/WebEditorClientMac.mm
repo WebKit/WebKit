@@ -35,6 +35,7 @@
 #import "WebPage.h"
 #import "WebPageProxyMessages.h"
 #import "WebProcess.h"
+#import <WebCore/Editor.h>
 #import <WebCore/FocusController.h>
 #import <WebCore/Frame.h>
 #import <WebCore/KeyboardEvent.h>

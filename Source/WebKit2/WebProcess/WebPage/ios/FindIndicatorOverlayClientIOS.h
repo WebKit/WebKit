@@ -29,10 +29,7 @@
 #import <WebCore/Frame.h>
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/PageOverlay.h>
-
-namespace WebCore {
-class TextIndicator;
-}
+#import <WebCore/TextIndicator.h>
 
 namespace WebKit {
 

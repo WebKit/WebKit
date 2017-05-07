@@ -26,14 +26,15 @@
 #pragma once
 
 #include <WebCore/EditorInsertAction.h>
-#include <WebCore/SharedBuffer.h>
 #include <WebCore/TextAffinity.h>
 #include <wtf/Forward.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 class CSSStyleDeclaration;
 class Node;
 class Range;
+class SharedBuffer;
 }
 
 namespace WebKit {

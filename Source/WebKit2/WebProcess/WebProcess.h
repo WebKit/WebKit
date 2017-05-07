@@ -27,18 +27,14 @@
 
 #include "CacheModel.h"
 #include "ChildProcess.h"
-#include "DrawingArea.h"
-#include "LibWebRTCNetwork.h"
 #include "PluginProcessConnectionManager.h"
 #include "ResourceCachesToClear.h"
 #include "SandboxExtension.h"
-#include "SharedMemory.h"
 #include "TextCheckerState.h"
 #include "ViewUpdateDispatcher.h"
-#include "VisitedLinkTable.h"
 #include "WebInspectorInterruptDispatcher.h"
+#include <WebCore/ActivityState.h>
 #include <WebCore/HysteresisActivity.h>
-#include <WebCore/ResourceLoadStatisticsStore.h>
 #include <WebCore/SessionID.h>
 #include <WebCore/Timer.h>
 #include <wtf/Forward.h>
@@ -68,6 +64,7 @@ class PageGroup;
 class ResourceRequest;
 class SessionID;
 class UserGestureToken;
+class ResourceLoadStatisticsStore;
 struct PluginInfo;
 struct SecurityOriginData;
 struct SoupNetworkProxySettings;
@@ -78,6 +75,7 @@ namespace WebKit {
 class EventDispatcher;
 class GamepadData;
 class InjectedBundle;
+class LibWebRTCNetwork;
 class NetworkProcessConnection;
 class ObjCObjectGraph;
 class UserData;

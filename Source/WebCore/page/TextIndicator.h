@@ -37,7 +37,7 @@ class GraphicsContext;
 class Range;
 
 // FIXME: Move PresentationTransition to TextIndicatorWindow, because it's about presentation.
-enum class TextIndicatorPresentationTransition {
+enum class TextIndicatorPresentationTransition : uint8_t {
     None,
 
     // These animations drive themselves.

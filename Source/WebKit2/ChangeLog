@@ -1,3 +1,32 @@
+2017-05-06  Tim Horton  <timothy_horton@apple.com>
+
+        Reduce the number of includes in WebPage.h and WebProcess.h
+        https://bugs.webkit.org/show_bug.cgi?id=171779
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/InjectedBundle/API/APIInjectedBundleEditorClient.h:
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        * WebProcess/Network/webrtc/LibWebRTCProvider.cpp:
+        * WebProcess/Network/webrtc/LibWebRTCResolver.cpp:
+        * WebProcess/WebCoreSupport/mac/WebContextMenuClientMac.mm:
+        * WebProcess/WebCoreSupport/mac/WebEditorClientMac.mm:
+        * WebProcess/WebPage/FindController.cpp:
+        * WebProcess/WebPage/WebFrame.cpp:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::disableEnumeratingAllNetworkInterfaces):
+        (WebKit::WebPage::enableEnumeratingAllNetworkInterfaces):
+        (WebKit::WebPage::didReceivePolicyDecision):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::disableEnumeratingAllNetworkInterfaces): Deleted.
+        (WebKit::WebPage::enableEnumeratingAllNetworkInterfaces): Deleted.
+        * WebProcess/WebPage/ios/FindIndicatorOverlayClientIOS.h:
+        * WebProcess/WebProcess.cpp:
+        * WebProcess/WebProcess.h:
+        In my measurement, this improves WebKit2 debug clean build time by
+        ~10% for Mac and ~5% for iOS. The most valuable change is the one to
+        remove LibWebRTC headers..
+
 2017-05-06  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (r216294): The new test fails on WebKit1
