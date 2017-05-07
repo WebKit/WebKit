@@ -105,7 +105,7 @@ void IndentOutdentCommand::indentIntoBlockquote(const Position& start, const Pos
         return;
 
     RefPtr<Node> nodeAfterStart = start.computeNodeAfterPosition();
-    RefPtr<Node> outerBlock = (start.containerNode() == nodeToSplitTo) ? start.containerNode() : splitTreeToNode(start.containerNode(), nodeToSplitTo);
+    RefPtr<Node> outerBlock = (start.containerNode() == nodeToSplitTo) ? start.containerNode() : splitTreeToNode(*start.containerNode(), *nodeToSplitTo);
 
     VisiblePosition startOfContents = start;
     if (!targetBlockquote) {
@@ -179,7 +179,7 @@ void IndentOutdentCommand::outdentParagraph()
     auto* enclosingBlockFlow = enclosingBlock(startOfParagraphNode);
     RefPtr<Node> splitBlockquoteNode = enclosingNode;
     if (enclosingBlockFlow != enclosingNode)
-        splitBlockquoteNode = splitTreeToNode(startOfParagraphNode, enclosingNode, true);
+        splitBlockquoteNode = splitTreeToNode(*startOfParagraphNode, *enclosingNode, true);
     else {
         // We split the blockquote at where we start outdenting.
         auto* highestInlineNode = highestEnclosingNodeOfType(visibleStartOfParagraph.deepEquivalent(), isInline, CannotCrossEditingBoundary, enclosingBlockFlow);

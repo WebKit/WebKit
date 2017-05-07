@@ -112,7 +112,7 @@ public:
     WEBCORE_EXPORT static int rangeLength(const Range*, bool spacesForReplacedElements = false);
     WEBCORE_EXPORT static RefPtr<Range> rangeFromLocationAndLength(ContainerNode* scope, int rangeLocation, int rangeLength, bool spacesForReplacedElements = false);
     WEBCORE_EXPORT static bool getLocationAndLengthFromRange(Node* scope, const Range*, size_t& location, size_t& length);
-    WEBCORE_EXPORT static Ref<Range> subrange(Range* entireRange, int characterOffset, int characterCount);
+    WEBCORE_EXPORT static Ref<Range> subrange(Range& entireRange, int characterOffset, int characterCount);
 
 private:
     void exitNode(Node*);

@@ -57,9 +57,9 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-static int toIdentifier(PassRefPtr<CSSValue> value)
+static int toIdentifier(RefPtr<CSSValue>&& value)
 {
-    return (value && value->isPrimitiveValue()) ? static_pointer_cast<CSSPrimitiveValue>(value)->valueID() : 0;
+    return is<CSSPrimitiveValue>(value.get()) ? downcast<CSSPrimitiveValue>(*value).valueID() : 0;
 }
 
 static String& styleSpanClassString()

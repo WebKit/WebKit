@@ -239,10 +239,10 @@ String AlternativeTextController::dismissSoon(ReasonForDismissingAlternativeText
 
 void AlternativeTextController::applyAlternativeTextToRange(const Range& range, const String& alternative, AlternativeTextType alternativeType, const Vector<DocumentMarker::MarkerType>& markerTypesToAdd)
 {
-    RefPtr<Range> paragraphRangeContainingCorrection = range.cloneRange();
+    auto paragraphRangeContainingCorrection = range.cloneRange();
 
-    setStart(paragraphRangeContainingCorrection.get(), startOfParagraph(range.startPosition()));
-    setEnd(paragraphRangeContainingCorrection.get(), endOfParagraph(range.endPosition()));
+    setStart(paragraphRangeContainingCorrection.ptr(), startOfParagraph(range.startPosition()));
+    setEnd(paragraphRangeContainingCorrection.ptr(), endOfParagraph(range.endPosition()));
 
     // After we replace the word at range rangeWithAlternative, we need to add markers to that range.
     // However, once the replacement took place, the value of rangeWithAlternative is not valid anymore.
@@ -265,16 +265,16 @@ void AlternativeTextController::applyAlternativeTextToRange(const Range& range, 
     // Clone the range, since the caller of this method may want to keep the original range around.
     auto rangeWithAlternative = range.cloneRange();
 
-    ContainerNode& rootNode = paragraphRangeContainingCorrection.get()->startContainer().treeScope().rootNode();
+    ContainerNode& rootNode = paragraphRangeContainingCorrection->startContainer().treeScope().rootNode();
     int paragraphStartIndex = TextIterator::rangeLength(Range::create(rootNode.document(), &rootNode, 0, &paragraphRangeContainingCorrection->startContainer(), paragraphRangeContainingCorrection->startOffset()).ptr());
     SpellingCorrectionCommand::create(rangeWithAlternative, alternative)->apply();
     // Recalculate pragraphRangeContainingCorrection, since SpellingCorrectionCommand modified the DOM, such that the original paragraphRangeContainingCorrection is no longer valid. Radar: 10305315 Bugzilla: 89526
-    paragraphRangeContainingCorrection = TextIterator::rangeFromLocationAndLength(&rootNode, paragraphStartIndex, correctionStartOffsetInParagraph + alternative.length());
-    if (!paragraphRangeContainingCorrection)
+    auto updatedParagraphRangeContainingCorrection = TextIterator::rangeFromLocationAndLength(&rootNode, paragraphStartIndex, correctionStartOffsetInParagraph + alternative.length());
+    if (!updatedParagraphRangeContainingCorrection)
         return;
     
-    setEnd(paragraphRangeContainingCorrection.get(), m_frame.selection().selection().start());
-    RefPtr<Range> replacementRange = TextIterator::subrange(paragraphRangeContainingCorrection.get(), correctionStartOffsetInParagraph, alternative.length());
+    setEnd(updatedParagraphRangeContainingCorrection.get(), m_frame.selection().selection().start());
+    RefPtr<Range> replacementRange = TextIterator::subrange(*updatedParagraphRangeContainingCorrection, correctionStartOffsetInParagraph, alternative.length());
     String newText = plainText(replacementRange.get());
 
     // Check to see if replacement succeeded.
@@ -352,7 +352,7 @@ void AlternativeTextController::timerFired()
     case AlternativeTextTypeSpellingSuggestions: {
         if (!m_alternativeTextInfo.rangeWithAlternative || plainText(m_alternativeTextInfo.rangeWithAlternative.get()) != m_alternativeTextInfo.originalText)
             break;
-        String paragraphText = plainText(&TextCheckingParagraph(m_alternativeTextInfo.rangeWithAlternative).paragraphRange());
+        String paragraphText = plainText(&TextCheckingParagraph(*m_alternativeTextInfo.rangeWithAlternative).paragraphRange());
         Vector<String> suggestions;
         textChecker()->getGuessesForWord(m_alternativeTextInfo.originalText, paragraphText, m_frame.selection().selection(), suggestions);
         if (suggestions.isEmpty()) {

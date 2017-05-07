@@ -571,7 +571,7 @@ bool DragController::concludeEditDrag(const DragData& dragData)
     if (dragIsMove(innerFrame->selection(), dragData) || dragCaret.isContentRichlyEditable()) {
         bool chosePlainText = false;
         RefPtr<DocumentFragment> fragment = documentFragmentFromDragData(dragData, *innerFrame, *range, true, chosePlainText);
-        if (!fragment || !innerFrame->editor().shouldInsertFragment(fragment, range, EditorInsertAction::Dropped)) {
+        if (!fragment || !innerFrame->editor().shouldInsertFragment(*fragment, range.get(), EditorInsertAction::Dropped)) {
             return false;
         }
 
@@ -581,7 +581,7 @@ bool DragController::concludeEditDrag(const DragData& dragData)
             // but only to smart insert if the selection granularity is word granularity.
             bool smartDelete = innerFrame->editor().smartInsertDeleteEnabled();
             bool smartInsert = smartDelete && innerFrame->selection().granularity() == WordGranularity && dragData.canSmartReplace();
-            MoveSelectionCommand::create(fragment, dragCaret.base(), smartInsert, smartDelete)->apply();
+            MoveSelectionCommand::create(fragment.releaseNonNull(), dragCaret.base(), smartInsert, smartDelete)->apply();
         } else {
             if (setSelectionToDragCaret(innerFrame.get(), dragCaret, range, point)) {
                 ReplaceSelectionCommand::CommandOptions options = ReplaceSelectionCommand::SelectReplacement | ReplaceSelectionCommand::PreventNesting;
@@ -589,7 +589,7 @@ bool DragController::concludeEditDrag(const DragData& dragData)
                     options |= ReplaceSelectionCommand::SmartReplace;
                 if (chosePlainText)
                     options |= ReplaceSelectionCommand::MatchStyle;
-                ReplaceSelectionCommand::create(*m_documentUnderMouse, WTFMove(fragment), options, EditActionInsertFromDrop)->apply();
+                ReplaceSelectionCommand::create(*m_documentUnderMouse, fragment.releaseNonNull(), options, EditActionInsertFromDrop)->apply();
             }
         }
     } else {
@@ -1066,7 +1066,7 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
 #if PLATFORM(COCOA)
                 // Otherwise, if no file URL is specified, call out to the injected bundle to populate the pasteboard with data.
                 auto& editor = src.editor();
-                editor.willWriteSelectionToPasteboard(src.selection().toNormalizedRange());
+                editor.willWriteSelectionToPasteboard(src.selection().toNormalizedRange().get());
                 editor.writeSelectionToPasteboard(dataTransfer.pasteboard());
                 editor.didWriteSelectionToPasteboard();
 #endif

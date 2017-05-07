@@ -205,7 +205,7 @@ protected:
     
     Position positionAvoidingSpecialElementBoundary(const Position&);
     
-    RefPtr<Node> splitTreeToNode(Node*, Node*, bool splitAncestor = false);
+    RefPtr<Node> splitTreeToNode(Node&, Node&, bool splitAncestor = false);
 
     Vector<RefPtr<EditCommand>> m_commands;
 

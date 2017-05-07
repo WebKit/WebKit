@@ -510,14 +510,14 @@ void TypingCommand::typingAddedToOpenCommand(ETypingCommand commandTypeForAddedT
     updatePreservesTypingStyle(commandTypeForAddedTyping);
 
 #if PLATFORM(COCOA)
-    frame.editor().appliedEditing(this);
+    frame.editor().appliedEditing(*this);
     // Since the spellchecking code may also perform corrections and other replacements, it should happen after the typing changes.
     if (!m_shouldPreventSpellChecking)
         markMisspellingsAfterTyping(commandTypeForAddedTyping);
 #else
     // The old spellchecking code requires that checking be done first, to prevent issues like that in 6864072, where <doesn't> is marked as misspelled.
     markMisspellingsAfterTyping(commandTypeForAddedTyping);
-    frame.editor().appliedEditing(this);
+    frame.editor().appliedEditing(*this);
 #endif
 }
 

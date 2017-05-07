@@ -43,7 +43,7 @@ void Editor::pasteWithPasteboard(Pasteboard* pasteboard, bool allowPlainText, Ma
 
     bool chosePlainText;
     RefPtr<DocumentFragment> fragment = pasteboard->documentFragment(m_frame, *range, allowPlainText, chosePlainText);
-    if (fragment && shouldInsertFragment(fragment, range, EditorInsertAction::Pasted))
+    if (fragment && shouldInsertFragment(*fragment, range.get(), EditorInsertAction::Pasted))
         pasteAsFragment(fragment.releaseNonNull(), canSmartReplaceWithPasteboard(*pasteboard), chosePlainText, mailBlockquoteHandling);
 }
 
@@ -51,7 +51,7 @@ template <typename PlatformDragData>
 static RefPtr<DocumentFragment> createFragmentFromPlatformData(PlatformDragData& platformDragData, Frame& frame)
 {
     if (containsFilenames(&platformDragData)) {
-        if (PassRefPtr<DocumentFragment> fragment = fragmentFromFilenames(frame.document(), &platformDragData))
+        if (auto fragment = fragmentFromFilenames(frame.document(), &platformDragData))
             return fragment;
     }
 

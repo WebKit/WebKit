@@ -2493,10 +2493,10 @@ int TextIterator::rangeLength(const Range* range, bool forSelectionPreservation)
     return length;
 }
 
-Ref<Range> TextIterator::subrange(Range* entireRange, int characterOffset, int characterCount)
+Ref<Range> TextIterator::subrange(Range& entireRange, int characterOffset, int characterCount)
 {
-    CharacterIterator entireRangeIterator(*entireRange);
-    return characterSubrange(entireRange->ownerDocument(), entireRangeIterator, characterOffset, characterCount);
+    CharacterIterator entireRangeIterator(entireRange);
+    return characterSubrange(entireRange.ownerDocument(), entireRangeIterator, characterOffset, characterCount);
 }
 
 static inline bool isInsideReplacedElement(TextIterator& iterator)

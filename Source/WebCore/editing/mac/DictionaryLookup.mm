@@ -145,7 +145,7 @@ RefPtr<Range> DictionaryLookup::rangeAtHitTestResult(const HitTestResult& hitTes
     if (extractedRange.location == NSNotFound || extractedRange.length == 0)
         return nullptr;
 
-    return TextIterator::subrange(fullCharacterRange.get(), extractedRange.location, extractedRange.length);
+    return TextIterator::subrange(*fullCharacterRange, extractedRange.location, extractedRange.length);
 
     END_BLOCK_OBJC_EXCEPTIONS;
     return nullptr;

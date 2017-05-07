@@ -53,13 +53,13 @@ public:
         return adoptRef(*new InsertTextCommand(document, text, selectInsertedText, rebalanceType, editingAction));
     }
 
-    static Ref<InsertTextCommand> createWithMarkerSupplier(Document& document, const String& text, PassRefPtr<TextInsertionMarkerSupplier> markerSupplier, EditAction editingAction = EditActionInsert)
+    static Ref<InsertTextCommand> createWithMarkerSupplier(Document& document, const String& text, Ref<TextInsertionMarkerSupplier>&& markerSupplier, EditAction editingAction = EditActionInsert)
     {
-        return adoptRef(*new InsertTextCommand(document, text, markerSupplier, editingAction));
+        return adoptRef(*new InsertTextCommand(document, text, WTFMove(markerSupplier), editingAction));
     }
 
 protected:
-    InsertTextCommand(Document&, const String& text, PassRefPtr<TextInsertionMarkerSupplier>, EditAction);
+    InsertTextCommand(Document&, const String& text, Ref<TextInsertionMarkerSupplier>&&, EditAction);
     InsertTextCommand(Document&, const String& text, bool selectInsertedText, RebalanceType, EditAction);
 
 private:

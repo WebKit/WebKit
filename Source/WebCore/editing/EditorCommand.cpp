@@ -155,10 +155,10 @@ static bool executeApplyParagraphStyle(Frame& frame, EditorCommandSource source,
     return false;
 }
 
-static bool executeInsertFragment(Frame& frame, PassRefPtr<DocumentFragment> fragment)
+static bool executeInsertFragment(Frame& frame, Ref<DocumentFragment>&& fragment)
 {
     ASSERT(frame.document());
-    ReplaceSelectionCommand::create(*frame.document(), fragment, ReplaceSelectionCommand::PreventNesting, EditActionInsert)->apply();
+    ReplaceSelectionCommand::create(*frame.document(), WTFMove(fragment), ReplaceSelectionCommand::PreventNesting, EditActionInsert)->apply();
     return true;
 }
 
@@ -1736,12 +1736,12 @@ static const EditorInternalCommand* internalCommand(const String& commandName)
 
 Editor::Command Editor::command(const String& commandName)
 {
-    return Command(internalCommand(commandName), CommandFromMenuOrKeyBinding, &m_frame);
+    return Command(internalCommand(commandName), CommandFromMenuOrKeyBinding, m_frame);
 }
 
 Editor::Command Editor::command(const String& commandName, EditorCommandSource source)
 {
-    return Command(internalCommand(commandName), source, &m_frame);
+    return Command(internalCommand(commandName), source, m_frame);
 }
 
 bool Editor::commandIsSupportedFromMenuOrKeyBinding(const String& commandName)
@@ -1753,16 +1753,12 @@ Editor::Command::Command()
 {
 }
 
-Editor::Command::Command(const EditorInternalCommand* command, EditorCommandSource source, PassRefPtr<Frame> frame)
+Editor::Command::Command(const EditorInternalCommand* command, EditorCommandSource source, Frame& frame)
     : m_command(command)
     , m_source(source)
-    , m_frame(command ? frame : 0)
+    , m_frame(command ? &frame : nullptr)
 {
-    // Use separate assertions so we can tell which bad thing happened.
-    if (!command)
-        ASSERT(!m_frame);
-    else
-        ASSERT(m_frame);
+    ASSERT(command || !m_frame);
 }
 
 bool Editor::Command::execute(const String& parameter, Event* triggeringEvent) const

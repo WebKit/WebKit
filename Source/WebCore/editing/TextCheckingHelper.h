@@ -33,9 +33,7 @@ struct TextCheckingResult;
 
 class TextCheckingParagraph {
 public:
-    explicit TextCheckingParagraph(PassRefPtr<Range> checkingRange);
-    TextCheckingParagraph(PassRefPtr<Range> checkingRange, PassRefPtr<Range> paragraphRange);
-    ~TextCheckingParagraph();
+    explicit TextCheckingParagraph(Ref<Range>&& checkingRange, Range* paragraphRange = nullptr);
 
     int rangeLength() const;
     Ref<Range> subrange(int characterOffset, int characterCount) const;
@@ -66,7 +64,7 @@ private:
     void invalidateParagraphRangeValues();
     Range& offsetAsRange() const;
 
-    RefPtr<Range> m_checkingRange;
+    Ref<Range> m_checkingRange;
     mutable RefPtr<Range> m_paragraphRange;
     mutable RefPtr<Range> m_offsetAsRange;
     mutable String m_text;
@@ -78,7 +76,7 @@ private:
 class TextCheckingHelper {
     WTF_MAKE_NONCOPYABLE(TextCheckingHelper);
 public:
-    TextCheckingHelper(EditorClient*, PassRefPtr<Range>);
+    TextCheckingHelper(EditorClient&, Range&);
     ~TextCheckingHelper();
 
     String findFirstMisspelling(int& firstMisspellingOffset, bool markAll, RefPtr<Range>& firstMisspellingRange);
@@ -92,8 +90,8 @@ public:
     Vector<String> guessesForMisspelledOrUngrammaticalRange(bool checkGrammar, bool& misspelled, bool& ungrammatical) const;
 
 private:
-    EditorClient* m_client;
-    RefPtr<Range> m_range;
+    EditorClient& m_client;
+    Ref<Range> m_range;
 
     bool unifiedTextCheckerEnabled() const;
 #if USE(GRAMMAR_CHECKING)

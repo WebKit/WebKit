@@ -51,9 +51,9 @@ private:
     void doApply() final;
     EditAction editingAction() const final;
 
-    HTMLElement* fixOrphanedListChild(Node&);
+    HTMLElement& fixOrphanedListChild(Node&);
     bool selectionHasListOfType(const VisibleSelection& selection, const QualifiedName&);
-    RefPtr<HTMLElement> mergeWithNeighboringLists(PassRefPtr<HTMLElement>);
+    Ref<HTMLElement> mergeWithNeighboringLists(HTMLElement&);
     void doApplyForSingleParagraph(bool forceCreateList, const HTMLQualifiedName&, Range* currentSelection);
     void unlistifyParagraph(const VisiblePosition& originalStart, HTMLElement* listNode, Node* listChildNode);
     RefPtr<HTMLElement> listifyParagraph(const VisiblePosition& originalStart, const QualifiedName& listTag);

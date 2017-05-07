@@ -98,7 +98,7 @@ void Editor::pasteWithPasteboard(Pasteboard* pasteboard, bool allowPlainText, Ma
     bool chosePlainText;
     RefPtr<DocumentFragment> fragment = webContentFromPasteboard(*pasteboard, *range, allowPlainText, chosePlainText);
 
-    if (fragment && shouldInsertFragment(fragment, range, EditorInsertAction::Pasted))
+    if (fragment && shouldInsertFragment(*fragment, range.get(), EditorInsertAction::Pasted))
         pasteAsFragment(fragment.releaseNonNull(), canSmartReplaceWithPasteboard(*pasteboard), false, mailBlockquoteHandling);
 
     client()->setInsertionPasteboard(String());
@@ -186,7 +186,7 @@ void Editor::replaceNodeFromPasteboard(Node* node, const String& pasteboardName)
     bool chosePlainText;
     if (RefPtr<DocumentFragment> fragment = webContentFromPasteboard(pasteboard, *range, true, chosePlainText)) {
         maybeCopyNodeAttributesToFragment(*node, *fragment);
-        if (shouldInsertFragment(fragment, range, EditorInsertAction::Pasted))
+        if (shouldInsertFragment(*fragment, range.get(), EditorInsertAction::Pasted))
             pasteAsFragment(fragment.releaseNonNull(), canSmartReplaceWithPasteboard(pasteboard), false, MailBlockquoteHandling::IgnoreBlockquote);
     }
 

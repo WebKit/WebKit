@@ -150,7 +150,7 @@ public:
     WEBCORE_EXPORT void outdent();
     void transpose();
 
-    bool shouldInsertFragment(PassRefPtr<DocumentFragment>, PassRefPtr<Range>, EditorInsertAction);
+    bool shouldInsertFragment(DocumentFragment&, Range*, EditorInsertAction);
     bool shouldInsertText(const String&, Range*, EditorInsertAction) const;
     WEBCORE_EXPORT bool shouldDeleteRange(Range*) const;
     bool shouldApplyStyle(StyleProperties*, Range*);
@@ -200,7 +200,7 @@ public:
     bool willUnapplyEditing(const EditCommandComposition&) const;
     bool willReapplyEditing(const EditCommandComposition&) const;
 
-    void appliedEditing(PassRefPtr<CompositeEditCommand>);
+    void appliedEditing(CompositeEditCommand&);
     void unappliedEditing(EditCommandComposition&);
     void reappliedEditing(EditCommandComposition&);
     void unappliedSpellCorrection(const VisibleSelection& selectionOfCorrected, const String& corrected, const String& correction);
@@ -212,7 +212,7 @@ public:
     class Command {
     public:
         WEBCORE_EXPORT Command();
-        Command(const EditorInternalCommand*, EditorCommandSource, PassRefPtr<Frame>);
+        Command(const EditorInternalCommand*, EditorCommandSource, Frame&);
 
         WEBCORE_EXPORT bool execute(const String& parameter = String(), Event* triggeringEvent = nullptr) const;
         WEBCORE_EXPORT bool execute(Event* triggeringEvent) const;
@@ -261,7 +261,7 @@ public:
     void markMisspellings(const VisibleSelection&, RefPtr<Range>& firstMisspellingRange);
     void markBadGrammar(const VisibleSelection&);
     void markMisspellingsAndBadGrammar(const VisibleSelection& spellingSelection, bool markGrammar, const VisibleSelection& grammarSelection);
-    void markAndReplaceFor(PassRefPtr<SpellCheckRequest>, const Vector<TextCheckingResult>&);
+    void markAndReplaceFor(const SpellCheckRequest&, const Vector<TextCheckingResult>&);
 
     bool isOverwriteModeEnabled() const { return m_overwriteModeEnabled; }
     WEBCORE_EXPORT void toggleOverwriteModeEnabled();
@@ -289,7 +289,7 @@ public:
 
     void didBeginEditing();
     void didEndEditing();
-    void willWriteSelectionToPasteboard(PassRefPtr<Range>);
+    void willWriteSelectionToPasteboard(Range*);
     void didWriteSelectionToPasteboard();
 
     void showFontPanel();

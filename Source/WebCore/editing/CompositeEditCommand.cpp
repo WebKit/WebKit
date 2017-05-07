@@ -372,7 +372,7 @@ void CompositeEditCommand::apply()
 
 void CompositeEditCommand::didApplyCommand()
 {
-    frame().editor().appliedEditing(this);
+    frame().editor().appliedEditing(*this);
 }
 
 Vector<RefPtr<StaticRange>> CompositeEditCommand::targetRanges() const
@@ -1708,18 +1708,17 @@ Position CompositeEditCommand::positionAvoidingSpecialElementBoundary(const Posi
 
 // Splits the tree parent by parent until we reach the specified ancestor. We use VisiblePositions
 // to determine if the split is necessary. Returns the last split node.
-RefPtr<Node> CompositeEditCommand::splitTreeToNode(Node* start, Node* end, bool shouldSplitAncestor)
+RefPtr<Node> CompositeEditCommand::splitTreeToNode(Node& start, Node& end, bool shouldSplitAncestor)
 {
-    ASSERT(start);
-    ASSERT(end);
-    ASSERT(start != end);
+    ASSERT(&start != &end);
 
+    RefPtr<Node> adjustedEnd = &end;
+    if (shouldSplitAncestor && adjustedEnd->parentNode())
+        adjustedEnd = adjustedEnd->parentNode();
+
+    ASSERT(adjustedEnd);
     RefPtr<Node> node;
-    if (shouldSplitAncestor && end->parentNode())
-        end = end->parentNode();
-
-    RefPtr<Node> endNode = end;
-    for (node = start; node && node->parentNode() != endNode; node = node->parentNode()) {
+    for (node = &start; node && node->parentNode() != adjustedEnd; node = node->parentNode()) {
         if (!is<Element>(*node->parentNode()))
             break;
         // Do not split a node when doing so introduces an empty node.
