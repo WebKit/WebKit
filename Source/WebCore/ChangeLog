@@ -1,5 +1,12 @@
 2017-05-06  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed build fix after r216339.
+
+        * dom/Document.h:
+        (WebCore::Document::readyState):
+
+2017-05-06  Chris Dumez  <cdumez@apple.com>
+
         Align our IDL files with the latest DOM specification
         https://bugs.webkit.org/show_bug.cgi?id=171777
 

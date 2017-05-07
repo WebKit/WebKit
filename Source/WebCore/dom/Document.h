@@ -403,7 +403,7 @@ public:
         Interactive,
         Complete
     };
-    WEBCORE_EXPORT ReadyState readyState() const { return m_readyState; }
+    ReadyState readyState() const { return m_readyState; }
 
     WEBCORE_EXPORT String defaultCharsetForLegacyBindings() const;
 
