@@ -34,6 +34,7 @@
 #include <WebCore/PageGroup.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/Settings.h>
+#include <WebCore/StorageType.h>
 
 using namespace WebCore;
 
@@ -41,17 +42,17 @@ namespace WebKit {
 
 RefPtr<StorageNamespaceImpl> StorageNamespaceImpl::createSessionStorageNamespace(uint64_t identifier, unsigned quotaInBytes)
 {
-    return adoptRef(new StorageNamespaceImpl(SessionStorage, identifier, nullptr, quotaInBytes));
+    return adoptRef(new StorageNamespaceImpl(StorageType::Session, identifier, nullptr, quotaInBytes));
 }
 
 RefPtr<StorageNamespaceImpl> StorageNamespaceImpl::createLocalStorageNamespace(uint64_t identifier, unsigned quotaInBytes)
 {
-    return adoptRef(new StorageNamespaceImpl(LocalStorage, identifier, nullptr, quotaInBytes));
+    return adoptRef(new StorageNamespaceImpl(StorageType::Local, identifier, nullptr, quotaInBytes));
 }
 
 RefPtr<StorageNamespaceImpl> StorageNamespaceImpl::createTransientLocalStorageNamespace(uint64_t identifier, WebCore::SecurityOrigin& topLevelOrigin, uint64_t quotaInBytes)
 {
-    return adoptRef(new StorageNamespaceImpl(LocalStorage, identifier, &topLevelOrigin, quotaInBytes));
+    return adoptRef(new StorageNamespaceImpl(StorageType::TransientLocal, identifier, &topLevelOrigin, quotaInBytes));
 }
 
 StorageNamespaceImpl::StorageNamespaceImpl(WebCore::StorageType storageType, uint64_t storageNamespaceID, WebCore::SecurityOrigin* topLevelOrigin, unsigned quotaInBytes)

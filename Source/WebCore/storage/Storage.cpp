@@ -33,6 +33,7 @@
 #include "SchemeRegistry.h"
 #include "SecurityOrigin.h"
 #include "StorageArea.h"
+#include "StorageType.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -145,7 +146,7 @@ bool Storage::isDisabledByPrivateBrowsing() const
     if (!m_frame->page()->usesEphemeralSession())
         return false;
 
-    if (m_storageArea->storageType() == LocalStorage) {
+    if (isLocalStorage(m_storageArea->storageType())) {
         if (SchemeRegistry::allowsLocalStorageAccessInPrivateBrowsing(m_frame->document()->securityOrigin().protocol()))
             return false;
     }

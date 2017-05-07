@@ -83,6 +83,8 @@ class URL;
 class WebKitNamedFlow;
 class WorkerInspectorProxy;
 
+enum class StorageType;
+
 struct ReplayPosition;
 struct WebSocketFrame;
 

@@ -29,6 +29,7 @@
 #include "StorageSyncManager.h"
 #include "StorageTracker.h"
 #include <WebCore/StorageMap.h>
+#include <WebCore/StorageType.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringHash.h>
@@ -46,7 +47,7 @@ static HashMap<String, StorageNamespaceImpl*>& localStorageNamespaceMap()
 
 Ref<StorageNamespaceImpl> StorageNamespaceImpl::createSessionStorageNamespace(unsigned quota)
 {
-    return adoptRef(*new StorageNamespaceImpl(SessionStorage, String(), quota));
+    return adoptRef(*new StorageNamespaceImpl(StorageType::Session, String(), quota));
 }
 
 Ref<StorageNamespaceImpl> StorageNamespaceImpl::getOrCreateLocalStorageNamespace(const String& databasePath, unsigned quota)
@@ -57,7 +58,7 @@ Ref<StorageNamespaceImpl> StorageNamespaceImpl::getOrCreateLocalStorageNamespace
     if (slot)
         return *slot;
 
-    Ref<StorageNamespaceImpl> storageNamespace = adoptRef(*new StorageNamespaceImpl(LocalStorage, databasePath, quota));
+    Ref<StorageNamespaceImpl> storageNamespace = adoptRef(*new StorageNamespaceImpl(StorageType::Local, databasePath, quota));
     slot = storageNamespace.ptr();
 
     return storageNamespace;
@@ -70,7 +71,7 @@ StorageNamespaceImpl::StorageNamespaceImpl(StorageType storageType, const String
     , m_quota(quota)
     , m_isShutdown(false)
 {
-    if (m_storageType == LocalStorage && !m_path.isEmpty())
+    if (isLocalStorage(m_storageType) && !m_path.isEmpty())
         m_syncManager = StorageSyncManager::create(m_path);
 }
 
@@ -78,7 +79,7 @@ StorageNamespaceImpl::~StorageNamespaceImpl()
 {
     ASSERT(isMainThread());
 
-    if (m_storageType == LocalStorage) {
+    if (isLocalStorage(m_storageType)) {
         ASSERT(localStorageNamespaceMap().get(m_path) == this);
         localStorageNamespaceMap().remove(m_path);
     }
@@ -91,7 +92,7 @@ RefPtr<StorageNamespace> StorageNamespaceImpl::copy(Page*)
 {
     ASSERT(isMainThread());
     ASSERT(!m_isShutdown);
-    ASSERT(m_storageType == SessionStorage);
+    ASSERT(m_storageType == StorageType::Session);
 
     RefPtr<StorageNamespaceImpl> newNamespace = adoptRef(new StorageNamespaceImpl(m_storageType, m_path, m_quota));
 
@@ -123,7 +124,7 @@ void StorageNamespaceImpl::close()
         return;
 
     // If we're session storage, we shouldn't need to do any work here.
-    if (m_storageType == SessionStorage) {
+    if (m_storageType == StorageType::Session) {
         ASSERT(!m_syncManager);
         return;
     }
