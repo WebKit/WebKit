@@ -139,7 +139,8 @@ public:
     bool mayCauseRepaintInsideViewport(const IntRect* visibleRect = nullptr) const;
 
     // Returns true if this renderer requires a new stacking context.
-    bool createsGroup() const { return isTransparent() || hasMask() || hasClipPath() || hasFilter() || hasBackdropFilter() || hasBlendMode(); }
+    static bool createsGroupForStyle(const RenderStyle&);
+    bool createsGroup() const { return createsGroupForStyle(style()); }
 
     bool isTransparent() const { return style().opacity() < 1.0f; }
     float opacity() const { return style().opacity(); }
@@ -426,6 +427,11 @@ inline bool RenderElement::canContainAbsolutelyPositionedObjects() const
         || (isRenderBlock() && hasTransformRelatedProperty())
         || isSVGForeignObject()
         || isRenderView();
+}
+
+inline bool RenderElement::createsGroupForStyle(const RenderStyle& style)
+{
+    return style.opacity() < 1.0f || style.hasMask() || style.clipPath() || style.hasFilter() || style.hasBackdropFilter() || style.hasBlendMode();
 }
 
 inline bool RenderObject::isRenderLayerModelObject() const
