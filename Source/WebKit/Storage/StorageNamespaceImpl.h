@@ -39,6 +39,7 @@ class StorageAreaImpl;
 class StorageNamespaceImpl : public WebCore::StorageNamespace {
 public:
     static Ref<StorageNamespaceImpl> createSessionStorageNamespace(unsigned quota);
+    static Ref<StorageNamespaceImpl> createEphemeralLocalStorageNamespace(unsigned quota);
     static Ref<StorageNamespaceImpl> getOrCreateLocalStorageNamespace(const String& databasePath, unsigned quota);
     virtual ~StorageNamespaceImpl();
 

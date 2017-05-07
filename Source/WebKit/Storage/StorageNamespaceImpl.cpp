@@ -50,6 +50,11 @@ Ref<StorageNamespaceImpl> StorageNamespaceImpl::createSessionStorageNamespace(un
     return adoptRef(*new StorageNamespaceImpl(StorageType::Session, String(), quota));
 }
 
+Ref<StorageNamespaceImpl> StorageNamespaceImpl::createEphemeralLocalStorageNamespace(unsigned quota)
+{
+    return adoptRef(*new StorageNamespaceImpl(StorageType::EphemeralLocal, String(), quota));
+}
+
 Ref<StorageNamespaceImpl> StorageNamespaceImpl::getOrCreateLocalStorageNamespace(const String& databasePath, unsigned quota)
 {
     ASSERT(!databasePath.isNull());
@@ -71,7 +76,7 @@ StorageNamespaceImpl::StorageNamespaceImpl(StorageType storageType, const String
     , m_quota(quota)
     , m_isShutdown(false)
 {
-    if (isLocalStorage(m_storageType) && !m_path.isEmpty())
+    if (isPersistentLocalStorage(m_storageType) && !m_path.isEmpty())
         m_syncManager = StorageSyncManager::create(m_path);
 }
 
@@ -79,7 +84,7 @@ StorageNamespaceImpl::~StorageNamespaceImpl()
 {
     ASSERT(isMainThread());
 
-    if (isLocalStorage(m_storageType)) {
+    if (isPersistentLocalStorage(m_storageType)) {
         ASSERT(localStorageNamespaceMap().get(m_path) == this);
         localStorageNamespaceMap().remove(m_path);
     }
@@ -92,13 +97,12 @@ RefPtr<StorageNamespace> StorageNamespaceImpl::copy(Page*)
 {
     ASSERT(isMainThread());
     ASSERT(!m_isShutdown);
-    ASSERT(m_storageType == StorageType::Session);
+    ASSERT(m_storageType == StorageType::Session || m_storageType == StorageType::EphemeralLocal);
 
     RefPtr<StorageNamespaceImpl> newNamespace = adoptRef(new StorageNamespaceImpl(m_storageType, m_path, m_quota));
+    for (auto& iter : m_storageAreaMap)
+        newNamespace->m_storageAreaMap.set(iter.key, iter.value->copy());
 
-    StorageAreaMap::iterator end = m_storageAreaMap.end();
-    for (StorageAreaMap::iterator i = m_storageAreaMap.begin(); i != end; ++i)
-        newNamespace->m_storageAreaMap.set(i->key, i->value->copy());
     return newNamespace;
 }
 
@@ -123,8 +127,8 @@ void StorageNamespaceImpl::close()
     if (m_isShutdown)
         return;
 
-    // If we're session storage, we shouldn't need to do any work here.
-    if (m_storageType == StorageType::Session) {
+    // If we're not a persistent storage, we shouldn't need to do any work here.
+    if (m_storageType == StorageType::Session || m_storageType == StorageType::EphemeralLocal) {
         ASSERT(!m_syncManager);
         return;
     }

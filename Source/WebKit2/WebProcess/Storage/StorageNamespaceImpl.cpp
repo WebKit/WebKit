@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,7 @@
 #include "WebPage.h"
 #include "WebPageGroupProxy.h"
 #include "WebProcess.h"
+#include <WebCore/Frame.h>
 #include <WebCore/PageGroup.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/Settings.h>
@@ -43,6 +44,11 @@ namespace WebKit {
 RefPtr<StorageNamespaceImpl> StorageNamespaceImpl::createSessionStorageNamespace(uint64_t identifier, unsigned quotaInBytes)
 {
     return adoptRef(new StorageNamespaceImpl(StorageType::Session, identifier, nullptr, quotaInBytes));
+}
+
+RefPtr<StorageNamespaceImpl> StorageNamespaceImpl::createEphemeralLocalStorageNamespace(uint64_t identifier, unsigned quotaInBytes)
+{
+    return adoptRef(new StorageNamespaceImpl(StorageType::EphemeralLocal, identifier, nullptr, quotaInBytes));
 }
 
 RefPtr<StorageNamespaceImpl> StorageNamespaceImpl::createLocalStorageNamespace(uint64_t identifier, unsigned quotaInBytes)
@@ -74,6 +80,9 @@ void StorageNamespaceImpl::didDestroyStorageAreaMap(StorageAreaMap& map)
 
 RefPtr<StorageArea> StorageNamespaceImpl::storageArea(const SecurityOriginData& securityOrigin)
 {
+    if (m_storageType == StorageType::EphemeralLocal)
+        return ephemeralLocalStorageArea(securityOrigin);
+
     RefPtr<StorageAreaMap> map;
 
     auto& slot = m_storageAreaMaps.add(securityOrigin, nullptr).iterator->value;
@@ -86,11 +95,125 @@ RefPtr<StorageArea> StorageNamespaceImpl::storageArea(const SecurityOriginData& 
     return StorageAreaImpl::create(map.releaseNonNull());
 }
 
+class StorageNamespaceImpl::EphemeralStorageArea final : public StorageArea {
+public:
+    static Ref<EphemeralStorageArea> create(const SecurityOriginData& origin, unsigned quotaInBytes)
+    {
+        return adoptRef(*new EphemeralStorageArea(origin, quotaInBytes));
+    }
+
+    Ref<EphemeralStorageArea> copy()
+    {
+        return adoptRef(*new EphemeralStorageArea(*this));
+    }
+
+private:
+    EphemeralStorageArea(const SecurityOriginData& origin, unsigned quotaInBytes)
+        : m_securityOriginData(origin)
+        , m_storageMap(StorageMap::create(quotaInBytes))
+    {
+    }
+
+    EphemeralStorageArea(EphemeralStorageArea& other)
+        : m_securityOriginData(other.m_securityOriginData)
+        , m_storageMap(other.m_storageMap)
+    {
+    }
+
+    // WebCore::StorageArea.
+    unsigned length()
+    {
+        return m_storageMap->length();
+    }
+
+    String key(unsigned index)
+    {
+        return m_storageMap->key(index);
+    }
+
+    String item(const String& key)
+    {
+        return m_storageMap->getItem(key);
+    }
+
+    void setItem(Frame*, const String& key, const String& value, bool& quotaException)
+    {
+        String oldValue;
+        if (auto newMap = m_storageMap->setItem(key, value, oldValue, quotaException))
+            m_storageMap = WTFMove(newMap);
+    }
+
+    void removeItem(Frame*, const String& key)
+    {
+        String oldValue;
+        if (auto newMap = m_storageMap->removeItem(key, oldValue))
+            m_storageMap = WTFMove(newMap);
+    }
+
+    void clear(Frame*)
+    {
+        if (!m_storageMap->length())
+            return;
+
+        m_storageMap = StorageMap::create(m_storageMap->quota());
+    }
+
+    bool contains(const String& key)
+    {
+        return m_storageMap->contains(key);
+    }
+
+    bool canAccessStorage(Frame* frame)
+    {
+        return frame && frame->page();
+    }
+
+    StorageType storageType() const
+    {
+        return StorageType::EphemeralLocal;
+    }
+
+    size_t memoryBytesUsedByCache()
+    {
+        return 0;
+    }
+
+    void incrementAccessCount() { }
+    void decrementAccessCount() { }
+    void closeDatabaseIfIdle() { }
+
+    SecurityOriginData securityOrigin() const
+    {
+        return m_securityOriginData;
+    }
+
+    SecurityOriginData m_securityOriginData;
+    RefPtr<StorageMap> m_storageMap;
+};
+
+RefPtr<StorageArea> StorageNamespaceImpl::ephemeralLocalStorageArea(const SecurityOriginData& securityOrigin)
+{
+    auto& slot = m_ephemeralLocalStorageAreas.add(securityOrigin, nullptr).iterator->value;
+    if (!slot)
+        slot = StorageNamespaceImpl::EphemeralStorageArea::create(securityOrigin, m_quotaInBytes);
+
+    return slot.get();
+}
+
 RefPtr<StorageNamespace> StorageNamespaceImpl::copy(Page* newPage)
 {
     ASSERT(m_storageNamespaceID);
 
-    return createSessionStorageNamespace(WebPage::fromCorePage(newPage)->pageID(), m_quotaInBytes);
+    if (m_storageType == StorageType::Session)
+        return createSessionStorageNamespace(WebPage::fromCorePage(newPage)->pageID(), m_quotaInBytes);
+
+    ASSERT(m_storageType == StorageType::EphemeralLocal);
+    RefPtr<StorageNamespaceImpl> newNamespace = adoptRef(new StorageNamespaceImpl(m_storageType, m_storageNamespaceID, m_topLevelOrigin.get(), m_quotaInBytes));
+
+    for (auto& iter : m_ephemeralLocalStorageAreas)
+        newNamespace->m_ephemeralLocalStorageAreas.set(iter.key, iter.value->copy());
+
+    return newNamespace;
 }
 
 } // namespace WebKit

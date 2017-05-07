@@ -83,6 +83,10 @@ StorageAreaMap::StorageAreaMap(StorageNamespaceImpl* storageNamespace, Ref<WebCo
     case StorageType::Session:
         WebProcess::singleton().parentProcessConnection()->send(Messages::StorageManager::CreateSessionStorageMap(m_storageMapID, storageNamespace->storageNamespaceID(), SecurityOriginData::fromSecurityOrigin(m_securityOrigin)), 0);
         break;
+
+    case StorageType::EphemeralLocal:
+        // The UI process is not involved for EphemeralLocal storages.
+        return;
     }
 
     WebProcess::singleton().addMessageReceiver(Messages::StorageAreaMap::messageReceiverName(), m_storageMapID, *this);
@@ -90,8 +94,10 @@ StorageAreaMap::StorageAreaMap(StorageNamespaceImpl* storageNamespace, Ref<WebCo
 
 StorageAreaMap::~StorageAreaMap()
 {
-    WebProcess::singleton().parentProcessConnection()->send(Messages::StorageManager::DestroyStorageMap(m_storageMapID), 0);
-    WebProcess::singleton().removeMessageReceiver(Messages::StorageAreaMap::messageReceiverName(), m_storageMapID);
+    if (m_storageType != StorageType::EphemeralLocal) {
+        WebProcess::singleton().parentProcessConnection()->send(Messages::StorageManager::DestroyStorageMap(m_storageMapID), 0);
+        WebProcess::singleton().removeMessageReceiver(Messages::StorageAreaMap::messageReceiverName(), m_storageMapID);
+    }
 
     m_storageNamespace->didDestroyStorageAreaMap(*this);
 }

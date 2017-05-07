@@ -192,8 +192,12 @@ Page* Chrome::createWindow(Frame& frame, const FrameLoadRequest& request, const 
     Page* newPage = m_client.createWindow(frame, request, features, action);
     if (!newPage)
         return nullptr;
+
     if (auto* oldSessionStorage = m_page.sessionStorage(false))
         newPage->setSessionStorage(oldSessionStorage->copy(newPage));
+    if (auto* oldEphemeralLocalStorage = m_page.ephemeralLocalStorage(false))
+        newPage->setEphemeralLocalStorage(oldEphemeralLocalStorage->copy(newPage));
+
     return newPage;
 }
 
