@@ -1,0 +1,21 @@
+Before rotation
+layoutViewport: 0, 0 - 320 x 548
+visualViewport: 0, 0 - 320 x 548
+client rect of fixed object:0, 0 - 320 x 548
+
+In orientationchange event handler:
+(This will trigger the resize handler by forcing a layout.)
+
+In resize event handler:
+layoutViewport: 0, 0 - 568 x 320
+visualViewport: 0, 0 - 568 x 320
+client rect of fixed object:0, 0 - 568 x 320
+layoutViewport: 0, 0 - 568 x 320
+visualViewport: 0, 0 - 568 x 320
+client rect of fixed object:0, 0 - 568 x 320
+
+After rotation
+layoutViewport: 0, 0 - 568 x 548
+visualViewport: 0, 0 - 568 x 320
+client rect of fixed object:0, 0 - 568 x 548
+

@@ -1,3 +1,24 @@
+2017-05-07  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS] REGRESSION (r209409): getBoundingClientRect is wrong for fixed-position elements in resize/orientationchange
+        https://bugs.webkit.org/show_bug.cgi?id=171140
+
+        Reviewed by Sam Weinig.
+
+        Tests that fetch the dimensions of a fixed element in resize and orientationchange handlers,
+        which is a proxy for reading the layout viewport.
+
+        * fast/events/ios/rotation/layout-viewport-during-rotation-expected.txt: Added.
+        * fast/events/ios/rotation/layout-viewport-during-rotation.html: Added.
+        * fast/events/ios/rotation/layout-viewport-during-safari-type-rotation-expected.txt: Added.
+        * fast/events/ios/rotation/layout-viewport-during-safari-type-rotation.html: Added.
+        * fast/events/ios/rotation/resources/rotation-utils.js: Added.
+        (stringFromRect):
+        (accumulateLog):
+        (logFixedObject):
+        (logFixedAndViewports):
+        (doTest):
+
 2017-05-07  Youenn Fablet  <youenn@apple.com>
 
         [MediaStream] r216197 caused some webrtc tests to fail
