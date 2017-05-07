@@ -91,7 +91,7 @@ public:
     void startProducingData();
     void stopProducingData();
 
-    void endStream();
+    void endCaptureTracks();
 
     // EventTarget
     EventTargetInterface eventTargetInterface() const final { return MediaStreamEventTargetInterfaceType; }

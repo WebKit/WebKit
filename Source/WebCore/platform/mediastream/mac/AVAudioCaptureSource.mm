@@ -83,6 +83,18 @@ public:
         AVCaptureDeviceTypedef *device = [getAVCaptureDeviceClass() deviceWithUniqueID:deviceID];
         return device ? AVAudioCaptureSource::create(device, emptyString(), constraints) : CaptureSourceOrError();
     }
+
+#if PLATFORM(IOS)
+    void setActiveSource(AVAudioCaptureSource& source)
+    {
+        if (m_activeSource && m_activeSource->isProducingData())
+            m_activeSource->setMuted(true);
+        m_activeSource = &source;
+    }
+
+private:
+    AVAudioCaptureSource* m_activeSource { nullptr };
+#endif
 };
 
 CaptureSourceOrError AVAudioCaptureSource::create(AVCaptureDeviceTypedef* device, const AtomicString& id, const MediaConstraints* constraints)
@@ -97,17 +109,22 @@ CaptureSourceOrError AVAudioCaptureSource::create(AVCaptureDeviceTypedef* device
     return CaptureSourceOrError(WTFMove(source));
 }
 
-RealtimeMediaSource::AudioCaptureFactory& AVAudioCaptureSource::factory()
+static AVAudioCaptureSourceFactory& avAudioCaptureSourceFactory()
 {
     static NeverDestroyed<AVAudioCaptureSourceFactory> factory;
     return factory.get();
+}
+
+RealtimeMediaSource::AudioCaptureFactory& AVAudioCaptureSource::factory()
+{
+    return avAudioCaptureSourceFactory();
 }
 
 AVAudioCaptureSource::AVAudioCaptureSource(AVCaptureDeviceTypedef* device, const AtomicString& id)
     : AVMediaCaptureSource(device, id, Type::Audio)
 {
 }
-    
+
 AVAudioCaptureSource::~AVAudioCaptureSource()
 {
     shutdownCaptureSession();
@@ -133,6 +150,10 @@ void AVAudioCaptureSource::updateSettings(RealtimeMediaSourceSettings& settings)
 
 void AVAudioCaptureSource::setupCaptureSession()
 {
+#if PLATFORM(IOS)
+    avAudioCaptureSourceFactory().setActiveSource(*this);
+#endif
+
     RetainPtr<AVCaptureDeviceInputType> audioIn = adoptNS([allocAVCaptureDeviceInputInstance() initWithDevice:device() error:nil]);
 
     if (![session() canAddInput:audioIn.get()]) {

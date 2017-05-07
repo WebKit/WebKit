@@ -1,3 +1,14 @@
+2017-05-07  Youenn Fablet  <youenn@apple.com>
+
+        [MediaStream] r216197 caused some webrtc tests to fail
+        https://bugs.webkit.org/show_bug.cgi?id=171728
+
+        Reviewed by Eric Carlson.
+
+        * UIProcess/UserMediaProcessManager.cpp:
+        (WebKit::UserMediaProcessManager::willEnableMediaStreamInPage): Removing muting streams of the page requesting
+        additional capture streams. This is now done in the WebProcess.
+
 2017-05-07  Tim Horton  <timothy_horton@apple.com>
 
         Clean up some WebProcessProxy, WebPage, and message handler includes

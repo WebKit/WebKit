@@ -118,6 +118,18 @@ public:
             return { };
         return AVVideoCaptureSource::create(device, emptyString(), constraints);
     }
+
+#if PLATFORM(IOS)
+    void setActiveSource(AVVideoCaptureSource& source)
+    {
+        if (m_activeSource && m_activeSource->isProducingData())
+            m_activeSource->setMuted(true);
+        m_activeSource = &source;
+    }
+
+private:
+    AVVideoCaptureSource* m_activeSource { nullptr };
+#endif
 };
 
 CaptureSourceOrError AVVideoCaptureSource::create(AVCaptureDeviceTypedef* device, const AtomicString& id, const MediaConstraints* constraints)
@@ -132,10 +144,15 @@ CaptureSourceOrError AVVideoCaptureSource::create(AVCaptureDeviceTypedef* device
     return CaptureSourceOrError(WTFMove(source));
 }
 
-RealtimeMediaSource::VideoCaptureFactory& AVVideoCaptureSource::factory()
+static AVVideoCaptureSourceFactory& avVideoCaptureSourceFactory()
 {
     static NeverDestroyed<AVVideoCaptureSourceFactory> factory;
     return factory.get();
+}
+
+RealtimeMediaSource::VideoCaptureFactory& AVVideoCaptureSource::factory()
+{
+    return avVideoCaptureSourceFactory();
 }
 
 AVVideoCaptureSource::AVVideoCaptureSource(AVCaptureDeviceTypedef* device, const AtomicString& id)
@@ -381,6 +398,10 @@ static inline int sensorOrientationFromVideoOutput(AVCaptureVideoDataOutputType*
 
 void AVVideoCaptureSource::setupCaptureSession()
 {
+#if PLATFORM(IOS)
+    avVideoCaptureSourceFactory().setActiveSource(*this);
+#endif
+
     NSError *error = nil;
     RetainPtr<AVCaptureDeviceInputType> videoIn = adoptNS([allocAVCaptureDeviceInputInstance() initWithDevice:device() error:&error]);
     if (error) {

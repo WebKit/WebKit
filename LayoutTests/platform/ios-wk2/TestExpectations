@@ -1970,6 +1970,3 @@ webkit.org/b/171628 scrollingcoordinator/ios/nested-fixed-layer-positions.html [
 
 webkit.org/b/171638 [ Release ] http/tests/xmlhttprequest/methods.html [ Pass Timeout ]
 
-webkit.org/b/171728 webrtc/audio-replace-track.html [ Failure ]
-
-webkit.org/b/171728 webrtc/video-replace-track.html [ Timeout ]

@@ -1,3 +1,38 @@
+2017-05-07  Youenn Fablet  <youenn@apple.com>
+
+        [MediaStream] r216197 caused some webrtc tests to fail
+        https://bugs.webkit.org/show_bug.cgi?id=171728
+
+        Reviewed by Eric Carlson.
+
+        Covered by existing tests.
+
+        Rename MediaStream::endStream to MediaStream::endCaptureTracks and only stopping capture tracks.
+        Using it when Document is asked to stop media capture.
+
+        Adding the ability to have only one active capture source at a time in a WebProcess.
+        This is done by keeping in its related factory the active capture source.
+        When a new source is created and started, it replaces the active capture source which becomes muted.
+        Using that mechanism for iOS.
+
+        * Modules/mediastream/MediaStream.cpp:
+        (WebCore::MediaStream::endCaptureTracks):
+        (WebCore::MediaStream::endStream): Deleted.
+        * Modules/mediastream/MediaStream.h:
+        * Modules/mediastream/MediaStreamTrack.h:
+        (WebCore::MediaStreamTrack::isCaptureTrack):
+        * dom/Document.cpp:
+        (WebCore::Document::stopMediaCapture):
+        * platform/mediastream/mac/AVAudioCaptureSource.mm:
+        (WebCore::AVAudioCaptureSourceFactory::setActiveSource):
+        (WebCore::AVAudioCaptureSource::setupCaptureSession):
+        * platform/mediastream/mac/AVVideoCaptureSource.mm:
+        (WebCore::AVVideoCaptureSourceFactory::setActiveSource):
+        (WebCore::AVVideoCaptureSource::setupCaptureSession):
+        * platform/mediastream/mac/CoreAudioCaptureSource.cpp:
+        (WebCore::CoreAudioCaptureSourceFactory::setActiveSource):
+        (WebCore::CoreAudioSharedUnit::startProducingData):
+
 2017-05-07  Tim Horton  <timothy_horton@apple.com>
 
         Clean up some WebProcessProxy, WebPage, and message handler includes

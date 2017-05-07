@@ -73,6 +73,7 @@ private:
     virtual ~CoreAudioCaptureSource();
 
     friend class CoreAudioSharedUnit;
+    friend class CoreAudioCaptureSourceFactory;
 
     bool isCaptureSource() const final { return true; }
     void startProducingData() final;
