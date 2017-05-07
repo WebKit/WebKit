@@ -50,8 +50,7 @@ typedef HashMap<OverlapTestRequestClient*, IntRect> OverlapTestRequestMap;
 struct PaintInfo {
     PaintInfo(GraphicsContext& newContext, const LayoutRect& newRect, PaintPhase newPhase, PaintBehavior newPaintBehavior,
         RenderObject* newSubtreePaintRoot = nullptr, ListHashSet<RenderInline*>* newOutlineObjects = nullptr,
-        OverlapTestRequestMap* overlapTestRequests = nullptr, const RenderLayerModelObject* newPaintContainer = nullptr,
-        bool newRequireSecurityOriginAccessForWidgets = false)
+        OverlapTestRequestMap* overlapTestRequests = nullptr, const RenderLayerModelObject* newPaintContainer = nullptr)
             : rect(newRect)
             , phase(newPhase)
             , paintBehavior(newPaintBehavior)
@@ -59,7 +58,6 @@ struct PaintInfo {
             , outlineObjects(newOutlineObjects)
             , overlapTestRequests(overlapTestRequests)
             , paintContainer(newPaintContainer)
-            , requireSecurityOriginAccessForWidgets(newRequireSecurityOriginAccessForWidgets)
             , m_context(&newContext)
     {
     }
@@ -122,7 +120,6 @@ struct PaintInfo {
     ListHashSet<RenderInline*>* outlineObjects; // used to list outlines that should be painted by a block with inline children
     OverlapTestRequestMap* overlapTestRequests;
     const RenderLayerModelObject* paintContainer; // the layer object that originates the current painting
-    bool requireSecurityOriginAccessForWidgets { false };
 
 private:
     GraphicsContext* m_context;

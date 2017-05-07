@@ -56,7 +56,6 @@ public:
 
     bool hasFilterThatAffectsOpacity() const;
     bool hasFilterThatMovesPixels() const;
-    bool hasFilterThatShouldBeRestrictedBySecurityOrigin() const;
 
     bool hasReferenceFilter() const;
 

@@ -31,7 +31,6 @@
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
 #include "RenderView.h"
-#include "SecurityOrigin.h"
 #include <wtf/StackStats.h>
 #include <wtf/Ref.h>
 
@@ -217,13 +216,6 @@ void RenderWidget::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
 
 void RenderWidget::paintContents(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    if (paintInfo.requireSecurityOriginAccessForWidgets) {
-        if (auto contentDocument = frameOwnerElement().contentDocument()) {
-            if (!document().securityOrigin().canAccess(contentDocument->securityOrigin()))
-                return;
-        }
-    }
-
     IntPoint contentPaintOffset = roundedIntPoint(paintOffset + location() + contentBoxRect().location());
     // Tell the widget to paint now. This is the only time the widget is allowed
     // to paint itself. That way it will composite properly with z-indexed layers.
@@ -237,8 +229,8 @@ void RenderWidget::paintContents(PaintInfo& paintInfo, const LayoutPoint& paintO
         paintInfo.context().translate(widgetPaintOffset);
         paintRect.move(-widgetPaintOffset);
     }
-    // FIXME: Remove repaintrect enclosing/integral snapping when RenderWidget becomes device pixel snapped.
-    m_widget->paint(paintInfo.context(), snappedIntRect(paintRect), paintInfo.requireSecurityOriginAccessForWidgets ? Widget::SecurityOriginPaintPolicy::AccessibleOriginOnly : Widget::SecurityOriginPaintPolicy::AnyOrigin);
+    // FIXME: Remove repaintrect encolsing/integral snapping when RenderWidget becomes device pixel snapped.
+    m_widget->paint(paintInfo.context(), snappedIntRect(paintRect));
 
     if (!widgetPaintOffset.isZero())
         paintInfo.context().translate(-widgetPaintOffset);
