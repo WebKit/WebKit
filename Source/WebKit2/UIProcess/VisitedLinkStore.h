@@ -29,6 +29,7 @@
 #include "APIObject.h"
 #include "MessageReceiver.h"
 #include "VisitedLinkTable.h"
+#include "WebPageProxy.h"
 #include "WebProcessLifetimeObserver.h"
 #include <WebCore/LinkHash.h>
 #include <wtf/Forward.h>

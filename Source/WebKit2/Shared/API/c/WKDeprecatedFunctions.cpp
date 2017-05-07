@@ -27,6 +27,7 @@
 
 #include "APIContentExtension.h"
 #include "APIDictionary.h"
+#include "WKAPICast.h"
 #include "WKArray.h"
 #include "WKContextPrivate.h"
 #include "WKMutableDictionary.h"

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebProcessLifetimeTracker.h"
 
+#include "WebPageProxy.h"
 #include "WebProcessLifetimeObserver.h"
 #include "WebProcessProxy.h"
 

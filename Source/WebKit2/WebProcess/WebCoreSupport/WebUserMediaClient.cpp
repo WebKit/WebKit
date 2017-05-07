@@ -22,6 +22,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "UserMediaPermissionRequestManager.h"
 #include "WebPage.h"
 #include <WebCore/UserMediaController.h>
 #include <WebCore/UserMediaRequest.h>

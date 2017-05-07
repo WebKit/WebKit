@@ -27,6 +27,7 @@
 #include "PerActivityStateCPUUsageSampler.h"
 
 #include "Logging.h"
+#include "WebPageProxy.h"
 #include "WebProcessPool.h"
 #include "WebProcessProxy.h"
 #include <WebCore/DiagnosticLoggingKeys.h>

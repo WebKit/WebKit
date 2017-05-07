@@ -29,7 +29,6 @@
 #include "LayerTreeContext.h"
 #include "RemoteLayerBackingStoreCollection.h"
 #include "RemoteLayerTreeTransaction.h"
-#include "WebPage.h"
 #include <WebCore/GraphicsLayerFactory.h>
 #include <WebCore/LayerPool.h>
 #include <WebCore/PlatformCALayer.h>
@@ -55,9 +54,9 @@ public:
 
     WebCore::LayerPool& layerPool() { return m_layerPool; }
 
-    float deviceScaleFactor() const { return m_webPage.deviceScaleFactor(); }
+    float deviceScaleFactor() const;
 
-    LayerHostingMode layerHostingMode() const { return m_webPage.layerHostingMode(); }
+    LayerHostingMode layerHostingMode() const;
 
     void buildTransaction(RemoteLayerTreeTransaction&, WebCore::PlatformCALayer& rootLayer);
 

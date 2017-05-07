@@ -28,7 +28,6 @@
 
 #include "APIObject.h"
 #include "WebPageGroupData.h"
-#include "WebPageProxy.h"
 #include "WebProcessProxy.h"
 #include <WebCore/UserStyleSheetTypes.h>
 #include <wtf/Forward.h>

@@ -54,6 +54,16 @@ RemoteLayerTreeContext::~RemoteLayerTreeContext()
         layer->clearContext();
 }
 
+float RemoteLayerTreeContext::deviceScaleFactor() const
+{
+    return m_webPage.deviceScaleFactor();
+}
+
+LayerHostingMode RemoteLayerTreeContext::layerHostingMode() const
+{
+    return m_webPage.layerHostingMode();
+}
+
 void RemoteLayerTreeContext::layerWasCreated(PlatformCALayerRemote& layer, PlatformCALayer::LayerType type)
 {
     GraphicsLayer::PlatformLayerID layerID = layer.layerID();

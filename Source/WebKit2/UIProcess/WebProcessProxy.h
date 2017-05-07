@@ -31,38 +31,49 @@
 #include "MessageReceiverMap.h"
 #include "PluginInfoStore.h"
 #include "ProcessLauncher.h"
+#include "ProcessTerminationReason.h"
+#include "ProcessThrottler.h"
 #include "ProcessThrottlerClient.h"
 #include "ResponsivenessTimer.h"
+#include "VisibleWebPageCounter.h"
 #include "WebConnectionToWebProcess.h"
-#include "WebPageProxy.h"
 #include "WebProcessProxyMessages.h"
 #include <WebCore/LinkHash.h>
+#include <WebCore/SessionID.h>
 #include <memory>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
-#if PLATFORM(IOS)
-#include "ProcessThrottler.h"
-#endif
+namespace API {
+class PageConfiguration;
+}
 
 namespace WebCore {
 class ResourceRequest;
 class URL;
 struct PluginInfo;
-};
+struct SecurityOriginData;
+}
 
 namespace WebKit {
 
 class NetworkProcessProxy;
+class ObjCObjectGraph;
+class PageClient;
 class UserMediaCaptureManagerProxy;
+class VisitedLinkStore;
 class WebBackForwardListItem;
+class WebFrameProxy;
 class WebPageGroup;
+class WebPageProxy;
 class WebProcessPool;
+class WebUserContentControllerProxy;
 class WebsiteDataStore;
 enum class WebsiteDataType;
 struct WebNavigationDataStore;
+struct WebPageCreationParameters;
 struct WebsiteData;
 
 class WebProcessProxy : public ChildProcessProxy, public ResponsivenessTimer::Client, private ProcessThrottlerClient {

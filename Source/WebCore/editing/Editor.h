@@ -26,6 +26,7 @@
 #pragma once
 
 #include "Color.h"
+#include "CompositionUnderline.h"
 #include "DataTransferAccessPolicy.h"
 #include "DictationAlternative.h"
 #include "DocumentMarker.h"
@@ -80,17 +81,6 @@ class TextEvent;
 struct PasteboardPlainText;
 struct PasteboardURL;
 struct TextCheckingResult;
-
-struct CompositionUnderline {
-    CompositionUnderline() 
-        : startOffset(0), endOffset(0), thick(false) { }
-    CompositionUnderline(unsigned s, unsigned e, const Color& c, bool t) 
-        : startOffset(s), endOffset(e), color(c), thick(t) { }
-    unsigned startOffset;
-    unsigned endOffset;
-    Color color;
-    bool thick;
-};
 
 enum EditorCommandSource { CommandFromMenuOrKeyBinding, CommandFromDOM, CommandFromDOMWithUserInterface };
 enum EditorParagraphSeparator { EditorParagraphSeparatorIsDiv, EditorParagraphSeparatorIsP };

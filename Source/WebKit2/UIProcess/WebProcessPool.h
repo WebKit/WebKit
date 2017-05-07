@@ -31,6 +31,7 @@
 #include "APIWebsiteDataStore.h"
 #include "DownloadProxyMap.h"
 #include "GenericCallback.h"
+#include "HiddenPageThrottlingAutoIncreasesCounter.h"
 #include "MessageReceiver.h"
 #include "MessageReceiverMap.h"
 #include "NetworkProcessProxy.h"

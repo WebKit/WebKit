@@ -33,6 +33,7 @@
 #import "WebCoreArgumentCoders.h"
 #import "WebPage.h"
 #import "WebPageProxyMessages.h"
+#import <WebCore/Editor.h>
 #import <WebCore/FocusController.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/GraphicsContext.h>

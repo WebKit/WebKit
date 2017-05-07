@@ -57,6 +57,7 @@
 #include "SessionStateConversion.h"
 #include "SessionTracker.h"
 #include "ShareableBitmap.h"
+#include "UserMediaPermissionRequestManager.h"
 #include "VisitedLinkTableController.h"
 #include "WKBundleAPICast.h"
 #include "WKRetainPtr.h"
@@ -130,6 +131,7 @@
 #include <WebCore/DragController.h>
 #include <WebCore/DragData.h>
 #include <WebCore/Editing.h>
+#include <WebCore/Editor.h>
 #include <WebCore/ElementIterator.h>
 #include <WebCore/EventHandler.h>
 #include <WebCore/EventNames.h>
@@ -344,7 +346,7 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
     , m_geolocationPermissionRequestManager(this)
 #endif
 #if ENABLE(MEDIA_STREAM)
-    , m_userMediaPermissionRequestManager(*this)
+    , m_userMediaPermissionRequestManager { std::make_unique<UserMediaPermissionRequestManager>(*this) }
 #endif
     , m_pageScrolledHysteresis([this](HysteresisState state) { if (state == HysteresisState::Stopped) pageStoppedScrolling(); }, pageScrollHysteresisSeconds)
     , m_canRunBeforeUnloadConfirmPanel(parameters.canRunBeforeUnloadConfirmPanel)
@@ -3864,27 +3866,27 @@ void WebPage::didReceiveNotificationPermissionDecision(uint64_t notificationID, 
 #if ENABLE(MEDIA_STREAM)
 void WebPage::userMediaAccessWasGranted(uint64_t userMediaID, const String& audioDeviceUID, const String& videoDeviceUID)
 {
-    m_userMediaPermissionRequestManager.userMediaAccessWasGranted(userMediaID, audioDeviceUID, videoDeviceUID);
+    m_userMediaPermissionRequestManager->userMediaAccessWasGranted(userMediaID, audioDeviceUID, videoDeviceUID);
 }
 
 void WebPage::userMediaAccessWasDenied(uint64_t userMediaID, uint64_t reason, String invalidConstraint)
 {
-    m_userMediaPermissionRequestManager.userMediaAccessWasDenied(userMediaID, static_cast<UserMediaRequest::MediaAccessDenialReason>(reason), invalidConstraint);
+    m_userMediaPermissionRequestManager->userMediaAccessWasDenied(userMediaID, static_cast<UserMediaRequest::MediaAccessDenialReason>(reason), invalidConstraint);
 }
 
 void WebPage::didCompleteMediaDeviceEnumeration(uint64_t userMediaID, const Vector<CaptureDevice>& devices, const String& deviceIdentifierHashSalt, bool originHasPersistentAccess)
 {
-    m_userMediaPermissionRequestManager.didCompleteMediaDeviceEnumeration(userMediaID, devices, deviceIdentifierHashSalt, originHasPersistentAccess);
+    m_userMediaPermissionRequestManager->didCompleteMediaDeviceEnumeration(userMediaID, devices, deviceIdentifierHashSalt, originHasPersistentAccess);
 }
 #if ENABLE(SANDBOX_EXTENSIONS)
 void WebPage::grantUserMediaDeviceSandboxExtensions(const MediaDeviceSandboxExtensions& extensions)
 {
-    m_userMediaPermissionRequestManager.grantUserMediaDeviceSandboxExtensions(extensions);
+    m_userMediaPermissionRequestManager->grantUserMediaDeviceSandboxExtensions(extensions);
 }
 
 void WebPage::revokeUserMediaDeviceSandboxExtensions(const Vector<String>& extensionIDs)
 {
-    m_userMediaPermissionRequestManager.revokeUserMediaDeviceSandboxExtensions(extensionIDs);
+    m_userMediaPermissionRequestManager->revokeUserMediaDeviceSandboxExtensions(extensionIDs);
 }
 #endif
 #endif

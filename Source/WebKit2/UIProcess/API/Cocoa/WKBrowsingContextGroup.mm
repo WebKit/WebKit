@@ -31,9 +31,10 @@
 
 #import "APIArray.h"
 #import "APIString.h"
+#import "WKAPICast.h"
 #import "WKArray.h"
 #import "WKPageGroup.h"
-#import "WKPreferences.h"
+#import "WKPreferencesRef.h"
 #import "WKRetainPtr.h"
 #import "WKSharedAPICast.h"
 #import "WKStringCF.h"

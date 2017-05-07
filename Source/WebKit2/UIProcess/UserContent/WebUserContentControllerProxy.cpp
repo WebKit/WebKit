@@ -31,6 +31,7 @@
 #include "APIUserScript.h"
 #include "APIUserStyleSheet.h"
 #include "DataReference.h"
+#include "WebPageCreationParameters.h"
 #include "WebProcessProxy.h"
 #include "WebScriptMessageHandler.h"
 #include "WebUserContentControllerDataTypes.h"

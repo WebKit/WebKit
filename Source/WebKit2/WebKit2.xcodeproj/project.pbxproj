@@ -697,6 +697,8 @@
 		2DD13BD518F7DADD00E130A1 /* FindControllerIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DD13BD318F7DADD00E130A1 /* FindControllerIOS.mm */; };
 		2DD45ADE1E5F8972006C355F /* InputViewUpdateDeferrer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD45ADC1E5F8972006C355F /* InputViewUpdateDeferrer.h */; };
 		2DD45ADF1E5F8972006C355F /* InputViewUpdateDeferrer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DD45ADD1E5F8972006C355F /* InputViewUpdateDeferrer.mm */; };
+		2DD5A7291EBF08D5009BA597 /* VisibleWebPageCounter.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD5A7281EBF08D5009BA597 /* VisibleWebPageCounter.h */; };
+		2DD5A72B1EBF09A7009BA597 /* HiddenPageThrottlingAutoIncreasesCounter.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD5A72A1EBF09A7009BA597 /* HiddenPageThrottlingAutoIncreasesCounter.h */; };
 		2DD67A2E1BD819730053B251 /* APIFindMatchesClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD67A2D1BD819730053B251 /* APIFindMatchesClient.h */; };
 		2DD67A351BD861060053B251 /* WKTextFinderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD67A331BD861060053B251 /* WKTextFinderClient.h */; };
 		2DD67A361BD861060053B251 /* WKTextFinderClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DD67A341BD861060053B251 /* WKTextFinderClient.mm */; };
@@ -2913,6 +2915,8 @@
 		2DD13BD318F7DADD00E130A1 /* FindControllerIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FindControllerIOS.mm; path = ios/FindControllerIOS.mm; sourceTree = "<group>"; };
 		2DD45ADC1E5F8972006C355F /* InputViewUpdateDeferrer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InputViewUpdateDeferrer.h; path = ios/InputViewUpdateDeferrer.h; sourceTree = "<group>"; };
 		2DD45ADD1E5F8972006C355F /* InputViewUpdateDeferrer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = InputViewUpdateDeferrer.mm; path = ios/InputViewUpdateDeferrer.mm; sourceTree = "<group>"; };
+		2DD5A7281EBF08D5009BA597 /* VisibleWebPageCounter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VisibleWebPageCounter.h; sourceTree = "<group>"; };
+		2DD5A72A1EBF09A7009BA597 /* HiddenPageThrottlingAutoIncreasesCounter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HiddenPageThrottlingAutoIncreasesCounter.h; sourceTree = "<group>"; };
 		2DD67A2D1BD819730053B251 /* APIFindMatchesClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIFindMatchesClient.h; sourceTree = "<group>"; };
 		2DD67A331BD861060053B251 /* WKTextFinderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKTextFinderClient.h; sourceTree = "<group>"; };
 		2DD67A341BD861060053B251 /* WKTextFinderClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKTextFinderClient.mm; sourceTree = "<group>"; };
@@ -6700,6 +6704,7 @@
 				BC06F44812DBD1F5002D78DE /* GeolocationPermissionRequestManagerProxy.h */,
 				BC06F43912DBCCFB002D78DE /* GeolocationPermissionRequestProxy.cpp */,
 				BC06F43812DBCCFB002D78DE /* GeolocationPermissionRequestProxy.h */,
+				2DD5A72A1EBF09A7009BA597 /* HiddenPageThrottlingAutoIncreasesCounter.h */,
 				839A2F2F1E2067390039057E /* HighPerformanceGraphicsUsageSampler.cpp */,
 				839A2F301E2067390039057E /* HighPerformanceGraphicsUsageSampler.h */,
 				31607F3819627002009B87DA /* LegacySessionStateCoding.h */,
@@ -6731,6 +6736,7 @@
 				4A410F3C19AF7B04002EBAB5 /* UserMediaPermissionRequestProxy.h */,
 				074E75FC1DF2002400D318EC /* UserMediaProcessManager.cpp */,
 				074E75FB1DF1FD1300D318EC /* UserMediaProcessManager.h */,
+				2DD5A7281EBF08D5009BA597 /* VisibleWebPageCounter.h */,
 				1A0F29E1120B44420053D1B9 /* VisitedLinkStore.cpp */,
 				1A0F29E2120B44420053D1B9 /* VisitedLinkStore.h */,
 				1A60224918C16B0800C3E8C9 /* VisitedLinkStore.messages.in */,
@@ -8117,6 +8123,7 @@
 				379A873C18BBFF0700588AF2 /* _WKElementActionInternal.h in Headers */,
 				1AD01BC91905D37E00C9C45F /* _WKErrorRecoveryAttempting.h in Headers */,
 				317FE7CF1C487DBD00A0CA89 /* _WKExperimentalFeature.h in Headers */,
+				2DD5A72B1EBF09A7009BA597 /* HiddenPageThrottlingAutoIncreasesCounter.h in Headers */,
 				317FE7CD1C487DAE00A0CA89 /* _WKExperimentalFeatureInternal.h in Headers */,
 				005D158F18E4C4EB00734619 /* _WKFindDelegate.h in Headers */,
 				2DEAC5CF1AC368BB00A195D8 /* _WKFindOptions.h in Headers */,
@@ -8860,6 +8867,7 @@
 				1A445BA5184D5FDA004B3414 /* WKContextConnectionClient.h in Headers */,
 				1A445BA3184D5FCF004B3414 /* WKContextDownloadClient.h in Headers */,
 				1A445BA1184D5FC1004B3414 /* WKContextHistoryClient.h in Headers */,
+				2DD5A7291EBF08D5009BA597 /* VisibleWebPageCounter.h in Headers */,
 				1A445B9F184D5FB5004B3414 /* WKContextInjectedBundleClient.h in Headers */,
 				51A555F6128C6C47009ABCEC /* WKContextMenuItem.h in Headers */,
 				51A55601128C6D92009ABCEC /* WKContextMenuItemTypes.h in Headers */,

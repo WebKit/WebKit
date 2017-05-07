@@ -31,13 +31,13 @@
 #include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/BlobPart.h>
 #include <WebCore/CertificateInfo.h>
+#include <WebCore/CompositionUnderline.h>
 #include <WebCore/Credential.h>
 #include <WebCore/Cursor.h>
 #include <WebCore/DatabaseDetails.h>
 #include <WebCore/DictationAlternative.h>
 #include <WebCore/DictionaryPopupInfo.h>
 #include <WebCore/DragData.h>
-#include <WebCore/Editor.h>
 #include <WebCore/EventTrackingRegions.h>
 #include <WebCore/FileChooser.h>
 #include <WebCore/FilterOperation.h>

@@ -1,3 +1,18 @@
+2017-05-07  Tim Horton  <timothy_horton@apple.com>
+
+        Clean up some WebProcessProxy, WebPage, and message handler includes
+        https://bugs.webkit.org/show_bug.cgi?id=171791
+
+        Reviewed by Sam Weinig.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * editing/CompositionUnderline.h: Added.
+        (WebCore::CompositionUnderline::CompositionUnderline):
+        * editing/Editor.h:
+        (WebCore::CompositionUnderline::CompositionUnderline): Deleted.
+        Move CompositionUnderline out of Editor.h, so that other files can
+        include that without Editor.h (which is quite large). Also, modernize it slightly.
+
 2017-05-07  Sam Weinig  <sam@webkit.org>
 
         Implement Subresource Integrity (SRI)

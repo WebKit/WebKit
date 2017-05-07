@@ -36,6 +36,7 @@
 #include "EditingRange.h"
 #include "EditorState.h"
 #include "GeolocationPermissionRequestManagerProxy.h"
+#include "HiddenPageThrottlingAutoIncreasesCounter.h"
 #include "LayerTreeContext.h"
 #include "MessageSender.h"
 #include "NotificationPermissionRequestManagerProxy.h"
@@ -46,6 +47,7 @@
 #include "ShareableBitmap.h"
 #include "UserMediaPermissionRequestManagerProxy.h"
 #include "VisibleContentRectUpdateInfo.h"
+#include "VisibleWebPageCounter.h"
 #include "WKBase.h"
 #include "WKPagePrivate.h"
 #include "WebColorPicker.h"
@@ -182,10 +184,6 @@ typedef GtkWidget* PlatformWidget;
 #endif
 
 namespace WebKit {
-
-enum HiddenPageThrottlingAutoIncreasesCounterType { };
-typedef RefCounter<HiddenPageThrottlingAutoIncreasesCounterType> HiddenPageThrottlingAutoIncreasesCounter;
-
 class CertificateInfo;
 class NativeWebGestureEvent;
 class NativeWebKeyboardEvent;
@@ -239,10 +237,6 @@ typedef GenericCallback<uint64_t> UnsignedCallback;
 typedef GenericCallback<EditingRange> EditingRangeCallback;
 typedef GenericCallback<const String&> StringCallback;
 typedef GenericCallback<API::SerializedScriptValue*, bool, const WebCore::ExceptionDetails&> ScriptValueCallback;
-
-enum VisibleWebPageCounterType { };
-using VisibleWebPageCounter = RefCounter<VisibleWebPageCounterType>;
-using VisibleWebPageToken = VisibleWebPageCounter::Token;
 
 #if PLATFORM(GTK)
 typedef GenericCallback<API::Error*> PrintFinishedCallback;

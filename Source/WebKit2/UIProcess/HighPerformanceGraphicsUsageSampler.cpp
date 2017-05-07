@@ -26,6 +26,7 @@
 #include "config.h"
 #include "HighPerformanceGraphicsUsageSampler.h"
 
+#include "WebPageProxy.h"
 #include "WebProcessPool.h"
 #include <WebCore/DiagnosticLoggingKeys.h>
 

@@ -30,6 +30,7 @@
 
 #include "GamepadData.h"
 #include "UIGamepad.h"
+#include "WebPageProxy.h"
 #include "WebProcessPool.h"
 #include <WebCore/MockGamepadProvider.h>
 #include <WebCore/PlatformGamepad.h>

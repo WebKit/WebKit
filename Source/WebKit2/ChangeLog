@@ -1,3 +1,58 @@
+2017-05-07  Tim Horton  <timothy_horton@apple.com>
+
+        Clean up some WebProcessProxy, WebPage, and message handler includes
+        https://bugs.webkit.org/show_bug.cgi?id=171791
+
+        Reviewed by Sam Weinig.
+
+        This is worth another ~10% off WebKit2 clean build time on Mac.
+        This time, the most impactful change is the removal of
+        UserMediaPermissionRequestManager.h from WebPage.h, which completely
+        eradicates JSC's VM.h (which is enormous) from WebPage.h (at least on Mac).
+
+        * Scripts/webkit/messages.py:
+        (headers_for_type):
+        Stop specializing CompositionUnderline now that it has its own file.
+
+        * Shared/API/c/WKDeprecatedFunctions.cpp:
+        * Shared/WebCoreArgumentCoders.cpp:
+        * UIProcess/API/Cocoa/WKBrowsingContextGroup.mm:
+        * UIProcess/Gamepad/UIGamepadProvider.cpp:
+        * UIProcess/HiddenPageThrottlingAutoIncreasesCounter.h: Added.
+        * UIProcess/HighPerformanceGraphicsUsageSampler.cpp:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        * UIProcess/PerActivityStateCPUUsageSampler.cpp:
+        * UIProcess/UserContent/WebUserContentControllerProxy.cpp:
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::toWebCore):
+        * UIProcess/VisibleWebPageCounter.h: Added.
+        * UIProcess/VisitedLinkStore.h:
+        * UIProcess/WebPageGroup.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessLifetimeTracker.cpp:
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.h:
+        Remove WebPageProxy and forward-declare a whole bunch of things.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebUserMediaClient.cpp:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::userMediaAccessWasGranted):
+        (WebKit::WebPage::userMediaAccessWasDenied):
+        (WebKit::WebPage::didCompleteMediaDeviceEnumeration):
+        (WebKit::WebPage::grantUserMediaDeviceSandboxExtensions):
+        (WebKit::WebPage::revokeUserMediaDeviceSandboxExtensions):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::userMediaPermissionRequestManager):
+        * WebProcess/WebPage/ios/FindControllerIOS.mm:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        * WebProcess/WebPage/mac/RemoteLayerTreeContext.h:
+        (WebKit::RemoteLayerTreeContext::deviceScaleFactor): Deleted.
+        (WebKit::RemoteLayerTreeContext::layerHostingMode): Deleted.
+        * WebProcess/WebPage/mac/RemoteLayerTreeContext.mm:
+        (WebKit::RemoteLayerTreeContext::deviceScaleFactor):
+        (WebKit::RemoteLayerTreeContext::layerHostingMode):
+
 2017-05-06  Chris Dumez  <cdumez@apple.com>
 
         Align our IDL files with the latest DOM specification

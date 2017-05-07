@@ -43,7 +43,6 @@
 #include "Plugin.h"
 #include "SandboxExtension.h"
 #include "UserData.h"
-#include "UserMediaPermissionRequestManager.h"
 #include "WebURLSchemeHandler.h"
 #include <WebCore/ActivityState.h>
 #include <WebCore/FrameLoaderTypes.h>
@@ -153,11 +152,13 @@ class DrawingArea;
 class DownloadID;
 class GamepadData;
 class InjectedBundleBackForwardList;
+class MediaDeviceSandboxExtensions;
 class NotificationPermissionRequestManager;
 class PDFPlugin;
 class PageBanner;
 class PluginView;
 class RemoteWebInspectorUI;
+class UserMediaPermissionRequestManager;
 class VisibleContentRectUpdateInfo;
 class WebColorChooser;
 class WebContextMenu;
@@ -499,7 +500,7 @@ public:
 #endif
 
 #if ENABLE(MEDIA_STREAM)
-    UserMediaPermissionRequestManager& userMediaPermissionRequestManager() { return m_userMediaPermissionRequestManager; }
+    UserMediaPermissionRequestManager& userMediaPermissionRequestManager() { return *m_userMediaPermissionRequestManager; }
 #endif
 
     void elementDidFocus(WebCore::Node*);
@@ -1412,7 +1413,7 @@ private:
 #endif
 
 #if ENABLE(MEDIA_STREAM)
-    UserMediaPermissionRequestManager m_userMediaPermissionRequestManager;
+    std::unique_ptr<UserMediaPermissionRequestManager> m_userMediaPermissionRequestManager;
 #endif
 
     std::unique_ptr<WebCore::PrintContext> m_printContext;
