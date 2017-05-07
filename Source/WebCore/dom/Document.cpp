@@ -1135,25 +1135,6 @@ ExceptionOr<Ref<Element>> Document::createElementNS(const AtomicString& namespac
     return createElement(parsedName, false);
 }
 
-String Document::readyState() const
-{
-    static NeverDestroyed<const String> loading(MAKE_STATIC_STRING_IMPL("loading"));
-    static NeverDestroyed<const String> interactive(MAKE_STATIC_STRING_IMPL("interactive"));
-    static NeverDestroyed<const String> complete(MAKE_STATIC_STRING_IMPL("complete"));
-
-    switch (m_readyState) {
-    case Loading:
-        return loading;
-    case Interactive:
-        return interactive;
-    case Complete:
-        return complete;
-    }
-
-    ASSERT_NOT_REACHED();
-    return String();
-}
-
 void Document::setReadyState(ReadyState readyState)
 {
     if (readyState == m_readyState)

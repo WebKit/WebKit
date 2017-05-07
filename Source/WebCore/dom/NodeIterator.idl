@@ -23,13 +23,14 @@
     ImplementationLacksVTable,
     JSCustomMarkFunction,
 ] interface NodeIterator {
-    readonly attribute Node root;
-    readonly attribute unsigned long whatToShow;
-    readonly attribute NodeFilter filter;
+    readonly attribute Node root; // FIXME: Should be [SameObject].
     readonly attribute Node referenceNode;
     readonly attribute boolean pointerBeforeReferenceNode;
+    readonly attribute unsigned long whatToShow;
+    readonly attribute NodeFilter? filter;
 
-    Node nextNode();
-    Node previousNode();
+    Node? nextNode();
+    Node? previousNode();
+
     void detach();
 };

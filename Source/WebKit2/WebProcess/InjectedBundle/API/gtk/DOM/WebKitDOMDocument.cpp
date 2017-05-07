@@ -1792,9 +1792,17 @@ gchar* webkit_dom_document_get_ready_state(WebKitDOMDocument* self)
 {
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_DOCUMENT(self), 0);
-    WebCore::Document* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->readyState());
-    return result;
+
+    auto readyState = WebKit::core(self)->readyState();
+    switch (readyState) {
+    case WebCore::Document::Loading:
+        return convertToUTF8String(ASCIILiteral("loading"));
+    case WebCore::Document::Interactive:
+        return convertToUTF8String(ASCIILiteral("interactive"));
+    case WebCore::Document::Complete:
+        return convertToUTF8String(ASCIILiteral("complete"));
+    }
+    return 0;
 }
 
 gchar* webkit_dom_document_get_character_set(WebKitDOMDocument* self)

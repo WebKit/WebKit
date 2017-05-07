@@ -398,7 +398,12 @@ public:
 
     WEBCORE_EXPORT Element* scrollingElement();
 
-    WEBCORE_EXPORT String readyState() const;
+    enum ReadyState {
+        Loading,
+        Interactive,
+        Complete
+    };
+    WEBCORE_EXPORT ReadyState readyState() const { return m_readyState; }
 
     WEBCORE_EXPORT String defaultCharsetForLegacyBindings() const;
 
@@ -659,11 +664,6 @@ public:
     bool inLimitedQuirksMode() const { return m_compatibilityMode == DocumentCompatibilityMode::LimitedQuirksMode; }
     bool inNoQuirksMode() const { return m_compatibilityMode == DocumentCompatibilityMode::NoQuirksMode; }
 
-    enum ReadyState {
-        Loading,
-        Interactive,
-        Complete
-    };
     void setReadyState(ReadyState);
     void setParsing(bool);
     bool parsing() const { return m_bParsing; }

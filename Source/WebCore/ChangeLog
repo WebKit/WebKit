@@ -1,3 +1,38 @@
+2017-05-06  Chris Dumez  <cdumez@apple.com>
+
+        Align our IDL files with the latest DOM specification
+        https://bugs.webkit.org/show_bug.cgi?id=171777
+
+        Reviewed by Sam Weinig.
+
+        Align our IDL files with the latest DOM specification:
+        - https://dom.spec.whatwg.org
+
+        No Web-facing behavior change. Things that do not match the specification
+        have been annotated with FIXME comments.
+
+        * dom/CharacterData.idl:
+        * dom/Comment.idl:
+        * dom/CustomEvent.idl:
+        * dom/DOMImplementation.idl:
+        * dom/Document.cpp:
+        * dom/Document.h:
+        (WebCore::Document::readyState):
+        * dom/Document.idl:
+        * dom/MutationObserver.idl:
+        * dom/NamedNodeMap.idl:
+        * dom/NodeFilter.idl:
+        * dom/NodeIterator.idl:
+        * dom/NodeList.idl:
+        * dom/NonDocumentTypeChildNode.idl:
+        * dom/ParentNode.idl:
+        * dom/ProcessingInstruction.idl:
+        * dom/Range.idl:
+        * dom/ShadowRoot.idl:
+        * dom/Text.idl:
+        * dom/TreeWalker.idl:
+        * html/DOMTokenList.idl:
+
 2017-05-06  Tim Horton  <timothy_horton@apple.com>
 
         Reduce the number of includes in WebPage.h and WebProcess.h

@@ -22,12 +22,9 @@
 [
     JSGenerateToJSObject
 ] interface ProcessingInstruction : CharacterData {
+    readonly attribute DOMString target;
 
-    // DOM Level 1
-
-    readonly attribute DOMString? target;
-
-    // interface LinkStyle from DOM Level 2 Style Sheets
-    readonly attribute StyleSheet sheet;
+    // Extension from CSSOM (https://drafts.csswg.org/cssom/#linkstyle).
+    readonly attribute StyleSheet? sheet;
 };
 

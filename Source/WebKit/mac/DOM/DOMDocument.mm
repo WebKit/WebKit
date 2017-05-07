@@ -305,7 +305,17 @@
 - (NSString *)readyState
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->readyState();
+    auto readyState = IMPL->readyState();
+    switch (readyState) {
+    case WebCore::Document::Loading:
+        return @"loading";
+    case WebCore::Document::Interactive:
+        return @"interactive";
+    case WebCore::Document::Complete:
+        return @"complete";
+    }
+    ASSERT_NOT_REACHED();
+    return @"complete";
 }
 
 - (NSString *)characterSet

@@ -35,8 +35,6 @@
     [CEReactions, MayThrowException] boolean toggle(DOMString token, optional boolean force);
     [CEReactions, MayThrowException] void replace(DOMString token, DOMString newToken);
     [MayThrowException] boolean supports(DOMString token);
-
-    iterable<DOMString>;
-
     [CEReactions] stringifier attribute DOMString value;
+    iterable<DOMString>;
 };

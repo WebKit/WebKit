@@ -28,16 +28,14 @@
 [
     NoInterfaceObject,
 ] interface ParentNode {
-    readonly attribute HTMLCollection children;
-    readonly attribute Element firstElementChild;
-    readonly attribute Element lastElementChild;
+    readonly attribute HTMLCollection children; // FIXME: Should be [SameObject].
+    readonly attribute Element? firstElementChild;
+    readonly attribute Element? lastElementChild;
     readonly attribute unsigned long childElementCount;
 
     [CEReactions, Unscopable, MayThrowException] void prepend((Node or DOMString)... nodes);
     [CEReactions, Unscopable, MayThrowException] void append((Node or DOMString)... nodes);
 
-    // [Unscopable] Element? query(DOMString relativeSelectors);
-    // [NewObject, Unscopable] Elements queryAll(DOMString relativeSelectors);
-    [MayThrowException] Element querySelector(DOMString selectors);
+    [MayThrowException] Element? querySelector(DOMString selectors);
     [MayThrowException, NewObject] NodeList querySelectorAll(DOMString selectors);
 };

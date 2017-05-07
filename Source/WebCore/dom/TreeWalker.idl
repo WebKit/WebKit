@@ -23,16 +23,16 @@
     ImplementationLacksVTable,
     JSCustomMarkFunction,
 ] interface TreeWalker {
-    readonly attribute Node root;
+    readonly attribute Node root; // FIXME: Should be [SameObject].
     readonly attribute unsigned long whatToShow;
-    readonly attribute NodeFilter filter;
+    readonly attribute NodeFilter? filter;
     attribute Node currentNode;
 
-    Node parentNode();
-    Node firstChild();
-    Node lastChild();
-    Node previousSibling();
-    Node nextSibling();
-    Node previousNode();
-    Node nextNode();
+    Node? parentNode();
+    Node? firstChild();
+    Node? lastChild();
+    Node? previousSibling();
+    Node? nextSibling();
+    Node? previousNode();
+    Node? nextNode();
 };

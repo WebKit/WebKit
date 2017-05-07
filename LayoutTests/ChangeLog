@@ -1,3 +1,19 @@
+2017-05-06  Chris Dumez  <cdumez@apple.com>
+
+        Align our IDL files with the latest DOM specification
+        https://bugs.webkit.org/show_bug.cgi?id=171777
+
+        Reviewed by Sam Weinig.
+
+        Rebaseline a few tests.
+
+        * fast/dom/Document/adoptNode-null-expected.txt:
+        * fast/dom/Document/adoptNode-null.html:
+        * fast/dom/Document/importNode-null-expected.txt:
+        * fast/dom/Document/importNode-null.html:
+        * fast/dom/Range/range-intersectsNode-expected.txt:
+        * fast/text/text-combine-crash-expected.txt:
+
 2017-05-06  Alexey Proskuryakov  <ap@apple.com>
 
         Mark http/tests/loading/resourceLoadStatistics/prevalent-resource-without-user-interaction.html as flaky

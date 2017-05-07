@@ -27,137 +27,160 @@
     JSCustomMarkFunction,
     JSGenerateToNativeObject,
 ] interface Document : Node {
+    readonly attribute DOMImplementation implementation; // FIXME: Should be [SameObject].
+    [ImplementedAs=urlForBindings] readonly attribute USVString URL;
+    [ImplementedAs=urlForBindings] readonly attribute USVString documentURI;
+    readonly attribute USVString origin;
+    readonly attribute DOMString compatMode;
+    [ImplementedAs=characterSetWithUTF8Fallback] readonly attribute DOMString characterSet;
+    [ImplementedAs=characterSetWithUTF8Fallback] readonly attribute DOMString charset; // Historical alias of .characterSet,
+    [ImplementedAs=characterSetWithUTF8Fallback] readonly attribute DOMString inputEncoding; // Historical alias of .characterSet.
+    readonly attribute DOMString contentType;
+
     readonly attribute DocumentType? doctype;
-    readonly attribute DOMImplementation implementation;
     [DOMJIT=Getter] readonly attribute Element? documentElement;
 
-    [NewObject, MayThrowException, ImplementedAs=createElementForBindings] Element createElement(DOMString tagName);
+    HTMLCollection getElementsByTagName(DOMString qualifiedName);
+    HTMLCollection getElementsByTagNameNS(DOMString? namespaceURI, DOMString localName);
+    HTMLCollection getElementsByClassName(DOMString classNames);
+
+    [NewObject, MayThrowException, ImplementedAs=createElementForBindings] Element createElement(DOMString localName); // FIXME: missing options parameter.
+    [NewObject, MayThrowException] Element createElementNS(DOMString? namespaceURI, DOMString qualifiedName); // FIXME: missing options parameter.
     [NewObject] DocumentFragment createDocumentFragment();
-
     [NewObject] Text createTextNode(DOMString data);
-    [NewObject] Comment createComment(DOMString data);
     [NewObject, MayThrowException] CDATASection createCDATASection(DOMString data);
+    [NewObject] Comment createComment(DOMString data);
     [NewObject, MayThrowException] ProcessingInstruction createProcessingInstruction(DOMString target, DOMString data);
-    [NewObject, MayThrowException] Attr createAttribute(DOMString name);
 
-    HTMLCollection getElementsByTagName(DOMString tagname);
+    [CEReactions, MayThrowException, NewObject] Node importNode(Node node, optional boolean deep = false);
+    [CEReactions, MayThrowException] Node adoptNode(Node node);
 
-    [CEReactions, MayThrowException, NewObject] Node importNode(Node importedNode, optional boolean deep = false);
-
-    [NewObject, MayThrowException] Element createElementNS(DOMString? namespaceURI, DOMString qualifiedName);
+    [NewObject, MayThrowException] Attr createAttribute(DOMString localName);
     [NewObject, MayThrowException] Attr createAttributeNS(DOMString? namespaceURI, DOMString qualifiedName);
 
-    HTMLCollection getElementsByTagNameNS(DOMString? namespaceURI, DOMString localName);
+    [MayThrowException, NewObject] Event createEvent(DOMString type);
 
-    [ImplementedAs=characterSetWithUTF8Fallback] readonly attribute DOMString inputEncoding;
+    [NewObject] Range createRange();
 
+    // NodeFilter.SHOW_ALL = 0xFFFFFFFF.
+    [NewObject] NodeIterator createNodeIterator(Node root, optional unsigned long whatToShow = 0xFFFFFFFF, optional NodeFilter? filter = null);
+    [NewObject] TreeWalker createTreeWalker(Node root, optional unsigned long whatToShow = 0xFFFFFFFF, optional NodeFilter? filter = null);
+
+    // Extensions from HTML specification (https://html.spec.whatwg.org/#the-document-object).
+    [PutForwards=href, Unforgeable] readonly attribute Location? location;
+    [SetterMayThrowException] attribute USVString domain;
+    readonly attribute USVString referrer;
+    [GetterMayThrowException, SetterMayThrowException] attribute USVString cookie;
+    readonly attribute DOMString lastModified;
+    readonly attribute DocumentReadyState readyState;
+
+    // DOM tree accessors.
+    [CEReactions] attribute DOMString title;
+    [CEReactions] attribute DOMString dir;
+    [CEReactions, DOMJIT=Getter, ImplementedAs=bodyOrFrameset, SetterMayThrowException] attribute HTMLElement? body;
+    readonly attribute HTMLHeadElement? head;
+    readonly attribute HTMLCollection images; // Should be [SameObject].
+    readonly attribute HTMLCollection embeds; // Should be [SameObject].
+    readonly attribute HTMLCollection plugins; // Should be [SameObject].
+    readonly attribute HTMLCollection links; // Should be [SameObject].
+    readonly attribute HTMLCollection forms; // Should be [SameObject].
+    readonly attribute HTMLCollection scripts; // Should be [SameObject].
+    NodeList getElementsByName([AtomicString] DOMString elementName);
+    readonly attribute HTMLScriptElement? currentScript; // FIXME: Should return a HTMLOrSVGScriptElement.
+
+    // User interaction.
+    readonly attribute DOMWindow? defaultView;
+    boolean hasFocus();
+    [CEReactions] attribute DOMString designMode;
+    [CEReactions] boolean execCommand(DOMString commandId, optional boolean showUI = false, optional DOMString? value = null); // FIXME: value should not be nullable.
+    boolean queryCommandEnabled(DOMString commandId);
+    boolean queryCommandIndeterm(DOMString commandId);
+    boolean queryCommandState(DOMString commandId);
+    boolean queryCommandSupported(DOMString commandId);
+    DOMString queryCommandValue(DOMString commandId);
+
+    // Special event handler IDL attributes that only apply to Document objects.
+    [LenientThis] attribute EventHandler onreadystatechange;
+
+    // Extensions from the CSSOM specification (https://drafts.csswg.org/cssom/#extensions-to-the-document-interface).
+    readonly attribute StyleSheetList styleSheets; // FIXME: Should be [SameObject].
+
+    // Extensions from the CSSOM-View specification (https://drafts.csswg.org/cssom-view/#extensions-to-the-document-interface).
+    readonly attribute Element? scrollingElement;
+    // sequence<Element> elementsFromPoint(double x, double y);  // FIXME: Implement this.
+    // CaretPosition? caretPositionFromPoint(double x, double y);  // FIXME: Implement this.
+
+    // Extensions from Selection API (https://www.w3.org/TR/selection-api/#extensions-to-document-interface).
+    DOMSelection? getSelection();
+
+    // XPath extensions (https://www.w3.org/TR/DOM-Level-3-XPath/xpath.html#XPathEvaluator).
+    [MayThrowException] XPathExpression createExpression(optional DOMString expression = "undefined", optional XPathNSResolver? resolver); // FIXME: Using "undefined" as default parameter value is wrong.
+    XPathNSResolver createNSResolver(Node? nodeResolver);
+    [MayThrowException] XPathResult evaluate(optional DOMString expression = "undefined", optional Node? contextNode, optional XPathNSResolver? resolver, optional unsigned short type = 0, optional XPathResult? inResult); // FIXME: Using "undefined" as default parameter value is wrong.
+
+    // Extensions from FullScreen API (https://fullscreen.spec.whatwg.org/#api).
+    // FIXME: Should probably be unprefixed.
+    [Conditional=FULLSCREEN_API] readonly attribute boolean webkitFullscreenEnabled;
+    [Conditional=FULLSCREEN_API, ImplementedAs=webkitFullscreenElementForBindings] readonly attribute Element? webkitFullscreenElement;
+    [Conditional=FULLSCREEN_API] void webkitExitFullscreen();
+    [Conditional=FULLSCREEN_API] readonly attribute boolean webkitIsFullScreen; // Mozilla version.
+    [Conditional=FULLSCREEN_API] readonly attribute boolean webkitFullScreenKeyboardInputAllowed; // Mozilla version.
+    [Conditional=FULLSCREEN_API, ImplementedAs=webkitCurrentFullScreenElementForBindings] readonly attribute Element webkitCurrentFullScreenElement; // Mozilla version.
+    [Conditional=FULLSCREEN_API] void webkitCancelFullScreen(); // Mozilla version.
+    [NotEnumerable, Conditional=FULLSCREEN_API] attribute EventHandler onwebkitfullscreenchange;
+    [NotEnumerable, Conditional=FULLSCREEN_API] attribute EventHandler onwebkitfullscreenerror;
+
+    // Extensions from Pointer Lock API (https://www.w3.org/TR/pointerlock/#extensions-to-the-document-interface).
+    [NotEnumerable, Conditional=POINTER_LOCK] attribute EventHandler onpointerlockchange; // FIXME: Should be enumerable.
+    [NotEnumerable, Conditional=POINTER_LOCK] attribute EventHandler onpointerlockerror; // FIXME: Should be enumerable.
+    // readonly attribute Element? pointerLockElement; // FIXME: Implement this.
+    [Conditional=POINTER_LOCK] void exitPointerLock();
+
+    // Extensions from CSS Font Loading API (https://drafts.csswg.org/css-font-loading/#font-face-source).
+    // FIXME: Should be in a separate FontFaceSource interface.
+    readonly attribute FontFaceSet fonts;
+
+    // Extensions from Page visibility API (https://www.w3.org/TR/page-visibility/#sec-document-interface).
+    readonly attribute boolean hidden;
+    readonly attribute VisibilityState visibilityState;
+    attribute EventHandler onvisibilitychange;
+
+    // FIXME: Should be in a separate DocumentAndElementEventHandlers interface.
+    // https://html.spec.whatwg.org/#documentandelementeventhandlers
+    [NotEnumerable] attribute EventHandler oncopy; // FIXME: Should be enumerable.
+    [NotEnumerable] attribute EventHandler oncut; // FIXME: Should be enumerable.
+    [NotEnumerable] attribute EventHandler onpaste; // FIXME: Should be enumerable.
+
+    // FIXME: Those have been dropped from the HTML specification.
+    readonly attribute HTMLCollection applets;
+    readonly attribute HTMLCollection anchors;
+
+    // FIXME: Those were dropped from the CSSOM specification.
+    readonly attribute DOMString? preferredStylesheetSet;
+    attribute DOMString? selectedStylesheetSet;
+
+    // FIXME: Those have been dropped from the DOM specification.
     readonly attribute DOMString? xmlEncoding;
     [SetterMayThrowException] attribute DOMString? xmlVersion;
     attribute boolean xmlStandalone;
 
-    [CEReactions, MayThrowException] Node adoptNode(Node source);
-
-    [ImplementedAs=urlForBindings] readonly attribute USVString documentURI;
-
-    [MayThrowException, NewObject] Event createEvent(DOMString eventType);
-
-    [NewObject] Range createRange();
-
-    [NewObject] NodeIterator createNodeIterator(Node root, optional unsigned long whatToShow = 0xFFFFFFFF, optional NodeFilter? filter = null);
-    [NewObject] TreeWalker createTreeWalker(Node root, optional unsigned long whatToShow = 0xFFFFFFFF, optional NodeFilter? filter = null);
-
-    readonly attribute DOMWindow defaultView;
-
-    readonly attribute StyleSheetList styleSheets;
-
-    // FIXME: Using "undefined" as default parameter value is wrong.
+    // FIXME: Blink has already dropped this (https://groups.google.com/a/chromium.org/forum/#!topic/blink-dev/s3ezjTuC8ig).
     CSSStyleDeclaration getOverrideStyle(optional Element? element = null, optional DOMString pseudoElement = "undefined");
 
-    readonly attribute DOMString contentType;
+    // FIXME: Should be moved to GlobalEventHandlers (http://w3c.github.io/selection-api/#extensions-to-globaleventhandlers).
+    [NotEnumerable] attribute EventHandler onselectstart; // FIXME: Should be enumerable.
+    [NotEnumerable] attribute EventHandler onselectionchange; // FIXME: Should be enumerable.
 
-    // FIXME: Using "undefined" as default parameter value is wrong.
-    [MayThrowException] XPathExpression createExpression(optional DOMString expression = "undefined", optional XPathNSResolver? resolver);
-    XPathNSResolver createNSResolver(Node? nodeResolver);
-
-    // FIXME: Using "undefined" as default parameter value is wrong.
-    [MayThrowException] XPathResult evaluate(optional DOMString expression = "undefined", optional Node? contextNode, optional XPathNSResolver? resolver, optional unsigned short type = 0, optional XPathResult? inResult);
-
-    // FIXME: The default value for the last parameter should be the empty string.
-    [CEReactions] boolean execCommand(DOMString command, optional boolean userInterface = false, optional DOMString? value = null);
-
-    boolean queryCommandEnabled(DOMString command);
-    boolean queryCommandIndeterm(DOMString command);
-    boolean queryCommandState(DOMString command);
-    boolean queryCommandSupported(DOMString command);
-    DOMString queryCommandValue(DOMString command);
-
-    [CEReactions] attribute DOMString title;
-    attribute DOMString dir;
-    attribute DOMString designMode;
-
-    readonly attribute USVString referrer;
-    [SetterMayThrowException] attribute USVString domain;
-    [ImplementedAs=urlForBindings] readonly attribute USVString URL;
-
-    [GetterMayThrowException, SetterMayThrowException] attribute USVString cookie;
-
-    [CEReactions, DOMJIT=Getter, ImplementedAs=bodyOrFrameset, SetterMayThrowException] attribute HTMLElement? body;
-
-    readonly attribute HTMLHeadElement? head;
-    readonly attribute HTMLCollection images;
-    readonly attribute HTMLCollection applets;
-    readonly attribute HTMLCollection links;
-    readonly attribute HTMLCollection forms;
-    readonly attribute HTMLCollection anchors;
-    readonly attribute HTMLCollection embeds;
-    readonly attribute HTMLCollection plugins;
-    readonly attribute HTMLCollection scripts;
-    readonly attribute DOMString lastModified;
-
-    NodeList getElementsByName([AtomicString] DOMString elementName);
-
-    [PutForwards=href, Unforgeable] readonly attribute Location? location;
-
-    [ImplementedAs=characterSetWithUTF8Fallback] readonly attribute DOMString charset;
-    readonly attribute DOMString readyState;
-
+    // Non standard: It has been superseeded by caretPositionFromPoint which we do not implement yet.
     Range caretRangeFromPoint(optional long x = 0, optional long y = 0);
-
-    // Mozilla extensions
-    DOMSelection getSelection();
-    [ImplementedAs=characterSetWithUTF8Fallback] readonly attribute DOMString characterSet;
-
-    readonly attribute DOMString? preferredStylesheetSet;
-    attribute DOMString? selectedStylesheetSet;
 
     // FIXME: This is not standard and has been dropped from Blink already.
     [Custom] (CanvasRenderingContext2D or WebGLRenderingContextBase) getCSSCanvasContext(DOMString contextId, DOMString name, long width, long height);
 
-    HTMLCollection getElementsByClassName(DOMString classNames);
-
-    boolean hasFocus();
-
-    readonly attribute DOMString compatMode;
-
-#if defined(ENABLE_FULLSCREEN_API) && ENABLE_FULLSCREEN_API
-    // Mozilla version
-    readonly attribute boolean webkitIsFullScreen;
-    readonly attribute boolean webkitFullScreenKeyboardInputAllowed;
-    [ImplementedAs=webkitCurrentFullScreenElementForBindings] readonly attribute Element webkitCurrentFullScreenElement;
-    void webkitCancelFullScreen();
-
-    // W3C version
-    readonly attribute boolean webkitFullscreenEnabled;
-    [ImplementedAs=webkitFullscreenElementForBindings] readonly attribute Element? webkitFullscreenElement;
-    void webkitExitFullscreen();
-#endif
-
-    [Conditional=POINTER_LOCK] void exitPointerLock();
-
+    // Non standard (https://developer.apple.com/reference/webkitjs/document/1633863-webkitgetnamedflows).
     [Conditional=CSS_REGIONS] DOMNamedFlowCollection webkitGetNamedFlows();
 
-    readonly attribute FontFaceSet fonts;
-
+    // FIXME: This has been dropped from the standard now that Touch has a constructor.
 #if defined(ENABLE_IOS_TOUCH_EVENTS) && ENABLE_IOS_TOUCH_EVENTS
 #include <WebKitAdditions/DocumentIOS.idl>
 #elif defined(ENABLE_TOUCH_EVENTS) && ENABLE_TOUCH_EVENTS
@@ -169,47 +192,17 @@
     [NewObject, Custom] TouchList createTouchList(Touch... touches);
 #endif
 
-    // Page visibility API.
-    readonly attribute VisibilityState visibilityState;
-    readonly attribute boolean hidden;
-    attribute EventHandler onvisibilitychange;
-
-    // currentscript API: http://www.whatwg.org/specs/web-apps/current-work/multipage/dom.html#dom-document-currentscript
-    readonly attribute HTMLScriptElement? currentScript;
-
-    // http://www.w3.org/TR/2014/WD-dom-20140204/#dom-document-origin
-    readonly attribute USVString origin;
-
-    // http://dev.w3.org/csswg/cssom-view/#dom-document-scrollingelement
-    readonly attribute Element? scrollingElement;
-
-    // Unique to Element and Document
-    // FIXME: Should these be exposed on Window as well (and therefore moved to GlobalEventHandlers.idl)?
+    // Non standard event handlers.
     [NotEnumerable] attribute EventHandler onbeforecopy;
     [NotEnumerable] attribute EventHandler onbeforecut;
     [NotEnumerable] attribute EventHandler onbeforeinput;
     [NotEnumerable] attribute EventHandler onbeforepaste;
-    [NotEnumerable] attribute EventHandler oncopy;
-    [NotEnumerable] attribute EventHandler oncut;
-    [NotEnumerable] attribute EventHandler onpaste;
-    [NotEnumerable] attribute EventHandler onselectstart;
-    [NotEnumerable, Conditional=FULLSCREEN_API] attribute EventHandler onwebkitfullscreenchange;
-    [NotEnumerable, Conditional=FULLSCREEN_API] attribute EventHandler onwebkitfullscreenerror;
-
-    // Unique to Document and HTMLBodyElement
-    [NotEnumerable] attribute EventHandler onselectionchange;
-
-    // Unique to Document
-    [LenientThis] attribute EventHandler onreadystatechange;
-    [NotEnumerable, Conditional=POINTER_LOCK] attribute EventHandler onpointerlockchange;
-    [NotEnumerable, Conditional=POINTER_LOCK] attribute EventHandler onpointerlockerror;
 };
 
-enum VisibilityState {
-    "hidden",
-    "visible",
-    "prerender"
-};
+// FIXME: Missing "unloaded" value (https://www.w3.org/TR/page-visibility/#sec-document-interface).
+enum VisibilityState { "hidden", "visible", "prerender" };
+
+enum DocumentReadyState { "loading", "interactive", "complete" };
 
 Document implements ParentNode;
 Document implements NonElementParentNode;

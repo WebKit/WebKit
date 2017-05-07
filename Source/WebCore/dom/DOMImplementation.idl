@@ -27,8 +27,8 @@
     [NewObject, MayThrowException] XMLDocument createDocument(DOMString? namespaceURI, [TreatNullAs=EmptyString] DOMString qualifiedName, optional DocumentType? doctype = null);
     [NewObject] HTMLDocument createHTMLDocument(optional DOMString title);
 
-    boolean hasFeature();
+    boolean hasFeature(); // Useless; always returns true.
 
-    // FIXME: Using "undefined" as default parameter value is wrong.
+    // FIXME: This has already been dropped in Blink (https://bugs.chromium.org/p/chromium/issues/detail?id=363561).
     CSSStyleSheet createCSSStyleSheet(optional DOMString title = "undefined", optional DOMString media = "undefined");
 };

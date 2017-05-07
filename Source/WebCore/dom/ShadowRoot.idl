@@ -30,6 +30,7 @@
     readonly attribute ShadowRootMode mode;
     readonly attribute Element host;
 
+    // FIXME: Seems to have been dropped from the Shadow DOM API.
     [CEReactions, SetterMayThrowException] attribute [TreatNullAs=EmptyString] DOMString innerHTML;
 };
 
