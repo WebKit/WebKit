@@ -1,3 +1,15 @@
+2017-05-06  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Make rotation tests more reliable
+        https://bugs.webkit.org/show_bug.cgi?id=171778
+
+        Reviewed by Tim Horton.
+
+        New baseline.
+
+        * fast/events/ios/rotation/zz-no-rotation-expected.txt:
+        * fast/events/ios/rotation/zz-no-rotation.html:
+
 2017-05-06  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r216333.

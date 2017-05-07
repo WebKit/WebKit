@@ -108,6 +108,17 @@ static Vector<WebKitTestRunnerWindow*> allWindows;
 
 @end
 
+namespace WTR {
+
+enum class WebViewSizingMode {
+    Default,
+    HeightRespectsStatusBar
+};
+
+static CGRect viewRectForWindowRect(CGRect, PlatformWebView::WebViewSizingMode);
+
+} // namespace WTR
+
 @interface PlatformWebViewController : UIViewController
 @end
 
@@ -116,27 +127,28 @@ static Vector<WebKitTestRunnerWindow*> allWindows;
 - (void)viewWillTransitionToSize:(CGSize)toSize withTransitionCoordinator:(id <UIViewControllerTransitionCoordinator>)coordinator
 {
     [super viewWillTransitionToSize:toSize withTransitionCoordinator:coordinator];
-    
+
     TestRunnerWKWebView *webView = WTR::TestController::singleton().mainWebView()->platformView();
-    
+
     if (webView.usesSafariLikeRotation)
         [webView _setInterfaceOrientationOverride:[[UIApplication sharedApplication] statusBarOrientation]];
-        
+
     [coordinator animateAlongsideTransition: ^(id<UIViewControllerTransitionCoordinatorContext> context) {
+        // This code assumes that we should take the status bar into account, which we only do for flexible viewport tests,
+        // but it only makes sense to test rotation with a flexible viewport anyway.
         if (webView.usesSafariLikeRotation) {
             [webView _beginAnimatedResizeWithUpdates:^{
-                auto size = self.view.bounds.size;
-                webView.frame = self.view.bounds;
-                [webView _overrideLayoutParametersWithMinimumLayoutSize:size maximumUnobscuredSizeOverride:size];
+                webView.frame = viewRectForWindowRect(self.view.bounds, WTR::PlatformWebView::WebViewSizingMode::HeightRespectsStatusBar);
+                [webView _overrideLayoutParametersWithMinimumLayoutSize:webView.frame.size maximumUnobscuredSizeOverride:webView.frame.size];
                 [webView _setInterfaceOrientationOverride:[[UIApplication sharedApplication] statusBarOrientation]];
             }];
         } else
-            webView.frame = self.view.bounds;
+            webView.frame = viewRectForWindowRect(self.view.bounds, WTR::PlatformWebView::WebViewSizingMode::HeightRespectsStatusBar);
     } completion:^(id<UIViewControllerTransitionCoordinatorContext> context) {
-        webView.frame = self.view.bounds;
+        webView.frame = viewRectForWindowRect(self.view.bounds, WTR::PlatformWebView::WebViewSizingMode::HeightRespectsStatusBar);
         if (webView.usesSafariLikeRotation)
             [webView _endAnimatedResize];
-            
+
         [webView _didEndRotation];
     }];
 }
@@ -144,11 +156,6 @@ static Vector<WebKitTestRunnerWindow*> allWindows;
 @end
 
 namespace WTR {
-
-enum class WebViewSizingMode {
-    Default,
-    HeightRespectsStatusBar
-};
 
 static CGRect viewRectForWindowRect(CGRect windowRect, PlatformWebView::WebViewSizingMode mode)
 {

@@ -4562,9 +4562,6 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 
 - (void)_setInterfaceOrientationOverride:(UIInterfaceOrientation)interfaceOrientation
 {
-    if (!_overridesInterfaceOrientation)
-        [[NSNotificationCenter defaultCenter] removeObserver:self name:UIWindowDidRotateNotification object:nil];
-
     _overridesInterfaceOrientation = YES;
 
     if (interfaceOrientation == _interfaceOrientationOverride)
@@ -4580,6 +4577,12 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 {
     ASSERT(_overridesInterfaceOrientation);
     return _interfaceOrientationOverride;
+}
+
+- (void)_clearInterfaceOrientationOverride
+{
+    _overridesInterfaceOrientation = NO;
+    _interfaceOrientationOverride = UIInterfaceOrientationPortrait;
 }
 
 - (CGSize)_maximumUnobscuredSizeOverride
@@ -4676,6 +4679,7 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
             _page->setMaximumUnobscuredSize(WebCore::FloatSize(newMaximumUnobscuredSize));
         if (_overridesInterfaceOrientation)
             _page->setDeviceOrientation(newOrientation);
+
         [self _scheduleVisibleContentRectUpdate];
         return;
     }
@@ -4913,6 +4917,15 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 {
     [self _setMinimumLayoutSizeOverride:minimumLayoutSize];
     [self _setMaximumUnobscuredSizeOverride:maximumUnobscuredSizeOverride];
+}
+
+- (void)_clearOverrideLayoutParameters
+{
+    _overridesMinimumLayoutSize = NO;
+    _minimumLayoutSizeOverride = CGSizeZero;
+    
+    _overridesMaximumUnobscuredSize = NO;
+    _maximumUnobscuredSizeOverride = CGSizeZero;
 }
 
 - (UIView *)_viewForFindUI

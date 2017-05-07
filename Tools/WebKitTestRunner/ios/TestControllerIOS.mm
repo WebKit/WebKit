@@ -82,26 +82,46 @@ void TestController::platformResetStateToConsistentValues()
 
     [[UIDevice currentDevice] setOrientation:UIDeviceOrientationPortrait animated:NO];
     
-    if (PlatformWebView* webView = mainWebView()) {
-        webView->platformView()._stableStateOverride = nil;
-        webView->platformView().usesSafariLikeRotation = NO;
-        UIScrollView *scrollView = webView->platformView().scrollView;
+    if (PlatformWebView* platformWebView = mainWebView()) {
+        TestRunnerWKWebView *webView = platformWebView->platformView();
+        webView._stableStateOverride = nil;
+        webView.usesSafariLikeRotation = NO;
+        webView.overrideSafeAreaInsets = UIEdgeInsetsZero;
+        [webView _clearOverrideLayoutParameters];
+        [webView _clearInterfaceOrientationOverride];
+
+        UIScrollView *scrollView = webView.scrollView;
         [scrollView _removeAllAnimations:YES];
         [scrollView setZoomScale:1 animated:NO];
         [scrollView setContentOffset:CGPointZero];
-
-        webView->platformView().overrideSafeAreaInsets = UIEdgeInsetsZero;
     }
 }
 
 void TestController::platformConfigureViewForTest(const TestInvocation& test)
 {
-    if (test.options().useFlexibleViewport) {
-        CGRect screenBounds = [UIScreen mainScreen].bounds;
-        mainWebView()->resizeTo(screenBounds.size.width, screenBounds.size.height, PlatformWebView::WebViewSizingMode::HeightRespectsStatusBar);
-        // We also pass data to InjectedBundle::beginTesting() to have it call
-        // WKBundlePageSetUseTestingViewportConfiguration(false).
+    if (!test.options().useFlexibleViewport)
+        return;
+        
+    TestRunnerWKWebView *webView = mainWebView()->platformView();
+    CGRect screenBounds = [UIScreen mainScreen].bounds;
+    
+    CGSize oldSize = webView.bounds.size;
+    mainWebView()->resizeTo(screenBounds.size.width, screenBounds.size.height, PlatformWebView::WebViewSizingMode::HeightRespectsStatusBar);
+    CGSize newSize = webView.bounds.size;
+    
+    if (!CGSizeEqualToSize(oldSize, newSize)) {
+        __block bool doneResizing = false;
+        [webView _doAfterNextVisibleContentRectUpdate: ^{
+            doneResizing = true;
+        }];
+
+        platformRunUntil(doneResizing, 10);
+        if (!doneResizing)
+            WTFLogAlways("Timed out waiting for view resize to complete in platformConfigureViewForTest()");
     }
+    
+    // We also pass data to InjectedBundle::beginTesting() to have it call
+    // WKBundlePageSetUseTestingViewportConfiguration(false).
 }
 
 void TestController::updatePlatformSpecificTestOptionsForTest(TestOptions&, const std::string&) const

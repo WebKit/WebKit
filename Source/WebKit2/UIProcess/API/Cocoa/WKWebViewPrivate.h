@@ -190,6 +190,9 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 
 - (void)_overrideLayoutParametersWithMinimumLayoutSize:(CGSize)minimumLayoutSize maximumUnobscuredSizeOverride:(CGSize)maximumUnobscuredSizeOverride WK_API_AVAILABLE(ios(9_0));
 
+- (void)_clearOverrideLayoutParameters;
+- (void)_clearInterfaceOrientationOverride;
+
 - (UIView *)_viewForFindUI;
 
 - (void)_setOverlaidAccessoryViewsInset:(CGSize)inset;
