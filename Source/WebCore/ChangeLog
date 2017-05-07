@@ -1,5 +1,24 @@
 2017-05-06  Chris Dumez  <cdumez@apple.com>
 
+        Implement the concept of cookie-averse document
+        https://bugs.webkit.org/show_bug.cgi?id=171746
+        <rdar://problem/32004466>
+
+        Reviewed by Sam Weinig.
+
+        Implement the concept of cookie-averse document:
+        - https://html.spec.whatwg.org/#cookie-averse-document-object
+
+        Test: fast/cookies/cookie-averse-document.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::isCookieAverse):
+        (WebCore::Document::cookie):
+        (WebCore::Document::setCookie):
+        * dom/Document.h:
+
+2017-05-06  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed build fix after r216339.
 
         * dom/Document.h:
