@@ -1,3 +1,18 @@
+2017-05-07  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Cannot sign in with new Google sign-in page
+        https://bugs.webkit.org/show_bug.cgi?id=171770
+
+        Reviewed by Carlos Garcia Campos.
+
+        Google's new authentication page does not work with the Firefox user
+        agent that's required to make various Google websites work. Special-case
+        accounts.google.com so that it receives our standard user agent.
+
+        * platform/UserAgentQuirks.cpp:
+        (WebCore::isGoogle):
+        (WebCore::urlRequiresFirefoxBrowser):
+
 2017-05-06  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] CTFontDescriptorCreateMatchingFontDescriptor() is not case insensitive
