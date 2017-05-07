@@ -87,6 +87,10 @@ TEST(UserAgentTest, Quirks)
     uaString = standardUserAgentForURL(URL(ParsedURLString, "http://www.googleblog.com/"));
     EXPECT_FALSE(uaString.contains("Firefox"));
 
+    // Nor should it affect accounts.google.com due to bug #171770.
+    uaString = standardUserAgentForURL(URL(ParsedURLString, "http://accounts.google.com/"));
+    EXPECT_FALSE(uaString.contains("Firefox"));
+
     assertUserAgentForURLHasChromeBrowserQuirk("http://typekit.com/");
     assertUserAgentForURLHasChromeBrowserQuirk("http://typekit.net/");
     assertUserAgentForURLHasChromeBrowserQuirk("http://www.slack.com/");
