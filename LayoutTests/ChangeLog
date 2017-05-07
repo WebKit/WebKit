@@ -1,5 +1,12 @@
 2017-05-06  Alexey Proskuryakov  <ap@apple.com>
 
+        Mark http/tests/loading/resourceLoadStatistics/prevalent-resource-without-user-interaction.html as flaky
+        https://bugs.webkit.org/show_bug.cgi?id=171785
+
+        * platform/wk2/TestExpectations:
+
+2017-05-06  Alexey Proskuryakov  <ap@apple.com>
+
         REGRESSION (r216294): The new test fails on WebKit1
         https://bugs.webkit.org/show_bug.cgi?id=171780
 
