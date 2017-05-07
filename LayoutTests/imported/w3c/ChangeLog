@@ -1,3 +1,14 @@
+2017-05-07  Sam Weinig  <sam@webkit.org>
+
+        Implement Subresource Integrity (SRI)
+        https://bugs.webkit.org/show_bug.cgi?id=148363
+
+        Reviewed by Daniel Bates.
+
+        * web-platform-tests/html/dom/reflection-metadata-expected.txt:
+        * web-platform-tests/html/dom/reflection-misc-expected.txt:
+        Update results now that we support the reflected 'integrity' property.
+
 2017-05-04  Daniel Bates  <dabates@apple.com>
 
         importScripts() should respect X-Content-Type-Options: nosniff

@@ -135,8 +135,9 @@ private:
     bool m_isHandlingBeforeLoad { false };
 
     PendingSheetType m_pendingSheetType;
+    String m_integrityMetadataForPendingSheetRequest;
 
     std::unique_ptr<DOMTokenList> m_relList;
 };
 
-} //namespace
+}

@@ -42,6 +42,7 @@ public:
         CachedScript,
         CrossOriginLoad,
         Nosniff,
+        FailedIntegrityCheck,
     };
 
     struct ConsoleMessage {

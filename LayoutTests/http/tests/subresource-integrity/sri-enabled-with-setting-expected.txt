@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: Cannot load script http://127.0.0.1:8000/subresource-integrity/resources/non-matching-digest.js. Failed integrity metadata check.
+CONSOLE MESSAGE: line 107: Cannot load stylesheet http://127.0.0.1:8000/subresource-integrity/resources/style.css. Failed integrity metadata check.
+
+PASS Test that Subresource Integrity's 'integrity' property is exposed on the <link> element. 
+PASS Test that Subresource Integrity's 'integrity' property is exposed on the <script> element. 
+PASS Script: Same-origin with incorrect hash, should block evaluation. 
+PASS Style: Same-origin with incorrect hash, should block evaluation. 
+

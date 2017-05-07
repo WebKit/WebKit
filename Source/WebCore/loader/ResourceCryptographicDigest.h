@@ -61,8 +61,20 @@ struct ResourceCryptographicDigest {
     }
 };
 
+struct EncodedResourceCryptographicDigest {
+    using Algorithm = ResourceCryptographicDigest::Algorithm;
+    
+    Algorithm algorithm;
+    String digest;
+};
+
 std::optional<ResourceCryptographicDigest> parseCryptographicDigest(const UChar*& begin, const UChar* end);
 std::optional<ResourceCryptographicDigest> parseCryptographicDigest(const LChar*& begin, const LChar* end);
+
+std::optional<EncodedResourceCryptographicDigest> parseEncodedCryptographicDigest(const UChar*& begin, const UChar* end);
+std::optional<EncodedResourceCryptographicDigest> parseEncodedCryptographicDigest(const LChar*& begin, const LChar* end);
+
+std::optional<ResourceCryptographicDigest> decodeEncodedResourceCryptographicDigest(const EncodedResourceCryptographicDigest&);
 
 ResourceCryptographicDigest cryptographicDigestForBytes(ResourceCryptographicDigest::Algorithm, const char* bytes, size_t length);
 

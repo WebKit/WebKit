@@ -28,14 +28,15 @@
 
 #include "ScriptElement.h"
 #include "ScriptSourceCode.h"
+#include "SubresourceIntegrity.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringImpl.h>
 
 namespace WebCore {
 
-Ref<LoadableClassicScript> LoadableClassicScript::create(const String& nonce, const String& crossOriginMode, const String& charset, const AtomicString& initiatorName, bool isInUserAgentShadowTree)
+Ref<LoadableClassicScript> LoadableClassicScript::create(const String& nonce, const String& integrityMetadata, const String& crossOriginMode, const String& charset, const AtomicString& initiatorName, bool isInUserAgentShadowTree)
 {
-    return adoptRef(*new LoadableClassicScript(nonce, crossOriginMode, charset, initiatorName, isInUserAgentShadowTree));
+    return adoptRef(*new LoadableClassicScript(nonce, integrityMetadata, crossOriginMode, charset, initiatorName, isInUserAgentShadowTree));
 }
 
 LoadableClassicScript::~LoadableClassicScript()
@@ -95,6 +96,13 @@ void LoadableClassicScript::notifyFinished(CachedResource& resource)
         };
     }
 #endif
+
+    if (!m_error && !resource.errorOccurred() && !matchIntegrityMetadata(resource, m_integrity)) {
+        m_error = Error {
+            ErrorType::FailedIntegrityCheck,
+            ConsoleMessage { MessageSource::Security, MessageLevel::Error, makeString("Cannot load script ", m_cachedScript->url().stringCenterEllipsizedToLength(), ". Failed integrity metadata check.") }
+        };
+    }
 
     notifyClientFinished();
 }

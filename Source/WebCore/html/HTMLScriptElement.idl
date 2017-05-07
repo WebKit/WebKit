@@ -30,4 +30,5 @@ interface HTMLScriptElement : HTMLElement {
     attribute DOMString? crossOrigin;
     [Reflect] attribute DOMString nonce;
     [Reflect] attribute boolean noModule;
+    [Reflect, EnabledBySetting=SubresourceIntegrity] attribute DOMString integrity;
 };

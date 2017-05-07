@@ -38,10 +38,10 @@ class QualifiedName;
 
 // Space characters as defined by the HTML specification.
 template<typename CharacterType> bool isHTMLSpace(CharacterType);
+template<typename CharacterType> bool isNotHTMLSpace(CharacterType);
 template<typename CharacterType> bool isComma(CharacterType);
 template<typename CharacterType> bool isHTMLSpaceOrComma(CharacterType);
 bool isHTMLLineBreak(UChar);
-bool isNotHTMLSpace(UChar);
 bool isHTMLSpaceButNotLineBreak(UChar);
 
 // 2147483647 is 2^31 - 1.
@@ -106,6 +106,11 @@ template<typename CharacterType> inline bool isHTMLSpace(CharacterType character
     return character <= ' ' && (character == ' ' || character == '\n' || character == '\t' || character == '\r' || character == '\f');
 }
 
+template<typename CharacterType> inline bool isNotHTMLSpace(CharacterType character)
+{
+    return !isHTMLSpace(character);
+}
+
 inline bool isHTMLLineBreak(UChar character)
 {
     return character <= '\r' && (character == '\n' || character == '\r');
@@ -119,11 +124,6 @@ template<typename CharacterType> inline bool isComma(CharacterType character)
 template<typename CharacterType> inline bool isHTMLSpaceOrComma(CharacterType character)
 {
     return isComma(character) || isHTMLSpace(character);
-}
-
-inline bool isNotHTMLSpace(UChar character)
-{
-    return !isHTMLSpace(character);
 }
 
 inline bool isHTMLSpaceButNotLineBreak(UChar character)

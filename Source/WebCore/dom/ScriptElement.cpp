@@ -48,6 +48,7 @@
 #include "ScriptRunner.h"
 #include "ScriptSourceCode.h"
 #include "ScriptableDocumentParser.h"
+#include "Settings.h"
 #include "TextNodeTraversal.h"
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringBuilder.h>
@@ -294,6 +295,7 @@ bool ScriptElement::requestClassicScript(const String& sourceURL)
     if (!stripLeadingAndTrailingHTMLSpaces(sourceURL).isEmpty()) {
         auto script = LoadableClassicScript::create(
             m_element.attributeWithoutSynchronization(HTMLNames::nonceAttr),
+            m_element.document().settings().subresourceIntegrityEnabled() ? m_element.attributeWithoutSynchronization(HTMLNames::integrityAttr).string() : emptyString(),
             m_element.attributeWithoutSynchronization(HTMLNames::crossoriginAttr),
             scriptCharset(),
             m_element.localName(),

@@ -42,5 +42,6 @@
     [PutForwards=value] readonly attribute DOMTokenList relList;
 
     [Reflect] attribute DOMString nonce;
+    [Reflect, EnabledBySetting=SubresourceIntegrity] attribute DOMString integrity;
 };
 

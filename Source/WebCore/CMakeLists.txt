@@ -1973,6 +1973,7 @@ set(WebCore_SOURCES
     loader/ResourceTimingInformation.cpp
     loader/SinkDocument.cpp
     loader/SubframeLoader.cpp
+    loader/SubresourceIntegrity.cpp
     loader/SubresourceLoader.cpp
     loader/TextResourceDecoder.cpp
     loader/TextTrackLoader.cpp

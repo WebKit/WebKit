@@ -1207,38 +1207,38 @@ PASS link.nonce: IDL set to "\0"
 PASS link.nonce: IDL set to null 
 PASS link.nonce: IDL set to object "test-toString" 
 PASS link.nonce: IDL set to object "test-valueOf" 
-FAIL link.integrity: typeof IDL attribute assert_equals: expected "string" but got "undefined"
-FAIL link.integrity: IDL get with DOM attribute unset assert_equals: expected (string) "" but got (undefined) undefined
-FAIL link.integrity: setAttribute() to "" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL link.integrity: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " assert_equals: IDL get expected (string) " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " but got (undefined) undefined
-FAIL link.integrity: setAttribute() to undefined assert_equals: IDL get expected (string) "undefined" but got (undefined) undefined
-FAIL link.integrity: setAttribute() to 7 assert_equals: IDL get expected (string) "7" but got (undefined) undefined
-FAIL link.integrity: setAttribute() to 1.5 assert_equals: IDL get expected (string) "1.5" but got (undefined) undefined
-FAIL link.integrity: setAttribute() to true assert_equals: IDL get expected (string) "true" but got (undefined) undefined
-FAIL link.integrity: setAttribute() to false assert_equals: IDL get expected (string) "false" but got (undefined) undefined
-FAIL link.integrity: setAttribute() to object "[object Object]" assert_equals: IDL get expected (string) "[object Object]" but got (undefined) undefined
-FAIL link.integrity: setAttribute() to NaN assert_equals: IDL get expected (string) "NaN" but got (undefined) undefined
-FAIL link.integrity: setAttribute() to Infinity assert_equals: IDL get expected (string) "Infinity" but got (undefined) undefined
-FAIL link.integrity: setAttribute() to -Infinity assert_equals: IDL get expected (string) "-Infinity" but got (undefined) undefined
-FAIL link.integrity: setAttribute() to "\0" assert_equals: IDL get expected (string) "\0" but got (undefined) undefined
-FAIL link.integrity: setAttribute() to null assert_equals: IDL get expected (string) "null" but got (undefined) undefined
-FAIL link.integrity: setAttribute() to object "test-toString" assert_equals: IDL get expected (string) "test-toString" but got (undefined) undefined
-FAIL link.integrity: setAttribute() to object "test-valueOf" assert_equals: IDL get expected (string) "test-valueOf" but got (undefined) undefined
-FAIL link.integrity: IDL set to "" assert_equals: getAttribute() expected "" but got "test-valueOf"
-FAIL link.integrity: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " assert_equals: getAttribute() expected " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " but got "test-valueOf"
-FAIL link.integrity: IDL set to undefined assert_equals: getAttribute() expected "undefined" but got "test-valueOf"
-FAIL link.integrity: IDL set to 7 assert_equals: getAttribute() expected "7" but got "test-valueOf"
-FAIL link.integrity: IDL set to 1.5 assert_equals: getAttribute() expected "1.5" but got "test-valueOf"
-FAIL link.integrity: IDL set to true assert_equals: getAttribute() expected "true" but got "test-valueOf"
-FAIL link.integrity: IDL set to false assert_equals: getAttribute() expected "false" but got "test-valueOf"
-FAIL link.integrity: IDL set to object "[object Object]" assert_equals: getAttribute() expected "[object Object]" but got "test-valueOf"
-FAIL link.integrity: IDL set to NaN assert_equals: getAttribute() expected "NaN" but got "test-valueOf"
-FAIL link.integrity: IDL set to Infinity assert_equals: getAttribute() expected "Infinity" but got "test-valueOf"
-FAIL link.integrity: IDL set to -Infinity assert_equals: getAttribute() expected "-Infinity" but got "test-valueOf"
-FAIL link.integrity: IDL set to "\0" assert_equals: getAttribute() expected "\0" but got "test-valueOf"
-FAIL link.integrity: IDL set to null assert_equals: getAttribute() expected "null" but got "test-valueOf"
-FAIL link.integrity: IDL set to object "test-toString" assert_equals: getAttribute() expected "test-toString" but got "test-valueOf"
-FAIL link.integrity: IDL set to object "test-valueOf" assert_equals: IDL get expected (string) "test-valueOf" but got (object) object "test-valueOf"
+PASS link.integrity: typeof IDL attribute 
+PASS link.integrity: IDL get with DOM attribute unset 
+PASS link.integrity: setAttribute() to "" 
+PASS link.integrity: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS link.integrity: setAttribute() to undefined 
+PASS link.integrity: setAttribute() to 7 
+PASS link.integrity: setAttribute() to 1.5 
+PASS link.integrity: setAttribute() to true 
+PASS link.integrity: setAttribute() to false 
+PASS link.integrity: setAttribute() to object "[object Object]" 
+PASS link.integrity: setAttribute() to NaN 
+PASS link.integrity: setAttribute() to Infinity 
+PASS link.integrity: setAttribute() to -Infinity 
+PASS link.integrity: setAttribute() to "\0" 
+PASS link.integrity: setAttribute() to null 
+PASS link.integrity: setAttribute() to object "test-toString" 
+PASS link.integrity: setAttribute() to object "test-valueOf" 
+PASS link.integrity: IDL set to "" 
+PASS link.integrity: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS link.integrity: IDL set to undefined 
+PASS link.integrity: IDL set to 7 
+PASS link.integrity: IDL set to 1.5 
+PASS link.integrity: IDL set to true 
+PASS link.integrity: IDL set to false 
+PASS link.integrity: IDL set to object "[object Object]" 
+PASS link.integrity: IDL set to NaN 
+PASS link.integrity: IDL set to Infinity 
+PASS link.integrity: IDL set to -Infinity 
+PASS link.integrity: IDL set to "\0" 
+PASS link.integrity: IDL set to null 
+PASS link.integrity: IDL set to object "test-toString" 
+PASS link.integrity: IDL set to object "test-valueOf" 
 PASS link.hreflang: typeof IDL attribute 
 PASS link.hreflang: IDL get with DOM attribute unset 
 PASS link.hreflang: setAttribute() to "" 

@@ -54,6 +54,7 @@
 #include "StyleResolveForDocument.h"
 #include "StyleScope.h"
 #include "StyleSheetContents.h"
+#include "SubresourceIntegrity.h"
 #include <wtf/Ref.h>
 #include <wtf/SetForScope.h>
 #include <wtf/StdLibExtras.h>
@@ -239,7 +240,7 @@ void HTMLLinkElement::process()
 
     if (m_disabledState != Disabled && treatAsStyleSheet && document().frame() && url.isValid()) {
         String charset = attributeWithoutSynchronization(charsetAttr);
-        if (charset.isEmpty() && document().frame())
+        if (charset.isEmpty())
             charset = document().charset();
 
         if (m_cachedSheet) {
@@ -275,6 +276,9 @@ void HTMLLinkElement::process()
         if (!isActive)
             priority = ResourceLoadPriority::VeryLow;
 
+        if (document().settings().subresourceIntegrityEnabled())
+            m_integrityMetadataForPendingSheetRequest = attributeWithoutSynchronization(HTMLNames::integrityAttr);
+
         ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
         options.sameOriginDataURLFlag = SameOriginDataURLFlag::Set;
         if (document().contentSecurityPolicy()->allowStyleWithNonce(attributeWithoutSynchronization(HTMLNames::nonceAttr)))
@@ -282,7 +286,6 @@ void HTMLLinkElement::process()
 
         CachedResourceRequest request(url, options, priority, WTFMove(charset));
         request.setInitiator(*this);
-
         request.setAsPotentiallyCrossOrigin(crossOrigin(), document());
 
         ASSERT_WITH_SECURITY_IMPLICATION(!m_cachedSheet);
@@ -293,7 +296,8 @@ void HTMLLinkElement::process()
         else {
             // The request may have been denied if (for example) the stylesheet is local and the document is remote.
             m_loading = false;
-            removePendingSheet();
+            sheetLoaded();
+            notifyLoadedSheetAndAllCriticalSubresources(false);
         }
     } else if (m_sheet) {
         // we no longer contain a stylesheet, e.g. perhaps rel or type was changed
@@ -342,7 +346,6 @@ void HTMLLinkElement::removedFrom(ContainerNode& insertionPoint)
         m_styleScope->removeStyleSheetCandidateNode(*this);
         m_styleScope = nullptr;
     }
-
 }
 
 void HTMLLinkElement::finishParsingChildren()
@@ -375,6 +378,15 @@ void HTMLLinkElement::setCSSStyleSheet(const String& href, const URL& baseURL, c
 
     // Completing the sheet load may cause scripts to execute.
     Ref<HTMLLinkElement> protectedThis(*this);
+
+    if (!cachedStyleSheet->errorOccurred() && !matchIntegrityMetadata(*cachedStyleSheet, m_integrityMetadataForPendingSheetRequest)) {
+        document().addConsoleMessage(MessageSource::Security, MessageLevel::Error, makeString("Cannot load stylesheet ", cachedStyleSheet->url().stringCenterEllipsizedToLength(), ". Failed integrity metadata check."));
+
+        m_loading = false;
+        sheetLoaded();
+        notifyLoadedSheetAndAllCriticalSubresources(true);
+        return;
+    }
 
     CSSParserContext parserContext(document(), baseURL, charset);
     auto cachePolicy = frame->loader().subresourceCachePolicy(baseURL);

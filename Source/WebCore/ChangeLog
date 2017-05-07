@@ -1,3 +1,74 @@
+2017-05-07  Sam Weinig  <sam@webkit.org>
+
+        Implement Subresource Integrity (SRI)
+        https://bugs.webkit.org/show_bug.cgi?id=148363
+        <rdar://problem/18945879>
+
+        Reviewed by Daniel Bates.
+
+        Tests: http/tests/subresource-integrity/sri-disabled-with-setting.html
+               http/tests/subresource-integrity/sri-enabled-with-setting.html
+               http/tests/subresource-integrity/sri-script-cors.html
+               http/tests/subresource-integrity/sri-style-cors.html
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * dom/LoadableClassicScript.cpp:
+        (WebCore::LoadableClassicScript::create):
+        (WebCore::LoadableClassicScript::notifyFinished):
+        * dom/LoadableClassicScript.h:
+        * dom/LoadableScript.h:
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::requestClassicScript):
+        Store integrity metadata in the script fetcher so it can be passed to
+        the checked when script load finishes.
+
+        * html/HTMLAttributeNames.in:
+        Add 'integrity'.
+
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::process):
+        When requesting a stylesheet, cache the integrity metadata so it can
+        be used when the load completes (accessing the attribute at load completion
+        time is incorrect, as a script might have changed the attributes value since
+        the request was made).
+
+        (WebCore::HTMLLinkElement::setCSSStyleSheet):
+        Add an integrity check using the cached integrity metadata when a load
+        finishes.
+
+        * html/HTMLLinkElement.h:
+        Add cached integrity metadata member.
+
+        * html/HTMLLinkElement.idl:
+        * html/HTMLScriptElement.idl:
+        Add integrity property.
+
+        * html/parser/HTMLParserIdioms.h:
+        (WebCore::isNotHTMLSpace):
+        Templatize isNotHTMLSpace so it can work for both UChar and LChar.
+
+        * loader/ResourceCryptographicDigest.cpp:
+        (WebCore::parseCryptographicDigestImpl):
+        (WebCore::parseEncodedCryptographicDigestImpl):
+        (WebCore::parseEncodedCryptographicDigest):
+        (WebCore::decodeEncodedResourceCryptographicDigest):
+        * loader/ResourceCryptographicDigest.h:
+        Add concept of an encoded digest to more closely model the spec so that hashes
+        that match the grammar but are invalid (say, mixing base64 and base64URL) make
+        it through the algorithm longer, and don't cause us to load something that should
+        be blocked.
+
+        * loader/SubresourceIntegrity.cpp: Added.
+        * loader/SubresourceIntegrity.h: Added.
+        Add implementation of Subresource Integrity metadata validation allowing
+        for a CachedResource and integrity metadata to be passed for validation.
+
+        * page/Settings.in:
+        Add setting for Subresource Integrity, defaulted to enabled.
+
 2017-05-07  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Cannot sign in with new Google sign-in page
