@@ -2684,6 +2684,8 @@ void AXObjectCache::performDeferredIsIgnoredChange()
 
 void AXObjectCache::recomputeDeferredIsIgnored(RenderBlock& renderer)
 {
+    if (renderer.beingDestroyed())
+        return;
     m_deferredIsIgnoredChangeList.add(&renderer);
 }
 
