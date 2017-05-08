@@ -146,4 +146,18 @@ FloatRect smallestRectWithAspectRatioAroundRect(float aspectRatio, const FloatRe
     return destRect;
 }
 
+bool ellipseContainsPoint(const FloatPoint& center, const FloatSize& radii, const FloatPoint& point)
+{
+    FloatPoint transformedPoint(point);
+    transformedPoint.move(-center.x(), -center.y());
+    transformedPoint.scale(radii.height(), radii.width());
+    float radius = radii.width() * radii.height();
+
+    if (transformedPoint.x() > radius || transformedPoint.y() > radius)
+        return false;
+    if (transformedPoint.x() + transformedPoint.y() <= radius)
+        return true;
+    return (transformedPoint.lengthSquared() <= radius * radius);
+}
+
 }
