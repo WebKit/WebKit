@@ -1,3 +1,29 @@
+2017-05-08  Youenn Fablet  <youenn@apple.com>
+
+        Add support for reading and writing settings from UIProcess audio capture
+        https://bugs.webkit.org/show_bug.cgi?id=171633
+
+        Reviewed by Eric Carlson.
+
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp:
+        (WebKit::UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstraints):
+        (WebKit::UserMediaCaptureManagerProxy::applyConstraints):
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.h:
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.messages.in:
+        * WebProcess/cocoa/UserMediaCaptureManager.cpp:
+        (WebKit::UserMediaCaptureManager::Source::setSettings):
+        (WebKit::UserMediaCaptureManager::Source::applyConstraintsSucceeded):
+        (WebKit::UserMediaCaptureManager::Source::applyConstraintsFailed):
+        (WebKit::UserMediaCaptureManager::createCaptureSource):
+        (WebKit::UserMediaCaptureManager::sourceSettingsChanged):
+        (WebKit::UserMediaCaptureManager::applyConstraints):
+        (WebKit::UserMediaCaptureManager::applyConstraintsSucceeded):
+        (WebKit::UserMediaCaptureManager::applyConstraintsFailed):
+        (WebKit::UserMediaCaptureManager::Source::setMuted): Deleted.
+        (WebKit::UserMediaCaptureManager::Source::setEnabled): Deleted.
+        * WebProcess/cocoa/UserMediaCaptureManager.h:
+        * WebProcess/cocoa/UserMediaCaptureManager.messages.in:
+
 2017-05-08  Alex Christensen  <achristensen@webkit.org>
 
         Reduce PassRefPtr use

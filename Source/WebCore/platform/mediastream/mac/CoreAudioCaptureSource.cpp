@@ -91,8 +91,9 @@ public:
 
     OSStatus suspend();
 
-    OSStatus setupAudioUnits();
-    void cleanupAudioUnits();
+    OSStatus setupAudioUnit();
+    void cleanupAudioUnit();
+    OSStatus reconfigureAudioUnit();
 
     void addEchoCancellationSource(AudioSampleDataSource&);
     void removeEchoCancellationSource(AudioSampleDataSource&);
@@ -109,6 +110,8 @@ public:
     void setSampleRate(int sampleRate) { m_sampleRate = sampleRate; }
     void setEnableEchoCancellation(bool enableEchoCancellation) { m_enableEchoCancellation = enableEchoCancellation; }
 
+    bool hasAudioUnit() const { return m_ioUnit; }
+
 private:
     OSStatus configureSpeakerProc();
     OSStatus configureMicrophoneProc();
@@ -121,7 +124,7 @@ private:
     static OSStatus speakerCallback(void*, AudioUnitRenderActionFlags*, const AudioTimeStamp*, UInt32, UInt32, AudioBufferList*);
     OSStatus provideSpeakerData(AudioUnitRenderActionFlags&, const AudioTimeStamp&, UInt32, UInt32, AudioBufferList*);
 
-    Vector<CoreAudioCaptureSource*> m_clients;
+    Vector<std::reference_wrapper<CoreAudioCaptureSource>> m_clients;
 
     AudioUnit m_ioUnit { nullptr };
 
@@ -152,7 +155,6 @@ private:
     int32_t m_producingCount { 0 };
 
     mutable std::unique_ptr<RealtimeMediaSourceCapabilities> m_capabilities;
-    mutable RealtimeMediaSourceSupportedConstraints m_supportedConstraints;
     mutable std::optional<RealtimeMediaSourceSettings> m_currentSettings;
 
 #if !LOG_DISABLED
@@ -181,12 +183,14 @@ CoreAudioSharedUnit::CoreAudioSharedUnit()
 
 void CoreAudioSharedUnit::addClient(CoreAudioCaptureSource& client)
 {
-    m_clients.append(&client);
+    m_clients.append(client);
 }
 
 void CoreAudioSharedUnit::removeClient(CoreAudioCaptureSource& client)
 {
-    m_clients.removeAll(&client);
+    m_clients.removeAllMatching([&](const auto& item) {
+        return &client == &item.get();
+    });
 }
 
 void CoreAudioSharedUnit::addEchoCancellationSource(AudioSampleDataSource& source)
@@ -211,7 +215,7 @@ size_t CoreAudioSharedUnit::preferredIOBufferSize()
     return AudioSession::sharedSession().bufferSize();
 }
 
-OSStatus CoreAudioSharedUnit::setupAudioUnits()
+OSStatus CoreAudioSharedUnit::setupAudioUnit()
 {
     if (m_ioUnit)
         return 0;
@@ -226,7 +230,7 @@ OSStatus CoreAudioSharedUnit::setupAudioUnits()
     AudioComponent ioComponent = AudioComponentFindNext(nullptr, &ioUnitDescription);
     ASSERT(ioComponent);
     if (!ioComponent) {
-        LOG(Media, "CoreAudioCaptureSource::setupAudioUnits(%p) unable to find vpio unit component", this);
+        LOG(Media, "CoreAudioCaptureSource::setupAudioUnit(%p) unable to find vpio unit component", this);
         return -1;
     }
 
@@ -236,13 +240,13 @@ OSStatus CoreAudioSharedUnit::setupAudioUnits()
     if (name) {
         m_ioUnitName = name;
         CFRelease(name);
-        LOG(Media, "CoreAudioCaptureSource::setupAudioUnits(%p) created \"%s\" component", this, m_ioUnitName.utf8().data());
+        LOG(Media, "CoreAudioCaptureSource::setupAudioUnit(%p) created \"%s\" component", this, m_ioUnitName.utf8().data());
     }
 #endif
 
     auto err = AudioComponentInstanceNew(ioComponent, &m_ioUnit);
     if (err) {
-        LOG(Media, "CoreAudioCaptureSource::setupAudioUnits(%p) unable to open vpio unit, error %d (%.4s)", this, (int)err, (char*)&err);
+        LOG(Media, "CoreAudioCaptureSource::setupAudioUnit(%p) unable to open vpio unit, error %d (%.4s)", this, (int)err, (char*)&err);
         return err;
     }
 
@@ -250,13 +254,13 @@ OSStatus CoreAudioSharedUnit::setupAudioUnits()
         uint32_t param = 0;
         err = AudioUnitSetProperty(m_ioUnit, kAUVoiceIOProperty_VoiceProcessingEnableAGC, kAudioUnitScope_Global, inputBus, &param, sizeof(param));
         if (err) {
-            LOG(Media, "CoreAudioCaptureSource::setupAudioUnits(%p) unable to set vpio automatic gain control, error %d (%.4s)", this, (int)err, (char*)&err);
+            LOG(Media, "CoreAudioCaptureSource::setupAudioUnit(%p) unable to set vpio automatic gain control, error %d (%.4s)", this, (int)err, (char*)&err);
             return err;
         }
         param = 1;
         err = AudioUnitSetProperty(m_ioUnit, kAUVoiceIOProperty_BypassVoiceProcessing, kAudioUnitScope_Global, inputBus, &param, sizeof(param));
         if (err) {
-            LOG(Media, "CoreAudioCaptureSource::setupAudioUnits(%p) unable to set vpio unit echo cancellation, error %d (%.4s)", this, (int)err, (char*)&err);
+            LOG(Media, "CoreAudioCaptureSource::setupAudioUnit(%p) unable to set vpio unit echo cancellation, error %d (%.4s)", this, (int)err, (char*)&err);
             return err;
         }
     }
@@ -265,7 +269,7 @@ OSStatus CoreAudioSharedUnit::setupAudioUnits()
     uint32_t param = 1;
     err = AudioUnitSetProperty(m_ioUnit, kAudioOutputUnitProperty_EnableIO, kAudioUnitScope_Input, inputBus, &param, sizeof(param));
     if (err) {
-        LOG(Media, "CoreAudioCaptureSource::setupAudioUnits(%p) unable to enable vpio unit input, error %d (%.4s)", this, (int)err, (char*)&err);
+        LOG(Media, "CoreAudioCaptureSource::setupAudioUnit(%p) unable to enable vpio unit input, error %d (%.4s)", this, (int)err, (char*)&err);
         return err;
     }
 #else
@@ -277,7 +281,7 @@ OSStatus CoreAudioSharedUnit::setupAudioUnits()
 
     err = AudioUnitSetProperty(m_ioUnit, kAudioOutputUnitProperty_CurrentDevice, kAudioUnitScope_Global, inputBus, &m_captureDeviceID, sizeof(m_captureDeviceID));
     if (err) {
-        LOG(Media, "CoreAudioCaptureSource::setupAudioUnits(%p) unable to set vpio unit capture device ID, error %d (%.4s)", this, (int)err, (char*)&err);
+        LOG(Media, "CoreAudioCaptureSource::setupAudioUnit(%p) unable to set vpio unit capture device ID, error %d (%.4s)", this, (int)err, (char*)&err);
         return err;
     }
 #endif
@@ -286,16 +290,16 @@ OSStatus CoreAudioSharedUnit::setupAudioUnits()
     if (err)
         return err;
 
-    err = AudioUnitInitialize(m_ioUnit);
-    if (err) {
-        LOG(Media, "CoreAudioCaptureSource::setupAudioUnits(%p) AudioUnitInitialize() failed, error %d (%.4s)", this, (int)err, (char*)&err);
-        return err;
-    }
-    m_ioUnitInitialized = true;
-
     err = configureSpeakerProc();
     if (err)
         return err;
+
+    err = AudioUnitInitialize(m_ioUnit);
+    if (err) {
+        LOG(Media, "CoreAudioCaptureSource::setupAudioUnit(%p) AudioUnitInitialize() failed, error %d (%.4s)", this, (int)err, (char*)&err);
+        return err;
+    }
+    m_ioUnitInitialized = true;
 
     return err;
 }
@@ -458,11 +462,10 @@ OSStatus CoreAudioSharedUnit::processMicrophoneSamples(AudioUnitRenderActionFlag
     if (m_volume != 1.0)
         m_microphoneSampleBuffer->applyGain(m_volume);
 
-    for (auto* client : m_clients) {
-        if (client->isProducingData())
-            client->audioSamplesAvailable(MediaTime(sampleTime, m_microphoneProcFormat.sampleRate()), m_microphoneSampleBuffer->bufferList(), m_microphoneProcFormat, inNumberFrames);
+    for (CoreAudioCaptureSource& client : m_clients) {
+        if (client.isProducingData())
+            client.audioSamplesAvailable(MediaTime(sampleTime, m_microphoneProcFormat.sampleRate()), m_microphoneSampleBuffer->bufferList(), m_microphoneProcFormat, inNumberFrames);
     }
-
     return noErr;
 }
 
@@ -474,14 +477,13 @@ OSStatus CoreAudioSharedUnit::microphoneCallback(void *inRefCon, AudioUnitRender
     return dataSource->processMicrophoneSamples(*ioActionFlags, *inTimeStamp, inBusNumber, inNumberFrames, ioData);
 }
 
-void CoreAudioSharedUnit::cleanupAudioUnits()
+void CoreAudioSharedUnit::cleanupAudioUnit()
 {
-    ASSERT(m_clients.isEmpty());
     if (m_ioUnitInitialized) {
         ASSERT(m_ioUnit);
         auto err = AudioUnitUninitialize(m_ioUnit);
         if (err)
-            LOG(Media, "CoreAudioSharedUnit::cleanupAudioUnits(%p) AudioUnitUninitialize failed with error %d (%.4s)", this, (int)err, (char*)&err);
+            LOG(Media, "CoreAudioSharedUnit::cleanupAudioUnit(%p) AudioUnitUninitialize failed with error %d (%.4s)", this, (int)err, (char*)&err);
         m_ioUnitInitialized = false;
     }
 
@@ -497,6 +499,35 @@ void CoreAudioSharedUnit::cleanupAudioUnits()
 #endif
 }
 
+OSStatus CoreAudioSharedUnit::reconfigureAudioUnit()
+{
+    OSStatus err;
+    if (!hasAudioUnit())
+        return 0;
+
+    if (m_ioUnitStarted) {
+        err = AudioOutputUnitStop(m_ioUnit);
+        if (err) {
+            LOG(Media, "CoreAudioSharedUnit::reconfigureAudioUnit(%p) AudioOutputUnitStop failed with error %d (%.4s)", this, (int)err, (char*)&err);
+            return err;
+        }
+    }
+
+    cleanupAudioUnit();
+    err = setupAudioUnit();
+    if (err)
+        return err;
+
+    if (m_ioUnitStarted) {
+        err = AudioOutputUnitStart(m_ioUnit);
+        if (err) {
+            LOG(Media, "CoreAudioSharedUnit::reconfigureAudioUnit(%p) AudioOutputUnitStart failed with error %d (%.4s)", this, (int)err, (char*)&err);
+            return err;
+        }
+    }
+    return err;
+}
+
 void CoreAudioSharedUnit::startProducingData()
 {
     ASSERT(isMainThread());
@@ -509,9 +540,9 @@ void CoreAudioSharedUnit::startProducingData()
 
     OSStatus err;
     if (!m_ioUnit) {
-        err = setupAudioUnits();
+        err = setupAudioUnit();
         if (err) {
-            cleanupAudioUnits();
+            cleanupAudioUnit();
             ASSERT(!m_ioUnit);
             return;
         }
@@ -687,20 +718,15 @@ void CoreAudioCaptureSource::stopProducingData()
 
 const RealtimeMediaSourceCapabilities& CoreAudioCaptureSource::capabilities() const
 {
-    if (m_capabilities)
-        return *m_capabilities;
-
-    m_supportedConstraints.setSupportsDeviceId(true);
-    m_supportedConstraints.setSupportsEchoCancellation(true);
-    m_supportedConstraints.setSupportsVolume(true);
-
-    // FIXME: finish this.
-    m_capabilities = std::make_unique<RealtimeMediaSourceCapabilities>(m_supportedConstraints);
-    m_capabilities->setDeviceId(id());
-    m_capabilities->setEchoCancellation(RealtimeMediaSourceCapabilities::EchoCancellation::ReadWrite);
-    m_capabilities->setVolume(CapabilityValueOrRange(0.0, 1.0));
-
-    return *m_capabilities;
+    if (!m_capabilities) {
+        RealtimeMediaSourceCapabilities capabilities(settings().supportedConstraints());
+        capabilities.setDeviceId(id());
+        capabilities.setEchoCancellation(RealtimeMediaSourceCapabilities::EchoCancellation::ReadWrite);
+        capabilities.setVolume(CapabilityValueOrRange(0.0, 1.0));
+        capabilities.setSampleRate(CapabilityValueOrRange(8000, 96000));
+        m_capabilities = WTFMove(capabilities);
+    }
+    return m_capabilities.value();
 }
 
 const RealtimeMediaSourceSettings& CoreAudioCaptureSource::settings() const
@@ -712,8 +738,14 @@ const RealtimeMediaSourceSettings& CoreAudioCaptureSource::settings() const
         settings.setDeviceId(id());
         settings.setEchoCancellation(echoCancellation());
 
-        m_currentSettings = WTFMove(settings);
+        RealtimeMediaSourceSupportedConstraints supportedConstraints;
+        supportedConstraints.setSupportsDeviceId(true);
+        supportedConstraints.setSupportsEchoCancellation(true);
+        supportedConstraints.setSupportsVolume(true);
+        supportedConstraints.setSupportsSampleRate(true);
+        settings.setSupportedConstraints(supportedConstraints);
 
+        m_currentSettings = WTFMove(settings);
     }
     return m_currentSettings.value();
 }
@@ -752,7 +784,7 @@ bool CoreAudioCaptureSource::applySampleRate(int sampleRate)
 
     CoreAudioSharedUnit::singleton().setSampleRate(sampleRate);
 
-    // FIXME: do reconfiguration if audio unit is started.
+    scheduleReconfiguration();
     return true;
 }
 
@@ -760,8 +792,22 @@ bool CoreAudioCaptureSource::applyEchoCancellation(bool enableEchoCancellation)
 {
     CoreAudioSharedUnit::singleton().setEnableEchoCancellation(enableEchoCancellation);
 
-    // FIXME: do reconfiguration if audio unit is started.
+    scheduleReconfiguration();
     return true;
+}
+
+void CoreAudioCaptureSource::scheduleReconfiguration()
+{
+    ASSERT(isMainThread());
+    auto& unit = CoreAudioSharedUnit::singleton();
+    if (!unit.hasAudioUnit() || m_reconfigurationOngoing)
+        return;
+
+    m_reconfigurationOngoing = true;
+    scheduleDeferredTask([this, &unit] {
+        unit.reconfigureAudioUnit();
+        m_reconfigurationOngoing = false;
+    });
 }
 
 } // namespace WebCore

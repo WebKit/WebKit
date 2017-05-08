@@ -751,7 +751,7 @@ std::optional<std::pair<String, String>> RealtimeMediaSource::applyConstraints(c
     return std::nullopt;
 }
 
-void RealtimeMediaSource::applyConstraints(const MediaConstraints& constraints, SuccessHandler successHandler, FailureHandler failureHandler)
+void RealtimeMediaSource::applyConstraints(const MediaConstraints& constraints, SuccessHandler&& successHandler, FailureHandler&& failureHandler)
 {
     auto result = applyConstraints(constraints);
     if (!result && successHandler)

@@ -269,7 +269,7 @@ void MediaStreamTrack::applyConstraints(const std::optional<MediaTrackConstraint
         weakThis->m_promise->resolve();
         weakThis->m_constraints = constraints.value_or(MediaTrackConstraints { });
     };
-    m_private->applyConstraints(createMediaConstraintsImpl(constraints), successHandler, failureHandler);
+    m_private->applyConstraints(createMediaConstraintsImpl(constraints), WTFMove(successHandler), WTFMove(failureHandler));
 }
 
 void MediaStreamTrack::addObserver(Observer& observer)

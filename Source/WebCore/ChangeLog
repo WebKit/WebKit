@@ -1,3 +1,51 @@
+2017-05-08  Youenn Fablet  <youenn@apple.com>
+
+        Add support for reading and writing settings from UIProcess audio capture
+        https://bugs.webkit.org/show_bug.cgi?id=171633
+
+        Reviewed by Eric Carlson.
+
+        Covered by manual testing and existing test sets.
+
+        Moving success/failure callbacks for applyConstraints.
+        Making main RealtimeMediaSource::applyConstraints virtual so that WebProcess source proxies can implement it by
+        doing an IPC call directly. Doing so for UIProcess CoreAudioCaptureSource.
+
+        Adding support for volume to CoreAudioCaptureSource by applying gain post-capturing.
+        Adding support for toggling echo cancellation in CoreAudioCaptureSource.
+        Adding support to change echo cancellation and sample rate by scheduling a reconfiguration of the audio unit.
+        To do so, we stop producing data, delete the audio unit and restart producing data.
+        Removing CoreAudioCaptureSource::supportedConstraints as it is redundant with
+        RealtimeMediaSourceSettings::supportedConstraints.
+
+        Setting sample rate only to the following values: 8000, 16000, 32000, 44100, 48000.
+
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        (WebCore::MediaStreamTrack::applyConstraints):
+        * platform/mediastream/MediaStreamTrackPrivate.cpp:
+        (WebCore::MediaStreamTrackPrivate::applyConstraints):
+        * platform/mediastream/MediaStreamTrackPrivate.h:
+        * platform/mediastream/RealtimeMediaSource.cpp:
+        (WebCore::RealtimeMediaSource::applyConstraints):
+        * platform/mediastream/RealtimeMediaSource.h:
+        * platform/mediastream/RealtimeMediaSourceSettings.h:
+        (WebCore::RealtimeMediaSourceSettings::supportedConstraints):
+        * platform/mediastream/mac/CoreAudioCaptureSource.cpp:
+        (WebCore::CoreAudioCaptureSource::~CoreAudioCaptureSource):
+        (WebCore::CoreAudioCaptureSource::processMicrophoneSamples):
+        (WebCore::CoreAudioCaptureSource::cleanupAudioUnit):
+        (WebCore::CoreAudioCaptureSource::createAudioUnit):
+        (WebCore::CoreAudioCaptureSource::configureAudioUnit):
+        (WebCore::CoreAudioCaptureSource::startProducingData):
+        (WebCore::CoreAudioCaptureSource::capabilities):
+        (WebCore::CoreAudioCaptureSource::settings):
+        (WebCore::CoreAudioCaptureSource::applySampleRate):
+        (WebCore::CoreAudioCaptureSource::applyEchoCancellation):
+        (WebCore::CoreAudioCaptureSource::scheduleReconfiguration):
+        (WebCore::CoreAudioCaptureSource::cleanupAudioUnits): Deleted.
+        (WebCore::CoreAudioCaptureSource::setupAudioUnits): Deleted.
+        * platform/mediastream/mac/CoreAudioCaptureSource.h:
+
 2017-05-08  Chris Dumez  <cdumez@apple.com>
 
         Drop non-standard document.implementation.createCSSStyleSheet() API

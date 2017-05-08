@@ -73,9 +73,9 @@ public:
     }
 
     const RealtimeMediaSourceSettings& settings() const final { return m_settings; }
-    void setSettings(const RealtimeMediaSourceSettings& settings)
+    void setSettings(RealtimeMediaSourceSettings&& settings)
     {
-        m_settings = settings;
+        m_settings = WTFMove(settings);
         settingsDidChange();
     }
 
@@ -114,7 +114,20 @@ public:
             observer->audioSamplesAvailable(time, audioData, m_description, numberOfFrames);
     }
 
-    virtual void setMuted(bool muted)
+    void applyConstraintsSucceeded(const WebCore::RealtimeMediaSourceSettings& settings)
+    {
+        auto callbacks = m_pendingApplyConstraintsCallbacks.takeFirst();
+        setSettings(WebCore::RealtimeMediaSourceSettings(settings));
+        callbacks.successHandler();
+    }
+
+    void applyConstraintsFailed(const String& failedConstraint, const String& errorMessage)
+    {
+        auto callbacks = m_pendingApplyConstraintsCallbacks.takeFirst();
+        callbacks.failureHandler(failedConstraint, errorMessage);
+    }
+
+    void setMuted(bool muted) final
     {
         if (m_muted == muted)
             return;
@@ -123,7 +136,7 @@ public:
         m_manager.setMuted(m_id, m_muted);
     }
 
-    virtual void setEnabled(bool enabled)
+    void setEnabled(bool enabled) final
     {
         if (m_enabled == enabled)
             return;
@@ -132,6 +145,7 @@ public:
         m_manager.setEnabled(m_id, m_enabled);
     }
 
+private:
     void startProducingData() final { m_manager.startProducingData(m_id); }
     void stopProducingData() final { m_manager.stopProducingData(m_id); }
     bool isCaptureSource() const final { return true; }
@@ -145,10 +159,14 @@ public:
         return m_audioSourceProvider.get();
     }
 
-private:
     // RealtimeMediaSource
     void beginConfiguration() final { }
     void commitConfiguration() final { }
+
+    void applyConstraints(const WebCore::MediaConstraints& constraints, SuccessHandler&& successHandler, FailureHandler&& failureHandler) final {
+        m_manager.applyConstraints(m_id, constraints);
+        m_pendingApplyConstraintsCallbacks.append({ WTFMove(successHandler), WTFMove(failureHandler)});
+    }
 
     uint64_t m_id;
     UserMediaCaptureManager& m_manager;
@@ -157,6 +175,12 @@ private:
     CAAudioStreamDescription m_description;
     CARingBuffer m_ringBuffer;
     RefPtr<WebAudioSourceProviderAVFObjC> m_audioSourceProvider;
+
+    struct ApplyConstraintsCallback {
+        SuccessHandler successHandler;
+        FailureHandler failureHandler;
+    };
+    Deque<ApplyConstraintsCallback> m_pendingApplyConstraintsCallbacks;
 };
 
 UserMediaCaptureManager::UserMediaCaptureManager(WebProcess* process)
@@ -194,11 +218,13 @@ WebCore::CaptureSourceOrError UserMediaCaptureManager::createCaptureSource(const
     constraintsData.isValid = constraints->isValid();
     bool succeeded;
 
+    RealtimeMediaSourceSettings settings;
     String errorMessage;
-    if (!m_process.sendSync(Messages::UserMediaCaptureManagerProxy::CreateMediaSourceForCaptureDeviceWithConstraints(id, deviceID, sourceType, constraintsData), Messages::UserMediaCaptureManagerProxy::CreateMediaSourceForCaptureDeviceWithConstraints::Reply(succeeded, errorMessage), 0))
+    if (!m_process.sendSync(Messages::UserMediaCaptureManagerProxy::CreateMediaSourceForCaptureDeviceWithConstraints(id, deviceID, sourceType, constraintsData), Messages::UserMediaCaptureManagerProxy::CreateMediaSourceForCaptureDeviceWithConstraints::Reply(succeeded, errorMessage, settings), 0))
         return WTFMove(errorMessage);
 
     auto source = adoptRef(*new Source(String::number(id), sourceType, emptyString(), id, *this));
+    source->setSettings(WTFMove(settings));
     m_sources.set(id, source.copyRef());
     return WebCore::CaptureSourceOrError(WTFMove(source));
 }
@@ -224,7 +250,7 @@ void UserMediaCaptureManager::sourceEnabledChanged(uint64_t id, bool enabled)
 void UserMediaCaptureManager::sourceSettingsChanged(uint64_t id, const RealtimeMediaSourceSettings& settings)
 {
     ASSERT(m_sources.contains(id));
-    m_sources.get(id)->setSettings(settings);
+    m_sources.get(id)->setSettings(RealtimeMediaSourceSettings(settings));
 }
 
 void UserMediaCaptureManager::storageChanged(uint64_t id, const SharedMemory::Handle& handle, const WebCore::CAAudioStreamDescription& description, uint64_t numberOfFrames)
@@ -272,6 +298,30 @@ void UserMediaCaptureManager::setMuted(uint64_t id, bool muted)
 void UserMediaCaptureManager::setEnabled(uint64_t id, bool enabled)
 {
     m_process.send(Messages::UserMediaCaptureManagerProxy::SetEnabled(id, enabled), 0);
+}
+
+void UserMediaCaptureManager::applyConstraints(uint64_t id, const WebCore::MediaConstraints& constraints)
+{
+    MediaConstraintsData constraintsData;
+    constraintsData.mandatoryConstraints = constraints.mandatoryConstraints();
+    constraintsData.advancedConstraints = constraints.advancedConstraints();
+    constraintsData.isValid = constraints.isValid();
+
+    m_process.send(Messages::UserMediaCaptureManagerProxy::ApplyConstraints(id, constraintsData), 0);
+}
+
+void UserMediaCaptureManager::applyConstraintsSucceeded(uint64_t id, const WebCore::RealtimeMediaSourceSettings& settings)
+{
+    ASSERT(m_sources.contains(id));
+    auto& source = *m_sources.get(id);
+    source.applyConstraintsSucceeded(settings);
+}
+
+void UserMediaCaptureManager::applyConstraintsFailed(uint64_t id, const String& failedConstraint, const String& message)
+{
+    ASSERT(m_sources.contains(id));
+    auto& source = *m_sources.get(id);
+    source.applyConstraintsFailed(failedConstraint, message);
 }
 
 }

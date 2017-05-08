@@ -75,6 +75,8 @@ private:
     friend class CoreAudioSharedUnit;
     friend class CoreAudioCaptureSourceFactory;
 
+    void scheduleReconfiguration();
+
     bool isCaptureSource() const final { return true; }
     void startProducingData() final;
     void stopProducingData() final;
@@ -94,11 +96,11 @@ private:
     bool m_isProducingData { false };
     bool m_isSuspended { false };
 
-    mutable std::unique_ptr<RealtimeMediaSourceCapabilities> m_capabilities;
-    mutable RealtimeMediaSourceSupportedConstraints m_supportedConstraints;
+    mutable std::optional<RealtimeMediaSourceCapabilities> m_capabilities;
     mutable std::optional<RealtimeMediaSourceSettings> m_currentSettings;
 
     RefPtr<WebAudioSourceProviderAVFObjC> m_audioSourceProvider;
+    bool m_reconfigurationOngoing { false };
 };
 
 } // namespace WebCore
