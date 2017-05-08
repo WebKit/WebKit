@@ -834,6 +834,12 @@ plugins/form-value.html [ Skip ]
 # We don't have LastResource font.
 fast/text/font-weight-download-2.html [ Failure ]
 
+# Tests crashing with GST < 1.10
+http/tests/media/hls/hls-audio-tracks-has-audio.html [ Skip ]
+http/tests/media/hls/hls-audio-tracks-locale-selection.html [ Skip ]
+http/tests/media/hls/hls-audio-tracks.html [ Skip ]
+http/tests/media/hls/video-duration-accessibility.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////
