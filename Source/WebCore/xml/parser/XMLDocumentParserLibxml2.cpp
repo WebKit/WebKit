@@ -511,7 +511,7 @@ Ref<XMLParserContext> XMLParserContext::createStringParser(xmlSAXHandlerPtr hand
     parser->_private = userData;
 
     // Substitute entities.
-    xmlCtxtUseOptions(parser, XML_PARSE_NOENT);
+    xmlCtxtUseOptions(parser, XML_PARSE_NOENT | XML_PARSE_HUGE);
 
     switchToUTF16(parser);
 
@@ -540,7 +540,7 @@ RefPtr<XMLParserContext> XMLParserContext::createMemoryParser(xmlSAXHandlerPtr h
 
     // Substitute entities.
     // FIXME: Why is XML_PARSE_NODICT needed? This is different from what createStringParser does.
-    xmlCtxtUseOptions(parser, XML_PARSE_NODICT | XML_PARSE_NOENT);
+    xmlCtxtUseOptions(parser, XML_PARSE_NODICT | XML_PARSE_NOENT | XML_PARSE_HUGE);
 
     // Internal initialization
     parser->sax2 = 1;
