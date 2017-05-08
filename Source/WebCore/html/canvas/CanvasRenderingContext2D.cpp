@@ -2087,8 +2087,10 @@ void CanvasRenderingContext2D::putImageData(ImageData& data, ImageBuffer::Coordi
         return;
     IntRect sourceRect(destRect);
     sourceRect.move(-destOffset);
+    sourceRect.intersect(IntRect(0, 0, data.width(), data.height()));
 
-    buffer->putByteArray(Unmultiplied, data.data(), IntSize(data.width(), data.height()), sourceRect, IntPoint(destOffset), coordinateSystem);
+    if (!sourceRect.isEmpty())
+        buffer->putByteArray(Unmultiplied, data.data(), IntSize(data.width(), data.height()), sourceRect, IntPoint(destOffset), coordinateSystem);
 
     didDraw(destRect, CanvasDidDrawApplyNone); // ignore transform, shadow and clip
 }
