@@ -154,6 +154,13 @@ void DownloadProxy::didReceiveResponse(const ResourceResponse& response)
     if (!m_processPool)
         return;
 
+#if !USE(NETWORK_SESSION)
+    // As per https://html.spec.whatwg.org/#as-a-download (step 2), the filename from the Content-Disposition header
+    // should override the suggested filename from the download attribute.
+    if (!m_suggestedFilename.isNull() && response.isAttachmentWithFilename())
+        m_suggestedFilename = String();
+#endif
+
     m_processPool->downloadClient().didReceiveResponse(m_processPool.get(), this, response);
 }
 
