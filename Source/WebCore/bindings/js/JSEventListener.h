@@ -55,7 +55,7 @@ public:
     {
         return listener->type() == JSEventListenerType
             ? static_cast<const JSEventListener*>(listener)
-            : 0;
+            : nullptr;
     }
 
     virtual ~JSEventListener();
@@ -66,7 +66,7 @@ public:
     bool isAttribute() const { return m_isAttribute; }
 
     JSC::JSObject* jsFunction(ScriptExecutionContext*) const;
-    DOMWrapperWorld& isolatedWorld() const { return *m_isolatedWorld; }
+    DOMWrapperWorld& isolatedWorld() const { return m_isolatedWorld; }
 
     JSC::JSObject* wrapper() const { return m_wrapper.get(); }
     void setWrapper(JSC::VM&, JSC::JSObject* wrapper) const { m_wrapper = JSC::Weak<JSC::JSObject>(wrapper); }
@@ -88,7 +88,7 @@ private:
     mutable JSC::Weak<JSC::JSObject> m_wrapper;
 
     bool m_isAttribute;
-    RefPtr<DOMWrapperWorld> m_isolatedWorld;
+    Ref<DOMWrapperWorld> m_isolatedWorld;
 };
 
 // For "onxxx" attributes that automatically set up JavaScript event listeners.
@@ -129,7 +129,7 @@ inline JSC::JSObject* JSEventListener::jsFunction(ScriptExecutionContext* script
 
     // If m_wrapper is 0, then m_jsFunction is zombied, and should never be accessed.
     if (!m_wrapper)
-        return 0;
+        return nullptr;
 
     // Try to verify that m_jsFunction wasn't recycled. (Not exact, since an
     // event listener can be almost anything, but this makes test-writing easier).
