@@ -298,11 +298,11 @@ public:
         return m_mouseTargetHitTestResult.get();
     }
 
-    void simulateUserInterqaction()
+    void simulateUserInteraction()
     {
-        mouseMoveTo(1, 1);
-        keyStroke(GDK_KEY_Down);
-        keyStroke(GDK_KEY_Up);
+        runJavaScriptAndWaitUntilFinished("document.getElementById('testInput').focus()", nullptr);
+        keyStroke(GDK_KEY_a);
+        keyStroke(GDK_KEY_b);
         while (gtk_events_pending())
             gtk_main_iteration();
     }
@@ -535,7 +535,7 @@ static void testWebViewJavaScriptDialogs(UIClientTest* test, gconstpointer)
     static const char* jsConfirmFormat = "do { confirmed = confirm('%s'); } while (!confirmed); alert('confirmed');";
     static const char* jsPromptFormat = "alert(prompt('%s', 'default'));";
     static const char* htmlOnBeforeUnloadFormat =
-        "<html><body onbeforeunload=\"return beforeUnloadHandler();\"><script>function beforeUnloadHandler() { return \"%s\"; }</script></body></html>";
+        "<html><body onbeforeunload=\"return beforeUnloadHandler();\"><input id=\"testInput\" type=\"text\"></input><script>function beforeUnloadHandler() { return \"%s\"; }</script></body></html>";
 
     test->m_scriptDialogType = WEBKIT_SCRIPT_DIALOG_ALERT;
     GUniquePtr<char> alertDialogMessage(g_strdup_printf(jsAlertFormat, kAlertDialogMessage));
@@ -568,7 +568,7 @@ static void testWebViewJavaScriptDialogs(UIClientTest* test, gconstpointer)
 
     // Reload should trigger onbeforeunload.
 #if 0
-    test->simulateUserInterqaction();
+    test->simulateUserInteraction();
     // FIXME: reloading HTML data doesn't emit finished load event.
     // See https://bugs.webkit.org/show_bug.cgi?id=139089.
     test->m_scriptDialogConfirmed = false;
@@ -578,7 +578,7 @@ static void testWebViewJavaScriptDialogs(UIClientTest* test, gconstpointer)
 #endif
 
     // Navigation should trigger onbeforeunload.
-    test->simulateUserInterqaction();
+    test->simulateUserInteraction();
     test->m_scriptDialogConfirmed = false;
     test->loadHtml("<html></html>", nullptr);
     test->waitUntilLoadFinished();
@@ -588,7 +588,7 @@ static void testWebViewJavaScriptDialogs(UIClientTest* test, gconstpointer)
     test->m_scriptDialogConfirmed = false;
     test->loadHtml(beforeUnloadDialogHTML.get(), nullptr);
     test->waitUntilLoadFinished();
-    test->simulateUserInterqaction();
+    test->simulateUserInteraction();
     test->tryCloseAndWaitUntilClosed();
     g_assert(test->m_scriptDialogConfirmed);
 

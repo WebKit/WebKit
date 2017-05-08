@@ -1,3 +1,14 @@
+2017-05-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+ test /webkit2/WebKitWebView/javascript-dialogs after r215404.
+
+        Sending down+up keys is no longer enough to simulate a real user interaction after r215404, the key events now
+        should be handled by the web process to be considered a user interaction. So, add an input to the HTML and send
+        characters to the input. Also fix typo in the function name.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestUIClient.cpp:
+        (testWebViewJavaScriptDialogs):
+
 2017-05-07  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Cannot sign in with new Google sign-in page
