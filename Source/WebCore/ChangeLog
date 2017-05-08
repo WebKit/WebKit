@@ -1,3 +1,21 @@
+2017-05-08  Antti Koivisto  <antti@apple.com>
+
+        ComposedTreeIterator does not traverse all slotted children if the traversal root is a slot element.
+        https://bugs.webkit.org/show_bug.cgi?id=171375
+        <rdar://problem/31863184>
+
+        Reviewed by Zalan Bujtas.
+
+        We were hitting an assert when using details element with a flow thread. The root cause for this turned
+        out to be that we only traversed the first slotted child if the traversal root was a slot element.
+
+        Test: fast/html/details-flow-thread.html
+
+        * dom/ComposedTreeIterator.cpp:
+        (WebCore::ComposedTreeIterator::traverseNextLeavingContext):
+
+            Try to traverse to the next slotted child before testing if we at the end of the current context.
+
 2017-05-08  Mark Lam  <mark.lam@apple.com>
 
         Introduce ExceptionScope::assertNoException() and releaseAssertNoException().

@@ -1,3 +1,18 @@
+2017-05-08  Antti Koivisto  <antti@apple.com>
+
+        ComposedTreeIterator does not traverse all slotted children if the traversal root is a slot element.
+        https://bugs.webkit.org/show_bug.cgi?id=171375
+        <rdar://problem/31863184>
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/html/details-flow-thread-expected.txt: Added.
+        * fast/html/details-flow-thread.html: Added.
+        * fast/shadow-dom/composed-tree-slots-expected.txt:
+        * fast/shadow-dom/composed-tree-slots.html:
+
+            Expand the test so it also prints out slot subtrees using slots as traversal roots.
+
 2017-05-08  Chris Dumez  <cdumez@apple.com>
 
         Move 'style' from Element to HTMLElement / SVGElement and make it settable
