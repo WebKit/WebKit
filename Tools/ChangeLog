@@ -1,3 +1,12 @@
+2017-05-08  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        REGRESSION(r216179): [GTK] Script install-dependencies misses liborc
+        https://bugs.webkit.org/show_bug.cgi?id=171681
+
+        Reviewed by Carlos Garcia Campos.
+
+        * gtk/install-dependencies:
+
 2017-05-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK+ test /webkit2/WebKitConsoleMessage/network-error after r215556.
