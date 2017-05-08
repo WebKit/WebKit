@@ -1,3 +1,55 @@
+2017-05-07  Youenn Fablet  <youenn@apple.com>
+
+        Regenerate w3c-import.log files after r215670
+        https://bugs.webkit.org/show_bug.cgi?id=171210
+
+        Reviewed by Chris Dumez.
+
+        Updating all w3c-import.log files of web-platform-tests.
+        Fixing some import expectations.
+        Fixing some tests to match the current import revision, only syntatic changes (meta annotations and links to resources).
+
+        * resources/import-expectations.json:
+        * web-platform-tests/WebCryptoAPI/OWNERS:
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.worker.js: meta annotation changes.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_AES-CBC.worker.js: Ditto for all crypto tests.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_AES-CTR.worker.js:
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_AES-GCM.worker.js:
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_AES-KW.worker.js:
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_ECDH.worker.js:
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_ECDSA.worker.js:
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_HMAC.worker.js:
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_RSA-OAEP.worker.js:
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_RSA-PSS.worker.js:
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_RSASSA-PKCS1-v1_5.worker.js:
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_AES-CBC.worker.js:
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_AES-CTR.worker.js:
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_AES-GCM.worker.js:
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_AES-KW.worker.js:
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_ECDH.worker.js:
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_ECDSA.worker.js:
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_HMAC.worker.js:
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-OAEP.worker.js:
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-PSS.worker.js:
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_RSASSA-PKCS1-v1_5.worker.js:
+        * web-platform-tests/WebCryptoAPI/tools/generate.py:
+        * web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/wrapKey_unwrapKey.worker.js:
+        * web-platform-tests/css/css-grid-1/grid-layout-properties.html:
+        * web-platform-tests/css/selectors4/focus-within-009.html:
+        * web-platform-tests/domparsing/DOMParser-parseFromString-html.html:
+        * web-platform-tests/domparsing/createContextualFragment.html:
+        * web-platform-tests/domparsing/innerhtml-01.xhtml:
+        * web-platform-tests/domparsing/innerhtml-03.xhtml:
+        * web-platform-tests/domparsing/innerhtml-04.html:
+        * web-platform-tests/domparsing/innerhtml-05.xhtml:
+        * web-platform-tests/domparsing/innerhtml-06.html:
+        * web-platform-tests/domparsing/innerhtml-07.html:
+        * web-platform-tests/domparsing/insert-adjacent.html:
+        * web-platform-tests/domparsing/insert_adjacent_html.html:
+        * web-platform-tests/domparsing/outerhtml-01.html:
+        * web-platform-tests/domparsing/outerhtml-02.html:
+        * web-platform-tests/domparsing/xml-serialization.xhtml:
+
 2017-05-07  Ben Kelly <ben@wanderview.com>
 
         Set the Response.blob() type based on the content-type header value.
