@@ -1,0 +1,12 @@
+Tests that documents created via DOMParser.parseFromString() inherit their context document's origin / URL
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS newDocument.origin is document.origin
+PASS newDocument.URL is document.URL
+PASS newDocument.location is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
