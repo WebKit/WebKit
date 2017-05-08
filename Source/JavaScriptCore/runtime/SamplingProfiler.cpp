@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -719,7 +719,7 @@ String SamplingProfiler::StackFrame::nameFromCallee(VM& vm)
         PropertySlot slot(callee, PropertySlot::InternalMethodType::VMInquiry);
         PropertyName propertyName(ident);
         bool hasProperty = callee->getPropertySlot(exec, propertyName, slot);
-        ASSERT_UNUSED(scope, !scope.exception());
+        scope.assertNoException();
         if (hasProperty) {
             if (slot.isValue()) {
                 JSValue nameValue = slot.getValue(exec, propertyName);

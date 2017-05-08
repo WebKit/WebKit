@@ -504,7 +504,7 @@ auto B3IRGenerator::addGrowMemory(ExpressionType delta, ExpressionType& result) 
         // grow() does not require ExecState* if it doesn't throw exceptions.
         ExecState* exec = nullptr; 
         PageCount result = wasmMemory->grow(vm, exec, static_cast<uint32_t>(delta), shouldThrowExceptionsOnFailure);
-        RELEASE_ASSERT(!scope.exception());
+        scope.releaseAssertNoException();
         if (!result)
             return -1;
 

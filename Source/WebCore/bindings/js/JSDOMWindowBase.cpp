@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 2000 Harri Porten (porten@kde.org)
  *  Copyright (C) 2006 Jon Shier (jshier@iastate.edu)
- *  Copyright (C) 2003-2009, 2014, 2016 Apple Inc. All rights reseved.
+ *  Copyright (C) 2003-2017 Apple Inc. All rights reseved.
  *  Copyright (C) 2006 Alexey Proskuryakov (ap@webkit.org)
  *  Copyright (c) 2015 Canon Inc. All rights reserved.
  *
@@ -216,7 +216,7 @@ public:
 
         JSMainThreadExecState::runTask(exec, m_task);
 
-        ASSERT_UNUSED(scope, !scope.exception());
+        scope.assertNoException();
     }
 
 private:

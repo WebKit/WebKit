@@ -27,6 +27,8 @@
 #include "ExceptionScope.h"
 
 #include "Exception.h"
+#include <wtf/StackTrace.h>
+#include <wtf/StringPrintStream.h>
 
 namespace JSC {
     
@@ -45,6 +47,23 @@ ExceptionScope::~ExceptionScope()
 {
     RELEASE_ASSERT(m_vm.m_topExceptionScope);
     m_vm.m_topExceptionScope = m_previousScope;
+}
+
+CString ExceptionScope::unexpectedExceptionMessage()
+{
+    StringPrintStream out;
+
+    out.println("Unexpected exception observed at:");
+    auto currentStack = std::unique_ptr<StackTrace>(StackTrace::captureStackTrace(25, 1));
+    currentStack->dump(out, "    ");
+
+    if (!m_vm.nativeStackTraceOfLastThrow())
+        return CString();
+    
+    out.println("The exception was thrown from:");
+    m_vm.nativeStackTraceOfLastThrow()->dump(out, "    ");
+
+    return out.toCString();
 }
 
 #endif // ENABLE(EXCEPTION_SCOPE_VERIFICATION)

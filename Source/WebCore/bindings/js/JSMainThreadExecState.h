@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -133,7 +133,7 @@ private:
         JSC::VM& vm = s_mainThreadState->vm();
         auto scope = DECLARE_CATCH_SCOPE(vm);
         ASSERT(isMainThread());
-        ASSERT_UNUSED(scope, !scope.exception());
+        scope.assertNoException();
 
         JSC::ExecState* state = s_mainThreadState;
         bool didExitJavaScript = s_mainThreadState && !m_previousState;

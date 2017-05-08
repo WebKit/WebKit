@@ -614,6 +614,10 @@ void VM::throwException(ExecState* exec, Exception* exception)
     interpreter->notifyDebuggerOfExceptionToBeThrown(*this, exec, exception);
 
     setException(exception);
+
+#if ENABLE(EXCEPTION_SCOPE_VERIFICATION)
+    m_nativeStackTraceOfLastThrow = std::unique_ptr<StackTrace>(StackTrace::captureStackTrace(25));
+#endif
 }
 
 JSValue VM::throwException(ExecState* exec, JSValue thrownValue)

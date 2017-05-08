@@ -343,7 +343,7 @@ JSC::JSObject* JSTestNode::serialize(ExecState* state, JSTestNode* thisObject, T
     auto* result = constructEmptyObject(state);
 
     auto nameValue = jsTestNodeNameGetter(*state, *thisObject, throwScope);
-    ASSERT(!throwScope.exception());
+    throwScope.assertNoException();
     result->putDirect(vm, Identifier::fromString(&vm, "name"), nameValue);
 
     return result;

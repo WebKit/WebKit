@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2015 Andy VanWagoner (thetalecrafter@gmail.com)
  * Copyright (C) 2016 Sukolsak Sakshuwong (sukolsak@gmail.com)
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -358,7 +358,7 @@ void IntlNumberFormat::createNumberFormat(ExecState& state)
 
     if (!m_initializedNumberFormat) {
         initializeNumberFormat(state, jsUndefined(), jsUndefined());
-        ASSERT_UNUSED(scope, !scope.exception());
+        scope.assertNoException();
     }
 
     UNumberFormatStyle style;
@@ -486,7 +486,7 @@ JSObject* IntlNumberFormat::resolvedOptions(ExecState& state)
 
     if (!m_initializedNumberFormat) {
         initializeNumberFormat(state, jsUndefined(), jsUndefined());
-        ASSERT_UNUSED(scope, !scope.exception());
+        scope.assertNoException();
     }
 
     JSObject* options = constructEmptyObject(&state);

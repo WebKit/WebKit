@@ -38,12 +38,17 @@ public:
     VM& vm() const { return m_vm; }
     unsigned recursionDepth() const { return m_recursionDepth; }
     Exception* exception() { return m_vm.exception(); }
-    
+
+    ALWAYS_INLINE void assertNoException() { ASSERT_WITH_MESSAGE(!exception(), "%s", unexpectedExceptionMessage().data()); }
+    ALWAYS_INLINE void releaseAssertNoException() { RELEASE_ASSERT_WITH_MESSAGE(!exception(), "%s", unexpectedExceptionMessage().data()); }
+
 protected:
     ExceptionScope(VM&, ExceptionEventLocation);
     ExceptionScope(const ExceptionScope&) = delete;
     ExceptionScope(ExceptionScope&&) = default;
     ~ExceptionScope();
+
+    JS_EXPORT_PRIVATE CString unexpectedExceptionMessage();
 
     VM& m_vm;
     ExceptionScope* m_previousScope;
@@ -57,6 +62,10 @@ class ExceptionScope {
 public:
     ALWAYS_INLINE VM& vm() const { return m_vm; }
     ALWAYS_INLINE Exception* exception() { return m_vm.exception(); }
+    ALWAYS_INLINE CString unexpectedExceptionMessage() { return { }; }
+
+    ALWAYS_INLINE void assertNoException() { ASSERT(!exception()); }
+    ALWAYS_INLINE void releaseAssertNoException() { RELEASE_ASSERT(!exception()); }
 
 protected:
     ALWAYS_INLINE ExceptionScope(VM& vm)

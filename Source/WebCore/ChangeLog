@@ -1,3 +1,67 @@
+2017-05-08  Mark Lam  <mark.lam@apple.com>
+
+        Introduce ExceptionScope::assertNoException() and releaseAssertNoException().
+        https://bugs.webkit.org/show_bug.cgi?id=171776
+
+        Reviewed by Keith Miller.
+
+        No new tests because there's no behavior change in functionality.  We're only
+        refactoring the code to use the new assertion utility function.
+
+        * Modules/plugins/QuickTimePluginReplacement.mm:
+        (WebCore::QuickTimePluginReplacement::installReplacement):
+        * bindings/js/JSCryptoKeySerializationJWK.cpp:
+        (WebCore::getJSArrayFromJSON):
+        (WebCore::getStringFromJSON):
+        (WebCore::getBooleanFromJSON):
+        * bindings/js/JSCustomElementRegistryCustom.cpp:
+        (WebCore::JSCustomElementRegistry::whenDefined):
+        * bindings/js/JSDOMExceptionHandling.cpp:
+        (WebCore::propagateExceptionSlowPath):
+        (WebCore::throwNotSupportedError):
+        (WebCore::throwInvalidStateError):
+        (WebCore::throwSecurityError):
+        (WebCore::throwDOMSyntaxError):
+        (WebCore::throwDataCloneError):
+        (WebCore::throwIndexSizeError):
+        (WebCore::throwTypeMismatchError):
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::makeThisTypeErrorForBuiltins):
+        (WebCore::makeGetterTypeErrorForBuiltins):
+        * bindings/js/JSDOMGlobalObjectTask.cpp:
+        * bindings/js/JSDOMPromise.h:
+        (WebCore::callPromiseFunction):
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowMicrotaskCallback::call):
+        * bindings/js/JSMainThreadExecState.h:
+        (WebCore::JSMainThreadExecState::~JSMainThreadExecState):
+        * bindings/js/ReadableStreamDefaultController.cpp:
+        (WebCore::ReadableStreamDefaultController::isControlledReadableStreamLocked):
+        * bindings/js/ReadableStreamDefaultController.h:
+        (WebCore::ReadableStreamDefaultController::enqueue):
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneDeserializer::readTerminal):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateSerializerFunction):
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        (WebCore::JSTestNode::serialize):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::JSTestObj::serialize):
+        * bindings/scripts/test/JS/JSTestSerialization.cpp:
+        (WebCore::JSTestSerialization::serialize):
+        * bindings/scripts/test/JS/JSTestSerializationInherit.cpp:
+        (WebCore::JSTestSerializationInherit::serialize):
+        * bindings/scripts/test/JS/JSTestSerializationInheritFinal.cpp:
+        (WebCore::JSTestSerializationInheritFinal::serialize):
+        * contentextensions/ContentExtensionParser.cpp:
+        (WebCore::ContentExtensions::getTypeFlags):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::didAddUserAgentShadowRoot):
+        (WebCore::HTMLMediaElement::updateMediaControlsAfterPresentationModeChange):
+        (WebCore::HTMLMediaElement::getCurrentMediaControlsStatus):
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::didAddUserAgentShadowRoot):
+
 2017-05-08  Chris Dumez  <cdumez@apple.com>
 
         Move 'style' from Element to HTMLElement / SVGElement and make it settable

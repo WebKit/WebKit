@@ -78,6 +78,10 @@
 #include <wtf/ListHashSet.h>
 #endif
 
+#if ENABLE(EXCEPTION_SCOPE_VERIFICATION)
+#include <wtf/StackTrace.h>
+#endif
+
 namespace WTF {
 class SimpleStats;
 } // namespace WTF
@@ -674,6 +678,10 @@ public:
     void notifyNeedTermination() { m_traps.fireTrap(VMTraps::NeedTermination); }
     void notifyNeedWatchdogCheck() { m_traps.fireTrap(VMTraps::NeedWatchdogCheck); }
 
+#if ENABLE(EXCEPTION_SCOPE_VERIFICATION)
+    StackTrace* nativeStackTraceOfLastThrow() const { return m_nativeStackTraceOfLastThrow.get(); }
+#endif
+
 private:
     friend class LLIntOffsetsExtractor;
 
@@ -706,6 +714,7 @@ private:
     {
 #if ENABLE(EXCEPTION_SCOPE_VERIFICATION)
         m_needExceptionCheck = false;
+        m_nativeStackTraceOfLastThrow = nullptr;
 #endif
         m_exception = nullptr;
     }
@@ -752,6 +761,7 @@ private:
     ExceptionEventLocation m_simulatedThrowPointLocation;
     unsigned m_simulatedThrowPointRecursionDepth { 0 };
     mutable bool m_needExceptionCheck { false };
+    std::unique_ptr<StackTrace> m_nativeStackTraceOfLastThrow;
 #endif
 
     bool m_failNextNewCodeBlock { false };

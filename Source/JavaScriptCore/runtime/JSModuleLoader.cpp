@@ -63,7 +63,7 @@ void JSModuleLoader::finishCreation(ExecState* exec, VM& vm, JSGlobalObject* glo
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
     JSMap* map = JSMap::create(exec, vm, globalObject->mapStructure());
-    RELEASE_ASSERT(!scope.exception());
+    scope.releaseAssertNoException();
     putDirect(vm, Identifier::fromString(&vm, "registry"), map);
 }
 

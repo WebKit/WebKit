@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
- *  Copyright (C) 2004-2011, 2013, 2016 Apple Inc. All rights reserved.
+ *  Copyright (C) 2004-2017 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Samuel Weinig <sam@webkit.org>
  *  Copyright (C) 2013 Michael Pruett <michael@68k.org>
  *
@@ -205,7 +205,7 @@ JSValue createDOMException(ExecState& state, Exception&& exception)
 
 void propagateExceptionSlowPath(JSC::ExecState& state, JSC::ThrowScope& throwScope, Exception&& exception)
 {
-    ASSERT(!throwScope.exception());
+    throwScope.assertNoException();
     throwException(&state, throwScope, createDOMException(state, WTFMove(exception)));
 }
     
@@ -248,27 +248,27 @@ void reportDeprecatedSetterError(JSC::ExecState& state, const char* interfaceNam
 
 void throwNotSupportedError(JSC::ExecState& state, JSC::ThrowScope& scope)
 {
-    ASSERT(!scope.exception());
+    scope.assertNoException();
     throwException(&state, scope, createDOMException(&state, NOT_SUPPORTED_ERR));
 }
 
 void throwNotSupportedError(JSC::ExecState& state, JSC::ThrowScope& scope, const char* message)
 {
-    ASSERT(!scope.exception());
+    scope.assertNoException();
     String messageString(message);
     throwException(&state, scope, createDOMException(&state, NOT_SUPPORTED_ERR, &messageString));
 }
 
 void throwInvalidStateError(JSC::ExecState& state, JSC::ThrowScope& scope, const char* message)
 {
-    ASSERT(!scope.exception());
+    scope.assertNoException();
     String messageString(message);
     throwException(&state, scope, createDOMException(&state, INVALID_STATE_ERR, &messageString));
 }
 
 void throwSecurityError(JSC::ExecState& state, JSC::ThrowScope& scope, const String& message)
 {
-    ASSERT(!scope.exception());
+    scope.assertNoException();
     throwException(&state, scope, createDOMException(&state, SECURITY_ERR, message));
 }
 
@@ -379,25 +379,25 @@ JSC::EncodedJSValue rejectPromiseWithThisTypeError(JSC::ExecState& state, const 
 
 void throwDOMSyntaxError(JSC::ExecState& state, JSC::ThrowScope& scope)
 {
-    ASSERT(!scope.exception());
+    scope.assertNoException();
     throwException(&state, scope, createDOMException(&state, SYNTAX_ERR));
 }
 
 void throwDataCloneError(JSC::ExecState& state, JSC::ThrowScope& scope)
 {
-    ASSERT(!scope.exception());
+    scope.assertNoException();
     throwException(&state, scope, createDOMException(&state, DATA_CLONE_ERR));
 }
 
 void throwIndexSizeError(JSC::ExecState& state, JSC::ThrowScope& scope)
 {
-    ASSERT(!scope.exception());
+    scope.assertNoException();
     throwException(&state, scope, createDOMException(&state, INDEX_SIZE_ERR));
 }
 
 void throwTypeMismatchError(JSC::ExecState& state, JSC::ThrowScope& scope)
 {
-    ASSERT(!scope.exception());
+    scope.assertNoException();
     throwException(&state, scope, createDOMException(&state, TYPE_MISMATCH_ERR));
 }
 

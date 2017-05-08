@@ -292,7 +292,7 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::create(VM& vm, ExecState* exec, JS
             default:
                 RELEASE_ASSERT_NOT_REACHED();
             }
-            ASSERT(!throwScope.exception());
+            throwScope.assertNoException();
             break;
         }
         }
@@ -330,7 +330,7 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::create(VM& vm, ExecState* exec, JS
                 moduleInformation.tableInformation.initial(), moduleInformation.tableInformation.maximum());
             // We should always be able to allocate a JSWebAssemblyTable we've defined.
             // If it's defined to be too large, we should have thrown a validation error.
-            ASSERT(!throwScope.exception());
+            throwScope.assertNoException();
             ASSERT(table);
             instance->m_table.set(vm, instance, table);
         }

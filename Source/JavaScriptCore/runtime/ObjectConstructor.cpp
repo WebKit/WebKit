@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2008, 2016 Apple Inc. All rights reserved.
+ *  Copyright (C) 2008-2017 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -235,7 +235,7 @@ JSValue objectConstructorGetOwnPropertyDescriptors(ExecState* exec, JSObject* ob
 
         PutPropertySlot slot(descriptors);
         descriptors->putOwnDataPropertyMayBeIndex(exec, propertyName, fromDescriptor, slot);
-        ASSERT(!scope.exception());
+        scope.assertNoException();
     }
 
     return descriptors;
@@ -419,7 +419,7 @@ EncodedJSValue JSC_HOST_CALL objectConstructorDefineProperty(ExecState* exec)
     if (!success)
         return JSValue::encode(jsNull());
     ASSERT((descriptor.attributes() & Accessor) || (!descriptor.isAccessorDescriptor()));
-    ASSERT(!scope.exception());
+    scope.assertNoException();
     obj->methodTable(vm)->defineOwnProperty(obj, exec, propertyName, descriptor, true);
     scope.release();
     return JSValue::encode(obj);

@@ -8784,19 +8784,19 @@ JSC::JSObject* JSTestObj::serialize(ExecState* state, JSTestObj* thisObject, Thr
     auto* result = constructEmptyObject(state);
 
     auto createValue = jsTestObjCreateGetter(*state, *thisObject, throwScope);
-    ASSERT(!throwScope.exception());
+    throwScope.assertNoException();
     result->putDirect(vm, Identifier::fromString(&vm, "create"), createValue);
 
     auto readOnlyStringAttrValue = jsTestObjReadOnlyStringAttrGetter(*state, *thisObject, throwScope);
-    ASSERT(!throwScope.exception());
+    throwScope.assertNoException();
     result->putDirect(vm, Identifier::fromString(&vm, "readOnlyStringAttr"), readOnlyStringAttrValue);
 
     auto enumAttrValue = jsTestObjEnumAttrGetter(*state, *thisObject, throwScope);
-    ASSERT(!throwScope.exception());
+    throwScope.assertNoException();
     result->putDirect(vm, Identifier::fromString(&vm, "enumAttr"), enumAttrValue);
 
     auto longAttrValue = jsTestObjLongAttrGetter(*state, *thisObject, throwScope);
-    ASSERT(!throwScope.exception());
+    throwScope.assertNoException();
     result->putDirect(vm, Identifier::fromString(&vm, "longAttr"), longAttrValue);
 
     return result;

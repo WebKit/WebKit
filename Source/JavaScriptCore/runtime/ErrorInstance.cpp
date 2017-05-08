@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003, 2008, 2016 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2017 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -189,7 +189,7 @@ String ErrorInstance::sanitizedToString(ExecState* exec)
         }
         currentObj = obj->getPrototypeDirect();
     }
-    ASSERT(!scope.exception());
+    scope.assertNoException();
 
     String nameString;
     if (!nameValue)
@@ -204,7 +204,7 @@ String ErrorInstance::sanitizedToString(ExecState* exec)
     PropertySlot messageSlot(this, PropertySlot::InternalMethodType::VMInquiry);
     if (JSObject::getOwnPropertySlot(this, exec, messagePropertName, messageSlot) && messageSlot.isValue())
         messageValue = messageSlot.getValue(exec, messagePropertName);
-    ASSERT(!scope.exception());
+    scope.assertNoException();
 
     String messageString;
     if (!messageValue)

@@ -207,7 +207,7 @@ JSC::JSObject* JSTestSerializationInherit::serialize(ExecState* state, JSTestSer
     auto* result = JSTestSerialization::serialize(state, thisObject, throwScope);
 
     auto inheritLongAttributeValue = jsTestSerializationInheritInheritLongAttributeGetter(*state, *thisObject, throwScope);
-    ASSERT(!throwScope.exception());
+    throwScope.assertNoException();
     result->putDirect(vm, Identifier::fromString(&vm, "inheritLongAttribute"), inheritLongAttributeValue);
 
     return result;

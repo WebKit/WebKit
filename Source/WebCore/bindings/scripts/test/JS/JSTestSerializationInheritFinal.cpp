@@ -245,7 +245,7 @@ JSC::JSObject* JSTestSerializationInheritFinal::serialize(ExecState* state, JSTe
     auto* result = JSTestSerializationInherit::serialize(state, thisObject, throwScope);
 
     auto finalLongAttributeBarValue = jsTestSerializationInheritFinalFinalLongAttributeBarGetter(*state, *thisObject, throwScope);
-    ASSERT(!throwScope.exception());
+    throwScope.assertNoException();
     result->putDirect(vm, Identifier::fromString(&vm, "finalLongAttributeBar"), finalLongAttributeBarValue);
 
     return result;

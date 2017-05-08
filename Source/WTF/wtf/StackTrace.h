@@ -36,7 +36,7 @@ class PrintStream;
 class StackTrace {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static StackTrace* captureStackTrace(int maxFrames);
+    static StackTrace* captureStackTrace(int maxFrames, int framesToSkip = 0);
 
     // Borrowed stack trace.
     StackTrace(void** stack, int size)
@@ -71,7 +71,7 @@ public:
 
     WTF_EXPORT_PRIVATE static std::optional<DemangleEntry> demangle(void*);
 
-    WTF_EXPORT_PRIVATE void dump(PrintStream&) const;
+    WTF_EXPORT_PRIVATE void dump(PrintStream&, const char* indentString = nullptr) const;
 
 private:
     inline static size_t instanceSize(int capacity);

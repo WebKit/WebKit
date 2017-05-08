@@ -1608,7 +1608,7 @@ JSInternalPromise* GlobalObject::moduleLoaderResolve(JSGlobalObject* globalObjec
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     JSInternalPromiseDeferred* deferred = JSInternalPromiseDeferred::create(exec, globalObject);
-    RELEASE_ASSERT(!scope.exception());
+    scope.releaseAssertNoException();
     const Identifier key = keyValue.toPropertyKey(exec);
     if (UNLIKELY(scope.exception())) {
         JSValue exception = scope.exception();
@@ -1645,7 +1645,7 @@ JSInternalPromise* GlobalObject::moduleLoaderResolve(JSGlobalObject* globalObjec
     if (!directoryName)
         return deferred->reject(exec, createError(exec, makeString("Could not resolve the referrer name '", String(referrer.impl()), "'.")));
     auto result = deferred->resolve(exec, jsString(exec, resolvePath(directoryName.value(), ModuleName(key.impl()))));
-    RELEASE_ASSERT(!scope.exception());
+    scope.releaseAssertNoException();
     return result;
 }
 
@@ -1735,7 +1735,7 @@ JSInternalPromise* GlobalObject::moduleLoaderFetch(JSGlobalObject* globalObject,
         return deferred->reject(exec, createError(exec, makeString("Could not open file '", moduleKey, "'.")));
 
     auto result = deferred->resolve(exec, JSSourceCode::create(exec->vm(), makeSource(stringFromUTF(utf8), SourceOrigin { moduleKey }, moduleKey, TextPosition(), SourceProviderSourceType::Module)));
-    RELEASE_ASSERT(!scope.exception());
+    scope.releaseAssertNoException();
     return result;
 }
 
@@ -3014,7 +3014,7 @@ EncodedJSValue JSC_HOST_CALL functionGenerateHeapSnapshot(ExecState* exec)
 
     String jsonString = snapshotBuilder.json();
     EncodedJSValue result = JSValue::encode(JSONParse(exec, jsonString));
-    RELEASE_ASSERT(!scope.exception());
+    scope.releaseAssertNoException();
     return result;
 }
 
@@ -3053,7 +3053,7 @@ EncodedJSValue JSC_HOST_CALL functionSamplingProfilerStackTraces(ExecState* exec
 
     String jsonString = vm.samplingProfiler()->stackTracesAsJSON();
     EncodedJSValue result = JSValue::encode(JSONParse(exec, jsonString));
-    RELEASE_ASSERT(!scope.exception());
+    scope.releaseAssertNoException();
     return result;
 }
 #endif // ENABLE(SAMPLING_PROFILER)
@@ -3101,9 +3101,9 @@ static JSValue box(ExecState* exec, VM& vm, JSValue wasmValue)
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     JSString* type = asString(wasmValue.get(exec, makeIdentifier(vm, "type")));
-    ASSERT_UNUSED(scope, !scope.exception());
+    scope.assertNoException();
     JSValue value = wasmValue.get(exec, makeIdentifier(vm, "value"));
-    ASSERT(!scope.exception());
+    scope.assertNoException();
 
     auto unboxString = [&] (const char* hexFormat, const char* decFormat, auto& result) {
         if (!value.isString())
@@ -3489,7 +3489,7 @@ static bool runWithScripts(GlobalObject* globalObject, const Vector<Script>& scr
 
             if (isModule) {
                 promise = loadAndEvaluateModule(globalObject->globalExec(), fileName);
-                RELEASE_ASSERT(!scope.exception());
+                scope.releaseAssertNoException();
             } else {
                 if (!fetchScriptFromLocalFileSystem(fileName, scriptBuffer))
                     return false; // fail early so we can catch missing files
@@ -3518,12 +3518,12 @@ static bool runWithScripts(GlobalObject* globalObject, const Vector<Script>& scr
             });
 
             promise->then(globalObject->globalExec(), fulfillHandler, rejectHandler);
-            RELEASE_ASSERT(!scope.exception());
+            scope.releaseAssertNoException();
             vm.drainMicrotasks();
         } else {
             NakedPtr<Exception> evaluationException;
             JSValue returnValue = evaluate(globalObject->globalExec(), jscSource(scriptBuffer, SourceOrigin { absolutePath(fileName) }, fileName), JSValue(), evaluationException);
-            ASSERT(!scope.exception());
+            scope.assertNoException();
             if (evaluationException)
                 returnValue = evaluationException->value();
             checkException(globalObject, isLastFile, evaluationException, returnValue, uncaughtExceptionName, alwaysDumpUncaughtException, dump, success);

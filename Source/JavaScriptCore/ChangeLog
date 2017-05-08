@@ -1,3 +1,114 @@
+2017-05-08  Mark Lam  <mark.lam@apple.com>
+
+        Introduce ExceptionScope::assertNoException() and releaseAssertNoException().
+        https://bugs.webkit.org/show_bug.cgi?id=171776
+
+        Reviewed by Keith Miller.
+
+        Instead of ASSERT(!scope.exception()), we can now do scope.assertNoException().
+        Ditto for RELEASE_ASSERT and scope.releaseAssertNoException().  
+
+        The advantage of using ExceptionScope::assertNoException() and
+        releaseAssertNoException() is that if the assertion fails, these utility
+        functions will print the stack trace for where the unexpected exception is
+        detected as well as where the unexpected exception was thrown from.  This makes
+        it much easier to debug the source of unhandled exceptions.
+
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::pauseIfNeeded):
+        * dfg/DFGOperations.cpp:
+        * interpreter/Interpreter.cpp:
+        (JSC::eval):
+        (JSC::notifyDebuggerOfUnwinding):
+        (JSC::Interpreter::executeProgram):
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        (JSC::Interpreter::prepareForRepeatCall):
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::debug):
+        * interpreter/ShadowChicken.cpp:
+        (JSC::ShadowChicken::functionsOnStack):
+        * jsc.cpp:
+        (GlobalObject::moduleLoaderResolve):
+        (GlobalObject::moduleLoaderFetch):
+        (functionGenerateHeapSnapshot):
+        (functionSamplingProfilerStackTraces):
+        (box):
+        (runWithScripts):
+        * runtime/AbstractModuleRecord.cpp:
+        (JSC::AbstractModuleRecord::finishCreation):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::ArrayPrototype::tryInitializeSpeciesWatchpoint):
+        * runtime/Completion.cpp:
+        (JSC::rejectPromise):
+        * runtime/ErrorInstance.cpp:
+        (JSC::ErrorInstance::sanitizedToString):
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::createError):
+        * runtime/ExceptionScope.cpp:
+        (JSC::ExceptionScope::unexpectedExceptionMessage):
+        * runtime/ExceptionScope.h:
+        (JSC::ExceptionScope::assertNoException):
+        (JSC::ExceptionScope::releaseAssertNoException):
+        (JSC::ExceptionScope::unexpectedExceptionMessage):
+        * runtime/GenericArgumentsInlines.h:
+        (JSC::GenericArguments<Type>::defineOwnProperty):
+        * runtime/IntlCollator.cpp:
+        (JSC::IntlCollator::createCollator):
+        (JSC::IntlCollator::resolvedOptions):
+        * runtime/IntlDateTimeFormat.cpp:
+        (JSC::IntlDateTimeFormat::resolvedOptions):
+        (JSC::IntlDateTimeFormat::format):
+        * runtime/IntlNumberFormat.cpp:
+        (JSC::IntlNumberFormat::createNumberFormat):
+        (JSC::IntlNumberFormat::resolvedOptions):
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::putToPrimitiveByIndex):
+        * runtime/JSGenericTypedArrayViewPrototypeFunctions.h:
+        (JSC::genericTypedArrayViewProtoFuncIncludes):
+        (JSC::genericTypedArrayViewProtoFuncIndexOf):
+        (JSC::genericTypedArrayViewProtoFuncLastIndexOf):
+        (JSC::genericTypedArrayViewPrivateFuncSubarrayCreate):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncHostPromiseRejectionTracker):
+        * runtime/JSModuleEnvironment.cpp:
+        (JSC::JSModuleEnvironment::getOwnPropertySlot):
+        * runtime/JSModuleLoader.cpp:
+        (JSC::JSModuleLoader::finishCreation):
+        * runtime/JSModuleNamespaceObject.cpp:
+        (JSC::JSModuleNamespaceObject::finishCreation):
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::toJSON):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::ordinaryToPrimitive):
+        * runtime/JSPropertyNameEnumerator.h:
+        (JSC::propertyNameEnumerator):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::objectConstructorGetOwnPropertyDescriptors):
+        (JSC::objectConstructorDefineProperty):
+        * runtime/ObjectPrototype.cpp:
+        (JSC::objectProtoFuncHasOwnProperty):
+        * runtime/ProgramExecutable.cpp:
+        (JSC::ProgramExecutable::initializeGlobalProperties):
+        * runtime/ReflectObject.cpp:
+        (JSC::reflectObjectDefineProperty):
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::StackFrame::nameFromCallee):
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncRepeatCharacter):
+        * runtime/TemplateRegistry.cpp:
+        (JSC::TemplateRegistry::getTemplateObject):
+        * runtime/VM.cpp:
+        (JSC::VM::throwException):
+        * runtime/VM.h:
+        (JSC::VM::nativeStackTraceOfLastThrow):
+        (JSC::VM::clearException):
+        * wasm/WasmB3IRGenerator.cpp:
+        * wasm/js/JSWebAssemblyInstance.cpp:
+        (JSC::JSWebAssemblyInstance::create):
+
 2017-05-06  Bill Ming  <mbbill@gmail.com>
 
         Fix 32bit Windows build by giving correct parameters to MASM

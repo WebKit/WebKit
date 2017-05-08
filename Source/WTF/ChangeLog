@@ -1,3 +1,18 @@
+2017-05-08  Mark Lam  <mark.lam@apple.com>
+
+        Introduce ExceptionScope::assertNoException() and releaseAssertNoException().
+        https://bugs.webkit.org/show_bug.cgi?id=171776
+
+        Reviewed by Keith Miller.
+
+        1. Add an option to skip some number of top frames when capturing the StackTrace.
+        2. Add an option to use an indentation string when dumping the StackTrace.
+
+        * wtf/StackTrace.cpp:
+        (WTF::StackTrace::captureStackTrace):
+        (WTF::StackTrace::dump):
+        * wtf/StackTrace.h:
+
 2017-05-05  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] Use memoryFootprint for MemoryUsage retrieval in Linux

@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003, 2007, 2013, 2016 Apple Inc.
+ *  Copyright (C) 2003-2017 Apple Inc.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -145,7 +145,7 @@ static JSInternalPromise* rejectPromise(ExecState* exec, JSGlobalObject* globalO
 {
     VM& vm = exec->vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);
-    ASSERT(scope.exception());
+    scope.assertNoException();
     JSValue exception = scope.exception()->value();
     scope.clearException();
     JSInternalPromiseDeferred* deferred = JSInternalPromiseDeferred::create(exec, globalObject);

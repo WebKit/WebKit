@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -66,7 +66,7 @@ public:
             JSMainThreadExecState::runTask(exec, m_task);
         else
             m_task->run(exec);
-        ASSERT_UNUSED(scope, !scope.exception());
+        scope.assertNoException();
     }
 
 private:

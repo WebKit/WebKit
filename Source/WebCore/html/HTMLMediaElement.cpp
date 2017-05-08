@@ -6810,7 +6810,7 @@ void HTMLMediaElement::didAddUserAgentShadowRoot(ShadowRoot* root)
     argList.append(mediaControlsHostJSWrapper);
 
     JSC::JSObject* function = functionValue.toObject(exec);
-    ASSERT(!scope.exception());
+    scope.assertNoException();
     JSC::CallData callData;
     JSC::CallType callType = function->methodTable()->getCallData(function, callData);
     if (callType == JSC::CallType::None)
@@ -6824,7 +6824,7 @@ void HTMLMediaElement::didAddUserAgentShadowRoot(ShadowRoot* root)
 
     // Connect the Media, MediaControllerHost, and Controller so the GC knows about their relationship
     JSC::JSObject* mediaJSWrapperObject = mediaJSWrapper.toObject(exec);
-    ASSERT(!scope.exception());
+    scope.assertNoException();
     JSC::Identifier controlsHost = JSC::Identifier::fromString(&exec->vm(), "controlsHost");
     
     ASSERT(!mediaJSWrapperObject->hasProperty(exec, controlsHost));
@@ -6894,7 +6894,7 @@ void HTMLMediaElement::updateMediaControlsAfterPresentationModeChange()
         return;
 
     JSC::JSObject* function = functionValue.toObject(exec);
-    ASSERT(!scope.exception());
+    scope.assertNoException();
     JSC::CallData callData;
     JSC::CallType callType = function->methodTable()->getCallData(function, callData);
     if (callType == JSC::CallType::None)
@@ -6936,7 +6936,7 @@ String HTMLMediaElement::getCurrentMediaControlsStatus()
         return emptyString();
 
     JSC::JSObject* function = functionValue.toObject(exec);
-    ASSERT(!scope.exception());
+    scope.assertNoException();
     JSC::CallData callData;
     JSC::CallType callType = function->methodTable()->getCallData(function, callData);
     JSC::MarkedArgumentBuffer argList;

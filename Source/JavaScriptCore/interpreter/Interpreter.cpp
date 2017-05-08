@@ -152,7 +152,7 @@ JSValue eval(CallFrame* callFrame)
         }
         
         // If the literal parser bailed, it should not have thrown exceptions.
-        ASSERT(!scope.exception());
+        scope.assertNoException();
 
         VariableEnvironment variablesUnderTDZ;
         JSScope::collectClosureVariablesUnderTDZ(callerScopeChain, variablesUnderTDZ);
@@ -593,7 +593,7 @@ ALWAYS_INLINE static void notifyDebuggerOfUnwinding(VM& vm, CallFrame* callFrame
             debugger->unwindEvent(callFrame);
         else
             debugger->didExecuteProgram(callFrame);
-        ASSERT_UNUSED(catchScope, !catchScope.exception());
+        catchScope.assertNoException();
     }
 }
 
@@ -751,7 +751,7 @@ JSValue Interpreter::executeProgram(const SourceCode& source, CallFrame* callFra
     ASSERT(throwScope.exception() || program);
     RETURN_IF_EXCEPTION(throwScope, { });
 
-    ASSERT(!throwScope.exception());
+    throwScope.assertNoException();
     ASSERT(!vm.isCollectorBusyOnCurrentThread());
     RELEASE_ASSERT(vm.currentThreadIsHoldingAPILock());
     if (vm.isCollectorBusyOnCurrentThread())
@@ -902,7 +902,7 @@ JSValue Interpreter::executeCall(CallFrame* callFrame, JSObject* function, CallT
     VM& vm = callFrame->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    ASSERT(!throwScope.exception());
+    throwScope.assertNoException();
     ASSERT(!vm.isCollectorBusyOnCurrentThread());
     if (vm.isCollectorBusyOnCurrentThread())
         return jsNull();
@@ -967,7 +967,7 @@ JSObject* Interpreter::executeConstruct(CallFrame* callFrame, JSObject* construc
     VM& vm = callFrame->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    ASSERT(!throwScope.exception());
+    throwScope.assertNoException();
     ASSERT(!vm.isCollectorBusyOnCurrentThread());
     // We throw in this case because we have to return something "valid" but we're
     // already in an invalid state.
@@ -1036,7 +1036,7 @@ CallFrameClosure Interpreter::prepareForRepeatCall(FunctionExecutable* functionE
 {
     VM& vm = *scope->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    ASSERT_UNUSED(throwScope, !throwScope.exception());
+    throwScope.assertNoException();
     
     if (vm.isCollectorBusyOnCurrentThread())
         return CallFrameClosure();
@@ -1088,7 +1088,7 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     ASSERT(scope->vm() == &callFrame->vm());
-    ASSERT(!throwScope.exception());
+    throwScope.assertNoException();
     ASSERT(!vm.isCollectorBusyOnCurrentThread());
     RELEASE_ASSERT(vm.currentThreadIsHoldingAPILock());
     if (vm.isCollectorBusyOnCurrentThread())
@@ -1231,7 +1231,7 @@ JSValue Interpreter::execute(ModuleProgramExecutable* executable, CallFrame* cal
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     ASSERT(scope->vm() == &callFrame->vm());
-    ASSERT(!throwScope.exception());
+    throwScope.assertNoException();
     ASSERT(!vm.isCollectorBusyOnCurrentThread());
     RELEASE_ASSERT(vm.currentThreadIsHoldingAPILock());
     if (vm.isCollectorBusyOnCurrentThread())
@@ -1284,7 +1284,7 @@ NEVER_INLINE void Interpreter::debug(CallFrame* callFrame, DebugHookType debugHo
         return;
 
     ASSERT(callFrame->codeBlock()->hasDebuggerRequests());
-    ASSERT_UNUSED(scope, !scope.exception());
+    scope.assertNoException();
 
     switch (debugHookType) {
         case DidEnterCallFrame:
@@ -1309,7 +1309,7 @@ NEVER_INLINE void Interpreter::debug(CallFrame* callFrame, DebugHookType debugHo
             debugger->didReachBreakpoint(callFrame);
             break;
     }
-    ASSERT(!scope.exception());
+    scope.assertNoException();
 }
 
 } // namespace JSC

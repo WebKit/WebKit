@@ -44,17 +44,18 @@ ALWAYS_INLINE size_t StackTrace::instanceSize(int capacity)
     return sizeof(StackTrace) + (capacity - 1) * sizeof(void*);
 }
 
-StackTrace* StackTrace::captureStackTrace(int maxFrames)
+StackTrace* StackTrace::captureStackTrace(int maxFrames, int framesToSkip)
 {
     maxFrames = std::max(1, maxFrames);
     size_t sizeToAllocate = instanceSize(maxFrames);
     StackTrace* trace = new (NotNull, fastMalloc(sizeToAllocate)) StackTrace();
 
-    static const int framesToSkip = 2;
+    // Skip 2 additional frames i.e. StackTrace::captureStackTrace and WTFGetBacktrace.
+    framesToSkip += 2;
     int numberOfFrames = maxFrames + framesToSkip;
 
     WTFGetBacktrace(&trace->m_skippedFrame0, &numberOfFrames);
-    ASSERT(numberOfFrames > framesToSkip);
+    RELEASE_ASSERT(numberOfFrames >= framesToSkip);
     trace->m_size = numberOfFrames - framesToSkip;
     trace->m_capacity = maxFrames;
 
@@ -80,7 +81,7 @@ auto StackTrace::demangle(void* pc) -> std::optional<DemangleEntry>
     return std::nullopt;
 }
 
-void StackTrace::dump(PrintStream& out) const
+void StackTrace::dump(PrintStream& out, const char* indentString) const
 {
     const auto* stack = this->stack();
 #if HAVE(BACKTRACE_SYMBOLS)
@@ -89,6 +90,8 @@ void StackTrace::dump(PrintStream& out) const
         return;
 #endif
 
+    if (!indentString)
+        indentString = "";
     for (int i = 0; i < m_size; ++i) {
         const char* mangledName = nullptr;
         const char* cxaDemangled = nullptr;
@@ -103,9 +106,9 @@ void StackTrace::dump(PrintStream& out) const
 #endif
         const int frameNumber = i + 1;
         if (mangledName || cxaDemangled)
-            out.printf("%-3d %p %s\n", frameNumber, stack[i], cxaDemangled ? cxaDemangled : mangledName);
+            out.printf("%s%-3d %p %s\n", indentString, frameNumber, stack[i], cxaDemangled ? cxaDemangled : mangledName);
         else
-            out.printf("%-3d %p\n", frameNumber, stack[i]);
+            out.printf("%s%-3d %p\n", indentString, frameNumber, stack[i]);
     }
 
 #if HAVE(BACKTRACE_SYMBOLS)

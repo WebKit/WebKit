@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -147,7 +147,7 @@ EncodedJSValue JSC_HOST_CALL reflectObjectDefineProperty(ExecState* exec)
     if (UNLIKELY(!success))
         return encodedJSValue();
     ASSERT((descriptor.attributes() & Accessor) || (!descriptor.isAccessorDescriptor()));
-    ASSERT(!scope.exception());
+    scope.assertNoException();
 
     // Reflect.defineProperty should not throw an error when the defineOwnProperty operation fails.
     bool shouldThrow = false;

@@ -4552,7 +4552,7 @@ sub GenerateSerializerFunction
         my $name = $attribute->name;
         my $getFunctionName = GetAttributeGetterName($interface, $className, $attribute);
         push(@implContent, "    auto ${name}Value = ${getFunctionName}Getter(*state, *thisObject, throwScope);\n");
-        push(@implContent, "    ASSERT(!throwScope.exception());\n");
+        push(@implContent, "    throwScope.assertNoException();\n");
         push(@implContent, "    result->putDirect(vm, Identifier::fromString(&vm, \"${name}\"), ${name}Value);\n");
         push(@implContent, "\n");
     }

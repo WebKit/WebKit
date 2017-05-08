@@ -227,7 +227,7 @@ bool GenericArguments<Type>::defineOwnProperty(JSObject* object, ExecState* exec
                     JSValue value = thisObject->getIndexQuickly(index);
                     ASSERT(value);
                     object->putDirectMayBeIndex(exec, ident, value);
-                    ASSERT(!scope.exception());
+                    scope.assertNoException();
 
                     thisObject->setModifiedArgumentDescriptor(vm, index);
                 }

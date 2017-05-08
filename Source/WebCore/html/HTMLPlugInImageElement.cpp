@@ -366,8 +366,8 @@ void HTMLPlugInImageElement::didAddUserAgentShadowRoot(ShadowRoot* root)
 
     // It is expected the JS file provides a createOverlay(shadowRoot, title, subtitle) function.
     auto* overlay = globalObject.get(&state, JSC::Identifier::fromString(&state, "createOverlay")).toObject(&state);
+    ASSERT(!overlay == !!scope.exception());
     if (!overlay) {
-        ASSERT(scope.exception());
         scope.clearException();
         return;
     }

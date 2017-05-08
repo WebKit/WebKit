@@ -818,7 +818,8 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncRepeatCharacter(ExecState* exec)
 
     auto viewWithString = string->viewWithUnderlyingString(*exec);
     StringView view = viewWithString.view;
-    ASSERT(view.length() == 1 && !scope.exception());
+    ASSERT(view.length() == 1);
+    scope.assertNoException();
     UChar character = view[0];
     scope.release();
     if (!(character & ~0xff))

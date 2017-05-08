@@ -1750,9 +1750,9 @@ JSCell* JIT_OPERATION operationStrCat2(ExecState* exec, EncodedJSValue a, Encode
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSString* str1 = JSValue::decode(a).toString(exec);
-    ASSERT(!scope.exception()); // Impossible, since we must have been given primitives.
+    scope.assertNoException(); // Impossible, since we must have been given primitives.
     JSString* str2 = JSValue::decode(b).toString(exec);
-    ASSERT(!scope.exception());
+    scope.assertNoException();
 
     scope.release();
     return jsString(exec, str1, str2);
@@ -1765,11 +1765,11 @@ JSCell* JIT_OPERATION operationStrCat3(ExecState* exec, EncodedJSValue a, Encode
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSString* str1 = JSValue::decode(a).toString(exec);
-    ASSERT(!scope.exception()); // Impossible, since we must have been given primitives.
+    scope.assertNoException(); // Impossible, since we must have been given primitives.
     JSString* str2 = JSValue::decode(b).toString(exec);
-    ASSERT(!scope.exception());
+    scope.assertNoException();
     JSString* str3 = JSValue::decode(c).toString(exec);
-    ASSERT(!scope.exception());
+    scope.assertNoException();
 
     scope.release();
     return jsString(exec, str1, str2, str3);

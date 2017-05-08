@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2009, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -259,7 +259,7 @@ JSObject* createError(ExecState* exec, JSValue value, const String& message, Err
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     String errorMessage = makeString(errorDescriptionForValue(exec, value)->value(exec), ' ', message);
-    ASSERT_UNUSED(scope, !scope.exception());
+    scope.assertNoException();
     JSObject* exception = createTypeError(exec, errorMessage, appender, runtimeTypeForValue(value));
     ASSERT(exception->isErrorInstance());
     return exception;

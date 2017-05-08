@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -80,7 +80,7 @@ void JSModuleNamespaceObject::finishCreation(ExecState* exec, JSGlobalObject*, A
     // http://www.ecma-international.org/ecma-262/6.0/#sec-module-namespace-exotic-objects-isextensible
     // http://www.ecma-international.org/ecma-262/6.0/#sec-module-namespace-exotic-objects-preventextensions
     methodTable(vm)->preventExtensions(this, exec);
-    ASSERT_UNUSED(scope, !scope.exception());
+    scope.assertNoException();
 }
 
 void JSModuleNamespaceObject::destroy(JSCell* cell)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -235,7 +235,7 @@ inline JSC::JSValue callPromiseFunction(JSC::ExecState& state)
     promiseFunction(state, DeferredPromise::create(globalObject, *promiseDeferred));
 
     rejectPromiseWithExceptionIfAny(state, globalObject, *promiseDeferred);
-    ASSERT_UNUSED(scope, !scope.exception());
+    scope.assertNoException();
     return promiseDeferred->promise();
 }
 

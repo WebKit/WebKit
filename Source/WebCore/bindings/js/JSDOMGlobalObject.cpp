@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2017 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -81,9 +81,9 @@ EncodedJSValue JSC_HOST_CALL makeThisTypeErrorForBuiltins(ExecState* execState)
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     auto interfaceName = execState->uncheckedArgument(0).getString(execState);
-    ASSERT_UNUSED(scope, !scope.exception());
+    scope.assertNoException();
     auto functionName = execState->uncheckedArgument(1).getString(execState);
-    ASSERT(!scope.exception());
+    scope.assertNoException();
     return JSValue::encode(createTypeError(execState, makeThisTypeErrorMessage(interfaceName.utf8().data(), functionName.utf8().data())));
 }
 
@@ -95,9 +95,9 @@ EncodedJSValue JSC_HOST_CALL makeGetterTypeErrorForBuiltins(ExecState* execState
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     auto interfaceName = execState->uncheckedArgument(0).getString(execState);
-    ASSERT_UNUSED(scope, !scope.exception());
+    scope.assertNoException();
     auto attributeName = execState->uncheckedArgument(1).getString(execState);
-    ASSERT(!scope.exception());
+    scope.assertNoException();
     return JSValue::encode(createTypeError(execState, makeGetterTypeErrorMessage(interfaceName.utf8().data(), attributeName.utf8().data())));
 }
 

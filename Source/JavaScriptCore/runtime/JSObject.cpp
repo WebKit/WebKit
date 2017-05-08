@@ -1963,7 +1963,7 @@ JSValue JSObject::ordinaryToPrimitive(ExecState* exec, PreferredPrimitiveType hi
             return value;
     }
 
-    ASSERT(!scope.exception());
+    scope.assertNoException();
 
     return throwTypeError(exec, scope, ASCIILiteral("No default value"));
 }

@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2015 Andy VanWagoner (thetalecrafter@gmail.com)
  * Copyright (C) 2015 Sukolsak Sakshuwong (sukolsak@gmail.com)
- * Copyright (C) 2016 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -343,7 +343,7 @@ void IntlCollator::createCollator(ExecState& state)
 
     if (!m_initializedCollator) {
         initializeCollator(state, jsUndefined(), jsUndefined());
-        ASSERT_UNUSED(scope, !scope.exception());
+        scope.assertNoException();
     }
 
     UErrorCode status = U_ZERO_ERROR;
@@ -475,7 +475,7 @@ JSObject* IntlCollator::resolvedOptions(ExecState& state)
 
     if (!m_initializedCollator) {
         initializeCollator(state, jsUndefined(), jsUndefined());
-        ASSERT_UNUSED(scope, !scope.exception());
+        scope.assertNoException();
     }
 
     JSObject* options = constructEmptyObject(&state);

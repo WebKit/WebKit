@@ -1395,7 +1395,7 @@ void ArrayPrototype::tryInitializeSpeciesWatchpoint(ExecState* exec)
 
     PropertySlot constructorSlot(this, PropertySlot::InternalMethodType::VMInquiry);
     this->getOwnPropertySlot(this, exec, vm.propertyNames->constructor, constructorSlot);
-    ASSERT_UNUSED(scope, !scope.exception());
+    scope.assertNoException();
     if (constructorSlot.slotBase() != this
         || !constructorSlot.isCacheableValue()
         || constructorSlot.getValue(exec, vm.propertyNames->constructor) != arrayConstructor) {
@@ -1409,7 +1409,7 @@ void ArrayPrototype::tryInitializeSpeciesWatchpoint(ExecState* exec)
 
     PropertySlot speciesSlot(arrayConstructor, PropertySlot::InternalMethodType::VMInquiry);
     arrayConstructor->getOwnPropertySlot(arrayConstructor, exec, vm.propertyNames->speciesSymbol, speciesSlot);
-    ASSERT_UNUSED(scope, !scope.exception());
+    scope.assertNoException();
     if (speciesSlot.slotBase() != arrayConstructor
         || !speciesSlot.isCacheableGetter()
         || speciesSlot.getterSetter() != globalObject->speciesGetterSetter()) {

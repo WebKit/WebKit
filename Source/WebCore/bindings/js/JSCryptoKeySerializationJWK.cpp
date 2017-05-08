@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -62,7 +62,7 @@ static bool getJSArrayFromJSON(ExecState* exec, JSObject* json, const char* key,
         return false;
 
     JSValue value = slot.getValue(exec, identifier);
-    ASSERT(!scope.exception());
+    scope.assertNoException();
     if (!isJSArray(value)) {
         throwTypeError(exec, scope, String::format("Expected an array for \"%s\" JSON key",  key));
         return false;
@@ -85,7 +85,7 @@ static bool getStringFromJSON(ExecState* exec, JSObject* json, const char* key, 
         return false;
 
     JSValue jsValue = slot.getValue(exec, identifier);
-    ASSERT(!scope.exception());
+    scope.assertNoException();
     if (!jsValue.getString(exec, result)) {
         // Can get an out of memory exception.
         RETURN_IF_EXCEPTION(scope, false);
@@ -108,7 +108,7 @@ static bool getBooleanFromJSON(ExecState* exec, JSObject* json, const char* key,
         return false;
 
     JSValue jsValue = slot.getValue(exec, identifier);
-    ASSERT(!scope.exception());
+    scope.assertNoException();
     if (!jsValue.isBoolean()) {
         throwTypeError(exec, scope, String::format("Expected a boolean value for \"%s\" JSON key",  key));
         return false;

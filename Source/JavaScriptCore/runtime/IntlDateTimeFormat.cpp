@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2015 Andy VanWagoner (thetalecrafter@gmail.com)
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -832,7 +832,7 @@ JSObject* IntlDateTimeFormat::resolvedOptions(ExecState& exec)
     // Note: In this version of the ECMAScript 2015 Internationalization API, the timeZone property will be the name of the default time zone if no timeZone property was provided in the options object provided to the Intl.DateTimeFormat constructor. The previous version left the timeZone property undefined in this case.
     if (!m_initializedDateTimeFormat) {
         initializeDateTimeFormat(exec, jsUndefined(), jsUndefined());
-        ASSERT_UNUSED(scope, !scope.exception());
+        scope.assertNoException();
     }
 
     JSObject* options = constructEmptyObject(&exec);
@@ -881,7 +881,7 @@ JSValue IntlDateTimeFormat::format(ExecState& exec, double value)
     // 12.3.4 FormatDateTime abstract operation (ECMA-402 2.0)
     if (!m_initializedDateTimeFormat) {
         initializeDateTimeFormat(exec, jsUndefined(), jsUndefined());
-        ASSERT(!scope.exception());
+        scope.assertNoException();
     }
 
     // 1. If x is not a finite Number, then throw a RangeError exception.

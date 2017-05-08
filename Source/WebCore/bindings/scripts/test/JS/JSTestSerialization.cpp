@@ -406,23 +406,23 @@ JSC::JSObject* JSTestSerialization::serialize(ExecState* state, JSTestSerializat
     auto* result = constructEmptyObject(state);
 
     auto firstStringAttributeValue = jsTestSerializationFirstStringAttributeGetter(*state, *thisObject, throwScope);
-    ASSERT(!throwScope.exception());
+    throwScope.assertNoException();
     result->putDirect(vm, Identifier::fromString(&vm, "firstStringAttribute"), firstStringAttributeValue);
 
     auto secondLongAttributeValue = jsTestSerializationSecondLongAttributeGetter(*state, *thisObject, throwScope);
-    ASSERT(!throwScope.exception());
+    throwScope.assertNoException();
     result->putDirect(vm, Identifier::fromString(&vm, "secondLongAttribute"), secondLongAttributeValue);
 
     auto fourthUnrestrictedDoubleAttributeValue = jsTestSerializationFourthUnrestrictedDoubleAttributeGetter(*state, *thisObject, throwScope);
-    ASSERT(!throwScope.exception());
+    throwScope.assertNoException();
     result->putDirect(vm, Identifier::fromString(&vm, "fourthUnrestrictedDoubleAttribute"), fourthUnrestrictedDoubleAttributeValue);
 
     auto fifthLongAttributeValue = jsTestSerializationFifthLongAttributeGetter(*state, *thisObject, throwScope);
-    ASSERT(!throwScope.exception());
+    throwScope.assertNoException();
     result->putDirect(vm, Identifier::fromString(&vm, "fifthLongAttribute"), fifthLongAttributeValue);
 
     auto sixthTypedefAttributeValue = jsTestSerializationSixthTypedefAttributeGetter(*state, *thisObject, throwScope);
-    ASSERT(!throwScope.exception());
+    throwScope.assertNoException();
     result->putDirect(vm, Identifier::fromString(&vm, "sixthTypedefAttribute"), sixthTypedefAttributeValue);
 
     return result;

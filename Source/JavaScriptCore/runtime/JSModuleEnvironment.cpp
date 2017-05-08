@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -91,7 +91,7 @@ bool JSModuleEnvironment::getOwnPropertySlot(JSObject* cell, ExecState* exec, Pr
         ASSERT_UNUSED(result, result);
         ASSERT(redirectSlot.isValue());
         JSValue value = redirectSlot.getValue(exec, resolution.localName);
-        ASSERT_UNUSED(scope, !scope.exception());
+        scope.assertNoException();
         slot.setValue(thisObject, redirectSlot.attributes(), value);
         return true;
     }
