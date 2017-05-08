@@ -80,7 +80,7 @@ void Widget::hide()
         gtk_widget_hide(platformWidget());
 }
 
-void Widget::paint(GraphicsContext&, const IntRect&)
+void Widget::paint(GraphicsContext&, const IntRect&, SecurityOriginPaintPolicy)
 {
 }
 
