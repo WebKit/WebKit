@@ -23,13 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebOpenPanelResultListener_h
-#define WebOpenPanelResultListener_h
+#pragma once
 
+#include <wtf/Forward.h>
+#include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
-#include <WebCore/FileChooser.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
+class FileChooser;
 class Icon;
 }
 
@@ -39,7 +41,7 @@ class WebPage;
 
 class WebOpenPanelResultListener : public RefCounted<WebOpenPanelResultListener> {
 public:
-    static Ref<WebOpenPanelResultListener> create(WebPage*, PassRefPtr<WebCore::FileChooser>);
+    static Ref<WebOpenPanelResultListener> create(WebPage&, Ref<WebCore::FileChooser>&&);
     ~WebOpenPanelResultListener();
 
     void disconnectFromPage() { m_page = 0; }
@@ -49,13 +51,10 @@ public:
 #endif
 
 private:
-    WebOpenPanelResultListener(WebPage*, PassRefPtr<WebCore::FileChooser>);
+    WebOpenPanelResultListener(WebPage&, Ref<WebCore::FileChooser>&&);
 
     WebPage* m_page;
-    RefPtr<WebCore::FileChooser> m_fileChooser;
+    Ref<WebCore::FileChooser> m_fileChooser;
 };
 
 } // namespace WebKit
-
-
-#endif // WebOpenPanelResultListener_h

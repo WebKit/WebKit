@@ -167,19 +167,16 @@ void PlatformCALayer::drawTextAtPoint(CGContextRef context, CGFloat x, CGFloat y
     CTLineDraw(line.get(), context);
 }
 
-PassRefPtr<PlatformCALayer> PlatformCALayer::createCompatibleLayerOrTakeFromPool(PlatformCALayer::LayerType layerType, PlatformCALayerClient* client, IntSize size)
+Ref<PlatformCALayer> PlatformCALayer::createCompatibleLayerOrTakeFromPool(PlatformCALayer::LayerType layerType, PlatformCALayerClient* client, IntSize size)
 {
-    RefPtr<PlatformCALayer> layer;
-
-    if ((layer = layerPool().takeLayerWithSize(size))) {
-        layer->setOwner(client);
-        return WTFMove(layer);
+    if (auto layerFromPool = layerPool().takeLayerWithSize(size)) {
+        layerFromPool->setOwner(client);
+        return layerFromPool.releaseNonNull();
     }
 
-    layer = createCompatibleLayer(layerType, client);
+    auto layer = createCompatibleLayer(layerType, client);
     layer->setBounds(FloatRect(FloatPoint(), size));
-    
-    return WTFMove(layer);
+    return layer;
 }
 
 void PlatformCALayer::moveToLayerPool()

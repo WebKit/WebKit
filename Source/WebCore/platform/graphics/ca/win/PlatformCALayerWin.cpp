@@ -47,14 +47,14 @@
 
 using namespace WebCore;
 
-PassRefPtr<PlatformCALayer> PlatformCALayerWin::create(LayerType layerType, PlatformCALayerClient* owner)
+Ref<PlatformCALayer> PlatformCALayerWin::create(LayerType layerType, PlatformCALayerClient* owner)
 {
-    return adoptRef(new PlatformCALayerWin(layerType, nullptr, owner));
+    return adoptRef(*new PlatformCALayerWin(layerType, nullptr, owner));
 }
 
-PassRefPtr<PlatformCALayer> PlatformCALayerWin::create(PlatformLayer* platformLayer, PlatformCALayerClient* owner)
+Ref<PlatformCALayer> PlatformCALayerWin::create(PlatformLayer* platformLayer, PlatformCALayerClient* owner)
 {
-    return adoptRef(new PlatformCALayerWin(LayerTypeCustom, platformLayer, owner));
+    return adoptRef(*new PlatformCALayerWin(LayerTypeCustom, platformLayer, owner));
 }
 
 static CFStringRef toCACFLayerType(PlatformCALayer::LayerType type)
@@ -181,11 +181,11 @@ PlatformCALayerWin::~PlatformCALayerWin()
     delete layerIntern;
 }
 
-PassRefPtr<PlatformCALayer> PlatformCALayerWin::clone(PlatformCALayerClient* owner) const
+Ref<PlatformCALayer> PlatformCALayerWin::clone(PlatformCALayerClient* owner) const
 {
     PlatformCALayer::LayerType type = (layerType() == PlatformCALayer::LayerTypeTransformLayer) ?
         PlatformCALayer::LayerTypeTransformLayer : PlatformCALayer::LayerTypeLayer;
-    RefPtr<PlatformCALayer> newLayer = PlatformCALayerWin::create(type, owner);
+    auto newLayer = PlatformCALayerWin::create(type, owner);
 
     newLayer->setPosition(position());
     newLayer->setBounds(bounds());
@@ -353,7 +353,7 @@ void PlatformCALayerWin::removeAnimationForKey(const String& key)
     setNeedsCommit();
 }
 
-PassRefPtr<PlatformCAAnimation> PlatformCALayerWin::animationForKey(const String& key)
+RefPtr<PlatformCAAnimation> PlatformCALayerWin::animationForKey(const String& key)
 {
     HashMap<String, RefPtr<PlatformCAAnimation> >::iterator it = m_animations.find(key);
     if (it == m_animations.end())
@@ -939,7 +939,7 @@ String PlatformCALayerWin::layerTreeAsString() const
     return builder.toString();
 }
 
-PassRefPtr<PlatformCALayer> PlatformCALayerWin::createCompatibleLayer(PlatformCALayer::LayerType layerType, PlatformCALayerClient* client) const
+Ref<PlatformCALayer> PlatformCALayerWin::createCompatibleLayer(PlatformCALayer::LayerType layerType, PlatformCALayerClient* client) const
 {
     return PlatformCALayerWin::create(layerType, client);
 }

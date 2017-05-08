@@ -26,18 +26,19 @@
 #include "config.h"
 #include "WebOpenPanelResultListener.h"
 
+#include <WebCore/FileChooser.h>
 #include <WebCore/Icon.h>
 
 namespace WebKit {
 
-Ref<WebOpenPanelResultListener> WebOpenPanelResultListener::create(WebPage* page, PassRefPtr<WebCore::FileChooser> fileChooser)
+Ref<WebOpenPanelResultListener> WebOpenPanelResultListener::create(WebPage& page, Ref<WebCore::FileChooser>&& fileChooser)
 {
-    return adoptRef(*new WebOpenPanelResultListener(page, fileChooser));
+    return adoptRef(*new WebOpenPanelResultListener(page, WTFMove(fileChooser)));
 }
 
-WebOpenPanelResultListener::WebOpenPanelResultListener(WebPage* page, PassRefPtr<WebCore::FileChooser> fileChooser)
-    : m_page(page)
-    , m_fileChooser(fileChooser)
+WebOpenPanelResultListener::WebOpenPanelResultListener(WebPage& page, Ref<WebCore::FileChooser>&& fileChooser)
+    : m_page(&page)
+    , m_fileChooser(WTFMove(fileChooser))
 {
 }
 

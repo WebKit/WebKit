@@ -23,12 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebPageGroupProxy_h
-#define WebPageGroupProxy_h
+#pragma once
 
 #include "APIObject.h"
 #include "WebPageGroupData.h"
-#include <wtf/PassRefPtr.h>
+#include <wtf/Ref.h>
 
 namespace WebCore {
 class PageGroup;
@@ -40,7 +39,7 @@ class WebUserContentController;
 
 class WebPageGroupProxy : public API::ObjectImpl<API::Object::Type::BundlePageGroup> {
 public:
-    static PassRefPtr<WebPageGroupProxy> create(const WebPageGroupData&);
+    static Ref<WebPageGroupProxy> create(const WebPageGroupData&);
     virtual ~WebPageGroupProxy();
 
     const String& identifier() const { return m_data.identifier; }
@@ -60,5 +59,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // WebPageGroupProxy_h

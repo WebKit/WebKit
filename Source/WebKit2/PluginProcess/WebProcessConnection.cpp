@@ -176,7 +176,7 @@ void WebProcessConnection::didClose(IPC::Connection&)
         destroyPluginControllerProxy(pluginControllers[i]);
 }
 
-void WebProcessConnection::destroyPlugin(uint64_t pluginInstanceID, bool asynchronousCreationIncomplete, PassRefPtr<Messages::WebProcessConnection::DestroyPlugin::DelayedReply> reply)
+void WebProcessConnection::destroyPlugin(uint64_t pluginInstanceID, bool asynchronousCreationIncomplete, Ref<Messages::WebProcessConnection::DestroyPlugin::DelayedReply>&& reply)
 {
     // We return immediately from this synchronous IPC. We want to make sure the plugin destruction is just about to start so audio playback
     // will finish soon after returning. However we don't want to wait for destruction to complete fully as that may take a while.
@@ -229,7 +229,7 @@ void WebProcessConnection::createPluginInternal(const PluginCreationParameters& 
 #endif
 }
 
-void WebProcessConnection::createPlugin(const PluginCreationParameters& creationParameters, PassRefPtr<Messages::WebProcessConnection::CreatePlugin::DelayedReply> reply)
+void WebProcessConnection::createPlugin(const PluginCreationParameters& creationParameters, Ref<Messages::WebProcessConnection::CreatePlugin::DelayedReply>&& reply)
 {
     // Ensure we don't clamp any timers during initialization
     ActivityAssertion activityAssertion(PluginProcess::singleton().connectionActivity());
@@ -240,7 +240,7 @@ void WebProcessConnection::createPlugin(const PluginCreationParameters& creation
     if (pluginControllerProxy) {
         // It might still be in the middle of initialization in which case we have to let that initialization complete and respond to this message later.
         if (pluginControllerProxy->isInitializing()) {
-            pluginControllerProxy->setInitializationReply(reply);
+            pluginControllerProxy->setInitializationReply(WTFMove(reply));
             return;
         }
         

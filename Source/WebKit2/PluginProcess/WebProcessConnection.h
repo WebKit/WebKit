@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebProcessConnection_h
-#define WebProcessConnection_h
+#pragma once
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
@@ -70,9 +69,9 @@ private:
     // Message handlers.
     void didReceiveWebProcessConnectionMessage(IPC::Connection&, IPC::Decoder&);
     void didReceiveSyncWebProcessConnectionMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&);
-    void createPlugin(const PluginCreationParameters&, PassRefPtr<Messages::WebProcessConnection::CreatePlugin::DelayedReply>);
+    void createPlugin(const PluginCreationParameters&, Ref<Messages::WebProcessConnection::CreatePlugin::DelayedReply>&&);
     void createPluginAsynchronously(const PluginCreationParameters&);
-    void destroyPlugin(uint64_t pluginInstanceID, bool asynchronousCreationIncomplete, PassRefPtr<Messages::WebProcessConnection::DestroyPlugin::DelayedReply>);
+    void destroyPlugin(uint64_t pluginInstanceID, bool asynchronousCreationIncomplete, Ref<Messages::WebProcessConnection::DestroyPlugin::DelayedReply>&&);
     
     void createPluginInternal(const PluginCreationParameters&, bool& result, bool& wantsWheelEvents, uint32_t& remoteLayerClientID);
 
@@ -86,6 +85,3 @@ private:
 } // namespace WebKit
 
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
-
-
-#endif // WebProcessConnection_h

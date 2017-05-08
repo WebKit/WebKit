@@ -44,7 +44,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassRefPtr<PlatformCALayerRemote> PlatformCALayerRemote::create(LayerType layerType, PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
+Ref<PlatformCALayerRemote> PlatformCALayerRemote::create(LayerType layerType, PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
 {
     RefPtr<PlatformCALayerRemote> layer;
 
@@ -55,21 +55,21 @@ PassRefPtr<PlatformCALayerRemote> PlatformCALayerRemote::create(LayerType layerT
 
     context.layerWasCreated(*layer, layerType);
 
-    return WTFMove(layer);
+    return layer.releaseNonNull();
 }
 
-PassRefPtr<PlatformCALayerRemote> PlatformCALayerRemote::create(PlatformLayer *platformLayer, PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
+Ref<PlatformCALayerRemote> PlatformCALayerRemote::create(PlatformLayer *platformLayer, PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
 {
     return PlatformCALayerRemoteCustom::create(platformLayer, owner, context);
 }
 
-PassRefPtr<PlatformCALayerRemote> PlatformCALayerRemote::create(const PlatformCALayerRemote& other, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
+Ref<PlatformCALayerRemote> PlatformCALayerRemote::create(const PlatformCALayerRemote& other, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
 {
     auto layer = adoptRef(*new PlatformCALayerRemote(other, owner, context));
 
     context.layerWasCreated(layer.get(), other.layerType());
 
-    return WTFMove(layer);
+    return layer;
 }
 
 PlatformCALayerRemote::PlatformCALayerRemote(LayerType layerType, PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
@@ -89,11 +89,11 @@ PlatformCALayerRemote::PlatformCALayerRemote(const PlatformCALayerRemote& other,
 {
 }
 
-PassRefPtr<PlatformCALayer> PlatformCALayerRemote::clone(PlatformCALayerClient* owner) const
+Ref<PlatformCALayer> PlatformCALayerRemote::clone(PlatformCALayerClient* owner) const
 {
     auto clone = PlatformCALayerRemote::create(*this, owner, *m_context);
 
-    updateClonedLayerProperties(*clone);
+    updateClonedLayerProperties(clone);
 
     clone->setClonedLayer(this);
     return WTFMove(clone);
@@ -357,7 +357,7 @@ void PlatformCALayerRemote::removeAnimationForKey(const String& key)
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::AnimationsChanged);
 }
 
-PassRefPtr<PlatformCAAnimation> PlatformCALayerRemote::animationForKey(const String& key)
+RefPtr<PlatformCAAnimation> PlatformCALayerRemote::animationForKey(const String& key)
 {
     return m_animations.get(key);
 }
@@ -821,7 +821,7 @@ void PlatformCALayerRemote::updateCustomAppearance(GraphicsLayer::CustomAppearan
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::CustomAppearanceChanged);
 }
 
-PassRefPtr<PlatformCALayer> PlatformCALayerRemote::createCompatibleLayer(PlatformCALayer::LayerType layerType, PlatformCALayerClient* client) const
+Ref<PlatformCALayer> PlatformCALayerRemote::createCompatibleLayer(PlatformCALayer::LayerType layerType, PlatformCALayerClient* client) const
 {
     return PlatformCALayerRemote::create(layerType, client, *m_context);
 }

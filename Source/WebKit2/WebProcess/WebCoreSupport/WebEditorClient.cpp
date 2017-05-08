@@ -245,8 +245,8 @@ void WebEditorClient::registerUndoStep(UndoStep& step)
     if (m_page->isInRedo())
         return;
 
-    auto webStep = WebUndoStep::create(&step);
-    auto editAction = static_cast<uint32_t>(webStep->step()->editingAction());
+    auto webStep = WebUndoStep::create(step);
+    auto editAction = static_cast<uint32_t>(webStep->step().editingAction());
 
     m_page->addWebUndoStep(webStep->stepID(), webStep.ptr());
     m_page->send(Messages::WebPageProxy::RegisterEditCommandForUndo(webStep->stepID(), editAction));

@@ -356,7 +356,7 @@ PassRefPtr<PlatformCALayer> GraphicsLayerCA::createPlatformCALayer(PlatformCALay
     if (result->canHaveBackingStore())
         result->setWantsDeepColorBackingStore(screenSupportsExtendedColor());
     
-    return result;
+    return WTFMove(result);
 #elif PLATFORM(WIN)
     return PlatformCALayerWin::create(layerType, owner);
 #endif

@@ -75,7 +75,7 @@ public:
 
     bool isInitializing() const { return m_isInitializing; }
     
-    void setInitializationReply(PassRefPtr<Messages::WebProcessConnection::CreatePlugin::DelayedReply>);
+    void setInitializationReply(Ref<Messages::WebProcessConnection::CreatePlugin::DelayedReply>&&);
     RefPtr<Messages::WebProcessConnection::CreatePlugin::DelayedReply> takeInitializationReply();
 
 private:

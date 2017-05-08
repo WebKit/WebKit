@@ -23,34 +23,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebUndoStep_h
-#define WebUndoStep_h
+#pragma once
 
 #include <WebCore/UndoStep.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefPtr.h>
+#include <wtf/Ref.h>
 
 namespace WebKit {
 
 class WebUndoStep : public RefCounted<WebUndoStep> {
 public:
-    static Ref<WebUndoStep> create(PassRefPtr<WebCore::UndoStep>);
+    static Ref<WebUndoStep> create(Ref<WebCore::UndoStep>&&);
     ~WebUndoStep();
 
-    WebCore::UndoStep* step() const { return m_step.get(); }
+    WebCore::UndoStep& step() const { return m_step.get(); }
     uint64_t stepID() const { return m_stepID; }
 
 private:
-    WebUndoStep(PassRefPtr<WebCore::UndoStep> step, uint64_t stepID)
-        : m_step(step)
+    WebUndoStep(Ref<WebCore::UndoStep>&& step, uint64_t stepID)
+        : m_step(WTFMove(step))
         , m_stepID(stepID)
     {
     }
 
-    RefPtr<WebCore::UndoStep> m_step;
+    Ref<WebCore::UndoStep> m_step;
     uint64_t m_stepID;
 };
 
 } // namespace WebKit
-
-#endif // WebEditCommand_h

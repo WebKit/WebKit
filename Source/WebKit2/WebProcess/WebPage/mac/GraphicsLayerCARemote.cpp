@@ -49,7 +49,7 @@ PassRefPtr<PlatformCALayer> GraphicsLayerCARemote::createPlatformCALayer(Platfor
     if (result->canHaveBackingStore())
         result->setWantsDeepColorBackingStore(screenSupportsExtendedColor());
 
-    return result;
+    return WTFMove(result);
 }
 
 PassRefPtr<PlatformCALayer> GraphicsLayerCARemote::createPlatformCALayer(PlatformLayer* platformLayer, PlatformCALayerClient* owner)

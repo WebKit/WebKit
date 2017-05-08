@@ -1,3 +1,24 @@
+2017-05-08  Alex Christensen  <achristensen@webkit.org>
+
+        Reduce PassRefPtr use
+        https://bugs.webkit.org/show_bug.cgi?id=171809
+
+        Reviewed by Chris Dumez.
+
+        * platform/graphics/ca/PlatformCALayer.cpp:
+        (WebCore::PlatformCALayer::createCompatibleLayerOrTakeFromPool):
+        * platform/graphics/ca/PlatformCALayer.h:
+        * platform/graphics/ca/TileCoverageMap.cpp:
+        (WebCore::TileCoverageMap::TileCoverageMap):
+        * platform/graphics/ca/TileGrid.cpp:
+        (WebCore::TileGrid::TileGrid):
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.h:
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+        (PlatformCALayerCocoa::create):
+        (PlatformCALayerCocoa::clone):
+        (PlatformCALayerCocoa::animationForKey):
+        (PlatformCALayerCocoa::createCompatibleLayer):
+
 2017-05-08  Jer Noble  <jer.noble@apple.com>
 
         [Mac] Audio capture fails when shouldCaptureAudioInUIProcess is set.

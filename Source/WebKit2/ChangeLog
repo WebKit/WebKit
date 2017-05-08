@@ -1,3 +1,54 @@
+2017-05-08  Alex Christensen  <achristensen@webkit.org>
+
+        Reduce PassRefPtr use
+        https://bugs.webkit.org/show_bug.cgi?id=171809
+
+        Reviewed by Chris Dumez.
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::setInitializationReply):
+        * PluginProcess/PluginControllerProxy.h:
+        * PluginProcess/WebProcessConnection.cpp:
+        (WebKit::WebProcessConnection::destroyPlugin):
+        (WebKit::WebProcessConnection::createPlugin):
+        * PluginProcess/WebProcessConnection.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::runOpenPanel):
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::registerUndoStep):
+        * WebProcess/WebPage/VisitedLinkTableController.cpp:
+        (WebKit::VisitedLinkTableController::getOrCreate):
+        * WebProcess/WebPage/VisitedLinkTableController.h:
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::hitTest):
+        (WebKit::WebFrame::createSelectionSnapshot):
+        * WebProcess/WebPage/WebFrame.h:
+        * WebProcess/WebPage/WebOpenPanelResultListener.cpp:
+        (WebKit::WebOpenPanelResultListener::create):
+        (WebKit::WebOpenPanelResultListener::WebOpenPanelResultListener):
+        * WebProcess/WebPage/WebOpenPanelResultListener.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::unapplyEditCommand):
+        (WebKit::WebPage::reapplyEditCommand):
+        * WebProcess/WebPage/WebPageGroupProxy.cpp:
+        (WebKit::WebPageGroupProxy::create):
+        * WebProcess/WebPage/WebPageGroupProxy.h:
+        * WebProcess/WebPage/WebUndoStep.cpp:
+        (WebKit::WebUndoStep::create):
+        * WebProcess/WebPage/WebUndoStep.h:
+        (WebKit::WebUndoStep::step):
+        (WebKit::WebUndoStep::WebUndoStep):
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.cpp:
+        (WebKit::PlatformCALayerRemote::create):
+        (WebKit::PlatformCALayerRemote::clone):
+        (WebKit::PlatformCALayerRemote::animationForKey):
+        (WebKit::PlatformCALayerRemote::createCompatibleLayer):
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.h:
+        * WebProcess/WebPage/mac/PlatformCALayerRemoteCustom.h:
+        * WebProcess/WebPage/mac/PlatformCALayerRemoteCustom.mm:
+        (WebKit::PlatformCALayerRemoteCustom::create):
+        (WebKit::PlatformCALayerRemoteCustom::clone):
+
 2017-05-08  Jer Noble  <jer.noble@apple.com>
 
         [Mac] Audio capture fails when shouldCaptureAudioInUIProcess is set.

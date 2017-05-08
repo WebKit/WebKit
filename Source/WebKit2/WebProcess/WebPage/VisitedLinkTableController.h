@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VisitedLinkTableController_h
-#define VisitedLinkTableController_h
+#pragma once
 
 #include "MessageReceiver.h"
 #include "SharedMemory.h"
@@ -35,7 +34,7 @@ namespace WebKit {
 
 class VisitedLinkTableController final : public WebCore::VisitedLinkStore , private IPC::MessageReceiver {
 public:
-    static PassRefPtr<VisitedLinkTableController> getOrCreate(uint64_t identifier);
+    static Ref<VisitedLinkTableController> getOrCreate(uint64_t identifier);
     virtual ~VisitedLinkTableController();
 
 private:
@@ -58,5 +57,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // VisitedLinkTableController_h

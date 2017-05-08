@@ -29,7 +29,6 @@
 #include "GraphicsLayer.h"
 #include <QuartzCore/CABase.h>
 #include <wtf/CurrentTime.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/TypeCasts.h>
@@ -82,7 +81,7 @@ public:
     };
     enum FilterType { Linear, Nearest, Trilinear };
 
-    virtual PassRefPtr<PlatformCALayer> clone(PlatformCALayerClient*) const = 0;
+    virtual Ref<PlatformCALayer> clone(PlatformCALayerClient*) const = 0;
 
     virtual ~PlatformCALayer();
 
@@ -132,7 +131,7 @@ public:
 
     virtual void addAnimationForKey(const String& key, PlatformCAAnimation&) = 0;
     virtual void removeAnimationForKey(const String& key) = 0;
-    virtual PassRefPtr<PlatformCAAnimation> animationForKey(const String& key) = 0;
+    virtual RefPtr<PlatformCAAnimation> animationForKey(const String& key) = 0;
 
     virtual void setMask(PlatformCALayer*) = 0;
 
@@ -260,8 +259,8 @@ public:
     void setAnchorPointOnMainThread(FloatPoint3D);
 #endif
 
-    virtual PassRefPtr<PlatformCALayer> createCompatibleLayer(LayerType, PlatformCALayerClient*) const = 0;
-    PassRefPtr<PlatformCALayer> createCompatibleLayerOrTakeFromPool(LayerType layerType, PlatformCALayerClient* client, IntSize);
+    virtual Ref<PlatformCALayer> createCompatibleLayer(LayerType, PlatformCALayerClient*) const = 0;
+    Ref<PlatformCALayer> createCompatibleLayerOrTakeFromPool(LayerType, PlatformCALayerClient*, IntSize);
 
 #if PLATFORM(COCOA)
     virtual void enumerateRectsBeingDrawn(CGContextRef, void (^block)(CGRect)) = 0;

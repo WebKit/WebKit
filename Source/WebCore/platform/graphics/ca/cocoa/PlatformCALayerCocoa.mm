@@ -69,14 +69,14 @@ SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVPlayerLayer)
 
 using namespace WebCore;
 
-PassRefPtr<PlatformCALayer> PlatformCALayerCocoa::create(LayerType layerType, PlatformCALayerClient* owner)
+Ref<PlatformCALayer> PlatformCALayerCocoa::create(LayerType layerType, PlatformCALayerClient* owner)
 {
-    return adoptRef(new PlatformCALayerCocoa(layerType, owner));
+    return adoptRef(*new PlatformCALayerCocoa(layerType, owner));
 }
 
-PassRefPtr<PlatformCALayer> PlatformCALayerCocoa::create(void* platformLayer, PlatformCALayerClient* owner)
+Ref<PlatformCALayer> PlatformCALayerCocoa::create(void* platformLayer, PlatformCALayerClient* owner)
 {
-    return adoptRef(new PlatformCALayerCocoa(static_cast<PlatformLayer*>(platformLayer), owner));
+    return adoptRef(*new PlatformCALayerCocoa(static_cast<PlatformLayer*>(platformLayer), owner));
 }
 
 static NSString * const platformCALayerPointer = @"WKPlatformCALayer";
@@ -311,7 +311,7 @@ void PlatformCALayerCocoa::commonInit()
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-PassRefPtr<PlatformCALayer> PlatformCALayerCocoa::clone(PlatformCALayerClient* owner) const
+Ref<PlatformCALayer> PlatformCALayerCocoa::clone(PlatformCALayerClient* owner) const
 {
     LayerType type;
     switch (layerType()) {
@@ -332,7 +332,7 @@ PassRefPtr<PlatformCALayer> PlatformCALayerCocoa::clone(PlatformCALayerClient* o
         type = LayerTypeLayer;
         break;
     };
-    RefPtr<PlatformCALayer> newLayer = PlatformCALayerCocoa::create(type, owner);
+    auto newLayer = PlatformCALayerCocoa::create(type, owner);
     
     newLayer->setPosition(position());
     newLayer->setBounds(bounds());
@@ -352,7 +352,7 @@ PassRefPtr<PlatformCALayer> PlatformCALayerCocoa::clone(PlatformCALayerClient* o
     if (type == LayerTypeAVPlayerLayer) {
         ASSERT([newLayer->platformLayer() isKindOfClass:getAVPlayerLayerClass()]);
 
-        AVPlayerLayer *destinationPlayerLayer = static_cast<PlatformCALayerCocoa *>(newLayer.get())->avPlayerLayer();
+        AVPlayerLayer *destinationPlayerLayer = static_cast<PlatformCALayerCocoa&>(newLayer.get()).avPlayerLayer();
         AVPlayerLayer *sourcePlayerLayer = avPlayerLayer();
         ASSERT(sourcePlayerLayer);
 
@@ -508,11 +508,11 @@ void PlatformCALayerCocoa::removeAnimationForKey(const String& key)
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-PassRefPtr<PlatformCAAnimation> PlatformCALayerCocoa::animationForKey(const String& key)
+RefPtr<PlatformCAAnimation> PlatformCALayerCocoa::animationForKey(const String& key)
 {
     CAPropertyAnimation* propertyAnimation = static_cast<CAPropertyAnimation*>([m_layer animationForKey:key]);
     if (!propertyAnimation)
-        return 0;
+        return nullptr;
     return PlatformCAAnimationCocoa::create(propertyAnimation);
 }
 
@@ -1190,7 +1190,7 @@ CGRect PlatformCALayer::frameForLayer(const PlatformLayer* tileLayer)
     return [tileLayer frame];
 }
 
-PassRefPtr<PlatformCALayer> PlatformCALayerCocoa::createCompatibleLayer(PlatformCALayer::LayerType layerType, PlatformCALayerClient* client) const
+Ref<PlatformCALayer> PlatformCALayerCocoa::createCompatibleLayer(PlatformCALayer::LayerType layerType, PlatformCALayerClient* client) const
 {
     return PlatformCALayerCocoa::create(layerType, client);
 }

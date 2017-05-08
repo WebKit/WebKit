@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebFrame_h
-#define WebFrame_h
+#pragma once
 
 #include "APIObject.h"
 #include "DownloadID.h"
@@ -36,7 +35,6 @@
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/PolicyChecker.h>
 #include <wtf/Forward.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
 
@@ -111,7 +109,7 @@ public:
     WebCore::IntSize scrollOffset() const;
     bool hasHorizontalScrollbar() const;
     bool hasVerticalScrollbar() const;
-    PassRefPtr<InjectedBundleHitTestResult> hitTest(const WebCore::IntPoint) const;
+    RefPtr<InjectedBundleHitTestResult> hitTest(const WebCore::IntPoint) const;
     bool getDocumentBackgroundColor(double* red, double* green, double* blue, double* alpha);
     bool containsAnyFormElements() const;
     bool containsAnyFormControls() const;
@@ -158,7 +156,7 @@ public:
     RetainPtr<CFDataRef> webArchiveData(FrameFilterFunction, void* context);
 #endif
 
-    PassRefPtr<ShareableBitmap> createSelectionSnapshot() const;
+    RefPtr<ShareableBitmap> createSelectionSnapshot() const;
 
 #if PLATFORM(IOS)
     uint64_t firstLayerTreeTransactionIDAfterDidCommitLoad() const { return m_firstLayerTreeTransactionIDAfterDidCommitLoad; }
@@ -186,5 +184,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // WebFrame_h

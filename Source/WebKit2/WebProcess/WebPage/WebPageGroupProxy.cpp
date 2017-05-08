@@ -35,14 +35,14 @@
 
 namespace WebKit {
 
-PassRefPtr<WebPageGroupProxy> WebPageGroupProxy::create(const WebPageGroupData& data)
+Ref<WebPageGroupProxy> WebPageGroupProxy::create(const WebPageGroupData& data)
 {
     auto pageGroup = adoptRef(*new WebPageGroupProxy(data));
 
     if (pageGroup->isVisibleToInjectedBundle() && WebProcess::singleton().injectedBundle())
         WebProcess::singleton().injectedBundle()->didInitializePageGroup(pageGroup.ptr());
 
-    return WTFMove(pageGroup);
+    return pageGroup;
 }
 
 WebPageGroupProxy::WebPageGroupProxy(const WebPageGroupData& data)

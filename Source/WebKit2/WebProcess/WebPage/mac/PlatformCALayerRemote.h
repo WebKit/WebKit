@@ -39,9 +39,9 @@ class RemoteLayerTreeContext;
 
 class PlatformCALayerRemote : public WebCore::PlatformCALayer {
 public:
-    static PassRefPtr<PlatformCALayerRemote> create(WebCore::PlatformCALayer::LayerType, WebCore::PlatformCALayerClient*, RemoteLayerTreeContext&);
-    static PassRefPtr<PlatformCALayerRemote> create(PlatformLayer *, WebCore::PlatformCALayerClient*, RemoteLayerTreeContext&);
-    static PassRefPtr<PlatformCALayerRemote> create(const PlatformCALayerRemote&, WebCore::PlatformCALayerClient*, RemoteLayerTreeContext&);
+    static Ref<PlatformCALayerRemote> create(WebCore::PlatformCALayer::LayerType, WebCore::PlatformCALayerClient*, RemoteLayerTreeContext&);
+    static Ref<PlatformCALayerRemote> create(PlatformLayer *, WebCore::PlatformCALayerClient*, RemoteLayerTreeContext&);
+    static Ref<PlatformCALayerRemote> create(const PlatformCALayerRemote&, WebCore::PlatformCALayerClient*, RemoteLayerTreeContext&);
 
     virtual ~PlatformCALayerRemote();
 
@@ -66,7 +66,7 @@ public:
 
     void addAnimationForKey(const String& key, WebCore::PlatformCAAnimation&) override;
     void removeAnimationForKey(const String& key) override;
-    PassRefPtr<WebCore::PlatformCAAnimation> animationForKey(const String& key) override;
+    RefPtr<WebCore::PlatformCAAnimation> animationForKey(const String& key) override;
     void animationStarted(const String& key, CFTimeInterval beginTime) override;
     void animationEnded(const String& key) override;
 
@@ -175,9 +175,9 @@ public:
 
     WebCore::TiledBacking* tiledBacking() override { return nullptr; }
 
-    PassRefPtr<WebCore::PlatformCALayer> clone(WebCore::PlatformCALayerClient* owner) const override;
+    Ref<WebCore::PlatformCALayer> clone(WebCore::PlatformCALayerClient* owner) const override;
 
-    PassRefPtr<PlatformCALayer> createCompatibleLayer(WebCore::PlatformCALayer::LayerType, WebCore::PlatformCALayerClient*) const override;
+    Ref<PlatformCALayer> createCompatibleLayer(WebCore::PlatformCALayer::LayerType, WebCore::PlatformCALayerClient*) const override;
 
     void enumerateRectsBeingDrawn(CGContextRef, void (^block)(CGRect)) override;
 

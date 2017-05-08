@@ -33,11 +33,11 @@ namespace WebCore {
 
 class PlatformCALayerCocoa final : public PlatformCALayer {
 public:
-    static PassRefPtr<PlatformCALayer> create(LayerType, PlatformCALayerClient*);
+    static Ref<PlatformCALayer> create(LayerType, PlatformCALayerClient*);
     
     // This function passes the layer as a void* rather than a PlatformLayer because PlatformLayer
     // is defined differently for Obj C and C++. This allows callers from both languages.
-    static PassRefPtr<PlatformCALayer> create(void* platformLayer, PlatformCALayerClient*);
+    static Ref<PlatformCALayer> create(void* platformLayer, PlatformCALayerClient*);
 
     WEBCORE_EXPORT static LayerType layerTypeForPlatformLayer(PlatformLayer*);
 
@@ -62,7 +62,7 @@ public:
 
     void addAnimationForKey(const String& key, PlatformCAAnimation&) override;
     void removeAnimationForKey(const String& key) override;
-    PassRefPtr<PlatformCAAnimation> animationForKey(const String& key) override;
+    RefPtr<PlatformCAAnimation> animationForKey(const String& key) override;
     void animationStarted(const String& key, CFTimeInterval beginTime) override;
     void animationEnded(const String& key) override;
 
@@ -169,9 +169,9 @@ public:
 
     TiledBacking* tiledBacking() override;
 
-    PassRefPtr<PlatformCALayer> clone(PlatformCALayerClient* owner) const override;
+    Ref<PlatformCALayer> clone(PlatformCALayerClient* owner) const override;
 
-    PassRefPtr<PlatformCALayer> createCompatibleLayer(PlatformCALayer::LayerType, PlatformCALayerClient*) const override;
+    Ref<PlatformCALayer> createCompatibleLayer(PlatformCALayer::LayerType, PlatformCALayerClient*) const override;
 
     void enumerateRectsBeingDrawn(CGContextRef, void (^block)(CGRect)) override;
 

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PlatformCALayerRemoteCustom_h
-#define PlatformCALayerRemoteCustom_h
+#pragma once
 
 #include "PlatformCALayerRemote.h"
 
@@ -36,7 +35,7 @@ class LayerHostingContext;
 class PlatformCALayerRemoteCustom final : public PlatformCALayerRemote {
     friend class PlatformCALayerRemote;
 public:
-    static PassRefPtr<PlatformCALayerRemote> create(PlatformLayer *, WebCore::PlatformCALayerClient*, RemoteLayerTreeContext&);
+    static Ref<PlatformCALayerRemote> create(PlatformLayer *, WebCore::PlatformCALayerClient*, RemoteLayerTreeContext&);
 
     virtual ~PlatformCALayerRemoteCustom();
 
@@ -50,7 +49,7 @@ public:
 private:
     PlatformCALayerRemoteCustom(WebCore::PlatformCALayer::LayerType, PlatformLayer *, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext&);
 
-    PassRefPtr<WebCore::PlatformCALayer> clone(WebCore::PlatformCALayerClient* owner) const override;
+    Ref<WebCore::PlatformCALayer> clone(WebCore::PlatformCALayerClient* owner) const override;
 
     bool isPlatformCALayerRemoteCustom() const override { return true; }
 
@@ -65,5 +64,3 @@ private:
 } // namespace WebKit
 
 SPECIALIZE_TYPE_TRAITS_PLATFORM_CALAYER(WebKit::PlatformCALayerRemoteCustom, isPlatformCALayerRemote())
-
-#endif // PlatformCALayerRemoteCustom_h

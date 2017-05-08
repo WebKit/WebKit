@@ -44,16 +44,16 @@ static HashMap<uint64_t, VisitedLinkTableController*>& visitedLinkTableControlle
     return visitedLinkTableControllers;
 }
 
-PassRefPtr<VisitedLinkTableController> VisitedLinkTableController::getOrCreate(uint64_t identifier)
+Ref<VisitedLinkTableController> VisitedLinkTableController::getOrCreate(uint64_t identifier)
 {
     auto& visitedLinkTableControllerPtr = visitedLinkTableControllers().add(identifier, nullptr).iterator->value;
     if (visitedLinkTableControllerPtr)
-        return visitedLinkTableControllerPtr;
+        return *visitedLinkTableControllerPtr;
 
     auto visitedLinkTableController = adoptRef(*new VisitedLinkTableController(identifier));
     visitedLinkTableControllerPtr = visitedLinkTableController.ptr();
 
-    return WTFMove(visitedLinkTableController);
+    return visitedLinkTableController;
 }
 
 VisitedLinkTableController::VisitedLinkTableController(uint64_t identifier)
