@@ -1971,3 +1971,5 @@ webkit.org/b/171628 scrollingcoordinator/ios/nested-fixed-layer-positions.html [
 webkit.org/b/171638 [ Release ] http/tests/xmlhttprequest/methods.html [ Pass Timeout ]
 
 webkit.org/b/171830 [ Debug ] http/tests/websocket/tests/hybi/workers/close.html [ Pass Failure ]
+
+webkit.org/b/169637 imported/w3c/web-platform-tests/XMLHttpRequest/timeout-multiple-fetches.html [ Pass Failure ]
