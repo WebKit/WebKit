@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -424,20 +424,24 @@ void WebFrameLoaderClient::dispatchDidStartProvisionalLoad()
     webPage->send(Messages::WebPageProxy::DidStartProvisionalLoadForFrame(m_frame->frameID(), provisionalLoader.navigationID(), url, unreachableURL, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
 }
 
+static constexpr unsigned maxTitleLength = 1000; // Closest power of 10 above the W3C recommendation for Title length.
+
 void WebFrameLoaderClient::dispatchDidReceiveTitle(const StringWithDirection& title)
 {
     WebPage* webPage = m_frame->page();
     if (!webPage)
         return;
 
+    auto truncatedTitle = truncateFromEnd(title, maxTitleLength);
+    
     RefPtr<API::Object> userData;
 
     // Notify the bundle client.
     // FIXME: Use direction of title.
-    webPage->injectedBundleLoaderClient().didReceiveTitleForFrame(webPage, title.string, m_frame, userData);
+    webPage->injectedBundleLoaderClient().didReceiveTitleForFrame(webPage, truncatedTitle.string, m_frame, userData);
 
     // Notify the UIProcess.
-    webPage->send(Messages::WebPageProxy::DidReceiveTitleForFrame(m_frame->frameID(), title.string, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
+    webPage->send(Messages::WebPageProxy::DidReceiveTitleForFrame(m_frame->frameID(), truncatedTitle.string, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
 }
 
 void WebFrameLoaderClient::dispatchDidCommitLoad(std::optional<HasInsecureContent> hasInsecureContent)

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -60,6 +61,13 @@ inline bool operator==(const StringWithDirection& a, const StringWithDirection& 
 inline bool operator!=(const StringWithDirection& a, const StringWithDirection& b)
 {
     return !(a == b);
+}
+
+inline StringWithDirection truncateFromEnd(const StringWithDirection& string, unsigned maxLength)
+{
+    if (string.direction == LTR)
+        return StringWithDirection(string.string.left(maxLength), LTR);
+    return StringWithDirection(string.string.right(maxLength), RTL);
 }
 
 }
