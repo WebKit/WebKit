@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2010 Rob Buis <buis@kde.org>
- * Copyright (C) 2007, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2014 Adobe Systems Incorporated. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -24,6 +24,7 @@
 #include "SVGSVGElement.h"
 
 #include "CSSHelper.h"
+#include "DOMWrapperWorld.h"
 #include "ElementIterator.h"
 #include "EventNames.h"
 #include "FrameSelection.h"
@@ -215,19 +216,19 @@ void SVGSVGElement::parseAttribute(const QualifiedName& name, const AtomicString
         // For these events, the outermost <svg> element works like a <body> element does,
         // setting certain event handlers directly on the window object.
         if (name == HTMLNames::onunloadAttr) {
-            document().setWindowAttributeEventListener(eventNames().unloadEvent, name, value);
+            document().setWindowAttributeEventListener(eventNames().unloadEvent, name, value, mainThreadNormalWorld());
             return;
         }
         if (name == HTMLNames::onresizeAttr) {
-            document().setWindowAttributeEventListener(eventNames().resizeEvent, name, value);
+            document().setWindowAttributeEventListener(eventNames().resizeEvent, name, value, mainThreadNormalWorld());
             return;
         }
         if (name == HTMLNames::onscrollAttr) {
-            document().setWindowAttributeEventListener(eventNames().scrollEvent, name, value);
+            document().setWindowAttributeEventListener(eventNames().scrollEvent, name, value, mainThreadNormalWorld());
             return;
         }
         if (name == SVGNames::onzoomAttr) {
-            document().setWindowAttributeEventListener(eventNames().zoomEvent, name, value);
+            document().setWindowAttributeEventListener(eventNames().zoomEvent, name, value, mainThreadNormalWorld());
             return;
         }
     }
@@ -236,11 +237,11 @@ void SVGSVGElement::parseAttribute(const QualifiedName& name, const AtomicString
     // setting certain event handlers directly on the window object.
     // FIXME: Why different from the events above that work only on the outermost <svg> element?
     if (name == HTMLNames::onabortAttr) {
-        document().setWindowAttributeEventListener(eventNames().abortEvent, name, value);
+        document().setWindowAttributeEventListener(eventNames().abortEvent, name, value, mainThreadNormalWorld());
         return;
     }
     if (name == HTMLNames::onerrorAttr) {
-        document().setWindowAttributeEventListener(eventNames().errorEvent, name, value);
+        document().setWindowAttributeEventListener(eventNames().errorEvent, name, value, mainThreadNormalWorld());
         return;
     }
 

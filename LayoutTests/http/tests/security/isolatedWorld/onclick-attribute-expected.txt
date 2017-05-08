@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: line 1: PASS: onclick handler is not visible in isolated world.
+ALERT: undefined
+Event handlers should be unique in isolated worlds.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+link
