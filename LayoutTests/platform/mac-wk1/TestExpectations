@@ -350,6 +350,7 @@ webkit.org/b/167752 media/modern-media-controls/icon-button/icon-button-active-s
 webkit.org/b/167477 [ Debug ] media/modern-media-controls/play-pause-button/play-pause-button.html [ Pass Timeout ]
 webkit.org/b/171245 [ Debug ] media/modern-media-controls/scrubber-support/scrubber-support-click.html [ Pass Timeout ]
 webkit.org/b/171629 media/modern-media-controls/slider/slider-styles.html [ Pass Timeout ]
+webkit.org/b/171828 media/modern-media-controls/status-label/status-label-font.html [ Pass Timeout ]
 webkit.org/b/167475 [ Debug ] media/modern-media-controls/volume-slider/volume-slider-value.html [ Pass Timeout ]
 webkit.org/b/170682 [ Debug ] media/modern-media-controls/volume-up-support/volume-up-support.html [ Pass Timeout ]
 

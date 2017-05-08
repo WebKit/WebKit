@@ -1,3 +1,12 @@
+2017-05-08  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Mark media/modern-media-controls/status-label/status-label-font.html as flaky on mac-wk1.
+        https://bugs.webkit.org/show_bug.cgi?id=171828
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2017-05-08  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: Setting aria-orientation="horizontal" on a listbox is being overridden on the Mac
