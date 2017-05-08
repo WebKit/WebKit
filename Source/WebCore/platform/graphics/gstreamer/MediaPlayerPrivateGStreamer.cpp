@@ -947,20 +947,19 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
         GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(m_pipeline.get()), GST_DEBUG_GRAPH_SHOW_ALL, "webkit-video.error");
 
         error = MediaPlayer::Empty;
-        if (err->code == GST_STREAM_ERROR_CODEC_NOT_FOUND
-            || err->code == GST_STREAM_ERROR_WRONG_TYPE
-            || err->code == GST_STREAM_ERROR_FAILED
-            || err->code == GST_CORE_ERROR_MISSING_PLUGIN
-            || err->code == GST_RESOURCE_ERROR_NOT_FOUND)
+        if (g_error_matches(err.get(), GST_STREAM_ERROR, GST_STREAM_ERROR_CODEC_NOT_FOUND)
+            || g_error_matches(err.get(), GST_STREAM_ERROR, GST_STREAM_ERROR_WRONG_TYPE)
+            || g_error_matches(err.get(), GST_STREAM_ERROR, GST_STREAM_ERROR_FAILED)
+            || g_error_matches(err.get(), GST_CORE_ERROR, GST_CORE_ERROR_MISSING_PLUGIN)
+            || g_error_matches(err.get(), GST_RESOURCE_ERROR, GST_RESOURCE_ERROR_NOT_FOUND))
             error = MediaPlayer::FormatError;
-        else if (err->domain == GST_STREAM_ERROR) {
+        else if (g_error_matches(err.get(), GST_STREAM_ERROR, GST_STREAM_ERROR_TYPE_NOT_FOUND)) {
             // Let the mediaPlayerClient handle the stream error, in
             // this case the HTMLMediaElement will emit a stalled
             // event.
-            if (err->code == GST_STREAM_ERROR_TYPE_NOT_FOUND) {
-                GST_ERROR("Decode error, let the Media element emit a stalled event.");
-                break;
-            }
+            GST_ERROR("Decode error, let the Media element emit a stalled event.");
+            break;
+        } else if (err->domain == GST_STREAM_ERROR) {
             error = MediaPlayer::DecodeError;
             attemptNextLocation = true;
         } else if (err->domain == GST_RESOURCE_ERROR)
