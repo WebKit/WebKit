@@ -2,8 +2,9 @@
 <html>
 <style>
     .box {
-        height: 100px;
+        height: 50px;
         display: inline-block;
+        zoom: 2;
     }
     .green-box {
         width: 100px;
@@ -29,17 +30,6 @@
             green 87.5%,
             blue 87.5%
         );
-    }
-    @media (-webkit-min-device-pixel-ratio: 2) {
-        .box {
-            height: 50px;
-        }
-        .green-box {
-            width: 50px;
-        }
-        .repeat-box {
-            width: 200px;
-        }
     }
 </style>
 <body>

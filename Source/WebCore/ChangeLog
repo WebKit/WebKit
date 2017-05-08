@@ -1,3 +1,32 @@
+2017-05-08  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [CG] To decode an image frame asynchronously, pass the native size of the image to CGImageSourceCreateThumbnailAtIndex() if it's smaller than the sizeForDrawing
+        https://bugs.webkit.org/show_bug.cgi?id=170864
+ 
+        Reviewed by Simon Fraser.
+
+        Tests: Existing tests were modified to test this patch.
+ 
+        The maxPixelSize was omitted when calling CGImageSourceCreateThumbnailAtIndex()
+        for the nativeSize image or when areaOf(nativeSize) < areaOf(sizeForDrawing).
+        The assumption was if we don't pass maxPixelSize, CG will create an image with the
+        nativeSize regardless how big this size is. It turns out this is wrong. CG has an
+        optimization to return a scaled down image if areaOf(nativeSize) is greater than
+        some maximum value.
+ 
+        This is not what we want for asynchronously image decoding. We want the decoded
+        frame to have the size we ask for, not some scaled down frame. The fix is to pass
+        always maxPixelSize to CGImageSourceCreateThumbnailAtIndex(). maxPixelSize will be
+        equal to maxDimension(sizeForDrawing) if sizeForDrawing is valid it is less than
+        maxDimension(nativeSize). Otherwise it will be equal to maxDimension(nativeSize).
+
+        * platform/graphics/DecodingOptions.h:
+        * platform/graphics/cg/ImageDecoderCG.cpp:
+        (WebCore::appendImageSourceOption):
+        (WebCore::appendImageSourceOptions):
+        (WebCore::imageSourceAsyncOptions):
+        (WebCore::ImageDecoder::createFrameImageAtIndex):
+
 2017-05-08  Beth Dakin  <bdakin@apple.com>
 
         WebKit should default to using sRGB with NSColor conversion instead of device 

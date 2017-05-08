@@ -2,35 +2,21 @@
 <html>
 <style>
     .box {
-        height: 100px;
+        height: 50px;
         display: inline-block;
+        zoom: 2;
+        image-rendering: crisp-edges;
     }
     .green-box {
         width: 100px;
-        background-position: -50px -1000px;
+        background-position: -50px -16500px;
     }
     .repeat-box {
         width: 400px;
-        background-position: 0px -1000px;
+        background-position: 0px -16500px;
         background-repeat: repeat-x;
     }
     .image-background {
-    }
-    @media (-webkit-min-device-pixel-ratio: 2) {
-        .box {
-            height: 50px;
-        }
-        .green-box {
-            width: 50px;
-            background-position: -25px -500px;
-        }
-        .repeat-box {
-            width: 200px;
-            background-position: 0px -500px;
-        }
-        .image-background {
-            background-size: 100px, 1050px;
-        }
     }
 </style>
 <body>

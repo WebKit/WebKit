@@ -3,8 +3,9 @@
 <style>
     .box {
         width: 200px;
-        height: 100px;
+        height: 50px;
         display: inline-block;
+        zoom: 2;
     }
     .rgb-background {
         background: linear-gradient(
@@ -15,12 +16,6 @@
             green 75%,
             blue 75%
         );
-    }
-    @media (-webkit-min-device-pixel-ratio: 2) {
-        .box {
-            width: 100px;
-            height: 50px;
-        }
     }
 </style>
 <body>

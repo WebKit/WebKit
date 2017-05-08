@@ -1,3 +1,19 @@
+2017-05-08  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [CG] To decode an image frame asynchronously, pass the native size of the image to CGImageSourceCreateThumbnailAtIndex() if it's smaller than the sizeForDrawing
+        https://bugs.webkit.org/show_bug.cgi?id=170864
+
+        Reviewed by Simon Fraser.
+
+        * fast/images/async-image-background-image-repeated-expected.html:
+        * fast/images/async-image-background-image-repeated.html:
+        * fast/images/resources/sprite-sheet-red-green-blue.png:
+        * fast/images/sprite-sheet-image-draw-expected.html:
+        * fast/images/sprite-sheet-image-draw.html:
+        Change the sprite image to be 200x33100 instead of 200x2100 and use it in drawing.
+        If the maxPixelSize is not passed to CGImageSourceCreateThumbnailAtIndex(), the
+        decoded farme of this image will be 30x5000 pixels (15% of the original size).
+
 2017-05-08  Beth Dakin  <bdakin@apple.com>
 
         WebKit should default to using sRGB with NSColor conversion instead of device 
