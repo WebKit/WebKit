@@ -272,6 +272,12 @@ set(WTF_SOURCES
 set(WTF_INCLUDE_DIRECTORIES
     "${BMALLOC_DIR}"
     "${WTF_DIR}"
+    "${CMAKE_BINARY_DIR}"
+    "${DERIVED_SOURCES_DIR}"
+    "${THIRDPARTY_DIR}"
+)
+
+set(WTF_PRIVATE_INCLUDE_DIRECTORIES
     "${WTF_DIR}/wtf"
     "${WTF_DIR}/wtf/dtoa"
     "${WTF_DIR}/wtf/persistence"
@@ -279,9 +285,6 @@ set(WTF_INCLUDE_DIRECTORIES
     "${WTF_DIR}/wtf/text/icu"
     "${WTF_DIR}/wtf/threads"
     "${WTF_DIR}/wtf/unicode"
-    "${THIRDPARTY_DIR}"
-    "${CMAKE_BINARY_DIR}"
-    "${DERIVED_SOURCES_DIR}"
 )
 
 set(WTF_LIBRARIES
