@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,9 +32,15 @@
 .details-section .row.box-model .label {
     position: absolute;
     color: black;
+    padding: 0 2px;
+}
+
+body[dir=ltr] .details-section .row.box-model .label {
     margin-left: 3px;
-    padding-left: 2px;
-    padding-right: 2px;
+}
+
+body[dir=rtl] .details-section .row.box-model .label {
+    margin-right: 16px;
 }
 
 .details-section .row.box-model :matches(.position, .margin, .border, .padding, .content) {
