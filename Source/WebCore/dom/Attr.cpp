@@ -26,6 +26,7 @@
 #include "AttributeChangeInvalidation.h"
 #include "Event.h"
 #include "ExceptionCode.h"
+#include "NoEventDispatchAssertion.h"
 #include "ScopedEventQueue.h"
 #include "StyleProperties.h"
 #include "StyledElement.h"
@@ -167,8 +168,10 @@ void Attr::childrenChanged(const ChildChange&)
     } else
         m_standaloneValue = newValue;
 
-    if (m_element)
+    if (m_element) {
+        NoEventDispatchAssertion::DisableAssertionsInScope allowedScope;
         m_element->attributeChanged(qualifiedName(), oldValue, newValue);
+    }
 }
 
 CSSStyleDeclaration* Attr::style()

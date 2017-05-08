@@ -69,8 +69,9 @@ static void dispatchChildRemovalEvents(Node&);
 
 ChildNodesLazySnapshot* ChildNodesLazySnapshot::latestSnapshot;
 
-#ifndef NDEBUG
+#if !ASSERT_DISABLED
 unsigned NoEventDispatchAssertion::s_count = 0;
+unsigned NoEventDispatchAssertion::DisableAssertionsInScope::s_existingCount = 0;
 NoEventDispatchAssertion::EventAllowedScope* NoEventDispatchAssertion::EventAllowedScope::s_currentScope = nullptr;
 #endif
 

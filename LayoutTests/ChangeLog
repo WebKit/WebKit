@@ -1,3 +1,14 @@
+2017-04-25  Brent Fulgham  <bfulgham@apple.com>
+
+        Relax the event firing ASSERT for Attr changes
+        https://bugs.webkit.org/show_bug.cgi?id=171236
+        <rdar://problem/30516349>
+
+        Reviewed by Dean Jackson.
+
+        * fast/dom/HTMLLinkElement/event-while-removing-attribute-expected.txt: Added.
+        * fast/dom/HTMLLinkElement/event-while-removing-attribute.html: Added.
+
 2017-04-25  Chris Dumez  <cdumez@apple.com>
 
         Content-Disposition header filename is ignored when 'download' attribute is specified in HTML
