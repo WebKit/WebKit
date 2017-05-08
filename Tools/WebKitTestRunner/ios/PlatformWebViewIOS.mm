@@ -32,6 +32,7 @@
 #import <WebCore/QuartzCoreSPI.h>
 #import <WebKit/WKImageCG.h>
 #import <WebKit/WKPreferencesPrivate.h>
+#import <WebKit/WKSnapshotConfiguration.h>
 #import <WebKit/WKWebViewConfiguration.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/BlockObjCExceptions.h>
@@ -304,7 +305,22 @@ RetainPtr<CGImageRef> PlatformWebView::windowSnapshotImage()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 #if USE(IOSURFACE)
-    return nullptr;
+    __block bool isDone = false;
+    __block RetainPtr<CGImageRef> result;
+    
+    RetainPtr<WKSnapshotConfiguration> snapshotConfiguration = adoptNS([[WKSnapshotConfiguration alloc] init]);
+    [snapshotConfiguration setRect:CGRectMake(0, 0, m_view.frame.size.width, m_view.frame.size.height)];
+    [snapshotConfiguration setSnapshotWidth:@(m_view.frame.size.width)];
+    
+    [m_view takeSnapshotWithConfiguration:snapshotConfiguration.get() completionHandler:^(UIImage *snapshotImage, NSError *error) {
+        if (!error)
+            result = [snapshotImage CGImage];
+        isDone = true;
+    }];
+    while (!isDone)
+        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]];
+    return result;
+
 #else
     CGFloat deviceScaleFactor = 2; // FIXME: hardcode 2x for now. In future we could respect 1x and 3x as we do on Mac.
     CATransform3D transform = CATransform3DMakeScale(deviceScaleFactor, deviceScaleFactor, 1);

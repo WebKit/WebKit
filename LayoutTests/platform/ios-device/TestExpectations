@@ -3,3 +3,10 @@
 # See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
 #
 
+# https://bugs.webkit.org/show_bug.cgi?id=170772
+compositing/geometry/clipped-out-perspective.html [ ImageOnlyFailure ]
+compositing/hidpi-subpixel-transform-origin.html [ ImageOnlyFailure ]
+compositing/regions/position-layer-inside-region-overflow-hidden.html [ ImageOnlyFailure ]
+compositing/regions/position-layers-inside-region-overflow-hidden.html [ ImageOnlyFailure ]
+compositing/regions/position-layers-inside-regions-overflow-hidden.html [ ImageOnlyFailure ]
+

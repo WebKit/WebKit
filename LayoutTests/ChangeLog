@@ -1,3 +1,14 @@
+2017-05-08  Jonathan Bedard  <jbedard@apple.com>
+
+        Implement PlatformWebView::windowSnapshotImage and createBitmapContextFromWebView for iOS devices
+        https://bugs.webkit.org/show_bug.cgi?id=169421
+        <rdar://problem/30950171>
+
+        Reviewed by Tim Horton.
+
+        * platform/ios-device/TestExpectations: Mark compositing tests as failures, this
+        is due to a bug tracked in https://bugs.webkit.org/show_bug.cgi?id=170772.
+
 2017-05-08  Chris Dumez  <cdumez@apple.com>
 
         Drop non-standard document.implementation.createCSSStyleSheet() API

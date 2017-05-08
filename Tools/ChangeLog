@@ -1,5 +1,18 @@
 2017-05-08  Jonathan Bedard  <jbedard@apple.com>
 
+        Implement PlatformWebView::windowSnapshotImage and createBitmapContextFromWebView for iOS devices
+        https://bugs.webkit.org/show_bug.cgi?id=169421
+        <rdar://problem/30950171>
+
+        Reviewed by Tim Horton.
+
+        * DumpRenderTree/ios/PixelDumpSupportIOS.mm:
+        (createBitmapContextFromWebView): Implement for IOSurface.
+        * WebKitTestRunner/ios/PlatformWebViewIOS.mm:
+        (WTR::PlatformWebView::windowSnapshotImage): Use snapshot API for device.
+
+2017-05-08  Jonathan Bedard  <jbedard@apple.com>
+
         buildbot: Cleanup simulators after running tests
         https://bugs.webkit.org/show_bug.cgi?id=171679
 

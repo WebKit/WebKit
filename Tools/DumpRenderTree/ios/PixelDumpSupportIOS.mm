@@ -38,6 +38,10 @@
 #import <CommonCrypto/CommonDigest.h>
 #import <MobileCoreServices/UTCoreTypes.h>
 #import <QuartzCore/QuartzCore.h>
+#import <WebCore/CoreGraphicsSPI.h>
+#import <WebCore/GraphicsContextCG.h>
+#import <WebCore/IOSurface.h>
+#import <WebCore/PlatformScreen.h>
 #import <WebCore/QuartzCoreSPI.h>
 #import <WebKit/WebCoreThread.h>
 #import <wtf/BlockObjCExceptions.h>
@@ -56,15 +60,31 @@ RefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool increme
     WebThreadLock();
     [CATransaction flush];
 
-#if USE(IOSURFACE)
-    return nullptr;
-#else
     CGFloat deviceScaleFactor = 2; // FIXME: hardcode 2x for now. In future we could respect 1x and 3x as we do on Mac.
-    CATransform3D transform = CATransform3DMakeScale(deviceScaleFactor, deviceScaleFactor, 1);
     
     CGSize viewSize = [[mainFrame webView] frame].size;
     int bufferWidth = ceil(viewSize.width * deviceScaleFactor);
     int bufferHeight = ceil(viewSize.height * deviceScaleFactor);
+
+#if USE(IOSURFACE)
+    WebCore::FloatSize snapshotSize(viewSize);
+    snapshotSize.scale(deviceScaleFactor);
+
+    WebCore::IOSurface::Format snapshotFormat = WebCore::screenSupportsExtendedColor() ? WebCore::IOSurface::Format::RGB10 : WebCore::IOSurface::Format::RGBA;
+    auto surface = WebCore::IOSurface::create(WebCore::expandedIntSize(snapshotSize), WebCore::sRGBColorSpaceRef(), snapshotFormat);
+    RetainPtr<CGImageRef> cgImage = surface->createImage();
+
+    void* bitmapBuffer = nullptr;
+    size_t bitmapRowBytes = 0;
+    auto bitmapContext = createBitmapContext(bufferWidth, bufferHeight, bitmapRowBytes, bitmapBuffer);
+    if (!bitmapContext)
+        return nullptr;
+
+    CGContextDrawImage(bitmapContext->cgContext(), CGRectMake(0, 0, bufferWidth, bufferHeight), cgImage.get());
+    return bitmapContext;
+#else
+    CATransform3D transform = CATransform3DMakeScale(deviceScaleFactor, deviceScaleFactor, 1);
+    static CGColorSpaceRef sRGBSpace = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
 
     CARenderServerBufferRef buffer = CARenderServerCreateBuffer(bufferWidth, bufferHeight);
     if (!buffer) {
@@ -77,7 +97,6 @@ RefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool increme
     uint8_t* data = CARenderServerGetBufferData(buffer);
     size_t rowBytes = CARenderServerGetBufferRowBytes(buffer);
 
-    static CGColorSpaceRef sRGBSpace = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
     RetainPtr<CGDataProviderRef> provider = adoptCF(CGDataProviderCreateWithData(0, data, CARenderServerGetBufferDataSize(buffer), nullptr));
     
     RetainPtr<CGImageRef> cgImage = adoptCF(CGImageCreate(bufferWidth, bufferHeight, 8, 32, rowBytes, sRGBSpace, kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host, provider.get(), 0, false, kCGRenderingIntentDefault));
