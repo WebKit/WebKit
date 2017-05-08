@@ -90,21 +90,21 @@ style.transitionProperty = "";
 
 style.transitionProperty = "solid, font-size";
 shouldBe("style.transitionProperty", "'solid, font-size'");
-shouldBe("computedStyle.transitionProperty", "'all'");
+shouldBe("computedStyle.transitionProperty", "'solid, font-size'");
 shouldBe("style.webkitTransitionProperty", "'solid, font-size'");
-shouldBe("computedStyle.webkitTransitionProperty", "'all'");
+shouldBe("computedStyle.webkitTransitionProperty", "'solid, font-size'");
 
 style.transitionProperty = "solid, left";
 shouldBe("style.transitionProperty", "'solid, left'");
-shouldBe("computedStyle.transitionProperty", "'all'");
+shouldBe("computedStyle.transitionProperty", "'solid, left'");
 shouldBe("style.webkitTransitionProperty", "'solid, left'");
-shouldBe("computedStyle.webkitTransitionProperty", "'all'");
+shouldBe("computedStyle.webkitTransitionProperty", "'solid, left'");
 
 style.transitionProperty = "solid";
 shouldBe("style.transitionProperty", "'solid'");
-shouldBe("computedStyle.transitionProperty", "'all'");
+shouldBe("computedStyle.transitionProperty", "'solid'");
 shouldBe("style.webkitTransitionProperty", "'solid'");
-shouldBe("computedStyle.webkitTransitionProperty", "'all'");
+shouldBe("computedStyle.webkitTransitionProperty", "'solid'");
 
 style.transitionProperty = '';
 
@@ -668,9 +668,9 @@ shouldBe("computedStyle.webkitTransition", "'all 0s ease 0s'");
 
 style.transition = "widthFoo";
 shouldBe("style.transition", "'widthFoo'");
-shouldBe("computedStyle.transition", "'all 0s ease 0s'");
+shouldBe("computedStyle.transition", "'widthFoo 0s ease 0s'");
 shouldBe("style.webkitTransition", "'widthFoo'");
-shouldBe("computedStyle.webkitTransition", "'all 0s ease 0s'");
+shouldBe("computedStyle.webkitTransition", "'widthFoo 0s ease 0s'");
 
 style.transition = '';
 
