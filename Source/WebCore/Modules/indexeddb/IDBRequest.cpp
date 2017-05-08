@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -370,7 +370,9 @@ void IDBRequest::setResult(const IDBKeyData& keyData)
 
     // FIXME: This conversion should be done lazily, when script needs the JSValues, so that global object
     // of the IDBRequest wrapper can be used, rather than the lexicalGlobalObject.
-    m_result = Result { JSC::Strong<JSC::Unknown> { context->vm(), toJS<IDLIDBKeyData>(*state, *jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject()), keyData) } };
+    VM& vm = context->vm();
+    JSLockHolder lock(vm);
+    m_result = Result { JSC::Strong<JSC::Unknown> { vm, toJS<IDLIDBKeyData>(*state, *jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject()), keyData) } };
 }
 
 void IDBRequest::setResult(const Vector<IDBKeyData>& keyDatas)
@@ -387,8 +389,9 @@ void IDBRequest::setResult(const Vector<IDBKeyData>& keyDatas)
 
     // FIXME: This conversion should be done lazily, when script needs the JSValues, so that global object
     // of the IDBRequest wrapper can be used, rather than the lexicalGlobalObject.
-    Locker<JSLock> locker(context->vm().apiLock());
-    m_result = Result { JSC::Strong<JSC::Unknown> { context->vm(), toJS<IDLSequence<IDLIDBKeyData>>(*state, *jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject()), keyDatas) } };
+    VM& vm = context->vm();
+    JSLockHolder lock(vm);
+    m_result = Result { JSC::Strong<JSC::Unknown> { vm, toJS<IDLSequence<IDLIDBKeyData>>(*state, *jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject()), keyDatas) } };
 }
 
 void IDBRequest::setResult(const Vector<IDBValue>& values)
@@ -405,8 +408,9 @@ void IDBRequest::setResult(const Vector<IDBValue>& values)
 
     // FIXME: This conversion should be done lazily, when script needs the JSValues, so that global object
     // of the IDBRequest wrapper can be used, rather than the lexicalGlobalObject.
-    Locker<JSLock> locker(context->vm().apiLock());
-    m_result = Result { JSC::Strong<JSC::Unknown> { context->vm(), toJS<IDLSequence<IDLIDBValue>>(*state, *jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject()), values) } };
+    VM& vm = context->vm();
+    JSLockHolder lock(vm);
+    m_result = Result { JSC::Strong<JSC::Unknown> { vm, toJS<IDLSequence<IDLIDBValue>>(*state, *jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject()), values) } };
 }
 
 void IDBRequest::setResult(uint64_t number)
@@ -436,7 +440,9 @@ void IDBRequest::setResultToStructuredClone(const IDBValue& value)
 
     // FIXME: This conversion should be done lazily, when script needs the JSValues, so that global object
     // of the IDBRequest wrapper can be used, rather than the lexicalGlobalObject.
-    m_result = Result { JSC::Strong<JSC::Unknown> { context->vm(), toJS<IDLIDBValue>(*state, *jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject()), value) } };
+    VM& vm = context->vm();
+    JSLockHolder lock(vm);
+    m_result = Result { JSC::Strong<JSC::Unknown> { vm, toJS<IDLIDBValue>(*state, *jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject()), value) } };
 }
 
 void IDBRequest::setResultToUndefined()

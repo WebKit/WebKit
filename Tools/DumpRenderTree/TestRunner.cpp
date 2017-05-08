@@ -347,7 +347,10 @@ static JSValueRef setAudioResultCallback(JSContextRef context, JSObjectRef funct
         return JSValueMakeUndefined(context);
 
     // FIXME (123058): Use a JSC API to get buffer contents once such is exposed.
-    JSC::JSArrayBufferView* jsBufferView = JSC::jsDynamicCast<JSC::JSArrayBufferView*>(toJS(context)->vm(), toJS(toJS(context), arguments[0]));
+    JSC::VM& vm = toJS(context)->vm();
+    JSC::JSLockHolder lock(vm);
+
+    JSC::JSArrayBufferView* jsBufferView = JSC::jsDynamicCast<JSC::JSArrayBufferView*>(vm, toJS(toJS(context), arguments[0]));
     ASSERT(jsBufferView);
     RefPtr<JSC::ArrayBufferView> bufferView = jsBufferView->unsharedImpl();
     const char* buffer = static_cast<const char*>(bufferView->baseAddress());
