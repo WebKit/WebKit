@@ -214,10 +214,10 @@ void MarkupAccumulator::concatenateMarkup(StringBuilder& result)
     result.append(m_markup);
 }
 
-void MarkupAccumulator::appendAttributeValue(StringBuilder& result, const String& attribute, bool documentIsHTML)
+void MarkupAccumulator::appendAttributeValue(StringBuilder& result, const String& attribute, bool isSerializingHTML)
 {
     appendCharactersReplacingEntities(result, attribute, 0, attribute.length(),
-        documentIsHTML ? EntityMaskInHTMLAttributeValue : EntityMaskInAttributeValue);
+        isSerializingHTML ? EntityMaskInHTMLAttributeValue : EntityMaskInAttributeValue);
 }
 
 void MarkupAccumulator::appendCustomAttributes(StringBuilder&, const Element&, Namespaces*)
@@ -489,12 +489,12 @@ void MarkupAccumulator::generateUniquePrefix(QualifiedName& prefixedName, const 
 
 void MarkupAccumulator::appendAttribute(StringBuilder& result, const Element& element, const Attribute& attribute, Namespaces* namespaces)
 {
-    bool documentIsHTML = element.document().isHTMLDocument();
+    bool isSerializingHTML = element.document().isHTMLDocument() && !inXMLFragmentSerialization();
 
     result.append(' ');
 
     QualifiedName prefixedName = attribute.name();
-    if (documentIsHTML && !attributeIsInSerializedNamespace(attribute))
+    if (isSerializingHTML && !attributeIsInSerializedNamespace(attribute))
         result.append(attribute.name().localName());
     else {
         if (!attribute.namespaceURI().isEmpty()) {
@@ -524,11 +524,11 @@ void MarkupAccumulator::appendAttribute(StringBuilder& result, const Element& el
         appendQuotedURLAttributeValue(result, element, attribute);
     else {
         result.append('"');
-        appendAttributeValue(result, attribute.value(), documentIsHTML);
+        appendAttributeValue(result, attribute.value(), isSerializingHTML);
         result.append('"');
     }
 
-    if ((inXMLFragmentSerialization() || !documentIsHTML) && namespaces && shouldAddNamespaceAttribute(attribute, *namespaces))
+    if (!isSerializingHTML && namespaces && shouldAddNamespaceAttribute(attribute, *namespaces))
         appendNamespace(result, prefixedName.prefix(), prefixedName.namespaceURI(), *namespaces);
 }
 

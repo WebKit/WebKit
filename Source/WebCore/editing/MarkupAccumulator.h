@@ -92,7 +92,7 @@ protected:
     void appendStartMarkup(StringBuilder&, const Node&, Namespaces*);
     void appendEndMarkup(StringBuilder&, const Element&);
 
-    void appendAttributeValue(StringBuilder&, const String&, bool);
+    void appendAttributeValue(StringBuilder&, const String&, bool isSerializingHTML);
     void appendNamespace(StringBuilder&, const AtomicString& prefix, const AtomicString& namespaceURI, Namespaces&, bool allowEmptyDefaultNS = false);
     void appendXMLDeclaration(StringBuilder&, const Document&);
     void appendDocumentType(StringBuilder&, const DocumentType&);
