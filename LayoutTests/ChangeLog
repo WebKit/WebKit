@@ -1,3 +1,14 @@
+2017-05-04  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Search events should not fire synchronously for search type input elements with incremental attribute set
+        https://bugs.webkit.org/show_bug.cgi?id=171376
+        <rdar://problem/31863296>
+
+        Reviewed by Chris Dumez.
+
+        * fast/forms/search/search-incremental-crash-expected.txt: Added.
+        * fast/forms/search/search-incremental-crash.html: Added.
+
 2017-05-08  Zalan Bujtas  <zalan@apple.com>
 
         Text overlaps on http://www.duden.de/rechtschreibung/Acre

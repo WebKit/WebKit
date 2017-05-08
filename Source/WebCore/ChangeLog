@@ -1,3 +1,20 @@
+2017-05-04  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Search events should not fire synchronously for search type input elements with incremental attribute set
+        https://bugs.webkit.org/show_bug.cgi?id=171376
+        <rdar://problem/31863296>
+
+        Reviewed by Chris Dumez.
+
+        For some reasons, we fire search events immediately for search type input elements with incremental
+        attribute set only when the length of the input equals to zero. This behaviour should be prevented
+        as event listeners in the middle might perform unexpectedly.
+
+        Test: fast/forms/search/search-incremental-crash.html
+
+        * html/SearchInputType.cpp:
+        (WebCore::SearchInputType::startSearchEventTimer):
+
 2017-05-08  Zalan Bujtas  <zalan@apple.com>
 
         Text overlaps on http://www.duden.de/rechtschreibung/Acre
