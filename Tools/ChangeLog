@@ -1,5 +1,14 @@
 2017-05-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Fix GTK+ test /webkit2/WebKitConsoleMessage/network-error after r215556.
+
+        Glib uses now Unicode quotes in error messages.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestConsoleMessage.cpp:
+        (testWebKitConsoleMessageNetworkError):
+
+2017-05-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Fix GTK+ test /webkit2/WebKitWebView/javascript-dialogs after r215404.
 
         Sending down+up keys is no longer enough to simulate a real user interaction after r215404, the key events now
