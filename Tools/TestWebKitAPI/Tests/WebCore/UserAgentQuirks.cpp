@@ -89,7 +89,6 @@ TEST(UserAgentTest, Quirks)
 
     assertUserAgentForURLHasChromeBrowserQuirk("http://typekit.com/");
     assertUserAgentForURLHasChromeBrowserQuirk("http://typekit.net/");
-    assertUserAgentForURLHasChromeBrowserQuirk("http://www.youtube.com/");
     assertUserAgentForURLHasChromeBrowserQuirk("http://www.slack.com/");
 
     assertUserAgentForURLHasFirefoxBrowserQuirk("http://www.google.com/");
