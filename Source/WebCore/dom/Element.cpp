@@ -1343,7 +1343,7 @@ void Element::attributeChanged(const QualifiedName& name, const AtomicString& ol
     invalidateNodeListAndCollectionCachesInAncestors(&name, this);
 
     if (AXObjectCache* cache = document().existingAXObjectCache())
-        cache->handleAttributeChanged(name, this);
+        cache->handleAttributeChanged(name, *this);
 }
 
 template <typename CharacterType>

@@ -1002,9 +1002,10 @@ void AXObjectCache::postNotification(AccessibilityObject* object, Document* docu
         postPlatformNotification(object, notification);
 }
 
-void AXObjectCache::checkedStateChanged(Node* node)
+void AXObjectCache::checkedStateChanged(Element& element)
 {
-    postNotification(node, AXObjectCache::AXCheckedStateChanged);
+    element.document().updateStyleIfNeeded();
+    postNotification(&element, AXObjectCache::AXCheckedStateChanged);
 }
 
 void AXObjectCache::handleMenuItemSelected(Node* node)
@@ -1027,13 +1028,14 @@ void AXObjectCache::handleFocusedUIElementChanged(Node* oldNode, Node* newNode)
     platformHandleFocusedUIElementChanged(oldNode, newNode);
 }
     
-void AXObjectCache::selectedChildrenChanged(Node* node)
+void AXObjectCache::selectedChildrenChanged(Element& element)
 {
-    handleMenuItemSelected(node);
+    element.document().updateStyleIfNeeded();
+    handleMenuItemSelected(&element);
     
     // postTarget is TargetObservableParent so that you can pass in any child of an element and it will go up the parent tree
     // to find the container which should send out the notification.
-    postNotification(node, AXSelectedChildrenChanged, TargetObservableParent);
+    postNotification(&element, AXSelectedChildrenChanged, TargetObservableParent);
 }
 
 void AXObjectCache::selectedChildrenChanged(RenderObject* renderer)
@@ -1402,35 +1404,39 @@ void AXObjectCache::handleScrollbarUpdate(ScrollView* view)
     }
 }
     
-void AXObjectCache::handleAriaExpandedChange(Node* node)
+void AXObjectCache::handleAriaExpandedChange(Element& element)
 {
-    if (AccessibilityObject* obj = getOrCreate(node))
+    ASSERT_WITH_SECURITY_IMPLICATION(!element.needsStyleRecalc());
+    if (AccessibilityObject* obj = getOrCreate(&element))
         obj->handleAriaExpandedChanged();
 }
     
-void AXObjectCache::handleActiveDescendantChanged(Node* node)
+void AXObjectCache::handleActiveDescendantChanged(Element& element)
 {
-    if (AccessibilityObject* obj = getOrCreate(node))
+    ASSERT_WITH_SECURITY_IMPLICATION(!element.needsStyleRecalc());
+    if (AccessibilityObject* obj = getOrCreate(&element))
         obj->handleActiveDescendantChanged();
 }
 
-void AXObjectCache::handleAriaRoleChanged(Node* node)
+void AXObjectCache::handleAriaRoleChanged(Element& element)
 {
+    ASSERT_WITH_SECURITY_IMPLICATION(!element.needsStyleRecalc());
     stopCachingComputedObjectAttributes();
 
-    if (AccessibilityObject* obj = getOrCreate(node)) {
+    if (AccessibilityObject* obj = getOrCreate(&element)) {
         obj->updateAccessibilityRole();
         obj->notifyIfIgnoredValueChanged();
     }
 }
 
-void AXObjectCache::handleAttributeChanged(const QualifiedName& attrName, Element* element)
+void AXObjectCache::handleAttributeChanged(const QualifiedName& attrName, Element& element)
 {
+    element.document().updateStyleIfNeeded();
     if (attrName == roleAttr)
         handleAriaRoleChanged(element);
     else if (attrName == altAttr || attrName == titleAttr)
-        textChanged(element);
-    else if (attrName == forAttr && is<HTMLLabelElement>(*element))
+        textChanged(&element);
+    else if (attrName == forAttr && is<HTMLLabelElement>(element))
         labelChanged(element);
 
     if (!attrName.localName().string().startsWith("aria-"))
@@ -1439,11 +1445,11 @@ void AXObjectCache::handleAttributeChanged(const QualifiedName& attrName, Elemen
     if (attrName == aria_activedescendantAttr)
         handleActiveDescendantChanged(element);
     else if (attrName == aria_busyAttr)
-        postNotification(element, AXObjectCache::AXElementBusyChanged);
+        postNotification(&element, AXObjectCache::AXElementBusyChanged);
     else if (attrName == aria_valuenowAttr || attrName == aria_valuetextAttr)
-        postNotification(element, AXObjectCache::AXValueChanged);
+        postNotification(&element, AXObjectCache::AXValueChanged);
     else if (attrName == aria_labelAttr || attrName == aria_labeledbyAttr || attrName == aria_labelledbyAttr)
-        textChanged(element);
+        textChanged(&element);
     else if (attrName == aria_checkedAttr)
         checkedStateChanged(element);
     else if (attrName == aria_selectedAttr)
@@ -1451,34 +1457,32 @@ void AXObjectCache::handleAttributeChanged(const QualifiedName& attrName, Elemen
     else if (attrName == aria_expandedAttr)
         handleAriaExpandedChange(element);
     else if (attrName == aria_hiddenAttr)
-        childrenChanged(element->parentNode(), element);
+        childrenChanged(element.parentNode(), &element);
     else if (attrName == aria_invalidAttr)
-        postNotification(element, AXObjectCache::AXInvalidStatusChanged);
+        postNotification(&element, AXObjectCache::AXInvalidStatusChanged);
     else if (attrName == aria_modalAttr)
         handleAriaModalChange(element);
     else if (attrName == aria_currentAttr)
-        postNotification(element, AXObjectCache::AXCurrentChanged);
+        postNotification(&element, AXObjectCache::AXCurrentChanged);
     else
-        postNotification(element, AXObjectCache::AXAriaAttributeChanged);
+        postNotification(&element, AXObjectCache::AXAriaAttributeChanged);
 }
 
-void AXObjectCache::handleAriaModalChange(Node* node)
+void AXObjectCache::handleAriaModalChange(Element& element)
 {
-    if (!is<Element>(node))
-        return;
-    
-    if (!nodeHasRole(node, "dialog") && !nodeHasRole(node, "alertdialog"))
+    ASSERT_WITH_SECURITY_IMPLICATION(!element.needsStyleRecalc());
+    if (!nodeHasRole(&element, "dialog") && !nodeHasRole(&element, "alertdialog"))
         return;
     
     stopCachingComputedObjectAttributes();
-    if (equalLettersIgnoringASCIICase(downcast<Element>(*node).attributeWithoutSynchronization(aria_modalAttr), "true")) {
+    if (equalLettersIgnoringASCIICase(element.attributeWithoutSynchronization(aria_modalAttr), "true")) {
         // Add the newly modified node to the modal nodes set, and set it to be the current valid aria modal node.
         // We will recompute the current valid aria modal node in ariaModalNode() when this node is not visible.
-        m_ariaModalNodesSet.add(node);
-        m_currentAriaModalNode = node;
+        m_ariaModalNodesSet.add(&element);
+        m_currentAriaModalNode = &element;
     } else {
         // Remove the node from the modal nodes set. There might be other visible modal nodes, so we recompute here.
-        m_ariaModalNodesSet.remove(node);
+        m_ariaModalNodesSet.remove(&element);
         updateCurrentAriaModalNode();
     }
     if (m_currentAriaModalNode)
@@ -1487,10 +1491,11 @@ void AXObjectCache::handleAriaModalChange(Node* node)
     startCachingComputedObjectAttributesUntilTreeMutates();
 }
 
-void AXObjectCache::labelChanged(Element* element)
+void AXObjectCache::labelChanged(Element& element)
 {
-    ASSERT(is<HTMLLabelElement>(*element));
-    HTMLElement* correspondingControl = downcast<HTMLLabelElement>(*element).control();
+    ASSERT_WITH_SECURITY_IMPLICATION(!element.needsStyleRecalc());
+    ASSERT(is<HTMLLabelElement>(element));
+    HTMLElement* correspondingControl = downcast<HTMLLabelElement>(element).control();
     textChanged(correspondingControl);
 }
 

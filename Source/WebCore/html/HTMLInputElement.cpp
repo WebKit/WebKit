@@ -915,7 +915,7 @@ void HTMLInputElement::setChecked(bool nowChecked, TextFieldEventBehavior eventB
     // because of the way the code is structured.
     if (renderer()) {
         if (AXObjectCache* cache = renderer()->document().existingAXObjectCache())
-            cache->checkedStateChanged(this);
+            cache->checkedStateChanged(*this);
     }
 
     // Only send a change event for items in the document (avoid firing during

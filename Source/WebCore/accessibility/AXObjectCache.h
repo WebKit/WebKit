@@ -164,8 +164,8 @@ public:
     void childrenChanged(Node*, Node* newChild = nullptr);
     void childrenChanged(RenderObject*, RenderObject* newChild = nullptr);
     void childrenChanged(AccessibilityObject*);
-    void checkedStateChanged(Node*);
-    void selectedChildrenChanged(Node*);
+    void checkedStateChanged(Element&);
+    void selectedChildrenChanged(Element&);
     void selectedChildrenChanged(RenderObject*);
     // Called by a node when text or a text equivalent (e.g. alt) attribute is changed.
     void textChanged(Node*);
@@ -173,17 +173,13 @@ public:
     // Called when a node has just been attached, so we can make sure we have the right subclass of AccessibilityObject.
     void updateCacheAfterNodeIsAttached(Node*);
 
-    void handleActiveDescendantChanged(Node*);
-    void handleAriaRoleChanged(Node*);
     void handleFocusedUIElementChanged(Node* oldFocusedNode, Node* newFocusedNode);
     void handleScrolledToAnchor(const Node* anchorNode);
-    void handleAriaExpandedChange(Node*);
     void handleScrollbarUpdate(ScrollView*);
-    
-    void handleAriaModalChange(Node*);
+
     Node* ariaModalNode();
 
-    void handleAttributeChanged(const QualifiedName& attrName, Element*);
+    void handleAttributeChanged(const QualifiedName& attrName, Element&);
     void recomputeIsIgnored(RenderObject* renderer);
 
 #if HAVE(ACCESSIBILITY)
@@ -346,7 +342,6 @@ protected:
 
     void frameLoadingEventPlatformNotification(AccessibilityObject*, AXLoadingEvent);
     void textChanged(AccessibilityObject*);
-    void labelChanged(Element*);
 
     // This is a weak reference cache for knowing if Nodes used by TextMarkers are valid.
     void setNodeInUse(Node* n) { m_textMarkerNodes.add(n); }
@@ -402,6 +397,12 @@ private:
     void findAriaModalNodes();
     void updateCurrentAriaModalNode();
     bool isNodeVisible(Node*) const;
+
+    void handleActiveDescendantChanged(Element&);
+    void handleAriaRoleChanged(Element&);
+    void handleAriaExpandedChange(Element&);
+    void handleAriaModalChange(Element&);
+    void labelChanged(Element&);
 
     Document& m_document;
     HashMap<AXID, RefPtr<AccessibilityObject>> m_objects;
@@ -474,7 +475,7 @@ inline bool isNodeAriaVisible(Node*) { return true; }
 inline const Element* AXObjectCache::rootAXEditableElement(const Node*) { return nullptr; }
 inline Node* AXObjectCache::ariaModalNode() { return nullptr; }
 inline void AXObjectCache::attachWrapper(AccessibilityObject*) { }
-inline void AXObjectCache::checkedStateChanged(Node*) { }
+inline void AXObjectCache::checkedStateChanged(Element&) { }
 inline void AXObjectCache::childrenChanged(RenderObject*, RenderObject*) { }
 inline void AXObjectCache::childrenChanged(Node*, Node*) { }
 inline void AXObjectCache::childrenChanged(AccessibilityObject*) { }
@@ -485,13 +486,13 @@ inline void AXObjectCache::updateCacheAfterNodeIsAttached(Node*) { }
 inline void AXObjectCache::detachWrapper(AccessibilityObject*, AccessibilityDetachmentType) { }
 inline void AXObjectCache::frameLoadingEventNotification(Frame*, AXLoadingEvent) { }
 inline void AXObjectCache::frameLoadingEventPlatformNotification(AccessibilityObject*, AXLoadingEvent) { }
-inline void AXObjectCache::handleActiveDescendantChanged(Node*) { }
-inline void AXObjectCache::handleAriaExpandedChange(Node*) { }
-inline void AXObjectCache::handleAriaRoleChanged(Node*) { }
-inline void AXObjectCache::handleAriaModalChange(Node*) { }
+inline void AXObjectCache::handleActiveDescendantChanged(Element&) { }
+inline void AXObjectCache::handleAriaExpandedChange(Element&) { }
+inline void AXObjectCache::handleAriaRoleChanged(Element&) { }
+inline void AXObjectCache::handleAriaModalChange(Element&) { }
 inline void AXObjectCache::handleFocusedUIElementChanged(Node*, Node*) { }
 inline void AXObjectCache::handleScrollbarUpdate(ScrollView*) { }
-inline void AXObjectCache::handleAttributeChanged(const QualifiedName&, Element*) { }
+inline void AXObjectCache::handleAttributeChanged(const QualifiedName&, Element&) { }
 inline void AXObjectCache::recomputeIsIgnored(RenderObject*) { }
 inline void AXObjectCache::recomputeDeferredIsIgnored(RenderBlock&) { }
 inline void AXObjectCache::deferTextChanged(RenderText&) { }
@@ -512,7 +513,7 @@ inline void AXObjectCache::remove(RenderObject*) { }
 inline void AXObjectCache::remove(Node*) { }
 inline void AXObjectCache::remove(Widget*) { }
 inline void AXObjectCache::selectedChildrenChanged(RenderObject*) { }
-inline void AXObjectCache::selectedChildrenChanged(Node*) { }
+inline void AXObjectCache::selectedChildrenChanged(Element&) { }
 inline void AXObjectCache::setIsSynchronizingSelection(bool) { }
 inline void AXObjectCache::setTextSelectionIntent(const AXTextStateChangeIntent&) { }
 inline RefPtr<Range> AXObjectCache::rangeForUnorderedCharacterOffsets(const CharacterOffset&, const CharacterOffset&) { return nullptr; }
