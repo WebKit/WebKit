@@ -241,6 +241,11 @@ static AvoidanceReasonFlags canUseForStyle(const RenderStyle& style, IncludeReas
     if (style.trailingWord() != TrailingWord::Auto)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonAutoTrailingWord, reasons, includeReasons);
 #endif
+    if (style.hyphens() == HyphensAuto) {
+        auto textReasons = canUseForText(style.hyphenString(), style.fontCascade(), std::nullopt, false, includeReasons);
+        if (textReasons != NoReason)
+            SET_REASON_AND_RETURN_IF_NEEDED(textReasons, reasons, includeReasons);
+    }
     return reasons;
 }
 

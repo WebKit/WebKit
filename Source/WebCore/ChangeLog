@@ -1,3 +1,18 @@
+2017-05-08  Zalan Bujtas  <zalan@apple.com>
+
+        Bail out of simple line layout when hyphen needs a fallback font.
+        https://bugs.webkit.org/show_bug.cgi?id=171811
+
+        Reviewed by Antti Koivisto.
+
+        With hyphen: auto is set, we don't know if the hypen string is going to be used, until
+        after we started laying out the content and figured that the text overflows the line.
+        However it's too late to bail out of simple line layout at this point, so let's just
+        pre-check if the hyphen string needs a fallback font.
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::canUseForStyle):
+
 2017-05-08  Youenn Fablet  <youenn@apple.com>
 
         TURNS gathering is not working properly
