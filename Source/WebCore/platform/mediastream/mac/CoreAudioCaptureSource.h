@@ -51,7 +51,7 @@ class AudioSampleDataSource;
 class CaptureDeviceInfo;
 class WebAudioSourceProviderAVFObjC;
 
-class CoreAudioCaptureSource : public RealtimeMediaSource {
+class CoreAudioCaptureSource final : public RealtimeMediaSource {
 public:
 
     static CaptureSourceOrError create(const String& deviceID, const MediaConstraints*);
@@ -80,9 +80,9 @@ private:
     void stopProducingData() final;
     bool isProducingData() const final { return m_isProducingData; }
 
-    bool applyVolume(double) override { return true; }
-    bool applySampleRate(int) override { return true; }
-    bool applyEchoCancellation(bool) override { return true; }
+    bool applyVolume(double) final { return true; }
+    bool applySampleRate(int) final;
+    bool applyEchoCancellation(bool) final;
 
     const RealtimeMediaSourceCapabilities& capabilities() const final;
     const RealtimeMediaSourceSettings& settings() const final;

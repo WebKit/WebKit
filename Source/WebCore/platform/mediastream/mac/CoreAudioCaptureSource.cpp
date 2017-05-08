@@ -80,6 +80,7 @@ const UInt32 inputBus = 1;
 class CoreAudioSharedUnit {
 public:
     static CoreAudioSharedUnit& singleton();
+    CoreAudioSharedUnit();
 
     void addClient(CoreAudioCaptureSource&);
     void removeClient(CoreAudioCaptureSource&);
@@ -99,6 +100,14 @@ public:
     static size_t preferredIOBufferSize();
 
     const CAAudioStreamDescription& microphoneFormat() const { return m_microphoneProcFormat; }
+
+    double volume() const { return m_volume; }
+    int sampleRate() const { return m_sampleRate; }
+    bool enableEchoCancellation() const { return m_enableEchoCancellation; }
+
+    void setVolume(double volume) { m_volume = volume; }
+    void setSampleRate(int sampleRate) { m_sampleRate = sampleRate; }
+    void setEnableEchoCancellation(bool enableEchoCancellation) { m_enableEchoCancellation = enableEchoCancellation; }
 
 private:
     OSStatus configureSpeakerProc();
@@ -153,12 +162,21 @@ private:
     uint64_t m_speakerProcsCalled { 0 };
     uint64_t m_microphoneProcsCalled { 0 };
 #endif
+
+    bool m_enableEchoCancellation { true };
+    double m_volume { 1 };
+    int m_sampleRate;
 };
 
 CoreAudioSharedUnit& CoreAudioSharedUnit::singleton()
 {
     static NeverDestroyed<CoreAudioSharedUnit> singleton;
     return singleton;
+}
+
+CoreAudioSharedUnit::CoreAudioSharedUnit()
+{
+    m_sampleRate = AudioSession::sharedSession().sampleRate();
 }
 
 void CoreAudioSharedUnit::addClient(CoreAudioCaptureSource& client)
@@ -228,15 +246,23 @@ OSStatus CoreAudioSharedUnit::setupAudioUnits()
         return err;
     }
 
-    uint32_t param = m_clients.first()->echoCancellation();
-    err = AudioUnitSetProperty(m_ioUnit, kAUVoiceIOProperty_VoiceProcessingEnableAGC, kAudioUnitScope_Global, inputBus, &param, sizeof(param));
-    if (err) {
-        LOG(Media, "CoreAudioCaptureSource::setupAudioUnits(%p) unable to set vpio unit echo cancellation, error %d (%.4s)", this, (int)err, (char*)&err);
-        return err;
+    if (!m_enableEchoCancellation) {
+        uint32_t param = 0;
+        err = AudioUnitSetProperty(m_ioUnit, kAUVoiceIOProperty_VoiceProcessingEnableAGC, kAudioUnitScope_Global, inputBus, &param, sizeof(param));
+        if (err) {
+            LOG(Media, "CoreAudioCaptureSource::setupAudioUnits(%p) unable to set vpio automatic gain control, error %d (%.4s)", this, (int)err, (char*)&err);
+            return err;
+        }
+        param = 1;
+        err = AudioUnitSetProperty(m_ioUnit, kAUVoiceIOProperty_BypassVoiceProcessing, kAudioUnitScope_Global, inputBus, &param, sizeof(param));
+        if (err) {
+            LOG(Media, "CoreAudioCaptureSource::setupAudioUnits(%p) unable to set vpio unit echo cancellation, error %d (%.4s)", this, (int)err, (char*)&err);
+            return err;
+        }
     }
 
 #if PLATFORM(IOS)
-    param = 1;
+    uint32_t param = 1;
     err = AudioUnitSetProperty(m_ioUnit, kAudioOutputUnitProperty_EnableIO, kAudioUnitScope_Input, inputBus, &param, sizeof(param));
     if (err) {
         LOG(Media, "CoreAudioCaptureSource::setupAudioUnits(%p) unable to enable vpio unit input, error %d (%.4s)", this, (int)err, (char*)&err);
@@ -292,7 +318,7 @@ OSStatus CoreAudioSharedUnit::configureMicrophoneProc()
         return err;
     }
 
-    microphoneProcFormat.mSampleRate = m_clients.first()->sampleRate();
+    microphoneProcFormat.mSampleRate = m_sampleRate;
     err = AudioUnitSetProperty(m_ioUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Output, inputBus, &microphoneProcFormat, size);
     if (err) {
         LOG(Media, "CoreAudioSharedUnit::configureMicrophoneProc(%p) unable to set output stream format, error %d (%.4s)", this, (int)err, (char*)&err);
@@ -323,7 +349,7 @@ OSStatus CoreAudioSharedUnit::configureSpeakerProc()
         return err;
     }
 
-    speakerProcFormat.mSampleRate = m_clients.first()->sampleRate();
+    speakerProcFormat.mSampleRate = m_sampleRate;
     err = AudioUnitSetProperty(m_ioUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, outputBus, &speakerProcFormat, size);
     if (err) {
         LOG(Media, "CoreAudioSharedUnit::configureSpeakerProc(%p) unable to get input stream format, error %d (%.4s)", this, (int)err, (char*)&err);
@@ -428,6 +454,9 @@ OSStatus CoreAudioSharedUnit::processMicrophoneSamples(AudioUnitRenderActionFlag
 #endif
     m_latestMicTimeStamp = sampleTime;
     m_microphoneSampleBuffer->setTimes(adjustedHostTime, sampleTime);
+
+    if (m_volume != 1.0)
+        m_microphoneSampleBuffer->applyGain(m_volume);
 
     for (auto* client : m_clients) {
         if (client->isProducingData())
@@ -598,11 +627,13 @@ CoreAudioCaptureSource::CoreAudioCaptureSource(const String& deviceID, const Str
 {
     m_muted = true;
 
-    setVolume(1.0);
-    setSampleRate(AudioSession::sharedSession().sampleRate());
-    setEchoCancellation(true);
+    auto& unit = CoreAudioSharedUnit::singleton();
 
-    CoreAudioSharedUnit::singleton().addClient(*this);
+    initializeEchoCancellation(unit.enableEchoCancellation());
+    initializeSampleRate(unit.sampleRate());
+    initializeVolume(unit.volume());
+
+    unit.addClient(*this);
 }
 
 CoreAudioCaptureSource::~CoreAudioCaptureSource()
@@ -702,6 +733,35 @@ AudioSourceProvider* CoreAudioCaptureSource::audioSourceProvider()
     }
 
     return m_audioSourceProvider.get();
+}
+
+bool CoreAudioCaptureSource::applySampleRate(int sampleRate)
+{
+    // FIXME: We should be able to describe sample rate as a discreet range constraint so that we only enter here with values that can be applied.
+    switch (sampleRate) {
+    case 8000:
+    case 16000:
+    case 32000:
+    case 44100:
+    case 48000:
+    case 96000:
+        break;
+    default:
+        return false;
+    }
+
+    CoreAudioSharedUnit::singleton().setSampleRate(sampleRate);
+
+    // FIXME: do reconfiguration if audio unit is started.
+    return true;
+}
+
+bool CoreAudioCaptureSource::applyEchoCancellation(bool enableEchoCancellation)
+{
+    CoreAudioSharedUnit::singleton().setEnableEchoCancellation(enableEchoCancellation);
+
+    // FIXME: do reconfiguration if audio unit is started.
+    return true;
 }
 
 } // namespace WebCore

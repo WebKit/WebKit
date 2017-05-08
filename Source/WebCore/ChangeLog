@@ -1,3 +1,36 @@
+2017-05-08  Youenn Fablet  <youenn@apple.com>
+
+        CoreAudioSharedUnit should own its configuration parameters
+        https://bugs.webkit.org/show_bug.cgi?id=171812
+
+        Reviewed by Eric Carlson.
+
+        Covered by manual tests.
+
+        Add sampleRate, volume and echoCancellation parameters to the shared audio unit.
+        Set default values when creating the shared audio unit and use those for the creation of new sources.
+        Add support for volume.
+        Add support for disabling echo cancellation.
+        Check valid sample rates when trying to apply a sample rate.
+
+        * platform/mediastream/RealtimeMediaSource.h:
+        * platform/mediastream/mac/CoreAudioCaptureSource.cpp:
+        (WebCore::CoreAudioSharedUnit::volume):
+        (WebCore::CoreAudioSharedUnit::sampleRate):
+        (WebCore::CoreAudioSharedUnit::enableEchoCancellation):
+        (WebCore::CoreAudioSharedUnit::setVolume):
+        (WebCore::CoreAudioSharedUnit::setSampleRate):
+        (WebCore::CoreAudioSharedUnit::setEnableEchoCancellation):
+        (WebCore::CoreAudioSharedUnit::CoreAudioSharedUnit):
+        (WebCore::CoreAudioSharedUnit::setupAudioUnits):
+        (WebCore::CoreAudioSharedUnit::configureMicrophoneProc):
+        (WebCore::CoreAudioSharedUnit::configureSpeakerProc):
+        (WebCore::CoreAudioSharedUnit::processMicrophoneSamples):
+        (WebCore::CoreAudioCaptureSource::CoreAudioCaptureSource):
+        (WebCore::CoreAudioCaptureSource::applySampleRate):
+        (WebCore::CoreAudioCaptureSource::applyEchoCancellation):
+        * platform/mediastream/mac/CoreAudioCaptureSource.h:
+
 2017-05-08  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: Setting aria-orientation="horizontal" on a listbox is being overridden on the Mac
