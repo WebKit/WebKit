@@ -1,3 +1,15 @@
+2017-05-08  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] Audio capture fails when shouldCaptureAudioInUIProcess is set.
+        https://bugs.webkit.org/show_bug.cgi?id=171710
+
+        Reviewed by Eric Carlson.
+
+        RealtimeMediaSourceCenterMac's setUseAVFoundationAudioCapture() is now accessed via a singleton.
+
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::syncWithWebCorePrefs):
+
 2017-05-08  Andy Estes  <aestes@apple.com>
 
         [macOS] com.macromedia.Flash Player ESR.plugin.sb is installed outside of PlugInSandboxProfiles

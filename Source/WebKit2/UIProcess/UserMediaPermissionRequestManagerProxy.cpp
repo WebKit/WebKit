@@ -366,7 +366,7 @@ void UserMediaPermissionRequestManagerProxy::syncWithWebCorePrefs() const
 
 #if USE(AVFOUNDATION)
     bool useAVFoundationAudioCapture = m_page.preferences().useAVFoundationAudioCapture();
-    WebCore::RealtimeMediaSourceCenterMac::setUseAVFoundationAudioCapture(useAVFoundationAudioCapture);
+    WebCore::RealtimeMediaSourceCenterMac::singleton().setUseAVFoundationAudioCapture(useAVFoundationAudioCapture);
 #endif
 #endif
 }

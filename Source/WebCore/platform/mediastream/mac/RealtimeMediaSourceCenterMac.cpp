@@ -47,31 +47,19 @@ namespace WebCore {
 
 void RealtimeMediaSourceCenterMac::setUseAVFoundationAudioCapture(bool enabled)
 {
-    static std::optional<bool> active = std::nullopt;
-    if (active && active.value() == enabled)
-        return;
-
-    active = enabled;
-    if (active.value()) {
-        RealtimeMediaSourceCenter::singleton().setAudioFactory(AVAudioCaptureSource::factory());
-        RealtimeMediaSourceCenter::singleton().setAudioCaptureDeviceManager(AVCaptureDeviceManager::singleton());
-    } else {
-        RealtimeMediaSourceCenter::singleton().setAudioFactory(CoreAudioCaptureSource::factory());
-#if PLATFORM(MAC)
-        RealtimeMediaSourceCenter::singleton().setAudioCaptureDeviceManager(CoreAudioCaptureDeviceManager::singleton());
-#else
-        RealtimeMediaSourceCenter::singleton().setAudioCaptureDeviceManager(AVAudioSessionCaptureDeviceManager::singleton());
-#endif
-    }
+    m_useAVFoundationAudioCapture = enabled;
 }
 
-
-
-RealtimeMediaSourceCenter& RealtimeMediaSourceCenter::platformCenter()
+RealtimeMediaSourceCenterMac& RealtimeMediaSourceCenterMac::singleton()
 {
     ASSERT(isMainThread());
     static NeverDestroyed<RealtimeMediaSourceCenterMac> center;
     return center;
+}
+
+RealtimeMediaSourceCenter& RealtimeMediaSourceCenter::platformCenter()
+{
+    return RealtimeMediaSourceCenterMac::singleton();
 }
 
 RealtimeMediaSourceCenterMac::RealtimeMediaSourceCenterMac()
@@ -87,17 +75,6 @@ RealtimeMediaSourceCenterMac::RealtimeMediaSourceCenterMac()
     m_supportedConstraints.setSupportsEchoCancellation(false);
     m_supportedConstraints.setSupportsDeviceId(true);
     m_supportedConstraints.setSupportsGroupId(true);
-
-    m_audioFactory = &CoreAudioCaptureSource::factory();
-    m_videoFactory = &AVVideoCaptureSource::factory();
-
-#if PLATFORM(MAC)
-    m_audioCaptureDeviceManager = &CoreAudioCaptureDeviceManager::singleton();
-#else
-    // FIXME 170861: Use AVAudioSession to enumerate audio capture devices on iOS
-    m_audioCaptureDeviceManager = &AVCaptureDeviceManager::singleton();
-#endif
-    m_videoCaptureDeviceManager = &AVCaptureDeviceManager::singleton();
 }
 
 RealtimeMediaSourceCenterMac::~RealtimeMediaSourceCenterMac()
@@ -135,8 +112,8 @@ void RealtimeMediaSourceCenterMac::createMediaStream(NewMediaStreamHandler&& com
     Vector<Ref<RealtimeMediaSource>> videoSources;
     String invalidConstraint;
 
-    if (!audioDeviceID.isEmpty() && m_audioFactory) {
-        auto audioSource = m_audioFactory->createAudioCaptureSource(audioDeviceID, audioConstraints);
+    if (!audioDeviceID.isEmpty() && audioFactory()) {
+        auto audioSource = audioFactory()->createAudioCaptureSource(audioDeviceID, audioConstraints);
         if (audioSource)
             audioSources.append(audioSource.source());
 #if !LOG_DISABLED
@@ -144,8 +121,8 @@ void RealtimeMediaSourceCenterMac::createMediaStream(NewMediaStreamHandler&& com
             LOG(Media, "RealtimeMediaSourceCenterMac::createMediaStream(%p), audio constraints failed to apply: %s", this, audioSource.errorMessage.utf8().data());
 #endif
     }
-    if (!videoDeviceID.isEmpty() && m_videoFactory) {
-        auto videoSource = m_videoFactory->createVideoCaptureSource(videoDeviceID, videoConstraints);
+    if (!videoDeviceID.isEmpty() && videoFactory()) {
+        auto videoSource = videoFactory()->createVideoCaptureSource(videoDeviceID, videoConstraints);
         if (videoSource)
             videoSources.append(videoSource.source());
 #if !LOG_DISABLED
@@ -164,11 +141,11 @@ Vector<CaptureDevice> RealtimeMediaSourceCenterMac::getMediaStreamDevices()
 {
     Vector<CaptureDevice> result;
 
-    if (m_audioCaptureDeviceManager)
-        result.appendVector(m_audioCaptureDeviceManager->getAudioSourcesInfo());
+    if (auto audioDeviceManager = audioCaptureDeviceManager())
+        result.appendVector(audioDeviceManager->getAudioSourcesInfo());
 
-    if (m_videoCaptureDeviceManager)
-        result.appendVector(m_videoCaptureDeviceManager->getVideoSourcesInfo());
+    if (auto videoDeviceManager = videoCaptureDeviceManager())
+        result.appendVector(videoDeviceManager->getVideoSourcesInfo());
 
     return result;
 }
@@ -190,10 +167,10 @@ Vector<String> RealtimeMediaSourceCenterMac::bestSourcesForTypeAndConstraints(Re
             continue;
 
         CaptureSourceOrError sourceOrError;
-        if (type == RealtimeMediaSource::Type::Video && m_videoFactory)
-            sourceOrError = m_videoFactory->createVideoCaptureSource(captureDevice.persistentId(), &constraints);
-        else if (type == RealtimeMediaSource::Type::Audio && m_audioFactory)
-            sourceOrError = m_audioFactory->createAudioCaptureSource(captureDevice.persistentId(), &constraints);
+        if (type == RealtimeMediaSource::Type::Video && videoFactory())
+            sourceOrError = videoFactory()->createVideoCaptureSource(captureDevice.persistentId(), &constraints);
+        else if (type == RealtimeMediaSource::Type::Audio && audioFactory())
+            sourceOrError = audioFactory()->createAudioCaptureSource(captureDevice.persistentId(), &constraints);
 
         if (!sourceOrError) {
             // FIXME: Handle the case of invalid constraints on more than one device.
@@ -217,12 +194,28 @@ Vector<String> RealtimeMediaSourceCenterMac::bestSourcesForTypeAndConstraints(Re
 
 RealtimeMediaSource::AudioCaptureFactory* RealtimeMediaSourceCenterMac::defaultAudioFactory()
 {
-    return &CoreAudioCaptureSource::factory();
+    return m_useAVFoundationAudioCapture ? &AVAudioCaptureSource::factory() : &CoreAudioCaptureSource::factory();
 }
 
 RealtimeMediaSource::VideoCaptureFactory* RealtimeMediaSourceCenterMac::defaultVideoFactory()
 {
     return &AVVideoCaptureSource::factory();
+}
+
+CaptureDeviceManager* RealtimeMediaSourceCenterMac::defaultAudioCaptureDeviceManager()
+{
+    if (m_useAVFoundationAudioCapture)
+        return &AVCaptureDeviceManager::singleton();
+#if PLATFORM(MAC)
+    return &CoreAudioCaptureDeviceManager::singleton();
+#else
+    return &AVAudioSessionCaptureDeviceManager::singleton();
+#endif
+}
+
+CaptureDeviceManager* RealtimeMediaSourceCenterMac::defaultVideoCaptureDeviceManager()
+{
+    return &AVCaptureDeviceManager::singleton();
 }
 
 } // namespace WebCore

@@ -630,7 +630,7 @@ void Settings::setUseAVFoundationAudioCapture(bool useAVFoundationAudioCapture)
 {
     gUseAVFoundationAudioCapture = useAVFoundationAudioCapture;
 #if USE(AVFOUNDATION)
-    RealtimeMediaSourceCenterMac::setUseAVFoundationAudioCapture(useAVFoundationAudioCapture);
+    RealtimeMediaSourceCenterMac::singleton().setUseAVFoundationAudioCapture(useAVFoundationAudioCapture);
 #endif
 }
 #endif

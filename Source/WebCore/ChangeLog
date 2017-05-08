@@ -1,3 +1,35 @@
+2017-05-08  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] Audio capture fails when shouldCaptureAudioInUIProcess is set.
+        https://bugs.webkit.org/show_bug.cgi?id=171710
+
+        Reviewed by Eric Carlson.
+
+        Both the shouldCaptureAudioInUIProcess setting and useAVFoundationAudioCapture setting were trying to set
+        the audio factory for RealtimeMediaSourceCenter, and were stomping on each others' changes. Change the way
+        the useAVFoundationAudioCapture works so that it only affects the defaultAudioFactory, allowing that default
+        to be overridden by the shuoldCaptureAudioInUIProcess setting when it calls setAudioFactory().
+
+        * page/Settings.cpp:
+        (WebCore::Settings::setUseAVFoundationAudioCapture):
+        * platform/mediastream/RealtimeMediaSourceCenter.cpp:
+        (WebCore::RealtimeMediaSourceCenter::audioFactory):
+        (WebCore::RealtimeMediaSourceCenter::videoFactory):
+        (WebCore::RealtimeMediaSourceCenter::audioCaptureDeviceManager):
+        (WebCore::RealtimeMediaSourceCenter::videoCaptureDeviceManager):
+        * platform/mediastream/RealtimeMediaSourceCenter.h:
+        (WebCore::RealtimeMediaSourceCenter::audioFactory): Deleted.
+        (WebCore::RealtimeMediaSourceCenter::videoFactory): Deleted.
+        (WebCore::RealtimeMediaSourceCenter::audioCaptureDeviceManager): Deleted.
+        (WebCore::RealtimeMediaSourceCenter::videoCaptureDeviceManager): Deleted.
+        * platform/mediastream/mac/RealtimeMediaSourceCenterMac.cpp:
+        (WebCore::RealtimeMediaSourceCenterMac::setUseAVFoundationAudioCapture):
+        (WebCore::RealtimeMediaSourceCenterMac::singleton):
+        (WebCore::RealtimeMediaSourceCenter::platformCenter):
+        (WebCore::RealtimeMediaSourceCenterMac::defaultAudioFactory):
+        (WebCore::RealtimeMediaSourceCenterMac::defaultAudioCaptureDeviceManager):
+        * platform/mediastream/mac/RealtimeMediaSourceCenterMac.h:
+
 2017-05-04  Jiewen Tan  <jiewen_tan@apple.com>
 
         Search events should not fire synchronously for search type input elements with incremental attribute set
