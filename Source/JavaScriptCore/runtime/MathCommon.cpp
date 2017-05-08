@@ -467,6 +467,11 @@ int32_t JIT_OPERATION operationToInt32(double value)
     return JSC::toInt32(value);
 }
 
+int32_t JIT_OPERATION operationToInt32SensibleSlow(double number)
+{
+    return toInt32Internal<ToInt32Mode::AfterSensibleConversionAttempt>(number);
+}
+
 #if HAVE(ARM_IDIV_INSTRUCTIONS)
 static inline bool isStrictInt32(double value)
 {
