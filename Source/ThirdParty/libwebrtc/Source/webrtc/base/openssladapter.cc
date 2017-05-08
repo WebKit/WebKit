@@ -332,6 +332,11 @@ OpenSSLAdapter::BeginSSL() {
   }
 
   SSL_set_app_data(ssl_, this);
+  // WEBKIT Changes - Start
+  if (ssl_host_name_.length()) {
+    SSL_set_tlsext_host_name(ssl_, ssl_host_name_.c_str());
+  }
+  // WEBKIT Changes - End
 
   SSL_set_bio(ssl_, bio, bio);
   SSL_set_mode(ssl_, SSL_MODE_ENABLE_PARTIAL_WRITE |
