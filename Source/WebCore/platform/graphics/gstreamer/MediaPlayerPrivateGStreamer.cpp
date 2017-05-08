@@ -937,9 +937,7 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
     GST_DEBUG("Message %s received from element %s", GST_MESSAGE_TYPE_NAME(message), GST_MESSAGE_SRC_NAME(message));
     switch (GST_MESSAGE_TYPE(message)) {
     case GST_MESSAGE_ERROR:
-        if (m_resetPipeline)
-            break;
-        if (m_missingPluginsCallback)
+        if (m_resetPipeline || m_missingPluginsCallback || m_errorOccured)
             break;
         gst_message_parse_error(message, &err.outPtr(), &debug.outPtr());
         GST_ERROR("Error %d: %s (url=%s)", err->code, err->message, m_url.string().utf8().data());

@@ -1,5 +1,25 @@
 2017-05-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GStreamer] Do not report more errors after the first one
+        https://bugs.webkit.org/show_bug.cgi?id=171722
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        We can receive several error messages for the same error from different elements. That's not expected by the
+        media source selection algorithm implementation. I don't know if didn't happen with previous versions of GST,
+        but since the upgrade to 1.10.4 several tests are failing because of this.
+
+        Fixes: media/video-error-does-not-exist.html
+               media/video-load-networkState.html
+               media/video-source-error.html
+               media/video-source-none-supported.html
+               media/video-source-moved.html
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::handleMessage): Return early also when an error already occured.
+
+2017-05-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GStreamer] Fix handling of gst errors in MediaPlayerPrivateGStreamer::handleMessage
         https://bugs.webkit.org/show_bug.cgi?id=171721
 
