@@ -1,3 +1,27 @@
+2017-05-08  Zalan Bujtas  <zalan@apple.com>
+
+        Text overlaps on http://www.duden.de/rechtschreibung/Acre
+        https://bugs.webkit.org/show_bug.cgi?id=171796
+        <rdar://problem/31036028>
+
+        Reviewed by Simon Fraser.
+
+        Simple line layout pre-measures space using the primary font,
+        even if the space glyph requires a fallback font (and even if the string does not have a space in it at all).
+        When this width gets cached (see WidthCache) we might end up using it later during normal line layout and
+        it could produce incorrect layout.
+        This patch removes the space width caching from Simple line layout, since Font already caches it.
+
+        Test: fast/text/simple-line-layout-fallback-space-glyph.html
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::createLineRuns):
+        * rendering/SimpleLineLayoutTextFragmentIterator.cpp:
+        (WebCore::SimpleLineLayout::TextFragmentIterator::Style::Style):
+        (WebCore::SimpleLineLayout::TextFragmentIterator::skipToNextPosition):
+        (WebCore::SimpleLineLayout::TextFragmentIterator::textWidth):
+        * rendering/SimpleLineLayoutTextFragmentIterator.h:
+
 2017-05-08  Chris Dumez  <cdumez@apple.com>
 
         Refactor ImageInputType::width() / height() for clarity

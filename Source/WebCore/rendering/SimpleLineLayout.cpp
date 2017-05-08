@@ -626,7 +626,7 @@ static std::optional<unsigned> hyphenPositionForFragment(SplitFragmentData split
     // It does not work properly with non-collapsed leading tabs when font is enlarged.
     auto adjustedAvailableWidth = availableWidth - style.hyphenStringWidth;
     if (!line.isEmpty())
-        adjustedAvailableWidth += style.spaceWidth;
+        adjustedAvailableWidth += style.font.spaceWidth();
     if (!enoughWidthForHyphenation(adjustedAvailableWidth, style.font.pixelSize()))
         return std::nullopt;
 
@@ -769,7 +769,7 @@ static void forceFragmentToLine(LineState& line, TextFragmentIterator& textFragm
 static bool createLineRuns(LineState& line, const LineState& previousLine, Layout::RunVector& runs, TextFragmentIterator& textFragmentIterator)
 {
     const auto& style = textFragmentIterator.style();
-    line.setCollapedWhitespaceWidth(style.spaceWidth + style.wordSpacing);
+    line.setCollapedWhitespaceWidth(style.font.spaceWidth() + style.wordSpacing);
     bool lineCanBeWrapped = style.wrapLines || style.breakFirstWordOnOverflow || style.breakAnyWordOnOverflow;
     auto fragment = firstFragment(textFragmentIterator, line, previousLine, runs);
     while (fragment.type() != TextFragmentIterator::TextFragment::ContentEnd) {
