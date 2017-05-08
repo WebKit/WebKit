@@ -2,17 +2,26 @@
 Test 1
   div (shadow root)
     slot
+Slot trees:
+
 
 Test 2
   div (shadow root)
     slot
       #text
+Slot trees:
+  #text
+
 
 Test 3
   div (shadow root)
     slot
       #text
       div
+Slot trees:
+  #text
+  div
+
 
 Test 4
   div (shadow root)
@@ -21,12 +30,20 @@ Test 4
         #text
       div
         #text
+Slot trees:
+  div
+    #text
+  div
+    #text
+
 
 Test 5
   div (shadow root)
     div
       slot
     #text
+Slot trees:
+
 
 Test 6
   div (shadow root)
@@ -34,6 +51,9 @@ Test 6
       slot
         #text
     #text
+Slot trees:
+  #text
+
 
 Test 7
   div (shadow root)
@@ -42,6 +62,10 @@ Test 7
         #text
         div
     #text
+Slot trees:
+  #text
+  div
+
 
 Test 8
   div (shadow root)
@@ -52,23 +76,40 @@ Test 8
         div
           #text
     #text
+Slot trees:
+  div
+    #text
+  div
+    #text
+
 
 Test 9
   div (shadow root)
     slot
       slot-default
         #text
+Slot trees:
+  slot-default
+    #text
+
 
 Test 10
   div (shadow root)
     slot
       #text
+Slot trees:
+  #text
+
 
 Test 11
   div (shadow root)
     slot
       #text
       div
+Slot trees:
+  #text
+  div
+
 
 Test 12
   div (shadow root)
@@ -77,6 +118,12 @@ Test 12
         #text
       div
         #text
+Slot trees:
+  div
+    #text
+  div
+    #text
+
 
 Test 13
   div (shadow root)
@@ -86,6 +133,12 @@ Test 13
           #text
           slot
           #text
+Slot trees:
+
+  #text
+  slot
+  #text
+
 
 Test 14
   div (shadow root)
@@ -96,6 +149,14 @@ Test 14
           slot
             #text
           #text
+Slot trees:
+  #text
+
+  #text
+  slot
+    #text
+  #text
+
 
 Test 15
   div (shadow root)
@@ -107,6 +168,16 @@ Test 15
             #text
             div
           #text
+Slot trees:
+  #text
+  div
+
+  #text
+  slot
+    #text
+    div
+  #text
+
 
 Test 16
   div (shadow root)
@@ -120,4 +191,18 @@ Test 16
             div
               #text
           #text
+Slot trees:
+  div
+    #text
+  div
+    #text
+
+  #text
+  slot
+    div
+      #text
+    div
+      #text
+  #text
+
 

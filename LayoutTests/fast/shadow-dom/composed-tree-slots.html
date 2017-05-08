@@ -34,26 +34,38 @@ if (window.testRunner)
 <script>
 function installShadows(tree)
 {
-    var shadowHosts = tree.querySelectorAll("[shadow]");
-    for (var i = 0; i < shadowHosts.length; ++i) {
-        var shadowId = shadowHosts[i].getAttribute("shadow");
+    for (const host of tree.querySelectorAll("[shadow]")) {
+        var shadowId = host.getAttribute("shadow");
         var shadowContents = document.querySelector("#"+shadowId).content.cloneNode(true);
 
         installShadows(shadowContents);
 
-        var shadowRoot = shadowHosts[i].attachShadow({ mode: "open" });
+        var shadowRoot = host.attachShadow({ mode: "open" });
         shadowRoot.appendChild(shadowContents);
     }
 }
 
+function findSlots(root)
+{
+    let slots = [];
+    for (const host of root.querySelectorAll("[shadow]")) {
+        for (const slot of host.shadowRoot.querySelectorAll("slot"))
+            slots.push(slot);
+        Array.prototype.push.apply(slots, findSlots(host.shadowRoot));
+    }
+    return slots;
+}
+
 var console = document.querySelector("#console");
 
-var tests = document.querySelectorAll("[test]");
-for (var i = 0; i < tests.length; ++i) {
-    var test = tests[i].content.cloneNode(true);
+for (const testTemplate of document.querySelectorAll("[test]")) {
+    var test = testTemplate.content.cloneNode(true);
     installShadows(test);
-    console.innerText += "\nTest " + tests[i].getAttribute("test") + "\n";
+    console.innerText += "\nTest " + testTemplate.getAttribute("test") + "\n";
     console.innerText += internals.composedTreeAsText(test);
+    console.innerText += "Slot trees:\n";
+    for (const slot of findSlots(test))
+        console.innerText += internals.composedTreeAsText(slot) + "\n";
 }
 
 </script>
