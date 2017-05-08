@@ -28,7 +28,4 @@
     [NewObject] HTMLDocument createHTMLDocument(optional DOMString title);
 
     boolean hasFeature(); // Useless; always returns true.
-
-    // FIXME: This has already been dropped in Blink (https://bugs.chromium.org/p/chromium/issues/detail?id=363561).
-    CSSStyleSheet createCSSStyleSheet(optional DOMString title = "undefined", optional DOMString media = "undefined");
 };

@@ -1,3 +1,21 @@
+2017-05-08  Chris Dumez  <cdumez@apple.com>
+
+        Drop non-standard document.implementation.createCSSStyleSheet() API
+        https://bugs.webkit.org/show_bug.cgi?id=171825
+
+        Reviewed by Simon Fraser.
+
+        * fast/css/DOMImplementation.createCSSStyleSheet-obsolete-expected.txt:
+        * fast/css/DOMImplementation.createCSSStyleSheet-obsolete.html:
+        Add layout test coverage.
+
+        * fast/dom/StyleSheet/gc-parent-rule-expected.txt:
+        * fast/dom/StyleSheet/gc-parent-rule.html:
+        * fast/dom/StyleSheet/gc-parent-stylesheet-expected.txt:
+        * fast/dom/StyleSheet/gc-parent-stylesheet.html:
+        Add utility functions to construct a CSSStyleSheet object and use it instead
+        of document.implementation.createCSSStyleSheet().
+
 2017-05-08  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: don't expose empty roledescription

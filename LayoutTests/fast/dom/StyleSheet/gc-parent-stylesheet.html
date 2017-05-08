@@ -7,9 +7,19 @@
 window.jsTestIsAsync = true;
 description("Test that CSS stylesheets don't lose custom properties on GC when only reachable through child rules.");
 
+function createCSSStyleSheet()
+{
+    const style = document.createElement("style");
+    document.head.appendChild(style);
+    const sheet = style.sheet;
+    document.head.removeChild(style);
+    return sheet;
+}
+
 function test()
 {
-    var sheet = document.implementation.createCSSStyleSheet("title", "screen");
+    sheet = createCSSStyleSheet();
+    shouldBe("sheet.__proto__", "CSSStyleSheet.prototype");
     sheet.foo = "0";
     sheet.insertRule("div { color:black }", 0);
     rule = sheet.rules[0];

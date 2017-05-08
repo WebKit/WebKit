@@ -1,0 +1,3 @@
+
+PASS DOMImplementation.createCSSStyleSheet should not exist 
+

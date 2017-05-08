@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+test(function() {
+    assert_equals(document.implementation.createCSSStyleSheet, undefined);
+}, "DOMImplementation.createCSSStyleSheet should not exist");
+</script>
+</body>
+</html>

@@ -1,3 +1,27 @@
+2017-05-08  Chris Dumez  <cdumez@apple.com>
+
+        Drop non-standard document.implementation.createCSSStyleSheet() API
+        https://bugs.webkit.org/show_bug.cgi?id=171825
+
+        Reviewed by Simon Fraser.
+
+        Drop non-standard document.implementation.createCSSStyleSheet() API.
+
+        This was never-implemented by Firefox and they actually rejected implementing it:
+        - Drop non-standard document.implementation.createCSSStyleSheet() API
+
+        Blink dropped this API back in 2014 after getting UseCounter data showing this was not used:
+        - https://bugs.chromium.org/p/chromium/issues/detail?id=363561
+        - https://groups.google.com/a/chromium.org/forum/#!msg/blink-dev/uDjkuGA9gQs/zytnzJ6WryYJ
+
+        The API is not useful in its current state because even though
+        document.implementation.createCSSStyleSheet() allows you to create a stylesheet, there is
+        currently no way to associate it with the document.
+
+        Test: fast/css/DOMImplementation.createCSSStyleSheet-obsolete.html
+
+        * dom/DOMImplementation.idl:
+
 2017-05-08  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: don't expose empty roledescription
