@@ -1,3 +1,25 @@
+2017-05-08  Chris Dumez  <cdumez@apple.com>
+
+        Drop non-standard Element.scrollByLines() / scrollByPages()
+        https://bugs.webkit.org/show_bug.cgi?id=171820
+
+        Reviewed by Simon Fraser.
+
+        Drop non-standard Element.scrollByLines() / scrollByPages().
+
+        Those were added a very long time ago (https://trac.webkit.org/changeset/7901/webkit)
+        for Safari RSS but does not seem to be used anymore.
+
+        Blink has already dropped it without issue back in 2014:
+        - https://bugs.chromium.org/p/chromium/issues/detail?id=398356
+
+        Their UseCounter data showed no usage:
+        - https://www.chromestatus.com/metrics/feature/timeline/popularity/390
+
+        Test: fast/css/element-scrollByLines-scrollByPages-obsolete.html
+
+        * dom/Element.idl:
+
 2017-05-08  Youenn Fablet  <youenn@apple.com>
 
         CoreAudioSharedUnit should own its configuration parameters

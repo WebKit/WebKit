@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+test(function() {
+    assert_equals(document.body.scrollByLines, undefined);
+    assert_equals(Element.prototype.scrollByLines, undefined);
+}, "Element.scrollByLines");
+
+test(function() {
+    assert_equals(document.body.scrollByPages, undefined);
+    assert_equals(Element.prototype.scrollByPages, undefined);
+}, "Element.scrollByPages");
+</script>
+</body>
+</html>

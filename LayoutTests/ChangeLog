@@ -1,3 +1,21 @@
+2017-05-08  Chris Dumez  <cdumez@apple.com>
+
+        Drop non-standard Element.scrollByLines() / scrollByPages()
+        https://bugs.webkit.org/show_bug.cgi?id=171820
+
+        Reviewed by Simon Fraser.
+
+        * LayoutTests/fast/css/element-scrollByLines-scrollByPages-obsolete-expected.txt:
+        * LayoutTests/fast/css/element-scrollByLines-scrollByPages-obsolete.html:
+        Add layout test coverage.
+
+        * fast/dom/non-numeric-values-numeric-parameters-expected.txt:
+        * fast/dom/script-tests/non-numeric-values-numeric-parameters.js:
+        * fast/events/scroll-event-does-not-bubble.html:
+        * fast/layers/scroll-overflow-no-layer-expected.txt: Renamed from LayoutTests/fast/layers/scrollByLines-overflow-no-layer-expected.txt.
+        * fast/layers/scroll-overflow-no-layer.html: Renamed from LayoutTests/fast/layers/scrollByLines-overflow-no-layer.html.
+        Update existing tests to stop relying on the API.
+
 2017-05-08  Matt Lewis  <jlewis3@apple.com>
 
         Marked http/tests/websocket/tests/hybi/workers/close.html is flaky.

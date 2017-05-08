@@ -1,3 +1,15 @@
+2017-05-08  Chris Dumez  <cdumez@apple.com>
+
+        Drop non-standard Element.scrollByLines() / scrollByPages()
+        https://bugs.webkit.org/show_bug.cgi?id=171820
+
+        Reviewed by Simon Fraser.
+
+        Drop non-standard Element.scrollByLines() / scrollByPages() from
+        WebInspector code.
+
+        * UserInterface/Models/NativeFunctionParameters.js:
+
 2017-05-08  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Make it easy to dynamically show/hide a SettingsView

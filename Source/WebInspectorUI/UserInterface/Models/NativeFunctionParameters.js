@@ -408,8 +408,6 @@ WebInspector.NativePrototypeFunctionParameters = {
         removeAttribute: "attributeName",
         removeAttributeNS: "namespace, attributeName",
         removeAttributeNode: "attributeName",
-        scrollByLines: "[lines]",
-        scrollByPages: "[pages]",
         scrollIntoView: "[alignWithTop]",
         scrollIntoViewIfNeeded: "[centerIfNeeded]",
         setAttribute: "name, value",

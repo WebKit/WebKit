@@ -12,14 +12,13 @@
     if (window.testRunner)
         testRunner.dumpAsText();
 
-    function testScrollByLine()
+    function testScroll()
     {
         var overflowDiv = document.getElementById("overflow");
-        overflowDiv.scrollByLines(10);
-        overflowDiv.scrollByPages(10);
+        overflowDiv.scrollTop = 100;
         overflowDiv.innerHTML = "PASSED: The test did not crash!";
     }
-    window.addEventListener("load", testScrollByLine, false);
+    window.addEventListener("load", testScroll, false);
 </script>
 </head>
 <body>

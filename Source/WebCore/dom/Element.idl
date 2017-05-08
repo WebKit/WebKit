@@ -116,10 +116,6 @@
     // Non standard API (https://www.w3.org/Bugs/Public/show_bug.cgi?id=17152).
     void scrollIntoViewIfNeeded(optional boolean centerIfNeeded = true);
 
-    // FIXME: Non standard API already dropped by Blink (https://bugs.chromium.org/p/chromium/issues/detail?id=398356).
-    void scrollByLines(optional long lines = 0);
-    void scrollByPages(optional long pages = 0);
-
     // Event handler from Selection API (http://w3c.github.io/selection-api/#extensions-to-globaleventhandlers).
     // FIXME: Should be moved to GlobalEventHandlers.
     [NotEnumerable] attribute EventHandler onselectstart; // FIXME: Should be enumerable.
