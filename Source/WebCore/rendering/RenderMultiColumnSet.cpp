@@ -234,7 +234,7 @@ LayoutUnit RenderMultiColumnSet::calculateBalancedHeight(bool initial) const
         return m_computedColumnHeight;
     }
 
-    if (forcedBreaksCount() > 1 && forcedBreaksCount() >= computedColumnCount()) {
+    if (forcedBreaksCount() >= computedColumnCount()) {
         // Too many forced breaks to allow any implicit breaks. Initial balancing should already
         // have set a good height. There's nothing more we should do.
         return m_computedColumnHeight;
