@@ -61,9 +61,9 @@ StyledElement::~StyledElement()
         cssomWrapper->clearParentElement();
 }
 
-CSSStyleDeclaration* StyledElement::cssomStyle()
+CSSStyleDeclaration& StyledElement::cssomStyle()
 {
-    return ensureMutableInlineStyle().ensureInlineCSSStyleDeclaration(this);
+    return ensureMutableInlineStyle().ensureInlineCSSStyleDeclaration(*this);
 }
 
 MutableStyleProperties& StyledElement::ensureMutableInlineStyle()

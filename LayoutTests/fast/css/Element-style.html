@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<div id="testDiv" style="background-color: red"></div>
+<svg id="testSVG" style="background-color: red"></div>
+<script>
+test(() => {
+    const testDiv = document.getElementById("testDiv");
+    assert_equals(testDiv.__proto__, HTMLDivElement.prototype, "testDiv is an HTMLDivElement");
+    assert_idl_attribute(testDiv, "style", "HTMLElement has 'style' attribute");
+    assert_own_property(HTMLElement.prototype, "style", "'style' is on HTMLElement prototype");
+
+    const testSVG = document.getElementById("testSVG");
+    assert_equals(testSVG.__proto__, SVGSVGElement.prototype, "testSVG is an SVGSVGElement");
+    assert_idl_attribute(testSVG, "style", "SVGElement has 'style' attribute");
+    assert_own_property(SVGElement.prototype, "style", "'style' is on SVGElement prototype");
+
+    assert_not_exists("Element.prototype", "style", "'style' is not on Element prototype");
+}, "'style' property location");
+
+test(() => {
+    const testDiv = document.getElementById("testDiv");
+    assert_equals(testDiv.style.__proto__, CSSStyleDeclaration.prototype, "HTMLElement.style type");
+
+    const testSVG = document.getElementById("testSVG");
+    assert_equals(testSVG.style.__proto__, CSSStyleDeclaration.prototype, "SVGElement.style type");
+}, "'style' property type");
+
+test(() => {
+    const testDiv = document.getElementById("testDiv");
+    assert_equals(testDiv.style.backgroundColor, "red", "HTMLElement.style getter");
+    assert_readonly(testDiv, "style", "HTMLElement.style is readonly");
+    testDiv.style = "background-color: green";
+    assert_equals(testDiv.style.backgroundColor, "green", "HTMLElement.style setter");
+
+    const testSVG = document.getElementById("testSVG");
+    assert_equals(testSVG.style.backgroundColor, "red", "SVGElement.style getter");
+    assert_readonly(testSVG, "style", "SVGElement.style is readonly");
+    testSVG.style = "background-color: green";
+    assert_equals(testSVG.style.backgroundColor, "green", "SVGElement.style setter");
+}, "style should be settable");
+</script>
+</body>
+</html>

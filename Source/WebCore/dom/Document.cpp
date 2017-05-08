@@ -927,7 +927,7 @@ Ref<Text> Document::createEditingTextNode(const String& text)
 Ref<CSSStyleDeclaration> Document::createCSSStyleDeclaration()
 {
     Ref<MutableStyleProperties> propertySet(MutableStyleProperties::create());
-    return *propertySet->ensureCSSStyleDeclaration();
+    return propertySet->ensureCSSStyleDeclaration();
 }
 
 ExceptionOr<Ref<Node>> Document::importNode(Node& nodeToImport, bool deep)

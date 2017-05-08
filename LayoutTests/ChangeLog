@@ -1,3 +1,25 @@
+2017-05-08  Chris Dumez  <cdumez@apple.com>
+
+        Move 'style' from Element to HTMLElement / SVGElement and make it settable
+        https://bugs.webkit.org/show_bug.cgi?id=171795
+
+        Reviewed by Alex Christensen.
+
+        * accessibility/roles-exposed.html:
+        Add null check for element.style.
+
+        * fast/css/Element-style-expected.txt: Added.
+        * fast/css/Element-style.html: Added.
+        Add layout test coverage.
+
+        * fast/forms/input-width-height-attributes-without-renderer-loaded-image-expected.txt:
+        Rebaseline test that was setting HTMLElement.style which was a no-op until this patch. Now that it actually
+        does something, the input element actually looses its renderer. This found a bug which I fixed in this
+        patch.
+
+        * js/dom/dom-static-property-for-in-iteration-expected.txt:
+        Rebaseline as property enumeration order has changed.
+
 2017-05-08  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: Propagate aria-readonly to grid descendants

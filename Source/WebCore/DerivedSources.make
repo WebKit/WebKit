@@ -323,6 +323,7 @@ JS_BINDING_IDLS = \
 	$(WebCore)/css/DeprecatedCSSOMValue.idl \
     $(WebCore)/css/DeprecatedCSSOMValueList.idl \
     $(WebCore)/css/DOMCSSNamespace.idl \
+    $(WebCore)/css/ElementCSSInlineStyle.idl \
     $(WebCore)/css/FontFace.idl \
     $(WebCore)/css/FontFaceSet.idl \
     $(WebCore)/css/MediaList.idl \

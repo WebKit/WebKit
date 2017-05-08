@@ -1325,25 +1325,25 @@ PropertySetCSSStyleDeclaration* MutableStyleProperties::cssStyleDeclaration()
     return m_cssomWrapper.get();
 }
 
-CSSStyleDeclaration* MutableStyleProperties::ensureCSSStyleDeclaration()
+CSSStyleDeclaration& MutableStyleProperties::ensureCSSStyleDeclaration()
 {
     if (m_cssomWrapper) {
         ASSERT(!static_cast<CSSStyleDeclaration*>(m_cssomWrapper.get())->parentRule());
         ASSERT(!m_cssomWrapper->parentElement());
-        return m_cssomWrapper.get();
+        return *m_cssomWrapper;
     }
-    m_cssomWrapper = std::make_unique<PropertySetCSSStyleDeclaration>(this);
-    return m_cssomWrapper.get();
+    m_cssomWrapper = std::make_unique<PropertySetCSSStyleDeclaration>(*this);
+    return *m_cssomWrapper;
 }
 
-CSSStyleDeclaration* MutableStyleProperties::ensureInlineCSSStyleDeclaration(StyledElement* parentElement)
+CSSStyleDeclaration& MutableStyleProperties::ensureInlineCSSStyleDeclaration(StyledElement& parentElement)
 {
     if (m_cssomWrapper) {
-        ASSERT(m_cssomWrapper->parentElement() == parentElement);
-        return m_cssomWrapper.get();
+        ASSERT(m_cssomWrapper->parentElement() == &parentElement);
+        return *m_cssomWrapper;
     }
-    m_cssomWrapper = std::make_unique<InlineCSSStyleDeclaration>(this, parentElement);
-    return m_cssomWrapper.get();
+    m_cssomWrapper = std::make_unique<InlineCSSStyleDeclaration>(*this, parentElement);
+    return *m_cssomWrapper;
 }
 
 unsigned StyleProperties::averageSizeInBytes()

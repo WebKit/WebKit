@@ -41,6 +41,7 @@
 #import <WebCore/NameNodeList.h>
 #import <WebCore/NodeList.h>
 #import <WebCore/StyleProperties.h>
+#import <WebCore/StyledElement.h>
 #import <WebCore/ThreadCheck.h>
 #import <WebCore/WebScriptObjectPrivate.h>
 
@@ -72,7 +73,8 @@ DOMElement *kit(WebCore::Element* value)
 - (DOMCSSStyleDeclaration *)style
 {
     WebCore::JSMainThreadNullState state;
-    return kit(unwrap(*self).cssomStyle());
+    auto& element = unwrap(*self);
+    return is<WebCore::StyledElement>(element) ? kit(&downcast<WebCore::StyledElement>(element).cssomStyle()) : nullptr;
 }
 
 - (int)offsetLeft

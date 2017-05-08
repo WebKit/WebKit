@@ -1,3 +1,73 @@
+2017-05-08  Chris Dumez  <cdumez@apple.com>
+
+        Move 'style' from Element to HTMLElement / SVGElement and make it settable
+        https://bugs.webkit.org/show_bug.cgi?id=171795
+
+        Reviewed by Alex Christensen.
+
+        Move 'style' from Element to HTMLElement / SVGElement and make it settable
+        as per:
+        - https://drafts.csswg.org/cssom/#the-elementcssinlinestyle-interface
+
+        Both Firefox and Chrome already match the specification (both for the
+        property location and having it settable).
+
+        Test: fast/css/Element-style.html
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/ElementCSSInlineStyle.idl: Added.
+        * css/PropertySetCSSStyleDeclaration.h:
+        * css/StyleProperties.cpp:
+        (WebCore::MutableStyleProperties::ensureCSSStyleDeclaration):
+        (WebCore::MutableStyleProperties::ensureInlineCSSStyleDeclaration):
+        * css/StyleProperties.h:
+        * dom/Attr.cpp:
+        (WebCore::Attr::style):
+        * dom/Document.cpp:
+        (WebCore::Document::createCSSStyleDeclaration):
+        * dom/Element.cpp:
+        * dom/Element.h:
+        * dom/Element.idl:
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::cssomStyle):
+        * dom/StyledElement.h:
+        * editing/Editor.cpp:
+        (WebCore::Editor::applyEditingStyleToElement):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline):
+        * html/HTMLElement.idl:
+
+        * html/ImageInputType.cpp:
+        (WebCore::ImageInputType::height):
+        (WebCore::ImageInputType::width):
+        Fix bug that was found by fast/forms/input-width-height-attributes-without-renderer-loaded-image.html.
+        That test relied on setting HTMLElement.style which did not work until now. Call updateLayout()
+        *before* doing the renderer check.
+
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::getMatchedStylesForNode):
+        (WebCore::InspectorCSSAgent::getInlineStylesForNode):
+        (WebCore::InspectorCSSAgent::getComputedStyleForNode):
+        (WebCore::InspectorCSSAgent::asInspectorStyleSheet):
+        (WebCore::InspectorCSSAgent::buildObjectForAttributesStyle):
+        * inspector/InspectorCSSAgent.h:
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyle::create):
+        (WebCore::InspectorStyle::InspectorStyle):
+        (WebCore::InspectorStyle::extractSourceData):
+        (WebCore::InspectorStyle::setText):
+        (WebCore::InspectorStyleSheet::inspectorStyleForId):
+        (WebCore::InspectorStyleSheetForInlineStyle::create):
+        (WebCore::InspectorStyleSheetForInlineStyle::InspectorStyleSheetForInlineStyle):
+        (WebCore::InspectorStyleSheetForInlineStyle::didModifyElementAttribute):
+        (WebCore::InspectorStyleSheetForInlineStyle::setStyleText):
+        (WebCore::InspectorStyleSheetForInlineStyle::ensureParsedDataReady):
+        (WebCore::InspectorStyleSheetForInlineStyle::inlineStyle):
+        * inspector/InspectorStyleSheet.h:
+        * svg/SVGElement.idl:
+
 2017-05-08  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: Propagate aria-readonly to grid descendants

@@ -387,6 +387,7 @@ set(WebCore_NON_SVG_IDL_FILES
     css/DeprecatedCSSOMValue.idl
     css/DeprecatedCSSOMValueList.idl
     css/DOMCSSNamespace.idl
+    css/ElementCSSInlineStyle.idl
     css/FontFace.idl
     css/FontFaceSet.idl
     css/MediaList.idl

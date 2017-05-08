@@ -197,8 +197,6 @@ public:
 
     const Vector<RefPtr<Attr>>& attrNodeList();
 
-    virtual CSSStyleDeclaration* cssomStyle();
-
     const QualifiedName& tagQName() const { return m_tagName; }
 #if ENABLE(JIT)
     static ptrdiff_t tagQNameMemoryOffset() { return OBJECT_OFFSETOF(Element, m_tagName); }

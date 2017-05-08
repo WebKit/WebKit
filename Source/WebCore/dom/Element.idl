@@ -66,10 +66,6 @@
     [CEReactions, MayThrowException] Element? insertAdjacentElement(DOMString where, Element element); // Historical.
     [MayThrowException] void insertAdjacentText(DOMString where, DOMString data); // Historical.
 
-    // FIXME: Should be in a separate ElementCSSInlineStyle and implemented by HTMLElement / SVGElement.
-    // https://drafts.csswg.org/cssom/#the-elementcssinlinestyle-interface
-    [ImplementedAs=cssomStyle] readonly attribute CSSStyleDeclaration style; // FIXME: Should be [SameObject, PutForwards=cssText].
-
     // CSSOM-view extensions (https://drafts.csswg.org/cssom-view/#extension-to-the-element-interface).
     sequence<DOMRect> getClientRects();
     [NewObject] DOMRect getBoundingClientRect();

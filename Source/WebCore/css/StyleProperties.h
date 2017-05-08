@@ -236,8 +236,8 @@ public:
     void clear();
     bool parseDeclaration(const String& styleDeclaration, CSSParserContext);
 
-    WEBCORE_EXPORT CSSStyleDeclaration* ensureCSSStyleDeclaration();
-    CSSStyleDeclaration* ensureInlineCSSStyleDeclaration(StyledElement* parentElement);
+    WEBCORE_EXPORT CSSStyleDeclaration& ensureCSSStyleDeclaration();
+    CSSStyleDeclaration& ensureInlineCSSStyleDeclaration(StyledElement& parentElement);
 
     int findPropertyIndex(CSSPropertyID) const;
     int findCustomPropertyIndex(const String& propertyName) const;

@@ -2367,11 +2367,6 @@ bool Element::hasAttributeNS(const AtomicString& namespaceURI, const AtomicStrin
     return elementData()->findAttributeByName(qName);
 }
 
-CSSStyleDeclaration* Element::cssomStyle()
-{
-    return nullptr;
-}
-
 void Element::focus(bool restorePreviousSelection, FocusDirection direction)
 {
     if (!isConnected())

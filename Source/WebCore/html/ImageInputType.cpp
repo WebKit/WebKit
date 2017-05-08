@@ -177,6 +177,8 @@ unsigned ImageInputType::height() const
 {
     Ref<HTMLInputElement> element(this->element());
 
+    element->document().updateLayout();
+
     if (!element->renderer()) {
         // Check the attribute first for an explicit pixel value.
         if (auto optionalHeight = parseHTMLNonNegativeInteger(element->attributeWithoutSynchronization(heightAttr)))
@@ -188,8 +190,6 @@ unsigned ImageInputType::height() const
             return imageLoader->image()->imageSizeForRenderer(element->renderer(), 1).height().toUnsigned();
     }
 
-    element->document().updateLayout();
-
     RenderBox* box = element->renderBox();
     return box ? adjustForAbsoluteZoom(box->contentHeight(), *box) : 0;
 }
@@ -197,6 +197,8 @@ unsigned ImageInputType::height() const
 unsigned ImageInputType::width() const
 {
     Ref<HTMLInputElement> element(this->element());
+
+    element->document().updateLayout();
 
     if (!element->renderer()) {
         // Check the attribute first for an explicit pixel value.
@@ -208,8 +210,6 @@ unsigned ImageInputType::width() const
         if (imageLoader && imageLoader->image())
             return imageLoader->image()->imageSizeForRenderer(element->renderer(), 1).width().toUnsigned();
     }
-
-    element->document().updateLayout();
 
     RenderBox* box = element->renderBox();
     return box ? adjustForAbsoluteZoom(box->contentWidth(), *box) : 0;

@@ -30,7 +30,6 @@
     attribute DOMString xmlspace;
 
     readonly attribute SVGAnimatedString className;
-    [ImplementedAs=cssomStyle] readonly attribute CSSStyleDeclaration style;
 
     attribute long tabIndex;
 
@@ -44,4 +43,5 @@
     readonly attribute DOMStringMap dataset;
 };
 
+SVGElement implements ElementCSSInlineStyle;
 SVGElement implements GlobalEventHandlers;

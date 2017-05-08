@@ -431,7 +431,8 @@ if (window.testRunner && window.accessibilityController) {
     examples = document.querySelectorAll('.ex');
     for (var i = 0, c = examples.length; i < c; i++) {
         el = examples[i];
-        el.style.display = 'none';
+        if (el.style)
+            el.style.display = 'none';
     }
 }
 </script>

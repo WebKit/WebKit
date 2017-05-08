@@ -921,7 +921,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     RefPtr<MutableStyleProperties> typingStyle = _private->coreFrame->selection().copyTypingStyle();
     if (!typingStyle)
         return nil;
-    return kit(typingStyle->ensureCSSStyleDeclaration());
+    return kit(&typingStyle->ensureCSSStyleDeclaration());
 }
 
 - (void)_setTypingStyle:(DOMCSSStyleDeclaration *)style withUndoAction:(EditAction)undoAction

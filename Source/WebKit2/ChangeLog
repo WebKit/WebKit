@@ -1,3 +1,15 @@
+2017-05-08  Chris Dumez  <cdumez@apple.com>
+
+        Move 'style' from Element to HTMLElement / SVGElement and make it settable
+        https://bugs.webkit.org/show_bug.cgi?id=171795
+
+        Reviewed by Alex Christensen.
+
+        Build fix.
+
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::shouldApplyStyle):
+
 2017-05-07  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS] REGRESSION (r209409): getBoundingClientRect is wrong for fixed-position elements in resize/orientationchange

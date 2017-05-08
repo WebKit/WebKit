@@ -2105,7 +2105,7 @@ static NSMutableSet *knownPluginMIMETypes()
     auto* style = editingStyle->style();
     if (!style)
         return nil;
-    return kit(style->ensureCSSStyleDeclaration());
+    return kit(&style->ensureCSSStyleDeclaration());
 }
 
 - (NSUInteger)_renderTreeSize

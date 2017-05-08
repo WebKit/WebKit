@@ -606,9 +606,9 @@ void InspectorCSSAgent::getMatchedStylesForNode(ErrorString& errorString, int no
                 auto entry = Inspector::Protocol::CSS::InheritedStyleEntry::create()
                     .setMatchedCSSRules(buildArrayForMatchedRuleList(parentMatchedRules, styleResolver, *parentElement, NOPSEUDO))
                     .release();
-                if (parentElement->cssomStyle() && parentElement->cssomStyle()->length()) {
-                    if (InspectorStyleSheetForInlineStyle* styleSheet = asInspectorStyleSheet(parentElement))
-                        entry->setInlineStyle(styleSheet->buildObjectForStyle(styleSheet->styleForId(InspectorCSSId(styleSheet->id(), 0))));
+                if (is<StyledElement>(*parentElement) && downcast<StyledElement>(*parentElement).cssomStyle().length()) {
+                    auto& styleSheet = asInspectorStyleSheet(downcast<StyledElement>(*parentElement));
+                    entry->setInlineStyle(styleSheet.buildObjectForStyle(styleSheet.styleForId(InspectorCSSId(styleSheet.id(), 0))));
                 }
 
                 entries->addItem(WTFMove(entry));
@@ -622,16 +622,14 @@ void InspectorCSSAgent::getMatchedStylesForNode(ErrorString& errorString, int no
 
 void InspectorCSSAgent::getInlineStylesForNode(ErrorString& errorString, int nodeId, RefPtr<Inspector::Protocol::CSS::CSSStyle>& inlineStyle, RefPtr<Inspector::Protocol::CSS::CSSStyle>& attributesStyle)
 {
-    Element* element = elementForId(errorString, nodeId);
-    if (!element)
+    auto* element = elementForId(errorString, nodeId);
+    if (!is<StyledElement>(element))
         return;
 
-    InspectorStyleSheetForInlineStyle* styleSheet = asInspectorStyleSheet(element);
-    if (!styleSheet)
-        return;
-
-    inlineStyle = styleSheet->buildObjectForStyle(element->cssomStyle());
-    if (auto attributes = buildObjectForAttributesStyle(element))
+    auto& styledElement = downcast<StyledElement>(*element);
+    auto& styleSheet = asInspectorStyleSheet(styledElement);
+    inlineStyle = styleSheet.buildObjectForStyle(&styledElement.cssomStyle());
+    if (auto attributes = buildObjectForAttributesStyle(styledElement))
         attributesStyle = WTFMove(attributes);
     else
         attributesStyle = nullptr;
@@ -639,12 +637,12 @@ void InspectorCSSAgent::getInlineStylesForNode(ErrorString& errorString, int nod
 
 void InspectorCSSAgent::getComputedStyleForNode(ErrorString& errorString, int nodeId, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::CSS::CSSComputedStyleProperty>>& style)
 {
-    Element* element = elementForId(errorString, nodeId);
+    auto* element = elementForId(errorString, nodeId);
     if (!element)
         return;
 
-    RefPtr<CSSComputedStyleDeclaration> computedStyleInfo = CSSComputedStyleDeclaration::create(*element, true);
-    Ref<InspectorStyle> inspectorStyle = InspectorStyle::create(InspectorCSSId(), computedStyleInfo, nullptr);
+    auto computedStyleInfo = CSSComputedStyleDeclaration::create(*element, true);
+    auto inspectorStyle = InspectorStyle::create(InspectorCSSId(), WTFMove(computedStyleInfo), nullptr);
     style = inspectorStyle->buildArrayForComputedStyle();
 }
 
@@ -920,22 +918,19 @@ void InspectorCSSAgent::getNamedFlowCollection(ErrorString& errorString, int doc
     result = WTFMove(namedFlows);
 }
 
-InspectorStyleSheetForInlineStyle* InspectorCSSAgent::asInspectorStyleSheet(Element* element)
+InspectorStyleSheetForInlineStyle& InspectorCSSAgent::asInspectorStyleSheet(StyledElement& element)
 {
-    NodeToInspectorStyleSheet::iterator it = m_nodeToInspectorStyleSheet.find(element);
+    auto it = m_nodeToInspectorStyleSheet.find(&element);
     if (it == m_nodeToInspectorStyleSheet.end()) {
-        CSSStyleDeclaration* style = element->cssomStyle();
-        if (!style)
-            return nullptr;
-
         String newStyleSheetId = String::number(m_lastStyleSheetId++);
-        RefPtr<InspectorStyleSheetForInlineStyle> inspectorStyleSheet = InspectorStyleSheetForInlineStyle::create(m_domAgent->pageAgent(), newStyleSheetId, element, Inspector::Protocol::CSS::StyleSheetOrigin::Regular, this);
-        m_idToInspectorStyleSheet.set(newStyleSheetId, inspectorStyleSheet);
-        m_nodeToInspectorStyleSheet.set(element, inspectorStyleSheet);
-        return inspectorStyleSheet.get();
+        auto inspectorStyleSheet = InspectorStyleSheetForInlineStyle::create(m_domAgent->pageAgent(), newStyleSheetId, element, Inspector::Protocol::CSS::StyleSheetOrigin::Regular, this);
+        auto& inspectorStyleSheetRef = inspectorStyleSheet.get();
+        m_idToInspectorStyleSheet.set(newStyleSheetId, inspectorStyleSheet.copyRef());
+        m_nodeToInspectorStyleSheet.set(&element, WTFMove(inspectorStyleSheet));
+        return inspectorStyleSheetRef;
     }
 
-    return it->value.get();
+    return *it->value;
 }
 
 Element* InspectorCSSAgent::elementForId(ErrorString& errorString, int nodeId)
@@ -1085,21 +1080,15 @@ RefPtr<Inspector::Protocol::Array<Inspector::Protocol::CSS::RuleMatch>> Inspecto
     return WTFMove(result);
 }
 
-RefPtr<Inspector::Protocol::CSS::CSSStyle> InspectorCSSAgent::buildObjectForAttributesStyle(Element* element)
+RefPtr<Inspector::Protocol::CSS::CSSStyle> InspectorCSSAgent::buildObjectForAttributesStyle(StyledElement& element)
 {
-    ASSERT(element);
-    if (!is<StyledElement>(*element))
-        return nullptr;
-
     // FIXME: Ugliness below.
-    StyleProperties* attributeStyle = const_cast<StyleProperties*>(downcast<StyledElement>(element)->presentationAttributeStyle());
+    auto* attributeStyle = const_cast<StyleProperties*>(element.presentationAttributeStyle());
     if (!attributeStyle)
         return nullptr;
 
-    ASSERT_WITH_SECURITY_IMPLICATION(attributeStyle->isMutable());
-    MutableStyleProperties* mutableAttributeStyle = static_cast<MutableStyleProperties*>(attributeStyle);
-
-    Ref<InspectorStyle> inspectorStyle = InspectorStyle::create(InspectorCSSId(), mutableAttributeStyle->ensureCSSStyleDeclaration(), nullptr);
+    auto& mutableAttributeStyle = downcast<MutableStyleProperties>(*attributeStyle);
+    auto inspectorStyle = InspectorStyle::create(InspectorCSSId(), mutableAttributeStyle.ensureCSSStyleDeclaration(), nullptr);
     return inspectorStyle->buildObjectForStyle();
 }
 

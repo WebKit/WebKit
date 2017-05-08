@@ -54,6 +54,7 @@
 #include <WebCore/Range.h>
 #include <WebCore/RenderElement.h>
 #include <WebCore/RenderTreeAsText.h>
+#include <WebCore/StyledElement.h>
 
 #include <initguid.h>
 // {3B0C0EFF-478B-4b0b-8290-D2321E08E23E}
@@ -1350,14 +1351,10 @@ HRESULT DOMElement::style(_COM_Outptr_opt_ IDOMCSSStyleDeclaration** result)
     if (!result)
         return E_POINTER;
     *result = nullptr;
-    if (!m_element)
+    if (!is<WebCore::StyledElement>(m_element))
         return E_FAIL;
 
-    WebCore::CSSStyleDeclaration* style = m_element->cssomStyle();
-    if (!style)
-        return E_FAIL;
-
-    *result = DOMCSSStyleDeclaration::createInstance(style);
+    *result = DOMCSSStyleDeclaration::createInstance(&downcast<WebCore::StyledElement>(*m_element).cssomStyle());
     return *result ? S_OK : E_FAIL;
 }
 

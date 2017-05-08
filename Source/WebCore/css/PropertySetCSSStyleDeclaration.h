@@ -43,7 +43,9 @@ class StyledElement;
 
 class PropertySetCSSStyleDeclaration : public CSSStyleDeclaration {
 public:
-    PropertySetCSSStyleDeclaration(MutableStyleProperties* propertySet) : m_propertySet(propertySet) { }
+    explicit PropertySetCSSStyleDeclaration(MutableStyleProperties& propertySet)
+        : m_propertySet(&propertySet)
+    { }
 
     virtual void clearParentElement() { ASSERT_NOT_REACHED(); }
 
@@ -117,9 +119,9 @@ private:
 
 class InlineCSSStyleDeclaration final : public PropertySetCSSStyleDeclaration {
 public:
-    InlineCSSStyleDeclaration(MutableStyleProperties* propertySet, StyledElement* parentElement)
+    InlineCSSStyleDeclaration(MutableStyleProperties& propertySet, StyledElement& parentElement)
         : PropertySetCSSStyleDeclaration(propertySet)
-        , m_parentElement(parentElement) 
+        , m_parentElement(&parentElement)
     {
     }
 

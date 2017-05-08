@@ -46,6 +46,7 @@ PASS a["contentEditable"] is inherit
 PASS a["isContentEditable"] is false
 PASS a["spellcheck"] is true
 PASS a["dataset"] is [object DOMStringMap]
+PASS a["style"] is [object CSSStyleDeclaration]
 PASS a["onabort"] is null
 PASS a["onblur"] is null
 PASS a["oncanplay"] is null
@@ -114,7 +115,6 @@ PASS a["classList"] is
 PASS a["slot"] is 
 PASS a["attributes"] is [object NamedNodeMap]
 PASS a["shadowRoot"] is null
-PASS a["style"] is [object CSSStyleDeclaration]
 PASS a["scrollTop"] is 0
 PASS a["scrollLeft"] is 0
 PASS a["scrollWidth"] is 0
