@@ -2810,13 +2810,13 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EUnicodeBidi e)
         m_value.valueID = CSSValueBidiOverride;
         break;
     case Isolate:
-        m_value.valueID = CSSValueWebkitIsolate;
+        m_value.valueID = CSSValueIsolate;
         break;
     case IsolateOverride:
-        m_value.valueID = CSSValueWebkitIsolateOverride;
+        m_value.valueID = CSSValueIsolateOverride;
         break;
     case Plaintext:
-        m_value.valueID = CSSValueWebkitPlaintext;
+        m_value.valueID = CSSValuePlaintext;
         break;
     }
 }
@@ -2832,10 +2832,13 @@ template<> inline CSSPrimitiveValue::operator EUnicodeBidi() const
         return Embed;
     case CSSValueBidiOverride:
         return Override;
+    case CSSValueIsolate:
     case CSSValueWebkitIsolate:
         return Isolate;
+    case CSSValueIsolateOverride:
     case CSSValueWebkitIsolateOverride:
         return IsolateOverride;
+    case CSSValuePlaintext:
     case CSSValueWebkitPlaintext:
         return Plaintext;
     default:

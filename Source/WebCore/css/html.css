@@ -1178,7 +1178,7 @@ template {
 }
 
 bdi, output {
-    unicode-bidi: -webkit-isolate;
+    unicode-bidi: isolate;
 }
 
 bdo {

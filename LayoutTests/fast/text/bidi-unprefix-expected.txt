@@ -1,0 +1,12 @@
+This test makes sure that getComputedStyle() returns the unprefixed bidi properties.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS window.getComputedStyle(document.getElementById('test1')).getPropertyValue('unicode-bidi') is "isolate"
+PASS window.getComputedStyle(document.getElementById('test2')).getPropertyValue('unicode-bidi') is "isolate-override"
+PASS window.getComputedStyle(document.getElementById('test3')).getPropertyValue('unicode-bidi') is "plaintext"
+PASS window.getComputedStyle(document.getElementById('test4')).getPropertyValue('unicode-bidi') is "isolate"
+PASS window.getComputedStyle(document.getElementById('test5')).getPropertyValue('unicode-bidi') is "isolate-override"
+PASS window.getComputedStyle(document.getElementById('test6')).getPropertyValue('unicode-bidi') is "plaintext"
+

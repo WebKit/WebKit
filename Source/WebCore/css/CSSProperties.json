@@ -3503,19 +3503,28 @@
                 "embed",
                 "bidi-override",
                 {
-                    "value": "-webkit-isolate",
-                    "status": "experimental",
+                    "value": "isolate",
                     "url": "https://www.w3.org/TR/css-writing-modes-3/#valdef-unicode-bidi-isolate"
                 },
                 {
-                    "value": "-webkit-isolate-override",
-                    "status": "experimental",
+                    "value": "isolate-override",
                     "url": "https://www.w3.org/TR/css-writing-modes-3/#valdef-unicode-bidi-isolate-override"
                 },
                 {
-                    "value": "-webkit-plaintext",
-                    "status": "experimental",
+                    "value": "plaintext",
                     "url": "https://www.w3.org/TR/css-writing-modes-3/#valdef-unicode-bidi-plaintext"
+                },
+                {
+                    "value": "-webkit-isolate",
+                    "status": "deprecated"
+                },
+                {
+                    "value": "-webkit-isolate-override",
+                    "status": "deprecated"
+                },
+                {
+                    "value": "-webkit-plaintext",
+                    "status": "deprecated"
                 }
             ],
             "specification": {

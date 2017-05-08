@@ -154,7 +154,7 @@ void VTTCueBox::applyCSSProperties(const IntSize& videoSize)
     setInlineStyleProperty(CSSPropertyPosition, CSSValueAbsolute);
 
     //  the 'unicode-bidi' property must be set to 'plaintext'
-    setInlineStyleProperty(CSSPropertyUnicodeBidi, CSSValueWebkitPlaintext);
+    setInlineStyleProperty(CSSPropertyUnicodeBidi, CSSValuePlaintext);
 
     // the 'direction' property must be set to direction
     setInlineStyleProperty(CSSPropertyDirection, m_cue.getCSSWritingDirection());

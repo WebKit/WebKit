@@ -1591,3 +1591,5 @@ webkit.org/b/165553 media/media-controls-timeline-updates-when-hovered.html [ Pa
 webkit.org/b/171272 [ Yosemite ElCapitan Sierra ] fast/text/kaithi.html [ ImageOnlyFailure ]
 
 webkit.org/b/171465 media/track/track-in-band-style.html [ Pass Timeout ]
+
+webkit.org/b/171760 imported/w3c/i18n/bidi/bidi-plaintext-011.html [ ImageOnlyFailure ]

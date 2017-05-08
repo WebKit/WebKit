@@ -20,46 +20,46 @@ function styleOf(name, attributes) {
 }
 
 var tests = [
-    ['div', {}, 'ltr', '-webkit-isolate'],
+    ['div', {}, 'ltr', 'isolate'],
     ['div', {'dir': 'ltr'}, 'ltr', 'embed'],
     ['div', {'dir': 'rtl'}, 'rtl', 'embed'],
-    ['div', {'dir': 'auto'}, 'ltr', '-webkit-isolate'],
+    ['div', {'dir': 'auto'}, 'ltr', 'isolate'],
     ['div', {'dir': ''}, 'ltr', 'embed'],
 
     ['span', {}, 'ltr', 'normal'],
     ['span', {'dir': 'ltr'}, 'ltr', 'embed'],
     ['span', {'dir': 'rtl'}, 'rtl', 'embed'],
-    ['span', {'dir': 'auto'}, 'ltr', '-webkit-isolate'],
+    ['span', {'dir': 'auto'}, 'ltr', 'isolate'],
     ['span', {'dir': ''}, 'ltr', 'embed'],
 
-    ['bdi', {}, 'ltr', '-webkit-isolate'],
-    ['bdi', {'dir': 'ltr'}, 'ltr', '-webkit-isolate'],
-    ['bdi', {'dir': 'rtl'}, 'rtl', '-webkit-isolate'],
-    ['bdi', {'dir': 'auto'}, 'ltr', '-webkit-isolate'],
-    ['bdi', {'dir': ''}, 'ltr', '-webkit-isolate'],
+    ['bdi', {}, 'ltr', 'isolate'],
+    ['bdi', {'dir': 'ltr'}, 'ltr', 'isolate'],
+    ['bdi', {'dir': 'rtl'}, 'rtl', 'isolate'],
+    ['bdi', {'dir': 'auto'}, 'ltr', 'isolate'],
+    ['bdi', {'dir': ''}, 'ltr', 'isolate'],
 
-    ['output', {}, 'ltr', '-webkit-isolate'],
-    ['output', {'dir': 'ltr'}, 'ltr', '-webkit-isolate'],
-    ['output', {'dir': 'rtl'}, 'rtl', '-webkit-isolate'],
-    ['output', {'dir': 'auto'}, 'ltr', '-webkit-isolate'],
-    ['output', {'dir': ''}, 'ltr', '-webkit-isolate'],
+    ['output', {}, 'ltr', 'isolate'],
+    ['output', {'dir': 'ltr'}, 'ltr', 'isolate'],
+    ['output', {'dir': 'rtl'}, 'rtl', 'isolate'],
+    ['output', {'dir': 'auto'}, 'ltr', 'isolate'],
+    ['output', {'dir': ''}, 'ltr', 'isolate'],
 
     ['bdo', {}, 'ltr', 'bidi-override'],
     ['bdo', {'dir': 'ltr'}, 'ltr', 'bidi-override'],
     ['bdo', {'dir': 'rtl'}, 'rtl', 'bidi-override'],
-    ['bdo', {'dir': 'auto'}, 'ltr', 'bidi-override -webkit-isolate'],
+    ['bdo', {'dir': 'auto'}, 'ltr', 'bidi-override isolate'],
     ['bdo', {'dir': ''}, 'ltr', 'bidi-override'],
 
     ['textarea', {}, 'ltr', 'normal'],
     ['textarea', {'dir': 'ltr'}, 'ltr', 'embed'],
     ['textarea', {'dir': 'rtl'}, 'rtl', 'embed'],
-    ['textarea', {'dir': 'auto'}, 'ltr', '-webkit-plaintext'],
+    ['textarea', {'dir': 'auto'}, 'ltr', 'plaintext'],
     ['textarea', {'dir': ''}, 'ltr', 'embed'],
 
     ['pre', {}, 'ltr', 'normal'],
     ['pre', {'dir': 'ltr'}, 'ltr', 'embed'],
     ['pre', {'dir': 'rtl'}, 'rtl', 'embed'],
-    ['pre', {'dir': 'auto'}, 'ltr', '-webkit-plaintext'],
+    ['pre', {'dir': 'auto'}, 'ltr', 'plaintext'],
     ['pre', {'dir': ''}, 'ltr', 'embed'],
 ].forEach(function (test) {
     shouldBe('styleOf("' + test[0] + '", ' + JSON.stringify(test[1]) + ').direction', '"' + test[2] + '"');

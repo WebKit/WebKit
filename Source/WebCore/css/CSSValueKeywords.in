@@ -508,6 +508,8 @@ hide
 higher
 invert
 inverted
+isolate-override
+plaintext
 -webkit-isolate
 -webkit-isolate-override
 -webkit-plaintext

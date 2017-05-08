@@ -509,7 +509,7 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
         "none", "hidden", "inset", "groove", "ridge", "outset", "dotted", "dashed", "solid", "double"
     ],
     "unicode-bidi": [
-        "normal", "bidi-override", "embed", "-webkit-plaintext", "-webkit-isolate", "-webkit-isolate-override"
+        "normal", "bidi-override", "embed", "plaintext", "isolate", "isolate-override"
     ],
     "clip-rule": [
         "nonzero", "evenodd"

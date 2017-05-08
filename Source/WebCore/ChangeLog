@@ -1,3 +1,125 @@
+2017-05-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Unprefix unicode-bidi CSS values
+        https://bugs.webkit.org/show_bug.cgi?id=171761
+
+        Reviewed by Simon Fraser.
+
+        Create new values which parse to the same internal state as the
+        prefixed values.
+
+        Tests: fast/text/bidi-unprefix.html
+               imported/w3c/i18n/bidi/bidi-embed-001.html
+               imported/w3c/i18n/bidi/bidi-embed-002.html
+               imported/w3c/i18n/bidi/bidi-embed-003.html
+               imported/w3c/i18n/bidi/bidi-embed-004.html
+               imported/w3c/i18n/bidi/bidi-embed-005.html
+               imported/w3c/i18n/bidi/bidi-embed-006.html
+               imported/w3c/i18n/bidi/bidi-embed-007.html
+               imported/w3c/i18n/bidi/bidi-embed-008.html
+               imported/w3c/i18n/bidi/bidi-embed-009.html
+               imported/w3c/i18n/bidi/bidi-embed-010.html
+               imported/w3c/i18n/bidi/bidi-embed-011.html
+               imported/w3c/i18n/bidi/bidi-isolate-001.html
+               imported/w3c/i18n/bidi/bidi-isolate-002.html
+               imported/w3c/i18n/bidi/bidi-isolate-003.html
+               imported/w3c/i18n/bidi/bidi-isolate-004.html
+               imported/w3c/i18n/bidi/bidi-isolate-005.html
+               imported/w3c/i18n/bidi/bidi-isolate-006.html
+               imported/w3c/i18n/bidi/bidi-isolate-007.html
+               imported/w3c/i18n/bidi/bidi-isolate-008.html
+               imported/w3c/i18n/bidi/bidi-isolate-009.html
+               imported/w3c/i18n/bidi/bidi-isolate-010.html
+               imported/w3c/i18n/bidi/bidi-isolate-011.html
+               imported/w3c/i18n/bidi/bidi-isolate-override-001.html
+               imported/w3c/i18n/bidi/bidi-isolate-override-002.html
+               imported/w3c/i18n/bidi/bidi-isolate-override-003.html
+               imported/w3c/i18n/bidi/bidi-isolate-override-004.html
+               imported/w3c/i18n/bidi/bidi-isolate-override-005.html
+               imported/w3c/i18n/bidi/bidi-isolate-override-006.html
+               imported/w3c/i18n/bidi/bidi-isolate-override-007.html
+               imported/w3c/i18n/bidi/bidi-isolate-override-008.html
+               imported/w3c/i18n/bidi/bidi-isolate-override-009.html
+               imported/w3c/i18n/bidi/bidi-isolate-override-010.html
+               imported/w3c/i18n/bidi/bidi-isolate-override-011.html
+               imported/w3c/i18n/bidi/bidi-isolate-override-012.html
+               imported/w3c/i18n/bidi/bidi-normal-001.html
+               imported/w3c/i18n/bidi/bidi-normal-002.html
+               imported/w3c/i18n/bidi/bidi-normal-003.html
+               imported/w3c/i18n/bidi/bidi-normal-004.html
+               imported/w3c/i18n/bidi/bidi-normal-005.html
+               imported/w3c/i18n/bidi/bidi-normal-006.html
+               imported/w3c/i18n/bidi/bidi-normal-007.html
+               imported/w3c/i18n/bidi/bidi-normal-008.html
+               imported/w3c/i18n/bidi/bidi-normal-009.html
+               imported/w3c/i18n/bidi/bidi-normal-010.html
+               imported/w3c/i18n/bidi/bidi-normal-011.html
+               imported/w3c/i18n/bidi/bidi-override-001.html
+               imported/w3c/i18n/bidi/bidi-override-002.html
+               imported/w3c/i18n/bidi/bidi-override-003.html
+               imported/w3c/i18n/bidi/bidi-override-004.html
+               imported/w3c/i18n/bidi/bidi-override-005.html
+               imported/w3c/i18n/bidi/bidi-override-006.html
+               imported/w3c/i18n/bidi/bidi-override-007.html
+               imported/w3c/i18n/bidi/bidi-override-008.html
+               imported/w3c/i18n/bidi/bidi-override-009.html
+               imported/w3c/i18n/bidi/bidi-override-010.html
+               imported/w3c/i18n/bidi/bidi-override-011.html
+               imported/w3c/i18n/bidi/bidi-override-012.html
+               imported/w3c/i18n/bidi/bidi-plaintext-001.html
+               imported/w3c/i18n/bidi/bidi-plaintext-003.html
+               imported/w3c/i18n/bidi/bidi-plaintext-005.html
+               imported/w3c/i18n/bidi/bidi-plaintext-006.html
+               imported/w3c/i18n/bidi/bidi-plaintext-007.html
+               imported/w3c/i18n/bidi/bidi-plaintext-008.html
+               imported/w3c/i18n/bidi/bidi-plaintext-009.html
+               imported/w3c/i18n/bidi/bidi-plaintext-010.html
+               imported/w3c/i18n/bidi/bidi-plaintext-011.html
+               imported/w3c/i18n/bidi/bidi-table-001.html
+               imported/w3c/i18n/bidi/bidi-unset-001.html
+               imported/w3c/i18n/bidi/bidi-unset-002.html
+               imported/w3c/i18n/bidi/bidi-unset-003.html
+               imported/w3c/i18n/bidi/bidi-unset-004.html
+               imported/w3c/i18n/bidi/bidi-unset-005.html
+               imported/w3c/i18n/bidi/bidi-unset-006.html
+               imported/w3c/i18n/bidi/bidi-unset-007.html
+               imported/w3c/i18n/bidi/bidi-unset-008.html
+               imported/w3c/i18n/bidi/bidi-unset-009.html
+               imported/w3c/i18n/bidi/bidi-unset-010.html
+               imported/w3c/i18n/bidi/block-embed-001.html
+               imported/w3c/i18n/bidi/block-embed-002.html
+               imported/w3c/i18n/bidi/block-embed-003.html
+               imported/w3c/i18n/bidi/block-override-001.html
+               imported/w3c/i18n/bidi/block-override-002.html
+               imported/w3c/i18n/bidi/block-override-003.html
+               imported/w3c/i18n/bidi/block-override-004.html
+               imported/w3c/i18n/bidi/block-override-isolate-001.html
+               imported/w3c/i18n/bidi/block-override-isolate-002.html
+               imported/w3c/i18n/bidi/block-override-isolate-003.html
+               imported/w3c/i18n/bidi/block-override-isolate-004.html
+               imported/w3c/i18n/bidi/block-plaintext-001.html
+               imported/w3c/i18n/bidi/block-plaintext-002.html
+               imported/w3c/i18n/bidi/block-plaintext-003.html
+               imported/w3c/i18n/bidi/block-plaintext-004.html
+               imported/w3c/i18n/bidi/block-plaintext-005.html
+               imported/w3c/i18n/bidi/block-plaintext-006.html
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator EUnicodeBidi):
+        * css/CSSProperties.json:
+        * css/CSSValueKeywords.in:
+        * css/html.css:
+        (bdi, output):
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::CSSParserFastPaths::isValidKeywordPropertyAndValue):
+        * html/HTMLElement.cpp:
+        (WebCore::unicodeBidiAttributeForDirAuto):
+        * html/track/TextTrackCueGeneric.cpp:
+        (WebCore::TextTrackCueGenericBoxElement::applyCSSProperties):
+        * html/track/VTTCue.cpp:
+        (WebCore::VTTCueBox::applyCSSProperties):
+
 2017-05-07  Ben Kelly  <ben@wanderview.com>
 
         Set the Response.blob() type based on the content-type header value.
