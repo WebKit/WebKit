@@ -70,9 +70,9 @@ public:
     bool isRevoked() const;
 
 private:
-    ProxyObject(VM&, Structure*);
-    void finishCreation(VM&, ExecState*, JSValue target, JSValue handler);
-    static Structure* structureForTarget(JSGlobalObject*, JSValue target);
+    JS_EXPORT_PRIVATE ProxyObject(VM&, Structure*);
+    JS_EXPORT_PRIVATE void finishCreation(VM&, ExecState*, JSValue target, JSValue handler);
+    JS_EXPORT_PRIVATE static Structure* structureForTarget(JSGlobalObject*, JSValue target);
 
     static String toStringName(const JSObject*, ExecState*);
     static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);

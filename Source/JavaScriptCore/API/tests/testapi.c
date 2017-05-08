@@ -47,6 +47,7 @@
 #include "FunctionOverridesTest.h"
 #include "GlobalContextWithFinalizerTest.h"
 #include "JSONParseTest.h"
+#include "JSObjectGetProxyTargetTest.h"
 #include "MultithreadedMultiVMExecutionTest.h"
 #include "PingPongStackOverflowTest.h"
 #include "TypedArrayCTest.h"
@@ -1958,6 +1959,7 @@ int main(int argc, char* argv[])
     failed = testGlobalContextWithFinalizer() || failed;
     failed = testPingPongStackOverflow() || failed;
     failed = testJSONParse() || failed;
+    failed = testJSObjectGetProxyTarget() || failed;
 
     // Clear out local variables pointing at JSObjectRefs to allow their values to be collected
     function = NULL;

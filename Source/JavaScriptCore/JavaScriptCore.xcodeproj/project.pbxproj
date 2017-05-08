@@ -1024,6 +1024,7 @@
 		0FF4275715914A20004CB9FF /* LinkBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FF4275615914A20004CB9FF /* LinkBuffer.cpp */; };
 		0FF427641591A1CC004CB9FF /* DFGDisassembler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FF427611591A1C9004CB9FF /* DFGDisassembler.cpp */; };
 		0FF427651591A1CE004CB9FF /* DFGDisassembler.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF427621591A1C9004CB9FF /* DFGDisassembler.h */; };
+		0FF47C5A1EBFE84600F280B7 /* JSObjectGetProxyTargetTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FF47C581EBFE83500F280B7 /* JSObjectGetProxyTargetTest.cpp */; };
 		0FF4B4BC1E88449700DBBE86 /* AirRegLiveness.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FF4B4BA1E88449500DBBE86 /* AirRegLiveness.cpp */; };
 		0FF4B4BD1E88449A00DBBE86 /* AirRegLiveness.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF4B4BB1E88449500DBBE86 /* AirRegLiveness.h */; };
 		0FF4B4C71E8893C500DBBE86 /* AirCFG.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF4B4C61E8893BF00DBBE86 /* AirCFG.h */; };
@@ -3593,6 +3594,8 @@
 		0FF4275615914A20004CB9FF /* LinkBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LinkBuffer.cpp; sourceTree = "<group>"; };
 		0FF427611591A1C9004CB9FF /* DFGDisassembler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGDisassembler.cpp; path = dfg/DFGDisassembler.cpp; sourceTree = "<group>"; };
 		0FF427621591A1C9004CB9FF /* DFGDisassembler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGDisassembler.h; path = dfg/DFGDisassembler.h; sourceTree = "<group>"; };
+		0FF47C581EBFE83500F280B7 /* JSObjectGetProxyTargetTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSObjectGetProxyTargetTest.cpp; path = API/tests/JSObjectGetProxyTargetTest.cpp; sourceTree = "<group>"; };
+		0FF47C591EBFE83500F280B7 /* JSObjectGetProxyTargetTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSObjectGetProxyTargetTest.h; path = API/tests/JSObjectGetProxyTargetTest.h; sourceTree = "<group>"; };
 		0FF4B4BA1E88449500DBBE86 /* AirRegLiveness.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AirRegLiveness.cpp; path = b3/air/AirRegLiveness.cpp; sourceTree = "<group>"; };
 		0FF4B4BB1E88449500DBBE86 /* AirRegLiveness.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirRegLiveness.h; path = b3/air/AirRegLiveness.h; sourceTree = "<group>"; };
 		0FF4B4C61E8893BF00DBBE86 /* AirCFG.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirCFG.h; path = b3/air/AirCFG.h; sourceTree = "<group>"; };
@@ -5769,6 +5772,7 @@
 		141211000A48772600480255 /* tests */ = {
 			isa = PBXGroup;
 			children = (
+				144005170A531CB50005F061 /* minidom */,
 				FEF040501AAE662D00BD28B0 /* CompareAndSwapTest.cpp */,
 				FEF040521AAEC4ED00BD28B0 /* CompareAndSwapTest.h */,
 				C29ECB021804D0ED00D2CBB4 /* CurrentThisInsideBlockGetterTest.h */,
@@ -5785,11 +5789,12 @@
 				FE0D4A081ABA2437002F54BF /* GlobalContextWithFinalizerTest.h */,
 				C2181FC018A948FB0025A235 /* JSExportTests.h */,
 				C2181FC118A948FB0025A235 /* JSExportTests.mm */,
+				0FF47C581EBFE83500F280B7 /* JSObjectGetProxyTargetTest.cpp */,
+				0FF47C591EBFE83500F280B7 /* JSObjectGetProxyTargetTest.h */,
 				5C4E8E941DBEBDA20036F1FC /* JSONParseTest.cpp */,
 				5C4E8E951DBEBDA20036F1FC /* JSONParseTest.h */,
 				FEF49AA91EB947FE00653BDB /* MultithreadedMultiVMExecutionTest.cpp */,
 				FEF49AAA1EB947FE00653BDB /* MultithreadedMultiVMExecutionTest.h */,
-				144005170A531CB50005F061 /* minidom */,
 				FEDA50D41B97F442009A3B4F /* PingPongStackOverflowTest.cpp */,
 				FEDA50D51B97F4D9009A3B4F /* PingPongStackOverflowTest.h */,
 				65570F581AA4C00A009B3C23 /* Regress141275.h */,
@@ -10051,6 +10056,7 @@
 				C29ECB031804D0ED00D2CBB4 /* CurrentThisInsideBlockGetterTest.mm in Sources */,
 				C20328201981979D0088B499 /* CustomGlobalObjectClassTest.c in Sources */,
 				C288B2DE18A54D3E007BE40B /* DateTests.mm in Sources */,
+				0FF47C5A1EBFE84600F280B7 /* JSObjectGetProxyTargetTest.cpp in Sources */,
 				FE0D4A061AB8DD0A002F54BF /* ExecutionTimeLimitTest.cpp in Sources */,
 				FECB8B271D25BB85006F2463 /* FunctionOverridesTest.cpp in Sources */,
 				FE0D4A091ABA2437002F54BF /* GlobalContextWithFinalizerTest.cpp in Sources */,
