@@ -152,5 +152,21 @@ motionQuery.addListener(handleReduceMotionChanged); // Note: https://webkit.org/
 
 </script>
 
+
+<h2>Example 4: Only display animated version if prefers-reduced-motion is both supported *and* off.</h2>
+<p>This example uses a more explicit match for <code>(prefers-reduced-motion: no-preference)</code> which excludes all browsers that don't yet support the new feature.</p>
+<img id="jaws" src="jaws.jpg" alt="Brody realizing the shark is in the water" width="480" height="214">
+
+<script type="text/javascript">
+
+var motionQuery2 = matchMedia('(prefers-reduced-motion: no-preference)'); 
+function handleReduceMotionChanged2() {
+    document.images['jaws'].src = motionQuery2.matches ? 'jaws.gif' : 'jaws.jpg';
+}
+handleReduceMotionChanged2(); // trigger this once on load to set up the initial value
+motionQuery.addListener(handleReduceMotionChanged2); // Note: https://webkit.org/b/168491
+
+</script>
+
 </body>
 </html>
