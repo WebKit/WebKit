@@ -34,6 +34,6 @@ Alignment 4
 [ ]
     NSFont: Times-Roman 16.00 pt.
     NSKern: 0pt
-    NSStrokeColor: NSDeviceRGBColorSpace 0 0 0 1
+    NSStrokeColor: NSCustomColorSpace sRGB IEC61966-2.1 colorspace 0 0 0 1
     NSStrokeWidth: 0
 

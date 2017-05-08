@@ -1,3 +1,23 @@
+2017-05-08  Beth Dakin  <bdakin@apple.com>
+
+        WebKit should default to using sRGB with NSColor conversion instead of device 
+        color space
+        https://bugs.webkit.org/show_bug.cgi?id=171745
+        -and corresponding-
+        rdar://problem/28314183
+
+        Reviewed by Tim Horton.
+
+        * editing/mac/attributed-string/anchor-element-expected.txt:
+        * editing/mac/attributed-string/basic-expected.txt:
+        * editing/mac/attributed-string/comment-cdata-section-expected.txt:
+        * editing/mac/attributed-string/font-size-expected.txt:
+        * editing/mac/attributed-string/font-style-variant-effect-expected.txt:
+        * editing/mac/attributed-string/font-weight-expected.txt:
+        * editing/mac/attributed-string/letter-spacing-expected.txt:
+        * editing/mac/attributed-string/text-decorations-expected.txt:
+        * editing/mac/attributed-string/vertical-align-expected.txt:
+
 2017-05-04  Jiewen Tan  <jiewen_tan@apple.com>
 
         Search events should not fire synchronously for search type input elements with incremental attribute set

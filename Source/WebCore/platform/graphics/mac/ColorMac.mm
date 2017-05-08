@@ -58,7 +58,7 @@ static RGBA32 makeRGBAFromNSColor(NSColor *c)
     CGFloat alpha;
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    NSColor *rgbColor = [c colorUsingColorSpaceName:NSDeviceRGBColorSpace];
+    NSColor *rgbColor = [c colorUsingColorSpace:[NSColorSpace sRGBColorSpace]];
     if (!rgbColor)
         return makeRGBA(0, 0, 0, 0);
 
@@ -77,17 +77,17 @@ NSColor *nsColor(const Color& color)
 {
     if (!color.isValid()) {
         // Need this to avoid returning nil because cachedRGBAValues will default to 0.
-        static NeverDestroyed<NSColor *> clearColor = [[NSColor colorWithDeviceRed:0 green:0 blue:0 alpha:0] retain];
+        static NeverDestroyed<NSColor *> clearColor = [[NSColor colorWithSRGBRed:0 green:0 blue:0 alpha:0] retain];
         return clearColor;
     }
 
     if (Color::isBlackColor(color)) {
-        static NeverDestroyed<NSColor *> blackColor = [[NSColor colorWithDeviceRed:0 green:0 blue:0 alpha:1] retain];
+        static NeverDestroyed<NSColor *> blackColor = [[NSColor colorWithSRGBRed:0 green:0 blue:0 alpha:1] retain];
         return blackColor;
     }
 
     if (Color::isWhiteColor(color)) {
-        static NeverDestroyed<NSColor *> whiteColor = [[NSColor colorWithDeviceRed:1 green:1 blue:1 alpha:1] retain];
+        static NeverDestroyed<NSColor *> whiteColor = [[NSColor colorWithSRGBRed:1 green:1 blue:1 alpha:1] retain];
         return whiteColor;
     }
 

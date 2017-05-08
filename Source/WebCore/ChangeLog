@@ -1,3 +1,17 @@
+2017-05-08  Beth Dakin  <bdakin@apple.com>
+
+        WebKit should default to using sRGB with NSColor conversion instead of device 
+        color space
+        https://bugs.webkit.org/show_bug.cgi?id=171745
+        -and corresponding-
+        rdar://problem/28314183
+
+        Reviewed by Tim Horton.
+
+        * platform/graphics/mac/ColorMac.mm:
+        (WebCore::makeRGBAFromNSColor):
+        (WebCore::nsColor):
+
 2017-05-08  Alex Christensen  <achristensen@webkit.org>
 
         Reduce PassRefPtr use
