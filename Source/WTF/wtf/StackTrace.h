@@ -36,7 +36,7 @@ class PrintStream;
 class StackTrace {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static StackTrace* captureStackTrace(int maxFrames, int framesToSkip = 0);
+    WTF_EXPORT_PRIVATE static StackTrace* captureStackTrace(int maxFrames, int framesToSkip = 0);
 
     // Borrowed stack trace.
     StackTrace(void** stack, int size)
