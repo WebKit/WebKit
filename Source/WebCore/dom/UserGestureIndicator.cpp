@@ -54,8 +54,10 @@ UserGestureIndicator::UserGestureIndicator(std::optional<ProcessingUserGestureSt
     if (state)
         currentToken() = UserGestureToken::create(state.value());
 
-    if (document && currentToken()->processingUserGesture())
+    if (document && currentToken()->processingUserGesture()) {
         document->topDocument().updateLastHandledUserGestureTimestamp();
+        document->topDocument().setUserDidInteractWithPage(true);
+    }
 }
 
 UserGestureIndicator::UserGestureIndicator(RefPtr<UserGestureToken> token)
