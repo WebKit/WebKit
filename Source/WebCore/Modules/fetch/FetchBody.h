@@ -80,7 +80,7 @@ public:
 
     FetchBodyConsumer& consumer() { return m_consumer; }
 
-    void consumeOnceLoadingFinished(FetchBodyConsumer::Type, Ref<DeferredPromise>&&);
+    void consumeOnceLoadingFinished(FetchBodyConsumer::Type, Ref<DeferredPromise>&&, const String&);
     void cleanConsumePromise() { m_consumePromise = nullptr; }
 
     FetchBody clone() const;

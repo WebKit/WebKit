@@ -132,7 +132,7 @@ void FetchBodyOwner::consumeOnceLoadingFinished(FetchBodyConsumer::Type type, Re
         return;
     }
     m_isDisturbed = true;
-    m_body->consumeOnceLoadingFinished(type, WTFMove(promise));
+    m_body->consumeOnceLoadingFinished(type, WTFMove(promise), m_contentType);
 }
 
 void FetchBodyOwner::formData(Ref<DeferredPromise>&& promise)

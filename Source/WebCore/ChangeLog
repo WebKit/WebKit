@@ -1,3 +1,42 @@
+2017-05-07  Ben Kelly  <ben@wanderview.com>
+
+        Set the Response.blob() type based on the content-type header value.
+        https://bugs.webkit.org/show_bug.cgi?id=170849
+
+        Reviewed by Youenn Fablet.
+
+        There are two problems to fix here:
+
+        1.  Currently the FetchResponse class only called updateContentType()
+        when first created even though all the headers were not available.  This
+        patch calls updateContentType() again after the headers are populated.
+
+        2.  The fetch design requires propagating the normalized blob
+        type to FetchBodyConsumer as well.  Currently this is only done if
+        Response.blob() is called after the body is completely loaded.  If
+        we hit the consumeOnceLoadingFinished() path, then the type is not
+        passed.  This is similar to what was happening in bug 171489 with
+        ReadableStream bodies.  This patch sets the type on the
+        FetchBodyConsumer in consumeOnceLoadingFinished() as well.
+
+        Theses changes allow WebKit to pass the "Consume response's body: from
+        fetch to blob" case in the WPT response-consume.html test.
+
+        Test: http://w3c-test.org/fetch/api/response/response-consume.html
+
+        * Modules/fetch/FetchResponse.cpp:
+        (WebCore::FetchResponse::BodyLoader::didReceiveResponse): Modified to
+        call FetchBodyOwner::updateContentType() after filling m_headers.
+        (WebCore::FetchBody::consumeOnceLoadingFinished): Call
+        FetchBodyConsumer::setContentType() when being consumed as
+        a blob.
+        * Modules/fetch/FetchBody.h: Modify consumeOnceLoadingFinished()
+        to take the content type string.
+        * Modules/fetch/FetchBodyOwner.cpp:
+        (WebCore::FetchBodyOwner::consumeOnceLoadingFinished): Pass
+        the content type string down to FetchBody so it can be
+        propagated to the FetchBodyConsumer.
+
 2017-05-07  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS] REGRESSION (r209409): getBoundingClientRect is wrong for fixed-position elements in resize/orientationchange
