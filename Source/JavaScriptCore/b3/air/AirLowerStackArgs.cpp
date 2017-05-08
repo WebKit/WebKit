@@ -70,14 +70,13 @@ void lowerStackArgs(Code& code)
 
         for (unsigned instIndex = 0; instIndex < block->size(); ++instIndex) {
             Inst& inst = block->at(instIndex);
-            bool isPatch = inst.kind.opcode == Patch;
 
             inst.forEachArg(
                 [&] (Arg& arg, Arg::Role role, Bank, Width width) {
                     auto stackAddr = [&] (Value::OffsetType offsetFromFP) -> Arg {
                         int32_t offsetFromSP = offsetFromFP + code.frameSize();
 
-                        if (isPatch && inst.admitsExtendedOffsetAddr(arg)) {
+                        if (inst.admitsExtendedOffsetAddr(arg)) {
                             // Stackmaps and patchpoints expect addr inputs relative to SP or FP only. We might as well
                             // not even bother generating an addr with valid form for these opcodes since extended offset
                             // addr is always valid.
