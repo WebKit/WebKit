@@ -1,3 +1,19 @@
+2017-05-08  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [GTK] Web Inspector: Add new GTK+ icon for timeline recording stopwatch
+        https://bugs.webkit.org/show_bug.cgi?id=154088
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add a free icon and remove some unused ones for the Web Inspector
+        in GTK+.
+
+        * UserInterface/Images/gtk/Stopwatch.png: Removed.
+        * UserInterface/Images/gtk/Stopwatch.svg: Added.
+        * UserInterface/Images/gtk/Stopwatch@2x.png: Removed.
+        * UserInterface/Views/TimelineIcons.css:
+        (body:not(.mac-platform, .windows-platform) .stopwatch-icon .icon): Deleted.
+
 2017-05-05  Nikita Vasilyev  <nvasilyev@apple.com>
 
         REGRESSION (r212998): Web Inspector: bad spacing of go-to arrow for HTTP POST request data
