@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Licensed under the Creative Commons Attribution-Share Alike 3.0 United States License (http://creativecommons.org/licenses/by-sa/3.0/) -->
+<svg xmlns="http://www.w3.org/2000/svg" id="root" version="1.1" viewBox="0 0 16 16">
+ <defs>
+  <linearGradient id="a" x1="4.8318" x2="7.3147" y1="2.981" y2="8.4838" gradientUnits="userSpaceOnUse" gradientTransform="translate(7.2292e-7 .00010801)">
+   <stop stop-color="#c0c0c0" offset="0"/>
+   <stop stop-color="#4d4d4d" offset="1"/>
+  </linearGradient>
+ </defs>
+ <rect width="1.0468" height="1.4734" x="10.537" y="-5.9769" fill="#696969" rx="0" transform="matrix(.77454 .63252 -.63252 .77454 0 0)"/>
+ <rect width="1.3537" height=".80834" x="10.384" y="-6.393" fill="#696969" transform="matrix(.77454 .63252 -.63252 .77454 0 0)" rx=".31377" ry=".43142"/>
+ <rect width="1.0468" height="1.4734" x="-1.783" y="4.0841" fill="#696969" rx="0" transform="matrix(-.77454 .63252 .63252 .77454 0 0)"/>
+ <rect width="1.3537" height=".80834" x="-1.9364" y="3.668" fill="#696969" transform="matrix(-.77454 .63252 .63252 .77454 0 0)" rx=".31377" ry=".43142"/>
+ <rect width="1.7382" height="2" x="7.084" y=".67643" fill="#696969" rx="0"/>
+ <rect width="2.2479" height="1.0972" x="6.8292" y=".11162" fill="#696969" rx=".31377" ry=".43142"/>
+ <circle cx="7.9531" cy="8.9622" r="6.1575" fill="#fff" stroke="url(#a)" stroke-width="1.5"/>
+ <path fill="#f00" fill-rule="evenodd" d="m10.759 5.1131-3.2397 3.5863 0.8486 0.6138z"/>
+ <circle cx="7.9531" cy="8.9622" r=".72222" fill="#fff" stroke="#000" stroke-width=".2"/>
+</svg>

@@ -51,11 +51,6 @@
     content: url(../Images/Stopwatch.svg);
 }
 
-/* FIXME: <https://webkit.org/b/154088> [GTK] Web Inspector: Add new GTK+ icon for timeline recording stopwatch */
-body:not(.mac-platform, .windows-platform) .stopwatch-icon .icon {
-    content: image-set(url(../Images/Stopwatch.png) 1x, url(../Images/Stopwatch@2x.png) 2x);
-}
-
 .time-icon .icon {
     content: url(../Images/Timeline.svg);
     width: 13px;
