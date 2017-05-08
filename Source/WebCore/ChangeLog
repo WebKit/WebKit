@@ -1,3 +1,15 @@
+2017-05-08  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, rolling out r216419.
+
+        Broke 70 layout tests on GTK bot
+
+        Reverted changeset:
+
+        "Ensure clean tree before AX cache update."
+        https://bugs.webkit.org/show_bug.cgi?id=171546
+        http://trac.webkit.org/changeset/216419
+
 2017-05-08  Youenn Fablet  <youenn@apple.com>
 
         CoreAudioCaptureSource should not modify its shared unit if already started/stopped
