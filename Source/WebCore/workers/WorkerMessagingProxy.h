@@ -28,20 +28,20 @@
 #include "WorkerGlobalScopeProxy.h"
 #include "WorkerLoaderProxy.h"
 #include "WorkerObjectProxy.h"
+#include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
 
 class DedicatedWorkerThread;
 class WorkerInspectorProxy;
 
-class WorkerMessagingProxy final : public WorkerGlobalScopeProxy, public WorkerObjectProxy, public WorkerLoaderProxy {
+class WorkerMessagingProxy final : public ThreadSafeRefCounted<WorkerMessagingProxy>, public WorkerGlobalScopeProxy, public WorkerObjectProxy, public WorkerLoaderProxy {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit WorkerMessagingProxy(Worker&);
-
-private:
     virtual ~WorkerMessagingProxy();
 
+private:
     // Implementations of WorkerGlobalScopeProxy.
     // (Only use these functions in the worker object thread.)
     void startWorkerGlobalScope(const URL& scriptURL, const String& userAgent, const String& sourceCode, const ContentSecurityPolicyResponseHeaders&, bool shouldBypassMainWorldContentSecurityPolicy, MonotonicTime timeOrigin, JSC::RuntimeFlags) final;
