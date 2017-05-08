@@ -35,8 +35,9 @@ WebInspector.ResourceClusterContentView = class ResourceClusterContentView exten
 
         function createPathComponent(displayName, className, identifier)
         {
-            var pathComponent = new WebInspector.HierarchicalPathComponent(displayName, className, identifier, false, true);
+            let pathComponent = new WebInspector.HierarchicalPathComponent(displayName, className, identifier, false, true);
             pathComponent.addEventListener(WebInspector.HierarchicalPathComponent.Event.SiblingWasSelected, this._pathComponentSelected, this);
+            pathComponent.comparisonData = resource;
             return pathComponent;
         }
 
@@ -256,7 +257,7 @@ WebInspector.ResourceClusterContentView = class ResourceClusterContentView exten
         if (!currentResponseContentView)
             return;
 
-        delete this._responseContentView;
+        this._responseContentView = null;
 
         this.contentViewContainer.replaceContentView(currentResponseContentView, this.responseContentView);
     }

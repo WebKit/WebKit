@@ -38,6 +38,7 @@ WebInspector.ScriptClusterTimelineView = class ScriptClusterTimelineView extends
         {
             let pathComponent = new WebInspector.HierarchicalPathComponent(displayName, className, identifier, false, showSelectorArrows);
             pathComponent.addEventListener(WebInspector.HierarchicalPathComponent.Event.SiblingWasSelected, this._pathComponentSelected, this);
+            pathComponent.comparisonData = timeline;
             return pathComponent;
         }
 

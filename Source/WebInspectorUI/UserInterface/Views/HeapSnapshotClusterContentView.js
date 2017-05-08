@@ -37,6 +37,7 @@ WebInspector.HeapSnapshotClusterContentView = class HeapSnapshotClusterContentVi
         {
             let pathComponent = new WebInspector.HierarchicalPathComponent(displayName, className, identifier, false, true);
             pathComponent.addEventListener(WebInspector.HierarchicalPathComponent.Event.SiblingWasSelected, this._pathComponentSelected, this);
+            pathComponent.comparisonData = heapSnapshot;
             return pathComponent;
         }
 

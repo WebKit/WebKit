@@ -1,3 +1,35 @@
+2017-05-08  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Request/Response toggles not working
+        https://bugs.webkit.org/show_bug.cgi?id=171833
+        <rdar://problem/31341637>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/HierarchicalPathNavigationItem.js:
+        (WebInspector.HierarchicalPathNavigationItem.set components.let.componentsEqual):
+        (WebInspector.HierarchicalPathNavigationItem.prototype.set components):
+        If the new components being set were shallowly equal, then they wouldn't
+        actually be updated even if ultimately they are different. In this case
+        the Path Components with values "request" / "response" would not update
+        between different resources because the path components had equivalent
+        simple values. Provide a different discriminator (comparisonData) which
+        can be an object so these path components compare as necessarily different.
+
+        * UserInterface/Views/HeapSnapshotClusterContentView.js:
+        (WebInspector.HeapSnapshotClusterContentView.createPathComponent):
+        (WebInspector.HeapSnapshotClusterContentView):
+        * UserInterface/Views/ResourceClusterContentView.js:
+        (WebInspector.ResourceClusterContentView.createPathComponent):
+        (WebInspector.ResourceClusterContentView):
+        (WebInspector.ResourceClusterContentView.prototype._resourceTypeDidChange):
+        * UserInterface/Views/SVGImageResourceClusterContentView.js:
+        (WebInspector.SVGImageResourceClusterContentView):
+        * UserInterface/Views/ScriptClusterTimelineView.js:
+        (WebInspector.ScriptClusterTimelineView.createPathComponent):
+        (WebInspector.ScriptClusterTimelineView):
+        Provide comparisonData for path components cases that would need it.
+
 2017-05-08  Chris Dumez  <cdumez@apple.com>
 
         Drop non-standard Element.scrollByLines() / scrollByPages()

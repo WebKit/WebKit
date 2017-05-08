@@ -36,6 +36,7 @@ WebInspector.SVGImageResourceClusterContentView = class SVGImageResourceClusterC
             const showSelectorArrows = true;
             let pathComponent = new WebInspector.HierarchicalPathComponent(displayName, className, identifier, textOnly, showSelectorArrows);
             pathComponent.addEventListener(WebInspector.HierarchicalPathComponent.Event.SiblingWasSelected, this._pathComponentSelected, this);
+            pathComponent.comparisonData = resource;
             return pathComponent;
         };
 
