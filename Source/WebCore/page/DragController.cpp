@@ -658,13 +658,11 @@ Element* DragController::draggableElement(const Frame* sourceFrame, Element* sta
         state.type = DragSourceActionNone;
 #endif
 
-    for (auto* renderer = startElement->renderer(); renderer; renderer = renderer->parent()) {
-        Element* element = renderer->nonPseudoElement();
-        if (!element) {
-            // Anonymous render blocks don't correspond to actual DOM elements, so we skip over them
-            // for the purposes of finding a draggable element.
+    for (auto* element = startElement; element; element = element->parentOrShadowHostElement()) {
+        auto* renderer = element->renderer();
+        if (!renderer)
             continue;
-        }
+
         EUserDrag dragMode = renderer->style().userDrag();
         if ((m_dragSourceAction & DragSourceActionDHTML) && dragMode == DRAG_ELEMENT) {
             state.type = static_cast<DragSourceAction>(state.type | DragSourceActionDHTML);
