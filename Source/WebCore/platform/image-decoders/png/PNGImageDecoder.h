@@ -44,7 +44,7 @@ namespace WebCore {
         String filenameExtension() const override { return "png"; }
 #if ENABLE(APNG)
         size_t frameCount() const override { return m_frameCount; }
-        RepetitionCount repetitionCount() const override { return m_playCount-1; }
+        RepetitionCount repetitionCount() const override;
 #endif
         bool isSizeAvailable() override;
         bool setSize(const IntSize&) override;
