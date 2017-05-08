@@ -1,3 +1,23 @@
+2017-05-08  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: Propagate aria-readonly to grid descendants
+        https://bugs.webkit.org/show_bug.cgi?id=171189
+
+        Reviewed by Chris Fleizach.
+
+        Add new test cases to aria-readonly.html. In addition, because the platform-specific
+        test expectations seem due to how platforms treat whitespace from the test file, hide
+        the test cases after the test is run so that there are no extraneous characters and
+        a single expectations file can be shared.
+
+        * accessibility/aria-readonly-expected.txt: Updated.
+        * accessibility/aria-readonly.html: Updated.
+        * accessibility/gtk/aria-readonly-propagated-expected.txt: Added.
+        * accessibility/gtk/aria-readonly-propagated.html: Added.
+        * platform/mac-elcapitan/accessibility/aria-readonly-expected.txt: Removed.
+        * platform/mac/accessibility/aria-readonly-expected.txt: Removed.
+        * platform/win/accessibility/aria-readonly-expected.txt: Removed.
+
 2017-05-06  Zalan Bujtas  <zalan@apple.com>
 
         Ensure clean tree before AX cache update.

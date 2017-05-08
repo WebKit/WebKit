@@ -4,6 +4,7 @@
 <script src="../resources/js-test-pre.js"></script>
 </head>
 <body id="body">
+<div id="content">
 
 <!-- These reflect the native writable state, but can be overridden by @aria-readonly. -->
 <div contenteditable id="htmlEditableDiv" data-expectedwritable="true"></div>
@@ -50,7 +51,21 @@
 <div role="treegrid" aria-readonly="false" id="ariaTreeGrid2" tabindex="0" data-expectedwritable="true"><div role="row"><div role="gridcell"></div></div></div>
 
 
+<!--aria-readonly should be propagated to gridcells if the property is not set on the gridcell -->
+<div role="grid" aria-readonly="true"><div role="row"><div role="gridcell" id="ariaGridCell3" tabindex="0" data-expectedwritable="false"></div></div></div>
+<div role="grid" aria-readonly="false"><div role="row"><div role="gridcell" id="ariaGridCell4" tabindex="0" data-expectedwritable="true"></div></div></div>
+<div role="grid" aria-readonly="false"><div role="row"><div role="gridcell" aria-readonly="true" id="ariaGridCell5" tabindex="0" data-expectedwritable="false"></div></div></div>
+<div role="grid" aria-readonly="true"><div role="row"><div role="gridcell" aria-readonly="false" id="ariaGridCell6" tabindex="0" data-expectedwritable="true"></div></div></div>
+<div role="grid" aria-readonly="true"><div role="row"><div role="columnheader" id="ariaColumnHeader3" tabindex="0" data-expectedwritable="false"></div></div></div>
+<div role="grid" aria-readonly="false"><div role="row"><div role="columnheader" id="ariaColumnHeader4" tabindex="0" data-expectedwritable="true"></div></div></div>
+<div role="grid" aria-readonly="false"><div role="row"><div role="columnheader" aria-readonly="true" id="ariaColumnHeader5" tabindex="0" data-expectedwritable="false"></div></div></div>
+<div role="grid" aria-readonly="true"><div role="row"><div role="columnheader" aria-readonly="false" id="ariaColumnHeader6" tabindex="0" data-expectedwritable="true"></div></div></div>
+<div role="grid" aria-readonly="true"><div role="row"><div role="rowheader" id="ariaRowHeader3" tabindex="0" data-expectedwritable="false"></div></div></div>
+<div role="grid" aria-readonly="false"><div role="row"><div role="rowheader" id="ariaRowHeader4" tabindex="0" data-expectedwritable="true"></div></div></div>
+<div role="grid" aria-readonly="false"><div role="row"><div role="rowheader" aria-readonly="true" id="ariaRowHeader5" tabindex="0" data-expectedwritable="false"></div></div></div>
+<div role="grid" aria-readonly="true"><div role="row"><div role="rowheader" aria-readonly="false" id="ariaRowHeader6" tabindex="0" data-expectedwritable="true"></div></div></div>
 
+</div>
 <p id="description"></p>
 <div id="console"></div>
 
@@ -78,6 +93,7 @@
             result.innerText += output + "\n";
         }
 
+        document.getElementById("content").style.visibility = "hidden";
     }
 
 </script>

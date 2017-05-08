@@ -1,3 +1,21 @@
+2017-05-08  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: Propagate aria-readonly to grid descendants
+        https://bugs.webkit.org/show_bug.cgi?id=171189
+
+        Reviewed by Chris Fleizach.
+
+        Propagate aria-readonly to grid descendants if the property is not
+        explicitly set on the descendant.
+
+        Test: accessibility/gtk/aria-readonly-propagated.html
+              Additional test cases also added to accessibility/aria-readonly.html
+
+        * accessibility/AccessibilityARIAGridCell.cpp:
+        (WebCore::AccessibilityARIAGridCell::ariaReadOnlyValue):
+        * accessibility/AccessibilityARIAGridCell.h:
+        * accessibility/AccessibilityObject.h:
+
 2017-05-06  Zalan Bujtas  <zalan@apple.com>
 
         Ensure clean tree before AX cache update.
