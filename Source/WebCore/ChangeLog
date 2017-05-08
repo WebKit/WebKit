@@ -1,3 +1,16 @@
+2017-05-08  Youenn Fablet  <youenn@apple.com>
+
+        CoreAudioCaptureSource should not modify its shared unit if already started/stopped
+        https://bugs.webkit.org/show_bug.cgi?id=171804
+
+        Reviewed by Jer Noble.
+
+        Manual testing only since CoreAudioSharedUnit is not mocked.
+
+        * platform/mediastream/mac/CoreAudioCaptureSource.cpp:
+        (WebCore::CoreAudioCaptureSource::startProducingData): Exit early if source is already started.
+        (WebCore::CoreAudioCaptureSource::stopProducingData): Exit early if source is already stopped.
+
 2017-05-08  Antti Koivisto  <antti@apple.com>
 
         ComposedTreeIterator does not traverse all slotted children if the traversal root is a slot element.
