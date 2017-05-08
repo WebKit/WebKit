@@ -1,3 +1,19 @@
+2017-05-08  Jonathan Bedard  <jbedard@apple.com>
+
+        buildbot: Cleanup simulators after running tests
+        https://bugs.webkit.org/show_bug.cgi?id=171679
+
+        Reviewed by Aakash Jain.
+
+        simctl is partitioned for each user. Since kill-old-processes
+        is run as root, we need to specify the buildbot user when tearing
+        down simulators between steps.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (KillOldProcesses): Pass buildbot user to kill-old-processes.
+        * BuildSlaveSupport/kill-old-processes:
+        (main): Specify the user for simctl if one has been provided.
+
 2017-05-08  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         REGRESSION(r216179): [GTK] Script install-dependencies misses liborc

@@ -26,7 +26,7 @@
 import os, sys
 
 
-def main():
+def main(user=None):
     tasksToKillWin = [
         "cl.exe",
         "devenv.com",
@@ -113,7 +113,10 @@ def main():
         for task in tasksToKill + tasksToKillMac:
             os.system("killall -9 -v -m " + task)
         # Shutdown any simulators
-        os.system("xcrun simctl shutdown booted")
+        if os.geteuid() == 0 and user:
+            os.system("sudo -u {} xcrun simctl shutdown booted".format(user))
+        else:
+            os.system("xcrun simctl shutdown booted")
         # Kill all instances of python executing run-webkit-tests
         os.system("ps aux | grep -E '.+/Python .+(run_webkit_tests|run-webkit-tests|mod_pywebsocket)' | grep -v grep | awk '{print $2}' | xargs kill")
     elif sys.platform == 'cygwin' or sys.platform == 'win32':
@@ -129,4 +132,5 @@ def main():
 
 
 if __name__ == '__main__':
-    sys.exit(main())
+    user = sys.argv[1] if len(sys.argv) > 1 else None
+    sys.exit(main(user))
