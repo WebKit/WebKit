@@ -1,3 +1,14 @@
+2017-05-08  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: don't expose empty roledescription
+        https://bugs.webkit.org/show_bug.cgi?id=163647
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/aria-roledescription-expected.txt: New test cases, updated expectations.
+        * accessibility/aria-roledescription.html: New test cases, updated expectations.
+        * platform/gtk/accessibility/aria-roledescription-expected.txt: New test cases, updated expectations.
+
 2017-05-08  Chris Dumez  <cdumez@apple.com>
 
         Drop non-standard Element.scrollByLines() / scrollByPages()

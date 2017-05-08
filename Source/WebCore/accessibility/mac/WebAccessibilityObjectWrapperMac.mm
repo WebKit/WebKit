@@ -2207,7 +2207,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
 #pragma clang diagnostic pop
 
     const AtomicString& overrideRoleDescription = m_object->roleDescription();
-    if (!overrideRoleDescription.isNull())
+    if (!overrideRoleDescription.isNull() && !overrideRoleDescription.isEmpty())
         return overrideRoleDescription;
     
     NSString* axRole = [self role];

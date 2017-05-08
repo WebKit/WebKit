@@ -1,3 +1,24 @@
+2017-05-08  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: don't expose empty roledescription
+        https://bugs.webkit.org/show_bug.cgi?id=163647
+
+        Reviewed by Chris Fleizach.
+
+        If the value of aria-roledescription is empty or contains only whitespace
+        characters, ignore the value. Also strip out leading or trailing whitespace
+        characters in the value.
+
+        No new tests: We already had coverage for an empty aria-roledescription value.
+        That test was updated to reflect the new behavior. New test cases were added
+        to cover a value that contains only whitespace characters, and a value with
+        leading and trailing whitespace characters.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::roleDescription):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper roleDescription]):
+
 2017-05-08  Chris Dumez  <cdumez@apple.com>
 
         Drop non-standard Element.scrollByLines() / scrollByPages()

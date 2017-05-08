@@ -2332,7 +2332,7 @@ bool AccessibilityObject::hasHighlighting() const
 
 String AccessibilityObject::roleDescription() const
 {
-    return getAttribute(aria_roledescriptionAttr);
+    return stripLeadingAndTrailingHTMLSpaces(getAttribute(aria_roledescriptionAttr));
 }
     
 static bool nodeHasPresentationRole(Node* node)
