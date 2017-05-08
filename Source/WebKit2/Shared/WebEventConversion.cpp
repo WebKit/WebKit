@@ -109,6 +109,15 @@ public:
         m_eventNumber = webEvent.eventNumber();
         m_menuTypeForEvent = webEvent.menuTypeForEvent();
 #endif
+        m_modifierFlags = 0;
+        if (webEvent.shiftKey())
+            m_modifierFlags |= WebEvent::ShiftKey;
+        if (webEvent.controlKey())
+            m_modifierFlags |= WebEvent::ControlKey;
+        if (webEvent.altKey())
+            m_modifierFlags |= WebEvent::AltKey;
+        if (webEvent.metaKey())
+            m_modifierFlags |= WebEvent::MetaKey;
     }
 };
 

@@ -72,7 +72,7 @@ public:
     void simulateSpacebarKeyPress();
     void simulateAltKeyPress();
     void simulateRightClick(unsigned x, unsigned y);
-    void simulateMouseMove(unsigned x, unsigned y);
+    void simulateMouseMove(unsigned x, unsigned y, WKEventModifiers = 0);
 #if PLATFORM(MAC)
     void simulateButtonClick(WKEventMouseButton, unsigned x, unsigned y, WKEventModifiers);
 #endif
