@@ -2025,7 +2025,8 @@
                 "end"
             ],
             "codegen-properties": {
-                "converter": "TextAlign"
+                "converter": "TextAlign",
+                "custom": "Initial|Value"
             }
         },
         "text-anchor": {
