@@ -1,3 +1,9 @@
+2017-05-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix expectations of fast/events/drag-and-drop-link-containing-block.html.
+
+        * platform/gtk/TestExpectations:
+
 2017-04-21  Chris Dumez  <cdumez@apple.com>
 
         Regression(r206240): XMLSerializer.serializeToString() does not properly escape '<' / '>' in attribute values
