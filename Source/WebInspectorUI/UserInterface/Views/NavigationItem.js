@@ -33,6 +33,7 @@ WebInspector.NavigationItem = class NavigationItem extends WebInspector.Object
 
         this._element = document.createElement("div");
         this._hidden = false;
+        this._parentNavigationBar = null;
 
         if (role)
             this._element.setAttribute("role", role);
@@ -45,25 +46,10 @@ WebInspector.NavigationItem = class NavigationItem extends WebInspector.Object
 
     // Public
 
-    get identifier()
-    {
-        return this._identifier;
-    }
-
-    get element()
-    {
-        return this._element;
-    }
-
-    get parentNavigationBar()
-    {
-        return this._parentNavigationBar;
-    }
-
-    get minimumWidth()
-    {
-        return this._element.realOffsetWidth;
-    }
+    get identifier() { return this._identifier; }
+    get element() { return this._element; }
+    get minimumWidth() { return this._element.realOffsetWidth; }
+    get parentNavigationBar() { return this._parentNavigationBar; }
 
     updateLayout(expandOnly)
     {

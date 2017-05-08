@@ -40,11 +40,10 @@ WebInspector.SettingsTabContentView = class SettingsTabContentView extends WebIn
         WebInspector.settings.zoomFactor.addEventListener(WebInspector.Setting.Event.Changed, boundNeedsLayout);
 
         this._navigationBar = new WebInspector.NavigationBar;
-        this._navigationBar.element.classList.add("hidden");
         this._navigationBar.addEventListener(WebInspector.NavigationBar.Event.NavigationItemSelected, this._navigationItemSelected, this);
 
         this._selectedSettingsView = null;
-        this._settingsViewIdentifierMap = new Map;
+        this._settingsViews = [];
 
         this.addSubview(this._navigationBar);
 
@@ -81,38 +80,106 @@ WebInspector.SettingsTabContentView = class SettingsTabContentView extends WebIn
         return this._selectedSettingsView;
     }
 
-    set selectedSettingsView(page)
+    set selectedSettingsView(settingsView)
     {
-        if (this._selectedSettingsView === page)
+        if (this._selectedSettingsView === settingsView)
             return;
 
         if (this._selectedSettingsView)
-            this.replaceSubview(this._selectedSettingsView, page);
+            this.replaceSubview(this._selectedSettingsView, settingsView);
         else
-            this.addSubview(page);
+            this.addSubview(settingsView);
 
-        this._selectedSettingsView = page;
+        this._selectedSettingsView = settingsView;
         this._selectedSettingsView.updateLayout();
 
-        this._navigationBar.selectedNavigationItem = page.identifier;
+        let navigationItem = this._navigationBar.findNavigationItem(settingsView.identifier);
+        console.assert(navigationItem, "Missing navigation item for settings view.", settingsView)
+        if (!navigationItem)
+            return;
+
+        this._navigationBar.selectedNavigationItem = navigationItem;
     }
 
     addSettingsView(settingsView)
     {
-        let identifier = settingsView.identifier;
-        console.assert(!this._settingsViewIdentifierMap.has(identifier), "SettingsView already exists.", settingsView);
-        if (this._settingsViewIdentifierMap.has(identifier))
+        if (this._settingsViews.includes(settingsView)) {
+            console.assert(false, "SettingsView already exists.", settingsView);
+            return;
+        }
+
+        this._settingsViews.push(settingsView);
+        this._navigationBar.addNavigationItem(new WebInspector.RadioButtonNavigationItem(settingsView.identifier, settingsView.displayName));
+
+        this._updateNavigationBarVisibility();
+    }
+
+    setSettingsViewVisible(settingsView, visible)
+    {
+        let navigationItem = this._navigationBar.findNavigationItem(settingsView.identifier);
+        console.assert(navigationItem, "Missing NavigationItem for identifier: " + settingsView.identifier);
+        if (!navigationItem)
             return;
 
-        this._settingsViewIdentifierMap.set(identifier, settingsView);
+        if (navigationItem.hidden === !visible)
+            return;
 
-        this._navigationBar.addNavigationItem(new WebInspector.RadioButtonNavigationItem(identifier, settingsView.displayName));
+        navigationItem.hidden = !visible;
+        settingsView.element.classList.toggle("hidden", !visible);
 
-        if (this._settingsViewIdentifierMap.size > 1)
-            this._navigationBar.element.classList.remove("hidden");
+        this._updateNavigationBarVisibility();
+
+        if (!this.selectedSettingsView) {
+            if (visible)
+                this.selectedSettingsView = settingsView;
+            return;
+        }
+
+        if (this.selectedSettingsView !== settingsView)
+            return;
+
+        let index = this._settingsViews.indexOf(settingsView);
+        console.assert(index !== -1, "SettingsView not found.", settingsView)
+        if (index === -1)
+            return;
+
+        let previousIndex = index;
+        while (--previousIndex >= 0) {
+            let previousNavigationItem = this._navigationBar.navigationItems[previousIndex];
+            console.assert(previousNavigationItem);
+            if (!previousNavigationItem || previousNavigationItem.hidden)
+                continue;
+
+            this.selectedSettingsView = this._settingsViews[previousIndex];
+            return;
+        }
+
+        let nextIndex = index;
+        while (++nextIndex < this._settingsViews.length) {
+            let nextNavigationItem = this._navigationBar.navigationItems[nextIndex];
+            console.assert(nextNavigationItem);
+            if (!nextNavigationItem || nextNavigationItem.hidden)
+                continue;
+
+            this.selectedSettingsView = this._settingsViews[nextIndex];
+            return;
+        }
     }
 
     // Private
+
+    _updateNavigationBarVisibility()
+    {
+        let visibleItems = 0;
+        for (let item of this._navigationBar.navigationItems) {
+            if (!item.hidden && ++visibleItems > 1) {
+                this._navigationBar.element.classList.remove("invisible");
+                return;
+            }
+        }
+
+        this._navigationBar.element.classList.add("invisible");
+    }
 
     _navigationItemSelected(event)
     {
@@ -120,7 +187,7 @@ WebInspector.SettingsTabContentView = class SettingsTabContentView extends WebIn
         if (!navigationItem)
             return;
 
-        let settingsView = this._settingsViewIdentifierMap.get(navigationItem.identifier);
+        let settingsView = this._settingsViews.find((view) => view.identifier === navigationItem.identifier);
         console.assert(settingsView, "Missing SettingsView for identifier " + navigationItem.identifier);
         if (!settingsView)
             return;

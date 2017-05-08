@@ -1,3 +1,71 @@
+2017-05-08  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Make it easy to dynamically show/hide a SettingsView
+        https://bugs.webkit.org/show_bug.cgi?id=171765
+        <rdar://problem/32031280>
+
+        Reviewed by Brian Burg.
+
+        This patch adds SettingsTabContentView.prototype.setSettingsViewVisible,
+        for dynamically showing/hiding a child view (and its NavigationBar item).
+        The following new behavior is relevant when more that one child SettingsView
+        exist in the Settings tab:
+         - Hiding the selected view will cause a new view to become selected.
+           The previous visible view is selected, if it exists. Otherwise the
+           next visible view is used.
+         - Showing a view when no views are selected cause the view to be selected.
+
+        As the Settings tab currently has only one child view, the behavior above
+        was tested by adding a handful of vanilla SettingsView objects to the tab
+        and toggling their visibility.
+
+        * UserInterface/Views/NavigationBar.js:
+        Simplify overloaded parameter `navigationItemOrIdentifierOrIndex`, which
+        is used in a few places and is always an instance of NavigationItem.
+
+        (WebInspector.NavigationBar):
+        (WebInspector.NavigationBar.prototype.removeNavigationItem):
+        (WebInspector.NavigationBar.prototype.get selectedNavigationItem):
+        (WebInspector.NavigationBar.prototype.set selectedNavigationItem):
+        (WebInspector.NavigationBar.prototype.findNavigationItem):
+        Lookup a navigation item by its identifier.
+        (WebInspector.NavigationBar.prototype._findNavigationItem): Deleted.
+        Replaced overloaded private method with new public method.
+
+        * UserInterface/Views/NavigationItem.js:
+        Cleanup.
+        (WebInspector.NavigationItem):
+        (WebInspector.NavigationItem.prototype.get identifier):
+        (WebInspector.NavigationItem.prototype.get element):
+        (WebInspector.NavigationItem.prototype.get minimumWidth):
+        (WebInspector.NavigationItem.prototype.get parentNavigationBar):
+
+        * UserInterface/Views/SettingsTabContentView.css:
+        Use `visibility: hidden` instead of `display: none` when hiding the
+        NavigationBar, so that the selected view's top position stays the same.
+
+        (.content-view.settings):
+        (.content-view.settings .navigation-bar.invisible):
+
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WebInspector.SettingsTabContentView):
+        Switch to an array of SettingsViews instead of a map. Fast lookup isn't
+        a concern due to the small number of items, and having indices simplifies
+        traversing the previous/next items in `setSettingsViewVisible`.
+
+        (WebInspector.SettingsTabContentView.prototype.set selectedSettingsView):
+        Rename `page` to `settingsView`.
+        (WebInspector.SettingsTabContentView.prototype.addSettingsView):
+        (WebInspector.SettingsTabContentView.prototype.setSettingsViewVisible):
+        Shows/hides the specified view. Hiding the selected SettingsView will
+        cause another visible view to become selected, if one exists.
+
+        (WebInspector.SettingsTabContentView.prototype._updateNavigationBarVisibility):
+        Helper for updating navigation bar visibility after making a change
+        to the navigation items.
+
+        (WebInspector.SettingsTabContentView.prototype._navigationItemSelected):
+
 2017-05-08  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Unprefix unicode-bidi CSS values

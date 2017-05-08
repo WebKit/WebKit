@@ -25,8 +25,12 @@
  */
 
 .content-view.settings {
-    padding: 6vh 0;
+    padding-bottom: 6vh;
     overflow-y: auto;
+}
+
+.content-view.settings .navigation-bar.invisible {
+    visibility: hidden;
 }
 
 .content-view.settings .navigation-bar .item.radio.button.text-only {
