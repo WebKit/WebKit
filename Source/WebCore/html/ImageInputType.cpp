@@ -179,19 +179,19 @@ unsigned ImageInputType::height() const
 
     element->document().updateLayout();
 
-    if (!element->renderer()) {
-        // Check the attribute first for an explicit pixel value.
-        if (auto optionalHeight = parseHTMLNonNegativeInteger(element->attributeWithoutSynchronization(heightAttr)))
-            return optionalHeight.value();
+    if (auto* renderer = element->renderer())
+        return adjustForAbsoluteZoom(downcast<RenderBox>(*renderer).contentHeight(), *renderer);
 
-        // If the image is available, use its height.
-        HTMLImageLoader* imageLoader = element->imageLoader();
-        if (imageLoader && imageLoader->image())
-            return imageLoader->image()->imageSizeForRenderer(element->renderer(), 1).height().toUnsigned();
-    }
+    // Check the attribute first for an explicit pixel value.
+    if (auto optionalHeight = parseHTMLNonNegativeInteger(element->attributeWithoutSynchronization(heightAttr)))
+        return optionalHeight.value();
 
-    RenderBox* box = element->renderBox();
-    return box ? adjustForAbsoluteZoom(box->contentHeight(), *box) : 0;
+    // If the image is available, use its height.
+    auto* imageLoader = element->imageLoader();
+    if (imageLoader && imageLoader->image())
+        return imageLoader->image()->imageSizeForRenderer(element->renderer(), 1).height().toUnsigned();
+
+    return 0;
 }
 
 unsigned ImageInputType::width() const
@@ -200,19 +200,19 @@ unsigned ImageInputType::width() const
 
     element->document().updateLayout();
 
-    if (!element->renderer()) {
-        // Check the attribute first for an explicit pixel value.
-        if (auto optionalWidth = parseHTMLNonNegativeInteger(element->attributeWithoutSynchronization(widthAttr)))
-            return optionalWidth.value();
+    if (auto* renderer = element->renderer())
+        return adjustForAbsoluteZoom(downcast<RenderBox>(*renderer).contentWidth(), *renderer);
 
-        // If the image is available, use its width.
-        HTMLImageLoader* imageLoader = element->imageLoader();
-        if (imageLoader && imageLoader->image())
-            return imageLoader->image()->imageSizeForRenderer(element->renderer(), 1).width().toUnsigned();
-    }
+    // Check the attribute first for an explicit pixel value.
+    if (auto optionalWidth = parseHTMLNonNegativeInteger(element->attributeWithoutSynchronization(widthAttr)))
+        return optionalWidth.value();
 
-    RenderBox* box = element->renderBox();
-    return box ? adjustForAbsoluteZoom(box->contentWidth(), *box) : 0;
+    // If the image is available, use its width.
+    auto* imageLoader = element->imageLoader();
+    if (imageLoader && imageLoader->image())
+        return imageLoader->image()->imageSizeForRenderer(element->renderer(), 1).width().toUnsigned();
+
+    return 0;
 }
 
 } // namespace WebCore
