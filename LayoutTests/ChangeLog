@@ -1,3 +1,13 @@
+2017-05-08  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: Setting aria-orientation="horizontal" on a listbox is being overridden on the Mac
+        https://bugs.webkit.org/show_bug.cgi?id=171821
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/aria-orientation-expected.txt: New test case.
+        * accessibility/aria-orientation.html: New test case.
+
 2017-05-08  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         [CG] To decode an image frame asynchronously, pass the native size of the image to CGImageSourceCreateThumbnailAtIndex() if it's smaller than the sizeForDrawing

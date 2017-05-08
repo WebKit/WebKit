@@ -1,3 +1,21 @@
+2017-05-08  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: Setting aria-orientation="horizontal" on a listbox is being overridden on the Mac
+        https://bugs.webkit.org/show_bug.cgi?id=171821
+
+        Reviewed by Chris Fleizach.
+
+        The Mac's AccessibilityObject wrapper was unconditionally returning vertical
+        as the orientation of listbox. Removing this override causes the author-specified
+        value to be exposed, with the default/implicit orientation continuing to be vertical.
+
+        No new tests. We already have coverage for the default/implicit orientation on a
+        listbox. A new test case was added to aria-orientation.html so that we would have
+        coverage for aria-orientation="horizontal" on a listbox.
+
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+
 2017-05-08  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         [CG] To decode an image frame asynchronously, pass the native size of the image to CGImageSourceCreateThumbnailAtIndex() if it's smaller than the sizeForDrawing

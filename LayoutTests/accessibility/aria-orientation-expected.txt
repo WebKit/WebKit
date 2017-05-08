@@ -14,6 +14,7 @@ radio 1
 cell
 cell2
 X
+Option
 This test makes sure that aria-orientation works correctly and the implicit defaults are defined on different roles.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -34,6 +35,7 @@ PASS radiogroup2.orientation is 'AXOrientation: AXVerticalOrientation'
 PASS treegrid2.orientation is 'AXOrientation: AXHorizontalOrientation'
 PASS separator2.orientation is 'AXOrientation: AXUnknownOrientation'
 PASS slider2.orientation is 'AXOrientation: AXUnknownOrientation'
+PASS listbox2.orientation is 'AXOrientation: AXHorizontalOrientation'
 PASS successfullyParsed is true
 
 TEST COMPLETE
