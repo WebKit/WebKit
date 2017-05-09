@@ -1,3 +1,17 @@
+2017-05-08  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION(r213564): Flash video playback failures
+        https://bugs.webkit.org/show_bug.cgi?id=171840
+        <rdar://problem/32041569>
+
+        Reviewed by Alexey Proskuryakov.
+
+        The sandbox restrictions added in r213564 to prevent access to unused iokit properties
+        blocked some items needed for Flash video playback. This change relaxes the sandbox
+        to allow this software to run properly.
+
+        * PluginProcess/mac/com.apple.WebKit.plugin-common.sb.in:
+
 2017-05-08  Alex Christensen  <achristensen@webkit.org>
 
         Reduce PassRefPtr use in WebKit2
