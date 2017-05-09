@@ -1,0 +1,40 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTable {TABLE} at (0,0) size 784x61 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x59
+          RenderTableRow {TR} at (0,0) size 782x38
+            RenderTableCell {TD} at (0,0) size 782x38 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderText {#text} at (2,2) size 770x34
+                text run at (2,2) width 160: "The Supreme Court says "
+                text run at (162,2) width 491: "Wisconsin can continue using tuition vouchers to help poor parents send their "
+                text run at (653,2) width 119: "children to church-"
+                text run at (2,19) width 80: "run schools. "
+                text run at (82,19) width 120: "What's your stand?"
+          RenderTableRow {TR} at (0,38) size 782x21
+            RenderTableCell {TD} at (0,38) size 391x21 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 31x17
+                text run at (2,2) width 31: "hello"
+            RenderTableCell {TD} at (391,38) size 391x21 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 31x17
+                text run at (2,2) width 31: "hello"
+      RenderBlock (anonymous) at (0,61) size 784x17
+        RenderBR {BR} at (0,0) size 0x17
+      RenderTable {TABLE} at (0,78) size 600x40 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 598x38
+          RenderTableRow {TR} at (0,0) size 598x38
+            RenderTableCell {TD} at (0,8) size 35x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 31x18
+                text run at (2,3) width 31: "hello"
+            RenderTableCell {TD} at (35,0) size 563x38 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 533x34
+                text run at (2,2) width 160: "The Supreme Court says "
+                text run at (162,2) width 373: "Wisconsin can continue using tuition vouchers to help poor"
+                text run at (2,19) width 114: "parents send their "
+                text run at (116,19) width 199: "children to church-run schools. "
+                text run at (315,19) width 120: "What's your stand?"
+          RenderTableRow {TR} at (0,38) size 598x0
+      RenderBlock (anonymous) at (0,118) size 784x17
+        RenderBR {BR} at (0,0) size 0x17

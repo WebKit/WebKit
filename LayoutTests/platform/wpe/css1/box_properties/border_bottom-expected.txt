@@ -1,0 +1,159 @@
+layer at (0,0) size 785x963
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x963
+  RenderBlock {HTML} at (0,0) size 785x963
+    RenderBody {BODY} at (8,8) size 769x947 [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 769x17
+        RenderText {#text} at (0,0) size 355x17
+          text run at (0,0) width 355: "The style declarations which apply to the text below are:"
+      RenderBlock {PRE} at (0,33) size 769x60
+        RenderText {#text} at (0,0) size 344x60
+          text run at (0,0) width 328: ".one {border-bottom: purple double 10px;}"
+          text run at (0,15) width 320: ".two {border-bottom: purple thin solid;}"
+          text run at (0,30) width 344: ".three {border-bottom: black medium solid;}"
+          text run at (0,45) width 288: "TD {border-bottom: green 2px solid;}"
+      RenderBlock {HR} at (0,106) size 769x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,124) size 769x34
+        RenderText {#text} at (0,0) size 731x34
+          text run at (0,0) width 658: "Note that all table cells on this page should have a two-pixel solid green border along their bottom sides. "
+          text run at (658,0) width 73: "This border"
+          text run at (0,17) width 365: "applies only to the cells, not the rows which contain them."
+      RenderBlock {P} at (0,174) size 769x27 [border: none (10px double #800080) none]
+        RenderText {#text} at (0,0) size 438x17
+          text run at (0,0) width 438: "This paragraph should have a purple, double, 10-pixel bottom border."
+      RenderBlock {P} at (0,217) size 769x18 [border: none (1px solid #800080) none]
+        RenderText {#text} at (0,0) size 355x17
+          text run at (0,0) width 355: "This paragraph should have a thin purple bottom border."
+      RenderTable {TABLE} at (0,251) size 769x106 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 767x104
+          RenderTableRow {TR} at (0,5) size 767x39
+            RenderTableCell {TD} at (5,5) size 758x39 [border: (1px inset #808080) (2px solid #008000) (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderText {#text} at (2,2) size 736x34
+                text run at (2,2) width 453: "Every cell in this table should have a 2-pixel solid green bottom border. "
+                text run at (455,2) width 283: "This is also true of the table-testing section in"
+                text run at (2,19) width 198: "the second half of the test page."
+          RenderTableRow {TR} at (0,49) size 767x50
+            RenderTableCell {TD} at (5,63) size 194x22 [border: (1px inset #808080) (2px solid #008000) (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 53x17
+                text run at (2,2) width 53: "Cell one"
+            RenderTableCell {TD} at (203,49) size 560x50 [border: (1px inset #808080) (2px solid #008000) (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock (anonymous) at (2,2) size 555x17
+                RenderText {#text} at (0,0) size 54x17
+                  text run at (0,0) width 54: "Cell two"
+              RenderTable {TABLE} at (2,19) size 161x28 [border: (1px outset #808080)]
+                RenderTableSection {TBODY} at (1,1) size 159x26
+                  RenderTableRow {TR} at (0,2) size 159x22
+                    RenderTableCell {TD} at (2,2) size 155x22 [border: (1px inset #808080) (2px solid #008000) (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 151x17
+                        text run at (2,2) width 151: "Nested single-cell table!"
+      RenderBlock {UL} at (0,373) size 769x128
+        RenderListItem {LI} at (40,0) size 729x71 [border: none (3px solid #000000) none]
+          RenderBlock (anonymous) at (0,0) size 729x17
+            RenderListMarker at (-17,0) size 7x17: bullet
+            RenderText {#text} at (0,0) size 118x17
+              text run at (0,0) width 118: "This is a list item..."
+          RenderBlock {UL} at (0,17) size 729x51
+            RenderListItem {LI} at (40,0) size 689x17
+              RenderListMarker at (-17,0) size 7x17: white bullet
+              RenderText {#text} at (0,0) size 73x17
+                text run at (0,0) width 73: "...and this..."
+            RenderListItem {LI} at (40,17) size 689x17
+              RenderListMarker at (-17,0) size 7x17: white bullet
+              RenderText {#text} at (0,0) size 115x17
+                text run at (0,0) width 115: "...is a second list..."
+            RenderListItem {LI} at (40,34) size 689x17
+              RenderListMarker at (-17,0) size 7x17: white bullet
+              RenderText {#text} at (0,0) size 176x17
+                text run at (0,0) width 176: "...nested within the list item."
+        RenderListItem {LI} at (40,71) size 729x20 [border: none (3px solid #000000) none]
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderText {#text} at (0,0) size 158x17
+            text run at (0,0) width 158: "This is a second list item."
+        RenderListItem {LI} at (40,91) size 729x37 [border: none (3px solid #000000) none]
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderText {#text} at (0,0) size 722x34
+            text run at (0,0) width 722: "Each list item in this list should have a medium-width black border at its bottom, which for the first item means that"
+            text run at (0,17) width 104: "it should appear "
+          RenderInline {EM} at (0,0) size 50x17
+            RenderText {#text} at (104,17) size 50x17
+              text run at (104,17) width 50: "beneath"
+          RenderText {#text} at (154,17) size 390x17
+            text run at (154,17) width 390: " the nested list (below the line \"...nested within the list item.\")."
+      RenderTable {TABLE} at (0,517) size 769x430 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 767x428
+          RenderTableRow {TR} at (0,0) size 767x26
+            RenderTableCell {TD} at (0,0) size 767x26 [bgcolor=#C0C0C0] [border: (1px inset #808080) (2px solid #008000) (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 163x17
+                RenderText {#text} at (4,4) size 163x17
+                  text run at (4,4) width 163: "TABLE Testing Section"
+          RenderTableRow {TR} at (0,26) size 767x402
+            RenderTableCell {TD} at (0,214) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080) (2px solid #008000) (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 4x17
+                text run at (4,4) width 4: " "
+            RenderTableCell {TD} at (12,26) size 755x402 [border: (1px inset #808080) (2px solid #008000) (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 747x34
+                RenderText {#text} at (0,0) size 731x34
+                  text run at (0,0) width 658: "Note that all table cells on this page should have a two-pixel solid green border along their bottom sides. "
+                  text run at (658,0) width 73: "This border"
+                  text run at (0,17) width 365: "applies only to the cells, not the rows which contain them."
+              RenderBlock {P} at (4,54) size 747x27 [border: none (10px double #800080) none]
+                RenderText {#text} at (0,0) size 438x17
+                  text run at (0,0) width 438: "This paragraph should have a purple, double, 10-pixel bottom border."
+              RenderBlock {P} at (4,97) size 747x18 [border: none (1px solid #800080) none]
+                RenderText {#text} at (0,0) size 355x17
+                  text run at (0,0) width 355: "This paragraph should have a thin purple bottom border."
+              RenderTable {TABLE} at (4,131) size 747x106 [border: (1px outset #808080)]
+                RenderTableSection {TBODY} at (1,1) size 745x104
+                  RenderTableRow {TR} at (0,5) size 745x39
+                    RenderTableCell {TD} at (5,5) size 736x39 [border: (1px inset #808080) (2px solid #008000) (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+                      RenderText {#text} at (2,2) size 720x34
+                        text run at (2,2) width 453: "Every cell in this table should have a 2-pixel solid green bottom border. "
+                        text run at (455,2) width 267: "This is also true of the table-testing section"
+                        text run at (2,19) width 214: "in the second half of the test page."
+                  RenderTableRow {TR} at (0,49) size 745x50
+                    RenderTableCell {TD} at (5,63) size 188x22 [border: (1px inset #808080) (2px solid #008000) (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 53x17
+                        text run at (2,2) width 53: "Cell one"
+                    RenderTableCell {TD} at (197,49) size 544x50 [border: (1px inset #808080) (2px solid #008000) (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+                      RenderBlock (anonymous) at (2,2) size 539x17
+                        RenderText {#text} at (0,0) size 54x17
+                          text run at (0,0) width 54: "Cell two"
+                      RenderTable {TABLE} at (2,19) size 161x28 [border: (1px outset #808080)]
+                        RenderTableSection {TBODY} at (1,1) size 159x26
+                          RenderTableRow {TR} at (0,2) size 159x22
+                            RenderTableCell {TD} at (2,2) size 155x22 [border: (1px inset #808080) (2px solid #008000) (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                              RenderText {#text} at (2,2) size 151x17
+                                text run at (2,2) width 151: "Nested single-cell table!"
+              RenderBlock {UL} at (4,253) size 747x128
+                RenderListItem {LI} at (40,0) size 707x71 [border: none (3px solid #000000) none]
+                  RenderBlock (anonymous) at (0,0) size 707x17
+                    RenderListMarker at (-17,0) size 7x17: bullet
+                    RenderText {#text} at (0,0) size 118x17
+                      text run at (0,0) width 118: "This is a list item..."
+                  RenderBlock {UL} at (0,17) size 707x51
+                    RenderListItem {LI} at (40,0) size 667x17
+                      RenderListMarker at (-17,0) size 7x17: white bullet
+                      RenderText {#text} at (0,0) size 73x17
+                        text run at (0,0) width 73: "...and this..."
+                    RenderListItem {LI} at (40,17) size 667x17
+                      RenderListMarker at (-17,0) size 7x17: white bullet
+                      RenderText {#text} at (0,0) size 115x17
+                        text run at (0,0) width 115: "...is a second list..."
+                    RenderListItem {LI} at (40,34) size 667x17
+                      RenderListMarker at (-17,0) size 7x17: white bullet
+                      RenderText {#text} at (0,0) size 176x17
+                        text run at (0,0) width 176: "...nested within the list item."
+                RenderListItem {LI} at (40,71) size 707x20 [border: none (3px solid #000000) none]
+                  RenderListMarker at (-17,0) size 7x17: bullet
+                  RenderText {#text} at (0,0) size 158x17
+                    text run at (0,0) width 158: "This is a second list item."
+                RenderListItem {LI} at (40,91) size 707x37 [border: none (3px solid #000000) none]
+                  RenderListMarker at (-17,0) size 7x17: bullet
+                  RenderText {#text} at (0,0) size 695x34
+                    text run at (0,0) width 695: "Each list item in this list should have a medium-width black border at its bottom, which for the first item means"
+                    text run at (0,17) width 131: "that it should appear "
+                  RenderInline {EM} at (0,0) size 50x17
+                    RenderText {#text} at (131,17) size 50x17
+                      text run at (131,17) width 50: "beneath"
+                  RenderText {#text} at (181,17) size 390x17
+                    text run at (181,17) width 390: " the nested list (below the line \"...nested within the list item.\")."

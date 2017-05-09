@@ -1,0 +1,16 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x17
+        RenderText {#text} at (0,0) size 468x17
+          text run at (0,0) width 468: "This test case creates a TR element then tries to assign to the cells property"
+      RenderBlock {P} at (0,33) size 784x30
+        RenderText {#text} at (0,6) size 41x17
+          text run at (0,6) width 41: "Crash "
+        RenderButton {BUTTON} at (43,2) size 110x26 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+          RenderBlock (anonymous) at (8,4) size 94x17
+            RenderText {#text} at (0,0) size 94x17
+              text run at (0,0) width 94: "TR.cells = null"
+        RenderText {#text} at (0,0) size 0x0

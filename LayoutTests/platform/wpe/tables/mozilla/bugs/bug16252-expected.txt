@@ -1,0 +1,521 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTable {TABLE} at (0,0) size 600x455
+        RenderTableSection {TBODY} at (0,0) size 600x455
+          RenderTableRow {TR} at (0,0) size 600x455
+            RenderTableCell {TD} at (0,0) size 600x455 [r=0 c=0 rs=1 cs=1]
+              RenderBlock (anonymous) at (0,0) size 600x1
+                RenderImage {IMG} at (0,0) size 600x1
+                RenderText {#text} at (0,0) size 0x0
+              RenderBlock {BLOCKQUOTE} at (40,17) size 520x422
+                RenderBlock {BLOCKQUOTE} at (40,0) size 440x422
+                  RenderBlock (anonymous) at (0,0) size 440x204
+                    RenderTable {TABLE} at (180,0) size 260x282
+                      RenderTableSection {TBODY} at (0,0) size 260x282
+                        RenderTableRow {TR} at (0,0) size 260x21
+                          RenderTableCell {TD} at (0,0) size 6x21 [bgcolor=#FFFFFF] [r=0 c=0 rs=1 cs=1]
+                            RenderBR {BR} at (2,2) size 0x17
+                          RenderTableCell {TD} at (6,1) size 254x19 [bgcolor=#CCCCDD] [r=0 c=1 rs=1 cs=1]
+                            RenderInline {FONT} at (0,0) size 246x15
+                              RenderInline {B} at (0,0) size 246x15
+                                RenderText {#text} at (2,2) size 246x15
+                                  text run at (2,2) width 246: "CHAMBERLAIN'S CAREER STATISTICS"
+                        RenderTableRow {TR} at (0,21) size 260x261
+                          RenderTableCell {TD} at (0,141) size 6x21 [bgcolor=#FFFFFF] [r=1 c=0 rs=1 cs=1]
+                            RenderBR {BR} at (2,122) size 0x17
+                          RenderTableCell {TD} at (6,21) size 254x261 [r=1 c=1 rs=1 cs=1]
+                            RenderTable {TABLE} at (2,2) size 250x240
+                              RenderTableSection {TBODY} at (0,0) size 250x240
+                                RenderTableRow {TR} at (0,0) size 250x15 [bgcolor=#EEEEEE]
+                                  RenderTableCell {TD} at (0,0) size 32x15 [r=0 c=0 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 22x11
+                                      RenderText {#text} at (2,2) size 22x11
+                                        text run at (2,2) width 22: "Year"
+                                  RenderTableCell {TD} at (31,0) size 71x15 [r=0 c=1 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 26x11
+                                      RenderText {#text} at (2,2) size 26x11
+                                        text run at (2,2) width 26: "Team"
+                                  RenderTableCell {TD} at (101,0) size 29x15 [r=0 c=2 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 16x11
+                                      RenderText {#text} at (11,2) size 16x11
+                                        text run at (11,2) width 16: "GP"
+                                  RenderTableCell {TD} at (129,0) size 35x15 [r=0 c=3 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 20x11
+                                      RenderText {#text} at (13,2) size 20x11
+                                        text run at (13,2) width 20: "Reb"
+                                  RenderTableCell {TD} at (163,0) size 27x15 [r=0 c=4 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 23x11
+                                      RenderText {#text} at (2,2) size 23x11
+                                        text run at (2,2) width 23: "RPG"
+                                  RenderTableCell {TD} at (189,0) size 35x15 [r=0 c=5 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 16x11
+                                      RenderText {#text} at (17,2) size 16x11
+                                        text run at (17,2) width 16: "Pts"
+                                  RenderTableCell {TD} at (223,0) size 28x15 [r=0 c=6 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 23x11
+                                      RenderText {#text} at (2,2) size 23x11
+                                        text run at (2,2) width 23: "PPG"
+                                RenderTableRow {TR} at (0,15) size 250x15 [bgcolor=#FFFFFF]
+                                  RenderTableCell {TD} at (0,15) size 32x15 [r=1 c=0 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 27x11
+                                      RenderText {#text} at (2,2) size 27x11
+                                        text run at (2,2) width 27: "59-60"
+                                  RenderTableCell {TD} at (31,15) size 71x15 [r=1 c=1 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 57x11
+                                      RenderText {#text} at (2,2) size 57x11
+                                        text run at (2,2) width 57: "Philadelphia"
+                                  RenderTableCell {TD} at (101,15) size 29x15 [r=1 c=2 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 13x11
+                                      RenderText {#text} at (14,2) size 13x11
+                                        text run at (14,2) width 13: "72"
+                                  RenderTableCell {TD} at (129,15) size 35x15 [r=1 c=3 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 25x11
+                                      RenderText {#text} at (8,2) size 25x11
+                                        text run at (8,2) width 25: "1941"
+                                  RenderTableCell {TD} at (163,15) size 27x15 [r=1 c=4 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 22x11
+                                      RenderText {#text} at (3,2) size 22x11
+                                        text run at (3,2) width 22: "27.0"
+                                  RenderTableCell {TD} at (189,15) size 35x15 [r=1 c=5 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 25x11
+                                      RenderText {#text} at (8,2) size 25x11
+                                        text run at (8,2) width 25: "2707"
+                                  RenderTableCell {TD} at (223,15) size 28x15 [r=1 c=6 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 22x11
+                                      RenderText {#text} at (3,2) size 22x11
+                                        text run at (3,2) width 22: "37.6"
+                                RenderTableRow {TR} at (0,30) size 250x15 [bgcolor=#FFFFFF]
+                                  RenderTableCell {TD} at (0,30) size 32x15 [r=2 c=0 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 27x11
+                                      RenderText {#text} at (2,2) size 27x11
+                                        text run at (2,2) width 27: "60-61"
+                                  RenderTableCell {TD} at (31,30) size 71x15 [r=2 c=1 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 57x11
+                                      RenderText {#text} at (2,2) size 57x11
+                                        text run at (2,2) width 57: "Philadelphia"
+                                  RenderTableCell {TD} at (101,30) size 29x15 [r=2 c=2 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 13x11
+                                      RenderText {#text} at (14,2) size 13x11
+                                        text run at (14,2) width 13: "79"
+                                  RenderTableCell {TD} at (129,30) size 35x15 [r=2 c=3 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 25x11
+                                      RenderText {#text} at (8,2) size 25x11
+                                        text run at (8,2) width 25: "2149"
+                                  RenderTableCell {TD} at (163,30) size 27x15 [r=2 c=4 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 22x11
+                                      RenderText {#text} at (3,2) size 22x11
+                                        text run at (3,2) width 22: "27.2"
+                                  RenderTableCell {TD} at (189,30) size 35x15 [r=2 c=5 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 25x11
+                                      RenderText {#text} at (8,2) size 25x11
+                                        text run at (8,2) width 25: "3033"
+                                  RenderTableCell {TD} at (223,30) size 28x15 [r=2 c=6 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 22x11
+                                      RenderText {#text} at (3,2) size 22x11
+                                        text run at (3,2) width 22: "38.4"
+                                RenderTableRow {TR} at (0,45) size 250x15 [bgcolor=#FFFFFF]
+                                  RenderTableCell {TD} at (0,45) size 32x15 [r=3 c=0 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 27x11
+                                      RenderText {#text} at (2,2) size 27x11
+                                        text run at (2,2) width 27: "61-62"
+                                  RenderTableCell {TD} at (31,45) size 71x15 [r=3 c=1 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 57x11
+                                      RenderText {#text} at (2,2) size 57x11
+                                        text run at (2,2) width 57: "Philadelphia"
+                                  RenderTableCell {TD} at (101,45) size 29x15 [r=3 c=2 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 13x11
+                                      RenderText {#text} at (14,2) size 13x11
+                                        text run at (14,2) width 13: "80"
+                                  RenderTableCell {TD} at (129,45) size 35x15 [r=3 c=3 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 25x11
+                                      RenderText {#text} at (8,2) size 25x11
+                                        text run at (8,2) width 25: "2052"
+                                  RenderTableCell {TD} at (163,45) size 27x15 [r=3 c=4 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 22x11
+                                      RenderText {#text} at (3,2) size 22x11
+                                        text run at (3,2) width 22: "25.7"
+                                  RenderTableCell {TD} at (189,45) size 35x15 [r=3 c=5 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 25x11
+                                      RenderText {#text} at (8,2) size 25x11
+                                        text run at (8,2) width 25: "4029"
+                                  RenderTableCell {TD} at (223,45) size 28x15 [r=3 c=6 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 22x11
+                                      RenderText {#text} at (3,2) size 22x11
+                                        text run at (3,2) width 22: "50.4"
+                                RenderTableRow {TR} at (0,60) size 250x15 [bgcolor=#FFFFFF]
+                                  RenderTableCell {TD} at (0,60) size 32x15 [r=4 c=0 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 27x11
+                                      RenderText {#text} at (2,2) size 27x11
+                                        text run at (2,2) width 27: "62-63"
+                                  RenderTableCell {TD} at (31,60) size 71x15 [r=4 c=1 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 66x11
+                                      RenderText {#text} at (2,2) size 66x11
+                                        text run at (2,2) width 66: "San Francisco"
+                                  RenderTableCell {TD} at (101,60) size 29x15 [r=4 c=2 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 13x11
+                                      RenderText {#text} at (14,2) size 13x11
+                                        text run at (14,2) width 13: "80"
+                                  RenderTableCell {TD} at (129,60) size 35x15 [r=4 c=3 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 25x11
+                                      RenderText {#text} at (8,2) size 25x11
+                                        text run at (8,2) width 25: "1946"
+                                  RenderTableCell {TD} at (163,60) size 27x15 [r=4 c=4 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 22x11
+                                      RenderText {#text} at (3,2) size 22x11
+                                        text run at (3,2) width 22: "24.3"
+                                  RenderTableCell {TD} at (189,60) size 35x15 [r=4 c=5 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 25x11
+                                      RenderText {#text} at (8,2) size 25x11
+                                        text run at (8,2) width 25: "3806"
+                                  RenderTableCell {TD} at (223,60) size 28x15 [r=4 c=6 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 22x11
+                                      RenderText {#text} at (3,2) size 22x11
+                                        text run at (3,2) width 22: "44.8"
+                                RenderTableRow {TR} at (0,75) size 250x15 [bgcolor=#FFFFFF]
+                                  RenderTableCell {TD} at (0,75) size 32x15 [r=5 c=0 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 27x11
+                                      RenderText {#text} at (2,2) size 27x11
+                                        text run at (2,2) width 27: "63-64"
+                                  RenderTableCell {TD} at (31,75) size 71x15 [r=5 c=1 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 66x11
+                                      RenderText {#text} at (2,2) size 66x11
+                                        text run at (2,2) width 66: "San Francisco"
+                                  RenderTableCell {TD} at (101,75) size 29x15 [r=5 c=2 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 13x11
+                                      RenderText {#text} at (14,2) size 13x11
+                                        text run at (14,2) width 13: "80"
+                                  RenderTableCell {TD} at (129,75) size 35x15 [r=5 c=3 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 25x11
+                                      RenderText {#text} at (8,2) size 25x11
+                                        text run at (8,2) width 25: "1787"
+                                  RenderTableCell {TD} at (163,75) size 27x15 [r=5 c=4 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 22x11
+                                      RenderText {#text} at (3,2) size 22x11
+                                        text run at (3,2) width 22: "22.3"
+                                  RenderTableCell {TD} at (189,75) size 35x15 [r=5 c=5 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 25x11
+                                      RenderText {#text} at (8,2) size 25x11
+                                        text run at (8,2) width 25: "2948"
+                                  RenderTableCell {TD} at (223,75) size 28x15 [r=5 c=6 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 22x11
+                                      RenderText {#text} at (3,2) size 22x11
+                                        text run at (3,2) width 22: "36.9"
+                                RenderTableRow {TR} at (0,90) size 250x15 [bgcolor=#FFFFFF]
+                                  RenderTableCell {TD} at (0,90) size 32x15 [r=6 c=0 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 27x11
+                                      RenderText {#text} at (2,2) size 27x11
+                                        text run at (2,2) width 27: "64-65"
+                                  RenderTableCell {TD} at (31,90) size 71x15 [r=6 c=1 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 45x11
+                                      RenderText {#text} at (2,2) size 45x11
+                                        text run at (2,2) width 45: "S.F.-Phila"
+                                  RenderTableCell {TD} at (101,90) size 29x15 [r=6 c=2 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 13x11
+                                      RenderText {#text} at (14,2) size 13x11
+                                        text run at (14,2) width 13: "73"
+                                  RenderTableCell {TD} at (129,90) size 35x15 [r=6 c=3 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 25x11
+                                      RenderText {#text} at (8,2) size 25x11
+                                        text run at (8,2) width 25: "1673"
+                                  RenderTableCell {TD} at (163,90) size 27x15 [r=6 c=4 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 22x11
+                                      RenderText {#text} at (3,2) size 22x11
+                                        text run at (3,2) width 22: "22.9"
+                                  RenderTableCell {TD} at (189,90) size 35x15 [r=6 c=5 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 25x11
+                                      RenderText {#text} at (8,2) size 25x11
+                                        text run at (8,2) width 25: "2534"
+                                  RenderTableCell {TD} at (223,90) size 28x15 [r=6 c=6 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 22x11
+                                      RenderText {#text} at (3,2) size 22x11
+                                        text run at (3,2) width 22: "34.7"
+                                RenderTableRow {TR} at (0,105) size 250x15 [bgcolor=#FFFFFF]
+                                  RenderTableCell {TD} at (0,105) size 32x15 [r=7 c=0 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 27x11
+                                      RenderText {#text} at (2,2) size 27x11
+                                        text run at (2,2) width 27: "65-66"
+                                  RenderTableCell {TD} at (31,105) size 71x15 [r=7 c=1 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 57x11
+                                      RenderText {#text} at (2,2) size 57x11
+                                        text run at (2,2) width 57: "Philadelphia"
+                                  RenderTableCell {TD} at (101,105) size 29x15 [r=7 c=2 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 13x11
+                                      RenderText {#text} at (14,2) size 13x11
+                                        text run at (14,2) width 13: "79"
+                                  RenderTableCell {TD} at (129,105) size 35x15 [r=7 c=3 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 25x11
+                                      RenderText {#text} at (8,2) size 25x11
+                                        text run at (8,2) width 25: "1943"
+                                  RenderTableCell {TD} at (163,105) size 27x15 [r=7 c=4 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 22x11
+                                      RenderText {#text} at (3,2) size 22x11
+                                        text run at (3,2) width 22: "24.6"
+                                  RenderTableCell {TD} at (189,105) size 35x15 [r=7 c=5 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 25x11
+                                      RenderText {#text} at (8,2) size 25x11
+                                        text run at (8,2) width 25: "2649"
+                                  RenderTableCell {TD} at (223,105) size 28x15 [r=7 c=6 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 22x11
+                                      RenderText {#text} at (3,2) size 22x11
+                                        text run at (3,2) width 22: "33.5"
+                                RenderTableRow {TR} at (0,120) size 250x15 [bgcolor=#FFFFFF]
+                                  RenderTableCell {TD} at (0,120) size 32x15 [r=8 c=0 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 27x11
+                                      RenderText {#text} at (2,2) size 27x11
+                                        text run at (2,2) width 27: "66-67"
+                                  RenderTableCell {TD} at (31,120) size 71x15 [r=8 c=1 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 57x11
+                                      RenderText {#text} at (2,2) size 57x11
+                                        text run at (2,2) width 57: "Philadelphia"
+                                  RenderTableCell {TD} at (101,120) size 29x15 [r=8 c=2 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 13x11
+                                      RenderText {#text} at (14,2) size 13x11
+                                        text run at (14,2) width 13: "81"
+                                  RenderTableCell {TD} at (129,120) size 35x15 [r=8 c=3 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 25x11
+                                      RenderText {#text} at (8,2) size 25x11
+                                        text run at (8,2) width 25: "1957"
+                                  RenderTableCell {TD} at (163,120) size 27x15 [r=8 c=4 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 22x11
+                                      RenderText {#text} at (3,2) size 22x11
+                                        text run at (3,2) width 22: "24.2"
+                                  RenderTableCell {TD} at (189,120) size 35x15 [r=8 c=5 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 25x11
+                                      RenderText {#text} at (8,2) size 25x11
+                                        text run at (8,2) width 25: "1956"
+                                  RenderTableCell {TD} at (223,120) size 28x15 [r=8 c=6 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 22x11
+                                      RenderText {#text} at (3,2) size 22x11
+                                        text run at (3,2) width 22: "24.1"
+                                RenderTableRow {TR} at (0,135) size 250x15 [bgcolor=#FFFFFF]
+                                  RenderTableCell {TD} at (0,135) size 32x15 [r=9 c=0 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 27x11
+                                      RenderText {#text} at (2,2) size 27x11
+                                        text run at (2,2) width 27: "67-68"
+                                  RenderTableCell {TD} at (31,135) size 71x15 [r=9 c=1 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 57x11
+                                      RenderText {#text} at (2,2) size 57x11
+                                        text run at (2,2) width 57: "Philadelphia"
+                                  RenderTableCell {TD} at (101,135) size 29x15 [r=9 c=2 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 13x11
+                                      RenderText {#text} at (14,2) size 13x11
+                                        text run at (14,2) width 13: "82"
+                                  RenderTableCell {TD} at (129,135) size 35x15 [r=9 c=3 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 25x11
+                                      RenderText {#text} at (8,2) size 25x11
+                                        text run at (8,2) width 25: "1952"
+                                  RenderTableCell {TD} at (163,135) size 27x15 [r=9 c=4 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 22x11
+                                      RenderText {#text} at (3,2) size 22x11
+                                        text run at (3,2) width 22: "23.8"
+                                  RenderTableCell {TD} at (189,135) size 35x15 [r=9 c=5 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 25x11
+                                      RenderText {#text} at (8,2) size 25x11
+                                        text run at (8,2) width 25: "1992"
+                                  RenderTableCell {TD} at (223,135) size 28x15 [r=9 c=6 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 22x11
+                                      RenderText {#text} at (3,2) size 22x11
+                                        text run at (3,2) width 22: "24.3"
+                                RenderTableRow {TR} at (0,150) size 250x15 [bgcolor=#FFFFFF]
+                                  RenderTableCell {TD} at (0,150) size 32x15 [r=10 c=0 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 27x11
+                                      RenderText {#text} at (2,2) size 27x11
+                                        text run at (2,2) width 27: "68-69"
+                                  RenderTableCell {TD} at (31,150) size 71x15 [r=10 c=1 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 53x11
+                                      RenderText {#text} at (2,2) size 53x11
+                                        text run at (2,2) width 53: "L.A. Lakers"
+                                  RenderTableCell {TD} at (101,150) size 29x15 [r=10 c=2 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 13x11
+                                      RenderText {#text} at (14,2) size 13x11
+                                        text run at (14,2) width 13: "81"
+                                  RenderTableCell {TD} at (129,150) size 35x15 [r=10 c=3 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 25x11
+                                      RenderText {#text} at (8,2) size 25x11
+                                        text run at (8,2) width 25: "1712"
+                                  RenderTableCell {TD} at (163,150) size 27x15 [r=10 c=4 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 22x11
+                                      RenderText {#text} at (3,2) size 22x11
+                                        text run at (3,2) width 22: "21.1"
+                                  RenderTableCell {TD} at (189,150) size 35x15 [r=10 c=5 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 25x11
+                                      RenderText {#text} at (8,2) size 25x11
+                                        text run at (8,2) width 25: "1664"
+                                  RenderTableCell {TD} at (223,150) size 28x15 [r=10 c=6 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 22x11
+                                      RenderText {#text} at (3,2) size 22x11
+                                        text run at (3,2) width 22: "20.5"
+                                RenderTableRow {TR} at (0,165) size 250x15 [bgcolor=#FFFFFF]
+                                  RenderTableCell {TD} at (0,165) size 32x15 [r=11 c=0 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 27x11
+                                      RenderText {#text} at (2,2) size 27x11
+                                        text run at (2,2) width 27: "69-70"
+                                  RenderTableCell {TD} at (31,165) size 71x15 [r=11 c=1 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 53x11
+                                      RenderText {#text} at (2,2) size 53x11
+                                        text run at (2,2) width 53: "L.A. Lakers"
+                                  RenderTableCell {TD} at (101,165) size 29x15 [r=11 c=2 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 13x11
+                                      RenderText {#text} at (14,2) size 13x11
+                                        text run at (14,2) width 13: "12"
+                                  RenderTableCell {TD} at (129,165) size 35x15 [r=11 c=3 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 19x11
+                                      RenderText {#text} at (14,2) size 19x11
+                                        text run at (14,2) width 19: "221"
+                                  RenderTableCell {TD} at (163,165) size 27x15 [r=11 c=4 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 22x11
+                                      RenderText {#text} at (3,2) size 22x11
+                                        text run at (3,2) width 22: "18.4"
+                                  RenderTableCell {TD} at (189,165) size 35x15 [r=11 c=5 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 19x11
+                                      RenderText {#text} at (14,2) size 19x11
+                                        text run at (14,2) width 19: "328"
+                                  RenderTableCell {TD} at (223,165) size 28x15 [r=11 c=6 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 22x11
+                                      RenderText {#text} at (3,2) size 22x11
+                                        text run at (3,2) width 22: "27.3"
+                                RenderTableRow {TR} at (0,180) size 250x15 [bgcolor=#FFFFFF]
+                                  RenderTableCell {TD} at (0,180) size 32x15 [r=12 c=0 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 27x11
+                                      RenderText {#text} at (2,2) size 27x11
+                                        text run at (2,2) width 27: "70-71"
+                                  RenderTableCell {TD} at (31,180) size 71x15 [r=12 c=1 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 53x11
+                                      RenderText {#text} at (2,2) size 53x11
+                                        text run at (2,2) width 53: "L.A. Lakers"
+                                  RenderTableCell {TD} at (101,180) size 29x15 [r=12 c=2 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 13x11
+                                      RenderText {#text} at (14,2) size 13x11
+                                        text run at (14,2) width 13: "82"
+                                  RenderTableCell {TD} at (129,180) size 35x15 [r=12 c=3 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 25x11
+                                      RenderText {#text} at (8,2) size 25x11
+                                        text run at (8,2) width 25: "1493"
+                                  RenderTableCell {TD} at (163,180) size 27x15 [r=12 c=4 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 22x11
+                                      RenderText {#text} at (3,2) size 22x11
+                                        text run at (3,2) width 22: "18.2"
+                                  RenderTableCell {TD} at (189,180) size 35x15 [r=12 c=5 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 25x11
+                                      RenderText {#text} at (8,2) size 25x11
+                                        text run at (8,2) width 25: "1696"
+                                  RenderTableCell {TD} at (223,180) size 28x15 [r=12 c=6 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 22x11
+                                      RenderText {#text} at (3,2) size 22x11
+                                        text run at (3,2) width 22: "20.7"
+                                RenderTableRow {TR} at (0,195) size 250x15 [bgcolor=#FFFFFF]
+                                  RenderTableCell {TD} at (0,195) size 32x15 [r=13 c=0 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 27x11
+                                      RenderText {#text} at (2,2) size 27x11
+                                        text run at (2,2) width 27: "71-72"
+                                  RenderTableCell {TD} at (31,195) size 71x15 [r=13 c=1 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 53x11
+                                      RenderText {#text} at (2,2) size 53x11
+                                        text run at (2,2) width 53: "L.A. Lakers"
+                                  RenderTableCell {TD} at (101,195) size 29x15 [r=13 c=2 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 13x11
+                                      RenderText {#text} at (14,2) size 13x11
+                                        text run at (14,2) width 13: "82"
+                                  RenderTableCell {TD} at (129,195) size 35x15 [r=13 c=3 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 25x11
+                                      RenderText {#text} at (8,2) size 25x11
+                                        text run at (8,2) width 25: "1572"
+                                  RenderTableCell {TD} at (163,195) size 27x15 [r=13 c=4 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 22x11
+                                      RenderText {#text} at (3,2) size 22x11
+                                        text run at (3,2) width 22: "19.2"
+                                  RenderTableCell {TD} at (189,195) size 35x15 [r=13 c=5 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 25x11
+                                      RenderText {#text} at (8,2) size 25x11
+                                        text run at (8,2) width 25: "1213"
+                                  RenderTableCell {TD} at (223,195) size 28x15 [r=13 c=6 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 22x11
+                                      RenderText {#text} at (3,2) size 22x11
+                                        text run at (3,2) width 22: "14.8"
+                                RenderTableRow {TR} at (0,210) size 250x15 [bgcolor=#FFFFFF]
+                                  RenderTableCell {TD} at (0,210) size 32x15 [r=14 c=0 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 27x11
+                                      RenderText {#text} at (2,2) size 27x11
+                                        text run at (2,2) width 27: "72-73"
+                                  RenderTableCell {TD} at (31,210) size 71x15 [r=14 c=1 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 53x11
+                                      RenderText {#text} at (2,2) size 53x11
+                                        text run at (2,2) width 53: "L.A. Lakers"
+                                  RenderTableCell {TD} at (101,210) size 29x15 [r=14 c=2 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 13x11
+                                      RenderText {#text} at (14,2) size 13x11
+                                        text run at (14,2) width 13: "82"
+                                  RenderTableCell {TD} at (129,210) size 35x15 [r=14 c=3 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 25x11
+                                      RenderText {#text} at (8,2) size 25x11
+                                        text run at (8,2) width 25: "1526"
+                                  RenderTableCell {TD} at (163,210) size 27x15 [r=14 c=4 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 22x11
+                                      RenderText {#text} at (3,2) size 22x11
+                                        text run at (3,2) width 22: "18.6"
+                                  RenderTableCell {TD} at (189,210) size 35x15 [r=14 c=5 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 25x11
+                                      RenderText {#text} at (8,2) size 25x11
+                                        text run at (8,2) width 25: "1084"
+                                  RenderTableCell {TD} at (223,210) size 28x15 [r=14 c=6 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 22x11
+                                      RenderText {#text} at (3,2) size 22x11
+                                        text run at (3,2) width 22: "13.2"
+                                RenderTableRow {TR} at (0,225) size 250x15 [bgcolor=#FFFFFF]
+                                  RenderTableCell {TD} at (0,225) size 102x15 [r=15 c=0 rs=1 cs=2]
+                                    RenderInline {FONT} at (0,0) size 28x11
+                                      RenderText {#text} at (2,2) size 28x11
+                                        text run at (2,2) width 28: "Totals"
+                                  RenderTableCell {TD} at (101,225) size 29x15 [r=15 c=2 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 25x11
+                                      RenderText {#text} at (2,2) size 25x11
+                                        text run at (2,2) width 25: "1045"
+                                  RenderTableCell {TD} at (129,225) size 35x15 [r=15 c=3 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 31x11
+                                      RenderText {#text} at (2,2) size 31x11
+                                        text run at (2,2) width 31: "23924"
+                                  RenderTableCell {TD} at (163,225) size 27x15 [r=15 c=4 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 22x11
+                                      RenderText {#text} at (3,2) size 22x11
+                                        text run at (3,2) width 22: "22.9"
+                                  RenderTableCell {TD} at (189,225) size 35x15 [r=15 c=5 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 31x11
+                                      RenderText {#text} at (2,2) size 31x11
+                                        text run at (2,2) width 31: "31419"
+                                  RenderTableCell {TD} at (223,225) size 28x15 [r=15 c=6 rs=1 cs=1]
+                                    RenderInline {FONT} at (0,0) size 22x11
+                                      RenderText {#text} at (3,2) size 22x11
+                                        text run at (3,2) width 22: "30.1"
+                            RenderBlock {HR} at (2,250) size 250x1 [border: (1px inset #000000) none (1px inset #000000)]
+                    RenderText {#text} at (0,0) size 176x204
+                      text run at (0,0) width 164: "Known as ``Wilt the Stilt''"
+                      text run at (0,17) width 170: "and ``The Big Dipper,'' the"
+                      text run at (0,34) width 136: "7-foot-1 Chamberlain"
+                      text run at (0,51) width 162: "dominated the NBA from"
+                      text run at (0,68) width 164: "1959 through 1973, when"
+                      text run at (0,85) width 106: "he played for the"
+                      text run at (0,102) width 165: "Philadelphia (later the San"
+                      text run at (0,119) width 152: "Francisco) Warriors, the"
+                      text run at (0,136) width 158: "76ers and the Lakers. He"
+                      text run at (0,153) width 176: "scored 31,419 points during"
+                      text run at (0,170) width 162: "his career, averaging 30.1"
+                      text run at (0,187) width 128: "points for his career."
+                  RenderBlock {P} at (0,220) size 440x51
+                    RenderText {#text} at (0,0) size 155x51
+                      text run at (0,0) width 155: "He also led the league in"
+                      text run at (0,17) width 146: "career rebounding with"
+                      text run at (0,34) width 48: "23,924."
+                  RenderBlock {P} at (0,287) size 440x68
+                    RenderText {#text} at (0,0) size 437x68
+                      text run at (0,0) width 437: "One of only two men named MVP and rookie of the year in the same"
+                      text run at (0,17) width 422: "season (1959), he was also MVP in 1966 through 1968. He led the"
+                      text run at (0,34) width 412: "NBA in scoring seven straight seasons, 1960 to 1966, and led the"
+                      text run at (0,51) width 268: "league in rebounding 11 of his 14 seasons."
+                  RenderBlock {P} at (0,371) size 440x51
+                    RenderText {#text} at (0,0) size 439x51
+                      text run at (0,0) width 439: "One of his most famous records is the 100 points he scored in a single"
+                      text run at (0,17) width 428: "game in the Philadelphia Warriors' 169-147 defeat of the New York"
+                      text run at (0,34) width 267: "Knicks on March 2, 1962, in Hershey, Pa."

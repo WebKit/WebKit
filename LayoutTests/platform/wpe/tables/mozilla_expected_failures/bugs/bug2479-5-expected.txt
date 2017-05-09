@@ -1,0 +1,190 @@
+layer at (0,0) size 785x1314
+  RenderView at (0,0) size 785x600
+layer at (8,8) size 769x1306
+  RenderBlock {HTML} at (8,8) size 769x1306 [bgcolor=#008000] [border: (16px solid #00FF00)]
+    RenderTable at (16,16) size 737x1274
+      RenderTableSection (anonymous) at (0,0) size 737x1274
+        RenderTableRow (anonymous) at (0,0) size 737x1274
+          RenderTableCell {HEAD} at (0,0) size 153x744 [color=#FFFFFF] [bgcolor=#FF0000] [border: (5px solid #FFFFFF)] [r=0 c=0 rs=1 cs=1]
+            RenderBlock {META} at (21,37) size 111x2 [border: (1px dotted #FFFFFF)]
+            RenderBlock {META} at (21,55) size 111x2 [border: (1px dotted #FFFFFF)]
+            RenderBlock {META} at (21,73) size 111x2 [border: (1px dotted #FFFFFF)]
+            RenderBlock {META} at (21,91) size 111x2 [border: (1px dotted #FFFFFF)]
+            RenderBlock {TITLE} at (21,109) size 111x104 [border: (1px dotted #FFFFFF)]
+              RenderText {#text} at (1,1) size 74x102
+                text run at (1,1) width 67: "Evil Tests:"
+                text run at (1,18) width 66: "Rendering"
+                text run at (1,35) width 74: "BODY and"
+                text run at (1,52) width 63: "HEAD as"
+                text run at (1,69) width 68: "children of"
+                text run at (1,86) width 67: "HTML - 2"
+            RenderBlock {STYLE} at (21,229) size 111x478 [border: (1px dotted #FFFFFF)]
+              RenderText {#text} at (1,1) size 109x476
+                text run at (1,1) width 77: "/* Layout */"
+                text run at (1,18) width 58: "HTML {"
+                text run at (1,35) width 92: "display: block;"
+                text run at (1,52) width 107: "border: 1em lime"
+                text run at (1,69) width 86: "solid; margin:"
+                text run at (1,86) width 44: "8px; } "
+                text run at (45,86) width 50: "HEAD,"
+                text run at (1,103) width 59: "BODY {"
+                text run at (1,120) width 88: "display: table-"
+                text run at (1,137) width 109: "cell; border: solid"
+                text run at (1,154) width 39: "thick; "
+                text run at (40,154) width 55: "padding:"
+                text run at (1,171) width 83: "1em; margin:"
+                text run at (1,188) width 47: "1em; } "
+                text run at (48,188) width 59: "HEAD >"
+                text run at (1,205) width 100: "*, BODY > * {"
+                text run at (1,222) width 92: "display: block;"
+                text run at (1,239) width 73: "border: thin"
+                text run at (1,256) width 95: "dotted; margin:"
+                text run at (1,273) width 59: "1em 0; } "
+                text run at (60,273) width 12: "/*"
+                text run at (1,290) width 85: "Formatting */"
+                text run at (1,307) width 98: "HTML { color:"
+                text run at (1,324) width 38: "black;"
+                text run at (1,341) width 79: "background:"
+                text run at (1,358) width 55: "green; } "
+                text run at (56,358) width 46: "HEAD"
+                text run at (1,375) width 91: "{ color: white;"
+                text run at (1,392) width 107: "background: red;"
+                text run at (1,409) width 12: "} "
+                text run at (13,409) width 59: "BODY {"
+                text run at (1,426) width 87: "color: yellow;"
+                text run at (1,443) width 109: "background: teal;"
+                text run at (1,460) width 8: "}"
+          RenderTableCell {BODY} at (153,41) size 584x1233 [color=#FFFF00] [bgcolor=#008080] [border: (5px solid #FFFF00)] [r=0 c=1 rs=1 cs=1]
+            RenderBlock {H1} at (21,53) size 542x76 [border: (1px dotted #FFFF00)]
+              RenderText {#text} at (1,1) size 152x36
+                text run at (1,1) width 152: "Rendering "
+              RenderInline {CODE} at (0,0) size 64x30
+                RenderText {#text} at (153,8) size 64x30
+                  text run at (153,8) width 64: "BODY"
+              RenderText {#text} at (217,1) size 68x36
+                text run at (217,1) width 68: " and "
+              RenderInline {CODE} at (0,0) size 64x30
+                RenderText {#text} at (285,8) size 64x30
+                  text run at (285,8) width 64: "HEAD"
+              RenderText {#text} at (349,1) size 506x73
+                text run at (349,1) width 158: " as children"
+                text run at (1,38) width 35: "of "
+              RenderInline {CODE} at (0,0) size 64x30
+                RenderText {#text} at (36,45) size 64x30
+                  text run at (36,45) width 64: "HTML"
+              RenderText {#text} at (100,38) size 43x36
+                text run at (100,38) width 43: " - 2"
+            RenderBlock {P} at (21,161) size 542x36 [border: (1px dotted #FFFF00)]
+              RenderText {#text} at (1,1) size 383x17
+                text run at (1,1) width 383: "If you have any comments to make regarding this test, e-mail"
+              RenderInline {A} at (0,0) size 182x17 [color=#0000EE]
+                RenderText {#text} at (1,18) size 182x17
+                  text run at (1,18) width 182: "py8ieh=eviltests@bath.ac.uk"
+              RenderText {#text} at (183,18) size 4x17
+                text run at (183,18) width 4: "."
+            RenderBlock {DL} at (21,213) size 542x71 [border: (1px dotted #FFFF00)]
+              RenderBlock {DT} at (1,1) size 540x17
+                RenderText {#text} at (0,0) size 80x17
+                  text run at (0,0) width 80: "Prerequisites"
+              RenderBlock {DD} at (41,18) size 500x52
+                RenderText {#text} at (0,0) size 466x34
+                  text run at (0,0) width 466: "Browsers that are subjected to this test should support the the background,"
+                  text run at (0,17) width 456: "padding, margin, border and color properties of CSS, and in addition the"
+                RenderInline {CODE} at (0,0) size 64x15
+                  RenderText {#text} at (0,37) size 64x15
+                    text run at (0,37) width 64: "overflow"
+                RenderText {#text} at (64,34) size 285x17
+                  text run at (64,34) width 285: " property and fixed position stuff from CSS2."
+            RenderBlock {H2} at (21,308) size 542x28 [border: (1px dotted #FFFF00)]
+              RenderText {#text} at (1,1) size 495x26
+                text run at (1,1) width 495: "1. Making the BODY and the HEAD into a table"
+            RenderBlock {P} at (21,360) size 542x19 [border: (1px dotted #FFFF00)]
+              RenderText {#text} at (1,1) size 256x17
+                text run at (1,1) width 256: "This is really evil, but completely valid..."
+            RenderBlock {P} at (21,395) size 542x87 [border: (1px dotted #FFFF00)]
+              RenderText {#text} at (1,1) size 539x85
+                text run at (1,1) width 520: "This document should have two cells, side by side: one on the left, the other on the"
+                text run at (1,18) width 539: "right. The one on the left should be red with white writing and a thick white border. It"
+                text run at (1,35) width 496: "should contain four dotted lines separated by a blank line, followed by a dotted"
+                text run at (1,52) width 483: "bordered box containing the document title, and another dotted bordered box"
+                text run at (1,69) width 280: "containing the stylesheet, also shown below:"
+            RenderBlock {PRE} at (21,498) size 542x17 [border: (1px dotted #FFFF00)]
+              RenderText {#text} at (1,1) size 40x15
+                text run at (1,1) width 40: "  ..."
+            RenderBlock {P} at (21,531) size 542x19 [border: (1px dotted #FFFF00)]
+              RenderText {#text} at (1,1) size 453x17
+                text run at (1,1) width 453: "The dotted borders and lines and the text in the left cell should be white."
+            RenderBlock {P} at (21,566) size 542x36 [border: (1px dotted #FFFF00)]
+              RenderText {#text} at (1,1) size 522x34
+                text run at (1,1) width 522: "The right cell should be teal, with yellow text. This paragraph you are reading now"
+                text run at (1,18) width 166: "should be in this right cell."
+            RenderBlock {P} at (21,618) size 542x19 [border: (1px dotted #FFFF00)]
+              RenderText {#text} at (1,1) size 444x17
+                text run at (1,1) width 444: "The width of the two cells is left up to the user agent to decide, I think."
+            RenderBlock {P} at (21,653) size 542x70 [border: (1px dotted #FFFF00)]
+              RenderText {#text} at (1,1) size 539x68
+                text run at (1,1) width 501: "The right cell should look similar to the left cell in formatting -- each box of text"
+                text run at (1,18) width 520: "should have a yellow dotted border, and there should be a blank line between each"
+                text run at (1,35) width 539: "such box. No box should be nested -- the dotted boxes should always be distinct from"
+                text run at (1,52) width 69: "each other."
+            RenderBlock {P} at (21,739) size 542x36 [border: (1px dotted #FFFF00)]
+              RenderText {#text} at (1,1) size 489x34
+                text run at (1,1) width 489: "The cells should be the same height, and they should have grown vertically to"
+                text run at (1,18) width 144: "accommodate this text."
+            RenderBlock {P} at (21,791) size 542x53 [border: (1px dotted #FFFF00)]
+              RenderText {#text} at (1,1) size 534x51
+                text run at (1,1) width 534: "Around the whole setup should be two borders, dark green and light green. The cells"
+                text run at (1,18) width 511: "should be separated from each other and from these outer borders by 1em of dark"
+                text run at (1,35) width 39: "green."
+            RenderBlock {P} at (21,860) size 542x36 [border: (1px dotted #FFFF00)]
+              RenderText {#text} at (1,1) size 508x34
+                text run at (1,1) width 508: "There should also be some alternate stylesheets set up to allow you to display the"
+                text run at (1,18) width 311: "<META> content. This may help with diagnosis."
+            RenderBlock {H2} at (21,920) size 542x28 [border: (1px dotted #FFFF00)]
+              RenderText {#text} at (1,1) size 154x26
+                text run at (1,1) width 154: "Submit Results"
+            RenderBlock {FORM} at (21,972) size 542x101 [border: (1px dotted #FFFF00)]
+              RenderBlock {P} at (1,17) size 540x67
+                RenderText {#text} at (0,0) size 259x17
+                  text run at (0,0) width 259: "How does your browser fare on this test?"
+                RenderMenuList {SELECT} at (2,19) size 536x19 [color=#000000] [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+                  RenderBlock (anonymous) at (1,1) size 534x17
+                    RenderText at (0,0) size 250x17
+                      text run at (0,0) width 250: "Document renders exactly as described."
+                RenderText {#text} at (0,0) size 0x0
+                RenderInline {LABEL} at (0,0) size 246x17
+                  RenderText {#text} at (0,45) size 70x17
+                    text run at (0,45) width 70: "Comment: "
+                  RenderTextControl {INPUT} at (72,42) size 172x23 [color=#000000] [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+                RenderText {#text} at (246,45) size 4x17
+                  text run at (246,45) width 4: " "
+                RenderButton {INPUT} at (252,43) size 57x22 [color=#000000] [bgcolor=#C0C0C0]
+                  RenderBlock (anonymous) at (6,2) size 45x17
+                    RenderText at (0,0) size 45x17
+                      text run at (0,0) width 45: "Submit"
+                RenderText {#text} at (0,0) size 0x0
+            RenderBlock {HR} at (21,1089) size 542x2 [border: (1px dotted #FFFF00)]
+            RenderBlock {P} at (21,1107) size 542x19 [border: (1px dotted #FFFF00)]
+              RenderInline {A} at (0,0) size 161x17 [color=#0000EE]
+                RenderText {#text} at (1,1) size 161x17
+                  text run at (1,1) width 161: "Up to the Evil Tests Page"
+              RenderText {#text} at (162,1) size 4x17
+                text run at (162,1) width 4: "."
+            RenderBlock {P} at (21,1142) size 542x19 [border: (1px dotted #FFFF00)]
+              RenderText {#text} at (1,1) size 173x17
+                text run at (1,1) width 173: "This page is maintained by "
+              RenderInline {A} at (0,0) size 77x17 [color=#0000EE]
+                RenderText {#text} at (174,1) size 77x17
+                  text run at (174,1) width 77: "Ian Hickson"
+              RenderText {#text} at (251,1) size 9x17
+                text run at (251,1) width 9: " ("
+              RenderInline {A} at (0,0) size 123x17 [color=#0000EE]
+                RenderText {#text} at (260,1) size 123x17
+                  text run at (260,1) width 123: "py8ieh@bath.ac.uk"
+              RenderText {#text} at (383,1) size 9x17
+                text run at (383,1) width 9: ")."
+            RenderBlock {P} at (21,1177) size 542x19 [border: (1px dotted #FFFF00)]
+              RenderText {#text} at (1,1) size 170x17
+                text run at (1,1) width 170: "Last updated in June 1999."
+layer at (274,1099) size 166x17
+  RenderBlock {DIV} at (3,3) size 166x17

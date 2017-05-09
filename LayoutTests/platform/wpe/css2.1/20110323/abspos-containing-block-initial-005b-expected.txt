@@ -1,0 +1,8 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 120x120
+  RenderTable {HTML} at (0,0) size 120x120 [bgcolor=#FFFF00] [border: (10px solid #000000)]
+    RenderTableSection (anonymous) at (10,10) size 100x100
+      RenderTableRow (anonymous) at (0,0) size 100x100
+        RenderTableCell (anonymous) at (0,0) size 100x8 [r=0 c=0 rs=1 cs=1]
+          RenderBody {BODY} at (8,8) size 84x0

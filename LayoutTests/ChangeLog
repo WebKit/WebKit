@@ -1,3 +1,24 @@
+2017-05-09  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed. Landing the WPE layout test baselines.
+
+        Baseline filenames are omitted for brevity.
+
+        * platform/wpe/TestExpectations: Added.
+        * platform/wpe/animations/: Added.
+        * platform/wpe/css1/: Added.
+        * platform/wpe/css2.1/: Added.
+        * platform/wpe/css3/: Added.
+        * platform/wpe/fast/: Added.
+        * platform/wpe/ietestcenter/: Added.
+        * platform/wpe/js/: Added.
+        * platform/wpe/scrollbars/: Added.
+        * platform/wpe/security/: Added.
+        * platform/wpe/sputnik/: Added.
+        * platform/wpe/tables/: Added.
+        * platform/wpe/transforms/: Added.
+        * platform/wpe/transitions/: Added.
+
 2017-05-08  Frederic Wang  <fwang@igalia.com>
 
         Simplify ScrollingStateNode::scrollingStateTreeAsText

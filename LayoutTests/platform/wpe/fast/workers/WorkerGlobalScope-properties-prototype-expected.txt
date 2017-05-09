@@ -1,0 +1,23 @@
+Tests that WorkerGlobalScope's properties are on the prototype.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+self.__proto__.__proto__ === WorkerGlobalScope.prototype: true
+self.__proto__.__proto__.__proto__ === EventTarget.prototype: true
+self.__proto__.__proto__.__proto__.__proto__ === {}.__proto__: true
+self.__proto__.__proto__.hasOwnProperty('navigator') === true: true
+self.__proto__.__proto__.hasOwnProperty('self') === true: true
+self.__proto__.__proto__.hasOwnProperty('location') === true: true
+self.__proto__.__proto__.hasOwnProperty('close') === true: true
+self.__proto__.__proto__.hasOwnProperty('importScripts') === true: true
+self.__proto__.__proto__.hasOwnProperty('indexedDB') === true: false
+self.hasOwnProperty('navigator') === false: true
+self.hasOwnProperty('location') === false: true
+self.hasOwnProperty('close') === false: true
+self.hasOwnProperty('postMessage') === true: true
+self.hasOwnProperty('onmessage') === true: true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

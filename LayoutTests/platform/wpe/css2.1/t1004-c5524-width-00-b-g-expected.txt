@@ -1,0 +1,12 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x557
+  RenderBlock {HTML} at (0,0) size 800x557
+    RenderBody {BODY} at (8,16) size 784x533
+      RenderBlock {P} at (0,0) size 784x34
+        RenderText {#text} at (0,0) size 770x34
+          text run at (0,0) width 395: "The blue rectangle below should be exactly 200 pixels by 120 "
+          text run at (395,0) width 375: "pixels on the ruler (and the aqua bars should stick out of the"
+          text run at (0,17) width 193: "blue box, with no red present)."
+      RenderBlock {DIV} at (0,50) size 784x483
+        RenderImage {IMG} at (40,40) size 120x200

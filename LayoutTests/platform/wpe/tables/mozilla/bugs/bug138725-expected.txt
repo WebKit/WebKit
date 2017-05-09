@@ -1,0 +1,35 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTable {TABLE} at (0,0) size 175x60
+        RenderTableSection {TBODY} at (0,0) size 175x60
+          RenderTableRow {TR} at (0,2) size 175x56
+            RenderTableCell {TD} at (2,2) size 171x56 [r=0 c=0 rs=1 cs=1]
+              RenderBlock (anonymous) at (1,1) size 169x0
+                RenderInline {SPAN} at (0,0) size 0x0
+                  RenderText {#text} at (0,0) size 0x0
+                  RenderInline {SPAN} at (0,0) size 0x0
+                    RenderText {#text} at (0,0) size 0x0
+                    RenderText {#text} at (0,0) size 0x0
+              RenderBlock (anonymous) at (1,1) size 169x54
+                RenderTable {TABLE} at (0,0) size 169x54
+                  RenderTableSection {TBODY} at (0,0) size 169x54
+                    RenderTableRow {TR} at (0,2) size 169x50
+                      RenderTableCell {TD} at (2,2) size 165x50 [r=0 c=0 rs=1 cs=1]
+                        RenderTable {TABLE} at (1,1) size 163x48
+                          RenderTableSection {TBODY} at (0,0) size 163x48
+                            RenderTableRow {TR} at (0,2) size 163x44
+                              RenderTableCell {TD} at (2,2) size 159x44 [r=0 c=0 rs=1 cs=1]
+                                RenderBlock {FORM} at (1,1) size 157x26
+                                  RenderButton {INPUT} at (2,2) size 153x22 [bgcolor=#C0C0C0]
+                                    RenderBlock (anonymous) at (6,2) size 141x17
+                                      RenderText at (0,0) size 141x17
+                                        text run at (0,0) width 141: "ApplyForThisPosition"
+                                  RenderText {#text} at (0,0) size 0x0
+              RenderBlock (anonymous) at (1,55) size 169x0
+                RenderInline {SPAN} at (0,0) size 0x0
+                  RenderInline {SPAN} at (0,0) size 0x0
+                  RenderText {#text} at (0,0) size 0x0
+                RenderText {#text} at (0,0) size 0x0

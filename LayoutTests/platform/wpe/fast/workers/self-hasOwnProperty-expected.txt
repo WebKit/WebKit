@@ -1,0 +1,13 @@
+Tests that self.hasOwnProperty() works in workers
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+self.hasOwnProperty('DedicatedWorkerGlobalScope'): true
+self.hasOwnProperty('WorkerGlobalScope'): true
+self.hasOwnProperty('postMessage'): true
+self.hasOwnProperty('IDBDatabase'): false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

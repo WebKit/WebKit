@@ -1,0 +1,49 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTable {TABLE} at (0,0) size 784x138
+        RenderTableSection {TBODY} at (0,0) size 784x138
+          RenderTableRow {TR} at (0,0) size 784x70
+            RenderTableCell {TD} at (0,0) size 785x70 [r=0 c=0 rs=1 cs=4]
+              RenderBR {BR} at (392,1) size 1x17
+              RenderInline {FONT} at (0,0) size 729x51
+                RenderText {#text} at (28,18) size 729x34
+                  text run at (28,18) width 182: "The Supreme Court says "
+                  text run at (209,18) width 548: "Wisconsin can continue using tuition vouchers to help poor parents send their"
+                  text run at (212,35) width 222: "children to church-run schools. "
+                  text run at (433,35) width 140: "What's your stand? "
+                RenderBR {BR} at (572,49) size 1x0
+                RenderBR {BR} at (392,52) size 1x17
+              RenderText {#text} at (0,0) size 0x0
+          RenderTableRow {TR} at (0,70) size 784x20
+            RenderTableCell {TD} at (0,71) size 558x18 [r=1 c=0 rs=1 cs=1]
+              RenderInline {FONT} at (0,0) size 141x15
+                RenderText {#text} at (416,0) size 141x17
+                  text run at (416,1) width 141: "I agree with the program"
+              RenderText {#text} at (0,0) size 0x0
+            RenderTableCell {TD} at (557,70) size 66x20 [r=1 c=1 rs=1 cs=1]
+              RenderBlock {INPUT} at (3,4) size 12x12
+          RenderTableRow {TR} at (0,90) size 784x20
+            RenderTableCell {TD} at (0,91) size 558x18 [r=2 c=0 rs=1 cs=1]
+              RenderInline {FONT} at (0,0) size 154x15
+                RenderText {#text} at (403,0) size 154x17
+                  text run at (403,1) width 154: "I think vouchers are wrong"
+              RenderText {#text} at (0,0) size 0x0
+            RenderTableCell {TD} at (557,90) size 66x20 [r=2 c=1 rs=1 cs=1]
+              RenderBlock {INPUT} at (3,4) size 12x12
+          RenderTableRow {TR} at (0,110) size 784x28
+            RenderTableCell {TD} at (0,115) size 623x18 [r=3 c=0 rs=1 cs=2]
+              RenderInline {A} at (0,0) size 77x17 [color=#0000EE]
+                RenderInline {FONT} at (0,0) size 77x15
+                  RenderText {#text} at (273,0) size 77x17
+                    text run at (273,1) width 77: "View Results"
+              RenderInline {FONT} at (0,0) size 1x16
+                RenderText {#text} at (0,0) size 0x0
+            RenderTableCell {TD} at (622,110) size 163x28 [r=3 c=2 rs=1 cs=2]
+              RenderButton {INPUT} at (61,3) size 40x22 [bgcolor=#C0C0C0]
+                RenderBlock (anonymous) at (6,2) size 27x17
+                  RenderText at (0,0) size 27x17
+                    text run at (0,0) width 27: "vote"
+              RenderText {#text} at (0,0) size 0x0

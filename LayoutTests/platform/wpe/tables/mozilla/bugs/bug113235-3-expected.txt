@@ -1,0 +1,540 @@
+layer at (0,0) size 785x946
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x946
+  RenderBlock {HTML} at (0,0) size 785x946
+    RenderBody {BODY} at (8,8) size 769x930
+      RenderBlock (anonymous) at (0,0) size 769x17
+        RenderInline {FONT} at (0,0) size 108x17
+          RenderText {#text} at (0,0) size 96x17
+            text run at (0,0) width 96: "same line as X "
+          RenderInline {A} at (0,0) size 12x17
+            RenderText {#text} at (96,0) size 12x17
+              text run at (96,0) width 12: "X"
+      RenderBlock (anonymous) at (0,17) size 769x27
+        RenderTable {TABLE} at (0,0) size 53x27 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 51x25
+            RenderTableRow {TR} at (0,2) size 51x21
+              RenderTableCell {TD} at (2,2) size 47x21 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 43x17
+                  text run at (2,2) width 43: "table-1"
+      RenderBlock (anonymous) at (0,44) size 769x17
+        RenderInline {FONT} at (0,0) size 10x17
+          RenderInline {A} at (0,0) size 10x17
+            RenderText {#text} at (0,0) size 10x17
+              text run at (0,0) width 10: "Z"
+          RenderInline {FONT} at (0,0) size 0x17
+            RenderText {#text} at (0,0) size 0x0
+      RenderBlock (anonymous) at (0,69) size 769x2
+        RenderBlock {HR} at (0,0) size 769x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,79) size 769x17
+        RenderInline {FONT} at (0,0) size 108x17
+          RenderInline {FONT} at (0,0) size 108x17
+            RenderInline {FONT} at (0,0) size 108x17
+              RenderInline {A} at (0,0) size 12x17
+                RenderText {#text} at (0,0) size 12x17
+                  text run at (0,0) width 12: "X"
+              RenderText {#text} at (12,0) size 96x17
+                text run at (12,0) width 96: " same line as X"
+      RenderBlock (anonymous) at (0,96) size 769x27
+        RenderTable {TABLE} at (0,0) size 53x27 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 51x25
+            RenderTableRow {TR} at (0,2) size 51x21
+              RenderTableCell {TD} at (2,2) size 47x21 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 43x17
+                  text run at (2,2) width 43: "table-2"
+      RenderBlock (anonymous) at (0,123) size 769x17
+        RenderInline {FONT} at (0,0) size 10x17
+          RenderInline {FONT} at (0,0) size 10x17
+            RenderInline {FONT} at (0,0) size 10x17
+              RenderInline {A} at (0,0) size 10x17
+                RenderText {#text} at (0,0) size 10x17
+                  text run at (0,0) width 10: "Z"
+              RenderInline {FONT} at (0,0) size 0x17
+                RenderText {#text} at (0,0) size 0x0
+      RenderBlock (anonymous) at (0,148) size 769x2
+        RenderBlock {HR} at (0,0) size 769x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,158) size 769x17
+        RenderInline {FONT} at (0,0) size 12x17
+          RenderInline {FONT} at (0,0) size 12x17
+            RenderInline {FONT} at (0,0) size 12x17
+              RenderInline {FONT} at (0,0) size 12x17
+                RenderInline {FONT} at (0,0) size 12x17
+                  RenderInline {A} at (0,0) size 12x17
+                    RenderText {#text} at (0,0) size 12x17
+                      text run at (0,0) width 12: "X"
+      RenderBlock (anonymous) at (0,175) size 769x27
+        RenderTable {TABLE} at (0,0) size 53x27 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 51x25
+            RenderTableRow {TR} at (0,2) size 51x21
+              RenderTableCell {TD} at (2,2) size 47x21 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 43x17
+                  text run at (2,2) width 43: "table-3"
+      RenderBlock (anonymous) at (0,202) size 769x17
+        RenderInline {FONT} at (0,0) size 104x17
+          RenderInline {FONT} at (0,0) size 104x17
+            RenderInline {FONT} at (0,0) size 104x17
+              RenderInline {FONT} at (0,0) size 104x17
+                RenderInline {FONT} at (0,0) size 104x17
+                  RenderText {#text} at (0,0) size 94x17
+                    text run at (0,0) width 94: "same line as Z "
+                  RenderInline {A} at (0,0) size 10x17
+                    RenderText {#text} at (94,0) size 10x17
+                      text run at (94,0) width 10: "Z"
+                  RenderInline {FONT} at (0,0) size 0x17
+                    RenderText {#text} at (0,0) size 0x0
+      RenderBlock (anonymous) at (0,227) size 769x2
+        RenderBlock {HR} at (0,0) size 769x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,237) size 769x17
+        RenderInline {FONT} at (0,0) size 101x17
+          RenderInline {FONT} at (0,0) size 101x17
+            RenderInline {FONT} at (0,0) size 101x17
+              RenderInline {FONT} at (0,0) size 101x17
+                RenderInline {FONT} at (0,0) size 101x17
+                  RenderInline {FONT} at (0,0) size 101x17
+                    RenderInline {FONT} at (0,0) size 101x17
+                      RenderText {#text} at (0,0) size 101x17
+                        text run at (0,0) width 101: "line before table"
+      RenderBlock (anonymous) at (0,254) size 769x27
+        RenderTable {TABLE} at (0,0) size 53x27 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 51x25
+            RenderTableRow {TR} at (0,2) size 51x21
+              RenderTableCell {TD} at (2,2) size 47x21 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 43x17
+                  text run at (2,2) width 43: "table-4"
+      RenderBlock (anonymous) at (0,281) size 769x17
+        RenderInline {FONT} at (0,0) size 10x17
+          RenderInline {FONT} at (0,0) size 10x17
+            RenderInline {FONT} at (0,0) size 10x17
+              RenderInline {FONT} at (0,0) size 10x17
+                RenderInline {FONT} at (0,0) size 10x17
+                  RenderInline {FONT} at (0,0) size 10x17
+                    RenderInline {FONT} at (0,0) size 10x17
+                      RenderInline {A} at (0,0) size 10x17
+                        RenderText {#text} at (0,0) size 10x17
+                          text run at (0,0) width 10: "Z"
+                      RenderInline {FONT} at (0,0) size 0x17
+                        RenderText {#text} at (0,0) size 0x0
+      RenderBlock (anonymous) at (0,306) size 769x2
+        RenderBlock {HR} at (0,0) size 769x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,316) size 769x0
+        RenderInline {FONT} at (0,0) size 0x0
+          RenderInline {FONT} at (0,0) size 0x0
+            RenderInline {FONT} at (0,0) size 0x0
+              RenderInline {FONT} at (0,0) size 0x0
+                RenderInline {FONT} at (0,0) size 0x0
+                  RenderInline {FONT} at (0,0) size 0x0
+                    RenderInline {FONT} at (0,0) size 0x0
+                      RenderInline {FONT} at (0,0) size 0x0
+                        RenderInline {FONT} at (0,0) size 0x0
+      RenderBlock (anonymous) at (0,316) size 769x27
+        RenderTable {TABLE} at (0,0) size 53x27 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 51x25
+            RenderTableRow {TR} at (0,2) size 51x21
+              RenderTableCell {TD} at (2,2) size 47x21 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 43x17
+                  text run at (2,2) width 43: "table-5"
+      RenderBlock (anonymous) at (0,343) size 769x17
+        RenderInline {FONT} at (0,0) size 103x17
+          RenderInline {FONT} at (0,0) size 103x17
+            RenderInline {FONT} at (0,0) size 103x17
+              RenderInline {FONT} at (0,0) size 103x17
+                RenderInline {FONT} at (0,0) size 103x17
+                  RenderInline {FONT} at (0,0) size 103x17
+                    RenderInline {FONT} at (0,0) size 103x17
+                      RenderInline {FONT} at (0,0) size 103x17
+                        RenderInline {FONT} at (0,0) size 103x17
+                          RenderText {#text} at (0,0) size 93x17
+                            text run at (0,0) width 93: "line after table "
+                          RenderInline {A} at (0,0) size 10x17
+                            RenderText {#text} at (93,0) size 10x17
+                              text run at (93,0) width 10: "Z"
+                          RenderInline {FONT} at (0,0) size 0x17
+                            RenderText {#text} at (0,0) size 0x0
+      RenderBlock (anonymous) at (0,368) size 769x2
+        RenderBlock {HR} at (0,0) size 769x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,378) size 769x17
+        RenderInline {FONT} at (0,0) size 101x17
+          RenderInline {FONT} at (0,0) size 101x17
+            RenderInline {FONT} at (0,0) size 101x17
+              RenderInline {FONT} at (0,0) size 101x17
+                RenderInline {FONT} at (0,0) size 101x17
+                  RenderInline {FONT} at (0,0) size 101x17
+                    RenderInline {FONT} at (0,0) size 101x17
+                      RenderInline {FONT} at (0,0) size 101x17
+                        RenderInline {FONT} at (0,0) size 101x17
+                          RenderInline {FONT} at (0,0) size 101x17
+                            RenderInline {FONT} at (0,0) size 101x17
+                              RenderText {#text} at (0,0) size 101x17
+                                text run at (0,0) width 101: "line before table"
+      RenderBlock (anonymous) at (0,395) size 769x27
+        RenderTable {TABLE} at (0,0) size 53x27 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 51x25
+            RenderTableRow {TR} at (0,2) size 51x21
+              RenderTableCell {TD} at (2,2) size 47x21 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 43x17
+                  text run at (2,2) width 43: "table-6"
+      RenderBlock (anonymous) at (0,422) size 769x0
+        RenderInline {FONT} at (0,0) size 0x0
+          RenderInline {FONT} at (0,0) size 0x0
+            RenderInline {FONT} at (0,0) size 0x0
+              RenderInline {FONT} at (0,0) size 0x0
+                RenderInline {FONT} at (0,0) size 0x0
+                  RenderInline {FONT} at (0,0) size 0x0
+                    RenderInline {FONT} at (0,0) size 0x0
+                      RenderInline {FONT} at (0,0) size 0x0
+                        RenderInline {FONT} at (0,0) size 0x0
+                          RenderInline {FONT} at (0,0) size 0x0
+                            RenderInline {FONT} at (0,0) size 0x0
+                              RenderInline {FONT} at (0,0) size 0x0
+                                RenderText {#text} at (0,0) size 0x0
+      RenderBlock (anonymous) at (0,430) size 769x2
+        RenderBlock {HR} at (0,0) size 769x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,440) size 769x0
+        RenderInline {FONT} at (0,0) size 0x0
+          RenderInline {FONT} at (0,0) size 0x0
+            RenderInline {FONT} at (0,0) size 0x0
+              RenderInline {FONT} at (0,0) size 0x0
+                RenderInline {FONT} at (0,0) size 0x0
+                  RenderInline {FONT} at (0,0) size 0x0
+                    RenderInline {FONT} at (0,0) size 0x0
+                      RenderInline {FONT} at (0,0) size 0x0
+                        RenderInline {FONT} at (0,0) size 0x0
+                          RenderInline {FONT} at (0,0) size 0x0
+                            RenderInline {FONT} at (0,0) size 0x0
+                              RenderInline {FONT} at (0,0) size 0x0
+                                RenderInline {FONT} at (0,0) size 0x0
+      RenderBlock (anonymous) at (0,440) size 769x17
+        RenderBlock {DIV} at (0,0) size 769x17
+          RenderText {#text} at (0,0) size 80x17
+            text run at (0,0) width 80: "div before X"
+      RenderBlock (anonymous) at (0,457) size 769x17
+        RenderInline {FONT} at (0,0) size 12x17
+          RenderInline {FONT} at (0,0) size 12x17
+            RenderInline {FONT} at (0,0) size 12x17
+              RenderInline {FONT} at (0,0) size 12x17
+                RenderInline {FONT} at (0,0) size 12x17
+                  RenderInline {FONT} at (0,0) size 12x17
+                    RenderInline {FONT} at (0,0) size 12x17
+                      RenderInline {FONT} at (0,0) size 12x17
+                        RenderInline {FONT} at (0,0) size 12x17
+                          RenderInline {FONT} at (0,0) size 12x17
+                            RenderInline {FONT} at (0,0) size 12x17
+                              RenderInline {FONT} at (0,0) size 12x17
+                                RenderInline {FONT} at (0,0) size 12x17
+                                  RenderInline {A} at (0,0) size 12x17
+                                    RenderText {#text} at (0,0) size 12x17
+                                      text run at (0,0) width 12: "X"
+      RenderBlock (anonymous) at (0,474) size 769x27
+        RenderTable {TABLE} at (0,0) size 53x27 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 51x25
+            RenderTableRow {TR} at (0,2) size 51x21
+              RenderTableCell {TD} at (2,2) size 47x21 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 43x17
+                  text run at (2,2) width 43: "table-7"
+      RenderBlock (anonymous) at (0,501) size 769x17
+        RenderInline {FONT} at (0,0) size 10x17
+          RenderInline {FONT} at (0,0) size 10x17
+            RenderInline {FONT} at (0,0) size 10x17
+              RenderInline {FONT} at (0,0) size 10x17
+                RenderInline {FONT} at (0,0) size 10x17
+                  RenderInline {FONT} at (0,0) size 10x17
+                    RenderInline {FONT} at (0,0) size 10x17
+                      RenderInline {FONT} at (0,0) size 10x17
+                        RenderInline {FONT} at (0,0) size 10x17
+                          RenderInline {FONT} at (0,0) size 10x17
+                            RenderInline {FONT} at (0,0) size 10x17
+                              RenderInline {FONT} at (0,0) size 10x17
+                                RenderInline {FONT} at (0,0) size 10x17
+                                  RenderInline {A} at (0,0) size 10x17
+                                    RenderText {#text} at (0,0) size 10x17
+                                      text run at (0,0) width 10: "Z"
+                                  RenderInline {FONT} at (0,0) size 0x17
+                                    RenderText {#text} at (0,0) size 0x0
+      RenderBlock (anonymous) at (0,526) size 769x2
+        RenderBlock {HR} at (0,0) size 769x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,536) size 769x17
+        RenderInline {FONT} at (0,0) size 12x17
+          RenderInline {FONT} at (0,0) size 12x17
+            RenderInline {FONT} at (0,0) size 12x17
+              RenderInline {FONT} at (0,0) size 12x17
+                RenderInline {FONT} at (0,0) size 12x17
+                  RenderInline {FONT} at (0,0) size 12x17
+                    RenderInline {FONT} at (0,0) size 12x17
+                      RenderInline {FONT} at (0,0) size 12x17
+                        RenderInline {FONT} at (0,0) size 12x17
+                          RenderInline {FONT} at (0,0) size 12x17
+                            RenderInline {FONT} at (0,0) size 12x17
+                              RenderInline {FONT} at (0,0) size 12x17
+                                RenderInline {FONT} at (0,0) size 12x17
+                                  RenderInline {FONT} at (0,0) size 12x17
+                                    RenderInline {FONT} at (0,0) size 12x17
+                                      RenderInline {A} at (0,0) size 12x17
+                                        RenderText {#text} at (0,0) size 12x17
+                                          text run at (0,0) width 12: "X"
+      RenderBlock (anonymous) at (0,553) size 769x44
+        RenderBlock {DIV} at (0,0) size 769x17
+          RenderText {#text} at (0,0) size 98x17
+            text run at (0,0) width 98: "div before table"
+        RenderTable {TABLE} at (0,17) size 53x27 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 51x25
+            RenderTableRow {TR} at (0,2) size 51x21
+              RenderTableCell {TD} at (2,2) size 47x21 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 43x17
+                  text run at (2,2) width 43: "table-8"
+      RenderBlock (anonymous) at (0,597) size 769x17
+        RenderInline {FONT} at (0,0) size 10x17
+          RenderInline {FONT} at (0,0) size 10x17
+            RenderInline {FONT} at (0,0) size 10x17
+              RenderInline {FONT} at (0,0) size 10x17
+                RenderInline {FONT} at (0,0) size 10x17
+                  RenderInline {FONT} at (0,0) size 10x17
+                    RenderInline {FONT} at (0,0) size 10x17
+                      RenderInline {FONT} at (0,0) size 10x17
+                        RenderInline {FONT} at (0,0) size 10x17
+                          RenderInline {FONT} at (0,0) size 10x17
+                            RenderInline {FONT} at (0,0) size 10x17
+                              RenderInline {FONT} at (0,0) size 10x17
+                                RenderInline {FONT} at (0,0) size 10x17
+                                  RenderInline {FONT} at (0,0) size 10x17
+                                    RenderInline {FONT} at (0,0) size 10x17
+                                      RenderInline {A} at (0,0) size 10x17
+                                        RenderText {#text} at (0,0) size 10x17
+                                          text run at (0,0) width 10: "Z"
+                                      RenderInline {FONT} at (0,0) size 0x17
+                                        RenderText {#text} at (0,0) size 0x0
+      RenderBlock (anonymous) at (0,622) size 769x2
+        RenderBlock {HR} at (0,0) size 769x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,632) size 769x17
+        RenderInline {FONT} at (0,0) size 12x17
+          RenderInline {FONT} at (0,0) size 12x17
+            RenderInline {FONT} at (0,0) size 12x17
+              RenderInline {FONT} at (0,0) size 12x17
+                RenderInline {FONT} at (0,0) size 12x17
+                  RenderInline {FONT} at (0,0) size 12x17
+                    RenderInline {FONT} at (0,0) size 12x17
+                      RenderInline {FONT} at (0,0) size 12x17
+                        RenderInline {FONT} at (0,0) size 12x17
+                          RenderInline {FONT} at (0,0) size 12x17
+                            RenderInline {FONT} at (0,0) size 12x17
+                              RenderInline {FONT} at (0,0) size 12x17
+                                RenderInline {FONT} at (0,0) size 12x17
+                                  RenderInline {FONT} at (0,0) size 12x17
+                                    RenderInline {FONT} at (0,0) size 12x17
+                                      RenderInline {FONT} at (0,0) size 12x17
+                                        RenderInline {FONT} at (0,0) size 12x17
+                                          RenderInline {A} at (0,0) size 12x17
+                                            RenderText {#text} at (0,0) size 12x17
+                                              text run at (0,0) width 12: "X"
+      RenderBlock (anonymous) at (0,649) size 769x44
+        RenderTable {TABLE} at (0,0) size 53x27 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 51x25
+            RenderTableRow {TR} at (0,2) size 51x21
+              RenderTableCell {TD} at (2,2) size 47x21 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 43x17
+                  text run at (2,2) width 43: "table-9"
+        RenderBlock {DIV} at (0,27) size 769x17
+          RenderText {#text} at (0,0) size 86x17
+            text run at (0,0) width 86: "div after table"
+      RenderBlock (anonymous) at (0,693) size 769x17
+        RenderInline {FONT} at (0,0) size 10x17
+          RenderInline {FONT} at (0,0) size 10x17
+            RenderInline {FONT} at (0,0) size 10x17
+              RenderInline {FONT} at (0,0) size 10x17
+                RenderInline {FONT} at (0,0) size 10x17
+                  RenderInline {FONT} at (0,0) size 10x17
+                    RenderInline {FONT} at (0,0) size 10x17
+                      RenderInline {FONT} at (0,0) size 10x17
+                        RenderInline {FONT} at (0,0) size 10x17
+                          RenderInline {FONT} at (0,0) size 10x17
+                            RenderInline {FONT} at (0,0) size 10x17
+                              RenderInline {FONT} at (0,0) size 10x17
+                                RenderInline {FONT} at (0,0) size 10x17
+                                  RenderInline {FONT} at (0,0) size 10x17
+                                    RenderInline {FONT} at (0,0) size 10x17
+                                      RenderInline {FONT} at (0,0) size 10x17
+                                        RenderInline {FONT} at (0,0) size 10x17
+                                          RenderInline {A} at (0,0) size 10x17
+                                            RenderText {#text} at (0,0) size 10x17
+                                              text run at (0,0) width 10: "Z"
+                                          RenderInline {FONT} at (0,0) size 0x17
+                                            RenderText {#text} at (0,0) size 0x0
+      RenderBlock (anonymous) at (0,718) size 769x2
+        RenderBlock {HR} at (0,0) size 769x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,728) size 769x0
+        RenderInline {FONT} at (0,0) size 0x0
+          RenderInline {FONT} at (0,0) size 0x0
+            RenderInline {FONT} at (0,0) size 0x0
+              RenderInline {FONT} at (0,0) size 0x0
+                RenderInline {FONT} at (0,0) size 0x0
+                  RenderInline {FONT} at (0,0) size 0x0
+                    RenderInline {FONT} at (0,0) size 0x0
+                      RenderInline {FONT} at (0,0) size 0x0
+                        RenderInline {FONT} at (0,0) size 0x0
+                          RenderInline {FONT} at (0,0) size 0x0
+                            RenderInline {FONT} at (0,0) size 0x0
+                              RenderInline {FONT} at (0,0) size 0x0
+                                RenderInline {FONT} at (0,0) size 0x0
+                                  RenderInline {FONT} at (0,0) size 0x0
+                                    RenderInline {FONT} at (0,0) size 0x0
+                                      RenderInline {FONT} at (0,0) size 0x0
+                                        RenderInline {FONT} at (0,0) size 0x0
+                                          RenderInline {FONT} at (0,0) size 0x0
+                                            RenderInline {FONT} at (0,0) size 0x0
+      RenderBlock (anonymous) at (0,728) size 769x44
+        RenderBlock {DIV} at (0,0) size 769x17
+          RenderText {#text} at (0,0) size 98x17
+            text run at (0,0) width 98: "div before table"
+        RenderTable {TABLE} at (0,17) size 61x27 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 59x25
+            RenderTableRow {TR} at (0,2) size 59x21
+              RenderTableCell {TD} at (2,2) size 55x21 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 51x17
+                  text run at (2,2) width 51: "table-10"
+      RenderBlock (anonymous) at (0,772) size 769x17
+        RenderInline {FONT} at (0,0) size 10x17
+          RenderInline {FONT} at (0,0) size 10x17
+            RenderInline {FONT} at (0,0) size 10x17
+              RenderInline {FONT} at (0,0) size 10x17
+                RenderInline {FONT} at (0,0) size 10x17
+                  RenderInline {FONT} at (0,0) size 10x17
+                    RenderInline {FONT} at (0,0) size 10x17
+                      RenderInline {FONT} at (0,0) size 10x17
+                        RenderInline {FONT} at (0,0) size 10x17
+                          RenderInline {FONT} at (0,0) size 10x17
+                            RenderInline {FONT} at (0,0) size 10x17
+                              RenderInline {FONT} at (0,0) size 10x17
+                                RenderInline {FONT} at (0,0) size 10x17
+                                  RenderInline {FONT} at (0,0) size 10x17
+                                    RenderInline {FONT} at (0,0) size 10x17
+                                      RenderInline {FONT} at (0,0) size 10x17
+                                        RenderInline {FONT} at (0,0) size 10x17
+                                          RenderInline {FONT} at (0,0) size 10x17
+                                            RenderInline {FONT} at (0,0) size 10x17
+                                              RenderInline {A} at (0,0) size 10x17
+                                                RenderText {#text} at (0,0) size 10x17
+                                                  text run at (0,0) width 10: "Z"
+                                              RenderInline {FONT} at (0,0) size 0x17
+                                                RenderText {#text} at (0,0) size 0x0
+      RenderBlock (anonymous) at (0,797) size 769x2
+        RenderBlock {HR} at (0,0) size 769x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,807) size 769x0
+        RenderInline {FONT} at (0,0) size 0x0
+          RenderInline {FONT} at (0,0) size 0x0
+            RenderInline {FONT} at (0,0) size 0x0
+              RenderInline {FONT} at (0,0) size 0x0
+                RenderInline {FONT} at (0,0) size 0x0
+                  RenderInline {FONT} at (0,0) size 0x0
+                    RenderInline {FONT} at (0,0) size 0x0
+                      RenderInline {FONT} at (0,0) size 0x0
+                        RenderInline {FONT} at (0,0) size 0x0
+                          RenderInline {FONT} at (0,0) size 0x0
+                            RenderInline {FONT} at (0,0) size 0x0
+                              RenderInline {FONT} at (0,0) size 0x0
+                                RenderInline {FONT} at (0,0) size 0x0
+                                  RenderInline {FONT} at (0,0) size 0x0
+                                    RenderInline {FONT} at (0,0) size 0x0
+                                      RenderInline {FONT} at (0,0) size 0x0
+                                        RenderInline {FONT} at (0,0) size 0x0
+                                          RenderInline {FONT} at (0,0) size 0x0
+                                            RenderInline {FONT} at (0,0) size 0x0
+                                              RenderInline {FONT} at (0,0) size 0x0
+                                                RenderInline {FONT} at (0,0) size 0x0
+      RenderBlock (anonymous) at (0,807) size 769x44
+        RenderTable {TABLE} at (0,0) size 61x27 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 59x25
+            RenderTableRow {TR} at (0,2) size 59x21
+              RenderTableCell {TD} at (2,2) size 55x21 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 51x17
+                  text run at (2,2) width 51: "table-11"
+        RenderBlock {DIV} at (0,27) size 769x17
+          RenderText {#text} at (0,0) size 86x17
+            text run at (0,0) width 86: "div after table"
+      RenderBlock (anonymous) at (0,851) size 769x17
+        RenderInline {FONT} at (0,0) size 10x17
+          RenderInline {FONT} at (0,0) size 10x17
+            RenderInline {FONT} at (0,0) size 10x17
+              RenderInline {FONT} at (0,0) size 10x17
+                RenderInline {FONT} at (0,0) size 10x17
+                  RenderInline {FONT} at (0,0) size 10x17
+                    RenderInline {FONT} at (0,0) size 10x17
+                      RenderInline {FONT} at (0,0) size 10x17
+                        RenderInline {FONT} at (0,0) size 10x17
+                          RenderInline {FONT} at (0,0) size 10x17
+                            RenderInline {FONT} at (0,0) size 10x17
+                              RenderInline {FONT} at (0,0) size 10x17
+                                RenderInline {FONT} at (0,0) size 10x17
+                                  RenderInline {FONT} at (0,0) size 10x17
+                                    RenderInline {FONT} at (0,0) size 10x17
+                                      RenderInline {FONT} at (0,0) size 10x17
+                                        RenderInline {FONT} at (0,0) size 10x17
+                                          RenderInline {FONT} at (0,0) size 10x17
+                                            RenderInline {FONT} at (0,0) size 10x17
+                                              RenderInline {FONT} at (0,0) size 10x17
+                                                RenderInline {FONT} at (0,0) size 10x17
+                                                  RenderInline {A} at (0,0) size 10x17
+                                                    RenderText {#text} at (0,0) size 10x17
+                                                      text run at (0,0) width 10: "Z"
+                                                  RenderInline {FONT} at (0,0) size 0x17
+                                                    RenderText {#text} at (0,0) size 0x0
+      RenderBlock (anonymous) at (0,876) size 769x2
+        RenderBlock {HR} at (0,0) size 769x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,886) size 769x0
+        RenderInline {FONT} at (0,0) size 0x0
+          RenderInline {FONT} at (0,0) size 0x0
+            RenderInline {FONT} at (0,0) size 0x0
+              RenderInline {FONT} at (0,0) size 0x0
+                RenderInline {FONT} at (0,0) size 0x0
+                  RenderInline {FONT} at (0,0) size 0x0
+                    RenderInline {FONT} at (0,0) size 0x0
+                      RenderInline {FONT} at (0,0) size 0x0
+                        RenderInline {FONT} at (0,0) size 0x0
+                          RenderInline {FONT} at (0,0) size 0x0
+                            RenderInline {FONT} at (0,0) size 0x0
+                              RenderInline {FONT} at (0,0) size 0x0
+                                RenderInline {FONT} at (0,0) size 0x0
+                                  RenderInline {FONT} at (0,0) size 0x0
+                                    RenderInline {FONT} at (0,0) size 0x0
+                                      RenderInline {FONT} at (0,0) size 0x0
+                                        RenderInline {FONT} at (0,0) size 0x0
+                                          RenderInline {FONT} at (0,0) size 0x0
+                                            RenderInline {FONT} at (0,0) size 0x0
+                                              RenderInline {FONT} at (0,0) size 0x0
+                                                RenderInline {FONT} at (0,0) size 0x0
+                                                  RenderInline {FONT} at (0,0) size 0x0
+                                                    RenderInline {FONT} at (0,0) size 0x0
+      RenderBlock (anonymous) at (0,886) size 769x44
+        RenderBlock {DIV} at (0,0) size 769x17
+          RenderText {#text} at (0,0) size 98x17
+            text run at (0,0) width 98: "div before table"
+        RenderTable {TABLE} at (0,17) size 61x27 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 59x25
+            RenderTableRow {TR} at (0,2) size 59x21
+              RenderTableCell {TD} at (2,2) size 55x21 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 51x17
+                  text run at (2,2) width 51: "table-12"
+      RenderBlock (anonymous) at (0,930) size 769x0
+        RenderInline {FONT} at (0,0) size 0x0
+          RenderInline {FONT} at (0,0) size 0x0
+            RenderInline {FONT} at (0,0) size 0x0
+              RenderInline {FONT} at (0,0) size 0x0
+                RenderInline {FONT} at (0,0) size 0x0
+                  RenderInline {FONT} at (0,0) size 0x0
+                    RenderInline {FONT} at (0,0) size 0x0
+                      RenderInline {FONT} at (0,0) size 0x0
+                        RenderInline {FONT} at (0,0) size 0x0
+                          RenderInline {FONT} at (0,0) size 0x0
+                            RenderInline {FONT} at (0,0) size 0x0
+                              RenderInline {FONT} at (0,0) size 0x0
+                                RenderInline {FONT} at (0,0) size 0x0
+                                  RenderInline {FONT} at (0,0) size 0x0
+                                    RenderInline {FONT} at (0,0) size 0x0
+                                      RenderInline {FONT} at (0,0) size 0x0
+                                        RenderInline {FONT} at (0,0) size 0x0
+                                          RenderInline {FONT} at (0,0) size 0x0
+                                            RenderInline {FONT} at (0,0) size 0x0
+                                              RenderInline {FONT} at (0,0) size 0x0
+                                                RenderInline {FONT} at (0,0) size 0x0
+                                                  RenderInline {FONT} at (0,0) size 0x0
+                                                    RenderInline {FONT} at (0,0) size 0x0
+                                                      RenderInline {FONT} at (0,0) size 0x0
+                                                        RenderText {#text} at (0,0) size 0x0

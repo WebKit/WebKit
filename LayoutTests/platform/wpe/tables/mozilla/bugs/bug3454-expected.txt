@@ -1,0 +1,31 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,16) size 784x568
+      RenderTable {TABLE} at (16,0) size 752x67 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 750x65
+          RenderTableRow {TR} at (0,2) size 750x21
+            RenderTableCell {TH} at (2,2) size 174x21 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (45,2) size 83x17
+                text run at (45,2) width 83: "Header One"
+            RenderTableCell {TH} at (177,2) size 271x21 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (92,2) size 86x17
+                text run at (92,2) width 86: "Header Two"
+            RenderTableCell {TH} at (449,2) size 300x21 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (101,2) size 96x17
+                text run at (101,2) width 96: "Header Three"
+          RenderTableRow {TR} at (0,25) size 750x38
+            RenderTableCell {TD} at (2,25) size 174x38 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 157x34
+                text run at (2,2) width 116: "This table uses the"
+                text run at (2,19) width 157: "separated borders model."
+            RenderTableCell {TD} at (177,25) size 271x38 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 251x34
+                text run at (2,2) width 251: "This means that elements within the cell"
+                text run at (2,19) width 180: "have border-spacing of 1em."
+            RenderTableCell {TD} at (449,25) size 300x38 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 279x34
+                text run at (2,2) width 205: "The borders on the header cells, "
+                text run at (207,2) width 74: "on all sides,"
+                text run at (2,19) width 198: "should be medium solid purple."
