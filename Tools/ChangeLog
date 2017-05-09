@@ -1,3 +1,12 @@
+2017-05-09  Jonathan Bedard  <jbedard@apple.com>
+
+        REGRESSION: ImageDiff not building with make
+        https://bugs.webkit.org/show_bug.cgi?id=171788
+
+        Reviewed by Alex Christensen.
+
+        * Makefile: Build ImageDiff for all platforms.
+
 2017-05-09  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win] ImageDiff isn't built since Bug 168945
