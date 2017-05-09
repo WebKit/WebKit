@@ -1,6 +1,7 @@
 /*
     Copyright (C) 2012 Nokia Corporation and/or its subsidiary(-ies)
     Copyright (C) 2012 Company 100, Inc.
+    Copyright (C) 2017 Sony Interactive Entertainment Inc.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -232,8 +233,8 @@ void CoordinatedGraphicsScene::setLayerState(CoordinatedLayerID id, const Coordi
     if (layerState.solidColorChanged)
         layer->setSolidColor(layerState.solidColor);
 
-    if (layerState.debugBorderColorChanged || layerState.debugBorderWidthChanged)
-        layer->setDebugVisuals(layerState.showDebugBorders, layerState.debugBorderColor, layerState.debugBorderWidth, layerState.showRepaintCounter);
+    if (layerState.debugVisualsChanged)
+        layer->setDebugVisuals(layerState.debugVisuals.showDebugBorders, layerState.debugVisuals.debugBorderColor, layerState.debugVisuals.debugBorderWidth, layerState.debugVisuals.showRepaintCounter);
 
     if (layerState.replicaChanged)
         layer->setReplicaLayer(getLayerByIDIfExists(layerState.replica));

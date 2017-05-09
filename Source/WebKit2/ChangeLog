@@ -1,3 +1,23 @@
+2017-05-09  Yoshiaki Jitsukawa  <Yoshiaki.Jitsukawa@sony.com>
+
+        [Coordinated Graphics] Debug Visuals don't hide
+        https://bugs.webkit.org/show_bug.cgi?id=162704
+
+        Reviewed by Žan Doberšek.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.cpp:
+        (IPC::ArgumentCoder<CoordinatedGraphicsLayerState>::encode):
+        (IPC::ArgumentCoder<CoordinatedGraphicsLayerState>::decode):
+        (IPC::ArgumentCoder<DebugVisuals>::encode):
+        (IPC::ArgumentCoder<DebugVisuals>::decode):
+        The encoder and decoder for DebugVisuals have been added.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.h:
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.cpp:
+        (WebKit::CoordinatedGraphicsScene::setLayerState):
+        Update the debug visuals of a layer according to the DebugVisuals information
+        if the debugVisualsChanged flag is set to true.
+
 2017-05-09  Zan Dobersek  <zdobersek@igalia.com>
 
         Upstream the WPE port

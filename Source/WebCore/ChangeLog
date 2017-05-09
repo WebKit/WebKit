@@ -1,3 +1,26 @@
+2017-05-09  Yoshiaki Jitsukawa  <Yoshiaki.Jitsukawa@sony.com>
+
+        [Coordinated Graphics] Debug Visuals don't hide
+        https://bugs.webkit.org/show_bug.cgi?id=162704
+
+        Reviewed by Žan Doberšek.
+
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::setShowDebugBorder):
+        (WebCore::CoordinatedGraphicsLayer::setShowRepaintCounter):
+        (WebCore::CoordinatedGraphicsLayer::syncLayerState):
+        (WebCore::CoordinatedGraphicsLayer::setDebugBorder):
+        showDebugBorders() and showRepaintCounter() of CoordinatedGraphicsLayer should reflect
+        the "show" argument to the layer state.
+
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsState.h:
+        (WebCore::DebugVisuals::DebugVisuals):
+        (WebCore::CoordinatedGraphicsLayerState::CoordinatedGraphicsLayerState):
+        To set the debug visuals of a layer, the visibility flags of the borders and the repaint
+        counters as well as the border width and color are needed. Thus a new bundle struct
+        DebugVisuals and its change flag debugVisualsChanged have been introduced in order to
+        send the information at once.
+
 2017-05-09  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Handle IDLPromise<> properly

@@ -2,6 +2,7 @@
  * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2012 Company 100, Inc.
+ * Copyright (C) 2017 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,6 +44,7 @@ struct TileUpdateInfo;
 class TransformationMatrix;
 class TransformOperations;
 struct Length;
+struct DebugVisuals;
 
 class FilterOperations;
 }
@@ -92,6 +94,11 @@ template<> struct ArgumentCoder<WebCore::TileCreationInfo> {
 template<> struct ArgumentCoder<WebCore::CoordinatedGraphicsState> {
     static void encode(Encoder&, const WebCore::CoordinatedGraphicsState&);
     static bool decode(Decoder&, WebCore::CoordinatedGraphicsState&);
+};
+
+template<> struct ArgumentCoder<WebCore::DebugVisuals> {
+    static void encode(Encoder&, const WebCore::DebugVisuals&);
+    static bool decode(Decoder&, WebCore::DebugVisuals&);
 };
 
 } // namespace IPC

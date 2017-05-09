@@ -2,6 +2,7 @@
  * Copyright (C) 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2012 Company 100, Inc.
+ * Copyright (C) 2017 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -645,11 +646,8 @@ void ArgumentCoder<CoordinatedGraphicsLayerState>::encode(Encoder& encoder, cons
     if (state.solidColorChanged)
         encoder << state.solidColor;
 
-    if (state.debugBorderColorChanged)
-        encoder << state.debugBorderColor;
-
-    if (state.debugBorderWidthChanged)
-        encoder << state.debugBorderWidth;
+    if (state.debugVisualsChanged)
+        encoder << state.debugVisuals;
 
     if (state.filtersChanged)
         encoder << state.filters;
@@ -720,10 +718,7 @@ bool ArgumentCoder<CoordinatedGraphicsLayerState>::decode(Decoder& decoder, Coor
     if (state.solidColorChanged && !decoder.decode(state.solidColor))
         return false;
 
-    if (state.debugBorderColorChanged && !decoder.decode(state.debugBorderColor))
-        return false;
-
-    if (state.debugBorderWidthChanged && !decoder.decode(state.debugBorderWidth))
+    if (state.debugVisualsChanged && !decoder.decode(state.debugVisuals))
         return false;
 
     if (state.filtersChanged && !decoder.decode(state.filters))
@@ -911,6 +906,27 @@ bool ArgumentCoder<CoordinatedGraphicsState>::decode(Decoder& decoder, Coordinat
 
         state.updateAtlasesToCreate.append(std::make_pair(atlasID, surface.release()));
     }
+
+    return true;
+}
+
+void ArgumentCoder<DebugVisuals>::encode(Encoder& encoder, const DebugVisuals& debugVisuals)
+{
+    encoder << debugVisuals.debugBorderColor;
+    encoder << debugVisuals.debugBorderWidth;
+    encoder << debugVisuals.flags;
+}
+
+bool ArgumentCoder<DebugVisuals>::decode(Decoder& decoder, DebugVisuals& debugVisuals)
+{
+    if (!decoder.decode(debugVisuals.debugBorderColor))
+        return false;
+
+    if (!decoder.decode(debugVisuals.debugBorderWidth))
+        return false;
+
+    if (!decoder.decode(debugVisuals.flags))
+        return false;
 
     return true;
 }

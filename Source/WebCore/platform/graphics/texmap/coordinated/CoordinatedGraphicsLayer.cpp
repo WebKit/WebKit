@@ -3,6 +3,7 @@
  Copyright (C) 2010 Apple Inc. All rights reserved.
  Copyright (C) 2012 Company 100, Inc.
  Copyright (C) 2012 Intel Corporation. All rights reserved.
+ Copyright (C) 2017 Sony Interactive Entertainment Inc.
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Library General Public
@@ -447,8 +448,8 @@ void CoordinatedGraphicsLayer::setShowDebugBorder(bool show)
         return;
 
     GraphicsLayer::setShowDebugBorder(show);
-    m_layerState.showDebugBorders = true;
-    m_layerState.flagsChanged = true;
+    m_layerState.debugVisuals.showDebugBorders = show;
+    m_layerState.debugVisualsChanged = true;
 
     didChangeLayerState();
 }
@@ -459,8 +460,8 @@ void CoordinatedGraphicsLayer::setShowRepaintCounter(bool show)
         return;
 
     GraphicsLayer::setShowRepaintCounter(show);
-    m_layerState.showRepaintCounter = true;
-    m_layerState.flagsChanged = true;
+    m_layerState.debugVisuals.showRepaintCounter = show;
+    m_layerState.debugVisualsChanged = true;
 
     didChangeLayerState();
 }
@@ -661,26 +662,29 @@ void CoordinatedGraphicsLayer::syncLayerState()
         m_layerState.masksToBounds = masksToBounds();
         m_layerState.preserves3D = preserves3D();
         m_layerState.fixedToViewport = fixedToViewport();
-        m_layerState.showDebugBorders = isShowingDebugBorder();
-        m_layerState.showRepaintCounter = isShowingRepaintCounter();
         m_layerState.isScrollable = isScrollable();
     }
 
-    if (m_layerState.showDebugBorders)
+    if (m_layerState.debugVisualsChanged) {
+        m_layerState.debugVisuals.showDebugBorders = isShowingDebugBorder();
+        m_layerState.debugVisuals.showRepaintCounter = isShowingRepaintCounter();
+    }
+
+    if (m_layerState.debugVisuals.showDebugBorders)
         updateDebugIndicators();
 }
 
 void CoordinatedGraphicsLayer::setDebugBorder(const Color& color, float width)
 {
-    ASSERT(m_layerState.showDebugBorders);
-    if (m_layerState.debugBorderColor != color) {
-        m_layerState.debugBorderColor = color;
-        m_layerState.debugBorderColorChanged = true;
+    ASSERT(m_layerState.debugVisuals.showDebugBorders);
+    if (m_layerState.debugVisuals.debugBorderColor != color) {
+        m_layerState.debugVisuals.debugBorderColor = color;
+        m_layerState.debugVisualsChanged = true;
     }
 
-    if (m_layerState.debugBorderWidth != width) {
-        m_layerState.debugBorderWidth = width;
-        m_layerState.debugBorderWidthChanged = true;
+    if (m_layerState.debugVisuals.debugBorderWidth != width) {
+        m_layerState.debugVisuals.debugBorderWidth = width;
+        m_layerState.debugVisualsChanged = true;
     }
 }
 
