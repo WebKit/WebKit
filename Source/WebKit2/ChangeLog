@@ -1,3 +1,27 @@
+2017-05-09  Alex Christensen  <achristensen@webkit.org>
+
+        Buffer media in NetworkProcess to reduce IPC overhead
+        https://bugs.webkit.org/show_bug.cgi?id=171834
+        <rdar://problem/31485485>
+
+        Reviewed by Jer Noble.
+
+        I have measured a significant CPU usage reduction when buffering media data in the NetworkProcess,
+        especially on arm64 processors.  Buffering data in the NetworkProcess introduces no additional data
+        copies after r215686, and it reduces the number of messages sent from the NetworkProcess to the WebProcess,
+        each of which must also be forwarded to mediaserverd by AVFoundation.  This reduces the number of messages
+        from thousands per second to a maximum of 20 per second.  This adds 1/20 second additional latency in
+        media loading, which will probably not be noticed by most users.  This also adds the possibility of large
+        allocations when decoding IPC messages in the WebProcess, and if that becomes the source of crashes we can
+        add a maximum buffered amount in addition to a maximum buffered time, but we are likely not to receive
+        so much data in 1/20 second to have problems allocating the buffer.
+
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::maximumBufferingTime):
+        Buffer data in the NetworkProcess for up to 50ms before sending it to the WebProcess in one message.
+        This value is used in NetworkResourceLoader::didReceiveBuffer to append to m_bufferedData instead of
+        sending the small chunks immediately.
+
 2017-05-09  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r216545.

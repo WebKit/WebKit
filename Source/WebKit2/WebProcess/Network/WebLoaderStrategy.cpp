@@ -115,6 +115,7 @@ static Seconds maximumBufferingTime(CachedResource* resource)
     case CachedResource::ImageResource:
         return 500_ms;
     case CachedResource::MediaResource:
+        return 50_ms;
     case CachedResource::MainResource:
     case CachedResource::RawResource:
     case CachedResource::SVGDocumentResource:
