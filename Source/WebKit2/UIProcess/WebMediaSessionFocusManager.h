@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebMediaSessionFocusManager_h
-#define WebMediaSessionFocusManager_h
+#pragma once
 
 #if ENABLE(MEDIA_SESSION)
 
@@ -41,7 +40,7 @@ class WebMediaSessionFocusManager : public API::ObjectImpl<API::Object::Type::Me
 public:
     static const char* supplementName();
 
-    static PassRefPtr<WebMediaSessionFocusManager> create(WebProcessPool*);
+    static Ref<WebMediaSessionFocusManager> create(WebProcessPool*);
 
     void initializeClient(const WKMediaSessionFocusManagerClientBase*);
 
@@ -72,5 +71,3 @@ private:
 } // namespace WebKit
 
 #endif // ENABLE(MEDIA_SESSION)
-
-#endif /* WebMediaSessionFocusManager_h */

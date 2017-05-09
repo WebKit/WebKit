@@ -36,8 +36,8 @@ using namespace WebCore;
 
 namespace WebKit {
 
-NetscapePluginStream::NetscapePluginStream(PassRefPtr<NetscapePlugin> plugin, uint64_t streamID, const String& requestURLString, bool sendNotification, void* notificationData)
-    : m_plugin(plugin)
+NetscapePluginStream::NetscapePluginStream(Ref<NetscapePlugin>&& plugin, uint64_t streamID, const String& requestURLString, bool sendNotification, void* notificationData)
+    : m_plugin(WTFMove(plugin))
     , m_streamID(streamID)
     , m_requestURLString(requestURLString)
     , m_sendNotification(sendNotification)

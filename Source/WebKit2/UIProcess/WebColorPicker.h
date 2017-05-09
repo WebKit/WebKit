@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebColorPicker_h
-#define WebColorPicker_h
+#pragma once
 
 #if ENABLE(INPUT_TYPE_COLOR)
 
@@ -50,9 +49,9 @@ public:
         virtual void didEndColorPicker() = 0;
     };
 
-    static PassRefPtr<WebColorPicker> create(Client* client)
+    static Ref<WebColorPicker> create(Client* client)
     {
-        return adoptRef(new WebColorPicker(client));
+        return adoptRef(*new WebColorPicker(client));
     }
 
     virtual ~WebColorPicker();
@@ -72,5 +71,3 @@ protected:
 } // namespace WebKit
 
 #endif // ENABLE(INPUT_TYPE_COLOR)
-
-#endif // WebColorPicker_h

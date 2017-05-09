@@ -39,9 +39,9 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassRefPtr<WebIconDatabase> WebIconDatabase::create(WebProcessPool* processPool)
+Ref<WebIconDatabase> WebIconDatabase::create(WebProcessPool* processPool)
 {
-    return adoptRef(new WebIconDatabase(*processPool));
+    return adoptRef(*new WebIconDatabase(*processPool));
 }
 
 WebIconDatabase::~WebIconDatabase()
@@ -315,7 +315,7 @@ void WebIconDatabase::setPrivateBrowsingEnabled(bool privateBrowsingEnabled)
         m_iconDatabaseImpl->setPrivateBrowsingEnabled(privateBrowsingEnabled);
 }
 
-PassRefPtr<API::Data> WebIconDatabase::iconDataForPageURL(const String& pageURL)
+RefPtr<API::Data> WebIconDatabase::iconDataForPageURL(const String& pageURL)
 {
     auto* image = imageForPageURL(pageURL);
     if (!image)

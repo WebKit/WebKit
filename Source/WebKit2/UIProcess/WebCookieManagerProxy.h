@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebCookieManagerProxy_h
-#define WebCookieManagerProxy_h
+#pragma once
 
 #include "APIObject.h"
 #include "GenericCallback.h"
@@ -61,7 +60,7 @@ class WebCookieManagerProxy : public API::ObjectImpl<API::Object::Type::CookieMa
 public:
     static const char* supplementName();
 
-    static PassRefPtr<WebCookieManagerProxy> create(WebProcessPool*);
+    static Ref<WebCookieManagerProxy> create(WebProcessPool*);
     virtual ~WebCookieManagerProxy();
 
     void initializeClient(const WKCookieManagerClientBase*);
@@ -150,5 +149,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // WebCookieManagerProxy_h

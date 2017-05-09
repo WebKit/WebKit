@@ -37,9 +37,9 @@ const char* WebMediaSessionFocusManager::supplementName()
     return "WebMediaSessionFocusManager";
 }
 
-PassRefPtr<WebMediaSessionFocusManager> WebMediaSessionFocusManager::create(WebProcessPool* processPool)
+Ref<WebMediaSessionFocusManager> WebMediaSessionFocusManager::create(WebProcessPool* processPool)
 {
-    return adoptRef(new WebMediaSessionFocusManager(processPool));
+    return adoptRef(*new WebMediaSessionFocusManager(processPool));
 }
 
 WebMediaSessionFocusManager::WebMediaSessionFocusManager(WebProcessPool* processPool)

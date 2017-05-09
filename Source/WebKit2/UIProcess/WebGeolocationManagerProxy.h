@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebGeolocationManagerProxy_h
-#define WebGeolocationManagerProxy_h
+#pragma once
 
 #include "APIObject.h"
 #include "Connection.h"
@@ -43,7 +42,7 @@ class WebGeolocationManagerProxy : public API::ObjectImpl<API::Object::Type::Geo
 public:
     static const char* supplementName();
 
-    static PassRefPtr<WebGeolocationManagerProxy> create(WebProcessPool*);
+    static Ref<WebGeolocationManagerProxy> create(WebProcessPool*);
 
     void initializeProvider(const WKGeolocationProviderBase*);
 
@@ -83,5 +82,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // WebGeolocationManagerProxy_h

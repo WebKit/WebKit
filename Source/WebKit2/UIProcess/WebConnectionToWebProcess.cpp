@@ -31,9 +31,9 @@
 
 namespace WebKit {
 
-PassRefPtr<WebConnectionToWebProcess> WebConnectionToWebProcess::create(WebProcessProxy* process)
+Ref<WebConnectionToWebProcess> WebConnectionToWebProcess::create(WebProcessProxy* process)
 {
-    return adoptRef(new WebConnectionToWebProcess(process));
+    return adoptRef(*new WebConnectionToWebProcess(process));
 }
 
 WebConnectionToWebProcess::WebConnectionToWebProcess(WebProcessProxy* process)

@@ -52,10 +52,10 @@ void WebContextInjectedBundleClient::didReceiveSynchronousMessageFromInjectedBun
     returnData = adoptRef(toImpl(returnDataRef));
 }
 
-PassRefPtr<API::Object> WebContextInjectedBundleClient::getInjectedBundleInitializationUserData(WebProcessPool* processPool)
+RefPtr<API::Object> WebContextInjectedBundleClient::getInjectedBundleInitializationUserData(WebProcessPool* processPool)
 {
     if (!m_client.getInjectedBundleInitializationUserData)
-        return 0;
+        return nullptr;
 
     return adoptRef(toImpl(m_client.getInjectedBundleInitializationUserData(toAPI(processPool), m_client.base.clientInfo)));
 }

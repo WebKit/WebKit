@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GenericCallback_h
-#define GenericCallback_h
+#pragma once
 
 #include "APIError.h"
 #include "APISerializedScriptValue.h"
@@ -34,7 +33,6 @@
 #include <functional>
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RunLoop.h>
 
@@ -95,9 +93,9 @@ class GenericCallback : public CallbackBase {
 public:
     typedef Function<void (T..., Error)> CallbackFunction;
 
-    static PassRefPtr<GenericCallback> create(CallbackFunction&& callback, const ProcessThrottler::BackgroundActivityToken& activityToken = nullptr)
+    static Ref<GenericCallback> create(CallbackFunction&& callback, const ProcessThrottler::BackgroundActivityToken& activityToken = nullptr)
     {
-        return adoptRef(new GenericCallback(WTFMove(callback), activityToken));
+        return adoptRef(*new GenericCallback(WTFMove(callback), activityToken));
     }
 
     virtual ~GenericCallback()
@@ -172,12 +170,12 @@ void invalidateCallbackMap(HashMap<uint64_t, T>& callbackMap, CallbackBase::Erro
 
 class CallbackMap {
 public:
-    uint64_t put(PassRefPtr<CallbackBase> callback)
+    uint64_t put(Ref<CallbackBase>&& callback)
     {
         ASSERT(!m_map.contains(callback->callbackID()));
 
         uint64_t callbackID = callback->callbackID();
-        m_map.set(callbackID, callback);
+        m_map.set(callbackID, WTFMove(callback));
         return callbackID;
     }
 
@@ -192,17 +190,17 @@ public:
     };
 
     template<typename... T>
-    uint64_t put(std::function<void (T...)> function, const ProcessThrottler::BackgroundActivityToken& activityToken)
+    uint64_t put(std::function<void(T...)>&& function, const ProcessThrottler::BackgroundActivityToken& activityToken)
     {
         auto callback = GenericCallbackType<sizeof...(T), T...>::type::create(WTFMove(function), activityToken);
-        return put(callback);
+        return put(WTFMove(callback));
     }
 
     template<typename... T>
-    uint64_t put(Function<void (T...)>&& function, const ProcessThrottler::BackgroundActivityToken& activityToken)
+    uint64_t put(Function<void(T...)>&& function, const ProcessThrottler::BackgroundActivityToken& activityToken)
     {
         auto callback = GenericCallbackType<sizeof...(T), T...>::type::create(WTFMove(function), activityToken);
-        return put(callback);
+        return put(WTFMove(callback));
     }
 
     template<class T>
@@ -225,5 +223,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // GenericCallback_h

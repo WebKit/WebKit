@@ -45,7 +45,7 @@ WKTypeID WKPageGroupGetTypeID()
 WKPageGroupRef WKPageGroupCreateWithIdentifier(WKStringRef identifier)
 {
     auto pageGroup = WebPageGroup::create(toWTFString(identifier));
-    return toAPI(pageGroup.leakRef());
+    return toAPI(&pageGroup.leakRef());
 }
 
 void WKPageGroupSetPreferences(WKPageGroupRef pageGroupRef, WKPreferencesRef preferencesRef)

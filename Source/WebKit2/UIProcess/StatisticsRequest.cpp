@@ -31,8 +31,8 @@
 
 namespace WebKit {
 
-StatisticsRequest::StatisticsRequest(PassRefPtr<DictionaryCallback> callback)
-    : m_callback(callback)
+StatisticsRequest::StatisticsRequest(Ref<DictionaryCallback>&& callback)
+    : m_callback(WTFMove(callback))
 {
 }
 

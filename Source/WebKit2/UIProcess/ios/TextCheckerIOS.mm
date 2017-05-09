@@ -199,7 +199,7 @@ void TextChecker::ignoreWord(int64_t, const String&)
     notImplemented();
 }
 
-void TextChecker::requestCheckingOfString(PassRefPtr<TextCheckerCompletion>, int32_t)
+void TextChecker::requestCheckingOfString(Ref<TextCheckerCompletion>&&, int32_t)
 {
     notImplemented();
 }

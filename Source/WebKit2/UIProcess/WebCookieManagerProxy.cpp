@@ -44,9 +44,9 @@ const char* WebCookieManagerProxy::supplementName()
     return "WebCookieManagerProxy";
 }
 
-PassRefPtr<WebCookieManagerProxy> WebCookieManagerProxy::create(WebProcessPool* processPool)
+Ref<WebCookieManagerProxy> WebCookieManagerProxy::create(WebProcessPool* processPool)
 {
-    return adoptRef(new WebCookieManagerProxy(processPool));
+    return adoptRef(*new WebCookieManagerProxy(processPool));
 }
 
 WebCookieManagerProxy::WebCookieManagerProxy(WebProcessPool* processPool)

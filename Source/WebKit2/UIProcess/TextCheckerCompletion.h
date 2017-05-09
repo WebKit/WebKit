@@ -23,8 +23,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TextCheckerCompletion_h
-#define TextCheckerCompletion_h
+#pragma once
 
 #include "WebPageProxy.h"
 #include <WebCore/TextChecking.h>
@@ -34,7 +33,7 @@ namespace WebKit {
 
 class TextCheckerCompletion : public RefCounted<TextCheckerCompletion> {
 public:
-    static PassRefPtr<TextCheckerCompletion> create(uint64_t requestID, const WebCore::TextCheckingRequestData&, WebPageProxy*);
+    static Ref<TextCheckerCompletion> create(uint64_t requestID, const WebCore::TextCheckingRequestData&, WebPageProxy*);
 
     const WebCore::TextCheckingRequestData& textCheckingRequestData() const;
     int64_t spellDocumentTag();
@@ -50,5 +49,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // TextCheckerCompletion_h

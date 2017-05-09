@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NetscapePluginStream_h
-#define NetscapePluginStream_h
+#pragma once
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
@@ -32,7 +31,6 @@
 #include <WebCore/npruntime_internal.h>
 #include <memory>
 #include <wtf/Forward.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RunLoop.h>
@@ -48,9 +46,9 @@ class NetscapePlugin;
 
 class NetscapePluginStream : public RefCounted<NetscapePluginStream> {
 public:
-    static Ref<NetscapePluginStream> create(PassRefPtr<NetscapePlugin> plugin, uint64_t streamID, const String& requestURLString, bool sendNotification, void* notificationData)
+    static Ref<NetscapePluginStream> create(Ref<NetscapePlugin>&& plugin, uint64_t streamID, const String& requestURLString, bool sendNotification, void* notificationData)
     {
-        return adoptRef(*new NetscapePluginStream(plugin, streamID, requestURLString, sendNotification, notificationData));
+        return adoptRef(*new NetscapePluginStream(WTFMove(plugin), streamID, requestURLString, sendNotification, notificationData));
     }
     ~NetscapePluginStream();
 
@@ -71,7 +69,7 @@ public:
     void setURL(const String& newURLString);
 
 private:
-    NetscapePluginStream(PassRefPtr<NetscapePlugin>, uint64_t streamID, const String& requestURLString, bool sendNotification, void* notificationData);
+    NetscapePluginStream(Ref<NetscapePlugin>&&, uint64_t streamID, const String& requestURLString, bool sendNotification, void* notificationData);
 
     bool start(const String& responseURLString, uint32_t streamLength, 
                uint32_t lastModifiedTime, const String& mimeType, const String& headers);
@@ -83,7 +81,7 @@ private:
     void deliverDataToPlugin();
     void deliverDataToFile(const char* bytes, int length);
 
-    RefPtr<NetscapePlugin> m_plugin;
+    Ref<NetscapePlugin> m_plugin;
     uint64_t m_streamID;
 
     String m_requestURLString;
@@ -116,5 +114,3 @@ private:
 } // namespace WebKit
 
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
-
-#endif // NetscapePluginStream_h

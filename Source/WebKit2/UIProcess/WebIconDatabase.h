@@ -48,7 +48,7 @@ class WebProcessPool;
 
 class WebIconDatabase : public API::ObjectImpl<API::Object::Type::IconDatabase>, private WebCore::IconDatabaseClient, private IPC::MessageReceiver {
 public:
-    static PassRefPtr<WebIconDatabase> create(WebProcessPool*);
+    static Ref<WebIconDatabase> create(WebProcessPool*);
     virtual ~WebIconDatabase();
 
     void invalidate();
@@ -71,7 +71,7 @@ public:
 
     WebCore::Image* imageForPageURL(const String&, const WebCore::IntSize& iconSize = WebCore::IntSize(32, 32));
     WebCore::NativeImagePtr nativeImageForPageURL(const String&, const WebCore::IntSize& iconSize = WebCore::IntSize(32, 32));
-    PassRefPtr<API::Data> iconDataForPageURL(const String& pageURL);
+    RefPtr<API::Data> iconDataForPageURL(const String& pageURL);
 
     bool isOpen();
     bool isUrlImportCompleted();

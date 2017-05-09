@@ -23,13 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebFullScreenManagerProxy_h
-#define WebFullScreenManagerProxy_h
+#pragma once
 
 #if ENABLE(FULLSCREEN_API)
 
 #include "MessageReceiver.h"
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
@@ -55,7 +53,7 @@ public:
 
 class WebFullScreenManagerProxy : public RefCounted<WebFullScreenManagerProxy>, public IPC::MessageReceiver {
 public:
-    static PassRefPtr<WebFullScreenManagerProxy> create(WebPageProxy&, WebFullScreenManagerProxyClient&);
+    static Ref<WebFullScreenManagerProxy> create(WebPageProxy&, WebFullScreenManagerProxyClient&);
     virtual ~WebFullScreenManagerProxy();
 
     void invalidate();
@@ -91,5 +89,3 @@ private:
 } // namespace WebKit
 
 #endif // ENABLE(FULLSCREEN_API)
-
-#endif // WebFullScreenManagerProxy_h

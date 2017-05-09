@@ -28,7 +28,6 @@
 #include "APINavigation.h"
 #include "APIObject.h"
 #include <WebCore/FrameLoaderTypes.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
 

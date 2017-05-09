@@ -1,3 +1,89 @@
+2017-05-08  Alex Christensen  <achristensen@webkit.org>
+
+        Reduce PassRefPtr use in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=171831
+
+        Reviewed by Chris Dumez.
+
+        * UIProcess/API/C/WKPageGroup.cpp:
+        (WKPageGroupCreateWithIdentifier):
+        * UIProcess/GenericCallback.h:
+        (WebKit::GenericCallback::create):
+        (WebKit::CallbackMap::put):
+        * UIProcess/StatisticsRequest.cpp:
+        (WebKit::StatisticsRequest::StatisticsRequest):
+        * UIProcess/StatisticsRequest.h:
+        (WebKit::StatisticsRequest::create):
+        * UIProcess/TextChecker.h:
+        * UIProcess/TextCheckerCompletion.cpp:
+        (WebKit::TextCheckerCompletion::create):
+        * UIProcess/TextCheckerCompletion.h:
+        * UIProcess/WebColorPicker.h:
+        (WebKit::WebColorPicker::create):
+        * UIProcess/WebConnectionToWebProcess.cpp:
+        (WebKit::WebConnectionToWebProcess::create):
+        * UIProcess/WebConnectionToWebProcess.h:
+        * UIProcess/WebContextInjectedBundleClient.cpp:
+        (WebKit::WebContextInjectedBundleClient::getInjectedBundleInitializationUserData):
+        * UIProcess/WebContextInjectedBundleClient.h:
+        * UIProcess/WebContextMenuListenerProxy.h:
+        (WebKit::WebContextMenuListenerProxy::create):
+        * UIProcess/WebCookieManagerProxy.cpp:
+        (WebKit::WebCookieManagerProxy::create):
+        * UIProcess/WebCookieManagerProxy.h:
+        * UIProcess/WebEditCommandProxy.h:
+        (WebKit::WebEditCommandProxy::create):
+        * UIProcess/WebFormSubmissionListenerProxy.h:
+        (WebKit::WebFormSubmissionListenerProxy::create):
+        * UIProcess/WebFrameListenerProxy.h:
+        * UIProcess/WebFrameProxy.h:
+        (WebKit::WebFrameProxy::create):
+        * UIProcess/WebFullScreenManagerProxy.cpp:
+        (WebKit::WebFullScreenManagerProxy::create):
+        * UIProcess/WebFullScreenManagerProxy.h:
+        * UIProcess/WebGeolocationManagerProxy.cpp:
+        (WebKit::WebGeolocationManagerProxy::create):
+        * UIProcess/WebGeolocationManagerProxy.h:
+        * UIProcess/WebIconDatabase.cpp:
+        (WebKit::WebIconDatabase::create):
+        (WebKit::WebIconDatabase::iconDataForPageURL):
+        * UIProcess/WebIconDatabase.h:
+        * UIProcess/WebMediaSessionFocusManager.cpp:
+        (WebKit::WebMediaSessionFocusManager::create):
+        * UIProcess/WebMediaSessionFocusManager.h:
+        * UIProcess/WebOpenPanelResultListenerProxy.h:
+        (WebKit::WebOpenPanelResultListenerProxy::create):
+        * UIProcess/WebPageGroup.cpp:
+        (WebKit::WebPageGroup::create):
+        * UIProcess/WebPageGroup.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::forceRepaint):
+        (WebKit::WebPageProxy::computePagesForPrinting):
+        (WebKit::WebPageProxy::drawRectToImage):
+        (WebKit::WebPageProxy::drawPagesToPDF):
+        (WebKit::WebPageProxy::drawPagesForPrinting):
+        (WebKit::WebPageProxy::callAfterNextPresentationUpdate):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/TextCheckerIOS.mm:
+        (WebKit::TextChecker::requestCheckingOfString):
+        * UIProcess/mac/TextCheckerMac.mm:
+        (WebKit::TextChecker::requestCheckingOfString):
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.h:
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController finishedExitFullScreenAnimation:]):
+        * UIProcess/mac/WKPrintingView.mm:
+        (-[WKPrintingView _preparePDFDataForPrintingOnSecondaryThread]):
+        (-[WKPrintingView _drawPreview:]):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::loadURL):
+        (WebKit::NetscapePlugin::manualStreamDidReceiveResponse):
+        * WebProcess/Plugins/Netscape/NetscapePluginStream.cpp:
+        (WebKit::NetscapePluginStream::NetscapePluginStream):
+        * WebProcess/Plugins/Netscape/NetscapePluginStream.h:
+        (WebKit::NetscapePluginStream::create):
+        * WebProcess/WebCoreSupport/SessionStateConversion.cpp:
+        (WebKit::toFormData):
+
 2017-05-08  Youenn Fablet  <youenn@apple.com>
 
         Add support for reading and writing settings from UIProcess audio capture

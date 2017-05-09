@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TiledCoreAnimationDrawingAreaProxy_h
-#define TiledCoreAnimationDrawingAreaProxy_h
+#pragma once
 
 #if !PLATFORM(IOS)
 
@@ -80,5 +79,3 @@ private:
 SPECIALIZE_TYPE_TRAITS_DRAWING_AREA_PROXY(TiledCoreAnimationDrawingAreaProxy, DrawingAreaTypeTiledCoreAnimation)
 
 #endif // !PLATFORM(IOS)
-
-#endif // TiledCoreAnimationDrawingAreaProxy_h

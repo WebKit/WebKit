@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebContextInjectedBundleClient_h
-#define WebContextInjectedBundleClient_h
+#pragma once
 
 #include "APIClient.h"
 #include "WKContext.h"
@@ -46,9 +45,7 @@ class WebContextInjectedBundleClient : public API::Client<WKContextInjectedBundl
 public:
     void didReceiveMessageFromInjectedBundle(WebProcessPool*, const String&, API::Object*);
     void didReceiveSynchronousMessageFromInjectedBundle(WebProcessPool*, const String&, API::Object*, RefPtr<API::Object>& returnData);
-    PassRefPtr<API::Object> getInjectedBundleInitializationUserData(WebProcessPool*);
+    RefPtr<API::Object> getInjectedBundleInitializationUserData(WebProcessPool*);
 };
 
 } // namespace WebKit
-
-#endif // WebContextInjectedBundleClient_h

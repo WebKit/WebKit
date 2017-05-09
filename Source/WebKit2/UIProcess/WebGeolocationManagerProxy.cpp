@@ -37,9 +37,9 @@ const char* WebGeolocationManagerProxy::supplementName()
     return "WebGeolocationManagerProxy";
 }
 
-PassRefPtr<WebGeolocationManagerProxy> WebGeolocationManagerProxy::create(WebProcessPool* processPool)
+Ref<WebGeolocationManagerProxy> WebGeolocationManagerProxy::create(WebProcessPool* processPool)
 {
-    return adoptRef(new WebGeolocationManagerProxy(processPool));
+    return adoptRef(*new WebGeolocationManagerProxy(processPool));
 }
 
 WebGeolocationManagerProxy::WebGeolocationManagerProxy(WebProcessPool* processPool)

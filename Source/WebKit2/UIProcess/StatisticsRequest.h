@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef StatisticsRequest_h
-#define StatisticsRequest_h
+#pragma once
 
 #include "GenericCallback.h"
 #include "StatisticsData.h"
@@ -44,9 +43,9 @@ enum StatisticsRequestType {
 
 class StatisticsRequest : public RefCounted<StatisticsRequest> {
 public:
-    static PassRefPtr<StatisticsRequest> create(PassRefPtr<DictionaryCallback> callback)
+    static Ref<StatisticsRequest> create(Ref<DictionaryCallback>&& callback)
     {
-        return adoptRef(new StatisticsRequest(callback));
+        return adoptRef(*new StatisticsRequest(WTFMove(callback)));
     }
 
     ~StatisticsRequest();
@@ -56,7 +55,7 @@ public:
     void completedRequest(uint64_t requestID, const StatisticsData&);
 
 private:
-    StatisticsRequest(PassRefPtr<DictionaryCallback>);
+    StatisticsRequest(Ref<DictionaryCallback>&&);
 
     HashSet<uint64_t> m_outstandingRequests;
     RefPtr<DictionaryCallback> m_callback;
@@ -65,5 +64,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // StatisticsRequest_h

@@ -500,7 +500,7 @@ void TextChecker::ignoreWord(int64_t spellDocumentTag, const String& word)
     [[NSSpellChecker sharedSpellChecker] ignoreWord:word inSpellDocumentWithTag:spellDocumentTag];
 }
 
-void TextChecker::requestCheckingOfString(PassRefPtr<TextCheckerCompletion>, int32_t)
+void TextChecker::requestCheckingOfString(Ref<TextCheckerCompletion>&&, int32_t)
 {
     notImplemented();
 }

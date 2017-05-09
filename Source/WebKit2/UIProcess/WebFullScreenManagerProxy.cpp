@@ -39,9 +39,9 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassRefPtr<WebFullScreenManagerProxy> WebFullScreenManagerProxy::create(WebPageProxy& page, WebFullScreenManagerProxyClient& client)
+Ref<WebFullScreenManagerProxy> WebFullScreenManagerProxy::create(WebPageProxy& page, WebFullScreenManagerProxyClient& client)
 {
-    return adoptRef(new WebFullScreenManagerProxy(page, client));
+    return adoptRef(*new WebFullScreenManagerProxy(page, client));
 }
 
 WebFullScreenManagerProxy::WebFullScreenManagerProxy(WebPageProxy& page, WebFullScreenManagerProxyClient& client)

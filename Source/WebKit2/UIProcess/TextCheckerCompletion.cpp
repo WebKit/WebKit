@@ -30,9 +30,9 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassRefPtr<TextCheckerCompletion> TextCheckerCompletion::create(uint64_t requestID, const TextCheckingRequestData& requestData, WebPageProxy* page)
+Ref<TextCheckerCompletion> TextCheckerCompletion::create(uint64_t requestID, const TextCheckingRequestData& requestData, WebPageProxy* page)
 {
-    return adoptRef(new TextCheckerCompletion(requestID, requestData, page));
+    return adoptRef(*new TextCheckerCompletion(requestID, requestData, page));
 }
 
 TextCheckerCompletion::TextCheckerCompletion(uint64_t requestID, const TextCheckingRequestData& requestData, WebPageProxy* page)

@@ -3034,16 +3034,15 @@ void WebPageProxy::getWebArchiveOfFrame(WebFrameProxy* frame, Function<void (API
     m_process->send(Messages::WebPage::GetWebArchiveOfFrame(frame->frameID(), callbackID), m_pageID);
 }
 
-void WebPageProxy::forceRepaint(PassRefPtr<VoidCallback> prpCallback)
+void WebPageProxy::forceRepaint(RefPtr<VoidCallback>&& callback)
 {
-    RefPtr<VoidCallback> callback = prpCallback;
     if (!isValid()) {
         // FIXME: If the page is invalid we should not call the callback. It'd be better to just return false from forceRepaint.
         callback->invalidate(CallbackBase::Error::OwnerWasInvalidated);
         return;
     }
 
-    std::function<void (CallbackBase::Error)> didForceRepaintCallback = [this, callback](CallbackBase::Error error) {
+    Function<void(CallbackBase::Error)> didForceRepaintCallback = [this, callback = WTFMove(callback)](CallbackBase::Error error) mutable {
         if (error != CallbackBase::Error::None) {
             callback->invalidate(error);
             return;
@@ -3054,7 +3053,7 @@ void WebPageProxy::forceRepaint(PassRefPtr<VoidCallback> prpCallback)
             return;
         }
     
-        callAfterNextPresentationUpdate([callback](CallbackBase::Error error) {
+        callAfterNextPresentationUpdate([callback = WTFMove(callback)](CallbackBase::Error error) {
             if (error != CallbackBase::Error::None) {
                 callback->invalidate(error);
                 return;
@@ -3064,7 +3063,7 @@ void WebPageProxy::forceRepaint(PassRefPtr<VoidCallback> prpCallback)
         });
     };
 
-    uint64_t callbackID = m_callbacks.put(didForceRepaintCallback, m_process->throttler().backgroundActivityToken());
+    uint64_t callbackID = m_callbacks.put(WTFMove(didForceRepaintCallback), m_process->throttler().backgroundActivityToken());
     m_drawingArea->waitForBackingStoreUpdateOnNextPaint();
     m_process->send(Messages::WebPage::ForceRepaint(callbackID), m_pageID); 
 }
@@ -5992,57 +5991,53 @@ void WebPageProxy::endPrinting()
     m_process->send(Messages::WebPage::EndPrinting(), m_pageID, printingSendOptions(m_isPerformingDOMPrintOperation));
 }
 
-void WebPageProxy::computePagesForPrinting(WebFrameProxy* frame, const PrintInfo& printInfo, PassRefPtr<ComputedPagesCallback> prpCallback)
+void WebPageProxy::computePagesForPrinting(WebFrameProxy* frame, const PrintInfo& printInfo, Ref<ComputedPagesCallback>&& callback)
 {
-    RefPtr<ComputedPagesCallback> callback = prpCallback;
     if (!isValid()) {
         callback->invalidate();
         return;
     }
 
     uint64_t callbackID = callback->callbackID();
-    m_callbacks.put(callback);
+    m_callbacks.put(WTFMove(callback));
     m_isInPrintingMode = true;
     m_process->send(Messages::WebPage::ComputePagesForPrinting(frame->frameID(), printInfo, callbackID), m_pageID, printingSendOptions(m_isPerformingDOMPrintOperation));
 }
 
 #if PLATFORM(COCOA)
-void WebPageProxy::drawRectToImage(WebFrameProxy* frame, const PrintInfo& printInfo, const IntRect& rect, const WebCore::IntSize& imageSize, PassRefPtr<ImageCallback> prpCallback)
+void WebPageProxy::drawRectToImage(WebFrameProxy* frame, const PrintInfo& printInfo, const IntRect& rect, const WebCore::IntSize& imageSize, Ref<ImageCallback>&& callback)
 {
-    RefPtr<ImageCallback> callback = prpCallback;
     if (!isValid()) {
         callback->invalidate();
         return;
     }
     
     uint64_t callbackID = callback->callbackID();
-    m_callbacks.put(callback);
+    m_callbacks.put(WTFMove(callback));
     m_process->send(Messages::WebPage::DrawRectToImage(frame->frameID(), printInfo, rect, imageSize, callbackID), m_pageID, printingSendOptions(m_isPerformingDOMPrintOperation));
 }
 
-void WebPageProxy::drawPagesToPDF(WebFrameProxy* frame, const PrintInfo& printInfo, uint32_t first, uint32_t count, PassRefPtr<DataCallback> prpCallback)
+void WebPageProxy::drawPagesToPDF(WebFrameProxy* frame, const PrintInfo& printInfo, uint32_t first, uint32_t count, Ref<DataCallback>&& callback)
 {
-    RefPtr<DataCallback> callback = prpCallback;
     if (!isValid()) {
         callback->invalidate();
         return;
     }
     
     uint64_t callbackID = callback->callbackID();
-    m_callbacks.put(callback);
+    m_callbacks.put(WTFMove(callback));
     m_process->send(Messages::WebPage::DrawPagesToPDF(frame->frameID(), printInfo, first, count, callbackID), m_pageID, printingSendOptions(m_isPerformingDOMPrintOperation));
 }
 #elif PLATFORM(GTK)
-void WebPageProxy::drawPagesForPrinting(WebFrameProxy* frame, const PrintInfo& printInfo, PassRefPtr<PrintFinishedCallback> didPrintCallback)
+void WebPageProxy::drawPagesForPrinting(WebFrameProxy* frame, const PrintInfo& printInfo, Ref<PrintFinishedCallback>&& callback)
 {
-    RefPtr<PrintFinishedCallback> callback = didPrintCallback;
     if (!isValid()) {
         callback->invalidate();
         return;
     }
 
     uint64_t callbackID = callback->callbackID();
-    m_callbacks.put(callback);
+    m_callbacks.put(WTFMove(callback));
     m_isInPrintingMode = true;
     m_process->send(Messages::WebPage::DrawPagesForPrinting(frame->frameID(), printInfo, callbackID), m_pageID, printingSendOptions(m_isPerformingDOMPrintOperation));
 }
@@ -6744,7 +6739,7 @@ void WebPageProxy::callAfterNextPresentationUpdate(std::function<void (CallbackB
         return;
     }
 
-    m_drawingArea->dispatchAfterEnsuringDrawing(callback);
+    m_drawingArea->dispatchAfterEnsuringDrawing(WTFMove(callback));
 }
 
 void WebPageProxy::setShouldScaleViewToFitDocument(bool shouldScaleViewToFitDocument)

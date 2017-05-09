@@ -207,12 +207,9 @@ void TextChecker::ignoreWord(int64_t /* spellDocumentTag */, const String& word)
 #endif
 }
 
-void TextChecker::requestCheckingOfString(PassRefPtr<TextCheckerCompletion> completion, int32_t insertionPoint)
+void TextChecker::requestCheckingOfString(Ref<TextCheckerCompletion>&& completion, int32_t insertionPoint)
 {
 #if ENABLE(SPELLCHECK)
-    if (!completion)
-        return;
-
     TextCheckingRequestData request = completion->textCheckingRequestData();
     ASSERT(request.sequence() != unrequestedTextCheckingSequence);
     ASSERT(request.mask() != TextCheckingTypeNone);

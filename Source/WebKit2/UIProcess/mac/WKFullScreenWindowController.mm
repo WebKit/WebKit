@@ -426,7 +426,7 @@ static const float minVideoWidth = 480 + 20 + 20; // Note: Keep in sync with med
     _repaintCallback = VoidCallback::create([self](WebKit::CallbackBase::Error) {
         [self completeFinishExitFullScreenAnimationAfterRepaint];
     });
-    _page->forceRepaint(_repaintCallback);
+    _page->forceRepaint(_repaintCallback.copyRef());
 }
 
 - (void)completeFinishExitFullScreenAnimationAfterRepaint

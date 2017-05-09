@@ -169,7 +169,7 @@ void NetscapePlugin::loadURL(const String& method, const String& urlString, cons
 
     if (target.isNull()) {
         // The browser is going to send the data in a stream, create a plug-in stream.
-        auto pluginStream = NetscapePluginStream::create(this, requestID, urlString, sendNotification, notificationData);
+        auto pluginStream = NetscapePluginStream::create(*this, requestID, urlString, sendNotification, notificationData);
         ASSERT(!m_streams.contains(requestID));
 
         m_streams.set(requestID, WTFMove(pluginStream));
@@ -897,7 +897,7 @@ void NetscapePlugin::manualStreamDidReceiveResponse(const URL& responseURL, uint
     ASSERT(m_shouldUseManualLoader);
     ASSERT(!m_manualStream);
     
-    m_manualStream = NetscapePluginStream::create(this, 0, responseURL.string(), false, 0);
+    m_manualStream = NetscapePluginStream::create(*this, 0, responseURL.string(), false, 0);
     m_manualStream->didReceiveResponse(responseURL, streamLength, lastModifiedTime, mimeType, headers);
 }
 

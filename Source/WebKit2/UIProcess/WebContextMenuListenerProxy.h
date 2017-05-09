@@ -38,9 +38,9 @@ class WebContextMenuProxyMac;
 
 class WebContextMenuListenerProxy : public API::ObjectImpl<API::Object::Type::ContextMenuListener> {
 public:
-    static PassRefPtr<WebContextMenuListenerProxy> create(WebContextMenuProxy* contextMenuMac)
+    static Ref<WebContextMenuListenerProxy> create(WebContextMenuProxy* contextMenuMac)
     {
-        return adoptRef(new WebContextMenuListenerProxy(contextMenuMac));
+        return adoptRef(*new WebContextMenuListenerProxy(contextMenuMac));
     }
 
     virtual ~WebContextMenuListenerProxy();

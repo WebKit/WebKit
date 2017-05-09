@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebEditCommandProxy_h
-#define WebEditCommandProxy_h
+#pragma once
 
 #include "APIObject.h"
 #include <WebCore/EditAction.h>
@@ -38,9 +37,9 @@ class WebPageProxy;
 
 class WebEditCommandProxy : public API::ObjectImpl<API::Object::Type::EditCommandProxy> {
 public:
-    static PassRefPtr<WebEditCommandProxy> create(uint64_t commandID, WebCore::EditAction editAction, WebPageProxy* page)
+    static Ref<WebEditCommandProxy> create(uint64_t commandID, WebCore::EditAction editAction, WebPageProxy* page)
     {
-        return adoptRef(new WebEditCommandProxy(commandID, editAction, page));
+        return adoptRef(*new WebEditCommandProxy(commandID, editAction, page));
     }
     ~WebEditCommandProxy();
 
@@ -63,5 +62,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // WebEditCommandProxy_h

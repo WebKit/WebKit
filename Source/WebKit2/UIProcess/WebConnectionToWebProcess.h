@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebConnectionToWebProcess_h
-#define WebConnectionToWebProcess_h
+#pragma once
 
 #include "WebConnection.h"
 
@@ -34,7 +33,7 @@ class WebProcessProxy;
 
 class WebConnectionToWebProcess : public WebConnection {
 public:
-    static PassRefPtr<WebConnectionToWebProcess> create(WebProcessProxy*);
+    static Ref<WebConnectionToWebProcess> create(WebProcessProxy*);
 
     WebProcessProxy* webProcessProxy() const { return m_process; }
 
@@ -56,5 +55,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // WebConnectionToWebProcess_h

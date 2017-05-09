@@ -32,7 +32,6 @@
 #include <WebCore/FrameLoaderTypes.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/text/WTFString.h>
 
 #if ENABLE(CONTENT_FILTERING)
@@ -59,9 +58,9 @@ typedef GenericCallback<API::Data*> DataCallback;
 
 class WebFrameProxy : public API::ObjectImpl<API::Object::Type::Frame> {
 public:
-    static PassRefPtr<WebFrameProxy> create(WebPageProxy* page, uint64_t frameID)
+    static Ref<WebFrameProxy> create(WebPageProxy* page, uint64_t frameID)
     {
-        return adoptRef(new WebFrameProxy(page, frameID));
+        return adoptRef(*new WebFrameProxy(page, frameID));
     }
 
     virtual ~WebFrameProxy();

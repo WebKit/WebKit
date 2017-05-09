@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TextChecker_h
-#define TextChecker_h
+#pragma once
 
 #include "TextCheckerCompletion.h"
 #include <WebCore/EditorClient.h>
@@ -86,9 +85,7 @@ public:
     static void getGuessesForWord(int64_t spellDocumentTag, const String& word, const String& context, int32_t insertionPoint, Vector<String>& guesses, bool initialCapitalizationEnabled);
     static void learnWord(int64_t spellDocumentTag, const String& word);
     static void ignoreWord(int64_t spellDocumentTag, const String& word);
-    static void requestCheckingOfString(PassRefPtr<TextCheckerCompletion>, int32_t insertionPoint);
+    static void requestCheckingOfString(Ref<TextCheckerCompletion>&&, int32_t insertionPoint);
 };
 
 } // namespace WebKit
-
-#endif // TextChecker_h

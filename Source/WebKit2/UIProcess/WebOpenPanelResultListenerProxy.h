@@ -23,12 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebOpenPanelResultListenerProxy_h
-#define WebOpenPanelResultListenerProxy_h
+#pragma once
 
 #include "APIObject.h"
 #include <wtf/Forward.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
@@ -44,9 +42,9 @@ class WebPageProxy;
 
 class WebOpenPanelResultListenerProxy : public API::ObjectImpl<API::Object::Type::FramePolicyListener> {
 public:
-    static PassRefPtr<WebOpenPanelResultListenerProxy> create(WebPageProxy* page)
+    static Ref<WebOpenPanelResultListenerProxy> create(WebPageProxy* page)
     {
-        return adoptRef(new WebOpenPanelResultListenerProxy(page));
+        return adoptRef(*new WebOpenPanelResultListenerProxy(page));
     }
 
     virtual ~WebOpenPanelResultListenerProxy();
@@ -66,5 +64,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // WebOpenPanelResultListenerProxy_h
