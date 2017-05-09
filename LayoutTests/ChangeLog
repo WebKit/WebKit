@@ -1,3 +1,24 @@
+2017-05-09  Sam Weinig  <sam@webkit.org>
+
+        Implement Subresource Integrity (SRI)
+        https://bugs.webkit.org/show_bug.cgi?id=148363
+        <rdar://problem/18945879>
+
+        Reviewed by Youenn Fablet.
+
+        Add tests for Subresource Integrity for Fetch based off the ones from Web 
+        Platform Tests. Additional tests for more CORS combinations have been added.
+
+        * http/tests/subresource-integrity/resources/crossorigin-anon-resource.txt: Added.
+        * http/tests/subresource-integrity/resources/crossorigin-creds-resource.txt: Added.
+        * http/tests/subresource-integrity/resources/crossorigin-ineligible-resource.txt: Added.
+        * http/tests/subresource-integrity/resources/resource.txt: Added.
+        * http/tests/subresource-integrity/sri-fetch-expected.txt: Added.
+        * http/tests/subresource-integrity/sri-fetch-worker-expected.txt: Added.
+        * http/tests/subresource-integrity/sri-fetch-worker.html: Added.
+        * http/tests/subresource-integrity/sri-fetch.html: Added.
+        * http/tests/subresource-integrity/sri-fetch.js: Added.
+
 2017-05-09  Matt Lewis  <jlewis3@apple.com>
 
         Marked webrtc/captureCanvas-webrtc.html as flaky.

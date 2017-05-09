@@ -28,6 +28,8 @@
 
 #pragma once
 
+#include <wtf/text/WTFString.h>
+
 namespace WebCore {
 
 struct FetchOptions {
@@ -51,6 +53,8 @@ struct FetchOptions {
 
     enum class ReferrerPolicy { EmptyString, NoReferrer, NoReferrerWhenDowngrade, Origin, OriginWhenCrossOrigin, UnsafeUrl };
     ReferrerPolicy referrerPolicy { ReferrerPolicy::EmptyString };
+
+    String integrity;
 };
 
 } // namespace WebCore

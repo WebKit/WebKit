@@ -83,7 +83,7 @@ public:
     Cache cache() const;
     Redirect redirect() const;
 
-    const String& integrity() const { return m_internalRequest.integrity; }
+    const String& integrity() const { return m_internalRequest.options.integrity; }
 
     ExceptionOr<Ref<FetchRequest>> clone(ScriptExecutionContext&);
 
@@ -91,7 +91,6 @@ public:
         ResourceRequest request;
         FetchOptions options;
         String referrer;
-        String integrity;
     };
 
     const FetchOptions& fetchOptions() const { return m_internalRequest.options; }

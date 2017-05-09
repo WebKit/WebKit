@@ -105,7 +105,7 @@ static std::optional<Exception> buildOptions(FetchRequest::InternalRequest& requ
         request.options.redirect = init.redirect.value();
 
     if (!init.integrity.isNull())
-        request.integrity = init.integrity;
+        request.options.integrity = init.integrity;
 
     if (!init.method.isNull()) {
         if (auto exception = setMethod(request.request, init.method))
@@ -132,7 +132,7 @@ ExceptionOr<FetchHeaders&> FetchRequest::initializeOptions(const Init& init)
         const String& method = m_internalRequest.request.httpMethod();
         if (method != "GET" && method != "POST" && method != "HEAD")
             return Exception { TypeError, ASCIILiteral("Method must be GET, POST or HEAD in no-cors mode.") };
-        if (!m_internalRequest.integrity.isEmpty())
+        if (!m_internalRequest.options.integrity.isEmpty())
             return Exception { TypeError, ASCIILiteral("There cannot be an integrity in no-cors mode.") };
         m_headers->setGuard(FetchHeaders::Guard::RequestNoCors);
     }

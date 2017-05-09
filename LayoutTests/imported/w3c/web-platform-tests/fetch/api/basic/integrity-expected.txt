@@ -1,15 +1,19 @@
+CONSOLE MESSAGE: Fetch API cannot load http://localhost:8800/fetch/api/resources/top.txt. Failed integrity metadata check.
+CONSOLE MESSAGE: Fetch API cannot load http://localhost:8800/fetch/api/resources/top.txt. Failed integrity metadata check.
+CONSOLE MESSAGE: Fetch API cannot load http://localhost:8800/fetch/api/resources/top.txt. Failed integrity metadata check.
+CONSOLE MESSAGE: Fetch API cannot load http://localhost:8801/fetch/api/resources/top.txt?pipe=header(Access-Control-Allow-Origin,*). Failed integrity metadata check.
 
 PASS Empty string integrity 
 PASS SHA-256 integrity 
 PASS SHA-384 integrity 
 PASS SHA-512 integrity 
-FAIL Invalid integrity assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS Invalid integrity 
 PASS Multiple integrities: valid stronger than invalid 
-FAIL Multiple integrities: invalid stronger than valid assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS Multiple integrities: invalid stronger than valid 
 PASS Multiple integrities: invalid as strong as valid 
 PASS Multiple integrities: both are valid 
-FAIL Multiple integrities: both are invalid assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS Multiple integrities: both are invalid 
 PASS CORS empty integrity 
 PASS CORS SHA-512 integrity 
-FAIL CORS invalid integrity assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS CORS invalid integrity 
 

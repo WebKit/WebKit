@@ -66,6 +66,8 @@ namespace WebCore {
         ThreadableLoaderOptions(const ResourceLoaderOptions&, PreflightPolicy, ContentSecurityPolicyEnforcement, String&& initiator, ResponseFilteringPolicy);
         ~ThreadableLoaderOptions();
 
+        ThreadableLoaderOptions isolatedCopy() const;
+
         PreflightPolicy preflightPolicy { ConsiderPreflight };
         ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement { ContentSecurityPolicyEnforcement::EnforceConnectSrcDirective };
         String initiator; // This cannot be an AtomicString, as isolatedCopy() wouldn't create an object that's safe for passing to another thread.

@@ -60,6 +60,48 @@ ThreadableLoaderOptions::ThreadableLoaderOptions(const ResourceLoaderOptions& ba
 {
 }
 
+ThreadableLoaderOptions ThreadableLoaderOptions::isolatedCopy() const
+{
+    ThreadableLoaderOptions copy;
+
+    // FetchOptions
+    copy.type = this->type;
+    copy.destination = this->destination;
+    copy.mode = this->mode;
+    copy.credentials = this->credentials;
+    copy.cache = this->cache;
+    copy.redirect = this->redirect;
+    copy.referrerPolicy = this->referrerPolicy;
+    copy.integrity = this->integrity.isolatedCopy();
+
+    // ResourceLoaderOptions
+    copy.sendLoadCallbacks = this->sendLoadCallbacks;
+    copy.sniffContent = this->sniffContent;
+    copy.dataBufferingPolicy = this->dataBufferingPolicy;
+    copy.allowCredentials = this->allowCredentials;
+    copy.securityCheck = this->securityCheck;
+    copy.certificateInfoPolicy = this->certificateInfoPolicy;
+    copy.contentSecurityPolicyImposition = this->contentSecurityPolicyImposition;
+    copy.defersLoadingPolicy = this->defersLoadingPolicy;
+    copy.cachingPolicy = this->cachingPolicy;
+    copy.sameOriginDataURLFlag = this->sameOriginDataURLFlag;
+    copy.initiatorContext = this->initiatorContext;
+    copy.clientCredentialPolicy = this->clientCredentialPolicy;
+    copy.maxRedirectCount = this->maxRedirectCount;
+    copy.derivedCachedDataTypesToRetrieve.reserveInitialCapacity(this->derivedCachedDataTypesToRetrieve.size());
+    for (auto& derivedCachedDataType : this->derivedCachedDataTypesToRetrieve)
+        copy.derivedCachedDataTypesToRetrieve.uncheckedAppend(derivedCachedDataType.isolatedCopy());
+
+    // ThreadableLoaderOptions
+    copy.preflightPolicy = this->preflightPolicy;
+    copy.contentSecurityPolicyEnforcement = this->contentSecurityPolicyEnforcement;
+    copy.initiator = this->initiator.isolatedCopy();
+    copy.filteringPolicy = this->filteringPolicy;
+
+    return copy;
+}
+
+
 RefPtr<ThreadableLoader> ThreadableLoader::create(ScriptExecutionContext& context, ThreadableLoaderClient& client, ResourceRequest&& request, const ThreadableLoaderOptions& options, String&& referrer)
 {
     if (is<WorkerGlobalScope>(context))

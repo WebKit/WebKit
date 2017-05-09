@@ -1,3 +1,15 @@
+2017-05-09  Sam Weinig  <sam@webkit.org>
+
+        Implement Subresource Integrity (SRI)
+        https://bugs.webkit.org/show_bug.cgi?id=148363
+        <rdar://problem/18945879>
+
+        Reviewed by Youenn Fablet.
+
+        * web-platform-tests/fetch/api/basic/integrity-expected.txt:
+        * web-platform-tests/fetch/api/basic/integrity-worker-expected.txt:
+        Update results now that integrity is implemented.
+
 2017-05-09  Youenn Fablet  <youenn@apple.com>
 
         Refresh webrtc WPT tests
