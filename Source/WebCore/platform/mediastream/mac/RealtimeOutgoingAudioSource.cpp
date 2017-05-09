@@ -39,8 +39,10 @@ namespace WebCore {
 
 static inline AudioStreamBasicDescription libwebrtcAudioFormat(Float64 sampleRate, size_t channelCount)
 {
+    // FIXME: Microphones can have more than two channels. In such case, we should do the mix down based on AudioChannelLayoutTag.
+    size_t libWebRTCChannelCount = channelCount >= 2 ? 2 : channelCount;
     AudioStreamBasicDescription streamFormat;
-    FillOutASBDForLPCM(streamFormat, sampleRate, channelCount, LibWebRTCAudioFormat::sampleSize, LibWebRTCAudioFormat::sampleSize, LibWebRTCAudioFormat::isFloat, LibWebRTCAudioFormat::isBigEndian, LibWebRTCAudioFormat::isNonInterleaved);
+    FillOutASBDForLPCM(streamFormat, sampleRate, libWebRTCChannelCount, LibWebRTCAudioFormat::sampleSize, LibWebRTCAudioFormat::sampleSize, LibWebRTCAudioFormat::isFloat, LibWebRTCAudioFormat::isBigEndian, LibWebRTCAudioFormat::isNonInterleaved);
     return streamFormat;
 }
 
@@ -78,8 +80,6 @@ void RealtimeOutgoingAudioSource::sourceEnabledChanged()
 
 void RealtimeOutgoingAudioSource::audioSamplesAvailable(const MediaTime& time, const PlatformAudioData& audioData, const AudioStreamDescription& streamDescription, size_t sampleCount)
 {
-    ASSERT(streamDescription.numberOfChannels() <= 2);
-
     if (m_inputStreamDescription != streamDescription) {
         m_inputStreamDescription = toCAAudioStreamDescription(streamDescription);
         auto status  = m_sampleConverter->setInputFormat(m_inputStreamDescription);

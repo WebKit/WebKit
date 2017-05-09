@@ -1,3 +1,16 @@
+2017-05-09  Youenn Fablet  <youenn@apple.com>
+
+        RealtimeOutgoingAudioSource is crashing when given data with more than two channels
+        https://bugs.webkit.org/show_bug.cgi?id=171868
+
+        Reviewed by Eric Carlson.
+
+        Manual testing.
+
+        * platform/mediastream/mac/RealtimeOutgoingAudioSource.cpp:
+        (WebCore::libwebrtcAudioFormat): Capping the number of channels to 2.
+        (WebCore::RealtimeOutgoingAudioSource::audioSamplesAvailable):
+
 2017-05-09  Myles C. Maxfield  <mmaxfield@apple.com>
 
         font-stretch: normal selects expanded fonts instead of condensed fonts
