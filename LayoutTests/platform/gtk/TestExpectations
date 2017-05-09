@@ -2231,6 +2231,8 @@ webkit.org/b/171599 animations/trigger-container-scroll-empty.html [ Pass Failur
 
 webkit.org/b/171600 css3/filters/composited-during-animation-layertree.html [ Pass Failure ]
 
+webkit.org/b/171844 compositing/visibility/visibility-simple-video-layer.html [ Pass ImageOnlyFailure Timeout ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////

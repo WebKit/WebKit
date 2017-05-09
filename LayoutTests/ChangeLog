@@ -1,3 +1,10 @@
+2017-05-08  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed GTK expectations gardening
+
+        * platform/gtk/TestExpectations:
+        * webaudio/codec-tests/wav/24bit-22khz-resample-expected.wav:
+
 2017-05-08  Matt Lewis  <jlewis3@apple.com>
 
         Marked http/tests/security/storage-blocking-loosened-plugin.html as flaky
