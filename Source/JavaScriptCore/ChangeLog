@@ -1,3 +1,20 @@
+2017-05-09  Filip Pizlo  <fpizlo@apple.com>
+
+        Heap::heap() should behave gracefully for null pointers
+        https://bugs.webkit.org/show_bug.cgi?id=171888
+        <rdar://problem/32005315>
+
+        Reviewed by Mark Lam.
+        
+        Some callers of Heap::heap() can pass a null cell and they will behave gracefully if we
+        return a null Heap. So, let's do that.
+        
+        This fixes a crash and it does not hurt performance. I'm seeing a possible 0.5% regression
+        with 74% probability. That's a neutral result by our usual 95% standard.
+
+        * heap/HeapInlines.h:
+        (JSC::Heap::heap):
+
 2017-05-09  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Handle IDLPromise<> properly

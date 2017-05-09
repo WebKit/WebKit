@@ -46,13 +46,15 @@ ALWAYS_INLINE VM* Heap::vm() const
 
 ALWAYS_INLINE Heap* Heap::heap(const HeapCell* cell)
 {
+    if (!cell)
+        return nullptr;
     return cell->heap();
 }
 
 inline Heap* Heap::heap(const JSValue v)
 {
     if (!v.isCell())
-        return 0;
+        return nullptr;
     return heap(v.asCell());
 }
 
