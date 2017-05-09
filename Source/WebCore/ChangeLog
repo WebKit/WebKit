@@ -1,3 +1,21 @@
+2017-05-09  Chris Dumez  <cdumez@apple.com>
+
+        Update DocumentOrShadowRoot.idl to match specifications
+        https://bugs.webkit.org/show_bug.cgi?id=171845
+
+        Reviewed by Ryosuke Niwa.
+
+        Update DocumentOrShadowRoot.idl to match specifications:
+        - https://dom.spec.whatwg.org/#mixin-documentorshadowroot
+        - https://w3c.github.io/webcomponents/spec/shadow/#extensions-to-the-documentorshadowroot-mixin
+        - https://w3c.github.io/pointerlock/#extensions-to-the-documentorshadowroot-mixin
+
+        No Web-facing behavior change. Things that do not match the specification were merely
+        annotated with FIXME comments.
+
+        * dom/Document.idl:
+        * dom/DocumentOrShadowRoot.idl:
+
 2017-05-09  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, attempt to fix macOS ports using ApplePay

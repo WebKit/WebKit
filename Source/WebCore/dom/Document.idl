@@ -103,14 +103,14 @@
     [LenientThis] attribute EventHandler onreadystatechange;
 
     // Extensions from the CSSOM specification (https://drafts.csswg.org/cssom/#extensions-to-the-document-interface).
+    // FIXME: Should likely be moved to DocumentOrShadowRoot.
     readonly attribute StyleSheetList styleSheets; // FIXME: Should be [SameObject].
 
     // Extensions from the CSSOM-View specification (https://drafts.csswg.org/cssom-view/#extensions-to-the-document-interface).
     readonly attribute Element? scrollingElement;
-    // sequence<Element> elementsFromPoint(double x, double y);  // FIXME: Implement this.
-    // CaretPosition? caretPositionFromPoint(double x, double y);  // FIXME: Implement this.
 
     // Extensions from Selection API (https://www.w3.org/TR/selection-api/#extensions-to-document-interface).
+    // FIXME: Should likely be moved to DocumentOrShadowRoot.
     DOMSelection? getSelection();
 
     // XPath extensions (https://www.w3.org/TR/DOM-Level-3-XPath/xpath.html#XPathEvaluator).
@@ -133,7 +133,6 @@
     // Extensions from Pointer Lock API (https://www.w3.org/TR/pointerlock/#extensions-to-the-document-interface).
     [NotEnumerable, Conditional=POINTER_LOCK] attribute EventHandler onpointerlockchange; // FIXME: Should be enumerable.
     [NotEnumerable, Conditional=POINTER_LOCK] attribute EventHandler onpointerlockerror; // FIXME: Should be enumerable.
-    // readonly attribute Element? pointerLockElement; // FIXME: Implement this.
     [Conditional=POINTER_LOCK] void exitPointerLock();
 
     // Extensions from CSS Font Loading API (https://drafts.csswg.org/css-font-loading/#font-face-source).
