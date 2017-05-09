@@ -1,3 +1,4 @@
+
 (Frame scrolling node
   (scrollable area size 785 585)
   (contents size 1805 5108)
@@ -8,23 +9,23 @@
   (children 4
     (Fixed node
       (anchor edges: AnchorEdgeLeft AnchorEdgeTop)
-      (viewport rect at last layout: 0.00 0.00 785.00 585.00)
-      (layer position at last layout -4.00 -4.00)
+      (viewport rect at last layout at (0,0) size 785x585)
+      (layer position at last layout (-4,-4))
     )
     (Fixed node
       (anchor edges: AnchorEdgeLeft AnchorEdgeTop)
-      (viewport rect at last layout: 0.00 0.00 785.00 585.00)
-      (layer position at last layout 6.00 196.00)
+      (viewport rect at last layout at (0,0) size 785x585)
+      (layer position at last layout (6,196))
     )
     (Fixed node
       (anchor edges: AnchorEdgeRight AnchorEdgeTop)
-      (viewport rect at last layout: 0.00 0.00 785.00 585.00)
-      (layer position at last layout 597.00 196.00)
+      (viewport rect at last layout at (0,0) size 785x585)
+      (layer position at last layout (597,196))
     )
     (Fixed node
       (anchor edges: AnchorEdgeLeft AnchorEdgeBottom)
-      (viewport rect at last layout: 0.00 0.00 785.00 585.00)
-      (layer position at last layout -4.00 497.00)
+      (viewport rect at last layout at (0,0) size 785x585)
+      (layer position at last layout (-4,497))
     )
   )
 )

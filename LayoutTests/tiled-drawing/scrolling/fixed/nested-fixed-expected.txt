@@ -1,3 +1,4 @@
+
 (Frame scrolling node
   (scrollable area size 785 600)
   (contents size 785 2213)
@@ -8,8 +9,8 @@
   (children 1
     (Fixed node
       (anchor edges: AnchorEdgeLeft AnchorEdgeTop)
-      (viewport rect at last layout: 0.00 200.00 785.00 600.00)
-      (layer position at last layout 0.00 200.00)
+      (viewport rect at last layout at (0,200) size 785x600)
+      (layer position at last layout (0,200))
     )
   )
 )

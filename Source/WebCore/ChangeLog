@@ -1,3 +1,38 @@
+2017-05-08  Frederic Wang  <fwang@igalia.com>
+
+        Simplify ScrollingStateNode::scrollingStateTreeAsText
+        https://bugs.webkit.org/show_bug.cgi?id=171802
+
+        Reviewed by Simon Fraser.
+
+        The following simplifications are performed:
+        - Rely on TextStream's internal value to manage indentation.
+        - Use TextStream::dumpProperty and << to print simple properties.
+        - Try and use TextStream::GroupScope for groups.
+
+        No new tests, only minor format changes in the dumped tree.
+
+        * page/scrolling/ScrollingStateFixedNode.cpp:
+        (WebCore::ScrollingStateFixedNode::dumpProperties):
+        * page/scrolling/ScrollingStateFixedNode.h:
+        * page/scrolling/ScrollingStateFrameScrollingNode.cpp:
+        (WebCore::ScrollingStateFrameScrollingNode::dumpProperties):
+        * page/scrolling/ScrollingStateFrameScrollingNode.h:
+        * page/scrolling/ScrollingStateNode.cpp:
+        (WebCore::ScrollingStateNode::dumpProperties):
+        (WebCore::ScrollingStateNode::dump):
+        (WebCore::ScrollingStateNode::scrollingStateTreeAsText):
+        * page/scrolling/ScrollingStateNode.h:
+        * page/scrolling/ScrollingStateOverflowScrollingNode.cpp:
+        (WebCore::ScrollingStateOverflowScrollingNode::dumpProperties):
+        * page/scrolling/ScrollingStateOverflowScrollingNode.h:
+        * page/scrolling/ScrollingStateScrollingNode.cpp:
+        (WebCore::ScrollingStateScrollingNode::dumpProperties):
+        * page/scrolling/ScrollingStateScrollingNode.h:
+        * page/scrolling/ScrollingStateStickyNode.cpp:
+        (WebCore::ScrollingStateStickyNode::dumpProperties):
+        * page/scrolling/ScrollingStateStickyNode.h:
+
 2017-05-08  Youenn Fablet  <youenn@apple.com>
 
         Follow-up to bug 171710: use more references and reject if either audio or video source creation is failing

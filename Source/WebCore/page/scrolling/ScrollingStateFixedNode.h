@@ -57,7 +57,7 @@ private:
 
     void reconcileLayerPositionForViewportRect(const LayoutRect& viewportRect, ScrollingLayerPositionAction) override;
 
-    void dumpProperties(TextStream&, int indent, ScrollingStateTreeAsTextBehavior) const override;
+    void dumpProperties(TextStream&, ScrollingStateTreeAsTextBehavior) const override;
 
     FixedPositionViewportConstraints m_constraints;
 };

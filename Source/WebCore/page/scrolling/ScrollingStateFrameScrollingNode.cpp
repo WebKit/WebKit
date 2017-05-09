@@ -262,64 +262,48 @@ void ScrollingStateFrameScrollingNode::setScrollerImpsFromScrollbars(Scrollbar*,
 }
 #endif
 
-void ScrollingStateFrameScrollingNode::dumpProperties(TextStream& ts, int indent, ScrollingStateTreeAsTextBehavior behavior) const
+void ScrollingStateFrameScrollingNode::dumpProperties(TextStream& ts, ScrollingStateTreeAsTextBehavior behavior) const
 {
-    ts << "(Frame scrolling node" << "\n";
+    ts << "Frame scrolling node";
     
-    ScrollingStateScrollingNode::dumpProperties(ts, indent, behavior);
+    ScrollingStateScrollingNode::dumpProperties(ts, behavior);
     
-    if (m_frameScaleFactor != 1) {
-        writeIndent(ts, indent + 1);
-        ts << "(frame scale factor " << m_frameScaleFactor << ")\n";
-    }
+    if (m_frameScaleFactor != 1)
+        ts.dumpProperty("frame scale factor", m_frameScaleFactor);
     
     if (m_visualViewportEnabled) {
-        writeIndent(ts, indent + 1);
-        ts << "(layout viewport " << m_layoutViewport << ")\n";
-        writeIndent(ts, indent + 1);
-        ts << "(min layout viewport origin " << m_minLayoutViewportOrigin << ")\n";
-        writeIndent(ts, indent + 1);
-        ts << "(max layout viewport origin " << m_maxLayoutViewportOrigin << ")\n";
+        ts.dumpProperty("layout viewport", m_layoutViewport);
+        ts.dumpProperty("min layout viewport origin", m_minLayoutViewportOrigin);
+        ts.dumpProperty("max layout viewport origin", m_maxLayoutViewportOrigin);
     }
     
-    if (m_behaviorForFixed == StickToViewportBounds) {
-        writeIndent(ts, indent + 1);
-        ts << "(fixed behavior: stick to viewport)\n";
-    }
+    if (m_behaviorForFixed == StickToViewportBounds)
+        ts.dumpProperty("behavior for fixed", m_behaviorForFixed);
 
     if (!m_eventTrackingRegions.asynchronousDispatchRegion.isEmpty()) {
-        ++indent;
-        writeIndent(ts, indent);
-        ts << "(asynchronous event dispatch region";
-        ++indent;
+        TextStream::GroupScope scope(ts);
+        ts << "asynchronous event dispatch region";
         for (auto rect : m_eventTrackingRegions.asynchronousDispatchRegion.rects()) {
             ts << "\n";
-            writeIndent(ts, indent);
+            ts.writeIndent();
             ts << rect;
-        }
-        ts << ")\n";
-        indent -= 2;
-    }
-    if (!m_eventTrackingRegions.eventSpecificSynchronousDispatchRegions.isEmpty()) {
-        for (const auto& synchronousEventRegion : m_eventTrackingRegions.eventSpecificSynchronousDispatchRegions) {
-            ++indent;
-            writeIndent(ts, indent);
-            ts << "(synchronous event dispatch region for event " << synchronousEventRegion.key;
-            ++indent;
-            for (auto rect : synchronousEventRegion.value.rects()) {
-                ts << "\n";
-                writeIndent(ts, indent);
-                ts << rect;
-            }
-            ts << ")\n";
-            indent -= 2;
         }
     }
 
-    if (m_synchronousScrollingReasons) {
-        writeIndent(ts, indent + 1);
-        ts << "(Scrolling on main thread because: " << ScrollingCoordinator::synchronousScrollingReasonsAsText(m_synchronousScrollingReasons) << ")\n";
+    if (!m_eventTrackingRegions.eventSpecificSynchronousDispatchRegions.isEmpty()) {
+        for (const auto& synchronousEventRegion : m_eventTrackingRegions.eventSpecificSynchronousDispatchRegions) {
+            TextStream::GroupScope scope(ts);
+            ts << "synchronous event dispatch region for event " << synchronousEventRegion.key;
+            for (auto rect : synchronousEventRegion.value.rects()) {
+                ts << "\n";
+                ts.writeIndent();
+                ts << rect;
+            }
+        }
     }
+
+    if (m_synchronousScrollingReasons)
+        ts.dumpProperty("Scrolling on main thread because:", ScrollingCoordinator::synchronousScrollingReasonsAsText(m_synchronousScrollingReasons));
     
     // FIXME: dump more properties.
 }

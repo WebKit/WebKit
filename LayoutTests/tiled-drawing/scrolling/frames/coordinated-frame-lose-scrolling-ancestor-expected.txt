@@ -1,3 +1,4 @@
+
 (Frame scrolling node
   (scrollable area size 785 600)
   (contents size 785 1016)
@@ -18,11 +19,11 @@
           (anchor edges: AnchorEdgeTop AnchorEdgeBottom)
           (top offset 10.00)
           (bottom offset 10.00)
-          (containing block rect 8.00, 8.00 484.00 x 404.00)
-          (sticky box rect 8.00 312.00 100.00 100.00)
-          (constraining rect 0.00 0.00 500.00 300.00)
-          (sticky offset at last layout 0.00 -122.00)
-          (layer position at last layout 8.00 190.00)
+          (containing block rect at (8,8) size 484x404)
+          (sticky box rect at (8,312) size 100x100)
+          (constraining rect at (0,0) size 500x300)
+          (sticky offset at last layout width=0 height=-122)
+          (layer position at last layout (8,190))
         )
       )
     )

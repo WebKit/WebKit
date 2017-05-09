@@ -236,10 +236,10 @@ public:
 protected:
     ScrollingStateNode(const ScrollingStateNode&, ScrollingStateTree&);
 
-    virtual void dumpProperties(TextStream&, int indent, ScrollingStateTreeAsTextBehavior) const;
+    virtual void dumpProperties(TextStream&, ScrollingStateTreeAsTextBehavior) const;
     
 private:
-    void dump(TextStream&, int indent, ScrollingStateTreeAsTextBehavior) const;
+    void dump(TextStream&, ScrollingStateTreeAsTextBehavior) const;
 
     const ScrollingNodeType m_nodeType;
     ScrollingNodeID m_nodeID;

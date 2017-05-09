@@ -1,4 +1,5 @@
 Attempted scroll to -5000, 0
+
 (Frame scrolling node
   (scrollable area size 785 585)
   (contents size 5008 5021)
@@ -8,6 +9,7 @@ Attempted scroll to -5000, 0
 )
 
 Attempted scroll to 0, -5000
+
 (Frame scrolling node
   (scrollable area size 785 585)
   (contents size 5008 5021)
@@ -17,6 +19,7 @@ Attempted scroll to 0, -5000
 )
 
 Attempted scroll to -5000, -5000
+
 (Frame scrolling node
   (scrollable area size 785 585)
   (contents size 5008 5021)
@@ -26,6 +29,7 @@ Attempted scroll to -5000, -5000
 )
 
 Attempted scroll to 10000, 0
+
 (Frame scrolling node
   (scrollable area size 785 585)
   (contents size 5008 5021)
@@ -36,6 +40,7 @@ Attempted scroll to 10000, 0
 )
 
 Attempted scroll to 0, 10000
+
 (Frame scrolling node
   (scrollable area size 785 585)
   (contents size 5008 5021)
@@ -46,6 +51,7 @@ Attempted scroll to 0, 10000
 )
 
 Attempted scroll to 10000, 10000
+
 (Frame scrolling node
   (scrollable area size 785 585)
   (contents size 5008 5021)

@@ -185,42 +185,40 @@ void ScrollingStateScrollingNode::setExpectsWheelEventTestTrigger(bool expectsTe
     setPropertyChanged(ExpectsWheelEventTestTrigger);
 }
 
-void ScrollingStateScrollingNode::dumpProperties(TextStream& ts, int indent, ScrollingStateTreeAsTextBehavior behavior) const
+void ScrollingStateScrollingNode::dumpProperties(TextStream& ts, ScrollingStateTreeAsTextBehavior behavior) const
 {
-    ScrollingStateNode::dumpProperties(ts, indent, behavior);
+    ScrollingStateNode::dumpProperties(ts, behavior);
     
     if (m_scrollPosition != FloatPoint()) {
-        writeIndent(ts, indent + 1);
-        ts << "(scroll position "
+        TextStream::GroupScope scope(ts);
+        ts << "scroll position "
             << TextStream::FormatNumberRespectingIntegers(m_scrollPosition.x()) << " "
-            << TextStream::FormatNumberRespectingIntegers(m_scrollPosition.y()) << ")\n";
+            << TextStream::FormatNumberRespectingIntegers(m_scrollPosition.y());
     }
 
     if (!m_scrollableAreaSize.isEmpty()) {
-        writeIndent(ts, indent + 1);
-        ts << "(scrollable area size "
+        TextStream::GroupScope scope(ts);
+        ts << "scrollable area size "
             << TextStream::FormatNumberRespectingIntegers(m_scrollableAreaSize.width()) << " "
-            << TextStream::FormatNumberRespectingIntegers(m_scrollableAreaSize.height()) << ")\n";
+            << TextStream::FormatNumberRespectingIntegers(m_scrollableAreaSize.height());
     }
 
     if (!m_totalContentsSize.isEmpty()) {
-        writeIndent(ts, indent + 1);
-        ts << "(contents size "
+        TextStream::GroupScope scope(ts);
+        ts << "contents size "
             << TextStream::FormatNumberRespectingIntegers(m_totalContentsSize.width()) << " "
-            << TextStream::FormatNumberRespectingIntegers(m_totalContentsSize.height()) << ")\n";
+            << TextStream::FormatNumberRespectingIntegers(m_totalContentsSize.height());
     }
 
     if (m_requestedScrollPosition != IntPoint()) {
-        writeIndent(ts, indent + 1);
-        ts << "(requested scroll position "
+        TextStream::GroupScope scope(ts);
+        ts << "requested scroll position "
             << TextStream::FormatNumberRespectingIntegers(m_requestedScrollPosition.x()) << " "
-            << TextStream::FormatNumberRespectingIntegers(m_requestedScrollPosition.y()) << ")\n";
+            << TextStream::FormatNumberRespectingIntegers(m_requestedScrollPosition.y());
     }
 
-    if (m_scrollOrigin != IntPoint()) {
-        writeIndent(ts, indent + 1);
-        ts << "(scroll origin " << m_scrollOrigin.x() << " " << m_scrollOrigin.y() << ")\n";
-    }
+    if (m_scrollOrigin != IntPoint())
+        ts.dumpProperty("scroll origin", m_scrollOrigin);
 }
 
 } // namespace WebCore
