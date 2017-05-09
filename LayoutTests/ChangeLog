@@ -1,3 +1,19 @@
+2017-05-09  Chris Dumez  <cdumez@apple.com>
+
+        ontransitionend eventHandler should be in GlobalEventHandlers
+        https://bugs.webkit.org/show_bug.cgi?id=171836
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/css/ontransitionend-eventhandler-expected.txt: Added.
+        * fast/css/ontransitionend-eventhandler.html: Added.
+        Add layout test coverage.
+
+        * fast/dom/event-handler-attributes-expected.txt:
+        * fast/dom/event-handler-attributes.html:
+        * js/dom/dom-static-property-for-in-iteration-expected.txt:
+        Rebaseline existing tests to reflect behavior change.
+
 2017-05-09  Nael Ouedraogo  <nael.ouedraogo@crf.canon.fr>
 
         Invalid MediaSource duration value should throw TyperError instead of InvalidStateError

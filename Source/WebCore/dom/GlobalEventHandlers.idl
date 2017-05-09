@@ -97,6 +97,12 @@
     attribute EventHandler onvolumechange;
     attribute EventHandler onwaiting;
 
+    // Extensions from CSS Transitions API (https://drafts.csswg.org/css-transitions/#interface-globaleventhandlers-idl).
+    attribute EventHandler ontransitionend;
+    // attribute EventHandler ontransitionrun;
+    // attribute EventHandler ontransitionstart;
+    // attribute EventHandler ontransitioncancel;
+
 
     // Additions that are not yet part of the standard.
 

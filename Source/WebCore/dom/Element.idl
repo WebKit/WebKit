@@ -123,21 +123,13 @@
     [NotEnumerable, ImplementedAs=onwebkitAnimationStart] attribute EventHandler onwebkitanimationstart; // Non-standard.
     [NotEnumerable, ImplementedAs=onwebkitTransitionEnd] attribute EventHandler onwebkittransitionend; // Non-standard.
 
-    // Event handlers from CSS Transitions API.
-    // FIXME: Should be moved to GlobalEventHandlers.
-    // https://drafts.csswg.org/css-transitions/#interface-globaleventhandlers-idl
-    [NotEnumerable] attribute EventHandler ontransitionend; // FIXME: Should be enumerable.
-    // attribute EventHandler ontransitionrun;
-    // attribute EventHandler ontransitionstart;
-    // attribute EventHandler ontransitioncancel;
-    [NotEnumerable, ImplementedAs=onwebkitAnimationEnd] attribute EventHandler onwebkitanimationend; // Non-standard.
-
     // Non-standard WebKit API (https://developer.apple.com/reference/webkitjs/gestureevent).
     [NotEnumerable, Conditional=IOS_GESTURE_EVENTS] attribute EventHandler ongesturechange;
     [NotEnumerable, Conditional=IOS_GESTURE_EVENTS] attribute EventHandler ongestureend;
     [NotEnumerable, Conditional=IOS_GESTURE_EVENTS] attribute EventHandler ongesturestart;
 
     // Non standard event handlers.
+    [NotEnumerable, ImplementedAs=onwebkitAnimationEnd] attribute EventHandler onwebkitanimationend;
     [NotEnumerable] attribute EventHandler onbeforecopy;
     [NotEnumerable] attribute EventHandler onbeforecut;
     [NotEnumerable] attribute EventHandler onbeforeinput;

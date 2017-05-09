@@ -1,3 +1,21 @@
+2017-05-09  Chris Dumez  <cdumez@apple.com>
+
+        ontransitionend eventHandler should be in GlobalEventHandlers
+        https://bugs.webkit.org/show_bug.cgi?id=171836
+
+        Reviewed by Ryosuke Niwa.
+
+        ontransitionend eventHandler should be in GlobalEventHandlers:
+        - https://drafts.csswg.org/css-transitions/#interface-globaleventhandlers-idl
+
+        WebKit currently has in on Window and Element only. Firefox matches the specification.
+
+        Test: fast/css/ontransitionend-eventhandler.html
+
+        * dom/Element.idl:
+        * dom/GlobalEventHandlers.idl:
+        * page/DOMWindow.idl:
+
 2017-05-09  Nael Ouedraogo  <nael.ouedraogo@crf.canon.fr>
 
         MediaSource.readyState should use an IDL enum

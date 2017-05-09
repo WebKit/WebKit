@@ -110,6 +110,7 @@ PASS a["ontoggle"] is null
 PASS a["onunhandledrejection"] is null
 PASS a["onvolumechange"] is null
 PASS a["onwaiting"] is null
+PASS a["ontransitionend"] is null
 PASS a["namespaceURI"] is http://www.w3.org/1999/xhtml
 PASS a["prefix"] is null
 PASS a["localName"] is a
