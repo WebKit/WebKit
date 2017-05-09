@@ -44,6 +44,7 @@
 #include "JSLock.h"
 #include "JSSegmentedVariableObjectSubspace.h"
 #include "JSStringSubspace.h"
+#include "JSWebAssemblyCodeBlockSubspace.h"
 #include "MacroAssemblerCodeRef.h"
 #include "Microtask.h"
 #include "NumericStrings.h"
@@ -295,6 +296,9 @@ public:
     JSStringSubspace stringSpace;
     JSDestructibleObjectSubspace destructibleObjectSpace;
     JSSegmentedVariableObjectSubspace segmentedVariableObjectSpace;
+#if ENABLE(WEBASSEMBLY)
+    JSWebAssemblyCodeBlockSubspace webAssemblyCodeBlockSpace;
+#endif
 
 #if ENABLE(DFG_JIT)
     std::unique_ptr<DFG::LongLivedState> dfgState;

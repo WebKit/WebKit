@@ -1,3 +1,64 @@
+2017-05-09  Saam Barati  <sbarati@apple.com>
+
+        CallLinkInfos belonging to Wasm->JS stubs need to be informed when we clearCode() from all Executables
+        https://bugs.webkit.org/show_bug.cgi?id=171707
+        <rdar://problem/31891649>
+
+        Reviewed by Filip Pizlo.
+
+        This patch fixes a bug where a Wasm->JS IC call stub would go stale
+        and point into a CodeBlock no longer owned by any executable. The
+        problematic scenario is this:
+
+        1. We generate the call IC which has a branch on a callee check. This
+           callee owns the Executable in question. If the branch succeeds, it
+           will call code belonging to a particular CodeBlock associated with
+           that Executable.
+
+        2. Heap::deleteAllCodeBlocks is called. This leads the Executable to clear
+           its various CodeBlock references.
+
+        3. Wasm has no idea this happened, so now it has stale ICs that point into
+           code from a CodeBlock no longer belonging to an Executable.
+
+        This patch fixes the bug by informing all JSWebAssemblyCodeBlocks to unlink
+        their CallLinkInfo when Heap::deleteAllCodeBlocks is called.
+
+        We track all JSWebAssemblyCodeBlocks by creating a new subspace for them.
+        This allows us to quickly iterate over the live JSWebAssemblyCodeBlocks in the
+        heap.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * heap/Heap.cpp:
+        (JSC::Heap::deleteAllCodeBlocks):
+        * heap/Subspace.h:
+        * heap/SubspaceInlines.h:
+        (JSC::Subspace::forEachLiveCell):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        * wasm/js/JSWebAssemblyCodeBlock.cpp:
+        (JSC::JSWebAssemblyCodeBlock::clearJSCallICs):
+        * wasm/js/JSWebAssemblyCodeBlock.h:
+        (JSC::JSWebAssemblyCodeBlock::createStructure): Deleted.
+        (JSC::JSWebAssemblyCodeBlock::functionImportCount): Deleted.
+        (JSC::JSWebAssemblyCodeBlock::module): Deleted.
+        (JSC::JSWebAssemblyCodeBlock::jsEntrypointCalleeFromFunctionIndexSpace): Deleted.
+        (JSC::JSWebAssemblyCodeBlock::wasmEntrypointLoadLocationFromFunctionIndexSpace): Deleted.
+        (JSC::JSWebAssemblyCodeBlock::wasmToJsCallStubForImport): Deleted.
+        (JSC::JSWebAssemblyCodeBlock::offsetOfImportWasmToJSStub): Deleted.
+        (JSC::JSWebAssemblyCodeBlock::codeBlock): Deleted.
+        (JSC::JSWebAssemblyCodeBlock::offsetOfImportStubs): Deleted.
+        (JSC::JSWebAssemblyCodeBlock::allocationSize): Deleted.
+        (JSC::JSWebAssemblyCodeBlock::importWasmToJSStub): Deleted.
+        * wasm/js/JSWebAssemblyCodeBlockSubspace.cpp: Added.
+        (JSC::JSWebAssemblyCodeBlockSubspace::JSWebAssemblyCodeBlockSubspace):
+        (JSC::JSWebAssemblyCodeBlockSubspace::~JSWebAssemblyCodeBlockSubspace):
+        (JSC::JSWebAssemblyCodeBlockSubspace::finishSweep):
+        (JSC::JSWebAssemblyCodeBlockSubspace::destroy):
+        * wasm/js/JSWebAssemblyCodeBlockSubspace.h: Added.
+
 2017-05-08  Saam Barati  <sbarati@apple.com>
 
         testWasmBoundsCheck and testCallFunctionWithHellaArguments is broken in testb3

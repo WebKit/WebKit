@@ -46,7 +46,7 @@ namespace Wasm {
 class Plan;
 }
 
-class JSWebAssemblyCodeBlock : public JSCell {
+class JSWebAssemblyCodeBlock final : public JSCell {
 public:
     typedef JSCell Base;
     static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
@@ -55,6 +55,12 @@ public:
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
         return Structure::create(vm, globalObject, prototype, TypeInfo(CellType, StructureFlags), info());
+    }
+
+    template<typename CellType>
+    static Subspace* subspaceFor(VM& vm)
+    {
+        return &vm.webAssemblyCodeBlockSpace;
     }
 
     unsigned functionImportCount() const { return m_codeBlock->functionImportCount(); }
@@ -86,6 +92,8 @@ public:
     }
 
     Wasm::CodeBlock& codeBlock() { return m_codeBlock.get(); }
+
+    void clearJSCallICs(VM&);
 
 private:
     JSWebAssemblyCodeBlock(VM&, Ref<Wasm::CodeBlock>&&, const Wasm::ModuleInformation&);

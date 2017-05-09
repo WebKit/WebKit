@@ -79,6 +79,9 @@ public:
     
     template<typename Func>
     void forEachMarkedCell(const Func&);
+
+    template<typename Func>
+    void forEachLiveCell(const Func&);
     
     static ptrdiff_t offsetOfAllocatorForSizeStep() { return OBJECT_OFFSETOF(Subspace, m_allocatorForSizeStep); }
     

@@ -79,6 +79,12 @@ bool JSWebAssemblyCodeBlock::isSafeToRun(JSWebAssemblyMemory* memory) const
     return m_codeBlock->isSafeToRun(memory->memory().mode());
 }
 
+void JSWebAssemblyCodeBlock::clearJSCallICs(VM& vm)
+{
+    for (auto iter = m_callLinkInfos.begin(); !!iter; ++iter)
+        (*iter)->unlink(vm);
+}
+
 void JSWebAssemblyCodeBlock::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSWebAssemblyCodeBlock* thisObject = jsCast<JSWebAssemblyCodeBlock*>(cell);

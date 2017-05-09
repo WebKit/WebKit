@@ -967,6 +967,7 @@ set(JavaScriptCore_SOURCES
     wasm/WasmWorklist.cpp
 
     wasm/js/JSWebAssemblyCodeBlock.cpp
+    wasm/js/JSWebAssemblyCodeBlockSubspace.cpp
     wasm/js/JSWebAssemblyCompileError.cpp
     wasm/js/JSWebAssemblyInstance.cpp
     wasm/js/JSWebAssemblyLinkError.cpp
