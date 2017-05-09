@@ -753,7 +753,7 @@ void WebVideoFullscreenInterfaceAVKit::exitFullscreen(const WebCore::IntRect& fi
             [[m_playerViewController view] setBackgroundColor:[getUIColorClass() clearColor]];
             [CATransaction commit];
 
-            dispatch_async(dispatch_get_main_queue(), ^{
+            dispatch_async(dispatch_get_main_queue(), [protectedThis, this]() {
                 if (m_fullscreenChangeObserver)
                     m_fullscreenChangeObserver->didExitFullscreen();
             });

@@ -66,7 +66,7 @@ class WEBCORE_EXPORT WebVideoFullscreenInterfaceAVKit final
     : public WebVideoFullscreenInterface
     , public WebVideoFullscreenModelClient
     , public WebPlaybackSessionModelClient
-    , public RefCounted<WebVideoFullscreenInterfaceAVKit> {
+    , public ThreadSafeRefCounted<WebVideoFullscreenInterfaceAVKit> {
 
 public:
     static Ref<WebVideoFullscreenInterfaceAVKit> create(WebPlaybackSessionInterfaceAVKit&);
