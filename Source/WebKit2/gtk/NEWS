@@ -1,4 +1,16 @@
 ==================
+WebKitGTK+  2.16.2
+==================
+
+  - Update user agent quirks to make Youtube and new Google login page work.
+  - Fix rendering of animated PNGs.
+  - Fix playing of some live streams.
+  - Update several web inspector icons.
+  - Fix the build with NPAPI plugins enabled but X11 disabled.
+  - Fix the build with OpenGL disabled.
+  - Fix several crashes and rendering issues.
+
+==================
 WebKitGTK+  2.16.1
 ==================
 

@@ -1,3 +1,9 @@
+2017-05-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.16.2 release.
+
+        * Source/cmake/OptionsGTK.cmake: Bump version numbers.
+
 2017-04-21  Konstantin Tokarev  <annulen@yandex.ru>
 
         [cmake] WTF target should not have wtf and subdirectries in public interface
