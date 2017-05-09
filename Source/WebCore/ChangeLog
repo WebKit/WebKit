@@ -1,3 +1,18 @@
+2017-05-08  Chris Dumez  <cdumez@apple.com>
+
+        Refactor / Clean up DOMWindow.idl
+        https://bugs.webkit.org/show_bug.cgi?id=171843
+
+        Reviewed by Ryosuke Niwa.
+
+        Refactor / Clean up DOMWindow.idl to match the specification more closely:
+        - https://html.spec.whatwg.org/#the-window-object
+
+        No expected Web-facing change. Things that do not match the specification
+        have been annotated with FIXME comments.
+
+        * page/DOMWindow.idl:
+
 2017-05-08  Frederic Wang  <fwang@igalia.com>
 
         Simplify ScrollingStateNode::scrollingStateTreeAsText
