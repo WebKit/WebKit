@@ -670,3 +670,5 @@ webkit.org/b/171763 [ Debug ] compositing/tiling/non-active-window-tiles-size.ht
 webkit.org/b/171837 [ Debug ] http/tests/security/storage-blocking-loosened-plugin.html [ Pass Failure ]
 
 webkit.org/b/171862 [ Sierra Debug ] storage/indexeddb/modern/idbtransaction-objectstore-failures.html [ Pass Failure ]
+
+webkit.org/b/170870 webrtc/captureCanvas-webrtc.html [ Pass Timeout ]
