@@ -1,3 +1,17 @@
+2017-05-09  Jonathan Bedard  <jbedard@apple.com>
+
+        build ImageDiff with host SDK from Make
+        https://bugs.webkit.org/show_bug.cgi?id=171835
+
+        Reviewed by Alexey Proskuryakov.
+
+        ImageDiff should be built for the default SDK and default architecture when
+        the SDKROOT is set to either iOS device or iOS simulator. Check the
+        DO_NOT_BUILD_IMAGE_DIFF flag to skip the ImageDiff build.
+
+        * ImageDiff/Makefile: Use Mac SDK when building for iOS Simulator or iOS device.
+        * Makefile: Do not build ImageDiff if the DO_NOT_BUILD_IMAGE_DIFF flag is set.
+
 2017-05-09  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, adding myself to contributors.json

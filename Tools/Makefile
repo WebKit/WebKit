@@ -1,12 +1,15 @@
-MODULES = DumpRenderTree WebKitTestRunner MiniBrowser ../Source/ThirdParty/gtest/xcode TestWebKitAPI ImageDiff
+MODULES = DumpRenderTree WebKitTestRunner MiniBrowser ../Source/ThirdParty/gtest/xcode TestWebKitAPI
 
 ifneq (,$(SDKROOT))
 	ifeq (,$(findstring macosx,$(SDKROOT)))
-		MODULES = DumpRenderTree WebKitTestRunner ../Source/ThirdParty/gtest/xcode TestWebKitAPI ImageDiff
+		MODULES = DumpRenderTree WebKitTestRunner ../Source/ThirdParty/gtest/xcode TestWebKitAPI
 	endif
 	ifneq (,$(findstring iphone,$(SDKROOT)))
 		MODULES += MobileMiniBrowser
 	endif
+endif
+ifeq (,$(DO_NOT_BUILD_IMAGE_DIFF))
+	MODULES += ImageDiff
 endif
 
 all:
