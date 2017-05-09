@@ -90,6 +90,7 @@ const IntSize& DragController::maxDragImageSize()
 
 void DragController::cleanupAfterSystemDrag()
 {
+#if PLATFORM(MAC)
     // Drag has ended, dragEnded *should* have been called, however it is possible
     // for the UIDelegate to take over the drag, and fail to send the appropriate
     // drag termination event.  As dragEnded just resets drag variables, we just
@@ -98,6 +99,7 @@ void DragController::cleanupAfterSystemDrag()
     // is asynchronous.
     if (m_page.mainFrame().view()->platformWidget())
         dragEnded();
+#endif
 }
 
 #if ENABLE(DATA_INTERACTION)
