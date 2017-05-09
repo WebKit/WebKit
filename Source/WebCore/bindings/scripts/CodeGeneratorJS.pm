@@ -4087,7 +4087,7 @@ sub GenerateImplementation
 
             my $functionImplementationName = $function->extendedAttributes->{ImplementedAs} || $codeGenerator->WK_lcfirst($function->name);
 
-            AddToImplIncludes("JSDOMPromise.h") if IsReturningPromise($function);
+            AddToImplIncludes("JSDOMPromiseDeferred.h") if IsReturningPromise($function);
 
             if (!$function->isStatic) {
                 my $classParameterType = $className eq "JSEventTarget" ? "JSEventTargetWrapper*" : "${className}*";
