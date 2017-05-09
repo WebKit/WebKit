@@ -146,8 +146,10 @@ protected:
         , m_hashAndFlags(hashAndFlags)
     { }
 
+    enum ConstructWithConstExprTag { ConstructWithConstExpr };
+    
     template<unsigned charactersCount>
-    constexpr StringImplShape(unsigned refCount, unsigned length, const char (&characters)[charactersCount], unsigned hashAndFlags)
+    constexpr StringImplShape(unsigned refCount, unsigned length, const char (&characters)[charactersCount], unsigned hashAndFlags, ConstructWithConstExprTag)
         : m_refCount(refCount)
         , m_length(length)
         , m_data8(reinterpret_cast<const LChar*>(characters))
@@ -155,7 +157,7 @@ protected:
     { }
     
     template<unsigned charactersCount>
-    constexpr StringImplShape(unsigned refCount, unsigned length, const char16_t (&characters)[charactersCount], unsigned hashAndFlags)
+    constexpr StringImplShape(unsigned refCount, unsigned length, const char16_t (&characters)[charactersCount], unsigned hashAndFlags, ConstructWithConstExprTag)
         : m_refCount(refCount)
         , m_length(length)
         , m_data16(reinterpret_cast<const UChar*>(characters))
@@ -593,14 +595,14 @@ public:
         template<unsigned charactersCount>
         constexpr StaticStringImpl(const char (&characters)[charactersCount], StringKind stringKind = StringNormal)
             : StringImplShape(s_refCountFlagIsStaticString, charactersCount - 1, characters,
-                s_hashFlag8BitBuffer | s_hashFlagDidReportCost | stringKind | BufferInternal | (StringHasher::computeLiteralHashAndMaskTop8Bits(characters) << s_flagCount))
+                s_hashFlag8BitBuffer | s_hashFlagDidReportCost | stringKind | BufferInternal | (StringHasher::computeLiteralHashAndMaskTop8Bits(characters) << s_flagCount), ConstructWithConstExpr)
         {
         }
 
         template<unsigned charactersCount>
         constexpr StaticStringImpl(const char16_t (&characters)[charactersCount], StringKind stringKind = StringNormal)
             : StringImplShape(s_refCountFlagIsStaticString, charactersCount - 1, characters,
-                s_hashFlagDidReportCost | stringKind | BufferInternal | (StringHasher::computeLiteralHashAndMaskTop8Bits(characters) << s_flagCount))
+                s_hashFlagDidReportCost | stringKind | BufferInternal | (StringHasher::computeLiteralHashAndMaskTop8Bits(characters) << s_flagCount), ConstructWithConstExpr)
         {
         }
 
