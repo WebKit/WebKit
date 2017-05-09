@@ -65,6 +65,9 @@ WorkerMessagingProxy::WorkerMessagingProxy(Worker* workerObject)
     ASSERT(m_workerObject);
     ASSERT((is<Document>(*m_scriptExecutionContext) && isMainThread())
         || (is<WorkerGlobalScope>(*m_scriptExecutionContext) && currentThread() == downcast<WorkerGlobalScope>(*m_scriptExecutionContext).thread().threadID()));
+
+    // Nobody outside this class ref counts this object. The original ref
+    // is balanced by the deref in workerGlobalScopeDestroyedInternal.
 }
 
 WorkerMessagingProxy::~WorkerMessagingProxy()
@@ -169,8 +172,9 @@ void WorkerMessagingProxy::postExceptionToWorkerObject(const String& errorMessag
 
 void WorkerMessagingProxy::postMessageToPageInspector(const String& message)
 {
-    RunLoop::main().dispatch([this, message = message.isolatedCopy()] {
-        m_inspectorProxy->sendMessageFromWorkerToFrontend(message);
+    RunLoop::main().dispatch([this, protectedThis = makeRef(*this), message = message.isolatedCopy()] {
+        if (!m_mayBeDestroyed)
+            m_inspectorProxy->sendMessageFromWorkerToFrontend(message);
     });
 }
 
@@ -240,8 +244,9 @@ void WorkerMessagingProxy::workerGlobalScopeDestroyedInternal()
 
     m_inspectorProxy->workerTerminated();
 
+    // This balances the original ref in construction.
     if (m_mayBeDestroyed)
-        delete this;
+        deref();
 }
 
 void WorkerMessagingProxy::terminateWorkerGlobalScope()
