@@ -1,0 +1,17 @@
+
+Harness Error (TIMEOUT), message = null
+
+PASS Set duration to 2^31 - 1 
+PASS Set duration to 1 
+FAIL Set duration to Number.MAX_VALUE assert_equals: mediaSource.duration expected 1.7976931348623157e+308 but got Infinity
+PASS Set duration to Number.MIN_VALUE 
+FAIL Set duration to Number.MAX_VALUE - 1 assert_equals: mediaSource.duration expected 1.7976931348623157e+308 but got Infinity
+PASS Set duration to Number.MIN_VALUE - 1 
+PASS Set duration to Number.POSITIVE_INFINITY 
+PASS Set duration to Number.NEGATIVE_INFINITY 
+PASS Set duration to lowest value. 
+PASS Set duration to a negative double. 
+PASS Set duration to a positive double. 
+TIMEOUT Set duration to zero Test timed out
+PASS Set duration to NaN 
+

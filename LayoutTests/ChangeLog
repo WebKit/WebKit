@@ -1,3 +1,20 @@
+2017-05-09  Nael Ouedraogo  <nael.ouedraogo@crf.canon.fr>
+
+        Invalid MediaSource duration value should throw TyperError instead of InvalidStateError
+        https://bugs.webkit.org/show_bug.cgi?id=171653
+
+        Reviewed by Youenn Fablet.
+
+        Modify MediaSource::setDuration to throw a TypeError when duration value is invalid as per MSE specification
+        (https://www.w3.org/TR/2016/REC-media-source-20161117/#dom-mediasource-duration).
+
+        Update expectation of corresponding WPT test.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/imported/w3c/web-platform-tests/media-source/mediasource-duration-boundaryconditions-expected.txt: Added.
+        * platform/mac/TestExpectations:
+        * platform/mac/imported/w3c/web-platform-tests/media-source/mediasource-duration-boundaryconditions-expected.txt: Added.
+
 2017-05-09  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Handle IDLPromise<> properly
