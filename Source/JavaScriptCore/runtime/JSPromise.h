@@ -52,6 +52,8 @@ public:
     // This may raise a JS exception.
     void initialize(ExecState*, JSGlobalObject*, JSValue executor);
 
+    JS_EXPORT_PRIVATE static JSPromise* resolve(JSGlobalObject&, JSValue);
+
 protected:
     JSPromise(VM&, Structure*);
     void finishCreation(VM&);

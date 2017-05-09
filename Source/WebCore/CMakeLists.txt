@@ -1163,7 +1163,7 @@ set(WebCore_SOURCES
     bindings/js/JSDOMGlobalObjectTask.cpp
     bindings/js/JSDOMGuardedObject.cpp
     bindings/js/JSDOMMapLike.cpp
-    bindings/js/JSDOMPromise.cpp
+    bindings/js/JSDOMPromiseDeferred.cpp
     bindings/js/JSDOMStringMapCustom.cpp
     bindings/js/JSDOMWindowBase.cpp
     bindings/js/JSDOMWindowCustom.cpp

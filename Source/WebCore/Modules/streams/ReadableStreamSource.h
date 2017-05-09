@@ -30,7 +30,7 @@
 
 #if ENABLE(STREAMS_API)
 
-#include "JSDOMPromise.h"
+#include "JSDOMPromiseDeferred.h"
 #include "ReadableStreamDefaultController.h"
 #include <wtf/Optional.h>
 
@@ -40,8 +40,8 @@ class ReadableStreamSource : public RefCounted<ReadableStreamSource> {
 public:
     virtual ~ReadableStreamSource() { }
 
-    void start(ReadableStreamDefaultController&&, DOMPromise<void>&&);
-    void pull(DOMPromise<void>&&);
+    void start(ReadableStreamDefaultController&&, DOMPromiseDeferred<void>&&);
+    void pull(DOMPromiseDeferred<void>&&);
     void cancel(JSC::JSValue);
 
     bool isPulling() const { return !!m_promise; }
@@ -63,11 +63,11 @@ protected:
     virtual void doCancel() = 0;
 
 private:
-    std::optional<DOMPromise<void>> m_promise;
+    std::optional<DOMPromiseDeferred<void>> m_promise;
     std::optional<ReadableStreamDefaultController> m_controller;
 };
 
-inline void ReadableStreamSource::start(ReadableStreamDefaultController&& controller, DOMPromise<void>&& promise)
+inline void ReadableStreamSource::start(ReadableStreamDefaultController&& controller, DOMPromiseDeferred<void>&& promise)
 {
     ASSERT(!m_promise);
     m_promise = WTFMove(promise);
@@ -77,7 +77,7 @@ inline void ReadableStreamSource::start(ReadableStreamDefaultController&& contro
     doStart();
 }
 
-inline void ReadableStreamSource::pull(DOMPromise<void>&& promise)
+inline void ReadableStreamSource::pull(DOMPromiseDeferred<void>&& promise)
 {
     ASSERT(!m_promise);
     ASSERT(m_controller);

@@ -38,8 +38,8 @@ class VM;
 
 namespace WebCore {
 
+class DOMPromise;
 class JSDOMGlobalObject;
-class RejectedPromise;
 class ScriptExecutionContext;
 class UnhandledPromise;
 
@@ -56,7 +56,7 @@ public:
 
 private:
     void reportUnhandledRejections(Vector<UnhandledPromise>&&);
-    void reportRejectionHandled(RejectedPromise&&);
+    void reportRejectionHandled(Ref<DOMPromise>&&);
 
     ScriptExecutionContext& m_context;
     Vector<UnhandledPromise> m_aboutToBeNotifiedRejectedPromises;

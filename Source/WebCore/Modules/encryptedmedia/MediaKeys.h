@@ -32,7 +32,7 @@
 
 #include "ExceptionOr.h"
 #include "GenericTaskQueue.h"
-#include "JSDOMPromise.h"
+#include "JSDOMPromiseDeferred.h"
 #include "MediaKeySessionType.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>

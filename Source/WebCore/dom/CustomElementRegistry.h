@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "JSDOMPromise.h"
+#include "JSDOMPromiseDeferred.h"
 #include "QualifiedName.h"
 #include <wtf/HashMap.h>
 #include <wtf/SetForScope.h>

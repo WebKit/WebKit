@@ -32,7 +32,7 @@
 #include "ActiveDOMObject.h"
 #include "DoubleRange.h"
 #include "EventTarget.h"
-#include "JSDOMPromise.h"
+#include "JSDOMPromiseDeferred.h"
 #include "LongRange.h"
 #include "MediaStreamTrackPrivate.h"
 #include "MediaTrackConstraints.h"
@@ -108,7 +108,7 @@ public:
     TrackCapabilities getCapabilities() const;
 
     const MediaTrackConstraints& getConstraints() const { return m_constraints; }
-    void applyConstraints(const std::optional<MediaTrackConstraints>&, DOMPromise<void>&&);
+    void applyConstraints(const std::optional<MediaTrackConstraints>&, DOMPromiseDeferred<void>&&);
 
     RealtimeMediaSource& source() { return m_private->source(); }
     MediaStreamTrackPrivate& privateTrack() { return m_private.get(); }
@@ -152,7 +152,7 @@ private:
     Ref<MediaStreamTrackPrivate> m_private;
 
     MediaTrackConstraints m_constraints;
-    std::optional<DOMPromise<void>> m_promise;
+    std::optional<DOMPromiseDeferred<void>> m_promise;
     WeakPtrFactory<MediaStreamTrack> m_weakPtrFactory;
 
     bool m_ended { false };

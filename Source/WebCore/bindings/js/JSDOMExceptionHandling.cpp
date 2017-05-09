@@ -27,7 +27,7 @@
 #include "ExceptionCodeDescription.h"
 #include "ExceptionHeaders.h"
 #include "ExceptionInterfaces.h"
-#include "JSDOMPromise.h"
+#include "JSDOMPromiseDeferred.h"
 #include "JSDOMWindow.h"
 #include "JSDynamicDowncast.h"
 #include "JSExceptionBase.h"

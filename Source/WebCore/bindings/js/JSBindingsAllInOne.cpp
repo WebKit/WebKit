@@ -51,7 +51,7 @@
 #include "JSDOMExceptionHandling.cpp"
 #include "JSDOMGlobalObject.cpp"
 #include "JSDOMGlobalObjectTask.cpp"
-#include "JSDOMPromise.cpp"
+#include "JSDOMPromiseDeferred.cpp"
 #include "JSDOMStringMapCustom.cpp"
 #include "JSDOMWindowBase.cpp"
 #include "JSDOMWindowCustom.cpp"

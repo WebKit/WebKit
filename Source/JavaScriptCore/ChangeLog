@@ -1,3 +1,22 @@
+2017-05-09  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Handle IDLPromise<> properly
+        https://bugs.webkit.org/show_bug.cgi?id=166752
+
+        Reviewed by Youenn Fablet.
+
+        Add JSPromise::resolve static function.
+        This applies `Promise.resolve()` conversion to a given value.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::promiseResolveFunction):
+        * runtime/JSPromise.cpp:
+        (JSC::JSPromise::resolve):
+        * runtime/JSPromise.h:
+
 2017-05-09  Zan Dobersek  <zdobersek@igalia.com>
 
         Upstream the WPE port

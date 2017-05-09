@@ -26,6 +26,7 @@
 #pragma once
 
 #include "Event.h"
+#include "JSDOMPromise.h"
 #include <heap/Strong.h>
 
 namespace WebCore {
@@ -33,7 +34,7 @@ namespace WebCore {
 class PromiseRejectionEvent final : public Event {
 public:
     struct Init : EventInit {
-        JSC::JSValue promise;
+        JSC::JSPromise* promise;
         JSC::JSValue reason;
     };
 
@@ -44,7 +45,7 @@ public:
 
     virtual ~PromiseRejectionEvent();
 
-    JSC::JSValue promise() const { return m_promise.get(); }
+    JSC::JSPromise& promise() const { return *m_promise.get(); }
     JSC::JSValue reason() const { return m_reason.get(); }
 
     EventInterface eventInterface() const override { return PromiseRejectionEventInterfaceType; }
@@ -52,7 +53,7 @@ public:
 private:
     PromiseRejectionEvent(JSC::ExecState&, const AtomicString&, const Init&, IsTrusted);
 
-    JSC::Strong<JSC::Unknown> m_promise;
+    JSC::Strong<JSC::JSPromise> m_promise;
     JSC::Strong<JSC::Unknown> m_reason;
 };
 

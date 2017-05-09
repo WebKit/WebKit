@@ -40,7 +40,7 @@
 #include "JSCryptoKeyPair.h"
 #include "JSCryptoKeySerializationJWK.h"
 #include "JSCryptoOperationData.h"
-#include "JSDOMPromise.h"
+#include "JSDOMPromiseDeferred.h"
 #include "ScriptState.h"
 #include <runtime/Error.h>
 

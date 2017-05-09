@@ -133,7 +133,7 @@ static inline bool isLocalDescriptionTypeValidForState(RTCSdpType type, RTCSigna
     return false;
 }
 
-void PeerConnectionBackend::setLocalDescription(RTCSessionDescription& sessionDescription, DOMPromise<void>&& promise)
+void PeerConnectionBackend::setLocalDescription(RTCSessionDescription& sessionDescription, DOMPromiseDeferred<void>&& promise)
 {
     ASSERT(!m_peerConnection.isClosed());
 
@@ -193,7 +193,7 @@ static inline bool isRemoteDescriptionTypeValidForState(RTCSdpType type, RTCSign
     return false;
 }
 
-void PeerConnectionBackend::setRemoteDescription(RTCSessionDescription& sessionDescription, DOMPromise<void>&& promise)
+void PeerConnectionBackend::setRemoteDescription(RTCSessionDescription& sessionDescription, DOMPromiseDeferred<void>&& promise)
 {
     ASSERT(!m_peerConnection.isClosed());
 
@@ -234,7 +234,7 @@ void PeerConnectionBackend::setRemoteDescriptionFailed(Exception&& exception)
     m_setDescriptionPromise = std::nullopt;
 }
 
-void PeerConnectionBackend::addIceCandidate(RTCIceCandidate* iceCandidate, DOMPromise<void>&& promise)
+void PeerConnectionBackend::addIceCandidate(RTCIceCandidate* iceCandidate, DOMPromiseDeferred<void>&& promise)
 {
     ASSERT(!m_peerConnection.isClosed());
 

@@ -6530,8 +6530,8 @@
 		E172AF6D180F24C600FBADB9 /* CryptoAlgorithm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E172AF6B180F24C600FBADB9 /* CryptoAlgorithm.cpp */; };
 		E172AF6E180F24C600FBADB9 /* CryptoAlgorithm.h in Headers */ = {isa = PBXBuildFile; fileRef = E172AF6C180F24C600FBADB9 /* CryptoAlgorithm.h */; };
 		E172AF70180F289500FBADB9 /* CryptoKeyUsage.h in Headers */ = {isa = PBXBuildFile; fileRef = E172AF6F180F289500FBADB9 /* CryptoKeyUsage.h */; };
-		E172AF8F1811BC3700FBADB9 /* JSDOMPromise.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E172AF8D1811BC3700FBADB9 /* JSDOMPromise.cpp */; };
-		E172AF901811BC3700FBADB9 /* JSDOMPromise.h in Headers */ = {isa = PBXBuildFile; fileRef = E172AF8E1811BC3700FBADB9 /* JSDOMPromise.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E172AF8F1811BC3700FBADB9 /* JSDOMPromiseDeferred.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E172AF8D1811BC3700FBADB9 /* JSDOMPromiseDeferred.cpp */; };
+		E172AF901811BC3700FBADB9 /* JSDOMPromiseDeferred.h in Headers */ = {isa = PBXBuildFile; fileRef = E172AF8E1811BC3700FBADB9 /* JSDOMPromiseDeferred.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E175BA991E8AE3380071454F /* GridPosition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1F817451E897A5200F22CD0 /* GridPosition.cpp */; };
 		E179F0DA1B9774FE00ED0A27 /* Internals.mm in Sources */ = {isa = PBXBuildFile; fileRef = E179F0D91B9774FE00ED0A27 /* Internals.mm */; };
 		E17B491516A9B094001C8839 /* TransitionEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E17B491316A9B093001C8839 /* TransitionEvent.cpp */; };
@@ -6660,6 +6660,7 @@
 		E3565B7B1DC2D6C900217DBD /* JSEventCustom.h in Headers */ = {isa = PBXBuildFile; fileRef = E34EE49F1DC2D57500EAA9D3 /* JSEventCustom.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E35802B61DC8435D00A9773C /* DOMJITIDLTypeFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = E35802B51DC8435800A9773C /* DOMJITIDLTypeFilter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E377FE4D1DADE16500CDD025 /* NodeConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = E3D049931DADC04500718F3C /* NodeConstants.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E37C86501EB63E3F0087C6CA /* JSDOMPromise.h in Headers */ = {isa = PBXBuildFile; fileRef = E37C864F1EB63E2D0087C6CA /* JSDOMPromise.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E38838981BAD145F00D62EE3 /* ScriptModuleLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E38838941BAD145F00D62EE3 /* ScriptModuleLoader.cpp */; };
 		E38838991BAD145F00D62EE3 /* ScriptModuleLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = E38838951BAD145F00D62EE3 /* ScriptModuleLoader.h */; };
 		E398FC241DC32A20003C4684 /* DOMJITHelpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E398FC231DC32A1B003C4684 /* DOMJITHelpers.cpp */; };
@@ -15061,8 +15062,8 @@
 		E172AF6B180F24C600FBADB9 /* CryptoAlgorithm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoAlgorithm.cpp; sourceTree = "<group>"; };
 		E172AF6C180F24C600FBADB9 /* CryptoAlgorithm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithm.h; sourceTree = "<group>"; };
 		E172AF6F180F289500FBADB9 /* CryptoKeyUsage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoKeyUsage.h; sourceTree = "<group>"; };
-		E172AF8D1811BC3700FBADB9 /* JSDOMPromise.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMPromise.cpp; sourceTree = "<group>"; };
-		E172AF8E1811BC3700FBADB9 /* JSDOMPromise.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMPromise.h; sourceTree = "<group>"; };
+		E172AF8D1811BC3700FBADB9 /* JSDOMPromiseDeferred.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMPromiseDeferred.cpp; sourceTree = "<group>"; };
+		E172AF8E1811BC3700FBADB9 /* JSDOMPromiseDeferred.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMPromiseDeferred.h; sourceTree = "<group>"; };
 		E176580C180DF3A0005A96D1 /* OESElementIndexUint.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = OESElementIndexUint.idl; sourceTree = "<group>"; };
 		E179F0D91B9774FE00ED0A27 /* Internals.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Internals.mm; sourceTree = "<group>"; };
 		E17B490B16A97269001C8839 /* TransitionEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TransitionEvent.idl; sourceTree = "<group>"; };
@@ -15205,6 +15206,7 @@
 		E334825E1DC93AA0009C9544 /* DOMJITAbstractHeapRepository.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMJITAbstractHeapRepository.h; sourceTree = "<group>"; };
 		E34EE49F1DC2D57500EAA9D3 /* JSEventCustom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSEventCustom.h; sourceTree = "<group>"; };
 		E35802B51DC8435800A9773C /* DOMJITIDLTypeFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMJITIDLTypeFilter.h; sourceTree = "<group>"; };
+		E37C864F1EB63E2D0087C6CA /* JSDOMPromise.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMPromise.h; sourceTree = "<group>"; };
 		E38838941BAD145F00D62EE3 /* ScriptModuleLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptModuleLoader.cpp; sourceTree = "<group>"; };
 		E38838951BAD145F00D62EE3 /* ScriptModuleLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptModuleLoader.h; sourceTree = "<group>"; };
 		E398FC231DC32A1B003C4684 /* DOMJITHelpers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMJITHelpers.cpp; sourceTree = "<group>"; };
@@ -23410,8 +23412,9 @@
 				4138F8561D253EEE001CB61E /* JSDOMIterator.h */,
 				41DEFCB31E56C1B9000D9E5F /* JSDOMMapLike.cpp */,
 				41DEFCB41E56C1B9000D9E5F /* JSDOMMapLike.h */,
-				E172AF8D1811BC3700FBADB9 /* JSDOMPromise.cpp */,
-				E172AF8E1811BC3700FBADB9 /* JSDOMPromise.h */,
+				E37C864F1EB63E2D0087C6CA /* JSDOMPromise.h */,
+				E172AF8D1811BC3700FBADB9 /* JSDOMPromiseDeferred.cpp */,
+				E172AF8E1811BC3700FBADB9 /* JSDOMPromiseDeferred.h */,
 				BC6932710D7E293900AE44D1 /* JSDOMWindowBase.cpp */,
 				BC6932720D7E293900AE44D1 /* JSDOMWindowBase.h */,
 				460CBF331D4BCCFE0092E88E /* JSDOMWindowProperties.cpp */,
@@ -27211,6 +27214,7 @@
 				C0C054CC1118C8E400CE2636 /* generate-bindings.pl in Headers */,
 				BC23F0DB0DAFF4A4009FDC91 /* GeneratedImage.h in Headers */,
 				830030F61B7D33B500ED3AAC /* GenericCachedHTMLCollection.h in Headers */,
+				E37C86501EB63E3F0087C6CA /* JSDOMPromise.h in Headers */,
 				0720B0A114D3323500642955 /* GenericEventQueue.h in Headers */,
 				CD62FB961AF018E70012ED7D /* GenericTaskQueue.h in Headers */,
 				9746AF2414F4DDE6003E7A70 /* Geolocation.h in Headers */,
@@ -27753,7 +27757,7 @@
 				0F4966AB1DB40C4300A274BB /* JSDOMPoint.h in Headers */,
 				0F4966AD1DB40C4300A274BB /* JSDOMPointInit.h in Headers */,
 				0F4966AF1DB40C4300A274BB /* JSDOMPointReadOnly.h in Headers */,
-				E172AF901811BC3700FBADB9 /* JSDOMPromise.h in Headers */,
+				E172AF901811BC3700FBADB9 /* JSDOMPromiseDeferred.h in Headers */,
 				0F4710BC1DB56BE8002DCEC3 /* JSDOMRect.h in Headers */,
 				0F4710BE1DB56BE8002DCEC3 /* JSDOMRectInit.h in Headers */,
 				0F4710C01DB56BE8002DCEC3 /* JSDOMRectReadOnly.h in Headers */,
@@ -31701,7 +31705,7 @@
 				0F4966AA1DB40C4300A274BB /* JSDOMPoint.cpp in Sources */,
 				0F4966AC1DB40C4300A274BB /* JSDOMPointInit.cpp in Sources */,
 				0F4966AE1DB40C4300A274BB /* JSDOMPointReadOnly.cpp in Sources */,
-				E172AF8F1811BC3700FBADB9 /* JSDOMPromise.cpp in Sources */,
+				E172AF8F1811BC3700FBADB9 /* JSDOMPromiseDeferred.cpp in Sources */,
 				0F4710BB1DB56BE8002DCEC3 /* JSDOMRect.cpp in Sources */,
 				0F4710BD1DB56BE8002DCEC3 /* JSDOMRectInit.cpp in Sources */,
 				0F4710BF1DB56BE8002DCEC3 /* JSDOMRectReadOnly.cpp in Sources */,

@@ -28,7 +28,7 @@
 #include "JSDOMGlobalObject.h"
 
 #include "Document.h"
-#include "JSDOMPromise.h"
+#include "JSDOMPromiseDeferred.h"
 #include "JSDOMWindow.h"
 #include "JSEventListener.h"
 #include "JSMediaStream.h"

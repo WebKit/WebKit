@@ -37,7 +37,7 @@
 #include "JSCryptoAlgorithmParameters.h"
 #include "JSCryptoKey.h"
 #include "JSCryptoKeyPair.h"
-#include "JSDOMPromise.h"
+#include "JSDOMPromiseDeferred.h"
 #include "JSDOMWrapper.h"
 #include "JSEcKeyParams.h"
 #include "JSEcdhKeyDeriveParams.h"

@@ -38,7 +38,7 @@ class WEBCORE_EXPORT DOMGuardedObject : public RefCounted<DOMGuardedObject>, pub
 public:
     ~DOMGuardedObject();
 
-    bool isSuspended() { return !m_guarded || !canInvokeCallback(); } // The wrapper world has gone away or active DOM objects have been suspended.
+    bool isSuspended() const { return !m_guarded || !canInvokeCallback(); } // The wrapper world has gone away or active DOM objects have been suspended.
 
     void visitAggregate(JSC::SlotVisitor& visitor) { visitor.append(m_guarded); }
 

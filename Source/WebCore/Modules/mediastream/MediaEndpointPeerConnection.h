@@ -63,7 +63,7 @@ private:
     Vector<RefPtr<MediaStream>> getRemoteStreams() const final;
 
     Ref<RTCRtpReceiver> createReceiver(const String& transceiverMid, const String& trackKind, const String& trackId) final;
-    void replaceTrack(RTCRtpSender&, Ref<MediaStreamTrack>&&, DOMPromise<void>&&) final;
+    void replaceTrack(RTCRtpSender&, Ref<MediaStreamTrack>&&, DOMPromiseDeferred<void>&&) final;
 
     void emulatePlatformEvent(const String& action) final;
 
@@ -85,7 +85,7 @@ private:
 
     void addIceCandidateTask(RTCIceCandidate&);
 
-    void replaceTrackTask(RTCRtpSender&, const String& mid, Ref<MediaStreamTrack>&&, DOMPromise<void>&);
+    void replaceTrackTask(RTCRtpSender&, const String& mid, Ref<MediaStreamTrack>&&, DOMPromiseDeferred<void>&);
 
     bool localDescriptionTypeValidForState(RTCSdpType) const;
     bool remoteDescriptionTypeValidForState(RTCSdpType) const;

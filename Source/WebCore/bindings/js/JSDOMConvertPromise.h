@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Yusuke Suzuki <utatane.tea@gmail.com>
+ * Copyright (C) 2017 Yusuke Suzuki <utatane.tea@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,30 +27,46 @@
 
 #include "IDLTypes.h"
 #include "JSDOMConvertBase.h"
+#include "JSDOMPromise.h"
 
 namespace WebCore {
 
-// FIXME: Implement IDLPromise<> conversions.
-// https://bugs.webkit.org/show_bug.cgi?id=166752
-template<typename T>
-struct Converter<IDLPromise<T>> : DefaultConverter<IDLPromise<T>> {
-    using ReturnType = JSC::JSValue;
+template<typename T> struct Converter<IDLPromise<T>> : DefaultConverter<IDLPromise<T>> {
+    using ReturnType = JSC::JSPromise*;
 
-    static JSC::JSValue convert(JSC::ExecState&, JSC::JSValue value)
+    // https://heycam.github.io/webidl/#es-promise
+    template<typename ExceptionThrower = DefaultExceptionThrower>
+    static ReturnType convert(JSC::ExecState& state, JSC::JSValue value, ExceptionThrower&& exceptionThrower = ExceptionThrower())
     {
-        return value;
+        JSC::VM& vm = state.vm();
+        auto scope = DECLARE_THROW_SCOPE(vm);
+        auto* globalObject = jsDynamicDowncast<JSDOMGlobalObject*>(vm, state.lexicalGlobalObject());
+        if (!globalObject)
+            return nullptr;
+
+        // 1. Let resolve be the original value of %Promise%.resolve.
+        // 2. Let promise be the result of calling resolve with %Promise% as the this value and V as the single argument value.
+        auto* promise = JSC::JSPromise::resolve(*globalObject, value);
+        if (scope.exception()) {
+            exceptionThrower(state, scope);
+            return nullptr;
+        }
+        ASSERT(promise);
+
+        // 3. Return the IDL promise type value that is a reference to the same object as promise.
+        return promise;
     }
 };
 
-template<typename T>
-struct JSConverter<IDLPromise<T>> {
-    using Type = JSC::JSValue;
+template<typename T> struct JSConverter<IDLPromise<T>> {
     static constexpr bool needsState = false;
     static constexpr bool needsGlobalObject = false;
 
-    static JSC::JSValue convert(JSC::JSValue value)
+    static JSC::JSValue convert(JSC::JSPromise& promise)
     {
-        return value;
+        // The result of converting an IDL promise type value to an ECMAScript value is the Promise value
+        // that represents a reference to the same object that the IDL promise type represents.
+        return &promise;
     }
 };
 

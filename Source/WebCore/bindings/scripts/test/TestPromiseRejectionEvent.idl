@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple, Inc. All Rights Reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,19 +23,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#include "JSDOMPromiseDeferred.h"
-
-namespace WebCore {
-
-class CachedModuleScriptLoader;
-
-class CachedModuleScriptLoaderClient {
-public:
-    virtual ~CachedModuleScriptLoaderClient() { }
-
-    virtual void notifyFinished(CachedModuleScriptLoader&, RefPtr<DeferredPromise>) = 0;
+[
+    Constructor(DOMString type, TestPromiseRejectionEventInit eventInitDict),
+    ConstructorCallWith=ScriptState,
+    Exposed=(Window,Worker),
+] interface TestPromiseRejectionEvent : Event {
+    readonly attribute Promise<any> promise;
+    readonly attribute any reason;
 };
 
-}
+dictionary TestPromiseRejectionEventInit : EventInit {
+    required Promise<any> promise;
+    any reason;
+};

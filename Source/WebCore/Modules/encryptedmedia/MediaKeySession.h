@@ -35,7 +35,7 @@
 #include "EventTarget.h"
 #include "GenericEventQueue.h"
 #include "GenericTaskQueue.h"
-#include "JSDOMPromise.h"
+#include "JSDOMPromiseDeferred.h"
 #include "MediaKeyMessageType.h"
 #include "MediaKeySessionType.h"
 #include "MediaKeyStatus.h"
@@ -70,7 +70,7 @@ public:
     void close(Ref<DeferredPromise>&&);
     void remove(Ref<DeferredPromise>&&);
 
-    using ClosedPromise = DOMPromise<void>;
+    using ClosedPromise = DOMPromiseDeferred<void>;
     void registerClosedPromise(ClosedPromise&&);
 
     const Vector<std::pair<Ref<SharedBuffer>, MediaKeyStatus>>& statuses() const { return m_statuses; }

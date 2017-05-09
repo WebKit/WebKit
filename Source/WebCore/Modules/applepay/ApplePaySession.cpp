@@ -43,7 +43,7 @@
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "EventNames.h"
-#include "JSDOMPromise.h"
+#include "JSDOMPromiseDeferred.h"
 #include "LinkIconCollector.h"
 #include "LinkIconType.h"
 #include "MainFrame.h"

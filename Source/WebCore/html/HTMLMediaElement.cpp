@@ -53,7 +53,7 @@
 #include "HTMLSourceElement.h"
 #include "HTMLVideoElement.h"
 #include "JSDOMError.h"
-#include "JSDOMPromise.h"
+#include "JSDOMPromiseDeferred.h"
 #include "JSHTMLMediaElement.h"
 #include "Language.h"
 #include "Logging.h"
@@ -1012,7 +1012,7 @@ void HTMLMediaElement::scheduleResolvePendingPlayPromises()
 
 void HTMLMediaElement::rejectPendingPlayPromises(DOMError& error)
 {
-    Vector<DOMPromise<void>> pendingPlayPromises = WTFMove(m_pendingPlayPromises);
+    Vector<DOMPromiseDeferred<void>> pendingPlayPromises = WTFMove(m_pendingPlayPromises);
 
     for (auto& promise : pendingPlayPromises)
         promise.rejectType<IDLInterface<DOMError>>(error);
@@ -1020,7 +1020,7 @@ void HTMLMediaElement::rejectPendingPlayPromises(DOMError& error)
 
 void HTMLMediaElement::resolvePendingPlayPromises()
 {
-    Vector<DOMPromise<void>> pendingPlayPromises = WTFMove(m_pendingPlayPromises);
+    Vector<DOMPromiseDeferred<void>> pendingPlayPromises = WTFMove(m_pendingPlayPromises);
 
     for (auto& promise : pendingPlayPromises)
         promise.resolve();
@@ -3136,7 +3136,7 @@ void HTMLMediaElement::setPreload(const String& preload)
     setAttributeWithoutSynchronization(preloadAttr, preload);
 }
 
-void HTMLMediaElement::play(DOMPromise<void>&& promise)
+void HTMLMediaElement::play(DOMPromiseDeferred<void>&& promise)
 {
     LOG(Media, "HTMLMediaElement::play(%p)", this);
 

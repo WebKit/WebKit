@@ -53,7 +53,7 @@
 #include "GenericEventQueue.h"
 #include "HRTFDatabaseLoader.h"
 #include "HRTFPanner.h"
-#include "JSDOMPromise.h"
+#include "JSDOMPromiseDeferred.h"
 #include "Logging.h"
 #include "NetworkingContext.h"
 #include "OfflineAudioCompletionEvent.h"
@@ -283,7 +283,7 @@ bool AudioContext::isInitialized() const
     return m_isInitialized;
 }
 
-void AudioContext::addReaction(State state, DOMPromise<void>&& promise)
+void AudioContext::addReaction(State state, DOMPromiseDeferred<void>&& promise)
 {
     size_t stateIndex = static_cast<size_t>(state);
     if (stateIndex >= m_stateReactions.size())
@@ -304,7 +304,7 @@ void AudioContext::setState(State state)
     if (stateIndex >= m_stateReactions.size())
         return;
 
-    Vector<DOMPromise<void>> reactions;
+    Vector<DOMPromiseDeferred<void>> reactions;
     m_stateReactions[stateIndex].swap(reactions);
 
     for (auto& promise : reactions)
@@ -1040,7 +1040,7 @@ void AudioContext::decrementActiveSourceCount()
     --m_activeSourceCount;
 }
 
-void AudioContext::suspend(DOMPromise<void>&& promise)
+void AudioContext::suspend(DOMPromiseDeferred<void>&& promise)
 {
     if (isOfflineContext()) {
         promise.reject(INVALID_STATE_ERR);
@@ -1069,7 +1069,7 @@ void AudioContext::suspend(DOMPromise<void>&& promise)
     });
 }
 
-void AudioContext::resume(DOMPromise<void>&& promise)
+void AudioContext::resume(DOMPromiseDeferred<void>&& promise)
 {
     if (isOfflineContext()) {
         promise.reject(INVALID_STATE_ERR);
@@ -1098,7 +1098,7 @@ void AudioContext::resume(DOMPromise<void>&& promise)
     });
 }
 
-void AudioContext::close(DOMPromise<void>&& promise)
+void AudioContext::close(DOMPromiseDeferred<void>&& promise)
 {
     if (isOfflineContext()) {
         promise.reject(INVALID_STATE_ERR);

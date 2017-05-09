@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "JSDOMPromise.h"
+#include "JSDOMPromiseDeferred.h"
 
 #include "ExceptionCode.h"
 #include "JSDOMError.h"

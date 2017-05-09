@@ -328,7 +328,7 @@ void LibWebRTCPeerConnectionBackend::addRemoteStream(Ref<MediaStream>&& mediaStr
     m_remoteStreams.append(WTFMove(mediaStream));
 }
 
-void LibWebRTCPeerConnectionBackend::replaceTrack(RTCRtpSender& sender, Ref<MediaStreamTrack>&& track, DOMPromise<void>&& promise)
+void LibWebRTCPeerConnectionBackend::replaceTrack(RTCRtpSender& sender, Ref<MediaStreamTrack>&& track, DOMPromiseDeferred<void>&& promise)
 {
     ASSERT(sender.track());
     auto* currentTrack = sender.track();

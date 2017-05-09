@@ -31,7 +31,7 @@
 #if ENABLE(ENCRYPTED_MEDIA)
 
 #include "GenericTaskQueue.h"
-#include "JSDOMPromise.h"
+#include "JSDOMPromiseDeferred.h"
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 

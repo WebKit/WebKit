@@ -1,3 +1,13 @@
+2017-05-09  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Handle IDLPromise<> properly
+        https://bugs.webkit.org/show_bug.cgi?id=166752
+
+        Reviewed by Youenn Fablet.
+
+        * js/dom/promise-rejection-event-should-follow-webidl-promise-conversion-rule-expected.txt: Added.
+        * js/dom/promise-rejection-event-should-follow-webidl-promise-conversion-rule.html: Added.
+
 2017-05-09  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed. Landing the WPE layout test baselines.

@@ -35,7 +35,7 @@
 
 #include "EventTarget.h"
 #include "ExceptionOr.h"
-#include "JSDOMPromise.h"
+#include "JSDOMPromiseDeferred.h"
 #include "MediaTrackConstraints.h"
 #include "RealtimeMediaSourceCenter.h"
 #include "Timer.h"
@@ -56,8 +56,8 @@ public:
 
     Document* document() const;
 
-    using Promise = DOMPromise<IDLInterface<MediaStream>>;
-    using EnumerateDevicesPromise = DOMPromise<IDLSequence<IDLInterface<MediaDeviceInfo>>>;
+    using Promise = DOMPromiseDeferred<IDLInterface<MediaStream>>;
+    using EnumerateDevicesPromise = DOMPromiseDeferred<IDLSequence<IDLInterface<MediaDeviceInfo>>>;
 
     struct StreamConstraints {
         Variant<bool, MediaTrackConstraints> video;

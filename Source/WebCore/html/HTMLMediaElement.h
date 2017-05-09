@@ -93,7 +93,7 @@ class VideoTrackList;
 class VideoTrackPrivate;
 class WebKitMediaKeys;
 
-template<typename> class DOMPromise;
+template<typename> class DOMPromiseDeferred;
 
 #if ENABLE(VIDEO_TRACK)
 using CueIntervalTree = PODIntervalTree<MediaTime, TextTrackCue*>;
@@ -238,7 +238,7 @@ public:
     bool loop() const;
     void setLoop(bool b);
 
-    void play(DOMPromise<void>&&);
+    void play(DOMPromiseDeferred<void>&&);
 
     WEBCORE_EXPORT void play() override;
     WEBCORE_EXPORT void pause() override;
@@ -871,7 +871,7 @@ private:
     RefPtr<TimeRanges> m_playedTimeRanges;
     GenericEventQueue m_asyncEventQueue;
 
-    Vector<DOMPromise<void>> m_pendingPlayPromises;
+    Vector<DOMPromiseDeferred<void>> m_pendingPlayPromises;
 
     double m_requestedPlaybackRate { 1 };
     double m_reportedPlaybackRate { 1 };

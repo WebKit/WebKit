@@ -29,7 +29,7 @@
 #if ENABLE(WEBGPU)
 
 #include "GPUCommandBuffer.h"
-#include "JSDOMPromise.h"
+#include "JSDOMPromiseDeferred.h"
 #include "JSDOMWrapper.h"
 #include <runtime/JSCJSValue.h>
 

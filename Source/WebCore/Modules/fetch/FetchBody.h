@@ -34,7 +34,7 @@
 #include "FetchBodyConsumer.h"
 #include "FetchLoader.h"
 #include "FormData.h"
-#include "JSDOMPromise.h"
+#include "JSDOMPromiseDeferred.h"
 #include "URLSearchParams.h"
 #include <wtf/Optional.h>
 #include <wtf/Variant.h>

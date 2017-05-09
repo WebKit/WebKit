@@ -32,7 +32,7 @@
 #include "JSCustomElementInterface.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConvert.h"
-#include "JSDOMPromise.h"
+#include "JSDOMPromiseDeferred.h"
 
 using namespace JSC;
 

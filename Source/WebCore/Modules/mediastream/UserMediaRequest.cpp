@@ -49,7 +49,7 @@
 
 namespace WebCore {
 
-ExceptionOr<void> UserMediaRequest::start(Document& document, Ref<MediaConstraintsImpl>&& audioConstraints, Ref<MediaConstraintsImpl>&& videoConstraints, DOMPromise<IDLInterface<MediaStream>>&& promise)
+ExceptionOr<void> UserMediaRequest::start(Document& document, Ref<MediaConstraintsImpl>&& audioConstraints, Ref<MediaConstraintsImpl>&& videoConstraints, DOMPromiseDeferred<IDLInterface<MediaStream>>&& promise)
 {
     auto* userMedia = UserMediaController::from(document.page());
     if (!userMedia)
@@ -64,7 +64,7 @@ ExceptionOr<void> UserMediaRequest::start(Document& document, Ref<MediaConstrain
     return { };
 }
 
-UserMediaRequest::UserMediaRequest(Document& document, UserMediaController& controller, Ref<MediaConstraintsImpl>&& audioConstraints, Ref<MediaConstraintsImpl>&& videoConstraints, DOMPromise<IDLInterface<MediaStream>>&& promise)
+UserMediaRequest::UserMediaRequest(Document& document, UserMediaController& controller, Ref<MediaConstraintsImpl>&& audioConstraints, Ref<MediaConstraintsImpl>&& videoConstraints, DOMPromiseDeferred<IDLInterface<MediaStream>>&& promise)
     : ContextDestructionObserver(&document)
     , m_audioConstraints(WTFMove(audioConstraints))
     , m_videoConstraints(WTFMove(videoConstraints))

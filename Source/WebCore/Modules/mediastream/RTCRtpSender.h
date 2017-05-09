@@ -41,7 +41,7 @@ class RTCRtpSender : public RTCRtpSenderReceiverBase {
 public:
     class Backend {
     public:
-        virtual void replaceTrack(RTCRtpSender&, RefPtr<MediaStreamTrack>&&, DOMPromise<void>&&) = 0;
+        virtual void replaceTrack(RTCRtpSender&, RefPtr<MediaStreamTrack>&&, DOMPromiseDeferred<void>&&) = 0;
         virtual RTCRtpParameters getParameters(RTCRtpSender&) const = 0;
         virtual ~Backend() { }
     };
@@ -60,7 +60,7 @@ public:
     void setTrack(Ref<MediaStreamTrack>&&);
     void setTrackToNull();
 
-    void replaceTrack(RefPtr<MediaStreamTrack>&&, DOMPromise<void>&&);
+    void replaceTrack(RefPtr<MediaStreamTrack>&&, DOMPromiseDeferred<void>&&);
 
     RTCRtpParameters getParameters();
 

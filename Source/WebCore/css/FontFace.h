@@ -27,7 +27,7 @@
 
 #include "CSSFontFace.h"
 #include "CSSPropertyNames.h"
-#include "JSDOMPromise.h"
+#include "JSDOMPromiseDeferred.h"
 #include <wtf/Variant.h>
 #include <wtf/WeakPtr.h>
 
@@ -73,7 +73,7 @@ public:
     enum class LoadStatus { Unloaded, Loading, Loaded, Error };
     LoadStatus status() const;
 
-    using Promise = DOMPromise<IDLInterface<FontFace>>;
+    using Promise = DOMPromiseDeferred<IDLInterface<FontFace>>;
     std::optional<Promise>& promise() { return m_promise; }
     void registerLoaded(Promise&&);
 

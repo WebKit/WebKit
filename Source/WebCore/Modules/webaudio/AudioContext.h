@@ -31,7 +31,7 @@
 #include "AudioDestinationNode.h"
 #include "EventListener.h"
 #include "EventTarget.h"
-#include "JSDOMPromise.h"
+#include "JSDOMPromiseDeferred.h"
 #include "MediaCanStartListener.h"
 #include "MediaProducer.h"
 #include "PlatformMediaSession.h"
@@ -111,9 +111,9 @@ public:
     using ActiveDOMObject::suspend;
     using ActiveDOMObject::resume;
 
-    void suspend(DOMPromise<void>&&);
-    void resume(DOMPromise<void>&&);
-    void close(DOMPromise<void>&&);
+    void suspend(DOMPromiseDeferred<void>&&);
+    void resume(DOMPromiseDeferred<void>&&);
+    void close(DOMPromiseDeferred<void>&&);
 
     enum class State { Suspended, Running, Interrupted, Closed };
     State state() const;
@@ -329,7 +329,7 @@ private:
     void handleDirtyAudioSummingJunctions();
     void handleDirtyAudioNodeOutputs();
 
-    void addReaction(State, DOMPromise<void>&&);
+    void addReaction(State, DOMPromiseDeferred<void>&&);
     void updateAutomaticPullNodes();
 
     // Only accessed in the audio thread.
@@ -366,7 +366,7 @@ private:
     Vector<AudioNode*> m_renderingAutomaticPullNodes;
     // Only accessed in the audio thread.
     Vector<AudioNode*> m_deferredFinishDerefList;
-    Vector<Vector<DOMPromise<void>>> m_stateReactions;
+    Vector<Vector<DOMPromiseDeferred<void>>> m_stateReactions;
 
     std::unique_ptr<PlatformMediaSession> m_mediaSession;
     std::unique_ptr<GenericEventQueue> m_eventQueue;

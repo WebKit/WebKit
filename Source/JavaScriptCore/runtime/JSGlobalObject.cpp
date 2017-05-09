@@ -428,6 +428,11 @@ void JSGlobalObject::init(VM& vm)
             init.set(JSFunction::createBuiltinFunction(init.vm, iteratorHelpersPerformIterationCodeGenerator(init.vm), init.owner));
         });
 
+    m_promiseResolveFunction.initLater(
+        [] (const Initializer<JSFunction>& init) {
+            init.set(JSFunction::createBuiltinFunction(init.vm, promiseConstructorResolveCodeGenerator(init.vm), init.owner));
+        });
+
     m_newPromiseCapabilityFunction.set(vm, this, JSFunction::createBuiltinFunction(vm, promiseOperationsNewPromiseCapabilityCodeGenerator(vm), this));
     m_functionProtoHasInstanceSymbolFunction.set(vm, this, hasInstanceSymbolFunction);
     m_throwTypeErrorGetterSetter.initLater(
@@ -1187,6 +1192,7 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     thisObject->m_arrayProtoValuesFunction.visit(visitor);
     thisObject->m_initializePromiseFunction.visit(visitor);
     thisObject->m_iteratorProtocolFunction.visit(visitor);
+    thisObject->m_promiseResolveFunction.visit(visitor);
     visitor.append(thisObject->m_objectProtoValueOfFunction);
     visitor.append(thisObject->m_newPromiseCapabilityFunction);
     visitor.append(thisObject->m_functionProtoHasInstanceSymbolFunction);

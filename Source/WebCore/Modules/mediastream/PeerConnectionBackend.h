@@ -33,7 +33,7 @@
 
 #if ENABLE(WEB_RTC)
 
-#include "JSDOMPromise.h"
+#include "JSDOMPromiseDeferred.h"
 #include "RTCRtpParameters.h"
 #include "RTCSignalingState.h"
 
@@ -56,8 +56,8 @@ struct RTCDataChannelInit;
 struct RTCOfferOptions;
 
 namespace PeerConnection {
-using SessionDescriptionPromise = DOMPromise<IDLInterface<RTCSessionDescription>>;
-using StatsPromise = DOMPromise<IDLInterface<RTCStatsReport>>;
+using SessionDescriptionPromise = DOMPromiseDeferred<IDLInterface<RTCSessionDescription>>;
+using StatsPromise = DOMPromiseDeferred<IDLInterface<RTCStatsReport>>;
 }
 
 using CreatePeerConnectionBackend = std::unique_ptr<PeerConnectionBackend> (*)(RTCPeerConnection&);
@@ -71,9 +71,9 @@ public:
 
     void createOffer(RTCOfferOptions&&, PeerConnection::SessionDescriptionPromise&&);
     void createAnswer(RTCAnswerOptions&&, PeerConnection::SessionDescriptionPromise&&);
-    void setLocalDescription(RTCSessionDescription&, DOMPromise<void>&&);
-    void setRemoteDescription(RTCSessionDescription&, DOMPromise<void>&&);
-    void addIceCandidate(RTCIceCandidate*, DOMPromise<void>&&);
+    void setLocalDescription(RTCSessionDescription&, DOMPromiseDeferred<void>&&);
+    void setRemoteDescription(RTCSessionDescription&, DOMPromiseDeferred<void>&&);
+    void addIceCandidate(RTCIceCandidate*, DOMPromiseDeferred<void>&&);
 
     virtual std::unique_ptr<RTCDataChannelHandler> createDataChannelHandler(const String&, const RTCDataChannelInit&) = 0;
 
@@ -94,7 +94,7 @@ public:
     virtual Vector<RefPtr<MediaStream>> getRemoteStreams() const = 0;
 
     virtual Ref<RTCRtpReceiver> createReceiver(const String& transceiverMid, const String& trackKind, const String& trackId) = 0;
-    virtual void replaceTrack(RTCRtpSender&, Ref<MediaStreamTrack>&&, DOMPromise<void>&&) = 0;
+    virtual void replaceTrack(RTCRtpSender&, Ref<MediaStreamTrack>&&, DOMPromiseDeferred<void>&&) = 0;
     virtual void notifyAddedTrack(RTCRtpSender&) { }
     virtual void notifyRemovedTrack(RTCRtpSender&) { }
 
@@ -137,7 +137,7 @@ private:
     virtual void doSetLocalDescription(RTCSessionDescription&) = 0;
     virtual void doSetRemoteDescription(RTCSessionDescription&) = 0;
     virtual void doAddIceCandidate(RTCIceCandidate&) = 0;
-    virtual void endOfIceCandidates(DOMPromise<void>&& promise) { promise.resolve(); }
+    virtual void endOfIceCandidates(DOMPromiseDeferred<void>&& promise) { promise.resolve(); }
     virtual void doStop() = 0;
 
 protected:
@@ -145,8 +145,8 @@ protected:
 
 private:
     std::optional<PeerConnection::SessionDescriptionPromise> m_offerAnswerPromise;
-    std::optional<DOMPromise<void>> m_setDescriptionPromise;
-    std::optional<DOMPromise<void>> m_addIceCandidatePromise;
+    std::optional<DOMPromiseDeferred<void>> m_setDescriptionPromise;
+    std::optional<DOMPromiseDeferred<void>> m_addIceCandidatePromise;
 
     bool m_shouldFilterICECandidates { true };
     struct PendingICECandidate {

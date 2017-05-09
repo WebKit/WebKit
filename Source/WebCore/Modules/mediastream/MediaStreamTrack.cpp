@@ -253,7 +253,7 @@ static Ref<MediaConstraintsImpl> createMediaConstraintsImpl(const std::optional<
     return createMediaConstraintsImpl(constraints.value());
 }
 
-void MediaStreamTrack::applyConstraints(const std::optional<MediaTrackConstraints>& constraints, DOMPromise<void>&& promise)
+void MediaStreamTrack::applyConstraints(const std::optional<MediaTrackConstraints>& constraints, DOMPromiseDeferred<void>&& promise)
 {
     m_promise = WTFMove(promise);
 

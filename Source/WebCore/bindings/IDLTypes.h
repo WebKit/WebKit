@@ -48,7 +48,7 @@ namespace WebCore {
 class IDBKey;
 class IDBKeyData;
 class IDBValue;
-template<typename> class DOMPromise;
+class DOMPromise;
 
 template<typename T>
 struct IDLType {
@@ -185,7 +185,7 @@ template<typename K, typename V> struct IDLRecord : IDLType<Vector<WTF::KeyValue
     using ParameterType = const Vector<WTF::KeyValuePair<typename K::ImplementationType, typename V::ImplementationType>>&;
 };
 
-template<typename T> struct IDLPromise : IDLType<DOMPromise<T>> {
+template<typename T> struct IDLPromise : IDLType<DOMPromise> {
     using InnerType = T;
 };
 

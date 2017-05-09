@@ -28,7 +28,7 @@
 
 #if ENABLE(WEBGPU)
 
-#include "JSDOMPromise.h"
+#include "JSDOMPromiseDeferred.h"
 
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Yusuke Suzuki <utatane.tea@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,231 +26,29 @@
 
 #pragma once
 
-#include "JSDOMConvert.h"
 #include "JSDOMGuardedObject.h"
-#include <runtime/JSPromiseDeferred.h>
+#include <runtime/JSPromise.h>
 
 namespace WebCore {
 
-class DeferredPromise : public DOMGuarded<JSC::JSPromiseDeferred> {
+class DOMPromise : public DOMGuarded<JSC::JSPromise> {
 public:
-    static Ref<DeferredPromise> create(JSDOMGlobalObject& globalObject, JSC::JSPromiseDeferred& deferred)
+    static Ref<DOMPromise> create(JSDOMGlobalObject& globalObject, JSC::JSPromise& promise)
     {
-        return adoptRef(*new DeferredPromise(globalObject, deferred));
+        return adoptRef(*new DOMPromise(globalObject, promise));
     }
 
-    template<class IDLType>
-    void resolve(typename IDLType::ParameterType value)
+    JSC::JSPromise* promise() const
     {
-        if (isSuspended())
-            return;
-        ASSERT(deferred());
-        ASSERT(globalObject());
-        JSC::ExecState* exec = globalObject()->globalExec();
-        JSC::JSLockHolder locker(exec);
-        resolve(*exec, toJS<IDLType>(*exec, *globalObject(), std::forward<typename IDLType::ParameterType>(value)));
+        ASSERT(!isSuspended());
+        return guarded();
     }
-
-    void resolve()
-    {
-        if (isSuspended())
-            return;
-        ASSERT(deferred());
-        ASSERT(globalObject());
-        JSC::ExecState* exec = globalObject()->globalExec();
-        JSC::JSLockHolder locker(exec);
-        resolve(*exec, JSC::jsUndefined());
-    }
-
-    template<class IDLType>
-    void resolveWithNewlyCreated(typename IDLType::ParameterType value)
-    {
-        if (isSuspended())
-            return;
-        ASSERT(deferred());
-        ASSERT(globalObject());
-        JSC::ExecState* exec = globalObject()->globalExec();
-        JSC::JSLockHolder locker(exec);
-        resolve(*exec, toJSNewlyCreated<IDLType>(*exec, *globalObject(), std::forward<typename IDLType::ParameterType>(value)));
-    }
-
-    template<class IDLType>
-    void reject(typename IDLType::ParameterType value)
-    {
-        if (isSuspended())
-            return;
-        ASSERT(deferred());
-        ASSERT(globalObject());
-        JSC::ExecState* exec = globalObject()->globalExec();
-        JSC::JSLockHolder locker(exec);
-        reject(*exec, toJS<IDLType>(*exec, *globalObject(), std::forward<typename IDLType::ParameterType>(value)));
-    }
-
-    void reject();
-    void reject(std::nullptr_t);
-    void reject(Exception&&);
-    WEBCORE_EXPORT void reject(ExceptionCode, const String& = { });
-    void reject(const JSC::PrivateName&);
-
-    template<typename Callback>
-    void resolveWithCallback(Callback callback)
-    {
-        if (isSuspended())
-            return;
-        ASSERT(deferred());
-        ASSERT(globalObject());
-        JSC::ExecState* exec = globalObject()->globalExec();
-        JSC::JSLockHolder locker(exec);
-        resolve(*exec, callback(*exec, *globalObject()));
-    }
-
-    template<typename Callback>
-    void rejectWithCallback(Callback callback)
-    {
-        if (isSuspended())
-            return;
-        ASSERT(deferred());
-        ASSERT(globalObject());
-        JSC::ExecState* exec = globalObject()->globalExec();
-        JSC::JSLockHolder locker(exec);
-        reject(*exec, callback(*exec, *globalObject()));
-    }
-
-    JSC::JSValue promise() const;
 
 private:
-    DeferredPromise(JSDOMGlobalObject& globalObject, JSC::JSPromiseDeferred& deferred) : DOMGuarded<JSC::JSPromiseDeferred>(globalObject, deferred) { }
-
-    JSC::JSPromiseDeferred* deferred() const { return guarded(); }
-
-    WEBCORE_EXPORT void callFunction(JSC::ExecState&, JSC::JSValue function, JSC::JSValue resolution);
-    void resolve(JSC::ExecState& state, JSC::JSValue resolution) { callFunction(state, deferred()->resolve(), resolution); }
-    void reject(JSC::ExecState& state, JSC::JSValue resolution) { callFunction(state, deferred()->reject(), resolution); }
-};
-
-class DOMPromiseBase {
-public:
-    DOMPromiseBase(Ref<DeferredPromise>&& genericPromise)
-        : m_promiseDeferred(WTFMove(genericPromise))
+    DOMPromise(JSDOMGlobalObject& globalObject, JSC::JSPromise& promise)
+        : DOMGuarded<JSC::JSPromise>(globalObject, promise)
     {
-    }
-
-    DOMPromiseBase(DOMPromiseBase&& promise)
-        : m_promiseDeferred(WTFMove(promise.m_promiseDeferred))
-    {
-    }
-
-    DOMPromiseBase(const DOMPromiseBase& other)
-        : m_promiseDeferred(other.m_promiseDeferred.copyRef())
-    {
-    }
-
-    DOMPromiseBase& operator=(const DOMPromiseBase& other)
-    {
-        m_promiseDeferred = other.m_promiseDeferred.copyRef();
-        return *this;
-    }
-
-    DOMPromiseBase& operator=(DOMPromiseBase&& other)
-    {
-        m_promiseDeferred = WTFMove(other.m_promiseDeferred);
-        return *this;
-    }
-
-    void reject()
-    {
-        m_promiseDeferred->reject();
-    }
-
-    template<typename... ErrorType> 
-    void reject(ErrorType&&... error)
-    {
-        m_promiseDeferred->reject(std::forward<ErrorType>(error)...);
-    }
-
-    template<typename IDLType>
-    void rejectType(typename IDLType::ParameterType value)
-    {
-        m_promiseDeferred->reject<IDLType>(std::forward<typename IDLType::ParameterType>(value));
-    }
-
-    JSC::JSValue promise() const { return m_promiseDeferred->promise(); };
-
-protected:
-    Ref<DeferredPromise> m_promiseDeferred;
-};
-
-template<typename IDLType> 
-class DOMPromise : public DOMPromiseBase {
-public:
-    using DOMPromiseBase::DOMPromiseBase;
-    using DOMPromiseBase::operator=;
-    using DOMPromiseBase::promise;
-    using DOMPromiseBase::reject;
-
-    void resolve(typename IDLType::ParameterType value)
-    { 
-        m_promiseDeferred->resolve<IDLType>(std::forward<typename IDLType::ParameterType>(value));
     }
 };
-
-template<> class DOMPromise<void> : public DOMPromiseBase {
-public:
-    using DOMPromiseBase::DOMPromiseBase;
-    using DOMPromiseBase::operator=;
-    using DOMPromiseBase::promise;
-    using DOMPromiseBase::reject;
-
-    void resolve()
-    { 
-        m_promiseDeferred->resolve();
-    }
-};
-
-
-Ref<DeferredPromise> createDeferredPromise(JSC::ExecState&, JSDOMWindow&);
-
-void fulfillPromiseWithJSON(Ref<DeferredPromise>&&, const String&);
-void fulfillPromiseWithArrayBuffer(Ref<DeferredPromise>&&, ArrayBuffer*);
-void fulfillPromiseWithArrayBuffer(Ref<DeferredPromise>&&, const void*, size_t);
-WEBCORE_EXPORT void rejectPromiseWithExceptionIfAny(JSC::ExecState&, JSDOMGlobalObject&, JSC::JSPromiseDeferred&);
-JSC::EncodedJSValue createRejectedPromiseWithTypeError(JSC::ExecState&, const String&);
-
-using PromiseFunction = void(JSC::ExecState&, Ref<DeferredPromise>&&);
-
-enum class PromiseExecutionScope { WindowOnly, WindowOrWorker };
-
-template<PromiseFunction promiseFunction, PromiseExecutionScope executionScope>
-inline JSC::JSValue callPromiseFunction(JSC::ExecState& state)
-{
-    JSC::VM& vm = state.vm();
-    auto scope = DECLARE_CATCH_SCOPE(vm);
-
-    JSDOMGlobalObject& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject());
-    JSC::JSPromiseDeferred* promiseDeferred = JSC::JSPromiseDeferred::create(&state, &globalObject);
-
-    // promiseDeferred can be null when terminating a Worker abruptly.
-    if (executionScope == PromiseExecutionScope::WindowOrWorker && !promiseDeferred)
-        return JSC::jsUndefined();
-
-    promiseFunction(state, DeferredPromise::create(globalObject, *promiseDeferred));
-
-    rejectPromiseWithExceptionIfAny(state, globalObject, *promiseDeferred);
-    scope.assertNoException();
-    return promiseDeferred->promise();
-}
-
-using BindingPromiseFunction = JSC::EncodedJSValue(JSC::ExecState*, Ref<DeferredPromise>&&);
-template<BindingPromiseFunction bindingFunction>
-inline void bindingPromiseFunctionAdapter(JSC::ExecState& state, Ref<DeferredPromise>&& promise)
-{
-    bindingFunction(&state, WTFMove(promise));
-}
-
-template<BindingPromiseFunction bindingPromiseFunction, PromiseExecutionScope executionScope>
-inline JSC::JSValue callPromiseFunction(JSC::ExecState& state)
-{
-    return callPromiseFunction<bindingPromiseFunctionAdapter<bindingPromiseFunction>, executionScope>(state);
-}
 
 } // namespace WebCore
