@@ -1,5 +1,22 @@
 2017-05-09  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Cherry-pick r216023. rdar://problem/31971371
+
+    2017-05-01  Chris Dumez  <cdumez@apple.com>
+
+            Do not dispatch SVG load event in frameless documents
+            https://bugs.webkit.org/show_bug.cgi?id=171505
+            <rdar://problem/31799776>
+
+            Reviewed by Andreas Kling.
+
+            Add layout test coverage. I have verified that this test passes on both Firefox and Chrome.
+
+            * fast/dom/domparser-parsefromstring-svg-load-event-expected.txt: Added.
+            * fast/dom/domparser-parsefromstring-svg-load-event.html: Added.
+
+2017-05-09  Matthew Hanson  <matthew_hanson@apple.com>
+
         Cherry-pick r215971. rdar://problem/31971140
 
     2017-04-28  Per Arne Vollan  <pvollan@apple.com>

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Tests that SVG load events are not fired in frameless documents. This test passes if you do not see a FAIL alert message.");
+jsTestIsAsync = true;
+
+new DOMParser().parseFromString('<svg onload=alert("FAIL")>', 'text/html');
+
+setTimeout(finishJSTest, 0);
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
