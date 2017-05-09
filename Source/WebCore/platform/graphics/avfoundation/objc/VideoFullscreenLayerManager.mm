@@ -28,6 +28,7 @@
 
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 
+#import "Color.h"
 #import "QuartzCoreSPI.h"
 #import "WebCoreCALayerExtras.h"
 #import <mach/mach_init.h>
@@ -79,9 +80,11 @@ void VideoFullscreenLayerManager::setVideoLayer(PlatformLayer *videoLayer, IntSi
     if (m_videoFullscreenLayer) {
         [m_videoLayer setFrame:CGRectMake(0, 0, m_videoFullscreenFrame.width(), m_videoFullscreenFrame.height())];
         [m_videoFullscreenLayer insertSublayer:m_videoLayer.get() atIndex:0];
+        [m_videoLayer setBackgroundColor:cachedCGColor(Color::transparent)];
     } else {
         [m_videoInlineLayer insertSublayer:m_videoLayer.get() atIndex:0];
         [m_videoLayer setFrame:m_videoInlineLayer.get().bounds];
+        [m_videoLayer setBackgroundColor:cachedCGColor(Color::black)];
     }
 }
 
@@ -103,9 +106,11 @@ void VideoFullscreenLayerManager::setVideoFullscreenLayer(PlatformLayer *videoFu
         if (m_videoFullscreenLayer) {
             [m_videoFullscreenLayer insertSublayer:m_videoLayer.get() atIndex:0];
             [m_videoLayer setFrame:CGRectMake(0, 0, m_videoFullscreenFrame.width(), m_videoFullscreenFrame.height())];
+            [m_videoLayer setBackgroundColor:cachedCGColor(Color::transparent)];
         } else if (m_videoInlineLayer) {
             [m_videoLayer setFrame:[m_videoInlineLayer bounds]];
             [m_videoInlineLayer insertSublayer:m_videoLayer.get() atIndex:0];
+            [m_videoLayer setBackgroundColor:cachedCGColor(Color::black)];
         } else
             [m_videoLayer removeFromSuperlayer];
 
