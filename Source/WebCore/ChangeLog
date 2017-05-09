@@ -1,5 +1,34 @@
 2017-05-09  Nael Ouedraogo  <nael.ouedraogo@crf.canon.fr>
 
+        MediaSource.readyState should use an IDL enum
+        https://bugs.webkit.org/show_bug.cgi?id=171672
+
+        Reviewed by Eric Carlson and Chris Dumez.
+
+        MediaSource.readyState should use an IDL enum as per specification
+        (https://www.w3.org/TR/2016/CR-media-source-20160503/#idl-def-ReadyState).
+
+        No new tests required since no behavior change.
+
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::toString):
+        (WebCore::MediaSource::MediaSource):
+        (WebCore::MediaSource::setPrivateAndOpen):
+        (WebCore::MediaSource::buffered):
+        (WebCore::MediaSource::setReadyState):
+        (WebCore::MediaSource::streamEndedWithError):
+        (WebCore::MediaSource::isOpen):
+        (WebCore::MediaSource::isClosed):
+        (WebCore::MediaSource::isEnded):
+        (WebCore::MediaSource::detachFromElement):
+        (WebCore::MediaSource::openIfInEndedState):
+        (WebCore::MediaSource::stop):
+        (WebCore::MediaSource::onReadyStateChange):
+        * Modules/mediasource/MediaSource.h:
+        * Modules/mediasource/MediaSource.idl:
+
+2017-05-09  Nael Ouedraogo  <nael.ouedraogo@crf.canon.fr>
+
         Invalid MediaSource duration value should throw TyperError instead of InvalidStateError
         https://bugs.webkit.org/show_bug.cgi?id=171653
 

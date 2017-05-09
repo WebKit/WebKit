@@ -33,6 +33,12 @@ enum EndOfStreamError {
     "decode"
 };
 
+enum ReadyState {
+    "closed",
+    "open",
+    "ended"
+};
+
 [
     ActiveDOMObject,
     Conditional=MEDIA_SOURCE,
@@ -51,7 +57,7 @@ enum EndOfStreamError {
     [MayThrowException] SourceBuffer addSourceBuffer(DOMString type);
     [MayThrowException] void removeSourceBuffer(SourceBuffer buffer);
 
-    readonly attribute DOMString readyState;
+    readonly attribute ReadyState readyState;
     
     [MayThrowException] void endOfStream(optional EndOfStreamError error);
 

@@ -82,7 +82,9 @@ public:
     ExceptionOr<void> setDuration(double);
     ExceptionOr<void> setDurationInternal(const MediaTime&);
     MediaTime currentTime() const;
-    const AtomicString& readyState() const { return m_readyState; }
+
+    enum class ReadyState { Closed, Open, Ended };
+    ReadyState readyState() const { return m_readyState; }
     ExceptionOr<void> endOfStream(std::optional<EndOfStreamError>);
 
     HTMLMediaElement* mediaElement() const { return m_mediaElement; }
@@ -118,11 +120,8 @@ private:
 
     URLRegistry& registry() const final;
 
-    static const AtomicString& openKeyword();
-    static const AtomicString& closedKeyword();
-    static const AtomicString& endedKeyword();
-    void setReadyState(const AtomicString&);
-    void onReadyStateChange(const AtomicString& oldState, const AtomicString& newState);
+    void setReadyState(ReadyState);
+    void onReadyStateChange(ReadyState oldState, ReadyState newState);
 
     Vector<PlatformTimeRanges> activeRanges() const;
 
@@ -147,7 +146,7 @@ private:
     HTMLMediaElement* m_mediaElement { nullptr };
     MediaTime m_duration;
     MediaTime m_pendingSeekTime;
-    AtomicString m_readyState;
+    ReadyState m_readyState { ReadyState::Closed };
     GenericEventQueue m_asyncEventQueue;
 };
 
