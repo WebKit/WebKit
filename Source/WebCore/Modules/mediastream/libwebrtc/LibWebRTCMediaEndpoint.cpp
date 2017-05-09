@@ -576,7 +576,11 @@ std::unique_ptr<RTCDataChannelHandler> LibWebRTCMediaEndpoint::createDataChannel
     if (options.id)
         init.id = *options.id;
 
-    return std::make_unique<LibWebRTCDataChannelHandler>(m_backend->CreateDataChannel(label.utf8().data(), &init));
+    auto channel = m_backend->CreateDataChannel(label.utf8().data(), &init);
+    if (!channel)
+        return nullptr;
+
+    return std::make_unique<LibWebRTCDataChannelHandler>(WTFMove(channel));
 }
 
 void LibWebRTCMediaEndpoint::addDataChannel(rtc::scoped_refptr<webrtc::DataChannelInterface>&& dataChannel)

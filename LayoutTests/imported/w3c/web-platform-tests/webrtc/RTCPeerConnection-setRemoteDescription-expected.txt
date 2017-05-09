@@ -1,0 +1,6 @@
+
+PASS Triggers ontrack when called with a remote description and the MSID of the stream is is parsed. 
+FAIL Malformed SDP description should be rejected with RTCError Can't find variable: RTCError
+PASS Invalid SDP type should be rejected with TypeError 
+FAIL SDP type that is invalid for current signaling state should be rejected with InvalidStateError Can't find variable: InvalidStateError
+

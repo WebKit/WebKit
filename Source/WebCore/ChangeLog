@@ -1,3 +1,25 @@
+2017-05-09  Youenn Fablet  <youenn@apple.com>
+
+        Refresh webrtc WPT tests
+        https://bugs.webkit.org/show_bug.cgi?id=171878
+
+        Reviewed by Eric Carlson.
+
+        Tests: imported/w3c/web-platform-tests/webrtc/RTCConfiguration-iceCandidatePoolSize.html
+               imported/w3c/web-platform-tests/webrtc/RTCDataChannel-id.html
+               imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-canTrickleIceCandidates.html
+               imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-constructor.html
+               imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-createDataChannel.html
+               imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-iceGatheringState.html
+               imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-idl.html
+               imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setRemoteDescription.html
+               imported/w3c/web-platform-tests/webrtc/datachannel-idlharness.html
+               imported/w3c/web-platform-tests/webrtc/getstats.html
+               imported/w3c/web-platform-tests/webrtc/interfaces.html
+
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::createDataChannel): exiting early if libwebrtc is not creating a data channel.
+
 2017-05-09  Javier Fernandez  <jfernandez@igalia.com>
 
         space-evenly misbehaves with flexbox

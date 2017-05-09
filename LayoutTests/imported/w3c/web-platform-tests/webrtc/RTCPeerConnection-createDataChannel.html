@@ -1,0 +1,129 @@
+<!doctype html>
+<meta charset=utf-8>
+<title>RTCPeerConnection createDataChannel method</title>
+<script src=/resources/testharness.js></script>
+<script src=/resources/testharnessreport.js></script>
+<script>
+'use strict';
+
+test(() => {
+  const pc = new RTCPeerConnection;
+  assert_equals(pc.createDataChannel.length, 1);
+  assert_throws(new TypeError, () => pc.createDataChannel());
+}, 'createDataChannel required arguments');
+
+test(() => {
+  const pc = new RTCPeerConnection;
+  pc.close();
+  assert_equals(pc.signalingState, 'closed', 'signaling state');
+  assert_throws('InvalidStateError', () => pc.createDataChannel(''));
+}, 'createDataChannel with closed connection');
+
+test(() => {
+  const pc = new RTCPeerConnection;
+  const channel = pc.createDataChannel('');
+  assert_true(channel instanceof RTCDataChannel, 'is RTCDataChannel');
+  assert_equals(channel.label, '', 'label');
+  assert_equals(channel.ordered, true, 'ordered');
+  assert_equals(channel.maxPacketLifeTime, null, 'maxPacketLifeTime');
+  assert_equals(channel.maxRetransmits, null, 'maxRetransmits');
+  assert_equals(channel.protocol, '', 'protocol');
+  assert_equals(channel.negotiated, false, 'negotiated');
+  // Since no offer/answer exchange has occurred yet, the DTLS role is unknown
+  // and so the ID should be null.
+  assert_equals(channel.id, null, 'id');
+  assert_equals(channel.priority, 'low', 'priority');
+}, 'createDataChannel defaults');
+
+const labels = [
+  ['"foo"', 'foo', 'foo'],
+  ['null', null, 'null'],
+  ['undefined', undefined, 'undefined'],
+  ['lone surrogate', '\uD800', '\uFFFD'],
+];
+for (const [description, label, expected] of labels) {
+  test(() => {
+    const pc = new RTCPeerConnection;
+    const channel = pc.createDataChannel(label);
+    assert_equals(channel.label, expected);
+  }, 'createDataChannel with label ' + description);
+}
+
+test(() => {
+  const pc = new RTCPeerConnection;
+  const channel = pc.createDataChannel('', { ordered: false });
+  assert_equals(channel.ordered, false);
+}, 'createDataChannel with ordered false');
+
+// true as the default value of a boolean is confusing because null is converted
+// to false while undefined is converted to true.
+test(() => {
+  const pc = new RTCPeerConnection;
+  const channel1 = pc.createDataChannel('', { ordered: null });
+  assert_equals(channel1.ordered, false);
+  const channel2 = pc.createDataChannel('', { ordered: undefined });
+  assert_equals(channel2.ordered, true);
+}, 'createDataChannel with ordered null/undefined');
+
+test(() => {
+  const pc = new RTCPeerConnection;
+  const channel = pc.createDataChannel('', { maxPacketLifeTime: 0 });
+  assert_equals(channel.maxPacketLifeTime, 0);
+}, 'createDataChannel with maxPacketLifeTime 0');
+
+test(() => {
+  const pc = new RTCPeerConnection;
+  const channel = pc.createDataChannel('', { maxRetransmits: 0 });
+  assert_equals(channel.maxRetransmits, 0);
+}, 'createDataChannel with maxRetransmits 0');
+
+test(() => {
+  const pc = new RTCPeerConnection;
+  assert_throws('SyntaxError', () => pc.createDataChannel('', {
+    maxPacketLifeTime: 0,
+    maxRetransmits: 0
+  }));
+}, 'createDataChannel with both maxPacketLifeTime and maxRetransmits');
+
+const protocols = [
+  ['"foo"', 'foo', 'foo'],
+  ['null', null, 'null'],
+  ['undefined', undefined, ''],
+  ['lone surrogate', '\uD800', '\uFFFD'],
+];
+for (const [description, protocol, expected] of protocols) {
+  test(() => {
+    const pc = new RTCPeerConnection;
+    const channel = pc.createDataChannel('', { protocol: protocol });
+    assert_equals(channel.protocol, expected);
+  }, 'createDataChannel with protocol ' + description);
+}
+
+test(() => {
+  const pc = new RTCPeerConnection;
+  const channel = pc.createDataChannel('', { negotiated: true });
+  assert_equals(channel.negotiated, true);
+}, 'createDataChannel with negotiated true');
+
+// |id| is an unsigned short using [EnforceRange]. Additionally,
+// https://w3c.github.io/webrtc-pc/#dom-rtcpeerconnection-createdatachannel
+// says: "If id is equal to 65535, which is greater than the maximum allowed ID
+// of 65534 but still qualifies as an unsigned short, throw a TypeError."
+for (const id of [-1, 0, 1, 65534, 65535, 65536]) {
+  test(() => {
+    const pc = new RTCPeerConnection;
+    if (id >= 0 && id <= 65534) {
+      const channel = pc.createDataChannel('', { id: id });
+      assert_equals(channel.id, id);
+    } else {
+      assert_throws(new TypeError, () => pc.createDataChannel('', { id: id }));
+    }
+  }, 'createDataChannel with id ' + id);
+}
+
+test(() => {
+  const pc = new RTCPeerConnection;
+  const channel = pc.createDataChannel('', { priority: "high" });
+  assert_equals(channel.priority, "high");
+}, 'createDataChannel with priority "high"');
+</script>

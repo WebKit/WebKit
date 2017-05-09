@@ -1,0 +1,29 @@
+
+PASS createDataChannel required arguments 
+FAIL createDataChannel with closed connection assert_equals: signaling state expected "closed" but got "stable"
+FAIL createDataChannel defaults assert_equals: priority expected (string) "low" but got (undefined) undefined
+PASS createDataChannel with label "foo" 
+FAIL createDataChannel with label null assert_equals: expected "null" but got ""
+PASS createDataChannel with label undefined 
+PASS createDataChannel with label lone surrogate 
+PASS createDataChannel with ordered false 
+PASS createDataChannel with ordered null/undefined 
+PASS createDataChannel with maxPacketLifeTime 0 
+PASS createDataChannel with maxRetransmits 0 
+FAIL createDataChannel with both maxPacketLifeTime and maxRetransmits assert_throws: function "() => pc.createDataChannel('', {
+    maxPacketLifeTime: 0,
+    maxRetransmits: 0
+  })" threw object "TypeError: Type error" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS createDataChannel with protocol "foo" 
+PASS createDataChannel with protocol null 
+PASS createDataChannel with protocol undefined 
+PASS createDataChannel with protocol lone surrogate 
+PASS createDataChannel with negotiated true 
+PASS createDataChannel with id -1 
+PASS createDataChannel with id 0 
+PASS createDataChannel with id 1 
+FAIL createDataChannel with id 65534 The operation is not supported.
+PASS createDataChannel with id 65535 
+PASS createDataChannel with id 65536 
+FAIL createDataChannel with priority "high" assert_equals: expected (string) "high" but got (undefined) undefined
+

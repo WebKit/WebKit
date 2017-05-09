@@ -1,0 +1,4 @@
+
+FAIL DTLS client uses odd data channel IDs assert_equals: id expected 1 but got 0
+FAIL DTLS server uses even data channel IDs assert_not_equals: got disallowed value null
+
