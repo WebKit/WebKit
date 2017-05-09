@@ -1291,6 +1291,12 @@ static LayoutUnit initialJustifyContentOffset(LayoutUnit availableFreeSpace, Con
         else
             return availableFreeSpace / 2;
     }
+    if (justifyContentDistribution == ContentDistributionSpaceEvenly) {
+        if (availableFreeSpace > 0 && numberOfChildren)
+            return availableFreeSpace / (numberOfChildren + 1);
+        // Fallback to 'center'
+        return availableFreeSpace / 2;
+    }
     return 0;
 }
 
@@ -1301,6 +1307,8 @@ static LayoutUnit justifyContentSpaceBetweenChildren(LayoutUnit availableFreeSpa
             return availableFreeSpace / (numberOfChildren - 1);
         if (justifyContentDistribution == ContentDistributionSpaceAround)
             return availableFreeSpace / numberOfChildren;
+        if (justifyContentDistribution == ContentDistributionSpaceEvenly)
+            return availableFreeSpace / (numberOfChildren + 1);
     }
     return 0;
 }
@@ -1646,6 +1654,12 @@ static LayoutUnit initialAlignContentOffset(LayoutUnit availableFreeSpace, Conte
         if (availableFreeSpace < 0)
             return availableFreeSpace / 2;
     }
+    if (alignContentDistribution == ContentDistributionSpaceEvenly) {
+        if (availableFreeSpace > 0)
+            return availableFreeSpace / (numberOfLines + 1);
+        // Fallback to 'center'
+        return availableFreeSpace / 2;
+    }
     return LayoutUnit();
 }
 
@@ -1656,6 +1670,8 @@ static LayoutUnit alignContentSpaceBetweenChildren(LayoutUnit availableFreeSpace
             return availableFreeSpace / (numberOfLines - 1);
         if (alignContentDistribution == ContentDistributionSpaceAround || alignContentDistribution == ContentDistributionStretch)
             return availableFreeSpace / numberOfLines;
+        if (alignContentDistribution == ContentDistributionSpaceEvenly)
+            return availableFreeSpace / (numberOfLines + 1);
     }
     return LayoutUnit();
 }

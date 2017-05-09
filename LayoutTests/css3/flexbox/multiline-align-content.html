@@ -106,6 +106,13 @@
   <div data-offset-x="0" data-offset-y="100" data-expected-height="20"></div>
 </div>
 
+<div data-expected-height="120" class="flexbox horizontal" style="align-content: space-evenly">
+  <div data-offset-x="0" data-offset-y="15" data-expected-height="20"></div>
+  <div data-offset-x="100" data-offset-y="15" data-expected-height="20"></div>
+  <div data-offset-x="0" data-offset-y="50" data-expected-height="20"></div>
+  <div data-offset-x="0" data-offset-y="85" data-expected-height="20"></div>
+</div>
+
 <div data-expected-height="120" class="flexbox horizontal" style="align-content: space-around">
   <div data-offset-x="0" data-offset-y="10" data-expected-height="20"></div>
   <div data-offset-x="100" data-offset-y="10" data-expected-height="20"></div>
@@ -152,6 +159,14 @@
   <div data-offset-x="0" data-offset-y="25" data-expected-height="20"></div>
 </div>
 
+<!-- If we overflow, we should true center. -->
+<div data-expected-height="30" class="flexbox horizontal" style="align-content: space-evenly; height: 30px">
+  <div data-offset-x="0" data-offset-y="-15" data-expected-height="20"></div>
+  <div data-offset-x="100" data-offset-y="-15" data-expected-height="20"></div>
+  <div data-offset-x="0" data-offset-y="5" data-expected-height="20"></div>
+  <div data-offset-x="0" data-offset-y="25" data-expected-height="20"></div>
+</div>
+
 <!-- Stretch should only grow, not shrink. -->
 <div data-expected-height="30" class="flexbox horizontal" style="align-content: stretch; height: 30px">
   <div data-offset-x="0" data-offset-y="0" data-expected-height="20"></div>
@@ -165,6 +180,8 @@
 </div>
 <div data-expected-height="30" class="flexbox horizontal" style="align-content: space-around; height: 30px">
 </div>
+<div data-expected-height="30" class="flexbox horizontal" style="align-content: space-evenly; height: 30px">
+</div>
 <div data-expected-height="30" class="flexbox horizontal" style="align-content: stretch; height: 30px">
 </div>
 
@@ -173,6 +190,9 @@
   <div data-offset-x="0" data-offset-y="0" data-expected-height="30"></div>
 </div>
 <div data-expected-height="30" class="flexbox horizontal" style="align-content: space-around; height: 30px">
+  <div data-offset-x="0" data-offset-y="0" data-expected-height="30"></div>
+</div>
+<div data-expected-height="30" class="flexbox horizontal" style="align-content: space-evenly; height: 30px">
   <div data-offset-x="0" data-offset-y="0" data-expected-height="30"></div>
 </div>
 <div data-expected-height="30" class="flexbox horizontal" style="align-content: stretch; height: 30px">
@@ -222,6 +242,13 @@
   <div data-offset-x="10" data-offset-y="0" data-expected-width="20"></div>
 </div>
 
+<div data-expected-width="120" class="flexbox vertical-rl" style="align-content: space-evenly">
+  <div data-offset-x="85" data-offset-y="0" data-expected-width="20"></div>
+  <div data-offset-x="85" data-offset-y="10" data-expected-width="20"></div>
+  <div data-offset-x="50" data-offset-y="0" data-expected-width="20"></div>
+  <div data-offset-x="15" data-offset-y="0" data-expected-width="20"></div>
+</div>
+
 <div data-expected-width="120" class="flexbox vertical-rl" style="align-content: stretch">
   <div data-offset-x="80" data-offset-y="0" data-expected-width="40"></div>
   <div data-offset-x="80" data-offset-y="10" data-expected-width="40"></div>
@@ -261,6 +288,14 @@
   <div data-offset-x="-15" data-offset-y="0" data-expected-width="20"></div>
 </div>
 
+<!-- If we overflow, we should true center. -->
+<div data-expected-width="30" class="flexbox vertical-rl" style="align-content: space-evenly; width: 30px;">
+  <div data-offset-x="25" data-offset-y="0" data-expected-width="20"></div>
+  <div data-offset-x="25" data-offset-y="10" data-expected-width="20"></div>
+  <div data-offset-x="5" data-offset-y="0" data-expected-width="20"></div>
+  <div data-offset-x="-15" data-offset-y="0" data-expected-width="20"></div>
+</div>
+
 <!-- Stretch should only grow, not shrink. -->
 <div data-expected-width="30" class="flexbox vertical-rl" style="align-content: stretch; width: 30px;">
   <div data-offset-x="10" data-offset-y="0" data-expected-width="20"></div>
@@ -274,6 +309,8 @@
 </div>
 <div data-expected-width="30" class="flexbox vertical-rl" style="align-content: space-around; width: 30px">
 </div>
+<div data-expected-width="30" class="flexbox vertical-rl" style="align-content: space-evenly; width: 30px">
+</div>
 <div data-expected-width="30" class="flexbox vertical-rl" style="align-content: stretch; width: 30px">
 </div>
 
@@ -282,6 +319,9 @@
   <div data-offset-x="0" data-offset-y="0" data-expected-width="30"></div>
 </div>
 <div data-expected-width="30" class="flexbox vertical-rl" style="align-content: space-around; width: 30px">
+  <div data-offset-x="0" data-offset-y="0" data-expected-width="30"></div>
+</div>
+<div data-expected-width="30" class="flexbox vertical-rl" style="align-content: space-evenly; width: 30px">
   <div data-offset-x="0" data-offset-y="0" data-expected-width="30"></div>
 </div>
 <div data-expected-width="30" class="flexbox vertical-rl" style="align-content: stretch; width: 30px">

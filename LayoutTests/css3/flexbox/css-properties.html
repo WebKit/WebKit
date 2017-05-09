@@ -75,6 +75,10 @@ flexbox.style.justifyContent = 'space-between';
 shouldBeEqualToString('flexbox.style.justifyContent', 'space-between');
 shouldBeEqualToString('window.getComputedStyle(flexbox, null).justifyContent', 'space-between');
 
+flexbox.style.justifyContent = 'space-evenly';
+shouldBeEqualToString('flexbox.style.justifyContent', 'space-evenly');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).justifyContent', 'space-evenly');
+
 flexbox.style.justifyContent = '';
 shouldBeEqualToString('flexbox.style.justifyContent', '');
 shouldBeEqualToString('window.getComputedStyle(flexbox, null).justifyContent', 'normal');
@@ -300,6 +304,10 @@ shouldBeEqualToString('window.getComputedStyle(flexbox, null).alignContent', 'sp
 flexbox.style.alignContent = 'space-around';
 shouldBeEqualToString('flexbox.style.alignContent', 'space-around');
 shouldBeEqualToString('window.getComputedStyle(flexbox, null).alignContent', 'space-around');
+
+flexbox.style.alignContent = 'space-evenly';
+shouldBeEqualToString('flexbox.style.alignContent', 'space-evenly');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).alignContent', 'space-evenly');
 
 flexbox.style.alignContent = 'stretch';
 shouldBeEqualToString('flexbox.style.alignContent', 'stretch');

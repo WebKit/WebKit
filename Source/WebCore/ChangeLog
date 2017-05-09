@@ -1,3 +1,33 @@
+2017-05-09  Javier Fernandez  <jfernandez@igalia.com>
+
+        space-evenly misbehaves with flexbox
+        https://bugs.webkit.org/show_bug.cgi?id=170445
+
+        Reviewed by David Hyatt.
+
+        The CSS Box Alignment specification defines the <content-distribution>
+        set as some of the allowed values for the Content Distribution
+        properties, align-content and justify-content. The 'space-evenly' value
+        is not among the ones allowed for these properties according to the CSS
+        Flexible Box specification.
+
+        The CSS Flexbible box specification states that it must follow the CSS
+        Box Alignment specification, so this new value must be considered as
+        part of an upgraded level of the spec, which should be implemented
+        eventually.
+
+        Since we have already shipped an implementation of the new CSS Box
+        Alignment values for CSS Grid Layout, we need to implement it for
+        Flexbox as well.
+
+        No new tests, but several new test cases added.
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::initialJustifyContentOffset):
+        (WebCore::justifyContentSpaceBetweenChildren):
+        (WebCore::initialAlignContentOffset):
+        (WebCore::alignContentSpaceBetweenChildren):
+
 2017-05-09  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Avoid -Wformat warnings in RenderLayerCompositor.cpp and RenderLayerBacking.cpp

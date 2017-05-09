@@ -30,6 +30,7 @@ PASS .flexbox 28
 PASS .flexbox 29 
 PASS .flexbox 30 
 PASS .flexbox 31 
+PASS .flexbox 32 
 horizontal-tb ltr row
 horizontal-tb rtl row
 horizontal-tb ltr column

@@ -1,3 +1,28 @@
+2017-05-09  Javier Fernandez  <jfernandez@igalia.com>
+
+        space-evenly misbehaves with flexbox
+        https://bugs.webkit.org/show_bug.cgi?id=170445
+
+        Reviewed by David Hyatt.
+
+        Added test cases for the 'space-evenly' value for align-content and justify-content.
+
+        * css3/flexbox/alignContent-applies-with-flexWrap-wrap-with-single-line-expected.txt:
+        * css3/flexbox/alignContent-applies-with-flexWrap-wrap-with-single-line.html:
+        * css3/flexbox/css-properties-expected.txt:
+        * css3/flexbox/css-properties.html:
+        * css3/flexbox/flex-justify-content-expected.txt:
+        * css3/flexbox/flex-justify-content.html:
+        * css3/flexbox/multiline-align-content-expected.txt:
+        * css3/flexbox/multiline-align-content-horizontal-column-expected.txt:
+        * css3/flexbox/multiline-align-content-horizontal-column.html:
+        * css3/flexbox/multiline-align-content.html:
+        * css3/flexbox/resources/flexbox.css:
+        (.align-content-space-around):
+        (.justify-content-space-around):
+        * css3/flexbox/true-centering-expected.txt:
+        * css3/flexbox/true-centering.html:
+
 2017-05-09  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r216508.
