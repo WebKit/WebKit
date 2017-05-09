@@ -1,3 +1,14 @@
+2017-05-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Building Webkit2Gtk without OpenGL fails.
+        https://bugs.webkit.org/show_bug.cgi?id=170959
+
+        Reviewed by Žan Doberšek.
+
+        * platform/graphics/texmap/TextureMapperGC3DPlatformLayer.cpp:
+        * platform/graphics/texmap/TextureMapperGC3DPlatformLayer.h:
+        * platform/graphics/texmap/TextureMapperPlatformLayerBuffer.h:
+
 2017-05-09  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [AppleWin] CaptureDeviceManager.cpp: error C2813: #import is not supported with /MP

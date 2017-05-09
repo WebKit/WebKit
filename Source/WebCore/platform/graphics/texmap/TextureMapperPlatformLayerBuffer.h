@@ -23,13 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TextureMapperPlatformLayerBuffer_h
-#define TextureMapperPlatformLayerBuffer_h
+#pragma once
 
 #include "BitmapTextureGL.h"
 #include "GraphicsTypes3D.h"
 #include "TextureMapperPlatformLayer.h"
 #include <wtf/CurrentTime.h>
+
+#if USE(COORDINATED_GRAPHICS_THREADED)
 
 namespace WebCore {
 
@@ -76,4 +77,4 @@ private:
 
 } // namespace WebCore
 
-#endif // TextureMapperPlatformLayerBuffer_h
+#endif // COORDINATED_GRAPHICS_THREADED

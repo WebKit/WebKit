@@ -20,7 +20,7 @@
 #include "config.h"
 #include "TextureMapperGC3DPlatformLayer.h"
 
-#if USE(TEXTURE_MAPPER)
+#if ENABLE(GRAPHICS_CONTEXT_3D) && USE(TEXTURE_MAPPER)
 
 #if USE(OPENGL_ES_2)
 #define GL_GLEXT_PROTOTYPES 1
@@ -129,4 +129,4 @@ void TextureMapperGC3DPlatformLayer::paintToTextureMapper(TextureMapper& texture
 
 } // namespace WebCore
 
-#endif // USE(TEXTURE_MAPPER)
+#endif // ENABLE(GRAPHICS_CONTEXT_3D) && USE(TEXTURE_MAPPER)

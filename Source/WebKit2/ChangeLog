@@ -1,3 +1,13 @@
+2017-05-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Building Webkit2Gtk without OpenGL fails.
+        https://bugs.webkit.org/show_bug.cgi?id=170959
+
+        Reviewed by Žan Doberšek.
+
+        * UIProcess/gtk/HardwareAccelerationManager.cpp:
+        (WebKit::HardwareAccelerationManager::HardwareAccelerationManager):
+
 2017-05-08  Youenn Fablet  <youenn@apple.com>
 
         Follow-up to bug 171710: use more references and reject if either audio or video source creation is failing
