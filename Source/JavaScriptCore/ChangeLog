@@ -1,3 +1,69 @@
+2017-05-08  Saam Barati  <sbarati@apple.com>
+
+        testWasmBoundsCheck and testCallFunctionWithHellaArguments is broken in testb3
+        https://bugs.webkit.org/show_bug.cgi?id=171392
+        <rdar://problem/31872222>
+
+        Reviewed by Keith Miller.
+
+        This patch fixes two bugs. The first one is:
+        Inside testb3, we were using the wrong WasmBoundsCheckValue constructor.
+        Everything compiled OK because of implicit casting in C. I've changed one
+        of the constructors to take arguments in a different order so we don't
+        run into this problem again.
+        
+        The second bug was that Air::ShufflePair::inst was assuming that a move
+        from BigImm to its destination is always valid. This is not the case.
+        For example, the store, `Move BigImm, Addr` is not allowed. I refactored
+        the code to be correct by emitting more than one instruction when needeed.
+        
+        When testing my changes, I ran ARM64 testb3 both in debug and
+        release. I ran into many pre-existing failures. I've opened
+        a new bug to fix those here: https://bugs.webkit.org/show_bug.cgi?id=171826
+
+        * b3/B3WasmBoundsCheckValue.cpp:
+        (JSC::B3::WasmBoundsCheckValue::WasmBoundsCheckValue):
+        * b3/B3WasmBoundsCheckValue.h:
+        * b3/air/AirEmitShuffle.cpp:
+        (JSC::B3::Air::ShufflePair::insts):
+        (JSC::B3::Air::ShufflePair::inst): Deleted.
+        * b3/air/AirEmitShuffle.h:
+        * b3/air/AirLowerMacros.cpp:
+        (JSC::B3::Air::lowerMacros):
+        * b3/testb3.cpp:
+        (JSC::B3::testLoadAcq42):
+        (JSC::B3::testStoreRelAddLoadAcq32):
+        (JSC::B3::testStoreRelAddLoadAcq8):
+        (JSC::B3::testStoreRelAddFenceLoadAcq8):
+        (JSC::B3::testStoreRelAddLoadAcq16):
+        (JSC::B3::testStoreRelAddLoadAcq64):
+        (JSC::B3::testSimplePatchpointWithOuputClobbersGPArgs):
+        (JSC::B3::testCheckMul):
+        (JSC::B3::testCheckMulMemory):
+        (JSC::B3::testCheckMul64):
+        (JSC::B3::testCheckMulFold):
+        (JSC::B3::testCheckMulFoldFail):
+        (JSC::B3::testCheckMulArgumentAliasing64):
+        (JSC::B3::testCheckMulArgumentAliasing32):
+        (JSC::B3::testCheckMul64SShr):
+        (JSC::B3::testCallFunctionWithHellaArguments):
+        (JSC::B3::functionWithHellaArguments2):
+        (JSC::B3::testCallFunctionWithHellaArguments2):
+        (JSC::B3::functionWithHellaArguments3):
+        (JSC::B3::testCallFunctionWithHellaArguments3):
+        (JSC::B3::testSpillDefSmallerThanUse):
+        (JSC::B3::testLateRegister):
+        (JSC::B3::testTerminalPatchpointThatNeedsToBeSpilled):
+        (JSC::B3::testTerminalPatchpointThatNeedsToBeSpilled2):
+        (JSC::B3::testMoveConstants):
+        (JSC::B3::testAtomicWeakCAS):
+        (JSC::B3::testAtomicStrongCAS):
+        (JSC::B3::testAtomicXchg):
+        (JSC::B3::testWasmBoundsCheck):
+        (JSC::B3::run):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::emitCheckAndPreparePointer):
+
 2017-05-08  Filip Pizlo  <fpizlo@apple.com>
 
         Expose a function to get proxy targets

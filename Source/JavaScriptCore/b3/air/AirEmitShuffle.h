@@ -74,10 +74,9 @@ public:
     
     Bank bank() const;
 
-    // Creates an instruction for the move represented by this shuffle pair. You need to pass
-    // Code if this is a memory->memory pair. You can pass null if you know that it's not. In
-    // fact, passing null is a good way to assert that this is not a memory->memory pair.
-    Inst inst(Code*, Value* origin) const;
+    // Creates an instruction sequence for the move represented by this shuffle pair.
+    // You need to pass Code because we may need to create a tmp.
+    Vector<Inst, 2> insts(Code&, Value* origin) const;
 
     void dump(PrintStream&) const;
     

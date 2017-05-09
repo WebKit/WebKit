@@ -81,17 +81,31 @@ Bank ShufflePair::bank() const
     return FP;
 }
 
-Inst ShufflePair::inst(Code* code, Value* origin) const
+Vector<Inst, 2> ShufflePair::insts(Code& code, Value* origin) const
 {
-    if (UNLIKELY(src().isMemory() && dst().isMemory())) {
-        RELEASE_ASSERT(code);
-        return Inst(moveFor(bank(), width()), origin, src(), dst(), code->newTmp(bank()));
-    }
+    if (UNLIKELY(src().isMemory() && dst().isMemory()))
+        return { Inst(moveFor(bank(), width()), origin, src(), dst(), code.newTmp(bank())) };
 
-    if (src().isSomeImm())
-        return Inst(Move, origin, Arg::bigImm(src().value()), dst());
+    if (isValidForm(moveFor(bank(), width()), src().kind(), dst().kind()))
+        return { Inst(moveFor(bank(), width()), origin, src(), dst()) };
 
-    return Inst(moveFor(bank(), width()), origin, src(), dst());
+    // We must be a store immediate or a move immediate if we reach here. The reason:
+    // 1. We're not a mem->mem move, given the above check.
+    // 2. It's always valid to do a load from Addr into a tmp using Move/Move32/MoveFloat/MoveDouble.
+    ASSERT(isValidForm(moveFor(bank(), width()), Arg::Addr, Arg::Tmp));
+    // 3. It's also always valid to do a Tmp->Tmp move.
+    ASSERT(isValidForm(moveFor(bank(), width()), Arg::Tmp, Arg::Tmp));
+    // 4. It's always valid to do a Tmp->Addr store.
+    ASSERT(isValidForm(moveFor(bank(), width()), Arg::Tmp, Arg::Addr));
+
+    ASSERT(src().isSomeImm());
+    Tmp tmp = code.newTmp(bank());
+    ASSERT(isValidForm(Move, Arg::BigImm, Arg::Tmp));
+    ASSERT(isValidForm(moveFor(bank(), width()), Arg::Tmp, dst().kind()));
+    return {
+        Inst(Move, origin, Arg::bigImm(src().value()), tmp),
+        Inst(moveFor(bank(), width()), origin, tmp, dst()),
+    };
 }
 
 void ShufflePair::dump(PrintStream& out) const

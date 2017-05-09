@@ -35,7 +35,7 @@ WasmBoundsCheckValue::~WasmBoundsCheckValue()
 {
 }
 
-WasmBoundsCheckValue::WasmBoundsCheckValue(Origin origin, Value* ptr, unsigned offset, GPRReg pinnedGPR)
+WasmBoundsCheckValue::WasmBoundsCheckValue(Origin origin, GPRReg pinnedGPR, Value* ptr, unsigned offset)
     : Value(CheckedOpcode, WasmBoundsCheck, origin, ptr)
     , m_offset(offset)
     , m_boundsType(Type::Pinned)
