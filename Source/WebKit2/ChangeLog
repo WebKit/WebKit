@@ -1,3 +1,13 @@
+2017-05-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Building Webkit2Gtk without OpenGL fails.
+        https://bugs.webkit.org/show_bug.cgi?id=170959
+
+        Reviewed by Žan Doberšek.
+
+        * UIProcess/gtk/HardwareAccelerationManager.cpp:
+        (WebKit::HardwareAccelerationManager::HardwareAccelerationManager):
+
 2017-05-05  Dean Jackson  <dino@apple.com>
 
         Restrict SVG filters to accessible security origins

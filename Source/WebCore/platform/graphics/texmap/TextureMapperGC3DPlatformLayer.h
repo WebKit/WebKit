@@ -19,7 +19,7 @@
 
 #pragma once
 
-#if USE(TEXTURE_MAPPER)
+#if ENABLE(GRAPHICS_CONTEXT_3D) && USE(TEXTURE_MAPPER)
 
 #include "GraphicsContext3D.h"
 #include "PlatformLayer.h"
@@ -61,4 +61,4 @@ private:
 
 } // namespace WebCore
 
-#endif // USE(TEXTURE_MAPPER)
+#endif // ENABLE(GRAPHICS_CONTEXT_3D) && USE(TEXTURE_MAPPER)

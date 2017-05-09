@@ -70,7 +70,7 @@ HardwareAccelerationManager::HardwareAccelerationManager()
     }
 #endif
 
-#if PLATFORM(WAYLAND)
+#if PLATFORM(WAYLAND) && USE(EGL)
     if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::Wayland) {
         if (!WaylandCompositor::singleton().isRunning()) {
             m_canUseHardwareAcceleration = false;
