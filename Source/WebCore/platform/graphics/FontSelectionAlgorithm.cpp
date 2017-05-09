@@ -35,7 +35,7 @@ auto FontSelectionAlgorithm::stretchDistance(FontSelectionCapabilities capabilit
     if (width.includes(m_request.width))
         return { FontSelectionValue(), m_request.width };
 
-    if (m_request.width >= normalStretchValue()) {
+    if (m_request.width > normalStretchValue()) {
         if (width.minimum > m_request.width)
             return { width.minimum - m_request.width, width.minimum };
         ASSERT(width.maximum < m_request.width);

@@ -1,3 +1,26 @@
+2017-05-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        font-stretch: normal selects expanded fonts instead of condensed fonts
+        https://bugs.webkit.org/show_bug.cgi?id=171838
+        <rdar://problem/31005481>
+
+        Reviewed by Jon Lee.
+
+        CSS Fonts level 3 says: "If the value of ‘font-stretch’ is ‘normal’ or one of the condensed
+        values, narrower width values are checked first, then wider values."
+
+        CSS Fonts level 4 erroneously was incompatible with this, but was updated in
+        https://github.com/w3c/csswg-drafts/commit/4559389d183bbaaf3321af5ba1c924caa7c488bb
+        to be consistent with this.
+
+        Now, CSS Fonts level 4 states: "If the desired stretch value is less than or equal to100,
+        stretch values below the desired stretch value are checked in descending order followed by
+        stretch values above the desired stretch value in ascending order"
+
+        Test: fast/text/font-width-100.html
+
+        * platform/graphics/FontSelectionAlgorithm.cpp:
+
 2017-05-09  Romain Bellessort  <romain.bellessort@crf.canon.fr>
 
         [Readable Streams API] Enable creation of ReadableStreamBYOBReader
