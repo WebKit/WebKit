@@ -127,10 +127,10 @@ String UserAgentQuirks::stringForQuirk(UserAgentQuirk quirk)
     switch (quirk) {
     case NeedsChromeBrowser:
         // Get versions from https://chromium.googlesource.com/chromium/src.git
-        return ASCIILiteral("Chrome/56.0.2891.4");
+        return ASCIILiteral("Chrome/58.0.3029.81");
     case NeedsFirefoxBrowser:
         // Gecko version never changes. Firefox version must be updated below.
-        return ASCIILiteral("Gecko/20100101 Firefox/50.0");
+        return ASCIILiteral("Gecko/20100101 Firefox/53.0");
     case NeedsMacintoshPlatform:
         return ASCIILiteral("Macintosh; Intel Mac OS X 10_12");
     case NeedsLinuxDesktopPlatform:
@@ -144,7 +144,7 @@ String UserAgentQuirks::stringForQuirk(UserAgentQuirk quirk)
 
 String UserAgentQuirks::firefoxRevisionString()
 {
-    return ASCIILiteral("rv:50.0");
+    return ASCIILiteral("rv:53.0");
 }
 
 }
