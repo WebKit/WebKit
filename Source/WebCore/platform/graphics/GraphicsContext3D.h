@@ -60,7 +60,7 @@
 #include <wtf/RetainPtr.h>
 OBJC_CLASS CALayer;
 OBJC_CLASS WebGLLayer;
-#elif PLATFORM(GTK) || PLATFORM(WIN_CAIRO)
+#elif PLATFORM(GTK) || PLATFORM(WIN_CAIRO) || PLATFORM(WPE)
 typedef unsigned int GLuint;
 #endif
 
@@ -1373,7 +1373,7 @@ private:
 
     std::unique_ptr<ShaderNameHash> nameHashMapForShaders;
 
-#if ((PLATFORM(GTK) || PLATFORM(WIN)) && USE(OPENGL_ES_2))
+#if ((PLATFORM(GTK) || PLATFORM(WIN) || PLATFORM(WPE)) && USE(OPENGL_ES_2))
     friend class Extensions3DOpenGLES;
     std::unique_ptr<Extensions3DOpenGLES> m_extensions;
 #else

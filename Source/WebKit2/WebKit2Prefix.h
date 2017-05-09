@@ -57,7 +57,7 @@
 
 #endif
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) || PLATFORM(WPE)
 #define ENABLE_SHAREABLE_RESOURCE 1
 #endif
 

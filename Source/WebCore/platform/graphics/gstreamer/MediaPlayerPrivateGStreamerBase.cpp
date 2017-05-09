@@ -59,7 +59,9 @@
 #endif
 
 #if USE(EGL)
+#if !PLATFORM(WPE)
 #include "GLContextEGL.h"
+#endif
 #include <gst/gl/egl/gstgldisplay_egl.h>
 #endif
 
@@ -69,6 +71,8 @@
 
 #if PLATFORM(WAYLAND)
 #include "PlatformDisplayWayland.h"
+#elif PLATFORM(WPE)
+#include "PlatformDisplayWPE.h"
 #endif
 
 // gstglapi.h may include eglplatform.h and it includes X.h, which
@@ -436,6 +440,11 @@ bool MediaPlayerPrivateGStreamerBase::ensureGstGLContext()
 #if PLATFORM(WAYLAND)
         if (is<PlatformDisplayWayland>(sharedDisplay))
             m_glDisplay = GST_GL_DISPLAY(gst_gl_display_egl_new_with_egl_display(downcast<PlatformDisplayWayland>(sharedDisplay).eglDisplay()));
+#endif
+
+#if PLATFORM(WPE)
+        ASSERT(is<PlatformDisplayWPE>(sharedDisplay));
+        m_glDisplay = GST_GL_DISPLAY(gst_gl_display_egl_new_with_egl_display(downcast<PlatformDisplayWPE>(sharedDisplay).eglDisplay()));
 #endif
 
         ASSERT(m_glDisplay);

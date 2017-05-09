@@ -1,3 +1,95 @@
+2017-05-09  Zan Dobersek  <zdobersek@igalia.com>
+
+        Upstream the WPE port
+        https://bugs.webkit.org/show_bug.cgi?id=171110
+
+        Reviewed by Alex Christensen.
+
+        webkit-dev thread:
+        https://lists.webkit.org/pipermail/webkit-dev/2017-April/028923.html
+
+        Existing files changed to properly use PLATFORM(WPE) build guards or other
+        WPE-specific additions (e.g. pasteboard support).
+        In-file changes removed from this ChangeLog entry for brevity.
+
+        * Platform/IPC/glib/GSocketMonitor.cpp:
+        * PlatformWPE.cmake: Added.
+        * Scripts/generate-forwarding-headers.pl:
+        * Shared/API/c/WKBase.h:
+        * Shared/API/c/wpe/WKBaseWPE.h: Copied from Source/WebKit2/Shared/DrawingAreaInfo.h.
+        * Shared/API/c/wpe/WebKit.h: Added.
+        * Shared/CoordinatedGraphics/threadedcompositor/CompositingRunLoop.cpp:
+        * Shared/CoordinatedGraphics/threadedcompositor/CompositingRunLoop.h:
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.h:
+        * Shared/DrawingAreaInfo.h:
+        * Shared/NativeWebKeyboardEvent.h:
+        * Shared/NativeWebMouseEvent.h:
+        * Shared/NativeWebTouchEvent.h:
+        * Shared/NativeWebWheelEvent.h:
+        * Shared/WebCoreArgumentCoders.cpp:
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/WebPreferencesDefinitions.h:
+        * Shared/wpe/NativeWebKeyboardEventWPE.cpp: Copied from Source/WebKit2/Shared/DrawingAreaInfo.h.
+        * Shared/wpe/NativeWebMouseEventWPE.cpp: Copied from Source/WebKit2/Shared/DrawingAreaInfo.h.
+        * Shared/wpe/NativeWebTouchEventWPE.cpp: Copied from Source/WebKit2/Shared/DrawingAreaInfo.h.
+        * Shared/wpe/NativeWebWheelEventWPE.cpp: Copied from Source/WebKit2/Shared/DrawingAreaInfo.h.
+        * Shared/wpe/ProcessExecutablePathWPE.cpp: Added.
+        * Shared/wpe/WebEventFactory.cpp: Added.
+        * Shared/wpe/WebEventFactory.h: Copied from Source/WebKit2/Shared/DrawingAreaInfo.h.
+        * UIProcess/API/C/WKAPICast.h:
+        * UIProcess/API/C/wpe/WKAPICastWPE.h: Copied from Source/WebKit2/Shared/DrawingAreaInfo.h.
+        * UIProcess/API/C/wpe/WKView.cpp: Copied from Source/WebKit2/Shared/DrawingAreaInfo.h.
+        * UIProcess/API/C/wpe/WKView.h: Copied from Source/WebKit2/Shared/NativeWebWheelEvent.h.
+        * UIProcess/API/wpe/CompositingManagerProxy.cpp: Copied from Source/WebKit2/Shared/DrawingAreaInfo.h.
+        * UIProcess/API/wpe/CompositingManagerProxy.h: Copied from Source/WebKit2/Shared/DrawingAreaInfo.h.
+        * UIProcess/API/wpe/CompositingManagerProxy.messages.in: Added.
+        * UIProcess/API/wpe/DrawingAreaProxyWPE.cpp: Added.
+        * UIProcess/API/wpe/DrawingAreaProxyWPE.h: Copied from Source/WebKit2/Shared/NativeWebWheelEvent.h.
+        * UIProcess/API/wpe/PageClientImpl.cpp: Added.
+        * UIProcess/API/wpe/PageClientImpl.h: Added.
+        * UIProcess/API/wpe/ScrollGestureController.cpp: Added.
+        * UIProcess/API/wpe/ScrollGestureController.h: Copied from Source/WebKit2/Shared/DrawingAreaInfo.h.
+        * UIProcess/API/wpe/WPEView.cpp: Added.
+        * UIProcess/API/wpe/WPEView.h: Added.
+        * UIProcess/API/wpe/WPEViewClient.cpp: Copied from Source/WebKit2/Shared/DrawingAreaInfo.h.
+        * UIProcess/API/wpe/WPEViewClient.h: Copied from Source/WebKit2/Shared/DrawingAreaInfo.h.
+        * UIProcess/API/wpe/WebKit2InspectorGResourceBundle.xml: Added.
+        * UIProcess/ChildProcessProxy.cpp:
+        * UIProcess/Launcher/ProcessLauncher.h:
+        * UIProcess/Launcher/wpe/ProcessLauncherWPE.cpp: Added.
+        * UIProcess/WebInspectorProxy.h:
+        * UIProcess/WebPasteboardProxy.h:
+        * UIProcess/WebPasteboardProxy.messages.in:
+        * UIProcess/WebProcessPool.cpp:
+        * UIProcess/wpe/TextCheckerWPE.cpp: Added.
+        * UIProcess/wpe/WebInspectorProxyWPE.cpp: Added.
+        * UIProcess/wpe/WebPageProxyWPE.cpp: Copied from Source/WebKit2/Shared/DrawingAreaInfo.h.
+        * UIProcess/wpe/WebPasteboardProxyWPE.cpp: Copied from Source/WebKit2/Shared/DrawingAreaInfo.h.
+        * UIProcess/wpe/WebPreferencesWPE.cpp: Copied from Source/WebKit2/Shared/CoordinatedGraphics/threadedcompositor/CompositingRunLoop.h.
+        * UIProcess/wpe/WebProcessPoolWPE.cpp: Added.
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebKit2Prefix.h:
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h:
+        * WebProcess/WebCoreSupport/wpe/WebContextMenuClientWPE.cpp: Copied from Source/WebKit2/Shared/DrawingAreaInfo.h.
+        * WebProcess/WebCoreSupport/wpe/WebEditorClientWPE.cpp: Added.
+        * WebProcess/WebCoreSupport/wpe/WebPopupMenuWPE.cpp: Copied from Source/WebKit2/Shared/DrawingAreaInfo.h.
+        * WebProcess/WebPage/CoordinatedGraphics/ThreadedCoordinatedLayerTreeHost.cpp:
+        * WebProcess/WebPage/DrawingArea.cpp:
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/wpe/CompositingManager.cpp: Copied from Source/WebKit2/Shared/DrawingAreaInfo.h.
+        * WebProcess/WebPage/wpe/CompositingManager.h: Copied from Source/WebKit2/Shared/DrawingAreaInfo.h.
+        * WebProcess/WebPage/wpe/DrawingAreaWPE.cpp: Added.
+        * WebProcess/WebPage/wpe/DrawingAreaWPE.h: Added.
+        * WebProcess/WebPage/wpe/WebInspectorUIWPE.cpp: Copied from Source/WebKit2/Shared/DrawingAreaInfo.h.
+        * WebProcess/WebPage/wpe/WebInspectorWPE.cpp: Copied from Source/WebKit2/Shared/DrawingAreaInfo.h.
+        * WebProcess/WebPage/wpe/WebPageWPE.cpp: Copied from Source/WebKit2/Shared/CoordinatedGraphics/threadedcompositor/CompositingRunLoop.h.
+        * WebProcess/wpe/WebProcessMainWPE.cpp: Copied from Source/WebKit2/Shared/DrawingAreaInfo.h.
+        * wpe/wpe-webkit.pc.in: Added.
+
 2017-05-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Building Webkit2Gtk without OpenGL fails.

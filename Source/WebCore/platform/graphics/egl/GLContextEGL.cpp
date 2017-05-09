@@ -204,6 +204,13 @@ std::unique_ptr<GLContextEGL> GLContextEGL::createSharingContext(PlatformDisplay
     if (eglBindAPI(gEGLAPIVersion) == EGL_FALSE)
         return nullptr;
 
+#if PLATFORM(WPE)
+    if (platformDisplay.type() == PlatformDisplay::Type::WPE) {
+        if (auto context = createWPEContext(platformDisplay))
+            return context;
+    }
+#endif
+
     auto context = createSurfacelessContext(platformDisplay);
     if (!context) {
 #if PLATFORM(X11)
@@ -250,6 +257,9 @@ GLContextEGL::~GLContextEGL()
 
 #if PLATFORM(WAYLAND)
     destroyWaylandWindow();
+#endif
+#if PLATFORM(WPE)
+    destroyWPETarget();
 #endif
 }
 

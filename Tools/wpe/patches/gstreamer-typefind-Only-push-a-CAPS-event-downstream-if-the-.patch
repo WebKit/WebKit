@@ -1,0 +1,32 @@
+From 5e43ee5989d7b51dcb3145bd997525247a3d62dc Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Sebastian=20Dr=C3=B6ge?= <sebastian@centricular.com>
+Date: Wed, 11 May 2016 15:06:39 +0300
+Subject: [PATCH] typefind: Only push a CAPS event downstream if the sinkpad is
+ not in PULL mode
+
+The other signal handlers of the type-found signal might have reactivated
+typefind in PULL mode already, pushing a CAPS event at that point would cause
+deadlocks and is in general unexpected by elements that are in PULL mode.
+
+https://bugzilla.gnome.org/show_bug.cgi?id=765906
+---
+ plugins/elements/gsttypefindelement.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/plugins/elements/gsttypefindelement.c b/plugins/elements/gsttypefindelement.c
+index c686412..453ff75 100644
+--- a/plugins/elements/gsttypefindelement.c
++++ b/plugins/elements/gsttypefindelement.c
+@@ -179,6 +179,10 @@ gst_type_find_element_have_type (GstTypeFindElement * typefind,
+   GST_INFO_OBJECT (typefind, "found caps %" GST_PTR_FORMAT ", probability=%u",
+       caps, probability);
+ 
++  /* Do nothing if downstream is pulling from us */
++  if (GST_PAD_MODE (typefind->src) == GST_PAD_MODE_PULL)
++    return;
++
+   GST_OBJECT_LOCK (typefind);
+ 
+   /* Now actually send the CAPS event downstream.
+-- 
+2.8.1

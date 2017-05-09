@@ -1,0 +1,37 @@
+From 3a069193e25364ebdacac86f4b03022c151ea29c Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Sebastian=20Dr=C3=B6ge?= <sebastian@centricular.com>
+Date: Mon, 14 Nov 2016 11:32:17 +0200
+Subject: [PATCH] dtlscertificate: Fix error checking in RSA_generate_key_ex()
+ usage
+
+Was broken during the port for OpenSSL 1.1.
+
+https://bugzilla.gnome.org/show_bug.cgi?id=774328
+---
+ ext/dtls/gstdtlscertificate.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/ext/dtls/gstdtlscertificate.c b/ext/dtls/gstdtlscertificate.c
+index c1c9602..c2d9bb2 100644
+--- a/ext/dtls/gstdtlscertificate.c
++++ b/ext/dtls/gstdtlscertificate.c
+@@ -207,12 +207,13 @@ init_generated (GstDtlsCertificate * self)
+   rsa = RSA_new ();
+   if (rsa != NULL) {
+     BIGNUM *e = BN_new ();
+-    if (e != NULL && BN_set_word (e, RSA_F4)
+-        && RSA_generate_key_ex (rsa, 2048, e, NULL)) {
++    if (e == NULL || !BN_set_word (e, RSA_F4)
++        || !RSA_generate_key_ex (rsa, 2048, e, NULL)) {
+       RSA_free (rsa);
+       rsa = NULL;
+     }
+-    BN_free (e);
++    if (e)
++      BN_free (e);
+   }
+ #endif
+ 
+-- 
+2.10.2
+

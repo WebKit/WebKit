@@ -425,7 +425,7 @@ def _set_up_derived_options(port, options):
         options.verbose = True
 
     # The GTK+ and EFL ports only support WebKit2 so they always use WKTR.
-    if options.platform == "gtk" or options.platform == "efl":
+    if options.platform in ["efl", "gtk", "wpe"]:
         options.webkit_test_runner = True
 
 

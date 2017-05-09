@@ -100,6 +100,7 @@ Usage: $programName [options] [options to pass to build system]
   --analyze                         Enable static anaylsis (iOS and Mac only)
 
   --gtk                             Build the GTK+ port
+  --wpe                             Build the WPE port
   --wincairo                        Build using Cairo (rather than CoreGraphics) on Windows
 
   --inspector-frontend              Copy Web Inspector user interface resources to the build directory

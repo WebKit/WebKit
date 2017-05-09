@@ -58,4 +58,11 @@ messages -> WebPasteboardProxy {
     WriteToClipboard(String pasteboardName, struct WebKit::WebSelectionData pasteboardContent)
     ReadFromClipboard(String pasteboardName) -> (struct WebKit::WebSelectionData pasteboardContent)
 #endif
+
+#if PLATFORM(WPE)
+    GetPasteboardTypes() -> (Vector<String> types)
+    ReadStringFromPasteboard(uint64_t index, String pasteboardType) -> (String string)
+    WriteWebContentToPasteboard(struct WebCore::PasteboardWebContent content)
+    WriteStringToPasteboard(String pasteboardType, String text)
+#endif
 }

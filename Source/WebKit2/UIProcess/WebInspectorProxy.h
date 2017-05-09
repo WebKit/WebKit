@@ -224,7 +224,7 @@ private:
 
     WebPreferences& inspectorPagePreferences() const;
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) || PLATFORM(WPE)
     void createInspectorWindow();
     void updateInspectorWindowTitle() const;
 #endif

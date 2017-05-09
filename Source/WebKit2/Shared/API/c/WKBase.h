@@ -38,6 +38,10 @@
 #include <WebKit/WKBaseMac.h>
 #endif
 
+#if defined(BUILDING_WPE__)
+#include <WebKit/WKBaseWPE.h>
+#endif
+
 /* WebKit2 shared types */
 
 typedef uint32_t WKTypeID;

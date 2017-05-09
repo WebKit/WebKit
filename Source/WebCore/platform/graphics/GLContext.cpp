@@ -120,7 +120,7 @@ std::unique_ptr<GLContext> GLContext::createSharingContext(PlatformDisplay& disp
     }
 #endif
 
-#if USE(EGL) || PLATFORM(WAYLAND)
+#if USE(EGL) || PLATFORM(WAYLAND) || PLATFORM(WPE)
     if (auto eglContext = GLContextEGL::createSharingContext(display))
         return WTFMove(eglContext);
 #endif

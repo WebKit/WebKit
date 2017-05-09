@@ -24,9 +24,10 @@ use Getopt::Long qw(:config pass_through);
 
 my $platform = "";
 $platform = "gtk" if isGtk();
+$platform = "wpe" if isWPE();
 
 if (!$platform) {
-    die "No platform specified for " . basename($0) .". Use --gtk.\n";
+    die "No platform specified for " . basename($0) .". Use --gtk or --wpe.\n";
 }
 
 my $wipeOnChange = $ENV{JHBUILD_WIPE_ON_CHANGE} // 1;
@@ -132,7 +133,7 @@ delete $ENV{AR_FLAGS} if exists $ENV{AR_FLAGS};
 
 chdir(relativeScriptsDir() . "/../jhbuild") or die $!;
 
-my %prettyPlatform = ( "gtk" => "GTK+" );
+my %prettyPlatform = ( "gtk" => "GTK+", "wpe" => "WPE" );
 
 if (!$force && !jhbuildConfigurationChanged()) {
     print $prettyPlatform{$platform} . " port dependencies are already up to date\n";

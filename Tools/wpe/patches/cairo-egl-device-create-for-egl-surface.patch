@@ -1,0 +1,133 @@
+From a4e0daf18bf8252463f66d75eef499cfffa32565 Mon Sep 17 00:00:00 2001
+From: Zan Dobersek <zdobersek@igalia.com>
+Date: Mon, 17 Nov 2014 01:23:15 -0800
+Subject: [PATCH] Add cairo_egl_device_create_for_egl_surface().
+
+---
+ src/cairo-egl-context.c | 66 ++++++++++++++++++++++++++++++++++++++++++-------
+ src/cairo-gl.h          |  3 +++
+ 2 files changed, 60 insertions(+), 9 deletions(-)
+
+diff --git a/src/cairo-egl-context.c b/src/cairo-egl-context.c
+index bf704c6..be2bcf9 100644
+--- a/src/cairo-egl-context.c
++++ b/src/cairo-egl-context.c
+@@ -48,7 +48,8 @@ typedef struct _cairo_egl_context {
+     EGLDisplay display;
+     EGLContext context;
+ 
+-    EGLSurface dummy_surface;
++    EGLSurface surface;
++    cairo_bool_t is_dummy_surface;
+ 
+     EGLContext previous_context;
+     EGLSurface previous_surface;
+@@ -74,7 +75,7 @@ _egl_get_current_surface (cairo_egl_context_t *ctx)
+ {
+     if (ctx->base.current_target == NULL ||
+         _cairo_gl_surface_is_texture (ctx->base.current_target)) {
+-	return  ctx->dummy_surface;
++	return  ctx->surface;
+     }
+ 
+     return ((cairo_egl_surface_t *) ctx->base.current_target)->egl;
+@@ -151,8 +152,8 @@ _egl_destroy (void *abstract_ctx)
+ 
+     eglMakeCurrent (ctx->display,
+ 		    EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+-    if (ctx->dummy_surface != EGL_NO_SURFACE)
+-        eglDestroySurface (ctx->display, ctx->dummy_surface);
++    if (ctx->is_dummy_surface && ctx->surface != EGL_NO_SURFACE)
++        eglDestroySurface (ctx->display, ctx->surface);
+ }
+ 
+ static cairo_bool_t
+@@ -218,13 +219,14 @@ cairo_egl_device_create (EGLDisplay dpy, EGLContext egl)
+ 	eglQueryContext (dpy, egl, EGL_CONFIG_ID, &config_attribs[1]);
+ 	eglChooseConfig (dpy, config_attribs, &config, 1, &numConfigs);
+ 
+-	ctx->dummy_surface = eglCreatePbufferSurface (dpy, config, attribs);
+-	if (ctx->dummy_surface == NULL) {
++	ctx->is_dummy_surface = TRUE;
++	ctx->surface = eglCreatePbufferSurface (dpy, config, attribs);
++	if (ctx->surface == NULL) {
+ 	    free (ctx);
+ 	    return _cairo_gl_context_create_in_error (CAIRO_STATUS_NO_MEMORY);
+ 	}
+ 
+-	if (!eglMakeCurrent (dpy, ctx->dummy_surface, ctx->dummy_surface, egl)) {
++	if (!eglMakeCurrent (dpy, ctx->surface, ctx->surface, egl)) {
+ 	    free (ctx);
+ 	    return _cairo_gl_context_create_in_error (CAIRO_STATUS_NO_MEMORY);
+ 	}
+@@ -238,8 +240,54 @@ cairo_egl_device_create (EGLDisplay dpy, EGLContext egl)
+ 
+     status = _cairo_gl_context_init (&ctx->base);
+     if (unlikely (status)) {
+-	if (ctx->dummy_surface != EGL_NO_SURFACE)
+-	    eglDestroySurface (dpy, ctx->dummy_surface);
++	if (ctx->surface != EGL_NO_SURFACE)
++	    eglDestroySurface (dpy, ctx->surface);
++	free (ctx);
++	return _cairo_gl_context_create_in_error (status);
++    }
++
++    eglMakeCurrent (dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
++
++    return &ctx->base.base;
++}
++
++cairo_device_t *
++cairo_egl_device_create_for_egl_surface (EGLDisplay dpy, EGLContext egl, EGLSurface surface)
++{
++    cairo_egl_context_t *ctx;
++    cairo_status_t status;
++
++    ctx = calloc (1, sizeof (cairo_egl_context_t));
++    if (unlikely (ctx == NULL))
++	return _cairo_gl_context_create_in_error (CAIRO_STATUS_NO_MEMORY);
++
++    ctx->display = dpy;
++    ctx->context = egl;
++    ctx->surface = surface;
++
++    ctx->base.acquire = _egl_acquire;
++    ctx->base.release = _egl_release;
++    ctx->base.make_current = _egl_make_current;
++    ctx->base.swap_buffers = _egl_swap_buffers;
++    ctx->base.destroy = _egl_destroy;
++
++    /* We are about the change the current state of EGL, so we should
++     * query the pre-existing surface now instead of later. */
++    _egl_query_current_state (ctx);
++
++	if (!eglMakeCurrent (dpy, surface, surface, egl)) {
++	    free (ctx);
++	    return _cairo_gl_context_create_in_error (CAIRO_STATUS_NO_MEMORY);
++	}
++
++    status = _cairo_gl_dispatch_init (&ctx->base.dispatch, eglGetProcAddress);
++    if (unlikely (status)) {
++	free (ctx);
++	return _cairo_gl_context_create_in_error (status);
++    }
++
++    status = _cairo_gl_context_init (&ctx->base);
++    if (unlikely (status)) {
+ 	free (ctx);
+ 	return _cairo_gl_context_create_in_error (status);
+     }
+diff --git a/src/cairo-gl.h b/src/cairo-gl.h
+index 9fd7608..a94f581 100644
+--- a/src/cairo-gl.h
++++ b/src/cairo-gl.h
+@@ -132,6 +132,9 @@ cairo_gl_surface_create_for_dc (cairo_device_t		*device,
+ cairo_public cairo_device_t *
+ cairo_egl_device_create (EGLDisplay dpy, EGLContext egl);
+ 
++cairo_public cairo_device_t *
++cairo_egl_device_create_for_egl_surface (EGLDisplay dpy, EGLContext egl, EGLSurface surface);
++
+ cairo_public cairo_surface_t *
+ cairo_gl_surface_create_for_egl (cairo_device_t	*device,
+ 				 EGLSurface	 egl,

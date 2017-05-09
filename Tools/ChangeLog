@@ -1,3 +1,69 @@
+2017-05-09  Zan Dobersek  <zdobersek@igalia.com>
+
+        Upstream the WPE port
+        https://bugs.webkit.org/show_bug.cgi?id=171110
+
+        Reviewed by Alex Christensen.
+
+        webkit-dev thread:
+        https://lists.webkit.org/pipermail/webkit-dev/2017-April/028923.html
+
+        Add WPE support to various tooling scripts, TestWebKitAPI and WebKitTestRunner.
+        In-file changes removed from this ChangeLog entry for brevity.
+
+        * BuildSlaveSupport/built-product-archive:
+        * BuildSlaveSupport/test-result-archive:
+        * CMakeLists.txt:
+        * ImageDiff/PlatformWPE.cmake: Added.
+        * Scripts/build-dumprendertree:
+        * Scripts/build-webkit:
+        * Scripts/build-webkittestrunner:
+        * Scripts/update-webkit-libs-jhbuild:
+        * Scripts/update-webkitwpe-libs: Added.
+        * Scripts/webkitdirs.pm:
+        * Scripts/webkitperl/FeatureList.pm:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        * Scripts/webkitpy/port/factory.py:
+        * Scripts/webkitpy/port/wpe.py: Added.
+        * TestWebKitAPI/PlatformWPE.cmake: Added.
+        * TestWebKitAPI/wpe/InjectedBundleControllerWPE.cpp: Copied from Source/WebKit2/Shared/DrawingAreaInfo.h.
+        * TestWebKitAPI/wpe/PlatformUtilitiesWPE.cpp: Added.
+        * TestWebKitAPI/wpe/main.cpp: Copied from Source/WebKit2/Shared/DrawingAreaInfo.h.
+        * WebKitTestRunner/InjectedBundle/AccessibilityController.cpp:
+        * WebKitTestRunner/InjectedBundle/AccessibilityController.h:
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.cpp:
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/InjectedBundle/wpe/AccessibilityControllerWPE.cpp: Added.
+        * WebKitTestRunner/InjectedBundle/wpe/AccessibilityUIElementWPE.cpp: Added.
+        * WebKitTestRunner/InjectedBundle/wpe/ActivateFontsWPE.cpp: Added.
+        * WebKitTestRunner/InjectedBundle/wpe/InjectedBundleWPE.cpp: Copied from Source/WebKit2/Shared/DrawingAreaInfo.h.
+        * WebKitTestRunner/InjectedBundle/wpe/TestRunnerWPE.cpp: Copied from Source/WebKit2/Shared/DrawingAreaInfo.h.
+        * WebKitTestRunner/PlatformWPE.cmake: Added.
+        * WebKitTestRunner/PlatformWebView.h:
+        * WebKitTestRunner/TestController.cpp:
+        * WebKitTestRunner/wpe/EventSenderProxyWPE.cpp: Added.
+        * WebKitTestRunner/wpe/HeadlessViewBackend.cpp: Added.
+        * WebKitTestRunner/wpe/HeadlessViewBackend.h: Copied from Source/WebKit2/Shared/CoordinatedGraphics/threadedcompositor/CompositingRunLoop.h.
+        * WebKitTestRunner/wpe/PlatformWebViewWPE.cpp: Added.
+        * WebKitTestRunner/wpe/TestControllerWPE.cpp: Added.
+        * WebKitTestRunner/wpe/main.cpp: Copied from Source/WebKit2/Shared/DrawingAreaInfo.h.
+        * jhbuild/jhbuild-wrapper:
+        * wpe/generate-inspector-gresource-manifest.py: Added.
+        * wpe/jhbuild.modules: Added.
+        * wpe/jhbuildrc: Added.
+        * wpe/patches/cairo-egl-device-create-for-egl-surface.patch: Added.
+        * wpe/patches/fontconfig-C-11-requires-a-space-between-literal-and-identifier.patch: Added.
+        * wpe/patches/freetype6-2.4.11-truetype-font-height-fix.patch: Added.
+        * wpe/patches/gdate-suppress-string-format-literal-warning.patch: Added.
+        * wpe/patches/glib-warning-fix.patch: Added.
+        * wpe/patches/gst-plugins-bad-0001-dtls-port-to-OpenSSL-1.1.0.patch: Added.
+        * wpe/patches/gst-plugins-bad-0002-dtlscertificate-Fix-error-checking-in-RSA_generate_k.patch: Added.
+        * wpe/patches/gst-plugins-good-Revert-qtdemux-expose-streams-with-first-moof-for-fr.patch: Added.
+        * wpe/patches/gst-plugins-good-use-the-tfdt-decode-time.patch: Added.
+        * wpe/patches/gstreamer-typefind-Only-push-a-CAPS-event-downstream-if-the-.patch: Added.
+
 2017-05-08  Jonathan Bedard  <jbedard@apple.com>
 
         Implement PlatformWebView::windowSnapshotImage and createBitmapContextFromWebView for iOS devices

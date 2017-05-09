@@ -54,6 +54,9 @@ public:
 #if PLATFORM(WIN)
         Windows,
 #endif
+#if PLATFORM(WPE)
+        WPE,
+#endif
     };
 
     virtual Type type() const = 0;

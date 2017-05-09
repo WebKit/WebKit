@@ -71,7 +71,7 @@ bool AccessibilityController::enhancedAccessibilityEnabled()
     return WKAccessibilityEnhancedAccessibilityEnabled();
 }
 
-#if !PLATFORM(GTK)
+#if !PLATFORM(GTK) && !PLATFORM(WPE)
 Ref<AccessibilityUIElement> AccessibilityController::rootElement()
 {
     WKBundlePageRef page = InjectedBundle::singleton().page()->page();

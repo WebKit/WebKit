@@ -73,7 +73,7 @@ private:
 
 #if PLATFORM(COCOA)
     RetainPtr<NotificationHandler> m_globalNotificationHandler;
-#else
+#elif PLATFORM(GTK) || PLATFORM(EFL)
     RefPtr<AccessibilityNotificationHandler> m_globalNotificationHandler;
 #endif
 };

@@ -27,11 +27,17 @@
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 
+#if PLATFORM(GTK)
+#define AUDIO_GRESOURCE_PATH "/org/webkitgtk/resources/audio"
+#elif PLATFORM(WPE)
+#define AUDIO_GRESOURCE_PATH "/org/webkitwpe/resources/audio"
+#endif
+
 namespace WebCore {
 
 PassRefPtr<AudioBus> AudioBus::loadPlatformResource(const char* name, float sampleRate)
 {
-    GUniquePtr<char> path(g_strdup_printf("/org/webkitgtk/resources/audio/%s", name));
+    GUniquePtr<char> path(g_strdup_printf(AUDIO_GRESOURCE_PATH "/%s", name));
     GRefPtr<GBytes> data = adoptGRef(g_resources_lookup_data(path.get(), G_RESOURCE_LOOKUP_FLAGS_NONE, nullptr));
     ASSERT(data);
     return createBusFromInMemoryAudioFile(g_bytes_get_data(data.get(), nullptr), g_bytes_get_size(data.get()), false, sampleRate);

@@ -59,7 +59,7 @@ static URLSchemesMap& secureSchemes()
         secureSchemes.get().add("about");
         secureSchemes.get().add("data");
         secureSchemes.get().add("wss");
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) || PLATFORM(WPE)
         secureSchemes.get().add("resource");
 #endif
     }

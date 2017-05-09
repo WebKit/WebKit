@@ -1,3 +1,13 @@
+2017-05-09  Zan Dobersek  <zdobersek@igalia.com>
+
+        Upstream the WPE port
+        https://bugs.webkit.org/show_bug.cgi?id=171110
+
+        Reviewed by Alex Christensen.
+
+        * include/EGL/eglplatform.h:
+        Allow building WPE on platforms that don't provide X11 libraries.
+
 2017-05-04  Don Olmstead  <don.olmstead@am.sony.com>
 
         [Win] Remove redundant macros that are set in the CMake config

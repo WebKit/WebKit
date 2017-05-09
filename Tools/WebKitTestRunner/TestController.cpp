@@ -768,7 +768,7 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options)
     // some other code doing this, it should probably be responsible for cleanup too.
     resetPreferencesToConsistentValues(options);
 
-#if !PLATFORM(COCOA)
+#if !PLATFORM(COCOA) && !PLATFORM(WPE)
     WKTextCheckerContinuousSpellCheckingEnabledStateChanged(true);
 #endif
 

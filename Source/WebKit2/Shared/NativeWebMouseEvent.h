@@ -38,6 +38,10 @@ OBJC_CLASS NSView;
 typedef union _GdkEvent GdkEvent;
 #endif
 
+#if PLATFORM(WPE)
+struct wpe_input_pointer_event;
+#endif
+
 namespace WebKit {
 
 class NativeWebMouseEvent : public WebMouseEvent {
@@ -47,6 +51,8 @@ public:
 #elif PLATFORM(GTK)
     NativeWebMouseEvent(const NativeWebMouseEvent&);
     NativeWebMouseEvent(GdkEvent*, int);
+#elif PLATFORM(WPE)
+    NativeWebMouseEvent(struct wpe_input_pointer_event*, float deviceScaleFactor);
 #endif
 
 #if USE(APPKIT)
@@ -55,6 +61,8 @@ public:
     const GdkEvent* nativeEvent() const { return m_nativeEvent.get(); }
 #elif PLATFORM(IOS)
     const void* nativeEvent() const { return 0; }
+#elif PLATFORM(WPE)
+    const void* nativeEvent() const { return nullptr; }
 #endif
 
 private:

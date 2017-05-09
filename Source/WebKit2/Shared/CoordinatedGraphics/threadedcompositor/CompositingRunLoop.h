@@ -28,6 +28,7 @@
 
 #if USE(COORDINATED_GRAPHICS_THREADED)
 
+#include <functional>
 #include <wtf/Atomics.h>
 #include <wtf/Condition.h>
 #include <wtf/FastMalloc.h>

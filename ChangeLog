@@ -1,3 +1,19 @@
+2017-05-09  Zan Dobersek  <zdobersek@igalia.com>
+
+        Upstream the WPE port
+        https://bugs.webkit.org/show_bug.cgi?id=171110
+
+        Reviewed by Alex Christensen.
+
+        webkit-dev thread:
+        https://lists.webkit.org/pipermail/webkit-dev/2017-April/028923.html
+
+        * CMakeLists.txt: Add the WPE port identifier.
+        * Source/cmake/FindLibGBM.cmake: Added.
+        * Source/cmake/FindWPEBackend-mesa.cmake: Added.
+        * Source/cmake/FindWPEBackend.cmake: Added.
+        * Source/cmake/OptionsWPE.cmake: Added.
+
 2017-05-04  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r216206.

@@ -93,6 +93,12 @@ private:
     void writeToClipboard(const String& pasteboardName, const WebCore::SelectionData&) override;
     Ref<WebCore::SelectionData> readFromClipboard(const String& pasteboardName) override;
 #endif
+#if PLATFORM(WPE)
+    void getTypes(Vector<String>& types) override;
+    String readStringFromPasteboard(int index, const String& pasteboardType) override;
+    void writeToPasteboard(const WebCore::PasteboardWebContent&) override;
+    void writeToPasteboard(const String& pasteboardType, const String&) override;
+#endif
 };
 
 } // namespace WebKit

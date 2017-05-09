@@ -25,7 +25,14 @@
 #include <wtf/Noncopyable.h>
 
 #if USE(EGL) && !PLATFORM(GTK)
+#if PLATFORM(WPE)
+// FIXME: For now default to the GBM EGL platform, but this should really be
+// somehow deducible from the build configuration.
+#define __GBM__ 1
+#include <EGL/eglplatform.h>
+#else
 #include "eglplatform.h"
+#endif
 typedef EGLNativeWindowType GLNativeWindowType;
 #else
 typedef uint64_t GLNativeWindowType;

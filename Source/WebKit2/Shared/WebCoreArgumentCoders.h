@@ -135,6 +135,12 @@ struct SoupNetworkProxySettings;
 }
 #endif
 
+#if PLATFORM(WPE)
+namespace WebCore {
+struct PasteboardWebContents;
+}
+#endif
+
 #if ENABLE(CONTENT_FILTERING)
 namespace WebCore {
 class ContentFilterUnblockHandler;
@@ -414,6 +420,13 @@ template<> struct ArgumentCoder<WebCore::PasteboardImage> {
 template<> struct ArgumentCoder<WebCore::SoupNetworkProxySettings> {
     static void encode(Encoder&, const WebCore::SoupNetworkProxySettings&);
     static bool decode(Decoder&, WebCore::SoupNetworkProxySettings&);
+};
+#endif
+
+#if PLATFORM(WPE)
+template<> struct ArgumentCoder<WebCore::PasteboardWebContent> {
+    static void encode(Encoder&, const WebCore::PasteboardWebContent&);
+    static bool decode(Decoder&, WebCore::PasteboardWebContent&);
 };
 #endif
 

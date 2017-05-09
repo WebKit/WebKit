@@ -74,10 +74,10 @@ ThreadedCoordinatedLayerTreeHost::ThreadedCoordinatedLayerTreeHost(WebPage& webP
         // Do not do frame sync when rendering offscreen in the web process to ensure that SwapBuffers never blocks.
         // Rendering to the actual screen will happen later anyway since the UI process schedules a redraw for every update,
         // the compositor will take care of syncing to vblank.
-        m_compositor = ThreadedCompositor::create(m_compositorClient, scaledSize, scaleFactor, m_surface->window(), ThreadedCompositor::ShouldDoFrameSync::Yes, paintFlags);
+        m_compositor = ThreadedCompositor::create(m_compositorClient, webPage, scaledSize, scaleFactor, m_surface->window(), ThreadedCompositor::ShouldDoFrameSync::Yes, paintFlags);
         m_layerTreeContext.contextID = m_surface->surfaceID();
     } else
-        m_compositor = ThreadedCompositor::create(m_compositorClient, scaledSize, scaleFactor);
+        m_compositor = ThreadedCompositor::create(m_compositorClient, webPage, scaledSize, scaleFactor);
 
     didChangeViewport();
 }

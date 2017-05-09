@@ -1,0 +1,11 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=${prefix}
+libdir=@LIB_INSTALL_DIR@
+includedir=${prefix}/include
+
+Name: WebKit2
+Description: WPE-flavored Web engine
+Version: @PROJECT_VERSION@
+Requires.private: glib-2.0 libsoup-2.4
+Libs: -L${libdir} -lWPEWebKit -lWPE
+Cflags: -I${includedir}/wpe-@WPE_API_VERSION@ -I${includedir}/wpe-@WPE_API_VERSION@/WPE

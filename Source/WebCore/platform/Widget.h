@@ -61,6 +61,10 @@ typedef struct _GtkContainer GtkContainer;
 typedef GtkWidget* PlatformWidget;
 #endif
 
+#if PLATFORM(WPE)
+typedef void* PlatformWidget;
+#endif
+
 typedef PlatformWidget PlatformPageClient;
 
 namespace WebCore {

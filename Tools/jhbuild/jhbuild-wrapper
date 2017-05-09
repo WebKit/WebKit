@@ -31,6 +31,8 @@ def determine_platform():
         return "efl";
     if '--gtk' in sys.argv:
         return "gtk";
+    if '--wpe' in sys.argv:
+        return "wpe"
     raise ValueError('No platform specified for jhbuild-wrapper.')
 
 try:

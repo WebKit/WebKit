@@ -107,6 +107,7 @@ use constant {
     Mac      => "Mac",
     JSCOnly  => "JSCOnly",
     WinCairo => "WinCairo",
+    WPE      => "WPE",
     Unknown  => "Unknown"
 };
 
@@ -445,6 +446,7 @@ sub argumentsForConfiguration()
     push(@args, '--32-bit') if ($architecture ne "x86_64" and !isWin64());
     push(@args, '--64-bit') if (isWin64());
     push(@args, '--gtk') if isGtk();
+    push(@args, '--wpe') if isWPE();
     push(@args, '--jsc-only') if isJSCOnly();
     push(@args, '--wincairo') if isWinCairo();
     push(@args, '--inspector-frontend') if isInspectorFrontend();
@@ -680,7 +682,7 @@ sub executableProductDir
     my $productDirectory = productDir();
 
     my $binaryDirectory;
-    if (isGtk() || isJSCOnly()) {
+    if (isGtk() || isJSCOnly() || isWPE()) {
         $binaryDirectory = "bin";
     } elsif (isAnyWindows()) {
         $binaryDirectory = isWin64() ? "bin64" : "bin32";
@@ -938,6 +940,9 @@ sub builtDylibPathForName
             return "$baseProductDir/$libraryName.intermediate/$configuration/$libraryName.intermediate/$libraryName.lib";
         }
     }
+    if (isWPE()) {
+        return "$configurationProductDir/lib/libWPEWebKit.so";
+    }
 
     die "Unsupported platform, can't determine built library locations.\nTry `build-webkit --help` for more information.\n";
 }
@@ -1052,7 +1057,8 @@ sub determinePortName()
     my %argToPortName = (
         gtk => GTK,
         'jsc-only' => JSCOnly,
-        wincairo => WinCairo
+        wincairo => WinCairo,
+        wpe => WPE
     );
 
     for my $arg (sort keys %argToPortName) {
@@ -1086,6 +1092,7 @@ sub determinePortName()
             my $portsChoice = join "\n\t", qw(
                 --gtk
                 --jsc-only
+                --wpe
             );
             die "Please specify which WebKit port to build using one of the following options:"
                 . "\n\t$portsChoice\n";
@@ -1111,6 +1118,11 @@ sub isGtk()
 sub isJSCOnly()
 {
     return portName() eq JSCOnly;
+}
+
+sub isWPE()
+{
+    return portName() eq WPE;
 }
 
 # Determine if this is debian, ubuntu, linspire, or something similar.
@@ -1516,6 +1528,8 @@ sub launcherPath()
         return "$relativeScriptsPath/run-minibrowser";
     } elsif (isAppleWebKit()) {
         return "$relativeScriptsPath/run-safari";
+    } elsif (isWPE()) {
+        return "$relativeScriptsPath/run-wpe";
     }
 }
 
@@ -1527,6 +1541,8 @@ sub launcherName()
         return "Safari";
     } elsif (isAppleWinWebKit()) {
         return "MiniBrowser";
+    } elsif (isWPE()) {
+        return "WPELauncher";
     }
 }
 
@@ -1826,6 +1842,8 @@ sub getJhbuildPath()
     }
     if (isGtk()) {
         push(@jhbuildPath, "DependenciesGTK");
+    } elsif (isWPE()) {
+        push(@jhbuildPath, "DependenciesWPE");
     } else {
         die "Cannot get JHBuild path for platform that isn't GTK+.\n";
     }
@@ -1866,6 +1884,8 @@ sub wrapperPrefixIfNeeded()
         my @prefix = (File::Spec->catfile(sourceDir(), "Tools", "jhbuild", "jhbuild-wrapper"));
         if (isGtk()) {
             push(@prefix, "--gtk");
+        } elsif (isWPE()) {
+            push(@prefix, "--wpe");
         }
         push(@prefix, "run");
 
@@ -2024,7 +2044,7 @@ sub generateBuildSystemFromCMakeProject
     push @args, '-DSHOW_BINDINGS_GENERATION_PROGRESS=1' unless ($willUseNinja && -t STDOUT);
 
     # Some ports have production mode, but build-webkit should always use developer mode.
-    push @args, "-DDEVELOPER_MODE=ON" if isGtk() || isJSCOnly();
+    push @args, "-DDEVELOPER_MODE=ON" if isGtk() || isJSCOnly() || isWPE();
 
     # Don't warn variables which aren't used by cmake ports.
     push @args, "--no-warn-unused-cli";
@@ -2099,6 +2119,10 @@ sub buildCMakeProjectOrExit($$$@)
 
     if (isGtk() && checkForArgumentAndRemoveFromARGV("--update-gtk")) {
         system("perl", "$sourceDir/Tools/Scripts/update-webkitgtk-libs") == 0 or die $!;
+    }
+
+    if (isWPE() && checkForArgumentAndRemoveFromARGV("--update-wpe")) {
+        system("perl", "$sourceDir/Tools/Scripts/update-webkitwpe-libs") == 0 or die $!;
     }
 
     $returnCode = exitStatus(generateBuildSystemFromCMakeProject($prefixPath, @cmakeArgs));

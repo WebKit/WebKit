@@ -1,3 +1,13 @@
+2017-05-09  Zan Dobersek  <zdobersek@igalia.com>
+
+        Upstream the WPE port
+        https://bugs.webkit.org/show_bug.cgi?id=171110
+
+        Reviewed by Alex Christensen.
+
+        * PlatformWPE.cmake: Added.
+        * shell/PlatformWPE.cmake: Added.
+
 2017-05-09  Saam Barati  <sbarati@apple.com>
 
         CallLinkInfos belonging to Wasm->JS stubs need to be informed when we clearCode() from all Executables

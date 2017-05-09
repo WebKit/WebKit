@@ -285,7 +285,7 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     notifyThisWebProcessPoolWasCreated();
 }
 
-#if !PLATFORM(COCOA) && !PLATFORM(GTK)
+#if !PLATFORM(COCOA) && !PLATFORM(GTK) && !PLATFORM(WPE)
 void WebProcessPool::platformInitialize()
 {
 }

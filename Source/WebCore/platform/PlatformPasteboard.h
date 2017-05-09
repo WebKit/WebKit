@@ -40,6 +40,10 @@ OBJC_CLASS NSPasteboard;
 OBJC_CLASS UIPasteboard;
 #endif
 
+#if PLATFORM(WPE)
+struct wpe_pasteboard;
+#endif
+
 namespace WebCore {
 
 class Color;
@@ -53,7 +57,7 @@ struct PasteboardWebContent;
 class PlatformPasteboard {
 public:
     WEBCORE_EXPORT explicit PlatformPasteboard(const String& pasteboardName);
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(WPE)
     WEBCORE_EXPORT PlatformPasteboard();
     WEBCORE_EXPORT Vector<String> filenamesForDataInteraction();
     WEBCORE_EXPORT void getTypesByFidelityForItemAtIndex(Vector<String>& types, int index);
@@ -109,6 +113,9 @@ private:
 #endif
 #if PLATFORM(GTK)
     GtkClipboard* m_clipboard;
+#endif
+#if PLATFORM(WPE)
+    struct wpe_pasteboard* m_pasteboard;
 #endif
 };
 

@@ -1,3 +1,73 @@
+2017-05-09  Zan Dobersek  <zdobersek@igalia.com>
+
+        Upstream the WPE port
+        https://bugs.webkit.org/show_bug.cgi?id=171110
+
+        Reviewed by Alex Christensen.
+
+        webkit-dev thread:
+        https://lists.webkit.org/pipermail/webkit-dev/2017-April/028923.html
+
+        Existing files mostly changed to properly use PLATFORM(WPE) build guards.
+        In-file changes removed from this ChangeLog entry for brevity.
+
+        * CMakeLists.txt:
+        * PlatformWPE.cmake: Added.
+        * accessibility/AccessibilityObject.h:
+        * accessibility/wpe/AXObjectCacheWPE.cpp: Added.
+        * accessibility/wpe/AccessibilityObjectWPE.cpp: Copied from Source/WebCore/platform/audio/glib/AudioBusGLib.cpp.
+        * config.h:
+        * crypto/keys/CryptoKeyEC.h:
+        * crypto/keys/CryptoKeyRSA.h:
+        * editing/Editor.cpp:
+        * editing/Editor.h:
+        * editing/wpe/EditorWPE.cpp: Added.
+        * page/EventHandler.cpp:
+        * page/wpe/EventHandlerWPE.cpp: Added.
+        * platform/Cursor.h:
+        * platform/DragData.h:
+        * platform/DragImage.h:
+        * platform/FileSystem.h:
+        * platform/MainThreadSharedTimer.cpp:
+        * platform/MainThreadSharedTimer.h:
+        * platform/Pasteboard.h:
+        * platform/PasteboardStrategy.h:
+        * platform/PlatformPasteboard.h:
+        * platform/SchemeRegistry.cpp:
+        * platform/Widget.h:
+        * platform/audio/glib/AudioBusGLib.cpp:
+        * platform/glib/FileSystemGlib.cpp:
+        * platform/graphics/ANGLEWebKitBridge.h:
+        * platform/graphics/GLContext.cpp:
+        * platform/graphics/GLContext.h:
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/OpenGLESShims.h:
+        * platform/graphics/PlatformDisplay.cpp:
+        * platform/graphics/PlatformDisplay.h:
+        * platform/graphics/egl/GLContextEGL.cpp:
+        * platform/graphics/egl/GLContextEGL.h:
+        * platform/graphics/egl/GLContextEGLWPE.cpp: Copied from Source/WebCore/platform/audio/glib/AudioBusGLib.cpp.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        * platform/graphics/wpe/IconWPE.cpp: Copied from Source/WebKit2/Shared/DrawingAreaInfo.h.
+        * platform/graphics/wpe/ImageWPE.cpp: Copied from Source/WebKit2/Shared/DrawingAreaInfo.h.
+        * platform/graphics/wpe/PlatformDisplayWPE.cpp: Added.
+        * platform/graphics/wpe/PlatformDisplayWPE.h: Added.
+        * platform/wpe/CursorWPE.cpp: Copied from Source/WebKit2/Shared/DrawingAreaInfo.h.
+        * platform/wpe/LocalizedStringsWPE.cpp: Copied from Source/WebKit2/Shared/DrawingAreaInfo.h.
+        * platform/wpe/PasteboardWPE.cpp: Added.
+        * platform/wpe/PlatformKeyboardEventWPE.cpp: Copied from Source/WebKit2/Shared/DrawingAreaInfo.h.
+        * platform/wpe/PlatformPasteboardWPE.cpp: Added.
+        * platform/wpe/PlatformScreenWPE.cpp: Copied from Source/WebKit2/Shared/DrawingAreaInfo.h.
+        * platform/wpe/RenderThemeWPE.cpp: Copied from Source/WebKit2/Shared/NativeWebWheelEvent.h.
+        * platform/wpe/RenderThemeWPE.h: Copied from Source/WebKit2/Shared/DrawingAreaInfo.h.
+        * platform/wpe/ScrollbarThemeWPE.cpp: Copied from Source/WebKit2/Shared/DrawingAreaInfo.h.
+        * platform/wpe/ScrollbarThemeWPE.h: Copied from Source/WebKit2/Shared/DrawingAreaInfo.h.
+        * platform/wpe/SoundWPE.cpp: Copied from Source/WebKit2/Shared/DrawingAreaInfo.h.
+        * platform/wpe/ThemeWPE.cpp: Added.
+        * platform/wpe/ThemeWPE.h: Copied from Source/WebKit2/Shared/DrawingAreaInfo.h.
+        * platform/wpe/WidgetWPE.cpp: Copied from Source/WebKit2/Shared/DrawingAreaInfo.h.
+
 2017-05-09  Frederic Wang  <fwang@igalia.com>
 
         Fix property names in ScrollingTreeScrollingNode::dumpProperties

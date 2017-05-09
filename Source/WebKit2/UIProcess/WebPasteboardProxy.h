@@ -98,6 +98,7 @@ private:
     void setPasteboardStringForType(const String& pasteboardName, const String& pasteboardType, const String&, uint64_t& newChangeCount);
     void setPasteboardBufferForType(const String& pasteboardName, const String& pasteboardType, const SharedMemory::Handle&, uint64_t size, uint64_t& newChangeCount);
 #endif
+
 #if PLATFORM(GTK)
     void writeToClipboard(const String& pasteboardName, const WebSelectionData&);
     void readFromClipboard(const String& pasteboardName, WebSelectionData&);
@@ -105,7 +106,14 @@ private:
     WebFrameProxy* m_primarySelectionOwner { nullptr };
     WebFrameProxy* m_frameWritingToClipboard { nullptr };
 #endif // PLATFORM(GTK)
-    
+
+#if PLATFORM(WPE)
+    void getPasteboardTypes(Vector<String>& pasteboardTypes);
+    void readStringFromPasteboard(uint64_t index, const String& pasteboardType, WTF::String&);
+    void writeWebContentToPasteboard(const WebCore::PasteboardWebContent&);
+    void writeStringToPasteboard(const String& pasteboardType, const String&);
+#endif
+
     WebProcessProxyList m_webProcessProxyList;
 };
 

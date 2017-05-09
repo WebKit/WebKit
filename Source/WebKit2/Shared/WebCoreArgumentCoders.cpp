@@ -84,10 +84,13 @@
 #if PLATFORM(IOS)
 #include <WebCore/FloatQuad.h>
 #include <WebCore/InspectorOverlay.h>
-#include <WebCore/Pasteboard.h>
 #include <WebCore/SelectionRect.h>
 #include <WebCore/SharedBuffer.h>
 #endif // PLATFORM(IOS)
+
+#if PLATFORM(IOS) || PLATFORM(WPE)
+#include <WebCore/Pasteboard.h>
+#endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 #include <WebCore/MediaPlaybackTargetContext.h>
@@ -1491,6 +1494,23 @@ bool ArgumentCoder<PasteboardImage>::decode(Decoder& decoder, PasteboardImage& p
 }
 
 #endif
+
+#if PLATFORM(WPE)
+void ArgumentCoder<PasteboardWebContent>::encode(Encoder& encoder, const PasteboardWebContent& content)
+{
+    encoder << content.text;
+    encoder << content.markup;
+}
+
+bool ArgumentCoder<PasteboardWebContent>::decode(Decoder& decoder, PasteboardWebContent& content)
+{
+    if (!decoder.decode(content.text))
+        return false;
+    if (!decoder.decode(content.markup))
+        return false;
+    return true;
+}
+#endif // PLATFORM(WPE)
 
 void ArgumentCoder<DictationAlternative>::encode(Encoder& encoder, const DictationAlternative& dictationAlternative)
 {

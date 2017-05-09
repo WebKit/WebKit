@@ -41,7 +41,7 @@ typedef struct CGImage *CGImageRef;
 OBJC_CLASS NSImage;
 #elif PLATFORM(WIN)
 typedef struct HBITMAP__* HBITMAP;
-#elif PLATFORM(GTK)
+#elif USE(CAIRO)
 #include "RefPtrCairo.h"
 #endif
 
@@ -64,7 +64,7 @@ typedef RetainPtr<CGImageRef> DragImageRef;
 typedef RetainPtr<NSImage> DragImageRef;
 #elif PLATFORM(WIN)
 typedef HBITMAP DragImageRef;
-#elif PLATFORM(GTK)
+#elif PLATFORM(GTK) || PLATFORM(WPE)
 typedef RefPtr<cairo_surface_t> DragImageRef;
 #endif
 

@@ -50,6 +50,11 @@ typedef struct _GtkWidget GtkWidget;
 typedef WKViewRef PlatformWKView;
 typedef GtkWidget* PlatformWindow;
 typedef cairo_surface_t *PlatformImage;
+#elif PLATFORM(WPE)
+class HeadlessViewBackend;
+typedef WKViewRef PlatformWKView;
+typedef HeadlessViewBackend* PlatformWindow;
+typedef cairo_surface_t* PlatformImage;
 #endif
 
 namespace WTR {
