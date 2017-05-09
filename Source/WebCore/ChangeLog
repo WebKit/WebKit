@@ -1,3 +1,17 @@
+2017-05-09  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Localized strings aren't loaded
+        https://bugs.webkit.org/show_bug.cgi?id=171884
+
+        Reviewed by Dean Jackson.
+
+        Remove the extraneous file extension in the file name.
+
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::mediaControlsScript):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::mediaControlsScript):
+
 2017-05-09  Chris Dumez  <cdumez@apple.com>
 
         Introduce DocumentAndElementEventHandlers IDL interface

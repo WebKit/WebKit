@@ -1349,7 +1349,7 @@ String RenderThemeIOS::mediaControlsScript()
             NSBundle *bundle = [NSBundle bundleForClass:[WebCoreRenderThemeBundle class]];
 
             StringBuilder scriptBuilder;
-            scriptBuilder.append([NSString stringWithContentsOfFile:[bundle pathForResource:@"modern-media-controls-localized-strings.js" ofType:@"js"] encoding:NSUTF8StringEncoding error:nil]);
+            scriptBuilder.append([NSString stringWithContentsOfFile:[bundle pathForResource:@"modern-media-controls-localized-strings" ofType:@"js"] encoding:NSUTF8StringEncoding error:nil]);
             scriptBuilder.append([NSString stringWithContentsOfFile:[bundle pathForResource:@"modern-media-controls" ofType:@"js" inDirectory:@"modern-media-controls"] encoding:NSUTF8StringEncoding error:nil]);
             m_mediaControlsScript = scriptBuilder.toString();
         }
