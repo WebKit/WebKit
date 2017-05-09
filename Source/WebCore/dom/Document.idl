@@ -144,12 +144,6 @@
     readonly attribute VisibilityState visibilityState;
     attribute EventHandler onvisibilitychange;
 
-    // FIXME: Should be in a separate DocumentAndElementEventHandlers interface.
-    // https://html.spec.whatwg.org/#documentandelementeventhandlers
-    [NotEnumerable] attribute EventHandler oncopy; // FIXME: Should be enumerable.
-    [NotEnumerable] attribute EventHandler oncut; // FIXME: Should be enumerable.
-    [NotEnumerable] attribute EventHandler onpaste; // FIXME: Should be enumerable.
-
     // FIXME: Those have been dropped from the HTML specification.
     readonly attribute HTMLCollection applets;
     readonly attribute HTMLCollection anchors;
@@ -190,12 +184,6 @@
         optional unrestricted float webkitRotationAngle = NaN, optional unrestricted float webkitForce = NaN);
     [NewObject, Custom] TouchList createTouchList(Touch... touches);
 #endif
-
-    // Non standard event handlers.
-    [NotEnumerable] attribute EventHandler onbeforecopy;
-    [NotEnumerable] attribute EventHandler onbeforecut;
-    [NotEnumerable] attribute EventHandler onbeforeinput;
-    [NotEnumerable] attribute EventHandler onbeforepaste;
 };
 
 // FIXME: Missing "unloaded" value (https://www.w3.org/TR/page-visibility/#sec-document-interface).
@@ -203,6 +191,7 @@ enum VisibilityState { "hidden", "visible", "prerender" };
 
 enum DocumentReadyState { "loading", "interactive", "complete" };
 
+Document implements DocumentAndElementEventHandlers;
 Document implements ParentNode;
 Document implements NonElementParentNode;
 Document implements DocumentOrShadowRoot;

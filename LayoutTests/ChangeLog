@@ -1,3 +1,17 @@
+2017-05-09  Chris Dumez  <cdumez@apple.com>
+
+        Introduce DocumentAndElementEventHandlers IDL interface
+        https://bugs.webkit.org/show_bug.cgi?id=171879
+
+        Reviewed by Simon Fraser and Ryosuke Niwa.
+
+        * fast/events/DocumentAndElementEventHandlers-expected.txt: Added.
+        * fast/events/DocumentAndElementEventHandlers.html: Added.
+        Add layout test coverage.
+
+        * js/dom/dom-static-property-for-in-iteration-expected.txt:
+        Rebaseline now that those event handlers are enumerable.
+
 2017-05-10  Dean Jackson  <dino@apple.com>
 
         Restrict SVG filters to accessible security origins
