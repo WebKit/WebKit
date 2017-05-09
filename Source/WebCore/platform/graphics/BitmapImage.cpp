@@ -183,10 +183,15 @@ void BitmapImage::draw(GraphicsContext& context, const FloatRect& destRect, cons
     if (decodingMode == DecodingMode::Asynchronous && shouldUseAsyncDecodingForLargeImages()) {
         ASSERT(!canAnimate() && !m_currentFrame);
 
-        if (!frameHasDecodedNativeImageCompatibleWithOptionsAtIndex(m_currentFrame, m_currentSubsamplingLevel, DecodingOptions(sizeForDrawing))
-            && !frameIsBeingDecodedAndIsCompatibleWithOptionsAtIndex(m_currentFrame, DecodingOptions(sizeForDrawing))) {
+        bool frameIsCompatible = frameHasDecodedNativeImageCompatibleWithOptionsAtIndex(m_currentFrame, m_currentSubsamplingLevel, DecodingOptions(sizeForDrawing));
+        bool frameIsBeingDecoded = frameIsBeingDecodedAndIsCompatibleWithOptionsAtIndex(m_currentFrame, DecodingOptions(sizeForDrawing));
+        bool frameIsComplete = frameIsCompleteAtIndex(m_currentFrame);
+
+        // If the current frame is incomplete, a new request for decoding this frame has to be made even if
+        // it is currently being decoded. New data may have been received since the previous request was made.
+        if ((!frameIsCompatible && !frameIsBeingDecoded) || !frameIsComplete) {
             LOG(Images, "BitmapImage::%s - %p - url: %s [requesting large async decoding]", __FUNCTION__, this, sourceURL().string().utf8().data());
-            m_source.requestFrameAsyncDecodingAtIndex(0, m_currentSubsamplingLevel, sizeForDrawing);
+            frameIsBeingDecoded = m_source.requestFrameAsyncDecodingAtIndex(0, m_currentSubsamplingLevel, sizeForDrawing);
         }
 
         if (!frameHasDecodedNativeImageCompatibleWithOptionsAtIndex(m_currentFrame, m_currentSubsamplingLevel, DecodingMode::Asynchronous)) {
@@ -196,6 +201,7 @@ void BitmapImage::draw(GraphicsContext& context, const FloatRect& destRect, cons
         }
 
         image = frameImageAtIndex(m_currentFrame);
+        ASSERT_IMPLIES(encodedDataStatus() == EncodedDataStatus::Complete, frameIsBeingDecoded || frameIsComplete);
         LOG(Images, "BitmapImage::%s - %p - url: %s [a decoded image frame is available for drawing]", __FUNCTION__, this, sourceURL().string().utf8().data());
     } else {
         StartAnimationStatus status = internalStartAnimation();

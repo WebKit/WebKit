@@ -1,3 +1,21 @@
+2017-05-08  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        The Incomplete asynchronously decoded image frame should be decoded every time it's drawn
+        https://bugs.webkit.org/show_bug.cgi?id=170836
+
+        Reviewed by Tim Horton.
+
+        The asynchronously decoded image frames has to be cached to prevent flickering,
+        but we have to keep requesting new decoding for the incomplete frame every time
+        it's drawn. This is to avoid drawing an incomplete image frame even after all
+        its encoded data is received.
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::draw):
+        * platform/graphics/ImageFrameCache.cpp:
+        (WebCore::ImageFrameCache::cacheAsyncFrameNativeImageAtIndex):
+        (WebCore::ImageFrameCache::requestFrameAsyncDecodingAtIndex):
+
 2017-05-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Guard DragController::cleanupAfterSystemDrag to only clear drag state on Mac
