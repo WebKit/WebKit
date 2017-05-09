@@ -221,7 +221,7 @@ static bool urlRequiresChromeBrowser(const URL& url)
 
 static bool urlRequiresFirefoxBrowser(const URL& url)
 {
-    return isGoogle(url);
+    return isGoogle(url) && url.host() != "accounts.google.com";
 }
 
 static bool urlRequiresMacintoshPlatform(const URL& url)
