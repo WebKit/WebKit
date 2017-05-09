@@ -53,7 +53,7 @@ public:
     void start();
 
     WEBCORE_EXPORT void setAllowedMediaDeviceUIDs(const String& audioDeviceUID, const String& videoDeviceUID);
-    WEBCORE_EXPORT void allow(const String& audioDeviceUID, const String& videoDeviceUID, const String& deviceIdentifierHashSalt);
+    WEBCORE_EXPORT void allow(const String& audioDeviceUID, const String& videoDeviceUID);
 
     enum MediaAccessDenialReason { NoConstraints, UserMediaDisabled, NoCaptureDevices, InvalidConstraint, HardwareError, PermissionDenied, OtherFailure };
     WEBCORE_EXPORT void deny(MediaAccessDenialReason, const String& invalidConstraint);

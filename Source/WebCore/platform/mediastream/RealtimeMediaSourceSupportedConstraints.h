@@ -93,6 +93,9 @@ public:
 
     bool supportsConstraint(MediaConstraintType) const;
 
+    static const AtomicString& nameForConstraint(MediaConstraintType);
+    static MediaConstraintType constraintFromName(const String&);
+
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static bool decode(Decoder&, RealtimeMediaSourceSupportedConstraints&);
 
