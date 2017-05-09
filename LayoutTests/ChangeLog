@@ -1,3 +1,17 @@
+2017-05-09  Romain Bellessort  <romain.bellessort@crf.canon.fr>
+
+        [Readable Streams API] Enable creation of ReadableStreamBYOBReader
+        https://bugs.webkit.org/show_bug.cgi?id=171665
+
+        Reviewed by Youenn Fablet.
+        
+        Added test to check the creation of ReadableStreamBYOBReader. Also check
+        that created object has the right methods and properties.
+
+        * streams/readable-stream-byob-reader-expected.txt: Added.
+        * streams/readable-stream-byob-reader.html: Added.
+        * streams/readable-stream-byob-reader.js: Added.
+
 2017-05-09  Frederic Wang  <fwang@igalia.com>
 
         Print more properties in the output of scrolling trees

@@ -1,0 +1,60 @@
+'use strict';
+
+if (self.importScripts) {
+    self.importScripts('../resources/testharness.js');
+}
+
+test(function() {
+    const rs = new ReadableStream({
+        type: "bytes"
+    });
+    rs.getReader({ mode: 'byob' });
+}, "Getting a ReadableStreamBYOBReader should succeed");
+
+test(() => {
+    const methods = ['cancel', 'constructor', 'read', 'releaseLock'];
+    const properties = methods.concat(['closed']).sort();
+
+    const rs = new ReadableStream({ type: "bytes" });
+    const reader = rs.getReader({ mode: 'byob' });
+
+    const proto = Object.getPrototypeOf(reader);
+
+    assert_array_equals(Object.getOwnPropertyNames(proto).sort(), properties);
+
+    for (const m of methods) {
+        const propDesc = Object.getOwnPropertyDescriptor(proto, m);
+        assert_equals(propDesc.enumerable, false, 'method should be non-enumerable');
+        assert_equals(propDesc.configurable, true, 'method should be configurable');
+        assert_equals(propDesc.writable, true, 'method should be writable');
+        assert_equals(typeof reader[m], 'function', 'should have be a method');
+    }
+
+    const closedPropDesc = Object.getOwnPropertyDescriptor(proto, 'closed');
+    assert_equals(closedPropDesc.enumerable, false, 'closed should be non-enumerable');
+    assert_equals(closedPropDesc.configurable, true, 'closed should be configurable');
+    assert_not_equals(closedPropDesc.get, undefined, 'closed should have a getter');
+    assert_equals(closedPropDesc.set, undefined, 'closed should not have a setter');
+
+    assert_equals(reader.cancel.length, 1, 'cancel has 1 parameter');
+    assert_equals(reader.constructor.length, 1, 'constructor has 1 parameter');
+    assert_equals(reader.read.length, 1, 'read has 1 parameter');
+    assert_equals(reader.releaseLock.length, 0, 'releaseLock has 0 parameter');
+
+}, 'ReadableStreamBYOBReader instances should have the correct list of properties');
+
+test(function() {
+    const rs = new ReadableStream();
+    const tmp = 12;
+    assert_throws(new TypeError("Can only call ReadableStream.getReader on instances of ReadableStream"),
+        function() { rs.getReader.apply(tmp); });
+}, "Calling getReader() with a this object different from ReadableStream should throw a TypeError");
+
+test(function() {
+    const rs = new ReadableStream();
+
+    assert_throws(new TypeError("ReadableStreamBYOBReader needs a ReadableByteStreamController"),
+        function() { rs.getReader({ mode: 'byob' }); });
+}, "Calling getReader({ mode: 'byob' }) with a ReadableStream whose controller is a ReadableStreamDefaultController should throw a TypeError");
+
+done();

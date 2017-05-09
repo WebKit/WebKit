@@ -26,6 +26,23 @@
 // @conditional=ENABLE(STREAMS_API)
 // @internal
 
+function privateInitializeReadableStreamBYOBReader(stream)
+{
+    "use strict";
+
+    if (!@isReadableStream(stream))
+        @throwTypeError("ReadableStreamBYOBReader needs a ReadableStream");
+    if (!@isReadableByteStreamController(stream.@readableStreamController))
+        @throwTypeError("ReadableStreamBYOBReader needs a ReadableByteStreamController");
+    if (@isReadableStreamLocked(stream))
+        @throwTypeError("ReadableStream is locked");
+
+    @readableStreamReaderGenericInitialize(this, stream);
+    this.@readIntoRequests = [];
+
+    return this;
+}
+
 function privateInitializeReadableByteStreamController(stream, underlyingByteSource, highWaterMark)
 {
     "use strict";
@@ -108,10 +125,10 @@ function isReadableStreamBYOBReader(reader)
 {
     "use strict";
 
-    // FIXME: Since BYOBReader is not yet implemented, always return false.
-    // To be implemented at the same time as BYOBReader (see isReadableStreamDefaultReader
-    // to apply same model).
-    return false;
+    // Spec tells to return true only if reader has a readIntoRequests internal slot.
+    // However, since it is a private slot, it cannot be checked using hasOwnProperty().
+    // Since readIntoRequests is initialized with an empty array, the following test is ok.
+    return @isObject(reader) && !!reader.@readIntoRequests;
 }
 
 function readableByteStreamControllerCancel(controller, reason)

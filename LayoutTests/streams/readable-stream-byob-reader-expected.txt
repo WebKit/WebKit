@@ -1,0 +1,10 @@
+
+PASS Getting a ReadableStreamBYOBReader should succeed 
+PASS ReadableStreamBYOBReader instances should have the correct list of properties 
+PASS Calling getReader() with a this object different from ReadableStream should throw a TypeError 
+PASS Calling getReader({ mode: 'byob' }) with a ReadableStream whose controller is a ReadableStreamDefaultController should throw a TypeError 
+PASS Getting a ReadableStreamBYOBReader should succeed 
+PASS ReadableStreamBYOBReader instances should have the correct list of properties 
+PASS Calling getReader() with a this object different from ReadableStream should throw a TypeError 
+PASS Calling getReader({ mode: 'byob' }) with a ReadableStream whose controller is a ReadableStreamDefaultController should throw a TypeError 
+

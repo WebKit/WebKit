@@ -116,6 +116,7 @@ namespace WebCore {
     macro(MediaStreamTrack) \
     macro(ReadableByteStreamController) \
     macro(ReadableStream) \
+    macro(ReadableStreamBYOBReader) \
     macro(ReadableStreamBYOBRequest) \
     macro(ReadableStreamDefaultController) \
     macro(ReadableStreamDefaultReader) \

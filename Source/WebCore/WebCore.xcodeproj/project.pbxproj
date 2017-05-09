@@ -3124,6 +3124,8 @@
 		7C4C96DC1AD4483500365A60 /* JSWritableStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C4C96D81AD4483500365A60 /* JSWritableStream.cpp */; };
 		7C4C96DD1AD4483500365A50 /* JSReadableStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C4C96D91AD4483500365A50 /* JSReadableStream.h */; };
 		7C4C96DD1AD4483500365A60 /* JSWritableStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C4C96D91AD4483500365A60 /* JSWritableStream.h */; };
+		7C4C96DE1AD4483500363572 /* JSReadableStreamBYOBReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C4C96DA1AD4483500363572 /* JSReadableStreamBYOBReader.cpp */; };
+		7C4C96DF1AD4483500363572 /* JSReadableStreamBYOBReader.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C4C96DB1AD4483500363572 /* JSReadableStreamBYOBReader.h */; };
 		7C4C96DE1AD4483500365A50 /* JSReadableStreamDefaultReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C4C96DA1AD4483500365A50 /* JSReadableStreamDefaultReader.cpp */; };
 		7C4C96DF1AD4483500365A50 /* JSReadableStreamDefaultReader.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C4C96DB1AD4483500365A50 /* JSReadableStreamDefaultReader.h */; };
 		7C4C96E31AD44ABF00365A50 /* LaunchServicesSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C4C96E21AD44ABF00365A50 /* LaunchServicesSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9392,6 +9394,7 @@
 		419BC2DD1685329900D64D6D /* VisitedLinkState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VisitedLinkState.h; sourceTree = "<group>"; };
 		419BE7521BC7F3DB00E1C85B /* WebCoreBuiltinNames.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreBuiltinNames.h; sourceTree = "<group>"; };
 		419BE75A1BCBD3ED00E1C85B /* NavigatorUserMedia.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = NavigatorUserMedia.js; sourceTree = "<group>"; };
+		419FAFAD1ABABCD5005B3572 /* ReadableStreamBYOBReader.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ReadableStreamBYOBReader.idl; sourceTree = "<group>"; };
 		419FAFAD1ABABCD5005B828B /* ReadableStreamDefaultReader.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ReadableStreamDefaultReader.idl; sourceTree = "<group>"; };
 		41A023ED1A39DB7900F722CF /* ReadableStream.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ReadableStream.idl; sourceTree = "<group>"; };
 		41A023ED1A39DB7900F722DF /* WritableStream.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WritableStream.idl; sourceTree = "<group>"; };
@@ -11134,6 +11137,8 @@
 		7C4C96D81AD4483500365A60 /* JSWritableStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWritableStream.cpp; sourceTree = "<group>"; };
 		7C4C96D91AD4483500365A50 /* JSReadableStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSReadableStream.h; sourceTree = "<group>"; };
 		7C4C96D91AD4483500365A60 /* JSWritableStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWritableStream.h; sourceTree = "<group>"; };
+		7C4C96DA1AD4483500363572 /* JSReadableStreamBYOBReader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSReadableStreamBYOBReader.cpp; sourceTree = "<group>"; };
+		7C4C96DB1AD4483500363572 /* JSReadableStreamBYOBReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSReadableStreamBYOBReader.h; sourceTree = "<group>"; };
 		7C4C96DA1AD4483500365A50 /* JSReadableStreamDefaultReader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSReadableStreamDefaultReader.cpp; sourceTree = "<group>"; };
 		7C4C96DB1AD4483500365A50 /* JSReadableStreamDefaultReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSReadableStreamDefaultReader.h; sourceTree = "<group>"; };
 		7C4C96E21AD44ABF00365A50 /* LaunchServicesSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LaunchServicesSPI.h; sourceTree = "<group>"; };
@@ -12271,6 +12276,7 @@
 		9908B0F11BCACF9100ED0F65 /* ReadableStreamInternals.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = ReadableStreamInternals.js; sourceTree = "<group>"; };
 		9908B0F11BCACF9100ED0F75 /* WritableStreamInternals.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = WritableStreamInternals.js; sourceTree = "<group>"; };
 		9908B0F11BCACF9100ED3F64 /* ReadableByteStreamInternals.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = ReadableByteStreamInternals.js; sourceTree = "<group>"; };
+		9908B0F21BCACF9100ED3572 /* ReadableStreamBYOBReader.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = ReadableStreamBYOBReader.js; sourceTree = "<group>"; };
 		9908B0F21BCACF9100ED0F65 /* ReadableStreamDefaultReader.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = ReadableStreamDefaultReader.js; sourceTree = "<group>"; };
 		9908B0F31BCACFFE00ED0F65 /* ByteLengthQueuingStrategyBuiltins.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ByteLengthQueuingStrategyBuiltins.cpp; sourceTree = "<group>"; };
 		9908B0F51BCAD07D00ED0F65 /* ByteLengthQueuingStrategyBuiltins.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ByteLengthQueuingStrategyBuiltins.h; sourceTree = "<group>"; };
@@ -12286,6 +12292,8 @@
 		9908B0FD1BCAD07D00ED0F66 /* JSDOMBindingInternalsBuiltins.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMBindingInternalsBuiltins.cpp; sourceTree = "<group>"; };
 		9908B0FD1BCAD07D00ED0F75 /* WritableStreamInternalsBuiltins.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WritableStreamInternalsBuiltins.cpp; sourceTree = "<group>"; };
 		9908B0FD1BCAD07D00ED3F64 /* ReadableByteStreamInternalsBuiltins.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReadableByteStreamInternalsBuiltins.cpp; sourceTree = "<group>"; };
+		9908B0FE1BCAD07D00ED3572 /* ReadableStreamBYOBReaderBuiltins.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReadableStreamBYOBReaderBuiltins.cpp; sourceTree = "<group>"; };
+		9908B0FF1BCAD07D00ED3572 /* ReadableStreamBYOBReaderBuiltins.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReadableStreamBYOBReaderBuiltins.h; sourceTree = "<group>"; };
 		9908B0FE1BCAD07D00ED0F65 /* ReadableStreamDefaultReaderBuiltins.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReadableStreamDefaultReaderBuiltins.cpp; sourceTree = "<group>"; };
 		9908B0FF1BCAD07D00ED0F65 /* ReadableStreamDefaultReaderBuiltins.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReadableStreamDefaultReaderBuiltins.h; sourceTree = "<group>"; };
 		9920398018B95BC600B39AF9 /* UserInputBridge.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserInputBridge.cpp; sourceTree = "<group>"; };
@@ -17704,6 +17712,8 @@
 				9908B0F11BCACF9100ED3F64 /* ReadableByteStreamInternals.js */,
 				41A023ED1A39DB7900F722CF /* ReadableStream.idl */,
 				9908B0EF1BCACF9100ED0F65 /* ReadableStream.js */,
+				419FAFAD1ABABCD5005B3572 /* ReadableStreamBYOBReader.idl */,
+				9908B0F21BCACF9100ED3572 /* ReadableStreamBYOBReader.js */,
 				41189EF71AD8232800B95672 /* ReadableStreamBYOBRequest.idl */,
 				9908B0F01BCACF9100ED5672 /* ReadableStreamBYOBRequest.js */,
 				41189EF71AD8232800B90A0D /* ReadableStreamDefaultController.idl */,
@@ -17728,6 +17738,8 @@
 				6C4C96DB1AD4483500363F64 /* JSReadableByteStreamController.h */,
 				7C4C96D81AD4483500365A50 /* JSReadableStream.cpp */,
 				7C4C96D91AD4483500365A50 /* JSReadableStream.h */,
+				7C4C96DA1AD4483500363572 /* JSReadableStreamBYOBReader.cpp */,
+				7C4C96DB1AD4483500363572 /* JSReadableStreamBYOBReader.h */,
 				6C4C96DA1AD4483500365672 /* JSReadableStreamBYOBRequest.cpp */,
 				6C4C96DB1AD4483500365672 /* JSReadableStreamBYOBRequest.h */,
 				6C4C96DA1AD4483500365A50 /* JSReadableStreamDefaultController.cpp */,
@@ -18787,6 +18799,8 @@
 				9B03D8061BB3110D00B73F64 /* ReadableByteStreamInternalsBuiltins.h */,
 				9908B0F91BCAD07D00ED0F65 /* ReadableStreamBuiltins.cpp */,
 				9B03D8061BB3110D00B764D8 /* ReadableStreamBuiltins.h */,
+				9908B0FE1BCAD07D00ED3572 /* ReadableStreamBYOBReaderBuiltins.cpp */,
+				9908B0FF1BCAD07D00ED3572 /* ReadableStreamBYOBReaderBuiltins.h */,
 				9908B0FA1BCAD07D00ED0F65 /* ReadableStreamDefaultControllerBuiltins.cpp */,
 				9908B0FB1BCAD07D00ED0F65 /* ReadableStreamDefaultControllerBuiltins.h */,
 				9908B0FE1BCAD07D00ED0F65 /* ReadableStreamDefaultReaderBuiltins.cpp */,
@@ -28015,6 +28029,7 @@
 				65DF320209D1CC60000BE325 /* JSRange.h in Headers */,
 				6C4C96DF1AD4483500363F64 /* JSReadableByteStreamController.h in Headers */,
 				7C4C96DD1AD4483500365A50 /* JSReadableStream.h in Headers */,
+				7C4C96DF1AD4483500363572 /* JSReadableStreamBYOBReader.h in Headers */,
 				6C4C96DF1AD4483500365672 /* JSReadableStreamBYOBRequest.h in Headers */,
 				6C4C96DF1AD4483500365A50 /* JSReadableStreamDefaultController.h in Headers */,
 				7C4C96DF1AD4483500365A50 /* JSReadableStreamDefaultReader.h in Headers */,
@@ -32002,6 +32017,7 @@
 				65DF320109D1CC60000BE325 /* JSRange.cpp in Sources */,
 				6C4C96DE1AD4483500363F64 /* JSReadableByteStreamController.cpp in Sources */,
 				7C4C96DC1AD4483500365A50 /* JSReadableStream.cpp in Sources */,
+				7C4C96DE1AD4483500363572 /* JSReadableStreamBYOBReader.cpp in Sources */,
 				6C4C96DE1AD4483500365672 /* JSReadableStreamBYOBRequest.cpp in Sources */,
 				6C4C96DE1AD4483500365A50 /* JSReadableStreamDefaultController.cpp in Sources */,
 				7C4C96DE1AD4483500365A50 /* JSReadableStreamDefaultReader.cpp in Sources */,

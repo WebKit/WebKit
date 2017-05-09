@@ -93,13 +93,12 @@ function getReader(options)
     if (options === @undefined)
          options = { };
 
-    if (options.mode === 'byob') {
-        // FIXME: Update once ReadableByteStreamContoller and ReadableStreamBYOBReader are implemented.
-        @throwTypeError("ReadableStreamBYOBReader is not implemented");
-    }
-
     if (options.mode === @undefined)
         return new @ReadableStreamDefaultReader(this);
+
+    // String conversion is required by spec, hence double equals.
+    if (options.mode == 'byob')
+        return new @ReadableStreamBYOBReader(this);
 
     @throwRangeError("Invalid mode is specified");
 }
