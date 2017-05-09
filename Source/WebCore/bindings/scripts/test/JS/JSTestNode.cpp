@@ -27,7 +27,7 @@
 #include "JSDOMConvert.h"
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMIterator.h"
-#include "JSDOMPromise.h"
+#include "JSDOMPromiseDeferred.h"
 #include "JSDOMWrapperCache.h"
 #include "RuntimeEnabledFeatures.h"
 #include <runtime/Error.h>

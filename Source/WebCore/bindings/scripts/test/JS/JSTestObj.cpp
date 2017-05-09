@@ -33,7 +33,7 @@
 #include "JSDOMConvertVariadic.h"
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMIterator.h"
-#include "JSDOMPromise.h"
+#include "JSDOMPromiseDeferred.h"
 #include "JSDOMStringList.h"
 #include "JSDOMWindow.h"
 #include "JSDOMWindowBase.h"
