@@ -1782,9 +1782,9 @@ EXPRESSION: span = document.createElement('span'); span.id = 'foo'; span
         "_value": ""
       },
       {
-        "_name": "tabIndex",
-        "_type": "number",
-        "_value": "-1"
+        "_name": "dataset",
+        "_type": "object",
+        "_value": "DOMStringMap"
       }
     ],
     "_entries": null

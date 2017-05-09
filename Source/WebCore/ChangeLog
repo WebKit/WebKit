@@ -1,3 +1,35 @@
+2017-05-08  Chris Dumez  <cdumez@apple.com>
+
+        Move offsetParent / offsetLeft / offsetTop / offsetWidth / offsetHeight from Element to HTMLElement
+        https://bugs.webkit.org/show_bug.cgi?id=171829
+
+        Reviewed by Simon Fraser.
+
+        Move offsetParent / offsetLeft / offsetTop / offsetWidth / offsetHeight from Element to HTMLElement,
+        as per the specification:
+        - https://drafts.csswg.org/cssom-view/#extensions-to-the-htmlelement-interface
+
+        Both Firefox and Chrome match the specification and also do not have the corresponding API on
+        SVGElement.
+
+        Bug tracking the similar move in Blink (completed over 1 year ago):
+        - https://bugs.chromium.org/p/chromium/issues/detail?id=463116
+
+        Note that for the inner SVG elements like <rect> and <circle> these attributes were returning 0,
+        because those aren't part of the CSS box model. They did return correct values for the <svg>
+        element itself, however.
+
+        Test: fast/css/htmlelement-offset-properties.html
+
+        * dom/Element.idl:
+        - Drop offset* attributes, now that they are on HTMLElement.
+
+        * html/HTMLElement.idl:
+        - Resync HTMLElement.idl with the specification: https://html.spec.whatwg.org/#htmlelement
+          No behavior change besides what's indicated in the Changelog above. Things that do not match
+          the spec have been annotated with FIXME comments.
+        - Add offset* attributes that used to be on Element.
+
 2017-05-08  Youenn Fablet  <youenn@apple.com>
 
         Add support for reading and writing settings from UIProcess audio capture

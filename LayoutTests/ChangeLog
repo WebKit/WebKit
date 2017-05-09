@@ -1,3 +1,25 @@
+2017-05-08  Chris Dumez  <cdumez@apple.com>
+
+        Move offsetParent / offsetLeft / offsetTop / offsetWidth / offsetHeight from Element to HTMLElement
+        https://bugs.webkit.org/show_bug.cgi?id=171829
+
+        Reviewed by Simon Fraser.
+
+        * fast/css/htmlelement-offset-properties-expected.txt:
+        * fast/css/htmlelement-offset-properties.html:
+        Add layout test coverage.
+
+        * editing/pasteboard/drag-link-with-data-transfer-adds-trusted-link-to-pasteboard.html:
+        * fast/css-grid-layout/grid-item-display.html:
+        * js/dom/dom-static-property-for-in-iteration-expected.txt:
+        * mathml/presentation/menclose-notation-no-overlap-expected.txt:
+        * mathml/presentation/menclose-notation-no-overlap.html:
+        * platform/mac/inspector/model/remote-object-expected.txt:
+        * svg/dynamic-updates/resources/SVGTestCase.js:
+        (clickAt):
+        * svg/text/inline-text-destroy-attributes-crash.xhtml:
+        Use getClientBoundingRect() instead of offset* properties for non-HTML elements.
+
 2017-05-08  Matt Lewis  <jlewis3@apple.com>
 
         Marked imported/w3c/web-platform-tests/XMLHttpRequest/timeout-multiple-fetches.html as flaky.

@@ -42,9 +42,10 @@ function iframeLoaded() {
 }
 
 function clickAt(x, y) {
-    // Translation due to <h1> above us
-    x = x + rootSVGElement.offsetLeft;
-    y = y + rootSVGElement.offsetTop;
+    // Translation due to <h1> above us.
+    var clientRect = rootSVGElement.getBoundingClientRect();
+    x = x + clientRect.left;
+    y = y + clientRect.top;
 
     if (window.eventSender) {
         eventSender.mouseMoveTo(x, y);

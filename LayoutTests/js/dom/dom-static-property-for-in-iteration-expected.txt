@@ -35,17 +35,22 @@ PASS a["title"] is
 PASS a["lang"] is 
 PASS a["translate"] is true
 PASS a["dir"] is 
-PASS a["tabIndex"] is 0
-PASS a["draggable"] is true
-PASS a["webkitdropzone"] is 
+PASS a["dataset"] is [object DOMStringMap]
 PASS a["hidden"] is false
+PASS a["tabIndex"] is 0
 PASS a["accessKey"] is 
+PASS a["draggable"] is true
+PASS a["spellcheck"] is true
 PASS a["innerText"] is nerget
-PASS a["outerText"] is nerget
 PASS a["contentEditable"] is inherit
 PASS a["isContentEditable"] is false
-PASS a["spellcheck"] is true
-PASS a["dataset"] is [object DOMStringMap]
+PASS a["offsetParent"] is [object HTMLBodyElement]
+PASS a["offsetTop"] is 714
+PASS a["offsetLeft"] is 8
+PASS a["offsetWidth"] is 40
+PASS a["offsetHeight"] is 18
+PASS a["outerText"] is nerget
+PASS a["webkitdropzone"] is 
 PASS a["style"] is [object CSSStyleDeclaration]
 PASS a["onabort"] is null
 PASS a["onblur"] is null
@@ -123,11 +128,6 @@ PASS a["clientTop"] is 0
 PASS a["clientLeft"] is 0
 PASS a["clientWidth"] is 0
 PASS a["clientHeight"] is 0
-PASS a["offsetParent"] is [object HTMLBodyElement]
-PASS a["offsetTop"] is 1899
-PASS a["offsetLeft"] is 8
-PASS a["offsetWidth"] is 40
-PASS a["offsetHeight"] is 18
 PASS a["innerHTML"] is nerget
 PASS a["outerHTML"] is <a id="foo" href="bar">nerget</a>
 PASS a["webkitRegionOverset"] is undefined

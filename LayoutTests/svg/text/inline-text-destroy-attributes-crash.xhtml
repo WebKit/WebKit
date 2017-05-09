@@ -10,13 +10,13 @@
 <text id="text2"></text>
 <script>
     if (window.testRunner)
-	    testRunner.dumpAsText();
+        testRunner.dumpAsText();
 
     var range = document.createRange();
     range.setStart(document.getElementById("use1"), 0);
     range.setEnd(document.getElementById("text2"), 0);
     (new XMLSerializer()).serializeToString(range.extractContents());
-	document.getElementById('text1').offsetTop;
+    document.getElementById('text1').clientTop;
     range.surroundContents(document.getElementById("tspan1"));
 </script>
 </svg>

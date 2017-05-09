@@ -92,9 +92,16 @@
 
     function moveMouseToCenterOfElement(elementId) {
         var element = document.getElementById(elementId);
-        var centerX = element.offsetLeft + element.offsetWidth / 2;
-        var centerY = element.offsetTop + element.offsetHeight / 2;
-        eventSender.mouseMoveTo(centerX, centerY);
+        if (element.offsetLeft) {
+            var centerX = element.offsetLeft + element.offsetWidth / 2;
+            var centerY = element.offsetTop + element.offsetHeight / 2;
+            eventSender.mouseMoveTo(centerX, centerY);
+        } else {
+            var clientRect = element.getBoundingClientRect();
+            var centerX = clientRect.left + clientRect.width / 2;
+            var centerY = clientRect.top + clientRect.height / 2;
+            eventSender.mouseMoveTo(centerX, centerY);
+        }
     }
 
     function dragAndDropElement (elementId) {

@@ -110,9 +110,8 @@ function runTests()
     dragAndDrop(htmlHyperlink.offsetLeft, htmlHyperlink.offsetTop + htmlHyperlink.offsetHeight / 2, endX, endY);
 
     debug("<br>Dragging SVG hyperlink<br>");
-    // Only the SVG root element has a CSS layout box. And Offset{Left, Top, Width, Height} only work for elements that have a CSS layout box
-    // per <http://www.w3.org/TR/cssom-view/#extensions-to-the-htmlelement-interface>.
-    dragAndDrop(svgHyperlink.ownerSVGElement.offsetLeft, svgHyperlink.ownerSVGElement.offsetTop + 10, endX, endY);
+    const clientRect = svgHyperlink.ownerSVGElement.getBoundingClientRect();
+    dragAndDrop(clientRect.left, clientRect.top + 10, endX, endY);
 }
 </script>
 </head>
