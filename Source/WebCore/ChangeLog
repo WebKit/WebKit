@@ -1,3 +1,16 @@
+2017-05-09  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Avoid -Wformat warnings in RenderLayerCompositor.cpp and RenderLayerBacking.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=171875
+
+        Reviewed by Simon Fraser.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::detachFromScrollingCoordinator):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::logLayerInfo):
+        (WebCore::RenderLayerCompositor::updateScrollCoordinatedLayer):
+
 2017-05-09  Chris Dumez  <cdumez@apple.com>
 
         Drop custom bindings code for Window.location setter
