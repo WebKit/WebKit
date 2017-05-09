@@ -656,7 +656,7 @@ SocketStreamHandleImpl::~SocketStreamHandleImpl()
 Optional<size_t> SocketStreamHandleImpl::platformSend(const char* data, size_t length)
 {
     if (!CFWriteStreamCanAcceptBytes(m_writeStream.get()))
-        return Nullopt;
+        return 0;
 
     CFIndex result = CFWriteStreamWrite(m_writeStream.get(), reinterpret_cast<const UInt8*>(data), length);
     if (result == -1)

@@ -175,7 +175,7 @@ Optional<size_t> SocketStreamHandleImpl::platformSend(const char* data, size_t l
 {
     LOG(Network, "SocketStreamHandle %p platformSend", this);
     if (!m_outputStream || !data)
-        return Nullopt;
+        return 0;
 
     GUniqueOutPtr<GError> error;
     gssize written = g_pollable_output_stream_write_nonblocking(m_outputStream.get(), data, length, m_cancellable.get(), &error.outPtr());
