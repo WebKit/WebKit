@@ -161,8 +161,7 @@ void SearchInputType::startSearchEventTimer()
     unsigned length = element().innerTextValue().length();
 
     if (!length) {
-        stopSearchEventTimer();
-        element().onSearch();
+        m_searchEventTimer.startOneShot(0_ms);
         return;
     }
 
