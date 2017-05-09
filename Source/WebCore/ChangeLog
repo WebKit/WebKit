@@ -1,3 +1,27 @@
+2017-05-09  Chris Dumez  <cdumez@apple.com>
+
+        Drop custom bindings code for Window.location setter
+        https://bugs.webkit.org/show_bug.cgi?id=171846
+
+        Reviewed by Sam Weinig.
+
+        Drop custom bindings code for Window.location setter as the custom code was merely needed
+        to address a very old Mac widget that has long been fixed (rdar://problem/5695330).
+
+        No new tests, no Web-facing behavior change.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::setLocation): Deleted.
+        Drop custom code.
+
+        * page/DOMWindow.idl:
+        Align Window.location with https://html.spec.whatwg.org/#the-window-object:
+        - Mark property as readonly.
+        - Add [PutsForward=href] IDL extended attribute.
+        Also, we need to mark the atribute as nullable as this reflects our current implementation.
+        We currently return null if the associated Window does not have a frame. This does not match
+        the specification and we should update our implementation in the future to never return null.
+
 2017-05-09  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r216508.

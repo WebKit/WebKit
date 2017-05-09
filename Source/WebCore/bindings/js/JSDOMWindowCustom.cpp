@@ -452,30 +452,6 @@ String JSDOMWindow::toStringName(const JSObject* object, ExecState* exec)
 
 // Custom Attributes
 
-void JSDOMWindow::setLocation(ExecState& state, JSValue value)
-{
-    VM& vm = state.vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-#if ENABLE(DASHBOARD_SUPPORT)
-    // To avoid breaking old widgets, make "var location =" in a top-level frame create
-    // a property named "location" instead of performing a navigation (<rdar://problem/5688039>).
-    if (Frame* activeFrame = activeDOMWindow(&state).frame()) {
-        if (activeFrame->settings().usesDashboardBackwardCompatibilityMode() && !activeFrame->tree().parent()) {
-            if (BindingSecurity::shouldAllowAccessToDOMWindow(&state, wrapped()))
-                putDirect(state.vm(), Identifier::fromString(&state, "location"), value);
-            return;
-        }
-    }
-#endif
-
-    String locationString = value.toWTFString(&state);
-    RETURN_IF_EXCEPTION(scope, void());
-
-    if (Location* location = wrapped().location())
-        location->setHref(activeDOMWindow(&state), firstDOMWindow(&state), locationString);
-}
-
 JSValue JSDOMWindow::event(ExecState& state) const
 {
     Event* event = currentEvent();
