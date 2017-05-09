@@ -1,3 +1,15 @@
+2017-05-09  Ryan Haddad  <ryanhaddad@apple.com>
+
+        [iOS Simulator] Flaky failure LayoutTest/webrtc/libwebrtc/release-while-setting-local-description.html
+        https://bugs.webkit.org/show_bug.cgi?id=171742
+
+        Reviewed by Youenn Fablet.
+
+        Silence the console messages for unhandled rejections in this test.
+
+        * webrtc/libwebrtc/release-while-setting-local-description-expected.txt:
+        * webrtc/libwebrtc/release-while-setting-local-description.html:
+
 2017-05-09  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] deviceId constraint doesn't work with getUserMedia
