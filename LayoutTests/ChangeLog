@@ -1,5 +1,20 @@
 2017-05-09  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Cherry-pick r216120. rdar://problem/31970955
+
+    2017-05-03  Daniel Bates  <dabates@apple.com>
+
+            Abandon the current load once the provisional loader detaches from the frame
+            https://bugs.webkit.org/show_bug.cgi?id=171577
+            <rdar://problem/31581227>
+
+            Reviewed by Brent Fulgham.
+
+            * fast/loader/inner-iframe-loads-data-url-into-parent-on-unload-crash-expected.txt: Added.
+            * fast/loader/inner-iframe-loads-data-url-into-parent-on-unload-crash.html: Added.
+
+2017-05-09  Matthew Hanson  <matthew_hanson@apple.com>
+
         Cherry-pick r216096. rdar://problem/31971264
 
     2017-05-02  Zalan Bujtas  <zalan@apple.com>
