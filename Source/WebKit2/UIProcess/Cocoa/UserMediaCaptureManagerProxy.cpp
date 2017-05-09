@@ -131,10 +131,10 @@ void UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstrai
     auto constraints = MediaConstraintsImpl::create(MediaConstraintsData(constraintsData));
     switch (type) {
     case WebCore::RealtimeMediaSource::Type::Audio:
-        sourceOrError = RealtimeMediaSourceCenter::singleton().audioFactory()->createAudioCaptureSource(deviceID, constraints.ptr());
+        sourceOrError = RealtimeMediaSourceCenter::singleton().audioFactory().createAudioCaptureSource(deviceID, constraints.ptr());
         break;
     case WebCore::RealtimeMediaSource::Type::Video:
-        sourceOrError = RealtimeMediaSourceCenter::singleton().videoFactory()->createVideoCaptureSource(deviceID, constraints.ptr());
+        sourceOrError = RealtimeMediaSourceCenter::singleton().videoFactory().createVideoCaptureSource(deviceID, constraints.ptr());
         break;
     case WebCore::RealtimeMediaSource::Type::None:
         ASSERT_NOT_REACHED();

@@ -78,9 +78,9 @@ void RealtimeMediaSourceCenter::unsetAudioFactory(RealtimeMediaSource::AudioCapt
         m_audioFactory = nullptr;
 }
 
-RealtimeMediaSource::AudioCaptureFactory* RealtimeMediaSourceCenter::audioFactory()
+RealtimeMediaSource::AudioCaptureFactory& RealtimeMediaSourceCenter::audioFactory()
 {
-    return m_audioFactory ? m_audioFactory: defaultAudioFactory();
+    return m_audioFactory ? *m_audioFactory : defaultAudioFactory();
 }
 
 void RealtimeMediaSourceCenter::setVideoFactory(RealtimeMediaSource::VideoCaptureFactory& factory)
@@ -94,9 +94,9 @@ void RealtimeMediaSourceCenter::unsetVideoFactory(RealtimeMediaSource::VideoCapt
         m_videoFactory = nullptr;
 }
 
-RealtimeMediaSource::VideoCaptureFactory* RealtimeMediaSourceCenter::videoFactory()
+RealtimeMediaSource::VideoCaptureFactory& RealtimeMediaSourceCenter::videoFactory()
 {
-    return m_videoFactory ? m_videoFactory : defaultVideoFactory();
+    return m_videoFactory ? *m_videoFactory : defaultVideoFactory();
 }
 
 void RealtimeMediaSourceCenter::setAudioCaptureDeviceManager(CaptureDeviceManager& deviceManager)
@@ -110,9 +110,9 @@ void RealtimeMediaSourceCenter::unsetAudioCaptureDeviceManager(CaptureDeviceMana
         m_audioCaptureDeviceManager = nullptr;
 }
 
-CaptureDeviceManager* RealtimeMediaSourceCenter::audioCaptureDeviceManager()
+CaptureDeviceManager& RealtimeMediaSourceCenter::audioCaptureDeviceManager()
 {
-    return m_audioCaptureDeviceManager ? m_audioCaptureDeviceManager : defaultAudioCaptureDeviceManager();
+    return m_audioCaptureDeviceManager ? *m_audioCaptureDeviceManager : defaultAudioCaptureDeviceManager();
 }
 
 void RealtimeMediaSourceCenter::setVideoCaptureDeviceManager(CaptureDeviceManager& deviceManager)
@@ -126,9 +126,9 @@ void RealtimeMediaSourceCenter::unsetVideoCaptureDeviceManager(CaptureDeviceMana
         m_videoCaptureDeviceManager = nullptr;
 }
 
-CaptureDeviceManager* RealtimeMediaSourceCenter::videoCaptureDeviceManager()
+CaptureDeviceManager& RealtimeMediaSourceCenter::videoCaptureDeviceManager()
 {
-    return m_videoCaptureDeviceManager ? m_videoCaptureDeviceManager : defaultVideoCaptureDeviceManager();
+    return m_videoCaptureDeviceManager ? *m_videoCaptureDeviceManager : defaultVideoCaptureDeviceManager();
 }
 
 static void addStringToSHA1(SHA1& sha1, const String& string)

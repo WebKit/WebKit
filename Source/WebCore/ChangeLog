@@ -1,3 +1,42 @@
+2017-05-08  Youenn Fablet  <youenn@apple.com>
+
+        Follow-up to bug 171710: use more references and reject if either audio or video source creation is failing
+        https://bugs.webkit.org/show_bug.cgi?id=171824
+
+        Reviewed by Alex Christensen.
+
+        Refactoring to use more references.
+        Only behavioral change is the rejection of the getUserMedia promise if either audio or video source creation is
+        failing. Previously, if audio source creation was failing, the promise would still resolve if video source was
+        sucessfully created.
+
+        * platform/mediastream/RealtimeMediaSourceCenter.cpp:
+        (WebCore::RealtimeMediaSourceCenter::audioFactory):
+        (WebCore::RealtimeMediaSourceCenter::videoFactory):
+        (WebCore::RealtimeMediaSourceCenter::audioCaptureDeviceManager):
+        (WebCore::RealtimeMediaSourceCenter::videoCaptureDeviceManager):
+        * platform/mediastream/RealtimeMediaSourceCenter.h:
+        (WebCore::RealtimeMediaSourceCenter::defaultAudioFactory): Deleted.
+        (WebCore::RealtimeMediaSourceCenter::defaultVideoFactory): Deleted.
+        (WebCore::RealtimeMediaSourceCenter::defaultAudioCaptureDeviceManager): Deleted.
+        (WebCore::RealtimeMediaSourceCenter::defaultVideoCaptureDeviceManager): Deleted.
+        * platform/mediastream/mac/RealtimeMediaSourceCenterMac.cpp:
+        (WebCore::RealtimeMediaSourceCenterMac::createMediaStream):
+        (WebCore::RealtimeMediaSourceCenterMac::getMediaStreamDevices):
+        (WebCore::RealtimeMediaSourceCenterMac::bestSourcesForTypeAndConstraints):
+        (WebCore::RealtimeMediaSourceCenterMac::defaultAudioFactory):
+        (WebCore::RealtimeMediaSourceCenterMac::defaultVideoFactory):
+        (WebCore::RealtimeMediaSourceCenterMac::defaultAudioCaptureDeviceManager):
+        (WebCore::RealtimeMediaSourceCenterMac::defaultVideoCaptureDeviceManager):
+        * platform/mediastream/mac/RealtimeMediaSourceCenterMac.h:
+        * platform/mediastream/openwebrtc/RealtimeMediaSourceCenterOwr.h:
+        * platform/mock/MockRealtimeMediaSourceCenter.cpp:
+        (WebCore::MockRealtimeMediaSourceCenter::defaultAudioFactory):
+        (WebCore::MockRealtimeMediaSourceCenter::defaultVideoFactory):
+        (WebCore::MockRealtimeMediaSourceCenter::defaultAudioCaptureDeviceManager):
+        (WebCore::MockRealtimeMediaSourceCenter::defaultVideoCaptureDeviceManager):
+        * platform/mock/MockRealtimeMediaSourceCenter.h:
+
 2017-05-08  Chris Dumez  <cdumez@apple.com>
 
         Drop [CEReactions] from CharacterData operations

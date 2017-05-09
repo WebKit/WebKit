@@ -28,6 +28,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "CaptureDeviceManager.h"
 #include "RealtimeMediaSourceCenter.h"
 
 namespace WebCore {
@@ -44,10 +45,22 @@ private:
     Vector<CaptureDevice> getMediaStreamDevices() final;
     void createMediaStream(NewMediaStreamHandler&&, const String& audioDeviceID, const String& videoDeviceID, const MediaConstraints* audioConstraints, const MediaConstraints* videoConstraints) final;
 
-    RealtimeMediaSource::AudioCaptureFactory* defaultAudioFactory() final;
-    RealtimeMediaSource::VideoCaptureFactory* defaultVideoFactory() final;
+    RealtimeMediaSource::AudioCaptureFactory& defaultAudioFactory() final;
+    RealtimeMediaSource::VideoCaptureFactory& defaultVideoFactory() final;
+    CaptureDeviceManager& defaultAudioCaptureDeviceManager() final;
+    CaptureDeviceManager& defaultVideoCaptureDeviceManager() final;
 
     ExceptionOr<void> setDeviceEnabled(const String& persistentID, bool) final;
+
+    class MockCaptureDeviceManager final : public CaptureDeviceManager {
+    private:
+        Vector<CaptureDevice>& captureDevices() final { return m_devices; }
+
+        Vector<CaptureDevice> m_devices;
+    };
+
+    MockCaptureDeviceManager m_defaultAudioCaptureDeviceManager;
+    MockCaptureDeviceManager m_defaultVideoCaptureDeviceManager;
 };
 
 }
