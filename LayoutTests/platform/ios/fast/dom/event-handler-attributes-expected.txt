@@ -99,6 +99,9 @@ PASS testScriptAttribute(window, "selectstart") is "none"
 Event names we expect to be able to set on the document
 
 PASS testScriptAttribute(document, "abort") is "document"
+PASS testScriptAttribute(document, "animationend") is "document"
+PASS testScriptAttribute(document, "animationiteration") is "document"
+PASS testScriptAttribute(document, "animationstart") is "document"
 PASS testScriptAttribute(document, "beforecopy") is "document"
 PASS testScriptAttribute(document, "beforecut") is "document"
 PASS testScriptAttribute(document, "beforepaste") is "document"
@@ -167,9 +170,6 @@ PASS testScriptAttribute(document, "wheel") is "document"
 
 Event names we expect not to be able to set on the document
 
-PASS testScriptAttribute(document, "animationend") is "none"
-PASS testScriptAttribute(document, "animationiteration") is "none"
-PASS testScriptAttribute(document, "animationstart") is "none"
 PASS testScriptAttribute(document, "beforeload") is "none"
 PASS testScriptAttribute(document, "beforeunload") is "none"
 PASS testScriptAttribute(document, "focusin") is "none"
@@ -855,9 +855,9 @@ PASS testElementAttribute(rectElement, "unload") is "none"
 Event names on a non-HTML element
 
 PASS testElementAttribute(nonHTMLElement, "abort") is "none"
-FAIL testElementAttribute(nonHTMLElement, "animationend") should be none. Was script: target; content: none.
-FAIL testElementAttribute(nonHTMLElement, "animationiteration") should be none. Was script: target; content: none.
-FAIL testElementAttribute(nonHTMLElement, "animationstart") should be none. Was script: target; content: none.
+PASS testElementAttribute(nonHTMLElement, "animationend") is "none"
+PASS testElementAttribute(nonHTMLElement, "animationiteration") is "none"
+PASS testElementAttribute(nonHTMLElement, "animationstart") is "none"
 FAIL testElementAttribute(nonHTMLElement, "beforecopy") should be none. Was script: target; content: none.
 FAIL testElementAttribute(nonHTMLElement, "beforecut") should be none. Was script: target; content: none.
 FAIL testElementAttribute(nonHTMLElement, "beforeload") should be none. Was script: target; content: none.

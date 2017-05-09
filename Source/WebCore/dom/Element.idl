@@ -112,17 +112,6 @@
     // FIXME: Should be moved to GlobalEventHandlers.
     [NotEnumerable] attribute EventHandler onselectstart; // FIXME: Should be enumerable.
 
-    // Event handlers from CSS Animations API.
-    // FIXME: Should be moved to GlobalEventHandlers.
-    // https://drafts.csswg.org/css-animations/#interface-globaleventhandlers-idl
-    [NotEnumerable] attribute EventHandler onanimationend; // FIXME: Should be enumerable.
-    [NotEnumerable] attribute EventHandler onanimationiteration; // FIXME: Should be enumerable.
-    [NotEnumerable] attribute EventHandler onanimationstart; // FIXME: Should be enumerable.
-    // attribute EventHandler onanimationcancel;
-    [NotEnumerable, ImplementedAs=onwebkitAnimationIteration] attribute EventHandler onwebkitanimationiteration; // Non-standard.
-    [NotEnumerable, ImplementedAs=onwebkitAnimationStart] attribute EventHandler onwebkitanimationstart; // Non-standard.
-    [NotEnumerable, ImplementedAs=onwebkitTransitionEnd] attribute EventHandler onwebkittransitionend; // Non-standard.
-
     // Non-standard WebKit API (https://developer.apple.com/reference/webkitjs/gestureevent).
     [NotEnumerable, Conditional=IOS_GESTURE_EVENTS] attribute EventHandler ongesturechange;
     [NotEnumerable, Conditional=IOS_GESTURE_EVENTS] attribute EventHandler ongestureend;
@@ -137,6 +126,9 @@
     [NotEnumerable] attribute EventHandler oncopy;
     [NotEnumerable] attribute EventHandler oncut;
     [NotEnumerable] attribute EventHandler onpaste;
+    [NotEnumerable, ImplementedAs=onwebkitAnimationIteration] attribute EventHandler onwebkitanimationiteration;
+    [NotEnumerable, ImplementedAs=onwebkitAnimationStart] attribute EventHandler onwebkitanimationstart;
+    [NotEnumerable, ImplementedAs=onwebkitTransitionEnd] attribute EventHandler onwebkittransitionend;
 
     // FIXME: These event handlers should only be on Document (https://fullscreen.spec.whatwg.org/#api).
     [NotEnumerable, Conditional=FULLSCREEN_API] attribute EventHandler onwebkitfullscreenchange;

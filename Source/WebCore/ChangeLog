@@ -1,3 +1,22 @@
+2017-05-09  Chris Dumez  <cdumez@apple.com>
+
+        Move onanimation* EventHandlers to GlobalEventHandlers
+        https://bugs.webkit.org/show_bug.cgi?id=171874
+
+        Reviewed by Simon Fraser.
+
+        Move onanimation* EventHandlers to GlobalEventHandlers to match the specification:
+        - https://drafts.csswg.org/css-animations/#interface-globaleventhandlers-idl
+
+        We previously have those on Window and Element only. Firefox complies with the
+        specification.
+
+        Test: fast/css/onanimation-eventhandlers.html
+
+        * dom/Element.idl:
+        * dom/GlobalEventHandlers.idl:
+        * page/DOMWindow.idl:
+
 2017-05-09  Youenn Fablet  <youenn@apple.com>
 
         Refresh webrtc WPT tests

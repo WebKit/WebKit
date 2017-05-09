@@ -184,18 +184,6 @@ typedef USVString CSSOMString;
     [MayThrowException, EnabledForWorld=shadowRootIsAlwaysOpen] NodeList collectMatchingElementsInFlatTree(Node scope, DOMString selectors);
     [MayThrowException, EnabledForWorld=shadowRootIsAlwaysOpen] Element? matchingElementInFlatTree(Node scope, DOMString selectors);
 
-    // Event handlers from CSS Animations API.
-    // FIXME: Should be moved to GlobalEventHandlers.
-    // https://drafts.csswg.org/css-animations/#interface-globaleventhandlers-idl
-    [NotEnumerable] attribute EventHandler onanimationend; // FIXME: Should be enumerable.
-    [NotEnumerable] attribute EventHandler onanimationiteration; // FIXME: Should be enumerable.
-    [NotEnumerable] attribute EventHandler onanimationstart; // FIXME: Should be enumerable.
-    // attribute EventHandler onanimationcancel;
-    [NotEnumerable, ImplementedAs=onwebkitAnimationEnd] attribute EventHandler onwebkitanimationend; // Non standard.
-    [NotEnumerable, ImplementedAs=onwebkitAnimationIteration] attribute EventHandler onwebkitanimationiteration; // Non standard.
-    [NotEnumerable, ImplementedAs=onwebkitAnimationStart] attribute EventHandler onwebkitanimationstart; // Non standard.
-    [NotEnumerable, ImplementedAs=onwebkitTransitionEnd] attribute EventHandler onwebkittransitionend; // Non standard.
-
     // iOS Gesture API event handlers.
     [NotEnumerable, Conditional=IOS_GESTURE_EVENTS] attribute EventHandler ongesturechange;
     [NotEnumerable, Conditional=IOS_GESTURE_EVENTS] attribute EventHandler ongestureend;
@@ -207,8 +195,12 @@ typedef USVString CSSOMString;
     // Event handler from DeviceOrientation Event Specification (https://w3c.github.io/deviceorientation/spec-source-orientation.html#deviceorientation)
     [NotEnumerable, Conditional=DEVICE_ORIENTATION] attribute EventHandler ondeviceorientation; // FIXME: Should be enumerable.
 
-    // Non standard event handler.
+    // Non standard event handlers.
     [NotEnumerable, Conditional=PROXIMITY_EVENTS] attribute EventHandler onwebkitdeviceproximity;
+    [NotEnumerable, ImplementedAs=onwebkitAnimationEnd] attribute EventHandler onwebkitanimationend;
+    [NotEnumerable, ImplementedAs=onwebkitAnimationIteration] attribute EventHandler onwebkitanimationiteration;
+    [NotEnumerable, ImplementedAs=onwebkitAnimationStart] attribute EventHandler onwebkitanimationstart;
+    [NotEnumerable, ImplementedAs=onwebkitTransitionEnd] attribute EventHandler onwebkittransitionend;
 };
 
 DOMWindow implements GlobalCrypto;

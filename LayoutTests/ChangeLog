@@ -1,3 +1,19 @@
+2017-05-09  Chris Dumez  <cdumez@apple.com>
+
+        Move onanimation* EventHandlers to GlobalEventHandlers
+        https://bugs.webkit.org/show_bug.cgi?id=171874
+
+        Reviewed by Simon Fraser.
+
+        * fast/css/onanimation-eventhandlers-expected.txt: Added.
+        * fast/css/onanimation-eventhandlers.html: Added.
+        Add layout test coverage.
+
+        * fast/dom/event-handler-attributes-expected.txt:
+        * fast/dom/event-handler-attributes.html:
+        * js/dom/dom-static-property-for-in-iteration-expected.txt:
+        Rebaseline existing tests to reflect behavior change.
+
 2017-05-09  Matt Lewis  <jlewis3@apple.com>
 
         Fixed a typo in expectations file.
