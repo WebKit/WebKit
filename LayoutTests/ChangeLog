@@ -1,3 +1,22 @@
+2017-05-10  Dean Jackson  <dino@apple.com>
+
+        Restrict SVG filters to accessible security origins
+        https://bugs.webkit.org/show_bug.cgi?id=118689
+        <rdar://problem/27362159>
+
+        Reviewed by Brent Fulgham.
+
+        Add a test that shows safe frames, unsafe frames, and
+        then a safe frame that itself has an unsafe frame, to
+        show that the security requirements are being forwarded
+        down the tree.
+
+        * http/tests/css/filters-on-iframes-expected.html: Added.
+        * http/tests/css/filters-on-iframes.html: Added.
+        * http/tests/css/resources/blank.html: Added.
+        * http/tests/css/resources/references-external.html: Added.
+        * http/tests/css/resources/solid-red.html: Added.
+
 2017-05-09  Chris Dumez  <cdumez@apple.com>
 
         Move onanimation* EventHandlers to GlobalEventHandlers

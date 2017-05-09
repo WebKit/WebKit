@@ -4441,7 +4441,7 @@ void FrameView::didPaintContents(GraphicsContext& context, const IntRect& dirtyR
     }
 }
 
-void FrameView::paintContents(GraphicsContext& context, const IntRect& dirtyRect)
+void FrameView::paintContents(GraphicsContext& context, const IntRect& dirtyRect, SecurityOriginPaintPolicy securityOriginPaintPolicy)
 {
 #ifndef NDEBUG
     bool fillWithRed;
@@ -4493,7 +4493,7 @@ void FrameView::paintContents(GraphicsContext& context, const IntRect& dirtyRect
     while (is<RenderInline>(renderer) && !downcast<RenderInline>(*renderer).firstLineBox())
         renderer = renderer->parent();
 
-    rootLayer->paint(context, dirtyRect, LayoutSize(), m_paintBehavior, renderer);
+    rootLayer->paint(context, dirtyRect, LayoutSize(), m_paintBehavior, renderer, 0, securityOriginPaintPolicy == SecurityOriginPaintPolicy::AnyOrigin ? RenderLayer::SecurityOriginPaintPolicy::AnyOrigin : RenderLayer::SecurityOriginPaintPolicy::AccessibleOriginOnly);
     if (rootLayer->containsDirtyOverlayScrollbars())
         rootLayer->paintOverlayScrollbars(context, dirtyRect, m_paintBehavior, renderer);
 

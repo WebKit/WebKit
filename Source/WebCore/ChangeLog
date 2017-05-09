@@ -1,3 +1,57 @@
+2017-05-10  Dean Jackson  <dino@apple.com>
+
+        Restrict SVG filters to accessible security origins
+        https://bugs.webkit.org/show_bug.cgi?id=118689
+        <rdar://problem/27362159>
+
+        Reviewed by Brent Fulgham.
+
+        Certain SVG filters should only be allowed to operate
+        on content that is has SecurityOrigin access to. Implement
+        this by including a flag in PaintInfo and LayerPaintingInfo,
+        and have RenderWidget make sure the documents have acceptable
+        SecurityOrigins as it goes to paint.
+
+        This could be used as the first step in a "safe painting"
+        strategy, allowing some content to be rendered into a 
+        canvas or via the element() CSS function... but it is only
+        a small first step.
+
+        Test: http/tests/css/filters-on-iframes.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::paintContents):
+        * page/FrameView.h:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::paint):
+        * platform/ScrollView.h:
+        * platform/Scrollbar.cpp:
+        (WebCore::Scrollbar::paint):
+        * platform/Scrollbar.h:
+        * platform/Widget.h:
+        * platform/graphics/filters/FilterOperation.h:
+        (WebCore::FilterOperation::shouldBeRestrictedBySecurityOrigin):
+        * platform/graphics/filters/FilterOperations.cpp:
+        (WebCore::FilterOperations::hasFilterThatShouldBeRestrictedBySecurityOrigin):
+        * platform/graphics/filters/FilterOperations.h:
+        * platform/mac/WidgetMac.mm:
+        (WebCore::Widget::paint):
+        * rendering/FilterEffectRenderer.cpp:
+        (WebCore::FilterEffectRenderer::build):
+        * rendering/FilterEffectRenderer.h:
+        * rendering/PaintInfo.h:
+        (WebCore::PaintInfo::PaintInfo):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paint):
+        (WebCore::RenderLayer::setupFilters):
+        (WebCore::RenderLayer::paintForegroundForFragmentsWithPhase):
+        * rendering/RenderLayer.h:
+        * rendering/RenderScrollbar.cpp:
+        (WebCore::RenderScrollbar::paint):
+        * rendering/RenderScrollbar.h:
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::paintContents):
+
 2017-05-09  Chris Dumez  <cdumez@apple.com>
 
         Move onanimation* EventHandlers to GlobalEventHandlers

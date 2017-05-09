@@ -347,7 +347,7 @@ public:
     void addEmbeddedObjectToUpdate(RenderEmbeddedObject&);
     void removeEmbeddedObjectToUpdate(RenderEmbeddedObject&);
 
-    WEBCORE_EXPORT void paintContents(GraphicsContext&, const IntRect& dirtyRect) final;
+    WEBCORE_EXPORT void paintContents(GraphicsContext&, const IntRect& dirtyRect, SecurityOriginPaintPolicy = SecurityOriginPaintPolicy::AnyOrigin) final;
 
     struct PaintingState {
         PaintBehavior paintBehavior;

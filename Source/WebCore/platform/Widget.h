@@ -118,7 +118,9 @@ public:
     void move(int x, int y) { setFrameRect(IntRect(x, y, width(), height())); }
     void move(const IntPoint& p) { setFrameRect(IntRect(p, size())); }
 
-    WEBCORE_EXPORT virtual void paint(GraphicsContext&, const IntRect&);
+    enum class SecurityOriginPaintPolicy { AnyOrigin, AccessibleOriginOnly };
+
+    WEBCORE_EXPORT virtual void paint(GraphicsContext&, const IntRect&, SecurityOriginPaintPolicy = SecurityOriginPaintPolicy::AnyOrigin);
     void invalidate() { invalidateRect(boundsRect()); }
     virtual void invalidateRect(const IntRect&) = 0;
 

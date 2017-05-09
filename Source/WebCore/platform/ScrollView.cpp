@@ -1166,7 +1166,7 @@ void ScrollView::paintPanScrollIcon(GraphicsContext& context)
     context.drawImage(*panScrollIcon, iconGCPoint);
 }
 
-void ScrollView::paint(GraphicsContext& context, const IntRect& rect)
+void ScrollView::paint(GraphicsContext& context, const IntRect& rect, SecurityOriginPaintPolicy securityOriginPaintPolicy)
 {
     if (platformWidget()) {
         Widget::paint(context, rect);
@@ -1198,7 +1198,7 @@ void ScrollView::paint(GraphicsContext& context, const IntRect& rect)
             context.clip(visibleContentRect(LegacyIOSDocumentVisibleRect));
         }
 
-        paintContents(context, documentDirtyRect);
+        paintContents(context, documentDirtyRect, securityOriginPaintPolicy);
     }
 
 #if ENABLE(RUBBER_BANDING)

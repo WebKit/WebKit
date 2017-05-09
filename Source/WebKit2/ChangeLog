@@ -1,3 +1,17 @@
+2017-05-10  Dean Jackson  <dino@apple.com>
+
+        Restrict SVG filters to accessible security origins
+        https://bugs.webkit.org/show_bug.cgi?id=118689
+        <rdar://problem/27362159>
+
+        Reviewed by Brent Fulgham.
+
+        Update parameter lists.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::paint):
+        * WebProcess/Plugins/PluginView.h:
+
 2017-05-09  Yoshiaki Jitsukawa  <Yoshiaki.Jitsukawa@sony.com>
 
         [Coordinated Graphics] Debug Visuals don't hide
