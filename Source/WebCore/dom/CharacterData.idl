@@ -18,13 +18,13 @@
  */
 
 interface CharacterData : Node {
-    [CEReactions] attribute [TreatNullAs=EmptyString] DOMString data; // FIXME: Not marked as [CEReactions] in the spec.
+    attribute [TreatNullAs=EmptyString] DOMString data;
     readonly attribute unsigned long length;
     [MayThrowException] DOMString substringData(unsigned long offset, unsigned long count);
-    [CEReactions] void appendData(DOMString data); // FIXME: Not marked as [CEReactions] in the spec.
-    [CEReactions, MayThrowException] void insertData(unsigned long offset, DOMString data); // FIXME: Not marked as [CEReactions] in the spec.
-    [CEReactions, MayThrowException] void deleteData(unsigned long offset, unsigned long count); // FIXME: Not marked as [CEReactions] in the spec.
-    [CEReactions, MayThrowException] void replaceData(unsigned long offset, unsigned long count, DOMString data); // FIXME: Not marked as [CEReactions] in the spec.
+    void appendData(DOMString data);
+    [MayThrowException] void insertData(unsigned long offset, DOMString data);
+    [MayThrowException] void deleteData(unsigned long offset, unsigned long count);
+    [MayThrowException] void replaceData(unsigned long offset, unsigned long count, DOMString data);
 };
 
 CharacterData implements ChildNode;
