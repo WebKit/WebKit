@@ -513,8 +513,14 @@ WebInspector.TimelineTabContentView = class TimelineTabContentView extends WebIn
         if (this._viewMode === mode)
             return;
 
+        let navigationItemForViewMode = this.contentBrowser.navigationBar.findNavigationItem(mode);
+        console.assert(navigationItemForViewMode, "Couldn't find navigation item for this view mode.");
+        if (!navigationItemForViewMode)
+            return;
+
         this._viewMode = mode;
-        this.contentBrowser.navigationBar.selectedNavigationItem = this._viewMode;
+
+        this.contentBrowser.navigationBar.selectedNavigationItem = navigationItemForViewMode;
 
         if (!selectedByUser)
             return;

@@ -1,3 +1,21 @@
+2017-05-09  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: Assertion failed: Cannot select item with unexpected parent bar. (at NavigationBar.js:132)
+        https://bugs.webkit.org/show_bug.cgi?id=171885
+
+        Reviewed by Matt Baker.
+
+        This new assertion revealed a real misuse of the NavigationBar API.
+
+        * UserInterface/Views/NavigationBar.js:
+        (WebInspector.NavigationBar.prototype.set selectedNavigationItem):
+        Improve this to be an assertion so it can be paused at using the debugger.
+
+        * UserInterface/Views/TimelineTabContentView.js:
+        (WebInspector.TimelineTabContentView.prototype._changeViewMode):
+        We need to set a NavigationItem as the selected item, not its identifier.
+        Look up the corresponding item for the identifier that we received (the view mode).
+
 2017-05-08  Brian Burg  <bburg@apple.com>
 
         Web Inspector: RTL: box model labels have bad alignment

@@ -128,10 +128,10 @@ WebInspector.NavigationBar = class NavigationBar extends WebInspector.View
 
     set selectedNavigationItem(navigationItem)
     {
-        if (navigationItem && navigationItem.parentNavigationBar !== this) {
-            console.error("Cannot select item with unexpected parent bar.", navigationItem);
+        let navigationItemHasOtherParent = navigationItem && navigationItem.parentNavigationBar !== this;
+        console.assert(!navigationItemHasOtherParent, "Cannot select item with unexpected parent bar.", navigationItem);
+        if (navigationItemHasOtherParent)
             return;
-        }
 
         // Only radio navigation items can be selected.
         if (!(navigationItem instanceof WebInspector.RadioButtonNavigationItem))
