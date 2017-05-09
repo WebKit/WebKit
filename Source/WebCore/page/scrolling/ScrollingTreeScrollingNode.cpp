@@ -140,16 +140,16 @@ void ScrollingTreeScrollingNode::dumpProperties(TextStream& ts, ScrollingStateTr
         ts.dumpProperty("total content size for rubber band", m_totalContentsSizeForRubberBand);
     if (m_reachableContentsSize != m_totalContentsSize)
         ts.dumpProperty("reachable content size", m_reachableContentsSize);
-    ts.dumpProperty("scrollable area size", m_lastCommittedScrollPosition);
+    ts.dumpProperty("last committed scroll position", m_lastCommittedScrollPosition);
     if (m_scrollOrigin != IntPoint())
-        ts.dumpProperty("scrollable area size", m_scrollOrigin);
+        ts.dumpProperty("scroll origin", m_scrollOrigin);
 
 #if ENABLE(CSS_SCROLL_SNAP)
     if (m_snapOffsetsInfo.horizontalSnapOffsets.size())
         ts.dumpProperty("horizontal snap offsets", m_snapOffsetsInfo.horizontalSnapOffsets);
 
     if (m_snapOffsetsInfo.verticalSnapOffsets.size())
-        ts.dumpProperty("horizontal snap offsets", m_snapOffsetsInfo.verticalSnapOffsets);
+        ts.dumpProperty("vertical snap offsets", m_snapOffsetsInfo.verticalSnapOffsets);
 
     if (m_currentHorizontalSnapPointIndex)
         ts.dumpProperty("current horizontal snap point index", m_currentHorizontalSnapPointIndex);

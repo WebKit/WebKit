@@ -1,3 +1,15 @@
+2017-05-09  Frederic Wang  <fwang@igalia.com>
+
+        Fix property names in ScrollingTreeScrollingNode::dumpProperties
+        https://bugs.webkit.org/show_bug.cgi?id=171848
+
+        Reviewed by Gyuyoung Kim.
+
+        No new tests, this function is only used for debugging purpose.
+
+        * page/scrolling/ScrollingTreeScrollingNode.cpp:
+        (WebCore::ScrollingTreeScrollingNode::dumpProperties):
+
 2017-05-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Building Webkit2Gtk without OpenGL fails.
