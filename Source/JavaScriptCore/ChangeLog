@@ -1,3 +1,14 @@
+2017-05-09  Michael Saboff  <msaboff@apple.com>
+
+        Cap the number of FTL compilation threads on iOS to 2
+        https://bugs.webkit.org/show_bug.cgi?id=171887
+
+        Reviewed by Filip Pizlo.
+
+        Set an iOS specific max of 2 threads.
+
+        * runtime/Options.h:
+
 2017-05-09  Filip Pizlo  <fpizlo@apple.com>
 
         Heap::heap() should behave gracefully for null pointers
