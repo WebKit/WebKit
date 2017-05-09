@@ -802,13 +802,13 @@ bool JSObject::putInlineSlow(ExecState* exec, PropertyName propertyName, JSValue
             ProxyObject* proxy = jsCast<ProxyObject*>(obj);
             return proxy->ProxyObject::put(proxy, exec, propertyName, value, slot);
         }
-        JSValue prototype = obj->getPrototypeDirect();
+        JSValue prototype = obj->getPrototype(vm, exec);
+        RETURN_IF_EXCEPTION(scope, false);
         if (prototype.isNull())
             break;
         obj = asObject(prototype);
     }
 
-    ASSERT(!structure(vm)->prototypeChainMayInterceptStoreTo(vm, propertyName) || obj == this);
     if (!putDirectInternal<PutModePut>(vm, propertyName, value, 0, slot))
         return typeError(exec, scope, slot.isStrictMode(), ASCIILiteral(ReadonlyPropertyWriteError));
     return true;

@@ -1,5 +1,26 @@
 2017-05-09  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Cherry-pick r216309. rdar://problem/31971364
+
+    2017-05-05  Keith Miller  <keith_miller@apple.com>
+
+            Put does not properly consult the prototype chain
+            https://bugs.webkit.org/show_bug.cgi?id=171754
+
+            Reviewed by Saam Barati.
+
+            We should do a follow up that cleans up the rest of put. See:
+            https://bugs.webkit.org/show_bug.cgi?id=171759
+
+            * runtime/JSCJSValue.cpp:
+            (JSC::JSValue::putToPrimitive):
+            * runtime/JSObject.cpp:
+            (JSC::JSObject::putInlineSlow):
+            * runtime/JSObjectInlines.h:
+            (JSC::JSObject::canPerformFastPutInline):
+
+2017-05-09  Matthew Hanson  <matthew_hanson@apple.com>
+
         Cherry-pick r215596. rdar://problem/31971150
 
     2017-04-20  Mark Lam  <mark.lam@apple.com>
