@@ -268,10 +268,26 @@ void ScrollingStateFrameScrollingNode::dumpProperties(TextStream& ts, ScrollingS
     
     ScrollingStateScrollingNode::dumpProperties(ts, behavior);
     
+    if (behavior & ScrollingStateTreeAsTextBehaviorIncludeLayerIDs) {
+        ts.dumpProperty("counter scrolling layer ID", m_counterScrollingLayer.layerID());
+        ts.dumpProperty("inset clip layer ID", m_insetClipLayer.layerID());
+        ts.dumpProperty("scrolled contents layer ID", m_scrolledContentsLayer.layerID());
+        ts.dumpProperty("content shadow layer ID", m_contentShadowLayer.layerID());
+        ts.dumpProperty("header layer ID", m_headerLayer.layerID());
+        ts.dumpProperty("footer layer ID", m_footerLayer.layerID());
+    }
+
     if (m_frameScaleFactor != 1)
         ts.dumpProperty("frame scale factor", m_frameScaleFactor);
+    if (m_topContentInset)
+        ts.dumpProperty("top content inset", m_topContentInset);
+    if (m_headerHeight)
+        ts.dumpProperty("header height", m_headerHeight);
+    if (m_footerHeight)
+        ts.dumpProperty("footer height", m_footerHeight);
     
     if (m_visualViewportEnabled) {
+        ts.dumpProperty("visual viewport enabled", m_visualViewportEnabled);
         ts.dumpProperty("layout viewport", m_layoutViewport);
         ts.dumpProperty("min layout viewport origin", m_minLayoutViewportOrigin);
         ts.dumpProperty("max layout viewport origin", m_maxLayoutViewportOrigin);
@@ -305,7 +321,15 @@ void ScrollingStateFrameScrollingNode::dumpProperties(TextStream& ts, ScrollingS
     if (m_synchronousScrollingReasons)
         ts.dumpProperty("Scrolling on main thread because:", ScrollingCoordinator::synchronousScrollingReasonsAsText(m_synchronousScrollingReasons));
     
-    // FIXME: dump more properties.
+    ts.dumpProperty("behavior for fixed", m_behaviorForFixed);
+
+    if (m_requestedScrollPosition != FloatPoint())
+        ts.dumpProperty("requested scroll position", m_requestedScrollPosition);
+    if (m_requestedScrollPositionRepresentsProgrammaticScroll)
+        ts.dumpProperty("requested scroll position represents programmatic scroll", m_requestedScrollPositionRepresentsProgrammaticScroll);
+
+    if (m_fixedElementsLayoutRelativeToFrame)
+        ts.dumpProperty("fixed elements lay out relative to frame", m_fixedElementsLayoutRelativeToFrame);
 }
 
 } // namespace WebCore

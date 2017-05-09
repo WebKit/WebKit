@@ -1,3 +1,42 @@
+2017-05-09  Frederic Wang  <fwang@igalia.com>
+
+        Print more properties in the output of scrolling trees
+        https://bugs.webkit.org/show_bug.cgi?id=171858
+
+        Reviewed by Simon Fraser.
+
+        Update text expectations to include new properties.
+
+        * fast/scrolling/ios/remove-scrolling-role-expected.txt:
+        * fast/visual-viewport/tiled-drawing/zoomed-fixed-scrolled-down-expected.txt:
+        * fast/visual-viewport/tiled-drawing/zoomed-fixed-scrolled-down-then-up-expected.txt:
+        * fast/visual-viewport/tiled-drawing/zoomed-fixed-scrolling-layers-state-expected.txt:
+        * tiled-drawing/scrolling/clamp-out-of-bounds-scrolls-expected.txt:
+        * tiled-drawing/scrolling/fixed/absolute-inside-fixed-expected.txt:
+        * tiled-drawing/scrolling/fixed/absolute-inside-out-of-view-fixed-expected.txt:
+        * tiled-drawing/scrolling/fixed/fixed-in-overflow-expected.txt:
+        * tiled-drawing/scrolling/fixed/fixed-position-out-of-view-expected.txt:
+        * tiled-drawing/scrolling/fixed/fixed-position-out-of-view-negative-zindex-expected.txt:
+        * tiled-drawing/scrolling/fixed/four-bars-expected.txt:
+        * tiled-drawing/scrolling/fixed/four-bars-with-header-and-footer-expected.txt:
+        * tiled-drawing/scrolling/fixed/four-bars-zoomed-expected.txt:
+        * tiled-drawing/scrolling/fixed/negative-scroll-offset-expected.txt:
+        * tiled-drawing/scrolling/fixed/negative-scroll-offset-in-view-expected.txt:
+        * tiled-drawing/scrolling/fixed/nested-fixed-expected.txt:
+        * tiled-drawing/scrolling/fixed/percentage-inside-fixed-expected.txt:
+        * tiled-drawing/scrolling/frames/coordinated-frame-expected.txt:
+        * tiled-drawing/scrolling/frames/coordinated-frame-gain-scrolling-ancestor-expected.txt:
+        * tiled-drawing/scrolling/frames/coordinated-frame-in-fixed-expected.txt:
+        * tiled-drawing/scrolling/frames/coordinated-frame-lose-scrolling-ancestor-expected.txt:
+        * tiled-drawing/scrolling/frames/fixed-inside-frame-expected.txt:
+        * tiled-drawing/scrolling/frames/remove-coordinated-frame-expected.txt:
+        * tiled-drawing/scrolling/frames/scroll-region-after-frame-layout-expected.txt:
+        * tiled-drawing/scrolling/scrolling-tree-after-scroll-expected.txt:
+        * tiled-drawing/scrolling/scrolling-tree-slow-scrolling-expected.txt:
+        * tiled-drawing/scrolling/sticky/negative-scroll-offset-expected.txt:
+        * tiled-drawing/scrolling/sticky/sticky-horizontal-expected.txt:
+        * tiled-drawing/scrolling/sticky/sticky-vertical-expected.txt:
+
 2017-05-09  Chris Dumez  <cdumez@apple.com>
 
         ontransitionend eventHandler should be in GlobalEventHandlers

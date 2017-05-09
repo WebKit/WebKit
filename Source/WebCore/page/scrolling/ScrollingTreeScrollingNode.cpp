@@ -158,6 +158,8 @@ void ScrollingTreeScrollingNode::dumpProperties(TextStream& ts, ScrollingStateTr
         ts.dumpProperty("current vertical snap point index", m_currentVerticalSnapPointIndex);
     
 #endif
+
+    ts.dumpProperty("scrollable area parameters", m_scrollableAreaParameters);
 }
 
 } // namespace WebCore

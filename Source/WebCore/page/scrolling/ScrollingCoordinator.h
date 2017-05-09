@@ -244,6 +244,7 @@ private:
     bool m_forceSynchronousScrollLayerPositionUpdates { false };
 };
 
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, ScrollableAreaParameters);
 WEBCORE_EXPORT TextStream& operator<<(TextStream&, ScrollingNodeType);
 WEBCORE_EXPORT TextStream& operator<<(TextStream&, ScrollingLayerPositionAction);
 

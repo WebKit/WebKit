@@ -1,3 +1,22 @@
+2017-05-09  Frederic Wang  <fwang@igalia.com>
+
+        Print more properties in the output of scrolling trees
+        https://bugs.webkit.org/show_bug.cgi?id=171858
+
+        Reviewed by Simon Fraser.
+
+        No new tests, no behavior changes.
+
+        * page/scrolling/ScrollingCoordinator.cpp: Implement << operator to print ScrollableAreaParameters.
+        (WebCore::operator<<):
+        * page/scrolling/ScrollingCoordinator.h: Declare new << operator.
+        * page/scrolling/ScrollingStateFrameScrollingNode.cpp: Print new properties.
+        (WebCore::ScrollingStateFrameScrollingNode::dumpProperties):
+        * page/scrolling/ScrollingStateScrollingNode.cpp: ditto.
+        (WebCore::ScrollingStateScrollingNode::dumpProperties):
+        * page/scrolling/ScrollingTreeScrollingNode.cpp: ditto.
+        (WebCore::ScrollingTreeScrollingNode::dumpProperties):
+
 2017-05-09  Chris Dumez  <cdumez@apple.com>
 
         ontransitionend eventHandler should be in GlobalEventHandlers

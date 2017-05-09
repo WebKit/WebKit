@@ -3,9 +3,18 @@ Attempted scroll to -5000, 0
 (Frame scrolling node
   (scrollable area size 785 585)
   (contents size 5008 5021)
+  (scrollable area parameters 
+    (horizontal scroll elasticity 2)
+    (vertical scroll elasticity 2)
+    (horizontal scrollbar mode 0)
+    (vertical scrollbar mode 0)
+    (has enabled horizontal scrollbar 1)
+    (has enabled vertical scrollbar 1))
+  (visual viewport enabled 1)
   (layout viewport at (0,0) size 785x585)
   (min layout viewport origin (0,0))
   (max layout viewport origin (4223,4436))
+  (behavior for fixed 0)
 )
 
 Attempted scroll to 0, -5000
@@ -13,9 +22,18 @@ Attempted scroll to 0, -5000
 (Frame scrolling node
   (scrollable area size 785 585)
   (contents size 5008 5021)
+  (scrollable area parameters 
+    (horizontal scroll elasticity 2)
+    (vertical scroll elasticity 2)
+    (horizontal scrollbar mode 0)
+    (vertical scrollbar mode 0)
+    (has enabled horizontal scrollbar 1)
+    (has enabled vertical scrollbar 1))
+  (visual viewport enabled 1)
   (layout viewport at (0,0) size 785x585)
   (min layout viewport origin (0,0))
   (max layout viewport origin (4223,4436))
+  (behavior for fixed 0)
 )
 
 Attempted scroll to -5000, -5000
@@ -23,9 +41,18 @@ Attempted scroll to -5000, -5000
 (Frame scrolling node
   (scrollable area size 785 585)
   (contents size 5008 5021)
+  (scrollable area parameters 
+    (horizontal scroll elasticity 2)
+    (vertical scroll elasticity 2)
+    (horizontal scrollbar mode 0)
+    (vertical scrollbar mode 0)
+    (has enabled horizontal scrollbar 1)
+    (has enabled vertical scrollbar 1))
+  (visual viewport enabled 1)
   (layout viewport at (0,0) size 785x585)
   (min layout viewport origin (0,0))
   (max layout viewport origin (4223,4436))
+  (behavior for fixed 0)
 )
 
 Attempted scroll to 10000, 0
@@ -34,9 +61,19 @@ Attempted scroll to 10000, 0
   (scrollable area size 785 585)
   (contents size 5008 5021)
   (requested scroll position 4223 0)
+  (requested scroll position represents programmatic scroll 1)
+  (scrollable area parameters 
+    (horizontal scroll elasticity 2)
+    (vertical scroll elasticity 2)
+    (horizontal scrollbar mode 0)
+    (vertical scrollbar mode 0)
+    (has enabled horizontal scrollbar 1)
+    (has enabled vertical scrollbar 1))
+  (visual viewport enabled 1)
   (layout viewport at (0,0) size 785x585)
   (min layout viewport origin (0,0))
   (max layout viewport origin (4223,4436))
+  (behavior for fixed 0)
 )
 
 Attempted scroll to 0, 10000
@@ -45,9 +82,19 @@ Attempted scroll to 0, 10000
   (scrollable area size 785 585)
   (contents size 5008 5021)
   (requested scroll position 0 4436)
+  (requested scroll position represents programmatic scroll 1)
+  (scrollable area parameters 
+    (horizontal scroll elasticity 2)
+    (vertical scroll elasticity 2)
+    (horizontal scrollbar mode 0)
+    (vertical scrollbar mode 0)
+    (has enabled horizontal scrollbar 1)
+    (has enabled vertical scrollbar 1))
+  (visual viewport enabled 1)
   (layout viewport at (4223,0) size 785x585)
   (min layout viewport origin (0,0))
   (max layout viewport origin (4223,4436))
+  (behavior for fixed 0)
 )
 
 Attempted scroll to 10000, 10000
@@ -56,9 +103,19 @@ Attempted scroll to 10000, 10000
   (scrollable area size 785 585)
   (contents size 5008 5021)
   (requested scroll position 4223 4436)
+  (requested scroll position represents programmatic scroll 1)
+  (scrollable area parameters 
+    (horizontal scroll elasticity 2)
+    (vertical scroll elasticity 2)
+    (horizontal scrollbar mode 0)
+    (vertical scrollbar mode 0)
+    (has enabled horizontal scrollbar 1)
+    (has enabled vertical scrollbar 1))
+  (visual viewport enabled 1)
   (layout viewport at (0,4436) size 785x585)
   (min layout viewport origin (0,0))
   (max layout viewport origin (4223,4436))
+  (behavior for fixed 0)
 )
 
 
