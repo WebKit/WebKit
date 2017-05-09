@@ -3858,6 +3858,15 @@
       ],
       "status" : "committer"
    },
+   "Matt Lewis" : {
+      "emails" : [
+         "jlewis3@apple.com"
+      ],
+      "nicks" : [
+         "mattlewis"
+      ],
+      "status" : "committer"
+   },
    "Matt Lilek" : {
       "emails" : [
          "dev+webkit@mattlilek.com",
