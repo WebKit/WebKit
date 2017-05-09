@@ -155,21 +155,12 @@ p {
     border-bottom: 1px solid #979797;
 }
 
-.test .indicator {
-    color: #E7B135;
-    opacity: 0;
-
-    position: absolute;
-    left: -1.2rem;
+.test .running {
+    color: #ffffff;
 }
 
-.test .indicator.running {
-    animation: test-running 1s;
-}
-
-@keyframes test-running {
-  0%   { opacity: 0; }
-  100%  { opacity: 1; }
+.test .running:before {
+    content: '\25b8';
 }
 
 .score {
