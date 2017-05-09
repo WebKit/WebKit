@@ -1,3 +1,12 @@
+2017-05-08  Matt Lewis  <jlewis3@apple.com>
+
+        Marked http/tests/security/storage-blocking-loosened-plugin.html as flaky
+        https://bugs.webkit.org/show_bug.cgi?id=171837
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2017-05-08  Chris Dumez  <cdumez@apple.com>
 
         Move offsetParent / offsetLeft / offsetTop / offsetWidth / offsetHeight from Element to HTMLElement
