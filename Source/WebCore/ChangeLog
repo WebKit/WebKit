@@ -1,3 +1,47 @@
+2017-05-09  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] deviceId constraint doesn't work with getUserMedia
+        https://bugs.webkit.org/show_bug.cgi?id=171877
+        <rdar://problem/31899730>
+
+        Reviewed by Jer Noble.
+
+        Test: fast/mediastream/get-user-media-device-id.html
+
+        * Modules/mediastream/MediaConstraintsImpl.h:
+        (WebCore::MediaConstraintsData::MediaConstraintsData): Add a constructor that 
+        takes a const MediaConstraints&.
+
+        * Modules/mediastream/MediaDevicesEnumerationRequest.cpp:
+        (WebCore::MediaDevicesEnumerationRequest::topLevelDocumentOrigin): Don't return
+        NULL for the main frame so the origin matches that returned for a UserMediaRequest.
+
+        * Modules/mediastream/UserMediaController.h:
+        (WebCore::UserMediaController::setDeviceIDHashSalt): Deleted, not used.
+        (WebCore::UserMediaController::deviceIDHashSalt): Deleted, not used.
+
+        * Modules/mediastream/UserMediaRequest.cpp:
+        (WebCore::UserMediaRequest::allow): Add device ID hash salt parameter, set it on
+        constraints.
+        * Modules/mediastream/UserMediaRequest.h:
+
+        * platform/mediastream/MediaConstraints.h:
+        * platform/mediastream/RealtimeMediaSource.cpp:
+        (WebCore::RealtimeMediaSource::fitnessDistance): ASSERT if called for DeviceId.
+        (WebCore::RealtimeMediaSource::selectSettings): Special case DeviceId because it
+        we have to hash the device ID before comparing, and because the DeviceId can't be
+        changed so it should never be added to the flattened constraints.
+
+        * platform/mediastream/RealtimeMediaSourceSupportedConstraints.cpp:
+        (WebCore::RealtimeMediaSourceSupportedConstraints::nameForConstraint): Deleted, unused.
+        (WebCore::RealtimeMediaSourceSupportedConstraints::constraintFromName): Deleted, unused.
+        * platform/mediastream/RealtimeMediaSourceSupportedConstraints.h:
+
+        * platform/mediastream/mac/AVVideoCaptureSource.mm:
+        * platform/mediastream/mac/RealtimeMediaSourceCenterMac.cpp:
+        (WebCore::RealtimeMediaSourceCenterMac::bestSourcesForTypeAndConstraints): Pass device
+        id, not empty string.
+
 2017-05-09  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Localized strings aren't loaded

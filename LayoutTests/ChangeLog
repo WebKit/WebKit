@@ -1,3 +1,14 @@
+2017-05-09  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] deviceId constraint doesn't work with getUserMedia
+        https://bugs.webkit.org/show_bug.cgi?id=171877
+        <rdar://problem/31899730>
+
+        Reviewed by Jer Noble.
+
+        * fast/mediastream/get-user-media-device-id-expected.txt: Added.
+        * fast/mediastream/get-user-media-device-id.html: Added.
+
 2017-05-09  Matt Lewis  <jlewis3@apple.com>
 
         Marked multiple test flaky.

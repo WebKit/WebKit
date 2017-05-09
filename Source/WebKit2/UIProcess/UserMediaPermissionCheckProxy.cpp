@@ -27,28 +27,34 @@
 #include "UserMediaPermissionCheckProxy.h"
 
 #include "UserMediaPermissionRequestManagerProxy.h"
+#include <WebCore/SecurityOrigin.h>
+#include <WebCore/SecurityOriginData.h>
+
+using namespace WebCore;
 
 namespace WebKit {
 
-UserMediaPermissionCheckProxy::UserMediaPermissionCheckProxy(UserMediaPermissionRequestManagerProxy& manager, uint64_t userMediaID)
-    : m_manager(&manager)
-    , m_userMediaID(userMediaID)
+UserMediaPermissionCheckProxy::UserMediaPermissionCheckProxy(uint64_t userMediaID, uint64_t frameID, CompletionHandler&& handler, const String& userMediaDocumentOriginIdentifier, const String& topLevelDocumentOriginIdentifier)
+    : m_userMediaID(userMediaID)
+    , m_frameID(frameID)
+    , m_completionHandler(WTFMove(handler))
+    , m_userMediaDocumentSecurityOrigin((SecurityOriginData::fromDatabaseIdentifier(userMediaDocumentOriginIdentifier)->securityOrigin()))
+    , m_topLevelDocumentSecurityOrigin(SecurityOriginData::fromDatabaseIdentifier(topLevelDocumentOriginIdentifier)->securityOrigin())
 {
 }
 
 void UserMediaPermissionCheckProxy::setUserMediaAccessInfo(const String& mediaDeviceIdentifierHashSalt, bool allowed)
 {
-    ASSERT(m_manager);
-    if (!m_manager)
+    if (!m_completionHandler)
         return;
 
-    m_manager->didCompleteUserMediaPermissionCheck(m_userMediaID, mediaDeviceIdentifierHashSalt, allowed);
-    m_manager = nullptr;
+    m_completionHandler(m_userMediaID, mediaDeviceIdentifierHashSalt, allowed);
+    m_completionHandler = nullptr;
 }
 
 void UserMediaPermissionCheckProxy::invalidate()
 {
-    m_manager = nullptr;
+    m_completionHandler = nullptr;
 }
 
 } // namespace WebKit

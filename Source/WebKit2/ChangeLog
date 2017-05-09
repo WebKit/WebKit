@@ -1,3 +1,55 @@
+2017-05-09  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] deviceId constraint doesn't work with getUserMedia
+        https://bugs.webkit.org/show_bug.cgi?id=171877
+        <rdar://problem/31899730>
+
+        Reviewed by Jer Noble.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<MediaConstraintsData>::encode): Encode deviceIDHashSalt.
+        (IPC::ArgumentCoder<MediaConstraintsData>::decode): Decode deviceIDHashSalt.
+
+        * UIProcess/UserMediaPermissionCheckProxy.cpp:
+        (WebKit::UserMediaPermissionCheckProxy::UserMediaPermissionCheckProxy): Initialize
+        completion handler, frame ID, and security origins.
+        (WebKit::UserMediaPermissionCheckProxy::setUserMediaAccessInfo): Complete by calling
+        completion handler because we now sometimes request access info before calling gUM.
+        (WebKit::UserMediaPermissionCheckProxy::invalidate): Clear completion handler.
+        * UIProcess/UserMediaPermissionCheckProxy.h:
+
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::FrameAuthorizationState::FrameAuthorizationState): Take security origins, not
+        UserMediaPermissionRequestProxy, so it can be constructed with a UserMediaPermissionCheckProxy.
+        (WebKit::FrameAuthorizationState::ensureSecurityOriginsAreEqual): Ditto. Clear has salt
+        when origins don't match.
+        (WebKit::UserMediaPermissionRequestManagerProxy::stateForRequest): Templatize.
+        (WebKit::UserMediaPermissionRequestManagerProxy::userMediaAccessWasDenied): Fix typo.
+        (WebKit::UserMediaPermissionRequestManagerProxy::userMediaAccessWasGranted): Ditto.
+        Don't set state for empty UIDs. Pass hash salt to web process.
+        (WebKit::UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame):
+        The device ID hash salt is now required to validate constraints, so get it first.
+        (WebKit::UserMediaPermissionRequestManagerProxy::getUserMediaPermissionInfo): Helper
+        method used to get the device ID hash salt.
+        (WebKit::UserMediaPermissionRequestManagerProxy::enumerateMediaDevicesForFrame): Restructure
+        to use getUserMediaPermissionInfo.
+        (WebKit::UserMediaPermissionRequestManagerProxy::didCompleteUserMediaPermissionCheck): Deleted.
+        * UIProcess/UserMediaPermissionRequestManagerProxy.h:
+
+        * WebProcess/MediaStream/UserMediaPermissionRequestManager.cpp:
+        (WebKit::UserMediaPermissionRequestManager::userMediaAccessWasGranted): Add device ID
+        hash salt parameter.
+        * WebProcess/MediaStream/UserMediaPermissionRequestManager.h:
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::userMediaAccessWasGranted): Ditto.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
+        * WebProcess/cocoa/UserMediaCaptureManager.cpp:
+        (WebKit::UserMediaCaptureManager::createCaptureSource): Use new MediaConstraintsData 
+        constructor.
+
 2017-05-10  Dean Jackson  <dino@apple.com>
 
         Restrict SVG filters to accessible security origins
