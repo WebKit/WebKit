@@ -34,6 +34,7 @@ if (WIN32)
     add_subdirectory(DumpRenderTree)
     add_subdirectory(TestWebKitAPI)
     add_subdirectory(MiniBrowser/win)
+    add_subdirectory(ImageDiff)
 endif ()
 
 if (ENABLE_WEBKIT2 AND ENABLE_API_TESTS)

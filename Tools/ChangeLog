@@ -1,3 +1,14 @@
+2017-05-09  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] ImageDiff isn't built since Bug 168945
+        https://bugs.webkit.org/show_bug.cgi?id=171847
+
+        Reviewed by Alex Christensen.
+
+        * CMakeLists.txt: Add 'ImageDiff' sub-directory to build if WIN32.
+        * ImageDiff/ImageDiff.cpp: Include some header files to fix compilation errors.
+        * ImageDiff/PlatformWin.cmake: Define USE_CAIRO if WinCairo port.
+
 2017-05-09  Zan Dobersek  <zdobersek@igalia.com>
 
         Upstream the WPE port

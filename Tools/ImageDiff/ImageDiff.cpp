@@ -32,6 +32,11 @@
 #include <stdio.h>
 #include <string.h>
 
+#if PLATFORM(WIN)
+#include <fcntl.h>
+#include <io.h>
+#endif
+
 using namespace ImageDiff;
 
 #if OS(WINDOWS)

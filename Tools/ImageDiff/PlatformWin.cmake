@@ -1,4 +1,5 @@
 if (${WTF_PLATFORM_WIN_CAIRO})
+    add_definitions(-DUSE_CAIRO=1)
     include(Cairo.cmake)
 else ()
     include(PlatformMac.cmake)
