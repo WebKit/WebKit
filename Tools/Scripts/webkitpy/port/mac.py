@@ -162,31 +162,6 @@ class MacPort(DarwinPort):
     def _check_port_build(self):
         return not self.get_option('java') or self._build_java_test_support()
 
-    def _get_crash_log(self, name, pid, stdout, stderr, newer_than, time_fn=None, sleep_fn=None, wait_for_log=True):
-        # Note that we do slow-spin here and wait, since it appears the time
-        # ReportCrash takes to actually write and flush the file varies when there are
-        # lots of simultaneous crashes going on.
-        # FIXME: Should most of this be moved into CrashLogs()?
-        time_fn = time_fn or time.time
-        sleep_fn = sleep_fn or time.sleep
-        crash_log = ''
-        crash_logs = CrashLogs(self.host)
-        now = time_fn()
-        # FIXME: delete this after we're sure this code is working ...
-        _log.debug('looking for crash log for %s:%s' % (name, str(pid)))
-        deadline = now + 5 * int(self.get_option('child_processes', 1))
-        while not crash_log and now <= deadline:
-            crash_log = crash_logs.find_newest_log(name, pid, include_errors=True, newer_than=newer_than)
-            if not wait_for_log:
-                break
-            if not crash_log or not [line for line in crash_log.splitlines() if not line.startswith('ERROR')]:
-                sleep_fn(0.1)
-                now = time_fn()
-
-        if not crash_log:
-            return (stderr, None)
-        return (stderr, crash_log)
-
     def start_helper(self, pixel_tests=False):
         helper_path = self._path_to_helper()
         if not helper_path:

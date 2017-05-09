@@ -87,6 +87,9 @@ class IOSDevicePort(IOSPort):
     def operating_system(self):
         return 'ios-device'
 
+    def _get_crash_log(self, name, pid, stdout, stderr, newer_than, time_fn=None, sleep_fn=None, wait_for_log=True):
+        return (stderr, None)
+
     def _create_devices(self, device_class):
         if not apple_additions():
             raise RuntimeError(self.NO_ON_DEVICE_TESTING)

@@ -20,6 +20,8 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import time
+
 from webkitpy.port import port_testcase
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.tool.mocktool import MockOptions
@@ -124,3 +126,11 @@ class DarwinTest(port_testcase.PortTestCase):
         port = self.make_port()
         port.host.executive = MockExecutive2(run_command_fn=throwing_run_command)
         OutputCapture().assert_outputs(self, port.sample_process, args=['test', 42])
+
+    def test_get_crash_log(self):
+        # Darwin crash logs are tested elsewhere, so here we just make sure we don't crash.
+        def fake_time_cb():
+            times = [0, 20, 40]
+            return lambda: times.pop(0)
+        port = self.make_port(port_name=self.port_name)
+        port._get_crash_log('DumpRenderTree', 1234, None, None, time.time(), wait_for_log=False)

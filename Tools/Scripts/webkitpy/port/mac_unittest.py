@@ -141,14 +141,6 @@ class MacTest(darwin_testcase.DarwinTest):
         child_processes = OutputCapture().assert_outputs(self, port.default_child_processes, (), expected_logs=expected_logs)
         self.assertEqual(child_processes, 1)
 
-    def test_get_crash_log(self):
-        # Mac crash logs are tested elsewhere, so here we just make sure we don't crash.
-        def fake_time_cb():
-            times = [0, 20, 40]
-            return lambda: times.pop(0)
-        port = self.make_port(port_name='mac-snowleopard')
-        port._get_crash_log('DumpRenderTree', 1234, None, None, time.time(), wait_for_log=False)
-
     def test_32bit(self):
         port = self.make_port(options=MockOptions(architecture='x86'))
 

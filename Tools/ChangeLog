@@ -1,5 +1,32 @@
 2017-05-09  Jonathan Bedard  <jbedard@apple.com>
 
+        webkitpy: Remove unneeded crash log retrieval, refactor Darwin crash retrieval
+        https://bugs.webkit.org/show_bug.cgi?id=170857
+        <rdar://problem/31635373>
+
+        Reviewed by Aakash Jain.
+
+        Since LayoutTestRelay has been removed, iOS Simulators and Macs can use the same
+        code to search for crash logs.
+
+        * Scripts/webkitpy/port/darwin.py:
+        (DarwinPort._get_crash_log): Moved from MacPort.
+        * Scripts/webkitpy/port/darwin_testcase.py:
+        (DarwinTest.test_get_crash_log): Moved from MacTest.
+        * Scripts/webkitpy/port/ios_device.py:
+        (IOSDevicePort._get_crash_log): Implement pass-through for iOS device, since iOS
+        devices must search for crash-logs remotely.
+        * Scripts/webkitpy/port/ios_simulator.py:
+        (IOSSimulatorPort._get_crash_log): Deleted.
+        * Scripts/webkitpy/port/ios_simulator_unittest.py:
+        (IOSSimulatorTest.test_get_crash_log): Deleted.
+        * Scripts/webkitpy/port/mac.py:
+        (MacPort._get_crash_log): Moved to DarwinPort
+        * Scripts/webkitpy/port/mac_unittest.py:
+        (MacTest.test_get_crash_log): Moved to DarwinTest.
+
+2017-05-09  Jonathan Bedard  <jbedard@apple.com>
+
         build ImageDiff with host SDK from Make
         https://bugs.webkit.org/show_bug.cgi?id=171835
 
