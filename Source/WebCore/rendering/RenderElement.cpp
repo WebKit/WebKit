@@ -2256,6 +2256,15 @@ void RenderElement::removeFromRenderFlowThreadIncludingDescendants(bool shouldUp
         setFlowThreadState(NotInsideFlowThread);
 }
 
+void RenderElement::resetFlowThreadContainingBlockAndChildInfoIncludingDescendants(RenderFlowThread* flowThread)
+{
+    if (flowThread)
+        flowThread->removeFlowChildInfo(*this);
+
+    for (auto& child : childrenOfType<RenderElement>(*this))
+        child.resetFlowThreadContainingBlockAndChildInfoIncludingDescendants(flowThread);
+}
+
 #if ENABLE(TEXT_AUTOSIZING)
 static RenderObject::BlockContentHeightType includeNonFixedHeight(const RenderObject& renderer)
 {

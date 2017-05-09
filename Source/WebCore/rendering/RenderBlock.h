@@ -325,7 +325,7 @@ public:
     RenderFlowThread* cachedFlowThreadContainingBlock() const;
     void setCachedFlowThreadContainingBlockNeedsUpdate();
     virtual bool cachedFlowThreadContainingBlockNeedsUpdate() const;
-    void resetFlowThreadContainingBlockAndChildInfoIncludingDescendants();
+    void resetFlowThreadContainingBlockAndChildInfoIncludingDescendants(RenderFlowThread* = nullptr) final;
 
     std::optional<LayoutUnit> availableLogicalHeightForPercentageComputation() const;
     bool hasDefiniteLogicalHeight() const;

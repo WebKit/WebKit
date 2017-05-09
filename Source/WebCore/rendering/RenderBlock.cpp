@@ -3416,7 +3416,7 @@ RenderFlowThread* RenderBlock::locateFlowThreadContainingBlock() const
     return rareData->m_flowThreadContainingBlock.value();
 }
 
-void RenderBlock::resetFlowThreadContainingBlockAndChildInfoIncludingDescendants()
+void RenderBlock::resetFlowThreadContainingBlockAndChildInfoIncludingDescendants(RenderFlowThread*)
 {
     if (flowThreadState() == NotInsideFlowThread)
         return;
@@ -3426,16 +3426,7 @@ void RenderBlock::resetFlowThreadContainingBlockAndChildInfoIncludingDescendants
 
     auto* flowThread = cachedFlowThreadContainingBlock();
     setCachedFlowThreadContainingBlockNeedsUpdate();
-
-    if (flowThread)
-        flowThread->removeFlowChildInfo(*this);
-
-    for (auto& child : childrenOfType<RenderElement>(*this)) {
-        if (flowThread)
-            flowThread->removeFlowChildInfo(child);
-        if (is<RenderBlock>(child))
-            downcast<RenderBlock>(child).resetFlowThreadContainingBlockAndChildInfoIncludingDescendants();
-    }
+    RenderElement::resetFlowThreadContainingBlockAndChildInfoIncludingDescendants(flowThread);
 }
 
 LayoutUnit RenderBlock::paginationStrut() const

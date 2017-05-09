@@ -1,3 +1,14 @@
+2017-05-09  Zalan Bujtas  <zalan@apple.com>
+
+        resetFlowThreadContainingBlockAndChildInfoIncludingDescendants should not ignore RenderElement subtrees.
+        https://bugs.webkit.org/show_bug.cgi?id=171873
+        <rdar://problem/32004954>
+
+        Reviewed by Simon Fraser.
+
+        * fast/multicol/crash-when-column-inside-table-expected.txt: Added.
+        * fast/multicol/crash-when-column-inside-table.html: Added.
+
 2017-05-09  Ryan Haddad  <ryanhaddad@apple.com>
 
         [iOS Simulator] Flaky failure LayoutTest/webrtc/libwebrtc/release-while-setting-local-description.html

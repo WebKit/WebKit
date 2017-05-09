@@ -221,6 +221,7 @@ public:
     RespectImageOrientationEnum shouldRespectImageOrientation() const;
 
     void removeFromRenderFlowThread();
+    virtual void resetFlowThreadContainingBlockAndChildInfoIncludingDescendants(RenderFlowThread*);
 
     // Called before anonymousChild.setStyle(). Override to set custom styles for
     // the child.
