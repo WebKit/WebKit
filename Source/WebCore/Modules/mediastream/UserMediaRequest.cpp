@@ -153,7 +153,7 @@ void UserMediaRequest::start()
     m_controller->requestUserMediaAccess(*this);
 }
 
-void UserMediaRequest::allow(const String& audioDeviceUID, const String& videoDeviceUID)
+void UserMediaRequest::allow(const String& audioDeviceUID, const String& videoDeviceUID, const String& deviceIdentifierHashSalt)
 {
     m_allowedAudioDeviceUID = audioDeviceUID;
     m_allowedVideoDeviceUID = videoDeviceUID;
@@ -179,6 +179,9 @@ void UserMediaRequest::allow(const String& audioDeviceUID, const String& videoDe
         
         m_promise.resolve(stream);
     };
+
+    m_audioConstraints->setDeviceIDHashSalt(deviceIdentifierHashSalt);
+    m_videoConstraints->setDeviceIDHashSalt(deviceIdentifierHashSalt);
 
     RealtimeMediaSourceCenter::singleton().createMediaStream(WTFMove(callback), m_allowedAudioDeviceUID, m_allowedVideoDeviceUID, &m_audioConstraints.get(), &m_videoConstraints.get());
 }

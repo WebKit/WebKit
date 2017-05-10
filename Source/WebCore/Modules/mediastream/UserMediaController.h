@@ -46,15 +46,11 @@ public:
     void enumerateMediaDevices(MediaDevicesEnumerationRequest&);
     void cancelMediaDevicesEnumerationRequest(MediaDevicesEnumerationRequest&);
 
-    void setDeviceIDHashSalt(const String& salt) { m_idHashSalt = salt; }
-    String deviceIDHashSalt() const { return m_idHashSalt; }
-
     WEBCORE_EXPORT static const char* supplementName();
     static UserMediaController* from(Page* page) { return static_cast<UserMediaController*>(Supplement<Page>::from(page, supplementName())); }
 
 private:
     UserMediaClient* m_client;
-    String m_idHashSalt;
 };
 
 inline void UserMediaController::requestUserMediaAccess(UserMediaRequest& request)

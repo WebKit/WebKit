@@ -811,6 +811,9 @@ public:
     virtual const Vector<MediaTrackConstraintSetMap>& advancedConstraints() const = 0;
     virtual bool isValid() const = 0;
 
+    virtual String deviceIDHashSalt() const = 0;
+    virtual void setDeviceIDHashSalt(const String&) = 0;
+
 protected:
     MediaConstraints() { }
 };
