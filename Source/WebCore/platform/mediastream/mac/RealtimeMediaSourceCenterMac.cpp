@@ -191,7 +191,6 @@ Vector<String> RealtimeMediaSourceCenterMac::bestSourcesForTypeAndConstraints(Re
     for (auto& device : bestSources)
         sourceUIDs.uncheckedAppend(device->persistentID());
 
-    invalidConstraint = emptyString();
     return sourceUIDs;
 }
 

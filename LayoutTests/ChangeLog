@@ -1,5 +1,18 @@
 2017-05-10  Matt Lewis  <jlewis3@apple.com>
 
+        Unreviewed, rolling out r216563.
+
+        Revision caused 2 api failures
+
+        Reverted changeset:
+
+        "[MediaStream] deviceId constraint doesn't work with
+        getUserMedia"
+        https://bugs.webkit.org/show_bug.cgi?id=171877
+        http://trac.webkit.org/changeset/216563
+
+2017-05-10  Matt Lewis  <jlewis3@apple.com>
+
         Marked imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-idl.html as flaky.
         https://bugs.webkit.org/show_bug.cgi?id=171930
 

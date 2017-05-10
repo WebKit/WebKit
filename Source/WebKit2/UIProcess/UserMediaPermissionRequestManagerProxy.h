@@ -30,7 +30,6 @@
 namespace WebCore {
 class CaptureDevice;
 struct MediaConstraintsData;
-class SecurityOrigin;
 };
 
 namespace WebKit {
@@ -39,21 +38,17 @@ class WebPageProxy;
 
 class FrameAuthorizationState {
 public:
-    explicit FrameAuthorizationState(WebCore::SecurityOrigin* userMediaDocumentSecurityOrigin, WebCore::SecurityOrigin* topLevelDocumentSecurityOrigin);
+    explicit FrameAuthorizationState(UserMediaPermissionRequestProxy&);
 
     bool hasPermissionToUseCaptureDevice(const String& deviceUID);
     void setHasPermissionToUseCaptureDevice(const String&, bool);
 
-    void ensureSecurityOriginsAreEqual(WebCore::SecurityOrigin* userMediaDocumentSecurityOrigin, WebCore::SecurityOrigin* topLevelDocumentSecurityOrigin);
-
-    void setDeviceIdentifierHashSalt(const String& hashSalt) { m_deviceIdentifierHashSalt = hashSalt; }
-    const String& deviceIdentifierHashSalt() const { return m_deviceIdentifierHashSalt; }
+    void ensureSecurityOriginsAreEqual(UserMediaPermissionRequestProxy&);
 
 private:
     RefPtr<WebCore::SecurityOrigin> m_userMediaDocumentSecurityOrigin;
     RefPtr<WebCore::SecurityOrigin> m_topLevelDocumentSecurityOrigin;
     Vector<String> m_authorizedDeviceUIDs;
-    String m_deviceIdentifierHashSalt;
 };
 
 class UserMediaPermissionRequestManagerProxy {
@@ -69,11 +64,11 @@ public:
 
     void userMediaAccessWasGranted(uint64_t, const String& audioDeviceUID, const String& videoDeviceUID);
     void userMediaAccessWasDenied(uint64_t, UserMediaPermissionRequestProxy::UserMediaAccessDenialReason);
+    FrameAuthorizationState& stateForRequest(UserMediaPermissionRequestProxy&);
 
-    template <typename RequestType>
-    FrameAuthorizationState& stateForRequest(RequestType&);
+    void enumerateMediaDevicesForFrame(uint64_t userMediaID, uint64_t frameID, String userMediaDocumentOriginIdentifier, String topLevelDocumentOriginIdentifier);
 
-    void enumerateMediaDevicesForFrame(uint64_t userMediaID, uint64_t frameID, String&& userMediaDocumentOriginIdentifier, String&& topLevelDocumentOriginIdentifier);
+    void didCompleteUserMediaPermissionCheck(uint64_t, const String&, bool allow);
 
     void stopCapture();
     void scheduleNextRejection();
@@ -86,9 +81,7 @@ public:
 private:
     Ref<UserMediaPermissionRequestProxy> createRequest(uint64_t userMediaID, uint64_t frameID, const String&userMediaDocumentOriginIdentifier, const String& topLevelDocumentOriginIdentifier, const Vector<String>& audioDeviceUIDs, const Vector<String>& videoDeviceUIDs);
     void denyRequest(uint64_t userMediaID, UserMediaPermissionRequestProxy::UserMediaAccessDenialReason, const String& invalidConstraint);
-
-    void getUserMediaPermissionInfo(uint64_t userMediaID, uint64_t frameID, UserMediaPermissionCheckProxy::CompletionHandler&&, String&& userMediaDocumentOriginIdentifier, String&& topLevelDocumentOriginIdentifier);
-
+    Ref<UserMediaPermissionCheckProxy> createUserMediaPermissionCheck(uint64_t userMediaID);
     void syncWithWebCorePrefs() const;
 
     HashMap<uint64_t, RefPtr<UserMediaPermissionRequestProxy>> m_pendingUserMediaRequests;

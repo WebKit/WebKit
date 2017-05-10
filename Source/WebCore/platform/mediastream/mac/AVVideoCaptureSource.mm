@@ -116,7 +116,7 @@ public:
         AVCaptureDeviceTypedef *device = [getAVCaptureDeviceClass() deviceWithUniqueID:deviceID];
         if (!device)
             return { };
-        return AVVideoCaptureSource::create(device, deviceID, constraints);
+        return AVVideoCaptureSource::create(device, emptyString(), constraints);
     }
 
 #if PLATFORM(IOS)

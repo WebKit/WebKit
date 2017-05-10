@@ -212,11 +212,15 @@ WebCore::CaptureSourceOrError UserMediaCaptureManager::createCaptureSource(const
         return { };
 
     uint64_t id = nextSessionID();
+    MediaConstraintsData constraintsData;
+    constraintsData.mandatoryConstraints = constraints->mandatoryConstraints();
+    constraintsData.advancedConstraints = constraints->advancedConstraints();
+    constraintsData.isValid = constraints->isValid();
     bool succeeded;
 
     RealtimeMediaSourceSettings settings;
     String errorMessage;
-    if (!m_process.sendSync(Messages::UserMediaCaptureManagerProxy::CreateMediaSourceForCaptureDeviceWithConstraints(id, deviceID, sourceType, *constraints), Messages::UserMediaCaptureManagerProxy::CreateMediaSourceForCaptureDeviceWithConstraints::Reply(succeeded, errorMessage, settings), 0))
+    if (!m_process.sendSync(Messages::UserMediaCaptureManagerProxy::CreateMediaSourceForCaptureDeviceWithConstraints(id, deviceID, sourceType, constraintsData), Messages::UserMediaCaptureManagerProxy::CreateMediaSourceForCaptureDeviceWithConstraints::Reply(succeeded, errorMessage, settings), 0))
         return WTFMove(errorMessage);
 
     auto source = adoptRef(*new Source(String::number(id), sourceType, emptyString(), id, *this));

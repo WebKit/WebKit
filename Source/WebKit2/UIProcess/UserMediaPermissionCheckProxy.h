@@ -29,39 +29,25 @@
 #include "APIObject.h"
 #include <wtf/text/WTFString.h>
 
-namespace WebCore {
-class SecurityOrigin;
-}
-
 namespace WebKit {
 
 class UserMediaPermissionRequestManagerProxy;
 
 class UserMediaPermissionCheckProxy : public API::ObjectImpl<API::Object::Type::UserMediaPermissionCheck> {
 public:
-
-    using CompletionHandler = std::function<void(uint64_t, String&&, bool allowed)>;
-
-    static Ref<UserMediaPermissionCheckProxy> create(uint64_t userMediaID, uint64_t frameID, CompletionHandler&& handler, const String& userMediaDocumentOriginIdentifier, const String& topLevelDocumentOriginIdentifier)
+    static Ref<UserMediaPermissionCheckProxy> create(UserMediaPermissionRequestManagerProxy& manager, uint64_t userMediaID)
     {
-        return adoptRef(*new UserMediaPermissionCheckProxy(userMediaID, frameID, WTFMove(handler), userMediaDocumentOriginIdentifier, topLevelDocumentOriginIdentifier));
+        return adoptRef(*new UserMediaPermissionCheckProxy(manager, userMediaID));
     }
 
-    void setUserMediaAccessInfo(String&&, bool allowed);
+    void setUserMediaAccessInfo(const String&, bool allowed);
     void invalidate();
 
-    uint64_t frameID() const { return m_frameID; }
-    WebCore::SecurityOrigin* userMediaDocumentSecurityOrigin() { return &m_userMediaDocumentSecurityOrigin.get(); }
-    WebCore::SecurityOrigin* topLevelDocumentSecurityOrigin() { return &m_topLevelDocumentSecurityOrigin.get(); }
-
 private:
-    UserMediaPermissionCheckProxy(uint64_t userMediaID, uint64_t frameID, CompletionHandler&&, const String& userMediaDocumentOriginIdentifier, const String& topLevelDocumentOriginIdentifier);
+    UserMediaPermissionCheckProxy(UserMediaPermissionRequestManagerProxy&, uint64_t);
 
+    UserMediaPermissionRequestManagerProxy* m_manager;
     uint64_t m_userMediaID;
-    uint64_t m_frameID;
-    CompletionHandler m_completionHandler;
-    Ref<WebCore::SecurityOrigin> m_userMediaDocumentSecurityOrigin;
-    Ref<WebCore::SecurityOrigin> m_topLevelDocumentSecurityOrigin;
 };
 
 } // namespace WebKit
