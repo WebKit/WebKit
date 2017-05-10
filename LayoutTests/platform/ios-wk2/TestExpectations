@@ -1977,3 +1977,5 @@ webkit.org/b/169637 imported/w3c/web-platform-tests/XMLHttpRequest/timeout-multi
 webkit.org/b/171886 imported/w3c/web-platform-tests/streams/readable-byte-streams/general.html [ Pass Failure ]
 
 webkit.org/b/171899 webrtc/libwebrtc/release-while-setting-local-description.html [ Pass Failure ]
+
+webkit.org/b/171930 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-idl.html [ Pass Failure ]
