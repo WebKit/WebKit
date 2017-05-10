@@ -257,7 +257,7 @@ gchar* webkit_dom_attr_get_value(WebKitDOMAttr* self)
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_ATTR(self), 0);
     WebCore::Attr* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->valueForBindings());
+    gchar* result = convertToUTF8String(item->value());
     return result;
 }
 
@@ -269,7 +269,7 @@ void webkit_dom_attr_set_value(WebKitDOMAttr* self, const gchar* value, GError**
     UNUSED_PARAM(error);
     WebCore::Attr* item = WebKit::core(self);
     WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setValueForBindings(convertedValue);
+    item->setValue(convertedValue);
 }
 
 WebKitDOMElement* webkit_dom_attr_get_owner_element(WebKitDOMAttr* self)

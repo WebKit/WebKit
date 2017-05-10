@@ -79,8 +79,9 @@ public:
     CollectionType type() const;
     ContainerNode& ownerNode() const;
     ContainerNode& rootNode() const;
-    void invalidateCacheForAttribute(const QualifiedName* attributeName);
-    virtual void invalidateCache(Document&);
+    void invalidateCacheForAttribute(const QualifiedName& attributeName);
+    virtual void invalidateCacheForDocument(Document&);
+    void invalidateCache() { invalidateCacheForDocument(document()); }
 
     bool hasNamedElementCache() const;
 
@@ -195,11 +196,11 @@ inline Document& HTMLCollection::document() const
     return m_ownerNode->document();
 }
 
-inline void HTMLCollection::invalidateCacheForAttribute(const QualifiedName* attributeName)
+inline void HTMLCollection::invalidateCacheForAttribute(const QualifiedName& attributeName)
 {
-    if (!attributeName || shouldInvalidateTypeOnAttributeChange(invalidationType(), *attributeName))
-        invalidateCache(document());
-    else if (hasNamedElementCache() && (*attributeName == HTMLNames::idAttr || *attributeName == HTMLNames::nameAttr))
+    if (shouldInvalidateTypeOnAttributeChange(invalidationType(), attributeName))
+        invalidateCache();
+    else if (hasNamedElementCache() && (attributeName == HTMLNames::idAttr || attributeName == HTMLNames::nameAttr))
         invalidateNamedElementCache(document());
 }
 

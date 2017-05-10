@@ -1,3 +1,65 @@
+2017-05-10  Chris Dumez  <cdumez@apple.com>
+
+        Simplify relationship between Attr and Element now that Attr is childless
+        https://bugs.webkit.org/show_bug.cgi?id=171909
+
+        Reviewed by Ryosuke Niwa.
+
+        Simplify relationship between Attr and Element now that Attr is childless
+        after r216259.
+
+        No new tests, no Web facing behavior change.
+
+        * dom/Attr.cpp:
+        (WebCore::Attr::setValue):
+        Attr::setValue() was only called by Element::setAttributeInternal() to make sure
+        we updated the Attr node's Text child. However, now that Attr has no Text child,
+        Element no longer needs to update the Attr node's value.
+        Attr::setValueForBindings() was thus renamed to setValue(). Its implementation
+        was also simplified by calling Element::setAttribute() on its ownerElement, if
+        it has one, instead of duplicating a bunch of code from Element::setAttributeInternal().
+
+        (WebCore::Attr::setNodeValue):
+        Call setValue() instead of setValueForBindings() now that it has been renamed.
+
+        * dom/Attr.h:
+        * dom/Attr.idl:
+        Rename valueForBindings / setValueForBindings to value / setValue.
+
+        * dom/Document.h:
+        Split shouldInvalidateNodeListAndCollectionCaches() into 2 methods, one taking an Attr name
+        and another that does not. There are now 2 calls sites instead of one, so we no longer need
+        to branch in this function.
+
+        * dom/Element.cpp:
+        (WebCore::Element::setAttributeInternal):
+        Drop code calling Attr::setValue() on the Attr node since Attr::setValue() was only
+        duplicating logic from Element::setAttributeInternal() after r216259. There is nothing
+        on Attr that needs updating when an element attribute gets updated.
+
+        (WebCore::Element::attributeChanged):
+        Call the new invalidateNodeListAndCollectionCachesInAncestorsForAttribute(). This
+        is the only call site that passes an attribute name.
+
+        * dom/Node.cpp:
+        (WebCore::Document::shouldInvalidateNodeListAndCollectionCaches):
+        (WebCore::Document::shouldInvalidateNodeListAndCollectionCachesForAttribute):
+        Split into 2 to avoid branching, as explained above.
+
+        (WebCore::Node::invalidateNodeListAndCollectionCachesInAncestors):
+        (WebCore::Node::invalidateNodeListAndCollectionCachesInAncestorsForAttribute):
+        - invalidateNodeListAndCollectionCachesInAncestors() used to invalidate childNodeLists
+          if the Node was an attribute node. Drop this as this is no longer needed as of r216259.
+        - After the change to Attr::setValue(), call sites for
+          invalidateNodeListAndCollectionCachesInAncestors() either had no parameters, or both
+          parameters present and non-null. There is therefore no longer any need to handle
+          having an attrName but no attributeOwnerElement. To make this obvious, I split this
+          into 2 methods: invalidateNodeListAndCollectionCachesInAncestors() and
+          invalidateNodeListAndCollectionCachesInAncestorsForAttribute(attrName). We no longer
+          need the attributeOwnerElement parameter as it was only used to exit early.
+
+        * dom/Node.h:
+
 2017-05-10  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r207372) Visibility property is not inherited when used in an animation

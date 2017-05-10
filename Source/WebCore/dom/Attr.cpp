@@ -86,28 +86,15 @@ ExceptionOr<void> Attr::setPrefix(const AtomicString& prefix)
 
 void Attr::setValue(const AtomicString& value)
 {
-    if (m_element) {
-        Style::AttributeChangeInvalidation styleInvalidation(*m_element, qualifiedName(), elementAttribute().value(), value);
-        elementAttribute().setValue(value);
-    } else
+    if (m_element)
+        m_element->setAttribute(qualifiedName(), value);
+    else
         m_standaloneValue = value;
-
-    invalidateNodeListAndCollectionCachesInAncestors(&m_name, m_element);
-}
-
-void Attr::setValueForBindings(const AtomicString& value)
-{
-    AtomicString oldValue = this->value();
-    if (m_element)
-        m_element->willModifyAttribute(qualifiedName(), oldValue, value);
-    setValue(value);
-    if (m_element)
-        m_element->didModifyAttribute(qualifiedName(), oldValue, value);
 }
 
 ExceptionOr<void> Attr::setNodeValue(const String& value)
 {
-    setValueForBindings(value);
+    setValue(value);
     return { };
 }
 

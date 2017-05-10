@@ -53,7 +53,7 @@ public:
     bool collectionCanTraverseBackward() const { return traversalType != CollectionTraversalType::CustomForwardOnly; }
     void willValidateIndexCache() const { document().registerCollection(const_cast<CachedHTMLCollection<HTMLCollectionClass, traversalType>&>(*this)); }
 
-    void invalidateCache(Document&) override;
+    void invalidateCacheForDocument(Document&) override;
 
     bool elementMatches(Element&) const;
 
@@ -78,9 +78,9 @@ CachedHTMLCollection<HTMLCollectionClass, traversalType>::~CachedHTMLCollection(
 }
 
 template <typename HTMLCollectionClass, CollectionTraversalType traversalType>
-void CachedHTMLCollection<HTMLCollectionClass, traversalType>::invalidateCache(Document& document)
+void CachedHTMLCollection<HTMLCollectionClass, traversalType>::invalidateCacheForDocument(Document& document)
 {
-    HTMLCollection::invalidateCache(document);
+    HTMLCollection::invalidateCacheForDocument(document);
     if (m_indexCache.hasValidCache(collection())) {
         document.unregisterCollection(*this);
         m_indexCache.invalidate(collection());

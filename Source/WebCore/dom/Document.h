@@ -726,8 +726,11 @@ public:
     void unregisterCollection(HTMLCollection&);
     void collectionCachedIdNameMap(const HTMLCollection&);
     void collectionWillClearIdNameMap(const HTMLCollection&);
-    bool shouldInvalidateNodeListAndCollectionCaches(const QualifiedName* attrName = nullptr) const;
-    void invalidateNodeListAndCollectionCaches(const QualifiedName* attrName);
+    bool shouldInvalidateNodeListAndCollectionCaches() const;
+    bool shouldInvalidateNodeListAndCollectionCachesForAttribute(const QualifiedName& attrName) const;
+
+    template <typename InvalidationFunction>
+    void invalidateNodeListAndCollectionCaches(InvalidationFunction);
 
     void attachNodeIterator(NodeIterator*);
     void detachNodeIterator(NodeIterator*);

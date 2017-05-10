@@ -474,7 +474,8 @@ public:
     void showTreeForThisAcrossFrame() const;
 #endif // ENABLE(TREE_DEBUGGING)
 
-    void invalidateNodeListAndCollectionCachesInAncestors(const QualifiedName* attrName = nullptr, Element* attributeOwnerElement = nullptr);
+    void invalidateNodeListAndCollectionCachesInAncestors();
+    void invalidateNodeListAndCollectionCachesInAncestorsForAttribute(const QualifiedName& attrName);
     NodeListsNodeData* nodeLists();
     void clearNodeLists();
 

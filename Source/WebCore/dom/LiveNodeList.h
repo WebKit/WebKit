@@ -48,12 +48,13 @@ public:
 
     ALWAYS_INLINE NodeListInvalidationType invalidationType() const { return static_cast<NodeListInvalidationType>(m_invalidationType); }
     ContainerNode& ownerNode() const { return m_ownerNode; }
-    ALWAYS_INLINE void invalidateCacheForAttribute(const QualifiedName* attrName) const
+    ALWAYS_INLINE void invalidateCacheForAttribute(const QualifiedName& attrName) const
     {
-        if (!attrName || shouldInvalidateTypeOnAttributeChange(invalidationType(), *attrName))
-            invalidateCache(document());
+        if (shouldInvalidateTypeOnAttributeChange(invalidationType(), attrName))
+            invalidateCache();
     }
-    virtual void invalidateCache(Document&) const = 0;
+    virtual void invalidateCacheForDocument(Document&) const = 0;
+    void invalidateCache() const { invalidateCacheForDocument(document()); }
 
     bool isRegisteredForInvalidationAtDocument() const { return m_isRegisteredForInvalidationAtDocument; }
     void setRegisteredForInvalidationAtDocument(bool f) { m_isRegisteredForInvalidationAtDocument = f; }
@@ -89,7 +90,7 @@ public:
     bool collectionCanTraverseBackward() const { return true; }
     void willValidateIndexCache() const { document().registerNodeListForInvalidation(const_cast<CachedLiveNodeList<NodeListType>&>(*this)); }
 
-    void invalidateCache(Document&) const final;
+    void invalidateCacheForDocument(Document&) const final;
     size_t memoryCost() const final { return m_indexCache.memoryCost(); }
 
 protected:
@@ -152,7 +153,7 @@ inline ContainerNode& CachedLiveNodeList<NodeListType>::rootNode() const
 }
 
 template <class NodeListType>
-void CachedLiveNodeList<NodeListType>::invalidateCache(Document& document) const
+void CachedLiveNodeList<NodeListType>::invalidateCacheForDocument(Document& document) const
 {
     if (!m_indexCache.hasValidCache(nodeList()))
         return;

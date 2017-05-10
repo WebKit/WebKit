@@ -136,7 +136,7 @@ HTMLCollection::~HTMLCollection()
     }
 }
 
-void HTMLCollection::invalidateCache(Document& document)
+void HTMLCollection::invalidateCacheForDocument(Document& document)
 {
     if (hasNamedElementCache())
         invalidateNamedElementCache(document);

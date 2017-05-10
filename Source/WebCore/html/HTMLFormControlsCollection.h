@@ -46,7 +46,7 @@ public:
 private:
     explicit HTMLFormControlsCollection(ContainerNode&);
 
-    void invalidateCache(Document&) override;
+    void invalidateCacheForDocument(Document&) override;
     void updateNamedElementCache() const override;
 
     const Vector<FormAssociatedElement*>& formControlElements() const;

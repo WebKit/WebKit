@@ -141,9 +141,9 @@ void HTMLFormControlsCollection::updateNamedElementCache() const
     setNamedItemCache(WTFMove(cache));
 }
 
-void HTMLFormControlsCollection::invalidateCache(Document& document)
+void HTMLFormControlsCollection::invalidateCacheForDocument(Document& document)
 {
-    CachedHTMLCollection<HTMLFormControlsCollection, CollectionTypeTraits<FormControls>::traversalType>::invalidateCache(document);
+    CachedHTMLCollection<HTMLFormControlsCollection, CollectionTypeTraits<FormControls>::traversalType>::invalidateCacheForDocument(document);
     m_cachedElement = nullptr;
     m_cachedElementOffsetInArray = 0;
 }

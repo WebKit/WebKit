@@ -58,13 +58,13 @@
 - (NSString *)value
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->valueForBindings();
+    return IMPL->value();
 }
 
 - (void)setValue:(NSString *)newValue
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setValueForBindings(newValue);
+    IMPL->setValue(newValue);
 }
 
 - (DOMElement *)ownerElement

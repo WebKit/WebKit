@@ -1276,15 +1276,8 @@ inline void Element::setAttributeInternal(unsigned index, const QualifiedName& n
     willModifyAttribute(attributeName, oldValue, newValue);
 
     if (newValue != oldValue) {
-        // If there is an Attr node hooked to this attribute, the Attr::setValue() call below
-        // will write into the ElementData.
-        // FIXME: Refactor this so it makes some sense.
-        if (RefPtr<Attr> attrNode = attrIfExists(attributeName))
-            attrNode->setValue(newValue);
-        else {
-            Style::AttributeChangeInvalidation styleInvalidation(*this, name, oldValue, newValue);
-            ensureUniqueElementData().attributeAt(index).setValue(newValue);
-        }
+        Style::AttributeChangeInvalidation styleInvalidation(*this, name, oldValue, newValue);
+        ensureUniqueElementData().attributeAt(index).setValue(newValue);
     }
 
     didModifyAttribute(attributeName, oldValue, newValue);
@@ -1340,7 +1333,7 @@ void Element::attributeChanged(const QualifiedName& name, const AtomicString& ol
     if (valueIsSameAsBefore)
         return;
 
-    invalidateNodeListAndCollectionCachesInAncestors(&name, this);
+    invalidateNodeListAndCollectionCachesInAncestorsForAttribute(name);
 
     if (AXObjectCache* cache = document().existingAXObjectCache())
         cache->handleAttributeChanged(name, this);

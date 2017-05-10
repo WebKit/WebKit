@@ -838,54 +838,74 @@ bool shouldInvalidateNodeListCachesForAttr<numNodeListInvalidationTypes>(const u
     return false;
 }
 
-bool Document::shouldInvalidateNodeListAndCollectionCaches(const QualifiedName* attrName) const
+inline bool Document::shouldInvalidateNodeListAndCollectionCaches() const
 {
-    if (attrName)
-        return shouldInvalidateNodeListCachesForAttr<DoNotInvalidateOnAttributeChanges + 1>(m_nodeListAndCollectionCounts, *attrName);
-
-    for (int type = 0; type < numNodeListInvalidationTypes; type++) {
+    for (int type = 0; type < numNodeListInvalidationTypes; ++type) {
         if (m_nodeListAndCollectionCounts[type])
             return true;
     }
-
     return false;
 }
 
-void Document::invalidateNodeListAndCollectionCaches(const QualifiedName* attrName)
+inline bool Document::shouldInvalidateNodeListAndCollectionCachesForAttribute(const QualifiedName& attrName) const
+{
+    return shouldInvalidateNodeListCachesForAttr<DoNotInvalidateOnAttributeChanges + 1>(m_nodeListAndCollectionCounts, attrName);
+}
+
+template <typename InvalidationFunction>
+void Document::invalidateNodeListAndCollectionCaches(InvalidationFunction invalidate)
 {
     Vector<LiveNodeList*, 8> lists;
     copyToVector(m_listsInvalidatedAtDocument, lists);
     for (auto* list : lists)
-        list->invalidateCacheForAttribute(attrName);
+        invalidate(*list);
 
     Vector<HTMLCollection*, 8> collections;
     copyToVector(m_collectionsInvalidatedAtDocument, collections);
     for (auto* collection : collections)
-        collection->invalidateCacheForAttribute(attrName);
+        invalidate(*collection);
 }
 
-void Node::invalidateNodeListAndCollectionCachesInAncestors(const QualifiedName* attrName, Element* attributeOwnerElement)
+void Node::invalidateNodeListAndCollectionCachesInAncestors()
 {
-    if (hasRareData() && (!attrName || isAttributeNode())) {
-        if (NodeListsNodeData* lists = rareData()->nodeLists())
+    if (hasRareData()) {
+        if (auto* lists = rareData()->nodeLists())
             lists->clearChildNodeListCache();
     }
 
-    // Modifications to attributes that are not associated with an Element can't invalidate NodeList caches.
-    if (attrName && !attributeOwnerElement)
+    if (!document().shouldInvalidateNodeListAndCollectionCaches())
         return;
 
-    if (!document().shouldInvalidateNodeListAndCollectionCaches(attrName))
-        return;
+    document().invalidateNodeListAndCollectionCaches([](auto& list) {
+        list.invalidateCache();
+    });
 
-    document().invalidateNodeListAndCollectionCaches(attrName);
-
-    for (Node* node = this; node; node = node->parentNode()) {
+    for (auto* node = this; node; node = node->parentNode()) {
         if (!node->hasRareData())
             continue;
-        NodeRareData* data = node->rareData();
-        if (data->nodeLists())
-            data->nodeLists()->invalidateCaches(attrName);
+
+        if (auto* lists = node->rareData()->nodeLists())
+            lists->invalidateCaches();
+    }
+}
+
+void Node::invalidateNodeListAndCollectionCachesInAncestorsForAttribute(const QualifiedName& attrName)
+{
+    ASSERT(is<Element>(*this));
+
+    if (!document().shouldInvalidateNodeListAndCollectionCachesForAttribute(attrName))
+        return;
+
+    document().invalidateNodeListAndCollectionCaches([&attrName](auto& list) {
+        list.invalidateCacheForAttribute(attrName);
+    });
+
+    for (auto* node = this; node; node = node->parentNode()) {
+        if (!node->hasRareData())
+            continue;
+
+        if (auto* lists = node->rareData()->nodeLists())
+            lists->invalidateCachesForAttribute(attrName);
     }
 }
 
@@ -1864,19 +1884,25 @@ void Node::showTreeForThisAcrossFrame() const
 
 // --------
 
-void NodeListsNodeData::invalidateCaches(const QualifiedName* attrName)
+void NodeListsNodeData::invalidateCaches()
+{
+    for (auto& atomicName : m_atomicNameCaches)
+        atomicName.value->invalidateCache();
+
+    for (auto& collection : m_cachedCollections)
+        collection.value->invalidateCache();
+
+    for (auto& tagCollection : m_tagCollectionNSCache)
+        tagCollection.value->invalidateCache();
+}
+
+void NodeListsNodeData::invalidateCachesForAttribute(const QualifiedName& attrName)
 {
     for (auto& atomicName : m_atomicNameCaches)
         atomicName.value->invalidateCacheForAttribute(attrName);
 
     for (auto& collection : m_cachedCollections)
         collection.value->invalidateCacheForAttribute(attrName);
-
-    if (attrName)
-        return;
-
-    for (auto& tagCollection : m_tagCollectionNSCache)
-        tagCollection.value->invalidateCacheForAttribute(nullptr);
 }
 
 void Node::getSubresourceURLs(ListHashSet<URL>& urls) const

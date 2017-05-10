@@ -741,7 +741,7 @@ const Vector<HTMLElement*>& HTMLSelectElement::listItems() const
 void HTMLSelectElement::invalidateSelectedItems()
 {
     if (HTMLCollection* collection = cachedHTMLCollection(SelectedOptions))
-        collection->invalidateCache(document());
+        collection->invalidateCache();
 }
 
 void HTMLSelectElement::setRecalcListItems()
@@ -753,7 +753,7 @@ void HTMLSelectElement::setRecalcListItems()
     invalidateStyleForSubtree();
     if (!isConnected()) {
         if (HTMLCollection* collection = cachedHTMLCollection(SelectOptions))
-            collection->invalidateCache(document());
+            collection->invalidateCache();
     }
     if (!isConnected())
         invalidateSelectedItems();

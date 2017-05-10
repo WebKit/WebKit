@@ -44,9 +44,7 @@ public:
     Element* ownerElement() const { return m_element; }
 
     WEBCORE_EXPORT const AtomicString& value() const;
-    void setValue(const AtomicString&);
-    const AtomicString& valueForBindings() const { return value(); }
-    WEBCORE_EXPORT void setValueForBindings(const AtomicString&);
+    WEBCORE_EXPORT void setValue(const AtomicString&);
 
     const QualifiedName& qualifiedName() const { return m_name; }
 
