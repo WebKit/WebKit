@@ -1,5 +1,23 @@
 2017-05-10  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Fix order of merge from r212528
+
+    2017-05-01  Jeremy Jones  <jeremyj@apple.com>
+
+            Fix order of merge from r212528
+
+            Two changes got merged in the wrong order.
+            rdar://problem/31153819
+
+            Reviewed by Jer Noble.
+
+            Fixes test failure media/media-fullscreen-loop-inline.html
+
+            * html/MediaElementSession.cpp:
+            (WebCore::MediaElementSession::requiresFullscreenForVideoPlayback):
+
+2017-05-10  Matthew Hanson  <matthew_hanson@apple.com>
+
         Cherry-pick r215429. rdar://problem/32057106
 
     2017-04-17  Youenn Fablet  <youenn@apple.com>

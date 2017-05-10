@@ -541,12 +541,12 @@ bool MediaElementSession::requiresFullscreenForVideoPlayback(const HTMLMediaElem
     if (is<HTMLAudioElement>(element))
         return false;
 
+    if (element.isTemporarilyAllowingInlinePlaybackAfterFullscreen())
+        return false;
+
     Settings* settings = element.document().settings();
     if (!settings || !settings->allowsInlineMediaPlayback())
         return true;
-
-    if (element.isTemporarilyAllowingInlinePlaybackAfterFullscreen())
-        return false;
 
     if (!settings->inlineMediaPlaybackRequiresPlaysInlineAttribute())
         return false;
