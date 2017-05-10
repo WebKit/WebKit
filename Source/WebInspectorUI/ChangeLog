@@ -1,3 +1,15 @@
+2017-05-09  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [GTK][Win] Web Inspector: Cann't open "Quick Open" dialog by pressing Ctrl+Shift+O
+        https://bugs.webkit.org/show_bug.cgi?id=171798
+
+        Reviewed by Michael Catanzaro.
+
+        PC can't input the shortcut keys Command+Shift+O and Command+P.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.contentLoaded): Use CommandOrControl instead of Command.
+
 2017-05-09  Brian Burg  <bburg@apple.com>
 
         Web Inspector: Assertion failed: Cannot select item with unexpected parent bar. (at NavigationBar.js:132)
