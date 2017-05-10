@@ -27,6 +27,7 @@
 
 #include "CalleeBits.h"
 #include "VMEntryRecord.h"
+#include "WasmIndexOrName.h"
 #include <functional>
 #include <wtf/Indenter.h>
 #include <wtf/text/WTFString.h>
@@ -77,10 +78,10 @@ public:
         bool isNativeFrame() const { return !codeBlock() && !isWasmFrame(); }
         bool isInlinedFrame() const { return !!inlineCallFrame(); }
         bool isWasmFrame() const;
-        std::optional<unsigned> const wasmFunctionIndex()
+        Wasm::IndexOrName const wasmFunctionIndexOrName()
         {
             ASSERT(isWasmFrame());
-            return m_wasmFunctionIndex;
+            return m_wasmFunctionIndexOrName;
         }
 
         JS_EXPORT_PRIVATE String functionName() const;
@@ -121,7 +122,7 @@ public:
         size_t m_index;
         size_t m_argumentCountIncludingThis;
         unsigned m_bytecodeOffset;
-        std::optional<unsigned> m_wasmFunctionIndex;
+        Wasm::IndexOrName m_wasmFunctionIndexOrName;
         bool m_callerIsVMEntryFrame : 1;
         bool m_isWasmFrame : 1;
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,40 +27,23 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "B3Compilation.h"
-#include "RegisterAtOffsetList.h"
 #include "WasmFormat.h"
-#include "WasmIndexOrName.h"
-#include <wtf/ThreadSafeRefCounted.h>
+#include "WasmParser.h"
 
 namespace JSC { namespace Wasm {
 
-class Callee : public ThreadSafeRefCounted<Callee> {
-    WTF_MAKE_FAST_ALLOCATED;
+class NameSectionParser : public Parser<NameSection> {
 public:
-    static Ref<Callee> create(Wasm::Entrypoint&& entrypoint)
+    NameSectionParser(const uint8_t* sourceBuffer, size_t sourceLength, const ModuleInformation& info)
+        : Parser(sourceBuffer, sourceLength)
+        , m_info(info)
     {
-        Callee* callee = new Callee(WTFMove(entrypoint));
-        return adoptRef(*callee);
     }
 
-    static Ref<Callee> create(Wasm::Entrypoint&& entrypoint, size_t index, const Name* name)
-    {
-        Callee* callee = new Callee(WTFMove(entrypoint), index, name);
-        return adoptRef(*callee);
-    }
-
-    void* entrypoint() const { return m_entrypoint.compilation->code().executableAddress(); }
-
-    RegisterAtOffsetList* calleeSaveRegisters() { return &m_entrypoint.calleeSaveRegisters; }
-    IndexOrName indexOrName() const { return m_indexOrName; }
-
+    Result WARN_UNUSED_RETURN parse();
+    
 private:
-    JS_EXPORT_PRIVATE Callee(Wasm::Entrypoint&&);
-    JS_EXPORT_PRIVATE Callee(Wasm::Entrypoint&&, size_t, const Name*);
-
-    Wasm::Entrypoint m_entrypoint;
-    IndexOrName m_indexOrName;
+    const ModuleInformation& m_info;
 };
 
 } } // namespace JSC::Wasm

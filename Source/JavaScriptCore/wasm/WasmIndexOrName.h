@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,44 +25,37 @@
 
 #pragma once
 
-#if ENABLE(WEBASSEMBLY)
-
-#include "B3Compilation.h"
-#include "RegisterAtOffsetList.h"
-#include "WasmFormat.h"
-#include "WasmIndexOrName.h"
-#include <wtf/ThreadSafeRefCounted.h>
+#include "WasmName.h"
+#include <wtf/StdLibExtras.h>
+#include <wtf/text/WTFString.h>
 
 namespace JSC { namespace Wasm {
 
-class Callee : public ThreadSafeRefCounted<Callee> {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    static Ref<Callee> create(Wasm::Entrypoint&& entrypoint)
-    {
-        Callee* callee = new Callee(WTFMove(entrypoint));
-        return adoptRef(*callee);
-    }
+struct IndexOrName {
+    typedef size_t Index;
 
-    static Ref<Callee> create(Wasm::Entrypoint&& entrypoint, size_t index, const Name* name)
-    {
-        Callee* callee = new Callee(WTFMove(entrypoint), index, name);
-        return adoptRef(*callee);
-    }
+    IndexOrName()
+        : m_index(emptyTag)
+    { }
+    IndexOrName(Index, const Name*);
+    bool isEmpty() const { return bitwise_cast<Index>(*this) & emptyTag; }
+    bool isIndex() const { return bitwise_cast<Index>(*this) & indexTag; }
+    bool isName() const { return !(isEmpty() || isName()); }
 
-    void* entrypoint() const { return m_entrypoint.compilation->code().executableAddress(); }
-
-    RegisterAtOffsetList* calleeSaveRegisters() { return &m_entrypoint.calleeSaveRegisters; }
-    IndexOrName indexOrName() const { return m_indexOrName; }
+    friend String makeString(const IndexOrName&);
 
 private:
-    JS_EXPORT_PRIVATE Callee(Wasm::Entrypoint&&);
-    JS_EXPORT_PRIVATE Callee(Wasm::Entrypoint&&, size_t, const Name*);
+    union {
+        Index m_index;
+        const Name* m_name;
+    };
 
-    Wasm::Entrypoint m_entrypoint;
-    IndexOrName m_indexOrName;
+    // Use the top bits as tags. Neither pointers nor the function index space should use them.
+    static constexpr Index indexTag = 1ull << (CHAR_BIT * sizeof(Index) - 1);
+    static constexpr Index emptyTag = 1ull << (CHAR_BIT * sizeof(Index) - 2);
+    static constexpr Index allTags = indexTag | emptyTag;
 };
 
-} } // namespace JSC::Wasm
+String makeString(const IndexOrName&);
 
-#endif // ENABLE(WEBASSEMBLY)
+} } // namespace JSC::Wasm

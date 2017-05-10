@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,46 +23,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#if ENABLE(WEBASSEMBLY)
-
-#include "B3Compilation.h"
-#include "RegisterAtOffsetList.h"
-#include "WasmFormat.h"
+#include "config.h"
 #include "WasmIndexOrName.h"
-#include <wtf/ThreadSafeRefCounted.h>
 
 namespace JSC { namespace Wasm {
 
-class Callee : public ThreadSafeRefCounted<Callee> {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    static Ref<Callee> create(Wasm::Entrypoint&& entrypoint)
-    {
-        Callee* callee = new Callee(WTFMove(entrypoint));
-        return adoptRef(*callee);
-    }
+IndexOrName::IndexOrName(Index index, const Name* name)
+{
+    static_assert(sizeof(m_index) == sizeof(m_name), "bit-tagging depends on sizes being equal");
+    static_assert(sizeof(m_index) == sizeof(*this), "bit-tagging depends on object being the size of the union's types");
 
-    static Ref<Callee> create(Wasm::Entrypoint&& entrypoint, size_t index, const Name* name)
-    {
-        Callee* callee = new Callee(WTFMove(entrypoint), index, name);
-        return adoptRef(*callee);
-    }
+    if ((index & allTags) || (bitwise_cast<Index>(name) & allTags))
+        *this = IndexOrName();
+    else if (name)
+        m_name = name;
+    else
+        m_index = indexTag | index;
+}
 
-    void* entrypoint() const { return m_entrypoint.compilation->code().executableAddress(); }
-
-    RegisterAtOffsetList* calleeSaveRegisters() { return &m_entrypoint.calleeSaveRegisters; }
-    IndexOrName indexOrName() const { return m_indexOrName; }
-
-private:
-    JS_EXPORT_PRIVATE Callee(Wasm::Entrypoint&&);
-    JS_EXPORT_PRIVATE Callee(Wasm::Entrypoint&&, size_t, const Name*);
-
-    Wasm::Entrypoint m_entrypoint;
-    IndexOrName m_indexOrName;
+String makeString(const IndexOrName& ion)
+{
+    if (ion.isEmpty())
+        return String();
+    if (ion.isIndex())
+        return String::number(ion.m_index & ~IndexOrName::indexTag);
+    return String(ion.m_name->data(), ion.m_name->size());
 };
 
 } } // namespace JSC::Wasm
-
-#endif // ENABLE(WEBASSEMBLY)

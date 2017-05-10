@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -58,9 +58,9 @@ String StackFrame::sourceURL() const
 String StackFrame::functionName(VM& vm) const
 {
     if (m_isWasmFrame) {
-        if (m_wasmFunctionIndex == invalidWasmIndex)
+        if (m_wasmFunctionIndexOrName.isEmpty())
             return ASCIILiteral("wasm function");
-        return makeString("wasm function index: ", String::number(m_wasmFunctionIndex));
+        return makeString("wasm function: ", makeString(m_wasmFunctionIndexOrName));
     }
 
     if (m_codeBlock) {

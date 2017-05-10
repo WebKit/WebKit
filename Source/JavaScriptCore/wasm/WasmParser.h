@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -62,7 +62,7 @@ protected:
 
     bool WARN_UNUSED_RETURN consumeCharacter(char);
     bool WARN_UNUSED_RETURN consumeString(const char*);
-    bool WARN_UNUSED_RETURN consumeUTF8String(Vector<LChar>&, size_t);
+    bool WARN_UNUSED_RETURN consumeUTF8String(Name&, size_t);
 
     bool WARN_UNUSED_RETURN parseVarUInt1(uint8_t&);
     bool WARN_UNUSED_RETURN parseInt7(int8_t&);
@@ -142,7 +142,7 @@ ALWAYS_INLINE bool Parser<SuccessType>::consumeString(const char* str)
 }
 
 template<typename SuccessType>
-ALWAYS_INLINE bool Parser<SuccessType>::consumeUTF8String(Vector<LChar>& result, size_t stringLength)
+ALWAYS_INLINE bool Parser<SuccessType>::consumeUTF8String(Name& result, size_t stringLength)
 {
     if (length() < stringLength || m_offset > length() - stringLength)
         return false;

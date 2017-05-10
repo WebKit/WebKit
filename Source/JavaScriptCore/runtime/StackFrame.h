@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #pragma once
 
 #include "Strong.h"
+#include "WasmIndexOrName.h"
 #include <limits.h>
 
 namespace JSC {
@@ -35,7 +36,9 @@ class JSObject;
 
 class StackFrame {
 public:
-    StackFrame() = default;
+    StackFrame()
+        : m_bytecodeOffset(UINT_MAX)
+    { }
 
     StackFrame(VM& vm, JSCell* callee)
         : m_callee(vm, callee)
@@ -48,12 +51,11 @@ public:
         , m_bytecodeOffset(bytecodeOffset)
     { }
 
-    static constexpr unsigned invalidWasmIndex = UINT_MAX;
-    static StackFrame wasm(unsigned index)
+    static StackFrame wasm(Wasm::IndexOrName indexOrName)
     {
         StackFrame result;
         result.m_isWasmFrame = true;
-        result.m_wasmFunctionIndex = index;
+        result.m_wasmFunctionIndexOrName = indexOrName;
         return result;
     }
 
@@ -78,7 +80,7 @@ private:
     Strong<CodeBlock> m_codeBlock { };
     union {
         unsigned m_bytecodeOffset;
-        unsigned m_wasmFunctionIndex;
+        Wasm::IndexOrName m_wasmFunctionIndexOrName;
     };
     bool m_isWasmFrame { false };
 };

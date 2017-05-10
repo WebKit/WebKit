@@ -33,6 +33,7 @@
 #include "MacroAssemblerCodeRef.h"
 #include "RegisterAtOffsetList.h"
 #include "WasmMemoryInformation.h"
+#include "WasmName.h"
 #include "WasmOps.h"
 #include "WasmPageCount.h"
 #include "WasmSignature.h"
@@ -74,7 +75,7 @@ enum class ExternalKind : uint8_t {
 };
 
 template<typename Int>
-static bool isValidExternalKind(Int val)
+inline bool isValidExternalKind(Int val)
 {
     switch (val) {
     case static_cast<Int>(ExternalKind::Function):
@@ -82,9 +83,8 @@ static bool isValidExternalKind(Int val)
     case static_cast<Int>(ExternalKind::Memory):
     case static_cast<Int>(ExternalKind::Global):
         return true;
-    default:
-        return false;
     }
+    return false;
 }
 
 static_assert(static_cast<int>(ExternalKind::Function) == 0, "Wasm needs Function to have the value 0");
@@ -105,19 +105,19 @@ inline const char* makeString(ExternalKind kind)
 }
 
 struct Import {
-    const Vector<LChar> module;
-    const Vector<LChar> field;
+    const Name module;
+    const Name field;
     ExternalKind kind;
     unsigned kindIndex; // Index in the vector of the corresponding kind.
 };
 
 struct Export {
-    const Vector<LChar> field;
+    const Name field;
     ExternalKind kind;
     unsigned kindIndex; // Index in the vector of the corresponding kind.
 };
 
-String makeString(const Vector<LChar>& characters);
+String makeString(const Name& characters);
 
 struct Global {
     enum Mutability : uint8_t {
@@ -231,8 +231,32 @@ private:
 };
     
 struct CustomSection {
-    Vector<LChar> name;
+    Name name;
     Vector<uint8_t> payload;
+};
+
+enum class NameType : uint8_t {
+    Function = 1,
+    Local = 2,
+};
+    
+template<typename Int>
+inline bool isValidNameType(Int val)
+{
+    switch (val) {
+    case static_cast<Int>(NameType::Function):
+    case static_cast<Int>(NameType::Local):
+        return true;
+    }
+    return false;
+}
+    
+struct NameSection {
+    Vector<Name> functionNames;
+    const Name* get(size_t functionIndexSpace)
+    {
+        return functionIndexSpace < functionNames.size() ? &functionNames[functionIndexSpace] : nullptr;
+    }
 };
 
 struct UnlinkedWasmToWasmCall {

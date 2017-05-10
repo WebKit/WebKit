@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,44 +25,13 @@
 
 #pragma once
 
-#if ENABLE(WEBASSEMBLY)
+#include <wtf/Vector.h>
+#include <wtf/text/LChar.h>
 
-#include "B3Compilation.h"
-#include "RegisterAtOffsetList.h"
-#include "WasmFormat.h"
-#include "WasmIndexOrName.h"
-#include <wtf/ThreadSafeRefCounted.h>
+namespace JSC {
 
-namespace JSC { namespace Wasm {
+namespace Wasm {
 
-class Callee : public ThreadSafeRefCounted<Callee> {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    static Ref<Callee> create(Wasm::Entrypoint&& entrypoint)
-    {
-        Callee* callee = new Callee(WTFMove(entrypoint));
-        return adoptRef(*callee);
-    }
-
-    static Ref<Callee> create(Wasm::Entrypoint&& entrypoint, size_t index, const Name* name)
-    {
-        Callee* callee = new Callee(WTFMove(entrypoint), index, name);
-        return adoptRef(*callee);
-    }
-
-    void* entrypoint() const { return m_entrypoint.compilation->code().executableAddress(); }
-
-    RegisterAtOffsetList* calleeSaveRegisters() { return &m_entrypoint.calleeSaveRegisters; }
-    IndexOrName indexOrName() const { return m_indexOrName; }
-
-private:
-    JS_EXPORT_PRIVATE Callee(Wasm::Entrypoint&&);
-    JS_EXPORT_PRIVATE Callee(Wasm::Entrypoint&&, size_t, const Name*);
-
-    Wasm::Entrypoint m_entrypoint;
-    IndexOrName m_indexOrName;
-};
+using Name = Vector<LChar>;
 
 } } // namespace JSC::Wasm
-
-#endif // ENABLE(WEBASSEMBLY)

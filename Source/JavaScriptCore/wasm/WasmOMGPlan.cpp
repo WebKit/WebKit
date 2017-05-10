@@ -98,7 +98,7 @@ void OMGPlan::work(CompilationEffort)
     void* entrypoint;
     {
         ASSERT(m_codeBlock.ptr() == m_module->codeBlockFor(mode()));
-        Ref<Callee> callee = Callee::create(WTFMove(omgEntrypoint), functionIndexSpace);
+        Ref<Callee> callee = Callee::create(WTFMove(omgEntrypoint), functionIndexSpace, m_moduleInformation->nameSection.get(functionIndexSpace));
         MacroAssembler::repatchPointer(parseAndCompileResult.value()->wasmCalleeMoveLocation, CalleeBits::boxWasm(callee.ptr()));
         ASSERT(!m_codeBlock->m_optimizedCallees[m_functionIndex]);
         entrypoint = callee->entrypoint();

@@ -951,12 +951,14 @@ set(JavaScriptCore_SOURCES
     wasm/WasmContext.cpp
     wasm/WasmFaultSignalHandler.cpp
     wasm/WasmFormat.cpp
+    wasm/WasmIndexOrName.cpp
     wasm/WasmMachineThreads.cpp
     wasm/WasmMemory.cpp
     wasm/WasmMemoryInformation.cpp
     wasm/WasmModule.cpp
     wasm/WasmModuleInformation.cpp
     wasm/WasmModuleParser.cpp
+    wasm/WasmNameSectionParser.cpp
     wasm/WasmOMGPlan.cpp
     wasm/WasmOpcodeOrigin.cpp
     wasm/WasmPageCount.cpp

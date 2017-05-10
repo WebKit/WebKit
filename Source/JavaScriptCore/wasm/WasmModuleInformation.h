@@ -74,7 +74,7 @@ struct ModuleInformation : public ThreadSafeRefCounted<ModuleInformation> {
     Vector<Global> globals;
     unsigned firstInternalGlobal { 0 };
     Vector<CustomSection> customSections;
-
+    NameSection nameSection;
 };
 
     

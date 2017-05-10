@@ -32,6 +32,7 @@
 #include "Interpreter.h"
 #include "JSCInlines.h"
 #include "WasmCallee.h"
+#include "WasmIndexOrName.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace JSC {
@@ -166,7 +167,7 @@ void StackVisitor::readNonInlinedFrame(CallFrame* callFrame, CodeOrigin* codeOri
 #if ENABLE(WEBASSEMBLY)
         CalleeBits bits = callFrame->callee();
         if (bits.isWasm())
-            m_frame.m_wasmFunctionIndex = bits.asWasmCallee()->index();
+            m_frame.m_wasmFunctionIndexOrName = bits.asWasmCallee()->indexOrName();
 #endif
     } else {
         m_frame.m_codeBlock = callFrame->codeBlock();
@@ -283,10 +284,10 @@ String StackVisitor::Frame::functionName() const
 
     switch (codeType()) {
     case CodeType::Wasm:
-        if (m_wasmFunctionIndex)
-            traceLine = makeString("wasm function index: ", String::number(*m_wasmFunctionIndex));
+        if (m_wasmFunctionIndexOrName.isEmpty())
+            traceLine = makeString("wasm function");
         else
-            traceLine = ASCIILiteral("wasm function");
+            traceLine = makeString("wasm function: ", makeString(m_wasmFunctionIndexOrName));
         break;
     case CodeType::Eval:
         traceLine = ASCIILiteral("eval code");

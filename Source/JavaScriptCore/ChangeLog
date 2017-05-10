@@ -1,3 +1,67 @@
+2017-05-10  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: support name section
+
+        https://bugs.webkit.org/show_bug.cgi?id=171263
+
+        Reviewed by Keith Miller.
+
+        The name section is an optional custom section in the WebAssembly
+        spec. At least when debugging, developers expect to be able to use
+        this section to obtain intelligible stack traces, otherwise we
+        just number the wasm functions which is somewhat painful.
+
+        This patch parses this section, dropping its content eagerly on
+        error, and if there is a name section then backtraces use their
+        value instead of numbers. Otherwise we stick to numbers as before.
+
+        Note that the format of name sections changed in mid-February:
+          https://github.com/WebAssembly/design/pull/984
+        And binaryen was only updated in early March:
+          https://github.com/WebAssembly/binaryen/pull/933
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * interpreter/Interpreter.cpp:
+        (JSC::GetStackTraceFunctor::operator()):
+        * interpreter/StackVisitor.cpp:
+        (JSC::StackVisitor::readNonInlinedFrame):
+        (JSC::StackVisitor::Frame::functionName):
+        * interpreter/StackVisitor.h:
+        (JSC::StackVisitor::Frame::wasmFunctionIndexOrName):
+        * runtime/StackFrame.cpp:
+        (JSC::StackFrame::functionName):
+        * runtime/StackFrame.h:
+        (JSC::StackFrame::StackFrame):
+        (JSC::StackFrame::wasm):
+        * wasm/WasmBBQPlanInlines.h:
+        (JSC::Wasm::BBQPlan::initializeCallees):
+        * wasm/WasmCallee.cpp:
+        (JSC::Wasm::Callee::Callee):
+        * wasm/WasmCallee.h:
+        (JSC::Wasm::Callee::create):
+        (JSC::Wasm::Callee::indexOrName):
+        * wasm/WasmFormat.cpp:
+        (JSC::Wasm::makeString):
+        * wasm/WasmFormat.h:
+        (JSC::Wasm::isValidExternalKind):
+        (JSC::Wasm::isValidNameType):
+        (JSC::Wasm::NameSection::get):
+        * wasm/WasmIndexOrName.cpp: Copied from Source/JavaScriptCore/wasm/WasmCallee.cpp.
+        (JSC::Wasm::IndexOrName::IndexOrName):
+        (JSC::Wasm::makeString):
+        * wasm/WasmIndexOrName.h: Copied from Source/JavaScriptCore/wasm/WasmFormat.cpp.
+        * wasm/WasmModuleInformation.h:
+        * wasm/WasmModuleParser.cpp:
+        * wasm/WasmName.h: Copied from Source/JavaScriptCore/wasm/WasmCallee.cpp.
+        * wasm/WasmNameSectionParser.cpp: Added.
+        * wasm/WasmNameSectionParser.h: Copied from Source/JavaScriptCore/wasm/WasmCallee.cpp.
+        (JSC::Wasm::NameSectionParser::NameSectionParser):
+        * wasm/WasmOMGPlan.cpp:
+        (JSC::Wasm::OMGPlan::work):
+        * wasm/WasmParser.h:
+        (JSC::Wasm::Parser<SuccessType>::consumeUTF8String):
+
 2017-05-10  Filip Pizlo  <fpizlo@apple.com>
 
         Null pointer dereference in WTF::RefPtr<WTF::StringImpl>::operator!() under slow_path_get_direct_pname

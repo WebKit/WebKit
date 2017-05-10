@@ -1,3 +1,15 @@
+2017-05-10  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: support name section
+        https://bugs.webkit.org/show_bug.cgi?id=171263
+
+        Reviewed by Keith Miller.
+
+        * wasm/function-tests/nameSection.js: Added.
+        (const.compile):
+        * wasm/function-tests/nameSection.wasm: Added.
+        * wasm/function-tests/stack-trace.js: Update format
+
 2017-05-10  Filip Pizlo  <fpizlo@apple.com>
 
         Null pointer dereference in WTF::RefPtr<WTF::StringImpl>::operator!() under slow_path_get_direct_pname

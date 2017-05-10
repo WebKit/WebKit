@@ -47,10 +47,10 @@ for (let i = 0; i < 10000; ++i) {
     stacktrace = stacktrace.split("\n");
     assert(stacktrace[0].indexOf("imp") !== -1); // the arrow function import named "imp".
     assert(stacktrace[1] === "wasm function@[wasm code]"); // the wasm->js stub
-    assert(stacktrace[2] === "wasm function index: 4@[wasm code]");
-    assert(stacktrace[3] === "wasm function index: 2@[wasm code]");
-    assert(stacktrace[4] === "wasm function index: 3@[wasm code]");
-    assert(stacktrace[5] === "wasm function index: 1@[wasm code]");
+    assert(stacktrace[2] === "wasm function: 4@[wasm code]");
+    assert(stacktrace[3] === "wasm function: 2@[wasm code]");
+    assert(stacktrace[4] === "wasm function: 3@[wasm code]");
+    assert(stacktrace[5] === "wasm function: 1@[wasm code]");
     assert(stacktrace[6] === "wasm function@[wasm code]"); // wasm entry
 
     stacktrace = null;
