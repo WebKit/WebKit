@@ -1,3 +1,32 @@
+2017-05-10  Tim Horton  <timothy_horton@apple.com>
+
+        Add an experimental feature flag for constant properties
+        https://bugs.webkit.org/show_bug.cgi?id=171913
+        <rdar://problem/31995518>
+
+        Reviewed by Ryosuke Niwa.
+
+        * css/parser/CSSParser.cpp:
+        (WebCore::CSSParserContext::CSSParserContext):
+        (WebCore::operator==):
+        * css/parser/CSSParserImpl.cpp:
+        (WebCore::CSSParserImpl::consumeCustomPropertyValue):
+        * css/parser/CSSParserMode.h:
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::CSSPropertyParser::parseValueStart):
+        * css/parser/CSSVariableParser.cpp:
+        (WebCore::classifyBlock):
+        (WebCore::isValidVariableReference):
+        (WebCore::isValidConstantReference):
+        (WebCore::classifyVariableRange):
+        (WebCore::CSSVariableParser::containsValidVariableReferences):
+        (WebCore::CSSVariableParser::parseDeclarationValue):
+        * css/parser/CSSVariableParser.h:
+        Plumb the experimental feature flag down into CSSVariableParser by way
+        of CSSParserContext.
+
+        * page/Settings.in:
+
 2017-05-10  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r206960): Possible null pointer dereference under DOMSelection::getRangeAt()

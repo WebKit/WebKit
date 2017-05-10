@@ -1,3 +1,16 @@
+2017-05-10  Tim Horton  <timothy_horton@apple.com>
+
+        Add an experimental feature flag for constant properties
+        https://bugs.webkit.org/show_bug.cgi?id=171913
+        <rdar://problem/31995518>
+
+        Reviewed by Ryosuke Niwa.
+
+        * Shared/WebPreferencesDefinitions.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        Add an experimental feature flag.
+
 2017-05-09  Dean Jackson  <dino@apple.com>
 
         Disable WebGL2 by default

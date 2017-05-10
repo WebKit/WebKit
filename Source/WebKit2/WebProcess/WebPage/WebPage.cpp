@@ -3339,6 +3339,8 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 
     settings.setSpringTimingFunctionEnabled(store.getBoolValueForKey(WebPreferencesKey::springTimingFunctionEnabledKey()));
 
+    settings.setConstantPropertiesEnabled(store.getBoolValueForKey(WebPreferencesKey::constantPropertiesEnabledKey()));
+
     settings.setVisualViewportEnabled(store.getBoolValueForKey(WebPreferencesKey::visualViewportEnabledKey()));
 
     settings.setInputEventsEnabled(store.getBoolValueForKey(WebPreferencesKey::inputEventsEnabledKey()));

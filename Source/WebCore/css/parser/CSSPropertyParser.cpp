@@ -331,7 +331,7 @@ bool CSSPropertyParser::parseValueStart(CSSPropertyID propertyID, bool important
         }
     }
 
-    if (CSSVariableParser::containsValidVariableReferences(originalRange)) {
+    if (CSSVariableParser::containsValidVariableReferences(originalRange, m_context)) {
         RefPtr<CSSVariableReferenceValue> variable = CSSVariableReferenceValue::create(CSSVariableData::create(originalRange));
 
         if (isShorthand) {

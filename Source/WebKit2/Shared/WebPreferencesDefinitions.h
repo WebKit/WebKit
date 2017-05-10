@@ -340,10 +340,11 @@
 //   are the text exposed to the user from the WebKit client.
 // - They should be alphabetically ordered by the human readable text (the first string).
 // - The default value may be either false (for unstable features) or
-//   DEFAULT_EXPERIMENTAL_FEATURE_ENABLED (for features that are ready for
+//   DEFAULT_EXPERIMENTAL_FEATURES_ENABLED (for features that are ready for
 //   wider testing).
 
 #define FOR_EACH_WEBKIT_EXPERIMENTAL_FEATURE_PREFERENCE(macro) \
+    macro(ConstantPropertiesEnabled, constantPropertiesEnabled, Bool, bool, DEFAULT_EXPERIMENTAL_FEATURES_ENABLED, "Constant Properties", "Enable CSS constant() properties") \
     macro(SpringTimingFunctionEnabled, springTimingFunctionEnabled, Bool, bool, DEFAULT_EXPERIMENTAL_FEATURES_ENABLED, "CSS Spring Animations", "CSS Spring Animation prototype") \
     macro(LinkPreloadEnabled, linkPreloadEnabled, Bool, bool, DEFAULT_EXPERIMENTAL_FEATURES_ENABLED, "Link Preload", "Link preload support") \
     macro(ModernMediaControlsEnabled, modernMediaControlsEnabled, Bool, bool, DEFAULT_MODERN_MEDIA_CONTROLS_ENABLED, "Modern Media Controls", "Use modern media controls look") \

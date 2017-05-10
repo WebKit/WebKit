@@ -87,6 +87,7 @@ CSSParserContext::CSSParserContext(Document& document, const URL& baseURL, const
     textAutosizingEnabled = document.settings().textAutosizingEnabled();
 #endif
     springTimingFunctionEnabled = document.settings().springTimingFunctionEnabled();
+    constantPropertiesEnabled = document.settings().constantPropertiesEnabled();
     deferredCSSParserEnabled = document.settings().deferredCSSParserEnabled();
 
 #if PLATFORM(IOS)
@@ -108,6 +109,7 @@ bool operator==(const CSSParserContext& a, const CSSParserContext& b)
         && a.enforcesCSSMIMETypeInNoQuirksMode == b.enforcesCSSMIMETypeInNoQuirksMode
         && a.useLegacyBackgroundSizeShorthandBehavior == b.useLegacyBackgroundSizeShorthandBehavior
         && a.springTimingFunctionEnabled == b.springTimingFunctionEnabled
+        && a.constantPropertiesEnabled == b.constantPropertiesEnabled
         && a.deferredCSSParserEnabled == b.deferredCSSParserEnabled;
 }
 

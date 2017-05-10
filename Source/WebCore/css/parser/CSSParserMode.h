@@ -104,6 +104,7 @@ public:
     bool enforcesCSSMIMETypeInNoQuirksMode { true };
     bool useLegacyBackgroundSizeShorthandBehavior { false };
     bool springTimingFunctionEnabled { false };
+    bool constantPropertiesEnabled { false };
     
     bool deferredCSSParserEnabled { false };
 
