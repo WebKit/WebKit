@@ -1,3 +1,12 @@
+2017-05-10  Matt Lewis  <jlewis3@apple.com>
+
+        Marked tiled-drawing/scrolling/fast-scroll-select-latched-mainframe.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=171935
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2017-05-10  Andy Estes  <aestes@apple.com>
 
         Keyboard input suppression should extend to subframes
