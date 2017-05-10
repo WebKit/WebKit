@@ -460,6 +460,7 @@ private:
                         
                         Node* base = m_graph.varArgChild(m_node, 0).node();
                         Node* index = m_graph.varArgChild(m_node, 1).node();
+                        LocationKind indexedPropertyLoc = indexedPropertyLocForResultType(m_node->result());
                         
                         ArrayMode mode = m_node->arrayMode();
                         switch (mode.type()) {
@@ -467,21 +468,21 @@ private:
                             if (!mode.isInBounds())
                                 break;
                             heap = HeapLocation(
-                                IndexedPropertyLoc, IndexedInt32Properties, base, index);
+                                indexedPropertyLoc, IndexedInt32Properties, base, index);
                             break;
                             
                         case Array::Double:
                             if (!mode.isInBounds())
                                 break;
                             heap = HeapLocation(
-                                IndexedPropertyLoc, IndexedDoubleProperties, base, index);
+                                indexedPropertyLoc, IndexedDoubleProperties, base, index);
                             break;
                             
                         case Array::Contiguous:
                             if (!mode.isInBounds())
                                 break;
                             heap = HeapLocation(
-                                IndexedPropertyLoc, IndexedContiguousProperties, base, index);
+                                indexedPropertyLoc, IndexedContiguousProperties, base, index);
                             break;
                             
                         case Array::Int8Array:
@@ -496,7 +497,7 @@ private:
                             if (!mode.isInBounds())
                                 break;
                             heap = HeapLocation(
-                                IndexedPropertyLoc, TypedArrayProperties, base, index);
+                                indexedPropertyLoc, TypedArrayProperties, base, index);
                             break;
                             
                         default:
