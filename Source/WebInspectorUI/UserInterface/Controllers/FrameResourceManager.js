@@ -440,7 +440,7 @@ WebInspector.FrameResourceManager = class FrameResourceManager extends WebInspec
         this._resourceRequestIdentifierMap.delete(requestIdentifier);
     }
 
-    resourceRequestDidFailLoading(requestIdentifier, canceled, timestamp)
+    resourceRequestDidFailLoading(requestIdentifier, canceled, timestamp, errorText)
     {
         // Called from WebInspector.NetworkObserver.
 
@@ -456,7 +456,7 @@ WebInspector.FrameResourceManager = class FrameResourceManager extends WebInspec
             return;
 
         let elapsedTime = WebInspector.timelineManager.computeElapsedTime(timestamp);
-        resource.markAsFailed(canceled, elapsedTime);
+        resource.markAsFailed(canceled, elapsedTime, errorText);
 
         if (resource === resource.parentFrame.provisionalMainResource)
             resource.parentFrame.clearProvisionalLoad();

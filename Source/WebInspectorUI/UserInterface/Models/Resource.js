@@ -59,6 +59,9 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
         this._statusCode = NaN;
         this._statusText = null;
         this._cached = false;
+        this._canceled = false;
+        this._failed = false;
+        this._failureReasonText = null;
         this._receivedNetworkLoadMetrics = false;
         this._responseSource = WebInspector.Resource.ResponseSource.Unknown;
         this._timingData = new WebInspector.ResourceTimingData(this);
@@ -390,6 +393,11 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
     get canceled()
     {
         return this._canceled;
+    }
+
+    get failureReasonText()
+    {
+        return this._failureReasonText;
     }
 
     get requestDataContentType()
@@ -790,13 +798,16 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
         this.dispatchEventToListeners(WebInspector.Resource.Event.TimestampsDidChange);
     }
 
-    markAsFailed(canceled, elapsedTime)
+    markAsFailed(canceled, elapsedTime, errorText)
     {
         console.assert(!this._finished);
 
         this._failed = true;
         this._canceled = canceled;
         this._finishedOrFailedTimestamp = elapsedTime || NaN;
+
+        if (!this._failureReasonText)
+            this._failureReasonText = errorText || null;
 
         this.dispatchEventToListeners(WebInspector.Resource.Event.LoadingDidFail);
         this.dispatchEventToListeners(WebInspector.Resource.Event.TimestampsDidChange);

@@ -55,7 +55,7 @@ WebInspector.NetworkObserver = class NetworkObserver
 
     loadingFailed(requestId, timestamp, errorText, canceled)
     {
-        WebInspector.frameResourceManager.resourceRequestDidFailLoading(requestId, canceled, timestamp);
+        WebInspector.frameResourceManager.resourceRequestDidFailLoading(requestId, canceled, timestamp, errorText);
     }
 
     requestServedFromMemoryCache(requestId, frameId, loaderId, documentURL, timestamp, initiator, resource)

@@ -1,3 +1,29 @@
+2017-05-09  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Provide resource load error reason text in details sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=171901
+        <rdar://problem/29850995>
+
+        Reviewed by Brian Burg.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Controllers/FrameResourceManager.js:
+        (WebInspector.FrameResourceManager.prototype.resourceRequestDidFailLoading):
+        * UserInterface/Models/Resource.js:
+        (WebInspector.Resource):
+        (WebInspector.Resource.prototype.get failureReasonText):
+        (WebInspector.Resource.prototype.markAsFailed):
+        * UserInterface/Protocol/NetworkObserver.js:
+        (WebInspector.NetworkObserver.prototype.loadingFailed):
+        Include the error text we got from the backend. In most cases this should
+        be a localized error description.
+
+        * UserInterface/Views/ResourceDetailsSidebarPanel.js:
+        (WebInspector.ResourceDetailsSidebarPanel.prototype.set resource):
+        (WebInspector.ResourceDetailsSidebarPanel.prototype._refreshErrorReason):
+        (WebInspector.ResourceDetailsSidebarPanel.prototype._refreshRequestAndResponse):
+        Include an Error field alongside the status code section when there was an error.
+
 2017-05-09  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [GTK][Win] Web Inspector: Cann't open "Quick Open" dialog by pressing Ctrl+Shift+O

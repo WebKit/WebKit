@@ -51,8 +51,7 @@ WebInspector.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel ext
         this._initiatedRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Initiated"));
 
         var firstGroup = [this._locationFullURLRow];
-        var secondGroup = [this._locationSchemeRow, this._locationHostRow, this._locationPortRow, this._locationPathRow,
-            this._locationQueryStringRow, this._locationFragmentRow, this._locationFilenameRow];
+        var secondGroup = [this._locationSchemeRow, this._locationHostRow, this._locationPortRow, this._locationPathRow, this._locationQueryStringRow, this._locationFragmentRow, this._locationFilenameRow];
         var thirdGroup = [this._initiatorRow, this._initiatedRow];
 
         this._fullURLGroup = new WebInspector.DetailsSectionGroup(firstGroup);
@@ -74,6 +73,7 @@ WebInspector.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel ext
 
         this._statusTextRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Status"));
         this._statusCodeRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Code"));
+        this._errorReasonRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Error"));
 
         this._remoteAddressRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("IP Address"));
         this._connectionIdentifierRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Connection ID"));
@@ -86,12 +86,13 @@ WebInspector.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel ext
         this._compressionRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Compression"));
 
         let requestGroup = new WebInspector.DetailsSectionGroup([this._requestMethodRow, this._protocolRow, this._priorityRow, this._cachedRow]);
-        let statusGroup = new WebInspector.DetailsSectionGroup([this._statusTextRow, this._statusCodeRow]);
+        let statusGroup = new WebInspector.DetailsSectionGroup([this._statusTextRow, this._statusCodeRow, this._errorReasonRow]);
         let connectionGroup = new WebInspector.DetailsSectionGroup([this._remoteAddressRow, this._connectionIdentifierRow]);
         let sizeGroup = new WebInspector.DetailsSectionGroup([this._encodedSizeRow, this._decodedSizeRow, this._transferSizeRow]);
         let compressionGroup = new WebInspector.DetailsSectionGroup([this._compressedRow, this._compressionRow]);
 
-        this._requestAndResponseSection = new WebInspector.DetailsSection("resource-request-response", WebInspector.UIString("Request & Response"), [requestGroup, statusGroup, connectionGroup, sizeGroup, compressionGroup]);
+        this._requestAndResponseSection = new WebInspector.DetailsSection("resource-request-response", WebInspector.UIString("Request & Response"));
+        this._requestAndResponseSection.groups = [requestGroup, statusGroup, connectionGroup, sizeGroup, compressionGroup];
 
         this._requestHeadersRow = new WebInspector.DetailsSectionDataGridRow(null, WebInspector.UIString("No Request Headers"));
         this._requestHeadersSection = new WebInspector.DetailsSection("resource-request-headers", WebInspector.UIString("Request Headers"));
@@ -165,6 +166,7 @@ WebInspector.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel ext
             this._resource.removeEventListener(WebInspector.Resource.Event.URLDidChange, this._refreshURL, this);
             this._resource.removeEventListener(WebInspector.Resource.Event.MIMETypeDidChange, this._refreshMIMEType, this);
             this._resource.removeEventListener(WebInspector.Resource.Event.TypeDidChange, this._refreshResourceType, this);
+            this._resource.removeEventListener(WebInspector.Resource.Event.LoadingDidFail, this._refreshErrorReason, this);
             this._resource.removeEventListener(WebInspector.Resource.Event.RequestHeadersDidChange, this._refreshRequestHeaders, this);
             this._resource.removeEventListener(WebInspector.Resource.Event.ResponseReceived, this._refreshRequestAndResponse, this);
             this._resource.removeEventListener(WebInspector.Resource.Event.CacheStatusDidChange, this._refreshRequestAndResponse, this);
@@ -179,6 +181,7 @@ WebInspector.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel ext
             this._resource.addEventListener(WebInspector.Resource.Event.URLDidChange, this._refreshURL, this);
             this._resource.addEventListener(WebInspector.Resource.Event.MIMETypeDidChange, this._refreshMIMEType, this);
             this._resource.addEventListener(WebInspector.Resource.Event.TypeDidChange, this._refreshResourceType, this);
+            this._resource.addEventListener(WebInspector.Resource.Event.LoadingDidFail, this._refreshErrorReason, this);
             this._resource.addEventListener(WebInspector.Resource.Event.RequestHeadersDidChange, this._refreshRequestHeaders, this);
             this._resource.addEventListener(WebInspector.Resource.Event.ResponseReceived, this._refreshRequestAndResponse, this);
             this._resource.addEventListener(WebInspector.Resource.Event.CacheStatusDidChange, this._refreshRequestAndResponse, this);
@@ -311,6 +314,26 @@ WebInspector.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel ext
         this._typeMIMETypeRow.value = this._resource.mimeType;
     }
 
+    _refreshErrorReason()
+    {
+        if (!this._resource)
+            return;
+
+        if (!this._resource.hadLoadingError()) {
+            this._errorReasonRow.value = null;
+            return;
+        }
+
+        if (this._resource.failureReasonText)
+            this._errorReasonRow.value = this._resource.failureReasonText;
+        else if (this._resource.statusCode >= 400)
+            this._errorReasonRow.value = WebInspector.UIString("Failure status code");
+        else if (this._resource.canceled)
+            this._errorReasonRow.value = WebInspector.UIString("Load cancelled");
+        else
+            this._errorReasonRow.value = WebInspector.UIString("Unknown error");
+    }
+
     _refreshRequestAndResponse()
     {
         if (!this._resource)
@@ -335,6 +358,7 @@ WebInspector.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel ext
 
         this._statusCodeRow.value = this._resource.statusCode || emDash;
         this._statusTextRow.value = this._resource.statusText || emDash;
+        this._refreshErrorReason();
 
         this._refreshResponseHeaders();
         this._refreshCompressed();
@@ -462,9 +486,7 @@ WebInspector.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel ext
             return;
 
         function hideImageSection() {
-            let imageSectionElement = this._imageSizeSection.element;
-            if (imageSectionElement.parentNode)
-                this.contentView.element.removeChild(imageSectionElement);
+            this._imageSizeSection.element.remove();
         }
 
         // Hide the section if we're not dealing with an image or if the load failed.
@@ -513,7 +535,6 @@ WebInspector.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel ext
     _refreshRequestDataSection()
     {
         var resource = this._resource;
-
         if (!resource)
             return;
 
