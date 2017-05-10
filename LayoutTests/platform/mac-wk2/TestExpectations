@@ -678,3 +678,5 @@ webkit.org/b/171895 webrtc/audio-replace-track.html [ Pass Failure Timeout ]
 webkit.org/b/171930 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-idl.html [ Pass Failure ]
 
 webkit.org/171935 [ Sierra ] tiled-drawing/scrolling/fast-scroll-select-latched-mainframe.html [ Pass Failure ]
+
+webkit.org/171939 [ Sierra Release ] media/track/track-cue-rendering-on-resize.html [ Pass Timeout ]
