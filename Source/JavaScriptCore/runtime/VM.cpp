@@ -619,8 +619,7 @@ void VM::throwException(ExecState* exec, Exception* exception)
     setException(exception);
 
 #if ENABLE(EXCEPTION_SCOPE_VERIFICATION)
-    m_nativeStackTraceOfLastThrow = std::unique_ptr<StackTrace>(StackTrace::captureStackTrace(100));
-    m_throwingThread = currentThread();
+    m_nativeStackTraceOfLastThrow = std::unique_ptr<StackTrace>(StackTrace::captureStackTrace(25));
 #endif
 }
 

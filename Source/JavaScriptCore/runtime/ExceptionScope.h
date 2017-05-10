@@ -42,8 +42,6 @@ public:
     ALWAYS_INLINE void assertNoException() { ASSERT_WITH_MESSAGE(!exception(), "%s", unexpectedExceptionMessage().data()); }
     ALWAYS_INLINE void releaseAssertNoException() { RELEASE_ASSERT_WITH_MESSAGE(!exception(), "%s", unexpectedExceptionMessage().data()); }
 
-    void releaseAssertIsTerminatedExecutionException();
-
 protected:
     ExceptionScope(VM&, ExceptionEventLocation);
     ExceptionScope(const ExceptionScope&) = delete;
@@ -64,11 +62,10 @@ class ExceptionScope {
 public:
     ALWAYS_INLINE VM& vm() const { return m_vm; }
     ALWAYS_INLINE Exception* exception() { return m_vm.exception(); }
+    ALWAYS_INLINE CString unexpectedExceptionMessage() { return { }; }
 
     ALWAYS_INLINE void assertNoException() { ASSERT(!exception()); }
     ALWAYS_INLINE void releaseAssertNoException() { RELEASE_ASSERT(!exception()); }
-
-    void releaseAssertIsTerminatedExecutionException();
 
 protected:
     ALWAYS_INLINE ExceptionScope(VM& vm)
@@ -76,8 +73,6 @@ protected:
     { }
     ExceptionScope(const ExceptionScope&) = delete;
     ExceptionScope(ExceptionScope&&) = default;
-
-    ALWAYS_INLINE CString unexpectedExceptionMessage() { return { }; }
 
     VM& m_vm;
 };
