@@ -462,25 +462,6 @@ JSValue JSDOMWindow::event(ExecState& state) const
 
 // Custom functions
 
-JSValue JSDOMWindow::open(ExecState& state)
-{
-    VM& vm = state.vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    String urlString = convert<IDLNullable<IDLUSVString>>(state, state.argument(0));
-    RETURN_IF_EXCEPTION(scope, JSValue());
-    JSValue targetValue = state.argument(1);
-    AtomicString target = targetValue.isUndefinedOrNull() ? AtomicString("_blank", AtomicString::ConstructFromLiteral) : targetValue.toString(&state)->toAtomicString(&state);
-    RETURN_IF_EXCEPTION(scope, JSValue());
-    String windowFeaturesString = convert<IDLNullable<IDLDOMString>>(state, state.argument(2));
-    RETURN_IF_EXCEPTION(scope, JSValue());
-
-    RefPtr<DOMWindow> openedWindow = wrapped().open(urlString, target, windowFeaturesString, activeDOMWindow(&state), firstDOMWindow(&state));
-    if (!openedWindow)
-        return jsNull();
-    return toJS(&state, openedWindow.get());
-}
-
 class DialogHandler {
 public:
     explicit DialogHandler(ExecState& exec)

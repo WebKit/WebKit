@@ -76,7 +76,7 @@ typedef USVString CSSOMString;
     [Replaceable, DoNotCheckSecurityOnGetter] readonly attribute DOMWindow? opener;
     [Replaceable, DoNotCheckSecurityOnGetter] readonly attribute DOMWindow? parent;
     [CheckSecurityForNode] readonly attribute Element? frameElement;
-    [Custom] DOMWindow? open(optional USVString url = "about:blank", optional DOMString target = "_blank", optional [TreatNullAs=EmptyString] DOMString features = "");
+    [CallWith=ActiveWindow&FirstWindow] DOMWindow? open(optional USVString url = "about:blank", optional DOMString target = "_blank", optional [TreatNullAs=EmptyString] DOMString features = "");
 
     // The user agent.
     readonly attribute Navigator navigator;
