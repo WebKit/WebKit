@@ -388,27 +388,27 @@ WebInspector.ScriptTimelineRecord.EventType.displayName = function(eventType, de
         return WebInspector.UIString("Garbage Collection");
     case WebInspector.ScriptTimelineRecord.EventType.TimerFired:
         if (details && includeDetailsInMainTitle)
-            return WebInspector.UIString("Timer %s Fired").format(details);
+            return WebInspector.UIString("Timer %d Fired").format(details);
         return WebInspector.UIString("Timer Fired");
     case WebInspector.ScriptTimelineRecord.EventType.TimerInstalled:
         if (details && includeDetailsInMainTitle)
-            return WebInspector.UIString("Timer %s Installed").format(details.timerId);
+            return WebInspector.UIString("Timer %d Installed").format(details.timerId);
         return WebInspector.UIString("Timer Installed");
     case WebInspector.ScriptTimelineRecord.EventType.TimerRemoved:
         if (details && includeDetailsInMainTitle)
-            return WebInspector.UIString("Timer %s Removed").format(details);
+            return WebInspector.UIString("Timer %d Removed").format(details);
         return WebInspector.UIString("Timer Removed");
     case WebInspector.ScriptTimelineRecord.EventType.AnimationFrameFired:
         if (details && includeDetailsInMainTitle)
-            return WebInspector.UIString("Animation Frame %s Fired").format(details);
+            return WebInspector.UIString("Animation Frame %d Fired").format(details);
         return WebInspector.UIString("Animation Frame Fired");
     case WebInspector.ScriptTimelineRecord.EventType.AnimationFrameRequested:
         if (details && includeDetailsInMainTitle)
-            return WebInspector.UIString("Animation Frame %s Requested").format(details);
+            return WebInspector.UIString("Animation Frame %d Requested").format(details);
         return WebInspector.UIString("Animation Frame Requested");
     case WebInspector.ScriptTimelineRecord.EventType.AnimationFrameCanceled:
         if (details && includeDetailsInMainTitle)
-            return WebInspector.UIString("Animation Frame %s Canceled").format(details);
+            return WebInspector.UIString("Animation Frame %d Canceled").format(details);
         return WebInspector.UIString("Animation Frame Canceled");
     }
 };

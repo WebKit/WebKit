@@ -1,5 +1,18 @@
 2017-05-10  Brian Burg  <bburg@apple.com>
 
+        Web Inspector: RTL: in Timelines > JavaScript & Events, digits for timer and animation frame number are not localized
+        https://bugs.webkit.org/show_bug.cgi?id=171818
+
+        Reviewed by Joseph Pecoraro.
+
+        These numbers need to be formatted with %d, not %s.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Models/ScriptTimelineRecord.js:
+        (WebInspector.ScriptTimelineRecord.EventType.displayName):
+
+2017-05-10  Brian Burg  <bburg@apple.com>
+
         Web Inspector: remove dead code for switching Toolbar display options
         https://bugs.webkit.org/show_bug.cgi?id=170738
 
