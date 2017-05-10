@@ -115,12 +115,12 @@ private:
     WEBCORE_EXPORT void reconcileViewportConstrainedLayerPositions(const LayoutRect& viewportRect, ScrollingLayerPositionAction) override;
     WEBCORE_EXPORT void scrollableAreaScrollbarLayerDidChange(ScrollableArea&, ScrollbarOrientation) override;
 
-    WEBCORE_EXPORT void setSynchronousScrollingReasons(SynchronousScrollingReasons) override;
+    WEBCORE_EXPORT void setSynchronousScrollingReasons(FrameView&, SynchronousScrollingReasons) final;
 
     virtual void scheduleTreeStateCommit() = 0;
 
     void ensureRootStateNodeForFrameView(FrameView&);
-    void updateMainFrameScrollLayerPosition();
+    void updateScrollLayerPosition(FrameView&);
 
     void updateScrollPositionAfterAsyncScrollTimerFired();
     void setEventTrackingRegionsDirty();

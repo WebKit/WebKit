@@ -1,3 +1,29 @@
+2017-05-10  Frederic Wang  <fwang@igalia.com>
+
+        Refactor ScrollingCoordinator::setSynchronousScrollingReasons to accept a FrameView
+        https://bugs.webkit.org/show_bug.cgi?id=171923
+
+        Reviewed by Simon Fraser.
+
+        Currently ScrollingCoordinator::setSynchronousScrollingReasons implementations assumes
+        SynchronousScrollingReasons apply to the main frame. This commit allows to specify
+        a FrameView in order to prepare support for fast scrolling of frames.
+
+        No new tests, no behavior changes.
+
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::setSynchronousScrollingReasons): Use the FrameView to
+        find the state node.
+        (WebCore::AsyncScrollingCoordinator::updateScrollLayerPosition): Rename this function
+        updateMainFrameScrollLayerPosition and use the specified FrameView.
+        * page/scrolling/AsyncScrollingCoordinator.h: Add FrameView parameter.
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::updateSynchronousScrollingReasons): Remove the const since
+        AsyncScrollingCoordinator uses scrollLayerForFrameView. Pass the frameView to
+        setSynchronousScrollingReasons.
+        * page/scrolling/ScrollingCoordinator.h:
+        (WebCore::ScrollingCoordinator::setSynchronousScrollingReasons): Add FrameView parameter.
+
 2017-05-10  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r207372) Visibility property is not inherited when used in an animation

@@ -343,14 +343,14 @@ SynchronousScrollingReasons ScrollingCoordinator::synchronousScrollingReasons(co
     return synchronousScrollingReasons;
 }
 
-void ScrollingCoordinator::updateSynchronousScrollingReasons(const FrameView& frameView)
+void ScrollingCoordinator::updateSynchronousScrollingReasons(FrameView& frameView)
 {
     // FIXME: Once we support async scrolling of iframes, we'll have to track the synchronous scrolling
     // reasons per frame (maybe on scrolling tree nodes).
     if (!frameView.frame().isMainFrame())
         return;
 
-    setSynchronousScrollingReasons(synchronousScrollingReasons(frameView));
+    setSynchronousScrollingReasons(frameView, synchronousScrollingReasons(frameView));
 }
 
 void ScrollingCoordinator::setForceSynchronousScrollLayerPositionUpdates(bool forceSynchronousScrollLayerPositionUpdates)

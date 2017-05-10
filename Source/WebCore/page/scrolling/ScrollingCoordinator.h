@@ -234,10 +234,10 @@ protected:
     Page* m_page; // FIXME: ideally this would be a reference but it gets nulled on async teardown.
 
 private:
-    virtual void setSynchronousScrollingReasons(SynchronousScrollingReasons) { }
+    virtual void setSynchronousScrollingReasons(FrameView&, SynchronousScrollingReasons) { }
 
     virtual bool hasVisibleSlowRepaintViewportConstrainedObjects(const FrameView&) const;
-    void updateSynchronousScrollingReasons(const FrameView&);
+    void updateSynchronousScrollingReasons(FrameView&);
 
     EventTrackingRegions absoluteEventTrackingRegionsForFrame(const Frame&) const;
     
