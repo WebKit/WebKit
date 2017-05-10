@@ -1,3 +1,34 @@
+2017-05-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        ImageDiff: Add CG implementation for new ImageDiff
+        https://bugs.webkit.org/show_bug.cgi?id=170608
+
+        Reviewed Alex Christensen.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/win/ImageDiffCairo.cpp: Removed.
+        * DumpRenderTree/win/ImageDiffWin.cpp: Removed.
+        * ImageDiff/CMakeLists.txt:
+        * ImageDiff/Cairo.cmake:
+        * ImageDiff/ImageDiff.cpp:
+        (main):
+        * ImageDiff/ImageDiff.xcodeproj/project.pbxproj:
+        * ImageDiff/PlatformImage.cpp:
+        * ImageDiff/PlatformImage.h:
+        * ImageDiff/cairo/PlatformImageCairo.cpp:
+        * ImageDiff/cg/ImageDiff.cpp: Removed.
+        * ImageDiff/cg/PlatformImageCG.cpp: Added.
+        (ImageDiff::PlatformImage::createFromStdin):
+        (ImageDiff::PlatformImage::createFromDiffData):
+        (ImageDiff::PlatformImage::PlatformImage):
+        (ImageDiff::PlatformImage::~PlatformImage):
+        (ImageDiff::PlatformImage::width):
+        (ImageDiff::PlatformImage::height):
+        (ImageDiff::PlatformImage::rowBytes):
+        (ImageDiff::PlatformImage::hasAlpha):
+        (ImageDiff::PlatformImage::pixels):
+        (ImageDiff::PlatformImage::writeAsPNGToStdout):
+
 2017-05-10  Zan Dobersek  <zdobersek@igalia.com>
 
         Enable FTL JIT by default on AArch64

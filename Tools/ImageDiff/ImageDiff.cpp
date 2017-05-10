@@ -25,21 +25,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+// FIXME: We need to be able to include these defines from a config.h somewhere.
+#define JS_EXPORT_PRIVATE
+
 #include "PlatformImage.h"
 #include <algorithm>
 #include <cstdlib>
 #include <stdio.h>
 #include <string.h>
 
-#if PLATFORM(WIN)
+#ifdef _WIN32
 #include <fcntl.h>
 #include <io.h>
 #endif
 
 using namespace ImageDiff;
 
-#if OS(WINDOWS)
+#ifdef _WIN32
 #define FORMAT_SIZE_T "Iu"
 #else
 #define FORMAT_SIZE_T "zu"
@@ -47,7 +49,7 @@ using namespace ImageDiff;
 
 int main(int argc, const char* argv[])
 {
-#if PLATFORM(WIN)
+#ifdef _WIN32
     _setmode(0, _O_BINARY);
     _setmode(1, _O_BINARY);
 #endif

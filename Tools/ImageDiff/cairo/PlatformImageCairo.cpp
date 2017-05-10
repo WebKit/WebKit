@@ -23,13 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
 #include "PlatformImage.h"
 
 #include <cairo.h>
 #include <stdio.h>
 
-#if OS(WINDOWS)
+#ifdef _WIN32
 #define FORMAT_SIZE_T "Iu"
 #else
 #define FORMAT_SIZE_T "zu"

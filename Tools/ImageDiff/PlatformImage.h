@@ -25,10 +25,11 @@
 
 #include <cmath>
 #include <memory>
-#include <wtf/Platform.h>
 
-#if USE(CAIRO)
+#if defined(USE_CAIRO) && USE_CAIRO
 typedef struct _cairo_surface cairo_surface_t;
+#else
+typedef struct CGImage *CGImageRef;
 #endif
 
 namespace ImageDiff {
@@ -38,8 +39,10 @@ public:
     static std::unique_ptr<PlatformImage> createFromStdin(size_t);
     static std::unique_ptr<PlatformImage> createFromDiffData(void*, size_t width, size_t height);
 
-#if USE(CAIRO)
+#if defined(USE_CAIRO) && USE_CAIRO
     PlatformImage(cairo_surface_t*);
+#else
+    PlatformImage(CGImageRef);
 #endif
     ~PlatformImage();
 
@@ -53,8 +56,11 @@ public:
     void writeAsPNGToStdout();
 
 private:
-#if USE(CAIRO)
+#if defined(USE_CAIRO) && USE_CAIRO
     cairo_surface_t* m_image;
+#else
+    CGImageRef m_image;
+    mutable void* m_buffer { nullptr };
 #endif
 };
 
