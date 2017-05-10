@@ -1,3 +1,17 @@
+2017-05-10  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r216578.
+        https://bugs.webkit.org/show_bug.cgi?id=171920
+
+        Broke the GTK+ build with Wayland enabled (Requested by KaL on
+        #webkit).
+
+        Reverted changeset:
+
+        "[GTK] Bump GTK+ and its dependencies in jhbuild"
+        https://bugs.webkit.org/show_bug.cgi?id=171918
+        http://trac.webkit.org/changeset/216578
+
 2017-05-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Bump GTK+ and its dependencies in jhbuild

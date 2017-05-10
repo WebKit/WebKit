@@ -1,0 +1,11 @@
+--- a/configure	2016-12-06 14:33:55.708778846 -0500
++++ b/configure	2016-12-06 14:35:09.695069930 -0500
+@@ -25092,7 +25092,7 @@
+     CUPS_API_MAJOR=`echo $ECHO_N $CUPS_API_VERSION | awk -F. '{print $1}'`
+     CUPS_API_MINOR=`echo $ECHO_N $CUPS_API_VERSION | awk -F. '{print $2}'`
+ 
+-    if test $CUPS_API_MAJOR -gt 1 -o \
++    if test $CUPS_API_MAJOR -lt 1 -o \
+             $CUPS_API_MAJOR -eq 1 -a $CUPS_API_MINOR -lt 2; then
+       as_fn_error $? "CUPS >= 1.2 not found" "$LINENO" 5
+     fi
