@@ -1,3 +1,9 @@
+2017-05-10  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, remove TestExpectation for a test that was removed in r216259.
+
+        * platform/mac/TestExpectations:
+
 2017-05-10  Matt Lewis  <jlewis3@apple.com>
 
         Marked perf/class-list-remove.html as flaky.

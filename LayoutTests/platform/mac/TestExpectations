@@ -400,8 +400,6 @@ editing/pasteboard/paste-TIFF.html [ Skip ]
 editing/mac/pasteboard/dataTransfer-set-data-file-url.html [ Skip ]
 webkit.org/b/147674 editing/mac/pasteboard/5583362.html [ Skip ]
 
-webkit.org/b/112620 [ Debug ] svg/custom/image-with-attr-change-after-delete-crash.html [ Crash Pass ]
-
 # Assorted failures that need investigation
 
 webkit.org/b/107118 fast/canvas/canvas-quadratic-same-endpoint.html [ Failure ]
