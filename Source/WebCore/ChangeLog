@@ -1,3 +1,19 @@
+2017-05-10  Jer Noble  <jer.noble@apple.com>
+
+        RELEASE_ASSERT at WebAudioSourceProviderAVFObjC::provideInput()
+        https://bugs.webkit.org/show_bug.cgi?id=171711
+
+        Reviewed by Youenn Fablet.
+
+        Before iterating over the channels in either the WebAudioBufferList or the AudioBus, ensure
+        we don't walk over the end of either by only iterating over the minimum length of either.
+        Also, when the internal format of WebAudioSourceProviderAVFObjC changes, notify the
+        MediaStreamAudioSourceNode that the number of channels and sample rate have changed.
+
+        * platform/mediastream/mac/WebAudioSourceProviderAVFObjC.mm:
+        (WebCore::WebAudioSourceProviderAVFObjC::provideInput):
+        (WebCore::WebAudioSourceProviderAVFObjC::prepare):
+
 2017-05-04  Filip Pizlo  <fpizlo@apple.com>
 
         GCController.cpp's collect() should be Async
