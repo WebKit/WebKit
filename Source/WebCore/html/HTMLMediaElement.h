@@ -1020,7 +1020,7 @@ private:
     bool m_haveVisibleTextTrack : 1;
     bool m_processingPreferenceChange : 1;
 
-    PlaybackWithoutUserGesture m_playbackWithoutUserGesture;
+    PlaybackWithoutUserGesture m_playbackWithoutUserGesture { PlaybackWithoutUserGesture::None };
     std::optional<MediaTime> m_playbackWithoutUserGestureStartedTime;
 
     String m_subtitleTrackLanguage;

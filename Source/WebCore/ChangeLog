@@ -1,3 +1,14 @@
+2017-05-10  Matt Rajca  <mrajca@apple.com>
+
+        DumpRenderTree crashed in com.apple.WebCore: std::optional<WTF::MediaTime>::operator-> + 71 :: CRASHING TEST: fullscreen/video-controls-timeline.html
+        https://bugs.webkit.org/show_bug.cgi?id=171932
+
+        Reviewed by Eric Carlson.
+
+        Explicitly initialize m_playbackWithoutUserGesture to "None".
+
+        * html/HTMLMediaElement.h:
+
 2017-05-10  Andy Estes  <aestes@apple.com>
 
         Keyboard input suppression should extend to subframes
