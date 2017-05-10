@@ -1,3 +1,14 @@
+2017-05-10  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Remove some last remnants of the EFL port
+        https://bugs.webkit.org/show_bug.cgi?id=171922
+
+        Reviewed by Antonio Gomes.
+
+        The EFL port is no more.
+
+        * wtf/PlatformEfl.cmake: Removed.
+
 2017-05-10  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win] StaticStringImpl in HTMLNames.cpp aren't constructed
