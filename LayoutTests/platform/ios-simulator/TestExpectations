@@ -2770,3 +2770,11 @@ editing/caret/emoji.html [ Failure ]
 
 fast/media/video-element-in-details-collapse.html [ Skip ]
 webkit.org/b/167795 http/tests/security/bypassing-cors-checks-for-extension-urls.html [ Skip ]
+
+http/tests/cache/disk-cache/disk-cache-remove-several-pending-writes.html [ Failure ]
+http/tests/loading/preload-css-with-csp-nonce.html [ Failure ]
+imported/w3c/web-platform-tests/dom/events/EventTarget-dispatchEvent.html [ Failure ]
+imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/persisted-user-state-restoration/scroll-restoration-fragment-scrolling-cross-origin.html [ Failure ]
+media/media-fullscreen-loop-inline.html [ Failure ]
+editing/caret/emoji.html [ Timeout ]
+media/audio-dealloc-crash.html [ Timeout ]
