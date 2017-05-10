@@ -35,13 +35,13 @@ layer at (0,0) size 800x600
             text run at (1,1) width 84: "Lorem ipsum"
       RenderBlock (anonymous) at (0,261) size 784x47
         RenderBR {BR} at (0,0) size 0x17
-        RenderButton {INPUT} at (2,19) size 133x26 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+        RenderButton {INPUT} at (2,19) size 133x26 [color=#2E3436] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
           RenderBlock (anonymous) at (8,4) size 117x17
             RenderText at (0,0) size 117x17
               text run at (0,0) width 117: "Negative margin"
         RenderText {#text} at (137,23) size 4x17
           text run at (137,23) width 4: " "
-        RenderButton {INPUT} at (143,19) size 126x26 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+        RenderButton {INPUT} at (143,19) size 126x26 [color=#2E3436] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
           RenderBlock (anonymous) at (8,4) size 110x17
             RenderText at (0,0) size 110x17
               text run at (0,0) width 110: "Positive margin"
@@ -58,13 +58,13 @@ layer at (0,0) size 800x600
             text run at (1,1) width 84: "Lorem ipsum"
       RenderBlock (anonymous) at (0,427) size 784x47
         RenderBR {BR} at (0,0) size 0x17
-        RenderButton {INPUT} at (2,19) size 133x26 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+        RenderButton {INPUT} at (2,19) size 133x26 [color=#2E3436] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
           RenderBlock (anonymous) at (8,4) size 117x17
             RenderText at (0,0) size 117x17
               text run at (0,0) width 117: "Negative margin"
         RenderText {#text} at (137,23) size 4x17
           text run at (137,23) width 4: " "
-        RenderButton {INPUT} at (143,19) size 126x26 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+        RenderButton {INPUT} at (143,19) size 126x26 [color=#2E3436] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
           RenderBlock (anonymous) at (8,4) size 110x17
             RenderText at (0,0) size 110x17
               text run at (0,0) width 110: "Positive margin"

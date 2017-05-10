@@ -1,3 +1,16 @@
+2017-05-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Bump GTK+ and its dependencies in jhbuild
+        https://bugs.webkit.org/show_bug.cgi?id=171918
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * WebKitTestRunner/InjectedBundle/gtk/ActivateFontsGtk.cpp:
+        (WTR::initializeGtkSettings):
+        * gtk/jhbuild.modules:
+        * gtk/patches/gtk+-configure-fix-detecting-CUPS-2.x.patch: Removed.
+        * gtk/patches/librsvg-2.36.1-bump-up-config.guess-to-support-aarch64.patch: Removed.
+
 2017-05-10  Don Olmstead  <don.olmstead@am.sony.com>
 
         [Win] Set CMake args in build-webkit

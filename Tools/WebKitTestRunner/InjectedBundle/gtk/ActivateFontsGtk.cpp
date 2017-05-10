@@ -45,13 +45,11 @@ void initializeGtkSettings()
     if (!settings)
         return;
     g_object_set(settings, 
-                 "gtk-xft-dpi", 98304,
-                 "gtk-xft-antialias", 1,
-                 "gtk-xft-hinting", 0,
-                 "gtk-font-name", "Liberation Sans 12",
-                 "gtk-theme-name", "Raleigh",
-                 "gtk-icon-theme-name", "gnome",
-                 "gtk-xft-rgba", "none", NULL);
+        "gtk-xft-dpi", 98304,
+        "gtk-xft-antialias", 1,
+        "gtk-xft-hinting", 0,
+        "gtk-font-name", "Liberation Sans 12",
+        "gtk-xft-rgba", "none", nullptr);
 }
 
 CString getOutputDir()

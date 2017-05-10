@@ -53,36 +53,36 @@ layer at (0,0) size 800x324
         RenderText {#text} at (150,36) size 4x17
           text run at (150,36) width 4: " "
         RenderBR {BR} at (0,0) size 0x0
-        RenderButton {BUTTON} at (2,76) size 16x9 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+        RenderButton {BUTTON} at (2,76) size 16x9 [color=#2E3436] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
           RenderBlock (anonymous) at (8,4) size 0x0
         RenderText {#text} at (20,66) size 4x17
           text run at (20,66) width 4: " "
-        RenderButton {BUTTON} at (26,62) size 60x26 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+        RenderButton {BUTTON} at (26,62) size 60x26 [color=#2E3436] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
           RenderBlock (anonymous) at (8,4) size 44x17
             RenderText {#text} at (0,0) size 44x17
               text run at (0,0) width 44: "button"
         RenderText {#text} at (88,66) size 4x17
           text run at (88,66) width 4: " "
         RenderBR {BR} at (0,0) size 0x0
-        RenderButton {BUTTON} at (2,106) size 16x9 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+        RenderButton {BUTTON} at (2,106) size 16x9 [color=#2E3436] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
           RenderBlock (anonymous) at (8,4) size 0x0
         RenderText {#text} at (20,96) size 4x17
           text run at (20,96) width 4: " "
-        RenderButton {BUTTON} at (26,92) size 60x26 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+        RenderButton {BUTTON} at (26,92) size 60x26 [color=#2E3436] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
           RenderBlock (anonymous) at (8,4) size 44x17
             RenderText {#text} at (0,0) size 44x17
               text run at (0,0) width 44: "button"
         RenderText {#text} at (88,96) size 4x17
           text run at (88,96) width 4: " "
         RenderBR {BR} at (0,0) size 0x0
-        RenderButton {BUTTON} at (2,122) size 61x26 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+        RenderButton {BUTTON} at (2,122) size 61x26 [color=#2E3436] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
           RenderBlock (anonymous) at (8,4) size 45x17
             RenderInline (generated) at (0,0) size 45x17
               RenderText at (0,0) size 45x17
                 text run at (0,0) width 45: "before"
         RenderText {#text} at (65,126) size 4x17
           text run at (65,126) width 4: " "
-        RenderButton {BUTTON} at (71,122) size 105x26 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+        RenderButton {BUTTON} at (71,122) size 105x26 [color=#2E3436] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
           RenderBlock (anonymous) at (8,4) size 89x17
             RenderInline (generated) at (0,0) size 45x17
               RenderText at (0,0) size 45x17
@@ -92,14 +92,14 @@ layer at (0,0) size 800x324
         RenderText {#text} at (178,126) size 4x17
           text run at (178,126) width 4: " "
         RenderBR {BR} at (0,0) size 0x0
-        RenderButton {BUTTON} at (2,152) size 47x26 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+        RenderButton {BUTTON} at (2,152) size 47x26 [color=#2E3436] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
           RenderBlock (anonymous) at (8,4) size 31x17
             RenderInline (generated) at (0,0) size 31x17
               RenderText at (0,0) size 31x17
                 text run at (0,0) width 31: "after"
         RenderText {#text} at (51,156) size 4x17
           text run at (51,156) width 4: " "
-        RenderButton {BUTTON} at (57,152) size 91x26 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+        RenderButton {BUTTON} at (57,152) size 91x26 [color=#2E3436] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
           RenderBlock (anonymous) at (8,4) size 75x17
             RenderText {#text} at (0,0) size 44x17
               text run at (0,0) width 44: "button"
@@ -109,14 +109,14 @@ layer at (0,0) size 800x324
         RenderText {#text} at (150,156) size 4x17
           text run at (150,156) width 4: " "
         RenderBR {BR} at (0,0) size 0x0
-        RenderButton {BUTTON} at (2,182) size 61x26 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+        RenderButton {BUTTON} at (2,182) size 61x26 [color=#2E3436] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
           RenderBlock (anonymous) at (8,4) size 45x17
             RenderInline (generated) at (0,0) size 45x17
               RenderText at (0,0) size 45x17
                 text run at (0,0) width 45: "before"
         RenderText {#text} at (65,186) size 4x17
           text run at (65,186) width 4: " "
-        RenderButton {BUTTON} at (71,182) size 105x26 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+        RenderButton {BUTTON} at (71,182) size 105x26 [color=#2E3436] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
           RenderBlock (anonymous) at (8,4) size 89x17
             RenderInline (generated) at (0,0) size 45x17
               RenderText at (0,0) size 45x17
@@ -126,14 +126,14 @@ layer at (0,0) size 800x324
         RenderText {#text} at (178,186) size 4x17
           text run at (178,186) width 4: " "
         RenderBR {BR} at (0,0) size 0x0
-        RenderButton {BUTTON} at (2,212) size 47x26 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+        RenderButton {BUTTON} at (2,212) size 47x26 [color=#2E3436] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
           RenderBlock (anonymous) at (8,4) size 31x17
             RenderInline (generated) at (0,0) size 31x17
               RenderText at (0,0) size 31x17
                 text run at (0,0) width 31: "after"
         RenderText {#text} at (51,216) size 4x17
           text run at (51,216) width 4: " "
-        RenderButton {BUTTON} at (57,212) size 91x26 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+        RenderButton {BUTTON} at (57,212) size 91x26 [color=#2E3436] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
           RenderBlock (anonymous) at (8,4) size 75x17
             RenderText {#text} at (0,0) size 44x17
               text run at (0,0) width 44: "button"
