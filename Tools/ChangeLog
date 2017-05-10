@@ -1,3 +1,12 @@
+2017-05-10  Don Olmstead  <don.olmstead@am.sony.com>
+
+        [Win] Set CMake args in build-webkit
+        https://bugs.webkit.org/show_bug.cgi?id=171436
+
+        Reviewed by Per Arne Vollan.
+
+        * Scripts/build-webkit:
+
 2017-05-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         ImageDiff: Add CG implementation for new ImageDiff

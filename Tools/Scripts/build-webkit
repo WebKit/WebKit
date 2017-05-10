@@ -258,7 +258,7 @@ if (isAppleWinWebKit() || isWinCairo()) {
     removeCMakeCache(@featureArgs);
 
     chdirWebKit();
-    if (exitStatus(generateBuildSystemFromCMakeProject())) {
+    if (exitStatus(generateBuildSystemFromCMakeProject($prefixPath, @cmakeArgs))) {
         die "Run \"C:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/vcvarsall.bat\" before build-webkit when using ninja";
     }
     chdirWebKit();
