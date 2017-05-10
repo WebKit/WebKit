@@ -121,9 +121,15 @@ if (!window.InspectorFrontendHost) {
 
         copyText: function(text)
         {
-            this._textToCopy = text;
+            let textarea = document.createElement("textarea");
+            textarea.textContent = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+
             if (!document.execCommand("copy"))
-                console.error("Clipboard access is denied");
+                console.error("Could not copy to clipboard.");
+
+            document.body.removeChild(textarea);
         },
 
         killText: function(text, shouldStartNewSequence)
