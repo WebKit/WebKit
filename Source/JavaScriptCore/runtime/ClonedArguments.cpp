@@ -153,7 +153,7 @@ ClonedArguments* ClonedArguments::createByCopyingFrom(
 
 Structure* ClonedArguments::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype, IndexingType indexingType)
 {
-    Structure* structure = Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info(), indexingType);
+    Structure* structure = Structure::create(vm, globalObject, prototype, TypeInfo(ClonedArgumentsType, StructureFlags), info(), indexingType);
     PropertyOffset offset;
     structure = structure->addPropertyTransition(vm, structure, vm.propertyNames->length, DontEnum, offset);
     ASSERT(offset == clonedArgumentsLengthPropertyOffset);

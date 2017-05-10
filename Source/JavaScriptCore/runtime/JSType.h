@@ -93,7 +93,9 @@ enum JSType : uint8_t {
     JSMapType,
     JSSetType,
 
-    LastJSCObjectType = JSSetType,
+    ClonedArgumentsType,
+
+    LastJSCObjectType = ClonedArgumentsType,
     MaxJSType = 0b11111111,
 };
 
