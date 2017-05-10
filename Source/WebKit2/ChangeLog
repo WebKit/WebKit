@@ -1,3 +1,17 @@
+2017-05-09  Dean Jackson  <dino@apple.com>
+
+        Disable WebGL2 by default
+        https://bugs.webkit.org/show_bug.cgi?id=171894
+        <rdar://problem/32089917>
+
+        Reviewed by Tim Horton.
+
+        Some WASM and WebGL2 content is failing because it
+        detects our WebGL2RenderingContext, but doesn't realise
+        that we don't implement enough of it to be useful.
+
+        * Shared/WebPreferencesDefinitions.h:
+
 2017-05-10  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r216563.
