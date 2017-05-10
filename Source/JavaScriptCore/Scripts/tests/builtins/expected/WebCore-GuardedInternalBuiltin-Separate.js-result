@@ -31,7 +31,7 @@
 
 #pragma once
 
-#if ENABLE(READABLE_STREAM_API) || ENABLE(WRITABLE_STREAM_API)
+#if ENABLE(STREAMS_API)
 
 #include <builtins/BuiltinUtils.h>
 #include <bytecode/UnlinkedFunctionExecutable.h>
@@ -151,7 +151,7 @@ inline void GuardedInternalBuiltinBuiltinFunctions::visit(JSC::SlotVisitor& visi
 
 } // namespace WebCore
 
-#endif // ENABLE(READABLE_STREAM_API) || ENABLE(WRITABLE_STREAM_API)
+#endif // ENABLE(STREAMS_API)
 ### End File: GuardedInternalBuiltinBuiltins.h
 
 ### Begin File: GuardedInternalBuiltinBuiltins.cpp
@@ -188,7 +188,7 @@ inline void GuardedInternalBuiltinBuiltinFunctions::visit(JSC::SlotVisitor& visi
 #include "config.h"
 #include "GuardedInternalBuiltinBuiltins.h"
 
-#if ENABLE(READABLE_STREAM_API) || ENABLE(WRITABLE_STREAM_API)
+#if ENABLE(STREAMS_API)
 
 #include "WebCoreJSClientData.h"
 #include <heap/HeapInlines.h>
@@ -224,6 +224,6 @@ WEBCORE_FOREACH_GUARDEDINTERNALBUILTIN_BUILTIN_CODE(DEFINE_BUILTIN_GENERATOR)
 
 } // namespace WebCore
 
-#endif // ENABLE(READABLE_STREAM_API) || ENABLE(WRITABLE_STREAM_API)
+#endif // ENABLE(STREAMS_API)
 
 ### End File: GuardedInternalBuiltinBuiltins.cpp

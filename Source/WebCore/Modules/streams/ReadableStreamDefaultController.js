@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// @conditional=ENABLE(READABLE_STREAM_API)
+// @conditional=ENABLE(STREAMS_API)
 
 function enqueue(chunk)
 {

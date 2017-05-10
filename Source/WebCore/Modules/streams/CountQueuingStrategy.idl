@@ -30,7 +30,7 @@
 [
     JSBuiltin,
     Constructor,
-    Conditional=READABLE_STREAM_API|WRITABLE_STREAM_API,
+    Conditional=STREAMS_API,
     Exposed=(Window,Worker),
 ] interface CountQueuingStrategy {
     double size();
