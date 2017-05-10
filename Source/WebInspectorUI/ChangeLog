@@ -1,3 +1,55 @@
+2017-05-10  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: remove dead code for switching Toolbar display options
+        https://bugs.webkit.org/show_bug.cgi?id=170738
+
+        Reviewed by Joseph Pecoraro.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Base/Main.js:
+        (WebInspector.contentLoaded):
+        * UserInterface/Views/ButtonToolbarItem.css:
+        (.toolbar .item.button > .glyph):
+        (.toolbar .item.button > .label):
+        (.toolbar.icon-and-label-vertical .item.button): Deleted.
+        (.toolbar.icon-and-label-horizontal .item.button): Deleted.
+        (.toolbar.small-size .item.button > .glyph): Deleted.
+        (.toolbar.label-only .item.button > .glyph): Deleted.
+        (.toolbar.label-only .item.activate.button.activated > .label): Deleted.
+        (.toolbar.icon-and-label-horizontal .item.button > .label): Deleted.
+        (.toolbar.icon-only .item.button > .label): Deleted.
+        * UserInterface/Views/ControlToolbarItem.css:
+        (.toolbar .item.control):
+        (.toolbar:matches(.icon-and-label-horizontal, .icon-only) .item.control): Deleted.
+        * UserInterface/Views/DashboardContainerView.css:
+        (.toolbar .dashboard-container):
+        (.toolbar.icon-and-label-vertical:matches(.small-size, .normal-size) .dashboard-container): Deleted.
+        (.toolbar.label-only .dashboard-container,): Deleted.
+        (.toolbar.normal-size:matches(.icon-only, .icon-and-label-vertical, .icon-and-label-horizontal) .dashboard-container): Deleted.
+        (.toolbar.label-only .dashboard-container .advance-arrow): Deleted.
+        (body[dir=ltr] .toolbar.label-only .dashboard-container .advance-arrow): Deleted.
+        (body[dir=rtl] .toolbar.label-only .dashboard-container .advance-arrow): Deleted.
+        * UserInterface/Views/DefaultDashboardView.css:
+        (.toolbar .dashboard.default > .item):
+        (.toolbar.label-only .dashboard.default > .item,): Deleted.
+        (.toolbar.normal-size:matches(.icon-only, .icon-and-label-vertical, .icon-and-label-horizontal) .dashboard.default > .item): Deleted.
+        * UserInterface/Views/ReplayDashboardView.css:
+        (.toolbar .dashboard.replay .item.button > .glyph):
+        (.toolbar.label-only .dashboard.replay .item.button > .glyph): Deleted.
+        * UserInterface/Views/Toolbar.css:
+        (.toolbar .control-section):
+        (.toolbar:matches(.icon-and-label-horizontal.small-size, .icon-only.small-size, .label-only) .control-section): Deleted.
+        * UserInterface/Views/Toolbar.js:
+        (WebInspector.Toolbar):
+        (WebInspector.Toolbar.prototype.layout):
+        (WebInspector.Toolbar.prototype.get displayMode): Deleted.
+        (WebInspector.Toolbar.prototype.set displayMode): Deleted.
+        (WebInspector.Toolbar.prototype.get sizeMode): Deleted.
+        (WebInspector.Toolbar.prototype.set sizeMode): Deleted.
+        (WebInspector.Toolbar.prototype._handleContextMenuEvent): Deleted.
+        (WebInspector.Toolbar.prototype._changeDisplayMode): Deleted.
+        (WebInspector.Toolbar.prototype._toggleSmallIcons): Deleted.
+
 2017-05-10  Ross Kirsling  <ross.kirsling@sony.com>
 
         Web Inspector: Copy to clipboard fails via InspectorFrontendHostStub

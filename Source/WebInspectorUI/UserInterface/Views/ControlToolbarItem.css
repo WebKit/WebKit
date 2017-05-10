@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,17 +27,13 @@
     align-items: center;
     justify-content: center;
 
-    padding: 3px 2px;
+    padding: 0 2px;
 
     opacity: 0.5;
 }
 
 .toolbar.small-size .item.control {
     padding: 2px;
-}
-
-.toolbar:matches(.icon-and-label-horizontal, .icon-only) .item.control {
-    padding: 0 2px;
 }
 
 .toolbar .item.control:hover {

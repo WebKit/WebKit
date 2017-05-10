@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2014 University of Washington. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,13 +44,3 @@
     width: 16px !important;
     height: 16px !important;
 }
-
-.toolbar.label-only .dashboard.replay .item.button > .glyph {
-    /* The default styles here will try to elide buttons in label-only mode. */
-    display: flex !important;
-
-    /* ButtonNavigationItem is not aware of alternate button sizes, so override here. */
-    width: 14px !important;
-    height: 14px !important;
-}
-

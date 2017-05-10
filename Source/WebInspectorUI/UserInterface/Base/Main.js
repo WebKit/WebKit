@@ -279,9 +279,7 @@ WebInspector.contentLoaded = function()
     this._settingsKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, WebInspector.KeyboardShortcut.Key.Comma, this._showSettingsTab.bind(this));
 
     // Create the user interface elements.
-    this.toolbar = new WebInspector.Toolbar(document.getElementById("toolbar"), null, true);
-    this.toolbar.displayMode = WebInspector.Toolbar.DisplayMode.IconOnly;
-    this.toolbar.sizeMode = WebInspector.Toolbar.SizeMode.Small;
+    this.toolbar = new WebInspector.Toolbar(document.getElementById("toolbar"));
 
     this.tabBar = new WebInspector.TabBar(document.getElementById("tab-bar"));
     this.tabBar.addEventListener(WebInspector.TabBar.Event.OpenDefaultTab, this._openDefaultTab, this);

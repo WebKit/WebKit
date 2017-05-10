@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,12 +25,9 @@
 
 WebInspector.Toolbar = class Toolbar extends WebInspector.NavigationBar
 {
-    constructor(element, navigationItems, dontAllowModeChanges)
+    constructor(element)
     {
-        super(element, navigationItems, "toolbar");
-
-        this.displayMode = WebInspector.Toolbar.DisplayMode.IconAndLabelVertical;
-        this.sizeMode = WebInspector.Toolbar.SizeMode.Normal;
+        super(element, null, "toolbar");
 
         this._controlSectionElement = document.createElement("div");
         this._controlSectionElement.className = WebInspector.Toolbar.ControlSectionStyleClassName;
@@ -55,60 +52,9 @@ WebInspector.Toolbar = class Toolbar extends WebInspector.NavigationBar
         this._rightSectionElement = document.createElement("div");
         this._rightSectionElement.className = WebInspector.Toolbar.ItemSectionStyleClassName + " " + WebInspector.Toolbar.RightItemSectionStyleClassName;
         this.element.appendChild(this._rightSectionElement);
-
-        if (!dontAllowModeChanges)
-            this.element.addEventListener("contextmenu", this._handleContextMenuEvent.bind(this), false);
     }
 
     // Public
-
-    get displayMode()
-    {
-        return this._displayMode;
-    }
-
-    set displayMode(mode)
-    {
-        if (mode === this._displayMode)
-            return;
-
-        if (this._displayMode)
-            this.element.classList.remove(this._displayMode);
-
-        // Revert the forced icon-only mode if it was applied.
-        if (this._displayMode === WebInspector.Toolbar.DisplayMode.IconAndLabelHorizontal)
-            this.element.classList.remove(WebInspector.Toolbar.DisplayMode.IconOnly);
-
-        this._displayMode = mode;
-
-        this.element.classList.add(mode);
-
-        this.updateLayout();
-
-        this.dispatchEventToListeners(WebInspector.Toolbar.Event.DisplayModeDidChange);
-    }
-
-    get sizeMode()
-    {
-        return this._sizeMode;
-    }
-
-    set sizeMode(mode)
-    {
-        if (mode === this._sizeMode)
-            return;
-
-        if (this._sizeMode)
-            this.element.classList.remove(this._sizeMode);
-
-        this._sizeMode = mode;
-
-        this.element.classList.add(mode);
-
-        this.updateLayout();
-
-        this.dispatchEventToListeners(WebInspector.Toolbar.Event.SizeModeDidChange);
-    }
 
     addToolbarItem(toolbarItem, sectionIdentifier)
     {
@@ -163,12 +109,6 @@ WebInspector.Toolbar = class Toolbar extends WebInspector.NavigationBar
         // Remove the collapsed style class to test if the items can fit at full width.
         this.element.classList.remove(WebInspector.NavigationBar.CollapsedStyleClassName);
 
-        // Revert the forced icon-only mode if it was applied.
-        if (this._displayMode === WebInspector.Toolbar.DisplayMode.IconAndLabelHorizontal) {
-            this.element.classList.remove(WebInspector.Toolbar.DisplayMode.IconOnly);
-            this.element.classList.add(WebInspector.Toolbar.DisplayMode.IconAndLabelHorizontal);
-        }
-
         function isOverflowingToolbar()
         {
             var controlSectionWidth = this._controlSectionElement.realOffsetWidth;
@@ -182,44 +122,10 @@ WebInspector.Toolbar = class Toolbar extends WebInspector.NavigationBar
             return Math.round(controlSectionWidth + leftSectionWidth + centerLeftSectionWidth + centerSectionWidth + centerRightSectionWidth + rightSectionWidth) > toolbarWidth;
         }
 
-        // Only the horizontal display mode supports collapsing labels.
-        // If any sections are overflowing the toolbar then force the display mode to be icon only.
-        if (this._displayMode === WebInspector.Toolbar.DisplayMode.IconAndLabelHorizontal && isOverflowingToolbar.call(this)) {
-            this.element.classList.remove(WebInspector.Toolbar.DisplayMode.IconAndLabelHorizontal);
-            this.element.classList.add(WebInspector.Toolbar.DisplayMode.IconOnly);
-        }
-
         if (!isOverflowingToolbar.call(this))
             return;
 
         this.element.classList.add(WebInspector.NavigationBar.CollapsedStyleClassName);
-    }
-
-    // Private
-
-    _handleContextMenuEvent(event)
-    {
-        let contextMenu = WebInspector.ContextMenu.createFromEvent(event);
-
-        contextMenu.appendCheckboxItem(WebInspector.UIString("Icon and Text (Vertical)"), this._changeDisplayMode.bind(this, WebInspector.Toolbar.DisplayMode.IconAndLabelVertical), this._displayMode === WebInspector.Toolbar.DisplayMode.IconAndLabelVertical);
-        contextMenu.appendCheckboxItem(WebInspector.UIString("Icon and Text (Horizontal)"), this._changeDisplayMode.bind(this, WebInspector.Toolbar.DisplayMode.IconAndLabelHorizontal), this._displayMode === WebInspector.Toolbar.DisplayMode.IconAndLabelHorizontal);
-        contextMenu.appendCheckboxItem(WebInspector.UIString("Icon Only"), this._changeDisplayMode.bind(this, WebInspector.Toolbar.DisplayMode.IconOnly), this._displayMode === WebInspector.Toolbar.DisplayMode.IconOnly);
-        contextMenu.appendCheckboxItem(WebInspector.UIString("Text Only"), this._changeDisplayMode.bind(this, WebInspector.Toolbar.DisplayMode.LabelOnly), this._displayMode === WebInspector.Toolbar.DisplayMode.LabelOnly);
-
-        if (this._displayMode !== WebInspector.Toolbar.DisplayMode.LabelOnly) {
-            contextMenu.appendSeparator();
-            contextMenu.appendCheckboxItem(WebInspector.UIString("Small Icons"), this._toggleSmallIcons.bind(this), this._sizeMode === WebInspector.Toolbar.SizeMode.Small);
-        }
-    }
-
-    _changeDisplayMode(displayMode)
-    {
-        this.displayMode = displayMode;
-    }
-
-    _toggleSmallIcons()
-    {
-        this.sizeMode = this._sizeMode === WebInspector.Toolbar.SizeMode.Normal ? WebInspector.Toolbar.SizeMode.Small : WebInspector.Toolbar.SizeMode.Normal;
     }
 };
 
@@ -232,11 +138,6 @@ WebInspector.Toolbar.CenterItemSectionStyleClassName = "center";
 WebInspector.Toolbar.CenterRightItemSectionStyleClassName = "center-right";
 WebInspector.Toolbar.RightItemSectionStyleClassName = "right";
 
-WebInspector.Toolbar.Event = {
-    DisplayModeDidChange: "toolbar-display-mode-did-change",
-    SizeModeDidChange: "toolbar-size-mode-did-change"
-};
-
 WebInspector.Toolbar.Section = {
     Control: "control",
     Left: "left",
@@ -244,16 +145,4 @@ WebInspector.Toolbar.Section = {
     Center: "center",
     CenterRight: "center-right",
     Right: "right"
-};
-
-WebInspector.Toolbar.DisplayMode = {
-    IconAndLabelVertical: "icon-and-label-vertical",
-    IconAndLabelHorizontal: "icon-and-label-horizontal",
-    IconOnly: "icon-only",
-    LabelOnly: "label-only"
-};
-
-WebInspector.Toolbar.SizeMode = {
-    Normal: "normal-size",
-    Small: "small-size"
 };

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,6 +40,7 @@ body.javascript .toolbar .dashboard.default > :matches(.resourcesCount, .resourc
 .toolbar .dashboard.default > .item {
     line-height: 13px;
 
+    margin: 1px 0;
     padding: 0 5px;
 
     display: flex;
@@ -179,18 +180,4 @@ body[dir=rtl] .toolbar .dashboard.default > .item > div {
 
 @keyframes console-item-pulse {
     50% { opacity: 0.6; }
-}
-
-
-/* Styles for the extra short style, one row with quite a small y-margin */
-
-.toolbar.label-only .dashboard.default > .item,
-.toolbar.small-size:matches(.icon-only, .icon-and-label-vertical, .icon-and-label-horizontal) .dashboard.default > .item {
-    margin: 1px 0;
-}
-
-/* Styles for the fairly short style, one row with quite a bit of y-margin */
-
-.toolbar.normal-size:matches(.icon-only, .icon-and-label-vertical, .icon-and-label-horizontal) .dashboard.default > .item {
-    margin: 4px 0;
 }
