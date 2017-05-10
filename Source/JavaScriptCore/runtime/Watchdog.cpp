@@ -69,21 +69,18 @@ void Watchdog::setTimeLimit(std::chrono::microseconds limit,
 bool Watchdog::shouldTerminate(ExecState* exec)
 {
     ASSERT(m_vm->currentThreadIsHoldingAPILock());
-    // FIXME: Will unindent the following before landing. Leaving indented for now to minimize the code diff.
-    {
-        if (currentWallClockTime() < m_wallClockDeadline)
-            return false; // Just a stale timer firing. Nothing to do.
+    if (currentWallClockTime() < m_wallClockDeadline)
+        return false; // Just a stale timer firing. Nothing to do.
 
-        // Set m_wallClockDeadline to noTimeLimit here so that we can reject all future
-        // spurious wakes.
-        m_wallClockDeadline = noTimeLimit;
+    // Set m_wallClockDeadline to noTimeLimit here so that we can reject all future
+    // spurious wakes.
+    m_wallClockDeadline = noTimeLimit;
 
-        auto cpuTime = currentCPUTime();
-        if (cpuTime < m_cpuDeadline) {
-            auto remainingCPUTime = m_cpuDeadline - cpuTime;
-            startTimer(remainingCPUTime);
-            return false;
-        }
+    auto cpuTime = currentCPUTime();
+    if (cpuTime < m_cpuDeadline) {
+        auto remainingCPUTime = m_cpuDeadline - cpuTime;
+        startTimer(remainingCPUTime);
+        return false;
     }
 
     // Note: we should not be holding the lock while calling the callbacks. The callbacks may
@@ -96,23 +93,21 @@ bool Watchdog::shouldTerminate(ExecState* exec)
     if (needsTermination)
         return true;
 
-    // FIXME: Will unindent the following before landing. Leaving indented for now to minimize the code diff.
-    {
-        // If we get here, then the callback above did not want to terminate execution. As a
-        // result, the callback may have done one of the following:
-        //   1. cleared the time limit (i.e. watchdog is disabled),
-        //   2. set a new time limit via Watchdog::setTimeLimit(), or
-        //   3. did nothing (i.e. allow another cycle of the current time limit).
-        //
-        // In the case of 1, we don't have to do anything.
-        // In the case of 2, Watchdog::setTimeLimit() would already have started the timer.
-        // In the case of 3, we need to re-start the timer here.
+    // If we get here, then the callback above did not want to terminate execution. As a
+    // result, the callback may have done one of the following:
+    //   1. cleared the time limit (i.e. watchdog is disabled),
+    //   2. set a new time limit via Watchdog::setTimeLimit(), or
+    //   3. did nothing (i.e. allow another cycle of the current time limit).
+    //
+    // In the case of 1, we don't have to do anything.
+    // In the case of 2, Watchdog::setTimeLimit() would already have started the timer.
+    // In the case of 3, we need to re-start the timer here.
 
-        ASSERT(m_hasEnteredVM);
-        bool callbackAlreadyStartedTimer = (m_cpuDeadline != noTimeLimit);
-        if (hasTimeLimit() && !callbackAlreadyStartedTimer)
-            startTimer(m_timeLimit);
-    }
+    ASSERT(m_hasEnteredVM);
+    bool callbackAlreadyStartedTimer = (m_cpuDeadline != noTimeLimit);
+    if (hasTimeLimit() && !callbackAlreadyStartedTimer)
+        startTimer(m_timeLimit);
+
     return false;
 }
 

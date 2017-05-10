@@ -1,3 +1,15 @@
+2017-05-09  Mark Lam  <mark.lam@apple.com>
+
+        Unindent some code in Watchdog::shouldTerminate().
+        https://bugs.webkit.org/show_bug.cgi?id=171896
+
+        Rubber stamped by Keith Miller.
+
+        I should have done this before I landed r213107, but I forgot.  Unindenting it now.
+
+        * runtime/Watchdog.cpp:
+        (JSC::Watchdog::shouldTerminate):
+
 2017-05-09  Michael Saboff  <msaboff@apple.com>
 
         Cap the number of FTL compilation threads on iOS to 2
