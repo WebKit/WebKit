@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2015, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -126,6 +126,11 @@ int main(int argc, char** argv)
             }
         }
     }
+
+#if PLATFORM(MAC)
+    // Don't allow Apple Events in WebKit processes. This can be removed when <rdar://problem/14012823> is fixed.
+    setenv("__APPLEEVENTSSERVICENAME", "", 1);
+#endif
 
     xpc_main(XPCServiceEventHandler);
     return 0;
