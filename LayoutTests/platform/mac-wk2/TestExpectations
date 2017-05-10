@@ -680,3 +680,5 @@ webkit.org/b/171930 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-idl
 webkit.org/171935 [ Sierra ] tiled-drawing/scrolling/fast-scroll-select-latched-mainframe.html [ Pass Failure ]
 
 webkit.org/171939 [ Sierra Release ] media/track/track-cue-rendering-on-resize.html [ Pass Timeout ]
+
+webkit.org/171947 [ Sierra Release ] transitions/extra-transition.html [ Pass Failure ]
