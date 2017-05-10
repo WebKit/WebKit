@@ -154,12 +154,8 @@ const emitters = {
     Memory: (section, bin) => {
         // Flags, currently can only be [0,1]
         put(bin, "varuint1", section.data.length);
-        for (const memory of section.data) {
-            put(bin, "varuint32", memory.max ? 1 : 0);
-            put(bin, "varuint32", memory.initial);
-            if (memory.max)
-                put(bin, "varuint32", memory.max);
-        }
+        for (const memory of section.data)
+            putResizableLimits(bin, memory.initial, memory.maximum);
     },
 
     Global: (section, bin) => {

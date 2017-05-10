@@ -1,5 +1,18 @@
 2017-05-10  JF Bastien  <jfbastien@apple.com>
 
+        WebAssemby: builder doesn't do Memory section maximum correctly
+        https://bugs.webkit.org/show_bug.cgi?id=171931
+
+        Reviewed by Keith Miller.
+
+        * wasm/Builder.js:
+        (export.default.Builder.prototype._registerSectionBuilders.const.section.in.WASM.description.section.switch.section.case.string_appeared_here.this.section):
+        * wasm/Builder_WebAssemblyBinary.js:
+        (const.emitters.Memory):
+        * wasm/function-tests/memory-grow-invalid.js: Added.
+
+2017-05-10  JF Bastien  <jfbastien@apple.com>
+
         WebAssembly: support name section
         https://bugs.webkit.org/show_bug.cgi?id=171263
 

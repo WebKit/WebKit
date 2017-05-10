@@ -517,8 +517,8 @@ export default class Builder {
                     const s = this._addSection(section);
                     const memoryBuilder = {
                         End: () => this,
-                        InitialMaxPages: (initial, max) => {
-                            s.data.push({ initial, max });
+                        InitialMaxPages: (initial, maximum) => {
+                            s.data.push({ initial, maximum });
                             return _errorHandlingProxyFor(memoryBuilder);
                         }
                     };
