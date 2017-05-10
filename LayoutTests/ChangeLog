@@ -1,3 +1,14 @@
+2017-05-10  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Skip http/tests/navigation/keyboard-events-during-provisional-subframe-navigation.html on ios-simulator.
+        https://bugs.webkit.org/show_bug.cgi?id=171880
+
+        Unreviewed test gardening.
+
+        This test times out on ios-simulator because it relies on eventSender.keyDown.
+
+        * platform/ios/TestExpectations:
+
 2017-05-10  Timothy Horton  <timothy_horton@apple.com>
 
         Add an experimental feature flag for constant properties
