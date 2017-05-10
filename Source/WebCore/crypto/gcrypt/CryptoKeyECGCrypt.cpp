@@ -45,6 +45,9 @@ static size_t curveSize(CryptoKeyEC::NamedCurve curve)
     case CryptoKeyEC::NamedCurve::P384:
         return 384;
     }
+
+    ASSERT_NOT_REACHED();
+    return 0;
 }
 
 static const char* curveName(CryptoKeyEC::NamedCurve curve)
@@ -55,6 +58,9 @@ static const char* curveName(CryptoKeyEC::NamedCurve curve)
     case CryptoKeyEC::NamedCurve::P384:
         return "NIST P-384";
     }
+
+    ASSERT_NOT_REACHED();
+    return nullptr;
 }
 
 static unsigned uncompressedPointSizeForCurve(CryptoKeyEC::NamedCurve curve)
@@ -65,6 +71,9 @@ static unsigned uncompressedPointSizeForCurve(CryptoKeyEC::NamedCurve curve)
     case CryptoKeyEC::NamedCurve::P384:
         return 97;
     }
+
+    ASSERT_NOT_REACHED();
+    return 0;
 }
 
 static unsigned uncompressedFieldElementSizeForCurve(CryptoKeyEC::NamedCurve curve)
@@ -75,6 +84,9 @@ static unsigned uncompressedFieldElementSizeForCurve(CryptoKeyEC::NamedCurve cur
     case CryptoKeyEC::NamedCurve::P384:
         return 48;
     }
+
+    ASSERT_NOT_REACHED();
+    return 0;
 }
 
 static Vector<uint8_t> extractMPIData(gcry_mpi_t mpi)

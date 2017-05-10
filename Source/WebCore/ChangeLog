@@ -1,3 +1,16 @@
+2017-05-10  Hyungwook Lee  <hyungwook.lee@navercorp.com>
+
+        [GTK] Fix compile warnings in CryptoKeyECGCrypt.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=171851
+
+        Reviewed by Alex Christensen.
+
+        * crypto/gcrypt/CryptoKeyECGCrypt.cpp:
+        (WebCore::curveSize):
+        (WebCore::curveName):
+        (WebCore::uncompressedPointSizeForCurve):
+        (WebCore::uncompressedFieldElementSizeForCurve):
+
 2017-05-08  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-grid] Remove Blink-specific code for handling orthogonal grid items
