@@ -1,3 +1,23 @@
+2017-05-10  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r206960): Possible null pointer dereference under DOMSelection::getRangeAt()
+        https://bugs.webkit.org/show_bug.cgi?id=171925
+        <rdar://problem/29931223>
+
+        Reviewed by Wenson Hsieh.
+
+        We have evidence that selection().firstRange() can return null in DOMSelection::getRangeAt().
+        When this happens, we now throw an INDEX_SIZE_ERR instead of dereferencing it.
+
+        I believe this can happen if the VisibleSelection is orphaned but not none, because
+        rangeCount() only checks for isNone() but VisibleSelection::firstRange() can return null
+        if isNoneOrOrphaned().
+
+        No new tests, I do not know how to reproduce.
+
+        * page/DOMSelection.cpp:
+        (WebCore::DOMSelection::getRangeAt):
+
 2017-05-10  Matt Rajca  <mrajca@apple.com>
 
         DumpRenderTree crashed in com.apple.WebCore: std::optional<WTF::MediaTime>::operator-> + 71 :: CRASHING TEST: fullscreen/video-controls-timeline.html
