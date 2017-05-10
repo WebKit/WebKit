@@ -394,7 +394,7 @@ static Vector<IDBKeyData> createKeyPathArray(ExecState& exec, JSValue value, con
         Vector<IDBKeyData> keys;
         for (auto& entry : vector) {
             auto key = internalCreateIDBKeyFromScriptValueAndKeyPath(exec, value, entry);
-            if (!key)
+            if (!key || !key->isValid())
                 return { };
             keys.append(key.get());
         }

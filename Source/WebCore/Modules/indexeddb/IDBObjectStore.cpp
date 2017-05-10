@@ -432,7 +432,7 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::clear(ExecState& execState)
 
 ExceptionOr<Ref<IDBIndex>> IDBObjectStore::createIndex(ExecState&, const String& name, IDBKeyPath&& keyPath, const IndexParameters& parameters)
 {
-    LOG(IndexedDB, "IDBObjectStore::createIndex %s", name.utf8().data());
+    LOG(IndexedDB, "IDBObjectStore::createIndex %s (keyPath: %s, unique: %i, multiEntry: %i)", name.utf8().data(), loggingString(keyPath).utf8().data(), parameters.unique, parameters.multiEntry);
     ASSERT(currentThread() == m_transaction.database().originThreadID());
 
     if (!m_transaction.isVersionChange())
