@@ -191,6 +191,19 @@ JSBoundFunction::JSBoundFunction(VM& vm, JSGlobalObject* globalObject, Structure
 {
 }
 
+JSArray* JSBoundFunction::boundArgsCopy(ExecState* exec)
+{
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    JSArray* result = constructEmptyArray(exec, nullptr, globalObject());
+    RETURN_IF_EXCEPTION(scope, nullptr);
+    for (unsigned i = 0; i < m_boundArgs->length(); ++i) {
+        result->push(exec, m_boundArgs->getIndexQuickly(i));
+        RETURN_IF_EXCEPTION(scope, nullptr);
+    }
+    return result;
+}
+
 void JSBoundFunction::finishCreation(VM& vm, NativeExecutable* executable, int length)
 {
     String name; // We lazily create our 'name' string property.

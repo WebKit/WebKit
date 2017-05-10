@@ -305,7 +305,7 @@ JSValue JSInjectedScriptHost::getInternalProperties(ExecState* exec)
         RETURN_IF_EXCEPTION(scope, JSValue());
         if (boundFunction->boundArgs()) {
             scope.release();
-            array->putDirectIndex(exec, index++, constructInternalProperty(exec, "boundArgs", boundFunction->boundArgs()));
+            array->putDirectIndex(exec, index++, constructInternalProperty(exec, "boundArgs", boundFunction->boundArgsCopy(exec)));
             return array;
         }
         return array;

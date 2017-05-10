@@ -1,3 +1,20 @@
+2017-05-09  Filip Pizlo  <fpizlo@apple.com>
+
+        JSInjectedScriptHost should get a copy of the boundArgs
+        https://bugs.webkit.org/show_bug.cgi?id=171897
+
+        Reviewed by Joseph Pecoraro.
+        
+        The boundArgs array is very special - it cannot be mutated in any way. So, it makes sense
+        for the inspector to get a copy of it.
+
+        * inspector/JSInjectedScriptHost.cpp:
+        (Inspector::JSInjectedScriptHost::getInternalProperties):
+        * runtime/JSBoundFunction.cpp:
+        (JSC::JSBoundFunction::boundArgsCopy):
+        * runtime/JSBoundFunction.h:
+        (JSC::JSBoundFunction::boundArgs):
+
 2017-05-09  Mark Lam  <mark.lam@apple.com>
 
         Unindent some code in Watchdog::shouldTerminate().
