@@ -1,3 +1,17 @@
+2017-05-10  Zan Dobersek  <zdobersek@igalia.com>
+
+        Enable FTL JIT by default on AArch64
+        https://bugs.webkit.org/show_bug.cgi?id=144039
+
+        Reviewed by Yusuke Suzuki.
+
+        * Scripts/build-jsc: Enable the FTL JIT option by default on ARM64.
+        * Scripts/run-jsc-stress-tests: Unmark the ARM64 and Linux combination
+        as an unsupported FTL platform.
+        * Scripts/webkitdirs.pm:
+        (isARM64): Returns 1 if the determined architecture is 'arm64'.
+        * Scripts/webkitperl/FeatureList.pm: Enable FTL_JIT and WEBASSEMBLY on ARM64.
+
 2017-05-09  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Remove unneeded crash log retrieval, refactor Darwin crash retrieval

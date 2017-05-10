@@ -66,7 +66,7 @@ endmacro()
 macro(WEBKIT_OPTION_BEGIN)
     set(_SETTING_WEBKIT_OPTIONS TRUE)
 
-    if (WTF_CPU_X86_64)
+    if (WTF_CPU_X86_64 OR WTF_CPU_ARM64)
         set(ENABLE_FTL_DEFAULT ON)
     else ()
         set(ENABLE_FTL_DEFAULT OFF)

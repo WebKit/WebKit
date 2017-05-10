@@ -1,3 +1,14 @@
+2017-05-10  Zan Dobersek  <zdobersek@igalia.com>
+
+        Enable FTL JIT by default on AArch64
+        https://bugs.webkit.org/show_bug.cgi?id=144039
+
+        Reviewed by Yusuke Suzuki.
+
+        * Source/cmake/OptionsWPE.cmake:
+        * Source/cmake/WebKitFeatures.cmake: Set FTL as enabled by default
+        when targeting either WTF_CPU_X86_64 or WTF_CPU_ARM64.
+
 2017-05-09  Zan Dobersek  <zdobersek@igalia.com>
 
         Upstream the WPE port

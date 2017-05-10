@@ -413,7 +413,7 @@ end
 
 $hostOS = determineOS unless $hostOS
 $architecture = determineArchitecture unless $architecture
-$isFTLPlatform = !($architecture == "x86" || $architecture == "arm" || $architecture == "mips" || $hostOS == "windows" || $hostOS == "linux" && $architecture == "arm64")
+$isFTLPlatform = !($architecture == "x86" || $architecture == "arm" || $architecture == "mips" || $hostOS == "windows")
 
 if !$testRunnerType
     if $remote and $hostOS == "darwin"

@@ -1235,6 +1235,11 @@ sub isX86_64()
     return (architecture() eq "x86_64") || 0;
 }
 
+sub isARM64()
+{
+    return (architecture() eq "arm64") || 0;
+}
+
 sub isCrossCompilation()
 {
     my $compiler = "";
