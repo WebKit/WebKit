@@ -1,3 +1,17 @@
+2017-05-10  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GTK] HTTP authentication dialog should focus on first input field
+        https://bugs.webkit.org/show_bug.cgi?id=151349
+
+        Reviewed by Michael Catanzaro.
+
+        Setting focus on a widget before it's mapped does nothing. Move
+        the call to the right place.
+
+        * UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:
+        (webkitAuthenticationDialogInitialize):
+        (webkitAuthenticationDialogMap):
+
 2017-05-10  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] -Wmissing-field-initializers triggered by RemoteInspectorServer.cpp:128
