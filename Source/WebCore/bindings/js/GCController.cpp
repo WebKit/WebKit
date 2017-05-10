@@ -41,7 +41,7 @@ namespace WebCore {
 static void collect(void*)
 {
     JSLockHolder lock(commonVM());
-    commonVM().heap.collectNow(Sync, CollectionScope::Full);
+    commonVM().heap.collectNow(Async, CollectionScope::Full);
 }
 
 GCController& GCController::singleton()
