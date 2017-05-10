@@ -120,6 +120,7 @@
     macro(WebGL2RenderingContext) \
     macro(WebGLVertexArrayObject) \
     macro(WebSocket) \
+    macro(WritableStream) \
     macro(__defineGetter__) \
     macro(__defineSetter__) \
     macro(__lookupGetter__) \

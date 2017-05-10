@@ -494,7 +494,7 @@ public:
     String resourceLoadStatisticsForOrigin(const String& origin);
     void setResourceLoadStatisticsEnabled(bool);
 
-#if ENABLE(READABLE_STREAM_API)
+#if ENABLE(STREAMS_API)
     bool isReadableStreamDisturbed(JSC::ExecState&, JSC::JSValue);
 #endif
 

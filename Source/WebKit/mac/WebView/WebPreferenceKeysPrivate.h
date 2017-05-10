@@ -168,6 +168,8 @@
 #define WebKitShadowDOMEnabledPreferenceKey @"WebKitShadowDOMEnabled"
 #define WebKitCustomElementsEnabledPreferenceKey @"WebKitCustomElementsEnabled"
 #define WebKitFetchAPIEnabledPreferenceKey @"WebKitFetchAPIEnabled"
+#define WebKitWritableStreamAPIEnabledPreferenceKey @"WebKitWritableStreamAPIEnabled"
+#define WebKitReadableByteStreamAPIEnabledPreferenceKey @"WebKitReadableByteStreamAPIEnabled"
 #define WebKitDownloadAttributeEnabledPreferenceKey @"WebKitDownloadAttributeEnabled"
 #define WebKitES6ModulesEnabledPreferenceKey @"WebKitES6ModulesEnabled"
 #define WebKitCSSGridLayoutEnabledPreferenceKey @"WebKitCSSGridLayoutEnabled"

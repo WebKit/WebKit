@@ -187,6 +187,13 @@ void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* page
         RuntimeEnabledFeatures::sharedFeatures().setFetchAPIEnabled(enabled);
 #endif
 
+#if ENABLE(STREAMS_API)
+    if (preference == "WebKitReadableByteStreamAPIEnabled")
+        RuntimeEnabledFeatures::sharedFeatures().setReadableByteStreamAPIEnabled(enabled);
+    if (preference == "WebKitWritableStreamAPIEnabled")
+        RuntimeEnabledFeatures::sharedFeatures().setWritableStreamAPIEnabled(enabled);
+#endif
+
 #if ENABLE(DOWNLOAD_ATTRIBUTE)
     if (preference == "WebKitDownloadAttributeEnabled")
         RuntimeEnabledFeatures::sharedFeatures().setDownloadAttributeEnabled(enabled);

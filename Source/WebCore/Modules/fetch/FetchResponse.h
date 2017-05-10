@@ -56,7 +56,7 @@ public:
     static void fetch(ScriptExecutionContext&, FetchRequest&, FetchPromise&&);
 
     void consume(unsigned, Ref<DeferredPromise>&&);
-#if ENABLE(READABLE_STREAM_API)
+#if ENABLE(STREAMS_API)
     void startConsumingStream(unsigned);
     void consumeChunk(Ref<JSC::Uint8Array>&&);
     void finishConsumingStream(Ref<DeferredPromise>&&);
@@ -75,7 +75,7 @@ public:
     FetchHeaders& headers() { return m_headers; }
     Ref<FetchResponse> cloneForJS();
 
-#if ENABLE(READABLE_STREAM_API)
+#if ENABLE(STREAMS_API)
     ReadableStreamSource* createReadableStreamSource();
     void consumeBodyAsStream();
     void feedStream();
@@ -93,7 +93,7 @@ private:
     const char* activeDOMObjectName() const final;
     bool canSuspendForDocumentSuspension() const final;
 
-#if ENABLE(READABLE_STREAM_API)
+#if ENABLE(STREAMS_API)
     void closeStream();
 #endif
 
@@ -104,7 +104,7 @@ private:
         bool start(ScriptExecutionContext&, const FetchRequest&);
         void stop();
 
-#if ENABLE(READABLE_STREAM_API)
+#if ENABLE(STREAMS_API)
         RefPtr<SharedBuffer> startStreaming();
 #endif
 

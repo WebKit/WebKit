@@ -50,6 +50,7 @@ namespace WebCore {
 
 EncodedJSValue JSC_HOST_CALL makeThisTypeErrorForBuiltins(ExecState*);
 EncodedJSValue JSC_HOST_CALL makeGetterTypeErrorForBuiltins(ExecState*);
+EncodedJSValue JSC_HOST_CALL isReadableByteStreamAPIEnabled(ExecState*);
 
 const ClassInfo JSDOMGlobalObject::s_info = { "DOMGlobalObject", &JSGlobalObject::s_info, 0, CREATE_METHOD_TABLE(JSDOMGlobalObject) };
 
@@ -99,29 +100,30 @@ EncodedJSValue JSC_HOST_CALL makeGetterTypeErrorForBuiltins(ExecState* execState
     return JSValue::encode(createTypeError(execState, makeGetterTypeErrorMessage(interfaceName.utf8().data(), attributeName.utf8().data())));
 }
 
+#if ENABLE(STREAMS_API)
+EncodedJSValue JSC_HOST_CALL isReadableByteStreamAPIEnabled(ExecState*)
+{
+    return JSValue::encode(jsBoolean(RuntimeEnabledFeatures::sharedFeatures().readableByteStreamAPIEnabled()));
+}
+#endif
+
 void JSDOMGlobalObject::addBuiltinGlobals(VM& vm)
 {
     m_builtinInternalFunctions.initialize(*this);
 
-#if ENABLE(READABLE_STREAM_API)
+#if ENABLE(STREAMS_API)
     JSObject* privateReadableStreamDefaultControllerConstructor = createReadableStreamDefaultControllerPrivateConstructor(vm, *this);
-#if ENABLE(READABLE_BYTE_STREAM_API)
     JSObject* privateReadableByteStreamControllerConstructor = createReadableByteStreamControllerPrivateConstructor(vm, *this);
-#endif
     JSObject* privateReadableStreamDefaultReaderConstructor = createReadableStreamDefaultReaderPrivateConstructor(vm, *this);
 
     ASSERT(!constructors(NoLockingNecessary).get(privateReadableStreamDefaultControllerConstructor->info()).get());
-#if ENABLE(READABLE_BYTE_STREAM_API)
     ASSERT(!constructors(NoLockingNecessary).get(privateReadableByteStreamControllerConstructor->info()).get());
-#endif
     ASSERT(!constructors(NoLockingNecessary).get(privateReadableStreamDefaultReaderConstructor->info()).get());
     JSC::WriteBarrier<JSC::JSObject> temp;
     {
         auto locker = lockDuringMarking(vm.heap, m_gcLock);
         constructors(locker).add(privateReadableStreamDefaultControllerConstructor->info(), temp).iterator->value.set(vm, this, privateReadableStreamDefaultControllerConstructor);
-#if ENABLE(READABLE_BYTE_STREAM_API)
         constructors(locker).add(privateReadableByteStreamControllerConstructor->info(), temp).iterator->value.set(vm, this, privateReadableByteStreamControllerConstructor);
-#endif
         constructors(locker).add(privateReadableStreamDefaultReaderConstructor->info(), temp).iterator->value.set(vm, this, privateReadableStreamDefaultReaderConstructor);
     }
 #endif
@@ -136,20 +138,17 @@ void JSDOMGlobalObject::addBuiltinGlobals(VM& vm)
         JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().structuredCloneArrayBufferViewPrivateName(),
             JSFunction::create(vm, this, 1, String(), structuredCloneArrayBufferView), DontDelete | ReadOnly),
         JSDOMGlobalObject::GlobalPropertyInfo(vm.propertyNames->builtinNames().ArrayBufferPrivateName(), getDirect(vm, vm.propertyNames->ArrayBuffer), DontDelete | ReadOnly),
-#if ENABLE(READABLE_STREAM_API) || ENABLE(WRITABLE_STREAM_API)
+#if ENABLE(STREAMS_API)
         JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().streamClosedPrivateName(), jsNumber(1), DontDelete | ReadOnly),
         JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().streamClosingPrivateName(), jsNumber(2), DontDelete | ReadOnly),
         JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().streamErroredPrivateName(), jsNumber(3), DontDelete | ReadOnly),
         JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().streamReadablePrivateName(), jsNumber(4), DontDelete | ReadOnly),
         JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().streamWaitingPrivateName(), jsNumber(5), DontDelete | ReadOnly),
         JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().streamWritablePrivateName(), jsNumber(6), DontDelete | ReadOnly),
-#endif
-#if ENABLE(READABLE_STREAM_API)
         JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().ReadableStreamDefaultControllerPrivateName(), privateReadableStreamDefaultControllerConstructor, DontDelete | ReadOnly),
-#if ENABLE(READABLE_BYTE_STREAM_API)
         JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().ReadableByteStreamControllerPrivateName(), privateReadableByteStreamControllerConstructor, DontDelete | ReadOnly),
-#endif
         JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().ReadableStreamDefaultReaderPrivateName(), privateReadableStreamDefaultReaderConstructor, DontDelete | ReadOnly),
+        JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().readableByteStreamAPIEnabledPrivateName(), JSFunction::create(vm, this, 0, String(), isReadableByteStreamAPIEnabled), DontDelete | ReadOnly),
 #endif
     };
     addStaticGlobals(staticGlobals, WTF_ARRAY_LENGTH(staticGlobals));

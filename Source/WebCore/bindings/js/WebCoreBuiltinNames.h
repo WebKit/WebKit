@@ -74,6 +74,7 @@ namespace WebCore {
     macro(queuedSetRemoteDescription) \
     macro(reader) \
     macro(readRequests) \
+    macro(readableByteStreamAPIEnabled) \
     macro(readableStreamController) \
     macro(readyPromiseCapability) \
     macro(removeTrack) \

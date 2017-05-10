@@ -51,10 +51,8 @@
 #include "JSCanvasPattern.cpp"
 #include "JSCanvasProxy.cpp"
 #include "JSCanvasRenderingContext2D.cpp"
-#if ENABLE(READABLE_STREAM_API)
 #include "JSByteLengthQueuingStrategy.cpp"
 #include "JSCountQueuingStrategy.cpp"
-#endif
 #if ENABLE(WEB_AUDIO)
 #include "JSChannelMergerNode.cpp"
 #include "JSChannelSplitterNode.cpp"
@@ -668,9 +666,7 @@
 #include "JSWorkerGlobalScopeNotifications.cpp"
 #include "JSWorkerLocation.cpp"
 #include "JSWorkerNavigator.cpp"
-#if ENABLE(WRITABLE_STREAM_API)
 #include "JSWritableStream.cpp"
-#endif
 #include "JSXMLDocument.cpp"
 #include "JSXMLHttpRequest.cpp"
 #include "JSXMLHttpRequestEventTarget.cpp"

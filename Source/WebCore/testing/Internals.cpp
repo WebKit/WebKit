@@ -3492,7 +3492,7 @@ void Internals::setShowAllPlugins(bool show)
     page->setShowAllPlugins(show);
 }
 
-#if ENABLE(READABLE_STREAM_API)
+#if ENABLE(STREAMS_API)
 
 bool Internals::isReadableStreamDisturbed(JSC::ExecState& state, JSValue stream)
 {

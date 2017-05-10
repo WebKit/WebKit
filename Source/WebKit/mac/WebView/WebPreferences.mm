@@ -620,6 +620,10 @@ public:
 #if ENABLE(FETCH_API)
         [NSNumber numberWithBool:YES], WebKitFetchAPIEnabledPreferenceKey,
 #endif
+#if ENABLE(STREAMS_API)
+        [NSNumber numberWithBool:NO], WebKitReadableByteStreamAPIEnabledPreferenceKey,
+        [NSNumber numberWithBool:NO], WebKitWritableStreamAPIEnabledPreferenceKey,
+#endif
 #if ENABLE(DOWNLOAD_ATTRIBUTE)
         [NSNumber numberWithBool:NO], WebKitDownloadAttributeEnabledPreferenceKey,
 #endif
@@ -2848,6 +2852,26 @@ static NSString *classIBCreatorID = nil;
 - (void)setFetchAPIEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitFetchAPIEnabledPreferenceKey];
+}
+
+- (BOOL)readableByteStreamAPIEnabled
+{
+    return [self _boolValueForKey:WebKitReadableByteStreamAPIEnabledPreferenceKey];
+}
+
+- (void)setReadableByteStreamAPIEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitReadableByteStreamAPIEnabledPreferenceKey];
+}
+
+- (BOOL)writableStreamAPIEnabled
+{
+    return [self _boolValueForKey:WebKitWritableStreamAPIEnabledPreferenceKey];
+}
+
+- (void)setWritableStreamAPIEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitWritableStreamAPIEnabledPreferenceKey];
 }
 
 - (BOOL)downloadAttributeEnabled

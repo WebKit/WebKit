@@ -49,7 +49,7 @@ function initializeFetchResponse(body, init)
         if (status === 101 || status === 204 || status === 205 || status === 304)
             @throwTypeError("Response cannot have a body with the given status");
 
-        // FIXME: Use @isReadableStream once it is no longer guarded by READABLE_STREAM_API guard.
+        // FIXME: Use @isReadableStream once it is no longer guarded by STREAMS_API compilation guard.
         let isBodyReadableStream = (@isObject(body) && !!body.@readableStreamController);
         if (isBodyReadableStream)
           this.@body = body;

@@ -505,6 +505,12 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (void)setFetchAPIEnabled:(BOOL)flag;
 - (BOOL)fetchAPIEnabled;
 
+- (void)setReadableByteStreamAPIEnabled:(BOOL)flag;
+- (BOOL)readableByteStreamAPIEnabled;
+
+- (void)setWritableStreamAPIEnabled:(BOOL)flag;
+- (BOOL)writableStreamAPIEnabled;
+
 - (void)setDownloadAttributeEnabled:(BOOL)flag;
 - (BOOL)downloadAttributeEnabled;
 

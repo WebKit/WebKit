@@ -673,26 +673,11 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 #define ENABLE_SPELLCHECK 0
 #endif
 
-#if !defined(ENABLE_READABLE_STREAM_API)
+#if !defined(ENABLE_STREAMS_API)
 #if PLATFORM(WIN)
-#define ENABLE_READABLE_STREAM_API 0
+#define ENABLE_STREAMS_API 0
 #else
-#define ENABLE_READABLE_STREAM_API 1
-#endif
-#if !defined(ENABLE_READABLE_BYTE_STREAM_API)
-#if PLATFORM(WIN)
-#define ENABLE_READABLE_BYTE_STREAM_API 0
-#else
-#define ENABLE_READABLE_BYTE_STREAM_API 1
-#endif
-#endif
-#endif
-
-#if !defined(ENABLE_WRITABLE_STREAM_API)
-#if PLATFORM(WIN)
-#define ENABLE_WRITABLE_STREAM_API 0
-#else
-#define ENABLE_WRITABLE_STREAM_API 1
+#define ENABLE_STREAMS_API 1
 #endif
 #endif
 
