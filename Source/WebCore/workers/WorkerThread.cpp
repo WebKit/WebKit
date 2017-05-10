@@ -234,10 +234,7 @@ void WorkerThread::stop()
     // Mutex protection is necessary because stop() can be called before the context is fully created.
     LockHolder lock(m_threadCreationMutex);
 
-    // Ensure that tasks are being handled by thread event loop. If script execution weren't forbidden, a while(1) loop in JS could keep the thread alive forever.
     if (m_workerGlobalScope) {
-        m_workerGlobalScope->script()->scheduleExecutionTermination();
-
         m_runLoop.postTaskAndTerminate({ ScriptExecutionContext::Task::CleanupTask, [] (ScriptExecutionContext& context ) {
             WorkerGlobalScope& workerGlobalScope = downcast<WorkerGlobalScope>(context);
 
@@ -265,6 +262,10 @@ void WorkerThread::stop()
         return;
     }
     m_runLoop.terminate();
+
+    // Ensure that tasks are being handled by thread event loop. If script execution weren't forbidden, a while(1) loop in JS could keep the thread alive forever.
+    if (m_workerGlobalScope)
+        m_workerGlobalScope->script()->scheduleExecutionTermination();
 }
 
 void WorkerThread::releaseFastMallocFreeMemoryInAllThreads()

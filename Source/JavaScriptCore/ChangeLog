@@ -1,5 +1,32 @@
 2017-05-10  Mark Lam  <mark.lam@apple.com>
 
+        WorkerThread::stop() should call scheduleExecutionTermination() last.
+        https://bugs.webkit.org/show_bug.cgi?id=171775
+        <rdar://problem/30975761>
+
+        Reviewed by Geoffrey Garen.
+
+        Increased the number of frames captured in VM::nativeStackTraceOfLastThrow()
+        from 25 to 100.  From experience, I found that 25 is sometimes not sufficient
+        for our debugging needs.
+
+        Also added VM::throwingThread() to track which thread an exception was thrown in.
+        This may be useful if the client is entering the VM from different threads.
+
+        * runtime/ExceptionScope.cpp:
+        (JSC::ExceptionScope::unexpectedExceptionMessage):
+        (JSC::ExceptionScope::releaseAssertIsTerminatedExecutionException):
+        * runtime/ExceptionScope.h:
+        (JSC::ExceptionScope::exception):
+        (JSC::ExceptionScope::unexpectedExceptionMessage):
+        * runtime/VM.cpp:
+        (JSC::VM::throwException):
+        * runtime/VM.h:
+        (JSC::VM::throwingThread):
+        (JSC::VM::clearException):
+
+2017-05-10  Mark Lam  <mark.lam@apple.com>
+
         Crash in JavaScriptCore GC when using JSC on dispatch queues (thread_get_state returns NULL stack pointer).
         https://bugs.webkit.org/show_bug.cgi?id=160337
         <rdar://problem/27611733>
