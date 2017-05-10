@@ -1,3 +1,20 @@
+2017-05-10  Filip Pizlo  <fpizlo@apple.com>
+
+        Null pointer dereference in WTF::RefPtr<WTF::StringImpl>::operator!() under slow_path_get_direct_pname
+        https://bugs.webkit.org/show_bug.cgi?id=171801
+
+        Reviewed by Michael Saboff.
+        
+        These tests used to crash. The prefix and postfix tests cover different paths, except
+        postfix-ignored goes down the same path as prefix due to an optimization.
+
+        * stress/for-in-postfix-ignored-index.js: Added.
+        (foo):
+        * stress/for-in-postfix-index.js: Added.
+        (foo):
+        * stress/for-in-prefix-index.js: Added.
+        (foo):
+
 2017-05-08  Mark Lam  <mark.lam@apple.com>
 
         op_throw_static_error's use of its first operand should be reflected in DFG BytecodeUseDef as well.

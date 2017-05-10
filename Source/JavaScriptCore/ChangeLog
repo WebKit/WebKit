@@ -1,3 +1,18 @@
+2017-05-10  Filip Pizlo  <fpizlo@apple.com>
+
+        Null pointer dereference in WTF::RefPtr<WTF::StringImpl>::operator!() under slow_path_get_direct_pname
+        https://bugs.webkit.org/show_bug.cgi?id=171801
+
+        Reviewed by Michael Saboff.
+        
+        This was a goofy oversight. The for-in optimization relies on the bytecode generator
+        to detect when the loop's index variable gets mutated. We forgot to have the hooks for
+        detecting this in prefix and postfix operations (++i and i++).
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::PostfixNode::emitResolve):
+        (JSC::PrefixNode::emitResolve):
+
 2017-05-10  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] -Wmissing-field-initializers triggered by RemoteInspectorServer.cpp:128
