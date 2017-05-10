@@ -496,19 +496,6 @@ const CGFloat minimumTapHighlightRadius = 2.0;
 #import <WebKitAdditions/WKContentViewInteractionAdditions.mm>
 #endif
 
-static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularity)
-{
-    switch (granularity) {
-    case WKSelectionGranularityDynamic:
-        return UIWebSelectionModeWeb;
-    case WKSelectionGranularityCharacter:
-        return UIWebSelectionModeTextOnly;
-    }
-
-    ASSERT_NOT_REACHED();
-    return UIWebSelectionModeWeb;
-}
-
 - (void)_createAndConfigureDoubleTapGestureRecognizer
 {
     _doubleTapGestureRecognizer = adoptNS([[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_doubleTapRecognized:)]);
@@ -591,7 +578,7 @@ static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularit
     _showingTextStyleOptions = NO;
 
     // FIXME: This should be called when we get notified that loading has completed.
-    [self useSelectionAssistantWithMode:toUIWebSelectionMode([_webView _selectionGranularity])];
+    [self useSelectionAssistantWithGranularity:_webView._selectionGranularity];
     
     _actionSheetAssistant = adoptNS([[WKActionSheetAssistant alloc] initWithView:self]);
     [_actionSheetAssistant setDelegate:self];
@@ -1783,16 +1770,16 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     _page->handleTap(location, _layerTreeTransactionIdAtLastTouchStart);
 }
 
-- (void)useSelectionAssistantWithMode:(UIWebSelectionMode)selectionMode
+- (void)useSelectionAssistantWithGranularity:(WKSelectionGranularity)selectionGranularity
 {
-    if (selectionMode == UIWebSelectionModeWeb) {
+    if (selectionGranularity == WKSelectionGranularityDynamic) {
         if (_textSelectionAssistant) {
             [_textSelectionAssistant deactivateSelection];
             _textSelectionAssistant = nil;
         }
         if (!_webSelectionAssistant)
             _webSelectionAssistant = adoptNS([[UIWKSelectionAssistant alloc] initWithView:self]);
-    } else if (selectionMode == UIWebSelectionModeTextOnly) {
+    } else if (selectionGranularity == WKSelectionGranularityCharacter) {
         if (_webSelectionAssistant)
             _webSelectionAssistant = nil;
 
@@ -3785,13 +3772,13 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
 
 - (void)_startAssistingKeyboard
 {
-    [self useSelectionAssistantWithMode:UIWebSelectionModeTextOnly];
+    [self useSelectionAssistantWithGranularity:WKSelectionGranularityCharacter];
     [self reloadInputViews];
 }
 
 - (void)_stopAssistingKeyboard
 {
-    [self useSelectionAssistantWithMode:toUIWebSelectionMode([_webView _selectionGranularity])];
+    [self useSelectionAssistantWithGranularity:_webView._selectionGranularity];
 }
 
 - (const AssistedNodeInformation&)assistedNodeInformation

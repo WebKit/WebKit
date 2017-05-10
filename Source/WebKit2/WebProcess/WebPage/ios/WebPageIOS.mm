@@ -1698,6 +1698,9 @@ RefPtr<Range> WebPage::switchToBlockSelectionAtPoint(const IntPoint& point, Sele
 
 bool WebPage::shouldSwitchToBlockModeForHandle(const IntPoint& handlePoint, SelectionHandlePosition handlePosition)
 {
+    if (!m_allowsBlockSelection)
+        return false;
+
     if (!m_blockRectForTextSelection.height())
         return false;
     switch (handlePosition) {

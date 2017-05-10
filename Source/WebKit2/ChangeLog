@@ -1,3 +1,50 @@
+2017-05-10  Timothy Horton  <timothy_horton@apple.com>
+
+        Disable block selection for dynamic selection granularity
+        https://bugs.webkit.org/show_bug.cgi?id=171908
+        <rdar://problem/32098024>
+
+        Reviewed by Enrica Casucci.
+
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration init]):
+        (-[WKWebViewConfiguration copyWithZone:]):
+        (-[WKWebViewConfiguration _allowsBlockSelection]):
+        (-[WKWebViewConfiguration _setAllowsBlockSelection:]):
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+        Add a private configuration parameter to re-enable block selection.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _allowsBlockSelection]):
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/Cocoa/VersionChecks.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters):
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::allowsBlockSelection):
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebPage/WebPage.h:
+        Plumb allowsBlockSelection through from WKWebViewConfiguration to WebPage.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setupInteraction]):
+        (-[WKContentView useSelectionAssistantWithGranularity:]):
+        (-[WKContentView _startAssistingKeyboard]):
+        (-[WKContentView _stopAssistingKeyboard]):
+        (toUIWebSelectionMode): Deleted.
+        (-[WKContentView useSelectionAssistantWithMode:]): Deleted.
+        Stop needlessly converting to UIWebSelectionMode.
+        
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::shouldSwitchToBlockModeForHandle):
+        Don't switch to block selection unless allowsBlockSelection is set.
+
 2017-05-10  Tim Horton  <timothy_horton@apple.com>
 
         Add an experimental feature flag for constant properties
