@@ -1,3 +1,12 @@
+2017-05-10  Matt Lewis  <jlewis3@apple.com>
+
+        Marked perf/class-list-remove.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=171945
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2017-05-10  Andy Estes  <aestes@apple.com>
 
         r216599 accidentally included two copies of the new layout test and expected result

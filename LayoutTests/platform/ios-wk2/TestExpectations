@@ -1979,3 +1979,5 @@ webkit.org/b/171886 imported/w3c/web-platform-tests/streams/readable-byte-stream
 webkit.org/b/171899 webrtc/libwebrtc/release-while-setting-local-description.html [ Pass Failure ]
 
 webkit.org/b/171930 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-idl.html [ Pass Failure ]
+
+webkit.org/b/171945 [ Debug ] perf/class-list-remove.html [ Pass Failure Timeout ]
