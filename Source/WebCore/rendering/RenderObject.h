@@ -267,6 +267,7 @@ public:
     virtual bool isTextControl() const { return false; }
     virtual bool isTextArea() const { return false; }
     virtual bool isTextField() const { return false; }
+    virtual bool isSearchField() const { return false; }
     virtual bool isTextControlInnerBlock() const { return false; }
     virtual bool isVideo() const { return false; }
     virtual bool isWidget() const { return false; }
