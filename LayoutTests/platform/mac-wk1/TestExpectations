@@ -373,3 +373,6 @@ webkit.org/b/170877 [ Debug ] webgl/1.0.2/conformance/glsl/misc/shader-with-rese
 
 # This was a WK2-only fix.
 http/tests/css/filters-on-iframes.html [ Skip ]
+
+webkit.org/b/171937 imported/w3c/web-platform-tests/dom/nodes/ParentNode-querySelector-All-xht.xht [ Pass Failure ]
+webkit.org/b/171937 imported/w3c/web-platform-tests/dom/nodes/ParentNode-querySelector-All.html [ Pass Failure ]
