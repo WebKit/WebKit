@@ -1,3 +1,20 @@
+2017-05-09  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r213727. rdar://problem/32086123
+
+    2017-03-10  Per Arne Vollan  <pvollan@apple.com>
+
+            [Win] Scrollbars buttons have incorrect size in HiDPI.
+            https://bugs.webkit.org/show_bug.cgi?id=169463
+
+            Reviewed by Alex Christensen.
+
+            There seems to be a bug in DrawThemeBackground when the device context is scaled.
+            We can work around this by scaling the drawing rectangle instead.
+
+            * platform/win/ScrollbarThemeWin.cpp:
+            (WebCore::ScrollbarThemeWin::paintButton):
+
 2017-05-09  Matthew Hanson  <matthew_hanson@apple.com>
 
         Cherry-pick r216431. rdar://problem/31971208
