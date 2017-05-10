@@ -1,0 +1,55 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+
+<html>
+<head>
+    <meta name="viewport" content="initial-scale=1.0">
+    <style>
+        body {
+            height: 2000px;
+        }
+        
+        #extent {
+            position: fixed;
+            border: 10px solid rgba(0, 0, 128, 0.5);
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+        }
+    </style>
+    <script src="../../../../resources/js-test-pre.js"></script>
+    <script src="resources/rotation-utils.js"></script>
+    <script>
+        function getRotationUIScript()
+        {
+            return `
+            (function() {
+                uiController.simulateRotationLikeSafari('landscape-right', function() {
+                    uiController.doAfterVisibleContentRectUpdate(function () {
+                        uiController.uiScriptComplete();
+                    })
+                });
+            })();`
+        }
+        
+        window.addEventListener('resize', function() {
+            accumulateLog('');
+            accumulateLog('In resize event handler:');
+            logFixedAndViewports();
+        }, false);
+
+        window.addEventListener('orientationchange', function() {
+            accumulateLog('');
+            accumulateLog('In orientationchange event handler:');
+            accumulateLog('(This will trigger the resize handler by forcing a layout.)');
+            logFixedAndViewports();
+        }, false);
+
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <div id="extent"></div>
+<script src="../../../../resources/js-test-post.js"></script>
+</body>
+</html>

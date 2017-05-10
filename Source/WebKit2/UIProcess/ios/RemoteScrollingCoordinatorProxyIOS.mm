@@ -95,7 +95,7 @@ void RemoteScrollingCoordinatorProxy::connectStateNodeLayers(ScrollingStateTree&
 FloatRect RemoteScrollingCoordinatorProxy::customFixedPositionRect() const
 {
     return m_webPageProxy.computeCustomFixedPositionRect(m_webPageProxy.unobscuredContentRect(), m_webPageProxy.unobscuredContentRectRespectingInputViewBounds(), m_webPageProxy.customFixedPositionRect(),
-        m_webPageProxy.displayedContentScale(), WebPageProxy::UnobscuredRectConstraint::Unconstrained, visualViewportEnabled());
+        m_webPageProxy.displayedContentScale(), FrameView::LayoutViewportConstraint::Unconstrained, visualViewportEnabled());
 }
 
 void RemoteScrollingCoordinatorProxy::scrollingTreeNodeWillStartPanGesture()
