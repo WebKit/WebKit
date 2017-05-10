@@ -1,3 +1,20 @@
+2017-05-10  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] StaticStringImpl in HTMLNames.cpp aren't constructed
+        https://bugs.webkit.org/show_bug.cgi?id=171800
+
+        Reviewed by Yusuke Suzuki.
+
+        Global variables of StaticStringImpl in HTMLNames.cpp aren't
+        constructed on Windows since Bug 171586. It seems that
+        reinterpret_cast prevents constexpr's compile time initialization
+        in VC++.
+
+        * wtf/text/StringImpl.h:
+        (WTF::StringImplShape::StringImplShape): Added const char* and
+        const char16_t* members in the union. Do not use reinterpret_cast
+        in constexpr constructors.
+
 2017-05-09  Mark Lam  <mark.lam@apple.com>
 
         Force StaticStringImpl constructor to use the constexpr versions of StringImplShape constructors.

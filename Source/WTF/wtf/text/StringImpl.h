@@ -152,7 +152,7 @@ protected:
     constexpr StringImplShape(unsigned refCount, unsigned length, const char (&characters)[charactersCount], unsigned hashAndFlags, ConstructWithConstExprTag)
         : m_refCount(refCount)
         , m_length(length)
-        , m_data8(reinterpret_cast<const LChar*>(characters))
+        , m_data8Char(characters)
         , m_hashAndFlags(hashAndFlags)
     { }
     
@@ -160,7 +160,7 @@ protected:
     constexpr StringImplShape(unsigned refCount, unsigned length, const char16_t (&characters)[charactersCount], unsigned hashAndFlags, ConstructWithConstExprTag)
         : m_refCount(refCount)
         , m_length(length)
-        , m_data16(reinterpret_cast<const UChar*>(characters))
+        , m_data16Char(characters)
         , m_hashAndFlags(hashAndFlags)
     { }
 
@@ -169,6 +169,10 @@ protected:
     union {
         const LChar* m_data8;
         const UChar* m_data16;
+        // It seems that reinterpret_cast prevents constexpr's compile time initialization in VC++.
+        // These are needed to avoid reinterpret_cast.
+        const char* m_data8Char;
+        const char16_t* m_data16Char;
     };
     mutable unsigned m_hashAndFlags;
 };
