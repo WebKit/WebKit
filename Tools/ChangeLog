@@ -1,3 +1,15 @@
+2017-05-10  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Remove user agent quirk for Slack
+        https://bugs.webkit.org/show_bug.cgi?id=171869
+
+        Reviewed by Carlos Garcia Campos.
+
+        Remove the corresponding test.
+
+        * TestWebKitAPI/Tests/WebCore/UserAgentQuirks.cpp:
+        (TestWebKitAPI::TEST):
+
 2017-05-10  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r216578.

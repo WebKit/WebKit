@@ -1,3 +1,16 @@
+2017-05-10  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Remove user agent quirk for Slack
+        https://bugs.webkit.org/show_bug.cgi?id=171869
+
+        Reviewed by Carlos Garcia Campos.
+
+        The user agent quirk for Slack does not seem to be necessary anymore. I am able to use Slack
+        without difficulty using our default user agent.
+
+        * platform/UserAgentQuirks.cpp:
+        (WebCore::urlRequiresChromeBrowser):
+
 2017-05-10  Hyungwook Lee  <hyungwook.lee@navercorp.com>
 
         [GTK] Fix compile warnings in CryptoKeyECGCrypt.cpp
