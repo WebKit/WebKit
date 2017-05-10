@@ -1,3 +1,21 @@
+2017-05-08  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-grid] Remove Blink-specific code for handling orthogonal grid items
+        https://bugs.webkit.org/show_bug.cgi?id=171807
+
+        Reviewed by Darin Adler.
+
+        This code was added in r203252 as part of a patch improving the handling of
+        {min|max}-content with orthogonal flows. The original code came from Blink which performs a
+        pre-layout of orthogonal boxes in FrameView. That is not true in the case of WebKit so we do
+        not need this code at all. Actually it was causing incorrect renderings in some tests.
+
+        I'm also removing an invalid return statement just after another return.
+
+        * rendering/GridTrackSizingAlgorithm.cpp:
+        (WebCore::GridTrackSizingAlgorithmStrategy::minContentForChild):
+        (WebCore::GridTrackSizingAlgorithmStrategy::maxContentForChild):
+
 2017-05-09  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed build fix.

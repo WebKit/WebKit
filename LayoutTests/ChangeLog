@@ -1,3 +1,16 @@
+2017-05-08  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-grid] Remove Blink-specific code for handling orthogonal grid items
+        https://bugs.webkit.org/show_bug.cgi?id=171807
+
+        Reviewed by Darin Adler.
+
+        Updated the expectations. They should now be compatible with Firefox and Chrome.
+
+        * fast/css-grid-layout/grid-track-sizing-with-orthogonal-flows.html:
+        * fast/css-grid-layout/grid-track-sizing-with-percentages-and-orthogonal-flows.html:
+        * fast/css-grid-layout/repeating-layout-must-produce-the-same-results.html:
+
 2017-05-09  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] deviceId constraint doesn't work with getUserMedia
