@@ -1,3 +1,13 @@
+2017-05-10  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] -Wmissing-field-initializers triggered by RemoteInspectorServer.cpp:128
+        https://bugs.webkit.org/show_bug.cgi?id=171273
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UIProcess/glib/RemoteInspectorClient.cpp:
+        (WebKit::RemoteInspectorClient::RemoteInspectorClient):
+
 2017-05-09  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] deviceId constraint doesn't work with getUserMedia
