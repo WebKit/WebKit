@@ -148,6 +148,7 @@ public:
 
     void isResponsive(std::function<void(bool isWebProcessResponsive)>);
     void didReceiveMainThreadPing();
+    void didExceedMemoryLimit();
 
 private:
     explicit WebProcessProxy(WebProcessPool&);

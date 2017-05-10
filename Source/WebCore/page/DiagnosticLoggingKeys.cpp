@@ -338,6 +338,16 @@ String DiagnosticLoggingKeys::documentLoaderStoppingKey()
     return ASCIILiteral("documentLoaderStopping");
 }
 
+String DiagnosticLoggingKeys::simulatedPageCrashKey()
+{
+    return ASCIILiteral("SimulatedPageCrash");
+}
+
+String DiagnosticLoggingKeys::exceededMemoryLimitKey()
+{
+    return ASCIILiteral("ExceededMemoryLimit");
+}
+
 String DiagnosticLoggingKeys::cannotSuspendActiveDOMObjectsKey()
 {
     return ASCIILiteral("cannotSuspendActiveDOMObjects");

@@ -50,6 +50,8 @@ public:
     static String diskCacheKey();
     static String diskCacheAfterValidationKey();
     static String documentLoaderStoppingKey();
+    WEBCORE_EXPORT static String simulatedPageCrashKey();
+    WEBCORE_EXPORT static String exceededMemoryLimitKey();
     static String engineFailedToLoadKey();
     WEBCORE_EXPORT static String entryRightlyNotWarmedUpKey();
     WEBCORE_EXPORT static String entryWronglyNotWarmedUpKey();

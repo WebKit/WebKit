@@ -50,6 +50,7 @@
 #include "WebProcessProxyMessages.h"
 #include "WebUserContentControllerProxy.h"
 #include "WebsiteData.h"
+#include <WebCore/DiagnosticLoggingKeys.h>
 #include <WebCore/SuddenTermination.h>
 #include <WebCore/URL.h>
 #include <stdio.h>
@@ -1024,6 +1025,24 @@ void WebProcessProxy::didReceiveMainThreadPing()
     bool isWebProcessResponsive = true;
     for (auto& callback : isResponsiveCallbacks)
         callback(isWebProcessResponsive);
+}
+
+static Vector<RefPtr<WebPageProxy>> pagesCopy(WTF::IteratorRange<WebProcessProxy::WebPageProxyMap::const_iterator::Values> pages)
+{
+    Vector<RefPtr<WebPageProxy>> vector;
+    for (auto& page : pages)
+        vector.append(page);
+    return vector;
+}
+
+void WebProcessProxy::didExceedMemoryLimit()
+{
+    RELEASE_LOG(PerformanceLogging, "%p - WebProcessProxy::didExceedMemoryLimit() Terminating WebProcess that has exceeded the memory limit", this);
+    for (auto& page : pagesCopy(pages())) {
+        page->logDiagnosticMessage(DiagnosticLoggingKeys::simulatedPageCrashKey(), DiagnosticLoggingKeys::exceededMemoryLimitKey(), false);
+        page->terminateProcess();
+        page->processDidCrash();
+    }
 }
 
 #if !PLATFORM(COCOA)
