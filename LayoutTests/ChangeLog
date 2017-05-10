@@ -1,5 +1,18 @@
 2017-05-10  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Unreviewed, rolling out r216591.
+
+        This change broke an internal build.
+
+        Reverted changeset:
+
+        "REGRESSION (r207372) Visibility property is not inherited
+        when used in an animation"
+        https://bugs.webkit.org/show_bug.cgi?id=171883
+        http://trac.webkit.org/changeset/216591
+
+2017-05-10  Ryan Haddad  <ryanhaddad@apple.com>
+
         Unreviewed, remove TestExpectation for a test that was removed in r216259.
 
         * platform/mac/TestExpectations:
