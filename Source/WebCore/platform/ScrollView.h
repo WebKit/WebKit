@@ -85,7 +85,7 @@ public:
     virtual IntRect windowClipRect() const = 0;
 
     // Functions for child manipulation and inspection.
-    const HashSet<Ref<Widget>>& children() const { return m_children; }
+    const HashSet<RefPtr<Widget>>& children() const { return m_children; }
     WEBCORE_EXPORT virtual void addChild(PassRefPtr<Widget>);
     virtual void removeChild(Widget&);
 

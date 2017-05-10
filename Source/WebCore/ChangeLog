@@ -1,3 +1,12 @@
+2017-05-10  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Remove inadvertant change to ScrollView.h that was included in r216589.
+
+        Unreviewed build fix.
+
+        * platform/ScrollView.h:
+        (WebCore::ScrollView::children):
+
 2017-05-09  Matthew Hanson  <matthew_hanson@apple.com>
 
         Cherry-pick r216131. rdar://problem/31967895
