@@ -41,20 +41,6 @@
 namespace WebCore {
 
 ScrollView::ScrollView()
-    : m_horizontalScrollbarMode(ScrollbarAuto)
-    , m_verticalScrollbarMode(ScrollbarAuto)
-    , m_horizontalScrollbarLock(false)
-    , m_verticalScrollbarLock(false)
-    , m_prohibitsScrolling(false)
-    , m_canBlitOnScroll(true)
-    , m_scrollbarsSuppressed(false)
-    , m_inUpdateScrollbars(false)
-    , m_updateScrollbarsPass(0)
-    , m_drawPanScrollIcon(false)
-    , m_useFixedLayout(false)
-    , m_paintsEntireContents(false)
-    , m_clipsRepaints(true)
-    , m_delegatesScrolling(false)
 {
 }
 
@@ -381,7 +367,7 @@ ScrollPosition ScrollView::maximumScrollPosition() const
 
 ScrollPosition ScrollView::adjustScrollPositionWithinRange(const ScrollPosition& scrollPoint) const
 {
-    if (!constrainsScrollingToContentEdge())
+    if (!constrainsScrollingToContentEdge() || m_allowsUnclampedScrollPosition)
         return scrollPoint;
 
     return scrollPoint.constrainedBetween(minimumScrollPosition(), maximumScrollPosition());
@@ -418,7 +404,7 @@ void ScrollView::notifyPageThatContentAreaWillPaint() const
 
 void ScrollView::setScrollOffset(const ScrollOffset& offset)
 {
-    LOG_WITH_STREAM(Scrolling, stream << "\nScrollView::setScrollOffset " << offset);
+    LOG_WITH_STREAM(Scrolling, stream << "\nScrollView::setScrollOffset " << offset << " constrains " << constrainsScrollingToContentEdge());
 
     IntPoint constrainedOffset = offset;
     if (constrainsScrollingToContentEdge())

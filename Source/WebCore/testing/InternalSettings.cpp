@@ -638,6 +638,15 @@ ExceptionOr<void> InternalSettings::setScrollingTreeIncludesFrames(bool enabled)
     return { };
 }
 
+ExceptionOr<void> InternalSettings::setAllowUnclampedScrollPosition(bool allowUnclamped)
+{
+    if (!m_page || !m_page->mainFrame().view())
+        return Exception { INVALID_ACCESS_ERR };
+
+    m_page->mainFrame().view()->setAllowsUnclampedScrollPositionForTesting(allowUnclamped);
+    return { };
+}
+
 ExceptionOr<void> InternalSettings::setAllowsInlineMediaPlayback(bool allows)
 {
     if (!m_page)

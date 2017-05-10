@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <script src="../../resources/js-test-pre.js"></script>
+    <style>
+        body {
+            height: 2000px;
+            width: 2000px;
+        }
+    </style>
+    <script>
+        description("This test scrolls the page and checks that the layout and visual viewports respond as expected.");
+
+        if (window.internals) {
+            internals.settings.setVisualViewportEnabled(true);
+            internals.settings.setAllowUnclampedScrollPosition(true);
+        }
+
+        window.jsTestIsAsync = true;
+
+        var visualViewport;
+        function doTest()
+        {
+            // Zooming may scroll the view away from the origin.
+            window.scrollTo(-123, -234);
+            visualViewport = internals.visualViewportRect();
+            layoutViewport = internals.layoutViewportRect();
+            debug('Scrolled to ' + window.scrollX + ', ' + window.scrollY);
+
+            // Don't use shouldBeEqualToString() to avoid showing failures when correct output differs between platforms. 
+            evalAndLogResult("JSON.stringify(layoutViewport)");
+            evalAndLogResult("JSON.stringify(visualViewport)");
+
+            debug('');
+            window.scrollTo(475, 525);
+            visualViewport = internals.visualViewportRect();
+            layoutViewport = internals.layoutViewportRect();
+            debug('Scrolled to ' + window.scrollX + ', ' + window.scrollY);
+
+            evalAndLogResult("JSON.stringify(layoutViewport)");
+            evalAndLogResult("JSON.stringify(visualViewport)");
+
+            debug('');
+            window.scrollTo(1800, 1700);
+            visualViewport = internals.visualViewportRect();
+            layoutViewport = internals.layoutViewportRect();
+            debug('Scrolled to ' + window.scrollX + ', ' + window.scrollY);
+
+            evalAndLogResult("JSON.stringify(layoutViewport)");
+            evalAndLogResult("JSON.stringify(visualViewport)");
+
+            window.scrollTo(0, 0);
+
+            finishJSTest();
+        }
+        
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

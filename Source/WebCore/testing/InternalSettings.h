@@ -88,6 +88,7 @@ public:
     ExceptionOr<void> setBackgroundShouldExtendBeyondPage(bool);
     ExceptionOr<void> setShouldConvertPositionStyleOnCopy(bool);
     ExceptionOr<void> setScrollingTreeIncludesFrames(bool);
+    ExceptionOr<void> setAllowUnclampedScrollPosition(bool);
     ExceptionOr<void> setAllowsInlineMediaPlayback(bool);
     ExceptionOr<void> setAllowsInlineMediaPlaybackAfterFullscreen(bool);
     ExceptionOr<void> setInlineMediaPlaybackRequiresPlaysInlineAttribute(bool);
