@@ -258,13 +258,7 @@ private:
         WTF_MAKE_FAST_ALLOCATED;
 #endif
     public:
-        explicit DerivedFonts(bool custom)
-            : forCustomFont(custom)
-        {
-        }
-        ~DerivedFonts();
 
-        bool forCustomFont;
         RefPtr<Font> smallCaps;
         RefPtr<Font> noSynthesizableFeatures;
         RefPtr<Font> emphasisMark;

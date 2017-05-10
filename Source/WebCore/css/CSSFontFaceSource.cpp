@@ -206,9 +206,9 @@ RefPtr<Font> CSSFontFaceSource::font(const FontDescription& fontDescription, boo
     if (!m_inDocumentCustomPlatformData)
         return nullptr;
 #if PLATFORM(COCOA)
-    return Font::create(m_inDocumentCustomPlatformData->fontPlatformData(fontDescription, syntheticBold, syntheticItalic, fontFaceFeatures, fontFaceVariantSettings, fontFaceCapabilities), true, false);
+    return Font::create(m_inDocumentCustomPlatformData->fontPlatformData(fontDescription, syntheticBold, syntheticItalic, fontFaceFeatures, fontFaceVariantSettings, fontFaceCapabilities), true);
 #else
-    return Font::create(m_inDocumentCustomPlatformData->fontPlatformData(fontDescription, syntheticBold, syntheticItalic), true, false);
+    return Font::create(m_inDocumentCustomPlatformData->fontPlatformData(fontDescription, syntheticBold, syntheticItalic), true);
 #endif
 #endif
 

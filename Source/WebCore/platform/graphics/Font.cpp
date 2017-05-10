@@ -263,7 +263,7 @@ GlyphData Font::glyphDataForCharacter(UChar32 character) const
 const Font& Font::verticalRightOrientationFont() const
 {
     if (!m_derivedFontData)
-        m_derivedFontData = std::make_unique<DerivedFonts>(isCustomFont());
+        m_derivedFontData = std::make_unique<DerivedFonts>();
     if (!m_derivedFontData->verticalRightOrientation) {
         auto verticalRightPlatformData = FontPlatformData::cloneWithOrientation(m_platformData, Horizontal);
         m_derivedFontData->verticalRightOrientation = create(verticalRightPlatformData, isCustomFont(), false, true);
@@ -275,7 +275,7 @@ const Font& Font::verticalRightOrientationFont() const
 const Font& Font::uprightOrientationFont() const
 {
     if (!m_derivedFontData)
-        m_derivedFontData = std::make_unique<DerivedFonts>(isCustomFont());
+        m_derivedFontData = std::make_unique<DerivedFonts>();
     if (!m_derivedFontData->uprightOrientation)
         m_derivedFontData->uprightOrientation = create(m_platformData, isCustomFont(), false, true);
     ASSERT(m_derivedFontData->uprightOrientation != this);
@@ -285,7 +285,7 @@ const Font& Font::uprightOrientationFont() const
 const Font* Font::smallCapsFont(const FontDescription& fontDescription) const
 {
     if (!m_derivedFontData)
-        m_derivedFontData = std::make_unique<DerivedFonts>(isCustomFont());
+        m_derivedFontData = std::make_unique<DerivedFonts>();
     if (!m_derivedFontData->smallCaps)
         m_derivedFontData->smallCaps = createScaledFont(fontDescription, smallCapsFontSizeMultiplier);
     ASSERT(m_derivedFontData->smallCaps != this);
@@ -296,7 +296,7 @@ const Font& Font::noSynthesizableFeaturesFont() const
 {
 #if PLATFORM(COCOA)
     if (!m_derivedFontData)
-        m_derivedFontData = std::make_unique<DerivedFonts>(isCustomFont());
+        m_derivedFontData = std::make_unique<DerivedFonts>();
     if (!m_derivedFontData->noSynthesizableFeatures)
         m_derivedFontData->noSynthesizableFeatures = createFontWithoutSynthesizableFeatures();
     ASSERT(m_derivedFontData->noSynthesizableFeatures != this);
@@ -309,7 +309,7 @@ const Font& Font::noSynthesizableFeaturesFont() const
 const Font* Font::emphasisMarkFont(const FontDescription& fontDescription) const
 {
     if (!m_derivedFontData)
-        m_derivedFontData = std::make_unique<DerivedFonts>(isCustomFont());
+        m_derivedFontData = std::make_unique<DerivedFonts>();
     if (!m_derivedFontData->emphasisMark)
         m_derivedFontData->emphasisMark = createScaledFont(fontDescription, emphasisMarkFontSizeMultiplier);
     ASSERT(m_derivedFontData->emphasisMark != this);
@@ -319,7 +319,7 @@ const Font* Font::emphasisMarkFont(const FontDescription& fontDescription) const
 const Font& Font::brokenIdeographFont() const
 {
     if (!m_derivedFontData)
-        m_derivedFontData = std::make_unique<DerivedFonts>(isCustomFont());
+        m_derivedFontData = std::make_unique<DerivedFonts>();
     if (!m_derivedFontData->brokenIdeograph) {
         m_derivedFontData->brokenIdeograph = create(m_platformData, isCustomFont(), false);
         m_derivedFontData->brokenIdeograph->m_isBrokenIdeographFallback = true;
@@ -348,10 +348,6 @@ const OpenTypeMathData* Font::mathData() const
             m_mathData = nullptr;
     }
     return m_mathData.get();
-}
-
-Font::DerivedFonts::~DerivedFonts()
-{
 }
 
 RefPtr<Font> Font::createScaledFont(const FontDescription& fontDescription, float scaleFactor) const

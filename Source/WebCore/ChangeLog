@@ -1,3 +1,27 @@
+2017-05-10  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Tiny cleanup in Font::DerivedFonts
+        https://bugs.webkit.org/show_bug.cgi?id=171893
+
+        Reviewed by Jon Lee.
+
+        This variable was written to but never read.
+
+        No new tests because there is no behavior change.
+
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::font):
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::verticalRightOrientationFont):
+        (WebCore::Font::uprightOrientationFont):
+        (WebCore::Font::smallCapsFont):
+        (WebCore::Font::noSynthesizableFeaturesFont):
+        (WebCore::Font::emphasisMarkFont):
+        (WebCore::Font::brokenIdeographFont):
+        (WebCore::Font::DerivedFonts::~DerivedFonts): Deleted.
+        * platform/graphics/Font.h:
+        (WebCore::Font::DerivedFonts::DerivedFonts): Deleted.
+
 2017-05-10  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Remove user agent quirk for Slack
