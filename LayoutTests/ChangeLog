@@ -1,3 +1,20 @@
+2017-05-10  Per Arne Vollan  <pvollan@apple.com>
+
+        LayoutTest http/tests/media/track-in-band-hls-metadata-crash.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=167749
+
+        Reviewed by Eric Carlson.
+
+        This is a speculative fix of the test. I have not been able to reproduce the timeout.
+        When the test times out, the 'addtrack' event is never received. In case the event
+        was dispatched before we added the event listener, the event listener is added before
+        the video source is set. In case the test will continue to time out, a couple of
+        error event callbacks have been added to get more information. Also, video playback
+        will begin when the 'canplaythrough' event is received.
+ 
+        * http/tests/media/track-in-band-hls-metadata-crash-expected.txt:
+        * http/tests/media/track-in-band-hls-metadata-crash.html:
+
 2017-05-10  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r216578.
