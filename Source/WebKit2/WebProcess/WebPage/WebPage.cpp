@@ -3342,6 +3342,8 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 
     settings.setConstantPropertiesEnabled(store.getBoolValueForKey(WebPreferencesKey::constantPropertiesEnabledKey()));
 
+    settings.setViewportFitEnabled(store.getBoolValueForKey(WebPreferencesKey::viewportFitEnabledKey()));
+
     settings.setVisualViewportEnabled(store.getBoolValueForKey(WebPreferencesKey::visualViewportEnabledKey()));
 
     settings.setInputEventsEnabled(store.getBoolValueForKey(WebPreferencesKey::inputEventsEnabledKey()));

@@ -32,6 +32,7 @@
 #include "Frame.h"
 #include "IntSize.h"
 #include "ScriptableDocumentParser.h"
+#include "Settings.h"
 #include "TextStream.h"
 
 namespace WebCore {
@@ -417,7 +418,7 @@ void setViewportFeature(ViewportArguments& arguments, Document& document, String
 #endif
     else if (equalLettersIgnoringASCIICase(key, "shrink-to-fit"))
         arguments.shrinkToFit = findBooleanValue(document, key, value);
-    else if (equalLettersIgnoringASCIICase(key, "viewport-fit"))
+    else if (equalLettersIgnoringASCIICase(key, "viewport-fit") && document.settings().viewportFitEnabled())
         arguments.viewportFit = parseViewportFitValue(document, key, value);
     else
         reportViewportWarning(document, UnrecognizedViewportArgumentKeyError, key);

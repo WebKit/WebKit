@@ -294,3 +294,5 @@ langAttributeAwareFormControlUIEnabled initial=false
 subresourceIntegrityEnabled initial=true
 
 constantPropertiesEnabled initial=false
+
+viewportFitEnabled initial=false
