@@ -52,7 +52,7 @@ IntRect Widget::frameRect() const
     return m_frame;
 }
 
-void Widget::paint(GraphicsContext&, const IntRect&)
+void Widget::paint(GraphicsContext&, const IntRect&, SecurityOriginPaintPolicy)
 {
     notImplemented();
 }
