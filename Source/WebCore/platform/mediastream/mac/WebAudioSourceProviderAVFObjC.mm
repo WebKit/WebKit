@@ -80,9 +80,7 @@ void WebAudioSourceProviderAVFObjC::provideInput(AudioBus* bus, size_t framesToP
     }
 
     WebAudioBufferList list { *m_outputDescription };
-    ASSERT(list.bufferCount() == bus->numberOfChannels());
-    unsigned channelCount = std::min(list.bufferCount(), bus->numberOfChannels());
-    for (unsigned i = 0; i < channelCount; ++i) {
+    for (unsigned i = 0; i < list.bufferCount(); ++i) {
         AudioChannel& channel = *bus->channel(i);
         auto* buffer = list.buffer(i);
         buffer->mNumberChannels = 1;
@@ -139,8 +137,11 @@ void WebAudioSourceProviderAVFObjC::prepare(const AudioStreamBasicDescription* f
     m_dataSource->setInputFormat(*m_inputDescription);
     m_dataSource->setOutputFormat(*m_outputDescription);
 
-    if (m_client)
-        m_client->setFormat(numberOfChannels, sampleRate);
+    RefPtr<WebAudioSourceProviderAVFObjC> protectedThis = this;
+    callOnMainThread([protectedThis = WTFMove(protectedThis), numberOfChannels, sampleRate] {
+        if (protectedThis->m_client)
+            protectedThis->m_client->setFormat(numberOfChannels, sampleRate);
+    });
 }
 
 void WebAudioSourceProviderAVFObjC::unprepare()

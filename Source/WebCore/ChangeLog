@@ -1,3 +1,16 @@
+2017-05-10  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r216630.
+
+        This change caused assertion failures with webrtc LayoutTests.
+
+        Reverted changeset:
+
+        "RELEASE_ASSERT at
+        WebAudioSourceProviderAVFObjC::provideInput()"
+        https://bugs.webkit.org/show_bug.cgi?id=171711
+        http://trac.webkit.org/changeset/216630
+
 2017-05-09  Sam Weinig  <sam@webkit.org>
 
         Remove support for legacy Notifications
