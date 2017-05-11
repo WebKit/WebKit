@@ -56,6 +56,7 @@ typedef NS_ENUM(NSInteger, PDFLayerControllerCursorType) {
 - (void)pdfLayerController:(PDFLayerController *)pdfLayerController didChangeSelection:(PDFSelection *)selection;
 
 - (void)setMouseCursor:(PDFLayerControllerCursorType)cursorType;
+- (void)didChangeAnnotationState;
 
 @end
 

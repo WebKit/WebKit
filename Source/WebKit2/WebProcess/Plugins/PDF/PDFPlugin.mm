@@ -481,6 +481,11 @@ static const int defaultScrollMagnitudeThresholdForPageFlip = 20;
     _pdfPlugin->notifyCursorChanged(cursorType);
 }
 
+- (void)didChangeAnnotationState
+{
+    _pdfPlugin->didMutatePDFDocument();
+}
+
 @end
 
 @interface PDFViewLayout
