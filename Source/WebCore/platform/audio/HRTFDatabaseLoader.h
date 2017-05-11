@@ -33,8 +33,8 @@
 #include <memory>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 #include <wtf/Threading.h>
 
 namespace WebCore {
@@ -47,7 +47,7 @@ public:
     // and starts loading asynchronously (when created the first time).
     // Returns the HRTFDatabaseLoader.
     // Must be called from the main thread.
-    static PassRefPtr<HRTFDatabaseLoader> createAndLoadAsynchronouslyIfNecessary(float sampleRate);
+    static Ref<HRTFDatabaseLoader> createAndLoadAsynchronouslyIfNecessary(float sampleRate);
 
     // Both constructor and destructor must be called from the main thread.
     ~HRTFDatabaseLoader();

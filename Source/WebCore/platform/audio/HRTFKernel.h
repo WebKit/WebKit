@@ -31,7 +31,6 @@
 
 #include "FFTFrame.h"
 #include <memory>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
@@ -50,18 +49,18 @@ class HRTFKernel : public RefCounted<HRTFKernel> {
 public:
     // Note: this is destructive on the passed in AudioChannel.
     // The length of channel must be a power of two.
-    static PassRefPtr<HRTFKernel> create(AudioChannel* channel, size_t fftSize, float sampleRate)
+    static Ref<HRTFKernel> create(AudioChannel* channel, size_t fftSize, float sampleRate)
     {
-        return adoptRef(new HRTFKernel(channel, fftSize, sampleRate));
+        return adoptRef(*new HRTFKernel(channel, fftSize, sampleRate));
     }
 
-    static PassRefPtr<HRTFKernel> create(std::unique_ptr<FFTFrame> fftFrame, float frameDelay, float sampleRate)
+    static Ref<HRTFKernel> create(std::unique_ptr<FFTFrame> fftFrame, float frameDelay, float sampleRate)
     {
-        return adoptRef(new HRTFKernel(WTFMove(fftFrame), frameDelay, sampleRate));
+        return adoptRef(*new HRTFKernel(WTFMove(fftFrame), frameDelay, sampleRate));
     }
 
     // Given two HRTFKernels, and an interpolation factor x: 0 -> 1, returns an interpolated HRTFKernel.
-    static PassRefPtr<HRTFKernel> createInterpolatedKernel(HRTFKernel* kernel1, HRTFKernel* kernel2, float x);
+    static RefPtr<HRTFKernel> createInterpolatedKernel(HRTFKernel* kernel1, HRTFKernel* kernel2, float x);
   
     FFTFrame* fftFrame() { return m_fftFrame.get(); }
     

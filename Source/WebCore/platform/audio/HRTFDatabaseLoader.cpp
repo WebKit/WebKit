@@ -45,18 +45,17 @@ static HashMap<double, HRTFDatabaseLoader*>& loaderMap()
     return loaderMap;
 }
 
-PassRefPtr<HRTFDatabaseLoader> HRTFDatabaseLoader::createAndLoadAsynchronouslyIfNecessary(float sampleRate)
+Ref<HRTFDatabaseLoader> HRTFDatabaseLoader::createAndLoadAsynchronouslyIfNecessary(float sampleRate)
 {
     ASSERT(isMainThread());
 
-    RefPtr<HRTFDatabaseLoader> loader = loaderMap().get(sampleRate);
-    if (loader) {
+    if (RefPtr<HRTFDatabaseLoader> loader = loaderMap().get(sampleRate)) {
         ASSERT(sampleRate == loader->databaseSampleRate());
-        return loader;
+        return loader.releaseNonNull();
     }
 
-    loader = adoptRef(new HRTFDatabaseLoader(sampleRate));
-    loaderMap().add(sampleRate, loader.get());
+    auto loader = adoptRef(*new HRTFDatabaseLoader(sampleRate));
+    loaderMap().add(sampleRate, loader.ptr());
 
     loader->loadAsynchronously();
 

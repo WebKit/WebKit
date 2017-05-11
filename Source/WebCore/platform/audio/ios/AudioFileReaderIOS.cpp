@@ -130,7 +130,7 @@ SInt64 AudioFileReader::getSizeProc(void* clientData)
     return static_cast<AudioFileReader*>(clientData)->dataSize();
 }
 
-PassRefPtr<AudioBus> AudioFileReader::createBus(float sampleRate, bool mixToMono)
+RefPtr<AudioBus> AudioFileReader::createBus(float sampleRate, bool mixToMono)
 {
     if (!m_extAudioFileRef)
         return nullptr;
@@ -231,13 +231,13 @@ PassRefPtr<AudioBus> AudioFileReader::createBus(float sampleRate, bool mixToMono
     return audioBus.release();
 }
 
-PassRefPtr<AudioBus> createBusFromAudioFile(const char* filePath, bool mixToMono, float sampleRate)
+RefPtr<AudioBus> createBusFromAudioFile(const char* filePath, bool mixToMono, float sampleRate)
 {
     AudioFileReader reader(filePath);
     return reader.createBus(sampleRate, mixToMono);
 }
 
-PassRefPtr<AudioBus> createBusFromInMemoryAudioFile(const void* data, size_t dataSize, bool mixToMono, float sampleRate)
+RefPtr<AudioBus> createBusFromInMemoryAudioFile(const void* data, size_t dataSize, bool mixToMono, float sampleRate)
 {
     AudioFileReader reader(data, dataSize);
     return reader.createBus(sampleRate, mixToMono);

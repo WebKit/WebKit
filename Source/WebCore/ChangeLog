@@ -1,3 +1,41 @@
+2017-05-11  Chris Dumez  <cdumez@apple.com>
+
+        Stop using PassRefPtr in platform/audio
+        https://bugs.webkit.org/show_bug.cgi?id=171966
+
+        Reviewed by Ryosuke Niwa.
+
+        Stop using PassRefPtr in platform/audio.
+
+        * platform/audio/AudioBus.h:
+        (WebCore::AudioBus::AudioBus):
+        * platform/audio/AudioFileReader.h:
+        * platform/audio/HRTFDatabaseLoader.cpp:
+        (WebCore::HRTFDatabaseLoader::createAndLoadAsynchronouslyIfNecessary):
+        * platform/audio/HRTFDatabaseLoader.h:
+        * platform/audio/HRTFKernel.cpp:
+        (WebCore::HRTFKernel::createInterpolatedKernel):
+        * platform/audio/HRTFKernel.h:
+        (WebCore::HRTFKernel::create):
+        * platform/audio/glib/AudioBusGLib.cpp:
+        (WebCore::AudioBus::loadPlatformResource):
+        * platform/audio/gstreamer/AudioFileReaderGStreamer.cpp:
+        (WebCore::AudioFileReader::createBus):
+        (WebCore::createBusFromAudioFile):
+        (WebCore::createBusFromInMemoryAudioFile):
+        * platform/audio/ios/AudioFileReaderIOS.cpp:
+        (WebCore::AudioFileReader::createBus):
+        (WebCore::createBusFromAudioFile):
+        (WebCore::createBusFromInMemoryAudioFile):
+        * platform/audio/ios/AudioFileReaderIOS.h:
+        * platform/audio/mac/AudioBusMac.mm:
+        (WebCore::AudioBus::loadPlatformResource):
+        * platform/audio/mac/AudioFileReaderMac.cpp:
+        (WebCore::AudioFileReader::createBus):
+        (WebCore::createBusFromAudioFile):
+        (WebCore::createBusFromInMemoryAudioFile):
+        * platform/audio/mac/AudioFileReaderMac.h:
+
 2017-05-11  Mark Lam  <mark.lam@apple.com>
 
         WorkerThread::stop() should call scheduleExecutionTermination() last.

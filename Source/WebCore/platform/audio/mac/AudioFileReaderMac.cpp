@@ -129,16 +129,16 @@ SInt64 AudioFileReader::getSizeProc(void* clientData)
     return audioFileReader->dataSize();
 }
 
-PassRefPtr<AudioBus> AudioFileReader::createBus(float sampleRate, bool mixToMono)
+RefPtr<AudioBus> AudioFileReader::createBus(float sampleRate, bool mixToMono)
 {
     if (!m_extAudioFileRef)
-        return 0;
+        return nullptr;
 
     // Get file's data format
     UInt32 size = sizeof(m_fileDataFormat);
     OSStatus result = ExtAudioFileGetProperty(m_extAudioFileRef, kExtAudioFileProperty_FileDataFormat, &size, &m_fileDataFormat);
     if (result != noErr)
-        return 0;
+        return nullptr;
 
     // Number of channels
     size_t numberOfChannels = m_fileDataFormat.mChannelsPerFrame;
@@ -148,7 +148,7 @@ PassRefPtr<AudioBus> AudioFileReader::createBus(float sampleRate, bool mixToMono
     size = sizeof(numberOfFrames64);
     result = ExtAudioFileGetProperty(m_extAudioFileRef, kExtAudioFileProperty_FileLengthFrames, &size, &numberOfFrames64);
     if (result != noErr || numberOfFrames64 <= 0)
-        return 0;
+        return nullptr;
 
     // Sample-rate
     double fileSampleRate = m_fileDataFormat.mSampleRate;
@@ -171,7 +171,7 @@ PassRefPtr<AudioBus> AudioFileReader::createBus(float sampleRate, bool mixToMono
 
     result = ExtAudioFileSetProperty(m_extAudioFileRef, kExtAudioFileProperty_ClientDataFormat, sizeof(AudioStreamBasicDescription), &m_clientDataFormat);
     if (result != noErr)
-        return 0;
+        return nullptr;
 
     // Change numberOfFrames64 to destination sample-rate
     numberOfFrames64 = numberOfFrames64 * (m_clientDataFormat.mSampleRate / fileSampleRate);
@@ -221,7 +221,7 @@ PassRefPtr<AudioBus> AudioFileReader::createBus(float sampleRate, bool mixToMono
     result = ExtAudioFileRead(m_extAudioFileRef, &framesToRead, bufferList);
     if (result != noErr) {
         destroyAudioBufferList(bufferList);
-        return 0;
+        return nullptr;
     }
 
     if (mixToMono && numberOfChannels == 2) {
@@ -237,12 +237,12 @@ PassRefPtr<AudioBus> AudioFileReader::createBus(float sampleRate, bool mixToMono
     return audioBus;
 }
 
-PassRefPtr<AudioBus> createBusFromAudioFile(const char* filePath, bool mixToMono, float sampleRate)
+RefPtr<AudioBus> createBusFromAudioFile(const char* filePath, bool mixToMono, float sampleRate)
 {
     return AudioFileReader(filePath).createBus(sampleRate, mixToMono);
 }
 
-PassRefPtr<AudioBus> createBusFromInMemoryAudioFile(const void* data, size_t dataSize, bool mixToMono, float sampleRate)
+RefPtr<AudioBus> createBusFromInMemoryAudioFile(const void* data, size_t dataSize, bool mixToMono, float sampleRate)
 {
     return AudioFileReader(data, dataSize).createBus(sampleRate, mixToMono);
 }

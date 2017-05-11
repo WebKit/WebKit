@@ -147,10 +147,10 @@ public:
     // Makes maximum absolute value == 1.0 (if possible).
     void normalize();
 
-    static PassRefPtr<AudioBus> loadPlatformResource(const char* name, float sampleRate);
+    static RefPtr<AudioBus> loadPlatformResource(const char* name, float sampleRate);
 
 protected:
-    AudioBus() { };
+    AudioBus() { }
 
     AudioBus(unsigned numberOfChannels, size_t length, bool allocate);
 

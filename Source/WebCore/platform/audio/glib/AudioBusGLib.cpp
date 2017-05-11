@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-PassRefPtr<AudioBus> AudioBus::loadPlatformResource(const char* name, float sampleRate)
+RefPtr<AudioBus> AudioBus::loadPlatformResource(const char* name, float sampleRate)
 {
     GUniquePtr<char> path(g_strdup_printf(AUDIO_GRESOURCE_PATH "/%s", name));
     GRefPtr<GBytes> data = adoptGRef(g_resources_lookup_data(path.get(), G_RESOURCE_LOOKUP_FLAGS_NONE, nullptr));
