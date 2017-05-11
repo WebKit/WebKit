@@ -26,7 +26,6 @@
 
 #include "TextFlags.h"
 #include <wtf/Forward.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/text/StringImpl.h>

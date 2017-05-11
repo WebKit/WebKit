@@ -70,7 +70,7 @@ public:
     void endClip() override;
     IntRect clipBounds() override;
     IntSize maxTextureSize() const override { return IntSize(2000, 2000); }
-    PassRefPtr<BitmapTexture> createTexture() override;
+    Ref<BitmapTexture> createTexture() override;
     inline GraphicsContext3D* graphicsContext3D() const { return m_context3D.get(); }
 
     void drawFiltered(const BitmapTexture& sourceTexture, const BitmapTexture* contentTexture, const FilterOperation&, int pass);

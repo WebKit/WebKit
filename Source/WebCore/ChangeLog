@@ -1,3 +1,236 @@
+2017-05-11  Chris Dumez  <cdumez@apple.com>
+
+        Stop using PassRefPtr in platform/graphics
+        https://bugs.webkit.org/show_bug.cgi?id=171977
+
+        Reviewed by Alex Christensen.
+
+        Stop using PassRefPtr in platform/graphics.
+
+        * css/CSSCrossfadeValue.cpp:
+        (WebCore::CSSCrossfadeValue::image):
+        * css/CSSFilterImageValue.cpp:
+        (WebCore::CSSFilterImageValue::image):
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::brokenImage):
+        (WebCore::CachedImage::image):
+        (WebCore::CachedImage::imageForRenderer):
+        * page/PageSerializer.cpp:
+        (WebCore::PageSerializer::addImageToResources):
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::paintPanScrollIcon):
+        * platform/graphics/CrossfadeGeneratedImage.cpp:
+        (WebCore::CrossfadeGeneratedImage::drawCrossfade):
+        * platform/graphics/FontPlatformData.h:
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/Image.cpp:
+        (WebCore::Image::nullImage):
+        * platform/graphics/Image.h:
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::createResourceLoader):
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/Pattern.cpp:
+        (WebCore::Pattern::create):
+        (WebCore::Pattern::Pattern):
+        * platform/graphics/Pattern.h:
+        * platform/graphics/PlatformTextTrack.h:
+        (WebCore::PlatformTextTrack::create):
+        (WebCore::PlatformTextTrack::createOutOfBand):
+        (WebCore::PlatformTextTrack::captionMenuOffItem):
+        (WebCore::PlatformTextTrack::captionMenuAutomaticItem):
+        * platform/graphics/avfoundation/InbandMetadataTextTrackPrivateAVF.cpp:
+        (WebCore::InbandMetadataTextTrackPrivateAVF::create):
+        (WebCore::InbandMetadataTextTrackPrivateAVF::addDataCue):
+        * platform/graphics/avfoundation/InbandMetadataTextTrackPrivateAVF.h:
+        * platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp:
+        (WebCore::InbandTextTrackPrivateAVF::processAttributedStrings):
+        * platform/graphics/avfoundation/MediaSelectionGroupAVFObjC.h:
+        * platform/graphics/avfoundation/MediaSelectionGroupAVFObjC.mm:
+        (WebCore::MediaSelectionOptionAVFObjC::create):
+        (WebCore::MediaSelectionGroupAVFObjC::create):
+        (WebCore::MediaSelectionGroupAVFObjC::updateOptions):
+        * platform/graphics/avfoundation/cf/InbandTextTrackPrivateAVCF.h:
+        (WebCore::InbandTextTrackPrivateAVCF::create):
+        * platform/graphics/avfoundation/cf/InbandTextTrackPrivateLegacyAVCF.h:
+        (WebCore::InbandTextTrackPrivateLegacyAVCF::create):
+        * platform/graphics/avfoundation/cf/WebCoreAVCFResourceLoader.cpp:
+        (WebCore::WebCoreAVCFResourceLoader::create):
+        * platform/graphics/avfoundation/cf/WebCoreAVCFResourceLoader.h:
+        * platform/graphics/avfoundation/objc/CDMSessionAVContentKeySession.h:
+        * platform/graphics/avfoundation/objc/CDMSessionAVContentKeySession.mm:
+        (WebCore::CDMSessionAVContentKeySession::generateKeyReleaseMessage):
+        * platform/graphics/avfoundation/objc/CDMSessionAVStreamSession.h:
+        * platform/graphics/avfoundation/objc/CDMSessionAVStreamSession.mm:
+        (WebCore::CDMSessionAVStreamSession::generateKeyReleaseMessage):
+        * platform/graphics/avfoundation/objc/InbandTextTrackPrivateAVFObjC.h:
+        (WebCore::InbandTextTrackPrivateAVFObjC::create):
+        * platform/graphics/avfoundation/objc/InbandTextTrackPrivateLegacyAVFObjC.h:
+        (WebCore::InbandTextTrackPrivateLegacyAVFObjC::create):
+        * platform/graphics/avfoundation/objc/OutOfBandTextTrackPrivateAVF.h:
+        (WebCore::OutOfBandTextTrackPrivateAVF::create):
+        * platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.h:
+        * platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.mm:
+        (WebCore::WebCoreAVFResourceLoader::create):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::createPlatformCALayer):
+        (WebCore::GraphicsLayerCA::createPlatformCAAnimation):
+        (WebCore::GraphicsLayerCA::setContentsToPlatformLayer):
+        (WebCore::GraphicsLayerCA::replicatedLayerRoot):
+        (WebCore::GraphicsLayerCA::createAnimationFromKeyframes):
+        (WebCore::GraphicsLayerCA::appendToUncommittedAnimations):
+        (WebCore::GraphicsLayerCA::createBasicAnimation):
+        (WebCore::GraphicsLayerCA::createKeyframeAnimation):
+        (WebCore::GraphicsLayerCA::createSpringAnimation):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        (WebCore::GraphicsLayerCA::LayerPropertyAnimation::LayerPropertyAnimation):
+        * platform/graphics/ca/PlatformCAAnimation.h:
+        * platform/graphics/ca/cocoa/PlatformCAAnimationCocoa.h:
+        * platform/graphics/ca/cocoa/PlatformCAAnimationCocoa.mm:
+        (PlatformCAAnimationCocoa::create):
+        (PlatformCAAnimationCocoa::copy):
+        * platform/graphics/ca/win/AbstractCACFLayerTreeHost.h:
+        * platform/graphics/ca/win/CACFLayerTreeHost.cpp:
+        (WebCore::CACFLayerTreeHost::create):
+        (WebCore::CACFLayerTreeHost::addPendingAnimatedLayer):
+        * platform/graphics/ca/win/CACFLayerTreeHost.h:
+        * platform/graphics/ca/win/PlatformCAAnimationWin.cpp:
+        (PlatformCAAnimationWin::create):
+        (PlatformCAAnimationWin::copy):
+        * platform/graphics/ca/win/PlatformCAAnimationWin.h:
+        * platform/graphics/ca/win/PlatformCALayerWin.cpp:
+        (PlatformCALayerWin::addAnimationForKey):
+        * platform/graphics/ca/win/WKCACFViewLayerTreeHost.cpp:
+        (WebCore::WKCACFViewLayerTreeHost::create):
+        * platform/graphics/ca/win/WKCACFViewLayerTreeHost.h:
+        * platform/graphics/cairo/PatternCairo.cpp:
+        (WebCore::Pattern::createPlatformPattern):
+        * platform/graphics/cairo/PlatformContextCairo.cpp:
+        (WebCore::PlatformContextCairo::clipForPatternFilling):
+        * platform/graphics/cg/PDFDocumentImage.h:
+        * platform/graphics/cg/PatternCG.cpp:
+        (WebCore::Pattern::createPlatformPattern):
+        * platform/graphics/filters/FEDiffuseLighting.cpp:
+        (WebCore::FEDiffuseLighting::FEDiffuseLighting):
+        (WebCore::FEDiffuseLighting::create):
+        (WebCore::FEDiffuseLighting::lightSource):
+        * platform/graphics/filters/FEDiffuseLighting.h:
+        * platform/graphics/filters/FELighting.cpp:
+        (WebCore::FELighting::FELighting):
+        (WebCore::FELighting::drawLighting):
+        * platform/graphics/filters/FELighting.h:
+        * platform/graphics/filters/FESpecularLighting.cpp:
+        (WebCore::FESpecularLighting::FESpecularLighting):
+        (WebCore::FESpecularLighting::create):
+        (WebCore::FESpecularLighting::lightSource):
+        * platform/graphics/filters/FESpecularLighting.h:
+        * platform/graphics/filters/FETile.cpp:
+        (WebCore::FETile::platformApplySoftware):
+        * platform/graphics/filters/FilterEffect.cpp:
+        (WebCore::FilterEffect::asUnmultipliedImage):
+        (WebCore::FilterEffect::asPremultipliedImage):
+        * platform/graphics/filters/FilterEffect.h:
+        * platform/graphics/filters/FilterOperation.cpp:
+        (WebCore::ReferenceFilterOperation::setFilterEffect):
+        (WebCore::BasicColorMatrixFilterOperation::blend):
+        (WebCore::BasicComponentTransferFilterOperation::blend):
+        (WebCore::BlurFilterOperation::blend):
+        (WebCore::DropShadowFilterOperation::blend):
+        * platform/graphics/filters/FilterOperation.h:
+        (WebCore::FilterOperation::blend):
+        (WebCore::PassthroughFilterOperation::create):
+        (WebCore::ReferenceFilterOperation::create):
+        * platform/graphics/gpu/Texture.cpp:
+        (WebCore::Texture::create):
+        * platform/graphics/gpu/Texture.h:
+        * platform/graphics/gstreamer/AudioTrackPrivateGStreamer.h:
+        * platform/graphics/gstreamer/ImageGStreamer.h:
+        (WebCore::ImageGStreamer::createImage):
+        (WebCore::ImageGStreamer::image):
+        * platform/graphics/gstreamer/InbandMetadataTextTrackPrivateGStreamer.h:
+        (WebCore::InbandMetadataTextTrackPrivateGStreamer::create):
+        (WebCore::InbandMetadataTextTrackPrivateGStreamer::addGenericCue):
+        * platform/graphics/gstreamer/InbandTextTrackPrivateGStreamer.h:
+        (WebCore::InbandTextTrackPrivateGStreamer::create):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::processTableOfContentsEntry):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::paint):
+        * platform/graphics/gstreamer/VideoTrackPrivateGStreamer.h:
+        * platform/graphics/gstreamer/mse/MediaSourceClientGStreamerMSE.cpp:
+        (WebCore::MediaSourceClientGStreamerMSE::enqueueSample):
+        * platform/graphics/gstreamer/mse/MediaSourceClientGStreamerMSE.h:
+        * platform/graphics/gstreamer/mse/MediaSourceGStreamer.cpp:
+        * platform/graphics/gstreamer/mse/PlaybackPipeline.cpp:
+        (WebCore::PlaybackPipeline::enqueueSample):
+        * platform/graphics/gstreamer/mse/PlaybackPipeline.h:
+        * platform/graphics/gtk/ImageGtk.cpp:
+        (WebCore::loadImageFromGResource):
+        (WebCore::loadResourceSharedBuffer):
+        (WebCore::loadMissingImageIconFromTheme):
+        (WebCore::Image::loadPlatformResource):
+        * platform/graphics/harfbuzz/HarfBuzzFace.cpp:
+        (WebCore::FaceCacheEntry::create):
+        * platform/graphics/harfbuzz/HarfBuzzFace.h:
+        (WebCore::HarfBuzzFace::create):
+        * platform/graphics/mac/ImageMac.mm:
+        (WebCore::Image::loadPlatformResource):
+        * platform/graphics/opentype/OpenTypeMathData.h:
+        (WebCore::OpenTypeMathData::create):
+        * platform/graphics/texmap/BitmapTexture.h:
+        (WebCore::BitmapTexture::applyFilters):
+        * platform/graphics/texmap/BitmapTextureGL.cpp:
+        (WebCore::BitmapTextureGL::applyFilters):
+        * platform/graphics/texmap/BitmapTextureGL.h:
+        (WebCore::BitmapTextureGL::FilterInfo::FilterInfo):
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.cpp:
+        (WebCore::GraphicsLayerTextureMapper::commitLayerChanges):
+        * platform/graphics/texmap/TextureMapper.cpp:
+        (WebCore::TextureMapper::acquireTextureFromPool):
+        * platform/graphics/texmap/TextureMapper.h:
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        (WebCore::TextureMapperGL::createTexture):
+        * platform/graphics/texmap/TextureMapperGL.h:
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        (WebCore::TextureMapperLayer::paintIntoSurface):
+        (WebCore::commitSurface):
+        (WebCore::TextureMapperLayer::paintWithIntermediateSurface):
+        (WebCore::TextureMapperLayer::setBackingStore):
+        * platform/graphics/texmap/TextureMapperLayer.h:
+        * platform/graphics/texmap/TextureMapperTiledBackingStore.h:
+        (WebCore::TextureMapperTiledBackingStore::create):
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::syncImageBacking):
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.h:
+        * platform/graphics/texmap/coordinated/CoordinatedImageBacking.cpp:
+        (WebCore::CoordinatedImageBacking::create):
+        (WebCore::CoordinatedImageBacking::CoordinatedImageBacking):
+        * platform/graphics/texmap/coordinated/CoordinatedImageBacking.h:
+        * platform/graphics/win/ImageWin.cpp:
+        (WebCore::Image::loadPlatformResource):
+        * platform/graphics/win/MediaPlayerPrivateFullscreenWindow.cpp:
+        (WebCore::MediaPlayerPrivateFullscreenWindow::setRootChildLayer):
+        * platform/graphics/win/MediaPlayerPrivateFullscreenWindow.h:
+        * platform/graphics/win/PatternDirect2D.cpp:
+        (WebCore::Pattern::createPlatformPattern):
+        * platform/graphics/win/SharedGDIObject.h:
+        (WebCore::SharedGDIObject::create):
+        * rendering/FilterEffectRenderer.cpp:
+        (WebCore::FilterEffectRenderer::build):
+        * rendering/RenderImageResource.cpp:
+        (WebCore::RenderImageResource::image):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::drawPlatformResizerImage):
+        * rendering/svg/RenderSVGResourcePattern.cpp:
+        (WebCore::RenderSVGResourcePattern::buildPattern):
+        * svg/SVGFEDiffuseLightingElement.cpp:
+        (WebCore::SVGFEDiffuseLightingElement::setFilterEffectAttribute):
+        (WebCore::SVGFEDiffuseLightingElement::build):
+        * svg/SVGFESpecularLightingElement.cpp:
+        (WebCore::SVGFESpecularLightingElement::setFilterEffectAttribute):
+        (WebCore::SVGFESpecularLightingElement::build):
+        * svg/graphics/SVGImageCache.cpp:
+        (WebCore::SVGImageCache::imageForRenderer):
+
 2017-05-11  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove Vibration API

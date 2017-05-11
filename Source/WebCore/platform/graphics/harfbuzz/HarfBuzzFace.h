@@ -34,7 +34,7 @@
 #include <hb.h>
 
 #include <wtf/HashMap.h>
-#include <wtf/PassRefPtr.h>
+#include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -47,9 +47,9 @@ public:
     static const hb_tag_t vrt2Tag;
     static const hb_tag_t kernTag;
 
-    static PassRefPtr<HarfBuzzFace> create(FontPlatformData* platformData, uint64_t uniqueID)
+    static Ref<HarfBuzzFace> create(FontPlatformData* platformData, uint64_t uniqueID)
     {
-        return adoptRef(new HarfBuzzFace(platformData, uniqueID));
+        return adoptRef(*new HarfBuzzFace(platformData, uniqueID));
     }
     ~HarfBuzzFace();
 

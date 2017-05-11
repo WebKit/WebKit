@@ -48,10 +48,10 @@ const hb_tag_t HarfBuzzFace::kernTag = HB_TAG('k', 'e', 'r', 'n');
 
 class FaceCacheEntry : public RefCounted<FaceCacheEntry> {
 public:
-    static PassRefPtr<FaceCacheEntry> create(hb_face_t* face)
+    static Ref<FaceCacheEntry> create(hb_face_t* face)
     {
         ASSERT(face);
-        return adoptRef(new FaceCacheEntry(face));
+        return adoptRef(*new FaceCacheEntry(face));
     }
     ~FaceCacheEntry()
     {

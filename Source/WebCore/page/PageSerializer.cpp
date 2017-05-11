@@ -276,7 +276,7 @@ void PageSerializer::addImageToResources(CachedImage* image, RenderElement* imag
     if (!url.isValid() || m_resourceURLs.contains(url))
         return;
 
-    if (!image || image->image() == Image::nullImage())
+    if (!image || image->image() == &Image::nullImage())
         return;
 
     RefPtr<SharedBuffer> data = imageRenderer ? image->imageForRenderer(imageRenderer)->data() : 0;

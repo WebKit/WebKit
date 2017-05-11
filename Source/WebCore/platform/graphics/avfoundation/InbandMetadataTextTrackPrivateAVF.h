@@ -41,7 +41,7 @@ struct IncompleteMetaDataCue {
 
 class InbandMetadataTextTrackPrivateAVF : public InbandTextTrackPrivate {
 public:
-    static PassRefPtr<InbandMetadataTextTrackPrivateAVF> create(Kind, CueFormat, const AtomicString& id = emptyAtom);
+    static Ref<InbandMetadataTextTrackPrivateAVF> create(Kind, CueFormat, const AtomicString& id = emptyAtom);
 
     ~InbandMetadataTextTrackPrivateAVF();
 
@@ -51,7 +51,7 @@ public:
     void setInBandMetadataTrackDispatchType(const AtomicString& value) { m_inBandMetadataTrackDispatchType = value; }
 
 #if ENABLE(DATACUE_VALUE)
-    void addDataCue(const MediaTime& start, const MediaTime& end, PassRefPtr<SerializedPlatformRepresentation>, const String&);
+    void addDataCue(const MediaTime& start, const MediaTime& end, Ref<SerializedPlatformRepresentation>&&, const String&);
     void updatePendingCueEndTimes(const MediaTime&);
 #endif
 

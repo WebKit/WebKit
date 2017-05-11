@@ -336,7 +336,7 @@ void PlatformCALayerWin::addAnimationForKey(const String& key, PlatformCAAnimati
     // Tell the host about it so we can fire the start animation event
     AbstractCACFLayerTreeHost* host = layerTreeHostForLayer(this);
     if (host)
-        host->addPendingAnimatedLayer(this);
+        host->addPendingAnimatedLayer(*this);
 }
 
 void PlatformCALayerWin::removeAnimationForKey(const String& key)

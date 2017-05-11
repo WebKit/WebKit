@@ -53,7 +53,7 @@ public:
 
     bool isPlatformCAAnimationRemote() const override { return true; }
 
-    PassRefPtr<PlatformCAAnimation> copy() const override;
+    Ref<PlatformCAAnimation> copy() const override;
 
     String keyPath() const override;
 

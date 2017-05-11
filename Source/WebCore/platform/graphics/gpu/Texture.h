@@ -45,7 +45,7 @@ class Texture : public RefCounted<Texture> {
 public:
     ~Texture();
     enum Format { RGBA8, BGRA8 };
-    static PassRefPtr<Texture> create(GraphicsContext3D*, Format, int width, int height);
+    static RefPtr<Texture> create(GraphicsContext3D*, Format, int width, int height);
     void bindTile(int tile);
     void load(void* pixels);
     void updateSubRect(void* pixels, const IntRect&);

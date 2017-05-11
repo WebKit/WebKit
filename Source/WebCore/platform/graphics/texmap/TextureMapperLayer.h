@@ -117,7 +117,7 @@ public:
     void setAnimations(const TextureMapperAnimations&);
     void setFixedToViewport(bool);
     bool fixedToViewport() const { return m_fixedToViewport; }
-    void setBackingStore(PassRefPtr<TextureMapperBackingStore>);
+    void setBackingStore(RefPtr<TextureMapperBackingStore>&&);
 
     void syncAnimations();
     bool descendantsOrSelfHaveRunningAnimations() const;
@@ -157,7 +157,7 @@ private:
 
     void paintRecursive(const TextureMapperPaintOptions&);
     void paintUsingOverlapRegions(const TextureMapperPaintOptions&);
-    PassRefPtr<BitmapTexture> paintIntoSurface(const TextureMapperPaintOptions&, const IntSize&);
+    RefPtr<BitmapTexture> paintIntoSurface(const TextureMapperPaintOptions&, const IntSize&);
     void paintWithIntermediateSurface(const TextureMapperPaintOptions&, const IntRect&);
     void paintSelf(const TextureMapperPaintOptions&);
     void paintSelfAndChildren(const TextureMapperPaintOptions&);

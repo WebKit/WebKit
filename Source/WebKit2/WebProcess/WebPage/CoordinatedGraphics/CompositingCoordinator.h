@@ -111,7 +111,7 @@ private:
     // CoordinatedGraphicsLayerClient
     bool isFlushingLayerChanges() const override { return m_isFlushingLayerChanges; }
     WebCore::FloatRect visibleContentsRect() const override;
-    Ref<WebCore::CoordinatedImageBacking> createImageBackingIfNeeded(WebCore::Image*) override;
+    Ref<WebCore::CoordinatedImageBacking> createImageBackingIfNeeded(WebCore::Image&) override;
     void detachLayer(WebCore::CoordinatedGraphicsLayer*) override;
     bool paintToSurface(const WebCore::IntSize&, WebCore::CoordinatedSurface::Flags, uint32_t& /* atlasID */, WebCore::IntPoint&, WebCore::CoordinatedSurface::Client&) override;
     void syncLayerState(WebCore::CoordinatedLayerID, WebCore::CoordinatedGraphicsLayerState&) override;

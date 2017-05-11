@@ -32,7 +32,7 @@ class TextureMapper;
 
 class TextureMapperTiledBackingStore : public TextureMapperBackingStore {
 public:
-    static PassRefPtr<TextureMapperTiledBackingStore> create() { return adoptRef(new TextureMapperTiledBackingStore); }
+    static Ref<TextureMapperTiledBackingStore> create() { return adoptRef(*new TextureMapperTiledBackingStore); }
     virtual ~TextureMapperTiledBackingStore() { }
 
     RefPtr<BitmapTexture> texture() const override;

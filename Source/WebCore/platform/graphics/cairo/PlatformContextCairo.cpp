@@ -314,10 +314,9 @@ void PlatformContextCairo::clipForPatternFilling(const GraphicsContextState& sta
     cairo_clip_extents(m_cr.get(), &x1, &y1, &x2, &y2);
     FloatRect clipRect(x1, y1, x2 - x1, y2 - y1);
 
-    Image* patternImage = state.fillPattern->tileImage();
-    ASSERT(patternImage);
+    auto& patternImage = state.fillPattern->tileImage();
     const AffineTransform& patternTransform = state.fillPattern->getPatternSpaceTransform();
-    FloatRect patternRect = patternTransform.mapRect(FloatRect(0, 0, patternImage->width(), patternImage->height()));
+    FloatRect patternRect = patternTransform.mapRect(FloatRect(0, 0, patternImage.width(), patternImage.height()));
 
     bool repeatX = state.fillPattern->repeatX();
     bool repeatY = state.fillPattern->repeatY();

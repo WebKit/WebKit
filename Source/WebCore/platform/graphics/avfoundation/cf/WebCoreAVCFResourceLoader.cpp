@@ -45,11 +45,11 @@
 
 namespace WebCore {
 
-PassRefPtr<WebCoreAVCFResourceLoader> WebCoreAVCFResourceLoader::create(MediaPlayerPrivateAVFoundationCF* parent, AVCFAssetResourceLoadingRequestRef avRequest)
+Ref<WebCoreAVCFResourceLoader> WebCoreAVCFResourceLoader::create(MediaPlayerPrivateAVFoundationCF* parent, AVCFAssetResourceLoadingRequestRef avRequest)
 {
     ASSERT(avRequest);
     ASSERT(parent);
-    return adoptRef(new WebCoreAVCFResourceLoader(parent, avRequest));
+    return adoptRef(*new WebCoreAVCFResourceLoader(parent, avRequest));
 }
 
 WebCoreAVCFResourceLoader::WebCoreAVCFResourceLoader(MediaPlayerPrivateAVFoundationCF* parent, AVCFAssetResourceLoadingRequestRef avRequest)

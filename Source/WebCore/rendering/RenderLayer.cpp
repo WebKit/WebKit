@@ -3723,12 +3723,12 @@ void RenderLayer::drawPlatformResizerImage(GraphicsContext& context, const Layou
     RefPtr<Image> resizeCornerImage;
     FloatSize cornerResizerSize;
     if (renderer().document().deviceScaleFactor() >= 2) {
-        static NeverDestroyed<Image*> resizeCornerImageHiRes(Image::loadPlatformResource("textAreaResizeCorner@2x").leakRef());
+        static NeverDestroyed<Image*> resizeCornerImageHiRes(&Image::loadPlatformResource("textAreaResizeCorner@2x").leakRef());
         resizeCornerImage = resizeCornerImageHiRes;
         cornerResizerSize = resizeCornerImage->size();
         cornerResizerSize.scale(0.5f);
     } else {
-        static NeverDestroyed<Image*> resizeCornerImageLoRes(Image::loadPlatformResource("textAreaResizeCorner").leakRef());
+        static NeverDestroyed<Image*> resizeCornerImageLoRes(&Image::loadPlatformResource("textAreaResizeCorner").leakRef());
         resizeCornerImage = resizeCornerImageLoRes;
         cornerResizerSize = resizeCornerImage->size();
     }

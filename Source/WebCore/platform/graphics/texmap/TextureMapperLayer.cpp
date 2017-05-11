@@ -365,7 +365,7 @@ void TextureMapperLayer::applyMask(const TextureMapperPaintOptions& options)
     options.textureMapper.setMaskMode(false);
 }
 
-PassRefPtr<BitmapTexture> TextureMapperLayer::paintIntoSurface(const TextureMapperPaintOptions& options, const IntSize& size)
+RefPtr<BitmapTexture> TextureMapperLayer::paintIntoSurface(const TextureMapperPaintOptions& options, const IntSize& size)
 {
     RefPtr<BitmapTexture> surface = options.textureMapper.acquireTextureFromPool(size, BitmapTexture::SupportsAlpha | BitmapTexture::FBOAttachment);
     TextureMapperPaintOptions paintOptions(options);
@@ -376,16 +376,16 @@ PassRefPtr<BitmapTexture> TextureMapperLayer::paintIntoSurface(const TextureMapp
         m_state.maskLayer->applyMask(options);
     surface = surface->applyFilters(options.textureMapper, m_currentFilters);
     options.textureMapper.bindSurface(surface.get());
-    return surface.release();
+    return surface;
 }
 
-static void commitSurface(const TextureMapperPaintOptions& options, PassRefPtr<BitmapTexture> surface, const IntRect& rect, float opacity)
+static void commitSurface(const TextureMapperPaintOptions& options, BitmapTexture& surface, const IntRect& rect, float opacity)
 {
     options.textureMapper.bindSurface(options.surface.get());
     TransformationMatrix targetTransform;
     targetTransform.translate(options.offset.width(), options.offset.height());
     targetTransform.multiply(options.transform);
-    options.textureMapper.drawTexture(*surface.get(), rect, targetTransform, opacity);
+    options.textureMapper.drawTexture(surface, rect, targetTransform, opacity);
 }
 
 void TextureMapperLayer::paintWithIntermediateSurface(const TextureMapperPaintOptions& options, const IntRect& rect)
@@ -405,7 +405,7 @@ void TextureMapperLayer::paintWithIntermediateSurface(const TextureMapperPaintOp
     }
 
     if (replicaSurface && options.opacity == 1) {
-        commitSurface(options, replicaSurface, rect, 1);
+        commitSurface(options, *replicaSurface, rect, 1);
         replicaSurface = nullptr;
     }
 
@@ -416,7 +416,7 @@ void TextureMapperLayer::paintWithIntermediateSurface(const TextureMapperPaintOp
         mainSurface = replicaSurface;
     }
 
-    commitSurface(options, mainSurface, rect, options.opacity);
+    commitSurface(options, *mainSurface, rect, options.opacity);
 }
 
 void TextureMapperLayer::paintRecursive(const TextureMapperPaintOptions& options)
@@ -637,9 +637,9 @@ void TextureMapperLayer::setFixedToViewport(bool fixedToViewport)
     m_fixedToViewport = fixedToViewport;
 }
 
-void TextureMapperLayer::setBackingStore(PassRefPtr<TextureMapperBackingStore> backingStore)
+void TextureMapperLayer::setBackingStore(RefPtr<TextureMapperBackingStore>&& backingStore)
 {
-    m_backingStore = backingStore;
+    m_backingStore = WTFMove(backingStore);
 }
 
 bool TextureMapperLayer::descendantsOrSelfHaveRunningAnimations() const

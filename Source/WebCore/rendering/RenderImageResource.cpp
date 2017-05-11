@@ -94,7 +94,7 @@ void RenderImageResource::resetAnimation()
 
 RefPtr<Image> RenderImageResource::image(const IntSize&) const
 {
-    return m_cachedImage ? m_cachedImage->imageForRenderer(m_renderer) : Image::nullImage();
+    return m_cachedImage ? m_cachedImage->imageForRenderer(m_renderer) : &Image::nullImage();
 }
 
 bool RenderImageResource::errorOccurred() const

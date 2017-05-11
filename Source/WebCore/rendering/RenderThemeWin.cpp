@@ -890,9 +890,9 @@ bool RenderThemeWin::paintSearchFieldCancelButton(const RenderBox& o, const Pain
     // be one pixel closer to the bottom of the field.  This tends to look better with the text.
     bounds.setY(parentBox.y() + (parentBox.height() - bounds.height() + 1) / 2);
 
-    static Image* cancelImage = Image::loadPlatformResource("searchCancel").leakRef();
-    static Image* cancelPressedImage = Image::loadPlatformResource("searchCancelPressed").leakRef();
-    paintInfo.context().drawImage(isPressed(o) ? *cancelPressedImage : *cancelImage, bounds);
+    static Image& cancelImage = Image::loadPlatformResource("searchCancel").leakRef();
+    static Image& cancelPressedImage = Image::loadPlatformResource("searchCancelPressed").leakRef();
+    paintInfo.context().drawImage(isPressed(o) ? cancelPressedImage : cancelImage, bounds);
     return false;
 }
 
@@ -939,8 +939,8 @@ bool RenderThemeWin::paintSearchFieldResultsDecorationPart(const RenderBox& o, c
     // be one pixel closer to the bottom of the field.  This tends to look better with the text.
     bounds.setY(parentBox.y() + (parentBox.height() - bounds.height() + 1) / 2);
     
-    static Image* magnifierImage = Image::loadPlatformResource("searchMagnifier").leakRef();
-    paintInfo.context().drawImage(*magnifierImage, bounds);
+    static Image& magnifierImage = Image::loadPlatformResource("searchMagnifier").leakRef();
+    paintInfo.context().drawImage(magnifierImage, bounds);
     return false;
 }
 
@@ -974,8 +974,8 @@ bool RenderThemeWin::paintSearchFieldResultsButton(const RenderBox& o, const Pai
     // be one pixel closer to the bottom of the field.  This tends to look better with the text.
     bounds.setY(parentBox.y() + (parentBox.height() - bounds.height() + 1) / 2);
 
-    static Image* magnifierImage = Image::loadPlatformResource("searchMagnifierResults").leakRef();
-    paintInfo.context().drawImage(*magnifierImage, bounds);
+    static Image& magnifierImage = Image::loadPlatformResource("searchMagnifierResults").leakRef();
+    paintInfo.context().drawImage(magnifierImage, bounds);
     return false;
 }
 

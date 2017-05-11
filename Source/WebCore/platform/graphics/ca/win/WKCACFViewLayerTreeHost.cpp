@@ -66,10 +66,10 @@ SOFT_LINK(WebKitQuartzCoreAdditions, WKCACFViewSetContextUserData, void, __cdecl
 SOFT_LINK_OPTIONAL(WebKitQuartzCoreAdditions, WKCACFViewSetShouldInvertColors, void, _cdecl, (WKCACFViewRef view, bool shouldInvertColors))
 SOFT_LINK_OPTIONAL(WebKitQuartzCoreAdditions, WKCACFViewGetD3DDevice9, IDirect3DDevice9*, _cdecl, (WKCACFViewRef view))
 
-PassRefPtr<WKCACFViewLayerTreeHost> WKCACFViewLayerTreeHost::create()
+RefPtr<WKCACFViewLayerTreeHost> WKCACFViewLayerTreeHost::create()
 {
     if (!WebKitQuartzCoreAdditionsLibrary())
-        return 0;
+        return nullptr;
 
     return adoptRef(new WKCACFViewLayerTreeHost);
 }

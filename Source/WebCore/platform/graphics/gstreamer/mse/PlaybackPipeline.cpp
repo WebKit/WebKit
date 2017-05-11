@@ -476,7 +476,7 @@ void PlaybackPipeline::flush(AtomicString trackId)
     GST_DEBUG("trackId=%s flushed", trackId.string().utf8().data());
 }
 
-void PlaybackPipeline::enqueueSample(RefPtr<MediaSample> mediaSample)
+void PlaybackPipeline::enqueueSample(Ref<MediaSample>&& mediaSample)
 {
     ASSERT(WTF::isMainThread());
 
@@ -503,7 +503,7 @@ void PlaybackPipeline::enqueueSample(RefPtr<MediaSample> mediaSample)
     GstElement* appsrc = stream->appsrc;
     MediaTime lastEnqueuedTime = stream->lastEnqueuedTime;
 
-    GStreamerMediaSample* sample = static_cast<GStreamerMediaSample*>(mediaSample.get());
+    GStreamerMediaSample* sample = static_cast<GStreamerMediaSample*>(mediaSample.ptr());
     if (sample->sample() && gst_sample_get_buffer(sample->sample())) {
         GRefPtr<GstSample> gstSample = sample->sample();
         GstBuffer* buffer = gst_sample_get_buffer(gstSample.get());

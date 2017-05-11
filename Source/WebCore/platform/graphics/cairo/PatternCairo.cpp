@@ -36,9 +36,9 @@ namespace WebCore {
 
 cairo_pattern_t* Pattern::createPlatformPattern(const AffineTransform&) const
 {
-    RefPtr<cairo_surface_t> surface = tileImage()->nativeImageForCurrentFrame();
+    RefPtr<cairo_surface_t> surface = tileImage().nativeImageForCurrentFrame();
     if (!surface)
-        return 0;
+        return nullptr;
 
     cairo_pattern_t* pattern = cairo_pattern_create_for_surface(surface.get());
 

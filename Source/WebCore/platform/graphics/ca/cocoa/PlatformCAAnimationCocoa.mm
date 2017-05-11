@@ -149,14 +149,14 @@ CAMediaTimingFunction* WebCore::toCAMediaTimingFunction(const TimingFunction* ti
     return [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear];
 }
 
-PassRefPtr<PlatformCAAnimation> PlatformCAAnimationCocoa::create(AnimationType type, const String& keyPath)
+Ref<PlatformCAAnimation> PlatformCAAnimationCocoa::create(AnimationType type, const String& keyPath)
 {
-    return adoptRef(new PlatformCAAnimationCocoa(type, keyPath));
+    return adoptRef(*new PlatformCAAnimationCocoa(type, keyPath));
 }
 
-PassRefPtr<PlatformCAAnimation> PlatformCAAnimationCocoa::create(PlatformAnimationRef animation)
+Ref<PlatformCAAnimation> PlatformCAAnimationCocoa::create(PlatformAnimationRef animation)
 {
-    return adoptRef(new PlatformCAAnimationCocoa(animation));
+    return adoptRef(*new PlatformCAAnimationCocoa(animation));
 }
 
 PlatformCAAnimationCocoa::PlatformCAAnimationCocoa(AnimationType type, const String& keyPath)
@@ -196,9 +196,9 @@ PlatformCAAnimationCocoa::~PlatformCAAnimationCocoa()
 {
 }
 
-PassRefPtr<PlatformCAAnimation> PlatformCAAnimationCocoa::copy() const
+Ref<PlatformCAAnimation> PlatformCAAnimationCocoa::copy() const
 {
-    RefPtr<PlatformCAAnimation> animation = create(animationType(), keyPath());
+    auto animation = create(animationType(), keyPath());
     
     animation->setBeginTime(beginTime());
     animation->setDuration(duration());
@@ -212,7 +212,7 @@ PassRefPtr<PlatformCAAnimation> PlatformCAAnimationCocoa::copy() const
     animation->copyTimingFunctionFrom(*this);
     animation->setValueFunction(valueFunction());
 
-    setHasExplicitBeginTime(downcast<PlatformCAAnimationCocoa>(*animation).platformAnimation(), hasExplicitBeginTime(platformAnimation()));
+    setHasExplicitBeginTime(downcast<PlatformCAAnimationCocoa>(animation.get()).platformAnimation(), hasExplicitBeginTime(platformAnimation()));
     
     // Copy the specific Basic or Keyframe values.
     if (animationType() == Keyframe) {

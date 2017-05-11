@@ -507,7 +507,6 @@ public:
     HDC hdc() const;
 #if PLATFORM(WIN)
 #if USE(WINGDI)
-    void setBitmap(PassRefPtr<SharedBitmap>);
     const AffineTransform& affineTransform() const;
     AffineTransform& affineTransform();
     void resetAffineTransform();

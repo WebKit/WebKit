@@ -60,7 +60,7 @@ public:
     void didProvideContentKeyRequest(AVContentKeyRequest *);
 
 protected:
-    PassRefPtr<Uint8Array> generateKeyReleaseMessage(unsigned short& errorCode, uint32_t& systemCode);
+    RefPtr<Uint8Array> generateKeyReleaseMessage(unsigned short& errorCode, uint32_t& systemCode);
 
     bool hasContentKeySession() const { return m_contentKeySession; }
     AVContentKeySession* contentKeySession();

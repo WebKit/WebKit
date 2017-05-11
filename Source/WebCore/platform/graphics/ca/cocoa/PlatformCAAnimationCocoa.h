@@ -48,14 +48,14 @@ void setHasExplicitBeginTime(CAAnimation *, bool);
 
 class PlatformCAAnimationCocoa final : public PlatformCAAnimation {
 public:
-    static PassRefPtr<PlatformCAAnimation> create(AnimationType, const String& keyPath);
-    WEBCORE_EXPORT static PassRefPtr<PlatformCAAnimation> create(PlatformAnimationRef);
+    static Ref<PlatformCAAnimation> create(AnimationType, const String& keyPath);
+    WEBCORE_EXPORT static Ref<PlatformCAAnimation> create(PlatformAnimationRef);
 
     virtual ~PlatformCAAnimationCocoa();
 
     bool isPlatformCAAnimationCocoa() const override { return true; }
 
-    PassRefPtr<PlatformCAAnimation> copy() const override;
+    Ref<PlatformCAAnimation> copy() const override;
 
     PlatformAnimationRef platformAnimation() const;
     

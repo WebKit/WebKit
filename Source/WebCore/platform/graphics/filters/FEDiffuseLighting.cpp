@@ -27,17 +27,14 @@
 
 namespace WebCore {
 
-FEDiffuseLighting::FEDiffuseLighting(Filter& filter, const Color& lightingColor, float surfaceScale,
-    float diffuseConstant, float kernelUnitLengthX, float kernelUnitLengthY, PassRefPtr<LightSource> lightSource)
-    : FELighting(filter, DiffuseLighting, lightingColor, surfaceScale, diffuseConstant, 0, 0, kernelUnitLengthX, kernelUnitLengthY, lightSource)
+FEDiffuseLighting::FEDiffuseLighting(Filter& filter, const Color& lightingColor, float surfaceScale, float diffuseConstant, float kernelUnitLengthX, float kernelUnitLengthY, Ref<LightSource>&& lightSource)
+    : FELighting(filter, DiffuseLighting, lightingColor, surfaceScale, diffuseConstant, 0, 0, kernelUnitLengthX, kernelUnitLengthY, WTFMove(lightSource))
 {
 }
 
-Ref<FEDiffuseLighting> FEDiffuseLighting::create(Filter& filter, const Color& lightingColor,
-    float surfaceScale, float diffuseConstant, float kernelUnitLengthX,
-    float kernelUnitLengthY, PassRefPtr<LightSource> lightSource)
+Ref<FEDiffuseLighting> FEDiffuseLighting::create(Filter& filter, const Color& lightingColor, float surfaceScale, float diffuseConstant, float kernelUnitLengthX, float kernelUnitLengthY, Ref<LightSource>&& lightSource)
 {
-    return adoptRef(*new FEDiffuseLighting(filter, lightingColor, surfaceScale, diffuseConstant, kernelUnitLengthX, kernelUnitLengthY, lightSource));
+    return adoptRef(*new FEDiffuseLighting(filter, lightingColor, surfaceScale, diffuseConstant, kernelUnitLengthX, kernelUnitLengthY, WTFMove(lightSource)));
 }
 
 FEDiffuseLighting::~FEDiffuseLighting()
@@ -109,14 +106,9 @@ bool FEDiffuseLighting::setKernelUnitLengthY(float kernelUnitLengthY)
     return true;
 }
 
-const LightSource* FEDiffuseLighting::lightSource() const
+const LightSource& FEDiffuseLighting::lightSource() const
 {
     return m_lightSource.get();
-}
-
-void FEDiffuseLighting::setLightSource(PassRefPtr<LightSource> lightSource)
-{    
-    m_lightSource = lightSource;
 }
 
 void FEDiffuseLighting::dump()

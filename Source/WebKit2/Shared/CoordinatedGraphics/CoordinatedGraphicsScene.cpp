@@ -349,9 +349,9 @@ void CoordinatedGraphicsScene::createBackingStoreIfNeeded(TextureMapperLayer* la
     if (m_backingStores.contains(layer))
         return;
 
-    RefPtr<CoordinatedBackingStore> backingStore(CoordinatedBackingStore::create());
-    m_backingStores.add(layer, backingStore);
-    layer->setBackingStore(backingStore);
+    auto backingStore = CoordinatedBackingStore::create();
+    m_backingStores.add(layer, backingStore.copyRef());
+    layer->setBackingStore(WTFMove(backingStore));
 }
 
 void CoordinatedGraphicsScene::removeBackingStoreIfNeeded(TextureMapperLayer* layer)
@@ -360,7 +360,7 @@ void CoordinatedGraphicsScene::removeBackingStoreIfNeeded(TextureMapperLayer* la
     if (!backingStore)
         return;
 
-    layer->setBackingStore(0);
+    layer->setBackingStore(nullptr);
 }
 
 void CoordinatedGraphicsScene::resetBackingStoreSizeToLayerSize(TextureMapperLayer* layer)

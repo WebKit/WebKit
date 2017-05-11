@@ -186,13 +186,13 @@ Image* CSSCrossfadeValue::image(RenderElement& renderer, const FloatSize& size)
     auto* cachedToImage = cachedImageForCSSValue(m_toValue, cachedResourceLoader, options);
 
     if (!cachedFromImage || !cachedToImage)
-        return Image::nullImage();
+        return &Image::nullImage();
 
     auto* fromImage = cachedFromImage->imageForRenderer(&renderer);
     auto* toImage = cachedToImage->imageForRenderer(&renderer);
 
     if (!fromImage || !toImage)
-        return Image::nullImage();
+        return &Image::nullImage();
 
     m_generatedImage = CrossfadeGeneratedImage::create(*fromImage, *toImage, m_percentageValue->floatValue(), fixedSize(renderer), size);
     return m_generatedImage.get();

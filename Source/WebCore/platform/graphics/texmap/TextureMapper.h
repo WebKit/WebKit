@@ -77,7 +77,7 @@ public:
     virtual void beginClip(const TransformationMatrix&, const FloatRect&) = 0;
     virtual void endClip() = 0;
     virtual IntRect clipBounds() = 0;
-    virtual PassRefPtr<BitmapTexture> createTexture() = 0;
+    virtual Ref<BitmapTexture> createTexture() = 0;
 
     virtual void beginPainting(PaintFlags = 0) { }
     virtual void endPainting() { }
@@ -86,7 +86,7 @@ public:
 
     virtual IntSize maxTextureSize() const = 0;
 
-    virtual PassRefPtr<BitmapTexture> acquireTextureFromPool(const IntSize&, const BitmapTexture::Flags = BitmapTexture::SupportsAlpha);
+    virtual RefPtr<BitmapTexture> acquireTextureFromPool(const IntSize&, const BitmapTexture::Flags = BitmapTexture::SupportsAlpha);
 
     void setPatternTransform(const TransformationMatrix& p) { m_patternTransform = p; }
     void setWrapMode(WrapMode m) { m_wrapMode = m; }

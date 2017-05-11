@@ -38,14 +38,14 @@ namespace WebCore {
 
 class PlatformCAAnimationWin final : public PlatformCAAnimation {
 public:
-    static PassRefPtr<PlatformCAAnimation> create(AnimationType, const String& keyPath);
-    static PassRefPtr<PlatformCAAnimation> create(PlatformAnimationRef);
+    static Ref<PlatformCAAnimation> create(AnimationType, const String& keyPath);
+    static Ref<PlatformCAAnimation> create(PlatformAnimationRef);
 
     virtual ~PlatformCAAnimationWin();
 
     bool isPlatformCAAnimationWin() const override { return true; }
     
-    PassRefPtr<PlatformCAAnimation> copy() const override;
+    Ref<PlatformCAAnimation> copy() const override;
 
     PlatformAnimationRef platformAnimation() const;
     

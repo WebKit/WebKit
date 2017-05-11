@@ -348,7 +348,7 @@ bool GraphicsLayerCA::filtersCanBeComposited(const FilterOperations& filters)
 #endif
 }
 
-PassRefPtr<PlatformCALayer> GraphicsLayerCA::createPlatformCALayer(PlatformCALayer::LayerType layerType, PlatformCALayerClient* owner)
+Ref<PlatformCALayer> GraphicsLayerCA::createPlatformCALayer(PlatformCALayer::LayerType layerType, PlatformCALayerClient* owner)
 {
 #if PLATFORM(COCOA)
     auto result = PlatformCALayerCocoa::create(layerType, owner);
@@ -356,13 +356,13 @@ PassRefPtr<PlatformCALayer> GraphicsLayerCA::createPlatformCALayer(PlatformCALay
     if (result->canHaveBackingStore())
         result->setWantsDeepColorBackingStore(screenSupportsExtendedColor());
     
-    return WTFMove(result);
+    return result;
 #elif PLATFORM(WIN)
     return PlatformCALayerWin::create(layerType, owner);
 #endif
 }
     
-PassRefPtr<PlatformCALayer> GraphicsLayerCA::createPlatformCALayer(PlatformLayer* platformLayer, PlatformCALayerClient* owner)
+Ref<PlatformCALayer> GraphicsLayerCA::createPlatformCALayer(PlatformLayer* platformLayer, PlatformCALayerClient* owner)
 {
 #if PLATFORM(COCOA)
     return PlatformCALayerCocoa::create(platformLayer, owner);
@@ -371,7 +371,7 @@ PassRefPtr<PlatformCALayer> GraphicsLayerCA::createPlatformCALayer(PlatformLayer
 #endif
 }
 
-PassRefPtr<PlatformCAAnimation> GraphicsLayerCA::createPlatformCAAnimation(PlatformCAAnimation::AnimationType type, const String& keyPath)
+Ref<PlatformCAAnimation> GraphicsLayerCA::createPlatformCAAnimation(PlatformCAAnimation::AnimationType type, const String& keyPath)
 {
 #if PLATFORM(COCOA)
     return PlatformCAAnimationCocoa::create(type, keyPath);
@@ -1131,7 +1131,7 @@ void GraphicsLayerCA::setContentsToPlatformLayer(PlatformLayer* platformLayer, C
     // the creator of the raw layer is using it for some other purpose.
     // For now we don't support such a case.
     PlatformCALayer* platformCALayer = PlatformCALayer::platformCALayer(platformLayer);
-    m_contentsLayer = platformLayer ? (platformCALayer ? platformCALayer : createPlatformCALayer(platformLayer, this)) : nullptr;
+    m_contentsLayer = platformLayer ? (platformCALayer ? platformCALayer : createPlatformCALayer(platformLayer, this).ptr()) : nullptr;
     m_contentsLayerPurpose = platformLayer ? purpose : NoContentsLayer;
 
     if (m_contentsClippingLayer && m_contentsLayer)
@@ -2685,7 +2685,7 @@ GraphicsLayerCA::CloneID GraphicsLayerCA::ReplicaState::cloneID() const
     return String::adopt(WTFMove(result));
 }
 
-PassRefPtr<PlatformCALayer> GraphicsLayerCA::replicatedLayerRoot(ReplicaState& replicaState)
+RefPtr<PlatformCALayer> GraphicsLayerCA::replicatedLayerRoot(ReplicaState& replicaState)
 {
     // Limit replica nesting, to avoid 2^N explosion of replica layers.
     if (!m_replicatedLayer || replicaState.replicaDepth() == ReplicaState::maxReplicaDepth)
@@ -2907,7 +2907,7 @@ bool GraphicsLayerCA::createAnimationFromKeyframes(const KeyframeValueList& valu
     if (!valuesOK)
         return false;
 
-    m_uncomittedAnimations.append(LayerPropertyAnimation(caAnimation, animationName, valueList.property(), animationIndex, 0, timeOffset));
+    m_uncomittedAnimations.append(LayerPropertyAnimation(caAnimation.releaseNonNull(), animationName, valueList.property(), animationIndex, 0, timeOffset));
 
     return true;
 }
@@ -2934,7 +2934,7 @@ bool GraphicsLayerCA::appendToUncommittedAnimations(const KeyframeValueList& val
     if (!validMatrices)
         return false;
 
-    m_uncomittedAnimations.append(LayerPropertyAnimation(caAnimation, animationName, valueList.property(), animationIndex, 0, timeOffset));
+    m_uncomittedAnimations.append(LayerPropertyAnimation(caAnimation.releaseNonNull(), animationName, valueList.property(), animationIndex, 0, timeOffset));
     return true;
 }
 
@@ -3015,7 +3015,7 @@ bool GraphicsLayerCA::appendToUncommittedAnimations(const KeyframeValueList& val
         
         ASSERT(valuesOK);
 
-        m_uncomittedAnimations.append(LayerPropertyAnimation(caAnimation, animationName, valueList.property(), animationIndex, internalFilterPropertyIndex, timeOffset));
+        m_uncomittedAnimations.append(LayerPropertyAnimation(caAnimation.releaseNonNull(), animationName, valueList.property(), animationIndex, internalFilterPropertyIndex, timeOffset));
     }
 
     return true;
@@ -3054,24 +3054,24 @@ bool GraphicsLayerCA::createFilterAnimationsFromKeyframes(const KeyframeValueLis
     return true;
 }
 
-PassRefPtr<PlatformCAAnimation> GraphicsLayerCA::createBasicAnimation(const Animation* anim, const String& keyPath, bool additive)
+Ref<PlatformCAAnimation> GraphicsLayerCA::createBasicAnimation(const Animation* anim, const String& keyPath, bool additive)
 {
-    RefPtr<PlatformCAAnimation> basicAnim = createPlatformCAAnimation(PlatformCAAnimation::Basic, keyPath);
-    setupAnimation(basicAnim.get(), anim, additive);
+    auto basicAnim = createPlatformCAAnimation(PlatformCAAnimation::Basic, keyPath);
+    setupAnimation(basicAnim.ptr(), anim, additive);
     return basicAnim;
 }
 
-PassRefPtr<PlatformCAAnimation> GraphicsLayerCA::createKeyframeAnimation(const Animation* anim, const String& keyPath, bool additive)
+Ref<PlatformCAAnimation> GraphicsLayerCA::createKeyframeAnimation(const Animation* anim, const String& keyPath, bool additive)
 {
-    RefPtr<PlatformCAAnimation> keyframeAnim = createPlatformCAAnimation(PlatformCAAnimation::Keyframe, keyPath);
-    setupAnimation(keyframeAnim.get(), anim, additive);
+    auto keyframeAnim = createPlatformCAAnimation(PlatformCAAnimation::Keyframe, keyPath);
+    setupAnimation(keyframeAnim.ptr(), anim, additive);
     return keyframeAnim;
 }
 
-RefPtr<PlatformCAAnimation> GraphicsLayerCA::createSpringAnimation(const Animation* anim, const String& keyPath, bool additive)
+Ref<PlatformCAAnimation> GraphicsLayerCA::createSpringAnimation(const Animation* anim, const String& keyPath, bool additive)
 {
     auto basicAnim = createPlatformCAAnimation(PlatformCAAnimation::Spring, keyPath);
-    setupAnimation(basicAnim.get(), anim, additive);
+    setupAnimation(basicAnim.ptr(), anim, additive);
     return basicAnim;
 }
 
@@ -3740,7 +3740,7 @@ void GraphicsLayerCA::setupContentsLayer(PlatformCALayer* contentsLayer)
     setLayerDebugBorder(*contentsLayer, contentsLayerDebugBorderColor(isShowingDebugBorder()), contentsLayerBorderWidth);
 }
 
-PassRefPtr<PlatformCALayer> GraphicsLayerCA::findOrMakeClone(CloneID cloneID, PlatformCALayer *sourceLayer, LayerMap* clones, CloneLevel cloneLevel)
+RefPtr<PlatformCALayer> GraphicsLayerCA::findOrMakeClone(CloneID cloneID, PlatformCALayer *sourceLayer, LayerMap* clones, CloneLevel cloneLevel)
 {
     if (!sourceLayer)
         return nullptr;
@@ -3853,7 +3853,7 @@ void GraphicsLayerCA::propagateLayerChangeToReplicas(ScheduleFlushOrNot schedule
     }
 }
 
-PassRefPtr<PlatformCALayer> GraphicsLayerCA::fetchCloneLayers(GraphicsLayer* replicaRoot, ReplicaState& replicaState, CloneLevel cloneLevel)
+RefPtr<PlatformCALayer> GraphicsLayerCA::fetchCloneLayers(GraphicsLayer* replicaRoot, ReplicaState& replicaState, CloneLevel cloneLevel)
 {
     RefPtr<PlatformCALayer> primaryLayer;
     RefPtr<PlatformCALayer> structuralLayer;
@@ -3967,16 +3967,16 @@ PassRefPtr<PlatformCALayer> GraphicsLayerCA::fetchCloneLayers(GraphicsLayer* rep
     return result;
 }
 
-PassRefPtr<PlatformCALayer> GraphicsLayerCA::cloneLayer(PlatformCALayer *layer, CloneLevel cloneLevel)
+Ref<PlatformCALayer> GraphicsLayerCA::cloneLayer(PlatformCALayer *layer, CloneLevel cloneLevel)
 {
-    RefPtr<PlatformCALayer> newLayer = layer->clone(this);
+    auto newLayer = layer->clone(this);
 
     if (cloneLevel == IntermediateCloneLevel) {
         newLayer->setOpacity(layer->opacity());
-        copyAnimations(layer, newLayer.get());
+        copyAnimations(layer, newLayer.ptr());
     }
 
-    setLayerDebugBorder(*newLayer, cloneLayerDebugBorderColor(isShowingDebugBorder()), cloneLayerBorderWidth);
+    setLayerDebugBorder(newLayer, cloneLayerDebugBorderColor(isShowingDebugBorder()), cloneLayerBorderWidth);
 
     return newLayer;
 }

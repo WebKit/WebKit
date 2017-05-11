@@ -167,16 +167,16 @@ void CachedImage::allClientsRemoved()
 std::pair<Image*, float> CachedImage::brokenImage(float deviceScaleFactor) const
 {
     if (deviceScaleFactor >= 3) {
-        static NeverDestroyed<Image*> brokenImageVeryHiRes(Image::loadPlatformResource("missingImage@3x").leakRef());
+        static NeverDestroyed<Image*> brokenImageVeryHiRes(&Image::loadPlatformResource("missingImage@3x").leakRef());
         return std::make_pair(brokenImageVeryHiRes, 3);
     }
 
     if (deviceScaleFactor >= 2) {
-        static NeverDestroyed<Image*> brokenImageHiRes(Image::loadPlatformResource("missingImage@2x").leakRef());
+        static NeverDestroyed<Image*> brokenImageHiRes(&Image::loadPlatformResource("missingImage@2x").leakRef());
         return std::make_pair(brokenImageHiRes, 2);
     }
 
-    static NeverDestroyed<Image*> brokenImageLoRes(Image::loadPlatformResource("missingImage").leakRef());
+    static NeverDestroyed<Image*> brokenImageLoRes(&Image::loadPlatformResource("missingImage").leakRef());
     return std::make_pair(brokenImageLoRes, 1);
 }
 
@@ -197,7 +197,7 @@ Image* CachedImage::image()
     if (m_image)
         return m_image.get();
 
-    return Image::nullImage();
+    return &Image::nullImage();
 }
 
 Image* CachedImage::imageForRenderer(const RenderObject* renderer)
@@ -210,11 +210,11 @@ Image* CachedImage::imageForRenderer(const RenderObject* renderer)
     }
 
     if (!m_image)
-        return Image::nullImage();
+        return &Image::nullImage();
 
     if (m_image->isSVGImage()) {
         Image* image = m_svgImageCache->imageForRenderer(renderer);
-        if (image != Image::nullImage())
+        if (image != &Image::nullImage())
             return image;
     }
     return m_image.get();

@@ -66,7 +66,7 @@ public:
 
     // From SourceBufferPrivateGStreamer.
     void flush(AtomicString);
-    void enqueueSample(RefPtr<MediaSample>);
+    void enqueueSample(Ref<MediaSample>&&);
 
     GstElement* pipeline();
 private:

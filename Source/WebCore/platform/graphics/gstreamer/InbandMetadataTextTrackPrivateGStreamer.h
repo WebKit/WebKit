@@ -34,9 +34,9 @@ namespace WebCore {
 
 class InbandMetadataTextTrackPrivateGStreamer : public InbandTextTrackPrivate {
 public:
-    static PassRefPtr<InbandMetadataTextTrackPrivateGStreamer> create(Kind kind, CueFormat cueFormat, const AtomicString& id = emptyAtom)
+    static Ref<InbandMetadataTextTrackPrivateGStreamer> create(Kind kind, CueFormat cueFormat, const AtomicString& id = emptyAtom)
     {
-        return adoptRef(new InbandMetadataTextTrackPrivateGStreamer(kind, cueFormat, id));
+        return adoptRef(*new InbandMetadataTextTrackPrivateGStreamer(kind, cueFormat, id));
     }
 
     ~InbandMetadataTextTrackPrivateGStreamer() { }
@@ -52,10 +52,10 @@ public:
         client()->addDataCue(start, end, data, length);
     }
 
-    void addGenericCue(PassRefPtr<GenericCueData> data)
+    void addGenericCue(GenericCueData& data)
     {
         ASSERT(cueFormat() == Generic);
-        client()->addGenericCue(*data);
+        client()->addGenericCue(data);
     }
 
 private:

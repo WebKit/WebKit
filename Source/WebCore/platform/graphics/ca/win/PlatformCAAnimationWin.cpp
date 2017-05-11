@@ -142,14 +142,14 @@ static RetainPtr<CACFTimingFunctionRef> toCACFTimingFunction(const TimingFunctio
     return CACFTimingFunctionGetFunctionWithName(kCACFTimingFunctionLinear);
 }
 
-PassRefPtr<PlatformCAAnimation> PlatformCAAnimationWin::create(AnimationType type, const String& keyPath)
+Ref<PlatformCAAnimation> PlatformCAAnimationWin::create(AnimationType type, const String& keyPath)
 {
-    return adoptRef(new PlatformCAAnimationWin(type, keyPath));
+    return adoptRef(*new PlatformCAAnimationWin(type, keyPath));
 }
 
-PassRefPtr<PlatformCAAnimation> PlatformCAAnimationWin::create(PlatformAnimationRef animation)
+Ref<PlatformCAAnimation> PlatformCAAnimationWin::create(PlatformAnimationRef animation)
 {
-    return adoptRef(new PlatformCAAnimationWin(animation));
+    return adoptRef(*new PlatformCAAnimationWin(animation));
 }
 
 PlatformCAAnimationWin::PlatformCAAnimationWin(AnimationType type, const String& keyPath)
@@ -177,9 +177,9 @@ PlatformCAAnimationWin::PlatformCAAnimationWin(PlatformAnimationRef animation)
     m_animation = animation;
 }
 
-PassRefPtr<PlatformCAAnimation> PlatformCAAnimationWin::copy() const
+Ref<PlatformCAAnimation> PlatformCAAnimationWin::copy() const
 {
-    RefPtr<PlatformCAAnimation> animation = create(animationType(), keyPath());
+    auto animation = create(animationType(), keyPath());
     
     animation->setBeginTime(beginTime());
     animation->setDuration(duration());

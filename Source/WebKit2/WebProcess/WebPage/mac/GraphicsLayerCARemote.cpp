@@ -42,7 +42,7 @@ bool GraphicsLayerCARemote::filtersCanBeComposited(const FilterOperations& filte
     return PlatformCALayerRemote::filtersCanBeComposited(filters);
 }
 
-PassRefPtr<PlatformCALayer> GraphicsLayerCARemote::createPlatformCALayer(PlatformCALayer::LayerType layerType, PlatformCALayerClient* owner)
+Ref<PlatformCALayer> GraphicsLayerCARemote::createPlatformCALayer(PlatformCALayer::LayerType layerType, PlatformCALayerClient* owner)
 {
     auto result = PlatformCALayerRemote::create(layerType, owner, m_context);
 
@@ -52,12 +52,12 @@ PassRefPtr<PlatformCALayer> GraphicsLayerCARemote::createPlatformCALayer(Platfor
     return WTFMove(result);
 }
 
-PassRefPtr<PlatformCALayer> GraphicsLayerCARemote::createPlatformCALayer(PlatformLayer* platformLayer, PlatformCALayerClient* owner)
+Ref<PlatformCALayer> GraphicsLayerCARemote::createPlatformCALayer(PlatformLayer* platformLayer, PlatformCALayerClient* owner)
 {
     return PlatformCALayerRemote::create(platformLayer, owner, m_context);
 }
 
-PassRefPtr<PlatformCAAnimation> GraphicsLayerCARemote::createPlatformCAAnimation(PlatformCAAnimation::AnimationType type, const String& keyPath)
+Ref<PlatformCAAnimation> GraphicsLayerCARemote::createPlatformCAAnimation(PlatformCAAnimation::AnimationType type, const String& keyPath)
 {
     return PlatformCAAnimationRemote::create(type, keyPath);
 }

@@ -45,7 +45,7 @@
 #include "SourceBufferPrivateGStreamer.h"
 #include "TimeRanges.h"
 #include "WebKitMediaSourceGStreamer.h"
-#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
 #include <wtf/glib/GRefPtr.h>
 
 namespace WebCore {

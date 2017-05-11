@@ -34,7 +34,7 @@ namespace WebCore {
 
 class WKCACFViewLayerTreeHost : public CACFLayerTreeHost {
 public:
-    static PassRefPtr<WKCACFViewLayerTreeHost> create();
+    static RefPtr<WKCACFViewLayerTreeHost> create();
 
     virtual bool createRenderer();
 

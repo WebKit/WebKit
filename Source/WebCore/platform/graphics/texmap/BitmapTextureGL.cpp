@@ -33,8 +33,8 @@
 #include "TextureMapperShaderProgram.h"
 #include "Timer.h"
 #include <wtf/HashMap.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 
 #if USE(CAIRO)
 #include "CairoUtilities.h"
@@ -214,7 +214,7 @@ static unsigned getPassesRequiredForFilter(FilterOperation::OperationType type)
     }
 }
 
-PassRefPtr<BitmapTexture> BitmapTextureGL::applyFilters(TextureMapper& textureMapper, const FilterOperations& filters)
+RefPtr<BitmapTexture> BitmapTextureGL::applyFilters(TextureMapper& textureMapper, const FilterOperations& filters)
 {
     if (filters.isEmpty())
         return this;
@@ -241,7 +241,7 @@ PassRefPtr<BitmapTexture> BitmapTextureGL::applyFilters(TextureMapper& textureMa
             }
 
             if (last) {
-                toBitmapTextureGL(resultSurface.get())->m_filterInfo = BitmapTextureGL::FilterInfo(filter, j, spareSurface);
+                toBitmapTextureGL(resultSurface.get())->m_filterInfo = BitmapTextureGL::FilterInfo(filter.copyRef(), j, spareSurface.copyRef());
                 break;
             }
 

@@ -120,17 +120,17 @@ RefPtr<Image> CSSFilterImageValue::image(RenderElement* renderer, const FloatSiz
     ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
     auto* cachedImage = cachedImageForCSSValue(m_imageValue, renderer->document().cachedResourceLoader(), options);
     if (!cachedImage)
-        return Image::nullImage();
+        return &Image::nullImage();
 
     auto* image = cachedImage->imageForRenderer(renderer);
     if (!image)
-        return Image::nullImage();
+        return &Image::nullImage();
 
     // Transform Image into ImageBuffer.
     // FIXME (149424): This buffer should not be unconditionally unaccelerated.
     auto texture = ImageBuffer::create(size, Unaccelerated);
     if (!texture)
-        return Image::nullImage();
+        return &Image::nullImage();
 
     auto imageRect = FloatRect { { }, size };
     texture->context().drawImage(*image, imageRect);
@@ -140,7 +140,7 @@ RefPtr<Image> CSSFilterImageValue::image(RenderElement* renderer, const FloatSiz
     filterRenderer->setSourceImageRect(imageRect);
     filterRenderer->setFilterRegion(imageRect);
     if (!filterRenderer->build(*renderer, m_filterOperations, FilterFunction))
-        return Image::nullImage();
+        return &Image::nullImage();
     filterRenderer->apply();
 
     return filterRenderer->output()->copyImage();

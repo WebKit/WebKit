@@ -72,12 +72,12 @@ void ReferenceFilterOperation::loadExternalDocumentIfNeeded(CachedResourceLoader
     m_cachedSVGDocumentReference->load(cachedResourceLoader, options);
 }
 
-void ReferenceFilterOperation::setFilterEffect(PassRefPtr<FilterEffect> filterEffect)
+void ReferenceFilterOperation::setFilterEffect(RefPtr<FilterEffect>&& filterEffect)
 {
-    m_filterEffect = filterEffect;
+    m_filterEffect = WTFMove(filterEffect);
 }
 
-PassRefPtr<FilterOperation> BasicColorMatrixFilterOperation::blend(const FilterOperation* from, double progress, bool blendToPassthrough)
+RefPtr<FilterOperation> BasicColorMatrixFilterOperation::blend(const FilterOperation* from, double progress, bool blendToPassthrough)
 {
     if (from && !from->isSameType(*this))
         return this;
@@ -113,7 +113,7 @@ double BasicColorMatrixFilterOperation::passthroughAmount() const
     }
 }
 
-PassRefPtr<FilterOperation> BasicComponentTransferFilterOperation::blend(const FilterOperation* from, double progress, bool blendToPassthrough)
+RefPtr<FilterOperation> BasicComponentTransferFilterOperation::blend(const FilterOperation* from, double progress, bool blendToPassthrough)
 {
     if (from && !from->isSameType(*this))
         return this;
@@ -159,7 +159,7 @@ bool BlurFilterOperation::operator==(const FilterOperation& operation) const
     return m_stdDeviation == downcast<BlurFilterOperation>(operation).stdDeviation();
 }
     
-PassRefPtr<FilterOperation> BlurFilterOperation::blend(const FilterOperation* from, double progress, bool blendToPassthrough)
+RefPtr<FilterOperation> BlurFilterOperation::blend(const FilterOperation* from, double progress, bool blendToPassthrough)
 {
     if (from && !from->isSameType(*this))
         return this;
@@ -182,7 +182,7 @@ bool DropShadowFilterOperation::operator==(const FilterOperation& operation) con
     return m_location == other.m_location && m_stdDeviation == other.m_stdDeviation && m_color == other.m_color;
 }
     
-PassRefPtr<FilterOperation> DropShadowFilterOperation::blend(const FilterOperation* from, double progress, bool blendToPassthrough)
+RefPtr<FilterOperation> DropShadowFilterOperation::blend(const FilterOperation* from, double progress, bool blendToPassthrough)
 {
     if (from && !from->isSameType(*this))
         return this;

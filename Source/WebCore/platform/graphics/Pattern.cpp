@@ -31,17 +31,16 @@
 
 namespace WebCore {
 
-Ref<Pattern> Pattern::create(PassRefPtr<Image> tileImage, bool repeatX, bool repeatY)
+Ref<Pattern> Pattern::create(Ref<Image>&& tileImage, bool repeatX, bool repeatY)
 {
-    return adoptRef(*new Pattern(tileImage, repeatX, repeatY));
+    return adoptRef(*new Pattern(WTFMove(tileImage), repeatX, repeatY));
 }
 
-Pattern::Pattern(PassRefPtr<Image> image, bool repeatX, bool repeatY)
-    : m_tileImage(image)
+Pattern::Pattern(Ref<Image>&& image, bool repeatX, bool repeatY)
+    : m_tileImage(WTFMove(image))
     , m_repeatX(repeatX)
     , m_repeatY(repeatY)
 {
-    ASSERT(m_tileImage);
 }
 
 Pattern::~Pattern()

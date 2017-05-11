@@ -52,7 +52,7 @@ public:
         virtual bool imageBackingVisible() = 0;
     };
 
-    static PassRefPtr<CoordinatedImageBacking> create(Client*, PassRefPtr<Image>);
+    static Ref<CoordinatedImageBacking> create(Client&, Ref<Image>&&);
     virtual ~CoordinatedImageBacking();
 
     static CoordinatedImageBackingID getCoordinatedImageBackingID(Image*);
@@ -68,7 +68,7 @@ public:
     void update();
 
 private:
-    CoordinatedImageBacking(Client*, PassRefPtr<Image>);
+    CoordinatedImageBacking(Client&, Ref<Image>&&);
 
     void releaseSurfaceIfNeeded();
     void updateVisibilityIfNeeded(bool& changedToVisible);

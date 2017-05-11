@@ -93,20 +93,15 @@ void MediaPlayerPrivateFullscreenWindow::createWindow(HWND parentHwnd)
 }
 
 #if USE(CA)
-void MediaPlayerPrivateFullscreenWindow::setRootChildLayer(PassRefPtr<PlatformCALayer> rootChild)
+void MediaPlayerPrivateFullscreenWindow::setRootChildLayer(Ref<PlatformCALayer>&& rootChild)
 {
-    if (m_rootChild == rootChild)
+    if (m_rootChild == rootChild.ptr())
         return;
 
     if (m_rootChild)
         m_rootChild->removeFromSuperlayer();
 
-    m_rootChild = rootChild;
-
-    if (!m_rootChild) {
-        m_layerTreeHost = nullptr;
-        return;
-    }
+    m_rootChild = WTFMove(rootChild);
 
     if (!m_layerTreeHost) {
         m_layerTreeHost = CACFLayerTreeHost::create();

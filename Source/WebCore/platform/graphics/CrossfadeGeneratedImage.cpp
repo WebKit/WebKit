@@ -72,7 +72,7 @@ static void drawCrossfadeSubimage(GraphicsContext& context, Image& image, Compos
 void CrossfadeGeneratedImage::drawCrossfade(GraphicsContext& context)
 {
     // Draw nothing if either of the images hasn't loaded yet.
-    if (m_fromImage.ptr() == Image::nullImage() || m_toImage.ptr() == Image::nullImage())
+    if (m_fromImage.ptr() == &Image::nullImage() || m_toImage.ptr() == &Image::nullImage())
         return;
 
     GraphicsContextStateSaver stateSaver(context);

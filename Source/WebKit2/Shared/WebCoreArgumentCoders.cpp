@@ -964,7 +964,7 @@ bool ArgumentCoder<Cursor>::decode(Decoder& decoder, Cursor& cursor)
         return false;
 
     if (!isValidImagePresent) {
-        cursor = Cursor(Image::nullImage(), IntPoint());
+        cursor = Cursor(&Image::nullImage(), IntPoint());
         return true;
     }
 

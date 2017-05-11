@@ -58,7 +58,7 @@ public:
     void setStreamSession(AVStreamSession*);
 
 protected:
-    PassRefPtr<Uint8Array> generateKeyReleaseMessage(unsigned short& errorCode, uint32_t& systemCode);
+    RefPtr<Uint8Array> generateKeyReleaseMessage(unsigned short& errorCode, uint32_t& systemCode);
 
     WeakPtrFactory<CDMSessionAVStreamSession> m_weakPtrFactory;
     RetainPtr<AVStreamSession> m_streamSession;

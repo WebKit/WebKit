@@ -48,9 +48,9 @@ SOFT_LINK_CLASS(AVFoundation, AVMediaSelectionOption)
 
 namespace WebCore {
 
-PassRefPtr<MediaSelectionOptionAVFObjC> MediaSelectionOptionAVFObjC::create(MediaSelectionGroupAVFObjC& group, AVMediaSelectionOption *option)
+Ref<MediaSelectionOptionAVFObjC> MediaSelectionOptionAVFObjC::create(MediaSelectionGroupAVFObjC& group, AVMediaSelectionOption *option)
 {
-    return adoptRef(new MediaSelectionOptionAVFObjC(group, option));
+    return adoptRef(*new MediaSelectionOptionAVFObjC(group, option));
 }
 
 MediaSelectionOptionAVFObjC::MediaSelectionOptionAVFObjC(MediaSelectionGroupAVFObjC& group, AVMediaSelectionOption *option)
@@ -85,9 +85,9 @@ int MediaSelectionOptionAVFObjC::index() const
     return [[m_group->avMediaSelectionGroup() options] indexOfObject:m_mediaSelectionOption.get()];
 }
 
-PassRefPtr<MediaSelectionGroupAVFObjC> MediaSelectionGroupAVFObjC::create(AVPlayerItem *item, AVMediaSelectionGroup *group, const Vector<String>& characteristics)
+Ref<MediaSelectionGroupAVFObjC> MediaSelectionGroupAVFObjC::create(AVPlayerItem *item, AVMediaSelectionGroup *group, const Vector<String>& characteristics)
 {
-    return adoptRef(new MediaSelectionGroupAVFObjC(item, group, characteristics));
+    return adoptRef(*new MediaSelectionGroupAVFObjC(item, group, characteristics));
 }
 
 MediaSelectionGroupAVFObjC::MediaSelectionGroupAVFObjC(AVPlayerItem *item, AVMediaSelectionGroup *group, const Vector<String>& characteristics)
@@ -130,7 +130,7 @@ void MediaSelectionGroupAVFObjC::updateOptions(const Vector<String>& characteris
     for (AVMediaSelectionOption* addedAVOption in addedAVOptions.get()) {
         auto addedOption = MediaSelectionOptionAVFObjC::create(*this, addedAVOption);
         if (addedAVOption == selectedOption)
-            m_selectedOption = addedOption.get();
+            m_selectedOption = addedOption.ptr();
         m_options.set(addedAVOption, WTFMove(addedOption));
     }
 

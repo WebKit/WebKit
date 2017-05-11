@@ -142,7 +142,7 @@ bool FilterEffectRenderer::build(RenderElement& renderer, const FilterOperations
         case FilterOperation::REFERENCE: {
             auto& referenceOperation = downcast<ReferenceFilterOperation>(filterOperation);
             effect = buildReferenceFilter(renderer, *previousEffect, referenceOperation);
-            referenceOperation.setFilterEffect(effect);
+            referenceOperation.setFilterEffect(effect.copyRef());
             break;
         }
         case FilterOperation::GRAYSCALE: {

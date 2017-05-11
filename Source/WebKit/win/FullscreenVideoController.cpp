@@ -286,7 +286,7 @@ void FullscreenVideoController::enterFullscreen()
     ::ShowWindow(m_fullscreenWindow->hwnd(), SW_SHOW);
 
 #if USE(CA)
-    m_fullscreenWindow->setRootChildLayer(m_rootChild);
+    m_fullscreenWindow->setRootChildLayer(*m_rootChild);
 
     PlatformCALayer* videoLayer = PlatformCALayer::platformCALayer(m_videoElement->platformLayer());
     ASSERT(videoLayer);

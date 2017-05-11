@@ -38,9 +38,9 @@ namespace WebCore {
 
 class InbandTextTrackPrivateAVFObjC : public InbandTextTrackPrivateAVF {
 public:
-    static PassRefPtr<InbandTextTrackPrivateAVFObjC> create(AVFInbandTrackParent* player,  AVMediaSelectionOption *selection, InbandTextTrackPrivate::CueFormat format)
+    static Ref<InbandTextTrackPrivateAVFObjC> create(AVFInbandTrackParent* player,  AVMediaSelectionOption *selection, InbandTextTrackPrivate::CueFormat format)
     {
-        return adoptRef(new InbandTextTrackPrivateAVFObjC(player, selection, format));
+        return adoptRef(*new InbandTextTrackPrivateAVFObjC(player, selection, format));
     }
 
     ~InbandTextTrackPrivateAVFObjC() { }

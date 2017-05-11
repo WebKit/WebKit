@@ -78,7 +78,7 @@ Image* SVGImageCache::imageForRenderer(const RenderObject* renderer) const
 {
     auto* image = findImageForRenderer(renderer);
     if (!image)
-        return Image::nullImage();
+        return &Image::nullImage();
     ASSERT(!image->size().isEmpty());
     return image;
 }

@@ -51,7 +51,7 @@ public:
     virtual bool isPlatformCAAnimationWin() const { return false; }
     virtual bool isPlatformCAAnimationRemote() const { return false; }
     
-    virtual PassRefPtr<PlatformCAAnimation> copy() const = 0;
+    virtual Ref<PlatformCAAnimation> copy() const = 0;
     
     AnimationType animationType() const { return m_type; }
     virtual String keyPath() const = 0;

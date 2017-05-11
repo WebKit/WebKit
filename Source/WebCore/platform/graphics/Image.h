@@ -36,7 +36,6 @@
 #include "ImageTypes.h"
 #include "NativeImage.h"
 #include <wtf/Optional.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
@@ -79,8 +78,7 @@ class Image : public RefCounted<Image> {
 public:
     virtual ~Image();
     
-    static PassRefPtr<Image> create(ImageObserver* = nullptr);
-    WEBCORE_EXPORT static PassRefPtr<Image> loadPlatformResource(const char* name);
+    WEBCORE_EXPORT static Ref<Image> loadPlatformResource(const char* name);
     WEBCORE_EXPORT static bool supportsType(const String&);
 
     virtual bool isBitmapImage() const { return false; }
@@ -98,7 +96,7 @@ public:
     // the image contains only resources from its own security origin.
     virtual bool hasSingleSecurityOrigin() const { return false; }
 
-    WEBCORE_EXPORT static Image* nullImage();
+    WEBCORE_EXPORT static Image& nullImage();
     bool isNull() const { return size().isEmpty(); }
 
     virtual void setContainerSize(const FloatSize&) { }

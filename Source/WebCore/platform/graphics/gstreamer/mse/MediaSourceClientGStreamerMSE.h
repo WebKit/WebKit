@@ -51,7 +51,7 @@ public:
     bool append(RefPtr<SourceBufferPrivateGStreamer>, const unsigned char*, unsigned);
     void removedFromMediaSource(RefPtr<SourceBufferPrivateGStreamer>);
     void flush(AtomicString);
-    void enqueueSample(PassRefPtr<MediaSample>);
+    void enqueueSample(Ref<MediaSample>&&);
 
     void clearPlayerPrivate();
 

@@ -30,7 +30,7 @@
 #include "CachedRawResourceClient.h"
 #include "CachedResourceHandle.h"
 #include <wtf/Noncopyable.h>
-#include <wtf/PassRefPtr.h>
+#include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
 
@@ -45,7 +45,7 @@ class MediaPlayerPrivateAVFoundationObjC;
 class WebCoreAVFResourceLoader : public RefCounted<WebCoreAVFResourceLoader>, CachedRawResourceClient {
     WTF_MAKE_NONCOPYABLE(WebCoreAVFResourceLoader); WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassRefPtr<WebCoreAVFResourceLoader> create(MediaPlayerPrivateAVFoundationObjC* parent, AVAssetResourceLoadingRequest *);
+    static Ref<WebCoreAVFResourceLoader> create(MediaPlayerPrivateAVFoundationObjC* parent, AVAssetResourceLoadingRequest *);
     virtual ~WebCoreAVFResourceLoader();
 
     void startLoading();

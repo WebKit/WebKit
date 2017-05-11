@@ -37,9 +37,9 @@
 
 namespace WebCore {
 
-PassRefPtr<InbandMetadataTextTrackPrivateAVF> InbandMetadataTextTrackPrivateAVF::create(InbandTextTrackPrivate::Kind kind, InbandTextTrackPrivate::CueFormat cueFormat, const AtomicString& id)
+Ref<InbandMetadataTextTrackPrivateAVF> InbandMetadataTextTrackPrivateAVF::create(InbandTextTrackPrivate::Kind kind, InbandTextTrackPrivate::CueFormat cueFormat, const AtomicString& id)
 {
-    return adoptRef(new InbandMetadataTextTrackPrivateAVF(kind, cueFormat, id));
+    return adoptRef(*new InbandMetadataTextTrackPrivateAVF(kind, cueFormat, id));
 }
 
 InbandMetadataTextTrackPrivateAVF::InbandMetadataTextTrackPrivateAVF(InbandTextTrackPrivate::Kind kind, InbandTextTrackPrivate::CueFormat cueFormat, const AtomicString& id)
@@ -55,7 +55,7 @@ InbandMetadataTextTrackPrivateAVF::~InbandMetadataTextTrackPrivateAVF()
 
 #if ENABLE(DATACUE_VALUE)
 
-void InbandMetadataTextTrackPrivateAVF::addDataCue(const MediaTime& start, const MediaTime& end, PassRefPtr<SerializedPlatformRepresentation> prpCueData, const String& type)
+void InbandMetadataTextTrackPrivateAVF::addDataCue(const MediaTime& start, const MediaTime& end, Ref<SerializedPlatformRepresentation>&& cueData, const String& type)
 {
     ASSERT(cueFormat() == Data);
     ASSERT(start >= MediaTime::zeroTime());
@@ -63,11 +63,10 @@ void InbandMetadataTextTrackPrivateAVF::addDataCue(const MediaTime& start, const
     if (!client())
         return;
 
-    RefPtr<SerializedPlatformRepresentation> cueData = prpCueData;
     m_currentCueStartTime = start;
     if (end.isPositiveInfinite())
-        m_incompleteCues.append(IncompleteMetaDataCue { cueData.get(), start });
-    client()->addDataCue(start, end, cueData.releaseNonNull(), type);
+        m_incompleteCues.append(IncompleteMetaDataCue { cueData.ptr(), start });
+    client()->addDataCue(start, end, WTFMove(cueData), type);
 }
 
 void InbandMetadataTextTrackPrivateAVF::updatePendingCueEndTimes(const MediaTime& time)

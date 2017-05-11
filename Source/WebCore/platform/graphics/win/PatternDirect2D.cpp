@@ -54,7 +54,7 @@ ID2D1BitmapBrush* Pattern::createPlatformPattern(const GraphicsContext& context,
     RELEASE_ASSERT(platformContext);
 
     ID2D1BitmapBrush* patternBrush = nullptr;
-    HRESULT hr = platformContext->CreateBitmapBrush(patternImage->nativeImage(&context).get(), &bitmapBrushProperties, &brushProperties, &patternBrush);
+    HRESULT hr = platformContext->CreateBitmapBrush(patternImage.nativeImage(&context).get(), &bitmapBrushProperties, &brushProperties, &patternBrush);
     ASSERT(SUCCEEDED(hr));
     return patternBrush;
 }

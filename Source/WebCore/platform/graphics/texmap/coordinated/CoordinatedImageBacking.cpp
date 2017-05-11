@@ -57,14 +57,14 @@ CoordinatedImageBackingID CoordinatedImageBacking::getCoordinatedImageBackingID(
     return reinterpret_cast<CoordinatedImageBackingID>(image);
 }
 
-PassRefPtr<CoordinatedImageBacking> CoordinatedImageBacking::create(Client* client, PassRefPtr<Image> image)
+Ref<CoordinatedImageBacking> CoordinatedImageBacking::create(Client& client, Ref<Image>&& image)
 {
-    return adoptRef(new CoordinatedImageBacking(client, image));
+    return adoptRef(*new CoordinatedImageBacking(client, WTFMove(image)));
 }
 
-CoordinatedImageBacking::CoordinatedImageBacking(Client* client, PassRefPtr<Image> image)
-    : m_client(client)
-    , m_image(image)
+CoordinatedImageBacking::CoordinatedImageBacking(Client& client, Ref<Image>&& image)
+    : m_client(&client)
+    , m_image(WTFMove(image))
     , m_id(getCoordinatedImageBackingID(m_image.get()))
     , m_clearContentsTimer(*this, &CoordinatedImageBacking::clearContentsTimerFired)
     , m_isDirty(false)

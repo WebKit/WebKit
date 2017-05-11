@@ -48,9 +48,9 @@ class ImageBuffer;
 
 class PDFDocumentImage final : public Image {
 public:
-    static PassRefPtr<PDFDocumentImage> create(ImageObserver* observer)
+    static Ref<PDFDocumentImage> create(ImageObserver* observer)
     {
-        return adoptRef(new PDFDocumentImage(observer));
+        return adoptRef(*new PDFDocumentImage(observer));
     }
 
     void setPdfImageCachingPolicy(PDFImageCachingPolicy);

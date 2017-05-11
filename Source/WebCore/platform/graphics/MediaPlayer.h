@@ -528,7 +528,7 @@ public:
     long platformErrorCode() const;
 
     CachedResourceLoader* cachedResourceLoader();
-    PassRefPtr<PlatformMediaResourceLoader> createResourceLoader();
+    RefPtr<PlatformMediaResourceLoader> createResourceLoader();
 
 #if ENABLE(VIDEO_TRACK)
     void addAudioTrack(AudioTrackPrivate&);

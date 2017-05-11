@@ -59,16 +59,16 @@ public:
     void updateContentsNoSwizzle(const void*, const IntRect& target, const IntPoint& sourceOffset, int bytesPerLine, unsigned bytesPerPixel = 4, Platform3DObject glFormat = GraphicsContext3D::RGBA);
     bool isBackedByOpenGL() const override { return true; }
 
-    PassRefPtr<BitmapTexture> applyFilters(TextureMapper&, const FilterOperations&) override;
+    RefPtr<BitmapTexture> applyFilters(TextureMapper&, const FilterOperations&) override;
     struct FilterInfo {
         RefPtr<FilterOperation> filter;
         unsigned pass;
         RefPtr<BitmapTexture> contentTexture;
 
-        FilterInfo(PassRefPtr<FilterOperation> f = 0, unsigned p = 0, PassRefPtr<BitmapTexture> t = 0)
-            : filter(f)
+        FilterInfo(RefPtr<FilterOperation>&& f = nullptr, unsigned p = 0, RefPtr<BitmapTexture>&& t = nullptr)
+            : filter(WTFMove(f))
             , pass(p)
-            , contentTexture(t)
+            , contentTexture(WTFMove(t))
             { }
     };
     const FilterInfo* filterInfo() const { return &m_filterInfo; }

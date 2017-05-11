@@ -58,7 +58,7 @@ public:
 
 #if USE(CA)
     PlatformCALayer* rootChildLayer() const { return m_rootChild.get(); }
-    void setRootChildLayer(PassRefPtr<PlatformCALayer>);
+    void setRootChildLayer(Ref<PlatformCALayer>&&);
 #endif
 
 private:

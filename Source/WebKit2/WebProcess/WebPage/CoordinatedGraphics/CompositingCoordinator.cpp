@@ -211,11 +211,11 @@ void CompositingCoordinator::syncLayerState(CoordinatedLayerID id, CoordinatedGr
     m_state.layersToUpdate.append(std::make_pair(id, state));
 }
 
-Ref<CoordinatedImageBacking> CompositingCoordinator::createImageBackingIfNeeded(Image* image)
+Ref<CoordinatedImageBacking> CompositingCoordinator::createImageBackingIfNeeded(Image& image)
 {
-    CoordinatedImageBackingID imageID = CoordinatedImageBacking::getCoordinatedImageBackingID(image);
-    auto addResult = m_imageBackings.ensure(imageID, [this, image] {
-        return CoordinatedImageBacking::create(this, image);
+    CoordinatedImageBackingID imageID = CoordinatedImageBacking::getCoordinatedImageBackingID(&image);
+    auto addResult = m_imageBackings.ensure(imageID, [this, &image] {
+        return CoordinatedImageBacking::create(*this, image);
     });
     return *addResult.iterator->value;
 }

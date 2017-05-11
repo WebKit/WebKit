@@ -65,7 +65,7 @@ static void patternReleaseCallback(void* info)
 
 CGPatternRef Pattern::createPlatformPattern(const AffineTransform& userSpaceTransformation) const
 {
-    FloatRect tileRect = tileImage()->rect();
+    FloatRect tileRect = tileImage().rect();
 
     AffineTransform patternTransform = userSpaceTransformation * m_patternSpaceTransformation;
     patternTransform.scaleNonUniform(1, -1);
@@ -74,7 +74,7 @@ CGPatternRef Pattern::createPlatformPattern(const AffineTransform& userSpaceTran
     // If we're repeating in both directions, we can use image-backed patterns
     // instead of custom patterns, and avoid tiling-edge pixel cracks.
     if (m_repeatX && m_repeatY)
-        return wkCGPatternCreateWithImageAndTransform(tileImage()->nativeImage().get(), patternTransform, wkPatternTilingConstantSpacing);
+        return wkCGPatternCreateWithImageAndTransform(tileImage().nativeImage().get(), patternTransform, wkPatternTilingConstantSpacing);
 
     // If FLT_MAX should also be used for xStep or yStep, nothing is rendered. Using fractions of FLT_MAX also
     // result in nothing being rendered.
@@ -85,7 +85,7 @@ CGPatternRef Pattern::createPlatformPattern(const AffineTransform& userSpaceTran
     CGFloat yStep = m_repeatY ? tileRect.height() : (1 << 22);
 
     // The pattern will release the CGImageRef when it's done rendering in patternReleaseCallback
-    CGImageRef platformImage = tileImage()->nativeImage().leakRef();
+    CGImageRef platformImage = tileImage().nativeImage().leakRef();
 
     const CGPatternCallbacks patternCallbacks = { 0, patternCallback, patternReleaseCallback };
     return CGPatternCreate(platformImage, tileRect, patternTransform, xStep, yStep, kCGPatternTilingConstantSpacing, TRUE, &patternCallbacks);

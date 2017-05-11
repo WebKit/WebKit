@@ -30,8 +30,8 @@
 #include "IntPoint.h"
 #include "IntRect.h"
 #include "IntSize.h"
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
@@ -84,7 +84,7 @@ public:
     inline int numberOfBytes() const { return size().width() * size().height() * bpp() >> 3; }
     inline bool isOpaque() const { return !(m_flags & SupportsAlpha); }
 
-    virtual PassRefPtr<BitmapTexture> applyFilters(TextureMapper&, const FilterOperations&) { return this; }
+    virtual RefPtr<BitmapTexture> applyFilters(TextureMapper&, const FilterOperations&) { return this; }
 
 protected:
     IntSize m_contentSize;

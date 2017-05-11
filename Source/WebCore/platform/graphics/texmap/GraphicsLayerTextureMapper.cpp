@@ -468,7 +468,7 @@ void GraphicsLayerTextureMapper::commitLayerChanges()
         m_layer.setFilters(filters());
 
     if (m_changeMask & BackingStoreChange)
-        m_layer.setBackingStore(m_backingStore);
+        m_layer.setBackingStore(m_backingStore.copyRef());
 
     if (m_changeMask & DebugVisualsChange)
         m_layer.setDebugVisuals(isShowingDebugBorder(), debugBorderColor(), debugBorderWidth(), isShowingRepaintCounter());

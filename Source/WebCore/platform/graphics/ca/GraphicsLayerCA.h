@@ -219,9 +219,9 @@ private:
 
     WEBCORE_EXPORT void layerDidDisplay(PlatformCALayer*);
 
-    virtual PassRefPtr<PlatformCALayer> createPlatformCALayer(PlatformCALayer::LayerType, PlatformCALayerClient* owner);
-    virtual PassRefPtr<PlatformCALayer> createPlatformCALayer(PlatformLayer*, PlatformCALayerClient* owner);
-    virtual PassRefPtr<PlatformCAAnimation> createPlatformCAAnimation(PlatformCAAnimation::AnimationType, const String& keyPath);
+    virtual Ref<PlatformCALayer> createPlatformCALayer(PlatformCALayer::LayerType, PlatformCALayerClient* owner);
+    virtual Ref<PlatformCALayer> createPlatformCALayer(PlatformLayer*, PlatformCALayerClient* owner);
+    virtual Ref<PlatformCAAnimation> createPlatformCAAnimation(PlatformCAAnimation::AnimationType, const String& keyPath);
 
     PlatformCALayer* primaryLayer() const { return m_structuralLayer.get() ? m_structuralLayer.get() : m_layer.get(); }
     PlatformCALayer* hostLayerForSublayers() const;
@@ -240,9 +240,9 @@ private:
     bool createFilterAnimationsFromKeyframes(const KeyframeValueList&, const Animation*, const String& animationName, double timeOffset);
 
     // Return autoreleased animation (use RetainPtr?)
-    PassRefPtr<PlatformCAAnimation> createBasicAnimation(const Animation*, const String& keyPath, bool additive);
-    PassRefPtr<PlatformCAAnimation> createKeyframeAnimation(const Animation*, const String&, bool additive);
-    RefPtr<PlatformCAAnimation> createSpringAnimation(const Animation*, const String&, bool additive);
+    Ref<PlatformCAAnimation> createBasicAnimation(const Animation*, const String& keyPath, bool additive);
+    Ref<PlatformCAAnimation> createKeyframeAnimation(const Animation*, const String&, bool additive);
+    Ref<PlatformCAAnimation> createSpringAnimation(const Animation*, const String&, bool additive);
     void setupAnimation(PlatformCAAnimation*, const Animation*, bool additive);
     
     const TimingFunction& timingFunctionForAnimationValue(const AnimationValue&, const Animation&);
@@ -366,13 +366,13 @@ private:
         Vector<ReplicaBranchType> m_replicaBranches;
         size_t m_replicaDepth;
     };
-    PassRefPtr<PlatformCALayer>replicatedLayerRoot(ReplicaState&);
+    RefPtr<PlatformCALayer>replicatedLayerRoot(ReplicaState&);
 
     enum CloneLevel { RootCloneLevel, IntermediateCloneLevel };
-    PassRefPtr<PlatformCALayer> fetchCloneLayers(GraphicsLayer* replicaRoot, ReplicaState&, CloneLevel);
+    RefPtr<PlatformCALayer> fetchCloneLayers(GraphicsLayer* replicaRoot, ReplicaState&, CloneLevel);
     
-    PassRefPtr<PlatformCALayer> cloneLayer(PlatformCALayer *, CloneLevel);
-    PassRefPtr<PlatformCALayer> findOrMakeClone(CloneID, PlatformCALayer *, LayerMap*, CloneLevel);
+    Ref<PlatformCALayer> cloneLayer(PlatformCALayer *, CloneLevel);
+    RefPtr<PlatformCALayer> findOrMakeClone(CloneID, PlatformCALayer *, LayerMap*, CloneLevel);
 
     void ensureCloneLayers(CloneID, RefPtr<PlatformCALayer>& primaryLayer, RefPtr<PlatformCALayer>& structuralLayer,
         RefPtr<PlatformCALayer>& contentsLayer, RefPtr<PlatformCALayer>& contentsClippingLayer, RefPtr<PlatformCALayer>& contentsShapeMaskLayer,
@@ -560,8 +560,8 @@ private:
     // This represents the animation of a single property. There may be multiple transform animations for
     // a single transition or keyframe animation, so index is used to distinguish these.
     struct LayerPropertyAnimation {
-        LayerPropertyAnimation(PassRefPtr<PlatformCAAnimation> caAnimation, const String& animationName, AnimatedPropertyID property, int index, int subIndex, double timeOffset)
-            : m_animation(caAnimation)
+        LayerPropertyAnimation(Ref<PlatformCAAnimation>&& caAnimation, const String& animationName, AnimatedPropertyID property, int index, int subIndex, double timeOffset)
+            : m_animation(WTFMove(caAnimation))
             , m_name(animationName)
             , m_property(property)
             , m_index(index)

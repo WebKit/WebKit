@@ -32,11 +32,11 @@ TextureMapper::TextureMapper() = default;
 
 TextureMapper::~TextureMapper() = default;
 
-PassRefPtr<BitmapTexture> TextureMapper::acquireTextureFromPool(const IntSize& size, const BitmapTexture::Flags flags)
+RefPtr<BitmapTexture> TextureMapper::acquireTextureFromPool(const IntSize& size, const BitmapTexture::Flags flags)
 {
     RefPtr<BitmapTexture> selectedTexture = m_texturePool->acquireTexture(size, flags);
     selectedTexture->reset(size, flags);
-    return selectedTexture.release();
+    return selectedTexture;
 }
 
 std::unique_ptr<TextureMapper> TextureMapper::create()

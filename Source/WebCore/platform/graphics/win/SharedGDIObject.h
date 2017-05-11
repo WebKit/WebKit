@@ -26,7 +26,7 @@
 #ifndef SharedGDIObject_h
 #define SharedGDIObject_h
 
-#include <wtf/PassRefPtr.h>
+#include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/win/GDIObject.h>
 
@@ -34,9 +34,9 @@ namespace WebCore {
 
 template <typename T> class SharedGDIObject : public RefCounted<SharedGDIObject<T>> {
 public:
-    static PassRefPtr<SharedGDIObject> create(GDIObject<T> object)
+    static Ref<SharedGDIObject> create(GDIObject<T> object)
     {
-        return adoptRef(new SharedGDIObject<T>(WTFMove(object)));
+        return adoptRef(*new SharedGDIObject<T>(WTFMove(object)));
     }
 
     T get() const

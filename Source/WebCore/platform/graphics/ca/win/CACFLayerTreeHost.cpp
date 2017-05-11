@@ -121,7 +121,7 @@ bool CACFLayerTreeHost::acceleratedCompositingAvailable()
     return available;
 }
 
-PassRefPtr<CACFLayerTreeHost> CACFLayerTreeHost::create()
+RefPtr<CACFLayerTreeHost> CACFLayerTreeHost::create()
 {
     if (!acceleratedCompositingAvailable())
         return nullptr;
@@ -208,9 +208,9 @@ PlatformCALayer* CACFLayerTreeHost::rootLayer() const
     return m_rootLayer.get();
 }
 
-void CACFLayerTreeHost::addPendingAnimatedLayer(PassRefPtr<PlatformCALayer> layer)
+void CACFLayerTreeHost::addPendingAnimatedLayer(PlatformCALayer& layer)
 {
-    m_pendingAnimatedLayers.add(layer);
+    m_pendingAnimatedLayers.add(&layer);
 }
 
 void CACFLayerTreeHost::setRootChildLayer(PlatformCALayer* layer)

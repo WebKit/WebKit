@@ -46,7 +46,7 @@ class CoordinatedGraphicsLayerClient {
 public:
     virtual bool isFlushingLayerChanges() const = 0;
     virtual FloatRect visibleContentsRect() const = 0;
-    virtual Ref<CoordinatedImageBacking> createImageBackingIfNeeded(Image*) = 0;
+    virtual Ref<CoordinatedImageBacking> createImageBackingIfNeeded(Image&) = 0;
     virtual void detachLayer(CoordinatedGraphicsLayer*) = 0;
     virtual bool paintToSurface(const IntSize&, CoordinatedSurface::Flags, uint32_t& atlasID, IntPoint&, CoordinatedSurface::Client&) = 0;
 

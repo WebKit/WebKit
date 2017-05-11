@@ -54,11 +54,11 @@ Image::~Image()
 {
 }
 
-Image* Image::nullImage()
+Image& Image::nullImage()
 {
     ASSERT(isMainThread());
     static Image& nullImage = BitmapImage::create().leakRef();
-    return &nullImage;
+    return nullImage;
 }
 
 bool Image::supportsType(const String& type)
