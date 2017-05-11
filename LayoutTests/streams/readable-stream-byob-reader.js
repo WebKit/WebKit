@@ -57,4 +57,51 @@ test(function() {
         function() { rs.getReader({ mode: 'byob' }); });
 }, "Calling getReader({ mode: 'byob' }) with a ReadableStream whose controller is a ReadableStreamDefaultController should throw a TypeError");
 
+promise_test(function(test) {
+    const rs = new ReadableStream({ type: 'bytes' });
+    const reader = rs.getReader({ mode: 'byob' });
+    let rp = reader.cancel.apply(rs);
+    const myError= new TypeError("Can only call ReadableStreamBYOBReader.cancel() on instances of ReadableStreamBYOBReader");
+
+    return promise_rejects(test, myError, rp);
+}, "Calling ReadableStreamBYOBReader.cancel() with a this object different from ReadableStreamBYOBReader should be rejected");
+
+promise_test(function(test) {
+    let controller;
+
+    const rs = new ReadableStream({
+        start: function(c) {
+            controller = c;
+        },
+        type: "bytes"
+    });
+
+    const reader = rs.getReader({ mode: 'byob' });
+    const myError = new TypeError("Sample error");
+    controller.error(myError);
+    let rp = reader.cancel("Sample reason");
+
+    return promise_rejects(test, myError, rp);
+}, "Calling ReadableStreamBYOBReader.cancel() on a ReadableStream that has been errored should result in a promise rejected with the same error");
+
+promise_test(function(test) {
+    let controller;
+
+    const rs = new ReadableStream({
+        start: function(c) {
+            controller = c;
+        },
+        type: "bytes"
+    });
+
+    const reader = rs.getReader({ mode: 'byob' });
+    controller.close();
+
+    return reader.cancel("Sample reason").then(
+        function(res) {
+            assert_object_equals(res, undefined);
+        }
+    );
+}, "Calling ReadableStreamBYOBReader.cancel() on a ReadableStream that has been closed should result in a promise resolved with undefined");
+
 done();

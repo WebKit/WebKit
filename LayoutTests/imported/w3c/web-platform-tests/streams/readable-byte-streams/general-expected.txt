@@ -35,7 +35,7 @@ FAIL ReadableStream with byte source: read(view), then respond() with too big va
 FAIL ReadableStream with byte source: respond(3) to read(view) with 2 element Uint16Array enqueues the 1 byte remainder ReadableStreamBYOBReader read() is not implemented
 FAIL ReadableStream with byte source: enqueue(), getReader(), then read(view) ReadableStreamBYOBReader read() is not implemented
 PASS ReadableStream with byte source: enqueue(), getReader(), then cancel() (mode = not BYOB) 
-FAIL ReadableStream with byte source: enqueue(), getReader(), then cancel() (mode = BYOB) ReadableStreamBYOBReader cancel() is not implemented
+PASS ReadableStream with byte source: enqueue(), getReader(), then cancel() (mode = BYOB) 
 FAIL ReadableStream with byte source: getReader(), read(view), then cancel() ReadableStreamBYOBReader read() is not implemented
 FAIL ReadableStream with byte source: cancel() with partially filled pending pull() request promise_test: Unhandled rejection with value: object "TypeError: ReadableStreamBYOBReader read() is not implemented"
 FAIL ReadableStream with byte source: enqueue(), getReader(), then read(view) where view.buffer is not fully covered by view ReadableStreamBYOBReader read() is not implemented

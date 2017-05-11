@@ -28,8 +28,13 @@ function cancel(reason)
 {
     "use strict";
 
-    // FIXME: Implement appropriate behavior.
-    @throwTypeError("ReadableStreamBYOBReader cancel() is not implemented");
+    if (!@isReadableStreamBYOBReader(this))
+        return @Promise.@reject(@makeThisTypeError("ReadableStreamBYOBReader", "cancel"));
+
+    if (!this.@ownerReadableStream)
+        return @Promise.@reject(new @TypeError("cancel() called on a reader owned by no readable stream"));
+
+    return @readableStreamReaderGenericCancel(this, reason);
 }
 
 function read(view)

@@ -274,9 +274,13 @@ function readableStreamError(stream, error)
         for (let index = 0, length = requests.length; index < length; ++index)
             requests[index].@reject.@call(@undefined, error);
         reader.@readRequests = [];
-    } else
-        // FIXME: Implement ReadableStreamBYOBReader.
-        @throwTypeError("Only ReadableStreamDefaultReader is currently supported");
+    } else {
+        @assert(@isReadableStreamBYOBReader(reader));
+        const requests = reader.@readIntoRequests;
+        for (let index = 0, length = requests.length; index < length; ++index)
+            requests[index].@reject.@call(@undefined, error);
+        reader.@readIntoRequests = [];
+    }
 
     reader.@closedPromiseCapability.@reject.@call(@undefined, error);
     reader.@closedPromiseCapability.@promise.@promiseIsHandled = true;
