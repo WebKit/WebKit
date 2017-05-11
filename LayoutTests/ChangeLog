@@ -1,3 +1,12 @@
+2017-05-11  Matt Lewis  <jlewis3@apple.com>
+
+        Marked tiled-drawing/scrolling/fast-scroll-iframe-latched-mainframe.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=168937
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2017-05-11  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove Vibration API
