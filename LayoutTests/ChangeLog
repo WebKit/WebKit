@@ -1,3 +1,12 @@
+2017-05-11  Matt Lewis  <jlewis3@apple.com>
+
+        Marked media/media-controls-clone-crash.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=171978
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2017-05-11  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Error trying to delete DOM breakpoints from the Debugger tab
