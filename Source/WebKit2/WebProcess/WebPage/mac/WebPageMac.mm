@@ -74,6 +74,7 @@
 #import <WebCore/MainFrame.h>
 #import <WebCore/NetworkStorageSession.h>
 #import <WebCore/NetworkingContext.h>
+#import <WebCore/NodeRenderStyle.h>
 #import <WebCore/Page.h>
 #import <WebCore/PageOverlayController.h>
 #import <WebCore/PlatformKeyboardEvent.h>
@@ -434,9 +435,6 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(Frame* frame, Range& ra
         editor.setIsGettingDictionaryPopupInfo(false);
         return dictionaryPopupInfo;
     }
-    
-    RenderObject* renderer = range.startContainer().renderer();
-    const RenderStyle& style = renderer->style();
 
     Vector<FloatQuad> quads;
     range.absoluteTextQuads(quads);
@@ -447,7 +445,9 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(Frame* frame, Range& ra
 
     IntRect rangeRect = frame->view()->contentsToWindow(quads[0].enclosingBoundingBox());
 
-    dictionaryPopupInfo.origin = FloatPoint(rangeRect.x(), rangeRect.y() + (style.fontMetrics().ascent() * pageScaleFactor()));
+    const RenderStyle* style = range.startContainer().renderStyle();
+    float scaledAscent = style ? style->fontMetrics().ascent() * pageScaleFactor() : 0;
+    dictionaryPopupInfo.origin = FloatPoint(rangeRect.x(), rangeRect.y() + scaledAscent);
     dictionaryPopupInfo.options = *options;
 
     NSAttributedString *nsAttributedString = editingAttributedStringFromRange(range, IncludeImagesInAttributedString::No);
