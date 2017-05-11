@@ -1,3 +1,16 @@
+2017-05-10  Andy Estes  <aestes@apple.com>
+
+        REGRESSION (r167845): ASSERT(!m_renderView.needsLayout()) in svg/custom/bug79798.html
+        https://bugs.webkit.org/show_bug.cgi?id=132297
+
+        Reviewed by Simon Fraser.
+
+        We don't know why m_renderView needs layout in this case, but we know that we don't need to
+        assert if the client hasn't set the ScrollableInnerFrameTrigger compositing trigger.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::requiresCompositingForScrollableFrame):
+
 2017-05-10  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r216630.

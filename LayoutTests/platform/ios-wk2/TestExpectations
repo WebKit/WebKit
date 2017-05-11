@@ -269,7 +269,6 @@ svg/dynamic-updates/SVGClipPathElement-transform-influences-hitTesting.html
 svg/custom/linking-a-03-b-all.svg
 
 # SVG tests that fail due to an assert failure:
-webkit.org/b/132297 [ Debug ] svg/custom/bug79798.html [ Skip ]
 svg/custom/image-with-prefix-in-webarchive.svg
 
 # SVG tests that fail:

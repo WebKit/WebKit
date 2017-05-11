@@ -1,3 +1,17 @@
+2017-05-10  Andy Estes  <aestes@apple.com>
+
+        REGRESSION (r167845): ASSERT(!m_renderView.needsLayout()) in svg/custom/bug79798.html
+        https://bugs.webkit.org/show_bug.cgi?id=132297
+
+        Reviewed by Simon Fraser.
+
+        * http/tests/navigation/keyboard-events-during-provisional-navigation-expected.txt:
+        * http/tests/navigation/keyboard-events-during-provisional-subframe-navigation-expected.txt:
+        * http/tests/navigation/resources/keyboard-events-test.js:
+        (runTest):
+        * platform/ios-wk2/TestExpectations:
+        * platform/wk2/TestExpectations:
+
 2017-05-09  Sam Weinig  <sam@webkit.org>
 
         Remove support for legacy Notifications

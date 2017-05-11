@@ -32,13 +32,6 @@ function runTest(window)
     console.log("Pressing \"a\".");
     eventSender.keyDown("a");
 
-    // FIXME: Composition events trigger assertions when performed in subframes.
-    // See <https://webkit.org/b/132297>.
-    if (window !== window.top) {
-        console.log("Input element value after text input events: \"" + textInput.value + "\".");
-        return;
-    }
-
     console.log("Setting marked text to \"b\".");
     textInputController.setMarkedText("b", 0, 1);
 

@@ -5,7 +5,9 @@ CONSOLE MESSAGE: line 5: keypressevent dispatched (isTrusted: false).
 CONSOLE MESSAGE: line 28: Pressing tab.
 CONSOLE MESSAGE: line 30: Active element after pressing tab: [object HTMLInputElement].
 CONSOLE MESSAGE: line 32: Pressing "a".
-CONSOLE MESSAGE: line 38: Input element value after text input events: "".
+CONSOLE MESSAGE: line 35: Setting marked text to "b".
+CONSOLE MESSAGE: line 38: Inserting text "c".
+CONSOLE MESSAGE: line 41: Input element value after text input events: "".
 CONSOLE MESSAGE: line 20: Pressing "z" with access key modifiers should navigate to resources/keyboard-events-after-navigation.html.
 CONSOLE MESSAGE: line 6: Finished navigating to resources/keyboard-events-after-navigation.html.
 CONSOLE MESSAGE: line 7: Trusted events should be logged and the input element should have the value "ac".
@@ -22,17 +24,17 @@ CONSOLE MESSAGE: line 5: textInputevent dispatched (isTrusted: true).
 CONSOLE MESSAGE: line 5: beforeinputevent dispatched (isTrusted: true).
 CONSOLE MESSAGE: line 5: inputevent dispatched (isTrusted: true).
 CONSOLE MESSAGE: line 5: keyupevent dispatched (isTrusted: true).
-CONSOLE MESSAGE: line 42: Setting marked text to "b".
+CONSOLE MESSAGE: line 35: Setting marked text to "b".
 CONSOLE MESSAGE: line 5: compositionstartevent dispatched (isTrusted: true).
 CONSOLE MESSAGE: line 5: compositionupdateevent dispatched (isTrusted: true).
 CONSOLE MESSAGE: line 5: beforeinputevent dispatched (isTrusted: true).
 CONSOLE MESSAGE: line 5: inputevent dispatched (isTrusted: true).
-CONSOLE MESSAGE: line 45: Inserting text "c".
+CONSOLE MESSAGE: line 38: Inserting text "c".
 CONSOLE MESSAGE: line 5: beforeinputevent dispatched (isTrusted: true).
 CONSOLE MESSAGE: line 5: inputevent dispatched (isTrusted: true).
 CONSOLE MESSAGE: line 5: textInputevent dispatched (isTrusted: true).
 CONSOLE MESSAGE: line 5: beforeinputevent dispatched (isTrusted: true).
 CONSOLE MESSAGE: line 5: inputevent dispatched (isTrusted: true).
 CONSOLE MESSAGE: line 5: compositionendevent dispatched (isTrusted: true).
-CONSOLE MESSAGE: line 48: Input element value after text input events: "ac".
+CONSOLE MESSAGE: line 41: Input element value after text input events: "ac".
 
