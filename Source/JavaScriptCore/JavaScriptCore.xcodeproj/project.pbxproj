@@ -106,6 +106,10 @@
 		0F0B83B014BCF71600885B4F /* CallLinkInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F0B83AE14BCF71400885B4F /* CallLinkInfo.cpp */; };
 		0F0B83B114BCF71800885B4F /* CallLinkInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0B83AF14BCF71400885B4F /* CallLinkInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F0B83B914BCF95F00885B4F /* CallReturnOffsetToBytecodeOffset.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0B83B814BCF95B00885B4F /* CallReturnOffsetToBytecodeOffset.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F0CAEFB1EC4DA6800970D12 /* JSHeapFinalizerPrivate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F0CAEF91EC4DA6200970D12 /* JSHeapFinalizerPrivate.cpp */; };
+		0F0CAEFC1EC4DA6B00970D12 /* JSHeapFinalizerPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0CAEFA1EC4DA6200970D12 /* JSHeapFinalizerPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F0CAEFF1EC4DA8800970D12 /* HeapFinalizerCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0CAEFE1EC4DA8500970D12 /* HeapFinalizerCallback.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F0CAF001EC4DA8B00970D12 /* HeapFinalizerCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F0CAEFD1EC4DA8500970D12 /* HeapFinalizerCallback.cpp */; };
 		0F0CD4C215F1A6070032F1C0 /* PutDirectIndexMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0CD4C015F1A6040032F1C0 /* PutDirectIndexMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F0CD4C415F6B6BB0032F1C0 /* SparseArrayValueMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F0CD4C315F6B6B50032F1C0 /* SparseArrayValueMap.cpp */; };
 		0F0FC45A14BD15F500B81154 /* LLIntCallLinkInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0FC45814BD15F100B81154 /* LLIntCallLinkInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2682,6 +2686,10 @@
 		0F0B83AE14BCF71400885B4F /* CallLinkInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CallLinkInfo.cpp; sourceTree = "<group>"; };
 		0F0B83AF14BCF71400885B4F /* CallLinkInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallLinkInfo.h; sourceTree = "<group>"; };
 		0F0B83B814BCF95B00885B4F /* CallReturnOffsetToBytecodeOffset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallReturnOffsetToBytecodeOffset.h; sourceTree = "<group>"; };
+		0F0CAEF91EC4DA6200970D12 /* JSHeapFinalizerPrivate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHeapFinalizerPrivate.cpp; sourceTree = "<group>"; };
+		0F0CAEFA1EC4DA6200970D12 /* JSHeapFinalizerPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHeapFinalizerPrivate.h; sourceTree = "<group>"; };
+		0F0CAEFD1EC4DA8500970D12 /* HeapFinalizerCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HeapFinalizerCallback.cpp; sourceTree = "<group>"; };
+		0F0CAEFE1EC4DA8500970D12 /* HeapFinalizerCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeapFinalizerCallback.h; sourceTree = "<group>"; };
 		0F0CD4C015F1A6040032F1C0 /* PutDirectIndexMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PutDirectIndexMode.h; sourceTree = "<group>"; };
 		0F0CD4C315F6B6B50032F1C0 /* SparseArrayValueMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SparseArrayValueMap.cpp; sourceTree = "<group>"; };
 		0F0FC45814BD15F100B81154 /* LLIntCallLinkInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LLIntCallLinkInfo.h; sourceTree = "<group>"; };
@@ -6044,6 +6052,8 @@
 				DC3D2B0B1D34376E00BA918C /* HeapCell.cpp */,
 				DC3D2B091D34316100BA918C /* HeapCell.h */,
 				0F070A441D543A89006E7232 /* HeapCellInlines.h */,
+				0F0CAEFD1EC4DA8500970D12 /* HeapFinalizerCallback.cpp */,
+				0F0CAEFE1EC4DA8500970D12 /* HeapFinalizerCallback.h */,
 				0F32BD0E1BB34F190093A57F /* HeapHelperPool.cpp */,
 				0F32BD0F1BB34F190093A57F /* HeapHelperPool.h */,
 				C2DA778218E259990066FCB6 /* HeapInlines.h */,
@@ -6171,6 +6181,8 @@
 				A72028B41797601E0098028C /* JSCTestRunnerUtils.cpp */,
 				A72028B51797601E0098028C /* JSCTestRunnerUtils.h */,
 				86E3C60A167BAB87006D760A /* JSExport.h */,
+				0F0CAEF91EC4DA6200970D12 /* JSHeapFinalizerPrivate.cpp */,
+				0F0CAEFA1EC4DA6200970D12 /* JSHeapFinalizerPrivate.h */,
 				C25D709A16DE99F400FCA6BC /* JSManagedValue.h */,
 				C25D709916DE99F400FCA6BC /* JSManagedValue.mm */,
 				2A4BB7F218A41179008A0FCD /* JSManagedValueInternal.h */,
@@ -8434,6 +8446,7 @@
 				534638751E70DDEC00F12AC1 /* PromiseDeferredTimer.h in Headers */,
 				62EC9BB71B7EB07C00303AD1 /* CallFrameShuffleData.h in Headers */,
 				0FF4B4BD1E88449A00DBBE86 /* AirRegLiveness.h in Headers */,
+				0F0CAEFF1EC4DA8800970D12 /* HeapFinalizerCallback.h in Headers */,
 				62D755D71B84FB4A001801FA /* CallFrameShuffler.h in Headers */,
 				0F0B83B114BCF71800885B4F /* CallLinkInfo.h in Headers */,
 				0F93329E14CA7DC50085F3C6 /* CallLinkStatus.h in Headers */,
@@ -8820,6 +8833,7 @@
 				0F0332C818B546EC005F979A /* FTLWeightedTarget.h in Headers */,
 				0F666EC1183566F900D017F1 /* FullBytecodeLiveness.h in Headers */,
 				2A83638A18D7D0FE0000EBCC /* FullGCActivityCallback.h in Headers */,
+				0F0CAEFC1EC4DA6B00970D12 /* JSHeapFinalizerPrivate.h in Headers */,
 				14AD910D1DCA92940014F9FE /* FunctionCodeBlock.h in Headers */,
 				BC18C4040E16F5CD00B34460 /* FunctionConstructor.h in Headers */,
 				147341D81DC02F9900AA29BA /* FunctionExecutable.h in Headers */,
@@ -10810,6 +10824,7 @@
 				DC69AA661CF7A1F200C6272F /* MatchResult.cpp in Sources */,
 				4340A4841A9051AF00D73CCA /* MathCommon.cpp in Sources */,
 				14469DDF107EC7E700650446 /* MathObject.cpp in Sources */,
+				0F0CAEFB1EC4DA6800970D12 /* JSHeapFinalizerPrivate.cpp in Sources */,
 				90213E3D123A40C200D422F3 /* MemoryStatistics.cpp in Sources */,
 				0FB5467D14F5CFD6002C2989 /* MethodOfGettingAValueProfile.cpp in Sources */,
 				E3794E751B77EB97005543AE /* ModuleAnalyzer.cpp in Sources */,
@@ -10901,6 +10916,7 @@
 				998ED6741BED70AC00DD8017 /* RemoteControllableTarget.cpp in Sources */,
 				534638771E71E06E00F12AC1 /* PromiseDeferredTimer.cpp in Sources */,
 				A594558F18245EFD00CC3843 /* RemoteInspectionTarget.cpp in Sources */,
+				0F0CAF001EC4DA8B00970D12 /* HeapFinalizerCallback.cpp in Sources */,
 				995566861E4E8B0F00AAE13C /* RemoteInspector.cpp in Sources */,
 				992F56B51E4E84A80035953B /* RemoteInspectorCocoa.mm in Sources */,
 				992F56B61E4E84AB0035953B /* RemoteInspectorXPCConnection.mm in Sources */,

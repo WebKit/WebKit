@@ -1,5 +1,49 @@
 2017-05-11  Filip Pizlo  <fpizlo@apple.com>
 
+        Offer SPI to notify clients that GC has happened
+        https://bugs.webkit.org/show_bug.cgi?id=171980
+
+        Reviewed by Geoffrey Garen.
+        
+        Sometimes when you're programming with weak references, it's most convenient if the GC tells
+        you when it finishes. This adds exactly such an API. This API is called at the *flip*: the
+        moment when the GC knows for sure which objects are dead and has definitely not allocated any
+        new objects or executed any JS code. The finalization part of the flip, which is where this
+        callback gets called, runs on the "main" thread - i.e. some thread that is attempting to
+        execute JS code and holds the JS lock. This will usually run as a side-effect of some
+        allocation or from the runloop.
+        
+        This means, for example, that if you implemented a vector of weak references and registered a
+        callback to prune the vector of null weak references, then aside from the callback, nobody
+        would ever see a null weak reference in the vector.
+
+        * API/JSHeapFinalizerPrivate.cpp: Added.
+        (JSContextGroupAddHeapFinalizer):
+        (JSContextGroupRemoveHeapFinalizer):
+        * API/JSHeapFinalizerPrivate.h: Added.
+        * API/tests/testapi.c:
+        (heapFinalizer):
+        (testMarkingConstraintsAndHeapFinalizers):
+        (main):
+        (testMarkingConstraints): Deleted.
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * heap/Heap.cpp:
+        (JSC::Heap::finalize):
+        (JSC::Heap::addHeapFinalizerCallback):
+        (JSC::Heap::removeHeapFinalizerCallback):
+        * heap/Heap.h:
+        * heap/HeapFinalizerCallback.cpp: Added.
+        (JSC::HeapFinalizerCallback::dump):
+        * heap/HeapFinalizerCallback.h: Added.
+        (JSC::HeapFinalizerCallback::HeapFinalizerCallback):
+        (JSC::HeapFinalizerCallback::operator==):
+        (JSC::HeapFinalizerCallback::operator!=):
+        (JSC::HeapFinalizerCallback::operator bool):
+        (JSC::HeapFinalizerCallback::run):
+
+2017-05-11  Filip Pizlo  <fpizlo@apple.com>
+
         JSWeakCreate/Retain/Release should take a JSContextGroupRef and not a JSContextRef
         https://bugs.webkit.org/show_bug.cgi?id=171979
 

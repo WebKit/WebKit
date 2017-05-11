@@ -28,6 +28,7 @@
 #include "JavaScriptCore.h"
 #include "JSBasePrivate.h"
 #include "JSContextRefPrivate.h"
+#include "JSHeapFinalizerPrivate.h"
 #include "JSMarkingConstraintPrivate.h"
 #include "JSObjectRefPrivate.h"
 #include "JSScriptRefPrivate.h"
@@ -1143,7 +1144,18 @@ static void markingConstraint(JSMarkerRef marker, void *userData)
     }
 }
 
-static void testMarkingConstraints(void)
+static bool didRunHeapFinalizer;
+static JSContextGroupRef expectedContextGroup;
+
+static void heapFinalizer(JSContextGroupRef group, void *userData)
+{
+    assertTrue((uintptr_t)userData == (uintptr_t)42, "Correct userData was passed");
+    assertTrue(group == expectedContextGroup, "Correct context group");
+    
+    didRunHeapFinalizer = true;
+}
+
+static void testMarkingConstraintsAndHeapFinalizers(void)
 {
     JSContextGroupRef group;
     JSContextRef context;
@@ -1154,16 +1166,20 @@ static void testMarkingConstraints(void)
     printf("Testing Marking Constraints.\n");
     
     group = JSContextGroupCreate();
+    expectedContextGroup = group;
+    
     context = JSGlobalContextCreateInGroup(group, NULL);
 
     weakRefs = (JSWeakRef*)calloc(numWeakRefs, sizeof(JSWeakRef));
 
     JSContextGroupAddMarkingConstraint(group, markingConstraint, weakRefs);
+    JSContextGroupAddHeapFinalizer(group, heapFinalizer, (void*)(uintptr_t)42);
     
     for (i = numWeakRefs; i--;)
         weakRefs[i] = JSWeakCreate(group, JSObjectMakeArray(context, 0, NULL, NULL));
     
     JSSynchronousGarbageCollectForDebugging(context);
+    assertTrue(didRunHeapFinalizer, "Did run heap finalizer");
     
     deadCount = 0;
     for (i = 0; i < numWeakRefs; i += 2) {
@@ -1177,9 +1193,19 @@ static void testMarkingConstraints(void)
     for (i = numWeakRefs; i--;)
         JSWeakRelease(group, weakRefs[i]);
     
+    didRunHeapFinalizer = false;
+    JSSynchronousGarbageCollectForDebugging(context);
+    assertTrue(didRunHeapFinalizer, "Did run heap finalizer");
+
+    JSContextGroupRemoveHeapFinalizer(group, heapFinalizer, (void*)(uintptr_t)42);
+
+    didRunHeapFinalizer = false;
+    JSSynchronousGarbageCollectForDebugging(context);
+    assertTrue(!didRunHeapFinalizer, "Did not run heap finalizer");
+    
     JSContextGroupRelease(group);
 
-    printf("PASS: Marking Constraints.\n");
+    printf("PASS: Marking Constraints and Heap Finalizers.\n");
 }
 
 int main(int argc, char* argv[])
@@ -1212,7 +1238,7 @@ int main(int argc, char* argv[])
 
     ASSERT(Base_didFinalize);
 
-    testMarkingConstraints();
+    testMarkingConstraintsAndHeapFinalizers();
 
     JSClassDefinition globalObjectClassDefinition = kJSClassDefinitionEmpty;
     globalObjectClassDefinition.initialize = globalObject_initialize;

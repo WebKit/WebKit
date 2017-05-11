@@ -31,6 +31,7 @@
 #include "GCRequest.h"
 #include "HandleSet.h"
 #include "HandleStack.h"
+#include "HeapFinalizerCallback.h"
 #include "HeapObserver.h"
 #include "ListableHandler.h"
 #include "MarkedBlock.h"
@@ -374,6 +375,9 @@ public:
 #endif // USE(CF)
 
     HeapVerifier* verifier() const { return m_verifier.get(); }
+    
+    void addHeapFinalizerCallback(const HeapFinalizerCallback&);
+    void removeHeapFinalizerCallback(const HeapFinalizerCallback&);
 
 private:
     friend class AllocatingScope;
@@ -620,7 +624,9 @@ private:
     RefPtr<StopIfNecessaryTimer> m_stopIfNecessaryTimer;
 
     Vector<HeapObserver*> m_observers;
-
+    
+    Vector<HeapFinalizerCallback> m_heapFinalizerCallbacks;
+    
     unsigned m_deferralDepth;
     bool m_didDeferGCWork { false };
 

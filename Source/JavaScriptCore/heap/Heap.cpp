@@ -1976,6 +1976,9 @@ void Heap::finalize()
     if (HasOwnPropertyCache* cache = vm()->hasOwnPropertyCache())
         cache->clear();
     
+    for (const HeapFinalizerCallback& callback : m_heapFinalizerCallbacks)
+        callback.run(*vm());
+    
     if (Options::sweepSynchronously())
         sweepSynchronously();
 
@@ -2815,6 +2818,16 @@ void Heap::performIncrement(size_t bytes)
     size_t bytesVisited = slotVisitor.performIncrementOfDraining(static_cast<size_t>(targetBytes));
     // incrementBalance may go negative here because it'll remember how many bytes we overshot.
     m_incrementBalance -= bytesVisited;
+}
+
+void Heap::addHeapFinalizerCallback(const HeapFinalizerCallback& callback)
+{
+    m_heapFinalizerCallbacks.append(callback);
+}
+
+void Heap::removeHeapFinalizerCallback(const HeapFinalizerCallback& callback)
+{
+    m_heapFinalizerCallbacks.removeFirst(callback);
 }
 
 } // namespace JSC

@@ -55,6 +55,7 @@ set(JavaScriptCore_SOURCES
     API/JSCallbackObject.cpp
     API/JSClassRef.cpp
     API/JSContextRef.cpp
+    API/JSHeapFinalizerPrivate.cpp
     API/JSMarkingConstraintPrivate.cpp
     API/JSObjectRef.cpp
     API/JSTypedArray.cpp
@@ -507,6 +508,7 @@ set(JavaScriptCore_SOURCES
     heap/HandleStack.cpp
     heap/Heap.cpp
     heap/HeapCell.cpp
+    heap/HeapFinalizerCallback.cpp
     heap/HeapHelperPool.cpp
     heap/HeapProfiler.cpp
     heap/HeapSnapshot.cpp
