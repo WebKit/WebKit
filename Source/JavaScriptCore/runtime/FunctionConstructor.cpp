@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003-2008, 2013, 2016 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2017 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -124,17 +124,17 @@ JSObject* constructFunctionSkippingEvalEnabledCheck(
         builder.append(prefix);
         builder.append(functionName.string());
         builder.append('(');
-        auto viewWithString = args.at(0).toString(exec)->viewWithUnderlyingString(*exec);
+        auto viewWithString = args.at(0).toString(exec)->viewWithUnderlyingString(exec);
         RETURN_IF_EXCEPTION(scope, nullptr);
         builder.append(viewWithString.view);
         for (size_t i = 1; i < args.size() - 1; i++) {
             builder.appendLiteral(", ");
-            auto viewWithString = args.at(i).toString(exec)->viewWithUnderlyingString(*exec);
+            auto viewWithString = args.at(i).toString(exec)->viewWithUnderlyingString(exec);
             RETURN_IF_EXCEPTION(scope, nullptr);
             builder.append(viewWithString.view);
         }
         builder.appendLiteral(") {\n");
-        viewWithString = args.at(args.size() - 1).toString(exec)->viewWithUnderlyingString(*exec);
+        viewWithString = args.at(args.size() - 1).toString(exec)->viewWithUnderlyingString(exec);
         RETURN_IF_EXCEPTION(scope, nullptr);
         builder.append(viewWithString.view);
         builder.appendLiteral("\n}}");

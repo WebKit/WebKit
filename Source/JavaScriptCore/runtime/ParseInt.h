@@ -219,7 +219,7 @@ static ALWAYS_INLINE typename std::result_of<CallbackWhenNoException(StringView)
     JSString* string = value.toStringOrNull(exec);
     if (UNLIKELY(!string))
         return { };
-    auto viewWithString = string->viewWithUnderlyingString(*exec);
+    auto viewWithString = string->viewWithUnderlyingString(exec);
     RETURN_IF_EXCEPTION(scope, { });
     return callback(viewWithString.view);
 }

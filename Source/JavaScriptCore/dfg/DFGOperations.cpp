@@ -841,7 +841,7 @@ EncodedJSValue JIT_OPERATION operationParseIntStringNoRadix(ExecState* exec, JSS
     NativeCallFrameTracer tracer(&vm, exec);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto viewWithString = string->viewWithUnderlyingString(*exec);
+    auto viewWithString = string->viewWithUnderlyingString(exec);
     RETURN_IF_EXCEPTION(scope, { });
 
     // This version is as if radix was undefined. Hence, undefined.toNumber() === 0.
@@ -854,7 +854,7 @@ EncodedJSValue JIT_OPERATION operationParseIntString(ExecState* exec, JSString* 
     NativeCallFrameTracer tracer(&vm, exec);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto viewWithString = string->viewWithUnderlyingString(*exec);
+    auto viewWithString = string->viewWithUnderlyingString(exec);
     RETURN_IF_EXCEPTION(scope, { });
 
     return parseIntResult(parseInt(viewWithString.view, radix));

@@ -1,5 +1,55 @@
 2017-05-11  Filip Pizlo  <fpizlo@apple.com>
 
+        Callers of JSString::unsafeView() should check exceptions
+        https://bugs.webkit.org/show_bug.cgi?id=171995
+
+        Reviewed by Mark Lam.
+        
+        unsafeView() can throw OOME. So, callers of unsafeView() should check for exceptions before trying
+        to access the view.
+
+        Also, I made the functions surrounding unsafeView() take ExecState* not ExecState&, to comply with
+        the rest of JSC.
+
+        * dfg/DFGOperations.cpp:
+        * jsc.cpp:
+        (printInternal):
+        (functionDebug):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncJoin):
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructFunctionSkippingEvalEnabledCheck):
+        * runtime/IntlCollatorPrototype.cpp:
+        (JSC::IntlCollatorFuncCompare):
+        * runtime/JSGenericTypedArrayViewPrototypeFunctions.h:
+        (JSC::genericTypedArrayViewProtoFuncJoin):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncParseFloat):
+        * runtime/JSONObject.cpp:
+        (JSC::JSONProtoFuncParse):
+        * runtime/JSString.cpp:
+        (JSC::JSString::getPrimitiveNumber):
+        (JSC::JSString::toNumber):
+        * runtime/JSString.h:
+        (JSC::JSString::getIndex):
+        (JSC::JSRopeString::unsafeView):
+        (JSC::JSRopeString::viewWithUnderlyingString):
+        (JSC::JSString::unsafeView):
+        (JSC::JSString::viewWithUnderlyingString):
+        * runtime/JSStringJoiner.h:
+        (JSC::JSStringJoiner::appendWithoutSideEffects):
+        (JSC::JSStringJoiner::append):
+        * runtime/ParseInt.h:
+        (JSC::toStringView):
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncRepeatCharacter):
+        (JSC::stringProtoFuncCharAt):
+        (JSC::stringProtoFuncCharCodeAt):
+        (JSC::stringProtoFuncIndexOf):
+        (JSC::stringProtoFuncNormalize):
+
+2017-05-11  Filip Pizlo  <fpizlo@apple.com>
+
         Offer SPI to notify clients that GC has happened
         https://bugs.webkit.org/show_bug.cgi?id=171980
 
