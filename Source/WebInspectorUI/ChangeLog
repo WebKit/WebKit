@@ -1,3 +1,32 @@
+2017-05-11  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [GTK] Web Inspector: Add new GTK+ icons for resources in large sizes (32px @ 1x/2x)
+        https://bugs.webkit.org/show_bug.cgi?id=155802
+        <rdar://problem/25320686>
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add more free icons for the Web Inspector in GTK+.
+
+        * UserInterface/Images/gtk/ClippingCSSLarge.png: Added.
+        * UserInterface/Images/gtk/ClippingCSSLarge@2x.png: Added.
+        * UserInterface/Images/gtk/ClippingGenericLarge.png: Added.
+        * UserInterface/Images/gtk/ClippingGenericLarge@2x.png: Added.
+        * UserInterface/Images/gtk/ClippingJSLarge.png: Added.
+        * UserInterface/Images/gtk/ClippingJSLarge@2x.png: Added.
+        * UserInterface/Images/gtk/DocumentCSSLarge.png: Added.
+        * UserInterface/Images/gtk/DocumentCSSLarge@2x.png: Added.
+        * UserInterface/Images/gtk/DocumentFontLarge.png: Added.
+        * UserInterface/Images/gtk/DocumentFontLarge@2x.png: Added.
+        * UserInterface/Images/gtk/DocumentGenericLarge.png: Added.
+        * UserInterface/Images/gtk/DocumentGenericLarge@2x.png: Added.
+        * UserInterface/Images/gtk/DocumentImageLarge.png: Added.
+        * UserInterface/Images/gtk/DocumentImageLarge@2x.png: Added.
+        * UserInterface/Images/gtk/DocumentJSLarge.png: Added.
+        * UserInterface/Images/gtk/DocumentJSLarge@2x.png: Added.
+        * UserInterface/Images/gtk/DocumentMarkupLarge.png: Added.
+        * UserInterface/Images/gtk/DocumentMarkupLarge@2x.png: Added.
+
 2017-05-10  Brian Burg  <bburg@apple.com>
 
         Web Inspector: RTL: in Timelines > JavaScript & Events, digits for timer and animation frame number are not localized
