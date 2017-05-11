@@ -1,3 +1,16 @@
+2017-05-11  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: stop supporting 0xD
+        https://bugs.webkit.org/show_bug.cgi?id=168788
+        <rdar://problem/31880922>
+
+        Reviewed by Saam Barati.
+
+        Only version 1 is supported by other browsers, and there shouldn't
+        be any 0xD binaries in the wild anymore.
+
+        * wasm/WasmModuleParser.cpp:
+
 2017-05-09  Sam Weinig  <sam@webkit.org>
 
         Remove support for legacy Notifications

@@ -1,3 +1,15 @@
+2017-05-11  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: stop supporting 0xD
+        https://bugs.webkit.org/show_bug.cgi?id=168788
+        <rdar://problem/31880922>
+
+        Reviewed by Saam Barati.
+
+        Test that only version 1 is supported.
+
+        * wasm/js-api/version.js: Added.
+
 2017-05-10  JF Bastien  <jfbastien@apple.com>
 
         WebAssemby: builder doesn't do Memory section maximum correctly
