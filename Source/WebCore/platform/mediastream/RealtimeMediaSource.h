@@ -215,6 +215,10 @@ protected:
 
     void notifyMutedObservers() const;
 
+    void initializeVolume(double volume) { m_volume = volume; }
+    void initializeSampleRate(int sampleRate) { m_sampleRate = sampleRate; }
+    void initializeEchoCancellation(bool echoCancellation) { m_echoCancellation = echoCancellation; }
+
     bool m_muted { false };
     bool m_enabled { true };
 
