@@ -1,3 +1,19 @@
+2017-05-11  Tim Horton  <timothy_horton@apple.com>
+
+        Mail spins launching spell checker when typing
+        https://bugs.webkit.org/show_bug.cgi?id=171986
+        <rdar://problem/26305327>
+
+        Reviewed by Beth Dakin.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _setEditable:]):
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::didBecomeEditable):
+        (WebKit::WebViewImpl::startObservingFontPanel): Deleted.
+        Asynchronously pre-warm the spell checker when a WKWebView becomes editable.
+
 2017-05-11  Chris Dumez  <cdumez@apple.com>
 
         Stop using PassRefPtr in platform/graphics

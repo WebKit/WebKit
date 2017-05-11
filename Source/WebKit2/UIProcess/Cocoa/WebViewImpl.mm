@@ -2610,9 +2610,13 @@ void WebViewImpl::selectionDidChange()
 #endif
 }
 
-void WebViewImpl::startObservingFontPanel()
+void WebViewImpl::didBecomeEditable()
 {
     [m_windowVisibilityObserver startObservingFontPanel];
+
+    dispatch_async(dispatch_get_main_queue(), [] {
+        [[NSSpellChecker sharedSpellChecker] _preflightChosenSpellServer];
+    });
 }
 
 void WebViewImpl::updateFontPanelIfNeeded()

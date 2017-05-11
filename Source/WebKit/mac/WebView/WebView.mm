@@ -8056,6 +8056,13 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSC::JSValue j
         _private->page->setEditable(flag);
         if (!_private->tabKeyCyclesThroughElementsChanged)
             _private->page->setTabKeyCyclesThroughElements(!flag);
+#if PLATFORM(MAC)
+        if (flag) {
+            dispatch_async(dispatch_get_main_queue(), [] {
+                [[NSSpellChecker sharedSpellChecker] _preflightChosenSpellServer];
+            });
+        }
+#endif
         Frame* mainFrame = [self _mainCoreFrame];
         if (mainFrame) {
             if (flag) {

@@ -287,7 +287,7 @@ public:
     id validRequestorForSendAndReturnTypes(NSString *sendType, NSString *returnType);
     void centerSelectionInVisibleArea();
     void selectionDidChange();
-    void startObservingFontPanel();
+    void didBecomeEditable();
     void updateFontPanelIfNeeded();
     void changeFontFromFontPanel();
     bool validateUserInterfaceItem(id <NSValidatedUserInterfaceItem>);

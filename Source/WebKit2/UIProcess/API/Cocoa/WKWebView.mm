@@ -3629,7 +3629,8 @@ WEBCORE_COMMAND(yankAndSelect)
 {
     _page->setEditable(editable);
 #if PLATFORM(MAC)
-    _impl->startObservingFontPanel();
+    if (editable)
+        _impl->didBecomeEditable();
 #endif
 }
 
