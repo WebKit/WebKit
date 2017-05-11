@@ -34,7 +34,10 @@
 
 #if ENABLE(WEBGL)
 #include "JSWebGLContextAttributes.h"
-#include "JSWebGLRenderingContextBase.h"
+#include "JSWebGLRenderingContext.h"
+#if ENABLE(WEBGL2)
+#include "JSWebGL2RenderingContext.h"
+#endif
 #endif
 
 #if ENABLE(WEBGPU)
@@ -64,7 +67,14 @@ JSValue JSHTMLCanvasElement::getContext(ExecState& state)
         auto attributes = convert<IDLDictionary<WebGLContextAttributes>>(state, state.argument(1));
         RETURN_IF_EXCEPTION(scope, JSValue());
 
-        return toJS<IDLNullable<IDLInterface<WebGLRenderingContextBase>>>(state, *globalObject(), static_cast<WebGLRenderingContextBase*>(wrapped().getContextWebGL(contextId, WTFMove(attributes))));
+        if (auto context = wrapped().getContextWebGL(contextId, WTFMove(attributes))) {
+            if (is<WebGLRenderingContext>(*context))
+                return toJS<IDLNullable<IDLInterface<WebGLRenderingContext>>>(state, *globalObject(), static_cast<WebGLRenderingContext*>(context));
+#if ENABLE(WEBGL2)
+            if (is<WebGL2RenderingContext>(*context))
+                return toJS<IDLNullable<IDLInterface<WebGL2RenderingContext>>>(state, *globalObject(), static_cast<WebGL2RenderingContext*>(context));
+#endif
+        }
     }
 #endif
 

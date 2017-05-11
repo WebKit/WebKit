@@ -530,7 +530,7 @@ enum EventThrottlingBehavior {
     void disableTileSizeUpdateDelay();
     void setSpeculativeTilingDelayDisabledForTesting(boolean disabled);
 
-    [Conditional=WEBGL] void simulateWebGLContextChanged(WebGLRenderingContextBase context);
+    [Conditional=WEBGL] void simulateWebGLContextChanged(WebGLRenderingContext context);
 
     [Conditional=MEDIA_STREAM] void observeMediaStreamTrack(MediaStreamTrack track);
     [Conditional=MEDIA_STREAM] Promise<ImageData> grabNextMediaStreamTrackFrame();

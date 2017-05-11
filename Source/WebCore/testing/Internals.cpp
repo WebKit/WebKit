@@ -139,7 +139,7 @@
 #include "ViewportArguments.h"
 #include "WebCoreJSClientData.h"
 #if ENABLE(WEBGL)
-#include "WebGLRenderingContextBase.h"
+#include "WebGLRenderingContext.h"
 #endif
 #include "WorkerThread.h"
 #include "WritingDirection.h"
@@ -3976,7 +3976,7 @@ void Internals::setAsRunningUserScripts(Document& document)
 }
 
 #if ENABLE(WEBGL)
-void Internals::simulateWebGLContextChanged(WebGLRenderingContextBase& context)
+void Internals::simulateWebGLContextChanged(WebGLRenderingContext& context)
 {
     context.simulateContextChanged();
 }

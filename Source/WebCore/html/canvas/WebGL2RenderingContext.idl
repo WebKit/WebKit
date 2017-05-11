@@ -50,7 +50,7 @@ typedef (ImageData or HTMLImageElement or HTMLCanvasElement or HTMLVideoElement)
     JSCustomMarkFunction,
     JSGenerateToJSObject,
     DoNotCheckConstants,
-] interface WebGL2RenderingContext : WebGLRenderingContextBase {
+] interface WebGL2RenderingContext {
     const GLenum READ_BUFFER                                   = 0x0C02;
     const GLenum UNPACK_ROW_LENGTH                             = 0x0CF2;
     const GLenum UNPACK_SKIP_ROWS                              = 0x0CF3;
@@ -337,11 +337,6 @@ typedef (ImageData or HTMLImageElement or HTMLCanvasElement or HTMLVideoElement)
     const GLuint64 TIMEOUT_IGNORED                             = 0xFFFFFFFFFFFFFFFF;
 
     /* Buffer objects */
-    // WebGL1:
-    void bufferData(GLenum target, GLsizeiptr size, GLenum usage);
-    void bufferData(GLenum target, BufferDataSource? srcData, GLenum usage);
-    void bufferSubData(GLenum target, GLintptr dstByteOffset, BufferDataSource? srcData);
-    // WebGL2:
     void bufferData(GLenum target, ArrayBufferView data, GLenum usage, GLuint srcOffset, optional GLuint length = 0);
     void bufferSubData(GLenum target, GLintptr dstByteOffset, ArrayBufferView srcData, GLuint srcOffset, optional GLuint length = 0);
 
@@ -466,3 +461,5 @@ typedef (ImageData or HTMLImageElement or HTMLCanvasElement or HTMLVideoElement)
     GLboolean isVertexArray(WebGLVertexArrayObject? vertexArray);
     void bindVertexArray(WebGLVertexArrayObject? vertexArray);
 };
+
+WebGL2RenderingContext implements WebGLRenderingContextBase;

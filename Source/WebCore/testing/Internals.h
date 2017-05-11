@@ -76,7 +76,7 @@ class SourceBuffer;
 class StyleSheet;
 class TimeRanges;
 class TypeConversions;
-class WebGLRenderingContextBase;
+class WebGLRenderingContext;
 class XMLHttpRequest;
 
 class Internals final : public RefCounted<Internals>,  private ContextDestructionObserver
@@ -565,7 +565,7 @@ public:
     void setAsRunningUserScripts(Document&);
 
 #if ENABLE(WEBGL)
-    void simulateWebGLContextChanged(WebGLRenderingContextBase&);
+    void simulateWebGLContextChanged(WebGLRenderingContext&);
 #endif
 
 #if ENABLE(MEDIA_STREAM)

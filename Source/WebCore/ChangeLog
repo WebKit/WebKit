@@ -1,3 +1,51 @@
+2017-05-11  Dean Jackson  <dino@apple.com>
+
+        WebGLRenderingContext should implement WebGLRenderingContextBase
+        https://bugs.webkit.org/show_bug.cgi?id=171961
+        <rdar://problem/32124920>
+
+        Reviewed by Sam Weinig.
+
+        WebGLRenderingContext and WebGL2RenderingContext are both
+        defined to "implement" WebGLRenderingContextBase. However, we
+        were doing it via inheritance, which meant that some things
+        were not visible on the WebGLRenderingContext prototype.
+
+        Test: fast/canvas/webgl/constants-on-interface.html
+
+        * WebCore.xcodeproj/project.pbxproj: Move the Custom.cpp files
+        out of the GC-only area now they have real content.
+
+        * bindings/js/JSDocumentCustom.cpp: Handle the fact that we
+        don't use the base class from the bindings, so we need to
+        translate WebGL1 and WebGL2 contexts into the right JS classes.
+        (WebCore::JSDocument::getCSSCanvasContext):
+        * bindings/js/JSHTMLCanvasElementCustom.cpp:
+        (WebCore::JSHTMLCanvasElement::getContext):
+
+        * bindings/js/JSWebGL2RenderingContextCustom.cpp: Implement the
+        custom methods. In this case, we don't yet expose any
+        extensions for WebGL 2.
+        (WebCore::toJS):
+        (WebCore::JSWebGL2RenderingContext::getExtension):
+
+        * bindings/js/JSWebGLRenderingContextBaseCustom.cpp: Removed.
+
+        * bindings/js/JSWebGLRenderingContextCustom.cpp:
+        (WebCore::toJS):
+        (WebCore::JSWebGLRenderingContext::getExtension):
+
+        * html/canvas/WebGL2RenderingContext.h: Make some things public.
+        * html/canvas/WebGLRenderingContext.h: Ditto.
+
+        * html/canvas/WebGL2RenderingContext.idl: Use implements.
+        * html/canvas/WebGLRenderingContext.idl: Ditto.
+
+        * testing/Internals.cpp: This now takes a WebGLRenderingContext.
+        (WebCore::Internals::simulateWebGLContextChanged):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2017-05-11  Andy Estes  <aestes@apple.com>
 
         Fix a spelling mistake in ApplePayErrorCode

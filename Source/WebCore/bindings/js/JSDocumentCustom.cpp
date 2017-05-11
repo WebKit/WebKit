@@ -39,7 +39,10 @@
 #include <wtf/GetPtr.h>
 
 #if ENABLE(WEBGL)
-#include "JSWebGLRenderingContextBase.h"
+#include "JSWebGLRenderingContext.h"
+#if ENABLE(WEBGL2)
+#include "JSWebGL2RenderingContext.h"
+#endif
 #endif
 
 #if ENABLE(WEBGPU)
@@ -151,8 +154,12 @@ JSValue JSDocument::getCSSCanvasContext(JSC::ExecState& state)
         return jsNull();
 
 #if ENABLE(WEBGL)
-    if (is<WebGLRenderingContextBase>(*context))
-        return toJS(&state, globalObject(), downcast<WebGLRenderingContextBase>(*context));
+    if (is<WebGLRenderingContext>(*context))
+        return toJS(&state, globalObject(), downcast<WebGLRenderingContext>(*context));
+#if ENABLE(WEBGL2)
+    if (is<WebGL2RenderingContext>(*context))
+        return toJS(&state, globalObject(), downcast<WebGL2RenderingContext>(*context));
+#endif
 #endif
 #if ENABLE(WEBGPU)
     if (is<WebGPURenderingContext>(*context))

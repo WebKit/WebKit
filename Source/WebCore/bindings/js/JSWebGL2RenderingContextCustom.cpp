@@ -39,6 +39,25 @@ void JSWebGL2RenderingContext::visitAdditionalChildren(SlotVisitor& visitor)
     visitor.addOpaqueRoot(&wrapped());
 }
 
+static JSValue toJS(ExecState&, JSDOMGlobalObject&, WebGLExtension*)
+{
+    // No extensions for WebGL2 at the moment.
+    return jsNull();
+}
+
+JSValue JSWebGL2RenderingContext::getExtension(ExecState& state)
+{
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (state.argumentCount() < 1)
+        return throwException(&state, scope, createNotEnoughArgumentsError(&state));
+
+    auto name = state.uncheckedArgument(0).toWTFString(&state);
+    RETURN_IF_EXCEPTION(scope, { });
+    return toJS(state, *globalObject(), wrapped().getExtension(name));
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEBGL)

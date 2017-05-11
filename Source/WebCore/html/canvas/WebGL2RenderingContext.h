@@ -168,16 +168,15 @@ public:
     GC3Dboolean isVertexArray(WebGLVertexArrayObject* vertexArray);
     void bindVertexArray(WebGLVertexArrayObject* vertexArray);
     
-private:
-    bool isWebGL2() const final { return true; }
-
-    // Extensions
     WebGLExtension* getExtension(const String&) final;
     std::optional<Vector<String>> getSupportedExtensions() final;
     WebGLAny getParameter(GC3Denum pname) final;
 
     void renderbufferStorage(GC3Denum target, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height) final;
     void hint(GC3Denum target, GC3Denum mode) final;
+
+private:
+    bool isWebGL2() const final { return true; }
 
     void initializeVertexArrayObjects() final;
     GC3Dint getMaxDrawBuffers() final;
