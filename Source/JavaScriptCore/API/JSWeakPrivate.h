@@ -34,10 +34,10 @@ extern "C" {
 
 typedef const struct OpaqueJSWeak* JSWeakRef;
 
-JS_EXPORT JSWeakRef JSWeakCreate(JSContextRef, JSObjectRef);
+JS_EXPORT JSWeakRef JSWeakCreate(JSContextGroupRef, JSObjectRef);
 
-JS_EXPORT void JSWeakRetain(JSContextRef, JSWeakRef);
-JS_EXPORT void JSWeakRelease(JSContextRef, JSWeakRef);
+JS_EXPORT void JSWeakRetain(JSContextGroupRef, JSWeakRef);
+JS_EXPORT void JSWeakRelease(JSContextGroupRef, JSWeakRef);
 
 JS_EXPORT JSObjectRef JSWeakGetObject(JSWeakRef);
 

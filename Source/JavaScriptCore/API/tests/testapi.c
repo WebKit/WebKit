@@ -1161,7 +1161,7 @@ static void testMarkingConstraints(void)
     JSContextGroupAddMarkingConstraint(group, markingConstraint, weakRefs);
     
     for (i = numWeakRefs; i--;)
-        weakRefs[i] = JSWeakCreate(context, JSObjectMakeArray(context, 0, NULL, NULL));
+        weakRefs[i] = JSWeakCreate(group, JSObjectMakeArray(context, 0, NULL, NULL));
     
     JSSynchronousGarbageCollectForDebugging(context);
     
@@ -1175,7 +1175,7 @@ static void testMarkingConstraints(void)
     assertTrue(deadCount != 0, "At least some objects died");
     
     for (i = numWeakRefs; i--;)
-        JSWeakRelease(context, weakRefs[i]);
+        JSWeakRelease(group, weakRefs[i]);
     
     JSContextGroupRelease(group);
 
