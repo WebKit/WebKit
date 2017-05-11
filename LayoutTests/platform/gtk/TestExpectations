@@ -3682,6 +3682,9 @@ webkit.org/b/171726 imported/w3c/web-platform-tests/media-source/mediasource-see
 webkit.org/b/171726 imported/w3c/web-platform-tests/media-source/mediasource-seek-during-pending-seek.html [ Failure ]
 webkit.org/b/171726 media/media-source/media-source-init-segment-duration.html [ Failure ]
 
+webkit.org/b/171972 fast/images/async-image-background-image-repeated.html [ ImageOnlyFailure ]
+webkit.org/b/171972 fast/images/sprite-sheet-image-draw.html [ ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
