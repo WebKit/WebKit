@@ -71,22 +71,22 @@ public:
 
     WEBCORE_EXPORT void setAudioFactory(RealtimeMediaSource::AudioCaptureFactory&);
     WEBCORE_EXPORT void unsetAudioFactory(RealtimeMediaSource::AudioCaptureFactory&);
-    RealtimeMediaSource::AudioCaptureFactory* audioFactory() const { return m_audioFactory; }
+    WEBCORE_EXPORT RealtimeMediaSource::AudioCaptureFactory* audioFactory();
 
     WEBCORE_EXPORT void setVideoFactory(RealtimeMediaSource::VideoCaptureFactory&);
     WEBCORE_EXPORT void unsetVideoFactory(RealtimeMediaSource::VideoCaptureFactory&);
-    RealtimeMediaSource::VideoCaptureFactory* videoFactory() const { return m_videoFactory; }
+    WEBCORE_EXPORT RealtimeMediaSource::VideoCaptureFactory* videoFactory();
 
     virtual CaptureDeviceManager* defaultAudioCaptureDeviceManager() { return nullptr; }
     virtual CaptureDeviceManager* defaultVideoCaptureDeviceManager() { return nullptr; }
 
     WEBCORE_EXPORT void setAudioCaptureDeviceManager(CaptureDeviceManager&);
     WEBCORE_EXPORT void unsetAudioCaptureDeviceManager(CaptureDeviceManager&);
-    CaptureDeviceManager* audioCaptureDeviceManager() const { return m_audioCaptureDeviceManager; }
+    CaptureDeviceManager* audioCaptureDeviceManager();
 
     WEBCORE_EXPORT void setVideoCaptureDeviceManager(CaptureDeviceManager&);
     WEBCORE_EXPORT void unsetVideoCaptureDeviceManager(CaptureDeviceManager&);
-    CaptureDeviceManager* videoCaptureDeviceManager() const { return m_videoCaptureDeviceManager; }
+    CaptureDeviceManager* videoCaptureDeviceManager();
 
     String hashStringWithSalt(const String& id, const String& hashSalt);
     WEBCORE_EXPORT std::optional<CaptureDevice> captureDeviceWithUniqueID(const String& id, const String& hashSalt);

@@ -78,6 +78,11 @@ void RealtimeMediaSourceCenter::unsetAudioFactory(RealtimeMediaSource::AudioCapt
         m_audioFactory = nullptr;
 }
 
+RealtimeMediaSource::AudioCaptureFactory* RealtimeMediaSourceCenter::audioFactory()
+{
+    return m_audioFactory ? m_audioFactory: defaultAudioFactory();
+}
+
 void RealtimeMediaSourceCenter::setVideoFactory(RealtimeMediaSource::VideoCaptureFactory& factory)
 {
     m_videoFactory = &factory;
@@ -87,6 +92,11 @@ void RealtimeMediaSourceCenter::unsetVideoFactory(RealtimeMediaSource::VideoCapt
 {
     if (m_videoFactory == &factory)
         m_videoFactory = nullptr;
+}
+
+RealtimeMediaSource::VideoCaptureFactory* RealtimeMediaSourceCenter::videoFactory()
+{
+    return m_videoFactory ? m_videoFactory : defaultVideoFactory();
 }
 
 void RealtimeMediaSourceCenter::setAudioCaptureDeviceManager(CaptureDeviceManager& deviceManager)
@@ -100,6 +110,11 @@ void RealtimeMediaSourceCenter::unsetAudioCaptureDeviceManager(CaptureDeviceMana
         m_audioCaptureDeviceManager = nullptr;
 }
 
+CaptureDeviceManager* RealtimeMediaSourceCenter::audioCaptureDeviceManager()
+{
+    return m_audioCaptureDeviceManager ? m_audioCaptureDeviceManager : defaultAudioCaptureDeviceManager();
+}
+
 void RealtimeMediaSourceCenter::setVideoCaptureDeviceManager(CaptureDeviceManager& deviceManager)
 {
     m_videoCaptureDeviceManager = &deviceManager;
@@ -109,6 +124,11 @@ void RealtimeMediaSourceCenter::unsetVideoCaptureDeviceManager(CaptureDeviceMana
 {
     if (m_videoCaptureDeviceManager == &deviceManager)
         m_videoCaptureDeviceManager = nullptr;
+}
+
+CaptureDeviceManager* RealtimeMediaSourceCenter::videoCaptureDeviceManager()
+{
+    return m_videoCaptureDeviceManager ? m_videoCaptureDeviceManager : defaultVideoCaptureDeviceManager();
 }
 
 static void addStringToSHA1(SHA1& sha1, const String& string)
