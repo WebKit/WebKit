@@ -123,15 +123,15 @@ TEST(WebKit2, WKHTTPCookieStore)
             ASSERT_TRUE([cookie1.get().path isEqualToString:cookie.path]);
             ASSERT_TRUE([cookie1.get().value isEqualToString:cookie.value]);
             ASSERT_TRUE([cookie1.get().domain isEqualToString:cookie.domain]);
-            ASSERT_TRUE(cookie1.get().secure);
-            ASSERT_TRUE(cookie1.get().sessionOnly);
+            ASSERT_TRUE(cookie.secure);
+            ASSERT_TRUE(cookie.sessionOnly);
         } else {
             ASSERT_TRUE([cookie2.get().path isEqualToString:cookie.path]);
             ASSERT_TRUE([cookie2.get().value isEqualToString:cookie.value]);
             ASSERT_TRUE([cookie2.get().name isEqualToString:cookie.name]);
             ASSERT_TRUE([cookie2.get().domain isEqualToString:cookie.domain]);
-            ASSERT_FALSE(cookie2.get().secure);
-            ASSERT_FALSE(cookie2.get().sessionOnly);
+            ASSERT_FALSE(cookie.secure);
+            ASSERT_FALSE(cookie.sessionOnly);
         }
     }
     [cookies release];
@@ -158,8 +158,8 @@ TEST(WebKit2, WKHTTPCookieStore)
         ASSERT_TRUE([cookie1.get().path isEqualToString:cookie.path]);
         ASSERT_TRUE([cookie1.get().value isEqualToString:cookie.value]);
         ASSERT_TRUE([cookie1.get().domain isEqualToString:cookie.domain]);
-        ASSERT_TRUE(cookie1.get().secure);
-        ASSERT_TRUE(cookie1.get().sessionOnly);
+        ASSERT_TRUE(cookie.secure);
+        ASSERT_TRUE(cookie.sessionOnly);
     }
     [cookies release];
 
