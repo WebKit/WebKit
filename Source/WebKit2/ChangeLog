@@ -1,3 +1,15 @@
+2017-05-11  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GTK] JavaScript prompt uses title of page to be loaded rather than title of current page
+        https://bugs.webkit.org/show_bug.cgi?id=152690
+
+        Reviewed by Michael Catanzaro.
+
+        webkit_web_view_get_uri() returns the page to be loaded, use
+        internal api for this.
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewCreateJavaScriptDialog):
+
 2017-05-10  Tim Horton  <timothy_horton@apple.com>
 
         Null deref in WebPage::dictionaryPopupInfoForRange
