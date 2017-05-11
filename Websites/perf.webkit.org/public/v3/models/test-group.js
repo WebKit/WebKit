@@ -90,15 +90,15 @@ class TestGroup extends LabeledObject {
         const commitSetLabelMap = new Map;
         for (const request of orderedBuildRequests) {
             const set = request.commitSet();
-            if (!this._requestedCommitSets.includes(set))
-                this._requestedCommitSets.push(set);
+            if (!requestedCommitSets.includes(set))
+                requestedCommitSets.push(set);
         }
         return requestedCommitSets;
     }
 
     requestsForCommitSet(commitSet)
     {
-        this._orderedBuildRequests().filter((request) => request.commitSet() == commitSet);
+        return this._orderedBuildRequests().filter((request) => request.commitSet() == commitSet);
     }
 
     labelForCommitSet(commitSet)
