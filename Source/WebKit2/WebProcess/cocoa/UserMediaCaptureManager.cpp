@@ -257,11 +257,11 @@ void UserMediaCaptureManager::stopProducingData(uint64_t id)
     m_process.send(Messages::UserMediaCaptureManagerProxy::StopProducingData(id), 0);
 }
 
-WebCore::RealtimeMediaSourceCapabilities&& UserMediaCaptureManager::capabilities(uint64_t id)
+WebCore::RealtimeMediaSourceCapabilities UserMediaCaptureManager::capabilities(uint64_t id)
 {
     WebCore::RealtimeMediaSourceCapabilities capabilities;
     m_process.sendSync(Messages::UserMediaCaptureManagerProxy::Capabilities(id), Messages::UserMediaCaptureManagerProxy::Capabilities::Reply(capabilities), 0);
-    return WTFMove(capabilities);
+    return capabilities;
 }
 
 void UserMediaCaptureManager::setMuted(uint64_t id, bool muted)
