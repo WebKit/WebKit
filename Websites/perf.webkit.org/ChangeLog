@@ -1,3 +1,24 @@
+2017-05-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove the code for old syncing script configuration in BuildbotSyncer
+        https://bugs.webkit.org/show_bug.cgi?id=171963
+
+        Reviewed by Chris Dumez.
+
+        Removed the code for specifying {"root": ~}, {"rootOptions": [~]}, and {"rootsExcluding": [~]} in buildbot
+        properties in the syncing script's configurations since they are no longer used after r215061.
+
+        Also removed the support for using "arguments" as an alias to "properties", and updated the tests accordingly.
+
+        * tools/js/buildbot-syncer.js:
+        (BuildbotSyncer._parseRepositoryGroup): Removed the unused code.
+        (BuildbotSyncer._validateAndMergeConfig): Just allow string values in properties.
+        (BuildbotSyncer._validateAndMergeProperties): Deleted.
+
+        * unit-tests/buildbot-syncer-tests.js:
+        (sampleiOSConfig): Use "properties" instead of "arguments" to specify the buildbot properties.
+        (sampleiOSConfigWithExpansions): Ditto.
+
 2017-05-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Another build fix after r215633 to make the bar graphs render even when the confidence intervals aren't available.

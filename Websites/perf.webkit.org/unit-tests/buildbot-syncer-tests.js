@@ -26,26 +26,26 @@ function sampleiOSConfig()
         'types': {
             'speedometer': {
                 'test': ['Speedometer'],
-                'arguments': {'test_name': 'speedometer'}
+                'properties': {'test_name': 'speedometer'}
             },
             'jetstream': {
                 'test': ['JetStream'],
-                'arguments': {'test_name': 'jetstream'}
+                'properties': {'test_name': 'jetstream'}
             },
             'dromaeo-dom': {
                 'test': ['Dromaeo', 'DOM Core Tests'],
-                'arguments': {'tests': 'dromaeo-dom'}
+                'properties': {'tests': 'dromaeo-dom'}
             },
         },
         'builders': {
             'iPhone-bench': {
                 'builder': 'ABTest-iPhone-RunBenchmark-Tests',
-                'arguments': { 'forcescheduler': 'ABTest-iPhone-RunBenchmark-Tests-ForceScheduler' },
+                'properties': { 'forcescheduler': 'ABTest-iPhone-RunBenchmark-Tests-ForceScheduler' },
                 'slaveList': ['ABTest-iPhone-0'],
             },
             'iPad-bench': {
                 'builder': 'ABTest-iPad-RunBenchmark-Tests',
-                'arguments': { 'forcescheduler': 'ABTest-iPad-RunBenchmark-Tests-ForceScheduler' },
+                'properties': { 'forcescheduler': 'ABTest-iPad-RunBenchmark-Tests-ForceScheduler' },
                 'slaveList': ['ABTest-iPad-0', 'ABTest-iPad-1'],
             }
         },
@@ -69,25 +69,25 @@ function sampleiOSConfigWithExpansions()
         "types": {
             "iphone-plt": {
                 "test": ["PLT-iPhone"],
-                "arguments": {"test_name": "plt"}
+                "properties": {"test_name": "plt"}
             },
             "ipad-plt": {
                 "test": ["PLT-iPad"],
-                "arguments": {"test_name": "plt"}
+                "properties": {"test_name": "plt"}
             },
             "speedometer": {
                 "test": ["Speedometer"],
-                "arguments": {"tests": "speedometer"}
+                "properties": {"tests": "speedometer"}
             },
         },
         "builders": {
             "iphone": {
                 "builder": "iPhone AB Tests",
-                "arguments": {"forcescheduler": "force-iphone-ab-tests"}
+                "properties": {"forcescheduler": "force-iphone-ab-tests"}
             },
             "ipad": {
                 "builder": "iPad AB Tests",
-                "arguments": {"forcescheduler": "force-ipad-ab-tests"}
+                "properties": {"forcescheduler": "force-ipad-ab-tests"}
             },
         },
         "configurations": [
@@ -440,28 +440,28 @@ describe('BuildbotSyncer', () => {
             });
         });
 
-        it('should throw when arguments is not an object', () => {
+        it('should throw when properties is not an object', () => {
             assert.throws(() => {
                 const config = smallConfiguration();
-                config.configurations[0].arguments = 'hello';
+                config.configurations[0].properties = 'hello';
                 BuildbotSyncer._loadConfig(MockRemoteAPI, config);
             });
         });
 
-        it('should throw when arguments\'s values are malformed', () => {
+        it('should throw when propertie\'s values are malformed', () => {
             assert.throws(() => {
                 const config = smallConfiguration();
-                config.configurations[0].arguments = {'some': {'otherKey': 'some root'}};
+                config.configurations[0].properties = {'some': {'otherKey': 'some root'}};
                 BuildbotSyncer._loadConfig(RemoteAPI, config);
             });
             assert.throws(() => {
                 const config = smallConfiguration();
-                config.configurations[0].arguments = {'some': {'root': ['a', 'b']}};
+                config.configurations[0].properties = {'some': {'root': ['a', 'b']}};
                 BuildbotSyncer._loadConfig(RemoteAPI, config);
             });
             assert.throws(() => {
                 const config = smallConfiguration();
-                config.configurations[0].arguments = {'some': {'root': 1}};
+                config.configurations[0].properties = {'some': {'root': 1}};
                 BuildbotSyncer._loadConfig(RemoteAPI, config);
             });
         });

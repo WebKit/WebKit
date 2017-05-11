@@ -334,7 +334,6 @@ class BuildbotSyncer {
             description: group.description,
             acceptsRoots: group.acceptsRoots,
             propertiesTemplate,
-            arguments: group.arguments,
             repositoryList: parsedRepositoryList,
         };
     }
@@ -389,11 +388,14 @@ class BuildbotSyncer {
 
             switch (name) {
             case 'properties': // Fallthrough
-            case 'arguments':
-                assert.equal(typeof(value), 'object', 'arguments should be a dictionary');
+                assert.equal(typeof(value), 'object', 'properties should be a dictionary');
                 if (!config['properties'])
                     config['properties'] = {};
-                this._validateAndMergeProperties(config['properties'], value);
+                const properties = config['properties'];
+                for (const name in value) {
+                    assert.equal(typeof(value[name]), 'string', 'A argument value must be a string');
+                    properties[name] = value[name];
+                }
                 break;
             case 'test': // Fallthrough
             case 'slaveList': // Fallthrough
@@ -414,37 +416,6 @@ class BuildbotSyncer {
             }
         }
         return config;
-    }
-
-    static _validateAndMergeProperties(properties, configArguments)
-    {
-        for (let name in configArguments) {
-            const value = configArguments[name];
-            if (typeof(value) == 'string') {
-                properties[name] = value;
-                continue;
-            }
-            assert.equal(typeof(value), 'object', 'A argument value must be either a string or a dictionary');
-
-            const keys = Object.keys(value);
-            assert.equal(keys.length, 1, 'arguments value cannot contain more than one key');
-            let namedValue = value[keys[0]];
-            switch (keys[0]) {
-            case 'root':
-                assert.equal(typeof(namedValue), 'string', 'root name must be a string');
-                break;
-            case 'rootOptions': // Fallthrough
-            case 'rootsExcluding':
-                assert(namedValue instanceof Array, `${keys[0]} must specify an array`);
-                for (let excludedRootName of namedValue)
-                    assert.equal(typeof(excludedRootName), 'string', `${keys[0]} must specify an array of strings`);
-                namedValue = namedValue.slice();
-                break;
-            default:
-                assert(false, `Unrecognized named argument ${keys[0]}`);
-            }
-            properties[name] = {[keys[0]]: namedValue};
-        }
     }
 
 }
