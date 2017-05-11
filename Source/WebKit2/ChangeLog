@@ -1,3 +1,9 @@
+2017-05-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.17.2 release.
+
+        * gtk/NEWS: Add release notes for 2.17.2.
+
 2017-05-11  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK] JavaScript prompt uses title of page to be loaded rather than title of current page

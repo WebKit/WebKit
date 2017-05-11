@@ -1,4 +1,18 @@
 =================
+WebKitGTK+ 2.17.2
+=================
+
+What's new in WebKitGTK+ 2.17.2?
+
+  - Update user agent quirks to make Youtube and new Google login page work.
+  - Fix URL shown in the title of beforeunload dialogs.
+  - Focus first input field of HTTP authentication dialog.
+  - Fix rendering of PNG images when decoded in more than one chunk.
+  - Update several web inspector icons.
+  - Fix the build with OpenGL disabled.
+  - Fix several crashes and rendering issues.
+
+=================
 WebKitGTK+ 2.17.1
 =================
 

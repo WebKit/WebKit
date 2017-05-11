@@ -1,3 +1,9 @@
+2017-05-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.17.2 release.
+
+        * Source/cmake/OptionsGTK.cmake: Bump version numbers.
+
 2017-05-10  Don Olmstead  <don.olmstead@am.sony.com>
 
         [Win] Specify source file type when preprocessing IDL files
