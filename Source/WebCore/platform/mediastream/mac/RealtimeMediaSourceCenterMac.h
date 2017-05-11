@@ -56,11 +56,11 @@ private:
 
     Vector<String> bestSourcesForTypeAndConstraints(RealtimeMediaSource::Type, const MediaConstraints&, String& invalidConstraint);
 
-    RealtimeMediaSource::AudioCaptureFactory* defaultAudioFactory() final;
-    RealtimeMediaSource::VideoCaptureFactory* defaultVideoFactory() final;
+    RealtimeMediaSource::AudioCaptureFactory& defaultAudioFactory() final;
+    RealtimeMediaSource::VideoCaptureFactory& defaultVideoFactory() final;
 
-    CaptureDeviceManager* defaultAudioCaptureDeviceManager() final;
-    CaptureDeviceManager* defaultVideoCaptureDeviceManager() final;
+    CaptureDeviceManager& defaultAudioCaptureDeviceManager() final;
+    CaptureDeviceManager& defaultVideoCaptureDeviceManager() final;
 
     bool m_useAVFoundationAudioCapture { false };
 };

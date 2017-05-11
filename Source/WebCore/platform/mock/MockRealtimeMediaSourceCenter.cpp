@@ -184,14 +184,24 @@ Vector<CaptureDevice> MockRealtimeMediaSourceCenter::getMediaStreamDevices()
     return sources;
 }
 
-RealtimeMediaSource::AudioCaptureFactory* MockRealtimeMediaSourceCenter::defaultAudioFactory()
+RealtimeMediaSource::AudioCaptureFactory& MockRealtimeMediaSourceCenter::defaultAudioFactory()
 {
-    return &MockRealtimeAudioSource::factory();
+    return MockRealtimeAudioSource::factory();
 }
 
-RealtimeMediaSource::VideoCaptureFactory* MockRealtimeMediaSourceCenter::defaultVideoFactory()
+RealtimeMediaSource::VideoCaptureFactory& MockRealtimeMediaSourceCenter::defaultVideoFactory()
 {
-    return &MockRealtimeVideoSource::factory();
+    return MockRealtimeVideoSource::factory();
+}
+
+CaptureDeviceManager& MockRealtimeMediaSourceCenter::defaultAudioCaptureDeviceManager()
+{
+    return m_defaultAudioCaptureDeviceManager;
+}
+
+CaptureDeviceManager& MockRealtimeMediaSourceCenter::defaultVideoCaptureDeviceManager()
+{
+    return m_defaultVideoCaptureDeviceManager;
 }
 
 ExceptionOr<void> MockRealtimeMediaSourceCenter::setDeviceEnabled(const String& id, bool enabled)
