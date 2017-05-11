@@ -88,9 +88,14 @@ static webrtc::PeerConnectionInterface::RTCConfiguration configurationFromMediaE
         webrtc::PeerConnectionInterface::IceServer iceServer;
         iceServer.username = server.username.utf8().data();
         iceServer.password = server.credential.utf8().data();
-        for (auto& url : server.urls)
-            iceServer.urls.push_back({ url.string().utf8().data() });
-        rtcConfiguration.servers.push_back(WTFMove(iceServer));
+        for (auto& url : server.urls) {
+            // FIXME: If TURNS is failing, the whole ICE candidate gathering is failing.
+            // We should fix that and reactivate TURNS gathering.
+            if (!url.protocolIs("turns"))
+                iceServer.urls.push_back({ url.string().utf8().data() });
+        }
+        if (iceServer.urls.size())
+            rtcConfiguration.servers.push_back(WTFMove(iceServer));
     }
 
     rtcConfiguration.ice_candidate_pool_size = configuration.iceCandidatePoolSize;
