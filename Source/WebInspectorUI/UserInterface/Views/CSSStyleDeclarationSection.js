@@ -64,6 +64,7 @@ WebInspector.CSSStyleDeclarationSection = class CSSStyleDeclarationSection exten
         if (this.selectorEditable) {
             this._selectorInput = this._headerElement.createChild("textarea");
             this._selectorInput.spellcheck = false;
+            this._selectorInput.dir = "ltr";
             this._selectorInput.tabIndex = -1;
             this._selectorInput.addEventListener("mouseover", this._handleMouseOver.bind(this));
             this._selectorInput.addEventListener("mousemove", this._handleMouseMove.bind(this));

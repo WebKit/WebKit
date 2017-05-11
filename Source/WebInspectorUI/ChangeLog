@@ -1,3 +1,34 @@
+2017-05-11  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: RTL: "Elements > Styles - Rules" rule and media query headers should be left aligned
+        https://bugs.webkit.org/show_bug.cgi?id=171954
+        <rdar://problem/31961976>
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/CSSStyleDeclarationSection.css:
+        (.style-declaration-section > .header):
+        (.style-declaration-section.locked > .header > .locked-icon):
+        (.style-declaration-section > .header > .icon):
+        (.style-declaration-section > .header > textarea):
+        (.style-declaration-section.invalid-selector > .header > .icon):
+        (body[dir=ltr] .style-declaration-section > .header): Deleted.
+        (body[dir=rtl] .style-declaration-section > .header): Deleted.
+        (body[dir=ltr] .style-declaration-section.locked > .header > .locked-icon): Deleted.
+        (body[dir=rtl] .style-declaration-section.locked > .header > .locked-icon): Deleted.
+        (body[dir=ltr] .style-declaration-section > .header > .icon): Deleted.
+        (body[dir=rtl] .style-declaration-section > .header > .icon): Deleted.
+        (body[dir=ltr] .style-declaration-section > .header > textarea): Deleted.
+        (body[dir=rtl] .style-declaration-section > .header > textarea): Deleted.
+        Remove RTL rules.
+
+        * UserInterface/Views/CSSStyleDeclarationSection.js:
+        (WebInspector.CSSStyleDeclarationSection):
+        Set dir="ltr" so selector's textareas work correctly.
+
+        * UserInterface/Views/RulesStyleDetailsPanel.css:
+        (.sidebar > .panel.details.css-style .rules):
+
 2017-05-11  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Error trying to delete DOM breakpoints from the Debugger tab
