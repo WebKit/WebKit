@@ -424,7 +424,7 @@ sub GenerateNamedGetter
         push(@output, "        if (thisObject->nameGetter(state, propertyName, value)) {\n");
         push(@output, "            slot.setValue(thisObject, ${attributeString}, value);\n");
     } else {
-        my $namedGetterFunctionName = $namedGetterFunction->name || "namedItem";
+        my $namedGetterFunctionName = $namedGetterFunction->extendedAttributes->{ImplementedAs} || $namedGetterFunction->name || "namedItem";
         my $itemVariable = "item";
         push(@output, "        auto item = thisObject->wrapped().${namedGetterFunctionName}(propertyNameToAtomicString(propertyName));\n");
 
