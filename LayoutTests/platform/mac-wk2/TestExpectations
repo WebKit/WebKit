@@ -684,3 +684,5 @@ webkit.org/171939 [ Sierra Release ] media/track/track-cue-rendering-on-resize.h
 webkit.org/171947 [ Sierra Release ] transitions/extra-transition.html [ Pass Failure ]
 
 webkit.org/171978 [ El Capitan Debug ] media/media-controls-clone-crash.html [ Pass Timeout ]
+
+webkit.org/170699 [ Release ] imported/w3c/web-platform-tests/html/webappapis/timers/negative-settimeout.html [ Pass Failure ]
