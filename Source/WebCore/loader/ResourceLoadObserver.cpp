@@ -432,6 +432,12 @@ void ResourceLoadObserver::setTimeToLiveCookiePartitionFree(double seconds)
     m_store->setTimeToLiveCookiePartitionFree(seconds);
 }
 
+void ResourceLoadObserver::setReducedTimestampResolution(double seconds)
+{
+    if (seconds > 0)
+        timestampResolution = seconds;
+}
+
 void ResourceLoadObserver::fireDataModificationHandler()
 {
     m_store->fireDataModificationHandler();

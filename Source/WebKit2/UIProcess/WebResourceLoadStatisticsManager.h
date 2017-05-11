@@ -57,6 +57,9 @@ public:
     static void clearInMemoryAndPersistentStore();
     static void clearInMemoryAndPersistentStoreModifiedSinceHours(unsigned);
     static void resetToConsistentState();
+#if PLATFORM(COCOA)
+    static void registerUserDefaultsIfNeeded();
+#endif
 
 private:
 };

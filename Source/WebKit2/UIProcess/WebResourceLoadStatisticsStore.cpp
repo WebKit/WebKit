@@ -29,6 +29,7 @@
 #include "WebProcessMessages.h"
 #include "WebProcessPool.h"
 #include "WebProcessProxy.h"
+#include "WebResourceLoadStatisticsManager.h"
 #include "WebResourceLoadStatisticsStoreMessages.h"
 #include "WebsiteDataFetchOption.h"
 #include "WebsiteDataType.h"
@@ -182,6 +183,9 @@ void WebResourceLoadStatisticsStore::registerSharedResourceLoadObserver()
 void WebResourceLoadStatisticsStore::registerSharedResourceLoadObserver(std::function<void(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, bool clearFirst)>&& shouldPartitionCookiesForDomainsHandler)
 {
     registerSharedResourceLoadObserver();
+#if PLATFORM(COCOA)
+    WebResourceLoadStatisticsManager::registerUserDefaultsIfNeeded();
+#endif
     m_resourceLoadStatisticsStore->setShouldPartitionCookiesCallback([this, shouldPartitionCookiesForDomainsHandler = WTFMove(shouldPartitionCookiesForDomainsHandler)] (const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, bool clearFirst) {
         shouldPartitionCookiesForDomainsHandler(domainsToRemove, domainsToAdd, clearFirst);
     });

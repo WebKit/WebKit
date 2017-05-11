@@ -1,3 +1,23 @@
+2017-05-11  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Enable configuration through preferences
+        https://bugs.webkit.org/show_bug.cgi?id=171949
+        <rdar://problem/31894518>
+
+        Reviewed by Alex Christensen.
+
+        * Shared/WebPreferencesDefinitions.h:
+            Added ResourceLoadStatisticsTimeToLiveUserInteraction,
+            ResourceLoadStatisticsTimeToLiveCookiePartitionFree, and
+            ResourceLoadStatisticsReducedTimestampResolution.
+        * UIProcess/Cocoa/WebResourceLoadStatisticsManagerCocoa.mm: Added.
+        (WebKit::WebResourceLoadStatisticsManager::registerUserDefaultsIfNeeded):
+        * UIProcess/WebResourceLoadStatisticsManager.h:
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::registerSharedResourceLoadObserver):
+            Now calls WebResourceLoadStatisticsManager::registerUserDefaultsIfNeeded().
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2017-05-11  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK] Remove notifications guards from GTK API layer
