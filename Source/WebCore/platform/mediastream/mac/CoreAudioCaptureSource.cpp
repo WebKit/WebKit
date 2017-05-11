@@ -710,7 +710,7 @@ void CoreAudioCaptureSource::stopProducingData()
     
     CoreAudioSharedUnit::singleton().stopProducingData();
     m_isProducingData = false;
-    m_muted = false;
+    m_muted = true;
 
     if (m_audioSourceProvider)
         m_audioSourceProvider->unprepare();

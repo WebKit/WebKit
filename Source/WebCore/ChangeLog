@@ -1,3 +1,14 @@
+2017-05-10  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] CoreAudioCaptureSource claims to never be muted
+        https://bugs.webkit.org/show_bug.cgi?id=171946
+        <rdar://problem/32111991>
+
+        Reviewed by Jer Noble.
+
+        * platform/mediastream/mac/CoreAudioCaptureSource.cpp:
+        (WebCore::CoreAudioCaptureSource::stopProducingData): Set m_muted to true.
+
 2017-05-10  Jer Noble  <jer.noble@apple.com>
 
         RELEASE_ASSERT at WebAudioSourceProviderAVFObjC::provideInput()
