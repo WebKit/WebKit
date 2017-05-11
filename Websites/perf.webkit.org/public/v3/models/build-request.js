@@ -135,6 +135,7 @@ class BuildRequest extends DataModelObject {
             for (const item of rawData.revisionItems) {
                 item.commit = CommitLog.findById(item.commit);
                 item.patch = item.patch ? UploadedFile.findById(item.patch) : null;
+                item.rootFile = item.rootFile ? UploadedFile.findById(item.rootFile) : null;
             }
             rawData.customRoots = rawData.customRoots.map((fileId) => UploadedFile.findById(fileId));
             return CommitSet.ensureSingleton(rawData.id, rawData);

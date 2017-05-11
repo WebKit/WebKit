@@ -117,7 +117,12 @@ class BuildRequestsFetcher {
             $patch_file_id = $row['commitset_patch_file'];
             if ($patch_file_id)
                 $this->add_uploaded_file($patch_file_id);
-            array_push($revision_items, array('commit' => $row['commit_id'], 'patch' => $patch_file_id));
+
+            $root_file_id = $row['commitset_root_file'];
+            if ($root_file_id)
+                $this->add_uploaded_file($root_file_id);
+
+            array_push($revision_items, array('commit' => $row['commit_id'], 'patch' => $patch_file_id, 'rootFile' => $root_file_id));
 
             if (array_key_exists($commit_id, $this->commits_by_id))
                 continue;

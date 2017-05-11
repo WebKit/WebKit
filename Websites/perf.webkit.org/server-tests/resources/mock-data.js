@@ -25,6 +25,7 @@ MockData = {
     macosRepositoryId() { return 9; },
     webkitRepositoryId() { return 11; },
     gitWebkitRepositoryId() { return 111; },
+    sharedRepositoryId() { return 14; },
     addMockData: function (db, statusList)
     {
         if (!statusList)
@@ -34,12 +35,15 @@ MockData = {
             db.insert('build_slaves', {id: 20, name: 'sync-slave', password_hash: crypto.createHash('sha256').update('password').digest('hex')}),
             db.insert('repositories', {id: this.macosRepositoryId(), name: 'macOS'}),
             db.insert('repositories', {id: this.webkitRepositoryId(), name: 'WebKit'}),
+            db.insert('repositories', {id: this.sharedRepositoryId(), name: 'Shared'}),
             db.insert('triggerable_repository_groups', {id: 2001, name: 'webkit-svn', triggerable: 1000}),
             db.insert('triggerable_repositories', {repository: this.macosRepositoryId(), group: 2001}),
             db.insert('triggerable_repositories', {repository: this.webkitRepositoryId(), group: 2001}),
             db.insert('commits', {id: 87832, repository: this.macosRepositoryId(), revision: '10.11 15A284'}),
             db.insert('commits', {id: 93116, repository: this.webkitRepositoryId(), revision: '191622', time: (new Date(1445945816878)).toISOString()}),
             db.insert('commits', {id: 96336, repository: this.webkitRepositoryId(), revision: '192736', time: (new Date(1448225325650)).toISOString()}),
+            db.insert('commits', {id: 111168, repository: this.sharedRepositoryId(), revision: '80229', time: '2016-03-02T23:17:54.3Z'}),
+            db.insert('commits', {id: 111169, repository: this.sharedRepositoryId(), revision: '80230', time: '2016-03-02T23:37:18.0Z'}),
             db.insert('builds', {id: 901, number: '901', time: '2015-10-27T12:05:27.1Z'}),
             db.insert('platforms', {id: MockData.somePlatformId(), name: 'some platform'}),
             db.insert('platforms', {id: MockData.otherPlatformId(), name: 'other platform'}),

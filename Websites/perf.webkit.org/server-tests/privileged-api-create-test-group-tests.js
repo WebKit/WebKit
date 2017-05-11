@@ -323,7 +323,7 @@ describe('/privileged-api/create-test-group', function () {
             let insertedGroupId;
             return PrivilegedAPI.sendRequest('create-test-group', {name: 'test', task: taskId, commitSets: {'macOS': ['15A284', '15A284'], 'WebKit': ['191622', '191623']}}).then((content) => {
                 insertedGroupId = content['testGroupId'];
-                return TestGroup.fetchByTask(taskId);
+                return TestGroup.fetchForTask(taskId, true);
             }).then((testGroups) => {
                 assert.equal(testGroups.length, 1);
                 const group = testGroups[0];
@@ -361,7 +361,7 @@ describe('/privileged-api/create-test-group', function () {
             let insertedGroupId;
             return PrivilegedAPI.sendRequest('create-test-group', params).then((content) => {
                 insertedGroupId = content['testGroupId'];
-                return TestGroup.fetchByTask(taskId);
+                return TestGroup.fetchForTask(taskId, true);
             }).then((testGroups) => {
                 assert.equal(testGroups.length, 1);
                 const group = testGroups[0];
@@ -392,7 +392,7 @@ describe('/privileged-api/create-test-group', function () {
             return PrivilegedAPI.sendRequest('create-test-group', {name: 'test', task: taskId, repetitionCount: 2,
                 commitSets: {'WebKit': ['191622', '191623'], 'macOS': ['15A284', '15A284']}}).then((content) => {
                 insertedGroupId = content['testGroupId'];
-                return TestGroup.fetchByTask(taskId);
+                return TestGroup.fetchForTask(taskId, true);
             }).then((testGroups) => {
                 assert.equal(testGroups.length, 1);
                 const group = testGroups[0];
@@ -438,7 +438,7 @@ describe('/privileged-api/create-test-group', function () {
             let insertedGroupId;
             return PrivilegedAPI.sendRequest('create-test-group', params).then((content) => {
                 insertedGroupId = content['testGroupId'];
-                return TestGroup.fetchByTask(taskId);
+                return TestGroup.fetchForTask(taskId, true);
             }).then((testGroups) => {
                 assert.equal(testGroups.length, 1);
                 const group = testGroups[0];
@@ -485,7 +485,7 @@ describe('/privileged-api/create-test-group', function () {
                     {[webkit.id()]: {revision: '191622'}, [macos.id()]: {revision: '15A284'}, 'customRoots': [uploadedFile['id']]}];
                 return PrivilegedAPI.sendRequest('create-test-group', {name: 'test', task: taskId, repetitionCount: 2, revisionSets}).then((content) => {
                     insertedGroupId = content['testGroupId'];
-                    return TestGroup.fetchByTask(taskId);
+                    return TestGroup.fetchForTask(taskId, true);
                 });
             }).then((testGroups) => {
                 assert.equal(testGroups.length, 1);
@@ -534,7 +534,7 @@ describe('/privileged-api/create-test-group', function () {
             return PrivilegedAPI.sendRequest('create-test-group', {name: 'test', task: taskId, repetitionCount: 2, revisionSets});
         }).then((content) => {
             insertedGroupId = content['testGroupId'];
-            return TestGroup.fetchByTask(taskId);
+            return TestGroup.fetchForTask(taskId, true);
         }).then((testGroups) => {
             assert.equal(testGroups.length, 1);
             const group = testGroups[0];
@@ -618,7 +618,7 @@ describe('/privileged-api/create-test-group', function () {
                 {name: 'test', taskName: 'other task', platform: MockData.somePlatformId(), test: MockData.someTestId(), revisionSets});
         }).then((result) => {
             insertedGroupId = result['testGroupId'];
-            return Promise.all([AnalysisTask.fetchById(result['taskId']), TestGroup.fetchByTask(result['taskId'])]);
+            return Promise.all([AnalysisTask.fetchById(result['taskId']), TestGroup.fetchForTask(result['taskId'], true)]);
         }).then((result) => {
             const [analysisTask, testGroups] = result;
 
@@ -660,7 +660,7 @@ describe('/privileged-api/create-test-group', function () {
         }).then((result) => {
             secondResult = result;
             assert.equal(firstResult['taskId'], secondResult['taskId']);
-            return Promise.all([AnalysisTask.fetchById(result['taskId']), TestGroup.fetchByTask(result['taskId'])]);
+            return Promise.all([AnalysisTask.fetchById(result['taskId']), TestGroup.fetchForTask(result['taskId'], true)]);
         }).then((result) => {
             const [analysisTask, testGroups] = result;
 

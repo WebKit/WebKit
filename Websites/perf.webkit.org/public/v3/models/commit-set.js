@@ -8,26 +8,49 @@ class CommitSet extends DataModelObject {
         this._repositories = [];
         this._repositoryToCommitMap = new Map;
         this._repositoryToPatchMap = new Map;
+        this._repositoryToRootMap = new Map;
         this._latestCommitTime = null;
         this._customRoots = [];
+        this._allRootFiles = [];
 
         if (!object)
             return;
 
+        this._updateFromObject(object);
+    }
+
+    updateSingleton(object)
+    {
+        this._repositoryToCommitMap.clear();
+        this._repositoryToPatchMap.clear();
+        this._repositoryToRootMap.clear();
+        this._repositories = [];
+        this._updateFromObject(object);
+    }
+
+    _updateFromObject(object)
+    {
+        const rootFiles = new Set;
         for (const item of object.revisionItems) {
             const commit = item.commit;
             console.assert(commit instanceof CommitLog);
             console.assert(!item.patch || item.patch instanceof UploadedFile);
+            console.assert(!item.rootFile || item.rootFile instanceof UploadedFile);
             const repository = commit.repository();
             this._repositoryToCommitMap.set(repository, commit);
             this._repositoryToPatchMap.set(repository, item.patch);
+            this._repositoryToRootMap.set(repository, item.rootFile);
+            if (item.rootFile)
+                rootFiles.add(item.rootFile);
             this._repositories.push(commit.repository());
         }
         this._customRoots = object.customRoots;
+        this._allRootFiles = Array.from(rootFiles).concat(object.customRoots);
     }
 
     repositories() { return this._repositories; }
     customRoots() { return this._customRoots; }
+    allRootFiles() { return this._allRootFiles; }
     commitForRepository(repository) { return this._repositoryToCommitMap.get(repository); }
 
     revisionForRepository(repository)
@@ -37,6 +60,7 @@ class CommitSet extends DataModelObject {
     }
 
     patchForRepository(repository) { return this._repositoryToPatchMap.get(repository); }
+    rootForRepository(repository) { return this._repositoryToRootMap.get(repository); }
 
     // FIXME: This should return a Date object.
     latestCommitTime()
@@ -57,7 +81,9 @@ class CommitSet extends DataModelObject {
         for (const [repository, commit] of this._repositoryToCommitMap) {
             if (commit != other._repositoryToCommitMap.get(repository))
                 return false;
-            if (this._repositoryToPatchMap.get(repository) != other._repositoryToCommitMap.get(repository))
+            if (this._repositoryToPatchMap.get(repository) != other._repositoryToPatchMap.get(repository))
+                return false;
+            if (this._repositoryToRootMap.get(repository) != other._repositoryToRootMap.get(repository))
                 return false;
         }
         return CommitSet.areCustomRootsEqual(this._customRoots, other._customRoots);

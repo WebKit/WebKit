@@ -455,7 +455,7 @@ class AnalysisTaskPage extends PageWithHeading {
 
     _fetchRelatedInfoForTaskId(taskId)
     {
-        TestGroup.fetchByTask(taskId).then(this._didFetchTestGroups.bind(this));
+        TestGroup.fetchForTask(taskId).then(this._didFetchTestGroups.bind(this));
         AnalysisResults.fetch(taskId).then(this._didFetchAnalysisResults.bind(this));
         AnalysisTask.fetchRelatedTasks(taskId).then((relatedTasks) => {
             this._relatedTasks = relatedTasks;

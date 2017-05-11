@@ -1,5 +1,79 @@
 2017-05-10  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Add API to upload a patched build for a custom A/B testing
+        https://bugs.webkit.org/show_bug.cgi?id=171956
+
+        Reviewed by Chris Dumez.
+
+        Added /api/upload-root to upload a root file, the build product of a patch associated with a commit set.
+
+        Extracted more functions out of privileged-api/upload-file.php to uploaded-file-helpers.php to share code
+        with /api/upload-root.php.
+
+        * public/api/upload-root.php: Added.
+        (main):
+        (compute_commit_set_items_to_update): Find the list of commit set items to associate this root with.
+        A root can be associated with multiple repositories and there fore commit set items; e.g. if a software
+        is built from multiple repositories and there is a patch associated with one of them, the built product
+        must be associated with all those repositories.
+
+        * public/include/build-requests-fetcher.php:
+        (BuildRequestsFetcher::fetch_commits_for_set_if_needed): Include the root file is there is one.
+
+        * public/include/json-header.php:
+        (validate_arguments): Added the support for validating json string.
+        (verify_slave): Return the slave ID found.
+
+        * public/include/uploaded-file-helpers.php:
+        (validate_uploaded_file): Extracted from /privileged-api/upload-file to be shared with /api/upload-root.
+        (query_total_file_size): Ditto.
+        (create_uploaded_file_from_form_data): Ditto.
+        (upload_file_in_transaction): Ditto. Takes a lambda to do the extra work inside the transaction.
+
+        * public/privileged-api/upload-file.php:
+        (main):
+
+        * public/v3/models/build-request.js:
+        (BuildRequest.constructBuildRequestsFromData): Resolve the rootFIle of each commit set item.
+
+        * public/v3/models/commit-set.js:
+        (CommitSet): Added _repositoryToRootMap and _allRootFiles as instance variables.
+        (CommitSet.prototype.updateSingleton): Added. Previously, each commit set's states never changed after
+        its creation. After this patch, each item can be newly associated with a root so we must update its
+        _repositoryToRootMap and _allRootFiles. For simplicity, we update all states.
+        (CommitSet.prototype._updateFromObject): Extracted from the constructor.
+        (CommitSet.prototype.allRootFiles): Added. Includes custom roots and roots created for patches.
+        (CommitSet.prototype.rootForRepository): Added.
+        (CommitSet.prototype.equals): Fixed the bug that we were comparing _repositoryToPatchMap to
+        _repositoryToCommitMap, and added a check for _repositoryToRootMap.
+
+        * public/v3/models/test-group.js:
+        (TestGroup.prototype.task): Added.
+        (TestGroup.createWithTask):
+        (TestGroup.createWithCustomConfiguration):
+        (TestGroup.createAndRefetchTestGroups):
+        (TestGroup._fetchTestGroupsForTask): Deleted. Now fetchForTask takes a boolean argument: ignoreCache.
+        (TestGroup.findAllByTask): Added.
+        (TestGroup.fetchForTask): Renamed from fetchByTask.
+
+        * public/v3/pages/analysis-task-page.js:
+        (AnalysisTaskPage.prototype._fetchRelatedInfoForTaskId):
+
+        * server-tests/api-build-requests-tests.js:
+
+        * server-tests/api-upload-root-tests.js: Added. Added tests for /api/upload-root.
+        (makeReport): Added.
+        (addSlaveAndCreateRootFile): Added.
+        (createTestGroupWihPatch): Added.
+
+        * server-tests/privileged-api-create-test-group-tests.js:
+
+        * server-tests/resources/mock-data.js:
+        (MockData.sharedRepositoryId): Added.
+        (MockData.addMockData): Added "Shared" repository along with commits.
+
+2017-05-10  Ryosuke Niwa  <rniwa@webkit.org>
+
         Rename server-tests/api-update-triggerable.js to server-tests/api-update-triggerable-tests.js
         https://bugs.webkit.org/show_bug.cgi?id=171905
 
