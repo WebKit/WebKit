@@ -1,3 +1,16 @@
+2017-05-10  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r216436. rdar://problem/32041544
+
+    2017-05-08  Youenn Fablet  <youenn@apple.com>
+
+            TURNS gathering is not working properly
+            https://bugs.webkit.org/show_bug.cgi?id=171747
+
+            Reviewed by Eric Carlson.
+
+            * Source/webrtc/base/openssladapter.cc: Adding support for SNI in case of TLS ice candidate gathering.
+
 2017-04-29  Dan Bernstein  <mitz@apple.com>
 
         [Xcode] libwebrtc SRCROOT includes examples

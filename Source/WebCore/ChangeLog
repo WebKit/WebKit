@@ -1,5 +1,21 @@
 2017-05-10  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r216436. rdar://problem/32041544
+
+    2017-05-08  Youenn Fablet  <youenn@apple.com>
+
+            TURNS gathering is not working properly
+            https://bugs.webkit.org/show_bug.cgi?id=171747
+
+            Reviewed by Eric Carlson.
+
+            Covered by manual tests.
+
+            * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp:
+            (WebCore::configurationFromMediaEndpointConfiguration): Reveting TURNS ice server skipping.
+
+2017-05-10  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r216331. rdar://problem/31122612
 
     2017-05-06  Myles C. Maxfield  <mmaxfield@apple.com>
