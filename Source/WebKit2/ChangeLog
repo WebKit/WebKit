@@ -1,3 +1,15 @@
+2017-05-11  Andy Estes  <aestes@apple.com>
+
+        Fix a spelling mistake in ApplePayErrorCode
+        https://bugs.webkit.org/show_bug.cgi?id=171981
+        <rdar://problem/32136567>
+
+        Reviewed by Beth Dakin.
+
+        * UIProcess/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm:
+        (WebKit::toPKPaymentErrorCode):
+        (WebKit::toPKPaymentAuthorizationStatus):
+
 2017-05-11  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Enable configuration through preferences

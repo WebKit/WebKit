@@ -155,7 +155,7 @@ struct PaymentError {
         Unknown,
         ShippingContactInvalid,
         BillingContactInvalid,
-        AddressUnservicable,
+        AddressUnserviceable,
     };
 
     enum class ContactField {
@@ -207,7 +207,7 @@ template<> struct EnumTraits<WebCore::PaymentError::Code> {
         WebCore::PaymentError::Code::Unknown,
         WebCore::PaymentError::Code::ShippingContactInvalid,
         WebCore::PaymentError::Code::BillingContactInvalid,
-        WebCore::PaymentError::Code::AddressUnservicable
+        WebCore::PaymentError::Code::AddressUnserviceable
     >;
 };
 
