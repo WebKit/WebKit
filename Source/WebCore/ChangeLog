@@ -1,3 +1,28 @@
+2017-05-11  Frederic Wang  <fwang@igalia.com>
+
+        Unify hasTouchScrollableOverflow/needsCompositedScrolling concepts
+        https://bugs.webkit.org/show_bug.cgi?id=171974
+
+        Reviewed by Simon Fraser.
+
+        This commit moves the following pattern in a single RenderLayer::usesAcceleratedScrolling function:
+        #if PLATFORM(IOS)
+        ...hasTouchScrollableOverflow()...
+        #else
+        ...needsCompositedScrolling()...
+        #endif
+
+        No new tests, behavior unchanged.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::usesAcceleratedScrolling): Introduce helper function.
+        * rendering/RenderLayer.h: Declare the function.
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::layerOrAncestorIsTransformedOrUsingCompositedScrolling): Use the new function.
+        (WebCore::RenderLayerBacking::updateConfiguration): Ditto.
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::useCoordinatedScrollingForLayer): Ditto.
+
 2017-05-11  Romain Bellessort  <romain.bellessort@crf.canon.fr>
 
         [Readable Streams API] Implement ReadableStreamBYOBReader cancel()

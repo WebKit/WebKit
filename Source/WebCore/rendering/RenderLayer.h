@@ -265,6 +265,7 @@ public:
     bool hasAcceleratedTouchScrolling() const { return false; }
     bool hasTouchScrollableOverflow() const { return false; }
 #endif
+    bool usesAcceleratedScrolling() const;
 
     int verticalScrollbarWidth(OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize) const;
     int horizontalScrollbarHeight(OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize) const;

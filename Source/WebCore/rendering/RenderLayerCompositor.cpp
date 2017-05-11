@@ -2723,11 +2723,7 @@ static bool useCoordinatedScrollingForLayer(RenderView& view, const RenderLayer&
     if (layer.isRootLayer() && view.frameView().frame().isMainFrame())
         return true;
 
-#if PLATFORM(IOS)
-    return layer.hasTouchScrollableOverflow();
-#else
-    return layer.needsCompositedScrolling();
-#endif
+    return layer.usesAcceleratedScrolling();
 }
 
 bool RenderLayerCompositor::requiresCompositingForPosition(RenderLayerModelObject& renderer, const RenderLayer& layer, RenderLayer::ViewportConstrainedNotCompositedReason* viewportConstrainedNotCompositedReason) const

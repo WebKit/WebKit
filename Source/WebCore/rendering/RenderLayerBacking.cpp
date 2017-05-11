@@ -546,17 +546,10 @@ void RenderLayerBacking::updateCustomAppearance(const RenderStyle& style)
         m_graphicsLayer->setCustomAppearance(GraphicsLayer::NoCustomAppearance);
 }
 
-// FIXME: the hasAcceleratedTouchScrolling()/needsCompositedScrolling() concepts need to be merged.
 static bool layerOrAncestorIsTransformedOrUsingCompositedScrolling(RenderLayer& layer)
 {
     for (RenderLayer* curr = &layer; curr; curr = curr->parent()) {
-        if (curr->hasTransform()
-#if PLATFORM(IOS)
-            || curr->hasTouchScrollableOverflow()
-#else
-            || curr->needsCompositedScrolling()
-#endif
-            )
+        if (curr->hasTransform() || curr->usesAcceleratedScrolling())
             return true;
     }
 
@@ -682,12 +675,8 @@ bool RenderLayerBacking::updateConfiguration()
     bool needsDescendantsClippingLayer = compositor().clipsCompositingDescendants(m_owningLayer);
 
     if (!renderer().view().needsLayout()) {
-        bool usesCompositedScrolling;
-#if PLATFORM(IOS)
-        usesCompositedScrolling = m_owningLayer.hasTouchScrollableOverflow();
-#else
-        usesCompositedScrolling = m_owningLayer.needsCompositedScrolling();
-#endif
+        bool usesCompositedScrolling = m_owningLayer.usesAcceleratedScrolling();
+
         // Our scrolling layer will clip.
         if (usesCompositedScrolling)
             needsDescendantsClippingLayer = false;

@@ -2188,6 +2188,15 @@ bool RenderLayer::handleTouchEvent(const PlatformTouchEvent& touchEvent)
 #endif
 #endif // PLATFORM(IOS)
 
+bool RenderLayer::usesAcceleratedScrolling() const
+{
+#if PLATFORM(IOS)
+    return hasTouchScrollableOverflow();
+#else
+    return needsCompositedScrolling();
+#endif
+}
+
 #if ENABLE(IOS_TOUCH_EVENTS)
 void RenderLayer::registerAsTouchEventListenerForScrolling()
 {
