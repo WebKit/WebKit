@@ -1,3 +1,35 @@
+2017-05-11  Mark Lam  <mark.lam@apple.com>
+
+        WorkerThread::stop() should call scheduleExecutionTermination() last.
+        https://bugs.webkit.org/show_bug.cgi?id=171775
+        <rdar://problem/30975761>
+
+        Reviewed by Geoffrey Garen.
+
+        Currently, WorkerThread::stop() calls scheduleExecutionTermination() to terminate
+        JS execution first, followed by posting a cleanup task to the worker, and lastly,
+        it invokes terminate() on the WorkerRunLoop.
+
+        As a result, before run loop is terminate, the worker thread may observe the
+        TerminatedExecutionException in JS code, bail out, see another JS task to run,
+        re-enters the VM to run said JS code, and fails with an assertion due to the
+        TerminatedExecutionException still being pending on VM entry.
+
+        WorkerRunLoop::Task::performTask() already has a check to only allow a task to
+        run if and only if !runLoop.terminated() and the task is not a clean up task.
+        We'll fix the above race by ensuring that having WorkerThread::stop() terminate
+        the run loop before it scheduleExecutionTermination() which throws the
+        TerminatedExecutionException.  This way, by the time JS code unwinds out of the
+        VM due to the TerminatedExecutionException, runLoop.terminated() is guaranteed
+        to be true and thereby prevents re-entry into the VM.
+
+        This issue is covered by an existing test that I just unskipped in TestExpectations.
+
+        * bindings/js/JSDOMPromiseDeferred.cpp:
+        (WebCore::DeferredPromise::callFunction):
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThread::stop):
+
 2017-05-11  Chris Dumez  <cdumez@apple.com>
 
         Drop custom bindings code for HTMLFormControlsCollection's named property getter

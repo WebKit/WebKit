@@ -1,3 +1,13 @@
+2017-05-11  Mark Lam  <mark.lam@apple.com>
+
+        WorkerThread::stop() should call scheduleExecutionTermination() last.
+        https://bugs.webkit.org/show_bug.cgi?id=171775
+        <rdar://problem/30975761>
+
+        Reviewed by Geoffrey Garen.
+
+        * TestExpectations:
+
 2017-05-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed GTK+ gardening. Update expectations of tests failing after r216450.
