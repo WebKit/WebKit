@@ -37,7 +37,7 @@ class WebGPUTextureDescriptor;
 class WebGPUTexture : public WebGPUObject {
 public:
     virtual ~WebGPUTexture();
-    static Ref<WebGPUTexture> createFromDrawableTexture(WebGPURenderingContext*, PassRefPtr<GPUTexture>);
+    static Ref<WebGPUTexture> createFromDrawableTexture(WebGPURenderingContext*, RefPtr<GPUTexture>&&);
     static Ref<WebGPUTexture> create(WebGPURenderingContext*, WebGPUTextureDescriptor*);
 
     unsigned long width() const;
@@ -46,7 +46,7 @@ public:
     GPUTexture* texture() const { return m_texture.get(); }
 
 private:
-    WebGPUTexture(WebGPURenderingContext*, PassRefPtr<GPUTexture>);
+    WebGPUTexture(WebGPURenderingContext*, RefPtr<GPUTexture>&&);
     WebGPUTexture(WebGPURenderingContext*, WebGPUTextureDescriptor*);
 
     RefPtr<GPUTexture> m_texture;

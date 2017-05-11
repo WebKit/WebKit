@@ -47,8 +47,8 @@ WebGPUDrawable::WebGPUDrawable(WebGPURenderingContext* context)
     if (!m_drawable)
         return;
 
-    RefPtr<GPUTexture> drawableTexture = GPUTexture::createFromDrawable(m_drawable.get());
-    m_texture = WebGPUTexture::createFromDrawableTexture(context, drawableTexture);
+    auto drawableTexture = GPUTexture::createFromDrawable(m_drawable.get());
+    m_texture = WebGPUTexture::createFromDrawableTexture(context, WTFMove(drawableTexture));
 }
 
 WebGPUDrawable::~WebGPUDrawable()

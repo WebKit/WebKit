@@ -34,9 +34,9 @@
 
 namespace WebCore {
 
-Ref<WebGPUTexture> WebGPUTexture::createFromDrawableTexture(WebGPURenderingContext* context, PassRefPtr<GPUTexture> drawableTexture)
+Ref<WebGPUTexture> WebGPUTexture::createFromDrawableTexture(WebGPURenderingContext* context, RefPtr<GPUTexture>&& drawableTexture)
 {
-    return adoptRef(*new WebGPUTexture(context, drawableTexture));
+    return adoptRef(*new WebGPUTexture(context, WTFMove(drawableTexture)));
 }
 
 Ref<WebGPUTexture> WebGPUTexture::create(WebGPURenderingContext* context, WebGPUTextureDescriptor* descriptor)
@@ -44,9 +44,9 @@ Ref<WebGPUTexture> WebGPUTexture::create(WebGPURenderingContext* context, WebGPU
     return adoptRef(*new WebGPUTexture(context, descriptor));
 }
 
-WebGPUTexture::WebGPUTexture(WebGPURenderingContext* context, PassRefPtr<GPUTexture> drawableTexture)
+WebGPUTexture::WebGPUTexture(WebGPURenderingContext* context, RefPtr<GPUTexture>&& drawableTexture)
     : WebGPUObject(context)
-    , m_texture(drawableTexture)
+    , m_texture(WTFMove(drawableTexture))
 {
 }
 

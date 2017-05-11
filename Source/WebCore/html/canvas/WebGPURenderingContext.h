@@ -91,7 +91,7 @@ protected:
     void initializeNewContext();
 
 private:
-    WebGPURenderingContext(HTMLCanvasElement&, PassRefPtr<GPUDevice>);
+    WebGPURenderingContext(HTMLCanvasElement&, Ref<GPUDevice>&&);
 
     RefPtr<GPUDevice> m_device;
 };

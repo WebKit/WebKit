@@ -1,3 +1,23 @@
+2017-05-11  Chris Dumez  <cdumez@apple.com>
+
+        Stop using PassRefPtr in WebGPU code
+        https://bugs.webkit.org/show_bug.cgi?id=171965
+
+        Reviewed by Alex Christensen.
+
+        Stop using PassRefPtr in WebGPU code.
+
+        * html/canvas/WebGPUDrawable.cpp:
+        (WebCore::WebGPUDrawable::WebGPUDrawable):
+        * html/canvas/WebGPURenderingContext.cpp:
+        (WebCore::WebGPURenderingContext::create):
+        (WebCore::WebGPURenderingContext::WebGPURenderingContext):
+        * html/canvas/WebGPURenderingContext.h:
+        * html/canvas/WebGPUTexture.cpp:
+        (WebCore::WebGPUTexture::createFromDrawableTexture):
+        (WebCore::WebGPUTexture::WebGPUTexture):
+        * html/canvas/WebGPUTexture.h:
+
 2017-05-11  Youenn Fablet  <youenn@apple.com>
 
         Name WebRTC Threads
