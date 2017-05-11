@@ -688,10 +688,6 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 #define ENABLE_TOUCH_ICON_LOADING 0
 #endif
 
-#if !defined(ENABLE_VIBRATION)
-#define ENABLE_VIBRATION 0
-#endif
-
 #if !defined(ENABLE_VIDEO)
 #define ENABLE_VIDEO 0
 #endif

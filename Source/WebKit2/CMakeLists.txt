@@ -328,8 +328,6 @@ set(WebKit2_SOURCES
     UIProcess/WebProcessProxy.cpp
     UIProcess/WebURLSchemeHandler.cpp
     UIProcess/WebURLSchemeTask.cpp
-    UIProcess/WebVibrationProvider.cpp
-    UIProcess/WebVibrationProxy.cpp
     UIProcess/WebViewportAttributes.cpp
 
     UIProcess/API/APIContentExtension.cpp
@@ -396,7 +394,6 @@ set(WebKit2_SOURCES
     UIProcess/API/C/WKUserContentControllerRef.cpp
     UIProcess/API/C/WKUserMediaPermissionCheck.cpp
     UIProcess/API/C/WKUserMediaPermissionRequest.cpp
-    UIProcess/API/C/WKVibration.cpp
     UIProcess/API/C/WKViewportAttributes.cpp
     UIProcess/API/C/WKWebsiteDataStoreRef.cpp
     UIProcess/API/C/WKWebsitePolicies.cpp
@@ -563,7 +560,6 @@ set(WebKit2_SOURCES
     WebProcess/WebCoreSupport/WebProgressTrackerClient.cpp
     WebProcess/WebCoreSupport/WebSearchPopupMenu.cpp
     WebProcess/WebCoreSupport/WebUserMediaClient.cpp
-    WebProcess/WebCoreSupport/WebVibrationClient.cpp
 
     WebProcess/WebPage/DrawingArea.cpp
     WebProcess/WebPage/EventDispatcher.cpp
@@ -630,7 +626,6 @@ set(WebKit2_MESSAGES_IN_FILES
     UIProcess/WebProcessPool.messages.in
     UIProcess/WebProcessProxy.messages.in
     UIProcess/WebResourceLoadStatisticsStore.messages.in
-    UIProcess/WebVibrationProxy.messages.in
 
     UIProcess/Automation/WebAutomationSession.messages.in
 

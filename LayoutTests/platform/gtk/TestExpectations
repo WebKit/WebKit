@@ -592,9 +592,6 @@ Bug(GTK) fast/text/font-weights-zh.html [ WontFix ]
 # LAYER_TREE_INCLUDES_VISIBLE_RECTS option to layerTreeAsText is only applicable to Mac.
 Bug(GTK) compositing/visible-rect [ Skip ]
 
-# Vibration API support not yet.
-webkit.org/b/99029 vibration [ Failure ]
-
 # Pointer Lock is not implemented.
 webkit.org/b/99036 pointer-lock [ Skip ]
 # As well as testing fullscreen functionality, these tests also utilize the pointer lock feature.
@@ -602,7 +599,6 @@ webkit.org/b/99036 http/tests/fullscreen [ Skip ]
 webkit.org/b/99036 http/tests/pointer-lock [ Skip ]
 webkit.org/b/99036 fast/shadow-dom/pointerlockelement-in-shadow-tree.html [ Skip ]
 webkit.org/b/99036 fast/shadow-dom/pointerlockelement-in-slot.html [ Skip ]
-
 
 # IETC flexbox failures
 webkit.org/b/85211 ietestcenter/css3/flexbox/flexbox-align-stretch-001.htm [ ImageOnlyFailure ]

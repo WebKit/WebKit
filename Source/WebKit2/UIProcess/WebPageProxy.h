@@ -226,10 +226,6 @@ struct PlatformPopupMenuData;
 struct PrintInfo;
 struct WebPopupItem;
 
-#if ENABLE(VIBRATION)
-class WebVibrationProxy;
-#endif
-
 #if USE(QUICK_LOOK)
 class QuickLookDocumentData;
 #endif
@@ -338,10 +334,6 @@ public:
     void setAllowsRemoteInspection(bool);
     String remoteInspectionNameOverride() const { return m_remoteInspectionNameOverride; }
     void setRemoteInspectionNameOverride(const String&);
-#endif
-
-#if ENABLE(VIBRATION)
-    WebVibrationProxy* vibration() { return m_vibration.get(); }
 #endif
 
 #if ENABLE(FULLSCREEN_API)
@@ -1686,10 +1678,6 @@ private:
     bool m_hasNetworkRequestsOnSuspended { false };
     bool m_isKeyboardAnimatingIn { false };
     bool m_isScrollingOrZooming { false };
-#endif
-
-#if ENABLE(VIBRATION)
-    RefPtr<WebVibrationProxy> m_vibration;
 #endif
 
 #if ENABLE(APPLE_PAY)

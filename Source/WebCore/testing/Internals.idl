@@ -425,10 +425,6 @@ enum EventThrottlingBehavior {
 
     boolean isSelectPopupVisible(HTMLSelectElement element);
 
-#if defined(ENABLE_VIBRATION) && ENABLE_VIBRATION
-    boolean isVibrating();
-#endif
-
     [MayThrowException] boolean isPluginUnavailabilityIndicatorObscured(Element element);
     boolean isPluginSnapshotted(Element element);
 

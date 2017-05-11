@@ -1,3 +1,12 @@
+2017-05-11  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Remove Vibration API
+        https://bugs.webkit.org/show_bug.cgi?id=171766
+
+        Rubber-stamped by Alexey Proskuryakov.
+
+        * Scripts/webkitperl/FeatureList.pm:
+
 2017-05-11  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         Add WPE release bots

@@ -204,10 +204,6 @@
 #include <WebCore/MHTMLArchive.h>
 #endif
 
-#if ENABLE(VIBRATION)
-#include "WebVibrationClient.h"
-#endif
-
 #if ENABLE(POINTER_LOCK)
 #include <WebCore/PointerLockController.h>
 #endif
@@ -437,9 +433,6 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
 #endif
 #if ENABLE(NOTIFICATIONS)
     WebCore::provideNotification(m_page.get(), new WebNotificationClient(this));
-#endif
-#if ENABLE(VIBRATION)
-    WebCore::provideVibrationTo(m_page.get(), new WebVibrationClient(this));
 #endif
 #if ENABLE(PROXIMITY_EVENTS)
     WebCore::provideDeviceProximityTo(m_page.get(), new WebDeviceProximityClient(this));

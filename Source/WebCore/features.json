@@ -1113,6 +1113,16 @@
         "description": "Allows selection of variation values along fonts' exposed axes."
     },
     {
+        "name": "Vibration API",
+        "status": {
+            "status": "Removed"
+        },
+        "url": "https://w3c.github.io/vibration/",
+        "keywords": ["vibration"],
+        "category": "webapps",
+        "description": "An API that provides access to the vibration mechanism of the hosting device."
+    },
+    {
         "name": "ViewportAPI",
         "status": {
             "status": "Under Consideration"

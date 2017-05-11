@@ -193,10 +193,6 @@
 #include "SpeechSynthesis.h"
 #endif
 
-#if ENABLE(VIBRATION)
-#include "Vibration.h"
-#endif
-
 #if ENABLE(MEDIA_STREAM)
 #include "MockRealtimeMediaSourceCenter.h"
 #endif
@@ -3129,17 +3125,6 @@ ExceptionOr<Ref<DOMRect>> Internals::selectionBounds()
 
     return DOMRect::create(document->frame()->selection().selectionBounds());
 }
-
-#if ENABLE(VIBRATION)
-
-bool Internals::isVibrating()
-{
-    auto* document = contextDocument();
-    auto* page = document ? document->page() : nullptr;
-    return page && Vibration::from(page)->isVibrating();
-}
-
-#endif
 
 ExceptionOr<bool> Internals::isPluginUnavailabilityIndicatorObscured(Element& element)
 {

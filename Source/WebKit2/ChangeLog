@@ -1,3 +1,33 @@
+2017-05-11  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Remove Vibration API
+        https://bugs.webkit.org/show_bug.cgi?id=171766
+
+        Rubber-stamped by Alexey Proskuryakov.
+
+        * CMakeLists.txt:
+        * Shared/API/APIObject.h:
+        * Shared/API/c/WKBase.h:
+        * UIProcess/API/C/WKAPICast.h:
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageGetVibration): Deleted.
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/API/C/WKVibration.cpp: Removed.
+        * UIProcess/API/C/WKVibration.h: Removed.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::m_weakPtrFactory):
+        (WebKit::WebPageProxy::resetState):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::vibration): Deleted.
+        * UIProcess/WebVibrationProvider.cpp: Removed.
+        * UIProcess/WebVibrationProvider.h: Removed.
+        * UIProcess/WebVibrationProxy.cpp: Removed.
+        * UIProcess/WebVibrationProxy.h: Removed.
+        * UIProcess/WebVibrationProxy.messages.in: Removed.
+        * WebProcess/WebCoreSupport/WebVibrationClient.cpp: Removed.
+        * WebProcess/WebCoreSupport/WebVibrationClient.h: Removed.
+        * WebProcess/WebPage/WebPage.cpp:
+
 2017-05-11  Andy Estes  <aestes@apple.com>
 
         Fix a spelling mistake in ApplePayErrorCode

@@ -28,7 +28,6 @@ set(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/quota"
     "${WEBCORE_DIR}/Modules/speech"
     "${WEBCORE_DIR}/Modules/streams"
-    "${WEBCORE_DIR}/Modules/vibration"
     "${WEBCORE_DIR}/Modules/webaudio"
     "${WEBCORE_DIR}/Modules/webdatabase"
     "${WEBCORE_DIR}/Modules/webdriver"
@@ -150,7 +149,6 @@ set(WebCore_IDL_INCLUDES
     Modules/quota
     Modules/speech
     Modules/streams
-    Modules/vibration
     Modules/webaudio
     Modules/webdatabase
     Modules/websockets
@@ -282,8 +280,6 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/streams/ReadableStreamDefaultReader.idl
     Modules/streams/ReadableStreamSource.idl
     Modules/streams/WritableStream.idl
-
-    Modules/vibration/NavigatorVibration.idl
 
     Modules/webaudio/AnalyserNode.idl
     Modules/webaudio/AudioBuffer.idl
@@ -993,9 +989,6 @@ set(WebCore_SOURCES
     Modules/speech/SpeechSynthesisEvent.cpp
     Modules/speech/SpeechSynthesisUtterance.cpp
     Modules/speech/SpeechSynthesisVoice.cpp
-
-    Modules/vibration/NavigatorVibration.cpp
-    Modules/vibration/Vibration.cpp
 
     Modules/webaudio/AnalyserNode.cpp
     Modules/webaudio/AsyncAudioDecoder.cpp

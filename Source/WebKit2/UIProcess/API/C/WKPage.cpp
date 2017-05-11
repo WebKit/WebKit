@@ -84,10 +84,6 @@
 #include "WebContextMenuItem.h"
 #endif
 
-#if ENABLE(VIBRATION)
-#include "WebVibrationProxy.h"
-#endif
-
 #if ENABLE(MEDIA_SESSION)
 #include "WebMediaSessionMetadata.h"
 #include <WebCore/MediaSessionEvents.h>
@@ -358,16 +354,6 @@ uint64_t WKPageGetRenderTreeSize(WKPageRef page)
 WKInspectorRef WKPageGetInspector(WKPageRef pageRef)
 {
     return toAPI(toImpl(pageRef)->inspector());
-}
-
-WKVibrationRef WKPageGetVibration(WKPageRef page)
-{
-#if ENABLE(VIBRATION)
-    return toAPI(toImpl(page)->vibration());
-#else
-    UNUSED_PARAM(page);
-    return 0;
-#endif
 }
 
 double WKPageGetEstimatedProgress(WKPageRef pageRef)

@@ -118,8 +118,6 @@ WK_EXPORT uint64_t WKPageGetRenderTreeSize(WKPageRef page);
 
 WK_EXPORT WKInspectorRef WKPageGetInspector(WKPageRef page);
 
-WK_EXPORT WKVibrationRef WKPageGetVibration(WKPageRef page);
-
 WK_EXPORT WKStringRef WKPageCopyUserAgent(WKPageRef page);
 
 WK_EXPORT WKStringRef WKPageCopyApplicationNameForUserAgent(WKPageRef page);

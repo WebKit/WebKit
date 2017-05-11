@@ -143,10 +143,6 @@
 #include "RemoteScrollingCoordinatorProxy.h"
 #endif
 
-#if ENABLE(VIBRATION)
-#include "WebVibrationProxy.h"
-#endif
-
 #ifndef NDEBUG
 #include <wtf/RefCountedLeakCounter.h>
 #endif
@@ -478,9 +474,6 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
 #if PLATFORM(IOS) && HAVE(AVKIT) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     m_playbackSessionManager = WebPlaybackSessionManagerProxy::create(*this);
     m_videoFullscreenManager = WebVideoFullscreenManagerProxy::create(*this, *m_playbackSessionManager);
-#endif
-#if ENABLE(VIBRATION)
-    m_vibration = WebVibrationProxy::create(this);
 #endif
 
 #if ENABLE(APPLE_PAY)
@@ -5384,10 +5377,6 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
         m_fullScreenManager->invalidate();
         m_fullScreenManager = nullptr;
     }
-#endif
-
-#if ENABLE(VIBRATION)
-    m_vibration->invalidate();
 #endif
 
     if (m_openPanelResultListener) {

@@ -153,7 +153,6 @@ public:
         UserInitiatedAction,
         UserMediaPermissionCheck,
         UserMediaPermissionRequest,
-        Vibration,
         ViewportAttributes,
         VisitedLinkStore,
         WebResourceLoadStatisticsManager,

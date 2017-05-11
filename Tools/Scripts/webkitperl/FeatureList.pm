@@ -128,7 +128,6 @@ my (
     $touchEventsSupport,
     $touchIconLoadingSupport,
     $touchSliderSupport,
-    $vibrationSupport,
     $videoSupport,
     $videoTrackSupport,
     $webAnimationsSupport,
@@ -370,9 +369,6 @@ my @features = (
 
     { option => "touch-slider", desc => "Toggle Touch Slider support",
       define => "ENABLE_TOUCH_SLIDER", default => 0, value => \$touchSliderSupport },
-
-    { option => "vibration", desc => "Toggle Vibration support",
-      define => "ENABLE_VIBRATION", default => 0, value => \$vibrationSupport },
 
     { option => "video", desc => "Toggle Video support",
       define => "ENABLE_VIDEO", default => (isAppleWebKit() || isGtk() || isWPE()), value => \$videoSupport },

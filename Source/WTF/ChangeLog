@@ -1,3 +1,12 @@
+2017-05-11  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Remove Vibration API
+        https://bugs.webkit.org/show_bug.cgi?id=171766
+
+        Rubber-stamped by Alexey Proskuryakov.
+
+        * wtf/FeatureDefines.h:
+
 2017-05-09  Sam Weinig  <sam@webkit.org>
 
         Remove support for legacy Notifications

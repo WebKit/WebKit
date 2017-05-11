@@ -112,7 +112,6 @@ class WebRenderObject;
 class WebResourceLoadStatisticsManager;
 class WebTextChecker;
 class WebUserContentControllerProxy;
-class WebVibrationProxy;
 class WebViewportAttributes;
 struct WebsitePolicies;
 
@@ -168,7 +167,6 @@ WK_ADD_API_MAPPING(WKUserContentFilterRef, API::ContentExtension)
 WK_ADD_API_MAPPING(WKUserMediaPermissionCheckRef, UserMediaPermissionCheckProxy)
 WK_ADD_API_MAPPING(WKUserMediaPermissionRequestRef, UserMediaPermissionRequestProxy)
 WK_ADD_API_MAPPING(WKUserScriptRef, API::UserScript)
-WK_ADD_API_MAPPING(WKVibrationRef, WebVibrationProxy)
 WK_ADD_API_MAPPING(WKViewportAttributesRef, WebViewportAttributes)
 WK_ADD_API_MAPPING(WKWebsiteDataStoreRef, API::WebsiteDataStore)
 WK_ADD_API_MAPPING(WKWebsitePoliciesRef, API::WebsitePolicies)

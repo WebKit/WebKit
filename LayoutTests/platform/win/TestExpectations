@@ -535,9 +535,6 @@ fast/events/platform-wheelevent-paging-y-in-scrolling-page.html [ Skip ]
 pointer-lock/ [ Skip ]
 http/tests/pointer-lock/ [ Skip ]
 
-# TODO Vibration API is not implemented.
-vibration/ [ Skip ]
-
 # Proximity Events is not supported.
 proximity/ [ Skip ]
 fast/events/constructors/device-proximity-event-constructor.html

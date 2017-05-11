@@ -450,10 +450,6 @@ public:
 
     ExceptionOr<Ref<DOMRect>> selectionBounds();
 
-#if ENABLE(VIBRATION)
-    bool isVibrating();
-#endif
-
     ExceptionOr<bool> isPluginUnavailabilityIndicatorObscured(Element&);
     bool isPluginSnapshotted(Element&);
 
