@@ -1,3 +1,15 @@
+2017-05-11  Chris Dumez  <cdumez@apple.com>
+
+        Annotate Ref::ptr() with RETURNS_NONNULL
+        https://bugs.webkit.org/show_bug.cgi?id=171996
+
+        Reviewed by Andreas Kling.
+
+        Annotate Ref::ptr() with RETURNS_NONNULL as it can never return null.
+
+        * wtf/Ref.h:
+        (WTF::Ref::ptr): Deleted.
+
 2017-05-11  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove Vibration API
