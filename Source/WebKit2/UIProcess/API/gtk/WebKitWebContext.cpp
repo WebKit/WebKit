@@ -168,9 +168,7 @@ struct _WebKitWebContextPrivate {
 #if ENABLE(GEOLOCATION)
     RefPtr<WebKitGeolocationProvider> geolocationProvider;
 #endif
-#if ENABLE(NOTIFICATIONS)
     RefPtr<WebKitNotificationProvider> notificationProvider;
-#endif
     GRefPtr<WebKitWebsiteDataManager> websiteDataManager;
 
     CString faviconDatabaseDirectory;
@@ -327,9 +325,7 @@ static void webkitWebContextConstructed(GObject* object)
 #if ENABLE(GEOLOCATION)
     priv->geolocationProvider = WebKitGeolocationProvider::create(priv->processPool->supplement<WebGeolocationManagerProxy>());
 #endif
-#if ENABLE(NOTIFICATIONS)
     priv->notificationProvider = WebKitNotificationProvider::create(priv->processPool->supplement<WebNotificationManagerProxy>(), webContext);
-#endif
 #if ENABLE(REMOTE_INSPECTOR)
     priv->remoteInspectorProtocolHandler = std::make_unique<RemoteInspectorProtocolHandler>(webContext);
 #endif
