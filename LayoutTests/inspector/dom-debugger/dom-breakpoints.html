@@ -24,6 +24,7 @@ function test()
     const subtreeModifiedTestId = "subtree-modified-test";
     const attributeModifiedTestId = "attribute-modified-test";
     const nodeRemovedTestId = "node-removed-test";
+    const multipleBreakpointsTestId = "multiple-breakpoints-test";
 
     let suite = InspectorTest.createAsyncSuite("DOMBreakpoints");
 
@@ -93,7 +94,7 @@ function test()
                 WebInspector.domDebuggerManager.awaitEvent(WebInspector.DOMDebuggerManager.Event.DOMBreakpointAdded)
                 .then((event) => {
                     let breakpoint = event.data.breakpoint;
-                    InspectorTest.pass("Breakpoint added.");
+                    InspectorTest.pass(`Added '${type}' breakpoint.`);
                     resolve(event);
                 });
 
@@ -210,6 +211,51 @@ function test()
     });
 
     suite.addTestCase({
+        name: "RemoveAllBreakpointsForNode",
+        description: "Check that debugger does not pause for removed breakpoints on node.",
+        teardown,
+        test(resolve, reject) {
+            let breakpointTypes = Object.values(WebInspector.DOMBreakpoint.Type);
+            let breakpointPromises = breakpointTypes.map(type => addBreakpointForElementIdentifier(multipleBreakpointsTestId, type));
+
+            Promise.all(breakpointPromises)
+            .then((values) => {
+                let breakpoints = values.map(event => event.data.breakpoint);
+                if (!breakpoints.length) {
+                    InspectorTest.fail("No breakpoints added.");
+                    reject();
+                    return;
+                }
+
+                let node = WebInspector.domTreeManager.nodeForId(breakpoints[0].domNodeIdentifier);
+                if (!node) {
+                    InspectorTest.fail("No DOM node associated with breakpoint.");
+                    reject();
+                    return;
+                }
+
+                let breakpointsRemoved = 0;
+
+                function breakpointRemoved() {
+                    if (++breakpointsRemoved === breakpoints.length) {
+                        InspectorTest.pass(`Removed ${breakpointsRemoved} breakpoints.`);
+
+                        let nodeBreakpoints = WebInspector.domDebuggerManager.domBreakpointsForNode(node);
+                        InspectorTest.expectThat(!nodeBreakpoints.length, "DOM node should have no breakpoints.");
+
+                        WebInspector.domDebuggerManager.removeEventListener(WebInspector.DOMDebuggerManager.Event.DOMBreakpointRemoved, breakpointRemoved);
+                        resolve();
+                    }
+                }
+
+                WebInspector.domDebuggerManager.addEventListener(WebInspector.DOMDebuggerManager.Event.DOMBreakpointRemoved, breakpointRemoved);
+                WebInspector.domDebuggerManager.removeDOMBreakpointsForNode(node);
+            })
+            .then(resolve, reject);
+        }
+    });
+
+    suite.addTestCase({
         name: "SetBreakpointWithInvalidNodeId",
         description: "Check that setting a breakpoint for a nonexistant node returns an error.",
         teardown,
@@ -285,6 +331,7 @@ function test()
     <div id="subtree-modified-test"></div>
     <div id="attribute-modified-test"></div>
     <div id="node-removed-test"></div>
+    <div id="multiple-breakpoints-test"></div>
 </div>
 </body>
 </html>

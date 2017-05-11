@@ -38,8 +38,7 @@ WebInspector.DOMNodeTreeElement = class DOMNodeTreeElement extends WebInspector.
 
     ondelete()
     {
-        let breakpoints = WebInspector.domDebuggerManager.domBreakpointsForNode(this.representedObject);
-        breakpoints.forEach(WebInspector.domDebuggerManager.removeDOMBreakpoint);
+        WebInspector.domDebuggerManager.removeDOMBreakpointsForNode(this.representedObject);
         return true;
     }
 

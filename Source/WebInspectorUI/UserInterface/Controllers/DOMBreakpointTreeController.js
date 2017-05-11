@@ -74,9 +74,7 @@ WebInspector.DOMBreakpointTreeController = class DOMBreakpointsTreeController ex
             });
 
             contextMenu.appendItem(WebInspector.UIString("Delete Breakpoints"), function() {
-                let breakpoints = WebInspector.domDebuggerManager.domBreakpointsForNode(domNode);
-                for (let breakpoint of breakpoints)
-                    WebInspector.domDebuggerManager.removeDOMBreakpoint(breakpoint);
+                WebInspector.domDebuggerManager.removeDOMBreakpointsForNode(domNode);
             });
         }
     }

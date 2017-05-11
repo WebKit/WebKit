@@ -1,3 +1,31 @@
+2017-05-11  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Error trying to delete DOM breakpoints from the Debugger tab
+        https://bugs.webkit.org/show_bug.cgi?id=171970
+        <rdar://problem/32129262>
+
+        Reviewed by Brian Burg.
+
+        In the Debugger sidebar, DOM breakpoints can be cleared from a DOM node
+        in two ways: by using the DOM node tree element's context menu, or by
+        pressing the delete key while the element is selected. Each method used
+        a different code path, and the latter had an error which caused it to fail.
+
+        Add a `removeDOMBreakpointsForNode` method to DOMDebuggerManager to make
+        the operation convenient, and call it from both event handlers.
+
+        * UserInterface/Controllers/DOMBreakpointTreeController.js:
+        (WebInspector.DOMBreakpointTreeController.appendBreakpointContextMenuItems):
+        Use convenience method.
+
+        * UserInterface/Controllers/DOMDebuggerManager.js:
+        (WebInspector.DOMDebuggerManager.prototype.removeDOMBreakpointsForNode):
+        Helper function for removing all of a node's breakpoints.
+
+        * UserInterface/Views/DOMNodeTreeElement.js:
+        (WebInspector.DOMNodeTreeElement.prototype.ondelete):
+        Use convenience method.
+
 2017-05-11  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [GTK] Web Inspector: Add new GTK+ icons for resources in large sizes (32px @ 1x/2x)

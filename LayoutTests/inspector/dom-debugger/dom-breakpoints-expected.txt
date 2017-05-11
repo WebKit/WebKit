@@ -3,14 +3,14 @@ Tests for DOM breakpoints.
 
 == Running test suite: DOMBreakpoints
 -- Running test case: BasicBreakpoint
-PASS: Breakpoint added.
+PASS: Added 'subtree-modified' breakpoint.
 PASS: Breakpoint should not be disabled.
 PASS: Breakpoint should have node identifier.
 PASS: Breakpoint URL should match document URL.
 -- Running test teardown.
 
 -- Running test case: BreakOnSubtreeModified
-PASS: Breakpoint added.
+PASS: Added 'subtree-modified' breakpoint.
 PASS: Breakpoint should have expected type.
 Call DOM operation.
 PAUSED:
@@ -21,7 +21,7 @@ CALL STACK:
 -- Running test teardown.
 
 -- Running test case: BreakOnAttributeModified
-PASS: Breakpoint added.
+PASS: Added 'attribute-modified' breakpoint.
 PASS: Breakpoint should have expected type.
 Call DOM operation.
 PAUSED:
@@ -32,7 +32,7 @@ CALL STACK:
 -- Running test teardown.
 
 -- Running test case: BreakOnNodeRemoved
-PASS: Breakpoint added.
+PASS: Added 'node-removed' breakpoint.
 PASS: Breakpoint should have expected type.
 Call DOM operation.
 PAUSED:
@@ -43,16 +43,24 @@ CALL STACK:
 -- Running test teardown.
 
 -- Running test case: ShouldNotPauseOnDisabledBreakpoint
-PASS: Breakpoint added.
+PASS: Added 'subtree-modified' breakpoint.
 Wait for evaluate in page to return.
 PASS: Should not pause for disabled breakpoint.
 -- Running test teardown.
 
 -- Running test case: RemoveBreakpoint
-PASS: Breakpoint added.
+PASS: Added 'subtree-modified' breakpoint.
 Remove breakpoint.
 Wait for evaluate in page to return.
 PASS: Should not pause for removed breakpoint.
+-- Running test teardown.
+
+-- Running test case: RemoveAllBreakpointsForNode
+PASS: Added 'subtree-modified' breakpoint.
+PASS: Added 'attribute-modified' breakpoint.
+PASS: Added 'node-removed' breakpoint.
+PASS: Removed 3 breakpoints.
+PASS: DOM node should have no breakpoints.
 -- Running test teardown.
 
 -- Running test case: SetBreakpointWithInvalidNodeId
