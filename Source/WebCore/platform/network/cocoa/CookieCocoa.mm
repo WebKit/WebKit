@@ -98,7 +98,9 @@ Cookie::operator NSHTTPCookie *() const
     if (secure)
         [properties setObject:@YES forKey:NSHTTPCookieSecure];
 
-    [properties setObject:(session ? @"TRUE" : @"FALSE") forKey:NSHTTPCookieDiscard];
+    if (session)
+        [properties setObject:@YES forKey:NSHTTPCookieDiscard];
+
     [properties setObject:@"1" forKey:NSHTTPCookieVersion];
 
     return [NSHTTPCookie cookieWithProperties:properties];
