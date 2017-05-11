@@ -1,4 +1,0 @@
-DESKTOP NOTIFICATION:(RTL) icon , title New E-mail, text Meet me tonight at 8!
-Showing a notification with direction "rtl"...
-
-

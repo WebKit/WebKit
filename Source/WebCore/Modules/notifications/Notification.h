@@ -31,7 +31,7 @@
 
 #pragma once
 
-#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS)
 
 #include "ActiveDOMObject.h"
 #include "EventTarget.h"
@@ -44,17 +44,11 @@
 namespace WebCore {
 
 class Document;
-class NotificationCenter;
 class NotificationPermissionCallback;
 
 class Notification final : public RefCounted<Notification>, public ActiveDOMObject, public EventTargetWithInlineData {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-#if ENABLE(LEGACY_NOTIFICATIONS)
-    static ExceptionOr<Ref<Notification>> create(const String& title, const String& body, const String& iconURL, ScriptExecutionContext&, NotificationCenter&);
-#endif
-
-#if ENABLE(NOTIFICATIONS)
     enum class Direction { Auto, Ltr, Rtl };
     struct Options {
         Direction dir;
@@ -64,7 +58,6 @@ public:
         String icon;
     };
     static Ref<Notification> create(Document&, const String& title, const Options&);
-#endif
     
     virtual ~Notification();
 
@@ -94,11 +87,9 @@ public:
 
     WEBCORE_EXPORT void finalize();
 
-#if ENABLE(NOTIFICATIONS)
     static String permission(Document&);
     WEBCORE_EXPORT static String permissionString(NotificationClient::Permission);
     static void requestPermission(Document&, RefPtr<NotificationPermissionCallback>&&);
-#endif
 
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
 
@@ -106,19 +97,14 @@ public:
     using RefCounted::deref;
 
 private:
-#if ENABLE(LEGACY_NOTIFICATIONS)
-    Notification(const String& title, const String& body, URL&& iconURL, ScriptExecutionContext&, NotificationCenter&);
-#endif
-
-#if ENABLE(NOTIFICATIONS)
     Notification(Document&, const String& title);
-#endif
 
     EventTargetInterface eventTargetInterface() const final { return NotificationEventTargetInterfaceType; }
 
-    void contextDestroyed() final;
+    // ActiveDOMObject
     const char* activeDOMObjectName() const final;
     bool canSuspendForDocumentSuspension() const final;
+    void stop() final;
 
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
@@ -133,13 +119,9 @@ private:
     enum State { Idle, Showing, Closed };
     State m_state { Idle };
 
-    RefPtr<NotificationCenter> m_notificationCenter;
-
-#if ENABLE(NOTIFICATIONS)
     std::unique_ptr<Timer> m_taskTimer;
-#endif
 };
 
 } // namespace WebCore
 
-#endif // ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
+#endif // ENABLE(NOTIFICATIONS)

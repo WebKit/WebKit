@@ -47,9 +47,6 @@ fast/events/attempt-scroll-with-no-scrollbars.html [ Failure ]
 # Pixel test doesn't repaint entire view so result is corrupted by previous test
 webkit.org/b/21916 tables/mozilla_expected_failures/bugs/bug178855.xml [ Pass ImageOnlyFailure Failure ]
 
-# https://bugs.webkit.org/show_bug.cgi?id=81697 Skip file:// based notifications tests
-fast/notifications
-
 # This port doesn't support detecting slow unload handlers.
 fast/dom/Window/slow-unload-handler.html
 fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html

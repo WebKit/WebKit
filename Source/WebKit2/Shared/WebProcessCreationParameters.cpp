@@ -111,7 +111,7 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
         encoder << bundleParameterData->dataReference();
 #endif
 
-#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS)
     encoder << notificationPermissions;
 #endif
 
@@ -278,7 +278,7 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
     }
 #endif
 
-#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS)
     if (!decoder.decode(parameters.notificationPermissions))
         return false;
 #endif

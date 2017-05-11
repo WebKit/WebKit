@@ -150,7 +150,7 @@ struct WebProcessCreationParameters {
     RefPtr<API::Data> bundleParameterData;
 #endif // PLATFORM(COCOA)
 
-#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS)
     HashMap<String, bool> notificationPermissions;
 #endif
 

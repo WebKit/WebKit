@@ -1,3 +1,41 @@
+2017-05-09  Sam Weinig  <sam@webkit.org>
+
+        Remove support for legacy Notifications
+        https://bugs.webkit.org/show_bug.cgi?id=171487
+
+        Reviewed by Jon Lee.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        Remove files.
+
+        * Configurations/FeatureDefines.xcconfig:
+        Remove definition of ENABLE_LEGACY_NOTIFICATIONS.
+
+        * DerivedSources.make:
+        Remove IDL files.
+
+        * Modules/notifications/DOMWindowNotifications.cpp: Removed.
+        * Modules/notifications/DOMWindowNotifications.h: Removed.
+        * Modules/notifications/DOMWindowNotifications.idl: Removed.
+        * Modules/notifications/NotificationCenter.cpp: Removed.
+        * Modules/notifications/NotificationCenter.h: Removed.
+        * Modules/notifications/NotificationCenter.idl: Removed.
+        * Modules/notifications/NotificationClient.h:
+        * Modules/notifications/NotificationController.cpp:
+        * Modules/notifications/NotificationController.h:
+        * Modules/notifications/WorkerGlobalScopeNotifications.cpp: Removed.
+        * Modules/notifications/WorkerGlobalScopeNotifications.h: Removed.
+        * Modules/notifications/WorkerGlobalScopeNotifications.idl: Removed.
+        * Modules/notifications/Notification.idl:
+        * Modules/notifications/Notification.cpp:
+        * Modules/notifications/Notification.h:
+        * dom/EventTargetFactory.in:
+        * page/DOMWindow.cpp:
+        * workers/WorkerThread.h:
+        Remove code legacy Notification code. Replace use of NotificationCenter with direct
+        calls to the NotificationClient.
+
 2017-05-10  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r216635.

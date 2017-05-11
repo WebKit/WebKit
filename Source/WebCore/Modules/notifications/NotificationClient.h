@@ -70,12 +70,7 @@ public:
     // Requests user permission to show desktop notifications from a particular
     // script context. The callback parameter should be run when the user has
     // made a decision.
-#if ENABLE(LEGACY_NOTIFICATIONS)
-    virtual void requestPermission(ScriptExecutionContext*, RefPtr<VoidCallback>&&) = 0;
-#endif
-#if ENABLE(NOTIFICATIONS)
     virtual void requestPermission(ScriptExecutionContext*, RefPtr<NotificationPermissionCallback>&&) = 0;
-#endif
 
     virtual bool hasPendingPermissionRequests(ScriptExecutionContext*) const = 0;
 

@@ -37,7 +37,7 @@ window.addEventListener('load', function() {
     window.sessionStorage.page_cache_notifications_test_started = true;
 
     // This notification is shown and should not be suspendable.
-    notification = webkitNotifications.createNotification('', 'title 2', 'body');
+    notification = new Notification('title', { body: 'body' });
     notification.onerror = function() {
         testFailed("Could not show the notification");
         finishJSTest();
@@ -46,7 +46,6 @@ window.addEventListener('load', function() {
         // Force a back navigation back to this page.
         window.location.href = "resources/page-cache-helper.html";
     };
-    notification.show();
 }, false);
 
 </script>

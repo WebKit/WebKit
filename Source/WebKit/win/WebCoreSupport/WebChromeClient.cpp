@@ -70,7 +70,7 @@ static const size_t maxFilePathsListSize = USHRT_MAX;
 
 WebChromeClient::WebChromeClient(WebView* webView)
     : m_webView(webView)
-#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS)
     , m_notificationsDelegate(std::make_unique<WebDesktopNotificationsDelegate>(webView))
 #endif
 {

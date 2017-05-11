@@ -69,7 +69,7 @@ public:
     WEBCORE_EXPORT static unsigned workerThreadCount();
     static void releaseFastMallocFreeMemoryInAllThreads();
 
-#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS)
     NotificationClient* getNotificationClient() { return m_notificationClient; }
     void setNotificationClient(NotificationClient* client) { m_notificationClient = client; }
 #endif
@@ -110,7 +110,7 @@ private:
 
     std::unique_ptr<WorkerThreadStartupData> m_startupData;
 
-#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS)
     NotificationClient* m_notificationClient { nullptr };
 #endif
 

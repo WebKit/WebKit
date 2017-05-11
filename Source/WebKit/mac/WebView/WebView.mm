@@ -1481,7 +1481,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 #if ENABLE(GEOLOCATION)
     WebCore::provideGeolocationTo(_private->page, new WebGeolocationClient(self));
 #endif
-#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS)
     WebCore::provideNotification(_private->page, new WebNotificationClient(self));
 #endif
 #if ENABLE(DEVICE_ORIENTATION)
@@ -10033,7 +10033,7 @@ static NSTextAlignment nsTextAlignmentFromRenderStyle(const RenderStyle* style)
 
 - (uint64_t)_notificationIDForTesting:(JSValueRef)jsNotification
 {
-#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS)
     auto* page = _private->page;
     if (!page)
         return 0;

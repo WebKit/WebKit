@@ -1,2 +1,0 @@
-CONSOLE MESSAGE: line 36: Uncaught InvalidStateError (DOM Exception 11): The object is in an invalid state.
-PASS

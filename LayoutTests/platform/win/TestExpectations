@@ -144,7 +144,6 @@ fast/events/popup-blocking-click-in-iframe.html [ Skip ]
 fast/dom/Geolocation/ [ Skip ]
 
 # TODO This port doesn't support Notifications.
-fast/notifications/ [ Skip ]
 http/tests/notifications/ [ Skip ]
 fast/history/page-cache-notification-non-suspendable.html [ Skip ]
 fast/history/page-cache-notification-suspendable.html [ Skip ]

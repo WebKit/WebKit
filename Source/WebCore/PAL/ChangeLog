@@ -1,3 +1,13 @@
+2017-05-09  Sam Weinig  <sam@webkit.org>
+
+        Remove support for legacy Notifications
+        https://bugs.webkit.org/show_bug.cgi?id=171487
+
+        Reviewed by Jon Lee.
+
+        * Configurations/FeatureDefines.xcconfig:
+        Remove definition of ENABLE_LEGACY_NOTIFICATIONS.
+
 2017-05-09  Zan Dobersek  <zdobersek@igalia.com>
 
         Upstream the WPE port

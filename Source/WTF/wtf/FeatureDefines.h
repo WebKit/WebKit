@@ -538,10 +538,6 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 #define ENABLE_LEGACY_ENCRYPTED_MEDIA 0
 #endif
 
-#if !defined(ENABLE_LEGACY_NOTIFICATIONS)
-#define ENABLE_LEGACY_NOTIFICATIONS 0
-#endif
-
 #if !defined(ENABLE_LEGACY_VENDOR_PREFIXES)
 #define ENABLE_LEGACY_VENDOR_PREFIXES 0
 #endif

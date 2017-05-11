@@ -29,28 +29,24 @@ window.addEventListener("pagehide", function(event) {
 }, false);
 
 window.addEventListener('load', function() {
-    // This notification is in idle state and should be suspendable.
-    notification1 = webkitNotifications.createNotification('', 'title 1', 'body');
-
     // This notification is shown and should be suspendable once it is closed.
-    notification2 = webkitNotifications.createNotification('', 'title 2', 'body');
-    notification2.ondisplay = function() {
+    notification = new Notification('title', { body: 'body' });
+    notification.ondisplay = function() {
         // Close the notification.
         setTimeout(function() {
-            notification2.cancel();
+            notification.close();
         }, 0);
     };
-    notification2.onerror = function() {
+    notification.onerror = function() {
         testFailed("Could not display the notification");
         finishJSTest();
     };
-    notification2.onclose = function() {
+    notification.onclose = function() {
         setTimeout(function() {
             // Force a back navigation back to this page.
             window.location.href = "resources/page-cache-helper.html";
         }, 0);
     };
-    notification2.show();
 }, false);
 
 </script>
