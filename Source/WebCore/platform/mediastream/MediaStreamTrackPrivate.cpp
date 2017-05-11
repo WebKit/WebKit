@@ -141,9 +141,9 @@ const RealtimeMediaSourceCapabilities& MediaStreamTrackPrivate::capabilities() c
     return m_source->capabilities();
 }
 
-void MediaStreamTrackPrivate::applyConstraints(const MediaConstraints& constraints, RealtimeMediaSource::SuccessHandler successHandler, RealtimeMediaSource::FailureHandler failureHandler)
+void MediaStreamTrackPrivate::applyConstraints(const MediaConstraints& constraints, RealtimeMediaSource::SuccessHandler&& successHandler, RealtimeMediaSource::FailureHandler&& failureHandler)
 {
-    m_source->applyConstraints(constraints, successHandler, failureHandler);
+    m_source->applyConstraints(constraints, WTFMove(successHandler), WTFMove(failureHandler));
 }
 
 AudioSourceProvider* MediaStreamTrackPrivate::audioSourceProvider()

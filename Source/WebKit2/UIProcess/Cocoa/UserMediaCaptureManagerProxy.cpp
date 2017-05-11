@@ -125,7 +125,7 @@ UserMediaCaptureManagerProxy::~UserMediaCaptureManagerProxy()
     m_process.removeMessageReceiver(Messages::UserMediaCaptureManagerProxy::messageReceiverName());
 }
 
-void UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstraints(uint64_t id, const String& deviceID, WebCore::RealtimeMediaSource::Type type, const MediaConstraintsData& constraintsData, bool& succeeded, String& invalidConstraints)
+void UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstraints(uint64_t id, const String& deviceID, WebCore::RealtimeMediaSource::Type type, const MediaConstraintsData& constraintsData, bool& succeeded, String& invalidConstraints, WebCore::RealtimeMediaSourceSettings& settings)
 {
     CaptureSourceOrError sourceOrError;
     auto constraints = MediaConstraintsImpl::create(MediaConstraintsData(constraintsData));
@@ -142,9 +142,11 @@ void UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstrai
     }
 
     succeeded = !!sourceOrError;
-    if (sourceOrError)
-        m_proxies.set(id, std::make_unique<SourceProxy>(id, *this, sourceOrError.source()));
-    else
+    if (sourceOrError) {
+        auto source = sourceOrError.source();
+        settings = source->settings();
+        m_proxies.set(id, std::make_unique<SourceProxy>(id, *this, WTFMove(source)));
+    } else
         invalidConstraints = WTFMove(sourceOrError.errorMessage);
 }
 
@@ -181,6 +183,21 @@ void UserMediaCaptureManagerProxy::setEnabled(uint64_t id, bool enabled)
     auto iter = m_proxies.find(id);
     if (iter != m_proxies.end())
         iter->value->source().setEnabled(enabled);
+}
+
+void UserMediaCaptureManagerProxy::applyConstraints(uint64_t id, const WebCore::MediaConstraintsData& constraintsData)
+{
+    auto constraints = MediaConstraintsImpl::create(MediaConstraintsData(constraintsData));
+    auto iter = m_proxies.find(id);
+    if (iter == m_proxies.end())
+        return;
+
+    auto& source = iter->value->source();
+    auto result = source.applyConstraints(constraints);
+    if (!result)
+        m_process.send(Messages::UserMediaCaptureManager::ApplyConstraintsSucceeded(id, source.settings()), 0);
+    else
+        m_process.send(Messages::UserMediaCaptureManager::ApplyConstraintsFailed(id, result.value().first, result.value().second), 0);
 }
 
 }

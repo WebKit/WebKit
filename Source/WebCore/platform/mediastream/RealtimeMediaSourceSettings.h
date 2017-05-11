@@ -93,6 +93,7 @@ public:
     const AtomicString& groupId() const { return m_groupId; }
     void setGroupId(const AtomicString& groupId) { m_groupId = groupId; }
 
+    const RealtimeMediaSourceSupportedConstraints& supportedConstraints() const { return m_supportedConstraints; }
     void setSupportedConstraints(const RealtimeMediaSourceSupportedConstraints& supportedConstraints) { m_supportedConstraints = supportedConstraints; }
 
     template<class Encoder> void encode(Encoder&) const;

@@ -89,7 +89,7 @@ public:
     const RealtimeMediaSourceSettings& settings() const;
     const RealtimeMediaSourceCapabilities& capabilities() const;
 
-    void applyConstraints(const MediaConstraints&, RealtimeMediaSource::SuccessHandler, RealtimeMediaSource::FailureHandler);
+    void applyConstraints(const MediaConstraints&, RealtimeMediaSource::SuccessHandler&&, RealtimeMediaSource::FailureHandler&&);
 
     AudioSourceProvider* audioSourceProvider();
 
