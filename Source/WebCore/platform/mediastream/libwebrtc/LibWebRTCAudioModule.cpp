@@ -35,6 +35,7 @@ namespace WebCore {
 LibWebRTCAudioModule::LibWebRTCAudioModule()
     : m_audioTaskRunner(rtc::Thread::Create())
 {
+    m_audioTaskRunner->SetName("WebKitWebRTCAudioModule", nullptr);
     m_audioTaskRunner->Start();
 }
 

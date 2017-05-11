@@ -109,12 +109,14 @@ static void initializePeerConnectionFactoryAndThreads()
 
     ASSERT(!factoryAndThreads.factory);
 
-    auto thread = rtc::Thread::Create();
     factoryAndThreads.networkThread = factoryAndThreads.networkThreadWithSocketServer ? rtc::Thread::CreateWithSocketServer() : rtc::Thread::Create();
+    factoryAndThreads.networkThread->SetName("WebKitWebRTCNetwork", nullptr);
     bool result = factoryAndThreads.networkThread->Start();
     ASSERT_UNUSED(result, result);
 
     factoryAndThreads.signalingThread = rtc::Thread::Create();
+    factoryAndThreads.signalingThread->SetName("WebKitWebRTCSignaling", nullptr);
+    
     result = factoryAndThreads.signalingThread->Start();
     ASSERT(result);
 
