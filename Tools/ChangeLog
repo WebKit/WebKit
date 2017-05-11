@@ -1,5 +1,19 @@
 2017-05-11  Joseph Pecoraro  <pecoraro@apple.com>
 
+        REGRESSION(r216217): lldb_webkit.py no longer prints out a WTFString, StringImpl needs to handle StringImplShape change
+        https://bugs.webkit.org/show_bug.cgi?id=171989
+
+        Reviewed by Brian Burg.
+
+        * lldb/lldb_webkit.py:
+        (WTFStringImplProvider.get_data8):
+        (WTFStringImplProvider.get_data16):
+        m_data8 and m_data16 are now part of the superclass StringImplShape
+        instead of directly in StringImpl. So first get the shape by getting
+        index 0, and the data properties are the same offset within that.
+
+2017-05-11  Joseph Pecoraro  <pecoraro@apple.com>
+
         Remove Vibration API
         https://bugs.webkit.org/show_bug.cgi?id=171766
 
