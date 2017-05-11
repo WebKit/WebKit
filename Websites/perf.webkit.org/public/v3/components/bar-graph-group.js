@@ -42,6 +42,8 @@ class BarGraphGroup {
             }
             if (entry.interval) {
                 for (const value of entry.interval) {
+                    if (isNaN(value))
+                        continue;
                     min = Math.min(min, value);
                     max = Math.max(max, value);
                 }

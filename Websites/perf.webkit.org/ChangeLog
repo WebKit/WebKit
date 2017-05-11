@@ -1,5 +1,12 @@
 2017-05-10  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Another build fix after r215633 to make the bar graphs render even when the confidence intervals aren't available.
+
+        * public/v3/components/bar-graph-group.js:
+        (BarGraphGroup.prototype._computeRange):
+
+2017-05-10  Ryosuke Niwa  <rniwa@webkit.org>
+
         Build fix after r215633.
 
         * public/v3/models/test-group.js:
