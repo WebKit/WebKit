@@ -2714,11 +2714,15 @@ void AXObjectCache::performDeferredCacheUpdate()
 
 void AXObjectCache::recomputeDeferredIsIgnored(RenderBlock& renderer)
 {
+    if (renderer.beingDestroyed())
+        return;
     m_deferredCacheUpdateList.add(&renderer);
 }
 
 void AXObjectCache::deferTextChanged(RenderText& renderer)
 {
+    if (renderer.beingDestroyed())
+        return;
     m_deferredCacheUpdateList.add(&renderer);
 }
 

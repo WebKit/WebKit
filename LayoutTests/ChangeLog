@@ -1,5 +1,20 @@
 2017-05-10  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r216307. rdar://problem/31955660
+
+    2017-05-05  Zalan Bujtas  <zalan@apple.com>
+
+            Renderers being destroyed should not be added to AX's deferred list.
+            https://bugs.webkit.org/show_bug.cgi?id=171768
+            <rdar://problem/31955660>
+
+            Reviewed by Simon Fraser.
+
+            * accessibility/crash-when-renderers-are-added-back-to-deferred-list-expected.txt: Added.
+            * accessibility/crash-when-renderers-are-added-back-to-deferred-list.html: Added.
+
+2017-05-10  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r216252. rdar://problem/32040952
 
     2017-05-05  Matt Lewis  <jlewis3@apple.com>
