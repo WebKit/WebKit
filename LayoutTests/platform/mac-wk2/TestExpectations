@@ -688,3 +688,5 @@ webkit.org/b/171978 [ ElCapitan Debug ] media/media-controls-clone-crash.html [ 
 webkit.org/b/170699 [ Release ] imported/w3c/web-platform-tests/html/webappapis/timers/negative-settimeout.html [ Pass Failure ]
 
 webkit.org/b/168937 [ Debug ] tiled-drawing/scrolling/fast-scroll-iframe-latched-mainframe.html [ Pass Failure ]
+
+webkit.org/b/172034 [ Sierra Release ] webrtc/closing-peerconnection.html [ Pass Timeout ]

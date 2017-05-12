@@ -1,3 +1,12 @@
+2017-05-12  Matt Lewis  <jlewis3@apple.com>
+
+        Marked webrtc/closing-peerconnection.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=172034
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2017-05-12  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK] After upgrading glib and glib-networking, resources with zero bytes are always identified as text/plain
