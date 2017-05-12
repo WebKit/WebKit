@@ -41,7 +41,11 @@
 
 namespace WebCore {
 
-class MockRealtimeAudioSourceFactory : public RealtimeMediaSource::AudioCaptureFactory {
+class MockRealtimeAudioSourceFactory : public RealtimeMediaSource::AudioCaptureFactory
+#if PLATFORM(IOS)
+    , public RealtimeMediaSource::SingleSourceFactory<MockRealtimeAudioSource>
+#endif
+{
 public:
     CaptureSourceOrError createAudioCaptureSource(const String& deviceID, const MediaConstraints* constraints) final {
         for (auto& device : MockRealtimeMediaSource::audioDevices()) {
@@ -70,16 +74,28 @@ RefPtr<MockRealtimeAudioSource> MockRealtimeAudioSource::createMuted(const Strin
 }
 #endif
 
-RealtimeMediaSource::AudioCaptureFactory& MockRealtimeAudioSource::factory()
+static MockRealtimeAudioSourceFactory& mockAudioCaptureSourceFactory()
 {
     static NeverDestroyed<MockRealtimeAudioSourceFactory> factory;
     return factory.get();
+}
+
+RealtimeMediaSource::AudioCaptureFactory& MockRealtimeAudioSource::factory()
+{
+    return mockAudioCaptureSourceFactory();
 }
 
 MockRealtimeAudioSource::MockRealtimeAudioSource(const String& name)
     : MockRealtimeMediaSource(createCanonicalUUIDString(), RealtimeMediaSource::Type::Audio, name)
     , m_timer(RunLoop::current(), this, &MockRealtimeAudioSource::tick)
 {
+}
+
+MockRealtimeAudioSource::~MockRealtimeAudioSource()
+{
+#if PLATFORM(IOS)
+    mockAudioCaptureSourceFactory().unsetActiveSource(*this);
+#endif
 }
 
 void MockRealtimeAudioSource::updateSettings(RealtimeMediaSourceSettings& settings)
@@ -105,6 +121,15 @@ void MockRealtimeAudioSource::initializeSupportedConstraints(RealtimeMediaSource
 
 void MockRealtimeAudioSource::startProducingData()
 {
+    if (m_isProducingData)
+        return;
+
+    m_isProducingData = true;
+
+#if PLATFORM(IOS)
+    mockAudioCaptureSourceFactory().setActiveSource(*this);
+#endif
+
     if (!sampleRate())
         setSampleRate(!deviceIndex() ? 44100 : 48000);
 
@@ -116,6 +141,11 @@ void MockRealtimeAudioSource::startProducingData()
 
 void MockRealtimeAudioSource::stopProducingData()
 {
+    if (!m_isProducingData)
+        return;
+
+    m_isProducingData = false;
+
     MockRealtimeMediaSource::stopProducingData();
     m_timer.stop();
     m_elapsedTime += monotonicallyIncreasingTime() - m_startTime;

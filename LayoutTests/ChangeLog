@@ -1,3 +1,27 @@
+2017-05-11  Youenn Fablet  <youenn@apple.com>
+
+        [iOS] Unset active media capture source when stopped capturing
+        https://bugs.webkit.org/show_bug.cgi?id=171815
+        <rdar://problem/32117885>
+
+        Reviewed by Eric Carlson.
+
+        Improving the existing tests for better reliability and debugability.
+        Updating tests to use less webkitAudioContext.
+
+        * platform/ios/mediastream/getUserMedia-single-capture-expected.txt: Added.
+        * platform/ios/mediastream/getUserMedia-single-capture.html: Added.
+        * webrtc/audio-peer-connection-webaudio.html:
+        * webrtc/audio-replace-track-expected.txt:
+        * webrtc/audio-replace-track.html:
+        * webrtc/peer-connection-audio-mute.html:
+        * webrtc/peer-connection-audio-mute2.html:
+        * webrtc/peer-connection-remote-audio-mute.html:
+        * webrtc/peer-connection-remote-audio-mute2.html:
+        * webrtc/routines.js:
+        * webrtc/video-replace-track-expected.txt:
+        * webrtc/video-replace-track.html:
+
 2017-05-11  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r216677.

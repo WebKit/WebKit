@@ -110,7 +110,11 @@ const OSType videoCaptureFormat = kCVPixelFormatType_420YpCbCr8Planar;
 const OSType videoCaptureFormat = kCVPixelFormatType_420YpCbCr8BiPlanarFullRange;
 #endif
 
-class AVVideoCaptureSourceFactory : public RealtimeMediaSource::VideoCaptureFactory {
+class AVVideoCaptureSourceFactory : public RealtimeMediaSource::VideoCaptureFactory
+#if PLATFORM(IOS)
+    , public RealtimeMediaSource::SingleSourceFactory<AVVideoCaptureSource>
+#endif
+{
 public:
     CaptureSourceOrError createVideoCaptureSource(const String& deviceID, const MediaConstraints* constraints) final {
         AVCaptureDeviceTypedef *device = [getAVCaptureDeviceClass() deviceWithUniqueID:deviceID];
@@ -118,18 +122,6 @@ public:
             return { };
         return AVVideoCaptureSource::create(device, emptyString(), constraints);
     }
-
-#if PLATFORM(IOS)
-    void setActiveSource(AVVideoCaptureSource& source)
-    {
-        if (m_activeSource && m_activeSource->isProducingData())
-            m_activeSource->setMuted(true);
-        m_activeSource = &source;
-    }
-
-private:
-    AVVideoCaptureSource* m_activeSource { nullptr };
-#endif
 };
 
 CaptureSourceOrError AVVideoCaptureSource::create(AVCaptureDeviceTypedef* device, const AtomicString& id, const MediaConstraints* constraints)
@@ -162,6 +154,9 @@ AVVideoCaptureSource::AVVideoCaptureSource(AVCaptureDeviceTypedef* device, const
 
 AVVideoCaptureSource::~AVVideoCaptureSource()
 {
+#if PLATFORM(IOS)
+    avVideoCaptureSourceFactory().unsetActiveSource(*this);
+#endif
 }
 
 static void updateSizeMinMax(int& min, int& max, int value)

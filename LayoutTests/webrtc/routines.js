@@ -72,11 +72,11 @@ function onAddIceCandidateError(error)
     assert_unreached();
 }
 
-function analyseAudio(stream, duration)
+function analyseAudio(stream, duration, context)
 {
     return new Promise((resolve, reject) => {
-        var context = new webkitAudioContext();
         var sourceNode = context.createMediaStreamSource(stream);
+
         var analyser = context.createAnalyser();
         var gain = context.createGain();
 

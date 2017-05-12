@@ -1,3 +1,61 @@
+2017-05-11  Youenn Fablet  <youenn@apple.com>
+
+        [iOS] Unset active media capture source when stopped capturing
+        https://bugs.webkit.org/show_bug.cgi?id=171815
+        <rdar://problem/32117885>
+
+        Reviewed by Eric Carlson.
+
+        Test: platform/ios/mediastream/getUserMedia-single-capture.html
+
+        Introducing SingleSourceFactory template class to be used by capture factories for iOS.
+        This class ensures that only one source is active at a time.
+        Update all capture sources accordingly.
+        Ensure sources are no longer considered as active sources when being destroyed.
+        Add support for mock sources and introducing m_isProducingData for them as well.
+
+        Update WebRTC outgoing source classes to handle the case of replaced track and resetting the enabled/mute
+        state according the new source.
+
+        Update the way we handle timestamps for audio data. We now consider that we read/write as a flow.
+        This allows smooth audio track replacing.
+
+        * platform/mediastream/RealtimeMediaSource.h:
+        * platform/mediastream/mac/AVAudioCaptureSource.mm:
+        (WebCore::AVAudioCaptureSource::~AVAudioCaptureSource):
+        (WebCore::AVAudioCaptureSourceFactory::setActiveSource): Deleted.
+        * platform/mediastream/mac/AVVideoCaptureSource.mm:
+        (WebCore::AVVideoCaptureSource::~AVVideoCaptureSource):
+        (WebCore::AVVideoCaptureSourceFactory::setActiveSource): Deleted.
+        * platform/mediastream/mac/CoreAudioCaptureSource.cpp:
+        (WebCore::CoreAudioCaptureSource::~CoreAudioCaptureSource):
+        (WebCore::CoreAudioCaptureSource::stopProducingData):
+        (WebCore::CoreAudioCaptureSourceFactory::setActiveSource): Deleted.
+        * platform/mediastream/mac/RealtimeOutgoingAudioSource.cpp:
+        (WebCore::RealtimeOutgoingAudioSource::setSource):
+        (WebCore::RealtimeOutgoingAudioSource::audioSamplesAvailable):
+        (WebCore::RealtimeOutgoingAudioSource::pullAudioData):
+        * platform/mediastream/mac/RealtimeOutgoingAudioSource.h:
+        * platform/mediastream/mac/RealtimeOutgoingVideoSource.cpp:
+        (WebCore::RealtimeOutgoingVideoSource::setSource):
+        (WebCore::RealtimeOutgoingVideoSource::sourceMutedChanged):
+        (WebCore::RealtimeOutgoingVideoSource::sourceEnabledChanged):
+        * platform/mock/MockRealtimeAudioSource.cpp:
+        (WebCore::mockAudioCaptureSourceFactory):
+        (WebCore::MockRealtimeAudioSource::factory):
+        (WebCore::MockRealtimeAudioSource::~MockRealtimeAudioSource):
+        (WebCore::MockRealtimeAudioSource::startProducingData):
+        (WebCore::MockRealtimeAudioSource::stopProducingData):
+        * platform/mock/MockRealtimeAudioSource.h:
+        * platform/mock/MockRealtimeVideoSource.cpp:
+        (WebCore::mockVideoCaptureSourceFactory):
+        (WebCore::MockRealtimeVideoSource::factory):
+        (WebCore::MockRealtimeVideoSource::~MockRealtimeVideoSource):
+        (WebCore::MockRealtimeVideoSource::startProducingData):
+        (WebCore::MockRealtimeVideoSource::stopProducingData):
+        * platform/mock/MockRealtimeVideoSource.h:
+        (WebCore::MockRealtimeVideoSource::~MockRealtimeVideoSource): Deleted.
+
 2017-05-11  Timothy Horton  <timothy_horton@apple.com>
 
         Fix the iOS build

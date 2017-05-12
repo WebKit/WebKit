@@ -58,6 +58,10 @@ bool RealtimeOutgoingAudioSource::setSource(Ref<RealtimeMediaSource>&& newSource
     m_audioSource->removeObserver(*this);
     m_audioSource = WTFMove(newSource);
     m_audioSource->addObserver(*this);
+
+    m_muted = m_audioSource->muted();
+    m_enabled = m_audioSource->enabled();
+    m_sampleConverter->setMuted(m_muted || !m_enabled);
     return true;
 }
 
@@ -78,7 +82,7 @@ void RealtimeOutgoingAudioSource::sourceEnabledChanged()
     m_sampleConverter->setMuted(m_muted || !m_enabled);
 }
 
-void RealtimeOutgoingAudioSource::audioSamplesAvailable(const MediaTime& time, const PlatformAudioData& audioData, const AudioStreamDescription& streamDescription, size_t sampleCount)
+void RealtimeOutgoingAudioSource::audioSamplesAvailable(const MediaTime&, const PlatformAudioData& audioData, const AudioStreamDescription& streamDescription, size_t sampleCount)
 {
     if (m_inputStreamDescription != streamDescription) {
         m_inputStreamDescription = toCAAudioStreamDescription(streamDescription);
@@ -89,7 +93,9 @@ void RealtimeOutgoingAudioSource::audioSamplesAvailable(const MediaTime& time, c
         status = m_sampleConverter->setOutputFormat(m_outputStreamDescription.streamDescription());
         ASSERT(!status);
     }
-    m_sampleConverter->pushSamples(time, audioData, sampleCount);
+
+    m_sampleConverter->pushSamples(MediaTime(m_writeCount, LibWebRTCAudioFormat::sampleRate), audioData, sampleCount);
+    m_writeCount += sampleCount;
 
     LibWebRTCProvider::callOnWebRTCSignalingThread([protectedThis = makeRef(*this)] {
         protectedThis->pullAudioData();
@@ -109,8 +115,8 @@ void RealtimeOutgoingAudioSource::pullAudioData()
     bufferList.mBuffers[0].mDataByteSize = bufferSize;
     bufferList.mBuffers[0].mData = m_audioBuffer.data();
 
-    m_sampleConverter->pullAvalaibleSamplesAsChunks(bufferList, chunkSampleCount, m_startFrame, [this, chunkSampleCount] {
-        m_startFrame += chunkSampleCount;
+    m_sampleConverter->pullAvalaibleSamplesAsChunks(bufferList, chunkSampleCount, m_readCount, [this, chunkSampleCount] {
+        m_readCount += chunkSampleCount;
         for (auto sink : m_sinks)
             sink->OnData(m_audioBuffer.data(), LibWebRTCAudioFormat::sampleSize, m_outputStreamDescription.sampleRate(), m_outputStreamDescription.numberOfChannels(), chunkSampleCount);
     });

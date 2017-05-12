@@ -48,7 +48,11 @@
 
 namespace WebCore {
 
-class MockRealtimeVideoSourceFactory : public RealtimeMediaSource::VideoCaptureFactory {
+class MockRealtimeVideoSourceFactory : public RealtimeMediaSource::VideoCaptureFactory
+#if PLATFORM(IOS)
+    , public RealtimeMediaSource::SingleSourceFactory<MockRealtimeVideoSource>
+#endif
+{
 public:
     CaptureSourceOrError createVideoCaptureSource(const String& deviceID, const MediaConstraints* constraints) final {
         for (auto& device : MockRealtimeMediaSource::videoDevices()) {
@@ -77,10 +81,15 @@ RefPtr<MockRealtimeVideoSource> MockRealtimeVideoSource::createMuted(const Strin
 }
 #endif
 
-RealtimeMediaSource::VideoCaptureFactory& MockRealtimeVideoSource::factory()
+static MockRealtimeVideoSourceFactory& mockVideoCaptureSourceFactory()
 {
     static NeverDestroyed<MockRealtimeVideoSourceFactory> factory;
     return factory.get();
+}
+
+RealtimeMediaSource::VideoCaptureFactory& MockRealtimeVideoSource::factory()
+{
+    return mockVideoCaptureSourceFactory();
 }
 
 MockRealtimeVideoSource::MockRealtimeVideoSource(const String& name)
@@ -94,8 +103,24 @@ MockRealtimeVideoSource::MockRealtimeVideoSource(const String& name)
     m_dashWidths.uncheckedAppend(6);
 }
 
+MockRealtimeVideoSource::~MockRealtimeVideoSource()
+{
+#if PLATFORM(IOS)
+    mockVideoCaptureSourceFactory().unsetActiveSource(*this);
+#endif
+}
+
 void MockRealtimeVideoSource::startProducingData()
 {
+    if (m_isProducingData)
+        return;
+    
+    m_isProducingData = true;
+    
+#if PLATFORM(IOS)
+    mockVideoCaptureSourceFactory().setActiveSource(*this);
+#endif
+
     MockRealtimeMediaSource::startProducingData();
     if (size().isEmpty()) {
         setWidth(640);
@@ -108,6 +133,11 @@ void MockRealtimeVideoSource::startProducingData()
 
 void MockRealtimeVideoSource::stopProducingData()
 {
+    if (!m_isProducingData)
+        return;
+    
+    m_isProducingData = false;
+    
     MockRealtimeMediaSource::stopProducingData();
     m_timer.stop();
     m_elapsedTime += monotonicallyIncreasingTime() - m_startTime;

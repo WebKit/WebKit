@@ -62,7 +62,11 @@ bool RealtimeOutgoingVideoSource::setSource(Ref<RealtimeMediaSource>&& newSource
     m_videoSource->removeObserver(*this);
     m_videoSource = WTFMove(newSource);
     m_videoSource->addObserver(*this);
+
     setSizeFromSource();
+    m_muted = m_videoSource->muted();
+    m_enabled = m_videoSource->enabled();
+
     return true;
 }
 
@@ -76,6 +80,7 @@ void RealtimeOutgoingVideoSource::stop()
 void RealtimeOutgoingVideoSource::sourceMutedChanged()
 {
     ASSERT(m_muted != m_videoSource->muted());
+
     m_muted = m_videoSource->muted();
 
     if (m_muted && m_sinks.size() && m_enabled)
@@ -85,6 +90,7 @@ void RealtimeOutgoingVideoSource::sourceMutedChanged()
 void RealtimeOutgoingVideoSource::sourceEnabledChanged()
 {
     ASSERT(m_enabled != m_videoSource->enabled());
+
     m_enabled = m_videoSource->enabled();
 
     if (!m_enabled && m_sinks.size() && !m_muted)

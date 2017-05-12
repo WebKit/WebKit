@@ -25,26 +25,30 @@ function grabImagePixels()
     return imageData.data;
  }
 
-function testFrontCameraImage()
+function testFrontCameraImage(testName)
 {
-    data = grabImagePixels();
+    test(() => {
+        data = grabImagePixels();
 
-    assert_true(data[0] < 20);
-    assert_true(data[1] < 20);
-    assert_true(data[2] < 20);
+        assert_true(data[0] < 20, "1");
+        assert_true(data[1] < 20, "2");
+        assert_true(data[2] < 20, "3");
+    }, "testFrontCameraImage " + testName);
 }
 
-function testBackCameraImage()
+function testBackCameraImage(testName)
 {
-    data = grabImagePixels();
+    test(() => {
+        data = grabImagePixels();
 
-    assert_true(data[0] > 100);
-    assert_true(data[1] > 100);
-    assert_true(data[2] > 100);
+        assert_true(data[0] > 100, "1");
+        assert_true(data[1] > 100, "2");
+        assert_true(data[2] > 100, "3");
 
-    assert_true(data[0] < 200);
-    assert_true(data[1] < 200);
-    assert_true(data[2] < 200);
+        assert_true(data[0] < 200, "4");
+        assert_true(data[1] < 200, "5");
+        assert_true(data[2] < 200, "6");
+    }, "testBackCameraImage " + testName);
 }
 
 promise_test((test) => {
@@ -56,14 +60,10 @@ promise_test((test) => {
     var backStream;
     return navigator.mediaDevices.getUserMedia({ video: { facingMode: { exact: ["user"] } } }).then((stream) => {
         frontStream = stream;
-        return navigator.mediaDevices.getUserMedia({ video: { facingMode: { exact: ["environment"] } } });
-    }).then((stream) => {
-        backStream = stream;
-    }).then(() => {
         return new Promise((resolve, reject) => {
             createConnections((firstConnection) => {
                 sender = firstConnection.addTrack(frontStream.getVideoTracks()[0], frontStream);
-            }, (secondConnection) => {
+           }, (secondConnection) => {
                 secondConnection.ontrack = (trackEvent) => {
                     resolve(trackEvent.streams[0]);
                 };
@@ -74,8 +74,10 @@ promise_test((test) => {
         video.srcObject = remoteStream;
         return video.play();
     }).then(() => {
-        testFrontCameraImage();
-    }).then(() => {
+        testFrontCameraImage("test1");
+        return navigator.mediaDevices.getUserMedia({ video: { facingMode: { exact: ["environment"] } } });
+    }).then((stream) => {
+        backStream = stream;
         var currentTrack = sender.track;
         promise = sender.replaceTrack(backStream.getVideoTracks()[0]);
         assert_true(currentTrack === sender.track);
@@ -84,7 +86,7 @@ promise_test((test) => {
         assert_true(sender.track === backStream.getVideoTracks()[0]);
         return waitFor(500);
     }).then(() => {
-        testBackCameraImage();
+        testBackCameraImage("test1");
     });
 }, "Switching from front to back camera");
 
@@ -96,14 +98,9 @@ promise_test((test) => {
     var frontStream;
     var backStream;
 
-    return navigator.mediaDevices.getUserMedia({ video: { height: { min: 400 }, facingMode: { exact: ["user"] } } }).then((stream) => {
+    return navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 480, facingMode: { exact: ["user"] } } }).then((stream) => {
         frontStream = stream;
-        return navigator.mediaDevices.getUserMedia({ video: { height: { max: 400 }, facingMode: { exact: ["environment"] } } });
-    }).then((stream) => {
-        backStream = stream;
-        assert_true(frontStream.getVideoTracks()[0].getSettings().height >= 400, "frontStream should be bigger");
-        assert_true(backStream.getVideoTracks()[0].getSettings().height < 400, "backStream should be smaller");
-    }).then(() => {
+        assert_true(frontStream.getVideoTracks()[0].getSettings().height === 480, "frontStream should be big");
         return new Promise((resolve, reject) => {
             createConnections((firstConnection) => {
                 sender = firstConnection.addTrack(frontStream.getVideoTracks()[0], frontStream);
@@ -118,13 +115,16 @@ promise_test((test) => {
         video.srcObject = remoteStream;
         return video.play();
     }).then(() => {
-        testFrontCameraImage();
-    }).then(() => {
+        testFrontCameraImage("test2");
+        return navigator.mediaDevices.getUserMedia({ video: { width: 320, height: 240, facingMode: { exact: ["environment"] } } });
+    }).then((stream) => {
+        backStream = stream;
+        assert_true(backStream.getVideoTracks()[0].getSettings().height === 240, "backStream should be small");
         return sender.replaceTrack(backStream.getVideoTracks()[0]);
     }).then(() => {
         return waitFor(500);
     }).then(() => {
-        testBackCameraImage();
+        testBackCameraImage("test2");
     });
 }, "Switching from front to back camera, with lower resolution");
 
@@ -136,13 +136,9 @@ promise_test((test) => {
     var frontStream;
     var backStream;
 
-    return navigator.mediaDevices.getUserMedia({ video: { height: { max: 400 }, facingMode: { exact: ["user"] } } }).then((stream) => {
+    return navigator.mediaDevices.getUserMedia({ video: { width: 320, height: 240, facingMode: { exact: ["user"] } } }).then((stream) => {
         frontStream = stream;
-        return navigator.mediaDevices.getUserMedia({ video: { height: { min: 400 }, facingMode: { exact: ["environment"] } } });
-    }).then((stream) => {
-        backStream = stream;
-        assert_true(frontStream.getVideoTracks()[0].getSettings().height < 400, "front stream should be smaller");
-        assert_true(backStream.getVideoTracks()[0].getSettings().height >= 400, "back stream should be bigger");
+        assert_true(frontStream.getVideoTracks()[0].getSettings().height === 240, "front stream should be small");
     }).then(() => {
         return new Promise((resolve, reject) => {
             createConnections((firstConnection) => {
@@ -158,13 +154,12 @@ promise_test((test) => {
         video.srcObject = remoteStream;
         return video.play();
     }).then(() => {
-        testFrontCameraImage();
-    }).then(() => {
+        testFrontCameraImage("test3");
+        return navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 480 , facingMode: { exact: ["environment"] } } });
+    }).then((stream) => {
+        backStream = stream;
+        assert_true(backStream.getVideoTracks()[0].getSettings().height === 480, "back stream should be big");
         return promise_rejects(test, "InvalidModificationError", sender.replaceTrack(backStream.getVideoTracks()[0]));
-    }).then(() => {
-        return waitFor(500);
-    }).then(() => {
-        testBackCameraImage();
     });
 }, "Switching from front to back camera, with higher resolution");
         </script>

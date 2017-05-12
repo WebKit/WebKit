@@ -51,7 +51,7 @@ public:
 
     static VideoCaptureFactory& factory();
 
-    virtual ~MockRealtimeVideoSource() { }
+    virtual ~MockRealtimeVideoSource();
 
 protected:
     MockRealtimeVideoSource(const String&);
@@ -69,6 +69,7 @@ private:
 
     void startProducingData() final;
     void stopProducingData() final;
+    bool isProducingData() const final { return m_isProducingData; }
 
     void drawAnimation(GraphicsContext&);
     void drawText(GraphicsContext&);
@@ -102,6 +103,7 @@ private:
     unsigned m_frameNumber { 0 };
 
     RunLoop::Timer<MockRealtimeVideoSource> m_timer;
+    bool m_isProducingData { false };
 };
 
 } // namespace WebCore

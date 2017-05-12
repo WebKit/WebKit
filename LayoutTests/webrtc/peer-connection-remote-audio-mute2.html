@@ -9,6 +9,7 @@
 <body>
     <script src ="routines.js"></script>
     <script>
+    var context = new webkitAudioContext();
     promise_test((test) => {
         if (window.testRunner)
             testRunner.setUserMediaPermission(true);
@@ -27,23 +28,25 @@
                     };
                 });
             }).then(() => {
-                return analyseAudio(remoteStream, 500).then((results) => {
+                return analyseAudio(remoteStream, 500, context).then((results) => {
                     assert_true(results.heardHum, "heard hum from remote enabled track");
                 });
             }).then(() => {
                 remoteTrack.enabled = false;
                 return waitFor(100);
             }).then(() => {
-                return analyseAudio(remoteStream, 500).then((results) => {
+                return analyseAudio(remoteStream, 500, context).then((results) => {
                     assert_false(results.heardHum, "not heard hum from remote disabled track");
                 });
             }).then(() => {
                 remoteTrack.enabled = true;
                 return waitFor(100);
             }).then(() => {
-                return analyseAudio(remoteStream, 500).then((results) => {
+                return analyseAudio(remoteStream, 500, context).then((results) => {
                     assert_true(results.heardHum, "heard hum from remote reenabled track");
                 });
+            }).then(() => {
+                return context.close();
             });
         });
     }, "Muting and unmuting an incoming audio track");

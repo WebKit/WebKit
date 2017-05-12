@@ -49,23 +49,15 @@
 
 namespace WebCore {
 
-class CoreAudioCaptureSourceFactory : public RealtimeMediaSource::AudioCaptureFactory {
+class CoreAudioCaptureSourceFactory : public RealtimeMediaSource::AudioCaptureFactory
+#if PLATFORM(IOS)
+    , public RealtimeMediaSource::SingleSourceFactory<CoreAudioCaptureSource>
+#endif
+{
 public:
     CaptureSourceOrError createAudioCaptureSource(const String& deviceID, const MediaConstraints* constraints) final {
         return CoreAudioCaptureSource::create(deviceID, constraints);
     }
-
-#if PLATFORM(IOS)
-    void setActiveSource(CoreAudioCaptureSource& source)
-    {
-        if (m_activeSource && m_activeSource->isProducingData())
-            m_activeSource->setMuted(true);
-        m_activeSource = &source;
-    }
-
-private:
-    CoreAudioCaptureSource* m_activeSource { nullptr };
-#endif
 };
 
 static CoreAudioCaptureSourceFactory& coreAudioCaptureSourceFactory()
@@ -669,6 +661,10 @@ CoreAudioCaptureSource::CoreAudioCaptureSource(const String& deviceID, const Str
 
 CoreAudioCaptureSource::~CoreAudioCaptureSource()
 {
+#if PLATFORM(IOS)
+    coreAudioCaptureSourceFactory().unsetActiveSource(*this);
+#endif
+
     CoreAudioSharedUnit::singleton().removeClient(*this);
 }
 
@@ -707,7 +703,7 @@ void CoreAudioCaptureSource::stopProducingData()
 {
     if (!m_isProducingData)
         return;
-    
+
     CoreAudioSharedUnit::singleton().stopProducingData();
     m_isProducingData = false;
     m_muted = true;
