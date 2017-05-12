@@ -276,7 +276,7 @@ void RenderImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
 
 void RenderImage::updateIntrinsicSizeIfNeeded(const LayoutSize& newSize)
 {
-    if (imageResource().errorOccurred() || !m_imageResource->hasImage())
+    if (imageResource().errorOccurred() || !m_imageResource->cachedImage())
         return;
     setIntrinsicSize(newSize);
 }
@@ -357,7 +357,7 @@ void RenderImage::notifyFinished(CachedResource& newImage)
 
 bool RenderImage::isShowingMissingOrImageError() const
 {
-    return !imageResource().hasImage() || imageResource().errorOccurred();
+    return !imageResource().cachedImage() || imageResource().errorOccurred();
 }
 
 bool RenderImage::isShowingAltText() const
@@ -367,7 +367,7 @@ bool RenderImage::isShowingAltText() const
 
 bool RenderImage::hasNonBitmapImage() const
 {
-    if (!imageResource().hasImage())
+    if (!imageResource().cachedImage())
         return false;
 
     Image* image = cachedImage()->imageForRenderer(this);
@@ -381,7 +381,7 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
     GraphicsContext& context = paintInfo.context();
     float deviceScaleFactor = document().deviceScaleFactor();
 
-    if (!imageResource().hasImage() || imageResource().errorOccurred()) {
+    if (!imageResource().cachedImage() || imageResource().errorOccurred()) {
         if (paintInfo.phase == PaintPhaseSelection)
             return;
 
@@ -561,7 +561,7 @@ void RenderImage::areaElementFocusChanged(HTMLAreaElement* element)
 
 void RenderImage::paintIntoRect(GraphicsContext& context, const FloatRect& rect)
 {
-    if (!imageResource().hasImage() || imageResource().errorOccurred() || rect.width() <= 0 || rect.height() <= 0)
+    if (!imageResource().cachedImage() || imageResource().errorOccurred() || rect.width() <= 0 || rect.height() <= 0)
         return;
 
     RefPtr<Image> img = imageResource().image(flooredIntSize(rect.size()));
@@ -599,7 +599,7 @@ bool RenderImage::boxShadowShouldBeAppliedToBackground(const LayoutPoint& paintO
 bool RenderImage::foregroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect, unsigned maxDepthToTest) const
 {
     UNUSED_PARAM(maxDepthToTest);
-    if (!imageResource().hasImage() || imageResource().errorOccurred())
+    if (!imageResource().cachedImage() || imageResource().errorOccurred())
         return false;
     if (cachedImage() && !cachedImage()->isLoaded())
         return false;

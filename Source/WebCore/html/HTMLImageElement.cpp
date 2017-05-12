@@ -281,7 +281,7 @@ void HTMLImageElement::didAttachRenderers()
 
     auto& renderImage = downcast<RenderImage>(*renderer());
     RenderImageResource& renderImageResource = renderImage.imageResource();
-    if (renderImageResource.hasImage())
+    if (renderImageResource.cachedImage())
         return;
     renderImageResource.setCachedImage(m_imageLoader.image());
 

@@ -72,7 +72,7 @@ Ref<SVGImageElement> SVGImageElement::create(const QualifiedName& tagName, Docum
 bool SVGImageElement::hasSingleSecurityOrigin() const
 {
     auto* renderer = downcast<RenderSVGImage>(this->renderer());
-    if (!renderer || !renderer->imageResource().hasImage())
+    if (!renderer || !renderer->imageResource().cachedImage())
         return true;
     auto* image = renderer->imageResource().cachedImage()->image();
     return !image || image->hasSingleSecurityOrigin();
@@ -182,7 +182,7 @@ bool SVGImageElement::haveLoadedRequiredResources()
 void SVGImageElement::didAttachRenderers()
 {
     if (auto* imageObj = downcast<RenderSVGImage>(renderer())) {
-        if (imageObj->imageResource().hasImage())
+        if (imageObj->imageResource().cachedImage())
             return;
 
         imageObj->imageResource().setCachedImage(m_imageLoader.image());

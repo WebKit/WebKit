@@ -1,5 +1,16 @@
 2017-05-11  Zalan Bujtas  <zalan@apple.com>
 
+        RenderImageResource::hasImage is redundant and RenderImageResourceStyleImage's override is incorrect.
+        https://bugs.webkit.org/show_bug.cgi?id=172010
+        <rdar://problem/31086735>
+
+        Reviewed by Simon Fraser.
+
+        * fast/images/missing-content-image-crash-expected.txt: Added.
+        * fast/images/missing-content-image-crash.html: Added.
+
+2017-05-11  Zalan Bujtas  <zalan@apple.com>
+
         AX: Defer text changes until after the tree is clean if needed.
         https://bugs.webkit.org/show_bug.cgi?id=171546
         <rdar://problem/31934942>

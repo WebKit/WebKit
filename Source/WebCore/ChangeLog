@@ -1,5 +1,38 @@
 2017-05-11  Zalan Bujtas  <zalan@apple.com>
 
+        RenderImageResource::hasImage is redundant and RenderImageResourceStyleImage's override is incorrect.
+        https://bugs.webkit.org/show_bug.cgi?id=172010
+        <rdar://problem/31086735>
+
+        Reviewed by Simon Fraser.
+
+        RenderImageResourceStyleImage::hasImage() always returns true even when ::cachedImage()
+        returns nullptr (e.g. image is pending).
+        Remove it and use cachedImage() instead.
+
+        Test: fast/images/missing-content-image-crash.html
+
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::didAttachRenderers):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::updateIntrinsicSizeIfNeeded):
+        (WebCore::RenderImage::isShowingMissingOrImageError):
+        (WebCore::RenderImage::hasNonBitmapImage):
+        (WebCore::RenderImage::paintReplaced):
+        (WebCore::RenderImage::paintIntoRect):
+        (WebCore::RenderImage::foregroundIsKnownToBeOpaqueInRect):
+        * rendering/RenderImageResource.h:
+        (WebCore::RenderImageResource::cachedImage):
+        (WebCore::RenderImageResource::hasImage): Deleted.
+        * rendering/RenderImageResourceStyleImage.h:
+        * rendering/svg/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::paint):
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::hasSingleSecurityOrigin):
+        (WebCore::SVGImageElement::didAttachRenderers):
+
+2017-05-11  Zalan Bujtas  <zalan@apple.com>
+
         AX: Defer text changes until after the tree is clean if needed.
         https://bugs.webkit.org/show_bug.cgi?id=171546
         <rdar://problem/31934942>

@@ -42,7 +42,6 @@ private:
     void initialize(RenderElement*) override;
     void shutdown() override;
 
-    bool hasImage() const override { return true; }
     RefPtr<Image> image(const IntSize& = { }) const override;
     bool errorOccurred() const override { return m_styleImage->errorOccurred(); }
 
