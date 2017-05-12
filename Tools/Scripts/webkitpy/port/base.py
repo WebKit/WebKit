@@ -1348,7 +1348,7 @@ class Port(object):
         return driver.Driver
 
     def path_to_crash_logs(self):
-        return self.results_directory()
+        raise NotImplementedError
 
     def _get_crash_log(self, name, pid, stdout, stderr, newer_than):
         name_str = name or '<unknown process name>'

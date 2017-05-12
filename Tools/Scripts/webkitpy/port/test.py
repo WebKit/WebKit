@@ -463,6 +463,9 @@ class TestPort(Port):
     def _driver_class(self):
         return TestDriver
 
+    def path_to_crash_logs(self):
+        return self.results_directory()
+
     def start_http_server(self, additional_dirs=None):
         pass
 

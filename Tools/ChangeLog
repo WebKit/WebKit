@@ -1,3 +1,14 @@
+2017-05-12  Jonathan Bedard  <jbedard@apple.com>
+
+        Unreviewed follow-up to r216776.
+
+        * Scripts/webkitpy/port/base.py:
+        (Port.path_to_crash_logs): Raise not implemented.
+        * Scripts/webkitpy/port/test.py:
+        (TestPort.path_to_crash_logs): Return results directory as the location of crash logs.
+        * Scripts/webkitpy/port/win.py:
+        (WinPort.path_to_crash_logs): Ditto.
+
 2017-05-12  Alexey Proskuryakov  <ap@apple.com>
 
         Bot watcher's dashboard shows results links twice sometimes
