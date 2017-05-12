@@ -10,6 +10,7 @@ list(APPEND WTF_SOURCES
     glib/RunLoopGLib.cpp
 
     linux/CurrentProcessMemoryStatus.cpp
+    linux/MemoryFootprintLinux.cpp
     linux/MemoryPressureHandlerLinux.cpp
 
     text/unix/TextBreakIteratorInternalICUUnix.cpp
