@@ -70,6 +70,7 @@ public:
     WEBCORE_EXPORT void selectAudioMediaOption(uint64_t index) final;
     WEBCORE_EXPORT void selectLegibleMediaOption(uint64_t index) final;
     WEBCORE_EXPORT void togglePictureInPicture() final;
+    WEBCORE_EXPORT void toggleMuted() final;
 
     double duration() const final;
     double currentTime() const final;
@@ -87,6 +88,7 @@ public:
     ExternalPlaybackTargetType externalPlaybackTargetType() const final;
     String externalPlaybackLocalizedDeviceName() const final;
     bool wirelessVideoPlaybackDisabled() const final;
+    bool isMuted() const final;
 
 protected:
     WEBCORE_EXPORT WebPlaybackSessionModelMediaElement();

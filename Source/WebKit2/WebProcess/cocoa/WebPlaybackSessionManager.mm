@@ -149,6 +149,12 @@ void WebPlaybackSessionInterfaceContext::wirelessVideoPlaybackDisabledChanged(bo
         m_manager->wirelessVideoPlaybackDisabledChanged(m_contextId, disabled);
 }
 
+void WebPlaybackSessionInterfaceContext::mutedChanged(bool muted)
+{
+    if (m_manager)
+        m_manager->mutedChanged(m_contextId, muted);
+}
+
 #pragma mark - WebPlaybackSessionManager
 
 Ref<WebPlaybackSessionManager> WebPlaybackSessionManager::create(WebPage& page)
@@ -358,6 +364,11 @@ void WebPlaybackSessionManager::wirelessVideoPlaybackDisabledChanged(uint64_t co
     m_page->send(Messages::WebPlaybackSessionManagerProxy::SetWirelessVideoPlaybackDisabled(contextId, disabled));
 }
 
+void WebPlaybackSessionManager::mutedChanged(uint64_t contextId, bool muted)
+{
+    m_page->send(Messages::WebPlaybackSessionManagerProxy::SetMuted(contextId, muted));
+}
+
 #pragma mark Messages from WebPlaybackSessionManagerProxy:
 
 void WebPlaybackSessionManager::play(uint64_t contextId)
@@ -443,6 +454,12 @@ void WebPlaybackSessionManager::togglePictureInPicture(uint64_t contextId)
 {
     UserGestureIndicator indicator(ProcessingUserGesture);
     ensureModel(contextId).togglePictureInPicture();
+}
+
+void WebPlaybackSessionManager::toggleMuted(uint64_t contextId)
+{
+    UserGestureIndicator indicator(ProcessingUserGesture);
+    ensureModel(contextId).toggleMuted();
 }
 
 } // namespace WebKit

@@ -69,6 +69,7 @@ class WebPlaybackSessionInterfaceAVKit;
 @property AVPlayerControllerStatus status;
 @property (retain) AVValueTiming *timing;
 @property (retain) NSArray *seekableTimeRanges;
+@property (getter=isMuted) BOOL muted;
 
 @property (readonly) BOOL hasMediaSelectionOptions;
 @property (readonly) BOOL hasAudioMediaSelectionOptions;

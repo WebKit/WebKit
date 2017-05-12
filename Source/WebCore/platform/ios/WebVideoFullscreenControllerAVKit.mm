@@ -166,6 +166,7 @@ private:
     String externalPlaybackLocalizedDeviceName() const override;
     bool wirelessVideoPlaybackDisabled() const override;
     void togglePictureInPicture() override { }
+    void toggleMuted() override;
 
     // WebPlaybackSessionModelClient
     void durationChanged(double) override;
@@ -178,6 +179,7 @@ private:
     void legibleMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& options, uint64_t selectedIndex) override;
     void externalPlaybackChanged(bool enabled, WebPlaybackSessionModel::ExternalPlaybackTargetType, const String& localizedDeviceName) override;
     void wirelessVideoPlaybackDisabledChanged(bool) override;
+    void mutedChanged(bool) override;
 
     // WebVideoFullscreenModel
     void addClient(WebVideoFullscreenModelClient&) override;
@@ -189,6 +191,7 @@ private:
     bool isVisible() const override;
     bool hasVideo() const override;
     FloatSize videoDimensions() const override;
+    bool isMuted() const override;
 
     HashSet<WebPlaybackSessionModelClient*> m_playbackClients;
     HashSet<WebVideoFullscreenModelClient*> m_fullscreenClients;
@@ -442,6 +445,20 @@ void WebVideoFullscreenControllerContext::wirelessVideoPlaybackDisabledChanged(b
         client->wirelessVideoPlaybackDisabledChanged(disabled);
 }
 
+void WebVideoFullscreenControllerContext::mutedChanged(bool muted)
+{
+    if (WebThreadIsCurrent()) {
+        RefPtr<WebVideoFullscreenControllerContext> protectedThis(this);
+        dispatch_async(dispatch_get_main_queue(), [protectedThis, muted] {
+            protectedThis->mutedChanged(muted);
+        });
+        return;
+    }
+
+    for (auto& client : m_playbackClients)
+        client->mutedChanged(muted);
+}
+
 #pragma mark WebVideoFullscreenModel
 
 void WebVideoFullscreenControllerContext::addClient(WebVideoFullscreenModelClient& client)
@@ -521,6 +538,12 @@ bool WebVideoFullscreenControllerContext::hasVideo() const
     return m_fullscreenModel ? m_fullscreenModel->hasVideo() : false;
 }
 
+bool WebVideoFullscreenControllerContext::isMuted() const
+{
+    ASSERT(isUIThread());
+    return m_playbackModel ? m_playbackModel->isMuted() : false;
+}
+
 FloatSize WebVideoFullscreenControllerContext::videoDimensions() const
 {
     ASSERT(isUIThread());
@@ -568,6 +591,16 @@ void WebVideoFullscreenControllerContext::togglePlayState()
     WebThreadRun([protectedThis, this] {
         if (m_playbackModel)
             m_playbackModel->togglePlayState();
+    });
+}
+
+void WebVideoFullscreenControllerContext::toggleMuted()
+{
+    ASSERT(isUIThread());
+    RefPtr<WebVideoFullscreenControllerContext> protectedThis(this);
+    WebThreadRun([protectedThis, this] {
+        if (m_playbackModel)
+            m_playbackModel->toggleMuted();
     });
 }
 

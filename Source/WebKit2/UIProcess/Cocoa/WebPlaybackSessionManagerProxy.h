@@ -83,6 +83,7 @@ public:
     void setLegibleMediaSelectionIndex(uint64_t selectedIndex);
     void setExternalPlayback(bool, WebPlaybackSessionModel::ExternalPlaybackTargetType, const String&);
     void setWirelessVideoPlaybackDisabled(bool);
+    void setMuted(bool);
 
 private:
     friend class WebVideoFullscreenModelContext;
@@ -107,6 +108,7 @@ private:
     void selectAudioMediaOption(uint64_t) final;
     void selectLegibleMediaOption(uint64_t) final;
     void togglePictureInPicture() final;
+    void toggleMuted() final;
 
     double playbackStartedTime() const final { return m_playbackStartedTime; }
     double duration() const final { return m_duration; }
@@ -125,6 +127,7 @@ private:
     WebPlaybackSessionModel::ExternalPlaybackTargetType externalPlaybackTargetType() const final { return m_externalPlaybackTargetType; }
     String externalPlaybackLocalizedDeviceName() const final { return m_externalPlaybackLocalizedDeviceName; }
     bool wirelessVideoPlaybackDisabled() const final { return m_wirelessVideoPlaybackDisabled; }
+    bool isMuted() const final { return m_muted; }
 
     WebPlaybackSessionManagerProxy* m_manager;
     uint64_t m_contextId;
@@ -147,6 +150,7 @@ private:
     WebPlaybackSessionModel::ExternalPlaybackTargetType m_externalPlaybackTargetType { WebPlaybackSessionModel::TargetTypeNone };
     String m_externalPlaybackLocalizedDeviceName;
     bool m_wirelessVideoPlaybackDisabled { false };
+    bool m_muted { false };
 };
 
 class WebPlaybackSessionManagerProxy : public RefCounted<WebPlaybackSessionManagerProxy>, private IPC::MessageReceiver {
@@ -192,6 +196,7 @@ private:
     void setPlaybackStartedTime(uint64_t contextId, double playbackStartedTime);
     void setRate(uint64_t contextId, bool isPlaying, double rate);
     void handleControlledElementIDResponse(uint64_t, String) const;
+    void setMuted(uint64_t contextId, bool muted);
 
     // Messages to WebPlaybackSessionManager
     void play(uint64_t contextId);
@@ -207,6 +212,7 @@ private:
     void selectAudioMediaOption(uint64_t contextId, uint64_t index);
     void selectLegibleMediaOption(uint64_t contextId, uint64_t index);
     void togglePictureInPicture(uint64_t contextId);
+    void toggleMuted(uint64_t contextId);
 
     WebPageProxy* m_page;
     HashMap<uint64_t, ModelInterfaceTuple> m_contextMap;

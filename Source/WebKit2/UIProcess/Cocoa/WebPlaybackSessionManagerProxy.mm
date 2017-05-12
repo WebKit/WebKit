@@ -135,6 +135,12 @@ void WebPlaybackSessionModelContext::togglePictureInPicture()
         m_manager->togglePictureInPicture(m_contextId);
 }
 
+void WebPlaybackSessionModelContext::toggleMuted()
+{
+    if (m_manager)
+        m_manager->toggleMuted(m_contextId);
+}
+
 void WebPlaybackSessionModelContext::setPlaybackStartedTime(double playbackStartedTime)
 {
     m_playbackStartedTime = playbackStartedTime;
@@ -236,6 +242,13 @@ void WebPlaybackSessionModelContext::setWirelessVideoPlaybackDisabled(bool wirel
     m_wirelessVideoPlaybackDisabled = wirelessVideoPlaybackDisabled;
     for (auto* client : m_clients)
         client->wirelessVideoPlaybackDisabledChanged(wirelessVideoPlaybackDisabled);
+}
+
+void WebPlaybackSessionModelContext::setMuted(bool muted)
+{
+    m_muted = muted;
+    for (auto* client : m_clients)
+        client->mutedChanged(muted);
 }
 
 #pragma mark - WebPlaybackSessionManagerProxy
@@ -414,6 +427,11 @@ void WebPlaybackSessionManagerProxy::setWirelessVideoPlaybackDisabled(uint64_t c
     ensureModel(contextId).setWirelessVideoPlaybackDisabled(disabled);
 }
 
+void WebPlaybackSessionManagerProxy::setMuted(uint64_t contextId, bool muted)
+{
+    ensureModel(contextId).setMuted(muted);
+}
+
 void WebPlaybackSessionManagerProxy::setDuration(uint64_t contextId, double duration)
 {
     ensureModel(contextId).setDuration(duration);
@@ -507,6 +525,11 @@ void WebPlaybackSessionManagerProxy::selectLegibleMediaOption(uint64_t contextId
 void WebPlaybackSessionManagerProxy::togglePictureInPicture(uint64_t contextId)
 {
     m_page->send(Messages::WebPlaybackSessionManager::TogglePictureInPicture(contextId), m_page->pageID());
+}
+
+void WebPlaybackSessionManagerProxy::toggleMuted(uint64_t contextId)
+{
+    m_page->send(Messages::WebPlaybackSessionManager::ToggleMuted(contextId), m_page->pageID());
 }
 
 void WebPlaybackSessionManagerProxy::requestControlledElementID()

@@ -36,6 +36,7 @@ messages -> WebPlaybackSessionManagerProxy {
     SetDuration(uint64_t contextId, double duration)
     SetPlaybackStartedTime(uint64_t contextId, double playbackStartedTime)
     SetRate(uint64_t contextId, bool isPlaying, double rate)
+    SetMuted(uint64_t contextId, bool muted);
     SetUpPlaybackControlsManagerWithID(uint64_t contextId)
     ClearPlaybackControlsManager()
 
