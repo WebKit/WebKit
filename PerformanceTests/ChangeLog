@@ -1,5 +1,32 @@
 2017-05-11  Addy Osmani  <addyosmani@gmail.com>
 
+        Speedometer: Add an ES2015 TodoMVC implementation
+        https://bugs.webkit.org/show_bug.cgi?id=171448
+
+        Reviewed by Ryosuke Niwa.
+
+        Adds ES2015 TodoMVC implementation for Speedometer
+
+        * Speedometer/resources/todomvc/vanilla-examples/es2015/index.html: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/es2015/node_modules/todomvc-app-css/index.css: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/es2015/node_modules/todomvc-app-css/package.json: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/es2015/node_modules/todomvc-app-css/readme.md: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/es2015/node_modules/todomvc-common/base.css: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/es2015/node_modules/todomvc-common/base.js: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/es2015/node_modules/todomvc-common/package.json: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/es2015/node_modules/todomvc-common/readme.md: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/es2015/package.json: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/es2015/src/.jshintrc: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/es2015/src/app.js: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/es2015/src/controller.js: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/es2015/src/helpers.js: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/es2015/src/model.js: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/es2015/src/store.js: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/es2015/src/template.js: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/es2015/src/view.js: Added.
+
+2017-05-11  Addy Osmani  <addyosmani@gmail.com>
+
         Speedometer: Add an Elm TodoMVC implementation
         https://bugs.webkit.org/show_bug.cgi?id=171464
 
