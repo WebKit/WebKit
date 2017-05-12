@@ -1,5 +1,23 @@
 2017-05-11  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r216623. rdar://problem/32116336
+
+    2017-05-10  Jer Noble  <jer.noble@apple.com>
+
+            CoreAudioCaptureSource reports 3 or 5 channel audio output; actually only mono
+            https://bugs.webkit.org/show_bug.cgi?id=171940
+
+            Reviewed by Eric Carlson.
+
+            Asking for the Input VPIO stream format will return the internal mic format, before processing. Instead
+            ask for the input bus's output format, which is post processing, which will return the correct number
+            of channels (one).
+
+            * platform/mediastream/mac/CoreAudioCaptureSource.cpp:
+            (WebCore::CoreAudioSharedUnit::configureMicrophoneProc):
+
+2017-05-11  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r216599. rdar://problem/31201793
 
     2017-05-10  Andy Estes  <aestes@apple.com>
