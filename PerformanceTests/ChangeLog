@@ -1,5 +1,31 @@
 2017-05-11  Addy Osmani  <addyosmani@gmail.com>
 
+        Speedometer: Update the vanilla JavaScript TodoMVC implem to a more recent version
+        https://bugs.webkit.org/show_bug.cgi?id=171306
+
+        Reviewed by Ryosuke Niwa.
+
+        Update vanilla JS TodoMVC implementation to the latest.
+
+        * Speedometer/resources/todomvc/vanilla-examples/vanillajs/bower.json: Removed.
+        * Speedometer/resources/todomvc/vanilla-examples/vanillajs/bower_components/todomvc-common/base.css: Removed.
+        * Speedometer/resources/todomvc/vanilla-examples/vanillajs/bower_components/todomvc-common/base.js: Removed.
+        * Speedometer/resources/todomvc/vanilla-examples/vanillajs/bower_components/todomvc-common/bg.png: Removed.
+        * Speedometer/resources/todomvc/vanilla-examples/vanillajs/index.html:
+        * Speedometer/resources/todomvc/vanilla-examples/vanillajs/js/app.js:
+        * Speedometer/resources/todomvc/vanilla-examples/vanillajs/js/controller.js:
+        * Speedometer/resources/todomvc/vanilla-examples/vanillajs/js/helpers.js:
+        * Speedometer/resources/todomvc/vanilla-examples/vanillajs/js/model.js:
+        * Speedometer/resources/todomvc/vanilla-examples/vanillajs/js/store.js:
+        * Speedometer/resources/todomvc/vanilla-examples/vanillajs/js/template.js: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/vanillajs/js/view.js:
+        * Speedometer/resources/todomvc/vanilla-examples/vanillajs/node_modules/todomvc-app-css/index.css: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/vanillajs/node_modules/todomvc-common/base.css: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/vanillajs/node_modules/todomvc-common/base.js: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/vanillajs/package.json: Added.
+
+2017-05-11  Addy Osmani  <addyosmani@gmail.com>
+
         Speedometer: Add an ES2015 TodoMVC implementation
         https://bugs.webkit.org/show_bug.cgi?id=171448
 
