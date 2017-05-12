@@ -113,7 +113,7 @@ Ref<MediaStreamTrack> MediaStreamTrack::clone()
     return MediaStreamTrack::create(*scriptExecutionContext(), m_private->clone());
 }
 
-void MediaStreamTrack::stopTrack()
+void MediaStreamTrack::stopTrack(StopMode mode)
 {
     // NOTE: this method is called when the "stop" method is called from JS, using the "ImplementedAs" IDL attribute.
     // This is done because ActiveDOMObject requires a "stop" method.
@@ -121,8 +121,13 @@ void MediaStreamTrack::stopTrack()
     if (ended())
         return;
 
-    m_ended = true;
+    // An 'ended' event is not posted if m_ended is true when trackEnded is called, so set it now if we are
+    // not supposed to post the event.
+    if (mode == StopMode::Silently)
+        m_ended = true;
+
     m_private->endTrack();
+    m_ended = true;
 }
 
 MediaStreamTrack::TrackSettings MediaStreamTrack::getSettings() const
@@ -303,7 +308,7 @@ void MediaStreamTrack::trackEnded(MediaStreamTrackPrivate&)
     
 void MediaStreamTrack::trackMutedChanged(MediaStreamTrackPrivate&)
 {
-    if (scriptExecutionContext()->activeDOMObjectsAreSuspended() || scriptExecutionContext()->activeDOMObjectsAreStopped())
+    if (scriptExecutionContext()->activeDOMObjectsAreSuspended() || scriptExecutionContext()->activeDOMObjectsAreStopped() || m_ended)
         return;
 
     AtomicString eventType = muted() ? eventNames().muteEvent : eventNames().unmuteEvent;

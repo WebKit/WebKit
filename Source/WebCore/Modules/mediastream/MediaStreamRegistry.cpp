@@ -62,10 +62,6 @@ URLRegistrable* MediaStreamRegistry::lookup(const String& url) const
     return m_mediaStreams.get(url);
 }
 
-MediaStreamRegistry::MediaStreamRegistry()
-{
-}
-
 MediaStream* MediaStreamRegistry::lookUp(const URL& url) const
 {
     return static_cast<MediaStream*>(lookup(url.string()));
@@ -84,21 +80,16 @@ void MediaStreamRegistry::registerStream(MediaStream& stream)
 
 void MediaStreamRegistry::unregisterStream(MediaStream& stream)
 {
-    Vector<MediaStream*>& allStreams = mediaStreams();
+    auto& allStreams = mediaStreams();
     size_t pos = allStreams.find(&stream);
     if (pos != notFound)
         allStreams.remove(pos);
 }
 
-MediaStream* MediaStreamRegistry::lookUp(const MediaStreamPrivate& privateStream) const
+void MediaStreamRegistry::forEach(std::function<void(MediaStream&)> callback) const
 {
-    Vector<MediaStream*>& allStreams = mediaStreams();
-    for (auto& stream : allStreams) {
-        if (&stream->privateStream() == &privateStream)
-            return stream;
-    }
-
-    return nullptr;
+    for (auto& stream : mediaStreams())
+        callback(*stream);
 }
 
 } // namespace WebCore
