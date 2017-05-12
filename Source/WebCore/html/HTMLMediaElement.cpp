@@ -392,6 +392,7 @@ static bool mediaSessionMayBeConfusedWithMainContent(const MediaElementSessionIn
 HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& document, bool createdByParser)
     : HTMLElement(tagName, document)
     , ActiveDOMObject(&document)
+    , m_weakFactory(this)
     , m_pendingActionTimer(*this, &HTMLMediaElement::pendingActionTimerFired)
     , m_progressEventTimer(*this, &HTMLMediaElement::progressEventTimerFired)
     , m_playbackProgressTimer(*this, &HTMLMediaElement::playbackProgressTimerFired)

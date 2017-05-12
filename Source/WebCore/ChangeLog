@@ -1,5 +1,27 @@
 2017-05-12  Andreas Kling  <akling@apple.com>
 
+        MediaResourceLoader shouldn't keep its HTMLMediaElement alive.
+        https://bugs.webkit.org/show_bug.cgi?id=172032
+        <rdar://problem/30816144>
+
+        Reviewed by Joseph Pecoraro.
+
+        Use a WeakPtr<HTMLMediaElement> in MediaResourceLoader instead, since the loader
+        is retained by a NSURLSession object we hand over to AVFoundation.
+
+        This prevents AVFoundation from keeping entire documents alive outside our control.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::createWeakPtr):
+        * loader/MediaResourceLoader.cpp:
+        (WebCore::MediaResourceLoader::MediaResourceLoader):
+        (WebCore::MediaResourceLoader::requestResource):
+        * loader/MediaResourceLoader.h:
+
+2017-05-12  Andreas Kling  <akling@apple.com>
+
         Memory pressure response should only do sync bmalloc scavenge in sync mode.
         https://bugs.webkit.org/show_bug.cgi?id=172035
 

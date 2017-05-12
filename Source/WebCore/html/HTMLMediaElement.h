@@ -130,6 +130,7 @@ class HTMLMediaElement
 #endif
 {
 public:
+    WeakPtr<HTMLMediaElement> createWeakPtr() { return m_weakFactory.createWeakPtr(); }
     MediaPlayer* player() const { return m_player.get(); }
 
     virtual bool isVideo() const { return false; }
@@ -855,6 +856,7 @@ private:
     void handleSeekToPlaybackPosition(double);
     void seekToPlaybackPositionEndedTimerFired();
 
+    WeakPtrFactory<HTMLMediaElement> m_weakFactory;
     Timer m_pendingActionTimer;
     Timer m_progressEventTimer;
     Timer m_playbackProgressTimer;

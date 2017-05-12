@@ -43,7 +43,7 @@ namespace WebCore {
 MediaResourceLoader::MediaResourceLoader(Document& document, HTMLMediaElement& mediaElement, const String& crossOriginMode)
     : ContextDestructionObserver(&document)
     , m_document(&document)
-    , m_mediaElement(&mediaElement)
+    , m_mediaElement(mediaElement.createWeakPtr())
     , m_crossOriginMode(crossOriginMode)
     , m_weakFactory(this)
 {
@@ -79,7 +79,8 @@ RefPtr<PlatformMediaResource> MediaResourceLoader::requestResource(ResourceReque
     // FIXME: Skip Content Security Policy check if the element that initiated this request is in a user-agent shadow tree. See <https://bugs.webkit.org/show_bug.cgi?id=155505>.
     CachedResourceRequest cacheRequest(WTFMove(request), ResourceLoaderOptions(SendCallbacks, DoNotSniffContent, bufferingPolicy, AllowStoredCredentials, ClientCredentialPolicy::MayAskClientForCredentials, FetchOptions::Credentials::Include, DoSecurityCheck, FetchOptions::Mode::NoCors, DoNotIncludeCertificateInfo, ContentSecurityPolicyImposition::DoPolicyCheck, DefersLoadingPolicy::AllowDefersLoading, cachingPolicy));
     cacheRequest.setAsPotentiallyCrossOrigin(m_crossOriginMode, *m_document);
-    cacheRequest.setInitiator(*m_mediaElement);
+    if (m_mediaElement)
+        cacheRequest.setInitiator(*m_mediaElement.get());
 
     CachedResourceHandle<CachedRawResource> resource = m_document->cachedResourceLoader().requestMedia(WTFMove(cacheRequest));
     if (!resource)

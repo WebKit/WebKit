@@ -64,7 +64,7 @@ private:
     void contextDestroyed() override;
 
     Document* m_document;
-    RefPtr<HTMLMediaElement> m_mediaElement;
+    WeakPtr<HTMLMediaElement> m_mediaElement;
     String m_crossOriginMode;
     HashSet<MediaResource*> m_resources;
     WeakPtrFactory<const MediaResourceLoader> m_weakFactory;
