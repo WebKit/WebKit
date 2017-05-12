@@ -1,3 +1,29 @@
+2017-05-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] GIF images are not properly loaded the first time
+        https://bugs.webkit.org/show_bug.cgi?id=170432
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        When the GIF image is loaded for the first time, it's always read from the network, and the decoder is usually
+        fetched with chunks of data. Then the data is cached in disk by the network process, so that when loaded from
+        the cache, the whole encoded data is available to fetch the encoder. The problem is that we are failing to
+        decode the image when giving chunks of data, that's why it only happens the first time loaded. If the first
+        chunk of data provided is enough to get some metadata, including the size, but not frame contents, the load fails
+        in CachedImage::addIncrementalDataBuffer() because the EncodedDataStatus reported is SizeAvailable but
+        Image::isNull() returns true. An Image is considered to be Null when its size is empty, and the size is
+        calculated always using the first frame in ImageFrameCache. Since we still don't have frames, the image is
+        always Null in this case. It is not expected that EncodedDataStatus returns SizeAvailable and the image is Null,
+        that's why it's considered an error and the load finishes with a decode error. However, the non CG ImageDecoder
+        has a m_size member to handle this particular case, and it's when m_size is set when EncodedDataStatus changes
+        to SizeAvailable. We should return the ImageEncoder size as the ImageSize when we have a decoder but
+        not frames yet.
+
+        Test: http/tests/images/gif-progressive-load.html
+
+        * platform/graphics/ImageFrameCache.cpp:
+        (WebCore::ImageFrameCache::size): Return ImageDecoder::size() without caching it, if frame list is empty.
+
 2017-05-12  Per Arne Vollan  <pvollan@apple.com>
 
         The iBooks application is not able to get current position.
