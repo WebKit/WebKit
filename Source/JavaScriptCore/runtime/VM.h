@@ -653,7 +653,7 @@ public:
     bool enableControlFlowProfiler();
     bool disableControlFlowProfiler();
 
-    JS_EXPORT_PRIVATE void queueMicrotask(JSGlobalObject*, Ref<Microtask>&&);
+    void queueMicrotask(JSGlobalObject&, Ref<Microtask>&&);
     JS_EXPORT_PRIVATE void drainMicrotasks();
     void setGlobalConstRedeclarationShouldThrow(bool globalConstRedeclarationThrow) { m_globalConstRedeclarationShouldThrow = globalConstRedeclarationThrow; }
     ALWAYS_INLINE bool globalConstRedeclarationShouldThrow() const { return m_globalConstRedeclarationShouldThrow; }

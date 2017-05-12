@@ -177,7 +177,7 @@ struct GlobalObjectMethodTable {
     typedef RuntimeFlags (*JavaScriptRuntimeFlagsFunctionPtr)(const JSGlobalObject*);
     JavaScriptRuntimeFlagsFunctionPtr javaScriptRuntimeFlags;
 
-    typedef void (*QueueTaskToEventLoopFunctionPtr)(const JSGlobalObject*, Ref<Microtask>&&);
+    typedef void (*QueueTaskToEventLoopFunctionPtr)(JSGlobalObject&, Ref<Microtask>&&);
     QueueTaskToEventLoopFunctionPtr queueTaskToEventLoop;
 
     typedef bool (*ShouldInterruptScriptBeforeTimeoutPtr)(const JSGlobalObject*);

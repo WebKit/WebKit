@@ -1431,11 +1431,11 @@ const HashSet<String>& JSGlobalObject::intlNumberFormatAvailableLocales()
 void JSGlobalObject::queueMicrotask(Ref<Microtask>&& task)
 {
     if (globalObjectMethodTable()->queueTaskToEventLoop) {
-        globalObjectMethodTable()->queueTaskToEventLoop(this, WTFMove(task));
+        globalObjectMethodTable()->queueTaskToEventLoop(*this, WTFMove(task));
         return;
     }
 
-    vm().queueMicrotask(this, WTFMove(task));
+    vm().queueMicrotask(*this, WTFMove(task));
 }
 
 bool JSGlobalObject::hasDebugger() const

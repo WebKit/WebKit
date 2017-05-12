@@ -200,7 +200,7 @@ RuntimeFlags JSDOMWindowBase::javaScriptRuntimeFlags(const JSGlobalObject* objec
 
 class JSDOMWindowMicrotaskCallback : public RefCounted<JSDOMWindowMicrotaskCallback> {
 public:
-    static Ref<JSDOMWindowMicrotaskCallback> create(JSDOMWindowBase* globalObject, Ref<JSC::Microtask>&& task)
+    static Ref<JSDOMWindowMicrotaskCallback> create(JSDOMWindowBase& globalObject, Ref<JSC::Microtask>&& task)
     {
         return adoptRef(*new JSDOMWindowMicrotaskCallback(globalObject, WTFMove(task)));
     }
@@ -220,9 +220,9 @@ public:
     }
 
 private:
-    JSDOMWindowMicrotaskCallback(JSDOMWindowBase* globalObject, Ref<JSC::Microtask>&& task)
-        : m_globalObject(globalObject->vm(), globalObject)
-        , m_task(WTFMove(task))
+    JSDOMWindowMicrotaskCallback(JSDOMWindowBase& globalObject, Ref<JSC::Microtask>&& task)
+        : m_globalObject { globalObject.vm(), &globalObject }
+        , m_task { WTFMove(task) }
     {
     }
 
@@ -230,12 +230,12 @@ private:
     Ref<JSC::Microtask> m_task;
 };
 
-void JSDOMWindowBase::queueTaskToEventLoop(const JSGlobalObject* object, Ref<JSC::Microtask>&& task)
+void JSDOMWindowBase::queueTaskToEventLoop(JSGlobalObject& object, Ref<JSC::Microtask>&& task)
 {
-    const JSDOMWindowBase* thisObject = static_cast<const JSDOMWindowBase*>(object);
+    JSDOMWindowBase& thisObject = static_cast<JSDOMWindowBase&>(object);
 
-    RefPtr<JSDOMWindowMicrotaskCallback> callback = JSDOMWindowMicrotaskCallback::create((JSDOMWindowBase*)thisObject, WTFMove(task));
-    auto microtask = std::make_unique<ActiveDOMCallbackMicrotask>(MicrotaskQueue::mainThreadQueue(), *thisObject->scriptExecutionContext(), [callback]() mutable {
+    RefPtr<JSDOMWindowMicrotaskCallback> callback = JSDOMWindowMicrotaskCallback::create(thisObject, WTFMove(task));
+    auto microtask = std::make_unique<ActiveDOMCallbackMicrotask>(MicrotaskQueue::mainThreadQueue(), *thisObject.scriptExecutionContext(), [callback]() mutable {
         callback->call();
     });
 

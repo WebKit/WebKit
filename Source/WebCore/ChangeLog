@@ -1,3 +1,27 @@
+2017-05-12  Daniel Bates  <dabates@apple.com>
+
+        Cleanup: Make QueueTaskToEventLoopFunctionPtr take JSGlobalObject&
+        https://bugs.webkit.org/show_bug.cgi?id=172021
+
+        Reviewed by Mark Lam.
+
+        * bindings/js/JSDOMGlobalObjectTask.cpp: Include header JSDOMGlobalObject.h.
+        (WebCore::JSGlobalObjectTask::JSGlobalObjectTask): Change type of first argument from JSDOMGlobalObject*
+        to JSDOMGlobalObject& and update code as necessary. Also, use C++11 brace initialization syntax
+        for member initializer list.
+        * bindings/js/JSDOMGlobalObjectTask.h: Remove header JSDOMGlobalObject.h and forward declare
+        JSDOMGlobalObject and JSC::Microtask.
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowMicrotaskCallback::create):
+        (WebCore::JSDOMWindowMicrotaskCallback::JSDOMWindowMicrotaskCallback): Change type of first argument
+        from JSDOMWindowBase* to JSDOMWindowBase& and update code as necessary. Also, use C++11 brace
+        initialization syntax for member initializer list.
+        (WebCore::JSDOMWindowBase::queueTaskToEventLoop):
+        * bindings/js/JSDOMWindowBase.h:
+        * bindings/js/JSWorkerGlobalScopeBase.cpp:
+        (WebCore::JSWorkerGlobalScopeBase::queueTaskToEventLoop):
+        * bindings/js/JSWorkerGlobalScopeBase.h:
+
 2017-05-12  Jer Noble  <jer.noble@apple.com>
 
         [MediaStream] Streams while play while page is in background can get "stuck" when page is forgrounded.

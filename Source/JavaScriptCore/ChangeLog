@@ -1,3 +1,22 @@
+2017-05-12  Daniel Bates  <dabates@apple.com>
+
+        Cleanup: Make QueueTaskToEventLoopFunctionPtr take JSGlobalObject&
+        https://bugs.webkit.org/show_bug.cgi?id=172021
+
+        Reviewed by Mark Lam.
+
+        Change the function alias for QueueTaskToEventLoopFunctionPtr to take JSGlobalObject&
+        instead of a const JSGlobalObject* as all implementations expect to be passed a non-
+        const, non-null JSGlobalObject object.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::queueMicrotask):
+        * runtime/JSGlobalObject.h:
+        * runtime/VM.cpp:
+        (JSC::VM::queueMicrotask):
+        * runtime/VM.h: Remove JS_EXPORT_PRIVATE annotation from queueMicrotask() as
+        it is only called from JavaScriptCore code.
+
 2017-05-12  Michael Saboff  <msaboff@apple.com>
 
         [iOS] Use memory footprint to dynamically adjust behavior of allocators

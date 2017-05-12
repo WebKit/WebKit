@@ -865,9 +865,9 @@ void VM::dumpTypeProfilerData()
     typeProfiler()->dumpTypeProfilerData(*this);
 }
 
-void VM::queueMicrotask(JSGlobalObject* globalObject, Ref<Microtask>&& task)
+void VM::queueMicrotask(JSGlobalObject& globalObject, Ref<Microtask>&& task)
 {
-    m_microtaskQueue.append(std::make_unique<QueuedTask>(*this, globalObject, WTFMove(task)));
+    m_microtaskQueue.append(std::make_unique<QueuedTask>(*this, &globalObject, WTFMove(task)));
 }
 
 void VM::drainMicrotasks()
