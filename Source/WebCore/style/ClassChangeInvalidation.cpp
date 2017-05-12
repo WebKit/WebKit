@@ -86,14 +86,22 @@ static ClassChangeVector computeClassChange(const SpaceSplitString& oldClasses, 
     return changedClasses;
 }
 
-static bool mayBeAffectedByHostRules(ShadowRoot* shadowRoot, AtomicStringImpl* changedClass)
+static bool mayBeAffectedByHostRules(ShadowRoot* shadowRoot, AtomicStringImpl* changedClass, bool& mayAffectShadowTree)
 {
+    // FIXME: More of this code should be shared between Class/Attribute/IdInvalidation.
     if (!shadowRoot)
         return false;
     auto& shadowRuleSets = shadowRoot->styleScope().resolver().ruleSets();
-    if (shadowRuleSets.authorStyle().hostPseudoClassRules().isEmpty())
+    auto& authorStyle = shadowRuleSets.authorStyle();
+    if (authorStyle.hostPseudoClassRules().isEmpty() && !authorStyle.hasHostPseudoClassRulesMatchingInShadowTree())
         return false;
-    return shadowRuleSets.features().classesInRules.contains(changedClass);
+
+    if (!shadowRuleSets.features().classesInRules.contains(changedClass))
+        return false;
+
+    if (authorStyle.hasHostPseudoClassRulesMatchingInShadowTree())
+        mayAffectShadowTree = true;
+    return true;
 }
 
 static bool mayBeAffectedBySlottedRules(const Vector<ShadowRoot*>& assignedShadowRoots, AtomicStringImpl* changedClass)
@@ -111,6 +119,7 @@ static bool mayBeAffectedBySlottedRules(const Vector<ShadowRoot*>& assignedShado
 void ClassChangeInvalidation::invalidateStyle(const SpaceSplitString& oldClasses, const SpaceSplitString& newClasses)
 {
     auto changedClasses = computeClassChange(oldClasses, newClasses);
+    bool mayAffectShadowTree = false;
 
     auto& ruleSets = m_element.styleResolver().ruleSets();
     auto* shadowRoot = m_element.shadowRoot();
@@ -119,7 +128,7 @@ void ClassChangeInvalidation::invalidateStyle(const SpaceSplitString& oldClasses
     ClassChangeVector changedClassesAffectingStyle;
     for (auto* changedClass : changedClasses) {
         bool mayAffectStyle = ruleSets.features().classesInRules.contains(changedClass)
-            || mayBeAffectedByHostRules(shadowRoot, changedClass)
+            || mayBeAffectedByHostRules(shadowRoot, changedClass, mayAffectShadowTree)
             || mayBeAffectedBySlottedRules(assignedShadowRoots, changedClass);
         if (mayAffectStyle)
             changedClassesAffectingStyle.append(changedClass);
@@ -128,7 +137,11 @@ void ClassChangeInvalidation::invalidateStyle(const SpaceSplitString& oldClasses
     if (changedClassesAffectingStyle.isEmpty())
         return;
 
-    if (shadowRoot && ruleSets.authorStyle().hasShadowPseudoElementRules()) {
+    if (shadowRoot && ruleSets.authorStyle().hasShadowPseudoElementRules())
+        mayAffectShadowTree = true;
+
+    if (mayAffectShadowTree) {
+        // FIXME: We should do fine-grained invalidation for shadow tree.
         m_element.invalidateStyleForSubtree();
         return;
     }

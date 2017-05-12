@@ -1,3 +1,40 @@
+2017-05-12  Antti Koivisto  <antti@apple.com>
+
+        Updating class name of a shadow host does not update the style applied by descendants of :host()
+        https://bugs.webkit.org/show_bug.cgi?id=170762
+        <rdar://problem/31572668>
+
+        Reviewed by Ryosuke Niwa.
+
+        We need to invalidate shadow tree style when host classes or attributes change if it may be
+        affected by host rules.
+
+        Test: fast/shadow-dom/css-scoping-host-class-and-attribute-mutation.html
+
+        * css/RuleSet.cpp:
+        (WebCore::isHostSelectorMatchingInShadowTree):
+        (WebCore::RuleSet::addRule):
+
+            Check if we have :host selectors that affect shadow tree.
+
+        * css/RuleSet.h:
+        (WebCore::RuleSet::hasHostPseudoClassRulesMatchingInShadowTree):
+        * style/AttributeChangeInvalidation.cpp:
+        (WebCore::Style::mayBeAffectedByHostRules):
+        (WebCore::Style::AttributeChangeInvalidation::invalidateStyle):
+
+            Invalidate the whole subtree if there is a class change that may affect shadow tree style.
+
+        * style/ClassChangeInvalidation.cpp:
+        (WebCore::Style::mayBeAffectedByHostRules):
+        (WebCore::Style::ClassChangeInvalidation::invalidateStyle):
+        * style/IdChangeInvalidation.cpp:
+        (WebCore::Style::mayBeAffectedByHostRules):
+        (WebCore::Style::IdChangeInvalidation::invalidateStyle):
+
+            Same for classes and ids.
+            This should be refactored at some point to reduce copy-code.
+
 2017-05-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] ASSERTION FAILED: !m_flushingLayers

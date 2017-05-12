@@ -194,6 +194,20 @@ static unsigned rulesCountForName(const RuleSet::AtomRuleMap& map, const AtomicS
     return 0;
 }
 
+static bool isHostSelectorMatchingInShadowTree(const CSSSelector& startSelector)
+{
+    auto* leftmostSelector = &startSelector;
+    bool hasDescendantOrChildRelation = false;
+    while (auto* previous = leftmostSelector->tagHistory()) {
+        hasDescendantOrChildRelation = leftmostSelector->hasDescendantOrChildRelation();
+        leftmostSelector = previous;
+    }
+    if (!hasDescendantOrChildRelation)
+        return false;
+
+    return leftmostSelector->match() == CSSSelector::PseudoClass && leftmostSelector->pseudoClassType() == CSSSelector::PseudoClassHost;
+}
+
 void RuleSet::addRule(StyleRule* rule, unsigned selectorIndex, AddRuleFlags addRuleFlags)
 {
     RuleData ruleData(rule, selectorIndex, m_ruleCount++, addRuleFlags);
@@ -308,6 +322,9 @@ void RuleSet::addRule(StyleRule* rule, unsigned selectorIndex, AddRuleFlags addR
         addToRuleSet(customPseudoElementSelector->value(), m_shadowPseudoElementRules, ruleData);
         return;
     }
+
+    if (!m_hasHostPseudoClassRulesMatchingInShadowTree)
+        m_hasHostPseudoClassRulesMatchingInShadowTree = isHostSelectorMatchingInShadowTree(*ruleData.selector());
 
     if (hostPseudoClassSelector) {
         m_hostPseudoClassRules.append(ruleData);

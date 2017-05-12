@@ -42,16 +42,23 @@ static bool mayBeAffectedByAttributeChange(DocumentRuleSets& ruleSets, bool isHT
     return nameSet.contains(attributeName.localName());
 }
 
-static bool mayBeAffectedByHostRules(const Element& element, const QualifiedName& attributeName)
+static bool mayBeAffectedByHostRules(const Element& element, const QualifiedName& attributeName, bool& mayAffectShadowTree)
 {
+    // FIXME: More of this code should be shared between Class/Attribute/IdInvalidation.
     auto* shadowRoot = element.shadowRoot();
     if (!shadowRoot)
         return false;
     auto& shadowRuleSets = shadowRoot->styleScope().resolver().ruleSets();
-    if (shadowRuleSets.authorStyle().hostPseudoClassRules().isEmpty())
+    auto& authorStyle = shadowRuleSets.authorStyle();
+    if (authorStyle.hostPseudoClassRules().isEmpty() && !authorStyle.hasHostPseudoClassRulesMatchingInShadowTree())
         return false;
 
-    return mayBeAffectedByAttributeChange(shadowRuleSets, element.isHTMLElement(), attributeName);
+    if (!mayBeAffectedByAttributeChange(shadowRuleSets, element.isHTMLElement(), attributeName))
+        return false;
+
+    if (authorStyle.hasHostPseudoClassRulesMatchingInShadowTree())
+        mayAffectShadowTree = true;
+    return true;
 }
 
 static bool mayBeAffectedBySlottedRules(const Element& element, const QualifiedName& attributeName)
@@ -73,9 +80,10 @@ void AttributeChangeInvalidation::invalidateStyle(const QualifiedName& attribute
 
     auto& ruleSets = m_element.styleResolver().ruleSets();
     bool isHTML = m_element.isHTMLElement();
+    bool mayAffectShadowTree = false;
 
     bool mayAffectStyle = mayBeAffectedByAttributeChange(ruleSets, isHTML, attributeName)
-        || mayBeAffectedByHostRules(m_element, attributeName)
+        || mayBeAffectedByHostRules(m_element, attributeName, mayAffectShadowTree)
         || mayBeAffectedBySlottedRules(m_element, attributeName);
 
     if (!mayAffectStyle)
@@ -86,7 +94,10 @@ void AttributeChangeInvalidation::invalidateStyle(const QualifiedName& attribute
         return;
     }
 
-    if (m_element.shadowRoot() && ruleSets.authorStyle().hasShadowPseudoElementRules()) {
+    if (m_element.shadowRoot() && ruleSets.authorStyle().hasShadowPseudoElementRules())
+        mayAffectShadowTree = true;
+
+    if (mayAffectShadowTree) {
         m_element.invalidateStyleForSubtree();
         return;
     }

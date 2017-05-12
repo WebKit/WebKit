@@ -1,3 +1,14 @@
+2017-05-12  Antti Koivisto  <antti@apple.com>
+
+        Updating class name of a shadow host does not update the style applied by descendants of :host()
+        https://bugs.webkit.org/show_bug.cgi?id=170762
+        <rdar://problem/31572668>
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/shadow-dom/css-scoping-host-class-and-attribute-mutation-expected.html: Added.
+        * fast/shadow-dom/css-scoping-host-class-and-attribute-mutation.html: Added.
+
 2017-05-12  Claudio Saavedra  <csaavedra@igalia.com>
 
         [WPE] Unreviewed gardening.
