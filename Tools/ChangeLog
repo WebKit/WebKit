@@ -1,3 +1,17 @@
+2017-05-12  Brady Eidson  <beidson@apple.com>
+
+        REGRESSION (r216711): API test WKWebView.ClearAppCache is failing.
+        https://bugs.webkit.org/show_bug.cgi?id=172030
+
+        Unreviewed - Test gardening, in effect...
+
+        More exploration as to why this continues to fail on the bots.
+        
+        This change should give us a smoking gun.
+        
+        * TestWebKitAPI/Tests/WebKit2Cocoa/LocalStorageClear.mm:
+        (TEST):
+
 2017-05-12  Hyungwook Lee  <hyungwook.lee@navercorp.com>
 
         [GTK] Fix compile warnings in PlatformImageCairo.cpp

@@ -168,6 +168,12 @@ TEST(WKWebView, ClearAppCache)
     [[WKWebsiteDataStore defaultDataStore] fetchDataRecordsOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] completionHandler:^(NSArray<WKWebsiteDataRecord *> *websiteDataRecords)
     {
         EXPECT_EQ(websiteDataRecords.count, 1ul);
+        for (WKWebsiteDataRecord *record in websiteDataRecords) {
+            EXPECT_STREQ("127.0.0.1", [record.displayName UTF8String]);
+            for (NSString *type in record.dataTypes)
+                EXPECT_STREQ([WKWebsiteDataTypeOfflineWebApplicationCache UTF8String], [type UTF8String]);
+        }
+
         originalWebsiteDataRecordCount = websiteDataRecords.count;
         readyToContinue = true;
     }];
