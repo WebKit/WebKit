@@ -23,6 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#if PLATFORM(MAC)
+
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <AppKit/NSTextChecker.h>
@@ -44,3 +46,5 @@ extern NSString *NSTextCheckingInsertionPointKey;
 @end
 
 #endif
+
+#endif // PLATFORM(MAC)
