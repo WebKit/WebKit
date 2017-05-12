@@ -1,3 +1,17 @@
+2017-05-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Add some logging for layer tree commits, and resize and orientation change events
+        https://bugs.webkit.org/show_bug.cgi?id=172041
+
+        Reviewed by Tim Horton.
+
+        Add some logging that's useful during rotation investigations.
+
+        * dom/Document.cpp:
+        (WebCore::Document::orientationChanged):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::sendResizeEventIfNeeded):
+
 2017-05-12  Romain Bellessort  <romain.bellessort@crf.canon.fr>
 
         [Readable Streams API] Add ReadableStreamBYOBReader closed getter

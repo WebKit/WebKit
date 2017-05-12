@@ -1468,6 +1468,8 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
     if (![self usesStandardContentView])
         return;
 
+    LOG_WITH_STREAM(VisibleRects, stream << "-[WKWebView _didCommitLayerTree:] transactionID " <<  layerTreeTransaction.transactionID() << " _dynamicViewportUpdateMode " << (int)_dynamicViewportUpdateMode);
+
     if (_dynamicViewportUpdateMode != DynamicViewportUpdateMode::NotResizing) {
         if (_resizeAnimationTransformTransactionID && layerTreeTransaction.transactionID() >= _resizeAnimationTransformTransactionID.value()) {
             _resizeAnimationTransformTransactionID = std::nullopt;

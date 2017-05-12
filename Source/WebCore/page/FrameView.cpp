@@ -3625,6 +3625,8 @@ void FrameView::sendResizeEventIfNeeded()
     bool isMainFrame = frame().isMainFrame();
     bool canSendResizeEventSynchronously = isMainFrame && !m_shouldAutoSize;
 
+    LOG(Events, "FrameView %p sendResizeEventIfNeeded sending resize event, size %dx%d (canSendResizeEventSynchronously %d)", this, currentSize.width(), currentSize.height(), canSendResizeEventSynchronously);
+
     Ref<Event> resizeEvent = Event::create(eventNames().resizeEvent, false, false);
     if (canSendResizeEventSynchronously)
         frame().document()->dispatchWindowEvent(resizeEvent);

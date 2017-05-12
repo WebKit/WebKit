@@ -6970,6 +6970,7 @@ void Document::didRemoveInDocumentShadowRoot(ShadowRoot& shadowRoot)
 
 void Document::orientationChanged(int orientation)
 {
+    LOG(Events, "Document %p orientationChanged - orientation %d", this, orientation);
     dispatchWindowEvent(Event::create(eventNames().orientationchangeEvent, false, false));
     m_orientationNotifier.orientationChanged(orientation);
 }
