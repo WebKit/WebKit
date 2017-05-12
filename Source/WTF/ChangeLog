@@ -1,3 +1,22 @@
+2017-05-12  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r216772. rdar://problem/31969082
+
+    2017-05-12  Andreas Kling  <akling@apple.com>
+
+            More aggressive memory kill limits.
+            https://bugs.webkit.org/show_bug.cgi?id=172037
+            <rdar://problem/31969082>
+
+            Reviewed by Michael Saboff.
+
+            Bring down the memory kill limits to 4GB for active processes, and 2GB for inactive.
+            Also make MemoryUsagePolicy::Strict kick in above 1.5GB.
+
+            * wtf/MemoryPressureHandler.cpp:
+            (WTF::MemoryPressureHandler::thresholdForMemoryKill):
+            (WTF::thresholdForPolicy):
+
 2017-05-03  Mark Lam  <mark.lam@apple.com>
 
         Use the CLoop for CPU(ARM64E).

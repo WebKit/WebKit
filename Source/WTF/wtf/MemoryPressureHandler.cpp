@@ -79,8 +79,8 @@ size_t MemoryPressureHandler::thresholdForMemoryKill()
 {
 #if CPU(X86_64) || CPU(ARM64)
     if (m_processState == WebsamProcessState::Active)
-        return 16 * GB;
-    return 4 * GB;
+        return 4 * GB;
+    return 2 * GB;
 #else
     return 3 * GB;
 #endif
@@ -92,7 +92,7 @@ static size_t thresholdForPolicy(MemoryUsagePolicy policy)
     case MemoryUsagePolicy::Conservative:
         return 1 * GB;
     case MemoryUsagePolicy::Strict:
-        return 2 * GB;
+        return 1.5 * GB;
     case MemoryUsagePolicy::Unrestricted:
     default:
         ASSERT_NOT_REACHED();
