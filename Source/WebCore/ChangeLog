@@ -1,3 +1,25 @@
+2017-05-12  Jer Noble  <jer.noble@apple.com>
+
+        [MediaStream] Streams while play while page is in background can get "stuck" when page is forgrounded.
+        https://bugs.webkit.org/show_bug.cgi?id=172022
+
+        Reviewed by Youenn Fablet.
+
+        When an AVSampleBufferDisplayLayer is disconnected from the CA renderer, none of its samples will be decoded
+        and enqueued for rendering. Once the layer is attached to a renderer again, it's stuffed full of samples which
+        will never be decoded as their decode time has long passed.
+
+        Pass the visibility state of the element through to the MediaPlayer so that MediaPlayerPrivateMediaStreamAVFObjC
+        can flush its renderers when going from not visible -> visible.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::visibilityStateChanged):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::setVisible):
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::updatePlayer):
+
 2017-05-12  Per Arne Vollan  <pvollan@apple.com>
 
         Unreviewed Windows build fix.

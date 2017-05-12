@@ -696,6 +696,16 @@ bool MediaPlayerPrivateMediaStreamAVFObjC::hasAudio() const
     return m_mediaStreamPrivate->hasAudio();
 }
 
+void MediaPlayerPrivateMediaStreamAVFObjC::setVisible(bool visible)
+{
+    if (m_visible == visible)
+        return;
+
+    m_visible = visible;
+    if (m_visible)
+        flushRenderers();
+}
+
 MediaTime MediaPlayerPrivateMediaStreamAVFObjC::durationMediaTime() const
 {
     return MediaTime::positiveInfiniteTime();
