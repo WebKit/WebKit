@@ -1,3 +1,23 @@
+2017-05-12  David Quesada  <david_quesada@apple.com>
+
+        Add SPI for overriding WKWebView's clipping behavior for _visibleContentRect
+        https://bugs.webkit.org/show_bug.cgi?id=172000
+        rdar://problem/32144756
+
+        Reviewed by Simon Fraser.
+
+        Extract -[WKWebView _visibleContentRect]'s use of -_scroller to a new property
+        _enclosingViewForExposedRectComputation, which is declared in the private
+        header for subclasses to implement custom logic for determining the view to
+        clip rendering to.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _enclosingViewForExposedRectComputation]):
+        (-[WKWebView _visibleRectInEnclosingView:]):
+        (-[WKWebView _visibleContentRect]):
+        (-[WKWebView _visibleRectInEnclosingScrollView:]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
 2017-05-12  Chris Dumez  <cdumez@apple.com>
 
         Stop using PassRefPtr under WebKit2/UIProcess

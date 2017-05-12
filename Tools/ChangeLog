@@ -1,3 +1,21 @@
+2017-05-12  David Quesada  <david_quesada@apple.com>
+
+        Add SPI for overriding WKWebView's clipping behavior for _visibleContentRect
+        https://bugs.webkit.org/show_bug.cgi?id=172000
+        rdar://problem/32144756
+
+        Reviewed by Simon Fraser.
+
+        Added API tests to verify that WKWebView provides the expected value for
+        _visibleContentRect in various configurations. (i.e. not inside a scrollview,
+        inside a scrollview but not clipped, clipped by an ancestor scrollview,
+        clipped by the webview's _enclosingViewForExposedRectComputation)
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/VisibleContentRect.mm: Added.
+        (-[TestWKWebViewWithEnclosingView _enclosingViewForExposedRectComputation]):
+        (TestWebKitAPI::TEST):
+
 2017-05-12  Brady Eidson  <beidson@apple.com>
 
         REGRESSION (r216711): API test WKWebView.ClearAppCache is failing.
