@@ -1,3 +1,17 @@
+2017-05-12  Andreas Kling  <akling@apple.com>
+
+        Memory pressure response should only do sync bmalloc scavenge in sync mode.
+        https://bugs.webkit.org/show_bug.cgi?id=172035
+
+        Reviewed by Michael Saboff.
+
+        Only call WTF::releaseFastMallocFreeMemory() and his threading-related friends
+        when releaseMemory() is invoked with Synchronous::Yes, or if it's a critical
+        pressure response (maintaining the behavior added in r215775.)
+
+        * page/MemoryRelease.cpp:
+        (WebCore::releaseMemory):
+
 2017-05-12  Daniel Bates  <dabates@apple.com>
 
         Cleanup: Use Ref instead of RefPtr to hold DOMWrapperWorld

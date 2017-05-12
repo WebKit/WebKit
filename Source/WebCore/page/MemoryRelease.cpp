@@ -110,24 +110,26 @@ void releaseMemory(Critical critical, Synchronous synchronous)
 {
     TraceScope scope(MemoryPressureHandlerStart, MemoryPressureHandlerEnd, static_cast<uint64_t>(critical), static_cast<uint64_t>(synchronous));
 
-    // Return unused pages back to the OS now as this will likely give us a little memory to work with.
-    WTF::releaseFastMallocFreeMemory();
-
-    if (critical == Critical::Yes)
+    if (critical == Critical::Yes) {
+        // Return unused pages back to the OS now as this will likely give us a little memory to work with.
+        WTF::releaseFastMallocFreeMemory();
         releaseCriticalMemory(synchronous);
+    }
 
     releaseNoncriticalMemory();
 
     platformReleaseMemory(critical);
 
-    // FastMalloc has lock-free thread specific caches that can only be cleared from the thread itself.
-    WorkerThread::releaseFastMallocFreeMemoryInAllThreads();
+    if (synchronous == Synchronous::Yes) {
+        // FastMalloc has lock-free thread specific caches that can only be cleared from the thread itself.
+        WorkerThread::releaseFastMallocFreeMemoryInAllThreads();
 #if ENABLE(ASYNC_SCROLLING) && !PLATFORM(IOS)
-    ScrollingThread::dispatch([]() {
-        WTF::releaseFastMallocFreeMemory();
-    });
+        ScrollingThread::dispatch([]() {
+            WTF::releaseFastMallocFreeMemory();
+        });
 #endif
-    WTF::releaseFastMallocFreeMemory();
+        WTF::releaseFastMallocFreeMemory();
+    }
 
 #if ENABLE(RESOURCE_USAGE)
     Page::forEachPage([&](Page& page) {
