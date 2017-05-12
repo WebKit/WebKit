@@ -113,6 +113,7 @@ private:
     BOOL _allowsInlineMediaPlayback;
     BOOL _inlineMediaPlaybackRequiresPlaysInlineAttribute;
     BOOL _allowsInlineMediaPlaybackAfterFullscreen;
+    BOOL _allowsBlockSelection;
 #endif
 
     BOOL _invisibleAutoplayNotPermitted;
@@ -194,8 +195,8 @@ private:
     _needsStorageAccessFromFileURLsQuirk = YES;
 
 #if PLATFORM(IOS)
-    BOOL defaultToSelectionGranularityCharacter = [[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitDebugDefaultSelectionGranularityCharacter"] && WebKit::linkedOnOrAfter(WebKit::SDKVersion::FirstToUseSelectionGranularityCharacterByDefault);
-    _selectionGranularity = defaultToSelectionGranularityCharacter ? WKSelectionGranularityCharacter : WKSelectionGranularityDynamic;
+    _selectionGranularity = WKSelectionGranularityDynamic;
+    _allowsBlockSelection = [[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitDebugAllowBlockSelection"];
 #endif
 
     return self;
@@ -306,6 +307,7 @@ private:
     configuration->_allowsPictureInPictureMediaPlayback = self->_allowsPictureInPictureMediaPlayback;
     configuration->_alwaysRunsAtForegroundPriority = _alwaysRunsAtForegroundPriority;
     configuration->_selectionGranularity = self->_selectionGranularity;
+    configuration->_allowsBlockSelection = self->_allowsBlockSelection;
     configuration->_ignoresViewportScaleLimits = self->_ignoresViewportScaleLimits;
 #endif
 #if PLATFORM(MAC)
@@ -626,6 +628,16 @@ static NSString *defaultApplicationNameForUserAgent()
 - (void)_setAllowsInlineMediaPlaybackAfterFullscreen:(BOOL)allows
 {
     _allowsInlineMediaPlaybackAfterFullscreen = allows;
+}
+
+- (BOOL)_allowsBlockSelection
+{
+    return _allowsBlockSelection;
+}
+
+- (void)_setAllowsBlockSelection:(BOOL)allowsBlockSelection
+{
+    _allowsBlockSelection = allowsBlockSelection;
 }
 #endif // PLATFORM(IOS)
 

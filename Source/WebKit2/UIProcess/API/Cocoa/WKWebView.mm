@@ -1201,6 +1201,11 @@ static CGSize roundScrollViewContentSize(const WebKit::WebPageProxy& page, CGSiz
     return [_configuration selectionGranularity];
 }
 
+- (BOOL)_allowsBlockSelection
+{
+    return [_configuration _allowsBlockSelection];
+}
+
 - (void)_setHasCustomContentView:(BOOL)pageHasCustomContentView loadedMIMEType:(const WTF::String&)mimeType
 {
     if (pageHasCustomContentView) {
