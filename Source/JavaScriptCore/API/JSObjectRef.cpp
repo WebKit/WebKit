@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Kelvin W Sherlock (ksherlock@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -52,6 +52,7 @@
 #include "ObjectConstructor.h"
 #include "ObjectPrototype.h"
 #include "PropertyNameArray.h"
+#include "ProxyObject.h"
 #include "RegExpConstructor.h"
 
 #if ENABLE(REMOTE_INSPECTOR)
@@ -674,4 +675,19 @@ void JSPropertyNameAccumulatorAddName(JSPropertyNameAccumulatorRef array, JSStri
     PropertyNameArray* propertyNames = toJS(array);
     JSLockHolder locker(propertyNames->vm());
     propertyNames->add(propertyName->identifier(propertyNames->vm()));
+}
+
+JSObjectRef JSObjectGetProxyTarget(JSObjectRef objectRef)
+{
+    JSObject* object = toJS(objectRef);
+    if (!object)
+        return nullptr;
+    VM& vm = *object->vm();
+    JSLockHolder locker(vm);
+    JSObject* result = nullptr;
+    if (JSProxy* proxy = jsDynamicCast<JSProxy*>(vm, object))
+        result = proxy->target();
+    else if (ProxyObject* proxy = jsDynamicCast<ProxyObject*>(vm, object))
+        result = proxy->target();
+    return toRef(result);
 }
