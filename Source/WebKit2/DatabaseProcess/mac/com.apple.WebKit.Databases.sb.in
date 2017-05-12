@@ -102,6 +102,12 @@
     (subpath (param "WEBKIT2_FRAMEWORK_DIR")))
 (allow system-fsctl (fsctl-command (_IO "h" 47)))
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+;; Various services required by CFNetwork and other frameworks
+(allow mach-lookup
+    (global-name "com.apple.analyticsd"))
+#endif
+
 ;; Sandbox extensions
 (define (apply-read-and-issue-extension op path-filter)
     (op file-read* path-filter)

@@ -1,3 +1,16 @@
+2017-05-12  Brent Fulgham  <bfulgham@apple.com>
+
+        [WK2][macOS] Add a mach-lookup exception for 'com.apple.analyticsd'
+        https://bugs.webkit.org/show_bug.cgi?id=172040
+        <rdar://problem/31765514>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * DatabaseProcess/mac/com.apple.WebKit.Databases.sb.in:
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+        * PluginProcess/mac/com.apple.WebKit.plugin-common.sb.in:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2017-05-12  Simon Fraser  <simon.fraser@apple.com>
 
         Add some logging for layer tree commits, and resize and orientation change events

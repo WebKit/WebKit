@@ -323,6 +323,9 @@
 #if __MAC_OS_X_VERSION_MIN_REQUIRED < 101100
        (global-name "com.apple.audio.VDCAssistant")
 #endif
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+       (global-name "com.apple.analyticsd")
+#endif
        (global-name "com.apple.audio.audiohald")
        (global-name "com.apple.audio.coreaudiod")
        (global-name "com.apple.awdd")
