@@ -1,3 +1,21 @@
+2017-05-12  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r216710. rdar://problem/32146527
+
+    2017-05-11  Dean Jackson  <dino@apple.com>
+
+            Modern Media Controls shouldn't be an experimental feature
+            https://bugs.webkit.org/show_bug.cgi?id=172004
+            <rdar://problem/32146522>
+
+            Reviewed by Simon Fraser.
+
+            This is either always on or always off, so shouldn't
+            show up in an Experimental Features menu.
+
+            * Shared/WebPreferencesDefinitions.h: Move ModernMediaControlsEnabled
+            to a normal preference.
+
 2017-05-11  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r216691. rdar://problem/32136567
