@@ -1,5 +1,96 @@
 2017-05-11  Addy Osmani  <addyosmani@gmail.com>
 
+        Speedometer: Update the Flight.js implementation to a more recent library version
+        https://bugs.webkit.org/show_bug.cgi?id=171471
+
+        Reviewed by Ryosuke Niwa.
+
+        Speedometer: Update FlightJS TodoMVC implementation
+
+        * Speedometer/resources/todomvc/dependency-examples/flight/.gitignore: Removed.
+        * Speedometer/resources/todomvc/dependency-examples/flight/.jshintrc: Removed.
+        * Speedometer/resources/todomvc/dependency-examples/flight/app/js/main.js: Removed.
+        * Speedometer/resources/todomvc/dependency-examples/flight/app/js/store.js: Removed.
+        * Speedometer/resources/todomvc/dependency-examples/flight/bower.json: Removed.
+        * Speedometer/resources/todomvc/dependency-examples/flight/bower_components/es5-shim/es5-shim.js: Removed.
+        * Speedometer/resources/todomvc/dependency-examples/flight/bower_components/flight/lib/compose.js: Removed.
+        * Speedometer/resources/todomvc/dependency-examples/flight/bower_components/flight/lib/index.js: Removed.
+        * Speedometer/resources/todomvc/dependency-examples/flight/bower_components/flight/lib/logger.js: Removed.
+        * Speedometer/resources/todomvc/dependency-examples/flight/bower_components/jquery/jquery.js: Removed.
+        * Speedometer/resources/todomvc/dependency-examples/flight/bower_components/todomvc-common/base.css: Removed.
+        * Speedometer/resources/todomvc/dependency-examples/flight/bower_components/todomvc-common/bg.png: Removed.
+        * Speedometer/resources/todomvc/dependency-examples/flight/flight/app/js/data/stats.js: Renamed from PerformanceTests/Speedometer/resources/todomvc/dependency-examples/flight/app/js/data/stats.js.
+        * Speedometer/resources/todomvc/dependency-examples/flight/flight/app/js/data/todos.js: Renamed from PerformanceTests/Speedometer/resources/todomvc/dependency-examples/flight/app/js/data/todos.js.
+        * Speedometer/resources/todomvc/dependency-examples/flight/flight/app/js/main.js: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/flight/app/js/page/app.js: Renamed from PerformanceTests/Speedometer/resources/todomvc/dependency-examples/flight/app/js/app.js.
+        * Speedometer/resources/todomvc/dependency-examples/flight/flight/app/js/store.js: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/flight/app/js/ui/main_selector.js: Renamed from PerformanceTests/Speedometer/resources/todomvc/dependency-examples/flight/app/js/ui/main_selector.js.
+        * Speedometer/resources/todomvc/dependency-examples/flight/flight/app/js/ui/new_item.js: Renamed from PerformanceTests/Speedometer/resources/todomvc/dependency-examples/flight/app/js/ui/new_item.js.
+        * Speedometer/resources/todomvc/dependency-examples/flight/flight/app/js/ui/stats.js: Renamed from PerformanceTests/Speedometer/resources/todomvc/dependency-examples/flight/app/js/ui/stats.js.
+        * Speedometer/resources/todomvc/dependency-examples/flight/flight/app/js/ui/todo_list.js: Renamed from PerformanceTests/Speedometer/resources/todomvc/dependency-examples/flight/app/js/ui/todo_list.js.
+        * Speedometer/resources/todomvc/dependency-examples/flight/flight/app/js/ui/toggle_all.js: Renamed from PerformanceTests/Speedometer/resources/todomvc/dependency-examples/flight/app/js/ui/toggle_all.js.
+        * Speedometer/resources/todomvc/dependency-examples/flight/flight/app/js/ui/with_filters.js: Renamed from PerformanceTests/Speedometer/resources/todomvc/dependency-examples/flight/app/js/ui/with_filters.js.
+        * Speedometer/resources/todomvc/dependency-examples/flight/flight/app/js/utils.js: Renamed from PerformanceTests/Speedometer/resources/todomvc/dependency-examples/flight/app/js/utils.js.
+        * Speedometer/resources/todomvc/dependency-examples/flight/flight/app/templates/stats.html: Renamed from PerformanceTests/Speedometer/resources/todomvc/dependency-examples/flight/app/templates/stats.html.
+        * Speedometer/resources/todomvc/dependency-examples/flight/flight/app/templates/todo.html: Renamed from PerformanceTests/Speedometer/resources/todomvc/dependency-examples/flight/app/templates/todo.html.
+        * Speedometer/resources/todomvc/dependency-examples/flight/flight/index.html: Renamed from PerformanceTests/Speedometer/resources/todomvc/dependency-examples/flight/index.html.
+        * Speedometer/resources/todomvc/dependency-examples/flight/flight/node_modules/depot/README.md: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/flight/node_modules/depot/depot.js: Renamed from PerformanceTests/Speedometer/resources/todomvc/dependency-examples/flight/bower_components/depot/depot.js.
+        * Speedometer/resources/todomvc/dependency-examples/flight/flight/node_modules/depot/depot.min.js: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/flight/node_modules/depot/package.json: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/flight/node_modules/es5-shim/LICENSE: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/flight/node_modules/es5-shim/es5-sham.js: Renamed from PerformanceTests/Speedometer/resources/todomvc/dependency-examples/flight/bower_components/es5-shim/es5-sham.js.
+        * Speedometer/resources/todomvc/dependency-examples/flight/flight/node_modules/es5-shim/es5-sham.min.js: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/flight/node_modules/es5-shim/es5-shim.js: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/flight/node_modules/es5-shim/es5-shim.min.js: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/flight/node_modules/flight/LICENSE: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/flight/node_modules/flight/index.js: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/flight/node_modules/flight/lib/advice.js: Renamed from PerformanceTests/Speedometer/resources/todomvc/dependency-examples/flight/bower_components/flight/lib/advice.js.
+        * Speedometer/resources/todomvc/dependency-examples/flight/flight/node_modules/flight/lib/base.js: Renamed from PerformanceTests/Speedometer/resources/todomvc/dependency-examples/flight/bower_components/flight/lib/base.js.
+        * Speedometer/resources/todomvc/dependency-examples/flight/flight/node_modules/flight/lib/component.js: Renamed from PerformanceTests/Speedometer/resources/todomvc/dependency-examples/flight/bower_components/flight/lib/component.js.
+        * Speedometer/resources/todomvc/dependency-examples/flight/flight/node_modules/flight/lib/compose.js: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/flight/node_modules/flight/lib/debug.js: Renamed from PerformanceTests/Speedometer/resources/todomvc/dependency-examples/flight/bower_components/flight/lib/debug.js.
+        * Speedometer/resources/todomvc/dependency-examples/flight/flight/node_modules/flight/lib/logger.js: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/flight/node_modules/flight/lib/registry.js: Renamed from PerformanceTests/Speedometer/resources/todomvc/dependency-examples/flight/bower_components/flight/lib/registry.js.
+        * Speedometer/resources/todomvc/dependency-examples/flight/flight/node_modules/flight/lib/utils.js: Renamed from PerformanceTests/Speedometer/resources/todomvc/dependency-examples/flight/bower_components/flight/lib/utils.js.
+        * Speedometer/resources/todomvc/dependency-examples/flight/flight/node_modules/jquery/README.md: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/flight/node_modules/jquery/dist/jquery.js: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/flight/node_modules/jquery/dist/jquery.min.js: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/flight/node_modules/jquery/package.json: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/flight/node_modules/memorystorage/memorystorage.js: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/flight/node_modules/requirejs-text/LICENSE: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/flight/node_modules/requirejs-text/README.md: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/flight/node_modules/requirejs-text/bower.json: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/flight/node_modules/requirejs-text/package.json: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/flight/node_modules/requirejs-text/text.js: Renamed from PerformanceTests/Speedometer/resources/todomvc/dependency-examples/flight/bower_components/requirejs-text/text.js.
+        * Speedometer/resources/todomvc/dependency-examples/flight/flight/node_modules/requirejs/README.md: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/flight/node_modules/requirejs/package.json: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/flight/node_modules/requirejs/require.js: Renamed from PerformanceTests/Speedometer/resources/todomvc/dependency-examples/flight/bower_components/requirejs/require.js.
+        * Speedometer/resources/todomvc/dependency-examples/flight/flight/node_modules/todomvc-app-css/index.css: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/flight/node_modules/todomvc-app-css/package.json: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/flight/node_modules/todomvc-app-css/readme.md: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/flight/node_modules/todomvc-common/base.css: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/flight/node_modules/todomvc-common/base.js: Renamed from PerformanceTests/Speedometer/resources/todomvc/dependency-examples/flight/bower_components/todomvc-common/base.js.
+        * Speedometer/resources/todomvc/dependency-examples/flight/flight/node_modules/todomvc-common/package.json: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/flight/node_modules/todomvc-common/readme.md: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/flight/package.json: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/karma.conf.js: Removed.
+        * Speedometer/resources/todomvc/dependency-examples/flight/package.json: Removed.
+        * Speedometer/resources/todomvc/dependency-examples/flight/readme.md: Removed.
+        * Speedometer/resources/todomvc/dependency-examples/flight/test/.jshintrc: Removed.
+        * Speedometer/resources/todomvc/dependency-examples/flight/test/fixture/footer.html: Removed.
+        * Speedometer/resources/todomvc/dependency-examples/flight/test/fixture/new_todo.html: Removed.
+        * Speedometer/resources/todomvc/dependency-examples/flight/test/fixture/toggle_all.html: Removed.
+        * Speedometer/resources/todomvc/dependency-examples/flight/test/mock/datastore.js: Removed.
+        * Speedometer/resources/todomvc/dependency-examples/flight/test/spec/data/stats_spec.js: Removed.
+        * Speedometer/resources/todomvc/dependency-examples/flight/test/spec/data/todos_spec.js: Removed.
+        * Speedometer/resources/todomvc/dependency-examples/flight/test/spec/ui/new_item_spec.js: Removed.
+        * Speedometer/resources/todomvc/dependency-examples/flight/test/spec/ui/stats_spec.js: Removed.
+        * Speedometer/resources/todomvc/dependency-examples/flight/test/spec/ui/toggle_all_spec.js: Removed.
+        * Speedometer/resources/todomvc/dependency-examples/flight/test/test-main.js: Removed.
+
+2017-05-11  Addy Osmani  <addyosmani@gmail.com>
+
         Speedometer: Update the AngularJS implementation to a more recent library version
         https://bugs.webkit.org/show_bug.cgi?id=171307
 
