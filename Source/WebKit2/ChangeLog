@@ -1,3 +1,14 @@
+2017-05-12  Andy Estes  <aestes@apple.com>
+
+        [Cocoa] Stop setting a status on PKPaymentRequestShippingContactUpdate when there are errors
+        https://bugs.webkit.org/show_bug.cgi?id=172036
+        <rdar://problem/31587957>
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm:
+        (WebKit::WebPaymentCoordinatorProxy::platformCompleteShippingContactSelection):
+
 2017-05-12  Chris Dumez  <cdumez@apple.com>
 
         Stop using PassRefPtr under WebKit2/Shared
