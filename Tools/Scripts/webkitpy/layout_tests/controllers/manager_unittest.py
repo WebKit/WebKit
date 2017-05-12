@@ -65,6 +65,9 @@ class ManagerTest(unittest.TestCase):
         self.assertTrue(manager.needs_servers(['imported/w3c/wpt/test']))
 
         manager = get_manager()
+        self.assertTrue(manager.needs_servers(['http/wpt/funky']))
+
+        manager = get_manager()
         self.assertFalse(manager.needs_servers(['imported/w3c']))
 
     def integration_test_needs_servers(self):

@@ -1,3 +1,30 @@
+2017-05-11  Youenn Fablet  <youenn@apple.com>
+
+        Allow WPT server to serve specific WebKit test
+        https://bugs.webkit.org/show_bug.cgi?id=171479
+
+        Reviewed by Ryosuke Niwa.
+
+        Adding a new mount point to WPT server.
+        It points to LayoutTests/http/wpt folder and is triggered on "/WebKit" urls.
+
+        Updating the webkitpy infrastructure to launch WPT server and do test url mapping for LayoutTests/wpt tests.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager.__init__):
+        (Manager._is_http_test):
+        (Manager._needs_web_platform_test):
+        (Manager._run_tests):
+        (Manager._is_web_platform_test): Deleted.
+        * Scripts/webkitpy/layout_tests/servers/web_platform_test_launcher.py:
+        (build_routes):
+        (main):
+        * Scripts/webkitpy/port/driver.py:
+        (Driver):
+        (Driver.is_webkit_specific_web_platform_test):
+        (Driver.test_to_uri):
+        (Driver._command_from_driver_input):
+
 2017-05-11  Brady Eidson  <beidson@apple.com>
 
         [WKWebsiteDataStore removeDataOfTypes:...] doesn't work for IndexedDB if the data store has a custom IDB path.

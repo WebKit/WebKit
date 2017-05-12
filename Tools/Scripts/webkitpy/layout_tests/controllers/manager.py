@@ -78,9 +78,10 @@ class Manager(object):
         self._options = options
         self._printer = printer
         self._expectations = None
-        self.HTTP_SUBDIR = 'http' + port.TEST_PATH_SEPARATOR
+        self.HTTP_SUBDIR = 'http' + port.TEST_PATH_SEPARATOR + 'test'
         self.WEBSOCKET_SUBDIR = 'websocket' + port.TEST_PATH_SEPARATOR
         self.web_platform_test_subdir = self._port.web_platform_test_server_doc_root()
+        self.webkit_specific_web_platform_test_subdir = 'http' + port.TEST_PATH_SEPARATOR + 'wpt' + port.TEST_PATH_SEPARATOR
         self.LAYOUT_TESTS_DIRECTORY = 'LayoutTests'
         self._results_directory = self._port.results_directory()
         self._finder = LayoutTestFinder(self._port, self._options)
@@ -93,13 +94,13 @@ class Manager(object):
         return self._finder.find_tests(self._options, args)
 
     def _is_http_test(self, test):
-        return self.HTTP_SUBDIR in test or self._is_websocket_test(test) or self._is_web_platform_test(test)
+        return self.HTTP_SUBDIR in test or self._is_websocket_test(test) or self._needs_web_platform_test(test)
 
     def _is_websocket_test(self, test):
         return self.WEBSOCKET_SUBDIR in test
 
-    def _is_web_platform_test(self, test):
-        return self.web_platform_test_subdir in test
+    def _needs_web_platform_test(self, test):
+        return self.web_platform_test_subdir in test or self.webkit_specific_web_platform_test_subdir in test
 
     def _custom_device_for_test(self, test):
         for device_class in self._port.CUSTOM_DEVICE_CLASSES:
@@ -317,8 +318,8 @@ class Manager(object):
         return test_run_results.RunDetails(exit_code, summarized_results, initial_results, retry_results, enabled_pixel_tests_in_retry)
 
     def _run_tests(self, tests_to_run, tests_to_skip, repeat_each, iterations, num_workers, retrying):
-        needs_http = any((self._is_http_test(test) and not self._is_web_platform_test(test)) for test in tests_to_run)
-        needs_web_platform_test_server = any(self._is_web_platform_test(test) for test in tests_to_run)
+        needs_http = any((self._is_http_test(test) and not self._needs_web_platform_test(test)) for test in tests_to_run)
+        needs_web_platform_test_server = any(self._needs_web_platform_test(test) for test in tests_to_run)
         needs_websockets = any(self._is_websocket_test(test) for test in tests_to_run)
 
         test_inputs = self._get_test_inputs(tests_to_run, repeat_each, iterations)

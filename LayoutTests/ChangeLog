@@ -1,5 +1,21 @@
 2017-05-11  Youenn Fablet  <youenn@apple.com>
 
+        Allow WPT server to serve specific WebKit tests
+        https://bugs.webkit.org/show_bug.cgi?id=171479
+
+        Reviewed by Ryosuke Niwa.
+
+        Moving tests to ensure they are correctly runned.
+
+        * http/wpt/fetch/fetch-as-blob-expected.txt: Renamed from LayoutTests/http/tests/fetch/fetch-as-blob-expected.txt.
+        * http/wpt/fetch/fetch-as-blob-worker-expected.txt: Renamed from LayoutTests/http/tests/fetch/fetch-as-blob-worker-expected.txt.
+        * http/wpt/fetch/fetch-as-blob-worker.html: Renamed from LayoutTests/http/tests/fetch/fetch-as-blob-worker.html.
+        * http/wpt/fetch/fetch-as-blob.html: Renamed from LayoutTests/http/tests/fetch/fetch-as-blob.html.
+        * http/wpt/fetch/fetch-as-blob.js: Renamed from LayoutTests/http/tests/fetch/fetch-as-blob.js.
+        (promise_test):
+
+2017-05-11  Youenn Fablet  <youenn@apple.com>
+
         [iOS] Unset active media capture source when stopped capturing
         https://bugs.webkit.org/show_bug.cgi?id=171815
         <rdar://problem/32117885>
