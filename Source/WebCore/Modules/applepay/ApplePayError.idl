@@ -29,7 +29,7 @@
     "unknown",
     "shippingContactInvalid",
     "billingContactInvalid",
-    "addressUnservicable"
+    "addressUnserviceable"
 };
 
 [

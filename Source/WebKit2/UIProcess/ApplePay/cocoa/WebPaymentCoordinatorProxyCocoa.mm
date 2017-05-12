@@ -580,7 +580,7 @@ static PKPaymentErrorCode toPKPaymentErrorCode(WebCore::PaymentError::Code code)
         return PKPaymentShippingContactInvalidError;
     case WebCore::PaymentError::Code::BillingContactInvalid:
         return PKPaymentBillingContactInvalidError;
-    case WebCore::PaymentError::Code::AddressUnservicable:
+    case WebCore::PaymentError::Code::AddressUnserviceable:
         return PKPaymentShippingAddressUnserviceableError;
     }
 }
@@ -666,7 +666,7 @@ static PKPaymentAuthorizationStatus toPKPaymentAuthorizationStatus(const std::op
         auto& error = result->errors[0];
         switch (error.code) {
         case WebCore::PaymentError::Code::Unknown:
-        case WebCore::PaymentError::Code::AddressUnservicable:
+        case WebCore::PaymentError::Code::AddressUnserviceable:
             return PKPaymentAuthorizationStatusFailure;
 
         case WebCore::PaymentError::Code::BillingContactInvalid:
@@ -750,7 +750,7 @@ static PKPaymentAuthorizationStatus toPKPaymentAuthorizationStatus(const std::op
         auto& error = update->errors[0];
         switch (error.code) {
         case WebCore::PaymentError::Code::Unknown:
-        case WebCore::PaymentError::Code::AddressUnservicable:
+        case WebCore::PaymentError::Code::AddressUnserviceable:
             return PKPaymentAuthorizationStatusFailure;
 
         case WebCore::PaymentError::Code::BillingContactInvalid:
