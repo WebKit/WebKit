@@ -120,7 +120,7 @@ private:
     bool hasVideo() const override;
     bool hasAudio() const override;
 
-    void setVisible(bool) override { /* No-op */ }
+    void setVisible(bool) final;
 
     MediaTime durationMediaTime() const override;
     MediaTime currentMediaTime() const override;
@@ -262,6 +262,7 @@ private:
     bool m_pendingSelectedTrackCheck { false };
     bool m_shouldDisplayFirstVideoFrame { false };
     bool m_transformIsValid { false };
+    bool m_visible { false };
 
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     std::unique_ptr<VideoFullscreenLayerManager> m_videoFullscreenLayerManager;
