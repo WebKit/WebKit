@@ -29,7 +29,6 @@
 import logging
 import os
 
-from webkitpy.common.system.crashlogs import CrashLogs
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.port.base import Port
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration

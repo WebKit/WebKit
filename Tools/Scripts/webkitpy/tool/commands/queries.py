@@ -430,7 +430,8 @@ and PID and prints it to stdout."""
     argument_names = "PROCESS_NAME [PID]"
 
     def execute(self, options, args, tool):
-        crash_logs = CrashLogs(tool)
+        default_port = tool.port_factory.get()
+        crash_logs = CrashLogs(tool, default_port.path_to_crash_logs())
         pid = None
         if len(args) > 1:
             pid = int(args[1])

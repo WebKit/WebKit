@@ -532,24 +532,24 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
 
     def test_crash_log(self):
         # FIXME: Need to rewrite these tests to not be mac-specific, or move them elsewhere.
-        # Currently CrashLog uploading only works on Darwin.
-        if not self._platform.is_mac():
+        # Currently CrashLog uploading only works on Darwin and Windows.
+        if not self._platform.is_mac() or self._platform.is_win():
             return
         mock_crash_report = make_mock_crash_report_darwin('DumpRenderTree', 12345)
         host = MockHost()
-        host.filesystem.write_text_file('/Users/mock/Library/Logs/DiagnosticReports/DumpRenderTree_2011-06-13-150719_quadzen.crash', mock_crash_report)
+        host.filesystem.write_text_file('/tmp/layout-test-results/DumpRenderTree_2011-06-13-150719_quadzen.crash', mock_crash_report)
         _, regular_output, _ = logging_run(['failures/unexpected/crash-with-stderr.html', '--dump-render-tree'], tests_included=True, host=host)
         expected_crash_log = mock_crash_report
         self.assertEqual(host.filesystem.read_text_file('/tmp/layout-test-results/failures/unexpected/crash-with-stderr-crash-log.txt'), expected_crash_log)
 
     def test_web_process_crash_log(self):
         # FIXME: Need to rewrite these tests to not be mac-specific, or move them elsewhere.
-        # Currently CrashLog uploading only works on Darwin.
-        if not self._platform.is_mac():
+        # Currently CrashLog uploading only works on Darwin and Windows.
+        if not self._platform.is_mac() or self._platform.is_win():
             return
         mock_crash_report = make_mock_crash_report_darwin('WebProcess', 12345)
         host = MockHost()
-        host.filesystem.write_text_file('/Users/mock/Library/Logs/DiagnosticReports/WebProcess_2011-06-13-150719_quadzen.crash', mock_crash_report)
+        host.filesystem.write_text_file('/tmp/layout-test-results/WebProcess_2011-06-13-150719_quadzen.crash', mock_crash_report)
         logging_run(['failures/unexpected/web-process-crash-with-stderr.html'], tests_included=True, host=host)
         self.assertEqual(host.filesystem.read_text_file('/tmp/layout-test-results/failures/unexpected/web-process-crash-with-stderr-crash-log.txt'), mock_crash_report)
 

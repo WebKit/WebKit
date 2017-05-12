@@ -38,6 +38,9 @@ class IOSDeviceTest(ios_testcase.IOSTest):
         self.assertEqual('ios-device', self.make_port().operating_system())
 
     # FIXME: Update tests when <rdar://problem/30497991> is completed.
+    def test_crashlog_path(self):
+        pass
+
     def test_spindump(self):
         pass
 

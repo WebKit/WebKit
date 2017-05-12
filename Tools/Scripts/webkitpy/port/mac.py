@@ -32,7 +32,6 @@ import os
 import time
 import re
 
-from webkitpy.common.system.crashlogs import CrashLogs
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.port.darwin import DarwinPort
 

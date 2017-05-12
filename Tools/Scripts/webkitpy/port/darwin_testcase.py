@@ -25,6 +25,7 @@ import time
 from webkitpy.port import port_testcase
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.tool.mocktool import MockOptions
+from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.executive_mock import MockExecutive, MockExecutive2, MockProcess, ScriptError
 from webkitpy.common.system.systemhost_mock import MockSystemHost
 
@@ -87,6 +88,14 @@ class DarwinTest(port_testcase.PortTestCase):
         port.start_helper()
         port.stop_helper()
         oc.restore_output()
+
+    def test_crashlog_path(self):
+        port = self.make_port()
+        self.assertEqual(port.path_to_crash_logs(), '/Users/mock/Library/Logs/CrashReporter')
+
+        host = MockSystemHost(filesystem=MockFileSystem(files=['/Users/mock/Library/Logs/DiagnosticReports/crashlog.crash']))
+        port = self.make_port(host)
+        self.assertEqual(port.path_to_crash_logs(), '/Users/mock/Library/Logs/DiagnosticReports')
 
     def test_spindump(self):
 

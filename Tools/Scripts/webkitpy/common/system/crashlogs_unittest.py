@@ -235,6 +235,8 @@ quit:
 
 
 class CrashLogsTest(unittest.TestCase):
+    DARWIN_MOCK_CRASH_DIRECTORY = '/Users/mock/Library/Logs/DiagnosticReports'
+
     def create_crash_logs_darwin(self):
         if not SystemHost().platform.is_mac():
             return
@@ -252,7 +254,7 @@ class CrashLogsTest(unittest.TestCase):
         self.files['/Users/mock/Library/Logs/DiagnosticReports/DumpRenderTree_2011-06-13-150722_quadzen.crash'] = self.other_process_mock_crash_report
         self.files['/Users/mock/Library/Logs/DiagnosticReports/DumpRenderTree_2011-06-13-150723_quadzen.crash'] = self.misformatted_mock_crash_report
         self.filesystem = MockFileSystem(self.files)
-        crash_logs = CrashLogs(MockSystemHost(filesystem=self.filesystem))
+        crash_logs = CrashLogs(MockSystemHost(filesystem=self.filesystem), CrashLogsTest.DARWIN_MOCK_CRASH_DIRECTORY)
         logs = self.filesystem.files_under('/Users/mock/Library/Logs/DiagnosticReports/')
         for path in reversed(sorted(logs)):
             self.assertTrue(path in self.files.keys())
@@ -297,7 +299,7 @@ class CrashLogsTest(unittest.TestCase):
         self.assertIn('IOError: No such file or directory', log)
 
         self.filesystem = MockFileSystem(self.files)
-        crash_logs = CrashLogs(MockSystemHost(filesystem=self.filesystem))
+        crash_logs = CrashLogs(MockSystemHost(filesystem=self.filesystem), CrashLogsTest.DARWIN_MOCK_CRASH_DIRECTORY)
         self.filesystem.mtime = bad_mtime
         log = crash_logs.find_newest_log("DumpRenderTree", newer_than=1.0, include_errors=True)
         self.assertIn('OSError: No such file or directory', log)
@@ -344,7 +346,7 @@ class CrashLogsTest(unittest.TestCase):
             return
 
         crash_report = make_mock_crash_report_darwin('DumpRenderTree', 28528)
-        crash_logs = CrashLogs(MockSystemHost())
+        crash_logs = CrashLogs(MockSystemHost(), CrashLogsTest.DARWIN_MOCK_CRASH_DIRECTORY)
         crash_timestamp = crash_logs.get_timestamp_from_log(crash_report)
         self.assertIn('2011-12-07 13:27:34.816', str(crash_timestamp))
 

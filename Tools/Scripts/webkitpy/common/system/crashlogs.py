@@ -37,9 +37,9 @@ class CrashLogs(object):
     GLOBAL_PID_REGEX = re.compile(r'\s+Global\s+PID:\s+\[(?P<pid>\d+)\]')
     EXIT_PROCESS_PID_REGEX = re.compile(r'Exit process \d+:(?P<pid>\w+), code')
 
-    def __init__(self, host, results_directory=None):
+    def __init__(self, host, crash_log_directory):
         self._host = host
-        self._results_directory = results_directory
+        self._crash_log_directory = crash_log_directory
 
     def find_newest_log(self, process_name, pid=None, include_errors=False, newer_than=None):
         if self._host.platform.is_mac():
@@ -53,21 +53,11 @@ class CrashLogs(object):
             return self._find_all_logs_darwin(include_errors, newer_than)
         return None
 
-    def _log_directory_darwin(self):
-        log_directory = self._host.filesystem.expanduser("~")
-        log_directory = self._host.filesystem.join(log_directory, "Library", "Logs")
-        if self._host.filesystem.exists(self._host.filesystem.join(log_directory, "DiagnosticReports")):
-            log_directory = self._host.filesystem.join(log_directory, "DiagnosticReports")
-        else:
-            log_directory = self._host.filesystem.join(log_directory, "CrashReporter")
-        return log_directory
-
     def _find_newest_log_darwin(self, process_name, pid, include_errors, newer_than):
         def is_crash_log(fs, dirpath, basename):
             return basename.startswith(process_name + "_") and basename.endswith(".crash")
 
-        log_directory = self._log_directory_darwin()
-        logs = self._host.filesystem.files_under(log_directory, file_filter=is_crash_log)
+        logs = self._host.filesystem.files_under(self._crash_log_directory, file_filter=is_crash_log)
         first_line_regex = re.compile(r'^Process:\s+(?P<process_name>.*) \[(?P<pid>\d+)\]$')
         errors = ''
         for path in reversed(sorted(logs)):
@@ -92,7 +82,7 @@ class CrashLogs(object):
         def is_crash_log(fs, dirpath, basename):
             return basename.startswith("CrashLog")
 
-        logs = self._host.filesystem.files_under(self._results_directory, file_filter=is_crash_log)
+        logs = self._host.filesystem.files_under(self._crash_log_directory, file_filter=is_crash_log)
         errors = u''
         for path in reversed(sorted(logs)):
             try:
@@ -129,8 +119,7 @@ class CrashLogs(object):
         def is_crash_log(fs, dirpath, basename):
             return basename.endswith(".crash")
 
-        log_directory = self._log_directory_darwin()
-        logs = self._host.filesystem.files_under(log_directory, file_filter=is_crash_log)
+        logs = self._host.filesystem.files_under(self._crash_log_directory, file_filter=is_crash_log)
         first_line_regex = re.compile(r'^Process:\s+(?P<process_name>.*) \[(?P<pid>\d+)\]$')
         errors = ''
         crash_logs = {}

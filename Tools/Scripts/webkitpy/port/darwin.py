@@ -85,6 +85,15 @@ class DarwinPort(ApplePort):
         self._executive.popen([self.path_to_script('run-safari')] + self._arguments_for_configuration() + ['--no-saved-state', '-NSOpen', results_filename],
             cwd=self.webkit_base(), stdout=file(os.devnull), stderr=file(os.devnull))
 
+    @memoized
+    def path_to_crash_logs(self):
+        log_directory = self.host.filesystem.expanduser('~')
+        log_directory = self.host.filesystem.join(log_directory, 'Library', 'Logs')
+        diagnositc_reports_directory = self.host.filesystem.join(log_directory, 'DiagnosticReports')
+        if self.host.filesystem.exists(diagnositc_reports_directory):
+            return diagnositc_reports_directory
+        return self.host.filesystem.join(log_directory, 'CrashReporter')
+
     def _merge_crash_logs(self, logs, new_logs, crashed_processes):
         for test, crash_log in new_logs.iteritems():
             try:
@@ -98,7 +107,7 @@ class DarwinPort(ApplePort):
         return logs
 
     def _look_for_all_crash_logs_in_log_dir(self, newer_than):
-        crash_log = CrashLogs(self.host)
+        crash_log = CrashLogs(self.host, self.path_to_crash_logs())
         return crash_log.find_all_logs(include_errors=True, newer_than=newer_than)
 
     def _get_crash_log(self, name, pid, stdout, stderr, newer_than, time_fn=None, sleep_fn=None, wait_for_log=True):
@@ -108,7 +117,7 @@ class DarwinPort(ApplePort):
         time_fn = time_fn or time.time
         sleep_fn = sleep_fn or time.sleep
         crash_log = ''
-        crash_logs = CrashLogs(self.host)
+        crash_logs = CrashLogs(self.host, self.path_to_crash_logs())
         now = time_fn()
         deadline = now + 5 * int(self.get_option('child_processes', 1))
         while not crash_log and now <= deadline:

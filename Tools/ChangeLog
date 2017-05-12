@@ -1,3 +1,52 @@
+2017-05-12  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Pass directory with crash logs into CrashLogs
+        https://bugs.webkit.org/show_bug.cgi?id=172033
+        <rdar://problem/32157616>
+
+        Reviewed by Daniel Bates.
+
+        Refactor CrashLogs and the callers of CrashLogs so that the port object owns
+        the location of crash logs.
+
+        * Scripts/webkitpy/common/system/crashlogs.py:
+        (CrashLogs.__init__): Pass mandatory crash_log_directory when constructing.
+        (CrashLogs._find_newest_log_darwin): Use self._crash_log_directory instead of
+        generating one.
+        (CrashLogs._find_newest_log_win): Use self._crash_log_directory instead of
+        self._results_directory.
+        (CrashLogs._find_all_logs_darwin): Use self._crash_log_directory instead of
+        generating one.
+        (CrashLogs._log_directory_darwin): Moved to port.
+        * Scripts/webkitpy/common/system/crashlogs_unittest.py: Update tests since the path
+        to the crash log is no longer owned by CrashLogs.
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py: Use the general
+        directory for uploading crash logs. Note that crash logs are only supported on Mac
+        and Windows.
+        * Scripts/webkitpy/port/apple.py: Remove unneeded CrashLogs import.
+        * Scripts/webkitpy/port/base.py:
+        (Port.path_to_crash_logs): Unless ports declare otherwise, crash logs are assumed
+        to be in the results directory.
+        * Scripts/webkitpy/port/darwin.py:
+        (DarwinPort.path_to_crash_logs): Moved from CrashLogs._log_directory_darwin.
+        (DarwinPort._look_for_all_crash_logs_in_log_dir): Use port specific crash log path.
+        (DarwinPort._get_crash_log): Ditto.
+        * Scripts/webkitpy/port/darwin_testcase.py:
+        (DarwinTest.test_crashlog_path): Test that the Darwin ports are correctly calculating
+        the path to crash logs.
+        * Scripts/webkitpy/port/ios_device.py:
+        (IOSDevicePort.path_to_crash_logs): Currently, crash log retrieval is undefined for iOS.
+        * Scripts/webkitpy/port/ios_device_unittest.py:
+        (IOSDeviceTest.test_crashlog_path): Currently, crash log retrieval is undefined for iOS.
+        * Scripts/webkitpy/port/ios_simulator.py: Remove unneeded CrashLogs import.
+        * Scripts/webkitpy/port/mac.py: Ditto.
+        * Scripts/webkitpy/port/test.py:
+        (TestDriver.run_test): Use port specific crash log path when retrieving crash logs.
+        * Scripts/webkitpy/port/win.py:
+        (WinPort._get_crash_log): Ditto.
+        * Scripts/webkitpy/tool/commands/queries.py:
+        (execute): Construct a port object since this is the object which owns the path to crash logs.
+
 2017-05-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK+ test /webkit2/WebKitWebView/create-navigation-data after r216615.

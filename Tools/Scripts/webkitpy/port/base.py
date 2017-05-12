@@ -1347,6 +1347,9 @@ class Port(object):
         """Returns the port's driver implementation."""
         return driver.Driver
 
+    def path_to_crash_logs(self):
+        return self.results_directory()
+
     def _get_crash_log(self, name, pid, stdout, stderr, newer_than):
         name_str = name or '<unknown process name>'
         pid_str = str(pid or '<unknown>')

@@ -579,7 +579,7 @@ class TestDriver(Driver):
 
         crash_log = ''
         if crashed_process_name:
-            crash_logs = CrashLogs(self._port.host)
+            crash_logs = CrashLogs(self._port.host, self._port.path_to_crash_logs())
             crash_log = crash_logs.find_newest_log(crashed_process_name, None) or ''
 
         if stop_when_done:

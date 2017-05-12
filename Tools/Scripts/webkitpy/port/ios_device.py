@@ -68,6 +68,9 @@ class IOSDevicePort(IOSPort):
         return port_name
 
     # FIXME: These need device implementations <rdar://problem/30497991>.
+    def path_to_crash_logs(self):
+        raise NotImplementedError
+
     def check_for_leaks(self, process_name, process_pid):
         pass
 

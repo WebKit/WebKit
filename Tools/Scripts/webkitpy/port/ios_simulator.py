@@ -32,7 +32,6 @@ from webkitpy.common.memoized import memoized
 from webkitpy.port.device import Device
 from webkitpy.port.ios import IOSPort
 from webkitpy.xcode.simulator import Simulator, Runtime, DeviceType
-from webkitpy.common.system.crashlogs import CrashLogs
 
 
 _log = logging.getLogger(__name__)
