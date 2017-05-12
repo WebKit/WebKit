@@ -1,5 +1,43 @@
 2017-05-11  Addy Osmani  <addyosmani@gmail.com>
 
+        Speedometer: Add an ES2015 (Babel + Webpack) TodoMVC implementation
+        https://bugs.webkit.org/show_bug.cgi?id=171452
+
+        Reviewed by Ryosuke Niwa.
+
+        Adds ES2015 Babel + Webpack TodoMVC implem
+
+        * Speedometer/resources/todomvc/vanilla-examples/es2015-babel-webpack/.babelrc: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/es2015-babel-webpack/.eslintignore: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/es2015-babel-webpack/dist/bundle.app.73bcc5d3c1d07180f0e3.js: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/es2015-babel-webpack/dist/bundle.app.73bcc5d3c1d07180f0e3.js.map: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/es2015-babel-webpack/dist/bundle.manifest.112bf70a7f3deebf1f93.js: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/es2015-babel-webpack/dist/bundle.manifest.112bf70a7f3deebf1f93.js.map: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/es2015-babel-webpack/dist/bundle.vendor.efaa3e0e20077c8e7471.js: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/es2015-babel-webpack/dist/bundle.vendor.efaa3e0e20077c8e7471.js.map: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/es2015-babel-webpack/dist/index.html: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/es2015-babel-webpack/dist/styles.app.73bcc5d3c1d07180f0e3.css: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/es2015-babel-webpack/dist/styles.app.73bcc5d3c1d07180f0e3.css.map: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/es2015-babel-webpack/dist/styles.vendor.efaa3e0e20077c8e7471.css: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/es2015-babel-webpack/dist/styles.vendor.efaa3e0e20077c8e7471.css.map: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/es2015-babel-webpack/package.json: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/es2015-babel-webpack/src/app.css: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/es2015-babel-webpack/src/app.js: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/es2015-babel-webpack/src/bootstrap.js: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/es2015-babel-webpack/src/controller.js: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/es2015-babel-webpack/src/controller.test.js: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/es2015-babel-webpack/src/helpers.js: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/es2015-babel-webpack/src/index.html: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/es2015-babel-webpack/src/memory.js: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/es2015-babel-webpack/src/model.js: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/es2015-babel-webpack/src/store.js: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/es2015-babel-webpack/src/template.js: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/es2015-babel-webpack/src/todo.js: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/es2015-babel-webpack/src/view.js: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/es2015-babel-webpack/webpack.config.babel.js: Added.
+
+2017-05-11  Addy Osmani  <addyosmani@gmail.com>
+
         Speedometer: Add an Inferno TodoMVC implementation
         https://bugs.webkit.org/show_bug.cgi?id=171411
 
