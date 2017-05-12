@@ -130,7 +130,7 @@ RootInlineBox* RenderBlockFlow::createAndAppendRootInlineBox()
 
     if (UNLIKELY(AXObjectCache::accessibilityEnabled()) && firstRootBox() == rootBox) {
         if (AXObjectCache* cache = document().existingAXObjectCache())
-            cache->recomputeDeferredIsIgnored(*this);
+            cache->deferRecomputeIsIgnored(element());
     }
 
     return rootBox;
