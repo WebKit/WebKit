@@ -1,3 +1,19 @@
+2017-05-12  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [selectors4] css/selectors4/focus-within-006.html test from WPT is failing
+        https://bugs.webkit.org/show_bug.cgi?id=170900
+
+        Reviewed by Sergio Villar Senin.
+
+        The issue has been fixed in WPT repo:
+        https://github.com/w3c/web-platform-tests/pull/5786
+
+        This patch is importing the changes so we can close this bug on WebKit.
+
+        * web-platform-tests/css/selectors4/focus-within-006-expected.html:
+        * web-platform-tests/css/selectors4/focus-within-006.html:
+        * web-platform-tests/css/selectors4/w3c-import.log:
+
 2017-05-11  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [selectors4] :focus-within tests using shadow DOM don't pass on WK1

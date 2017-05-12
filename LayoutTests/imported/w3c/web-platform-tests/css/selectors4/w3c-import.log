@@ -46,6 +46,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors4/focus-within-shadow-004.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors4/focus-within-shadow-005-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors4/focus-within-shadow-005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors4/focus-within-shadow-006-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors4/focus-within-shadow-006.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors4/of-type-selectors-expected.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors4/of-type-selectors.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors4/selector-required-expected.html
