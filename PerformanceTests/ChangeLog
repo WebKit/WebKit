@@ -1,3 +1,44 @@
+2017-05-11  Addy Osmani  <addyosmani@gmail.com>
+
+        Speedometer: Update the AngularJS implementation to a more recent library version
+        https://bugs.webkit.org/show_bug.cgi?id=171307
+
+        Reviewed by Ryosuke Niwa.
+
+        Updates the AngularJS implementation of TodoMVC to 1.4.x
+
+        * Speedometer/resources/todomvc/architecture-examples/angularjs/bower.json: Removed.
+        * Speedometer/resources/todomvc/architecture-examples/angularjs/bower_components/angular-mocks/angular-mocks.js: Removed.
+        * Speedometer/resources/todomvc/architecture-examples/angularjs/bower_components/angular/angular.js: Removed.
+        * Speedometer/resources/todomvc/architecture-examples/angularjs/bower_components/todomvc-common/base.css: Removed.
+        * Speedometer/resources/todomvc/architecture-examples/angularjs/bower_components/todomvc-common/base.js: Removed.
+        * Speedometer/resources/todomvc/architecture-examples/angularjs/bower_components/todomvc-common/bg.png: Removed.
+        * Speedometer/resources/todomvc/architecture-examples/angularjs/index.html:
+        * Speedometer/resources/todomvc/architecture-examples/angularjs/js/app.js:
+        * Speedometer/resources/todomvc/architecture-examples/angularjs/js/controllers/todoCtrl.js:
+        * Speedometer/resources/todomvc/architecture-examples/angularjs/js/directives/todoBlur.js: Removed.
+        * Speedometer/resources/todomvc/architecture-examples/angularjs/js/directives/todoEscape.js:
+        * Speedometer/resources/todomvc/architecture-examples/angularjs/js/directives/todoFocus.js:
+        * Speedometer/resources/todomvc/architecture-examples/angularjs/js/services/todoStorage.js:
+        * Speedometer/resources/todomvc/architecture-examples/angularjs/node_modules/angular-resource/angular-resource.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angularjs/node_modules/angular-route/angular-route.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angularjs/node_modules/angular/angular.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angularjs/node_modules/todomvc-app-css/index.css: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angularjs/node_modules/todomvc-app-css/package.json: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angularjs/node_modules/todomvc-app-css/readme.md: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angularjs/node_modules/todomvc-common/base.css: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angularjs/node_modules/todomvc-common/base.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angularjs/node_modules/todomvc-common/package.json: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angularjs/node_modules/todomvc-common/readme.md: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angularjs/package.json: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angularjs/readme.md:
+        * Speedometer/resources/todomvc/architecture-examples/angularjs/test/config/testacular.conf.js: Removed.
+        * Speedometer/resources/todomvc/architecture-examples/angularjs/test/package.json: Removed.
+        * Speedometer/resources/todomvc/architecture-examples/angularjs/test/readme.md: Removed.
+        * Speedometer/resources/todomvc/architecture-examples/angularjs/test/unit/directivesSpec.js: Removed.
+        * Speedometer/resources/todomvc/architecture-examples/angularjs/test/unit/todoCtrlSpec.js: Removed.
+        * Speedometer/resources/todomvc/architecture-examples/angularjs/todomvc-index.html: Added.
+
 2017-05-09  Jon Davis  <jond@apple.com>
 
         [ARES6] Improved the running test indicator
