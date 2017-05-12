@@ -1,3 +1,21 @@
+2017-05-12  Jeremy Jones  <jeremyj@apple.com>
+
+        Add UIClient callback for when picture-in-picture is activated.
+        https://bugs.webkit.org/show_bug.cgi?id=172023
+
+        Reviewed by Simon Fraser.
+
+        Added a test for WKPageUIClientV10 setHasVideoInPictureInPicture.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/PictureInPictureDelegate.html: Added.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/PictureInPictureDelegate.mm: Added.
+        (onLoadedCompletedCallback):
+        (waitUntilOnLoadIsCompleted):
+        (didFinishLoadForFrame):
+        (setHasVideoInPictureInPicture):
+        (TestWebKitAPI::TEST):
+
 2017-05-12  Jonathan Bedard  <jbedard@apple.com>
 
         Unreviewed follow-up to r216776.

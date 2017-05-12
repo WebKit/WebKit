@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script>
+            document.addEventListener('mousedown', function(event) {
+                var target = document.getElementById('video');
+                target.webkitSetPresentationMode(target.webkitPresentationMode == "inline" ? "picture-in-picture" : "inline");
+            });
+        </script>
+        <style>
+            #video {
+                background-color: red;
+                width: 150px;
+                height: 150px;
+            }
+        </style>
+    </head>
+    <body onload="window.onloadcompleted = true; ">
+        <video id="video" playsinline src="test.mp4" />
+    </body>
+</html>
+
+

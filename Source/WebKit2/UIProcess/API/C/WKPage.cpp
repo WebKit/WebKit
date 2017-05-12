@@ -110,7 +110,7 @@ template<> struct ClientTraits<WKPagePolicyClientBase> {
 };
 
 template<> struct ClientTraits<WKPageUIClientBase> {
-    typedef std::tuple<WKPageUIClientV0, WKPageUIClientV1, WKPageUIClientV2, WKPageUIClientV3, WKPageUIClientV4, WKPageUIClientV5, WKPageUIClientV6, WKPageUIClientV7, WKPageUIClientV8, WKPageUIClientV9> Versions;
+    typedef std::tuple<WKPageUIClientV0, WKPageUIClientV1, WKPageUIClientV2, WKPageUIClientV3, WKPageUIClientV4, WKPageUIClientV5, WKPageUIClientV6, WKPageUIClientV7, WKPageUIClientV8, WKPageUIClientV9, WKPageUIClientV10> Versions;
 };
 
 #if ENABLE(CONTEXT_MENUS)
@@ -1767,6 +1767,14 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
                 return;
 
             m_client.fullscreenMayReturnToInline(toAPI(page), m_client.base.clientInfo);
+        }
+        
+        void setHasVideoInPictureInPicture(WebPageProxy* page, bool hasVideoInPictureInPicture) override
+        {
+            if (!m_client.setHasVideoInPictureInPicture)
+                return;
+            
+            m_client.setHasVideoInPictureInPicture(toAPI(page), hasVideoInPictureInPicture, m_client.base.clientInfo);
         }
 
         void close(WebPageProxy* page) override

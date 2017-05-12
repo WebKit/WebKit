@@ -1,3 +1,21 @@
+2017-05-12  Jeremy Jones  <jeremyj@apple.com>
+
+        Add UIClient callback for when picture-in-picture is activated.
+        https://bugs.webkit.org/show_bug.cgi?id=172023
+
+        Reviewed by Simon Fraser.
+
+        Add WKUIPageClientV10 with setHasVideoInPictureInPicture.
+
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::setHasVideoInPictureInPicture):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageUIClient):
+        * UIProcess/API/C/WKPageUIClient.h:
+        * UIProcess/Cocoa/WebVideoFullscreenManagerProxy.mm:
+        (WebKit::WebVideoFullscreenManagerProxy::setupFullscreenWithID):
+        (WebKit::WebVideoFullscreenManagerProxy::fullscreenModeChanged):
+
 2017-05-12  Brent Fulgham  <bfulgham@apple.com>
 
         REGRESSION(r213564): Flash audio playback failures
