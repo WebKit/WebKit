@@ -1,3 +1,17 @@
+2017-05-11  Dean Jackson  <dino@apple.com>
+
+        Modern Media Controls shouldn't be an experimental feature
+        https://bugs.webkit.org/show_bug.cgi?id=172004
+        <rdar://problem/32146522>
+
+        Reviewed by Simon Fraser.
+
+        This is either always on or always off, so shouldn't
+        show up in an Experimental Features menu.
+
+        * Shared/WebPreferencesDefinitions.h: Move ModernMediaControlsEnabled
+        to a normal preference.
+
 2017-05-11  Tim Horton  <timothy_horton@apple.com>
 
         Mail spins launching spell checker when typing
