@@ -1,3 +1,41 @@
+2017-05-12  Addy Osmani  <addyosmani@gmail.com>
+
+        Speedometer: Add a React.js TodoMVC implementation
+        https://bugs.webkit.org/show_bug.cgi?id=171444
+
+        Reviewed by Ryosuke Niwa.
+
+        Adds a more recent React.js TodoMVC implemenation to Speedometer
+
+        * Speedometer/resources/todomvc/architecture-examples/react/build.min.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/react/index.html: Added.
+        * Speedometer/resources/todomvc/architecture-examples/react/js/app.jsx: Added.
+        * Speedometer/resources/todomvc/architecture-examples/react/license.md: Added.
+        * Speedometer/resources/todomvc/architecture-examples/react/node_modules/classnames/LICENSE: Added.
+        * Speedometer/resources/todomvc/architecture-examples/react/node_modules/classnames/bind.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/react/node_modules/classnames/bower.json: Added.
+        * Speedometer/resources/todomvc/architecture-examples/react/node_modules/classnames/dedupe.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/react/node_modules/classnames/index.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/react/node_modules/classnames/package.json: Added.
+        * Speedometer/resources/todomvc/architecture-examples/react/node_modules/director/LICENSE: Added.
+        * Speedometer/resources/todomvc/architecture-examples/react/node_modules/director/bower.json: Added.
+        * Speedometer/resources/todomvc/architecture-examples/react/node_modules/director/package.json: Added.
+        * Speedometer/resources/todomvc/architecture-examples/react/node_modules/react-dom/LICENSE: Added.
+        * Speedometer/resources/todomvc/architecture-examples/react/node_modules/react-dom/dist/react-dom-server.min.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/react/node_modules/react-dom/dist/react-dom.min.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/react/node_modules/react-dom/index.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/react/node_modules/react/LICENSE: Added.
+        * Speedometer/resources/todomvc/architecture-examples/react/node_modules/react/README.md: Added.
+        * Speedometer/resources/todomvc/architecture-examples/react/node_modules/react/dist/react-with-addons.min.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/react/node_modules/react/dist/react.min.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/react/node_modules/react/package.json: Added.
+        * Speedometer/resources/todomvc/architecture-examples/react/node_modules/todomvc-app-css/index.css: Added.
+        * Speedometer/resources/todomvc/architecture-examples/react/node_modules/todomvc-common/base.css: Added.
+        * Speedometer/resources/todomvc/architecture-examples/react/node_modules/todomvc-common/base.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/react/npm-shrinkwrap.json: Added.
+        * Speedometer/resources/todomvc/architecture-examples/react/package.json: Added.
+        * Speedometer/resources/todomvc/architecture-examples/react/yarn.lock: Added.
+
 2017-05-11  Addy Osmani  <addyosmani@gmail.com>
 
         Speedometer: Update the Ember.js TodoMVC to a more recent version
