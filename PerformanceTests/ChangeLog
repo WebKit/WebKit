@@ -1,5 +1,31 @@
 2017-05-11  Addy Osmani  <addyosmani@gmail.com>
 
+        Speedometer: Add an Inferno TodoMVC implementation
+        https://bugs.webkit.org/show_bug.cgi?id=171411
+
+        Reviewed by Ryosuke Niwa.
+
+        Adds a Inferno implem of TodoMVC to Speedometer
+
+        * Speedometer/resources/todomvc/architecture-examples/inferno/dist/bundle.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/inferno/index.html: Added.
+        * Speedometer/resources/todomvc/architecture-examples/inferno/node_modules/todomvc-app-css/index.css: Added.
+        * Speedometer/resources/todomvc/architecture-examples/inferno/node_modules/todomvc-app-css/package.json: Added.
+        * Speedometer/resources/todomvc/architecture-examples/inferno/node_modules/todomvc-app-css/readme.md: Added.
+        * Speedometer/resources/todomvc/architecture-examples/inferno/node_modules/todomvc-common/base.css: Added.
+        * Speedometer/resources/todomvc/architecture-examples/inferno/node_modules/todomvc-common/base.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/inferno/node_modules/todomvc-common/package.json: Added.
+        * Speedometer/resources/todomvc/architecture-examples/inferno/node_modules/todomvc-common/readme.md: Added.
+        * Speedometer/resources/todomvc/architecture-examples/inferno/package.json: Added.
+        * Speedometer/resources/todomvc/architecture-examples/inferno/src/base.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/inferno/src/index.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/inferno/src/item.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/inferno/src/model.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/inferno/src/share.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/inferno/webpack.config.js: Added.
+
+2017-05-11  Addy Osmani  <addyosmani@gmail.com>
+
         Speedometer: Add an Angular 2 (4.x) TodoMVC implementation
         https://bugs.webkit.org/show_bug.cgi?id=171343
 
