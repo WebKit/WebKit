@@ -1,3 +1,28 @@
+2017-05-12  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GTK] After upgrading glib and glib-networking, resources with zero bytes are always identified as text/plain
+        https://bugs.webkit.org/show_bug.cgi?id=171058
+
+        Reviewed by Carlos Garcia Campos.
+
+        GLib-based ports have issues detecting the mimetypes of empty
+        files, as they are all considered to be text/plain by
+        glib. Replace these resources with a minimal valid file for its
+        type (that is, 1x1 PNG files and 1 whitespace for text files).
+
+        * fast/preloader/resources/base-image1.png:
+        * fast/preloader/resources/base-image2.png:
+        * fast/preloader/resources/base-image3.png:
+        * fast/preloader/resources/image1.png:
+        * fast/preloader/resources/link1.css:
+        * fast/preloader/resources/noscript-image1.png:
+        * fast/preloader/resources/noscript-image2.png:
+        * fast/preloader/resources/script1.js:
+        * fast/preloader/resources/style1.css:
+        * tables/mozilla/core/col_widths_fix_autoFixPer.html:
+
+        * platform/gtk/TestExpectations: Unskip the now passing tests.
+
 2017-05-12  Antti Koivisto  <antti@apple.com>
 
         Updating class name of a shadow host does not update the style applied by descendants of :host()
