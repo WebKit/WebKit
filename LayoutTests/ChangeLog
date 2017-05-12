@@ -1,5 +1,18 @@
 2017-05-11  Matt Lewis  <jlewis3@apple.com>
 
+        Unreviewed, rolling out r216677.
+
+        Patch caused layout test crashes.
+
+        Reverted changeset:
+
+        "WorkerThread::stop() should call
+        scheduleExecutionTermination() last."
+        https://bugs.webkit.org/show_bug.cgi?id=171775
+        http://trac.webkit.org/changeset/216677
+
+2017-05-11  Matt Lewis  <jlewis3@apple.com>
+
         Marked tiled-drawing/scrolling/fast-scroll-iframe-latched-mainframe.html as flaky.
         https://bugs.webkit.org/show_bug.cgi?id=168937
 

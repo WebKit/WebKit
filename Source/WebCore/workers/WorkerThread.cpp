@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2017 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -234,7 +234,10 @@ void WorkerThread::stop()
     // Mutex protection is necessary because stop() can be called before the context is fully created.
     LockHolder lock(m_threadCreationMutex);
 
+    // Ensure that tasks are being handled by thread event loop. If script execution weren't forbidden, a while(1) loop in JS could keep the thread alive forever.
     if (m_workerGlobalScope) {
+        m_workerGlobalScope->script()->scheduleExecutionTermination();
+
         m_runLoop.postTaskAndTerminate({ ScriptExecutionContext::Task::CleanupTask, [] (ScriptExecutionContext& context ) {
             WorkerGlobalScope& workerGlobalScope = downcast<WorkerGlobalScope>(context);
 
@@ -259,15 +262,6 @@ void WorkerThread::stop()
             } });
 
         } });
-        
-        // Prevent a while (1) { } loop from keeping the worker alive forever by requesting that the worker thread
-        // throw an uncatchable TerminatedExecutionException.
-        //
-        // We should only do this after terminating the runloop via the call to m_runLoop.postTaskAndTerminate()
-        // above. This ensures that when the worker bails out of JS code due to the TerminatedExecutionException,
-        // the m_runLoop.terminated() flag will already be set, and WorkerRunLoop::Task::performTask() won't try to
-        // re-enter the VM with the TerminatedExecutionException still pending thereafter.
-        m_workerGlobalScope->script()->scheduleExecutionTermination();
         return;
     }
     m_runLoop.terminate();
