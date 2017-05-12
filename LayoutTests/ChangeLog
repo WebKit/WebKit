@@ -1,3 +1,12 @@
+2017-05-11  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [selectors4] :focus-within tests using shadow DOM don't pass on WK1
+        https://bugs.webkit.org/show_bug.cgi?id=170935
+
+        Reviewed by Youenn Fablet.
+
+        * platform/mac-wk1/TestExpectations: Remove tests as they're passing now.
+
 2017-05-11  Zalan Bujtas  <zalan@apple.com>
 
         RenderImageResource::hasImage is redundant and RenderImageResourceStyleImage's override is incorrect.
