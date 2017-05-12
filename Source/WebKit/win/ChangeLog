@@ -1,3 +1,15 @@
+2017-05-11  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r216554. rdar://problem/27362159
+
+    2017-05-09  Dean Jackson  <dino@apple.com>
+
+            Fix Windows build.
+
+            * Plugins/PluginView.h:
+            * Plugins/PluginViewWin.cpp:
+            (WebCore::PluginView::paint):
+
 2017-04-27  Alex Christensen  <achristensen@webkit.org>
 
         Modernize Frame.h
