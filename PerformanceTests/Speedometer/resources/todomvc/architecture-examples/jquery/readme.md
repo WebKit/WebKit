@@ -11,10 +11,10 @@ The [jQuery website](http://jquery.com) is a great resource for getting started.
 
 Here are some links you may find helpful:
 
-* [How jQuery Works](http://learn.jquery.com/about-jquery/how-jquery-works)
+* [Learning Center](http://learn.jquery.com/)
 * [API Reference](http://api.jquery.com)
 * [Plugins](http://plugins.jquery.com)
-* [Brower Support](http://jquery.com/browser-support)
+* [Browser Support](http://jquery.com/browser-support)
 * [Blog](http://blog.jquery.com)
 
 Articles and guides from the community:

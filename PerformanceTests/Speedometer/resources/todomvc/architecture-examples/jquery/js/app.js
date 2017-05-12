@@ -1,187 +1,192 @@
-/*global jQuery, Handlebars */
+/*global jQuery, Handlebars, Router */
 jQuery(function ($) {
     'use strict';
 
-    var Utils = {
-    uuid: function () {
-    /*jshint bitwise:false */
-    var i, random;
-    var uuid = '';
+    Handlebars.registerHelper('eq', function (a, b, options) {
+        return a === b ? options.fn(this) : options.inverse(this);
+    });
 
-    for (i = 0; i < 32; i++) {
-    random = Math.random() * 16 | 0;
-    if (i === 8 || i === 12 || i === 16 || i === 20) {
-    uuid += '-';
-    }
-    uuid += (i === 12 ? 4 : (i === 16 ? (random & 3 | 8) : random)).toString(16);
-    }
 
-    return uuid;
-    },
-    pluralize: function (count, word) {
-    return count === 1 ? word : word + 's';
-    },
-    store: function (namespace, data) {
-    if (arguments.length > 1) {
-    return localStorage.setItem(namespace, JSON.stringify(data));
-    } else {
-    var store = localStorage.getItem(namespace);
-    return (store && JSON.parse(store)) || [];
-    }
-    }
+    var util = {
+        uuid: function () {
+            /*jshint bitwise:false */
+            var i, random;
+            var uuid = '';
+
+            for (i = 0; i < 32; i++) {
+                random = Math.random() * 16 | 0;
+                if (i === 8 || i === 12 || i === 16 || i === 20) {
+                    uuid += '-';
+                }
+                uuid += (i === 12 ? 4 : (i === 16 ? (random & 3 | 8) : random)).toString(16);
+            }
+
+            return uuid;
+        },
+        pluralize: function (count, word) {
+            return count === 1 ? word : word + 's';
+        },
+        store: function (namespace, data) {
+            return [];
+        }
     };
 
     var App = {
-    init: function () {
-    this.ENTER_KEY = 13;
-    this.todos = Utils.store('todos-jquery');
-    this.cacheElements();
-    this.bindEvents();
-    this.render();
-    },
-    cacheElements: function () {
-    this.todoTemplate = Handlebars.compile($('#todo-template').html());
-    this.footerTemplate = Handlebars.compile($('#footer-template').html());
-    this.$todoApp = $('#todoapp');
-    this.$header = this.$todoApp.find('#header');
-    this.$main = this.$todoApp.find('#main');
-    this.$footer = this.$todoApp.find('#footer');
-    this.$newTodo = this.$header.find('#new-todo');
-    this.$toggleAll = this.$main.find('#toggle-all');
-    this.$todoList = this.$main.find('#todo-list');
-    this.$count = this.$footer.find('#todo-count');
-    this.$clearBtn = this.$footer.find('#clear-completed');
-    },
-    bindEvents: function () {
-    var list = this.$todoList;
-    this.$newTodo.on('keyup', this.create);
-    this.$toggleAll.on('change', this.toggleAll);
-    this.$footer.on('click', '#clear-completed', this.destroyCompleted);
-    list.on('change', '.toggle', this.toggle);
-    list.on('dblclick', 'label', this.edit);
-    list.on('keypress', '.edit', this.blurOnEnter);
-    list.on('blur', '.edit', this.update);
-    list.on('click', '.destroy', this.destroy);
-    },
-    render: function () {
-    this.$todoList.html(this.todoTemplate(this.todos));
-    this.$main.toggle(!!this.todos.length);
-    this.$toggleAll.prop('checked', !this.activeTodoCount());
-    this.renderFooter();
-    Utils.store('todos-jquery', this.todos);
-    },
-    renderFooter: function () {
-    var todoCount = this.todos.length;
-    var activeTodoCount = this.activeTodoCount();
-    var footer = {
-    activeTodoCount: activeTodoCount,
-    activeTodoWord: Utils.pluralize(activeTodoCount, 'item'),
-    completedTodos: todoCount - activeTodoCount
-    };
+        ENTER_KEY: 13,
+        ESCAPE_KEY: 27,
+        init: function () {
+            this.todos = util.store('todos-jquery');
+            this.todoTemplate = Handlebars.compile($('#todo-template').html());
+            this.footerTemplate = Handlebars.compile($('#footer-template').html());
+            this.bindEvents();
 
-    this.$footer.toggle(!!todoCount);
-    this.$footer.html(this.footerTemplate(footer));
-    },
-    toggleAll: function () {
-    var isChecked = $(this).prop('checked');
+            new Router({
+                '/:filter': function (filter) {
+                    this.filter = filter;
+                    this.render();
+                }.bind(this)
+            }).init('/all');
+        },
+        bindEvents: function () {
+            $('#new-todo').on('keyup', this.create.bind(this));
+            $('#toggle-all').on('change', this.toggleAll.bind(this));
+            $('#footer').on('click', '#clear-completed', this.destroyCompleted.bind(this));
+            $('#todo-list')
+                .on('change', '.toggle', this.toggle.bind(this))
+                .on('dblclick', 'label', this.edit.bind(this))
+                .on('keyup', '.edit', this.editKeyup.bind(this))
+                .on('focusout', '.edit', this.update.bind(this))
+                .on('click', '.destroy', this.destroy.bind(this));
+        },
+        render: function () {
+            var todos = this.getFilteredTodos();
+            $('#todo-list').html(this.todoTemplate(todos));
+            $('#main').toggle(todos.length > 0);
+            $('#toggle-all').prop('checked', this.getActiveTodos().length === 0);
+            this.renderFooter();
+            $('#new-todo').focus();
+            util.store('todos-jquery', this.todos);
+        },
+        renderFooter: function () {
+            var todoCount = this.todos.length;
+            var activeTodoCount = this.getActiveTodos().length;
+            var template = this.footerTemplate({
+                activeTodoCount: activeTodoCount,
+                activeTodoWord: util.pluralize(activeTodoCount, 'item'),
+                completedTodos: todoCount - activeTodoCount,
+                filter: this.filter
+            });
 
-    $.each(App.todos, function (i, val) {
-    val.completed = isChecked;
-    });
+            $('#footer').toggle(todoCount > 0).html(template);
+        },
+        toggleAll: function (e) {
+            var isChecked = $(e.target).prop('checked');
 
-    App.render();
-    },
-    activeTodoCount: function () {
-    var count = 0;
+            this.todos.forEach(function (todo) {
+                todo.completed = isChecked;
+            });
 
-    $.each(this.todos, function (i, val) {
-    if (!val.completed) {
-    count++;
-    }
-    });
+            this.render();
+        },
+        getActiveTodos: function () {
+            return this.todos.filter(function (todo) {
+                return !todo.completed;
+            });
+        },
+        getCompletedTodos: function () {
+            return this.todos.filter(function (todo) {
+                return todo.completed;
+            });
+        },
+        getFilteredTodos: function () {
+            if (this.filter === 'active') {
+                return this.getActiveTodos();
+            }
 
-    return count;
-    },
-    destroyCompleted: function () {
-    var todos = App.todos;
-    var l = todos.length;
+            if (this.filter === 'completed') {
+                return this.getCompletedTodos();
+            }
 
-    while (l--) {
-    if (todos[l].completed) {
-    todos.splice(l, 1);
-    }
-    }
+            return this.todos;
+        },
+        destroyCompleted: function () {
+            this.todos = this.getActiveTodos();
+            this.filter = 'all';
+            this.render();
+        },
+        // accepts an element from inside the `.item` div and
+        // returns the corresponding index in the `todos` array
+        indexFromEl: function (el) {
+            var id = $(el).closest('li').data('id');
+            var todos = this.todos;
+            var i = todos.length;
 
-    App.render();
-    },
-    // accepts an element from inside the `.item` div and
-    // returns the corresponding todo in the todos array
-    getTodo: function (elem, callback) {
-    var id = $(elem).closest('li').data('id');
+            while (i--) {
+                if (todos[i].id === id) {
+                    return i;
+                }
+            }
+        },
+        create: function (e) {
+            var $input = $(e.target);
+            var val = $.trim($input.val());
 
-    $.each(this.todos, function (i, val) {
-    if (val.id === id) {
-    callback.apply(App, arguments);
-    return false;
-    }
-    });
-    },
-    create: function (e) {
-    var $input = $(this);
-    var val = $.trim($input.val());
+            if (e.which !== this.ENTER_KEY || !val) {
+                return;
+            }
 
-    if (e.which !== App.ENTER_KEY || !val) {
-    return;
-    }
+            this.todos.push({
+                id: util.uuid(),
+                title: val,
+                completed: false
+            });
 
-    App.todos.push({
-    id: Utils.uuid(),
-    title: val,
-    completed: false
-    });
+            $input.val('');
 
-    $input.val('');
-    App.render();
-    },
-    toggle: function () {
-    App.getTodo(this, function (i, val) {
-    val.completed = !val.completed;
-    });
-    App.render();
-    },
-    edit: function () {
-    var $input = $(this).closest('li').addClass('editing').find('.edit');
-    var val = $input.val();
+            this.render();
+        },
+        toggle: function (e) {
+            var i = this.indexFromEl(e.target);
+            this.todos[i].completed = !this.todos[i].completed;
+            this.render();
+        },
+        edit: function (e) {
+            var $input = $(e.target).closest('li').addClass('editing').find('.edit');
+            $input.val($input.val()).focus();
+        },
+        editKeyup: function (e) {
+            if (e.which === this.ENTER_KEY) {
+                e.target.blur();
+            }
 
-    $input.val(val).focus();
-    },
-    blurOnEnter: function (e) {
-    if (e.which === App.ENTER_KEY) {
-    e.target.blur();
-    }
-    },
-    update: function () {
-    var val = $.trim($(this).removeClass('editing').val());
+            if (e.which === this.ESCAPE_KEY) {
+                $(e.target).data('abort', true).blur();
+            }
+        },
+        update: function (e) {
+            var el = e.target;
+            var $el = $(el);
+            var val = $el.val().trim();
 
-    App.getTodo(this, function (i) {
-    if (val) {
-    this.todos[i].title = val;
-    } else {
-    this.todos.splice(i, 1);
-    }
-    this.render();
-    });
-    },
-    destroy: function () {
-    App.getTodo(this, function (i) {
-    this.todos.splice(i, 1);
-    this.render();
-    });
-    }
+            if (!val) {
+                this.destroy(e);
+                return;
+            }
+
+            if ($el.data('abort')) {
+                $el.data('abort', false);
+            } else {
+                this.todos[this.indexFromEl(el)].title = val;
+            }
+
+            this.render();
+        },
+        destroy: function (e) {
+            this.todos.splice(this.indexFromEl(e.target), 1);
+            this.render();
+        }
     };
 
     window.app = App;
-    Utils.store = function () { return []; }
-
-    App.init();
+    window.app.init();
 });
