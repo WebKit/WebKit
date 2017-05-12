@@ -319,7 +319,7 @@ public:
     void getNetworkProcessConnection(Ref<Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply>&&);
 
 #if ENABLE(DATABASE_PROCESS)
-    void ensureDatabaseProcess();
+    void ensureDatabaseProcessAndWebsiteDataStore(WebsiteDataStore* relevantDataStore);
     DatabaseProcessProxy* databaseProcess() { return m_databaseProcess.get(); }
     void getDatabaseProcessConnection(Ref<Messages::WebProcessProxy::GetDatabaseProcessConnection::DelayedReply>&&);
     void databaseProcessCrashed(DatabaseProcessProxy*);
@@ -646,7 +646,7 @@ template<typename T>
 void WebProcessPool::sendToDatabaseProcessRelaunchingIfNecessary(T&& message)
 {
 #if ENABLE(DATABASE_PROCESS)
-    ensureDatabaseProcess();
+    ensureDatabaseProcessAndWebsiteDataStore(nullptr);
     m_databaseProcess->send(std::forward<T>(message), 0);
 #else
     sendToAllProcessesRelaunchingThemIfNecessary(std::forward<T>(message));

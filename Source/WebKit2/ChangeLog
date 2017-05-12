@@ -1,3 +1,29 @@
+2017-05-11  Brady Eidson  <beidson@apple.com>
+
+        [WKWebsiteDataStore removeDataOfTypes:...] doesn't work for IndexedDB if the data store has a custom IDB path.
+        <rdar://problem/30612463> and https://bugs.webkit.org/show_bug.cgi?id=171994
+
+        Reviewed by Andy Estes.
+        Informal review by Maureen Daum.
+
+        * DatabaseProcess/DatabaseProcess.cpp:
+        (WebKit::DatabaseProcess::deleteWebsiteData): Instead of accessing the m_idbServers set directly, make
+          the method call that creates the server on demand.
+        (WebKit::DatabaseProcess::deleteWebsiteDataForOrigins): Ditto.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureDatabaseProcessAndWebsiteDataStore): Not only create the DatabaseProcess if necessary,
+          but also notify it about the passed-in WebsiteDataStore.
+        (WebKit::WebProcessPool::getDatabaseProcessConnection):
+        (WebKit::WebProcessPool::ensureDatabaseProcess): Deleted.
+        * UIProcess/WebProcessPool.h:
+        (WebKit::WebProcessPool::sendToDatabaseProcessRelaunchingIfNecessary):
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::fetchData):
+        (WebKit::WebsiteDataStore::removeData):
+        (WebKit::WebsiteDataStore::databaseProcessParameters):
+
 2017-05-11  Dean Jackson  <dino@apple.com>
 
         Modern Media Controls shouldn't be an experimental feature

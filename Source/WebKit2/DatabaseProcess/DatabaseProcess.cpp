@@ -219,13 +219,12 @@ void DatabaseProcess::deleteWebsiteData(WebCore::SessionID sessionID, OptionSet<
         parentProcessConnection()->send(Messages::DatabaseProcessProxy::DidDeleteWebsiteData(callbackID), 0);
     };
 
-    auto* server = m_idbServers.get(sessionID);
-    if (!server || !websiteDataTypes.contains(WebsiteDataType::IndexedDBDatabases)) {
+    if (!websiteDataTypes.contains(WebsiteDataType::IndexedDBDatabases)) {
         completionHandler();
         return;
     }
 
-    server->closeAndDeleteDatabasesModifiedSince(modifiedSince, WTFMove(completionHandler));
+    idbServer(sessionID).closeAndDeleteDatabasesModifiedSince(modifiedSince, WTFMove(completionHandler));
 #endif
 }
 
@@ -236,13 +235,12 @@ void DatabaseProcess::deleteWebsiteDataForOrigins(WebCore::SessionID sessionID, 
         parentProcessConnection()->send(Messages::DatabaseProcessProxy::DidDeleteWebsiteDataForOrigins(callbackID), 0);
     };
 
-    auto* server = m_idbServers.get(sessionID);
-    if (!server || !websiteDataTypes.contains(WebsiteDataType::IndexedDBDatabases)) {
+    if (!websiteDataTypes.contains(WebsiteDataType::IndexedDBDatabases)) {
         completionHandler();
         return;
     }
 
-    server->closeAndDeleteDatabasesForOrigins(securityOriginDatas, WTFMove(completionHandler));
+    idbServer(sessionID).closeAndDeleteDatabasesForOrigins(securityOriginDatas, WTFMove(completionHandler));
 #endif
 }
 

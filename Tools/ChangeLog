@@ -1,3 +1,14 @@
+2017-05-11  Brady Eidson  <beidson@apple.com>
+
+        [WKWebsiteDataStore removeDataOfTypes:...] doesn't work for IndexedDB if the data store has a custom IDB path.
+        <rdar://problem/30612463> and https://bugs.webkit.org/show_bug.cgi?id=171994
+
+        Reviewed by Andy Estes.
+        Informal review by Maureen Daum.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/WebsiteDataStoreCustomPaths.mm:
+        (TEST):
+
 2017-05-11  Joseph Pecoraro  <pecoraro@apple.com>
 
         REGRESSION(r216217): lldb_webkit.py no longer prints out a WTFString, StringImpl needs to handle StringImplShape change

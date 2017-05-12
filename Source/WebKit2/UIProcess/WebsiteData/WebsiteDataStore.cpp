@@ -419,7 +419,7 @@ void WebsiteDataStore::fetchData(OptionSet<WebsiteDataType> dataTypes, OptionSet
 #if ENABLE(DATABASE_PROCESS)
     if (dataTypes.contains(WebsiteDataType::IndexedDBDatabases) && isPersistent()) {
         for (auto& processPool : processPools()) {
-            processPool->ensureDatabaseProcess();
+            processPool->ensureDatabaseProcessAndWebsiteDataStore(this);
 
             callbackAggregator->addPendingCallback();
             processPool->databaseProcess()->fetchWebsiteData(m_sessionID, dataTypes, [callbackAggregator, processPool](WebsiteData websiteData) {
@@ -691,7 +691,7 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, std::chr
 #if ENABLE(DATABASE_PROCESS)
     if (dataTypes.contains(WebsiteDataType::IndexedDBDatabases) && isPersistent()) {
         for (auto& processPool : processPools()) {
-            processPool->ensureDatabaseProcess();
+            processPool->ensureDatabaseProcessAndWebsiteDataStore(this);
 
             callbackAggregator->addPendingCallback();
             processPool->databaseProcess()->deleteWebsiteData(m_sessionID, dataTypes, modifiedSince, [callbackAggregator, processPool] {
@@ -959,7 +959,7 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
 #if ENABLE(DATABASE_PROCESS)
     if (dataTypes.contains(WebsiteDataType::IndexedDBDatabases) && isPersistent()) {
         for (auto& processPool : processPools()) {
-            processPool->ensureDatabaseProcess();
+            processPool->ensureDatabaseProcessAndWebsiteDataStore(this);
 
             callbackAggregator->addPendingCallback();
             processPool->databaseProcess()->deleteWebsiteDataForOrigins(m_sessionID, dataTypes, origins, [callbackAggregator, processPool] {
@@ -1250,6 +1250,8 @@ void WebsiteDataStore::registerSharedResourceLoadObserver()
 
 DatabaseProcessCreationParameters WebsiteDataStore::databaseProcessParameters()
 {
+    resolveDirectoriesIfNecessary();
+
     DatabaseProcessCreationParameters parameters;
 
     parameters.sessionID = m_sessionID;
