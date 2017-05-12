@@ -1415,9 +1415,6 @@ bool NetscapePluginInstanceProxy::demarshalValueFromArray(ExecState* exec, NSArr
                 return false;
 
             auto rootObject = frame->script().createRootObject(m_pluginView);
-            if (!rootObject)
-                return false;
-            
             result = ProxyInstance::create(WTFMove(rootObject), this, objectID)->createRuntimeObject(exec);
             return true;
         }
@@ -1469,7 +1466,7 @@ void NetscapePluginInstanceProxy::releaseLocalObject(JSC::JSValue value)
     m_localObjects.release(asObject(value));
 }
 
-PassRefPtr<Instance> NetscapePluginInstanceProxy::createBindingsInstance(PassRefPtr<RootObject> rootObject)
+RefPtr<Instance> NetscapePluginInstanceProxy::createBindingsInstance(Ref<RootObject>&& rootObject)
 {
     uint32_t requestID = nextRequestID();
     
@@ -1484,7 +1481,7 @@ PassRefPtr<Instance> NetscapePluginInstanceProxy::createBindingsInstance(PassRef
         return nullptr;
 
     // Since the reply was non-null, "this" is still a valid pointer.
-    return ProxyInstance::create(rootObject, this, reply->m_objectID);
+    return ProxyInstance::create(WTFMove(rootObject), this, reply->m_objectID);
 }
 
 void NetscapePluginInstanceProxy::addInstance(ProxyInstance* instance)

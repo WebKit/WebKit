@@ -62,7 +62,7 @@ class URL;
 class Widget;
 struct ExceptionDetails;
 
-using RootObjectMap = HashMap<void*, RefPtr<JSC::Bindings::RootObject>>;
+using RootObjectMap = HashMap<void*, Ref<JSC::Bindings::RootObject>>;
 
 enum ReasonForCallingCanExecuteScripts {
     AboutToExecuteScript,
@@ -163,7 +163,7 @@ public:
     WEBCORE_EXPORT JSC::Bindings::RootObject* bindingRootObject();
     JSC::Bindings::RootObject* cacheableBindingRootObject();
 
-    WEBCORE_EXPORT RefPtr<JSC::Bindings::RootObject> createRootObject(void* nativeHandle);
+    WEBCORE_EXPORT Ref<JSC::Bindings::RootObject> createRootObject(void* nativeHandle);
 
     void collectIsolatedContexts(Vector<std::pair<JSC::ExecState*, SecurityOrigin*>>&);
 

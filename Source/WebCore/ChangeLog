@@ -1,3 +1,21 @@
+2017-05-11  Chris Dumez  <cdumez@apple.com>
+
+        Drop remaining uses of PassRefPtr in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=172013
+
+        Reviewed by Yusuke Suzuki.
+
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::createRootObject):
+        * bindings/js/ScriptController.h:
+        * bindings/js/ScriptControllerMac.mm:
+        * bridge/objc/WebScriptObject.mm:
+        (WebCore::createJSWrapper):
+        (-[WebScriptObject _setImp:originRootObject:rootObject:]):
+        (-[WebScriptObject _setOriginRootObject:andRootObject:]):
+        (-[WebScriptObject _initWithJSObject:originRootObject:rootObject:]):
+        * bridge/objc/WebScriptObjectPrivate.h:
+
 2017-05-11  Zalan Bujtas  <zalan@apple.com>
 
         RenderImageResource::hasImage is redundant and RenderImageResourceStyleImage's override is incorrect.

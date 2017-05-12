@@ -462,12 +462,12 @@ extern "C" {
     }
 }
 
-- (PassRefPtr<JSC::Bindings::Instance>)createPluginBindingsInstance:(PassRefPtr<JSC::Bindings::RootObject>)rootObject
+- (RefPtr<JSC::Bindings::Instance>)createPluginBindingsInstance:(Ref<JSC::Bindings::RootObject>&&)rootObject
 {
     if (!_proxy)
-        return 0;
+        return nullptr;
     
-    return _proxy->createBindingsInstance(rootObject);
+    return _proxy->createBindingsInstance(WTFMove(rootObject));
 }
 
 - (void)pluginView:(NSView *)pluginView receivedResponse:(NSURLResponse *)response

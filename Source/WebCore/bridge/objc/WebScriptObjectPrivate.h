@@ -27,7 +27,7 @@
 
 #import "WebScriptObject.h"
 #import <runtime/JSCJSValue.h>
-#import <wtf/PassRefPtr.h>
+#import <wtf/RefPtr.h>
 
 namespace JSC {
     class JSObject;
@@ -44,7 +44,7 @@ namespace WebCore {
     NSObject *getJSWrapper(JSC::JSObject*);
     void addJSWrapper(NSObject *wrapper, JSC::JSObject*);
     void removeJSWrapper(JSC::JSObject*);
-    id createJSWrapper(JSC::JSObject*, PassRefPtr<JSC::Bindings::RootObject> origin, PassRefPtr<JSC::Bindings::RootObject> root);
+    id createJSWrapper(JSC::JSObject*, RefPtr<JSC::Bindings::RootObject>&& origin, RefPtr<JSC::Bindings::RootObject>&&);
 
     void disconnectWindowWrapper(WebScriptObject *);
 }
@@ -53,9 +53,9 @@ namespace WebCore {
 + (id)_convertValueToObjcValue:(JSC::JSValue)value originRootObject:(JSC::Bindings::RootObject*)originRootObject rootObject:(JSC::Bindings::RootObject*)rootObject;
 + (id)scriptObjectForJSObject:(JSObjectRef)jsObject originRootObject:(JSC::Bindings::RootObject*)originRootObject rootObject:(JSC::Bindings::RootObject*)rootObject;
 - (id)_init;
-- (id)_initWithJSObject:(JSC::JSObject*)imp originRootObject:(PassRefPtr<JSC::Bindings::RootObject>)originRootObject rootObject:(PassRefPtr<JSC::Bindings::RootObject>)rootObject;
-- (void)_setImp:(JSC::JSObject*)imp originRootObject:(PassRefPtr<JSC::Bindings::RootObject>)originRootObject rootObject:(PassRefPtr<JSC::Bindings::RootObject>)rootObject;
-- (void)_setOriginRootObject:(PassRefPtr<JSC::Bindings::RootObject>)originRootObject andRootObject:(PassRefPtr<JSC::Bindings::RootObject>)rootObject;
+- (id)_initWithJSObject:(JSC::JSObject*)imp originRootObject:(RefPtr<JSC::Bindings::RootObject>&&)originRootObject rootObject:(RefPtr<JSC::Bindings::RootObject>&&)rootObject;
+- (void)_setImp:(JSC::JSObject*)imp originRootObject:(RefPtr<JSC::Bindings::RootObject>&&)originRootObject rootObject:(RefPtr<JSC::Bindings::RootObject>&&)rootObject;
+- (void)_setOriginRootObject:(RefPtr<JSC::Bindings::RootObject>&&)originRootObject andRootObject:(RefPtr<JSC::Bindings::RootObject>&&)rootObject;
 - (void)_initializeScriptDOMNodeImp;
 - (JSC::JSObject*)_imp;
 - (BOOL)_hasImp;

@@ -113,11 +113,11 @@ static void removeJSWrapperIfRetainCountOne(NSObject* wrapper, JSObject* impl)
         wrapperCache().remove(impl);
 }
 
-id createJSWrapper(JSC::JSObject* object, PassRefPtr<JSC::Bindings::RootObject> origin, PassRefPtr<JSC::Bindings::RootObject> root)
+id createJSWrapper(JSC::JSObject* object, RefPtr<JSC::Bindings::RootObject>&& origin, RefPtr<JSC::Bindings::RootObject>&& root)
 {
     if (id wrapper = getJSWrapper(object))
         return wrapper;
-    return [[[WebScriptObject alloc] _initWithJSObject:object originRootObject:origin rootObject:root] autorelease];
+    return [[[WebScriptObject alloc] _initWithJSObject:object originRootObject:WTFMove(origin) rootObject:WTFMove(root)] autorelease];
 }
 
 static void addExceptionToConsole(ExecState* exec, JSC::Exception* exception)
@@ -186,7 +186,7 @@ void disconnectWindowWrapper(WebScriptObject *windowWrapper)
     return WebCore::createJSWrapper(&wrapped, originRootObject, rootObject);
 }
 
-- (void)_setImp:(JSObject*)imp originRootObject:(PassRefPtr<RootObject>)originRootObject rootObject:(PassRefPtr<RootObject>)rootObject
+- (void)_setImp:(JSObject*)imp originRootObject:(RefPtr<RootObject>&&)originRootObject rootObject:(RefPtr<RootObject>&&)rootObject
 {
     // This function should only be called once, as a (possibly lazy) initializer.
     ASSERT(!_private->imp);
@@ -204,7 +204,7 @@ void disconnectWindowWrapper(WebScriptObject *windowWrapper)
         _private->rootObject->gcProtect(imp);
 }
 
-- (void)_setOriginRootObject:(PassRefPtr<RootObject>)originRootObject andRootObject:(PassRefPtr<RootObject>)rootObject
+- (void)_setOriginRootObject:(RefPtr<RootObject>&&)originRootObject andRootObject:(RefPtr<RootObject>&&)rootObject
 {
     ASSERT(_private->imp);
 
@@ -224,13 +224,13 @@ void disconnectWindowWrapper(WebScriptObject *windowWrapper)
     _private->originRootObject = originRootObject.leakRef();
 }
 
-- (id)_initWithJSObject:(JSC::JSObject*)imp originRootObject:(PassRefPtr<JSC::Bindings::RootObject>)originRootObject rootObject:(PassRefPtr<JSC::Bindings::RootObject>)rootObject
+- (id)_initWithJSObject:(JSC::JSObject*)imp originRootObject:(RefPtr<JSC::Bindings::RootObject>&&)originRootObject rootObject:(RefPtr<JSC::Bindings::RootObject>&&)rootObject
 {
     ASSERT(imp);
 
     self = [super init];
     _private = [[WebScriptObjectPrivate alloc] init];
-    [self _setImp:imp originRootObject:originRootObject rootObject:rootObject];
+    [self _setImp:imp originRootObject:WTFMove(originRootObject) rootObject:WTFMove(rootObject)];
     
     return self;
 }

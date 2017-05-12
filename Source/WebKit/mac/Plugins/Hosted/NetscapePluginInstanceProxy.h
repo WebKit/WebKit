@@ -142,7 +142,7 @@ public:
     bool convertPoint(double sourceX, double sourceY, NPCoordinateSpace sourceSpace, 
                       double& destX, double& destY, NPCoordinateSpace destSpace);
 
-    PassRefPtr<JSC::Bindings::Instance> createBindingsInstance(PassRefPtr<JSC::Bindings::RootObject>);
+    RefPtr<JSC::Bindings::Instance> createBindingsInstance(Ref<JSC::Bindings::RootObject>&&);
     RetainPtr<NSData *> marshalValues(JSC::ExecState*, const JSC::ArgList& args);
     void marshalValue(JSC::ExecState*, JSC::JSValue, data_t& resultData, mach_msg_type_number_t& resultLength);
     JSC::JSValue demarshalValue(JSC::ExecState*, const char* valueData, mach_msg_type_number_t valueLength);

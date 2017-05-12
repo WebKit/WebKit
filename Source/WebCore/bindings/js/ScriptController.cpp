@@ -529,15 +529,15 @@ Bindings::RootObject* ScriptController::bindingRootObject()
     return m_bindingRootObject.get();
 }
 
-RefPtr<Bindings::RootObject> ScriptController::createRootObject(void* nativeHandle)
+Ref<Bindings::RootObject> ScriptController::createRootObject(void* nativeHandle)
 {
     RootObjectMap::iterator it = m_rootObjects.find(nativeHandle);
     if (it != m_rootObjects.end())
-        return it->value;
+        return it->value.copyRef();
 
-    RefPtr<Bindings::RootObject> rootObject = Bindings::RootObject::create(nativeHandle, globalObject(pluginWorld()));
+    auto rootObject = Bindings::RootObject::create(nativeHandle, globalObject(pluginWorld()));
 
-    m_rootObjects.set(nativeHandle, rootObject);
+    m_rootObjects.set(nativeHandle, rootObject.copyRef());
     return rootObject;
 }
 

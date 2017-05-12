@@ -695,8 +695,8 @@ RefPtr<JSC::Bindings::Instance> PluginView::bindingInstance()
         return nullptr;
     }
 
-    RefPtr<JSC::Bindings::RootObject> root = m_parentFrame->script().createRootObject(this);
-    RefPtr<JSC::Bindings::Instance> instance = JSC::Bindings::CInstance::create(object, root.release());
+    auto root = m_parentFrame->script().createRootObject(this);
+    RefPtr<JSC::Bindings::Instance> instance = JSC::Bindings::CInstance::create(object, WTFMove(root));
 
     _NPN_ReleaseObject(object);
 
