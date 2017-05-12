@@ -115,12 +115,13 @@ bool InspectorPageAgent::cachedResourceContent(CachedResource* cachedResource, S
     if (!cachedResource)
         return false;
 
+    *base64Encoded = !hasTextContent(cachedResource);
+
     if (!cachedResource->encodedSize()) {
-        *result = String();
+        *result = emptyString();
         return true;
     }
 
-    *base64Encoded = !hasTextContent(cachedResource);
     if (*base64Encoded) {
         if (auto* buffer = cachedResource->resourceBuffer()) {
             *result = base64Encode(buffer->data(), buffer->size());
