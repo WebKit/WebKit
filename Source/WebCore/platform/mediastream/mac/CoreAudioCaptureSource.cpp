@@ -667,6 +667,9 @@ void CoreAudioCaptureSource::removeEchoCancellationSource(AudioSampleDataSource&
 
 void CoreAudioCaptureSource::startProducingData()
 {
+    if (m_isProducingData)
+        return;
+
     CoreAudioSharedUnit::singleton().startProducingData();
     m_isProducingData = CoreAudioSharedUnit::singleton().isProducingData();
 
@@ -681,6 +684,9 @@ void CoreAudioCaptureSource::startProducingData()
 
 void CoreAudioCaptureSource::stopProducingData()
 {
+    if (!m_isProducingData)
+        return;
+    
     CoreAudioSharedUnit::singleton().stopProducingData();
     m_isProducingData = false;
     m_muted = true;
