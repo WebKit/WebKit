@@ -1,5 +1,58 @@
 2017-05-11  Addy Osmani  <addyosmani@gmail.com>
 
+        Speedometer: Add an Angular 2 (4.x) TodoMVC implementation
+        https://bugs.webkit.org/show_bug.cgi?id=171343
+
+        Reviewed by Ryosuke Niwa.
+
+        Add a TodoMVC Angular 2 (4.x) implem for the benchmark
+
+        * Speedometer/resources/todomvc/architecture-examples/angular/.angular-cli.json: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angular/.editorconfig: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angular/README.md: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angular/dist/assets/css/todomvc-app.css: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angular/dist/assets/css/todomvc-common.css: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angular/dist/favicon.ico: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angular/dist/index.html: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angular/dist/inline.b342d102ba4a53bf2002.bundle.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angular/dist/main.779eb2f1ddbe23ac61c7.bundle.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angular/dist/polyfills.2d45a4c73c85e24fe474.bundle.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angular/dist/styles.d41d8cd98f00b204e980.bundle.css: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angular/dist/vendor.b4be818cb6d8028f9192.bundle.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angular/e2e/app.e2e-spec.ts: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angular/e2e/app.po.ts: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angular/e2e/tsconfig.e2e.json: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angular/karma.conf.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angular/package.json: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angular/protractor.conf.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angular/src/app/app.component.css: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angular/src/app/app.component.html: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angular/src/app/app.component.spec.ts: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angular/src/app/app.component.ts: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angular/src/app/app.module.ts: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angular/src/app/todo-data.service.spec.ts: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angular/src/app/todo-data.service.ts: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angular/src/app/todo.spec.ts: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angular/src/app/todo.ts: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angular/src/assets/.gitkeep: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angular/src/assets/css/todomvc-app.css: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angular/src/assets/css/todomvc-common.css: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angular/src/environments/environment.prod.ts: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angular/src/environments/environment.ts: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angular/src/favicon.ico: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angular/src/index.html: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angular/src/main.ts: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angular/src/polyfills.ts: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angular/src/styles.css: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angular/src/test.ts: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angular/src/tsconfig.app.json: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angular/src/tsconfig.spec.json: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angular/src/typings.d.ts: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angular/tsconfig.json: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angular/tslint.json: Added.
+
+2017-05-11  Addy Osmani  <addyosmani@gmail.com>
+
         Speedometer: Add a Vue.js TodoMVC implementation
         https://bugs.webkit.org/show_bug.cgi?id=171325
 
