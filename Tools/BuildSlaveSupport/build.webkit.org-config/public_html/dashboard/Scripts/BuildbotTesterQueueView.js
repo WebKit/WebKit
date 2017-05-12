@@ -255,7 +255,7 @@ BuildbotTesterQueueView.prototype = {
         iteration.failedTestSteps.forEach(function(failedStep) {
             if (failedStep.name === "layout-test")
                 addResultKind(this._testStepFailureDescriptionWithCount(failedStep), iteration.queue.buildbot.layoutTestResultsURLForIteration(iteration));
-            if (failedStep.name === "dashboard-tests")
+            else if (failedStep.name === "dashboard-tests")
                 addResultKind(this._testStepFailureDescription(failedStep), iteration.queue.buildbot.dashboardTestResultsURLForIteration(iteration));
             else
                 addResultKind(this._testStepFailureDescriptionWithCount(failedStep), failedStep.URL);

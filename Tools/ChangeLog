@@ -1,3 +1,13 @@
+2017-05-12  Alexey Proskuryakov  <ap@apple.com>
+
+        Bot watcher's dashboard shows results links twice sometimes
+        https://bugs.webkit.org/show_bug.cgi?id=172043
+
+        Reviewed by Tim Horton.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotTesterQueueView.js:
+        (BuildbotTesterQueueView.prototype._presentPopoverForGenericTestFailures):
+
 2017-05-12  Brady Eidson  <beidson@apple.com>
 
         REGRESSION (r216711): API test WKWebView.ClearAppCache is failing.
