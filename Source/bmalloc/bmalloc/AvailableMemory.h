@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,46 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "RAMSize.h"
+#pragma once
 
-#include "StdLibExtras.h"
-#include <mutex>
+#include "BPlatform.h"
+#include "Sizes.h"
 
-#if OS(WINDOWS)
-#include <windows.h>
-#else
-#include <bmalloc/bmalloc.h>
-#endif
+namespace bmalloc {
 
-namespace WTF {
-    
-#if OS(WINDOWS)
-static const size_t ramSizeGuess = 512 * MB;
-#endif
+size_t availableMemory();
 
-static size_t computeRAMSize()
-{
-#if OS(WINDOWS)
-    MEMORYSTATUSEX status;
-    status.dwLength = sizeof(status);
-    bool result = GlobalMemoryStatusEx(&status);
-    if (!result)
-        return ramSizeGuess;
-    return status.ullTotalPhys;
-#else
-    return bmalloc::api::availableMemory();
-#endif
 }
 
-size_t ramSize()
-{
-    static size_t ramSize;
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
-        ramSize = computeRAMSize();
-    });
-    return ramSize;
-}
-
-} // namespace WTF

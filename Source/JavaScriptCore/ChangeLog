@@ -1,3 +1,33 @@
+2017-05-12  Michael Saboff  <msaboff@apple.com>
+
+        [iOS] Use memory footprint to dynamically adjust behavior of allocators
+        https://bugs.webkit.org/show_bug.cgi?id=171944
+
+        Reviewed by Filip Pizlo.
+
+        This change is iOS only.
+
+        Added the ability to react to when memory usage is critical.  This is defined as memory
+        usage being above the newly added option criticalGCMemoryThreshold.  When we are in this
+        critical state, all collections are Full and we limit the amount of memory we allocate
+        between collections to 1/4th the memory above the critical threshold.
+
+        Changed the calculation of proportionalHeapSize to be based on process memory footprint
+        and not how big the heap is.  Also, the values of Options::smallHeapRAMFraction and
+        Options::mediumHeapRAMFraction are overriden so that most of the heap growth is happens
+        using the more agressive Options::smallHeapGrowthFactor.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+        (JSC::Heap::overCriticalMemoryThreshold):
+        (JSC::Heap::shouldDoFullCollection):
+        (JSC::Heap::collectIfNecessaryOrDefer):
+        * heap/Heap.h:
+        * runtime/Options.cpp:
+        (JSC::overrideDefaults):
+        (JSC::Options::initialize):
+        * runtime/Options.h:
+
 2017-05-11  Saam Barati  <sbarati@apple.com>
 
         Computing optionalDefArgWidth in CheckSpecial should not consider Scratch roles

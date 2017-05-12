@@ -68,6 +68,9 @@
 #include "WasmMemory.h"
 #include "WeakSetInlines.h"
 #include <algorithm>
+#if PLATFORM(IOS)
+#include <bmalloc/bmalloc.h>
+#endif
 #include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
 #include <wtf/ParallelVectorIterator.h>
@@ -112,10 +115,18 @@ size_t minHeapSize(HeapType heapType, size_t ramSize)
 
 size_t proportionalHeapSize(size_t heapSize, size_t ramSize)
 {
+#if PLATFORM(IOS)
+    size_t memoryFootprint = bmalloc::api::memoryFootprint();
+    if (memoryFootprint < ramSize * Options::smallHeapRAMFraction())
+        return Options::smallHeapGrowthFactor() * heapSize;
+    if (memoryFootprint < ramSize * Options::mediumHeapRAMFraction())
+        return Options::mediumHeapGrowthFactor() * heapSize;
+#else
     if (heapSize < ramSize * Options::smallHeapRAMFraction())
         return Options::smallHeapGrowthFactor() * heapSize;
     if (heapSize < ramSize * Options::mediumHeapRAMFraction())
         return Options::mediumHeapGrowthFactor() * heapSize;
+#endif
     return Options::largeHeapGrowthFactor() * heapSize;
 }
 
@@ -313,6 +324,10 @@ Heap::Heap(VM* vm, HeapType heapType)
     
     m_collectorSlotVisitor->optimizeForStoppedMutator();
 
+    // When memory is critical, allow allocating 25% of the amount above the critical threshold before collecting.
+    size_t memoryAboveCriticalThreshold = static_cast<size_t>(static_cast<double>(m_ramSize) * (1.0 - Options::criticalGCMemoryThreshold()));
+    m_maxEdenSizeWhenCritical = memoryAboveCriticalThreshold / 4;
+
     LockHolder locker(*m_threadLock);
     m_thread = adoptRef(new Thread(locker, *this));
 }
@@ -486,6 +501,16 @@ bool Heap::webAssemblyFastMemoriesThisCycleAtThreshold() const
     // a collection: get too close and we may be close to the actual limit.
     size_t fastMemoryThreshold = std::max<size_t>(1, Wasm::Memory::maxFastMemoryCount() / 2);
     return m_webAssemblyFastMemoriesAllocatedThisCycle > fastMemoryThreshold;
+}
+
+bool Heap::overCriticalMemoryThreshold() const
+{
+#if PLATFORM(IOS)
+    if (bmalloc::api::percentAvailableMemoryInUse() > Options::criticalGCMemoryThreshold())
+        return true;
+#endif
+
+    return false;
 }
 
 void Heap::reportAbandonedObjectGraph()
@@ -2339,7 +2364,7 @@ bool Heap::shouldDoFullCollection() const
         return true;
 
     if (!m_currentRequest.scope)
-        return m_shouldDoFullCollection || webAssemblyFastMemoriesThisCycleAtThreshold();
+        return m_shouldDoFullCollection || webAssemblyFastMemoriesThisCycleAtThreshold() || overCriticalMemoryThreshold();
     return *m_currentRequest.scope == CollectionScope::Full;
 }
 
@@ -2490,8 +2515,15 @@ void Heap::collectIfNecessaryOrDefer(GCDeferralContext* deferralContext)
         if (m_bytesAllocatedThisCycle <= Options::gcMaxHeapSize())
             return;
     } else {
+        size_t bytesAllowedThisCycle = m_maxEdenSize;
+
+#if PLATFORM(IOS)
+        if (overCriticalMemoryThreshold())
+            bytesAllowedThisCycle = std::min(m_maxEdenSizeWhenCritical, bytesAllowedThisCycle);
+#endif
+
         if (!webAssemblyFastMemoriesThisCycleAtThreshold()
-            && m_bytesAllocatedThisCycle <= m_maxEdenSize)
+            && m_bytesAllocatedThisCycle <= bytesAllowedThisCycle)
             return;
     }
 

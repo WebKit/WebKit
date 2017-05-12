@@ -219,6 +219,8 @@ public:
     void reportWebAssemblyFastMemoriesAllocated(size_t);
     bool webAssemblyFastMemoriesThisCycleAtThreshold() const;
 
+    bool overCriticalMemoryThreshold() const;
+    
 #if ENABLE(RESOURCE_USAGE)
     // Use this API to report the subset of extra memory that lives outside this process.
     JS_EXPORT_PRIVATE void reportExternalMemoryVisited(size_t);
@@ -553,6 +555,7 @@ private:
     size_t m_webAssemblyFastMemoriesAllocatedThisCycle;
     size_t m_bytesAbandonedSinceLastFullCollect;
     size_t m_maxEdenSize;
+    size_t m_maxEdenSizeWhenCritical;
     size_t m_maxHeapSize;
     bool m_shouldDoFullCollection;
     size_t m_totalBytesVisited;

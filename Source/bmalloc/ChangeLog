@@ -1,3 +1,56 @@
+2017-05-12  Michael Saboff  <msaboff@apple.com>
+
+        [iOS] Use memory footprint to dynamically adjust behavior of allocators
+        https://bugs.webkit.org/show_bug.cgi?id=171944
+
+        Reviewed by Filip Pizlo.
+
+        This change is iOS only.
+
+        After the scavenger thread completes scavenging, it asks the OS for how much total memory the
+        process is using.  This information is used to update the sleep delay for the scanvenger thread,
+        as well as to provide memory in use data for other parts of the system.
+
+        The scavenger sleep time is calculated using the following quadradic equation.
+
+            scavengerSleep = 1.2*percentFreeMemory^2 - percentFreeMemory + 2
+
+        Where percentFreeMemory is between 0 and 100.  The result is constrained to the values 2 and 250.
+
+        This equation empirically works out to providing a 2ms sleep time when we have less than 10%
+        memory available, 30ms when 20% is available and 250ms when 50% or more is available.  In testing,
+        this exponentially agressive scavenging delay by itself reduced memory usage and made it much
+        more deterministic when used without the corresponding change in the JSC Heap.
+
+        Changed the scavenger thread to use the User Initiated QOS priority to ensure it doesn't
+        get starved.
+
+        Moved the non-Windows functionality of WTF::RAMSize() to new files AvailableMemory.{cpp,h}
+        and implemented in the function availableMemory().  That functions limits the value returned
+        on iOS to a maximum of 840MB as that is the jetsam soft memory limit.
+        Added a new API availableMemory() so that WTF::RAMSize() will use this value.
+
+        * CMakeLists.txt:
+        * bmalloc.xcodeproj/project.pbxproj:
+        * bmalloc/BPlatform.h:
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::Heap):
+        (bmalloc::Heap::updateMemoryInUseParameters):
+        (bmalloc::Heap::concurrentScavenge):
+        (bmalloc::Heap::scavenge):
+        * bmalloc/Heap.h:
+        (bmalloc::Heap::memoryFootprint):
+        (bmalloc::Heap::percentAvailableMemoryInUse):
+        * bmalloc/Sizes.h:
+        * bmalloc/bmalloc.h:
+        (bmalloc::api::availableMemory):
+        (bmalloc::api::memoryFootprint):
+        (bmalloc::api::percentAvailableMemoryInUse):
+        * bmalloc/AvailableMemory.cpp: Added.
+        (bmalloc::computeAvailableMemory):
+        (bmalloc::availableMemory):
+        * bmalloc/AvailableMemory.h: Added.
+
 2017-05-05  Joseph Pecoraro  <pecoraro@apple.com>
 
         Leaks always reports "WebKit Malloc Memory Pressure Handler" dispatch_queue/source as leaking

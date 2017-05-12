@@ -1,3 +1,16 @@
+2017-05-12  Michael Saboff  <msaboff@apple.com>
+
+        [iOS] Use memory footprint to dynamically adjust behavior of allocators
+        https://bugs.webkit.org/show_bug.cgi?id=171944
+
+        Reviewed by Filip Pizlo.
+
+        Moved the non-Windows implementation of RAMSize() to bmalloc/AvailableMemory.cpp and
+        called the function availableMemory().
+
+        * wtf/RAMSize.cpp:
+        (WTF::computeRAMSize):
+
 2017-05-12  Claudio Saavedra  <csaavedra@igalia.com>
 
         [WPE] Add MemoryFootprintLinux to build

@@ -344,6 +344,10 @@ static void overrideDefaults()
     }
 
 #if PLATFORM(IOS)
+    // On iOS, we control heap growth using process memory footprint. Therefore these values can be agressive.
+    Options::smallHeapRAMFraction() = 0.8;
+    Options::mediumHeapRAMFraction() = 0.9;
+
     Options::useSigillCrashAnalyzer() = true;
 #endif
 
@@ -542,6 +546,7 @@ void Options::initialize()
             ASSERT(Options::thresholdForOptimizeAfterLongWarmUp() >= Options::thresholdForOptimizeAfterWarmUp());
             ASSERT(Options::thresholdForOptimizeAfterWarmUp() >= Options::thresholdForOptimizeSoon());
             ASSERT(Options::thresholdForOptimizeAfterWarmUp() >= 0);
+            ASSERT(Options::criticalGCMemoryThreshold() > 0.0 && Options::criticalGCMemoryThreshold() < 1.0);
 
             dumpOptionsIfNeeded();
             ensureOptionsAreCoherent();
