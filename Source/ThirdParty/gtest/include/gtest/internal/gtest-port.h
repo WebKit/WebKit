@@ -240,13 +240,17 @@
 // won't compile otherwise.  We can #include it here as we already
 // included <stdlib.h>, which is guaranteed to define size_t through
 // <stddef.h>.
+#if HAVE(REGEX_H)
 #include <regex.h>  // NOLINT
+#define GTEST_USES_POSIX_RE 1
+#else
+#define GTEST_USES_SIMPLE_RE 1
+#endif
 #include <strings.h>  // NOLINT
 #include <sys/types.h>  // NOLINT
 #include <time.h>  // NOLINT
 #include <unistd.h>  // NOLINT
 
-#define GTEST_USES_POSIX_RE 1
 
 #elif GTEST_OS_WINDOWS
 

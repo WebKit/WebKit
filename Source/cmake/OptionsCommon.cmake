@@ -272,6 +272,7 @@ _HAVE_CHECK_FUNCTION(HAVE_TIMEGM timegm)
 _HAVE_CHECK_FUNCTION(HAVE_VASPRINTF vasprintf)
 
 # Check for symbols
+_HAVE_CHECK_SYMBOL(HAVE_REGEX_H regexec regex.h)
 # Windows has signal.h but is missing symbols that are used in calls to signal.
 _HAVE_CHECK_SYMBOL(HAVE_SIGNAL_H SIGTRAP signal.h)
 

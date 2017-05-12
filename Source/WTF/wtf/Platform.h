@@ -638,6 +638,7 @@
 #define HAVE_LANGINFO_H 1
 #define HAVE_LOCALTIME_R 1
 #define HAVE_MMAP 1
+#define HAVE_REGEX_H 1
 #define HAVE_SIGNAL_H 1
 #define HAVE_STAT_BIRTHTIME 1
 #define HAVE_STRINGS_H 1

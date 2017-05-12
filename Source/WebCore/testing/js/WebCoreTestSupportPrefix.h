@@ -63,7 +63,7 @@
 
 #include <fcntl.h>
 #include <sys/types.h>
-#if defined(__APPLE__)
+#if HAVE(REGEX_H)
 #include <regex.h>
 #endif
 

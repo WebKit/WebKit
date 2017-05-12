@@ -36,8 +36,11 @@
 #include <wtf/StringExtras.h>
 #include <wtf/text/StringBuilder.h>
 
-#if OS(UNIX) || OS(DARWIN)
+#if HAVE(REGEX_H)
 #include <regex.h>
+#endif
+
+#if OS(UNIX)
 #include <unistd.h>
 #endif
 
@@ -373,7 +376,7 @@ void ConfigFile::parse()
                 return true;
             }
         }
-#if OS(UNIX) || OS(DARWIN)
+#if HAVE(REGEX_H)
         else if (scanner.tryConsume("=~")) {
             char* predicateRegExString = nullptr;
             bool ignoreCase { false };

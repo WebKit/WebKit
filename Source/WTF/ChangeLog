@@ -1,3 +1,12 @@
+2017-05-11  Don Olmstead  <don.olmstead@am.sony.com>
+
+        [CMake] Add HAVE check for regex.h
+        https://bugs.webkit.org/show_bug.cgi?id=171950
+
+        Reviewed by Michael Catanzaro.
+
+        * wtf/Platform.h:
+
 2017-05-11  Chris Dumez  <cdumez@apple.com>
 
         Annotate Ref::ptr() with RETURNS_NONNULL

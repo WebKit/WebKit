@@ -1,3 +1,12 @@
+2017-05-11  Don Olmstead  <don.olmstead@am.sony.com>
+
+        [CMake] Add HAVE check for regex.h
+        https://bugs.webkit.org/show_bug.cgi?id=171950
+
+        Reviewed by Michael Catanzaro.
+
+        * gtest/include/gtest/internal/gtest-port.h:
+
 2017-04-19  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] ../../Source/ThirdParty/xdgmime/src/xdgmimecache.c:200:62: warning: pointer of type ‘void *’ used in arithmetic [-Wpointer-arith]
