@@ -48,7 +48,7 @@ JSCustomElementInterface::JSCustomElementInterface(const QualifiedName& name, JS
     : ActiveDOMCallback(globalObject->scriptExecutionContext())
     , m_name(name)
     , m_constructor(constructor)
-    , m_isolatedWorld(&globalObject->world())
+    , m_isolatedWorld(globalObject->world())
 {
 }
 
@@ -182,7 +182,7 @@ void JSCustomElementInterface::upgradeElement(Element& element)
     if (!context)
         return;
     ASSERT(context->isDocument());
-    JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(context, *m_isolatedWorld);
+    JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(context, m_isolatedWorld);
     ExecState* state = globalObject->globalExec();
     RETURN_IF_EXCEPTION(scope, void());
 
@@ -233,7 +233,7 @@ void JSCustomElementInterface::invokeCallback(Element& element, JSObject* callba
 
     ASSERT(context);
     ASSERT(context->isDocument());
-    JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(context, *m_isolatedWorld);
+    JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(context, m_isolatedWorld);
     ExecState* state = globalObject->globalExec();
 
     JSObject* jsElement = asObject(toJS(state, globalObject, element));

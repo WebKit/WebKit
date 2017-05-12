@@ -30,7 +30,6 @@
 #include "MutationCallback.h"
 #include <heap/Weak.h>
 #include <runtime/JSObject.h>
-#include <wtf/Forward.h>
 
 namespace WebCore {
 
@@ -52,7 +51,7 @@ private:
     JSMutationCallback(JSC::JSObject* callback, JSDOMGlobalObject*);
 
     mutable JSC::Weak<JSC::JSObject> m_callback;
-    RefPtr<DOMWrapperWorld> m_isolatedWorld;
+    Ref<DOMWrapperWorld> m_isolatedWorld;
 };
 
 } // namespace WebCore

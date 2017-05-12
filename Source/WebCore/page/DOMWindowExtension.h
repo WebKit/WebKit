@@ -48,12 +48,12 @@ public:
     void willDestroyGlobalObjectInFrame() override;
     void willDetachGlobalObjectFromFrame() override;
 
-    DOMWrapperWorld& world() const { return *m_world; }
+    DOMWrapperWorld& world() const { return m_world; }
 
 private:
     WEBCORE_EXPORT DOMWindowExtension(Frame*, DOMWrapperWorld&);
 
-    RefPtr<DOMWrapperWorld> m_world;
+    Ref<DOMWrapperWorld> m_world;
     RefPtr<Frame> m_disconnectedFrame;
     bool m_wasDetached;
 };

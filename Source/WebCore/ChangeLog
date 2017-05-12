@@ -1,5 +1,31 @@
 2017-05-12  Daniel Bates  <dabates@apple.com>
 
+        Cleanup: Use Ref instead of RefPtr to hold DOMWrapperWorld
+        https://bugs.webkit.org/show_bug.cgi?id=171988
+
+        Reviewed by Chris Dumez.
+
+        * bindings/js/JSCustomElementInterface.cpp:
+        (WebCore::JSCustomElementInterface::JSCustomElementInterface):
+        (WebCore::JSCustomElementInterface::upgradeElement):
+        (WebCore::JSCustomElementInterface::invokeCallback):
+        * bindings/js/JSCustomElementInterface.h:
+        * bindings/js/JSMutationCallback.cpp:
+        (WebCore::JSMutationCallback::JSMutationCallback):
+        (WebCore::JSMutationCallback::call):
+        * bindings/js/JSMutationCallback.h:
+        * bindings/js/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::ScheduledAction):
+        (WebCore::ScheduledAction::execute):
+        * bindings/js/ScheduledAction.h:
+        (WebCore::ScheduledAction::ScheduledAction):
+        * page/DOMWindowExtension.cpp:
+        (WebCore::DOMWindowExtension::DOMWindowExtension):
+        * page/DOMWindowExtension.h:
+        (WebCore::DOMWindowExtension::world):
+
+2017-05-12  Daniel Bates  <dabates@apple.com>
+
         Cleanup: Make QueueTaskToEventLoopFunctionPtr take JSGlobalObject&
         https://bugs.webkit.org/show_bug.cgi?id=172021
 
