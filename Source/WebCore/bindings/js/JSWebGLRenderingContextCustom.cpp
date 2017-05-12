@@ -24,9 +24,9 @@
  */
 
 #include "config.h"
-#include "JSWebGLRenderingContext.h"
 
 #if ENABLE(WEBGL)
+#include "JSWebGLRenderingContext.h"
 #include "DOMWrapperWorld.h"
 #include "EXTBlendMinMax.h"
 #include "EXTFragDepth.h"
