@@ -901,7 +901,7 @@ writeH("OpcodeGenerated") {
                     outp.puts "if (!Arg::isValidBitImm64Form(args[#{index}].value()))"
                     outp.puts "OPGEN_RETURN(false);"
                 when "SimpleAddr"
-                    outp.puts "if (!args[#{index}].tmp().isGP())"
+                    outp.puts "if (!args[#{index}].ptr().isGP())"
                     outp.puts "OPGEN_RETURN(false);"
                 when "Addr"
                     if arg.role == "UA"

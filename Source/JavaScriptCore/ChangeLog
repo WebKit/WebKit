@@ -1,3 +1,40 @@
+2017-05-11  Saam Barati  <sbarati@apple.com>
+
+        isValidForm for SimpleAddr should use ptr() instead of tmp()
+        https://bugs.webkit.org/show_bug.cgi?id=171992
+
+        Reviewed by Filip Pizlo.
+
+        Arg::tmp() asserts that its kind is Tmp. Inst::isValidForm for
+        SimpleAddr was using Arg::tmp() instead of ptr() to check
+        if the address Tmp isGP(). It should be using Arg::ptr() instead
+        of Arg::tmp() since Arg::ptr() is designed for SimpleAddr.
+        
+        This patch also fixes an incorrect assertion in the ARM64
+        macro assembler. We were asserting various atomic ops were
+        only over 32/64 bit operations. However, the code was properly handling
+        8/16/32/64 bit ops. I changed the assertion to reflect what is
+        actually going on.
+
+        * assembler/ARM64Assembler.h:
+        (JSC::ARM64Assembler::ldar):
+        (JSC::ARM64Assembler::ldxr):
+        (JSC::ARM64Assembler::ldaxr):
+        (JSC::ARM64Assembler::stxr):
+        (JSC::ARM64Assembler::stlr):
+        (JSC::ARM64Assembler::stlxr):
+        * b3/air/opcode_generator.rb:
+        * b3/testb3.cpp:
+        (JSC::B3::testLoadAcq42):
+        (JSC::B3::testStoreRelAddLoadAcq32):
+        (JSC::B3::testStoreRelAddLoadAcq8):
+        (JSC::B3::testStoreRelAddFenceLoadAcq8):
+        (JSC::B3::testStoreRelAddLoadAcq16):
+        (JSC::B3::testStoreRelAddLoadAcq64):
+        (JSC::B3::testAtomicWeakCAS):
+        (JSC::B3::testAtomicStrongCAS):
+        (JSC::B3::testAtomicXchg):
+
 2017-05-11  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r216677.

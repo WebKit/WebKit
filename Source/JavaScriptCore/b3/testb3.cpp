@@ -300,13 +300,6 @@ void testLoad42()
 
 void testLoadAcq42()
 {
-#ifndef NDEBUG
-    if (isARM64()) {
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=171826
-        return;
-    }
-#endif
-
     Procedure proc;
     BasicBlock* root = proc.addBlock();
     int x = 42;
@@ -5777,13 +5770,6 @@ void testStoreAddLoad32(int amount)
 
 void testStoreRelAddLoadAcq32(int amount)
 {
-#ifndef NDEBUG
-    if (isARM64()) {
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=171826
-        return;
-    }
-#endif
-
     Procedure proc;
     BasicBlock* root = proc.addBlock();
     int slot = 37;
@@ -5857,13 +5843,6 @@ void testStoreAddLoad8(int amount, B3::Opcode loadOpcode)
 
 void testStoreRelAddLoadAcq8(int amount, B3::Opcode loadOpcode)
 {
-#ifndef NDEBUG
-    if (isARM64()) {
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=171826
-        return;
-    }
-#endif
-
     Procedure proc;
     BasicBlock* root = proc.addBlock();
     int8_t slot = 37;
@@ -5893,13 +5872,6 @@ void testStoreRelAddLoadAcq8(int amount, B3::Opcode loadOpcode)
 
 void testStoreRelAddFenceLoadAcq8(int amount, B3::Opcode loadOpcode)
 {
-#ifndef NDEBUG
-    if (isARM64()) {
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=171826
-        return;
-    }
-#endif
-
     Procedure proc;
     BasicBlock* root = proc.addBlock();
     int8_t slot = 37;
@@ -5983,13 +5955,6 @@ void testStoreAddLoad16(int amount, B3::Opcode loadOpcode)
 
 void testStoreRelAddLoadAcq16(int amount, B3::Opcode loadOpcode)
 {
-#ifndef NDEBUG
-    if (isARM64()) {
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=171826
-        return;
-    }
-#endif
-
     Procedure proc;
     BasicBlock* root = proc.addBlock();
     int16_t slot = 37;
@@ -6061,13 +6026,6 @@ void testStoreAddLoad64(int amount)
 
 void testStoreRelAddLoadAcq64(int amount)
 {
-#ifndef NDEBUG
-    if (isARM64()) {
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=171826
-        return;
-    }
-#endif
-
     Procedure proc;
     BasicBlock* root = proc.addBlock();
     int64_t slot = 37000000000ll;
@@ -14696,12 +14654,6 @@ void testOptimizeMaterialization()
 template<typename T>
 void testAtomicWeakCAS()
 {
-#ifndef NDEBUG
-    if (isARM64()) {
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=171826
-        return;
-    }
-#endif
     Type type = NativeTraits<T>::type;
     Width width = NativeTraits<T>::width;
     
@@ -14949,12 +14901,6 @@ void testAtomicWeakCAS()
 template<typename T>
 void testAtomicStrongCAS()
 {
-#ifndef NDEBUG
-    if (isARM64()) {
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=171826
-        return;
-    }
-#endif
     Type type = NativeTraits<T>::type;
     Width width = NativeTraits<T>::width;
     
@@ -15224,12 +15170,6 @@ void testAtomicStrongCAS()
 template<typename T>
 void testAtomicXchg(B3::Opcode opcode)
 {
-#ifndef NDEBUG
-    if (isARM64()) {
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=171826
-        return;
-    }
-#endif
     Type type = NativeTraits<T>::type;
     Width width = NativeTraits<T>::width;
     

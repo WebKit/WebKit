@@ -35,9 +35,11 @@
 #include <stdint.h>
 
 #define CHECK_DATASIZE_OF(datasize) ASSERT(datasize == 32 || datasize == 64)
+#define CHECK_MEMOPSIZE_OF(size) ASSERT(size == 8 || size == 16 || size == 32 || size == 64 || size == 128);
 #define DATASIZE_OF(datasize) ((datasize == 64) ? Datasize_64 : Datasize_32)
 #define MEMOPSIZE_OF(datasize) ((datasize == 8 || datasize == 128) ? MemOpSize_8_or_128 : (datasize == 16) ? MemOpSize_16 : (datasize == 32) ? MemOpSize_32 : MemOpSize_64)
 #define CHECK_DATASIZE() CHECK_DATASIZE_OF(datasize)
+#define CHECK_MEMOPSIZE() CHECK_MEMOPSIZE_OF(datasize)
 #define CHECK_VECTOR_DATASIZE() ASSERT(datasize == 64 || datasize == 128)
 #define DATASIZE DATASIZE_OF(datasize)
 #define MEMOPSIZE MEMOPSIZE_OF(datasize)
@@ -1550,42 +1552,42 @@ public:
     template<int datasize>
     void ldar(RegisterID dst, RegisterID src)
     {
-        CHECK_DATASIZE();
+        CHECK_MEMOPSIZE();
         insn(exoticLoad(MEMOPSIZE, ExoticLoadFence_Acquire, ExoticLoadAtomic_None, dst, src));
     }
 
     template<int datasize>
     void ldxr(RegisterID dst, RegisterID src)
     {
-        CHECK_DATASIZE();
+        CHECK_MEMOPSIZE();
         insn(exoticLoad(MEMOPSIZE, ExoticLoadFence_None, ExoticLoadAtomic_Link, dst, src));
     }
 
     template<int datasize>
     void ldaxr(RegisterID dst, RegisterID src)
     {
-        CHECK_DATASIZE();
+        CHECK_MEMOPSIZE();
         insn(exoticLoad(MEMOPSIZE, ExoticLoadFence_Acquire, ExoticLoadAtomic_Link, dst, src));
     }
     
     template<int datasize>
     void stxr(RegisterID result, RegisterID src, RegisterID dst)
     {
-        CHECK_DATASIZE();
+        CHECK_MEMOPSIZE();
         insn(exoticStore(MEMOPSIZE, ExoticStoreFence_None, result, src, dst));
     }
 
     template<int datasize>
     void stlr(RegisterID src, RegisterID dst)
     {
-        CHECK_DATASIZE();
+        CHECK_MEMOPSIZE();
         insn(storeRelease(MEMOPSIZE, src, dst));
     }
 
     template<int datasize>
     void stlxr(RegisterID result, RegisterID src, RegisterID dst)
     {
-        CHECK_DATASIZE();
+        CHECK_MEMOPSIZE();
         insn(exoticStore(MEMOPSIZE, ExoticStoreFence_Release, result, src, dst));
     }
     
