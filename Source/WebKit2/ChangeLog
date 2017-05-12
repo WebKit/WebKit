@@ -1,3 +1,103 @@
+2017-05-12  Chris Dumez  <cdumez@apple.com>
+
+        Stop using PassRefPtr under WebKit2/UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=172029
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _takeViewSnapshot]):
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::registerEditCommand):
+        * UIProcess/API/gtk/PageClientImpl.h:
+        * UIProcess/API/gtk/WebKitFaviconDatabase.cpp:
+        (getIconSurfaceSynchronously):
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        * UIProcess/API/wpe/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::registerEditCommand):
+        * UIProcess/API/wpe/PageClientImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::registerEditCommand):
+        * UIProcess/DefaultUndoController.cpp:
+        (WebKit::DefaultUndoController::registerEditCommand):
+        * UIProcess/DefaultUndoController.h:
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        (WebKit::DownloadProxy::create):
+        * UIProcess/Downloads/DownloadProxy.h:
+        * UIProcess/GeolocationPermissionRequestManagerProxy.cpp:
+        (WebKit::GeolocationPermissionRequestManagerProxy::createRequest):
+        * UIProcess/GeolocationPermissionRequestManagerProxy.h:
+        * UIProcess/InspectorServer/HTTPRequest.cpp:
+        (WebKit::HTTPRequest::parseHTTPRequestFromBuffer):
+        * UIProcess/InspectorServer/HTTPRequest.h:
+        * UIProcess/InspectorServer/WebInspectorServer.cpp:
+        (WebKit::WebInspectorServer::didReceiveUnrecognizedHTTPRequest):
+        (WebKit::WebInspectorServer::didReceiveWebSocketUpgradeHTTPRequest):
+        (WebKit::WebInspectorServer::didEstablishWebSocketConnection):
+        * UIProcess/InspectorServer/WebInspectorServer.h:
+        * UIProcess/InspectorServer/WebSocketServerClient.h:
+        (WebKit::WebSocketServerClient::didReceiveUnrecognizedHTTPRequest):
+        (WebKit::WebSocketServerClient::didReceiveWebSocketUpgradeHTTPRequest):
+        (WebKit::WebSocketServerClient::didEstablishWebSocketConnection):
+        * UIProcess/InspectorServer/WebSocketServerConnection.cpp:
+        (WebKit::WebSocketServerConnection::readHTTPMessage):
+        (WebKit::WebSocketServerConnection::upgradeToWebSocketServerConnection):
+        * UIProcess/InspectorServer/WebSocketServerConnection.h:
+        * UIProcess/Notifications/NotificationPermissionRequestManagerProxy.cpp:
+        (WebKit::NotificationPermissionRequestManagerProxy::createRequest):
+        * UIProcess/Notifications/NotificationPermissionRequestManagerProxy.h:
+        * UIProcess/Notifications/WebNotificationProvider.cpp:
+        (WebKit::WebNotificationProvider::notificationPermissions):
+        * UIProcess/Notifications/WebNotificationProvider.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/Storage/LocalStorageDatabase.cpp:
+        * UIProcess/WebContextMenuListenerProxy.h:
+        * UIProcess/WebCookieManagerProxy.h:
+        * UIProcess/WebEditCommandProxy.cpp:
+        (WebKit::WebEditCommandProxy::unapply):
+        (WebKit::WebEditCommandProxy::reapply):
+        * UIProcess/WebEditCommandProxy.h:
+        * UIProcess/WebGrammarDetail.cpp:
+        (WebKit::WebGrammarDetail::create):
+        * UIProcess/WebGrammarDetail.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::ExceededDatabaseQuotaRecords::createRecord):
+        (WebKit::WebPageProxy::registerEditCommand):
+        (WebKit::WebPageProxy::didReceiveAuthenticationChallengeProxy):
+        (WebKit::WebPageProxy::exceededDatabaseQuota):
+        (WebKit::WebPageProxy::reachedApplicationCacheOriginQuota):
+        (WebKit::WebPageProxy::takeViewSnapshot):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::plugInAutoStartOriginHashes):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (-[WKEditCommandObjC initWithWebEditCommandProxy:]):
+        (WebKit::PageClientImpl::registerEditCommand):
+        (WebKit::PageClientImpl::saveImageToLibrary):
+        (WebKit::PageClientImpl::setDragImage):
+        (WebKit::PageClientImpl::takeViewSnapshot):
+        * UIProcess/ios/WKGeolocationProviderIOS.mm:
+        (-[WKWebAllowDenyPolicyListener initWithPermissionRequestProxy:]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::saveImageToLibrary):
+        * UIProcess/mac/PageClientImpl.h:
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::registerEditCommand):
+        (WebKit::PageClientImpl::setDragImage):
+        (WebKit::PageClientImpl::setPromisedDataForImage):
+        (WebKit::PageClientImpl::takeViewSnapshot):
+        * UIProcess/mac/WKImmediateActionController.mm:
+        (-[WKImmediateActionController _webHitTestResult]):
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::setDragImage):
+        (WebKit::WebPageProxy::setPromisedDataForImage):
+        * WebProcess/IconDatabase/WebIconDatabaseProxy.h:
+
 2017-05-12  Jeremy Jones  <jeremyj@apple.com>
 
         Add UIClient callback for when picture-in-picture is activated.

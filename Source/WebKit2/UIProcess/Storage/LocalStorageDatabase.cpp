@@ -33,7 +33,7 @@
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/StorageMap.h>
 #include <WebCore/SuddenTermination.h>
-#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
 #include <wtf/WorkQueue.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>

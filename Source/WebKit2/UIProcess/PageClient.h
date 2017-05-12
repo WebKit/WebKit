@@ -165,7 +165,7 @@ public:
     virtual void setCursorHiddenUntilMouseMoves(bool) = 0;
     virtual void didChangeViewportProperties(const WebCore::ViewportAttributes&) = 0;
 
-    virtual void registerEditCommand(PassRefPtr<WebEditCommandProxy>, WebPageProxy::UndoOrRedo) = 0;
+    virtual void registerEditCommand(Ref<WebEditCommandProxy>&&, WebPageProxy::UndoOrRedo) = 0;
     virtual void clearAllEditCommands() = 0;
     virtual bool canUndoRedo(WebPageProxy::UndoOrRedo) = 0;
     virtual void executeUndoRedo(WebPageProxy::UndoOrRedo) = 0;
@@ -173,14 +173,14 @@ public:
 #if PLATFORM(COCOA)
     virtual void accessibilityWebProcessTokenReceived(const IPC::DataReference&) = 0;
     virtual bool executeSavedCommandBySelector(const String& selector) = 0;
-    virtual void setDragImage(const WebCore::IntPoint& clientPosition, PassRefPtr<ShareableBitmap> dragImage, WebCore::DragSourceAction) = 0;
+    virtual void setDragImage(const WebCore::IntPoint& clientPosition, Ref<ShareableBitmap>&& dragImage, WebCore::DragSourceAction) = 0;
     virtual void updateSecureInputState() = 0;
     virtual void resetSecureInputState() = 0;
     virtual void notifyInputContextAboutDiscardedComposition() = 0;
     virtual void makeFirstResponder() = 0;
     virtual void setAcceleratedCompositingRootLayer(LayerOrView *) = 0;
     virtual LayerOrView *acceleratedCompositingRootLayer() const = 0;
-    virtual PassRefPtr<ViewSnapshot> takeViewSnapshot() = 0;
+    virtual RefPtr<ViewSnapshot> takeViewSnapshot() = 0;
 #if ENABLE(MAC_GESTURE_EVENTS)
     virtual void gestureEventWasNotHandledByWebCore(const NativeWebGestureEvent&) = 0;
 #endif
@@ -191,12 +191,9 @@ public:
 #endif
 
 #if USE(APPKIT)
-    virtual void setPromisedDataForImage(const String& pasteboardName, PassRefPtr<WebCore::SharedBuffer> imageBuffer, const String& filename, const String& extension, const String& title,
-                                 const String& url, const String& visibleUrl, PassRefPtr<WebCore::SharedBuffer> archiveBuffer) = 0;
+    virtual void setPromisedDataForImage(const String& pasteboardName, Ref<WebCore::SharedBuffer>&& imageBuffer, const String& filename, const String& extension, const String& title, const String& url, const String& visibleUrl, RefPtr<WebCore::SharedBuffer>&& archiveBuffer) = 0;
 #if ENABLE(ATTACHMENT_ELEMENT)
-    virtual void setPromisedDataForAttachment(const String& pasteboardName, const String& filename, const String& extension, const String& title,
-                                         const String& url, const String& visibleUrl) = 0;
-
+    virtual void setPromisedDataForAttachment(const String& pasteboardName, const String& filename, const String& extension, const String& title, const String& url, const String& visibleUrl) = 0;
 #endif
 #endif
 
@@ -305,7 +302,7 @@ public:
     virtual bool isAssistingNode() = 0;
     virtual bool interpretKeyEvent(const NativeWebKeyboardEvent&, bool isCharEvent) = 0;
     virtual void positionInformationDidChange(const InteractionInformationAtPosition&) = 0;
-    virtual void saveImageToLibrary(PassRefPtr<WebCore::SharedBuffer>) = 0;
+    virtual void saveImageToLibrary(Ref<WebCore::SharedBuffer>&&) = 0;
     virtual bool allowsBlockSelection() = 0;
     virtual void didUpdateBlockSelectionWithTouch(uint32_t touch, uint32_t flags, float growThreshold, float shrinkThreshold) = 0;
     virtual void showPlaybackTargetPicker(bool hasVideo, const WebCore::IntRect& elementRect) = 0;

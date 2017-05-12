@@ -29,7 +29,7 @@ namespace WebKit {
 
 class DefaultUndoController {
 public:
-    void registerEditCommand(PassRefPtr<WebEditCommandProxy>, WebPageProxy::UndoOrRedo);
+    void registerEditCommand(Ref<WebEditCommandProxy>&&, WebPageProxy::UndoOrRedo);
     void clearAllEditCommands();
     bool canUndoRedo(WebPageProxy::UndoOrRedo);
     void executeUndoRedo(WebPageProxy::UndoOrRedo);

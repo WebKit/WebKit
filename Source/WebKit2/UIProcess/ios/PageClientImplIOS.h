@@ -73,13 +73,13 @@ private:
     void setCursor(const WebCore::Cursor&) override;
     void setCursorHiddenUntilMouseMoves(bool) override;
     void didChangeViewportProperties(const WebCore::ViewportAttributes&) override;
-    void registerEditCommand(PassRefPtr<WebEditCommandProxy>, WebPageProxy::UndoOrRedo) override;
+    void registerEditCommand(Ref<WebEditCommandProxy>&&, WebPageProxy::UndoOrRedo) override;
     void clearAllEditCommands() override;
     bool canUndoRedo(WebPageProxy::UndoOrRedo) override;
     void executeUndoRedo(WebPageProxy::UndoOrRedo) override;
     void accessibilityWebProcessTokenReceived(const IPC::DataReference&) override;
     bool executeSavedCommandBySelector(const String& selector) override;
-    void setDragImage(const WebCore::IntPoint& clientPosition, PassRefPtr<ShareableBitmap> dragImage, WebCore::DragSourceAction) override;
+    void setDragImage(const WebCore::IntPoint& clientPosition, Ref<ShareableBitmap>&& dragImage, WebCore::DragSourceAction) override;
     void updateSecureInputState() override;
     void resetSecureInputState() override;
     void notifyInputContextAboutDiscardedComposition() override;
@@ -111,7 +111,7 @@ private:
     LayerOrView *acceleratedCompositingRootLayer() const override;
     LayerHostingMode viewLayerHostingMode() override { return LayerHostingMode::OutOfProcess; }
 
-    PassRefPtr<ViewSnapshot> takeViewSnapshot() override;
+    RefPtr<ViewSnapshot> takeViewSnapshot() override;
     void wheelEventWasNotHandledByWebCore(const NativeWebWheelEvent&) override;
 
     void commitPotentialTapFailed() override;
@@ -131,7 +131,7 @@ private:
     void selectionDidChange() override;
     bool interpretKeyEvent(const NativeWebKeyboardEvent&, bool isCharEvent) override;
     void positionInformationDidChange(const InteractionInformationAtPosition&) override;
-    void saveImageToLibrary(PassRefPtr<WebCore::SharedBuffer>) override;
+    void saveImageToLibrary(Ref<WebCore::SharedBuffer>&&) override;
     bool allowsBlockSelection() override;
     void didUpdateBlockSelectionWithTouch(uint32_t touch, uint32_t flags, float growThreshold, float shrinkThreshold) override;
     void showPlaybackTargetPicker(bool hasVideo, const WebCore::IntRect& elementRect) override;

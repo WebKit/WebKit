@@ -31,7 +31,6 @@
 #include "WebContextSupplement.h"
 #include "WebCookieManagerProxyClient.h"
 #include <WebCore/SessionID.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 

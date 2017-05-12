@@ -91,7 +91,7 @@ void WebNotificationProvider::removeNotificationManager(WebNotificationManagerPr
     m_client.removeNotificationManager(toAPI(manager), m_client.base.clientInfo);
 }
 
-PassRefPtr<API::Dictionary> WebNotificationProvider::notificationPermissions()
+RefPtr<API::Dictionary> WebNotificationProvider::notificationPermissions()
 {
     if (!m_client.notificationPermissions)
         return API::Dictionary::create();

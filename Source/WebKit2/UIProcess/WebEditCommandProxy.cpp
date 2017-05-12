@@ -56,7 +56,7 @@ void WebEditCommandProxy::unapply()
         return;
 
     m_page->process().send(Messages::WebPage::UnapplyEditCommand(m_commandID), m_page->pageID(), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
-    m_page->registerEditCommand(this, WebPageProxy::Redo);
+    m_page->registerEditCommand(*this, WebPageProxy::Redo);
 }
 
 void WebEditCommandProxy::reapply()
@@ -65,7 +65,7 @@ void WebEditCommandProxy::reapply()
         return;
 
     m_page->process().send(Messages::WebPage::ReapplyEditCommand(m_commandID), m_page->pageID(), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
-    m_page->registerEditCommand(this, WebPageProxy::Undo);
+    m_page->registerEditCommand(*this, WebPageProxy::Undo);
 }
 
 String WebEditCommandProxy::nameForEditAction(EditAction editAction)

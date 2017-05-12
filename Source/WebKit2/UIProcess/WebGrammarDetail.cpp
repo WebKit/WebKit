@@ -32,14 +32,14 @@
 
 namespace WebKit {
 
-PassRefPtr<WebGrammarDetail> WebGrammarDetail::create(int location, int length, API::Array* guesses, const String& userDescription)
+Ref<WebGrammarDetail> WebGrammarDetail::create(int location, int length, API::Array* guesses, const String& userDescription)
 {
-    return adoptRef(new WebGrammarDetail(location, length, guesses, userDescription));
+    return adoptRef(*new WebGrammarDetail(location, length, guesses, userDescription));
 }
 
-PassRefPtr<WebGrammarDetail> WebGrammarDetail::create(const WebCore::GrammarDetail& grammarDetail)
+Ref<WebGrammarDetail> WebGrammarDetail::create(const WebCore::GrammarDetail& grammarDetail)
 {
-    return adoptRef(new WebGrammarDetail(grammarDetail));
+    return adoptRef(*new WebGrammarDetail(grammarDetail));
 }
 
 WebGrammarDetail::WebGrammarDetail(int location, int length, API::Array* guesses, const String& userDescription)

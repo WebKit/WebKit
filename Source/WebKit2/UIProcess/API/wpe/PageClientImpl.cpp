@@ -132,7 +132,7 @@ void PageClientImpl::didChangeViewportProperties(const WebCore::ViewportAttribut
 {
 }
 
-void PageClientImpl::registerEditCommand(PassRefPtr<WebEditCommandProxy>, WebPageProxy::UndoOrRedo)
+void PageClientImpl::registerEditCommand(Ref<WebEditCommandProxy>&&, WebPageProxy::UndoOrRedo)
 {
 }
 

@@ -32,7 +32,7 @@
 #include "SandboxExtension.h"
 #include <WebCore/ResourceRequest.h>
 #include <wtf/Forward.h>
-#include <wtf/PassRefPtr.h>
+#include <wtf/Ref.h>
 
 namespace API {
 class Data;
@@ -54,7 +54,7 @@ class WebProcessPool;
 
 class DownloadProxy : public API::ObjectImpl<API::Object::Type::Download>, public IPC::MessageReceiver {
 public:
-    static PassRefPtr<DownloadProxy> create(DownloadProxyMap&, WebProcessPool&, const WebCore::ResourceRequest&);
+    static Ref<DownloadProxy> create(DownloadProxyMap&, WebProcessPool&, const WebCore::ResourceRequest&);
     ~DownloadProxy();
 
     DownloadID downloadID() const { return m_downloadID; }

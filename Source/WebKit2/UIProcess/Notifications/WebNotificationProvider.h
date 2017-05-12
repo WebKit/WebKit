@@ -56,7 +56,7 @@ public:
     void addNotificationManager(WebNotificationManagerProxy*);
     void removeNotificationManager(WebNotificationManagerProxy*);
     
-    PassRefPtr<API::Dictionary> notificationPermissions();
+    RefPtr<API::Dictionary> notificationPermissions();
 };
 
 } // namespace WebKit

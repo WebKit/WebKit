@@ -539,7 +539,7 @@ void WKContextClearCachedCredentials(WKContextRef context)
 
 WKDictionaryRef WKContextCopyPlugInAutoStartOriginHashes(WKContextRef contextRef)
 {
-    return toAPI(toImpl(contextRef)->plugInAutoStartOriginHashes().leakRef());
+    return toAPI(&toImpl(contextRef)->plugInAutoStartOriginHashes().leakRef());
 }
 
 void WKContextSetPlugInAutoStartOriginHashes(WKContextRef contextRef, WKDictionaryRef dictionaryRef)

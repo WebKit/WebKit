@@ -1542,7 +1542,7 @@ void WebProcessPool::plugInDidReceiveUserInteraction(unsigned plugInOriginHash, 
     m_plugInAutoStartProvider.didReceiveUserInteraction(plugInOriginHash, sessionID);
 }
 
-PassRefPtr<API::Dictionary> WebProcessPool::plugInAutoStartOriginHashes() const
+Ref<API::Dictionary> WebProcessPool::plugInAutoStartOriginHashes() const
 {
     return m_plugInAutoStartProvider.autoStartOriginsTableCopy();
 }

@@ -40,7 +40,7 @@ public:
     void invalidateRequests();
 
     // Create a request to be presented to the user.
-    PassRefPtr<GeolocationPermissionRequestProxy> createRequest(uint64_t geolocationID);
+    Ref<GeolocationPermissionRequestProxy> createRequest(uint64_t geolocationID);
     
     // Called by GeolocationPermissionRequestProxy when a decision is made by the user.
     void didReceiveGeolocationPermissionDecision(uint64_t, bool allow);

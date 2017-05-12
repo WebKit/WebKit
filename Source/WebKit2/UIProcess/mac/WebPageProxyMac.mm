@@ -272,7 +272,7 @@ void WebPageProxy::replaceSelectionWithPasteboardData(const Vector<String>& type
 void WebPageProxy::setDragImage(const WebCore::IntPoint& clientPosition, const ShareableBitmap::Handle& dragImageHandle, std::optional<TextIndicatorData>, const FloatPoint&, uint64_t action)
 {
     if (auto dragImage = ShareableBitmap::create(dragImageHandle))
-        m_pageClient.setDragImage(clientPosition, WTFMove(dragImage), static_cast<DragSourceAction>(action));
+        m_pageClient.setDragImage(clientPosition, dragImage.releaseNonNull(), static_cast<DragSourceAction>(action));
 
     didStartDrag();
 }
@@ -283,14 +283,14 @@ void WebPageProxy::setPromisedDataForImage(const String& pasteboardName, const S
     MESSAGE_CHECK_URL(url);
     MESSAGE_CHECK_URL(visibleURL);
     RefPtr<SharedMemory> sharedMemoryImage = SharedMemory::map(imageHandle, SharedMemory::Protection::ReadOnly);
-    RefPtr<SharedBuffer> imageBuffer = SharedBuffer::create(static_cast<unsigned char*>(sharedMemoryImage->data()), imageSize);
+    auto imageBuffer = SharedBuffer::create(static_cast<unsigned char*>(sharedMemoryImage->data()), imageSize);
     RefPtr<SharedBuffer> archiveBuffer;
     
     if (!archiveHandle.isNull()) {
         RefPtr<SharedMemory> sharedMemoryArchive = SharedMemory::map(archiveHandle, SharedMemory::Protection::ReadOnly);
         archiveBuffer = SharedBuffer::create(static_cast<unsigned char*>(sharedMemoryArchive->data()), archiveSize);
     }
-    m_pageClient.setPromisedDataForImage(pasteboardName, imageBuffer, filename, extension, title, url, visibleURL, archiveBuffer);
+    m_pageClient.setPromisedDataForImage(pasteboardName, WTFMove(imageBuffer), filename, extension, title, url, visibleURL, WTFMove(archiveBuffer));
 }
 
 #if ENABLE(ATTACHMENT_ELEMENT)

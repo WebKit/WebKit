@@ -2531,11 +2531,9 @@ void WebViewImpl::executeEditCommandForSelector(SEL selector, const String& argu
     m_page->executeEditCommand(commandNameForSelector(selector), argument);
 }
 
-void WebViewImpl::registerEditCommand(RefPtr<WebEditCommandProxy> prpCommand, WebPageProxy::UndoOrRedo undoOrRedo)
+void WebViewImpl::registerEditCommand(Ref<WebEditCommandProxy>&& command, WebPageProxy::UndoOrRedo undoOrRedo)
 {
-    RefPtr<WebEditCommandProxy> command = prpCommand;
-
-    RetainPtr<WKEditCommandObjC> commandObjC = adoptNS([[WKEditCommandObjC alloc] initWithWebEditCommandProxy:command]);
+    RetainPtr<WKEditCommandObjC> commandObjC = adoptNS([[WKEditCommandObjC alloc] initWithWebEditCommandProxy:command.ptr()]);
     String actionName = WebEditCommandProxy::nameForEditAction(command->editAction());
 
     NSUndoManager *undoManager = [m_view undoManager];

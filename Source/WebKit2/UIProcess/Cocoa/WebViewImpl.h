@@ -280,7 +280,7 @@ public:
     bool isEditable() const;
     bool executeSavedCommandBySelector(SEL);
     void executeEditCommandForSelector(SEL, const String& argument = String());
-    void registerEditCommand(RefPtr<WebEditCommandProxy>, WebPageProxy::UndoOrRedo);
+    void registerEditCommand(Ref<WebEditCommandProxy>&&, WebPageProxy::UndoOrRedo);
     void clearAllEditCommands();
     bool writeSelectionToPasteboard(NSPasteboard *, NSArray *types);
     bool readSelectionFromPasteboard(NSPasteboard *);

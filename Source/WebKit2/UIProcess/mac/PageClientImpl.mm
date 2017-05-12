@@ -317,9 +317,9 @@ void PageClientImpl::didChangeViewportProperties(const WebCore::ViewportAttribut
 {
 }
 
-void PageClientImpl::registerEditCommand(PassRefPtr<WebEditCommandProxy> prpCommand, WebPageProxy::UndoOrRedo undoOrRedo)
+void PageClientImpl::registerEditCommand(Ref<WebEditCommandProxy>&& command, WebPageProxy::UndoOrRedo undoOrRedo)
 {
-    m_impl->registerEditCommand(prpCommand, undoOrRedo);
+    m_impl->registerEditCommand(WTFMove(command), undoOrRedo);
 }
 
 #if USE(INSERTION_UNDO_GROUPING)
@@ -344,7 +344,7 @@ void PageClientImpl::executeUndoRedo(WebPageProxy::UndoOrRedo undoOrRedo)
     return (undoOrRedo == WebPageProxy::Undo) ? [[m_view undoManager] undo] : [[m_view undoManager] redo];
 }
 
-void PageClientImpl::setDragImage(const IntPoint& clientPosition, PassRefPtr<ShareableBitmap> dragImage, DragSourceAction action)
+void PageClientImpl::setDragImage(const IntPoint& clientPosition, Ref<ShareableBitmap>&& dragImage, DragSourceAction action)
 {
     RetainPtr<CGImageRef> dragCGImage = dragImage->makeCGImage();
     RetainPtr<NSImage> dragNSImage = adoptNS([[NSImage alloc] initWithCGImage:dragCGImage.get() size:dragImage->size()]);
@@ -355,10 +355,10 @@ void PageClientImpl::setDragImage(const IntPoint& clientPosition, PassRefPtr<Sha
     m_impl->dragImageForView(m_view, dragNSImage.get(), clientPosition, action == DragSourceActionLink);
 }
 
-void PageClientImpl::setPromisedDataForImage(const String& pasteboardName, PassRefPtr<SharedBuffer> imageBuffer, const String& filename, const String& extension, const String& title, const String& url, const String& visibleURL, PassRefPtr<SharedBuffer> archiveBuffer)
+void PageClientImpl::setPromisedDataForImage(const String& pasteboardName, Ref<SharedBuffer>&& imageBuffer, const String& filename, const String& extension, const String& title, const String& url, const String& visibleURL, RefPtr<SharedBuffer>&& archiveBuffer)
 {
     RefPtr<Image> image = BitmapImage::create();
-    image->setData(imageBuffer.get(), true);
+    image->setData(WTFMove(imageBuffer), true);
     m_impl->setPromisedDataForImage(image.get(), filename, extension, title, url, visibleURL, archiveBuffer.get(), pasteboardName);
 }
 
@@ -503,7 +503,7 @@ CALayer *PageClientImpl::acceleratedCompositingRootLayer() const
     return m_impl->acceleratedCompositingRootLayer();
 }
 
-PassRefPtr<ViewSnapshot> PageClientImpl::takeViewSnapshot()
+RefPtr<ViewSnapshot> PageClientImpl::takeViewSnapshot()
 {
     return m_impl->takeViewSnapshot();
 }

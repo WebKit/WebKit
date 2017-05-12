@@ -29,7 +29,7 @@
 #if ENABLE(INSPECTOR_SERVER)
 
 #include <WebCore/SocketStreamHandleClient.h>
-#include <wtf/PassRefPtr.h>
+#include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -78,7 +78,7 @@ private:
     void readHTTPMessage();
 
     // WebSocket Mode.
-    void upgradeToWebSocketServerConnection(PassRefPtr<HTTPRequest>);
+    void upgradeToWebSocketServerConnection(Ref<HTTPRequest>&&);
     void readWebSocketFrames();
     bool readWebSocketFrame();
 

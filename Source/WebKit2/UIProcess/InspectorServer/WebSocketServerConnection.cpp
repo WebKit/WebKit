@@ -173,7 +173,7 @@ void WebSocketServerConnection::readHTTPMessage()
     const HTTPHeaderMap& headers = request->headerFields();
     String upgradeHeaderValue = headers.get(HTTPHeaderName::Upgrade);
     if (upgradeHeaderValue == "websocket") {
-        upgradeToWebSocketServerConnection(request);
+        upgradeToWebSocketServerConnection(request.releaseNonNull());
         return;
     }
     if (upgradeHeaderValue == "WebSocket") {
@@ -182,24 +182,21 @@ void WebSocketServerConnection::readHTTPMessage()
     }
 
     // Otherwise, this is an HTTP Request we don't know how to deal with.
-    m_client->didReceiveUnrecognizedHTTPRequest(this, request);
+    m_client->didReceiveUnrecognizedHTTPRequest(this, request.releaseNonNull());
 }
 
-void WebSocketServerConnection::upgradeToWebSocketServerConnection(PassRefPtr<HTTPRequest> request)
+void WebSocketServerConnection::upgradeToWebSocketServerConnection(Ref<HTTPRequest>&& request)
 {
-    ASSERT(request);
     ASSERT(m_mode == HTTP);
     m_mode = WebSocket;
-    RefPtr<HTTPRequest> protectedRequest(request);
-
     // Ask the client if we should upgrade for this or not.
-    if (!m_client->didReceiveWebSocketUpgradeHTTPRequest(this, protectedRequest)) {
+    if (!m_client->didReceiveWebSocketUpgradeHTTPRequest(this, request.copyRef())) {
         shutdownNow();
         return;
     }
 
     // Build and send the WebSocket handshake response.
-    const HTTPHeaderMap& requestHeaders = protectedRequest->headerFields();
+    const HTTPHeaderMap& requestHeaders = request->headerFields();
     String accept = WebSocketHandshake::getExpectedWebSocketAccept(requestHeaders.get(HTTPHeaderName::SecWebSocketKey));
     HTTPHeaderMap responseHeaders;
     responseHeaders.add("Upgrade", requestHeaders.get(HTTPHeaderName::Upgrade));
@@ -208,7 +205,7 @@ void WebSocketServerConnection::upgradeToWebSocketServerConnection(PassRefPtr<HT
 
     sendHTTPResponseHeader(101, "WebSocket Protocol Handshake", responseHeaders);
 
-    m_client->didEstablishWebSocketConnection(this, protectedRequest);
+    m_client->didEstablishWebSocketConnection(this, WTFMove(request));
 }
 
 void WebSocketServerConnection::readWebSocketFrames()

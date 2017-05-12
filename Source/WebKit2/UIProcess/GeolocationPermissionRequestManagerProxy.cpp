@@ -45,11 +45,11 @@ void GeolocationPermissionRequestManagerProxy::invalidateRequests()
     m_pendingRequests.clear();
 }
 
-PassRefPtr<GeolocationPermissionRequestProxy> GeolocationPermissionRequestManagerProxy::createRequest(uint64_t geolocationID)
+Ref<GeolocationPermissionRequestProxy> GeolocationPermissionRequestManagerProxy::createRequest(uint64_t geolocationID)
 {
     auto request = GeolocationPermissionRequestProxy::create(this, geolocationID);
     m_pendingRequests.add(geolocationID, request.ptr());
-    return WTFMove(request);
+    return request;
 }
 
 void GeolocationPermissionRequestManagerProxy::didReceiveGeolocationPermissionDecision(uint64_t geolocationID, bool allowed)

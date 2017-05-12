@@ -30,7 +30,6 @@
 #include "APIObject.h"
 #include "WKArray.h"
 #include "WebContextMenuProxy.h"
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
 namespace WebKit {

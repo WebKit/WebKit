@@ -41,7 +41,7 @@ public:
     void invalidateRequests();
     
     // Create a request to be presented to the user.
-    PassRefPtr<NotificationPermissionRequest> createRequest(uint64_t notificationID);
+    Ref<NotificationPermissionRequest> createRequest(uint64_t notificationID);
     
     // Called by NotificationPermissionRequest when a decision is made by the user.
     void didReceiveNotificationPermissionDecision(uint64_t notificationID, bool allow);

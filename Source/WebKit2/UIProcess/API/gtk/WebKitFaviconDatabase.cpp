@@ -131,7 +131,7 @@ struct GetFaviconSurfaceAsyncData {
 };
 WEBKIT_DEFINE_ASYNC_DATA_STRUCT(GetFaviconSurfaceAsyncData)
 
-static PassRefPtr<cairo_surface_t> getIconSurfaceSynchronously(WebKitFaviconDatabase* database, const String& pageURL, GError** error)
+static RefPtr<cairo_surface_t> getIconSurfaceSynchronously(WebKitFaviconDatabase* database, const String& pageURL, GError** error)
 {
     ASSERT(RunLoop::isMain());
 
@@ -140,16 +140,16 @@ static PassRefPtr<cairo_surface_t> getIconSurfaceSynchronously(WebKitFaviconData
     WebCore::Image* iconImage = database->priv->iconDatabase->imageForPageURL(pageURL, WebCore::IntSize(1, 1));
     if (!iconImage) {
         g_set_error(error, WEBKIT_FAVICON_DATABASE_ERROR, WEBKIT_FAVICON_DATABASE_ERROR_FAVICON_UNKNOWN, _("Unknown favicon for page %s"), pageURL.utf8().data());
-        return 0;
+        return nullptr;
     }
 
     RefPtr<cairo_surface_t> surface = iconImage->nativeImageForCurrentFrame();
     if (!surface) {
         g_set_error(error, WEBKIT_FAVICON_DATABASE_ERROR, WEBKIT_FAVICON_DATABASE_ERROR_FAVICON_NOT_FOUND, _("Page %s does not have a favicon"), pageURL.utf8().data());
-        return 0;
+        return nullptr;
     }
 
-    return surface.release();
+    return surface;
 }
 
 static void deletePendingIconRequests(WebKitFaviconDatabase* database, PendingIconRequestVector* requests, const String& pageURL)

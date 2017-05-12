@@ -46,7 +46,6 @@
 #import <wtf/Assertions.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/HashSet.h>
-#import <wtf/PassRefPtr.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
 
@@ -67,7 +66,7 @@ using namespace WebKit;
 @end
 
 @interface WKWebAllowDenyPolicyListener : NSObject<WebAllowDenyPolicyListener>
-- (id)initWithPermissionRequestProxy:(PassRefPtr<GeolocationPermissionRequestProxy>)permissionRequestProxy;
+- (id)initWithPermissionRequestProxy:(RefPtr<GeolocationPermissionRequestProxy>&&)permissionRequestProxy;
 - (void)denyOnlyThisRequest NO_RETURN_DUE_TO_ASSERT;
 @end
 
@@ -333,13 +332,13 @@ static void setEnableHighAccuracy(WKGeolocationManagerRef geolocationManager, bo
     RefPtr<GeolocationPermissionRequestProxy> _permissionRequestProxy;
 }
 
-- (id)initWithPermissionRequestProxy:(PassRefPtr<GeolocationPermissionRequestProxy>)permissionRequestProxy
+- (id)initWithPermissionRequestProxy:(RefPtr<GeolocationPermissionRequestProxy>&&)permissionRequestProxy
 {
     self = [super init];
     if (!self)
         return nil;
 
-    _permissionRequestProxy = permissionRequestProxy;
+    _permissionRequestProxy = WTFMove(permissionRequestProxy);
     return self;
 }
 

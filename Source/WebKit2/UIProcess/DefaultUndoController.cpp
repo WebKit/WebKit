@@ -27,12 +27,12 @@
 
 namespace WebKit {
 
-void DefaultUndoController::registerEditCommand(PassRefPtr<WebEditCommandProxy> command, WebPageProxy::UndoOrRedo undoOrRedo)
+void DefaultUndoController::registerEditCommand(Ref<WebEditCommandProxy>&& command, WebPageProxy::UndoOrRedo undoOrRedo)
 {
     if (undoOrRedo == WebPageProxy::Undo)
-        m_undoStack.append(command);
+        m_undoStack.append(WTFMove(command));
     else
-        m_redoStack.append(command);
+        m_redoStack.append(WTFMove(command));
 }
 
 void DefaultUndoController::clearAllEditCommands()

@@ -84,7 +84,6 @@
 #include <memory>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
@@ -860,7 +859,7 @@ public:
     void addEditCommand(WebEditCommandProxy*);
     void removeEditCommand(WebEditCommandProxy*);
     bool isValidEditCommand(WebEditCommandProxy*);
-    void registerEditCommand(PassRefPtr<WebEditCommandProxy>, UndoOrRedo);
+    void registerEditCommand(Ref<WebEditCommandProxy>&&, UndoOrRedo);
 
 #if PLATFORM(COCOA)
     void registerKeypressCommandName(const String& name) { m_knownKeypressCommandNames.add(name); }
@@ -1013,7 +1012,7 @@ public:
     bool autoSizingShouldExpandToViewHeight() const { return m_autoSizingShouldExpandToViewHeight; }
     void setAutoSizingShouldExpandToViewHeight(bool);
 
-    void didReceiveAuthenticationChallengeProxy(uint64_t frameID, PassRefPtr<AuthenticationChallengeProxy>);
+    void didReceiveAuthenticationChallengeProxy(uint64_t frameID, Ref<AuthenticationChallengeProxy>&&);
 
     int64_t spellDocumentTag();
     void didFinishCheckingText(uint64_t requestID, const Vector<WebCore::TextCheckingResult>&);
@@ -1038,7 +1037,7 @@ public:
     void recordNavigationSnapshot(WebBackForwardListItem&);
 
 #if PLATFORM(COCOA)
-    PassRefPtr<ViewSnapshot> takeViewSnapshot();
+    RefPtr<ViewSnapshot> takeViewSnapshot();
 #endif
 
 #if ENABLE(SUBTLE_CRYPTO)
@@ -1312,8 +1311,8 @@ private:
     void pageDidScroll();
     void runOpenPanel(uint64_t frameID, const WebCore::SecurityOriginData&, const WebCore::FileChooserSettings&);
     void printFrame(uint64_t frameID);
-    void exceededDatabaseQuota(uint64_t frameID, const String& originIdentifier, const String& databaseName, const String& displayName, uint64_t currentQuota, uint64_t currentOriginUsage, uint64_t currentDatabaseUsage, uint64_t expectedUsage, PassRefPtr<Messages::WebPageProxy::ExceededDatabaseQuota::DelayedReply>);
-    void reachedApplicationCacheOriginQuota(const String& originIdentifier, uint64_t currentQuota, uint64_t totalBytesNeeded, PassRefPtr<Messages::WebPageProxy::ReachedApplicationCacheOriginQuota::DelayedReply>);
+    void exceededDatabaseQuota(uint64_t frameID, const String& originIdentifier, const String& databaseName, const String& displayName, uint64_t currentQuota, uint64_t currentOriginUsage, uint64_t currentDatabaseUsage, uint64_t expectedUsage, Ref<Messages::WebPageProxy::ExceededDatabaseQuota::DelayedReply>&&);
+    void reachedApplicationCacheOriginQuota(const String& originIdentifier, uint64_t currentQuota, uint64_t totalBytesNeeded, Ref<Messages::WebPageProxy::ReachedApplicationCacheOriginQuota::DelayedReply>&&);
     void requestGeolocationPermissionForFrame(uint64_t geolocationID, uint64_t frameID, String originIdentifier);
 
 #if ENABLE(MEDIA_STREAM)

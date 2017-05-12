@@ -28,8 +28,8 @@
 #include "APIObject.h"
 #include <WebCore/EditAction.h>
 #include <wtf/Forward.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 
 namespace WebKit {
 

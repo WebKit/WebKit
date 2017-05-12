@@ -64,7 +64,7 @@ using namespace WebKit;
 {
     RefPtr<WebEditCommandProxy> m_command;
 }
-- (id)initWithWebEditCommandProxy:(PassRefPtr<WebEditCommandProxy>)command;
+- (id)initWithWebEditCommandProxy:(Ref<WebEditCommandProxy>&&)command;
 - (WebEditCommandProxy*)command;
 @end
 
@@ -75,13 +75,13 @@ using namespace WebKit;
 
 @implementation WKEditCommandObjC
 
-- (id)initWithWebEditCommandProxy:(PassRefPtr<WebEditCommandProxy>)command
+- (id)initWithWebEditCommandProxy:(Ref<WebEditCommandProxy>&&)command
 {
     self = [super init];
     if (!self)
         return nil;
     
-    m_command = command;
+    m_command = WTFMove(command);
     return self;
 }
 
@@ -303,11 +303,9 @@ void PageClientImpl::didChangeViewportProperties(const ViewportAttributes&)
     notImplemented();
 }
 
-void PageClientImpl::registerEditCommand(PassRefPtr<WebEditCommandProxy> prpCommand, WebPageProxy::UndoOrRedo undoOrRedo)
+void PageClientImpl::registerEditCommand(Ref<WebEditCommandProxy>&& command, WebPageProxy::UndoOrRedo undoOrRedo)
 {
-    RefPtr<WebEditCommandProxy> command = prpCommand;
-    
-    RetainPtr<WKEditCommandObjC> commandObjC = adoptNS([[WKEditCommandObjC alloc] initWithWebEditCommandProxy:command]);
+    RetainPtr<WKEditCommandObjC> commandObjC = adoptNS([[WKEditCommandObjC alloc] initWithWebEditCommandProxy:command.copyRef()]);
     String actionName = WebEditCommandProxy::nameForEditAction(command->editAction());
     
     NSUndoManager *undoManager = [m_contentView undoManager];
@@ -354,7 +352,7 @@ void PageClientImpl::positionInformationDidChange(const InteractionInformationAt
     [m_contentView _positionInformationDidChange:info];
 }
 
-void PageClientImpl::saveImageToLibrary(PassRefPtr<SharedBuffer> imageBuffer)
+void PageClientImpl::saveImageToLibrary(Ref<SharedBuffer>&& imageBuffer)
 {
     RetainPtr<NSData> imageData = imageBuffer->createNSData();
     UIImageDataWriteToSavedPhotosAlbum(imageData.get(), nil, NULL, NULL);
@@ -366,7 +364,7 @@ bool PageClientImpl::executeSavedCommandBySelector(const String&)
     return false;
 }
 
-void PageClientImpl::setDragImage(const IntPoint&, PassRefPtr<ShareableBitmap>, DragSourceAction)
+void PageClientImpl::setDragImage(const IntPoint&, Ref<ShareableBitmap>&&, DragSourceAction)
 {
     notImplemented();
 }
@@ -494,7 +492,7 @@ LayerOrView *PageClientImpl::acceleratedCompositingRootLayer() const
     return nullptr;
 }
 
-PassRefPtr<ViewSnapshot> PageClientImpl::takeViewSnapshot()
+RefPtr<ViewSnapshot> PageClientImpl::takeViewSnapshot()
 {
     return [m_webView _takeViewSnapshot];
 }

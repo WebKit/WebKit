@@ -30,14 +30,14 @@
 #include "APIObject.h"
 #include <WebCore/TextCheckerClient.h>
 #include <wtf/Forward.h>
-#include <wtf/PassRefPtr.h>
+#include <wtf/Ref.h>
 
 namespace WebKit {
 
 class WebGrammarDetail : public API::ObjectImpl<API::Object::Type::GrammarDetail> {
 public:
-    static PassRefPtr<WebGrammarDetail> create(int location, int length, API::Array* guesses, const String& userDescription);
-    static PassRefPtr<WebGrammarDetail> create(const WebCore::GrammarDetail&);
+    static Ref<WebGrammarDetail> create(int location, int length, API::Array* guesses, const String& userDescription);
+    static Ref<WebGrammarDetail> create(const WebCore::GrammarDetail&);
 
     int location() const { return m_grammarDetail.location; }
     int length() const { return m_grammarDetail.length; }

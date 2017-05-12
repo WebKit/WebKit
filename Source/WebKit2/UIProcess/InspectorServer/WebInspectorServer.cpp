@@ -107,7 +107,7 @@ void WebInspectorServer::sendMessageOverConnection(unsigned pageIdForConnection,
         connection->sendWebSocketMessage(message);
 }
 
-void WebInspectorServer::didReceiveUnrecognizedHTTPRequest(WebSocketServerConnection* connection, PassRefPtr<HTTPRequest> request)
+void WebInspectorServer::didReceiveUnrecognizedHTTPRequest(WebSocketServerConnection* connection, Ref<HTTPRequest>&& request)
 {
     // request->url() contains only the path extracted from the HTTP request line
     // and URL is poor at parsing incomplete URLs, so extract the interesting parts manually.
@@ -136,7 +136,7 @@ void WebInspectorServer::didReceiveUnrecognizedHTTPRequest(WebSocketServerConnec
     connection->shutdownAfterSendOrNow();
 }
 
-bool WebInspectorServer::didReceiveWebSocketUpgradeHTTPRequest(WebSocketServerConnection*, PassRefPtr<HTTPRequest> request)
+bool WebInspectorServer::didReceiveWebSocketUpgradeHTTPRequest(WebSocketServerConnection*, Ref<HTTPRequest>&& request)
 {
     String path = request->url();
 
@@ -160,7 +160,7 @@ bool WebInspectorServer::didReceiveWebSocketUpgradeHTTPRequest(WebSocketServerCo
     return true;
 }
 
-void WebInspectorServer::didEstablishWebSocketConnection(WebSocketServerConnection* connection, PassRefPtr<HTTPRequest> request)
+void WebInspectorServer::didEstablishWebSocketConnection(WebSocketServerConnection* connection, Ref<HTTPRequest>&& request)
 {
     String path = request->url();
     unsigned pageId = pageIdFromRequestPath(path);

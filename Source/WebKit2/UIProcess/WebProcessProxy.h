@@ -43,8 +43,8 @@
 #include <memory>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 
 namespace API {
 class PageConfiguration;

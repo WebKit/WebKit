@@ -147,9 +147,9 @@ void PageClientImpl::didChangeViewportProperties(const WebCore::ViewportAttribut
     notImplemented();
 }
 
-void PageClientImpl::registerEditCommand(PassRefPtr<WebEditCommandProxy> command, WebPageProxy::UndoOrRedo undoOrRedo)
+void PageClientImpl::registerEditCommand(Ref<WebEditCommandProxy>&& command, WebPageProxy::UndoOrRedo undoOrRedo)
 {
-    m_undoController.registerEditCommand(command, undoOrRedo);
+    m_undoController.registerEditCommand(WTFMove(command), undoOrRedo);
 }
 
 void PageClientImpl::clearAllEditCommands()
