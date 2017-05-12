@@ -6982,7 +6982,7 @@ void Document::stopMediaCapture()
 {
     MediaStreamRegistry::shared().forEach([this](MediaStream& stream) {
         if (stream.document() == this)
-            stream.endStream();
+            stream.endCaptureTracks();
     });
 }
 #endif

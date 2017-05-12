@@ -73,6 +73,7 @@ private:
     virtual ~CoreAudioCaptureSource();
 
     friend class CoreAudioSharedUnit;
+    friend class CoreAudioCaptureSourceFactory;
 
     void scheduleReconfiguration();
 

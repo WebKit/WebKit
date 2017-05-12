@@ -58,7 +58,25 @@ public:
     CaptureSourceOrError createAudioCaptureSource(const String& deviceID, const MediaConstraints* constraints) final {
         return CoreAudioCaptureSource::create(deviceID, constraints);
     }
+
+#if PLATFORM(IOS)
+    void setActiveSource(CoreAudioCaptureSource& source)
+    {
+        if (m_activeSource && m_activeSource->isProducingData())
+            m_activeSource->setMuted(true);
+        m_activeSource = &source;
+    }
+
+private:
+    CoreAudioCaptureSource* m_activeSource { nullptr };
+#endif
 };
+
+static CoreAudioCaptureSourceFactory& coreAudioCaptureSourceFactory()
+{
+    static NeverDestroyed<CoreAudioCaptureSourceFactory> factory;
+    return factory.get();
+}
 
 const UInt32 outputBus = 0;
 const UInt32 inputBus = 1;
@@ -601,7 +619,7 @@ OSStatus CoreAudioSharedUnit::defaultInputDevice(uint32_t* deviceID)
     auto err = AudioUnitGetProperty(m_ioUnit, kAudioOutputUnitProperty_CurrentDevice, kAudioUnitScope_Global, inputBus, deviceID, &propertySize);
     if (err)
         LOG(Media, "CoreAudioSharedUnit::defaultInputDevice(%p) unable to get default input device ID, error %d (%.4s)", this, (int)err, (char*)&err);
-    
+
     return err;
 }
 
@@ -635,8 +653,7 @@ CaptureSourceOrError CoreAudioCaptureSource::create(const String& deviceID, cons
 
 RealtimeMediaSource::AudioCaptureFactory& CoreAudioCaptureSource::factory()
 {
-    static NeverDestroyed<CoreAudioCaptureSourceFactory> factory;
-    return factory.get();
+    return coreAudioCaptureSourceFactory();
 }
 
 CoreAudioCaptureSource::CoreAudioCaptureSource(const String& deviceID, const String& label, uint32_t persistentID)
@@ -677,6 +694,10 @@ void CoreAudioCaptureSource::startProducingData()
 {
     if (m_isProducingData)
         return;
+
+#if PLATFORM(IOS)
+    coreAudioCaptureSourceFactory().setActiveSource(*this);
+#endif
 
     CoreAudioSharedUnit::singleton().startProducingData();
     m_isProducingData = CoreAudioSharedUnit::singleton().isProducingData();

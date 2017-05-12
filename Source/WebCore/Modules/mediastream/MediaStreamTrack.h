@@ -75,7 +75,7 @@ public:
     enum class StopMode { Silently, PostEvent };
     void stopTrack(StopMode = StopMode::Silently);
 
-    bool isCaptureTrack() const;
+    bool isCaptureTrack() const { return m_private->isCaptureTrack(); }
 
     struct TrackSettings {
         std::optional<int> width;
