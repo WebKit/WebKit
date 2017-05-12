@@ -33,6 +33,8 @@
 #import <UIKit/UIItemProvider_Private.h>
 #import <WebCore/SoftLinking.h>
 #import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/_WKFocusedElementInfo.h>
+#import <WebKit/_WKFormInputSession.h>
 #import <wtf/RetainPtr.h>
 
 SOFT_LINK_FRAMEWORK(UIKit)
@@ -75,7 +77,9 @@ static NSArray *dataInteractionEventNames()
     if (self = [super init]) {
         _webView = webView;
         _shouldEnsureUIApplication = NO;
+        _isDoneWaitingForInputSession = true;
         [_webView setUIDelegate:self];
+        [_webView _setInputDelegate:self];
     }
     return self;
 }
@@ -84,6 +88,9 @@ static NSArray *dataInteractionEventNames()
 {
     if ([_webView UIDelegate] == self)
         [_webView setUIDelegate:nil];
+
+    if ([_webView _inputDelegate] == self)
+        [_webView _setInputDelegate:nil];
 
     [super dealloc];
 }
@@ -217,6 +224,12 @@ static NSArray *dataInteractionEventNames()
         }
 
         [_webView _simulateWillBeginDataInteractionWithSession:_dataInteractionSession.get()];
+
+        RetainPtr<WKWebView> retainedWebView = _webView;
+        dispatch_async(dispatch_get_main_queue(), ^() {
+            [retainedWebView resignFirstResponder];
+        });
+
         _phase = DataInteractionBegan;
         break;
     }
@@ -267,6 +280,16 @@ static NSArray *dataInteractionEventNames()
     return _phase;
 }
 
+- (void)waitForInputSession
+{
+    _isDoneWaitingForInputSession = false;
+
+    // Waiting for an input session implies that we should allow input sessions to begin.
+    self.allowsFocusToStartInputSession = YES;
+
+    Util::run(&_isDoneWaitingForInputSession);
+}
+
 #pragma mark - WKUIDelegatePrivate
 
 - (void)_webView:(WKWebView *)webView dataInteractionOperationWasHandled:(BOOL)handled forSession:(id)session itemProviders:(NSArray<UIItemProvider *> *)itemProviders
@@ -301,6 +324,18 @@ static NSArray *dataInteractionEventNames()
     });
 
     return self.showCustomActionSheetBlock(element);
+}
+
+#pragma mark - _WKInputDelegate
+
+- (BOOL)_webView:(WKWebView *)webView focusShouldStartInputSession:(id <_WKFocusedElementInfo>)info
+{
+    return _allowsFocusToStartInputSession;
+}
+
+- (void)_webView:(WKWebView *)webView didStartInputSession:(id <_WKFormInputSession>)inputSession
+{
+    _isDoneWaitingForInputSession = true;
 }
 
 @end

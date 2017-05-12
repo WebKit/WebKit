@@ -135,6 +135,15 @@ void DocumentMarkerController::addDictationResultMarker(Range* range, const Reta
 
 #endif
 
+void DocumentMarkerController::addDraggedContentMarker(RefPtr<Range> range)
+{
+    for (TextIterator markedText(range.get()); !markedText.atEnd(); markedText.advance()) {
+        RefPtr<Range> textPiece = markedText.range();
+        DocumentMarker::DraggedContentData draggedContentData { markedText.node() };
+        addMarker(&textPiece->startContainer(), { DocumentMarker::DraggedContent, textPiece->startOffset(), textPiece->endOffset(), WTFMove(draggedContentData) });
+    }
+}
+
 void DocumentMarkerController::removeMarkers(Range* range, DocumentMarker::MarkerTypes markerTypes, RemovePartiallyOverlappingMarkerOrNot shouldRemovePartiallyOverlappingMarker)
 {
     for (TextIterator markedText(range); !markedText.atEnd(); markedText.advance()) {
@@ -293,6 +302,20 @@ Vector<FloatRect> DocumentMarkerController::renderedRectsForMarkers(DocumentMark
     return result;
 }
 
+static bool shouldInsertAsSeparateMarker(const DocumentMarker& newMarker)
+{
+#if PLATFORM(IOS)
+    if (newMarker.type() == DocumentMarker::DictationPhraseWithAlternatives || newMarker.type() == DocumentMarker::DictationResult)
+        return true;
+#endif
+    if (newMarker.type() == DocumentMarker::DraggedContent) {
+        if (auto targetNode = WTF::get<DocumentMarker::DraggedContentData>(newMarker.data()).targetNode)
+            return targetNode->renderer() && targetNode->renderer()->isRenderReplaced();
+    }
+
+    return false;
+}
+
 // Markers are stored in order sorted by their start offset.
 // Markers of the same type do not overlap each other.
 
@@ -317,8 +340,7 @@ void DocumentMarkerController::addMarker(Node* node, const DocumentMarker& newMa
     if (!list) {
         list = std::make_unique<MarkerList>();
         list->append(RenderedDocumentMarker(newMarker));
-#if PLATFORM(IOS)
-    } else if (newMarker.type() == DocumentMarker::DictationPhraseWithAlternatives || newMarker.type() == DocumentMarker::DictationResult) {
+    } else if (shouldInsertAsSeparateMarker(newMarker)) {
         // We don't merge dictation markers.
         size_t i;
         size_t numberOfMarkers = list->size();
@@ -328,7 +350,6 @@ void DocumentMarkerController::addMarker(Node* node, const DocumentMarker& newMa
                 break;
         }
         list->insert(i, RenderedDocumentMarker(newMarker));
-#endif
     } else {
         RenderedDocumentMarker toInsert(newMarker);
         size_t numMarkers = list->size();
@@ -504,6 +525,9 @@ DocumentMarker* DocumentMarkerController::markerContainingPoint(const LayoutPoin
 
 Vector<RenderedDocumentMarker*> DocumentMarkerController::markersFor(Node* node, DocumentMarker::MarkerTypes markerTypes)
 {
+    if (!possiblyHasMarkers(markerTypes))
+        return { };
+
     Vector<RenderedDocumentMarker*> result;
     MarkerList* list = m_markers.get(node);
     if (!list)

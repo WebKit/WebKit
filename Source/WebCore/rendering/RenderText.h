@@ -176,6 +176,8 @@ public:
     
     bool canUseSimplifiedTextMeasuring() const { return m_canUseSimplifiedTextMeasuring; }
 
+    Vector<std::pair<unsigned, unsigned>> draggedContentRangesBetweenOffsets(unsigned startOffset, unsigned endOffset) const;
+
 protected:
     virtual void computePreferredLogicalWidths(float leadWidth);
     void willBeDestroyed() override;

@@ -59,6 +59,7 @@ public:
     void addDictationPhraseWithAlternativesMarker(Range*, const Vector<String>& interpretations);
     void addDictationResultMarker(Range*, const RetainPtr<id>& metadata);
 #endif
+    void addDraggedContentMarker(RefPtr<Range>);
 
     void copyMarkers(Node* srcNode, unsigned startOffset, int length, Node* dstNode, int delta);
     bool hasMarkers() const

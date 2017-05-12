@@ -29,6 +29,7 @@
 #import <UIKit/UIItemProvider.h>
 #import <UIKit/UIKit.h>
 #import <WebKit/WKUIDelegatePrivate.h>
+#import <WebKit/_WKInputDelegate.h>
 #import <wtf/BlockPtr.h>
 
 @class MockDataOperationSession;
@@ -48,7 +49,8 @@ typedef NS_ENUM(NSInteger, DataInteractionPhase) {
     DataInteractionPerforming = 4
 };
 
-@interface DataInteractionSimulator : NSObject<WKUIDelegatePrivate> {
+@interface DataInteractionSimulator : NSObject<WKUIDelegatePrivate, _WKInputDelegate> {
+@private
     RetainPtr<TestWKWebView> _webView;
     RetainPtr<MockDataInteractionSession> _dataInteractionSession;
     RetainPtr<MockDataOperationSession> _dataOperationSession;
@@ -59,6 +61,7 @@ typedef NS_ENUM(NSInteger, DataInteractionPhase) {
     CGPoint _startLocation;
     CGPoint _endLocation;
 
+    bool _isDoneWaitingForInputSession;
     BOOL _shouldPerformOperation;
     double _currentProgress;
     bool _isDoneWithCurrentRun;
@@ -67,7 +70,9 @@ typedef NS_ENUM(NSInteger, DataInteractionPhase) {
 
 - (instancetype)initWithWebView:(TestWKWebView *)webView;
 - (void)runFrom:(CGPoint)startLocation to:(CGPoint)endLocation;
+- (void)waitForInputSession;
 
+@property (nonatomic) BOOL allowsFocusToStartInputSession;
 @property (nonatomic) BOOL shouldEnsureUIApplication;
 @property (nonatomic) BlockPtr<BOOL(_WKActivatedElementInfo *)> showCustomActionSheetBlock;
 @property (nonatomic) BlockPtr<NSArray *(NSArray *)> convertItemProvidersBlock;

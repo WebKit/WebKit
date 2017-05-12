@@ -274,7 +274,7 @@ void WebPageProxy::setDragImage(const WebCore::IntPoint& clientPosition, const S
     if (auto dragImage = ShareableBitmap::create(dragImageHandle))
         m_pageClient.setDragImage(clientPosition, WTFMove(dragImage), static_cast<DragSourceAction>(action));
 
-    process().send(Messages::WebPage::DidStartDrag(), m_pageID);
+    didStartDrag();
 }
 
 void WebPageProxy::setPromisedDataForImage(const String& pasteboardName, const SharedMemory::Handle& imageHandle, uint64_t imageSize, const String& filename, const String& extension,

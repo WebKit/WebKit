@@ -159,6 +159,7 @@ public:
     void cancelDragAndDrop(const PlatformMouseEvent&, DataTransfer&);
     bool performDragAndDrop(const PlatformMouseEvent&, DataTransfer&);
     void updateDragStateAfterEditDragIfNeeded(Element& rootEditableElement);
+    RefPtr<Element> draggedElement() const;
 #endif
 
     void scheduleHoverStateUpdate();
@@ -253,6 +254,8 @@ public:
 #if ENABLE(DRAG_SUPPORT)
     WEBCORE_EXPORT bool eventMayStartDrag(const PlatformMouseEvent&) const;
     
+    WEBCORE_EXPORT void didStartDrag();
+    WEBCORE_EXPORT void dragCancelled();
     WEBCORE_EXPORT void dragSourceEndedAt(const PlatformMouseEvent&, DragOperation);
 #endif
 

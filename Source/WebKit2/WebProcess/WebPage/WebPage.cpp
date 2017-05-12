@@ -3655,6 +3655,18 @@ void WebPage::mayPerformUploadDragDestinationAction()
         m_pendingDropExtensionsForFileUpload[i]->consumePermanently();
     m_pendingDropExtensionsForFileUpload.clear();
 }
+
+void WebPage::didStartDrag()
+{
+    m_isStartingDrag = false;
+    m_page->mainFrame().eventHandler().didStartDrag();
+}
+
+void WebPage::dragCancelled()
+{
+    m_isStartingDrag = false;
+    m_page->mainFrame().eventHandler().dragCancelled();
+}
     
 #endif // ENABLE(DRAG_SUPPORT)
 

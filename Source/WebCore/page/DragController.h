@@ -62,6 +62,7 @@ struct DragState;
         WEBCORE_EXPORT void dragExited(const DragData&);
         WEBCORE_EXPORT DragOperation dragUpdated(const DragData&);
         WEBCORE_EXPORT bool performDragOperation(const DragData&);
+        WEBCORE_EXPORT void dragCancelled();
 
         bool mouseIsOverFileInput() const { return m_fileInputElementUnderMouse; }
         unsigned numberOfItemsToBeAccepted() const { return m_numberOfItemsToBeAccepted; }
