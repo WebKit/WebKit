@@ -578,7 +578,7 @@ bool Editor::tryDHTMLPaste()
 
 bool Editor::shouldInsertText(const String& text, Range* range, EditorInsertAction action) const
 {
-    if (m_frame.loader().shouldSuppressKeyboardInput() && action == EditorInsertAction::Typed)
+    if (m_frame.mainFrame().loader().shouldSuppressKeyboardInput() && action == EditorInsertAction::Typed)
         return false;
 
     return client() && client()->shouldInsertText(text, range, action);

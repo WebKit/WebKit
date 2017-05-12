@@ -1,5 +1,25 @@
 2017-05-11  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r216599. rdar://problem/31201793
+
+    2017-05-10  Andy Estes  <aestes@apple.com>
+
+            Keyboard input suppression should extend to subframes
+            https://bugs.webkit.org/show_bug.cgi?id=171880
+            <rdar://problem/31201793>
+
+            Reviewed by Ryosuke Niwa.
+
+            Test: http/tests/navigation/keyboard-events-during-provisional-subframe-navigation.html
+
+            * dom/EventDispatcher.cpp:
+            (WebCore::shouldSuppressEventDispatchInDOM): Changed to call shouldSuppressKeyboardInput()
+            on the main frame's loader.
+            * editing/Editor.cpp:
+            (WebCore::Editor::shouldInsertText): Ditto.
+
+2017-05-11  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r216559. rdar://problem/31771707
 
     2017-05-09  Jeremy Jones  <jeremyj@apple.com>
