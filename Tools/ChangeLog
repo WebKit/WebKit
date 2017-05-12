@@ -1,3 +1,13 @@
+2017-05-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+ test /webkit2/WebKitWebView/create-navigation-data after r216615.
+
+        In r216615 the custom code for window.open() was removed. The generated code now correctly handles the optional
+        URL parameter using the default value "about:blank" when not provided.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestUIClient.cpp:
+        (testWebViewCreateNavigationData):
+
 2017-05-11  Youenn Fablet  <youenn@apple.com>
 
         Allow WPT server to serve specific WebKit test
