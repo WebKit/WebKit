@@ -1,5 +1,37 @@
 2017-05-11  Addy Osmani  <addyosmani@gmail.com>
 
+        Speedometer: Update the Backbone.js implementation to a more recent library version
+        https://bugs.webkit.org/show_bug.cgi?id=171305
+
+        Reviewed by Ryosuke Niwa.
+
+        Updates the Backbone.js TodoMVC implementation to latest
+
+        * Speedometer/resources/todomvc/architecture-examples/backbone/bower.json: Removed.
+        * Speedometer/resources/todomvc/architecture-examples/backbone/bower_components/backbone.localStorage/backbone.localStorage.js: Removed.
+        * Speedometer/resources/todomvc/architecture-examples/backbone/bower_components/jquery/jquery.js: Removed.
+        * Speedometer/resources/todomvc/architecture-examples/backbone/bower_components/todomvc-common/base.css: Removed.
+        * Speedometer/resources/todomvc/architecture-examples/backbone/bower_components/todomvc-common/base.js: Removed.
+        * Speedometer/resources/todomvc/architecture-examples/backbone/bower_components/todomvc-common/bg.png: Removed.
+        * Speedometer/resources/todomvc/architecture-examples/backbone/bower_components/underscore/underscore.js: Removed.
+        * Speedometer/resources/todomvc/architecture-examples/backbone/index.html:
+        * Speedometer/resources/todomvc/architecture-examples/backbone/js/app.js:
+        * Speedometer/resources/todomvc/architecture-examples/backbone/js/backbone.sync.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/backbone/js/collections/todos.js:
+        * Speedometer/resources/todomvc/architecture-examples/backbone/js/models/todo.js:
+        * Speedometer/resources/todomvc/architecture-examples/backbone/js/routers/router.js:
+        * Speedometer/resources/todomvc/architecture-examples/backbone/js/views/app-view.js:
+        * Speedometer/resources/todomvc/architecture-examples/backbone/js/views/todo-view.js:
+        * Speedometer/resources/todomvc/architecture-examples/backbone/node_modules/backbone/backbone.js: Renamed from PerformanceTests/Speedometer/resources/todomvc/architecture-examples/backbone/bower_components/backbone/backbone.js.
+        * Speedometer/resources/todomvc/architecture-examples/backbone/node_modules/jquery/dist/jquery.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/backbone/node_modules/todomvc-app-css/index.css: Added.
+        * Speedometer/resources/todomvc/architecture-examples/backbone/node_modules/todomvc-common/base.css: Added.
+        * Speedometer/resources/todomvc/architecture-examples/backbone/node_modules/todomvc-common/base.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/backbone/node_modules/underscore/underscore.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/backbone/package.json: Added.
+
+2017-05-11  Addy Osmani  <addyosmani@gmail.com>
+
         Speedometer: Add a Preact.js TodoMVC implementation
         https://bugs.webkit.org/show_bug.cgi?id=171323
 
