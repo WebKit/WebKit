@@ -34,7 +34,7 @@ void BitmapImage::invalidatePlatformData()
 {
 }
 
-PassRefPtr<Image> Image::loadPlatformResource(const char* resource)
+Ref<Image> Image::loadPlatformResource(const char* resource)
 {
     WTFLogAlways("WARNING: trying to load platform resource '%s'", resource);
     return BitmapImage::create();
