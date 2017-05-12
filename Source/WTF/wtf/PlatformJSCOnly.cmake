@@ -21,7 +21,7 @@ if (WIN32)
     list(APPEND WTF_SOURCES
         win/MemoryFootprintWin.cpp
     )
-else (APPLE)
+elseif (APPLE)
     list(APPEND WTF_SOURCES
         cocoa/MemoryFootprintCocoa.cpp
     )

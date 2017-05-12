@@ -1,3 +1,10 @@
+2017-05-12  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed trivial JSCOnly buildfix after r216731.
+        https://bugs.webkit.org/show_bug.cgi?id=171693
+
+        * wtf/PlatformJSCOnly.cmake:
+
 2017-05-11  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [Win] Implement memoryFootprint for Windows
