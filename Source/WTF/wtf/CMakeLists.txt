@@ -225,7 +225,6 @@ set(WTF_SOURCES
     MD5.cpp
     MainThread.cpp
     MediaTime.cpp
-    MemoryFootprint.cpp
     MemoryPressureHandler.cpp
     MetaAllocator.cpp
     MonotonicTime.cpp

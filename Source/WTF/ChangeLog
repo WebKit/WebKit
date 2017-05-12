@@ -1,3 +1,32 @@
+2017-05-11  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [Win] Implement memoryFootprint for Windows
+        https://bugs.webkit.org/show_bug.cgi?id=171693
+
+        Reviewed by Alex Christensen.
+
+        This patch implements memoryFootprint for Windows. In Windows, we calculate the size
+        of private working set. This can be done by enumerating private pages in working set.
+
+        And we also split MemoryFootprint.cpp to cocoa, linux, and win versions.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/MallocPtr.h:
+        (WTF::MallocPtr::operator*):
+        (WTF::MallocPtr::operator->):
+        * wtf/PlatformGTK.cmake:
+        * wtf/PlatformJSCOnly.cmake:
+        * wtf/PlatformMac.cmake:
+        * wtf/PlatformWin.cmake:
+        * wtf/cocoa/MemoryFootprintCocoa.cpp: Copied from Source/WTF/wtf/MemoryFootprint.cpp.
+        (WTF::memoryFootprint):
+        * wtf/linux/MemoryFootprintLinux.cpp: Renamed from Source/WTF/wtf/MemoryFootprint.cpp.
+        (WTF::forEachLine):
+        (WTF::memoryFootprint):
+        * wtf/win/MemoryFootprintWin.cpp: Added.
+        (WTF::memoryFootprint):
+
 2017-05-11  Don Olmstead  <don.olmstead@am.sony.com>
 
         [CMake] Add HAVE check for regex.h

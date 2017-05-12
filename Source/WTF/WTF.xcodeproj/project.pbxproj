@@ -126,7 +126,7 @@
 		A8A47486151A825B004123FF /* WTFThreadData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8A4737A151A825B004123FF /* WTFThreadData.cpp */; };
 		AD89B6B71E6415080090707F /* MemoryPressureHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AD89B6B51E6415080090707F /* MemoryPressureHandler.cpp */; };
 		AD89B6BA1E64150F0090707F /* MemoryPressureHandlerCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = AD89B6B91E64150F0090707F /* MemoryPressureHandlerCocoa.mm */; };
-		ADF2CE671E39F106006889DB /* MemoryFootprint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ADF2CE651E39F106006889DB /* MemoryFootprint.cpp */; };
+		ADF2CE671E39F106006889DB /* MemoryFootprintCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ADF2CE651E39F106006889DB /* MemoryFootprintCocoa.cpp */; };
 		CD5497AC15857D0300B5BC30 /* MediaTime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD5497AA15857D0300B5BC30 /* MediaTime.cpp */; };
 		DCEE22011CEA7551000C2396 /* BlockObjCExceptions.mm in Sources */ = {isa = PBXBuildFile; fileRef = DCEE21FD1CEA7551000C2396 /* BlockObjCExceptions.mm */; };
 		DCEE22031CEA7551000C2396 /* PlatformUserPreferredLanguagesMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = DCEE21FF1CEA7551000C2396 /* PlatformUserPreferredLanguagesMac.mm */; };
@@ -518,7 +518,7 @@
 		AD89B6B61E6415080090707F /* MemoryPressureHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryPressureHandler.h; sourceTree = "<group>"; };
 		AD89B6B91E64150F0090707F /* MemoryPressureHandlerCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MemoryPressureHandlerCocoa.mm; sourceTree = "<group>"; };
 		ADF2CE641E39F106006889DB /* MemoryFootprint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryFootprint.h; sourceTree = "<group>"; };
-		ADF2CE651E39F106006889DB /* MemoryFootprint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryFootprint.cpp; sourceTree = "<group>"; };
+		ADF2CE651E39F106006889DB /* MemoryFootprintCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryFootprintCocoa.cpp; sourceTree = "<group>"; };
 		B38FD7BC168953E80065C969 /* FeatureDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FeatureDefines.h; sourceTree = "<group>"; };
 		C4F8A93619C65EB400B2B15D /* Stopwatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Stopwatch.h; sourceTree = "<group>"; };
 		C8F597CA2A57417FBAB92FD6 /* RandomDevice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RandomDevice.cpp; sourceTree = "<group>"; };
@@ -840,7 +840,6 @@
 				A8A472CB151A825B004123FF /* MD5.h */,
 				CD5497AA15857D0300B5BC30 /* MediaTime.cpp */,
 				CD5497AB15857D0300B5BC30 /* MediaTime.h */,
-				ADF2CE651E39F106006889DB /* MemoryFootprint.cpp */,
 				ADF2CE641E39F106006889DB /* MemoryFootprint.h */,
 				AD89B6B51E6415080090707F /* MemoryPressureHandler.cpp */,
 				AD89B6B61E6415080090707F /* MemoryPressureHandler.h */,
@@ -1168,6 +1167,7 @@
 			isa = PBXGroup;
 			children = (
 				E38C41241EB4E04C0042957D /* CPUTimeCocoa.mm */,
+				ADF2CE651E39F106006889DB /* MemoryFootprintCocoa.cpp */,
 				AD89B6B91E64150F0090707F /* MemoryPressureHandlerCocoa.mm */,
 				E4A0AD3C1A96253C00536DF6 /* WorkQueueCocoa.cpp */,
 			);
@@ -1330,7 +1330,7 @@
 				A8A473E4151A825B004123FF /* MainThreadMac.mm in Sources */,
 				A8A473E9151A825B004123FF /* MD5.cpp in Sources */,
 				CD5497AC15857D0300B5BC30 /* MediaTime.cpp in Sources */,
-				ADF2CE671E39F106006889DB /* MemoryFootprint.cpp in Sources */,
+				ADF2CE671E39F106006889DB /* MemoryFootprintCocoa.cpp in Sources */,
 				AD89B6B71E6415080090707F /* MemoryPressureHandler.cpp in Sources */,
 				AD89B6BA1E64150F0090707F /* MemoryPressureHandlerCocoa.mm in Sources */,
 				A8A473EC151A825B004123FF /* MetaAllocator.cpp in Sources */,

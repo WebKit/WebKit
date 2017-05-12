@@ -17,6 +17,20 @@ else ()
     )
 endif ()
 
+if (WIN32)
+    list(APPEND WTF_SOURCES
+        win/MemoryFootprintWin.cpp
+    )
+else (APPLE)
+    list(APPEND WTF_SOURCES
+        cocoa/MemoryFootprintCocoa.cpp
+    )
+else ()
+    list(APPEND WTF_SOURCES
+        linux/MemoryFootprintLinux.cpp
+    )
+endif ()
+
 if (LOWERCASE_EVENT_LOOP_TYPE STREQUAL "glib")
     list(APPEND WTF_SOURCES
         glib/GRefPtr.cpp

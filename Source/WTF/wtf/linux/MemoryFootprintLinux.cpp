@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2017 Yusuke Suzuki <utatane.tea@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,11 +26,6 @@
 #include "config.h"
 #include "MemoryFootprint.h"
 
-#if OS(DARWIN)
-#include <mach/mach.h>
-#include <mach/task_info.h>
-#endif
-
 #if OS(LINUX)
 #include <stdio.h>
 #include <wtf/StdLibExtras.h>
@@ -56,14 +51,7 @@ static void forEachLine(FILE* file, Functor functor)
 
 std::optional<size_t> memoryFootprint()
 {
-#if OS(DARWIN)
-    task_vm_info_data_t vmInfo;
-    mach_msg_type_number_t count = TASK_VM_INFO_COUNT;
-    kern_return_t result = task_info(mach_task_self(), TASK_VM_INFO, (task_info_t) &vmInfo, &count);
-    if (result != KERN_SUCCESS)
-        return std::nullopt;
-    return static_cast<size_t>(vmInfo.phys_footprint);
-#elif OS(LINUX)
+#if OS(LINUX)
     FILE* file = fopen("/proc/self/smaps", "r");
     if (!file)
         return std::nullopt;

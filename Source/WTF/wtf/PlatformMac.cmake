@@ -23,6 +23,7 @@ list(APPEND WTF_SOURCES
     cf/RunLoopCF.cpp
 
     cocoa/CPUTimeCocoa.mm
+    cocoa/MemoryFootprintCocoa.cpp
     cocoa/MemoryPressureHandlerCocoa.mm
     cocoa/WorkQueueCocoa.cpp
 
