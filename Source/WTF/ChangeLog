@@ -1,3 +1,12 @@
+2017-05-12  Ting-Wei Lan  <lantw44@gmail.com>
+
+        Include algorithm before using std::min
+        https://bugs.webkit.org/show_bug.cgi?id=171733
+
+        Reviewed by Chris Dumez.
+
+        * wtf/text/StringCommon.h:
+
 2017-05-12  Andreas Kling  <akling@apple.com>
 
         More aggressive memory kill limits.
