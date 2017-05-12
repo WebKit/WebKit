@@ -1,5 +1,41 @@
 2017-05-11  Addy Osmani  <addyosmani@gmail.com>
 
+        Speedometer: Add a React + Redux TodoMVC implementation
+        https://bugs.webkit.org/show_bug.cgi?id=171329
+
+        Reviewed by Ryosuke Niwa.
+
+        Adds React and Redux TodoMVC implementation for Speedometer
+
+        * Speedometer/resources/todomvc/architecture-examples/react-redux/README.md: Added.
+        * Speedometer/resources/todomvc/architecture-examples/react-redux/dist/index.html: Added.
+        * Speedometer/resources/todomvc/architecture-examples/react-redux/dist/static/css/main.d43d2909.css: Added.
+        * Speedometer/resources/todomvc/architecture-examples/react-redux/dist/static/js/main.946269ff.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/react-redux/package.json: Added.
+        * Speedometer/resources/todomvc/architecture-examples/react-redux/public/index.html: Added.
+        * Speedometer/resources/todomvc/architecture-examples/react-redux/src/actions/index.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/react-redux/src/actions/index.spec.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/react-redux/src/components/Footer.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/react-redux/src/components/Footer.spec.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/react-redux/src/components/Header.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/react-redux/src/components/Header.spec.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/react-redux/src/components/MainSection.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/react-redux/src/components/MainSection.spec.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/react-redux/src/components/TodoItem.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/react-redux/src/components/TodoItem.spec.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/react-redux/src/components/TodoTextInput.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/react-redux/src/components/TodoTextInput.spec.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/react-redux/src/constants/ActionTypes.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/react-redux/src/constants/TodoFilters.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/react-redux/src/containers/App.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/react-redux/src/index.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/react-redux/src/reducers/index.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/react-redux/src/reducers/todos.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/react-redux/src/reducers/todos.spec.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/react-redux/yarn.lock: Added.
+
+2017-05-11  Addy Osmani  <addyosmani@gmail.com>
+
         Speedometer: Add an ES2015 (Babel + Webpack) TodoMVC implementation
         https://bugs.webkit.org/show_bug.cgi?id=171452
 
