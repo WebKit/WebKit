@@ -350,9 +350,9 @@ bool Geolocation::shouldBlockGeolocationRequests()
 {
     bool isSecure = SecurityOrigin::isSecure(document()->url());
     bool hasMixedContent = document()->foundMixedContent();
-    bool isLocalFile = document()->url().isLocalFile();
+    bool isLocalOrigin = securityOrigin()->isLocal();
     if (securityOrigin()->canRequestGeolocation()) {
-        if (isLocalFile || (isSecure && !hasMixedContent))
+        if (isLocalOrigin || (isSecure && !hasMixedContent))
             return false;
     }
     

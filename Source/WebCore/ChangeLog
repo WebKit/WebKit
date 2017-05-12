@@ -1,3 +1,20 @@
+2017-05-11  Per Arne Vollan  <pvollan@apple.com>
+
+        Geolocation requests should not be blocked when the security origin is local.
+        https://bugs.webkit.org/show_bug.cgi?id=171857
+        rdar://problem/29318409
+
+        Reviewed by Brent Fulgham.
+
+        Geolocation requests from security origins where the url scheme is registered as local,
+        should not be blocked. This applies to the file url scheme, but also to other local url
+        schemes.
+
+        Test: fast/misc/geolocation-local-security-origin.html
+
+        * Modules/geolocation/Geolocation.cpp:
+        (WebCore::Geolocation::shouldBlockGeolocationRequests):
+
 2017-05-11  Chris Dumez  <cdumez@apple.com>
 
         Drop remaining uses of PassRefPtr in WebCore

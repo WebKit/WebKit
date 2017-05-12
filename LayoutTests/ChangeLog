@@ -1,3 +1,13 @@
+2017-05-11  Per Arne Vollan  <pvollan@apple.com>
+
+        Geolocation requests should not be blocked when the security origin is local.
+        https://bugs.webkit.org/show_bug.cgi?id=171857
+
+        Reviewed by Brent Fulgham.
+
+        * fast/misc/geolocation-local-security-origin-expected.txt: Added.
+        * fast/misc/geolocation-local-security-origin.html: Added.
+
 2017-05-11  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [selectors4] :focus-within tests using shadow DOM don't pass on WK1
