@@ -1,5 +1,28 @@
 2017-05-11  Saam Barati  <sbarati@apple.com>
 
+        Computing optionalDefArgWidth in CheckSpecial should not consider Scratch roles
+        https://bugs.webkit.org/show_bug.cgi?id=171962
+
+        Reviewed by Filip Pizlo.
+
+        The purpose of getting the result width is to get the width of
+        the result of the arithmetic. It does not care about that the
+        Check happens to define scratches.
+
+        * b3/B3CheckSpecial.cpp:
+        (JSC::B3::CheckSpecial::forEachArg):
+        * b3/testb3.cpp:
+        (JSC::B3::testCheckMul):
+        (JSC::B3::testCheckMulMemory):
+        (JSC::B3::testCheckMul64):
+        (JSC::B3::testCheckMulFold):
+        (JSC::B3::testCheckMulFoldFail):
+        (JSC::B3::testCheckMulArgumentAliasing64):
+        (JSC::B3::testCheckMulArgumentAliasing32):
+        (JSC::B3::testCheckMul64SShr):
+
+2017-05-11  Saam Barati  <sbarati@apple.com>
+
         isValidForm for SimpleAddr should use ptr() instead of tmp()
         https://bugs.webkit.org/show_bug.cgi?id=171992
 

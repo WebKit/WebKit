@@ -112,7 +112,7 @@ void CheckSpecial::forEachArg(Inst& inst, const ScopedLambda<Inst::EachArgCallba
     Inst hidden = hiddenBranch(inst);
     hidden.forEachArg(
         [&] (Arg& arg, Arg::Role role, Bank bank, Width width) {
-            if (Arg::isAnyDef(role)) {
+            if (Arg::isAnyDef(role) && role != Arg::Scratch) {
                 ASSERT(!optionalDefArgWidth); // There can only be one Def'ed arg.
                 optionalDefArgWidth = width;
             }

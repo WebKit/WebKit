@@ -9582,12 +9582,6 @@ void testCheckNeg64()
 
 void testCheckMul()
 {
-#ifndef NDEBUG
-    if (isARM64()) {
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=171826
-        return;
-    }
-#endif
     Procedure proc;
     BasicBlock* root = proc.addBlock();
     Value* arg1 = root->appendNew<Value>(
@@ -9625,12 +9619,6 @@ void testCheckMul()
 
 void testCheckMulMemory()
 {
-#ifndef NDEBUG
-    if (isARM64()) {
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=171826
-        return;
-    }
-#endif
     Procedure proc;
     BasicBlock* root = proc.addBlock();
 
@@ -9719,12 +9707,6 @@ void testCheckMul2()
 
 void testCheckMul64()
 {
-#ifndef NDEBUG
-    if (isARM64()) {
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=171826
-        return;
-    }
-#endif
     Procedure proc;
     BasicBlock* root = proc.addBlock();
     Value* arg1 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
@@ -9758,12 +9740,6 @@ void testCheckMul64()
 
 void testCheckMulFold(int a, int b)
 {
-#ifndef NDEBUG
-    if (isARM64()) {
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=171826
-        return;
-    }
-#endif
     Procedure proc;
     BasicBlock* root = proc.addBlock();
     Value* arg1 = root->appendNew<Const32Value>(proc, Origin(), a);
@@ -9782,12 +9758,6 @@ void testCheckMulFold(int a, int b)
 
 void testCheckMulFoldFail(int a, int b)
 {
-#ifndef NDEBUG
-    if (isARM64()) {
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=171826
-        return;
-    }
-#endif
     Procedure proc;
     BasicBlock* root = proc.addBlock();
     Value* arg1 = root->appendNew<Const32Value>(proc, Origin(), a);
@@ -9809,12 +9779,6 @@ void testCheckMulFoldFail(int a, int b)
 
 void testCheckMulArgumentAliasing64()
 {
-#ifndef NDEBUG
-    if (isARM64()) {
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=171826
-        return;
-    }
-#endif
     Procedure proc;
     BasicBlock* root = proc.addBlock();
     Value* arg1 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
@@ -9852,12 +9816,6 @@ void testCheckMulArgumentAliasing64()
 
 void testCheckMulArgumentAliasing32()
 {
-#ifndef NDEBUG
-    if (isARM64()) {
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=171826
-        return;
-    }
-#endif
     Procedure proc;
     BasicBlock* root = proc.addBlock();
     Value* arg1 = root->appendNew<Value>(
@@ -9901,12 +9859,6 @@ void testCheckMulArgumentAliasing32()
 
 void testCheckMul64SShr()
 {
-#ifndef NDEBUG
-    if (isARM64()) {
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=171826
-        return;
-    }
-#endif
     Procedure proc;
     BasicBlock* root = proc.addBlock();
     Value* arg1 = root->appendNew<Value>(
