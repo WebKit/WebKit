@@ -40,6 +40,7 @@
 #include "Geoposition.h"
 #include "Page.h"
 #include "PositionError.h"
+#include "RuntimeApplicationChecks.h"
 #include "SecurityOrigin.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/Ref.h>
@@ -346,13 +347,24 @@ static void logError(const String& target, const bool isSecure, const bool isMix
     document->addConsoleMessage(MessageSource::Security, MessageLevel::Error, message.toString());
 }
 
+// FIXME: remove this function when rdar://problem/32137821 is fixed.
+static bool isRequestFromIBooks()
+{
+#if PLATFORM(MAC)
+    return MacApplication::isIBooks();
+#elif PLATFORM(IOS)
+    return IOSApplication::isIBooks();
+#endif
+    return false;
+}
+    
 bool Geolocation::shouldBlockGeolocationRequests()
 {
     bool isSecure = SecurityOrigin::isSecure(document()->url());
     bool hasMixedContent = document()->foundMixedContent();
     bool isLocalOrigin = securityOrigin()->isLocal();
     if (securityOrigin()->canRequestGeolocation()) {
-        if (isLocalOrigin || (isSecure && !hasMixedContent))
+        if (isLocalOrigin || (isSecure && !hasMixedContent) || isRequestFromIBooks())
             return false;
     }
     

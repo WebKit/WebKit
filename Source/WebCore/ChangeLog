@@ -1,3 +1,19 @@
+2017-05-12  Per Arne Vollan  <pvollan@apple.com>
+
+        The iBooks application is not able to get current position.
+        https://bugs.webkit.org/show_bug.cgi?id=171982
+        rdar://problem/29318409
+
+        Reviewed by Brent Fulgham.
+
+        Geolocation requests from iBooks are currently blocked. Make an exemption from the policy for iBooks.
+
+        No new tests since we currently can't mock the iBooks application bundle ID.
+
+        * Modules/geolocation/Geolocation.cpp:
+        (WebCore::isRequestFromIBooks):
+        (WebCore::Geolocation::shouldBlockGeolocationRequests):
+
 2017-05-11  Per Arne Vollan  <pvollan@apple.com>
 
         Geolocation requests should not be blocked when the security origin is local.
