@@ -1,3 +1,12 @@
+2017-05-12  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [WPE] Unreviewed gardening.
+
+        ClientRect, ClientRectList were removed, PromiseRejectionEvent was
+        added, update global constructors attributes test expectations.
+
+        * platform/wpe/js/dom/global-constructors-attributes-expected.txt:
+
 2017-05-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] ASSERTION FAILED: !m_flushingLayers
