@@ -1,5 +1,35 @@
 2017-05-11  Addy Osmani  <addyosmani@gmail.com>
 
+        Speedometer: Add a Vue.js TodoMVC implementation
+        https://bugs.webkit.org/show_bug.cgi?id=171325
+
+        Reviewed by Ryosuke Niwa.
+
+        Adds a Vue.js TodoMVC implementation to Speedometer
+
+        * Speedometer/resources/todomvc/architecture-examples/vuejs-cli/.babelrc: Added.
+        * Speedometer/resources/todomvc/architecture-examples/vuejs-cli/.editorconfig: Added.
+        * Speedometer/resources/todomvc/architecture-examples/vuejs-cli/.eslintignore: Added.
+        * Speedometer/resources/todomvc/architecture-examples/vuejs-cli/.eslintrc.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/vuejs-cli/README.md: Added.
+        * Speedometer/resources/todomvc/architecture-examples/vuejs-cli/config/dev.env.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/vuejs-cli/config/index.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/vuejs-cli/config/prod.env.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/vuejs-cli/dist/index.html: Added.
+        * Speedometer/resources/todomvc/architecture-examples/vuejs-cli/dist/static/css/app.677b45842d9f8b96e5b23c18969233b7.css: Added.
+        * Speedometer/resources/todomvc/architecture-examples/vuejs-cli/dist/static/js/app.b0e835874bc8949670d1.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/vuejs-cli/dist/static/js/manifest.84b2b4fceb74ab1f91f3.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/vuejs-cli/dist/static/js/vendor.a52517c5aa98e7fbea2e.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/vuejs-cli/index.html: Added.
+        * Speedometer/resources/todomvc/architecture-examples/vuejs-cli/package.json: Added.
+        * Speedometer/resources/todomvc/architecture-examples/vuejs-cli/src/App.vue: Added.
+        * Speedometer/resources/todomvc/architecture-examples/vuejs-cli/src/components/Todos.vue: Added.
+        * Speedometer/resources/todomvc/architecture-examples/vuejs-cli/src/components/todo.css: Added.
+        * Speedometer/resources/todomvc/architecture-examples/vuejs-cli/src/main.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/vuejs-cli/yarn.lock: Added.
+
+2017-05-11  Addy Osmani  <addyosmani@gmail.com>
+
         Speedometer: Update the vanilla JavaScript TodoMVC implem to a more recent version
         https://bugs.webkit.org/show_bug.cgi?id=171306
 
