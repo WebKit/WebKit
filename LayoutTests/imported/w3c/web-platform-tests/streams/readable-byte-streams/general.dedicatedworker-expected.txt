@@ -10,9 +10,9 @@ FAIL ReadableStream with byte source: desiredSize when errored assert_equals: af
 PASS ReadableStream with byte source: getReader(), then releaseLock() 
 FAIL ReadableStream with byte source: getReader() with mode set to byob, then releaseLock() ReadableStreamBYOBReader releaseLock() is not implemented
 PASS ReadableStream with byte source: Test that closing a stream does not release a reader automatically 
-FAIL ReadableStream with byte source: Test that closing a stream does not release a BYOB reader automatically ReadableStreamBYOBReader closed is not implemented
+PASS ReadableStream with byte source: Test that closing a stream does not release a BYOB reader automatically 
 PASS ReadableStream with byte source: Test that erroring a stream does not release a reader automatically 
-FAIL ReadableStream with byte source: Test that erroring a stream does not release a BYOB reader automatically ReadableStreamBYOBReader closed is not implemented
+PASS ReadableStream with byte source: Test that erroring a stream does not release a BYOB reader automatically 
 PASS ReadableStream with byte source: releaseLock() on ReadableStreamReader with pending read() must throw 
 PASS ReadableStream with byte source: Automatic pull() after start() 
 PASS ReadableStream with byte source: Automatic pull() after start() and read() 

@@ -104,4 +104,78 @@ promise_test(function(test) {
     );
 }, "Calling ReadableStreamBYOBReader.cancel() on a ReadableStream that has been closed should result in a promise resolved with undefined");
 
+promise_test(function(test) {
+    let controller;
+
+    const rs = new ReadableStream({
+        start: function(c) {
+            controller = c;
+        },
+        type: "bytes"
+    });
+
+    const reader = rs.getReader({ mode: 'byob' });
+    controller.close();
+
+    return reader.closed.then(
+        function(res) {
+            assert_object_equals(res, undefined);
+        }
+    );
+}, "If controller is closed after ReadableStreamBYOBReader creation, ReadableStreamBYOBReader.closed should be a promise resolved with undefined");
+
+promise_test(function(test) {
+    let controller;
+
+    const rs = new ReadableStream({
+        start: function(c) {
+            controller = c;
+        },
+        type: "bytes"
+    });
+
+    controller.close();
+    const reader = rs.getReader({ mode: 'byob' });
+
+    return reader.closed.then(
+        function(res) {
+            assert_object_equals(res, undefined);
+        }
+    );
+}, "If controller has already been closed when ReadableStreamBYOBReader is created, ReadableStreamBYOBReader.closed should be a promise resolved with undefined");
+
+promise_test(function(test) {
+    let controller;
+
+    const rs = new ReadableStream({
+        start: function(c) {
+            controller = c;
+        },
+        type: "bytes"
+    });
+
+    const reader = rs.getReader({ mode: 'byob' });
+    const myError = new TypeError("Sample error");
+    controller.error(myError);
+
+    return promise_rejects(test, myError, reader.closed);
+}, "If controller is errored after ReadableStreamBYOBReader creation, ReadableStreamBYOBReader.closed should be a promise rejected with the same error");
+
+promise_test(function(test) {
+    let controller;
+
+    const rs = new ReadableStream({
+        start: function(c) {
+            controller = c;
+        },
+        type: "bytes"
+    });
+
+    const myError = new TypeError("Sample error");
+    controller.error(myError);
+    const reader = rs.getReader({ mode: 'byob' });
+
+    return promise_rejects(test, myError, reader.closed);
+}, "If controller has already been errored when ReadableStreamBYOBReader is created, ReadableStreamBYOBReader.closed should be a promise rejected with the same error");
+
 done();

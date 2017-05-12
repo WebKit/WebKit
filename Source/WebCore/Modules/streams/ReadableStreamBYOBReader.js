@@ -57,6 +57,8 @@ function closed()
 {
     "use strict";
 
-    // FIXME: Implement appropriate behavior.
-    @throwTypeError("ReadableStreamBYOBReader closed is not implemented");
+    if (!@isReadableStreamBYOBReader(this))
+        return @Promise.@reject(@makeGetterTypeError("ReadableStreamBYOBReader", "closed"));
+
+    return this.@closedPromiseCapability.@promise;
 }

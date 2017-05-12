@@ -1,3 +1,15 @@
+2017-05-12  Romain Bellessort  <romain.bellessort@crf.canon.fr>
+
+        [Readable Streams API] Add ReadableStreamBYOBReader closed getter
+        https://bugs.webkit.org/show_bug.cgi?id=172024
+
+        Reviewed by Youenn Fablet.
+
+        Added tests to check closed getter behaviour.
+
+        * streams/readable-stream-byob-reader-expected.txt: Updated.
+        * streams/readable-stream-byob-reader.js: Updated.
+
 2017-05-12  Matt Lewis  <jlewis3@apple.com>
 
         Marked webrtc/closing-peerconnection.html as flaky.
