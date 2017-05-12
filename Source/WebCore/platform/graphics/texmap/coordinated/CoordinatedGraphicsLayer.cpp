@@ -632,9 +632,6 @@ void CoordinatedGraphicsLayer::syncImageBacking()
         m_layerState.imageChanged = true;
     } else
         releaseImageBackingIfNeeded();
-
-    // syncImageBacking() changed m_layerState.imageID.
-    didChangeLayerState();
 }
 
 void CoordinatedGraphicsLayer::syncLayerState()

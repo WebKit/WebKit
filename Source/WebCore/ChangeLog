@@ -1,5 +1,19 @@
 2017-05-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] ASSERTION FAILED: !m_flushingLayers
+        https://bugs.webkit.org/show_bug.cgi?id=172025
+
+        Reviewed by Žan Doberšek.
+
+        The problem is that syncImageBacking() is calling didChangeLayerState(). All sync methods are called by
+        flushCompositingStateForThisLayerOnly() while flushing layers, so none of them should call didChange method that
+        will schedule a new flush while flushing.
+
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::syncImageBacking):
+
+2017-05-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] GIF images are not properly loaded the first time
         https://bugs.webkit.org/show_bug.cgi?id=170432
 
