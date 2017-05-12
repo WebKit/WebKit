@@ -1,5 +1,24 @@
 2017-05-11  Addy Osmani  <addyosmani@gmail.com>
 
+        Speedometer: Add an Elm TodoMVC implementation
+        https://bugs.webkit.org/show_bug.cgi?id=171464
+
+        Reviewed by Ryosuke Niwa.
+
+        Speedometer: Add Elm TodoMVC implementation
+
+        * Speedometer/resources/todomvc/functional-prog-examples/elm/Todo.elm: Added.
+        * Speedometer/resources/todomvc/functional-prog-examples/elm/Todo/Task.elm: Added.
+        * Speedometer/resources/todomvc/functional-prog-examples/elm/dist/elm.js: Added.
+        * Speedometer/resources/todomvc/functional-prog-examples/elm/index.html: Added.
+        * Speedometer/resources/todomvc/functional-prog-examples/elm/node_modules/todomvc-app-css/index.css: Added.
+        * Speedometer/resources/todomvc/functional-prog-examples/elm/node_modules/todomvc-common/base.css: Added.
+        * Speedometer/resources/todomvc/functional-prog-examples/elm/node_modules/todomvc-common/base.js: Added.
+        * Speedometer/resources/todomvc/functional-prog-examples/elm/package.json: Added.
+        * Speedometer/resources/todomvc/functional-prog-examples/elm/readme.md: Added.
+
+2017-05-11  Addy Osmani  <addyosmani@gmail.com>
+
         Speedometer: Update the Backbone.js implementation to a more recent library version
         https://bugs.webkit.org/show_bug.cgi?id=171305
 
