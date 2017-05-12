@@ -22,7 +22,8 @@
 ; THE POSSIBILITY OF SUCH DAMAGE.
 
 (version 1)
-(deny default)
+;(deny default)
+(allow default (with report))
 (allow system-audit file-read-metadata)
 
 (import "system.sb")
@@ -67,6 +68,7 @@
     (iokit-property "IOVARendererID")
     (iokit-property-regex #"^MetalPlugin(Name|ClassName)")
     (iokit-property "NoAutoRoute")
+    (iokit-property "Protocol Characteristics")
     (iokit-property "SupportAudioAUUC")
     (iokit-property "board-id")
     (iokit-property "idProduct")
@@ -279,6 +281,7 @@
 
 ;; Various services required by AppKit and other frameworks
 (allow mach-lookup
+    (global-name "com.apple.audio.AudioComponentRegistrar")
     (global-name "com.apple.CoreServices.coreservicesd")
     (global-name "com.apple.DiskArbitration.diskarbitrationd")
     (global-name "com.apple.FileCoordination")
@@ -338,7 +341,6 @@
     (remote udp))
 (allow network-inbound
     (local udp))
-
 
 ;; Open and Save panels
 (define (webkit-powerbox)

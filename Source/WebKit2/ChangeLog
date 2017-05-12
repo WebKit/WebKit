@@ -1,5 +1,18 @@
 2017-05-12  Brent Fulgham  <bfulgham@apple.com>
 
+        REGRESSION(r213564): Flash audio playback failures
+        https://bugs.webkit.org/show_bug.cgi?id=171876
+        <rdar://problem/32082745>
+
+        Reviewed by Alexey Proskuryakov.
+
+        The IOKit property filters added in r213564 need to be expanded to support
+        some Flash features.
+
+        * PluginProcess/mac/com.apple.WebKit.plugin-common.sb.in:
+
+2017-05-12  Brent Fulgham  <bfulgham@apple.com>
+
         [WK2][macOS] Add a mach-lookup exception for 'com.apple.analyticsd'
         https://bugs.webkit.org/show_bug.cgi?id=172040
         <rdar://problem/31765514>
