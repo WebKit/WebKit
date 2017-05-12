@@ -110,7 +110,11 @@ const OSType videoCaptureFormat = kCVPixelFormatType_420YpCbCr8Planar;
 const OSType videoCaptureFormat = kCVPixelFormatType_420YpCbCr8BiPlanarFullRange;
 #endif
 
-class AVVideoCaptureSourceFactory : public RealtimeMediaSource::VideoCaptureFactory {
+class AVVideoCaptureSourceFactory : public RealtimeMediaSource::VideoCaptureFactory
+#if PLATFORM(IOS)
+    , public RealtimeMediaSource::SingleSourceFactory<AVVideoCaptureSource>
+#endif
+{
 public:
     CaptureSourceOrError createVideoCaptureSource(const String& deviceID, const MediaConstraints* constraints) final {
         AVCaptureDeviceTypedef *device = [getAVCaptureDeviceClass() deviceWithUniqueID:deviceID];
@@ -145,6 +149,9 @@ AVVideoCaptureSource::AVVideoCaptureSource(AVCaptureDeviceTypedef* device, const
 
 AVVideoCaptureSource::~AVVideoCaptureSource()
 {
+#if PLATFORM(IOS)
+    avVideoCaptureSourceFactory().unsetActiveSource(*this);
+#endif
 }
 
 static void updateSizeMinMax(int& min, int& max, int value)

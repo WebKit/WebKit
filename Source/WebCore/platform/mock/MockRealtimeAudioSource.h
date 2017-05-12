@@ -47,13 +47,14 @@ public:
 
     static AudioCaptureFactory& factory();
 
-    virtual ~MockRealtimeAudioSource() = default;
+    virtual ~MockRealtimeAudioSource();
 
 protected:
     MockRealtimeAudioSource(const String& name = ASCIILiteral("Mock audio device"));
 
     void startProducingData() final;
     void stopProducingData() final;
+    bool isProducingData() const final { return m_isProducingData; }
 
     virtual void render(double) { }
 
@@ -79,6 +80,7 @@ private:
     double m_startTime { NAN };
     double m_lastRenderTime { NAN };
     double m_elapsedTime { 0 };
+    bool m_isProducingData { false };
 };
 
 } // namespace WebCore

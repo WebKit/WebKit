@@ -7,6 +7,7 @@
     <script src="../resources/testharnessreport.js"></script>
     <script src ="routines.js"></script>
     <script>
+    var context = new webkitAudioContext();
     promise_test((test) => {
         if (window.testRunner)
             testRunner.setUserMediaPermission(true);
@@ -21,11 +22,13 @@
                 setTimeout(() => reject("Test timed out"), 5000);
             });
         }).then((remoteStream) => {
-            return analyseAudio(remoteStream, 1000);
+            return analyseAudio(remoteStream, 1000, context);
         }).then((results) => {
             assert_true(results.heardHum, "heard hum");
             assert_true(results.heardBip, "heard bip");
             assert_true(results.heardBop, "heard bop");
+        }).then(() => {
+            return context.close();
         });
     }, "Basic audio playback through a peer connection");
     </script>

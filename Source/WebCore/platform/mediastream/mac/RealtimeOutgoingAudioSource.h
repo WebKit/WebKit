@@ -80,7 +80,8 @@ private:
     CAAudioStreamDescription m_outputStreamDescription;
 
     Vector<uint8_t> m_audioBuffer;
-    uint64_t m_startFrame { 0 };
+    uint64_t m_readCount { 0 };
+    uint64_t m_writeCount { 0 };
     bool m_muted { false };
     bool m_enabled { true };
 };

@@ -9,6 +9,7 @@
 <body>
     <script src ="routines.js"></script>
     <script>
+    var context = new webkitAudioContext();
     promise_test((test) => {
         if (window.testRunner)
             testRunner.setUserMediaPermission(true);
@@ -29,16 +30,18 @@
             }).then(() => {
                 return waitFor(500);
             }).then(() => {
-                return analyseAudio(remoteStream, 500).then((results) => {
+                return analyseAudio(remoteStream, 500, context).then((results) => {
                     assert_true(results.heardHum, "heard hum from remote enabled track");
                 });
             }).then(() => {
                 localTrack.enabled = false;
                 return waitFor(500);
             }).then(() => {
-                return analyseAudio(remoteStream, 500).then((results) => {
+                return analyseAudio(remoteStream, 500, context).then((results) => {
                     assert_false(results.heardHum, "not heard hum from remote disabled track");
                 });
+            }).then(() => {
+                return context.close();
             });
         });
     }, "Muting a local audio track and making sure the remote track is silent");

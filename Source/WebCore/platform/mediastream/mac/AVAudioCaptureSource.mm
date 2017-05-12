@@ -77,7 +77,11 @@ SOFT_LINK_POINTER(AVFoundation, AVMediaTypeAudio, NSString *)
 
 namespace WebCore {
 
-class AVAudioCaptureSourceFactory : public RealtimeMediaSource::AudioCaptureFactory {
+class AVAudioCaptureSourceFactory : public RealtimeMediaSource::AudioCaptureFactory
+#if PLATFORM(IOS)
+    , public RealtimeMediaSource::SingleSourceFactory<AVAudioCaptureSource>
+#endif
+{
 public:
     CaptureSourceOrError createAudioCaptureSource(const String& deviceID, const MediaConstraints* constraints) final {
         AVCaptureDeviceTypedef *device = [getAVCaptureDeviceClass() deviceWithUniqueID:deviceID];
@@ -110,6 +114,9 @@ AVAudioCaptureSource::AVAudioCaptureSource(AVCaptureDeviceTypedef* device, const
     
 AVAudioCaptureSource::~AVAudioCaptureSource()
 {
+#if PLATFORM(IOS)
+    avAudioCaptureSourceFactory().unsetActiveSource(*this);
+#endif
     shutdownCaptureSession();
 }
 
