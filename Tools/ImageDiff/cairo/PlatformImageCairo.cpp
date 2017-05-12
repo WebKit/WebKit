@@ -49,8 +49,8 @@ std::unique_ptr<PlatformImage> PlatformImage::createFromStdin(size_t imageSize)
             auto& context = *static_cast<ReadContext*>(closure);
             context.readBytes += length;
 
-            fread(data, 1, length, stdin);
-            return CAIRO_STATUS_SUCCESS;
+            size_t readBytes = fread(data, 1, length, stdin);
+            return readBytes == length ? CAIRO_STATUS_SUCCESS : CAIRO_STATUS_READ_ERROR;
         }, &context);
 
     if (cairo_surface_status(surface) != CAIRO_STATUS_SUCCESS) {
@@ -124,8 +124,8 @@ void PlatformImage::writeAsPNGToStdout()
     fprintf(stdout, "Content-Length: %" FORMAT_SIZE_T "\n", context.writtenBytes);
     cairo_surface_write_to_png_stream(m_image,
         [](void*, const unsigned char* data, unsigned length) -> cairo_status_t {
-            fwrite(data, 1, length, stdout);
-            return CAIRO_STATUS_SUCCESS;
+            size_t writtenBytes = fwrite(data, 1, length, stdout);
+            return writtenBytes == length ? CAIRO_STATUS_SUCCESS : CAIRO_STATUS_WRITE_ERROR;
         }, nullptr);
 }
 
