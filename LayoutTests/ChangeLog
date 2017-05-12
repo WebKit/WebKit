@@ -4,12 +4,23 @@
         following <http://trac.webkit.org/changeset/216789>
         (https://bugs.webkit.org/show_bug.cgi?id=171712)
 
+        In r216798 I inadvertently added testRunner.setPopupBlockingEnabled(true) instead
+        instead of testRunner.setPopupBlockingEnabled(false) to disable the popup blocker.
+
+        * plugins/navigator-plugin-crash.html:
+
+2017-05-12  Daniel Bates  <dabates@apple.com>
+
+        Attempt to fix timeout failure of test plugins/navigator-plugin-crash.html in WebKit1
+        following <http://trac.webkit.org/changeset/216789>
+        (https://bugs.webkit.org/show_bug.cgi?id=171712)
+
         On WebKit1 we need to explicitly allow the test tool to open windows by calling
         testRunner.setCanOpenWindows(). We should also call testRunner.setCloseRemainingWindowsWhenComplete(true)
         to have the test tool close any open windows after running the test.
 
         It is also good practice to explicitly disable the popup blocker by calling
-        testRunner.setPopupBlockingEnabled(true);.
+        testRunner.setPopupBlockingEnabled(false).
 
         * plugins/navigator-plugin-crash.html:
 
