@@ -1,3 +1,26 @@
+2017-05-12  Brady Eidson  <beidson@apple.com>
+
+        REGRESSION (r216711): API test WKWebView.ClearAppCache is failing.
+        https://bugs.webkit.org/show_bug.cgi?id=172030
+
+        Unreviewed - Test gardening, in effect...
+
+        This failure is only being seen by the bots.
+        
+        I believe this test is utterly broken in the first place; when it checks the .wal file's
+        size that is not actually an indicator that the records were deleted.
+        
+        But that isn't what's coming up as failure on the bots.
+        
+        This patch is an attempt to:
+        1 - More forcefully clear the Website data directory of leftovers before the test starts.
+        2 - Give an earlier indication of the failure that the bots are seeing, to possibly reveal more.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/LocalStorageClear.mm:
+        (defaultWebsiteDataDirectory):
+        (defaultApplicationCacheDirectory):
+        (TEST):
+
 2017-05-12  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Pass directory with crash logs into CrashLogs

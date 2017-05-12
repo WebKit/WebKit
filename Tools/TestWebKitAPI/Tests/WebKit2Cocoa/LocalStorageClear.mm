@@ -107,13 +107,22 @@ NSString *swizzledBundleIdentifierWebBookmarksD()
     return @"com.apple.webbookmarksd";
 }
 
+NSString *defaultWebsiteDataDirectory()
+{
+#if PLATFORM(IOS)
+    return nil;
+#else
+    return @"~/Library/Caches/TestWebKitAPI/WebKit";
+#endif
+}
+
 NSString *defaultApplicationCacheDirectory()
 {
 #if PLATFORM(IOS)
     // This is to mirror a quirk in WebsiteDataStore::defaultApplicationCacheDirectory and catch any regressions.
     return [NSHomeDirectory() stringByAppendingPathComponent:@"Library/Caches/com.apple.WebAppCache"];
 #else
-    return @"~/Library/Caches/TestWebKitAPI/WebKit/OfflineWebApplicationCache";
+    return [defaultWebsiteDataDirectory() stringByAppendingString:@"/OfflineWebApplicationCache"];
 #endif
 }
 
@@ -126,22 +135,24 @@ TEST(WKWebView, ClearAppCache)
     NSURL *dbResourceURL = [[NSBundle mainBundle] URLForResource:@"ApplicationCache" withExtension:@"db" subdirectory:@"TestWebKitAPI.resources"];
     NSURL *shmResourceURL = [[NSBundle mainBundle] URLForResource:@"ApplicationCache" withExtension:@"db-shm" subdirectory:@"TestWebKitAPI.resources"];
     NSURL *walResourceURL = [[NSBundle mainBundle] URLForResource:@"ApplicationCache" withExtension:@"db-wal" subdirectory:@"TestWebKitAPI.resources"];
-    
+
+    // Clean up any website data files left from any previous test run.
+    if (auto *websiteDataDirectory = defaultWebsiteDataDirectory()) {
+        NSURL *websiteDataURL = [NSURL fileURLWithPath:[websiteDataDirectory stringByExpandingTildeInPath]];
+        [[NSFileManager defaultManager] removeItemAtURL:websiteDataURL error:nil];
+    }
+
     NSURL *targetURL = [NSURL fileURLWithPath:[defaultApplicationCacheDirectory() stringByExpandingTildeInPath]];
     [[NSFileManager defaultManager] createDirectoryAtURL:targetURL withIntermediateDirectories:YES attributes:nil error:nil];
-    
+
     NSURL *dbTargetURL = [targetURL URLByAppendingPathComponent:@"ApplicationCache.db"];
     NSURL *walTargetURL = [targetURL URLByAppendingPathComponent:@"ApplicationCache.db-wal"];
     NSURL *shmTargetURL = [targetURL URLByAppendingPathComponent:@"ApplicationCache.db-shm"];
 
-    // Clean up any files that may have been left from this test failing before.
-    [[NSFileManager defaultManager] removeItemAtURL:dbTargetURL error:nil];
-    [[NSFileManager defaultManager] removeItemAtURL:walTargetURL error:nil];
-    [[NSFileManager defaultManager] removeItemAtURL:shmTargetURL error:nil];
     EXPECT_EQ(fileSize(dbTargetURL), -1);
     EXPECT_EQ(fileSize(walTargetURL), -1);
     EXPECT_EQ(fileSize(shmTargetURL), -1);
-    
+
     // Copy the resources from the bundle to ~/Library/...
     [[NSFileManager defaultManager] copyItemAtURL:dbResourceURL toURL:dbTargetURL error:nil];
     [[NSFileManager defaultManager] copyItemAtURL:shmResourceURL toURL:shmTargetURL error:nil];
@@ -156,7 +167,7 @@ TEST(WKWebView, ClearAppCache)
     readyToContinue = false;
     [[WKWebsiteDataStore defaultDataStore] fetchDataRecordsOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] completionHandler:^(NSArray<WKWebsiteDataRecord *> *websiteDataRecords)
     {
-        EXPECT_GT(websiteDataRecords.count, 0ul);
+        EXPECT_EQ(websiteDataRecords.count, 1ul);
         originalWebsiteDataRecordCount = websiteDataRecords.count;
         readyToContinue = true;
     }];
