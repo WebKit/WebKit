@@ -52,9 +52,9 @@ static inline bool isPowerOf2(unsigned v)
 }
 #endif
 
-void VisitedLinkTable::setSharedMemory(PassRefPtr<SharedMemory> sharedMemory)
+void VisitedLinkTable::setSharedMemory(Ref<SharedMemory>&& sharedMemory)
 {
-    m_sharedMemory = sharedMemory;
+    m_sharedMemory = WTFMove(sharedMemory);
     
     ASSERT(m_sharedMemory);
     ASSERT(!(m_sharedMemory->size() % sizeof(LinkHash)));

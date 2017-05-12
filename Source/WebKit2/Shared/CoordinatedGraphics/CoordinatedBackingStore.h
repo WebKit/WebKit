@@ -45,7 +45,7 @@ public:
 
     inline float scale() const { return m_scale; }
     void swapBuffers(WebCore::TextureMapper&);
-    void setBackBuffer(const WebCore::IntRect&, const WebCore::IntRect&, PassRefPtr<WebCore::CoordinatedSurface> buffer, const WebCore::IntPoint&);
+    void setBackBuffer(const WebCore::IntRect&, const WebCore::IntRect&, RefPtr<WebCore::CoordinatedSurface>&& buffer, const WebCore::IntPoint&);
 
 private:
     RefPtr<WebCore::CoordinatedSurface> m_surface;
@@ -60,7 +60,7 @@ public:
     void createTile(uint32_t tileID, float);
     void removeTile(uint32_t tileID);
     void removeAllTiles();
-    void updateTile(uint32_t tileID, const WebCore::IntRect&, const WebCore::IntRect&, PassRefPtr<WebCore::CoordinatedSurface>, const WebCore::IntPoint&);
+    void updateTile(uint32_t tileID, const WebCore::IntRect&, const WebCore::IntRect&, RefPtr<WebCore::CoordinatedSurface>&&, const WebCore::IntPoint&);
     static Ref<CoordinatedBackingStore> create() { return adoptRef(*new CoordinatedBackingStore); }
     void commitTileOperations(WebCore::TextureMapper&);
     RefPtr<WebCore::BitmapTexture> texture() const override;

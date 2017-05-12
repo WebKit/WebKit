@@ -34,13 +34,13 @@ class SandboxExtension;
 
 class BlobDataFileReferenceWithSandboxExtension final : public WebCore::BlobDataFileReference {
 public:
-    static Ref<BlobDataFileReference> create(const String& path, PassRefPtr<SandboxExtension> sandboxExtension)
+    static Ref<BlobDataFileReference> create(const String& path, RefPtr<SandboxExtension>&& sandboxExtension)
     {
-        return adoptRef(*new BlobDataFileReferenceWithSandboxExtension(path, sandboxExtension));
+        return adoptRef(*new BlobDataFileReferenceWithSandboxExtension(path, WTFMove(sandboxExtension)));
     }
 
 private:
-    BlobDataFileReferenceWithSandboxExtension(const String& path, PassRefPtr<SandboxExtension>);
+    BlobDataFileReferenceWithSandboxExtension(const String& path, RefPtr<SandboxExtension>&&);
     virtual ~BlobDataFileReferenceWithSandboxExtension();
 
     void prepareForFileAccess() override;

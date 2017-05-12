@@ -27,7 +27,7 @@
 #define WebGeolocationPosition_h
 
 #include "APIObject.h"
-#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
 
 namespace IPC {
 class Decoder;

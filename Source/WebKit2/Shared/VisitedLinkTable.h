@@ -27,7 +27,6 @@
 #define VisitedLinkTable_h
 
 #include <WebCore/LinkHash.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
 namespace WebKit {
@@ -39,7 +38,7 @@ public:
     VisitedLinkTable();
     ~VisitedLinkTable();
 
-    void setSharedMemory(PassRefPtr<SharedMemory>);
+    void setSharedMemory(Ref<SharedMemory>&&);
 
     // This should only be called from the UI process.
     bool addLinkHash(WebCore::LinkHash);

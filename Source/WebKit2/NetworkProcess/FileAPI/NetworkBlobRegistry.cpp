@@ -51,7 +51,7 @@ NetworkBlobRegistry::NetworkBlobRegistry()
 
 void NetworkBlobRegistry::registerFileBlobURL(NetworkConnectionToWebProcess* connection, const URL& url, const String& path, RefPtr<SandboxExtension>&& sandboxExtension, const String& contentType)
 {
-    blobRegistry().registerFileBlobURL(url, BlobDataFileReferenceWithSandboxExtension::create(path, sandboxExtension), contentType);
+    blobRegistry().registerFileBlobURL(url, BlobDataFileReferenceWithSandboxExtension::create(path, WTFMove(sandboxExtension)), contentType);
 
     ASSERT(!m_blobsForConnection.get(connection).contains(url));
     BlobForConnectionMap::iterator mapIterator = m_blobsForConnection.find(connection);

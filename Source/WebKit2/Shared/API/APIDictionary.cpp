@@ -64,15 +64,15 @@ Ref<Array> Dictionary::keys() const
     return API::Array::create(WTFMove(keys));
 }
 
-bool Dictionary::add(const WTF::String& key, PassRefPtr<API::Object> item)
+bool Dictionary::add(const WTF::String& key, RefPtr<API::Object>&& item)
 {
-    MapType::AddResult result = m_map.add(key, item);
+    MapType::AddResult result = m_map.add(key, WTFMove(item));
     return result.isNewEntry;
 }
 
-bool Dictionary::set(const WTF::String& key, PassRefPtr<API::Object> item)
+bool Dictionary::set(const WTF::String& key, RefPtr<API::Object>&& item)
 {
-    MapType::AddResult result = m_map.set(key, item);
+    MapType::AddResult result = m_map.set(key, WTFMove(item));
     return result.isNewEntry;
 }
 

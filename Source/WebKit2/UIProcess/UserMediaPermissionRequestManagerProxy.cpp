@@ -291,7 +291,7 @@ void UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame(
             return;
         }
 
-        if (!m_page.uiClient().decidePolicyForUserMediaPermissionRequest(m_page, *m_page.process().webFrame(frameID), *userMediaOrigin.get(), *topLevelOrigin.get(), request.get()))
+        if (!m_page.uiClient().decidePolicyForUserMediaPermissionRequest(m_page, *m_page.process().webFrame(frameID), userMediaOrigin, topLevelOrigin, request.get()))
             userMediaAccessWasDenied(userMediaID, UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::UserMediaDisabled);
 
     };
@@ -326,7 +326,7 @@ void UserMediaPermissionRequestManagerProxy::enumerateMediaDevicesForFrame(uint6
     auto userMediaOrigin = API::SecurityOrigin::create(SecurityOriginData::fromDatabaseIdentifier(userMediaDocumentOriginIdentifier).value_or(SecurityOriginData()).securityOrigin());
     auto topLevelOrigin = API::SecurityOrigin::create(SecurityOriginData::fromDatabaseIdentifier(topLevelDocumentOriginIdentifier).value_or(SecurityOriginData()).securityOrigin());
 
-    if (!m_page.uiClient().checkUserMediaPermissionForOrigin(m_page, *m_page.process().webFrame(frameID), *userMediaOrigin.get(), *topLevelOrigin.get(), request.get())) {
+    if (!m_page.uiClient().checkUserMediaPermissionForOrigin(m_page, *m_page.process().webFrame(frameID), userMediaOrigin, topLevelOrigin, request.get())) {
         m_pendingDeviceRequests.take(userMediaID);
         m_page.process().send(Messages::WebPage::DidCompleteMediaDeviceEnumeration(userMediaID, Vector<WebCore::CaptureDevice>(), emptyString(), false), m_page.pageID());
     }

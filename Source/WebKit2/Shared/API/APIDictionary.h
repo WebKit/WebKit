@@ -71,8 +71,8 @@ public:
 
     Ref<Array> keys() const;
 
-    bool add(const WTF::String& key, PassRefPtr<Object>);
-    bool set(const WTF::String& key, PassRefPtr<Object>);
+    bool add(const WTF::String& key, RefPtr<Object>&&);
+    bool set(const WTF::String& key, RefPtr<Object>&&);
     void remove(const WTF::String& key);
 
     size_t size() const { return m_map.size(); }

@@ -39,7 +39,7 @@ WKTypeID WKSecurityOriginGetTypeID()
 
 WKSecurityOriginRef WKSecurityOriginCreateFromString(WKStringRef string)
 {
-    return toAPI(API::SecurityOrigin::create(WebCore::SecurityOrigin::createFromString(toImpl(string)->string())).leakRef());
+    return toAPI(&API::SecurityOrigin::create(WebCore::SecurityOrigin::createFromString(toImpl(string)->string())).leakRef());
 }
 
 WKSecurityOriginRef WKSecurityOriginCreateFromDatabaseIdentifier(WKStringRef identifier)
@@ -47,13 +47,13 @@ WKSecurityOriginRef WKSecurityOriginCreateFromDatabaseIdentifier(WKStringRef ide
     auto origin = WebCore::SecurityOriginData::fromDatabaseIdentifier(toImpl(identifier)->string());
     if (!origin)
         return nullptr;
-    return toAPI(API::SecurityOrigin::create(origin.value().securityOrigin()).leakRef());
+    return toAPI(&API::SecurityOrigin::create(origin.value().securityOrigin()).leakRef());
 }
 
 WKSecurityOriginRef WKSecurityOriginCreate(WKStringRef protocol, WKStringRef host, int port)
 {
     auto securityOrigin = API::SecurityOrigin::create(toImpl(protocol)->string(), toImpl(host)->string(), port);
-    return toAPI(securityOrigin.leakRef());
+    return toAPI(&securityOrigin.leakRef());
 }
 
 WKStringRef WKSecurityOriginCopyDatabaseIdentifier(WKSecurityOriginRef securityOrigin)

@@ -28,7 +28,7 @@
 
 #include "APIObject.h"
 #include <WebCore/IntRect.h>
-#include <wtf/PassRefPtr.h>
+#include <wtf/Ref.h>
 #include <wtf/text/WTFString.h>
 
 namespace API {
@@ -51,7 +51,7 @@ public:
         return adoptRef(*new WebRenderObject(renderer, false));
     }
 
-    static PassRefPtr<WebRenderObject> create(const String& name, const String& elementTagName, const String& elementID, PassRefPtr<API::Array> elementClassNames, WebCore::IntPoint absolutePosition, WebCore::IntRect frameRect, const String& textSnippet, unsigned textLength, PassRefPtr<API::Array> children);
+    static Ref<WebRenderObject> create(const String& name, const String& elementTagName, const String& elementID, RefPtr<API::Array>&& elementClassNames, WebCore::IntPoint absolutePosition, WebCore::IntRect frameRect, const String& textSnippet, unsigned textLength, RefPtr<API::Array>&& children);
 
     virtual ~WebRenderObject();
 
@@ -71,7 +71,7 @@ public:
 
 private:
     WebRenderObject(WebCore::RenderObject*, bool shouldIncludeDescendants);
-    WebRenderObject(const String& name, const String& elementTagName, const String& elementID, PassRefPtr<API::Array> elementClassNames, WebCore::IntPoint absolutePosition, WebCore::IntRect frameRect, const String& textSnippet, unsigned textLength, PassRefPtr<API::Array> children);
+    WebRenderObject(const String& name, const String& elementTagName, const String& elementID, RefPtr<API::Array>&& elementClassNames, WebCore::IntPoint absolutePosition, WebCore::IntRect frameRect, const String& textSnippet, unsigned textLength, RefPtr<API::Array>&& children);
 
     RefPtr<API::Array> m_children;
 

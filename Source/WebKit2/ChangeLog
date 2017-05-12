@@ -1,3 +1,67 @@
+2017-05-12  Chris Dumez  <cdumez@apple.com>
+
+        Stop using PassRefPtr under WebKit2/Shared
+        https://bugs.webkit.org/show_bug.cgi?id=172017
+
+        Reviewed by Antti Koivisto.
+
+        * Shared/API/APIDictionary.cpp:
+        (API::Dictionary::add):
+        (API::Dictionary::set):
+        * Shared/API/APIDictionary.h:
+        * Shared/API/APISecurityOrigin.h:
+        (API::SecurityOrigin::createFromString):
+        (API::SecurityOrigin::create):
+        (API::SecurityOrigin::securityOrigin):
+        (API::SecurityOrigin::SecurityOrigin):
+        * Shared/API/APISerializedScriptValue.h:
+        (API::SerializedScriptValue::create):
+        (API::SerializedScriptValue::SerializedScriptValue):
+        * Shared/API/c/WKSharedAPICast.h:
+        (WebKit::ProxyingRefPtr::ProxyingRefPtr):
+        * Shared/APIWebArchiveResource.h:
+        * Shared/APIWebArchiveResource.mm:
+        (API::WebArchiveResource::create):
+        (API::WebArchiveResource::WebArchiveResource):
+        * Shared/AsyncRequest.h:
+        (WebKit::AsyncRequestMap::add):
+        * Shared/BlobDataFileReferenceWithSandboxExtension.cpp:
+        (WebKit::BlobDataFileReferenceWithSandboxExtension::BlobDataFileReferenceWithSandboxExtension):
+        * Shared/BlobDataFileReferenceWithSandboxExtension.h:
+        * Shared/CoordinatedGraphics/CoordinatedBackingStore.cpp:
+        (WebKit::CoordinatedBackingStoreTile::setBackBuffer):
+        (WebKit::CoordinatedBackingStore::updateTile):
+        * Shared/CoordinatedGraphics/CoordinatedBackingStore.h:
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.cpp:
+        (WebKit::CoordinatedGraphicsScene::createUpdateAtlas):
+        (WebKit::CoordinatedGraphicsScene::updateImageBacking):
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.h:
+        * Shared/Plugins/Netscape/NetscapePluginModule.cpp:
+        (WebKit::NetscapePluginModule::getOrCreate):
+        * Shared/Plugins/Netscape/NetscapePluginModule.h:
+        * Shared/VisitedLinkTable.cpp:
+        (WebKit::VisitedLinkTable::setSharedMemory):
+        * Shared/VisitedLinkTable.h:
+        * Shared/WebBackForwardListItem.h:
+        (WebKit::WebBackForwardListItem::setSnapshot):
+        * Shared/WebContextMenuItem.cpp:
+        (WebKit::WebContextMenuItem::create):
+        * Shared/WebContextMenuItem.h:
+        * Shared/WebGeolocationPosition.h:
+        * Shared/WebRenderLayer.cpp:
+        (WebKit::WebRenderLayer::create):
+        (WebKit::WebRenderLayer::createArrayFromLayerList):
+        (WebKit::WebRenderLayer::WebRenderLayer):
+        * Shared/WebRenderLayer.h:
+        * Shared/WebRenderObject.cpp:
+        (WebKit::WebRenderObject::create):
+        (WebKit::WebRenderObject::WebRenderObject):
+        * Shared/WebRenderObject.h:
+        * UIProcess/VisitedLinkStore.cpp:
+        (WebKit::VisitedLinkStore::resizeTable):
+        * WebProcess/WebPage/VisitedLinkTableController.cpp:
+        (WebKit::VisitedLinkTableController::setVisitedLinkTable):
+
 2017-05-11  Brady Eidson  <beidson@apple.com>
 
         [WKWebsiteDataStore removeDataOfTypes:...] doesn't work for IndexedDB if the data store has a custom IDB path.

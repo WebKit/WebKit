@@ -30,7 +30,6 @@
 
 #include "APIObject.h"
 #include <wtf/Forward.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
 namespace API {
@@ -49,7 +48,7 @@ public:
     virtual ~WebArchiveResource();
 
     static Ref<WebArchiveResource> create(API::Data*, const String& URL, const String& MIMEType, const String& textEncoding);
-    static Ref<WebArchiveResource> create(PassRefPtr<WebCore::ArchiveResource>);
+    static Ref<WebArchiveResource> create(RefPtr<WebCore::ArchiveResource>&&);
 
     Ref<API::Data> data();
     String URL();
@@ -60,7 +59,7 @@ public:
 
 private:
     WebArchiveResource(API::Data*, const String& URL, const String& MIMEType, const String& textEncoding);
-    WebArchiveResource(PassRefPtr<WebCore::ArchiveResource>);
+    WebArchiveResource(RefPtr<WebCore::ArchiveResource>&&);
 
     RefPtr<WebCore::ArchiveResource> m_archiveResource;
 };

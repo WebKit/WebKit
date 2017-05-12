@@ -94,7 +94,7 @@ void VisitedLinkTableController::setVisitedLinkTable(const SharedMemory::Handle&
     if (!sharedMemory)
         return;
 
-    m_visitedLinkTable.setSharedMemory(WTFMove(sharedMemory));
+    m_visitedLinkTable.setSharedMemory(sharedMemory.releaseNonNull());
 
     invalidateStylesForAllLinks();
 }

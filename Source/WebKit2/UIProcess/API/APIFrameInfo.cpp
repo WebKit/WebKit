@@ -53,7 +53,7 @@ Ref<FrameInfo> FrameInfo::create(const WebKit::WebFrameProxy& frame, const WebCo
 FrameInfo::FrameInfo(const WebKit::FrameInfoData& frameInfoData)
     : m_isMainFrame(frameInfoData.isMainFrame)
     , m_request(frameInfoData.request)
-    , m_securityOrigin(*SecurityOrigin::create(frameInfoData.securityOrigin.securityOrigin()))
+    , m_securityOrigin(SecurityOrigin::create(frameInfoData.securityOrigin.securityOrigin()))
     , m_handle(API::FrameHandle::create(frameInfoData.frameID))
 {
 }

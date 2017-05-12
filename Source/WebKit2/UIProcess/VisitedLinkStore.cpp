@@ -202,7 +202,7 @@ void VisitedLinkStore::pendingVisitedLinksTimerFired()
 
 void VisitedLinkStore::resizeTable(unsigned newTableSize)
 {
-    RefPtr<SharedMemory> newTableMemory = SharedMemory::allocate(newTableSize * sizeof(LinkHash));
+    auto newTableMemory = SharedMemory::allocate(newTableSize * sizeof(LinkHash));
 
     if (!newTableMemory) {
         LOG_ERROR("Could not allocate shared memory for visited link table");
@@ -214,7 +214,7 @@ void VisitedLinkStore::resizeTable(unsigned newTableSize)
     RefPtr<SharedMemory> currentTableMemory = m_table.sharedMemory();
     unsigned currentTableSize = m_tableSize;
 
-    m_table.setSharedMemory(newTableMemory);
+    m_table.setSharedMemory(newTableMemory.releaseNonNull());
     m_tableSize = newTableSize;
 
     if (currentTableMemory) {

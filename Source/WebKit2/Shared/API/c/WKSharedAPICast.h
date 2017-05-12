@@ -136,7 +136,7 @@ auto toImpl(T t) -> ImplType*
 template<typename ImplType, typename APIType = typename ImplTypeInfo<ImplType>::APIType>
 class ProxyingRefPtr {
 public:
-    ProxyingRefPtr(PassRefPtr<ImplType> impl)
+    ProxyingRefPtr(RefPtr<ImplType>&& impl)
         : m_impl(impl)
     {
     }
@@ -210,8 +210,8 @@ inline ProxyingRefPtr<API::URLResponse> toAPI(const WebCore::ResourceResponse& r
 inline WKSecurityOriginRef toCopiedAPI(WebCore::SecurityOrigin* origin)
 {
     if (!origin)
-        return 0;
-    return toAPI(API::SecurityOrigin::create(*origin).leakRef());
+        return nullptr;
+    return toAPI(&API::SecurityOrigin::create(*origin).leakRef());
 }
 
 /* Geometry conversions */

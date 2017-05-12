@@ -45,7 +45,7 @@ struct RawPluginMetaData;
 
 class NetscapePluginModule : public RefCounted<NetscapePluginModule> {
 public:
-    static PassRefPtr<NetscapePluginModule> getOrCreate(const String& pluginPath);
+    static RefPtr<NetscapePluginModule> getOrCreate(const String& pluginPath);
     ~NetscapePluginModule();
 
     const NPPluginFuncs& pluginFuncs() const { return m_pluginFuncs; }

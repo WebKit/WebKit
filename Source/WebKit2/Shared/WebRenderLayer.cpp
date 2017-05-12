@@ -43,7 +43,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassRefPtr<WebRenderLayer> WebRenderLayer::create(WebPage* page)
+RefPtr<WebRenderLayer> WebRenderLayer::create(WebPage* page)
 {
     Frame* mainFrame = page->mainFrame();
     if (!mainFrame)
@@ -63,12 +63,12 @@ PassRefPtr<WebRenderLayer> WebRenderLayer::create(WebPage* page)
     return adoptRef(new WebRenderLayer(rootLayer));
 }
 
-PassRefPtr<WebRenderLayer> WebRenderLayer::create(PassRefPtr<WebRenderObject> renderer, bool isReflection, bool isClipping, bool isClipped, CompositingLayerType type, WebCore::IntRect absoluteBoundingBox, double backingStoreMemoryEstimate, PassRefPtr<API::Array> negativeZOrderList, PassRefPtr<API::Array> normalFlowList, PassRefPtr<API::Array> positiveZOrderList, PassRefPtr<WebRenderLayer> frameContentsLayer)
+Ref<WebRenderLayer> WebRenderLayer::create(RefPtr<WebRenderObject>&& renderer, bool isReflection, bool isClipping, bool isClipped, CompositingLayerType type, WebCore::IntRect absoluteBoundingBox, double backingStoreMemoryEstimate, RefPtr<API::Array>&& negativeZOrderList, RefPtr<API::Array>&& normalFlowList, RefPtr<API::Array>&& positiveZOrderList, RefPtr<WebRenderLayer>&& frameContentsLayer)
 {
-    return adoptRef(new WebRenderLayer(renderer, isReflection, isClipping, isClipped, type, absoluteBoundingBox, backingStoreMemoryEstimate, negativeZOrderList, normalFlowList, positiveZOrderList, frameContentsLayer));
+    return adoptRef(*new WebRenderLayer(WTFMove(renderer), isReflection, isClipping, isClipped, type, absoluteBoundingBox, backingStoreMemoryEstimate, WTFMove(negativeZOrderList), WTFMove(normalFlowList), WTFMove(positiveZOrderList), WTFMove(frameContentsLayer)));
 }
 
-PassRefPtr<API::Array> WebRenderLayer::createArrayFromLayerList(Vector<RenderLayer*>* list)
+RefPtr<API::Array> WebRenderLayer::createArrayFromLayerList(Vector<RenderLayer*>* list)
 {
     if (!list || !list->size())
         return nullptr;
@@ -128,18 +128,18 @@ WebRenderLayer::WebRenderLayer(RenderLayer* layer)
     }
 }
 
-WebRenderLayer::WebRenderLayer(PassRefPtr<WebRenderObject> renderer, bool isReflection, bool isClipping, bool isClipped, CompositingLayerType type, WebCore::IntRect absoluteBoundingBox, double backingStoreMemoryEstimate, PassRefPtr<API::Array> negativeZOrderList, PassRefPtr<API::Array> normalFlowList, PassRefPtr<API::Array> positiveZOrderList, PassRefPtr<WebRenderLayer> frameContentsLayer)
-    : m_renderer(renderer)
+WebRenderLayer::WebRenderLayer(RefPtr<WebRenderObject>&& renderer, bool isReflection, bool isClipping, bool isClipped, CompositingLayerType type, WebCore::IntRect absoluteBoundingBox, double backingStoreMemoryEstimate, RefPtr<API::Array>&& negativeZOrderList, RefPtr<API::Array>&& normalFlowList, RefPtr<API::Array>&& positiveZOrderList, RefPtr<WebRenderLayer>&& frameContentsLayer)
+    : m_renderer(WTFMove(renderer))
     , m_isReflection(isReflection)
     , m_isClipping(isClipping)
     , m_isClipped(isClipped)
     , m_compositingLayerType(type)
     , m_absoluteBoundingBox(absoluteBoundingBox)
     , m_backingStoreMemoryEstimate(backingStoreMemoryEstimate)
-    , m_negativeZOrderList(negativeZOrderList)
-    , m_normalFlowList(normalFlowList)
-    , m_positiveZOrderList(positiveZOrderList)
-    , m_frameContentsLayer(frameContentsLayer)
+    , m_negativeZOrderList(WTFMove(negativeZOrderList))
+    , m_normalFlowList(WTFMove(normalFlowList))
+    , m_positiveZOrderList(WTFMove(positiveZOrderList))
+    , m_frameContentsLayer(WTFMove(frameContentsLayer))
 {
 }
 

@@ -102,12 +102,12 @@ private:
     void setLayerRepaintCountIfNeeded(WebCore::TextureMapperLayer*, const WebCore::CoordinatedGraphicsLayerState&);
 
     void syncUpdateAtlases(const WebCore::CoordinatedGraphicsState&);
-    void createUpdateAtlas(uint32_t atlasID, PassRefPtr<WebCore::CoordinatedSurface>);
+    void createUpdateAtlas(uint32_t atlasID, RefPtr<WebCore::CoordinatedSurface>&&);
     void removeUpdateAtlas(uint32_t atlasID);
 
     void syncImageBackings(const WebCore::CoordinatedGraphicsState&);
     void createImageBacking(WebCore::CoordinatedImageBackingID);
-    void updateImageBacking(WebCore::CoordinatedImageBackingID, PassRefPtr<WebCore::CoordinatedSurface>);
+    void updateImageBacking(WebCore::CoordinatedImageBackingID, RefPtr<WebCore::CoordinatedSurface>&&);
     void clearImageBackingContents(WebCore::CoordinatedImageBackingID);
     void removeImageBacking(WebCore::CoordinatedImageBackingID);
 

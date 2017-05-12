@@ -36,9 +36,9 @@ namespace API {
 
 class SerializedScriptValue : public API::ObjectImpl<API::Object::Type::SerializedScriptValue> {
 public:
-    static Ref<SerializedScriptValue> create(PassRefPtr<WebCore::SerializedScriptValue> serializedValue)
+    static Ref<SerializedScriptValue> create(RefPtr<WebCore::SerializedScriptValue>&& serializedValue)
     {
-        return adoptRef(*new SerializedScriptValue(serializedValue));
+        return adoptRef(*new SerializedScriptValue(WTFMove(serializedValue)));
     }
     
     static RefPtr<SerializedScriptValue> create(JSContextRef context, JSValueRef value, JSValueRef* exception)
@@ -68,8 +68,8 @@ public:
     WebCore::SerializedScriptValue* internalRepresentation() { return m_serializedScriptValue.get(); }
 
 private:
-    explicit SerializedScriptValue(PassRefPtr<WebCore::SerializedScriptValue> serializedScriptValue)
-        : m_serializedScriptValue(serializedScriptValue)
+    explicit SerializedScriptValue(RefPtr<WebCore::SerializedScriptValue>&& serializedScriptValue)
+        : m_serializedScriptValue(WTFMove(serializedScriptValue))
     {
     }
 

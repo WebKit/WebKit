@@ -27,32 +27,32 @@
 
 #include "APIObject.h"
 #include <WebCore/SecurityOrigin.h>
-#include <wtf/PassRefPtr.h>
+#include <wtf/Ref.h>
 
 namespace API {
 
 class SecurityOrigin : public API::ObjectImpl<API::Object::Type::SecurityOrigin> {
 public:
-    static RefPtr<SecurityOrigin> createFromString(const WTF::String& string)
+    static Ref<SecurityOrigin> createFromString(const WTF::String& string)
     {
         return create(WebCore::SecurityOrigin::createFromString(string));
     }
 
-    static RefPtr<SecurityOrigin> create(const WTF::String& protocol, const WTF::String& host, std::optional<uint16_t> port)
+    static Ref<SecurityOrigin> create(const WTF::String& protocol, const WTF::String& host, std::optional<uint16_t> port)
     {
         return create(WebCore::SecurityOrigin::create(protocol, host, port));
     }
 
-    static RefPtr<SecurityOrigin> create(const WebCore::SecurityOrigin& securityOrigin)
+    static Ref<SecurityOrigin> create(const WebCore::SecurityOrigin& securityOrigin)
     {
-        return adoptRef(new SecurityOrigin(securityOrigin));
+        return adoptRef(*new SecurityOrigin(securityOrigin));
     }
 
-    WebCore::SecurityOrigin& securityOrigin() const { return *m_securityOrigin; }
+    WebCore::SecurityOrigin& securityOrigin() const { return m_securityOrigin.get(); }
 
 private:
-    SecurityOrigin(PassRefPtr<WebCore::SecurityOrigin> securityOrigin)
-        : m_securityOrigin(securityOrigin)
+    SecurityOrigin(Ref<WebCore::SecurityOrigin>&& securityOrigin)
+        : m_securityOrigin(WTFMove(securityOrigin))
     {
     }
 
@@ -61,7 +61,7 @@ private:
     {
     }
 
-    RefPtr<WebCore::SecurityOrigin> m_securityOrigin;
+    Ref<WebCore::SecurityOrigin> m_securityOrigin;
 };
 
 }

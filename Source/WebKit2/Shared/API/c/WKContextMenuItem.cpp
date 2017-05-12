@@ -52,7 +52,7 @@ WKContextMenuItemRef WKContextMenuItemCreateAsAction(WKContextMenuItemTag tag, W
     UNUSED_PARAM(tag);
     UNUSED_PARAM(title);
     UNUSED_PARAM(enabled);
-    return 0;
+    return nullptr;
 #endif
 }
 
@@ -65,19 +65,19 @@ WKContextMenuItemRef WKContextMenuItemCreateAsCheckableAction(WKContextMenuItemT
     UNUSED_PARAM(title);
     UNUSED_PARAM(enabled);
     UNUSED_PARAM(checked);
-    return 0;
+    return nullptr;
 #endif
 }
 
 WKContextMenuItemRef WKContextMenuItemCreateAsSubmenu(WKStringRef title, bool enabled, WKArrayRef submenuItems)
 {
 #if ENABLE(CONTEXT_MENUS)
-    return toAPI(WebContextMenuItem::create(toImpl(title)->string(), enabled, toImpl(submenuItems)).leakRef());
+    return toAPI(&WebContextMenuItem::create(toImpl(title)->string(), enabled, toImpl(submenuItems)).leakRef());
 #else
     UNUSED_PARAM(title);
     UNUSED_PARAM(enabled);
     UNUSED_PARAM(submenuItems);
-    return 0;
+    return nullptr;
 #endif
 }
 
@@ -86,7 +86,7 @@ WKContextMenuItemRef WKContextMenuItemSeparatorItem()
 #if ENABLE(CONTEXT_MENUS)
     return toAPI(WebContextMenuItem::separatorItem());
 #else
-    return 0;
+    return nullptr;
 #endif
 }
 

@@ -29,8 +29,8 @@
 
 #include <functional>
 #include <wtf/HashMap.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 
 namespace WebKit {
 
@@ -126,9 +126,9 @@ public:
         return adoptRef(*request.leakRef());
     }
 
-    void add(uint64_t requestID, PassRefPtr<AsyncRequest> request)
+    void add(uint64_t requestID, RefPtr<AsyncRequest>&& request)
     {
-        m_requestMap.add(requestID, request);
+        m_requestMap.add(requestID, WTFMove(request));
     }
 
     void clear()

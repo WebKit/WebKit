@@ -39,7 +39,7 @@ WebContextMenuItem::WebContextMenuItem(const WebContextMenuItemData& data)
 {
 }
 
-PassRefPtr<WebContextMenuItem> WebContextMenuItem::create(const String& title, bool enabled, API::Array* submenuItems)
+Ref<WebContextMenuItem> WebContextMenuItem::create(const String& title, bool enabled, API::Array* submenuItems)
 {
     size_t size = submenuItems->size();
 
@@ -52,7 +52,7 @@ PassRefPtr<WebContextMenuItem> WebContextMenuItem::create(const String& title, b
             submenu.append(item->data());
     }
 
-    return adoptRef(new WebContextMenuItem(WebContextMenuItemData(WebCore::ContextMenuItemTagNoAction, title, enabled, submenu))).leakRef();
+    return adoptRef(*new WebContextMenuItem(WebContextMenuItemData(WebCore::ContextMenuItemTagNoAction, title, enabled, submenu))).leakRef();
 }
 
 WebContextMenuItem* WebContextMenuItem::separatorItem()
