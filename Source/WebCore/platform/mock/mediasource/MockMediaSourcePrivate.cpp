@@ -144,9 +144,9 @@ void MockMediaSourcePrivate::sourceBufferPrivateDidChangeActiveState(MockSourceB
     }
 }
 
-static bool MockSourceBufferPrivateHasAudio(PassRefPtr<MockSourceBufferPrivate> prpSourceBuffer)
+static bool MockSourceBufferPrivateHasAudio(MockSourceBufferPrivate* sourceBuffer)
 {
-    return prpSourceBuffer->hasAudio();
+    return sourceBuffer->hasAudio();
 }
 
 bool MockMediaSourcePrivate::hasAudio() const
@@ -154,9 +154,9 @@ bool MockMediaSourcePrivate::hasAudio() const
     return std::any_of(m_activeSourceBuffers.begin(), m_activeSourceBuffers.end(), MockSourceBufferPrivateHasAudio);
 }
 
-static bool MockSourceBufferPrivateHasVideo(PassRefPtr<MockSourceBufferPrivate> prpSourceBuffer)
+static bool MockSourceBufferPrivateHasVideo(MockSourceBufferPrivate* sourceBuffer)
 {
-    return prpSourceBuffer->hasVideo();
+    return sourceBuffer->hasVideo();
 }
 
 bool MockMediaSourcePrivate::hasVideo() const

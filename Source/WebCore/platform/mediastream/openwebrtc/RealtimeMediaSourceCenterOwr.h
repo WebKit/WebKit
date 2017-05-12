@@ -38,7 +38,7 @@
 #include "CaptureDeviceManager.h"
 #include "RealtimeMediaSourceCenter.h"
 #include "RealtimeMediaSourceOwr.h"
-#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
@@ -67,7 +67,7 @@ private:
     CaptureDeviceManager& defaultAudioCaptureDeviceManager() final { return m_defaultAudioCaptureDeviceManager; }
     CaptureDeviceManager& defaultVideoCaptureDeviceManager() final { return m_defaultVideoCaptureDeviceManager; }
 
-    PassRefPtr<RealtimeMediaSource> firstSource(RealtimeMediaSource::Type);
+    RealtimeMediaSource* firstSource(RealtimeMediaSource::Type);
     RealtimeMediaSourceOwrMap m_sourceMap;
     ValidConstraintsHandler m_validConstraintsHandler;
     InvalidConstraintsHandler m_invalidConstraintsHandler;

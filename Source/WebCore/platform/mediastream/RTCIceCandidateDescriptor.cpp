@@ -36,9 +36,9 @@
 
 namespace WebCore {
 
-PassRefPtr<RTCIceCandidateDescriptor> RTCIceCandidateDescriptor::create(const String& candidate, const String& sdpMid, unsigned short sdpMLineIndex)
+Ref<RTCIceCandidateDescriptor> RTCIceCandidateDescriptor::create(const String& candidate, const String& sdpMid, unsigned short sdpMLineIndex)
 {
-    return adoptRef(new RTCIceCandidateDescriptor(candidate, sdpMid, sdpMLineIndex));
+    return adoptRef(*new RTCIceCandidateDescriptor(candidate, sdpMid, sdpMLineIndex));
 }
 
 RTCIceCandidateDescriptor::RTCIceCandidateDescriptor(const String& candidate, const String& sdpMid, unsigned short sdpMLineIndex)

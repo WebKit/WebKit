@@ -1,3 +1,53 @@
+2017-05-11  Chris Dumez  <cdumez@apple.com>
+
+        Drop remaining uses of PassRefPtr under platform/
+        https://bugs.webkit.org/show_bug.cgi?id=172007
+
+        Reviewed by Geoffrey Garen.
+
+        * platform/graphics/wpe/ImageWPE.cpp:
+        (WebCore::Image::loadPlatformResource):
+        * platform/ios/LegacyTileGrid.h:
+        * platform/ios/LegacyTileGrid.mm:
+        (WebCore::LegacyTileGrid::tileForIndex):
+        (WebCore::LegacyTileGrid::tileForPoint):
+        * platform/ios/LegacyTileGridTile.h:
+        (WebCore::LegacyTileGridTile::create):
+        * platform/mediastream/RTCIceCandidateDescriptor.cpp:
+        (WebCore::RTCIceCandidateDescriptor::create):
+        * platform/mediastream/RTCIceCandidateDescriptor.h:
+        * platform/mediastream/RTCPeerConnectionHandlerClient.h:
+        * platform/mediastream/RTCSessionDescriptionDescriptor.cpp:
+        (WebCore::RTCSessionDescriptionDescriptor::create):
+        * platform/mediastream/RTCSessionDescriptionDescriptor.h:
+        * platform/mediastream/RTCSessionDescriptionRequest.h:
+        (WebCore::RTCSessionDescriptionRequest::extraData):
+        (WebCore::RTCSessionDescriptionRequest::setExtraData):
+        * platform/mediastream/RealtimeMediaSourceCenter.h:
+        * platform/mediastream/mac/RealtimeMediaSourceCenterMac.h:
+        * platform/mediastream/openwebrtc/RealtimeMediaSourceCenterOwr.cpp:
+        (WebCore::RealtimeMediaSourceCenterOwr::firstSource):
+        * platform/mediastream/openwebrtc/RealtimeMediaSourceCenterOwr.h:
+        * platform/mock/DeviceOrientationClientMock.cpp:
+        (WebCore::DeviceOrientationClientMock::setOrientation):
+        * platform/mock/DeviceOrientationClientMock.h:
+        * platform/mock/GeolocationClientMock.cpp:
+        (WebCore::GeolocationClientMock::setPosition):
+        * platform/mock/GeolocationClientMock.h:
+        * platform/mock/RTCNotifiersMock.cpp:
+        (WebCore::SessionRequestNotifier::SessionRequestNotifier):
+        (WebCore::SessionRequestNotifier::fire):
+        (WebCore::VoidRequestNotifier::VoidRequestNotifier):
+        * platform/mock/RTCNotifiersMock.h:
+        * platform/mock/TimerEventBasedMock.h:
+        (WebCore::TimerEventBasedMock::removeEvent):
+        (WebCore::TimerEvent::TimerEvent):
+        (WebCore::TimerEvent::timerFired):
+        * platform/mock/mediasource/MockMediaSourcePrivate.cpp:
+        (WebCore::MockSourceBufferPrivateHasAudio):
+        (WebCore::MockSourceBufferPrivateHasVideo):
+        * platform/wpe/RenderThemeWPE.h:
+
 2017-05-11  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [WPE] Stop using PassRefPtr in platform/graphics/wpe

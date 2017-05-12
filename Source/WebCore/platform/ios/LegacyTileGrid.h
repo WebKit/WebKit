@@ -34,7 +34,7 @@
 #include "IntSize.h"
 #include "LegacyTileCache.h"
 #include <wtf/HashMap.h>
-#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
 
 #define LOG_TILING 0
@@ -97,9 +97,9 @@ private:
 
     void addTileForIndex(const TileIndex&);
 
-    PassRefPtr<LegacyTileGridTile> tileForIndex(const TileIndex&) const;
+    RefPtr<LegacyTileGridTile> tileForIndex(const TileIndex&) const;
     IntRect tileRectForIndex(const TileIndex&) const;
-    PassRefPtr<LegacyTileGridTile> tileForPoint(const IntPoint&) const;
+    RefPtr<LegacyTileGridTile> tileForPoint(const IntPoint&) const;
     TileIndex tileIndexForPoint(const IntPoint&) const;
 
     IntRect adjustCoverRectForPageBounds(const IntRect&) const;

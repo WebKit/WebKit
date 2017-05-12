@@ -42,7 +42,10 @@ class LegacyTileGrid;
 // Refcount the tiles so they work nicely in vector and we know when to remove the tile layer from the parent.
 class LegacyTileGridTile : public RefCounted<LegacyTileGridTile> {
 public:
-    static PassRefPtr<LegacyTileGridTile> create(LegacyTileGrid* grid, const IntRect& rect) { return adoptRef<LegacyTileGridTile>(new LegacyTileGridTile(grid, rect)); }
+    static Ref<LegacyTileGridTile> create(LegacyTileGrid* grid, const IntRect& rect)
+    {
+        return adoptRef<LegacyTileGridTile>(*new LegacyTileGridTile(grid, rect));
+    }
     ~LegacyTileGridTile();
 
     LegacyTileLayer* tileLayer() const { return m_tileLayer.get(); }

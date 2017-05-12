@@ -38,9 +38,9 @@
 
 namespace WebCore {
 
-SessionRequestNotifier::SessionRequestNotifier(PassRefPtr<RTCSessionDescriptionRequest> request, PassRefPtr<RTCSessionDescriptionDescriptor> descriptor, const String& errorName)
-    : m_request(request)
-    , m_descriptor(descriptor)
+SessionRequestNotifier::SessionRequestNotifier(RefPtr<RTCSessionDescriptionRequest>&& request, RefPtr<RTCSessionDescriptionDescriptor>&& descriptor, const String& errorName)
+    : m_request(WTFMove(request))
+    , m_descriptor(WTFMove(descriptor))
     , m_errorName(errorName)
 {
 }
@@ -48,13 +48,13 @@ SessionRequestNotifier::SessionRequestNotifier(PassRefPtr<RTCSessionDescriptionR
 void SessionRequestNotifier::fire()
 {
     if (m_descriptor)
-        m_request->requestSucceeded(m_descriptor);
+        m_request->requestSucceeded(*m_descriptor);
     else
         m_request->requestFailed(m_errorName);
 }
 
-VoidRequestNotifier::VoidRequestNotifier(PassRefPtr<RTCVoidRequest> request, bool success, const String& errorName)
-    : m_request(request)
+VoidRequestNotifier::VoidRequestNotifier(RefPtr<RTCVoidRequest>&& request, bool success, const String& errorName)
+    : m_request(WTFMove(request))
     , m_success(success)
     , m_errorName(errorName)
 {

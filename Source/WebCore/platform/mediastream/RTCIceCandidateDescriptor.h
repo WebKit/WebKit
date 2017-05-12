@@ -33,7 +33,7 @@
 
 #if ENABLE(WEB_RTC)
 
-#include <wtf/PassRefPtr.h>
+#include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
@@ -41,7 +41,7 @@ namespace WebCore {
 
 class RTCIceCandidateDescriptor : public RefCounted<RTCIceCandidateDescriptor> {
 public:
-    static PassRefPtr<RTCIceCandidateDescriptor> create(const String& candidate, const String& sdpMid, unsigned short sdpMLineIndex);
+    static Ref<RTCIceCandidateDescriptor> create(const String& candidate, const String& sdpMid, unsigned short sdpMLineIndex);
     virtual ~RTCIceCandidateDescriptor();
 
     const String& candidate() const { return m_candidate; }

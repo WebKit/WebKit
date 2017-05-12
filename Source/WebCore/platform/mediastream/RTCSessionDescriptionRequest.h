@@ -33,7 +33,6 @@
 
 #if ENABLE(WEB_RTC)
 
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
@@ -51,11 +50,11 @@ public:
 
     virtual ~RTCSessionDescriptionRequest() { }
 
-    virtual void requestSucceeded(PassRefPtr<RTCSessionDescriptionDescriptor>) = 0;
+    virtual void requestSucceeded(RTCSessionDescriptionDescriptor&) = 0;
     virtual void requestFailed(const String& error) = 0;
 
-    PassRefPtr<ExtraData> extraData() const { return m_extraData; }
-    void setExtraData(PassRefPtr<ExtraData> extraData) { m_extraData = extraData; }
+    ExtraData* extraData() const { return m_extraData.get(); }
+    void setExtraData(RefPtr<ExtraData>&& extraData) { m_extraData = extraData; }
 
 protected:
     RTCSessionDescriptionRequest() { }

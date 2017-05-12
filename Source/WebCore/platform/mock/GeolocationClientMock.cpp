@@ -61,9 +61,9 @@ void GeolocationClientMock::setController(GeolocationController *controller)
     m_controller = controller;
 }
 
-void GeolocationClientMock::setPosition(PassRefPtr<GeolocationPosition> position)
+void GeolocationClientMock::setPosition(RefPtr<GeolocationPosition>&& position)
 {
-    m_lastPosition = position;
+    m_lastPosition = WTFMove(position);
     clearError();
     asyncUpdateController();
 }

@@ -36,7 +36,7 @@
 #include "RTCIceConnectionState.h"
 #include "RTCIceGatheringState.h"
 #include "RTCSignalingState.h"
-#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
@@ -49,11 +49,11 @@ public:
     virtual ~RTCPeerConnectionHandlerClient() { }
 
     virtual void negotiationNeeded() = 0;
-    virtual void didGenerateIceCandidate(PassRefPtr<RTCIceCandidateDescriptor>) = 0;
+    virtual void didGenerateIceCandidate(RefPtr<RTCIceCandidateDescriptor>&&) = 0;
     virtual void didChangeSignalingState(RTCSignalingState) = 0;
     virtual void didChangeIceGatheringState(RTCIceGatheringState) = 0;
     virtual void didChangeIceConnectionState(RTCIceConnectionState) = 0;
-    virtual void didAddRemoteStream(PassRefPtr<MediaStreamPrivate>) = 0;
+    virtual void didAddRemoteStream(RefPtr<MediaStreamPrivate>&&) = 0;
     virtual void didRemoveRemoteStream(MediaStreamPrivate*) = 0;
     virtual void didAddRemoteDataChannel(std::unique_ptr<RTCDataChannelHandler>) = 0;
 };

@@ -31,7 +31,6 @@
 #include "RTCDataChannelHandlerClient.h"
 #include "RTCPeerConnectionHandlerClient.h"
 #include "TimerEventBasedMock.h"
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -43,7 +42,7 @@ class RTCVoidRequest;
 
 class SessionRequestNotifier : public MockNotifier {
 public:
-    SessionRequestNotifier(PassRefPtr<RTCSessionDescriptionRequest>, PassRefPtr<RTCSessionDescriptionDescriptor>, const String& = emptyString());
+    SessionRequestNotifier(RefPtr<RTCSessionDescriptionRequest>&&, RefPtr<RTCSessionDescriptionDescriptor>&&, const String& = emptyString());
 
     void fire() override;
 
@@ -55,7 +54,7 @@ private:
 
 class VoidRequestNotifier : public MockNotifier {
 public:
-    VoidRequestNotifier(PassRefPtr<RTCVoidRequest>, bool, const String& = emptyString());
+    VoidRequestNotifier(RefPtr<RTCVoidRequest>&&, bool, const String& = emptyString());
 
     void fire() override;
 

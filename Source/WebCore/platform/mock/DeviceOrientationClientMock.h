@@ -30,7 +30,6 @@
 #include "DeviceOrientationData.h"
 #include "Timer.h"
 
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -51,7 +50,7 @@ public:
     DeviceOrientationData* lastOrientation() const override { return m_orientation.get(); }
     void deviceOrientationControllerDestroyed() override { }
 
-    WEBCORE_EXPORT void setOrientation(PassRefPtr<DeviceOrientationData>);
+    WEBCORE_EXPORT void setOrientation(RefPtr<DeviceOrientationData>&&);
 
 private:
     void timerFired();

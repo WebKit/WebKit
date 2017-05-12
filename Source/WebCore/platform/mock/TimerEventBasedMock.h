@@ -29,7 +29,7 @@
 #if ENABLE(WEB_RTC)
 
 #include "Timer.h"
-#include <wtf/PassRefPtr.h>
+#include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
@@ -46,9 +46,9 @@ public:
 
 class TimerEventBasedMock {
 public:
-    void removeEvent(PassRefPtr<TimerEvent> event)
+    void removeEvent(TimerEvent& event)
     {
-        size_t pos = m_timerEvents.find(event);
+        size_t pos = m_timerEvents.find(&event);
         m_timerEvents.remove(pos);
     }
 
@@ -58,10 +58,10 @@ protected:
 
 class TimerEvent : public RefCounted<TimerEvent> {
 public:
-    TimerEvent(TimerEventBasedMock* mock, PassRefPtr<MockNotifier> notifier)
+    TimerEvent(TimerEventBasedMock* mock, Ref<MockNotifier>&& notifier)
         : m_mock(mock)
         , m_timer(*this, &TimerEvent::timerFired)
-        , m_notifier(notifier)
+        , m_notifier(WTFMove(notifier))
     {
         m_timer.startOneShot(500_ms);
     }
@@ -74,13 +74,13 @@ public:
     void timerFired()
     {
         m_notifier->fire();
-        m_mock->removeEvent(this);
+        m_mock->removeEvent(*this);
     }
 
 private:
     TimerEventBasedMock* m_mock;
     Timer m_timer;
-    RefPtr<MockNotifier> m_notifier;
+    Ref<MockNotifier> m_notifier;
 };
 
 } // namespace WebCore

@@ -174,12 +174,12 @@ void RealtimeMediaSourceCenterOwr::mediaSourcesAvailable(GList* sources)
 
 }
 
-PassRefPtr<RealtimeMediaSource> RealtimeMediaSourceCenterOwr::firstSource(RealtimeMediaSource::Type type)
+RealtimeMediaSource* RealtimeMediaSourceCenterOwr::firstSource(RealtimeMediaSource::Type type)
 {
     for (auto iter = m_sourceMap.begin(); iter != m_sourceMap.end(); ++iter) {
         RefPtr<RealtimeMediaSource> source = iter->value;
         if (source->type() == type)
-            return source;
+            return source.get();
     }
 
     return nullptr;
