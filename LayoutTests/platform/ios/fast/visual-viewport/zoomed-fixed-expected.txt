@@ -18,37 +18,37 @@ Scrolled to 475, 525
 JSON.stringify(internals.layoutViewportRect()) is {"x":0,"y":0,"width":800,"height":600,"top":0,"right":800,"bottom":600,"left":0}
 JSON.stringify(internals.visualViewportRect()) is {"x":475,"y":525,"width":400,"height":300,"top":525,"right":875,"bottom":825,"left":475}
 client rect of top:
-JSON.stringify(fixedElement.getBoundingClientRect()) is {"x":-475,"y":-525,"width":800,"height":100,"top":-525,"right":325,"bottom":-425,"left":-475}
+JSON.stringify(fixedElement.getBoundingClientRect()) is {"x":0,"y":0,"width":800,"height":100,"top":0,"right":800,"bottom":100,"left":0}
 client rect of bottom:
-JSON.stringify(fixedElement.getBoundingClientRect()) is {"x":-475,"y":-25,"width":800,"height":100,"top":-25,"right":325,"bottom":75,"left":-475}
+JSON.stringify(fixedElement.getBoundingClientRect()) is {"x":0,"y":500,"width":800,"height":100,"top":500,"right":800,"bottom":600,"left":0}
 client rect of left:
-JSON.stringify(fixedElement.getBoundingClientRect()) is {"x":-475,"y":-525,"width":100,"height":600,"top":-525,"right":-375,"bottom":75,"left":-475}
+JSON.stringify(fixedElement.getBoundingClientRect()) is {"x":0,"y":0,"width":100,"height":600,"top":0,"right":100,"bottom":600,"left":0}
 client rect of right:
-JSON.stringify(fixedElement.getBoundingClientRect()) is {"x":225,"y":-525,"width":100,"height":600,"top":-525,"right":325,"bottom":75,"left":225}
+JSON.stringify(fixedElement.getBoundingClientRect()) is {"x":700,"y":0,"width":100,"height":600,"top":0,"right":800,"bottom":600,"left":700}
 
 Scrolled to 100, 776
 JSON.stringify(internals.layoutViewportRect()) is {"x":0,"y":0,"width":800,"height":600,"top":0,"right":800,"bottom":600,"left":0}
 JSON.stringify(internals.visualViewportRect()) is {"x":100,"y":776,"width":400,"height":300,"top":776,"right":500,"bottom":1076,"left":100}
 client rect of top:
-JSON.stringify(fixedElement.getBoundingClientRect()) is {"x":-100,"y":-776,"width":800,"height":100,"top":-776,"right":700,"bottom":-676,"left":-100}
+JSON.stringify(fixedElement.getBoundingClientRect()) is {"x":0,"y":0,"width":800,"height":100,"top":0,"right":800,"bottom":100,"left":0}
 client rect of bottom:
-JSON.stringify(fixedElement.getBoundingClientRect()) is {"x":-100,"y":-276,"width":800,"height":100,"top":-276,"right":700,"bottom":-176,"left":-100}
+JSON.stringify(fixedElement.getBoundingClientRect()) is {"x":0,"y":500,"width":800,"height":100,"top":500,"right":800,"bottom":600,"left":0}
 client rect of left:
-JSON.stringify(fixedElement.getBoundingClientRect()) is {"x":-100,"y":-776,"width":100,"height":600,"top":-776,"right":0,"bottom":-176,"left":-100}
+JSON.stringify(fixedElement.getBoundingClientRect()) is {"x":0,"y":0,"width":100,"height":600,"top":0,"right":100,"bottom":600,"left":0}
 client rect of right:
-JSON.stringify(fixedElement.getBoundingClientRect()) is {"x":600,"y":-776,"width":100,"height":600,"top":-776,"right":700,"bottom":-176,"left":600}
+JSON.stringify(fixedElement.getBoundingClientRect()) is {"x":700,"y":0,"width":100,"height":600,"top":0,"right":800,"bottom":600,"left":700}
 
 Scrolled to 50, 300
 JSON.stringify(internals.layoutViewportRect()) is {"x":0,"y":0,"width":800,"height":600,"top":0,"right":800,"bottom":600,"left":0}
 JSON.stringify(internals.visualViewportRect()) is {"x":50,"y":300,"width":400,"height":300,"top":300,"right":450,"bottom":600,"left":50}
 client rect of top:
-JSON.stringify(fixedElement.getBoundingClientRect()) is {"x":-50,"y":-300,"width":800,"height":100,"top":-300,"right":750,"bottom":-200,"left":-50}
+JSON.stringify(fixedElement.getBoundingClientRect()) is {"x":0,"y":0,"width":800,"height":100,"top":0,"right":800,"bottom":100,"left":0}
 client rect of bottom:
-JSON.stringify(fixedElement.getBoundingClientRect()) is {"x":-50,"y":200,"width":800,"height":100,"top":200,"right":750,"bottom":300,"left":-50}
+JSON.stringify(fixedElement.getBoundingClientRect()) is {"x":0,"y":500,"width":800,"height":100,"top":500,"right":800,"bottom":600,"left":0}
 client rect of left:
-JSON.stringify(fixedElement.getBoundingClientRect()) is {"x":-50,"y":-300,"width":100,"height":600,"top":-300,"right":50,"bottom":300,"left":-50}
+JSON.stringify(fixedElement.getBoundingClientRect()) is {"x":0,"y":0,"width":100,"height":600,"top":0,"right":100,"bottom":600,"left":0}
 client rect of right:
-JSON.stringify(fixedElement.getBoundingClientRect()) is {"x":650,"y":-300,"width":100,"height":600,"top":-300,"right":750,"bottom":300,"left":650}
+JSON.stringify(fixedElement.getBoundingClientRect()) is {"x":700,"y":0,"width":100,"height":600,"top":0,"right":800,"bottom":600,"left":700}
 PASS successfullyParsed is true
 
 TEST COMPLETE

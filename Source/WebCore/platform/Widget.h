@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Widget_h
-#define Widget_h
+#pragma once
 
 #if PLATFORM(IOS)
 #ifndef NSView
@@ -261,4 +260,3 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToValueTypeName) \
     static bool isType(const WebCore::Widget& widget) { return widget.predicate; } \
 SPECIALIZE_TYPE_TRAITS_END()
 
-#endif // Widget_h

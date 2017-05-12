@@ -1,3 +1,56 @@
+2017-05-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Incorrect position when dragging jQuery Draggable elements with position fixed after pinch zoom
+        https://bugs.webkit.org/show_bug.cgi?id=171113
+        rdar://problem/31746516
+
+        Reviewed by Tim Horton.
+
+        Make getBoundingClientRect() and getClientRects() return rects which are relative to the layout
+        viewport, rather than the visual viewport. This goes part of the way to fixing webkit.org/b/170981,
+        which aims to make pinch-zoom invisible to web pages ("inert visual viewport"). It fixes issues on various
+        sites like Facebook when zoomed.
+
+        Factor coordinate conversion code into functions on FrameView, which now documents
+        the various coordinate systems in a big comment. Document::adjustFloatQuadsForScrollAndAbsoluteZoomAndFrameScale()
+        and Document::adjustFloatRectForScrollAndAbsoluteZoomAndFrameScale() are renamed and factored
+        to use these helpers.
+
+        There are two behavior changes here:
+
+        1. FrameView::documentToClientOffset() now uses the origin of the layout viewport in the "document to client"
+           coordinate mapping.
+           
+        2. The two document functions would apply the scale and offset in the wrong order. We need
+           to first undo the effects of CSS zoom, page zoom and page scale, and then map from document
+           to client coordinates.
+
+        Tests: fast/visual-viewport/client-rects-relative-to-layout-viewport.html
+               fast/zooming/client-rects-with-css-and-page-zoom.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::convertAbsoluteToClientQuads):
+        (WebCore::Document::convertAbsoluteToClientRect):
+        (WebCore::Document::adjustFloatQuadsForScrollAndAbsoluteZoomAndFrameScale): Deleted.
+        (WebCore::Document::adjustFloatRectForScrollAndAbsoluteZoomAndFrameScale): Deleted.
+        * dom/Document.h:
+        * dom/Element.cpp:
+        (WebCore::Element::getClientRects):
+        (WebCore::Element::getBoundingClientRect):
+        * dom/Range.cpp:
+        (WebCore::Range::borderAndTextQuads):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::absoluteToDocumentScaleFactor):
+        (WebCore::FrameView::absoluteToDocumentRect):
+        (WebCore::FrameView::absoluteToDocumentPoint):
+        (WebCore::FrameView::documentToClientOffset):
+        (WebCore::FrameView::documentToClientRect):
+        (WebCore::FrameView::documentToClientPoint):
+        * page/FrameView.h:
+        * platform/ScrollableArea.h: #pragma once
+        * platform/Scrollbar.h: #pragma once
+        * platform/Widget.h: #pragma once
+
 2017-05-12  Mark Lam  <mark.lam@apple.com>
 
         WorkerRunLoop::Task::performTask() should check !scriptController->isTerminatingExecution().

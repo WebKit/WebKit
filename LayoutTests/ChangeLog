@@ -1,3 +1,31 @@
+2017-05-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Incorrect position when dragging jQuery Draggable elements with position fixed after pinch zoom
+        https://bugs.webkit.org/show_bug.cgi?id=171113
+
+        Reviewed by Tim Horton.
+
+        Rebaseline tests which dumped the getBoundingClientRect for fixed elements; now that these
+        are layout viewport-relative, getBoundingClientRect() for a fixed element is unchanging.
+
+        New test that exercises getBoundingClientRect() and getClientRects() for fixed and absolute
+        elements after zooming.
+
+        * fast/events/autoscroll-when-zoomed.html: Adjust to account for behavior change.
+        * fast/visual-viewport/client-rects-relative-to-layout-viewport-expected.txt: Added.
+        * fast/visual-viewport/client-rects-relative-to-layout-viewport.html: Added.
+        * fast/visual-viewport/zoomed-fixed-expected.txt:
+        * fast/visual-viewport/zoomed-fixed-header-and-footer-expected.txt:
+        * fast/zooming/client-rect-in-fixed-zoomed-expected.txt:
+        * fast/zooming/client-rect-in-fixed-zoomed.html:
+        * fast/zooming/client-rects-with-css-and-page-zoom-expected.txt: Added.
+        * fast/zooming/client-rects-with-css-and-page-zoom.html: Added.
+        * platform/ios-wk2/fast/visual-viewport/client-rects-relative-to-layout-viewport-expected.txt: Added.
+        * platform/ios/TestExpectations: Mark imported/w3c/web-platform-tests/cssom-view/elementFromPoint.html as failing;
+            it will be fixed via webkit.org/b/172019
+        * platform/ios/fast/visual-viewport/zoomed-fixed-expected.txt:
+        * platform/ios/fast/visual-viewport/zoomed-fixed-header-and-footer-expected.txt:
+
 2017-05-12  Mark Lam  <mark.lam@apple.com>
 
         WorkerRunLoop::Task::performTask() should check !scriptController->isTerminatingExecution().

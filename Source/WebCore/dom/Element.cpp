@@ -1157,7 +1157,7 @@ Vector<Ref<DOMRect>> Element::getClientRects()
 
     Vector<FloatQuad> quads;
     renderBoxModelObject->absoluteQuads(quads);
-    document().adjustFloatQuadsForScrollAndAbsoluteZoomAndFrameScale(quads, renderBoxModelObject->style());
+    document().convertAbsoluteToClientQuads(quads, renderBoxModelObject->style());
     return createDOMRectVector(quads);
 }
 
@@ -1185,10 +1185,11 @@ Ref<DOMRect> Element::getBoundingClientRect()
     for (size_t i = 1; i < quads.size(); ++i)
         result.unite(quads[i].boundingBox());
 
-    document().adjustFloatRectForScrollAndAbsoluteZoomAndFrameScale(result, renderer()->style());
+    document().convertAbsoluteToClientRect(result, renderer()->style());
     return DOMRect::create(result);
 }
 
+// Note that this is not web-exposed, and does not use the same coordinate system as getBoundingClientRect() and friends.
 IntRect Element::clientRect() const
 {
     if (RenderObject* renderer = this->renderer())

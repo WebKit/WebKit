@@ -6409,42 +6409,31 @@ Element* eventTargetElementForDocument(Document* document)
     return element;
 }
 
-void Document::adjustFloatQuadsForScrollAndAbsoluteZoomAndFrameScale(Vector<FloatQuad>& quads, const RenderStyle& style)
+void Document::convertAbsoluteToClientQuads(Vector<FloatQuad>& quads, const RenderStyle& style)
 {
     if (!view())
         return;
 
-    float zoom = style.effectiveZoom();
-    float inverseFrameScale = 1;
-    if (frame())
-        inverseFrameScale = 1 / frame()->frameScaleFactor();
+    const auto& frameView = *view();
+    float inverseFrameScale = frameView.absoluteToDocumentScaleFactor(style.effectiveZoom());
+    auto documentToClientOffset = frameView.documentToClientOffset();
 
-    LayoutRect visibleContentRect = view()->visibleContentRect();
     for (auto& quad : quads) {
-        quad.move(-visibleContentRect.x(), -visibleContentRect.y());
-        if (zoom != 1)
-            quad.scale(1 / zoom);
         if (inverseFrameScale != 1)
             quad.scale(inverseFrameScale);
+
+        quad.move(documentToClientOffset);
     }
 }
 
-void Document::adjustFloatRectForScrollAndAbsoluteZoomAndFrameScale(FloatRect& rect, const RenderStyle& style)
+void Document::convertAbsoluteToClientRect(FloatRect& rect, const RenderStyle& style)
 {
     if (!view())
         return;
 
-    float zoom = style.effectiveZoom();
-    float inverseFrameScale = 1;
-    if (frame())
-        inverseFrameScale = 1 / frame()->frameScaleFactor();
-
-    LayoutRect visibleContentRect = view()->visibleContentRect();
-    rect.move(-visibleContentRect.x(), -visibleContentRect.y());
-    if (zoom != 1)
-        rect.scale(1 / zoom);
-    if (inverseFrameScale != 1)
-        rect.scale(inverseFrameScale);
+    const auto& frameView = *view();
+    rect = frameView.absoluteToDocumentRect(rect, style.effectiveZoom()); 
+    rect = frameView.documentToClientRect(rect);
 }
 
 bool Document::hasActiveParser()

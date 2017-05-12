@@ -1199,8 +1199,8 @@ public:
     IntSize initialViewportSize() const;
 #endif
 
-    void adjustFloatQuadsForScrollAndAbsoluteZoomAndFrameScale(Vector<FloatQuad>&, const RenderStyle&);
-    void adjustFloatRectForScrollAndAbsoluteZoomAndFrameScale(FloatRect&, const RenderStyle&);
+    void convertAbsoluteToClientQuads(Vector<FloatQuad>&, const RenderStyle&);
+    void convertAbsoluteToClientRect(FloatRect&, const RenderStyle&);
 
     bool hasActiveParser();
     void incrementActiveParserCount() { ++m_activeParserCount; }

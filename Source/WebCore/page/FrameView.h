@@ -429,6 +429,30 @@ public:
     void maintainScrollPositionAtAnchor(ContainerNode*);
     WEBCORE_EXPORT void scrollElementToRect(const Element&, const IntRect&);
 
+    // Coordinate systems:
+    //
+    // "View"
+    //     Top left is top left of the FrameView/ScrollView/Widget. Size is Widget::boundsRect().size(). 
+    //
+    // "TotalContents"
+    //    Relative to ScrollView's scrolled contents, including headers and footers. Size is totalContentsSize().
+    //
+    // "Contents"
+    //    Relative to ScrollView's scrolled contents, excluding headers and footers, so top left is top left of the scroll view's
+    //    document, and size is contentsSize().
+    //
+    // "Absolute"
+    //    Relative to the document's scroll origin (non-zero for RTL documents), but affected by page zoom and page scale. Mostly used
+    //    in rendering code.
+    //
+    // "Document"
+    //    Relative to the document's scroll origin, but not affected by page zoom or page scale. Size is equivalent to CSS pixel dimensions.
+    //
+    // "Client"
+    //    Relative to the visible part of the document (or, more strictly, the layout viewport rect), and with the same scaling
+    //    as Document coordinates, i.e. matching CSS pixels. Affected by scroll origin.
+    //    
+
     // Methods to convert points and rects between the coordinate space of the renderer, and this view.
     WEBCORE_EXPORT IntRect convertFromRendererToContainingView(const RenderElement*, const IntRect&) const;
     WEBCORE_EXPORT IntRect convertFromContainingViewToRenderer(const RenderElement*, const IntRect&) const;
@@ -440,6 +464,14 @@ public:
     IntRect convertFromContainingView(const IntRect&) const final;
     IntPoint convertToContainingView(const IntPoint&) const final;
     IntPoint convertFromContainingView(const IntPoint&) const final;
+
+    float absoluteToDocumentScaleFactor(std::optional<float> effectiveZoom = std::nullopt) const;
+    FloatRect absoluteToDocumentRect(FloatRect, std::optional<float> effectiveZoom = std::nullopt) const;
+    FloatPoint absoluteToDocumentPoint(FloatPoint, std::optional<float> effectiveZoom = std::nullopt) const;
+
+    FloatSize documentToClientOffset() const;
+    FloatRect documentToClientRect(FloatRect) const;
+    FloatPoint documentToClientPoint(FloatPoint) const;
 
     bool isFrameViewScrollCorner(const RenderScrollbarPart& scrollCorner) const { return m_scrollCorner == &scrollCorner; }
 

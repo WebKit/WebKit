@@ -4906,6 +4906,42 @@ IntPoint FrameView::convertFromContainingView(const IntPoint& parentPoint) const
     return parentPoint;
 }
 
+float FrameView::absoluteToDocumentScaleFactor(std::optional<float> effectiveZoom) const
+{
+    // If effectiveZoom is passed, it already factors in pageZoomFactor(). 
+    float cssZoom = effectiveZoom.value_or(frame().pageZoomFactor()); 
+    return 1 / (cssZoom * frame().frameScaleFactor());
+}
+
+FloatRect FrameView::absoluteToDocumentRect(FloatRect rect, std::optional<float> effectiveZoom) const
+{
+    rect.scale(absoluteToDocumentScaleFactor(effectiveZoom));
+    return rect;
+}
+
+FloatPoint FrameView::absoluteToDocumentPoint(FloatPoint p, std::optional<float> effectiveZoom) const
+{
+    p.scale(absoluteToDocumentScaleFactor(effectiveZoom));
+    return p;
+}
+
+FloatSize FrameView::documentToClientOffset() const
+{
+    return frame().settings().visualViewportEnabled() ? -toFloatSize(layoutViewportRect().location()) : -toFloatSize(visibleContentRect().location());
+}
+
+FloatRect FrameView::documentToClientRect(FloatRect rect) const
+{
+    rect.move(documentToClientOffset());
+    return rect;
+}
+
+FloatPoint FrameView::documentToClientPoint(FloatPoint p) const
+{
+    p.move(documentToClientOffset());
+    return p;
+}
+
 void FrameView::setTracksRepaints(bool trackRepaints)
 {
     if (trackRepaints == m_isTrackingRepaints)

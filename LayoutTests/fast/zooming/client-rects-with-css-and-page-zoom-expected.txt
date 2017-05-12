@@ -1,0 +1,21 @@
+Tests getBoundingClient rect with both CSS zoom and page zoom
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+Testing box with CSS zoom on an ancestor
+PASS bounds.left.toFixed(2) is "18.00"
+PASS bounds.top.toFixed(2) is "150.00"
+PASS bounds.width.toFixed(2) is "40.00"
+PASS bounds.height.toFixed(2) is "50.00"
+
+Testing box without CSS zoom on an ancestor
+PASS bounds.left.toFixed(2) is "21.00"
+PASS bounds.top.toFixed(2) is "150.00"
+PASS bounds.width.toFixed(2) is "40.00"
+PASS bounds.height.toFixed(2) is "50.00"
+

@@ -72,10 +72,9 @@
             var lineHeight = containerRect.height / 3;
             
             window.scrollTo(0, containerRect.bottom - lineHeight);
-
             containerRect = document.getElementById('container').getBoundingClientRect(); // Scrolling changed it.
 
-            start = { x: containerRect.left + 10, y: containerRect.bottom - lineHeight / 3 };
+            start = { x: containerRect.left + 10, y: 2 * lineHeight / 3 };
             end = { x: containerRect.right - 10, y: 16 };
             
             eventSender.mouseMoveTo(pageScale * start.x, pageScale * start.y);

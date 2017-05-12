@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ScrollableArea_h
-#define ScrollableArea_h
+#pragma once
 
 #include "ScrollSnapOffsetsInfo.h"
 #include "Scrollbar.h"
@@ -391,4 +390,3 @@ private:
 
 } // namespace WebCore
 
-#endif // ScrollableArea_h

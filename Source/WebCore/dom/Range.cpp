@@ -1797,7 +1797,7 @@ Vector<FloatQuad> Range::borderAndTextQuads(CoordinateSpace space) const
                 Vector<FloatQuad> elementQuads;
                 renderer->absoluteQuads(elementQuads);
                 if (space == CoordinateSpace::Client)
-                    node->document().adjustFloatQuadsForScrollAndAbsoluteZoomAndFrameScale(elementQuads, renderer->style());
+                    node->document().convertAbsoluteToClientQuads(elementQuads, renderer->style());
                 quads.appendVector(elementQuads);
             }
         } else if (is<Text>(*node)) {
@@ -1806,7 +1806,7 @@ Vector<FloatQuad> Range::borderAndTextQuads(CoordinateSpace space) const
                 unsigned endOffset = node == &endContainer() ? m_end.offset() : std::numeric_limits<unsigned>::max();
                 auto textQuads = renderer->absoluteQuadsForRange(startOffset, endOffset);
                 if (space == CoordinateSpace::Client)
-                    node->document().adjustFloatQuadsForScrollAndAbsoluteZoomAndFrameScale(textQuads, renderer->style());
+                    node->document().convertAbsoluteToClientQuads(textQuads, renderer->style());
                 quads.appendVector(textQuads);
             }
         }
