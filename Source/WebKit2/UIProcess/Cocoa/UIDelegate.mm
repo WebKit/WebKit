@@ -131,6 +131,8 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
     m_delegateMethods.webViewContextMenuForElement = [delegate respondsToSelector:@selector(_webView:contextMenu:forElement:)];
     m_delegateMethods.webViewContextMenuForElementUserInfo = [delegate respondsToSelector:@selector(_webView:contextMenu:forElement:userInfo:)];
 #endif
+    
+    m_delegateMethods.webViewHasVideoInPictureInPictureDidChange = [delegate respondsToSelector:@selector(_webView:hasVideoInPictureInPictureDidChange:)];
 }
 
 #if ENABLE(CONTEXT_MENUS)
@@ -692,6 +694,18 @@ void UIDelegate::UIClient::didLosePointerLock(WebKit::WebPageProxy*)
 }
 
 #endif
+    
+void UIDelegate::UIClient::hasVideoInPictureInPictureDidChange(WebKit::WebPageProxy*, bool hasVideoInPictureInPicture)
+{
+    if (!m_uiDelegate.m_delegateMethods.webViewHasVideoInPictureInPictureDidChange)
+        return;
+    
+    auto delegate = m_uiDelegate.m_delegate.get();
+    if (!delegate)
+        return;
+    
+    [static_cast<id <WKUIDelegatePrivate>>(delegate) _webView:m_uiDelegate.m_webView hasVideoInPictureInPictureDidChange:hasVideoInPictureInPicture];
+}
 
 void UIDelegate::UIClient::imageOrMediaDocumentSizeChanged(const WebCore::IntSize& newSize)
 {

@@ -110,6 +110,8 @@ private:
         void requestPointerLock(WebKit::WebPageProxy*) override;
         void didLosePointerLock(WebKit::WebPageProxy*) override;
 #endif
+        
+        void hasVideoInPictureInPictureDidChange(WebKit::WebPageProxy*, bool) override;
 
         void imageOrMediaDocumentSizeChanged(const WebCore::IntSize&) override;
 
@@ -157,6 +159,7 @@ private:
         bool webViewContextMenuForElement : 1;
         bool webViewContextMenuForElementUserInfo : 1;
 #endif
+        bool webViewHasVideoInPictureInPictureDidChange : 1;
     } m_delegateMethods;
 };
 

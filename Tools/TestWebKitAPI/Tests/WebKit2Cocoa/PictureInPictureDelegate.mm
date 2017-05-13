@@ -42,6 +42,7 @@
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/mac/AppKitCompatibilityDeclarations.h>
 
 static bool receivedLoadedMessage;
 
@@ -81,13 +82,69 @@ static void didFinishLoadForFrame(WKPageRef, WKFrameRef, WKTypeRef, const void*)
     receivedLoadedMessage = true;
 }
 
-static void setHasVideoInPictureInPicture(WKPageRef, bool hasVideoInPictureInPicture, const void* context)
+static void hasVideoInPictureInPictureDidChange(WKPageRef, bool hasVideoInPictureInPicture, const void* context)
 {
     hasVideoInPictureInPictureValue = hasVideoInPictureInPicture;
     hasVideoInPictureInPictureCalled = true;
 }
 
+@interface PictureInPictureUIDelegate : NSObject <WKUIDelegate, WKScriptMessageHandler>
+@end
+
+@implementation PictureInPictureUIDelegate
+
+- (void)_webView:(WKWebView *)webView hasVideoInPictureInPictureDidChange:(BOOL)hasVideoInPictureInPicture
+{
+    hasVideoInPictureInPictureValue = hasVideoInPictureInPicture;
+    hasVideoInPictureInPictureCalled = true;
+}
+
+- (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
+{
+    NSString *bodyString = (NSString *)[message body];
+    if ([bodyString isEqualToString:@"load"])
+        receivedLoadedMessage = true;
+}
+@end
+
 namespace TestWebKitAPI {
+    
+TEST(PictureInPicture, WKUIDelegate)
+{
+    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration.get()]);
+    [configuration preferences]._fullScreenEnabled = YES;
+    [configuration preferences]._allowsPictureInPictureMediaPlayback = YES;
+    RetainPtr<PictureInPictureUIDelegate> handler = adoptNS([[PictureInPictureUIDelegate alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"pictureInPictureChangeHandler"];
+    [webView setUIDelegate:handler.get()];
+    
+    RetainPtr<NSWindow> window = adoptNS([[NSWindow alloc] initWithContentRect:[webView frame] styleMask:NSWindowStyleMaskBorderless backing:NSBackingStoreBuffered defer:NO]);
+    [[window contentView] addSubview:webView.get()];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"PictureInPictureDelegate" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    
+    receivedLoadedMessage = false;
+    
+    [webView loadRequest:request];
+    TestWebKitAPI::Util::run(&receivedLoadedMessage);
+
+    hasVideoInPictureInPictureValue = false;
+    hasVideoInPictureInPictureCalled = false;
+
+    NSEvent *event = [NSEvent mouseEventWithType:NSEventTypeLeftMouseDown location:NSMakePoint(5, 5) modifierFlags:0 timestamp:0 windowNumber:window.get().windowNumber context:0 eventNumber:0 clickCount:0 pressure:0];
+    [webView mouseDown:event];
+    TestWebKitAPI::Util::run(&hasVideoInPictureInPictureCalled);
+    ASSERT_TRUE(hasVideoInPictureInPictureValue);
+    
+    sleep(1); // Wait for PIPAgent to launch, or it won't call -pipDidClose: callback.
+    
+    hasVideoInPictureInPictureCalled = false;
+    [webView mouseDown:event];
+    TestWebKitAPI::Util::run(&hasVideoInPictureInPictureCalled);
+    ASSERT_FALSE(hasVideoInPictureInPictureValue);
+}
+    
     
 TEST(PictureInPicture, WKPageUIClient)
 {
@@ -103,7 +160,7 @@ TEST(PictureInPicture, WKPageUIClient)
     memset(&uiClient, 0, sizeof(uiClient));
     uiClient.base.version = 10;
     uiClient.base.clientInfo = NULL;
-    uiClient.setHasVideoInPictureInPicture = setHasVideoInPictureInPicture;
+    uiClient.hasVideoInPictureInPictureDidChange = hasVideoInPictureInPictureDidChange;
     WKPageSetPageUIClient(webView.page(), &uiClient.base);
     
     WKPageLoaderClientV0 loaderClient;

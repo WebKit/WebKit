@@ -1769,12 +1769,12 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
             m_client.fullscreenMayReturnToInline(toAPI(page), m_client.base.clientInfo);
         }
         
-        void setHasVideoInPictureInPicture(WebPageProxy* page, bool hasVideoInPictureInPicture) override
+        void hasVideoInPictureInPictureDidChange(WebPageProxy* page, bool hasVideoInPictureInPicture) override
         {
-            if (!m_client.setHasVideoInPictureInPicture)
+            if (!m_client.hasVideoInPictureInPictureDidChange)
                 return;
             
-            m_client.setHasVideoInPictureInPicture(toAPI(page), hasVideoInPictureInPicture, m_client.base.clientInfo);
+            m_client.hasVideoInPictureInPictureDidChange(toAPI(page), hasVideoInPictureInPicture, m_client.base.clientInfo);
         }
 
         void close(WebPageProxy* page) override

@@ -235,6 +235,16 @@ static _WKStorageBlockingPolicy toAPI(WebCore::SecurityOrigin::StorageBlockingPo
     _preferences->setFullScreenEnabled(fullScreenEnabled);
 }
 
+- (BOOL)_allowsPictureInPictureMediaPlayback
+{
+    return _preferences->allowsPictureInPictureMediaPlayback();
+}
+
+- (void)_setAllowsPictureInPictureMediaPlayback:(BOOL)allowed
+{
+    _preferences->setAllowsPictureInPictureMediaPlayback(allowed);
+}
+
 - (BOOL)_compositingBordersVisible
 {
     return _preferences->compositingBordersVisible();

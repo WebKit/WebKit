@@ -370,7 +370,7 @@ void WebVideoFullscreenManagerProxy::setupFullscreenWithID(uint64_t contextId, u
     m_page->rootViewToWindow(initialRect, initialWindowRect);
     interface->setupFullscreen(*model->layerHostView(), initialWindowRect, m_page->platformWindow(), videoFullscreenMode, allowsPictureInPicture);
 #endif
-    m_page->uiClient().setHasVideoInPictureInPicture(m_page, videoFullscreenMode & MediaPlayerEnums::VideoFullscreenModePictureInPicture);
+    m_page->uiClient().hasVideoInPictureInPictureDidChange(m_page, videoFullscreenMode & MediaPlayerEnums::VideoFullscreenModePictureInPicture);
 }
 
 void WebVideoFullscreenManagerProxy::setHasVideo(uint64_t contextId, bool hasVideo)
@@ -499,7 +499,7 @@ void WebVideoFullscreenManagerProxy::setVideoLayerGravity(uint64_t contextId, We
 
 void WebVideoFullscreenManagerProxy::fullscreenModeChanged(uint64_t contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode mode)
 {
-    m_page->uiClient().setHasVideoInPictureInPicture(m_page, mode & MediaPlayerEnums::VideoFullscreenModePictureInPicture);
+    m_page->uiClient().hasVideoInPictureInPictureDidChange(m_page, mode & MediaPlayerEnums::VideoFullscreenModePictureInPicture);
     m_page->send(Messages::WebVideoFullscreenManager::FullscreenModeChanged(contextId, mode), m_page->pageID());
 }
 

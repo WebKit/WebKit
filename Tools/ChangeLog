@@ -1,3 +1,20 @@
+2017-05-12  Jeremy Jones  <jeremyj@apple.com>
+
+        Add objc version of WK2 UIPageClient setHasVideoInPictureInPicture and rename it to hasVideoInPictureInPictureDidChange.
+        https://bugs.webkit.org/show_bug.cgi?id=172048
+        rdar://problem/32163054
+
+        Reviewed by Simon Fraser.
+
+        Add a WKWebView test for hasVideoInPictureInPictureDidChange UIDelegate callback.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/PictureInPictureDelegate.html:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/PictureInPictureDelegate.mm:
+        (hasVideoInPictureInPictureDidChange):
+        (-[PictureInPictureUIDelegate _webView:hasVideoInPictureInPictureDidChange:]):
+        (-[PictureInPictureUIDelegate userContentController:didReceiveScriptMessage:]):
+        (TestWebKitAPI::TEST):
+
 2017-05-12  Brady Eidson  <beidson@apple.com>
 
         REGRESSION (r216711): API test WKWebView.ClearAppCache is failing.

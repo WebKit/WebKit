@@ -121,7 +121,7 @@ typedef void (*WKHandleAutoplayEventCallback)(WKPageRef page, WKAutoplayEvent ev
 typedef void (*WKFullscreenMayReturnToInlineCallback)(WKPageRef page, const void* clientInfo);
 typedef void (*WKRequestPointerLockCallback)(WKPageRef page, const void* clientInfo);
 typedef void (*WKDidLosePointerLockCallback)(WKPageRef page, const void* clientInfo);
-typedef void (*WKSetHasVideoInPictureInPictureCallback)(WKPageRef page, bool hasVideoInPictureInPicture, const void* clientInfo);
+typedef void (*WKHasVideoInPictureInPictureDidChangeCallback)(WKPageRef page, bool hasVideoInPictureInPicture, const void* clientInfo);
     
 // Deprecated
 typedef WKPageRef (*WKPageCreateNewPageCallback_deprecatedForUseWithV0)(WKPageRef page, WKDictionaryRef features, WKEventModifiers modifiers, WKEventMouseButton mouseButton, const void *clientInfo);
@@ -925,7 +925,7 @@ typedef struct WKPageUIClientV10 {
     WKHandleAutoplayEventCallback                                       handleAutoplayEvent;
     
     // Version 10.
-    WKSetHasVideoInPictureInPictureCallback                             setHasVideoInPictureInPicture;
+    WKHasVideoInPictureInPictureDidChangeCallback                             hasVideoInPictureInPictureDidChange;
 } WKPageUIClientV10;
     
 #ifdef __cplusplus

@@ -1,3 +1,33 @@
+2017-05-12  Jeremy Jones  <jeremyj@apple.com>
+
+        Add objc version of WK2 UIPageClient setHasVideoInPictureInPicture and rename it to hasVideoInPictureInPictureDidChange.
+        https://bugs.webkit.org/show_bug.cgi?id=172048
+        rdar://problem/32163054
+
+        Reviewed by Simon Fraser.
+
+        Rename UIPageClient setHasVideoInPictureInPicture to hasVideoInPictureInPictureDidChange.
+        Add missing _allowsPictureInPictureMediaPlayback property to WKPreferences.
+        Add -hasVideoInPictureInPictureDidChange to UIDelegate.
+
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::hasVideoInPictureInPictureDidChange):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageUIClient):
+        * UIProcess/API/C/WKPageUIClient.h:
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences _allowsPictureInPictureMediaPlayback]):
+        (-[WKPreferences _setAllowsPictureInPictureMediaPlayback:]):
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/Cocoa/UIDelegate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::setDelegate):
+        (WebKit::UIDelegate::UIClient::hasVideoInPictureInPictureDidChange):
+        * UIProcess/Cocoa/WebVideoFullscreenManagerProxy.mm:
+        (WebKit::WebVideoFullscreenManagerProxy::setupFullscreenWithID):
+        (WebKit::WebVideoFullscreenManagerProxy::fullscreenModeChanged):
+
 2017-05-12  David Quesada  <david_quesada@apple.com>
 
         Add SPI for overriding WKWebView's clipping behavior for _visibleContentRect

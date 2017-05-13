@@ -60,6 +60,7 @@ struct UIEdgeInsets;
 - (void)_webViewDidExitFullscreen:(WKWebView *)webView WK_API_AVAILABLE(macosx(10.11), ios(8.3));
 - (void)_webViewRequestPointerLock:(WKWebView *)webView WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 - (void)_webViewDidLosePointerLock:(WKWebView *)webView WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+- (void)_webView:(WKWebView *)webView hasVideoInPictureInPictureDidChange:(BOOL)hasVideoInPictureInPicture WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 - (void)_webView:(WKWebView *)webView imageOrMediaDocumentSizeChanged:(CGSize)size WK_API_AVAILABLE(macosx(10.12), ios(10.0));
 - (NSDictionary *)_dataDetectionContextForWebView:(WKWebView *)webView WK_API_AVAILABLE(macosx(10.12), ios(10.0));

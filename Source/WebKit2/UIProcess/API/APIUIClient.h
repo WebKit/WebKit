@@ -79,7 +79,7 @@ public:
     virtual void fullscreenMayReturnToInline(WebKit::WebPageProxy*) { }
     virtual void didEnterFullscreen(WebKit::WebPageProxy*) { }
     virtual void didExitFullscreen(WebKit::WebPageProxy*) { }
-    virtual void setHasVideoInPictureInPicture(WebKit::WebPageProxy*, bool) { }
+    virtual void hasVideoInPictureInPictureDidChange(WebKit::WebPageProxy*, bool) { }
     virtual void close(WebKit::WebPageProxy*) { }
 
     virtual void takeFocus(WebKit::WebPageProxy*, WKFocusDirection) { }

@@ -6,6 +6,12 @@
                 var target = document.getElementById('video');
                 target.webkitSetPresentationMode(target.webkitPresentationMode == "inline" ? "picture-in-picture" : "inline");
             });
+            
+            function load() {
+                if (window.webkit !== undefined && window.webkit.messageHandlers.pictureInPictureChangeHandler !== undefined) {
+                    window.webkit.messageHandlers.pictureInPictureChangeHandler.postMessage('load');
+                }
+            }
         </script>
         <style>
             #video {
@@ -15,7 +21,7 @@
             }
         </style>
     </head>
-    <body onload="window.onloadcompleted = true; ">
+    <body onload="load(); window.onloadcompleted = true; ">
         <video id="video" playsinline src="test.mp4" />
     </body>
 </html>
