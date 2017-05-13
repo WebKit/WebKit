@@ -1,3 +1,17 @@
+2017-05-13  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r216808.
+        https://bugs.webkit.org/show_bug.cgi?id=172075
+
+        caused lldb to hang when debugging (Requested by smfr on
+        #webkit).
+
+        Reverted changeset:
+
+        "Use Mach exceptions instead of signals where possible"
+        https://bugs.webkit.org/show_bug.cgi?id=171865
+        http://trac.webkit.org/changeset/216808
+
 2017-05-12  Alex Christensen  <achristensen@webkit.org>
 
         Rename WKContentExtension to WKContentRuleList

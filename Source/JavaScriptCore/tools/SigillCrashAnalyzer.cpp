@@ -78,11 +78,11 @@ private:
 #endif // USE(OS_LOG)
 
 struct SignalContext {
-    SignalContext(PlatformRegisters& registers)
-        : registers(registers)
-        , machinePC(MachineContext::instructionPointer(registers))
-        , stackPointer(MachineContext::stackPointer(registers))
-        , framePointer(MachineContext::framePointer(registers))
+    SignalContext(mcontext_t& mcontext)
+        : mcontext(mcontext)
+        , machinePC(MachineContext::instructionPointer(mcontext))
+        , stackPointer(MachineContext::stackPointer(mcontext))
+        , framePointer(MachineContext::framePointer(mcontext))
     { }
 
     void dump()
@@ -112,7 +112,7 @@ struct SignalContext {
         v(gs)
 
 #define DUMP_REGISTER(__reg) \
-        log("Register " #__reg ": %p", reinterpret_cast<void*>(registers.__##__reg));
+        log("Register " #__reg ": %p", reinterpret_cast<void*>(mcontext->__ss.__##__reg));
         FOR_EACH_REGISTER(DUMP_REGISTER)
 #undef FOR_EACH_REGISTER
 
@@ -120,20 +120,20 @@ struct SignalContext {
         int i;
         for (i = 0; i < 28; i += 4) {
             log("x%d: %016llx x%d: %016llx x%d: %016llx x%d: %016llx",
-                i, registers.__x[i],
-                i+1, registers.__x[i+1],
-                i+2, registers.__x[i+2],
-                i+3, registers.__x[i+3]);
+                i, mcontext->__ss.__x[i],
+                i+1, mcontext->__ss.__x[i+1],
+                i+2, mcontext->__ss.__x[i+2],
+                i+3, mcontext->__ss.__x[i+3]);
         }
         ASSERT(i < 29);
         log("x%d: %016llx fp: %016llx lr: %016llx",
-            i, registers.__x[i], registers.__fp, registers.__lr);
+            i, mcontext->__ss.__x[i], mcontext->__ss.__fp, mcontext->__ss.__lr);
         log("sp: %016llx pc: %016llx cpsr: %08x",
-            registers.__sp, registers.__pc, registers.__cpsr);
+            mcontext->__ss.__sp, mcontext->__ss.__pc, mcontext->__ss.__cpsr);
 #endif
     }
 
-    PlatformRegisters& registers;
+    mcontext_t& mcontext;
     void* machinePC;
     void* stackPointer;
     void* framePointer;
@@ -142,8 +142,8 @@ struct SignalContext {
 static void installCrashHandler()
 {
 #if CPU(X86_64) || CPU(ARM64)
-    installSignalHandler(Signal::Ill, [] (Signal, SigInfo&, PlatformRegisters& registers) {
-        SignalContext context(registers);
+    installSignalHandler(Signal::Ill, [] (int, siginfo_t*, void* uap) {
+        SignalContext context(static_cast<ucontext_t*>(uap)->uc_mcontext);
 
         if (!isJITPC(context.machinePC))
             return SignalAction::NotHandled;

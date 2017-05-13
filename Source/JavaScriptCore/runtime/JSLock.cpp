@@ -30,8 +30,6 @@
 #include "SamplingProfiler.h"
 #include "WasmMachineThreads.h"
 #include <thread>
-#include <wtf/Threading.h>
-#include <wtf/threads/Signals.h>
 
 namespace JSC {
 
@@ -148,10 +146,6 @@ void JSLock::didAcquireLock()
     m_vm->heap.machineThreads().addCurrentThread();
 #if ENABLE(WEBASSEMBLY)
     Wasm::startTrackingCurrentThread();
-#endif
-
-#if HAVE(MACH_EXCEPTIONS)
-    registerThreadForMachExceptionHandling(&Thread::current());
 #endif
 
     m_vm->traps().notifyGrabAllLocks();
