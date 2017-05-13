@@ -1,3 +1,51 @@
+2017-05-12  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Elements should be inserted into a template element as its content's last child
+        https://bugs.webkit.org/show_bug.cgi?id=171373
+        <rdar://problem/31862949>
+
+        Reviewed by Ryosuke Niwa.
+
+        Before this change, our HTML parser obeys the following premises:
+        1) A fostering child whose parent is a table should be inserted before its parent and under its grandparent.
+        2) When inserting into a template element, an element should be inserted into its content.
+
+        Let's walk through the example:
+        a) Before eventhandler takes place
+        template
+        table
+            svg <- parser
+        b) After eventhandler takes place
+        template
+            table
+                svg <- parser
+        c) after parsing svg
+        template
+            content
+                svg
+                (table)
+            table
+
+        Finally, in the example, the svg element will be inserted into the content of the template element while
+        having its next sibling point to the table element. However, the table element is actually under the
+        template element not its content.
+
+        This messy tree is constructed because the second premise is incompleted. It should be: When inserting into
+        a template element, an element should be inserted into its content as its last child.
+        Quoted from Step 3 of https://html.spec.whatwg.org/multipage/syntax.html#appropriate-place-for-inserting-a-node
+        A correct tree will then looks like:
+        template
+            content
+                svg
+            table
+
+        Tests: fast/dom/HTMLTemplateElement/insert-fostering-child-crash.html
+               fast/dom/HTMLTemplateElement/insert-fostering-child.html
+
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::insert):
+        By nullifying task.nextChild, it will force the parser to append the element as task.parent's last child.
+
 2017-05-12  Alex Christensen  <achristensen@webkit.org>
 
         Rename WKContentExtension to WKContentRuleList
