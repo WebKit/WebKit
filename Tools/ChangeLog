@@ -1,3 +1,19 @@
+2017-05-12  Brady Eidson  <beidson@apple.com>
+
+        REGRESSION (r216711): API test WKWebView.ClearAppCache is failing.
+        https://bugs.webkit.org/show_bug.cgi?id=172030
+
+        Unreviewed - Test gardening
+
+        Try to resolve this once and for all by using the WebsiteDataStore API to nuke everything
+        before the test starts.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/LocalStorageClear.mm:
+        (defaultWebsiteCacheDirectory):
+        (defaultApplicationCacheDirectory):
+        (TEST):
+        (defaultWebsiteDataDirectory): Deleted.
+
 2017-05-12  David Quesada  <david_quesada@apple.com>
 
         Add SPI for overriding WKWebView's clipping behavior for _visibleContentRect

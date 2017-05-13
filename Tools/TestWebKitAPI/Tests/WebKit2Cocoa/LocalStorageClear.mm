@@ -107,7 +107,7 @@ NSString *swizzledBundleIdentifierWebBookmarksD()
     return @"com.apple.webbookmarksd";
 }
 
-NSString *defaultWebsiteDataDirectory()
+NSString *defaultWebsiteCacheDirectory()
 {
 #if PLATFORM(IOS)
     return nil;
@@ -122,7 +122,7 @@ NSString *defaultApplicationCacheDirectory()
     // This is to mirror a quirk in WebsiteDataStore::defaultApplicationCacheDirectory and catch any regressions.
     return [NSHomeDirectory() stringByAppendingPathComponent:@"Library/Caches/com.apple.WebAppCache"];
 #else
-    return [defaultWebsiteDataDirectory() stringByAppendingString:@"/OfflineWebApplicationCache"];
+    return [defaultWebsiteCacheDirectory() stringByAppendingString:@"/OfflineWebApplicationCache"];
 #endif
 }
 
@@ -132,15 +132,24 @@ TEST(WKWebView, ClearAppCache)
     // On iOS, MobileSafari and webbookmarksd need to share the same AppCache directory.
     TestWebKitAPI::InstanceMethodSwizzler swizzle([NSBundle class], @selector(bundleIdentifier), reinterpret_cast<IMP>(swizzledBundleIdentifierWebBookmarksD));
 #endif
+
+    // Start with a clean slate of WebsiteData.
+    readyToContinue = false;
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^()
+    {
+        readyToContinue = true;
+    }];
+    TestWebKitAPI::Util::run(&readyToContinue);
+
+    // Start with a clean slate of Website caches.
+    if (auto *websiteCacheDirectory = defaultWebsiteCacheDirectory()) {
+        NSURL *websiteCacheURL = [NSURL fileURLWithPath:[websiteCacheDirectory stringByExpandingTildeInPath]];
+        [[NSFileManager defaultManager] removeItemAtURL:websiteCacheURL error:nil];
+    }
+
     NSURL *dbResourceURL = [[NSBundle mainBundle] URLForResource:@"ApplicationCache" withExtension:@"db" subdirectory:@"TestWebKitAPI.resources"];
     NSURL *shmResourceURL = [[NSBundle mainBundle] URLForResource:@"ApplicationCache" withExtension:@"db-shm" subdirectory:@"TestWebKitAPI.resources"];
     NSURL *walResourceURL = [[NSBundle mainBundle] URLForResource:@"ApplicationCache" withExtension:@"db-wal" subdirectory:@"TestWebKitAPI.resources"];
-
-    // Clean up any website data files left from any previous test run.
-    if (auto *websiteDataDirectory = defaultWebsiteDataDirectory()) {
-        NSURL *websiteDataURL = [NSURL fileURLWithPath:[websiteDataDirectory stringByExpandingTildeInPath]];
-        [[NSFileManager defaultManager] removeItemAtURL:websiteDataURL error:nil];
-    }
 
     NSURL *targetURL = [NSURL fileURLWithPath:[defaultApplicationCacheDirectory() stringByExpandingTildeInPath]];
     [[NSFileManager defaultManager] createDirectoryAtURL:targetURL withIntermediateDirectories:YES attributes:nil error:nil];
