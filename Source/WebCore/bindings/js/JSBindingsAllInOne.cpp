@@ -109,7 +109,6 @@
 #include "JSTreeWalkerCustom.cpp"
 #include "JSVideoTrackCustom.cpp"
 #include "JSVideoTrackListCustom.cpp"
-#include "JSWorkerCustom.cpp"
 #include "JSWorkerGlobalScopeBase.cpp"
 #include "JSWorkerGlobalScopeCustom.cpp"
 #include "JSXMLDocumentCustom.cpp"

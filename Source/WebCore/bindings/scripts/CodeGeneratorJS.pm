@@ -4659,6 +4659,9 @@ sub GenerateCallWith
         $implIncludes{"JSDOMWindowBase.h"} = 1;
         push(@callWithArgs, "incumbentDOMWindow($statePointer)");
     }
+    if ($codeGenerator->ExtendedAttributeContains($callWith, "RuntimeFlags")) {
+        push(@callWithArgs, "${globalObject}->runtimeFlags()");
+    }
 
     return @callWithArgs;
 }

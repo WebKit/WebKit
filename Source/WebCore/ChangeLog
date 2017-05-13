@@ -1,3 +1,28 @@
+2017-05-12  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Remove need for custom binding for Worker constructor
+        https://bugs.webkit.org/show_bug.cgi?id=172050
+
+        Reviewed by Chris Dumez.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSWorkerCustom.cpp: Removed.
+        Remove JSWorkerCustom.cpp
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateCallWith):
+        * bindings/scripts/IDLAttributes.json:
+        Add RuntimeFlags as a new option for the ConstructorCallWith extended attribute.
+
+        * workers/Worker.cpp:
+        (WebCore::Worker::create):
+        * workers/Worker.h:
+        Update order of arguments to appease the generator.
+
+        * workers/Worker.idl:
+        Add extended attributes for the constructor.
+
 2017-05-12  Simon Fraser  <simon.fraser@apple.com>
 
         The rects returned by Element/Range.getClientRects() should not be rounded

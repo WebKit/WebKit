@@ -66,7 +66,7 @@
         },
         "ConstructorCallWith": {
             "contextsAllowed": ["interface"],
-            "values": ["Document", "ScriptExecutionContext", "ScriptState"]
+            "values": ["Document", "RuntimeFlags", "ScriptExecutionContext", "ScriptState"]
         },
         "ConstructorMayThrowException": {
             "contextsAllowed": ["interface"]
