@@ -45,7 +45,7 @@
 #import "URL.h"
 #import <wtf/NeverDestroyed.h>
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
 SOFT_LINK_PRIVATE_FRAMEWORK(LinkPresentation)
 #endif
 
@@ -196,7 +196,7 @@ LinkImageLayout::LinkImageLayout(URL& url, const String& titleString)
     NSURL *cocoaURL = url;
     NSString *absoluteURLString = [cocoaURL absoluteString];
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
     LinkPresentationLibrary();
     NSString *domain = [cocoaURL _lp_simplifiedDisplayString];
 #else
