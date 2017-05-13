@@ -163,26 +163,26 @@ void PluginPackage::setEnabled(bool enabled)
     m_isEnabled = enabled;
 }
 
-PassRefPtr<PluginPackage> PluginPackage::createPackage(const String& path, const time_t& lastModified)
+RefPtr<PluginPackage> PluginPackage::createPackage(const String& path, const time_t& lastModified)
 {
     RefPtr<PluginPackage> package = adoptRef(new PluginPackage(path, lastModified));
 
     if (!package->fetchInfo())
-        return 0;
+        return nullptr;
 
-    return package.release();
+    return package;
 }
 
 #if ENABLE(NETSCAPE_PLUGIN_METADATA_CACHE)
-PassRefPtr<PluginPackage> PluginPackage::createPackageFromCache(const String& path, const time_t& lastModified, const String& name, const String& description, const String& mimeDescription)
+Ref<PluginPackage> PluginPackage::createPackageFromCache(const String& path, const time_t& lastModified, const String& name, const String& description, const String& mimeDescription)
 {
-    RefPtr<PluginPackage> package = adoptRef(new PluginPackage(path, lastModified));
+    Ref<PluginPackage> package = adoptRef(*new PluginPackage(path, lastModified));
     package->m_name = name;
     package->m_description = description;
     package->determineModuleVersionFromDescription();
     package->setMIMEDescription(mimeDescription);
     package->m_infoIsFromCache = true;
-    return package.release();
+    return package;
 }
 #endif
 

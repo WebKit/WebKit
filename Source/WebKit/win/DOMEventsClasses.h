@@ -30,7 +30,6 @@
 #include "DOMCoreClasses.h"
 #include <WebCore/EventListener.h>
 
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
 // {AC3D1BC3-4976-4431-8A19-4812C5EFE39C}
@@ -109,9 +108,9 @@ public:
 class DOMEvent : public DOMObject, public IDOMEvent
 {
 public:
-    static IDOMEvent* createInstance(PassRefPtr<WebCore::Event> e);
+    static IDOMEvent* createInstance(RefPtr<WebCore::Event>&&);
 protected:
-    DOMEvent(PassRefPtr<WebCore::Event> e);
+    DOMEvent(RefPtr<WebCore::Event>&&);
     ~DOMEvent();
 
 public:
@@ -183,7 +182,9 @@ protected:
 class DOMUIEvent : public DOMEvent, public IDOMUIEvent
 {
 public:
-    DOMUIEvent(PassRefPtr<WebCore::Event> e) : DOMEvent(e) {}
+    DOMUIEvent(RefPtr<WebCore::Event>&& e)
+        : DOMEvent(WTFMove(e))
+    { }
 
     // IUnknown
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
@@ -298,7 +299,9 @@ public:
 class DOMKeyboardEvent : public DOMUIEvent, public IDOMKeyboardEvent
 {
 public:
-    DOMKeyboardEvent(PassRefPtr<WebCore::Event> e) : DOMUIEvent(e) { }
+    DOMKeyboardEvent(RefPtr<WebCore::Event>&& e)
+        : DOMUIEvent(WTFMove(e))
+    { }
 
     // IUnknown
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
@@ -464,7 +467,9 @@ public:
 class DOMMouseEvent : public DOMUIEvent, public IDOMMouseEvent
 {
 public:
-    DOMMouseEvent(PassRefPtr<WebCore::Event> e) : DOMUIEvent(e) { }
+    DOMMouseEvent(RefPtr<WebCore::Event>&& e)
+        : DOMUIEvent(WTFMove(e))
+    { }
 
     // IUnknown
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
@@ -639,7 +644,9 @@ public:
 class DOMMutationEvent : public DOMEvent, public IDOMMutationEvent
 {
 public:
-    DOMMutationEvent(PassRefPtr<WebCore::Event> e) : DOMEvent(e) { }
+    DOMMutationEvent(RefPtr<WebCore::Event>&& e)
+        : DOMEvent(WTFMove(e))
+    { }
 
     // IUnknown
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
@@ -752,7 +759,9 @@ public:
 class DOMOverflowEvent : public DOMEvent, public IDOMOverflowEvent
 {
 public:
-    DOMOverflowEvent(PassRefPtr<WebCore::Event> e) : DOMEvent(e) { }
+    DOMOverflowEvent(RefPtr<WebCore::Event>&& e)
+        : DOMEvent(WTFMove(e))
+    { }
 
     // IUnknown
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
@@ -860,7 +869,9 @@ public:
 class DOMWheelEvent : public DOMUIEvent, public IDOMWheelEvent
 {
 public:
-    DOMWheelEvent(PassRefPtr<WebCore::Event> e) : DOMUIEvent(e) { }
+    DOMWheelEvent(RefPtr<WebCore::Event>&& e)
+        : DOMUIEvent(WTFMove(e))
+    { }
 
     // IUnknown
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);

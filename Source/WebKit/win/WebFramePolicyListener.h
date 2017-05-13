@@ -27,7 +27,6 @@
 #define WebFramePolicyListener_h
 
 #include "WebKit.h"
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
 #include <WebCore/FrameLoaderTypes.h>
@@ -38,9 +37,9 @@ namespace WebCore {
 
 class WebFramePolicyListener : public IWebPolicyDecisionListener, public IWebFormSubmissionListener {
 public:
-    static WebFramePolicyListener* createInstance(PassRefPtr<WebCore::Frame>);
+    static WebFramePolicyListener* createInstance(RefPtr<WebCore::Frame>&&);
 protected:
-    WebFramePolicyListener(PassRefPtr<WebCore::Frame>);
+    WebFramePolicyListener(RefPtr<WebCore::Frame>&&);
     ~WebFramePolicyListener();
 
 public:

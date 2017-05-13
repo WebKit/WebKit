@@ -46,8 +46,8 @@ static HashMap<HistoryItem*, WebHistoryItem*>& historyItemWrappers()
     return staticHistoryItemWrappers;
 }
 
-WebHistoryItem::WebHistoryItem(PassRefPtr<HistoryItem> historyItem)
-    : m_historyItem(historyItem)
+WebHistoryItem::WebHistoryItem(RefPtr<HistoryItem>&& historyItem)
+    : m_historyItem(WTFMove(historyItem))
 {
     ASSERT(!historyItemWrappers().contains(m_historyItem.get()));
     historyItemWrappers().set(m_historyItem.get(), this);
@@ -72,14 +72,14 @@ WebHistoryItem* WebHistoryItem::createInstance()
     return instance;
 }
 
-WebHistoryItem* WebHistoryItem::createInstance(PassRefPtr<HistoryItem> historyItem)
+WebHistoryItem* WebHistoryItem::createInstance(RefPtr<HistoryItem>&& historyItem)
 {
     WebHistoryItem* instance;
 
     instance = historyItemWrappers().get(historyItem.get());
 
     if (!instance)
-        instance = new WebHistoryItem(historyItem);
+        instance = new WebHistoryItem(WTFMove(historyItem));
 
     instance->AddRef();
     return instance;

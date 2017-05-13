@@ -139,7 +139,7 @@ bool PluginDatabase::refresh()
         }
 
         RefPtr<PluginPackage> package = PluginPackage::createPackage(*it, lastModified);
-        if (package && add(package.release()))
+        if (package && add(package.releaseNonNull()))
             pluginSetChanged = true;
     }
 
@@ -325,16 +325,12 @@ void PluginDatabase::getDeletedPlugins(PluginSet& plugins) const
     }
 }
 
-bool PluginDatabase::add(PassRefPtr<PluginPackage> prpPackage)
+bool PluginDatabase::add(Ref<PluginPackage>&& package)
 {
-    ASSERT_ARG(prpPackage, prpPackage);
-
-    RefPtr<PluginPackage> package = prpPackage;
-
-    if (!m_plugins.add(package).isNewEntry)
+    if (!m_plugins.add(package.copyRef()).isNewEntry)
         return false;
 
-    m_pluginsByPath.add(package->path(), package);
+    m_pluginsByPath.add(package->path(), package.copyRef());
     return true;
 }
 
@@ -529,9 +525,9 @@ void PluginDatabase::loadPersistentMetadataCache()
         if (m_pluginDirectories.find(pluginDirectoryName) == WTF::notFound)
             continue;
 
-        RefPtr<PluginPackage> package = PluginPackage::createPackageFromCache(path, lastModified, name, desc, mimeDesc);
+        auto package = PluginPackage::createPackageFromCache(path, lastModified, name, desc, mimeDesc);
 
-        if (package && cachedPlugins.add(package).isNewEntry) {
+        if (cachedPlugins.add(package.copyRef()).isNewEntry) {
             cachedPluginPathsWithTimes.add(package->path(), package->lastModified());
             cachedPluginsByPath.add(package->path(), package);
         }

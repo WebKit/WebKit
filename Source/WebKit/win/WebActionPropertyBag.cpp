@@ -39,10 +39,10 @@ using namespace WebCore;
 
 // WebActionPropertyBag ------------------------------------------------
 
-WebActionPropertyBag::WebActionPropertyBag(const NavigationAction& action, PassRefPtr<HTMLFormElement> form, PassRefPtr<Frame> frame)
+WebActionPropertyBag::WebActionPropertyBag(const NavigationAction& action, RefPtr<HTMLFormElement>&& form, RefPtr<Frame>&& frame)
     : m_action(action)
-    , m_form(form)
-    , m_frame(frame)
+    , m_form(WTFMove(form))
+    , m_frame(WTFMove(frame))
 {
     gClassCount++;
     gClassNameCount().add("WebActionPropertyBag");
@@ -54,9 +54,9 @@ WebActionPropertyBag::~WebActionPropertyBag()
     gClassNameCount().remove("WebActionPropertyBag");
 }
 
-WebActionPropertyBag* WebActionPropertyBag::createInstance(const NavigationAction& action, PassRefPtr<HTMLFormElement> form, PassRefPtr<Frame> frame)
+WebActionPropertyBag* WebActionPropertyBag::createInstance(const NavigationAction& action, RefPtr<HTMLFormElement>&& form, RefPtr<Frame>&& frame)
 {
-    WebActionPropertyBag* instance = new WebActionPropertyBag(action, form, frame); 
+    WebActionPropertyBag* instance = new WebActionPropertyBag(action, WTFMove(form), WTFMove(frame));
     instance->AddRef();
     return instance;
 }

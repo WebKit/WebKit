@@ -29,7 +29,6 @@
 #include "WebKit.h"
 
 #include <CoreFoundation/CoreFoundation.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -43,9 +42,9 @@ class WebHistoryItem : public IWebHistoryItem, IWebHistoryItemPrivate
 {
 public:
     static WebHistoryItem* createInstance();
-    static WebHistoryItem* createInstance(PassRefPtr<WebCore::HistoryItem>);
+    static WebHistoryItem* createInstance(RefPtr<WebCore::HistoryItem>&&);
 protected:
-    WebHistoryItem(PassRefPtr<WebCore::HistoryItem>);
+    WebHistoryItem(RefPtr<WebCore::HistoryItem>&&);
     ~WebHistoryItem();
 
 public:

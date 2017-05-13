@@ -47,8 +47,8 @@ static HashMap<BackForwardList*, WebBackForwardList*>& backForwardListWrappers()
     return staticBackForwardListWrappers;
 }
 
-WebBackForwardList::WebBackForwardList(PassRefPtr<BackForwardList> backForwardList)
-    : m_backForwardList(backForwardList)
+WebBackForwardList::WebBackForwardList(RefPtr<BackForwardList>&& backForwardList)
+    : m_backForwardList(WTFMove(backForwardList))
 {
     ASSERT(!backForwardListWrappers().contains(m_backForwardList.get()));
     backForwardListWrappers().set(m_backForwardList.get(), this);
@@ -68,12 +68,12 @@ WebBackForwardList::~WebBackForwardList()
     gClassNameCount().remove("WebBackForwardList");
 }
 
-WebBackForwardList* WebBackForwardList::createInstance(PassRefPtr<BackForwardList> backForwardList)
+WebBackForwardList* WebBackForwardList::createInstance(RefPtr<BackForwardList>&& backForwardList)
 {
     WebBackForwardList* instance = backForwardListWrappers().get(backForwardList.get());
 
     if (!instance)
-        instance = new WebBackForwardList(backForwardList);
+        instance = new WebBackForwardList(WTFMove(backForwardList));
 
     instance->AddRef();
     return instance;

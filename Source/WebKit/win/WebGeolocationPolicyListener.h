@@ -28,7 +28,6 @@
 
 #include "WebKit.h"
 #include <WebCore/COMPtr.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -37,7 +36,7 @@ namespace WebCore {
 
 class WebGeolocationPolicyListener : public IWebGeolocationPolicyListener {
 public:
-    static COMPtr<WebGeolocationPolicyListener> createInstance(PassRefPtr<WebCore::Geolocation>);
+    static COMPtr<WebGeolocationPolicyListener> createInstance(RefPtr<WebCore::Geolocation>&&);
 
     // IUnknown
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
@@ -49,7 +48,7 @@ public:
     virtual HRESULT STDMETHODCALLTYPE deny();
 
 private:
-    WebGeolocationPolicyListener(PassRefPtr<WebCore::Geolocation>);
+    WebGeolocationPolicyListener(RefPtr<WebCore::Geolocation>&&);
     ~WebGeolocationPolicyListener();
 
     ULONG m_refCount { 0 };

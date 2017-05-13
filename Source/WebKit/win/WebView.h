@@ -519,7 +519,7 @@ public:
     bool supportsFullScreenForElement(const WebCore::Element*, bool withKeyboard) const;
     bool isFullScreen() const;
     WebCore::FullScreenController* fullScreenController();
-    void setFullScreenElement(PassRefPtr<WebCore::Element>);
+    void setFullScreenElement(RefPtr<WebCore::Element>&&);
     WebCore::Element* fullScreenElement() const { return m_fullScreenElement.get(); }
 #endif
 

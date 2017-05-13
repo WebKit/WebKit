@@ -30,16 +30,15 @@
 
 #include <WebCore/COMPtr.h>
 #include <WebCore/SharedBuffer.h>
-#include <WTF/PassRefPtr.h>
 #include <WTF/RefPtr.h>
 
 class MemoryStream : public IStream
 {
 public:
-    static COMPtr<MemoryStream> createInstance(PassRefPtr<WebCore::SharedBuffer> buffer);
+    static COMPtr<MemoryStream> createInstance(RefPtr<WebCore::SharedBuffer>&&);
 
 protected:
-    MemoryStream(PassRefPtr<WebCore::SharedBuffer> buffer);
+    MemoryStream(RefPtr<WebCore::SharedBuffer>&&);
     ~MemoryStream();
 public:
 

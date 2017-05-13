@@ -56,9 +56,9 @@ namespace WebCore {
 
     class PluginStream : public RefCounted<PluginStream>, private NetscapePlugInStreamLoaderClient {
     public:
-        static PassRefPtr<PluginStream> create(PluginStreamClient* client, Frame* frame, const ResourceRequest& request, bool sendNotification, void* notifyData, const NPPluginFuncs* functions, NPP instance, const PluginQuirkSet& quirks)
+        static Ref<PluginStream> create(PluginStreamClient* client, Frame* frame, const ResourceRequest& request, bool sendNotification, void* notifyData, const NPPluginFuncs* functions, NPP instance, const PluginQuirkSet& quirks)
         {
-            return adoptRef(new PluginStream(client, frame, request, sendNotification, notifyData, functions, instance, quirks));
+            return adoptRef(*new PluginStream(client, frame, request, sendNotification, notifyData, functions, instance, quirks));
         }
         virtual ~PluginStream();
         

@@ -31,12 +31,12 @@
 #include <WebCore/URL.h>
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/SharedBuffer.h>
-#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 
 class WebResource : public IWebResource {
 public:
-    static WebResource* createInstance(PassRefPtr<WebCore::SharedBuffer> data, const WebCore::ResourceResponse& response);
+    static WebResource* createInstance(RefPtr<WebCore::SharedBuffer>&&, const WebCore::ResourceResponse&);
 protected:
     WebResource(IStream* data, const WebCore::URL& url, const WTF::String& mimeType, const WTF::String& textEncodingName, const WTF::String& frameName);
     ~WebResource();

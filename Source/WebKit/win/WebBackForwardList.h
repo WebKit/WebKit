@@ -29,7 +29,6 @@
 
 #include "WebHistoryItem.h"
 
-#include <WTF/PassRefPtr.h>
 #include <WTF/RefPtr.h>
 
 class BackForwardList;
@@ -37,9 +36,9 @@ class BackForwardList;
 class WebBackForwardList : public IWebBackForwardList, IWebBackForwardListPrivate
 {
 public:
-    static WebBackForwardList* createInstance(PassRefPtr<BackForwardList>);
+    static WebBackForwardList* createInstance(RefPtr<BackForwardList>&&);
 protected:
-    WebBackForwardList(PassRefPtr<BackForwardList>);
+    WebBackForwardList(RefPtr<BackForwardList>&&);
     ~WebBackForwardList();
 
 public:

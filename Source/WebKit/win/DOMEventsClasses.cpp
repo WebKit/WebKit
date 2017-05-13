@@ -77,7 +77,7 @@ bool WebEventListener::operator==(const WebCore::EventListener& other) const
 void WebEventListener::handleEvent(WebCore::ScriptExecutionContext* s, WebCore::Event* e)
 {
     RefPtr<WebCore::Event> ePtr(e);
-    COMPtr<IDOMEvent> domEvent = DOMEvent::createInstance(ePtr);
+    COMPtr<IDOMEvent> domEvent = DOMEvent::createInstance(WTFMove(ePtr));
     m_iDOMEventListener->handleEvent(domEvent.get());
 }
 
@@ -88,16 +88,16 @@ Ref<WebEventListener> WebEventListener::create(IDOMEventListener* d)
 
 // DOMEvent -------------------------------------------------------------------
 
-DOMEvent::DOMEvent(PassRefPtr<WebCore::Event> e)
+DOMEvent::DOMEvent(RefPtr<WebCore::Event>&& e)
 {
-    m_event = e;
+    m_event = WTFMove(e);
 }
 
 DOMEvent::~DOMEvent()
 {
 }
 
-IDOMEvent* DOMEvent::createInstance(PassRefPtr<WebCore::Event> e)
+IDOMEvent* DOMEvent::createInstance(RefPtr<WebCore::Event>&& e)
 {
     if (!e)
         return nullptr;
@@ -107,36 +107,36 @@ IDOMEvent* DOMEvent::createInstance(PassRefPtr<WebCore::Event> e)
 
     switch (e->eventInterface()) {
     case WebCore::KeyboardEventInterfaceType: {
-        DOMKeyboardEvent* newEvent = new DOMKeyboardEvent(e);
+        DOMKeyboardEvent* newEvent = new DOMKeyboardEvent(WTFMove(e));
         hr = newEvent->QueryInterface(IID_IDOMKeyboardEvent, (void**)&domEvent);
         break;
     }
     case WebCore::MouseEventInterfaceType: {
-        DOMMouseEvent* newEvent = new DOMMouseEvent(e);
+        DOMMouseEvent* newEvent = new DOMMouseEvent(WTFMove(e));
         hr = newEvent->QueryInterface(IID_IDOMMouseEvent, (void**)&domEvent);
         break;
     }
     case WebCore::MutationEventInterfaceType: {
-        DOMMutationEvent* newEvent = new DOMMutationEvent(e);
+        DOMMutationEvent* newEvent = new DOMMutationEvent(WTFMove(e));
         hr = newEvent->QueryInterface(IID_IDOMMutationEvent, (void**)&domEvent);
         break;
     }
     case WebCore::OverflowEventInterfaceType: {
-        DOMOverflowEvent* newEvent = new DOMOverflowEvent(e);
+        DOMOverflowEvent* newEvent = new DOMOverflowEvent(WTFMove(e));
         hr = newEvent->QueryInterface(IID_IDOMOverflowEvent, (void**)&domEvent);
         break;
     }
     case WebCore::WheelEventInterfaceType: {
-        DOMWheelEvent* newEvent = new DOMWheelEvent(e);
+        DOMWheelEvent* newEvent = new DOMWheelEvent(WTFMove(e));
         hr = newEvent->QueryInterface(IID_IDOMWheelEvent, (void**)&domEvent);
         break;
     }
     default:
         if (e->isUIEvent()) {
-            DOMUIEvent* newEvent = new DOMUIEvent(e);
+            DOMUIEvent* newEvent = new DOMUIEvent(WTFMove(e));
             hr = newEvent->QueryInterface(IID_IDOMUIEvent, (void**)&domEvent);
         } else {
-            DOMEvent* newEvent = new DOMEvent(e);
+            DOMEvent* newEvent = new DOMEvent(WTFMove(e));
             hr = newEvent->QueryInterface(IID_IDOMEvent, (void**)&domEvent);
         }
     }

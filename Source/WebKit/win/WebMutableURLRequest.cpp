@@ -394,12 +394,12 @@ HRESULT WebMutableURLRequest::mutableCopy(_COM_Outptr_opt_ IWebMutableURLRequest
 
 // IWebMutableURLRequest ----------------------------------------------------
 
-void WebMutableURLRequest::setFormData(const PassRefPtr<FormData> data)
+void WebMutableURLRequest::setFormData(RefPtr<FormData>&& data)
 {
-    m_request.setHTTPBody(data);
+    m_request.setHTTPBody(WTFMove(data));
 }
 
-const PassRefPtr<FormData> WebMutableURLRequest::formData() const
+const RefPtr<FormData> WebMutableURLRequest::formData() const
 {
     return m_request.httpBody();
 }

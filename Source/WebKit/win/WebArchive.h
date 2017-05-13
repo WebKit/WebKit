@@ -28,7 +28,6 @@
 
 #include "WebKit.h"
 
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -39,9 +38,9 @@ class WebArchive : public IWebArchive
 {
 public:
     static WebArchive* createInstance();
-    static WebArchive* createInstance(PassRefPtr<WebCore::LegacyWebArchive>);
+    static WebArchive* createInstance(RefPtr<WebCore::LegacyWebArchive>&&);
 protected:
-    WebArchive(PassRefPtr<WebCore::LegacyWebArchive>);
+    WebArchive(RefPtr<WebCore::LegacyWebArchive>&&);
     ~WebArchive();
 
 public:

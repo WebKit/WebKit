@@ -41,16 +41,16 @@ WebArchive* WebArchive::createInstance()
     return instance;
 }
 
-WebArchive* WebArchive::createInstance(PassRefPtr<LegacyWebArchive> coreArchive)
+WebArchive* WebArchive::createInstance(RefPtr<LegacyWebArchive>&& coreArchive)
 {
-    WebArchive* instance = new WebArchive(coreArchive);
+    WebArchive* instance = new WebArchive(WTFMove(coreArchive));
 
     instance->AddRef();
     return instance;
 }
 
-WebArchive::WebArchive(PassRefPtr<LegacyWebArchive> coreArchive)
-    : m_archive(coreArchive)
+WebArchive::WebArchive(RefPtr<LegacyWebArchive>&& coreArchive)
+    : m_archive(WTFMove(coreArchive))
 {
     gClassCount++;
     gClassNameCount().add("WebArchive");
@@ -152,7 +152,7 @@ HRESULT WebArchive::data(_COM_Outptr_opt_ IStream** stream)
     if (!cfData)
         return E_FAIL;
 
-    RefPtr<SharedBuffer> buffer = SharedBuffer::create(CFDataGetBytePtr(cfData.get()), CFDataGetLength(cfData.get()));
+    auto buffer = SharedBuffer::create(CFDataGetBytePtr(cfData.get()), CFDataGetLength(cfData.get()));
 
-    return MemoryStream::createInstance(buffer).copyRefTo(stream);
+    return MemoryStream::createInstance(WTFMove(buffer)).copyRefTo(stream);
 }

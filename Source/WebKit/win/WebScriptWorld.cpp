@@ -38,8 +38,8 @@ static WorldMap& allWorlds()
     return map;
 }
 
-inline WebScriptWorld::WebScriptWorld(PassRefPtr<DOMWrapperWorld> world)
-    : m_world(world)
+inline WebScriptWorld::WebScriptWorld(RefPtr<DOMWrapperWorld>&& world)
+    : m_world(WTFMove(world))
 {
     ASSERT_ARG(world, m_world);
 
@@ -70,9 +70,9 @@ COMPtr<WebScriptWorld> WebScriptWorld::createInstance()
     return createInstance(ScriptController::createWorld());
 }
 
-COMPtr<WebScriptWorld> WebScriptWorld::createInstance(PassRefPtr<DOMWrapperWorld> world)
+COMPtr<WebScriptWorld> WebScriptWorld::createInstance(RefPtr<DOMWrapperWorld>&& world)
 {
-    return new WebScriptWorld(world);
+    return new WebScriptWorld(WTFMove(world));
 }
 
 COMPtr<WebScriptWorld> WebScriptWorld::findOrCreateWorld(DOMWrapperWorld& world)

@@ -565,7 +565,7 @@ HRESULT WebFrame::loadRequest(_In_opt_ IWebURLRequest* request)
     return S_OK;
 }
 
-void WebFrame::loadData(PassRefPtr<WebCore::SharedBuffer> data, BSTR mimeType, BSTR textEncodingName, BSTR baseURL, BSTR failingURL)
+void WebFrame::loadData(RefPtr<WebCore::SharedBuffer>&& data, BSTR mimeType, BSTR textEncodingName, BSTR baseURL, BSTR failingURL)
 {
     String mimeTypeString(mimeType, SysStringLen(mimeType));
     if (!mimeType)
@@ -582,7 +582,7 @@ void WebFrame::loadData(PassRefPtr<WebCore::SharedBuffer> data, BSTR mimeType, B
 
     ResourceRequest request(baseCoreURL);
     ResourceResponse response(URL(), mimeTypeString, data->size(), encodingString);
-    SubstituteData substituteData(data, failingCoreURL, response, SubstituteData::SessionHistoryVisibility::Hidden);
+    SubstituteData substituteData(WTFMove(data), failingCoreURL, response, SubstituteData::SessionHistoryVisibility::Hidden);
 
     // This method is only called from IWebFrame methods, so don't ASSERT that the Frame pointer isn't null.
     if (Frame* coreFrame = core(this))
@@ -591,7 +591,7 @@ void WebFrame::loadData(PassRefPtr<WebCore::SharedBuffer> data, BSTR mimeType, B
 
 HRESULT WebFrame::loadData(_In_opt_ IStream* data, _In_ BSTR mimeType, _In_ BSTR textEncodingName, _In_ BSTR url)
 {
-    RefPtr<SharedBuffer> sharedBuffer = SharedBuffer::create();
+    auto sharedBuffer = SharedBuffer::create();
 
     STATSTG stat;
     if (SUCCEEDED(data->Stat(&stat, STATFLAG_NONAME))) {
@@ -605,7 +605,7 @@ HRESULT WebFrame::loadData(_In_opt_ IStream* data, _In_ BSTR mimeType, _In_ BSTR
         }
     }
 
-    loadData(sharedBuffer, mimeType, textEncodingName, url, nullptr);
+    loadData(WTFMove(sharedBuffer), mimeType, textEncodingName, url, nullptr);
     return S_OK;
 }
 
@@ -1031,7 +1031,7 @@ HRESULT WebFrame::deselectAll()
 
 // WebFrame ---------------------------------------------------------------
 
-PassRefPtr<Frame> WebFrame::createSubframeWithOwnerElement(IWebView* webView, Page* page, HTMLFrameOwnerElement* ownerElement)
+Ref<Frame> WebFrame::createSubframeWithOwnerElement(IWebView* webView, Page* page, HTMLFrameOwnerElement* ownerElement)
 {
     webView->QueryInterface(&d->webView);
     d->webView->Release(); // don't hold the extra ref
@@ -1040,9 +1040,9 @@ PassRefPtr<Frame> WebFrame::createSubframeWithOwnerElement(IWebView* webView, Pa
     d->webView->viewWindow(&viewWindow);
 
     this->AddRef(); // We release this ref in frameLoaderDestroyed()
-    RefPtr<Frame> frame = Frame::create(page, ownerElement, new WebFrameLoaderClient(this));
-    d->frame = frame.get();
-    return frame.release();
+    auto frame = Frame::create(page, ownerElement, new WebFrameLoaderClient(this));
+    d->frame = frame.ptr();
+    return frame;
 }
 
 void WebFrame::initWithWebView(IWebView* webView, Page* page)

@@ -46,9 +46,9 @@ public:
     WebCore::DOMWrapperWorld& world() const { return *m_world; }
 
 private:
-    static COMPtr<WebScriptWorld> createInstance(PassRefPtr<WebCore::DOMWrapperWorld>);
+    static COMPtr<WebScriptWorld> createInstance(RefPtr<WebCore::DOMWrapperWorld>&&);
 
-    WebScriptWorld(PassRefPtr<WebCore::DOMWrapperWorld>);
+    WebScriptWorld(RefPtr<WebCore::DOMWrapperWorld>&&);
     ~WebScriptWorld();
 
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID, _COM_Outptr_ void** ppvObject);

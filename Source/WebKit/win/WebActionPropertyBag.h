@@ -33,10 +33,10 @@
 
 class WebActionPropertyBag : public IPropertyBag {
 public:
-    static WebActionPropertyBag* createInstance(const WebCore::NavigationAction&, PassRefPtr<WebCore::HTMLFormElement>, PassRefPtr<WebCore::Frame>);
+    static WebActionPropertyBag* createInstance(const WebCore::NavigationAction&, RefPtr<WebCore::HTMLFormElement>&&, RefPtr<WebCore::Frame>&&);
 
 private:
-    WebActionPropertyBag(const WebCore::NavigationAction&, PassRefPtr<WebCore::HTMLFormElement>, PassRefPtr<WebCore::Frame>);
+    WebActionPropertyBag(const WebCore::NavigationAction&, RefPtr<WebCore::HTMLFormElement>&&, RefPtr<WebCore::Frame>&&);
     ~WebActionPropertyBag();
 
 public:

@@ -30,7 +30,7 @@
 #include <WebCore/FocusDirection.h>
 #include <WebCore/ScrollTypes.h>
 #include <wtf/Forward.h>
-#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
 
 class WebView;
 class WebDesktopNotificationsDelegate;

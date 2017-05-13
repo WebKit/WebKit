@@ -31,8 +31,8 @@ using namespace WebCore;
 
 // MemoryStream ---------------------------------------------------------------
 
-MemoryStream::MemoryStream(PassRefPtr<SharedBuffer> buffer)
-    : m_buffer(buffer)
+MemoryStream::MemoryStream(RefPtr<SharedBuffer>&& buffer)
+    : m_buffer(WTFMove(buffer))
 {
     gClassCount++;
     gClassNameCount().add("MemoryStream");
@@ -44,9 +44,9 @@ MemoryStream::~MemoryStream()
     gClassNameCount().remove("MemoryStream");
 }
 
-COMPtr<MemoryStream> MemoryStream::createInstance(PassRefPtr<SharedBuffer> buffer)
+COMPtr<MemoryStream> MemoryStream::createInstance(RefPtr<SharedBuffer>&& buffer)
 {
-    return new MemoryStream(buffer);
+    return new MemoryStream(WTFMove(buffer));
 }
 
 // IUnknown -------------------------------------------------------------------
@@ -228,7 +228,7 @@ HRESULT MemoryStream::Stat(_Out_ STATSTG* pstatstg, DWORD /*grfStatFlag*/)
 
 HRESULT MemoryStream::Clone(_COM_Outptr_ IStream** ppstm)
 {
-    MemoryStream::createInstance(m_buffer).copyRefTo(ppstm);
+    MemoryStream::createInstance(m_buffer.copyRef()).copyRefTo(ppstm);
     // FIXME: MSDN says we should be returning STG_E_INSUFFICIENT_MEMORY instead of E_OUTOFMEMORY here.
     return (*ppstm) ? S_OK : E_OUTOFMEMORY;
 }

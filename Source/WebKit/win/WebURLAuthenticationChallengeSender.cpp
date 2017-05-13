@@ -37,8 +37,8 @@ using namespace WebCore;
 
 // WebURLAuthenticationChallengeSender ----------------------------------------------------------------
 
-WebURLAuthenticationChallengeSender::WebURLAuthenticationChallengeSender(PassRefPtr<AuthenticationClient> client)
-    : m_client(client)
+WebURLAuthenticationChallengeSender::WebURLAuthenticationChallengeSender(RefPtr<AuthenticationClient>&& client)
+    : m_client(WTFMove(client))
 {
     ASSERT(m_client);
     gClassCount++;
@@ -51,9 +51,9 @@ WebURLAuthenticationChallengeSender::~WebURLAuthenticationChallengeSender()
     gClassNameCount().remove("WebURLAuthenticationChallengeSender");
 }
 
-WebURLAuthenticationChallengeSender* WebURLAuthenticationChallengeSender::createInstance(PassRefPtr<WebCore::AuthenticationClient> client)
+WebURLAuthenticationChallengeSender* WebURLAuthenticationChallengeSender::createInstance(RefPtr<WebCore::AuthenticationClient>&& client)
 {
-    WebURLAuthenticationChallengeSender* instance = new WebURLAuthenticationChallengeSender(client);
+    WebURLAuthenticationChallengeSender* instance = new WebURLAuthenticationChallengeSender(WTFMove(client));
     instance->AddRef();
     return instance;
 }

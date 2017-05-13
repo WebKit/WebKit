@@ -32,14 +32,14 @@ using namespace WebCore;
 
 // WebGeolocationPolicyListener ----------------------------------------------------------------
 
-COMPtr<WebGeolocationPolicyListener> WebGeolocationPolicyListener::createInstance(PassRefPtr<Geolocation> geolocation)
+COMPtr<WebGeolocationPolicyListener> WebGeolocationPolicyListener::createInstance(RefPtr<Geolocation>&& geolocation)
 {
-    return new WebGeolocationPolicyListener(geolocation);
+    return new WebGeolocationPolicyListener(WTFMove(geolocation));
 }
 
-WebGeolocationPolicyListener::WebGeolocationPolicyListener(PassRefPtr<Geolocation> geolocation)
+WebGeolocationPolicyListener::WebGeolocationPolicyListener(RefPtr<Geolocation>&& geolocation)
     : m_refCount(0)
-    , m_geolocation(geolocation)
+    , m_geolocation(WTFMove(geolocation))
 {
     gClassCount++;
     gClassNameCount().add("WebGeolocationPolicyListener");

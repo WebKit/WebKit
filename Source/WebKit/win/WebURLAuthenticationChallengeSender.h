@@ -39,9 +39,9 @@ class DECLSPEC_UUID("5CACD637-F82F-491F-947A-5DCA38AA0FEA") WebURLAuthentication
     : public IWebURLAuthenticationChallengeSender
 {
 public:
-    static WebURLAuthenticationChallengeSender* createInstance(PassRefPtr<WebCore::AuthenticationClient>);
+    static WebURLAuthenticationChallengeSender* createInstance(RefPtr<WebCore::AuthenticationClient>&&);
 private:
-    WebURLAuthenticationChallengeSender(PassRefPtr<WebCore::AuthenticationClient>);
+    WebURLAuthenticationChallengeSender(RefPtr<WebCore::AuthenticationClient>&&);
     ~WebURLAuthenticationChallengeSender();
 public:
     // IUnknown

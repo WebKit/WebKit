@@ -99,8 +99,8 @@ public:
     virtual /* [local] */ CFURLRequestRef STDMETHODCALLTYPE cfRequest();
 
     // WebMutableURLRequest
-    void setFormData(const PassRefPtr<WebCore::FormData> data);
-    const PassRefPtr<WebCore::FormData> formData() const;
+    void setFormData(RefPtr<WebCore::FormData>&&);
+    const RefPtr<WebCore::FormData> formData() const;
     
     const WebCore::HTTPHeaderMap& httpHeaderFields() const;
 
