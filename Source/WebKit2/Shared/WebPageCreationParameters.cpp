@@ -107,7 +107,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << userStyleSheets;
     encoder << messageHandlers;
 #if ENABLE(CONTENT_EXTENSIONS)
-    encoder << contentExtensions;
+    encoder << contentRuleLists;
 #endif
 }
 
@@ -257,7 +257,7 @@ bool WebPageCreationParameters::decode(IPC::Decoder& decoder, WebPageCreationPar
     if (!decoder.decode(parameters.messageHandlers))
         return false;
 #if ENABLE(CONTENT_EXTENSIONS)
-    if (!decoder.decode(parameters.contentExtensions))
+    if (!decoder.decode(parameters.contentRuleLists))
         return false;
 #endif
     return true;

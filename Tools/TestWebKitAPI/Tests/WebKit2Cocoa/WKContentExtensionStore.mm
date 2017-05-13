@@ -30,24 +30,24 @@
 
 #import "PlatformUtilities.h"
 #import "Test.h"
-#import <WebKit/WKContentExtension.h>
-#import <WebKit/WKContentExtensionStorePrivate.h>
+#import <WebKit/WKContentRuleList.h>
+#import <WebKit/WKContentRuleListStorePrivate.h>
 #import <wtf/RetainPtr.h>
 
-class WKContentExtensionStoreTest : public testing::Test {
+class WKContentRuleListStoreTest : public testing::Test {
 public:
     virtual void SetUp()
     {
-        [[WKContentExtensionStore defaultStore] _removeAllContentExtensions];
+        [[WKContentRuleListStore defaultStore] _removeAllContentRuleLists];
     }
 };
 
 static NSString *basicFilter = @"[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*webkit.org\"}}]";
 
-TEST_F(WKContentExtensionStoreTest, Compile)
+TEST_F(WKContentRuleListStoreTest, Compile)
 {
     __block bool doneCompiling = false;
-    [[WKContentExtensionStore defaultStore] compileContentExtensionForIdentifier:@"TestExtension" encodedContentExtension:basicFilter completionHandler:^(WKContentExtension *filter, NSError *error) {
+    [[WKContentRuleListStore defaultStore] compileContentRuleListForIdentifier:@"TestRuleList" encodedContentRuleList:basicFilter completionHandler:^(WKContentRuleList *filter, NSError *error) {
     
         EXPECT_NOT_NULL(filter);
         EXPECT_NULL(error);
@@ -64,26 +64,26 @@ static void checkDomain(NSError *error)
     EXPECT_STREQ([[error domain] UTF8String], [WKErrorDomain UTF8String]);
 }
 
-TEST_F(WKContentExtensionStoreTest, InvalidExtension)
+TEST_F(WKContentRuleListStoreTest, InvalidRuleList)
 {
     __block bool doneCompiling = false;
-    [[WKContentExtensionStore defaultStore] compileContentExtensionForIdentifier:@"TestExtension" encodedContentExtension:invalidFilter completionHandler:^(WKContentExtension *filter, NSError *error) {
+    [[WKContentRuleListStore defaultStore] compileContentRuleListForIdentifier:@"TestRuleList" encodedContentRuleList:invalidFilter completionHandler:^(WKContentRuleList *filter, NSError *error) {
     
         EXPECT_NULL(filter);
         EXPECT_NOT_NULL(error);
         checkDomain(error);
-        EXPECT_EQ(error.code, WKErrorContentExtensionStoreCompileFailed);
-        EXPECT_STREQ("Extension compilation failed: Failed to parse the JSON String.", [[error helpAnchor] UTF8String]);
+        EXPECT_EQ(error.code, WKErrorContentRuleListStoreCompileFailed);
+        EXPECT_STREQ("Rule list compilation failed: Failed to parse the JSON String.", [[error helpAnchor] UTF8String]);
 
         doneCompiling = true;
     }];
     TestWebKitAPI::Util::run(&doneCompiling);
 }
 
-TEST_F(WKContentExtensionStoreTest, Lookup)
+TEST_F(WKContentRuleListStoreTest, Lookup)
 {
     __block bool doneCompiling = false;
-    [[WKContentExtensionStore defaultStore] compileContentExtensionForIdentifier:@"TestExtension" encodedContentExtension:basicFilter completionHandler:^(WKContentExtension *filter, NSError *error) {
+    [[WKContentRuleListStore defaultStore] compileContentRuleListForIdentifier:@"TestRuleList" encodedContentRuleList:basicFilter completionHandler:^(WKContentRuleList *filter, NSError *error) {
     
         EXPECT_NOT_NULL(filter);
         EXPECT_NULL(error);
@@ -93,9 +93,9 @@ TEST_F(WKContentExtensionStoreTest, Lookup)
     TestWebKitAPI::Util::run(&doneCompiling);
 
     __block bool doneLookingUp = false;
-    [[WKContentExtensionStore defaultStore] lookUpContentExtensionForIdentifier:@"TestExtension" completionHandler:^(WKContentExtension *filter, NSError *error) {
+    [[WKContentRuleListStore defaultStore] lookUpContentRuleListForIdentifier:@"TestRuleList" completionHandler:^(WKContentRuleList *filter, NSError *error) {
 
-        EXPECT_STREQ(filter.identifier.UTF8String, "TestExtension");
+        EXPECT_STREQ(filter.identifier.UTF8String, "TestRuleList");
         EXPECT_NOT_NULL(filter);
         EXPECT_NULL(error);
 
@@ -104,17 +104,17 @@ TEST_F(WKContentExtensionStoreTest, Lookup)
     TestWebKitAPI::Util::run(&doneLookingUp);
 }
 
-TEST_F(WKContentExtensionStoreTest, EncodedIdentifier)
+TEST_F(WKContentRuleListStoreTest, EncodedIdentifier)
 {
     // FIXME: U+00C4 causes problems here. Using the output of encodeForFileName with
     // the filesystem changes it to U+0041 followed by U+0308
     NSString *identifier = @":;%25%+25И😍";
     __block bool done = false;
-    [[WKContentExtensionStore defaultStore] compileContentExtensionForIdentifier:identifier encodedContentExtension:basicFilter completionHandler:^(WKContentExtension *filter, NSError *error) {
+    [[WKContentRuleListStore defaultStore] compileContentRuleListForIdentifier:identifier encodedContentRuleList:basicFilter completionHandler:^(WKContentRuleList *filter, NSError *error) {
 
         EXPECT_STREQ(filter.identifier.UTF8String, identifier.UTF8String);
 
-        [[WKContentExtensionStore defaultStore] getAvailableContentExtensionIdentifiers:^(NSArray<NSString *> *identifiers) {
+        [[WKContentRuleListStore defaultStore] getAvailableContentRuleListIdentifiers:^(NSArray<NSString *> *identifiers) {
             EXPECT_EQ(identifiers.count, 1u);
             EXPECT_EQ(identifiers[0].length, identifier.length);
             EXPECT_STREQ(identifiers[0].UTF8String, identifier.UTF8String);
@@ -125,26 +125,26 @@ TEST_F(WKContentExtensionStoreTest, EncodedIdentifier)
     TestWebKitAPI::Util::run(&done);
 }
 
-TEST_F(WKContentExtensionStoreTest, NonExistingIdentifierLookup)
+TEST_F(WKContentRuleListStoreTest, NonExistingIdentifierLookup)
 {
     __block bool doneLookingUp = false;
-    [[WKContentExtensionStore defaultStore] lookUpContentExtensionForIdentifier:@"DoesNotExist" completionHandler:^(WKContentExtension *filter, NSError *error) {
+    [[WKContentRuleListStore defaultStore] lookUpContentRuleListForIdentifier:@"DoesNotExist" completionHandler:^(WKContentRuleList *filter, NSError *error) {
     
         EXPECT_NULL(filter);
         EXPECT_NOT_NULL(error);
         checkDomain(error);
-        EXPECT_EQ(error.code, WKErrorContentExtensionStoreLookUpFailed);
-        EXPECT_STREQ("Extension lookup failed: Unspecified error during lookup.", [[error helpAnchor] UTF8String]);
+        EXPECT_EQ(error.code, WKErrorContentRuleListStoreLookUpFailed);
+        EXPECT_STREQ("Rule list lookup failed: Unspecified error during lookup.", [[error helpAnchor] UTF8String]);
         
         doneLookingUp = true;
     }];
     TestWebKitAPI::Util::run(&doneLookingUp);
 }
 
-TEST_F(WKContentExtensionStoreTest, VersionMismatch)
+TEST_F(WKContentRuleListStoreTest, VersionMismatch)
 {
     __block bool doneCompiling = false;
-    [[WKContentExtensionStore defaultStore] compileContentExtensionForIdentifier:@"TestExtension" encodedContentExtension:basicFilter completionHandler:^(WKContentExtension *filter, NSError *error)
+    [[WKContentRuleListStore defaultStore] compileContentRuleListForIdentifier:@"TestRuleList" encodedContentRuleList:basicFilter completionHandler:^(WKContentRuleList *filter, NSError *error)
     {
         
         EXPECT_NOT_NULL(filter);
@@ -154,34 +154,34 @@ TEST_F(WKContentExtensionStoreTest, VersionMismatch)
     }];
     TestWebKitAPI::Util::run(&doneCompiling);
 
-    [[WKContentExtensionStore defaultStore] _invalidateContentExtensionVersionForIdentifier:@"TestExtension"];
+    [[WKContentRuleListStore defaultStore] _invalidateContentRuleListVersionForIdentifier:@"TestRuleList"];
     
     __block bool doneLookingUp = false;
-    [[WKContentExtensionStore defaultStore] lookUpContentExtensionForIdentifier:@"TestExtension" completionHandler:^(WKContentExtension *filter, NSError *error)
+    [[WKContentRuleListStore defaultStore] lookUpContentRuleListForIdentifier:@"TestRuleList" completionHandler:^(WKContentRuleList *filter, NSError *error)
     {
         
         EXPECT_NULL(filter);
         EXPECT_NOT_NULL(error);
         checkDomain(error);
-        EXPECT_EQ(error.code, WKErrorContentExtensionStoreVersionMismatch);
-        EXPECT_STREQ("Extension lookup failed: Version of file does not match version of interpreter.", [[error helpAnchor] UTF8String]);
+        EXPECT_EQ(error.code, WKErrorContentRuleListStoreVersionMismatch);
+        EXPECT_STREQ("Rule list lookup failed: Version of file does not match version of interpreter.", [[error helpAnchor] UTF8String]);
         
         doneLookingUp = true;
     }];
     TestWebKitAPI::Util::run(&doneLookingUp);
 
     __block bool doneGettingSource = false;
-    [[WKContentExtensionStore defaultStore] _getContentExtensionSourceForIdentifier:@"TestExtension" completionHandler:^(NSString* source) {
+    [[WKContentRuleListStore defaultStore] _getContentRuleListSourceForIdentifier:@"TestRuleList" completionHandler:^(NSString* source) {
         EXPECT_NULL(source);
         doneGettingSource = true;
     }];
     TestWebKitAPI::Util::run(&doneGettingSource);
 }
 
-TEST_F(WKContentExtensionStoreTest, Removal)
+TEST_F(WKContentRuleListStoreTest, Removal)
 {
     __block bool doneCompiling = false;
-    [[WKContentExtensionStore defaultStore] compileContentExtensionForIdentifier:@"TestExtension" encodedContentExtension:basicFilter completionHandler:^(WKContentExtension *filter, NSError *error) {
+    [[WKContentRuleListStore defaultStore] compileContentRuleListForIdentifier:@"TestRuleList" encodedContentRuleList:basicFilter completionHandler:^(WKContentRuleList *filter, NSError *error) {
     
         EXPECT_NOT_NULL(filter);
         EXPECT_NULL(error);
@@ -191,7 +191,7 @@ TEST_F(WKContentExtensionStoreTest, Removal)
     TestWebKitAPI::Util::run(&doneCompiling);
 
     __block bool doneRemoving = false;
-    [[WKContentExtensionStore defaultStore] removeContentExtensionForIdentifier:@"TestExtension" completionHandler:^(NSError *error) {
+    [[WKContentRuleListStore defaultStore] removeContentRuleListForIdentifier:@"TestRuleList" completionHandler:^(NSError *error) {
         EXPECT_NULL(error);
 
         doneRemoving = true;
@@ -199,29 +199,29 @@ TEST_F(WKContentExtensionStoreTest, Removal)
     TestWebKitAPI::Util::run(&doneRemoving);
 }
 
-TEST_F(WKContentExtensionStoreTest, NonExistingIdentifierRemove)
+TEST_F(WKContentRuleListStoreTest, NonExistingIdentifierRemove)
 {
     __block bool doneRemoving = false;
-    [[WKContentExtensionStore defaultStore] removeContentExtensionForIdentifier:@"DoesNotExist" completionHandler:^(NSError *error) {
+    [[WKContentRuleListStore defaultStore] removeContentRuleListForIdentifier:@"DoesNotExist" completionHandler:^(NSError *error) {
         EXPECT_NOT_NULL(error);
         checkDomain(error);
-        EXPECT_EQ(error.code, WKErrorContentExtensionStoreRemoveFailed);
-        EXPECT_STREQ("Extension removal failed: Unspecified error during remove.", [[error helpAnchor] UTF8String]);
+        EXPECT_EQ(error.code, WKErrorContentRuleListStoreRemoveFailed);
+        EXPECT_STREQ("Rule list removal failed: Unspecified error during remove.", [[error helpAnchor] UTF8String]);
 
         doneRemoving = true;
     }];
     TestWebKitAPI::Util::run(&doneRemoving);
 }
 
-TEST_F(WKContentExtensionStoreTest, NonDefaultStore)
+TEST_F(WKContentRuleListStoreTest, NonDefaultStore)
 {
-    NSURL *tempDir = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"ContentExtensionTest"] isDirectory:YES];
-    WKContentExtensionStore *store = [WKContentExtensionStore storeWithURL:tempDir];
-    NSString *identifier = @"TestExtension";
-    NSString *fileName = @"ContentExtension-TestExtension";
+    NSURL *tempDir = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"ContentRuleListTest"] isDirectory:YES];
+    WKContentRuleListStore *store = [WKContentRuleListStore storeWithURL:tempDir];
+    NSString *identifier = @"TestRuleList";
+    NSString *fileName = @"ContentRuleList-TestRuleList";
 
     __block bool doneGettingAvailableIdentifiers = false;
-    [store getAvailableContentExtensionIdentifiers:^(NSArray<NSString *> *identifiers) {
+    [store getAvailableContentRuleListIdentifiers:^(NSArray<NSString *> *identifiers) {
         EXPECT_NOT_NULL(identifiers);
         EXPECT_EQ(identifiers.count, 0u);
         doneGettingAvailableIdentifiers = true;
@@ -229,7 +229,7 @@ TEST_F(WKContentExtensionStoreTest, NonDefaultStore)
     TestWebKitAPI::Util::run(&doneGettingAvailableIdentifiers);
     
     __block bool doneCompiling = false;
-    [store compileContentExtensionForIdentifier:identifier encodedContentExtension:basicFilter completionHandler:^(WKContentExtension *filter, NSError *error) {
+    [store compileContentRuleListForIdentifier:identifier encodedContentRuleList:basicFilter completionHandler:^(WKContentRuleList *filter, NSError *error) {
         EXPECT_NOT_NULL(filter);
         EXPECT_NULL(error);
         doneCompiling = true;
@@ -237,10 +237,10 @@ TEST_F(WKContentExtensionStoreTest, NonDefaultStore)
     TestWebKitAPI::Util::run(&doneCompiling);
 
     doneGettingAvailableIdentifiers = false;
-    [store getAvailableContentExtensionIdentifiers:^(NSArray<NSString *> *identifiers) {
+    [store getAvailableContentRuleListIdentifiers:^(NSArray<NSString *> *identifiers) {
         EXPECT_NOT_NULL(identifiers);
         EXPECT_EQ(identifiers.count, 1u);
-        EXPECT_STREQ(identifiers[0].UTF8String, "TestExtension");
+        EXPECT_STREQ(identifiers[0].UTF8String, "TestRuleList");
         doneGettingAvailableIdentifiers = true;
     }];
     TestWebKitAPI::Util::run(&doneGettingAvailableIdentifiers);
@@ -250,7 +250,7 @@ TEST_F(WKContentExtensionStoreTest, NonDefaultStore)
     EXPECT_EQ(data.length, 228u);
     
     __block bool doneCheckingSource = false;
-    [store _getContentExtensionSourceForIdentifier:identifier completionHandler:^(NSString *source) {
+    [store _getContentRuleListSourceForIdentifier:identifier completionHandler:^(NSString *source) {
         EXPECT_NOT_NULL(source);
         EXPECT_STREQ(basicFilter.UTF8String, source.UTF8String);
         doneCheckingSource = true;
@@ -258,7 +258,7 @@ TEST_F(WKContentExtensionStoreTest, NonDefaultStore)
     TestWebKitAPI::Util::run(&doneCheckingSource);
     
     __block bool doneRemoving = false;
-    [store removeContentExtensionForIdentifier:identifier completionHandler:^(NSError *error) {
+    [store removeContentRuleListForIdentifier:identifier completionHandler:^(NSError *error) {
         EXPECT_NULL(error);
         doneRemoving = true;
     }];
@@ -268,20 +268,20 @@ TEST_F(WKContentExtensionStoreTest, NonDefaultStore)
     EXPECT_NULL(dataAfterRemoving);
 }
 
-TEST_F(WKContentExtensionStoreTest, MultipleExtensions)
+TEST_F(WKContentRuleListStoreTest, MultipleRuleLists)
 {
     __block bool done = false;
-    [[WKContentExtensionStore defaultStore] compileContentExtensionForIdentifier:@"FirstExtension" encodedContentExtension:basicFilter completionHandler:^(WKContentExtension *filter, NSError *error) {
+    [[WKContentRuleListStore defaultStore] compileContentRuleListForIdentifier:@"FirstRuleList" encodedContentRuleList:basicFilter completionHandler:^(WKContentRuleList *filter, NSError *error) {
         EXPECT_NOT_NULL(filter);
         EXPECT_NULL(error);
-        [[WKContentExtensionStore defaultStore] compileContentExtensionForIdentifier:@"SecondExtension" encodedContentExtension:basicFilter completionHandler:^(WKContentExtension *filter, NSError *error) {
+        [[WKContentRuleListStore defaultStore] compileContentRuleListForIdentifier:@"SecondRuleList" encodedContentRuleList:basicFilter completionHandler:^(WKContentRuleList *filter, NSError *error) {
             EXPECT_NOT_NULL(filter);
             EXPECT_NULL(error);
-            [[WKContentExtensionStore defaultStore] getAvailableContentExtensionIdentifiers:^(NSArray<NSString *> *identifiers) {
+            [[WKContentRuleListStore defaultStore] getAvailableContentRuleListIdentifiers:^(NSArray<NSString *> *identifiers) {
                 EXPECT_NOT_NULL(identifiers);
                 EXPECT_EQ(identifiers.count, 2u);
-                EXPECT_STREQ(identifiers[0].UTF8String, "FirstExtension");
-                EXPECT_STREQ(identifiers[1].UTF8String, "SecondExtension");
+                EXPECT_STREQ(identifiers[0].UTF8String, "FirstRuleList");
+                EXPECT_STREQ(identifiers[1].UTF8String, "SecondRuleList");
                 done = true;
             }];
         }];
@@ -289,24 +289,24 @@ TEST_F(WKContentExtensionStoreTest, MultipleExtensions)
     TestWebKitAPI::Util::run(&done);
 }
 
-TEST_F(WKContentExtensionStoreTest, NonASCIISource)
+TEST_F(WKContentRuleListStoreTest, NonASCIISource)
 {
     static NSString *nonASCIIFilter = @"[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*webkit.org\"}, \"unused\":\"ðŸ’©\"}]";
-    NSURL *tempDir = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"ContentExtensionTest"] isDirectory:YES];
-    WKContentExtensionStore *store = [WKContentExtensionStore storeWithURL:tempDir];
-    NSString *identifier = @"TestExtension";
-    NSString *fileName = @"ContentExtension-TestExtension";
+    NSURL *tempDir = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"ContentRuleListTest"] isDirectory:YES];
+    WKContentRuleListStore *store = [WKContentRuleListStore storeWithURL:tempDir];
+    NSString *identifier = @"TestRuleList";
+    NSString *fileName = @"ContentRuleList-TestRuleList";
     
     __block bool done = false;
-    [store compileContentExtensionForIdentifier:identifier encodedContentExtension:nonASCIIFilter completionHandler:^(WKContentExtension *filter, NSError *error) {
+    [store compileContentRuleListForIdentifier:identifier encodedContentRuleList:nonASCIIFilter completionHandler:^(WKContentRuleList *filter, NSError *error) {
         EXPECT_NOT_NULL(filter);
         EXPECT_NULL(error);
 
-        [store _getContentExtensionSourceForIdentifier:identifier completionHandler:^(NSString *source) {
+        [store _getContentRuleListSourceForIdentifier:identifier completionHandler:^(NSString *source) {
             EXPECT_NOT_NULL(source);
             EXPECT_STREQ(nonASCIIFilter.UTF8String, source.UTF8String);
 
-            [store _removeAllContentExtensions];
+            [store _removeAllContentRuleLists];
             NSData *dataAfterRemoving = [NSData dataWithContentsOfURL:[tempDir URLByAppendingPathComponent:fileName]];
             EXPECT_NULL(dataAfterRemoving);
 
@@ -319,10 +319,10 @@ TEST_F(WKContentExtensionStoreTest, NonASCIISource)
 static size_t alertCount { 0 };
 static bool receivedAlert { false };
 
-@interface ContentExtensionDelegate : NSObject <WKUIDelegate>
+@interface ContentRuleListDelegate : NSObject <WKUIDelegate>
 @end
 
-@implementation ContentExtensionDelegate
+@implementation ContentRuleListDelegate
 
 - (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(void))completionHandler
 {
@@ -332,7 +332,7 @@ static bool receivedAlert { false };
         EXPECT_STREQ("content blockers enabled", message.UTF8String);
         break;
     case 1:
-        // After having removed the content extension.
+        // After having removed the content RuleList.
         EXPECT_STREQ("content blockers disabled", message.UTF8String);
         break;
     default:
@@ -344,27 +344,27 @@ static bool receivedAlert { false };
 
 @end
 
-TEST_F(WKContentExtensionStoreTest, AddRemove)
+TEST_F(WKContentRuleListStoreTest, AddRemove)
 {
-    [[WKContentExtensionStore defaultStore] _removeAllContentExtensions];
+    [[WKContentRuleListStore defaultStore] _removeAllContentRuleLists];
 
     __block bool doneCompiling = false;
     NSString* contentBlocker = @"[{\"action\":{\"type\":\"css-display-none\",\"selector\":\".hidden\"},\"trigger\":{\"url-filter\":\".*\"}}]";
-    __block RetainPtr<WKContentExtension> extension;
-    [[WKContentExtensionStore defaultStore] compileContentExtensionForIdentifier:@"TestAddRemove" encodedContentExtension:contentBlocker completionHandler:^(WKContentExtension *compiledExtension, NSError *error) {
+    __block RetainPtr<WKContentRuleList> ruleList;
+    [[WKContentRuleListStore defaultStore] compileContentRuleListForIdentifier:@"TestAddRemove" encodedContentRuleList:contentBlocker completionHandler:^(WKContentRuleList *compiledRuleList, NSError *error) {
         EXPECT_TRUE(error == nil);
-        extension = compiledExtension;
+        ruleList = compiledRuleList;
         doneCompiling = true;
     }];
     TestWebKitAPI::Util::run(&doneCompiling);
-    EXPECT_NOT_NULL(extension);
+    EXPECT_NOT_NULL(ruleList);
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    [[configuration userContentController] addContentExtension:extension.get()];
+    [[configuration userContentController] addContentRuleList:ruleList.get()];
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-    auto delegate = adoptNS([[ContentExtensionDelegate alloc] init]);
+    auto delegate = adoptNS([[ContentRuleListDelegate alloc] init]);
     [webView setUIDelegate:delegate.get()];
 
     NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"contentBlockerCheck" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
@@ -373,7 +373,7 @@ TEST_F(WKContentExtensionStoreTest, AddRemove)
     [webView loadRequest:request];
     TestWebKitAPI::Util::run(&receivedAlert);
 
-    [[configuration userContentController] removeContentExtension:extension.get()];
+    [[configuration userContentController] removeContentRuleList:ruleList.get()];
 
     receivedAlert = false;
     [webView reload];

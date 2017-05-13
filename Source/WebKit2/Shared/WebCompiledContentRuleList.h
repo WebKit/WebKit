@@ -25,33 +25,38 @@
 
 #pragma once
 
-#include "APIObject.h"
-#include <wtf/text/WTFString.h>
+#if ENABLE(CONTENT_EXTENSIONS)
+
+#include "WebCompiledContentRuleListData.h"
+#include <WebCore/CompiledContentExtension.h>
+#include <WebCore/ContentExtensionCompiler.h>
 
 namespace WebKit {
-class WebCompiledContentExtension;
-}
 
-namespace API {
-
-class ContentExtension final : public ObjectImpl<Object::Type::ContentExtension> {
+class WebCompiledContentRuleList final : public WebCore::ContentExtensions::CompiledContentExtension {
 public:
-#if ENABLE(CONTENT_EXTENSIONS)
-    static Ref<ContentExtension> create(const WTF::String& name, Ref<WebKit::WebCompiledContentExtension>&& contentExtension)
-    {
-        return adoptRef(*new ContentExtension(name, WTFMove(contentExtension)));
-    }
+    static Ref<WebCompiledContentRuleList> create(WebCompiledContentRuleListData&&);
+    virtual ~WebCompiledContentRuleList();
 
-    ContentExtension(const WTF::String& name, Ref<WebKit::WebCompiledContentExtension>&&);
-    virtual ~ContentExtension();
-
-    const WTF::String& name() const { return m_name; }
-    const WebKit::WebCompiledContentExtension& compiledExtension() const { return m_compiledExtension.get(); }
+    WebCompiledContentRuleListData data() const { return m_data; }
 
 private:
-    WTF::String m_name;
-    Ref<WebKit::WebCompiledContentExtension> m_compiledExtension;
-#endif // ENABLE(CONTENT_EXTENSIONS)
+    WebCompiledContentRuleList(WebCompiledContentRuleListData&&);
+
+    const WebCore::ContentExtensions::DFABytecode* filtersWithoutConditionsBytecode() const final;
+    unsigned filtersWithoutConditionsBytecodeLength() const final;
+    const WebCore::ContentExtensions::DFABytecode* filtersWithConditionsBytecode() const final;
+    unsigned filtersWithConditionsBytecodeLength() const final;
+    const WebCore::ContentExtensions::DFABytecode* topURLFiltersBytecode() const final;
+    unsigned topURLFiltersBytecodeLength() const final;
+    bool conditionsApplyOnlyToDomain() const final;
+    
+    const WebCore::ContentExtensions::SerializedActionByte* actions() const final;
+    unsigned actionsLength() const final;
+    
+    WebCompiledContentRuleListData m_data;
 };
 
-} // namespace API
+} // namespace WebKit
+
+#endif // ENABLE(CONTENT_EXTENSIONS)

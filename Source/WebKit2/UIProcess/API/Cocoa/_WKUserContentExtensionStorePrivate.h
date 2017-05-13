@@ -27,7 +27,7 @@
 
 #if WK_API_ENABLED
 
-@class WKContentExtensionStore;
+@class WKContentRuleListStore;
 
 @interface _WKUserContentExtensionStore (WKPrivate)
 
@@ -35,7 +35,7 @@
 - (void)_removeAllContentExtensions;
 - (void)_invalidateContentExtensionVersionForIdentifier:(NSString *)identifier;
 
-- (id)_initWithWKContentExtensionStore:(WKContentExtensionStore*)contentExtensionStore;
+- (id)_initWithWKContentRuleListStore:(WKContentRuleListStore*)contentRuleListStore;
 
 @end
 

@@ -33,8 +33,8 @@
 #import "WKBrowsingContextControllerInternal.h"
 #import "WKBrowsingContextGroupInternal.h"
 #import "WKConnectionInternal.h"
-#import "WKContentExtensionInternal.h"
-#import "WKContentExtensionStoreInternal.h"
+#import "WKContentRuleListInternal.h"
+#import "WKContentRuleListStoreInternal.h"
 #import "WKFrameInfoInternal.h"
 #import "WKHTTPCookieStoreInternal.h"
 #import "WKNSArray.h"
@@ -246,12 +246,12 @@ void* Object::newObject(size_t size, Type type)
         wrapper = [WKUserContentController alloc];
         break;
 
-    case Type::ContentExtension:
-        wrapper = [WKContentExtension alloc];
+    case Type::ContentRuleList:
+        wrapper = [WKContentRuleList alloc];
         break;
 
-    case Type::ContentExtensionStore:
-        wrapper = [WKContentExtensionStore alloc];
+    case Type::ContentRuleListStore:
+        wrapper = [WKContentRuleListStore alloc];
         break;
 
     case Type::UserContentWorld:

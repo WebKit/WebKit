@@ -29,7 +29,7 @@
 #include "DataReference.h"
 #include "FrameInfoData.h"
 #include "InjectedBundleScriptWorld.h"
-#include "WebCompiledContentExtension.h"
+#include "WebCompiledContentRuleList.h"
 #include "WebFrame.h"
 #include "WebPage.h"
 #include "WebProcess.h"
@@ -339,22 +339,22 @@ void WebUserContentController::removeUserScriptMessageHandlerInternal(InjectedBu
 #endif
 
 #if ENABLE(CONTENT_EXTENSIONS)
-void WebUserContentController::addContentExtensions(const Vector<std::pair<String, WebCompiledContentExtensionData>>& contentExtensions)
+void WebUserContentController::addContentRuleLists(const Vector<std::pair<String, WebCompiledContentRuleListData>>& contentRuleLists)
 {
-    for (const auto& contentExtension : contentExtensions) {
-        WebCompiledContentExtensionData contentExtensionData = contentExtension.second;
-        RefPtr<WebCompiledContentExtension> compiledContentExtension = WebCompiledContentExtension::create(WTFMove(contentExtensionData));
+    for (const auto& contentRuleList : contentRuleLists) {
+        WebCompiledContentRuleListData contentRuleListData = contentRuleList.second;
+        RefPtr<WebCompiledContentRuleList> compiledContentRuleList = WebCompiledContentRuleList::create(WTFMove(contentRuleListData));
 
-        m_contentExtensionBackend.addContentExtension(contentExtension.first, WTFMove(compiledContentExtension));
+        m_contentExtensionBackend.addContentExtension(contentRuleList.first, WTFMove(compiledContentRuleList));
     }
 }
 
-void WebUserContentController::removeContentExtension(const String& name)
+void WebUserContentController::removeContentRuleList(const String& name)
 {
     m_contentExtensionBackend.removeContentExtension(name);
 }
 
-void WebUserContentController::removeAllContentExtensions()
+void WebUserContentController::removeAllContentRuleLists()
 {
     m_contentExtensionBackend.removeAllContentExtensions();
 }

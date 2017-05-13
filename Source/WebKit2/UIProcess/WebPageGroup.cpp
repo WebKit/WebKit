@@ -27,10 +27,10 @@
 #include "WebPageGroup.h"
 
 #include "APIArray.h"
-#include "APIContentExtension.h"
+#include "APIContentRuleList.h"
 #include "APIUserScript.h"
 #include "APIUserStyleSheet.h"
-#include "WebCompiledContentExtension.h"
+#include "WebCompiledContentRuleList.h"
 #include "WebPageProxy.h"
 #include "WebPreferences.h"
 #include "WebUserContentControllerProxy.h"

@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "WebCompiledContentExtensionData.h"
+#include "WebCompiledContentRuleListData.h"
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
@@ -32,7 +32,7 @@
 
 namespace WebKit {
 
-void WebCompiledContentExtensionData::encode(IPC::Encoder& encoder) const
+void WebCompiledContentRuleListData::encode(IPC::Encoder& encoder) const
 {
     SharedMemory::Handle handle;
     data->createHandle(handle, SharedMemory::Protection::ReadOnly);
@@ -48,28 +48,28 @@ void WebCompiledContentExtensionData::encode(IPC::Encoder& encoder) const
     encoder << topURLFiltersBytecodeSize;
 }
 
-bool WebCompiledContentExtensionData::decode(IPC::Decoder& decoder, WebCompiledContentExtensionData& compiledContentExtensionData)
+bool WebCompiledContentRuleListData::decode(IPC::Decoder& decoder, WebCompiledContentRuleListData& compiledContentRuleListData)
 {
     SharedMemory::Handle handle;
     if (!decoder.decode(handle))
         return false;
-    compiledContentExtensionData.data = SharedMemory::map(handle, SharedMemory::Protection::ReadOnly);
+    compiledContentRuleListData.data = SharedMemory::map(handle, SharedMemory::Protection::ReadOnly);
 
-    if (!decoder.decode(compiledContentExtensionData.actionsOffset))
+    if (!decoder.decode(compiledContentRuleListData.actionsOffset))
         return false;
-    if (!decoder.decode(compiledContentExtensionData.actionsSize))
+    if (!decoder.decode(compiledContentRuleListData.actionsSize))
         return false;
-    if (!decoder.decode(compiledContentExtensionData.filtersWithoutConditionsBytecodeOffset))
+    if (!decoder.decode(compiledContentRuleListData.filtersWithoutConditionsBytecodeOffset))
         return false;
-    if (!decoder.decode(compiledContentExtensionData.filtersWithoutConditionsBytecodeSize))
+    if (!decoder.decode(compiledContentRuleListData.filtersWithoutConditionsBytecodeSize))
         return false;
-    if (!decoder.decode(compiledContentExtensionData.filtersWithConditionsBytecodeOffset))
+    if (!decoder.decode(compiledContentRuleListData.filtersWithConditionsBytecodeOffset))
         return false;
-    if (!decoder.decode(compiledContentExtensionData.filtersWithConditionsBytecodeSize))
+    if (!decoder.decode(compiledContentRuleListData.filtersWithConditionsBytecodeSize))
         return false;
-    if (!decoder.decode(compiledContentExtensionData.topURLFiltersBytecodeOffset))
+    if (!decoder.decode(compiledContentRuleListData.topURLFiltersBytecodeOffset))
         return false;
-    if (!decoder.decode(compiledContentExtensionData.topURLFiltersBytecodeSize))
+    if (!decoder.decode(compiledContentRuleListData.topURLFiltersBytecodeSize))
         return false;
 
     return true;

@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#include "APIContentExtension.h"
+#include "APIContentRuleList.h"
 #include "APIDictionary.h"
 #include "WKArray.h"
 #include "WKContextPrivate.h"
@@ -59,7 +59,7 @@ WKStringRef WKPageGroupCopyIdentifier(WKPageGroupRef)
 void WKPageGroupAddUserContentFilter(WKPageGroupRef pageGroupRef, WKUserContentFilterRef contentFilterRef)
 {
 #if ENABLE(CONTENT_EXTENSIONS)
-    toImpl(pageGroupRef)->userContentController().addContentExtension(*toImpl(contentFilterRef));
+    toImpl(pageGroupRef)->userContentController().addContentRuleList(*toImpl(contentFilterRef));
 #else
     UNUSED_PARAM(pageGroupRef);
     UNUSED_PARAM(contentFilterRef);
@@ -69,7 +69,7 @@ void WKPageGroupAddUserContentFilter(WKPageGroupRef pageGroupRef, WKUserContentF
 void WKPageGroupRemoveUserContentFilter(WKPageGroupRef pageGroupRef, WKStringRef contentFilterNameRef)
 {
 #if ENABLE(CONTENT_EXTENSIONS)
-    toImpl(pageGroupRef)->userContentController().removeContentExtension(toWTFString(contentFilterNameRef));
+    toImpl(pageGroupRef)->userContentController().removeContentRuleList(toWTFString(contentFilterNameRef));
 #else
     UNUSED_PARAM(pageGroupRef);
     UNUSED_PARAM(contentFilterNameRef);

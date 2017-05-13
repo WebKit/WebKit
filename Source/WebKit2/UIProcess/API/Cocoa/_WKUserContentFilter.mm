@@ -28,7 +28,7 @@
 
 #if WK_API_ENABLED
 
-#include "WebCompiledContentExtension.h"
+#include "WebCompiledContentRuleList.h"
 #include <WebCore/ContentExtensionCompiler.h>
 #include <WebCore/ContentExtensionError.h>
 #include <string>
@@ -39,20 +39,20 @@
 
 - (API::Object&)_apiObject
 {
-    return [_contentExtension _apiObject];
+    return [_contentRuleList _apiObject];
 }
 
 @end
 
 @implementation _WKUserContentFilter (WKPrivate)
 
-- (id)_initWithWKContentExtension:(WKContentExtension*)contentExtension
+- (id)_initWithWKContentRuleList:(WKContentRuleList*)contentRuleList
 {
     self = [super init];
     if (!self)
         return nil;
     
-    _contentExtension = contentExtension;
+    _contentRuleList = contentRuleList;
     
     return self;
 }

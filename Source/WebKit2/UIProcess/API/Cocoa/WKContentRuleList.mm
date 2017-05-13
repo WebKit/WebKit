@@ -23,22 +23,33 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WKFoundation.h>
+#import "config.h"
+#import "WKContentRuleListInternal.h"
 
 #if WK_API_ENABLED
 
-@class WKContentExtension;
+#include "WebCompiledContentRuleList.h"
 
-WK_CLASS_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA))
-@interface WKContentExtensionStore : NSObject
+@implementation WKContentRuleList
 
-+ (instancetype)defaultStore;
-+ (instancetype)storeWithURL:(NSURL *)url;
+- (void)dealloc
+{
+    _contentRuleList->~ContentRuleList();
 
-- (void)compileContentExtensionForIdentifier:(NSString *)identifier encodedContentExtension:(NSString *) encodedContentExtension completionHandler:(void (^)(WKContentExtension *, NSError *))completionHandler;
-- (void)lookUpContentExtensionForIdentifier:(NSString *)identifier completionHandler:(void (^)(WKContentExtension *, NSError *))completionHandler;
-- (void)removeContentExtensionForIdentifier:(NSString *)identifier completionHandler:(void (^)(NSError *))completionHandler;
-- (void)getAvailableContentExtensionIdentifiers:(void (^)(NSArray<NSString *>*))completionHandler;
+    [super dealloc];
+}
+
+#pragma mark WKObject protocol implementation
+
+- (API::Object&)_apiObject
+{
+    return *_contentRuleList;
+}
+
+- (NSString *)identifier
+{
+    return _contentRuleList->name();
+}
 
 @end
 

@@ -27,14 +27,14 @@
 
 #if WK_API_ENABLED
 
-#import "APIContentExtension.h"
+#import "APIContentRuleList.h"
 #import "WKObject.h"
 
-@class WKContentExtension;
+@class WKContentRuleList;
 
 @interface _WKUserContentFilter () <WKObject> {
 @package
-    RetainPtr<WKContentExtension> _contentExtension;
+    RetainPtr<WKContentRuleList> _contentRuleList;
 }
 @end
 

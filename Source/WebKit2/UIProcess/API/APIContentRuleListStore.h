@@ -37,9 +37,9 @@ class WorkQueue;
 
 namespace API {
 
-class ContentExtension;
+class ContentRuleList;
 
-class ContentExtensionStore final : public ObjectImpl<Object::Type::ContentExtensionStore> {
+class ContentRuleListStore final : public ObjectImpl<Object::Type::ContentRuleListStore> {
 public:
     enum class Error {
         LookupFailed = 1,
@@ -50,47 +50,50 @@ public:
     
     // This should be incremented every time a functional change is made to the bytecode, file format, etc.
     // to prevent crashing while loading old data.
-    // Also update ContentExtensionStore::getContentExtensionSource to be able to find the original JSON
+    // Also update ContentRuleListStore::getContentRuleListSource to be able to find the original JSON
     // source from old versions.
-    const static uint32_t CurrentContentExtensionFileVersion = 9;
+    const static uint32_t CurrentContentRuleListFileVersion = 9;
 
-    static ContentExtensionStore& defaultStore();
-    static Ref<ContentExtensionStore> storeWithPath(const WTF::String& storePath);
+    static ContentRuleListStore& defaultStore(bool legacyFilename);
+    static Ref<ContentRuleListStore> storeWithPath(const WTF::String& storePath, bool legacyFilename);
 
-    explicit ContentExtensionStore();
-    explicit ContentExtensionStore(const WTF::String& storePath);
-    virtual ~ContentExtensionStore();
+    explicit ContentRuleListStore(bool legacyFilename);
+    explicit ContentRuleListStore(const WTF::String& storePath, bool legacyFilename);
+    virtual ~ContentRuleListStore();
 
-    void compileContentExtension(const WTF::String& identifier, WTF::String&& json, Function<void(RefPtr<API::ContentExtension>, std::error_code)>);
-    void lookupContentExtension(const WTF::String& identifier, Function<void(RefPtr<API::ContentExtension>, std::error_code)>);
-    void removeContentExtension(const WTF::String& identifier, Function<void(std::error_code)>);
-    void getAvailableContentExtensionIdentifiers(Function<void(WTF::Vector<WTF::String>)>);
+    void compileContentRuleList(const WTF::String& identifier, WTF::String&& json, Function<void(RefPtr<API::ContentRuleList>, std::error_code)>);
+    void lookupContentRuleList(const WTF::String& identifier, Function<void(RefPtr<API::ContentRuleList>, std::error_code)>);
+    void removeContentRuleList(const WTF::String& identifier, Function<void(std::error_code)>);
+    void getAvailableContentRuleListIdentifiers(Function<void(WTF::Vector<WTF::String>)>);
 
     // For testing only.
-    void synchronousRemoveAllContentExtensions();
-    void invalidateContentExtensionVersion(const WTF::String& identifier);
-    void getContentExtensionSource(const WTF::String& identifier, Function<void(WTF::String)>);
+    void synchronousRemoveAllContentRuleLists();
+    void invalidateContentRuleListVersion(const WTF::String& identifier);
+    void getContentRuleListSource(const WTF::String& identifier, Function<void(WTF::String)>);
 
 private:
-    WTF::String defaultStorePath();
-
+    WTF::String defaultStorePath(bool legacyFilename);
+    static ContentRuleListStore& legacyDefaultStore();
+    static ContentRuleListStore& nonLegacyDdefaultStore();
+    
     const WTF::String m_storePath;
     Ref<WTF::WorkQueue> m_compileQueue;
     Ref<WTF::WorkQueue> m_readQueue;
     Ref<WTF::WorkQueue> m_removeQueue;
+    bool m_legacyFilename { false };
 };
 
-const std::error_category& contentExtensionStoreErrorCategory();
+const std::error_category& contentRuleListStoreErrorCategory();
 
-inline std::error_code make_error_code(ContentExtensionStore::Error error)
+inline std::error_code make_error_code(ContentRuleListStore::Error error)
 {
-    return { static_cast<int>(error), contentExtensionStoreErrorCategory() };
+    return { static_cast<int>(error), contentRuleListStoreErrorCategory() };
 }
 
 } // namespace API
 
 namespace std {
-template<> struct is_error_code_enum<API::ContentExtensionStore::Error> : public true_type { };
+template<> struct is_error_code_enum<API::ContentRuleListStore::Error> : public true_type { };
 }
 
 #endif // ENABLE(CONTENT_EXTENSIONS)

@@ -24,40 +24,22 @@
  */
 
 #include "config.h"
-#include "APIContentExtensionStore.h"
+#include "APIContentRuleList.h"
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
-#include "SandboxUtilities.h"
+#include "WebCompiledContentRuleList.h"
 
 namespace API {
 
-String ContentExtensionStore::defaultStorePath()
+ContentRuleList::ContentRuleList(const WTF::String& name, Ref<WebKit::WebCompiledContentRuleList>&& contentRuleList)
+    : m_name(name)
+    , m_compiledRuleList(WTFMove(contentRuleList))
 {
-    static dispatch_once_t onceToken;
-    static NSURL *contentExtensionStoreURL;
+}
 
-    dispatch_once(&onceToken, ^{
-        NSURL *url = [[NSFileManager defaultManager] URLForDirectory:NSLibraryDirectory inDomain:NSUserDomainMask appropriateForURL:nullptr create:NO error:nullptr];
-        if (!url)
-            RELEASE_ASSERT_NOT_REACHED();
-
-        url = [url URLByAppendingPathComponent:@"WebKit" isDirectory:YES];
-
-        if (!WebKit::processHasContainer()) {
-            NSString *bundleIdentifier = [NSBundle mainBundle].bundleIdentifier;
-            if (!bundleIdentifier)
-                bundleIdentifier = [NSProcessInfo processInfo].processName;
-            url = [url URLByAppendingPathComponent:bundleIdentifier isDirectory:YES];
-        }
-
-        contentExtensionStoreURL = [[url URLByAppendingPathComponent:@"ContentExtensions" isDirectory:YES] retain];
-    });
-
-    if (![[NSFileManager defaultManager] createDirectoryAtURL:contentExtensionStoreURL withIntermediateDirectories:YES attributes:nil error:nullptr])
-        LOG_ERROR("Failed to create directory %@", contentExtensionStoreURL);
-
-    return contentExtensionStoreURL.absoluteURL.path.fileSystemRepresentation;
+ContentRuleList::~ContentRuleList()
+{
 }
 
 } // namespace API

@@ -182,8 +182,8 @@ set(WebKit2_SOURCES
     Shared/UserData.cpp
     Shared/VisitedLinkTable.cpp
     Shared/WebBackForwardListItem.cpp
-    Shared/WebCompiledContentExtension.cpp
-    Shared/WebCompiledContentExtensionData.cpp
+    Shared/WebCompiledContentRuleList.cpp
+    Shared/WebCompiledContentRuleListData.cpp
     Shared/WebConnection.cpp
     Shared/WebConnectionClient.cpp
     Shared/WebContextMenuItem.cpp
@@ -332,8 +332,8 @@ set(WebKit2_SOURCES
     UIProcess/WebVibrationProxy.cpp
     UIProcess/WebViewportAttributes.cpp
 
-    UIProcess/API/APIContentExtension.cpp
-    UIProcess/API/APIContentExtensionStore.cpp
+    UIProcess/API/APIContentRuleList.cpp
+    UIProcess/API/APIContentRuleListStore.cpp
     UIProcess/API/APIExperimentalFeature.cpp
     UIProcess/API/APIFrameInfo.cpp
     UIProcess/API/APIHTTPCookieStore.cpp

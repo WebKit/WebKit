@@ -44,7 +44,7 @@ class CompiledContentExtension;
 namespace WebKit {
 
 class InjectedBundleScriptWorld;
-class WebCompiledContentExtensionData;
+class WebCompiledContentRuleListData;
 class WebUserMessageHandlerDescriptorProxy;
 
 class WebUserContentController final : public WebCore::UserContentProvider, private IPC::MessageReceiver {
@@ -67,7 +67,7 @@ public:
     void addUserStyleSheets(const Vector<WebUserStyleSheetData>&);
     void addUserScriptMessageHandlers(const Vector<WebScriptMessageHandlerData>&);
 #if ENABLE(CONTENT_EXTENSIONS)
-    void addContentExtensions(const Vector<std::pair<String, WebCompiledContentExtensionData>>&);
+    void addContentRuleLists(const Vector<std::pair<String, WebCompiledContentRuleListData>>&);
 #endif
 
 private:
@@ -98,8 +98,8 @@ private:
     void removeAllUserScriptMessageHandlers(const Vector<uint64_t>&);
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    void removeContentExtension(const String& name);
-    void removeAllContentExtensions();
+    void removeContentRuleList(const String& name);
+    void removeAllContentRuleLists();
 #endif
 
     void addUserScriptInternal(InjectedBundleScriptWorld&, uint64_t userScriptIdentifier, WebCore::UserScript&&);

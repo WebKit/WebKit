@@ -23,34 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "WKContentExtensionInternal.h"
+#import "WKContentRuleList.h"
 
 #if WK_API_ENABLED
 
-#include "WebCompiledContentExtension.h"
+#import "APIContentRuleList.h"
+#import "WKObject.h"
 
-@implementation WKContentExtension
+namespace WebKit {
 
-- (void)dealloc
+inline WKContentRuleList *wrapper(API::ContentRuleList& contentRuleList)
 {
-    _contentExtension->~ContentExtension();
-
-    [super dealloc];
+    ASSERT([contentRuleList.wrapper() isKindOfClass:[WKContentRuleList class]]);
+    return (WKContentRuleList *)contentRuleList.wrapper();
 }
 
-#pragma mark WKObject protocol implementation
-
-- (API::Object&)_apiObject
-{
-    return *_contentExtension;
 }
 
-- (NSString *)identifier
-{
-    return _contentExtension->name();
+@interface WKContentRuleList () <WKObject> {
+@package
+    API::ObjectStorage<API::ContentRuleList> _contentRuleList;
 }
-
 @end
 
 #endif // WK_API_ENABLED
