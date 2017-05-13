@@ -35,6 +35,7 @@
 #include "HTMLInputElement.h"
 #include "InputEvent.h"
 #include "KeyboardEvent.h"
+#include "MainFrame.h"
 #include "MouseEvent.h"
 #include "NoEventDispatchAssertion.h"
 #include "ScopedEventQueue.h"
@@ -116,7 +117,7 @@ static bool shouldSuppressEventDispatchInDOM(Node& node, Event& event)
     if (!frame)
         return false;
 
-    if (!frame->loader().shouldSuppressKeyboardInput())
+    if (!frame->mainFrame().loader().shouldSuppressKeyboardInput())
         return false;
 
     if (is<TextEvent>(event)) {

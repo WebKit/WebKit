@@ -10,26 +10,10 @@
             internals.settings.setShouldSuppressKeyboardInputDuringProvisionalNavigation(true);
         }
 
-        function waitForProvisionalNavigation(completionHandler)
-        {
-            var xhr = new XMLHttpRequest();
-            xhr.onreadystatechange = function() {
-                if (this.readyState !== this.DONE)
-                    return;
-                window.setTimeout(function() {
-                    completionHandler();
-                }, 0);
-            };
-            xhr.open("GET", "resources/never-respond.php");
-            xhr.send();
-
-            window.location = "resources/never-respond.php";
-        }
-
         waitForProvisionalNavigation(function() {
             console.log("Provisional navigation started.");
             console.log("No trusted events should be logged and the input element should have the value \"\".");
-            runTest();
+            runTest(window);
 
             console.log("Pressing \"z\" with access key modifiers should navigate to resources/keyboard-events-after-navigation.html.");
             eventSender.keyDown("z", internals.accessKeyModifiers());
