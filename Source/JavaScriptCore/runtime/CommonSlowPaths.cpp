@@ -1009,6 +1009,8 @@ SLOW_PATH_DECL(slow_path_new_array_with_spread)
     Structure* structure = globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous);
 
     JSArray* result = JSArray::tryCreateUninitialized(vm, structure, arraySize);
+    if (UNLIKELY(!result))
+        THROW(createOutOfMemoryError(exec));
     CHECK_EXCEPTION();
 
     unsigned index = 0;

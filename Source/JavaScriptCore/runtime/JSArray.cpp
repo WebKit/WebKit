@@ -62,7 +62,7 @@ Butterfly* createArrayButterflyInDictionaryIndexingMode(
 
 JSArray* JSArray::tryCreateUninitialized(VM& vm, GCDeferralContext* deferralContext, Structure* structure, unsigned initialLength)
 {
-    if (initialLength > MAX_STORAGE_VECTOR_LENGTH)
+    if (UNLIKELY(initialLength > MAX_STORAGE_VECTOR_LENGTH))
         return 0;
 
     unsigned outOfLineStorage = structure->outOfLineCapacity();
@@ -78,7 +78,7 @@ JSArray* JSArray::tryCreateUninitialized(VM& vm, GCDeferralContext* deferralCont
 
         unsigned vectorLength = Butterfly::optimalContiguousVectorLength(structure, initialLength);
         void* temp = vm.auxiliarySpace.tryAllocate(deferralContext, Butterfly::totalSize(0, outOfLineStorage, true, vectorLength * sizeof(EncodedJSValue)));
-        if (!temp)
+        if (UNLIKELY(!temp))
             return nullptr;
         butterfly = Butterfly::fromBase(temp, 0, outOfLineStorage);
         butterfly->setVectorLength(vectorLength);
@@ -93,7 +93,7 @@ JSArray* JSArray::tryCreateUninitialized(VM& vm, GCDeferralContext* deferralCont
     } else {
         unsigned vectorLength = ArrayStorage::optimalVectorLength(0, structure, initialLength);
         void* temp = vm.auxiliarySpace.tryAllocate(deferralContext, Butterfly::totalSize(0, outOfLineStorage, true, ArrayStorage::sizeFor(vectorLength)));
-        if (!temp)
+        if (UNLIKELY(!temp))
             return nullptr;
         butterfly = Butterfly::fromBase(temp, 0, outOfLineStorage);
         *butterfly->indexingHeader() = indexingHeaderForArrayStorage(initialLength, vectorLength);
@@ -862,7 +862,7 @@ JSArray* JSArray::fastSlice(ExecState& exec, unsigned startIndex, unsigned count
 
         ASSERT(!lexicalGlobalObject->isHavingABadTime());
         JSArray* resultArray = JSArray::tryCreateUninitialized(vm, resultStructure, count);
-        if (!resultArray)
+        if (UNLIKELY(!resultArray))
             return nullptr;
 
         auto& resultButterfly = *resultArray->butterfly();
