@@ -23,27 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKContentExtensionStorePrivate.h"
+#import <WebKit/WKFoundation.h>
 
 #if WK_API_ENABLED
 
-#import "APIContentExtensionStore.h"
-#import "WKObject.h"
+@class WKContentRuleList;
 
-namespace WebKit {
+WK_CLASS_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA))
+@interface WKContentRuleListStore : NSObject
 
-inline WKContentExtensionStore *wrapper(API::ContentExtensionStore& store)
-{
-    ASSERT([store.wrapper() isKindOfClass:[WKContentExtensionStore class]]);
-    return (WKContentExtensionStore *)store.wrapper();
-}
++ (instancetype)defaultStore;
++ (instancetype)storeWithURL:(NSURL *)url;
 
-}
+- (void)compileContentRuleListForIdentifier:(NSString *)identifier encodedContentRuleList:(NSString *) encodedContentRuleList completionHandler:(void (^)(WKContentRuleList *, NSError *))completionHandler;
+- (void)lookUpContentRuleListForIdentifier:(NSString *)identifier completionHandler:(void (^)(WKContentRuleList *, NSError *))completionHandler;
+- (void)removeContentRuleListForIdentifier:(NSString *)identifier completionHandler:(void (^)(NSError *))completionHandler;
+- (void)getAvailableContentRuleListIdentifiers:(void (^)(NSArray<NSString *>*))completionHandler;
 
-@interface WKContentExtensionStore () <WKObject> {
-@package
-    API::ObjectStorage<API::ContentExtensionStore> _contentExtensionStore;
-}
 @end
 
 #endif // WK_API_ENABLED

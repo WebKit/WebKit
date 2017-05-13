@@ -38,11 +38,11 @@ class Encoder;
 
 namespace WebKit {
 
-class WebCompiledContentExtensionData {
+class WebCompiledContentRuleListData {
 public:
-    WebCompiledContentExtensionData() = default;
+    WebCompiledContentRuleListData() = default;
 
-    WebCompiledContentExtensionData(RefPtr<SharedMemory>&& data, NetworkCache::Data fileData, unsigned conditionsApplyOnlyToDomainOffset, unsigned actionsOffset, unsigned actionsSize, unsigned filtersWithoutConditionsBytecodeOffset, unsigned filtersWithoutConditionsBytecodeSize, unsigned filtersWithConditionsBytecodeOffset, unsigned filtersWithConditionsBytecodeSize, unsigned topURLFiltersBytecodeOffset, unsigned topURLFiltersBytecodeSize)
+    WebCompiledContentRuleListData(RefPtr<SharedMemory>&& data, NetworkCache::Data fileData, unsigned conditionsApplyOnlyToDomainOffset, unsigned actionsOffset, unsigned actionsSize, unsigned filtersWithoutConditionsBytecodeOffset, unsigned filtersWithoutConditionsBytecodeSize, unsigned filtersWithConditionsBytecodeOffset, unsigned filtersWithConditionsBytecodeSize, unsigned topURLFiltersBytecodeOffset, unsigned topURLFiltersBytecodeSize)
         : data(WTFMove(data))
         , fileData(fileData)
         , conditionsApplyOnlyToDomainOffset(conditionsApplyOnlyToDomainOffset)
@@ -58,7 +58,7 @@ public:
     }
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::Decoder&, WebCompiledContentExtensionData&);
+    static bool decode(IPC::Decoder&, WebCompiledContentRuleListData&);
 
     RefPtr<SharedMemory> data;
     NetworkCache::Data fileData;

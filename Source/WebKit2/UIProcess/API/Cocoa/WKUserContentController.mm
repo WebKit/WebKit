@@ -30,7 +30,7 @@
 
 #import "APISerializedScriptValue.h"
 #import "APIUserContentWorld.h"
-#import "WKContentExtensionInternal.h"
+#import "WKContentRuleListInternal.h"
 #import "WKFrameInfoInternal.h"
 #import "WKNSArray.h"
 #import "WKScriptMessageHandler.h"
@@ -92,24 +92,24 @@
     _userContentControllerProxy->removeAllUserScripts();
 }
 
-- (void)addContentExtension:(WKContentExtension *)contentExtension
+- (void)addContentRuleList:(WKContentRuleList *)contentRuleList
 {
 #if ENABLE(CONTENT_EXTENSIONS)
-    _userContentControllerProxy->addContentExtension(*contentExtension->_contentExtension);
+    _userContentControllerProxy->addContentRuleList(*contentRuleList->_contentRuleList);
 #endif
 }
 
-- (void)removeContentExtension:(WKContentExtension *)contentExtension
+- (void)removeContentRuleList:(WKContentRuleList *)contentRuleList
 {
 #if ENABLE(CONTENT_EXTENSIONS)
-    _userContentControllerProxy->removeContentExtension(contentExtension->_contentExtension->name());
+    _userContentControllerProxy->removeContentRuleList(contentRuleList->_contentRuleList->name());
 #endif
 }
 
-- (void)removeAllContentExtensions
+- (void)removeAllContentRuleLists
 {
 #if ENABLE(CONTENT_EXTENSIONS)
-    _userContentControllerProxy->removeAllContentExtensions();
+    _userContentControllerProxy->removeAllContentRuleLists();
 #endif
 }
 
@@ -175,21 +175,21 @@ private:
 - (void)_addUserContentFilter:(_WKUserContentFilter *)userContentFilter
 {
 #if ENABLE(CONTENT_EXTENSIONS)
-    _userContentControllerProxy->addContentExtension(*userContentFilter->_contentExtension->_contentExtension);
+    _userContentControllerProxy->addContentRuleList(*userContentFilter->_contentRuleList->_contentRuleList);
 #endif
 }
 
 - (void)_removeUserContentFilter:(NSString *)userContentFilterName
 {
 #if ENABLE(CONTENT_EXTENSIONS)
-    _userContentControllerProxy->removeContentExtension(userContentFilterName);
+    _userContentControllerProxy->removeContentRuleList(userContentFilterName);
 #endif
 }
 
 - (void)_removeAllUserContentFilters
 {
 #if ENABLE(CONTENT_EXTENSIONS)
-    _userContentControllerProxy->removeAllContentExtensions();
+    _userContentControllerProxy->removeAllContentRuleLists();
 #endif
 }
 

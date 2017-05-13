@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,25 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "APIContentExtension.h"
+#import "WKContentRuleListStorePrivate.h"
 
-#if ENABLE(CONTENT_EXTENSIONS)
+#if WK_API_ENABLED
 
-#include "WebCompiledContentExtension.h"
+#import "APIContentRuleListStore.h"
+#import "WKObject.h"
 
-namespace API {
+namespace WebKit {
 
-ContentExtension::ContentExtension(const WTF::String& name, Ref<WebKit::WebCompiledContentExtension>&& contentExtension)
-    : m_name(name)
-    , m_compiledExtension(WTFMove(contentExtension))
+inline WKContentRuleListStore *wrapper(API::ContentRuleListStore& store)
 {
+    ASSERT([store.wrapper() isKindOfClass:[WKContentRuleListStore class]]);
+    return (WKContentRuleListStore *)store.wrapper();
 }
 
-ContentExtension::~ContentExtension()
-{
 }
 
-} // namespace API
+@interface WKContentRuleListStore () <WKObject> {
+@package
+    API::ObjectStorage<API::ContentRuleListStore> _contentRuleListStore;
+}
+@end
 
-#endif // ENABLE(CONTENT_EXTENSIONS)
+#endif // WK_API_ENABLED

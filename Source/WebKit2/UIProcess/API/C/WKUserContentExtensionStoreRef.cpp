@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WKUserContentExtensionStoreRef.h"
 
-#include "APIContentExtensionStore.h"
+#include "APIContentRuleListStore.h"
 #include "WKAPICast.h"
 
 using namespace WebKit;
@@ -34,7 +34,7 @@ using namespace WebKit;
 WKTypeID WKUserContentExtensionStoreGetTypeID()
 {
 #if ENABLE(CONTENT_EXTENSIONS)
-    return toAPI(API::ContentExtensionStore::APIType);
+    return toAPI(API::ContentRuleListStore::APIType);
 #else
     return 0;
 #endif

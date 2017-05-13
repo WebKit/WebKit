@@ -1,3 +1,227 @@
+2017-05-12  Alex Christensen  <achristensen@webkit.org>
+
+        Rename WKContentExtension to WKContentRuleList
+        https://bugs.webkit.org/show_bug.cgi?id=172053
+        <rdar://problem/32141005>
+
+        Reviewed by Geoffrey Garen.
+
+        * Shared/API/APIObject.h:
+        * Shared/API/Cocoa/WebKit.h:
+        * Shared/API/c/WKDeprecatedFunctions.cpp:
+        (WKPageGroupAddUserContentFilter):
+        (WKPageGroupRemoveUserContentFilter):
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::newObject):
+        * Shared/WebCompiledContentExtension.cpp: Removed.
+        * Shared/WebCompiledContentExtension.h: Removed.
+        * Shared/WebCompiledContentExtensionData.cpp: Removed.
+        * Shared/WebCompiledContentExtensionData.h: Removed.
+        * Shared/WebCompiledContentRuleList.cpp: Copied from Source/WebKit2/Shared/WebCompiledContentExtension.cpp.
+        (WebKit::WebCompiledContentRuleList::create):
+        (WebKit::WebCompiledContentRuleList::WebCompiledContentRuleList):
+        (WebKit::WebCompiledContentRuleList::~WebCompiledContentRuleList):
+        (WebKit::WebCompiledContentRuleList::conditionsApplyOnlyToDomain):
+        (WebKit::WebCompiledContentRuleList::filtersWithoutConditionsBytecode):
+        (WebKit::WebCompiledContentRuleList::filtersWithoutConditionsBytecodeLength):
+        (WebKit::WebCompiledContentRuleList::filtersWithConditionsBytecode):
+        (WebKit::WebCompiledContentRuleList::filtersWithConditionsBytecodeLength):
+        (WebKit::WebCompiledContentRuleList::topURLFiltersBytecode):
+        (WebKit::WebCompiledContentRuleList::topURLFiltersBytecodeLength):
+        (WebKit::WebCompiledContentRuleList::actions):
+        (WebKit::WebCompiledContentRuleList::actionsLength):
+        (WebKit::WebCompiledContentExtension::create): Deleted.
+        (WebKit::WebCompiledContentExtension::WebCompiledContentExtension): Deleted.
+        (WebKit::WebCompiledContentExtension::~WebCompiledContentExtension): Deleted.
+        (WebKit::WebCompiledContentExtension::conditionsApplyOnlyToDomain): Deleted.
+        (WebKit::WebCompiledContentExtension::filtersWithoutConditionsBytecode): Deleted.
+        (WebKit::WebCompiledContentExtension::filtersWithoutConditionsBytecodeLength): Deleted.
+        (WebKit::WebCompiledContentExtension::filtersWithConditionsBytecode): Deleted.
+        (WebKit::WebCompiledContentExtension::filtersWithConditionsBytecodeLength): Deleted.
+        (WebKit::WebCompiledContentExtension::topURLFiltersBytecode): Deleted.
+        (WebKit::WebCompiledContentExtension::topURLFiltersBytecodeLength): Deleted.
+        (WebKit::WebCompiledContentExtension::actions): Deleted.
+        (WebKit::WebCompiledContentExtension::actionsLength): Deleted.
+        * Shared/WebCompiledContentRuleList.h: Copied from Source/WebKit2/Shared/WebCompiledContentExtension.h.
+        * Shared/WebCompiledContentRuleListData.cpp: Copied from Source/WebKit2/Shared/WebCompiledContentExtensionData.cpp.
+        (WebKit::WebCompiledContentRuleListData::encode):
+        (WebKit::WebCompiledContentRuleListData::decode):
+        (WebKit::WebCompiledContentExtensionData::encode): Deleted.
+        (WebKit::WebCompiledContentExtensionData::decode): Deleted.
+        * Shared/WebCompiledContentRuleListData.h: Copied from Source/WebKit2/Shared/WebCompiledContentExtensionData.h.
+        (WebKit::WebCompiledContentRuleListData::WebCompiledContentRuleListData):
+        (WebKit::WebCompiledContentExtensionData::WebCompiledContentExtensionData): Deleted.
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/API/APIContentExtension.cpp: Removed.
+        * UIProcess/API/APIContentExtension.h: Removed.
+        * UIProcess/API/APIContentExtensionStore.cpp: Removed.
+        * UIProcess/API/APIContentExtensionStore.h: Removed.
+        * UIProcess/API/APIContentRuleList.cpp: Copied from Source/WebKit2/UIProcess/API/APIContentExtension.cpp.
+        (API::ContentRuleList::ContentRuleList):
+        (API::ContentRuleList::~ContentRuleList):
+        (API::ContentExtension::ContentExtension): Deleted.
+        (API::ContentExtension::~ContentExtension): Deleted.
+        * UIProcess/API/APIContentRuleList.h: Copied from Source/WebKit2/UIProcess/API/APIContentExtension.h.
+        * UIProcess/API/APIContentRuleListStore.cpp: Copied from Source/WebKit2/UIProcess/API/APIContentExtensionStore.cpp.
+        (API::ContentRuleListStore::legacyDefaultStore):
+        (API::ContentRuleListStore::nonLegacyDdefaultStore):
+        (API::ContentRuleListStore::defaultStore):
+        (API::ContentRuleListStore::storeWithPath):
+        (API::ContentRuleListStore::ContentRuleListStore):
+        (API::ContentRuleListStore::~ContentRuleListStore):
+        (API::constructedPathPrefix):
+        (API::ContentRuleListMetaData::fileSize):
+        (API::encodeContentRuleListMetaData):
+        (API::decodeContentRuleListMetaData):
+        (API::openAndMapContentRuleList):
+        (API::compiledToFile):
+        (API::createExtension):
+        (API::ContentRuleListStore::lookupContentRuleList):
+        (API::ContentRuleListStore::getAvailableContentRuleListIdentifiers):
+        (API::ContentRuleListStore::compileContentRuleList):
+        (API::ContentRuleListStore::removeContentRuleList):
+        (API::ContentRuleListStore::synchronousRemoveAllContentRuleLists):
+        (API::ContentRuleListStore::invalidateContentRuleListVersion):
+        (API::ContentRuleListStore::getContentRuleListSource):
+        (API::contentRuleListStoreErrorCategory):
+        (API::ContentExtensionStore::defaultStore): Deleted.
+        (API::ContentExtensionStore::storeWithPath): Deleted.
+        (API::ContentExtensionStore::ContentExtensionStore): Deleted.
+        (API::ContentExtensionStore::~ContentExtensionStore): Deleted.
+        (API::ContentExtensionMetaData::fileSize): Deleted.
+        (API::encodeContentExtensionMetaData): Deleted.
+        (API::decodeContentExtensionMetaData): Deleted.
+        (API::openAndMapContentExtension): Deleted.
+        (API::ContentExtensionStore::lookupContentExtension): Deleted.
+        (API::ContentExtensionStore::getAvailableContentExtensionIdentifiers): Deleted.
+        (API::ContentExtensionStore::compileContentExtension): Deleted.
+        (API::ContentExtensionStore::removeContentExtension): Deleted.
+        (API::ContentExtensionStore::synchronousRemoveAllContentExtensions): Deleted.
+        (API::ContentExtensionStore::invalidateContentExtensionVersion): Deleted.
+        (API::ContentExtensionStore::getContentExtensionSource): Deleted.
+        (API::contentExtensionStoreErrorCategory): Deleted.
+        * UIProcess/API/APIContentRuleListStore.h: Copied from Source/WebKit2/UIProcess/API/APIContentExtensionStore.h.
+        (API::make_error_code):
+        * UIProcess/API/C/WKAPICast.h:
+        * UIProcess/API/C/WKPageGroup.cpp:
+        * UIProcess/API/C/WKUserContentControllerRef.cpp:
+        (WKUserContentControllerAddUserContentFilter):
+        (WKUserContentControllerRemoveAllUserContentFilters):
+        * UIProcess/API/C/WKUserContentExtensionStoreRef.cpp:
+        (WKUserContentExtensionStoreGetTypeID):
+        * UIProcess/API/Cocoa/APIUserContentExtensionStoreCocoa.mm:
+        (API::ContentRuleListStore::defaultStorePath):
+        (API::ContentExtensionStore::defaultStorePath): Deleted.
+        * UIProcess/API/Cocoa/WKContentExtension.h: Removed.
+        * UIProcess/API/Cocoa/WKContentExtension.mm: Removed.
+        * UIProcess/API/Cocoa/WKContentExtensionInternal.h: Removed.
+        * UIProcess/API/Cocoa/WKContentExtensionStore.h: Removed.
+        * UIProcess/API/Cocoa/WKContentExtensionStore.mm: Removed.
+        * UIProcess/API/Cocoa/WKContentExtensionStoreInternal.h: Removed.
+        * UIProcess/API/Cocoa/WKContentExtensionStorePrivate.h: Removed.
+        * UIProcess/API/Cocoa/WKContentRuleList.h: Copied from Source/WebKit2/UIProcess/API/Cocoa/WKContentExtension.h.
+        * UIProcess/API/Cocoa/WKContentRuleList.mm: Copied from Source/WebKit2/UIProcess/API/Cocoa/WKContentExtension.mm.
+        (-[WKContentRuleList dealloc]):
+        (-[WKContentRuleList _apiObject]):
+        (-[WKContentRuleList identifier]):
+        (-[WKContentExtension dealloc]): Deleted.
+        (-[WKContentExtension _apiObject]): Deleted.
+        (-[WKContentExtension identifier]): Deleted.
+        * UIProcess/API/Cocoa/WKContentRuleListInternal.h: Copied from Source/WebKit2/UIProcess/API/Cocoa/WKContentExtensionInternal.h.
+        (WebKit::wrapper):
+        * UIProcess/API/Cocoa/WKContentRuleListStore.h: Copied from Source/WebKit2/UIProcess/API/Cocoa/WKContentExtensionStore.h.
+        * UIProcess/API/Cocoa/WKContentRuleListStore.mm: Copied from Source/WebKit2/UIProcess/API/Cocoa/WKContentExtensionStore.mm.
+        (toWKErrorCode):
+        (-[WKContentRuleListStore dealloc]):
+        (+[WKContentRuleListStore defaultStore]):
+        (+[WKContentRuleListStore storeWithURL:]):
+        (-[WKContentRuleListStore compileContentRuleListForIdentifier:encodedContentRuleList:completionHandler:]):
+        (-[WKContentRuleListStore _compileContentRuleListForIdentifier:encodedContentRuleList:completionHandler:releasesArgument:]):
+        (-[WKContentRuleListStore lookUpContentRuleListForIdentifier:completionHandler:]):
+        (-[WKContentRuleListStore getAvailableContentRuleListIdentifiers:]):
+        (-[WKContentRuleListStore removeContentRuleListForIdentifier:completionHandler:]):
+        (-[WKContentRuleListStore _apiObject]):
+        (-[WKContentRuleListStore _removeAllContentRuleLists]):
+        (-[WKContentRuleListStore _invalidateContentRuleListVersionForIdentifier:]):
+        (-[WKContentRuleListStore _getContentRuleListSourceForIdentifier:completionHandler:]):
+        (-[WKContentRuleListStore _compileContentRuleListForIdentifier:encodedContentRuleList:completionHandler:]):
+        (-[WKContentExtensionStore dealloc]): Deleted.
+        (+[WKContentExtensionStore defaultStore]): Deleted.
+        (+[WKContentExtensionStore storeWithURL:]): Deleted.
+        (-[WKContentExtensionStore compileContentExtensionForIdentifier:encodedContentExtension:completionHandler:]): Deleted.
+        (-[WKContentExtensionStore _compileContentExtensionForIdentifier:encodedContentExtension:completionHandler:releasesArgument:]): Deleted.
+        (-[WKContentExtensionStore lookUpContentExtensionForIdentifier:completionHandler:]): Deleted.
+        (-[WKContentExtensionStore getAvailableContentExtensionIdentifiers:]): Deleted.
+        (-[WKContentExtensionStore removeContentExtensionForIdentifier:completionHandler:]): Deleted.
+        (-[WKContentExtensionStore _apiObject]): Deleted.
+        (-[WKContentExtensionStore _removeAllContentExtensions]): Deleted.
+        (-[WKContentExtensionStore _invalidateContentExtensionVersionForIdentifier:]): Deleted.
+        (-[WKContentExtensionStore _getContentExtensionSourceForIdentifier:completionHandler:]): Deleted.
+        (-[WKContentExtensionStore _compileContentExtensionForIdentifier:encodedContentExtension:completionHandler:]): Deleted.
+        * UIProcess/API/Cocoa/WKContentRuleListStoreInternal.h: Copied from Source/WebKit2/UIProcess/API/Cocoa/WKContentExtensionStoreInternal.h.
+        (WebKit::wrapper):
+        * UIProcess/API/Cocoa/WKContentRuleListStorePrivate.h: Copied from Source/WebKit2/UIProcess/API/Cocoa/WKContentExtensionStorePrivate.h.
+        * UIProcess/API/Cocoa/WKError.h:
+        * UIProcess/API/Cocoa/WKError.mm:
+        (localizedDescriptionForErrorCode):
+        * UIProcess/API/Cocoa/WKUserContentController.h:
+        * UIProcess/API/Cocoa/WKUserContentController.mm:
+        (-[WKUserContentController addContentRuleList:]):
+        (-[WKUserContentController removeContentRuleList:]):
+        (-[WKUserContentController removeAllContentRuleLists]):
+        (-[WKUserContentController _addUserContentFilter:]):
+        (-[WKUserContentController _removeUserContentFilter:]):
+        (-[WKUserContentController _removeAllUserContentFilters]):
+        (-[WKUserContentController addContentExtension:]): Deleted.
+        (-[WKUserContentController removeContentExtension:]): Deleted.
+        (-[WKUserContentController removeAllContentExtensions]): Deleted.
+        * UIProcess/API/Cocoa/_WKUserContentExtensionStore.mm:
+        (toUserContentRuleListStoreError):
+        (+[_WKUserContentExtensionStore defaultStore]):
+        (+[_WKUserContentExtensionStore storeWithURL:]):
+        (-[_WKUserContentExtensionStore compileContentExtensionForIdentifier:encodedContentExtension:completionHandler:]):
+        (-[_WKUserContentExtensionStore lookupContentExtensionForIdentifier:completionHandler:]):
+        (-[_WKUserContentExtensionStore removeContentExtensionForIdentifier:completionHandler:]):
+        (-[_WKUserContentExtensionStore _apiObject]):
+        (-[_WKUserContentExtensionStore _removeAllContentExtensions]):
+        (-[_WKUserContentExtensionStore _invalidateContentExtensionVersionForIdentifier:]):
+        (-[_WKUserContentExtensionStore _initWithWKContentRuleListStore:]):
+        (toUserContentExtensionStoreError): Deleted.
+        (-[_WKUserContentExtensionStore _initWithWKContentExtensionStore:]): Deleted.
+        * UIProcess/API/Cocoa/_WKUserContentExtensionStoreInternal.h:
+        * UIProcess/API/Cocoa/_WKUserContentExtensionStorePrivate.h:
+        * UIProcess/API/Cocoa/_WKUserContentFilter.mm:
+        (-[_WKUserContentFilter _apiObject]):
+        (-[_WKUserContentFilter _initWithWKContentRuleList:]):
+        (-[_WKUserContentFilter _initWithWKContentExtension:]): Deleted.
+        * UIProcess/API/Cocoa/_WKUserContentFilterInternal.h:
+        * UIProcess/API/Cocoa/_WKUserContentFilterPrivate.h:
+        * UIProcess/UserContent/WebUserContentControllerProxy.cpp:
+        (WebKit::WebUserContentControllerProxy::addProcess):
+        (WebKit::WebUserContentControllerProxy::addContentRuleList):
+        (WebKit::WebUserContentControllerProxy::removeContentRuleList):
+        (WebKit::WebUserContentControllerProxy::removeAllContentRuleLists):
+        (WebKit::WebUserContentControllerProxy::addContentExtension): Deleted.
+        (WebKit::WebUserContentControllerProxy::removeContentExtension): Deleted.
+        (WebKit::WebUserContentControllerProxy::removeAllContentExtensions): Deleted.
+        * UIProcess/UserContent/WebUserContentControllerProxy.h:
+        * UIProcess/WebPageGroup.cpp:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/UserContent/WebUserContentController.cpp:
+        (WebKit::WebUserContentController::addContentRuleLists):
+        (WebKit::WebUserContentController::removeContentRuleList):
+        (WebKit::WebUserContentController::removeAllContentRuleLists):
+        (WebKit::WebUserContentController::addContentExtensions): Deleted.
+        (WebKit::WebUserContentController::removeContentExtension): Deleted.
+        (WebKit::WebUserContentController::removeAllContentExtensions): Deleted.
+        * WebProcess/UserContent/WebUserContentController.h:
+        * WebProcess/UserContent/WebUserContentController.messages.in:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_backgroundCPULimit):
+
 2017-05-12  Jeremy Jones  <jeremyj@apple.com>
 
         Add objc version of WK2 UIPageClient setHasVideoInPictureInPicture and rename it to hasVideoInPictureInPictureDidChange.

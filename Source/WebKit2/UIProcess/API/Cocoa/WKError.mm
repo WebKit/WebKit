@@ -58,17 +58,17 @@ NSString *localizedDescriptionForErrorCode(WKErrorCode errorCode)
     case WKErrorJavaScriptResultTypeIsUnsupported:
         return WEB_UI_STRING("JavaScript execution returned a result of an unsupported type", "WKErrorJavaScriptResultTypeIsUnsupported description");
 
-    case WKErrorContentExtensionStoreLookUpFailed:
-        return WEB_UI_STRING("Looking up a WKUserContentExtension failed", "WKErrorContentExtensionStoreLookupFailed description");
+    case WKErrorContentRuleListStoreLookUpFailed:
+        return WEB_UI_STRING("Looking up a WKContentRuleList failed", "WKErrorContentRuleListStoreLookupFailed description");
 
-    case WKErrorContentExtensionStoreVersionMismatch:
-        return WEB_UI_STRING("Looking up a WKUserContentExtension found a binary that is incompatible", "WKErrorContentExtensionStoreVersionMismatch description");
+    case WKErrorContentRuleListStoreVersionMismatch:
+        return WEB_UI_STRING("Looking up a WKContentRuleList found a binary that is incompatible", "WKErrorContentRuleListStoreVersionMismatch description");
 
-    case WKErrorContentExtensionStoreCompileFailed:
-        return WEB_UI_STRING("Compiling a WKUserContentExtension failed", "WKErrorContentExtensionStoreCompileFailed description");
+    case WKErrorContentRuleListStoreCompileFailed:
+        return WEB_UI_STRING("Compiling a WKContentRuleList failed", "WKErrorContentRuleListStoreCompileFailed description");
 
-    case WKErrorContentExtensionStoreRemoveFailed:
-        return WEB_UI_STRING("Removing a WKUserContentExtension failed", "WKErrorContentExtensionStoreRemoveFailed description");
+    case WKErrorContentRuleListStoreRemoveFailed:
+        return WEB_UI_STRING("Removing a WKContentRuleList failed", "WKErrorContentRuleListStoreRemoveFailed description");
     }
 }
 

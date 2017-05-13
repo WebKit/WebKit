@@ -163,8 +163,8 @@
 /* Subtitle of the label to show on a snapshotted plug-in */
 "Click to restart" = "Click to restart";
 
-/* WKErrorContentExtensionStoreCompileFailed description */
-"Compiling a WKUserContentExtension failed" = "Compiling a WKUserContentExtension failed";
+/* WKErrorContentRuleListStoreCompileFailed description */
+"Compiling a WKContentRuleList failed" = "Compiling a WKContentRuleList failed";
 
 /* WebKitErrorCannotShowMIMEType description */
 "Content with specified MIME type can’t be shown" = "Content with specified MIME type can’t be shown";
@@ -352,11 +352,11 @@
 /* Look Up context menu item with selected word */
 "Look Up “%s”" = "Look Up “%s”";
 
-/* WKErrorContentExtensionStoreLookupFailed description */
-"Looking up a WKUserContentExtension failed" = "Looking up a WKUserContentExtension failed";
+/* WKErrorContentRuleListStoreLookupFailed description */
+"Looking up a WKContentRuleList failed" = "Looking up a WKContentRuleList failed";
 
-/* WKErrorContentExtensionStoreVersionMismatch description */
-"Looking up a WKUserContentExtension found a binary that is incompatible" = "Looking up a WKUserContentExtension found a binary that is incompatible";
+/* WKErrorContentRuleListStoreVersionMismatch description */
+"Looking up a WKContentRuleList found a binary that is incompatible" = "Looking up a WKContentRuleList found a binary that is incompatible";
 
 /* Media Loop context menu item */
 "Loop" = "Loop";
@@ -496,8 +496,8 @@
 /* Reload context menu item */
 "Reload" = "Reload";
 
-/* WKErrorContentExtensionStoreRemoveFailed description */
-"Removing a WKUserContentExtension failed" = "Removing a WKUserContentExtension failed";
+/* WKErrorContentRuleListStoreRemoveFailed description */
+"Removing a WKContentRuleList failed" = "Removing a WKContentRuleList failed";
 
 /* default label for Reset buttons in forms on web pages */
 "Reset" = "Reset";

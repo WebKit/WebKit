@@ -568,7 +568,7 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
     m_userContentController->addUserStyleSheets(parameters.userStyleSheets);
     m_userContentController->addUserScriptMessageHandlers(parameters.messageHandlers);
 #if ENABLE(CONTENT_EXTENSIONS)
-    m_userContentController->addContentExtensions(parameters.contentExtensions);
+    m_userContentController->addContentRuleLists(parameters.contentRuleLists);
 #endif
 }
 

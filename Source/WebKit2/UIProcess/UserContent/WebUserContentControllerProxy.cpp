@@ -40,8 +40,8 @@
 #include <WebCore/SerializedScriptValue.h>
 
 #if ENABLE(CONTENT_EXTENSIONS)
-#include "APIContentExtension.h"
-#include "WebCompiledContentExtension.h"
+#include "APIContentRuleList.h"
+#include "WebCompiledContentRuleList.h"
 #endif
 
 namespace WebKit {
@@ -92,9 +92,9 @@ void WebUserContentControllerProxy::addProcess(WebProcessProxy& webProcessProxy,
         parameters.messageHandlers.append({ handler->identifier(), handler->userContentWorld().identifier(), handler->name() });
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    ASSERT(parameters.contentExtensions.isEmpty());
-    for (const auto& contentExtension : m_contentExtensions.values())
-        parameters.contentExtensions.append(std::make_pair(contentExtension->name(), contentExtension->compiledExtension().data()));
+    ASSERT(parameters.contentRuleLists.isEmpty());
+    for (const auto& contentRuleList : m_contentRuleLists.values())
+        parameters.contentRuleLists.append(std::make_pair(contentRuleList->name(), contentRuleList->compiledRuleList().data()));
 #endif
 }
 
@@ -332,30 +332,30 @@ void WebUserContentControllerProxy::didPostMessage(IPC::Connection& connection, 
 }
 
 #if ENABLE(CONTENT_EXTENSIONS)
-void WebUserContentControllerProxy::addContentExtension(API::ContentExtension& contentExtension)
+void WebUserContentControllerProxy::addContentRuleList(API::ContentRuleList& contentRuleList)
 {
-    m_contentExtensions.set(contentExtension.name(), &contentExtension);
+    m_contentRuleLists.set(contentRuleList.name(), &contentRuleList);
 
-    auto pair = std::make_pair(contentExtension.name(), contentExtension.compiledExtension().data());
+    auto pair = std::make_pair(contentRuleList.name(), contentRuleList.compiledRuleList().data());
 
     for (WebProcessProxy* process : m_processes)
-        process->send(Messages::WebUserContentController::AddContentExtensions({ pair }), m_identifier);
+        process->send(Messages::WebUserContentController::AddContentRuleLists({ pair }), m_identifier);
 }
 
-void WebUserContentControllerProxy::removeContentExtension(const String& name)
+void WebUserContentControllerProxy::removeContentRuleList(const String& name)
 {
-    m_contentExtensions.remove(name);
+    m_contentRuleLists.remove(name);
 
     for (WebProcessProxy* process : m_processes)
-        process->send(Messages::WebUserContentController::RemoveContentExtension(name), m_identifier);
+        process->send(Messages::WebUserContentController::RemoveContentRuleList(name), m_identifier);
 }
 
-void WebUserContentControllerProxy::removeAllContentExtensions()
+void WebUserContentControllerProxy::removeAllContentRuleLists()
 {
-    m_contentExtensions.clear();
+    m_contentRuleLists.clear();
 
     for (WebProcessProxy* process : m_processes)
-        process->send(Messages::WebUserContentController::RemoveAllContentExtensions(), m_identifier);
+        process->send(Messages::WebUserContentController::RemoveAllContentRuleLists(), m_identifier);
 }
 #endif
 

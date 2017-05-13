@@ -182,8 +182,8 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/C/mac/WKContextPrivateMac.mm
     UIProcess/API/C/mac/WKPagePrivateMac.mm
 
+    UIProcess/API/Cocoa/APIContentRuleListStoreCocoa.mm
     UIProcess/API/Cocoa/APISerializedScriptValueCocoa.mm
-    UIProcess/API/Cocoa/APIUserContentExtensionStoreCocoa.mm
     UIProcess/API/Cocoa/APIWebsiteDataStoreCocoa.mm
     UIProcess/API/Cocoa/LegacyBundleForClass.mm
     UIProcess/API/Cocoa/WKBackForwardList.mm
@@ -191,8 +191,8 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/Cocoa/WKBrowsingContextController.mm
     UIProcess/API/Cocoa/WKBrowsingContextGroup.mm
     UIProcess/API/Cocoa/WKConnection.mm
-    UIProcess/API/Cocoa/WKContentExtension.mm
-    UIProcess/API/Cocoa/WKContentExtensionStore.mm
+    UIProcess/API/Cocoa/WKContentRuleList.mm
+    UIProcess/API/Cocoa/WKContentRuleListStore.mm
     UIProcess/API/Cocoa/WKError.mm
     UIProcess/API/Cocoa/WKFrameInfo.mm
     UIProcess/API/Cocoa/WKHTTPCookieStore.mm

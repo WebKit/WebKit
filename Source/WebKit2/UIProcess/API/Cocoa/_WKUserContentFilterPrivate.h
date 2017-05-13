@@ -27,11 +27,11 @@
 
 #if WK_API_ENABLED
 
-@class WKUserContentExtension;
+@class WKUserContentRuleList;
 
 @interface _WKUserContentFilter (WKPrivate)
 
-- (id)_initWithWKContentExtension:(WKContentExtension*)contentExtension;
+- (id)_initWithWKContentRuleList:(WKContentRuleList*)contentRuleList;
 
 @end
 

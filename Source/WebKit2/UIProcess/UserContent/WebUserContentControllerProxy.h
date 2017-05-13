@@ -37,7 +37,7 @@
 
 namespace API {
 class Array;
-class ContentExtension;
+class ContentRuleList;
 class UserContentWorld;
 class UserScript;
 class UserStyleSheet;
@@ -92,9 +92,9 @@ public:
     void removeAllUserMessageHandlers(API::UserContentWorld&);
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    void addContentExtension(API::ContentExtension&);
-    void removeContentExtension(const String&);
-    void removeAllContentExtensions();
+    void addContentRuleList(API::ContentRuleList&);
+    void removeContentRuleList(const String&);
+    void removeAllContentRuleLists();
 #endif
 
 private:
@@ -116,7 +116,7 @@ private:
     HashCountedSet<RefPtr<API::UserContentWorld>> m_userContentWorlds;
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    HashMap<String, RefPtr<API::ContentExtension>> m_contentExtensions;
+    HashMap<String, RefPtr<API::ContentRuleList>> m_contentRuleLists;
 #endif
 };
 

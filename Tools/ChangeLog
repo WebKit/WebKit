@@ -1,3 +1,18 @@
+2017-05-12  Alex Christensen  <achristensen@webkit.org>
+
+        Rename WKContentExtension to WKContentRuleList
+        https://bugs.webkit.org/show_bug.cgi?id=172053
+        <rdar://problem/32141005>
+
+        Reviewed by Geoffrey Garen.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/WKContentExtensionStore.mm:
+        (WKContentRuleListStoreTest::SetUp):
+        (TEST_F):
+        (-[ContentRuleListDelegate webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:]):
+        (WKContentExtensionStoreTest::SetUp): Deleted.
+        (-[ContentExtensionDelegate webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:]): Deleted.
+
 2017-05-12  Keith Miller  <keith_miller@apple.com>
 
         Use Mach exceptions instead of signals where possible

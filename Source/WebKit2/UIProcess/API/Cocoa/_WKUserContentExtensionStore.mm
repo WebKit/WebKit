@@ -28,8 +28,8 @@
 
 #if WK_API_ENABLED
 
-#import "WKContentExtensionStoreInternal.h"
-#import "WKContentExtensionStorePrivate.h"
+#import "WKContentRuleListStoreInternal.h"
+#import "WKContentRuleListStorePrivate.h"
 #import "WKErrorInternal.h"
 #import "_WKUserContentExtensionStorePrivate.h"
 #import "_WKUserContentFilterInternal.h"
@@ -38,20 +38,20 @@
 
 NSString * const _WKUserContentExtensionsDomain = @"WKErrorDomain";
 
-static NSError *toUserContentExtensionStoreError(const NSError *error)
+static NSError *toUserContentRuleListStoreError(const NSError *error)
 {
     if (!error)
         return nil;
 
     ASSERT(error.domain == WKErrorDomain);
     switch (error.code) {
-    case WKErrorContentExtensionStoreLookUpFailed:
+    case WKErrorContentRuleListStoreLookUpFailed:
         return [NSError errorWithDomain:_WKUserContentExtensionsDomain code:_WKUserContentExtensionStoreErrorLookupFailed userInfo:error.userInfo];
-    case WKErrorContentExtensionStoreVersionMismatch:
+    case WKErrorContentRuleListStoreVersionMismatch:
         return [NSError errorWithDomain:_WKUserContentExtensionsDomain code:_WKUserContentExtensionStoreErrorVersionMismatch userInfo:error.userInfo];
-    case WKErrorContentExtensionStoreCompileFailed:
+    case WKErrorContentRuleListStoreCompileFailed:
         return [NSError errorWithDomain:_WKUserContentExtensionsDomain code:_WKUserContentExtensionStoreErrorCompileFailed userInfo:error.userInfo];
-    case WKErrorContentExtensionStoreRemoveFailed:
+    case WKErrorContentRuleListStoreRemoveFailed:
         return [NSError errorWithDomain:_WKUserContentExtensionsDomain code:_WKUserContentExtensionStoreErrorRemoveFailed userInfo:error.userInfo];
     default:
         RELEASE_ASSERT_NOT_REACHED();
@@ -62,34 +62,34 @@ static NSError *toUserContentExtensionStoreError(const NSError *error)
 
 + (instancetype)defaultStore
 {
-    return [[[_WKUserContentExtensionStore alloc] _initWithWKContentExtensionStore:[WKContentExtensionStore defaultStore]] autorelease];
+    return [[[_WKUserContentExtensionStore alloc] _initWithWKContentRuleListStore:[WKContentRuleListStore defaultStoreWithLegacyFilename]] autorelease];
 }
 
 + (instancetype)storeWithURL:(NSURL *)url
 {
-    return [[[_WKUserContentExtensionStore alloc] _initWithWKContentExtensionStore:[WKContentExtensionStore storeWithURL:url]] autorelease];
+    return [[[_WKUserContentExtensionStore alloc] _initWithWKContentRuleListStore:[WKContentRuleListStore storeWithURLAndLegacyFilename:url]] autorelease];
 }
 
-- (void)compileContentExtensionForIdentifier:(NSString *)identifier encodedContentExtension:(NSString *)encodedContentExtension completionHandler:(void (^)(_WKUserContentFilter *, NSError *))completionHandler
+- (void)compileContentExtensionForIdentifier:(NSString *)identifier encodedContentExtension:(NSString *)encodedContentRuleList completionHandler:(void (^)(_WKUserContentFilter *, NSError *))completionHandler
 {
-    [_contentExtensionStore _compileContentExtensionForIdentifier:identifier encodedContentExtension:encodedContentExtension completionHandler:^(WKContentExtension *contentExtension, NSError *error) {
-        _WKUserContentFilter *contentFilter = contentExtension ? [[[_WKUserContentFilter alloc] _initWithWKContentExtension:contentExtension] autorelease] : nil;
-        completionHandler(contentFilter, toUserContentExtensionStoreError(error));
+    [_contentRuleListStore _compileContentRuleListForIdentifier:identifier encodedContentRuleList:encodedContentRuleList completionHandler:^(WKContentRuleList *contentRuleList, NSError *error) {
+        _WKUserContentFilter *contentFilter = contentRuleList ? [[[_WKUserContentFilter alloc] _initWithWKContentRuleList:contentRuleList] autorelease] : nil;
+        completionHandler(contentFilter, toUserContentRuleListStoreError(error));
     }];
 }
 
 - (void)lookupContentExtensionForIdentifier:(NSString *)identifier completionHandler:(void (^)(_WKUserContentFilter *, NSError *))completionHandler
 {
-    [_contentExtensionStore lookUpContentExtensionForIdentifier:identifier completionHandler:^(WKContentExtension *contentExtension, NSError *error) {
-        _WKUserContentFilter *contentFilter = contentExtension ? [[[_WKUserContentFilter alloc] _initWithWKContentExtension:contentExtension] autorelease] : nil;
-        completionHandler(contentFilter, toUserContentExtensionStoreError(error));
+    [_contentRuleListStore lookUpContentRuleListForIdentifier:identifier completionHandler:^(WKContentRuleList *contentRuleList, NSError *error) {
+        _WKUserContentFilter *contentFilter = contentRuleList ? [[[_WKUserContentFilter alloc] _initWithWKContentRuleList:contentRuleList] autorelease] : nil;
+        completionHandler(contentFilter, toUserContentRuleListStoreError(error));
     }];
 }
 
 - (void)removeContentExtensionForIdentifier:(NSString *)identifier completionHandler:(void (^)(NSError *))completionHandler
 {
-    [_contentExtensionStore removeContentExtensionForIdentifier:identifier completionHandler:^(NSError *error) {
-        completionHandler(toUserContentExtensionStoreError(error));
+    [_contentRuleListStore removeContentRuleListForIdentifier:identifier completionHandler:^(NSError *error) {
+        completionHandler(toUserContentRuleListStoreError(error));
     }];
 }
 
@@ -97,7 +97,7 @@ static NSError *toUserContentExtensionStoreError(const NSError *error)
 
 - (API::Object&)_apiObject
 {
-    return [_contentExtensionStore _apiObject];
+    return [_contentRuleListStore _apiObject];
 }
 
 @end
@@ -108,21 +108,21 @@ static NSError *toUserContentExtensionStoreError(const NSError *error)
 
 - (void)_removeAllContentExtensions
 {
-    [_contentExtensionStore _removeAllContentExtensions];
+    [_contentRuleListStore _removeAllContentRuleLists];
 }
 
 - (void)_invalidateContentExtensionVersionForIdentifier:(NSString *)identifier
 {
-    [_contentExtensionStore _invalidateContentExtensionVersionForIdentifier:identifier];
+    [_contentRuleListStore _invalidateContentRuleListVersionForIdentifier:identifier];
 }
 
-- (id)_initWithWKContentExtensionStore:(WKContentExtensionStore*)contentExtensionStore
+- (id)_initWithWKContentRuleListStore:(WKContentRuleListStore*)contentRuleListStore
 {
     self = [super init];
     if (!self)
         return nil;
     
-    _contentExtensionStore = contentExtensionStore;
+    _contentRuleListStore = contentRuleListStore;
     
     return self;
 }

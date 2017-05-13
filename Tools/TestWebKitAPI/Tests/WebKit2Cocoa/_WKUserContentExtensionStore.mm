@@ -72,7 +72,7 @@ TEST_F(_WKUserContentExtensionStoreTest, InvalidExtension)
         EXPECT_NOT_NULL(error);
         checkDomain(error);
         EXPECT_EQ(error.code, _WKUserContentExtensionStoreErrorCompileFailed);
-        EXPECT_STREQ("Extension compilation failed: Failed to parse the JSON String.", [[error helpAnchor] UTF8String]);
+        EXPECT_STREQ("Rule list compilation failed: Failed to parse the JSON String.", [[error helpAnchor] UTF8String]);
 
         doneCompiling = true;
     }];
@@ -111,7 +111,7 @@ TEST_F(_WKUserContentExtensionStoreTest, NonExistingIdentifierLookup)
         EXPECT_NOT_NULL(error);
         checkDomain(error);
         EXPECT_EQ(error.code, _WKUserContentExtensionStoreErrorLookupFailed);
-        EXPECT_STREQ("Extension lookup failed: Unspecified error during lookup.", [[error helpAnchor] UTF8String]);
+        EXPECT_STREQ("Rule list lookup failed: Unspecified error during lookup.", [[error helpAnchor] UTF8String]);
         
         doneLookingUp = true;
     }];
@@ -141,7 +141,7 @@ TEST_F(_WKUserContentExtensionStoreTest, VersionMismatch)
         EXPECT_NOT_NULL(error);
         checkDomain(error);
         EXPECT_EQ(error.code, _WKUserContentExtensionStoreErrorVersionMismatch);
-        EXPECT_STREQ("Extension lookup failed: Version of file does not match version of interpreter.", [[error helpAnchor] UTF8String]);
+        EXPECT_STREQ("Rule list lookup failed: Version of file does not match version of interpreter.", [[error helpAnchor] UTF8String]);
         
         doneLookingUp = true;
     }];
@@ -176,7 +176,7 @@ TEST_F(_WKUserContentExtensionStoreTest, NonExistingIdentifierRemove)
         EXPECT_NOT_NULL(error);
         checkDomain(error);
         EXPECT_EQ(error.code, _WKUserContentExtensionStoreErrorRemoveFailed);
-        EXPECT_STREQ("Extension removal failed: Unspecified error during remove.", [[error helpAnchor] UTF8String]);
+        EXPECT_STREQ("Rule list removal failed: Unspecified error during remove.", [[error helpAnchor] UTF8String]);
 
         doneRemoving = true;
     }];

@@ -31,7 +31,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class WKContentExtension;
+@class WKContentRuleList;
 @class WKUserScript;
 @protocol WKScriptMessageHandler;
 
@@ -71,19 +71,19 @@ WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
  */
 - (void)removeScriptMessageHandlerForName:(NSString *)name;
 
-/*! @abstract Adds a user content extension.
- @param name The name of the user content extension to add.
+/*! @abstract Adds a content rule list.
+ @param contentRuleList The content rule list to add.
  */
-- (void)addContentExtension:(WKContentExtension *)contentExtension WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)addContentRuleList:(WKContentRuleList *)contentRuleList WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
-/*! @abstract Removes a user content extension.
- @param name The identifier of the user content extension to remove.
+/*! @abstract Removes a content rule list.
+ @param contentRuleList The content rule list to remove.
  */
-- (void)removeContentExtension:(WKContentExtension *)contentExtension WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)removeContentRuleList:(WKContentRuleList *)contentRuleList WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
-/*! @abstract Removes all associated user content extensions.
+/*! @abstract Removes all associated content rule lists.
  */
-- (void)removeAllContentExtensions WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)removeAllContentRuleLists WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @end
 

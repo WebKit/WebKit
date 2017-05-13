@@ -1,3 +1,15 @@
+2017-05-12  Alex Christensen  <achristensen@webkit.org>
+
+        Rename WKContentExtension to WKContentRuleList
+        https://bugs.webkit.org/show_bug.cgi?id=172053
+        <rdar://problem/32141005>
+
+        Reviewed by Geoffrey Garen.
+
+        Covered by existing API tests.
+
+        * English.lproj/Localizable.strings:
+
 2017-05-12  Timothy Horton  <timothy_horton@apple.com>
 
         Don't use LinkPresentation URL shortening if it's not available

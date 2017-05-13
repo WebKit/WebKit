@@ -24,15 +24,15 @@
  */
 
 #include "config.h"
-#include "APIContentExtensionStore.h"
+#include "APIContentRuleListStore.h"
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
-#include "APIContentExtension.h"
+#include "APIContentRuleList.h"
 #include "NetworkCacheData.h"
 #include "NetworkCacheFileSystem.h"
 #include "SharedMemory.h"
-#include "WebCompiledContentExtension.h"
+#include "WebCompiledContentRuleList.h"
 #include <WebCore/ContentExtensionCompiler.h>
 #include <WebCore/ContentExtensionError.h>
 #include <string>
@@ -45,59 +45,78 @@
 using namespace WebKit::NetworkCache;
 
 namespace API {
-
-ContentExtensionStore& ContentExtensionStore::defaultStore()
+    
+ContentRuleListStore& ContentRuleListStore::legacyDefaultStore()
 {
-    static ContentExtensionStore* defaultStore = adoptRef(new ContentExtensionStore).leakRef();
+    const bool legacyFilename = true;
+    static ContentRuleListStore* defaultStore = adoptRef(new ContentRuleListStore(legacyFilename)).leakRef();
     return *defaultStore;
 }
-
-Ref<ContentExtensionStore> ContentExtensionStore::storeWithPath(const WTF::String& storePath)
+    
+ContentRuleListStore& ContentRuleListStore::nonLegacyDdefaultStore()
 {
-    return adoptRef(*new ContentExtensionStore(storePath));
+    const bool legacyFilename = false;
+    static ContentRuleListStore* defaultStore = adoptRef(new ContentRuleListStore(legacyFilename)).leakRef();
+    return *defaultStore;
+}
+    
+ContentRuleListStore& ContentRuleListStore::defaultStore(bool legacyFilename)
+{
+    if (legacyFilename)
+        return legacyDefaultStore();
+    return nonLegacyDdefaultStore();
 }
 
-ContentExtensionStore::ContentExtensionStore()
-    : ContentExtensionStore(defaultStorePath())
+Ref<ContentRuleListStore> ContentRuleListStore::storeWithPath(const WTF::String& storePath, bool legacyFilename)
+{
+    return adoptRef(*new ContentRuleListStore(storePath, legacyFilename));
+}
+
+ContentRuleListStore::ContentRuleListStore(bool legacyFilename)
+    : ContentRuleListStore(defaultStorePath(legacyFilename), legacyFilename)
 {
 }
 
-ContentExtensionStore::ContentExtensionStore(const WTF::String& storePath)
+ContentRuleListStore::ContentRuleListStore(const WTF::String& storePath, bool legacyFilename)
     : m_storePath(storePath)
-    , m_compileQueue(WorkQueue::create("ContentExtensionStore Compile Queue", WorkQueue::Type::Concurrent))
-    , m_readQueue(WorkQueue::create("ContentExtensionStore Read Queue"))
-    , m_removeQueue(WorkQueue::create("ContentExtensionStore Remove Queue"))
+    , m_compileQueue(WorkQueue::create("ContentRuleListStore Compile Queue", WorkQueue::Type::Concurrent))
+    , m_readQueue(WorkQueue::create("ContentRuleListStore Read Queue"))
+    , m_removeQueue(WorkQueue::create("ContentRuleListStore Remove Queue"))
+    , m_legacyFilename(legacyFilename)
 {
     WebCore::makeAllDirectories(storePath);
 }
 
-ContentExtensionStore::~ContentExtensionStore()
+ContentRuleListStore::~ContentRuleListStore()
 {
 }
 
-static const String& constructedPathPrefix()
+static const String& constructedPathPrefix(bool legacyFilename)
 {
-    static NeverDestroyed<String> prefix("ContentExtension-");
+    static NeverDestroyed<String> prefix("ContentRuleList-");
+    static NeverDestroyed<String> legacyPrefix("ContentExtension-");
+    if (legacyFilename)
+        return legacyPrefix;
     return prefix;
 }
 
-static const String constructedPathFilter()
+static const String constructedPathFilter(bool legacyFilename)
 {
-    return makeString(constructedPathPrefix(), '*');
+    return makeString(constructedPathPrefix(legacyFilename), '*');
 }
 
-static String constructedPath(const String& base, const String& identifier)
+static String constructedPath(const String& base, const String& identifier, bool legacyFilename)
 {
-    return WebCore::pathByAppendingComponent(base, makeString(constructedPathPrefix(), WebCore::encodeForFileName(identifier)));
+    return WebCore::pathByAppendingComponent(base, makeString(constructedPathPrefix(legacyFilename), WebCore::encodeForFileName(identifier)));
 }
 
 // The size and offset of the densely packed bytes in the file, not sizeof and offsetof, which would
 // represent the size and offset of the structure in memory, possibly with compiler-added padding.
-const size_t ContentExtensionFileHeaderSize = 2 * sizeof(uint32_t) + 5 * sizeof(uint64_t);
+const size_t ContentRuleListFileHeaderSize = 2 * sizeof(uint32_t) + 5 * sizeof(uint64_t);
 const size_t ConditionsApplyOnlyToDomainOffset = sizeof(uint32_t) + 5 * sizeof(uint64_t);
 
-struct ContentExtensionMetaData {
-    uint32_t version { ContentExtensionStore::CurrentContentExtensionFileVersion };
+struct ContentRuleListMetaData {
+    uint32_t version { ContentRuleListStore::CurrentContentRuleListFileVersion };
     uint64_t sourceSize { 0 };
     uint64_t actionsSize { 0 };
     uint64_t filtersWithoutConditionsBytecodeSize { 0 };
@@ -107,7 +126,7 @@ struct ContentExtensionMetaData {
     
     size_t fileSize() const
     {
-        return ContentExtensionFileHeaderSize
+        return ContentRuleListFileHeaderSize
             + sourceSize
             + actionsSize
             + filtersWithoutConditionsBytecodeSize
@@ -116,7 +135,7 @@ struct ContentExtensionMetaData {
     }
 };
 
-static Data encodeContentExtensionMetaData(const ContentExtensionMetaData& metaData)
+static Data encodeContentRuleListMetaData(const ContentRuleListMetaData& metaData)
 {
     WTF::Persistence::Encoder encoder;
 
@@ -128,11 +147,11 @@ static Data encodeContentExtensionMetaData(const ContentExtensionMetaData& metaD
     encoder << metaData.conditionedFiltersBytecodeSize;
     encoder << metaData.conditionsApplyOnlyToDomain;
 
-    ASSERT(encoder.bufferSize() == ContentExtensionFileHeaderSize);
+    ASSERT(encoder.bufferSize() == ContentRuleListFileHeaderSize);
     return Data(encoder.buffer(), encoder.bufferSize());
 }
 
-static bool decodeContentExtensionMetaData(ContentExtensionMetaData& metaData, const Data& fileData)
+static bool decodeContentRuleListMetaData(ContentRuleListMetaData& metaData, const Data& fileData)
 {
     bool success = false;
     fileData.apply([&metaData, &success, &fileData](const uint8_t* data, size_t size) {
@@ -162,13 +181,13 @@ static bool decodeContentExtensionMetaData(ContentExtensionMetaData& metaData, c
     return success;
 }
 
-static bool openAndMapContentExtension(const String& path, ContentExtensionMetaData& metaData, Data& fileData)
+static bool openAndMapContentRuleList(const String& path, ContentRuleListMetaData& metaData, Data& fileData)
 {
     fileData = mapFile(WebCore::fileSystemRepresentation(path).data());
     if (fileData.isNull())
         return false;
 
-    if (!decodeContentExtensionMetaData(metaData, fileData))
+    if (!decodeContentRuleListMetaData(metaData, fileData))
         return false;
 
     return true;
@@ -188,13 +207,13 @@ static bool writeDataToFile(const Data& fileData, WebCore::PlatformFileHandle fd
     return success;
 }
 
-static std::error_code compiledToFile(String&& json, const String& finalFilePath, ContentExtensionMetaData& metaData, Data& mappedData)
+static std::error_code compiledToFile(String&& json, const String& finalFilePath, ContentRuleListMetaData& metaData, Data& mappedData)
 {
     using namespace WebCore::ContentExtensions;
 
     class CompilationClient final : public ContentExtensionCompilationClient {
     public:
-        CompilationClient(WebCore::PlatformFileHandle fileHandle, ContentExtensionMetaData& metaData)
+        CompilationClient(WebCore::PlatformFileHandle fileHandle, ContentRuleListMetaData& metaData)
             : m_fileHandle(fileHandle)
             , m_metaData(metaData)
         {
@@ -266,7 +285,7 @@ static std::error_code compiledToFile(String&& json, const String& finalFilePath
             m_metaData.conditionedFiltersBytecodeSize = m_conditionFiltersBytecodeWritten;
             m_metaData.conditionsApplyOnlyToDomain = m_conditionsApplyOnlyToDomain;
             
-            Data header = encodeContentExtensionMetaData(m_metaData);
+            Data header = encodeContentRuleListMetaData(m_metaData);
             if (!m_fileError && WebCore::seekFile(m_fileHandle, 0ll, WebCore::FileSeekOrigin::SeekFromBeginning) == -1) {
                 WebCore::closeFile(m_fileHandle);
                 m_fileError = true;
@@ -290,7 +309,7 @@ static std::error_code compiledToFile(String&& json, const String& finalFilePath
         }
         
         WebCore::PlatformFileHandle m_fileHandle;
-        ContentExtensionMetaData& m_metaData;
+        ContentRuleListMetaData& m_metaData;
         size_t m_filtersWithoutConditionsBytecodeWritten { 0 };
         size_t m_filtersWithConditionBytecodeWritten { 0 };
         size_t m_conditionFiltersBytecodeWritten { 0 };
@@ -301,16 +320,16 @@ static std::error_code compiledToFile(String&& json, const String& finalFilePath
     };
 
     auto temporaryFileHandle = WebCore::invalidPlatformFileHandle;
-    String temporaryFilePath = WebCore::openTemporaryFile("ContentExtension", temporaryFileHandle);
+    String temporaryFilePath = WebCore::openTemporaryFile("ContentRuleList", temporaryFileHandle);
     if (temporaryFileHandle == WebCore::invalidPlatformFileHandle)
-        return ContentExtensionStore::Error::CompileFailed;
+        return ContentRuleListStore::Error::CompileFailed;
     
-    char invalidHeader[ContentExtensionFileHeaderSize];
+    char invalidHeader[ContentRuleListFileHeaderSize];
     memset(invalidHeader, 0xFF, sizeof(invalidHeader));
     // This header will be rewritten in CompilationClient::finalize.
     if (WebCore::writeToFile(temporaryFileHandle, invalidHeader, sizeof(invalidHeader)) == -1) {
         WebCore::closeFile(temporaryFileHandle);
-        return ContentExtensionStore::Error::CompileFailed;
+        return ContentRuleListStore::Error::CompileFailed;
     }
 
     CompilationClient compilationClient(temporaryFileHandle, metaData);
@@ -321,24 +340,24 @@ static std::error_code compiledToFile(String&& json, const String& finalFilePath
     }
     if (compilationClient.hadErrorWhileWritingToFile()) {
         WebCore::closeFile(temporaryFileHandle);
-        return ContentExtensionStore::Error::CompileFailed;
+        return ContentRuleListStore::Error::CompileFailed;
     }
     
     mappedData = adoptAndMapFile(temporaryFileHandle, 0, metaData.fileSize());
     if (mappedData.isNull())
-        return ContentExtensionStore::Error::CompileFailed;
+        return ContentRuleListStore::Error::CompileFailed;
 
     if (!WebCore::moveFile(temporaryFilePath, finalFilePath))
-        return ContentExtensionStore::Error::CompileFailed;
+        return ContentRuleListStore::Error::CompileFailed;
 
     return { };
 }
 
-static Ref<API::ContentExtension> createExtension(const String& identifier, const ContentExtensionMetaData& metaData, const Data& fileData)
+static Ref<API::ContentRuleList> createExtension(const String& identifier, const ContentRuleListMetaData& metaData, const Data& fileData)
 {
     auto sharedMemory = WebKit::SharedMemory::create(const_cast<uint8_t*>(fileData.data()), fileData.size(), WebKit::SharedMemory::Protection::ReadOnly);
-    const size_t headerAndSourceSize = ContentExtensionFileHeaderSize + metaData.sourceSize;
-    auto compiledContentExtensionData = WebKit::WebCompiledContentExtensionData(
+    const size_t headerAndSourceSize = ContentRuleListFileHeaderSize + metaData.sourceSize;
+    auto compiledContentRuleListData = WebKit::WebCompiledContentRuleListData(
         WTFMove(sharedMemory),
         fileData,
         ConditionsApplyOnlyToDomainOffset,
@@ -357,25 +376,25 @@ static Ref<API::ContentExtension> createExtension(const String& identifier, cons
             + metaData.filtersWithConditionsBytecodeSize,
         metaData.conditionedFiltersBytecodeSize
     );
-    auto compiledContentExtension = WebKit::WebCompiledContentExtension::create(WTFMove(compiledContentExtensionData));
-    return API::ContentExtension::create(identifier, WTFMove(compiledContentExtension));
+    auto compiledContentRuleList = WebKit::WebCompiledContentRuleList::create(WTFMove(compiledContentRuleListData));
+    return API::ContentRuleList::create(identifier, WTFMove(compiledContentRuleList));
 }
 
-void ContentExtensionStore::lookupContentExtension(const WTF::String& identifier, Function<void(RefPtr<API::ContentExtension>, std::error_code)> completionHandler)
+void ContentRuleListStore::lookupContentRuleList(const WTF::String& identifier, Function<void(RefPtr<API::ContentRuleList>, std::error_code)> completionHandler)
 {
-    m_readQueue->dispatch([protectedThis = makeRef(*this), identifier = identifier.isolatedCopy(), storePath = m_storePath.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
-        auto path = constructedPath(storePath, identifier);
+    m_readQueue->dispatch([protectedThis = makeRef(*this), identifier = identifier.isolatedCopy(), storePath = m_storePath.isolatedCopy(), legacyFilename = m_legacyFilename, completionHandler = WTFMove(completionHandler)]() mutable {
+        auto path = constructedPath(storePath, identifier, legacyFilename);
         
-        ContentExtensionMetaData metaData;
+        ContentRuleListMetaData metaData;
         Data fileData;
-        if (!openAndMapContentExtension(path, metaData, fileData)) {
+        if (!openAndMapContentRuleList(path, metaData, fileData)) {
             RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)] {
                 completionHandler(nullptr, Error::LookupFailed);
             });
             return;
         }
         
-        if (metaData.version != ContentExtensionStore::CurrentContentExtensionFileVersion) {
+        if (metaData.version != ContentRuleListStore::CurrentContentRuleListFileVersion) {
             RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)] {
                 completionHandler(nullptr, Error::VersionMismatch);
             });
@@ -388,14 +407,14 @@ void ContentExtensionStore::lookupContentExtension(const WTF::String& identifier
     });
 }
 
-void ContentExtensionStore::getAvailableContentExtensionIdentifiers(Function<void(WTF::Vector<WTF::String>)> completionHandler)
+void ContentRuleListStore::getAvailableContentRuleListIdentifiers(Function<void(WTF::Vector<WTF::String>)> completionHandler)
 {
-    m_readQueue->dispatch([protectedThis = makeRef(*this), storePath = m_storePath.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
+    m_readQueue->dispatch([protectedThis = makeRef(*this), storePath = m_storePath.isolatedCopy(), legacyFilename = m_legacyFilename, completionHandler = WTFMove(completionHandler)]() mutable {
 
-        Vector<String> fullPaths = WebCore::listDirectory(storePath, constructedPathFilter());
+        Vector<String> fullPaths = WebCore::listDirectory(storePath, constructedPathFilter(legacyFilename));
         Vector<String> identifiers;
         identifiers.reserveInitialCapacity(fullPaths.size());
-        const auto prefixLength = constructedPathPrefix().length();
+        const auto prefixLength = constructedPathPrefix(legacyFilename).length();
         for (const auto& path : fullPaths)
             identifiers.uncheckedAppend(WebCore::decodeFromFilename(path.substring(path.reverseFind('/') + 1 + prefixLength)));
 
@@ -405,13 +424,13 @@ void ContentExtensionStore::getAvailableContentExtensionIdentifiers(Function<voi
     });
 }
 
-void ContentExtensionStore::compileContentExtension(const WTF::String& identifier, WTF::String&& json, Function<void(RefPtr<API::ContentExtension>, std::error_code)> completionHandler)
+void ContentRuleListStore::compileContentRuleList(const WTF::String& identifier, WTF::String&& json, Function<void(RefPtr<API::ContentRuleList>, std::error_code)> completionHandler)
 {
     AtomicString::init();
-    m_compileQueue->dispatch([protectedThis = makeRef(*this), identifier = identifier.isolatedCopy(), json = json.isolatedCopy(), storePath = m_storePath.isolatedCopy(), completionHandler = WTFMove(completionHandler)] () mutable {
-        auto path = constructedPath(storePath, identifier);
+    m_compileQueue->dispatch([protectedThis = makeRef(*this), identifier = identifier.isolatedCopy(), legacyFilename = m_legacyFilename, json = json.isolatedCopy(), storePath = m_storePath.isolatedCopy(), completionHandler = WTFMove(completionHandler)] () mutable {
+        auto path = constructedPath(storePath, identifier, legacyFilename);
 
-        ContentExtensionMetaData metaData;
+        ContentRuleListMetaData metaData;
         Data fileData;
         auto error = compiledToFile(WTFMove(json), path, metaData, fileData);
         if (error) {
@@ -422,16 +441,16 @@ void ContentExtensionStore::compileContentExtension(const WTF::String& identifie
         }
 
         RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), identifier = WTFMove(identifier), fileData = WTFMove(fileData), metaData = WTFMove(metaData), completionHandler = WTFMove(completionHandler)] {
-            RefPtr<API::ContentExtension> contentExtension = createExtension(identifier, metaData, fileData);
-            completionHandler(contentExtension, { });
+            RefPtr<API::ContentRuleList> contentRuleList = createExtension(identifier, metaData, fileData);
+            completionHandler(contentRuleList, { });
         });
     });
 }
 
-void ContentExtensionStore::removeContentExtension(const WTF::String& identifier, Function<void(std::error_code)> completionHandler)
+void ContentRuleListStore::removeContentRuleList(const WTF::String& identifier, Function<void(std::error_code)> completionHandler)
 {
-    m_removeQueue->dispatch([protectedThis = makeRef(*this), identifier = identifier.isolatedCopy(), storePath = m_storePath.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
-        auto path = constructedPath(storePath, identifier);
+    m_removeQueue->dispatch([protectedThis = makeRef(*this), identifier = identifier.isolatedCopy(), storePath = m_storePath.isolatedCopy(), legacyFilename = m_legacyFilename, completionHandler = WTFMove(completionHandler)]() mutable {
+        auto path = constructedPath(storePath, identifier, legacyFilename);
 
         if (!WebCore::deleteFile(path)) {
             RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)] {
@@ -446,27 +465,27 @@ void ContentExtensionStore::removeContentExtension(const WTF::String& identifier
     });
 }
 
-void ContentExtensionStore::synchronousRemoveAllContentExtensions()
+void ContentRuleListStore::synchronousRemoveAllContentRuleLists()
 {
     for (const auto& path : WebCore::listDirectory(m_storePath, "*"))
         WebCore::deleteFile(path);
 }
 
-void ContentExtensionStore::invalidateContentExtensionVersion(const WTF::String& identifier)
+void ContentRuleListStore::invalidateContentRuleListVersion(const WTF::String& identifier)
 {
-    auto file = WebCore::openFile(constructedPath(m_storePath, identifier), WebCore::OpenForWrite);
+    auto file = WebCore::openFile(constructedPath(m_storePath, identifier, m_legacyFilename), WebCore::OpenForWrite);
     if (file == WebCore::invalidPlatformFileHandle)
         return;
-    ContentExtensionMetaData invalidHeader = {0, 0, 0, 0, 0, 0};
+    ContentRuleListMetaData invalidHeader = {0, 0, 0, 0, 0, 0};
     auto bytesWritten = WebCore::writeToFile(file, reinterpret_cast<const char*>(&invalidHeader), sizeof(invalidHeader));
     ASSERT_UNUSED(bytesWritten, bytesWritten == sizeof(invalidHeader));
     WebCore::closeFile(file);
 }
 
-void ContentExtensionStore::getContentExtensionSource(const WTF::String& identifier, Function<void(WTF::String)> completionHandler)
+void ContentRuleListStore::getContentRuleListSource(const WTF::String& identifier, Function<void(WTF::String)> completionHandler)
 {
-    m_readQueue->dispatch([protectedThis = makeRef(*this), identifier = identifier.isolatedCopy(), storePath = m_storePath.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
-        auto path = constructedPath(storePath, identifier);
+    m_readQueue->dispatch([protectedThis = makeRef(*this), identifier = identifier.isolatedCopy(), storePath = m_storePath.isolatedCopy(), legacyFilename = m_legacyFilename, completionHandler = WTFMove(completionHandler)]() mutable {
+        auto path = constructedPath(storePath, identifier, legacyFilename);
         
         auto complete = [protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)](String source) mutable {
             RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler), source = source.isolatedCopy()] {
@@ -474,9 +493,9 @@ void ContentExtensionStore::getContentExtensionSource(const WTF::String& identif
             });
         };
         
-        ContentExtensionMetaData metaData;
+        ContentRuleListMetaData metaData;
         Data fileData;
-        if (!openAndMapContentExtension(path, metaData, fileData)) {
+        if (!openAndMapContentRuleList(path, metaData, fileData)) {
             complete({ });
             return;
         }
@@ -487,8 +506,8 @@ void ContentExtensionStore::getContentExtensionSource(const WTF::String& identif
                 complete({ });
                 return;
             }
-            bool is8Bit = fileData.data()[ContentExtensionFileHeaderSize];
-            size_t start = ContentExtensionFileHeaderSize + sizeof(bool);
+            bool is8Bit = fileData.data()[ContentRuleListFileHeaderSize];
+            size_t start = ContentRuleListFileHeaderSize + sizeof(bool);
             size_t length = metaData.sourceSize - sizeof(bool);
             if (is8Bit)
                 complete(String(fileData.data() + start, length));
@@ -504,9 +523,9 @@ void ContentExtensionStore::getContentExtensionSource(const WTF::String& identif
     });
 }
 
-const std::error_category& contentExtensionStoreErrorCategory()
+const std::error_category& contentRuleListStoreErrorCategory()
 {
-    class ContentExtensionStoreErrorCategory : public std::error_category {
+    class ContentRuleListStoreErrorCategory : public std::error_category {
         const char* name() const noexcept final
         {
             return "content extension store";
@@ -514,14 +533,14 @@ const std::error_category& contentExtensionStoreErrorCategory()
 
         std::string message(int errorCode) const final
         {
-            switch (static_cast<ContentExtensionStore::Error>(errorCode)) {
-            case ContentExtensionStore::Error::LookupFailed:
+            switch (static_cast<ContentRuleListStore::Error>(errorCode)) {
+            case ContentRuleListStore::Error::LookupFailed:
                 return "Unspecified error during lookup.";
-            case ContentExtensionStore::Error::VersionMismatch:
+            case ContentRuleListStore::Error::VersionMismatch:
                 return "Version of file does not match version of interpreter.";
-            case ContentExtensionStore::Error::CompileFailed:
+            case ContentRuleListStore::Error::CompileFailed:
                 return "Unspecified error during compile.";
-            case ContentExtensionStore::Error::RemoveFailed:
+            case ContentRuleListStore::Error::RemoveFailed:
                 return "Unspecified error during remove.";
             }
 
@@ -529,8 +548,8 @@ const std::error_category& contentExtensionStoreErrorCategory()
         }
     };
 
-    static NeverDestroyed<ContentExtensionStoreErrorCategory> contentExtensionErrorCategory;
-    return contentExtensionErrorCategory;
+    static NeverDestroyed<ContentRuleListStoreErrorCategory> contentRuleListErrorCategory;
+    return contentRuleListErrorCategory;
 }
 
 } // namespace API

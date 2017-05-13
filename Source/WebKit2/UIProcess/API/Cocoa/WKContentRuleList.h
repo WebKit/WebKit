@@ -23,20 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WKContentExtensionStore.h>
+#import <WebKit/WKFoundation.h>
 
 #if WK_API_ENABLED
 
-@interface WKContentExtensionStore (WKPrivate)
+WK_CLASS_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA))
+@interface WKContentRuleList : NSObject
 
-// For testing only.
-- (void)_removeAllContentExtensions;
-- (void)_invalidateContentExtensionVersionForIdentifier:(NSString *)identifier;
-- (void)_getContentExtensionSourceForIdentifier:(NSString *)identifier completionHandler:(void (^)(NSString*))completionHandler;
-
-// NS_RELEASES_ARGUMENT to keep peak memory usage low.
-- (void)_compileContentExtensionForIdentifier:(NSString *)identifier encodedContentExtension:(NSString *) NS_RELEASES_ARGUMENT encodedContentExtension completionHandler:(void (^)(WKContentExtension *, NSError *))completionHandler;
+/*! @abstract A copy of the identifier of the content extension. */
+@property (nonatomic, readonly, copy) NSString *identifier;
 
 @end
 
-#endif
+#endif // WK_API_ENABLED
