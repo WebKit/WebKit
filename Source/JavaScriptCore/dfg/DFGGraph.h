@@ -33,9 +33,7 @@
 #include "DFGArgumentPosition.h"
 #include "DFGBasicBlock.h"
 #include "DFGFrozenValue.h"
-#include "DFGLongLivedState.h"
 #include "DFGNode.h"
-#include "DFGNodeAllocator.h"
 #include "DFGPlan.h"
 #include "DFGPropertyTypeKey.h"
 #include "DFGScannable.h"
@@ -126,7 +124,7 @@ enum AddSpeculationMode {
 // Nodes that are 'dead' remain in the vector with refCount 0.
 class Graph : public virtual Scannable {
 public:
-    Graph(VM&, Plan&, LongLivedState&);
+    Graph(VM&, Plan&);
     ~Graph();
     
     void changeChild(Edge& edge, Node* newNode)
@@ -186,22 +184,20 @@ public:
     template<typename... Params>
     Node* addNode(Params... params)
     {
-        Node* node = new (m_allocator) Node(params...);
-        addNodeToMapByIndex(node);
-        return node;
+        return m_nodes.addNew(params...);
     }
+
     template<typename... Params>
     Node* addNode(SpeculatedType type, Params... params)
     {
-        Node* node = new (m_allocator) Node(params...);
+        Node* node = m_nodes.addNew(params...);
         node->predict(type);
-        addNodeToMapByIndex(node);
         return node;
     }
 
     void deleteNode(Node*);
-    unsigned maxNodeCount() const { return m_nodesByIndex.size(); }
-    Node* nodeAt(unsigned index) const { return m_nodesByIndex[index]; }
+    unsigned maxNodeCount() const { return m_nodes.size(); }
+    Node* nodeAt(unsigned index) const { return m_nodes[index]; }
     void packNodeIndices();
 
     void dethread();
@@ -923,8 +919,6 @@ public:
     CodeBlock* m_codeBlock;
     CodeBlock* m_profiledBlock;
     
-    NodeAllocator& m_allocator;
-
     Vector< RefPtr<BasicBlock> , 8> m_blocks;
     Vector<Edge, 16> m_varArgChildren;
 
@@ -1020,8 +1014,6 @@ public:
     RegisteredStructure symbolStructure;
 
 private:
-    void addNodeToMapByIndex(Node*);
-
     bool isStringPrototypeMethodSane(JSGlobalObject*, UniquedStringImpl*);
 
     void handleSuccessor(Vector<BasicBlock*, 16>& worklist, BasicBlock*, BasicBlock* successor);
@@ -1054,8 +1046,7 @@ private:
         return bytecodeCanTruncateInteger(add->arithNodeFlags()) ? SpeculateInt32AndTruncateConstants : DontSpeculateInt32;
     }
 
-    Vector<Node*, 0, UnsafeVectorOverflow> m_nodesByIndex;
-    Vector<unsigned, 0, UnsafeVectorOverflow> m_nodeIndexFreeList;
+    B3::SparseCollection<Node> m_nodes;
     SegmentedVector<RegisteredStructureSet, 16> m_structureSets;
 };
 

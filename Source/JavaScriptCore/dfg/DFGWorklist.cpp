@@ -27,7 +27,6 @@
 #include "DFGWorklist.h"
 
 #include "CodeBlock.h"
-#include "DFGLongLivedState.h"
 #include "DFGSafepoint.h"
 #include "DeferGC.h"
 #include "JSCInlines.h"
@@ -109,7 +108,7 @@ protected:
             dataLog("Heap is stoped but here we are! (1)\n");
             RELEASE_ASSERT_NOT_REACHED();
         }
-        m_plan->compileInThread(*m_longLivedState, &m_data);
+        m_plan->compileInThread(&m_data);
         if (m_plan->stage != Plan::Cancelled) {
             if (m_plan->vm->heap.collectorBelievesThatTheWorldIsStopped()) {
                 dataLog("Heap is stopped but here we are! (2)\n");
@@ -147,7 +146,6 @@ protected:
             Thread::current().changePriority(m_relativePriority);
         
         m_compilationScope = std::make_unique<CompilationScope>();
-        m_longLivedState = std::make_unique<LongLivedState>();
     }
     
     void threadIsStopping(const AbstractLocker&) override
@@ -160,7 +158,6 @@ protected:
         ASSERT(!m_plan);
         
         m_compilationScope = nullptr;
-        m_longLivedState = nullptr;
         m_plan = nullptr;
     }
     
@@ -169,7 +166,6 @@ private:
     ThreadData& m_data;
     int m_relativePriority;
     std::unique_ptr<CompilationScope> m_compilationScope;
-    std::unique_ptr<LongLivedState> m_longLivedState;
     RefPtr<Plan> m_plan;
 };
 

@@ -27,7 +27,6 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "DFGAllocator.h"
 #include "DFGNode.h"
 
 namespace JSC { namespace DFG {

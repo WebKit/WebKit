@@ -1,3 +1,44 @@
+2017-05-12  Geoffrey Garen  <ggaren@apple.com>
+
+        [JSC] DFG::Node should not have its own allocator
+        https://bugs.webkit.org/show_bug.cgi?id=160098
+
+        Reviewed by Saam Barati.
+
+        I just rebased the patch from <http://trac.webkit.org/changeset/203808>.
+
+        I ran Octane and JetStream locally on a MacBook Air and I wasn't able to
+        reproduce a regression. Let's land this again and see what the bots say.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * b3/B3SparseCollection.h:
+        (JSC::B3::SparseCollection::packIndices):
+        * dfg/DFGAllocator.h: Removed.
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compileImpl):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::Graph):
+        (JSC::DFG::Graph::~Graph):
+        (JSC::DFG::Graph::deleteNode):
+        (JSC::DFG::Graph::packNodeIndices):
+        (JSC::DFG::Graph::addNodeToMapByIndex): Deleted.
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::addNode):
+        (JSC::DFG::Graph::maxNodeCount):
+        (JSC::DFG::Graph::nodeAt):
+        * dfg/DFGLongLivedState.cpp: Removed.
+        * dfg/DFGLongLivedState.h: Removed.
+        * dfg/DFGNode.h:
+        * dfg/DFGNodeAllocator.h:
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThread):
+        (JSC::DFG::Plan::compileInThreadImpl):
+        * dfg/DFGPlan.h:
+        * dfg/DFGWorklist.cpp:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+
 2017-05-12  Keith Miller  <keith_miller@apple.com>
 
         Use Mach exceptions instead of signals where possible

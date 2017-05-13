@@ -169,7 +169,7 @@ bool Plan::reportCompileTimes() const
         || (Options::reportFTLCompileTimes() && isFTL(mode));
 }
 
-void Plan::compileInThread(LongLivedState& longLivedState, ThreadData* threadData)
+void Plan::compileInThread(ThreadData* threadData)
 {
     this->threadData = threadData;
     
@@ -185,7 +185,7 @@ void Plan::compileInThread(LongLivedState& longLivedState, ThreadData* threadDat
     if (logCompilationChanges(mode) || Options::reportDFGPhaseTimes())
         dataLog("DFG(Plan) compiling ", *codeBlock, " with ", mode, ", number of instructions = ", codeBlock->instructionCount(), "\n");
 
-    CompilationPath path = compileInThreadImpl(longLivedState);
+    CompilationPath path = compileInThreadImpl();
 
     RELEASE_ASSERT(path == CancelPath || finalizer);
     RELEASE_ASSERT((path == CancelPath) == (stage == Cancelled));
@@ -235,7 +235,7 @@ void Plan::compileInThread(LongLivedState& longLivedState, ThreadData* threadDat
     }
 }
 
-Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
+Plan::CompilationPath Plan::compileInThreadImpl()
 {
     cleanMustHandleValuesIfNecessary();
     
@@ -245,7 +245,7 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
         dataLog("\n");
     }
     
-    Graph dfg(*vm, *this, longLivedState);
+    Graph dfg(*vm, *this);
     
     if (!parse(dfg)) {
         finalizer = std::make_unique<FailedFinalizer>(*this);

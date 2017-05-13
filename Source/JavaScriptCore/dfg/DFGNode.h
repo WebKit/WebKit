@@ -27,6 +27,7 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "B3SparseCollection.h"
 #include "BasicBlockLocation.h"
 #include "CodeBlock.h"
 #include "DFGAbstractValue.h"
@@ -246,6 +247,7 @@ struct CallDOMGetterData {
 //
 // Node represents a single operation in the data flow graph.
 struct Node {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static const char HashSetTemplateInstantiationString[];
     
@@ -2533,7 +2535,7 @@ public:
     AdjacencyList children;
 
 private:
-    friend class Graph;
+    friend class B3::SparseCollection<Node>;
 
     unsigned m_index { std::numeric_limits<unsigned>::max() };
     unsigned m_op : 10; // real type is NodeType
