@@ -1,3 +1,18 @@
+2017-05-12  Simon Fraser  <simon.fraser@apple.com>
+
+        The rects returned by Element/Range.getClientRects() should not be rounded
+        https://bugs.webkit.org/show_bug.cgi?id=172057
+
+        Reviewed by Chris Dumez.
+
+        Fix createDOMRectVector() to not expand the rects to integer boundaries (which
+        quad.enclosingBoundingBox() does), but to return rects with floating point
+        values. This matches Chrome and Firefox, and matches getBoundingClientRect(),
+        which does not integral snap.
+
+        * dom/DOMRect.cpp:
+        (WebCore::createDOMRectVector):
+
 2017-05-12  Jiewen Tan  <jiewen_tan@apple.com>
 
         Elements should be inserted into a template element as its content's last child

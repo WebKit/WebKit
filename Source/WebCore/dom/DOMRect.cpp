@@ -35,7 +35,7 @@ Vector<Ref<DOMRect>> createDOMRectVector(const Vector<FloatQuad>& quads)
     Vector<Ref<DOMRect>> result;
     result.reserveInitialCapacity(quads.size());
     for (auto& quad : quads)
-        result.uncheckedAppend(DOMRect::create(quad.enclosingBoundingBox()));
+        result.uncheckedAppend(DOMRect::create(quad.boundingBox()));
     return result;
 }
 

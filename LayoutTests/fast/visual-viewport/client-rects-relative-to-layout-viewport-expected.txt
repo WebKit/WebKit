@@ -16,7 +16,7 @@ visualViewportRect: 476, 526 - 392.5 x 292.5
 fixed client bounds: 12, 10 - 30 x 20
 fixed client rect: 12, 10 - 30 x 20
 absolute client bounds: 36.5, -133.5 - 50 x 25
-absolute client rect: 36, -134 - 51 x 26
+absolute client rect: 36.5, -133.5 - 50 x 25
 
 Scrolled to 100, 776
 layoutViewport: 83.5, 483.5 - 785 x 585
@@ -24,7 +24,7 @@ visualViewportRect: 100, 776 - 392.5 x 292.5
 fixed client bounds: 12, 10 - 30 x 20
 fixed client rect: 12, 10 - 30 x 20
 absolute client bounds: 36.5, -383.5 - 50 x 25
-absolute client rect: 36, -384 - 51 x 26
+absolute client rect: 36.5, -383.5 - 50 x 25
 
 Scrolled to 50, 300
 layoutViewport: 50, 300 - 785 x 585

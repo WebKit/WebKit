@@ -1,3 +1,32 @@
+2017-05-12  Simon Fraser  <simon.fraser@apple.com>
+
+        The rects returned by Element/Range.getClientRects() should not be rounded
+        https://bugs.webkit.org/show_bug.cgi?id=172057
+
+        Reviewed by Chris Dumez.
+
+        Fix tests that were sensitive to rounding. I had to mark fast/text/multiglyph-characters.html
+        as failing (webkit.org/b/172056).
+
+        * TestExpectations:
+        * fast/dom/Document/CaretRangeFromPoint/caretRangeFromPoint-in-zoom-and-scroll.html:
+        * fast/dom/Range/getClientRects-expected.txt:
+        * fast/dom/Range/getClientRects.html:
+        * fast/dom/Range/simple-line-layout-getclientrects-expected.html:
+        * fast/dom/Range/simple-line-layout-getclientrects.html:
+        * fast/visual-viewport/client-rects-relative-to-layout-viewport-expected.txt:
+        * platform/ios/TestExpectations:
+        * platform/ios/fast/multicol/client-rects-expected.txt:
+        * platform/ios/fast/multicol/client-rects-spanners-complex-expected.txt:
+        * platform/ios/fast/multicol/client-rects-spanners-expected.txt:
+        * platform/ios/fast/multicol/newmulticol/client-rects-expected.txt:
+        * platform/ios/fast/transforms/bounding-rect-zoom-expected.txt:
+        * platform/mac/fast/multicol/client-rects-expected.txt:
+        * platform/mac/fast/multicol/client-rects-spanners-complex-expected.txt:
+        * platform/mac/fast/multicol/client-rects-spanners-expected.txt:
+        * platform/mac/fast/multicol/newmulticol/client-rects-expected.txt:
+        * platform/mac/fast/transforms/bounding-rect-zoom-expected.txt:
+
 2017-05-12  Jiewen Tan  <jiewen_tan@apple.com>
 
         Elements should be inserted into a template element as its content's last child
