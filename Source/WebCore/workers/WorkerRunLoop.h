@@ -1,7 +1,6 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
- * Copyright (C) 2017 Apple Inc.  All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
@@ -71,14 +70,11 @@ namespace WebCore {
         public:
             Task(ScriptExecutionContext::Task&&, const String& mode);
             const String& mode() const { return m_mode; }
+            void performTask(const WorkerRunLoop&, WorkerGlobalScope*);
 
         private:
-            void performTask(WorkerGlobalScope*);
-
             ScriptExecutionContext::Task m_task;
             String m_mode;
-
-            friend class WorkerRunLoop;
         };
 
     private:
