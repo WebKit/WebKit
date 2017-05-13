@@ -1,3 +1,17 @@
+2017-05-13  Zalan Bujtas  <zalan@apple.com>
+
+        AccessibilityRenderObject::textUnderElement needs to assert on unclean tree.
+        https://bugs.webkit.org/show_bug.cgi?id=172065
+
+        Reviewed by Simon Fraser.
+
+        r192103 changed the assert logic incorrectly. If the tree is dirty, regardless of the renderer's type,
+        TextIterator will end up forcing style update/layout on the render tree.
+        The original assert would have hit with bug 171546 prior to r216726.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::textUnderElement):
+
 2017-05-12  Simon Fraser  <simon.fraser@apple.com>
 
         event.clientX/clientY should be in layout viewport coordinates
