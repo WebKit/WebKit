@@ -1,0 +1,114 @@
+body {
+    font-family: "Helvetica Neue", Helvetica, Verdana, sans-serif;
+    font-size: 14px;
+    line-height: 19px;
+    -webkit-user-select: none;
+}
+
+::selection {
+    background-color: rgb(200, 0, 0);
+    color: white;
+}
+
+img {
+    -webkit-user-select: none;
+    -webkit-user-drag: none;
+}
+
+main {
+    width: 800px;
+    margin: auto;
+    text-align: center;
+    padding: 10px;
+}
+
+#logo {
+    font-family: "Gill Sans", sans-serif;
+    margin-top: 60px;
+    line-height: 50px;
+    font-size: 50px;
+    color: color: rgb(50, 50, 50);
+}
+
+#logo span {
+    margin: 0 2px;
+    padding: 0 2px;
+}
+
+#logo .normal {
+    background-color: rgb(200, 0, 0);
+    color: white;
+}
+
+#logo .light {
+    color: rgb(100, 100, 100);
+    font-family: GillSans-Light, sans-serif;
+}
+
+#logo .highlight {
+    color: rgb(200, 0, 0);
+    font-weight: bold;
+    padding-right: 0;
+    margin-right: 0;
+}
+
+hr {
+    border: 2px solid rgb(200, 0, 0);
+    border-radius: 2px;
+    margin: 20px 0;
+}
+
+.benchmark {
+    display: block;
+    text-decoration: none;
+    margin-top: 40px;
+    padding: 30px 0 10px 0;
+    border-radius: 20px;
+    cursor: pointer;
+    outline: none;
+    border: 4px solid transparent;
+}
+
+.benchmark:focus {
+    border: 4px solid rgb(200, 0, 0);
+}
+
+.benchmark p {
+    color: rgb(128, 128, 128);
+    -webkit-user-select: text;
+}
+
+.benchmark:hover img {
+    -moz-filter: invert(100%) brightness(200);
+    -webkit-filter: invert(100%) brightness(200);
+    filter: invert(100%) brightness(200);
+}
+
+.benchmark:hover {
+    background-color: rgb(200, 0, 0);
+}
+
+.benchmark:hover * {
+    color: white !important;
+}
+
+#ares-6-logo {
+    width: 625px;
+    height: 137px;
+}
+
+#motionmark-logo {
+    width: 625px;
+    height: 154px;
+}
+
+#speedometer-logo {
+    width: 625px;
+    height: 116px;
+}
+
+#jetstream-logo {
+    width: 621px;
+    height: 96px;
+}
+
