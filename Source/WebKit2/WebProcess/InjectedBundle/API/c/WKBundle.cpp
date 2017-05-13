@@ -218,7 +218,7 @@ void WKBundleSetDatabaseQuota(WKBundleRef bundleRef, uint64_t quota)
 
 WKDataRef WKBundleCreateWKDataFromUInt8Array(WKBundleRef bundle, JSContextRef context, JSValueRef data)
 {
-    return toAPI(toImpl(bundle)->createWebDataFromUint8Array(context, data).leakRef());
+    return toAPI(&toImpl(bundle)->createWebDataFromUint8Array(context, data).leakRef());
 }
 
 int WKBundleNumberOfPages(WKBundleRef bundleRef, WKBundleFrameRef frameRef, double pageWidthInPixels, double pageHeightInPixels)

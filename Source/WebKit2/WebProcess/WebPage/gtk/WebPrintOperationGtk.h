@@ -28,8 +28,8 @@
 
 #include "PrintInfo.h"
 #include <WebCore/RefPtrCairo.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 #include <wtf/glib/GRefPtr.h>
 
 typedef struct _GtkPrintSettings GtkPrintSettings;
@@ -48,7 +48,7 @@ class WebPage;
 
 class WebPrintOperationGtk : public RefCounted<WebPrintOperationGtk> {
 public:
-    static PassRefPtr<WebPrintOperationGtk> create(WebPage*, const PrintInfo&);
+    static RefPtr<WebPrintOperationGtk> create(WebPage*, const PrintInfo&);
     virtual ~WebPrintOperationGtk();
 
     WebCore::PrintContext* printContext() const { return m_printContext; }

@@ -51,7 +51,7 @@ private:
     {
     }
 
-    PassRefPtr<WebCore::Element> createAnnotationElement() override;
+    Ref<WebCore::Element> createAnnotationElement() override;
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"

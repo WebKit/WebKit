@@ -79,10 +79,8 @@ PDFPluginTextAnnotation::~PDFPluginTextAnnotation()
     element()->removeEventListener(eventNames().keydownEvent, *eventListener(), false);
 }
 
-PassRefPtr<Element> PDFPluginTextAnnotation::createAnnotationElement()
+Ref<Element> PDFPluginTextAnnotation::createAnnotationElement()
 {
-    RefPtr<Element> element;
-
     Document& document = parent()->document();
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
@@ -90,27 +88,23 @@ PassRefPtr<Element> PDFPluginTextAnnotation::createAnnotationElement()
 #pragma clang diagnostic pop
     bool isMultiline = textAnnotation.isMultiline;
 
-    if (isMultiline)
-        element = document.createElement(textareaTag, false);
-    else
-        element = document.createElement(inputTag, false);
-
+    auto element = document.createElement(isMultiline ? textareaTag : inputTag, false);
     element->addEventListener(eventNames().keydownEvent, *eventListener(), false);
 
-    StyledElement* styledElement = static_cast<StyledElement*>(element.get());
+    auto& styledElement = downcast<StyledElement>(element.get());
 
     if (!textAnnotation)
         return element;
 
     // FIXME: Match font weight and style as well?
-    styledElement->setInlineStyleProperty(CSSPropertyColor, colorFromNSColor(textAnnotation.fontColor).serialized());
-    styledElement->setInlineStyleProperty(CSSPropertyFontFamily, textAnnotation.font.familyName);
-    styledElement->setInlineStyleProperty(CSSPropertyTextAlign, cssAlignmentValueForNSTextAlignment(textAnnotation.alignment));
+    styledElement.setInlineStyleProperty(CSSPropertyColor, colorFromNSColor(textAnnotation.fontColor).serialized());
+    styledElement.setInlineStyleProperty(CSSPropertyFontFamily, textAnnotation.font.familyName);
+    styledElement.setInlineStyleProperty(CSSPropertyTextAlign, cssAlignmentValueForNSTextAlignment(textAnnotation.alignment));
 
     if (isMultiline)
-        downcast<HTMLTextAreaElement>(styledElement)->setValue(textAnnotation.stringValue);
+        downcast<HTMLTextAreaElement>(styledElement).setValue(textAnnotation.stringValue);
     else
-        downcast<HTMLInputElement>(styledElement)->setValue(textAnnotation.stringValue);
+        downcast<HTMLInputElement>(styledElement).setValue(textAnnotation.stringValue);
 
     return element;
 }

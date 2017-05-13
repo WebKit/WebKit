@@ -1,3 +1,83 @@
+2017-05-12  Chris Dumez  <cdumez@apple.com>
+
+        Drop remaining uses of PassRefPtr in WebKit2/WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=172055
+
+        Reviewed by Alex Christensen.
+
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInScriptWorld.mm:
+        (+[WKWebProcessPlugInScriptWorld normalWorld]):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (contextMenuItems):
+        * WebProcess/InjectedBundle/API/c/WKBundleScriptWorld.cpp:
+        (WKBundleScriptWorldNormalWorld):
+        * WebProcess/InjectedBundle/API/gtk/WebKitScriptWorld.cpp:
+        (webkitScriptWorldCreate):
+        * WebProcess/InjectedBundle/DOM/InjectedBundleCSSStyleDeclarationHandle.cpp:
+        (WebKit::InjectedBundleCSSStyleDeclarationHandle::getOrCreate):
+        * WebProcess/InjectedBundle/DOM/InjectedBundleCSSStyleDeclarationHandle.h:
+        * WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.cpp:
+        (WebKit::InjectedBundleRangeHandle::getOrCreate):
+        (WebKit::InjectedBundleRangeHandle::create):
+        (WebKit::InjectedBundleRangeHandle::coreRange):
+        (WebKit::InjectedBundleRangeHandle::renderedImage):
+        * WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::create):
+        (WebKit::InjectedBundle::createWebDataFromUint8Array):
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+        * WebProcess/InjectedBundle/InjectedBundleBackForwardList.cpp:
+        (WebKit::InjectedBundleBackForwardList::itemAtIndex):
+        * WebProcess/InjectedBundle/InjectedBundleBackForwardList.h:
+        (WebKit::InjectedBundleBackForwardList::detach):
+        * WebProcess/InjectedBundle/InjectedBundleBackForwardListItem.h:
+        (WebKit::InjectedBundleBackForwardListItem::create):
+        (WebKit::InjectedBundleBackForwardListItem::InjectedBundleBackForwardListItem):
+        * WebProcess/InjectedBundle/InjectedBundleHitTestResult.cpp:
+        (WebKit::InjectedBundleHitTestResult::nodeHandle):
+        (WebKit::InjectedBundleHitTestResult::urlElementHandle):
+        * WebProcess/InjectedBundle/InjectedBundleHitTestResult.h:
+        * WebProcess/InjectedBundle/InjectedBundleNavigationAction.cpp:
+        (WebKit::InjectedBundleNavigationAction::create):
+        (WebKit::InjectedBundleNavigationAction::InjectedBundleNavigationAction):
+        * WebProcess/InjectedBundle/InjectedBundleNavigationAction.h:
+        * WebProcess/InjectedBundle/InjectedBundleScriptWorld.cpp:
+        (WebKit::InjectedBundleScriptWorld::getOrCreate):
+        (WebKit::InjectedBundleScriptWorld::normalWorld):
+        * WebProcess/InjectedBundle/InjectedBundleScriptWorld.h:
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::create):
+        (WebKit::NetscapePlugin::NetscapePlugin):
+        (WebKit::NetscapePlugin::supportsSnapshotting):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        * WebProcess/Plugins/PDF/PDFPluginAnnotation.h:
+        * WebProcess/Plugins/PDF/PDFPluginAnnotation.mm:
+        (WebKit::PDFPluginAnnotation::create):
+        * WebProcess/Plugins/PDF/PDFPluginChoiceAnnotation.h:
+        * WebProcess/Plugins/PDF/PDFPluginChoiceAnnotation.mm:
+        (WebKit::PDFPluginChoiceAnnotation::createAnnotationElement):
+        * WebProcess/Plugins/PDF/PDFPluginPasswordField.h:
+        * WebProcess/Plugins/PDF/PDFPluginPasswordField.mm:
+        (WebKit::PDFPluginPasswordField::createAnnotationElement):
+        * WebProcess/Plugins/PDF/PDFPluginTextAnnotation.h:
+        * WebProcess/Plugins/PDF/PDFPluginTextAnnotation.mm:
+        (WebKit::PDFPluginTextAnnotation::createAnnotationElement):
+        * WebProcess/UserContent/WebUserContentController.cpp:
+        (WebKit::worldMap):
+        (WebKit::WebUserMessageHandlerDescriptorProxy::create):
+        * WebProcess/WebCoreSupport/mac/WebDragClientMac.mm:
+        (WebKit::convertImageToBitmap):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::addUserScript):
+        (WebKit::WebPage::addUserStyleSheet):
+        * WebProcess/WebPage/gtk/WebPrintOperationGtk.cpp:
+        (WebKit::WebPrintOperationGtk::create):
+        * WebProcess/WebPage/gtk/WebPrintOperationGtk.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::rangeForPosition):
+        (WebKit::rangeAtWordBoundaryForPosition):
+        * WebProcess/WebPage/mac/PlatformCAAnimationRemote.h:
+
 2017-05-12  Alex Christensen  <achristensen@webkit.org>
 
         Rename WKContentExtension to WKContentRuleList

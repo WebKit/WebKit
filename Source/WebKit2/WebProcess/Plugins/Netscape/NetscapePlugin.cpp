@@ -53,18 +53,18 @@ namespace WebKit {
 // The plug-in that we're currently calling NPP_New for.
 static NetscapePlugin* currentNPPNewPlugin;
 
-RefPtr<NetscapePlugin> NetscapePlugin::create(PassRefPtr<NetscapePluginModule> pluginModule)
+RefPtr<NetscapePlugin> NetscapePlugin::create(RefPtr<NetscapePluginModule>&& pluginModule)
 {
     if (!pluginModule)
         return nullptr;
 
-    return adoptRef(*new NetscapePlugin(pluginModule));
+    return adoptRef(*new NetscapePlugin(pluginModule.releaseNonNull()));
 }
     
-NetscapePlugin::NetscapePlugin(PassRefPtr<NetscapePluginModule> pluginModule)
+NetscapePlugin::NetscapePlugin(Ref<NetscapePluginModule>&& pluginModule)
     : Plugin(NetscapePluginType)
     , m_nextRequestID(0)
-    , m_pluginModule(pluginModule)
+    , m_pluginModule(WTFMove(pluginModule))
     , m_npWindow()
     , m_isStarted(false)
 #if PLATFORM(COCOA)
@@ -1102,7 +1102,7 @@ Scrollbar* NetscapePlugin::verticalScrollbar()
 bool NetscapePlugin::supportsSnapshotting() const
 {
 #if PLATFORM(COCOA)
-    return m_pluginModule && m_pluginModule->pluginQuirks().contains(PluginQuirks::SupportsSnapshotting);
+    return m_pluginModule->pluginQuirks().contains(PluginQuirks::SupportsSnapshotting);
 #endif
     return false;
 }

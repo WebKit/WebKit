@@ -53,9 +53,9 @@ PDFPluginPasswordField::~PDFPluginPasswordField()
     element()->removeEventListener(eventNames().keyupEvent, *eventListener(), false);
 }
 
-PassRefPtr<Element> PDFPluginPasswordField::createAnnotationElement()
+Ref<Element> PDFPluginPasswordField::createAnnotationElement()
 {
-    RefPtr<Element> element = PDFPluginTextAnnotation::createAnnotationElement();
+    auto element = PDFPluginTextAnnotation::createAnnotationElement();
     element->setAttribute(typeAttr, "password");
     element->addEventListener(eventNames().keyupEvent, *eventListener(), false);
     return element;

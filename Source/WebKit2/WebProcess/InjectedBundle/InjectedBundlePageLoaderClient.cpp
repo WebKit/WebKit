@@ -267,7 +267,7 @@ void InjectedBundlePageLoaderClient::didClearWindowObjectForFrame(WebPage* page,
     if (!m_client.didClearWindowObjectForFrame)
         return;
 
-    m_client.didClearWindowObjectForFrame(toAPI(page), toAPI(frame), toAPI(InjectedBundleScriptWorld::getOrCreate(world).get()), m_client.base.clientInfo);
+    m_client.didClearWindowObjectForFrame(toAPI(page), toAPI(frame), toAPI(InjectedBundleScriptWorld::getOrCreate(world).ptr()), m_client.base.clientInfo);
 }
 
 void InjectedBundlePageLoaderClient::didCancelClientRedirectForFrame(WebPage* page, WebFrame* frame)

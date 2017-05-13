@@ -52,7 +52,7 @@ class NetscapePluginUnix;
 
 class NetscapePlugin : public Plugin {
 public:
-    static RefPtr<NetscapePlugin> create(PassRefPtr<NetscapePluginModule>);
+    static RefPtr<NetscapePlugin> create(RefPtr<NetscapePluginModule>&&);
     virtual ~NetscapePlugin();
 
     static RefPtr<NetscapePlugin> fromNPP(NPP);
@@ -159,7 +159,7 @@ public:
     WebCore::IntPoint convertToRootView(const WebCore::IntPoint&) const override;
 
 private:
-    NetscapePlugin(PassRefPtr<NetscapePluginModule> pluginModule);
+    explicit NetscapePlugin(Ref<NetscapePluginModule>&&);
 
     void callSetWindow();
     void callSetWindowInvisible();
@@ -286,7 +286,7 @@ private:
     StreamsMap m_streams;
     HashMap<void*, std::pair<RefPtr<NetscapePluginStream>, String>> m_redirects;
 
-    RefPtr<NetscapePluginModule> m_pluginModule;
+    Ref<NetscapePluginModule> m_pluginModule;
     NPP_t m_npp;
     NPWindow m_npWindow;
 

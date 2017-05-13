@@ -39,11 +39,11 @@ class WebPageProxy;
 
 class InjectedBundleBackForwardListItem : public API::ObjectImpl<API::Object::Type::BundleBackForwardListItem> {
 public:
-    static PassRefPtr<InjectedBundleBackForwardListItem> create(PassRefPtr<WebCore::HistoryItem> item)
+    static RefPtr<InjectedBundleBackForwardListItem> create(RefPtr<WebCore::HistoryItem>&& item)
     {
         if (!item)
-            return 0;
-        return adoptRef(new InjectedBundleBackForwardListItem(item));
+            return nullptr;
+        return adoptRef(new InjectedBundleBackForwardListItem(WTFMove(item)));
     }
 
     WebCore::HistoryItem* item() const { return m_item.get(); }
@@ -60,7 +60,9 @@ public:
     Ref<API::Array> children() const;
 
 private:
-    InjectedBundleBackForwardListItem(PassRefPtr<WebCore::HistoryItem> item) : m_item(item) { }
+    explicit InjectedBundleBackForwardListItem(RefPtr<WebCore::HistoryItem>&& item)
+        : m_item(WTFMove(item))
+    { }
 
     RefPtr<WebCore::HistoryItem> m_item;
 };

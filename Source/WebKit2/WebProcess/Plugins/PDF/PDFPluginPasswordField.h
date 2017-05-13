@@ -45,7 +45,7 @@ private:
     {
     }
 
-    PassRefPtr<WebCore::Element> createAnnotationElement() override;
+    Ref<WebCore::Element> createAnnotationElement() override;
 
     bool handleEvent(WebCore::Event*) override;
 };

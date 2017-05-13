@@ -163,9 +163,9 @@ public:
         {
         }
 
-        KeyframeValue(PassRefPtr<WebCore::FilterOperation> value)
+        KeyframeValue(RefPtr<WebCore::FilterOperation>&& value)
             : keyType(FilterKeyType)
-            , filter(value)
+            , filter(WTFMove(value))
         {
         }
 

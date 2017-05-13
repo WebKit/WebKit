@@ -30,7 +30,6 @@
 #include "ImageOptions.h"
 #include <JavaScriptCore/JSBase.h>
 #include <wtf/Forward.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -46,24 +45,24 @@ class WebImage;
 
 class InjectedBundleRangeHandle : public API::ObjectImpl<API::Object::Type::BundleRangeHandle> {
 public:
-    static PassRefPtr<InjectedBundleRangeHandle> getOrCreate(JSContextRef, JSObjectRef);
-    static PassRefPtr<InjectedBundleRangeHandle> getOrCreate(WebCore::Range*);
+    static RefPtr<InjectedBundleRangeHandle> getOrCreate(JSContextRef, JSObjectRef);
+    static RefPtr<InjectedBundleRangeHandle> getOrCreate(WebCore::Range*);
 
     virtual ~InjectedBundleRangeHandle();
 
     Ref<InjectedBundleNodeHandle> document();
 
     WebCore::IntRect boundingRectInWindowCoordinates() const;
-    PassRefPtr<WebImage> renderedImage(SnapshotOptions);
+    RefPtr<WebImage> renderedImage(SnapshotOptions);
     String text() const;
 
-    WebCore::Range* coreRange() const;
+    WebCore::Range& coreRange() const;
 
 private:
-    static Ref<InjectedBundleRangeHandle> create(WebCore::Range*);
-    InjectedBundleRangeHandle(WebCore::Range*);
+    static Ref<InjectedBundleRangeHandle> create(WebCore::Range&);
+    InjectedBundleRangeHandle(WebCore::Range&);
 
-    RefPtr<WebCore::Range> m_range;
+    Ref<WebCore::Range> m_range;
 };
 
 } // namespace WebKit

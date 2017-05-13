@@ -66,7 +66,7 @@ void PDFPluginChoiceAnnotation::commit()
     PDFPluginAnnotation::commit();
 }
 
-PassRefPtr<Element> PDFPluginChoiceAnnotation::createAnnotationElement()
+Ref<Element> PDFPluginChoiceAnnotation::createAnnotationElement()
 {
     Document& document = parent()->document();
 #pragma clang diagnostic push
@@ -74,13 +74,13 @@ PassRefPtr<Element> PDFPluginChoiceAnnotation::createAnnotationElement()
     PDFAnnotationChoiceWidget *choiceAnnotation = this->choiceAnnotation();
 #pragma clang diagnostic pop
 
-    RefPtr<Element> element = document.createElement(selectTag, false);
+    auto element = document.createElement(selectTag, false);
 
-    StyledElement* styledElement = static_cast<StyledElement*>(element.get());
+    auto& styledElement = downcast<StyledElement>(element.get());
 
     // FIXME: Match font weight and style as well?
-    styledElement->setInlineStyleProperty(CSSPropertyColor, colorFromNSColor(choiceAnnotation.fontColor).serialized());
-    styledElement->setInlineStyleProperty(CSSPropertyFontFamily, choiceAnnotation.font.familyName);
+    styledElement.setInlineStyleProperty(CSSPropertyColor, colorFromNSColor(choiceAnnotation.fontColor).serialized());
+    styledElement.setInlineStyleProperty(CSSPropertyFontFamily, choiceAnnotation.font.familyName);
 
     NSArray *choices = choiceAnnotation.choices;
     NSString *selectedChoice = choiceAnnotation.stringValue;
@@ -93,7 +93,7 @@ PassRefPtr<Element> PDFPluginChoiceAnnotation::createAnnotationElement()
         if (choice == selectedChoice)
             choiceOption->setAttributeWithoutSynchronization(selectedAttr, AtomicString("selected", AtomicString::ConstructFromLiteral));
 
-        styledElement->appendChild(choiceOption);
+        styledElement.appendChild(choiceOption);
     }
 
     return element;

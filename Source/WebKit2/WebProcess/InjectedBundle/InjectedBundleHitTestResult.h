@@ -30,7 +30,7 @@
 #include "InjectedBundleHitTestResultMediaType.h"
 #include <WebCore/HitTestResult.h>
 #include <wtf/Forward.h>
-#include <wtf/PassRefPtr.h>
+#include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
 
 namespace WebKit {
@@ -44,8 +44,8 @@ public:
 
     const WebCore::HitTestResult& coreHitTestResult() const { return m_hitTestResult; }
 
-    PassRefPtr<InjectedBundleNodeHandle> nodeHandle() const;
-    PassRefPtr<InjectedBundleNodeHandle> urlElementHandle() const;
+    RefPtr<InjectedBundleNodeHandle> nodeHandle() const;
+    RefPtr<InjectedBundleNodeHandle> urlElementHandle() const;
     WebFrame* frame() const;
     WebFrame* targetFrame() const;
 

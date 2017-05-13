@@ -45,7 +45,7 @@ WKBundleScriptWorldRef WKBundleScriptWorldCreateWorld()
 
 WKBundleScriptWorldRef WKBundleScriptWorldNormalWorld()
 {
-    return toAPI(InjectedBundleScriptWorld::normalWorld());
+    return toAPI(&InjectedBundleScriptWorld::normalWorld());
 }
 
 void WKBundleScriptWorldClearWrappers(WKBundleScriptWorldRef scriptWorldRef)

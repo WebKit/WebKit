@@ -57,42 +57,42 @@ static DOMHandleCache& domHandleCache()
     return cache;
 }
 
-PassRefPtr<InjectedBundleRangeHandle> InjectedBundleRangeHandle::getOrCreate(JSContextRef context, JSObjectRef object)
+RefPtr<InjectedBundleRangeHandle> InjectedBundleRangeHandle::getOrCreate(JSContextRef context, JSObjectRef object)
 {
     Range* range = JSRange::toWrapped(toJS(context)->vm(), toJS(object));
     return getOrCreate(range);
 }
 
-PassRefPtr<InjectedBundleRangeHandle> InjectedBundleRangeHandle::getOrCreate(Range* range)
+RefPtr<InjectedBundleRangeHandle> InjectedBundleRangeHandle::getOrCreate(Range* range)
 {
     if (!range)
-        return 0;
+        return nullptr;
 
     DOMHandleCache::AddResult result = domHandleCache().add(range, nullptr);
     if (!result.isNewEntry)
-        return PassRefPtr<InjectedBundleRangeHandle>(result.iterator->value);
+        return result.iterator->value;
 
-    auto rangeHandle = InjectedBundleRangeHandle::create(range);
+    auto rangeHandle = InjectedBundleRangeHandle::create(*range);
     result.iterator->value = rangeHandle.ptr();
     return WTFMove(rangeHandle);
 }
 
-Ref<InjectedBundleRangeHandle> InjectedBundleRangeHandle::create(Range* range)
+Ref<InjectedBundleRangeHandle> InjectedBundleRangeHandle::create(Range& range)
 {
     return adoptRef(*new InjectedBundleRangeHandle(range));
 }
 
-InjectedBundleRangeHandle::InjectedBundleRangeHandle(Range* range)
+InjectedBundleRangeHandle::InjectedBundleRangeHandle(Range& range)
     : m_range(range)
 {
 }
 
 InjectedBundleRangeHandle::~InjectedBundleRangeHandle()
 {
-    domHandleCache().remove(m_range.get());
+    domHandleCache().remove(m_range.ptr());
 }
 
-Range* InjectedBundleRangeHandle::coreRange() const
+Range& InjectedBundleRangeHandle::coreRange() const
 {
     return m_range.get();
 }
@@ -109,7 +109,7 @@ WebCore::IntRect InjectedBundleRangeHandle::boundingRectInWindowCoordinates() co
     return frame->view()->contentsToWindow(enclosingIntRect(boundingRect));
 }
 
-PassRefPtr<WebImage> InjectedBundleRangeHandle::renderedImage(SnapshotOptions options)
+RefPtr<WebImage> InjectedBundleRangeHandle::renderedImage(SnapshotOptions options)
 {
     Document& ownerDocument = m_range->ownerDocument();
     Frame* frame = ownerDocument.frame();
@@ -123,7 +123,7 @@ PassRefPtr<WebImage> InjectedBundleRangeHandle::renderedImage(SnapshotOptions op
     Ref<Frame> protector(*frame);
 
     VisibleSelection oldSelection = frame->selection().selection();
-    frame->selection().setSelection(VisibleSelection(*m_range));
+    frame->selection().setSelection(VisibleSelection(m_range));
 
     float scaleFactor = (options & SnapshotOptionsExcludeDeviceScaleFactor) ? 1 : frame->page()->deviceScaleFactor();
     IntRect paintRect = enclosingIntRect(m_range->absoluteBoundingRect());

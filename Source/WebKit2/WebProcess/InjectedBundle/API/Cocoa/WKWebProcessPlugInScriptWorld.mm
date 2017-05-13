@@ -42,7 +42,7 @@ using namespace WebKit;
 
 + (WKWebProcessPlugInScriptWorld *)normalWorld
 {
-    return wrapper(*InjectedBundleScriptWorld::normalWorld());
+    return wrapper(InjectedBundleScriptWorld::normalWorld());
 }
 
 - (void)dealloc

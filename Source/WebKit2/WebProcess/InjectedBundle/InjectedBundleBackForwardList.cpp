@@ -36,13 +36,13 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassRefPtr<InjectedBundleBackForwardListItem> InjectedBundleBackForwardList::itemAtIndex(int index) const
+RefPtr<InjectedBundleBackForwardListItem> InjectedBundleBackForwardList::itemAtIndex(int index) const
 {
     if (!m_page)
-        return 0;
+        return nullptr;
     Page* page = m_page->corePage();
     if (!page)
-        return 0;
+        return nullptr;
     return InjectedBundleBackForwardListItem::create(page->backForward().itemAtIndex(index));
 }
 

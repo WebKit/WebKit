@@ -27,8 +27,8 @@
 #define InjectedBundleCSSStyleDeclarationHandle_h
 
 #include "APIObject.h"
-#include <wtf/PassRefPtr.h>
 #include <wtf/Ref.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 class CSSStyleDeclaration;
@@ -38,7 +38,7 @@ namespace WebKit {
 
 class InjectedBundleCSSStyleDeclarationHandle : public API::ObjectImpl<API::Object::Type::BundleCSSStyleDeclarationHandle> {
 public:
-    static PassRefPtr<InjectedBundleCSSStyleDeclarationHandle> getOrCreate(WebCore::CSSStyleDeclaration*);
+    static RefPtr<InjectedBundleCSSStyleDeclarationHandle> getOrCreate(WebCore::CSSStyleDeclaration*);
     virtual ~InjectedBundleCSSStyleDeclarationHandle();
 
 private:

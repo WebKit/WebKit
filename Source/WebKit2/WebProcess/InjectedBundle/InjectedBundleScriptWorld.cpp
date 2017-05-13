@@ -61,20 +61,20 @@ Ref<InjectedBundleScriptWorld> InjectedBundleScriptWorld::create(const String& n
     return adoptRef(*new InjectedBundleScriptWorld(ScriptController::createWorld(), name));
 }
 
-PassRefPtr<InjectedBundleScriptWorld> InjectedBundleScriptWorld::getOrCreate(DOMWrapperWorld& world)
+Ref<InjectedBundleScriptWorld> InjectedBundleScriptWorld::getOrCreate(DOMWrapperWorld& world)
 {
     if (&world == &mainThreadNormalWorld())
         return normalWorld();
 
     if (InjectedBundleScriptWorld* existingWorld = allWorlds().get(&world))
-        return existingWorld;
+        return *existingWorld;
 
-    return adoptRef(new InjectedBundleScriptWorld(world, uniqueWorldName()));
+    return adoptRef(*new InjectedBundleScriptWorld(world, uniqueWorldName()));
 }
 
-InjectedBundleScriptWorld* InjectedBundleScriptWorld::normalWorld()
+InjectedBundleScriptWorld& InjectedBundleScriptWorld::normalWorld()
 {
-    static InjectedBundleScriptWorld* world = adoptRef(new InjectedBundleScriptWorld(mainThreadNormalWorld(), String())).leakRef();
+    static InjectedBundleScriptWorld& world = adoptRef(*new InjectedBundleScriptWorld(mainThreadNormalWorld(), String())).leakRef();
     return world;
 }
 

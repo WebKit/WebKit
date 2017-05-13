@@ -54,7 +54,7 @@ protected:
     {
     }
 
-    PassRefPtr<WebCore::Element> createAnnotationElement() override;
+    Ref<WebCore::Element> createAnnotationElement() override;
     String value() const;
 
 private:

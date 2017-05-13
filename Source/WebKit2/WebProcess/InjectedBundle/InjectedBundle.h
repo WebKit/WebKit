@@ -32,7 +32,7 @@
 #include "WKBundle.h"
 #include <WebCore/UserContentTypes.h>
 #include <WebCore/UserScriptTypes.h>
-#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -75,7 +75,7 @@ struct WebProcessCreationParameters;
 
 class InjectedBundle : public API::ObjectImpl<API::Object::Type::Bundle> {
 public:
-    static PassRefPtr<InjectedBundle> create(const WebProcessCreationParameters&, API::Object* initializationUserData);
+    static RefPtr<InjectedBundle> create(const WebProcessCreationParameters&, API::Object* initializationUserData);
 
     ~InjectedBundle();
 
@@ -117,7 +117,7 @@ public:
     void setWebNotificationPermission(WebPage*, const String& originString, bool allowed);
     void removeAllWebNotificationPermissions(WebPage*);
     uint64_t webNotificationID(JSContextRef, JSValueRef);
-    PassRefPtr<API::Data> createWebDataFromUint8Array(JSContextRef, JSValueRef);
+    Ref<API::Data> createWebDataFromUint8Array(JSContextRef, JSValueRef);
 
     // UserContent API
     void addUserScript(WebPageGroupProxy*, InjectedBundleScriptWorld*, const String& source, const String& url, API::Array* whitelist, API::Array* blacklist, WebCore::UserScriptInjectionTime, WebCore::UserContentInjectedFrames);

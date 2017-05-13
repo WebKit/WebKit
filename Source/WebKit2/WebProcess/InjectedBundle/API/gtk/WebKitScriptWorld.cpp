@@ -99,10 +99,10 @@ void webkitScriptWorldWindowObjectCleared(WebKitScriptWorld* world, WebKitWebPag
     g_signal_emit(world, signals[WINDOW_OBJECT_CLEARED], 0, page, frame);
 }
 
-static WebKitScriptWorld* webkitScriptWorldCreate(PassRefPtr<InjectedBundleScriptWorld> scriptWorld)
+static WebKitScriptWorld* webkitScriptWorldCreate(Ref<InjectedBundleScriptWorld>&& scriptWorld)
 {
     WebKitScriptWorld* world = WEBKIT_SCRIPT_WORLD(g_object_new(WEBKIT_TYPE_SCRIPT_WORLD, NULL));
-    world->priv->scriptWorld = scriptWorld;
+    world->priv->scriptWorld = WTFMove(scriptWorld);
 
     ASSERT(!scriptWorlds().contains(world->priv->scriptWorld.get()));
     scriptWorlds().add(world->priv->scriptWorld.get(), world);

@@ -379,7 +379,7 @@ struct PrintPagesData {
     bool isValid : 1;
 };
 
-PassRefPtr<WebPrintOperationGtk> WebPrintOperationGtk::create(WebPage* page, const PrintInfo& printInfo)
+RefPtr<WebPrintOperationGtk> WebPrintOperationGtk::create(WebPage* page, const PrintInfo& printInfo)
 {
 #if HAVE(GTK_UNIX_PRINTING)
     return adoptRef(new WebPrintOperationGtkUnix(page, printInfo));
@@ -388,7 +388,7 @@ PassRefPtr<WebPrintOperationGtk> WebPrintOperationGtk::create(WebPage* page, con
 #else
     UNUSED_PARAM(page);
     UNUSED_PARAM(printInfo);
-    return 0;
+    return nullptr;
 #endif
 }
 

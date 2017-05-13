@@ -46,7 +46,7 @@ class PDFPlugin;
 
 class PDFPluginAnnotation : public RefCounted<PDFPluginAnnotation> {
 public:
-    static PassRefPtr<PDFPluginAnnotation> create(PDFAnnotation *, PDFLayerController *, PDFPlugin*);
+    static RefPtr<PDFPluginAnnotation> create(PDFAnnotation *, PDFLayerController *, PDFPlugin*);
     virtual ~PDFPluginAnnotation();
 
     WebCore::Element* element() const { return m_element.get(); }
@@ -75,7 +75,7 @@ protected:
     virtual bool handleEvent(WebCore::Event*);
 
 private:
-    virtual PassRefPtr<WebCore::Element> createAnnotationElement() = 0;
+    virtual Ref<WebCore::Element> createAnnotationElement() = 0;
 
     class PDFPluginAnnotationEventListener : public WebCore::EventListener {
     public:

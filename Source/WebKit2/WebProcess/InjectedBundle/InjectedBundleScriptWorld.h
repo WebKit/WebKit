@@ -27,7 +27,7 @@
 #define InjectedBundleScriptWorld_h
 
 #include "APIObject.h"
-#include <wtf/PassRefPtr.h>
+#include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -41,8 +41,8 @@ class InjectedBundleScriptWorld : public API::ObjectImpl<API::Object::Type::Bund
 public:
     static Ref<InjectedBundleScriptWorld> create();
     static Ref<InjectedBundleScriptWorld> create(const String&);
-    static PassRefPtr<InjectedBundleScriptWorld> getOrCreate(WebCore::DOMWrapperWorld&);
-    static InjectedBundleScriptWorld* normalWorld();
+    static Ref<InjectedBundleScriptWorld> getOrCreate(WebCore::DOMWrapperWorld&);
+    static InjectedBundleScriptWorld& normalWorld();
 
     virtual ~InjectedBundleScriptWorld();
 

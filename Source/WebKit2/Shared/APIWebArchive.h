@@ -52,7 +52,7 @@ public:
     static Ref<WebArchive> create(WebArchiveResource* mainResource, RefPtr<API::Array>&& subresources, RefPtr<API::Array>&& subframeArchives);
     static Ref<WebArchive> create(API::Data*);
     static Ref<WebArchive> create(RefPtr<WebCore::LegacyWebArchive>&&);
-    static Ref<WebArchive> create(WebCore::Range*);
+    static Ref<WebArchive> create(WebCore::Range&);
 
     WebArchiveResource* mainResource();
     API::Array* subresources();

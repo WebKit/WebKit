@@ -31,7 +31,7 @@
 #include "InjectedBundleNodeHandle.h"
 #include "WebEvent.h"
 #include <WebCore/FrameLoaderTypes.h>
-#include <wtf/PassRefPtr.h>
+#include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -45,7 +45,7 @@ class WebFrame;
 
 class InjectedBundleNavigationAction : public API::ObjectImpl<API::Object::Type::BundleNavigationAction> {
 public:
-    static Ref<InjectedBundleNavigationAction> create(WebFrame*, const WebCore::NavigationAction&, PassRefPtr<WebCore::FormState>);
+    static Ref<InjectedBundleNavigationAction> create(WebFrame*, const WebCore::NavigationAction&, RefPtr<WebCore::FormState>&&);
 
     static WebEvent::Modifiers modifiersForNavigationAction(const WebCore::NavigationAction&);
     static WebMouseEvent::Button mouseButtonForNavigationAction(const WebCore::NavigationAction&);
@@ -63,7 +63,7 @@ public:
     AtomicString downloadAttribute() const { return m_downloadAttribute; }
 
 private:
-    InjectedBundleNavigationAction(WebFrame*, const WebCore::NavigationAction&, PassRefPtr<WebCore::FormState>);
+    InjectedBundleNavigationAction(WebFrame*, const WebCore::NavigationAction&, RefPtr<WebCore::FormState>&&);
 
     WebCore::NavigationType m_navigationType;
     WebEvent::Modifiers m_modifiers;

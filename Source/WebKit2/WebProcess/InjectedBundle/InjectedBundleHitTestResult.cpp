@@ -46,12 +46,12 @@ Ref<InjectedBundleHitTestResult> InjectedBundleHitTestResult::create(const HitTe
     return adoptRef(*new InjectedBundleHitTestResult(hitTestResult));
 }
 
-PassRefPtr<InjectedBundleNodeHandle> InjectedBundleHitTestResult::nodeHandle() const
+RefPtr<InjectedBundleNodeHandle> InjectedBundleHitTestResult::nodeHandle() const
 {
     return InjectedBundleNodeHandle::getOrCreate(m_hitTestResult.innerNonSharedNode());
 }
 
-PassRefPtr<InjectedBundleNodeHandle> InjectedBundleHitTestResult::urlElementHandle() const
+RefPtr<InjectedBundleNodeHandle> InjectedBundleHitTestResult::urlElementHandle() const
 {
     return InjectedBundleNodeHandle::getOrCreate(m_hitTestResult.URLElement());
 }

@@ -70,7 +70,7 @@ using namespace WebKit;
 #if TARGET_OS_IPHONE
 - (NSArray *)detectDataWithTypes:(WKDataDetectorTypes)types context:(NSDictionary *)context WK_API_AVAILABLE(ios(WK_IOS_TBA))
 {
-    RefPtr<WebCore::Range> coreRange = _rangeHandle->coreRange();
+    RefPtr<WebCore::Range> coreRange = &_rangeHandle->coreRange();
     return WebCore::DataDetection::detectContentInRange(coreRange, fromWKDataDetectorTypes(types), context);
 }
 #endif

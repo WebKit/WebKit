@@ -59,7 +59,7 @@ using namespace WebKit;
 
 namespace WebKit {
 
-static PassRefPtr<ShareableBitmap> convertImageToBitmap(NSImage *image, const IntSize& size, Frame& frame)
+static RefPtr<ShareableBitmap> convertImageToBitmap(NSImage *image, const IntSize& size, Frame& frame)
 {
     ShareableBitmap::Flags flags = ShareableBitmap::SupportsAlpha;
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
@@ -79,7 +79,7 @@ static PassRefPtr<ShareableBitmap> convertImageToBitmap(NSImage *image, const In
 
     [NSGraphicsContext setCurrentContext:savedContext.get()];
 
-    return WTFMove(bitmap);
+    return bitmap;
 }
 
 void WebDragClient::didConcludeEditDrag()

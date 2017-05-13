@@ -179,7 +179,7 @@ void WKBundlePageClickMenuItem(WKBundlePageRef pageRef, WKContextMenuItemRef ite
 }
 
 #if ENABLE(CONTEXT_MENUS)
-static PassRefPtr<API::Array> contextMenuItems(const WebContextMenu& contextMenu)
+static Ref<API::Array> contextMenuItems(const WebContextMenu& contextMenu)
 {
     auto items = contextMenu.items();
 
@@ -198,7 +198,7 @@ WKArrayRef WKBundlePageCopyContextMenuItems(WKBundlePageRef pageRef)
 #if ENABLE(CONTEXT_MENUS)
     WebContextMenu* contextMenu = toImpl(pageRef)->contextMenu();
 
-    return toAPI(contextMenuItems(*contextMenu).leakRef());
+    return toAPI(&contextMenuItems(*contextMenu).leakRef());
 #else
     UNUSED_PARAM(pageRef);
     return nullptr;
@@ -212,7 +212,7 @@ WKArrayRef WKBundlePageCopyContextMenuAtPointInWindow(WKBundlePageRef pageRef, W
     if (!contextMenu)
         return nullptr;
 
-    return toAPI(contextMenuItems(*contextMenu).leakRef());
+    return toAPI(&contextMenuItems(*contextMenu).leakRef());
 #else
     UNUSED_PARAM(pageRef);
     UNUSED_PARAM(point);

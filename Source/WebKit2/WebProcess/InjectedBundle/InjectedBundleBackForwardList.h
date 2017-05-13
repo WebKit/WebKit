@@ -27,7 +27,7 @@
 #define InjectedBundleBackForwardList_h
 
 #include "APIObject.h"
-#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
 
 namespace WebKit {
 
@@ -42,11 +42,11 @@ public:
         return adoptRef(*new InjectedBundleBackForwardList(page));
     }
 
-    void detach() { m_page = 0; }
+    void detach() { m_page = nullptr; }
 
     void clear();
 
-    PassRefPtr<InjectedBundleBackForwardListItem> itemAtIndex(int) const;
+    RefPtr<InjectedBundleBackForwardListItem> itemAtIndex(int) const;
     int backListCount() const;
     int forwardListCount() const;
 

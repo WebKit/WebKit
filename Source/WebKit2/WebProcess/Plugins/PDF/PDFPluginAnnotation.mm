@@ -52,14 +52,14 @@ namespace WebKit {
 
 using namespace HTMLNames;
 
-PassRefPtr<PDFPluginAnnotation> PDFPluginAnnotation::create(PDFAnnotation *annotation, PDFLayerController *pdfLayerController, PDFPlugin* plugin)
+RefPtr<PDFPluginAnnotation> PDFPluginAnnotation::create(PDFAnnotation *annotation, PDFLayerController *pdfLayerController, PDFPlugin* plugin)
 {
     if ([annotation isKindOfClass:pdfAnnotationTextWidgetClass()])
         return PDFPluginTextAnnotation::create(annotation, pdfLayerController, plugin);
     if ([annotation isKindOfClass:pdfAnnotationChoiceWidgetClass()])
         return PDFPluginChoiceAnnotation::create(annotation, pdfLayerController, plugin);
 
-    return 0;
+    return nullptr;
 }
 
 void PDFPluginAnnotation::attach(Element* parent)

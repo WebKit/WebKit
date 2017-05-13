@@ -1178,7 +1178,7 @@ void WebPage::selectWithGesture(const IntPoint& point, uint32_t granularity, uin
     send(Messages::WebPageProxy::GestureCallback(point, gestureType, gestureState, static_cast<uint32_t>(flags), callbackID));
 }
 
-static PassRefPtr<Range> rangeForPosition(Frame* frame, const VisiblePosition& position, bool baseIsStart)
+static RefPtr<Range> rangeForPosition(Frame* frame, const VisiblePosition& position, bool baseIsStart)
 {
     RefPtr<Range> range;
     VisiblePosition result = position;
@@ -1203,10 +1203,10 @@ static PassRefPtr<Range> rangeForPosition(Frame* frame, const VisiblePosition& p
             range = Range::create(*frame->document(), result, selectionEnd);
     }
 
-    return range.release();
+    return range;
 }
 
-static PassRefPtr<Range> rangeAtWordBoundaryForPosition(Frame* frame, const VisiblePosition& position, bool baseIsStart, SelectionDirection direction)
+static RefPtr<Range> rangeAtWordBoundaryForPosition(Frame* frame, const VisiblePosition& position, bool baseIsStart, SelectionDirection direction)
 {
     SelectionDirection sameDirection = baseIsStart ? DirectionForward : DirectionBackward;
     SelectionDirection oppositeDirection = baseIsStart ? DirectionBackward : DirectionForward;
@@ -1216,7 +1216,7 @@ static PassRefPtr<Range> rangeAtWordBoundaryForPosition(Frame* frame, const Visi
 
     if (atBoundaryOfGranularity(extent, WordGranularity, sameDirection)) {
         // This is a word boundary. Leave selection where it is.
-        return 0;
+        return nullptr;
     }
 
     if (atBoundaryOfGranularity(extent, WordGranularity, oppositeDirection)) {
@@ -1251,7 +1251,7 @@ static PassRefPtr<Range> rangeAtWordBoundaryForPosition(Frame* frame, const Visi
     if (extent.isNull() || extent == base)
         extent = wordBoundary;
     if (extent.isNull())
-        return 0;
+        return nullptr;
 
     return (base < extent) ? Range::create(*frame->document(), base, extent) : Range::create(*frame->document(), extent, base);
 }
