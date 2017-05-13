@@ -1,3 +1,24 @@
+2017-05-12  Simon Fraser  <simon.fraser@apple.com>
+
+        event.clientX/clientY should be in layout viewport coordinates
+        https://bugs.webkit.org/show_bug.cgi?id=172018
+
+        Reviewed by Zalan Bujtas.
+
+        Fix clientX and clientY on mouse events to be relative to the layout viewport, to match
+        getBoundingClientRect(), getClientRects() and fixed-position objects.
+
+        Also minor cleanup of MouseRelatedEvent to use initializers.
+
+        Test: fast/visual-viewport/client-coordinates-relative-to-layout-viewport.html
+
+        * dom/MouseRelatedEvent.cpp:
+        (WebCore::MouseRelatedEvent::MouseRelatedEvent):
+        (WebCore::MouseRelatedEvent::init):
+        (WebCore::MouseRelatedEvent::initCoordinates):
+        (WebCore::contentsScrollOffset): Deleted.
+        * dom/MouseRelatedEvent.h:
+
 2017-05-12  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Remove need for custom binding for Worker constructor

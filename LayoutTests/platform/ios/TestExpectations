@@ -2778,6 +2778,7 @@ fast/zooming/client-rect-in-fixed-zoomed.html [ Skip ]
 fast/visual-viewport/zoomed-scroll-to-anchor-in-position-fixed.html [ Skip ]
 fast/visual-viewport/zoomed-scroll-into-view-fixed.html [ Skip ]
 fast/scrolling/scroll-to-anchor-zoomed-header.html [ Skip ]
+fast/visual-viewport/client-coordinates-relative-to-layout-viewport.html [ Skip ]
 
 # This test relies on Arial being used to draw Arabic. However, on iOS,
 # we explicitly disallow this because this font is too slow.

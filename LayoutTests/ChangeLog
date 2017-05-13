@@ -1,5 +1,18 @@
 2017-05-12  Simon Fraser  <simon.fraser@apple.com>
 
+        event.clientX/clientY should be in layout viewport coordinates
+        https://bugs.webkit.org/show_bug.cgi?id=172018
+
+        Reviewed by Zalan Bujtas.
+        
+        * fast/events/clientXY-in-zoom-and-scroll.html:
+        * fast/visual-viewport/client-coordinates-relative-to-layout-viewport-expected.txt: Added.
+        * fast/visual-viewport/client-coordinates-relative-to-layout-viewport.html: Added.
+        * platform/ios/TestExpectations:
+        * platform/mac/fast/events/clientXY-in-zoom-and-scroll-expected.txt:
+
+2017-05-12  Simon Fraser  <simon.fraser@apple.com>
+
         The rects returned by Element/Range.getClientRects() should not be rounded
         https://bugs.webkit.org/show_bug.cgi?id=172057
 

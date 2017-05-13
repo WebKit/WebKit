@@ -65,7 +65,7 @@ public:
     void setAbsoluteLocation(const LayoutPoint& p) { m_absoluteLocation = p; }
 
 protected:
-    MouseRelatedEvent();
+    MouseRelatedEvent() = default;
     MouseRelatedEvent(const AtomicString& type, bool canBubble, bool cancelable, double timestamp, DOMWindow*,
         int detail, const IntPoint& screenLocation, const IntPoint& windowLocation,
 #if ENABLE(POINTER_LOCK)
@@ -95,8 +95,8 @@ private:
     LayoutPoint m_layerLocation;
     LayoutPoint m_offsetLocation;
     LayoutPoint m_absoluteLocation;
-    bool m_isSimulated;
-    bool m_hasCachedRelativePosition;
+    bool m_isSimulated { false };
+    bool m_hasCachedRelativePosition { false };
 };
 
 } // namespace WebCore

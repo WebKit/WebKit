@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        body {
+            width: 2000px;
+            height: 3000px;
+        }
+        .box {
+            height: 100px;
+            width: 100px;
+            background-color: blue;
+            pointer-events: none;
+        }
+        #client {
+            position: fixed;
+            background-color: red;
+            width: 28px;
+            height: 28px;
+        }
+        #clientrects {
+            position: absolute;
+            background-color: green;
+            width: 25px;
+            height: 25px;
+        }
+        #clientscroll {
+            position: absolute;
+            background-color: orange;
+            width: 22px;
+            height: 22px;
+        }
+        #page {
+            position: absolute;
+            background-color: blue;
+            width: 16px;
+            height: 16px;
+        }
+    </style>
+    <script src="../../resources/ui-helper.js"></script>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        if (window.internals)
+            internals.settings.setVisualViewportEnabled(true);
+
+        function getUIScript()
+        {
+            return `(function() {
+                uiController.zoomToScale(2, function() {
+                    uiController.uiScriptComplete();
+                });
+            })();`;
+        }
+        
+        function doAfterZooming()
+        {
+            window.scrollTo(120, 123);
+            eventSender.mouseMoveTo(345, 234);
+            eventSender.mouseDown();
+            eventSender.mouseUp();
+        }
+        
+        function doTest()
+        {
+            document.addEventListener('click', clickHandler);
+
+            if (!window.testRunner)
+                return;
+
+            testRunner.runUIScript(getUIScript(), function(zoomScale) {
+                doAfterZooming();
+            });
+        }
+        
+        function clickHandler(event)
+        {
+            document.getElementById('click-location').textContent = 'clicked at ' + event.clientX + ', ' + event.clientY;
+            var clientBox = document.getElementById('client');
+            var clientRect = clientBox.getBoundingClientRect();
+            clientBox.style.left = (event.clientX - clientRect.width / 2) + 'px';
+            clientBox.style.top = (event.clientY - clientRect.height / 2) + 'px';
+
+            var clientRectsBox = document.getElementById('clientrects');
+            clientRect = clientRectsBox.getBoundingClientRect();
+            var pageViewport = document.documentElement.getClientRects()[0];
+            clientRectsBox.style.left = (event.clientX - clientRect.width / 2) - pageViewport.left + 'px';
+            clientRectsBox.style.top = (event.clientY - clientRect.height / 2) - pageViewport.top + 'px';
+
+            var clientScrollBox = document.getElementById('clientscroll');
+            clientRect = clientScrollBox.getBoundingClientRect();
+            var pageViewport = document.documentElement.getBoundingClientRect();
+            clientRect = clientScrollBox.getBoundingClientRect();
+            clientScrollBox.style.left = (event.clientX - clientRect.width / 2) - pageViewport.left + 'px';
+            clientScrollBox.style.top = (event.clientY - clientRect.height / 2) - pageViewport.top + 'px';
+
+            var pageBox = document.getElementById('page');
+            clientRect = pageBox.getBoundingClientRect();
+            pageBox.style.left = (event.clientX - clientRect.width / 2) + 'px';
+            pageBox.style.top = (event.clientY - clientRect.height / 2) + 'px';
+            
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+        
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <div id="client" class="box"></div>
+    <div id="clientrects" class="box"></div>
+    <div id="clientscroll" class="box"></div>
+    <div id="page" class="box"></div>
+    <p>Got click at <span id="click-location"></span></p>
+</body>
+</html>
