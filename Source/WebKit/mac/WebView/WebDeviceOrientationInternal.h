@@ -33,12 +33,12 @@
     RefPtr<WebCore::DeviceOrientationData> m_orientation;
 }
 
-- (id)initWithCoreDeviceOrientation:(PassRefPtr<WebCore::DeviceOrientationData>)coreDeviceOrientation;
+- (id)initWithCoreDeviceOrientation:(RefPtr<WebCore::DeviceOrientationData>&&)coreDeviceOrientation;
 @end
 
 @interface WebDeviceOrientation (Internal)
 
-- (id)initWithCoreDeviceOrientation:(PassRefPtr<WebCore::DeviceOrientationData>)coreDeviceOrientation;
+- (id)initWithCoreDeviceOrientation:(RefPtr<WebCore::DeviceOrientationData>&&)coreDeviceOrientation;
 
 @end
 

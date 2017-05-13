@@ -35,7 +35,7 @@ namespace WebCore {
 
 @interface WebArchive (WebInternal)
 
-- (id)_initWithCoreLegacyWebArchive:(WTF::PassRefPtr<WebCore::LegacyWebArchive>)coreLegacyWebArchive;
+- (id)_initWithCoreLegacyWebArchive:(WTF::RefPtr<WebCore::LegacyWebArchive>&&)coreLegacyWebArchive;
 - (WebCore::LegacyWebArchive *)_coreLegacyWebArchive;
 
 @end

@@ -56,7 +56,7 @@ namespace WebKit {
       attributeKeys:(NSArray *)keys
     attributeValues:(NSArray *)values
        loadManually:(BOOL)loadManually
-            element:(PassRefPtr<WebCore::HTMLPlugInElement>)element;
+            element:(RefPtr<WebCore::HTMLPlugInElement>&&)element;
 
 - (void)pluginHostDied;
 - (CALayer *)pluginLayer;

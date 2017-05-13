@@ -35,7 +35,6 @@
 #import "WebNSObjectExtras.h"
 #import "WebNSURLExtras.h"
 #import <JavaScriptCore/InitializeThreading.h>
-#import <wtf/PassRefPtr.h>
 #import <WebCore/ArchiveResource.h>
 #import <WebCore/LegacyWebArchive.h>
 #import <WebCore/RuntimeApplicationChecks.h>
@@ -44,6 +43,7 @@
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebCoreURLResponse.h>
 #import <wtf/MainThread.h>
+#import <wtf/RefPtr.h>
 #import <wtf/RunLoop.h>
 
 using namespace WebCore;

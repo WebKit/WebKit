@@ -83,7 +83,7 @@
 #import <WebCore/Widget.h>
 #import <WebCore/WindowFeatures.h>
 #import <wtf/BlockObjCExceptions.h>
-#import <wtf/PassRefPtr.h>
+#import <wtf/RefPtr.h>
 #import <wtf/Vector.h>
 #import <wtf/text/WTFString.h>
 

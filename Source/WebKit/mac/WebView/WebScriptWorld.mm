@@ -52,18 +52,14 @@ static WorldMap& allWorlds()
 
 @implementation WebScriptWorld
 
-- (id)initWithWorld:(PassRefPtr<DOMWrapperWorld>)world
+- (id)initWithWorld:(Ref<DOMWrapperWorld>&&)world
 {
-    ASSERT_ARG(world, world);
-    if (!world)
-        return nil;
-
     self = [super init];
     if (!self)
         return nil;
 
     _private = [[WebScriptWorldPrivate alloc] init];
-    _private->world = world;
+    _private->world = WTFMove(world);
 
     ASSERT_ARG(world, !allWorlds().contains(_private->world.get()));
     allWorlds().add(_private->world.get(), self);
@@ -93,7 +89,7 @@ static WorldMap& allWorlds()
 
 + (WebScriptWorld *)standardWorld
 {
-    static WebScriptWorld *world = [[WebScriptWorld alloc] initWithWorld:&mainThreadNormalWorld()];
+    static WebScriptWorld *world = [[WebScriptWorld alloc] initWithWorld:mainThreadNormalWorld()];
     return world;
 }
 
@@ -131,7 +127,7 @@ DOMWrapperWorld* core(WebScriptWorld *world)
     if (WebScriptWorld *existingWorld = allWorlds().get(&world))
         return existingWorld;
 
-    return [[[self alloc] initWithWorld:&world] autorelease];
+    return [[[self alloc] initWithWorld:world] autorelease];
 }
 
 @end

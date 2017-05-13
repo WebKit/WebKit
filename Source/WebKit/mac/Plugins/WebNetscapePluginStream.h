@@ -32,7 +32,7 @@
 #import <WebCore/Timer.h>
 #import <WebCore/NetscapePlugInStreamLoader.h>
 #import <WebKitLegacy/npfunctions.h>
-#import <wtf/PassRefPtr.h>
+#import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
@@ -52,13 +52,13 @@ class WebNetscapePluginStream : public RefCounted<WebNetscapePluginStream>
                               , private WebCore::NetscapePlugInStreamLoaderClient
 {
 public:
-    static PassRefPtr<WebNetscapePluginStream> create(NSURLRequest *request, NPP plugin, bool sendNotification, void* notifyData)
+    static Ref<WebNetscapePluginStream> create(NSURLRequest *request, NPP plugin, bool sendNotification, void* notifyData)
     {
-        return adoptRef(new WebNetscapePluginStream(request, plugin, sendNotification, notifyData));
+        return adoptRef(*new WebNetscapePluginStream(request, plugin, sendNotification, notifyData));
     }
-    static PassRefPtr<WebNetscapePluginStream> create(WebCore::FrameLoader* frameLoader)
+    static Ref<WebNetscapePluginStream> create(WebCore::FrameLoader* frameLoader)
     {
-        return adoptRef(new WebNetscapePluginStream(frameLoader));
+        return adoptRef(*new WebNetscapePluginStream(frameLoader));
     }
     virtual ~WebNetscapePluginStream();
 

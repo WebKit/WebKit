@@ -213,11 +213,11 @@ void NetscapePluginHostManager::pluginHostDied(NetscapePluginHostProxy* pluginHo
     }
 }
 
-PassRefPtr<NetscapePluginInstanceProxy> NetscapePluginHostManager::instantiatePlugin(const String& pluginPath, cpu_type_t pluginArchitecture, const String& bundleIdentifier, WebHostedNetscapePluginView *pluginView, NSString *mimeType, NSArray *attributeKeys, NSArray *attributeValues, NSString *userAgent, NSURL *sourceURL, bool fullFrame, bool isPrivateBrowsingEnabled, bool isAcceleratedCompositingEnabled, bool hostLayersInWindowServer)
+RefPtr<NetscapePluginInstanceProxy> NetscapePluginHostManager::instantiatePlugin(const String& pluginPath, cpu_type_t pluginArchitecture, const String& bundleIdentifier, WebHostedNetscapePluginView *pluginView, NSString *mimeType, NSArray *attributeKeys, NSArray *attributeValues, NSString *userAgent, NSURL *sourceURL, bool fullFrame, bool isPrivateBrowsingEnabled, bool isAcceleratedCompositingEnabled, bool hostLayersInWindowServer)
 {
     NetscapePluginHostProxy* hostProxy = hostForPlugin(pluginPath, pluginArchitecture, bundleIdentifier);
     if (!hostProxy)
-        return 0;
+        return nullptr;
 
     RetainPtr<NSMutableDictionary> properties = adoptNS([[NSMutableDictionary alloc] init]);
     
@@ -272,7 +272,7 @@ PassRefPtr<NetscapePluginInstanceProxy> NetscapePluginHostManager::instantiatePl
     instance->setRenderContextID(reply->m_renderContextID);
     instance->setRendererType(reply->m_rendererType);
 
-    return WTFMove(instance);
+    return instance;
 }
 
 void NetscapePluginHostManager::createPropertyListFile(const String& pluginPath, cpu_type_t pluginArchitecture, const String& bundleIdentifier)

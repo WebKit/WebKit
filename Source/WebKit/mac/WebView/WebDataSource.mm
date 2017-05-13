@@ -79,30 +79,27 @@ using namespace WebCore;
 class WebDataSourcePrivate
 {
 public:
-    WebDataSourcePrivate(PassRefPtr<WebDocumentLoaderMac> loader)
-        : loader(loader)
+    WebDataSourcePrivate(Ref<WebDocumentLoaderMac>&& loader)
+        : loader(WTFMove(loader))
         , representationFinishedLoading(NO)
         , includedInWebKitStatistics(NO)
 #if PLATFORM(IOS)
         , _dataSourceDelegate(nil)
 #endif
     {
-        ASSERT(this->loader);
     }
     ~WebDataSourcePrivate()
     {
-        if (loader) {
-            // We might run in to infinite recursion if we're stopping loading as the result of detaching from the frame.
-            // Therefore, DocumentLoader::detachFromFrame() did some smart things to stop the recursion.
-            // As a result of breaking the resursion, DocumentLoader::m_subresourceLoader
-            // and DocumentLoader::m_plugInStreamLoaders might not be empty at this time.
-            // See <rdar://problem/9673866> for more details.
-            ASSERT(!loader->isLoading() || loader->isStopping());
-            loader->detachDataSource();
-        }
+        // We might run in to infinite recursion if we're stopping loading as the result of detaching from the frame.
+        // Therefore, DocumentLoader::detachFromFrame() did some smart things to stop the recursion.
+        // As a result of breaking the resursion, DocumentLoader::m_subresourceLoader
+        // and DocumentLoader::m_plugInStreamLoaders might not be empty at this time.
+        // See <rdar://problem/9673866> for more details.
+        ASSERT(!loader->isLoading() || loader->isStopping());
+        loader->detachDataSource();
     }
 
-    RefPtr<WebDocumentLoaderMac> loader;
+    Ref<WebDocumentLoaderMac> loader;
     RetainPtr<id<WebDocumentRepresentation> > representation;
     BOOL representationFinishedLoading;
     BOOL includedInWebKitStatistics;
@@ -202,9 +199,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (void)_setDeferMainResourceDataLoad:(BOOL)flag
 {
-    if (!toPrivate(_private)->loader)
-        return;
-
     toPrivate(_private)->loader->setDeferMainResourceDataLoad(flag);
 }
 
@@ -319,8 +313,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
             NSString *markupString = [[NSString alloc] initWithData:[mainResource data] encoding:NSUTF8StringEncoding];
 
             // FIXME: seems poor form to do this as a side effect of getting a document fragment
-            if (toPrivate(_private)->loader)
-                toPrivate(_private)->loader->addAllArchiveResources(*[archive _coreLegacyWebArchive]);
+            toPrivate(_private)->loader->addAllArchiveResources(*[archive _coreLegacyWebArchive]);
 
             DOMDocumentFragment *fragment = [[self webFrame] _documentFragmentWithMarkupString:markupString baseURLString:[[mainResource URL] _web_originalDataAsString]];
             [markupString release];
@@ -404,17 +397,16 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (DocumentLoader*)_documentLoader
 {
-    return toPrivate(_private)->loader.get();
+    return toPrivate(_private)->loader.ptr();
 }
 
-- (id)_initWithDocumentLoader:(PassRefPtr<WebDocumentLoaderMac>)loader
+- (id)_initWithDocumentLoader:(Ref<WebDocumentLoaderMac>&&)loader
 {
     self = [super init];
     if (!self)
         return nil;
 
-    ASSERT(loader);
-    _private = static_cast<void*>(new WebDataSourcePrivate(loader));
+    _private = static_cast<void*>(new WebDataSourcePrivate(WTFMove(loader)));
         
     LOG(Loading, "creating datasource for %@", static_cast<NSURL *>(toPrivate(_private)->loader->request().url()));
 

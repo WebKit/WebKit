@@ -44,7 +44,7 @@ using namespace WebCore;
 {
     RefPtr<NotificationPermissionCallback> _callback;
 }
-- (id)initWithCallback:(PassRefPtr<NotificationPermissionCallback>)callback;
+- (id)initWithCallback:(RefPtr<NotificationPermissionCallback>&&)callback;
 @end
 #endif
 
@@ -177,7 +177,7 @@ bool WebNotificationClient::hasPendingPermissionRequests(ScriptExecutionContext*
 void WebNotificationClient::requestPermission(ScriptExecutionContext* context, RefPtr<NotificationPermissionCallback>&& callback)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    WebNotificationPolicyListener *listener = [[WebNotificationPolicyListener alloc] initWithCallback:callback];
+    WebNotificationPolicyListener *listener = [[WebNotificationPolicyListener alloc] initWithCallback:WTFMove(callback)];
     requestPermission(context, listener);
     [listener release];
     END_BLOCK_OBJC_EXCEPTIONS;
@@ -219,12 +219,12 @@ uint64_t WebNotificationClient::notificationIDForTesting(WebCore::Notification* 
 
 @implementation WebNotificationPolicyListener
 
-- (id)initWithCallback:(PassRefPtr<NotificationPermissionCallback>)callback
+- (id)initWithCallback:(RefPtr<NotificationPermissionCallback>&&)callback
 {
     if (!(self = [super init]))
         return nil;
 
-    _callback = callback;
+    _callback = WTFMove(callback);
     return self;
 }
 

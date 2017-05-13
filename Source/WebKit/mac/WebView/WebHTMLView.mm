@@ -4826,12 +4826,12 @@ static BOOL isInPasswordField(Frame* coreFrame)
 }
 #endif
 
-static PassRefPtr<KeyboardEvent> currentKeyboardEvent(Frame* coreFrame)
+static RefPtr<KeyboardEvent> currentKeyboardEvent(Frame* coreFrame)
 {
 #if !PLATFORM(IOS)
     NSEvent *event = [NSApp currentEvent];
     if (!event)
-        return 0;
+        return nullptr;
 
     switch ([event type]) {
     case NSEventTypeKeyDown: {
@@ -4842,18 +4842,18 @@ static PassRefPtr<KeyboardEvent> currentKeyboardEvent(Frame* coreFrame)
     case NSEventTypeKeyUp:
         return KeyboardEvent::create(PlatformEventFactory::createPlatformKeyboardEvent(event), coreFrame->document()->defaultView());
     default:
-        return 0;
+        return nullptr;
     }
 #else
     WebEvent *event = [WAKWindow currentEvent];
     if (!event)
-        return 0;
+        return nullptr;
     WebEventType type = event.type;
     if (type == WebEventKeyDown || type == WebEventKeyUp) {
         Document* document = coreFrame->document();
         return KeyboardEvent::create(PlatformEventFactory::createPlatformKeyboardEvent(event), document ? document->defaultView() : 0);
     }
-    return 0;
+    return nullptr;
 #endif
 }
 

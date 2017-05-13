@@ -39,9 +39,9 @@ class ProxyRuntimeObject : public JSC::Bindings::RuntimeObject {
 public:
     typedef JSC::Bindings::RuntimeObject Base;
 
-    static ProxyRuntimeObject* create(JSC::VM& vm, JSC::Structure* structure, PassRefPtr<ProxyInstance> instance)
+    static ProxyRuntimeObject* create(JSC::VM& vm, JSC::Structure* structure, Ref<ProxyInstance>&& instance)
     {
-        ProxyRuntimeObject* object = new (JSC::allocateCell<ProxyRuntimeObject>(vm.heap)) ProxyRuntimeObject(vm, structure, instance);
+        ProxyRuntimeObject* object = new (JSC::allocateCell<ProxyRuntimeObject>(vm.heap)) ProxyRuntimeObject(vm, structure, WTFMove(instance));
         object->finishCreation(vm);
         return object;
     }
@@ -56,7 +56,7 @@ public:
     DECLARE_INFO;
 
 private:
-    ProxyRuntimeObject(JSC::VM&, JSC::Structure*, PassRefPtr<ProxyInstance>);
+    ProxyRuntimeObject(JSC::VM&, JSC::Structure*, Ref<ProxyInstance>&&);
     void finishCreation(JSC::VM&);
 };
 

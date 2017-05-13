@@ -29,8 +29,8 @@
 #define NetscapePluginHostManager_h
 
 #import <wtf/HashMap.h>
-#import <wtf/PassRefPtr.h>
 #import <wtf/NeverDestroyed.h>
+#import <wtf/RefPtr.h>
 #import <wtf/text/StringHash.h>
 #import <wtf/text/WTFString.h>
 
@@ -45,7 +45,7 @@ class NetscapePluginHostManager {
 public:
     static NetscapePluginHostManager& singleton();
     
-    PassRefPtr<NetscapePluginInstanceProxy> instantiatePlugin(const String& pluginPath, cpu_type_t pluginArchitecture, const String& bundleIdentifier, WebHostedNetscapePluginView *, NSString *mimeType, NSArray *attributeKeys, NSArray *attributeValues, NSString *userAgent, NSURL *sourceURL, bool fullFrame, bool isPrivateBrowsingEnabled, bool isAcceleratedCompositingEnabled, bool hostLayersInWindowServer);
+    RefPtr<NetscapePluginInstanceProxy> instantiatePlugin(const String& pluginPath, cpu_type_t pluginArchitecture, const String& bundleIdentifier, WebHostedNetscapePluginView *, NSString *mimeType, NSArray *attributeKeys, NSArray *attributeValues, NSString *userAgent, NSURL *sourceURL, bool fullFrame, bool isPrivateBrowsingEnabled, bool isAcceleratedCompositingEnabled, bool hostLayersInWindowServer);
 
     void pluginHostDied(NetscapePluginHostProxy*);
 

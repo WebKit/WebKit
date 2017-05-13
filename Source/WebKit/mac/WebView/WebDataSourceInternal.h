@@ -51,7 +51,7 @@ class WebDocumentLoaderMac;
 - (DOMDocumentFragment *)_documentFragmentWithArchive:(WebArchive *)archive;
 + (NSMutableDictionary *)_repTypesAllowImageTypeOmission:(BOOL)allowImageTypeOmission;
 - (void)_replaceSelectionWithArchive:(WebArchive *)archive selectReplacement:(BOOL)selectReplacement;
-- (id)_initWithDocumentLoader:(PassRefPtr<WebDocumentLoaderMac>)loader;
+- (id)_initWithDocumentLoader:(Ref<WebDocumentLoaderMac>&&)loader;
 - (void)_finishedLoading;
 - (void)_receivedData:(NSData *)data;
 - (void)_revertToProvisionalState;

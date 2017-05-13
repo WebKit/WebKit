@@ -138,9 +138,9 @@ static NSRect convertRectToScreen(NSWindow *window, NSRect rect)
     return _element.get();
 }
 
-- (void)setElement:(PassRefPtr<Element>)element
+- (void)setElement:(RefPtr<Element>&&)element
 {
-    _element = element;
+    _element = WTFMove(element);
 }
 
 - (BOOL)isFullScreen

@@ -67,7 +67,7 @@ namespace WebCore {
 
 - (BOOL)isFullScreen;
 
-- (void)setElement:(PassRefPtr<WebCore::Element>)element;
+- (void)setElement:(RefPtr<WebCore::Element>&&)element;
 - (WebCore::Element*)element;
 
 - (void)enterFullScreen:(NSScreen *)screen;

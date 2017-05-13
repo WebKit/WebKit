@@ -31,7 +31,6 @@
 
 #import "WebNetscapePluginPackage.h"
 #import <wtf/Forward.h>
-#import <wtf/PassRefPtr.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
 
@@ -78,7 +77,7 @@ namespace WebCore {
       attributeKeys:(NSArray *)keys
     attributeValues:(NSArray *)values
        loadManually:(BOOL)loadManually
-            element:(PassRefPtr<WebCore::HTMLPlugInElement>)element;
+            element:(RefPtr<WebCore::HTMLPlugInElement>&&)element;
 
 - (WebNetscapePluginPackage *)pluginPackage;
 

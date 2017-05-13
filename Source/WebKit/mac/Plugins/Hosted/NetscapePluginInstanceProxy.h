@@ -36,7 +36,7 @@
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
-#include <wtf/PassRefPtr.h>
+#include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
 #include "WebKitPluginHostTypes.h"
@@ -60,7 +60,7 @@ class ProxyInstance;
     
 class NetscapePluginInstanceProxy : public RefCounted<NetscapePluginInstanceProxy> {
 public:
-    static PassRefPtr<NetscapePluginInstanceProxy> create(NetscapePluginHostProxy*, WebHostedNetscapePluginView *, bool fullFramePlugin);
+    static Ref<NetscapePluginInstanceProxy> create(NetscapePluginHostProxy*, WebHostedNetscapePluginView *, bool fullFramePlugin);
     ~NetscapePluginInstanceProxy();
     
     uint32_t pluginID() const 
@@ -81,7 +81,7 @@ public:
     bool cancelStreamLoad(uint32_t streamID, NPReason);
     void disconnectStream(HostedNetscapePluginStream*);
     
-    void setManualStream(PassRefPtr<HostedNetscapePluginStream>);
+    void setManualStream(Ref<HostedNetscapePluginStream>&&);
     HostedNetscapePluginStream* manualStream() const { return m_manualStream.get(); }
     
     void pluginHostDied();

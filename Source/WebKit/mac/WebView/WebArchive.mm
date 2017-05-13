@@ -58,9 +58,9 @@ static NSString * const WebSubframeArchivesKey = @"WebSubframeArchives";
     RefPtr<LegacyWebArchive> coreArchive;
 }
 
-- (instancetype)initWithCoreArchive:(PassRefPtr<LegacyWebArchive>)coreArchive;
+- (instancetype)initWithCoreArchive:(RefPtr<LegacyWebArchive>&&)coreArchive;
 - (LegacyWebArchive*)coreArchive;
-- (void)setCoreArchive:(PassRefPtr<LegacyWebArchive>)newCoreArchive;
+- (void)setCoreArchive:(Ref<LegacyWebArchive>&&)newCoreArchive;
 @end
 
 @implementation WebArchivePrivate
@@ -83,14 +83,14 @@ static NSString * const WebSubframeArchivesKey = @"WebSubframeArchives";
     return self;
 }
 
-- (instancetype)initWithCoreArchive:(PassRefPtr<LegacyWebArchive>)_coreArchive
+- (instancetype)initWithCoreArchive:(RefPtr<LegacyWebArchive>&&)_coreArchive
 {
     self = [super init];
-    if (!self || !_coreArchive) {
+    if (!self|| !_coreArchive) {
         [self release];
         return nil;
     }
-    coreArchive = _coreArchive;
+    coreArchive = WTFMove(_coreArchive);
     return self;
 }
 
@@ -99,11 +99,10 @@ static NSString * const WebSubframeArchivesKey = @"WebSubframeArchives";
     return coreArchive.get();
 }
 
-- (void)setCoreArchive:(PassRefPtr<LegacyWebArchive>)newCoreArchive
+- (void)setCoreArchive:(Ref<LegacyWebArchive>&&)newCoreArchive
 {
     ASSERT(coreArchive);
-    ASSERT(newCoreArchive);
-    coreArchive = newCoreArchive;
+    coreArchive = WTFMove(newCoreArchive);
 }
 
 - (void)dealloc
@@ -206,7 +205,7 @@ static BOOL isArrayOfClass(id object, Class elementClass)
         return nil;
     }
         
-    [_private setCoreArchive:WTFMove(coreArchive)];
+    [_private setCoreArchive:coreArchive.releaseNonNull()];
         
 #if !LOG_DISABLED
     CFAbsoluteTime end = CFAbsoluteTimeGetCurrent();
@@ -317,7 +316,7 @@ static BOOL isArrayOfClass(id object, Class elementClass)
             auto mutableArray = [[NSMutableArray alloc] initWithCapacity:subframeArchives.size()];
             _private->cachedSubframeArchives = mutableArray;
             for (unsigned i = 0; i < subframeArchives.size(); ++i) {
-                WebArchive *archive = [[WebArchive alloc] _initWithCoreLegacyWebArchive:(LegacyWebArchive *)subframeArchives[i].ptr()];
+                WebArchive *archive = [[WebArchive alloc] _initWithCoreLegacyWebArchive:static_cast<LegacyWebArchive*>(subframeArchives[i].ptr())];
                 [mutableArray addObject:archive];
                 [archive release];
             }
@@ -350,7 +349,7 @@ static BOOL isArrayOfClass(id object, Class elementClass)
 
 @implementation WebArchive (WebInternal)
 
-- (id)_initWithCoreLegacyWebArchive:(PassRefPtr<WebCore::LegacyWebArchive>)coreLegacyWebArchive
+- (id)_initWithCoreLegacyWebArchive:(RefPtr<WebCore::LegacyWebArchive>&&)coreLegacyWebArchive
 {
     WebCoreThreadViolationCheckRoundTwo();
 
@@ -358,7 +357,7 @@ static BOOL isArrayOfClass(id object, Class elementClass)
     if (!self)
         return nil;
     
-    _private = [[WebArchivePrivate alloc] initWithCoreArchive:coreLegacyWebArchive];
+    _private = [[WebArchivePrivate alloc] initWithCoreArchive:WTFMove(coreLegacyWebArchive)];
     if (!_private) {
         [self release];
         return nil;

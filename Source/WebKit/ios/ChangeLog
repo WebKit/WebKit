@@ -1,3 +1,14 @@
+2017-05-12  Chris Dumez  <cdumez@apple.com>
+
+        Drop uses of PassRefPtr in WebKit/mac
+        https://bugs.webkit.org/show_bug.cgi?id=172066
+
+        Reviewed by Sam Weinig.
+
+        Build fix.
+
+        * Misc/WebGeolocationProviderIOS.mm:
+
 2017-05-01  Chris Dumez  <cdumez@apple.com>
 
         Remove some usage of PassRefPtr in editing code

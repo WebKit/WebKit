@@ -27,7 +27,7 @@
  */
 
 #import <WebKitLegacy/WebBackForwardList.h>
-#import <wtf/PassRefPtr.h>
+#import <wtf/Ref.h>
 
 class BackForwardList;
 

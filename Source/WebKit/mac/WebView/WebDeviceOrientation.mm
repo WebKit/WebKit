@@ -29,12 +29,12 @@ using namespace WebCore;
 
 @implementation WebDeviceOrientationInternal
 
-- (id)initWithCoreDeviceOrientation:(PassRefPtr<DeviceOrientationData>)coreDeviceOrientation
+- (id)initWithCoreDeviceOrientation:(RefPtr<DeviceOrientationData>&&)coreDeviceOrientation
 {
     self = [super init];
     if (!self)
         return nil;
-    m_orientation = coreDeviceOrientation;
+    m_orientation = WTFMove(coreDeviceOrientation);
     return self;
 }
 
@@ -42,12 +42,12 @@ using namespace WebCore;
 
 @implementation WebDeviceOrientation (Internal)
 
-- (id)initWithCoreDeviceOrientation:(PassRefPtr<WebCore::DeviceOrientationData>)coreDeviceOrientation
+- (id)initWithCoreDeviceOrientation:(RefPtr<WebCore::DeviceOrientationData>&&)coreDeviceOrientation
 {
     self = [super init];
     if (!self)
         return nil;
-    m_internal = [[WebDeviceOrientationInternal alloc] initWithCoreDeviceOrientation:coreDeviceOrientation];
+    m_internal = [[WebDeviceOrientationInternal alloc] initWithCoreDeviceOrientation:WTFMove(coreDeviceOrientation)];
     return self;
 }
 

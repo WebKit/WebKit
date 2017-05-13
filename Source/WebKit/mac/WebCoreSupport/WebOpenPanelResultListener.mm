@@ -26,7 +26,7 @@
 #import "WebOpenPanelResultListener.h"
 
 #import <WebCore/FileChooser.h>
-#import <wtf/PassRefPtr.h>
+#import <wtf/RefPtr.h>
 
 #if PLATFORM(IOS)
 #import <WebCore/Icon.h>

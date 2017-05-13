@@ -267,7 +267,7 @@ WebHistoryItem *kit(HistoryItem* item)
     if (kitItem)
         return kitItem;
     
-    return [[[WebHistoryItem alloc] initWithWebCoreHistoryItem:item] autorelease];
+    return [[[WebHistoryItem alloc] initWithWebCoreHistoryItem:*item] autorelease];
 }
 
 + (WebHistoryItem *)entryWithURL:(NSURL *)URL
@@ -284,7 +284,7 @@ WebHistoryItem *kit(HistoryItem* item)
     return item;
 }
 
-- (id)initWithWebCoreHistoryItem:(PassRefPtr<HistoryItem>)item
+- (id)initWithWebCoreHistoryItem:(Ref<HistoryItem>&&)item
 {   
     WebCoreThreadViolationCheckRoundOne();
     // Need to tell WebCore what function to call for the 
@@ -298,7 +298,7 @@ WebHistoryItem *kit(HistoryItem* item)
         return nil;
 
     _private = [[WebHistoryItemPrivate alloc] init];
-    _private->_historyItem = item;
+    _private->_historyItem = WTFMove(item);
 
     ASSERT(!historyItemWrappers().get(core(_private)));
     historyItemWrappers().set(core(_private), self);

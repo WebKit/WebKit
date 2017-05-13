@@ -78,7 +78,7 @@
 #import <WebCore/WebCoreObjCExtras.h>
 #import <runtime/InitializeThreading.h>
 #import <wtf/MainThread.h>
-#import <wtf/PassRefPtr.h>
+#import <wtf/RefPtr.h>
 #import <wtf/RunLoop.h>
 #import <wtf/text/WTFString.h>
 

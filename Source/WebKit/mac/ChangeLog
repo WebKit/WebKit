@@ -1,3 +1,91 @@
+2017-05-12  Chris Dumez  <cdumez@apple.com>
+
+        Drop uses of PassRefPtr in WebKit/mac
+        https://bugs.webkit.org/show_bug.cgi?id=172066
+
+        Reviewed by Sam Weinig.
+
+        * History/WebBackForwardListInternal.h:
+        * History/WebHistoryItem.mm:
+        (kit):
+        (-[WebHistoryItem initWithWebCoreHistoryItem:]):
+        * History/WebHistoryItemInternal.h:
+        * Plugins/Hosted/HostedNetscapePluginStream.h:
+        (WebKit::HostedNetscapePluginStream::create):
+        * Plugins/Hosted/NetscapePluginHostManager.h:
+        * Plugins/Hosted/NetscapePluginHostManager.mm:
+        (WebKit::NetscapePluginHostManager::instantiatePlugin):
+        * Plugins/Hosted/NetscapePluginInstanceProxy.h:
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::PluginRequest::create):
+        (WebKit::NetscapePluginInstanceProxy::create):
+        (WebKit::NetscapePluginInstanceProxy::setManualStream):
+        * Plugins/Hosted/ProxyInstance.h:
+        (WebKit::ProxyInstance::create):
+        * Plugins/Hosted/ProxyInstance.mm:
+        (WebKit::ProxyInstance::ProxyInstance):
+        (WebKit::ProxyInstance::newRuntimeObject):
+        * Plugins/Hosted/ProxyRuntimeObject.h:
+        (WebKit::ProxyRuntimeObject::create):
+        * Plugins/Hosted/ProxyRuntimeObject.mm:
+        (WebKit::ProxyRuntimeObject::ProxyRuntimeObject):
+        * Plugins/Hosted/WebHostedNetscapePluginView.h:
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+        (-[WebHostedNetscapePluginView initWithFrame:pluginPackage:URL:baseURL:MIMEType:attributeKeys:attributeValues:loadManually:element:]):
+        * Plugins/WebBaseNetscapePluginView.h:
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView initWithFrame:pluginPackage:URL:baseURL:MIMEType:attributeKeys:attributeValues:loadManually:element:]):
+        * Plugins/WebNetscapePluginStream.h:
+        (WebNetscapePluginStream::create):
+        * Plugins/WebNetscapePluginView.h:
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView initWithFrame:pluginPackage:URL:baseURL:MIMEType:attributeKeys:attributeValues:loadManually:element:]):
+        * WebCoreSupport/WebChromeClient.mm:
+        * WebCoreSupport/WebEditorClient.mm:
+        * WebCoreSupport/WebNotificationClient.mm:
+        (WebNotificationClient::requestPermission):
+        (-[WebNotificationPolicyListener initWithCallback:]):
+        * WebCoreSupport/WebOpenPanelResultListener.mm:
+        * WebCoreSupport/WebUserMediaClient.mm:
+        (WebUserMediaClient::requestUserMediaAccess):
+        (WebUserMediaClient::enumerateMediaDevices):
+        (-[WebUserMediaPolicyListener initWithUserMediaRequest:]):
+        (-[WebUserMediaPolicyCheckerListener initWithMediaDevicesEnumerationRequest:]):
+        * WebView/WebArchive.mm:
+        (-[WebArchivePrivate initWithCoreArchive:]):
+        (-[WebArchivePrivate setCoreArchive:]):
+        (-[WebArchive initWithData:]):
+        (-[WebArchive subframeArchives]):
+        (-[WebArchive _initWithCoreLegacyWebArchive:]):
+        * WebView/WebArchiveInternal.h:
+        * WebView/WebDataSource.mm:
+        (WebDataSourcePrivate::WebDataSourcePrivate):
+        (WebDataSourcePrivate::~WebDataSourcePrivate):
+        (-[WebDataSource _initWithDocumentLoader:]):
+        * WebView/WebDataSourceInternal.h:
+        * WebView/WebDeviceOrientation.mm:
+        (-[WebDeviceOrientation initWithCoreDeviceOrientation:]):
+        * WebView/WebDeviceOrientationInternal.h:
+        * WebView/WebFrame.mm:
+        (-[WebFrame _convertToDOMRange:]):
+        (-[WebFrame _convertToDOMRange:rangeIsRelativeTo:]):
+        * WebView/WebFrameInternal.h:
+        * WebView/WebFullScreenController.h:
+        * WebView/WebFullScreenController.mm:
+        (-[WebFullScreenController setElement:]):
+        * WebView/WebGeolocationPosition.mm:
+        (-[WebGeolocationPositionInternal initWithCoreGeolocationPosition:]):
+        (-[WebGeolocationPosition initWithGeolocationPosition:]):
+        * WebView/WebHTMLView.mm:
+        (currentKeyboardEvent):
+        * WebView/WebResource.mm:
+        * WebView/WebScriptWorld.mm:
+        (-[WebScriptWorld initWithWorld:]):
+        (+[WebScriptWorld standardWorld]):
+        (+[WebScriptWorld findOrCreateWorld:]):
+        * WebView/WebViewData.h:
+        (LayerFlushController::create):
+
 2017-05-11  Chris Dumez  <cdumez@apple.com>
 
         Drop remaining uses of PassRefPtr in WebCore

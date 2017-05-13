@@ -792,15 +792,15 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     return NSMakeRange(location, length);
 }
 
-- (PassRefPtr<Range>)_convertToDOMRange:(NSRange)nsrange
+- (RefPtr<Range>)_convertToDOMRange:(NSRange)nsrange
 {
     return [self _convertToDOMRange:nsrange rangeIsRelativeTo:WebRangeIsRelativeTo::EditableRoot];
 }
 
-- (PassRefPtr<Range>)_convertToDOMRange:(NSRange)nsrange rangeIsRelativeTo:(WebRangeIsRelativeTo)rangeIsRelativeTo
+- (RefPtr<Range>)_convertToDOMRange:(NSRange)nsrange rangeIsRelativeTo:(WebRangeIsRelativeTo)rangeIsRelativeTo
 {
     if (nsrange.location > INT_MAX)
-        return 0;
+        return nullptr;
     if (nsrange.length > INT_MAX || nsrange.location + nsrange.length > INT_MAX)
         nsrange.length = INT_MAX - nsrange.location;
 
@@ -822,11 +822,11 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     const VisibleSelection& selection = _private->coreFrame->selection().selection();
     RefPtr<Range> selectedRange = selection.toNormalizedRange();
     if (!selectedRange)
-        return 0;
+        return nullptr;
 
     RefPtr<Range> paragraphRange = makeRange(startOfParagraph(selection.visibleStart()), selection.visibleEnd());
     if (!paragraphRange)
-        return 0;
+        return nullptr;
 
     ContainerNode& rootNode = paragraphRange.get()->startContainer().treeScope().rootNode();
     int paragraphStartIndex = TextIterator::rangeLength(Range::create(rootNode.document(), &rootNode, 0, &paragraphRange->startContainer(), paragraphRange->startOffset()).ptr());

@@ -128,9 +128,9 @@ private:
 
 class LayerFlushController : public RefCounted<LayerFlushController>, public WebCore::LayerFlushSchedulerClient {
 public:
-    static PassRefPtr<LayerFlushController> create(WebView* webView)
+    static Ref<LayerFlushController> create(WebView* webView)
     {
-        return adoptRef(new LayerFlushController(webView));
+        return adoptRef(*new LayerFlushController(webView));
     }
     
     virtual bool flushLayers();

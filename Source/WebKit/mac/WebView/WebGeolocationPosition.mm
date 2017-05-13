@@ -26,7 +26,6 @@
 #import "WebGeolocationPosition.h"
 
 #import "WebGeolocationPositionInternal.h"
-#import <wtf/PassRefPtr.h>
 #import <wtf/RefPtr.h>
 
 #import <WebCore/GeolocationPosition.h>
@@ -39,17 +38,17 @@ using namespace WebCore;
     RefPtr<GeolocationPosition> _position;
 }
 
-- (id)initWithCoreGeolocationPosition:(PassRefPtr<GeolocationPosition>)coreGeolocationPosition;
+- (id)initWithCoreGeolocationPosition:(RefPtr<GeolocationPosition>&&)coreGeolocationPosition;
 @end
 
 @implementation WebGeolocationPositionInternal
 
-- (id)initWithCoreGeolocationPosition:(PassRefPtr<GeolocationPosition>)coreGeolocationPosition
+- (id)initWithCoreGeolocationPosition:(RefPtr<GeolocationPosition>&&)coreGeolocationPosition
 {
     self = [super init];
     if (!self)
         return nil;
-    _position = coreGeolocationPosition;
+    _position = WTFMove(coreGeolocationPosition);
     return self;
 }
 
@@ -71,12 +70,12 @@ GeolocationPosition* core(WebGeolocationPosition *position)
     return self;
 }
 
-- (id)initWithGeolocationPosition:(RefPtr<GeolocationPosition>)coreGeolocationPosition
+- (id)initWithGeolocationPosition:(RefPtr<GeolocationPosition>&&)coreGeolocationPosition
 {
     self = [super init];
     if (!self)
         return nil;
-    _internal = [[WebGeolocationPositionInternal alloc] initWithCoreGeolocationPosition:coreGeolocationPosition];
+    _internal = [[WebGeolocationPositionInternal alloc] initWithCoreGeolocationPosition:WTFMove(coreGeolocationPosition)];
     return self;
 }
 
