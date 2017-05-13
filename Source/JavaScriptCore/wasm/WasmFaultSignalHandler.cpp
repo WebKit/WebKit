@@ -52,9 +52,8 @@ static LazyNeverDestroyed<HashSet<std::tuple<void*, void*>>> codeLocations; // (
 
 static bool fastHandlerInstalled { false };
 
-static SignalAction trapHandler(int, siginfo_t* sigInfo, void* ucontext)
+static SignalAction trapHandler(Signal, SigInfo& sigInfo, PlatformRegisters& context)
 {
-    mcontext_t& context = static_cast<ucontext_t*>(ucontext)->uc_mcontext;
     void* faultingInstruction = MachineContext::instructionPointer(context);
     dataLogLnIf(verbose, "starting handler for fault at: ", RawPointer(faultingInstruction));
 
@@ -64,7 +63,7 @@ static SignalAction trapHandler(int, siginfo_t* sigInfo, void* ucontext)
     if (isJITPC(faultingInstruction)) {
         bool faultedInActiveFastMemory = false;
         {
-            void* faultingAddress = sigInfo->si_addr;
+            void* faultingAddress = sigInfo.faultingAddress;
             dataLogLnIf(verbose, "checking faulting address: ", RawPointer(faultingAddress), " is in an active fast memory");
             faultedInActiveFastMemory = Wasm::Memory::addressIsInActiveFastMemory(faultingAddress);
         }
@@ -124,11 +123,11 @@ void enableFastMemory()
             return;
 
 #if ENABLE(WEBASSEMBLY_FAST_MEMORY)
-        installSignalHandler(Signal::Bus, [] (int signal, siginfo_t* sigInfo, void* ucontext) {
+        installSignalHandler(Signal::Bus, [] (Signal signal, SigInfo& sigInfo, PlatformRegisters& ucontext) {
             return trapHandler(signal, sigInfo, ucontext);
         });
 
-        installSignalHandler(Signal::SegV, [] (int signal, siginfo_t* sigInfo, void* ucontext) {
+        installSignalHandler(Signal::SegV, [] (Signal signal, SigInfo& sigInfo, PlatformRegisters& ucontext) {
             return trapHandler(signal, sigInfo, ucontext);
         });
 

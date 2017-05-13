@@ -1,3 +1,40 @@
+2017-05-12  Keith Miller  <keith_miller@apple.com>
+
+        Use Mach exceptions instead of signals where possible
+        https://bugs.webkit.org/show_bug.cgi?id=171865
+
+        Reviewed by Mark Lam.
+
+        This patch adds some new JSC options. The first is an option that
+        enables or disables web assembly tier up. The second controls
+        whether or not we use mach exceptions (where available).
+
+        * API/tests/ExecutionTimeLimitTest.cpp:
+        (dispatchTermitateCallback):
+        (testExecutionTimeLimit):
+        * runtime/JSLock.cpp:
+        (JSC::JSLock::didAcquireLock):
+        * runtime/Options.cpp:
+        (JSC::overrideDefaults):
+        (JSC::Options::initialize):
+        * runtime/Options.h:
+        * runtime/VMTraps.cpp:
+        (JSC::SignalContext::SignalContext):
+        (JSC::SignalContext::adjustPCToPointToTrappingInstruction):
+        (JSC::installSignalHandler):
+        (JSC::VMTraps::SignalSender::send):
+        * tools/SigillCrashAnalyzer.cpp:
+        (JSC::SignalContext::SignalContext):
+        (JSC::SignalContext::dump):
+        (JSC::installCrashHandler):
+        * wasm/WasmBBQPlan.cpp:
+        (JSC::Wasm::BBQPlan::compileFunctions):
+        * wasm/WasmFaultSignalHandler.cpp:
+        (JSC::Wasm::trapHandler):
+        (JSC::Wasm::enableFastMemory):
+        * wasm/WasmMachineThreads.cpp:
+        (JSC::Wasm::resetInstructionCacheOnAllThreads):
+
 2017-05-12  Mark Lam  <mark.lam@apple.com>
 
         WorkerRunLoop::Task::performTask() should check !scriptController->isTerminatingExecution().

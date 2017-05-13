@@ -1,3 +1,62 @@
+2017-05-12  Keith Miller  <keith_miller@apple.com>
+
+        Use Mach exceptions instead of signals where possible
+        https://bugs.webkit.org/show_bug.cgi?id=171865
+
+        Reviewed by Mark Lam.
+
+        This patch enables using mach exceptions on darwin. The way the
+        mach exception api works is that we create a mach port, which is
+        like a file descriptor.  We then wait for a message to arrive on
+        that port in a thread. When another thread raises an exception (say
+        due to a bad memory access) the OS sends our thread a message. The
+        payload of that message is the register file of the crashing
+        thread. We then call our custom handlers that change the state as
+        needed. In order to restart the thread we send a payload back to
+        the OS with an updated register file along with a success message
+        header.
+
+        This patch also makes thread messages work without signals by
+        simply suspending the thread, and then running the message at that
+        time.
+
+        You can read more about mach exceptions here:
+        http://www.cs.cmu.edu/afs/cs/project/mach/public/doc/unpublished/exception.ps
+        and the Mach interface Generator (MiG) here:
+        http://www.cs.cmu.edu/afs/cs/project/mach/public/doc/unpublished/mig.ps
+
+        * Configurations/WTF.xcconfig:
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/Platform.h:
+        * wtf/PlatformRegisters.h:
+        (WTF::registersFromUContext):
+        * wtf/StackBounds.h:
+        (WTF::StackBounds::StackBounds):
+        * wtf/ThreadHolder.cpp:
+        (WTF::ThreadHolder::~ThreadHolder):
+        * wtf/ThreadMessage.cpp:
+        (WTF::sendMessageUsingSignal):
+        (WTF::sendMessageUsingMach):
+        (WTF::deliverMessagesUsingMach):
+        (WTF::sendMessageScoped):
+        * wtf/ThreadMessage.h:
+        (WTF::sendMessage):
+        * wtf/Threading.h:
+        (WTF::Thread::machThread):
+        * wtf/mac/MachExceptions.defs: Copied from Source/WTF/wtf/ThreadMessage.h.
+        * wtf/threads/Signals.cpp:
+        (WTF::startMachExceptionHandlerThread):
+        (WTF::fromMachException):
+        (WTF::toMachMask):
+        (WTF::handleSignalsWithMach):
+        (WTF::setExceptionPorts):
+        (WTF::activeThreads):
+        (WTF::registerThreadForMachExceptionHandling):
+        (WTF::unregisterThreadForMachExceptionHandling):
+        (WTF::installSignalHandler):
+        (WTF::jscSignalHandler):
+        * wtf/threads/Signals.h:
+
 2017-05-12  Ting-Wei Lan  <lantw44@gmail.com>
 
         Include algorithm before using std::min

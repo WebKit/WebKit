@@ -1,3 +1,14 @@
+2017-05-12  Keith Miller  <keith_miller@apple.com>
+
+        Use Mach exceptions instead of signals where possible
+        https://bugs.webkit.org/show_bug.cgi?id=171865
+
+        Reviewed by Mark Lam.
+
+        * TestWebKitAPI/Tests/WTF/ThreadMessages.cpp:
+        (runThreadMessageTest):
+        (TEST):
+
 2017-05-12  Jeremy Jones  <jeremyj@apple.com>
 
         Add objc version of WK2 UIPageClient setHasVideoInPictureInPicture and rename it to hasVideoInPictureInPictureDidChange.
