@@ -1,3 +1,29 @@
+2017-05-13  Javier Fernandez  <jfernandez@igalia.com>
+
+        [css-align] Implement the place-self shorthand
+        https://bugs.webkit.org/show_bug.cgi?id=168846
+
+        Reviewed by Zalan Bujtas.
+
+        The CSS Box Alignment specification defines a new shorthand to set the
+        Content Alignment properties (align-self and justify-self) at the
+        same time.
+
+        This patch provides the implementation of the CSS parsing logic and the
+        required regression tests.
+
+        Test: css3/parse-place-self.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSProperties.json:
+        * css/StyleProperties.cpp:
+        (WebCore::StyleProperties::getPropertyValue):
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::CSSPropertyParser::consumePlaceSelfShorthand):
+        (WebCore::CSSPropertyParser::parseShorthand):
+        * css/parser/CSSPropertyParser.h:
+
 2017-05-13  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r216801.

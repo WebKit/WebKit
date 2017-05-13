@@ -189,6 +189,8 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
         return getAlignmentShorthandValue(placeContentShorthand());
     case CSSPropertyPlaceItems:
         return getAlignmentShorthandValue(placeItemsShorthand());
+    case CSSPropertyPlaceSelf:
+        return getAlignmentShorthandValue(placeSelfShorthand());
     case CSSPropertyFont:
         return fontValue();
     case CSSPropertyMargin:

@@ -5545,6 +5545,25 @@ bool CSSPropertyParser::consumePlaceItemsShorthand(bool important)
     return true;
 }
 
+bool CSSPropertyParser::consumePlaceSelfShorthand(bool important)
+{
+    ASSERT(shorthandForProperty(CSSPropertyPlaceSelf).length() == 2);
+
+    RefPtr<CSSValue> alignSelfValue = consumeSimplifiedItemPosition(m_range);
+    if (!alignSelfValue)
+        return false;
+    RefPtr<CSSValue> justifySelfValue = m_range.atEnd() ? alignSelfValue : consumeSimplifiedItemPosition(m_range);
+    if (!justifySelfValue)
+        return false;
+
+    if (!m_range.atEnd())
+        return false;
+
+    addProperty(CSSPropertyAlignSelf, CSSPropertyPlaceSelf, alignSelfValue.releaseNonNull(), important);
+    addProperty(CSSPropertyJustifySelf, CSSPropertyPlaceSelf, justifySelfValue.releaseNonNull(), important);
+    return true;
+}
+
 bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
 {
     switch (property) {
@@ -5730,6 +5749,8 @@ bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
         return consumePlaceContentShorthand(important);
     case CSSPropertyPlaceItems:
         return consumePlaceItemsShorthand(important);
+    case CSSPropertyPlaceSelf:
+        return consumePlaceSelfShorthand(important);
     case CSSPropertyWebkitMarquee:
         return consumeShorthandGreedily(webkitMarqueeShorthand(), important);
     default:

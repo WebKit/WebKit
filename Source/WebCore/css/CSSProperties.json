@@ -4726,6 +4726,18 @@
                 "url": "https://drafts.csswg.org/css-align-3/#propdef-place-items"
             }
         },
+        "place-self": {
+            "codegen-properties": {
+                "longhands": [
+                    "align-self",
+                    "justify-self"
+                ]
+            },
+            "specification": {
+                "category": "css-align",
+                "url": "https://drafts.csswg.org/css-align-3/#propdef-place-self"
+            }
+        },
         "grid": {
             "codegen-properties": {
                 "longhands": [

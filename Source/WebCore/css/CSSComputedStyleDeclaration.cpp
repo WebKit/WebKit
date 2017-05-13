@@ -328,6 +328,7 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyJustifyItems,
     CSSPropertyPlaceContent,
     CSSPropertyPlaceItems,
+    CSSPropertyPlaceSelf,
 #if ENABLE(FILTERS_LEVEL_2)
     CSSPropertyWebkitBackdropFilter,
 #endif
@@ -2961,6 +2962,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
             return getCSSPropertyValuesForShorthandProperties(placeContentShorthand());
         case CSSPropertyPlaceItems:
             return getCSSPropertyValuesForShorthandProperties(placeItemsShorthand());
+        case CSSPropertyPlaceSelf:
+            return getCSSPropertyValuesForShorthandProperties(placeSelfShorthand());
         case CSSPropertyOrder:
             return cssValuePool.createValue(style->order(), CSSPrimitiveValue::CSS_NUMBER);
         case CSSPropertyFloat:
