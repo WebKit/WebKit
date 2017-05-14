@@ -102,11 +102,6 @@ static Ref<RefLogger> passWithRef(Ref<RefLogger>&& reference)
     return WTFMove(reference);
 }
 
-static RefPtr<RefLogger> passWithPassRefPtr(PassRefPtr<RefLogger> reference)
-{
-    return reference;
-}
-
 TEST(WTF_Ref, ReturnValue)
 {
     DerivedRefLogger a("a");
@@ -131,12 +126,6 @@ TEST(WTF_Ref, ReturnValue)
 
     {
         RefPtr<RefLogger> ptr(passWithRef(a));
-        ASSERT_EQ(&a, ptr.get());
-    }
-    ASSERT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
-
-    {
-        RefPtr<RefLogger> ptr(passWithPassRefPtr(passWithRef(a)));
         ASSERT_EQ(&a, ptr.get());
     }
     ASSERT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());

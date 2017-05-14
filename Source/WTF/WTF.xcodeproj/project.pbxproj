@@ -444,7 +444,6 @@
 		A8A472E5151A825B004123FF /* PageReservation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageReservation.h; sourceTree = "<group>"; };
 		A8A472E6151A825B004123FF /* ParallelJobs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParallelJobs.h; sourceTree = "<group>"; };
 		A8A472E9151A825B004123FF /* ParallelJobsLibdispatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParallelJobsLibdispatch.h; sourceTree = "<group>"; };
-		A8A472ED151A825B004123FF /* PassRefPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PassRefPtr.h; sourceTree = "<group>"; };
 		A8A472FB151A825B004123FF /* RandomNumber.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RandomNumber.cpp; sourceTree = "<group>"; };
 		A8A472FC151A825B004123FF /* RandomNumber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RandomNumber.h; sourceTree = "<group>"; };
 		A8A472FD151A825B004123FF /* RandomNumberSeed.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RandomNumberSeed.h; sourceTree = "<group>"; };
@@ -877,7 +876,6 @@
 				0FEB3DD01BB7366B009D7AAD /* ParallelVectorIterator.h */,
 				0F824A641B7443A0002E345D /* ParkingLot.cpp */,
 				0F824A651B7443A0002E345D /* ParkingLot.h */,
-				A8A472ED151A825B004123FF /* PassRefPtr.h */,
 				A876DBD7151816E500DADB95 /* Platform.h */,
 				E3200AB41E9A536D003B59D2 /* PlatformRegisters.h */,
 				DCEE21FE1CEA7551000C2396 /* PlatformUserPreferredLanguages.h */,

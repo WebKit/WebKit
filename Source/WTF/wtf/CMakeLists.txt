@@ -95,7 +95,6 @@ set(WTF_HEADERS
     ParallelJobsOpenMP.h
     ParallelVectorIterator.h
     ParkingLot.h
-    PassRefPtr.h
     Platform.h
     PlatformRegisters.h
     PrintStream.h

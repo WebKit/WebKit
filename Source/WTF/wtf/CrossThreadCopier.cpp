@@ -43,27 +43,18 @@ class CopierThreadSafeRefCountedTest : public ThreadSafeRefCounted<CopierThreadS
 };
 
 COMPILE_ASSERT((std::is_same<
-                    PassRefPtr<CopierThreadSafeRefCountedTest>,
-                    CrossThreadCopier<PassRefPtr<CopierThreadSafeRefCountedTest>>::Type
-                >::value),
-                PassRefPtrTest);
-COMPILE_ASSERT((std::is_same<
-                    PassRefPtr<CopierThreadSafeRefCountedTest>,
+                    RefPtr<CopierThreadSafeRefCountedTest>,
                     CrossThreadCopier<RefPtr<CopierThreadSafeRefCountedTest>>::Type
                 >::value),
                 RefPtrTest);
 COMPILE_ASSERT((std::is_same<
-                    PassRefPtr<CopierThreadSafeRefCountedTest>,
+                    RefPtr<CopierThreadSafeRefCountedTest>,
                     CrossThreadCopier<CopierThreadSafeRefCountedTest*>::Type
                 >::value),
                 RawPointerTest);
 
 // Add specializations for RefCounted types which will let us verify that no other template matches.
 template<typename T> struct CrossThreadCopierBase<false, false, RefPtr<T>> {
-    typedef int Type;
-};
-
-template<typename T> struct CrossThreadCopierBase<false, false, PassRefPtr<T>> {
     typedef int Type;
 };
 
@@ -75,7 +66,6 @@ template<typename T> struct CrossThreadCopierBase<false, false, T*> {
 class CopierRefCountedTest : public RefCounted<CopierRefCountedTest> {
 };
 
-static_assert((std::is_same<int, CrossThreadCopier<PassRefPtr<CopierRefCountedTest>>::Type>::value), "CrossThreadCopier specialization improperly applied to PassRefPtr<> of a RefCounted (but not ThreadSafeRefCounted) type");
 static_assert((std::is_same<int, CrossThreadCopier<RefPtr<CopierRefCountedTest>>::Type>::value), "CrossThreadCopier specialization improperly applied to RefPtr<> of a RefCounted (but not ThreadSafeRefCounted) type");
 static_assert((std::is_same<int, CrossThreadCopier<CopierRefCountedTest*>::Type>::value), "CrossThreadCopier specialization improperly applied to raw pointer of a RefCounted (but not ThreadSafeRefCounted) type");
 

@@ -1,3 +1,16 @@
+2017-05-14  Chris Dumez  <cdumez@apple.com>
+
+        Drop PassRefPtr class from WTF
+        https://bugs.webkit.org/show_bug.cgi?id=172091
+
+        Reviewed by Alex Christensen.
+
+        Drop API test coverage.
+
+        * TestWebKitAPI/Tests/WTF/Ref.cpp:
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::passWithPassRefPtr): Deleted.
+
 2017-05-13  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] deviceId constraint doesn't work with getUserMedia

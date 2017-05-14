@@ -1,3 +1,27 @@
+2017-05-14  Chris Dumez  <cdumez@apple.com>
+
+        Drop PassRefPtr class from WTF
+        https://bugs.webkit.org/show_bug.cgi?id=172091
+
+        Reviewed by Alex Christensen.
+
+        Drop PassRefPtr class from WTF as it is no longer used or needed.
+        Also drop RefPtr::release() for the same reasons.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/CrossThreadCopier.cpp:
+        * wtf/CrossThreadCopier.h:
+        * wtf/Forward.h:
+        * wtf/PassRefPtr.h: Removed.
+        * wtf/RefPtr.h:
+        (WTF::refIfNotNull):
+        (WTF::derefIfNotNull):
+        (WTF::RefPtr::RefPtr):
+        (WTF::RefPtr::release): Deleted.
+        * wtf/SizeLimits.cpp:
+        * wtf/Vector.h:
+
 2017-05-13  Chris Dumez  <cdumez@apple.com>
 
         Stop using RefPtr::release()

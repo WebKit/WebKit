@@ -1188,9 +1188,6 @@ void Vector<T, inlineCapacity, OverflowHandler, minCapacity>::shrinkCapacity(siz
     asanSetInitialBufferSizeTo(size());
 }
 
-// Templatizing these is better than just letting the conversion happen implicitly,
-// because for instance it allows a PassRefPtr to be appended to a RefPtr vector
-// without refcount thrash.
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity> template<typename U>
 void Vector<T, inlineCapacity, OverflowHandler, minCapacity>::append(const U* data, size_t dataSize)
 {
