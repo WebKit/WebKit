@@ -1,3 +1,19 @@
+2017-05-13  David Kilzer  <ddkilzer@apple.com>
+
+        Unused lambda in JSWebKitSubtleCrypto::wrapKey()
+        <https://webkit.org/b/172087>
+
+        Reviewed by Chris Dumez.
+
+        Fixes the following warning with newer clang:
+
+            Source/WebCore/bindings/js/JSWebKitSubtleCryptoCustom.cpp:594:35: error: lambda capture 'keyFormat' is not used [-Werror,-Wunused-lambda-capture]
+                auto exportSuccessCallback = [keyFormat, algorithm, parameters, wrappingKey, wrapper](const Vector<uint8_t>& exportedKeyData) mutable {
+                                              ^
+
+        * bindings/js/JSWebKitSubtleCryptoCustom.cpp:
+        (WebCore::JSWebKitSubtleCrypto::wrapKey): Remove unused lambda.
+
 2017-05-13  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] deviceId constraint doesn't work with getUserMedia

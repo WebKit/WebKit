@@ -591,7 +591,7 @@ JSValue JSWebKitSubtleCrypto::wrapKey(ExecState& state)
     RefPtr<DeferredPromise> wrapper = createDeferredPromise(state, domWindow());
     auto promise = wrapper->promise();
 
-    auto exportSuccessCallback = [keyFormat, algorithm, parameters, wrappingKey, wrapper](const Vector<uint8_t>& exportedKeyData) mutable {
+    auto exportSuccessCallback = [algorithm, parameters, wrappingKey, wrapper](const Vector<uint8_t>& exportedKeyData) mutable {
         auto encryptSuccessCallback = [wrapper](const Vector<uint8_t>& encryptedData) mutable {
             fulfillPromiseWithArrayBuffer(wrapper.releaseNonNull(), encryptedData.data(), encryptedData.size());
         };
