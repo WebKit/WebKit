@@ -75,7 +75,7 @@ void JSContextGroupAddMarkingConstraint(JSContextGroupRef group, JSMarkingConstr
     auto constraint = std::make_unique<MarkingConstraint>(
         toCString("Amc", constraintIndex, "(", RawPointer(bitwise_cast<void*>(constraintCallback)), ")"),
         toCString("API Marking Constraint #", constraintIndex, " (", RawPointer(bitwise_cast<void*>(constraintCallback)), ", ", RawPointer(userData), ")"),
-        [&vm, constraintCallback, userData]
+        [constraintCallback, userData]
         (SlotVisitor& slotVisitor, const VisitingTimeout&) {
             Marker marker;
             marker.IsMarked = isMarked;
@@ -88,6 +88,3 @@ void JSContextGroupAddMarkingConstraint(JSContextGroupRef group, JSMarkingConstr
     
     vm.heap.addMarkingConstraint(WTFMove(constraint));
 }
-
-
-

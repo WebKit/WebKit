@@ -1,5 +1,22 @@
 2017-05-13  David Kilzer  <ddkilzer@apple.com>
 
+        Unused lambda capture in JSContextGroupAddMarkingConstraint()
+        <https://webkit.org/b/172084>
+
+        Reviewed by Saam Barati.
+
+        Fixes the following warning with newer clang:
+
+            Source/JavaScriptCore/API/JSMarkingConstraintPrivate.cpp:78:11: error: lambda capture 'vm' is not used [-Werror,-Wunused-lambda-capture]
+                    [&vm, constraintCallback, userData]
+                      ^
+
+        * API/JSMarkingConstraintPrivate.cpp:
+        (JSContextGroupAddMarkingConstraint): Remove unused lambda
+        capture for '&vm'.
+
+2017-05-13  David Kilzer  <ddkilzer@apple.com>
+
         [JSC] config.rb fails when checking some clang versions
         <https://webkit.org/b/172082>
 
