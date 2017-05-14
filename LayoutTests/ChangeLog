@@ -1,3 +1,17 @@
+2017-05-14  David Kilzer  <ddkilzer@apple.com>
+
+        [macOS Debug WK1] fast/parser/adoption-agency-unload-iframe-4.html is a flaky timeout (always on iOS 10 Release WK1)
+        <https://webkit.org/b/172092>
+
+        Unreviewed test gardening.
+
+        See also Bug 169211 for a similar GTK WK1 timeout.
+
+        * platform/ios-wk1/TestExpectations:
+        - Mark as always timing out on all builds.
+        * platform/mac-wk1/TestExpectations:
+        - Mark flaky on Debug builds.
+
 2017-05-13  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] deviceId constraint doesn't work with getUserMedia

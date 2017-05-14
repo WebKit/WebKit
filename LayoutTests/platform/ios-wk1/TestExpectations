@@ -1886,3 +1886,5 @@ http/tests/websocket/tests/hybi/network-process-crash-error.html [ Skip ]
 
 # This was a WK2-only fix.
 http/tests/css/filters-on-iframes.html [ Skip ]
+
+webkit.org/b/172092 fast/parser/adoption-agency-unload-iframe-4.html [ Timeout ]
