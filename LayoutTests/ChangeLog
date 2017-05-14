@@ -1,5 +1,17 @@
 2017-05-14  David Kilzer  <ddkilzer@apple.com>
 
+        [iOS/macOS Debug WK2] LayoutTests/imported/w3c/web-platform-tests/webrtc/interfaces.html is a flaky crash due to assertion failure
+        <https://bugs.webkit.org/show_bug.cgi?id=172094>
+        <rdar://problem/32184256>
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        - Mark test as flaky crash on Debug WK2 builds.
+
+2017-05-14  David Kilzer  <ddkilzer@apple.com>
+
         [macOS Debug WK1] fast/parser/adoption-agency-unload-iframe-4.html is a flaky timeout (always on iOS 10 Release WK1)
         <https://webkit.org/b/172092>
 
