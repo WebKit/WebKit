@@ -5100,7 +5100,7 @@ void WebPage::resetAssistedNodeForFrame(WebFrame* frame)
 {
     if (!m_assistedNode)
         return;
-    if (m_assistedNode->document().frame() == frame->coreFrame()) {
+    if (frame->isMainFrame() || m_assistedNode->document().frame() == frame->coreFrame()) {
 #if PLATFORM(IOS)
         send(Messages::WebPageProxy::StopAssistingNode());
 #elif PLATFORM(MAC)

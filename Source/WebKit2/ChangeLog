@@ -1,3 +1,21 @@
+2017-05-14  Andreas Kling  <akling@apple.com>
+
+        Always reset the assisted node when the main frame commits a new load.
+        https://bugs.webkit.org/show_bug.cgi?id=172088
+
+        Reviewed by Antti Koivisto.
+
+        WebPage::m_assistedNode could extend the lifetime of the document it pointed into
+        if the main frame was navigated while the assisted node was in one of its subframes.
+        The life-supported document wouldn't be reachable from JavaScript but nevertheless
+        would consume memory and other resources.
+
+        This patch fixes the issue by always clearing WebPage::m_assistedNode when the main
+        frame commits a new load.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::resetAssistedNodeForFrame):
+
 2017-05-14  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed Mac cmake buildfix after r216690, just for fun.
