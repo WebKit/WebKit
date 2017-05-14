@@ -87,6 +87,8 @@ static RetainPtr<WKScriptMessage> lastScriptMessage;
         decisionHandler(nil, NO);
         return;
     }
+
+    decisionHandler(@"0x987654321", NO);
 }
 @end
 

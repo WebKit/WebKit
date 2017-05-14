@@ -41,7 +41,6 @@ private:
     friend NeverDestroyed<MockRealtimeMediaSourceCenter>;
     MockRealtimeMediaSourceCenter();
 
-    void validateRequestConstraints(ValidConstraintsHandler&& validHandler, InvalidConstraintsHandler&& invalidHandler, const MediaConstraints& audioConstraints, const MediaConstraints& videoConstraints) final;
     Vector<CaptureDevice> getMediaStreamDevices() final;
     void createMediaStream(NewMediaStreamHandler&&, const String& audioDeviceID, const String& videoDeviceID, const MediaConstraints* audioConstraints, const MediaConstraints* videoConstraints) final;
 

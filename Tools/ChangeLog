@@ -1,3 +1,21 @@
+2017-05-13  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] deviceId constraint doesn't work with getUserMedia
+        https://bugs.webkit.org/show_bug.cgi?id=171877
+        <rdar://problem/31899730>
+
+        Reviewed by Jer Noble.
+
+        The device ID hash salt is now required for getUserMedia to check deviceId constraint, so
+        implement the "checkUserMediaPermission" callback.
+        * TestWebKitAPI/Tests/WebKit2/UserMedia.cpp:
+        (TestWebKitAPI::decidePolicyForUserMediaPermissionRequestCallBack):
+        (TestWebKitAPI::checkUserMediaPermissionCallback):
+        (TestWebKitAPI::TEST):
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/UserMediaDisabled.mm:
+        (-[UserMediaUIDelegate _webView:checkUserMediaPermissionForURL:mainFrameURL:frameIdentifier:decisionHandler:]):
+
 2017-05-13  Chris Dumez  <cdumez@apple.com>
 
         Stop using RefPtr::release()

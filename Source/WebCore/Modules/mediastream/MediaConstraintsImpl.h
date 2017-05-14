@@ -46,12 +46,27 @@ struct MediaConstraintsData {
         , isValid(isValid)
     {
     }
+    MediaConstraintsData(const MediaConstraintsData& constraints, const String& hashSalt)
+        : mandatoryConstraints(constraints.mandatoryConstraints)
+        , advancedConstraints(constraints.advancedConstraints)
+        , deviceIDHashSalt(hashSalt)
+        , isValid(constraints.isValid)
+    {
+    }
+    MediaConstraintsData(const MediaConstraints& constraints)
+        : mandatoryConstraints(constraints.mandatoryConstraints())
+        , advancedConstraints(constraints.advancedConstraints())
+        , deviceIDHashSalt(constraints.deviceIDHashSalt())
+        , isValid(constraints.isValid())
+    {
+    }
 
     void setDefaultVideoConstraints();
     bool isConstraintSet(std::function<bool(const MediaTrackConstraintSetMap&)>&&);
 
     MediaTrackConstraintSetMap mandatoryConstraints;
     Vector<MediaTrackConstraintSetMap> advancedConstraints;
+    String deviceIDHashSalt;
     bool isValid { false };
 };
 
@@ -66,8 +81,11 @@ public:
     const MediaTrackConstraintSetMap& mandatoryConstraints() const final { return m_data.mandatoryConstraints; }
     const Vector<MediaTrackConstraintSetMap>& advancedConstraints() const final { return m_data.advancedConstraints; }
     bool isValid() const final { return m_data.isValid; }
-    const MediaConstraintsData& data() const { return m_data; }
 
+    const String& deviceIDHashSalt() const final { return m_data.deviceIDHashSalt; }
+    void setDeviceIDHashSalt(const String& salt) final { m_data.deviceIDHashSalt = salt; }
+
+    const MediaConstraintsData& data() const { return m_data; }
     void setDefaultVideoConstraints() { m_data.setDefaultVideoConstraints(); }
 
 private:

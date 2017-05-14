@@ -82,7 +82,7 @@ private:
     void derefEventTarget() override { deref(); }
 
     Timer m_scheduledEventTimer;
-    RealtimeMediaSourceCenter::DevicesChangedObserverToken m_deviceChangedToken { 0 };
+    std::optional<RealtimeMediaSourceCenter::DevicesChangedObserverToken> m_deviceChangedToken;
 };
 
 } // namespace WebCore

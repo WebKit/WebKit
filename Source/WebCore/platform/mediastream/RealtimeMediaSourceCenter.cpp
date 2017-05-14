@@ -198,6 +198,68 @@ void RealtimeMediaSourceCenter::captureDevicesChanged()
         it.value();
 }
 
+void RealtimeMediaSourceCenter::validateRequestConstraints(ValidConstraintsHandler&& validHandler, InvalidConstraintsHandler&& invalidHandler, const MediaConstraints& audioConstraints, const MediaConstraints& videoConstraints)
+{
+    struct DeviceInfo {
+        unsigned fitnessScore;
+        String id;
+    };
+
+    struct {
+        bool operator()(const DeviceInfo& a, const DeviceInfo& b)
+        {
+            return a.fitnessScore < b.fitnessScore;
+        }
+    } sortBasedOnFitnessScore;
+
+    Vector<DeviceInfo> audioDeviceInfo;
+    Vector<DeviceInfo> videoDeviceInfo;
+
+    String firstInvalidConstraint;
+    for (auto& device : getMediaStreamDevices()) {
+        if (!device.enabled())
+            continue;
+
+        String invalidConstraint;
+        CaptureSourceOrError sourceOrError;
+        if (device.type() == CaptureDevice::DeviceType::Video && videoConstraints.isValid()) {
+            auto sourceOrError = videoFactory().createVideoCaptureSource(device.persistentId(), nullptr);
+            if (sourceOrError && sourceOrError.captureSource->supportsConstraints(videoConstraints, invalidConstraint))
+                videoDeviceInfo.append({sourceOrError.captureSource->fitnessScore(), device.persistentId()});
+        } else if (device.type() == CaptureDevice::DeviceType::Audio && audioConstraints.isValid()) {
+            auto sourceOrError = audioFactory().createAudioCaptureSource(device.persistentId(), nullptr);
+            if (sourceOrError && sourceOrError.captureSource->supportsConstraints(audioConstraints, invalidConstraint))
+                audioDeviceInfo.append({sourceOrError.captureSource->fitnessScore(), device.persistentId()});
+        }
+
+        if (!invalidConstraint.isEmpty() && firstInvalidConstraint.isEmpty())
+            firstInvalidConstraint = invalidConstraint;
+    }
+
+    if ((audioConstraints.isValid() && audioDeviceInfo.isEmpty()) || (videoConstraints.isValid() && videoDeviceInfo.isEmpty())) {
+        invalidHandler(firstInvalidConstraint);
+        return;
+    }
+
+    Vector<String> audioSourceIds;
+    if (!audioDeviceInfo.isEmpty()) {
+        audioSourceIds.reserveInitialCapacity(audioDeviceInfo.size());
+        std::sort(audioDeviceInfo.begin(), audioDeviceInfo.end(), sortBasedOnFitnessScore);
+        for (auto& info : audioDeviceInfo)
+            audioSourceIds.uncheckedAppend(WTFMove(info.id));
+    }
+
+    Vector<String> videoSourceIds;
+    if (!videoDeviceInfo.isEmpty()) {
+        videoSourceIds.reserveInitialCapacity(videoDeviceInfo.size());
+        std::sort(videoDeviceInfo.begin(), videoDeviceInfo.end(), sortBasedOnFitnessScore);
+        for (auto& info : videoDeviceInfo)
+            videoSourceIds.uncheckedAppend(WTFMove(info.id));
+    }
+
+    validHandler(WTFMove(audioSourceIds), WTFMove(videoSourceIds));
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)

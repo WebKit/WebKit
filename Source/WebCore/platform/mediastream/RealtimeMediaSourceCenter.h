@@ -57,7 +57,7 @@ public:
 
     using ValidConstraintsHandler = std::function<void(const Vector<String>&& audioDeviceUIDs, const Vector<String>&& videoDeviceUIDs)>;
     using InvalidConstraintsHandler = std::function<void(const String& invalidConstraint)>;
-    virtual void validateRequestConstraints(ValidConstraintsHandler&&, InvalidConstraintsHandler&&, const MediaConstraints& audioConstraints, const MediaConstraints& videoConstraints) = 0;
+    virtual void validateRequestConstraints(ValidConstraintsHandler&&, InvalidConstraintsHandler&&, const MediaConstraints& audioConstraints, const MediaConstraints& videoConstraints);
 
     using NewMediaStreamHandler = std::function<void(RefPtr<MediaStreamPrivate>&&)>;
     virtual void createMediaStream(NewMediaStreamHandler&&, const String& audioDeviceID, const String& videoDeviceID, const MediaConstraints* audioConstraints, const MediaConstraints* videoConstraints) = 0;

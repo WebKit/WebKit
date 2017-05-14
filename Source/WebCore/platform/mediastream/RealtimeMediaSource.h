@@ -222,7 +222,8 @@ protected:
     virtual void beginConfiguration() { }
     virtual void commitConfiguration() { }
 
-    virtual bool selectSettings(const MediaConstraints&, FlattenedConstraint&, String&);
+    enum class SelectType { ForApplyConstraints, ForSupportsConstraints };
+    bool selectSettings(const MediaConstraints&, FlattenedConstraint&, String&, SelectType);
     virtual double fitnessDistance(const MediaConstraint&);
     virtual bool supportsSizeAndFrameRate(std::optional<IntConstraint> width, std::optional<IntConstraint> height, std::optional<DoubleConstraint>, String&, double& fitnessDistance);
     virtual bool supportsSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double>);

@@ -61,7 +61,7 @@ inline MediaDevices::MediaDevices(Document& document)
 MediaDevices::~MediaDevices()
 {
     if (m_deviceChangedToken)
-        RealtimeMediaSourceCenter::singleton().removeDevicesChangedObserver(m_deviceChangedToken);
+        RealtimeMediaSourceCenter::singleton().removeDevicesChangedObserver(m_deviceChangedToken.value());
 }
 
 Ref<MediaDevices> MediaDevices::create(Document& document)
