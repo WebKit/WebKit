@@ -696,8 +696,8 @@ static TextFragmentIterator::TextFragment splitFragmentToFitLine(TextFragmentIte
     auto rightSideWidth = fragmentToSplit.width() - splitFragmentData.width;
     if (rightSideWidth < 2 * availableWidth)
         rightSideWidth = textFragmentIterator.textWidth(splitFragmentData.position, fragmentToSplit.end(), 0);
-    return hyphenPosition ? fragmentToSplit.splitWithHyphen(splitFragmentData.position, splitFragmentData.width, rightSideWidth, textFragmentIterator) :
-        fragmentToSplit.split(splitFragmentData.position, splitFragmentData.width, rightSideWidth, textFragmentIterator);
+    return hyphenPosition ? fragmentToSplit.splitWithHyphen(splitFragmentData.position, textFragmentIterator.style().hyphenStringWidth,
+        splitFragmentData.width, rightSideWidth) : fragmentToSplit.split(splitFragmentData.position, splitFragmentData.width, rightSideWidth);
 }
 
 enum PreWrapLineBreakRule { Preserve, Ignore };

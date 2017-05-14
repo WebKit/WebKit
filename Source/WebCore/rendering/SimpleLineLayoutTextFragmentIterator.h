@@ -69,8 +69,8 @@ public:
         bool hasHyphen() const { return m_hasHyphen; }
 
         bool isEmpty() const { return start() == end() && !isLineBreak(); }
-        TextFragment split(unsigned splitPosition, float leftSideWidth, float rightSideWidth, const TextFragmentIterator&);
-        TextFragment splitWithHyphen(unsigned hyphenPosition, float leftSideWidth, float rightSideWidth, const TextFragmentIterator&);
+        TextFragment split(unsigned splitPosition, float leftSideWidth, float rightSideWidth);
+        TextFragment splitWithHyphen(unsigned hyphenPosition, float hyphenStringWidth, float leftSideWidth, float rightSideWidth);
         bool operator==(const TextFragment& other) const
         {
             return m_start == other.m_start
@@ -143,10 +143,9 @@ private:
     bool m_atEndOfSegment { false };
 };
 
-inline TextFragmentIterator::TextFragment TextFragmentIterator::TextFragment::split(unsigned splitPosition, float leftSideWidth,
-    float rightSideWidth, const TextFragmentIterator& textFragmentIterator)
+inline TextFragmentIterator::TextFragment TextFragmentIterator::TextFragment::split(unsigned splitPosition, float leftSideWidth, float rightSideWidth)
 {
-    auto updateFragmentProperties = [&textFragmentIterator] (TextFragment& fragment, unsigned start, unsigned end, float width)
+    auto updateFragmentProperties = [] (TextFragment& fragment, unsigned start, unsigned end, float width)
     {
         fragment.m_start = start;
         fragment.m_end = end;
@@ -162,13 +161,12 @@ inline TextFragmentIterator::TextFragment TextFragmentIterator::TextFragment::sp
     return rightSide;
 }
 
-inline TextFragmentIterator::TextFragment TextFragmentIterator::TextFragment::splitWithHyphen(unsigned hyphenPosition, float leftSideWidth,
-    float rightSideWidth, const TextFragmentIterator& textFragmentIterator)
+inline TextFragmentIterator::TextFragment TextFragmentIterator::TextFragment::splitWithHyphen(unsigned hyphenPosition, float hyphenStringWidth,
+    float leftSideWidth, float rightSideWidth)
 {
-    ASSERT(textFragmentIterator.style().shouldHyphenate);
-    auto rightSide = split(hyphenPosition, leftSideWidth, rightSideWidth, textFragmentIterator);
+    auto rightSide = split(hyphenPosition, leftSideWidth, rightSideWidth);
     m_hasHyphen = true;
-    m_width += textFragmentIterator.style().hyphenStringWidth;
+    m_width += hyphenStringWidth;
     return rightSide;
 }
 

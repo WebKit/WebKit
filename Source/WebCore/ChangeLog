@@ -1,3 +1,16 @@
+2017-05-14  Zalan Bujtas  <zalan@apple.com>
+
+        Remove unused lambda in TextFragmentIterator::TextFragment::split() and cleanup dependencies.
+        https://bugs.webkit.org/show_bug.cgi?id=172089
+
+        Reviewed by David Kilzer.
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::splitFragmentToFitLine):
+        * rendering/SimpleLineLayoutTextFragmentIterator.h:
+        (WebCore::SimpleLineLayout::TextFragmentIterator::TextFragment::split):
+        (WebCore::SimpleLineLayout::TextFragmentIterator::TextFragment::splitWithHyphen):
+
 2017-05-13  David Kilzer  <ddkilzer@apple.com>
 
         Unused lambda in JSWebKitSubtleCrypto::wrapKey()
