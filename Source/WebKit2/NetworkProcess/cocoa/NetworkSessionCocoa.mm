@@ -147,7 +147,11 @@ static WebCore::NetworkLoadPriority toNetworkLoadPriority(float priority)
     if (auto* networkDataTask = _session->dataTaskForIdentifier(task.taskIdentifier, storedCredentials)) {
         auto completionHandlerCopy = Block_copy(completionHandler);
         networkDataTask->willPerformHTTPRedirection(response, request, [completionHandlerCopy, taskIdentifier](auto& request) {
+#if !LOG_DISABLED
             LOG(NetworkSession, "%llu willPerformHTTPRedirection completionHandler (%s)", taskIdentifier, request.url().string().utf8().data());
+#else
+            UNUSED_PARAM(taskIdentifier);
+#endif
             completionHandlerCopy(request.nsURLRequest(WebCore::UpdateHTTPBody));
             Block_release(completionHandlerCopy);
         });
@@ -171,7 +175,11 @@ static WebCore::NetworkLoadPriority toNetworkLoadPriority(float priority)
     if (auto* networkDataTask = _session->dataTaskForIdentifier(taskIdentifier, storedCredentials)) {
         auto completionHandlerCopy = Block_copy(completionHandler);
         networkDataTask->willPerformHTTPRedirection(WebCore::synthesizeRedirectResponseIfNecessary([task currentRequest], request, nil), request, [completionHandlerCopy, taskIdentifier](auto& request) {
+#if !LOG_DISABLED
             LOG(NetworkSession, "%llu _schemeUpgraded completionHandler (%s)", taskIdentifier, request.url().string().utf8().data());
+#else
+            UNUSED_PARAM(taskIdentifier);
+#endif
             completionHandlerCopy(request.nsURLRequest(WebCore::UpdateHTTPBody));
             Block_release(completionHandlerCopy);
         });
@@ -213,7 +221,11 @@ static WebCore::NetworkLoadPriority toNetworkLoadPriority(float priority)
         auto sessionID = _session->sessionID();
         auto challengeCompletionHandler = [completionHandlerCopy, sessionID, authenticationChallenge, taskIdentifier, partition = networkDataTask->partition()](WebKit::AuthenticationChallengeDisposition disposition, const WebCore::Credential& credential)
         {
+#if !LOG_DISABLED
             LOG(NetworkSession, "%llu didReceiveChallenge completionHandler %d", taskIdentifier, disposition);
+#else
+            UNUSED_PARAM(taskIdentifier);
+#endif
 #if !USE(CREDENTIAL_STORAGE_WITH_NETWORK_SESSION)
             UNUSED_PARAM(sessionID);
             UNUSED_PARAM(authenticationChallenge);
@@ -369,7 +381,11 @@ static WebCore::NetworkLoadPriority toNetworkLoadPriority(float priority)
 
         auto completionHandlerCopy = Block_copy(completionHandler);
         networkDataTask->didReceiveResponse(WTFMove(resourceResponse), [completionHandlerCopy, taskIdentifier](WebCore::PolicyAction policyAction) {
+#if !LOG_DISABLED
             LOG(NetworkSession, "%llu didReceiveResponse completionHandler (%d)", taskIdentifier, policyAction);
+#else
+            UNUSED_PARAM(taskIdentifier);
+#endif
             completionHandlerCopy(toNSURLSessionResponseDisposition(policyAction));
             Block_release(completionHandlerCopy);
         });

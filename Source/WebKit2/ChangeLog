@@ -1,3 +1,50 @@
+2017-05-14  David Kilzer  <ddkilzer@apple.com>
+
+        Fix unused lambdas in WebKit2
+        <https://webkit.org/b/172090>
+
+        Reviewed by Chris Dumez.
+
+        Fixes unused lambda warnings found with newer clang.
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::retrieve):
+        * NetworkProcess/cache/NetworkCacheStatistics.cpp:
+        (WebKit::NetworkCache::Statistics::initialize):
+        - Use UNUSED_PARAM() to silence unused lambda warning since
+          'startTime' is used in Debug builds.
+
+        * NetworkProcess/capture/NetworkCaptureManager.cpp:
+        (WebKit::NetworkCapture::Manager::fuzzyMatchURLs):
+        - Remove unused 'this' from lambda capture.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:task:willPerformHTTPRedirection:newRequest:completionHandler:]):
+        (-[WKNetworkSessionDelegate URLSession:task:_schemeUpgraded:completionHandler:]):
+        (-[WKNetworkSessionDelegate URLSession:task:didReceiveChallenge:completionHandler:]):
+        (-[WKNetworkSessionDelegate URLSession:dataTask:didReceiveResponse:completionHandler:]):
+        - Use UNUSED_PARAM() to silence unused lambda warning since
+          'taskIdentifier' is used in Debug builds.
+
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::registerSharedResourceLoadObserver):
+        (WebKit::WebResourceLoadStatisticsStore::applicationWillTerminate):
+        - Remove unused 'this' from lambda captures.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::fetchData):
+        - Remove unused 'fetchOptions' from lambda capture.
+        (WebKit::WebsiteDataStore::fetchDataForTopPrivatelyControlledDomains):
+        - Remove unused 'this' from lambda capture.
+
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+        (WebKit::ViewGestureController::forceRepaintIfNeeded):
+        - Remove unused 'this' from lambda capture.
+
+        * WebProcess/cocoa/WebVideoFullscreenManager.mm:
+        (WebKit::WebVideoFullscreenManager::didExitFullscreen):
+        - Remove unused 'this' from nested lambda captures.
+
 2017-05-13  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] deviceId constraint doesn't work with getUserMedia

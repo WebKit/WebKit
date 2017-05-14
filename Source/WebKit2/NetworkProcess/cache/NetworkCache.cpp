@@ -382,6 +382,8 @@ void Cache::retrieve(const WebCore::ResourceRequest& request, const GlobalFrameI
 #if !LOG_DISABLED
         auto elapsedMS = static_cast<int64_t>(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - startTime).count());
         LOG(NetworkCache, "(NetworkProcess) retrieve complete useDecision=%d priority=%d time=%" PRIi64 "ms", static_cast<int>(useDecision), static_cast<int>(request.priority()), elapsedMS);
+#else
+        UNUSED_PARAM(startTime);
 #endif
         completionHandler(WTFMove(entry));
 

@@ -122,6 +122,8 @@ void Statistics::initialize(const String& databasePath)
 
 #if !LOG_DISABLED
         auto elapsedMS = static_cast<int64_t>(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - startTime).count());
+#else
+        UNUSED_PARAM(startTime);
 #endif
         LOG(NetworkCache, "(NetworkProcess) Network cache statistics database load complete, entries=%lu time=%" PRIi64 "ms", static_cast<size_t>(m_approximateEntryCount), elapsedMS);
 
@@ -129,6 +131,8 @@ void Statistics::initialize(const String& databasePath)
             bootstrapFromNetworkCache(networkCachePath);
 #if !LOG_DISABLED
             elapsedMS = static_cast<int64_t>(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - startTime).count());
+#else
+            UNUSED_PARAM(startTime);
 #endif
             LOG(NetworkCache, "(NetworkProcess) Network cache statistics database bootstrapping complete, entries=%lu time=%" PRIi64 "ms", static_cast<size_t>(m_approximateEntryCount), elapsedMS);
         }

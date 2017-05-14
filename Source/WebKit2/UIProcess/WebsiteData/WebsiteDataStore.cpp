@@ -285,7 +285,7 @@ void WebsiteDataStore::fetchData(OptionSet<WebsiteDataType> dataTypes, OptionSet
 #if ENABLE(VIDEO)
     if (dataTypes.contains(WebsiteDataType::DiskCache)) {
         callbackAggregator->addPendingCallback();
-        m_queue->dispatch([fetchOptions, mediaCacheDirectory = m_configuration.mediaCacheDirectory.isolatedCopy(), callbackAggregator] {
+        m_queue->dispatch([mediaCacheDirectory = m_configuration.mediaCacheDirectory.isolatedCopy(), callbackAggregator] {
             // FIXME: Make HTMLMediaElement::originsInMediaCache return a collection of SecurityOriginDatas.
             HashSet<RefPtr<WebCore::SecurityOrigin>> origins = WebCore::HTMLMediaElement::originsInMediaCache(mediaCacheDirectory);
             WebsiteData websiteData;
@@ -503,7 +503,7 @@ void WebsiteDataStore::fetchData(OptionSet<WebsiteDataType> dataTypes, OptionSet
 
 void WebsiteDataStore::fetchDataForTopPrivatelyControlledDomains(OptionSet<WebsiteDataType> dataTypes, OptionSet<WebsiteDataFetchOption> fetchOptions, Vector<String>&& topPrivatelyControlledDomains, std::function<void(Vector<WebsiteDataRecord>&&, Vector<String>&&)> completionHandler)
 {
-    fetchData(dataTypes, fetchOptions, [topPrivatelyControlledDomains = WTFMove(topPrivatelyControlledDomains), completionHandler, this](auto&& existingDataRecords) {
+    fetchData(dataTypes, fetchOptions, [topPrivatelyControlledDomains = WTFMove(topPrivatelyControlledDomains), completionHandler](auto&& existingDataRecords) {
         Vector<WebsiteDataRecord> matchingDataRecords;
         Vector<String> domainsWithMatchingDataRecords;
         for (auto&& dataRecord : existingDataRecords) {

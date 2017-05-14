@@ -186,7 +186,7 @@ void WebResourceLoadStatisticsStore::registerSharedResourceLoadObserver(std::fun
 #if PLATFORM(COCOA)
     WebResourceLoadStatisticsManager::registerUserDefaultsIfNeeded();
 #endif
-    m_resourceLoadStatisticsStore->setShouldPartitionCookiesCallback([this, shouldPartitionCookiesForDomainsHandler = WTFMove(shouldPartitionCookiesForDomainsHandler)] (const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, bool clearFirst) {
+    m_resourceLoadStatisticsStore->setShouldPartitionCookiesCallback([shouldPartitionCookiesForDomainsHandler = WTFMove(shouldPartitionCookiesForDomainsHandler)] (const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, bool clearFirst) {
         shouldPartitionCookiesForDomainsHandler(domainsToRemove, domainsToAdd, clearFirst);
     });
     m_resourceLoadStatisticsStore->setWritePersistentStoreCallback([this]() {
@@ -223,7 +223,7 @@ void WebResourceLoadStatisticsStore::processDidCloseConnection(WebProcessProxy&,
 void WebResourceLoadStatisticsStore::applicationWillTerminate()
 {
     BinarySemaphore semaphore;
-    m_statisticsQueue->dispatch([this, &semaphore] {
+    m_statisticsQueue->dispatch([&semaphore] {
         // Make sure any ongoing work in our queue is finished before we terminate.
         semaphore.signal();
     });

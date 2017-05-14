@@ -767,7 +767,7 @@ void ViewGestureController::forceRepaintIfNeeded()
     m_hasOutstandingRepaintRequest = true;
 
     uint64_t pageID = m_webPageProxy.pageID();
-    m_webPageProxy.forceRepaint(VoidCallback::create([this, pageID] (CallbackBase::Error error) {
+    m_webPageProxy.forceRepaint(VoidCallback::create([pageID] (CallbackBase::Error error) {
         if (auto gestureController = gestureControllerForPage(pageID))
             gestureController->removeSwipeSnapshot();
     }));
