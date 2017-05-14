@@ -1,3 +1,9 @@
+2017-05-14  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed Mac cmake buildfix after r216690, just for fun.
+
+        * PlatformMac.cmake:
+
 2017-05-14  David Kilzer  <ddkilzer@apple.com>
 
         Fix unused lambdas in WebKit2
