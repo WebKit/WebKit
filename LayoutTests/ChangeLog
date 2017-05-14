@@ -1,5 +1,11 @@
 2017-05-13  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/TestExpectations:
+
+2017-05-13  Ryan Haddad  <ryanhaddad@apple.com>
+
         Merge r216614.
 
     2017-05-10  Andy Estes  <aestes@apple.com>
