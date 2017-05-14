@@ -5,6 +5,16 @@
 
         Unreviewed test gardening.
 
+        * platform/ios-wk1/TestExpectations:
+        - This only times out on Release builds.
+
+2017-05-14  David Kilzer  <ddkilzer@apple.com>
+
+        [macOS Debug WK1] fast/parser/adoption-agency-unload-iframe-4.html is a flaky timeout (always on iOS 10 Release WK1)
+        <https://webkit.org/b/172092>
+
+        Unreviewed test gardening.
+
         See also Bug 169211 for a similar GTK WK1 timeout.
 
         * platform/ios-wk1/TestExpectations:
