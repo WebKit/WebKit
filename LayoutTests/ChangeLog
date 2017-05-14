@@ -1,3 +1,15 @@
+2017-05-13  David Kilzer  <ddkilzer@apple.com>
+
+        TestExpectations: Remove last refereneces to Legacy Notifications
+
+        Unreviewed test gardening fixes these lint warnings:
+
+            LayoutTests/TestExpectations:1222 Path does not exist. fast/notifications/notifications-event-stop-propagation.html
+            LayoutTests/TestExpectations:1223 Path does not exist. fast/notifications/notifications-multi-events.html
+
+        * TestExpectations: Remove references to skipped tests.  Legacy
+        Notification support was removed in r216641.
+
 2017-05-13  Ryan Haddad  <ryanhaddad@apple.com>
 
         Remove flaky expectation for LayoutTest media/media-controls-clone-crash.html.

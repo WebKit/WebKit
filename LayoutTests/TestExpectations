@@ -1223,10 +1223,6 @@ fast/events/destroyed-atomic-string.html [ Skip ]
 # Test disabled in r12843
 fast/loader/form-events-back-forward.html [ Skip ]
 
-# Tests landed disabled in r47056 for webkit.org/b/25463; never enabled
-fast/notifications/notifications-event-stop-propagation.html [ Skip ]
-fast/notifications/notifications-multi-events.html [ Skip ]
-
 # Test disabled in r42628
 http/tests/navigation/post-goback-repost-policy.html [ Skip ]
 
