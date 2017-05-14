@@ -153,7 +153,7 @@ class AnalysisTaskConfiguratorPane extends ComponentBase {
     {
         this._currentGroup = currentGroup;
         const form = this.part('form');
-        if (!form.hasCommitSets())
+        if (!form.hasCommitSets() && currentGroup)
             form.setConfigurations(currentGroup.test(), currentGroup.platform(), currentGroup.repetitionCount(), currentGroup.requestedCommitSets());
         this.enqueueToRender();
     }

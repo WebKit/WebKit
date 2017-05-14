@@ -1,3 +1,10 @@
+2017-05-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix. Added a missing null check.
+
+        * public/v3/pages/analysis-task-page.js:
+        (AnalysisTaskConfiguratorPane.prototype.setTestGroups):
+
 2017-05-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove the code for old syncing script configuration in BuildbotSyncer
