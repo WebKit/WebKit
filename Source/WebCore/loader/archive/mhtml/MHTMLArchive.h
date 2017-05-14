@@ -45,7 +45,7 @@ public:
     static Ref<MHTMLArchive> create();
     static RefPtr<MHTMLArchive> create(const URL&, SharedBuffer&);
 
-    static RefPtr<SharedBuffer> generateMHTMLData(Page*);
+    static Ref<SharedBuffer> generateMHTMLData(Page*);
 
     virtual ~MHTMLArchive();
 

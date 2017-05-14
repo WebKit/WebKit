@@ -177,7 +177,7 @@ RefPtr<AudioBus> AudioFileReader::createBus(float sampleRate, bool mixToMono)
     size_t busChannelCount = mixToMono ? 1 : numberOfChannels;
 
     // Create AudioBus where we'll put the PCM audio data
-    RefPtr<AudioBus> audioBus = AudioBus::create(busChannelCount, numberOfFrames);
+    auto audioBus = AudioBus::create(busChannelCount, numberOfFrames);
     audioBus->setSampleRate(m_clientDataFormat.mSampleRate); // save for later
 
     // Only allocated in the mixToMono case; deallocated on destruction.
@@ -228,7 +228,7 @@ RefPtr<AudioBus> AudioFileReader::createBus(float sampleRate, bool mixToMono)
 
     destroyAudioBufferList(bufferList);
 
-    return audioBus.release();
+    return audioBus;
 }
 
 RefPtr<AudioBus> createBusFromAudioFile(const char* filePath, bool mixToMono, float sampleRate)

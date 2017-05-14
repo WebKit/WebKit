@@ -93,7 +93,7 @@ public:
         if (!m_calcValue)
             return nullptr;
         m_sourceRange = m_range;
-        return CSSValuePool::singleton().createValue(m_calcValue.release());
+        return CSSValuePool::singleton().createValue(WTFMove(m_calcValue));
     }
     RefPtr<CSSPrimitiveValue> consumeNumber()
     {

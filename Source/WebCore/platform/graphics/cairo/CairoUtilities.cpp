@@ -282,7 +282,7 @@ RefPtr<cairo_surface_t> copyCairoImageSurface(cairo_surface_t* originalSurface)
     cairo_set_source_surface(cr.get(), originalSurface, 0, 0);
     cairo_set_operator(cr.get(), CAIRO_OPERATOR_SOURCE);
     cairo_paint(cr.get());
-    return newSurface.release();
+    return newSurface;
 }
 
 void copyRectFromCairoSurfaceToContext(cairo_surface_t* from, cairo_t* to, const IntSize& offset, const IntRect& rect)

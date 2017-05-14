@@ -120,7 +120,7 @@ HRESULT WebFramePolicyListener::continueSubmit()
 // WebFramePolicyListener ----------------------------------------------------------------
 void WebFramePolicyListener::receivedPolicyDecision(PolicyAction action)
 {
-    RefPtr<Frame> frame = m_frame.release();
+    RefPtr<Frame> frame = WTFMove(m_frame);
     if (frame)
         static_cast<WebFrameLoaderClient&>(frame->loader().client()).receivedPolicyDecision(action);
 }

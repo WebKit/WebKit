@@ -122,14 +122,14 @@ RefPtr<SharedMemory> SharedMemory::create(void* address, size_t size, Protection
     }
     if (fileDescriptor == -1) {
         WTFLogAlways("Failed to create shared memory file %s: %s", tempName.data(), strerror(errno));
-        return 0;
+        return nullptr;
     }
 
     while (ftruncate(fileDescriptor, size) == -1) {
         if (errno != EINTR) {
             closeWithRetry(fileDescriptor);
             shm_unlink(tempName.data());
-            return 0;
+            return nullptr;
         }
     }
 
@@ -137,7 +137,7 @@ RefPtr<SharedMemory> SharedMemory::create(void* address, size_t size, Protection
     if (data == MAP_FAILED) {
         closeWithRetry(fileDescriptor);
         shm_unlink(tempName.data());
-        return 0;
+        return nullptr;
     }
 
     shm_unlink(tempName.data());
@@ -146,7 +146,7 @@ RefPtr<SharedMemory> SharedMemory::create(void* address, size_t size, Protection
     instance->m_data = data;
     instance->m_fileDescriptor = fileDescriptor;
     instance->m_size = size;
-    return instance.release();
+    return instance;
 }
 
 RefPtr<SharedMemory> SharedMemory::allocate(size_t size)

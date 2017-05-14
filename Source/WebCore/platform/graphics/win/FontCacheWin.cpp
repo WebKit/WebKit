@@ -319,7 +319,7 @@ RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& descr
         DeleteObject(hfont);
     }
 
-    return fontData.release();
+    return fontData;
 }
 
 Vector<String> FontCache::systemFontFamilies()

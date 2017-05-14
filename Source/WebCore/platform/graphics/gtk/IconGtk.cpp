@@ -93,11 +93,11 @@ static String lookupIconName(String MIMEType)
 RefPtr<Icon> Icon::createIconForFiles(const Vector<String>& filenames)
 {
     if (filenames.isEmpty())
-        return 0;
+        return nullptr;
 
     if (filenames.size() == 1) {
         if (!g_path_skip_root(filenames[0].utf8().data()))
-            return 0;
+            return nullptr;
 
         String MIMEType = MIMETypeRegistry::getMIMETypeForPath(filenames[0]);
         String iconName = lookupIconName(MIMEType);
@@ -105,8 +105,8 @@ RefPtr<Icon> Icon::createIconForFiles(const Vector<String>& filenames)
         RefPtr<Icon> icon = adoptRef(new Icon);
         icon->m_icon = gtk_icon_theme_load_icon(gtk_icon_theme_get_default(), iconName.utf8().data(), 16, GTK_ICON_LOOKUP_USE_BUILTIN, 0);
         if (!icon->m_icon)
-            return 0;
-        return icon.release();
+            return nullptr;
+        return icon;
     }
 
     //FIXME: Implement this

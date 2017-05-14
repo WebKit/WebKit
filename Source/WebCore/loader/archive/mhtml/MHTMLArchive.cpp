@@ -130,7 +130,7 @@ RefPtr<MHTMLArchive> MHTMLArchive::create(const URL& url, SharedBuffer& data)
     return mainArchive;
 }
 
-RefPtr<SharedBuffer> MHTMLArchive::generateMHTMLData(Page* page)
+Ref<SharedBuffer> MHTMLArchive::generateMHTMLData(Page* page)
 {
     Vector<PageSerializer::Resource> resources;
     PageSerializer pageSerializer(resources);
@@ -162,7 +162,7 @@ RefPtr<SharedBuffer> MHTMLArchive::generateMHTMLData(Page* page)
     // We use utf8() below instead of ascii() as ascii() replaces CRLFs with ?? (we still only have put ASCII characters in it).
     ASSERT(stringBuilder.toString().containsOnlyASCII());
     CString asciiString = stringBuilder.toString().utf8();
-    RefPtr<SharedBuffer> mhtmlData = SharedBuffer::create();
+    auto mhtmlData = SharedBuffer::create();
     mhtmlData->append(asciiString.data(), asciiString.length());
 
     for (auto& resource : resources) {
@@ -213,7 +213,7 @@ RefPtr<SharedBuffer> MHTMLArchive::generateMHTMLData(Page* page)
     asciiString = makeString("--", boundary, "--\r\n").utf8();
     mhtmlData->append(asciiString.data(), asciiString.length());
 
-    return mhtmlData.release();
+    return mhtmlData;
 }
 
 }

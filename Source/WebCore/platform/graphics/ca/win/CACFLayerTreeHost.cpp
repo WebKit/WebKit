@@ -131,7 +131,7 @@ RefPtr<CACFLayerTreeHost> CACFLayerTreeHost::create()
         return nullptr;
     }
     host->initialize();
-    return host.release();
+    return host;
 }
 
 CACFLayerTreeHost::CACFLayerTreeHost()

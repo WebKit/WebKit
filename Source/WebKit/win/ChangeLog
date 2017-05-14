@@ -1,5 +1,18 @@
 2017-05-13  Chris Dumez  <cdumez@apple.com>
 
+        Stop using RefPtr::release()
+        https://bugs.webkit.org/show_bug.cgi?id=172074
+
+        Reviewed by Geoffrey Garen.
+
+        * WebFrame.cpp:
+        (WebFrame::loadPlainTextString):
+        (WebFrame::loadHTMLString):
+        * WebFramePolicyListener.cpp:
+        (WebFramePolicyListener::receivedPolicyDecision):
+
+2017-05-13  Chris Dumez  <cdumez@apple.com>
+
         Drop uses of PassRefPtr in WebKit/win
         https://bugs.webkit.org/show_bug.cgi?id=172067
 

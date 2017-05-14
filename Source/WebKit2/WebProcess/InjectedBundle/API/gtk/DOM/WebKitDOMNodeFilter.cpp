@@ -77,7 +77,7 @@ RefPtr<WebCore::NodeFilter> core(WebKitDOMNodeFilter* nodeFilter)
         g_object_weak_ref(G_OBJECT(nodeFilter), nodeFilterObjectDestroyedCallback, coreNodeFilter.get());
         g_object_set_data(G_OBJECT(nodeFilter), "webkit-core-node-filter", coreNodeFilter.get());
     }
-    return coreNodeFilter.release();
+    return coreNodeFilter;
 }
 
 } // namespace WebKit

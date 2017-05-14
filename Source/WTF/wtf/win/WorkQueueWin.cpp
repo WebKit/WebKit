@@ -187,7 +187,7 @@ void WorkQueue::dispatchAfter(Seconds duration, Function<void()>&& function)
     }
 
     // The timer callback will handle destroying context.
-    context.release().leakRef();
+    context.leakRef();
 }
 
 } // namespace WTF

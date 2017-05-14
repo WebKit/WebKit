@@ -68,7 +68,7 @@ RefPtr<MHTMLArchive> MHTMLParser::parseArchiveWithHeader(MIMEHeader* header)
         return nullptr;
     }
 
-    RefPtr<MHTMLArchive> archive = MHTMLArchive::create();
+    auto archive = MHTMLArchive::create();
     if (!header->isMultipart()) {
         // With IE a page with no resource is not multi-part.
         bool endOfArchiveReached = false;
@@ -76,7 +76,7 @@ RefPtr<MHTMLArchive> MHTMLParser::parseArchiveWithHeader(MIMEHeader* header)
         if (!resource)
             return nullptr;
         archive->setMainResource(resource.releaseNonNull());
-        return archive;
+        return WTFMove(archive);
     }
 
     // Skip the message content (it's a generic browser specific message).
@@ -100,7 +100,7 @@ RefPtr<MHTMLArchive> MHTMLParser::parseArchiveWithHeader(MIMEHeader* header)
             ASSERT_UNUSED(endOfPartReached, endOfPartReached);
             // The top-frame is the first frame found, regardless of the nesting level.
             if (subframeArchive->mainResource())
-                addResourceToArchive(subframeArchive->mainResource(), archive.get());
+                addResourceToArchive(subframeArchive->mainResource(), archive.ptr());
             archive->addSubframeArchive(subframeArchive.releaseNonNull());
             continue;
         }
@@ -110,10 +110,10 @@ RefPtr<MHTMLArchive> MHTMLParser::parseArchiveWithHeader(MIMEHeader* header)
             LOG_ERROR("Failed to parse MHTML part.");
             return nullptr;
         }
-        addResourceToArchive(resource.get(), archive.get());
+        addResourceToArchive(resource.get(), archive.ptr());
     }
 
-    return archive.release();
+    return WTFMove(archive);
 }
 
 void MHTMLParser::addResourceToArchive(ArchiveResource* resource, MHTMLArchive* archive)

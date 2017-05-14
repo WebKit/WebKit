@@ -79,7 +79,7 @@ RefPtr<cairo_surface_t> ShareableBitmap::createCairoSurface()
     ref(); // Balanced by deref in releaseSurfaceData.
     static cairo_user_data_key_t dataKey;
     cairo_surface_set_user_data(image.get(), &dataKey, this, releaseSurfaceData);
-    return image.release();
+    return image;
 }
 
 void ShareableBitmap::releaseSurfaceData(void* typelessBitmap)

@@ -630,7 +630,7 @@ public:
     {
         if (!m_result->length())
             return CSSValuePool::singleton().createIdentifierValue(CSSValueNormal);
-        return m_result.release();
+        return WTFMove(m_result);
     }
 
 private:
@@ -832,7 +832,7 @@ public:
     {
         if (!m_result->length())
             return CSSValuePool::singleton().createIdentifierValue(CSSValueNormal);
-        return m_result.release();
+        return WTFMove(m_result);
     }
 
 

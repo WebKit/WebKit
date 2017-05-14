@@ -1,3 +1,39 @@
+2017-05-13  Chris Dumez  <cdumez@apple.com>
+
+        Stop using RefPtr::release()
+        https://bugs.webkit.org/show_bug.cgi?id=172074
+
+        Reviewed by Geoffrey Garen.
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::FontVariantLigaturesParser::finalizeValue):
+        (WebCore::FontVariantNumericParser::finalizeValue):
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::CalcParser::consumeValue):
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::create):
+        * loader/archive/mhtml/MHTMLArchive.cpp:
+        (WebCore::MHTMLArchive::generateMHTMLData):
+        * loader/archive/mhtml/MHTMLArchive.h:
+        * loader/archive/mhtml/MHTMLParser.cpp:
+        (WebCore::MHTMLParser::parseArchiveWithHeader):
+        * platform/audio/ios/AudioFileReaderIOS.cpp:
+        (WebCore::AudioFileReader::createBus):
+        * platform/glib/SharedBufferGlib.cpp:
+        (WebCore::SharedBuffer::createFromReadingFile):
+        * platform/graphics/ca/win/CACFLayerTreeHost.cpp:
+        (WebCore::CACFLayerTreeHost::create):
+        * platform/graphics/cairo/CairoUtilities.cpp:
+        (WebCore::copyCairoImageSurface):
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::getImageData):
+        * platform/graphics/gtk/IconGtk.cpp:
+        (WebCore::Icon::createIconForFiles):
+        * platform/graphics/win/FontCacheWin.cpp:
+        (WebCore::FontCache::systemFallbackForCharacters):
+        * platform/win/SharedBufferWin.cpp:
+        (WebCore::SharedBuffer::createFromReadingFile):
+
 2017-05-13  Javier Fernandez  <jfernandez@igalia.com>
 
         [css-align] Implement the place-self shorthand

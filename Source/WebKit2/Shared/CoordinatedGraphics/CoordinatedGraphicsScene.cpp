@@ -463,8 +463,7 @@ void CoordinatedGraphicsScene::syncImageBackings(const CoordinatedGraphicsState&
 void CoordinatedGraphicsScene::createImageBacking(CoordinatedImageBackingID imageID)
 {
     ASSERT(!m_imageBackings.contains(imageID));
-    RefPtr<CoordinatedBackingStore> backingStore(CoordinatedBackingStore::create());
-    m_imageBackings.add(imageID, backingStore.release());
+    m_imageBackings.add(imageID, CoordinatedBackingStore::create());
 }
 
 void CoordinatedGraphicsScene::updateImageBacking(CoordinatedImageBackingID imageID, RefPtr<CoordinatedSurface>&& surface)

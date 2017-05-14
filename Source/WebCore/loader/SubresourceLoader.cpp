@@ -111,7 +111,7 @@ RefPtr<SubresourceLoader> SubresourceLoader::create(Frame& frame, CachedResource
         // is disabled to avoid re-entering style selection from a different thread (see <rdar://problem/9121719>).
         // FIXME: This should be fixed for all ports in <https://bugs.webkit.org/show_bug.cgi?id=56647>.
         subloader->m_iOSOriginalRequest = request;
-        return subloader.release();
+        return subloader;
     }
 #endif
     if (!subloader->init(request))
