@@ -31,7 +31,6 @@
 #include "CoordinatedLayerTreeHost.h"
 
 #include "DrawingArea.h"
-#include "WebCoordinatedSurface.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
 #include <WebCore/FrameView.h>

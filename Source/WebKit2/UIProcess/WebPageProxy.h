@@ -566,11 +566,6 @@ public:
 
     bool updateLayoutViewportParameters(const WebKit::RemoteLayerTreeTransaction&);
 
-#if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
-    void didRenderFrame(const WebCore::IntSize& contentsSize, const WebCore::IntRect& coveredRect);
-    void commitPageTransitionViewport();
-#endif
-
 #if PLATFORM(GTK)
     void setComposition(const String& text, Vector<WebCore::CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionEnd, uint64_t replacementRangeStart, uint64_t replacementRangeEnd);
     void confirmComposition(const String& compositionString, int64_t selectionStart, int64_t selectionLength);
