@@ -152,6 +152,9 @@ void WorkerScriptController::setException(JSC::Exception* exception)
 
 void WorkerScriptController::scheduleExecutionTermination()
 {
+    if (m_isTerminatingExecution)
+        return;
+
     {
         // The mutex provides a memory barrier to ensure that once
         // termination is scheduled, isTerminatingExecution() will

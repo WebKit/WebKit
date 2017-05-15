@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
- * Copyright (C) 2016 Apple Inc.  All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc.  All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -199,7 +199,7 @@ MessageQueueWaitResult WorkerRunLoop::runInMode(WorkerGlobalScope* context, cons
         break;
 
     case MessageQueueMessageReceived:
-        task->performTask(*this, context);
+        task->performTask(context);
         break;
 
     case MessageQueueTimeout:
@@ -228,7 +228,7 @@ void WorkerRunLoop::runCleanupTasks(WorkerGlobalScope* context)
         auto task = m_messageQueue.tryGetMessageIgnoringKilled();
         if (!task)
             return;
-        task->performTask(*this, context);
+        task->performTask(context);
     }
 }
 
@@ -252,9 +252,10 @@ void WorkerRunLoop::postTaskForMode(ScriptExecutionContext::Task&& task, const S
     m_messageQueue.append(std::make_unique<Task>(WTFMove(task), mode));
 }
 
-void WorkerRunLoop::Task::performTask(const WorkerRunLoop& runLoop, WorkerGlobalScope* context)
+void WorkerRunLoop::Task::performTask(WorkerGlobalScope* context)
 {
-    if ((!context->isClosing() && !runLoop.terminated()) || m_task.isCleanupTask())
+    ASSERT(context->script());
+    if ((!context->isClosing() && !context->script()->isTerminatingExecution()) || m_task.isCleanupTask())
         m_task.performTask(*context);
 }
 

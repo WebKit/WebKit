@@ -1,3 +1,125 @@
+2017-05-15  Mark Lam  <mark.lam@apple.com>
+
+        WorkerRunLoop::Task::performTask() should check !scriptController->isTerminatingExecution().
+        https://bugs.webkit.org/show_bug.cgi?id=171775
+        <rdar://problem/30975761>
+
+        Reviewed by Filip Pizlo.
+
+        Currently, WorkerThread::stop() calls scheduleExecutionTermination() to terminate
+        JS execution first, followed by posting a cleanup task to the worker, and lastly,
+        it invokes terminate() on the WorkerRunLoop.
+
+        As a result, before the run loop is terminated, the worker thread may observe the
+        TerminatedExecutionException in JS code, bail out, see another JS task to run,
+        re-enters the VM to run said JS code, and fails with an assertion due to the
+        TerminatedExecutionException still being pending on VM entry.
+
+        WorkerRunLoop::Task::performTask() already has a check to only allow a task to
+        run if and only if !runLoop.terminated() and the task is not a clean up task.
+        We'll fix the above race by changing WorkerRunLoop::Task::performTask() to check
+        !context->script()->isTerminatingExecution() instead of !runLoop.terminated().
+        Since WorkerThread::stop() always scheduleExecutionTermination() before it
+        terminates the run loop, !context->script()->isTerminatingExecution() implies
+        !runLoop.terminated().
+
+        The only time that runLoop is terminated without scheduleExecutionTermination()
+        being called is when WorkerThread::stop() is called before the WorkerThread has
+        finished creating its WorkerGlobalScope.  In this scenario, WorkerThread::stop()
+        will still terminate the run loop.  Hence, after the WorkerGlobalScope is created
+        (in WorkerThread::workerThread()), we will check if the run loop has been
+        terminated (i.e. stop() was called).  If so, we'll scheduleExecutionTermination()
+        there, and guarantee that if runloop.terminated() is true, then
+        context->script()->isTerminatingExecution() is also true.
+
+        Solutions that were considered but did not work (recorded for future reference):
+
+        1. In WorkerThread::stop(), call scheduleExecutionTermination() only after it
+           posts the cleanup task and terminate the run loop.
+
+           This did not work because this creates a race where the worker thread may run
+           the cleanup task before WorkerThread::stop() finishes.  As a result, the
+           scriptController may be deleted before we get to invoke scheduleExecutionTermination()
+           on it, thereby resulting in a use after free.
+
+           To make this work, we would have to change the life cycle management strategy
+           of the WorkerScriptController.  This is a more risky change that we would
+           want to take on at this time, and may also not be worth the gain.
+
+        2. Break scheduleExecutionTermination() up into 2 parts i.e. WorkerThread::stop()
+           will:
+           1. set the scriptControllers m_isTerminatingExecution flag before
+              posting the cleanup task and terminating the run loop, and
+           2. invoke VM::notifyNeedsTermination() after posting the cleanup task and
+              terminating the run loop.
+
+           This requires that we protect the liveness of the VM until we can invoke
+           notifyNeedsTermination() on it.
+
+           This did not work because:
+           1. We may end up destructing the VM in WorkerThread::stop() i.e. in the main
+              web frame, but only the worker thread holds the JS lock for the VM.
+
+              We can make the WorkerThread::stop() acquire the JS lock just before it
+              releases the protected VM's RefPtr, but that would mean the main thread
+              may be stuck waiting a bit for the worker thread to release its JSLock.
+              This is not desirable.
+
+           2. In practice, changing the liveness period of the Worker VM relative to its
+              WorkerScriptController and WorkerGlobalScope also has unexpected
+              ramifications.  We observed many worker tests failing with assertion
+              failures and crashes due to this change.
+
+           Hence, this approach is also a more risky change than it appears on the
+           surface, and is not worth exploring at this time.
+
+        In the end, changing WorkerRunLoop::Task::performTask() to check for
+        !scriptController->isTerminatingExecution() is the most straight forward solution
+        that is easy to prove correct.
+
+        Also fixed a race in WorkerThread::workerThread() where it can delete the
+        WorkerGlobalScope while WorkerThread::stop() is in the midst of accessing it.
+        We now guard the the nullifying of m_workerGlobalScope with the
+        m_threadCreationAndWorkerGlobalScopeMutex as well.
+
+        UPDATE: the only new thing in this patch for re-landing (vs one previously landed)
+        is that instead of nullifying m_workerGlobalScope directly (thereby deleting the
+        WorkerGlobalScope context), we'll swap it out and delete it only after we've
+        unlocked the m_threadCreationAndWorkerGlobalScopeMutex.  This is needed because
+        the destruction of the WorkerGlobalScope will cause the main thread to race against
+        the worker thread to delete the WorkerThread object, and the WorkerThread object
+        owns the mutex that we need to unlock after nullifying the m_workerGlobalScope
+        field.
+
+        This issue is covered by an existing test that I just unskipped in TestExpectations.
+
+        * bindings/js/JSDOMPromiseDeferred.cpp:
+        (WebCore::DeferredPromise::callFunction):
+
+        * bindings/js/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::scheduleExecutionTermination):
+        - Added a check to do nothing and return early if the scriptController is already
+          terminating execution.
+
+        * workers/WorkerRunLoop.cpp:
+        (WebCore::WorkerRunLoop::runInMode):
+        (WebCore::WorkerRunLoop::runCleanupTasks):
+        (WebCore::WorkerRunLoop::Task::performTask):
+
+        * workers/WorkerRunLoop.h:
+        - Made Task::performTask() private and make Task befriend the WorkerRunLoop class.
+          This ensures that only the WorkerRunLoop may call performTask().
+          Note: this change only formalizes and hardens a relationship that was already
+          in place before this.
+
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThread::start):
+        (WebCore::WorkerThread::workerThread):
+        (WebCore::WorkerThread::stop):
+        * workers/WorkerThread.h:
+        - Renamed m_threadCreationMutex to m_threadCreationAndWorkerGlobalScopeMutex so
+          that it more accurately describes what it guards.
+
 2017-05-15  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Unicode characters which can't be rendered in any font are invisible

@@ -1,3 +1,31 @@
+2017-05-15  Mark Lam  <mark.lam@apple.com>
+
+        WorkerRunLoop::Task::performTask() should check !scriptController->isTerminatingExecution().
+        https://bugs.webkit.org/show_bug.cgi?id=171775
+        <rdar://problem/30975761>
+
+        Reviewed by Filip Pizlo.
+
+        Increased the number of frames captured in VM::nativeStackTraceOfLastThrow()
+        from 25 to 100.  From experience, I found that 25 is sometimes not sufficient
+        for our debugging needs.
+
+        Also added VM::throwingThread() to track which thread an exception was thrown in.
+        This may be useful if the client is entering the VM from different threads.
+
+        * runtime/ExceptionScope.cpp:
+        (JSC::ExceptionScope::unexpectedExceptionMessage):
+        * runtime/ExceptionScope.h:
+        (JSC::ExceptionScope::exception):
+        (JSC::ExceptionScope::unexpectedExceptionMessage):
+        * runtime/Options.h:
+        - Added the unexpectedExceptionStackTraceLimit option.
+        * runtime/VM.cpp:
+        (JSC::VM::throwException):
+        * runtime/VM.h:
+        (JSC::VM::throwingThread):
+        (JSC::VM::clearException):
+
 2017-05-13  David Kilzer  <ddkilzer@apple.com>
 
         Unused lambda capture in JSContextGroupAddMarkingConstraint()

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -49,6 +49,9 @@ void DeferredPromise::callFunction(ExecState& exec, JSValue function, JSValue re
     if (!canInvokeCallback())
         return;
 
+    VM& vm = exec.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     CallData callData;
     CallType callType = getCallData(function, callData);
     ASSERT(callType != CallType::None);
@@ -57,6 +60,10 @@ void DeferredPromise::callFunction(ExecState& exec, JSValue function, JSValue re
     arguments.append(resolution);
 
     call(&exec, function, callType, callData, jsUndefined(), arguments);
+
+    // DeferredPromise should only be used by internal implementations that are well behaved.
+    // In practice, the only exception we should ever see here is the TerminatedExecutionException.
+    ASSERT_UNUSED(scope, !scope.exception() || isTerminatedExecutionException(vm, scope.exception()));
 
     clear();
 }
