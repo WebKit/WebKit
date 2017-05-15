@@ -380,6 +380,8 @@ public:
 
     bool isIntegerTranslation() const;
 
+    bool containsOnlyFiniteValues() const;
+
     // Returns the matrix without 3D components.
     TransformationMatrix to2dTransform() const;
     

@@ -33,6 +33,7 @@
 #include "IntRect.h"
 #include "LayoutRect.h"
 #include "TextStream.h"
+#include <cmath>
 #include <wtf/Assertions.h>
 #include <wtf/MathExtras.h>
 
@@ -1691,6 +1692,14 @@ bool TransformationMatrix::isIntegerTranslation() const
         return false;
 
     return true;
+}
+
+bool TransformationMatrix::containsOnlyFiniteValues() const
+{
+    return std::isfinite(m_matrix[0][0]) && std::isfinite(m_matrix[0][1]) && std::isfinite(m_matrix[0][2]) && std::isfinite(m_matrix[0][3])
+        && std::isfinite(m_matrix[1][0]) && std::isfinite(m_matrix[1][1]) && std::isfinite(m_matrix[1][2]) && std::isfinite(m_matrix[1][3])
+        && std::isfinite(m_matrix[2][0]) && std::isfinite(m_matrix[2][1]) && std::isfinite(m_matrix[2][2]) && std::isfinite(m_matrix[2][3])
+        && std::isfinite(m_matrix[3][0]) && std::isfinite(m_matrix[3][1]) && std::isfinite(m_matrix[3][2]) && std::isfinite(m_matrix[3][3]);
 }
 
 TransformationMatrix TransformationMatrix::to2dTransform() const

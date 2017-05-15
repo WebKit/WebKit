@@ -137,7 +137,7 @@ public:
 
     const TransformationMatrix& transform() const { return m_matrix; }
 
-    String toString() const;
+    ExceptionOr<String> toString() const;
 
 private:
     WebKitCSSMatrix() = default;

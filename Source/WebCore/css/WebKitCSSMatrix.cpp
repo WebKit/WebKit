@@ -35,6 +35,7 @@
 #include "StyleProperties.h"
 #include "TransformFunctions.h"
 #include <wtf/MathExtras.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -197,16 +198,61 @@ Ref<WebKitCSSMatrix> WebKitCSSMatrix::skewY(double angle) const
     return matrix;
 }
 
-String WebKitCSSMatrix::toString() const
+ExceptionOr<String> WebKitCSSMatrix::toString() const
 {
-    // FIXME - Need to ensure valid CSS floating point values (https://bugs.webkit.org/show_bug.cgi?id=20674)
-    if (m_matrix.isAffine())
-        return String::format("matrix(%f, %f, %f, %f, %f, %f)", m_matrix.a(), m_matrix.b(), m_matrix.c(), m_matrix.d(), m_matrix.e(), m_matrix.f());
-    return String::format("matrix3d(%f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f)",
-        m_matrix.m11(), m_matrix.m12(), m_matrix.m13(), m_matrix.m14(),
-        m_matrix.m21(), m_matrix.m22(), m_matrix.m23(), m_matrix.m24(),
-        m_matrix.m31(), m_matrix.m32(), m_matrix.m33(), m_matrix.m34(),
-        m_matrix.m41(), m_matrix.m42(), m_matrix.m43(), m_matrix.m44());
+    if (!m_matrix.containsOnlyFiniteValues())
+        return Exception { INVALID_STATE_ERR, ASCIILiteral("Matrix contains non-finite values") };
+
+    StringBuilder builder;
+    if (m_matrix.isAffine()) {
+        builder.appendLiteral("matrix(");
+        builder.append(String::numberToStringECMAScript(m_matrix.a()));
+        builder.appendLiteral(", ");
+        builder.append(String::numberToStringECMAScript(m_matrix.b()));
+        builder.appendLiteral(", ");
+        builder.append(String::numberToStringECMAScript(m_matrix.c()));
+        builder.appendLiteral(", ");
+        builder.append(String::numberToStringECMAScript(m_matrix.d()));
+        builder.appendLiteral(", ");
+        builder.append(String::numberToStringECMAScript(m_matrix.e()));
+        builder.appendLiteral(", ");
+        builder.append(String::numberToStringECMAScript(m_matrix.f()));
+    } else {
+        builder.appendLiteral("matrix3d(");
+        builder.append(String::numberToStringECMAScript(m_matrix.m11()));
+        builder.appendLiteral(", ");
+        builder.append(String::numberToStringECMAScript(m_matrix.m12()));
+        builder.appendLiteral(", ");
+        builder.append(String::numberToStringECMAScript(m_matrix.m13()));
+        builder.appendLiteral(", ");
+        builder.append(String::numberToStringECMAScript(m_matrix.m14()));
+        builder.appendLiteral(", ");
+        builder.append(String::numberToStringECMAScript(m_matrix.m21()));
+        builder.appendLiteral(", ");
+        builder.append(String::numberToStringECMAScript(m_matrix.m22()));
+        builder.appendLiteral(", ");
+        builder.append(String::numberToStringECMAScript(m_matrix.m23()));
+        builder.appendLiteral(", ");
+        builder.append(String::numberToStringECMAScript(m_matrix.m24()));
+        builder.appendLiteral(", ");
+        builder.append(String::numberToStringECMAScript(m_matrix.m31()));
+        builder.appendLiteral(", ");
+        builder.append(String::numberToStringECMAScript(m_matrix.m32()));
+        builder.appendLiteral(", ");
+        builder.append(String::numberToStringECMAScript(m_matrix.m33()));
+        builder.appendLiteral(", ");
+        builder.append(String::numberToStringECMAScript(m_matrix.m34()));
+        builder.appendLiteral(", ");
+        builder.append(String::numberToStringECMAScript(m_matrix.m41()));
+        builder.appendLiteral(", ");
+        builder.append(String::numberToStringECMAScript(m_matrix.m42()));
+        builder.appendLiteral(", ");
+        builder.append(String::numberToStringECMAScript(m_matrix.m43()));
+        builder.appendLiteral(", ");
+        builder.append(String::numberToStringECMAScript(m_matrix.m44()));
+    }
+    builder.append(')');
+    return builder.toString();
 }
 
 } // namespace WebCore

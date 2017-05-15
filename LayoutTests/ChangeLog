@@ -1,3 +1,18 @@
+2017-05-15  Chris Dumez  <cdumez@apple.com>
+
+        Align WebKitCSSMatrix stringifier with spec for DOMMatrix
+        https://bugs.webkit.org/show_bug.cgi?id=172114
+
+        Reviewed by Simon Fraser.
+
+        * fast/css/matrix-stringifier-expected.txt: Added.
+        * fast/css/matrix-stringifier.html: Added.
+        Add layout test coverage.
+
+        * fast/dom/Window/custom-constructors-expected.txt:
+        * fast/dom/Window/custom-constructors.html:
+        Rebaseline existing test to reflect behavior change.
+
 2017-05-15  Mark Lam  <mark.lam@apple.com>
 
         WorkerRunLoop::Task::performTask() should check !scriptController->isTerminatingExecution().

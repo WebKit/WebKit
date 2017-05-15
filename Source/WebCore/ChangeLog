@@ -1,3 +1,30 @@
+2017-05-15  Chris Dumez  <cdumez@apple.com>
+
+        Align WebKitCSSMatrix stringifier with spec for DOMMatrix
+        https://bugs.webkit.org/show_bug.cgi?id=172114
+
+        Reviewed by Simon Fraser.
+
+        Align WebKitCSSMatrix stringifier with spec for DOMMatrix after:
+        - https://github.com/w3c/fxtf-drafts/pull/148
+
+        The following changes were made:
+        - Use EcmaScript's ToString() to convert floating point values to string
+        - Throw an invalid state error if the matrix contains non-finite values
+        - Made WebKitCSSMatrix.toString enumerable as per [1].
+
+        [1] https://heycam.github.io/webidl/#es-stringifier
+
+        Test: fast/css/matrix-stringifier.html
+
+        * css/WebKitCSSMatrix.cpp:
+        (WebCore::WebKitCSSMatrix::toString):
+        * css/WebKitCSSMatrix.h:
+        * css/WebKitCSSMatrix.idl:
+        * platform/graphics/transforms/TransformationMatrix.cpp:
+        (WebCore::TransformationMatrix::containsOnlyFiniteValues):
+        * platform/graphics/transforms/TransformationMatrix.h:
+
 2017-05-15  Mark Lam  <mark.lam@apple.com>
 
         WorkerRunLoop::Task::performTask() should check !scriptController->isTerminatingExecution().
