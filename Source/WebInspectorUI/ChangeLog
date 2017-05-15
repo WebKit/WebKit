@@ -1,5 +1,16 @@
 2017-05-15  Fujii Hironori  <Hironori.Fujii@sony.com>
 
+        [GTK] Web Inspector: Add new GTK+ icons for Search icon of Quick Open dialog
+        https://bugs.webkit.org/show_bug.cgi?id=172110
+
+        Reviewed by Michael Catanzaro.
+
+        Add a free icon for the Web Inspector in GTK+.
+
+        * UserInterface/Images/gtk/Search.svg: Added.
+
+2017-05-15  Fujii Hironori  <Hironori.Fujii@sony.com>
+
         [GTK] Web Inspector: Add new GTK+ icons for Worker Scripts / Web Sockets
         https://bugs.webkit.org/show_bug.cgi?id=164138
 
