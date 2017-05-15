@@ -135,8 +135,7 @@ TEST(WKWebView, ClearAppCache)
 
     // Start with a clean slate of WebsiteData.
     readyToContinue = false;
-    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^()
-    {
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         readyToContinue = true;
     }];
     TestWebKitAPI::Util::run(&readyToContinue);
@@ -145,6 +144,11 @@ TEST(WKWebView, ClearAppCache)
     if (auto *websiteCacheDirectory = defaultWebsiteCacheDirectory()) {
         NSURL *websiteCacheURL = [NSURL fileURLWithPath:[websiteCacheDirectory stringByExpandingTildeInPath]];
         [[NSFileManager defaultManager] removeItemAtURL:websiteCacheURL error:nil];
+    }
+
+    if (auto *appCacheDirectory = defaultApplicationCacheDirectory()) {
+        NSURL *appCacheURL = [NSURL fileURLWithPath:[appCacheDirectory stringByExpandingTildeInPath]];
+        [[NSFileManager defaultManager] removeItemAtURL:appCacheURL error:nil];
     }
 
     NSURL *dbResourceURL = [[NSBundle mainBundle] URLForResource:@"ApplicationCache" withExtension:@"db" subdirectory:@"TestWebKitAPI.resources"];
