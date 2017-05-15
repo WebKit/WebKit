@@ -1,3 +1,25 @@
+2017-05-15  Brent Fulgham  <bfulgham@apple.com>
+
+        [iOS WK1] Do not try to dispatch messages to subframes if their documents have not been constructed yet.
+        https://bugs.webkit.org/show_bug.cgi?id=172059
+        <rdar://problem/31963192>
+
+        Reviewed by Zalan Bujtas.
+
+        On iOS WK1 we can end up in an inconsistent state, where
+        1. The web thread is inside a newly-injected iframe's document's constructor and
+        2. waiting on a delegate callback on the main thread
+        while the main thread
+        (a) Evaluates arbitrary JavaScript that modifies storage which
+        (b) Triggers an event dispatch.
+ 
+        * storage/StorageEventDispatcher.cpp:
+        (WebCore::StorageEventDispatcher::dispatchSessionStorageEvents): If the sub-frame's document
+        is in an inconsistent state, skip it.
+        (WebCore::StorageEventDispatcher::dispatchLocalStorageEvents): Ditto.
+        (WebCore::StorageEventDispatcher::dispatchSessionStorageEventsToFrames): Ditto.
+        (WebCore::StorageEventDispatcher::dispatchLocalStorageEventsToFrames): Ditto.
+
 2017-05-15  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Leading whitespace followed by a <br> produces an extra linebreak.

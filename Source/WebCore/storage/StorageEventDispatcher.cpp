@@ -50,6 +50,8 @@ void StorageEventDispatcher::dispatchSessionStorageEvents(const String& key, con
 
     // Send events only to our page.
     for (Frame* frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        if (!frame->document())
+            continue;
         if (sourceFrame != frame && frame->document()->securityOrigin().equal(securityOrigin.securityOrigin().ptr()))
             frames.append(frame);
     }
@@ -68,6 +70,8 @@ void StorageEventDispatcher::dispatchLocalStorageEvents(const String& key, const
     // Send events to every page.
     for (auto& pageInGroup : page->group().pages()) {
         for (Frame* frame = &pageInGroup->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+            if (!frame->document())
+                continue;
             if (sourceFrame != frame && frame->document()->securityOrigin().equal(securityOrigin.securityOrigin().ptr()))
                 frames.append(frame);
         }
@@ -82,6 +86,8 @@ void StorageEventDispatcher::dispatchSessionStorageEventsToFrames(Page& page, co
 
     for (auto& frame : frames) {
         auto result = frame->document()->domWindow()->sessionStorage();
+        if (!frame->document())
+            continue;
         if (!result.hasException())
             frame->document()->enqueueWindowEvent(StorageEvent::create(eventNames().storageEvent, key, oldValue, newValue, url, result.releaseReturnValue()));
     }
@@ -94,6 +100,8 @@ void StorageEventDispatcher::dispatchLocalStorageEventsToFrames(PageGroup& pageG
 
     for (auto& frame : frames) {
         auto result = frame->document()->domWindow()->localStorage();
+        if (!frame->document())
+            continue;
         if (!result.hasException())
             frame->document()->enqueueWindowEvent(StorageEvent::create(eventNames().storageEvent, key, oldValue, newValue, url, result.releaseReturnValue()));
     }
