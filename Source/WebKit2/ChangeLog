@@ -1,3 +1,22 @@
+2017-05-15  David Kilzer  <ddkilzer@apple.com>
+
+        Update json.hpp to v2.1.1
+        <https://webkit.org/b/172085>
+        <rdar://problem/32180980>
+
+        Reviewed by Alex Christensen.
+
+        * NetworkProcess/capture/NetworkCaptureEvent.cpp:
+        - Define JSON_NOEXCEPTION as 1 to disable exceptions in
+          json.hpp.
+        (WebKit::NetworkCapture::JSONCoder<String>::encode):
+        (WebKit::NetworkCapture::JSONCoder<WebCore::SharedBuffer>::encode):
+        - Build std::string passing in length to avoid the need for a
+          custom basic_json() constructor, and for efficiency.
+
+        * NetworkProcess/capture/json.hpp:
+        - Update to v2.1.1 and remove customizations.
+
 2017-05-15  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed build fix.
