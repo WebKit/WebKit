@@ -1,3 +1,22 @@
+2017-05-15  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [GTK] Web Inspector: Add new GTK+ icons for Worker Scripts / Web Sockets
+        https://bugs.webkit.org/show_bug.cgi?id=164138
+
+        Reviewed by Michael Catanzaro.
+
+        Add more free icons for the Web Inspector in GTK+.
+
+        * UserInterface/Images/gtk/WorkerScript.png: Added.
+        * UserInterface/Images/gtk/WorkerScript@2x.png: Added.
+        * UserInterface/Images/gtk/WorkerScriptLarge.png: Added.
+        * UserInterface/Images/gtk/WorkerScriptLarge@2x.png: Added.
+        * UserInterface/Views/ResourceIcons.css:
+        (.script.worker-icon .icon):
+        (.large .script.worker-icon .icon):
+        (body:matches(.mac-platform, .windows-platform) .script.worker-icon .icon): Deleted.
+        (body:matches(.mac-platform, .windows-platform) .large .script.worker-icon .icon): Deleted.
+
 2017-05-11  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: RTL: "Elements > Styles - Rules" rule and media query headers should be left aligned
