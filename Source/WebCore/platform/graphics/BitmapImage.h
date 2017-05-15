@@ -86,7 +86,8 @@ public:
     IntSize sizeRespectingOrientation() const { return m_source.sizeRespectingOrientation(); }
     Color singlePixelSolidColor() const override { return m_source.singlePixelSolidColor(); }
     bool frameIsBeingDecodedAndIsCompatibleWithOptionsAtIndex(size_t index, const DecodingOptions& decodingOptions) const { return m_source.frameIsBeingDecodedAndIsCompatibleWithOptionsAtIndex(index, decodingOptions); }
-    bool frameIsCompleteAtIndex(size_t index) const { return m_source.frameIsCompleteAtIndex(index); }
+    ImageFrame::DecodingStatus frameDecodingStatusAtIndex(size_t index) const { return m_source.frameDecodingStatusAtIndex(index); }
+    bool frameIsCompleteAtIndex(size_t index) const { return frameDecodingStatusAtIndex(index) == ImageFrame::DecodingStatus::Complete; }
     bool frameHasAlphaAtIndex(size_t index) const { return m_source.frameHasAlphaAtIndex(index); }
 
     bool frameHasFullSizeNativeImageAtIndex(size_t index, SubsamplingLevel subsamplingLevel) { return m_source.frameHasFullSizeNativeImageAtIndex(index, subsamplingLevel); }
@@ -200,6 +201,7 @@ private:
 
     size_t m_currentFrame { 0 }; // The index of the current frame of animation.
     SubsamplingLevel m_currentSubsamplingLevel { SubsamplingLevel::Default };
+    ImageFrame::DecodingStatus m_currentFrameDecodingStatus { ImageFrame::DecodingStatus::Invalid };
     std::unique_ptr<Timer> m_frameTimer;
     RepetitionCount m_repetitionsComplete { RepetitionCountNone }; // How many repetitions we've finished.
     MonotonicTime m_desiredFrameStartTime; // The system time at which we hope to see the next call to startAnimation().

@@ -40,7 +40,7 @@ class ImageFrame {
     friend class ImageFrameCache;
 public:
     enum class Caching { Metadata, MetadataAndImage };
-    enum class Decoding { None, Partial, Complete };
+    enum class DecodingStatus { Invalid, Partial, Complete, Decoding };
 
     ImageFrame();
     ImageFrame(const ImageFrame& other) { operator=(other); }
@@ -59,12 +59,12 @@ public:
     bool initialize(const IntSize&, bool premultiplyAlpha);
 #endif
 
-    void setDecoding(Decoding decoding) { m_decoding = decoding; }
-    Decoding decoding() const { return m_decoding; }
+    void setDecodingStatus(DecodingStatus);
+    DecodingStatus decodingStatus() const;
 
-    bool isEmpty() const { return m_decoding == Decoding::None; }
-    bool isPartial() const { return m_decoding == Decoding::Partial; }
-    bool isComplete() const { return m_decoding == Decoding::Complete; }
+    bool isInvalid() const { return m_decodingStatus == DecodingStatus::Invalid; }
+    bool isPartial() const { return m_decodingStatus == DecodingStatus::Partial; }
+    bool isComplete() const { return m_decodingStatus == DecodingStatus::Complete; }
 
     IntSize size() const;
     IntSize sizeRespectingOrientation() const { return !m_orientation.usesWidthAsHeight() ? size() : size().transposedSize(); }
@@ -101,7 +101,7 @@ public:
     Color singlePixelSolidColor() const;
 
 private:
-    Decoding m_decoding { Decoding::None };
+    DecodingStatus m_decodingStatus { DecodingStatus::Invalid };
     IntSize m_size;
 
 #if !USE(CG)

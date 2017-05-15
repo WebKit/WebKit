@@ -113,8 +113,6 @@ void ImageSource::setData(SharedBuffer* data, bool allDataReceived)
 
 EncodedDataStatus ImageSource::dataChanged(SharedBuffer* data, bool allDataReceived)
 {
-    m_frameCache->destroyIncompleteDecodedData();
-
 #if PLATFORM(IOS)
     // FIXME: We should expose a setting to enable/disable progressive loading and make this
     // code conditional on it. Then we can remove the PLATFORM(IOS)-guard.

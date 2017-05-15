@@ -50,7 +50,7 @@ ImageFrame& ImageFrame::operator=(const ImageFrame& other)
     if (this == &other)
         return *this;
 
-    m_decoding = other.m_decoding;
+    m_decodingStatus = other.m_decodingStatus;
     m_size = other.m_size;
 
 #if !USE(CG)
@@ -69,6 +69,18 @@ ImageFrame& ImageFrame::operator=(const ImageFrame& other)
     m_duration = other.m_duration;
     m_hasAlpha = other.m_hasAlpha;
     return *this;
+}
+
+void ImageFrame::setDecodingStatus(DecodingStatus decodingStatus)
+{
+    ASSERT(decodingStatus != DecodingStatus::Decoding);
+    m_decodingStatus = decodingStatus;
+}
+
+ImageFrame::DecodingStatus ImageFrame::decodingStatus() const
+{
+    ASSERT(m_decodingStatus != DecodingStatus::Decoding);
+    return m_decodingStatus;
 }
 
 unsigned ImageFrame::clearImage()

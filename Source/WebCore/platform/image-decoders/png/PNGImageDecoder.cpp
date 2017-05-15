@@ -430,7 +430,7 @@ void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, 
         return;
 #endif
     ImageFrame& buffer = m_frameBufferCache[m_currentFrame];
-    if (buffer.isEmpty()) {
+    if (buffer.isInvalid()) {
         png_structp png = m_reader->pngPtr();
         if (!buffer.initialize(scaledSize(), m_premultiplyAlpha)) {
             longjmp(JMPBUF(png), 1);
@@ -448,7 +448,7 @@ void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, 
             }
         }
 
-        buffer.setDecoding(ImageFrame::Decoding::Partial);
+        buffer.setDecodingStatus(ImageFrame::DecodingStatus::Partial);
         buffer.setHasAlpha(false);
 
 #if ENABLE(APNG)
@@ -556,7 +556,7 @@ void PNGImageDecoder::pngComplete()
     }
 #endif
     if (!m_frameBufferCache.isEmpty())
-        m_frameBufferCache.first().setDecoding(ImageFrame::Decoding::Complete);
+        m_frameBufferCache.first().setDecodingStatus(ImageFrame::DecodingStatus::Complete);
 }
 
 void PNGImageDecoder::decode(bool onlySize, unsigned haltAtFrame, bool allDataReceived)
@@ -740,7 +740,7 @@ void PNGImageDecoder::clearFrameBufferCache(size_t clearBeforeFrame)
     const Vector<ImageFrame>::iterator end(m_frameBufferCache.begin() + clearBeforeFrame);
 
     Vector<ImageFrame>::iterator i(end);
-    for (; (i != m_frameBufferCache.begin()) && (i->isEmpty() || (i->disposalMethod() == ImageFrame::DisposalMethod::RestoreToPrevious)); --i) {
+    for (; (i != m_frameBufferCache.begin()) && (i->isInvalid() || (i->disposalMethod() == ImageFrame::DisposalMethod::RestoreToPrevious)); --i) {
         if (i->isComplete() && (i != end))
             i->clear();
     }
@@ -748,7 +748,7 @@ void PNGImageDecoder::clearFrameBufferCache(size_t clearBeforeFrame)
     // Now |i| holds the last frame we need to preserve; clear prior frames.
     for (Vector<ImageFrame>::iterator j(m_frameBufferCache.begin()); j != i; ++j) {
         ASSERT(!j->isPartial());
-        if (j->isEmpty())
+        if (j->isInvalid())
             j->clear();
     }
 }
@@ -823,7 +823,7 @@ void PNGImageDecoder::frameComplete()
         return;
 
     ImageFrame& buffer = m_frameBufferCache[m_currentFrame];
-    buffer.setDecoding(ImageFrame::Decoding::Complete);
+    buffer.setDecodingStatus(ImageFrame::DecodingStatus::Complete);
 
     png_bytep interlaceBuffer = m_reader->interlaceBuffer();
 

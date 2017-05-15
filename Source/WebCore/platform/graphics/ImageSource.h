@@ -57,6 +57,7 @@ public:
     void destroyAllDecodedData() { m_frameCache->destroyAllDecodedData(); }
     void destroyAllDecodedDataExcludeFrame(size_t excludeFrame) { m_frameCache->destroyAllDecodedDataExcludeFrame(excludeFrame); }
     void destroyDecodedDataBeforeFrame(size_t beforeFrame) { m_frameCache->destroyDecodedDataBeforeFrame(beforeFrame); }
+    void destroyIncompleteDecodedData() { m_frameCache->destroyIncompleteDecodedData(); }
     void clearFrameBufferCache(size_t);
     void clear(SharedBuffer* data);
 
@@ -70,7 +71,7 @@ public:
     bool isAllDataReceived();
 
     bool shouldUseAsyncDecoding();
-    bool requestFrameAsyncDecodingAtIndex(size_t index, SubsamplingLevel subsamplingLevel, const std::optional<IntSize>& sizeForDrawing = { }) { return m_frameCache->requestFrameAsyncDecodingAtIndex(index, subsamplingLevel, sizeForDrawing); }
+    void requestFrameAsyncDecodingAtIndex(size_t index, SubsamplingLevel subsamplingLevel, const std::optional<IntSize>& sizeForDrawing = { }) { m_frameCache->requestFrameAsyncDecodingAtIndex(index, subsamplingLevel, sizeForDrawing); }
     bool hasAsyncDecodingQueue() const { return m_frameCache->hasAsyncDecodingQueue(); }
     bool isAsyncDecodingQueueIdle() const  { return m_frameCache->isAsyncDecodingQueueIdle(); }
     void stopAsyncDecodingQueue() { m_frameCache->stopAsyncDecodingQueue(); }
@@ -90,7 +91,7 @@ public:
 
     // ImageFrame metadata which does not require caching the ImageFrame.
     bool frameIsBeingDecodedAndIsCompatibleWithOptionsAtIndex(size_t index, const DecodingOptions& decodingOptions) { return m_frameCache->frameIsBeingDecodedAndIsCompatibleWithOptionsAtIndex(index, decodingOptions); }
-    bool frameIsCompleteAtIndex(size_t index) { return m_frameCache->frameIsCompleteAtIndex(index); }
+    ImageFrame::DecodingStatus frameDecodingStatusAtIndex(size_t index) { return m_frameCache->frameDecodingStatusAtIndex(index); }
     bool frameHasAlphaAtIndex(size_t index) { return m_frameCache->frameHasAlphaAtIndex(index); }
     bool frameHasImageAtIndex(size_t index) { return m_frameCache->frameHasImageAtIndex(index); }
     bool frameHasFullSizeNativeImageAtIndex(size_t index, const std::optional<SubsamplingLevel>& subsamplingLevel) { return m_frameCache->frameHasFullSizeNativeImageAtIndex(index, subsamplingLevel); }

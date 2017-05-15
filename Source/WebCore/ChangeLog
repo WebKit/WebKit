@@ -1,3 +1,96 @@
+2017-05-15  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        REGRESSION (216471): Infinite repaint-drawing loop when asynchronously decoding incomplete image frames
+        https://bugs.webkit.org/show_bug.cgi?id=171900
+
+        Reviewed by Tim Horton.
+
+        -- Don't destroy incomplete decoded image frames for large images. This
+        is to avoid flickering while decoding another image frame with the new
+        data. The old incomplete image frame will be destroyed once the newer one
+        finishes decoding.
+
+        -- Extend the enum ImageFrame::DecodingStatus by adding a new value called
+        'Decoding'. This new value will never be cached in the ImageFrame::
+        m_decodingStatus. Add a member m_currentFrameDecodingStatus to BitmapImage.
+        The purpose of this member is to invalidate the current frame, without
+        deleting it, when new encoded data is received.
+
+        -- Don't wait until the native image is decoded to cache the ImageFrame
+        decodingStatus. There is a big chance that more data arrives between
+        starting the decoding and finishing it such that the decoding changes
+        from Partial to Complete. We need to prevent keeping incomplete ImageFrames
+        cached because we mistakenly assume they are complete. To fix this issue
+        we need to know the ImageFrame decodingStatus when the decoding is requested.
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::destroyDecodedData):
+        (WebCore::BitmapImage::dataChanged):
+        (WebCore::BitmapImage::draw):
+        (WebCore::BitmapImage::internalStartAnimation): At the beginning of this 
+        function we check whether the next frame is being decoded or not and we 
+        return DecodingActive if it is. Let's handle the second check here also 
+        before requesting the decoding of nextFrame. We need to check whether the
+        nextFrame has a native image with decoded with the native size or not.
+        (WebCore::BitmapImage::internalAdvanceAnimation):
+        (WebCore::BitmapImage::imageFrameAvailableAtIndex):
+        * platform/graphics/BitmapImage.h:
+        * platform/graphics/ImageFrame.cpp:
+        (WebCore::ImageFrame::operator=):
+        (WebCore::ImageFrame::setDecodingStatus):
+        (WebCore::ImageFrame::decodingStatus):
+        * platform/graphics/ImageFrame.h:
+        (WebCore::ImageFrame::isInvalid):
+        (WebCore::ImageFrame::isPartial):
+        (WebCore::ImageFrame::isComplete):
+        (WebCore::ImageFrame::setDecoding): Deleted.
+        (WebCore::ImageFrame::decoding): Deleted.
+        (WebCore::ImageFrame::isEmpty): Deleted.
+        * platform/graphics/ImageFrameCache.cpp:
+        (WebCore::ImageFrameCache::setNativeImage):
+        (WebCore::ImageFrameCache::cacheMetadataAtIndex):
+        (WebCore::ImageFrameCache::cacheNativeImageAtIndex):
+        (WebCore::ImageFrameCache::cacheNativeImageAtIndexAsync):
+        (WebCore::ImageFrameCache::startAsyncDecodingQueue):
+        (WebCore::ImageFrameCache::requestFrameAsyncDecodingAtIndex):
+        (WebCore::ImageFrameCache::stopAsyncDecodingQueue):
+        (WebCore::ImageFrameCache::frameAtIndexCacheIfNeeded):
+        (WebCore::ImageFrameCache::frameDecodingStatusAtIndex):
+        (WebCore::ImageFrameCache::cacheFrameMetadataAtIndex): Deleted.
+        (WebCore::ImageFrameCache::cacheFrameNativeImageAtIndex): Deleted.
+        (WebCore::ImageFrameCache::cacheAsyncFrameNativeImageAtIndex): Deleted.
+        (WebCore::ImageFrameCache::frameIsCompleteAtIndex): Deleted.
+        * platform/graphics/ImageFrameCache.h:
+        (WebCore::ImageFrameCache::ImageFrameRequest::operator==):
+        * platform/graphics/ImageSource.cpp:
+        (WebCore::ImageSource::dataChanged):
+        * platform/graphics/ImageSource.h:
+        (WebCore::ImageSource::destroyIncompleteDecodedData):
+        (WebCore::ImageSource::requestFrameAsyncDecodingAtIndex): Let the caller
+        decide whether another request for the same image frame is allowed or not.
+        (WebCore::ImageSource::frameDecodingStatusAtIndex):
+        (WebCore::ImageSource::frameIsCompleteAtIndex): Deleted.
+        * platform/image-decoders/ImageDecoder.cpp:
+        (WebCore::ImageDecoder::frameDurationAtIndex):
+        (WebCore::ImageDecoder::createFrameImageAtIndex):
+        * platform/image-decoders/bmp/BMPImageReader.cpp:
+        (WebCore::BMPImageReader::decodeBMP):
+        * platform/image-decoders/gif/GIFImageDecoder.cpp:
+        (WebCore::GIFImageDecoder::clearFrameBufferCache):
+        (WebCore::GIFImageDecoder::haveDecodedRow):
+        (WebCore::GIFImageDecoder::frameComplete):
+        (WebCore::GIFImageDecoder::initFrameBuffer):
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+        (WebCore::JPEGImageDecoder::outputScanlines):
+        (WebCore::JPEGImageDecoder::jpegComplete):
+        * platform/image-decoders/png/PNGImageDecoder.cpp:
+        (WebCore::PNGImageDecoder::rowAvailable):
+        (WebCore::PNGImageDecoder::pngComplete):
+        (WebCore::PNGImageDecoder::clearFrameBufferCache):
+        (WebCore::PNGImageDecoder::frameComplete):
+        * platform/image-decoders/webp/WEBPImageDecoder.cpp:
+        (WebCore::WEBPImageDecoder::decode):
+
 2017-05-15  Chris Dumez  <cdumez@apple.com>
 
         Align WebKitCSSMatrix stringifier with spec for DOMMatrix
