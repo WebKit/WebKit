@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that leading whitespace followed by soft/hard linebreaks.</title>
+<style>
+div {
+  width: 100px;
+  font-size: 13px;
+}
+</style>
+<script>
+if (window.internals)
+    internals.settings.setSimpleLineLayoutEnabled(false);
+</script>
+</head>
+<body>
+<div>foobarfoobar foobi <br>foobar</div>
+<div>foobarfoobar foobi 
+<br>foobar</div>
+<div>foobarfoobar foobi 
+ <br>foobar</div>
+</body>
+
+<div style="white-space: pre">
+<div>foobarfoobar foobi <br>foobar</div>
+<div>foobarfoobar foobi 
+<br>foobar</div>
+<div>foobarfoobar foobi 
+ <br>foobar</div>
+</div>
+<div style="white-space: pre-wrap">
+<div>foobarfoobar foobi <br>foobar</div>
+<div>foobarfoobar foobi 
+<br>foobar</div>
+<div>foobarfoobar foobi 
+ <br>foobar</div>
+</div>
+<div style="white-space: pre-line">
+<div>foobarfoobar foobi <br>foobar</div>
+<div>foobarfoobar foobi 
+<br>foobar</div>
+<div>foobarfoobar foobi 
+ <br>foobar</div>
+</div>
+</body>
+</html>
