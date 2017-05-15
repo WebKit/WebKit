@@ -1,3 +1,10 @@
+2017-05-15  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rebaseline platform/ios/ios/css/construct-WebKitCSSMatrix.html after r216881.
+
+        * platform/ios/ios/css/construct-WebKitCSSMatrix-expected.txt:
+        * platform/ios/ios/css/resources/construct-WebKitCSSMatrix.js:
+
 2017-05-15  Jer Noble  <jer.noble@apple.com>
 
         Add experimental setting to allow document gesture interaction to fulfill media playback gesture requirement
