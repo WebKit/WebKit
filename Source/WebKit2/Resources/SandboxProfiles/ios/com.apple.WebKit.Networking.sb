@@ -61,6 +61,10 @@
 
 (network-client (remote tcp) (remote udp))
 
+;; allow 3rd party applications to access nsurlstoraged's top level domain data cache
+(allow-well-known-system-group-container-subpath-read
+    "/systemgroup.com.apple.nsurlstoragedresources/Library/dafsaData.bin")
+
 ;; Security framework
 (allow mach-lookup
     (global-name "com.apple.ocspd")

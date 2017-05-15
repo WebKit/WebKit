@@ -55,6 +55,11 @@
 (define (home-literal home-relative-literal)
     (literal (string-append (param "HOME_DIR") home-relative-literal)))
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+;; CFNetwork
+(allow file-read-data (path "/private/var/db/nsurlstoraged/dafsaData.bin"))
+#endif
+
 ;; Remove when <rdar://problem/29646094> is fixed.
 (define (HEX-pattern-match-generator pattern-descriptor)
     (letrec ((pattern-string ""))
