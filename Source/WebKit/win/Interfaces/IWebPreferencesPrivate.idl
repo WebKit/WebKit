@@ -197,4 +197,5 @@ interface IWebPreferencesPrivate4 : IWebPreferencesPrivate3
     HRESULT setResourceTimingEnabled([in] BOOL enabled);
     HRESULT linkPreloadEnabled([out, retval] BOOL*);
     HRESULT setLinkPreloadEnabled([in] BOOL enabled);
+    HRESULT clearNetworkLoaderSession();
 }

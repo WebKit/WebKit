@@ -41,6 +41,8 @@
 #include <WebCore/FileSystem.h>
 #include <WebCore/FontCascade.h>
 #include <WebCore/LocalizedStrings.h>
+#include <WebCore/NetworkStorageSession.h>
+#include <WebCore/PlatformCookieJar.h>
 #include <limits>
 #include <shlobj.h>
 #include <wchar.h>
@@ -2008,6 +2010,12 @@ HRESULT WebPreferences::linkPreloadEnabled(_Out_ BOOL* enabled)
     if (!enabled)
         return E_POINTER;
     *enabled = boolValueForKey(WebKitLinkPreloadEnabledPreferenceKey);
+    return S_OK;
+}
+
+HRESULT WebPreferences::clearNetworkLoaderSession()
+{
+    WebCore::deleteAllCookies(NetworkStorageSession::defaultStorageSession());
     return S_OK;
 }
 
