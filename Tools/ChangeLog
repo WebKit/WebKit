@@ -1,3 +1,17 @@
+2017-05-15  Timothy Horton  <timothy_horton@apple.com>
+
+        Null deref under WebContentReader::readURL when interacting with a file URL
+        https://bugs.webkit.org/show_bug.cgi?id=172045
+        <rdar://problem/25880647>
+
+        Reviewed by Wenson Hsieh.
+
+        * TestWebKitAPI/Tests/ios/DataInteractionTests.mm:
+        (TestWebKitAPI::TEST):
+        The text of the file URL is pasted because a textual version of it gets
+        onto the pasteboard. However, this test would have crashed before. Also
+        tests that we don't make an <a>.
+
 2017-05-14  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] fast/cookies/local-file-can-set-cookies.html is flaky.

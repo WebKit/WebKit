@@ -64,9 +64,6 @@
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <wtf/text/StringBuilder.h>
 
-SOFT_LINK_FRAMEWORK(AppSupport)
-SOFT_LINK(AppSupport, CPSharedResourcesDirectory, CFStringRef, (void), ())
-
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -330,34 +327,19 @@ bool Editor::WebContentReader::readURL(const URL& url, const String& title)
             return true;
     }
 
-    if ([(NSURL *)url isFileURL]) {
-        NSString *localPath = [(NSURL *)url relativePath];
-        // Only allow url attachments from ~/Media for now.
-        if (![localPath hasPrefix:[(NSString *)CPSharedResourcesDirectory() stringByAppendingString:@"/Media/DCIM/"]])
-            return false;
+    if ([(NSURL *)url isFileURL])
+        return false;
 
-        RetainPtr<NSString> fileType = adoptNS((NSString *)UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, (CFStringRef)[localPath pathExtension], NULL));
-        NSData *data = [NSData dataWithContentsOfFile:localPath];
-        if (UTTypeConformsTo((CFStringRef)fileType.get(), kUTTypePNG)) {
-            addFragment(frame.editor().createFragmentForImageResourceAndAddResource(ArchiveResource::create(SharedBuffer::create([[data copy] autorelease]), URL::fakeURLWithRelativePart("image.png"), @"image/png", emptyString(), emptyString())));
-            return fragment;
-        } else if (UTTypeConformsTo((CFStringRef)fileType.get(), kUTTypeJPEG)) {
-            addFragment(frame.editor().createFragmentForImageResourceAndAddResource(ArchiveResource::create(SharedBuffer::create([[data copy] autorelease]), URL::fakeURLWithRelativePart("image.jpg"), @"image/jpg", emptyString(), emptyString())));
-            return fragment;
-        }
-    } else {
-        auto anchor = HTMLAnchorElement::create(*frame.document());
-        anchor->setAttributeWithoutSynchronization(HTMLNames::hrefAttr, url.string());
+    auto anchor = HTMLAnchorElement::create(*frame.document());
+    anchor->setAttributeWithoutSynchronization(HTMLNames::hrefAttr, url.string());
 
-        String linkText = title.length() ? title : String([[(NSURL *)url absoluteString] precomposedStringWithCanonicalMapping]);
-        anchor->appendChild(frame.document()->createTextNode(linkText));
+    String linkText = title.length() ? title : String([[(NSURL *)url absoluteString] precomposedStringWithCanonicalMapping]);
+    anchor->appendChild(frame.document()->createTextNode(linkText));
 
-        auto newFragment = frame.document()->createDocumentFragment();
-        newFragment->appendChild(anchor);
-        addFragment(WTFMove(newFragment));
-        return true;
-    }
-    return false;
+    auto newFragment = frame.document()->createDocumentFragment();
+    newFragment->appendChild(anchor);
+    addFragment(WTFMove(newFragment));
+    return true;
 }
 
 bool Editor::WebContentReader::readPlainText(const String& text)
