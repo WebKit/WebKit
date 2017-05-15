@@ -48,8 +48,12 @@ namespace WebCore {
 inline MediaDevices::MediaDevices(Document& document)
     : ContextDestructionObserver(&document)
     , m_scheduledEventTimer(*this, &MediaDevices::scheduledEventTimerFired)
+    , m_weakPtrFactory(this)
 {
-    m_deviceChangedToken = RealtimeMediaSourceCenter::singleton().addDevicesChangedObserver([this]() {
+    m_deviceChangedToken = RealtimeMediaSourceCenter::singleton().addDevicesChangedObserver([weakThis = createWeakPtr(), this]() {
+
+        if (!weakThis)
+            return;
 
         // FIXME: We should only dispatch an event if the user has been granted access to the type of
         // device that was added or removed.

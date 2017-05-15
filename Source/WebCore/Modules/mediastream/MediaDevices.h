@@ -39,6 +39,7 @@
 #include "MediaTrackConstraints.h"
 #include "RealtimeMediaSourceCenter.h"
 #include "Timer.h"
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -81,8 +82,11 @@ private:
     void refEventTarget() override { ref(); }
     void derefEventTarget() override { deref(); }
 
+    WeakPtr<MediaDevices> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
+
     Timer m_scheduledEventTimer;
     std::optional<RealtimeMediaSourceCenter::DevicesChangedObserverToken> m_deviceChangedToken;
+    WeakPtrFactory<MediaDevices> m_weakPtrFactory;
 };
 
 } // namespace WebCore

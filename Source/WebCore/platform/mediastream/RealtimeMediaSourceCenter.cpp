@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2011 Ericsson AB. All rights reserved.
  * Copyright (C) 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,6 +44,12 @@ static RealtimeMediaSourceCenter*& mediaStreamCenterOverride()
 {
     static RealtimeMediaSourceCenter* override;
     return override;
+}
+
+static HashMap<unsigned, std::function<void()>>& observerMap()
+{
+    static NeverDestroyed<HashMap<unsigned, std::function<void()>>> map;
+    return map;
 }
 
 RealtimeMediaSourceCenter& RealtimeMediaSourceCenter::singleton()
@@ -181,20 +188,21 @@ ExceptionOr<void> RealtimeMediaSourceCenter::setDeviceEnabled(const String&, boo
 RealtimeMediaSourceCenter::DevicesChangedObserverToken RealtimeMediaSourceCenter::addDevicesChangedObserver(std::function<void()>&& observer)
 {
     static DevicesChangedObserverToken nextToken = 0;
-    m_devicesChangedObservers.set(++nextToken, WTFMove(observer));
+    observerMap().set(++nextToken, WTFMove(observer));
     return nextToken;
 }
 
 void RealtimeMediaSourceCenter::removeDevicesChangedObserver(DevicesChangedObserverToken token)
 {
-    bool wasRemoved = m_devicesChangedObservers.remove(token);
+    bool wasRemoved = observerMap().remove(token);
     ASSERT_UNUSED(wasRemoved, wasRemoved);
 }
 
 void RealtimeMediaSourceCenter::captureDevicesChanged()
 {
-    auto callbacks = m_devicesChangedObservers;
-    for (auto it : callbacks)
+    // Copy the hash map because the observer callback may call back in and modify the map.
+    auto callbacks = observerMap();
+    for (auto& it : callbacks)
         it.value();
 }
 
