@@ -1,3 +1,12 @@
+2017-05-14  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed build fix with newer Perl versions.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (AddLegacyCallerOperationIfNeeded): Support for experimental push on scalar (and
+        other auto-dereferencing) was removed in Perl 5.24. Instead, the LegacyCallers array
+        has to be dereferenced when pushing new values to it.
+
 2017-05-14  Sam Weinig  <sam@webkit.org>
 
         [WebIDL/DOM] Remove need for custom bindings for HTMLAllCollection and bring up to spec

@@ -208,7 +208,7 @@ sub AddLegacyCallerOperationIfNeeded
             $interface->{LegacyCallers} = [] if !exists $interface->{LegacyCallers};
 
             my $clonedOperation = IDLParser::cloneOperation($operation);
-            push($interface->{LegacyCallers}, $clonedOperation);
+            push(@{$interface->{LegacyCallers}}, $clonedOperation);
     
             $clonedOperation->{overloads} = $interface->{LegacyCallers};
             $clonedOperation->{overloadIndex} = @{$interface->{LegacyCallers}};
