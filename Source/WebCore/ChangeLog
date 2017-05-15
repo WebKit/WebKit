@@ -1,3 +1,73 @@
+2017-05-15  David Kilzer  <ddkilzer@apple.com>
+
+        Crash in libxml2.2.dylib: xmlDictReference
+        <https://webkit.org/b/172086>
+        <rdar://problem/23643436>
+
+        Reviewed by Daniel Bates.
+
+        Speculative fix and code clean-up based on source code
+        inspection.  The fix for the crash is in two parts that change
+        XSLStyleSheet::parseString():
+        1. Always set m_stylesheetDoc to nullptr after freeing it via
+           XSLStyleSheet::clearXSLStylesheetDocument().
+        2. Add nullptr check before using m_stylesheetDoc from parent.
+
+        Broadly speaking, the changes are:
+        - Extract code to reset m_stylesheetDoc into new private
+          XSLStyleSheet::clearXSLStylesheetDocument() method.  There is
+          a special contract between m_stylesheetDoc and
+          m_stylesheetDocTaken that wasn't being followed every time.
+          See comment in XSLStyleSheet::compileStyleSheet().
+        - XSLStyleSheet::clearDocuments() now calls new
+          clearXSLStylesheetDocument() method.  Previously, it was not
+          checking or resetting m_stylesheetDocTaken, and it might have
+          leaked an xmlDocPtr if m_stylesheetDoc was set and
+          m_stylesheetDocTaken was false.
+        - XSLStyleSheet::parseString() now calls new
+          clearXSLStylesheetDocument() method.  Previously, it did not
+          clear m_stylesheetDoc after freeing it, and it could return
+          early due to a failure in xmlCreateMemoryParserCtxt().
+        - In XSLStyleSheet::parseString() use checked arithmetic when
+          calculating 'size' for xmlCreateMemoryParserCtxt() and
+          xmlCtxtReadMemory().  This code used to do an implicit
+          unsigned -> signed integer conversion that could overflow.
+        - Always iterate m_children using an 'auto& import' variable.
+
+        * xml/XSLStyleSheet.h:
+        (WebCore::XSLStyleSheet::clearXSLStylesheetDocument): Add declaration.
+        (WebCore::XSLStyleSheet::m_disabled): Add default initializer.
+        (WebCore::XSLStyleSheet::m_stylesheetDoc): Ditto.
+        (WebCore::XSLStyleSheet::m_stylesheetDocTaken): Ditto.
+        (WebCore::XSLStyleSheet::m_parentStyleSheet): Ditto.
+
+        * xml/XSLStyleSheetLibxslt.cpp:
+        (WebCore::XSLStyleSheet::XSLStyleSheet): Get rid of redundant
+        initializers.  Set m_parentStyleSheet if needed.
+        (WebCore::XSLStyleSheet::~XSLStyleSheet): Call
+        clearXSLStylesheetDocument() instead of custom code.  Switch
+        m_children fast iteration to use 'auto& import' variable.
+        (WebCore::XSLStyleSheet::isLoading): Switch m_children fast
+        iteration to use 'auto& import' variable.
+        (WebCore::XSLStyleSheet::clearDocuments): Call
+        clearXSLStylesheetDocument() instead of setting m_stylesheetDoc
+        to nullptr.  This might fix an occasional xmlDocPtr leak.
+        (WebCore::XSLStyleSheet::clearXSLStylesheetDocument): Add.  This
+        method always sets m_stylesheetDoc to nullptr (after freeing it
+        if necessary) and sets m_stylesheetDocTaken to false.
+        (WebCore::XSLStyleSheet::parseString): Call
+        clearXSLStylesheetDocument().  Prior to this, m_stylesheetDoc
+        might be left pointing to a freed value, and this method could
+        return early if xmlCreateMemoryParserCtxt() failed.  Switch to
+        using Checked<> to compute required buffer size to parse XSL
+        stylesheet, and return early on overflow.  Clean up existing
+        return statements to use boolean expressions.  Add nullptr check
+        for m_parentStyleSheet->m_stylesheetDoc before using it.
+        (WebCore::XSLStyleSheet::loadChildSheet): Get rid of local
+        variable by calling loadSheet() from last array element.
+        (WebCore::XSLStyleSheet::compileStyleSheet): Add debug assert
+        that m_stylesheetDoc is not nullptr.
+
 2017-05-15  Jer Noble  <jer.noble@apple.com>
 
         Add experimental setting to allow document gesture interaction to fulfill media playback gesture requirement

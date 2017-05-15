@@ -100,22 +100,24 @@ private:
     XSLStyleSheet(XSLImportRule* parentImport, const String& originalURL, const URL& finalURL);
 
     bool isXSLStyleSheet() const override { return true; }
-    
+
+    void clearXSLStylesheetDocument();
+
     Node* m_ownerNode;
     String m_originalURL;
     URL m_finalURL;
-    bool m_isDisabled;
+    bool m_isDisabled { false };
 
     Vector<std::unique_ptr<XSLImportRule>> m_children;
 
     bool m_embedded;
     bool m_processed;
 
-    xmlDocPtr m_stylesheetDoc;
-    bool m_stylesheetDocTaken;
+    xmlDocPtr m_stylesheetDoc { nullptr };
+    bool m_stylesheetDocTaken { false };
     bool m_compilationFailed { false };
 
-    XSLStyleSheet* m_parentStyleSheet;
+    XSLStyleSheet* m_parentStyleSheet { nullptr };
 };
 
 } // namespace WebCore
