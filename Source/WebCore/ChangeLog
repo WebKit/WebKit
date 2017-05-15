@@ -1,3 +1,16 @@
+2017-05-15  Jer Noble  <jer.noble@apple.com>
+
+        Only ever initialize LibWebRTCProvider's staticFactoryAndThreads() factories once.
+        https://bugs.webkit.org/show_bug.cgi?id=172047
+
+        Reviewed by Youenn Fablet.
+
+        Wrap the initilization of the factories contained in staticFactoryAndThreads() in a call_once to ensure
+        new factories aren't created every time it's called.
+
+        * platform/mediastream/libwebrtc/LibWebRTCProvider.cpp:
+        (WebCore::staticFactoryAndThreads):
+
 2017-05-15  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: CRASH seen with DOM.setOuterHTML when there is no documentElement
