@@ -1,3 +1,16 @@
+2017-05-15  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Unicode characters which can't be rendered in any font are invisible
+        https://bugs.webkit.org/show_bug.cgi?id=171942
+        <rdar://problem/32054234>
+
+        Reviewed by Tim Horton.
+
+        * fast/text/default-ignorable-expected.html: Added.
+        * fast/text/default-ignorable.html: Added.
+        * fast/text/unknown-char-notdef-expected-mismatch.html: Added.
+        * fast/text/unknown-char-notdef.html: Added.
+
 2017-05-15  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Leading whitespace followed by a <br> produces an extra linebreak.

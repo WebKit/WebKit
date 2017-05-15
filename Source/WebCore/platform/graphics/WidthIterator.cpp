@@ -162,11 +162,9 @@ static inline std::pair<bool, bool> expansionLocation(bool ideograph, bool treat
     return std::make_pair(expandLeft, expandRight);
 }
 
-static bool characterMustDrawSomething(UChar32 character)
+static inline bool characterMustDrawSomething(UChar32 character)
 {
-    // u_hasBinaryProperty(character, UCHAR_EMOJI) would be better to use, but many OSes which
-    // WebKit runs on only have ICU version 55.1 or earlier. UCHAR_EMOJI was added in ICU 57.
-    return character >= 0x1F900 && character <= 0x1F9FF;
+    return !u_hasBinaryProperty(character, UCHAR_DEFAULT_IGNORABLE_CODE_POINT);
 }
 
 template <typename TextIterator>
