@@ -1,3 +1,16 @@
+2017-05-15  David Kilzer  <ddkilzer@apple.com>
+
+        JSEnvironmentRecord::allocationSizeForScopeSize() and offsetOfVariable(ScopeOffset) should used checked arithmetic
+        <https://webkit.org/b/172134>
+
+        Reviewed by Saam Barati.
+
+        * runtime/JSEnvironmentRecord.h:
+        (JSC::JSEnvironmentRecord::offsetOfVariable): Change to return
+        size_t and use checked arithmetic.
+        (JSC::JSEnvironmentRecord::allocationSizeForScopeSize): Change
+        to use checked arithmetic.
+
 2017-05-15  Mark Lam  <mark.lam@apple.com>
 
         WorkerRunLoop::Task::performTask() should check !scriptController->isTerminatingExecution().
