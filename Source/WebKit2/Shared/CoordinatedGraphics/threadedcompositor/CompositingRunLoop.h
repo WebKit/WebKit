@@ -55,10 +55,6 @@ public:
 
     void updateCompleted();
 
-#ifndef NDEBUG
-    bool isCurrent();
-#endif
-
 private:
     enum class UpdateState {
         Completed,

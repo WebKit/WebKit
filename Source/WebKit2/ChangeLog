@@ -1,3 +1,15 @@
+2017-05-15  Gwang Yoon Hwang  <yoon@igalia.com>
+
+        [WPE] Unreviewed debug build fix
+        https://bugs.webkit.org/show_bug.cgi?id=172118
+
+        Unreviewed, remove a dead code accidentally committed in r215259.
+
+        * Shared/CoordinatedGraphics/threadedcompositor/CompositingRunLoop.h:
+        Remove deprecated CompositingRunLoop::isCurrent.
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        (WebKit::ThreadedCompositor::frameComplete):
+
 2017-05-14  Daewoong Jang  <daewoong.jang@navercorp.com>
 
         [CoordinatedGraphics] Remove unused files and lines

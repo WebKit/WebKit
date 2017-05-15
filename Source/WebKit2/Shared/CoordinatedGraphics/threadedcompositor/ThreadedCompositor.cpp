@@ -336,7 +336,7 @@ void ThreadedCompositor::coordinateUpdateCompletionWithClient()
 #if PLATFORM(WPE)
 void ThreadedCompositor::frameComplete()
 {
-    ASSERT(m_compositingRunLoop->isCurrent());
+    ASSERT(!isMainThread());
     sceneUpdateFinished();
 }
 #endif
