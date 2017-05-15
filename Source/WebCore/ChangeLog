@@ -1,3 +1,17 @@
+2017-05-15  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: CRASH seen with DOM.setOuterHTML when there is no documentElement
+        https://bugs.webkit.org/show_bug.cgi?id=172135
+        <rdar://problem/32175860>
+
+        Reviewed by Brian Burg.
+
+        Test: inspector/dom/setOuterHTML-no-document-element.html
+
+        * inspector/DOMPatchSupport.cpp:
+        (WebCore::DOMPatchSupport::patchDocument):
+        Null check the document element which might not exist.
+
 2017-05-15  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         REGRESSION (216471): Infinite repaint-drawing loop when asynchronously decoding incomplete image frames

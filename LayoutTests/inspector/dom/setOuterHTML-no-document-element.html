@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let documentNodeId;
+    let suite = InspectorTest.createAsyncSuite("DOM.setOuterHTML.NoDocumentElement");
+
+    suite.addTestCase({
+        name: "RemoveDocumentElementAndTriggerSetOuterHTML",
+        description: "Log the initial outerHTML of the target element.",
+        test(resolve, reject) {
+            InspectorTest.evaluateInPage(`document.documentElement.remove()`);
+            DOMAgent.setOuterHTML(documentNodeId, "Test Content")
+                .then(() => { InspectorTest.pass("Should not crash."); })
+                .then(resolve, reject);
+        }
+    });
+
+    WebInspector.domTreeManager.requestDocument((documentNode) => {
+        documentNodeId = documentNode.id;
+        suite.runTestCasesAndFinish();
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test for DOM.setOuterHTML on a page without a documentElement.</p>
+</body>
+</html>

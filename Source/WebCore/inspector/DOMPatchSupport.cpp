@@ -90,6 +90,11 @@ void DOMPatchSupport::patchDocument(const String& markup)
     parser->finish();
     parser->detach();
 
+    if (!m_document.documentElement())
+        return;
+    if (!newDocument->documentElement())
+        return;
+
     std::unique_ptr<Digest> oldInfo = createDigest(*m_document.documentElement(), nullptr);
     std::unique_ptr<Digest> newInfo = createDigest(*newDocument->documentElement(), &m_unusedNodesMap);
 
