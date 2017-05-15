@@ -30,7 +30,7 @@ class WebKitIconTileWidget extends WP_Widget {
         
         ?>
         <div class="<?php echo esc_attr(join(' ', $classes)); ?>">
-            <a class="tile-link" href="<?php echo esc_url($url); ?>">Clickable link</a>
+            <a class="tile-link" href="<?php echo esc_url($url); ?>"><?php echo nl2br(esc_html($text)); ?></a>
             <div class="icon"></div>
             <h2><?php echo nl2br(esc_html($text)); ?></h2>
             <?php if (!empty($subtext)): ?><p><?php echo nl2br(esc_html($subtext)); ?></p><?php endif; ?>

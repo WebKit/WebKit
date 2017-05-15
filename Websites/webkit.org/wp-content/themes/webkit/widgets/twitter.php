@@ -68,10 +68,10 @@ class WebKitTwitterTileWidget extends WebKitPostTileWidget {
 
         ?>
         <div class="<?php echo esc_attr(join(' ', $classes)); ?>">
-            <a href="<?php echo esc_url($link); ?>" class="tile-link">Clickable link to tweet</a>
+            <a href="<?php echo esc_url($link); ?>" class="tile-link">Tweet: <?php echo $text; ?></a>
             <div class="tile-content">
             <?php if ( ! empty($Image) ): ?>
-            <img src="<?php echo esc_url($Image->media_url_https); ?>">
+            <img src="<?php echo esc_url($Image->media_url_https); ?>" alt="">
             <?php else: ?>
             <?php endif;?>
                 <p><?php echo $text; ?></p>
@@ -94,7 +94,7 @@ class WebKitTwitterTileWidget extends WebKitPostTileWidget {
 
         ?>
         <div class="<?php echo esc_attr(join(' ', $classes)); ?>">
-            <a class="tile-link" href="<?php echo esc_url($url); ?>">Clickable link</a>
+            <a class="tile-link" href="<?php echo esc_url($url); ?>"><?php echo nl2br(esc_html($options['text'])); ?></a>
             <div class="icon twitter-icon"></div>
             <h2><?php echo nl2br(esc_html($options['text'])); ?></h2>
         </div>

@@ -1,3 +1,14 @@
+2017-05-15  James Craig  <jcraig@apple.com>
+
+        AX: Inaccessible content on webkit.org main page
+        https://bugs.webkit.org/show_bug.cgi?id=172106
+
+        Reviewed by Joseph Pecoraro.
+
+        * wp-content/themes/webkit/widgets/icon.php: Resolved link title.
+        * wp-content/themes/webkit/widgets/post.php: Resolved link title.
+        * wp-content/themes/webkit/widgets/twitter.php: Resolved link titles. Suppressed unlabeled images with alt="".
+
 2017-05-14  James Craig  <jcraig@apple.com>
 
         Upload poster images and working captioned video
