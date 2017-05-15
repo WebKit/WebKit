@@ -6364,6 +6364,17 @@ void Document::updateLastHandledUserGestureTimestamp(MonotonicTime time)
         element->document().updateLastHandledUserGestureTimestamp(time);
 }
 
+bool Document::processingUserGestureForMedia() const
+{
+    if (ScriptController::processingUserGestureForMedia())
+        return true;
+
+    if (!settings().mediaUserGestureInheritsFromDocument())
+        return false;
+
+    return topDocument().hasHadUserInteraction();
+}
+
 void Document::startTrackingStyleRecalcs()
 {
     m_styleRecalcCount = 0;

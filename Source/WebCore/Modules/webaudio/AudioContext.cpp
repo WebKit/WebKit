@@ -368,6 +368,11 @@ String AudioContext::sourceApplicationIdentifier() const
     return emptyString();
 }
 
+bool AudioContext::processingUserGestureForMedia() const
+{
+    return document() ? document()->processingUserGestureForMedia() : false;
+}
+
 void AudioContext::visibilityStateChanged()
 {
     // Do not suspend if audio is audible.
@@ -933,7 +938,7 @@ void AudioContext::nodeWillBeginPlayback()
 bool AudioContext::willBeginPlayback()
 {
     if (userGestureRequiredForAudioStart()) {
-        if (!ScriptController::processingUserGestureForMedia())
+        if (!processingUserGestureForMedia())
             return false;
         removeBehaviorRestriction(AudioContext::RequireUserGestureForAudioStartRestriction);
     }
@@ -953,7 +958,7 @@ bool AudioContext::willBeginPlayback()
 bool AudioContext::willPausePlayback()
 {
     if (userGestureRequiredForAudioStart()) {
-        if (!ScriptController::processingUserGestureForMedia())
+        if (!processingUserGestureForMedia())
             return false;
         removeBehaviorRestriction(AudioContext::RequireUserGestureForAudioStartRestriction);
     }

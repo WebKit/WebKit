@@ -669,6 +669,7 @@ public:
         @NO, WebKitUserTimingEnabledPreferenceKey,
         @NO, WebKitResourceTimingEnabledPreferenceKey,
         @NO, WebKitCredentialManagementEnabledPreferenceKey,
+        @NO, WebKitMediaUserGestureInheritsFromDocument,
         nil];
 
 #if !PLATFORM(IOS)
@@ -3060,6 +3061,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setCredentialManagementEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitCredentialManagementEnabledPreferenceKey];
+}
+
+- (BOOL)mediaUserGestureInheritsFromDocument
+{
+    return [self _boolValueForKey:WebKitMediaUserGestureInheritsFromDocument];
+}
+
+- (void)setMediaUserGestureInheritsFromDocument:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitMediaUserGestureInheritsFromDocument];
 }
 
 #if PLATFORM(IOS)

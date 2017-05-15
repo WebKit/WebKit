@@ -1,5 +1,50 @@
 2017-05-15  Jer Noble  <jer.noble@apple.com>
 
+        Add experimental setting to allow document gesture interaction to fulfill media playback gesture requirement
+        https://bugs.webkit.org/show_bug.cgi?id=172131
+
+        Reviewed by Eric Carlson.
+
+        Test: media/restricted-audio-playback-with-document-gesture.html
+
+        Move all calls to ScriptController::processingUserGestureForMedia() to the new Document equivalent. In Document,
+        if the new setting is enabled, return true from processingUserGestureForMedia() if the top-level document has had
+        a user gesture interaction.
+
+        * Modules/mediastream/MediaStream.cpp:
+        (WebCore::MediaStream::processingUserGestureForMedia):
+        * Modules/mediastream/MediaStream.h:
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::processingUserGestureForMedia):
+        (WebCore::AudioContext::willBeginPlayback):
+        (WebCore::AudioContext::willPausePlayback):
+        * Modules/webaudio/AudioContext.h:
+        * dom/Document.cpp:
+        (WebCore::Document::processingUserGestureForMedia):
+        * dom/Document.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::load):
+        (WebCore::HTMLMediaElement::audioTrackEnabledChanged):
+        (WebCore::HTMLMediaElement::seekWithTolerance):
+        (WebCore::HTMLMediaElement::play):
+        (WebCore::HTMLMediaElement::playInternal):
+        (WebCore::HTMLMediaElement::pause):
+        (WebCore::HTMLMediaElement::pauseInternal):
+        (WebCore::HTMLMediaElement::setMuted):
+        (WebCore::HTMLMediaElement::webkitShowPlaybackTargetPicker):
+        (WebCore::HTMLMediaElement::processingUserGestureForMedia):
+        * html/HTMLMediaElement.h:
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::playbackPermitted):
+        (WebCore::MediaElementSession::dataLoadingPermitted):
+        (WebCore::MediaElementSession::fullscreenPermitted):
+        (WebCore::MediaElementSession::canShowControlsManager):
+        (WebCore::MediaElementSession::showPlaybackTargetPicker):
+        * page/Settings.in:
+        * platform/audio/PlatformMediaSession.h:
+
+2017-05-15  Jer Noble  <jer.noble@apple.com>
+
         Only ever initialize LibWebRTCProvider's staticFactoryAndThreads() factories once.
         https://bugs.webkit.org/show_bug.cgi?id=172047
 

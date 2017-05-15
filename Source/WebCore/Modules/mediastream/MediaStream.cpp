@@ -506,6 +506,11 @@ bool MediaStream::canProduceAudio() const
     return !muted() && active() && m_private->hasAudio() && m_isProducingData;
 }
 
+bool MediaStream::processingUserGestureForMedia() const
+{
+    return document() ? document()->processingUserGestureForMedia() : false;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)

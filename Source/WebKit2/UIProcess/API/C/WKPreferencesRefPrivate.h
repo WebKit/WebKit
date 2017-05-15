@@ -493,6 +493,10 @@ WK_EXPORT bool WKPreferencesGetCredentialManagementEnabled(WKPreferencesRef);
 WK_EXPORT void WKPreferencesSetInvisibleMediaAutoplayPermitted(WKPreferencesRef, bool flag);
 WK_EXPORT bool WKPreferencesGetInvisibleMediaAutoplayPermitted(WKPreferencesRef);
 
+// Defaults to false.
+WK_EXPORT void WKPreferencesSetMediaUserGestureInheritsFromDocument(WKPreferencesRef, bool flag);
+WK_EXPORT bool WKPreferencesGetMediaUserGestureInheritsFromDocument(WKPreferencesRef);
+
 #ifdef __cplusplus
 }
 #endif

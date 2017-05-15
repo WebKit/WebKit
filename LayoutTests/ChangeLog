@@ -1,3 +1,13 @@
+2017-05-15  Jer Noble  <jer.noble@apple.com>
+
+        Add experimental setting to allow document gesture interaction to fulfill media playback gesture requirement
+        https://bugs.webkit.org/show_bug.cgi?id=172131
+
+        Reviewed by Eric Carlson.
+
+        * media/restricted-audio-playback-with-document-gesture-expected.txt: Added.
+        * media/restricted-audio-playback-with-document-gesture.html: Added.
+
 2017-05-15  Per Arne Vollan  <pvollan@apple.com>
 
         LayoutTest http/tests/media/track-in-band-hls-metadata-crash.html is a flaky timeout

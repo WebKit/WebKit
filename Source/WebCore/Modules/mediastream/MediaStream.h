@@ -153,6 +153,7 @@ private:
     String sourceApplicationIdentifier() const final;
     bool canProduceAudio() const final;
     const Document* hostingDocument() const final { return document(); }
+    bool processingUserGestureForMedia() const final;
 
     bool internalAddTrack(Ref<MediaStreamTrack>&&, StreamModifier);
     bool internalRemoveTrack(const String&, StreamModifier);

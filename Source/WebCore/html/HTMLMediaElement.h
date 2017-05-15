@@ -815,6 +815,7 @@ private:
     bool shouldOverrideBackgroundPlaybackRestriction(PlatformMediaSession::InterruptionType) const override;
     bool shouldOverrideBackgroundLoadingRestriction() const override;
     bool canProduceAudio() const final;
+    bool processingUserGestureForMedia() const final;
 
     void pageMutedStateDidChange() override;
 

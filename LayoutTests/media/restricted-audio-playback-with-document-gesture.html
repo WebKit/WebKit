@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>restricted-audio-playback-with-document-gesture</title>
+    <script src=media-file.js></script>
+    <script src=video-test.js></script>
+
+    <script>
+    function runTest()
+    {
+        mediaElement = document.getElementsByTagName('audio')[0];
+
+        if (window.internals) {
+            run('internals.setMediaElementRestrictions(mediaElement, "RequireUserGestureForAudioRateChange")');
+            run('internals.settings.setMediaUserGestureInheritsFromDocument(true)');
+        }
+
+        consoleWrite('Running with keyDown.');
+        runWithKeyDown(() => {
+            run("mediaElement.src = findMediaFile('audio', 'content/test')");
+            waitForEvent('canplaythrough', canplaythrough);
+            waitForEventAndFail('error');
+        });
+    }
+
+    function canplaythrough()
+    {
+        run("mediaElement.play()");
+        testExpected('mediaElement.paused', false);
+        endTest();
+    }
+    </script>
+</head>
+
+<body onload="runTest()">
+    <p>Test that, when RequireUserGestureForAudioRateChange is set along with MediaUserGestureInheritsForDocument, a user gesture in the document will allow future media playback requests to succeed.</p>
+    <audio controls autoplay></audio>
+</body>
+</html>
+

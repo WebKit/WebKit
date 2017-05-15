@@ -231,6 +231,8 @@ public:
     virtual const Document* hostingDocument() const = 0;
     virtual String sourceApplicationIdentifier() const = 0;
 
+    virtual bool processingUserGestureForMedia() const = 0;
+
 protected:
     virtual ~PlatformMediaSessionClient() { }
 };

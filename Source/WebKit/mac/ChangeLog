@@ -1,3 +1,17 @@
+2017-05-15  Jer Noble  <jer.noble@apple.com>
+
+        Add experimental setting to allow document gesture interaction to fulfill media playback gesture requirement
+        https://bugs.webkit.org/show_bug.cgi?id=172131
+
+        Reviewed by Eric Carlson.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences mediaUserGestureInheritsFromDocument]):
+        (-[WebPreferences setMediaUserGestureInheritsFromDocument:]):
+        * WebView/WebPreferencesPrivate.h:
+
 2017-05-12  Chris Dumez  <cdumez@apple.com>
 
         Drop uses of PassRefPtr in WebKit/mac

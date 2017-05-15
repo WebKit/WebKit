@@ -1162,7 +1162,7 @@ void HTMLMediaElement::load()
     
     if (!m_mediaSession->dataLoadingPermitted(*this))
         return;
-    if (ScriptController::processingUserGestureForMedia())
+    if (processingUserGestureForMedia())
         removeBehaviorsRestrictionsAfterFirstUserGesture();
 
     prepareForLoad();
@@ -1878,7 +1878,7 @@ void HTMLMediaElement::audioTrackEnabledChanged(AudioTrack& track)
 {
     if (m_audioTracks && m_audioTracks->contains(track))
         m_audioTracks->scheduleChangeEvent();
-    if (ScriptController::processingUserGestureForMedia())
+    if (processingUserGestureForMedia())
         removeBehaviorsRestrictionsAfterFirstUserGesture(MediaElementSession::AllRestrictions & ~MediaElementSession::RequireUserGestureToControlControlsManager);
 }
 
@@ -2689,7 +2689,7 @@ void HTMLMediaElement::seekWithTolerance(const MediaTime& inTime, const MediaTim
     } else
         seekTask();
 
-    if (ScriptController::processingUserGestureForMedia())
+    if (processingUserGestureForMedia())
         m_mediaSession->removeBehaviorRestriction(MediaElementSession::RequireUserGestureToControlControlsManager);
 }
 
@@ -3154,7 +3154,7 @@ void HTMLMediaElement::play(DOMPromiseDeferred<void>&& promise)
         return;
     }
 
-    if (ScriptController::processingUserGestureForMedia())
+    if (processingUserGestureForMedia())
         removeBehaviorsRestrictionsAfterFirstUserGesture();
 
     if (!playInternal()) {
@@ -3175,7 +3175,7 @@ void HTMLMediaElement::play()
             setPlaybackWithoutUserGesture(PlaybackWithoutUserGesture::Prevented);
         return;
     }
-    if (ScriptController::processingUserGestureForMedia())
+    if (processingUserGestureForMedia())
         removeBehaviorsRestrictionsAfterFirstUserGesture();
 
     playInternal();
@@ -3239,7 +3239,7 @@ bool HTMLMediaElement::playInternal()
     } else if (m_readyState >= HAVE_FUTURE_DATA)
         scheduleResolvePendingPlayPromises();
 
-    if (ScriptController::processingUserGestureForMedia()) {
+    if (processingUserGestureForMedia()) {
         if (m_playbackWithoutUserGesture == PlaybackWithoutUserGesture::Prevented) {
             handleAutoplayEvent(AutoplayEvent::DidPlayMediaPreventedFromPlaying);
             setPlaybackWithoutUserGesture(PlaybackWithoutUserGesture::None);
@@ -3260,7 +3260,7 @@ void HTMLMediaElement::pause()
     if (!m_mediaSession->playbackPermitted(*this))
         return;
 
-    if (ScriptController::processingUserGestureForMedia())
+    if (processingUserGestureForMedia())
         removeBehaviorsRestrictionsAfterFirstUserGesture(MediaElementSession::RequireUserGestureToControlControlsManager);
 
     pauseInternal();
@@ -3287,7 +3287,7 @@ void HTMLMediaElement::pauseInternal()
 
     m_autoplaying = false;
 
-    if (ScriptController::processingUserGestureForMedia())
+    if (processingUserGestureForMedia())
         userDidInterfereWithAutoplay();
 
     setPlaybackWithoutUserGesture(PlaybackWithoutUserGesture::None);
@@ -3382,7 +3382,7 @@ void HTMLMediaElement::setMuted(bool muted)
 
     bool mutedStateChanged = m_muted != muted;
     if (mutedStateChanged || !m_explicitlyMuted) {
-        if (ScriptController::processingUserGestureForMedia()) {
+        if (processingUserGestureForMedia()) {
             removeBehaviorsRestrictionsAfterFirstUserGesture(MediaElementSession::AllRestrictions & ~MediaElementSession::RequireUserGestureToControlControlsManager);
 
             if (hasAudio() && muted)
@@ -5394,7 +5394,7 @@ void HTMLMediaElement::syncTextTrackBounds()
 void HTMLMediaElement::webkitShowPlaybackTargetPicker()
 {
     LOG(Media, "HTMLMediaElement::webkitShowPlaybackTargetPicker(%p)", this);
-    if (ScriptController::processingUserGestureForMedia())
+    if (processingUserGestureForMedia())
         removeBehaviorsRestrictionsAfterFirstUserGesture();
     m_mediaSession->showPlaybackTargetPicker(*this);
 }
@@ -7126,6 +7126,11 @@ bool HTMLMediaElement::shouldOverrideBackgroundPlaybackRestriction(PlatformMedia
 #endif
     }
     return false;
+}
+
+bool HTMLMediaElement::processingUserGestureForMedia() const
+{
+    return document().processingUserGestureForMedia();
 }
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
