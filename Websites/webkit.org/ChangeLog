@@ -1,3 +1,13 @@
+2017-05-14  James Craig  <jcraig@apple.com>
+
+        AX: All the articles on the WebKit blog are called "Clickable Link" by VoiceOver
+        https://bugs.webkit.org/show_bug.cgi?id=172096
+        <rdar://problem/31624323>
+
+        Unreviewed. Fixing broken link titles for screen readers.
+
+        * wp-content/themes/webkit/loop.php: Adding relevant link label for accessibility.
+
 2017-05-08  James Craig  <jcraig@apple.com>
 
         More demo files for prefers-reduced-motion post

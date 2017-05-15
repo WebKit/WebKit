@@ -12,7 +12,7 @@ $classes = array('tile', 'third-tile');
 $classes[] = 'third-tile';
 ?>
     <div <?php echo post_class(join(' ', $classes)); ?>>
-        <a class="tile-link" href="<?php the_permalink(); ?>">Clickable link</a>
+        <a class="tile-link" href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
         <div class="background-image">
             <div class="featured-image"<?php echo $background_image; ?>></div>
             <?php if ( $featured ): ?><div class="background-vignette"></div><?php endif; ?>
