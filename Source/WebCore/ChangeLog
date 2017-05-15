@@ -1,3 +1,23 @@
+2017-05-15  Gwang Yoon Hwang  <yoon@igalia.com>
+
+        [CAIRO] Painting an image mask with a matrix above Pixman's limit breaks internal states of Cairo
+        https://bugs.webkit.org/show_bug.cgi?id=169094
+
+        Reviewed by Žan Doberšek.
+
+        It is the same problem which addressed in r212431.
+        In HiDPI situation, it happens easily due to the size of coordinates.
+        Also, if this bug happens, it will break the rendering continuously
+        since we are reusing graphics contexts to render webpages in same
+        webview.
+
+        Test: fast/hidpi/hidpi-long-page-with-inset-element.html
+
+        * platform/graphics/cairo/PlatformContextCairo.cpp:
+        (WebCore::PlatformContextCairo::pushImageMask):
+        We can avoid the limit of the Pixman by reducing the source surface's
+        size, and it will create a minimal pattern matrix.
+
 2017-05-14  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed build fix with newer Perl versions.
