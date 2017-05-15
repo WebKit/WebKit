@@ -1,3 +1,11 @@
+2017-05-15  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed build fix.
+
+        Debugging code was accidentally left in the Plugin sandbox profile.
+
+        * PluginProcess/mac/com.apple.WebKit.plugin-common.sb.in:
+
 2017-05-15  Gwang Yoon Hwang  <yoon@igalia.com>
 
         [WPE] Unreviewed debug build fix

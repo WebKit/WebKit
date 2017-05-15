@@ -22,8 +22,7 @@
 ; THE POSSIBILITY OF SUCH DAMAGE.
 
 (version 1)
-;(deny default)
-(allow default (with report))
+(deny default)
 (allow system-audit file-read-metadata)
 
 (import "system.sb")
