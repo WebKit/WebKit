@@ -8,7 +8,6 @@ RUN(video.src = 'http://127.0.0.1:8000/media/resources/hls/metadata/prog_index.m
 EVENT(addtrack)
 RUN(track = video.textTracks[0])
 RUN(track.mode = 'hidden')
-RUN(video.play())
 EVENT(cuechange)
 
 ** Seek, should not crash.
