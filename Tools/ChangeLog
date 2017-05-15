@@ -1,3 +1,14 @@
+2017-05-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Update ARES-6 plan file to use the latest version
+        https://bugs.webkit.org/show_bug.cgi?id=172139
+
+        Reviewed by Keith Miller.
+
+        Include r216538.
+
+        * Scripts/webkitpy/benchmark_runner/data/plans/ares6.plan:
+
 2017-05-15  Jeremy Jones  <jeremyj@apple.com>
 
         Disable Picture In Picture API tests on unsupported platforms.
