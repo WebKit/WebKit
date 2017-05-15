@@ -1,3 +1,97 @@
+2017-05-14  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL/DOM] Remove need for custom bindings for HTMLAllCollection and bring up to spec
+        https://bugs.webkit.org/show_bug.cgi?id=172095
+
+        Reviewed by Darin Adler.
+
+        - Adds support for the legacycaller WebIDL special annotation.
+        - Updates implementation of HTMLAllCollection to match the current HTML spec.
+
+        Test: fast/dom/document-all.html
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JSHTMLAllCollectionCustom.cpp: Removed.
+        Removed JSHTMLAllCollectionCustom.cpp
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateInterface):
+        (AddLegacyCallerOperationIfNeeded):
+        Before code generation, clone all the legacycaller operations and put them
+        in their own set, so they can form an overload set.
+        
+        (AddStringifierOperationIfNeeded):
+        Use IDLParser::cloneType as the FIXME suggested.
+
+        (GenerateHeader):
+        Group call related functionality together and use new IsCallable predicate.
+
+        (GenerateOverloadedFunctionOrConstructor):
+        Generalize a little bit to allow the function being overloaded to be an overloaded legacycaller.
+
+        (GenerateImplementation):
+        Add call to generate the legacycaller code.
+
+        (GenerateLegacyCallerDefinitions):
+        (GenerateLegacyCallerDefinition):
+        Generate the legacycaller definition, using GenerateArgumentsCountCheck, GenerateParametersCheck
+        and GenerateImplementationFunctionCall to do all the heavy lifting.
+
+        (IsCallable):
+        Add helper predicate for both custom calls and legacycaller.
+
+        * bindings/scripts/IDLParser.pm:
+        (cloneType):.
+        (cloneArgument):.
+        (cloneOperation):
+        Add cloning functions for IDLArgument and IDLOperation, and make IDLType's
+        clone feasible for calling outside the package by removing the unneeded 
+        self parameter.
+
+        * bindings/scripts/test/JS/JSTestObj.cpp
+        * bindings/scripts/test/JS/JSTestObj.h
+        * bindings/scripts/test/TestObj.idl:
+        Add testing of legacycaller overloading.
+
+        * dom/Document.cpp:
+        (WebCore::Document::allFilteredByName):
+        * dom/Document.h:
+        Add new collection access for the HTMLAllNamedSubCollection.
+
+        * html/CachedHTMLCollection.h:
+        (WebCore::nameShouldBeVisibleInDocumentAll):
+        Update list of tags to match the current spec.
+
+        * html/CollectionType.h:
+        Add new type for HTMLAllNamedSubCollection.
+
+        * html/GenericCachedHTMLCollection.cpp:
+        (WebCore::GenericCachedHTMLCollection<traversalType>::elementMatches):
+        Specify that DocumentAllNamedItems does not want
+        the default elementMatches.
+ 
+        * html/HTMLAllCollection.cpp:
+        (WebCore::HTMLAllCollection::namedOrIndexedItemOrItems):
+        (WebCore::HTMLAllCollection::namedItemOrItems):
+        (WebCore::HTMLAllNamedSubCollection::~HTMLAllNamedSubCollection):
+        (WebCore::HTMLAllNamedSubCollection::elementMatches):
+        * html/HTMLAllCollection.h:
+        Move implementations from the custom binding, and re-implement to
+        match the spec. Alternate names to item/namedItem were needed to not
+        shadow the existing ones in HTMLCollection. HTMLAllNamedSubCollection
+        is a simple HTMLCollection that matches on a name, following the rules
+        of document.all about which tags can have name attributes.
+
+        * html/HTMLAllCollection.idl:
+        Remove custom annotations and add legacycaller which is now supported.
+
+        * html/HTMLCollection.cpp:
+        (WebCore::invalidationTypeExcludingIdAndNameAttributes):
+        (WebCore::HTMLCollection::~HTMLCollection):
+        Add DocumentAllNamedItems.
+
 2017-05-14  Zalan Bujtas  <zalan@apple.com>
 
         Remove unused lambda in TextFragmentIterator::TextFragment::split() and cleanup dependencies.

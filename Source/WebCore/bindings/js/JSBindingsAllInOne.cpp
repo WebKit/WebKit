@@ -67,7 +67,6 @@
 #include "JSEventListener.cpp"
 #include "JSEventTargetCustom.cpp"
 #include "JSExceptionBase.cpp"
-#include "JSHTMLAllCollectionCustom.cpp"
 #include "JSHTMLAppletElementCustom.cpp"
 #include "JSHTMLCanvasElementCustom.cpp"
 #include "JSHTMLCollectionCustom.cpp"

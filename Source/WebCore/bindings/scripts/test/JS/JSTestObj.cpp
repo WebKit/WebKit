@@ -1260,6 +1260,7 @@ JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionSingleConditionalOve
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionAttachShadowRoot(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOperationWithExternalDictionaryParameter(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionBufferSourceParameter(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionLegacyCallerNamed(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionToString(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionToJSON(JSC::ExecState*);
 
@@ -1922,6 +1923,7 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "attachShadowRoot", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionAttachShadowRoot), (intptr_t) (1) } },
     { "operationWithExternalDictionaryParameter", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionOperationWithExternalDictionaryParameter), (intptr_t) (1) } },
     { "bufferSourceParameter", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionBufferSourceParameter), (intptr_t) (1) } },
+    { "legacyCallerNamed", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionLegacyCallerNamed), (intptr_t) (1) } },
     { "toString", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionToString), (intptr_t) (0) } },
     { "toJSON", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionToJSON), (intptr_t) (0) } },
 #if ENABLE(Condition1)
@@ -8763,6 +8765,26 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionBufferSourceParamete
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionLegacyCallerNamedCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
+EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionLegacyCallerNamed(ExecState* state)
+{
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionLegacyCallerNamedCaller>(state, "legacyCallerNamed");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionLegacyCallerNamedCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
+    UNUSED_PARAM(throwScope);
+    auto& impl = castedThis->wrapped();
+    if (UNLIKELY(state->argumentCount() < 1))
+        return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
+    auto param = convert<IDLLong>(*state, state->uncheckedArgument(0));
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    impl.legacyCallerNamed(WTFMove(param));
+    return JSValue::encode(jsUndefined());
+}
+
 static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionToStringCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionToString(ExecState* state)
@@ -8776,6 +8798,73 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionToStringCaller(JSC::
     UNUSED_PARAM(throwScope);
     auto& impl = castedThis->wrapped();
     return JSValue::encode(toJS<IDLUSVString>(*state, impl.stringifierAttribute()));
+}
+
+static inline EncodedJSValue callJSTestObj1(ExecState* state)
+{
+    VM& vm = state->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(throwScope);
+    if (UNLIKELY(state->argumentCount() < 1))
+        return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
+    auto* castedThis = jsCast<JSTestObj*>(state->jsCallee());
+    ASSERT(castedThis);
+    auto& impl = castedThis->wrapped();
+    auto param = convert<IDLLong>(*state, state->uncheckedArgument(0));
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    impl.legacyCallerNamed(WTFMove(param));
+    return JSValue::encode(jsUndefined());
+}
+
+static inline EncodedJSValue callJSTestObj2(ExecState* state)
+{
+    VM& vm = state->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(throwScope);
+    if (UNLIKELY(state->argumentCount() < 1))
+        return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
+    auto* castedThis = jsCast<JSTestObj*>(state->jsCallee());
+    ASSERT(castedThis);
+    auto& impl = castedThis->wrapped();
+    auto param = convert<IDLDOMString>(*state, state->uncheckedArgument(0));
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    return JSValue::encode(toJS<IDLLong>(impl.legacyCallerOperationFromBindings(WTFMove(param))));
+}
+
+static inline EncodedJSValue callJSTestObj3(ExecState* state)
+{
+    VM& vm = state->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(throwScope);
+    auto* castedThis = jsCast<JSTestObj*>(state->jsCallee());
+    ASSERT(castedThis);
+    auto& impl = castedThis->wrapped();
+    impl.legacyCallerOperationFromBindings();
+    return JSValue::encode(jsUndefined());
+}
+
+EncodedJSValue JSC_HOST_CALL callJSTestObj(ExecState* state)
+{
+    VM& vm = state->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(throwScope);
+    size_t argsCount = std::min<size_t>(1, state->argumentCount());
+    if (argsCount == 0) {
+        return callJSTestObj3(state);
+    }
+    if (argsCount == 1) {
+        JSValue distinguishingArg = state->uncheckedArgument(0);
+        if (distinguishingArg.isNumber())
+            return callJSTestObj1(state);
+        return callJSTestObj2(state);
+    }
+    return throwVMTypeError(state, throwScope);
+}
+
+CallType JSTestObj::getCallData(JSCell*, CallData& callData)
+{
+    callData.native.function = callJSTestObj;
+    return CallType::Host;
 }
 
 JSC::JSObject* JSTestObj::serialize(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)

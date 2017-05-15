@@ -162,7 +162,9 @@ sub GenerateInterface
     my ($object, $interface, $defines, $enumerations, $dictionaries) = @_;
 
     $codeGenerator->LinkOverloadedFunctions($interface);
+
     AddStringifierOperationIfNeeded($interface);
+    AddLegacyCallerOperationIfNeeded($interface);
 
     if ($interface->isCallback) {
         $object->GenerateCallbackInterfaceHeader($interface, $enumerations, $dictionaries);
@@ -188,14 +190,29 @@ sub AddStringifierOperationIfNeeded
         $stringifier->extendedAttributes($extendedAttributeList);
         die "stringifier can only be used on attributes of String types" unless $codeGenerator->IsStringType($attribute->type);
         
-        # FIXME: This should use IDLParser's cloneType.
-        my $type = IDLType->new();
-        $type->name($attribute->type->name);
-
+        my $type = IDLParser::cloneType($attribute->type);
         $stringifier->type($type);
 
         push(@{$interface->functions}, $stringifier);
         last;
+    }
+}
+
+sub AddLegacyCallerOperationIfNeeded
+{
+    my $interface = shift;
+
+    foreach my $operation (@{$interface->functions}, @{$interface->anonymousFunctions}) {
+        my $isLegacyCaller = grep { $_ eq "legacycaller" } @{$operation->specials};
+        if ($isLegacyCaller) {
+            $interface->{LegacyCallers} = [] if !exists $interface->{LegacyCallers};
+
+            my $clonedOperation = IDLParser::cloneOperation($operation);
+            push($interface->{LegacyCallers}, $clonedOperation);
+    
+            $clonedOperation->{overloads} = $interface->{LegacyCallers};
+            $clonedOperation->{overloadIndex} = @{$interface->{LegacyCallers}};
+        }
     }
 }
 
@@ -1740,8 +1757,6 @@ sub GenerateHeader
         }
     }
 
-    $headerIncludes{"<runtime/CallData.h>"} = 1 if $interface->extendedAttributes->{CustomCall};
-
     $headerIncludes{"$interfaceName.h"} = 1 if $hasParent && $interface->extendedAttributes->{JSGenerateToNativeObject};
 
     $headerIncludes{"SVGElement.h"} = 1 if $className =~ /^JSSVG/;
@@ -1864,7 +1879,6 @@ sub GenerateHeader
     }
     $structureFlags{"JSC::NewImpurePropertyFiresWatchpoints"} = 1 if $interface->extendedAttributes->{NewImpurePropertyFiresWatchpoints};
     $structureFlags{"JSC::IsImmutablePrototypeExoticObject"} = 1 if $interface->extendedAttributes->{IsImmutablePrototypeExoticObject};
-    $structureFlags{"JSC::TypeOfShouldCallGetCallData"} = 1 if $interface->extendedAttributes->{CustomCall};
 
     # Getters
     if ($hasGetter) {
@@ -1920,8 +1934,12 @@ sub GenerateHeader
     # Custom pushEventHandlerScope function
     push(@headerContent, "    JSC::JSScope* pushEventHandlerScope(JSC::ExecState*, JSC::JSScope*) const;\n\n") if $interface->extendedAttributes->{JSCustomPushEventHandlerScope};
 
-    # Custom call functions
-    push(@headerContent, "    static JSC::CallType getCallData(JSC::JSCell*, JSC::CallData&);\n\n") if $interface->extendedAttributes->{CustomCall};
+    # LegacyCaller and custom call functions
+    if (IsCallable($interface)) {
+        push(@headerContent, "    static JSC::CallType getCallData(JSC::JSCell*, JSC::CallData&);\n\n");
+        $headerIncludes{"<runtime/CallData.h>"} = 1;
+        $structureFlags{"JSC::TypeOfShouldCallGetCallData"} = 1;
+    }
 
     # Custom deleteProperty function
     push(@headerContent, "    static bool deleteProperty(JSC::JSCell*, JSC::ExecState*, JSC::PropertyName);\n") if $interface->extendedAttributes->{CustomDeleteProperty};
@@ -2584,14 +2602,16 @@ sub getConditionalForFunctionConsideringOverloads
 # http://heycam.github.io/webidl/#es-overloads
 sub GenerateOverloadedFunctionOrConstructor
 {
-    my ($function, $interface, $isConstructor) = @_;
+    my ($function, $interface, $variant) = @_;
     my %allSets = ComputeEffectiveOverloadSet($function->{overloads});
 
     my $interfaceName = $interface->type->name;
     my $className = "JS$interfaceName";
     my $functionName;
-    if ($isConstructor) {
+    if ($variant eq "constructor") {
         $functionName = "construct${className}";
+    } elsif ($variant eq "legacycaller") {
+        $functionName = "call${className}";
     } else {
         my $kind = $function->isStatic ? "Constructor" : (OperationShouldBeOnInstance($interface, $function) ? "Instance" : "Prototype");
         $functionName = "js${interfaceName}${kind}Function" . $codeGenerator->WK_ucfirst($function->name);
@@ -2677,7 +2697,7 @@ sub GenerateOverloadedFunctionOrConstructor
     my $conditionalAttribute = getConditionalForFunctionConsideringOverloads($function);
     my $conditionalString = $conditionalAttribute ? $codeGenerator->GenerateConditionalStringFromAttributeValue($conditionalAttribute) : undef;
     push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
-    if ($isConstructor) {
+    if ($variant eq "constructor") {
         push(@implContent, "template<> EncodedJSValue JSC_HOST_CALL ${className}Constructor::construct(ExecState* state)\n");
     } else {
         push(@implContent, "EncodedJSValue JSC_HOST_CALL ${functionName}(ExecState* state)\n");
@@ -4259,16 +4279,18 @@ END
             push(@implContent, "#endif\n\n") if $conditional;
 
             # Generate a function dispatching call to the rest of the overloads.
-            GenerateOverloadedFunctionOrConstructor($function, $interface, 0) if !$isCustom && $isOverloaded && $function->{overloadIndex} == @{$function->{overloads}};
+            GenerateOverloadedFunctionOrConstructor($function, $interface, "operation") if !$isCustom && $isOverloaded && $function->{overloadIndex} == @{$function->{overloads}};
         }
 
         push(@implContent, $endAppleCopyright) if $inAppleCopyright;
 
     }
 
+    GenerateLegacyCallerDefinitions($interface, $className);
 
     GenerateImplementationIterableFunctions($interface) if $interface->iterable;
     GenerateSerializerFunction($interface, $className) if $interface->serializable;
+
     AddToImplIncludes("JSDOMMapLike.h") if $interface->mapLike;
 
     if ($needsVisitChildren) {
@@ -4571,6 +4593,62 @@ sub GenerateSerializerFunction
     push(@implContent, "    return BindingCaller<JS$interfaceName>::callOperation<${serializerNativeFunctionName}Caller>(state, \"$serializerFunctionName\");\n");
     push(@implContent, "}\n");
     push(@implContent, "\n");
+}
+
+sub GenerateLegacyCallerDefinitions
+{
+    my ($interface, $className) = @_;
+
+    if (!IsCallable($interface) || $interface->extendedAttributes->{CustomCall}) {
+        return;
+    }
+
+    my @legacyCallers = @{$interface->{LegacyCallers}};
+    if (@legacyCallers > 1) {
+        foreach my $legacyCaller (@legacyCallers) {
+            GenerateLegacyCallerDefinition($interface, $className, $legacyCaller);
+        }
+        GenerateOverloadedFunctionOrConstructor($legacyCallers[0], $interface, "legacycaller");
+    } else {
+        GenerateLegacyCallerDefinition($interface, $className, $legacyCallers[0]);
+    }
+
+    push(@implContent, "CallType ${className}::getCallData(JSCell*, CallData& callData)\n");
+    push(@implContent, "{\n");
+    push(@implContent, "    callData.native.function = call${className};\n");
+    push(@implContent, "    return CallType::Host;\n");
+    push(@implContent, "}\n");
+    push(@implContent, "\n");
+}
+
+sub GenerateLegacyCallerDefinition
+{
+    my ($interface, $className, $function) = @_;
+
+    my $isOverloaded = $function->{overloads} && @{$function->{overloads}} > 1;
+    if ($isOverloaded) {
+        push(@implContent, "static inline EncodedJSValue call${className}$function->{overloadIndex}(ExecState* state)\n");
+    } else {
+        push(@implContent, "static EncodedJSValue JSC_HOST_CALL call${className}(ExecState* state)\n");
+    }
+
+    push(@implContent, "{\n");
+    push(@implContent, "    VM& vm = state->vm();\n");
+    push(@implContent, "    auto throwScope = DECLARE_THROW_SCOPE(vm);\n");
+    push(@implContent, "    UNUSED_PARAM(throwScope);\n");
+
+    GenerateArgumentsCountCheck(\@implContent, $function, $interface);
+
+    push(@implContent, "    auto* castedThis = jsCast<${className}*>(state->jsCallee());\n");
+    push(@implContent, "    ASSERT(castedThis);\n");
+    push(@implContent, "    auto& impl = castedThis->wrapped();\n");
+
+    my $functionImplementationName = $function->extendedAttributes->{ImplementedAs} || $codeGenerator->WK_lcfirst($function->name) || "legacyCallerOperationFromBindings";
+    my $functionString = GenerateParametersCheck(\@implContent, $function, $interface, $functionImplementationName);
+
+    GenerateImplementationFunctionCall($function, $functionString, "    ", $interface);
+
+    push(@implContent, "}\n\n");
 }
 
 sub GenerateCallWithUsingReferences
@@ -5193,7 +5271,8 @@ sub GenerateCallbackImplementationContent
 
         GenerateConstructorDefinitions($contentRef, $className, "", $visibleName, $interfaceOrCallback);
 
-        push(@$contentRef, "JSValue ${className}::getConstructor(VM& vm, const JSGlobalObject* globalObject)\n{\n");
+        push(@$contentRef, "JSValue ${className}::getConstructor(VM& vm, const JSGlobalObject* globalObject)\n");
+        push(@$contentRef, "{\n");
         push(@$contentRef, "    return getDOMConstructor<${className}Constructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));\n");
         push(@$contentRef, "}\n\n");
     }
@@ -5257,7 +5336,7 @@ sub GenerateCallbackImplementationContent
     push(@$contentRef, "}\n\n");
 }
 
-sub GenerateImplementationFunctionCall()
+sub GenerateImplementationFunctionCall
 {
     my ($function, $functionString, $indent, $interface) = @_;
 
@@ -6178,7 +6257,7 @@ sub GenerateConstructorDefinitions
             foreach my $constructor (@constructors) {
                 GenerateConstructorDefinition($outputArray, $className, $protoClassName, $visibleInterfaceName, $interface, $generatingNamedConstructor, $constructor);
             }
-            GenerateOverloadedFunctionOrConstructor(@{$interface->constructors}[0], $interface, 1);
+            GenerateOverloadedFunctionOrConstructor(@{$interface->constructors}[0], $interface, "constructor");
         } elsif (@constructors == 1) {
             GenerateConstructorDefinition($outputArray, $className, $protoClassName, $visibleInterfaceName, $interface, $generatingNamedConstructor, $constructors[0]);
         } else {
@@ -6374,6 +6453,12 @@ sub IsConstructable
         || $interface->extendedAttributes->{Constructor}
         || $interface->extendedAttributes->{NamedConstructor}
         || $interface->extendedAttributes->{JSBuiltinConstructor};
+}
+
+sub IsCallable
+{
+    my $interface = shift;
+    return $interface->extendedAttributes->{CustomCall} || $interface->{LegacyCallers}
 }
 
 sub HeaderNeedsPrototypeDeclaration

@@ -10,5 +10,5 @@ PASS Test lookup IMG in collection using []
 PASS Test lookup IMG in collection using . 
 PASS Test lookup tags in collection using . 
 PASS Should find root element too 
-FAIL Should find both anchors and produce a list undefined is not an object (evaluating 'document.all["foo"].length')
+PASS Should find both anchors and produce a list 
 

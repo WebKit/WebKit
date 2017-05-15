@@ -97,15 +97,22 @@ bool CachedHTMLCollection<HTMLCollectionClass, traversalType>::elementMatches(El
 
 static inline bool nameShouldBeVisibleInDocumentAll(HTMLElement& element)
 {
-    // The document.all collection returns only certain types of elements by name,
-    // although it returns any type of element by id.
-    return element.hasTagName(HTMLNames::appletTag)
+    // https://html.spec.whatwg.org/multipage/infrastructure.html#all-named-elements
+    return element.hasTagName(HTMLNames::aTag)
+        || element.hasTagName(HTMLNames::appletTag)
+        || element.hasTagName(HTMLNames::buttonTag)
         || element.hasTagName(HTMLNames::embedTag)
         || element.hasTagName(HTMLNames::formTag)
+        || element.hasTagName(HTMLNames::frameTag)
+        || element.hasTagName(HTMLNames::framesetTag)
+        || element.hasTagName(HTMLNames::iframeTag)
         || element.hasTagName(HTMLNames::imgTag)
         || element.hasTagName(HTMLNames::inputTag)
+        || element.hasTagName(HTMLNames::mapTag)
+        || element.hasTagName(HTMLNames::metaTag)
         || element.hasTagName(HTMLNames::objectTag)
-        || element.hasTagName(HTMLNames::selectTag);
+        || element.hasTagName(HTMLNames::selectTag)
+        || element.hasTagName(HTMLNames::textareaTag);
 }
 
 static inline bool nameShouldBeVisibleInDocumentAll(Element& element)

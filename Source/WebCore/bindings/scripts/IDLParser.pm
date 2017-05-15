@@ -80,7 +80,7 @@ struct( IDLArgument => {
     isVariadic => '$',
     isOptional => '$',
     default => '$',
-    extendedAttributes => '$',
+    extendedAttributes => '%',
 });
 
 # https://heycam.github.io/webidl/#idl-operations
@@ -93,7 +93,7 @@ struct( IDLOperation => {
     isSerializer => '$',
     isMapLike => '$',
     specials => '@',
-    extendedAttributes => '$',
+    extendedAttributes => '%',
 });
 
 
@@ -513,7 +513,6 @@ sub makeSimpleType
 
 sub cloneType
 {
-    my $self = shift;
     my $type = shift;
 
     my $clonedType = IDLType->new();
@@ -524,10 +523,48 @@ sub cloneType
     copyExtendedAttributes($clonedType->extendedAttributes, $type->extendedAttributes);
 
     foreach my $subtype (@{$type->subtypes}) {
-        push(@{$clonedType->subtypes}, $self->cloneType($subtype));
+        push(@{$clonedType->subtypes}, cloneType($subtype));
     }
 
     return $clonedType;
+}
+
+sub cloneArgument
+{
+    my $argument = shift;
+
+    my $clonedArgument = IDLArgument->new();
+    $clonedArgument->name($argument->name);
+    $clonedArgument->type(cloneType($argument->type));
+    $clonedArgument->isVariadic($argument->isVariadic);
+    $clonedArgument->isOptional($argument->isOptional);
+    $clonedArgument->default($argument->default);
+    copyExtendedAttributes($clonedArgument->extendedAttributes, $argument->extendedAttributes);
+
+    return $clonedArgument;
+}
+
+sub cloneOperation
+{
+    my $operation = shift;
+
+    my $clonedOperation = IDLOperation->new();
+    $clonedOperation->name($operation->name);
+    $clonedOperation->type(cloneType($operation->type));
+    
+    foreach my $argument (@{$operation->arguments}) {
+        push(@{$clonedOperation->arguments}, cloneArgument($argument));
+    }
+
+    $clonedOperation->isStatic($operation->isStatic);
+    $clonedOperation->isIterable($operation->isIterable);
+    $clonedOperation->isSerializer($operation->isSerializer);
+    $clonedOperation->isMapLike($operation->isMapLike);
+    $clonedOperation->specials($operation->specials);
+
+    copyExtendedAttributes($clonedOperation->extendedAttributes, $operation->extendedAttributes);
+
+    return $clonedOperation;
 }
 
 my $nextAttribute_1 = '^(attribute|inherit)$';
@@ -645,7 +682,7 @@ sub typeByApplyingTypedefs
     if (exists $typedefs{$type->name}) {
         my $typedef = $typedefs{$type->name};
 
-        my $clonedType = $self->cloneType($typedef->type);
+        my $clonedType = cloneType($typedef->type);
         $clonedType->isNullable($clonedType->isNullable || $type->isNullable);
         $self->moveExtendedAttributesApplicableToTypes($clonedType, $type->extendedAttributes);
 

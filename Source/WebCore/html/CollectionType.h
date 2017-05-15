@@ -39,6 +39,8 @@ enum CollectionType {
     WindowNamedItems,
     DocumentNamedItems,
 
+    DocumentAllNamedItems, // Sub-collection returned by the "all" collection when there are multiple items with the same name
+
     // Unnamed HTMLCollection types cached in elements.
     NodeChildren, // first-level children (IE)
     TableTBodies, // all <tbody> elements in this table

@@ -4979,6 +4979,11 @@ Ref<HTMLCollection> Document::all()
     return ensureRareData().ensureNodeLists().addCachedCollection<HTMLAllCollection>(*this, DocAll);
 }
 
+Ref<HTMLCollection> Document::allFilteredByName(const AtomicString& name)
+{
+    return ensureRareData().ensureNodeLists().addCachedCollection<HTMLAllNamedSubCollection>(*this, DocumentAllNamedItems, name);
+}
+
 Ref<HTMLCollection> Document::windowNamedItems(const AtomicString& name)
 {
     return ensureRareData().ensureNodeLists().addCachedCollection<WindowNameCollection>(*this, WindowNamedItems, name);

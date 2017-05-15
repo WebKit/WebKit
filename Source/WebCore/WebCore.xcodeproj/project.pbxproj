@@ -5744,7 +5744,6 @@
 		BC97E23B109144950010D361 /* HTMLAllCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC97E239109144950010D361 /* HTMLAllCollection.cpp */; };
 		BC97E412109154FA0010D361 /* JSHTMLAllCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC97E410109154FA0010D361 /* JSHTMLAllCollection.cpp */; };
 		BC97E413109154FA0010D361 /* JSHTMLAllCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = BC97E411109154FA0010D361 /* JSHTMLAllCollection.h */; };
-		BC97E42C10915B060010D361 /* JSHTMLAllCollectionCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC97E42B10915B060010D361 /* JSHTMLAllCollectionCustom.cpp */; };
 		BC98A27D0C0C9950004BEBF7 /* JSStyleSheetCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC98A27C0C0C9950004BEBF7 /* JSStyleSheetCustom.cpp */; };
 		BCA169A20BFD55B40019CA76 /* JSHTMLTableCaptionElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCA169A00BFD55B40019CA76 /* JSHTMLTableCaptionElement.cpp */; };
 		BCA169A30BFD55B40019CA76 /* JSHTMLTableCaptionElement.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA169A10BFD55B40019CA76 /* JSHTMLTableCaptionElement.h */; };
@@ -14166,7 +14165,6 @@
 		BC97E23C109146F10010D361 /* HTMLAllCollection.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLAllCollection.idl; sourceTree = "<group>"; };
 		BC97E410109154FA0010D361 /* JSHTMLAllCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLAllCollection.cpp; sourceTree = "<group>"; };
 		BC97E411109154FA0010D361 /* JSHTMLAllCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHTMLAllCollection.h; sourceTree = "<group>"; };
-		BC97E42B10915B060010D361 /* JSHTMLAllCollectionCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLAllCollectionCustom.cpp; sourceTree = "<group>"; };
 		BC98A27C0C0C9950004BEBF7 /* JSStyleSheetCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSStyleSheetCustom.cpp; sourceTree = "<group>"; };
 		BC9A6141146859D9006057FD /* DOMExceptions.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = DOMExceptions.in; sourceTree = "<group>"; };
 		BC9A6142146859D9006057FD /* EventNames.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = EventNames.in; sourceTree = "<group>"; };
@@ -19561,6 +19559,7 @@
 				51E269321DD3BC43006B6A58 /* JSIDBTransactionCustom.cpp */,
 				A7D0318D0E93540300E24ACD /* JSImageDataCustom.cpp */,
 				AD726FE716D9F204003A4E6D /* JSMediaListCustom.h */,
+				415CDAF61E6CE0D3004F11EE /* JSMediaStreamTrackCustom.cpp */,
 				E1A5F99A0E7EAA2500AF85EA /* JSMessageChannelCustom.cpp */,
 				E1ADED460E76B8DD004A1A5E /* JSMessagePortCustom.cpp */,
 				1A750DD30A90E729000FF215 /* JSNodeIteratorCustom.cpp */,
@@ -23462,7 +23461,6 @@
 				C28083411C6DC96A001451B6 /* JSFontFaceCustom.cpp */,
 				1C24EEAA1C72AA0A0080F8FC /* JSFontFaceSetCustom.cpp */,
 				BCE7B1920D4E86960075A539 /* JSHistoryCustom.cpp */,
-				BC97E42B10915B060010D361 /* JSHTMLAllCollectionCustom.cpp */,
 				BC4EDEF30C08F3FB007EDD49 /* JSHTMLAppletElementCustom.cpp */,
 				9392262C1032107B006E7D5D /* JSHTMLCanvasElementCustom.cpp */,
 				BC51580A0C03D404008BB0EE /* JSHTMLDocumentCustom.cpp */,
@@ -23477,7 +23475,6 @@
 				7A74ECBC101839DA00BF939E /* JSInspectorFrontendHostCustom.cpp */,
 				BCE1C43F0D9830F4003B02F2 /* JSLocationCustom.cpp */,
 				2D9BF7481DBFDDF8007A7D99 /* JSMediaKeySessionCustom.cpp */,
-				415CDAF61E6CE0D3004F11EE /* JSMediaStreamTrackCustom.cpp */,
 				410B7E711045FAB000D8224F /* JSMessageEventCustom.cpp */,
 				A1E5B31D1AAD1DA4006EBEFB /* JSMockContentFilterSettingsCustom.cpp */,
 				C6F0917E143A2BB900685849 /* JSMutationObserverCustom.cpp */,
@@ -31738,7 +31735,6 @@
 				57957CB61E972C78008072AB /* JSHkdfParams.cpp in Sources */,
 				57E233691DCAB24300F28D01 /* JSHmacKeyParams.cpp in Sources */,
 				BC97E412109154FA0010D361 /* JSHTMLAllCollection.cpp in Sources */,
-				BC97E42C10915B060010D361 /* JSHTMLAllCollectionCustom.cpp in Sources */,
 				1A4A2DEF0A1B852A00C807F8 /* JSHTMLAnchorElement.cpp in Sources */,
 				1A4A2DF10A1B852A00C807F8 /* JSHTMLAppletElement.cpp in Sources */,
 				BC4EDEF40C08F3FB007EDD49 /* JSHTMLAppletElementCustom.cpp in Sources */,

@@ -464,9 +464,10 @@ public:
     WEBCORE_EXPORT Ref<HTMLCollection> anchors();
     WEBCORE_EXPORT Ref<HTMLCollection> scripts();
     Ref<HTMLCollection> all();
+    Ref<HTMLCollection> allFilteredByName(const AtomicString&);
 
-    Ref<HTMLCollection> windowNamedItems(const AtomicString& name);
-    Ref<HTMLCollection> documentNamedItems(const AtomicString& name);
+    Ref<HTMLCollection> windowNamedItems(const AtomicString&);
+    Ref<HTMLCollection> documentNamedItems(const AtomicString&);
 
     // Other methods (not part of DOM)
     bool isSynthesized() const { return m_isSynthesized; }

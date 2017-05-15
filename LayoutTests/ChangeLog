@@ -1,3 +1,17 @@
+2017-05-14  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL/DOM] Remove need for custom bindings for HTMLAllCollection and bring up to spec
+        https://bugs.webkit.org/show_bug.cgi?id=172095
+
+        Reviewed by Darin Adler.
+
+        * fast/dom/collection-null-like-arguments-expected.txt:
+        Update results.
+
+        * fast/dom/document-all-expected.txt: Added.
+        * fast/dom/document-all.html: Added.
+        New test that covers a bunch of missing coverage.
+
 2017-05-14  David Kilzer  <ddkilzer@apple.com>
 
         [iOS/macOS Debug WK2] LayoutTests/imported/w3c/web-platform-tests/webrtc/interfaces.html is a flaky crash due to assertion failure

@@ -77,6 +77,7 @@ bool GenericCachedHTMLCollection<traversalType>::elementMatches(Element& element
     case ByHTMLTag:
     case AllDescendants:
     case DocAll:
+    case DocumentAllNamedItems:
     case DocumentNamedItems:
     case FormControls:
     case SelectOptions:

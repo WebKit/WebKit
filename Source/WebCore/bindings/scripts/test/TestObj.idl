@@ -433,6 +433,10 @@ enum TestConfidence { "high", "kinda-low" };
     serializer = {create, readOnlyStringAttr, enumAttr, longAttr};
 
     void bufferSourceParameter(BufferSource data);
+    
+    legacycaller void legacyCallerNamed(long param);
+    legacycaller long (DOMString param);
+    legacycaller void ();
 };
 
 // The following comment should not generate any code.
