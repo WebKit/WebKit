@@ -1,3 +1,14 @@
+2017-05-15  Nael Ouedraogo  <nael.ouedraogo@crf.canon.fr>
+
+        Invalid MediaSource duration value should throw TyperError instead of InvalidStateError
+        https://bugs.webkit.org/show_bug.cgi?id=171653
+
+        Reviewed by Chris Dumez.
+
+        Rebaseline test results.
+
+        * web-platform-tests/media-source/mediasource-duration-boundaryconditions-expected.txt:
+
 2017-05-14  Sam Weinig  <sam@webkit.org>
 
         [WebIDL/DOM] Remove need for custom bindings for HTMLAllCollection and bring up to spec

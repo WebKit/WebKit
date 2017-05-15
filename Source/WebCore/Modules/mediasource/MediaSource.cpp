@@ -463,18 +463,18 @@ void MediaSource::monitorSourceBuffers()
 ExceptionOr<void> MediaSource::setDuration(double duration)
 {
     // 2.1 Attributes - Duration
-    // https://dvcs.w3.org/hg/html-media/raw-file/tip/media-source/media-source.html#attributes
+    // https://www.w3.org/TR/2016/REC-media-source-20161117/#attributes
 
     // On setting, run the following steps:
-    // 1. If the value being set is negative or NaN then throw an INVALID_ACCESS_ERR exception and abort these steps.
+    // 1. If the value being set is negative or NaN then throw a TypeError exception and abort these steps.
     if (duration < 0.0 || std::isnan(duration))
-        return Exception { INVALID_ACCESS_ERR };
+        return Exception { TypeError };
 
-    // 2. If the readyState attribute is not "open" then throw an INVALID_STATE_ERR exception and abort these steps.
+    // 2. If the readyState attribute is not "open" then throw an InvalidStateError exception and abort these steps.
     if (!isOpen())
         return Exception { INVALID_STATE_ERR };
 
-    // 3. If the updating attribute equals true on any SourceBuffer in sourceBuffers, then throw an INVALID_STATE_ERR
+    // 3. If the updating attribute equals true on any SourceBuffer in sourceBuffers, then throw an InvalidStateError
     // exception and abort these steps.
     for (auto& sourceBuffer : *m_sourceBuffers) {
         if (sourceBuffer->updating())
@@ -488,7 +488,7 @@ ExceptionOr<void> MediaSource::setDuration(double duration)
 ExceptionOr<void> MediaSource::setDurationInternal(const MediaTime& duration)
 {
     // 2.4.6 Duration Change
-    // https://rawgit.com/w3c/media-source/45627646344eea0170dd1cbc5a3d508ca751abb8/media-source-respec.html#duration-change-algorithm
+    // https://www.w3.org/TR/2016/REC-media-source-20161117/#duration-change-algorithm
 
     MediaTime newDuration = duration;
 

@@ -1,3 +1,19 @@
+2017-05-15  Nael Ouedraogo  <nael.ouedraogo@crf.canon.fr>
+
+        Invalid MediaSource duration value should throw TyperError instead of InvalidStateError
+        https://bugs.webkit.org/show_bug.cgi?id=171653
+
+        Reviewed by Chris Dumez.
+
+        Modify MediaSource::setDuration to throw a TypeError when duration value is invalid as per MSE specification
+        (https://www.w3.org/TR/2016/REC-media-source-20161117/#dom-mediasource-duration).
+
+        Update expectations of corresponding WPT test.
+
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::setDuration):
+        (WebCore::MediaSource::setDurationInternal):
+
 2017-05-15  Gwang Yoon Hwang  <yoon@igalia.com>
 
         [CAIRO] Painting an image mask with a matrix above Pixman's limit breaks internal states of Cairo
