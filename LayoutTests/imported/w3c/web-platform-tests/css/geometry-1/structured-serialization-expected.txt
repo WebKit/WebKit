@@ -1,0 +1,32 @@
+
+FAIL DOMPointReadOnly clone: basic promise_test: Unhandled rejection with value: object "DataCloneError (DOM Exception 25): The object can not be cloned."
+FAIL DOMPointReadOnly clone: custom property promise_test: Unhandled rejection with value: object "DataCloneError (DOM Exception 25): The object can not be cloned."
+FAIL DOMPointReadOnly clone: throwing getters promise_test: Unhandled rejection with value: object "DataCloneError (DOM Exception 25): The object can not be cloned."
+FAIL DOMPointReadOnly clone: non-initial values promise_test: Unhandled rejection with value: object "DataCloneError (DOM Exception 25): The object can not be cloned."
+FAIL DOMPoint clone: basic promise_test: Unhandled rejection with value: object "DataCloneError (DOM Exception 25): The object can not be cloned."
+FAIL DOMPoint clone: custom property promise_test: Unhandled rejection with value: object "DataCloneError (DOM Exception 25): The object can not be cloned."
+FAIL DOMPoint clone: throwing getters promise_test: Unhandled rejection with value: object "DataCloneError (DOM Exception 25): The object can not be cloned."
+FAIL DOMPoint clone: non-initial values promise_test: Unhandled rejection with value: object "DataCloneError (DOM Exception 25): The object can not be cloned."
+FAIL DOMRectReadOnly clone: basic promise_test: Unhandled rejection with value: object "DataCloneError (DOM Exception 25): The object can not be cloned."
+FAIL DOMRectReadOnly clone: custom property promise_test: Unhandled rejection with value: object "DataCloneError (DOM Exception 25): The object can not be cloned."
+FAIL DOMRectReadOnly clone: throwing getters promise_test: Unhandled rejection with value: object "DataCloneError (DOM Exception 25): The object can not be cloned."
+FAIL DOMRectReadOnly clone: non-initial values promise_test: Unhandled rejection with value: object "DataCloneError (DOM Exception 25): The object can not be cloned."
+FAIL DOMRect clone: basic promise_test: Unhandled rejection with value: object "DataCloneError (DOM Exception 25): The object can not be cloned."
+FAIL DOMRect clone: custom property promise_test: Unhandled rejection with value: object "DataCloneError (DOM Exception 25): The object can not be cloned."
+FAIL DOMRect clone: throwing getters promise_test: Unhandled rejection with value: object "DataCloneError (DOM Exception 25): The object can not be cloned."
+FAIL DOMRect clone: non-initial values promise_test: Unhandled rejection with value: object "DataCloneError (DOM Exception 25): The object can not be cloned."
+FAIL DOMQuad clone: basic undefined is not a constructor (evaluating 'new self[constr]()')
+FAIL DOMQuad clone: custom property undefined is not a constructor (evaluating 'new self[constr]()')
+FAIL DOMQuad clone: throwing getters undefined is not a constructor (evaluating 'new self[constr]()')
+FAIL DOMQuad clone: non-initial values undefined is not a constructor (evaluating 'new self[constr]')
+FAIL DOMMatrixReadOnly clone: basic undefined is not a constructor (evaluating 'new self[constr]()')
+FAIL DOMMatrixReadOnly clone: custom property undefined is not a constructor (evaluating 'new self[constr]()')
+FAIL DOMMatrixReadOnly clone: throwing getters undefined is not a constructor (evaluating 'new self[constr]()')
+FAIL DOMMatrixReadOnly clone: non-initial values (2d) undefined is not a constructor (evaluating 'new self[constr]([1, -0, Infinity, NaN, 5, 6])')
+FAIL DOMMatrixReadOnly clone: non-initial values (3d) undefined is not a constructor (evaluating 'new self[constr]')
+FAIL DOMMatrix clone: basic undefined is not a constructor (evaluating 'new self[constr]()')
+FAIL DOMMatrix clone: custom property undefined is not a constructor (evaluating 'new self[constr]()')
+FAIL DOMMatrix clone: throwing getters undefined is not a constructor (evaluating 'new self[constr]()')
+FAIL DOMMatrix clone: non-initial values (2d) undefined is not a constructor (evaluating 'new self[constr]([1, -0, Infinity, NaN, 5, 6])')
+FAIL DOMMatrix clone: non-initial values (3d) undefined is not a constructor (evaluating 'new self[constr]')
+

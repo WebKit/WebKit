@@ -1,3 +1,52 @@
+2017-05-15  Chris Dumez  <cdumez@apple.com>
+
+        Import css/geometry-1 web-platform-tests
+        https://bugs.webkit.org/show_bug.cgi?id=172130
+
+        Reviewed by Youenn Fablet.
+
+        Import css/geometry-1 web-platform-tests to gain better test coverage.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/css/geometry-1/DOMMatrix-001-expected.txt: Added.
+        * web-platform-tests/css/geometry-1/DOMMatrix-001.html: Added.
+        * web-platform-tests/css/geometry-1/DOMMatrix-002-expected.txt: Added.
+        * web-platform-tests/css/geometry-1/DOMMatrix-002.html: Added.
+        * web-platform-tests/css/geometry-1/DOMMatrix-003-expected.txt: Added.
+        * web-platform-tests/css/geometry-1/DOMMatrix-003.html: Added.
+        * web-platform-tests/css/geometry-1/DOMMatrix-a-f-alias-expected.txt: Added.
+        * web-platform-tests/css/geometry-1/DOMMatrix-a-f-alias.html: Added.
+        * web-platform-tests/css/geometry-1/DOMMatrix-css-string.worker-expected.txt: Added.
+        * web-platform-tests/css/geometry-1/DOMMatrix-css-string.worker.html: Added.
+        * web-platform-tests/css/geometry-1/DOMMatrix-css-string.worker.js: Added.
+        (string_appeared_here.forEach.constr.test):
+        (string_appeared_here.forEach.constr.assert_equals):
+        (test):
+        * web-platform-tests/css/geometry-1/DOMMatrix-newobject-expected.txt: Added.
+        * web-platform-tests/css/geometry-1/DOMMatrix-newobject.html: Added.
+        * web-platform-tests/css/geometry-1/DOMPoint-001-expected.txt: Added.
+        * web-platform-tests/css/geometry-1/DOMPoint-001.html: Added.
+        * web-platform-tests/css/geometry-1/DOMPoint-002-expected.txt: Added.
+        * web-platform-tests/css/geometry-1/DOMPoint-002.html: Added.
+        * web-platform-tests/css/geometry-1/DOMQuad-001-expected.txt: Added.
+        * web-platform-tests/css/geometry-1/DOMQuad-001.html: Added.
+        * web-platform-tests/css/geometry-1/DOMQuad-002-expected.txt: Added.
+        * web-platform-tests/css/geometry-1/DOMQuad-002.html: Added.
+        * web-platform-tests/css/geometry-1/DOMRect-001-expected.txt: Added.
+        * web-platform-tests/css/geometry-1/DOMRect-001.html: Added.
+        * web-platform-tests/css/geometry-1/OWNERS: Added.
+        * web-platform-tests/css/geometry-1/WebKitCSSMatrix-expected.txt: Added.
+        * web-platform-tests/css/geometry-1/WebKitCSSMatrix.html: Added.
+        * web-platform-tests/css/geometry-1/WebKitCSSMatrix.worker-expected.txt: Added.
+        * web-platform-tests/css/geometry-1/WebKitCSSMatrix.worker.html: Added.
+        * web-platform-tests/css/geometry-1/WebKitCSSMatrix.worker.js: Added.
+        (test):
+        * web-platform-tests/css/geometry-1/historical-expected.txt: Added.
+        * web-platform-tests/css/geometry-1/historical.html: Added.
+        * web-platform-tests/css/geometry-1/structured-serialization-expected.txt: Added.
+        * web-platform-tests/css/geometry-1/structured-serialization.html: Added.
+        * web-platform-tests/css/geometry-1/w3c-import.log: Added.
+
 2017-05-15  Nael Ouedraogo  <nael.ouedraogo@crf.canon.fr>
 
         Invalid MediaSource duration value should throw TyperError instead of InvalidStateError

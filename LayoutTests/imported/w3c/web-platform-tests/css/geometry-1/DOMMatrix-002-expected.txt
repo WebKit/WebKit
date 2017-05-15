@@ -1,0 +1,16 @@
+Test DOMMatrixReadOnly methods do not mutate the object
+
+
+FAIL test translate() doesn't mutate Can't find variable: DOMMatrixReadOnly
+FAIL test scale() doesn't mutate Can't find variable: DOMMatrixReadOnly
+FAIL test scale3d() doesn't mutate Can't find variable: DOMMatrixReadOnly
+FAIL test rotate() doesn't mutate Can't find variable: DOMMatrixReadOnly
+FAIL test rotateFromVector() doesn't mutate Can't find variable: DOMMatrixReadOnly
+FAIL test rotateAxisAngle() doesn't mutate Can't find variable: DOMMatrixReadOnly
+FAIL test skewX() doesn't mutate Can't find variable: DOMMatrixReadOnly
+FAIL test skewY() doesn't mutate Can't find variable: DOMMatrixReadOnly
+FAIL test multiply() doesn't mutate Can't find variable: DOMMatrixReadOnly
+FAIL test flipX() doesn't mutate Can't find variable: DOMMatrixReadOnly
+FAIL test flipY() doesn't mutate Can't find variable: DOMMatrixReadOnly
+FAIL test inverse() doesn't mutate Can't find variable: DOMMatrixReadOnly
+

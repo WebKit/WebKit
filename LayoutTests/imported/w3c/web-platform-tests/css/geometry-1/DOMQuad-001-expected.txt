@@ -1,0 +1,41 @@
+Test DOMQuad interface
+
+
+FAIL testConstructor0: points Can't find variable: DOMQuad
+FAIL testConstructor0: bounds Can't find variable: DOMQuad
+FAIL testConstructor1 assert_throws: function "function () { new DOMQuad(1); }" threw object "ReferenceError: Can't find variable: DOMQuad" ("ReferenceError") expected object "TypeError" ("TypeError")
+FAIL testConstructor2 assert_throws: function "function () { new DOMQuad(1, 2); }" threw object "ReferenceError: Can't find variable: DOMQuad" ("ReferenceError") expected object "TypeError" ("TypeError")
+FAIL testConstructor3 assert_throws: function "function () { new DOMQuad(1, 2, 3); }" threw object "ReferenceError: Can't find variable: DOMQuad" ("ReferenceError") expected object "TypeError" ("TypeError")
+FAIL testConstructor4 assert_throws: function "function () { new DOMQuad(1, 2, 3, 4); }" threw object "ReferenceError: Can't find variable: DOMQuad" ("ReferenceError") expected object "TypeError" ("TypeError")
+FAIL testConstructor5: points Can't find variable: DOMQuad
+FAIL testConstructor5: bounds Can't find variable: DOMQuad
+FAIL testConstructor6: points Can't find variable: DOMQuad
+FAIL testConstructor6: bounds Can't find variable: DOMQuad
+FAIL testConstructor7: points Can't find variable: DOMQuad
+FAIL testConstructor7: bounds Can't find variable: DOMQuad
+FAIL testConstructor8: points Can't find variable: DOMQuad
+FAIL testConstructor8: bounds Can't find variable: DOMQuad
+FAIL testConstructor9: points Can't find variable: DOMQuad
+FAIL testConstructor9: bounds Can't find variable: DOMQuad
+FAIL testConstructor10: points Can't find variable: DOMQuad
+FAIL testConstructor10: bounds Can't find variable: DOMQuad
+FAIL testConstructor11: points Can't find variable: DOMQuad
+FAIL testConstructor11: bounds Can't find variable: DOMQuad
+FAIL testConstructor12: points Can't find variable: DOMQuad
+FAIL testConstructor12: bounds Can't find variable: DOMQuad
+FAIL testConstructor13: points Can't find variable: DOMQuad
+FAIL testConstructor13: bounds Can't find variable: DOMQuad
+FAIL testConstructor14: points Can't find variable: DOMQuad
+FAIL testConstructor14: bounds Can't find variable: DOMQuad
+FAIL testConstructor15 assert_throws: function "function () { new DOMQuad({}, {}, {}, NaN); }" threw object "ReferenceError: Can't find variable: DOMQuad" ("ReferenceError") expected object "TypeError" ("TypeError")
+FAIL testConstructor16: points Can't find variable: DOMQuad
+FAIL testConstructor16: bounds Can't find variable: DOMQuad
+FAIL p1Top4Attributes0: points Can't find variable: DOMQuad
+FAIL p1Top4Attributes0: bounds Can't find variable: DOMQuad
+FAIL p1Top4Attributes1: points Can't find variable: DOMQuad
+FAIL p1Top4Attributes1: bounds Can't find variable: DOMQuad
+FAIL boundsAttribute0: points Can't find variable: DOMQuad
+FAIL boundsAttribute0: bounds Can't find variable: DOMQuad
+FAIL boundsAttribute1: points Can't find variable: DOMQuad
+FAIL boundsAttribute1: bounds Can't find variable: DOMQuad
+

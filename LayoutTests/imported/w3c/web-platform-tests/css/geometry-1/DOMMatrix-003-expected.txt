@@ -1,0 +1,17 @@
+Test DOMMatrix non-mutating methods
+
+
+FAIL test translate() Can't find variable: DOMMatrixReadOnly
+FAIL test scale() without offsets Can't find variable: DOMMatrixReadOnly
+FAIL test scale() with offsets Can't find variable: DOMMatrixReadOnly
+FAIL test scale3d() Can't find variable: DOMMatrixReadOnly
+FAIL test rotate() 2d Can't find variable: DOMMatrixReadOnly
+FAIL test rotate() Can't find variable: DOMMatrixReadOnly
+FAIL test rotateFromVector() Can't find variable: DOMMatrixReadOnly
+FAIL test rotateAxisAngle()  Can't find variable: DOMMatrixReadOnly
+FAIL test skewX() Can't find variable: DOMMatrixReadOnly
+FAIL test skewY() Can't find variable: DOMMatrixReadOnly
+FAIL test multiply with inverse is identity Can't find variable: DOMMatrixReadOnly
+FAIL test flipX() Can't find variable: DOMMatrixReadOnly
+FAIL test flipY() Can't find variable: DOMMatrixReadOnly
+

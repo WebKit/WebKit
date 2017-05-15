@@ -1,0 +1,21 @@
+Test DOMQuad interface
+
+
+FAIL test Constructor no args Can't find variable: DOMQuad
+FAIL test Constructor with one init DOMPoint arg Can't find variable: DOMQuad
+FAIL test Constructor with two init DOMPoint args Can't find variable: DOMQuad
+FAIL test Constructor with three init DOMPoint args Can't find variable: DOMQuad
+FAIL test Constructor with four init DOMPoint args Can't find variable: DOMQuad
+FAIL test Constructor with one DOMPoint arg Can't find variable: DOMQuad
+FAIL test Constructor with two DOMPoint args Can't find variable: DOMQuad
+FAIL test Constructor with three DOMPoint args Can't find variable: DOMQuad
+FAIL test Constructor with four DOMPoint args Can't find variable: DOMQuad
+FAIL test Constructor with invaild integer args assert_throws: function "function () { new DOMQuad(1, 2, 3, 4); }" threw object "ReferenceError: Can't find variable: DOMQuad" ("ReferenceError") expected object "TypeError" ("TypeError")
+FAIL test Constructor with invaild string args assert_throws: function "function () { new DOMQuad("1", "2", "3", "4"); }" threw object "ReferenceError: Can't find variable: DOMQuad" ("ReferenceError") expected object "TypeError" ("TypeError")
+FAIL test Constructor with NaN assert_throws: function "function () { new DOMQuad({}, {}, {}, NaN); }" threw object "ReferenceError: Can't find variable: DOMQuad" ("ReferenceError") expected object "TypeError" ("TypeError")
+FAIL test fromRect Can't find variable: DOMQuad
+FAIL test fromRect with Infinity Can't find variable: DOMQuad
+FAIL test fromQuad Can't find variable: DOMQuad
+FAIL test p1, p2, p3, p4 are readonly Can't find variable: DOMQuad
+FAIL test getBounds Can't find variable: DOMQuad
+

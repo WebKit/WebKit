@@ -1,0 +1,36 @@
+
+FAIL DOMMatrixReadOnly scaleNonUniform must be nuked assert_true: DOMMatrixReadOnly should exist expected true got false
+FAIL DOMMatrix scaleNonUniformSelf must be nuked assert_true: DOMMatrix should exist expected true got false
+FAIL DOMMatrix multiplyBy must be nuked assert_true: DOMMatrix should exist expected true got false
+FAIL DOMMatrix preMultiplyBy must be nuked assert_true: DOMMatrix should exist expected true got false
+FAIL DOMMatrix translateBy must be nuked assert_true: DOMMatrix should exist expected true got false
+FAIL DOMMatrix scaleBy must be nuked assert_true: DOMMatrix should exist expected true got false
+FAIL DOMMatrix scale3dBy must be nuked assert_true: DOMMatrix should exist expected true got false
+FAIL DOMMatrix scaleNonUniformBy must be nuked assert_true: DOMMatrix should exist expected true got false
+FAIL DOMMatrix rotateBy must be nuked assert_true: DOMMatrix should exist expected true got false
+FAIL DOMMatrix rotateFromVectorBy must be nuked assert_true: DOMMatrix should exist expected true got false
+FAIL DOMMatrix rotateAxisAngleBy must be nuked assert_true: DOMMatrix should exist expected true got false
+FAIL DOMMatrix skewXBy must be nuked assert_true: DOMMatrix should exist expected true got false
+FAIL DOMMatrix skewYBy must be nuked assert_true: DOMMatrix should exist expected true got false
+FAIL DOMMatrix fromString static member must be nuked assert_true: DOMMatrix should exist expected true got false
+FAIL DOMMatrixReadOnly fromString static member must be nuked assert_true: DOMMatrixReadOnly should exist expected true got false
+FAIL DOMMatrixReadOnly scale number of required arguments undefined is not an object (evaluating 'self[interf].prototype')
+FAIL DOMMatrix scaleSelf number of required arguments undefined is not an object (evaluating 'self[interf].prototype')
+FAIL DOMMatrixReadOnly translate number of required arguments undefined is not an object (evaluating 'self[interf].prototype')
+FAIL DOMMatrixReadOnly scale3d number of required arguments undefined is not an object (evaluating 'self[interf].prototype')
+FAIL DOMMatrixReadOnly rotateFromVector number of required arguments undefined is not an object (evaluating 'self[interf].prototype')
+FAIL DOMMatrixReadOnly rotateAxisAngle number of required arguments undefined is not an object (evaluating 'self[interf].prototype')
+FAIL DOMMatrixReadOnly skewX number of required arguments undefined is not an object (evaluating 'self[interf].prototype')
+FAIL DOMMatrixReadOnly skewY number of required arguments undefined is not an object (evaluating 'self[interf].prototype')
+FAIL DOMMatrix translateSelf number of required arguments undefined is not an object (evaluating 'self[interf].prototype')
+FAIL DOMMatrix scale3dSelf number of required arguments undefined is not an object (evaluating 'self[interf].prototype')
+FAIL DOMMatrix rotateFromVectorSelf number of required arguments undefined is not an object (evaluating 'self[interf].prototype')
+FAIL DOMMatrix rotateAxisAngleSelf number of required arguments undefined is not an object (evaluating 'self[interf].prototype')
+FAIL DOMMatrix skewXSelf number of required arguments undefined is not an object (evaluating 'self[interf].prototype')
+FAIL DOMMatrix skewYSelf number of required arguments undefined is not an object (evaluating 'self[interf].prototype')
+FAIL DOMPointReadOnly matrixTransform number of required arguments undefined is not an object (evaluating 'self[interf].prototype[member].length')
+FAIL DOMMatrixReadOnly multiply number of required arguments undefined is not an object (evaluating 'self[interf].prototype')
+FAIL DOMMatrix multiplySelf number of required arguments undefined is not an object (evaluating 'self[interf].prototype')
+FAIL DOMMatrix preMultiplySelf number of required arguments undefined is not an object (evaluating 'self[interf].prototype')
+PASS CSSMatrix must be nuked 
+
