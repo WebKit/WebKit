@@ -1,3 +1,16 @@
+2017-05-16  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Move setCollapedWhitespaceWidth call to updateLineConstrains.
+        https://bugs.webkit.org/show_bug.cgi?id=172178
+
+        Reviewed by Antti Koivisto.
+
+        No change in functionality.
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::updateLineConstrains):
+        (WebCore::SimpleLineLayout::createLineRuns):
+
 2017-05-16  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Return default device list until user gives permission to capture

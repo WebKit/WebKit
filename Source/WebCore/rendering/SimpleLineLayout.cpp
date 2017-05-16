@@ -608,7 +608,7 @@ static void updateLineConstrains(const RenderBlockFlow& flow, LineState& line, c
     numberOfPrecedingLinesWithHyphen = (previousLine.isEmpty() || !previousLine.lastFragment().hasHyphen()) ? 0 : numberOfPrecedingLinesWithHyphen + 1;
     if (style.hyphenLimitLines && numberOfPrecedingLinesWithHyphen >= *style.hyphenLimitLines)
         line.setHyphenationDisabled();
-
+    line.setCollapedWhitespaceWidth(style.font.spaceWidth() + style.wordSpacing);
 }
 
 struct SplitFragmentData {
@@ -781,7 +781,6 @@ static void forceFragmentToLine(LineState& line, TextFragmentIterator& textFragm
 static bool createLineRuns(LineState& line, const LineState& previousLine, Layout::RunVector& runs, TextFragmentIterator& textFragmentIterator)
 {
     const auto& style = textFragmentIterator.style();
-    line.setCollapedWhitespaceWidth(style.font.spaceWidth() + style.wordSpacing);
     bool lineCanBeWrapped = style.wrapLines || style.breakFirstWordOnOverflow || style.breakAnyWordOnOverflow;
     auto fragment = firstFragment(textFragmentIterator, line, previousLine, runs);
     while (fragment.type() != TextFragmentIterator::TextFragment::ContentEnd) {
