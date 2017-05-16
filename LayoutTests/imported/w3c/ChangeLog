@@ -1,3 +1,57 @@
+2017-05-16  Chris Dumez  <cdumez@apple.com>
+
+        Implement DOMMatrix / DOMMatrixReadOnly
+        https://bugs.webkit.org/show_bug.cgi?id=110001
+
+        Reviewed by Sam Weinig and Simon Fraser.
+
+        Rebaseline web-platform-tests now that more checks are passing.
+
+        * web-platform-tests/css/geometry-1/DOMMatrix-001-expected.txt:
+        Most checks are now passing. The few remaining failures seem to be due to our
+        parsing of the input CSS string now matching the specification. This behavior
+        is not new to this patch as I re-used exactly the same logic as for
+        WebKitCSSMatrix's parsing of the input string.
+
+        * web-platform-tests/css/geometry-1/DOMMatrix-002-expected.txt:
+        * web-platform-tests/css/geometry-1/DOMMatrix-003-expected.txt:
+        * web-platform-tests/css/geometry-1/DOMMatrix-a-f-alias-expected.txt:
+        All checks are now passing.
+
+        * web-platform-tests/css/geometry-1/DOMMatrix-newobject-expected.txt:
+        Most checks are now passing. The remaining failures are due to DOMMatrixReadOnly's
+        transformPoint() / toFloat32Array() / toFloat64Array() not being implemented in
+        this patch. I think we can take care of those in a follow-up.
+
+        * web-platform-tests/css/geometry-1/DOMPoint-002-expected.txt:
+        Fails differently now that we support DOMMatrix. The test goes further but still
+        fails because DOMPoint.matrixTransform() is not implemented.
+
+        * web-platform-tests/css/geometry-1/WebKitCSSMatrix-expected.txt:
+        One more check is passing now that we implement DOMMatrix. The remaining failure is
+        due to WebKitCSSMatrix not being an alias to DOMMatrix yet. I'd rather do this in a
+        follow-up.
+
+        * web-platform-tests/css/geometry-1/historical-expected.txt:
+        A lot of new passes.
+
+        * web-platform-tests/css/geometry-1/structured-serialization-expected.txt:
+        The test fails differently now that we support DOMMatrix. The test still fails because
+        we do not support yet the structured serialization of DOMMatrix objects. It appears we
+        do not support this for other types in this spec either (e.g. DOMPoint). I filed:
+        https://bugs.webkit.org/show_bug.cgi?id=172191
+
+        * web-platform-tests/css/geometry-1/DOMMatrix-stringifier-expected.txt: Added.
+        * web-platform-tests/css/geometry-1/DOMMatrix-stringifier.html: Added.
+        Import new test from upstream. The WebKitCSSMatrix failures are due to our
+        WebKitCSSMatrix implementation not complying with the standard. As per the
+        standard, WebKitCSSMatrix is supposed to become an alias to DOMMatrix. If we
+        do this aliasing (in a follow-up), then those tests will start passing.
+
+        * web-platform-tests/css/geometry-1/support/dommatrix-test-util.js: Added.
+        Add missing script that was missed by the importer when I initially imported the test
+        suite from upstream.
+
 2017-05-16  Romain Bellessort  <romain.bellessort@crf.canon.fr>
 
         [Readable Streams API] Implement ReadableStreamBYOBReader releaseLock()

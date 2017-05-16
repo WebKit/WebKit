@@ -338,6 +338,8 @@ enum TestConfidence { "high", "kinda-low" };
     [MayThrowException] sequence<DOMString> stringArrayFunction(sequence<DOMString> values);
     [MayThrowException] DOMStringList domStringListFunction(DOMStringList values);
 
+    void operationWithOptionalUnionParameter(optional (DOMString or sequence<unrestricted double>) optionalUnion);
+
     void methodWithAndWithoutNullableSequence(sequence<unsigned long> arrayArg, sequence<unsigned long>? nullableArrayArg);
 
     Element? getElementById([RequiresExistingAtomicString] DOMString elementId);

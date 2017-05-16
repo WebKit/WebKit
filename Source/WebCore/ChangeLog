@@ -1,3 +1,127 @@
+2017-05-16  Chris Dumez  <cdumez@apple.com>
+
+        Implement DOMMatrix / DOMMatrixReadOnly
+        https://bugs.webkit.org/show_bug.cgi?id=110001
+
+        Reviewed by Sam Weinig and Simon Fraser.
+
+        Implement DOMMatrix / DOMMatrixReadOnly as per:
+        - https://drafts.fxtf.org/geometry/#DOMMatrix
+
+        For now, these new types co-exist with WebKitCSSMatrix / SVGMatrix. However, in the future,
+        WebKitCSSMatrix / SVGMatrix are supposed to become aliases to DOMMatrix.
+
+        Most of it has been implemented. What remaining to be implemented is:
+        - Make WebKitCSSMatrix / SVGMatrix aliases to DOMMatrix
+        - DOMMatrix.fromFloat32Array() / fromFloat64Array()
+        - DOMMatrixReadOnly.fromFloat32Array() / fromFloat64Array() / toFloat32Array() / toFloat64Array()
+        - DOMMatrixReadOnly.transformPoint().
+
+        Tests: imported/w3c/web-platform-tests/css/geometry-1/*
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        Fix a bug in the bindings generator causing the generator code for
+        "Constructor(optional (DOMString or sequence<unrestricted double>) init)" to be wrong
+        and not build.
+
+        * css/DOMMatrix.cpp: Added.
+        (WebCore::DOMMatrix::DOMMatrix):
+        (WebCore::DOMMatrix::fromMatrix):
+        (WebCore::DOMMatrix::multiplySelf):
+        (WebCore::DOMMatrix::preMultiplySelf):
+        (WebCore::DOMMatrix::translateSelf):
+        (WebCore::DOMMatrix::scaleSelf):
+        (WebCore::DOMMatrix::scale3dSelf):
+        (WebCore::DOMMatrix::rotateSelf):
+        (WebCore::DOMMatrix::rotateFromVectorSelf):
+        (WebCore::DOMMatrix::rotateAxisAngleSelf):
+        (WebCore::DOMMatrix::skewXSelf):
+        (WebCore::DOMMatrix::skewYSelf):
+        (WebCore::DOMMatrix::invertSelf):
+        (WebCore::DOMMatrix::setMatrixValueForBindings):
+        * css/DOMMatrix.h: Added.
+        (WebCore::DOMMatrix::create):
+        (WebCore::DOMMatrix::setA):
+        (WebCore::DOMMatrix::setB):
+        (WebCore::DOMMatrix::setC):
+        (WebCore::DOMMatrix::setD):
+        (WebCore::DOMMatrix::setE):
+        (WebCore::DOMMatrix::setF):
+        (WebCore::DOMMatrix::setM11):
+        (WebCore::DOMMatrix::setM12):
+        (WebCore::DOMMatrix::setM13):
+        (WebCore::DOMMatrix::setM14):
+        (WebCore::DOMMatrix::setM21):
+        (WebCore::DOMMatrix::setM22):
+        (WebCore::DOMMatrix::setM23):
+        (WebCore::DOMMatrix::setM24):
+        (WebCore::DOMMatrix::setM31):
+        (WebCore::DOMMatrix::setM32):
+        (WebCore::DOMMatrix::setM33):
+        (WebCore::DOMMatrix::setM34):
+        (WebCore::DOMMatrix::setM41):
+        (WebCore::DOMMatrix::setM42):
+        (WebCore::DOMMatrix::setM43):
+        (WebCore::DOMMatrix::setM44):
+        * css/DOMMatrix.idl: Added.
+        * css/DOMMatrixInit.h: Added.
+        * css/DOMMatrixInit.idl: Added.
+        * css/DOMMatrixReadOnly.cpp: Added.
+        (WebCore::DOMMatrixReadOnly::DOMMatrixReadOnly):
+        (WebCore::DOMMatrixReadOnly::validateAndFixup):
+        (WebCore::DOMMatrixReadOnly::fromMatrix):
+        (WebCore::DOMMatrixReadOnly::isIdentity):
+        (WebCore::DOMMatrixReadOnly::setMatrixValue):
+        (WebCore::DOMMatrixReadOnly::translate):
+        (WebCore::DOMMatrixReadOnly::flipX):
+        (WebCore::DOMMatrixReadOnly::flipY):
+        (WebCore::DOMMatrixReadOnly::multiply):
+        (WebCore::DOMMatrixReadOnly::scale):
+        (WebCore::DOMMatrixReadOnly::scale3d):
+        (WebCore::DOMMatrixReadOnly::rotate):
+        (WebCore::DOMMatrixReadOnly::rotateFromVector):
+        (WebCore::DOMMatrixReadOnly::rotateAxisAngle):
+        (WebCore::DOMMatrixReadOnly::skewX):
+        (WebCore::DOMMatrixReadOnly::skewY):
+        (WebCore::DOMMatrixReadOnly::inverse):
+        (WebCore::DOMMatrixReadOnly::toString):
+        * css/DOMMatrixReadOnly.h: Added.
+        (WebCore::DOMMatrixReadOnly::create):
+        (WebCore::DOMMatrixReadOnly::a):
+        (WebCore::DOMMatrixReadOnly::b):
+        (WebCore::DOMMatrixReadOnly::c):
+        (WebCore::DOMMatrixReadOnly::d):
+        (WebCore::DOMMatrixReadOnly::e):
+        (WebCore::DOMMatrixReadOnly::f):
+        (WebCore::DOMMatrixReadOnly::m11):
+        (WebCore::DOMMatrixReadOnly::m12):
+        (WebCore::DOMMatrixReadOnly::m13):
+        (WebCore::DOMMatrixReadOnly::m14):
+        (WebCore::DOMMatrixReadOnly::m21):
+        (WebCore::DOMMatrixReadOnly::m22):
+        (WebCore::DOMMatrixReadOnly::m23):
+        (WebCore::DOMMatrixReadOnly::m24):
+        (WebCore::DOMMatrixReadOnly::m31):
+        (WebCore::DOMMatrixReadOnly::m32):
+        (WebCore::DOMMatrixReadOnly::m33):
+        (WebCore::DOMMatrixReadOnly::m34):
+        (WebCore::DOMMatrixReadOnly::m41):
+        (WebCore::DOMMatrixReadOnly::m42):
+        (WebCore::DOMMatrixReadOnly::m43):
+        (WebCore::DOMMatrixReadOnly::m44):
+        (WebCore::DOMMatrixReadOnly::is2D):
+        (WebCore::DOMMatrixReadOnly::fromMatrixHelper):
+        * css/DOMMatrixReadOnly.idl: Added.
+        * css/WebKitCSSMatrix.h:
+        * css/WebKitCSSMatrix.idl:
+        * svg/SVGMatrix.h:
+        * svg/SVGMatrix.idl:
+
 2017-05-16  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] AudioSampleBufferList::zeroABL takes byte count, not sample count

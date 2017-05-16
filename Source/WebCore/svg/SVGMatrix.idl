@@ -20,6 +20,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
+// FIXME: This should be removed and made an alias to DOMRect.
 [
     SkipVTableValidation
 ] interface SVGMatrix {

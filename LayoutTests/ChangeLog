@@ -1,3 +1,16 @@
+2017-05-16  Chris Dumez  <cdumez@apple.com>
+
+        Implement DOMMatrix / DOMMatrixReadOnly
+        https://bugs.webkit.org/show_bug.cgi?id=110001
+
+        Reviewed by Sam Weinig and Simon Fraser.
+
+        Drop test I previously added now that a better version landed in web-platform-tests
+        and was re-imported in this patch.
+
+        * fast/css/matrix-stringifier-expected.txt: Removed.
+        * fast/css/matrix-stringifier.html: Removed.
+
 2017-05-16  Myles C. Maxfield  <mmaxfield@apple.com>
 
         REGRESSION(r212513): LastResort is platform-dependent, so its semantics should not be required to perform font loading correctly.

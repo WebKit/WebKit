@@ -1,32 +1,32 @@
 
-FAIL DOMMatrix translate undefined is not a constructor (evaluating 'new self[constr]()')
-FAIL DOMMatrix scale undefined is not a constructor (evaluating 'new self[constr]()')
-FAIL DOMMatrix scale3d undefined is not a constructor (evaluating 'new self[constr]()')
-FAIL DOMMatrix rotate undefined is not a constructor (evaluating 'new self[constr]()')
-FAIL DOMMatrix rotateFromVector undefined is not a constructor (evaluating 'new self[constr]()')
-FAIL DOMMatrix rotateAxisAngle undefined is not a constructor (evaluating 'new self[constr]()')
-FAIL DOMMatrix skewX undefined is not a constructor (evaluating 'new self[constr]()')
-FAIL DOMMatrix skewY undefined is not a constructor (evaluating 'new self[constr]()')
-FAIL DOMMatrix multiply undefined is not a constructor (evaluating 'new self[constr]()')
-FAIL DOMMatrix flipX undefined is not a constructor (evaluating 'new self[constr]()')
-FAIL DOMMatrix flipY undefined is not a constructor (evaluating 'new self[constr]()')
-FAIL DOMMatrix inverse undefined is not a constructor (evaluating 'new self[constr]()')
-FAIL DOMMatrix transformPoint undefined is not a constructor (evaluating 'new self[constr]()')
-FAIL DOMMatrix toFloat32Array undefined is not a constructor (evaluating 'new self[constr]()')
-FAIL DOMMatrix toFloat64Array undefined is not a constructor (evaluating 'new self[constr]()')
-FAIL DOMMatrixReadOnly translate undefined is not a constructor (evaluating 'new self[constr]()')
-FAIL DOMMatrixReadOnly scale undefined is not a constructor (evaluating 'new self[constr]()')
-FAIL DOMMatrixReadOnly scale3d undefined is not a constructor (evaluating 'new self[constr]()')
-FAIL DOMMatrixReadOnly rotate undefined is not a constructor (evaluating 'new self[constr]()')
-FAIL DOMMatrixReadOnly rotateFromVector undefined is not a constructor (evaluating 'new self[constr]()')
-FAIL DOMMatrixReadOnly rotateAxisAngle undefined is not a constructor (evaluating 'new self[constr]()')
-FAIL DOMMatrixReadOnly skewX undefined is not a constructor (evaluating 'new self[constr]()')
-FAIL DOMMatrixReadOnly skewY undefined is not a constructor (evaluating 'new self[constr]()')
-FAIL DOMMatrixReadOnly multiply undefined is not a constructor (evaluating 'new self[constr]()')
-FAIL DOMMatrixReadOnly flipX undefined is not a constructor (evaluating 'new self[constr]()')
-FAIL DOMMatrixReadOnly flipY undefined is not a constructor (evaluating 'new self[constr]()')
-FAIL DOMMatrixReadOnly inverse undefined is not a constructor (evaluating 'new self[constr]()')
-FAIL DOMMatrixReadOnly transformPoint undefined is not a constructor (evaluating 'new self[constr]()')
-FAIL DOMMatrixReadOnly toFloat32Array undefined is not a constructor (evaluating 'new self[constr]()')
-FAIL DOMMatrixReadOnly toFloat64Array undefined is not a constructor (evaluating 'new self[constr]()')
+PASS DOMMatrix translate 
+PASS DOMMatrix scale 
+PASS DOMMatrix scale3d 
+PASS DOMMatrix rotate 
+PASS DOMMatrix rotateFromVector 
+PASS DOMMatrix rotateAxisAngle 
+PASS DOMMatrix skewX 
+PASS DOMMatrix skewY 
+PASS DOMMatrix multiply 
+PASS DOMMatrix flipX 
+PASS DOMMatrix flipY 
+PASS DOMMatrix inverse 
+FAIL DOMMatrix transformPoint matrix[method] is not a function. (In 'matrix[method]()', 'matrix[method]' is undefined)
+FAIL DOMMatrix toFloat32Array matrix[method] is not a function. (In 'matrix[method]()', 'matrix[method]' is undefined)
+FAIL DOMMatrix toFloat64Array matrix[method] is not a function. (In 'matrix[method]()', 'matrix[method]' is undefined)
+PASS DOMMatrixReadOnly translate 
+PASS DOMMatrixReadOnly scale 
+PASS DOMMatrixReadOnly scale3d 
+PASS DOMMatrixReadOnly rotate 
+PASS DOMMatrixReadOnly rotateFromVector 
+PASS DOMMatrixReadOnly rotateAxisAngle 
+PASS DOMMatrixReadOnly skewX 
+PASS DOMMatrixReadOnly skewY 
+PASS DOMMatrixReadOnly multiply 
+PASS DOMMatrixReadOnly flipX 
+PASS DOMMatrixReadOnly flipY 
+PASS DOMMatrixReadOnly inverse 
+FAIL DOMMatrixReadOnly transformPoint matrix[method] is not a function. (In 'matrix[method]()', 'matrix[method]' is undefined)
+FAIL DOMMatrixReadOnly toFloat32Array matrix[method] is not a function. (In 'matrix[method]()', 'matrix[method]' is undefined)
+FAIL DOMMatrixReadOnly toFloat64Array matrix[method] is not a function. (In 'matrix[method]()', 'matrix[method]' is undefined)
 

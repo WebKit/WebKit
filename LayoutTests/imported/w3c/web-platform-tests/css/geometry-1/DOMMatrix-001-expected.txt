@@ -1,96 +1,96 @@
 
-FAIL new DOMMatrix() Can't find variable: checkDOMMatrix
-FAIL new DOMMatrix(undefined) Can't find variable: checkDOMMatrix
-FAIL new DOMMatrix(new DOMMatrix()) Can't find variable: checkDOMMatrix
-FAIL new DOMMatrix("none") Can't find variable: checkDOMMatrix
-FAIL new DOMMatrix(" none") Can't find variable: checkDOMMatrix
-FAIL new DOMMatrix("none ") Can't find variable: checkDOMMatrix
-FAIL new DOMMatrix("NONE") Can't find variable: checkDOMMatrix
-FAIL new DOMMatrix("none/**/") Can't find variable: checkDOMMatrix
-FAIL new DOMMatrix("/**/none") Can't find variable: checkDOMMatrix
-FAIL new DOMMatrix("") Can't find variable: checkDOMMatrix
-FAIL new DOMMatrix(float32Array) 16 elements Can't find variable: checkDOMMatrix
-FAIL new DOMMatrix(float32Array) 6 elements Can't find variable: checkDOMMatrix
-FAIL new DOMMatrix(float64Array) 16 elements Can't find variable: checkDOMMatrix
-FAIL new DOMMatrix((float64Array) 6 elements Can't find variable: checkDOMMatrix
-FAIL new DOMMatrix(sequence) 16 elements Can't find variable: checkDOMMatrix
-FAIL new DOMMatrix(sequence) 6 elements Can't find variable: checkDOMMatrix
-FAIL new DOMMatrix("scale(2) translateX(5px) translateY(5px)") Can't find variable: checkDOMMatrix
-FAIL new DOMMatrix("scale(2 2) translateX(5) translateY(5)") Can't find variable: checkDOMMatrix
-FAIL new DOMMatrix("scale(2, 2), translateX(5)  ,translateY(5)") Can't find variable: checkDOMMatrix
-FAIL new DOMMatrix("translateX    (5px)") assert_throws: function "function () { new self[constr](string); }" threw object "TypeError: undefined is not a constructor (evaluating 'new self[constr](string)')" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
-FAIL new DOMMatrix("scale(2)translateX(5px)") assert_throws: function "function () { new self[constr](string); }" threw object "TypeError: undefined is not a constructor (evaluating 'new self[constr](string)')" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
-FAIL new DOMMatrix("translateX(5em)") assert_throws: function "function () { new self[constr](string); }" threw object "TypeError: undefined is not a constructor (evaluating 'new self[constr](string)')" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
-FAIL new DOMMatrix("translateX(5ex)") assert_throws: function "function () { new self[constr](string); }" threw object "TypeError: undefined is not a constructor (evaluating 'new self[constr](string)')" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
-FAIL new DOMMatrix("translateX(5ch)") assert_throws: function "function () { new self[constr](string); }" threw object "TypeError: undefined is not a constructor (evaluating 'new self[constr](string)')" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
-FAIL new DOMMatrix("translateX(5rem)") assert_throws: function "function () { new self[constr](string); }" threw object "TypeError: undefined is not a constructor (evaluating 'new self[constr](string)')" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
-FAIL new DOMMatrix("translateX(5vw)") assert_throws: function "function () { new self[constr](string); }" threw object "TypeError: undefined is not a constructor (evaluating 'new self[constr](string)')" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
-FAIL new DOMMatrix("translateX(5vh)") assert_throws: function "function () { new self[constr](string); }" threw object "TypeError: undefined is not a constructor (evaluating 'new self[constr](string)')" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
-FAIL new DOMMatrix("translateX(5vmin)") assert_throws: function "function () { new self[constr](string); }" threw object "TypeError: undefined is not a constructor (evaluating 'new self[constr](string)')" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
-FAIL new DOMMatrix("translateX(5vmax)") assert_throws: function "function () { new self[constr](string); }" threw object "TypeError: undefined is not a constructor (evaluating 'new self[constr](string)')" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
-FAIL new DOMMatrix("translateX(5%)") assert_throws: function "function () { new self[constr](string); }" threw object "TypeError: undefined is not a constructor (evaluating 'new self[constr](string)')" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
-FAIL new DOMMatrix(" ") assert_throws: function "function () { new self[constr](string); }" threw object "TypeError: undefined is not a constructor (evaluating 'new self[constr](string)')" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
-FAIL new DOMMatrix("/**/") assert_throws: function "function () { new self[constr](string); }" threw object "TypeError: undefined is not a constructor (evaluating 'new self[constr](string)')" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
-FAIL new DOMMatrix("\0") assert_throws: function "function () { new self[constr](string); }" threw object "TypeError: undefined is not a constructor (evaluating 'new self[constr](string)')" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
-FAIL new DOMMatrix(";") assert_throws: function "function () { new self[constr](string); }" threw object "TypeError: undefined is not a constructor (evaluating 'new self[constr](string)')" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
-FAIL new DOMMatrix("none;") assert_throws: function "function () { new self[constr](string); }" threw object "TypeError: undefined is not a constructor (evaluating 'new self[constr](string)')" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
-FAIL new DOMMatrix("null") assert_throws: function "function () { new self[constr](string); }" threw object "TypeError: undefined is not a constructor (evaluating 'new self[constr](string)')" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
-FAIL new DOMMatrix(null) assert_throws: function "function () { new self[constr](string); }" threw object "TypeError: undefined is not a constructor (evaluating 'new self[constr](string)')" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
-FAIL new DOMMatrix("undefined") assert_throws: function "function () { new self[constr](string); }" threw object "TypeError: undefined is not a constructor (evaluating 'new self[constr](string)')" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
-FAIL new DOMMatrix("inherit") assert_throws: function "function () { new self[constr](string); }" threw object "TypeError: undefined is not a constructor (evaluating 'new self[constr](string)')" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
-FAIL new DOMMatrix("initial") assert_throws: function "function () { new self[constr](string); }" threw object "TypeError: undefined is not a constructor (evaluating 'new self[constr](string)')" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
-FAIL new DOMMatrix("unset") assert_throws: function "function () { new self[constr](string); }" threw object "TypeError: undefined is not a constructor (evaluating 'new self[constr](string)')" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
-FAIL new DOMMatrix(sequence) Can't find variable: checkDOMMatrix
-FAIL new DOMMatrix(matrix) undefined is not a constructor (evaluating 'new self[constr]')
-FAIL new DOMMatrix("scale(2, 2), translateX(5px) translateY(5px)") assert_throws: function "function () { new self[constr](string); }" threw object "TypeError: undefined is not a constructor (evaluating 'new self[constr](string)')" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS new DOMMatrix() 
+PASS new DOMMatrix(undefined) 
+PASS new DOMMatrix(new DOMMatrix()) 
+PASS new DOMMatrix("none") 
+PASS new DOMMatrix(" none") 
+PASS new DOMMatrix("none ") 
+PASS new DOMMatrix("NONE") 
+PASS new DOMMatrix("none/**/") 
+PASS new DOMMatrix("/**/none") 
+PASS new DOMMatrix("") 
+PASS new DOMMatrix(float32Array) 16 elements 
+PASS new DOMMatrix(float32Array) 6 elements 
+PASS new DOMMatrix(float64Array) 16 elements 
+PASS new DOMMatrix((float64Array) 6 elements 
+PASS new DOMMatrix(sequence) 16 elements 
+PASS new DOMMatrix(sequence) 6 elements 
+PASS new DOMMatrix("scale(2) translateX(5px) translateY(5px)") 
+FAIL new DOMMatrix("scale(2 2) translateX(5) translateY(5)") The string did not match the expected pattern.
+FAIL new DOMMatrix("scale(2, 2), translateX(5)  ,translateY(5)") The string did not match the expected pattern.
+PASS new DOMMatrix("translateX    (5px)") 
+FAIL new DOMMatrix("scale(2)translateX(5px)") assert_throws: function "function () { new self[constr](string); }" did not throw
+PASS new DOMMatrix("translateX(5em)") 
+PASS new DOMMatrix("translateX(5ex)") 
+PASS new DOMMatrix("translateX(5ch)") 
+FAIL new DOMMatrix("translateX(5rem)") assert_throws: function "function () { new self[constr](string); }" did not throw
+FAIL new DOMMatrix("translateX(5vw)") assert_throws: function "function () { new self[constr](string); }" did not throw
+FAIL new DOMMatrix("translateX(5vh)") assert_throws: function "function () { new self[constr](string); }" did not throw
+FAIL new DOMMatrix("translateX(5vmin)") assert_throws: function "function () { new self[constr](string); }" did not throw
+FAIL new DOMMatrix("translateX(5vmax)") assert_throws: function "function () { new self[constr](string); }" did not throw
+PASS new DOMMatrix("translateX(5%)") 
+PASS new DOMMatrix(" ") 
+PASS new DOMMatrix("/**/") 
+PASS new DOMMatrix("\0") 
+PASS new DOMMatrix(";") 
+PASS new DOMMatrix("none;") 
+PASS new DOMMatrix("null") 
+PASS new DOMMatrix(null) 
+PASS new DOMMatrix("undefined") 
+PASS new DOMMatrix("inherit") 
+PASS new DOMMatrix("initial") 
+PASS new DOMMatrix("unset") 
+PASS new DOMMatrix(sequence) 
+PASS new DOMMatrix(matrix) 
+PASS new DOMMatrix("scale(2, 2), translateX(5px) translateY(5px)") 
 PASS new DOMMatrix(sequence) 17 elements 
 PASS new DOMMatrix(sequence) 15 elements 
 PASS new DOMMatrix(sequence) 5 elements 
 PASS new DOMMatrix(sequence) 0 elements 
-FAIL new DOMMatrixReadOnly() Can't find variable: checkDOMMatrix
-FAIL new DOMMatrixReadOnly(undefined) Can't find variable: checkDOMMatrix
-FAIL new DOMMatrixReadOnly(new DOMMatrixReadOnly()) Can't find variable: checkDOMMatrix
-FAIL new DOMMatrixReadOnly("none") Can't find variable: checkDOMMatrix
-FAIL new DOMMatrixReadOnly(" none") Can't find variable: checkDOMMatrix
-FAIL new DOMMatrixReadOnly("none ") Can't find variable: checkDOMMatrix
-FAIL new DOMMatrixReadOnly("NONE") Can't find variable: checkDOMMatrix
-FAIL new DOMMatrixReadOnly("none/**/") Can't find variable: checkDOMMatrix
-FAIL new DOMMatrixReadOnly("/**/none") Can't find variable: checkDOMMatrix
-FAIL new DOMMatrixReadOnly("") Can't find variable: checkDOMMatrix
-FAIL new DOMMatrixReadOnly(float32Array) 16 elements Can't find variable: checkDOMMatrix
-FAIL new DOMMatrixReadOnly(float32Array) 6 elements Can't find variable: checkDOMMatrix
-FAIL new DOMMatrixReadOnly(float64Array) 16 elements Can't find variable: checkDOMMatrix
-FAIL new DOMMatrixReadOnly((float64Array) 6 elements Can't find variable: checkDOMMatrix
-FAIL new DOMMatrixReadOnly(sequence) 16 elements Can't find variable: checkDOMMatrix
-FAIL new DOMMatrixReadOnly(sequence) 6 elements Can't find variable: checkDOMMatrix
-FAIL new DOMMatrixReadOnly("scale(2) translateX(5px) translateY(5px)") Can't find variable: checkDOMMatrix
-FAIL new DOMMatrixReadOnly("scale(2 2) translateX(5) translateY(5)") Can't find variable: checkDOMMatrix
-FAIL new DOMMatrixReadOnly("scale(2, 2), translateX(5)  ,translateY(5)") Can't find variable: checkDOMMatrix
-FAIL new DOMMatrixReadOnly("translateX    (5px)") assert_throws: function "function () { new self[constr](string); }" threw object "TypeError: undefined is not a constructor (evaluating 'new self[constr](string)')" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
-FAIL new DOMMatrixReadOnly("scale(2)translateX(5px)") assert_throws: function "function () { new self[constr](string); }" threw object "TypeError: undefined is not a constructor (evaluating 'new self[constr](string)')" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
-FAIL new DOMMatrixReadOnly("translateX(5em)") assert_throws: function "function () { new self[constr](string); }" threw object "TypeError: undefined is not a constructor (evaluating 'new self[constr](string)')" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
-FAIL new DOMMatrixReadOnly("translateX(5ex)") assert_throws: function "function () { new self[constr](string); }" threw object "TypeError: undefined is not a constructor (evaluating 'new self[constr](string)')" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
-FAIL new DOMMatrixReadOnly("translateX(5ch)") assert_throws: function "function () { new self[constr](string); }" threw object "TypeError: undefined is not a constructor (evaluating 'new self[constr](string)')" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
-FAIL new DOMMatrixReadOnly("translateX(5rem)") assert_throws: function "function () { new self[constr](string); }" threw object "TypeError: undefined is not a constructor (evaluating 'new self[constr](string)')" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
-FAIL new DOMMatrixReadOnly("translateX(5vw)") assert_throws: function "function () { new self[constr](string); }" threw object "TypeError: undefined is not a constructor (evaluating 'new self[constr](string)')" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
-FAIL new DOMMatrixReadOnly("translateX(5vh)") assert_throws: function "function () { new self[constr](string); }" threw object "TypeError: undefined is not a constructor (evaluating 'new self[constr](string)')" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
-FAIL new DOMMatrixReadOnly("translateX(5vmin)") assert_throws: function "function () { new self[constr](string); }" threw object "TypeError: undefined is not a constructor (evaluating 'new self[constr](string)')" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
-FAIL new DOMMatrixReadOnly("translateX(5vmax)") assert_throws: function "function () { new self[constr](string); }" threw object "TypeError: undefined is not a constructor (evaluating 'new self[constr](string)')" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
-FAIL new DOMMatrixReadOnly("translateX(5%)") assert_throws: function "function () { new self[constr](string); }" threw object "TypeError: undefined is not a constructor (evaluating 'new self[constr](string)')" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
-FAIL new DOMMatrixReadOnly(" ") assert_throws: function "function () { new self[constr](string); }" threw object "TypeError: undefined is not a constructor (evaluating 'new self[constr](string)')" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
-FAIL new DOMMatrixReadOnly("/**/") assert_throws: function "function () { new self[constr](string); }" threw object "TypeError: undefined is not a constructor (evaluating 'new self[constr](string)')" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
-FAIL new DOMMatrixReadOnly("\0") assert_throws: function "function () { new self[constr](string); }" threw object "TypeError: undefined is not a constructor (evaluating 'new self[constr](string)')" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
-FAIL new DOMMatrixReadOnly(";") assert_throws: function "function () { new self[constr](string); }" threw object "TypeError: undefined is not a constructor (evaluating 'new self[constr](string)')" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
-FAIL new DOMMatrixReadOnly("none;") assert_throws: function "function () { new self[constr](string); }" threw object "TypeError: undefined is not a constructor (evaluating 'new self[constr](string)')" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
-FAIL new DOMMatrixReadOnly("null") assert_throws: function "function () { new self[constr](string); }" threw object "TypeError: undefined is not a constructor (evaluating 'new self[constr](string)')" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
-FAIL new DOMMatrixReadOnly(null) assert_throws: function "function () { new self[constr](string); }" threw object "TypeError: undefined is not a constructor (evaluating 'new self[constr](string)')" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
-FAIL new DOMMatrixReadOnly("undefined") assert_throws: function "function () { new self[constr](string); }" threw object "TypeError: undefined is not a constructor (evaluating 'new self[constr](string)')" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
-FAIL new DOMMatrixReadOnly("inherit") assert_throws: function "function () { new self[constr](string); }" threw object "TypeError: undefined is not a constructor (evaluating 'new self[constr](string)')" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
-FAIL new DOMMatrixReadOnly("initial") assert_throws: function "function () { new self[constr](string); }" threw object "TypeError: undefined is not a constructor (evaluating 'new self[constr](string)')" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
-FAIL new DOMMatrixReadOnly("unset") assert_throws: function "function () { new self[constr](string); }" threw object "TypeError: undefined is not a constructor (evaluating 'new self[constr](string)')" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
-FAIL new DOMMatrixReadOnly(sequence) Can't find variable: checkDOMMatrix
-FAIL new DOMMatrixReadOnly(matrix) undefined is not a constructor (evaluating 'new self[constr]')
-FAIL new DOMMatrixReadOnly("scale(2, 2), translateX(5px) translateY(5px)") assert_throws: function "function () { new self[constr](string); }" threw object "TypeError: undefined is not a constructor (evaluating 'new self[constr](string)')" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS new DOMMatrixReadOnly() 
+PASS new DOMMatrixReadOnly(undefined) 
+PASS new DOMMatrixReadOnly(new DOMMatrixReadOnly()) 
+PASS new DOMMatrixReadOnly("none") 
+PASS new DOMMatrixReadOnly(" none") 
+PASS new DOMMatrixReadOnly("none ") 
+PASS new DOMMatrixReadOnly("NONE") 
+PASS new DOMMatrixReadOnly("none/**/") 
+PASS new DOMMatrixReadOnly("/**/none") 
+PASS new DOMMatrixReadOnly("") 
+PASS new DOMMatrixReadOnly(float32Array) 16 elements 
+PASS new DOMMatrixReadOnly(float32Array) 6 elements 
+PASS new DOMMatrixReadOnly(float64Array) 16 elements 
+PASS new DOMMatrixReadOnly((float64Array) 6 elements 
+PASS new DOMMatrixReadOnly(sequence) 16 elements 
+PASS new DOMMatrixReadOnly(sequence) 6 elements 
+PASS new DOMMatrixReadOnly("scale(2) translateX(5px) translateY(5px)") 
+FAIL new DOMMatrixReadOnly("scale(2 2) translateX(5) translateY(5)") The string did not match the expected pattern.
+FAIL new DOMMatrixReadOnly("scale(2, 2), translateX(5)  ,translateY(5)") The string did not match the expected pattern.
+PASS new DOMMatrixReadOnly("translateX    (5px)") 
+FAIL new DOMMatrixReadOnly("scale(2)translateX(5px)") assert_throws: function "function () { new self[constr](string); }" did not throw
+PASS new DOMMatrixReadOnly("translateX(5em)") 
+PASS new DOMMatrixReadOnly("translateX(5ex)") 
+PASS new DOMMatrixReadOnly("translateX(5ch)") 
+FAIL new DOMMatrixReadOnly("translateX(5rem)") assert_throws: function "function () { new self[constr](string); }" did not throw
+FAIL new DOMMatrixReadOnly("translateX(5vw)") assert_throws: function "function () { new self[constr](string); }" did not throw
+FAIL new DOMMatrixReadOnly("translateX(5vh)") assert_throws: function "function () { new self[constr](string); }" did not throw
+FAIL new DOMMatrixReadOnly("translateX(5vmin)") assert_throws: function "function () { new self[constr](string); }" did not throw
+FAIL new DOMMatrixReadOnly("translateX(5vmax)") assert_throws: function "function () { new self[constr](string); }" did not throw
+PASS new DOMMatrixReadOnly("translateX(5%)") 
+PASS new DOMMatrixReadOnly(" ") 
+PASS new DOMMatrixReadOnly("/**/") 
+PASS new DOMMatrixReadOnly("\0") 
+PASS new DOMMatrixReadOnly(";") 
+PASS new DOMMatrixReadOnly("none;") 
+PASS new DOMMatrixReadOnly("null") 
+PASS new DOMMatrixReadOnly(null) 
+PASS new DOMMatrixReadOnly("undefined") 
+PASS new DOMMatrixReadOnly("inherit") 
+PASS new DOMMatrixReadOnly("initial") 
+PASS new DOMMatrixReadOnly("unset") 
+PASS new DOMMatrixReadOnly(sequence) 
+PASS new DOMMatrixReadOnly(matrix) 
+PASS new DOMMatrixReadOnly("scale(2, 2), translateX(5px) translateY(5px)") 
 PASS new DOMMatrixReadOnly(sequence) 17 elements 
 PASS new DOMMatrixReadOnly(sequence) 15 elements 
 PASS new DOMMatrixReadOnly(sequence) 5 elements 

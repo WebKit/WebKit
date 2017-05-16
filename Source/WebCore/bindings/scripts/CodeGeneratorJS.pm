@@ -4944,6 +4944,7 @@ sub GenerateParametersCheck
 
             die "Variadic argument is already handled here" if $argument->isVariadic;
             my $argumentLookupMethod = $argument->isOptional ? "argument" : "uncheckedArgument";
+            my $nativeValueCastFunction;
 
             if ($argument->isOptional && defined($argument->default) && !WillConvertUndefinedToDefaultParameterValue($type, $argument->default)) {
                 my $defaultValue = $argument->default;
@@ -4955,6 +4956,7 @@ sub GenerateParametersCheck
             } elsif ($argument->isOptional && !defined($argument->default)) {
                 # Use std::optional<>() for optional arguments that are missing or undefined and that do not have a default value in the IDL.
                 $outer = "state->$argumentLookupMethod($argumentIndex).isUndefined() ? std::optional<$nativeType>() : ";
+                $nativeValueCastFunction = "std::optional<$nativeType>";
                 $inner = "state->uncheckedArgument($argumentIndex)";
             } else {
                 $outer = "";
@@ -4966,7 +4968,11 @@ sub GenerateParametersCheck
 
             my ($nativeValue, $mayThrowException) = JSValueToNative($interface, $argument, $inner, $conditional, "state", "*state", "*castedThis", $globalObjectReference, $argumentExceptionThrower);
 
-            push(@$outputArray, "    auto $name = ${outer}${nativeValue};\n");
+            if (defined $nativeValueCastFunction) {
+                push(@$outputArray, "    auto $name = ${outer}$nativeValueCastFunction(${nativeValue});\n");
+            } else {
+                push(@$outputArray, "    auto $name = ${outer}${nativeValue};\n");
+            }
             push(@$outputArray, "    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());\n") if $mayThrowException;
 
             $value = PassArgumentExpression($name, $argument);
@@ -5627,6 +5633,11 @@ sub GetNativeType
     return "Vector<" . GetNativeInnerType(@{$type->subtypes}[0], $interface) . ">" if $codeGenerator->IsSequenceOrFrozenArrayType($type);
     return "Vector<WTF::KeyValuePair<" . GetNativeInnerType(@{$type->subtypes}[0], $interface) . ", " . GetNativeInnerType(@{$type->subtypes}[1], $interface) . ">>" if $codeGenerator->IsRecordType($type);
 
+    if ($type->isUnion) {
+        my $IDLType = GetIDLType($interface, $type);
+        return "Converter<$IDLType>::ReturnType";
+    }
+    
     return "RefPtr<${typeName}>" if $codeGenerator->IsTypedArrayType($type) and $typeName ne "ArrayBuffer";
     return "${typeName}*";
 }

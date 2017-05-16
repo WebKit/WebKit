@@ -18,7 +18,7 @@ PASS test DOMPoint fromPoint with x, y, z, w
 PASS test DOMPoint fromPoint with x, y, z, w, v 
 PASS test DOMPoint fromPoint with x, z 
 PASS test DOMPoint fromPoint with undefined value 
-FAIL test DOMPoint matrixTransform Can't find variable: DOMMatrix
+FAIL test DOMPoint matrixTransform point.matrixTransform is not a function. (In 'point.matrixTransform(matrix)', 'point.matrixTransform' is undefined)
 PASS test DOMPoint Attributes undefined 
 PASS test DOMPoint Attributes NaN Infinity 
 PASS test DOMPointReadOnly Constructor no args 
@@ -38,6 +38,6 @@ PASS test DOMPointReadOnly fromPoint with x, y, z, w
 PASS test DOMPointReadOnly fromPoint with x, y, z, w, v 
 PASS test DOMPointReadOnly fromPoint with x, z 
 PASS test DOMPointReadOnly fromPoint with undefined value 
-FAIL test DOMPointReadOnly matrixTransform Can't find variable: DOMMatrix
+FAIL test DOMPointReadOnly matrixTransform point.matrixTransform is not a function. (In 'point.matrixTransform(matrix)', 'point.matrixTransform' is undefined)
 PASS test DOMPointReadOnly Attributes undefined 
 

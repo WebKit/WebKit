@@ -314,6 +314,9 @@ JS_BINDING_IDLS = \
     $(WebCore)/css/CSSStyleSheet.idl \
     $(WebCore)/css/CSSSupportsRule.idl \
     $(WebCore)/css/CSSUnknownRule.idl \
+    $(WebCore)/css/DOMMatrix.idl \
+    $(WebCore)/css/DOMMatrixInit.idl \
+    $(WebCore)/css/DOMMatrixReadOnly.idl \
     $(WebCore)/css/DeprecatedCSSOMCounter.idl \
 	$(WebCore)/css/DeprecatedCSSOMPrimitiveValue.idl \
 	$(WebCore)/css/DeprecatedCSSOMRGBColor.idl \

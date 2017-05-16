@@ -1,5 +1,9 @@
 
-FAIL Equivalence test assert_true: DOMMatrix should exist expected true got false
+FAIL Equivalence test assert_equals: interface object expected function "function DOMMatrix() {
+    [native code]
+}" but got function "function WebKitCSSMatrix() {
+    [native code]
+}"
 PASS Property descriptor for WebKitCSSMatrix 
-FAIL Property descriptor for DOMMatrix undefined is not an object (evaluating 'desc.value')
+PASS Property descriptor for DOMMatrix 
 

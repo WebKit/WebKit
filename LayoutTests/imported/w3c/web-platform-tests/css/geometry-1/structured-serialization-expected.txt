@@ -19,14 +19,14 @@ FAIL DOMQuad clone: basic undefined is not a constructor (evaluating 'new self[c
 FAIL DOMQuad clone: custom property undefined is not a constructor (evaluating 'new self[constr]()')
 FAIL DOMQuad clone: throwing getters undefined is not a constructor (evaluating 'new self[constr]()')
 FAIL DOMQuad clone: non-initial values undefined is not a constructor (evaluating 'new self[constr]')
-FAIL DOMMatrixReadOnly clone: basic undefined is not a constructor (evaluating 'new self[constr]()')
-FAIL DOMMatrixReadOnly clone: custom property undefined is not a constructor (evaluating 'new self[constr]()')
-FAIL DOMMatrixReadOnly clone: throwing getters undefined is not a constructor (evaluating 'new self[constr]()')
-FAIL DOMMatrixReadOnly clone: non-initial values (2d) undefined is not a constructor (evaluating 'new self[constr]([1, -0, Infinity, NaN, 5, 6])')
-FAIL DOMMatrixReadOnly clone: non-initial values (3d) undefined is not a constructor (evaluating 'new self[constr]')
-FAIL DOMMatrix clone: basic undefined is not a constructor (evaluating 'new self[constr]()')
-FAIL DOMMatrix clone: custom property undefined is not a constructor (evaluating 'new self[constr]()')
-FAIL DOMMatrix clone: throwing getters undefined is not a constructor (evaluating 'new self[constr]()')
-FAIL DOMMatrix clone: non-initial values (2d) undefined is not a constructor (evaluating 'new self[constr]([1, -0, Infinity, NaN, 5, 6])')
-FAIL DOMMatrix clone: non-initial values (3d) undefined is not a constructor (evaluating 'new self[constr]')
+FAIL DOMMatrixReadOnly clone: basic promise_test: Unhandled rejection with value: object "DataCloneError (DOM Exception 25): The object can not be cloned."
+FAIL DOMMatrixReadOnly clone: custom property promise_test: Unhandled rejection with value: object "DataCloneError (DOM Exception 25): The object can not be cloned."
+FAIL DOMMatrixReadOnly clone: throwing getters promise_test: Unhandled rejection with value: object "DataCloneError (DOM Exception 25): The object can not be cloned."
+FAIL DOMMatrixReadOnly clone: non-initial values (2d) promise_test: Unhandled rejection with value: object "DataCloneError (DOM Exception 25): The object can not be cloned."
+FAIL DOMMatrixReadOnly clone: non-initial values (3d) promise_test: Unhandled rejection with value: object "DataCloneError (DOM Exception 25): The object can not be cloned."
+FAIL DOMMatrix clone: basic promise_test: Unhandled rejection with value: object "DataCloneError (DOM Exception 25): The object can not be cloned."
+FAIL DOMMatrix clone: custom property promise_test: Unhandled rejection with value: object "DataCloneError (DOM Exception 25): The object can not be cloned."
+FAIL DOMMatrix clone: throwing getters promise_test: Unhandled rejection with value: object "DataCloneError (DOM Exception 25): The object can not be cloned."
+FAIL DOMMatrix clone: non-initial values (2d) promise_test: Unhandled rejection with value: object "DataCloneError (DOM Exception 25): The object can not be cloned."
+FAIL DOMMatrix clone: non-initial values (3d) promise_test: Unhandled rejection with value: object "DataCloneError (DOM Exception 25): The object can not be cloned."
 
