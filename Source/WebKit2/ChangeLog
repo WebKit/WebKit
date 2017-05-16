@@ -1,3 +1,22 @@
+2017-05-16  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [SOUP] Remove LATEST_RECORD_VERSION from GnuTLS priority string
+        https://bugs.webkit.org/show_bug.cgi?id=172153
+
+        Based on discussion with Nikos in https://bugzilla.gnome.org/show_bug.cgi?id=782218, we
+        should remove LATEST_RECORD_VERSION from our GnuTLS priority string. This causes GnuTLS to
+        use the latest TLS record version (the record format is separate from the TLS protocol
+        version), which we needed a couple years ago (after dropping SSLv3) for maximum
+        compatibility with broken web servers. But it's not needed anymore, and is causing new
+        compatibility problems with other broken web servers, so let's get rid of it.
+
+        Reviewed by Carlos Garcia Campos.
+
+        * NetworkProcess/EntryPoint/unix/NetworkProcessMain.cpp:
+        (main):
+        * WebProcess/EntryPoint/unix/WebProcessMain.cpp:
+        (main):
+
 2017-05-15  Andy Estes  <aestes@apple.com>
 
         Make the application PID available to WebCore
