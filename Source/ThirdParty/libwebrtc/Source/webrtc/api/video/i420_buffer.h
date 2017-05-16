@@ -40,7 +40,7 @@ class I420Buffer : public VideoFrameBuffer {
       const uint8_t* data_v, int stride_v);
 
   // Returns a rotated copy of |src|.
-  static rtc::scoped_refptr<I420Buffer> Rotate(const VideoFrameBuffer& src,
+  WEBRTC_DYLIB_EXPORT static rtc::scoped_refptr<I420Buffer> Rotate(const VideoFrameBuffer& src,
                                                VideoRotation rotation);
 
   // Sets the buffer to all black.

@@ -1,3 +1,13 @@
+2017-05-16  Youenn Fablet  <youenn@apple.com>
+
+        RealtimeOutgoingVideoSource should support sinkWants for rotation
+        https://bugs.webkit.org/show_bug.cgi?id=172123
+        <rdar://problem/32200017>
+
+        Reviewed by Eric Carlson.
+
+        * Source/webrtc/api/video/i420_buffer.h: Exporting rotate routine.
+
 2017-05-08  Youenn Fablet  <youenn@apple.com>
 
         TURNS gathering is not working properly

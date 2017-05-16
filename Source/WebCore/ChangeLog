@@ -1,3 +1,18 @@
+2017-05-16  Youenn Fablet  <youenn@apple.com>
+
+        RealtimeOutgoingVideoSource should support sinkWants for rotation
+        https://bugs.webkit.org/show_bug.cgi?id=172123
+        <rdar://problem/32200017>
+
+        Reviewed by Eric Carlson.
+
+        Covered by manual testing.
+
+        * platform/mediastream/mac/RealtimeOutgoingVideoSource.cpp:
+        (WebCore::RealtimeOutgoingVideoSource::AddOrUpdateSink): Triggering pixel rotation based on sink.
+        (WebCore::RealtimeOutgoingVideoSource::sendFrame): Doing the rotation using libwebrtc API.
+        * platform/mediastream/mac/RealtimeOutgoingVideoSource.h:
+
 2017-05-16  Myles C. Maxfield  <mmaxfield@apple.com>
 
         REGRESSION(r212513): LastResort is platform-dependent, so its semantics should not be required to perform font loading correctly.
