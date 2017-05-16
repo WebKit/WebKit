@@ -2115,6 +2115,8 @@ void Page::mainFrameLoadStarted(const URL& destinationURL, FrameLoadType type)
     String domain;
 #if ENABLE(PUBLIC_SUFFIX_LIST)
     domain = topPrivatelyControlledDomain(destinationURL.host());
+#else
+    UNUSED_PARAM(destinationURL);
 #endif
 
     Navigation navigation = { domain, type };

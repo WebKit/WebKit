@@ -661,6 +661,7 @@ String ResourceRequestBase::partitionName(const String& domain)
         return emptyString();
     return highLevel;
 #else
+    UNUSED_PARAM(domain);
 #if ENABLE(CACHE_PARTITIONING)
 #error Cache partitioning requires PUBLIC_SUFFIX_LIST
 #endif

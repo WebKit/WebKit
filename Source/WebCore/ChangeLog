@@ -1,3 +1,17 @@
+2017-05-16  Claudio Saavedra  <csaavedra@igalia.com>
+
+        Silent a few warnings about unused parameters
+        https://bugs.webkit.org/show_bug.cgi?id=172169
+
+        Reviewed by Sam Weinig.
+
+        * page/Page.cpp:
+        (WebCore::Page::mainFrameLoadStarted):
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::ImageBuffer::toData):
+        * platform/network/ResourceRequestBase.cpp:
+        (WebCore::ResourceRequestBase::partitionName):
+
 2017-05-16  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         WebItemProviderPasteboard should be robust when temporary files are missing path extensions
