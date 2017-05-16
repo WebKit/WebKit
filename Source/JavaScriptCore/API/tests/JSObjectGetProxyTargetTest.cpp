@@ -31,7 +31,7 @@
 #include "JSCInlines.h"
 #include "JSObjectRefPrivate.h"
 #include "JSProxy.h"
-#include "JavaScriptCore.h"
+#include "JavaScript.h"
 #include "Options.h"
 #include "ProxyObject.h"
 

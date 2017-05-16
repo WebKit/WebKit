@@ -1,3 +1,15 @@
+2017-05-15  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Build testapi in non Apple ports
+        https://bugs.webkit.org/show_bug.cgi?id=172103
+
+        Reviewed by Filip Pizlo.
+
+        Now testapi is drived in JSCOnly, GTK and WPE ports too.
+
+        * Scripts/build-jsc:
+        * Scripts/run-javascriptcore-tests:
+
 2017-05-15  Youenn Fablet  <youenn@apple.com>
 
         WPT test importer should not account for slow manual tests

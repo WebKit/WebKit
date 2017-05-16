@@ -1,3 +1,36 @@
+2017-05-15  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Build testapi in non Apple ports
+        https://bugs.webkit.org/show_bug.cgi?id=172103
+
+        Reviewed by Filip Pizlo.
+
+        This patch makes JSC testapi buildable in non-Apple ports.
+        We isolate CF related tests in testapi.c. If we do not use
+        CF, we include JavaScript.h instead of JavaScriptCore.h.
+
+        By running the testapi in Linux, we found that contraints
+        test have a bug: If constraint marker runs after WeakRefs
+        are destroyed, it accesses destroyed WeakRef. This patch
+        also fixes it.
+
+        * API/tests/CurrentThisInsideBlockGetterTest.h:
+        * API/tests/CustomGlobalObjectClassTest.c:
+        * API/tests/ExecutionTimeLimitTest.cpp:
+        * API/tests/FunctionOverridesTest.cpp:
+        * API/tests/GlobalContextWithFinalizerTest.cpp:
+        * API/tests/JSObjectGetProxyTargetTest.cpp:
+        * API/tests/MultithreadedMultiVMExecutionTest.cpp:
+        * API/tests/PingPongStackOverflowTest.cpp:
+        * API/tests/TypedArrayCTest.cpp:
+        * API/tests/testapi.c:
+        (assertEqualsAsCharactersPtr):
+        (markingConstraint):
+        (testMarkingConstraintsAndHeapFinalizers):
+        (testCFStrings):
+        (main):
+        * shell/CMakeLists.txt:
+
 2017-05-16  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: report Memory usage to GC

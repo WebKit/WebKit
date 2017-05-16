@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <JavaScriptCore/JavaScriptCore.h>
+#include <JavaScriptCore/JavaScript.h>
 
 #if JSC_OBJC_API_ENABLED
 

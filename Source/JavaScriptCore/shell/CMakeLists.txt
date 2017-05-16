@@ -55,4 +55,30 @@ if (NOT WIN32)
     add_executable(testair ${TESTAIR_SOURCES})
     target_link_libraries(testair ${JSC_LIBRARIES})
 
+    set(TESTAPI_SOURCES
+        ../API/tests/CompareAndSwapTest.cpp
+        ../API/tests/CustomGlobalObjectClassTest.c
+        ../API/tests/ExecutionTimeLimitTest.cpp
+        ../API/tests/FunctionOverridesTest.cpp
+        ../API/tests/GlobalContextWithFinalizerTest.cpp
+        ../API/tests/JSONParseTest.cpp
+        ../API/tests/JSObjectGetProxyTargetTest.cpp
+        ../API/tests/MultithreadedMultiVMExecutionTest.cpp
+        ../API/tests/PingPongStackOverflowTest.cpp
+        ../API/tests/TypedArrayCTest.cpp
+        ../API/tests/testapi.c
+    )
+    add_executable(testapi ${TESTAPI_SOURCES})
+    target_link_libraries(testapi ${JSC_LIBRARIES})
+
+    file(COPY
+        "${JAVASCRIPTCORE_DIR}/API/tests/testapi.js"
+        DESTINATION
+        ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+    )
+    file(COPY
+        "${JAVASCRIPTCORE_DIR}/API/tests/testapi-function-overrides.js"
+        DESTINATION
+        ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+    )
 endif ()

@@ -29,7 +29,7 @@
 #include "FunctionOverrides.h"
 #include "InitializeThreading.h"
 #include "JSContextRefPrivate.h"
-#include "JavaScriptCore.h"
+#include "JavaScript.h"
 #include "Options.h"
 #include <string>
 
