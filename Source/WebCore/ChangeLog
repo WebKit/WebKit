@@ -1,3 +1,44 @@
+2017-05-16  Mark Lam  <mark.lam@apple.com>
+
+        WorkerRunLoop::Task::performTask() needs to null check context->script() before use.
+        https://bugs.webkit.org/show_bug.cgi?id=172193
+        <rdar://problem/32225346>
+
+        Reviewed by Filip Pizlo.
+
+        According to https://build-safari.apple.com/results/Trunk%20Fuji%20GuardMalloc%20Production%20WK2%20Tests/r216929_459760e0918316187c8e52c6585a3a9ba9181204%20(12066)/results.html,
+        we see a crash with this crash trace:
+
+        Thread 13 Crashed:: WebCore: Worker
+        0 com.apple.WebCore        0x00000001099607b2 WebCore::WorkerScriptController::isTerminatingExecution() const + 18
+        1 com.apple.WebCore        0x000000010995ebbf WebCore::WorkerRunLoop::runCleanupTasks(WebCore::WorkerGlobalScope*) + 143
+        2 com.apple.WebCore        0x000000010995e80f WebCore::WorkerRunLoop::run(WebCore::WorkerGlobalScope*) + 111
+        3 com.apple.WebCore        0x00000001099621b6 WebCore::WorkerThread::workerThread() + 742
+        4 com.apple.JavaScriptCore 0x000000010a964b92 WTF::threadEntryPoint(void*) + 178
+        5 com.apple.JavaScriptCore 0x000000010a964a69 WTF::wtfThreadEntryPoint(void*) + 121
+        6 libsystem_pthread.dylib  0x00007fffbdb5caab _pthread_body + 180
+        7 libsystem_pthread.dylib  0x00007fffbdb5c9f7 _pthread_start + 286
+        8 libsystem_pthread.dylib  0x00007fffbdb5c1fd thread_start + 13
+
+        ... and the crashing address is:
+
+        Exception Codes: KERN_INVALID_ADDRESS at 0x0000000000000022
+
+        0x0000000000000022 is the offset of m_scheduledTerminationMutex in the
+        WorkerScriptController.  This means that WorkerScriptController::isTerminatingExecution()
+        is passed a NULL this pointer.  This means that it's possible to have a race
+        where a WorkerRunLoop::Task gets enqueued beyond the Cleanup task that deletes the
+        context->script().  As a result, WorkerRunLoop::Task::performTask() (called by
+        runCleanupTasks()) may see a null context->script().
+
+        Hence, WorkerRunLoop::Task::performTask() should null check context->script()
+        before invoking the isTerminatingExecution() query on it.
+
+        No new tests because this is already covered by existing tests.
+
+        * workers/WorkerRunLoop.cpp:
+        (WebCore::WorkerRunLoop::Task::performTask):
+
 2017-05-16  Youenn Fablet  <youenn@apple.com>
 
         Modernize WebKit2 getUserMedia passing of parameters

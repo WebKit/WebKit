@@ -254,8 +254,7 @@ void WorkerRunLoop::postTaskForMode(ScriptExecutionContext::Task&& task, const S
 
 void WorkerRunLoop::Task::performTask(WorkerGlobalScope* context)
 {
-    ASSERT(context->script());
-    if ((!context->isClosing() && !context->script()->isTerminatingExecution()) || m_task.isCleanupTask())
+    if ((!context->isClosing() && context->script() && !context->script()->isTerminatingExecution()) || m_task.isCleanupTask())
         m_task.performTask(*context);
 }
 
