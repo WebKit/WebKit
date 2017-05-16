@@ -41,6 +41,7 @@ ThreadedDisplayRefreshMonitor::ThreadedDisplayRefreshMonitor(ThreadedCompositor&
 {
 #if USE(GLIB_EVENT_LOOP)
     m_displayRefreshTimer.setPriority(RunLoopSourcePriority::DisplayRefreshMonitorTimer);
+    m_displayRefreshTimer.setName("[WebKit] ThreadedDisplayRefreshMonitor");
 #endif
 }
 

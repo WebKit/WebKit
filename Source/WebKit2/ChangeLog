@@ -1,3 +1,20 @@
+2017-05-16  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GLib] Name more GSource-based RunLoop::Timers
+        https://bugs.webkit.org/show_bug.cgi?id=172158
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Shared/CoordinatedGraphics/threadedcompositor/CompositingRunLoop.cpp:
+        (WebKit::CompositingRunLoop::CompositingRunLoop):
+        Specify 'CompositingRunLoop' as the name of this GSource-based RunLoop::Timer.
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedDisplayRefreshMonitor.cpp:
+        (WebKit::ThreadedDisplayRefreshMonitor::ThreadedDisplayRefreshMonitor):
+        Specify 'ThreadedDisplayRefreshMonitor' as the name of this GSource-based RunLoop::Timer.
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+        (WebKit::CoordinatedLayerTreeHost::CoordinatedLayerTreeHost):
+        Specify 'CoordinatedLayerTreeHost' as the name of this GSource-based RunLoop::Timer.
+
 2017-05-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Revert change committed by mistakle in r216922.

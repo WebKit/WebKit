@@ -65,6 +65,7 @@ CoordinatedLayerTreeHost::CoordinatedLayerTreeHost(WebPage& webPage)
 {
 #if USE(GLIB_EVENT_LOOP)
     m_layerFlushTimer.setPriority(RunLoopSourcePriority::LayerFlushTimer);
+    m_layerFlushTimer.setName("[WebKit] CoordinatedLayerTreeHost");
 #endif
     m_coordinator.createRootLayer(m_webPage.size());
 

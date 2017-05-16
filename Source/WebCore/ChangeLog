@@ -1,3 +1,14 @@
+2017-05-16  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GLib] Name more GSource-based RunLoop::Timers
+        https://bugs.webkit.org/show_bug.cgi?id=172158
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/glib/MainThreadSharedTimerGLib.cpp:
+        (WebCore::MainThreadSharedTimer::MainThreadSharedTimer):
+        Specify 'MainThreadSharedTimer' as the name of this GSource-based RunLoop::Timer.
+
 2017-05-16  Romain Bellessort  <romain.bellessort@crf.canon.fr>
 
         [Readable Streams API] Implement ReadableStreamBYOBReader releaseLock()

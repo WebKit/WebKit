@@ -36,6 +36,7 @@ MainThreadSharedTimer::MainThreadSharedTimer()
     : m_timer(RunLoop::main(), this, &MainThreadSharedTimer::fired)
 {
     m_timer.setPriority(RunLoopSourcePriority::MainThreadDispatcherTimer);
+    m_timer.setName("[WebKit] MainThreadDispatcherTimer");
 }
 
 void MainThreadSharedTimer::setFireInterval(Seconds interval)
