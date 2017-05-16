@@ -1,3 +1,10 @@
+2017-05-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Another build fix. Added a missing null check.
+
+        * public/v3/components/custom-analysis-task-configurator.js:
+        (CustomAnalysisTaskConfigurator.prototype._setUploadedFilesIfEmpty):
+
 2017-05-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         Build fix. Added a missing null check.

@@ -82,7 +82,7 @@ class CustomAnalysisTaskConfigurator extends ComponentBase {
 
     _setUploadedFilesIfEmpty(uploader, commitSet)
     {
-        if (uploader.hasFileToUpload() || uploader.uploadedFiles().length)
+        if (!uploader || uploader.hasFileToUpload() || uploader.uploadedFiles().length)
             return;
         for (const uploadedFile of commitSet.customRoots())
             uploader.addUploadedFile(uploadedFile);
