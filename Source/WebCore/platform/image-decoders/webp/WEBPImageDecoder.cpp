@@ -116,10 +116,10 @@ bool WEBPImageDecoder::decode(bool onlySize, bool)
     ImageFrame& buffer = m_frameBufferCache[0];
     ASSERT(!buffer.isComplete());
 
-    if (buffer.isEmpty()) {
+    if (buffer.isInvalid()) {
         if (!buffer.initialize(size(), m_premultiplyAlpha))
             return setFailed();
-        buffer.setDecoding(ImageFrame::Decoding::Partial);
+        buffer.setDecodingStatus(ImageFrame::DecodingStatus::Partial);
         buffer.setHasAlpha(m_hasAlpha);
     }
 
@@ -137,7 +137,7 @@ bool WEBPImageDecoder::decode(bool onlySize, bool)
 
     switch (WebPIUpdate(m_decoder, dataBytes, dataSize)) {
     case VP8_STATUS_OK:
-        buffer.setDecoding(ImageFrame::Decoding::Complete);
+        buffer.setDecodingStatus(ImageFrame::DecodingStatus::Complete);
         clear();
         return true;
     case VP8_STATUS_SUSPENDED:

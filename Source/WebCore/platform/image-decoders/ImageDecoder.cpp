@@ -196,7 +196,7 @@ unsigned ImageDecoder::frameBytesAtIndex(size_t index) const
 float ImageDecoder::frameDurationAtIndex(size_t index)
 {
     ImageFrame* buffer = frameBufferAtIndex(index);
-    if (!buffer || buffer->isEmpty())
+    if (!buffer || buffer->isInvalid())
         return 0;
     
     // Many annoying ads specify a 0 duration to make an image flash as quickly as possible.
@@ -216,7 +216,7 @@ NativeImagePtr ImageDecoder::createFrameImageAtIndex(size_t index, SubsamplingLe
         return nullptr;
 
     ImageFrame* buffer = frameBufferAtIndex(index);
-    if (!buffer || buffer->isEmpty() || !buffer->hasBackingStore())
+    if (!buffer || buffer->isInvalid() || !buffer->hasBackingStore())
         return nullptr;
 
     // Return the buffer contents as a native image. For some ports, the data
