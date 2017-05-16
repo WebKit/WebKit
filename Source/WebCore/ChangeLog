@@ -1,3 +1,15 @@
+2017-05-16  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] AudioSampleBufferList::zeroABL takes byte count, not sample count
+        https://bugs.webkit.org/show_bug.cgi?id=172194
+        <rdar://problem/32233799>
+
+        Reviewed by Jer Noble.
+
+        * platform/mediastream/mac/AudioTrackPrivateMediaStreamCocoa.cpp:
+        (WebCore::AudioTrackPrivateMediaStreamCocoa::render): Pass number of bytes to zero,
+        not number of samples.
+
 2017-05-16  Mark Lam  <mark.lam@apple.com>
 
         WorkerRunLoop::Task::performTask() needs to null check context->script() before use.
