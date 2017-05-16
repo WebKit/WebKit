@@ -1,3 +1,46 @@
+2017-05-16  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GTK] Tests that always pass when run alone, but fail in the bots
+        https://bugs.webkit.org/show_bug.cgi?id=168572
+
+        Reviewed by Michael Catanzaro.
+
+        PlatformWebView::viewSupportsOptions() is basically a comparison
+        that checks that the passed options are the ones supported by the
+        web view. There is no reason for them to be implemented for each
+        platform differently. In fact doing so causes issues each time a
+        new option is added, if the corresponding platform implementation
+        is not updated accordingly.
+
+        A consequence of not updating the viewSupportOptions()
+        implementations when new options are added is that tests that need
+        these options might fail if they are executed after a test that
+        didn't need the option, as the webview will be reused even if the
+        option is not supported. This cannot be spotted when running the
+        tests individually. See bug #165133 for other example of the same
+        problem.
+
+        Remove the platform implementations and make the comparison a
+        method of the TestOptions structure, so that the check is in one
+        place. For the time being, only include in the comparison the
+        options that were checked in the mac platform, which seem to be
+        the only ones relevant this far (unless newer ones have also been
+        forgotten).
+
+        * WebKitTestRunner/PlatformWebView.h:
+        (WTR::PlatformWebView::viewSupportsOptions): Use the method
+        defined below.
+        * WebKitTestRunner/TestOptions.h:
+        (WTR::TestOptions::hasSameInitializationOptions): Added.
+        * WebKitTestRunner/gtk/PlatformWebViewGtk.cpp:
+        (WTR::PlatformWebView::viewSupportsOptions): Deleted.
+        * WebKitTestRunner/ios/PlatformWebViewIOS.mm:
+        (WTR::PlatformWebView::viewSupportsOptions): Deleted.
+        * WebKitTestRunner/mac/PlatformWebViewMac.mm:
+        (WTR::PlatformWebView::viewSupportsOptions): Deleted.
+        * WebKitTestRunner/wpe/PlatformWebViewWPE.cpp:
+        (WTR::PlatformWebView::viewSupportsOptions): Deleted.
+
 2017-05-15  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Build testapi in non Apple ports

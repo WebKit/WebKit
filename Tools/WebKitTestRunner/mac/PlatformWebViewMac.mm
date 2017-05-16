@@ -282,21 +282,6 @@ RetainPtr<CGImageRef> PlatformWebView::windowSnapshotImage()
     return adoptCF(CGWindowListCreateImage(CGRectNull, kCGWindowListOptionIncludingWindow, [m_window windowNumber], options));
 }
 
-bool PlatformWebView::viewSupportsOptions(const TestOptions& options) const
-{
-    if (m_options.useThreadedScrolling != options.useThreadedScrolling
-        || m_options.overrideLanguages != options.overrideLanguages
-        || m_options.useMockScrollbars != options.useMockScrollbars
-        || m_options.needsSiteSpecificQuirks != options.needsSiteSpecificQuirks
-        || m_options.enableIntersectionObserver != options.enableIntersectionObserver
-        || m_options.enableModernMediaControls != options.enableModernMediaControls
-        || m_options.enablePointerLock != options.enablePointerLock
-        || m_options.enableCredentialManagement != options.enableCredentialManagement)
-        return false;
-
-    return true;
-}
-
 void PlatformWebView::changeWindowScaleIfNeeded(float newScale)
 {
     CGFloat currentScale = [m_window backingScaleFactor];

@@ -128,11 +128,6 @@ void PlatformWebView::setNavigationGesturesEnabled(bool)
 {
 }
 
-bool PlatformWebView::viewSupportsOptions(const TestOptions&) const
-{
-    return true;
-}
-
 void PlatformWebView::forceWindowFramesChanged()
 {
 }
