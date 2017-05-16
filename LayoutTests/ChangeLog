@@ -1,3 +1,16 @@
+2017-05-16  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Return default device list until user gives permission to capture
+        https://bugs.webkit.org/show_bug.cgi?id=172168
+        <rdar://problem/31816884>
+
+        Reviewed by Youenn Fablet.
+
+        * fast/mediastream/MediaDevices-enumerateDevices-expected.txt: Removed.
+        * fast/mediastream/MediaDevices-enumerateDevices.html: Removed.
+        * fast/mediastream/media-devices-enumerate-devices-expected.txt: Added.
+        * fast/mediastream/media-devices-enumerate-devices.html: Added.
+
 2017-05-16  Tim Horton  <timothy_horton@apple.com>
 
         Make it possible to adjust which edges are affected by safe area insets

@@ -1,0 +1,68 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>iOS specific constraints of one active capture source at a time</title>
+        <script src="../../resources/testharness.js"></script>
+        <script src="../../resources/testharnessreport.js"></script>
+        <script>
+        let deviceCount = 0;
+        function checkDevices(devices, havePermission)
+        {
+            assert_not_equals(devices.length, 0, "captureDevices.length != 0");
+            devices.forEach(function(device) {
+                assert_not_equals(device.kind, null, "device.kind is non-null");
+                assert_not_equals(device.deviceId, null, "device.deviceId is non-null");
+                assert_not_equals(device.label, null, "device.label is non-null");
+                if (havePermission)
+                    assert_not_equals(device.label, "", "device.label is not empty");
+                else
+                    assert_equals(device.label, "", "device.label is empty");
+
+                assert_not_equals(device.kind, null, "device.groupId is non-null");
+            });
+        }
+        
+        promise_test((test) => {
+            if (window.testRunner)
+                testRunner.setUserMediaPermission(true);
+
+            return navigator.mediaDevices.enumerateDevices()
+                .then((devices) => {
+                    deviceCount = devices.length;
+                    checkDevices(devices, false);
+                })
+        }, "Enumerate devices without permission");
+
+        promise_test((test) => {
+
+            if (window.testRunner)
+                testRunner.setUserMediaPersistentPermissionForOrigin(true, document.location.href, "");
+
+            return navigator.mediaDevices.enumerateDevices()
+                .then((devices) => {
+                    assert_not_equals(deviceCount, devices.length, "more devices revealed with persistent access");
+                    deviceCount = devices.length;
+                    checkDevices(devices, true);
+                })
+        }, "Enumerate devices with persistent access");
+
+        promise_test((test) => {
+
+            if (window.testRunner)
+                testRunner.setUserMediaPersistentPermissionForOrigin(false, document.location.href, "");
+
+            return navigator.mediaDevices.getUserMedia({audio:{}, video:{}})
+                .then((stream) => {
+                    return navigator.mediaDevices.enumerateDevices()
+                        .then((devices) => {
+                            assert_equals(deviceCount, devices.length, "same devices revealed when authenticated as with persistent access");
+                            checkDevices(devices, true);
+                        })
+                })
+        }, "Enumerate devices after authentication, without persistent access");
+
+        </script>
+    </head>
+    <body>
+</body>

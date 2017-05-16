@@ -76,6 +76,34 @@ void MediaDevicesRequest::contextDestroyed()
     ContextDestructionObserver::contextDestroyed();
 }
 
+void MediaDevicesRequest::filterDeviceList(Vector<RefPtr<MediaDeviceInfo>>& devices)
+{
+#if !PLATFORM(COCOA)
+    UNUSED_PARAM(devices);
+#else
+
+#if PLATFORM(IOS)
+    static const int defaultCameraCount = 2;
+#endif
+#if PLATFORM(MAC)
+    static const int defaultCameraCount = 1;
+#endif
+    static const int defaultMicrophoneCount = 1;
+
+    int cameraCount = 0;
+    int microphoneCount = 0;
+    devices.removeAllMatching([&](const RefPtr<MediaDeviceInfo>& device) -> bool {
+        if (device->kind() == MediaDeviceInfo::Kind::Videoinput && ++cameraCount > defaultCameraCount)
+            return true;
+        if (device->kind() == MediaDeviceInfo::Kind::Audioinput && ++microphoneCount > defaultMicrophoneCount)
+            return true;
+
+        return false;
+    });
+
+#endif
+}
+
 void MediaDevicesRequest::start()
 {
     RefPtr<MediaDevicesRequest> protectedThis = this;
@@ -103,6 +131,9 @@ void MediaDevicesRequest::start()
             auto deviceType = deviceInfo.type() == CaptureDevice::DeviceType::Audio ? MediaDeviceInfo::Kind::Audioinput : MediaDeviceInfo::Kind::Videoinput;
             devices.append(MediaDeviceInfo::create(scriptExecutionContext(), label, id, groupId, deviceType));
         }
+
+        if (!originHasPersistentAccess && !document.hasHadActiveMediaStreamTrack())
+            filterDeviceList(devices);
 
         callOnMainThread([protectedThis = makeRef(*this), devices = WTFMove(devices)]() mutable {
             protectedThis->m_promise.resolve(devices);
