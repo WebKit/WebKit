@@ -1,12 +1,12 @@
 import Ember from 'ember';
-import * as localStorageMemory from './memory';
+import localStorageMemory from './memory';
 
 export default Ember.Service.extend({
     lastId: 0,
     data: null,
     findAll() {
         return this.get('data') ||
-            this.set('data', JSON.parse(localStorageMemory.getItem('todos') || '[]'));
+            this.set('data', JSON.parse(window.localStorageMemory.getItem('todos') || '[]'));
     },
 
     add(attrs) {
@@ -22,6 +22,6 @@ export default Ember.Service.extend({
     },
 
     persist() {
-        localStorageMemory.setItem('todos', JSON.stringify(this.get('data')));
+        window.localStorageMemory.setItem('todos', JSON.stringify(this.get('data')));
     }
 });

@@ -74,9 +74,5 @@
     localStorageMemory.length = 0;
   };
 
-  if (typeof exports === 'object') {
-    module.exports = localStorageMemory;
-  } else {
     root.localStorageMemory = localStorageMemory;
-  }
-})(this);
+})(window);

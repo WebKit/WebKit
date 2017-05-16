@@ -1,3 +1,36 @@
+2017-05-16  Addy Osmani  <addyosmani@gmail.com>
+
+        Update to Speedometer 2.0 w/updated frameworks + new workloads
+        https://bugs.webkit.org/show_bug.cgi?id=170513
+
+        Reviewed by Ryosuke Niwa.
+
+        Refresh test runner and fix apps to work with it.
+
+        * Speedometer/InteractiveRunner.html:
+        (parseQueryString): Adds support for startAutomatically query parameter.
+        * Speedometer/resources/tests.js:
+        (triggerEnter): Refactor event triggering behavior for tests.
+        * Speedometer/resources/todomvc/architecture-examples/angular/dist/index.html:
+        (CSS): Drop reference to extraneous stylesheet in Angular TodoMVC.
+        * Speedometer/resources/todomvc/architecture-examples/emberjs/assets/todomvc.js:
+        * Speedometer/resources/todomvc/architecture-examples/emberjs/index.html:
+        (base): Enable Ember TodoMVC to be run from any directory/level.
+        * Speedometer/resources/todomvc/architecture-examples/emberjs/source/app/services/memory.js:
+        (localStorageMemory): Correct import path and switch to window.localStorageMemory to fix Ember failures.
+        * Speedometer/resources/todomvc/architecture-examples/emberjs/source/app/services/repo.js:
+        * Speedometer/resources/todomvc/architecture-examples/emberjs/tests/index.html:
+        * Speedometer/resources/todomvc/architecture-examples/jquery/index.html:
+        * Speedometer/resources/todomvc/architecture-examples/jquery/node_modules/director/LICENSE: Added.
+        (LICENSE): Add missing metadata and LICENSE files as part of director.js package for jQuery TodoMVC
+        * Speedometer/resources/todomvc/architecture-examples/jquery/node_modules/director/bower.json: Added.
+        * Speedometer/resources/todomvc/architecture-examples/jquery/node_modules/director/dist/director.js: Add missing 
+        director.js dependency for jQuery TodoMVC implementation.
+        * Speedometer/resources/todomvc/architecture-examples/jquery/node_modules/director/dist/director.min.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/jquery/node_modules/director/dist/ender.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/jquery/node_modules/director/package.json: Added.
+        * Speedometer/resources/todomvc/functional-prog-examples/elm/index.html: Fix path to built Elm TodoMVC scripts.
+
 2017-05-12  Addy Osmani  <addyosmani@gmail.com>
 
         Speedometer: Add a React.js TodoMVC implementation

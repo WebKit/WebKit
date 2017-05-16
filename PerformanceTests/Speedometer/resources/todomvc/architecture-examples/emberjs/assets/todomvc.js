@@ -363,19 +363,15 @@ define('todomvc/services/memory', ['exports'], function (exports) {
       localStorageMemory.length = 0;
     };
 
-    if (typeof exports === 'object') {
-      module.exports = localStorageMemory;
-    } else {
-      root.localStorageMemory = localStorageMemory;
-    }
-  })(this);
+    root.localStorageMemory = localStorageMemory;
+  })(window);
 });
 define('todomvc/services/repo', ['exports', 'ember', 'todomvc/services/memory'], function (exports, _ember, _todomvcServicesMemory) {
     exports['default'] = _ember['default'].Service.extend({
         lastId: 0,
         data: null,
         findAll: function findAll() {
-            return this.get('data') || this.set('data', JSON.parse(_todomvcServicesMemory.getItem('todos') || '[]'));
+            return this.get('data') || this.set('data', JSON.parse(window.localStorageMemory.getItem('todos') || '[]'));
         },
 
         add: function add(attrs) {
@@ -391,7 +387,7 @@ define('todomvc/services/repo', ['exports', 'ember', 'todomvc/services/memory'],
         },
 
         persist: function persist() {
-            _todomvcServicesMemory.setItem('todos', JSON.stringify(this.get('data')));
+            window.localStorageMemory.setItem('todos', JSON.stringify(this.get('data')));
         }
     });
 });
@@ -1257,7 +1253,7 @@ catch(err) {
 /* jshint ignore:start */
 
 if (!runningTests) {
-  require("todomvc/app")["default"].create({"name":"todomvc","version":"0.0.0+5dbc5fb9"});
+  require("todomvc/app")["default"].create({"name":"todomvc","version":"0.0.0+"});
 }
 
 /* jshint ignore:end */

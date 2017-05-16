@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>DoYouEvenBench</title>
+<title>Speedometer 2.0 Interactive Runner</title>
 <script src="resources/benchmark-runner.js" defer></script>
 <script src="resources/tests.js" defer></script>
 <style>
@@ -66,13 +66,37 @@ function createUIForSuites(suites, onstep, onrun) {
 
     var button = document.createElement('button');
     button.textContent = 'Run';
+    button.id = 'runSuites';
     button.onclick = onrun;
     control.appendChild(button);
 
     return control;
 }
 
+var parseQueryString = (function (pairList) {
+    var pairs = {};
+    for (var i = 0; i < pairList.length; ++i) {
+        var keyValue = pairList[i].split('=', 2);
+        if (keyValue.length == 1)
+            pairs[keyValue[0]] = '';
+        else
+            pairs[keyValue[0]] = decodeURIComponent(keyValue[1].replace(/\+/g, ' '));
+    }
+    return pairs;
+})(window.location.search.substr(1).split('&'));
+
+function disableAllSuitesExcept(suiteName) {
+    Suites.forEach(function(element) {
+        if (element.name !== suiteName)
+            element.disabled = true;
+    });
+}
+
 function startTest() {
+    var queryParam = parseQueryString['suite'];
+    if (queryParam !== undefined)
+        disableAllSuitesExcept(queryParam);
+
     var runner = new BenchmarkRunner(Suites, {
         willRunTest: function (suite, test) {
             test.anchor.classList.add('running');
@@ -112,6 +136,9 @@ function startTest() {
     document.body.appendChild(createUIForSuites(Suites,
         function () { runner.step(currentState).then(function (state) { currentState = state; }); },
         function () { runner.runAllSteps(currentState); currentState = null; }));
+
+    if (parseQueryString['startAutomatically'] !== undefined)
+        document.getElementById('runSuites').click();
 }
 
 window.addEventListener('load', startTest);
