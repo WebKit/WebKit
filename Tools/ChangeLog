@@ -1,3 +1,19 @@
+2017-05-15  Youenn Fablet  <youenn@apple.com>
+
+        WPT test importer should not account for slow manual tests
+        https://bugs.webkit.org/show_bug.cgi?id=172127
+
+        Reviewed by Ryosuke Niwa.
+
+        Making sure manual tests are not triggering updating tests-options.json file.
+
+        * Scripts/webkitpy/w3c/test_importer.py:
+        (TestImporter.find_importable_tests):
+        (TestImporter._already_identified_as_resource_file):
+        (TestImporter.update_tests_options):
+        * Scripts/webkitpy/w3c/test_importer_unittest.py:
+        (test_manual_slow_test):
+
 2017-05-15  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Some versions of simctl do not place parenthesis around runtime identifiers

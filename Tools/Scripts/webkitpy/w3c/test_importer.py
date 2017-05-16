@@ -312,11 +312,11 @@ class TestImporter(object):
                 elif self._is_in_resources_directory(fullpath):
                     _log.warning('%s is a test located in a "resources" folder. This test will be skipped by WebKit test runners.', fullpath)
 
-                if 'slow' in test_info:
-                    self._slow_tests.append(fullpath)
-
                 if 'manualtest' in test_info.keys():
                     continue
+
+                if 'slow' in test_info:
+                    self._slow_tests.append(fullpath)
 
                 if 'referencefile' in test_info.keys():
                     # Skip it since, the corresponding reference test should have a link to this file
@@ -506,6 +506,8 @@ class TestImporter(object):
             self.update_tests_options()
 
     def _already_identified_as_resource_file(self, path):
+        if not self._test_resource_files:
+            return False
         if path in self._test_resource_files["files"]:
             return True
         return any([path.find(directory) != -1 for directory in self._test_resource_files["directories"]])
@@ -517,6 +519,7 @@ class TestImporter(object):
         should_update = self.options.clean_destination_directory
         for full_path in self._slow_tests:
             w3c_test_path = self.filesystem.relpath(full_path, self.source_directory)
+            print w3c_test_path
             # No need to mark tests as slow if they are in skipped directories
             if self._already_identified_as_resource_file(w3c_test_path):
                 continue
