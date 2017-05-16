@@ -1,3 +1,10 @@
+2017-05-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Try to fix GTK+ build with MEDIA_STREAM enabled after r216918.
+
+        * platform/mediastream/openwebrtc/RealtimeMediaSourceCenterOwr.cpp:
+        (WebCore::RealtimeMediaSourceCenterOwr::validateRequestConstraints):
+
 2017-05-16  Youenn Fablet  <youenn@apple.com>
 
         Remove MediaConstraintsData and MediaConstraintsImpl

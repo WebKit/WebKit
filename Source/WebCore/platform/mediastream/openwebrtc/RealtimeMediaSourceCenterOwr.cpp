@@ -88,10 +88,10 @@ void RealtimeMediaSourceCenterOwr::validateRequestConstraints(ValidConstraintsHa
     // FIXME: Actually do constraints validation. The MediaConstraints
     // need to comply with the available audio/video device(s)
     // capabilities. See bug #123345.
-    if (audioConstraints.isValid())
+    if (audioConstraints.isValid)
         audioSources.append(String("audio"));
 
-    if (videoConstraints.isValid())
+    if (videoConstraints.isValid)
         videoSources.append(String("video"));
 
     m_validConstraintsHandler(WTFMove(audioSources), WTFMove(videoSources));
