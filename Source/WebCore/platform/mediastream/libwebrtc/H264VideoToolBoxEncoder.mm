@@ -28,19 +28,18 @@
 
 #if USE(LIBWEBRTC) && PLATFORM(COCOA)
 
-#if ENABLE(MAC_VIDEO_TOOLBOX)
+#if ENABLE(MAC_VIDEO_TOOLBOX) && USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/VideoToolBoxEncoderMac.mm>)
 #import <WebKitAdditions/VideoToolBoxEncoderMac.mm>
-#endif
+#else
 
 namespace WebCore {
 
-#if !ENABLE(MAC_VIDEO_TOOLBOX)
 int H264VideoToolboxEncoder::CreateCompressionSession(VTCompressionSessionRef& compressionSession, VTCompressionOutputCallback outputCallback, int32_t width, int32_t height)
 {
     return webrtc::H264VideoToolboxEncoder::CreateCompressionSession(compressionSession, outputCallback, width, height);
 }
-#endif
-
+    
 }
+#endif
 
 #endif

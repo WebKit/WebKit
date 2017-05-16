@@ -1,3 +1,14 @@
+2017-05-16  Per Arne Vollan  <pvollan@apple.com>
+
+        Compile error, include file is not found.
+        https://bugs.webkit.org/show_bug.cgi?id=172105
+
+        Reviewed by Brent Fulgham.
+
+        Use __has_include to detect if include file exists.
+
+        * platform/mediastream/libwebrtc/H264VideoToolBoxEncoder.mm:
+
 2017-05-15  Andy Estes  <aestes@apple.com>
 
         Make the application PID available to WebCore
