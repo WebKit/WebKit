@@ -31,6 +31,7 @@
 
 #if USE(LIBWEBRTC)
 
+#include <webrtc/api/video/i420_buffer.h>
 #include <webrtc/common_video/include/corevideo_frame_buffer.h>
 #include <webrtc/common_video/libyuv/include/webrtc_libyuv.h>
 #include <webrtc/media/base/videoframe.h>
@@ -117,9 +118,13 @@ bool RealtimeOutgoingVideoSource::GetStats(Stats*)
     return false;
 }
 
-void RealtimeOutgoingVideoSource::AddOrUpdateSink(rtc::VideoSinkInterface<webrtc::VideoFrame>* sink, const rtc::VideoSinkWants&)
+void RealtimeOutgoingVideoSource::AddOrUpdateSink(rtc::VideoSinkInterface<webrtc::VideoFrame>* sink, const rtc::VideoSinkWants& sinkWants)
 {
-    // FIXME: support sinkWants
+    ASSERT(!sinkWants.black_frames);
+
+    if (sinkWants.rotation_applied)
+        m_shouldApplyRotation = true;
+
     if (!m_sinks.contains(sink))
         m_sinks.append(sink);
 }
@@ -147,6 +152,12 @@ void RealtimeOutgoingVideoSource::sendOneBlackFrame()
 
 void RealtimeOutgoingVideoSource::sendFrame(rtc::scoped_refptr<webrtc::VideoFrameBuffer>&& buffer)
 {
+    // FIXME: We should make AVVideoCaptureSource handle the rotation whenever possible.
+    if (m_shouldApplyRotation && m_currentRotation != webrtc::kVideoRotation_0) {
+        // This implementation is inefficient, we should rotate on the CMSampleBuffer directly instead of doing this double allocation.
+        buffer = buffer->NativeToI420Buffer();
+        buffer = webrtc::I420Buffer::Rotate(*buffer, m_currentRotation);
+    }
     webrtc::VideoFrame frame(buffer, 0, 0, m_currentRotation);
     for (auto* sink : m_sinks)
         sink->OnFrame(frame);
