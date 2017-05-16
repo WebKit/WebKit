@@ -1,3 +1,13 @@
+2017-05-16  Mark Lam  <mark.lam@apple.com>
+
+        Gardening: rebased parser-syntax-check test results after r216891.
+        https://bugs.webkit.org/show_bug.cgi?id=172171
+
+        Not reviewed.
+
+        * js/parser-syntax-check-expected.txt:
+        * js/script-tests/parser-syntax-check.js:
+
 2017-05-16  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skip LayoutTest media/restricted-audio-playback-with-document-gesture.html on iOS.

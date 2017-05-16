@@ -886,8 +886,8 @@ invalid("({ async foo({a},...a){} });");
 invalid("({ async foo({...a},...a){} });");
 valid("({ foo(a, ...b){} });");
 valid("({ foo({a}, ...b){} });");
-valid("({ foo({a, ...b}){} });");
-valid("({ foo({b, ...a}, ...c){} });");
+invalid("({ foo({a, ...b}){} });");
+invalid("({ foo({b, ...a}, ...c){} });");
 
 debug("Weird things that used to crash.");
 invalid(`or ([[{break //(elseifo (a=0;a<2;a++)n=
