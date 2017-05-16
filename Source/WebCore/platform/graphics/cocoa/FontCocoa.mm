@@ -156,7 +156,7 @@ void Font::platformInit()
     // web standard. The AppKit adjustment of 20% is too big and is
     // incorrectly added to line spacing, so we use a 15% adjustment instead
     // and add it to the ascent.
-    if (!m_isCustomFont && needsAscentAdjustment(familyName.get()))
+    if (origin() == Origin::Local && needsAscentAdjustment(familyName.get()))
         ascent += std::round((ascent + descent) * 0.15f);
 #endif
 

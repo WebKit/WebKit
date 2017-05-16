@@ -83,7 +83,7 @@ void Font::platformInit()
     float fCapHeight = scaleEmToUnits(iCapHeight, unitsPerEm) * pointSize;
     float fLineGap = scaleEmToUnits(iLineGap, unitsPerEm) * pointSize;
 
-    if (!isCustomFont()) {
+    if (origin() == Origin::Local) {
         HWndDC dc(0);
         HGDIOBJ oldFont = SelectObject(dc, m_platformData.hfont());
         int faceLength = GetTextFace(dc, 0, 0);

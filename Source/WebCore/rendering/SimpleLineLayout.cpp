@@ -156,7 +156,7 @@ static AvoidanceReasonFlags canUseForFontAndText(const RenderBlockFlow& flow, In
     // We assume that all lines have metrics based purely on the primary font.
     const auto& style = flow.style();
     auto& fontCascade = style.fontCascade();
-    if (fontCascade.primaryFont().isLoading())
+    if (fontCascade.primaryFont().isInterstitial())
         SET_REASON_AND_RETURN_IF_NEEDED(FlowIsMissingPrimaryFont, reasons, includeReasons);
     std::optional<float> lineHeightConstraint;
     if (style.lineBoxContain() & LineBoxContainGlyphs)

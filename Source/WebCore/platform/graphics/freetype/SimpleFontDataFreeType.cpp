@@ -125,7 +125,7 @@ RefPtr<Font> Font::platformCreateScaledFont(const FontDescription& fontDescripti
         scaledFontDescription,
         m_platformData.syntheticBold(),
         m_platformData.syntheticOblique()),
-        isCustomFont(), false);
+        origin(), Interstitial::No);
 }
 
 void Font::determinePitch()

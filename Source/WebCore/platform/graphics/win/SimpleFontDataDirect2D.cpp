@@ -134,7 +134,7 @@ void Font::platformInit()
     float fCapHeight = scaleEmToUnits(iCapHeight, unitsPerEm) * pointSize;
     float fLineGap = scaleEmToUnits(iLineGap, unitsPerEm) * pointSize;
 
-    if (!isCustomFont()) {
+    if (origin() == Origin::Local) {
         Vector<WCHAR> faceName = getFaceName(font);
         fAscent = ascentConsideringMacAscentHack(faceName.data(), fAscent, fDescent);
     }

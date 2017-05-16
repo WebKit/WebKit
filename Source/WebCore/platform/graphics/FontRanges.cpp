@@ -62,7 +62,7 @@ private:
 
     bool isLoading() const final
     {
-        return m_font->isLoading();
+        return m_font->isInterstitial();
     }
 
     RefPtr<Font> m_font;

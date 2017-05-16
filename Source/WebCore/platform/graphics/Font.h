@@ -76,9 +76,21 @@ enum Pitch { UnknownPitch, FixedPitch, VariablePitch };
 class Font : public RefCounted<Font> {
 public:
     // Used to create platform fonts.
-    static Ref<Font> create(const FontPlatformData& platformData, bool isCustomFont = false, bool isLoading = false, bool isTextOrientationFallback = false)
+    enum class Origin {
+        Remote,
+        Local
+    };
+    enum class Interstitial {
+        Yes,
+        No
+    };
+    enum class OrientationFallback {
+        Fallback,
+        NoFallback
+    };
+    static Ref<Font> create(const FontPlatformData& platformData, Origin origin = Origin::Local, Interstitial interstitial = Interstitial::No, OrientationFallback orientationFallback = OrientationFallback::NoFallback)
     {
-        return adoptRef(*new Font(platformData, isCustomFont, isLoading, isTextOrientationFallback));
+        return adoptRef(*new Font(platformData, origin, interstitial, orientationFallback));
     }
 
     WEBCORE_EXPORT ~Font();
@@ -169,8 +181,8 @@ public:
     void determinePitch();
     Pitch pitch() const { return m_treatAsFixedPitch ? FixedPitch : VariablePitch; }
 
-    bool isCustomFont() const { return m_isCustomFont; }
-    bool isLoading() const { return m_isLoading; }
+    Origin origin() const { return m_origin ? Origin::Remote : Origin::Local; }
+    bool isInterstitial() const { return m_isInterstitial; }
 
 #ifndef NDEBUG
     String description() const;
@@ -208,7 +220,7 @@ public:
 #endif
 
 private:
-    Font(const FontPlatformData&, bool isCustomFont = false, bool isLoading = false, bool isTextOrientationFallback = false);
+    Font(const FontPlatformData&, Origin, Interstitial, OrientationFallback);
 
     void platformInit();
     void platformGlyphInit();
@@ -292,8 +304,8 @@ private:
 #endif
 
     unsigned m_treatAsFixedPitch : 1;
-    unsigned m_isCustomFont : 1; // Whether or not we are custom font loaded via @font-face
-    unsigned m_isLoading : 1; // Whether or not this custom font is still in the act of loading.
+    unsigned m_origin : 1; // Whether or not we are custom font loaded via @font-face
+    unsigned m_isInterstitial : 1; // Whether or not this custom font is the last resort placeholder for a loading font
 
     unsigned m_isTextOrientationFallback : 1;
     unsigned m_isBrokenIdeographFallback : 1;
@@ -335,7 +347,7 @@ ALWAYS_INLINE float Font::widthForGlyph(Glyph glyph) const
     // used in place of the actual font when isLoading() is true on both macOS and iOS.
     // The zero-width-space glyph in that font does not have a width of zero and, further, that glyph is used
     // for many other characters and must not be zero width when used for them.
-    if (isZeroWidthSpaceGlyph(glyph) && !isLoading())
+    if (isZeroWidthSpaceGlyph(glyph) && !isInterstitial())
         return 0;
 
     float width = m_glyphToWidthMap.metricsForGlyph(glyph);

@@ -625,7 +625,7 @@ RefPtr<Font> CSSFontFace::font(const FontDescription& fontDescription, bool synt
             fontIsLoading = true;
             if (status() == Status::TimedOut)
                 continue;
-            return Font::create(FontCache::singleton().lastResortFallbackFontForEveryCharacter(fontDescription)->platformData(), true, true);
+            return Font::create(FontCache::singleton().lastResortFallbackFontForEveryCharacter(fontDescription)->platformData(), Font::Origin::Remote, Font::Interstitial::Yes);
         case CSSFontFaceSource::Status::Success:
             if (RefPtr<Font> result = source->font(fontDescription, syntheticBold, syntheticItalic, m_featureSettings, m_variantSettings, m_fontSelectionCapabilities))
                 return result;

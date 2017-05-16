@@ -1,3 +1,51 @@
+2017-05-15  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Migrate Font constructor from bools to enums
+        https://bugs.webkit.org/show_bug.cgi?id=172140
+
+        Reviewed by Tim Horton.
+
+        In https://bugs.webkit.org/show_bug.cgi?id=168487, I'm adding a new flag to Font. We can't
+        keep having just a pile of bools in this class. Instead, we should be using enums.
+
+        No new tests because there is no behavior change.
+
+        * css/CSSFontFace.cpp:
+        (WebCore::CSSFontFace::font):
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::font):
+        * css/CSSSegmentedFontFace.cpp:
+        * loader/cache/CachedFont.cpp:
+        (WebCore::CachedFont::createFont):
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::Font):
+        (WebCore::Font::verticalRightOrientationFont):
+        (WebCore::Font::uprightOrientationFont):
+        (WebCore::Font::brokenIdeographFont):
+        (WebCore::Font::description):
+        (WebCore::Font::mathData):
+        * platform/graphics/Font.h:
+        (WebCore::Font::create):
+        (WebCore::Font::origin):
+        (WebCore::Font::isInterstitial):
+        (WebCore::Font::widthForGlyph):
+        (WebCore::Font::isCustomFont): Deleted.
+        (WebCore::Font::isLoading): Deleted.
+        * platform/graphics/FontRanges.cpp:
+        * platform/graphics/cocoa/FontCocoa.mm:
+        (WebCore::Font::platformInit):
+        * platform/graphics/freetype/SimpleFontDataFreeType.cpp:
+        (WebCore::Font::platformCreateScaledFont):
+        * platform/graphics/win/SimpleFontDataCGWin.cpp:
+        (WebCore::Font::platformInit):
+        * platform/graphics/win/SimpleFontDataDirect2D.cpp:
+        (WebCore::Font::platformInit):
+        * platform/graphics/win/SimpleFontDataWin.cpp:
+        (WebCore::Font::platformCreateScaledFont):
+        (WebCore::Font::determinePitch):
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::canUseForFontAndText):
+
 2017-05-15  Youenn Fablet  <youenn@apple.com>
 
         WebRTC outgoing muted video sources should send black frames

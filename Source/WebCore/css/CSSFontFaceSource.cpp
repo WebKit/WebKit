@@ -181,7 +181,7 @@ RefPtr<Font> CSSFontFaceSource::font(const FontDescription& fontDescription, boo
         if (m_immediateSource) {
             if (!m_immediateFontCustomPlatformData)
                 return nullptr;
-            return Font::create(CachedFont::platformDataFromCustomData(*m_immediateFontCustomPlatformData, fontDescription, syntheticBold, syntheticItalic, fontFaceFeatures, fontFaceVariantSettings, fontFaceCapabilities), true);
+            return Font::create(CachedFont::platformDataFromCustomData(*m_immediateFontCustomPlatformData, fontDescription, syntheticBold, syntheticItalic, fontFaceFeatures, fontFaceVariantSettings, fontFaceCapabilities), Font::Origin::Remote);
         }
 
         // We're local. Just return a Font from the normal cache.
@@ -206,9 +206,9 @@ RefPtr<Font> CSSFontFaceSource::font(const FontDescription& fontDescription, boo
     if (!m_inDocumentCustomPlatformData)
         return nullptr;
 #if PLATFORM(COCOA)
-    return Font::create(m_inDocumentCustomPlatformData->fontPlatformData(fontDescription, syntheticBold, syntheticItalic, fontFaceFeatures, fontFaceVariantSettings, fontFaceCapabilities), true);
+    return Font::create(m_inDocumentCustomPlatformData->fontPlatformData(fontDescription, syntheticBold, syntheticItalic, fontFaceFeatures, fontFaceVariantSettings, fontFaceCapabilities), Font::Origin::Remote);
 #else
-    return Font::create(m_inDocumentCustomPlatformData->fontPlatformData(fontDescription, syntheticBold, syntheticItalic), true);
+    return Font::create(m_inDocumentCustomPlatformData->fontPlatformData(fontDescription, syntheticBold, syntheticItalic), Font::Origin::Remote);
 #endif
 #endif
 
