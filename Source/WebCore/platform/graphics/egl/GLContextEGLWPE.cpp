@@ -28,7 +28,16 @@ namespace WebCore {
 std::unique_ptr<GLContextEGL> GLContextEGL::createWPEContext(PlatformDisplay& platformDisplay, EGLContext sharingContext)
 {
     auto offscreenTarget = downcast<PlatformDisplayWPE>(platformDisplay).createEGLOffscreenTarget();
-    auto context = createWindowContext(offscreenTarget->nativeWindow(), platformDisplay, sharingContext);
+
+    std::unique_ptr<GLContextEGL> context;
+    if (offscreenTarget->nativeWindow())
+        context = createWindowContext(offscreenTarget->nativeWindow(), platformDisplay, sharingContext);
+    if (!context)
+        context = createPbufferContext(platformDisplay, sharingContext);
+
+    // FIXME: if available, we could also fallback to the surfaceless-based GLContext
+    // before falling back to the pbuffer-based one.
+
     if (context)
         context->m_wpeTarget = WTFMove(offscreenTarget);
     return context;
