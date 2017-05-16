@@ -96,6 +96,12 @@ public:
     void setVideoFullscreenFrame(FloatRect) override;
 #endif
 
+#if ENABLE(VIDEO_TRACK)
+    bool requiresTextTrackRepresentation() const override;
+    void setTextTrackRepresentation(TextTrackRepresentation*) override;
+    void syncTextTrackBounds() override;
+#endif
+    
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     bool hasStreamSession() { return m_streamSession; }
     AVStreamSession *streamSession();
@@ -242,6 +248,7 @@ private:
     mutable bool m_loadingProgressed;
     bool m_hasAvailableVideoFrame;
     bool m_allRenderersHaveAvailableSamples { false };
+    RetainPtr<PlatformLayer> m_textTrackRepresentationLayer;
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     RefPtr<MediaPlaybackTarget> m_playbackTarget;
     bool m_shouldPlayToTarget { false };

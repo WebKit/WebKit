@@ -1,3 +1,25 @@
+2017-05-16  Jeremy Jones  <jeremyj@apple.com>
+
+        Captions and subtitles not showing up in picture-in-picture for MSE content.
+        https://bugs.webkit.org/show_bug.cgi?id=172145
+
+        Reviewed by Eric Carlson.
+
+        No new tests as this has no affect on the DOM.
+
+        Add TextTrackRepresentation code from MediaPlayerPrivateAVFoundationObj to MediaPlayerPrivateMediaSourceAVFObjc.
+        This moves the TextTrackRepresentation platfrom layer into the fullscreen container layer when going into
+        pip for fullscreen, allowing the captions to be visible.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::ensureLayer):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::setVideoFullscreenLayer):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::setVideoFullscreenFrame):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::requiresTextTrackRepresentation):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::syncTextTrackBounds):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::setTextTrackRepresentation):
+
 2017-05-16  David Kilzer  <ddkilzer@apple.com>
 
         WebCore::leakCGColor() needs CF_RETURNS_RETAINED annotation

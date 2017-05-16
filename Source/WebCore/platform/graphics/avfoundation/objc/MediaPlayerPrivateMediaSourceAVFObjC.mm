@@ -38,6 +38,7 @@
 #import "MediaSourcePrivateClient.h"
 #import "MediaTimeAVFoundation.h"
 #import "PlatformClockCM.h"
+#import "TextTrackRepresentation.h"
 #import "WebCoreSystemInterface.h"
 #import <AVFoundation/AVAsset.h>
 #import <AVFoundation/AVTime.h>
@@ -607,6 +608,10 @@ void MediaPlayerPrivateMediaSourceAVFObjC::ensureLayer()
 #endif
 
     [m_synchronizer addRenderer:m_sampleBufferDisplayLayer.get()];
+    
+#if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
+    m_videoFullscreenLayerManager->setVideoLayer(m_sampleBufferDisplayLayer.get(), snappedIntRect(m_player->client().mediaPlayerContentBoxRect()).size());
+#endif
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::destroyLayer()
@@ -895,14 +900,72 @@ void MediaPlayerPrivateMediaSourceAVFObjC::characteristicsChanged()
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
 void MediaPlayerPrivateMediaSourceAVFObjC::setVideoFullscreenLayer(PlatformLayer *videoFullscreenLayer, std::function<void()> completionHandler)
 {
+    if (m_videoFullscreenLayerManager->videoFullscreenLayer() == videoFullscreenLayer) {
+        completionHandler();
+        return;
+    }
+    
     m_videoFullscreenLayerManager->setVideoFullscreenLayer(videoFullscreenLayer, completionHandler);
+    
+    if (m_videoFullscreenLayerManager->videoFullscreenLayer() && m_textTrackRepresentationLayer) {
+        syncTextTrackBounds();
+        [m_videoFullscreenLayerManager->videoFullscreenLayer() addSublayer:m_textTrackRepresentationLayer.get()];
+    }
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::setVideoFullscreenFrame(FloatRect frame)
 {
     m_videoFullscreenLayerManager->setVideoFullscreenFrame(frame);
+    syncTextTrackBounds();
 }
 #endif
+    
+bool MediaPlayerPrivateMediaSourceAVFObjC::requiresTextTrackRepresentation() const
+{
+#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+    if (m_videoFullscreenLayerManager->videoFullscreenLayer())
+        return true;
+#endif
+    return false;
+}
+    
+void MediaPlayerPrivateMediaSourceAVFObjC::syncTextTrackBounds()
+{
+#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+    if (!m_videoFullscreenLayerManager->videoFullscreenLayer() || !m_textTrackRepresentationLayer)
+        return;
+    
+    auto videoFullscreenFrame = m_videoFullscreenLayerManager->videoFullscreenFrame();
+    auto videoRect = [m_sampleBufferDisplayLayer bounds];
+    auto textFrame = m_sampleBufferDisplayLayer ? videoRect : CGRectMake(0, 0, videoFullscreenFrame.width(), videoFullscreenFrame.height());
+    [m_textTrackRepresentationLayer setFrame:textFrame];
+#endif
+}
+    
+void MediaPlayerPrivateMediaSourceAVFObjC::setTextTrackRepresentation(TextTrackRepresentation* representation)
+{
+#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+    PlatformLayer* representationLayer = representation ? representation->platformLayer() : nil;
+    if (representationLayer == m_textTrackRepresentationLayer) {
+        syncTextTrackBounds();
+        return;
+    }
+    
+    if (m_textTrackRepresentationLayer)
+        [m_textTrackRepresentationLayer removeFromSuperlayer];
+    
+    m_textTrackRepresentationLayer = representationLayer;
+    
+    if (m_videoFullscreenLayerManager->videoFullscreenLayer() && m_textTrackRepresentationLayer) {
+        syncTextTrackBounds();
+        [m_videoFullscreenLayerManager->videoFullscreenLayer() addSublayer:m_textTrackRepresentationLayer.get()];
+    }
+    
+#else
+    UNUSED_PARAM(representation);
+#endif
+}
+    
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 void MediaPlayerPrivateMediaSourceAVFObjC::setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>&& target)
