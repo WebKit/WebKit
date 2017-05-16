@@ -41,10 +41,8 @@
 #include "Parser.h"
 #include "StackAlignment.h"
 #include <wtf/Assertions.h>
-#include <wtf/HashSet.h>
 #include <wtf/Threading.h>
 #include <wtf/text/StringBuilder.h>
-#include <wtf/text/UniquedStringImpl.h>
 
 using namespace WTF;
 
@@ -516,7 +514,7 @@ RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, Registe
                 hasComputedProperty = true;
                 break;
             }
-            if (node->m_type & PropertyNode::Constant || node->m_type & PropertyNode::Spread)
+            if (node->m_type & PropertyNode::Constant)
                 continue;
 
             // Duplicates are possible.
@@ -537,9 +535,6 @@ RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, Registe
             // Handle regular values.
             if (node->m_type & PropertyNode::Constant) {
                 emitPutConstantProperty(generator, dst, *node);
-                continue;
-            } else if (node->m_type & PropertyNode::Spread) {
-                generator.emitNode(dst, node->m_assign);
                 continue;
             }
 
@@ -4066,56 +4061,25 @@ void ObjectPatternNode::toString(StringBuilder& builder) const
 void ObjectPatternNode::bindValue(BytecodeGenerator& generator, RegisterID* rhs) const
 {
     generator.emitRequireObjectCoercible(rhs, ASCIILiteral("Right side of assignment cannot be destructured"));
-    
-    IdentifierSet excludedSet;
-
     for (const auto& target : m_targetPatterns) {
-        if (target.bindingType == BindingType::Element) {
-            RefPtr<RegisterID> temp = generator.newTemporary();
-            if (!target.propertyExpression) {
-                
-                // Should not emit get_by_id for indexed ones.
-                std::optional<uint32_t> optionalIndex = parseIndex(target.propertyName);
-                if (!optionalIndex)
-                    generator.emitGetById(temp.get(), rhs, target.propertyName);
-                else {
-                    RefPtr<RegisterID> pIndex = generator.emitLoad(nullptr, jsNumber(optionalIndex.value()));
-                    generator.emitGetByVal(temp.get(), rhs, pIndex.get());
-                }
-            } else {
-                RefPtr<RegisterID> propertyName = generator.emitNode(target.propertyExpression);
-                generator.emitGetByVal(temp.get(), rhs, propertyName.get());
+        RefPtr<RegisterID> temp = generator.newTemporary();
+        if (!target.propertyExpression) {
+            // Should not emit get_by_id for indexed ones.
+            std::optional<uint32_t> optionalIndex = parseIndex(target.propertyName);
+            if (!optionalIndex)
+                generator.emitGetById(temp.get(), rhs, target.propertyName);
+            else {
+                RefPtr<RegisterID> index = generator.emitLoad(nullptr, jsNumber(optionalIndex.value()));
+                generator.emitGetByVal(temp.get(), rhs, index.get());
             }
-            
-            if (UNLIKELY(m_containsRestElement))
-                excludedSet.add(target.propertyName.impl());
-            
-            if (target.defaultValue)
-                assignDefaultValueIfUndefined(generator, temp.get(), target.defaultValue);
-            target.pattern->bindValue(generator, temp.get());
         } else {
-            RefPtr<RegisterID> excludedSetReg = generator.emitLoad(generator.newTemporary(), excludedSet);
-        
-            RefPtr<RegisterID> newObject = generator.emitNewObject(generator.newTemporary());
-            
-            // load and call @copyDataProperties
-            auto var = generator.variable(generator.propertyNames().builtinNames().copyDataPropertiesPrivateName());
-            
-            RefPtr<RegisterID> scope = generator.newTemporary();
-            generator.moveToDestinationIfNeeded(scope.get(), generator.emitResolveScope(scope.get(), var));
-            RefPtr<RegisterID> copyDataProperties = generator.emitGetFromScope(generator.newTemporary(), scope.get(), var, ThrowIfNotFound);
-            
-            CallArguments args(generator, nullptr, 3);
-            unsigned argumentCount = 0;
-            generator.emitLoad(args.thisRegister(), jsUndefined());
-            generator.emitMove(args.argumentRegister(argumentCount++), newObject.get());
-            generator.emitMove(args.argumentRegister(argumentCount++), rhs);
-            generator.emitMove(args.argumentRegister(argumentCount++), excludedSetReg.get());
-
-            RefPtr<RegisterID> result = generator.newTemporary();
-            generator.emitCall(result.get(), copyDataProperties.get(), NoExpectedFunction, args, divot(), divotStart(), divotEnd(), DebuggableCall::No);
-            target.pattern->bindValue(generator, result.get());
+            RefPtr<RegisterID> propertyName = generator.emitNode(target.propertyExpression);
+            generator.emitGetByVal(temp.get(), rhs, propertyName.get());
         }
+
+        if (target.defaultValue)
+            assignDefaultValueIfUndefined(generator, temp.get(), target.defaultValue);
+        target.pattern->bindValue(generator, temp.get());
     }
 }
 
@@ -4262,33 +4226,6 @@ void RestParameterNode::emit(BytecodeGenerator& generator)
 RegisterID* SpreadExpressionNode::emitBytecode(BytecodeGenerator&, RegisterID*)
 {
     RELEASE_ASSERT_NOT_REACHED();
-    return 0;
-}
-
-RegisterID* ObjectSpreadExpressionNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
-{
-    RefPtr<RegisterID> src = generator.newTemporary();
-    generator.emitNode(src.get(), m_expression);
-    IdentifierSet excludedSet;
-    
-    RefPtr<RegisterID> excludedSetReg = generator.emitLoad(generator.newTemporary(), excludedSet);
-        
-    // load and call @copyDataProperties
-    auto var = generator.variable(generator.propertyNames().builtinNames().copyDataPropertiesPrivateName());
-    
-    RefPtr<RegisterID> scope = generator.newTemporary();
-    generator.moveToDestinationIfNeeded(scope.get(), generator.emitResolveScope(scope.get(), var));
-    RefPtr<RegisterID> copyDataProperties = generator.emitGetFromScope(generator.newTemporary(), scope.get(), var, ThrowIfNotFound);
-    
-    CallArguments args(generator, nullptr, 3);
-    unsigned argumentCount = 0;
-    generator.emitLoad(args.thisRegister(), jsUndefined());
-    generator.emitMove(args.argumentRegister(argumentCount++), dst);
-    generator.emitMove(args.argumentRegister(argumentCount++), src.get());
-    generator.emitMove(args.argumentRegister(argumentCount++), excludedSetReg.get());
-    
-    generator.emitCall(generator.newTemporary(), copyDataProperties.get(), NoExpectedFunction, args, divot(), divotStart(), divotEnd(), DebuggableCall::No);
-    
     return 0;
 }
 

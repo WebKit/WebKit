@@ -234,19 +234,9 @@ namespace JSC {
         , m_isClassProperty(isClassProperty)
     {
     }
-    
-    inline PropertyNode::PropertyNode(ExpressionNode* assign, Type type, PutType putType, SuperBinding superBinding, bool isClassProperty)
-        : m_name(nullptr)
-        , m_assign(assign)
-        , m_type(type)
-        , m_needsSuperBinding(superBinding == SuperBinding::Needed)
-        , m_putType(putType)
-        , m_isClassProperty(isClassProperty)
-    {
-    }
 
     inline PropertyNode::PropertyNode(ExpressionNode* name, ExpressionNode* assign, Type type, PutType putType, SuperBinding superBinding, bool isClassProperty)
-        : m_name(nullptr)
+        : m_name(0)
         , m_expression(name)
         , m_assign(assign)
         , m_type(type)
@@ -300,12 +290,6 @@ namespace JSC {
     
     
     inline SpreadExpressionNode::SpreadExpressionNode(const JSTokenLocation& location, ExpressionNode* expression)
-        : ExpressionNode(location)
-        , m_expression(expression)
-    {
-    }
-    
-    inline ObjectSpreadExpressionNode::ObjectSpreadExpressionNode(const JSTokenLocation& location, ExpressionNode* expression)
         : ExpressionNode(location)
         , m_expression(expression)
     {

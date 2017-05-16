@@ -1013,26 +1013,11 @@ template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::parseDe
         if (hasDestructuringPattern)
             *hasDestructuringPattern = true;
 
-        bool restElementWasFound = false;
-
         do {
             bool wasString = false;
 
             if (match(CLOSEBRACE))
                 break;
-
-            if (UNLIKELY(match(DOTDOTDOT))) {
-                JSTokenLocation location = m_token.m_location;
-                next();
-                auto innerPattern = parseBindingOrAssignmentElement(context, kind, exportType, duplicateIdentifier, hasDestructuringPattern, bindingContext, depth + 1);
-                if (kind == DestructuringKind::DestructureToExpressions && !innerPattern)
-                    return 0;
-                propagateError();
-                context.appendObjectPatternRestEntry(objectPattern, location, innerPattern);
-                restElementWasFound = true;
-                context.setContainsObjectRestElement(objectPattern, restElementWasFound);
-                break;
-            }
 
             const Identifier* propertyName = nullptr;
             TreeExpression propertyExpression = 0;
@@ -1108,7 +1093,7 @@ template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::parseDe
 
         if (kind == DestructuringKind::DestructureToExpressions && !match(CLOSEBRACE))
             return 0;
-        consumeOrFail(CLOSEBRACE, restElementWasFound ? "Expected a closing '}' following a rest element destructuring pattern" : "Expected either a closing '}' or an ',' after a property destructuring pattern");
+        consumeOrFail(CLOSEBRACE, "Expected either a closing '}' or an ',' after a property destructuring pattern");
         pattern = objectPattern;
         break;
     }
@@ -3803,16 +3788,6 @@ namedProperty:
         failIfFalse(node, "Cannot parse expression for property declaration");
         context.setEndOffset(node, m_lexer->currentOffset());
         return context.createProperty(propertyName, node, static_cast<PropertyNode::Type>(PropertyNode::Constant | PropertyNode::Computed), PropertyNode::Unknown, complete, SuperBinding::NotNeeded, isClassProperty);
-    }
-    case DOTDOTDOT: {
-        auto spreadLocation = m_token.m_location;
-        auto start = m_token.m_startPosition;
-        auto divot = m_token.m_endPosition;
-        next();
-        TreeExpression elem = parseAssignmentExpressionOrPropagateErrorClass(context);
-        failIfFalse(elem, "Cannot parse subject of a spread operation");
-        auto node = context.createObjectSpreadExpression(spreadLocation, elem, start, divot, m_lastTokenEndPosition);
-        return context.createProperty(node, PropertyNode::Spread, PropertyNode::Unknown, complete, SuperBinding::NotNeeded, isClassProperty);
     }
     default:
         failIfFalse(m_token.m_type & KeywordTokenFlag, "Expected a property name");

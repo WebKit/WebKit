@@ -58,8 +58,6 @@
 #include "JSFunction.h"
 #include "JSLexicalEnvironment.h"
 #include "JSModuleEnvironment.h"
-#include "JSSet.h"
-#include "JSString.h"
 #include "JSTemplateRegistryKey.h"
 #include "LLIntData.h"
 #include "LLIntEntrypoint.h"
@@ -406,8 +404,6 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         vm.functionHasExecutedCache()->removeUnexecutedRange(ownerExecutable->sourceID(), ownerExecutable->typeProfilingStartOffset(), ownerExecutable->typeProfilingEndOffset());
 
     if (!setConstantRegisters(unlinkedCodeBlock->constantRegisters(), unlinkedCodeBlock->constantsSourceCodeRepresentation()))
-        return false;
-    if (!setConstantIdentifierSetRegisters(vm, unlinkedCodeBlock->constantIdentifierSets()))
         return false;
     if (unlinkedCodeBlock->usesGlobalObject())
         m_constantRegisters[unlinkedCodeBlock->globalObjectRegister().toConstantIndex()].set(*m_vm, this, m_globalObject.get());
@@ -865,29 +861,6 @@ CodeBlock::~CodeBlock()
         stub->deref();
     }
 #endif // ENABLE(JIT)
-}
-
-bool CodeBlock::setConstantIdentifierSetRegisters(VM& vm, const Vector<ConstantIndentifierSetEntry>& constants)
-{
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    JSGlobalObject* globalObject = m_globalObject.get();
-    ExecState* exec = globalObject->globalExec();
-
-    for (const auto& entry : constants) {
-        Structure* setStructure = globalObject->setStructure();
-        RETURN_IF_EXCEPTION(scope, false);
-        JSSet* jsSet = JSSet::create(exec, vm, setStructure);
-        RETURN_IF_EXCEPTION(scope, false);
-
-        const IdentifierSet& set = entry.first;
-        for (auto& setEntry : set) {
-            JSString* jsString = jsOwnedString(&vm, setEntry.get());
-            jsSet->add(exec, JSValue(jsString));
-            RETURN_IF_EXCEPTION(scope, false);
-        }
-        m_constantRegisters[entry.second].set(vm, this, JSValue(jsSet));
-    }
-    return true;
 }
 
 bool CodeBlock::setConstantRegisters(const Vector<WriteBarrier<Unknown>>& constants, const Vector<SourceCodeRepresentation>& constantsSourceCodeRepresentation)

@@ -1951,27 +1951,6 @@ RegisterID* BytecodeGenerator::emitLoad(RegisterID* dst, JSValue v, SourceCodeRe
     return constantID;
 }
 
-RegisterID* BytecodeGenerator::emitLoad(RegisterID* dst, IdentifierSet& set)
-{
-    for (const auto& entry : m_codeBlock->constantIdentifierSets()) {
-        if (entry.first != set)
-            continue;
-        
-        return &m_constantPoolRegisters[entry.second];
-    }
-    
-    unsigned index = m_nextConstantOffset;
-    m_constantPoolRegisters.append(FirstConstantRegisterIndex + m_nextConstantOffset);
-    ++m_nextConstantOffset;
-    m_codeBlock->addSetConstant(set);
-    RegisterID* m_setRegister = &m_constantPoolRegisters[index];
-    
-    if (dst)
-        return emitMove(dst, m_setRegister);
-    
-    return m_setRegister;
-}
-
 RegisterID* BytecodeGenerator::emitLoadGlobalObject(RegisterID* dst)
 {
     if (!m_globalObjectRegister) {

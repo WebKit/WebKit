@@ -1,3 +1,61 @@
+2017-05-15  Mark Lam  <mark.lam@apple.com>
+
+        Rolling out r214038 and r213697: Crashes when using computed properties with rest destructuring and object spread.
+        https://bugs.webkit.org/show_bug.cgi?id=172147
+
+        Rubber-stamped by Saam Barati.
+
+        I rolled out every thing in those 2 patches except for the change to make
+        CodeBlock::finishCreation() return a bool plus its clients that depend on this.
+        I made this exception because r214931 relies on this change, and this part of
+        the change looks correct.
+
+        * builtins/BuiltinNames.h:
+        * builtins/GlobalOperations.js:
+        (globalPrivate.speciesConstructor):
+        (globalPrivate.copyDataProperties): Deleted.
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        (JSC::CodeBlock::setConstantIdentifierSetRegisters): Deleted.
+        * bytecode/CodeBlock.h:
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::addBitVector):
+        (JSC::UnlinkedCodeBlock::constantRegisters):
+        (JSC::UnlinkedCodeBlock::addSetConstant): Deleted.
+        (JSC::UnlinkedCodeBlock::constantIdentifierSets): Deleted.
+        * bytecompiler/BytecodeGenerator.cpp:
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::PropertyListNode::emitBytecode):
+        (JSC::ObjectPatternNode::bindValue):
+        (JSC::ObjectSpreadExpressionNode::emitBytecode): Deleted.
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createProperty):
+        (JSC::ASTBuilder::appendObjectPatternEntry):
+        (JSC::ASTBuilder::createObjectSpreadExpression): Deleted.
+        (JSC::ASTBuilder::appendObjectPatternRestEntry): Deleted.
+        (JSC::ASTBuilder::setContainsObjectRestElement): Deleted.
+        * parser/NodeConstructors.h:
+        (JSC::PropertyNode::PropertyNode):
+        (JSC::SpreadExpressionNode::SpreadExpressionNode):
+        (JSC::ObjectSpreadExpressionNode::ObjectSpreadExpressionNode): Deleted.
+        * parser/Nodes.h:
+        (JSC::ObjectPatternNode::appendEntry):
+        (JSC::ObjectSpreadExpressionNode::expression): Deleted.
+        (JSC::ObjectPatternNode::setContainsRestElement): Deleted.
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseDestructuringPattern):
+        (JSC::Parser<LexerType>::parseProperty):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createSpreadExpression):
+        (JSC::SyntaxChecker::createProperty):
+        (JSC::SyntaxChecker::operatorStackPop):
+        (JSC::SyntaxChecker::createObjectSpreadExpression): Deleted.
+        * runtime/ObjectConstructor.cpp:
+        (JSC::ObjectConstructor::finishCreation):
+        * runtime/SetPrototype.cpp:
+        (JSC::SetPrototype::finishCreation):
+
 2017-05-15  David Kilzer  <ddkilzer@apple.com>
 
         JSEnvironmentRecord::allocationSizeForScopeSize() and offsetOfVariable(ScopeOffset) should used checked arithmetic

@@ -646,11 +646,10 @@ namespace JSC {
 
     class PropertyNode : public ParserArenaFreeable {
     public:
-        enum Type { Constant = 1, Getter = 2, Setter = 4, Computed = 8, Shorthand = 16, Spread = 32 };
+        enum Type { Constant = 1, Getter = 2, Setter = 4, Computed = 8, Shorthand = 16 };
         enum PutType { Unknown, KnownDirect };
 
         PropertyNode(const Identifier&, ExpressionNode*, Type, PutType, SuperBinding, bool isClassProperty);
-        PropertyNode(ExpressionNode*, Type, PutType, SuperBinding, bool isClassProperty);
         PropertyNode(ExpressionNode* propertyName, ExpressionNode*, Type, PutType, SuperBinding, bool isClassProperty);
 
         ExpressionNode* expressionName() const { return m_expression; }
@@ -666,7 +665,7 @@ namespace JSC {
         const Identifier* m_name;
         ExpressionNode* m_expression;
         ExpressionNode* m_assign;
-        unsigned m_type : 6;
+        unsigned m_type : 5;
         unsigned m_needsSuperBinding : 1;
         unsigned m_putType : 1;
         unsigned m_isClassProperty: 1;
@@ -746,18 +745,6 @@ namespace JSC {
         RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
         
         bool isSpreadExpression() const override { return true; }
-        ExpressionNode* m_expression;
-    };
-    
-    class ObjectSpreadExpressionNode : public ExpressionNode, public ThrowableExpressionData {
-    public:
-        ObjectSpreadExpressionNode(const JSTokenLocation&, ExpressionNode*);
-        
-        ExpressionNode* expression() const { return m_expression; }
-        
-    private:
-        RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
-        
         ExpressionNode* m_expression;
     };
 
@@ -2127,28 +2114,19 @@ namespace JSC {
         Vector<Entry> m_targetPatterns;
     };
     
-    class ObjectPatternNode : public DestructuringPatternNode, public ThrowableExpressionData, public ParserArenaDeletable {
+    class ObjectPatternNode : public DestructuringPatternNode, public ParserArenaDeletable {
     public:
         using ParserArenaDeletable::operator new;
         
         ObjectPatternNode();
-        enum class BindingType {
-            Element,
-            RestElement
-        };
-        void appendEntry(const JSTokenLocation&, const Identifier& identifier, bool wasString, DestructuringPatternNode* pattern, ExpressionNode* defaultValue, BindingType bindingType)
+        void appendEntry(const JSTokenLocation&, const Identifier& identifier, bool wasString, DestructuringPatternNode* pattern, ExpressionNode* defaultValue)
         {
-            m_targetPatterns.append(Entry{ identifier, nullptr, wasString, pattern, defaultValue, bindingType });
+            m_targetPatterns.append(Entry { identifier, nullptr, wasString, pattern, defaultValue });
         }
 
-        void appendEntry(const JSTokenLocation&, ExpressionNode* propertyExpression, DestructuringPatternNode* pattern, ExpressionNode* defaultValue, BindingType bindingType)
+        void appendEntry(const JSTokenLocation&, ExpressionNode* propertyExpression, DestructuringPatternNode* pattern, ExpressionNode* defaultValue)
         {
-            m_targetPatterns.append(Entry{ Identifier(), propertyExpression, false, pattern, defaultValue, bindingType });
-        }
-        
-        void setContainsRestElement(bool containsRestElement)
-        {
-            m_containsRestElement = containsRestElement;
+            m_targetPatterns.append(Entry { Identifier(), propertyExpression, false, pattern, defaultValue });
         }
 
     private:
@@ -2161,9 +2139,7 @@ namespace JSC {
             bool wasString;
             DestructuringPatternNode* pattern;
             ExpressionNode* defaultValue;
-            BindingType bindingType;
         };
-        bool m_containsRestElement { false };
         Vector<Entry> m_targetPatterns;
     };
 

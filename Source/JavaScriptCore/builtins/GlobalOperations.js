@@ -79,29 +79,3 @@ function speciesConstructor(obj, defaultConstructor)
         return constructor;
     @throwTypeError("|this|.constructor[Symbol.species] is not a constructor");
 }
-
-@globalPrivate
-function copyDataProperties(target, source, excludedSet)
-{
-    if (!@isObject(target))
-        @throwTypeError("target needs to be an object");
-    
-    if (source == null)
-        return target;
-    
-    let from = @Object(source);
-    let keys = @Reflect.@ownKeys(from);
-    let keysLength = keys.length;
-    for (let i = 0; i < keysLength; i++) {
-        let nextKey = keys[i];
-        if (!excludedSet.@has(nextKey)) {
-            let desc = @Object.@getOwnPropertyDescriptor(from, nextKey);
-            if (desc.enumerable && desc !== @undefined) {
-                let propValue = from[nextKey];
-                @Object.@defineProperty(target, nextKey, {value: propValue, enumerable: true, writable: true, configurable: true});
-            }
-        }
-    }
-
-    return target;
-}

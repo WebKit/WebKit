@@ -1,3 +1,13 @@
+2017-05-15  Mark Lam  <mark.lam@apple.com>
+
+        Rolling out r214038 and r213697: Crashes when using computed properties with rest destructuring and object spread.
+        https://bugs.webkit.org/show_bug.cgi?id=172147
+
+        Rubber-stamped by Saam Barati.
+
+        * wtf/HashSet.h:
+        (WTF::=):
+
 2017-05-14  Chris Dumez  <cdumez@apple.com>
 
         Drop PassRefPtr class from WTF
