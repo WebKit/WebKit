@@ -280,18 +280,13 @@ String MediaControlsHost::generateUUID() const
 
 String MediaControlsHost::shadowRootCSSText() const
 {
-    Page* page = m_mediaElement->document().page();
-    if (!page)
-        return emptyString();
-    return RenderTheme::themeForPage(page)->modernMediaControlsStyleSheet();
+    return RenderTheme::singleton().modernMediaControlsStyleSheet();
 }
 
 String MediaControlsHost::base64StringForIconNameAndType(const String& iconName, const String& iconType) const
 {
-    Page* page = m_mediaElement->document().page();
-    if (!page)
-        return emptyString();
-    return RenderTheme::themeForPage(page)->mediaControlsBase64StringForIconNameAndType(iconName, iconType);
+
+    return RenderTheme::singleton().mediaControlsBase64StringForIconNameAndType(iconName, iconType);
 }
 
 }

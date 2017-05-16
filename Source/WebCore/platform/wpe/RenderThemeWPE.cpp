@@ -33,10 +33,10 @@
 
 namespace WebCore {
 
-Ref<RenderTheme> RenderTheme::themeForPage(Page*)
+RenderTheme& RenderTheme::singleton()
 {
-    static RenderTheme& theme = RenderThemeWPE::create().leakRef();
-    return theme;
+    static NeverDestroyed<Ref<RenderTheme>> theme(RenderThemeWPE::create());
+    return theme.get();
 }
 
 void RenderThemeWPE::updateCachedSystemFontDescription(CSSValueID, FontCascadeDescription&) const

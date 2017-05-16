@@ -244,12 +244,12 @@ bool TextFieldInputType::needsContainer() const
 
 bool TextFieldInputType::shouldHaveSpinButton() const
 {
-    return RenderTheme::themeForPage(element().document().page())->shouldHaveSpinButton(element());
+    return RenderTheme::singleton().shouldHaveSpinButton(element());
 }
 
 bool TextFieldInputType::shouldHaveCapsLockIndicator() const
 {
-    return RenderTheme::themeForPage(element().document().page())->shouldHaveCapsLockIndicator(element());
+    return RenderTheme::singleton().shouldHaveCapsLockIndicator(element());
 }
 
 void TextFieldInputType::createShadowSubtree()

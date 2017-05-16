@@ -48,12 +48,12 @@ static bool isCurrentColorString(const String& colorString)
     return equalLettersIgnoringASCIICase(colorString, "currentcolor");
 }
 
-static Color parseColor(const String& colorString, Document* document = nullptr)
+static Color parseColor(const String& colorString)
 {
     Color color = CSSParser::parseColor(colorString);
     if (color.isValid())
         return color;
-    return CSSParser::parseSystemColor(colorString, document);
+    return CSSParser::parseSystemColor(colorString);
 }
 
 Color currentColor(HTMLCanvasElement* canvas)
@@ -71,7 +71,7 @@ Color parseColorOrCurrentColor(const String& colorString, HTMLCanvasElement* can
     if (isCurrentColorString(colorString))
         return currentColor(canvas);
 
-    return parseColor(colorString, canvas ? &canvas->document() : nullptr);
+    return parseColor(colorString);
 }
 
 CanvasStyle::CanvasStyle(Color color)
@@ -109,12 +109,12 @@ inline CanvasStyle::CanvasStyle(CurrentColor color)
 {
 }
 
-CanvasStyle CanvasStyle::createFromString(const String& colorString, Document* document)
+CanvasStyle CanvasStyle::createFromString(const String& colorString)
 {
     if (isCurrentColorString(colorString))
         return CurrentColor { std::nullopt };
 
-    Color color = parseColor(colorString, document);
+    Color color = parseColor(colorString);
     if (!color.isValid())
         return { };
 

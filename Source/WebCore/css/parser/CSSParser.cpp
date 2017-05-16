@@ -173,16 +173,13 @@ Color CSSParser::parseColor(const String& string, bool strict)
     return primitiveValue.color();
 }
 
-Color CSSParser::parseSystemColor(const String& string, Document* document)
+Color CSSParser::parseSystemColor(const String& string)
 {
-    if (!document || !document->page())
-        return Color();
-    
     CSSValueID id = cssValueKeywordID(string);
     if (!StyleColor::isSystemColor(id))
         return Color();
     
-    return document->page()->theme().systemColor(id);
+    return RenderTheme::singleton().systemColor(id);
 }
 
 RefPtr<CSSValue> CSSParser::parseSingleValue(CSSPropertyID propertyID, const String& string, const CSSParserContext& context)

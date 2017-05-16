@@ -137,7 +137,7 @@ void MediaControlPanelElement::startTimer()
     // The timer is required to set the property display:'none' on the panel,
     // such that captions are correctly displayed at the bottom of the video
     // at the end of the fadeout transition.
-    Seconds duration = document().page() ? document().page()->theme().mediaControlsFadeOutDuration() : 0_s;
+    Seconds duration = RenderTheme::singleton().mediaControlsFadeOutDuration();
     m_transitionTimer.startOneShot(duration);
 }
 
@@ -188,7 +188,7 @@ void MediaControlPanelElement::makeOpaque()
     if (m_opaque)
         return;
 
-    double duration = document().page() ? document().page()->theme().mediaControlsFadeInDuration() : 0;
+    double duration = RenderTheme::singleton().mediaControlsFadeInDuration();
 
     setInlineStyleProperty(CSSPropertyTransitionProperty, CSSPropertyOpacity);
     setInlineStyleProperty(CSSPropertyTransitionDuration, duration, CSSPrimitiveValue::CSS_S);
@@ -205,7 +205,7 @@ void MediaControlPanelElement::makeTransparent()
     if (!m_opaque)
         return;
 
-    Seconds duration = document().page() ? document().page()->theme().mediaControlsFadeOutDuration() : 0_s;
+    Seconds duration = RenderTheme::singleton().mediaControlsFadeOutDuration();
 
     setInlineStyleProperty(CSSPropertyTransitionProperty, CSSPropertyOpacity);
     setInlineStyleProperty(CSSPropertyTransitionDuration, duration.value(), CSSPrimitiveValue::CSS_S);

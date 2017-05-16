@@ -839,7 +839,7 @@ void CanvasRenderingContext2D::setStrokeColor(const String& color, std::optional
         return;
 
     realizeSaves();
-    setStrokeStyle(CanvasStyle::createFromString(color, &canvas().document()));
+    setStrokeStyle(CanvasStyle::createFromString(color));
     modifiableState().unparsedStrokeColor = color;
 }
 
@@ -875,7 +875,7 @@ void CanvasRenderingContext2D::setFillColor(const String& color, std::optional<f
         return;
 
     realizeSaves();
-    setFillStyle(CanvasStyle::createFromString(color, &canvas().document()));
+    setFillStyle(CanvasStyle::createFromString(color));
     modifiableState().unparsedFillColor = color;
 }
 

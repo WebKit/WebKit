@@ -74,7 +74,7 @@ public:
         : m_overlay(overlay)
     {
         FontCascadeDescription fontDescription;
-        RenderTheme::defaultTheme()->systemFont(CSSValueMessageBox, fontDescription);
+        RenderTheme::singleton().systemFont(CSSValueMessageBox, fontDescription);
         fontDescription.setComputedSize(gFontSize);
         m_textFont = FontCascade(fontDescription, 0, 0);
         m_textFont.update(nullptr);

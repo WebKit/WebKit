@@ -1,3 +1,99 @@
+2017-05-15  Antti Koivisto  <antti@apple.com>
+
+        RenderTheme does not need to be per-page
+        https://bugs.webkit.org/show_bug.cgi?id=172116
+        <rdar://problem/30426457>
+
+        Reviewed by Zalan Bujtas.
+
+        There are no implementations of RenderTheme::themeForPage that actually care about the page.
+        It can be replaced with a singleton, simplifying a bunch of code.
+
+        * Modules/mediacontrols/MediaControlsHost.cpp:
+        (WebCore::MediaControlsHost::shadowRootCSSText):
+        (WebCore::MediaControlsHost::base64StringForIconNameAndType):
+        * css/CSSDefaultStyleSheets.cpp:
+        (WebCore::CSSDefaultStyleSheets::loadFullDefaultStyle):
+        (WebCore::CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement):
+
+            Fix a potential crash if we get here when page is null (though it doesn't appear to repro on trunk).
+
+        * css/StyleColor.cpp:
+        (WebCore::StyleColor::colorFromKeyword):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::adjustRenderStyle):
+        * css/parser/CSSParser.cpp:
+        (WebCore::CSSParser::parseSystemColor):
+        * css/parser/CSSParser.h:
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::CSSPropertyParser::consumeSystemFont):
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::updateAppearance):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::ensureMediaControlsInjectedScript):
+        * html/HTMLMeterElement.cpp:
+        (WebCore::HTMLMeterElement::createElementRenderer):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::usesMenuList):
+        (WebCore::HTMLSelectElement::platformHandleKeydownEvent):
+        (WebCore::HTMLSelectElement::menuListDefaultEventHandler):
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::adjustInnerTextStyle):
+        * html/InputType.cpp:
+        (WebCore::InputType::themeSupportsDataListUI):
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::shouldHaveSpinButton):
+        (WebCore::TextFieldInputType::shouldHaveCapsLockIndicator):
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::setStrokeColor):
+        (WebCore::CanvasRenderingContext2D::setFillColor):
+        * html/canvas/CanvasStyle.cpp:
+        (WebCore::parseColor):
+        (WebCore::parseColorOrCurrentColor):
+        (WebCore::CanvasStyle::createFromString):
+        * html/canvas/CanvasStyle.h:
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlPanelElement::startTimer):
+        (WebCore::MediaControlPanelElement::makeOpaque):
+        (WebCore::MediaControlPanelElement::makeTransparent):
+        * html/shadow/MediaControls.cpp:
+        (WebCore::MediaControls::reset):
+        (WebCore::MediaControls::reportedError):
+        (WebCore::MediaControls::updateCurrentTimeDisplay):
+        * html/shadow/mac/ImageControlsButtonElementMac.cpp:
+        (WebCore::ImageControlsButtonElementMac::tryCreate):
+        * page/MemoryRelease.cpp:
+        (WebCore::releaseNoncriticalMemory):
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        * page/Page.h:
+        (WebCore::Page::theme): Deleted.
+        * platform/wpe/RenderThemeWPE.cpp:
+        (WebCore::RenderTheme::singleton):
+        (WebCore::RenderTheme::themeForPage): Deleted.
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::getReplacementTextGeometry):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::theme):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::focusRingColor):
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::defaultTheme): Deleted.
+        * rendering/RenderThemeGtk.cpp:
+        (WebCore::RenderTheme::singleton):
+        (WebCore::RenderTheme::themeForPage): Deleted.
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderTheme::singleton):
+        (WebCore::RenderTheme::themeForPage): Deleted.
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderTheme::singleton):
+        (WebCore::RenderTheme::themeForPage): Deleted.
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::RenderTheme::singleton):
+        (WebCore::RenderTheme::themeForPage): Deleted.
+        * rendering/TextPaintStyle.cpp:
+        (WebCore::computeTextPaintStyle):
+
 2017-05-15  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Do not delete asynchronously decoded frames for large images if their clients are in the viewport

@@ -66,10 +66,10 @@ Ref<RenderTheme> RenderThemeGtk::create()
     return adoptRef(*new RenderThemeGtk());
 }
 
-Ref<RenderTheme> RenderTheme::themeForPage(Page*)
+RenderTheme& RenderTheme::singleton()
 {
-    static RenderTheme& rt = RenderThemeGtk::create().leakRef();
-    return rt;
+    static NeverDestroyed<Ref<RenderTheme>> theme(RenderThemeGtk::create());
+    return theme.get();
 }
 
 static double getScreenDPI()

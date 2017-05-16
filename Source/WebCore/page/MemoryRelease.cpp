@@ -57,7 +57,7 @@ namespace WebCore {
 
 static void releaseNoncriticalMemory()
 {
-    RenderTheme::defaultTheme()->purgeCaches();
+    RenderTheme::singleton().purgeCaches();
 
     FontCache::singleton().purgeInactiveFontData();
 

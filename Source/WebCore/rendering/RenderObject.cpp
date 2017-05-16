@@ -141,7 +141,7 @@ RenderObject::~RenderObject()
 
 RenderTheme& RenderObject::theme() const
 {
-    return page().theme();
+    return RenderTheme::singleton();
 }
 
 bool RenderObject::isDescendantOf(const RenderObject* ancestor) const

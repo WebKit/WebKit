@@ -1278,7 +1278,7 @@ Color RenderTheme::platformInactiveTextSearchHighlightColor() const
 #if ENABLE(TOUCH_EVENTS)
 Color RenderTheme::tapHighlightColor()
 {
-    return defaultTheme()->platformTapHighlightColor();
+    return singleton().platformTapHighlightColor();
 }
 #endif
 
@@ -1313,7 +1313,7 @@ void RenderTheme::setCustomFocusRingColor(const Color& c)
 
 Color RenderTheme::focusRingColor()
 {
-    return customFocusRingColor().isValid() ? customFocusRingColor() : defaultTheme()->platformFocusRingColor();
+    return customFocusRingColor().isValid() ? customFocusRingColor() : RenderTheme::singleton().platformFocusRingColor();
 }
 
 String RenderTheme::fileListDefaultLabel(bool multipleFilesAllowed) const

@@ -4429,7 +4429,7 @@ bool CSSPropertyParser::consumeSystemFont(bool important)
         return false;
     
     FontCascadeDescription fontDescription;
-    RenderTheme::defaultTheme()->systemFont(systemFontID, fontDescription);
+    RenderTheme::singleton().systemFont(systemFontID, fontDescription);
     if (!fontDescription.isAbsoluteSize())
         return false;
     

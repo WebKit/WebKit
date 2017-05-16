@@ -195,10 +195,10 @@ enum {
     leftPadding
 };
 
-Ref<RenderTheme> RenderTheme::themeForPage(Page*)
+RenderTheme& RenderTheme::singleton()
 {
-    static RenderTheme& rt = RenderThemeMac::create().leakRef();
-    return rt;
+    static NeverDestroyed<Ref<RenderTheme>> theme(RenderThemeMac::create());
+    return theme.get();
 }
 
 Ref<RenderTheme> RenderThemeMac::create()

@@ -97,7 +97,7 @@ RefPtr<ImageControlsButtonElementMac> ImageControlsButtonElementMac::tryCreate(D
     auto button = adoptRef(*new ImageControlsButtonElementMac(document));
     button->setAttributeWithoutSynchronization(HTMLNames::classAttr, AtomicString("x-webkit-image-controls-button", AtomicString::ConstructFromLiteral));
 
-    IntSize positionOffset = document.page()->theme().imageControlsButtonPositionOffset();
+    IntSize positionOffset = RenderTheme::singleton().imageControlsButtonPositionOffset();
     button->setInlineStyleProperty(CSSPropertyTop, positionOffset.height(), CSSPrimitiveValue::CSS_PX);
 
     // FIXME: Why is right: 0px off the right edge of the parent?

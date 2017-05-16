@@ -188,10 +188,10 @@ Ref<RenderTheme> RenderThemeWin::create()
     return adoptRef(*new RenderThemeWin);
 }
 
-Ref<RenderTheme> RenderTheme::themeForPage(Page* page)
+RenderTheme& RenderTheme::singleton()
 {
-    static RenderTheme& winTheme = RenderThemeWin::create().leakRef();
-    return winTheme;
+    static NeverDestroyed<Ref<RenderTheme>> theme(RenderThemeWin::create());
+    return theme.get();
 }
 
 RenderThemeWin::RenderThemeWin()

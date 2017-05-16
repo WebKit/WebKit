@@ -6698,7 +6698,7 @@ bool HTMLMediaElement::ensureMediaControlsInjectedScript()
     if (!page)
         return false;
 
-    String mediaControlsScript = RenderTheme::themeForPage(page)->mediaControlsScript();
+    String mediaControlsScript = RenderTheme::singleton().mediaControlsScript();
     if (!mediaControlsScript.length())
         return false;
 

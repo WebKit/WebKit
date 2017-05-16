@@ -62,15 +62,8 @@ public:
     virtual ~RenderTheme() { }
 
     // This function is to be implemented in your platform-specific theme implementation to hand back the
-    // appropriate platform theme. When the theme is needed in non-page dependent code, a default theme is
-    // used as fallback, which is returned for a nulled page, so the platform code needs to account for this.
-    static Ref<RenderTheme> themeForPage(Page*);
-
-    // When the theme is needed in non-page dependent code, the defaultTheme() is used as fallback.
-    static inline Ref<RenderTheme> defaultTheme()
-    {
-        return themeForPage(nullptr);
-    };
+    // appropriate platform theme.
+    static RenderTheme& singleton();
 
     virtual void purgeCaches() { }
 

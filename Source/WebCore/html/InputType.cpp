@@ -171,8 +171,7 @@ InputType::~InputType()
 
 bool InputType::themeSupportsDataListUI(InputType* type)
 {
-    Document& document = type->element().document();
-    return RenderTheme::themeForPage(document.page())->supportsDataListUI(type->formControlType());
+    return RenderTheme::singleton().supportsDataListUI(type->formControlType());
 }
 
 bool InputType::isTextField() const

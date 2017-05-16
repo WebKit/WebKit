@@ -47,7 +47,7 @@ public:
     CanvasStyle(CanvasGradient&);
     CanvasStyle(CanvasPattern&);
 
-    static CanvasStyle createFromString(const String& color, Document* = nullptr);
+    static CanvasStyle createFromString(const String& color);
     static CanvasStyle createFromStringWithOverrideAlpha(const String& color, float alpha);
 
     bool isValid() const { return !WTF::holds_alternative<Invalid>(m_style); }

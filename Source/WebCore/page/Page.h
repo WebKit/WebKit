@@ -166,8 +166,6 @@ public:
 
     void setNeedsRecalcStyleInAllFrames();
 
-    RenderTheme& theme() const { return *m_theme; }
-
     WEBCORE_EXPORT ViewportArguments viewportArguments() const;
 
     static void refreshPlugins(bool reload);
@@ -665,8 +663,6 @@ private:
     Ref<MainFrame> m_mainFrame;
 
     RefPtr<PluginData> m_pluginData;
-
-    RefPtr<RenderTheme> m_theme;
 
     UniqueRef<EditorClient> m_editorClient;
     PlugInClient* m_plugInClient;

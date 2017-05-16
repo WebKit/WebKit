@@ -357,7 +357,7 @@ bool RenderEmbeddedObject::getReplacementTextGeometry(const LayoutPoint& accumul
     contentRect.moveBy(roundedIntPoint(accumulatedOffset));
 
     FontCascadeDescription fontDescription;
-    RenderTheme::defaultTheme()->systemFont(CSSValueWebkitSmallControl, fontDescription);
+    RenderTheme::singleton().systemFont(CSSValueWebkitSmallControl, fontDescription);
     fontDescription.setWeight(boldWeightValue());
     fontDescription.setRenderingMode(settings().fontRenderingMode());
     fontDescription.setComputedSize(12);

@@ -295,10 +295,10 @@ RenderThemeIOS::RenderThemeIOS()
     CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), this, contentSizeCategoryDidChange, UIContentSizeCategoryDidChangeNotification, 0, CFNotificationSuspensionBehaviorDeliverImmediately);
 }
 
-Ref<RenderTheme> RenderTheme::themeForPage(Page*)
+RenderTheme& RenderTheme::singleton()
 {
-    static RenderTheme& renderTheme = RenderThemeIOS::create().leakRef();
-    return renderTheme;
+    static NeverDestroyed<Ref<RenderTheme>> theme(RenderThemeIOS::create());
+    return theme.get();
 }
 
 Ref<RenderTheme> RenderThemeIOS::create()
