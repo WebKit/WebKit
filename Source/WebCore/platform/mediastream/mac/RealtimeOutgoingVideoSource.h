@@ -58,7 +58,7 @@ private:
     RealtimeOutgoingVideoSource(Ref<RealtimeMediaSource>&&);
 
     void sendFrame(rtc::scoped_refptr<webrtc::VideoFrameBuffer>&&);
-    void sendBlackFrame();
+    void sendBlackFrames();
     void sendOneBlackFrame();
     void setSizeFromSource();
 

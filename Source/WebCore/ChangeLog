@@ -1,3 +1,25 @@
+2017-05-15  Youenn Fablet  <youenn@apple.com>
+
+        WebRTC outgoing muted video sources should send black frames
+        https://bugs.webkit.org/show_bug.cgi?id=170627
+        <rdar://problem/31513869>
+
+        Reviewed by Eric Carlson.
+
+        Covered by updated test.
+
+        Instead of sending one black frame and then another one asynchronously,
+        we use the timer to send a black frame every second when outgoing source is muted.
+
+        * platform/mediastream/mac/RealtimeOutgoingVideoSource.cpp:
+        (WebCore::RealtimeOutgoingVideoSource::sourceMutedChanged):
+        (WebCore::RealtimeOutgoingVideoSource::sourceEnabledChanged):
+        (WebCore::RealtimeOutgoingVideoSource::sendBlackFrames):
+        (WebCore::RealtimeOutgoingVideoSource::sendBlackFrame): Deleted.
+        * platform/mediastream/mac/RealtimeOutgoingVideoSource.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::videoSampleAvailable):
+
 2017-05-15  David Kilzer  <ddkilzer@apple.com>
 
         Crash in libxml2.2.dylib: xmlDictReference

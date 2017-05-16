@@ -1,3 +1,14 @@
+2017-05-15  Youenn Fablet  <youenn@apple.com>
+
+        WebRTC outgoing muted video sources should send black frames
+        https://bugs.webkit.org/show_bug.cgi?id=170627
+        <rdar://problem/31513869>
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/video-mute-expected.txt:
+        * webrtc/video-mute.html:
+
 2017-05-15  Mark Lam  <mark.lam@apple.com>
 
         Rolling out r214038 and r213697: Crashes when using computed properties with rest destructuring and object spread.

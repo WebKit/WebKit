@@ -83,8 +83,12 @@ void RealtimeOutgoingVideoSource::sourceMutedChanged()
 
     m_muted = m_videoSource->muted();
 
-    if (m_muted && m_sinks.size() && m_enabled)
-        sendBlackFrame();
+    if (m_muted && m_sinks.size() && m_enabled) {
+        sendBlackFrames();
+        return;
+    }
+    if (m_blackFrameTimer.isActive())
+        m_blackFrameTimer.stop();
 }
 
 void RealtimeOutgoingVideoSource::sourceEnabledChanged()
@@ -93,8 +97,12 @@ void RealtimeOutgoingVideoSource::sourceEnabledChanged()
 
     m_enabled = m_videoSource->enabled();
 
-    if (!m_enabled && m_sinks.size() && !m_muted)
-        sendBlackFrame();
+    if (!m_enabled && m_sinks.size() && !m_muted) {
+        sendBlackFrames();
+        return;
+    }
+    if (m_blackFrameTimer.isActive())
+        m_blackFrameTimer.stop();
 }
 
 void RealtimeOutgoingVideoSource::setSizeFromSource()
@@ -121,7 +129,7 @@ void RealtimeOutgoingVideoSource::RemoveSink(rtc::VideoSinkInterface<webrtc::Vid
     m_sinks.removeFirst(sink);
 }
 
-void RealtimeOutgoingVideoSource::sendBlackFrame()
+void RealtimeOutgoingVideoSource::sendBlackFrames()
 {
     if (!m_blackFrame) {
         auto frame = m_bufferPool.CreateBuffer(m_width, m_height);
@@ -129,8 +137,7 @@ void RealtimeOutgoingVideoSource::sendBlackFrame()
         m_blackFrame = WTFMove(frame);
     }
     sendOneBlackFrame();
-    // FIXME: We should not need to send two black frames but VTB requires that so we are sure a black frame is sent over the wire.
-    m_blackFrameTimer.startOneShot(0_s);
+    m_blackFrameTimer.startRepeating(1_s);
 }
 
 void RealtimeOutgoingVideoSource::sendOneBlackFrame()

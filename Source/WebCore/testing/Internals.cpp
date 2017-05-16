@@ -3986,14 +3986,15 @@ void Internals::videoSampleAvailable(MediaSample& sample)
     if (!m_nextTrackFramePromise)
         return;
 
-    auto videoSettings = m_track->getSettings();
-    if (!videoSettings.width || !videoSettings.height)
+    auto& videoSettings = m_track->source().settings();
+    if (!videoSettings.width() || !videoSettings.height())
         return;
-
+    
     auto rgba = sample.getRGBAImageData();
     if (!rgba)
         return;
-    auto imageData = ImageData::create(rgba.releaseNonNull(), *videoSettings.width, *videoSettings.height);
+    
+    auto imageData = ImageData::create(rgba.releaseNonNull(), videoSettings.width(), videoSettings.height());
     if (!imageData.hasException())
         m_nextTrackFramePromise->resolve(imageData.releaseReturnValue().releaseNonNull());
     else
