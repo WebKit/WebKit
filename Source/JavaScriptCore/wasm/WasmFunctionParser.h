@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -221,7 +221,7 @@ auto FunctionParser<Context>::parseExpression() -> PartialResult
         ExpressionType pointer;
         ExpressionType result;
         WASM_PARSER_FAIL_IF(!parseVarUInt32(alignment), "can't get load alignment");
-        // FIXME validate alignment. https://bugs.webkit.org/show_bug.cgi?id=168836
+        WASM_PARSER_FAIL_IF(alignment > memoryLog2Alignment(m_currentOpcode), "alignment cannot exceed load's natural alignment");
         WASM_PARSER_FAIL_IF(!parseVarUInt32(offset), "can't get load offset");
         WASM_TRY_POP_EXPRESSION_STACK_INTO(pointer, "load pointer");
         WASM_TRY_ADD_TO_CONTEXT(load(static_cast<LoadOpType>(m_currentOpcode), pointer, result, offset));
@@ -235,7 +235,7 @@ auto FunctionParser<Context>::parseExpression() -> PartialResult
         ExpressionType value;
         ExpressionType pointer;
         WASM_PARSER_FAIL_IF(!parseVarUInt32(alignment), "can't get store alignment");
-        // FIXME validate alignment. https://bugs.webkit.org/show_bug.cgi?id=168836
+        WASM_PARSER_FAIL_IF(alignment > memoryLog2Alignment(m_currentOpcode), "alignment cannot exceed store's natural alignment");
         WASM_PARSER_FAIL_IF(!parseVarUInt32(offset), "can't get store offset");
         WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "store value");
         WASM_TRY_POP_EXPRESSION_STACK_INTO(pointer, "store pointer");

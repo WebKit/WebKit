@@ -1,3 +1,16 @@
+2017-05-16  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: validate load / store alignment
+        https://bugs.webkit.org/show_bug.cgi?id=168836
+        <rdar://problem/31965349>
+
+        Reviewed by Keith Miller.
+
+        * wasm/WASM.js: fix regular expression greed
+        * wasm/function-tests/memory-alignment.js: Added.
+        (const.op.of.WASM.opcodes):
+        * wasm/wasm.json: fix formatting
+
 2017-05-15  Mark Lam  <mark.lam@apple.com>
 
         Rolling out r214038 and r213697: Crashes when using computed properties with rest destructuring and object spread.

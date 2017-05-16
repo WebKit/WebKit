@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -52,7 +52,7 @@ export function* opcodes(category = undefined) {
 };
 export const memoryAccessInfo = op => {
     //                <-----------valueType----------->  <-------type-------><---------width-------->  <--sign-->
-    const classify = /((?:i32)|(?:i64)|(?:f32)|(?:f64))\.((?:load)|(?:store))((?:8)?|(?:16)?|(?:32)?)_?((?:s|u)?)/;
+    const classify = /((?:i32)|(?:i64)|(?:f32)|(?:f64))\.((?:load)|(?:store))((?:8)|(?:16)|(?:32))?_?((?:s|u)?)/;
     const found = op.name.match(classify);
     const valueType = found[1];
     const type = found[2];

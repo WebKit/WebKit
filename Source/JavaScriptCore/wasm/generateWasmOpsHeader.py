@@ -1,6 +1,6 @@
 #! /usr/bin/python
 
-# Copyright (C) 2016 Apple Inc. All rights reserved.
+# Copyright (C) 2016-2017 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -104,6 +104,17 @@ def bitSet():
     return v
 
 validOps = bitSet()
+
+
+def memoryLog2AlignmentGenerator(filter):
+    result = []
+    for op in wasm.opcodeIterator(filter):
+        result.append("    case " + wasm.toCpp(op["name"]) + ": return " + memoryLog2Alignment(op) + ";")
+    return "\n".join(result)
+
+memoryLog2AlignmentLoads = memoryLog2AlignmentGenerator(lambda op: (op["category"] == "memory" and len(op["return"]) == 1))
+memoryLog2AlignmentStores = memoryLog2AlignmentGenerator(lambda op: (op["category"] == "memory" and len(op["return"]) == 0))
+
 
 contents = wasm.header + """
 
@@ -262,6 +273,18 @@ inline bool isSimple(BinaryOpType op)
         break;
     }
     return false;
+}
+
+inline uint32_t memoryLog2Alignment(OpType op)
+{
+    switch (op) {
+""" + memoryLog2AlignmentLoads + """
+""" + memoryLog2AlignmentStores + """
+    default:
+        break;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return 0;
 }
 
 #define CREATE_CASE(name, id, b3type, inc) case name: return #name;
