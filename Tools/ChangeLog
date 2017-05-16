@@ -1,3 +1,23 @@
+2017-05-16  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Start servers before setting-up for testing
+        https://bugs.webkit.org/show_bug.cgi?id=172176
+        <rdar://problem/32225538>
+
+        Reviewed by Alexey Proskuryakov.
+
+        On-device testing requires that servers are started before ports set-up their
+        test environments.
+
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_runner.py:
+        (LayoutTestRunner.__init__): Start servers when initializing LayoutTestRunner.
+        (LayoutTestRunner.run_tests): Move the starting of servers to the initializer.
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager.__init__): Delay construction of the test runner until we can determine
+        if servers need to be started.
+        (Manager.run): Determine if servers need to be started and construct the test runner.
+        (Manager._run_tests): Move the determination of servers to run into Manager.run.
+
 2017-05-16  Adrian Perez de Castro  <aperez@igalia.com>
 
         Unreviewed, adding myself to contributors.json
