@@ -27,6 +27,7 @@
 #include "GSocketMonitor.h"
 
 #include <gio/gio.h>
+#include <wtf/glib/RunLoopSourcePriority.h>
 
 namespace IPC {
 
@@ -51,9 +52,7 @@ void GSocketMonitor::start(GSocket* socket, GIOCondition condition, RunLoop& run
     g_source_set_name(m_source.get(), "[WebKit] Socket monitor");
     m_callback = WTFMove(callback);
     g_source_set_callback(m_source.get(), reinterpret_cast<GSourceFunc>(socketSourceCallback), this, nullptr);
-#if PLATFORM(WPE)
-    g_source_set_priority(m_source.get(), G_PRIORITY_HIGH + 30);
-#endif
+    g_source_set_priority(m_source.get(), RunLoopSourcePriority::RunLoopDispatcher);
     g_source_attach(m_source.get(), runLoop.mainContext());
 }
 
