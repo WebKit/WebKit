@@ -1,3 +1,15 @@
+2017-05-16  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Fix static position of positioned grid items
+        https://bugs.webkit.org/show_bug.cgi?id=172108
+
+        Reviewed by Sergio Villar Senin.
+
+        The test is updated as the expected results were wrong.
+        Note that after this patch we match Chrome and Firefox behavior on this test.
+
+        * fast/css-grid-layout/absolute-positioning-grid-container-parent.html:
+
 2017-05-15  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Do not delete asynchronously decoded frames for large images if their clients are in the viewport

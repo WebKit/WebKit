@@ -1,3 +1,23 @@
+2017-05-16  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Fix static position of positioned grid items
+        https://bugs.webkit.org/show_bug.cgi?id=172108
+
+        Reviewed by Sergio Villar Senin.
+
+        This patch makes us follow the text on the spec
+        (https://drafts.csswg.org/css-grid/#static-position):
+        "The static position of an absolutely-positioned child
+         of a grid container is determined as if it were the sole grid item
+         in a grid area whose edges coincide with the padding edges
+         of the grid container."
+
+        Test: fast/css-grid-layout/absolute-positioning-grid-container-parent.html
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::prepareChildForPositionedLayout): Modified to avoid
+        including padding to match the spec behavior.
+
 2017-05-16  Per Arne Vollan  <pvollan@apple.com>
 
         Compile error, include file is not found.
