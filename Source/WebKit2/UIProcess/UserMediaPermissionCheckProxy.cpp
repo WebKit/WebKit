@@ -34,12 +34,12 @@ using namespace WebCore;
 
 namespace WebKit {
 
-UserMediaPermissionCheckProxy::UserMediaPermissionCheckProxy(uint64_t userMediaID, uint64_t frameID, CompletionHandler&& handler, String&& userMediaDocumentOriginIdentifier, String&& topLevelDocumentOriginIdentifier)
+UserMediaPermissionCheckProxy::UserMediaPermissionCheckProxy(uint64_t userMediaID, uint64_t frameID, CompletionHandler&& handler, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin)
     : m_userMediaID(userMediaID)
     , m_frameID(frameID)
     , m_completionHandler(WTFMove(handler))
-    , m_userMediaDocumentSecurityOrigin((SecurityOriginData::fromDatabaseIdentifier(WTFMove(userMediaDocumentOriginIdentifier))->securityOrigin()))
-    , m_topLevelDocumentSecurityOrigin(SecurityOriginData::fromDatabaseIdentifier(WTFMove(topLevelDocumentOriginIdentifier))->securityOrigin())
+    , m_userMediaDocumentSecurityOrigin(WTFMove(userMediaDocumentOrigin))
+    , m_topLevelDocumentSecurityOrigin(WTFMove(topLevelDocumentOrigin))
 {
 }
 

@@ -37,6 +37,7 @@
 #include "ExceptionOr.h"
 #include "RealtimeMediaSource.h"
 #include "RealtimeMediaSourceSupportedConstraints.h"
+#include <wtf/Function.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -57,8 +58,8 @@ public:
     WEBCORE_EXPORT static RealtimeMediaSourceCenter& singleton();
     static void setSharedStreamCenterOverride(RealtimeMediaSourceCenter*);
 
-    using ValidConstraintsHandler = std::function<void(const Vector<String>&& audioDeviceUIDs, const Vector<String>&& videoDeviceUIDs)>;
-    using InvalidConstraintsHandler = std::function<void(const String& invalidConstraint)>;
+    using ValidConstraintsHandler = WTF::Function<void(const Vector<String>&& audioDeviceUIDs, const Vector<String>&& videoDeviceUIDs)>;
+    using InvalidConstraintsHandler = WTF::Function<void(const String& invalidConstraint)>;
     virtual void validateRequestConstraints(ValidConstraintsHandler&&, InvalidConstraintsHandler&&, const MediaConstraints& audioConstraints, const MediaConstraints& videoConstraints);
 
     using NewMediaStreamHandler = std::function<void(RefPtr<MediaStreamPrivate>&&)>;

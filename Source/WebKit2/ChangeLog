@@ -1,3 +1,43 @@
+2017-05-16  Youenn Fablet  <youenn@apple.com>
+
+        Modernize WebKit2 getUserMedia passing of parameters
+        https://bugs.webkit.org/show_bug.cgi?id=172161
+
+        Reviewed by Eric Carlson.
+
+        Passing SecurityOrigin as SecurityOriginData through IPC instead of Strings.
+        Making more use of Ref<> instead of RefPtr<>.
+
+        * UIProcess/UserMediaPermissionCheckProxy.cpp:
+        (WebKit::UserMediaPermissionCheckProxy::UserMediaPermissionCheckProxy):
+        (WebKit::UserMediaPermissionCheckProxy::setUserMediaAccessInfo):
+        * UIProcess/UserMediaPermissionCheckProxy.h:
+        (WebKit::UserMediaPermissionCheckProxy::create):
+        (WebKit::UserMediaPermissionCheckProxy::userMediaDocumentSecurityOrigin):
+        (WebKit::UserMediaPermissionCheckProxy::topLevelDocumentSecurityOrigin):
+        (WebKit::UserMediaPermissionCheckProxy::completionHandler):
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::FrameAuthorizationState::FrameAuthorizationState):
+        (WebKit::FrameAuthorizationState::ensureSecurityOriginsAreEqual):
+        (WebKit::UserMediaPermissionRequestManagerProxy::createRequest):
+        (WebKit::UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame):
+        (WebKit::UserMediaPermissionRequestManagerProxy::getUserMediaPermissionInfo):
+        (WebKit::UserMediaPermissionRequestManagerProxy::enumerateMediaDevicesForFrame):
+        * UIProcess/UserMediaPermissionRequestManagerProxy.h:
+        * UIProcess/UserMediaPermissionRequestProxy.cpp:
+        (WebKit::UserMediaPermissionRequestProxy::UserMediaPermissionRequestProxy):
+        * UIProcess/UserMediaPermissionRequestProxy.h:
+        (WebKit::UserMediaPermissionRequestProxy::create):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::requestUserMediaPermissionForFrame):
+        (WebKit::WebPageProxy::enumerateMediaDevicesForFrame):
+        (WebKit::WebPageProxy::requestNotificationPermission):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/MediaStream/UserMediaPermissionRequestManager.cpp:
+        (WebKit::UserMediaPermissionRequestManager::sendUserMediaRequest):
+        (WebKit::UserMediaPermissionRequestManager::enumerateMediaDevices):
+
 2017-05-16  David Kilzer  <ddkilzer@apple.com>
 
         Unused lambdas in UserMediaPermissionRequestManagerProxy.cpp

@@ -104,8 +104,8 @@ void UserMediaPermissionRequestManager::sendUserMediaRequest(UserMediaRequest& r
     ASSERT(webFrame);
 
     SecurityOrigin* topLevelDocumentOrigin = request.topLevelDocumentOrigin();
-    String topLevelDocumentOriginString = topLevelDocumentOrigin ? SecurityOriginData::fromSecurityOrigin(*topLevelDocumentOrigin).databaseIdentifier() : emptyString();
-    m_page.send(Messages::WebPageProxy::RequestUserMediaPermissionForFrame(requestID, webFrame->frameID(), SecurityOriginData::fromSecurityOrigin(*request.userMediaDocumentOrigin()).databaseIdentifier(), topLevelDocumentOriginString, request.audioConstraints(), request.videoConstraints()));
+    ASSERT(topLevelDocumentOrigin);
+    m_page.send(Messages::WebPageProxy::RequestUserMediaPermissionForFrame(requestID, webFrame->frameID(), SecurityOriginData::fromSecurityOrigin(*request.userMediaDocumentOrigin()), SecurityOriginData::fromSecurityOrigin(*topLevelDocumentOrigin), request.audioConstraints(), request.videoConstraints()));
 }
 
 void UserMediaPermissionRequestManager::cancelUserMediaRequest(UserMediaRequest& request)
@@ -192,8 +192,8 @@ void UserMediaPermissionRequestManager::enumerateMediaDevices(MediaDevicesEnumer
     ASSERT(webFrame);
 
     SecurityOrigin* topLevelDocumentOrigin = request.topLevelDocumentOrigin();
-    String topLevelDocumentOriginString = topLevelDocumentOrigin ? SecurityOriginData::fromSecurityOrigin(*topLevelDocumentOrigin).databaseIdentifier() : emptyString();
-    m_page.send(Messages::WebPageProxy::EnumerateMediaDevicesForFrame(requestID, webFrame->frameID(), SecurityOriginData::fromSecurityOrigin(*request.userMediaDocumentOrigin()).databaseIdentifier(), topLevelDocumentOriginString));
+    ASSERT(topLevelDocumentOrigin);
+    m_page.send(Messages::WebPageProxy::EnumerateMediaDevicesForFrame(requestID, webFrame->frameID(), SecurityOriginData::fromSecurityOrigin(*request.userMediaDocumentOrigin()), SecurityOriginData::fromSecurityOrigin(*topLevelDocumentOrigin)));
 }
 
 void UserMediaPermissionRequestManager::cancelMediaDevicesEnumeration(WebCore::MediaDevicesEnumerationRequest& request)

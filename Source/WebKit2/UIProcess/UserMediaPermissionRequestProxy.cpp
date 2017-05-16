@@ -30,12 +30,12 @@ using namespace WebCore;
 
 namespace WebKit {
 
-UserMediaPermissionRequestProxy::UserMediaPermissionRequestProxy(UserMediaPermissionRequestManagerProxy& manager, uint64_t userMediaID, uint64_t frameID, const String& userMediaDocumentOriginIdentifier, const String& topLevelDocumentOriginIdentifier, const Vector<String>& audioDeviceUIDs, const Vector<String>& videoDeviceUIDs)
+UserMediaPermissionRequestProxy::UserMediaPermissionRequestProxy(UserMediaPermissionRequestManagerProxy& manager, uint64_t userMediaID, uint64_t frameID, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, const Vector<String>& audioDeviceUIDs, const Vector<String>& videoDeviceUIDs)
     : m_manager(&manager)
     , m_userMediaID(userMediaID)
     , m_frameID(frameID)
-    , m_userMediaDocumentSecurityOrigin((SecurityOriginData::fromDatabaseIdentifier(userMediaDocumentOriginIdentifier)->securityOrigin()))
-    , m_topLevelDocumentSecurityOrigin(SecurityOriginData::fromDatabaseIdentifier(topLevelDocumentOriginIdentifier)->securityOrigin())
+    , m_userMediaDocumentSecurityOrigin(WTFMove(userMediaDocumentOrigin))
+    , m_topLevelDocumentSecurityOrigin(WTFMove(topLevelDocumentOrigin))
     , m_videoDeviceUIDs(videoDeviceUIDs)
     , m_audioDeviceUIDs(audioDeviceUIDs)
 {

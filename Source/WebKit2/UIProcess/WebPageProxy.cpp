@@ -5744,34 +5744,34 @@ UserMediaPermissionRequestManagerProxy& WebPageProxy::userMediaPermissionRequest
 }
 #endif
 
-void WebPageProxy::requestUserMediaPermissionForFrame(uint64_t userMediaID, uint64_t frameID, String userMediaDocumentOriginIdentifier, String topLevelDocumentOriginIdentifier, const WebCore::MediaConstraints& audioConstraints, const WebCore::MediaConstraints& videoConstraints)
+    void WebPageProxy::requestUserMediaPermissionForFrame(uint64_t userMediaID, uint64_t frameID, const WebCore::SecurityOriginData&  userMediaDocumentOriginData, const WebCore::SecurityOriginData& topLevelDocumentOriginData, const WebCore::MediaConstraints& audioConstraints, const WebCore::MediaConstraints& videoConstraints)
 {
 #if ENABLE(MEDIA_STREAM)
     MESSAGE_CHECK(m_process->webFrame(frameID));
 
-    userMediaPermissionRequestManager().requestUserMediaPermissionForFrame(userMediaID, frameID, userMediaDocumentOriginIdentifier, topLevelDocumentOriginIdentifier, audioConstraints, videoConstraints);
+    userMediaPermissionRequestManager().requestUserMediaPermissionForFrame(userMediaID, frameID, userMediaDocumentOriginData.securityOrigin(), topLevelDocumentOriginData.securityOrigin(), audioConstraints, videoConstraints);
 #else
     UNUSED_PARAM(userMediaID);
     UNUSED_PARAM(frameID);
-    UNUSED_PARAM(userMediaDocumentOriginIdentifier);
-    UNUSED_PARAM(topLevelDocumentOriginIdentifier);
+    UNUSED_PARAM(userMediaDocumentOriginData);
+    UNUSED_PARAM(topLevelDocumentOriginData);
     UNUSED_PARAM(audioConstraints);
     UNUSED_PARAM(videoConstraints);
 #endif
 }
 
-void WebPageProxy::enumerateMediaDevicesForFrame(uint64_t userMediaID, uint64_t frameID, String userMediaDocumentOriginIdentifier, String topLevelDocumentOriginIdentifier)
+void WebPageProxy::enumerateMediaDevicesForFrame(uint64_t userMediaID, uint64_t frameID, const WebCore::SecurityOriginData& userMediaDocumentOriginData, const WebCore::SecurityOriginData& topLevelDocumentOriginData)
 {
 #if ENABLE(MEDIA_STREAM)
     WebFrameProxy* frame = m_process->webFrame(frameID);
     MESSAGE_CHECK(frame);
 
-    userMediaPermissionRequestManager().enumerateMediaDevicesForFrame(userMediaID, frameID, WTFMove(userMediaDocumentOriginIdentifier), WTFMove(topLevelDocumentOriginIdentifier));
+    userMediaPermissionRequestManager().enumerateMediaDevicesForFrame(userMediaID, frameID, userMediaDocumentOriginData.securityOrigin(), topLevelDocumentOriginData.securityOrigin());
 #else
     UNUSED_PARAM(userMediaID);
     UNUSED_PARAM(frameID);
-    UNUSED_PARAM(userMediaDocumentOriginIdentifier);
-    UNUSED_PARAM(topLevelDocumentOriginIdentifier);
+    UNUSED_PARAM(userMediaDocumentOriginData);
+    UNUSED_PARAM(topLevelDocumentOriginData);
 #endif
 }
 
@@ -5787,10 +5787,10 @@ void WebPageProxy::requestNotificationPermission(uint64_t requestID, const Strin
     if (!isRequestIDValid(requestID))
         return;
 
-    RefPtr<API::SecurityOrigin> origin = API::SecurityOrigin::createFromString(originString);
-    RefPtr<NotificationPermissionRequest> request = m_notificationPermissionRequestManager.createRequest(requestID);
+    auto origin = API::SecurityOrigin::createFromString(originString);
+    auto request = m_notificationPermissionRequestManager.createRequest(requestID);
     
-    if (!m_uiClient->decidePolicyForNotificationPermissionRequest(this, origin.get(), request.get()))
+    if (!m_uiClient->decidePolicyForNotificationPermissionRequest(this, origin.ptr(), request.ptr()))
         request->deny();
 }
 
