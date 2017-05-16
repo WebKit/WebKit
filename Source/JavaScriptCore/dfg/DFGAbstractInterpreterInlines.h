@@ -566,6 +566,45 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     }
 
     case MakeRope: {
+        unsigned numberOfChildren = 0;
+        unsigned numberOfRemovedChildren = 0;
+        std::optional<unsigned> nonEmptyIndex;
+        for (unsigned i = 0; i < AdjacencyList::Size; ++i) {
+            Edge& edge = node->children.child(i);
+            if (!edge)
+                break;
+            ++numberOfChildren;
+
+            JSValue childConstant = m_state.forNode(edge).value();
+            if (!childConstant) {
+                nonEmptyIndex = i;
+                continue;
+            }
+            if (!childConstant.isString()) {
+                nonEmptyIndex = i;
+                continue;
+            }
+            if (asString(childConstant)->length()) {
+                nonEmptyIndex = i;
+                continue;
+            }
+
+            ++numberOfRemovedChildren;
+        }
+
+        if (numberOfRemovedChildren) {
+            m_state.setFoundConstants(true);
+            if (numberOfRemovedChildren == numberOfChildren) {
+                // Propagate the last child. This is the way taken in the constant folding phase.
+                forNode(node) = forNode(node->children.child(numberOfChildren - 1));
+                break;
+            }
+            if ((numberOfRemovedChildren + 1) == numberOfChildren) {
+                ASSERT(nonEmptyIndex);
+                forNode(node) = forNode(node->children.child(nonEmptyIndex.value()));
+                break;
+            }
+        }
         forNode(node).set(m_graph, m_vm.stringStructure.get());
         break;
     }

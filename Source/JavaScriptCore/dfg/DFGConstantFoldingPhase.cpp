@@ -639,6 +639,35 @@ private:
                 }
                 break;
             }
+
+            case MakeRope: {
+                for (unsigned i = 0; i < AdjacencyList::Size; ++i) {
+                    Edge& edge = node->children.child(i);
+                    if (!edge)
+                        break;
+                    JSValue childConstant = m_state.forNode(edge).value();
+                    if (!childConstant)
+                        continue;
+                    if (!childConstant.isString())
+                        continue;
+                    if (asString(childConstant)->length())
+                        continue;
+
+                    // Don't allow the MakeRope to have zero children.
+                    if (!i && !node->child2())
+                        break;
+
+                    node->children.removeEdge(i--);
+                    changed = true;
+                }
+
+                if (!node->child2()) {
+                    ASSERT(!node->child3());
+                    node->convertToIdentity();
+                    changed = true;
+                }
+                break;
+            }
                 
             default:
                 break;

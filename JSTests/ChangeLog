@@ -1,3 +1,18 @@
+2017-05-16  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG] Constant Folding Phase should convert MakeRope("", String) => Identity(String)
+        https://bugs.webkit.org/show_bug.cgi?id=172115
+
+        Reviewed by Saam Barati.
+
+        * stress/constant-folding-should-fold-make-rope-with-empty-strings.js: Added.
+        (shouldBe):
+        (unknown):
+        (readWord1):
+        (readWord2):
+        (readWord3):
+        (readWord4):
+
 2017-05-16  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: add memory fuzzer

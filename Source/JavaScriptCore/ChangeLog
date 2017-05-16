@@ -1,5 +1,39 @@
 2017-05-16  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [DFG] Constant Folding Phase should convert MakeRope("", String) => Identity(String)
+        https://bugs.webkit.org/show_bug.cgi?id=172115
+
+        Reviewed by Saam Barati.
+
+        In Fixup phase, we attempt to fold MakeRope to Identity (or reduce arguments) by dropping
+        empty strings. However, when we are in Fixup phase, we do not have much information about
+        constant values.
+
+        In ARES-6 Babylon, we find that we can constant-fold MakeRope by using constants figured
+        out by CFA. Without it, Babylon repeatedly produces rope strings. To fix this, we introduce
+        MakeRope handling in constant folding phase.
+
+        It shows 7.5% performance improvement in ARES-6 Babylon steadyState.
+
+            Before:
+
+            firstIteration:     50.02 +- 14.56 ms
+            averageWorstCase:   26.52 +- 4.52 ms
+            steadyState:        8.15 +- 0.23 ms
+
+            After:
+
+            firstIteration:     49.08 +- 12.90 ms
+            averageWorstCase:   25.16 +- 3.82 ms
+            steadyState:        7.58 +- 0.21 ms
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+
+2017-05-16  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         Unreviewed, add Objective C files to CMake Mac port
         https://bugs.webkit.org/show_bug.cgi?id=172103
 
