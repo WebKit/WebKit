@@ -208,7 +208,7 @@ Ref<RealtimeMediaSource> MockMediaEndpoint::createMutedRemoteSource(const String
     }
 
     m_mutedRemoteSources.set(mid, source);
-    return *source;
+    return source.releaseNonNull();
 }
 
 void MockMediaEndpoint::replaceSendSource(RealtimeMediaSource& newSource, const String& mid)
@@ -334,7 +334,7 @@ void MockMediaEndpoint::unmuteRemoteSourcesByMid()
 
 void MockMediaEndpoint::unmuteTimerFired()
 {
-    RefPtr<RealtimeMediaSource> source = m_mutedRemoteSources.get(m_midsOfSourcesToUnmute.takeLast());
+    auto* source = m_mutedRemoteSources.get(m_midsOfSourcesToUnmute.takeLast());
     if (source)
         source->setMuted(false);
 

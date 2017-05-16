@@ -48,7 +48,7 @@ CanvasCaptureMediaStreamTrack::CanvasCaptureMediaStreamTrack(ScriptExecutionCont
 Ref<CanvasCaptureMediaStreamTrack::Source> CanvasCaptureMediaStreamTrack::Source::create(HTMLCanvasElement& canvas, std::optional<double>&& frameRequestRate)
 {
     auto source = adoptRef(*new Source(canvas, WTFMove(frameRequestRate)));
-    source->startProducingData();
+    source->start();
 
     callOnMainThread([source = source.copyRef()] {
         if (!source->m_canvas)
@@ -76,10 +76,6 @@ CanvasCaptureMediaStreamTrack::Source::Source(HTMLCanvasElement& canvas, std::op
 
 void CanvasCaptureMediaStreamTrack::Source::startProducingData()
 {
-    if (m_isProducingData)
-        return;
-    m_isProducingData = true;
-
     if (!m_canvas)
         return;
     m_canvas->addObserver(*this);
@@ -93,10 +89,6 @@ void CanvasCaptureMediaStreamTrack::Source::startProducingData()
 
 void CanvasCaptureMediaStreamTrack::Source::stopProducingData()
 {
-    if (!m_isProducingData)
-        return;
-    m_isProducingData = false;
-
     m_requestFrameTimer.stop();
 
     if (!m_canvas)
@@ -113,7 +105,7 @@ void CanvasCaptureMediaStreamTrack::Source::canvasDestroyed(HTMLCanvasElement& c
 {
     ASSERT_UNUSED(canvas, m_canvas == &canvas);
 
-    stopProducingData();
+    stop();
     m_canvas = nullptr;
 }
 
@@ -150,7 +142,7 @@ void CanvasCaptureMediaStreamTrack::Source::captureCanvas()
 {
     ASSERT(m_canvas);
 
-    if (!m_isProducingData)
+    if (!isProducingData())
         return;
 
     if (m_frameRequestRate) {

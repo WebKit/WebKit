@@ -1,3 +1,104 @@
+2017-05-15  Youenn Fablet  <youenn@apple.com>
+
+        Simplify RealtimeMediaSource data production and state
+        https://bugs.webkit.org/show_bug.cgi?id=171999
+
+        Reviewed by Eric Carlson.
+
+        RealtimeMediaSource takes 3 booleans:
+        - m_isProducingData tells whether data is produced or not. In the case of capturing, it tells whether capture
+          happens.
+        - m_muted/m_enabled allows JS or WebKit level to start/stop the source.
+
+        Changed MediaStream capture state computation so that capture is reported as follows:
+        - m_isProducing is true, capture is happenning and is active
+        - m_muted is true, capture is happening but is inactive.
+
+        Except in the case of WebRTC incoming sources, for which sources may be created as muted as per the spec,
+        all sources are unmuted, enabled and not producing data when created.
+
+        RealtimeMediaSource is now activable either by calling start/stop or by calling setMuted/setEnabled.
+        This in turns will set the boolean values accordingly and will call the underlying
+        startProducingData/stopProducingData methods doing the actual stuff.
+
+        Removing from all RealtimeMediaSource subclasses the handling of producing data.
+        Making more methods non-virtual/member fields private to simplify the model.
+
+        * Modules/mediastream/CanvasCaptureMediaStreamTrack.cpp:
+        (WebCore::CanvasCaptureMediaStreamTrack::Source::create):
+        (WebCore::CanvasCaptureMediaStreamTrack::Source::startProducingData):
+        (WebCore::CanvasCaptureMediaStreamTrack::Source::stopProducingData):
+        (WebCore::CanvasCaptureMediaStreamTrack::Source::canvasDestroyed):
+        (WebCore::CanvasCaptureMediaStreamTrack::Source::captureCanvas):
+        * Modules/mediastream/CanvasCaptureMediaStreamTrack.h:
+        * Modules/mediastream/MediaStream.cpp:
+        (WebCore::MediaStream::mediaState):
+        * platform/mediastream/MediaStreamTrackPrivate.h:
+        (WebCore::MediaStreamTrackPrivate::startProducingData):
+        (WebCore::MediaStreamTrackPrivate::stopProducingData):
+        * platform/mediastream/RealtimeMediaSource.cpp:
+        (WebCore::RealtimeMediaSource::setMuted):
+        (WebCore::RealtimeMediaSource::notifyMutedChange):
+        (WebCore::RealtimeMediaSource::setEnabled):
+        (WebCore::RealtimeMediaSource::start):
+        (WebCore::RealtimeMediaSource::stop):
+        (WebCore::RealtimeMediaSource::requestStop):
+        (WebCore::RealtimeMediaSource::reset): Deleted.
+        * platform/mediastream/RealtimeMediaSource.h:
+        * platform/mediastream/mac/AVMediaCaptureSource.h:
+        * platform/mediastream/mac/AVMediaCaptureSource.mm:
+        (WebCore::AVMediaCaptureSource::AVMediaCaptureSource):
+        (WebCore::AVMediaCaptureSource::captureSessionIsRunningDidChange):
+        (WebCore::AVMediaCaptureSource::reset): Deleted.
+        (WebCore::AVMediaCaptureSource::isProducingData): Deleted.
+        * platform/mediastream/mac/CoreAudioCaptureSource.cpp:
+        (WebCore::CoreAudioCaptureSource::CoreAudioCaptureSource):
+        (WebCore::CoreAudioCaptureSource::startProducingData):
+        (WebCore::CoreAudioCaptureSource::stopProducingData):
+        (WebCore::CoreAudioCaptureSource::audioSourceProvider):
+        * platform/mediastream/mac/CoreAudioCaptureSource.h:
+        * platform/mediastream/mac/MockRealtimeAudioSourceMac.mm:
+        (WebCore::MockRealtimeAudioSourceMac::render):
+        (WebCore::MockRealtimeAudioSource::createMuted): Deleted.
+        * platform/mediastream/mac/MockRealtimeVideoSourceMac.mm:
+        (WebCore::MockRealtimeVideoSource::createMuted): Deleted.
+        * platform/mediastream/mac/RealtimeIncomingAudioSource.cpp:
+        (WebCore::RealtimeIncomingAudioSource::create):
+        (WebCore::RealtimeIncomingAudioSource::RealtimeIncomingAudioSource):
+        (WebCore::RealtimeIncomingAudioSource::~RealtimeIncomingAudioSource):
+        (WebCore::RealtimeIncomingAudioSource::startProducingData):
+        (WebCore::RealtimeIncomingAudioSource::stopProducingData):
+        (WebCore::RealtimeIncomingAudioSource::setSourceTrack):
+        * platform/mediastream/mac/RealtimeIncomingAudioSource.h:
+        * platform/mediastream/mac/RealtimeIncomingVideoSource.cpp:
+        (WebCore::RealtimeIncomingVideoSource::create):
+        (WebCore::RealtimeIncomingVideoSource::RealtimeIncomingVideoSource):
+        (WebCore::RealtimeIncomingVideoSource::startProducingData):
+        (WebCore::RealtimeIncomingVideoSource::setSourceTrack):
+        (WebCore::RealtimeIncomingVideoSource::stopProducingData):
+        (WebCore::RealtimeIncomingVideoSource::OnFrame):
+        * platform/mediastream/mac/RealtimeIncomingVideoSource.h:
+        * platform/mediastream/mac/WebAudioSourceProviderAVFObjC.mm:
+        (WebCore::WebAudioSourceProviderAVFObjC::setClient):
+        * platform/mock/MockMediaEndpoint.cpp:
+        (WebCore::MockMediaEndpoint::createMutedRemoteSource):
+        (WebCore::MockMediaEndpoint::unmuteTimerFired):
+        * platform/mock/MockRealtimeAudioSource.cpp:
+        (WebCore::MockRealtimeAudioSource::createMuted):
+        (WebCore::MockRealtimeAudioSource::startProducingData):
+        (WebCore::MockRealtimeAudioSource::stopProducingData):
+        * platform/mock/MockRealtimeAudioSource.h:
+        * platform/mock/MockRealtimeMediaSource.cpp:
+        (WebCore::MockRealtimeMediaSource::startProducingData): Deleted.
+        (WebCore::MockRealtimeMediaSource::stopProducingData): Deleted.
+        * platform/mock/MockRealtimeMediaSource.h:
+        * platform/mock/MockRealtimeVideoSource.cpp:
+        (WebCore::MockRealtimeVideoSource::createMuted):
+        (WebCore::MockRealtimeVideoSource::startProducingData):
+        (WebCore::MockRealtimeVideoSource::stopProducingData):
+        (WebCore::MockRealtimeVideoSource::generateFrame):
+        * platform/mock/MockRealtimeVideoSource.h:
+
 2017-05-15  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Migrate Font constructor from bools to enums

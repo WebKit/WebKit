@@ -62,8 +62,8 @@ public:
 
     bool ended() const { return m_isEnded; }
 
-    void startProducingData() { m_source->startProducingData(); }
-    void stopProducingData() { m_source->stopProducingData(); }
+    void startProducingData() { m_source->start(); }
+    void stopProducingData() { m_source->stop(); }
     bool isProducingData() { return m_source->isProducingData(); }
 
     bool isIsolated() const { return m_source->isIsolated(); }

@@ -80,11 +80,11 @@ MockRealtimeMediaSource::MockRealtimeMediaSource(const String& id, RealtimeMedia
     switch (type) {
     case RealtimeMediaSource::Type::Audio:
         m_deviceIndex = name == audioDevices()[0].label() ? 0 : 1;
-        setPersistentID(audioDevices()[m_deviceIndex].persistentId());
+        setPersistentID(String(audioDevices()[m_deviceIndex].persistentId()));
         return;
     case RealtimeMediaSource::Type::Video:
         m_deviceIndex = name == videoDevices()[0].label() ? 0 : 1;
-        setPersistentID(videoDevices()[m_deviceIndex].persistentId());
+        setPersistentID(String(videoDevices()[m_deviceIndex].persistentId()));
         return;
     case RealtimeMediaSource::Type::None:
         ASSERT_NOT_REACHED();
@@ -130,18 +130,6 @@ RealtimeMediaSourceSupportedConstraints& MockRealtimeMediaSource::supportedConst
     initializeSupportedConstraints(m_supportedConstraints);
 
     return m_supportedConstraints;
-}
-
-void MockRealtimeMediaSource::startProducingData()
-{
-    m_isProducingData = true;
-    setMuted(false);
-}
-
-void MockRealtimeMediaSource::stopProducingData()
-{
-    m_isProducingData = false;
-    setMuted(true);
 }
 
 } // namespace WebCore

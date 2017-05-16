@@ -107,13 +107,6 @@ MockRealtimeAudioSourceMac::~MockRealtimeAudioSourceMac()
     }
 }
 
-RefPtr<MockRealtimeAudioSource> MockRealtimeAudioSource::createMuted(const String& name)
-{
-    auto source = adoptRef(new MockRealtimeAudioSource(name));
-    source->m_muted = true;
-    return source;
-}
-
 void MockRealtimeAudioSourceMac::emitSampleBuffers(uint32_t frameCount)
 {
     ASSERT(m_formatDescription);
@@ -158,7 +151,7 @@ void MockRealtimeAudioSourceMac::render(double delta)
         uint32_t bipBopCount = std::min(frameCount, bipBopRemain);
         for (auto& audioBuffer : m_audioBufferList->buffers()) {
             audioBuffer.mDataByteSize = frameCount * m_streamFormat.mBytesPerFrame;
-            if (!m_muted && m_enabled) {
+            if (!muted() && enabled()) {
                 memcpy(audioBuffer.mData, &m_bipBopBuffer[bipBopStart], sizeof(Float32) * bipBopCount);
                 addHum(HumVolume, HumFrequency, sampleRate(), m_samplesRendered, static_cast<float*>(audioBuffer.mData), bipBopCount);
             } else

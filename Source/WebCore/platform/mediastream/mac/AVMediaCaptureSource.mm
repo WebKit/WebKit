@@ -148,8 +148,7 @@ AVMediaCaptureSource::AVMediaCaptureSource(AVCaptureDeviceTypedef* device, const
     static_assert(static_cast<int>(InterruptionReason::AudioInUse) == AVCaptureSessionInterruptionReasonAudioDeviceInUseByAnotherClient, "InterruptionReason::AudioInUse is not AVCaptureSessionInterruptionReasonAudioDeviceInUseByAnotherClient as expected");
 #endif
     
-    setPersistentID(device.uniqueID);
-    setMuted(true);
+    setPersistentID(String(device.uniqueID));
 }
 
 AVMediaCaptureSource::~AVMediaCaptureSource()
@@ -262,17 +261,6 @@ void AVMediaCaptureSource::setupSession()
     [m_session commitConfiguration];
 }
 
-void AVMediaCaptureSource::reset()
-{
-    RealtimeMediaSource::reset();
-    m_isRunning = false;
-    for (NSString *keyName in sessionKVOProperties())
-        [m_session removeObserver:m_objcObserver.get() forKeyPath:keyName];
-
-    shutdownCaptureSession();
-    m_session = nullptr;
-}
-
 void AVMediaCaptureSource::captureSessionIsRunningDidChange(bool state)
 {
     scheduleDeferredTask([this, state] {
@@ -280,17 +268,8 @@ void AVMediaCaptureSource::captureSessionIsRunningDidChange(bool state)
             return;
 
         m_isRunning = state;
-        if (m_muted == !m_isRunning)
-            return;
-
-        m_muted = !m_isRunning;
-        notifyMutedObservers();
+        notifyMutedChange(!m_isRunning);
     });
-}
-
-bool AVMediaCaptureSource::isProducingData() const
-{
-    return m_isRunning;
 }
 
 #if PLATFORM(IOS)

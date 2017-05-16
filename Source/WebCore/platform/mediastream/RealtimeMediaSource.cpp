@@ -60,21 +60,15 @@ RealtimeMediaSource::RealtimeMediaSource(const String& id, Type type, const Stri
     m_suppressNotifications = false;
 }
 
-void RealtimeMediaSource::reset()
-{
-    m_stopped = false;
-    m_muted = false;
-}
-
 void RealtimeMediaSource::addObserver(RealtimeMediaSource::Observer& observer)
 {
-    m_observers.append(&observer);
+    m_observers.append(observer);
 }
 
 void RealtimeMediaSource::removeObserver(RealtimeMediaSource::Observer& observer)
 {
-    m_observers.removeFirstMatching([&observer](auto* anObserver) {
-        return anObserver == &observer;
+    m_observers.removeFirstMatching([&observer](auto anObserver) {
+        return &anObserver.get() == &observer;
     });
 
     if (!m_observers.size())
@@ -83,39 +77,39 @@ void RealtimeMediaSource::removeObserver(RealtimeMediaSource::Observer& observer
 
 void RealtimeMediaSource::setMuted(bool muted)
 {
-    if (m_stopped || m_muted == muted)
+    if (muted)
+        stop();
+    else
+        start();
+
+    notifyMutedChange(muted);
+}
+
+void RealtimeMediaSource::notifyMutedChange(bool muted)
+{
+    if (m_muted == muted)
         return;
 
     m_muted = muted;
-
-    if (muted) {
-        // FIXME: We need to figure out how to guarantee that at least one black video frame is
-        // emitted after being muted.
-        stopProducingData();
-    } else
-        startProducingData();
 
     notifyMutedObservers();
 }
 
 void RealtimeMediaSource::notifyMutedObservers() const
 {
-    for (auto& observer : m_observers)
-        observer->sourceMutedChanged();
+    for (Observer& observer : m_observers)
+        observer.sourceMutedChanged();
 }
 
 void RealtimeMediaSource::setEnabled(bool enabled)
 {
-    if (m_stopped || m_enabled == enabled)
+    if (m_enabled == enabled)
         return;
 
     m_enabled = enabled;
 
-    if (m_stopped)
-        return;
-
-    for (auto& observer : m_observers)
-        observer->sourceEnabledChanged();
+    for (Observer& observer : m_observers)
+        observer.sourceEnabledChanged();
 }
 
 void RealtimeMediaSource::settingsDidChange()
@@ -129,49 +123,57 @@ void RealtimeMediaSource::settingsDidChange()
 
     scheduleDeferredTask([this] {
         m_pendingSettingsDidChangeNotification = false;
-        for (auto& observer : m_observers)
-            observer->sourceSettingsChanged();
+        for (Observer& observer : m_observers)
+            observer.sourceSettingsChanged();
     });
 }
 
 void RealtimeMediaSource::videoSampleAvailable(MediaSample& mediaSample)
 {
-    ASSERT(isMainThread());
-    for (const auto& observer : m_observers)
-        observer->videoSampleAvailable(mediaSample);
+    for (Observer& observer : m_observers)
+        observer.videoSampleAvailable(mediaSample);
 }
 
 void RealtimeMediaSource::audioSamplesAvailable(const MediaTime& time, const PlatformAudioData& audioData, const AudioStreamDescription& description, size_t numberOfFrames)
 {
-    for (const auto& observer : m_observers)
-        observer->audioSamplesAvailable(time, audioData, description, numberOfFrames);
+    for (Observer& observer : m_observers)
+        observer.audioSamplesAvailable(time, audioData, description, numberOfFrames);
 }
 
-void RealtimeMediaSource::stop(Observer* callingObserver)
+void RealtimeMediaSource::start()
 {
-    if (stopped())
+    if (m_isProducingData)
         return;
 
-    m_stopped = true;
+    m_isProducingData = true;
+    startProducingData();
+}
 
-    for (const auto& observer : m_observers) {
-        if (observer != callingObserver)
-            observer->sourceStopped();
-    }
+void RealtimeMediaSource::stop()
+{
+    if (!m_isProducingData)
+        return;
 
+    m_isProducingData = false;
     stopProducingData();
 }
 
 void RealtimeMediaSource::requestStop(Observer* callingObserver)
 {
-    if (stopped())
+    if (!m_isProducingData)
         return;
 
-    for (const auto& observer : m_observers) {
-        if (observer->preventSourceFromStopping())
+    for (Observer& observer : m_observers) {
+        if (observer.preventSourceFromStopping())
             return;
     }
-    stop(callingObserver);
+
+    stop();
+
+    for (Observer& observer : m_observers) {
+        if (&observer != callingObserver)
+            observer.sourceStopped();
+    }
 }
 
 bool RealtimeMediaSource::supportsSizeAndFrameRate(std::optional<int>, std::optional<int>, std::optional<double>)

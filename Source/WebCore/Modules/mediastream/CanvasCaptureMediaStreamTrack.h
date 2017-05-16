@@ -62,7 +62,6 @@ private:
         // RealtimeMediaSource API
         void startProducingData() final;
         void stopProducingData()  final;
-        bool isProducingData() const { return m_isProducingData; }
         const RealtimeMediaSourceCapabilities& capabilities() const final { return RealtimeMediaSourceCapabilities::emptyCapabilities(); }
         const RealtimeMediaSourceSettings& settings() const final { return m_settings; }
         bool applySize(const IntSize&) final { return true; }
@@ -70,7 +69,6 @@ private:
         void captureCanvas();
         void requestFrameTimerFired();
 
-        bool m_isProducingData { false };
         bool m_shouldEmitFrame { true };
         std::optional<double> m_frameRequestRate;
         Timer m_requestFrameTimer;

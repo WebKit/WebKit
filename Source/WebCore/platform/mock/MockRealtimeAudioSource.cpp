@@ -65,14 +65,14 @@ CaptureSourceOrError MockRealtimeAudioSource::create(const String& name, const M
 
     return CaptureSourceOrError(WTFMove(source));
 }
+#endif
 
-RefPtr<MockRealtimeAudioSource> MockRealtimeAudioSource::createMuted(const String& name)
+Ref<MockRealtimeAudioSource> MockRealtimeAudioSource::createMuted(const String& name)
 {
-    auto source = adoptRef(new MockRealtimeAudioSource(name));
-    source->m_muted = true;
+    auto source = adoptRef(*new MockRealtimeAudioSource(name));
+    source->notifyMutedChange(true);
     return source;
 }
-#endif
 
 static MockRealtimeAudioSourceFactory& mockAudioCaptureSourceFactory()
 {
@@ -121,11 +121,6 @@ void MockRealtimeAudioSource::initializeSupportedConstraints(RealtimeMediaSource
 
 void MockRealtimeAudioSource::startProducingData()
 {
-    if (m_isProducingData)
-        return;
-
-    m_isProducingData = true;
-
 #if PLATFORM(IOS)
     mockAudioCaptureSourceFactory().setActiveSource(*this);
 #endif
@@ -133,20 +128,12 @@ void MockRealtimeAudioSource::startProducingData()
     if (!sampleRate())
         setSampleRate(!deviceIndex() ? 44100 : 48000);
 
-    MockRealtimeMediaSource::startProducingData();
-
     m_startTime = monotonicallyIncreasingTime();
     m_timer.startRepeating(renderInterval());
 }
 
 void MockRealtimeAudioSource::stopProducingData()
 {
-    if (!m_isProducingData)
-        return;
-
-    m_isProducingData = false;
-
-    MockRealtimeMediaSource::stopProducingData();
     m_timer.stop();
     m_elapsedTime += monotonicallyIncreasingTime() - m_startTime;
     m_startTime = NAN;

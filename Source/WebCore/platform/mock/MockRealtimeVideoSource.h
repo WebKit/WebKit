@@ -47,7 +47,7 @@ class MockRealtimeVideoSource : public MockRealtimeMediaSource {
 public:
 
     static CaptureSourceOrError create(const String&, const MediaConstraints*);
-    static RefPtr<MockRealtimeVideoSource> createMuted(const String& name);
+    static Ref<MockRealtimeVideoSource> createMuted(const String& name);
 
     static VideoCaptureFactory& factory();
 
@@ -69,7 +69,6 @@ private:
 
     void startProducingData() final;
     void stopProducingData() final;
-    bool isProducingData() const final { return m_isProducingData; }
 
     void drawAnimation(GraphicsContext&);
     void drawText(GraphicsContext&);
@@ -103,7 +102,6 @@ private:
     unsigned m_frameNumber { 0 };
 
     RunLoop::Timer<MockRealtimeVideoSource> m_timer;
-    bool m_isProducingData { false };
 };
 
 } // namespace WebCore

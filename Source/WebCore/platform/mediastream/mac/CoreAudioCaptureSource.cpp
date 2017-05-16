@@ -648,8 +648,6 @@ CoreAudioCaptureSource::CoreAudioCaptureSource(const String& deviceID, const Str
     : RealtimeMediaSource(deviceID, RealtimeMediaSource::Type::Audio, label)
     , m_captureDeviceID(persistentID)
 {
-    m_muted = true;
-
     auto& unit = CoreAudioSharedUnit::singleton();
 
     initializeEchoCancellation(unit.enableEchoCancellation());
@@ -680,20 +678,11 @@ void CoreAudioCaptureSource::removeEchoCancellationSource(AudioSampleDataSource&
 
 void CoreAudioCaptureSource::startProducingData()
 {
-    if (m_isProducingData)
-        return;
-
 #if PLATFORM(IOS)
     coreAudioCaptureSourceFactory().setActiveSource(*this);
 #endif
 
     CoreAudioSharedUnit::singleton().startProducingData();
-    m_isProducingData = CoreAudioSharedUnit::singleton().isProducingData();
-
-    if (!m_isProducingData)
-        return;
-
-    m_muted = false;
 
     if (m_audioSourceProvider)
         m_audioSourceProvider->prepare(&CoreAudioSharedUnit::singleton().microphoneFormat().streamDescription());
@@ -701,12 +690,7 @@ void CoreAudioCaptureSource::startProducingData()
 
 void CoreAudioCaptureSource::stopProducingData()
 {
-    if (!m_isProducingData)
-        return;
-
     CoreAudioSharedUnit::singleton().stopProducingData();
-    m_isProducingData = false;
-    m_muted = true;
 
     if (m_audioSourceProvider)
         m_audioSourceProvider->unprepare();
@@ -756,7 +740,7 @@ AudioSourceProvider* CoreAudioCaptureSource::audioSourceProvider()
 {
     if (!m_audioSourceProvider) {
         m_audioSourceProvider = WebAudioSourceProviderAVFObjC::create(*this);
-        if (m_isProducingData)
+        if (isProducingData())
             m_audioSourceProvider->prepare(&CoreAudioSharedUnit::singleton().microphoneFormat().streamDescription());
     }
 
