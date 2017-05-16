@@ -51,6 +51,7 @@ auto ModuleParser::parse() -> Result
     uint32_t versionNumber;
 
     WASM_PARSER_FAIL_IF(length() < minSize, "expected a module of at least ", minSize, " bytes");
+    WASM_PARSER_FAIL_IF(length() > maxModuleSize, "module size ", length(), " is too large, maximum ", maxModuleSize);
     WASM_PARSER_FAIL_IF(!consumeCharacter(0) || !consumeString("asm"), "modules doesn't start with '\\0asm'");
     WASM_PARSER_FAIL_IF(!parseUInt32(versionNumber), "can't parse version number");
     WASM_PARSER_FAIL_IF(versionNumber != expectedVersionNumber, "unexpected version number ", versionNumber, " expected ", expectedVersionNumber);
@@ -102,7 +103,7 @@ auto ModuleParser::parseType() -> PartialResult
     uint32_t count;
 
     WASM_PARSER_FAIL_IF(!parseVarUInt32(count), "can't get Type section's count");
-    WASM_PARSER_FAIL_IF(count == std::numeric_limits<uint32_t>::max(), "Type section's count is too big ", count);
+    WASM_PARSER_FAIL_IF(count > maxTypes, "Type section's count is too big ", count, " maximum ", maxTypes);
     WASM_PARSER_FAIL_IF(!m_info->usedSignatures.tryReserveCapacity(count), "can't allocate enough memory for Type section's ", count, " entries");
 
     for (uint32_t i = 0; i < count; ++i) {
@@ -113,7 +114,7 @@ auto ModuleParser::parseType() -> PartialResult
         WASM_PARSER_FAIL_IF(!parseInt7(type), "can't get ", i, "th Type's type");
         WASM_PARSER_FAIL_IF(type != Func, i, "th Type is non-Func ", type);
         WASM_PARSER_FAIL_IF(!parseVarUInt32(argumentCount), "can't get ", i, "th Type's argument count");
-        WASM_PARSER_FAIL_IF(argumentCount == std::numeric_limits<uint32_t>::max(), i, "th argument count is too big ", argumentCount);
+        WASM_PARSER_FAIL_IF(argumentCount > maxFunctionParams, i, "th argument count is too big ", argumentCount, " maximum ", maxFunctionParams);
         RefPtr<Signature> maybeSignature = Signature::tryCreate(argumentCount);
         WASM_PARSER_FAIL_IF(!maybeSignature, "can't allocate enough memory for Type section's ", i, "th signature");
         Ref<Signature> signature = maybeSignature.releaseNonNull();
@@ -145,7 +146,7 @@ auto ModuleParser::parseImport() -> PartialResult
 {
     uint32_t importCount;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(importCount), "can't get Import section's count");
-    WASM_PARSER_FAIL_IF(importCount == std::numeric_limits<uint32_t>::max(), "Import section's count is too big ", importCount);
+    WASM_PARSER_FAIL_IF(importCount > maxImports, "Import section's count is too big ", importCount, " maximum ", maxImports);
     WASM_PARSER_FAIL_IF(!m_info->globals.tryReserveCapacity(importCount), "can't allocate enough memory for ", importCount, " globals"); // FIXME this over-allocates when we fix the FIXMEs below.
     WASM_PARSER_FAIL_IF(!m_info->imports.tryReserveCapacity(importCount), "can't allocate enough memory for ", importCount, " imports"); // FIXME this over-allocates when we fix the FIXMEs below.
     WASM_PARSER_FAIL_IF(!m_info->importFunctionSignatureIndices.tryReserveCapacity(importCount), "can't allocate enough memory for ", importCount, " import function signatures"); // FIXME this over-allocates when we fix the FIXMEs below.
@@ -211,7 +212,7 @@ auto ModuleParser::parseFunction() -> PartialResult
 {
     uint32_t count;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(count), "can't get Function section's count");
-    WASM_PARSER_FAIL_IF(count == std::numeric_limits<uint32_t>::max(), "Function section's count is too big ", count);
+    WASM_PARSER_FAIL_IF(count > maxFunctions, "Function section's count is too big ", count, " maximum ", maxFunctions);
     WASM_PARSER_FAIL_IF(!m_info->internalFunctionSignatureIndices.tryReserveCapacity(count), "can't allocate enough memory for ", count, " Function signatures");
     WASM_PARSER_FAIL_IF(!m_info->functionLocationInBinary.tryReserveCapacity(count), "can't allocate enough memory for ", count, "Function locations");
 
@@ -334,6 +335,7 @@ auto ModuleParser::parseGlobal() -> PartialResult
 {
     uint32_t globalCount;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(globalCount), "can't get Global section's count");
+    WASM_PARSER_FAIL_IF(globalCount > maxGlobals, "Global section's count is too big ", globalCount, " maximum ", maxGlobals);
     WASM_PARSER_FAIL_IF(!m_info->globals.tryReserveCapacity(globalCount + m_info->firstInternalGlobal), "can't allocate memory for ", globalCount + m_info->firstInternalGlobal, " globals");
 
     for (uint32_t globalIndex = 0; globalIndex < globalCount; ++globalIndex) {
@@ -359,7 +361,7 @@ auto ModuleParser::parseExport() -> PartialResult
 {
     uint32_t exportCount;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(exportCount), "can't get Export section's count");
-    WASM_PARSER_FAIL_IF(exportCount == std::numeric_limits<uint32_t>::max(), "Export section's count is too big ", exportCount);
+    WASM_PARSER_FAIL_IF(exportCount > maxExports, "Export section's count is too big ", exportCount, " maximum ", maxExports);
     WASM_PARSER_FAIL_IF(!m_info->exports.tryReserveCapacity(exportCount), "can't allocate enough memory for ", exportCount, " exports");
 
     HashSet<String> exportNames;
@@ -424,7 +426,7 @@ auto ModuleParser::parseElement() -> PartialResult
 
     uint32_t elementCount;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(elementCount), "can't get Element section's count");
-    WASM_PARSER_FAIL_IF(elementCount == std::numeric_limits<uint32_t>::max(), "Element section's count is too big ", elementCount);
+    WASM_PARSER_FAIL_IF(elementCount > maxTableEntries, "Element section's count is too big ", elementCount, " maximum ", maxTableEntries);
     WASM_PARSER_FAIL_IF(!m_info->elements.tryReserveCapacity(elementCount), "can't allocate memory for ", elementCount, " Elements");
     for (unsigned elementNum = 0; elementNum < elementCount; ++elementNum) {
         uint32_t tableIndex;
@@ -471,6 +473,7 @@ auto ModuleParser::parseCode() -> PartialResult
         WASM_PARSER_FAIL_IF(!parseVarUInt32(functionSize), "can't get ", i, "th Code function's size");
         WASM_PARSER_FAIL_IF(functionSize > length(), "Code function's size ", functionSize, " exceeds the module's size ", length());
         WASM_PARSER_FAIL_IF(functionSize > length() - m_offset, "Code function's size ", functionSize, " exceeds the module's remaining size", length() - m_offset);
+        WASM_PARSER_FAIL_IF(functionSize > std::numeric_limits<uint32_t>::max(), "Code function's size ", functionSize, " is too big");
 
         m_info->functionLocationInBinary[i].start = m_offset;
         m_info->functionLocationInBinary[i].end = m_offset + functionSize;
@@ -555,7 +558,7 @@ auto ModuleParser::parseData() -> PartialResult
     uint32_t segmentCount;
     WASM_PARSER_FAIL_IF(!m_info->memory, "Data section cannot exist without a Memory section or Import");
     WASM_PARSER_FAIL_IF(!parseVarUInt32(segmentCount), "can't get Data section's count");
-    WASM_PARSER_FAIL_IF(segmentCount == std::numeric_limits<uint32_t>::max(), "Data section's count is too big ", segmentCount);
+    WASM_PARSER_FAIL_IF(segmentCount > maxDataSegments, "Data section's count is too big ", segmentCount, " maximum ", maxDataSegments);
     WASM_PARSER_FAIL_IF(!m_info->data.tryReserveCapacity(segmentCount), "can't allocate enough memory for Data section's ", segmentCount, " segments");
 
     for (uint32_t segmentNumber = 0; segmentNumber < segmentCount; ++segmentNumber) {

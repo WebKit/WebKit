@@ -1,3 +1,19 @@
+2017-05-16  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: enforce size limits
+        https://bugs.webkit.org/show_bug.cgi?id=165833
+        <rdar://problem/29760219>
+
+        Reviewed by Keith Miller.
+
+        Use the same limits as V8.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * wasm/WasmLimits.h: Added.
+        * wasm/WasmModuleParser.cpp:
+        * wasm/WasmParser.h:
+        (JSC::Wasm::Parser<SuccessType>::consumeUTF8String):
+
 2017-05-15  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Build testapi in non Apple ports

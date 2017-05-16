@@ -30,6 +30,7 @@
 #include "B3Compilation.h"
 #include "B3Procedure.h"
 #include "WasmFormat.h"
+#include "WasmLimits.h"
 #include "WasmModuleInformation.h"
 #include "WasmOps.h"
 #include "WasmSections.h"
@@ -145,6 +146,8 @@ template<typename SuccessType>
 ALWAYS_INLINE bool Parser<SuccessType>::consumeUTF8String(Name& result, size_t stringLength)
 {
     if (length() < stringLength || m_offset > length() - stringLength)
+        return false;
+    if (stringLength > maxStringSize)
         return false;
     if (!result.tryReserveCapacity(stringLength))
         return false;

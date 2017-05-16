@@ -2080,6 +2080,7 @@
 		A7FB61001040C38B0017A286 /* PropertyDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = A7FB604B103F5EAB0017A286 /* PropertyDescriptor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7FCC26D17A0B6AA00786D1A /* FTLSwitchCase.h in Headers */ = {isa = PBXBuildFile; fileRef = A7FCC26C17A0B6AA00786D1A /* FTLSwitchCase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A8A4748E151A8306004123FF /* libWTF.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A8A4748D151A8306004123FF /* libWTF.a */; };
+		AD00659E1ECAC812000CA926 /* WasmLimits.h in Headers */ = {isa = PBXBuildFile; fileRef = AD00659D1ECAC7FE000CA926 /* WasmLimits.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AD2FCBE21DB58DAD00B3E736 /* JSWebAssemblyCompileError.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AD2FCBA61DB58DA400B3E736 /* JSWebAssemblyCompileError.cpp */; };
 		AD2FCBE31DB58DAD00B3E736 /* JSWebAssemblyCompileError.h in Headers */ = {isa = PBXBuildFile; fileRef = AD2FCBA71DB58DA400B3E736 /* JSWebAssemblyCompileError.h */; };
 		AD2FCBE41DB58DAD00B3E736 /* JSWebAssemblyInstance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AD2FCBA81DB58DA400B3E736 /* JSWebAssemblyInstance.cpp */; };
@@ -4711,6 +4712,7 @@
 		A8A4748D151A8306004123FF /* libWTF.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libWTF.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		A8E894310CD0602400367179 /* JSCallbackObjectFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCallbackObjectFunctions.h; sourceTree = "<group>"; };
 		A8E894330CD0603F00367179 /* JSGlobalObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGlobalObject.h; sourceTree = "<group>"; };
+		AD00659D1ECAC7FE000CA926 /* WasmLimits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmLimits.h; sourceTree = "<group>"; };
 		AD1CF06816DCAB2D00B97123 /* PropertyTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PropertyTable.cpp; sourceTree = "<group>"; };
 		AD2FCB8C1DB5844000B3E736 /* JSWebAssemblyModule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSWebAssemblyModule.cpp; path = js/JSWebAssemblyModule.cpp; sourceTree = "<group>"; };
 		AD2FCB8D1DB5844000B3E736 /* JSWebAssemblyModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSWebAssemblyModule.h; path = js/JSWebAssemblyModule.h; sourceTree = "<group>"; };
@@ -6430,6 +6432,7 @@
 				53F40E8A1D5901BB0099A1B6 /* WasmFunctionParser.h */,
 				AD8FF3961EB5BD850087FF82 /* WasmIndexOrName.cpp */,
 				AD8FF3951EB5BD850087FF82 /* WasmIndexOrName.h */,
+				AD00659D1ECAC7FE000CA926 /* WasmLimits.h */,
 				53E9E0A91EAE83DE00FEE251 /* WasmMachineThreads.cpp */,
 				53E9E0AA1EAE83DE00FEE251 /* WasmMachineThreads.h */,
 				535557151D9DFA32006D583B /* WasmMemory.cpp */,
@@ -9469,6 +9472,7 @@
 				0F1FB38F1E173A6700A9BE50 /* SynchronousStopTheWorldMutatorScheduler.h in Headers */,
 				A784A26411D16622005776AC /* SyntaxChecker.h in Headers */,
 				DC7997831CDE9FA0004D4A09 /* TagRegistersMode.h in Headers */,
+				AD00659E1ECAC812000CA926 /* WasmLimits.h in Headers */,
 				70ECA6081AFDBEA200449739 /* TemplateRegistry.h in Headers */,
 				70ECA6091AFDBEA200449739 /* TemplateRegistryKey.h in Headers */,
 				95D4261AF4C84CE2ACBAC981 /* TemplateRegistryKeyTable.h in Headers */,
