@@ -405,19 +405,19 @@ static Class classForTypeIdentifier(NSString *typeIdentifier)
     return numberOfFiles;
 }
 
-static NSURL *temporaryFileURLForDataInteractionContent(NSString *fileExtension, NSString *suggestedName)
+static NSURL *temporaryFileURLForDataInteractionContent(NSURL *url, NSString *suggestedName)
 {
     static NSString *defaultDataInteractionFileName = @"file";
     static NSString *dataInteractionDirectoryPrefix = @"data-interaction";
-    if (!fileExtension.length)
+    if (!url)
         return nil;
 
     NSString *temporaryDataInteractionDirectory = WebCore::createTemporaryDirectory(dataInteractionDirectoryPrefix);
     if (!temporaryDataInteractionDirectory)
         return nil;
 
-    NSString *filenameWithExtension = [suggestedName ?: defaultDataInteractionFileName stringByAppendingPathExtension:fileExtension];
-    return [NSURL fileURLWithPath:[temporaryDataInteractionDirectory stringByAppendingPathComponent:filenameWithExtension]];
+    suggestedName = [suggestedName ?: defaultDataInteractionFileName stringByAppendingPathExtension:url.pathExtension];
+    return [NSURL fileURLWithPath:[temporaryDataInteractionDirectory stringByAppendingPathComponent:url.lastPathComponent ?: suggestedName]];
 }
 
 - (void)doAfterLoadingProvidedContentIntoFileURLs:(WebItemProviderFileLoadBlock)action
@@ -483,7 +483,7 @@ static NSURL *temporaryFileURLForDataInteractionContent(NSString *fileExtension,
             // After executing this completion block, UIKit removes the file at the given URL. However, we need this data to persist longer for the web content process.
             // To address this, we hard link the given URL to a new temporary file in the temporary directory. This follows the same flow as regular file upload, in
             // WKFileUploadPanel.mm. The temporary files are cleaned up by the system at a later time.
-            RetainPtr<NSURL> destinationURL = temporaryFileURLForDataInteractionContent(url.pathExtension, suggestedName.get() ?: url.lastPathComponent);
+            RetainPtr<NSURL> destinationURL = temporaryFileURLForDataInteractionContent(url, suggestedName.get());
             if (destinationURL && !error && [[NSFileManager defaultManager] linkItemAtURL:url toURL:destinationURL.get() error:nil]) {
                 [setFileURLsLock lock];
                 [typeToFileURLMaps setObject:[NSDictionary dictionaryWithObject:destinationURL.get() forKey:typeIdentifier.get()] atIndexedSubscript:indexInItemProviderArray];
