@@ -1,5 +1,19 @@
 2017-05-16  JF Bastien  <jfbastien@apple.com>
 
+        WebAssembly: add memory fuzzer
+        https://bugs.webkit.org/show_bug.cgi?id=169976
+        <rdar://problem/31965328>
+
+        Reviewed by Keith Miller.
+
+        * wasm/fuzz/memory.js: Added.
+        (const.insert):
+        (const.action.string_appeared_here):
+        (const.performAction):
+        (catch):
+
+2017-05-16  JF Bastien  <jfbastien@apple.com>
+
         WebAssembly: validate load / store alignment
         https://bugs.webkit.org/show_bug.cgi?id=168836
         <rdar://problem/31965349>
