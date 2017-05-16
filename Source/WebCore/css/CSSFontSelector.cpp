@@ -332,11 +332,13 @@ void CSSFontSelector::beginLoadingFontSoon(CachedFont& font)
     if (!m_document)
         return;
 
-    m_fontsToBeginLoading.append(&font);
-    // Increment the request count now, in order to prevent didFinishLoad from being dispatched
-    // after this font has been requested but before it began loading. Balanced by
-    // decrementRequestCount() in beginLoadTimerFired() and in clearDocument().
-    m_document->cachedResourceLoader().incrementRequestCount(font);
+    if (!m_document->settings().webFontsAlwaysFallBack()) {
+        m_fontsToBeginLoading.append(&font);
+        // Increment the request count now, in order to prevent didFinishLoad from being dispatched
+        // after this font has been requested but before it began loading. Balanced by
+        // decrementRequestCount() in beginLoadTimerFired() and in clearDocument().
+        m_document->cachedResourceLoader().incrementRequestCount(font);
+    }
     m_beginLoadingTimer.startOneShot(0_s);
 }
 

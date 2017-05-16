@@ -33,9 +33,9 @@
 
 namespace WebCore {
 
-const Font* FontRanges::Range::font() const
+const Font* FontRanges::Range::font(ExternalResourceDownloadPolicy policy) const
 {
-    return m_fontAccessor->font();
+    return m_fontAccessor->font(policy);
 }
 
 FontRanges::FontRanges()
@@ -55,7 +55,7 @@ private:
     {
     }
 
-    const Font* font() const final
+    const Font* font(ExternalResourceDownloadPolicy) const final
     {
         return m_font.get();
     }
@@ -78,28 +78,44 @@ FontRanges::~FontRanges()
 {
 }
 
-GlyphData FontRanges::glyphDataForCharacter(UChar32 character) const
+GlyphData FontRanges::glyphDataForCharacter(UChar32 character, ExternalResourceDownloadPolicy policy) const
 {
+    const Font* resultFont = nullptr;
     for (auto& range : m_ranges) {
         if (range.from() <= character && character <= range.to()) {
-            if (auto* font = range.font()) {
-                auto glyphData = font->glyphDataForCharacter(character);
-                if (glyphData.glyph)
-                    return glyphData;
+            if (auto* font = range.font(policy)) {
+                if (font->isInterstitial()) {
+                    policy = ExternalResourceDownloadPolicy::Forbid;
+                    if (!resultFont)
+                        resultFont = font;
+                } else {
+                    auto glyphData = font->glyphDataForCharacter(character);
+                    if (glyphData.glyph)
+                        return glyphData;
+                }
             }
         }
+    }
+    if (resultFont) {
+        // We want higher-level code to be able to differentiate between
+        // "The interstitial font doesn't have the character" and
+        // "The real downloaded font doesn't have the character".
+        GlyphData result = resultFont->glyphDataForCharacter(character);
+        if (!result.font)
+            result.font = resultFont;
+        return result;
     }
     return GlyphData();
 }
 
 const Font* FontRanges::fontForCharacter(UChar32 character) const
 {
-    return glyphDataForCharacter(character).font;
+    return glyphDataForCharacter(character, ExternalResourceDownloadPolicy::Allow).font;
 }
 
 const Font& FontRanges::fontForFirstRange() const
 {
-    auto* font = m_ranges[0].font();
+    auto* font = m_ranges[0].font(ExternalResourceDownloadPolicy::Forbid);
     ASSERT(font);
     return *font;
 }

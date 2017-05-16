@@ -15,17 +15,21 @@ if (window.internals) {
 @font-face {
     font-family: "WebFont";
     font-weight: 100;
-    src: url("../../resources/Ahem_CJK.ttf") format("truetype");
+    src: url("../../resources/Ahem_CJK.ttf"), url("garbage2");
 }
 @font-face {
     font-family: "WebFont";
     font-weight: 900;
-    src: url("../../resources/Ahem.otf") format("opentype");
+    src: url("garbage3"), url("garbage4");
+}
+@font-face {
+    font-family: "WebFont2";
+    src: url("garbage5"), url("garbage6");
 }
 </style>
 </head>
 <body>
-This test makes sure that unnecessary fonts aren't downloaded. The test fails if Ahem.otf is downloaded.
-<div style="font: 100 100px 'WebFont';">&#x6A2A;</div>
+This test makes sure that unnecessary fonts aren't downloaded. The test fails if any of the "garbage" font names are requested.
+<div style="font-size: 100px; font-weight: 100; font-family: 'WebFont', 'WebFont2';">&#x6A2A;</div>
 </body>
 </html>

@@ -307,12 +307,6 @@ float FontCascade::glyphBufferForTextRun(CodePath codePathToUse, const TextRun& 
 
 float FontCascade::drawText(GraphicsContext& context, const TextRun& run, const FloatPoint& point, unsigned from, std::optional<unsigned> to, CustomFontNotReadyAction customFontNotReadyAction) const
 {
-    // Don't draw anything while we are using custom fonts that are in the process of loading,
-    // except if the 'force' argument is set to true (in which case it will use a fallback
-    // font).
-    if (isLoadingCustomFonts() && customFontNotReadyAction == DoNotPaintIfFontNotReady)
-        return 0;
-
     unsigned destination = to.value_or(run.length());
 
     CodePath codePathToUse = codePath(run);
@@ -327,7 +321,7 @@ float FontCascade::drawText(GraphicsContext& context, const TextRun& run, const 
         return 0;
     // Draw the glyph buffer now at the starting point returned in startX.
     FloatPoint startPoint(startX, point.y());
-    drawGlyphBuffer(context, glyphBuffer, startPoint);
+    drawGlyphBuffer(context, glyphBuffer, startPoint, customFontNotReadyAction);
     return startPoint.x() - startX;
 }
 
@@ -1400,7 +1394,15 @@ void FontCascade::drawEmphasisMarksForSimpleText(GraphicsContext& context, const
     drawEmphasisMarks(context, glyphBuffer, mark, FloatPoint(point.x() + initialAdvance, point.y()));
 }
 
-void FontCascade::drawGlyphBuffer(GraphicsContext& context, const GlyphBuffer& glyphBuffer, FloatPoint& point) const
+inline bool shouldDrawIfLoading(const Font& font, FontCascade::CustomFontNotReadyAction customFontNotReadyAction)
+{
+    // Don't draw anything while we are using custom fonts that are in the process of loading,
+    // except if the 'customFontNotReadyAction' argument is set to UseFallbackIfFontNotReady
+    // (in which case "font" will be a fallback font).
+    return !font.isInterstitial() || font.visibility() == Font::Visibility::Visible || customFontNotReadyAction == FontCascade::CustomFontNotReadyAction::UseFallbackIfFontNotReady;
+}
+
+void FontCascade::drawGlyphBuffer(GraphicsContext& context, const GlyphBuffer& glyphBuffer, FloatPoint& point, CustomFontNotReadyAction customFontNotReadyAction) const
 {
     // Draw each contiguous run of glyphs that use the same font data.
     const Font* fontData = glyphBuffer.fontAt(0);
@@ -1415,7 +1417,8 @@ void FontCascade::drawGlyphBuffer(GraphicsContext& context, const GlyphBuffer& g
         FloatSize nextOffset = glyphBuffer.offsetAt(nextGlyph);
 
         if (nextFontData != fontData || nextOffset != offset) {
-            context.drawGlyphs(*this, *fontData, glyphBuffer, lastFrom, nextGlyph - lastFrom, startPoint);
+            if (shouldDrawIfLoading(*fontData, customFontNotReadyAction))
+                context.drawGlyphs(*this, *fontData, glyphBuffer, lastFrom, nextGlyph - lastFrom, startPoint);
 
             lastFrom = nextGlyph;
             fontData = nextFontData;
@@ -1428,7 +1431,8 @@ void FontCascade::drawGlyphBuffer(GraphicsContext& context, const GlyphBuffer& g
         nextGlyph++;
     }
 
-    context.drawGlyphs(*this, *fontData, glyphBuffer, lastFrom, nextGlyph - lastFrom, startPoint);
+    if (shouldDrawIfLoading(*fontData, customFontNotReadyAction))
+        context.drawGlyphs(*this, *fontData, glyphBuffer, lastFrom, nextGlyph - lastFrom, startPoint);
     point.setX(nextX);
 }
 
@@ -1473,7 +1477,7 @@ void FontCascade::drawEmphasisMarks(GraphicsContext& context, const GlyphBuffer&
     }
     markBuffer.add(glyphBuffer.glyphAt(glyphBuffer.size() - 1) ? markGlyph : spaceGlyph, markFontData, 0);
 
-    drawGlyphBuffer(context, markBuffer, startPoint);
+    drawGlyphBuffer(context, markBuffer, startPoint, CustomFontNotReadyAction::DoNotPaintIfFontNotReady);
 }
 
 float FontCascade::floatWidthForSimpleText(const TextRun& run, HashSet<const Font*>* fallbackFonts, GlyphOverflow* glyphOverflow) const

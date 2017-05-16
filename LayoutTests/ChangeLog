@@ -1,3 +1,30 @@
+2017-05-16  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        REGRESSION(r212513): LastResort is platform-dependent, so its semantics should not be required to perform font loading correctly.
+        https://bugs.webkit.org/show_bug.cgi?id=168487
+
+        Reviewed by Antti Koivisto.
+
+        * fast/text/font-download-font-face-src-list-expected.txt: Added.
+        * fast/text/font-download-font-face-src-list.html: Copied from LayoutTests/fast/text/font-weight-download-2.html.
+        * fast/text/font-download-font-family-property-expected.txt: Added.
+        * fast/text/font-download-font-family-property.html: Copied from LayoutTests/fast/text/font-weight-download-2.html.
+        * fast/text/font-download-remote-fallback-all-expected.txt: Added.
+        * fast/text/font-download-remote-fallback-all.html: Copied from LayoutTests/fast/text/font-weight-download-2.html.
+        * fast/text/font-interstitial-invisible-width-while-loading-expected.txt: Added.
+        * fast/text/font-interstitial-invisible-width-while-loading.html: Added.
+        * fast/text/font-weight-download-2.html:
+        * fast/text/font-weight-download-3-expected.txt: Added.
+        * fast/text/font-weight-download-3.html: Copied from LayoutTests/fast/text/font-weight-download-2.html.
+        * fast/text/web-font-load-fallback-during-loading-2-expected.html: Added.
+        * fast/text/web-font-load-fallback-during-loading-2.html: Added.
+        * fast/text/web-font-load-fallback-during-loading-expected.html:
+        * fast/text/web-font-load-fallback-during-loading.html:
+        * fast/text/web-font-load-invisible-during-loading-expected.txt: Added.
+        * fast/text/web-font-load-invisible-during-loading.html: Added.
+        * http/tests/webfont/fallback-font-while-loading-expected.txt:
+        * http/tests/webfont/fallback-font-while-loading.html:
+
 2017-05-16  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Return default device list until user gives permission to capture

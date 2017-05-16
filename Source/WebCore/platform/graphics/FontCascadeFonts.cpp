@@ -350,13 +350,21 @@ GlyphData FontCascadeFonts::glyphDataForSystemFallback(UChar32 c, const FontCasc
 
 GlyphData FontCascadeFonts::glyphDataForVariant(UChar32 c, const FontCascadeDescription& description, FontVariant variant, unsigned fallbackIndex)
 {
+    ExternalResourceDownloadPolicy policy = ExternalResourceDownloadPolicy::Allow;
+    GlyphData loadingResult;
     while (true) {
         auto& fontRanges = realizeFallbackRangesAt(description, fallbackIndex++);
         if (fontRanges.isNull())
             break;
-        GlyphData data = fontRanges.glyphDataForCharacter(c);
+        GlyphData data = fontRanges.glyphDataForCharacter(c, policy);
         if (!data.font)
             continue;
+        if (data.font->isInterstitial()) {
+            policy = ExternalResourceDownloadPolicy::Forbid;
+            if (!loadingResult.font)
+                loadingResult = data;
+            continue;
+        }
         // The variantFont function should not normally return 0.
         // But if it does, we will just render the capital letter big.
         if (const Font* variantFont = data.font->variantFont(description, variant))
@@ -364,18 +372,28 @@ GlyphData FontCascadeFonts::glyphDataForVariant(UChar32 c, const FontCascadeDesc
         return data;
     }
 
+    if (loadingResult.font)
+        return loadingResult;
     return glyphDataForSystemFallback(c, description, variant);
 }
 
 GlyphData FontCascadeFonts::glyphDataForNormalVariant(UChar32 c, const FontCascadeDescription& description)
 {
+    ExternalResourceDownloadPolicy policy = ExternalResourceDownloadPolicy::Allow;
+    GlyphData loadingResult;
     for (unsigned fallbackIndex = 0; ; ++fallbackIndex) {
         auto& fontRanges = realizeFallbackRangesAt(description, fallbackIndex);
         if (fontRanges.isNull())
             break;
-        GlyphData data = fontRanges.glyphDataForCharacter(c);
+        GlyphData data = fontRanges.glyphDataForCharacter(c, policy);
         if (!data.font)
             continue;
+        if (data.font->isInterstitial()) {
+            policy = ExternalResourceDownloadPolicy::Forbid;
+            if (!loadingResult.font)
+                loadingResult = data;
+            continue;
+        }
         if (data.font->platformData().orientation() == Vertical && !data.font->isTextOrientationFallback()) {
             if (!FontCascade::isCJKIdeographOrSymbol(c))
                 return glyphDataForNonCJKCharacterWithGlyphOrientation(c, description.nonCJKGlyphOrientation(), data);
@@ -389,6 +407,8 @@ GlyphData FontCascadeFonts::glyphDataForNormalVariant(UChar32 c, const FontCasca
         return data;
     }
 
+    if (loadingResult.font)
+        return loadingResult;
     return glyphDataForSystemFallback(c, description, NormalVariant);
 }
 
@@ -397,13 +417,20 @@ static RefPtr<GlyphPage> glyphPageFromFontRanges(unsigned pageNumber, const Font
     const Font* font = nullptr;
     UChar32 pageRangeFrom = pageNumber * GlyphPage::size;
     UChar32 pageRangeTo = pageRangeFrom + GlyphPage::size - 1;
+    auto policy = ExternalResourceDownloadPolicy::Allow;
     for (unsigned i = 0; i < fontRanges.size(); ++i) {
         auto& range = fontRanges.rangeAt(i);
-        if (range.to()) {
-            if (range.from() <= pageRangeFrom && pageRangeTo <= range.to())
-                font = range.font();
-            break;
+        if (range.from() <= pageRangeFrom && pageRangeTo <= range.to()) {
+            font = range.font(policy);
+            if (!font)
+                continue;
+            if (font->isInterstitial()) {
+                font = nullptr;
+                policy = ExternalResourceDownloadPolicy::Forbid;
+                continue;
+            }
         }
+        break;
     }
     if (!font || font->platformData().orientation() == Vertical)
         return nullptr;

@@ -419,8 +419,8 @@ void CSSFontFace::fontLoadEventOccurred()
     // If the font is already in the cache, CSSFontFaceSource may report it's loaded before it is added here as a source.
     // Let's not pump the state machine until we've got all our sources. font() and load() are smart enough to act correctly
     // when a source is failed or succeeded before we have asked it to load.
-    if (m_sourcesPopulated)
-        pump();
+    if (m_sourcesPopulated && !webFontsShouldAlwaysFallBack())
+        pump(ExternalResourceDownloadPolicy::Forbid);
 
     ASSERT(m_fontSelector);
     m_fontSelector->fontLoaded();
@@ -526,16 +526,23 @@ void CSSFontFace::setStatus(Status newStatus)
         break;
     }
 
-    if (newStatus == Status::Loading)
-        m_timeoutTimer.startOneShot(webFontsShouldAlwaysFallBack() ? 0_s : 3_s);
-    else if (newStatus == Status::Success || newStatus == Status::Failure)
-        m_timeoutTimer.stop();
+    bool webFontsShouldAlwaysFallBack = this->webFontsShouldAlwaysFallBack();
+    if (!webFontsShouldAlwaysFallBack) {
+        if (newStatus == Status::Loading) {
+            Seconds timeUntilInterstitialFontIsDrawnVisibly = 3_s;
+            m_timeoutTimer.startOneShot(timeUntilInterstitialFontIsDrawnVisibly);
+        } else if (newStatus == Status::Success || newStatus == Status::Failure)
+            m_timeoutTimer.stop();
+    }
 
     iterateClients(m_clients, [&](Client& client) {
         client.fontStateChanged(*this, m_status, newStatus);
     });
 
     m_status = newStatus;
+
+    if (newStatus == Status::Loading && webFontsShouldAlwaysFallBack)
+        timeoutFired();
 }
 
 void CSSFontFace::fontLoaded(CSSFontFaceSource&)
@@ -550,7 +557,7 @@ bool CSSFontFace::webFontsShouldAlwaysFallBack() const
     return m_fontSelector && m_fontSelector->document() && m_fontSelector->document()->settings().webFontsAlwaysFallBack();
 }
 
-size_t CSSFontFace::pump()
+size_t CSSFontFace::pump(ExternalResourceDownloadPolicy policy)
 {
     size_t i;
     for (i = 0; i < m_sources.size(); ++i) {
@@ -558,15 +565,17 @@ size_t CSSFontFace::pump()
 
         if (source->status() == CSSFontFaceSource::Status::Pending) {
             ASSERT(m_status == Status::Pending || m_status == Status::Loading || m_status == Status::TimedOut);
-            if (m_status == Status::Pending)
-                setStatus(Status::Loading);
-            source->load(m_fontSelector.get());
+            if (policy == ExternalResourceDownloadPolicy::Allow || !source->requiresExternalResource()) {
+                if (m_status == Status::Pending)
+                    setStatus(Status::Loading);
+                source->load(m_fontSelector.get());
+            }
         }
 
         switch (source->status()) {
         case CSSFontFaceSource::Status::Pending:
-            ASSERT_NOT_REACHED();
-            break;
+            ASSERT(policy == ExternalResourceDownloadPolicy::Forbid);
+            return i;
         case CSSFontFaceSource::Status::Loading:
             ASSERT(m_status == Status::Pending || m_status == Status::Loading || m_status == Status::TimedOut);
             if (m_status == Status::Pending)
@@ -594,10 +603,10 @@ size_t CSSFontFace::pump()
 
 void CSSFontFace::load()
 {
-    pump();
+    pump(ExternalResourceDownloadPolicy::Allow);
 }
 
-RefPtr<Font> CSSFontFace::font(const FontDescription& fontDescription, bool syntheticBold, bool syntheticItalic)
+RefPtr<Font> CSSFontFace::font(const FontDescription& fontDescription, bool syntheticBold, bool syntheticItalic, ExternalResourceDownloadPolicy policy)
 {
     if (allSourcesFailed())
         return nullptr;
@@ -606,26 +615,18 @@ RefPtr<Font> CSSFontFace::font(const FontDescription& fontDescription, bool synt
     // return null from font(), which means we need to continue looping through the remainder
     // of the sources to try to find a font to use. These subsequent tries should not affect
     // our own state, though.
-    size_t startIndex = pump();
-    bool fontIsLoading = false;
+    size_t startIndex = pump(policy);
     for (size_t i = startIndex; i < m_sources.size(); ++i) {
         auto& source = m_sources[i];
-        if (source->status() == CSSFontFaceSource::Status::Pending) {
-            if (fontIsLoading && source->requiresExternalResource())
-                continue;
+        if (source->status() == CSSFontFaceSource::Status::Pending && (policy == ExternalResourceDownloadPolicy::Allow || !source->requiresExternalResource()))
             source->load(m_fontSelector.get());
-        }
 
         switch (source->status()) {
         case CSSFontFaceSource::Status::Pending:
-            ASSERT_NOT_REACHED();
-            break;
-        case CSSFontFaceSource::Status::Loading:
-            ASSERT(!fontIsLoading);
-            fontIsLoading = true;
-            if (status() == Status::TimedOut)
-                continue;
-            return Font::create(FontCache::singleton().lastResortFallbackFontForEveryCharacter(fontDescription)->platformData(), Font::Origin::Remote, Font::Interstitial::Yes);
+        case CSSFontFaceSource::Status::Loading: {
+            Font::Visibility visibility = status() == Status::TimedOut ? Font::Visibility::Visible : Font::Visibility::Invisible;
+            return Font::create(FontCache::singleton().lastResortFallbackFont(fontDescription)->platformData(), Font::Origin::Remote, Font::Interstitial::Yes, visibility);
+        }
         case CSSFontFaceSource::Status::Success:
             if (RefPtr<Font> result = source->font(fontDescription, syntheticBold, syntheticItalic, m_featureSettings, m_variantSettings, m_fontSelectionCapabilities))
                 return result;

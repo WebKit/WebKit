@@ -39,7 +39,7 @@ class FontAccessor : public RefCounted<FontAccessor> {
 public:
     virtual ~FontAccessor() { }
 
-    virtual const Font* font() const = 0;
+    virtual const Font* font(ExternalResourceDownloadPolicy) const = 0;
     virtual bool isLoading() const = 0;
 };
 

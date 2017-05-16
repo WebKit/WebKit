@@ -84,13 +84,17 @@ public:
         Yes,
         No
     };
-    enum class OrientationFallback {
-        Fallback,
-        NoFallback
+    enum class Visibility {
+        Visible,
+        Invisible
     };
-    static Ref<Font> create(const FontPlatformData& platformData, Origin origin = Origin::Local, Interstitial interstitial = Interstitial::No, OrientationFallback orientationFallback = OrientationFallback::NoFallback)
+    enum class OrientationFallback {
+        Yes,
+        No
+    };
+    static Ref<Font> create(const FontPlatformData& platformData, Origin origin = Origin::Local, Interstitial interstitial = Interstitial::No, Visibility visibility = Visibility::Visible, OrientationFallback orientationFallback = OrientationFallback::No)
     {
-        return adoptRef(*new Font(platformData, origin, interstitial, orientationFallback));
+        return adoptRef(*new Font(platformData, origin, interstitial, visibility, orientationFallback));
     }
 
     WEBCORE_EXPORT ~Font();
@@ -181,8 +185,9 @@ public:
     void determinePitch();
     Pitch pitch() const { return m_treatAsFixedPitch ? FixedPitch : VariablePitch; }
 
-    Origin origin() const { return m_origin ? Origin::Remote : Origin::Local; }
+    Origin origin() const { return m_origin; }
     bool isInterstitial() const { return m_isInterstitial; }
+    Visibility visibility() const { return m_visibility; }
 
 #ifndef NDEBUG
     String description() const;
@@ -220,7 +225,7 @@ public:
 #endif
 
 private:
-    Font(const FontPlatformData&, Origin, Interstitial, OrientationFallback);
+    Font(const FontPlatformData&, Origin, Interstitial, Visibility, OrientationFallback);
 
     void platformInit();
     void platformGlyphInit();
@@ -303,8 +308,10 @@ private:
     mutable SCRIPT_FONTPROPERTIES* m_scriptFontProperties;
 #endif
 
+    Origin m_origin; // Whether or not we are custom font loaded via @font-face
+    Visibility m_visibility; // @font-face's internal timer can cause us to show fonts even when a font is being downloaded.
+
     unsigned m_treatAsFixedPitch : 1;
-    unsigned m_origin : 1; // Whether or not we are custom font loaded via @font-face
     unsigned m_isInterstitial : 1; // Whether or not this custom font is the last resort placeholder for a loading font
 
     unsigned m_isTextOrientationFallback : 1;

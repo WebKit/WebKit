@@ -55,15 +55,16 @@ unsigned GlyphPage::s_count = 0;
 const float smallCapsFontSizeMultiplier = 0.7f;
 const float emphasisMarkFontSizeMultiplier = 0.5f;
 
-Font::Font(const FontPlatformData& platformData, Origin origin, Interstitial interstitial, OrientationFallback orientationFallback)
+Font::Font(const FontPlatformData& platformData, Origin origin, Interstitial interstitial, Visibility visibility, OrientationFallback orientationFallback)
     : m_maxCharWidth(-1)
     , m_avgCharWidth(-1)
     , m_platformData(platformData)
     , m_mathData(nullptr)
+    , m_origin(origin)
+    , m_visibility(visibility)
     , m_treatAsFixedPitch(false)
-    , m_origin(origin == Origin::Remote)
     , m_isInterstitial(interstitial == Interstitial::Yes)
-    , m_isTextOrientationFallback(orientationFallback == OrientationFallback::Fallback)
+    , m_isTextOrientationFallback(orientationFallback == OrientationFallback::Yes)
     , m_isBrokenIdeographFallback(false)
     , m_hasVerticalGlyphs(false)
     , m_isUsedInSystemFallbackCache(false)
@@ -75,7 +76,7 @@ Font::Font(const FontPlatformData& platformData, Origin origin, Interstitial int
     platformGlyphInit();
     platformCharWidthInit();
 #if ENABLE(OPENTYPE_VERTICAL)
-    if (platformData.orientation() == Vertical && orientationFallback == OrientationFallback::NoFallback) {
+    if (platformData.orientation() == Vertical && orientationFallback == OrientationFallback::No) {
         m_verticalData = FontCache::singleton().verticalData(platformData);
         m_hasVerticalGlyphs = m_verticalData.get() && m_verticalData->hasVerticalMetrics();
     }
@@ -266,7 +267,7 @@ const Font& Font::verticalRightOrientationFont() const
         m_derivedFontData = std::make_unique<DerivedFonts>();
     if (!m_derivedFontData->verticalRightOrientation) {
         auto verticalRightPlatformData = FontPlatformData::cloneWithOrientation(m_platformData, Horizontal);
-        m_derivedFontData->verticalRightOrientation = create(verticalRightPlatformData, origin(), Interstitial::No, OrientationFallback::Fallback);
+        m_derivedFontData->verticalRightOrientation = create(verticalRightPlatformData, origin(), Interstitial::No, Visibility::Visible, OrientationFallback::Yes);
     }
     ASSERT(m_derivedFontData->verticalRightOrientation != this);
     return *m_derivedFontData->verticalRightOrientation;
@@ -277,7 +278,7 @@ const Font& Font::uprightOrientationFont() const
     if (!m_derivedFontData)
         m_derivedFontData = std::make_unique<DerivedFonts>();
     if (!m_derivedFontData->uprightOrientation)
-        m_derivedFontData->uprightOrientation = create(m_platformData, origin(), Interstitial::No, OrientationFallback::Fallback);
+        m_derivedFontData->uprightOrientation = create(m_platformData, origin(), Interstitial::No, Visibility::Visible, OrientationFallback::Yes);
     ASSERT(m_derivedFontData->uprightOrientation != this);
     return *m_derivedFontData->uprightOrientation;
 }

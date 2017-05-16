@@ -149,11 +149,4 @@ Ref<Font> FontCache::lastResortFallbackFont(const FontDescription& fontDescripti
 
 #endif // PLATFORM(MAC)
 
-Ref<Font> FontCache::lastResortFallbackFontForEveryCharacter(const FontDescription& fontDescription)
-{
-    auto result = fontForFamily(fontDescription, AtomicString("LastResort", AtomicString::ConstructFromLiteral));
-    ASSERT(result);
-    return *result;
-}
-
 } // namespace WebCore

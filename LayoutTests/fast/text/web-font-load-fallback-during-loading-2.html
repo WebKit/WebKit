@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.internals) {
+    internals.settings.setWebFontsAlwaysFallBack(true);
+    internals.clearMemoryCache();
+    internals.invalidateFontCache();
+}
+</script>
+<style>
+@font-face {
+    font-family: "Helvetica";
+    src: url("../../resources/Ahem.ttf") format("truetype");
+}
+</style>
+</head>
+<body>
+This test makes sure that fallback fonts are used during the time when fonts are loading.
+<p><span id="test" style="font-family: 'Helvetica';">This is rendered with Helvetica.</span></p>
+</body>
+</html>

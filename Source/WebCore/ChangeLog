@@ -1,3 +1,120 @@
+2017-05-16  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        REGRESSION(r212513): LastResort is platform-dependent, so its semantics should not be required to perform font loading correctly.
+        https://bugs.webkit.org/show_bug.cgi?id=168487
+
+        Reviewed by Antti Koivisto.
+
+        There are three ways a Web author can chain multiple font files together:
+        1. Multiple entries in the "src" descriptor in an @font-face rule
+        2. Multiple @font-face rules with the same "font-family" descriptor
+        3. Multiple entries in the "font-family" property on an element
+
+        Before r212513, the code which iterated across #2 and #3 above could have
+        triggered each item in the chain to download. r212513 tried to solve this
+        by using LastResort as the interstitial font used during downloads, because
+        LastResort supports every character and therefore solves #3 above. However,
+        this change had a few problems:
+
+        1. Previously, our code would try to avoid using the interstitial font for
+        layout or rendering whenever possible (because one of the chains above may
+        have named a local font which would be better to use). In order to use the
+        benefits of LastResort, I had to remove this avoidance logic and make
+        WebKit try to use the interstitial font as often as possible. However, due
+        to the large metrics of LastResort, this means that offsetWidth queries
+        during font loading would be wildly inaccurate, causing Google Docs to break.
+        2. It also means that canvas drawing during font loading would actually draw
+        LastResort, causing Bing maps to break.
+        3. LastResort is platform-specific, so only platforms which have it would
+        actually be able to load fonts correctly.
+
+        Instead, we should keep the older logic about avoiding using the
+        interstitial font so that loading has a better experience for the user.
+        We solve the unnecessary download problem by giving our loading code a
+        downloading policy enum, which has two values: allow downloads or forbid
+        downloads. Whenever our loading code returns the interstitial font, we
+        continue our search, but we change the policy to forbid downloads.
+
+        There is one piece of subtlety, though: It is more common for web authors
+        to put good fallbacks in the "font-family" property than in the "src"
+        descriptor inside @font-face. This means that we shouldn't exhaustively
+        search through the @font-face src list first. Instead, we should look
+        through the src list until we hit a non-local font, and then immediately
+        start looking through the other other chains.
+
+        Tests: fast/text/font-download-font-face-src-list.html
+               fast/text/font-download-font-family-property.html
+               fast/text/font-download-remote-fallback-all.html
+               fast/text/font-interstitial-invisible-width-while-loading.html
+               fast/text/font-weight-download-3.html
+               fast/text/web-font-load-fallback-during-loading-2.html
+               fast/text/web-font-load-invisible-during-loading.html
+
+        * css/CSSFontFace.cpp:
+        (WebCore::CSSFontFace::fontLoadEventOccurred): Implement support for
+        the font download policy.
+        (WebCore::CSSFontFace::setStatus): After 3 seconds of loading, we
+        will start drawing the fallback font. However, for testing, we have an
+        internal setting to make this switch happen immediately. This patch now
+        requires that this internal switch happen synchronously.
+        (WebCore::CSSFontFace::pump): Implement support for the font download
+        policy.
+        (WebCore::CSSFontFace::load): Ditto.
+        (WebCore::CSSFontFace::font): Ditto.
+        * css/CSSFontFace.h: Ditto.
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::beginLoadingFontSoon): Implement support for
+        synchronous font download timeouts.
+        * css/CSSSegmentedFontFace.cpp:
+        (WebCore::CSSSegmentedFontFace::fontRanges): Implement support for the
+        font download policy.
+        * platform/graphics/Font.cpp: Add new flag which represents if the
+        interstitial font was created after the 3 second timeout or before.
+        Previously, we would distinguish between these two cases by knowing
+        that one font was LastResort and the other font was a fallback. Now that
+        we're using fallback fonts on both sides of the 3 second timeout, we
+        now no longer know which one should be invisible. This new enum solves
+        this problem.
+        (WebCore::Font::Font):
+        (WebCore::Font::verticalRightOrientationFont):
+        (WebCore::Font::uprightOrientationFont):
+        * platform/graphics/Font.h: Ditto.
+        (WebCore::Font::create):
+        (WebCore::Font::origin):
+        (WebCore::Font::visibility):
+        * platform/graphics/FontCache.h:
+        * platform/graphics/FontCascade.cpp: We try to fall back to a local() font
+        during downloads, but there might not be one that we can use. Therefore, we
+        can't use the presence of the interstitial font to detect if we should paint
+        invisibly. Instead, we can move this logic into the font-specific part of
+        painting, and consult with the specific font to know if it was created from
+        a timed-out @font-face rule or not.
+        (WebCore::FontCascade::drawText):
+        (WebCore::shouldDrawIfLoading):
+        (WebCore::FontCascade::drawGlyphBuffer):
+        (WebCore::FontCascade::drawEmphasisMarks):
+        * platform/graphics/FontCascade.h:
+        * platform/graphics/FontCascadeFonts.cpp:
+        (WebCore::FontCascadeFonts::glyphDataForVariant): Implement the logic
+        described above where we switch the policy if we encounter the intestitial
+        font.
+        (WebCore::FontCascadeFonts::glyphDataForNormalVariant): Ditto.
+        (WebCore::glyphPageFromFontRanges): Ditto.
+        * platform/graphics/FontRanges.cpp: Implement support for the font download
+        policy.
+        (WebCore::FontRanges::Range::font):
+        (WebCore::FontRanges::glyphDataForCharacter):
+        (WebCore::FontRanges::fontForCharacter):
+        (WebCore::FontRanges::fontForFirstRange):
+        * platform/graphics/FontRanges.h:
+        * platform/graphics/FontSelector.h:
+        * platform/graphics/freetype/FontCacheFreeType.cpp:
+        (WebCore::FontCache::lastResortFallbackFontForEveryCharacter): Deleted.
+        * platform/graphics/mac/FontCacheMac.mm:
+        (WebCore::FontCache::lastResortFallbackFontForEveryCharacter): Deleted.
+        * platform/graphics/win/FontCacheWin.cpp:
+        (WebCore::FontCache::lastResortFallbackFontForEveryCharacter): Deleted.
+
 2017-05-16  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Move setCollapedWhitespaceWidth call to updateLineConstrains.
