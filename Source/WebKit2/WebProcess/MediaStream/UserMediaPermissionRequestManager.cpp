@@ -29,7 +29,7 @@
 #include <WebCore/Document.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
-#include <WebCore/MediaConstraintsImpl.h>
+#include <WebCore/MediaConstraints.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>
 
@@ -105,7 +105,7 @@ void UserMediaPermissionRequestManager::sendUserMediaRequest(UserMediaRequest& r
 
     SecurityOrigin* topLevelDocumentOrigin = request.topLevelDocumentOrigin();
     String topLevelDocumentOriginString = topLevelDocumentOrigin ? SecurityOriginData::fromSecurityOrigin(*topLevelDocumentOrigin).databaseIdentifier() : emptyString();
-    m_page.send(Messages::WebPageProxy::RequestUserMediaPermissionForFrame(requestID, webFrame->frameID(), SecurityOriginData::fromSecurityOrigin(*request.userMediaDocumentOrigin()).databaseIdentifier(), topLevelDocumentOriginString, request.audioConstraints().data(), request.videoConstraints().data()));
+    m_page.send(Messages::WebPageProxy::RequestUserMediaPermissionForFrame(requestID, webFrame->frameID(), SecurityOriginData::fromSecurityOrigin(*request.userMediaDocumentOrigin()).databaseIdentifier(), topLevelDocumentOriginString, request.audioConstraints(), request.videoConstraints()));
 }
 
 void UserMediaPermissionRequestManager::cancelUserMediaRequest(UserMediaRequest& request)

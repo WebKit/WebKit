@@ -44,11 +44,12 @@ namespace WebCore {
 
 class CaptureDevice;
 class CaptureDeviceManager;
-class MediaConstraints;
 class RealtimeMediaSourceSettings;
 class RealtimeMediaSourceSupportedConstraints;
 class TrackSourceInfo;
 
+struct MediaConstraints;
+    
 class RealtimeMediaSourceCenter {
 public:
     virtual ~RealtimeMediaSourceCenter();

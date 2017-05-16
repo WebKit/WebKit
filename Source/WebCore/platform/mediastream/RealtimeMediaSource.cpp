@@ -526,12 +526,12 @@ bool RealtimeMediaSource::selectSettings(const MediaConstraints& constraints, Fl
 
     failedConstraint = emptyString();
 
-    // Check width, height, and frame rate separately, because while they may be supported individually the combination may not be supported.
+    // Check width, height and frame rate jointly, because while they may be supported individually the combination may not be supported.
     double distance = std::numeric_limits<double>::infinity();
-    if (!supportsSizeAndFrameRate(constraints.mandatoryConstraints().width(), constraints.mandatoryConstraints().height(), constraints.mandatoryConstraints().frameRate(), failedConstraint, m_fitnessScore))
+    if (!supportsSizeAndFrameRate(constraints.mandatoryConstraints.width(), constraints.mandatoryConstraints.height(), constraints.mandatoryConstraints.frameRate(), failedConstraint, m_fitnessScore))
         return false;
 
-    constraints.mandatoryConstraints().filter([&](const MediaConstraint& constraint) {
+    constraints.mandatoryConstraints.filter([&](const MediaConstraint& constraint) {
         if (!supportsConstraint(constraint))
             return false;
 
@@ -548,9 +548,9 @@ bool RealtimeMediaSource::selectSettings(const MediaConstraints& constraints, Fl
                 return false;
 
             ASSERT(constraint.isString());
-            ASSERT(!constraints.deviceIDHashSalt().isEmpty());
+            ASSERT(!constraints.deviceIDHashSalt.isEmpty());
 
-            auto hashedID = RealtimeMediaSourceCenter::singleton().hashStringWithSalt(m_persistentID, constraints.deviceIDHashSalt());
+            auto hashedID = RealtimeMediaSourceCenter::singleton().hashStringWithSalt(m_persistentID, constraints.deviceIDHashSalt);
             double constraintDistance = downcast<StringConstraint>(constraint).fitnessDistance(hashedID);
             if (std::isinf(constraintDistance)) {
                 failedConstraint = constraint.name();
@@ -587,7 +587,7 @@ bool RealtimeMediaSource::selectSettings(const MediaConstraints& constraints, Fl
     //     values of properties as exact.
     Vector<std::pair<double, MediaTrackConstraintSetMap>> supportedConstraints;
 
-    for (const auto& advancedConstraint : constraints.advancedConstraints()) {
+    for (const auto& advancedConstraint : constraints.advancedConstraints) {
         double constraintDistance = 0;
         bool supported = false;
 
@@ -697,7 +697,7 @@ bool RealtimeMediaSource::supportsConstraint(const MediaConstraint& constraint) 
 
 bool RealtimeMediaSource::supportsConstraints(const MediaConstraints& constraints, String& invalidConstraint)
 {
-    ASSERT(constraints.isValid());
+    ASSERT(constraints.isValid);
 
     FlattenedConstraint candidates;
     if (!selectSettings(constraints, candidates, invalidConstraint, SelectType::ForSupportsConstraints))
@@ -759,7 +759,7 @@ void RealtimeMediaSource::applyConstraints(const FlattenedConstraint& constraint
 
 std::optional<std::pair<String, String>> RealtimeMediaSource::applyConstraints(const MediaConstraints& constraints)
 {
-    ASSERT(constraints.isValid());
+    ASSERT(constraints.isValid);
 
     FlattenedConstraint candidates;
     String failedConstraint;

@@ -944,7 +944,6 @@ set(WebCore_SOURCES
     Modules/mediasource/VideoPlaybackQuality.cpp
 
     Modules/mediastream/CanvasCaptureMediaStreamTrack.cpp
-    Modules/mediastream/MediaConstraintsImpl.cpp
     Modules/mediastream/MediaDeviceInfo.cpp
     Modules/mediastream/MediaDevices.cpp
     Modules/mediastream/MediaDevicesEnumerationRequest.cpp

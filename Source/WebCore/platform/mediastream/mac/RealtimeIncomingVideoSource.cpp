@@ -209,11 +209,6 @@ const RealtimeMediaSourceSettings& RealtimeIncomingVideoSource::settings() const
     return m_currentSettings;
 }
 
-RealtimeMediaSourceSupportedConstraints& RealtimeIncomingVideoSource::supportedConstraints()
-{
-    return m_supportedConstraints;
-}
-
 } // namespace WebCore
 
 #endif // USE(LIBWEBRTC)

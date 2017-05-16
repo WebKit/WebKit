@@ -26,7 +26,7 @@
 #include "WebPageMessages.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
-#include <WebCore/MediaConstraintsImpl.h>
+#include <WebCore/MediaConstraints.h>
 #include <WebCore/MockRealtimeMediaSourceCenter.h>
 #include <WebCore/RealtimeMediaSource.h>
 #include <WebCore/SecurityOriginData.h>
@@ -251,7 +251,7 @@ void UserMediaPermissionRequestManagerProxy::scheduleNextRejection()
         m_rejectionTimer.startOneShot(Seconds(mimimumDelayBeforeReplying + randomNumber()));
 }
 
-void UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame(uint64_t userMediaID, uint64_t frameID, String userMediaDocumentOriginIdentifier, String topLevelDocumentOriginIdentifier, const WebCore::MediaConstraintsData& audioConstraintsData, const WebCore::MediaConstraintsData& videoConstraintsData)
+void UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame(uint64_t userMediaID, uint64_t frameID, String userMediaDocumentOriginIdentifier, String topLevelDocumentOriginIdentifier, const WebCore::MediaConstraints& audioConstraints, const WebCore::MediaConstraints& videoConstraints)
 {
 #if ENABLE(MEDIA_STREAM)
     auto invalidHandler = [this, userMediaID](const String& invalidConstraint) {
@@ -306,12 +306,11 @@ void UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame(
         return;
     }
 
-    auto validateConstraintsHandler = [this, userMediaID, validHandler = WTFMove(validHandler), invalidHandler = WTFMove(invalidHandler), audioConstraintsData, videoConstraintsData](String&& deviceIdentifierHashSalt) mutable {
+    auto validateConstraintsHandler = [this, userMediaID, validHandler = WTFMove(validHandler), invalidHandler = WTFMove(invalidHandler), audioConstraints = WebCore::MediaConstraints(audioConstraints), videoConstraints = WebCore::MediaConstraints(videoConstraints)](String&& deviceIdentifierHashSalt) mutable {
         syncWithWebCorePrefs();
-
-        auto audioConstraints = MediaConstraintsImpl::create(MediaConstraintsData(audioConstraintsData, deviceIdentifierHashSalt));
-        auto videoConstraints = MediaConstraintsImpl::create(MediaConstraintsData(videoConstraintsData, deviceIdentifierHashSalt));
-
+        
+        audioConstraints.deviceIDHashSalt = deviceIdentifierHashSalt;
+        videoConstraints.deviceIDHashSalt = WTFMove(deviceIdentifierHashSalt);
         RealtimeMediaSourceCenter::singleton().validateRequestConstraints(WTFMove(validHandler), WTFMove(invalidHandler), audioConstraints, videoConstraints);
     };
 
@@ -335,8 +334,8 @@ void UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame(
     UNUSED_PARAM(frameID);
     UNUSED_PARAM(userMediaDocumentOriginIdentifier);
     UNUSED_PARAM(topLevelDocumentOriginIdentifier);
-    UNUSED_PARAM(audioConstraintsData);
-    UNUSED_PARAM(videoConstraintsData);
+    UNUSED_PARAM(audioConstraints);
+    UNUSED_PARAM(videoConstraints);
 #endif
 }
 

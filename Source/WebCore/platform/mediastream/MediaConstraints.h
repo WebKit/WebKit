@@ -35,9 +35,10 @@
 
 #include "RealtimeMediaSourceSupportedConstraints.h"
 #include <cstdlib>
+#include <wtf/Vector.h>
 
 namespace WebCore {
-
+    
 class MediaConstraint {
 public:
     enum class DataType { None, Integer, Double, Boolean, String };
@@ -803,21 +804,16 @@ private:
 #endif
 };
 
-class MediaConstraints : public RefCounted<MediaConstraints> {
-public:
-    virtual ~MediaConstraints() { }
+struct MediaConstraints {
+    void setDefaultVideoConstraints();
+    bool isConstraintSet(std::function<bool(const MediaTrackConstraintSetMap&)>&&);
 
-    virtual const MediaTrackConstraintSetMap& mandatoryConstraints() const = 0;
-    virtual const Vector<MediaTrackConstraintSetMap>& advancedConstraints() const = 0;
-    virtual bool isValid() const = 0;
-
-    virtual const String& deviceIDHashSalt() const = 0;
-    virtual void setDeviceIDHashSalt(const String&) = 0;
-
-protected:
-    MediaConstraints() { }
+    MediaTrackConstraintSetMap mandatoryConstraints;
+    Vector<MediaTrackConstraintSetMap> advancedConstraints;
+    String deviceIDHashSalt;
+    bool isValid { false };
 };
-
+    
 } // namespace WebCore
 
 #define SPECIALIZE_TYPE_TRAITS_MEDIACONSTRAINT(ConstraintType, predicate) \

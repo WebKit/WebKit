@@ -33,7 +33,7 @@
 #include "Event.h"
 #include "EventNames.h"
 #include "JSOverconstrainedError.h"
-#include "MediaConstraintsImpl.h"
+#include "MediaConstraints.h"
 #include "MediaStream.h"
 #include "MediaStreamPrivate.h"
 #include "NotImplemented.h"
@@ -246,11 +246,14 @@ MediaStreamTrack::TrackCapabilities MediaStreamTrack::getCapabilities() const
     return result;
 }
 
-static Ref<MediaConstraintsImpl> createMediaConstraintsImpl(const std::optional<MediaTrackConstraints>& constraints)
+static MediaConstraints createMediaConstraints(const std::optional<MediaTrackConstraints>& constraints)
 {
-    if (!constraints)
-        return MediaConstraintsImpl::create({ }, { }, true);
-    return createMediaConstraintsImpl(constraints.value());
+    if (!constraints) {
+        MediaConstraints validConstraints;
+        validConstraints.isValid = true;
+        return validConstraints;
+    }
+    return createMediaConstraints(constraints.value());
 }
 
 void MediaStreamTrack::applyConstraints(const std::optional<MediaTrackConstraints>& constraints, DOMPromiseDeferred<void>&& promise)
@@ -269,7 +272,7 @@ void MediaStreamTrack::applyConstraints(const std::optional<MediaTrackConstraint
         weakThis->m_promise->resolve();
         weakThis->m_constraints = constraints.value_or(MediaTrackConstraints { });
     };
-    m_private->applyConstraints(createMediaConstraintsImpl(constraints), WTFMove(successHandler), WTFMove(failureHandler));
+    m_private->applyConstraints(createMediaConstraints(constraints), WTFMove(successHandler), WTFMove(failureHandler));
 }
 
 void MediaStreamTrack::addObserver(Observer& observer)

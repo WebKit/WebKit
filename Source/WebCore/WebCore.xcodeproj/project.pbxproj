@@ -179,7 +179,6 @@
 		07846385145B1B8E00A58DF1 /* JSTrackCustom.h in Headers */ = {isa = PBXBuildFile; fileRef = 07846384145B1B8E00A58DF1 /* JSTrackCustom.h */; };
 		0787C4691BFBDF6F006DCD7F /* JSMediaTrackSupportedConstraints.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0787C4671BFBDF6F006DCD7F /* JSMediaTrackSupportedConstraints.cpp */; };
 		0787C46A1BFBDF6F006DCD7F /* JSMediaTrackSupportedConstraints.h in Headers */ = {isa = PBXBuildFile; fileRef = 0787C4681BFBDF6F006DCD7F /* JSMediaTrackSupportedConstraints.h */; };
-		078E08FE17D14CEE00420AA1 /* MediaConstraintsImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07221B4A17CEC32700848E51 /* MediaConstraintsImpl.cpp */; };
 		078E08FF17D14CEE00420AA1 /* MediaStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07221B4C17CEC32700848E51 /* MediaStream.cpp */; };
 		078E090017D14CEE00420AA1 /* MediaStreamEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07221B4F17CEC32700848E51 /* MediaStreamEvent.cpp */; };
 		078E090117D14CEE00420AA1 /* MediaStreamRegistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07221B5217CEC32700848E51 /* MediaStreamRegistry.cpp */; };
@@ -195,7 +194,6 @@
 		078E090C17D14CEE00420AA1 /* RTCSessionDescription.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07221B7A17CEC32700848E51 /* RTCSessionDescription.cpp */; };
 		078E091217D14CEE00420AA1 /* UserMediaController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07221B8E17CEC32700848E51 /* UserMediaController.cpp */; };
 		078E091317D14CEE00420AA1 /* UserMediaRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07221B9017CEC32700848E51 /* UserMediaRequest.cpp */; };
-		078E091417D14D1C00420AA1 /* MediaConstraintsImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 07221B4B17CEC32700848E51 /* MediaConstraintsImpl.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		078E091517D14D1C00420AA1 /* MediaStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 07221B4D17CEC32700848E51 /* MediaStream.h */; };
 		078E091617D14D1C00420AA1 /* MediaStreamEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 07221B5017CEC32700848E51 /* MediaStreamEvent.h */; };
 		078E091717D14D1C00420AA1 /* MediaStreamRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 07221B5317CEC32700848E51 /* MediaStreamRegistry.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7438,8 +7436,6 @@
 		071E496F1AD5AB5E008A50B4 /* MediaPlaybackTargetMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaPlaybackTargetMac.h; sourceTree = "<group>"; };
 		0720B09E14D3323500642955 /* GenericEventQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GenericEventQueue.cpp; sourceTree = "<group>"; };
 		0720B09F14D3323500642955 /* GenericEventQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GenericEventQueue.h; sourceTree = "<group>"; };
-		07221B4A17CEC32700848E51 /* MediaConstraintsImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaConstraintsImpl.cpp; sourceTree = "<group>"; };
-		07221B4B17CEC32700848E51 /* MediaConstraintsImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaConstraintsImpl.h; sourceTree = "<group>"; };
 		07221B4C17CEC32700848E51 /* MediaStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaStream.cpp; sourceTree = "<group>"; };
 		07221B4D17CEC32700848E51 /* MediaStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaStream.h; sourceTree = "<group>"; };
 		07221B4E17CEC32700848E51 /* MediaStream.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaStream.idl; sourceTree = "<group>"; };
@@ -15961,8 +15957,6 @@
 				93A806121E03B51C008A1F26 /* DoubleRange.idl */,
 				93A806131E03B51C008A1F26 /* LongRange.h */,
 				93A806141E03B51C008A1F26 /* LongRange.idl */,
-				07221B4A17CEC32700848E51 /* MediaConstraintsImpl.cpp */,
-				07221B4B17CEC32700848E51 /* MediaConstraintsImpl.h */,
 				159AE82A1B3A402F0037478B /* MediaDeviceInfo.cpp */,
 				15145B8F1B3A1B3E00662BF7 /* MediaDeviceInfo.h */,
 				15145B911B3A1D4C00662BF7 /* MediaDeviceInfo.idl */,
@@ -28405,7 +28399,6 @@
 				5CBC8DAD1AAA302200E1C803 /* MediaAccessibilitySoftLink.h in Headers */,
 				931BCC611124DFCB00BE70DD /* MediaCanStartListener.h in Headers */,
 				078E093A17D16E1C00420AA1 /* MediaConstraints.h in Headers */,
-				078E091417D14D1C00420AA1 /* MediaConstraintsImpl.h in Headers */,
 				417253AB1354BBBC00360F2A /* MediaControlElements.h in Headers */,
 				DEBCCDD416646EAF00A452E1 /* MediaControlElementTypes.h in Headers */,
 				CDF65CC8145B1E7500C4C7AA /* MediaController.h in Headers */,
@@ -32418,7 +32411,6 @@
 				49E911C60EF86D47009D0CAF /* MatrixTransformOperation.cpp in Sources */,
 				5CBC8DAC1AAA302200E1C803 /* MediaAccessibilitySoftLink.cpp in Sources */,
 				1BE5BFC21D515715001666D9 /* MediaConstraints.cpp in Sources */,
-				078E08FE17D14CEE00420AA1 /* MediaConstraintsImpl.cpp in Sources */,
 				417253AA1354BBBC00360F2A /* MediaControlElements.cpp in Sources */,
 				DEBCCDD516646EB200A452E1 /* MediaControlElementTypes.cpp in Sources */,
 				CD27F6E7145770D30078207D /* MediaController.cpp in Sources */,

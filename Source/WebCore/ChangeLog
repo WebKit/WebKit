@@ -1,3 +1,63 @@
+2017-05-16  Youenn Fablet  <youenn@apple.com>
+
+        Remove MediaConstraintsData and MediaConstraintsImpl
+        https://bugs.webkit.org/show_bug.cgi?id=172132
+
+        Reviewed by Eric Carlson.
+
+        No observable change of behavior.
+
+        Removing MediaConstraintsData and MediaConstraintsImpl allows simplifying the code.
+        Further simplified the code by making MediaConstraints no longer ref counted and now a struct.
+        Simplified some RealtimeMediaSource subclasses by removing unused MediaConstraints class members.
+
+        * CMakeLists.txt: Removing MediaConstraintsImpl.cpp.
+        * Modules/mediastream/MediaConstraintsImpl.cpp: Removed.
+        * Modules/mediastream/MediaConstraintsImpl.h: Removed.
+        * Modules/mediastream/MediaDevices.cpp:
+        (WebCore::createMediaConstraints):
+        (WebCore::MediaDevices::getUserMedia):
+        (WebCore::createMediaConstraintsImpl): Deleted.
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        (WebCore::createMediaConstraints):
+        (WebCore::MediaStreamTrack::applyConstraints):
+        (WebCore::createMediaConstraintsImpl): Deleted.
+        * Modules/mediastream/MediaTrackConstraints.cpp:
+        (WebCore::createMediaConstraints):
+        (WebCore::createMediaConstraintsImpl): Deleted.
+        * Modules/mediastream/MediaTrackConstraints.h:
+        * Modules/mediastream/UserMediaRequest.cpp:
+        (WebCore::UserMediaRequest::start):
+        (WebCore::UserMediaRequest::UserMediaRequest):
+        (WebCore::UserMediaRequest::allow):
+        * Modules/mediastream/UserMediaRequest.h:
+        (WebCore::UserMediaRequest::audioConstraints):
+        (WebCore::UserMediaRequest::videoConstraints):
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mediastream/MediaConstraints.cpp:
+        (WebCore::addDefaultVideoConstraints):
+        (WebCore::MediaConstraints::isConstraintSet):
+        (WebCore::MediaConstraints::setDefaultVideoConstraints):
+        * platform/mediastream/MediaConstraints.h:
+        (WebCore::MediaConstraints::~MediaConstraints): Deleted.
+        (WebCore::MediaConstraints::MediaConstraints): Deleted.
+        * platform/mediastream/MediaStreamConstraintsValidationClient.h:
+        * platform/mediastream/RealtimeMediaSource.cpp:
+        (WebCore::RealtimeMediaSource::selectSettings):
+        (WebCore::RealtimeMediaSource::supportsConstraints):
+        (WebCore::RealtimeMediaSource::applyConstraints):
+        * platform/mediastream/RealtimeMediaSourceCenter.cpp:
+        (WebCore::RealtimeMediaSourceCenter::validateRequestConstraints):
+        * platform/mediastream/RealtimeMediaSourceCenter.h:
+        * platform/mediastream/mac/RealtimeIncomingAudioSource.cpp:
+        (WebCore::RealtimeIncomingAudioSource::supportedConstraints): Deleted.
+        * platform/mediastream/mac/RealtimeIncomingAudioSource.h:
+        * platform/mediastream/mac/RealtimeIncomingVideoSource.cpp:
+        (WebCore::RealtimeIncomingVideoSource::supportedConstraints): Deleted.
+        * platform/mediastream/mac/RealtimeIncomingVideoSource.h:
+        * platform/mock/MockRealtimeMediaSource.h:
+        (WebCore::MockRealtimeMediaSource::constraints): Deleted.
+
 2017-05-16  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Tell NEFilterSource about the presenting app's PID

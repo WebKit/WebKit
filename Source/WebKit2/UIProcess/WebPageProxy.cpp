@@ -182,7 +182,7 @@
 #endif
 
 #if ENABLE(MEDIA_STREAM)
-#include <WebCore/MediaConstraintsImpl.h>
+#include <WebCore/MediaConstraints.h>
 #endif
 
 // This controls what strategy we use for mouse wheel coalescing.
@@ -5744,19 +5744,19 @@ UserMediaPermissionRequestManagerProxy& WebPageProxy::userMediaPermissionRequest
 }
 #endif
 
-void WebPageProxy::requestUserMediaPermissionForFrame(uint64_t userMediaID, uint64_t frameID, String userMediaDocumentOriginIdentifier, String topLevelDocumentOriginIdentifier, const WebCore::MediaConstraintsData& audioConstraintsData, const WebCore::MediaConstraintsData& videoConstraintsData)
+void WebPageProxy::requestUserMediaPermissionForFrame(uint64_t userMediaID, uint64_t frameID, String userMediaDocumentOriginIdentifier, String topLevelDocumentOriginIdentifier, const WebCore::MediaConstraints& audioConstraints, const WebCore::MediaConstraints& videoConstraints)
 {
 #if ENABLE(MEDIA_STREAM)
     MESSAGE_CHECK(m_process->webFrame(frameID));
 
-    userMediaPermissionRequestManager().requestUserMediaPermissionForFrame(userMediaID, frameID, userMediaDocumentOriginIdentifier, topLevelDocumentOriginIdentifier, audioConstraintsData, videoConstraintsData);
+    userMediaPermissionRequestManager().requestUserMediaPermissionForFrame(userMediaID, frameID, userMediaDocumentOriginIdentifier, topLevelDocumentOriginIdentifier, audioConstraints, videoConstraints);
 #else
     UNUSED_PARAM(userMediaID);
     UNUSED_PARAM(frameID);
     UNUSED_PARAM(userMediaDocumentOriginIdentifier);
     UNUSED_PARAM(topLevelDocumentOriginIdentifier);
-    UNUSED_PARAM(audioConstraintsData);
-    UNUSED_PARAM(videoConstraintsData);
+    UNUSED_PARAM(audioConstraints);
+    UNUSED_PARAM(videoConstraints);
 #endif
 }
 

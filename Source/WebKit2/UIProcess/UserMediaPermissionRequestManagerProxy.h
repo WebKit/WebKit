@@ -29,7 +29,7 @@
 
 namespace WebCore {
 class CaptureDevice;
-struct MediaConstraintsData;
+struct MediaConstraints;
 class SecurityOrigin;
 };
 
@@ -65,7 +65,7 @@ public:
 
     void invalidatePendingRequests();
 
-    void requestUserMediaPermissionForFrame(uint64_t userMediaID, uint64_t frameID, String userMediaDocumentOriginIdentifier, String topLevelDocumentOriginIdentifier, const WebCore::MediaConstraintsData& audioConstraintsData, const WebCore::MediaConstraintsData& videoConstraintsData);
+    void requestUserMediaPermissionForFrame(uint64_t userMediaID, uint64_t frameID, String userMediaDocumentOriginIdentifier, String topLevelDocumentOriginIdentifier, const WebCore::MediaConstraints& audioConstraints, const WebCore::MediaConstraints& videoConstraints);
 
     void userMediaAccessWasGranted(uint64_t, const String& audioDeviceUID, const String& videoDeviceUID);
     void userMediaAccessWasDenied(uint64_t, UserMediaPermissionRequestProxy::UserMediaAccessDenialReason);

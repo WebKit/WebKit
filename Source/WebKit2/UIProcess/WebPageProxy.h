@@ -164,7 +164,7 @@ class ValidationBubble;
 struct DictionaryPopupInfo;
 struct ExceptionDetails;
 struct FileChooserSettings;
-struct MediaConstraintsData;
+struct MediaConstraints;
 struct SecurityOriginData;
 struct TextAlternativeWithRange;
 struct TextCheckingResult;
@@ -1313,7 +1313,7 @@ private:
 #if ENABLE(MEDIA_STREAM)
     UserMediaPermissionRequestManagerProxy& userMediaPermissionRequestManager();
 #endif
-    void requestUserMediaPermissionForFrame(uint64_t userMediaID, uint64_t frameID, String userMediaDocumentOriginIdentifier, String topLevelDocumentOriginIdentifier, const WebCore::MediaConstraintsData& audioConstraints, const WebCore::MediaConstraintsData& videoConstraints);
+    void requestUserMediaPermissionForFrame(uint64_t userMediaID, uint64_t frameID, String userMediaDocumentOriginIdentifier, String topLevelDocumentOriginIdentifier, const WebCore::MediaConstraints& audioConstraints, const WebCore::MediaConstraints& videoConstraints);
     void enumerateMediaDevicesForFrame(uint64_t userMediaID, uint64_t frameID, String userMediaDocumentOriginIdentifier, String topLevelDocumentOriginIdentifier);
 
     void runModal();

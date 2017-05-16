@@ -49,13 +49,13 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&) final;
 
-    void createMediaSourceForCaptureDeviceWithConstraints(uint64_t id, const String& deviceID, WebCore::RealtimeMediaSource::Type, const WebCore::MediaConstraintsData&, bool& succeeded, String& invalidConstraints, WebCore::RealtimeMediaSourceSettings&);
+    void createMediaSourceForCaptureDeviceWithConstraints(uint64_t id, const String& deviceID, WebCore::RealtimeMediaSource::Type, const WebCore::MediaConstraints&, bool& succeeded, String& invalidConstraints, WebCore::RealtimeMediaSourceSettings&);
     void startProducingData(uint64_t);
     void stopProducingData(uint64_t);
     void capabilities(uint64_t, WebCore::RealtimeMediaSourceCapabilities&);
     void setMuted(uint64_t, bool);
     void setEnabled(uint64_t, bool);
-    void applyConstraints(uint64_t, const WebCore::MediaConstraintsData&);
+    void applyConstraints(uint64_t, const WebCore::MediaConstraints&);
 
     class SourceProxy;
     friend class SourceProxy;

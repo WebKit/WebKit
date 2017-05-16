@@ -144,11 +144,6 @@ const RealtimeMediaSourceSettings& RealtimeIncomingAudioSource::settings() const
     return m_currentSettings;
 }
 
-RealtimeMediaSourceSupportedConstraints& RealtimeIncomingAudioSource::supportedConstraints()
-{
-    return m_supportedConstraints;
-}
-
 AudioSourceProvider* RealtimeIncomingAudioSource::audioSourceProvider()
 {
     if (!m_audioSourceProvider) {

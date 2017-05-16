@@ -68,7 +68,6 @@ protected:
     const RealtimeMediaSourceCapabilities& capabilities() const override;
     const RealtimeMediaSourceSettings& settings() const override;
 
-    MediaConstraints& constraints() { return *m_constraints.get(); }
     RealtimeMediaSourceSupportedConstraints& supportedConstraints();
 
     unsigned deviceIndex() { return m_deviceIndex; }
@@ -84,7 +83,6 @@ private:
     RealtimeMediaSourceSettings m_currentSettings;
     RealtimeMediaSourceSupportedConstraints m_supportedConstraints;
     std::unique_ptr<RealtimeMediaSourceCapabilities> m_capabilities;
-    RefPtr<MediaConstraints> m_constraints;
     unsigned m_deviceIndex { 0 };
 };
 

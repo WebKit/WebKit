@@ -36,17 +36,17 @@
 
 #include "ActiveDOMObject.h"
 #include "JSDOMPromiseDeferred.h"
+#include "MediaConstraints.h"
 
 namespace WebCore {
 
-class MediaConstraintsImpl;
 class MediaStream;
 class SecurityOrigin;
 class UserMediaController;
 
 class UserMediaRequest : public RefCounted<UserMediaRequest>, private ContextDestructionObserver {
 public:
-    static ExceptionOr<void> start(Document&, Ref<MediaConstraintsImpl>&& audioConstraints, Ref<MediaConstraintsImpl>&& videoConstraints, DOMPromiseDeferred<IDLInterface<MediaStream>>&&);
+    static ExceptionOr<void> start(Document&, MediaConstraints&& audioConstraints, MediaConstraints&& videoConstraints, DOMPromiseDeferred<IDLInterface<MediaStream>>&&);
 
     virtual ~UserMediaRequest();
 
@@ -61,8 +61,8 @@ public:
     const Vector<String>& audioDeviceUIDs() const { return m_audioDeviceUIDs; }
     const Vector<String>& videoDeviceUIDs() const { return m_videoDeviceUIDs; }
 
-    const MediaConstraintsImpl& audioConstraints() const { return m_audioConstraints; }
-    const MediaConstraintsImpl& videoConstraints() const { return m_videoConstraints; }
+    const MediaConstraints& audioConstraints() const { return m_audioConstraints; }
+    const MediaConstraints& videoConstraints() const { return m_videoConstraints; }
 
     const String& allowedAudioDeviceUID() const { return m_allowedAudioDeviceUID; }
     const String& allowedVideoDeviceUID() const { return m_allowedVideoDeviceUID; }
@@ -72,12 +72,12 @@ public:
     WEBCORE_EXPORT Document* document() const;
 
 private:
-    UserMediaRequest(Document&, UserMediaController&, Ref<MediaConstraintsImpl>&& audioConstraints, Ref<MediaConstraintsImpl>&& videoConstraints, DOMPromiseDeferred<IDLInterface<MediaStream>>&&);
+    UserMediaRequest(Document&, UserMediaController&, MediaConstraints&& audioConstraints, MediaConstraints&& videoConstraints, DOMPromiseDeferred<IDLInterface<MediaStream>>&&);
 
     void contextDestroyed() final;
     
-    Ref<MediaConstraintsImpl> m_audioConstraints;
-    Ref<MediaConstraintsImpl> m_videoConstraints;
+    MediaConstraints m_audioConstraints;
+    MediaConstraints m_videoConstraints;
 
     Vector<String> m_videoDeviceUIDs;
     Vector<String> m_audioDeviceUIDs;

@@ -61,9 +61,6 @@ private:
     const RealtimeMediaSourceCapabilities& capabilities() const final;
     const RealtimeMediaSourceSettings& settings() const final;
 
-    MediaConstraints& constraints() { return *m_constraints.get(); }
-    RealtimeMediaSourceSupportedConstraints& supportedConstraints();
-
     void processNewSample(CMSampleBufferRef, unsigned, unsigned, MediaSample::VideoRotation);
 
     bool applySize(const IntSize&) final { return true; }
@@ -75,8 +72,6 @@ private:
 
     RefPtr<Image> m_currentImage;
     RealtimeMediaSourceSettings m_currentSettings;
-    RealtimeMediaSourceSupportedConstraints m_supportedConstraints;
-    RefPtr<MediaConstraints> m_constraints;
     rtc::scoped_refptr<webrtc::VideoTrackInterface> m_videoTrack;
     RetainPtr<CMSampleBufferRef> m_buffer;
     PixelBufferConformerCV m_conformer;

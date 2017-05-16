@@ -230,11 +230,11 @@ void RealtimeMediaSourceCenter::validateRequestConstraints(ValidConstraintsHandl
 
         String invalidConstraint;
         CaptureSourceOrError sourceOrError;
-        if (device.type() == CaptureDevice::DeviceType::Video && videoConstraints.isValid()) {
+        if (device.type() == CaptureDevice::DeviceType::Video && videoConstraints.isValid) {
             auto sourceOrError = videoFactory().createVideoCaptureSource(device.persistentId(), nullptr);
             if (sourceOrError && sourceOrError.captureSource->supportsConstraints(videoConstraints, invalidConstraint))
                 videoDeviceInfo.append({sourceOrError.captureSource->fitnessScore(), device.persistentId()});
-        } else if (device.type() == CaptureDevice::DeviceType::Audio && audioConstraints.isValid()) {
+        } else if (device.type() == CaptureDevice::DeviceType::Audio && audioConstraints.isValid) {
             auto sourceOrError = audioFactory().createAudioCaptureSource(device.persistentId(), nullptr);
             if (sourceOrError && sourceOrError.captureSource->supportsConstraints(audioConstraints, invalidConstraint))
                 audioDeviceInfo.append({sourceOrError.captureSource->fitnessScore(), device.persistentId()});
@@ -244,7 +244,7 @@ void RealtimeMediaSourceCenter::validateRequestConstraints(ValidConstraintsHandl
             firstInvalidConstraint = invalidConstraint;
     }
 
-    if ((audioConstraints.isValid() && audioDeviceInfo.isEmpty()) || (videoConstraints.isValid() && videoDeviceInfo.isEmpty())) {
+    if ((audioConstraints.isValid && audioDeviceInfo.isEmpty()) || (videoConstraints.isValid && videoDeviceInfo.isEmpty())) {
         invalidHandler(firstInvalidConstraint);
         return;
     }

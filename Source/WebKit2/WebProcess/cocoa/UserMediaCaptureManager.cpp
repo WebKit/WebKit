@@ -35,7 +35,7 @@
 #include "WebProcess.h"
 #include "WebProcessCreationParameters.h"
 #include <WebCore/CaptureDevice.h>
-#include <WebCore/MediaConstraintsImpl.h>
+#include <WebCore/MediaConstraints.h>
 #include <WebCore/RealtimeMediaSourceCenter.h>
 #include <WebCore/WebAudioBufferList.h>
 #include <WebCore/WebAudioSourceProviderAVFObjC.h>
@@ -279,12 +279,7 @@ void UserMediaCaptureManager::setEnabled(uint64_t id, bool enabled)
 
 void UserMediaCaptureManager::applyConstraints(uint64_t id, const WebCore::MediaConstraints& constraints)
 {
-    MediaConstraintsData constraintsData;
-    constraintsData.mandatoryConstraints = constraints.mandatoryConstraints();
-    constraintsData.advancedConstraints = constraints.advancedConstraints();
-    constraintsData.isValid = constraints.isValid();
-
-    m_process.send(Messages::UserMediaCaptureManagerProxy::ApplyConstraints(id, constraintsData), 0);
+    m_process.send(Messages::UserMediaCaptureManagerProxy::ApplyConstraints(id, constraints), 0);
 }
 
 void UserMediaCaptureManager::applyConstraintsSucceeded(uint64_t id, const WebCore::RealtimeMediaSourceSettings& settings)

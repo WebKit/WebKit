@@ -102,7 +102,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 #include <WebCore/CaptureDevice.h>
-#include <WebCore/MediaConstraintsImpl.h>
+#include <WebCore/MediaConstraints.h>
 #endif
 
 using namespace WebCore;
@@ -2389,7 +2389,7 @@ bool ArgumentCoder<ResourceLoadStatistics>::decode(Decoder& decoder, WebCore::Re
 }
 
 #if ENABLE(MEDIA_STREAM)
-void ArgumentCoder<MediaConstraintsData>::encode(Encoder& encoder, const WebCore::MediaConstraintsData& constraint)
+void ArgumentCoder<MediaConstraints>::encode(Encoder& encoder, const WebCore::MediaConstraints& constraint)
 {
     encoder << constraint.mandatoryConstraints
         << constraint.advancedConstraints
@@ -2397,7 +2397,7 @@ void ArgumentCoder<MediaConstraintsData>::encode(Encoder& encoder, const WebCore
         << constraint.isValid;
 }
 
-bool ArgumentCoder<MediaConstraintsData>::decode(Decoder& decoder, WebCore::MediaConstraintsData& constraints)
+bool ArgumentCoder<MediaConstraints>::decode(Decoder& decoder, WebCore::MediaConstraints& constraints)
 {
     return decoder.decode(constraints.mandatoryConstraints)
         && decoder.decode(constraints.advancedConstraints)
