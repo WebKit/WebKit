@@ -63,6 +63,9 @@
     (iokit-property "IOGeneralInterest")
     (iokit-property "IOGLBundleName")
     (iokit-property "IOGVACodec")
+    (iokit-property-regex "^IOGVA[A-Z]+Decode")
+    (iokit-property "IOMACAddress") ;; For some Flash players
+    (iokit-property "IOPlatformSerialNumber") ;; Ditto
     (iokit-property "IOScreenRestoreState")
     (iokit-property "IOVARendererID")
     (iokit-property-regex #"^MetalPlugin(Name|ClassName)")

@@ -1,5 +1,18 @@
 2017-05-16  Brent Fulgham  <bfulgham@apple.com>
 
+        [WK2][macOS] Support Flash Player DRM features
+        https://bugs.webkit.org/show_bug.cgi?id=172157
+        <rdar://problem/31889297>
+
+        Reviewed by Dean Jackson.
+
+        Relax the IOKit whitelist to support DRM features needed by
+        some websites.
+
+        * PluginProcess/mac/com.apple.WebKit.plugin-common.sb.in:
+
+2017-05-16  Brent Fulgham  <bfulgham@apple.com>
+
         [WK2][macOS] Adopt a whitelist for XPC services
         https://bugs.webkit.org/show_bug.cgi?id=172151
         <rdar://problem/31916325>
