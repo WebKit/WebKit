@@ -1,6 +1,6 @@
 Viewport: initial-scale=1, viewport-fit=contain
 
-Window Size: 260 x 508
+Window Size: 260 x 538
 
 scale	1.00000
 maxScale	5.00000

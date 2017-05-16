@@ -244,6 +244,7 @@ WKWebView* fromWebPageProxy(WebKit::WebPageProxy& page)
 
     UIEdgeInsets _unobscuredSafeAreaInsets;
     BOOL _haveSetUnobscuredSafeAreaInsets;
+    UIRectEdge _obscuredInsetEdgesAffectedBySafeArea;
 
     UIInterfaceOrientation _interfaceOrientationOverride;
     BOOL _overridesInterfaceOrientation;
@@ -523,6 +524,7 @@ static uint32_t convertSystemLayoutDirection(NSUserInterfaceLayoutDirection dire
     [_scrollView addSubview:_contentView.get()];
     [_scrollView addSubview:[_contentView unscaledView]];
     [self _updateScrollViewBackground];
+    _obscuredInsetEdgesAffectedBySafeArea = UIRectEdgeTop | UIRectEdgeLeft | UIRectEdgeRight;
 
     _viewportMetaTagWidth = WebCore::ViewportArguments::ValueAuto;
     _initialScaleFactor = 1;
@@ -1356,10 +1358,14 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
 #if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
     if (self._safeAreaShouldAffectObscuredInsets) {
         UIEdgeInsets systemInsets = [_scrollView _systemContentInset];
-        insets.top += systemInsets.top;
-        insets.bottom += systemInsets.bottom;
-        insets.left += systemInsets.left;
-        insets.right += systemInsets.right;
+        if (_obscuredInsetEdgesAffectedBySafeArea & UIRectEdgeTop)
+            insets.top += systemInsets.top;
+        if (_obscuredInsetEdgesAffectedBySafeArea & UIRectEdgeBottom)
+            insets.bottom += systemInsets.bottom;
+        if (_obscuredInsetEdgesAffectedBySafeArea & UIRectEdgeLeft)
+            insets.left += systemInsets.left;
+        if (_obscuredInsetEdgesAffectedBySafeArea & UIRectEdgeRight)
+            insets.right += systemInsets.right;
     }
 #endif
 
@@ -4547,6 +4553,21 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
         return;
 
     _obscuredInsets = obscuredInsets;
+
+    [self _scheduleVisibleContentRectUpdate];
+}
+
+- (UIRectEdge)_obscuredInsetEdgesAffectedBySafeArea
+{
+    return _obscuredInsetEdgesAffectedBySafeArea;
+}
+
+- (void)_setObscuredInsetEdgesAffectedBySafeArea:(UIRectEdge)edges
+{
+    if (edges == _obscuredInsetEdgesAffectedBySafeArea)
+        return;
+
+    _obscuredInsetEdgesAffectedBySafeArea = edges;
 
     [self _scheduleVisibleContentRectUpdate];
 }

@@ -1,3 +1,19 @@
+2017-05-16  Timothy Horton  <timothy_horton@apple.com>
+
+        Make it possible to adjust which edges are affected by safe area insets
+        https://bugs.webkit.org/show_bug.cgi?id=172149
+        <rdar://problem/31564729>
+
+        Reviewed by Beth Dakin.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+        (-[WKWebView _computedContentInset]):
+        (-[WKWebView _obscuredInsetEdgesAffectedBySafeArea]):
+        (-[WKWebView _setObscuredInsetEdgesAffectedBySafeArea:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        Add SPI to adjust which edges are taken into account, and adjust the default.
+
 2017-05-16  Zan Dobersek  <zdobersek@igalia.com>
 
         [GLib] Use RunLoopSourcePriority::RunLoopDispatcher as the GSocketMonitor's GSource priority

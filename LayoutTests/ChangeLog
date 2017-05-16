@@ -1,3 +1,14 @@
+2017-05-16  Tim Horton  <timothy_horton@apple.com>
+
+        Make it possible to adjust which edges are affected by safe area insets
+        https://bugs.webkit.org/show_bug.cgi?id=172149
+        <rdar://problem/31564729>
+
+        Reviewed by Beth Dakin.
+
+        * fast/viewport/ios/viewport-fit-auto-expected.txt:
+        * fast/viewport/ios/viewport-fit-contain-expected.txt:
+
 2017-05-16  Mark Lam  <mark.lam@apple.com>
 
         Gardening: rebased parser-syntax-check test results after r216891.
