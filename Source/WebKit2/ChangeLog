@@ -1,5 +1,16 @@
 2017-05-15  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r216893. rdar://problem/32082745
+
+    2017-05-15  Brent Fulgham  <bfulgham@apple.com>
+
+            Correct typo (part of r216790).
+
+            * PluginProcess/mac/com.apple.WebKit.plugin-common.sb.in: The check-in missed part of a
+            regular expression needed to fix the audio playback.
+
+2017-05-15  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r216790. rdar://problem/32082745
 
     2017-05-12  Brent Fulgham  <bfulgham@apple.com>
