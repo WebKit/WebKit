@@ -1,3 +1,9 @@
+2017-05-16  Per Arne Vollan  <pvollan@apple.com>
+
+        Unreviewed Windows gardening. Skip svg animation test, since image throttling behaves differently on WK1.
+
+        * platform/win/TestExpectations:
+
 2017-05-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed GTK+ gardening. Rebaseline tests after r216817.
