@@ -1,3 +1,15 @@
+2017-05-16  Romain Bellessort  <romain.bellessort@crf.canon.fr>
+
+        [Readable Streams API] Implement ReadableStreamBYOBReader releaseLock()
+        https://bugs.webkit.org/show_bug.cgi?id=172111
+
+        Reviewed by Chris Dumez.
+
+        Added tests to check releaseLock() behavior.
+
+        * streams/readable-stream-byob-reader-expected.txt: Updated.
+        * streams/readable-stream-byob-reader.js: Added new tests.
+
 2017-05-16  Per Arne Vollan  <pvollan@apple.com>
 
         Unreviewed Windows gardening. Skip svg animation test, since image throttling behaves differently on WK1.

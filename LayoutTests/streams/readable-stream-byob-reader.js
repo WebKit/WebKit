@@ -178,4 +178,41 @@ promise_test(function(test) {
     return promise_rejects(test, myError, reader.closed);
 }, "If controller has already been errored when ReadableStreamBYOBReader is created, ReadableStreamBYOBReader.closed should be a promise rejected with the same error");
 
+test(function() {
+    const rs = new ReadableStream({ type: 'bytes' });
+    const reader = rs.getReader({ mode: 'byob' });
+    assert_throws(new TypeError("Can only call ReadableStreamBYOBReader.releaseLock() on instances of ReadableStreamBYOBReader"),
+        function() { reader.releaseLock.apply(rs); });
+}, "Calling ReadableStreamBYOBReader.releaseLock() with a this object different from ReadableStreamBYOBReader should be rejected");
+
+promise_test(function(test) {
+    const rs = new ReadableStream({
+        type: "bytes"
+    });
+
+    const reader = rs.getReader({ mode: 'byob' });
+    reader.releaseLock();
+    const myError = new TypeError();
+
+    return promise_rejects(test, myError, reader.closed);
+}, "Calling ReadableStreamBYOBReader.releaseLock() on a stream that is readable should result in ReadableStreamBYOBReader.closed promise to be rejected with a TypeError");
+
+promise_test(function(test) {
+    let controller;
+
+    const rs = new ReadableStream({
+        start: function(c) {
+            controller = c;
+        },
+        type: "bytes"
+    });
+
+    const reader = rs.getReader({ mode: 'byob' });
+    controller.close();
+    reader.releaseLock();
+    const myError = new TypeError();
+
+    return promise_rejects(test, myError, reader.closed);
+}, "Calling ReadableStreamBYOBReader.releaseLock() on a stream that is not readable should result in ReadableStreamBYOBReader.closed promise to be rejected with a TypeError");
+
 done();

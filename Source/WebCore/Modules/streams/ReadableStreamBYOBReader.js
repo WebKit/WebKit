@@ -49,8 +49,16 @@ function releaseLock()
 {
     "use strict";
 
-    // FIXME: Implement appropriate behavior.
-    @throwTypeError("ReadableStreamBYOBReader releaseLock() is not implemented");
+    if (!@isReadableStreamBYOBReader(this))
+        throw @makeThisTypeError("ReadableStreamBYOBReader", "releaseLock");
+
+    if (!this.@ownerReadableStream)
+        return;
+
+    if (this.@readIntoRequests.length)
+        @throwTypeError("There are still pending read requests, cannot release the lock");
+
+    @readableStreamReaderGenericRelease(this);
 }
 
 function closed()
