@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -117,7 +117,8 @@ Wasm::PageCount JSWebAssemblyMemory::grow(VM& vm, ExecState* exec, uint32_t delt
     }
 
     memory().check();
-    // FIXME Should we report extra memory to the GC on allocation / grow / visit? https://bugs.webkit.org/show_bug.cgi?id=170690
+
+    vm.heap.reportExtraMemoryAllocated(Wasm::PageCount(delta).bytes());
     return oldPageCount;
 }
 
@@ -125,7 +126,7 @@ void JSWebAssemblyMemory::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
-    // FIXME Should we report extra memory to the GC on allocation / grow / visit? https://bugs.webkit.org/show_bug.cgi?id=170690
+    heap()->reportExtraMemoryAllocated(memory().size());
     vm.heap.reportWebAssemblyFastMemoriesAllocated(1);
 }
 
@@ -144,7 +145,7 @@ void JSWebAssemblyMemory::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
     Base::visitChildren(thisObject, visitor);
     visitor.append(thisObject->m_bufferWrapper);
-    // FIXME Should we report extra memory to the GC on allocation / grow / visit? https://bugs.webkit.org/show_bug.cgi?id=170690
+    visitor.reportExtraMemoryVisited(thisObject->memory().size());
 }
 
 } // namespace JSC

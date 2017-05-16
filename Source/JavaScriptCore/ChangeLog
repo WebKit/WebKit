@@ -1,5 +1,18 @@
 2017-05-16  JF Bastien  <jfbastien@apple.com>
 
+        WebAssembly: report Memory usage to GC
+        https://bugs.webkit.org/show_bug.cgi?id=170690
+        <rdar://problem/31965310>
+
+        Reviewed by Keith Miller.
+
+        * wasm/js/JSWebAssemblyMemory.cpp:
+        (JSC::JSWebAssemblyMemory::grow):
+        (JSC::JSWebAssemblyMemory::finishCreation):
+        (JSC::JSWebAssemblyMemory::visitChildren):
+
+2017-05-16  JF Bastien  <jfbastien@apple.com>
+
         WebAssembly: validate load / store alignment
         https://bugs.webkit.org/show_bug.cgi?id=168836
         <rdar://problem/31965349>
