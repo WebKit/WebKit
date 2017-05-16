@@ -368,7 +368,7 @@ GraphicsContext3D::ImageExtractor::ImageExtractor(Image* image, ImageHtmlDomSour
 
 bool GraphicsContext3D::packImageData(Image* image, const void* pixels, GC3Denum format, GC3Denum type, bool flipY, AlphaOp alphaOp, DataFormat sourceFormat, unsigned width, unsigned height, unsigned sourceUnpackAlignment, Vector<uint8_t>& data)
 {
-    if (!pixels)
+    if (!image || !pixels)
         return false;
 
     unsigned packedSize;
@@ -380,7 +380,7 @@ bool GraphicsContext3D::packImageData(Image* image, const void* pixels, GC3Denum
     if (!packPixels(reinterpret_cast<const uint8_t*>(pixels), sourceFormat, width, height, sourceUnpackAlignment, format, type, alphaOp, data.data(), flipY))
         return false;
     if (ImageObserver* observer = image->imageObserver())
-        observer->didDraw(image);
+        observer->didDraw(*image);
     return true;
 }
 

@@ -1,3 +1,14 @@
+2017-05-15  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Do not delete asynchronously decoded frames for large images if their clients are in the viewport
+        https://bugs.webkit.org/show_bug.cgi?id=170640
+
+        Reviewed by Simon Fraser.
+
+        * fast/images/async-image-background-image-repeated.html:
+        * fast/images/async-image-background-image.html:
+        * fast/images/sprite-sheet-image-draw.html:
+
 2017-05-15  Youenn Fablet  <youenn@apple.com>
 
         WebRTC outgoing muted video sources should send black frames

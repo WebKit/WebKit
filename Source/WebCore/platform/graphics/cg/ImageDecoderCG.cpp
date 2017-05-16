@@ -307,6 +307,12 @@ IntSize ImageDecoder::frameSizeAtIndex(size_t index, SubsamplingLevel subsamplin
 bool ImageDecoder::frameIsCompleteAtIndex(size_t index) const
 {
     ASSERT(frameCount());
+    // CGImageSourceGetStatusAtIndex() changes the return status value from kCGImageStatusIncomplete
+    // to kCGImageStatusComplete only if (index > 1 && index < frameCount() - 1). To get an accurate
+    // result for the last frame (or the single frame of the static image) use CGImageSourceGetStatus()
+    // instead for this frame.
+    if (index == frameCount() - 1)
+        return CGImageSourceGetStatus(m_nativeDecoder.get()) == kCGImageStatusComplete;
     return CGImageSourceGetStatusAtIndex(m_nativeDecoder.get(), index) == kCGImageStatusComplete;
 }
 

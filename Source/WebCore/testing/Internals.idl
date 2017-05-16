@@ -103,6 +103,7 @@ enum EventThrottlingBehavior {
     boolean isStyleSheetLoadingSubresources(HTMLLinkElement link);
     void clearMemoryCache();
     void pruneMemoryCacheToSize(long size);
+    void destroyDecodedDataForAllImages();
     long memoryCacheSize();
     void setOverrideCachePolicy(CachePolicy policy);
     void setOverrideResourceLoadPriority(ResourceLoadPriority priority);

@@ -1432,7 +1432,7 @@ bool RenderElement::mayCauseRepaintInsideViewport(const IntRect* optionalViewpor
     return visibleRect.intersects(enclosingIntRect(absoluteClippedOverflowRect()));
 }
 
-bool RenderElement::shouldRepaintInVisibleRect(const IntRect& visibleRect) const
+bool RenderElement::isVisibleInDocumentRect(const IntRect& documentRect) const
 {
     if (document().activeDOMObjectsAreSuspended())
         return false;
@@ -1456,7 +1456,7 @@ bool RenderElement::shouldRepaintInVisibleRect(const IntRect& visibleRect) const
     }
 
     LayoutRect backgroundPaintingRect = backgroundIsPaintedByRoot ? view().backgroundRect() : absoluteClippedOverflowRect();
-    if (!visibleRect.intersects(enclosingIntRect(backgroundPaintingRect)))
+    if (!documentRect.intersects(enclosingIntRect(backgroundPaintingRect)))
         return false;
 
     return true;
@@ -1493,24 +1493,29 @@ void RenderElement::visibleInViewportStateChanged()
     ASSERT_NOT_REACHED();
 }
 
-VisibleInViewportState RenderElement::imageFrameAvailable(CachedImage& image, ImageAnimatingState animatingState, const IntRect* changeRect)
+bool RenderElement::isVisibleInViewport() const
 {
     auto& frameView = view().frameView();
     auto visibleRect = frameView.windowToContents(frameView.windowClipRect());
-    bool shouldRepaint = shouldRepaintInVisibleRect(visibleRect);
+    return isVisibleInDocumentRect(visibleRect);
+}
 
-    if (!shouldRepaint && animatingState == ImageAnimatingState::Yes)
+VisibleInViewportState RenderElement::imageFrameAvailable(CachedImage& image, ImageAnimatingState animatingState, const IntRect* changeRect)
+{
+    bool isVisible = isVisibleInViewport();
+
+    if (!isVisible && animatingState == ImageAnimatingState::Yes)
         view().addRendererWithPausedImageAnimations(*this, image);
 
     // Static images should repaint even if they are outside the viewport rectangle
     // because they should be inside the TileCoverageRect.
-    if (shouldRepaint || animatingState == ImageAnimatingState::No)
+    if (isVisible || animatingState == ImageAnimatingState::No)
         imageChanged(&image, changeRect);
 
     if (element() && image.image()->isBitmapImage())
         element()->dispatchWebKitImageReadyEventForTesting();
 
-    return shouldRepaint ? VisibleInViewportState::Yes : VisibleInViewportState::No;
+    return isVisible ? VisibleInViewportState::Yes : VisibleInViewportState::No;
 }
 
 void RenderElement::didRemoveCachedImageClient(CachedImage& cachedImage)
@@ -1522,7 +1527,7 @@ void RenderElement::didRemoveCachedImageClient(CachedImage& cachedImage)
 bool RenderElement::repaintForPausedImageAnimationsIfNeeded(const IntRect& visibleRect, CachedImage& cachedImage)
 {
     ASSERT(m_hasPausedImageAnimations);
-    if (!shouldRepaintInVisibleRect(visibleRect))
+    if (!isVisibleInDocumentRect(visibleRect))
         return false;
 
     repaint();

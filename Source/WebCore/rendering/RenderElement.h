@@ -141,7 +141,7 @@ public:
 
     bool borderImageIsLoadedAndCanBeRendered() const;
     bool mayCauseRepaintInsideViewport(const IntRect* visibleRect = nullptr) const;
-    bool shouldRepaintInVisibleRect(const IntRect& visibleRect) const;
+    bool isVisibleInDocumentRect(const IntRect& documentRect) const;
 
     // Returns true if this renderer requires a new stacking context.
     static bool createsGroupForStyle(const RenderStyle&);
@@ -318,6 +318,8 @@ private:
     std::unique_ptr<RenderStyle> computeFirstLineStyle() const;
     void invalidateCachedFirstLineStyle();
 
+    bool isVisibleInViewport() const;
+    bool canDestroyDecodedData() final { return !isVisibleInViewport(); }
     VisibleInViewportState imageFrameAvailable(CachedImage&, ImageAnimatingState, const IntRect* changeRect) final;
     void didRemoveCachedImageClient(CachedImage&) final;
 

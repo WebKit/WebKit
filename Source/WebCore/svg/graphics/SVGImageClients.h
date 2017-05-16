@@ -60,7 +60,7 @@ private:
         if (!imageObserver)
             return;
 
-        imageObserver->imageFrameAvailable(m_image, m_image->isAnimating() ? ImageAnimatingState::Yes : ImageAnimatingState::No, &r);
+        imageObserver->imageFrameAvailable(*m_image, m_image->isAnimating() ? ImageAnimatingState::Yes : ImageAnimatingState::No, &r);
     }
     
     SVGImage* m_image;

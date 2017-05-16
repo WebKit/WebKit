@@ -37,7 +37,7 @@ void TextureMapperTiledBackingStore::updateContentsFromImageIfNeeded(TextureMapp
     updateContents(textureMapper, m_image.get(), m_image->size(), enclosingIntRect(m_image->rect()), BitmapTexture::UpdateCannotModifyOriginalImageData);
 
     if (m_image->imageObserver())
-        m_image->imageObserver()->didDraw(m_image.get());
+        m_image->imageObserver()->didDraw(*m_image);
     m_image = nullptr;
 }
 

@@ -101,7 +101,7 @@ void Image::drawPattern(GraphicsContext& ctxt, const FloatRect& destRect, const 
     ctxt.drawPattern(*this, destRect, tileRect, patternTransform, phase, spacing, op, blendMode);
 
     if (imageObserver())
-        imageObserver()->didDraw(this);
+        imageObserver()->didDraw(*this);
 }
 
 } // namespace WebCore

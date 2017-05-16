@@ -1,3 +1,15 @@
+2017-05-15  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Do not delete asynchronously decoded frames for large images if their clients are in the viewport
+        https://bugs.webkit.org/show_bug.cgi?id=170640
+
+        Reviewed by Simon Fraser.
+
+        Enable the async decoding for large images.
+
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
 2017-05-15  Jer Noble  <jer.noble@apple.com>
 
         Add experimental setting to allow document gesture interaction to fulfill media playback gesture requirement

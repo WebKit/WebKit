@@ -289,8 +289,11 @@ void MemoryCache::forEachSessionResource(SessionID sessionID, const std::functio
 void MemoryCache::destroyDecodedDataForAllImages()
 {
     MemoryCache::singleton().forEachResource([](CachedResource& resource) {
-        if (resource.isImage())
-            resource.destroyDecodedData();
+        if (!resource.isImage())
+            return;
+
+        if (auto image = downcast<CachedImage>(resource).image())
+            image->destroyDecodedData();
     });
 }
 

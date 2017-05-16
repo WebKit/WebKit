@@ -729,6 +729,11 @@ void Internals::pruneMemoryCacheToSize(unsigned size)
     MemoryCache::singleton().pruneDeadResourcesToSize(size);
     MemoryCache::singleton().pruneLiveResourcesToSize(size, true);
 }
+    
+void Internals::destroyDecodedDataForAllImages()
+{
+    MemoryCache::singleton().destroyDecodedDataForAllImages();
+}
 
 unsigned Internals::memoryCacheSize() const
 {

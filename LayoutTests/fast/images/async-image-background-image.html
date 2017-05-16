@@ -44,6 +44,9 @@
  
                     // Wait for the image frame to finish decoding before finishing the test.
                     element.addEventListener("webkitImageFrameReady", function() {
+                        // Ensure internals.destroyDecodedDataForAllImages() will not destroy
+                        // the image's decoded data because it is inside the viewport.
+                        internals.destroyDecodedDataForAllImages();
                         testRunner.notifyDone();
                     }, false);
                 }

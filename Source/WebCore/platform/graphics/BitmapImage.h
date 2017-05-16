@@ -191,6 +191,7 @@ protected:
 private:
     void clearTimer();
     void startTimer(Seconds delay);
+    bool canDestroyDecodedData();
     bool isBitmapImage() const override { return true; }
     void dump(TextStream&) const override;
 

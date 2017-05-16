@@ -79,16 +79,17 @@ void BitmapImage::destroyDecodedData(bool destroyAll)
 
     if (!destroyAll)
         m_source.destroyDecodedDataBeforeFrame(m_currentFrame);
-    else if (m_source.hasAsyncDecodingQueue())
+    else if (!canDestroyDecodedData()) {
         m_source.destroyAllDecodedDataExcludeFrame(m_currentFrame);
-    else {
+        destroyAll = false;
+    } else {
         m_source.destroyAllDecodedData();
         m_currentFrameDecodingStatus = ImageFrame::DecodingStatus::Invalid;
     }
 
     // There's no need to throw away the decoder unless we're explicitly asked
     // to destroy all of the frames.
-    if (!destroyAll || m_source.hasAsyncDecodingQueue())
+    if (!destroyAll)
         m_source.clearFrameBufferCache(m_currentFrame);
     else
         m_source.clear(data());
@@ -246,7 +247,7 @@ void BitmapImage::draw(GraphicsContext& context, const FloatRect& destRect, cons
     m_currentFrameDecodingStatus = frameDecodingStatusAtIndex(m_currentFrame);
 
     if (imageObserver())
-        imageObserver()->didDraw(this);
+        imageObserver()->didDraw(*this);
 }
 
 void BitmapImage::drawPattern(GraphicsContext& ctxt, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& transform, const FloatPoint& phase, const FloatSize& spacing, CompositeOperator op, BlendMode blendMode)
@@ -313,6 +314,19 @@ void BitmapImage::startTimer(Seconds delay)
     ASSERT(!m_frameTimer);
     m_frameTimer = std::make_unique<Timer>(*this, &BitmapImage::advanceAnimation);
     m_frameTimer->startOneShot(delay);
+}
+
+bool BitmapImage::canDestroyDecodedData()
+{
+    // Animated images should preserve the current frame till the next one finishes decoding.
+    if (m_source.hasAsyncDecodingQueue())
+        return false;
+
+    // Small image should be decoded synchronously. Deleting its decoded frame is fine.
+    if (!shouldUseAsyncDecodingForLargeImages())
+        return true;
+
+    return !imageObserver() || imageObserver()->canDestroyDecodedData(*this);
 }
 
 BitmapImage::StartAnimationStatus BitmapImage::internalStartAnimation()
@@ -408,7 +422,7 @@ void BitmapImage::advanceAnimation()
     else {
         // Force repaint if showDebugBackground() is on.
         if (m_showDebugBackground)
-            imageObserver()->changedInRect(this);
+            imageObserver()->changedInRect(*this);
         LOG(Images, "BitmapImage::%s - %p - url: %s [lateFrameCount = %ld nextFrame = %ld]", __FUNCTION__, this, sourceURL().string().utf8().data(), ++m_lateFrameCount, nextFrame);
     }
 }
@@ -423,7 +437,7 @@ void BitmapImage::internalAdvanceAnimation()
     if (m_currentFrameDecodingStatus == ImageFrame::DecodingStatus::Decoding)
         m_currentFrameDecodingStatus = frameDecodingStatusAtIndex(m_currentFrame);
     if (imageObserver())
-        imageObserver()->imageFrameAvailable(this, ImageAnimatingState::Yes);
+        imageObserver()->imageFrameAvailable(*this, ImageAnimatingState::Yes);
 
     LOG(Images, "BitmapImage::%s - %p - url: %s [m_currentFrame = %ld]", __FUNCTION__, this, sourceURL().string().utf8().data(), m_currentFrame);
 }
@@ -474,7 +488,7 @@ void BitmapImage::imageFrameAvailableAtIndex(size_t index)
         if (m_currentFrameDecodingStatus == ImageFrame::DecodingStatus::Decoding)
             m_currentFrameDecodingStatus = frameDecodingStatusAtIndex(m_currentFrame);
         if (imageObserver())
-            imageObserver()->imageFrameAvailable(this, ImageAnimatingState::No);
+            imageObserver()->imageFrameAvailable(*this, ImageAnimatingState::No);
     }
 }
 

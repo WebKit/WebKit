@@ -57,6 +57,9 @@
                         promises.push(setElementImageBackground(elements[index], image));
  
                     Promise.all(promises).then(() => {
+                        // Ensure internals.destroyDecodedDataForAllImages() will not destroy
+                        // the images' decoded data because it is inside the viewport.
+                        internals.destroyDecodedDataForAllImages();
                         testRunner.notifyDone();
                     });
                 } else {

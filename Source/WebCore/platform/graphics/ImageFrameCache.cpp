@@ -124,7 +124,7 @@ void ImageFrameCache::decodedSizeChanged(long long decodedSize)
     if (!decodedSize || !m_image || !m_image->imageObserver())
         return;
     
-    m_image->imageObserver()->decodedSizeChanged(m_image, decodedSize);
+    m_image->imageObserver()->decodedSizeChanged(*m_image, decodedSize);
 }
 
 void ImageFrameCache::decodedSizeIncreased(unsigned decodedSize)
