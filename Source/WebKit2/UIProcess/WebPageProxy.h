@@ -40,7 +40,7 @@
 #include "MessageSender.h"
 #include "NotificationPermissionRequestManagerProxy.h"
 #include "PageLoadState.h"
-#include "ProcessCrashReason.h"
+#include "ProcessTerminationReason.h"
 #include "ProcessThrottler.h"
 #include "SandboxExtension.h"
 #include "ShareableBitmap.h"
@@ -687,8 +687,6 @@ public:
 
     double estimatedProgress() const;
 
-    void terminateProcess();
-
     SessionState sessionState(const std::function<bool (WebBackForwardListItem&)>& = nullptr) const;
     RefPtr<API::Navigation> restoreFromSessionState(SessionState, bool navigate);
 
@@ -859,7 +857,7 @@ public:
 
     void processDidBecomeUnresponsive();
     void processDidBecomeResponsive();
-    void processDidCrash(ProcessCrashReason);
+    void processDidTerminate(ProcessTerminationReason);
     void willChangeProcessIsResponsive();
     void didChangeProcessIsResponsive();
 

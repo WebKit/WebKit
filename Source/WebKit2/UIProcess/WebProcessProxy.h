@@ -55,12 +55,6 @@ struct PluginInfo;
 
 namespace WebKit {
 
-enum class TerminationReason {
-    ExceededActiveMemoryLimit,
-    ExceededInactiveMemoryLimit,
-    ExceededBackgroundCPULimit,
-};
-
 class NetworkProcessProxy;
 class UserMediaCaptureManagerProxy;
 class WebBackForwardListItem;
@@ -142,7 +136,7 @@ public:
     void disableSuddenTermination();
     bool isSuddenTerminationEnabled() { return !m_numberOfTimesSuddenTerminationWasDisabled; }
 
-    void requestTermination();
+    void requestTermination(ProcessTerminationReason);
 
     RefPtr<API::Object> transformHandlesToObjects(API::Object*);
     static RefPtr<API::Object> transformObjectsToHandles(API::Object*);
@@ -247,7 +241,7 @@ private:
 
     bool canTerminateChildProcess();
 
-    void terminateProcessDueToResourceLimits(TerminationReason);
+    void logDiagnosticMessageForResourceLimitTermination(const String& limitKey);
 
     ResponsivenessTimer m_responsivenessTimer;
     BackgroundProcessResponsivenessTimer m_backgroundResponsivenessTimer;

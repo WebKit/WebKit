@@ -600,7 +600,7 @@ void WebProcessProxy::didClose(IPC::Connection&)
     shutDown();
 
     for (size_t i = 0, size = pages.size(); i < size; ++i)
-        pages[i]->processDidCrash(ProcessCrashReason::Other);
+        pages[i]->processDidTerminate(ProcessTerminationReason::Crash);
 
 }
 
@@ -847,7 +847,7 @@ void WebProcessProxy::deleteWebsiteDataForOrigins(SessionID sessionID, OptionSet
     });
 }
 
-void WebProcessProxy::requestTermination()
+void WebProcessProxy::requestTermination(ProcessTerminationReason reason)
 {
     if (state() == State::Terminated)
         return;
@@ -863,7 +863,7 @@ void WebProcessProxy::requestTermination()
     shutDown();
 
     for (size_t i = 0, size = pages.size(); i < size; ++i)
-        pages[i]->processDidCrash(ProcessCrashReason::TerminationRequestedByClient);
+        pages[i]->processDidTerminate(reason);
 }
 
 void WebProcessProxy::enableSuddenTermination()
@@ -1127,59 +1127,24 @@ void WebProcessProxy::processTerminated()
     m_backgroundResponsivenessTimer.processTerminated();
 }
 
-static Vector<RefPtr<WebPageProxy>> pagesCopy(WTF::IteratorRange<WebProcessProxy::WebPageProxyMap::const_iterator::Values> pages)
+void WebProcessProxy::logDiagnosticMessageForResourceLimitTermination(const String& limitKey)
 {
-    Vector<RefPtr<WebPageProxy>> vector;
-    for (auto& page : pages)
-        vector.append(page);
-    return vector;
-}
-
-static String diagnosticLoggingKeyForTerminationReason(TerminationReason reason)
-{
-    switch (reason) {
-    case TerminationReason::ExceededActiveMemoryLimit:
-        return DiagnosticLoggingKeys::exceededActiveMemoryLimitKey();
-    case TerminationReason::ExceededInactiveMemoryLimit:
-        return DiagnosticLoggingKeys::exceededInactiveMemoryLimitKey();
-    case TerminationReason::ExceededBackgroundCPULimit:
-        return DiagnosticLoggingKeys::exceededBackgroundCPULimitKey();
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
-    }
-}
-
-static ProcessCrashReason toProcessCrashReason(TerminationReason reason)
-{
-    switch (reason) {
-    case TerminationReason::ExceededActiveMemoryLimit:
-    case TerminationReason::ExceededInactiveMemoryLimit:
-        return ProcessCrashReason::TerminationDueToMemoryUsage;
-    case TerminationReason::ExceededBackgroundCPULimit:
-        return ProcessCrashReason::TerminationDueToCPUUsage;
-    }
-    return ProcessCrashReason::Other;
-}
-
-void WebProcessProxy::terminateProcessDueToResourceLimits(TerminationReason reason)
-{
-    for (auto& page : pagesCopy(pages())) {
-        page->logDiagnosticMessage(DiagnosticLoggingKeys::simulatedPageCrashKey(), diagnosticLoggingKeyForTerminationReason(reason), ShouldSample::No);
-        page->terminateProcess();
-        page->processDidCrash(toProcessCrashReason(reason));
-    }
+    if (pageCount())
+        (*pages().begin())->logDiagnosticMessage(DiagnosticLoggingKeys::simulatedPageCrashKey(), limitKey, ShouldSample::No);
 }
 
 void WebProcessProxy::didExceedActiveMemoryLimit()
 {
     RELEASE_LOG_ERROR(PerformanceLogging, "%p - WebProcessProxy::didExceedActiveMemoryLimit() Terminating WebProcess that has exceeded the active memory limit", this);
-    terminateProcessDueToResourceLimits(TerminationReason::ExceededActiveMemoryLimit);
+    logDiagnosticMessageForResourceLimitTermination(DiagnosticLoggingKeys::exceededActiveMemoryLimitKey());
+    requestTermination(ProcessTerminationReason::ExceededMemoryLimit);
 }
 
 void WebProcessProxy::didExceedInactiveMemoryLimit()
 {
     RELEASE_LOG_ERROR(PerformanceLogging, "%p - WebProcessProxy::didExceedInactiveMemoryLimit() Terminating WebProcess that has exceeded the inactive memory limit", this);
-    terminateProcessDueToResourceLimits(TerminationReason::ExceededInactiveMemoryLimit);
+    logDiagnosticMessageForResourceLimitTermination(DiagnosticLoggingKeys::exceededInactiveMemoryLimitKey());
+    requestTermination(ProcessTerminationReason::ExceededMemoryLimit);
 }
 
 void WebProcessProxy::didExceedBackgroundCPULimit()
@@ -1200,7 +1165,8 @@ void WebProcessProxy::didExceedBackgroundCPULimit()
     }
 
     RELEASE_LOG_ERROR(PerformanceLogging, "%p - WebProcessProxy::didExceedBackgroundCPULimit() Terminating background WebProcess that has exceeded the background CPU limit", this);
-    terminateProcessDueToResourceLimits(TerminationReason::ExceededBackgroundCPULimit);
+    logDiagnosticMessageForResourceLimitTermination(DiagnosticLoggingKeys::exceededBackgroundCPULimitKey());
+    requestTermination(ProcessTerminationReason::ExceededCPULimit);
 }
 
 void WebProcessProxy::updateBackgroundResponsivenessTimer()

@@ -30,11 +30,14 @@
 #include "PlatformUtilities.h"
 #include "PlatformWebView.h"
 #include "Test.h"
+#include <WebKit/WKPagePrivate.h>
 #include <WebKit/WKRetainPtr.h>
+#include <signal.h>
 
 namespace TestWebKitAPI {
 
 static bool loadBeforeCrash = false;
+static bool clientTerminationHandlerCalled = false;
 static bool crashHandlerCalled = false;
 
 static void didFinishNavigation(WKPageRef page, WKNavigationRef navigation, WKTypeRef userData, const void* clientInfo)
@@ -47,7 +50,20 @@ static void didFinishNavigation(WKPageRef page, WKNavigationRef navigation, WKTy
     EXPECT_TRUE(false);
 }
 
-static void didCrashWithReason(WKPageRef page, WKProcessCrashReason reason, const void* clientInfo)
+static void webProcessWasTerminatedByClient(WKPageRef page, WKProcessTerminationReason reason, const void* clientInfo)
+{
+    // Test if first load actually worked.
+    EXPECT_TRUE(loadBeforeCrash);
+
+    // Should only be called once.
+    EXPECT_FALSE(clientTerminationHandlerCalled);
+
+    EXPECT_EQ(kWKProcessTerminationReasonRequestedByClient, reason);
+
+    clientTerminationHandlerCalled = true;
+}
+
+static void webProcessCrashed(WKPageRef page, WKProcessTerminationReason reason, const void* clientInfo)
 {
     // Test if first load actually worked.
     EXPECT_TRUE(loadBeforeCrash);
@@ -55,12 +71,12 @@ static void didCrashWithReason(WKPageRef page, WKProcessCrashReason reason, cons
     // Should only be called once.
     EXPECT_FALSE(crashHandlerCalled);
 
-    EXPECT_EQ(kWKProcessCrashReasonTerminationRequestedByClient, reason);
+    EXPECT_EQ(kWKProcessTerminationReasonCrash, reason);
 
     crashHandlerCalled = true;
 }
 
-TEST(WebKit2, ProcessDidCrashWithReasonRequestedByClient)
+TEST(WebKit2, ProcessDidTerminateRequestedByClient)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
     PlatformWebView webView(context.get());
@@ -69,15 +85,42 @@ TEST(WebKit2, ProcessDidCrashWithReasonRequestedByClient)
     memset(&navigationClient, 0, sizeof(navigationClient));
     navigationClient.base.version = 1;
     navigationClient.didFinishNavigation = didFinishNavigation;
-    navigationClient.webProcessDidCrashWithReason = didCrashWithReason;
+    navigationClient.webProcessDidTerminate = webProcessWasTerminatedByClient;
 
     WKPageSetPageNavigationClient(webView.page(), &navigationClient.base);
 
+    loadBeforeCrash = false;
     WKRetainPtr<WKURLRef> url = adoptWK(WKURLCreateWithUTF8CString("about:blank"));
     // Load a blank page and next kills WebProcess.
     WKPageLoadURL(webView.page(), url.get());
     Util::run(&loadBeforeCrash);
+
     WKPageTerminate(webView.page());
+
+    Util::run(&clientTerminationHandlerCalled);
+}
+
+TEST(WebKit2, ProcessDidTerminateWithReasonCrash)
+{
+    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
+    PlatformWebView webView(context.get());
+
+    WKPageNavigationClientV1 navigationClient;
+    memset(&navigationClient, 0, sizeof(navigationClient));
+    navigationClient.base.version = 1;
+    navigationClient.didFinishNavigation = didFinishNavigation;
+    navigationClient.webProcessDidTerminate = webProcessCrashed;
+
+    WKPageSetPageNavigationClient(webView.page(), &navigationClient.base);
+
+    loadBeforeCrash = false;
+    WKRetainPtr<WKURLRef> url = adoptWK(WKURLCreateWithUTF8CString("about:blank"));
+    // Load a blank page and next kills WebProcess.
+    WKPageLoadURL(webView.page(), url.get());
+    Util::run(&loadBeforeCrash);
+
+    // Simulate a crash by killing the WebProcess.
+    kill(WKPageGetProcessIdentifier(webView.page()), SIGKILL);
 
     Util::run(&crashHandlerCalled);
 }

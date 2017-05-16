@@ -27,7 +27,7 @@
 
 #include "APIData.h"
 #include "PluginModuleInfo.h"
-#include "ProcessCrashReason.h"
+#include "ProcessTerminationReason.h"
 #include "SameDocumentNavigationType.h"
 #include "WebEvent.h"
 #include "WebFramePolicyListenerProxy.h"
@@ -83,7 +83,7 @@ public:
     virtual void didReceiveAuthenticationChallenge(WebKit::WebPageProxy&, WebKit::AuthenticationChallengeProxy*) { }
 
     // FIXME: These function should not be part of this client.
-    virtual void processDidCrash(WebKit::WebPageProxy&, WebKit::ProcessCrashReason) { }
+    virtual void processDidTerminate(WebKit::WebPageProxy&, WebKit::ProcessTerminationReason) { }
     virtual void processDidBecomeResponsive(WebKit::WebPageProxy&) { }
     virtual void processDidBecomeUnresponsive(WebKit::WebPageProxy&) { }
 

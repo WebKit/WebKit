@@ -32,7 +32,7 @@
 #include "HTTPCookieAcceptPolicy.h"
 #include "InjectedBundleHitTestResultMediaType.h"
 #include "PluginModuleInfo.h"
-#include "ProcessCrashReason.h"
+#include "ProcessTerminationReason.h"
 #include "ResourceCachesToClear.h"
 #include "WKBundleHitTestResult.h"
 #include "WKContext.h"
@@ -41,7 +41,7 @@
 #include "WKPage.h"
 #include "WKPreferencesRef.h"
 #include "WKPreferencesRefPrivate.h"
-#include "WKProcessCrashReason.h"
+#include "WKProcessTerminationReason.h"
 #include "WKProtectionSpaceTypes.h"
 #include "WKResourceCacheManager.h"
 #include "WKSharedAPICast.h"
@@ -235,20 +235,20 @@ inline WKCacheModel toAPI(CacheModel cacheModel)
     return kWKCacheModelDocumentViewer;
 }
 
-inline WKProcessCrashReason toAPI(ProcessCrashReason reason)
+inline WKProcessTerminationReason toAPI(ProcessTerminationReason reason)
 {
     switch (reason) {
-    case ProcessCrashReason::TerminationDueToMemoryUsage:
-        return kWKProcessCrashReasonTerminationDueToMemoryUsage;
-    case ProcessCrashReason::TerminationDueToCPUUsage:
-        return kWKProcessCrashReasonTerminationDueToCPUUsage;
-    case ProcessCrashReason::TerminationRequestedByClient:
-        return kWKProcessCrashReasonTerminationRequestedByClient;
-    case ProcessCrashReason::Other:
-        return kWKProcessCrashReasonOther;
+    case ProcessTerminationReason::ExceededMemoryLimit:
+        return kWKProcessTerminationReasonExceededMemoryLimit;
+    case ProcessTerminationReason::ExceededCPULimit:
+        return kWKProcessTerminationReasonExceededCPULimit;
+    case ProcessTerminationReason::RequestedByClient:
+        return kWKProcessTerminationReasonRequestedByClient;
+    case ProcessTerminationReason::Crash:
+        return kWKProcessTerminationReasonCrash;
     }
 
-    return kWKProcessCrashReasonOther;
+    return kWKProcessTerminationReasonCrash;
 }
 
 inline FontSmoothingLevel toFontSmoothingLevel(WKFontSmoothingLevel wkLevel)
