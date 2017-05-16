@@ -178,8 +178,6 @@ void WebProcessPool::platformResolvePathsForSandboxExtensions()
 
 void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
 {
-    parameters.presenterApplicationPid = getpid();
-
 #if PLATFORM(MAC)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"

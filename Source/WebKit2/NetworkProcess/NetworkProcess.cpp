@@ -202,6 +202,7 @@ void NetworkProcess::lowMemoryHandler(Critical critical)
 
 void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&& parameters)
 {
+    WebCore::setPresentingApplicationPID(parameters.presentingApplicationPID);
     platformInitializeNetworkProcess(parameters);
 
     WTF::Thread::setCurrentThreadIsUserInitiated();

@@ -147,10 +147,6 @@ public:
 
     uint64_t userGestureTokenIdentifier(RefPtr<WebCore::UserGestureToken>);
     void userGestureTokenDestroyed(WebCore::UserGestureToken&);
-
-#if PLATFORM(COCOA)
-    pid_t presenterApplicationPid() const { return m_presenterApplicationPid; }
-#endif
     
     const TextCheckerState& textCheckerState() const { return m_textCheckerState; }
     void setTextCheckerState(const TextCheckerState&);
@@ -368,7 +364,6 @@ private:
 
 #if PLATFORM(COCOA)
     WebCore::MachSendRight m_compositingRenderServerPort;
-    pid_t m_presenterApplicationPid;
 #endif
 
     bool m_fullKeyboardAccessEnabled { false };

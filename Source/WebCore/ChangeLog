@@ -1,3 +1,21 @@
+2017-05-15  Andy Estes  <aestes@apple.com>
+
+        Make the application PID available to WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=172133
+
+        Reviewed by Andreas Kling.
+
+        * CMakeLists.txt:
+        * PlatformMac.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/RuntimeApplicationChecks.cpp: Added.
+        (WebCore::presentingApplicationPIDOverride):
+        (WebCore::presentingApplicationPID): Returns the override PID if set, or getCurrentProcessID()
+        otherwise.
+        (WebCore::setPresentingApplicationPID):
+        * platform/RuntimeApplicationChecks.h:
+        * platform/cocoa/RuntimeApplicationChecksCocoa.mm: Renamed from Source/WebCore/platform/RuntimeApplicationChecks.mm.
+
 2017-05-15  Antti Koivisto  <antti@apple.com>
 
         RenderTheme does not need to be per-page

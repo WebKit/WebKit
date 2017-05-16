@@ -308,7 +308,6 @@ list(APPEND WebCore_SOURCES
 
     platform/CPUMonitor.cpp
     platform/LocalizedStrings.cpp
-    platform/RuntimeApplicationChecks.mm
     platform/ScrollableArea.cpp
 
     platform/audio/AudioSession.cpp
@@ -347,6 +346,7 @@ list(APPEND WebCore_SOURCES
     platform/cocoa/MachSendRight.cpp
     platform/cocoa/NetworkExtensionContentFilter.mm
     platform/cocoa/ParentalControlsContentFilter.mm
+    platform/cocoa/RuntimeApplicationChecksCocoa.mm
     platform/cocoa/ScrollController.mm
     platform/cocoa/ScrollSnapAnimatorState.mm
     platform/cocoa/SearchPopupMenuCocoa.mm

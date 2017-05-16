@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2012, 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -84,6 +84,7 @@
 #import <WebCore/RenderStyle.h>
 #import <WebCore/RenderView.h>
 #import <WebCore/ResourceHandle.h>
+#import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/ScrollView.h>
 #import <WebCore/StyleInheritedData.h>
 #import <WebCore/TextIterator.h>
@@ -93,8 +94,8 @@
 #import <wtf/SetForScope.h>
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-#include <WebCore/MediaPlaybackTargetMac.h>
-#include <WebCore/MediaPlaybackTargetMock.h>
+#import <WebCore/MediaPlaybackTargetMac.h>
+#import <WebCore/MediaPlaybackTargetMock.h>
 #endif
 
 using namespace WebCore;
@@ -106,7 +107,7 @@ void WebPage::platformInitialize()
     WKAccessibilityWebPageObject* mockAccessibilityElement = [[[WKAccessibilityWebPageObject alloc] init] autorelease];
 
     // Get the pid for the starting process.
-    pid_t pid = WebProcess::singleton().presenterApplicationPid();
+    pid_t pid = WebCore::presentingApplicationPID();
     WKAXInitializeElementWithPresenterPid(mockAccessibilityElement, pid);
     [mockAccessibilityElement setWebPage:this];
     

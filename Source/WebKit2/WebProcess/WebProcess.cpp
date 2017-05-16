@@ -250,6 +250,8 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
 {    
     ASSERT(m_pageMap.isEmpty());
 
+    WebCore::setPresentingApplicationPID(parameters.presentingApplicationPID);
+
 #if OS(LINUX)
     if (parameters.memoryPressureMonitorHandle.fileDescriptor() != -1)
         MemoryPressureHandler::singleton().setMemoryPressureMonitorHandle(parameters.memoryPressureMonitorHandle.releaseFileDescriptor());
@@ -388,7 +390,7 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
     audit_token_t auditToken;
     if (parentProcessConnection()->getAuditToken(auditToken)) {
         RetainPtr<CFDataRef> auditData = adoptCF(CFDataCreate(nullptr, (const UInt8*)&auditToken, sizeof(auditToken)));
-        Inspector::RemoteInspector::singleton().setParentProcessInformation(presenterApplicationPid(), auditData);
+        Inspector::RemoteInspector::singleton().setParentProcessInformation(WebCore::presentingApplicationPID(), auditData);
     }
 #endif
 

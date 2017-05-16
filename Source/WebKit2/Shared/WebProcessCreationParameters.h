@@ -135,9 +135,9 @@ struct WebProcessCreationParameters {
     String uiProcessBundleIdentifier;
 #endif
 
-#if PLATFORM(COCOA)
-    pid_t presenterApplicationPid { 0 };
+    pid_t presentingApplicationPID { 0 };
 
+#if PLATFORM(COCOA)
     WebCore::MachSendRight acceleratedCompositingPort;
 
     String uiProcessBundleResourcePath;

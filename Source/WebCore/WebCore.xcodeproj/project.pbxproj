@@ -1937,7 +1937,7 @@
 		463EB6231B8789E00096ED51 /* TagCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 463EB6211B8789CB0096ED51 /* TagCollection.h */; };
 		465307D01DB6EE4800E4137C /* JSUIEventInit.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E045EF1DAA104F00B0D8B9 /* JSUIEventInit.h */; };
 		465307D11DB6EE4A00E4137C /* JSUIEventInit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83E045EE1DAA104F00B0D8B9 /* JSUIEventInit.cpp */; };
-		465A8E791C8A24CE00E7D3E4 /* RuntimeApplicationChecks.mm in Sources */ = {isa = PBXBuildFile; fileRef = 465A8E781C8A24CE00E7D3E4 /* RuntimeApplicationChecks.mm */; };
+		465A8E791C8A24CE00E7D3E4 /* RuntimeApplicationChecksCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 465A8E781C8A24CE00E7D3E4 /* RuntimeApplicationChecksCocoa.mm */; };
 		4671E0651D67A59600C6B497 /* CanvasPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4671E0631D67A57B00C6B497 /* CanvasPath.cpp */; };
 		4671E0661D67A59600C6B497 /* CanvasPath.h in Headers */ = {isa = PBXBuildFile; fileRef = 4671E0641D67A57B00C6B497 /* CanvasPath.h */; };
 		467302021C4EFE7800BCB357 /* IgnoreOpensDuringUnloadCountIncrementer.h in Headers */ = {isa = PBXBuildFile; fileRef = 467302011C4EFE6600BCB357 /* IgnoreOpensDuringUnloadCountIncrementer.h */; };
@@ -4266,6 +4266,7 @@
 		A185B42A1E8211A100DC9118 /* PreviewLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = A185B4281E8211A100DC9118 /* PreviewLoader.h */; };
 		A18890AE1AA13F250026C301 /* ParentalControlsContentFilter.mm in Sources */ = {isa = PBXBuildFile; fileRef = A18890AC1AA13F250026C301 /* ParentalControlsContentFilter.mm */; };
 		A18890AF1AA13F250026C301 /* ParentalControlsContentFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = A18890AD1AA13F250026C301 /* ParentalControlsContentFilter.h */; };
+		A18F7A361ECA73640059E1E1 /* RuntimeApplicationChecks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A18F7A351ECA73640059E1E1 /* RuntimeApplicationChecks.cpp */; };
 		A19AEA211AAA808600B52B25 /* JSMockContentFilterSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = A19AEA1E1AAA806E00B52B25 /* JSMockContentFilterSettings.h */; };
 		A19AEA221AAA808A00B52B25 /* JSMockContentFilterSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A19AEA1D1AAA806E00B52B25 /* JSMockContentFilterSettings.cpp */; };
 		A19D93461A9FEC7200B46C24 /* NEFilterSourceSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = A19D93441A9FEC7200B46C24 /* NEFilterSourceSPI.h */; };
@@ -9603,7 +9604,7 @@
 		4634592B1AC2271000ECB71C /* PowerObserverMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PowerObserverMac.cpp; sourceTree = "<group>"; };
 		463EB6201B8789CB0096ED51 /* TagCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TagCollection.cpp; sourceTree = "<group>"; };
 		463EB6211B8789CB0096ED51 /* TagCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TagCollection.h; sourceTree = "<group>"; };
-		465A8E781C8A24CE00E7D3E4 /* RuntimeApplicationChecks.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RuntimeApplicationChecks.mm; sourceTree = "<group>"; };
+		465A8E781C8A24CE00E7D3E4 /* RuntimeApplicationChecksCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RuntimeApplicationChecksCocoa.mm; sourceTree = "<group>"; };
 		4671E0631D67A57B00C6B497 /* CanvasPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CanvasPath.cpp; sourceTree = "<group>"; };
 		4671E0641D67A57B00C6B497 /* CanvasPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CanvasPath.h; sourceTree = "<group>"; };
 		467302011C4EFE6600BCB357 /* IgnoreOpensDuringUnloadCountIncrementer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IgnoreOpensDuringUnloadCountIncrementer.h; sourceTree = "<group>"; };
@@ -12458,6 +12459,7 @@
 		A185B4281E8211A100DC9118 /* PreviewLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreviewLoader.h; sourceTree = "<group>"; };
 		A18890AC1AA13F250026C301 /* ParentalControlsContentFilter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ParentalControlsContentFilter.mm; sourceTree = "<group>"; };
 		A18890AD1AA13F250026C301 /* ParentalControlsContentFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParentalControlsContentFilter.h; sourceTree = "<group>"; };
+		A18F7A351ECA73640059E1E1 /* RuntimeApplicationChecks.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RuntimeApplicationChecks.cpp; sourceTree = "<group>"; };
 		A19AEA1C1AAA7C4900B52B25 /* MockContentFilterSettings.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = MockContentFilterSettings.idl; sourceTree = "<group>"; };
 		A19AEA1D1AAA806E00B52B25 /* JSMockContentFilterSettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMockContentFilterSettings.cpp; sourceTree = "<group>"; };
 		A19AEA1E1AAA806E00B52B25 /* JSMockContentFilterSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMockContentFilterSettings.h; sourceTree = "<group>"; };
@@ -21054,6 +21056,7 @@
 				A18890AD1AA13F250026C301 /* ParentalControlsContentFilter.h */,
 				A18890AC1AA13F250026C301 /* ParentalControlsContentFilter.mm */,
 				52B0D4BD1C57FD1E0077CE53 /* PlatformView.h */,
+				465A8E781C8A24CE00E7D3E4 /* RuntimeApplicationChecksCocoa.mm */,
 				1AA84F03143BA7BD0051D153 /* ScrollController.h */,
 				1AA84F02143BA7BD0051D153 /* ScrollController.mm */,
 				F478755219983AFF0024A287 /* ScrollSnapAnimatorState.h */,
@@ -23978,8 +23981,8 @@
 				9831AE49154225A200FE2644 /* ReferrerPolicy.h */,
 				CDFC360318CA61C20026E56F /* RemoteCommandListener.cpp */,
 				CDFC360418CA61C20026E56F /* RemoteCommandListener.h */,
+				A18F7A351ECA73640059E1E1 /* RuntimeApplicationChecks.cpp */,
 				293EAE1E1356B2FE0067ACF9 /* RuntimeApplicationChecks.h */,
-				465A8E781C8A24CE00E7D3E4 /* RuntimeApplicationChecks.mm */,
 				5162C7F211F77EFA00612EFE /* SchemeRegistry.cpp */,
 				5162C7F311F77EFB00612EFE /* SchemeRegistry.h */,
 				5141298F1C601A890059E714 /* ScopeGuard.h */,
@@ -32867,6 +32870,7 @@
 				7EE6846B12D26E3800E79415 /* ResourceErrorCF.cpp in Sources */,
 				514C76500CE9234E007EF3CD /* ResourceErrorMac.mm in Sources */,
 				514C76780CE923A1007EF3CD /* ResourceHandle.cpp in Sources */,
+				A18F7A361ECA73640059E1E1 /* RuntimeApplicationChecks.cpp in Sources */,
 				7EE6846C12D26E3800E79415 /* ResourceHandleCFNet.cpp in Sources */,
 				26FAE4CC1852E3A5004C8C46 /* ResourceHandleCFURLConnectionDelegate.cpp in Sources */,
 				26C15CF61857E15D00F15C03 /* ResourceHandleCFURLConnectionDelegateWithOperationQueue.cpp in Sources */,
@@ -32932,7 +32936,7 @@
 				1A569D200D7E2B82007C3983 /* runtime_method.cpp in Sources */,
 				1A569D220D7E2B82007C3983 /* runtime_object.cpp in Sources */,
 				1A569D240D7E2B82007C3983 /* runtime_root.cpp in Sources */,
-				465A8E791C8A24CE00E7D3E4 /* RuntimeApplicationChecks.mm in Sources */,
+				465A8E791C8A24CE00E7D3E4 /* RuntimeApplicationChecksCocoa.mm in Sources */,
 				7C52229D1E1DAE47002CB8F7 /* RuntimeEnabledFeatures.cpp in Sources */,
 				CDD7089618359F6F002B3DC6 /* SampleMap.cpp in Sources */,
 				49E911CA0EF86D47009D0CAF /* ScaleTransformOperation.cpp in Sources */,

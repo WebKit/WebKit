@@ -460,6 +460,7 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess()
 #endif
 
     parameters.shouldUseTestingNetworkSession = m_shouldUseTestingNetworkSession;
+    parameters.presentingApplicationPID = getpid();
 
     // Add any platform specific parameters
     platformInitializeNetworkProcess(parameters);
@@ -751,6 +752,8 @@ WebProcessProxy& WebProcessPool::createNewWebProcess(WebsiteDataStore& websiteDa
 #if ENABLE(MEDIA_STREAM)
     parameters.shouldCaptureAudioInUIProcess = m_configuration->shouldCaptureAudioInUIProcess();
 #endif
+
+    parameters.presentingApplicationPID = getpid();
 
     // Add any platform specific parameters
     platformInitializeWebProcess(parameters);

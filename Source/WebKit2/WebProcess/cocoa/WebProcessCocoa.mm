@@ -74,7 +74,7 @@
 #endif
 
 #if USE(OS_STATE)
-#include <os/state_private.h>
+#import <os/state_private.h>
 #endif
 
 #if PLATFORM(IOS)
@@ -149,7 +149,6 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters&& par
 #endif
 
     m_compositingRenderServerPort = WTFMove(parameters.acceleratedCompositingPort);
-    m_presenterApplicationPid = parameters.presenterApplicationPid;
 
     WebCore::registerMemoryReleaseNotifyCallbacks();
     MemoryPressureHandler::ReliefLogger::setLoggingEnabled(parameters.shouldEnableMemoryPressureReliefLogging);
@@ -175,7 +174,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters&& par
 
 #if PLATFORM(IOS)
     if (canLoadAVSystemController_PIDToInheritApplicationStateFrom()) {
-        pid_t pid = WebProcess::singleton().presenterApplicationPid();
+        pid_t pid = WebCore::presentingApplicationPID();
         NSError *error = nil;
         [[getAVSystemControllerClass() sharedAVSystemController] setAttribute:@(pid) forKey:AVSystemController_PIDToInheritApplicationStateFrom error:&error];
         if (error)

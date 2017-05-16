@@ -76,6 +76,7 @@ struct NetworkProcessCreationParameters {
     Seconds loadThrottleLatency;
 
     Vector<String> urlSchemesRegisteredForCustomProtocols;
+    pid_t presentingApplicationPID { 0 };
 
 #if PLATFORM(COCOA)
     String parentProcessName;
