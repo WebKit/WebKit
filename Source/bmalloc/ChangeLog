@@ -1,3 +1,14 @@
+2017-05-15  Geoffrey Garen  <ggaren@apple.com>
+
+        bmalloc: Bump the size of the deallocator log to 512
+        https://bugs.webkit.org/show_bug.cgi?id=172143
+
+        Reviewed by Michael Saboff.
+
+        This is a speedup on parallel workloads for machines with lots of CPUs.
+
+        * bmalloc/Sizes.h:
+
 2017-05-12  Michael Saboff  <msaboff@apple.com>
 
         [iOS] Use memory footprint to dynamically adjust behavior of allocators

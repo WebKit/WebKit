@@ -65,7 +65,7 @@ namespace Sizes {
     static const size_t largeAlignment = smallMax / pageSizeWasteFactor;
     static const size_t largeAlignmentMask = largeAlignment - 1;
 
-    static const size_t deallocatorLogCapacity = 256;
+    static const size_t deallocatorLogCapacity = 512;
     static const size_t bumpRangeCacheCapacity = 3;
     
     static const std::chrono::milliseconds maxScavengeSleepDuration = std::chrono::milliseconds(250);
