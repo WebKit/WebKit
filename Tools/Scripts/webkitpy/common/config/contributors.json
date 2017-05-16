@@ -162,6 +162,15 @@
          "WebkitBugTracker@adobe.com"
       ]
    },
+   "Adrian Perez de Castro" : {
+      "emails" : [
+         "aperez@igalia.com"
+      ],
+      "nicks" : [
+         "aperezdc"
+      ],
+      "status" : "committer"
+   },
    "Adrienne Walker" : {
       "emails" : [
          "enne@google.com",
