@@ -1,3 +1,10 @@
+2017-05-15  Brent Fulgham  <bfulgham@apple.com>
+
+        Correct typo (part of r216790).
+
+        * PluginProcess/mac/com.apple.WebKit.plugin-common.sb.in: The check-in missed part of a
+        regular expression needed to fix the audio playback.
+
 2017-05-15  Jer Noble  <jer.noble@apple.com>
 
         Add experimental setting to allow document gesture interaction to fulfill media playback gesture requirement
