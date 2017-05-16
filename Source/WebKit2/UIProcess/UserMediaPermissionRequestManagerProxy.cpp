@@ -306,7 +306,7 @@ void UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame(
         return;
     }
 
-    auto validateConstraintsHandler = [this, userMediaID, validHandler = WTFMove(validHandler), invalidHandler = WTFMove(invalidHandler), audioConstraints = WebCore::MediaConstraints(audioConstraints), videoConstraints = WebCore::MediaConstraints(videoConstraints)](String&& deviceIdentifierHashSalt) mutable {
+    auto validateConstraintsHandler = [this, validHandler = WTFMove(validHandler), invalidHandler = WTFMove(invalidHandler), audioConstraints = WebCore::MediaConstraints(audioConstraints), videoConstraints = WebCore::MediaConstraints(videoConstraints)](String&& deviceIdentifierHashSalt) mutable {
         syncWithWebCorePrefs();
         
         audioConstraints.deviceIDHashSalt = deviceIdentifierHashSalt;
@@ -314,7 +314,7 @@ void UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame(
         RealtimeMediaSourceCenter::singleton().validateRequestConstraints(WTFMove(validHandler), WTFMove(invalidHandler), audioConstraints, videoConstraints);
     };
 
-    auto haveDeviceSaltHandler = [this, userMediaID, frameID, validateConstraintsHandler = WTFMove(validateConstraintsHandler)](uint64_t userMediaID, String&& deviceIdentifierHashSalt, bool originHasPersistentAccess) mutable {
+    auto haveDeviceSaltHandler = [this, validateConstraintsHandler = WTFMove(validateConstraintsHandler)](uint64_t userMediaID, String&& deviceIdentifierHashSalt, bool originHasPersistentAccess) mutable {
 
         auto request = m_pendingDeviceRequests.take(userMediaID);
         if (!request)
@@ -358,7 +358,7 @@ void UserMediaPermissionRequestManagerProxy::getUserMediaPermissionInfo(uint64_t
 void UserMediaPermissionRequestManagerProxy::enumerateMediaDevicesForFrame(uint64_t userMediaID, uint64_t frameID, String&& userMediaDocumentOriginIdentifier, String&& topLevelDocumentOriginIdentifier)
 {
 #if ENABLE(MEDIA_STREAM)
-    auto completionHandler = [this, userMediaID](uint64_t userMediaID, String&& deviceIdentifierHashSalt, bool originHasPersistentAccess) {
+    auto completionHandler = [this](uint64_t userMediaID, String&& deviceIdentifierHashSalt, bool originHasPersistentAccess) {
         auto request = m_pendingDeviceRequests.take(userMediaID);
         if (!request)
             return;

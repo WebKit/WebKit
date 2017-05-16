@@ -1,3 +1,30 @@
+2017-05-16  David Kilzer  <ddkilzer@apple.com>
+
+        Unused lambdas in UserMediaPermissionRequestManagerProxy.cpp
+        <https://webkit.org/b/172179>
+
+        Reviewed by Eric Carlson.
+
+        Fixes unused lambda warnings found with newer clang:
+
+            Source/WebKit2/UIProcess/UserMediaPermissionRequestManagerProxy.cpp:309:46: error: lambda capture 'userMediaID' is not used [-Werror,-Wunused-lambda-capture]
+                auto validateConstraintsHandler = [this, userMediaID, validHandler = WTFMove(validHandler), invalidHandler = WTFMove(invalidHandler), audioConstraints = WebCore::MediaConstraints(audioConstraints), videoConstraints = WebCore::MediaConstraints(videoConstraints)](String&& deviceIdentifierHashSalt) mutable {
+                                                         ^
+            Source/WebKit2/UIProcess/UserMediaPermissionRequestManagerProxy.cpp:318:41: error: lambda capture 'userMediaID' is not used [-Werror,-Wunused-lambda-capture]
+                auto haveDeviceSaltHandler = [this, userMediaID, frameID, validateConstraintsHandler = WTFMove(validateConstraintsHandler)](uint64_t userMediaID, String&& deviceIdentifierHashSalt, bool originHasPersistentAccess) mutable {
+                                                    ^
+            Source/WebKit2/UIProcess/UserMediaPermissionRequestManagerProxy.cpp:318:54: error: lambda capture 'frameID' is not used [-Werror,-Wunused-lambda-capture]
+                auto haveDeviceSaltHandler = [this, userMediaID, frameID, validateConstraintsHandler = WTFMove(validateConstraintsHandler)](uint64_t userMediaID, String&& deviceIdentifierHashSalt, bool originHasPersistentAccess) mutable {
+                                                                 ^
+            Source/WebKit2/UIProcess/UserMediaPermissionRequestManagerProxy.cpp:362:37: error: lambda capture 'userMediaID' is not used [-Werror,-Wunused-lambda-capture]
+                auto completionHandler = [this, userMediaID](uint64_t userMediaID, String&& deviceIdentifierHashSalt, bool originHasPersistentAccess) {
+                                                ^
+
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame):
+        (WebKit::UserMediaPermissionRequestManagerProxy::enumerateMediaDevicesForFrame):
+        - Remove unused lambdas.
+
 2017-05-16  Brent Fulgham  <bfulgham@apple.com>
 
         [WK2][macOS] Support Flash Player DRM features
