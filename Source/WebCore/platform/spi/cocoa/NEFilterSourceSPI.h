@@ -75,6 +75,7 @@ typedef void (^NEFilterSourceDecisionHandler)(NEFilterSourceStatus, NSDictionary
 - (void)remediateWithDecisionHandler:(NEFilterSourceDecisionHandler)decisionHandler;
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
 @property (copy) NSString *sourceAppIdentifier;
+@property (assign) pid_t sourceAppPid;
 #endif
 @end
 

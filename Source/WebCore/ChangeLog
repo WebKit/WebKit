@@ -1,3 +1,15 @@
+2017-05-16  Andy Estes  <aestes@apple.com>
+
+        [Cocoa] Tell NEFilterSource about the presenting app's PID
+        https://bugs.webkit.org/show_bug.cgi?id=172152
+        <rdar://problem/32197740>
+
+        Reviewed by Dan Bernstein.
+
+        * platform/cocoa/NetworkExtensionContentFilter.mm:
+        (WebCore::NetworkExtensionContentFilter::initialize):
+        * platform/spi/cocoa/NEFilterSourceSPI.h:
+
 2017-05-16  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Fix static position of positioned grid items

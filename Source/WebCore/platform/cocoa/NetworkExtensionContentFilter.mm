@@ -42,6 +42,11 @@
 SOFT_LINK_FRAMEWORK_OPTIONAL(NetworkExtension);
 SOFT_LINK_CLASS_OPTIONAL(NetworkExtension, NEFilterSource);
 
+// FIXME: Remove this once -setSourceAppPid: is declared in an SDK used by the builders
+@interface NEFilterSource ()
+- (void)setSourceAppPid:(pid_t)sourceAppPid;
+@end
+
 #if HAVE(MODERN_NE_FILTER_SOURCE)
 static inline NSData *replacementDataFromDecisionInfo(NSDictionary *decisionInfo)
 {
@@ -76,6 +81,9 @@ void NetworkExtensionContentFilter::initialize(const URL* url)
     m_neFilterSource = adoptNS([allocNEFilterSourceInstance() initWithDecisionQueue:m_queue.get()]);
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
     [m_neFilterSource setSourceAppIdentifier:applicationBundleIdentifier()];
+    // FIXME: Remove the -respondsToSelector: check once -setSourceAppPid: is defined in an SDK used by the builders.
+    if ([m_neFilterSource respondsToSelector:@selector(setSourceAppPid:)])
+        [m_neFilterSource setSourceAppPid:presentingApplicationPID()];
 #endif
 #else
     ASSERT_ARG(url, url);
