@@ -1,3 +1,16 @@
+2017-05-16  David Kilzer  <ddkilzer@apple.com>
+
+        WebCore::leakCGColor() needs CF_RETURNS_RETAINED annotation
+        <https://webkit.org/b/172190>
+
+        Reviewed by Simon Fraser.
+
+        * platform/graphics/cg/ColorCG.cpp:
+        (WebCore::leakCGColor): Annotate with CF_RETURNS_RETAINED since
+        it does not follow the CF naming convention, which means the
+        expected behavior can't be inferred by the clang static
+        analyzer.
+
 2017-05-16  Youenn Fablet  <youenn@apple.com>
 
         RealtimeOutgoingVideoSource should support sinkWants for rotation

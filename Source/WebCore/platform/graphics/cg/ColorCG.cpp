@@ -40,7 +40,7 @@
 #endif // !PLATFORM(IOS)
 
 namespace WebCore {
-static CGColorRef leakCGColor(const Color&);
+static CGColorRef leakCGColor(const Color&) CF_RETURNS_RETAINED;
 }
 
 namespace WTF {
