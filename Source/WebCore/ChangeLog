@@ -1,3 +1,29 @@
+2017-05-15  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Cherry-pick r216323. rdar://problem/31899730
+
+    2017-05-06  Youenn Fablet  <youenn@apple.com>
+
+            RealtimeMediaSourceCenter callbacks should be passed as r-values
+            https://bugs.webkit.org/show_bug.cgi?id=171407
+
+            Reviewed by Eric Carlson.
+
+            No change of behavior, this is mostly style here.
+
+            * platform/mediastream/RealtimeMediaSourceCenter.h:
+            * platform/mediastream/mac/RealtimeMediaSourceCenterMac.cpp:
+            (WebCore::RealtimeMediaSourceCenterMac::validateRequestConstraints):
+            (WebCore::RealtimeMediaSourceCenterMac::createMediaStream):
+            * platform/mediastream/mac/RealtimeMediaSourceCenterMac.h:
+            * platform/mediastream/openwebrtc/RealtimeMediaSourceCenterOwr.cpp:
+            (WebCore::RealtimeMediaSourceCenterOwr::validateRequestConstraints):
+            * platform/mediastream/openwebrtc/RealtimeMediaSourceCenterOwr.h:
+            * platform/mock/MockRealtimeMediaSourceCenter.cpp:
+            (WebCore::MockRealtimeMediaSourceCenter::validateRequestConstraints):
+            (WebCore::MockRealtimeMediaSourceCenter::createMediaStream):
+            * platform/mock/MockRealtimeMediaSourceCenter.h:
+
 2017-05-12  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r216809. rdar://problem/32141005

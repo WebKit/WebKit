@@ -65,7 +65,7 @@ MockRealtimeMediaSourceCenter::MockRealtimeMediaSourceCenter()
     m_supportedConstraints.setSupportsDeviceId(true);
 }
 
-void MockRealtimeMediaSourceCenter::validateRequestConstraints(ValidConstraintsHandler validHandler, InvalidConstraintsHandler invalidHandler, const MediaConstraints& audioConstraints, const MediaConstraints& videoConstraints)
+void MockRealtimeMediaSourceCenter::validateRequestConstraints(ValidConstraintsHandler&& validHandler, InvalidConstraintsHandler&& invalidHandler, const MediaConstraints& audioConstraints, const MediaConstraints& videoConstraints)
 {
     Vector<String> audioSourceIds;
     Vector<String> videoSourceIds;
@@ -126,7 +126,7 @@ void MockRealtimeMediaSourceCenter::validateRequestConstraints(ValidConstraintsH
     validHandler(WTFMove(audioSourceIds), WTFMove(videoSourceIds));
 }
 
-void MockRealtimeMediaSourceCenter::createMediaStream(NewMediaStreamHandler completionHandler, const String& audioDeviceID, const String& videoDeviceID, const MediaConstraints* audioConstraints, const MediaConstraints* videoConstraints)
+void MockRealtimeMediaSourceCenter::createMediaStream(NewMediaStreamHandler&& completionHandler, const String& audioDeviceID, const String& videoDeviceID, const MediaConstraints* audioConstraints, const MediaConstraints* videoConstraints)
 {
     Vector<Ref<RealtimeMediaSource>> audioSources;
     Vector<Ref<RealtimeMediaSource>> videoSources;
