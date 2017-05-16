@@ -2373,6 +2373,7 @@ void ArgumentCoder<MediaConstraintsData>::encode(Encoder& encoder, const WebCore
 {
     encoder << constraint.mandatoryConstraints
         << constraint.advancedConstraints
+        << constraint.deviceIDHashSalt
         << constraint.isValid;
 }
 
@@ -2380,6 +2381,7 @@ bool ArgumentCoder<MediaConstraintsData>::decode(Decoder& decoder, WebCore::Medi
 {
     return decoder.decode(constraints.mandatoryConstraints)
         && decoder.decode(constraints.advancedConstraints)
+        && decoder.decode(constraints.deviceIDHashSalt)
         && decoder.decode(constraints.isValid);
 }
 

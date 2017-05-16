@@ -39,6 +39,7 @@
 #include "MediaConstraints.h"
 #include "NotImplemented.h"
 #include "RealtimeMediaSourceCapabilities.h"
+#include "RealtimeMediaSourceCenter.h"
 #include <wtf/MainThread.h>
 #include <wtf/UUID.h>
 #include <wtf/text/StringHash.h>
@@ -341,11 +342,7 @@ double RealtimeMediaSource::fitnessDistance(const MediaConstraint& constraint)
     }
 
     case MediaConstraintType::DeviceId: {
-        ASSERT(constraint.isString());
-        if (!capabilities.supportsDeviceId())
-            return 0;
-
-        return downcast<StringConstraint>(constraint).fitnessDistance(m_id);
+        ASSERT_NOT_REACHED();
         break;
     }
 
@@ -502,7 +499,7 @@ void RealtimeMediaSource::applyConstraint(const MediaConstraint& constraint)
     }
 }
 
-bool RealtimeMediaSource::selectSettings(const MediaConstraints& constraints, FlattenedConstraint& candidates, String& failedConstraint)
+bool RealtimeMediaSource::selectSettings(const MediaConstraints& constraints, FlattenedConstraint& candidates, String& failedConstraint, SelectType type)
 {
     m_fitnessScore = std::numeric_limits<double>::infinity();
 
@@ -538,6 +535,26 @@ bool RealtimeMediaSource::selectSettings(const MediaConstraints& constraints, Fl
 
         if (constraint.constraintType() == MediaConstraintType::Width || constraint.constraintType() == MediaConstraintType::Height || constraint.constraintType() == MediaConstraintType::FrameRate) {
             candidates.set(constraint);
+            return false;
+        }
+
+        // The deviceId can't be changed, and the constraint value is the hashed device ID, so verify that the
+        // device's unique ID hashes to the constraint value but don't include the constraint in the flattened
+        // constraint set.
+        if (constraint.constraintType() == MediaConstraintType::DeviceId) {
+            if (type == SelectType::ForApplyConstraints)
+                return false;
+
+            ASSERT(constraint.isString());
+            ASSERT(!constraints.deviceIDHashSalt().isEmpty());
+
+            auto hashedID = RealtimeMediaSourceCenter::singleton().hashStringWithSalt(m_persistentID, constraints.deviceIDHashSalt());
+            double constraintDistance = downcast<StringConstraint>(constraint).fitnessDistance(hashedID);
+            if (std::isinf(constraintDistance)) {
+                failedConstraint = constraint.name();
+                return true;
+            }
+
             return false;
         }
 
@@ -681,7 +698,7 @@ bool RealtimeMediaSource::supportsConstraints(const MediaConstraints& constraint
     ASSERT(constraints.isValid());
 
     FlattenedConstraint candidates;
-    if (!selectSettings(constraints, candidates, invalidConstraint))
+    if (!selectSettings(constraints, candidates, invalidConstraint, SelectType::ForSupportsConstraints))
         return false;
     
     return true;
@@ -744,7 +761,7 @@ std::optional<std::pair<String, String>> RealtimeMediaSource::applyConstraints(c
 
     FlattenedConstraint candidates;
     String failedConstraint;
-    if (!selectSettings(constraints, candidates, failedConstraint))
+    if (!selectSettings(constraints, candidates, failedConstraint, SelectType::ForApplyConstraints))
         return { { failedConstraint, ASCIILiteral("Constraint not supported") } };
 
     applyConstraints(candidates);

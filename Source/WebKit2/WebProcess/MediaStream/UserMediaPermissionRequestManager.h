@@ -45,12 +45,12 @@ public:
 
     void startUserMediaRequest(WebCore::UserMediaRequest&);
     void cancelUserMediaRequest(WebCore::UserMediaRequest&);
-    void userMediaAccessWasGranted(uint64_t, const String& audioDeviceUID, const String& videoDeviceUID);
-    void userMediaAccessWasDenied(uint64_t, WebCore::UserMediaRequest::MediaAccessDenialReason, const String&);
+    void userMediaAccessWasGranted(uint64_t, String&& audioDeviceUID, String&& videoDeviceUID, String&& deviceIdentifierHashSalt);
+    void userMediaAccessWasDenied(uint64_t, WebCore::UserMediaRequest::MediaAccessDenialReason, String&&);
 
     void enumerateMediaDevices(WebCore::MediaDevicesEnumerationRequest&);
     void cancelMediaDevicesEnumeration(WebCore::MediaDevicesEnumerationRequest&);
-    void didCompleteMediaDeviceEnumeration(uint64_t, const Vector<WebCore::CaptureDevice>& deviceList, const String& deviceIdentifierHashSalt, bool originHasPersistentAccess);
+    void didCompleteMediaDeviceEnumeration(uint64_t, const Vector<WebCore::CaptureDevice>& deviceList, String&& deviceIdentifierHashSalt, bool originHasPersistentAccess);
 
     void grantUserMediaDeviceSandboxExtensions(const MediaDeviceSandboxExtensions&);
     void revokeUserMediaDeviceSandboxExtensions(const Vector<String>&);

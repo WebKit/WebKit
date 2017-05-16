@@ -153,10 +153,10 @@ void UserMediaRequest::start()
     m_controller->requestUserMediaAccess(*this);
 }
 
-void UserMediaRequest::allow(const String& audioDeviceUID, const String& videoDeviceUID)
+void UserMediaRequest::allow(String&& audioDeviceUID, String&& videoDeviceUID, String&& deviceIdentifierHashSalt)
 {
-    m_allowedAudioDeviceUID = audioDeviceUID;
-    m_allowedVideoDeviceUID = videoDeviceUID;
+    m_allowedAudioDeviceUID = WTFMove(audioDeviceUID);
+    m_allowedVideoDeviceUID = WTFMove(videoDeviceUID);
 
     RefPtr<UserMediaRequest> protectedThis = this;
     RealtimeMediaSourceCenter::NewMediaStreamHandler callback = [this, protectedThis = WTFMove(protectedThis)](RefPtr<MediaStreamPrivate>&& privateStream) mutable {
@@ -179,6 +179,9 @@ void UserMediaRequest::allow(const String& audioDeviceUID, const String& videoDe
         
         m_promise.resolve(stream);
     };
+
+    m_audioConstraints->setDeviceIDHashSalt(String(deviceIdentifierHashSalt));
+    m_videoConstraints->setDeviceIDHashSalt(WTFMove(deviceIdentifierHashSalt));
 
     RealtimeMediaSourceCenter::singleton().createMediaStream(WTFMove(callback), m_allowedAudioDeviceUID, m_allowedVideoDeviceUID, &m_audioConstraints.get(), &m_videoConstraints.get());
 }

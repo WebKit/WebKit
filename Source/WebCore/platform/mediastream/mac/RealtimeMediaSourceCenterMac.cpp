@@ -81,31 +81,6 @@ RealtimeMediaSourceCenterMac::~RealtimeMediaSourceCenterMac()
 {
 }
 
-void RealtimeMediaSourceCenterMac::validateRequestConstraints(ValidConstraintsHandler&& validHandler, InvalidConstraintsHandler&& invalidHandler, const MediaConstraints& audioConstraints, const MediaConstraints& videoConstraints)
-{
-    Vector<String> audioSourceUIDs;
-    Vector<String> videoSourceUIDs;
-    String invalidConstraint;
-
-    if (audioConstraints.isValid()) {
-        audioSourceUIDs = bestSourcesForTypeAndConstraints(RealtimeMediaSource::Type::Audio, audioConstraints, invalidConstraint);
-        if (!invalidConstraint.isEmpty()) {
-            invalidHandler(invalidConstraint);
-            return;
-        }
-    }
-
-    if (videoConstraints.isValid()) {
-        videoSourceUIDs = bestSourcesForTypeAndConstraints(RealtimeMediaSource::Type::Video, videoConstraints, invalidConstraint);
-        if (!invalidConstraint.isEmpty()) {
-            invalidHandler(invalidConstraint);
-            return;
-        }
-    }
-
-    validHandler(WTFMove(audioSourceUIDs), WTFMove(videoSourceUIDs));
-}
-
 void RealtimeMediaSourceCenterMac::createMediaStream(NewMediaStreamHandler&& completionHandler, const String& audioDeviceID, const String& videoDeviceID, const MediaConstraints* audioConstraints, const MediaConstraints* videoConstraints)
 {
     Vector<Ref<RealtimeMediaSource>> audioSources;
@@ -150,48 +125,6 @@ Vector<CaptureDevice> RealtimeMediaSourceCenterMac::getMediaStreamDevices()
     result.appendVector(videoCaptureDeviceManager().getVideoSourcesInfo());
 
     return result;
-}
-
-Vector<String> RealtimeMediaSourceCenterMac::bestSourcesForTypeAndConstraints(RealtimeMediaSource::Type type, const MediaConstraints& constraints, String& invalidConstraint)
-{
-    Vector<RefPtr<RealtimeMediaSource>> bestSources;
-
-    struct {
-        bool operator()(RefPtr<RealtimeMediaSource> a, RefPtr<RealtimeMediaSource> b)
-        {
-            return a->fitnessScore() < b->fitnessScore();
-        }
-    } sortBasedOnFitnessScore;
-
-    CaptureDevice::DeviceType deviceType = type == RealtimeMediaSource::Type::Video ? CaptureDevice::DeviceType::Video : CaptureDevice::DeviceType::Audio;
-    for (auto& captureDevice : getMediaStreamDevices()) {
-        if (!captureDevice.enabled() || captureDevice.type() != deviceType)
-            continue;
-
-        CaptureSourceOrError sourceOrError;
-        if (type == RealtimeMediaSource::Type::Video)
-            sourceOrError = videoFactory().createVideoCaptureSource(captureDevice.persistentId(), &constraints);
-        else if (type == RealtimeMediaSource::Type::Audio)
-            sourceOrError = audioFactory().createAudioCaptureSource(captureDevice.persistentId(), &constraints);
-
-        if (!sourceOrError) {
-            // FIXME: Handle the case of invalid constraints on more than one device.
-            invalidConstraint = WTFMove(sourceOrError.errorMessage);
-            continue;
-        }
-        bestSources.append(sourceOrError.source());
-    }
-
-    Vector<String> sourceUIDs;
-    if (bestSources.isEmpty())
-        return sourceUIDs;
-
-    sourceUIDs.reserveInitialCapacity(bestSources.size());
-    std::sort(bestSources.begin(), bestSources.end(), sortBasedOnFitnessScore);
-    for (auto& device : bestSources)
-        sourceUIDs.uncheckedAppend(device->persistentID());
-
-    return sourceUIDs;
 }
 
 RealtimeMediaSource::AudioCaptureFactory& RealtimeMediaSourceCenterMac::defaultAudioFactory()

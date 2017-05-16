@@ -87,10 +87,6 @@ PASS settings['height'] is 1080
 PASS settings['width'] is 1024
 PASS settings['height'] is 576
 
-** Constraint: {"deviceId":{"exact":"20983-20o198-109283-098-09812"}} - the 'exact' deviceID doesn't match, promise should reject.
-PASS Promise was rejected
-PASS error.constraint is "deviceId"
-
 PASS successfullyParsed is true
 
 TEST COMPLETE

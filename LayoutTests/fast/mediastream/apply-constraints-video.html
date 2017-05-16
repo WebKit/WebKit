@@ -94,12 +94,6 @@
                     constraint: { height: 576 }, 
                     expected: { width: 1024, height: 576},
                 },
-                {
-                    message: "the 'exact' deviceID doesn't match, promise should reject.",
-                    constraint: { deviceId: {exact: "20983-20o198-109283-098-09812"}, }, 
-                    expected: { },
-                    error: "deviceId",
-                },
             ];
 
             let tester = new ConstraintsTest({ video: true }, tests, "Tests applyConstraints on a video stream track.")

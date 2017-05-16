@@ -154,24 +154,24 @@ void UserMediaPermissionRequestManager::removeMediaRequestFromMaps(UserMediaRequ
     m_userMediaRequestToIDMap.remove(&request);
 }
 
-void UserMediaPermissionRequestManager::userMediaAccessWasGranted(uint64_t requestID, const String& audioDeviceUID, const String& videoDeviceUID)
+void UserMediaPermissionRequestManager::userMediaAccessWasGranted(uint64_t requestID, String&& audioDeviceUID, String&& videoDeviceUID, String&& deviceIdentifierHashSalt)
 {
     auto request = m_idToUserMediaRequestMap.take(requestID);
     if (!request)
         return;
     removeMediaRequestFromMaps(*request);
 
-    request->allow(audioDeviceUID, videoDeviceUID);
+    request->allow(WTFMove(audioDeviceUID), WTFMove(videoDeviceUID), WTFMove(deviceIdentifierHashSalt));
 }
 
-void UserMediaPermissionRequestManager::userMediaAccessWasDenied(uint64_t requestID, WebCore::UserMediaRequest::MediaAccessDenialReason reason, const String& invalidConstraint)
+void UserMediaPermissionRequestManager::userMediaAccessWasDenied(uint64_t requestID, WebCore::UserMediaRequest::MediaAccessDenialReason reason, String&& invalidConstraint)
 {
     auto request = m_idToUserMediaRequestMap.take(requestID);
     if (!request)
         return;
     removeMediaRequestFromMaps(*request);
 
-    request->deny(reason, invalidConstraint);
+    request->deny(reason, WTFMove(invalidConstraint));
 }
 
 void UserMediaPermissionRequestManager::enumerateMediaDevices(MediaDevicesEnumerationRequest& request)
@@ -205,14 +205,14 @@ void UserMediaPermissionRequestManager::cancelMediaDevicesEnumeration(WebCore::M
     m_idToMediaDevicesEnumerationRequestMap.remove(requestID);
 }
 
-void UserMediaPermissionRequestManager::didCompleteMediaDeviceEnumeration(uint64_t requestID, const Vector<CaptureDevice>& deviceList, const String& mediaDeviceIdentifierHashSalt, bool hasPersistentAccess)
+void UserMediaPermissionRequestManager::didCompleteMediaDeviceEnumeration(uint64_t requestID, const Vector<CaptureDevice>& deviceList, String&& mediaDeviceIdentifierHashSalt, bool hasPersistentAccess)
 {
     RefPtr<MediaDevicesEnumerationRequest> request = m_idToMediaDevicesEnumerationRequestMap.take(requestID);
     if (!request)
         return;
     m_mediaDevicesEnumerationRequestToIDMap.remove(request);
     
-    request->setDeviceInfo(deviceList, mediaDeviceIdentifierHashSalt, hasPersistentAccess);
+    request->setDeviceInfo(deviceList, WTFMove(mediaDeviceIdentifierHashSalt), hasPersistentAccess);
 }
 
 void UserMediaPermissionRequestManager::grantUserMediaDeviceSandboxExtensions(const MediaDeviceSandboxExtensions& extensions)

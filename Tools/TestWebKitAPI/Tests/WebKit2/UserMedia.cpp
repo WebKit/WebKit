@@ -29,6 +29,7 @@
 #include <WebKit/WKPreferencesRef.h>
 #include <WebKit/WKPreferencesRefPrivate.h>
 #include <WebKit/WKRetainPtr.h>
+#include <WebKit/WKUserMediaPermissionCheck.h>
 #include <string.h>
 #include <vector>
 
@@ -36,7 +37,7 @@ namespace TestWebKitAPI {
 
 static bool wasPrompted;
 
-void decidePolicyForUserMediaPermissionRequestCallBack(WKPageRef, WKFrameRef, WKSecurityOriginRef, WKSecurityOriginRef, WKUserMediaPermissionRequestRef permissionRequest, const void* /* clientInfo */)
+static void decidePolicyForUserMediaPermissionRequestCallBack(WKPageRef, WKFrameRef, WKSecurityOriginRef, WKSecurityOriginRef, WKUserMediaPermissionRequestRef permissionRequest, const void* /* clientInfo */)
 {
     WKRetainPtr<WKArrayRef> audioDeviceUIDs = WKUserMediaPermissionRequestAudioDeviceUIDs(permissionRequest);
     WKRetainPtr<WKArrayRef> videoDeviceUIDs = WKUserMediaPermissionRequestVideoDeviceUIDs(permissionRequest);
@@ -60,6 +61,11 @@ void decidePolicyForUserMediaPermissionRequestCallBack(WKPageRef, WKFrameRef, WK
     wasPrompted = true;
 }
 
+static void checkUserMediaPermissionCallback(WKPageRef, WKFrameRef, WKSecurityOriginRef, WKSecurityOriginRef, WKUserMediaPermissionCheckRef permissionRequest, const void*)
+{
+    WKUserMediaPermissionCheckSetUserMediaAccessInfo(permissionRequest, WKStringCreateWithUTF8CString("0x123456789"), false);
+}
+
 TEST(WebKit2, UserMediaBasic)
 {
     auto context = adoptWK(WKContextCreate());
@@ -75,7 +81,8 @@ TEST(WebKit2, UserMediaBasic)
     memset(&uiClient, 0, sizeof(uiClient));
     uiClient.base.version = 6;
     uiClient.decidePolicyForUserMediaPermissionRequest = decidePolicyForUserMediaPermissionRequestCallBack;
-
+    uiClient.checkUserMediaPermissionForOrigin = checkUserMediaPermissionCallback;
+    
     PlatformWebView webView(context.get(), pageGroup.get());
     WKPageSetPageUIClient(webView.page(), &uiClient.base);
 
