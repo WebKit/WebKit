@@ -1,3 +1,10 @@
+2017-05-16  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Unreviewed, add Objective C files to CMake Mac port
+        https://bugs.webkit.org/show_bug.cgi?id=172103
+
+        * shell/PlatformMac.cmake: Added.
+
 2017-05-16  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: enforce size limits
