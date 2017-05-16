@@ -45,6 +45,10 @@
 (deny iokit-get-properties)
 #endif
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+(deny mach-lookup (xpc-service-name-prefix ""))
+#endif
+
 ;; Utility functions for home directory relative path filters
 (define (home-regex home-relative-regex)
   (regex (string-append "^" (regex-quote (param "HOME_DIR")) home-relative-regex)))
@@ -102,11 +106,15 @@
     (subpath (param "WEBKIT2_FRAMEWORK_DIR")))
 (allow system-fsctl (fsctl-command (_IO "h" 47)))
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
 ;; Various services required by CFNetwork and other frameworks
 (allow mach-lookup
-    (global-name "com.apple.analyticsd"))
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+    (global-name "com.apple.analyticsd")
 #endif
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+    (global-name "com.apple.lsd.mapdb")
+#endif
+)
 
 ;; Sandbox extensions
 (define (apply-read-and-issue-extension op path-filter)

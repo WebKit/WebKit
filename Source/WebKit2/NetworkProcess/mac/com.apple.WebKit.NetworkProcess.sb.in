@@ -45,6 +45,10 @@
 (deny iokit-get-properties)
 #endif
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+(deny mach-lookup (xpc-service-name-prefix ""))
+#endif
+
 ;; Utility functions for home directory relative path filters
 (define (home-regex home-relative-regex)
   (regex (string-append "^" (regex-quote (param "HOME_DIR")) home-relative-regex)))
@@ -149,6 +153,7 @@
     (global-name "com.apple.cookied")
     (global-name "com.apple.cfnetwork.AuthBrokerAgent")
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+    (global-name "com.apple.lsd.mapdb")
     (global-name "com.apple.nesessionmanager.flow-divert-token")
 #endif
 )

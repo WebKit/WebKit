@@ -129,6 +129,16 @@
     (iokit-property "touch-size-id"))
 #endif
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+(deny mach-lookup (xpc-service-name-prefix ""))
+(allow mach-lookup
+    (xpc-service-name "com.apple.accessibility.mediaaccessibilityd")
+    (xpc-service-name "com.apple.audio.SandboxHelper")
+    (xpc-service-name "com.apple.coremedia.videodecoder")
+    (xpc-service-name-regex #"\.apple-extension-service$")
+)
+#endif
+
 ;; Utility functions for home directory relative path filters
 (define (home-regex home-relative-regex)
   (regex (string-append "^" (regex-quote (param "HOME_DIR")) home-relative-regex)))
@@ -340,6 +350,7 @@
        (global-name "com.apple.mediaremoted.xpc")
 #endif
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+       (global-name "com.apple.lsd.mapdb")
        (global-name "com.apple.nesessionmanager.flow-divert-token")
 #endif
        (global-name "com.apple.speech.speechsynthesisd")
