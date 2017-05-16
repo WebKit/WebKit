@@ -1,3 +1,11 @@
+2017-05-16  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Skip LayoutTest media/restricted-audio-playback-with-document-gesture.html on iOS.
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations:
+
 2017-05-16  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK] Tests that always pass when run alone, but fail in the bots

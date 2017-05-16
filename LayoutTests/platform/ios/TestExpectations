@@ -359,7 +359,7 @@ webkit.org/b/152993 http/tests/contentdispositionattachmentsandbox/form-submissi
 fast/text/complex-small-caps-non-bmp-capitalize.html [ Skip ]
 fast/text/all-small-caps-whitespace.html [ Skip ]
 
-# This test relies on EventSender.keydown(), which is not supported on iOS
+# These tests rely on EventSender.keydown(), which is not supported on iOS
 webkit.org/b/155233 fast/events/max-tabindex-focus.html [ Skip ]
 fast/events/beforeunload-alert-handled-keydown.html [ Skip ]
 fast/events/beforeunload-alert-unhandled-keydown.html [ Skip ]
@@ -377,6 +377,7 @@ fast/events/keyboardevent-code.html [ Skip ]
 http/tests/navigation/keyboard-events-during-provisional-navigation.html [ Skip ]
 http/tests/navigation/keyboard-events-during-provisional-subframe-navigation.html [ Skip ]
 media/audio-dealloc-crash.html [ Skip ]
+media/restricted-audio-playback-with-document-gesture.html [ Skip ]
 
 # Tests that use EventSender's mouseMoveTo, mouseUp and mouseDown
 fast/forms/range/disabled-while-dragging.html [ Skip ]
