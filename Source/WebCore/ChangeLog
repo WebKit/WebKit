@@ -1,3 +1,14 @@
+2017-05-17  Youenn Fablet  <youenn@apple.com>
+
+        Move-related refactoring on UserMediaPermissionRequestProxy
+        https://bugs.webkit.org/show_bug.cgi?id=172195
+
+        Reviewed by Alex Christensen.
+
+        No behavioral change.
+
+        * platform/mediastream/RealtimeMediaSourceCenter.h: Cleaning the function definition.
+
 2017-05-17  David Kilzer  <ddkilzer@apple.com>
 
         BlobDataFileReference::generateReplacementFile() should use mkstemp()

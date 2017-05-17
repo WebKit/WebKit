@@ -1,3 +1,21 @@
+2017-05-17  Youenn Fablet  <youenn@apple.com>
+
+        Move-related refactoring on UserMediaPermissionRequestProxy
+        https://bugs.webkit.org/show_bug.cgi?id=172195
+
+        Reviewed by Alex Christensen.
+
+        Moving vectors of strings instead of passing as const ref so that we do not copy them.
+
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::createRequest):
+        (WebKit::UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame):
+        * UIProcess/UserMediaPermissionRequestManagerProxy.h:
+        * UIProcess/UserMediaPermissionRequestProxy.cpp:
+        (WebKit::UserMediaPermissionRequestProxy::UserMediaPermissionRequestProxy):
+        * UIProcess/UserMediaPermissionRequestProxy.h:
+        (WebKit::UserMediaPermissionRequestProxy::create):
+
 2017-05-17  Andy Estes  <aestes@apple.com>
 
         REGRESSION (r215480): PKPaymentAuthorizationStatusFailure sent to PassKit in completeShippingContactSelection() even when there are no errors

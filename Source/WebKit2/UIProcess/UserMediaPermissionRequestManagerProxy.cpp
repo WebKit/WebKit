@@ -130,9 +130,9 @@ void UserMediaPermissionRequestManagerProxy::clearCachedState()
     invalidatePendingRequests();
 }
 
-Ref<UserMediaPermissionRequestProxy> UserMediaPermissionRequestManagerProxy::createRequest(uint64_t userMediaID, uint64_t frameID, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, const Vector<String>& audioDeviceUIDs, const Vector<String>& videoDeviceUIDs)
+Ref<UserMediaPermissionRequestProxy> UserMediaPermissionRequestManagerProxy::createRequest(uint64_t userMediaID, uint64_t frameID, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, Vector<String>&& audioDeviceUIDs, Vector<String>&& videoDeviceUIDs)
 {
-    auto request = UserMediaPermissionRequestProxy::create(*this, userMediaID, frameID, WTFMove(userMediaDocumentOrigin), WTFMove(topLevelDocumentOrigin), audioDeviceUIDs, videoDeviceUIDs);
+    auto request = UserMediaPermissionRequestProxy::create(*this, userMediaID, frameID, WTFMove(userMediaDocumentOrigin), WTFMove(topLevelDocumentOrigin), WTFMove(audioDeviceUIDs), WTFMove(videoDeviceUIDs));
     m_pendingUserMediaRequests.add(userMediaID, request.ptr());
     return request;
 }
@@ -254,7 +254,7 @@ void UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame(
         denyRequest(userMediaID, UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::InvalidConstraint, invalidConstraint);
     };
 
-    WebCore::RealtimeMediaSourceCenter::ValidConstraintsHandler validHandler = [this, userMediaID, frameID, userMediaDocumentOrigin = userMediaDocumentOrigin.copyRef(), topLevelDocumentOrigin = topLevelDocumentOrigin.copyRef()](const Vector<String>&& audioDeviceUIDs, const Vector<String>&& videoDeviceUIDs) mutable {
+    WebCore::RealtimeMediaSourceCenter::ValidConstraintsHandler validHandler = [this, userMediaID, frameID, userMediaDocumentOrigin = userMediaDocumentOrigin.copyRef(), topLevelDocumentOrigin = topLevelDocumentOrigin.copyRef()](Vector<String>&& audioDeviceUIDs, Vector<String>&& videoDeviceUIDs) mutable {
         if (!m_page.isValid())
             return;
 
@@ -269,24 +269,24 @@ void UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame(
         auto userMediaOrigin = API::SecurityOrigin::create(userMediaDocumentOrigin.get());
         auto topLevelOrigin = API::SecurityOrigin::create(topLevelDocumentOrigin.get());
         
-        auto request = createRequest(userMediaID, frameID, WTFMove(userMediaDocumentOrigin), WTFMove(topLevelDocumentOrigin), audioDeviceUIDs, videoDeviceUIDs);
+        auto request = createRequest(userMediaID, frameID, WTFMove(userMediaDocumentOrigin), WTFMove(topLevelDocumentOrigin), WTFMove(audioDeviceUIDs), WTFMove(videoDeviceUIDs));
 
         auto& frameState = stateForRequest(request.get());
-        for (const auto& deviceUID : audioDeviceUIDs) {
+        for (const auto& deviceUID : request->audioDeviceUIDs()) {
             if (frameState.hasPermissionToUseCaptureDevice(deviceUID)) {
                 authorizedForAudio = true;
                 break;
             }
         }
-        for (const auto& deviceUID : videoDeviceUIDs) {
+        for (const auto& deviceUID : request->videoDeviceUIDs()) {
             if (frameState.hasPermissionToUseCaptureDevice(deviceUID)) {
                 authorizedForVideo = true;
                 break;
             }
         }
 
-        if (authorizedForAudio == !audioDeviceUIDs.isEmpty() && authorizedForVideo == !videoDeviceUIDs.isEmpty()) {
-            userMediaAccessWasGranted(userMediaID, authorizedForAudio ? audioDeviceUIDs[0] : emptyString(), authorizedForVideo ? videoDeviceUIDs[0] : emptyString());
+        if (authorizedForAudio == !request->audioDeviceUIDs().isEmpty() && authorizedForVideo == !request->videoDeviceUIDs().isEmpty()) {
+            userMediaAccessWasGranted(userMediaID, authorizedForAudio ? request->audioDeviceUIDs()[0] : emptyString(), authorizedForVideo ? request->videoDeviceUIDs()[0] : emptyString());
             return;
         }
 
