@@ -68,7 +68,7 @@ namespace Sizes {
     static const size_t deallocatorLogCapacity = 512;
     static const size_t bumpRangeCacheCapacity = 3;
     
-    static const std::chrono::milliseconds maxScavengeSleepDuration = std::chrono::milliseconds(250);
+    static const std::chrono::milliseconds maxScavengeSleepDuration = std::chrono::milliseconds(512);
 
     static const size_t maskSizeClassCount = maskSizeClassMax / alignment;
 

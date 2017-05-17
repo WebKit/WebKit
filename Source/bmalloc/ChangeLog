@@ -1,3 +1,15 @@
+2017-05-16  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION(r216763): JetStream is 1% slower on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=172124
+
+        Reviewed by Filip Pizlo.
+
+        It appears that changing maxScavengeSleepDuration from 512 to 250ms in r216763 is
+        responsible for the regression.
+
+        * bmalloc/Sizes.h:
+
 2017-05-15  Geoffrey Garen  <ggaren@apple.com>
 
         bmalloc: Bump the size of the deallocator log to 512
