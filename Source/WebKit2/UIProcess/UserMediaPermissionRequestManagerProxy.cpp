@@ -338,7 +338,7 @@ void UserMediaPermissionRequestManagerProxy::getUserMediaPermissionInfo(uint64_t
     auto userMediaOrigin = API::SecurityOrigin::create(userMediaDocumentOrigin.get());
     auto topLevelOrigin = API::SecurityOrigin::create(topLevelDocumentOrigin.get());
 
-    auto request = UserMediaPermissionCheckProxy::create(userMediaID, frameID, WTFMove(handler), userMediaDocumentOrigin.copyRef(), topLevelDocumentOrigin.copyRef());
+    auto request = UserMediaPermissionCheckProxy::create(userMediaID, frameID, WTFMove(handler), WTFMove(userMediaDocumentOrigin), WTFMove(topLevelDocumentOrigin));
     m_pendingDeviceRequests.add(userMediaID, request.copyRef());
 
     if (!m_page.uiClient().checkUserMediaPermissionForOrigin(m_page, *m_page.process().webFrame(frameID), userMediaOrigin.get(), topLevelOrigin.get(), request.get()))
