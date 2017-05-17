@@ -1,0 +1,26 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/w3c/web-platform-tests
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/FileAPI/reading-data-section/Determining-Encoding.html
+/LayoutTests/imported/w3c/web-platform-tests/FileAPI/reading-data-section/FileReader-event-handler-attributes.html
+/LayoutTests/imported/w3c/web-platform-tests/FileAPI/reading-data-section/FileReader-multiple-reads.html
+/LayoutTests/imported/w3c/web-platform-tests/FileAPI/reading-data-section/filereader_abort.html
+/LayoutTests/imported/w3c/web-platform-tests/FileAPI/reading-data-section/filereader_error.html
+/LayoutTests/imported/w3c/web-platform-tests/FileAPI/reading-data-section/filereader_readAsArrayBuffer.html
+/LayoutTests/imported/w3c/web-platform-tests/FileAPI/reading-data-section/filereader_readAsDataURL.html
+/LayoutTests/imported/w3c/web-platform-tests/FileAPI/reading-data-section/filereader_readAsText.html
+/LayoutTests/imported/w3c/web-platform-tests/FileAPI/reading-data-section/filereader_readystate.html
+/LayoutTests/imported/w3c/web-platform-tests/FileAPI/reading-data-section/filereader_result.html

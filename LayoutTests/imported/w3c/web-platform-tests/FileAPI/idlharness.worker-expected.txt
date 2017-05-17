@@ -1,0 +1,112 @@
+
+PASS Window interface: existence and properties of interface object 
+FAIL ArrayBuffer interface: existence and properties of interface object assert_false: expected false got true
+PASS ArrayBufferView interface: existence and properties of interface object 
+PASS URL interface: operation createObjectURL(Blob) 
+PASS URL interface: operation revokeObjectURL(DOMString) 
+FAIL EventTarget interface: existence and properties of interface object assert_false: expected false got true
+FAIL Event interface: existence and properties of interface object assert_false: expected false got true
+PASS Blob interface: existence and properties of interface object 
+PASS Blob interface object length 
+PASS Blob interface object name 
+PASS Blob interface: existence and properties of interface prototype object 
+PASS Blob interface: existence and properties of interface prototype object's "constructor" property 
+PASS Blob interface: attribute size 
+PASS Blob interface: attribute type 
+PASS Blob interface: operation slice(long long,long long,DOMString) 
+PASS Blob must be primary interface of new Blob(["TEST"]) 
+PASS Stringification of new Blob(["TEST"]) 
+PASS Blob interface: new Blob(["TEST"]) must inherit property "size" with the proper type (0) 
+PASS Blob interface: new Blob(["TEST"]) must inherit property "type" with the proper type (1) 
+PASS Blob interface: new Blob(["TEST"]) must inherit property "slice" with the proper type (2) 
+PASS Blob interface: calling slice(long long,long long,DOMString) on new Blob(["TEST"]) with too few arguments must throw TypeError 
+FAIL File interface: existence and properties of interface object assert_own_property: self does not have own property "File" expected property "File" missing
+FAIL File interface object length assert_own_property: self does not have own property "File" expected property "File" missing
+FAIL File interface object name assert_own_property: self does not have own property "File" expected property "File" missing
+FAIL File interface: existence and properties of interface prototype object assert_own_property: self does not have own property "File" expected property "File" missing
+FAIL File interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "File" expected property "File" missing
+FAIL File interface: attribute name assert_own_property: self does not have own property "File" expected property "File" missing
+FAIL File interface: attribute lastModified assert_own_property: self does not have own property "File" expected property "File" missing
+FAIL File must be primary interface of new File(["myFileBits"], "myFileName") assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: File"
+FAIL Stringification of new File(["myFileBits"], "myFileName") assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: File"
+FAIL File interface: new File(["myFileBits"], "myFileName") must inherit property "name" with the proper type (0) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: File"
+FAIL File interface: new File(["myFileBits"], "myFileName") must inherit property "lastModified" with the proper type (1) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: File"
+FAIL Blob interface: new File(["myFileBits"], "myFileName") must inherit property "size" with the proper type (0) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: File"
+FAIL Blob interface: new File(["myFileBits"], "myFileName") must inherit property "type" with the proper type (1) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: File"
+FAIL Blob interface: new File(["myFileBits"], "myFileName") must inherit property "slice" with the proper type (2) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: File"
+FAIL Blob interface: calling slice(long long,long long,DOMString) on new File(["myFileBits"], "myFileName") with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: File"
+FAIL FileList interface: existence and properties of interface object assert_own_property: self does not have own property "FileList" expected property "FileList" missing
+FAIL FileList interface object length assert_own_property: self does not have own property "FileList" expected property "FileList" missing
+FAIL FileList interface object name assert_own_property: self does not have own property "FileList" expected property "FileList" missing
+FAIL FileList interface: existence and properties of interface prototype object assert_own_property: self does not have own property "FileList" expected property "FileList" missing
+FAIL FileList interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "FileList" expected property "FileList" missing
+FAIL FileList interface: operation item(unsigned long) assert_own_property: self does not have own property "FileList" expected property "FileList" missing
+FAIL FileList interface: attribute length assert_own_property: self does not have own property "FileList" expected property "FileList" missing
+PASS FileReader interface: existence and properties of interface object 
+PASS FileReader interface object length 
+PASS FileReader interface object name 
+PASS FileReader interface: existence and properties of interface prototype object 
+PASS FileReader interface: existence and properties of interface prototype object's "constructor" property 
+PASS FileReader interface: operation readAsArrayBuffer(Blob) 
+PASS FileReader interface: operation readAsBinaryString(Blob) 
+PASS FileReader interface: operation readAsText(Blob,DOMString) 
+PASS FileReader interface: operation readAsDataURL(Blob) 
+PASS FileReader interface: operation abort() 
+PASS FileReader interface: constant EMPTY on interface object 
+PASS FileReader interface: constant EMPTY on interface prototype object 
+PASS FileReader interface: constant LOADING on interface object 
+PASS FileReader interface: constant LOADING on interface prototype object 
+PASS FileReader interface: constant DONE on interface object 
+PASS FileReader interface: constant DONE on interface prototype object 
+PASS FileReader interface: attribute readyState 
+PASS FileReader interface: attribute result 
+PASS FileReader interface: attribute error 
+PASS FileReader interface: attribute onloadstart 
+PASS FileReader interface: attribute onprogress 
+PASS FileReader interface: attribute onload 
+PASS FileReader interface: attribute onabort 
+PASS FileReader interface: attribute onerror 
+PASS FileReader interface: attribute onloadend 
+PASS FileReader must be primary interface of new FileReader() 
+PASS Stringification of new FileReader() 
+PASS FileReader interface: new FileReader() must inherit property "readAsArrayBuffer" with the proper type (0) 
+PASS FileReader interface: calling readAsArrayBuffer(Blob) on new FileReader() with too few arguments must throw TypeError 
+PASS FileReader interface: new FileReader() must inherit property "readAsBinaryString" with the proper type (1) 
+PASS FileReader interface: calling readAsBinaryString(Blob) on new FileReader() with too few arguments must throw TypeError 
+PASS FileReader interface: new FileReader() must inherit property "readAsText" with the proper type (2) 
+PASS FileReader interface: calling readAsText(Blob,DOMString) on new FileReader() with too few arguments must throw TypeError 
+PASS FileReader interface: new FileReader() must inherit property "readAsDataURL" with the proper type (3) 
+PASS FileReader interface: calling readAsDataURL(Blob) on new FileReader() with too few arguments must throw TypeError 
+PASS FileReader interface: new FileReader() must inherit property "abort" with the proper type (4) 
+PASS FileReader interface: new FileReader() must inherit property "EMPTY" with the proper type (5) 
+PASS FileReader interface: new FileReader() must inherit property "LOADING" with the proper type (6) 
+PASS FileReader interface: new FileReader() must inherit property "DONE" with the proper type (7) 
+PASS FileReader interface: new FileReader() must inherit property "readyState" with the proper type (8) 
+PASS FileReader interface: new FileReader() must inherit property "result" with the proper type (9) 
+PASS FileReader interface: new FileReader() must inherit property "error" with the proper type (10) 
+PASS FileReader interface: new FileReader() must inherit property "onloadstart" with the proper type (11) 
+PASS FileReader interface: new FileReader() must inherit property "onprogress" with the proper type (12) 
+PASS FileReader interface: new FileReader() must inherit property "onload" with the proper type (13) 
+PASS FileReader interface: new FileReader() must inherit property "onabort" with the proper type (14) 
+PASS FileReader interface: new FileReader() must inherit property "onerror" with the proper type (15) 
+PASS FileReader interface: new FileReader() must inherit property "onloadend" with the proper type (16) 
+PASS FileReaderSync interface: existence and properties of interface object 
+PASS FileReaderSync interface object length 
+PASS FileReaderSync interface object name 
+PASS FileReaderSync interface: existence and properties of interface prototype object 
+PASS FileReaderSync interface: existence and properties of interface prototype object's "constructor" property 
+PASS FileReaderSync interface: operation readAsArrayBuffer(Blob) 
+PASS FileReaderSync interface: operation readAsBinaryString(Blob) 
+PASS FileReaderSync interface: operation readAsText(Blob,DOMString) 
+PASS FileReaderSync interface: operation readAsDataURL(Blob) 
+PASS FileReaderSync must be primary interface of new FileReaderSync() 
+PASS Stringification of new FileReaderSync() 
+PASS FileReaderSync interface: new FileReaderSync() must inherit property "readAsArrayBuffer" with the proper type (0) 
+PASS FileReaderSync interface: calling readAsArrayBuffer(Blob) on new FileReaderSync() with too few arguments must throw TypeError 
+PASS FileReaderSync interface: new FileReaderSync() must inherit property "readAsBinaryString" with the proper type (1) 
+PASS FileReaderSync interface: calling readAsBinaryString(Blob) on new FileReaderSync() with too few arguments must throw TypeError 
+PASS FileReaderSync interface: new FileReaderSync() must inherit property "readAsText" with the proper type (2) 
+PASS FileReaderSync interface: calling readAsText(Blob,DOMString) on new FileReaderSync() with too few arguments must throw TypeError 
+PASS FileReaderSync interface: new FileReaderSync() must inherit property "readAsDataURL" with the proper type (3) 
+PASS FileReaderSync interface: calling readAsDataURL(Blob) on new FileReaderSync() with too few arguments must throw TypeError 
+

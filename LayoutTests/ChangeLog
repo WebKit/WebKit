@@ -1,3 +1,12 @@
+2017-05-17  Ben Kelly  <ben@wanderview.com>
+
+        Import FileAPI WPT tests.
+        https://bugs.webkit.org/show_bug.cgi?id=171960
+
+        Reviewed by Youenn Fablet.
+
+        * TestExpectations:
+
 2017-05-17  Antti Koivisto  <antti@apple.com>
 
         Regression (198943): <marquee> shouldn't wrap text

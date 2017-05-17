@@ -1,0 +1,23 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/w3c/web-platform-tests
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/FileAPI/url/blob-url-in-sandboxed-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/FileAPI/url/multi-global-origin-serialization.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/FileAPI/url/origin.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/FileAPI/url/url_createobjecturl_blob.html
+/LayoutTests/imported/w3c/web-platform-tests/FileAPI/url/url_xmlhttprequest.html
+/LayoutTests/imported/w3c/web-platform-tests/FileAPI/url/url_xmlhttprequest_img-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/FileAPI/url/url_xmlhttprequest_img.html

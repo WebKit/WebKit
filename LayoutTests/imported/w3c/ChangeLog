@@ -1,3 +1,111 @@
+2017-05-17  Ben Kelly  <ben@wanderview.com>
+
+        Import FileAPI WPT tests.
+        https://bugs.webkit.org/show_bug.cgi?id=171960
+
+        Reviewed by Youenn Fablet.
+
+        * resources/import-expectations.json:
+        * resources/resource-files.json:
+        * web-platform-tests/FileAPI/BlobURL/support/file_test1.js: Added.
+        * web-platform-tests/FileAPI/BlobURL/support/file_test2.txt: Added.
+        * web-platform-tests/FileAPI/BlobURL/support/file_test3.html: Added.
+        * web-platform-tests/FileAPI/BlobURL/support/w3c-import.log: Added.
+        * web-platform-tests/FileAPI/FileReader/Progress_event_bubbles_cancelable-expected.txt: Added.
+        * web-platform-tests/FileAPI/FileReader/Progress_event_bubbles_cancelable.html: Added.
+        * web-platform-tests/FileAPI/FileReader/support/file_test1.txt: Added.
+        * web-platform-tests/FileAPI/FileReader/support/w3c-import.log: Added.
+        * web-platform-tests/FileAPI/FileReader/w3c-import.log: Added.
+        * web-platform-tests/FileAPI/FileReaderSync.worker-expected.txt: Added.
+        * web-platform-tests/FileAPI/FileReaderSync.worker.html: Added.
+        * web-platform-tests/FileAPI/FileReaderSync.worker.js: Added.
+        (setup):
+        (test):
+        * web-platform-tests/FileAPI/OWNERS: Added.
+        * web-platform-tests/FileAPI/blob/Blob-XHR-revoke-expected.txt: Added.
+        * web-platform-tests/FileAPI/blob/Blob-XHR-revoke.html: Added.
+        * web-platform-tests/FileAPI/blob/Blob-constructor-expected.txt: Added.
+        * web-platform-tests/FileAPI/blob/Blob-constructor.html: Added.
+        * web-platform-tests/FileAPI/blob/Blob-in-worker.worker-expected.txt: Added.
+        * web-platform-tests/FileAPI/blob/Blob-in-worker.worker.html: Added.
+        * web-platform-tests/FileAPI/blob/Blob-in-worker.worker.js: Added.
+        (async_test):
+        * web-platform-tests/FileAPI/blob/Blob-slice-expected.txt: Added.
+        * web-platform-tests/FileAPI/blob/Blob-slice-overflow-expected.txt: Added.
+        * web-platform-tests/FileAPI/blob/Blob-slice-overflow.html: Added.
+        * web-platform-tests/FileAPI/blob/Blob-slice.html: Added.
+        * web-platform-tests/FileAPI/blob/w3c-import.log: Added.
+        * web-platform-tests/FileAPI/file/File-constructor-expected.txt: Added.
+        * web-platform-tests/FileAPI/file/File-constructor.html: Added.
+        * web-platform-tests/FileAPI/file/Worker-read-file-constructor.worker-expected.txt: Added.
+        * web-platform-tests/FileAPI/file/Worker-read-file-constructor.worker.html: Added.
+        * web-platform-tests/FileAPI/file/Worker-read-file-constructor.worker.js: Added.
+        (async_test):
+        * web-platform-tests/FileAPI/file/w3c-import.log: Added.
+        * web-platform-tests/FileAPI/fileReader-expected.txt: Added.
+        * web-platform-tests/FileAPI/fileReader.html: Added.
+        * web-platform-tests/FileAPI/filelist-section/filelist-expected.txt: Added.
+        * web-platform-tests/FileAPI/filelist-section/filelist.html: Added.
+        * web-platform-tests/FileAPI/filelist-section/support/upload.txt: Added.
+        * web-platform-tests/FileAPI/filelist-section/support/upload.zip: Added.
+        * web-platform-tests/FileAPI/filelist-section/support/w3c-import.log: Added.
+        * web-platform-tests/FileAPI/filelist-section/w3c-import.log: Added.
+        * web-platform-tests/FileAPI/historical.https-expected.txt: Added.
+        * web-platform-tests/FileAPI/historical.https.html: Added.
+        * web-platform-tests/FileAPI/idlharness-expected.txt: Added.
+        * web-platform-tests/FileAPI/idlharness.html: Added.
+        * web-platform-tests/FileAPI/idlharness.idl: Added.
+        * web-platform-tests/FileAPI/idlharness.worker-expected.txt: Added.
+        * web-platform-tests/FileAPI/idlharness.worker.html: Added.
+        * web-platform-tests/FileAPI/idlharness.worker.js: Added.
+        (request.onload):
+        * web-platform-tests/FileAPI/reading-data-section/Determining-Encoding-expected.txt: Added.
+        * web-platform-tests/FileAPI/reading-data-section/Determining-Encoding.html: Added.
+        * web-platform-tests/FileAPI/reading-data-section/FileReader-event-handler-attributes-expected.txt: Added.
+        * web-platform-tests/FileAPI/reading-data-section/FileReader-event-handler-attributes.html: Added.
+        * web-platform-tests/FileAPI/reading-data-section/FileReader-multiple-reads-expected.txt: Added.
+        * web-platform-tests/FileAPI/reading-data-section/FileReader-multiple-reads.html: Added.
+        * web-platform-tests/FileAPI/reading-data-section/filereader_abort-expected.txt: Added.
+        * web-platform-tests/FileAPI/reading-data-section/filereader_abort.html: Added.
+        * web-platform-tests/FileAPI/reading-data-section/filereader_error-expected.txt: Added.
+        * web-platform-tests/FileAPI/reading-data-section/filereader_error.html: Added.
+        * web-platform-tests/FileAPI/reading-data-section/filereader_readAsArrayBuffer-expected.txt: Added.
+        * web-platform-tests/FileAPI/reading-data-section/filereader_readAsArrayBuffer.html: Added.
+        * web-platform-tests/FileAPI/reading-data-section/filereader_readAsDataURL-expected.txt: Added.
+        * web-platform-tests/FileAPI/reading-data-section/filereader_readAsDataURL.html: Added.
+        * web-platform-tests/FileAPI/reading-data-section/filereader_readAsText-expected.txt: Added.
+        * web-platform-tests/FileAPI/reading-data-section/filereader_readAsText.html: Added.
+        * web-platform-tests/FileAPI/reading-data-section/filereader_readystate-expected.txt: Added.
+        * web-platform-tests/FileAPI/reading-data-section/filereader_readystate.html: Added.
+        * web-platform-tests/FileAPI/reading-data-section/filereader_result-expected.txt: Added.
+        * web-platform-tests/FileAPI/reading-data-section/filereader_result.html: Added.
+        * web-platform-tests/FileAPI/reading-data-section/support/blue-100x100.png: Added.
+        * web-platform-tests/FileAPI/reading-data-section/support/w3c-import.log: Added.
+        * web-platform-tests/FileAPI/reading-data-section/w3c-import.log: Added.
+        * web-platform-tests/FileAPI/support/Blob.js: Added.
+        (test_blob):
+        * web-platform-tests/FileAPI/support/document-domain-setter.sub.html: Added.
+        * web-platform-tests/FileAPI/support/historical-serviceworker.js: Added.
+        (test):
+        * web-platform-tests/FileAPI/support/incumbent.sub.html: Added.
+        * web-platform-tests/FileAPI/support/upload.txt: Added.
+        * web-platform-tests/FileAPI/support/url-origin.html: Added.
+        * web-platform-tests/FileAPI/support/w3c-import.log: Added.
+        * web-platform-tests/FileAPI/url/blob-url-in-sandboxed-iframe-expected.txt: Added.
+        * web-platform-tests/FileAPI/url/blob-url-in-sandboxed-iframe.html: Added.
+        * web-platform-tests/FileAPI/url/multi-global-origin-serialization.sub-expected.txt: Added.
+        * web-platform-tests/FileAPI/url/multi-global-origin-serialization.sub.html: Added.
+        * web-platform-tests/FileAPI/url/origin.sub-expected.txt: Added.
+        * web-platform-tests/FileAPI/url/origin.sub.html: Added.
+        * web-platform-tests/FileAPI/url/url_createobjecturl_blob-expected.txt: Added.
+        * web-platform-tests/FileAPI/url/url_createobjecturl_blob.html: Added.
+        * web-platform-tests/FileAPI/url/url_xmlhttprequest-expected.txt: Added.
+        * web-platform-tests/FileAPI/url/url_xmlhttprequest.html: Added.
+        * web-platform-tests/FileAPI/url/url_xmlhttprequest_img-expected.html: Added.
+        * web-platform-tests/FileAPI/url/url_xmlhttprequest_img.html: Added.
+        * web-platform-tests/FileAPI/url/w3c-import.log: Added.
+        * web-platform-tests/FileAPI/w3c-import.log: Added.
+
 2017-05-17  Emilio Cobos Álvarez  <ecobos@igalia.com>
 
         Add a RuntimeEnabledFeature for display: contents, defaulted to false.

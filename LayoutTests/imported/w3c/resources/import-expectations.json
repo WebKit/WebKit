@@ -5,7 +5,7 @@
     "web-platform-tests/2dcontext/transformations/canvas_transformations_reset_001.html": "import", 
     "web-platform-tests/DOM-parsing": "skip", 
     "web-platform-tests/DOMEvents": "skip", 
-    "web-platform-tests/FileAPI": "skip", 
+    "web-platform-tests/FileAPI": "import", 
     "web-platform-tests/IndexedDB": "import", 
     "web-platform-tests/WebCryptoAPI": "import", 
     "web-platform-tests/WebIDL": "import", 

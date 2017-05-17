@@ -1,0 +1,7 @@
+
+PASS test FileReader InvalidStateError exception for readAsText 
+PASS test FileReader InvalidStateError exception for readAsDataURL 
+PASS test FileReader InvalidStateError exception for readAsArrayBuffer 
+PASS test FileReader InvalidStateError exception in onloadstart event for readAsArrayBuffer 
+PASS test FileReader no InvalidStateError exception in loadend event handler for readAsArrayBuffer 
+

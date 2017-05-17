@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>File API automated IDL tests</title>
+    <link rel="author" title="Intel" href="http://www.intel.com">
+    <link rel="help" href="http://dev.w3.org/2006/webapi/FileAPI/#conformance">
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+    <script src="/resources/WebIDLParser.js"></script>
+    <script src="/resources/idlharness.js"></script>
+  </head>
+  <body>
+    <h1>File API automated IDL tests</h1>
+
+    <div id="log"></div>
+
+    <form name="uploadData">
+      <input type="file" id="fileChooser">
+    </form>
+
+    <script>
+var file_input;
+setup(function() {
+    var idl_array = new IdlArray();
+
+    var request = new XMLHttpRequest();
+    request.open("GET", "idlharness.idl");
+    request.send();
+    request.onload = function() {
+        var idls = request.responseText;
+
+        idl_array.add_untested_idls("[PrimaryGlobal] interface Window { };");
+
+        idl_array.add_untested_idls("interface ArrayBuffer {};");
+        idl_array.add_untested_idls("interface ArrayBufferView {};");
+        idl_array.add_untested_idls("interface URL {};");
+        idl_array.add_untested_idls("interface EventTarget {};");
+        idl_array.add_untested_idls("interface Event {};");
+        idl_array.add_untested_idls("[TreatNonCallableAsNull] callback EventHandlerNonNull = any (Event event);");
+        idl_array.add_untested_idls("typedef EventHandlerNonNull? EventHandler;");
+
+        idl_array.add_idls(idls);
+
+        file_input = document.querySelector("#fileChooser");
+        idl_array.add_objects({
+            Blob: ['new Blob(["TEST"])'],
+            File: ['new File(["myFileBits"], "myFileName")'],
+            FileList: ['file_input.files'],
+            FileReader: ['new FileReader()']
+        });
+
+        idl_array.test();
+        done();
+  };
+}, {explicit_done: true});
+    </script>
+
+  </body>
+</html>

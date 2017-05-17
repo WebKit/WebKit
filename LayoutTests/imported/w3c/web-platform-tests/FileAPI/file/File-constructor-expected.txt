@@ -1,0 +1,17 @@
+
+PASS File interface object exists 
+PASS DOMString fileBits 
+PASS Unicode DOMString fileBits 
+PASS Empty Blob fileBits 
+PASS Blob fileBits 
+PASS ArrayBuffer fileBits 
+PASS Typed array fileBits 
+PASS Various fileBits 
+PASS Using fileName 
+FAIL Using special character in fileName assert_equals: expected "dummy:foo" but got "dummy/foo"
+PASS Using type on the File constructor 
+PASS Using uppercase characters in type 
+PASS Using illegal character for type 
+PASS Using lastModified 
+PASS Misusing name 
+

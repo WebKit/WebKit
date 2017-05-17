@@ -1265,6 +1265,9 @@ fast/forms/range/range-remove-on-drag.html [ Skip ]
 webkit.org/b/153137 imported/w3c/web-platform-tests/cssom-view/elementsFromPoint.html [ Skip ]
 webkit.org/b/5991 imported/w3c/web-platform-tests/cssom-view/scrollingElement.html [ Skip ]
 
+# FileAPI
+webkit.org/b/172099 imported/w3c/web-platform-tests/FileAPI/url/url_xmlhttprequest_img.html [ ImageOnlyFailure ]
+
 ### END OF -disabled tests
 ########################################
 
