@@ -16,10 +16,10 @@ PASS ...succeeded
 
 Passing invalid data to digest()
 PASS crypto.webkitSubtle.digest({name: 'sha-1'}) threw exception TypeError: Not enough arguments.
-PASS crypto.webkitSubtle.digest({name: 'sha-1'}, null) threw exception TypeError: Only ArrayBuffer and ArrayBufferView objects can be passed as CryptoOperationData.
-PASS crypto.webkitSubtle.digest({name: 'sha-1'}, 10) threw exception TypeError: Only ArrayBuffer and ArrayBufferView objects can be passed as CryptoOperationData.
-PASS crypto.webkitSubtle.digest({name: 'sha-1'}, [10]) threw exception TypeError: Only ArrayBuffer and ArrayBufferView objects can be passed as CryptoOperationData.
-PASS crypto.webkitSubtle.digest({name: 'sha-1'}, [new Uint8Array([0])]) threw exception TypeError: Only ArrayBuffer and ArrayBufferView objects can be passed as CryptoOperationData.
+PASS crypto.webkitSubtle.digest({name: 'sha-1'}, null) threw exception TypeError: Type error.
+PASS crypto.webkitSubtle.digest({name: 'sha-1'}, 10) threw exception TypeError: Type error.
+PASS crypto.webkitSubtle.digest({name: 'sha-1'}, [10]) threw exception TypeError: Type error.
+PASS crypto.webkitSubtle.digest({name: 'sha-1'}, [new Uint8Array([0])]) threw exception TypeError: Type error.
 
 Passing invalid algorithmIdentifiers to digest()
 PASS crypto.webkitSubtle.digest({ toString:function() { return 'sha-1' } }, data) threw exception NotSupportedError (DOM Exception 9): The operation is not supported..
