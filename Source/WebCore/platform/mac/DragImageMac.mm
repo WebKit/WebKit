@@ -30,6 +30,7 @@
 
 #import "BitmapImage.h"
 #import "CoreGraphicsSPI.h"
+#import "CoreTextSPI.h"
 #import "Element.h"
 #import "FloatRoundedRect.h"
 #import "FontCascade.h"
@@ -178,16 +179,13 @@ FloatPoint anchorPointForLinkDragImage(DragImageRef dragImage)
 struct LinkImageLayout {
     LinkImageLayout(URL&, const String& title);
 
-    struct LabelLine {
+    struct Label {
         FloatPoint origin;
-        RetainPtr<CTLineRef> line;
+        RetainPtr<CTFrameRef> frame;
     };
-    Vector<LabelLine> lines;
+    Vector<Label> labels;
 
     FloatRect boundingRect;
-
-private:
-    void addLine(CTLineRef, const Vector<CGPoint>& origins, CFIndex lineIndex, CGFloat x, CGFloat& y, CGFloat& maximumUsedTextWidth, bool isLastLine);
 };
 
 LinkImageLayout::LinkImageLayout(URL& url, const String& titleString)
@@ -217,19 +215,30 @@ LinkImageLayout::LinkImageLayout(URL& url, const String& titleString)
     CGFloat currentY = linkImagePadding;
     CGFloat maximumUsedTextWidth = 0;
 
-    auto buildLines = [this, maximumAvailableWidth, &maximumUsedTextWidth, &currentY] (NSString *text, NSColor *color, NSFont *font, CFIndex maximumLines, CTLineTruncationType truncationType) {
+    auto buildLines = [this, maximumAvailableWidth, &maximumUsedTextWidth, &currentY] (NSString *text, NSColor *color, NSFont *font, CFIndex maximumLines, CTLineBreakMode lineBreakMode) {
+        CTParagraphStyleSetting paragraphStyleSettings[1];
+        paragraphStyleSettings[0].spec = kCTParagraphStyleSpecifierLineBreakMode;
+        paragraphStyleSettings[0].valueSize = sizeof(CTLineBreakMode);
+        paragraphStyleSettings[0].value = &lineBreakMode;
+        RetainPtr<CTParagraphStyleRef> paragraphStyle = CTParagraphStyleCreate(paragraphStyleSettings, 1);
+
         NSDictionary *textAttributes = @{
             (id)kCTFontAttributeName: font,
-            (id)kCTForegroundColorAttributeName: color
+            (id)kCTForegroundColorAttributeName: color,
+            (id)kCTParagraphStyleAttributeName: (id)paragraphStyle.get()
         };
+        NSDictionary *frameAttributes = @{
+            (id)kCTFrameMaximumNumberOfLinesAttributeName: @(maximumLines)
+        };
+
         RetainPtr<NSAttributedString> attributedText = adoptNS([[NSAttributedString alloc] initWithString:text attributes:textAttributes]);
         RetainPtr<CTFramesetterRef> textFramesetter = adoptCF(CTFramesetterCreateWithAttributedString((CFAttributedStringRef)attributedText.get()));
 
         CFRange fitRange;
-        CGSize textSize = CTFramesetterSuggestFrameSizeWithConstraints(textFramesetter.get(), CFRangeMake(0, 0), nullptr, CGSizeMake(maximumAvailableWidth, CGFLOAT_MAX), &fitRange);
+        CGSize textSize = CTFramesetterSuggestFrameSizeWithConstraints(textFramesetter.get(), CFRangeMake(0, 0), (CFDictionaryRef)frameAttributes, CGSizeMake(maximumAvailableWidth, CGFLOAT_MAX), &fitRange);
 
         RetainPtr<CGPathRef> textPath = adoptCF(CGPathCreateWithRect(CGRectMake(0, 0, textSize.width, textSize.height), nullptr));
-        RetainPtr<CTFrameRef> textFrame = adoptCF(CTFramesetterCreateFrame(textFramesetter.get(), fitRange, textPath.get(), nullptr));
+        RetainPtr<CTFrameRef> textFrame = adoptCF(CTFramesetterCreateFrame(textFramesetter.get(), fitRange, textPath.get(), (CFDictionaryRef)frameAttributes));
 
         CFArrayRef ctLines = CTFrameGetLines(textFrame.get());
         CFIndex lineCount = CFArrayGetCount(ctLines);
@@ -237,66 +246,41 @@ LinkImageLayout::LinkImageLayout(URL& url, const String& titleString)
             return;
 
         Vector<CGPoint> origins(lineCount);
+        CGRect lineBounds;
+        CGFloat height = 0;
         CTFrameGetLineOrigins(textFrame.get(), CFRangeMake(0, 0), origins.data());
-
-        // Lay out and record the first (maximumLines - 1) lines.
-        CFIndex lineIndex = 0;
-        for (; lineIndex < std::min(maximumLines - 1, lineCount); ++lineIndex) {
+        for (CFIndex lineIndex = 0; lineIndex < lineCount; ++lineIndex) {
             CTLineRef line = (CTLineRef)CFArrayGetValueAtIndex(ctLines, lineIndex);
-            addLine(line, origins, lineIndex, linkImagePadding, currentY, maximumUsedTextWidth, lineIndex == lineCount - 1);
+
+            lineBounds = CTLineGetBoundsWithOptions(line, 0);
+            CGFloat trailingWhitespaceWidth = CTLineGetTrailingWhitespaceWidth(line);
+            CGFloat lineWidthIgnoringTrailingWhitespace = lineBounds.size.width - trailingWhitespaceWidth;
+            maximumUsedTextWidth = std::max(maximumUsedTextWidth, lineWidthIgnoringTrailingWhitespace);
+
+            if (lineIndex)
+                height += origins[lineIndex - 1].y - origins[lineIndex].y;
         }
 
-        if (lineIndex == lineCount)
-            return;
+        LinkImageLayout::Label label;
+        label.frame = textFrame;
+        label.origin = FloatPoint(linkImagePadding, currentY + origins[0].y);
+        labels.append(label);
 
-        // We had text that didn't fit in the first (maximumLines - 1) lines.
-        // Combine it into one last line, and truncate it.
-        CTLineRef firstRemainingLine = (CTLineRef)CFArrayGetValueAtIndex(ctLines, lineIndex);
-        CFIndex remainingRangeStart = CTLineGetStringRange(firstRemainingLine).location;
-        NSRange remainingRange = NSMakeRange(remainingRangeStart, [attributedText length] - remainingRangeStart);
-        NSAttributedString *remainingString = [attributedText attributedSubstringFromRange:remainingRange];
-        RetainPtr<CTLineRef> remainingLine = adoptCF(CTLineCreateWithAttributedString((CFAttributedStringRef)remainingString));
-        RetainPtr<NSAttributedString> ellipsisString = adoptNS([[NSAttributedString alloc] initWithString:@"\u2026" attributes:textAttributes]);
-        RetainPtr<CTLineRef> ellipsisLine = adoptCF(CTLineCreateWithAttributedString((CFAttributedStringRef)ellipsisString.get()));
-        RetainPtr<CTLineRef> truncatedLine = adoptCF(CTLineCreateTruncatedLine(remainingLine.get(), maximumAvailableWidth, truncationType, ellipsisLine.get()));
-        
-        if (!truncatedLine)
-            truncatedLine = remainingLine;
-        
-        addLine(truncatedLine.get(), origins, lineIndex, linkImagePadding, currentY, maximumUsedTextWidth, true);
+        currentY += height + lineBounds.size.height;
     };
 
     if (title)
-        buildLines(title, titleColor, titleFont, linkImageTitleMaximumLineCount, kCTLineTruncationEnd);
+        buildLines(title, titleColor, titleFont, linkImageTitleMaximumLineCount, kCTLineBreakByTruncatingTail);
 
     if (title && domain)
         currentY += linkImageDomainBaselineToTitleBaseline - (domainFont.ascender - domainFont.descender);
 
     if (domain)
-        buildLines(domain, domainColor, domainFont, 1, kCTLineTruncationMiddle);
+        buildLines(domain, domainColor, domainFont, 1, kCTLineBreakByTruncatingMiddle);
 
     currentY += linkImagePadding;
 
     boundingRect = FloatRect(0, 0, maximumUsedTextWidth + linkImagePadding * 2, currentY);
-}
-
-void LinkImageLayout::addLine(CTLineRef ctLine, const Vector<CGPoint>& origins, CFIndex lineIndex, CGFloat x, CGFloat& y, CGFloat& maximumUsedTextWidth, bool isLastLine)
-{
-    CGRect lineBounds = CTLineGetBoundsWithOptions(ctLine, 0);
-    CGFloat trailingWhitespaceWidth = CTLineGetTrailingWhitespaceWidth(ctLine);
-    CGFloat lineWidthIgnoringTrailingWhitespace = lineBounds.size.width - trailingWhitespaceWidth;
-    maximumUsedTextWidth = std::max(maximumUsedTextWidth, lineWidthIgnoringTrailingWhitespace);
-
-    if (lineIndex)
-        y += origins[lineIndex - 1].y - origins[lineIndex].y;
-
-    LinkImageLayout::LabelLine line;
-    line.line = ctLine;
-    line.origin = FloatPoint(x, y);
-    lines.append(line);
-
-    if (isLastLine)
-        y += lineBounds.size.height;
 }
 
 DragImageRef createDragImageForLink(Element&, URL& url, const String& title, TextIndicatorData&, FontRenderingMode, float)
@@ -309,11 +293,10 @@ DragImageRef createDragImageForLink(Element&, URL& url, const String& title, Tex
     GraphicsContext context((CGContextRef)[NSGraphicsContext currentContext].graphicsPort);
     context.fillRoundedRect(FloatRoundedRect(layout.boundingRect, FloatRoundedRect::Radii(linkImageCornerRadius)), Color::white);
 
-    for (const auto& line : layout.lines) {
+    for (const auto& label : layout.labels) {
         GraphicsContextStateSaver saver(context);
-        context.translate(line.origin.x(), layout.boundingRect.height() - line.origin.y() - linkImagePadding);
-        CGContextSetTextPosition(context.platformContext(), 0, 0);
-        CTLineDraw(line.line.get(), context.platformContext());
+        context.translate(label.origin.x(), layout.boundingRect.height() - label.origin.y() - linkImagePadding);
+        CTFrameDraw(label.frame.get(), context.platformContext());
     }
 
     [dragImage unlockFocus];

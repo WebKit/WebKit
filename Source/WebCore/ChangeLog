@@ -1,3 +1,21 @@
+2017-05-16  Tim Horton  <timothy_horton@apple.com>
+
+        [macOS] REGRESSION: Drag images for links with right-to-left titles are incorrect (172006)
+        https://bugs.webkit.org/show_bug.cgi?id=172006
+        <rdar://problem/32165137>
+
+        Reviewed by Dean Jackson.
+
+        * platform/mac/DragImageMac.mm:
+        (WebCore::LinkImageLayout::LinkImageLayout):
+        (WebCore::createDragImageForLink):
+        (WebCore::LinkImageLayout::addLine): Deleted.
+        * platform/spi/cocoa/CoreTextSPI.h:
+        Set and paint the entire frame as a single unit, making use of the
+        CTFrameMaximumNumberOfLines attribute to limit the number of lines.
+        This gives CoreText power over text alignment and makes RTL text lay
+        out correctly.
+
 2017-05-16  Chris Dumez  <cdumez@apple.com>
 
         Implement DOMMatrix / DOMMatrixReadOnly
