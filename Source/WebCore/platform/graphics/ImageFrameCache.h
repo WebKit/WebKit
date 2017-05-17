@@ -41,7 +41,7 @@ class Image;
 class ImageDecoder;
 class URL;
 
-class ImageFrameCache : public RefCounted<ImageFrameCache> {
+class ImageFrameCache : public ThreadSafeRefCounted<ImageFrameCache> {
     friend class ImageSource;
 public:
     static Ref<ImageFrameCache> create(Image* image)

@@ -281,28 +281,30 @@ void ImageFrameCache::startAsyncDecodingQueue()
     Ref<ImageDecoder> protectedDecoder = Ref<ImageDecoder>(*m_decoder);
 
     // We need to protect this, m_decodingQueue and m_decoder from being deleted while we are in the decoding loop.
-    decodingQueue()->dispatch([this, protectedThis = WTFMove(protectedThis), protectedQueue = WTFMove(protectedQueue), protectedDecoder = WTFMove(protectedDecoder)] {
+    decodingQueue()->dispatch([protectedThis = WTFMove(protectedThis), protectedQueue = WTFMove(protectedQueue), protectedDecoder = WTFMove(protectedDecoder)] {
         ImageFrameRequest frameRequest;
 
-        while (m_frameRequestQueue.dequeue(frameRequest)) {
+        while (protectedThis->m_frameRequestQueue.dequeue(frameRequest)) {
             TraceScope tracingScope(AsyncImageDecodeStart, AsyncImageDecodeEnd);
 
             // Get the frame NativeImage on the decoding thread.
             NativeImagePtr nativeImage = protectedDecoder->createFrameImageAtIndex(frameRequest.index, frameRequest.subsamplingLevel, frameRequest.decodingOptions);
             if (nativeImage)
-                LOG(Images, "ImageFrameCache::%s - %p - url: %s [frame %ld has been decoded]", __FUNCTION__, this, sourceURL().string().utf8().data(), frameRequest.index);
-            else
-                LOG(Images, "ImageFrameCache::%s - %p - url: %s [decoding for frame %ld has failed]", __FUNCTION__, this, sourceURL().string().utf8().data(), frameRequest.index);
+                LOG(Images, "ImageFrameCache::%s - %p - url: %s [frame %ld has been decoded]", __FUNCTION__, protectedThis.ptr(), protectedThis->sourceURL().string().utf8().data(), frameRequest.index);
+            else {
+                LOG(Images, "ImageFrameCache::%s - %p - url: %s [decoding for frame %ld has failed]", __FUNCTION__, protectedThis.ptr(), protectedThis->sourceURL().string().utf8().data(), frameRequest.index);
+                continue;
+            }
 
             // Update the cached frames on the main thread to avoid updating the MemoryCache from a different thread.
-            callOnMainThread([this, protectedQueue = protectedQueue.copyRef(), nativeImage, frameRequest] () mutable {
-                // The queue may be closed if after we got the frame NativeImage, stopAsyncDecodingQueue() was called
-                if (protectedQueue.ptr() == m_decodingQueue) {
-                    ASSERT(m_frameCommitQueue.first() == frameRequest);
-                    m_frameCommitQueue.removeFirst();
-                    cacheNativeImageAtIndexAsync(WTFMove(nativeImage), frameRequest.index, frameRequest.subsamplingLevel, frameRequest.decodingOptions, frameRequest.decodingStatus);
+            callOnMainThread([protectedThis = protectedThis.copyRef(), protectedQueue = protectedQueue.copyRef(), protectedDecoder = protectedDecoder.copyRef(), nativeImage = WTFMove(nativeImage), frameRequest] () mutable {
+                // The queue may have been closed if after we got the frame NativeImage, stopAsyncDecodingQueue() was called.
+                if (protectedQueue.ptr() == protectedThis->m_decodingQueue && protectedDecoder.ptr() == protectedThis->m_decoder) {
+                    ASSERT(protectedThis->m_frameCommitQueue.first() == frameRequest);
+                    protectedThis->m_frameCommitQueue.removeFirst();
+                    protectedThis->cacheNativeImageAtIndexAsync(WTFMove(nativeImage), frameRequest.index, frameRequest.subsamplingLevel, frameRequest.decodingOptions, frameRequest.decodingStatus);
                 } else
-                    LOG(Images, "ImageFrameCache::%s - %p - url: %s [frame %ld will not cached]", __FUNCTION__, this, sourceURL().string().utf8().data(), frameRequest.index);
+                    LOG(Images, "ImageFrameCache::%s - %p - url: %s [frame %ld will not cached]", __FUNCTION__, protectedThis.ptr(), protectedThis->sourceURL().string().utf8().data(), frameRequest.index);
             });
         }
     });

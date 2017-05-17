@@ -49,7 +49,7 @@ class URL;
 // ENABLE(IMAGE_DECODER_DOWN_SAMPLING) allows image decoders to downsample
 // at decode time. Image decoders will downsample any images larger than
 // |m_maxNumPixels|. FIXME: Not yet supported by all decoders.
-class ImageDecoder : public RefCounted<ImageDecoder> {
+class ImageDecoder : public ThreadSafeRefCounted<ImageDecoder> {
     WTF_MAKE_NONCOPYABLE(ImageDecoder); WTF_MAKE_FAST_ALLOCATED;
 public:
     ImageDecoder(AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
