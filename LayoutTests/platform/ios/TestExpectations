@@ -51,6 +51,7 @@ printing
 http/tests/notifications
 fast/history/page-cache-notification-non-suspendable.html
 fast/history/page-cache-notification-suspendable.html
+imported/w3c/web-platform-tests/notifications/
 
 # Web Audio tests are skipped on iOS for now.
 webaudio

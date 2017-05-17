@@ -1,3 +1,11 @@
+2017-05-17  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, skip newly imported notifications tests on iOS
+
+        Notifications are not enabled on iOS.
+
+        * platform/ios/TestExpectations:
+
 2017-05-17  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark two http/tests/media/hls/video tests as failing during investigation.
