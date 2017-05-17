@@ -223,7 +223,7 @@
     "web-platform-tests/microdata": "skip", 
     "web-platform-tests/mixed-content": "skip", 
     "web-platform-tests/navigation-timing": "skip", 
-    "web-platform-tests/notifications": "skip", 
+    "web-platform-tests/notifications": "import", 
     "web-platform-tests/offscreen-canvas": "skip", 
     "web-platform-tests/old-tests": "skip", 
     "web-platform-tests/orientation-event": "skip", 

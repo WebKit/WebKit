@@ -1,3 +1,13 @@
+2017-05-17  Chris Dumez  <cdumez@apple.com>
+
+        Import Notification tests from web-platform-tests
+        https://bugs.webkit.org/show_bug.cgi?id=172196
+
+        Reviewed by Youenn Fablet.
+
+        * resources/testharnessreport.js:
+        Allow notifications as this is a pre-requirement for web-platform-tests.
+
 2017-05-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         getElementById can return a wrong elemnt when a matching element is removed during beforeload event

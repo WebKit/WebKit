@@ -1,0 +1,3 @@
+
+PASS Called the notification constructor with one argument. 
+
