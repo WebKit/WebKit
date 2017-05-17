@@ -16,7 +16,7 @@ PASS a.href is 'bad:/|/url?value=key'
 Set search to null
 PASS a.href is 'https://www.mydomain.com/path/?null'
 Set search to empty string
-PASS a.href is 'https://www.mydomain.com/path/?'
+PASS a.href is 'https://www.mydomain.com/path/'
 PASS successfullyParsed is true
 
 TEST COMPLETE

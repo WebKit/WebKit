@@ -1,3 +1,23 @@
+2017-05-17  Chris Dumez  <cdumez@apple.com>
+
+        Setting URL.search to '' results in a stringified URL ending in '?'
+        https://bugs.webkit.org/show_bug.cgi?id=162345
+        <rdar://problem/31800441>
+
+        Reviewed by Alex Christensen.
+
+        As per the specification for the URL.search setter [1], if the given value is
+        the empty string, then we should set the URL's query to null. We would
+        previously set the URL's query to the empty string in this case. This aligns
+        our behavior with Firefox and Chrome.
+
+        [1] https://url.spec.whatwg.org/#dom-url-search
+
+        No new tests, updated existing tests.
+
+        * html/URLUtils.h:
+        (WebCore::URLUtils<T>::setSearch):
+
 2017-05-17  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] videoWidth and videoHeight should be set when 'loadedmetadata' event fires

@@ -47,12 +47,10 @@ a.href = "https://www.mydomain.com/path/?key=value";
 a.search = null;
 shouldBe("a.href", "'https://www.mydomain.com/path/?null'");
 
-// Firefox 3.5.2 Removes the '?', and it shouldn't, per
-// http://dev.w3.org/html5/spec/infrastructure.html#url-decomposition-idl-attributes .
 debug("Set search to empty string");
 a.href = "https://www.mydomain.com/path/?key=value";
 a.search = "";
-shouldBe("a.href", "'https://www.mydomain.com/path/?'");
+shouldBe("a.href", "'https://www.mydomain.com/path/'");
 
 </script>
 <script src="../../../resources/js-test-post.js"></script>

@@ -1,3 +1,15 @@
+2017-05-17  Chris Dumez  <cdumez@apple.com>
+
+        Setting URL.search to '' results in a stringified URL ending in '?'
+        https://bugs.webkit.org/show_bug.cgi?id=162345
+        <rdar://problem/31800441>
+
+        Reviewed by Alex Christensen.
+
+        Rebaseline web-platform-test now that more checks are passing.
+
+        * web-platform-tests/url/url-setters-expected.txt:
+
 2017-05-17  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r216974.

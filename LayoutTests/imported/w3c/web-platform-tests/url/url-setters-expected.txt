@@ -543,15 +543,15 @@ FAIL <area>: Setting <https://example.net?lang=en-US#nav>.search = '??lang=fr' a
 PASS URL: Setting <https://example.net?lang=en-US#nav>.search = '?' 
 PASS <a>: Setting <https://example.net?lang=en-US#nav>.search = '?' 
 PASS <area>: Setting <https://example.net?lang=en-US#nav>.search = '?' 
-FAIL URL: Setting <https://example.net?lang=en-US#nav>.search = '' assert_equals: expected "https://example.net/#nav" but got "https://example.net/?#nav"
-FAIL <a>: Setting <https://example.net?lang=en-US#nav>.search = '' assert_equals: expected "https://example.net/#nav" but got "https://example.net/?#nav"
-FAIL <area>: Setting <https://example.net?lang=en-US#nav>.search = '' assert_equals: expected "https://example.net/#nav" but got "https://example.net/?#nav"
-FAIL URL: Setting <https://example.net?lang=en-US>.search = '' assert_equals: expected "https://example.net/" but got "https://example.net/?"
-FAIL <a>: Setting <https://example.net?lang=en-US>.search = '' assert_equals: expected "https://example.net/" but got "https://example.net/?"
-FAIL <area>: Setting <https://example.net?lang=en-US>.search = '' assert_equals: expected "https://example.net/" but got "https://example.net/?"
-FAIL URL: Setting <https://example.net>.search = '' assert_equals: expected "https://example.net/" but got "https://example.net/?"
-FAIL <a>: Setting <https://example.net>.search = '' assert_equals: expected "https://example.net/" but got "https://example.net/?"
-FAIL <area>: Setting <https://example.net>.search = '' assert_equals: expected "https://example.net/" but got "https://example.net/?"
+PASS URL: Setting <https://example.net?lang=en-US#nav>.search = '' 
+PASS <a>: Setting <https://example.net?lang=en-US#nav>.search = '' 
+PASS <area>: Setting <https://example.net?lang=en-US#nav>.search = '' 
+PASS URL: Setting <https://example.net?lang=en-US>.search = '' 
+PASS <a>: Setting <https://example.net?lang=en-US>.search = '' 
+PASS <area>: Setting <https://example.net?lang=en-US>.search = '' 
+PASS URL: Setting <https://example.net>.search = '' 
+PASS <a>: Setting <https://example.net>.search = '' 
+PASS <area>: Setting <https://example.net>.search = '' 
 FAIL URL: Setting <a:/>.search = '\0	
 \r !"#$%&'()*+,-./09:;<=>?@AZ[\]^_`az{|}~Éé' UTF-8 percent encoding with the query encode set. Tabs and newlines are removed. assert_equals: expected "a:/?%00%01%1F%20!%22%23$%&'()*+,-./09:;%3C=%3E?@AZ[\\]^_`az{|}~%7F%C2%80%C2%81%C3%89%C3%A9" but got "a:/?%00%01%1F%20!%22%23$%&%27()*+,-./09:;%3C=%3E?@AZ[\\]^_`az{|}~%7F%C2%80%C2%81%C3%89%C3%A9"
 FAIL <a>: Setting <a:/>.search = '\0	
