@@ -67,6 +67,8 @@ bool ThreadedDisplayRefreshMonitor::requiresDisplayRefreshCallback()
 
 void ThreadedDisplayRefreshMonitor::dispatchDisplayRefreshCallback()
 {
+    if (!m_compositor)
+        return;
     m_displayRefreshTimer.startOneShot(0);
 }
 

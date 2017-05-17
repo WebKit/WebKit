@@ -124,6 +124,9 @@ void ThreadedCompositor::invalidate()
 {
     m_scene->detach();
     m_compositingRunLoop->stopUpdates();
+#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
+    m_displayRefreshMonitor->invalidate();
+#endif
     m_compositingRunLoop->performTaskSync([this, protectedThis = makeRef(*this)] {
         m_scene->purgeGLResources();
         m_context = nullptr;
@@ -132,13 +135,7 @@ void ThreadedCompositor::invalidate()
 #endif
         m_scene = nullptr;
     });
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-    m_displayRefreshMonitor->invalidate();
-#endif
     m_compositingRunLoop = nullptr;
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-    m_displayRefreshMonitor->invalidate();
-#endif
 }
 
 void ThreadedCompositor::setNativeSurfaceHandleForCompositing(uint64_t handle)
@@ -265,7 +262,8 @@ void ThreadedCompositor::renderLayerTree()
 #endif
 
 #if PLATFORM(GTK)
-    sceneUpdateFinished();
+    if (m_scene->isActive())
+        sceneUpdateFinished();
 #endif
 }
 
@@ -289,6 +287,9 @@ void ThreadedCompositor::updateSceneState(const CoordinatedGraphicsState& state)
         scene->commitSceneState(state);
 
         m_clientRendersNextFrame.store(true);
+        // Do not change m_coordinateUpdateCompletionWithClient while in force repaint.
+        if (m_inForceRepaint)
+            return;
         bool coordinateUpdate = std::any_of(state.layersToUpdate.begin(), state.layersToUpdate.end(),
             [](const std::pair<CoordinatedLayerID, CoordinatedGraphicsLayerState>& it) {
                 return it.second.platformLayerChanged || it.second.platformLayerUpdated;

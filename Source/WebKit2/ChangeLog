@@ -1,3 +1,27 @@
+2017-05-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [Threaded Compositor] SHOULD NEVER BE REACHED in WebKit::CompositingRunLoop::updateCompleted
+        https://bugs.webkit.org/show_bug.cgi?id=172167
+
+        Reviewed by Michael Catanzaro.
+
+        This is still happening, even after r216182, less often but still happens. There are two conditions in which
+        this can happen:
+
+         - Again in force repaint. r216182 fixed the case of force repaint called when update state is completed, but it
+           can also crash if update state is inProgress or PendingAfterCompletion when m_coordinateUpdateCompletionWithClient
+           is true.
+         - When the threaded compositor is invalidated right after renderLayerTree() starts, but before it finishes.
+
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        (WebKit::ThreadedCompositor::invalidate): Invalidate the refresh monitor right after stopping updates in the
+        compositing run loop to ensure no more updates are scheduled.
+        (WebKit::ThreadedCompositor::renderLayerTree): Check the scene is still active before calling sceneUpdateFinished().
+        (WebKit::ThreadedCompositor::updateSceneState): Do not update m_coordinateUpdateCompletionWithClient when in
+        force repaint.
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedDisplayRefreshMonitor.cpp:
+        (WebKit::ThreadedDisplayRefreshMonitor::dispatchDisplayRefreshCallback): Return early if the monitor has been invalidated.
+
 2017-05-16  Sam Weinig  <sam@webkit.org>
 
         Bring Notification.idl up to spec
