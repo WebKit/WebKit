@@ -197,7 +197,7 @@ void RenderMarquee::updateMarqueePosition()
 
 void RenderMarquee::updateMarqueeStyle()
 {
-    auto& style = m_layer->renderer().mutableStyle();
+    auto& style = m_layer->renderer().style();
     
     if (m_direction != style.marqueeDirection() || (m_totalLoops != style.marqueeLoopCount() && m_currentLoop >= m_totalLoops))
         m_currentLoop = 0; // When direction changes or our loopCount is a smaller number than our current loop, reset our loop.
@@ -210,23 +210,8 @@ void RenderMarquee::updateMarqueeStyle()
         // one loop.
         if (m_totalLoops <= 0 && style.marqueeBehavior() == MSLIDE)
             m_totalLoops = 1;
-        
-        // Hack alert: Set the white-space value to nowrap for horizontal marquees with inline children, thus ensuring
-        // all the text ends up on one line by default.  Limit this hack to the <marquee> element to emulate
-        // WinIE's behavior.  Someone using CSS3 can use white-space: nowrap on their own to get this effect.
-        // Second hack alert: Set the text-align back to auto.  WinIE completely ignores text-align on the
-        // marquee element.
-        // FIXME: Bring these up with the CSS WG.
-        if (isHorizontal() && m_layer->renderer().childrenInline()) {
-            style.setWhiteSpace(NOWRAP);
-            style.setTextAlign(TASTART);
-        }
     }
     
-    // Legacy hack - multiple browsers default vertical marquees to 200px tall.
-    if (!isHorizontal() && style.height().isAuto())
-        style.setHeight(Length(200, Fixed)); 
-   
     if (speed() != marqueeSpeed()) {
         m_speed = marqueeSpeed();
         if (m_timer.isActive())

@@ -1,3 +1,28 @@
+2017-05-17  Antti Koivisto  <antti@apple.com>
+
+        Regression (198943): <marquee> shouldn't wrap text
+        https://bugs.webkit.org/show_bug.cgi?id=172217
+
+        Reviewed by Andreas Kling.
+
+        RenderMarquee::updateMarqueeStyle mutated the style and then expected it to inherit to children.
+        This doesn't work anymore because render tree construction is now separated from style resolution
+        where inheritance happens.
+
+        Test: fast/html/marquee-child-wrap.html
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::adjustRenderStyle):
+
+            Implement marquee hacks in adjustRenderStyle instead. This can't do the childrenInline check
+            the previous code had but it wasn't working anyway (there are no children when updateMarqueeStyle
+            gets called).
+
+        * rendering/RenderMarquee.cpp:
+        (WebCore::RenderMarquee::updateMarqueeStyle):
+
+            This no longer needs mutable style.
+
 2017-05-16  David Kilzer  <ddkilzer@apple.com>
 
         Remove C-style casts by using xmlDocPtr instead of void*
