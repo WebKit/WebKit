@@ -1,3 +1,15 @@
+2017-05-17  Andy Estes  <aestes@apple.com>
+
+        REGRESSION (r215480): PKPaymentAuthorizationStatusFailure sent to PassKit in completeShippingContactSelection() even when there are no errors
+        https://bugs.webkit.org/show_bug.cgi?id=172227
+        <rdar://problem/31978432>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * UIProcess/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm:
+        (WebKit::toPKPaymentAuthorizationStatus): If there is an update with no errors, we should
+        return PKPaymentAuthorizationStatusSuccess instead of PKPaymentAuthorizationStatusFailure.
+
 2017-05-17  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r216974.

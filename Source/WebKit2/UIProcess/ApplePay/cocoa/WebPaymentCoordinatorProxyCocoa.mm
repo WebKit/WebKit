@@ -743,7 +743,7 @@ void WebPaymentCoordinatorProxy::platformCompleteShippingMethodSelection(const s
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 110000)
 static PKPaymentAuthorizationStatus toPKPaymentAuthorizationStatus(const std::optional<WebCore::ShippingContactUpdate>& update)
 {
-    if (!update)
+    if (!update || update->errors.isEmpty())
         return PKPaymentAuthorizationStatusSuccess;
 
     if (update->errors.size() == 1) {
