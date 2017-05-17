@@ -1,3 +1,14 @@
+2017-05-17  Don Olmstead  <don.olmstead@am.sony.com>
+
+        [Win] Support $vm.getpid()
+        https://bugs.webkit.org/show_bug.cgi?id=172248
+
+        Reviewed by Mark Lam.
+
+        * tools/JSDollarVMPrototype.cpp:
+        (JSC::functionGetPID):
+        (JSC::JSDollarVMPrototype::finishCreation):
+
 2017-05-17  Michael Saboff  <msaboff@apple.com>
 
         [iOS] The Garbage Collector shouldn't rely on the bmalloc scavenger for up to date memory footprint info
