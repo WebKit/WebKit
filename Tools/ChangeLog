@@ -1,3 +1,15 @@
+2017-05-16  Tim Horton  <timothy_horton@apple.com>
+
+        PageVisibilityStateWithWindowChanges tests sometimes time out
+        https://bugs.webkit.org/show_bug.cgi?id=172202
+        <rdar://problem/29653266>
+
+        Reviewed by Dean Jackson.
+
+        * TestWebKitAPI/Tests/mac/PageVisibilityStateWithWindowChanges.mm:
+        (TestWebKitAPI::PageVisibilityStateWithWindowChanges::runTest):
+        Make sure the window is miniaturizable, otherwise, in some cases, miniaturize: will not work.
+
 2017-05-16  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Start servers before setting-up for testing
