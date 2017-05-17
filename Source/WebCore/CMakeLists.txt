@@ -260,6 +260,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/navigatorcontentutils/NavigatorContentUtils.idl
 
     Modules/notifications/Notification.idl
+    Modules/notifications/NotificationPermission.idl
     Modules/notifications/NotificationPermissionCallback.idl
 
     Modules/proximity/DeviceProximityEvent.idl

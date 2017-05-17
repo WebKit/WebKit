@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,44 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebNotificationClient_h
-#define WebNotificationClient_h
-
-#if ENABLE(NOTIFICATIONS)
-
-#include <WebCore/NotificationClient.h>
+#pragma once
 
 namespace WebCore {
-class NotificationPermissionCallback;
-class ScriptExecutionContext;
-class VoidCallback;
-} // namespace WebCore
 
-namespace WebKit {
-
-class WebPage;
-
-class WebNotificationClient : public WebCore::NotificationClient {
-public:
-    WebNotificationClient(WebPage*);
-    virtual ~WebNotificationClient();
-
-private:
-    bool show(WebCore::Notification*) override;
-    void cancel(WebCore::Notification*) override;
-    void clearNotifications(WebCore::ScriptExecutionContext*) override;
-    void notificationObjectDestroyed(WebCore::Notification*) override;
-    void notificationControllerDestroyed() override;
-    void requestPermission(WebCore::ScriptExecutionContext*, RefPtr<WebCore::NotificationPermissionCallback>&&) override;
-    void cancelRequestsForPermission(WebCore::ScriptExecutionContext*) override;
-    bool hasPendingPermissionRequests(WebCore::ScriptExecutionContext*) const override;
-    WebCore::NotificationClient::Permission checkPermission(WebCore::ScriptExecutionContext*) override;
-    
-    WebPage* m_page;
+enum class NotificationPermission {
+    Default,
+    Denied,
+    Granted
 };
 
-} // namespace WebKit
-
-#endif // ENABLE(NOTIFICATIONS)
-
-#endif // WebNotificationClient_h
+}

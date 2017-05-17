@@ -34,6 +34,10 @@
 #include <wtf/HashMap.h>
 #include <wtf/text/StringHash.h>
 
+namespace WebCore {
+enum class NotificationDirection;
+}
+
 namespace API {
 class Array;
 class SecurityOrigin;
@@ -54,7 +58,7 @@ public:
     void initializeProvider(const WKNotificationProviderBase*);
     void populateCopyOfNotificationPermissions(HashMap<String, bool>&);
 
-    void show(WebPageProxy*, const String& title, const String& body, const String& iconURL, const String& tag, const String& lang, const String& dir, const String& originString, uint64_t pageNotificationID);
+    void show(WebPageProxy*, const String& title, const String& body, const String& iconURL, const String& tag, const String& lang, WebCore::NotificationDirection, const String& originString, uint64_t pageNotificationID);
     void cancel(WebPageProxy*, uint64_t pageNotificationID);
     void clearNotifications(WebPageProxy*);
     void clearNotifications(WebPageProxy*, const Vector<uint64_t>& pageNotificationIDs);

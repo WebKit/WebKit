@@ -90,7 +90,7 @@ void WebNotificationClient::cancelRequestsForPermission(ScriptExecutionContext* 
 NotificationClient::Permission WebNotificationClient::checkPermission(ScriptExecutionContext* context)
 {
     if (!context || !context->isDocument())
-        return NotificationClient::PermissionDenied;
+        return NotificationClient::Permission::Denied;
     return m_page->notificationPermissionRequestManager()->permissionLevel(context->securityOrigin());
 }
 

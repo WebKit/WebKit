@@ -1,3 +1,14 @@
+2017-05-16  Sam Weinig  <sam@webkit.org>
+
+        Bring Notification.idl up to spec
+        https://bugs.webkit.org/show_bug.cgi?id=172156
+
+        Reviewed by Chris Dumez.
+
+        * http/tests/notifications/notification-expected.txt: Added.
+        * http/tests/notifications/notification.html: Added.
+        Add test for basic Notification API functionality.
+
 2017-05-16  Zalan Bujtas  <zalan@apple.com>
 
         Do not skip <slot> children when collecting content for innerText.

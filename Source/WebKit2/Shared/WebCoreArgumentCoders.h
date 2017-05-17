@@ -34,6 +34,7 @@
 #include <WebCore/IndexedDB.h>
 #include <WebCore/MediaSelectionOption.h>
 #include <WebCore/NetworkLoadMetrics.h>
+#include <WebCore/NotificationDirection.h>
 #include <WebCore/PaymentHeaders.h>
 #include <WebCore/RealtimeMediaSource.h>
 #include <WebCore/ScrollSnapOffsetsInfo.h>
@@ -721,6 +722,15 @@ template<> struct EnumTraits<WebCore::NetworkLoadPriority> {
         WebCore::NetworkLoadPriority::Low,
         WebCore::NetworkLoadPriority::Medium,
         WebCore::NetworkLoadPriority::High
+    >;
+};
+
+template<> struct EnumTraits<WebCore::NotificationDirection> {
+    using values = EnumValues<
+        WebCore::NotificationDirection,
+        WebCore::NotificationDirection::Auto,
+        WebCore::NotificationDirection::Ltr,
+        WebCore::NotificationDirection::Rtl
     >;
 };
 

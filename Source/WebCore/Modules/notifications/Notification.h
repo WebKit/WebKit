@@ -36,7 +36,8 @@
 #include "ActiveDOMObject.h"
 #include "EventTarget.h"
 #include "ExceptionOr.h"
-#include "NotificationClient.h"
+#include "NotificationDirection.h"
+#include "NotificationPermission.h"
 #include "Timer.h"
 #include "URL.h"
 #include "WritingMode.h"
@@ -49,7 +50,9 @@ class NotificationPermissionCallback;
 class Notification final : public RefCounted<Notification>, public ActiveDOMObject, public EventTargetWithInlineData {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    enum class Direction { Auto, Ltr, Rtl };
+    using Permission = NotificationPermission;
+    using Direction = NotificationDirection;
+
     struct Options {
         Direction dir;
         String lang;
@@ -64,21 +67,14 @@ public:
     void show();
     void close();
 
-    const URL& iconURL() const { return m_icon; }
     const String& title() const { return m_title; }
+    Direction dir() const { return m_direction; }
     const String& body() const { return m_body; }
     const String& lang() const { return m_lang; }
-
-    const String& dir() const { return m_direction; }
-    void setDir(const String& dir) { m_direction = dir; }
-
-    const String& replaceId() const { return m_tag; }
-    void setReplaceId(const String& replaceId) { m_tag = replaceId; }
-
     const String& tag() const { return m_tag; }
-    void setTag(const String& tag) { m_tag = tag; }
+    const URL& icon() const { return m_icon; }
 
-    TextDirection direction() const { return m_direction == "rtl" ? RTL : LTR; }
+    TextDirection direction() const { return m_direction == Direction::Rtl ? RTL : LTR; }
 
     WEBCORE_EXPORT void dispatchClickEvent();
     WEBCORE_EXPORT void dispatchCloseEvent();
@@ -87,8 +83,7 @@ public:
 
     WEBCORE_EXPORT void finalize();
 
-    static String permission(Document&);
-    WEBCORE_EXPORT static String permissionString(NotificationClient::Permission);
+    static Permission permission(Document&);
     static void requestPermission(Document&, RefPtr<NotificationPermissionCallback>&&);
 
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
@@ -97,7 +92,7 @@ public:
     using RefCounted::deref;
 
 private:
-    Notification(Document&, const String& title);
+    Notification(Document&, const String& title, const Options&);
 
     EventTargetInterface eventTargetInterface() const final { return NotificationEventTargetInterfaceType; }
 
@@ -109,12 +104,12 @@ private:
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
-    URL m_icon;
     String m_title;
-    String m_body;
-    String m_direction;
+    Direction m_direction;
     String m_lang;
+    String m_body;
     String m_tag;
+    URL m_icon;
 
     enum State { Idle, Showing, Closed };
     State m_state { Idle };

@@ -23,21 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebCore/NotificationClient.h>
-
 #if ENABLE(NOTIFICATIONS)
+
 #import <WebCore/Notification.h>
+#import <WebCore/NotificationClient.h>
 #import <wtf/HashMap.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
-#endif
-
-namespace WebCore {
-class Notification;
-class NotificationPermissionCallback;
-class ScriptExecutionContext;
-class VoidCallback;
-}
 
 @class WebNotification;
 @class WebNotificationPolicyListener;
@@ -48,10 +40,8 @@ public:
     WebNotificationClient(WebView *);
     WebView *webView() { return m_webView; }
 
-#if ENABLE(NOTIFICATIONS)
     // For testing purposes.
     uint64_t notificationIDForTesting(WebCore::Notification*);
-#endif
 
 private:
     bool show(WebCore::Notification*) override;
@@ -59,24 +49,20 @@ private:
     void clearNotifications(WebCore::ScriptExecutionContext*) override;
     void notificationObjectDestroyed(WebCore::Notification*) override;
     void notificationControllerDestroyed() override;
-#if ENABLE(NOTIFICATIONS)
     void requestPermission(WebCore::ScriptExecutionContext*, RefPtr<WebCore::NotificationPermissionCallback>&&) override;
-#endif
     void cancelRequestsForPermission(WebCore::ScriptExecutionContext*) override { }
     bool hasPendingPermissionRequests(WebCore::ScriptExecutionContext*) const override;
     WebCore::NotificationClient::Permission checkPermission(WebCore::ScriptExecutionContext*) override;
 
-#if ENABLE(NOTIFICATIONS)
     void requestPermission(WebCore::ScriptExecutionContext*, WebNotificationPolicyListener *);
-#endif
 
     WebView *m_webView;
-#if ENABLE(NOTIFICATIONS)
     HashMap<RefPtr<WebCore::Notification>, RetainPtr<WebNotification>> m_notificationMap;
     
     typedef HashMap<RefPtr<WebCore::ScriptExecutionContext>, Vector<RetainPtr<WebNotification>>> NotificationContextMap;
     NotificationContextMap m_notificationContextMap;
 
     bool m_everRequestedPermission { false };
-#endif
 };
+
+#endif

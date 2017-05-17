@@ -105,17 +105,17 @@ NotificationClient::Permission WebNotificationManager::policyForOrigin(WebCore::
 {
 #if ENABLE(NOTIFICATIONS)
     if (!origin)
-        return NotificationClient::PermissionNotAllowed;
+        return NotificationClient::Permission::Default;
 
     ASSERT(!origin->isUnique());
     auto it = m_permissionsMap.find(origin->toRawString());
     if (it != m_permissionsMap.end())
-        return it->value ? NotificationClient::PermissionAllowed : NotificationClient::PermissionDenied;
+        return it->value ? NotificationClient::Permission::Granted : NotificationClient::Permission::Denied;
 #else
     UNUSED_PARAM(origin);
 #endif
     
-    return NotificationClient::PermissionNotAllowed;
+    return NotificationClient::Permission::Default;
 }
 
 void WebNotificationManager::removeAllPermissionsForTesting()
@@ -150,7 +150,7 @@ bool WebNotificationManager::show(Notification* notification, WebPage* page)
     auto it = m_notificationContextMap.add(notification->scriptExecutionContext(), Vector<uint64_t>()).iterator;
     it->value.append(notificationID);
 
-    m_process->parentProcessConnection()->send(Messages::WebPageProxy::ShowNotification(notification->title(), notification->body(), notification->iconURL().string(), notification->tag(), notification->lang(), notification->dir(), notification->scriptExecutionContext()->securityOrigin()->toString(), notificationID), page->pageID());
+    m_process->parentProcessConnection()->send(Messages::WebPageProxy::ShowNotification(notification->title(), notification->body(), notification->icon().string(), notification->tag(), notification->lang(), notification->dir(), notification->scriptExecutionContext()->securityOrigin()->toString(), notificationID), page->pageID());
     return true;
 #else
     UNUSED_PARAM(notification);

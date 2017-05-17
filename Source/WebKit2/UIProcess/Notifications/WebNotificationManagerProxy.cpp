@@ -98,7 +98,7 @@ void WebNotificationManagerProxy::populateCopyOfNotificationPermissions(HashMap<
     }
 }
 
-void WebNotificationManagerProxy::show(WebPageProxy* webPage, const String& title, const String& body, const String& iconURL, const String& tag, const String& lang, const String& dir, const String& originString, uint64_t pageNotificationID)
+void WebNotificationManagerProxy::show(WebPageProxy* webPage, const String& title, const String& body, const String& iconURL, const String& tag, const String& lang, WebCore::NotificationDirection dir, const String& originString, uint64_t pageNotificationID)
 {
     uint64_t globalNotificationID = generateGlobalNotificationID();
     RefPtr<WebNotification> notification = WebNotification::create(title, body, iconURL, tag, lang, dir, originString, globalNotificationID);

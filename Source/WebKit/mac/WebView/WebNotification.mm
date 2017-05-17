@@ -116,7 +116,7 @@ Notification* core(WebNotification *notification)
 - (NSString *)iconURL
 {
 #if ENABLE(NOTIFICATIONS)
-    return core(self)->iconURL();
+    return core(self)->icon();
 #else
     return nil;
 #endif
@@ -134,7 +134,14 @@ Notification* core(WebNotification *notification)
 - (NSString *)dir
 {
 #if ENABLE(NOTIFICATIONS)
-    return core(self)->dir();
+    switch (core(self)->dir()) {
+        case Notification::Direction::Auto:
+            return @"auto";
+        case Notification::Direction::Ltr:
+            return @"ltr";
+        case Notification::Direction::Rtl:
+            return @"rtl";
+    }
 #else
     return nil;
 #endif

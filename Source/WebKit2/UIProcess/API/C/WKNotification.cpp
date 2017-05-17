@@ -28,7 +28,9 @@
 
 #include "APISecurityOrigin.h"
 #include "WKAPICast.h"
+#include "WKString.h"
 #include "WebNotification.h"
+#include <WebCore/NotificationDirection.h>
 
 using namespace WebKit;
 
@@ -64,7 +66,14 @@ WKStringRef WKNotificationCopyLang(WKNotificationRef notification)
 
 WKStringRef WKNotificationCopyDir(WKNotificationRef notification)
 {
-    return toCopiedAPI(toImpl(notification)->dir());
+    switch (toImpl(notification)->dir()) {
+    case WebCore::NotificationDirection::Auto:
+        return WKStringCreateWithUTF8CString("auto");
+    case WebCore::NotificationDirection::Ltr:
+        return WKStringCreateWithUTF8CString("ltr");
+    case WebCore::NotificationDirection::Rtl:
+        return WKStringCreateWithUTF8CString("rtl");
+    }
 }
 
 WKSecurityOriginRef WKNotificationGetSecurityOrigin(WKNotificationRef notification)

@@ -71,10 +71,10 @@ NotificationPermissionRequestManager::NotificationPermissionRequestManager(WebPa
 #if ENABLE(NOTIFICATIONS)
 void NotificationPermissionRequestManager::startRequest(SecurityOrigin* origin, RefPtr<NotificationPermissionCallback>&& callback)
 {
-    NotificationClient::Permission permission = permissionLevel(origin);
-    if (permission != NotificationClient::PermissionNotAllowed) {
+    auto permission = permissionLevel(origin);
+    if (permission != NotificationClient::Permission::Default) {
         if (callback)
-            callback->handleEvent(Notification::permissionString(permission));
+            callback->handleEvent(permission);
         return;
     }
 
@@ -114,12 +114,12 @@ NotificationClient::Permission NotificationPermissionRequestManager::permissionL
 {
 #if ENABLE(NOTIFICATIONS)
     if (!m_page->corePage()->settings().notificationsEnabled())
-        return NotificationClient::PermissionDenied;
+        return NotificationClient::Permission::Denied;
     
     return WebProcess::singleton().supplement<WebNotificationManager>()->policyForOrigin(securityOrigin);
 #else
     UNUSED_PARAM(securityOrigin);
-    return NotificationClient::PermissionDenied;
+    return NotificationClient::Permission::Denied;
 #endif
 }
 
@@ -158,7 +158,7 @@ void NotificationPermissionRequestManager::didReceiveNotificationPermissionDecis
     if (!callback)
         return;
     
-    callback->handleEvent(Notification::permissionString(allowed ? NotificationClient::PermissionAllowed : NotificationClient::PermissionDenied));
+    callback->handleEvent(allowed ? NotificationClient::Permission::Granted : NotificationClient::Permission::Denied);
 #else
     UNUSED_PARAM(requestID);
     UNUSED_PARAM(allowed);

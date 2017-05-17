@@ -31,6 +31,7 @@
 
 #pragma once
 
+#include "NotificationPermission.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -39,15 +40,10 @@ class Notification;
 class NotificationPermissionCallback;
 class Page;
 class ScriptExecutionContext;
-class VoidCallback;
 
 class NotificationClient {
 public:
-    enum Permission {
-        PermissionAllowed, // User has allowed notifications
-        PermissionNotAllowed, // User has not yet allowed
-        PermissionDenied // User has explicitly denied permission
-    };
+    using Permission = NotificationPermission;
 
     // Requests that a notification be shown.
     virtual bool show(Notification*) = 0;

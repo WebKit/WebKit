@@ -1,3 +1,36 @@
+2017-05-16  Sam Weinig  <sam@webkit.org>
+
+        Bring Notification.idl up to spec
+        https://bugs.webkit.org/show_bug.cgi?id=172156
+
+        Reviewed by Chris Dumez.
+
+        Test: http/tests/notifications/notification.html
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * Modules/notifications/Notification.cpp:
+        (WebCore::Notification::create):
+        (WebCore::Notification::Notification):
+        (WebCore::Notification::show):
+        (WebCore::directionString): Deleted.
+        (WebCore::Notification::permission): Deleted.
+        (WebCore::Notification::permissionString): Deleted.
+        * Modules/notifications/Notification.h:
+        * Modules/notifications/Notification.idl:
+        * Modules/notifications/NotificationClient.h:
+        * Modules/notifications/NotificationDirection.h: Added.
+        * Modules/notifications/NotificationPermission.h: Added.
+        * Modules/notifications/NotificationPermission.idl: Added.
+        * Modules/notifications/NotificationPermissionCallback.h:
+        * Modules/notifications/NotificationPermissionCallback.idl:
+        Bring up to spec, replacing DOMStrings with enums where appropriate and adding
+        additional readonly properties to Notification to mirror options provided
+        in construction.
+
 2017-05-16  Zalan Bujtas  <zalan@apple.com>
 
         Do not skip <slot> children when collecting content for innerText.

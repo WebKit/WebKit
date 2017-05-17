@@ -173,6 +173,7 @@ struct WindowFeatures;
 
 enum class AutoplayEvent;
 enum class HasInsecureContent;
+enum class NotificationDirection;
 enum class ShouldSample;
 
 template <typename> class BoxExtent;
@@ -1334,7 +1335,7 @@ private:
     RefPtr<API::Navigation> reattachToWebProcessWithItem(WebBackForwardListItem*);
 
     void requestNotificationPermission(uint64_t notificationID, const String& originString);
-    void showNotification(const String& title, const String& body, const String& iconURL, const String& tag, const String& lang, const String& dir, const String& originString, uint64_t notificationID);
+    void showNotification(const String& title, const String& body, const String& iconURL, const String& tag, const String& lang, WebCore::NotificationDirection, const String& originString, uint64_t notificationID);
     void cancelNotification(uint64_t notificationID);
     void clearNotifications(const Vector<uint64_t>& notificationIDs);
     void didDestroyNotification(uint64_t notificationID);

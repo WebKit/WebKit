@@ -1,3 +1,27 @@
+2017-05-16  Sam Weinig  <sam@webkit.org>
+
+        Bring Notification.idl up to spec
+        https://bugs.webkit.org/show_bug.cgi?id=172156
+
+        Reviewed by Chris Dumez.
+
+        * WebCoreSupport/WebNotificationClient.h:
+        * WebCoreSupport/WebNotificationClient.mm:
+        (generateNotificationID):
+        (WebNotificationClient::show):
+        (WebNotificationClient::cancel):
+        (WebNotificationClient::clearNotifications):
+        (WebNotificationClient::notificationObjectDestroyed):
+        (WebNotificationClient::requestPermission):
+        (WebNotificationClient::hasPendingPermissionRequests):
+        (WebNotificationClient::checkPermission):
+        (-[WebNotificationPolicyListener allow]):
+        (-[WebNotificationPolicyListener deny]):
+        * WebView/WebNotification.mm:
+        (-[WebNotification iconURL]):
+        (-[WebNotification dir]):
+        Simplify #ifdefs and update for enum vs String usage.
+
 2017-05-15  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Do not delete asynchronously decoded frames for large images if their clients are in the viewport

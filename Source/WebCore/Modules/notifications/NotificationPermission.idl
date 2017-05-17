@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,21 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebNotification.h"
-
-namespace WebKit {
-
-WebNotification::WebNotification(const String& title, const String& body, const String& iconURL, const String& tag, const String& lang, WebCore::NotificationDirection dir, const String& originString, uint64_t notificationID)
-    : m_title(title)
-    , m_body(body)
-    , m_iconURL(iconURL)
-    , m_tag(tag)
-    , m_lang(lang)
-    , m_dir(dir)
-    , m_origin(API::SecurityOrigin::createFromString(originString))
-    , m_notificationID(notificationID)
-{
-}
-
-} // namespace WebKit
+[
+    Conditional=NOTIFICATIONS,
+] enum NotificationPermission {
+    "default",
+    "denied",
+    "granted"
+};

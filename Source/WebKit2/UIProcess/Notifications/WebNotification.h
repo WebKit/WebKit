@@ -31,11 +31,15 @@
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 
+namespace WebCore {
+enum class NotificationDirection;
+}
+
 namespace WebKit {
 
 class WebNotification : public API::ObjectImpl<API::Object::Type::Notification> {
 public:
-    static Ref<WebNotification> create(const String& title, const String& body, const String& iconURL, const String& tag, const String& lang, const String& dir, const String& originString, uint64_t notificationID)
+    static Ref<WebNotification> create(const String& title, const String& body, const String& iconURL, const String& tag, const String& lang, WebCore::NotificationDirection dir, const String& originString, uint64_t notificationID)
     {
         return adoptRef(*new WebNotification(title, body, iconURL, tag, lang, dir, originString, notificationID));
     }
@@ -45,20 +49,20 @@ public:
     const String& iconURL() const { return m_iconURL; }
     const String& tag() const { return m_tag; }
     const String& lang() const { return m_lang; }
-    const String& dir() const { return m_dir; }
+    WebCore::NotificationDirection dir() const { return m_dir; }
     API::SecurityOrigin* origin() const { return m_origin.get(); }
     
     uint64_t notificationID() const { return m_notificationID; }
 
 private:
-    WebNotification(const String& title, const String& body, const String& iconURL, const String& tag, const String& lang, const String& dir, const String& originString, uint64_t notificationID);
+    WebNotification(const String& title, const String& body, const String& iconURL, const String& tag, const String& lang, WebCore::NotificationDirection, const String& originString, uint64_t notificationID);
 
     String m_title;
     String m_body;
     String m_iconURL;
     String m_tag;
     String m_lang;
-    String m_dir;
+    WebCore::NotificationDirection m_dir;
     RefPtr<API::SecurityOrigin> m_origin;
     uint64_t m_notificationID;
 };

@@ -39,18 +39,36 @@
 #include "Event.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
+#include "NotificationClient.h"
 #include "NotificationController.h"
 #include "NotificationPermissionCallback.h"
 #include "WindowFocusAllowedIndicator.h"
 
 namespace WebCore {
 
-Notification::Notification(Document& document, const String& title)
+Ref<Notification> Notification::create(Document& context, const String& title, const Options& options)
+{
+    auto notification = adoptRef(*new Notification(context, title, options));
+    notification->suspendIfNeeded();
+    return notification;
+}
+
+Notification::Notification(Document& document, const String& title, const Options& options)
     : ActiveDOMObject(&document)
     , m_title(title)
+    , m_direction(options.dir)
+    , m_lang(options.lang)
+    , m_body(options.body)
+    , m_tag(options.tag)
     , m_state(Idle)
     , m_taskTimer(std::make_unique<Timer>([this] () { show(); }))
 {
+    if (!options.icon.isEmpty()) {
+        auto iconURL = document.completeURL(options.icon);
+        if (iconURL.isValid())
+            m_icon = iconURL;
+    }
+
     m_taskTimer->startOneShot(0_s);
 }
 
@@ -58,39 +76,7 @@ Notification::~Notification()
 {
 }
 
-static String directionString(Notification::Direction direction)
-{
-    // FIXME: Storing this as a string is not the right way to do it.
-    // FIXME: Seems highly unlikely that this does the right thing for Auto.
-    switch (direction) {
-    case Notification::Direction::Auto:
-        return ASCIILiteral("auto");
-    case Notification::Direction::Ltr:
-        return ASCIILiteral("ltr");
-    case Notification::Direction::Rtl:
-        return ASCIILiteral("rtl");
-    }
-    ASSERT_NOT_REACHED();
-    return { };
-}
-
-Ref<Notification> Notification::create(Document& context, const String& title, const Options& options)
-{
-    auto notification = adoptRef(*new Notification(context, title));
-    notification->m_body = options.body;
-    notification->m_tag = options.tag;
-    notification->m_lang = options.lang;
-    notification->m_direction = directionString(options.dir);
-    if (!options.icon.isEmpty()) {
-        auto iconURL = context.completeURL(options.icon);
-        if (iconURL.isValid())
-            notification->m_icon = iconURL;
-    }
-    notification->suspendIfNeeded();
-    return notification;
-}
-
-void Notification::show() 
+void Notification::show()
 {
     // prevent double-showing
     if (m_state != Idle)
@@ -102,7 +88,7 @@ void Notification::show()
 
     auto& client = NotificationController::from(page)->client();
 
-    if (client.checkPermission(scriptExecutionContext()) != NotificationClient::PermissionAllowed) {
+    if (client.checkPermission(scriptExecutionContext()) != Permission::Granted) {
         dispatchErrorEvent();
         return;
     }
@@ -178,23 +164,9 @@ void Notification::dispatchErrorEvent()
     dispatchEvent(Event::create(eventNames().errorEvent, false, false));
 }
 
-String Notification::permission(Document& document)
+auto Notification::permission(Document& document) -> Permission
 {
-    return permissionString(NotificationController::from(document.page())->client().checkPermission(&document));
-}
-
-String Notification::permissionString(NotificationClient::Permission permission)
-{
-    switch (permission) {
-    case NotificationClient::PermissionAllowed:
-        return ASCIILiteral("granted");
-    case NotificationClient::PermissionDenied:
-        return ASCIILiteral("denied");
-    case NotificationClient::PermissionNotAllowed:
-        return ASCIILiteral("default");
-    }
-    ASSERT_NOT_REACHED();
-    return { };
+    return NotificationController::from(document.page())->client().checkPermission(&document);
 }
 
 void Notification::requestPermission(Document& document, RefPtr<NotificationPermissionCallback>&& callback)
