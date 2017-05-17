@@ -1,3 +1,14 @@
+2017-05-17  Alex Christensen  <achristensen@webkit.org>
+
+        Fix ios-simulator API test after r216977
+        https://bugs.webkit.org/show_bug.cgi?id=171987
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/WKHTTPCookieStore.mm:
+        (TEST):
+        <rdar://problem/32260156> covers the investigation of this, but fixing it is 
+        not as urgent as having the rest of this working. Notably the ephemeral part of the
+        test works, so something is just wrong with the persistent part.
+
 2017-05-17  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r216955.
