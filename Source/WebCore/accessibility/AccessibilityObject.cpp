@@ -3315,8 +3315,13 @@ void AccessibilityObject::ariaOwnsElements(AccessibilityChildrenVector& axObject
 
 void AccessibilityObject::setIsIgnoredFromParentDataForChild(AccessibilityObject* child)
 {
-    if (!child || child->parentObject() != this)
+    if (!child)
         return;
+    
+    if (child->parentObject() != this) {
+        child->clearIsIgnoredFromParentData();
+        return;
+    }
     
     AccessibilityIsIgnoredFromParentData result = AccessibilityIsIgnoredFromParentData(this);
     if (!m_isIgnoredFromParentData.isNull()) {

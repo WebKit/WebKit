@@ -410,7 +410,12 @@ AccessibilityObject* AccessibilityRenderObject::nextSibling() const
     if (!nextSibling)
         return nullptr;
     
-    return axObjectCache()->getOrCreate(nextSibling);
+    // Make sure next sibling has the same parent.
+    AccessibilityObject* nextObj = axObjectCache()->getOrCreate(nextSibling);
+    if (nextObj && nextObj->parentObject() != this->parentObject())
+        return nullptr;
+    
+    return nextObj;
 }
 
 static RenderBoxModelObject* nextContinuation(RenderObject& renderer)

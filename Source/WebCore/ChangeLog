@@ -1,3 +1,21 @@
+2017-05-17  Nan Wang  <n_wang@apple.com>
+
+        ASSERTION FAILED in WebCore::AccessibilityNodeObject::insertChild()
+        https://bugs.webkit.org/show_bug.cgi?id=171927
+        <rdar://problem/32109781>
+
+        Reviewed by Chris Fleizach.
+
+        The nextSibling() logic might include the continuation sibling that's not
+        the child of the current renderer. Make sure we only insert the valid child.
+
+        Test: accessibility/insert-children-assert.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::setIsIgnoredFromParentDataForChild):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::nextSibling):
+
 2017-05-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         getElementById can return a wrong elemnt when a matching element is removed during beforeload event

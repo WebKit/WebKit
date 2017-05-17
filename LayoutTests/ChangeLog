@@ -1,3 +1,14 @@
+2017-05-17  Nan Wang  <n_wang@apple.com>
+
+        ASSERTION FAILED in WebCore::AccessibilityNodeObject::insertChild()
+        https://bugs.webkit.org/show_bug.cgi?id=171927
+        <rdar://problem/32109781>
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/insert-children-assert-expected.txt: Added.
+        * accessibility/insert-children-assert.html: Added.
+
 2017-05-17  Chris Dumez  <cdumez@apple.com>
 
         Import Notification tests from web-platform-tests
