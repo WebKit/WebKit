@@ -493,7 +493,7 @@ void TextIterator::advance()
         auto* renderer = m_node->renderer();
         if (!renderer) {
             m_handledNode = true;
-            m_handledChildren = !((m_behavior & TextIteratorTraversesFlatTree) && is<Element>(*m_node) && downcast<Element>(*m_node).hasDisplayContents());
+            m_handledChildren = !(is<Element>(*m_node) && downcast<Element>(*m_node).hasDisplayContents());
         } else {
             // handle current node according to its type
             if (!m_handledNode) {

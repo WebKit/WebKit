@@ -1,3 +1,19 @@
+2017-05-16  Zalan Bujtas  <zalan@apple.com>
+
+        Do not skip <slot> children when collecting content for innerText.
+        https://bugs.webkit.org/show_bug.cgi?id=172113
+        <rdar://problem/30362324>
+
+        Reviewed by Ryosuke Niwa and Brent Fulgham.
+
+        "display: contents" elements do not generate renderers but their children might.
+        This patch ensure that we don't skip them while collecting text content.  
+
+        Test: fast/text/inner-text-should-include-slot-subtree.html
+
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::advance):
+
 2017-05-16  Filip Pizlo  <fpizlo@apple.com>
 
         GCController::garbageCollectNowIfNotDoneRecently should request Async Full GCs

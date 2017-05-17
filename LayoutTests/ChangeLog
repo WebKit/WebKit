@@ -1,3 +1,14 @@
+2017-05-16  Zalan Bujtas  <zalan@apple.com>
+
+        Do not skip <slot> children when collecting content for innerText.
+        https://bugs.webkit.org/show_bug.cgi?id=172113
+        <rdar://problem/30362324>
+
+        Reviewed by Ryosuke Niwa and Brent Fulgham.
+
+        * fast/text/inner-text-should-include-slot-subtree-expected.txt: Added.
+        * fast/text/inner-text-should-include-slot-subtree.html: Added.
+
 2017-05-16  Jiewen Tan  <jiewen_tan@apple.com>
 
         Unreviewed, fix LayoutTests/plugins/navigator-plugin-crash.html

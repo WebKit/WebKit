@@ -2,6 +2,7 @@
 <html>
 <body>
 <div id="test-content">in-document <span id="host">unslotted <b id="slotted-element" slot="named-slot">slotted</b> unslotted</span> in-document<span id="user-agent-host"></span></div>
+<div id="display-none-content" style="display: none">inside-display-none</div>
 <script src="../../resources/js-test.js"></script>
 <script>
 
@@ -160,6 +161,8 @@ else {
 
     shouldBe("internals.countFindMatches('in-shadow in-document', ['DoNotTraverseFlatTree'])", "0");
     shouldBe("internals.countFindMatches('in-shadow in-document', [])", "0");
+
+    shouldBe("rangeText(internals.rangeOfString('inside-display-none', null, []))", "null");
 
     document.getElementById('console').style.display = null;
 }
