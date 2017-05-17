@@ -114,6 +114,7 @@ public:
 
     void clearMemoryCache();
     void pruneMemoryCacheToSize(unsigned size);
+    void destroyDecodedDataForAllImages();
     unsigned memoryCacheSize() const;
 
     unsigned imageFrameIndex(HTMLImageElement&);

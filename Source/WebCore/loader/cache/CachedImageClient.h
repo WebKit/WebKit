@@ -42,7 +42,9 @@ public:
     // If not null, the IntRect is the changed rect of the image.
     virtual void imageChanged(CachedImage*, const IntRect* = nullptr) { }
 
-    // Called when GIF animation progresses.
+    virtual bool canDestroyDecodedData() { return true; }
+
+    // Called when a new decoded frame for a large image is available or when an animated image is ready to advance to the next frame.
     virtual VisibleInViewportState imageFrameAvailable(CachedImage& image, ImageAnimatingState, const IntRect* changeRect) { imageChanged(&image, changeRect); return VisibleInViewportState::No; }
 
     virtual void didRemoveCachedImageClient(CachedImage&) { }

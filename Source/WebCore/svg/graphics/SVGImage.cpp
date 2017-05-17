@@ -321,7 +321,7 @@ void SVGImage::draw(GraphicsContext& context, const FloatRect& dstRect, const Fl
     stateSaver.restore();
 
     if (imageObserver())
-        imageObserver()->didDraw(this);
+        imageObserver()->didDraw(*this);
 }
 
 RenderBox* SVGImage::embeddedContentBox() const

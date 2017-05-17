@@ -104,7 +104,7 @@ public:
 
     void forEachResource(const std::function<void(CachedResource&)>&);
     void forEachSessionResource(SessionID, const std::function<void(CachedResource&)>&);
-    void destroyDecodedDataForAllImages();
+    WEBCORE_EXPORT void destroyDecodedDataForAllImages();
 
     // Sets the cache's memory capacities, in bytes. These will hold only approximately,
     // since the decoded cost of resources like scripts and stylesheets is not known.

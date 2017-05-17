@@ -127,20 +127,22 @@ private:
         explicit CachedImageObserver(CachedImage&);
 
         // ImageObserver API
-        URL sourceUrl() const override { return m_cachedImages[0]->url(); }
-        void decodedSizeChanged(const Image*, long long delta) final;
-        void didDraw(const Image*) final;
+        URL sourceUrl() const override { return !m_cachedImages.isEmpty() ? m_cachedImages[0]->url() : URL(); }
+        void decodedSizeChanged(const Image&, long long delta) final;
+        void didDraw(const Image&) final;
 
-        void imageFrameAvailable(const Image*, ImageAnimatingState, const IntRect* changeRect = nullptr) final;
-        void changedInRect(const Image*, const IntRect*) final;
+        bool canDestroyDecodedData(const Image&) final;
+        void imageFrameAvailable(const Image&, ImageAnimatingState, const IntRect* changeRect = nullptr) final;
+        void changedInRect(const Image&, const IntRect*) final;
 
         Vector<CachedImage*> m_cachedImages;
     };
 
-    void decodedSizeChanged(const Image*, long long delta);
-    void didDraw(const Image*);
-    void imageFrameAvailable(const Image*, ImageAnimatingState, const IntRect* changeRect = nullptr);
-    void changedInRect(const Image*, const IntRect*);
+    void decodedSizeChanged(const Image&, long long delta);
+    void didDraw(const Image&);
+    bool canDestroyDecodedData(const Image&);
+    void imageFrameAvailable(const Image&, ImageAnimatingState, const IntRect* changeRect = nullptr);
+    void changedInRect(const Image&, const IntRect*);
 
     void addIncrementalDataBuffer(SharedBuffer&);
 
