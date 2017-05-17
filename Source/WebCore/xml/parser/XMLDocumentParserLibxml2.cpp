@@ -1327,7 +1327,7 @@ void XMLDocumentParser::doEnd()
         XMLTreeViewer xmlTreeViewer(*document());
         xmlTreeViewer.transformDocumentToTreeView();
     } else if (m_sawXSLTransform) {
-        void* doc = xmlDocPtrForString(document()->cachedResourceLoader(), m_originalSourceForTransform.toString(), document()->url().string());
+        xmlDocPtr doc = xmlDocPtrForString(document()->cachedResourceLoader(), m_originalSourceForTransform.toString(), document()->url().string());
         document()->setTransformSource(std::make_unique<TransformSource>(doc));
 
         document()->setParsing(false); // Make the document think it's done, so it will apply XSL stylesheets.
@@ -1352,7 +1352,7 @@ static inline const char* nativeEndianUTF16Encoding()
     return BOMHighByte == 0xFF ? "UTF-16LE" : "UTF-16BE";
 }
 
-void* xmlDocPtrForString(CachedResourceLoader& cachedResourceLoader, const String& source, const String& url)
+xmlDocPtr xmlDocPtrForString(CachedResourceLoader& cachedResourceLoader, const String& source, const String& url)
 {
     if (source.isEmpty())
         return nullptr;

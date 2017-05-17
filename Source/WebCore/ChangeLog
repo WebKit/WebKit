@@ -1,3 +1,27 @@
+2017-05-16  David Kilzer  <ddkilzer@apple.com>
+
+        Remove C-style casts by using xmlDocPtr instead of void*
+        <https://webkit.org/b/172189>
+
+        Reviewed by Alex Christensen.
+
+        * dom/TransformSource.h: Fix whitespace indentation.
+        (typedef PlatformTransformSource): Use xmlDocPtr not void*.
+        * dom/TransformSourceLibxslt.cpp:
+        (WebCore::TransformSource::~TransformSource): Remove cast.
+        * xml/XSLStyleSheetLibxslt.cpp:
+        (WebCore::XSLStyleSheet::document): Remove cast.
+        * xml/XSLTProcessorLibxslt.cpp:
+        (WebCore::xmlDocPtrFromNode): Remove casts.
+        * xml/parser/XMLDocumentParser.h:
+        (WebCore::xmlDocPtrForString): Update declaration to return
+        xmlDocPtr not void*.
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::XMLDocumentParser::doEnd): Change type of local
+        variable from void* to xmlDocPtr.
+        (WebCore::xmlDocPtrForString): Update to return xmlDocPtr
+        not void*.
+
 2017-05-16  Sam Weinig  <sam@webkit.org>
 
         Bring Notification.idl up to spec

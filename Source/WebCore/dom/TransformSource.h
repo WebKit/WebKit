@@ -21,6 +21,7 @@
 
 #if ENABLE(XSLT)
 
+#include <libxml/tree.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
@@ -28,19 +29,19 @@
 
 namespace WebCore {
 
-    typedef void* PlatformTransformSource;
+typedef xmlDocPtr PlatformTransformSource;
 
-    class TransformSource {
-        WTF_MAKE_NONCOPYABLE(TransformSource); WTF_MAKE_FAST_ALLOCATED;
-    public:
-        explicit TransformSource(const PlatformTransformSource&);
-        ~TransformSource();
+class TransformSource {
+    WTF_MAKE_NONCOPYABLE(TransformSource); WTF_MAKE_FAST_ALLOCATED;
+public:
+    explicit TransformSource(const PlatformTransformSource&);
+    ~TransformSource();
 
-        PlatformTransformSource platformSource() const { return m_source; }
+    PlatformTransformSource platformSource() const { return m_source; }
 
-    private:
-        PlatformTransformSource m_source;
-    };
+private:
+    PlatformTransformSource m_source;
+};
 
 } // namespace WebCore
 

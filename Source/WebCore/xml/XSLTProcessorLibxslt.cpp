@@ -272,9 +272,9 @@ static inline xmlDocPtr xmlDocPtrFromNode(Node& sourceNode, bool& shouldDelete)
 
     xmlDocPtr sourceDoc = nullptr;
     if (sourceIsDocument && ownerDocument->transformSource())
-        sourceDoc = (xmlDocPtr)ownerDocument->transformSource()->platformSource();
+        sourceDoc = ownerDocument->transformSource()->platformSource();
     if (!sourceDoc) {
-        sourceDoc = (xmlDocPtr)xmlDocPtrForString(ownerDocument->cachedResourceLoader(), createMarkup(sourceNode),
+        sourceDoc = xmlDocPtrForString(ownerDocument->cachedResourceLoader(), createMarkup(sourceNode),
             sourceIsDocument ? ownerDocument->url().string() : String());
         shouldDelete = sourceDoc;
     }
