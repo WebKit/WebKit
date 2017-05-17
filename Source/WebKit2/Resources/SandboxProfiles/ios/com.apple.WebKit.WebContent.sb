@@ -111,6 +111,9 @@
 (allow mach-lookup
     (global-name "com.apple.coremedia.customurlloader.xpc"))
 
+(allow iokit-open
+    (iokit-user-client-class "IOHIDEventServiceFastPathUserClient")) ; <rdar://problem/28893177>
+
 ;; Media capture, microphone access
 (with-filter (extension "com.apple.webkit.microphone")
     (allow device-microphone))
