@@ -43,6 +43,9 @@ namespace WebCore {
 class RuntimeEnabledFeatures {
     WTF_MAKE_NONCOPYABLE(RuntimeEnabledFeatures);
 public:
+    void setDisplayContentsEnabled(bool isEnabled) { m_isDisplayContentsEnabled = isEnabled; }
+    bool displayContentsEnabled() const { return m_isDisplayContentsEnabled; }
+
     void setDOMIteratorEnabled(bool isEnabled) { m_isDOMIteratorEnabled = isEnabled; }
     bool domIteratorEnabled() const { return m_isDOMIteratorEnabled; }
 
@@ -226,6 +229,7 @@ private:
     bool m_isInteractiveFormValidationEnabled { false };
     bool m_isCredentialManagementEnabled { false };
 
+    bool m_isDisplayContentsEnabled { false };
     bool m_isDOMIteratorEnabled { true };
     bool m_isGeolocationEnabled { true };
     bool m_isShadowDOMEnabled { true };

@@ -359,6 +359,7 @@
     macro(WebAnimationsEnabled, webAnimationsEnabled, Bool, bool, false, "Web Animations", "Web Animations prototype") \
     macro(WebGL2Enabled, webGL2Enabled, Bool, bool, false, "WebGL 2.0", "WebGL 2 prototype") \
     macro(WebGPUEnabled, webGPUEnabled, Bool, bool, false, "WebGPU", "WebGPU prototype") \
+    macro(DisplayContentsEnabled, displayContentsEnabled, Bool, bool, false, "display: contents", "Enable CSS display: contents support") \
     \
 
 #if PLATFORM(COCOA)

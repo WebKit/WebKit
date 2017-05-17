@@ -1,3 +1,15 @@
+2017-05-17  Emilio Cobos Álvarez  <ecobos@igalia.com>
+
+        Add a RuntimeEnabledFeature for display: contents, defaulted to false.
+        https://bugs.webkit.org/show_bug.cgi?id=171984
+
+        Reviewed by Antti Koivisto.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (enableExperimentalFeatures):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetPreferencesToConsistentValues):
+
 2017-05-16  Timothy Horton  <timothy_horton@apple.com>
 
         Fix the build

@@ -666,6 +666,7 @@ public:
 #if ENABLE(INTERSECTION_OBSERVER)
         @NO, WebKitIntersectionObserverEnabledPreferenceKey,
 #endif
+        @NO, WebKitDisplayContentsEnabledPreferenceKey,
         @NO, WebKitUserTimingEnabledPreferenceKey,
         @NO, WebKitResourceTimingEnabledPreferenceKey,
         @NO, WebKitCredentialManagementEnabledPreferenceKey,
@@ -3031,6 +3032,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setIntersectionObserverEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitIntersectionObserverEnabledPreferenceKey];
+}
+
+- (BOOL)displayContentsEnabled
+{
+    return [self _boolValueForKey:WebKitDisplayContentsEnabledPreferenceKey];
+}
+
+- (void)setDisplayContentsEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitDisplayContentsEnabledPreferenceKey];
 }
 
 - (BOOL)userTimingEnabled

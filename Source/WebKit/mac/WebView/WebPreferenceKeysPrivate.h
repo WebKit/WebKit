@@ -234,5 +234,6 @@
 #define WebKitMediaCaptureRequiresSecureConnectionPreferenceKey @"WebKitMediaCaptureRequiresSecureConnection"
 #define WebKitAttachmentElementEnabledPreferenceKey @"WebKitAttachmentElementEnabled"
 #define WebKitIntersectionObserverEnabledPreferenceKey @"WebKitIntersectionObserverEnabled"
+#define WebKitDisplayContentsEnabledPreferenceKey @"WebKitDisplayContentsEnabled"
 #define WebKitUserTimingEnabledPreferenceKey @"WebKitUserTimingEnabled"
 #define WebKitResourceTimingEnabledPreferenceKey @"WebKitResourceTimingEnabled"

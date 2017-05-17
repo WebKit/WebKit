@@ -1,3 +1,20 @@
+2017-05-17  Emilio Cobos Álvarez  <ecobos@igalia.com>
+
+        Add a RuntimeEnabledFeature for display: contents, defaulted to false.
+        https://bugs.webkit.org/show_bug.cgi?id=171984
+
+        Reviewed by Antti Koivisto.
+
+        The "defaulted to false" is not only because there are spec issues,
+        but because I ran the WPT suite, and there was a fair amount of
+        crashes and messed render trees.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::adjustRenderStyle):
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setDisplayContentsEnabled):
+        (WebCore::RuntimeEnabledFeatures::displayContentsEnabled):
+
 2017-05-17  Antti Koivisto  <antti@apple.com>
 
         Regression (198943): <marquee> shouldn't wrap text

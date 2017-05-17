@@ -51,9 +51,9 @@ FAIL non-display-none child of svg ("<div id='target'>abc") assert_equals: expec
 PASS display:none child of svg ("<div style='display:none' id='target'>abc") 
 PASS child of display:none child of svg ("<div style='display:none'><div id='target'>abc") 
 PASS display:contents container ("<div style='display:contents'>abc") 
-PASS display:contents container ("<div><div style='display:contents'>abc") 
-PASS display:contents rendered ("<div>123<span style='display:contents'>abc") 
-PASS display:contents not processed via textContent ("<div style='display:contents'>   ") 
+FAIL display:contents container ("<div><div style='display:contents'>abc") assert_equals: expected "abc" but got ""
+FAIL display:contents rendered ("<div>123<span style='display:contents'>abc") assert_equals: expected "123abc" but got "123"
+FAIL display:contents not processed via textContent ("<div style='display:contents'>   ") assert_equals: expected "" but got "   "
 PASS display:contents not processed via textContent ("<div><div style='display:contents'>   ") 
 PASS visibility:hidden container ("<div style='visibility:hidden'>abc") 
 PASS visibility:hidden child not rendered ("<div>123<span style='visibility:hidden'>abc") 
