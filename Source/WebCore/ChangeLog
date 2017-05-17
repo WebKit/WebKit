@@ -1,3 +1,33 @@
+2017-05-17  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        When the image decoding thread makes a callOnMainThread(), ensure all the objects it needs are protected
+        https://bugs.webkit.org/show_bug.cgi?id=171614
+
+        Reviewed by David Kilzer.
+
+        The asynchronous image decoding was designed to not block the main thread if
+        the image is deleted. To achieve that we allow decoding the current frame
+        even if it is not going to be used after closing the decoding queue. We 
+        protect all the objects which the decoding thread uses. But when a frame
+        finishes decoding the native image frame is cached on the main thread. Not
+        all of the objects are protected when the callOnMainThread() is dispatched.
+        The ImageFrameCache and the ImageDecoder objects are not protected.
+
+        This might lead to two kinds of crashes:
+        1. A segfault inside the ImageDecoder trying to access one of its member
+        2. A segfault inside the ImageFrameCache trying to access one of its frames
+
+        The fix is to protect the ImageFrameCache and the ImageDecoder when the
+        decoding thread makes a callOnMainThread(). Also switch all the pointers
+        the decoding threads protect to be ThreadSafeRefCounted.
+
+        * platform/graphics/ImageFrameCache.cpp:
+        (WebCore::ImageFrameCache::startAsyncDecodingQueue):
+        * platform/graphics/ImageFrameCache.h:
+        * platform/graphics/cg/ImageDecoderCG.h:
+        * platform/graphics/win/ImageDecoderDirect2D.h:
+        * platform/image-decoders/ImageDecoder.h:
+
 2017-05-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         A URL type is vended for a non-URL plain text string when starting data interaction
