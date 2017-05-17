@@ -122,7 +122,7 @@ void PageVisibilityStateWithWindowChanges::runTest(View view)
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
     NSWindowStyleMask windowStyle = NSWindowStyleMaskBorderless | NSWindowStyleMaskMiniaturizable;
 #else
-    NSWindowStyleMask windowStyle = NSBorderlessWindowMask | NSMiniaturizableWindowMask;
+    NSUInteger windowStyle = NSBorderlessWindowMask | NSMiniaturizableWindowMask;
 #endif
 
     // Add it to a non-visible window. PageVisibility should still be "prerender".
