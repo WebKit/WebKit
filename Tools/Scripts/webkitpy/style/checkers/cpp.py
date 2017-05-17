@@ -3191,6 +3191,10 @@ def check_language(filename, clean_lines, line_number, file_extension, include_s
         error(line_number, 'runtime/printf', 1,
               'sscanf can be ok, but is slow and can overflow buffers.')
 
+    if search(r'\bmktemp\b', line):
+        error(line_number, 'security/temp_file', 5,
+              'Never use mktemp.  Use mkstemp or mkostemp instead.')
+
     # Check for suspicious usage of "if" like
     # } if (a == b) {
     if search(r'\}\s*if\s*\(', line):
@@ -3927,6 +3931,7 @@ class CppChecker(object):
         'runtime/virtual',
         'runtime/wtf_move',
         'security/printf',
+        'security/temp_file',
         'whitespace/blank_line',
         'whitespace/braces',
         'whitespace/brackets',

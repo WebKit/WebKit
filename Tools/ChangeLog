@@ -1,3 +1,16 @@
+2017-05-17  David Kilzer  <ddkilzer@apple.com>
+
+        BlobDataFileReference::generateReplacementFile() should use mkstemp()
+        <https://webkit.org/b/172192>
+
+        Reviewed by Brent Fulgham.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_language): Add check for mktemp.
+        (CppChecker): Add 'security/temp_file' category.
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (CppStyleTest.test_insecure_temp_file): Add test.
+
 2017-05-17  Devin Rousso  <drousso@apple.com>
 
         Unreviewed, change my email.

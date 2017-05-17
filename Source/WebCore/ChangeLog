@@ -1,3 +1,14 @@
+2017-05-17  David Kilzer  <ddkilzer@apple.com>
+
+        BlobDataFileReference::generateReplacementFile() should use mkstemp()
+        <https://webkit.org/b/172192>
+
+        Reviewed by Brent Fulgham.
+
+        * platform/network/mac/BlobDataFileReferenceMac.mm:
+        (WebCore::BlobDataFileReference::generateReplacementFile): Use
+        mkstemp().
+
 2017-05-17  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r216974.
