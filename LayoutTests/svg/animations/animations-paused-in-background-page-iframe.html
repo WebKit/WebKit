@@ -8,17 +8,15 @@ jsTestIsAsync = true;
 
 function frameLoadedInBackground()
 {
-    setTimeout(function() {
-        testImage = frame.contentDocument.getElementById("testImage");
-        shouldBeFalse("internals.isImageAnimating(testImage)");
-
+    testImage = frame.contentDocument.getElementById("testImage");
+    shouldBecomeEqual("internals.isImageAnimating(testImage)", "false", function() {
         document.onvisibilitychange = null;
         debug("Setting page visibility to visible");
         if (window.testRunner)
             testRunner.setPageVisibility('visible');
 
         shouldBecomeEqual("internals.isImageAnimating(testImage)", "true", finishJSTest);
-    }, 30);
+    });
 }
 
 window.onload = function() {

@@ -1,3 +1,15 @@
+2017-05-16  Chris Dumez  <cdumez@apple.com>
+
+        [macOS Debug wk2] Layout test svg/animations/animations-paused-in-background-page-iframe.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=172183
+
+        Reviewed by Andreas Kling.
+
+        Fix test flakiness by using shouldBecome() instead of relying on a 30ms timer.
+
+        * svg/animations/animations-paused-in-background-page-iframe-expected.txt:
+        * svg/animations/animations-paused-in-background-page-iframe.html:
+
 2017-05-16  Sam Weinig  <sam@webkit.org>
 
         Bring Notification.idl up to spec
