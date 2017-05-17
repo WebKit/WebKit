@@ -1,3 +1,68 @@
+2017-05-17  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Grandfather domains for existing data records
+        https://bugs.webkit.org/show_bug.cgi?id=172155
+        <rdar://problem/24913532>
+
+        Reviewed by Alex Christensen.
+
+        When WebResourceLoadStatisticsStore starts fresh it needs
+        to scan existing website data records and 'grandfather' them to
+        allow ample time to capture user interaction.
+
+        * Shared/WebPreferencesDefinitions.h:
+        * UIProcess/API/C/WKResourceLoadStatisticsManager.cpp:
+        (WKResourceLoadStatisticsManagerSetGrandfathered):
+        (WKResourceLoadStatisticsManagerIsGrandfathered):
+        (WKResourceLoadStatisticsManagerSetMinimumTimeBetweeenDataRecordsRemoval):
+        (WKResourceLoadStatisticsManagerSetGrandfatheringTime):
+            Functions for testing and configuration.
+        * UIProcess/API/C/WKResourceLoadStatisticsManager.h:
+        * UIProcess/Cocoa/WebResourceLoadStatisticsManagerCocoa.mm:
+        (WebKit::WebResourceLoadStatisticsManager::registerUserDefaultsIfNeeded):
+            Added grandfathering configuration.
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::topPrivatelyControlledDomainsWithWebiteData):
+            New function to get all top privately controlled domains that
+            have website data.
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebResourceLoadStatisticsManager.cpp:
+        (WebKit::WebResourceLoadStatisticsManager::setGrandfathered):
+        (WebKit::WebResourceLoadStatisticsManager::isGrandfathered):
+        (WebKit::WebResourceLoadStatisticsManager::setMinimumTimeBetweeenDataRecordsRemoval):
+        (WebKit::WebResourceLoadStatisticsManager::setGrandfatheringTime):
+        (WebKit::WebResourceLoadStatisticsManager::resetToConsistentState):
+            Functions for testing and configuration.
+            WebResourceLoadStatisticsManager::setMinimumTimeBetweeenDataRecordsRemoval() changed
+            as a result of WebResourceLoadStatisticsStore::setMinimumTimeBetweeenDataRecordsRemoval()
+            moving to WebCore::ResourceLoadObserver::setMinimumTimeBetweeenDataRecordsRemoval().
+        * UIProcess/WebResourceLoadStatisticsManager.h:
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::initializeDataTypesToRemove):
+        (WebKit::WebResourceLoadStatisticsStore::removeDataRecords):
+            Moved handling of pending removal into WebCore::ResourceLoadStatisticsStore since
+            that's where grandfathering happens.
+        (WebKit::WebResourceLoadStatisticsStore::registerSharedResourceLoadObserver):
+            Moved registration of write persistent store callback and reading of Cocoa defaults to
+            WebResourceLoadStatisticsStore::registerSharedResourceLoadObserver without parameters
+            so they are called for platforms without CFNETWORK_STORAGE_PARTITIONING.
+            Now includes registering WebResourceLoadStatisticsStore::grandfatherExistingWebsiteData()
+            as handler for grandfathering since it involves reading of the website data store.
+        (WebKit::WebResourceLoadStatisticsStore::grandfatherExistingWebsiteData):
+        (WebKit::WebResourceLoadStatisticsStore::readDataFromDiskIfNeeded):
+        (WebKit::WebResourceLoadStatisticsStore::setMinimumTimeBetweeenDataRecordsRemoval): Deleted.
+            Now happens in WebCore::ResourceLoadObserver::setMinimumTimeBetweeenDataRecordsRemoval().
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+        * UIProcess/WebsiteData/WebsiteDataRecord.cpp:
+        (WebKit::WebsiteDataRecord::topPrivatelyControlledDomain):
+            New function to ask a WebsiteDataRecord for its top privately controlled domain.
+        * UIProcess/WebsiteData/WebsiteDataRecord.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::topPrivatelyControlledDomainsWithWebsiteData):
+            New function to get all top privately controlled domains that
+            have website data.
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2017-05-17  Brent Fulgham  <bfulgham@apple.com>
 
         [WK2][iOS] Allow access to additional IOHID user class

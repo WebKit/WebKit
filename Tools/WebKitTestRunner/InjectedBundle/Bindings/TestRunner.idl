@@ -251,10 +251,13 @@ interface TestRunner {
 
     // Resource Load Statistics
     void installStatisticsDidModifyDataRecordsCallback(object callback);
+    void installStatisticsDidScanDataRecordsCallback(object callback);
     void setStatisticsPrevalentResource(DOMString hostName, boolean value);
     boolean isStatisticsPrevalentResource(DOMString hostName);
     void setStatisticsHasHadUserInteraction(DOMString hostName, boolean value);
     boolean isStatisticsHasHadUserInteraction(DOMString hostName);
+    void setStatisticsGrandfathered(DOMString hostName, boolean value);
+    boolean isStatisticsGrandfathered(DOMString hostName);
     void setStatisticsSubframeUnderTopFrameOrigin(DOMString hostName, DOMString topFrameHostName);
     void setStatisticsSubresourceUnderTopFrameOrigin(DOMString hostName, DOMString topFrameHostName);
     void setStatisticsSubresourceUniqueRedirectTo(DOMString hostName, DOMString hostNameRedirectedTo);
@@ -266,6 +269,7 @@ interface TestRunner {
     void setStatisticsNotifyPagesWhenDataRecordsWereScanned(boolean value);
     void setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(boolean value);
     void setStatisticsMinimumTimeBetweeenDataRecordsRemoval(double seconds);
+    void setStatisticsGrandfatheringTime(double seconds);
     void statisticsClearInMemoryAndPersistentStore();
     void statisticsClearInMemoryAndPersistentStoreModifiedSinceHours(unsigned long hours);
     void statisticsResetToConsistentState();

@@ -1,3 +1,31 @@
+2017-05-17  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Grandfather domains for existing data records
+        https://bugs.webkit.org/show_bug.cgi?id=172155
+        <rdar://problem/24913532>
+
+        Reviewed by Alex Christensen.
+
+        Adds test infrastructure needed for the added functionality.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::didReceiveMessageToPage):
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setStatisticsGrandfathered):
+        (WTR::TestRunner::isStatisticsGrandfathered):
+        (WTR::TestRunner::installStatisticsDidScanDataRecordsCallback):
+        (WTR::TestRunner::statisticsDidScanDataRecordsCallback):
+        (WTR::TestRunner::setStatisticsGrandfatheringTime):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::setStatisticsGrandfathered):
+        (WTR::TestController::isStatisticsGrandfathered):
+        (WTR::TestController::setStatisticsGrandfatheringTime):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+
 2017-05-17  Alex Christensen  <achristensen@webkit.org>
 
         Fix ios-simulator API test after r216977

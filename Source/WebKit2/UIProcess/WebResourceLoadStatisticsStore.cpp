@@ -36,7 +36,6 @@
 #include <WebCore/KeyedCoding.h>
 #include <WebCore/ResourceLoadObserver.h>
 #include <WebCore/ResourceLoadStatistics.h>
-#include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
 #include <wtf/MathExtras.h>
 #include <wtf/RunLoop.h>
@@ -46,7 +45,6 @@ using namespace WebCore;
 
 namespace WebKit {
 
-static auto minimumTimeBetweeenDataRecordsRemoval = 60;
 static OptionSet<WebKit::WebsiteDataType> dataTypesToRemove;
 static auto notifyPages = false;
 static auto shouldClassifyResourcesBeforeDataRecordsRemoval = true;
@@ -77,12 +75,6 @@ void WebResourceLoadStatisticsStore::setShouldClassifyResourcesBeforeDataRecords
     shouldClassifyResourcesBeforeDataRecordsRemoval = value;
 }
 
-void WebResourceLoadStatisticsStore::setMinimumTimeBetweeenDataRecordsRemoval(double seconds)
-{
-    if (seconds >= 0)
-        minimumTimeBetweeenDataRecordsRemoval = seconds;
-}
-
 void WebResourceLoadStatisticsStore::classifyResource(ResourceLoadStatistics& resourceStatistic)
 {
     if (!resourceStatistic.isPrevalentResource
@@ -90,46 +82,44 @@ void WebResourceLoadStatisticsStore::classifyResource(ResourceLoadStatistics& re
         resourceStatistic.isPrevalentResource = true;
 }
 
+static inline void initializeDataTypesToRemove()
+{
+    dataTypesToRemove |= WebsiteDataType::Cookies;
+    dataTypesToRemove |= WebsiteDataType::OfflineWebApplicationCache;
+    dataTypesToRemove |= WebsiteDataType::SessionStorage;
+    dataTypesToRemove |= WebsiteDataType::LocalStorage;
+    dataTypesToRemove |= WebsiteDataType::WebSQLDatabases;
+    dataTypesToRemove |= WebsiteDataType::IndexedDBDatabases;
+    dataTypesToRemove |= WebsiteDataType::MediaKeys;
+    dataTypesToRemove |= WebsiteDataType::HSTSCache;
+    dataTypesToRemove |= WebsiteDataType::SearchFieldRecentSearches;
+#if ENABLE(NETSCAPE_PLUGIN_API)
+    dataTypesToRemove |= WebsiteDataType::PlugInData;
+#endif
+#if ENABLE(MEDIA_STREAM)
+    dataTypesToRemove |= WebsiteDataType::MediaDeviceIdentifier;
+#endif
+}
+    
 void WebResourceLoadStatisticsStore::removeDataRecords()
 {
-    if (m_dataRecordsRemovalPending)
+    if (!coreStore().shouldRemoveDataRecords())
         return;
 
-    double now = currentTime();
-    if (m_lastTimeDataRecordsWereRemoved
-        && now < m_lastTimeDataRecordsWereRemoved + minimumTimeBetweeenDataRecordsRemoval)
-        return;
-
-    Vector<String> prevalentResourceDomains = coreStore().prevalentResourceDomainsWithoutUserInteraction();
+    Vector<String> prevalentResourceDomains = coreStore().topPrivatelyControlledDomainsToRemoveWebsiteDataFor();
     if (!prevalentResourceDomains.size())
         return;
     
-    m_dataRecordsRemovalPending = true;
-    m_lastTimeDataRecordsWereRemoved = now;
+    coreStore().dataRecordsBeingRemoved();
 
-    if (dataTypesToRemove.isEmpty()) {
-        dataTypesToRemove |= WebsiteDataType::Cookies;
-        dataTypesToRemove |= WebsiteDataType::OfflineWebApplicationCache;
-        dataTypesToRemove |= WebsiteDataType::SessionStorage;
-        dataTypesToRemove |= WebsiteDataType::LocalStorage;
-        dataTypesToRemove |= WebsiteDataType::WebSQLDatabases;
-        dataTypesToRemove |= WebsiteDataType::IndexedDBDatabases;
-        dataTypesToRemove |= WebsiteDataType::MediaKeys;
-        dataTypesToRemove |= WebsiteDataType::HSTSCache;
-        dataTypesToRemove |= WebsiteDataType::SearchFieldRecentSearches;
-#if ENABLE(NETSCAPE_PLUGIN_API)
-        dataTypesToRemove |= WebsiteDataType::PlugInData;
-#endif
-#if ENABLE(MEDIA_STREAM)
-        dataTypesToRemove |= WebsiteDataType::MediaDeviceIdentifier;
-#endif
-    }
+    if (dataTypesToRemove.isEmpty())
+        initializeDataTypesToRemove();
 
     // Switch to the main thread to get the default website data store
     RunLoop::main().dispatch([prevalentResourceDomains = WTFMove(prevalentResourceDomains), this] () mutable {
         WebProcessProxy::deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPersistentDataStores(dataTypesToRemove, WTFMove(prevalentResourceDomains), notifyPages, [this](Vector<String> domainsWithDeletedWebsiteData) mutable {
             this->coreStore().updateStatisticsForRemovedDataRecords(domainsWithDeletedWebsiteData);
-            m_dataRecordsRemovalPending = false;
+            this->coreStore().dataRecordsWereRemoved();
         });
     });
 }
@@ -178,19 +168,35 @@ void WebResourceLoadStatisticsStore::registerSharedResourceLoadObserver()
             return;
         processStatisticsAndDataRecords();
     });
+    m_resourceLoadStatisticsStore->setWritePersistentStoreCallback([this]() {
+        writeStoreToDisk();
+    });
+    m_resourceLoadStatisticsStore->setGrandfatherExistingWebsiteDataCallback([this]() {
+        grandfatherExistingWebsiteData();
+    });
+#if PLATFORM(COCOA)
+    WebResourceLoadStatisticsManager::registerUserDefaultsIfNeeded();
+#endif
 }
     
 void WebResourceLoadStatisticsStore::registerSharedResourceLoadObserver(std::function<void(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, bool clearFirst)>&& shouldPartitionCookiesForDomainsHandler)
 {
     registerSharedResourceLoadObserver();
-#if PLATFORM(COCOA)
-    WebResourceLoadStatisticsManager::registerUserDefaultsIfNeeded();
-#endif
     m_resourceLoadStatisticsStore->setShouldPartitionCookiesCallback([shouldPartitionCookiesForDomainsHandler = WTFMove(shouldPartitionCookiesForDomainsHandler)] (const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, bool clearFirst) {
         shouldPartitionCookiesForDomainsHandler(domainsToRemove, domainsToAdd, clearFirst);
     });
-    m_resourceLoadStatisticsStore->setWritePersistentStoreCallback([this]() {
-        writeStoreToDisk();
+}
+
+void WebResourceLoadStatisticsStore::grandfatherExistingWebsiteData()
+{
+    if (dataTypesToRemove.isEmpty())
+        initializeDataTypesToRemove();
+    
+    // Switch to the main thread to get the default website data store
+    RunLoop::main().dispatch([this] () mutable {
+        WebProcessProxy::topPrivatelyControlledDomainsWithWebiteData(dataTypesToRemove, notifyPages, [this](HashSet<String>&& topPrivatelyControlledDomainsWithWebsiteData) mutable {
+            this->coreStore().handleFreshStartWithEmptyOrNoStore(WTFMove(topPrivatelyControlledDomainsWithWebsiteData));
+        });
     });
 }
 
@@ -203,10 +209,15 @@ void WebResourceLoadStatisticsStore::readDataFromDiskIfNeeded()
         coreStore().clearInMemory();
 
         auto decoder = createDecoderFromDisk("full_browsing_session");
-        if (!decoder)
+        if (!decoder) {
+            grandfatherExistingWebsiteData();
             return;
+        }
 
         coreStore().readDataFromDecoder(*decoder);
+
+        if (coreStore().isEmpty())
+            grandfatherExistingWebsiteData();
     });
 }
 

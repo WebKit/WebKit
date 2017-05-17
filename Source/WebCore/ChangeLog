@@ -1,3 +1,48 @@
+2017-05-17  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Grandfather domains for existing data records
+        https://bugs.webkit.org/show_bug.cgi?id=172155
+        <rdar://problem/24913532>
+
+        Reviewed by Alex Christensen.
+
+        Test: http/tests/loading/resourceLoadStatistics/grandfathering.html
+
+        * loader/ResourceLoadObserver.cpp:
+        (WebCore::ResourceLoadObserver::setGrandfathered):
+        (WebCore::ResourceLoadObserver::isGrandfathered):
+        (WebCore::ResourceLoadObserver::setMinimumTimeBetweeenDataRecordsRemoval):
+        (WebCore::ResourceLoadObserver::setGrandfatheringTime):
+            Functions for testing and configuration.
+            ResourceLoadObserver::setMinimumTimeBetweeenDataRecordsRemoval() changed as a result of moving
+            WebKit::WebResourceLoadStatisticsStore::setMinimumTimeBetweeenDataRecordsRemoval() here.
+        * loader/ResourceLoadObserver.h:
+        * loader/ResourceLoadStatisticsStore.cpp:
+        (WebCore::ResourceLoadStatisticsStore::createEncoderFromData):
+        (WebCore::ResourceLoadStatisticsStore::readDataFromDecoder):
+            Now contains endOfGrandfatheringTimestamp.
+        (WebCore::ResourceLoadStatisticsStore::clearInMemoryAndPersistent):
+            Now makes a call to m_grandfatherExistingWebsiteDataHandler().
+        (WebCore::ResourceLoadStatisticsStore::setGrandfatherExistingWebsiteDataCallback):
+        (WebCore::ResourceLoadStatisticsStore::setMinimumTimeBetweeenDataRecordsRemoval):
+            Changed as a result of moving
+            WebKit::WebResourceLoadStatisticsStore::setMinimumTimeBetweeenDataRecordsRemoval() here.
+        (WebCore::ResourceLoadStatisticsStore::setGrandfatheringTime):
+        (WebCore::ResourceLoadStatisticsStore::topPrivatelyControlledDomainsToRemoveWebsiteDataFor):
+            Renamed since it now also takes grandfathering into account.
+        (WebCore::ResourceLoadStatisticsStore::updateStatisticsForRemovedDataRecords):
+            Fixed typo in local variable name.
+        (WebCore::ResourceLoadStatisticsStore::handleFreshStartWithEmptyOrNoStore):
+        (WebCore::ResourceLoadStatisticsStore::shouldRemoveDataRecords):
+            Convenience function added.
+        (WebCore::ResourceLoadStatisticsStore::dataRecordsBeingRemoved):
+            Convenience function added.
+        (WebCore::ResourceLoadStatisticsStore::dataRecordsWereRemoved):
+            Convenience function added.
+        (WebCore::ResourceLoadStatisticsStore::prevalentResourceDomainsWithoutUserInteraction): Deleted.
+            Replaced by ResourceLoadStatisticsStore::topPrivatelyControlledDomainsToRemoveWebsiteDataFor().
+        * loader/ResourceLoadStatisticsStore.h:
+
 2017-05-17  Zalan Bujtas  <zalan@apple.com>
 
         Debug ASSERT: WebCore::RenderImageResource::shutdown
