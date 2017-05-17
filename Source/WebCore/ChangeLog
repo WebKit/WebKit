@@ -1,94 +1,98 @@
 2017-05-17  Jason Marcell  <jmarcell@apple.com>
 
-        Cherry-pick r216901. rdar://problem/31469922
+        Revert r216784. rdar://problem/32249274
 
-    2017-05-15  Said Abou-Hallawa  <sabouhallawa@apple.com>
+    2017-05-17  Jason Marcell  <jmarcell@apple.com>
 
-            Do not delete asynchronously decoded frames for large images if their clients are in the viewport
-            https://bugs.webkit.org/show_bug.cgi?id=170640
+            Cherry-pick r216901. rdar://problem/31469922
 
-            Reviewed by Simon Fraser.
+        2017-05-15  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
-            The image flickering problem happens when a large image is visible in the
-            view port and for some reason, the decoded frame gets destroyed. When this
-            image is repainted, BitmapImage::draw() does not find a valid decoded frame
-            for that image. It then requests an async decoding for the image and just
-            draws nothing in the image rectangle. Drawing no content between two drawing
-            phases in which the image is drawn causes the unwanted flickering.
+                Do not delete asynchronously decoded frames for large images if their clients are in the viewport
+                https://bugs.webkit.org/show_bug.cgi?id=170640
 
-            To fix this issue we need to protect the decoded frames of all the images
-            in the view port from being destroyed. When BitmapImage::destroyDecodedData()
-            is called, it is going to check, through the ImageObserver, whether any
-            of its clients is visible. And if so, the current decoded frame won't be
-            destroyed.
+                Reviewed by Simon Fraser.
 
-            Tests: Modifying existing tests.
+                The image flickering problem happens when a large image is visible in the
+                view port and for some reason, the decoded frame gets destroyed. When this
+                image is repainted, BitmapImage::draw() does not find a valid decoded frame
+                for that image. It then requests an async decoding for the image and just
+                draws nothing in the image rectangle. Drawing no content between two drawing
+                phases in which the image is drawn causes the unwanted flickering.
 
-            * loader/cache/CachedImage.cpp:
-            (WebCore::CachedImage::CachedImageObserver::decodedSizeChanged):
-            (WebCore::CachedImage::CachedImageObserver::didDraw):
-            (WebCore::CachedImage::CachedImageObserver::canDestroyDecodedData):
-            (WebCore::CachedImage::CachedImageObserver::imageFrameAvailable):
-            (WebCore::CachedImage::CachedImageObserver::changedInRect):
-            (WebCore::CachedImage::decodedSizeChanged):
-            (WebCore::CachedImage::didDraw):
-            (WebCore::CachedImage::canDestroyDecodedData): Finds out whether it's okay
-            to discard the image decoded data or not.
-            (WebCore::CachedImage::imageFrameAvailable):
-            (WebCore::CachedImage::changedInRect):
-            * loader/cache/CachedImage.h:
-            * loader/cache/CachedImageClient.h:
-            (WebCore::CachedImageClient::canDestroyDecodedData):
-            * loader/cache/MemoryCache.cpp:
-            (WebCore::MemoryCache::destroyDecodedDataForAllImages): This function is
-            currently not used. Use in the internal destroyDecodedDataForAllImages()
-            but unlike what CachedImage::destroyDecodedData() does, make it destroy
-            the decoded frames without deleting the image itself.
-            * loader/cache/MemoryCache.h:
-            * platform/graphics/BitmapImage.cpp:
-            (WebCore::BitmapImage::destroyDecodedData):
-            (WebCore::BitmapImage::draw):
-            (WebCore::BitmapImage::canDestroyCurrentFrameDecodedData):
-            (WebCore::BitmapImage::advanceAnimation):
-            (WebCore::BitmapImage::internalAdvanceAnimation):
-            (WebCore::BitmapImage::imageFrameAvailableAtIndex):
-            * platform/graphics/BitmapImage.h:
-            * platform/graphics/GraphicsContext3D.cpp:
-            (WebCore::GraphicsContext3D::packImageData):
-            * platform/graphics/ImageFrameCache.cpp:
-            (WebCore::ImageFrameCache::decodedSizeChanged):
-            (ImageFrameCache::cacheAsyncFrameNativeImageAtIndex): The assertion in this
-            function is wrong. frameIsCompleteAtIndex() can be false when the an image
-            decoding is requested but can be true when the decoding finishes.
-            * platform/graphics/ImageObserver.h:
-            * platform/graphics/cairo/ImageCairo.cpp:
-            (WebCore::Image::drawPattern):
-            * platform/graphics/cg/ImageCG.cpp:
-            (WebCore::Image::drawPattern):
-            * platform/graphics/cg/ImageDecoderCG.cpp:
-            (WebCore::ImageDecoder::frameIsCompleteAtIndex):
-            * platform/graphics/cg/PDFDocumentImage.cpp:
-            (WebCore::PDFDocumentImage::decodedSizeChanged):
-            (WebCore::PDFDocumentImage::draw):
-            * platform/graphics/texmap/TextureMapperTiledBackingStore.cpp:
-            (WebCore::TextureMapperTiledBackingStore::updateContentsFromImageIfNeeded):
-            * platform/graphics/win/ImageDirect2D.cpp:
-            (WebCore::Image::drawPattern):
-            * rendering/RenderElement.cpp:
-            (WebCore::RenderElement::isVisibleInDocumentRect):
-            (WebCore::RenderElement::isVisibleInViewport):
-            (WebCore::RenderElement::imageFrameAvailable):
-            (WebCore::RenderElement::repaintForPausedImageAnimationsIfNeeded):
-            (WebCore::RenderElement::shouldRepaintInVisibleRect): Deleted. Function
-            is renamed to isVisibleInViewport() for better readability.
-            * rendering/RenderElement.h:
-            * svg/graphics/SVGImage.cpp:
-            (WebCore::SVGImage::draw):
-            * svg/graphics/SVGImageClients.h:
-            * testing/Internals.cpp:
-            (WebCore::Internals::destroyDecodedDataForAllImages):
-            * testing/Internals.h:
-            * testing/Internals.idl:
+                To fix this issue we need to protect the decoded frames of all the images
+                in the view port from being destroyed. When BitmapImage::destroyDecodedData()
+                is called, it is going to check, through the ImageObserver, whether any
+                of its clients is visible. And if so, the current decoded frame won't be
+                destroyed.
+
+                Tests: Modifying existing tests.
+
+                * loader/cache/CachedImage.cpp:
+                (WebCore::CachedImage::CachedImageObserver::decodedSizeChanged):
+                (WebCore::CachedImage::CachedImageObserver::didDraw):
+                (WebCore::CachedImage::CachedImageObserver::canDestroyDecodedData):
+                (WebCore::CachedImage::CachedImageObserver::imageFrameAvailable):
+                (WebCore::CachedImage::CachedImageObserver::changedInRect):
+                (WebCore::CachedImage::decodedSizeChanged):
+                (WebCore::CachedImage::didDraw):
+                (WebCore::CachedImage::canDestroyDecodedData): Finds out whether it's okay
+                to discard the image decoded data or not.
+                (WebCore::CachedImage::imageFrameAvailable):
+                (WebCore::CachedImage::changedInRect):
+                * loader/cache/CachedImage.h:
+                * loader/cache/CachedImageClient.h:
+                (WebCore::CachedImageClient::canDestroyDecodedData):
+                * loader/cache/MemoryCache.cpp:
+                (WebCore::MemoryCache::destroyDecodedDataForAllImages): This function is
+                currently not used. Use in the internal destroyDecodedDataForAllImages()
+                but unlike what CachedImage::destroyDecodedData() does, make it destroy
+                the decoded frames without deleting the image itself.
+                * loader/cache/MemoryCache.h:
+                * platform/graphics/BitmapImage.cpp:
+                (WebCore::BitmapImage::destroyDecodedData):
+                (WebCore::BitmapImage::draw):
+                (WebCore::BitmapImage::canDestroyCurrentFrameDecodedData):
+                (WebCore::BitmapImage::advanceAnimation):
+                (WebCore::BitmapImage::internalAdvanceAnimation):
+                (WebCore::BitmapImage::imageFrameAvailableAtIndex):
+                * platform/graphics/BitmapImage.h:
+                * platform/graphics/GraphicsContext3D.cpp:
+                (WebCore::GraphicsContext3D::packImageData):
+                * platform/graphics/ImageFrameCache.cpp:
+                (WebCore::ImageFrameCache::decodedSizeChanged):
+                (ImageFrameCache::cacheAsyncFrameNativeImageAtIndex): The assertion in this
+                function is wrong. frameIsCompleteAtIndex() can be false when the an image
+                decoding is requested but can be true when the decoding finishes.
+                * platform/graphics/ImageObserver.h:
+                * platform/graphics/cairo/ImageCairo.cpp:
+                (WebCore::Image::drawPattern):
+                * platform/graphics/cg/ImageCG.cpp:
+                (WebCore::Image::drawPattern):
+                * platform/graphics/cg/ImageDecoderCG.cpp:
+                (WebCore::ImageDecoder::frameIsCompleteAtIndex):
+                * platform/graphics/cg/PDFDocumentImage.cpp:
+                (WebCore::PDFDocumentImage::decodedSizeChanged):
+                (WebCore::PDFDocumentImage::draw):
+                * platform/graphics/texmap/TextureMapperTiledBackingStore.cpp:
+                (WebCore::TextureMapperTiledBackingStore::updateContentsFromImageIfNeeded):
+                * platform/graphics/win/ImageDirect2D.cpp:
+                (WebCore::Image::drawPattern):
+                * rendering/RenderElement.cpp:
+                (WebCore::RenderElement::isVisibleInDocumentRect):
+                (WebCore::RenderElement::isVisibleInViewport):
+                (WebCore::RenderElement::imageFrameAvailable):
+                (WebCore::RenderElement::repaintForPausedImageAnimationsIfNeeded):
+                (WebCore::RenderElement::shouldRepaintInVisibleRect): Deleted. Function
+                is renamed to isVisibleInViewport() for better readability.
+                * rendering/RenderElement.h:
+                * svg/graphics/SVGImage.cpp:
+                (WebCore::SVGImage::draw):
+                * svg/graphics/SVGImageClients.h:
+                * testing/Internals.cpp:
+                (WebCore::Internals::destroyDecodedDataForAllImages):
+                * testing/Internals.h:
+                * testing/Internals.idl:
 
 2017-05-16  Jason Marcell  <jmarcell@apple.com>
 
@@ -413,32 +417,6 @@
 
             * rendering/RenderWidget.cpp:
             (WebCore::RenderWidget::updateWidgetPosition):
-
-2017-05-12  Jason Marcell  <jmarcell@apple.com>
-
-        Cherry-pick r216766. rdar://problem/32151246
-
-    2017-05-12  Jer Noble  <jer.noble@apple.com>
-
-            [MediaStream] Streams while play while page is in background can get "stuck" when page is forgrounded.
-            https://bugs.webkit.org/show_bug.cgi?id=172022
-
-            Reviewed by Youenn Fablet.
-
-            When an AVSampleBufferDisplayLayer is disconnected from the CA renderer, none of its samples will be decoded
-            and enqueued for rendering. Once the layer is attached to a renderer again, it's stuffed full of samples which
-            will never be decoded as their decode time has long passed.
-
-            Pass the visibility state of the element through to the MediaPlayer so that MediaPlayerPrivateMediaStreamAVFObjC
-            can flush its renderers when going from not visible -> visible.
-
-            * html/HTMLMediaElement.cpp:
-            (WebCore::HTMLMediaElement::visibilityStateChanged):
-            * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.h:
-            * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
-            (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::setVisible):
-            * rendering/RenderVideo.cpp:
-            (WebCore::RenderVideo::updatePlayer):
 
 2017-05-12  Jason Marcell  <jmarcell@apple.com>
 
