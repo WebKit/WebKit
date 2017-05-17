@@ -278,6 +278,16 @@ PASS Object.getOwnPropertyDescriptor(global, 'DOMImplementation').hasOwnProperty
 PASS Object.getOwnPropertyDescriptor(global, 'DOMImplementation').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'DOMImplementation').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'DOMImplementation').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'DOMMatrix').value is DOMMatrix
+PASS Object.getOwnPropertyDescriptor(global, 'DOMMatrix').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'DOMMatrix').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'DOMMatrix').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'DOMMatrix').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'DOMMatrixReadOnly').value is DOMMatrixReadOnly
+PASS Object.getOwnPropertyDescriptor(global, 'DOMMatrixReadOnly').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'DOMMatrixReadOnly').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'DOMMatrixReadOnly').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'DOMMatrixReadOnly').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'DOMParser').value is DOMParser
 PASS Object.getOwnPropertyDescriptor(global, 'DOMParser').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'DOMParser').hasOwnProperty('set') is false

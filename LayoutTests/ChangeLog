@@ -1,3 +1,16 @@
+2017-05-17  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rebaseline js/dom/global-constructors-attributes.html after r216959.
+
+        * js/dom/global-constructors-attributes-expected.txt:
+        * platform/gtk/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-elcapitan/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-wk1/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-yosemite/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac/js/dom/global-constructors-attributes-expected.txt:
+        * platform/win/js/dom/global-constructors-attributes-expected.txt:
+        * platform/wpe/js/dom/global-constructors-attributes-expected.txt:
+
 2017-05-17  Ben Kelly  <ben@wanderview.com>
 
         Import FileAPI WPT tests.
