@@ -529,6 +529,8 @@ enum EventThrottlingBehavior {
 
     [Conditional=WEBGL] void simulateWebGLContextChanged(WebGLRenderingContext context);
 
+    void setPageVisibility(boolean isVisible);
+
     [Conditional=MEDIA_STREAM] void observeMediaStreamTrack(MediaStreamTrack track);
     [Conditional=MEDIA_STREAM] Promise<ImageData> grabNextMediaStreamTrackFrame();
     [Conditional=MEDIA_STREAM] readonly attribute unsigned long trackAudioSampleCount;

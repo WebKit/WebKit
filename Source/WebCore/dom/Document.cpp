@@ -137,6 +137,7 @@
 #include "PointerLockController.h"
 #include "PopStateEvent.h"
 #include "ProcessingInstruction.h"
+#include "RealtimeMediaSourceCenter.h"
 #include "RenderChildIterator.h"
 #include "RenderLayerCompositor.h"
 #include "RenderTreeUpdater.h"
@@ -1545,6 +1546,8 @@ void Document::visibilityStateChanged()
     dispatchEvent(Event::create(eventNames().visibilitychangeEvent, false, false));
     for (auto* client : m_visibilityStateCallbackClients)
         client->visibilityStateChanged();
+
+    notifyVisibilityChangedToMediaCapture();
 }
 
 auto Document::visibilityState() const -> VisibilityState
@@ -6978,6 +6981,13 @@ void Document::orientationChanged(int orientation)
     LOG(Events, "Document %p orientationChanged - orientation %d", this, orientation);
     dispatchWindowEvent(Event::create(eventNames().orientationchangeEvent, false, false));
     m_orientationNotifier.orientationChanged(orientation);
+}
+
+void Document::notifyVisibilityChangedToMediaCapture()
+{
+#if ENABLE(MEDIA_STREAM)
+    RealtimeMediaSourceCenter::singleton().setVisibility(!hidden());
+#endif
 }
 
 #if ENABLE(MEDIA_STREAM)

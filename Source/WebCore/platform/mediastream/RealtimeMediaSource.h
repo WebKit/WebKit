@@ -89,6 +89,8 @@ public:
     public:
         void setActiveSource(Source& source)
         {
+            if (m_activeSource == &source)
+                return;
             if (m_activeSource && m_activeSource->isProducingData())
                 m_activeSource->setMuted(true);
             m_activeSource = &source;
@@ -100,6 +102,7 @@ public:
                 m_activeSource = nullptr;
         }
 
+        RealtimeMediaSource* activeSource() { return m_activeSource; }
     private:
         RealtimeMediaSource* m_activeSource { nullptr };
     };
@@ -117,6 +120,7 @@ public:
     public:
         virtual ~VideoCaptureFactory() = default;
         virtual CaptureSourceOrError createVideoCaptureSource(const String& videoDeviceID, const MediaConstraints*) = 0;
+        virtual void setVisibility(bool) { }
 
     protected:
         VideoCaptureFactory() = default;

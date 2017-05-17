@@ -61,6 +61,14 @@ public:
         }
         return { };
     }
+#if PLATFORM(IOS)
+private:
+    void setVisibility(bool isVisible)
+    {
+        if (activeSource())
+            activeSource()->setMuted(!isVisible);
+    }
+#endif
 };
 
 #if !PLATFORM(MAC) && !PLATFORM(IOS)

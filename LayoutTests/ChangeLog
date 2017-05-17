@@ -1,3 +1,13 @@
+2017-05-17  Youenn Fablet  <youenn@apple.com>
+
+        iOS WebRTC Media Capture should not allow camera capture from background tab
+        https://bugs.webkit.org/show_bug.cgi?id=172200
+
+        Reviewed by Eric Carlson.
+
+        * platform/ios/mediastream/getUserMedia-disabled-in-background-tabs-expected.txt: Added.
+        * platform/ios/mediastream/getUserMedia-disabled-in-background-tabs.html: Added.
+
 2017-05-15  Jiewen Tan  <jiewen_tan@apple.com>
 
         Replace CryptoOperationData with BufferSource for WebKitSubtleCrypto

@@ -4028,6 +4028,22 @@ ExceptionOr<void> Internals::setMediaDeviceState(const String& id, const String&
     return { };
 }
 
+void Internals::setPageVisibility(bool isVisible)
+{
+    auto* document = contextDocument();
+    if (!document || !document->page())
+        return;
+    auto& page = *document->page();
+    auto state = page.activityState();
+
+    if (!isVisible)
+        state &= ~ActivityState::IsVisible;
+    else
+        state |= ActivityState::IsVisible;
+
+    page.setActivityState(state);
+}
+
 #endif
 
 } // namespace WebCore

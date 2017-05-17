@@ -268,6 +268,11 @@ void RealtimeMediaSourceCenter::validateRequestConstraints(ValidConstraintsHandl
     validHandler(WTFMove(audioSourceIds), WTFMove(videoSourceIds));
 }
 
+void RealtimeMediaSourceCenter::setVisibility(bool isVisible)
+{
+    videoFactory().setVisibility(isVisible);
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)

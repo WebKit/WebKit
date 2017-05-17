@@ -1,3 +1,34 @@
+2017-05-17  Youenn Fablet  <youenn@apple.com>
+
+        iOS WebRTC Media Capture should not allow camera capture from background tab
+        https://bugs.webkit.org/show_bug.cgi?id=172200
+
+        Reviewed by Eric Carlson.
+
+        Test: platform/ios/mediastream/getUserMedia-disabled-in-background-tabs.html and manual tests.
+
+        Making Video Capture Factory aware of Document visibility changes.
+        On iOS, muting/unmuting the current video source according Document visibility.
+        Not using Document visibility change observer as factories are platform and cannot implement
+        the visibility observer interface without moving the visibility observer interface.
+
+        Introducing internals API to switch on/off the page visibility.
+
+        * dom/Document.cpp:
+        (WebCore::Document::visibilityStateChanged):
+        (WebCore::Document::notifyVisibilityChangedToMediaCapture):
+        * dom/Document.h:
+        * platform/mediastream/RealtimeMediaSource.h:
+        * platform/mediastream/RealtimeMediaSourceCenter.cpp:
+        (WebCore::RealtimeMediaSourceCenter::setVisibility):
+        * platform/mediastream/RealtimeMediaSourceCenter.h:
+        * platform/mediastream/mac/AVVideoCaptureSource.mm:
+        (WebCore::AVVideoCaptureSourceFactory::setVisibility):
+        * testing/Internals.cpp:
+        (WebCore::Internals::setPageVisibility):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2017-05-17  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         When the image decoding thread makes a callOnMainThread(), ensure all the objects it needs are protected
