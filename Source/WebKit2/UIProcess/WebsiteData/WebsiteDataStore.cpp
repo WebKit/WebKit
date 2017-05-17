@@ -1265,6 +1265,23 @@ DatabaseProcessCreationParameters WebsiteDataStore::databaseProcessParameters()
     return parameters;
 }
 
+Vector<WebCore::Cookie> WebsiteDataStore::pendingCookies() const
+{
+    Vector<WebCore::Cookie> cookies;
+    copyToVector(m_pendingCookies, cookies);
+    return cookies;
+}
+
+void WebsiteDataStore::addPendingCookie(const WebCore::Cookie& cookie)
+{
+    m_pendingCookies.add(cookie);
+}
+
+void WebsiteDataStore::removePendingCookie(const WebCore::Cookie& cookie)
+{
+    m_pendingCookies.remove(cookie);
+}
+
 #if !PLATFORM(COCOA)
 WebsiteDataStoreParameters WebsiteDataStore::parameters()
 {

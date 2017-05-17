@@ -70,6 +70,8 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     parameters.uiProcessCookieStorageIdentifier = m_uiProcessCookieStorageIdentifier;
 #endif
 
+    copyToVector(m_pendingCookies, parameters.pendingCookies);
+
     if (!cookieFile.isEmpty())
         SandboxExtension::createHandleForReadWriteDirectory(WebCore::directoryName(cookieFile), parameters.cookieStoragePathExtensionHandle);
 

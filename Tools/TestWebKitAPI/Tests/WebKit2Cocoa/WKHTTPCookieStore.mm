@@ -167,4 +167,64 @@ TEST(WebKit2, WKHTTPCookieStore)
     [globalCookieStore removeObserver:observer2.get()];
 }
 
+static bool finished;
+
+@interface CookieUIDelegate : NSObject <WKUIDelegate>
+@end
+
+@implementation CookieUIDelegate
+- (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(void))completionHandler
+{
+    EXPECT_STREQ("cookie:cookiename=cookievalue", message.UTF8String);
+    finished = true;
+    completionHandler();
+}
+@end
+
+TEST(WebKit2, WKHTTPCookieStoreWithoutProcessPool)
+{
+    NSHTTPCookie *cookie = [NSHTTPCookie cookieWithProperties:[NSDictionary dictionaryWithObjectsAndKeys:@"127.0.0.1", NSHTTPCookieDomain, @"/", NSHTTPCookiePath, @"cookiename", NSHTTPCookieName, @"cookievalue", NSHTTPCookieValue, [NSDate distantFuture], NSHTTPCookieExpires, nil]];
+    NSString *alertCookieHTML = @"<script>alert('cookie:'+document.cookie);</script>";
+    
+    finished = false;
+    WKWebsiteDataStore *ephemeralStoreWithCookies = [WKWebsiteDataStore nonPersistentDataStore];
+    [ephemeralStoreWithCookies.httpCookieStore setCookie:cookie completionHandler:^ {
+        WKWebsiteDataStore *ephemeralStoreWithIndependentCookieStorage = [WKWebsiteDataStore nonPersistentDataStore];
+        [ephemeralStoreWithIndependentCookieStorage.httpCookieStore getAllCookies:^(NSArray<NSHTTPCookie *> *cookies) {
+            ASSERT_EQ(cookies.count, 0u);
+            
+            WKWebViewConfiguration *configuration = [[WKWebViewConfiguration alloc] init];
+            configuration.websiteDataStore = ephemeralStoreWithCookies;
+            WKWebView *view = [[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration];
+            view.UIDelegate = [[CookieUIDelegate alloc] init];
+
+            [view loadHTMLString:alertCookieHTML baseURL:[NSURL URLWithString:@"http://127.0.0.1/"]];
+        }];
+    }];
+    TestWebKitAPI::Util::run(&finished);
+    
+    finished = false;
+    WKWebsiteDataStore *defaultStore = [WKWebsiteDataStore defaultDataStore];
+    [defaultStore.httpCookieStore setCookie:cookie completionHandler:^ {
+        [defaultStore.httpCookieStore getAllCookies:^(NSArray<NSHTTPCookie *> *cookies) {
+            ASSERT_EQ(cookies.count, 1u);
+            
+            WKWebViewConfiguration *configuration = [[WKWebViewConfiguration alloc] init];
+            configuration.websiteDataStore = defaultStore;
+            WKWebView *view = [[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration];
+            view.UIDelegate = [[CookieUIDelegate alloc] init];
+            
+            [view loadHTMLString:alertCookieHTML baseURL:[NSURL URLWithString:@"http://127.0.0.1/"]];
+        }];
+    }];
+    TestWebKitAPI::Util::run(&finished);
+    
+    [defaultStore.httpCookieStore deleteCookie:cookie completionHandler:^ {
+        [defaultStore.httpCookieStore getAllCookies:^(NSArray<NSHTTPCookie *> *cookies) {
+            ASSERT_EQ(cookies.count, 0u);
+            finished = true;
+        }];
+    }];
+    TestWebKitAPI::Util::run(&finished);
+}
 #endif

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Joseph Pecoraro. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,6 +38,10 @@ namespace WebCore {
 
 struct Cookie {
     Cookie() { }
+    
+    Cookie(WTF::HashTableDeletedValueType)
+        : name(WTF::HashTableDeletedValue)
+    { }
 
     Cookie(const String& name, const String& value, const String& domain, const String& path, double expires, bool httpOnly, bool secure, bool session, const String& comment, const URL& commentURL, const Vector<uint16_t> ports)
         : name(name)
@@ -56,36 +61,53 @@ struct Cookie {
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static bool decode(Decoder&, Cookie&);
 
+    WEBCORE_EXPORT bool operator==(const Cookie&) const;
+    WEBCORE_EXPORT unsigned hash() const;
+
 #ifdef __OBJC__
     WEBCORE_EXPORT Cookie(NSHTTPCookie *);
     WEBCORE_EXPORT operator NSHTTPCookie *() const;
 #endif
 
+    bool isNull() const
+    {
+        return name.isNull()
+        && value.isNull()
+        && domain.isNull()
+        && path.isNull()
+        && expires == 0
+        && !httpOnly
+        && !secure
+        && !session
+        && comment.isNull()
+        && commentURL.isNull();
+    }
+    
     String name;
     String value;
     String domain;
     String path;
     // Expiration date, expressed as milliseconds since the UNIX epoch.
-    double expires;
-    bool httpOnly;
-    bool secure;
-    bool session;
+    double expires { 0 };
+    bool httpOnly { false };
+    bool secure { false };
+    bool session { false };
     String comment;
     URL commentURL;
     Vector<uint16_t> ports;
-
 };
 
 struct CookieHash {
     static unsigned hash(const Cookie& key)
-    { 
-        return StringHash::hash(key.name) + StringHash::hash(key.domain) + StringHash::hash(key.path) + key.secure;
+    {
+        return key.hash();
     }
 
     static bool equal(const Cookie& a, const Cookie& b)
     {
-        return a.name == b.name && a.domain == b.domain && a.path == b.path && a.secure == b.secure;
+        return a == b;
     }
+    static const bool safeToCompareToEmptyOrDeleted = false;
 };
 
 template<class Encoder>
@@ -129,5 +151,10 @@ namespace WTF {
     template<typename T> struct DefaultHash;
     template<> struct DefaultHash<WebCore::Cookie> {
         typedef WebCore::CookieHash Hash;
+    };
+    template<> struct HashTraits<WebCore::Cookie> : GenericHashTraits<WebCore::Cookie> {
+        static WebCore::Cookie emptyValue() { return { }; }
+        static void constructDeletedValue(WebCore::Cookie& slot) { slot = WebCore::Cookie(WTF::HashTableDeletedValue); }
+        static bool isDeletedValue(const WebCore::Cookie& slot) { return slot.name.isHashTableDeletedValue(); }
     };
 }

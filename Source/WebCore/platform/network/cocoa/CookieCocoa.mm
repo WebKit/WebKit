@@ -64,6 +64,9 @@ Cookie::Cookie(NSHTTPCookie *cookie)
 
 Cookie::operator NSHTTPCookie *() const
 {
+    if (isNull())
+        return nil;
+
     // FIXME: existing APIs do not provide a way to set httpOnly without parsing headers from scratch.
 
     NSMutableDictionary *properties = [NSMutableDictionary dictionaryWithCapacity:11];
@@ -104,6 +107,26 @@ Cookie::operator NSHTTPCookie *() const
     [properties setObject:@"1" forKey:NSHTTPCookieVersion];
 
     return [NSHTTPCookie cookieWithProperties:properties];
+}
+    
+bool Cookie::operator==(const Cookie& other) const
+{
+    ASSERT(!name.isHashTableDeletedValue());
+    bool thisNull = isNull();
+    bool otherNull = other.isNull();
+    if (thisNull || otherNull)
+        return thisNull == otherNull;
+    
+    NSHTTPCookie *nsCookie(*this);
+    return [nsCookie isEqual:other];
+}
+    
+unsigned Cookie::hash() const
+{
+    ASSERT(!name.isHashTableDeletedValue());
+    ASSERT(!isNull());
+    NSHTTPCookie *nsCookie(*this);
+    return nsCookie.hash;
 }
 
 } // namespace WebCore

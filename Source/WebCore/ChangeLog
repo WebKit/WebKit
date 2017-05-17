@@ -1,3 +1,32 @@
+2017-05-17  Alex Christensen  <achristensen@webkit.org>
+
+        Interacting with WKHTTPCookieStores before creating WKWebViews and WKProcessPools should affect cookies used
+        https://bugs.webkit.org/show_bug.cgi?id=171987
+
+        Reviewed by Brady Eidson.
+
+        Covered by new API tests.
+
+        * CMakeLists.txt:
+        * platform/Cookie.h:
+        (WebCore::Cookie::Cookie):
+        (WebCore::Cookie::isNull):
+        (WebCore::CookieHash::hash):
+        (WebCore::CookieHash::equal):
+        (WTF::HashTraits<WebCore::Cookie>::emptyValue):
+        (WTF::HashTraits<WebCore::Cookie>::constructDeletedValue):
+        (WTF::HashTraits<WebCore::Cookie>::isDeletedValue):
+        * platform/network/Cookie.cpp: Added.
+        (WebCore::Cookie::operator==):
+        (WebCore::Cookie::hash):
+        * platform/network/cocoa/CookieCocoa.mm:
+        (WebCore::Cookie::operator NSHTTPCookie *):
+        (WebCore::Cookie::operator==):
+        (WebCore::Cookie::hash):
+        * platform/network/cocoa/NetworkStorageSessionCocoa.mm:
+        (WebCore::NetworkStorageSession::setCookies):
+        Use NSHTTPCookie's hash and equality comparison to more closely match the NSHTTPCookie behavior.
+
 2017-05-17  Emilio Cobos Álvarez  <ecobos@igalia.com>
 
         Add a RuntimeEnabledFeature for display: contents, defaulted to false.

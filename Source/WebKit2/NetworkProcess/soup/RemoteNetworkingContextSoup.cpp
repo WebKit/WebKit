@@ -48,15 +48,15 @@ bool RemoteNetworkingContext::isValid() const
     return true;
 }
 
-void RemoteNetworkingContext::ensurePrivateBrowsingSession(SessionID sessionID)
+void RemoteNetworkingContext::ensurePrivateBrowsingSession(WebsiteDataStoreParameters&& parameters)
 {
-    ASSERT(sessionID.isEphemeral());
+    ASSERT(parameters.sessionID.isEphemeral());
 
-    if (NetworkStorageSession::storageSession(sessionID))
+    if (NetworkStorageSession::storageSession(parameters.sessionID))
         return;
 
-    NetworkStorageSession::ensurePrivateBrowsingSession(sessionID, String::number(sessionID.sessionID()));
-    SessionTracker::setSession(sessionID, NetworkSession::create(sessionID));
+    NetworkStorageSession::ensurePrivateBrowsingSession(parameters.sessionID, String::number(parameters.sessionID.sessionID()));
+    SessionTracker::setSession(parameters.sessionID, NetworkSession::create(parameters.sessionID));
 }
 
 void RemoteNetworkingContext::ensureWebsiteDataStoreSession(WebsiteDataStoreParameters&&)

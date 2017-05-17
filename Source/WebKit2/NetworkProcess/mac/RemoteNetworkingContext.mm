@@ -80,11 +80,11 @@ ResourceError RemoteNetworkingContext::blockedError(const ResourceRequest& reque
     return WebKit::blockedError(request);
 }
 
-void RemoteNetworkingContext::ensurePrivateBrowsingSession(SessionID sessionID)
+void RemoteNetworkingContext::ensurePrivateBrowsingSession(WebsiteDataStoreParameters&& parameters)
 {
-    ASSERT(sessionID.isEphemeral());
+    ASSERT(parameters.sessionID.isEphemeral());
 
-    if (NetworkStorageSession::storageSession(sessionID))
+    if (NetworkStorageSession::storageSession(parameters.sessionID))
         return;
 
     String base;
@@ -93,11 +93,15 @@ void RemoteNetworkingContext::ensurePrivateBrowsingSession(SessionID sessionID)
     else
         base = SessionTracker::getIdentifierBase();
 
-    NetworkStorageSession::ensurePrivateBrowsingSession(sessionID, base + '.' + String::number(sessionID.sessionID()));
+    NetworkStorageSession::ensurePrivateBrowsingSession(parameters.sessionID, base + '.' + String::number(parameters.sessionID.sessionID()));
+
+    auto* session = NetworkStorageSession::storageSession(parameters.sessionID);
+    for (const auto& cookie : parameters.pendingCookies)
+        session->setCookie(cookie);
 
 #if USE(NETWORK_SESSION)
-    auto networkSession = NetworkSession::create(sessionID, NetworkProcess::singleton().supplement<LegacyCustomProtocolManager>());
-    SessionTracker::setSession(sessionID, WTFMove(networkSession));
+    auto networkSession = NetworkSession::create(parameters.sessionID, NetworkProcess::singleton().supplement<LegacyCustomProtocolManager>());
+    SessionTracker::setSession(parameters.sessionID, WTFMove(networkSession));
 #endif
 }
 
@@ -121,6 +125,10 @@ void RemoteNetworkingContext::ensureWebsiteDataStoreSession(WebsiteDataStorePara
     }
 
     NetworkStorageSession::ensureSession(parameters.sessionID, base + '.' + String::number(parameters.sessionID.sessionID()), WTFMove(uiProcessCookieStorage));
+
+    auto* session = NetworkStorageSession::storageSession(parameters.sessionID);
+    for (const auto& cookie : parameters.pendingCookies)
+        session->setCookie(cookie);
 
 #if USE(NETWORK_SESSION)
     auto networkSession = NetworkSession::create(parameters.sessionID, NetworkProcess::singleton().supplement<LegacyCustomProtocolManager>());

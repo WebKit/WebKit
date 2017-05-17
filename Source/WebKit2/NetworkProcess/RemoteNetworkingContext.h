@@ -43,7 +43,7 @@ public:
     virtual ~RemoteNetworkingContext();
 
     // FIXME: Remove platform-specific code and use SessionTracker.
-    static void ensurePrivateBrowsingSession(WebCore::SessionID);
+    static void ensurePrivateBrowsingSession(WebsiteDataStoreParameters&&);
     static void ensureWebsiteDataStoreSession(WebsiteDataStoreParameters&&);
 
     bool shouldClearReferrerOnHTTPSToHTTPRedirect() const override { return m_shouldClearReferrerOnHTTPSToHTTPRedirect; }
