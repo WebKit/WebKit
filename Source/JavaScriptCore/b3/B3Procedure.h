@@ -256,6 +256,9 @@ public:
         setWasmBoundsCheckGenerator(RefPtr<WasmBoundsCheckGenerator>(createSharedTask<WasmBoundsCheckGeneratorFunction>(functor)));
     }
 
+    JS_EXPORT_PRIVATE RegisterSet mutableGPRs();
+    JS_EXPORT_PRIVATE RegisterSet mutableFPRs();
+
 private:
     friend class BlockInsertionSet;
 

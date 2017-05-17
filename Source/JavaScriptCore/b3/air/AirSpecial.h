@@ -46,7 +46,7 @@ public:
     static const char* const dumpPrefix;
     
     Special();
-    virtual ~Special();
+    JS_EXPORT_PRIVATE virtual ~Special();
 
     Code& code() const { return *m_code; }
 

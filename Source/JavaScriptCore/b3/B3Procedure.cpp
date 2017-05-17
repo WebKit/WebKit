@@ -383,6 +383,16 @@ void Procedure::setWasmBoundsCheckGenerator(RefPtr<WasmBoundsCheckGenerator> gen
     code().setWasmBoundsCheckGenerator(generator);
 }
 
+RegisterSet Procedure::mutableGPRs()
+{
+    return code().mutableGPRs();
+}
+
+RegisterSet Procedure::mutableFPRs()
+{
+    return code().mutableFPRs();
+}
+
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)

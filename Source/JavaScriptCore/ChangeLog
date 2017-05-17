@@ -1,3 +1,72 @@
+2017-05-17  Saam Barati  <sbarati@apple.com>
+
+        PinnedRegisters should be better modeled in IRC/Briggs
+        https://bugs.webkit.org/show_bug.cgi?id=171955
+
+        Reviewed by Filip Pizlo.
+
+        This patch fixes a bug in Briggs/IRC with respect to pinned registers.
+        Pinned registers were not part of the assignable register file in IRC/Briggs,
+        and this would lead to an asymmetry because they were modeled in the
+        interference graph. The bug is that we use registerCount() to move various
+        Tmps between various lists in the different allocators, and if a Tmp
+        interfered with a pinned register (usually via a Patchpoint's clobbered set),
+        we'd have an interference edge modeled in the degree for that Tmp, but the registerCount()
+        would make us think that this particular Tmp is not assignable. This would
+        lead us to fail to color a colorable graph. Specifically, this happened in
+        our various patchpoint tests that stress the register allocator by forcing
+        the entire register file into arguments for the patchpoint and then doing
+        interesting things with the result, arguments, etc.
+        
+        This patch fixes the bug by coming up with an more natural way to model pinned
+        registers. Pinned registers are now part of the register file. However,
+        pinned registers are live at every point in the program (this is a defining
+        property of a pinned register). In practice, this means that the only Tmps 
+        that can be assigned to pinned registers are ones that are coalescing
+        candidates. This means the program has some number of defs for a Tmp T like:
+        MoveType pinnedReg, T
+        
+        Note, if any other defs for T happen, like:
+        Add32, t1, t2, T
+        T will have an interference edge with pinnedReg, since pinnedReg is live
+        at every point in the program. Modeling pinned registers this way allows
+        IRC/Briggs to have no special casing for them. It treats it like any other
+        precolored Tmp. This allows us to do coalescing, biased coloring, etc, which
+        could all lead to a Tmp being assigned to a pinned register.
+        
+        Interestingly, we used to have special handling for the frame pointer
+        register, which in many ways, acts like a pinned register, since FP is
+        always live, and we wanted it to take place in coalescing. The allocator
+        had a side-table interference graph with FP. Interestingly, we didn't even
+        handle this properly everywhere since we could rely on a patchpoint never
+        claiming to clobber FP (this would be illegal). So the code only handled
+        the pseudo-pinned register properties of FP in various places. This patch
+        drops this special casing and pins FP since all pinned registers can take
+        part in coalescing.
+
+        * b3/B3PatchpointSpecial.h:
+        * b3/B3Procedure.cpp:
+        (JSC::B3::Procedure::mutableGPRs):
+        (JSC::B3::Procedure::mutableFPRs):
+        * b3/B3Procedure.h:
+        * b3/air/AirAllocateRegistersByGraphColoring.cpp:
+        * b3/air/AirCode.cpp:
+        (JSC::B3::Air::Code::Code):
+        (JSC::B3::Air::Code::pinRegister):
+        (JSC::B3::Air::Code::mutableGPRs):
+        (JSC::B3::Air::Code::mutableFPRs):
+        * b3/air/AirCode.h:
+        (JSC::B3::Air::Code::pinnedRegisters):
+        * b3/air/AirSpecial.h:
+        * b3/air/testair.cpp:
+        * b3/testb3.cpp:
+        (JSC::B3::testSimplePatchpointWithOuputClobbersGPArgs):
+        (JSC::B3::testSpillDefSmallerThanUse):
+        (JSC::B3::testLateRegister):
+        (JSC::B3::testTerminalPatchpointThatNeedsToBeSpilled):
+        (JSC::B3::testTerminalPatchpointThatNeedsToBeSpilled2):
+        (JSC::B3::testMoveConstants):
+
 2017-05-16  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DFG] Constant Folding Phase should convert MakeRope("", String) => Identity(String)

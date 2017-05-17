@@ -8129,11 +8129,6 @@ void testSimplePatchpointWithoutOuputClobbersGPArgs()
 
 void testSimplePatchpointWithOuputClobbersGPArgs()
 {
-    if (isARM64()) {
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=171826
-        return;
-    }
-
     // We can't predict where the output will be but we want to be sure it is not
     // one of the clobbered registers which is a bit hard to test.
     //
@@ -12779,11 +12774,6 @@ void testPatchpointDoubleRegs()
 
 void testSpillDefSmallerThanUse()
 {
-    if (isARM64()) {
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=171826
-        return;
-    }
-
     Procedure proc;
     BasicBlock* root = proc.addBlock();
 
@@ -12875,11 +12865,6 @@ void testSpillUseLargerThanDef()
 
 void testLateRegister()
 {
-    if (isARM64()) {
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=171826
-        return;
-    }
-
     Procedure proc;
     BasicBlock* root = proc.addBlock();
 
@@ -13692,10 +13677,6 @@ void testBranchBitAndImmFusion(
 
 void testTerminalPatchpointThatNeedsToBeSpilled()
 {
-    if (isARM64()) {
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=171826
-        return;
-    }
     // This is a unit test for how FTL's heap allocation fast paths behave.
     Procedure proc;
     
@@ -13730,10 +13711,7 @@ void testTerminalPatchpointThatNeedsToBeSpilled()
     
     Vector<Value*> args;
     {
-        RegisterSet fillAllGPRsSet = RegisterSet::allGPRs();
-        fillAllGPRsSet.exclude(RegisterSet::stackRegisters());
-        fillAllGPRsSet.exclude(RegisterSet::reservedHardwareRegisters());
-
+        RegisterSet fillAllGPRsSet = proc.mutableGPRs();
         for (unsigned i = 0; i < fillAllGPRsSet.numberOfSetRegisters(); i++)
             args.append(success->appendNew<Const32Value>(proc, Origin(), i));
     }
@@ -13763,11 +13741,6 @@ void testTerminalPatchpointThatNeedsToBeSpilled()
 
 void testTerminalPatchpointThatNeedsToBeSpilled2()
 {
-    if (isARM64()) {
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=171826 
-        return;
-    }
-
     // This is a unit test for how FTL's heap allocation fast paths behave.
     Procedure proc;
     
@@ -13815,9 +13788,7 @@ void testTerminalPatchpointThatNeedsToBeSpilled2()
     
     Vector<Value*> args;
     {
-        RegisterSet fillAllGPRsSet = RegisterSet::allGPRs();
-        fillAllGPRsSet.exclude(RegisterSet::stackRegisters());
-        fillAllGPRsSet.exclude(RegisterSet::reservedHardwareRegisters());
+        RegisterSet fillAllGPRsSet = proc.mutableGPRs();
         for (unsigned i = 0; i < fillAllGPRsSet.numberOfSetRegisters(); i++)
             args.append(success->appendNew<Const32Value>(proc, Origin(), i));
     }
@@ -14120,11 +14091,6 @@ void testTrappingStoreElimination()
 
 void testMoveConstants()
 {
-    if (isARM64()) {
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=171826
-        return;
-    }
-
     auto check = [] (Procedure& proc) {
         proc.resetReachability();
         

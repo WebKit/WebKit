@@ -65,6 +65,8 @@ Code::Code(Procedure& proc)
 
     if (auto reg = pinnedExtendedOffsetAddrRegister())
         pinRegister(*reg);
+
+    m_pinnedRegs.set(MacroAssembler::framePointerRegister);
 }
 
 Code::~Code()
@@ -89,6 +91,21 @@ void Code::pinRegister(Reg reg)
     regs.removeFirst(reg);
     m_mutableRegs.clear(reg);
     ASSERT(!regs.contains(reg));
+    m_pinnedRegs.set(reg);
+}
+
+RegisterSet Code::mutableGPRs()
+{
+    RegisterSet result = m_mutableRegs;
+    result.filter(RegisterSet::allGPRs());
+    return result;
+}
+
+RegisterSet Code::mutableFPRs()
+{
+    RegisterSet result = m_mutableRegs;
+    result.filter(RegisterSet::allFPRs());
+    return result;
 }
 
 bool Code::needsUsedRegisters() const

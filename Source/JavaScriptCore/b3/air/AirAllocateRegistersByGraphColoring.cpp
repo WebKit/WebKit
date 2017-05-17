@@ -60,9 +60,6 @@ public:
         , m_useCounts(useCounts)
         , m_code(code)
     {
-        for (Reg reg : m_regsInPriorityOrder)
-            m_mutableRegs.set(reg);
-        
         initializeDegrees(tmpArraySize);
         
         m_adjacencyList.resize(tmpArraySize);
@@ -232,11 +229,6 @@ protected:
         ASSERT(isPrecolored(u));
         ASSERT(!isPrecolored(v));
         
-        // If u is a pinned register then it's always safe to coalesce. Note that when we call this,
-        // we have already proved that there is no interference between u and v.
-        if (!m_mutableRegs.get(m_coloredTmp[u]))
-            return true;
-
         // If any adjacent of the non-colored node is not an adjacent of the colored node AND has a degree >= K
         // there is a risk that this node needs to have the same color as our precolored node. If we coalesce such
         // move, we may create an uncolorable graph.
@@ -515,8 +507,7 @@ protected:
     };
     typedef SimpleClassHashTraits<InterferenceEdge> InterferenceEdgeHashTraits;
 
-    const Vector<Reg>& m_regsInPriorityOrder;
-    RegisterSet m_mutableRegs;
+    Vector<Reg> m_regsInPriorityOrder;
     IndexType m_lastPrecoloredRegisterIndex { 0 };
 
     // The interference graph.
@@ -551,8 +542,6 @@ protected:
     BitVector m_isOnSelectStack;
     Vector<IndexType> m_selectStack;
 
-    IndexType m_framePointerIndex { 0 };
-    BitVector m_interferesWithFramePointer;
     // Low-degree, non-Move related.
     Vector<IndexType> m_simplifyWorklist;
     // High-degree Tmp.
@@ -567,6 +556,8 @@ protected:
     const HashSet<unsigned>& m_unspillableTmps;
     const UseCounts<Tmp>& m_useCounts;
     Code& m_code;
+
+    Vector<Tmp, 4> m_pinnedRegs;
 };
 
 template <typename IndexType, typename TmpMapper>
@@ -575,8 +566,6 @@ class Briggs : public AbstractColoringAllocator<IndexType, TmpMapper> {
 protected:
     using Base::m_isOnSelectStack;
     using Base::m_selectStack;
-    using Base::m_framePointerIndex;
-    using Base::m_interferesWithFramePointer;
     using Base::m_simplifyWorklist;
     using Base::m_spillWorklist;
     using Base::m_hasSelectedSpill;
@@ -606,6 +595,8 @@ protected:
     using Base::addToSpill;
     using Base::m_interferenceEdges;
     using Base::addBias;
+    using Base::m_pinnedRegs;
+    using Base::m_regsInPriorityOrder;
 
 public:
     Briggs(Code& code, const Vector<Reg>& regsInPriorityOrder, IndexType lastPrecoloredRegisterIndex, unsigned tmpArraySize, const HashSet<unsigned>& unspillableTmps, const UseCounts<Tmp>& useCounts)
@@ -717,8 +708,7 @@ protected:
         }
 
         if (isPrecolored(v)
-            || hasInterferenceEdge(InterferenceEdge(u, v))
-            || (u == m_framePointerIndex && m_interferesWithFramePointer.quickGet(v))) {
+            || hasInterferenceEdge(InterferenceEdge(u, v))) {
 
             // No need to ever consider this move again if it interferes.
             // No coalescing will remove the interference.
@@ -775,9 +765,6 @@ protected:
                 decrementDegree(adjacentTmpIndex);
             }
         });
-
-        if (m_framePointerIndex && m_interferesWithFramePointer.quickGet(v))
-            m_interferesWithFramePointer.quickSet(u);
     }
 
 
@@ -935,8 +922,6 @@ class IRC : public AbstractColoringAllocator<IndexType, TmpMapper> {
 protected:
     using Base::m_isOnSelectStack;
     using Base::m_selectStack;
-    using Base::m_framePointerIndex;
-    using Base::m_interferesWithFramePointer;
     using Base::m_simplifyWorklist;
     using Base::m_spillWorklist;
     using Base::m_hasSelectedSpill;
@@ -968,6 +953,8 @@ protected:
     using Base::m_adjacencyList;
     using Base::dumpInterferenceGraphInDot;
     using Base::addBias;
+    using Base::m_pinnedRegs;
+    using Base::m_regsInPriorityOrder;
 
 public:
     IRC(Code& code, const Vector<Reg>& regsInPriorityOrder, IndexType lastPrecoloredRegisterIndex, unsigned tmpArraySize, const HashSet<unsigned>& unspillableTmps, const UseCounts<Tmp>& useCounts)
@@ -1069,8 +1056,7 @@ protected:
             if (traceDebug)
                 dataLog("    Coalesced\n");
         } else if (isPrecolored(v)
-            || hasInterferenceEdge(InterferenceEdge(u, v))
-            || (u == m_framePointerIndex && m_interferesWithFramePointer.quickGet(v))) {
+            || hasInterferenceEdge(InterferenceEdge(u, v))) {
             addWorkList(u);
             addWorkList(v);
 
@@ -1126,9 +1112,6 @@ protected:
                 decrementDegree(adjacentTmpIndex);
             }
         });
-
-        if (m_framePointerIndex && m_interferesWithFramePointer.quickGet(v))
-            m_interferesWithFramePointer.quickSet(u);
 
         if (m_degrees[u] >= registerCount() && m_freezeWorklist.remove(u))
             addToSpill(u);
@@ -1382,8 +1365,6 @@ class ColoringAllocator : public AllocatorType<unsigned, AbsoluteTmpMapper<bank>
     using Base = AllocatorType<unsigned, TmpMapper>;
     using Base::m_isOnSelectStack;
     using Base::m_selectStack;
-    using Base::m_framePointerIndex;
-    using Base::m_interferesWithFramePointer;
     using Base::m_simplifyWorklist;
     using Base::m_spillWorklist;
     using Base::m_hasSelectedSpill;
@@ -1406,6 +1387,8 @@ class ColoringAllocator : public AllocatorType<unsigned, AbsoluteTmpMapper<bank>
     using Base::getAlias;
     using Base::addEdge;
     using Base::m_interferenceEdges;
+    using Base::m_pinnedRegs;
+    using Base::m_regsInPriorityOrder;
 
 public:
 
@@ -1413,9 +1396,12 @@ public:
         : Base(code, code.regsInPriorityOrder(bank), TmpMapper::lastMachineRegisterIndex(), tmpArraySize(code), unspillableTmp, useCounts)
         , m_tmpWidth(tmpWidth)
     {
-        if (bank == GP) {
-            m_framePointerIndex = TmpMapper::absoluteIndex(Tmp(MacroAssembler::framePointerRegister));
-            m_interferesWithFramePointer.ensureSize(tmpArraySize(code));
+        for (Reg reg : code.pinnedRegisters()) {
+            if ((bank == GP && reg.isGPR()) || (bank == FP && reg.isFPR())) {
+                m_pinnedRegs.append(Tmp(reg));
+                ASSERT(!m_regsInPriorityOrder.contains(reg));
+                m_regsInPriorityOrder.append(reg);
+            }
         }
 
         initializePrecoloredTmp();
@@ -1659,13 +1645,18 @@ protected:
                 list.add(nextMoveIndex);
             }
 
-            for (const Tmp& liveTmp : localCalc.live()) {
+            auto considerEdge = [&] (const Tmp& liveTmp) {
                 if (liveTmp != useTmp) {
                     if (traceDebug)
                         dataLog("    Adding def-live for coalescable: ", defTmp, ", ", liveTmp, "\n");
                     addEdge(defTmp, liveTmp);
                 }
-            }
+            };
+
+            for (const Tmp& liveTmp : localCalc.live())
+                considerEdge(liveTmp);
+            for (const Tmp& pinnedRegTmp : m_pinnedRegs)
+                considerEdge(pinnedRegTmp);
 
             // The next instruction could have early clobbers or early def's. We need to consider
             // those now.
@@ -1716,9 +1707,8 @@ protected:
                     
                     addEdge(arg, liveTmp);
                 }
-
-                if (bank == GP && !arg.isGPR())
-                    m_interferesWithFramePointer.quickSet(TmpMapper::absoluteIndex(arg));
+                for (const Tmp& pinnedRegTmp : m_pinnedRegs)
+                    addEdge(arg, pinnedRegTmp);
             });
     }
 

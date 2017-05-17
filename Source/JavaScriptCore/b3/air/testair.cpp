@@ -28,9 +28,12 @@
 #include "AirCode.h"
 #include "AirGenerate.h"
 #include "AirInstInlines.h"
+#include "AirSpecial.h"
 #include "AllowMacroScratchRegisterUsage.h"
+#include "B3BasicBlockInlines.h"
 #include "B3Compilation.h"
 #include "B3Procedure.h"
+#include "B3PatchpointSpecial.h"
 #include "CCallHelpers.h"
 #include "InitializeThreading.h"
 #include "JSCInlines.h"
@@ -1828,8 +1831,113 @@ void testX86VMULSDBaseIndexNeedRex()
     uint64_t index = 16;
     CHECK(compileAndRun<double>(proc, 2.4, &secondArg - 2, index, pureNaN()) == 2.4 * 4.2);
 }
+#endif // #if CPU(X86) || CPU(X86_64)
 
-#endif
+void testArgumentRegPinned()
+{
+    B3::Procedure proc;
+    Code& code = proc.code();
+    GPRReg pinned = GPRInfo::argumentGPR0;
+    proc.pinRegister(pinned);
+
+    B3::Air::Special* patchpointSpecial = code.addSpecial(std::make_unique<B3::PatchpointSpecial>());
+
+    B3::BasicBlock* b3Root = proc.addBlock();
+    B3::PatchpointValue* patchpoint = b3Root->appendNew<B3::PatchpointValue>(proc, B3::Void, B3::Origin());
+    patchpoint->clobber(RegisterSet(pinned));
+    patchpoint->setGenerator(
+        [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+            jit.move(CCallHelpers::TrustedImm32(42), pinned);
+        });
+
+    BasicBlock* root = code.addBlock();
+
+    Tmp t1 = code.newTmp(GP);
+    Tmp t2 = code.newTmp(GP);
+
+    root->append(Move, nullptr, Tmp(pinned), t1);
+    root->append(Patch, patchpoint, Arg::special(patchpointSpecial));
+    root->append(Move, nullptr, Tmp(pinned), t2);
+    root->append(Add32, nullptr, t1, t2, Tmp(GPRInfo::returnValueGPR));
+    root->append(Ret32, nullptr, Tmp(GPRInfo::returnValueGPR));
+
+    int32_t r = compileAndRun<int32_t>(proc, 10);
+    CHECK(r == 10 + 42);
+}
+
+void testArgumentRegPinned2()
+{
+    B3::Procedure proc;
+    Code& code = proc.code();
+    GPRReg pinned = GPRInfo::argumentGPR0;
+    proc.pinRegister(pinned);
+
+    B3::Air::Special* patchpointSpecial = code.addSpecial(std::make_unique<B3::PatchpointSpecial>());
+
+    B3::BasicBlock* b3Root = proc.addBlock();
+    B3::PatchpointValue* patchpoint = b3Root->appendNew<B3::PatchpointValue>(proc, B3::Void, B3::Origin());
+    patchpoint->clobber(RegisterSet()); 
+    patchpoint->setGenerator(
+        [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+            jit.move(CCallHelpers::TrustedImm32(42), pinned);
+        });
+
+    BasicBlock* root = code.addBlock();
+
+    Tmp t1 = code.newTmp(GP);
+    Tmp t2 = code.newTmp(GP);
+
+    // Since the patchpoint does not claim to clobber the pinned register,
+    // the register allocator is allowed to either coalesce the first move,
+    // the second move, or neither. The allowed results are:
+    // - No move coalesced: 52
+    // - The first move is coalesced: 84
+    // - The second move is coalesced: 52
+    root->append(Move, nullptr, Tmp(pinned), t1);
+    root->append(Patch, patchpoint, Arg::special(patchpointSpecial));
+    root->append(Move, nullptr, Tmp(pinned), t2);
+    root->append(Add32, nullptr, t1, t2, Tmp(GPRInfo::returnValueGPR));
+    root->append(Ret32, nullptr, Tmp(GPRInfo::returnValueGPR));
+
+    int32_t r = compileAndRun<int32_t>(proc, 10);
+    CHECK(r == 52 || r == 84);
+}
+
+void testArgumentRegPinned3()
+{
+    B3::Procedure proc;
+    Code& code = proc.code();
+    GPRReg pinned = GPRInfo::argumentGPR0;
+    proc.pinRegister(pinned);
+
+    B3::Air::Special* patchpointSpecial = code.addSpecial(std::make_unique<B3::PatchpointSpecial>());
+
+    B3::BasicBlock* b3Root = proc.addBlock();
+    B3::PatchpointValue* patchpoint = b3Root->appendNew<B3::PatchpointValue>(proc, B3::Void, B3::Origin());
+    patchpoint->clobber(RegisterSet(pinned));
+    patchpoint->setGenerator(
+        [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+            jit.move(CCallHelpers::TrustedImm32(42), pinned);
+        });
+
+    BasicBlock* root = code.addBlock();
+
+    Tmp t1 = code.newTmp(GP);
+    Tmp t2 = code.newTmp(GP);
+    Tmp t3 = code.newTmp(GP);
+
+    root->append(Move, nullptr, Tmp(pinned), t1);
+    root->append(Patch, patchpoint, Arg::special(patchpointSpecial));
+    root->append(Move, nullptr, Tmp(pinned), t2);
+    root->append(Patch, patchpoint, Arg::special(patchpointSpecial));
+    root->append(Move, nullptr, Tmp(pinned), t3);
+    root->append(Add32, nullptr, t1, t2, Tmp(GPRInfo::returnValueGPR));
+    root->append(Add32, nullptr, Tmp(GPRInfo::returnValueGPR), t3, Tmp(GPRInfo::returnValueGPR));
+    root->append(Ret32, nullptr, Tmp(GPRInfo::returnValueGPR));
+
+    int32_t r = compileAndRun<int32_t>(proc, 10);
+    CHECK(r == 10 + 42 + 42);
+}
 
 #define RUN(test) do {                          \
         if (!shouldRun(#test))                  \
@@ -1908,6 +2016,10 @@ void run(const char* filter)
     RUN(testX86VMULSDBaseIndexNeedRex());
 #endif
 
+    RUN(testArgumentRegPinned());
+    RUN(testArgumentRegPinned2());
+    RUN(testArgumentRegPinned3());
+
     if (tasks.isEmpty())
         usage();
 
@@ -1938,7 +2050,7 @@ void run(const char* filter)
     crashLock.lock();
 }
 
-} // anonymois namespace
+} // anonymous namespace
 
 #else // ENABLE(B3_JIT)
 

@@ -43,7 +43,7 @@ namespace JSC { namespace B3 {
 
 class PatchpointSpecial : public StackmapSpecial {
 public:
-    PatchpointSpecial();
+    JS_EXPORT_PRIVATE PatchpointSpecial();
     virtual ~PatchpointSpecial();
 
 protected:

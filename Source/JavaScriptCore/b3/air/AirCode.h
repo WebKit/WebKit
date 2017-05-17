@@ -81,8 +81,6 @@ public:
         ASSERT_NOT_REACHED();
     }
     
-    void setRegsInPriorityOrder(Bank, const Vector<Reg>&);
-    
     // This is the set of registers that Air is allowed to emit code to mutate. It's derived from
     // regsInPriorityOrder. Any registers not in this set are said to be "pinned".
     const RegisterSet& mutableRegs() const { return m_mutableRegs; }
@@ -104,7 +102,7 @@ public:
         unsigned byteSize, StackSlotKind, B3::StackSlot* = nullptr);
     StackSlot* addStackSlot(B3::StackSlot*);
 
-    Special* addSpecial(std::unique_ptr<Special>);
+    JS_EXPORT_PRIVATE Special* addSpecial(std::unique_ptr<Special>);
 
     // This is the special you need to make a C call!
     CCallSpecial* cCallSpecial();
@@ -311,12 +309,18 @@ public:
     void setDisassembler(std::unique_ptr<Disassembler>&& disassembler) { m_disassembler = WTFMove(disassembler); }
     Disassembler* disassembler() { return m_disassembler.get(); }
 
+    RegisterSet mutableGPRs();
+    RegisterSet mutableFPRs();
+    RegisterSet pinnedRegisters() const { return m_pinnedRegs; }
+
 private:
     friend class ::JSC::B3::Procedure;
     friend class BlockInsertionSet;
     
     Code(Procedure&);
 
+    void setRegsInPriorityOrder(Bank, const Vector<Reg>&);
+    
     Vector<Reg>& regsInPriorityOrderImpl(Bank bank)
     {
         switch (bank) {
@@ -332,6 +336,7 @@ private:
     Vector<Reg> m_gpRegsInPriorityOrder;
     Vector<Reg> m_fpRegsInPriorityOrder;
     RegisterSet m_mutableRegs;
+    RegisterSet m_pinnedRegs;
     SparseCollection<StackSlot> m_stackSlots;
     Vector<std::unique_ptr<BasicBlock>> m_blocks;
     SparseCollection<Special> m_specials;
