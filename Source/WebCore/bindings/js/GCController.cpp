@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2014, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -93,7 +93,7 @@ void GCController::garbageCollectNowIfNotDoneRecently()
 #if USE(CF) || USE(GLIB)
     JSLockHolder lock(commonVM());
     if (!commonVM().heap.isCurrentThreadBusy())
-        commonVM().heap.collectNowFullIfNotDoneRecently(Sync);
+        commonVM().heap.collectNowFullIfNotDoneRecently(Async);
 #else
     garbageCollectSoon();
 #endif

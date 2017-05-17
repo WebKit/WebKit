@@ -1,3 +1,24 @@
+2017-05-16  Filip Pizlo  <fpizlo@apple.com>
+
+        GCController::garbageCollectNowIfNotDoneRecently should request Async Full GCs
+        https://bugs.webkit.org/show_bug.cgi?id=172204
+
+        Reviewed by Saam Barati.
+
+        No new tests because existing tests will tell us if there is a problem.
+        
+        The goal of this change is to reduce the likelihood that we block for a GC. We want it to be
+        benchmark-neutral.
+        
+        It's a 0.14% speed-up on JetStream with 24% probability.
+        
+        It's a 0.12% slow-down on PLT3 with 43% probability.
+        
+        So it's neutral on my machine.
+
+        * bindings/js/GCController.cpp:
+        (WebCore::GCController::garbageCollectNowIfNotDoneRecently):
+
 2017-05-16  Tim Horton  <timothy_horton@apple.com>
 
         [macOS] REGRESSION: Drag images for links with right-to-left titles are incorrect (172006)
