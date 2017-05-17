@@ -80,6 +80,7 @@ private:
     void clearSheet();
 
     InsertionNotificationRequest insertedInto(ContainerNode&) final;
+    void finishedInsertingSubtree() final;
     void removedFrom(ContainerNode&) final;
 
     void initializeStyleSheet(Ref<StyleSheetContents>&&, const CachedCSSStyleSheet&);

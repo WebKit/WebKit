@@ -1,3 +1,16 @@
+2017-05-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        getElementById can return a wrong elemnt when a matching element is removed during beforeload event
+        https://bugs.webkit.org/show_bug.cgi?id=171374
+
+        Reviewed by Brent Fulgham.
+
+        Added a regression test for calling getElementById after removing a matching element
+        during beforeload event of a link element.
+
+        * fast/html/link-element-removal-during-beforeload-expected.txt: Added.
+        * fast/html/link-element-removal-during-beforeload.html: Added.
+
 2017-05-17  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rebaseline js/dom/global-constructors-attributes.html after r216959.
