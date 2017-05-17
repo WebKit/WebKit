@@ -26,6 +26,7 @@
 #pragma once
 
 #include "WebProcessLifetimeObserver.h"
+#include <WebCore/Cookie.h>
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/SecurityOriginHash.h>
 #include <WebCore/SessionID.h>
@@ -118,6 +119,10 @@ public:
     WebsiteDataStoreParameters parameters();
     DatabaseProcessCreationParameters databaseProcessParameters();
 
+    Vector<WebCore::Cookie> pendingCookies() const;
+    void addPendingCookie(const WebCore::Cookie&);
+    void removePendingCookie(const WebCore::Cookie&);
+
 private:
     explicit WebsiteDataStore(WebCore::SessionID);
     explicit WebsiteDataStore(Configuration, WebCore::SessionID);
@@ -160,6 +165,7 @@ private:
     Vector<uint8_t> m_uiProcessCookieStorageIdentifier;
     RetainPtr<CFHTTPCookieStorageRef> m_cfCookieStorage;
 #endif
+    HashSet<WebCore::Cookie> m_pendingCookies;
 };
 
 }

@@ -30,8 +30,7 @@
 
 namespace WebKit {
 
-
-WebsiteDataStoreParameters::WebsiteDataStoreParameters()
+WebsiteDataStoreParameters::~WebsiteDataStoreParameters()
 {
 }
 
@@ -40,6 +39,7 @@ void WebsiteDataStoreParameters::encode(IPC::Encoder& encoder) const
     encoder << sessionID;
     encoder << uiProcessCookieStorageIdentifier;
     encoder << cookieStoragePathExtensionHandle;
+    encoder << pendingCookies;
 }
 
 bool WebsiteDataStoreParameters::decode(IPC::Decoder& decoder, WebsiteDataStoreParameters& parameters)
@@ -51,6 +51,9 @@ bool WebsiteDataStoreParameters::decode(IPC::Decoder& decoder, WebsiteDataStoreP
         return false;
 
     if (!decoder.decode(parameters.cookieStoragePathExtensionHandle))
+        return false;
+
+    if (!decoder.decode(parameters.pendingCookies))
         return false;
 
     return true;

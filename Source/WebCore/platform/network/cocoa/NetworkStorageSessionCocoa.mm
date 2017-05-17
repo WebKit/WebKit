@@ -43,7 +43,7 @@ void NetworkStorageSession::setCookie(const Cookie& cookie)
 void NetworkStorageSession::setCookies(const Vector<Cookie>& cookies, const URL& url, const URL& mainDocumentURL)
 {
     RetainPtr<NSMutableArray> nsCookies = adoptNS([[NSMutableArray alloc] initWithCapacity:cookies.size()]);
-    for (auto cookie : cookies)
+    for (const auto& cookie : cookies)
         [nsCookies addObject:(NSHTTPCookie *)cookie];
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;

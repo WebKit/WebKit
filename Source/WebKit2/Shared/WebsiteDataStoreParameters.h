@@ -26,6 +26,7 @@
 #pragma once
 
 #include "SandboxExtension.h"
+#include <WebCore/Cookie.h>
 #include <WebCore/SessionID.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -38,14 +39,17 @@ class Encoder;
 namespace WebKit {
 
 struct WebsiteDataStoreParameters {
-    WebsiteDataStoreParameters();
-
+    WebsiteDataStoreParameters() = default;
+    WebsiteDataStoreParameters(WebsiteDataStoreParameters&&) = default;
+    ~WebsiteDataStoreParameters();
+    
     void encode(IPC::Encoder&) const;
     static bool decode(IPC::Decoder&, WebsiteDataStoreParameters&);
 
     WebCore::SessionID sessionID;
     Vector<uint8_t> uiProcessCookieStorageIdentifier;
     SandboxExtension::Handle cookieStoragePathExtensionHandle;
+    Vector<WebCore::Cookie> pendingCookies;
 };
 
 } // namespace WebKit

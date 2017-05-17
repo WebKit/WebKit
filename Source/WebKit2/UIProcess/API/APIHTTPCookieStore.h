@@ -27,6 +27,7 @@
 
 #include "APIObject.h"
 #include "HTTPCookieAcceptPolicy.h"
+#include <WebCore/Cookie.h>
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>

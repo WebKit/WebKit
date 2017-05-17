@@ -57,13 +57,9 @@ void HTTPCookieStore::cookies(Function<void (const Vector<WebCore::Cookie>&)>&& 
     auto& dataStore = m_owningDataStore.websiteDataStore();
     auto* pool = dataStore.processPoolForCookieStorageOperations();
     if (!pool) {
-        // FIXME: This is not necessarily the right storage session, but it's currently
-        // the best we can do in the absence of a process pool.
-        auto allCookies = WebCore::NetworkStorageSession::defaultStorageSession().getAllCookies();
-        callOnMainThread([completionHandler = WTFMove(completionHandler), allCookies = WTFMove(allCookies)]() {
+        callOnMainThread([completionHandler = WTFMove(completionHandler), allCookies = dataStore.pendingCookies()]() {
             completionHandler(allCookies);
         });
-
         return;
     }
 
@@ -78,13 +74,10 @@ void HTTPCookieStore::setCookie(const WebCore::Cookie& cookie, Function<void ()>
     auto& dataStore = m_owningDataStore.websiteDataStore();
     auto* pool = dataStore.processPoolForCookieStorageOperations();
     if (!pool) {
-        // FIXME: This is not necessarily the right storage session, but it's currently
-        // the best we can do in the absence of a process pool.
-        WebCore::NetworkStorageSession::defaultStorageSession().setCookie(cookie);
+        dataStore.addPendingCookie(cookie);
         callOnMainThread([completionHandler = WTFMove(completionHandler)]() {
             completionHandler();
         });
-
         return;
     }
 
@@ -99,13 +92,10 @@ void HTTPCookieStore::deleteCookie(const WebCore::Cookie& cookie, Function<void 
     auto& dataStore = m_owningDataStore.websiteDataStore();
     auto* pool = dataStore.processPoolForCookieStorageOperations();
     if (!pool) {
-        // FIXME: This is not necessarily the right storage session, but it's currently
-        // the best we can do in the absence of a process pool.
-        WebCore::NetworkStorageSession::defaultStorageSession().deleteCookie(cookie);
+        dataStore.removePendingCookie(cookie);
         callOnMainThread([completionHandler = WTFMove(completionHandler)]() {
             completionHandler();
         });
-
         return;
     }
 

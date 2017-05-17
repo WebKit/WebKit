@@ -113,7 +113,7 @@ public:
 
     void prefetchDNS(const String&);
 
-    void ensurePrivateBrowsingSession(WebCore::SessionID);
+    void ensurePrivateBrowsingSession(WebsiteDataStoreParameters&&);
 
     void grantSandboxExtensionsToDatabaseProcessForBlobs(const Vector<String>& filenames, Function<void ()>&& completionHandler);
 
