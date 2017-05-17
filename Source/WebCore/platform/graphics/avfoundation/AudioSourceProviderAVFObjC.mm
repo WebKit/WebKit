@@ -237,6 +237,7 @@ void AudioSourceProviderAVFObjC::createMix()
 
 void AudioSourceProviderAVFObjC::initCallback(MTAudioProcessingTapRef tap, void* clientInfo, void** tapStorageOut)
 {
+    ASSERT(tap);
     AudioSourceProviderAVFObjC* _this = static_cast<AudioSourceProviderAVFObjC*>(clientInfo);
     _this->m_tap = tap;
     _this->m_tapStorage = new TapStorage(_this);
@@ -359,10 +360,14 @@ void AudioSourceProviderAVFObjC::unprepare()
 void AudioSourceProviderAVFObjC::process(CMItemCount numberOfFrames, MTAudioProcessingTapFlags flags, AudioBufferList* bufferListInOut, CMItemCount* numberFramesOut, MTAudioProcessingTapFlags* flagsOut)
 {
     UNUSED_PARAM(flags);
+    
+    RetainPtr<MTAudioProcessingTapRef> tap = m_tap;
+    if (!tap)
+        return;
 
     CMItemCount itemCount = 0;
     CMTimeRange rangeOut;
-    OSStatus status = MTAudioProcessingTapGetSourceAudio(m_tap.get(), numberOfFrames, bufferListInOut, flagsOut, &rangeOut, &itemCount);
+    OSStatus status = MTAudioProcessingTapGetSourceAudio(tap.get(), numberOfFrames, bufferListInOut, flagsOut, &rangeOut, &itemCount);
     if (status != noErr || !itemCount)
         return;
 

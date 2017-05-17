@@ -1,3 +1,29 @@
+2017-05-17  Per Arne Vollan  <pvollan@apple.com>
+
+        Crash under WebCore::AudioSourceProviderAVFObjC::process().
+        https://bugs.webkit.org/show_bug.cgi?id=172101
+        rdar://problem/27446589
+
+        Reviewed by Jer Noble.
+
+        Calling the function MTAudioProcessingTapGetSourceAudio when the value of the
+        MTAudioProcessingTapRef parameter is null, will lead to a null dereference.
+        This can for example happen if MediaPlayerPrivateAVFoundationObjC::cancelLoad()
+        is called on the main thread while MediaToolbox is calling the
+        WebCore::AudioSourceProviderAVFObjC::processCallback function on a secondary
+        thread. MediaPlayerPrivateAVFoundationObjC::cancelLoad() will then call
+        AudioSourceProviderAVFObjC::setPlayerItem(nullptr), which will call
+        AudioSourceProviderAVFObjC::destroyMix(), which will set m_tap to null. When
+        AudioSourceProviderAVFObjC::process is called on the secondary thread, using
+        the m_tap member in the call to MTAudioProcessingTapGetSourceAudio, the process
+        will crash.
+
+        No new tests since I am not able to reproduce.
+
+        * platform/graphics/avfoundation/AudioSourceProviderAVFObjC.mm:
+        (WebCore::AudioSourceProviderAVFObjC::initCallback):
+        (WebCore::AudioSourceProviderAVFObjC::process):
+
 2017-05-17  Chris Dumez  <cdumez@apple.com>
 
         Setting URL.search to '' results in a stringified URL ending in '?'
