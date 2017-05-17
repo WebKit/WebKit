@@ -1,3 +1,17 @@
+2017-05-17  Michael Saboff  <msaboff@apple.com>
+
+        [iOS] The Garbage Collector shouldn't rely on the bmalloc scavenger for up to date memory footprint info (172186)
+        https://bugs.webkit.org/show_bug.cgi?id=172186
+
+        Reviewed by Geoffrey Garen.
+
+        The calls memoryFootprint() and percentAvailableMemoryInUse() now make a system call to get
+        the current memory footprint value.
+
+        * bmalloc/Heap.h:
+        (bmalloc::Heap::memoryFootprint):
+        (bmalloc::Heap::percentAvailableMemoryInUse):
+
 2017-05-16  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION(r216763): JetStream is 1% slower on Mac

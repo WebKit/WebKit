@@ -219,8 +219,6 @@ public:
     void reportWebAssemblyFastMemoriesAllocated(size_t);
     bool webAssemblyFastMemoriesThisCycleAtThreshold() const;
 
-    bool overCriticalMemoryThreshold() const;
-    
 #if ENABLE(RESOURCE_USAGE)
     // Use this API to report the subset of extra memory that lives outside this process.
     JS_EXPORT_PRIVATE void reportExternalMemoryVisited(size_t);
@@ -517,7 +515,7 @@ private:
     void sweepAllLogicallyEmptyWeakBlocks();
     bool sweepNextLogicallyEmptyWeakBlock();
 
-    bool shouldDoFullCollection() const;
+    bool shouldDoFullCollection();
 
     void incrementDeferralDepth();
     void decrementDeferralDepth();
@@ -533,6 +531,13 @@ private:
     void setMutatorShouldBeFenced(bool value);
     
     void addCoreConstraints();
+
+    enum class MemoryThresholdCallType {
+        Cached,
+        Direct
+    };
+
+    bool overCriticalMemoryThreshold(MemoryThresholdCallType memoryThresholdCallType = MemoryThresholdCallType::Cached);
     
     template<typename Func>
     void iterateExecutingAndCompilingCodeBlocks(const Func&);
@@ -694,7 +699,12 @@ private:
     Box<Lock> m_threadLock;
     RefPtr<AutomaticThreadCondition> m_threadCondition; // The mutator must not wait on this. It would cause a deadlock.
     RefPtr<AutomaticThread> m_thread;
-    
+
+#if PLATFORM(IOS)
+    unsigned m_precentAvailableMemoryCachedCallCount;
+    bool m_overCriticalMemoryThreshold;
+#endif
+
     Lock m_collectContinuouslyLock;
     Condition m_collectContinuouslyCondition;
     bool m_shouldStopCollectingContinuously { false };

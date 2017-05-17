@@ -173,11 +173,15 @@ inline void Heap::derefSmallLine(std::lock_guard<StaticMutex>& lock, Object obje
 #if BPLATFORM(IOS)
 inline size_t Heap::memoryFootprint()
 {
+    updateMemoryInUseParameters();
+
     return m_memoryFootprint;
 }
 
 inline double Heap::percentAvailableMemoryInUse()
 {
+    updateMemoryInUseParameters();
+
     return m_percentAvailableMemoryInUse;
 }
 #endif

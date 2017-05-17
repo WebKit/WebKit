@@ -503,14 +503,19 @@ bool Heap::webAssemblyFastMemoriesThisCycleAtThreshold() const
     return m_webAssemblyFastMemoriesAllocatedThisCycle > fastMemoryThreshold;
 }
 
-bool Heap::overCriticalMemoryThreshold() const
+bool Heap::overCriticalMemoryThreshold(MemoryThresholdCallType memoryThresholdCallType)
 {
 #if PLATFORM(IOS)
-    if (bmalloc::api::percentAvailableMemoryInUse() > Options::criticalGCMemoryThreshold())
-        return true;
-#endif
+    if (memoryThresholdCallType == MemoryThresholdCallType::Direct || ++m_precentAvailableMemoryCachedCallCount >= 100) {
+        m_overCriticalMemoryThreshold = bmalloc::api::percentAvailableMemoryInUse() > Options::criticalGCMemoryThreshold();
+        m_precentAvailableMemoryCachedCallCount = 0;
+    }
 
+    return m_overCriticalMemoryThreshold;
+#else
+    UNUSED_PARAM(memoryThresholdCallType);
     return false;
+#endif
 }
 
 void Heap::reportAbandonedObjectGraph()
@@ -2229,6 +2234,11 @@ void Heap::updateAllocationLimits()
         }
     }
 
+#if PLATFORM(IOS)
+    // Get critical memory threshold for next cycle.
+    overCriticalMemoryThreshold(MemoryThresholdCallType::Direct);
+#endif
+
     m_sizeAfterLastCollect = currentHeapSize;
     if (verbose)
         dataLog("sizeAfterLastCollect = ", m_sizeAfterLastCollect, "\n");
@@ -2358,7 +2368,7 @@ void Heap::collectNowFullIfNotDoneRecently(Synchronousness synchronousness)
     collectNow(synchronousness, CollectionScope::Full);
 }
 
-bool Heap::shouldDoFullCollection() const
+bool Heap::shouldDoFullCollection()
 {
     if (!Options::useGenerationalGC())
         return true;

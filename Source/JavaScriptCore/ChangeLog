@@ -1,3 +1,27 @@
+2017-05-17  Michael Saboff  <msaboff@apple.com>
+
+        [iOS] The Garbage Collector shouldn't rely on the bmalloc scavenger for up to date memory footprint info
+        https://bugs.webkit.org/show_bug.cgi?id=172186
+
+        Reviewed by Geoffrey Garen.
+
+        The calls to bmalloc::api::memoryFootprint() and ::percentAvailableMemoryInUse() now call
+        the OS to get up to date values.  In overCriticalMemoryThreshold(), we get the current value every
+        100th call and use a cached value the rest of the time.  When colleciton is done, we start with
+        a new overCriticalMemoryThreshold value for the next cycle.
+
+        The choice of 1 out of 100 calls was validated by using JetStream and verifying that it didn't impact
+        performance and still provides timely memory footprint data.  With additional debug logging, I
+        determined that we call overCriticalMemoryThreshold() over 20,000 times/second running JetStream.
+        Other logging showed that there were over 1700 calls to overCriticalMemoryThreshold() on average per
+        GC cycle.  Dividing both of these numbers by 100 seems reasonable.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::overCriticalMemoryThreshold):
+        (JSC::Heap::updateAllocationLimits):
+        (JSC::Heap::shouldDoFullCollection):
+        * heap/Heap.h:
+
 2017-05-17  Saam Barati  <sbarati@apple.com>
 
         PinnedRegisters should be better modeled in IRC/Briggs
