@@ -61,35 +61,33 @@ class TestRunInterruptedException(Exception):
 
 
 class LayoutTestRunner(object):
-    def __init__(self, options, port, printer, results_directory, test_is_slow_fn, needs_http=False, needs_websockets=False, needs_web_platform_test_server=False):
+    def __init__(self, options, port, printer, results_directory, test_is_slow_fn):
         self._options = options
         self._port = port
         self._printer = printer
         self._results_directory = results_directory
         self._test_is_slow = test_is_slow_fn
-        self._needs_http = needs_http
-        self._needs_websockets = needs_websockets
-        self._needs_web_platform_test_server = needs_web_platform_test_server
-
         self._sharder = Sharder(self._port.split_test)
         self._filesystem = self._port.host.filesystem
 
         self._expectations = None
         self._test_inputs = []
+        self._needs_http = None
+        self._needs_websockets = None
+        self._needs_web_platform_test_server = None
         self._retrying = False
         self._current_run_results = None
-
-        if (self._needs_http and self._options.http) or self._needs_web_platform_test_server:
-            self.start_servers()
 
     def get_worker_count(self, test_inputs, child_process_count):
         all_shards = self._sharder.shard_tests(test_inputs, child_process_count, self._options.fully_parallel)
         return min(child_process_count, len(all_shards))
 
-    def run_tests(self, expectations, test_inputs, tests_to_skip, num_workers, retrying):
+    def run_tests(self, expectations, test_inputs, tests_to_skip, num_workers, needs_http, needs_websockets, needs_web_platform_test_server, retrying):
         self._expectations = expectations
         self._test_inputs = test_inputs
-
+        self._needs_http = needs_http
+        self._needs_websockets = needs_websockets
+        self._needs_web_platform_test_server = needs_web_platform_test_server
         self._retrying = retrying
 
         # FIXME: rename all variables to test_run_results or some such ...
@@ -108,6 +106,9 @@ class LayoutTestRunner(object):
 
         self._printer.write_update('Sharding tests ...')
         all_shards = self._sharder.shard_tests(test_inputs, int(self._options.child_processes), self._options.fully_parallel)
+
+        if (self._needs_http and self._options.http) or self._needs_web_platform_test_server:
+            self.start_servers()
 
         self._printer.print_workers_and_shards(num_workers, len(all_shards))
 

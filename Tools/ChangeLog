@@ -1,3 +1,16 @@
+2017-05-17  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r216955.
+
+        This change caused strange behavior with web-platform-tests
+        locally and on EWS.
+
+        Reverted changeset:
+
+        "webkitpy: Start servers before setting-up for testing"
+        https://bugs.webkit.org/show_bug.cgi?id=172176
+        http://trac.webkit.org/changeset/216955
+
 2017-05-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         A URL type is vended for a non-URL plain text string when starting data interaction
