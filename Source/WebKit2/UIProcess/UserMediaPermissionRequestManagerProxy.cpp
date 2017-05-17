@@ -325,8 +325,8 @@ void UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame(
 #else
     UNUSED_PARAM(userMediaID);
     UNUSED_PARAM(frameID);
-    UNUSED_PARAM(userMediaDocumentOriginIdentifier);
-    UNUSED_PARAM(topLevelDocumentOriginIdentifier);
+    UNUSED_PARAM(userMediaDocumentOrigin);
+    UNUSED_PARAM(topLevelDocumentOrigin);
     UNUSED_PARAM(audioConstraints);
     UNUSED_PARAM(videoConstraints);
 #endif
@@ -369,8 +369,8 @@ void UserMediaPermissionRequestManagerProxy::enumerateMediaDevicesForFrame(uint6
 #else
     UNUSED_PARAM(userMediaID);
     UNUSED_PARAM(frameID);
-    UNUSED_PARAM(userMediaDocumentOriginIdentifier);
-    UNUSED_PARAM(topLevelDocumentOriginIdentifier);
+    UNUSED_PARAM(userMediaDocumentOrigin);
+    UNUSED_PARAM(topLevelDocumentOrigin);
 #endif
 }
 

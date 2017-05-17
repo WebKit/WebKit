@@ -1,5 +1,13 @@
 2017-05-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Fix the build with MEDIA_STREAM disabled after r216952.
+
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame):
+        (WebKit::UserMediaPermissionRequestManagerProxy::enumerateMediaDevicesForFrame):
+
+2017-05-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [Threaded Compositor] SHOULD NEVER BE REACHED in WebKit::CompositingRunLoop::updateCompleted
         https://bugs.webkit.org/show_bug.cgi?id=172167
 
