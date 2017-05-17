@@ -1,3 +1,14 @@
+2017-05-17  Zalan Bujtas  <zalan@apple.com>
+
+        Debug ASSERT: WebCore::RenderImageResource::shutdown
+        https://bugs.webkit.org/show_bug.cgi?id=172238
+        <rdar://problem/30064601>
+
+        Reviewed by Simon Fraser.
+
+        * fast/images/assert-when-insertion-point-is-incorrect-expected.txt: Added.
+        * fast/images/assert-when-insertion-point-is-incorrect.html: Added.
+
 2017-05-17  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark http/tests/appcache/404-resource-with-slow-main-resource.php as flaky on mac-wk1.

@@ -1,3 +1,23 @@
+2017-05-17  Zalan Bujtas  <zalan@apple.com>
+
+        Debug ASSERT: WebCore::RenderImageResource::shutdown
+        https://bugs.webkit.org/show_bug.cgi?id=172238
+        <rdar://problem/30064601>
+
+        Reviewed by Simon Fraser.
+
+        While constructing new renderers, as part of the render tree update, we check if the insertion point is valid for them. 
+        When this newly constructed child renderer can't be injected to a specific place, we destroy it right away.
+        This assert was added with the assumption that the image resource object gets initialized
+        (through RenderObject::initializeStyle) even when the renderer turns out to be invalid.
+
+        Test: fast/images/assert-when-insertion-point-is-incorrect.html
+
+        * rendering/RenderImageResource.cpp:
+        (WebCore::RenderImageResource::RenderImageResource):
+        (WebCore::RenderImageResource::shutdown):
+        * rendering/RenderImageResource.h:
+
 2017-05-17  Per Arne Vollan  <pvollan@apple.com>
 
         Crash under WebCore::AudioSourceProviderAVFObjC::process().

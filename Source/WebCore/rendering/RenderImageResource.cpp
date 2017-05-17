@@ -37,7 +37,6 @@
 namespace WebCore {
 
 RenderImageResource::RenderImageResource()
-    : m_renderer(0)
 {
 }
 
@@ -54,12 +53,12 @@ void RenderImageResource::initialize(RenderElement* renderer)
 
 void RenderImageResource::shutdown()
 {
-    ASSERT(m_renderer);
+    if (!m_cachedImage)
+        return;
 
-    if (m_cachedImage) {
-        image()->stopAnimation();
-        m_cachedImage->removeClient(*m_renderer);
-    }
+    ASSERT(m_renderer);
+    image()->stopAnimation();
+    m_cachedImage->removeClient(*m_renderer);
 }
 
 void RenderImageResource::setCachedImage(CachedImage* newImage)

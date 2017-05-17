@@ -61,7 +61,7 @@ public:
     virtual WrappedImagePtr imagePtr() const { return m_cachedImage.get(); }
 
 protected:
-    RenderElement* m_renderer;
+    RenderElement* m_renderer { nullptr };
     CachedResourceHandle<CachedImage> m_cachedImage;
 
 private:
