@@ -1,3 +1,16 @@
+2017-05-17  Matt Lewis  <jlewis3@apple.com>
+
+        Unreviewed, rolling out r216974.
+
+        Revision caused consistent timeouts on all platforms.
+
+        Reverted changeset:
+
+        "Add a RuntimeEnabledFeature for display: contents, defaulted
+        to false."
+        https://bugs.webkit.org/show_bug.cgi?id=171984
+        http://trac.webkit.org/changeset/216974
+
 2017-05-17  Alex Christensen  <achristensen@webkit.org>
 
         Interacting with WKHTTPCookieStores before creating WKWebViews and WKProcessPools should affect cookies used
