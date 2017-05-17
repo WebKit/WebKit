@@ -209,6 +209,9 @@ public:
 
     virtual AudioSourceProvider* audioSourceProvider() { return nullptr; }
 
+    // Testing only
+    virtual void delaySamples(float) { };
+
 protected:
     RealtimeMediaSource(const String& id, Type, const String& name);
 

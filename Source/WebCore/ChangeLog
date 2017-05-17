@@ -1,3 +1,33 @@
+2017-05-17  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] videoWidth and videoHeight should be set when 'loadedmetadata' event fires
+        https://bugs.webkit.org/show_bug.cgi?id=172223
+        <rdar://problem/31899755>
+
+        Reviewed by Jer Noble.
+
+        Test: fast/mediastream/get-user-media-on-loadedmetadata.html
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::currentReadyState): If a stream has
+        a video track, return HaveNothing until we have a sample.
+       
+        * platform/mediastream/RealtimeMediaSource.h:
+        * platform/mock/MockRealtimeAudioSource.cpp:
+        (WebCore::MockRealtimeAudioSource::tick): Optionally delay the next sample.
+        (WebCore::MockRealtimeAudioSource::delaySamples):
+        * platform/mock/MockRealtimeAudioSource.h:
+
+        * platform/mock/MockRealtimeVideoSource.cpp:
+        (WebCore::MockRealtimeVideoSource::delaySamples):
+        (WebCore::MockRealtimeVideoSource::generateFrame): Optionally delay the next sample.
+        * platform/mock/MockRealtimeVideoSource.h:
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::delayMediaStreamTrackSamples):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2017-05-17  Youenn Fablet  <youenn@apple.com>
 
         iOS WebRTC Media Capture should not allow camera capture from background tab

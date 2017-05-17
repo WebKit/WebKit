@@ -574,6 +574,7 @@ public:
     void observeMediaStreamTrack(MediaStreamTrack&);
     using TrackFramePromise = DOMPromiseDeferred<IDLInterface<ImageData>>;
     void grabNextMediaStreamTrackFrame(TrackFramePromise&&);
+    void delayMediaStreamTrackSamples(MediaStreamTrack&, float);
 #endif
 
 private:

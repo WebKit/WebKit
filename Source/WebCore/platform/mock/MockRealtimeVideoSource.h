@@ -82,6 +82,8 @@ private:
 
     void generateFrame();
 
+    void delaySamples(float) override;
+
     float m_baseFontSize { 0 };
     FontCascade m_timeFont;
 
@@ -98,6 +100,7 @@ private:
 
     double m_startTime { NAN };
     double m_elapsedTime { 0 };
+    double m_delayUntil { 0 };
 
     unsigned m_frameNumber { 0 };
 

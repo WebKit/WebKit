@@ -4044,6 +4044,11 @@ void Internals::setPageVisibility(bool isVisible)
     page.setActivityState(state);
 }
 
+void Internals::delayMediaStreamTrackSamples(MediaStreamTrack& track, float delay)
+{
+    track.source().delaySamples(delay);
+}
+
 #endif
 
 } // namespace WebCore

@@ -153,9 +153,21 @@ void MockRealtimeAudioSource::tick()
         m_lastRenderTime = monotonicallyIncreasingTime();
 
     double now = monotonicallyIncreasingTime();
+
+    if (m_delayUntil) {
+        if (m_delayUntil < now)
+            return;
+        m_delayUntil = 0;
+    }
+
     double delta = now - m_lastRenderTime;
     m_lastRenderTime = now;
     render(delta);
+}
+
+void MockRealtimeAudioSource::delaySamples(float delta)
+{
+    m_delayUntil = monotonicallyIncreasingTime() + delta;
 }
 
 } // namespace WebCore

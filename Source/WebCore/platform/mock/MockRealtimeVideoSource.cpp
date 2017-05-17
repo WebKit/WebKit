@@ -367,8 +367,19 @@ void MockRealtimeVideoSource::drawText(GraphicsContext& context)
     }
 }
 
+void MockRealtimeVideoSource::delaySamples(float delta)
+{
+    m_delayUntil = monotonicallyIncreasingTime() + delta;
+}
+
 void MockRealtimeVideoSource::generateFrame()
 {
+    if (m_delayUntil) {
+        if (m_delayUntil < monotonicallyIncreasingTime())
+            return;
+        m_delayUntil = 0;
+    }
+
     ImageBuffer* buffer = imageBuffer();
     if (!buffer)
         return;

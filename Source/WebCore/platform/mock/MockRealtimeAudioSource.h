@@ -75,10 +75,13 @@ private:
 
     bool isCaptureSource() const final { return true; }
 
+    void delaySamples(float) final;
+
     RunLoop::Timer<MockRealtimeAudioSource> m_timer;
     double m_startTime { NAN };
     double m_lastRenderTime { NAN };
     double m_elapsedTime { 0 };
+    double m_delayUntil { 0 };
 };
 
 } // namespace WebCore

@@ -1,3 +1,14 @@
+2017-05-17  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] videoWidth and videoHeight should be set when 'loadedmetadata' event fires
+        https://bugs.webkit.org/show_bug.cgi?id=172223
+        <rdar://problem/31899755>
+
+        Reviewed by Jer Noble.
+
+        * fast/mediastream/get-user-media-on-loadedmetadata-expected.txt: Added.
+        * fast/mediastream/get-user-media-on-loadedmetadata.html: Added.
+
 2017-05-17  Youenn Fablet  <youenn@apple.com>
 
         iOS WebRTC Media Capture should not allow camera capture from background tab
