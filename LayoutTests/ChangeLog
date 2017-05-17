@@ -1,3 +1,11 @@
+2017-05-16  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, fix LayoutTests/plugins/navigator-plugin-crash.html
+        <rdar://problem/32236478>
+
+        * plugins/navigator-plugin-crash-expected.txt:
+        * plugins/navigator-plugin-crash.html:
+
 2017-05-16  Chris Dumez  <cdumez@apple.com>
 
         Implement DOMMatrix / DOMMatrixReadOnly

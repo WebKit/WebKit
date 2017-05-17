@@ -18,7 +18,9 @@
         var data = t1.navigator.plugins[0];
         t1.close();
         setTimeout(function() {
-            document.body.innerHTML += JSON.stringify(data);
+            // Do not expect crashes.
+            JSON.stringify(data);
+
             if (window.testRunner)
                 testRunner.notifyDone();
         }, 200);
