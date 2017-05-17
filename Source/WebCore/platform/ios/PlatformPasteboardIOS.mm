@@ -198,6 +198,22 @@ static RetainPtr<NSDictionary> richTextRepresentationsForPasteboardWebContent(co
     return representations;
 }
 
+#if ENABLE(DATA_INTERACTION)
+
+static void addRepresentationsForPlainText(WebItemProviderRegistrationInfoList *itemsToRegister, const String& plainText)
+{
+    if (plainText.isEmpty())
+        return;
+
+    NSURL *platformURL = [NSURL URLWithString:plainText];
+    if (URL(platformURL).isValid())
+        [itemsToRegister addRepresentingObject:platformURL];
+
+    [itemsToRegister addData:[(NSString *)plainText dataUsingEncoding:NSUTF8StringEncoding] forType:(NSString *)kUTTypeUTF8PlainText];
+}
+
+#endif
+
 void PlatformPasteboard::writeObjectRepresentations(const PasteboardWebContent& content)
 {
 #if ENABLE(DATA_INTERACTION)
@@ -220,7 +236,7 @@ void PlatformPasteboard::writeObjectRepresentations(const PasteboardWebContent& 
         [itemsToRegister addData:content.dataInRTFFormat->createNSData().get() forType:(NSString *)kUTTypeRTF];
 
     if (!content.dataInStringFormat.isEmpty())
-        [itemsToRegister addRepresentingObject:(NSString *)content.dataInStringFormat];
+        addRepresentationsForPlainText(itemsToRegister.get(), content.dataInStringFormat);
 
     [m_pasteboard setItemsUsingRegistrationInfoLists:@[ itemsToRegister.get() ]];
 #else
@@ -289,13 +305,9 @@ void PlatformPasteboard::writeObjectRepresentations(const String& pasteboardType
     RetainPtr<WebItemProviderRegistrationInfoList> itemsToRegister = adoptNS([[WebItemProviderRegistrationInfoList alloc] init]);
 
     NSString *pasteboardTypeAsNSString = pasteboardType;
-    NSString *textAsNSString = text;
-    if (textAsNSString && pasteboardTypeAsNSString.length) {
-        if (UTTypeConformsTo((__bridge CFStringRef)pasteboardTypeAsNSString, kUTTypeURL))
-            [itemsToRegister addRepresentingObject:[[[NSURL alloc] initWithString:textAsNSString] autorelease]];
-
-        if (UTTypeConformsTo((__bridge CFStringRef)pasteboardTypeAsNSString, kUTTypeText))
-            [itemsToRegister addRepresentingObject:textAsNSString];
+    if (!text.isEmpty() && pasteboardTypeAsNSString.length) {
+        if (UTTypeConformsTo((__bridge CFStringRef)pasteboardTypeAsNSString, kUTTypeURL) || UTTypeConformsTo((__bridge CFStringRef)pasteboardTypeAsNSString, kUTTypeText))
+            addRepresentationsForPlainText(itemsToRegister.get(), text);
     }
 
     [m_pasteboard setItemsUsingRegistrationInfoLists:@[ itemsToRegister.get() ]];

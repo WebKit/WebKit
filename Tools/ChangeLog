@@ -1,3 +1,17 @@
+2017-05-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        A URL type is vended for a non-URL plain text string when starting data interaction
+        https://bugs.webkit.org/show_bug.cgi?id=172228
+        <rdar://problem/32166729>
+
+        Reviewed by Andy Estes.
+
+        Adds two new data interaction tests, SinglePlainTextWordTypeIdentifiers and SinglePlainTextURLTypeIdentifiers,
+        to verify that a URL UTI is not vended when beginning a data interaction on a single word, but that a URL is
+        still vended when beginning data interaction on something that resembles a link.
+
+        * TestWebKitAPI/Tests/ios/DataInteractionTests.mm:
+
 2017-05-17  David Kilzer  <ddkilzer@apple.com>
 
         BlobDataFileReference::generateReplacementFile() should use mkstemp()

@@ -232,6 +232,45 @@ TEST(DataInteractionTests, TextAreaToInput)
     checkSelectionRectsWithLogging(@[ makeCGRectValue(101, 241, 990, 232) ], [dataInteractionSimulator finalSelectionRects]);
 }
 
+TEST(DataInteractionTests, SinglePlainTextWordTypeIdentifiers)
+{
+    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    RetainPtr<DataInteractionSimulator> dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+
+    [webView loadTestPageNamed:@"textarea-to-input"];
+    [dataInteractionSimulator waitForInputSession];
+    [webView stringByEvaluatingJavaScript:@"source.value = 'pneumonoultramicroscopicsilicovolcanoconiosis'"];
+    [webView stringByEvaluatingJavaScript:@"source.selectionStart = 0"];
+    [webView stringByEvaluatingJavaScript:@"source.selectionEnd = source.value.length"];
+    [dataInteractionSimulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 300)];
+
+    NSArray *registeredTypes = [[dataInteractionSimulator sourceItemProviders].firstObject registeredTypeIdentifiers];
+    EXPECT_EQ(1UL, registeredTypes.count);
+    EXPECT_WK_STREQ([(NSString *)kUTTypeUTF8PlainText UTF8String], [registeredTypes.firstObject UTF8String]);
+    EXPECT_EQ([webView stringByEvaluatingJavaScript:@"source.value"].length, 0UL);
+    EXPECT_WK_STREQ("pneumonoultramicroscopicsilicovolcanoconiosis", [webView editorValue].UTF8String);
+}
+
+TEST(DataInteractionTests, SinglePlainTextURLTypeIdentifiers)
+{
+    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    RetainPtr<DataInteractionSimulator> dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+
+    [webView loadTestPageNamed:@"textarea-to-input"];
+    [dataInteractionSimulator waitForInputSession];
+    [webView stringByEvaluatingJavaScript:@"source.value = 'https://webkit.org/'"];
+    [webView stringByEvaluatingJavaScript:@"source.selectionStart = 0"];
+    [webView stringByEvaluatingJavaScript:@"source.selectionEnd = source.value.length"];
+    [dataInteractionSimulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 300)];
+
+    NSArray *registeredTypes = [[dataInteractionSimulator sourceItemProviders].firstObject registeredTypeIdentifiers];
+    EXPECT_EQ(2UL, registeredTypes.count);
+    EXPECT_WK_STREQ([(NSString *)kUTTypeURL UTF8String], [registeredTypes.firstObject UTF8String]);
+    EXPECT_WK_STREQ([(NSString *)kUTTypeUTF8PlainText UTF8String], [registeredTypes.lastObject UTF8String]);
+    EXPECT_EQ(0UL, [webView stringByEvaluatingJavaScript:@"source.value"].length);
+    EXPECT_WK_STREQ("https://webkit.org/", [webView editorValue].UTF8String);
+}
+
 TEST(DataInteractionTests, LinkToInput)
 {
     RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);

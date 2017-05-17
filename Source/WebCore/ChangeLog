@@ -1,3 +1,26 @@
+2017-05-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        A URL type is vended for a non-URL plain text string when starting data interaction
+        https://bugs.webkit.org/show_bug.cgi?id=172228
+        <rdar://problem/32166729>
+
+        Reviewed by Andy Estes.
+
+        Previously, when writing a plain text string to WebItemProviderPasteboard, we would write an NSString directly
+        to the item provider by using built-in functionality in NSString+UIItemProvider. However, this causes plain
+        strings such as "apple" to be considered URLs, since -[NSURL URLWithString:] creates a non-null NSURL. To fix
+        this, we instead write the string as UTF8 data, for the UTI kUTTypeUTF8PlainText, if the plain text is not a
+        URL. If the plain text is clearly a URL (determined by constructing a new WebCore URL with no base URL and the
+        plaintext string as the absolute URL) then we additionally write an NSURL to the pasteboard.
+
+        2 new API tests:
+        DataInteractionTests.SinglePlainTextWordTypeIdentifiers
+        DataInteractionTests.SinglePlainTextURLTypeIdentifiers
+
+        * platform/ios/PlatformPasteboardIOS.mm:
+        (WebCore::addRepresentationsForPlainText):
+        (WebCore::PlatformPasteboard::writeObjectRepresentations):
+
 2017-05-15  Jiewen Tan  <jiewen_tan@apple.com>
 
         Replace CryptoOperationData with BufferSource for WebKitSubtleCrypto
