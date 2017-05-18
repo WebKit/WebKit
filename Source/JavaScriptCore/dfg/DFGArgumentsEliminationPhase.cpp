@@ -816,7 +816,7 @@ private:
                                 }
                             } else
                                 argumentCountIncludingThis += countNumberOfSpreadArguments(candidate);
-
+                            
                             if (argumentCountIncludingThis <= varargsData->limit) {
                                 storeArgumentCountIncludingThis(argumentCountIncludingThis);
 
@@ -865,11 +865,11 @@ private:
                                     }
                                     storeValue(undefined, storeIndex);
                                 }
+                                
+                                node->remove();
+                                node->origin.exitOK = canExit;
+                                break;
                             }
-
-                            node->remove();
-                            node->origin.exitOK = canExit;
-                            break;
                         }
                     } else {
                         unsigned numberOfArgumentsToSkip = 0;
