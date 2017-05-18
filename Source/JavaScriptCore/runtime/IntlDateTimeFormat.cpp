@@ -47,7 +47,7 @@
 
 namespace JSC {
 
-const ClassInfo IntlDateTimeFormat::s_info = { "Object", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(IntlDateTimeFormat) };
+const ClassInfo IntlDateTimeFormat::s_info = { "Object", &Base::s_info, 0, CREATE_METHOD_TABLE(IntlDateTimeFormat) };
 
 static const char* const relevantExtensionKeys[2] = { "ca", "nu" };
 static const size_t indexOfExtensionKeyCa = 0;

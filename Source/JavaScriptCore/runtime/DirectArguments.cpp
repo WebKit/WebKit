@@ -34,7 +34,7 @@ namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(DirectArguments);
 
-const ClassInfo DirectArguments::s_info = { "Arguments", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(DirectArguments) };
+const ClassInfo DirectArguments::s_info = { "Arguments", &Base::s_info, 0, CREATE_METHOD_TABLE(DirectArguments) };
 
 DirectArguments::DirectArguments(VM& vm, Structure* structure, unsigned length, unsigned capacity)
     : GenericArguments(vm, structure)

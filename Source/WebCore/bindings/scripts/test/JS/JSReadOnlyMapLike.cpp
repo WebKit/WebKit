@@ -91,7 +91,7 @@ template<> void JSReadOnlyMapLikeConstructor::initializeProperties(VM& vm, JSDOM
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
 }
 
-template<> const ClassInfo JSReadOnlyMapLikeConstructor::s_info = { "ReadOnlyMapLike", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSReadOnlyMapLikeConstructor) };
+template<> const ClassInfo JSReadOnlyMapLikeConstructor::s_info = { "ReadOnlyMapLike", &Base::s_info, 0, CREATE_METHOD_TABLE(JSReadOnlyMapLikeConstructor) };
 
 /* Hash table for prototype */
 
@@ -107,7 +107,7 @@ static const HashTableValue JSReadOnlyMapLikePrototypeTableValues[] =
     { "forEach", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsReadOnlyMapLikePrototypeFunctionForEach), (intptr_t) (1) } },
 };
 
-const ClassInfo JSReadOnlyMapLikePrototype::s_info = { "ReadOnlyMapLikePrototype", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSReadOnlyMapLikePrototype) };
+const ClassInfo JSReadOnlyMapLikePrototype::s_info = { "ReadOnlyMapLikePrototype", &Base::s_info, 0, CREATE_METHOD_TABLE(JSReadOnlyMapLikePrototype) };
 
 void JSReadOnlyMapLikePrototype::finishCreation(VM& vm)
 {
@@ -116,7 +116,7 @@ void JSReadOnlyMapLikePrototype::finishCreation(VM& vm)
     putDirect(vm, vm.propertyNames->iteratorSymbol, getDirect(vm, vm.propertyNames->builtinNames().valuesPublicName()), DontEnum);
 }
 
-const ClassInfo JSReadOnlyMapLike::s_info = { "ReadOnlyMapLike", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSReadOnlyMapLike) };
+const ClassInfo JSReadOnlyMapLike::s_info = { "ReadOnlyMapLike", &Base::s_info, 0, CREATE_METHOD_TABLE(JSReadOnlyMapLike) };
 
 JSReadOnlyMapLike::JSReadOnlyMapLike(Structure* structure, JSDOMGlobalObject& globalObject, Ref<ReadOnlyMapLike>&& impl)
     : JSDOMWrapper<ReadOnlyMapLike>(structure, globalObject, WTFMove(impl))

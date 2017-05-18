@@ -38,7 +38,7 @@ namespace WebCore {
 
 using namespace JSC;
 
-const ClassInfo JSDOMWindowProperties::s_info = { "WindowProperties", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSDOMWindowProperties) };
+const ClassInfo JSDOMWindowProperties::s_info = { "WindowProperties", &Base::s_info, 0, CREATE_METHOD_TABLE(JSDOMWindowProperties) };
 
 static bool jsDOMWindowPropertiesGetOwnPropertySlotNamedItemGetter(JSDOMWindowProperties* thisObject, Frame& frame, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {

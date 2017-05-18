@@ -35,7 +35,7 @@
 
 namespace JSC {
 
-const ClassInfo WebAssemblyWrapperFunction::s_info = { "WebAssemblyWrapperFunction", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WebAssemblyWrapperFunction) };
+const ClassInfo WebAssemblyWrapperFunction::s_info = { "WebAssemblyWrapperFunction", &Base::s_info, nullptr, CREATE_METHOD_TABLE(WebAssemblyWrapperFunction) };
 
 static EncodedJSValue JSC_HOST_CALL callWebAssemblyWrapperFunction(ExecState* exec)
 {

@@ -278,7 +278,7 @@ inline CapabilityLevel canCompile(Node* node)
     case DefineAccessorProperty:
     case ToLowerCase:
     case NumberToStringWithRadix:
-    case CheckSubClass:
+    case CheckDOM:
     case CallDOM:
     case CallDOMGetter:
     case ArraySlice:

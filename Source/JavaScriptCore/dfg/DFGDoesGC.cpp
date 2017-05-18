@@ -115,7 +115,7 @@ bool doesGC(Graph& graph, Node* node)
     case CheckStructure:
     case GetExecutable:
     case GetButterfly:
-    case CheckSubClass:
+    case CheckDOM:
     case CheckArray:
     case GetScope:
     case SkipScope:

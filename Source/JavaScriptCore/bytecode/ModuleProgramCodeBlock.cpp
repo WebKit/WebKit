@@ -33,7 +33,7 @@
 namespace JSC {
 
 const ClassInfo ModuleProgramCodeBlock::s_info = {
-    "ModuleProgramCodeBlock", &Base::s_info, nullptr, nullptr,
+    "ModuleProgramCodeBlock", &Base::s_info, 0,
     CREATE_METHOD_TABLE(ModuleProgramCodeBlock)
 };
 

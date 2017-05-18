@@ -7902,33 +7902,10 @@ void SpeculativeJIT::compileCallDOMGetter(Node* node)
     jsValueResult(result.regs(), node);
 }
 
-void SpeculativeJIT::compileCheckSubClass(Node* node)
+void SpeculativeJIT::compileCheckDOM(Node* node)
 {
-    const ClassInfo* classInfo = node->classInfo();
-    if (!classInfo->checkSubClassPatchpoint) {
-        SpeculateCellOperand base(this, node->child1());
-        GPRTemporary other(this);
-        GPRTemporary specified(this);
-
-        GPRReg baseGPR = base.gpr();
-        GPRReg otherGPR = other.gpr();
-        GPRReg specifiedGPR = specified.gpr();
-
-        m_jit.emitLoadStructure(*m_jit.vm(), baseGPR, otherGPR, specifiedGPR);
-        m_jit.loadPtr(CCallHelpers::Address(otherGPR, Structure::classInfoOffset()), otherGPR);
-        m_jit.move(CCallHelpers::TrustedImmPtr(node->classInfo()), specifiedGPR);
-
-        CCallHelpers::Label loop = m_jit.label();
-        auto done = m_jit.branchPtr(CCallHelpers::Equal, otherGPR, specifiedGPR);
-        m_jit.loadPtr(CCallHelpers::Address(otherGPR, ClassInfo::offsetOfParentClass()), otherGPR);
-        m_jit.branchTestPtr(CCallHelpers::NonZero, otherGPR).linkTo(loop, &m_jit);
-        speculationCheck(BadType, JSValueSource::unboxedCell(baseGPR), node->child1(), m_jit.jump());
-        done.link(&m_jit);
-        noResult(node);
-        return;
-    }
-
-    RefPtr<DOMJIT::Patchpoint> patchpoint = classInfo->checkSubClassPatchpoint();
+    // FIXME: We can add the fallback implementation that inlines jsDynamicCast things here.
+    DOMJIT::Patchpoint* patchpoint = node->checkDOMPatchpoint();
 
     Vector<GPRReg> gpScratch;
     Vector<FPRReg> fpScratch;

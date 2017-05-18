@@ -35,7 +35,7 @@
 
 namespace JSC {
 
-const ClassInfo WebAssemblyInstancePrototype::s_info = { "WebAssembly.Instance.prototype", &Base::s_info, &prototypeTableWebAssemblyInstance, nullptr, CREATE_METHOD_TABLE(WebAssemblyInstancePrototype) };
+const ClassInfo WebAssemblyInstancePrototype::s_info = { "WebAssembly.Instance.prototype", &Base::s_info, &prototypeTableWebAssemblyInstance, CREATE_METHOD_TABLE(WebAssemblyInstancePrototype) };
 
 /* Source for WebAssemblyInstancePrototype.lut.h
  @begin prototypeTableWebAssemblyInstance

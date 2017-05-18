@@ -116,11 +116,11 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSBuiltinReadableByteStreamControllerPri
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSBuiltinReadableStreamBYOBReaderPrivateConstructor);
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSBuiltinReadableStreamBYOBRequestPrivateConstructor);
 
-template<> const ClassInfo JSBuiltinReadableStreamDefaultReaderPrivateConstructor::s_info = { "ReadableStreamDefaultReaderPrivateConstructor", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSBuiltinReadableStreamDefaultReaderPrivateConstructor) };
-template<> const ClassInfo JSBuiltinReadableStreamDefaultControllerPrivateConstructor::s_info = { "ReadableStreamDefaultControllerPrivateConstructor", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSBuiltinReadableStreamDefaultControllerPrivateConstructor) };
-template<> const ClassInfo JSBuiltinReadableByteStreamControllerPrivateConstructor::s_info = { "ReadableByteStreamControllerPrivateConstructor", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSBuiltinReadableByteStreamControllerPrivateConstructor) };
-template<> const ClassInfo JSBuiltinReadableStreamBYOBReaderPrivateConstructor::s_info = { "ReadableStreamBYOBReaderPrivateConstructor", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSBuiltinReadableStreamBYOBReaderPrivateConstructor) };
-template<> const ClassInfo JSBuiltinReadableStreamBYOBRequestPrivateConstructor::s_info = { "ReadableStreamBYOBRequestPrivateConstructor", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSBuiltinReadableStreamBYOBRequestPrivateConstructor) };
+template<> const ClassInfo JSBuiltinReadableStreamDefaultReaderPrivateConstructor::s_info = { "ReadableStreamDefaultReaderPrivateConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSBuiltinReadableStreamDefaultReaderPrivateConstructor) };
+template<> const ClassInfo JSBuiltinReadableStreamDefaultControllerPrivateConstructor::s_info = { "ReadableStreamDefaultControllerPrivateConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSBuiltinReadableStreamDefaultControllerPrivateConstructor) };
+template<> const ClassInfo JSBuiltinReadableByteStreamControllerPrivateConstructor::s_info = { "ReadableByteStreamControllerPrivateConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSBuiltinReadableByteStreamControllerPrivateConstructor) };
+template<> const ClassInfo JSBuiltinReadableStreamBYOBReaderPrivateConstructor::s_info = { "ReadableStreamBYOBReaderPrivateConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSBuiltinReadableStreamBYOBReaderPrivateConstructor) };
+template<> const ClassInfo JSBuiltinReadableStreamBYOBRequestPrivateConstructor::s_info = { "ReadableStreamBYOBRequestPrivateConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSBuiltinReadableStreamBYOBRequestPrivateConstructor) };
 
 template<> FunctionExecutable* JSBuiltinReadableStreamDefaultReaderPrivateConstructor::initializeExecutable(JSC::VM& vm)
 {

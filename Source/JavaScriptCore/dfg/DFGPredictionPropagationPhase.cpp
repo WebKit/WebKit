@@ -844,7 +844,7 @@ private:
             break;
         }
 
-        case CheckSubClass:
+        case CheckDOM:
             break;
 
         case CallObjectConstructor: {

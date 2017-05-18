@@ -43,7 +43,7 @@
 
 namespace JSC {
 
-const ClassInfo IntlCollator::s_info = { "Object", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(IntlCollator) };
+const ClassInfo IntlCollator::s_info = { "Object", &Base::s_info, 0, CREATE_METHOD_TABLE(IntlCollator) };
 
 static const char* const relevantExtensionKeys[3] = { "co", "kn", "kf" };
 static const size_t indexOfExtensionKeyCo = 0;

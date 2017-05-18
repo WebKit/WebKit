@@ -87,7 +87,7 @@ template<> void JSTestIterableConstructor::initializeProperties(VM& vm, JSDOMGlo
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
 }
 
-template<> const ClassInfo JSTestIterableConstructor::s_info = { "TestIterable", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestIterableConstructor) };
+template<> const ClassInfo JSTestIterableConstructor::s_info = { "TestIterable", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestIterableConstructor) };
 
 /* Hash table for prototype */
 
@@ -100,7 +100,7 @@ static const HashTableValue JSTestIterablePrototypeTableValues[] =
     { "forEach", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestIterablePrototypeFunctionForEach), (intptr_t) (1) } },
 };
 
-const ClassInfo JSTestIterablePrototype::s_info = { "TestIterablePrototype", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestIterablePrototype) };
+const ClassInfo JSTestIterablePrototype::s_info = { "TestIterablePrototype", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestIterablePrototype) };
 
 void JSTestIterablePrototype::finishCreation(VM& vm)
 {
@@ -109,7 +109,7 @@ void JSTestIterablePrototype::finishCreation(VM& vm)
     putDirect(vm, vm.propertyNames->iteratorSymbol, JSFunction::create(vm, globalObject(), 0, ASCIILiteral("[Symbol.Iterator]"), jsTestIterablePrototypeFunctionSymbolIterator), DontEnum);
 }
 
-const ClassInfo JSTestIterable::s_info = { "TestIterable", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestIterable) };
+const ClassInfo JSTestIterable::s_info = { "TestIterable", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestIterable) };
 
 JSTestIterable::JSTestIterable(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestIterable>&& impl)
     : JSDOMWrapper<TestIterable>(structure, globalObject, WTFMove(impl))
@@ -183,10 +183,10 @@ using TestIterableIterator = JSDOMIterator<JSTestIterable, TestIterableIteratorT
 using TestIterableIteratorPrototype = JSDOMIteratorPrototype<JSTestIterable, TestIterableIteratorTraits>;
 
 template<>
-const JSC::ClassInfo TestIterableIterator::s_info = { "TestIterable Iterator", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(TestIterableIterator) };
+const JSC::ClassInfo TestIterableIterator::s_info = { "TestIterable Iterator", &Base::s_info, 0, CREATE_METHOD_TABLE(TestIterableIterator) };
 
 template<>
-const JSC::ClassInfo TestIterableIteratorPrototype::s_info = { "TestIterable Iterator", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(TestIterableIteratorPrototype) };
+const JSC::ClassInfo TestIterableIteratorPrototype::s_info = { "TestIterable Iterator", &Base::s_info, 0, CREATE_METHOD_TABLE(TestIterableIteratorPrototype) };
 
 static inline EncodedJSValue jsTestIterablePrototypeFunctionSymbolIteratorCaller(ExecState*, JSTestIterable* thisObject, JSC::ThrowScope&)
 {

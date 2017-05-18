@@ -38,7 +38,7 @@ using namespace std;
 
 namespace JSC {
 
-const ClassInfo JSModuleEnvironment::s_info = { "JSModuleEnvironment", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSModuleEnvironment) };
+const ClassInfo JSModuleEnvironment::s_info = { "JSModuleEnvironment", &Base::s_info, 0, CREATE_METHOD_TABLE(JSModuleEnvironment) };
 
 JSModuleEnvironment* JSModuleEnvironment::create(
     VM& vm, Structure* structure, JSScope* currentScope, SymbolTable* symbolTable, JSValue initialValue, AbstractModuleRecord* moduleRecord)

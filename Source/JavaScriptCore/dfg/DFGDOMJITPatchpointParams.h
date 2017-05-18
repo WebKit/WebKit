@@ -27,7 +27,6 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "DFGSpeculativeJIT.h"
 #include "DOMJITPatchpointParams.h"
 
 namespace JSC { namespace DFG {
@@ -37,7 +36,7 @@ class SpeculativeJIT;
 class DOMJITPatchpointParams : public DOMJIT::PatchpointParams {
 public:
     DOMJITPatchpointParams(SpeculativeJIT* jit, Vector<DOMJIT::Value>&& regs, Vector<GPRReg>&& gpScratch, Vector<FPRReg>&& fpScratch)
-        : DOMJIT::PatchpointParams(jit->vm(), WTFMove(regs), WTFMove(gpScratch), WTFMove(fpScratch))
+        : DOMJIT::PatchpointParams(WTFMove(regs), WTFMove(gpScratch), WTFMove(fpScratch))
         , m_jit(jit)
     {
     }

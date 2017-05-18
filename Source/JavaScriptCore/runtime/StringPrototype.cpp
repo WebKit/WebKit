@@ -91,7 +91,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncIterator(ExecState*);
 
 namespace JSC {
 
-const ClassInfo StringPrototype::s_info = { "String", &StringObject::s_info, &stringPrototypeTable, nullptr, CREATE_METHOD_TABLE(StringPrototype) };
+const ClassInfo StringPrototype::s_info = { "String", &StringObject::s_info, &stringPrototypeTable, CREATE_METHOD_TABLE(StringPrototype) };
 
 /* Source for StringConstructor.lut.h
 @begin stringPrototypeTable

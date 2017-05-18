@@ -30,7 +30,7 @@
 
 namespace JSC {
 
-const ClassInfo JSSet::s_info = { "Set", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSSet) };
+const ClassInfo JSSet::s_info = { "Set", &Base::s_info, 0, CREATE_METHOD_TABLE(JSSet) };
 
 String JSSet::toStringName(const JSObject*, ExecState*)
 {

@@ -46,7 +46,7 @@ JSWebAssemblyLinkError::JSWebAssemblyLinkError(VM& vm, Structure* structure)
 {
 }
 
-const ClassInfo JSWebAssemblyLinkError::s_info = { "WebAssembly.LinkError", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSWebAssemblyLinkError) };
+const ClassInfo JSWebAssemblyLinkError::s_info = { "WebAssembly.LinkError", &Base::s_info, 0, CREATE_METHOD_TABLE(JSWebAssemblyLinkError) };
 
     
 JSObject* createJSWebAssemblyLinkError(ExecState* exec, VM& vm, const String& message)

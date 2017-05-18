@@ -56,7 +56,7 @@ static EncodedJSValue JSC_HOST_CALL webAssemblyValidateFunc(ExecState*);
 
 namespace JSC {
 
-const ClassInfo WebAssemblyPrototype::s_info = { "WebAssembly.prototype", &Base::s_info, &prototypeTableWebAssembly, nullptr, CREATE_METHOD_TABLE(WebAssemblyPrototype) };
+const ClassInfo WebAssemblyPrototype::s_info = { "WebAssembly.prototype", &Base::s_info, &prototypeTableWebAssembly, CREATE_METHOD_TABLE(WebAssemblyPrototype) };
 
 /* Source for WebAssemblyPrototype.lut.h
  @begin prototypeTableWebAssembly

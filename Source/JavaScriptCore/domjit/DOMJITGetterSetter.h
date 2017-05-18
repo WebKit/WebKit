@@ -54,6 +54,7 @@ public:
 
 #if ENABLE(JIT)
     virtual Ref<DOMJIT::CallDOMGetterPatchpoint> callDOMGetter() = 0;
+    virtual Ref<DOMJIT::Patchpoint> checkDOM() = 0;
 #endif
 
 private:

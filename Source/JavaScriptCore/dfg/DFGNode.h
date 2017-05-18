@@ -2416,6 +2416,17 @@ public:
         return m_opInfo.as<BasicBlockLocation*>();
     }
 
+    bool hasCheckDOMPatchpoint() const
+    {
+        return op() == CheckDOM;
+    }
+
+    DOMJIT::Patchpoint* checkDOMPatchpoint()
+    {
+        ASSERT(hasCheckDOMPatchpoint());
+        return m_opInfo.as<DOMJIT::Patchpoint*>();
+    }
+
     bool hasCallDOMGetterData() const
     {
         return op() == CallDOMGetter;
@@ -2429,12 +2440,12 @@ public:
 
     bool hasClassInfo() const
     {
-        return op() == CheckSubClass;
+        return op() == CheckDOM;
     }
 
     const ClassInfo* classInfo()
     {
-        return m_opInfo.as<const ClassInfo*>();
+        return m_opInfo2.as<const ClassInfo*>();
     }
 
     bool hasSignature() const

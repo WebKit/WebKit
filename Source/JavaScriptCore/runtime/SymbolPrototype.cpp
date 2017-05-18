@@ -42,7 +42,7 @@ static EncodedJSValue JSC_HOST_CALL symbolProtoFuncValueOf(ExecState*);
 
 namespace JSC {
 
-const ClassInfo SymbolPrototype::s_info = { "Symbol", &Base::s_info, &symbolPrototypeTable, nullptr, CREATE_METHOD_TABLE(SymbolPrototype) };
+const ClassInfo SymbolPrototype::s_info = { "Symbol", &Base::s_info, &symbolPrototypeTable, CREATE_METHOD_TABLE(SymbolPrototype) };
 
 /* Source for SymbolPrototype.lut.h
 @begin symbolPrototypeTable

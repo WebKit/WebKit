@@ -5616,8 +5616,8 @@ void SpeculativeJIT::compile(Node* node)
         compileCallDOMGetter(node);
         break;
 
-    case CheckSubClass:
-        compileCheckSubClass(node);
+    case CheckDOM:
+        compileCheckDOM(node);
         break;
 
     case Unreachable:

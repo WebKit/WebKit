@@ -47,7 +47,7 @@
 
 namespace JSC {
 
-const ClassInfo WebAssemblyInstanceConstructor::s_info = { "Function", &Base::s_info, &constructorTableWebAssemblyInstance, nullptr, CREATE_METHOD_TABLE(WebAssemblyInstanceConstructor) };
+const ClassInfo WebAssemblyInstanceConstructor::s_info = { "Function", &Base::s_info, &constructorTableWebAssemblyInstance, CREATE_METHOD_TABLE(WebAssemblyInstanceConstructor) };
 
 /* Source for WebAssemblyInstanceConstructor.lut.h
  @begin constructorTableWebAssemblyInstance

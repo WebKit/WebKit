@@ -1972,14 +1972,6 @@ sub GenerateHeader
     # Custom preventExtensions function.
     push(@headerContent, "    static bool preventExtensions(JSC::JSObject*, JSC::ExecState*);\n") if $interface->extendedAttributes->{CustomPreventExtensions};
     
-    # CheckSubClass Patchpoint function.
-    if ($interface->extendedAttributes->{DOMJIT}) {
-        $headerIncludes{"<domjit/DOMJITPatchpoint.h>"} = 1;
-        push(@headerContent, "#if ENABLE(JIT)\n");
-        push(@headerContent, "    static RefPtr<JSC::DOMJIT::Patchpoint> checkSubClassPatchpoint();\n");
-        push(@headerContent, "#endif\n");
-    }
-
     $structureFlags{"JSC::MasqueradesAsUndefined"} = 1 if $interface->extendedAttributes->{MasqueradesAsUndefined};
 
     # Constructor object getter
@@ -2259,6 +2251,7 @@ sub GenerateHeader
             push(@headerContent, "public:\n");
             push(@headerContent, "    ${domJITClassName}();\n");
             push(@headerContent, "#if ENABLE(JIT)\n");
+            push(@headerContent, "    Ref<JSC::DOMJIT::Patchpoint> checkDOM() override;\n");
             push(@headerContent, "    Ref<JSC::DOMJIT::CallDOMGetterPatchpoint> callDOMGetter() override;\n");
             push(@headerContent, "#endif\n");
             push(@headerContent, "};\n\n");
@@ -3197,6 +3190,7 @@ sub GenerateImplementation
         foreach my $function (@functions) {
             next unless $function->extendedAttributes->{DOMJIT};
             $implIncludes{"DOMJITIDLTypeFilter.h"} = 1;
+            $implIncludes{"DOMJITCheckDOM.h"} = 1;
             $implIncludes{"DOMJITAbstractHeapRepository.h"} = 1;
 
             my $isOverloaded = $function->{overloads} && @{$function->{overloads}} > 1;
@@ -3219,7 +3213,11 @@ sub GenerateImplementation
             $domJITSignatureFooter .= ");";
             my $conditionalString = $codeGenerator->GenerateConditionalString($function);
             push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
-            push(@implContent, "$domJITSignatureHeader $domJITSignatureFooter\n");
+            push(@implContent, "#if ENABLE(JIT)\n");
+            push(@implContent, "$domJITSignatureHeader DOMJIT::checkDOM<$interfaceName>, $domJITSignatureFooter\n");
+            push(@implContent, "#else\n");
+            push(@implContent, "$domJITSignatureHeader nullptr, $domJITSignatureFooter\n");
+            push(@implContent, "#endif\n");
             push(@implContent, "#endif\n") if $conditionalString;
             push(@implContent, "\n");
         }
@@ -3399,9 +3397,9 @@ sub GenerateImplementation
                                \%conditionals, $justGenerateValueArray);
 
     if ($justGenerateValueArray) {
-        push(@implContent, "const ClassInfo ${className}Prototype::s_info = { \"${visibleInterfaceName}Prototype\", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(${className}Prototype) };\n\n");
+        push(@implContent, "const ClassInfo ${className}Prototype::s_info = { \"${visibleInterfaceName}Prototype\", &Base::s_info, 0, CREATE_METHOD_TABLE(${className}Prototype) };\n\n");
     } else {
-        push(@implContent, "const ClassInfo ${className}Prototype::s_info = { \"${visibleInterfaceName}Prototype\", &Base::s_info, &${className}PrototypeTable, nullptr, CREATE_METHOD_TABLE(${className}Prototype) };\n\n");
+        push(@implContent, "const ClassInfo ${className}Prototype::s_info = { \"${visibleInterfaceName}Prototype\", &Base::s_info, &${className}PrototypeTable, CREATE_METHOD_TABLE(${className}Prototype) };\n\n");
     }
 
     if (PrototypeHasStaticPropertyTable($interface) && !IsGlobalOrPrimaryGlobalInterface($interface)) {
@@ -3500,17 +3498,7 @@ sub GenerateImplementation
     if ($numInstanceProperties > 0) {
         push(@implContent, "&${className}Table");
     } else {
-        push(@implContent, "nullptr");
-    }
-    if ($interface->extendedAttributes->{DOMJIT}) {
-        push(@implContent, "\n");
-        push(@implContent, "#if ENABLE(JIT)\n");
-        push(@implContent, ", &${className}::checkSubClassPatchpoint\n");
-        push(@implContent, "#else\n");
-        push(@implContent, ", nullptr\n");
-        push(@implContent, "#endif\n");
-    } else {
-        push(@implContent, ", nullptr");
+        push(@implContent, "0");
     }
     push(@implContent, ", CREATE_METHOD_TABLE($className) };\n\n");
 
@@ -5416,10 +5404,10 @@ using ${iteratorName} = JSDOMIterator<${className}, ${iteratorTraitsName}>;
 using ${iteratorPrototypeName} = JSDOMIteratorPrototype<${className}, ${iteratorTraitsName}>;
 
 template<>
-const JSC::ClassInfo ${iteratorName}::s_info = { "${visibleInterfaceName} Iterator", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(${iteratorName}) };
+const JSC::ClassInfo ${iteratorName}::s_info = { "${visibleInterfaceName} Iterator", &Base::s_info, 0, CREATE_METHOD_TABLE(${iteratorName}) };
 
 template<>
-const JSC::ClassInfo ${iteratorPrototypeName}::s_info = { "${visibleInterfaceName} Iterator", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(${iteratorPrototypeName}) };
+const JSC::ClassInfo ${iteratorPrototypeName}::s_info = { "${visibleInterfaceName} Iterator", &Base::s_info, 0, CREATE_METHOD_TABLE(${iteratorPrototypeName}) };
 
 END
 
@@ -6430,7 +6418,7 @@ sub GenerateConstructorHelperMethods
         push(@$outputArray, "}\n");
         push(@$outputArray, "\n");
     }
-    push(@$outputArray, "template<> const ClassInfo ${constructorClassName}::s_info = { \"${visibleInterfaceName}\", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE($constructorClassName) };\n\n");
+    push(@$outputArray, "template<> const ClassInfo ${constructorClassName}::s_info = { \"${visibleInterfaceName}\", &Base::s_info, 0, CREATE_METHOD_TABLE($constructorClassName) };\n\n");
 }
 
 sub HasCustomConstructor

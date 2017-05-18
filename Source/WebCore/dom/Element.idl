@@ -20,7 +20,6 @@
 
 [
     CustomToJSObject,
-    DOMJIT,
     JSCustomHeader,
     JSGenerateToNativeObject,
     ExportMacro=WEBCORE_EXPORT,

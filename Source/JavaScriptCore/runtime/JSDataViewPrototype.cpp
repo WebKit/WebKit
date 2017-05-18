@@ -88,7 +88,7 @@ EncodedJSValue JSC_HOST_CALL dataViewProtoGetterByteOffset(ExecState*);
 namespace JSC {
 
 const ClassInfo JSDataViewPrototype::s_info = {
-    "DataViewPrototype", &Base::s_info, &dataViewTable, nullptr,
+    "DataViewPrototype", &Base::s_info, &dataViewTable,
     CREATE_METHOD_TABLE(JSDataViewPrototype)
 };
 

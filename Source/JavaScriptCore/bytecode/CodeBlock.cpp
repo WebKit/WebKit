@@ -99,7 +99,7 @@
 namespace JSC {
 
 const ClassInfo CodeBlock::s_info = {
-    "CodeBlock", nullptr, nullptr, nullptr,
+    "CodeBlock", 0, 0,
     CREATE_METHOD_TABLE(CodeBlock)
 };
 

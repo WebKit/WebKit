@@ -68,7 +68,7 @@ struct MatcherResult {
     size_t extensionIndex;
 };
 
-const ClassInfo IntlObject::s_info = { "Object", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(IntlObject) };
+const ClassInfo IntlObject::s_info = { "Object", &Base::s_info, 0, CREATE_METHOD_TABLE(IntlObject) };
 
 IntlObject::IntlObject(VM& vm, Structure* structure)
     : JSNonFinalObject(vm, structure)

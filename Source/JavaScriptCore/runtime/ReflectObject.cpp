@@ -55,7 +55,7 @@ namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(ReflectObject);
 
-const ClassInfo ReflectObject::s_info = { "Object", &Base::s_info, &reflectObjectTable, nullptr, CREATE_METHOD_TABLE(ReflectObject) };
+const ClassInfo ReflectObject::s_info = { "Object", &Base::s_info, &reflectObjectTable, CREATE_METHOD_TABLE(ReflectObject) };
 
 /* Source for ReflectObject.lut.h
 @begin reflectObjectTable

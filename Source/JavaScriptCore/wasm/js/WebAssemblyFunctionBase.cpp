@@ -33,7 +33,7 @@
 
 namespace JSC {
 
-const ClassInfo WebAssemblyFunctionBase::s_info = { "WebAssemblyFunctionBase", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WebAssemblyFunctionBase) };
+const ClassInfo WebAssemblyFunctionBase::s_info = { "WebAssemblyFunctionBase", &Base::s_info, nullptr, CREATE_METHOD_TABLE(WebAssemblyFunctionBase) };
 
 WebAssemblyFunctionBase::WebAssemblyFunctionBase(VM& vm, JSGlobalObject* globalObject, Structure* structure)
     : Base(vm, globalObject, structure)

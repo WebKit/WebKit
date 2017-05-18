@@ -86,7 +86,7 @@ template<> void JSTestSerializationInheritFinalConstructor::initializeProperties
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
 }
 
-template<> const ClassInfo JSTestSerializationInheritFinalConstructor::s_info = { "TestSerializationInheritFinal", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestSerializationInheritFinalConstructor) };
+template<> const ClassInfo JSTestSerializationInheritFinalConstructor::s_info = { "TestSerializationInheritFinal", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestSerializationInheritFinalConstructor) };
 
 /* Hash table for prototype */
 
@@ -98,7 +98,7 @@ static const HashTableValue JSTestSerializationInheritFinalPrototypeTableValues[
     { "toJSON", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestSerializationInheritFinalPrototypeFunctionToJSON), (intptr_t) (0) } },
 };
 
-const ClassInfo JSTestSerializationInheritFinalPrototype::s_info = { "TestSerializationInheritFinalPrototype", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestSerializationInheritFinalPrototype) };
+const ClassInfo JSTestSerializationInheritFinalPrototype::s_info = { "TestSerializationInheritFinalPrototype", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestSerializationInheritFinalPrototype) };
 
 void JSTestSerializationInheritFinalPrototype::finishCreation(VM& vm)
 {
@@ -106,7 +106,7 @@ void JSTestSerializationInheritFinalPrototype::finishCreation(VM& vm)
     reifyStaticProperties(vm, JSTestSerializationInheritFinalPrototypeTableValues, *this);
 }
 
-const ClassInfo JSTestSerializationInheritFinal::s_info = { "TestSerializationInheritFinal", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestSerializationInheritFinal) };
+const ClassInfo JSTestSerializationInheritFinal::s_info = { "TestSerializationInheritFinal", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestSerializationInheritFinal) };
 
 JSTestSerializationInheritFinal::JSTestSerializationInheritFinal(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestSerializationInheritFinal>&& impl)
     : JSTestSerializationInherit(structure, globalObject, WTFMove(impl))

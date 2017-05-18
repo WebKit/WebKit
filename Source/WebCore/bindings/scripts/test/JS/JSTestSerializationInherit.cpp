@@ -84,7 +84,7 @@ template<> void JSTestSerializationInheritConstructor::initializeProperties(VM& 
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
 }
 
-template<> const ClassInfo JSTestSerializationInheritConstructor::s_info = { "TestSerializationInherit", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestSerializationInheritConstructor) };
+template<> const ClassInfo JSTestSerializationInheritConstructor::s_info = { "TestSerializationInherit", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestSerializationInheritConstructor) };
 
 /* Hash table for prototype */
 
@@ -95,7 +95,7 @@ static const HashTableValue JSTestSerializationInheritPrototypeTableValues[] =
     { "toJSON", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestSerializationInheritPrototypeFunctionToJSON), (intptr_t) (0) } },
 };
 
-const ClassInfo JSTestSerializationInheritPrototype::s_info = { "TestSerializationInheritPrototype", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestSerializationInheritPrototype) };
+const ClassInfo JSTestSerializationInheritPrototype::s_info = { "TestSerializationInheritPrototype", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestSerializationInheritPrototype) };
 
 void JSTestSerializationInheritPrototype::finishCreation(VM& vm)
 {
@@ -103,7 +103,7 @@ void JSTestSerializationInheritPrototype::finishCreation(VM& vm)
     reifyStaticProperties(vm, JSTestSerializationInheritPrototypeTableValues, *this);
 }
 
-const ClassInfo JSTestSerializationInherit::s_info = { "TestSerializationInherit", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestSerializationInherit) };
+const ClassInfo JSTestSerializationInherit::s_info = { "TestSerializationInherit", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestSerializationInherit) };
 
 JSTestSerializationInherit::JSTestSerializationInherit(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestSerializationInherit>&& impl)
     : JSTestSerialization(structure, globalObject, WTFMove(impl))

@@ -22,7 +22,6 @@
     Constructor,
     ConstructorCallWith=Document,
     CustomToJSObject,
-    DOMJIT,
     ExportMacro=WEBCORE_EXPORT,
     JSCustomHeader,
     JSCustomMarkFunction,

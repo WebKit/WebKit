@@ -1876,8 +1876,8 @@ private:
             break;
         }
 
-        case CheckSubClass: {
-            fixupCheckSubClass(node);
+        case CheckDOM: {
+            fixupCheckDOM(node);
             break;
         }
 
@@ -2973,14 +2973,16 @@ private:
         }
 
         Node* thisNode = m_graph.varArgChild(node, 1).node();
-        Node* checkSubClass = m_insertionSet.insertNode(m_indexInBlock, SpecNone, CheckSubClass, node->origin, OpInfo(signature->classInfo), Edge(thisNode));
+        Ref<DOMJIT::Patchpoint> checkDOMPatchpoint = signature->checkDOM();
+        m_graph.m_domJITPatchpoints.append(checkDOMPatchpoint.ptr());
+        Node* checkDOM = m_insertionSet.insertNode(m_indexInBlock, SpecNone, CheckDOM, node->origin, OpInfo(checkDOMPatchpoint.ptr()), OpInfo(signature->classInfo), Edge(thisNode));
         node->convertToCallDOM(m_graph);
-        fixupCheckSubClass(checkSubClass);
+        fixupCheckDOM(checkDOM);
         fixupCallDOM(node);
         return true;
     }
 
-    void fixupCheckSubClass(Node* node)
+    void fixupCheckDOM(Node* node)
     {
         fixEdge<CellUse>(node->child1());
     }

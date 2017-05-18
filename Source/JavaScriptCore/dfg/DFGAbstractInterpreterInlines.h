@@ -2381,7 +2381,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         // nobody would currently benefit from having that information. But it's a bug nonetheless.
         forNode(node).clear(); // The result is not a JS value.
         break;
-    case CheckSubClass: {
+    case CheckDOM: {
         JSValue constant = forNode(node->child1()).value();
         if (constant) {
             if (constant.isCell() && constant.asCell()->inherits(m_vm, node->classInfo())) {

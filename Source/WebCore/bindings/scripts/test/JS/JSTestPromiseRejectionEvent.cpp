@@ -148,7 +148,7 @@ template<> void JSTestPromiseRejectionEventConstructor::initializeProperties(VM&
     putDirect(vm, vm.propertyNames->length, jsNumber(2), ReadOnly | DontEnum);
 }
 
-template<> const ClassInfo JSTestPromiseRejectionEventConstructor::s_info = { "TestPromiseRejectionEvent", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestPromiseRejectionEventConstructor) };
+template<> const ClassInfo JSTestPromiseRejectionEventConstructor::s_info = { "TestPromiseRejectionEvent", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestPromiseRejectionEventConstructor) };
 
 /* Hash table for prototype */
 
@@ -159,7 +159,7 @@ static const HashTableValue JSTestPromiseRejectionEventPrototypeTableValues[] =
     { "reason", ReadOnly | CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestPromiseRejectionEventReason), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
 };
 
-const ClassInfo JSTestPromiseRejectionEventPrototype::s_info = { "TestPromiseRejectionEventPrototype", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestPromiseRejectionEventPrototype) };
+const ClassInfo JSTestPromiseRejectionEventPrototype::s_info = { "TestPromiseRejectionEventPrototype", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestPromiseRejectionEventPrototype) };
 
 void JSTestPromiseRejectionEventPrototype::finishCreation(VM& vm)
 {
@@ -167,7 +167,7 @@ void JSTestPromiseRejectionEventPrototype::finishCreation(VM& vm)
     reifyStaticProperties(vm, JSTestPromiseRejectionEventPrototypeTableValues, *this);
 }
 
-const ClassInfo JSTestPromiseRejectionEvent::s_info = { "TestPromiseRejectionEvent", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestPromiseRejectionEvent) };
+const ClassInfo JSTestPromiseRejectionEvent::s_info = { "TestPromiseRejectionEvent", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestPromiseRejectionEvent) };
 
 JSTestPromiseRejectionEvent::JSTestPromiseRejectionEvent(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestPromiseRejectionEvent>&& impl)
     : JSEvent(structure, globalObject, WTFMove(impl))

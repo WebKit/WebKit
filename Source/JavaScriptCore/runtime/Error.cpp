@@ -304,7 +304,7 @@ JSObject* createOutOfMemoryError(ExecState* exec)
 }
 
 
-const ClassInfo StrictModeTypeErrorFunction::s_info = { "Function", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(StrictModeTypeErrorFunction) };
+const ClassInfo StrictModeTypeErrorFunction::s_info = { "Function", &Base::s_info, 0, CREATE_METHOD_TABLE(StrictModeTypeErrorFunction) };
 
 void StrictModeTypeErrorFunction::destroy(JSCell* cell)
 {

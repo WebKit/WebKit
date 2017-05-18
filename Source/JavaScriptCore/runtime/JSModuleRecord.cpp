@@ -35,7 +35,7 @@
 
 namespace JSC {
 
-const ClassInfo JSModuleRecord::s_info = { "ModuleRecord", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSModuleRecord) };
+const ClassInfo JSModuleRecord::s_info = { "ModuleRecord", &Base::s_info, 0, CREATE_METHOD_TABLE(JSModuleRecord) };
 
 
 Structure* JSModuleRecord::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)

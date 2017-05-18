@@ -1579,9 +1579,6 @@ set(WebCore_SOURCES
 
     domjit/DOMJITHelpers.cpp
     domjit/JSDocumentDOMJIT.cpp
-    domjit/JSDocumentFragmentDOMJIT.cpp
-    domjit/JSElementDOMJIT.cpp
-    domjit/JSEventDOMJIT.cpp
     domjit/JSNodeDOMJIT.cpp
 
     editing/AlternativeTextController.cpp

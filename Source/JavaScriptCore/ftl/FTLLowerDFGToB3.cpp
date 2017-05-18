@@ -1093,8 +1093,8 @@ private:
         case NumberToStringWithRadix:
             compileNumberToStringWithRadix();
             break;
-        case CheckSubClass:
-            compileCheckSubClass();
+        case CheckDOM:
+            compileCheckDOM();
             break;
         case CallDOM:
             compileCallDOM();
@@ -10140,35 +10140,12 @@ private:
         crash();
     }
 
-    void compileCheckSubClass()
+    void compileCheckDOM()
     {
         LValue cell = lowCell(m_node->child1());
 
-        const ClassInfo* classInfo = m_node->classInfo();
-        if (!classInfo->checkSubClassPatchpoint) {
-            LBasicBlock loop = m_out.newBlock();
-            LBasicBlock parentClass = m_out.newBlock();
-            LBasicBlock continuation = m_out.newBlock();
+        DOMJIT::Patchpoint* domJIT = m_node->checkDOMPatchpoint();
 
-            LValue structure = loadStructure(cell);
-            ValueFromBlock otherAtStart = m_out.anchor(m_out.loadPtr(structure, m_heaps.Structure_classInfo));
-            m_out.jump(loop);
-
-            LBasicBlock lastNext = m_out.appendTo(loop, parentClass);
-            LValue other = m_out.phi(pointerType(), otherAtStart);
-            m_out.branch(m_out.equal(other, m_out.constIntPtr(classInfo)), unsure(continuation), unsure(parentClass));
-
-            m_out.appendTo(parentClass, continuation);
-            LValue parent = m_out.loadPtr(other, m_heaps.ClassInfo_parentClass);
-            speculate(BadType, jsValueValue(cell), m_node->child1().node(), m_out.isNull(parent));
-            m_out.addIncomingToPhi(other, m_out.anchor(parent));
-            m_out.jump(loop);
-
-            m_out.appendTo(continuation, lastNext);
-            return;
-        }
-
-        RefPtr<DOMJIT::Patchpoint> domJIT = classInfo->checkSubClassPatchpoint();
         PatchpointValue* patchpoint = m_out.patchpoint(Void);
         patchpoint->appendSomeRegister(cell);
         patchpoint->append(m_tagMask, ValueRep::reg(GPRInfo::tagMaskRegister));

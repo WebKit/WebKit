@@ -126,7 +126,7 @@
             "contextsAllowed": ["interface"]
         },
         "DOMJIT": {
-            "contextsAllowed": ["interface", "attribute", "operation"],
+            "contextsAllowed": ["attribute", "operation"],
             "values": ["", "ReadDOM", "Getter"]
         },
         "DoNotCheckConstants": {

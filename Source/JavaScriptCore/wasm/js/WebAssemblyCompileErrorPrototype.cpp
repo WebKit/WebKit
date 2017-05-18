@@ -35,7 +35,7 @@
 
 namespace JSC {
 
-const ClassInfo WebAssemblyCompileErrorPrototype::s_info = { "WebAssembly.CompileError.prototype", &Base::s_info, &prototypeTableWebAssemblyCompileError, nullptr, CREATE_METHOD_TABLE(WebAssemblyCompileErrorPrototype) };
+const ClassInfo WebAssemblyCompileErrorPrototype::s_info = { "WebAssembly.CompileError.prototype", &Base::s_info, &prototypeTableWebAssemblyCompileError, CREATE_METHOD_TABLE(WebAssemblyCompileErrorPrototype) };
 
 /* Source for WebAssemblyCompileErrorPrototype.lut.h
  @begin prototypeTableWebAssemblyCompileError

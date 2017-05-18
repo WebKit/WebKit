@@ -47,7 +47,7 @@
 
 namespace JSC {
 
-const ClassInfo WebAssemblyFunction::s_info = { "WebAssemblyFunction", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WebAssemblyFunction) };
+const ClassInfo WebAssemblyFunction::s_info = { "WebAssemblyFunction", &Base::s_info, nullptr, CREATE_METHOD_TABLE(WebAssemblyFunction) };
 
 static EncodedJSValue JSC_HOST_CALL callWebAssemblyFunction(ExecState* exec)
 {

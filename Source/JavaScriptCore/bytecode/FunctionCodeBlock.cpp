@@ -33,7 +33,7 @@
 namespace JSC {
 
 const ClassInfo FunctionCodeBlock::s_info = {
-    "FunctionCodeBlock", &Base::s_info, nullptr, nullptr,
+    "FunctionCodeBlock", &Base::s_info, 0,
     CREATE_METHOD_TABLE(FunctionCodeBlock)
 };
 

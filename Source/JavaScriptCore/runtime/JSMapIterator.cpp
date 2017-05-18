@@ -31,7 +31,7 @@
 
 namespace JSC {
 
-const ClassInfo JSMapIterator::s_info = { "Map Iterator", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSMapIterator) };
+const ClassInfo JSMapIterator::s_info = { "Map Iterator", &Base::s_info, 0, CREATE_METHOD_TABLE(JSMapIterator) };
 
 void JSMapIterator::finishCreation(VM& vm, JSMap* iteratedObject)
 {

@@ -44,8 +44,9 @@ typedef Ref<Patchpoint> CheckDOMGeneratorFunction(void);
 class Signature {
 public:
     template<typename... Arguments>
-    constexpr Signature(uintptr_t unsafeFunction, const ClassInfo* classInfo, Effect effect, SpeculatedType result, Arguments... arguments)
+    constexpr Signature(uintptr_t unsafeFunction, CheckDOMGeneratorFunction* checkDOMGeneratorFunction, const ClassInfo* classInfo, Effect effect, SpeculatedType result, Arguments... arguments)
         : unsafeFunction(unsafeFunction)
+        , checkDOMGeneratorFunction(checkDOMGeneratorFunction)
         , classInfo(classInfo)
         , effect(effect)
         , result(result)
@@ -54,7 +55,15 @@ public:
     {
     }
 
+#if ENABLE(JIT)
+    Ref<Patchpoint> checkDOM() const
+    {
+        return checkDOMGeneratorFunction();
+    }
+#endif
+
     uintptr_t unsafeFunction;
+    CheckDOMGeneratorFunction* checkDOMGeneratorFunction;
     const ClassInfo* const classInfo;
     const Effect effect;
     const SpeculatedType result;

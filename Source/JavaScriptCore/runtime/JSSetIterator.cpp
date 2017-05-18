@@ -31,7 +31,7 @@
 
 namespace JSC {
 
-const ClassInfo JSSetIterator::s_info = { "Set Iterator", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSSetIterator) };
+const ClassInfo JSSetIterator::s_info = { "Set Iterator", &Base::s_info, 0, CREATE_METHOD_TABLE(JSSetIterator) };
 
 void JSSetIterator::finishCreation(VM& vm, JSSet* iteratedObject)
 {
