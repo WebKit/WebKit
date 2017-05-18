@@ -1,3 +1,14 @@
+2017-05-18  Jon Davis  <jond@apple.com>
+
+        Add an Accessibility icon to webkit.org
+        https://bugs.webkit.org/show_bug.cgi?id=172298
+
+        Reviewed by Alexey Proskuryakov.
+
+        * wp-content/themes/webkit/images/icons.svg: Added accessibility icon to the sprite.
+        * wp-content/themes/webkit/style.css: New rule to use the accessibility icon from the icons sprite.
+        (.tile.category-accessibility .background-image):
+
 2017-05-15  James Craig  <jcraig@apple.com>
 
         AX: Inaccessible content on webkit.org main page

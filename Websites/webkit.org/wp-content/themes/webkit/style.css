@@ -438,6 +438,11 @@ footer .menu {
     background-color: #8e56b1;
 }
 
+.tile.category-accessibility .background-image {
+    background-color: #08c;
+    background-position: 50% 89.2%;
+}
+
 .tile.tag-console .background-image,
 .tile.tag-debugger .background-image,
 .tile.tag-shortcuts .background-image,
