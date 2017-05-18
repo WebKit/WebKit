@@ -226,7 +226,7 @@ OSStatus AudioTrackPrivateMediaStreamCocoa::render(UInt32 sampleCount, AudioBuff
     Ref<AudioTrackPrivateMediaStreamCocoa> protectedThis { *this };
 
     if (!m_isPlaying || m_muted || !m_dataSource || streamTrack().muted() || streamTrack().ended() || !streamTrack().enabled()) {
-        AudioSampleBufferList::zeroABL(ioData, static_cast<size_t>(sampleCount));
+        AudioSampleBufferList::zeroABL(ioData, static_cast<size_t>(sampleCount * m_outputDescription->bytesPerFrame()));
         actionFlags = kAudioUnitRenderAction_OutputIsSilence;
         return 0;
     }
