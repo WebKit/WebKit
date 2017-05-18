@@ -667,7 +667,7 @@ webkit.org/b/160996 fast/mediastream/MediaStream-video-element-video-tracks-disa
 webkit.org/b/160996 fast/mediastream/MediaStream-video-element-video-tracks-disabled.html [ ImageOnlyFailure ]
 webkit.org/b/161956 fast/mediastream/MediaStream-video-element-displays-buffer.html [ Failure ]
 webkit.org/b/168773 fast/mediastream/MediaStream-MediaElement-setObject-null.html [ Failure ]
-
+webkit.org/b/172269 fast/mediastream/media-devices-enumerate-devices.html [ Failure ]
 
 # Proximity Events is not supported.
 webkit.org/b/99060 proximity [ Failure ]
@@ -1474,6 +1474,8 @@ webkit.org/b/169811 fast/mediastream/captureStream/canvas2d-heavy-drawing.html [
 webkit.org/b/169811 fast/mediastream/captureStream/canvas2d.html [ Crash ]
 webkit.org/b/169811 fast/mediastream/captureStream/canvas3d.html [ Crash Timeout ]
 
+webkit.org/b/172281 accessibility/insert-children-assert.html [ Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -2023,6 +2025,8 @@ webkit.org/b/171600 css3/filters/composited-during-animation-layertree.html [ Pa
 
 webkit.org/b/171844 compositing/visibility/visibility-simple-video-layer.html [ Pass ImageOnlyFailure Timeout ]
 
+webkit.org/b/172283 inspector/worker/debugger-multiple-targets-pause.html [ Timeout Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -2339,6 +2343,8 @@ webkit.org/b/168568 http/tests/xmlhttprequest/timeout-greater-than-default-netwo
 webkit.org/b/168569 http/tests/appcache/main-resource-fallback-for-network-error-crash.html [ Timeout ]
 
 webkit.org/b/169211 fast/parser/adoption-agency-unload-iframe-4.html [ Timeout ]
+
+webkit.org/b/172284 svg/animations/animated-svg-image-outside-viewport-paused.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
@@ -3467,7 +3473,6 @@ webkit.org/b/105954 http/tests/navigation/reload-subframe-object.html [ Failure 
 webkit.org/b/170053 media/video-load-require-user-gesture.html [ Failure ]
 
 webkit.org/b/170335 canvas/philip/tests/2d.pattern.animated.gif.html [ Failure ]
-webkit.org/b/170335 svg/animations/animated-svg-image-outside-viewport-paused.html [ Failure ]
 
 webkit.org/b/171492 platform/gtk/fast/forms/menulist-typeahead-find.html [ Failure ]
 
@@ -3481,6 +3486,35 @@ webkit.org/b/171726 media/media-source/media-source-init-segment-duration.html [
 
 webkit.org/b/171972 fast/images/async-image-background-image-repeated.html [ ImageOnlyFailure ]
 webkit.org/b/171972 fast/images/sprite-sheet-image-draw.html [ ImageOnlyFailure ]
+
+webkit.org/b/172270 fast/text/font-interstitial-invisible-width-while-loading.html [ Failure ]
+webkit.org/b/172270 fast/text/web-font-load-invisible-during-loading.html [ Failure ]
+webkit.org/b/172270 fast/text/web-font-load-fallback-during-loading-2.html [ ImageOnlyFailure ]
+webkit.org/b/172270 fast/text/web-font-load-fallback-during-loading.html [ ImageOnlyFailure ]
+
+webkit.org/b/172271 fast/text/softbank-emoji.html [ Failure ]
+webkit.org/b/172271 fast/text/tatechuyoko.html [ Failure ]
+webkit.org/b/172271 fast/text/emoji-overlap.html [ ImageOnlyFailure ]
+webkit.org/b/172271 fast/text/multiple-codeunit-vertical-upright.html [ ImageOnlyFailure ]
+
+webkit.org/b/172272 fast/visual-viewport/client-coordinates-relative-to-layout-viewport.html [ Failure ]
+
+webkit.org/b/172273 fast/visual-viewport/client-rects-relative-to-layout-viewport.html [ Failure ]
+
+webkit.org/b/172274 http/tests/cache/disk-cache/disk-cache-media-small.html [ Failure ]
+
+webkit.org/b/172275 imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-non-integer-screeny.html [ Failure ]
+
+webkit.org/b/172276 media/video-muted.html [ Failure ]
+webkit.org/b/172276 media/video-play-audio-require-user-gesture.html [ Failure ]
+
+webkit.org/b/172277 media/video-restricted-invisible-autoplay-allowed-if-audible.html [ Failure ]
+
+webkit.org/b/172278 fast/html/marquee-child-wrap.html [ ImageOnlyFailure ]
+
+webkit.org/b/172279 fast/multicol/flexbox-rows.html [ ImageOnlyFailure ]
+
+webkit.org/b/172280 webaudio/codec-tests/wav/24bit-22khz-resample.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing

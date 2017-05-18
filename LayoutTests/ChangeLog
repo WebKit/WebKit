@@ -1,3 +1,9 @@
+2017-05-18  Miguel Gomez  <magomez@igalia.com>
+
+        Unreviewed GTK+ gardening. Update expectations of tests failing after r217039.
+
+        * platform/gtk/TestExpectations:
+
 2017-05-17  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r217014.
