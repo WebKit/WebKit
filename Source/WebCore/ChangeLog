@@ -1,3 +1,20 @@
+2017-05-17  Andy Estes  <aestes@apple.com>
+
+        [Cocoa] errors are not propagated to PassKit when calling ApplePaySession.completePayment()
+        https://bugs.webkit.org/show_bug.cgi?id=172253
+        <rdar://problem/32258020>
+
+        Reviewed by Dan Bernstein.
+
+        In ApplePaySession::completePayment(), releaseReturnValue() was being called twice on the
+        same convertedResult. Since the first call moved the errors vector out of convertedResult,
+        the vector is empty in the second call. It's the second call that sends the result to the
+        UI process, so we end up with an empty arary when we call PassKit's delegate completion
+        handler.
+
+        * Modules/applepay/ApplePaySession.cpp:
+        (WebCore::ApplePaySession::completePayment):
+
 2017-05-17  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r217014.
