@@ -110,25 +110,9 @@ void MediaPlayerPrivateGStreamer::registerMediaEngine(MediaEngineRegistrar regis
             getSupportedTypes, supportsType, nullptr, nullptr, nullptr, supportsKeySystem);
 }
 
-bool initializeGStreamerAndRegisterWebKitElements()
-{
-    if (!initializeGStreamer())
-        return false;
-
-    registerWebKitGStreamerElements();
-
-    GRefPtr<GstElementFactory> srcFactory = adoptGRef(gst_element_factory_find("webkitwebsrc"));
-    if (!srcFactory) {
-        GST_DEBUG_CATEGORY_INIT(webkit_media_player_debug, "webkitmediaplayer", 0, "WebKit media player");
-        gst_element_register(nullptr, "webkitwebsrc", GST_RANK_PRIMARY + 100, WEBKIT_TYPE_WEB_SRC);
-    }
-
-    return true;
-}
-
 bool MediaPlayerPrivateGStreamer::isAvailable()
 {
-    if (!initializeGStreamerAndRegisterWebKitElements())
+    if (!MediaPlayerPrivateGStreamerBase::initializeGStreamerAndRegisterWebKitElements())
         return false;
 
     GRefPtr<GstElementFactory> factory = adoptGRef(gst_element_factory_find("playbin"));
@@ -227,7 +211,7 @@ MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer()
 
 void MediaPlayerPrivateGStreamer::load(const String& urlString)
 {
-    if (!initializeGStreamerAndRegisterWebKitElements())
+    if (!MediaPlayerPrivateGStreamerBase::initializeGStreamerAndRegisterWebKitElements())
         return;
 
     URL url(URL(), urlString);
@@ -1776,7 +1760,7 @@ static HashSet<String, ASCIICaseInsensitiveHash>& mimeTypeSet()
 {
     static NeverDestroyed<HashSet<String, ASCIICaseInsensitiveHash>> mimeTypes = []()
     {
-        initializeGStreamerAndRegisterWebKitElements();
+        MediaPlayerPrivateGStreamerBase::initializeGStreamerAndRegisterWebKitElements();
         HashSet<String, ASCIICaseInsensitiveHash> set;
 
         GList* audioDecoderFactories = gst_element_factory_list_get_elements(GST_ELEMENT_FACTORY_TYPE_DECODER | GST_ELEMENT_FACTORY_TYPE_MEDIA_AUDIO, GST_RANK_MARGINAL);

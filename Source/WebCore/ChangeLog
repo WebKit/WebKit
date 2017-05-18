@@ -1,3 +1,30 @@
+2017-05-18  Vanessa Chipirrás Navalón  <vchipirras@igalia.com>
+
+        [GTK][GStreamer][MSE] Crash on youtube when MSE is enabled but gstreamer cant find the decoder element.
+        https://bugs.webkit.org/show_bug.cgi?id=167120
+
+        Reviewed by Žan Doberšek.
+
+        This is because supportCodecs() doesn't check in runtime which plugins the player has.
+        So, a static function which returns a map with the plugins has been created. That map is later
+        used in the supportsCodecs() method to check if the requested codec matches any of the map.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::initializeGStreamerAndRegisterWebKitElements):
+        The declaration is moved into this class.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::isAvailable): This function calls the implementation of
+        initializeGstreamerAndRegisterWebKitElements function.
+        (WebCore::MediaPlayerPrivateGStreamer::load): Ditto
+        (WebCore::mimeTypeSet): Ditto
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h: It is static type to expose
+        initializeGStreamerAndRegisterWebKitElements() function to be called from internal function
+        "which runs before MediaPlayerPrivateGStreamerBase initialization but needs to have GStreamer initialized".
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp:
+        (WebCore::codecSet): It returns a map with the plugins has been created.
+        (WebCore::MediaPlayerPrivateGStreamerMSE::supportsCodecs): To check if the requested codec
+        matches any of the map from codecSet().
+
 2017-05-18  Romain Bellessort  <romain.bellessort@crf.canon.fr>
 
         [Readable Streams API] Align getDesiredSize with spec

@@ -75,7 +75,7 @@ public:
     bool ensureGstGLContext();
     static GstContext* requestGLContext(const gchar* contextType, MediaPlayerPrivateGStreamerBase*);
 #endif
-
+    static bool initializeGStreamerAndRegisterWebKitElements();
     bool supportsMuting() const override { return true; }
     void setMuted(bool) override;
     bool muted() const;
