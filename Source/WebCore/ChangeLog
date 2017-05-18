@@ -1,3 +1,15 @@
+2017-05-18  Youenn Fablet  <youenn@apple.com>
+
+        RealtimeOutgoingAudioSource should use the source sample rate
+        https://bugs.webkit.org/show_bug.cgi?id=172297
+
+        Reviewed by Eric Carlson.
+
+        Covered by manual tests.
+
+        * platform/mediastream/mac/RealtimeOutgoingAudioSource.cpp:
+        (WebCore::RealtimeOutgoingAudioSource::audioSamplesAvailable): Using the audio source sample rate so that the converter does the right conversion.
+
 2017-05-18  Andy Estes  <aestes@apple.com>
 
         Add "countryCode" to ApplePayErrorContactField
