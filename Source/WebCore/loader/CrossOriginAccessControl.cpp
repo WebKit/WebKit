@@ -153,12 +153,14 @@ bool passesAccessControlCheck(const ResourceResponse& response, StoredCredential
     if (accessControlOriginString == "*" && includeCredentials == DoNotAllowStoredCredentials)
         return true;
 
-    // FIXME: Access-Control-Allow-Origin can contain a list of origins.
-    if (accessControlOriginString != securityOrigin.toString()) {
+    String securityOriginString = securityOrigin.toString();
+    if (accessControlOriginString != securityOriginString) {
         if (accessControlOriginString == "*")
-            errorDescription = "Cannot use wildcard in Access-Control-Allow-Origin when credentials flag is true.";
+            errorDescription = ASCIILiteral("Cannot use wildcard in Access-Control-Allow-Origin when credentials flag is true.");
+        else if (accessControlOriginString.find(',') != notFound)
+            errorDescription = ASCIILiteral("Access-Control-Allow-Origin cannot contain more than one origin.");
         else
-            errorDescription =  "Origin " + securityOrigin.toString() + " is not allowed by Access-Control-Allow-Origin.";
+            errorDescription = makeString("Origin ", securityOriginString, " is not allowed by Access-Control-Allow-Origin.");
         return false;
     }
 

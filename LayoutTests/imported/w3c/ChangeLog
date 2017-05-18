@@ -1,3 +1,16 @@
+2017-05-18  Daniel Bates  <dabates@apple.com>
+
+        Improve error message for Access-Control-Allow-Origin violation due to misconfigured server
+        https://bugs.webkit.org/show_bug.cgi?id=162819
+        <rdar://problem/28575938>
+
+        Reviewed by Joseph Pecoraro.
+
+        Update expected result.
+
+        * web-platform-tests/fetch/api/cors/cors-multiple-origins-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-multiple-origins-worker-expected.txt:
+
 2017-05-18  Chris Dumez  <cdumez@apple.com>
 
         Update web-platform-tests tools

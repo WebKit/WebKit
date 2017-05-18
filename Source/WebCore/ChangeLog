@@ -1,3 +1,26 @@
+2017-05-18  Daniel Bates  <dabates@apple.com>
+
+        Improve error message for Access-Control-Allow-Origin violation due to misconfigured server
+        https://bugs.webkit.org/show_bug.cgi?id=162819
+        <rdar://problem/28575938>
+
+        Reviewed by Joseph Pecoraro.
+
+        Inspired by Blink change:
+        <https://src.chromium.org/viewvc/blink?view=revision&revision=163406>
+
+        At most one Access-Control-Allow-Origin header may be in an HTTP response. Improve the
+        error message emitted on a CORS failure when Access-Control-Allow-Origin contains more
+        than one origin, indicated by the presence of a ',', as a way to help web developers/server
+        administrators differentiate between a misconfigured Access-Control-Allow-Origin header
+        and a misconfigured server.
+
+        * loader/CrossOriginAccessControl.cpp:
+        (WebCore::passesAccessControlCheck): Defined a local variable to hold the value of securityOrigin.toString()
+        and referenced this variable throughout the code to avoid computing the stringified security
+        origin more than once. Switched to using makeString() to concatenate error message when the
+        origin of the page does not match the value of the Access-Control-Allow-Origin header.
+
 2017-05-18  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Grandfather domains for existing data records
