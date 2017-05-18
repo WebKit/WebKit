@@ -30,7 +30,7 @@
 
 namespace JSC {
 
-const ClassInfo NativeStdFunctionCell::s_info = { "NativeStdFunctionCell", nullptr, nullptr, CREATE_METHOD_TABLE(NativeStdFunctionCell) };
+const ClassInfo NativeStdFunctionCell::s_info = { "NativeStdFunctionCell", nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(NativeStdFunctionCell) };
 
 NativeStdFunctionCell* NativeStdFunctionCell::create(VM& vm, NativeStdFunction&& function)
 {

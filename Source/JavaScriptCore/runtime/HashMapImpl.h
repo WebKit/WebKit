@@ -71,6 +71,7 @@ public:
     static const HashTableType Type = Data::Type;
     static const ClassInfo s_info; // This is never accessed directly, since that would break linkage on some compilers.
 
+
     static const ClassInfo* info()
     {
         switch (Type) {

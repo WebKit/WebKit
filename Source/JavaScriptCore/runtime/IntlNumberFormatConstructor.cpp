@@ -49,7 +49,7 @@ static EncodedJSValue JSC_HOST_CALL IntlNumberFormatConstructorFuncSupportedLoca
 
 namespace JSC {
 
-const ClassInfo IntlNumberFormatConstructor::s_info = { "Function", &Base::s_info, &numberFormatConstructorTable, CREATE_METHOD_TABLE(IntlNumberFormatConstructor) };
+const ClassInfo IntlNumberFormatConstructor::s_info = { "Function", &Base::s_info, &numberFormatConstructorTable, nullptr, CREATE_METHOD_TABLE(IntlNumberFormatConstructor) };
 
 /* Source for IntlNumberFormatConstructor.lut.h
 @begin numberFormatConstructorTable

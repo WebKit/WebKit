@@ -32,7 +32,7 @@
 
 namespace JSC {
     
-const ClassInfo StructureChain::s_info = { "StructureChain", 0, 0, CREATE_METHOD_TABLE(StructureChain) };
+const ClassInfo StructureChain::s_info = { "StructureChain", nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(StructureChain) };
 
 StructureChain::StructureChain(VM& vm, Structure* structure)
     : JSCell(vm, structure)

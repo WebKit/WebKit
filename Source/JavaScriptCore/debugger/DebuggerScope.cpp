@@ -34,7 +34,7 @@ namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(DebuggerScope);
 
-const ClassInfo DebuggerScope::s_info = { "DebuggerScope", &Base::s_info, 0, CREATE_METHOD_TABLE(DebuggerScope) };
+const ClassInfo DebuggerScope::s_info = { "DebuggerScope", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(DebuggerScope) };
 
 DebuggerScope* DebuggerScope::create(VM& vm, JSScope* scope)
 {

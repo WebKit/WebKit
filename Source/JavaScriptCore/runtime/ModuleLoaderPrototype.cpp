@@ -64,7 +64,7 @@ namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(ModuleLoaderPrototype);
 
-const ClassInfo ModuleLoaderPrototype::s_info = { "ModuleLoader", &Base::s_info, &moduleLoaderPrototypeTable, CREATE_METHOD_TABLE(ModuleLoaderPrototype) };
+const ClassInfo ModuleLoaderPrototype::s_info = { "ModuleLoader", &Base::s_info, &moduleLoaderPrototypeTable, nullptr, CREATE_METHOD_TABLE(ModuleLoaderPrototype) };
 
 /* Source for ModuleLoaderPrototype.lut.h
 @begin moduleLoaderPrototypeTable

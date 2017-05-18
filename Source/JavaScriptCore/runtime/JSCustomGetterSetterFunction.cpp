@@ -33,7 +33,7 @@
 
 namespace JSC {
 
-const ClassInfo JSCustomGetterSetterFunction::s_info = { "Function", &Base::s_info, 0, CREATE_METHOD_TABLE(JSCustomGetterSetterFunction) };
+const ClassInfo JSCustomGetterSetterFunction::s_info = { "Function", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSCustomGetterSetterFunction) };
 
 EncodedJSValue JSC_HOST_CALL JSCustomGetterSetterFunction::customGetterSetterFunctionCall(ExecState* exec)
 {

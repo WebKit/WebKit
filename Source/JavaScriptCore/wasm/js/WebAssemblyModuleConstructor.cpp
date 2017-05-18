@@ -55,7 +55,7 @@ static EncodedJSValue JSC_HOST_CALL webAssemblyModuleExports(ExecState*);
 
 namespace JSC {
 
-const ClassInfo WebAssemblyModuleConstructor::s_info = { "Function", &Base::s_info, &constructorTableWebAssemblyModule, CREATE_METHOD_TABLE(WebAssemblyModuleConstructor) };
+const ClassInfo WebAssemblyModuleConstructor::s_info = { "Function", &Base::s_info, &constructorTableWebAssemblyModule, nullptr, CREATE_METHOD_TABLE(WebAssemblyModuleConstructor) };
 
 /* Source for WebAssemblyModuleConstructor.lut.h
  @begin constructorTableWebAssemblyModule

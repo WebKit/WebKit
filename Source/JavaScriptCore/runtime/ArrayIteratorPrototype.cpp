@@ -37,7 +37,7 @@
 
 namespace JSC {
 
-const ClassInfo ArrayIteratorPrototype::s_info = { "Array Iterator", &Base::s_info, &arrayIteratorPrototypeTable, CREATE_METHOD_TABLE(ArrayIteratorPrototype) };
+const ClassInfo ArrayIteratorPrototype::s_info = { "Array Iterator", &Base::s_info, &arrayIteratorPrototypeTable, nullptr, CREATE_METHOD_TABLE(ArrayIteratorPrototype) };
 
 /* Source for ArrayIteratorPrototype.lut.h
 @begin arrayIteratorPrototypeTable

@@ -30,7 +30,7 @@
 
 namespace JSC {
 
-const ClassInfo JSGlobalLexicalEnvironment::s_info = { "JSGlobalLexicalEnvironment", &Base::s_info, 0, CREATE_METHOD_TABLE(JSGlobalLexicalEnvironment) };
+const ClassInfo JSGlobalLexicalEnvironment::s_info = { "JSGlobalLexicalEnvironment", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSGlobalLexicalEnvironment) };
 
 void JSGlobalLexicalEnvironment::destroy(JSCell* cell)
 {

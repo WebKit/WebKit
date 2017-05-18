@@ -5984,8 +5984,8 @@ void SpeculativeJIT::compile(Node* node)
         compileCallDOMGetter(node);
         break;
 
-    case CheckDOM:
-        compileCheckDOM(node);
+    case CheckSubClass:
+        compileCheckSubClass(node);
         break;
 
 #if ENABLE(FTL_JIT)        

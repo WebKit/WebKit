@@ -40,7 +40,7 @@
 
 namespace JSC {
 
-const ClassInfo JSDollarVMPrototype::s_info = { "DollarVMPrototype", &Base::s_info, 0, CREATE_METHOD_TABLE(JSDollarVMPrototype) };
+const ClassInfo JSDollarVMPrototype::s_info = { "DollarVMPrototype", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSDollarVMPrototype) };
     
     
 bool JSDollarVMPrototype::currentThreadOwnsJSLock(ExecState* exec)

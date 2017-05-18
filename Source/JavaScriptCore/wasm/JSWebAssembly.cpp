@@ -34,7 +34,7 @@ namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSWebAssembly);
 
-const ClassInfo JSWebAssembly::s_info = { "WebAssembly", &Base::s_info, 0, CREATE_METHOD_TABLE(JSWebAssembly) };
+const ClassInfo JSWebAssembly::s_info = { "WebAssembly", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSWebAssembly) };
 
 JSWebAssembly* JSWebAssembly::create(VM& vm, JSGlobalObject*, Structure* structure)
 {

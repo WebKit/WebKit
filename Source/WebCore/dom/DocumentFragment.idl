@@ -20,7 +20,8 @@
 [
     Constructor,
     ConstructorCallWith=Document,
-    CustomToJSObject
+    CustomToJSObject,
+    DOMJIT,
 ] interface DocumentFragment : Node {
 };
 

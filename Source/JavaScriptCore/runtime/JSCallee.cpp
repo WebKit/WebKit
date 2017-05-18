@@ -33,7 +33,7 @@
 
 namespace JSC {
 
-const ClassInfo JSCallee::s_info = { "Callee", &Base::s_info, 0, CREATE_METHOD_TABLE(JSCallee) };
+const ClassInfo JSCallee::s_info = { "Callee", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSCallee) };
 
 JSCallee::JSCallee(VM& vm, JSGlobalObject* globalObject, Structure* structure)
     : Base(vm, structure)

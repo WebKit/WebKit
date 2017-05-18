@@ -31,7 +31,7 @@
 
 namespace JSC {
 
-const ClassInfo JSWeakMap::s_info = { "WeakMap", &Base::s_info, 0, CREATE_METHOD_TABLE(JSWeakMap) };
+const ClassInfo JSWeakMap::s_info = { "WeakMap", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSWeakMap) };
 
 void JSWeakMap::finishCreation(VM& vm)
 {

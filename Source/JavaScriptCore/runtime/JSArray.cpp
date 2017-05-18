@@ -44,7 +44,7 @@ static const char* const LengthExceededTheMaximumArrayLengthError = "Length exce
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSArray);
 
-const ClassInfo JSArray::s_info = {"Array", &JSNonFinalObject::s_info, 0, CREATE_METHOD_TABLE(JSArray)};
+const ClassInfo JSArray::s_info = {"Array", &JSNonFinalObject::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSArray)};
 
 Butterfly* createArrayButterflyInDictionaryIndexingMode(
     VM& vm, JSCell* intendedOwner, unsigned initialLength)

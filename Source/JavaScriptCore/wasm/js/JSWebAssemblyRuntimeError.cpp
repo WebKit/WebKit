@@ -46,7 +46,7 @@ JSWebAssemblyRuntimeError::JSWebAssemblyRuntimeError(VM& vm, Structure* structur
 {
 }
 
-const ClassInfo JSWebAssemblyRuntimeError::s_info = { "WebAssembly.RuntimeError", &Base::s_info, 0, CREATE_METHOD_TABLE(JSWebAssemblyRuntimeError) };
+const ClassInfo JSWebAssemblyRuntimeError::s_info = { "WebAssembly.RuntimeError", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSWebAssemblyRuntimeError) };
 
     
 } // namespace JSC

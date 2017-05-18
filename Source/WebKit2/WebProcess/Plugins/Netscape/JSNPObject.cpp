@@ -58,7 +58,7 @@ static NPIdentifier npIdentifierFromIdentifier(PropertyName propertyName)
     return static_cast<NPIdentifier>(IdentifierRep::get(name.utf8().data()));
 }
 
-const ClassInfo JSNPObject::s_info = { "NPObject", &Base::s_info, 0, CREATE_METHOD_TABLE(JSNPObject) };
+const ClassInfo JSNPObject::s_info = { "NPObject", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSNPObject) };
 
 JSNPObject::JSNPObject(JSGlobalObject* globalObject, Structure* structure, NPRuntimeObjectMap* objectMap, NPObject* npObject)
     : JSDestructibleObject(globalObject->vm(), structure)

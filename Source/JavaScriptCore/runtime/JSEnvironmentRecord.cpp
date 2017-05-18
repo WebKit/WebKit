@@ -34,7 +34,7 @@
 
 namespace JSC {
 
-const ClassInfo JSEnvironmentRecord::s_info = { "EnvironmentRecord", &Base::s_info, 0, CREATE_METHOD_TABLE(JSEnvironmentRecord) };
+const ClassInfo JSEnvironmentRecord::s_info = { "EnvironmentRecord", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSEnvironmentRecord) };
 
 void JSEnvironmentRecord::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {

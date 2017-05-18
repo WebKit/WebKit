@@ -46,7 +46,7 @@ JSWebAssemblyCompileError::JSWebAssemblyCompileError(VM& vm, Structure* structur
 {
 }
 
-const ClassInfo JSWebAssemblyCompileError::s_info = { "WebAssembly.CompileError", &Base::s_info, 0, CREATE_METHOD_TABLE(JSWebAssemblyCompileError) };
+const ClassInfo JSWebAssemblyCompileError::s_info = { "WebAssembly.CompileError", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSWebAssemblyCompileError) };
 
     
 JSObject* createJSWebAssemblyCompileError(ExecState* exec, VM& vm, const String& message)

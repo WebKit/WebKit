@@ -66,7 +66,7 @@ private:
 
 } // anonymous namespace
 
-const ClassInfo InferredType::s_info = { "InferredType", 0, 0, CREATE_METHOD_TABLE(InferredType) };
+const ClassInfo InferredType::s_info = { "InferredType", nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(InferredType) };
 
 InferredType* InferredType::create(VM& vm)
 {

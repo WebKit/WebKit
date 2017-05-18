@@ -111,6 +111,11 @@ public:
     SpeculativeJIT(JITCompiler&);
     ~SpeculativeJIT();
 
+    VM& vm()
+    {
+        return *m_jit.vm();
+    }
+
     struct TrustedImmPtr {
         template <typename T>
         explicit TrustedImmPtr(T* value)
@@ -2758,7 +2763,7 @@ public:
     void compileGetButterfly(Node*);
     void compileCallDOMGetter(Node*);
     void compileCallDOM(Node*);
-    void compileCheckDOM(Node*);
+    void compileCheckSubClass(Node*);
     
 #if USE(JSVALUE32_64)
     template<typename BaseOperandType, typename PropertyOperandType, typename ValueOperandType, typename TagType>

@@ -52,7 +52,7 @@ static EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatPrototypeFuncResolvedOptio
 
 namespace JSC {
 
-const ClassInfo IntlDateTimeFormatPrototype::s_info = { "Object", &Base::s_info, &dateTimeFormatPrototypeTable, CREATE_METHOD_TABLE(IntlDateTimeFormatPrototype) };
+const ClassInfo IntlDateTimeFormatPrototype::s_info = { "Object", &Base::s_info, &dateTimeFormatPrototypeTable, nullptr, CREATE_METHOD_TABLE(IntlDateTimeFormatPrototype) };
 
 /* Source for IntlDateTimeFormatPrototype.lut.h
 @begin dateTimeFormatPrototypeTable

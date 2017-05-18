@@ -86,7 +86,7 @@ template<> void JSTestCallbackInterfaceConstructor::initializeProperties(VM& vm,
     reifyStaticProperties(vm, JSTestCallbackInterfaceConstructorTableValues, *this);
 }
 
-template<> const ClassInfo JSTestCallbackInterfaceConstructor::s_info = { "TestCallbackInterface", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestCallbackInterfaceConstructor) };
+template<> const ClassInfo JSTestCallbackInterfaceConstructor::s_info = { "TestCallbackInterface", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestCallbackInterfaceConstructor) };
 
 JSValue JSTestCallbackInterface::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {

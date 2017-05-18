@@ -34,7 +34,7 @@
 
 namespace JSC {
 
-const ClassInfo NullSetterFunction::s_info = { "Function", &Base::s_info, 0, CREATE_METHOD_TABLE(NullSetterFunction) };
+const ClassInfo NullSetterFunction::s_info = { "Function", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(NullSetterFunction) };
 
 
 class GetCallerStrictnessFunctor {

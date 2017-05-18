@@ -34,7 +34,7 @@
 
 namespace JSC {
 
-const ClassInfo GeneratorPrototype::s_info = { "Generator", &Base::s_info, &generatorPrototypeTable, CREATE_METHOD_TABLE(GeneratorPrototype) };
+const ClassInfo GeneratorPrototype::s_info = { "Generator", &Base::s_info, &generatorPrototypeTable, nullptr, CREATE_METHOD_TABLE(GeneratorPrototype) };
 
 /* Source for GeneratorPrototype.lut.h
 @begin generatorPrototypeTable

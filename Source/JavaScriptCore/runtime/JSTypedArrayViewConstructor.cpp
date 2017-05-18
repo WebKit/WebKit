@@ -42,7 +42,7 @@ JSTypedArrayViewConstructor::JSTypedArrayViewConstructor(VM& vm, Structure* stru
 {
 }
 
-const ClassInfo JSTypedArrayViewConstructor::s_info = { "Function", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTypedArrayViewConstructor) };
+const ClassInfo JSTypedArrayViewConstructor::s_info = { "Function", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTypedArrayViewConstructor) };
 
 void JSTypedArrayViewConstructor::finishCreation(VM& vm, JSGlobalObject* globalObject, JSTypedArrayViewPrototype* prototype, GetterSetter* speciesSymbol)
 {

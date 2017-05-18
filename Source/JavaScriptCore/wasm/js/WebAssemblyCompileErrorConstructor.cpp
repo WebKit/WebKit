@@ -37,7 +37,7 @@
 
 namespace JSC {
 
-const ClassInfo WebAssemblyCompileErrorConstructor::s_info = { "Function", &Base::s_info, &constructorTableWebAssemblyCompileError, CREATE_METHOD_TABLE(WebAssemblyCompileErrorConstructor) };
+const ClassInfo WebAssemblyCompileErrorConstructor::s_info = { "Function", &Base::s_info, &constructorTableWebAssemblyCompileError, nullptr, CREATE_METHOD_TABLE(WebAssemblyCompileErrorConstructor) };
 
 /* Source for WebAssemblyCompileErrorConstructor.lut.h
  @begin constructorTableWebAssemblyCompileError

@@ -25,6 +25,7 @@ typedef unsigned long long DOMTimeStamp;
 [
     Constructor(DOMString type, optional EventInit eventInitDict),
     CustomToJSObject,
+    DOMJIT,
     ExportToWrappedFunction,
     Exposed=(Window,Worker),
     JSCustomHeader,

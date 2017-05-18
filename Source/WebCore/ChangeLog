@@ -1,3 +1,94 @@
+2017-05-16  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC][DFG][DOMJIT] Extend CheckDOM to CheckSubClass
+        https://bugs.webkit.org/show_bug.cgi?id=172098
+
+        Reviewed by Saam Barati.
+
+        Add DOMJIT interface IDL attribute. Which allows us to define checkSubClassPatchpoint function
+        for that ClassInfo. And we move CheckSubClass patchpoint implementation to ClassInfo's member.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMGlobalObject.cpp:
+        * bindings/js/JSDOMWindowBase.cpp:
+        * bindings/js/JSDOMWindowProperties.cpp:
+        * bindings/js/JSDOMWindowShell.cpp:
+        * bindings/js/JSReadableStreamPrivateConstructors.cpp:
+        * bindings/js/JSWorkerGlobalScopeBase.cpp:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GenerateImplementation):
+        (GenerateImplementationIterableFunctions):
+        (GenerateConstructorHelperMethods):
+        * bindings/scripts/IDLAttributes.json:
+        * bindings/scripts/test/JS/JSInterfaceName.cpp:
+        * bindings/scripts/test/JS/JSMapLike.cpp:
+        * bindings/scripts/test/JS/JSReadOnlyMapLike.cpp:
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        * bindings/scripts/test/JS/JSTestCEReactions.cpp:
+        * bindings/scripts/test/JS/JSTestCEReactionsStringifier.cpp:
+        * bindings/scripts/test/JS/JSTestCallbackInterface.cpp:
+        * bindings/scripts/test/JS/JSTestClassWithJSBuiltinConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestCustomConstructorWithNoInterfaceObject.cpp:
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.cpp:
+        * bindings/scripts/test/JS/JSTestDOMJIT.cpp:
+        * bindings/scripts/test/JS/JSTestDOMJIT.h:
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        * bindings/scripts/test/JS/JSTestException.cpp:
+        * bindings/scripts/test/JS/JSTestGenerateIsReachable.cpp:
+        * bindings/scripts/test/JS/JSTestGlobalObject.cpp:
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        * bindings/scripts/test/JS/JSTestInterfaceLeadingUnderscore.cpp:
+        * bindings/scripts/test/JS/JSTestIterable.cpp:
+        * bindings/scripts/test/JS/JSTestJSBuiltinConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        * bindings/scripts/test/JS/JSTestOverloadedConstructorsWithSequence.cpp:
+        * bindings/scripts/test/JS/JSTestOverrideBuiltins.cpp:
+        * bindings/scripts/test/JS/JSTestPromiseRejectionEvent.cpp:
+        * bindings/scripts/test/JS/JSTestSerialization.cpp:
+        * bindings/scripts/test/JS/JSTestSerializationInherit.cpp:
+        * bindings/scripts/test/JS/JSTestSerializationInheritFinal.cpp:
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        * bridge/c/CRuntimeObject.cpp:
+        * bridge/c/c_instance.cpp:
+        * bridge/objc/ObjCRuntimeObject.mm:
+        * bridge/objc/objc_instance.mm:
+        * bridge/objc/objc_runtime.mm:
+        * bridge/runtime_array.cpp:
+        * bridge/runtime_method.cpp:
+        * bridge/runtime_object.cpp:
+        * dom/Document.idl:
+        * dom/DocumentFragment.idl:
+        * dom/Element.idl:
+        * dom/Event.idl:
+        * dom/Node.idl:
+        * domjit/JSDocumentDOMJIT.cpp:
+        (WebCore::JSDocument::checkSubClassPatchpoint):
+        (WebCore::DocumentDocumentElementDOMJIT::checkDOM): Deleted.
+        (WebCore::DocumentBodyDOMJIT::checkDOM): Deleted.
+        * domjit/JSDocumentFragmentDOMJIT.cpp: Copied from Source/JavaScriptCore/runtime/JSMap.cpp.
+        (WebCore::JSDocumentFragment::checkSubClassPatchpoint):
+        * domjit/JSElementDOMJIT.cpp: Copied from Source/JavaScriptCore/tools/JSDollarVM.cpp.
+        (WebCore::JSElement::checkSubClassPatchpoint):
+        * domjit/JSEventDOMJIT.cpp: Copied from Source/JavaScriptCore/tools/JSDollarVM.cpp.
+        (WebCore::JSEvent::checkSubClassPatchpoint):
+        * domjit/JSNodeDOMJIT.cpp:
+        (WebCore::JSNode::checkSubClassPatchpoint):
+        (WebCore::NodeFirstChildDOMJIT::checkDOM): Deleted.
+        (WebCore::NodeLastChildDOMJIT::checkDOM): Deleted.
+        (WebCore::NodeNextSiblingDOMJIT::checkDOM): Deleted.
+        (WebCore::NodePreviousSiblingDOMJIT::checkDOM): Deleted.
+        (WebCore::NodeParentNodeDOMJIT::checkDOM): Deleted.
+        (WebCore::NodeNodeTypeDOMJIT::checkDOM): Deleted.
+        (WebCore::NodeOwnerDocumentDOMJIT::checkDOM): Deleted.
+
 2017-05-17  Youenn Fablet  <youenn@apple.com>
 
         r216999 broke win build

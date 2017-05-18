@@ -94,7 +94,7 @@ template<> void JSMapLikeConstructor::initializeProperties(VM& vm, JSDOMGlobalOb
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
 }
 
-template<> const ClassInfo JSMapLikeConstructor::s_info = { "MapLike", &Base::s_info, 0, CREATE_METHOD_TABLE(JSMapLikeConstructor) };
+template<> const ClassInfo JSMapLikeConstructor::s_info = { "MapLike", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSMapLikeConstructor) };
 
 /* Hash table for prototype */
 
@@ -113,7 +113,7 @@ static const HashTableValue JSMapLikePrototypeTableValues[] =
     { "delete", DontEnum | JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsMapLikePrototypeFunctionDelete), (intptr_t) (1) } },
 };
 
-const ClassInfo JSMapLikePrototype::s_info = { "MapLikePrototype", &Base::s_info, 0, CREATE_METHOD_TABLE(JSMapLikePrototype) };
+const ClassInfo JSMapLikePrototype::s_info = { "MapLikePrototype", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSMapLikePrototype) };
 
 void JSMapLikePrototype::finishCreation(VM& vm)
 {
@@ -122,7 +122,7 @@ void JSMapLikePrototype::finishCreation(VM& vm)
     putDirect(vm, vm.propertyNames->iteratorSymbol, getDirect(vm, vm.propertyNames->builtinNames().valuesPublicName()), DontEnum);
 }
 
-const ClassInfo JSMapLike::s_info = { "MapLike", &Base::s_info, 0, CREATE_METHOD_TABLE(JSMapLike) };
+const ClassInfo JSMapLike::s_info = { "MapLike", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSMapLike) };
 
 JSMapLike::JSMapLike(Structure* structure, JSDOMGlobalObject& globalObject, Ref<MapLike>&& impl)
     : JSDOMWrapper<MapLike>(structure, globalObject, WTFMove(impl))

@@ -39,7 +39,7 @@
 
 namespace JSC {
 
-const ClassInfo IntlNumberFormat::s_info = { "Object", &Base::s_info, 0, CREATE_METHOD_TABLE(IntlNumberFormat) };
+const ClassInfo IntlNumberFormat::s_info = { "Object", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(IntlNumberFormat) };
 
 static const char* const relevantExtensionKeys[1] = { "nu" };
 

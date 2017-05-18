@@ -32,7 +32,7 @@
 
 namespace JSC {
 
-const ClassInfo MapIteratorPrototype::s_info = { "Map Iterator", &Base::s_info, 0, CREATE_METHOD_TABLE(MapIteratorPrototype) };
+const ClassInfo MapIteratorPrototype::s_info = { "Map Iterator", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(MapIteratorPrototype) };
 
 static EncodedJSValue JSC_HOST_CALL MapIteratorPrototypeFuncNext(ExecState*);
 

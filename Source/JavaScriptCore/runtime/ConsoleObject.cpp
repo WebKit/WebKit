@@ -58,7 +58,7 @@ static EncodedJSValue JSC_HOST_CALL consoleProtoFuncGroup(ExecState*);
 static EncodedJSValue JSC_HOST_CALL consoleProtoFuncGroupCollapsed(ExecState*);
 static EncodedJSValue JSC_HOST_CALL consoleProtoFuncGroupEnd(ExecState*);
 
-const ClassInfo ConsoleObject::s_info = { "Console", &Base::s_info, 0, CREATE_METHOD_TABLE(ConsoleObject) };
+const ClassInfo ConsoleObject::s_info = { "Console", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(ConsoleObject) };
 
 ConsoleObject::ConsoleObject(VM& vm, Structure* structure)
     : JSNonFinalObject(vm, structure)

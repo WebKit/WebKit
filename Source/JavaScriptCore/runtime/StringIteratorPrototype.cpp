@@ -36,7 +36,7 @@
 
 namespace JSC {
 
-const ClassInfo StringIteratorPrototype::s_info = { "String Iterator", &Base::s_info, &stringIteratorPrototypeTable, CREATE_METHOD_TABLE(StringIteratorPrototype) };
+const ClassInfo StringIteratorPrototype::s_info = { "String Iterator", &Base::s_info, &stringIteratorPrototypeTable, nullptr, CREATE_METHOD_TABLE(StringIteratorPrototype) };
 
 /* Source for StringIteratorPrototype.lut.h
 @begin stringIteratorPrototypeTable

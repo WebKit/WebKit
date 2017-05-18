@@ -31,7 +31,7 @@
 
 namespace JSC {
 
-const ClassInfo JSWeakSet::s_info = { "WeakSet", &Base::s_info, 0, CREATE_METHOD_TABLE(JSWeakSet) };
+const ClassInfo JSWeakSet::s_info = { "WeakSet", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSWeakSet) };
 
 void JSWeakSet::finishCreation(VM& vm)
 {

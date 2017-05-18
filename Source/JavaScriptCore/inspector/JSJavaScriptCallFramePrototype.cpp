@@ -51,7 +51,7 @@ static EncodedJSValue JSC_HOST_CALL jsJavaScriptCallFrameAttributeThisObject(Exe
 static EncodedJSValue JSC_HOST_CALL jsJavaScriptCallFrameAttributeType(ExecState*);
 static EncodedJSValue JSC_HOST_CALL jsJavaScriptCallFrameIsTailDeleted(ExecState*);
 
-const ClassInfo JSJavaScriptCallFramePrototype::s_info = { "JavaScriptCallFrame", &Base::s_info, 0, CREATE_METHOD_TABLE(JSJavaScriptCallFramePrototype) };
+const ClassInfo JSJavaScriptCallFramePrototype::s_info = { "JavaScriptCallFrame", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSJavaScriptCallFramePrototype) };
 
 void JSJavaScriptCallFramePrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
