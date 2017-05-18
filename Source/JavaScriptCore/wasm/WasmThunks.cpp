@@ -40,7 +40,7 @@
 
 namespace JSC { namespace Wasm {
 
-MacroAssemblerCodeRef throwExceptionFromWasmThunkGenerator()
+MacroAssemblerCodeRef throwExceptionFromWasmThunkGenerator(const AbstractLocker&)
 {
     CCallHelpers jit;
 
@@ -62,8 +62,11 @@ MacroAssemblerCodeRef throwExceptionFromWasmThunkGenerator()
             auto throwScope = DECLARE_THROW_SCOPE(*vm);
             JSGlobalObject* globalObject = wasmContext->globalObject();
 
-            JSWebAssemblyRuntimeError* error = JSWebAssemblyRuntimeError::create(
-                exec, *vm, globalObject->WebAssemblyRuntimeErrorStructure(), Wasm::errorMessageForExceptionType(type));
+            JSObject* error; 
+            if (type == ExceptionType::StackOverflow)
+                error = createStackOverflowError(exec, globalObject);
+            else
+                error = JSWebAssemblyRuntimeError::create(exec, *vm, globalObject->WebAssemblyRuntimeErrorStructure(), Wasm::errorMessageForExceptionType(type));
             throwException(exec, throwScope, error);
         }
 
@@ -86,6 +89,18 @@ MacroAssemblerCodeRef throwExceptionFromWasmThunkGenerator()
     return FINALIZE_CODE(linkBuffer, ("Throw exception from Wasm"));
 }
 
+MacroAssemblerCodeRef throwStackOverflowFromWasmThunkGenerator(const AbstractLocker& locker)
+{
+    CCallHelpers jit;
+
+    jit.move(GPRInfo::callFrameRegister, MacroAssembler::stackPointerRegister);
+    jit.move(CCallHelpers::TrustedImm32(static_cast<uint32_t>(ExceptionType::StackOverflow)), GPRInfo::argumentGPR1);
+    auto jumpToExceptionHandler = jit.jump();
+    LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID);
+    linkBuffer.link(jumpToExceptionHandler, CodeLocationLabel(Thunks::singleton().stub(locker, throwExceptionFromWasmThunkGenerator).code()));
+    return FINALIZE_CODE(linkBuffer, ("Throw stack overflow from Wasm"));
+}
+
 static Thunks* thunks;
 void Thunks::initialize()
 {
@@ -101,12 +116,22 @@ Thunks& Thunks::singleton()
 MacroAssemblerCodeRef Thunks::stub(ThunkGenerator generator)
 {
     auto locker = holdLock(m_lock);
+    return stub(locker, generator);
+}
 
+MacroAssemblerCodeRef Thunks::stub(const AbstractLocker& locker, ThunkGenerator generator)
+{
     ASSERT(!!generator);
-    auto addResult = m_stubs.add(generator, MacroAssemblerCodeRef());
-    if (addResult.isNewEntry)
-        addResult.iterator->value = generator();
-    return addResult.iterator->value;
+    {
+        auto addResult = m_stubs.add(generator, MacroAssemblerCodeRef());
+        if (!addResult.isNewEntry)
+            return addResult.iterator->value;
+    }
+
+    MacroAssemblerCodeRef code = generator(locker);
+    // We specifically don't use the iterator here to allow generator to recursively change m_stubs.
+    m_stubs.set(generator, code);
+    return code;
 }
 
 MacroAssemblerCodeRef Thunks::existingStub(ThunkGenerator generator)

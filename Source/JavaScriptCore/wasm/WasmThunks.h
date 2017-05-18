@@ -31,9 +31,10 @@
 
 namespace JSC { namespace Wasm {
 
-MacroAssemblerCodeRef throwExceptionFromWasmThunkGenerator();
+MacroAssemblerCodeRef throwExceptionFromWasmThunkGenerator(const AbstractLocker&);
+MacroAssemblerCodeRef throwStackOverflowFromWasmThunkGenerator(const AbstractLocker&);
 
-typedef MacroAssemblerCodeRef (*ThunkGenerator)();
+typedef MacroAssemblerCodeRef (*ThunkGenerator)(const AbstractLocker&);
 
 class Thunks {
 public:
@@ -41,6 +42,7 @@ public:
     static Thunks& singleton();
 
     MacroAssemblerCodeRef stub(ThunkGenerator);
+    MacroAssemblerCodeRef stub(const AbstractLocker&, ThunkGenerator);
     MacroAssemblerCodeRef existingStub(ThunkGenerator);
 
 private:

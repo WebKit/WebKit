@@ -1199,9 +1199,10 @@ def runWebAssembly
     prepareExtraAbsoluteFiles(WASMTESTS_PATH, ["wasm.json"])
     prepareExtraRelativeFiles(modules.map { |f| "../" + f }, $collection)
     run("default-wasm", "-m", *FTL_OPTIONS)
-    run("wasm-no-cjit", "-m", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
+    run("wasm-no-cjit-yes-tls-context", "-m", "--useFastTLSForWasmContext=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
     run("wasm-eager-jettison", "-m", "--forceCodeBlockToJettisonDueToOldAge=true", *FTL_OPTIONS)
     run("wasm-no-call-ic", "-m", "--useCallICsForWebAssemblyToJSCalls=false", *FTL_OPTIONS)
+    run("wasm-no-tls-context", "-m", "--useFastTLSForWasmContext=false", *FTL_OPTIONS)
 end
 
 def runWebAssemblyEmscripten(mode)
@@ -1214,9 +1215,10 @@ def runWebAssemblyEmscripten(mode)
     wasm = $benchmark.to_s.sub! '.js', '.wasm'
     prepareExtraRelativeFiles([Pathname('..') + wasm], $collection)
     run("default-wasm", *FTL_OPTIONS)
-    run("wasm-no-cjit", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
+    run("wasm-no-cjit-yes-tls-context", "--useFastTLSForWasmContext=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
     run("wasm-eager-jettison", "--forceCodeBlockToJettisonDueToOldAge=true", *FTL_OPTIONS)
     run("wasm-no-call-ic", "--useCallICsForWebAssemblyToJSCalls=false", *FTL_OPTIONS)
+    run("wasm-no-tls-context", "--useFastTLSForWasmContext=false", *FTL_OPTIONS)
 end
 
 def runWebAssemblySpecTest(mode)
@@ -1236,9 +1238,10 @@ def runWebAssemblySpecTest(mode)
     prepareExtraRelativeFiles(harness.map { |f| "../../spec-harness/" + f }, $collection)
 
     runWithOutputHandler("default-wasm", noisyOutputHandler, "../spec-harness.js", *FTL_OPTIONS)
-    runWithOutputHandler("wasm-no-cjit", noisyOutputHandler, "../spec-harness.js", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
+    runWithOutputHandler("wasm-no-cjit-yes-tls-context", noisyOutputHandler, "../spec-harness.js",  "--useFastTLSForWasmContext=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
     runWithOutputHandler("wasm-eager-jettison", noisyOutputHandler, "../spec-harness.js", "--forceCodeBlockToJettisonDueToOldAge=true", *FTL_OPTIONS)
     runWithOutputHandler("wasm-no-call-ic", noisyOutputHandler, "../spec-harness.js", "--useCallICsForWebAssemblyToJSCalls=false", *FTL_OPTIONS)
+    runWithOutputHandler("wasm-no-tls-context", noisyOutputHandler, "../spec-harness.js", "--useFastTLSForWasmContext=false", *FTL_OPTIONS)
 end
 
 def runChakra(mode, exception, baselineFile, extraFiles)

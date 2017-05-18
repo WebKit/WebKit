@@ -82,7 +82,7 @@ void JSWebAssemblyModule::finishCreation(VM& vm)
     }
 
     m_exportSymbolTable.set(vm, this, exportSymbolTable);
-    m_callee.set(vm, this, WebAssemblyToJSCallee::create(vm, vm.webAssemblyToJSCalleeStructure.get(), this));
+    m_callee.set(vm, this, WebAssemblyToJSCallee::create(vm, this));
 }
 
 void JSWebAssemblyModule::destroy(JSCell* cell)

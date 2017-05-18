@@ -36,6 +36,7 @@
 #include "LinkBuffer.h"
 #include "NativeErrorConstructor.h"
 #include "WasmCallingConvention.h"
+#include "WasmContext.h"
 #include "WasmExceptionType.h"
 
 namespace JSC { namespace Wasm {
@@ -608,23 +609,29 @@ MacroAssemblerCodeRef wasmToWasm(unsigned importIndex)
     JIT jit;
 
     GPRReg scratch = GPRInfo::nonPreservedNonArgumentGPR;
-
-    // B3's call codegen ensures that the JSCell is a WebAssemblyFunction.
-    materializeImportJSCell(jit, importIndex, scratch);
-
-    // Get the callee's WebAssembly.Instance and set it as WasmContext. The caller will take care of restoring its own Instance.
     GPRReg baseMemory = pinnedRegs.baseMemoryPointer;
     ASSERT(baseMemory != scratch);
-    jit.loadPtr(JIT::Address(scratch, WebAssemblyFunction::offsetOfInstance()), baseMemory); // Instance*.
-    jit.storeWasmContext(baseMemory);
-
-    // FIXME the following code assumes that all WebAssembly.Instance have the same pinned registers. https://bugs.webkit.org/show_bug.cgi?id=162952
-    // Set up the callee's baseMemory register as well as the memory size registers.
-    jit.loadPtr(JIT::Address(baseMemory, JSWebAssemblyInstance::offsetOfMemory()), baseMemory); // JSWebAssemblyMemory*.
     const auto& sizeRegs = pinnedRegs.sizeRegisters;
     ASSERT(sizeRegs.size() >= 1);
     ASSERT(sizeRegs[0].sizeRegister != baseMemory);
     ASSERT(sizeRegs[0].sizeRegister != scratch);
+    GPRReg sizeRegAsScratch = sizeRegs[0].sizeRegister;
+
+    static_assert(std::is_same<Context, JSWebAssemblyInstance>::value, "This is assumed in the code below.");
+    // B3's call codegen ensures that the JSCell is a WebAssemblyFunction.
+    jit.loadWasmContext(sizeRegAsScratch); // Old Instance*
+    jit.loadPtr(JIT::Address(sizeRegAsScratch, JSWebAssemblyInstance::offsetOfImportFunction(importIndex)), scratch);
+
+    // Get the callee's WebAssembly.Instance and set it as WasmContext. The caller will take care of restoring its own Instance.
+    jit.loadPtr(JIT::Address(scratch, WebAssemblyFunction::offsetOfInstance()), baseMemory); // Instance*.
+    jit.storeWasmContext(baseMemory);
+
+    jit.loadPtr(JIT::Address(sizeRegAsScratch, JSWebAssemblyInstance::offsetOfCachedStackLimit()), sizeRegAsScratch);
+    jit.storePtr(sizeRegAsScratch, JIT::Address(baseMemory, JSWebAssemblyInstance::offsetOfCachedStackLimit()));
+
+    // FIXME the following code assumes that all WebAssembly.Instance have the same pinned registers. https://bugs.webkit.org/show_bug.cgi?id=162952
+    // Set up the callee's baseMemory register as well as the memory size registers.
+    jit.loadPtr(JIT::Address(baseMemory, JSWebAssemblyInstance::offsetOfMemory()), baseMemory); // JSWebAssemblyMemory*.
     ASSERT(!sizeRegs[0].sizeOffset); // The following code assumes we start at 0, and calculates subsequent size registers relative to 0.
     jit.loadPtr(JIT::Address(baseMemory, JSWebAssemblyMemory::offsetOfSize()), sizeRegs[0].sizeRegister); // Memory size.
     jit.loadPtr(JIT::Address(baseMemory, JSWebAssemblyMemory::offsetOfMemory()), baseMemory); // WasmMemory::void*.

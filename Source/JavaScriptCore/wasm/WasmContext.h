@@ -51,7 +51,9 @@ inline bool useFastTLS()
 
 inline bool useFastTLSForContext()
 {
-    return useFastTLS();
+    if (useFastTLS())
+        return Options::useFastTLSForWasmContext();
+    return false;
 }
 
 Context* loadContext(VM&);

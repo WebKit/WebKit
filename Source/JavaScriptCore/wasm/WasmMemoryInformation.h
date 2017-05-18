@@ -48,7 +48,7 @@ struct PinnedRegisterInfo {
     static const PinnedRegisterInfo& get();
     PinnedRegisterInfo(Vector<PinnedSizeRegisterInfo>&&, GPRReg, GPRReg);
 
-    RegisterSet toSave(MemoryMode mode = MemoryMode::BoundsChecking) const
+    RegisterSet toSave(MemoryMode mode) const
     {
         RegisterSet result;
         result.set(baseMemoryPointer);

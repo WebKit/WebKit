@@ -267,6 +267,8 @@ private:
     GPRReg m_memorySizeGPR { InvalidGPRReg };
     GPRReg m_wasmContextGPR;
     Value* m_instanceValue; // FIXME: make this lazy https://bugs.webkit.org/show_bug.cgi?id=169792
+    bool m_makesCalls { false };
+    uint32_t m_maxNumJSCallArguments { 0 };
 };
 
 // Memory accesses in WebAssembly have unsigned 32-bit offsets, whereas they have signed 32-bit offsets in B3.
@@ -381,9 +383,52 @@ B3IRGenerator::B3IRGenerator(const ModuleInformation& info, Procedure& procedure
 
     wasmCallingConvention().setupFrameInPrologue(&compilation->wasmCalleeMoveLocation, m_proc, Origin(), m_currentBlock);
 
-    m_currentBlock = emitTierUpCheck(m_currentBlock, TierUpCount::functionEntryDecrement(), Origin());
-
     m_instanceValue = materializeWasmContext(m_currentBlock);
+
+    {
+        B3::Value* framePointer = m_currentBlock->appendNew<B3::Value>(m_proc, B3::FramePointer, Origin());
+        B3::PatchpointValue* stackOverflowCheck = m_currentBlock->appendNew<B3::PatchpointValue>(m_proc, B3::Void, Origin());
+        stackOverflowCheck->appendSomeRegister(framePointer);
+        stackOverflowCheck->appendSomeRegister(m_instanceValue);
+        stackOverflowCheck->clobber(RegisterSet::macroScratchRegisters());
+        stackOverflowCheck->numGPScratchRegisters = 2;
+        stackOverflowCheck->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
+            GPRReg fp = params[0].gpr();
+            GPRReg context = params[1].gpr();
+            GPRReg scratch1 = params.gpScratch(0);
+            GPRReg scratch2 = params.gpScratch(1);
+
+            const Checked<int32_t> wasmFrameSize = params.proc().frameSize();
+            const unsigned minimumParentCheckSize = WTF::roundUpToMultipleOf(stackAlignmentBytes(), 1024);
+            const unsigned extraFrameSize = WTF::roundUpToMultipleOf(stackAlignmentBytes(), std::max<uint32_t>(
+                // This allows us to elide stack checks for functions that are terminal nodes in the call
+                // tree, (e.g they don't make any calls) and have a small enough frame size. This works by
+                // having any such terminal node have its parent caller include some extra size in its
+                // own check for it. The goal here is twofold:
+                // 1. Emit less code.
+                // 2. Try to speed things up by skipping stack checks.
+                minimumParentCheckSize,
+                // This allows us to elide stack checks in the Wasm -> JS call IC stub. Since these will
+                // spill all arguments to the stack, we ensure that a stack check here covers the
+                // stack that such a stub would use.
+                (Checked<uint32_t>(m_maxNumJSCallArguments) * sizeof(Register) + jscCallingConvention().headerSizeInBytes()).unsafeGet()
+            ));
+            const int32_t checkSize = m_makesCalls ? (wasmFrameSize + extraFrameSize).unsafeGet() : wasmFrameSize.unsafeGet();
+            // This allows leaf functions to not do stack checks if their frame size is within
+            // certain limits since their caller would have already done the check.
+            if (m_makesCalls || wasmFrameSize >= minimumParentCheckSize) {
+                jit.loadPtr(CCallHelpers::Address(context, Context::offsetOfCachedStackLimit()), scratch2);
+                jit.addPtr(CCallHelpers::TrustedImm32(-checkSize), fp, scratch1);
+                auto overflow = jit.branchPtr(CCallHelpers::Below, scratch1, scratch2);
+                jit.addLinkTask([overflow] (LinkBuffer& linkBuffer) {
+                    linkBuffer.link(overflow, CodeLocationLabel(Thunks::singleton().stub(throwStackOverflowFromWasmThunkGenerator).code()));
+                });
+            }
+        });
+    }
+
+    m_currentBlock = emitTierUpCheck(m_currentBlock, TierUpCount::functionEntryDecrement(), Origin());
 }
 
 void B3IRGenerator::restoreWebAssemblyGlobalState(const MemoryInformation& memory, Value* instance, Procedure& proc, BasicBlock* block)
@@ -998,10 +1043,14 @@ auto B3IRGenerator::addCall(uint32_t functionIndex, const Signature& signature, 
 {
     ASSERT(signature.argumentCount() == args.size());
 
+    m_makesCalls = true;
+
     Type returnType = signature.returnType();
     Vector<UnlinkedWasmToWasmCall>* unlinkedWasmToWasmCalls = &m_unlinkedWasmToWasmCalls;
 
     if (m_info.isImportedFunctionFromFunctionIndexSpace(functionIndex)) {
+        m_maxNumJSCallArguments = std::max(m_maxNumJSCallArguments, static_cast<uint32_t>(args.size()));
+
         // FIXME imports can be linked here, instead of generating a patchpoint, because all import stubs are generated before B3 compilation starts. https://bugs.webkit.org/show_bug.cgi?id=166462
         Value* functionImport = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), m_instanceValue, safeCast<int32_t>(JSWebAssemblyInstance::offsetOfImportFunction(functionIndex)));
         Value* jsTypeOfImport = m_currentBlock->appendNew<MemoryValue>(m_proc, Load8Z, origin(), functionImport, safeCast<int32_t>(JSCell::typeInfoTypeOffset()));
@@ -1017,7 +1066,9 @@ auto B3IRGenerator::addCall(uint32_t functionIndex, const Signature& signature, 
                 patchpoint->effects.writesPinned = true;
                 patchpoint->effects.readsPinned = true;
                 // We need to clobber all potential pinned registers since we might be leaving the instance.
-                patchpoint->clobberLate(PinnedRegisterInfo::get().toSave());
+                // We pessimistically assume we could be calling to something that is bounds checking.
+                // FIXME: We shouldn't have to do this: https://bugs.webkit.org/show_bug.cgi?id=172181
+                patchpoint->clobberLate(PinnedRegisterInfo::get().toSave(MemoryMode::BoundsChecking));
                 patchpoint->setGenerator([unlinkedWasmToWasmCalls, functionIndex] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
                     AllowMacroScratchRegisterUsage allowScratch(jit);
                     CCallHelpers::Call call = jit.threadSafePatchableNearCall();
@@ -1043,7 +1094,9 @@ auto B3IRGenerator::addCall(uint32_t functionIndex, const Signature& signature, 
                 patchpoint->effects.readsPinned = true;
                 patchpoint->append(jumpDestination, ValueRep::SomeRegister);
                 // We need to clobber all potential pinned registers since we might be leaving the instance.
-                patchpoint->clobberLate(PinnedRegisterInfo::get().toSave());
+                // We pessimistically assume we could be calling to something that is bounds checking.
+                // FIXME: We shouldn't have to do this: https://bugs.webkit.org/show_bug.cgi?id=172181
+                patchpoint->clobberLate(PinnedRegisterInfo::get().toSave(MemoryMode::BoundsChecking));
                 patchpoint->setGenerator([returnType] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
                     AllowMacroScratchRegisterUsage allowScratch(jit);
                     jit.call(params[returnType == Void ? 0 : 1].gpr());
@@ -1087,6 +1140,12 @@ auto B3IRGenerator::addCallIndirect(const Signature& signature, Vector<Expressio
 {
     ExpressionType calleeIndex = args.takeLast();
     ASSERT(signature.argumentCount() == args.size());
+
+    m_makesCalls = true;
+    // Note: call indirect can call either WebAssemblyFunction or WebAssemblyWrapperFunction. Because
+    // WebAssemblyWrapperFunction is like calling into JS, we conservatively assume all call indirects
+    // can be to JS for our stack check calculation.
+    m_maxNumJSCallArguments = std::max(m_maxNumJSCallArguments, static_cast<uint32_t>(args.size()));
 
     ExpressionType callableFunctionBuffer;
     ExpressionType jsFunctionBuffer;
@@ -1168,14 +1227,17 @@ auto B3IRGenerator::addCallIndirect(const Signature& signature, Vector<Expressio
         patchpoint->clobber(PinnedRegisterInfo::get().toSave(MemoryMode::BoundsChecking));
         patchpoint->clobber(RegisterSet::macroScratchRegisters());
         patchpoint->append(newContext, ValueRep::SomeRegister);
+        patchpoint->append(m_instanceValue, ValueRep::SomeRegister);
         patchpoint->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
             GPRReg newContext = params[0].gpr();
+            GPRReg oldContext = params[1].gpr();
             const PinnedRegisterInfo& pinnedRegs = PinnedRegisterInfo::get();
             const auto& sizeRegs = pinnedRegs.sizeRegisters;
             GPRReg baseMemory = pinnedRegs.baseMemoryPointer;
             ASSERT(newContext != baseMemory);
-
+            jit.loadPtr(CCallHelpers::Address(oldContext, Context::offsetOfCachedStackLimit()), baseMemory);
+            jit.storePtr(baseMemory, CCallHelpers::Address(newContext, Context::offsetOfCachedStackLimit()));
             jit.storeWasmContext(newContext);
             jit.loadPtr(CCallHelpers::Address(newContext, Context::offsetOfMemory()), baseMemory); // JSWebAssemblyMemory*.
             ASSERT(sizeRegs.size() == 1);
@@ -1200,7 +1262,11 @@ auto B3IRGenerator::addCallIndirect(const Signature& signature, Vector<Expressio
             patchpoint->effects.writesPinned = true;
             patchpoint->effects.readsPinned = true;
             // We need to clobber all potential pinned registers since we might be leaving the instance.
-            patchpoint->clobberLate(PinnedRegisterInfo::get().toSave());
+            // We pessimistically assume we're always calling something that is bounds checking so
+            // because the wasm->wasm thunk unconditionally overrides the size registers.
+            // FIXME: We should not have to do this, but the wasm->wasm stub assumes it can
+            // use all the pinned registers as scratch: https://bugs.webkit.org/show_bug.cgi?id=172181
+            patchpoint->clobberLate(PinnedRegisterInfo::get().toSave(MemoryMode::BoundsChecking));
 
             patchpoint->append(calleeCode, ValueRep::SomeRegister);
             patchpoint->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {

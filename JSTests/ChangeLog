@@ -1,3 +1,26 @@
+2017-05-18  Saam Barati  <sbarati@apple.com>
+
+        WebAssembly: perform stack checks
+        https://bugs.webkit.org/show_bug.cgi?id=165546
+        <rdar://problem/29760307>
+
+        Reviewed by Filip Pizlo.
+
+        * wasm.yaml:
+        * wasm/function-tests/factorial.js:
+        * wasm/function-tests/float-sub.js:
+        * wasm/function-tests/stack-overflow.js: Added.
+        (import.Builder.from.string_appeared_here.import.as.assert.from.string_appeared_here.makeInstance):
+        (import.Builder.from.string_appeared_here.import.as.assert.from.string_appeared_here.assertOverflows):
+        (assertOverflows.makeInstance):
+        (assertOverflows.makeInstance2):
+        (assertOverflows.assertThrows):
+        (assertOverflows):
+        (assertThrows.test.makeSignature):
+        (assertThrows.test.makeInstance):
+        (assertThrows.test):
+        (assertThrows):
+
 2017-05-18  Keith Miller  <keith_miller@apple.com>
 
         WebAssembly API: test with neutered inputs

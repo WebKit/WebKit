@@ -39,7 +39,8 @@ namespace Wasm {
     macro(OutOfBoundsTrunc, "Out of bounds Trunc operation") \
     macro(Unreachable, "Unreachable code should not be executed") \
     macro(DivisionByZero, "Division by zero") \
-    macro(IntegerOverflow, "Integer overflow")
+    macro(IntegerOverflow, "Integer overflow") \
+    macro(StackOverflow, "Stack overflow")
 
 enum class ExceptionType : uint32_t {
 #define MAKE_ENUM(enumName, error) enumName,

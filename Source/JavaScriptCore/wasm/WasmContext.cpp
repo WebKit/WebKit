@@ -40,7 +40,6 @@ Context* loadContext(VM& vm)
     if (useFastTLSForContext())
         return bitwise_cast<Context*>(_pthread_getspecific_direct(WTF_WASM_CONTEXT_KEY));
 #endif
-    // FIXME: Save this state elsewhere to allow PIC. https://bugs.webkit.org/show_bug.cgi?id=169773
     return vm.wasmContext;
 }
 
@@ -50,8 +49,9 @@ void storeContext(VM& vm, Context* context)
     if (useFastTLSForContext())
         _pthread_setspecific_direct(WTF_WASM_CONTEXT_KEY, bitwise_cast<void*>(context));
 #endif
-    // FIXME: Save this state elsewhere to allow PIC. https://bugs.webkit.org/show_bug.cgi?id=169773
     vm.wasmContext = context;
+    if (context)
+        context->setCachedStackLimit(vm.softStackLimit());
 }
 
 } } // namespace JSC::Wasm

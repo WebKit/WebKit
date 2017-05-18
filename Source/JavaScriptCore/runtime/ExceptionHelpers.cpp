@@ -69,7 +69,12 @@ bool isTerminatedExecutionException(VM& vm, Exception* exception)
 
 JSObject* createStackOverflowError(ExecState* exec)
 {
-    return createRangeError(exec, ASCIILiteral("Maximum call stack size exceeded."));
+    return createStackOverflowError(exec, exec->lexicalGlobalObject());
+}
+
+JSObject* createStackOverflowError(ExecState* exec, JSGlobalObject* globalObject)
+{
+    return createRangeError(exec, globalObject, ASCIILiteral("Maximum call stack size exceeded."));
 }
 
 JSObject* createUndefinedVariableError(ExecState* exec, const Identifier& ident)

@@ -163,6 +163,7 @@
 #include "WeakMapPrototype.h"
 #include "WeakSetConstructor.h"
 #include "WeakSetPrototype.h"
+#include "WebAssemblyToJSCallee.h"
 #include <wtf/RandomNumber.h>
 
 #if ENABLE(INTL)
@@ -887,6 +888,7 @@ putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Construct
         m_webAssemblyModuleRecordStructure.set(vm, this, WebAssemblyModuleRecord::createStructure(vm, this, m_objectPrototype.get()));
         m_webAssemblyFunctionStructure.set(vm, this, WebAssemblyFunction::createStructure(vm, this, m_functionPrototype.get()));
         m_webAssemblyWrapperFunctionStructure.set(vm, this, WebAssemblyWrapperFunction::createStructure(vm, this, m_functionPrototype.get()));
+        m_webAssemblyToJSCalleeStructure.set(vm, this, WebAssemblyToJSCallee::createStructure(vm, this, jsNull()));
         auto* webAssembly = JSWebAssembly::create(vm, this, m_webAssemblyStructure.get());
         putDirectWithoutTransition(vm, Identifier::fromString(exec, "WebAssembly"), webAssembly, DontEnum);
 
@@ -1270,6 +1272,7 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(thisObject->m_webAssemblyModuleRecordStructure);
     visitor.append(thisObject->m_webAssemblyFunctionStructure);
     visitor.append(thisObject->m_webAssemblyWrapperFunctionStructure);
+    visitor.append(thisObject->m_webAssemblyToJSCalleeStructure);
     FOR_EACH_WEBASSEMBLY_CONSTRUCTOR_TYPE(VISIT_SIMPLE_TYPE)
 #endif // ENABLE(WEBASSEMBLY)
 

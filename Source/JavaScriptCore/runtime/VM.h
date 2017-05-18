@@ -321,7 +321,6 @@ public:
     Strong<Structure> programExecutableStructure;
     Strong<Structure> functionExecutableStructure;
 #if ENABLE(WEBASSEMBLY)
-    Strong<Structure> webAssemblyToJSCalleeStructure;
     Strong<Structure> webAssemblyCodeBlockStructure;
 #endif
     Strong<Structure> moduleProgramExecutableStructure;

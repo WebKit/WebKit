@@ -1,3 +1,89 @@
+2017-05-18  Saam Barati  <sbarati@apple.com>
+
+        WebAssembly: perform stack checks
+        https://bugs.webkit.org/show_bug.cgi?id=165546
+        <rdar://problem/29760307>
+
+        Reviewed by Filip Pizlo.
+
+        This patch adds stack checks to wasm. It implements it by storing the stack
+        bounds on the Context.
+        
+        Stack checking works as normal, except we do a small optimization for terminal
+        nodes in the call tree (nodes that don't make any calls). These nodes will
+        only do a stack check if their frame size is beyond 1024 bytes. Otherwise,
+        it's assumed the parent that called them did their stack check for them.
+        This is because all things that make calls make sure to do an extra 1024
+        bytes whenever doing a stack check.
+        
+        We also take into account stack size for potential JS calls when doing
+        stack checks since our JS stubs don't do this on their own. Each frame
+        will ensure it does a stack check large enough for any potential JS call
+        stubs it'll execute.
+        
+        Surprisingly, this patch is neutral on WasmBench and TitzerBench.
+
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::Data::performAssertions):
+        * llint/LowLevelInterpreter.asm:
+        * runtime/Error.cpp:
+        (JSC::createRangeError):
+        (JSC::addErrorInfoAndGetBytecodeOffset):
+        I fixed a bug here where we assumed that the first frame that has line
+        and column info would be in our stack trace. This is not correct
+        since we limit our stack trace size. If everything in our limited
+        size stack trace is Wasm, then we won't have any frames with line
+        and column info.
+        * runtime/Error.h:
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::createStackOverflowError):
+        * runtime/ExceptionHelpers.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::webAssemblyToJSCalleeStructure):
+        * runtime/JSType.h:
+        * runtime/Options.h: I've added a new option that controls
+        whether or not we use fast TLS for the wasm context.
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::B3IRGenerator):
+        * wasm/WasmBinding.cpp:
+        (JSC::Wasm::wasmToWasm):
+        * wasm/WasmContext.cpp:
+        (JSC::Wasm::loadContext):
+        (JSC::Wasm::storeContext):
+        * wasm/WasmContext.h:
+        (JSC::Wasm::useFastTLSForContext):
+        * wasm/WasmExceptionType.h:
+        * wasm/WasmMemoryInformation.h:
+        (JSC::Wasm::PinnedRegisterInfo::toSave):
+        * wasm/WasmThunks.cpp:
+        (JSC::Wasm::throwExceptionFromWasmThunkGenerator):
+        (JSC::Wasm::throwStackOverflowFromWasmThunkGenerator):
+        (JSC::Wasm::Thunks::stub):
+        * wasm/WasmThunks.h:
+        * wasm/js/JSWebAssemblyInstance.h:
+        (JSC::JSWebAssemblyInstance::offsetOfCachedStackLimit):
+        (JSC::JSWebAssemblyInstance::cachedStackLimit):
+        (JSC::JSWebAssemblyInstance::setCachedStackLimit):
+        * wasm/js/JSWebAssemblyModule.cpp:
+        (JSC::JSWebAssemblyModule::finishCreation):
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::callWebAssemblyFunction):
+        * wasm/js/WebAssemblyToJSCallee.cpp: Make this a descendent of object.
+        This is needed for correctness because we may call into JS,
+        and then the first JS frame could stack overflow. When it stack
+        overflows, it rolls back one frame to the wasm->js call stub with
+        the wasm->js callee. It gets the lexical global object from this
+        frame, meaning it gets the global object from the callee. Therefore,
+        we must make it an object since all objects have global objects.
+        (JSC::WebAssemblyToJSCallee::create):
+        * wasm/js/WebAssemblyToJSCallee.h:
+
 2017-05-18  Keith Miller  <keith_miller@apple.com>
 
         WebAssembly API: test with neutered inputs

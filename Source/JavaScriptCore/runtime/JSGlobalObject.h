@@ -351,6 +351,7 @@ public:
     WriteBarrier<Structure> m_webAssemblyModuleRecordStructure;
     WriteBarrier<Structure> m_webAssemblyFunctionStructure;
     WriteBarrier<Structure> m_webAssemblyWrapperFunctionStructure;
+    WriteBarrier<Structure> m_webAssemblyToJSCalleeStructure;
     FOR_EACH_WEBASSEMBLY_CONSTRUCTOR_TYPE(DEFINE_STORAGE_FOR_SIMPLE_TYPE)
 #endif // ENABLE(WEBASSEMBLY)
 
@@ -621,6 +622,7 @@ public:
     Structure* webAssemblyModuleRecordStructure() const { return m_webAssemblyModuleRecordStructure.get(); }
     Structure* webAssemblyFunctionStructure() const { return m_webAssemblyFunctionStructure.get(); }
     Structure* webAssemblyWrapperFunctionStructure() const { return m_webAssemblyWrapperFunctionStructure.get(); }
+    Structure* webAssemblyToJSCalleeStructure() const { return m_webAssemblyToJSCalleeStructure.get(); }
 #endif // ENABLE(WEBASSEMBLY)
 
     JS_EXPORT_PRIVATE void setRemoteDebuggingEnabled(bool);
