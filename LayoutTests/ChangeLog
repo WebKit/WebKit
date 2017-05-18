@@ -1,3 +1,17 @@
+2017-05-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Add a test to ensure that media controls don't trigger composting of ancestors via "isolates blending"
+        https://bugs.webkit.org/show_bug.cgi?id=172320
+
+        Reviewed by Dean Jackson.
+
+        Test that makes some source-less and sourced audio and video controls, and dumps
+        the layer tree to ensure that they didn't trigger compositing on their ancestor
+        stacking context element.
+
+        * media/controls-should-not-trigger-isolates-blending-expected.txt: Added.
+        * media/controls-should-not-trigger-isolates-blending.html: Added.
+
 2017-05-18  Dean Jackson  <dino@apple.com>
 
         Transform misplaces element 50% of the time
