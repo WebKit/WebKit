@@ -31,10 +31,6 @@
 #include <map>
 #include <string>
 
-#if defined(_MSC_VER) && _MSC_VER < 1900
-#define snprintf _snprintf
-#endif
-
 // Helper classes for implementing has_member
 typedef char (&no_tag)[1];
 typedef char (&yes_tag)[2];

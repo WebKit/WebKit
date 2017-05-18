@@ -29,6 +29,7 @@
 #include <string.h>
 #include <wtf/FilePrintStream.h>
 #include <wtf/LockedPrintStream.h>
+#include <wtf/ProcessID.h>
 #include <wtf/Threading.h>
 #include <mutex>
 #include <thread>
@@ -96,11 +97,7 @@ static void initializeLogFileOnce()
     char actualFilename[maxPathLength + 1];
 
     if (filename && !strstr(filename, "%pid")) {
-#if PLATFORM(WIN)
-        _snprintf(actualFilename, sizeof(actualFilename), "%s.%%pid.txt", filename);
-#else
         snprintf(actualFilename, sizeof(actualFilename), "%s.%%pid.txt", filename);
-#endif
         filename = actualFilename;
     }
 #endif // DATA_LOG_TO_FILE
@@ -133,12 +130,8 @@ void setDataFile(const char* path)
             char* nextDest = formattedPath + pathCharactersAvailable;
             pathCharactersAvailable = maxPathLength - pathCharactersAvailable;
             if (pathCharactersAvailable) {
-                int pidTextLength;
-#if PLATFORM(WIN)
-                pidTextLength = _snprintf(nextDest, pathCharactersAvailable, "%d", GetCurrentProcessId());
-#else
-                pidTextLength = snprintf(nextDest, pathCharactersAvailable, "%d", getpid());
-#endif
+                int pidTextLength = snprintf(nextDest, pathCharactersAvailable, "%d", getCurrentProcessID());
+
                 if (pidTextLength < 0 || static_cast<size_t>(pidTextLength) >= pathCharactersAvailable)
                     pathCharactersAvailable = 0;
                 else {

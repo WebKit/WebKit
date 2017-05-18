@@ -1,3 +1,14 @@
+2017-05-18  Don Olmstead  <don.olmstead@am.sony.com>
+
+        [Win] Remove usage of _snprintf
+        https://bugs.webkit.org/show_bug.cgi?id=172251
+
+        Reviewed by Per Arne Vollan.
+
+        * wtf/DataLog.cpp:
+        (WTF::initializeLogFileOnce):
+        (WTF::setDataFile):
+
 2017-05-15  Mark Lam  <mark.lam@apple.com>
 
         Rolling out r214038 and r213697: Crashes when using computed properties with rest destructuring and object spread.
