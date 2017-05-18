@@ -325,8 +325,8 @@ public:
 #if PLATFORM(MAC)
     static void setShouldRepostNotificationsForTests(bool value);
 #endif
-    void recomputeDeferredIsIgnored(RenderBlock& renderer);
-    void deferTextChanged(RenderText& renderer);
+    void deferRecomputeIsIgnored(Element*);
+    void deferTextChangedIfNeeded(Node*);
     void performDeferredCacheUpdate();
 
 protected:
@@ -426,7 +426,8 @@ private:
 
     AXTextStateChangeIntent m_textSelectionIntent;
     bool m_isSynchronizingSelection { false };
-    ListHashSet<RenderObject*> m_deferredCacheUpdateList;
+    ListHashSet<Element*> m_deferredRecomputeIsIgnoredList;
+    ListHashSet<Node*> m_deferredTextChangedList;
 };
 
 class AXAttributeCacheEnabler
@@ -488,7 +489,7 @@ inline void AXObjectCache::handleFocusedUIElementChanged(Node*, Node*) { }
 inline void AXObjectCache::handleScrollbarUpdate(ScrollView*) { }
 inline void AXObjectCache::handleAttributeChanged(const QualifiedName&, Element*) { }
 inline void AXObjectCache::recomputeIsIgnored(RenderObject*) { }
-inline void AXObjectCache::deferTextChanged(RenderText&) { }
+inline void AXObjectCache::deferTextChangedIfNeeded(Node*) { }
 inline void AXObjectCache::performDeferredCacheUpdate() { }
 inline void AXObjectCache::handleScrolledToAnchor(const Node*) { }
 inline void AXObjectCache::postTextStateChangeNotification(Node*, const AXTextStateChangeIntent&, const VisibleSelection&) { }

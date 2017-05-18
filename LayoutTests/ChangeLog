@@ -1,5 +1,20 @@
 2017-05-17  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r216726. rdar://problem/31971324
+
+    2017-05-11  Zalan Bujtas  <zalan@apple.com>
+
+            AX: Defer text changes until after the tree is clean if needed.
+            https://bugs.webkit.org/show_bug.cgi?id=171546
+            <rdar://problem/31934942>
+
+            Reviewed by Simon Fraser.
+
+            * accessibility/crash-when-render-tree-is-not-clean-expected.txt: Added.
+            * accessibility/crash-when-render-tree-is-not-clean.html: Added.
+
+2017-05-17  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r216978. rdar://problem/31971195
 
     2017-05-17  Ryosuke Niwa  <rniwa@webkit.org>
