@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Licensed under the Creative Commons Attribution-Share Alike 3.0 United States License (http://creativecommons.org/licenses/by-sa/3.0/) -->
 <svg xmlns="http://www.w3.org/2000/svg" id="root" version="1.1" viewBox="0 0 16 16">
- <path d="m12 4h-1.333l-6.667 6.667v1.333h1.3333l6.6667-6.6667z"/>
- <path d="m4 4h1.3333l6.6667 6.667v1.333h-1.333l-6.667-6.6667z"/>
- <path d="m2 1c-0.5535 0-1 0.4465-1 1v12c0 0.55349 0.44651 1 1 1h12c0.55349 0 1-0.44651 1-1v-12c0-0.5535-0.447-1-1-1h-12zm1 1h10c0.55349 0 1 0.44651 1 1v10c0 0.55349-0.44651 1-1 1h-10c-0.5535 0-1-0.447-1-1v-10c0-0.5535 0.4465-1 1-1z"/>
+ <path fill="currentColor" d="m12 4h-1.333l-6.667 6.667v1.333h1.3333l6.6667-6.6667z"/>
+ <path fill="currentColor" d="m4 4h1.3333l6.6667 6.667v1.333h-1.333l-6.667-6.6667z"/>
+ <path fill="currentColor" d="m2 1c-0.5535 0-1 0.4465-1 1v12c0 0.55349 0.44651 1 1 1h12c0.55349 0 1-0.44651 1-1v-12c0-0.5535-0.447-1-1-1h-12zm1 1h10c0.55349 0 1 0.44651 1 1v10c0 0.55349-0.44651 1-1 1h-10c-0.5535 0-1-0.447-1-1v-10c0-0.5535 0.4465-1 1-1z"/>
 </svg>

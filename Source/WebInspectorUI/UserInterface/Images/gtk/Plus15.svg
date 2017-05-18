@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Licensed under the Creative Commons Attribution-Share Alike 3.0 United States License (http://creativecommons.org/licenses/by-sa/3.0/) -->
 <svg xmlns="http://www.w3.org/2000/svg" id="root" version="1.1" viewBox="0 0 15 15">
- <path d="m6.2907 1v5.3428h-5.2907v2.3145h5.2907v5.3428h2.4186v-5.3428h5.2907v-2.3145h-5.2907v-5.3428h-2.4186"/>
+ <path fill="currentColor" d="m6.2907 1v5.3428h-5.2907v2.3145h5.2907v5.3428h2.4186v-5.3428h5.2907v-2.3145h-5.2907v-5.3428h-2.4186"/>
 </svg>

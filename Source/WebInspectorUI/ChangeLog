@@ -1,3 +1,70 @@
+2017-05-18  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Web Inspector: [GTK] Adopt currentColor for mask SVG images
+        https://bugs.webkit.org/show_bug.cgi?id=150603
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UserInterface/Images/gtk/Circle.svg:
+        * UserInterface/Images/gtk/ClearBoth.svg:
+        * UserInterface/Images/gtk/ClearLeft.svg:
+        * UserInterface/Images/gtk/ClearRight.svg:
+        * UserInterface/Images/gtk/Close.svg:
+        * UserInterface/Images/gtk/CloseLarge.svg:
+        * UserInterface/Images/gtk/Console.svg:
+        * UserInterface/Images/gtk/Debugger.svg:
+        * UserInterface/Images/gtk/DockBottom.svg:
+        * UserInterface/Images/gtk/DockRight.svg:
+        * UserInterface/Images/gtk/DownloadArrow.svg:
+        * UserInterface/Images/gtk/Elements.svg:
+        * UserInterface/Images/gtk/Errors.svg:
+        * UserInterface/Images/gtk/Eye.svg:
+        * UserInterface/Images/gtk/FloatLeft.svg:
+        * UserInterface/Images/gtk/FloatRight.svg:
+        * UserInterface/Images/gtk/FontStyleItalic.svg:
+        * UserInterface/Images/gtk/FontStyleNormal.svg:
+        * UserInterface/Images/gtk/Gear.svg:
+        * UserInterface/Images/gtk/Issues.svg:
+        * UserInterface/Images/gtk/Logs.svg:
+        * UserInterface/Images/gtk/Minus.svg:
+        * UserInterface/Images/gtk/NavigationItemClear.svg:
+        * UserInterface/Images/gtk/NavigationItemTrash.svg:
+        * UserInterface/Images/gtk/Network.svg:
+        * UserInterface/Images/gtk/NewTab.svg:
+        * UserInterface/Images/gtk/NewTabPlus.svg:
+        * UserInterface/Images/gtk/Pause.svg:
+        * UserInterface/Images/gtk/Pencil.svg:
+        * UserInterface/Images/gtk/Plus13.svg:
+        * UserInterface/Images/gtk/Plus15.svg:
+        * UserInterface/Images/gtk/ReloadFull.svg:
+        * UserInterface/Images/gtk/ReloadToolbar.svg:
+        * UserInterface/Images/gtk/Resources.svg:
+        * UserInterface/Images/gtk/Search.svg:
+        * UserInterface/Images/gtk/SearchResults.svg:
+        * UserInterface/Images/gtk/SplitToggleUp.svg:
+        * UserInterface/Images/gtk/StepInto.svg:
+        * UserInterface/Images/gtk/StepOut.svg:
+        * UserInterface/Images/gtk/StepOver.svg:
+        * UserInterface/Images/gtk/Stop.svg:
+        * UserInterface/Images/gtk/Storage.svg:
+        * UserInterface/Images/gtk/TextAlignCenter.svg:
+        * UserInterface/Images/gtk/TextAlignJustify.svg:
+        * UserInterface/Images/gtk/TextAlignLeft.svg:
+        * UserInterface/Images/gtk/TextAlignRight.svg:
+        * UserInterface/Images/gtk/TextDecorationLineThrough.svg:
+        * UserInterface/Images/gtk/TextDecorationOverline.svg:
+        * UserInterface/Images/gtk/TextDecorationUnderline.svg:
+        * UserInterface/Images/gtk/TextTransformCapitalize.svg:
+        * UserInterface/Images/gtk/TextTransformLowercase.svg:
+        * UserInterface/Images/gtk/TextTransformUppercase.svg:
+        * UserInterface/Images/gtk/Time.svg:
+        * UserInterface/Images/gtk/Timeline.svg:
+        * UserInterface/Images/gtk/Undock.svg:
+        * UserInterface/Images/gtk/VisualStyleNone.svg:
+        * UserInterface/Images/gtk/VisualStylePropertyLinked.svg:
+        * UserInterface/Images/gtk/VisualStylePropertyUnlinked.svg:
+        * UserInterface/Images/gtk/Weight.svg:
+
 2017-05-15  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [GTK] Web Inspector: Add new GTK+ icons for Search icon of Quick Open dialog
