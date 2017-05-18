@@ -102,8 +102,10 @@ static inline bool isAllWhitespace(const String& string)
 
 static inline void insert(HTMLConstructionSiteTask& task)
 {
-    if (is<HTMLTemplateElement>(*task.parent))
+    if (is<HTMLTemplateElement>(*task.parent)) {
         task.parent = &downcast<HTMLTemplateElement>(*task.parent).content();
+        task.nextChild = nullptr;
+    }
 
     ASSERT(!task.child->parentNode());
     if (task.nextChild)
