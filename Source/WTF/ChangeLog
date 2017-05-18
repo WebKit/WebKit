@@ -1,3 +1,27 @@
+2017-05-18  Geoffrey Garen  <ggaren@apple.com>
+
+        AutomaticThread should wait longer before timing out
+        https://bugs.webkit.org/show_bug.cgi?id=172292
+
+        Reviewed by Filip Pizlo.
+
+        Increased the idle timeout from 1s => 10s.
+
+        This reduces the number of thread restarts on JetStream from
+        ~150 => ~0. It also matches other thread pool APIs on Darwin.
+
+        Intuitively, it seems wrong for helper threads to idle exit during
+        hardcore benchmarking.
+
+        This patch in combination with a bmalloc fix seems to be a 1%-2% JetStream
+        speedup on my Mac Pro.
+
+        A nice side-benefit is that per-thread traces are easier to read.
+
+        * wtf/AutomaticThread.cpp:
+        (WTF::AutomaticThread::start):
+        * wtf/AutomaticThread.h:
+
 2017-05-18  Don Olmstead  <don.olmstead@am.sony.com>
 
         [Win] Remove usage of _snprintf

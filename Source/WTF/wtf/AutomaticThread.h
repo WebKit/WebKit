@@ -54,7 +54,7 @@ namespace WTF {
 // to this thread sitting around even when it is not needed.
 //
 // AutomaticThread is here to help you in these situations. It encapsulates a lock, a condition
-// variable, and a thread. It will automatically shut the thread down after 1 second of inactivity.
+// variable, and a thread. It will automatically shut the thread down after a timeout of inactivity.
 // You use AutomaticThread by subclassing it, and put any state that is needed between [1] and [2]
 // in the subclass.
 //
@@ -101,7 +101,7 @@ private:
 class WTF_EXPORT_PRIVATE AutomaticThread : public ThreadSafeRefCounted<AutomaticThread> {
 public:
     // Note that if you drop all of your references to an AutomaticThread then as soon as there is a
-    // second during which it doesn't get woken up, it will simply die on its own. This is a
+    // timeout during which it doesn't get woken up, it will simply die on its own. This is a
     // permanent kind of death where the AutomaticThread object goes away, rather than the temporary
     // kind of death where AutomaticThread lives but its underlying thread dies. All you have to do
     // to prevent permanent death is keep a ref to AutomaticThread. At time of writing, every user of
