@@ -1,3 +1,13 @@
+2017-05-18  Keith Miller  <keith_miller@apple.com>
+
+        Fix wasm-mem-post-message.html test expectations
+        https://bugs.webkit.org/show_bug.cgi?id=172308
+
+        Unreviewed, test gardening.
+
+        * platform/ios-simulator/TestExpectations:
+        * platform/win/TestExpectations:
+
 2017-05-18  Jer Noble  <jer.noble@apple.com>
 
         Allow nested timers to propagate user gestures so long as the total nested interval is less than 1s.
