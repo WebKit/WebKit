@@ -69,6 +69,9 @@ SecurityOrigin* MediaDevicesRequest::securityOrigin() const
 
 void MediaDevicesRequest::contextDestroyed()
 {
+    // The call to m_enumerationRequest->cancel() might delete this.
+    auto protectedThis = makeRef(*this);
+
     if (m_enumerationRequest) {
         m_enumerationRequest->cancel();
         m_enumerationRequest = nullptr;

@@ -1,3 +1,23 @@
+2017-05-18  Per Arne Vollan  <pvollan@apple.com>
+
+        Protect MediaDeviceRequest instance during context destruction.
+        https://bugs.webkit.org/show_bug.cgi?id=172285
+        <rdar://problem/30369017>
+
+        Reviewed by Brent Fulgham.
+
+        In MediaDevicesRequest::contextDestroyed(), the call to m_enumerationRequest->cancel() might
+        end up deleting itself (MediaDevicesRequest). The std::function member m_completionHandler
+        in MediaDevicesEnumerationRequest contains a captured variable of type
+        RefPtr<MediaDevicesRequest>. When m_completionHandler is set to null in the cancel() method,
+        the MediaDevicesRequest object will be deleted if the m_completionHandler member is holding
+        the last reference.
+
+        No new tests, since I am unable to reproduce.
+
+        * Modules/mediastream/MediaDevicesRequest.cpp:
+        (WebCore::MediaDevicesRequest::contextDestroyed):
+
 2017-05-18  Antti Koivisto  <antti@apple.com>
 
         Design mode should not affect UA shadow trees
