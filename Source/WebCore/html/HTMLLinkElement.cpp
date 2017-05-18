@@ -323,8 +323,12 @@ Node::InsertionNotificationRequest HTMLLinkElement::insertedInto(ContainerNode& 
     m_styleScope = &Style::Scope::forNode(*this);
     m_styleScope->addStyleSheetCandidateNode(*this, m_createdByParser);
 
+    return InsertionShouldCallFinishedInsertingSubtree;
+}
+
+void HTMLLinkElement::finishedInsertingSubtree()
+{
     process();
-    return InsertionDone;
 }
 
 void HTMLLinkElement::removedFrom(ContainerNode& insertionPoint)
