@@ -939,7 +939,7 @@ class GlobalObject;
 class Workers;
 
 template<typename Func>
-int runJSC(CommandLine, const Func&);
+int runJSC(CommandLine, bool isWorker, const Func&);
 static void checkException(GlobalObject*, bool isLastFile, bool hasException, JSValue, const String& uncaughtExceptionName, bool alwaysDumpUncaughtException, bool dump, bool& success);
 
 class Message : public ThreadSafeRefCounted<Message> {
@@ -2551,7 +2551,7 @@ EncodedJSValue JSC_HOST_CALL functionDollarAgentStart(ExecState* exec)
             CommandLine commandLine(0, nullptr);
             commandLine.m_interactive = false;
             runJSC(
-                commandLine,
+                commandLine, true,
                 [&] (VM&, GlobalObject* globalObject) {
                     // Notify the thread that started us that we have registered a worker.
                     {
@@ -3792,7 +3792,7 @@ void CommandLine::parseArguments(int argc, char** argv)
 }
 
 template<typename Func>
-int runJSC(CommandLine options, const Func& func)
+int runJSC(CommandLine options, bool isWorker, const Func& func)
 {
     Worker worker(Workers::singleton());
     
@@ -3871,6 +3871,13 @@ int runJSC(CommandLine options, const Func& func)
 #endif
     }
 
+    if (isWorker) {
+        JSLockHolder locker(vm);
+        // This is needed because we don't want the worker's main
+        // thread to die before its compilation threads finish.
+        vm.deref();
+    }
+
     return result;
 }
 
@@ -3895,7 +3902,7 @@ int jscmain(int argc, char** argv)
 
     int result;
     result = runJSC(
-        options,
+        options, false,
         [&] (VM&, GlobalObject* globalObject) {
             return runWithScripts(globalObject, options.m_scripts, options.m_uncaughtExceptionName, options.m_alwaysDumpUncaughtException, options.m_dump, options.m_module);
         });

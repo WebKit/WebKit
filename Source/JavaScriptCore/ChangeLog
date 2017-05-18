@@ -1,3 +1,29 @@
+2017-05-18  Saam Barati  <sbarati@apple.com>
+
+        We need to destroy worker threads in jsc.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=170751
+        <rdar://problem/31800412>
+
+        Reviewed by Filip Pizlo.
+
+        This patch fixes a bug where a $ agent worker would still
+        have compilation threads running after the thread the worker
+        was created on dies. This manifested itself inside DFG AI where
+        we would notice a string constant is atomic, then the worker
+        thread would die, destroying its atomic string table, then
+        we'd notice the same string is no longer atomic, and we'd crash
+        because we'd fail to see the same speculated type for the same
+        JSValue.
+        
+        This patch makes it so that $ agent workers destroy their VM when
+        they're done executing. Before a VM gets destroyed, it ensures that
+        all its compilation threads finish.
+
+        * jsc.cpp:
+        (functionDollarAgentStart):
+        (runJSC):
+        (jscmain):
+
 2017-05-18  Michael Saboff  <msaboff@apple.com>
 
         Add FTL whitelist debugging option
