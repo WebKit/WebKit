@@ -58,6 +58,7 @@
 #include "NodeTraversal.h"
 #include "RenderElement.h"
 #include "ScriptController.h"
+#include "ShadowRoot.h"
 #include "SimulatedClick.h"
 #include "StyleProperties.h"
 #include "SubframeLoader.h"
@@ -401,6 +402,10 @@ Node::Editability HTMLElement::editabilityFromContentEditableAttr(const Node& no
             }
         }
     }
+
+    auto* containingShadowRoot = node.containingShadowRoot();
+    if (containingShadowRoot && containingShadowRoot->mode() == ShadowRootMode::UserAgent)
+        return Editability::ReadOnly;
 
     auto& document = node.document();
     if (is<HTMLDocument>(document))

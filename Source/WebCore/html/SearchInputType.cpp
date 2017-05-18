@@ -52,6 +52,10 @@ SearchInputType::SearchInputType(HTMLInputElement& element)
 {
 }
 
+SearchInputType::~SearchInputType()
+{
+}
+
 void SearchInputType::addSearchResult()
 {
 #if !PLATFORM(IOS)
@@ -110,24 +114,22 @@ void SearchInputType::createShadowSubtree()
     ASSERT(container);
     ASSERT(textWrapper);
 
-    auto resultsButton = SearchFieldResultsButtonElement::create(element().document());
-    m_resultsButton = resultsButton.ptr();
-    updateResultButtonPseudoType(resultsButton.get(), element().maxResults());
-    container->insertBefore(resultsButton, textWrapper);
+    m_resultsButton = SearchFieldResultsButtonElement::create(element().document());
+    updateResultButtonPseudoType(*m_resultsButton, element().maxResults());
+    container->insertBefore(*m_resultsButton, textWrapper);
 
-    auto cancelButton = SearchFieldCancelButtonElement::create(element().document());
-    m_cancelButton = cancelButton.ptr();
-    container->insertBefore(cancelButton, textWrapper->nextSibling());
+    m_cancelButton = SearchFieldCancelButtonElement::create(element().document());
+    container->insertBefore(*m_cancelButton, textWrapper->nextSibling());
 }
 
 HTMLElement* SearchInputType::resultsButtonElement() const
 {
-    return m_resultsButton;
+    return m_resultsButton.get();
 }
 
 HTMLElement* SearchInputType::cancelButtonElement() const
 {
-    return m_cancelButton;
+    return m_cancelButton.get();
 }
 
 void SearchInputType::handleKeydownEvent(KeyboardEvent& event)

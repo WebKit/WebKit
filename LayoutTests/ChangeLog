@@ -1,3 +1,14 @@
+2017-05-18  Antti Koivisto  <antti@apple.com>
+
+        Design mode should not affect UA shadow trees
+        https://bugs.webkit.org/show_bug.cgi?id=171854
+        <rdar://problem/32071037>
+
+        Reviewed by Zalan Bujtas.
+
+        * editing/deleting/search-shadow-tree-delete-expected.txt: Added.
+        * editing/deleting/search-shadow-tree-delete.html: Added.
+
 2017-05-18  Miguel Gomez  <magomez@igalia.com>
 
         Unreviewed GTK+ gardening. Update expectations of tests failing after r217039.

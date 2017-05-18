@@ -1,3 +1,27 @@
+2017-05-18  Antti Koivisto  <antti@apple.com>
+
+        Design mode should not affect UA shadow trees
+        https://bugs.webkit.org/show_bug.cgi?id=171854
+        <rdar://problem/32071037>
+
+        Reviewed by Zalan Bujtas.
+
+        Test: editing/deleting/search-shadow-tree-delete.html
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::editabilityFromContentEditableAttr):
+
+            Ignore design mode for UA shadow trees.
+
+        * html/SearchInputType.cpp:
+        (WebCore::SearchInputType::~SearchInputType):
+        (WebCore::SearchInputType::createShadowSubtree):
+        (WebCore::SearchInputType::resultsButtonElement):
+        (WebCore::SearchInputType::cancelButtonElement):
+        * html/SearchInputType.h:
+
+            Use RefPtr.
+
 2017-05-18  Vanessa Chipirrás Navalón  <vchipirras@igalia.com>
 
         [GTK][GStreamer][MSE] Crash on youtube when MSE is enabled but gstreamer cant find the decoder element.
