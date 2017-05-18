@@ -38,7 +38,7 @@ function simulateClick() {
     evt.initMouseEvent("click", true, true, window,
         0, 0, 0, 0, 0, false, false, false, false, 0, null);
     var cb = document.getElementById("anchor"); 
-    setTimeout(dispatchEvent(cb, evt), 100);
+    Promise.resolve().then(dispatchEvent(cb, evt));
 }
 
 function openWindow(evt) {
@@ -56,7 +56,7 @@ function openWindow(evt) {
         return;
     }
     // Go to next test stage.
-    window.setTimeout(nextTestStage, 0);
+    Promise.resolve().then(nextTestStage);
 }
 
 function doClick() {
@@ -76,7 +76,7 @@ function test() {
 }
 
 </script>
-<body onload="window.setTimeout(test, 0);">
+<body onload="test();">
 <input type="button" onclick="simulateClick();" value="click me" id="btn"><br>
 <a onclick="openWindow(event)" id="anchor"> open a new window </a><br>
 The JavaScript created (untrusted) event inside a user-initiated (trusted) event should not cache the UserGesture status. This test is for bug https://bugs.webkit.org/show_bug.cgi?id=50508.

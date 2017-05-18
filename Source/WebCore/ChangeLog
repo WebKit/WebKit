@@ -1,3 +1,31 @@
+2017-05-18  Jer Noble  <jer.noble@apple.com>
+
+        Allow nested timers to propagate user gestures so long as the total nested interval is less than 1s.
+        https://bugs.webkit.org/show_bug.cgi?id=172173
+
+        Reviewed by Andy Estes.
+
+        Test: media/restricted-audio-playback-with-multiple-settimeouts.html
+
+        Store the current nested timer interval in DOMTimerFireState, and use that value to propagate the
+        nested interval through multiple invocations of setTimeout().
+
+        Drive-by fix: instead of manually resetting the nesting level in DOMTimer::fired(), add the
+        nesting level to the DOMTimerFireState, and reset the nesting level on the state's destruction.
+        This fixes one place in DOMTimer::fire() where an early return lead to the timer's nesting level
+        not being reset.
+
+        * page/DOMTimer.cpp:
+        (WebCore::DOMTimerFireState::DOMTimerFireState):
+        (WebCore::DOMTimerFireState::~DOMTimerFireState):
+        (WebCore::DOMTimerFireState::nestedTimerInterval):
+        (WebCore::shouldForwardUserGesture):
+        (WebCore::userGestureTokenToForward):
+        (WebCore::currentNestedTimerInterval):
+        (WebCore::DOMTimer::DOMTimer):
+        (WebCore::DOMTimer::fired):
+        * page/DOMTimer.h:
+
 2017-05-18  Youenn Fablet  <youenn@apple.com>
 
         RealtimeOutgoingAudioSource should use the source sample rate

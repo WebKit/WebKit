@@ -1,3 +1,17 @@
+2017-05-18  Jer Noble  <jer.noble@apple.com>
+
+        Allow nested timers to propagate user gestures so long as the total nested interval is less than 1s.
+        https://bugs.webkit.org/show_bug.cgi?id=172173
+
+        Reviewed by Andy Estes.
+
+        * fast/events/popup-blocked-from-untrusted-mouse-click.html:
+        * fast/events/popup-blocking-timers4-expected.txt: Removed.
+        * fast/events/popup-blocking-timers4.html: Removed.
+        * media/restricted-audio-playback-with-multiple-settimeouts-expected.txt: Added.
+        * media/restricted-audio-playback-with-multiple-settimeouts.html: Added.
+        * platform/ios/TestExpectations:
+
 2017-05-18  Daniel Bates  <dabates@apple.com>
 
         Evaluating window named element may return wrong result

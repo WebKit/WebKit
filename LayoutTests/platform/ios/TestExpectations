@@ -382,6 +382,7 @@ http/tests/navigation/keyboard-events-during-provisional-navigation.html [ Skip 
 http/tests/navigation/keyboard-events-during-provisional-subframe-navigation.html [ Skip ]
 media/audio-dealloc-crash.html [ Skip ]
 media/restricted-audio-playback-with-document-gesture.html [ Skip ]
+media/restricted-audio-playback-with-multiple-settimeouts.html [ Skip ]
 
 # Tests that use EventSender's mouseMoveTo, mouseUp and mouseDown
 fast/forms/range/disabled-while-dragging.html [ Skip ]
