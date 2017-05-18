@@ -1,3 +1,17 @@
+2017-05-18  Romain Bellessort  <romain.bellessort@crf.canon.fr>
+
+        [Readable Streams API] Align getDesiredSize with spec
+        https://bugs.webkit.org/show_bug.cgi?id=172220
+
+        Reviewed by Chris Dumez.
+
+        Updated test expectations (tests are now passing).
+
+        * web-platform-tests/streams/readable-byte-streams/general-expected.txt: Updated.
+        * web-platform-tests/streams/readable-byte-streams/general.dedicatedworker-expected.txt: Updated.
+        * web-platform-tests/streams/readable-streams/general-expected.txt: Updated.
+        * web-platform-tests/streams/readable-streams/general.dedicatedworker-expected.txt: Updated.
+
 2017-05-17  Chris Dumez  <cdumez@apple.com>
 
         Setting URL.search to '' results in a stringified URL ending in '?'

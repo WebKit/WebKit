@@ -333,6 +333,13 @@ function readableStreamDefaultControllerGetDesiredSize(controller)
 {
    "use strict";
 
+   const stream = controller.@controlledReadableStream;
+
+   if (stream.@state === @streamErrored)
+       return null;
+   if (stream.@state === @streamClosed)
+       return 0;
+
    return controller.@strategy.highWaterMark - controller.@queue.size;
 }
 

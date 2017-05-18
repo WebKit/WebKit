@@ -1,3 +1,24 @@
+2017-05-18  Romain Bellessort  <romain.bellessort@crf.canon.fr>
+
+        [Readable Streams API] Align getDesiredSize with spec
+        https://bugs.webkit.org/show_bug.cgi?id=172220
+
+        Reviewed by Chris Dumez.
+
+        Aligned implementation of getDesiredSize operation for both controllers:
+        - https://streams.spec.whatwg.org/#readable-stream-default-controller-get-desired-size
+        - https://streams.spec.whatwg.org/#readable-byte-stream-controller-get-desired-size
+
+        Implementation slightly differs from spec as queueTotalSize refactoring is not
+        yet implemented, but behavior is now similar.
+
+        No new tests (already covered by WPT tests, corresponding expectations have been updated).
+
+        * Modules/streams/ReadableByteStreamInternals.js:
+        (readableByteStreamControllerGetDesiredSize): Updated.
+        * Modules/streams/ReadableStreamInternals.js:
+        (readableStreamDefaultControllerGetDesiredSize): Updated.
+
 2017-05-18  Tim Horton  <timothy_horton@apple.com>
 
         More WebKit2 header cleanup
