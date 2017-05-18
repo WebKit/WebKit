@@ -1,3 +1,20 @@
+2017-05-18  Filip Pizlo  <fpizlo@apple.com>
+
+        Constructor calls set this too early
+        https://bugs.webkit.org/show_bug.cgi?id=172302
+
+        Reviewed by Saam Barati.
+        
+        This tests all three kinds of constructs in BytecodeGenerator. All three were previously
+        wrong.
+
+        * stress/construct-overwritten-variable.js: Added.
+        (new.x.x):
+        * stress/construct-spread-overwritten-variable-2.js: Added.
+        (new.x.x):
+        * stress/construct-spread-overwritten-variable.js: Added.
+        (new.x.x):
+
 2017-05-18  Saam Barati  <sbarati@apple.com>
 
         WebAssembly: perform stack checks

@@ -1,3 +1,25 @@
+2017-05-18  Filip Pizlo  <fpizlo@apple.com>
+
+        Constructor calls set this too early
+        https://bugs.webkit.org/show_bug.cgi?id=172302
+
+        Reviewed by Saam Barati.
+        
+        We were setting this before evaluating the arguments, so this code:
+        
+            var x = 42;
+            new x(x = function() { });
+        
+        Would crash because we would pass 42 as this, and create_this would treat it as a cell.
+        Dereferencing a non-cell is guaranteed to crash.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitConstruct):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::NewExprNode::emitBytecode):
+        (JSC::FunctionCallValueNode::emitBytecode):
+
 2017-05-18  Saam Barati  <sbarati@apple.com>
 
         WebAssembly: perform stack checks
