@@ -1,3 +1,18 @@
+2017-05-18  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Many layout tests are failing.
+        https://bugs.webkit.org/show_bug.cgi?id=172286
+
+        Reviewed by Brent Fulgham.
+
+        Add a FIXME comment about unimplemented functions, instead of writing this to the test result file.
+ 
+        * DumpRenderTree/win/TestRunnerWin.cpp:
+        (TestRunner::grantWebNotificationPermission):
+        (TestRunner::denyWebNotificationPermission):
+        (TestRunner::removeAllWebNotificationPermissions):
+        (TestRunner::simulateWebNotificationClick):
+
 2017-05-18  Don Olmstead  <don.olmstead@am.sony.com>
 
         [Win] Remove usage of _snprintf

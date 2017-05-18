@@ -1368,22 +1368,26 @@ void TestRunner::setPageVisibility(const char* newVisibility)
 
 void TestRunner::grantWebNotificationPermission(JSStringRef origin)
 {
-    fprintf(testResult, "ERROR: TestRunner::grantWebNotificationPermission(JSStringRef) not implemented\n");
+    // FIXME: Implement.
+    // See https://bugs.webkit.org/show_bug.cgi?id=172295
 }
 
 void TestRunner::denyWebNotificationPermission(JSStringRef jsOrigin)
 {
-    fprintf(testResult, "ERROR: TestRunner::denyWebNotificationPermission(JSStringRef) not implemented\n");
+    // FIXME: Implement.
+    // See https://bugs.webkit.org/show_bug.cgi?id=172295
 }
 
 void TestRunner::removeAllWebNotificationPermissions()
 {
-    fprintf(testResult, "ERROR: TestRunner::removeAllWebNotificationPermissions() not implemented\n");
+    // FIXME: Implement.
+    // See https://bugs.webkit.org/show_bug.cgi?id=172295
 }
 
 void TestRunner::simulateWebNotificationClick(JSValueRef jsNotification)
 {
-    fprintf(testResult, "ERROR: TestRunner::simulateWebNotificationClick() not implemented\n");
+    // FIXME: Implement.
+    // See https://bugs.webkit.org/show_bug.cgi?id=172295
 }
 
 void TestRunner::simulateLegacyWebNotificationClick(JSStringRef title)
