@@ -452,7 +452,20 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
             return;
 
         let cursor = this._codeMirror.coordsChar({left: event.x, top: event.y});
-        if (this._mouseDownCursorPosition.line === cursor.line && this._mouseDownCursorPosition.ch === cursor.ch) {
+
+        let clickedBookmark = false;
+        for (let marker of this._codeMirror.findMarksAt(cursor)) {
+            if (marker.type !== "bookmark" || marker.replacedWith !== event.target)
+                continue;
+
+            let pos = marker.find();
+            if (pos.line === cursor.line && Math.abs(pos.ch - cursor.ch) <= 1) {
+                clickedBookmark = true;
+                break;
+            }
+        }
+
+        if (!clickedBookmark && this._mouseDownCursorPosition.line === cursor.line && this._mouseDownCursorPosition.ch === cursor.ch) {
             let line = this._codeMirror.getLine(cursor.line);
             if (cursor.ch === line.trimRight().length) {
                 let nextLine = this._codeMirror.getLine(cursor.line + 1);

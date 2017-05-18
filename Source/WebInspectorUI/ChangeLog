@@ -1,3 +1,14 @@
+2017-05-18  Devin Rousso  <drousso@apple.com>
+
+        REGRESSION (r?): Web Inspector: Shift-click on color square in Styles sidebar should not select text
+        https://bugs.webkit.org/show_bug.cgi?id=171902
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._handleMouseUp):
+        Do not attempt to select text if the element being clicked is a bookmark (such as a swatch).
+
 2017-05-18  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Web Socket Document Icon
