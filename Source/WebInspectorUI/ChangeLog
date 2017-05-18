@@ -1,3 +1,23 @@
+2017-05-18  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Web Socket Document Icon
+        https://bugs.webkit.org/show_bug.cgi?id=170023
+
+        Reviewed by Matt Baker.
+
+        Icons made by Jon Davis.
+
+        * UserInterface/Images/WebSocket.png: Added.
+        * UserInterface/Images/WebSocket@2x.png: Added.
+        * UserInterface/Images/WebSocketLarge.png: Added.
+        * UserInterface/Images/WebSocketLarge@2x.png: Added.
+        New icons for Web Socket resources.
+
+        * UserInterface/Views/ResourceIcons.css:
+        (body:matches(.mac-platform, .windows-platform) .resource-icon.resource-type-websocket .icon):
+        (body:matches(.mac-platform, .windows-platform) .large .resource-icon.resource-type-websocket .icon):
+        Use the icon.
+
 2017-05-18  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Web Inspector: [GTK] Adopt currentColor for mask SVG images
