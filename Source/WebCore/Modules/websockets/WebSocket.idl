@@ -36,7 +36,7 @@
     Constructor(USVString url, DOMString protocol),
     ConstructorMayThrowException,
     ConstructorCallWith=ScriptExecutionContext,
-    EnabledAtRuntime,
+    EnabledAtRuntime=WebSocket,
     Exposed=(Window,Worker),
 ] interface WebSocket : EventTarget {
     readonly attribute USVString URL; // Lowercased .url is the one in the spec, but leaving .URL for compatibility reasons.

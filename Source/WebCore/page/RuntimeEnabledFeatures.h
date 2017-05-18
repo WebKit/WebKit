@@ -201,7 +201,6 @@ public:
 #if ENABLE(VIDEO)
     bool audioEnabled() const;
     bool htmlMediaElementEnabled() const;
-    bool htmlAudioElementEnabled() const;
     bool htmlVideoElementEnabled() const;
     bool htmlSourceElementEnabled() const;
     bool mediaControllerEnabled() const;

@@ -1,3 +1,27 @@
+2017-05-18  Daniel Bates  <dabates@apple.com>
+
+        Bindings: Require value for extended attributes EnabledAtRuntime and EnabledForWorld
+        https://bugs.webkit.org/show_bug.cgi?id=172252
+
+        Reviewed by Sam Weinig.
+
+        According to Sam Weinig it is an anti-feature that EnabledAtRuntime can be specified
+        without a value. We should make it require a value for the name of the RuntimeEnabledFeatures
+        function to use in the generated code. For similar reasons we should also require
+        a value for the extended attribute EnabledForWorld.
+
+        * Modules/websockets/WebSocket.idl: Substitute EnabledAtRuntime=WebSocket for EnabledAtRuntime.
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GetRuntimeEnableFunctionName):
+        * html/HTMLAudioElement.idl: Substitute EnabledAtRuntime=Audio for EnabledAtRuntime.
+        * page/RuntimeEnabledFeatures.cpp:
+        (WebCore::RuntimeEnabledFeatures::audioEnabled):
+        (WebCore::RuntimeEnabledFeatures::htmlAudioElementEnabled): Deleted. This function duplicated
+        the functionality of RuntimeEnabledFeatures::audioEnabled(). Instead we explicitly
+        write EnabledAtRuntime=Audio in HTMLAudioElement.idl to use RuntimeEnabledFeatures::audioEnabled()
+        to determine whether to expose/conceal the HTMLAudioElement global constructor at runtime.
+        * page/RuntimeEnabledFeatures.h:
+
 2017-05-18  Jer Noble  <jer.noble@apple.com>
 
         Allow nested timers to propagate user gestures so long as the total nested interval is less than 1s.

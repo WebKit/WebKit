@@ -62,11 +62,6 @@ bool RuntimeEnabledFeatures::htmlMediaElementEnabled() const
     return MediaPlayer::isAvailable();
 }
 
-bool RuntimeEnabledFeatures::htmlAudioElementEnabled() const
-{
-    return MediaPlayer::isAvailable();
-}
-
 bool RuntimeEnabledFeatures::htmlVideoElementEnabled() const
 {
     return MediaPlayer::isAvailable();

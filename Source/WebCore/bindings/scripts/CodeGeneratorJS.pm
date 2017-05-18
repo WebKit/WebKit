@@ -2970,11 +2970,12 @@ sub GetRuntimeEnableFunctionName
     AddToImplIncludes("RuntimeEnabledFeatures.h");
 
     if ($context->extendedAttributes->{EnabledForWorld}) {
+        assert("Must specify value for EnabledForWorld.") if $context->extendedAttributes->{EnabledForWorld} eq "VALUE_IS_MISSING";
         return "worldForDOMObject(this)." . ToMethodName($context->extendedAttributes->{EnabledForWorld}) . "()";
     }
 
-    # If a parameter is given (e.g. "EnabledAtRuntime=FeatureName") return the RuntimeEnabledFeatures::sharedFeatures().{FeatureName}Enabled() method.
-    if ($context->extendedAttributes->{EnabledAtRuntime} && $context->extendedAttributes->{EnabledAtRuntime} ne "VALUE_IS_MISSING") {
+    if ($context->extendedAttributes->{EnabledAtRuntime}) {
+        assert("Must specify value for EnabledAtRuntime.") if $context->extendedAttributes->{EnabledAtRuntime} eq "VALUE_IS_MISSING";
         my @flags = split /&/, $context->extendedAttributes->{EnabledAtRuntime};
         my $result = "";
         foreach my $flag (@flags) {
@@ -2984,9 +2985,6 @@ sub GetRuntimeEnableFunctionName
         $result = "(" . $result . ")" unless scalar @flags eq 1;
         return $result;
     }
-
-    # Otherwise return a function named RuntimeEnabledFeatures::sharedFeatures().{methodName}Enabled().
-    return "RuntimeEnabledFeatures::sharedFeatures()." . ToMethodName($context->name) . "Enabled()";
 }
 
 sub GetCastingHelperForThisObject
