@@ -64,6 +64,7 @@ SOFT_LINK_CONSTANT(Contacts, CNPostalAddressCityKey, NSString *);
 SOFT_LINK_CONSTANT(Contacts, CNPostalAddressStateKey, NSString *);
 SOFT_LINK_CONSTANT(Contacts, CNPostalAddressPostalCodeKey, NSString *);
 SOFT_LINK_CONSTANT(Contacts, CNPostalAddressCountryKey, NSString *);
+SOFT_LINK_CONSTANT(Contacts, CNPostalAddressISOCountryCodeKey, NSString *);
 SOFT_LINK_CLASS(PassKit, PKPaymentAuthorizationResult)
 SOFT_LINK_CLASS(PassKit, PKPaymentRequestPaymentMethodUpdate)
 SOFT_LINK_CLASS(PassKit, PKPaymentRequestShippingContactUpdate)
@@ -634,6 +635,11 @@ static RetainPtr<NSError> toNSError(const WebCore::PaymentError& error)
         case WebCore::PaymentError::ContactField::Country:
             pkContactField = getPKContactFieldPostalAddress();
             postalAddressKey = getCNPostalAddressCountryKey();
+            break;
+
+        case WebCore::PaymentError::ContactField::CountryCode:
+            pkContactField = getPKContactFieldPostalAddress();
+            postalAddressKey = getCNPostalAddressISOCountryCodeKey();
             break;
         }
 

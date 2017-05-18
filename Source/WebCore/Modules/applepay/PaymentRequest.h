@@ -168,6 +168,7 @@ struct PaymentError {
         PostalCode,
         AdministrativeArea,
         Country,
+        CountryCode,
     };
 
     Code code;
@@ -222,7 +223,8 @@ template<> struct EnumTraits<WebCore::PaymentError::ContactField> {
         WebCore::PaymentError::ContactField::Locality,
         WebCore::PaymentError::ContactField::PostalCode,
         WebCore::PaymentError::ContactField::AdministrativeArea,
-        WebCore::PaymentError::ContactField::Country
+        WebCore::PaymentError::ContactField::Country,
+        WebCore::PaymentError::ContactField::CountryCode
     >;
 };
 

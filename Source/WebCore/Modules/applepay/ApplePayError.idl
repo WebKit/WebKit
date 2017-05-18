@@ -43,7 +43,8 @@
     "locality",
     "postalCode",
     "administrativeArea",
-    "country"
+    "country",
+    "countryCode"
 };
 
 [

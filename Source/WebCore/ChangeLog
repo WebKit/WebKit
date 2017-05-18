@@ -1,3 +1,16 @@
+2017-05-18  Andy Estes  <aestes@apple.com>
+
+        Add "countryCode" to ApplePayErrorContactField
+        https://bugs.webkit.org/show_bug.cgi?id=172264
+        <rdar://problem/32004909>
+
+        Reviewed by Anders Carlsson.
+
+        Added ApplePayError tests to http/tests/ssl/applepay/ApplePaySession.html
+
+        * Modules/applepay/ApplePayError.idl:
+        * Modules/applepay/PaymentRequest.h:
+
 2017-05-18  Daniel Bates  <dabates@apple.com>
 
         Cleanup: Remove unnecessary call to AddToImplIncludes("RuntimeEnabledFeatures.h") in GenerateImplementation()
