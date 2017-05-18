@@ -27,6 +27,7 @@
 #include "WPEView.h"
 
 #include "APIPageConfiguration.h"
+#include "DrawingAreaProxy.h"
 #include "NativeWebKeyboardEvent.h"
 #include "NativeWebMouseEvent.h"
 #include "NativeWebTouchEvent.h"

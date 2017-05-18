@@ -1,3 +1,10 @@
+2017-05-18  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [WPE] Unreviewed build fix
+
+        Add missing header after r217041.
+        * UIProcess/API/wpe/WPEView.cpp:
+
 2017-05-18  Tim Horton  <timothy_horton@apple.com>
 
         More WebKit2 header cleanup
