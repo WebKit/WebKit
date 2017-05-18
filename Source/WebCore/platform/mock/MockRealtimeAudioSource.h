@@ -43,7 +43,7 @@ class MockRealtimeAudioSource : public MockRealtimeMediaSource {
 public:
 
     static CaptureSourceOrError create(const String&, const MediaConstraints*);
-    static RefPtr<MockRealtimeAudioSource> createMuted(const String& name);
+    static Ref<MockRealtimeAudioSource> createMuted(const String& name);
 
     static AudioCaptureFactory& factory();
 
@@ -54,7 +54,6 @@ protected:
 
     void startProducingData() final;
     void stopProducingData() final;
-    bool isProducingData() const final { return m_isProducingData; }
 
     virtual void render(double) { }
 
@@ -80,7 +79,6 @@ private:
     double m_startTime { NAN };
     double m_lastRenderTime { NAN };
     double m_elapsedTime { 0 };
-    bool m_isProducingData { false };
 };
 
 } // namespace WebCore

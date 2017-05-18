@@ -68,7 +68,6 @@ public:
 
     void startProducingData() final;
     void stopProducingData() final;
-    bool isProducingData() const final;
 
 protected:
     AVMediaCaptureSource(AVCaptureDevice*, const AtomicString&, RealtimeMediaSource::Type);
@@ -91,7 +90,6 @@ protected:
 
 private:
     void setupSession();
-    void reset() final;
 
     void beginConfiguration() final;
     void commitConfiguration() final;

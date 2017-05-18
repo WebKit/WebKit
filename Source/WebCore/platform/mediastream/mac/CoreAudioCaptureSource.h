@@ -80,7 +80,6 @@ private:
     bool isCaptureSource() const final { return true; }
     void startProducingData() final;
     void stopProducingData() final;
-    bool isProducingData() const final { return m_isProducingData; }
 
     bool applyVolume(double) final { return true; }
     bool applySampleRate(int) final;
@@ -93,7 +92,6 @@ private:
 
     uint32_t m_captureDeviceID { 0 };
 
-    bool m_isProducingData { false };
     bool m_isSuspended { false };
 
     mutable std::optional<RealtimeMediaSourceCapabilities> m_capabilities;

@@ -485,7 +485,7 @@ void MediaEndpointOwr::unmuteRemoteSource(const String& mid, OwrMediaSource* rea
         return;
     }
 
-    if (!remoteSource->stopped())
+    if (remoteSource->isProducingData())
         remoteSource->swapOutShallowSource(*realSource);
 }
 

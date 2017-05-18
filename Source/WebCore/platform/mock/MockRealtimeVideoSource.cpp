@@ -72,14 +72,14 @@ CaptureSourceOrError MockRealtimeVideoSource::create(const String& name, const M
 
     return CaptureSourceOrError(WTFMove(source));
 }
+#endif
 
-RefPtr<MockRealtimeVideoSource> MockRealtimeVideoSource::createMuted(const String& name)
+Ref<MockRealtimeVideoSource> MockRealtimeVideoSource::createMuted(const String& name)
 {
-    auto source = adoptRef(new MockRealtimeVideoSource(name));
-    source->m_muted = true;
+    auto source = adoptRef(*new MockRealtimeVideoSource(name));
+    source->notifyMutedChange(true);
     return source;
 }
-#endif
 
 static MockRealtimeVideoSourceFactory& mockVideoCaptureSourceFactory()
 {
@@ -112,16 +112,10 @@ MockRealtimeVideoSource::~MockRealtimeVideoSource()
 
 void MockRealtimeVideoSource::startProducingData()
 {
-    if (m_isProducingData)
-        return;
-    
-    m_isProducingData = true;
-    
 #if PLATFORM(IOS)
     mockVideoCaptureSourceFactory().setActiveSource(*this);
 #endif
 
-    MockRealtimeMediaSource::startProducingData();
     if (size().isEmpty()) {
         setWidth(640);
         setHeight(480);
@@ -133,12 +127,6 @@ void MockRealtimeVideoSource::startProducingData()
 
 void MockRealtimeVideoSource::stopProducingData()
 {
-    if (!m_isProducingData)
-        return;
-    
-    m_isProducingData = false;
-    
-    MockRealtimeMediaSource::stopProducingData();
     m_timer.stop();
     m_elapsedTime += monotonicallyIncreasingTime() - m_startTime;
     m_startTime = NAN;
@@ -384,7 +372,7 @@ void MockRealtimeVideoSource::generateFrame()
     FloatRect frameRect(FloatPoint(), size);
     context.fillRect(FloatRect(FloatPoint(), size), !deviceIndex() ? Color::black : Color::darkGray);
 
-    if (!m_muted && m_enabled) {
+    if (!muted() && enabled()) {
         drawText(context);
         drawAnimation(context);
         drawBoxes(context);

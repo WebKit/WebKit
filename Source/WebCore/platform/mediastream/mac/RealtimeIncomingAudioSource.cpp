@@ -47,7 +47,7 @@ namespace WebCore {
 Ref<RealtimeIncomingAudioSource> RealtimeIncomingAudioSource::create(rtc::scoped_refptr<webrtc::AudioTrackInterface>&& audioTrack, String&& audioTrackId)
 {
     auto source = adoptRef(*new RealtimeIncomingAudioSource(WTFMove(audioTrack), WTFMove(audioTrackId)));
-    source->startProducingData();
+    source->start();
     return source;
 }
 
@@ -55,6 +55,7 @@ RealtimeIncomingAudioSource::RealtimeIncomingAudioSource(rtc::scoped_refptr<webr
     : RealtimeMediaSource(WTFMove(audioTrackId), RealtimeMediaSource::Type::Audio, String())
     , m_audioTrack(WTFMove(audioTrack))
 {
+    notifyMutedChange(!m_audioTrack);
 }
 
 RealtimeIncomingAudioSource::~RealtimeIncomingAudioSource()
@@ -63,7 +64,7 @@ RealtimeIncomingAudioSource::~RealtimeIncomingAudioSource()
         m_audioSourceProvider->unprepare();
         m_audioSourceProvider = nullptr;
     }
-    stopProducingData();
+    stop();
 }
 
 
@@ -112,20 +113,12 @@ void RealtimeIncomingAudioSource::OnData(const void* audioData, int bitsPerSampl
 
 void RealtimeIncomingAudioSource::startProducingData()
 {
-    if (m_isProducingData)
-        return;
-
-    m_isProducingData = true;
     if (m_audioTrack)
         m_audioTrack->AddSink(this);
 }
 
 void RealtimeIncomingAudioSource::stopProducingData()
 {
-    if (!m_isProducingData)
-        return;
-
-    m_isProducingData = false;
     if (m_audioTrack)
         m_audioTrack->RemoveSink(this);
 }
@@ -136,7 +129,8 @@ void RealtimeIncomingAudioSource::setSourceTrack(rtc::scoped_refptr<webrtc::Audi
     ASSERT(track);
 
     m_audioTrack = WTFMove(track);
-    if (m_isProducingData)
+    notifyMutedChange(!m_audioTrack);
+    if (isProducingData())
         m_audioTrack->AddSink(this);
 }
 

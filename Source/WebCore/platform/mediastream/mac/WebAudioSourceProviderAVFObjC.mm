@@ -109,7 +109,7 @@ void WebAudioSourceProviderAVFObjC::setClient(AudioSourceProviderClient* client)
     if (m_client && !m_connected) {
         m_connected = true;
         m_captureSource->addObserver(*this);
-        m_captureSource->startProducingData();
+        m_captureSource->start();
     } else if (!m_client && m_connected) {
         m_captureSource->removeObserver(*this);
         m_connected = false;

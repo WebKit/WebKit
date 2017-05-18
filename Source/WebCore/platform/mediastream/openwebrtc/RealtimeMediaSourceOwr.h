@@ -55,7 +55,7 @@ RealtimeMediaSourceOwr(OwrMediaSource* mediaSource, const String& id, RealtimeMe
     , m_mediaSource(mediaSource)
     {
         if (!mediaSource)
-            m_muted = true;
+            notifyMutedChange(true);
     }
 
 RealtimeMediaSourceOwr(const String& id, RealtimeMediaSource::Type type, const String& name)

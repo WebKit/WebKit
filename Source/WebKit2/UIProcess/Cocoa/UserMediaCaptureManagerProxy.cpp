@@ -154,14 +154,14 @@ void UserMediaCaptureManagerProxy::startProducingData(uint64_t id)
 {
     auto iter = m_proxies.find(id);
     if (iter != m_proxies.end())
-        iter->value->source().startProducingData();
+        iter->value->source().start();
 }
 
 void UserMediaCaptureManagerProxy::stopProducingData(uint64_t id)
 {
     auto iter = m_proxies.find(id);
     if (iter != m_proxies.end())
-        iter->value->source().stopProducingData();
+        iter->value->source().stop();
 }
 
 void UserMediaCaptureManagerProxy::capabilities(uint64_t id, WebCore::RealtimeMediaSourceCapabilities& capabilities)

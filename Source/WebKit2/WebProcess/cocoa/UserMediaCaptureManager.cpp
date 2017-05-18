@@ -110,8 +110,7 @@ public:
         WebAudioBufferList audioData(m_description, numberOfFrames);
         m_ringBuffer.fetch(audioData.list(), numberOfFrames, time.timeValue());
 
-        for (auto* observer : observers())
-            observer->audioSamplesAvailable(time, audioData, m_description, numberOfFrames);
+        RealtimeMediaSource::audioSamplesAvailable(time, audioData, m_description, numberOfFrames);
     }
 
     void applyConstraintsSucceeded(const WebCore::RealtimeMediaSourceSettings& settings)
@@ -125,24 +124,6 @@ public:
     {
         auto callbacks = m_pendingApplyConstraintsCallbacks.takeFirst();
         callbacks.failureHandler(failedConstraint, errorMessage);
-    }
-
-    void setMuted(bool muted) final
-    {
-        if (m_muted == muted)
-            return;
-
-        m_muted = muted;
-        m_manager.setMuted(m_id, m_muted);
-    }
-
-    void setEnabled(bool enabled) final
-    {
-        if (m_enabled == enabled)
-            return;
-
-        m_enabled = enabled;
-        m_manager.setEnabled(m_id, m_enabled);
     }
 
 private:
