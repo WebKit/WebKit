@@ -104,6 +104,7 @@
 #import <WebCore/TextStream.h>
 #import <WebCore/URLParser.h>
 #import <WebCore/ValidationBubble.h>
+#import <WebCore/ViewportArguments.h>
 #import <WebCore/WritingMode.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/HashMap.h>

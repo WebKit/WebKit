@@ -23,7 +23,6 @@
 #include "UserMediaPermissionRequestProxy.h"
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/Timer.h>
-#include <WebCore/UserMediaRequest.h>
 #include <wtf/HashMap.h>
 #include <wtf/Seconds.h>
 

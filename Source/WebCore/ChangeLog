@@ -1,3 +1,13 @@
+2017-05-18  Tim Horton  <timothy_horton@apple.com>
+
+        More WebKit2 header cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=172214
+
+        Reviewed by Simon Fraser.
+
+        * Modules/mediastream/UserMediaController.cpp:
+        * Modules/mediastream/UserMediaController.h:
+
 2017-05-16  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC][DFG][DOMJIT] Extend CheckDOM to CheckSubClass

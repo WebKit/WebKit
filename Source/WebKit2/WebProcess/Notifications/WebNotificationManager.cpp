@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebNotificationManager.h"
 
+#include "WebCoreArgumentCoders.h"
 #include "WebPage.h"
 #include "WebProcess.h"
 #include "WebProcessCreationParameters.h"

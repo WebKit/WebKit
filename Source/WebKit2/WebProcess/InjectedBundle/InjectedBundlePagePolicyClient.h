@@ -27,20 +27,21 @@
 #define InjectedBundlePagePolicyClient_h
 
 #include "APIClient.h"
-#include "APIObject.h"
-#include "WKBundlePage.h"
+#include "WKBundlePagePolicyClient.h"
 #include <wtf/Forward.h>
 
 namespace API {
+class Object;
+
 template<> struct ClientTraits<WKBundlePagePolicyClientBase> {
     typedef std::tuple<WKBundlePagePolicyClientV0> Versions;
 };
 }
 
 namespace WebCore {
-    class ResourceError;
-    class ResourceRequest;
-    class ResourceResponse;
+class ResourceError;
+class ResourceRequest;
+class ResourceResponse;
 }
 
 namespace WebKit {

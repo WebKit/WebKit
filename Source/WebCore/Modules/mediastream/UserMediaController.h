@@ -29,9 +29,10 @@
 
 #include "Page.h"
 #include "UserMediaClient.h"
-#include "UserMediaRequest.h"
 
 namespace WebCore {
+
+class UserMediaRequest;
 
 class UserMediaController : public Supplement<Page> {
 public:

@@ -52,12 +52,6 @@ enum {
 };
 typedef uint32_t WKInputFieldActionType;
 
-enum {
-    WKFullScreenNoKeyboard,
-    WKFullScreenKeyboard,
-};
-typedef uint32_t WKFullScreenKeyboardRequestType;
-
 typedef bool (*WKBundlePageShouldBeginEditingCallback)(WKBundlePageRef page, WKBundleRangeHandleRef range, const void* clientInfo);
 typedef bool (*WKBundlePageShouldEndEditingCallback)(WKBundlePageRef page, WKBundleRangeHandleRef range, const void* clientInfo);
 typedef bool (*WKBundlePageShouldInsertNodeCallback)(WKBundlePageRef page, WKBundleNodeHandleRef node, WKBundleRangeHandleRef rangeToReplace, WKInsertActionType action, const void* clientInfo);

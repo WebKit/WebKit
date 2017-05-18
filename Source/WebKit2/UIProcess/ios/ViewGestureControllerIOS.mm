@@ -28,6 +28,7 @@
 
 #if PLATFORM(IOS)
 
+#import "DrawingAreaProxy.h"
 #import "UIKitSPI.h"
 #import "ViewGestureControllerMessages.h"
 #import "ViewGestureGeometryCollectorMessages.h"

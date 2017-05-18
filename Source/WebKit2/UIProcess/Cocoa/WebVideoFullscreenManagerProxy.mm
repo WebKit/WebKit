@@ -29,6 +29,7 @@
 #if PLATFORM(IOS) && HAVE(AVKIT) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 
 #import "APIUIClient.h"
+#import "DrawingAreaProxy.h"
 #import "WebPageProxy.h"
 #import "WebPlaybackSessionManagerProxy.h"
 #import "WebProcessProxy.h"

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebURLSchemeTaskProxy.h"
 
+#include "WebCoreArgumentCoders.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
 #include "WebURLSchemeHandlerProxy.h"

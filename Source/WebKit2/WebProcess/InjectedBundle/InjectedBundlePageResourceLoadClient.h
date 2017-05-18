@@ -28,8 +28,7 @@
 
 #include "APIClient.h"
 #include "SameDocumentNavigationType.h"
-#include "WKBundlePage.h"
-#include <JavaScriptCore/JSBase.h>
+#include "WKBundlePageResourceLoadClient.h"
 #include <wtf/Forward.h>
 
 namespace API {

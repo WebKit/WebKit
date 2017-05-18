@@ -29,6 +29,12 @@
 #include <WebKit/WKBase.h>
 #include <WebKit/WKGeometry.h>
 
+enum {
+    WKFullScreenNoKeyboard,
+    WKFullScreenKeyboard,
+};
+typedef uint32_t WKFullScreenKeyboardRequestType;
+
 typedef bool (*WKBundlePageSupportsFullScreen)(WKBundlePageRef page, WKFullScreenKeyboardRequestType requestType);
 typedef void (*WKBundlePageEnterFullScreenForElement)(WKBundlePageRef page, WKBundleNodeHandleRef element);
 typedef void (*WKBundlePageExitFullScreenForElement)(WKBundlePageRef page, WKBundleNodeHandleRef element);

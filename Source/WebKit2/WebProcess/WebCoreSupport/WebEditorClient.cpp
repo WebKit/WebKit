@@ -27,6 +27,7 @@
 #include "WebEditorClient.h"
 
 #include "EditorState.h"
+#include "WKBundlePageEditorClient.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebFrame.h"
 #include "WebPage.h"

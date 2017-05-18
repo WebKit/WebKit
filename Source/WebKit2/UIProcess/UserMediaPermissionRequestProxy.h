@@ -20,7 +20,6 @@
 #pragma once
 
 #include "APIObject.h"
-#include <WebCore/UserMediaRequest.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 

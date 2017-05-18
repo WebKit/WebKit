@@ -29,6 +29,7 @@
 #include "AuthenticationManager.h"
 #include "DataReference.h"
 #include "DrawingArea.h"
+#include "FindController.h"
 #include "InjectedBundle.h"
 #include "InjectedBundleBackForwardListItem.h"
 #include "InjectedBundleDOMWindowExtension.h"

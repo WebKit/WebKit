@@ -30,6 +30,7 @@
 #include <WebCore/MockRealtimeMediaSourceCenter.h>
 #include <WebCore/RealtimeMediaSource.h>
 #include <WebCore/SecurityOriginData.h>
+#include <WebCore/UserMediaRequest.h>
 
 #if ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
 #include <WebCore/RealtimeMediaSourceCenterMac.h>

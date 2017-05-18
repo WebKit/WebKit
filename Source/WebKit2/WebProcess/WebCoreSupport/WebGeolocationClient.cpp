@@ -28,6 +28,7 @@
 
 #if ENABLE(GEOLOCATION)
 
+#include "GeolocationPermissionRequestManager.h"
 #include "WebGeolocationManager.h"
 #include "WebPage.h"
 #include "WebProcess.h"

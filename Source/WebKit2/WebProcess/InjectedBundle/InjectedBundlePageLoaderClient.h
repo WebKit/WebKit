@@ -27,17 +27,16 @@
 #define InjectedBundlePageLoaderClient_h
 
 #include "APIClient.h"
-#include "APIString.h"
-#include "APIURL.h"
 #include "SameDocumentNavigationType.h"
-#include "WKBundlePage.h"
-#include <JavaScriptCore/JSBase.h>
+#include "WKBundlePageLoaderClient.h"
 #include <WebCore/LayoutMilestones.h>
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
 
 namespace API {
 class Object;
+class String;
+class URL;
 
 template<> struct ClientTraits<WKBundlePageLoaderClientBase> {
     typedef std::tuple<WKBundlePageLoaderClientV0, WKBundlePageLoaderClientV1, WKBundlePageLoaderClientV2, WKBundlePageLoaderClientV3, WKBundlePageLoaderClientV4, WKBundlePageLoaderClientV5, WKBundlePageLoaderClientV6, WKBundlePageLoaderClientV7, WKBundlePageLoaderClientV8> Versions;
@@ -47,11 +46,11 @@ template<> struct ClientTraits<WKBundlePageLoaderClientBase> {
 namespace WebCore {
 class DOMWindowExtension;
 class DOMWrapperWorld;
-class URL;
 class ResourceError;
 class ResourceRequest;
 class ResourceResponse;
 class SharedBuffer;
+class URL;
 }
 
 namespace WebKit {

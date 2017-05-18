@@ -33,7 +33,7 @@ namespace WebCore {
 class Position;
 
 const EAffinity SEL_DEFAULT_AFFINITY = DOWNSTREAM;
-enum SelectionDirection { DirectionForward, DirectionBackward, DirectionRight, DirectionLeft };
+enum SelectionDirection : uint8_t { DirectionForward, DirectionBackward, DirectionRight, DirectionLeft };
 
 class VisibleSelection {
 public:

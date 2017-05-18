@@ -23,14 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InjectedBundlePageContextMenuClient_h
-#define InjectedBundlePageContextMenuClient_h
+#pragma once
 
 #if ENABLE(CONTEXT_MENUS)
 
 #include "APIClient.h"
 #include "APIInjectedBundlePageContextMenuClient.h"
-#include "WKBundlePage.h"
+#include "WKBundlePageContextMenuClient.h"
 
 namespace API {
 class Object;
@@ -61,4 +60,3 @@ private:
 } // namespace WebKit
 
 #endif // ENABLE(CONTEXT_MENUS)
-#endif // InjectedBundlePageEditorClient_h

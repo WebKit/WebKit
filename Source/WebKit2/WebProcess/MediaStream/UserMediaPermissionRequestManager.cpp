@@ -22,6 +22,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "WebCoreArgumentCoders.h"
 #include "WebFrame.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"

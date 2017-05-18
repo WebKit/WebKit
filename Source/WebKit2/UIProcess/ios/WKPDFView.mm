@@ -32,6 +32,7 @@
 #import "APIUIClient.h"
 #import "ApplicationStateTracker.h"
 #import "CorePDFSPI.h"
+#import "DrawingAreaProxy.h"
 #import "SessionState.h"
 #import "UIKitSPI.h"
 #import "WKPDFPageNumberIndicator.h"

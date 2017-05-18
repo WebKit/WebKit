@@ -1,3 +1,66 @@
+2017-05-18  Tim Horton  <timothy_horton@apple.com>
+
+        More WebKit2 header cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=172214
+
+        Reviewed by Simon Fraser.
+
+        * Shared/WebFindOptions.h:
+        * UIProcess/Cocoa/WebVideoFullscreenManagerProxy.mm:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        * UIProcess/UserMediaPermissionRequestManagerProxy.h:
+        * UIProcess/UserMediaPermissionRequestProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setCompositionAsync):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/mac/PageClientImpl.mm:
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+        * WebProcess/ApplePay/WebPaymentCoordinator.cpp:
+        * WebProcess/Automation/WebAutomationSessionProxy.cpp:
+        * WebProcess/InjectedBundle/API/c/WKBundlePageEditorClient.h:
+        * WebProcess/InjectedBundle/API/c/WKBundlePageFullScreenClient.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageContextMenuClient.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageFullScreenClient.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.h:
+        * WebProcess/InjectedBundle/InjectedBundlePagePolicyClient.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageResourceLoadClient.h:
+        * WebProcess/MediaStream/UserMediaPermissionRequestManager.cpp:
+        * WebProcess/Notifications/WebNotificationManager.cpp:
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        * WebProcess/WebCoreSupport/WebDiagnosticLoggingClient.cpp:
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        * WebProcess/WebCoreSupport/WebGeolocationClient.cpp:
+        * WebProcess/WebCoreSupport/WebSearchPopupMenu.cpp:
+        * WebProcess/WebCoreSupport/WebValidationMessageClient.cpp:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::setDeviceScaleFactor):
+        (WebKit::WebPage::centerSelectionInVisibleArea):
+        (WebKit::WebPage::findString):
+        (WebKit::WebPage::findStringMatches):
+        (WebKit::WebPage::getImageForFindMatch):
+        (WebKit::WebPage::selectFindMatch):
+        (WebKit::WebPage::hideFindUI):
+        (WebKit::WebPage::countStringMatches):
+        (WebKit::WebPage::didReceiveGeolocationPermissionDecision):
+        (WebKit::WebPage::mainFrameDidLayout):
+        (WebKit::WebPage::setCompositionAsync):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::findController):
+        (WebKit::WebPage::geolocationPermissionRequestManager):
+        * WebProcess/WebPage/WebURLSchemeTaskProxy.cpp:
+        Many small changes added up to a few percent. Removing UserMediaRequest
+        from UserMediaPermissionRequestProxy, which is included into WebPageProxy.h,
+        was worth another ~10% because it got VM.h out of WebPageProxy.h (like the
+        previous patch did with WebPage.h). In total, in my measurement (WebKit2
+        clean debug build) this is a ~15% speedup.
+
+        We really should figure out how to make DOMPromise.h not bring in all of
+        JavaScriptCore (or how to use promises without including DOMPromise.h in headers).
+
 2017-05-17  Chris Dumez  <cdumez@apple.com>
 
         Fix unsafe lambda capture in ContentRuleListStore::lookupContentRuleList()

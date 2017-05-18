@@ -29,8 +29,7 @@
 #if ENABLE(FULLSCREEN_API)
 
 #include "APIClient.h"
-#include "WKBundlePage.h"
-#include "WebEvent.h"
+#include "WKBundlePageFullScreenClient.h"
 #include <wtf/Forward.h>
 
 namespace API {

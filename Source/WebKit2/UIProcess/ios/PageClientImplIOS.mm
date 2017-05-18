@@ -31,6 +31,7 @@
 #import "APIData.h"
 #import "DataReference.h"
 #import "DownloadProxy.h"
+#import "DrawingAreaProxy.h"
 #import "InteractionInformationAtPosition.h"
 #import "NativeWebKeyboardEvent.h"
 #import "NavigationState.h"

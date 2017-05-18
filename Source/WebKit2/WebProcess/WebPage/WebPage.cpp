@@ -38,6 +38,8 @@
 #include "DrawingAreaMessages.h"
 #include "EditorState.h"
 #include "EventDispatcher.h"
+#include "FindController.h"
+#include "GeolocationPermissionRequestManager.h"
 #include "InjectedBundle.h"
 #include "InjectedBundleBackForwardList.h"
 #include "InjectedBundleScriptWorld.h"
@@ -58,6 +60,7 @@
 #include "SessionTracker.h"
 #include "ShareableBitmap.h"
 #include "UserMediaPermissionRequestManager.h"
+#include "ViewGestureGeometryCollector.h"
 #include "VisitedLinkTableController.h"
 #include "WKBundleAPICast.h"
 #include "WKRetainPtr.h"
@@ -325,7 +328,7 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
 #endif
     , m_layerHostingMode(parameters.layerHostingMode)
 #if PLATFORM(COCOA)
-    , m_viewGestureGeometryCollector(*this)
+    , m_viewGestureGeometryCollector(makeUniqueRef<ViewGestureGeometryCollector>(*this))
 #elif HAVE(ACCESSIBILITY) && PLATFORM(GTK)
     , m_accessibilityObject(nullptr)
 #endif
@@ -336,10 +339,10 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
     , m_editorClient { std::make_unique<API::InjectedBundle::EditorClient>() }
     , m_formClient(std::make_unique<API::InjectedBundle::FormClient>())
     , m_uiClient(std::make_unique<API::InjectedBundle::PageUIClient>())
-    , m_findController(this)
+    , m_findController(makeUniqueRef<FindController>(this))
     , m_userContentController(WebUserContentController::getOrCreate(parameters.userContentControllerID))
 #if ENABLE(GEOLOCATION)
-    , m_geolocationPermissionRequestManager(this)
+    , m_geolocationPermissionRequestManager(makeUniqueRef<GeolocationPermissionRequestManager>(this))
 #endif
 #if ENABLE(MEDIA_STREAM)
     , m_userMediaPermissionRequestManager { std::make_unique<UserMediaPermissionRequestManager>(*this) }
@@ -1685,10 +1688,10 @@ void WebPage::setDeviceScaleFactor(float scaleFactor)
     updateHeaderAndFooterLayersForDeviceScaleChange(scaleFactor);
 #endif
 
-    if (m_findController.isShowingOverlay()) {
+    if (findController().isShowingOverlay()) {
         // We must have updated layout to get the selection rects right.
         layoutIfNeeded();
-        m_findController.deviceScaleFactorDidChange();
+        findController().deviceScaleFactorDidChange();
     }
 
 #if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
@@ -2531,7 +2534,7 @@ void WebPage::centerSelectionInVisibleArea()
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
     frame.selection().revealSelection(SelectionRevealMode::Reveal, ScrollAlignment::alignCenterAlways);
-    m_findController.showFindIndicatorInSelection();
+    findController().showFindIndicatorInSelection();
 }
 
 bool WebPage::isControlledByAutomation() const
@@ -3761,32 +3764,32 @@ bool WebPage::findStringFromInjectedBundle(const String& target, FindOptions opt
 
 void WebPage::findString(const String& string, uint32_t options, uint32_t maxMatchCount)
 {
-    m_findController.findString(string, static_cast<FindOptions>(options), maxMatchCount);
+    findController().findString(string, static_cast<FindOptions>(options), maxMatchCount);
 }
 
 void WebPage::findStringMatches(const String& string, uint32_t options, uint32_t maxMatchCount)
 {
-    m_findController.findStringMatches(string, static_cast<FindOptions>(options), maxMatchCount);
+    findController().findStringMatches(string, static_cast<FindOptions>(options), maxMatchCount);
 }
 
 void WebPage::getImageForFindMatch(uint32_t matchIndex)
 {
-    m_findController.getImageForFindMatch(matchIndex);
+    findController().getImageForFindMatch(matchIndex);
 }
 
 void WebPage::selectFindMatch(uint32_t matchIndex)
 {
-    m_findController.selectFindMatch(matchIndex);
+    findController().selectFindMatch(matchIndex);
 }
 
 void WebPage::hideFindUI()
 {
-    m_findController.hideFindUI();
+    findController().hideFindUI();
 }
 
 void WebPage::countStringMatches(const String& string, uint32_t options, uint32_t maxMatchCount)
 {
-    m_findController.countStringMatches(string, static_cast<FindOptions>(options), maxMatchCount);
+    findController().countStringMatches(string, static_cast<FindOptions>(options), maxMatchCount);
 }
 
 void WebPage::didChangeSelectedIndexForActivePopupMenu(int32_t newIndex)
@@ -3850,7 +3853,7 @@ void WebPage::extendSandboxForFileFromOpenPanel(const SandboxExtension::Handle& 
 #if ENABLE(GEOLOCATION)
 void WebPage::didReceiveGeolocationPermissionDecision(uint64_t geolocationID, bool allowed)
 {
-    m_geolocationPermissionRequestManager.didReceiveGeolocationPermissionDecision(geolocationID, allowed);
+    geolocationPermissionRequestManager().didReceiveGeolocationPermissionDecision(geolocationID, allowed);
 }
 #endif
 
@@ -4044,7 +4047,7 @@ void WebPage::mainFrameDidLayout()
     }
 
 #if PLATFORM(MAC)
-    m_viewGestureGeometryCollector.mainFrameDidLayout();
+    m_viewGestureGeometryCollector->mainFrameDidLayout();
 #endif
 #if PLATFORM(IOS)
     if (FrameView* frameView = mainFrameView()) {
@@ -4052,7 +4055,7 @@ void WebPage::mainFrameDidLayout()
         if (m_viewportConfiguration.setContentsSize(newContentSize))
             viewportConfigurationChanged();
     }
-    m_findController.redraw();
+    findController().redraw();
 #endif
 }
 
@@ -4897,7 +4900,7 @@ void WebPage::firstRectForCharacterRangeAsync(const EditingRange& editingRange, 
     send(Messages::WebPageProxy::RectForCharacterRangeCallback(result, editingRange, callbackID));
 }
 
-void WebPage::setCompositionAsync(const String& text, Vector<CompositionUnderline> underlines, const EditingRange& selection, const EditingRange& replacementEditingRange)
+void WebPage::setCompositionAsync(const String& text, const Vector<CompositionUnderline>& underlines, const EditingRange& selection, const EditingRange& replacementEditingRange)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
 

@@ -28,6 +28,7 @@
 
 #if PLATFORM(MAC)
 
+#import "DrawingAreaProxy.h"
 #import "FrameLoadState.h"
 #import "Logging.h"
 #import "NativeWebWheelEvent.h"

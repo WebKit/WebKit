@@ -27,6 +27,8 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "UserMediaRequest.h"
+
 namespace WebCore {
 
 const char* UserMediaController::supplementName()

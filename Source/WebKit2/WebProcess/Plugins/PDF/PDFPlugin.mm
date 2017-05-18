@@ -40,6 +40,7 @@
 #import "WebCoreArgumentCoders.h"
 #import "WebEvent.h"
 #import "WebEventConversion.h"
+#import "WebFindOptions.h"
 #import "WebPage.h"
 #import "WebPageProxyMessages.h"
 #import "WebPasteboardProxyMessages.h"

@@ -6344,7 +6344,7 @@ void WebPageProxy::firstRectForCharacterRangeAsync(const EditingRange& range, st
     process().send(Messages::WebPage::FirstRectForCharacterRangeAsync(range, callbackID), m_pageID);
 }
 
-void WebPageProxy::setCompositionAsync(const String& text, Vector<CompositionUnderline> underlines, const EditingRange& selectionRange, const EditingRange& replacementRange)
+void WebPageProxy::setCompositionAsync(const String& text, const Vector<CompositionUnderline>& underlines, const EditingRange& selectionRange, const EditingRange& replacementRange)
 {
     if (!isValid()) {
         // If this fails, we should call -discardMarkedText on input context to notify the input method.

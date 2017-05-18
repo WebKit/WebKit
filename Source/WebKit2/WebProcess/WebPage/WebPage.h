@@ -31,8 +31,7 @@
 #include "APIInjectedBundlePageUIClient.h"
 #include "APIObject.h"
 #include "EditingRange.h"
-#include "FindController.h"
-#include "GeolocationPermissionRequestManager.h"
+#include "InjectedBundlePageContextMenuClient.h"
 #include "InjectedBundlePageFullScreenClient.h"
 #include "InjectedBundlePageLoaderClient.h"
 #include "InjectedBundlePagePolicyClient.h"
@@ -42,9 +41,11 @@
 #include "MessageSender.h"
 #include "Plugin.h"
 #include "SandboxExtension.h"
+#include "SharedMemory.h"
 #include "UserData.h"
 #include "WebURLSchemeHandler.h"
 #include <WebCore/ActivityState.h>
+#include <WebCore/DictionaryPopupInfo.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/HysteresisActivity.h>
 #include <WebCore/IntRect.h>
@@ -91,12 +92,7 @@
 #include <WebKitAdditions/PlatformGestureEventMac.h>
 #endif
 
-#if ENABLE(CONTEXT_MENUS)
-#include "InjectedBundlePageContextMenuClient.h"
-#endif
-
 #if PLATFORM(COCOA)
-#include "ViewGestureGeometryCollector.h"
 #include <wtf/RetainPtr.h>
 OBJC_CLASS CALayer;
 OBJC_CLASS NSArray;
@@ -115,7 +111,9 @@ class Connection;
 }
 
 namespace WebCore {
+class CaptureDevice;
 class DocumentLoader;
+class DragData;
 class GraphicsContext;
 class Frame;
 class FrameSelection;
@@ -130,13 +128,17 @@ class PrintContext;
 class Range;
 class ResourceResponse;
 class ResourceRequest;
+class SelectionRect;
 class SharedBuffer;
 class SubstituteData;
 class TextCheckingRequest;
 class URL;
+class VisiblePosition;
 class VisibleSelection;
 enum class TextIndicatorPresentationTransition : uint8_t;
 enum SyntheticClickType : int8_t;
+struct CompositionUnderline;
+struct DictationAlternative;
 struct Highlight;
 struct KeypressCommand;
 struct TextCheckingResult;
@@ -150,7 +152,9 @@ class MediaPlayerRequestInstallMissingPluginsCallback;
 namespace WebKit {
 class DrawingArea;
 class DownloadID;
+class FindController;
 class GamepadData;
+class GeolocationPermissionRequestManager;
 class InjectedBundleBackForwardList;
 class MediaDeviceSandboxExtensions;
 class NotificationPermissionRequestManager;
@@ -159,6 +163,7 @@ class PageBanner;
 class PluginView;
 class RemoteWebInspectorUI;
 class UserMediaPermissionRequestManager;
+class ViewGestureGeometryCollector;
 class VisibleContentRectUpdateInfo;
 class WebColorChooser;
 class WebContextMenu;
@@ -185,10 +190,10 @@ class WebUndoStep;
 class WebUserContentController;
 class WebVideoFullscreenManager;
 class WebWheelEvent;
+enum FindOptions : uint16_t;
 struct AssistedNodeInformation;
 struct AttributedString;
 struct BackForwardListItemState;
-struct EditingRange;
 struct EditorState;
 struct InteractionInformationAtPosition;
 struct InteractionInformationRequest;
@@ -200,6 +205,7 @@ struct WebPreferencesStore;
 struct WebSelectionData;
 
 typedef uint32_t SnapshotOptions;
+typedef uint32_t WKEventModifiers;
 
 #if PLATFORM(COCOA)
 class RemoteLayerTreeTransaction;
@@ -488,10 +494,10 @@ public:
 
     static const WebEvent* currentEvent();
 
-    FindController& findController() { return m_findController; }
+    FindController& findController() { return m_findController.get(); }
 
 #if ENABLE(GEOLOCATION)
-    GeolocationPermissionRequestManager& geolocationPermissionRequestManager() { return m_geolocationPermissionRequestManager; }
+    GeolocationPermissionRequestManager& geolocationPermissionRequestManager() { return m_geolocationPermissionRequestManager.get(); }
 #endif
 
 #if PLATFORM(IOS)
@@ -671,7 +677,7 @@ public:
     void getSelectedRangeAsync(uint64_t callbackID);
     void characterIndexForPointAsync(const WebCore::IntPoint&, uint64_t callbackID);
     void firstRectForCharacterRangeAsync(const EditingRange&, uint64_t callbackID);
-    void setCompositionAsync(const String& text, Vector<WebCore::CompositionUnderline> underlines, const EditingRange& selectionRange, const EditingRange& replacementRange);
+    void setCompositionAsync(const String& text, const Vector<WebCore::CompositionUnderline>& underlines, const EditingRange& selectionRange, const EditingRange& replacementRange);
     void confirmCompositionAsync();
 
 #if PLATFORM(MAC)
@@ -1344,7 +1350,7 @@ private:
     
     RetainPtr<WKAccessibilityWebPageObject> m_mockAccessibilityElement;
 
-    ViewGestureGeometryCollector m_viewGestureGeometryCollector;
+    UniqueRef<ViewGestureGeometryCollector> m_viewGestureGeometryCollector;
 
     RetainPtr<NSDictionary> m_dataDetectionContext;
 
@@ -1380,7 +1386,7 @@ private:
     InjectedBundlePageFullScreenClient m_fullScreenClient;
 #endif
 
-    FindController m_findController;
+    UniqueRef<FindController> m_findController;
 
     RefPtr<WebInspector> m_inspector;
     RefPtr<WebInspectorUI> m_inspectorUI;
@@ -1409,7 +1415,7 @@ private:
     Ref<WebUserContentController> m_userContentController;
 
 #if ENABLE(GEOLOCATION)
-    GeolocationPermissionRequestManager m_geolocationPermissionRequestManager;
+    UniqueRef<GeolocationPermissionRequestManager> m_geolocationPermissionRequestManager;
 #endif
 
 #if ENABLE(MEDIA_STREAM)

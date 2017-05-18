@@ -32,6 +32,7 @@
 #import "ColorSpaceData.h"
 #import "DataReference.h"
 #import "DownloadProxy.h"
+#import "DrawingAreaProxy.h"
 #import "NativeWebGestureEvent.h"
 #import "NativeWebKeyboardEvent.h"
 #import "NativeWebMouseEvent.h"

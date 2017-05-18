@@ -29,6 +29,7 @@
 #if ENABLE(APPLE_PAY)
 
 #include "DataReference.h"
+#include "WebCoreArgumentCoders.h"
 #include "WebPage.h"
 #include "WebPaymentCoordinatorMessages.h"
 #include "WebPaymentCoordinatorProxyMessages.h"

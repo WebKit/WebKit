@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebValidationMessageClient.h"
 
+#include "WebCoreArgumentCoders.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
 #include <WebCore/Element.h>

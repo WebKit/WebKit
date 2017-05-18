@@ -30,6 +30,7 @@
 #include "APIArray.h"
 #include "APISecurityOrigin.h"
 #include "DrawingArea.h"
+#include "FindController.h"
 #include "HangDetectionDisabler.h"
 #include "InjectedBundleNavigationAction.h"
 #include "InjectedBundleNodeHandle.h"

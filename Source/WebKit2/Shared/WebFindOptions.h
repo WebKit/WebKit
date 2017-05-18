@@ -23,12 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebFindOptions_h
-#define WebFindOptions_h
+#pragma once
 
 namespace WebKit {
 
-enum FindOptions {
+enum FindOptions : uint16_t {
     FindOptionsCaseInsensitive = 1 << 0,
     FindOptionsAtWordStarts = 1 << 1,
     FindOptionsTreatMedialCapitalAsWordStart = 1 << 2,
@@ -41,5 +40,3 @@ enum FindOptions {
 };
 
 } // namespace WebKit
-
-#endif // WebFindOptions_h

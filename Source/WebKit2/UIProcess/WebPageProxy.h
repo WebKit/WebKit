@@ -32,7 +32,6 @@
 #include "ContextMenuContextData.h"
 #include "DownloadID.h"
 #include "DragControllerAction.h"
-#include "DrawingAreaProxy.h"
 #include "EditingRange.h"
 #include "EditorState.h"
 #include "GeolocationPermissionRequestManagerProxy.h"
@@ -70,17 +69,16 @@
 #include <WebCore/DragActions.h>
 #include <WebCore/EventTrackingRegions.h>
 #include <WebCore/FrameLoaderTypes.h>
-#include <WebCore/FrameView.h>
-#include <WebCore/HitTestResult.h>
+#include <WebCore/FrameView.h> // FIXME: Move LayoutViewportConstraint to its own file and stop including this.
+#include <WebCore/LayoutPoint.h>
+#include <WebCore/LayoutSize.h>
 #include <WebCore/MediaProducer.h>
-#include <WebCore/Page.h>
 #include <WebCore/PlatformScreen.h>
 #include <WebCore/ScrollTypes.h>
 #include <WebCore/SearchPopupMenu.h>
 #include <WebCore/TextChecking.h>
 #include <WebCore/TextGranularity.h>
 #include <WebCore/UserInterfaceLayoutDirection.h>
-#include <WebCore/VisibleSelection.h>
 #include <memory>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -102,14 +100,6 @@ OBJC_CLASS _WKRemoteObjectRegistry;
 
 #if PLATFORM(COCOA)
 #include "LayerRepresentation.h"
-#endif
-
-#if PLATFORM(MAC)
-#include "AttributedString.h"
-#endif
-
-#if PLATFORM(IOS)
-#include "ProcessThrottler.h"
 #endif
 
 #if PLATFORM(GTK)
@@ -171,6 +161,8 @@ struct TextCheckingResult;
 struct ViewportAttributes;
 struct WindowFeatures;
 
+enum SelectionDirection : uint8_t;
+
 enum class AutoplayEvent;
 enum class HasInsecureContent;
 enum class NotificationDirection;
@@ -186,6 +178,7 @@ typedef GtkWidget* PlatformWidget;
 
 namespace WebKit {
 class CertificateInfo;
+class DrawingAreaProxy;
 class NativeWebGestureEvent;
 class NativeWebKeyboardEvent;
 class NativeWebMouseEvent;
@@ -597,7 +590,7 @@ public:
     void getSelectedRangeAsync(std::function<void (EditingRange, CallbackBase::Error)>);
     void characterIndexForPointAsync(const WebCore::IntPoint&, std::function<void (uint64_t, CallbackBase::Error)>);
     void firstRectForCharacterRangeAsync(const EditingRange&, std::function<void (const WebCore::IntRect&, const EditingRange&, CallbackBase::Error)>);
-    void setCompositionAsync(const String& text, Vector<WebCore::CompositionUnderline> underlines, const EditingRange& selectionRange, const EditingRange& replacementRange);
+    void setCompositionAsync(const String& text, const Vector<WebCore::CompositionUnderline>& underlines, const EditingRange& selectionRange, const EditingRange& replacementRange);
     void confirmCompositionAsync();
 
     void setScrollPerformanceDataCollectionEnabled(bool);
