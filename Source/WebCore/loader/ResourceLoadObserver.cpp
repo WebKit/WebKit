@@ -394,26 +394,6 @@ void ResourceLoadObserver::clearPrevalentResource(const URL& url)
     
     statistics.isPrevalentResource = false;
 }
-    
-void ResourceLoadObserver::setGrandfathered(const URL& url, bool value)
-{
-    if (url.isBlankURL() || url.isEmpty())
-        return;
-    
-    auto& statistics = m_store->ensureResourceStatisticsForPrimaryDomain(primaryDomain(url));
-    
-    statistics.grandfathered = value;
-}
-    
-bool ResourceLoadObserver::isGrandfathered(const URL& url)
-{
-    if (url.isBlankURL() || url.isEmpty())
-        return false;
-    
-    auto& statistics = m_store->ensureResourceStatisticsForPrimaryDomain(primaryDomain(url));
-    
-    return statistics.grandfathered;
-}
 
 void ResourceLoadObserver::setSubframeUnderTopFrameOrigin(const URL& subframe, const URL& topFrame)
 {
@@ -452,22 +432,12 @@ void ResourceLoadObserver::setTimeToLiveCookiePartitionFree(double seconds)
     m_store->setTimeToLiveCookiePartitionFree(seconds);
 }
 
-void ResourceLoadObserver::setMinimumTimeBetweeenDataRecordsRemoval(double seconds)
-{
-    m_store->setMinimumTimeBetweeenDataRecordsRemoval(seconds);
-}
-    
 void ResourceLoadObserver::setReducedTimestampResolution(double seconds)
 {
     if (seconds > 0)
         timestampResolution = seconds;
 }
 
-void ResourceLoadObserver::setGrandfatheringTime(double seconds)
-{
-    m_store->setMinimumTimeBetweeenDataRecordsRemoval(seconds);
-}
-    
 void ResourceLoadObserver::fireDataModificationHandler()
 {
     m_store->fireDataModificationHandler();

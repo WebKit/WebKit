@@ -153,8 +153,6 @@ public:
     bool isStatisticsPrevalentResource(WKStringRef hostName);
     void setStatisticsHasHadUserInteraction(WKStringRef hostName, bool value);
     bool isStatisticsHasHadUserInteraction(WKStringRef hostName);
-    void setStatisticsGrandfathered(WKStringRef hostName, bool value);
-    bool isStatisticsGrandfathered(WKStringRef hostName);
     void setStatisticsSubframeUnderTopFrameOrigin(WKStringRef hostName, WKStringRef topFrameHostName);
     void setStatisticsSubresourceUnderTopFrameOrigin(WKStringRef hostName, WKStringRef topFrameHostName);
     void setStatisticsSubresourceUniqueRedirectTo(WKStringRef hostName, WKStringRef hostNameRedirectedTo);
@@ -166,7 +164,6 @@ public:
     void setStatisticsNotifyPagesWhenDataRecordsWereScanned(bool);
     void setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(bool);
     void setStatisticsMinimumTimeBetweeenDataRecordsRemoval(double);
-    void setStatisticsGrandfatheringTime(double seconds);
     void statisticsClearInMemoryAndPersistentStore();
     void statisticsClearInMemoryAndPersistentStoreModifiedSinceHours(unsigned);
     void statisticsResetToConsistentState();

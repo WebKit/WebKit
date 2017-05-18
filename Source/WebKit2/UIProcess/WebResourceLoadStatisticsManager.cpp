@@ -61,16 +61,6 @@ bool WebResourceLoadStatisticsManager::hasHadUserInteraction(const String& hostN
     return WebCore::ResourceLoadObserver::sharedObserver().hasHadUserInteraction(URL(URL(), hostName));
 }
 
-void WebResourceLoadStatisticsManager::setGrandfathered(const String& hostName, bool value)
-{
-    WebCore::ResourceLoadObserver::sharedObserver().setGrandfathered(URL(URL(), hostName), value);
-}
-
-bool WebResourceLoadStatisticsManager::isGrandfathered(const String& hostName)
-{
-    return WebCore::ResourceLoadObserver::sharedObserver().isGrandfathered(URL(URL(), hostName));
-}
-
 void WebResourceLoadStatisticsManager::setSubframeUnderTopFrameOrigin(const String& hostName, const String& topFrameHostName)
 {
     WebCore::ResourceLoadObserver::sharedObserver().setSubframeUnderTopFrameOrigin(URL(URL(), hostName), URL(URL(), topFrameHostName));
@@ -94,16 +84,6 @@ void WebResourceLoadStatisticsManager::setTimeToLiveUserInteraction(double secon
 void WebResourceLoadStatisticsManager::setTimeToLiveCookiePartitionFree(double seconds)
 {
     WebCore::ResourceLoadObserver::sharedObserver().setTimeToLiveCookiePartitionFree(seconds);
-}
-
-void WebResourceLoadStatisticsManager::setMinimumTimeBetweeenDataRecordsRemoval(double seconds)
-{
-    WebCore::ResourceLoadObserver::sharedObserver().setMinimumTimeBetweeenDataRecordsRemoval(seconds);
-}
-
-void WebResourceLoadStatisticsManager::setGrandfatheringTime(double seconds)
-{
-    WebCore::ResourceLoadObserver::sharedObserver().setGrandfatheringTime(seconds);
 }
 
 void WebResourceLoadStatisticsManager::fireDataModificationHandler()
@@ -134,6 +114,11 @@ void WebResourceLoadStatisticsManager::setShouldClassifyResourcesBeforeDataRecor
     WebResourceLoadStatisticsStore::setShouldClassifyResourcesBeforeDataRecordsRemoval(value);
 }
 
+void WebResourceLoadStatisticsManager::setMinimumTimeBetweeenDataRecordsRemoval(double seconds)
+{
+    WebResourceLoadStatisticsStore::setMinimumTimeBetweeenDataRecordsRemoval(seconds);
+}
+
 void WebResourceLoadStatisticsManager::clearInMemoryAndPersistentStore()
 {
     WebCore::ResourceLoadObserver::sharedObserver().clearInMemoryAndPersistentStore();
@@ -148,9 +133,9 @@ void WebResourceLoadStatisticsManager::resetToConsistentState()
 {
     WebCore::ResourceLoadObserver::sharedObserver().setTimeToLiveUserInteraction(2592000);
     WebCore::ResourceLoadObserver::sharedObserver().setTimeToLiveCookiePartitionFree(86400);
-    WebCore::ResourceLoadObserver::sharedObserver().setMinimumTimeBetweeenDataRecordsRemoval(60);
     WebResourceLoadStatisticsStore::setNotifyPagesWhenDataRecordsWereScanned(false);
     WebResourceLoadStatisticsStore::setShouldClassifyResourcesBeforeDataRecordsRemoval(true);
+    WebResourceLoadStatisticsStore::setMinimumTimeBetweeenDataRecordsRemoval(60);
     WebCore::ResourceLoadObserver::sharedObserver().clearInMemoryStore();
 }
     

@@ -56,16 +56,6 @@ bool WKResourceLoadStatisticsManagerIsHasHadUserInteraction(WKStringRef hostName
     return WebResourceLoadStatisticsManager::hasHadUserInteraction(toWTFString(hostName));
 }
 
-void WKResourceLoadStatisticsManagerSetGrandfathered(WKStringRef hostName, bool value)
-{
-    WebResourceLoadStatisticsManager::setGrandfathered(toWTFString(hostName), value);
-}
-
-bool WKResourceLoadStatisticsManagerIsGrandfathered(WKStringRef hostName)
-{
-    return WebResourceLoadStatisticsManager::isGrandfathered(toWTFString(hostName));
-}
-
 void WKResourceLoadStatisticsManagerSetSubframeUnderTopFrameOrigin(WKStringRef hostName, WKStringRef topFrameHostName)
 {
     WebResourceLoadStatisticsManager::setSubframeUnderTopFrameOrigin(toWTFString(hostName), toWTFString(topFrameHostName));
@@ -91,16 +81,6 @@ void WKResourceLoadStatisticsManagerSetTimeToLiveCookiePartitionFree(double seco
     WebResourceLoadStatisticsManager::setTimeToLiveCookiePartitionFree(seconds);
 }
 
-void WKResourceLoadStatisticsManagerSetMinimumTimeBetweeenDataRecordsRemoval(double seconds)
-{
-    WebResourceLoadStatisticsManager::setMinimumTimeBetweeenDataRecordsRemoval(seconds);
-}
-
-void WKResourceLoadStatisticsManagerSetGrandfatheringTime(double seconds)
-{
-    WebResourceLoadStatisticsManager::setGrandfatheringTime(seconds);
-}
-
 void WKResourceLoadStatisticsManagerFireDataModificationHandler()
 {
     WebResourceLoadStatisticsManager::fireDataModificationHandler();
@@ -124,6 +104,11 @@ void WKResourceLoadStatisticsManagerSetNotifyPagesWhenDataRecordsWereScanned(boo
 void WKResourceLoadStatisticsManagerSetShouldClassifyResourcesBeforeDataRecordsRemoval(bool value)
 {
     WebResourceLoadStatisticsManager::setShouldClassifyResourcesBeforeDataRecordsRemoval(value);
+}
+
+void WKResourceLoadStatisticsManagerSetMinimumTimeBetweeenDataRecordsRemoval(double seconds)
+{
+    WebResourceLoadStatisticsManager::setMinimumTimeBetweeenDataRecordsRemoval(seconds);
 }
 
 void WKResourceLoadStatisticsManagerClearInMemoryAndPersistentStore()

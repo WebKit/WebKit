@@ -137,12 +137,4 @@ bool WebsiteDataRecord::matchesTopPrivatelyControlledDomain(const String& topPri
     return false;
 }
 
-String WebsiteDataRecord::topPrivatelyControlledDomain()
-{
-    if (types.contains(WebsiteDataType::Cookies))
-        return WebCore::topPrivatelyControlledDomain(cookieHostNames.takeAny());
-
-    return WebCore::topPrivatelyControlledDomain(origins.takeAny().securityOrigin().get().host());
-}
-
 }

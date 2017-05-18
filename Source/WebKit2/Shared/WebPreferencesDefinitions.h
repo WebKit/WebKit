@@ -288,8 +288,7 @@
     macro(ResourceLoadStatisticsTimeToLiveUserInteraction, resourceLoadStatisticsTimeToLiveUserInteraction, Double, double, 2592000, "", "") \
     macro(ResourceLoadStatisticsTimeToLiveCookiePartitionFree, resourceLoadStatisticsTimeToLiveCookiePartitionFree, Double, double, 86400, "", "") \
     macro(ResourceLoadStatisticsReducedTimestampResolution, resourceLoadStatisticsReducedTimestampResolution, Double, double, 3600, "", "") \
-    macro(ResourceLoadStatisticsGrandfatheringTime, resourceLoadStatisticsGrandfatheringTime, Double, double, 259200, "", "") \
-\
+    \
 
 #define FOR_EACH_WEBKIT_UINT32_PREFERENCE(macro) \
     macro(FontSmoothingLevel, fontSmoothingLevel, UInt32, uint32_t, FontSmoothingLevelMedium, "", "") \

@@ -70,7 +70,6 @@ struct WebsiteDataRecord {
 #endif
     
     bool matchesTopPrivatelyControlledDomain(const String&) const;
-    String topPrivatelyControlledDomain();
 };
 
 }

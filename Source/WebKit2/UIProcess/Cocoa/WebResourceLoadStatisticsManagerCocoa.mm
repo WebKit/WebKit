@@ -52,10 +52,6 @@ void WebResourceLoadStatisticsManager::registerUserDefaultsIfNeeded()
         double reducedTimestampResolution = [[NSUserDefaults standardUserDefaults] doubleForKey: WebPreferencesKey::resourceLoadStatisticsReducedTimestampResolutionKey()];
         if (reducedTimestampResolution > 0 && reducedTimestampResolution <= hourInSeconds)
             ResourceLoadObserver::sharedObserver().setReducedTimestampResolution(reducedTimestampResolution);
-
-        double grandfatheringTime = [[NSUserDefaults standardUserDefaults] doubleForKey: WebPreferencesKey::resourceLoadStatisticsGrandfatheringTimeKey()];
-        if (grandfatheringTime > 0 && grandfatheringTime <= 7 * dayInSeconds)
-            ResourceLoadObserver::sharedObserver().setGrandfatheringTime(grandfatheringTime);
     });
 }
 

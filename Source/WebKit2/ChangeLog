@@ -1,3 +1,17 @@
+2017-05-17  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r217014.
+
+        This change caused mac-wk2 LayoutTests to exit early due to
+        crashes.
+
+        Reverted changeset:
+
+        "Resource Load Statistics: Grandfather domains for existing
+        data records"
+        https://bugs.webkit.org/show_bug.cgi?id=172155
+        http://trac.webkit.org/changeset/217014
+
 2017-05-17  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Grandfather domains for existing data records

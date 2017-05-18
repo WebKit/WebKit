@@ -38,12 +38,11 @@
 
 namespace WebCore {
 
-static const auto statisticsModelVersion = 4;
-static const auto secondsPerDay = 24 * 3600;
-static auto timeToLiveUserInteraction = 30 * secondsPerDay;
-static auto timeToLiveCookiePartitionFree = 1 * secondsPerDay;
-static auto grandfatheringTime = 3 * secondsPerDay;
-static auto minimumTimeBetweeenDataRecordsRemoval = 60;
+static const auto statisticsModelVersion = 3;
+// 30 days in seconds
+static auto timeToLiveUserInteraction = 2592000;
+// 1 day in seconds
+static auto timeToLiveCookiePartitionFree = 86400;
 
 Ref<ResourceLoadStatisticsStore> ResourceLoadStatisticsStore::create()
 {
@@ -80,7 +79,6 @@ std::unique_ptr<KeyedEncoder> ResourceLoadStatisticsStore::createEncoderFromData
     auto encoder = KeyedEncoder::encoder();
 
     encoder->encodeUInt32("version", statisticsModelVersion);
-    encoder->encodeDouble("endOfGrandfatheringTimestamp", m_endOfGrandfatheringTimestamp);
     encoder->encodeObjects("browsingStatistics", m_resourceStatisticsMap.begin(), m_resourceStatisticsMap.end(), [](KeyedEncoder& encoderInner, const StatisticsValue& origin) {
         origin.value.encode(encoderInner);
     });
@@ -96,16 +94,6 @@ void ResourceLoadStatisticsStore::readDataFromDecoder(KeyedDecoder& decoder)
     unsigned version;
     if (!decoder.decodeUInt32("version", version))
         version = 1;
-
-    static const auto minimumVersionWithGrandfathering = 3;
-    if (version > minimumVersionWithGrandfathering) {
-        double endOfGrandfatheringTimestamp;
-        if (decoder.decodeDouble("endOfGrandfatheringTimestamp", endOfGrandfatheringTimestamp))
-            m_endOfGrandfatheringTimestamp = endOfGrandfatheringTimestamp;
-        else
-            m_endOfGrandfatheringTimestamp = 0;
-    }
-
     Vector<ResourceLoadStatistics> loadedStatistics;
     bool succeeded = decoder.decodeObjects("browsingStatistics", loadedStatistics, [version](KeyedDecoder& decoderInner, ResourceLoadStatistics& statistics) {
         return statistics.decode(decoderInner, version);
@@ -138,8 +126,6 @@ void ResourceLoadStatisticsStore::clearInMemoryAndPersistent()
     clearInMemory();
     if (m_writePersistentStoreHandler)
         m_writePersistentStoreHandler();
-    if (m_grandfatherExistingWebsiteDataHandler)
-        m_grandfatherExistingWebsiteDataHandler();
 }
 
 String ResourceLoadStatisticsStore::statisticsForOrigin(const String& origin)
@@ -189,11 +175,6 @@ void ResourceLoadStatisticsStore::setWritePersistentStoreCallback(std::function<
     m_writePersistentStoreHandler = WTFMove(handler);
 }
 
-void ResourceLoadStatisticsStore::setGrandfatherExistingWebsiteDataCallback(std::function<void()>&& handler)
-{
-    m_grandfatherExistingWebsiteDataHandler = WTFMove(handler);
-}
-
 void ResourceLoadStatisticsStore::fireDataModificationHandler()
 {
     if (m_dataAddedHandler)
@@ -221,10 +202,10 @@ void ResourceLoadStatisticsStore::fireShouldPartitionCookiesHandler()
             domainsToAdd.append(resourceStatistic.highLevelDomain);
         }
     }
-
+    
     if (domainsToRemove.isEmpty() && domainsToAdd.isEmpty())
         return;
-
+    
     if (m_shouldPartitionCookiesForDomainsHandler)
         m_shouldPartitionCookiesForDomainsHandler(domainsToRemove, domainsToAdd, false);
 }
@@ -233,7 +214,7 @@ void ResourceLoadStatisticsStore::fireShouldPartitionCookiesHandler(const Vector
 {
     if (domainsToRemove.isEmpty() && domainsToAdd.isEmpty())
         return;
-    
+
     if (m_shouldPartitionCookiesForDomainsHandler)
         m_shouldPartitionCookiesForDomainsHandler(domainsToRemove, domainsToAdd, clearFirst);
 
@@ -261,18 +242,6 @@ void ResourceLoadStatisticsStore::setTimeToLiveCookiePartitionFree(double second
         timeToLiveCookiePartitionFree = seconds;
 }
 
-void ResourceLoadStatisticsStore::setMinimumTimeBetweeenDataRecordsRemoval(double seconds)
-{
-    if (seconds >= 0)
-        minimumTimeBetweeenDataRecordsRemoval = seconds;
-}
-
-void ResourceLoadStatisticsStore::setGrandfatheringTime(double seconds)
-{
-    if (seconds >= 0)
-        grandfatheringTime = seconds;
-}
-
 void ResourceLoadStatisticsStore::processStatistics(std::function<void(ResourceLoadStatistics&)>&& processFunction)
 {
     for (auto& resourceStatistic : m_resourceStatisticsMap.values())
@@ -297,65 +266,21 @@ bool ResourceLoadStatisticsStore::hasHadRecentUserInteraction(ResourceLoadStatis
     return true;
 }
 
-Vector<String> ResourceLoadStatisticsStore::topPrivatelyControlledDomainsToRemoveWebsiteDataFor()
+Vector<String> ResourceLoadStatisticsStore::prevalentResourceDomainsWithoutUserInteraction()
 {
-    bool shouldCheckForGrandfathering = m_endOfGrandfatheringTimestamp > currentTime();
-    bool shouldClearGrandfathering = !shouldCheckForGrandfathering && m_endOfGrandfatheringTimestamp;
-
-    if (shouldClearGrandfathering)
-        m_endOfGrandfatheringTimestamp = 0;
-
     Vector<String> prevalentResources;
-    for (auto& statistic : m_resourceStatisticsMap.values()) {
-        if (statistic.isPrevalentResource
-            && !hasHadRecentUserInteraction(statistic)
-            && (!shouldCheckForGrandfathering || !statistic.grandfathered))
-            prevalentResources.append(statistic.highLevelDomain);
-
-        if (shouldClearGrandfathering && statistic.grandfathered)
-            statistic.grandfathered = false;
+    for (auto& resourceStatistic : m_resourceStatisticsMap.values()) {
+        if (resourceStatistic.isPrevalentResource && !hasHadRecentUserInteraction(resourceStatistic))
+            prevalentResources.append(resourceStatistic.highLevelDomain);
     }
-
     return prevalentResources;
 }
 
 void ResourceLoadStatisticsStore::updateStatisticsForRemovedDataRecords(const Vector<String>& prevalentResourceDomains)
 {
     for (auto& prevalentResourceDomain : prevalentResourceDomains) {
-        ResourceLoadStatistics& statistic = ensureResourceStatisticsForPrimaryDomain(prevalentResourceDomain);
-        ++statistic.dataRecordsRemoved;
+        ResourceLoadStatistics& statisic = ensureResourceStatisticsForPrimaryDomain(prevalentResourceDomain);
+        ++statisic.dataRecordsRemoved;
     }
 }
-
-void ResourceLoadStatisticsStore::handleFreshStartWithEmptyOrNoStore(HashSet<String>&& topPrivatelyControlledDomainsToGrandfather)
-{
-    for (auto& topPrivatelyControlledDomain : topPrivatelyControlledDomainsToGrandfather) {
-        ResourceLoadStatistics& statistic = ensureResourceStatisticsForPrimaryDomain(topPrivatelyControlledDomain);
-        statistic.grandfathered = true;
-    }
-    m_endOfGrandfatheringTimestamp = std::floor(currentTime()) + grandfatheringTime;
-}
-
-bool ResourceLoadStatisticsStore::shouldRemoveDataRecords()
-{
-    if (m_dataRecordsRemovalPending)
-        return false;
-
-    if (m_lastTimeDataRecordsWereRemoved && currentTime() < m_lastTimeDataRecordsWereRemoved + minimumTimeBetweeenDataRecordsRemoval)
-        return false;
-
-    return true;
-}
-
-void ResourceLoadStatisticsStore::dataRecordsBeingRemoved()
-{
-    m_lastTimeDataRecordsWereRemoved = currentTime();
-    m_dataRecordsRemovalPending = true;
-}
-
-void ResourceLoadStatisticsStore::dataRecordsWereRemoved()
-{
-    m_dataRecordsRemovalPending = false;
-}
-
 }

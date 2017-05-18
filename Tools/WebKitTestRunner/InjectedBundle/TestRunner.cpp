@@ -641,7 +641,6 @@ enum {
     DidEndSwipeCallbackID,
     DidRemoveSwipeSnapshotCallbackID,
     StatisticsDidModifyDataRecordsCallbackID,
-    StatisticsDidScanDataRecordsCallbackID,
     FirstUIScriptCallbackID = 100
 };
 
@@ -1246,42 +1245,6 @@ bool TestRunner::isStatisticsHasHadUserInteraction(JSStringRef hostName)
     return WKBooleanGetValue(static_cast<WKBooleanRef>(returnData));
 }
 
-void TestRunner::setStatisticsGrandfathered(JSStringRef hostName, bool value)
-{
-    Vector<WKRetainPtr<WKStringRef>> keys;
-    Vector<WKRetainPtr<WKTypeRef>> values;
-    
-    keys.append({ AdoptWK, WKStringCreateWithUTF8CString("HostName") });
-    values.append({ AdoptWK, WKStringCreateWithJSString(hostName) });
-    
-    keys.append({ AdoptWK, WKStringCreateWithUTF8CString("Value") });
-    values.append({ AdoptWK, WKBooleanCreate(value) });
-    
-    Vector<WKStringRef> rawKeys;
-    Vector<WKTypeRef> rawValues;
-    rawKeys.resize(keys.size());
-    rawValues.resize(values.size());
-    
-    for (size_t i = 0; i < keys.size(); ++i) {
-        rawKeys[i] = keys[i].get();
-        rawValues[i] = values[i].get();
-    }
-    
-    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SetStatisticsGrandfathered"));
-    WKRetainPtr<WKDictionaryRef> messageBody(AdoptWK, WKDictionaryCreate(rawKeys.data(), rawValues.data(), rawKeys.size()));
-    
-    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
-}
-    
-bool TestRunner::isStatisticsGrandfathered(JSStringRef hostName)
-{
-    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("IsStatisticsGrandfathered"));
-    WKRetainPtr<WKStringRef> messageBody(AdoptWK, WKStringCreateWithJSString(hostName));
-    WKTypeRef returnData = 0;
-    WKBundlePagePostSynchronousMessageForTesting(InjectedBundle::singleton().page()->page(), messageName.get(), messageBody.get(), &returnData);
-    return WKBooleanGetValue(static_cast<WKBooleanRef>(returnData));
-}
-
 void TestRunner::setStatisticsSubframeUnderTopFrameOrigin(JSStringRef hostName, JSStringRef topFrameHostName)
 {
     Vector<WKRetainPtr<WKStringRef>> keys;
@@ -1378,16 +1341,6 @@ void TestRunner::statisticsDidModifyDataRecordsCallback()
     callTestRunnerCallback(StatisticsDidModifyDataRecordsCallbackID);
 }
 
-void TestRunner::installStatisticsDidScanDataRecordsCallback(JSValueRef callback)
-{
-    cacheTestRunnerCallback(StatisticsDidScanDataRecordsCallbackID, callback);
-}
-
-void TestRunner::statisticsDidScanDataRecordsCallback()
-{
-    callTestRunnerCallback(StatisticsDidScanDataRecordsCallbackID);
-}
-
 void TestRunner::statisticsFireDataModificationHandler()
 {
     WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("StatisticsFireDataModificationHandler"));
@@ -1442,13 +1395,6 @@ void TestRunner::setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(bo
 void TestRunner::setStatisticsMinimumTimeBetweeenDataRecordsRemoval(double seconds)
 {
     WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SetStatisticsMinimumTimeBetweeenDataRecordsRemoval"));
-    WKRetainPtr<WKDoubleRef> messageBody(AdoptWK, WKDoubleCreate(seconds));
-    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
-}
-
-void TestRunner::setStatisticsGrandfatheringTime(double seconds)
-{
-    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SetStatisticsGrandfatheringTime"));
     WKRetainPtr<WKDoubleRef> messageBody(AdoptWK, WKDoubleCreate(seconds));
     WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
 }
