@@ -1,3 +1,15 @@
+2017-05-17  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r216554. rdar://problem/31971362
+
+    2017-05-09  Dean Jackson  <dino@apple.com>
+
+            Fix Windows build.
+
+            * Plugins/PluginView.h:
+            * Plugins/PluginViewWin.cpp:
+            (WebCore::PluginView::paint):
+
 2017-03-16  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r213846. rdar://problem/30983702
