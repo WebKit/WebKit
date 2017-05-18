@@ -1,3 +1,39 @@
+2017-05-18  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r209608): Cross-origin plugin document opened in child window blocked by parent
+        window CSP when object-src 'none' is set
+        https://bugs.webkit.org/show_bug.cgi?id=172038
+        <rdar://problem/32258262>
+
+        Reviewed by Andy Estes.
+
+        Fixes an issue where a cross-origin plugin document opened in a child window would inherit
+        the Content Security Policy (CSP) of its opener. In particular, a cross-origin plugin
+        document opened in a child window would be blocked when the CSP of its opener disallows
+        plugins (e.g. object-source 'none').
+
+        Prior to r209608 a document opened in a child window never inherited the CSP from its opener
+        and a plugin document loaded in a subframe would unconditionally inherit the CSP from its
+        parent frame. So, a plugin document opened in a child window would be allowed to load
+        regardless of whether its opener had a CSP that prevented plugins. Following r209608 a
+        document opened in a child window would inherit its CSP from its opener if and only if it
+        would inherit the security origin from its opener (e.g. about:blank) or was a plugin
+        document. The latter condition makes plugin documents opened in a child window unconditionally
+        inherit the CSP from their opener and is the cause of this bug. It seems reasonable to exempt
+        cross-origin plugin documents opened in a child window from the CSP inheritance rule because
+        such documents cannot compromise the origin of their opener. Same-origin plugin documents
+        opened in a child window will continue to inherit the CSP from their opener because such
+        documents can compromise the origin of their opener.
+
+        Tests: http/tests/security/contentSecurityPolicy/cross-origin-plugin-document-allowed-in-child-window.html
+               http/tests/security/contentSecurityPolicy/plugin-blocked-in-about-blank-window.html
+               http/tests/security/contentSecurityPolicy/same-origin-plugin-document-blocked-in-child-window.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::shouldInheritContentSecurityPolicyFromOwner): Added.
+        (WebCore::Document::initContentSecurityPolicy):
+        * dom/Document.h:
+
 2017-05-18  Keith Miller  <keith_miller@apple.com>
 
         WebAssembly API: test with neutered inputs

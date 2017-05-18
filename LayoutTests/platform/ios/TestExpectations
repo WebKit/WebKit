@@ -126,6 +126,9 @@ http/tests/security/contentSecurityPolicy/object-with-no-url-allowed-by-default-
 http/tests/security/contentSecurityPolicy/object-with-no-url-allowed-by-star.html
 http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-plugin-in-iframe.html
 http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-plugin-in-main-frame.html
+http/tests/security/contentSecurityPolicy/cross-origin-plugin-document-allowed-in-child-window.html
+http/tests/security/contentSecurityPolicy/plugin-blocked-in-about-blank-window.html
+http/tests/security/contentSecurityPolicy/same-origin-plugin-document-blocked-in-child-window.html
 
 # Pointer-lock not supported on iOS
 pointer-lock

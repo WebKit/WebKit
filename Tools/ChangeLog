@@ -1,3 +1,18 @@
+2017-05-18  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r209608): Cross-origin plugin document opened in child window blocked by parent
+        window CSP when object-src 'none' is set
+        https://bugs.webkit.org/show_bug.cgi?id=172038
+        <rdar://problem/32258262>
+
+        Reviewed by Andy Estes.
+
+        Teach the test Netscape plugin to look for a URL that contains plugin-document-alert-and-notify-done.pl.
+        When it sees this URL it will show a JavaScript alert and call testRunner.notifyDone().
+
+        * DumpRenderTree/TestNetscapePlugIn/main.cpp:
+        (NPP_New):
+
 2017-05-18  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Many layout tests are failing.

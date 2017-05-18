@@ -1,3 +1,25 @@
+2017-05-18  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r209608): Cross-origin plugin document opened in child window blocked by parent
+        window CSP when object-src 'none' is set
+        https://bugs.webkit.org/show_bug.cgi?id=172038
+        <rdar://problem/32258262>
+
+        Reviewed by Andy Estes.
+
+        Adds tests to ensure that a same-origin- and cross-origin- plugin document opened in a child
+        window inherit and do not inherit the CSP of its opener, respectively. Also adds a test to
+        ensure that an about:blank window inherits the CSP plugin policy of its opener.
+
+        * http/tests/plugins/resources/plugin-document-alert-and-notify-done.pl: Added.
+        * http/tests/security/contentSecurityPolicy/cross-origin-plugin-document-allowed-in-child-window-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/cross-origin-plugin-document-allowed-in-child-window.html: Added.
+        * http/tests/security/contentSecurityPolicy/plugin-blocked-in-about-blank-window-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/plugin-blocked-in-about-blank-window.html: Added.
+        * http/tests/security/contentSecurityPolicy/same-origin-plugin-document-blocked-in-child-window-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/same-origin-plugin-document-blocked-in-child-window.html: Added.
+        * platform/ios/TestExpectations: Skip added tests as iOS does not support plugins.
+
 2017-05-18  Keith Miller  <keith_miller@apple.com>
 
         WebAssembly API: test with neutered inputs
