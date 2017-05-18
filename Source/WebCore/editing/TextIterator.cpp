@@ -648,7 +648,8 @@ bool TextIterator::handleTextNode()
         auto range = m_flowRunResolverCache->rangeForRenderer(renderer);
         auto it = range.begin();
         auto end = range.end();
-        while (it != end && (*it).end() <= (static_cast<unsigned>(m_offset) + m_accumulatedSimpleTextLengthInFlow))
+        auto startPosition = static_cast<unsigned>(m_offset) + m_accumulatedSimpleTextLengthInFlow;
+        while (it != end && (*it).end() <= startPosition)
             ++it;
         if (m_nextRunNeedsWhitespace && rendererText[m_offset - 1] == '\n') {
             emitCharacter(' ', textNode, nullptr, m_offset, m_offset + 1);
@@ -664,7 +665,17 @@ bool TextIterator::handleTextNode()
             emitCharacter(' ', textNode, nullptr, m_offset, m_offset + 1);
             return false;
         }
-        const auto run = *it;
+        // If the position we are looking for is to the left of the renderer's first run, it could mean that
+        // the runs and the renderers are out of sync (e.g. we skipped a renderer in between).
+        // Better bail out at this point.
+        auto run = *it;
+        if (run.start() > startPosition) {
+            ASSERT(m_flowRunResolverCache);
+            if (&(rendererForPosition(m_flowRunResolverCache->flowContents(), startPosition)) != &renderer) {
+                ASSERT_NOT_REACHED();
+                return true;
+            }
+        }
         ASSERT(run.end() - run.start() <= rendererText.length());
         // contentStart skips leading whitespace.
         unsigned contentStart = std::max<unsigned>(m_offset, run.start() - m_accumulatedSimpleTextLengthInFlow);

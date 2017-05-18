@@ -40,6 +40,7 @@
 #include "RenderText.h"
 #include "RenderView.h"
 #include "Settings.h"
+#include "SimpleLineLayoutFlowContents.h"
 #include "SimpleLineLayoutResolver.h"
 #include "Text.h"
 #include "TextDecorationPainter.h"
@@ -252,6 +253,11 @@ Vector<FloatQuad> collectAbsoluteQuadsForRange(const RenderObject& renderer, uns
         quads.append(renderer.localToAbsoluteQuad(FloatQuad(runRect), UseTransforms, wasFixed));
     }
     return quads;
+}
+
+const RenderObject& rendererForPosition(const FlowContents& flowContents, unsigned position)
+{
+    return flowContents.segmentForPosition(position).renderer;
 }
 
 #if ENABLE(TREE_DEBUGGING)

@@ -50,6 +50,7 @@ public:
         bool canUseSimplifiedTextMeasuring;
     };
     const Segment& segmentForRun(unsigned start, unsigned end) const;
+    const Segment& segmentForPosition(unsigned) const;
 
     typedef Vector<Segment, 8>::const_iterator Iterator;
     Iterator begin() const { return m_segments.begin(); }
@@ -68,6 +69,15 @@ inline const FlowContents::Segment& FlowContents::segmentForRun(unsigned start, 
     if (lastSegment.start <= start && end <= lastSegment.end)
         return m_segments[m_lastSegmentIndex];
     return m_segments[segmentIndexForRunSlow(start, end)];
+}
+
+inline const FlowContents::Segment& FlowContents::segmentForPosition(unsigned position) const
+{
+    auto it = std::lower_bound(m_segments.begin(), m_segments.end(), position, [](const Segment& segment, unsigned position) {
+        return segment.end <= position;
+    });
+    ASSERT(it != m_segments.end());
+    return m_segments[it - m_segments.begin()];
 }
 
 }

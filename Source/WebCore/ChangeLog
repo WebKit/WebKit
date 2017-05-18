@@ -1,3 +1,17 @@
+2017-05-17  Zalan Bujtas  <zalan@apple.com>
+
+        Tighten TextIterator::handleTextNode run-renderer mapping logic.
+        https://bugs.webkit.org/show_bug.cgi?id=172174
+
+        Reviewed by Antti Koivisto.
+
+        This patch ensure that when runs and renderers are getting out of sync
+        we don't run into problems like webkit.org/b/172113 (where we end up
+        using incorrect content start/end positions).
+
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::handleTextNode):
+
 2017-05-17  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Grandfather domains for existing data records
