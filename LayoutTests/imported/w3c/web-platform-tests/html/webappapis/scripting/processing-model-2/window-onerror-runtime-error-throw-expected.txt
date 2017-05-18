@@ -1,4 +1,5 @@
 CONSOLE MESSAGE: line 32: bar
+CONSOLE MESSAGE: line 1321: Error: Tried to create a test with file_is_test
 
-PASS correct number of calls to window.onerror 
+PASS window.onerror: runtime scripterrors 
 

@@ -1,3 +1,1671 @@
+2017-05-18  Chris Dumez  <cdumez@apple.com>
+
+        Update web-platform-tests tools
+        https://bugs.webkit.org/show_bug.cgi?id=172247
+
+        Reviewed by Youenn Fablet.
+
+        Rebaseline tests now that WPT tools were updated.
+
+        * web-platform-tests/FileAPI/idlharness-expected.txt:
+        * web-platform-tests/FileAPI/idlharness.worker-expected.txt:
+        * web-platform-tests/FileAPI/url/multi-global-origin-serialization.sub-expected.txt:
+        * web-platform-tests/IndexedDB/interfaces-expected.txt:
+        * web-platform-tests/IndexedDB/interfaces.worker-expected.txt:
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/test_ecdh_bits-expected.txt:
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/test_ecdh_keys-expected.txt:
+        * web-platform-tests/WebCryptoAPI/idlharness-expected.txt:
+        * web-platform-tests/WebCryptoAPI/idlharness.worker-expected.txt:
+        * web-platform-tests/XMLHttpRequest/formdata-foreach-expected.txt:
+        * web-platform-tests/XMLHttpRequest/interfaces-expected.txt:
+        * web-platform-tests/XMLHttpRequest/responsetype-expected.txt:
+        * web-platform-tests/XMLHttpRequest/timeout-sync-expected.txt:
+        * web-platform-tests/background-fetch/interfaces.worker-expected.txt:
+        * web-platform-tests/cors/origin-expected.txt:
+        * web-platform-tests/custom-elements/custom-element-registry/define-expected.txt:
+        * web-platform-tests/custom-elements/parser/parser-fallsback-to-unknown-element-expected.txt:
+        * web-platform-tests/dom/interfaces-expected.txt:
+        * web-platform-tests/dom/nodes/Document-contentType/contentType/contenttype_datauri_01-expected.txt:
+        * web-platform-tests/dom/nodes/Document-contentType/contentType/contenttype_datauri_02-expected.txt:
+        * web-platform-tests/encoding/idlharness-expected.txt:
+        * web-platform-tests/fetch/api/basic/integrity-sharedworker-expected.txt:
+        * web-platform-tests/fetch/api/headers/headers-idl-expected.txt:
+        * web-platform-tests/fetch/api/request/request-idl-expected.txt:
+        * web-platform-tests/fetch/api/response/response-idl-expected.txt:
+        * web-platform-tests/hr-time/idlharness-expected.txt:
+        * web-platform-tests/html/browsers/origin/cross-origin-objects/cross-origin-objects-expected.txt:
+        * web-platform-tests/html/browsers/origin/cross-origin-objects/cross-origin-objects.html:
+        * web-platform-tests/html/dom/reflection-embedded-expected.txt:
+        * web-platform-tests/html/semantics/document-metadata/the-meta-element/pragma-directives/attr-meta-http-equiv-refresh/allow-scripts-flag-changing-1-expected.txt:
+        * web-platform-tests/html/semantics/document-metadata/the-meta-element/pragma-directives/attr-meta-http-equiv-refresh/allow-scripts-flag-changing-2-expected.txt:
+        * web-platform-tests/html/semantics/document-metadata/the-meta-element/pragma-directives/attr-meta-http-equiv-refresh/moving-documents-expected.txt:
+        * web-platform-tests/html/semantics/document-metadata/the-meta-element/pragma-directives/attr-meta-http-equiv-refresh/not-in-shadow-tree-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/HTMLElement/HTMLTrackElement/srclang-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/TextTrack/language-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/ready-states/autoplay-with-slow-text-tracks-expected.txt:
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/window-onerror-parse-error-expected.txt:
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/window-onerror-runtime-error-expected.txt:
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/window-onerror-runtime-error-throw-expected.txt:
+        * web-platform-tests/notifications/interfaces-expected.txt:
+        * web-platform-tests/resource-timing/idlharness-expected.txt:
+        * web-platform-tests/resource-timing/rt-initiatorType-other-expected.txt:
+        * web-platform-tests/resources/idlharness.js:
+        (set exposed):
+        (IdlArray.prototype.test):
+        (IdlArray.prototype.assert_type_is):
+        (IdlInterface.prototype.test_self):
+        (IdlInterface.prototype.add_iterable_members):
+        (IdlInterface.prototype.test_member_iterable):
+        (IdlInterface.prototype.test_members):
+        (IdlInterface.prototype.test_primary_interface_of):
+        (IdlInterface.prototype.test_interface_of):
+        (IdlInterface.prototype.do_interface_attribute_asserts):
+        (IdlTypedef):
+        * web-platform-tests/resources/testharness.js:
+        (WindowTestEnvironment):
+        (WindowTestEnvironment.prototype._dispatch):
+        (WindowTestEnvironment.prototype._forEach_windows):
+        (ServiceWorkerTestEnvironment):
+        (promise_test):
+        * web-platform-tests/shadow-dom/Document-prototype-currentScript-expected.txt:
+        * web-platform-tests/streams/byte-length-queuing-strategy.sharedworker-expected.txt:
+        * web-platform-tests/streams/count-queuing-strategy.sharedworker-expected.txt:
+        * web-platform-tests/streams/piping/close-propagation-backward.sharedworker-expected.txt:
+        * web-platform-tests/streams/piping/close-propagation-forward.sharedworker-expected.txt:
+        * web-platform-tests/streams/piping/error-propagation-backward.sharedworker-expected.txt:
+        * web-platform-tests/streams/piping/error-propagation-forward.sharedworker-expected.txt:
+        * web-platform-tests/streams/piping/flow-control.sharedworker-expected.txt:
+        * web-platform-tests/streams/piping/general-expected.txt:
+        * web-platform-tests/streams/piping/general.sharedworker-expected.txt:
+        * web-platform-tests/streams/piping/multiple-propagation.sharedworker-expected.txt:
+        * web-platform-tests/streams/piping/pipe-through.sharedworker-expected.txt:
+        * web-platform-tests/streams/piping/transform-streams.sharedworker-expected.txt:
+        * web-platform-tests/streams/readable-byte-streams/general.sharedworker-expected.txt:
+        * web-platform-tests/streams/readable-streams/bad-strategies.sharedworker-expected.txt:
+        * web-platform-tests/streams/readable-streams/bad-underlying-sources.sharedworker-expected.txt:
+        * web-platform-tests/streams/readable-streams/brand-checks.sharedworker-expected.txt:
+        * web-platform-tests/streams/readable-streams/cancel.sharedworker-expected.txt:
+        * web-platform-tests/streams/readable-streams/count-queuing-strategy-integration.sharedworker-expected.txt:
+        * web-platform-tests/streams/readable-streams/default-reader.sharedworker-expected.txt:
+        * web-platform-tests/streams/readable-streams/floating-point-total-queue-size.sharedworker-expected.txt:
+        * web-platform-tests/streams/readable-streams/garbage-collection.sharedworker-expected.txt:
+        * web-platform-tests/streams/readable-streams/general.sharedworker-expected.txt:
+        * web-platform-tests/streams/readable-streams/pipe-through.sharedworker-expected.txt:
+        * web-platform-tests/streams/readable-streams/readable-stream-reader.sharedworker-expected.txt:
+        * web-platform-tests/streams/readable-streams/tee.sharedworker-expected.txt:
+        * web-platform-tests/streams/readable-streams/templated.sharedworker-expected.txt:
+        * web-platform-tests/tools/browserutils/__init__.py: Added.
+        * web-platform-tests/tools/browserutils/browser.py: Added.
+        (path):
+        (Browser):
+        (Browser.install):
+        (Browser.install_webdriver):
+        (Browser.version):
+        (Browser.requirements):
+        (Browser.prepare_environment):
+        (Firefox):
+        (Firefox.platform_string):
+        (Firefox.platform_string_geckodriver):
+        (Firefox.latest_nightly_listing):
+        (Firefox.get_from_nightly):
+        (Firefox.install):
+        (Firefox.find_binary):
+        (Firefox.find_certutil):
+        (Firefox.find_webdriver):
+        (Firefox.install_certutil):
+        (Firefox.install_prefs):
+        (Firefox._latest_geckodriver_version):
+        (Firefox.install_webdriver):
+        (Firefox.version):
+        (Chrome):
+        (Chrome.platform_string):
+        (Chrome.install):
+        (Chrome.find_webdriver):
+        (Chrome.install_webdriver):
+        (Chrome.version):
+        (Chrome.prepare_environment):
+        * web-platform-tests/tools/browserutils/utils.py: Added.
+        (Kwargs):
+        (Kwargs.set_if_none):
+        (call):
+        (get_git_cmd):
+        (get_git_cmd.git):
+        (seekable):
+        (untar):
+        (unzip):
+        (pwd):
+        (pwd.__init__):
+        (pwd.__enter__):
+        (pwd.__exit__):
+        (get):
+        * web-platform-tests/tools/browserutils/virtualenv.py: Added.
+        (Virtualenv):
+        (Virtualenv.__init__):
+        (Virtualenv.exists):
+        (Virtualenv.create):
+        (Virtualenv.bin_path):
+        (Virtualenv.pip_path):
+        (Virtualenv.activate):
+        (Virtualenv.start):
+        (Virtualenv.install_requirements):
+        * web-platform-tests/tools/browserutils/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/tools/html5lib/html5lib/tests/performance/w3c-import.log.
+        * web-platform-tests/tools/conftest.py:
+        * web-platform-tests/tools/gitignore/tests/w3c-import.log:
+        * web-platform-tests/tools/gitignore/w3c-import.log:
+        * web-platform-tests/tools/html5lib/doc/w3c-import.log:
+        * web-platform-tests/tools/html5lib/html5lib/filters/w3c-import.log:
+        * web-platform-tests/tools/html5lib/html5lib/serializer/w3c-import.log:
+        * web-platform-tests/tools/html5lib/html5lib/tests/performance/w3c-import.log:
+        * web-platform-tests/tools/html5lib/html5lib/tests/testdata/encoding/chardet/w3c-import.log:
+        * web-platform-tests/tools/html5lib/html5lib/tests/testdata/encoding/w3c-import.log:
+        * web-platform-tests/tools/html5lib/html5lib/tests/testdata/sanitizer/w3c-import.log:
+        * web-platform-tests/tools/html5lib/html5lib/tests/testdata/serializer/w3c-import.log:
+        * web-platform-tests/tools/html5lib/html5lib/tests/testdata/sniffer/w3c-import.log:
+        * web-platform-tests/tools/html5lib/html5lib/tests/testdata/tokenizer/w3c-import.log:
+        * web-platform-tests/tools/html5lib/html5lib/tests/testdata/tree-construction/scripted/w3c-import.log:
+        * web-platform-tests/tools/html5lib/html5lib/tests/testdata/tree-construction/w3c-import.log:
+        * web-platform-tests/tools/html5lib/html5lib/tests/testdata/validator/w3c-import.log:
+        * web-platform-tests/tools/html5lib/html5lib/tests/testdata/w3c-import.log:
+        * web-platform-tests/tools/html5lib/html5lib/tests/w3c-import.log:
+        * web-platform-tests/tools/html5lib/html5lib/treeadapters/w3c-import.log:
+        * web-platform-tests/tools/html5lib/html5lib/treebuilders/w3c-import.log:
+        * web-platform-tests/tools/html5lib/html5lib/treewalkers/w3c-import.log:
+        * web-platform-tests/tools/html5lib/html5lib/trie/w3c-import.log:
+        * web-platform-tests/tools/html5lib/html5lib/w3c-import.log:
+        * web-platform-tests/tools/html5lib/utils/w3c-import.log:
+        * web-platform-tests/tools/html5lib/w3c-import.log:
+        * web-platform-tests/tools/lint/lint.py:
+        * web-platform-tests/tools/lint/tests/dummy/css-unique/match/support/tools/w3c-import.log:
+        * web-platform-tests/tools/lint/tests/dummy/css-unique/match/support/w3c-import.log:
+        * web-platform-tests/tools/lint/tests/dummy/css-unique/match/tools/w3c-import.log:
+        * web-platform-tests/tools/lint/tests/dummy/css-unique/match/w3c-import.log:
+        * web-platform-tests/tools/lint/tests/dummy/css-unique/not-match/support/w3c-import.log:
+        * web-platform-tests/tools/lint/tests/dummy/css-unique/not-match/tools/w3c-import.log:
+        * web-platform-tests/tools/lint/tests/dummy/css-unique/not-match/w3c-import.log:
+        * web-platform-tests/tools/lint/tests/dummy/css-unique/selectors/w3c-import.log:
+        * web-platform-tests/tools/lint/tests/dummy/css-unique/support/tools/w3c-import.log:
+        * web-platform-tests/tools/lint/tests/dummy/css-unique/support/w3c-import.log:
+        * web-platform-tests/tools/lint/tests/dummy/css-unique/tools/w3c-import.log:
+        * web-platform-tests/tools/lint/tests/dummy/css-unique/w3c-import.log:
+        * web-platform-tests/tools/lint/tests/dummy/css/work-in-progress/foo/support/w3c-import.log:
+        * web-platform-tests/tools/lint/tests/dummy/ref/w3c-import.log:
+        * web-platform-tests/tools/lint/tests/dummy/w3c-import.log:
+        * web-platform-tests/tools/lint/tests/w3c-import.log:
+        * web-platform-tests/tools/lint/w3c-import.log:
+        * web-platform-tests/tools/localpaths.py:
+        * web-platform-tests/tools/manifest/catalog/w3c-import.log:
+        * web-platform-tests/tools/manifest/tests/w3c-import.log:
+        * web-platform-tests/tools/manifest/w3c-import.log:
+        * web-platform-tests/tools/pytest.ini:
+        * web-platform-tests/tools/pytest/_pytest/_code/w3c-import.log:
+        * web-platform-tests/tools/pytest/_pytest/assertion/w3c-import.log:
+        * web-platform-tests/tools/pytest/_pytest/vendored_packages/pluggy-0.3.1.dist-info/w3c-import.log:
+        * web-platform-tests/tools/pytest/_pytest/vendored_packages/w3c-import.log:
+        * web-platform-tests/tools/pytest/_pytest/w3c-import.log:
+        * web-platform-tests/tools/pytest/bench/w3c-import.log:
+        * web-platform-tests/tools/pytest/doc/en/_templates/w3c-import.log:
+        * web-platform-tests/tools/pytest/doc/en/_themes/flask/static/w3c-import.log:
+        * web-platform-tests/tools/pytest/doc/en/_themes/flask/w3c-import.log:
+        * web-platform-tests/tools/pytest/doc/en/_themes/w3c-import.log:
+        * web-platform-tests/tools/pytest/doc/en/announce/w3c-import.log:
+        * web-platform-tests/tools/pytest/doc/en/example/assertion/global_testmodule_config/w3c-import.log:
+        * web-platform-tests/tools/pytest/doc/en/example/assertion/w3c-import.log:
+        * web-platform-tests/tools/pytest/doc/en/example/costlysetup/sub1/w3c-import.log:
+        * web-platform-tests/tools/pytest/doc/en/example/costlysetup/sub2/w3c-import.log:
+        * web-platform-tests/tools/pytest/doc/en/example/costlysetup/w3c-import.log:
+        * web-platform-tests/tools/pytest/doc/en/example/layout1/w3c-import.log:
+        * web-platform-tests/tools/pytest/doc/en/example/nonpython/w3c-import.log:
+        * web-platform-tests/tools/pytest/doc/en/example/py2py3/w3c-import.log:
+        * web-platform-tests/tools/pytest/doc/en/example/w3c-import.log:
+        * web-platform-tests/tools/pytest/doc/en/img/w3c-import.log:
+        * web-platform-tests/tools/pytest/doc/en/test/plugin/w3c-import.log:
+        * web-platform-tests/tools/pytest/doc/en/test/w3c-import.log:
+        * web-platform-tests/tools/pytest/doc/en/w3c-import.log:
+        * web-platform-tests/tools/pytest/extra/setup-py.test/w3c-import.log:
+        * web-platform-tests/tools/pytest/extra/w3c-import.log:
+        * web-platform-tests/tools/pytest/testing/code/w3c-import.log:
+        * web-platform-tests/tools/pytest/testing/cx_freeze/tests/w3c-import.log:
+        * web-platform-tests/tools/pytest/testing/cx_freeze/w3c-import.log:
+        * web-platform-tests/tools/pytest/testing/python/w3c-import.log:
+        * web-platform-tests/tools/pytest/testing/w3c-import.log:
+        * web-platform-tests/tools/pytest/w3c-import.log:
+        * web-platform-tests/tools/pywebsocket/src/example/w3c-import.log:
+        * web-platform-tests/tools/pywebsocket/src/mod_pywebsocket/handshake/w3c-import.log:
+        * web-platform-tests/tools/pywebsocket/src/mod_pywebsocket/w3c-import.log:
+        * web-platform-tests/tools/pywebsocket/src/test/cert/w3c-import.log:
+        * web-platform-tests/tools/pywebsocket/src/test/testdata/handlers/sub/w3c-import.log:
+        * web-platform-tests/tools/pywebsocket/src/test/testdata/handlers/w3c-import.log:
+        * web-platform-tests/tools/pywebsocket/src/test/testdata/w3c-import.log:
+        * web-platform-tests/tools/pywebsocket/src/test/w3c-import.log:
+        * web-platform-tests/tools/pywebsocket/src/w3c-import.log:
+        * web-platform-tests/tools/runner/css/w3c-import.log:
+        * web-platform-tests/tools/runner/fonts/w3c-import.log:
+        * web-platform-tests/tools/runner/w3c-import.log:
+        * web-platform-tests/tools/scripts/w3c-import.log:
+        * web-platform-tests/tools/serve/w3c-import.log:
+        * web-platform-tests/tools/six/documentation/w3c-import.log:
+        * web-platform-tests/tools/six/w3c-import.log:
+        * web-platform-tests/tools/sslutils/w3c-import.log:
+        * web-platform-tests/tools/tox.ini:
+        * web-platform-tests/tools/w3c-import.log:
+        * web-platform-tests/tools/webdriver/README.md:
+        * web-platform-tests/tools/webdriver/w3c-import.log:
+        * web-platform-tests/tools/webdriver/webdriver/client.py:
+        (Element.send_keys):
+        * web-platform-tests/tools/webdriver/webdriver/w3c-import.log:
+        * web-platform-tests/tools/wptrun.py: Added.
+        (WptrunnerHelpAction):
+        (WptrunnerHelpAction.__init__):
+        (WptrunnerHelpAction.__call__):
+        (create_parser):
+        (exit):
+        (args_general):
+        (check_environ):
+        (prompt_install):
+        (args_firefox):
+        (setup_firefox):
+        (args_chrome):
+        (setup_chrome):
+        (setup_edge):
+        (setup_sauce):
+        (setup_servo):
+        (setup_wptrunner):
+        (main):
+        * web-platform-tests/tools/wptrunner/LICENSE: Renamed from LayoutTests/imported/w3c/web-platform-tests/tools/LICENSE.
+        * web-platform-tests/tools/wptrunner/MANIFEST.in: Added.
+        * web-platform-tests/tools/wptrunner/README.rst: Added.
+        * web-platform-tests/tools/wptrunner/docs/Makefile: Added.
+        * web-platform-tests/tools/wptrunner/docs/architecture.svg: Added.
+        * web-platform-tests/tools/wptrunner/docs/conf.py: Added.
+        * web-platform-tests/tools/wptrunner/docs/design.rst: Added.
+        * web-platform-tests/tools/wptrunner/docs/expectation.rst: Added.
+        * web-platform-tests/tools/wptrunner/docs/index.rst: Added.
+        * web-platform-tests/tools/wptrunner/docs/make.bat: Added.
+        * web-platform-tests/tools/wptrunner/docs/usage.rst: Added.
+        * web-platform-tests/tools/wptrunner/docs/w3c-import.log: Added.
+        * web-platform-tests/tools/wptrunner/requirements.txt: Added.
+        * web-platform-tests/tools/wptrunner/requirements_chrome.txt: Added.
+        * web-platform-tests/tools/wptrunner/requirements_firefox.txt: Added.
+        * web-platform-tests/tools/wptrunner/requirements_sauce.txt: Added.
+        * web-platform-tests/tools/wptrunner/requirements_servo.txt: Added.
+        * web-platform-tests/tools/wptrunner/setup.py: Added.
+        * web-platform-tests/tools/wptrunner/test/metadata/reftest/reftest_and_fail.html.ini: Added.
+        * web-platform-tests/tools/wptrunner/test/metadata/reftest/reftest_cycle_fail.html.ini: Added.
+        * web-platform-tests/tools/wptrunner/test/metadata/reftest/reftest_match_fail.html.ini: Added.
+        * web-platform-tests/tools/wptrunner/test/metadata/reftest/reftest_mismatch_fail.html.ini: Added.
+        * web-platform-tests/tools/wptrunner/test/metadata/reftest/reftest_ref_timeout.html.ini: Added.
+        * web-platform-tests/tools/wptrunner/test/metadata/reftest/reftest_timeout.html.ini: Added.
+        * web-platform-tests/tools/wptrunner/test/metadata/reftest/w3c-import.log: Added.
+        * web-platform-tests/tools/wptrunner/test/metadata/testharness/firefox/__dir__.ini: Added.
+        * web-platform-tests/tools/wptrunner/test/metadata/testharness/firefox/subdir/test_pref_reset.html.ini: Added.
+        * web-platform-tests/tools/wptrunner/test/metadata/testharness/firefox/subdir/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/tools/py/doc/img/w3c-import.log.
+        * web-platform-tests/tools/wptrunner/test/metadata/testharness/firefox/test_pref_set.html.ini: Added.
+        * web-platform-tests/tools/wptrunner/test/metadata/testharness/firefox/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/tools/gitignore/w3c-import.log.
+        * web-platform-tests/tools/wptrunner/test/metadata/testharness/subdir/__dir__.ini: Added.
+        * web-platform-tests/tools/wptrunner/test/metadata/testharness/subdir/testharness_1.html.ini: Added.
+        * web-platform-tests/tools/wptrunner/test/metadata/testharness/subdir/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/tools/html5lib/html5lib/tests/testdata/encoding/chardet/w3c-import.log.
+        * web-platform-tests/tools/wptrunner/test/metadata/testharness/testharness_0.html.ini: Added.
+        * web-platform-tests/tools/wptrunner/test/metadata/testharness/testharness_error.html.ini: Added.
+        * web-platform-tests/tools/wptrunner/test/metadata/testharness/testharness_timeout.html.ini: Added.
+        * web-platform-tests/tools/wptrunner/test/metadata/testharness/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/tools/gitignore/w3c-import.log.
+        * web-platform-tests/tools/wptrunner/test/test.cfg.example: Added.
+        * web-platform-tests/tools/wptrunner/test/test.py: Added.
+        (setup_wptrunner_logging):
+        (ResultHandler):
+        (ResultHandler.__init__):
+        (ResultHandler.set_product):
+        (ResultHandler.__call__):
+        (test_settings):
+        (read_config):
+        (run_tests):
+        (settings_to_argv):
+        (set_from_args):
+        (run):
+        (get_parser):
+        (main):
+        * web-platform-tests/tools/wptrunner/test/testdata/reftest/green-expected.html: Added.
+        * web-platform-tests/tools/wptrunner/test/testdata/reftest/green-ref-expected.html: Added.
+        * web-platform-tests/tools/wptrunner/test/testdata/reftest/green-ref.html: Added.
+        * web-platform-tests/tools/wptrunner/test/testdata/reftest/green.html: Added.
+        * web-platform-tests/tools/wptrunner/test/testdata/reftest/red.html: Added.
+        * web-platform-tests/tools/wptrunner/test/testdata/reftest/reftest.https-expected.html: Added.
+        * web-platform-tests/tools/wptrunner/test/testdata/reftest/reftest.https.html: Added.
+        * web-platform-tests/tools/wptrunner/test/testdata/reftest/reftest_and_fail-expected.html: Added.
+        * web-platform-tests/tools/wptrunner/test/testdata/reftest/reftest_and_fail.html: Added.
+        * web-platform-tests/tools/wptrunner/test/testdata/reftest/reftest_and_fail_0-ref-expected.html: Added.
+        * web-platform-tests/tools/wptrunner/test/testdata/reftest/reftest_and_fail_0-ref.html: Added.
+        * web-platform-tests/tools/wptrunner/test/testdata/reftest/reftest_cycle-expected.html: Added.
+        * web-platform-tests/tools/wptrunner/test/testdata/reftest/reftest_cycle.html: Added.
+        * web-platform-tests/tools/wptrunner/test/testdata/reftest/reftest_cycle_0-ref-expected.html: Added.
+        * web-platform-tests/tools/wptrunner/test/testdata/reftest/reftest_cycle_0-ref.html: Added.
+        * web-platform-tests/tools/wptrunner/test/testdata/reftest/reftest_cycle_1-ref-expected.html: Added.
+        * web-platform-tests/tools/wptrunner/test/testdata/reftest/reftest_cycle_1-ref.html: Added.
+        * web-platform-tests/tools/wptrunner/test/testdata/reftest/reftest_cycle_fail-expected.html: Added.
+        * web-platform-tests/tools/wptrunner/test/testdata/reftest/reftest_cycle_fail.html: Added.
+        * web-platform-tests/tools/wptrunner/test/testdata/reftest/reftest_cycle_fail_0-ref-expected.html: Added.
+        * web-platform-tests/tools/wptrunner/test/testdata/reftest/reftest_cycle_fail_0-ref.html: Added.
+        * web-platform-tests/tools/wptrunner/test/testdata/reftest/reftest_match-expected.html: Added.
+        * web-platform-tests/tools/wptrunner/test/testdata/reftest/reftest_match.html: Added.
+        * web-platform-tests/tools/wptrunner/test/testdata/reftest/reftest_match_fail-expected.html: Added.
+        * web-platform-tests/tools/wptrunner/test/testdata/reftest/reftest_match_fail.html: Added.
+        * web-platform-tests/tools/wptrunner/test/testdata/reftest/reftest_mismatch-expected.html: Added.
+        * web-platform-tests/tools/wptrunner/test/testdata/reftest/reftest_mismatch.html: Added.
+        * web-platform-tests/tools/wptrunner/test/testdata/reftest/reftest_mismatch_fail-expected.html: Added.
+        * web-platform-tests/tools/wptrunner/test/testdata/reftest/reftest_mismatch_fail.html: Added.
+        * web-platform-tests/tools/wptrunner/test/testdata/reftest/reftest_or_0-expected.html: Added.
+        * web-platform-tests/tools/wptrunner/test/testdata/reftest/reftest_or_0.html: Added.
+        * web-platform-tests/tools/wptrunner/test/testdata/reftest/reftest_ref_timeout-expected.html: Added.
+        * web-platform-tests/tools/wptrunner/test/testdata/reftest/reftest_ref_timeout.html: Added.
+        * web-platform-tests/tools/wptrunner/test/testdata/reftest/reftest_timeout-expected.html: Added.
+        * web-platform-tests/tools/wptrunner/test/testdata/reftest/reftest_timeout.html: Added.
+        * web-platform-tests/tools/wptrunner/test/testdata/reftest/reftest_wait_0-expected.html: Added.
+        * web-platform-tests/tools/wptrunner/test/testdata/reftest/reftest_wait_0.html: Added.
+        * web-platform-tests/tools/wptrunner/test/testdata/reftest/w3c-import.log: Added.
+        * web-platform-tests/tools/wptrunner/test/testdata/testharness/firefox/subdir/test_pref_inherit.html: Added.
+        * web-platform-tests/tools/wptrunner/test/testdata/testharness/firefox/subdir/test_pref_reset.html: Added.
+        * web-platform-tests/tools/wptrunner/test/testdata/testharness/firefox/subdir/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/tools/html5lib/html5lib/tests/performance/w3c-import.log.
+        * web-platform-tests/tools/wptrunner/test/testdata/testharness/firefox/test_pref_dir.html: Added.
+        * web-platform-tests/tools/wptrunner/test/testdata/testharness/firefox/test_pref_set.html: Added.
+        * web-platform-tests/tools/wptrunner/test/testdata/testharness/firefox/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/tools/gitignore/w3c-import.log.
+        * web-platform-tests/tools/wptrunner/test/testdata/testharness/subdir/testharness_1.html: Added.
+        * web-platform-tests/tools/wptrunner/test/testdata/testharness/subdir/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/tools/py/doc/img/w3c-import.log.
+        * web-platform-tests/tools/wptrunner/test/testdata/testharness/testharness.https.html: Added.
+        * web-platform-tests/tools/wptrunner/test/testdata/testharness/testharness_0.html: Added.
+        * web-platform-tests/tools/wptrunner/test/testdata/testharness/testharness_error.html: Added.
+        * web-platform-tests/tools/wptrunner/test/testdata/testharness/testharness_long_timeout.html: Added.
+        * web-platform-tests/tools/wptrunner/test/testdata/testharness/testharness_timeout.html: Added.
+        * web-platform-tests/tools/wptrunner/test/testdata/testharness/w3c-import.log: Added.
+        * web-platform-tests/tools/wptrunner/test/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/tools/html5lib/html5lib/tests/testdata/sanitizer/w3c-import.log.
+        * web-platform-tests/tools/wptrunner/tox.ini: Added.
+        * web-platform-tests/tools/wptrunner/w3c-import.log: Added.
+        * web-platform-tests/tools/wptrunner/wptrunner.default.ini: Added.
+        * web-platform-tests/tools/wptrunner/wptrunner/__init__.py: Added.
+        * web-platform-tests/tools/wptrunner/wptrunner/browsers/__init__.py: Added.
+        * web-platform-tests/tools/wptrunner/wptrunner/browsers/b2g_setup/certtest_app.zip: Added.
+        * web-platform-tests/tools/wptrunner/wptrunner/browsers/b2g_setup/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/tools/py/doc/img/w3c-import.log.
+        * web-platform-tests/tools/wptrunner/wptrunner/browsers/base.py: Added.
+        (cmd_arg):
+        (get_free_port):
+        (browser_command):
+        (BrowserError):
+        (Browser):
+        (Browser.__init__):
+        (Browser.__init__.serving):
+        (Browser.__init__.also):
+        (Browser.__enter__):
+        (Browser.__exit__):
+        (Browser.setup):
+        (Browser.start):
+        (Browser.stop):
+        (Browser.pid):
+        (Browser.is_alive):
+        (Browser.setup_ssl):
+        (Browser.cleanup):
+        (Browser.executor_browser):
+        (Browser.executor_browser.for):
+        (Browser.log_crash):
+        (NullBrowser):
+        (NullBrowser.__init__):
+        (NullBrowser.start):
+        (NullBrowser.stop):
+        (NullBrowser.pid):
+        (NullBrowser.is_alive):
+        (NullBrowser.on_output):
+        (ExecutorBrowser):
+        (ExecutorBrowser.__init__):
+        * web-platform-tests/tools/wptrunner/wptrunner/browsers/chrome.py: Added.
+        (check_args):
+        (browser_kwargs):
+        (executor_kwargs):
+        (env_extras):
+        (env_options):
+        (ChromeBrowser):
+        (ChromeBrowser.__init__):
+        (ChromeBrowser.start):
+        (ChromeBrowser.stop):
+        (ChromeBrowser.pid):
+        (ChromeBrowser.is_alive):
+        (ChromeBrowser.cleanup):
+        (ChromeBrowser.executor_browser):
+        * web-platform-tests/tools/wptrunner/wptrunner/browsers/edge.py: Added.
+        (check_args):
+        (browser_kwargs):
+        (executor_kwargs):
+        (env_extras):
+        (env_options):
+        (EdgeBrowser):
+        (EdgeBrowser.__init__):
+        (EdgeBrowser.start):
+        (EdgeBrowser.stop):
+        (EdgeBrowser.pid):
+        (EdgeBrowser.is_alive):
+        (EdgeBrowser.cleanup):
+        (EdgeBrowser.executor_browser):
+        * web-platform-tests/tools/wptrunner/wptrunner/browsers/firefox.py: Added.
+        (check_args):
+        (browser_kwargs):
+        (executor_kwargs):
+        (env_extras):
+        (env_options):
+        (run_info_extras):
+        (update_properties):
+        (FirefoxBrowser):
+        (FirefoxBrowser.__init__):
+        (FirefoxBrowser.start):
+        (FirefoxBrowser.load_prefs):
+        (FirefoxBrowser.stop):
+        (FirefoxBrowser.pid):
+        (FirefoxBrowser.on_output):
+        (FirefoxBrowser.is_alive):
+        (FirefoxBrowser.cleanup):
+        (FirefoxBrowser.executor_browser):
+        (FirefoxBrowser.log_crash):
+        (FirefoxBrowser.setup_ssl):
+        (FirefoxBrowser.setup_ssl.certutil):
+        * web-platform-tests/tools/wptrunner/wptrunner/browsers/sauce.py: Added.
+        (get_capabilities):
+        (get_sauce_config):
+        (check_args):
+        (browser_kwargs):
+        (executor_kwargs):
+        (env_extras):
+        (env_options):
+        (get_tar):
+        (SauceConnect):
+        (SauceConnect.__init__):
+        (SauceConnect.__enter__):
+        (SauceConnect.__exit__):
+        (SauceConnect.upload_prerun_exec):
+        (SauceException):
+        (SauceBrowser):
+        (SauceBrowser.__init__):
+        (SauceBrowser.start):
+        (SauceBrowser.stop):
+        (SauceBrowser.pid):
+        (SauceBrowser.is_alive):
+        (SauceBrowser.cleanup):
+        (SauceBrowser.executor_browser):
+        * web-platform-tests/tools/wptrunner/wptrunner/browsers/sauce_setup/edge-prerun.bat: Added.
+        * web-platform-tests/tools/wptrunner/wptrunner/browsers/sauce_setup/safari-prerun.sh: Added.
+        * web-platform-tests/tools/wptrunner/wptrunner/browsers/sauce_setup/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/tools/gitignore/tests/w3c-import.log.
+        * web-platform-tests/tools/wptrunner/wptrunner/browsers/server-locations.txt: Added.
+        * web-platform-tests/tools/wptrunner/wptrunner/browsers/servo.py: Added.
+        (check_args):
+        (browser_kwargs):
+        (executor_kwargs):
+        (env_extras):
+        (env_options):
+        (update_properties):
+        (ServoBrowser):
+        (ServoBrowser.__init__):
+        (ServoBrowser.executor_browser):
+        * web-platform-tests/tools/wptrunner/wptrunner/browsers/servodriver.py: Added.
+        (check_args):
+        (browser_kwargs):
+        (executor_kwargs):
+        (env_extras):
+        (env_options):
+        (update_properties):
+        (make_hosts_file):
+        (ServoWebDriverBrowser):
+        (ServoWebDriverBrowser.__init__):
+        (ServoWebDriverBrowser.start):
+        (ServoWebDriverBrowser.stop):
+        (ServoWebDriverBrowser.pid):
+        (ServoWebDriverBrowser.on_output):
+        (ServoWebDriverBrowser.is_alive):
+        (ServoWebDriverBrowser.cleanup):
+        (ServoWebDriverBrowser.executor_browser):
+        * web-platform-tests/tools/wptrunner/wptrunner/browsers/w3c-import.log: Added.
+        * web-platform-tests/tools/wptrunner/wptrunner/config.json: Added.
+        * web-platform-tests/tools/wptrunner/wptrunner/config.py: Added.
+        (ConfigDict):
+        (ConfigDict.__init__):
+        (ConfigDict.get_path):
+        (read):
+        (path):
+        (load):
+        * web-platform-tests/tools/wptrunner/wptrunner/environment.py: Added.
+        (do_delayed_imports):
+        (serve_path):
+        (get_ssl_kwargs):
+        (ssl_env):
+        (TestEnvironmentError):
+        (TestEnvironment):
+        (TestEnvironment.__init__):
+        (TestEnvironment.__enter__):
+        (TestEnvironment.__exit__):
+        (TestEnvironment.ignore_interrupts):
+        (TestEnvironment.process_interrupts):
+        (TestEnvironment.load_config):
+        (TestEnvironment.setup_server_logging):
+        (TestEnvironment.get_routes):
+        (TestEnvironment.ensure_started):
+        * web-platform-tests/tools/wptrunner/wptrunner/executors/__init__.py: Added.
+        * web-platform-tests/tools/wptrunner/wptrunner/executors/base.py: Added.
+        (executor_kwargs):
+        (strip_server):
+        (TestharnessResultConverter):
+        (TestharnessResultConverter.__call__):
+        (reftest_result_converter):
+        (pytest_result_converter):
+        (ExecutorException):
+        (ExecutorException.__init__):
+        (TestExecutor):
+        (TestExecutor.__init__):
+        (TestExecutor.__init__.for):
+        (TestExecutor.logger):
+        (TestExecutor.setup):
+        (TestExecutor.teardown):
+        (TestExecutor.run_test):
+        (TestExecutor.server_url):
+        (TestExecutor.test_url):
+        (TestExecutor.do_test):
+        (TestExecutor.on_environment_change):
+        (TestExecutor.result_from_exception):
+        (TestharnessExecutor):
+        (RefTestExecutor):
+        (RefTestExecutor.__init__):
+        (RefTestImplementation):
+        (RefTestImplementation.__init__):
+        (RefTestImplementation.logger):
+        (RefTestImplementation.get_hash):
+        (RefTestImplementation.is_pass):
+        (RefTestImplementation.run_test):
+        (RefTestImplementation.retake_screenshot):
+        (WdspecExecutor):
+        (Protocol):
+        (Protocol.__init__):
+        (Protocol.logger):
+        (Protocol.setup):
+        (Protocol.teardown):
+        (Protocol.wait):
+        * web-platform-tests/tools/wptrunner/wptrunner/executors/executormarionette.py: Added.
+        (do_delayed_imports):
+        (MarionetteProtocol):
+        (MarionetteProtocol.__init__):
+        (MarionetteProtocol.setup):
+        (MarionetteProtocol.teardown):
+        (MarionetteProtocol.is_alive):
+        (MarionetteProtocol.after_connect):
+        (MarionetteProtocol.set_timeout):
+        (MarionetteProtocol.load_runner):
+        (MarionetteProtocol.close_old_windows):
+        (MarionetteProtocol.wait):
+        (MarionetteProtocol.on_environment_change):
+        (MarionetteProtocol.set_pref):
+        (MarionetteProtocol.clear_user_pref):
+        (MarionetteProtocol.get_pref):
+        (MarionetteProtocol.clear_origin):
+        (RemoteMarionetteProtocol):
+        (RemoteMarionetteProtocol.__init__):
+        (RemoteMarionetteProtocol.setup):
+        (RemoteMarionetteProtocol.teardown):
+        (RemoteMarionetteProtocol.is_alive):
+        (ExecuteAsyncScriptRun):
+        (ExecuteAsyncScriptRun.__init__):
+        (ExecuteAsyncScriptRun.run):
+        (ExecuteAsyncScriptRun._run):
+        (MarionetteTestharnessExecutor):
+        (MarionetteTestharnessExecutor.__init__):
+        (MarionetteTestharnessExecutor.is_alive):
+        (MarionetteTestharnessExecutor.on_environment_change):
+        (MarionetteTestharnessExecutor.do_test):
+        (MarionetteTestharnessExecutor.do_testharness):
+        (MarionetteRefTestExecutor):
+        (MarionetteRefTestExecutor.__init__):
+        (MarionetteRefTestExecutor.is_alive):
+        (MarionetteRefTestExecutor.on_environment_change):
+        (MarionetteRefTestExecutor.do_test):
+        (MarionetteRefTestExecutor.screenshot):
+        (MarionetteRefTestExecutor._screenshot):
+        (WdspecRun):
+        (WdspecRun.__init__):
+        (WdspecRun.run):
+        (WdspecRun._run):
+        (MarionetteWdspecExecutor):
+        (MarionetteWdspecExecutor.__init__):
+        (MarionetteWdspecExecutor.is_alive):
+        (MarionetteWdspecExecutor.on_environment_change):
+        (MarionetteWdspecExecutor.do_test):
+        (MarionetteWdspecExecutor.do_wdspec):
+        (MarionetteWdspecExecutor.do_delayed_imports):
+        * web-platform-tests/tools/wptrunner/wptrunner/executors/executorselenium.py: Added.
+        (do_delayed_imports):
+        (SeleniumProtocol):
+        (SeleniumProtocol.__init__):
+        (SeleniumProtocol.setup):
+        (SeleniumProtocol.teardown):
+        (SeleniumProtocol.is_alive):
+        (SeleniumProtocol.after_connect):
+        (SeleniumProtocol.load_runner):
+        (SeleniumProtocol.wait):
+        (SeleniumRun):
+        (SeleniumRun.__init__):
+        (SeleniumRun.run):
+        (SeleniumRun._run):
+        (SeleniumTestharnessExecutor):
+        (SeleniumTestharnessExecutor.__init__):
+        (SeleniumTestharnessExecutor.is_alive):
+        (SeleniumTestharnessExecutor.on_environment_change):
+        (SeleniumTestharnessExecutor.do_test):
+        (SeleniumTestharnessExecutor.do_testharness):
+        (SeleniumRefTestExecutor):
+        (SeleniumRefTestExecutor.__init__):
+        (SeleniumRefTestExecutor.is_alive):
+        (SeleniumRefTestExecutor.do_test):
+        (SeleniumRefTestExecutor.screenshot):
+        (SeleniumRefTestExecutor._screenshot):
+        * web-platform-tests/tools/wptrunner/wptrunner/executors/executorservo.py: Added.
+        (make_hosts_file):
+        (ServoTestharnessExecutor):
+        (ServoTestharnessExecutor.__init__):
+        (ServoTestharnessExecutor.teardown):
+        (ServoTestharnessExecutor.do_test):
+        (ServoTestharnessExecutor.on_output):
+        (ServoTestharnessExecutor.on_finish):
+        (TempFilename):
+        (TempFilename.__init__):
+        (TempFilename.__enter__):
+        (TempFilename.__exit__):
+        (ServoRefTestExecutor):
+        (ServoRefTestExecutor.__init__):
+        (ServoRefTestExecutor.teardown):
+        (ServoRefTestExecutor.screenshot):
+        (ServoRefTestExecutor.do_test):
+        (ServoRefTestExecutor.on_output):
+        (ServoWdspecProtocol):
+        (ServoWdspecProtocol.__init__):
+        (ServoWdspecProtocol.setup):
+        (ServoWdspecProtocol.teardown):
+        (ServoWdspecProtocol.is_alive):
+        (ServoWdspecProtocol.do_delayed_imports):
+        (ServoWdspecExecutor):
+        (ServoWdspecExecutor.__init__):
+        (ServoWdspecExecutor.is_alive):
+        (ServoWdspecExecutor.on_environment_change):
+        (ServoWdspecExecutor.do_test):
+        (ServoWdspecExecutor.do_wdspec):
+        * web-platform-tests/tools/wptrunner/wptrunner/executors/executorservodriver.py: Added.
+        (do_delayed_imports):
+        (ServoWebDriverProtocol):
+        (ServoWebDriverProtocol.__init__):
+        (ServoWebDriverProtocol.setup):
+        (ServoWebDriverProtocol.teardown):
+        (ServoWebDriverProtocol.is_alive):
+        (ServoWebDriverProtocol.after_connect):
+        (ServoWebDriverProtocol.wait):
+        (ServoWebDriverProtocol.on_environment_change):
+        (ServoWebDriverRun):
+        (ServoWebDriverRun.__init__):
+        (ServoWebDriverRun.run):
+        (ServoWebDriverRun._run):
+        (timeout_func):
+        (ServoWebDriverTestharnessExecutor):
+        (ServoWebDriverTestharnessExecutor.__init__):
+        (ServoWebDriverTestharnessExecutor.on_protocol_change):
+        (ServoWebDriverTestharnessExecutor.is_alive):
+        (ServoWebDriverTestharnessExecutor.do_test):
+        (ServoWebDriverTestharnessExecutor.do_testharness):
+        (TimeoutError):
+        (ServoWebDriverRefTestExecutor):
+        (ServoWebDriverRefTestExecutor.__init__):
+        (ServoWebDriverRefTestExecutor.is_alive):
+        (ServoWebDriverRefTestExecutor.do_test):
+        (ServoWebDriverRefTestExecutor.screenshot):
+        (ServoWebDriverRefTestExecutor._screenshot):
+        * web-platform-tests/tools/wptrunner/wptrunner/executors/process.py: Added.
+        (ProcessTestExecutor):
+        (ProcessTestExecutor.__init__):
+        (ProcessTestExecutor.setup):
+        (ProcessTestExecutor.is_alive):
+        (ProcessTestExecutor.do_test):
+        * web-platform-tests/tools/wptrunner/wptrunner/executors/pytestrunner/__init__.py: Added.
+        * web-platform-tests/tools/wptrunner/wptrunner/executors/pytestrunner/runner.py: Added.
+        (do_delayed_imports):
+        (run):
+        (SubtestResultRecorder):
+        (SubtestResultRecorder.__init__):
+        (SubtestResultRecorder.pytest_runtest_logreport):
+        (SubtestResultRecorder.record_pass):
+        (SubtestResultRecorder.record_fail):
+        (SubtestResultRecorder.record_error):
+        (SubtestResultRecorder.record_skip):
+        (SubtestResultRecorder.record):
+        (TemporaryDirectory):
+        (TemporaryDirectory.__enter__):
+        (TemporaryDirectory.__exit__):
+        * web-platform-tests/tools/wptrunner/wptrunner/executors/pytestrunner/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/tools/gitignore/w3c-import.log.
+        * web-platform-tests/tools/wptrunner/wptrunner/executors/reftest-wait.js: Added.
+        (test):
+        * web-platform-tests/tools/wptrunner/wptrunner/executors/reftest-wait_servodriver.js: Added.
+        (check_done):
+        * web-platform-tests/tools/wptrunner/wptrunner/executors/reftest-wait_webdriver.js: Added.
+        (test):
+        * web-platform-tests/tools/wptrunner/wptrunner/executors/reftest.js: Added.
+        * web-platform-tests/tools/wptrunner/wptrunner/executors/testharness_marionette.js: Added.
+        (listener):
+        (timeout.s.timer.setTimeout):
+        * web-platform-tests/tools/wptrunner/wptrunner/executors/testharness_servodriver.js: Added.
+        * web-platform-tests/tools/wptrunner/wptrunner/executors/testharness_webdriver.js: Added.
+        (f):
+        (timer.setTimeout):
+        * web-platform-tests/tools/wptrunner/wptrunner/executors/w3c-import.log: Added.
+        * web-platform-tests/tools/wptrunner/wptrunner/expected.py: Added.
+        (expected_path):
+        * web-platform-tests/tools/wptrunner/wptrunner/hosts.py: Added.
+        (HostsLine):
+        (HostsLine.__init__):
+        (HostsLine.from_string):
+        (HostsFile):
+        (HostsFile.__init__):
+        (HostsFile.set_host):
+        (HostsFile.from_file):
+        (HostsFile.to_string):
+        (HostsFile.to_file):
+        * web-platform-tests/tools/wptrunner/wptrunner/manifestexpected.py: Added.
+        (data_cls_getter):
+        (bool_prop):
+        (tags):
+        (prefs):
+        (prefs.value):
+        (ExpectedManifest):
+        (ExpectedManifest.__init__):
+        (ExpectedManifest.append):
+        (ExpectedManifest._remove_child):
+        (ExpectedManifest.get_test):
+        (ExpectedManifest.url):
+        (ExpectedManifest.disabled):
+        (ExpectedManifest.restart_after):
+        (ExpectedManifest.tags):
+        (ExpectedManifest.prefs):
+        (DirectoryManifest):
+        (DirectoryManifest.disabled):
+        (DirectoryManifest.restart_after):
+        (DirectoryManifest.tags):
+        (DirectoryManifest.prefs):
+        (TestNode):
+        (TestNode.__init__):
+        (TestNode.is_empty):
+        (TestNode.test_type):
+        (TestNode.id):
+        (TestNode.disabled):
+        (TestNode.restart_after):
+        (TestNode.tags):
+        (TestNode.prefs):
+        (TestNode.append):
+        (TestNode.get_subtest):
+        (SubtestNode):
+        (SubtestNode.__init__):
+        (SubtestNode.is_empty):
+        (get_manifest):
+        (get_dir_manifest):
+        * web-platform-tests/tools/wptrunner/wptrunner/manifestinclude.py: Added.
+        (IncludeManifest):
+        (IncludeManifest.__init__):
+        (IncludeManifest.create):
+        (IncludeManifest.append):
+        (IncludeManifest.include):
+        (IncludeManifest._include):
+        (IncludeManifest._get_components):
+        (IncludeManifest._add_rule):
+        (IncludeManifest.add_include):
+        (IncludeManifest.add_exclude):
+        (get_manifest):
+        * web-platform-tests/tools/wptrunner/wptrunner/manifestupdate.py: Added.
+        (ConditionError):
+        (data_cls_getter):
+        (ExpectedManifest):
+        (ExpectedManifest.__init__):
+        (ExpectedManifest.append):
+        (ExpectedManifest._remove_child):
+        (ExpectedManifest.get_test):
+        (ExpectedManifest.has_test):
+        (ExpectedManifest.url):
+        (TestNode):
+        (TestNode.__init__):
+        (TestNode.create):
+        (TestNode.is_empty):
+        (TestNode.test_type):
+        (TestNode.id):
+        (TestNode.disabled):
+        (TestNode.set_result):
+        (TestNode.coalesce_expected):
+        (TestNode._add_key_value):
+        (TestNode.clear_expected):
+        (TestNode.append):
+        (TestNode.get_subtest):
+        (SubtestNode):
+        (SubtestNode.__init__):
+        (SubtestNode.create):
+        (SubtestNode.is_empty):
+        (group_conditionals):
+        (make_expr):
+        (get_manifest):
+        (compile):
+        * web-platform-tests/tools/wptrunner/wptrunner/metadata.py: Added.
+        (load_test_manifests):
+        (update_expected):
+        (do_delayed_imports):
+        (files_in_repo):
+        (rev_range):
+        (paths_changed):
+        (load_change_data):
+        (unexpected_changes):
+        (update_from_logs):
+        (directory_manifests):
+        (write_changes):
+        (write_new_expected):
+        (ExpectedUpdater):
+        (ExpectedUpdater.__init__):
+        (ExpectedUpdater.update_from_log):
+        (ExpectedUpdater.suite_start):
+        (ExpectedUpdater.test_id):
+        (ExpectedUpdater.test_start):
+        (ExpectedUpdater.test_status):
+        (ExpectedUpdater.test_end):
+        (create_test_tree):
+        (create_expected):
+        (load_expected):
+        * web-platform-tests/tools/wptrunner/wptrunner/products.py: Added.
+        (products_enabled):
+        (product_module):
+        (load_product):
+        (load_product_update):
+        * web-platform-tests/tools/wptrunner/wptrunner/reduce.py: Added.
+        (setup_logging):
+        (group):
+        (next_power_of_two):
+        (Reducer):
+        (Reducer.__init__):
+        (Reducer.run):
+        (Reducer.unstable):
+        (Reducer.log_is_unstable):
+        (Reducer.log_is_unstable.handle_status):
+        (Reducer.log_is_unstable.handle_end):
+        (Reducer.get_initial_tests):
+        (do_reduce):
+        * web-platform-tests/tools/wptrunner/wptrunner/testharness_runner.html: Added.
+        * web-platform-tests/tools/wptrunner/wptrunner/testharnessreport-servo.js: Added.
+        (add_completion_callback):
+        * web-platform-tests/tools/wptrunner/wptrunner/testharnessreport-servodriver.js: Added.
+        (add_completion_callback.):
+        (add_completion_callback):
+        * web-platform-tests/tools/wptrunner/wptrunner/testharnessreport.js: Added.
+        * web-platform-tests/tools/wptrunner/wptrunner/testloader.py: Added.
+        (do_delayed_imports):
+        (TestChunker):
+        (TestChunker.__init__):
+        (TestChunker.__call__):
+        (Unchunked):
+        (Unchunked.__init__):
+        (Unchunked.__call__):
+        (HashChunker):
+        (HashChunker.__call__):
+        (DirectoryHashChunker):
+        (DirectoryHashChunker.__call__):
+        (EqualTimeChunker):
+        (EqualTimeChunker._group_by_directory):
+        (EqualTimeChunker._group_by_directory.PathData):
+        (EqualTimeChunker._group_by_directory.PathData.__init__):
+        (EqualTimeChunker._maybe_remove):
+        (EqualTimeChunker._maybe_add):
+        (EqualTimeChunker._maybe_move):
+        (EqualTimeChunker._badness):
+        (EqualTimeChunker._get_chunk):
+        (EqualTimeChunker._all_tests):
+        (EqualTimeChunker._chunked_tests):
+        (EqualTimeChunker._create_initial_chunks):
+        (EqualTimeChunker._create_initial_chunks.Chunk):
+        (EqualTimeChunker._create_initial_chunks.Chunk.__init__):
+        (EqualTimeChunker._create_initial_chunks.Chunk.appendleft):
+        (EqualTimeChunker._create_initial_chunks.Chunk.append):
+        (EqualTimeChunker._create_initial_chunks.Chunk.pop):
+        (EqualTimeChunker._create_initial_chunks.Chunk.popleft):
+        (EqualTimeChunker._create_initial_chunks.Chunk.badness):
+        (EqualTimeChunker._update_chunks):
+        (EqualTimeChunker._get_tests):
+        (EqualTimeChunker.__call__):
+        (TestFilter):
+        (TestFilter.__init__):
+        (TestFilter.__call__):
+        (TagFilter):
+        (TagFilter.__init__):
+        (TagFilter.__call__):
+        (ManifestLoader):
+        (ManifestLoader.__init__):
+        (ManifestLoader.load):
+        (ManifestLoader.create_manifest):
+        (ManifestLoader.update_manifest):
+        (ManifestLoader.load_manifest):
+        (iterfilter):
+        (TestLoader):
+        (TestLoader.__init__):
+        (TestLoader.test_ids):
+        (TestLoader.get_test):
+        (TestLoader.load_dir_metadata):
+        (TestLoader.load_metadata):
+        (TestLoader.iter_tests):
+        (TestLoader.iter_wpttest):
+        (TestLoader._load_tests):
+        (TestLoader.groups):
+        (TestSource):
+        (TestSource.queue_tests):
+        (TestSource.requeue_test):
+        (TestSource.__enter__):
+        (TestSource.__exit__):
+        (SingleTestSource):
+        (SingleTestSource.__init__):
+        (SingleTestSource.queue_tests):
+        (SingleTestSource.get_queue):
+        (SingleTestSource.requeue_test):
+        (PathGroupedSource):
+        (PathGroupedSource.__init__):
+        (PathGroupedSource.queue_tests):
+        (PathGroupedSource.get_queue):
+        (PathGroupedSource.requeue_test):
+        (PathGroupedSource.__exit__):
+        * web-platform-tests/tools/wptrunner/wptrunner/testrunner.py: Added.
+        (MessageLogger):
+        (MessageLogger.__init__):
+        (MessageLogger._log_data):
+        (MessageLogger.process_output):
+        (_log_func):
+        (_log_func.log):
+        (TestRunner):
+        (TestRunner.__init__):
+        (TestRunner.__init__.delegates):
+        (TestRunner.__enter__):
+        (TestRunner.__exit__):
+        (TestRunner.setup):
+        (TestRunner.teardown):
+        (TestRunner.run):
+        (TestRunner.stop):
+        (TestRunner.run_test):
+        (TestRunner.wait):
+        (TestRunner.send_message):
+        (start_runner):
+        (next_manager_number):
+        (BrowserManager):
+        (BrowserManager.__init__):
+        (BrowserManager.init):
+        (BrowserManager.send_message):
+        (BrowserManager.init_timeout):
+        (BrowserManager.after_init):
+        (BrowserManager.stop):
+        (BrowserManager.cleanup):
+        (BrowserManager.log_crash):
+        (BrowserManager.is_alive):
+        (_RunnerManagerState):
+        (TestRunnerManager):
+        (TestRunnerManager.__init__):
+        (TestRunnerManager.run):
+        (TestRunnerManager.wait_event):
+        (TestRunnerManager.should_stop):
+        (TestRunnerManager.start_init):
+        (TestRunnerManager.init):
+        (TestRunnerManager.start_test_runner):
+        (TestRunnerManager.init_succeeded):
+        (TestRunnerManager.init_failed):
+        (TestRunnerManager.get_next_test):
+        (TestRunnerManager.run_test):
+        (TestRunnerManager.test_ended):
+        (TestRunnerManager.wait_finished):
+        (TestRunnerManager.after_test_end):
+        (TestRunnerManager.restart_runner):
+        (TestRunnerManager.log):
+        (TestRunnerManager.error):
+        (TestRunnerManager.stop_runner):
+        (TestRunnerManager.teardown):
+        (TestRunnerManager.ensure_runner_stopped):
+        (TestRunnerManager.runner_teardown):
+        (TestRunnerManager.send_message):
+        (TestRunnerManager.cleanup):
+        (TestQueue):
+        (TestQueue.__init__):
+        (TestQueue.__enter__):
+        (TestQueue.__exit__):
+        (ManagerGroup):
+        (ManagerGroup.__init__):
+        (ManagerGroup.__enter__):
+        (ManagerGroup.__exit__):
+        (ManagerGroup.run):
+        (ManagerGroup.is_alive):
+        (ManagerGroup.wait):
+        (ManagerGroup.stop):
+        (ManagerGroup.unexpected_count):
+        * web-platform-tests/tools/wptrunner/wptrunner/tests/__init__.py: Added.
+        * web-platform-tests/tools/wptrunner/wptrunner/tests/test_chunker.py: Added.
+        (MockTest):
+        (MockTest.__init__):
+        (make_mock_manifest):
+        (TestEqualTimeChunker):
+        (TestEqualTimeChunker.test_include_all):
+        (TestEqualTimeChunker.test_include_all_1):
+        (TestEqualTimeChunker.test_long):
+        (TestEqualTimeChunker.test_long_1):
+        (TestEqualTimeChunker.test_too_few_dirs):
+        * web-platform-tests/tools/wptrunner/wptrunner/tests/test_hosts.py: Added.
+        (HostsTest):
+        (HostsTest.do_test):
+        (HostsTest.test_simple):
+        (test_blank_lines):
+        (test_whitespace):
+        (test_alignment):
+        (test_multiple_same_name):
+        * web-platform-tests/tools/wptrunner/wptrunner/tests/test_testloader.py: Added.
+        (test_filter_unicode):
+        * web-platform-tests/tools/wptrunner/wptrunner/tests/test_update.py: Added.
+        (TestExpectedUpdater):
+        (TestExpectedUpdater.create_manifest):
+        (TestExpectedUpdater.create_updater):
+        (TestExpectedUpdater.create_log):
+        (TestExpectedUpdater.coalesce_results):
+        (TestExpectedUpdater.test_update_0):
+        (TestExpectedUpdater.test_update_1):
+        (TestExpectedUpdater.test_new_subtest):
+        (TestExpectedUpdater.test_update_multiple_0):
+        (TestExpectedUpdater.test_update_multiple_1):
+        (TestExpectedUpdater.test_update_multiple_2):
+        (TestExpectedUpdater.test_update_multiple_3):
+        (TestExpectedUpdater.test_update_ignore_existing):
+        * web-platform-tests/tools/wptrunner/wptrunner/tests/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/tools/html5lib/html5lib/tests/performance/w3c-import.log.
+        * web-platform-tests/tools/wptrunner/wptrunner/update/__init__.py: Added.
+        (remove_logging_args):
+        (setup_logging):
+        (run_update):
+        (main):
+        * web-platform-tests/tools/wptrunner/wptrunner/update/base.py: Added.
+        (Step):
+        (Step.__init__):
+        (Step.run):
+        (Step.run.for):
+        (Step.create):
+        (Step.restore):
+        (StepRunner):
+        (StepRunner.__init__):
+        (StepRunner.run):
+        * web-platform-tests/tools/wptrunner/wptrunner/update/metadata.py: Added.
+        (GetUpdatePropertyList):
+        (GetUpdatePropertyList.create):
+        (UpdateExpected):
+        (UpdateExpected.create):
+        (CreateMetadataPatch):
+        (CreateMetadataPatch.create):
+        (MetadataUpdateRunner):
+        * web-platform-tests/tools/wptrunner/wptrunner/update/state.py: Added.
+        (State):
+        (State.__new__):
+        (State.__init__):
+        (State.__getstate__):
+        (State.load):
+        (State.push):
+        (State.save):
+        (State.is_empty):
+        (State.clear):
+        (State.__setattr__):
+        (State.__getattr__):
+        (State.__contains__):
+        (State.update):
+        (State.keys):
+        (StateContext):
+        (StateContext.__init__):
+        (StateContext.__enter__):
+        (StateContext.__exit__):
+        * web-platform-tests/tools/wptrunner/wptrunner/update/sync.py: Added.
+        (copy_wpt_tree):
+        (add_license):
+        (UpdateCheckout):
+        (UpdateCheckout.create):
+        (UpdateCheckout.restore):
+        (GetSyncTargetCommit):
+        (GetSyncTargetCommit.create):
+        (LoadManifest):
+        (LoadManifest.create):
+        (UpdateManifest):
+        (UpdateManifest.create):
+        (CopyWorkTree):
+        (CopyWorkTree.create):
+        (CreateSyncPatch):
+        (CreateSyncPatch.create):
+        (SyncFromUpstreamRunner):
+        * web-platform-tests/tools/wptrunner/wptrunner/update/tree.py: Added.
+        (get_unique_name):
+        (NoVCSTree):
+        (NoVCSTree.__init__):
+        (NoVCSTree.is_type):
+        (NoVCSTree.is_clean):
+        (NoVCSTree.add_new):
+        (NoVCSTree.create_patch):
+        (NoVCSTree.update_patch):
+        (NoVCSTree.commit_patch):
+        (HgTree):
+        (HgTree.__init__):
+        (HgTree.__getstate__):
+        (HgTree.__setstate__):
+        (HgTree.is_type):
+        (HgTree.is_clean):
+        (HgTree.add_new):
+        (HgTree.create_patch):
+        (HgTree.update_patch):
+        (HgTree.commit_patch):
+        (HgTree.contains_commit):
+        (GitTree):
+        (GitTree.__init__):
+        (GitTree.__getstate__):
+        (GitTree.__setstate__):
+        (GitTree.is_type):
+        (GitTree.rev):
+        (GitTree.is_clean):
+        (GitTree.add_new):
+        (GitTree.list_refs):
+        (GitTree.list_remote):
+        (GitTree.get_remote_sha1):
+        (GitTree.create_patch):
+        (GitTree.update_patch):
+        (GitTree.commit_patch):
+        (GitTree.init):
+        (GitTree.checkout):
+        (GitTree.update):
+        (GitTree.clean):
+        (GitTree.paths):
+        (GitTree.submodules):
+        (GitTree.contains_commit):
+        (CommitMessage):
+        (CommitMessage.__init__):
+        (CommitMessage.__str__):
+        (CommitMessage._parse_message):
+        (Commit):
+        (Commit.__init__):
+        (Commit.__getstate__):
+        (Commit.__setstate__):
+        (Commit._get_meta):
+        * web-platform-tests/tools/wptrunner/wptrunner/update/update.py: Added.
+        (setup_paths):
+        (LoadConfig):
+        (LoadConfig.create):
+        (LoadTrees):
+        (LoadTrees.create):
+        (SyncFromUpstream):
+        (SyncFromUpstream.create):
+        (UpdateMetadata):
+        (UpdateMetadata.create):
+        (UpdateRunner):
+        (WPTUpdate):
+        (WPTUpdate.__init__):
+        (WPTUpdate.__init__.holding):
+        (WPTUpdate.run):
+        (WPTUpdate.abort):
+        * web-platform-tests/tools/wptrunner/wptrunner/update/w3c-import.log: Added.
+        * web-platform-tests/tools/wptrunner/wptrunner/vcs.py: Added.
+        (vcs):
+        (vcs.inner):
+        (bind_to_repo):
+        (is_git_root):
+        * web-platform-tests/tools/wptrunner/wptrunner/w3c-import.log: Added.
+        * web-platform-tests/tools/wptrunner/wptrunner/webdriver_server.py: Added.
+        (WebDriverServer):
+        (WebDriverServer.__init__):
+        (WebDriverServer.make_command):
+        (WebDriverServer.start):
+        (WebDriverServer._run):
+        (WebDriverServer.stop):
+        (WebDriverServer.is_alive):
+        (WebDriverServer.on_output):
+        (WebDriverServer.pid):
+        (WebDriverServer.url):
+        (WebDriverServer.port):
+        (WebDriverServer._find_next_free_port):
+        (SeleniumServer):
+        (SeleniumServer.make_command):
+        (ChromeDriverServer):
+        (ChromeDriverServer.__init__):
+        (ChromeDriverServer.make_command):
+        (EdgeDriverServer):
+        (EdgeDriverServer.__init__):
+        (EdgeDriverServer.make_command):
+        (GeckoDriverServer):
+        (GeckoDriverServer.__init__):
+        (GeckoDriverServer.make_command):
+        (ServoDriverServer):
+        (ServoDriverServer.__init__):
+        (ServoDriverServer.make_command):
+        (cmd_arg):
+        (get_free_port):
+        (wait_for_service):
+        * web-platform-tests/tools/wptrunner/wptrunner/wptcommandline.py: Added.
+        (abs_path):
+        (url_or_path):
+        (require_arg):
+        (create_parser):
+        (set_from_config):
+        (get_test_paths):
+        (exe_path):
+        (check_args):
+        (check_args_update):
+        (create_parser_update):
+        (create_parser_reduce):
+        (parse_args):
+        (parse_args_update):
+        (parse_args_reduce):
+        * web-platform-tests/tools/wptrunner/wptrunner/wptlogging.py: Added.
+        (setup):
+        (setup_stdlib_logger):
+        (LogLevelRewriter):
+        (LogLevelRewriter.__init__):
+        (LogLevelRewriter.__call__):
+        (LogThread):
+        (LogThread.__init__):
+        (LogThread.run):
+        (LoggingWrapper):
+        (LoggingWrapper.__init__):
+        (LoggingWrapper.write):
+        (LoggingWrapper.flush):
+        (CaptureIO):
+        (CaptureIO.__init__):
+        (CaptureIO.__enter__):
+        (CaptureIO.__exit__):
+        * web-platform-tests/tools/wptrunner/wptrunner/wptmanifest/__init__.py: Added.
+        * web-platform-tests/tools/wptrunner/wptrunner/wptmanifest/backends/__init__.py: Added.
+        * web-platform-tests/tools/wptrunner/wptrunner/wptmanifest/backends/conditional.py: Added.
+        (ConditionalValue):
+        (ConditionalValue.__init__):
+        (ConditionalValue.value):
+        (ConditionalValue.__call__):
+        (ConditionalValue.set_value):
+        (ConditionalValue.remove):
+        (Compiler):
+        (Compiler.compile):
+        (Compiler.compile.of):
+        (Compiler.compile_condition):
+        (Compiler._initial_output_node):
+        (Compiler.visit_DataNode):
+        (Compiler.visit_KeyValueNode):
+        (Compiler.visit_ListNode):
+        (Compiler.visit_ValueNode):
+        (Compiler.visit_AtomNode):
+        (Compiler.visit_ConditionalNode):
+        (Compiler.visit_StringNode):
+        (Compiler.visit_StringNode.value):
+        (Compiler.visit_NumberNode):
+        (Compiler.visit_VariableNode):
+        (Compiler.visit_VariableNode.value):
+        (Compiler.visit_IndexNode):
+        (Compiler.visit_UnaryExpressionNode):
+        (Compiler.visit_BinaryExpressionNode):
+        (Compiler.visit_UnaryOperatorNode):
+        (Compiler.visit_BinaryOperatorNode):
+        (ManifestItem):
+        (ManifestItem.__init__):
+        (ManifestItem.__repr__):
+        (ManifestItem.__str__):
+        (ManifestItem.__contains__):
+        (ManifestItem.is_empty):
+        (ManifestItem.root):
+        (ManifestItem.name):
+        (ManifestItem.has_key):
+        (ManifestItem.get):
+        (ManifestItem.set):
+        (ManifestItem._add_key_value):
+        (ManifestItem.append):
+        (ManifestItem.remove):
+        (ManifestItem._remove_child):
+        (ManifestItem.iterchildren):
+        (ManifestItem._flatten):
+        (ManifestItem.iteritems):
+        (ManifestItem.iterkeys):
+        (ManifestItem.remove_value):
+        (compile_ast):
+        (compile):
+        * web-platform-tests/tools/wptrunner/wptrunner/wptmanifest/backends/static.py: Added.
+        (Compiler):
+        (Compiler.compile):
+        (Compiler.compile.of):
+        (Compiler.visit_DataNode):
+        (Compiler.visit_KeyValueNode):
+        (Compiler.visit_ValueNode):
+        (Compiler.visit_AtomNode):
+        (Compiler.visit_ListNode):
+        (Compiler.visit_ConditionalNode):
+        (Compiler.visit_StringNode):
+        (Compiler.visit_NumberNode):
+        (Compiler.visit_VariableNode):
+        (Compiler.visit_IndexNode):
+        (Compiler.visit_UnaryExpressionNode):
+        (Compiler.visit_BinaryExpressionNode):
+        (Compiler.visit_UnaryOperatorNode):
+        (Compiler.visit_BinaryOperatorNode):
+        (ManifestItem):
+        (ManifestItem.__init__):
+        (ManifestItem.__repr__):
+        (ManifestItem.__str__):
+        (ManifestItem.is_empty):
+        (ManifestItem.root):
+        (ManifestItem.has_key):
+        (ManifestItem.get):
+        (ManifestItem.set):
+        (ManifestItem.remove):
+        (ManifestItem._remove_child):
+        (ManifestItem.iterchildren):
+        (ManifestItem._flatten):
+        (ManifestItem.iteritems):
+        (ManifestItem.iterkeys):
+        (ManifestItem.itervalues):
+        (ManifestItem.append):
+        (compile_ast):
+        (compile):
+        * web-platform-tests/tools/wptrunner/wptrunner/wptmanifest/backends/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/tools/html5lib/html5lib/tests/performance/w3c-import.log.
+        * web-platform-tests/tools/wptrunner/wptrunner/wptmanifest/node.py: Added.
+        (NodeVisitor):
+        (NodeVisitor.visit):
+        (NodeVisitor.visit.body):
+        (Node):
+        (Node.__init__):
+        (Node.append):
+        (Node.remove):
+        (Node.__repr__):
+        (Node.__str__):
+        (Node.__eq__):
+        (Node.copy):
+        (DataNode):
+        (DataNode.append):
+        (KeyValueNode):
+        (KeyValueNode.append):
+        (ListNode):
+        (ListNode.append):
+        (ValueNode):
+        (ValueNode.append):
+        (AtomNode):
+        (ConditionalNode):
+        (UnaryExpressionNode):
+        (UnaryExpressionNode.__init__):
+        (UnaryExpressionNode.append):
+        (UnaryExpressionNode.copy):
+        (BinaryExpressionNode):
+        (BinaryExpressionNode.__init__):
+        (BinaryExpressionNode.append):
+        (BinaryExpressionNode.copy):
+        (UnaryOperatorNode):
+        (UnaryOperatorNode.append):
+        (BinaryOperatorNode):
+        (BinaryOperatorNode.append):
+        (IndexNode):
+        (VariableNode):
+        (StringNode):
+        (NumberNode):
+        * web-platform-tests/tools/wptrunner/wptrunner/wptmanifest/parser.py: Added.
+        (ParseError):
+        (ParseError.__init__):
+        (decode):
+        (precedence):
+        (TokenTypes):
+        (TokenTypes.__init__):
+        (Tokenizer):
+        (Tokenizer.__init__):
+        (Tokenizer.reset):
+        (Tokenizer.tokenize):
+        (Tokenizer.char):
+        (Tokenizer.consume):
+        (Tokenizer.peek):
+        (Tokenizer.skip_whitespace):
+        (Tokenizer.eol_state):
+        (Tokenizer.line_start_state):
+        (Tokenizer.data_line_state):
+        (Tokenizer.heading_state):
+        (Tokenizer.key_state):
+        (Tokenizer.after_key_state):
+        (Tokenizer.list_start_state):
+        (Tokenizer.list_value_start_state):
+        (Tokenizer.list_value_state):
+        (Tokenizer.list_value_atom_state):
+        (Tokenizer.list_end_state):
+        (Tokenizer.value_state):
+        (Tokenizer.value_inner_state):
+        (Tokenizer.comment_state):
+        (Tokenizer.line_end_state):
+        (Tokenizer.consume_string):
+        (Tokenizer.expr_or_value_state):
+        (Tokenizer.expr_state):
+        (Tokenizer.operator_state):
+        (Tokenizer.digit_state):
+        (Tokenizer.ident_state):
+        (Tokenizer.consume_escape):
+        (Tokenizer.decode_escape):
+        (Tokenizer.escape_value):
+        (Parser):
+        (Parser.__init__):
+        (Parser.reset):
+        (Parser.parse):
+        (Parser.consume):
+        (Parser.expect):
+        (Parser.manifest):
+        (Parser.data_block):
+        (Parser.eof_or_end_group):
+        (Parser.value_block):
+        (Parser.list_value):
+        (Parser.expression_values):
+        (Parser.value):
+        (Parser.atom):
+        (Parser.expr_start):
+        (Parser.expr):
+        (Parser.expr_operand):
+        (Parser.expr_unary_op):
+        (Parser.expr_bin_op):
+        (Parser.expr_value):
+        (Parser.expr_number):
+        (Treebuilder):
+        (Treebuilder.__init__):
+        (Treebuilder.append):
+        (Treebuilder.pop):
+        (ExpressionBuilder):
+        (ExpressionBuilder.__init__):
+        (ExpressionBuilder.finish):
+        (ExpressionBuilder.left_paren):
+        (ExpressionBuilder.right_paren):
+        (ExpressionBuilder.push_operator):
+        (ExpressionBuilder.pop_operator):
+        (ExpressionBuilder.push_operand):
+        (ExpressionBuilder.pop_operand):
+        (ExpressionBuilder.is_empty):
+        (ExpressionBuilder.precedence):
+        (parse):
+        * web-platform-tests/tools/wptrunner/wptrunner/wptmanifest/serializer.py: Added.
+        (escape):
+        (ManifestSerializer):
+        (ManifestSerializer.__init__):
+        (ManifestSerializer.serialize):
+        (ManifestSerializer.visit_DataNode):
+        (ManifestSerializer.visit_KeyValueNode):
+        (ManifestSerializer.visit_ListNode):
+        (ManifestSerializer.visit_ValueNode):
+        (ManifestSerializer.visit_AtomNode):
+        (ManifestSerializer.visit_ConditionalNode):
+        (ManifestSerializer.visit_StringNode):
+        (ManifestSerializer.visit_NumberNode):
+        (ManifestSerializer.visit_VariableNode):
+        (ManifestSerializer.visit_IndexNode):
+        (ManifestSerializer.visit_UnaryExpressionNode):
+        (ManifestSerializer.visit_BinaryExpressionNode):
+        (ManifestSerializer.visit_UnaryOperatorNode):
+        (ManifestSerializer.visit_BinaryOperatorNode):
+        (serialize):
+        * web-platform-tests/tools/wptrunner/wptrunner/wptmanifest/tests/__init__.py: Added.
+        * web-platform-tests/tools/wptrunner/wptrunner/wptmanifest/tests/test_conditional.py: Added.
+        (TestConditional):
+        (TestConditional.compile):
+        (TestConditional.test_get_0):
+        (test_get_1):
+        (test_get_2):
+        (test_get_3):
+        (test_set_0):
+        (test_set_1):
+        (test_set_2):
+        (test_api_0):
+        * web-platform-tests/tools/wptrunner/wptrunner/wptmanifest/tests/test_parser.py: Added.
+        (TestExpression):
+        (TestExpression.setUp):
+        (TestExpression.parse):
+        (TestExpression.compare):
+        (TestExpression.match):
+        (TestExpression.test_expr_0):
+        (test_expr_1):
+        (test_atom_0):
+        (test_atom_1):
+        * web-platform-tests/tools/wptrunner/wptrunner/wptmanifest/tests/test_serializer.py: Added.
+        (TokenizerTest):
+        (TokenizerTest.setUp):
+        (TokenizerTest.serialize):
+        (TokenizerTest.compare):
+        (TokenizerTest.test_0):
+        (test_1):
+        (test_2):
+        (test_3):
+        (test_4):
+        (test_5):
+        (test_6):
+        (test_7):
+        (test_8):
+        (test_9):
+        (test_10):
+        (test_11):
+        (test_12):
+        (test_13):
+        (test_14):
+        (test_15):
+        (test_16):
+        (test_17):
+        (test_18):
+        (test_escape_0):
+        (test_escape_1):
+        (test_escape_2):
+        (test_escape_3):
+        (test_escape_4):
+        (test_escape_5):
+        (test_escape_6):
+        (test_escape_7):
+        (test_escape_8):
+        (test_escape_9):
+        (test_escape_10):
+        (test_escape_11):
+        (test_atom_1):
+        (test_atom_2):
+        (test_atom_3):
+        (test_atom_4):
+        * web-platform-tests/tools/wptrunner/wptrunner/wptmanifest/tests/test_static.py: Added.
+        (TestStatic):
+        (TestStatic.compile):
+        (TestStatic.test_get_0):
+        (test_get_1):
+        (test_get_3):
+        (test_get_4):
+        (test_api):
+        (test_is_empty_1):
+        * web-platform-tests/tools/wptrunner/wptrunner/wptmanifest/tests/test_tokenizer.py: Added.
+        (TokenizerTest):
+        (TokenizerTest.setUp):
+        (TokenizerTest.tokenize):
+        (TokenizerTest.compare):
+        (TokenizerTest.test_heading_0):
+        (TokenizerTest.test_heading_1):
+        (TokenizerTest.test_heading_2):
+        (TokenizerTest.test_heading_3):
+        (TokenizerTest.test_heading_4):
+        (TokenizerTest.test_heading_5):
+        (TokenizerTest.test_heading_6):
+        (TokenizerTest.test_key_0):
+        (TokenizerTest.test_key_1):
+        (TokenizerTest.test_key_2):
+        (TokenizerTest.test_key_3):
+        (TokenizerTest.test_key_4):
+        (TokenizerTest.test_key_5):
+        (TokenizerTest.test_key_6):
+        (TokenizerTest.test_key_7):
+        (TokenizerTest.test_key_8):
+        (TokenizerTest.test_key_9):
+        (TokenizerTest.test_key_10):
+        (TokenizerTest.test_key_11):
+        (TokenizerTest.test_key_12):
+        (TokenizerTest.test_key_13):
+        (TokenizerTest.test_key_14):
+        (TokenizerTest.test_list_0):
+        (test_list_1):
+        (test_list_2):
+        (test_list_3):
+        (test_list_4):
+        (test_list_5):
+        (test_list_6):
+        (test_expr_0):
+        (test_expr_1):
+        (test_expr_2):
+        (test_expr_3):
+        (test_expr_4):
+        (test_expr_5):
+        (test_expr_6):
+        (test_expr_7):
+        (test_expr_8):
+        (test_expr_9):
+        (test_expr_10):
+        * web-platform-tests/tools/wptrunner/wptrunner/wptmanifest/tests/w3c-import.log: Added.
+        * web-platform-tests/tools/wptrunner/wptrunner/wptmanifest/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/tools/gitignore/w3c-import.log.
+        * web-platform-tests/tools/wptrunner/wptrunner/wptrunner.py: Added.
+        (setup_logging):
+        (get_loader):
+        (list_test_groups):
+        (list_disabled):
+        (get_pause_after_test):
+        (run_tests):
+        (start):
+        (main):
+        * web-platform-tests/tools/wptrunner/wptrunner/wpttest.py: Added.
+        (Result):
+        (Result.__init__):
+        (Result.__repr__):
+        (SubtestResult):
+        (SubtestResult.__init__):
+        (SubtestResult.__repr__):
+        (TestharnessResult):
+        (TestharnessSubtestResult):
+        (ReftestResult):
+        (WdspecResult):
+        (WdspecSubtestResult):
+        (get_run_info):
+        (RunInfo):
+        (RunInfo.__init__):
+        (RunInfo._update_mozinfo):
+        (Test):
+        (Test.__init__):
+        (Test.__eq__):
+        (Test.from_manifest):
+        (Test.id):
+        (Test.keys):
+        (Test.abs_path):
+        (Test._get_metadata):
+        (Test.itermeta):
+        (Test.disabled):
+        (Test.restart_after):
+        (Test.tags):
+        (Test.prefs):
+        (Test.expected):
+        (Test.__repr__):
+        (TestharnessTest):
+        (TestharnessTest.id):
+        (ManualTest):
+        (ManualTest.id):
+        (ReftestTest):
+        (ReftestTest.__init__):
+        (ReftestTest.from_manifest):
+        (ReftestTest.id):
+        (ReftestTest.keys):
+        (WdspecTest):
+        (from_manifest):
+        * web-platform-tests/tools/wptserve/docs/w3c-import.log:
+        * web-platform-tests/tools/wptserve/tests/functional/docroot/subdir/w3c-import.log:
+        * web-platform-tests/tools/wptserve/tests/functional/docroot/w3c-import.log:
+        * web-platform-tests/tools/wptserve/tests/functional/w3c-import.log:
+        * web-platform-tests/tools/wptserve/w3c-import.log:
+        * web-platform-tests/tools/wptserve/wptserve/w3c-import.log:
+        * web-platform-tests/url/interfaces-expected.txt:
+
 2017-05-18  Romain Bellessort  <romain.bellessort@crf.canon.fr>
 
         [Readable Streams API] Align getDesiredSize with spec

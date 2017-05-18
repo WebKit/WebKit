@@ -21,8 +21,6 @@ PASS Response interface: operation blob()
 PASS Response interface: operation formData() 
 PASS Response interface: operation json() 
 PASS Response interface: operation text() 
-PASS Response must be primary interface of new Response() 
-PASS Stringification of new Response() 
 PASS Response interface: new Response() must inherit property "error" with the proper type (0) 
 PASS Response interface: new Response() must inherit property "redirect" with the proper type (1) 
 PASS Response interface: calling redirect(USVString,unsigned short) on new Response() with too few arguments must throw TypeError 

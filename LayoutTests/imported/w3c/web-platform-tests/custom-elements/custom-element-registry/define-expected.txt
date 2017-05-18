@@ -1,5 +1,4 @@
 CONSOLE MESSAGE: line 15: TypeError: undefined is not an object (evaluating 'iframe.contentDocument.defaultView')
 
-Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'iframe.contentDocument.defaultView')
-
+FAIL Custom Elements: Element definition TypeError: undefined is not an object (evaluating 'iframe.contentDocument.defaultView')
 

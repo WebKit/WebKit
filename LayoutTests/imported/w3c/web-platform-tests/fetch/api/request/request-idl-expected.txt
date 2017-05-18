@@ -24,8 +24,6 @@ PASS Request interface: operation blob()
 FAIL Request interface: operation formData() assert_own_property: interface prototype object missing non-static operation expected property "formData" missing
 PASS Request interface: operation json() 
 PASS Request interface: operation text() 
-PASS Request must be primary interface of new Request("") 
-PASS Stringification of new Request("") 
 PASS Request interface: new Request("") must inherit property "method" with the proper type (0) 
 PASS Request interface: new Request("") must inherit property "url" with the proper type (1) 
 PASS Request interface: new Request("") must inherit property "headers" with the proper type (2) 

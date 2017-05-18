@@ -3,10 +3,7 @@ Harness Error (TIMEOUT), message = null
 
 PASS Exposed interfaces in a Service Worker. 
 PASS ServiceWorkerRegistration interface: existence and properties of interface object 
-FAIL ServiceWorkerGlobalScope interface: attribute onbackgroundfetched assert_own_property: self does not have own property "ServiceWorkerGlobalScope" expected property "ServiceWorkerGlobalScope" missing
-FAIL ServiceWorkerGlobalScope interface: attribute onbackgroundfetchfail assert_own_property: self does not have own property "ServiceWorkerGlobalScope" expected property "ServiceWorkerGlobalScope" missing
-FAIL ServiceWorkerGlobalScope interface: attribute onbackgroundfetchabort assert_own_property: self does not have own property "ServiceWorkerGlobalScope" expected property "ServiceWorkerGlobalScope" missing
-FAIL ServiceWorkerGlobalScope interface: attribute onbackgroundfetchclick assert_own_property: self does not have own property "ServiceWorkerGlobalScope" expected property "ServiceWorkerGlobalScope" missing
+PASS ServiceWorkerGlobalScope interface: existence and properties of interface object 
 FAIL BackgroundFetchManager interface: existence and properties of interface object assert_own_property: self does not have own property "BackgroundFetchManager" expected property "BackgroundFetchManager" missing
 FAIL BackgroundFetchManager interface object length assert_own_property: self does not have own property "BackgroundFetchManager" expected property "BackgroundFetchManager" missing
 FAIL BackgroundFetchManager interface object name assert_own_property: self does not have own property "BackgroundFetchManager" expected property "BackgroundFetchManager" missing
@@ -38,35 +35,9 @@ FAIL BackgroundFetchActiveFetches interface object name assert_own_property: sel
 FAIL BackgroundFetchActiveFetches interface: existence and properties of interface prototype object assert_own_property: self does not have own property "BackgroundFetchActiveFetches" expected property "BackgroundFetchActiveFetches" missing
 FAIL BackgroundFetchActiveFetches interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "BackgroundFetchActiveFetches" expected property "BackgroundFetchActiveFetches" missing
 FAIL BackgroundFetchActiveFetches interface: attribute responseReady assert_own_property: self does not have own property "BackgroundFetchActiveFetches" expected property "BackgroundFetchActiveFetches" missing
-FAIL BackgroundFetchEvent interface: existence and properties of interface object assert_own_property: self does not have own property "BackgroundFetchEvent" expected property "BackgroundFetchEvent" missing
-FAIL BackgroundFetchEvent interface object length assert_own_property: self does not have own property "BackgroundFetchEvent" expected property "BackgroundFetchEvent" missing
-FAIL BackgroundFetchEvent interface object name assert_own_property: self does not have own property "BackgroundFetchEvent" expected property "BackgroundFetchEvent" missing
-FAIL BackgroundFetchEvent interface: existence and properties of interface prototype object assert_own_property: self does not have own property "BackgroundFetchEvent" expected property "BackgroundFetchEvent" missing
-FAIL BackgroundFetchEvent interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "BackgroundFetchEvent" expected property "BackgroundFetchEvent" missing
-FAIL BackgroundFetchEvent interface: attribute tag assert_own_property: self does not have own property "BackgroundFetchEvent" expected property "BackgroundFetchEvent" missing
-FAIL BackgroundFetchEndEvent interface: existence and properties of interface object assert_own_property: self does not have own property "BackgroundFetchEndEvent" expected property "BackgroundFetchEndEvent" missing
-FAIL BackgroundFetchEndEvent interface object length assert_own_property: self does not have own property "BackgroundFetchEndEvent" expected property "BackgroundFetchEndEvent" missing
-FAIL BackgroundFetchEndEvent interface object name assert_own_property: self does not have own property "BackgroundFetchEndEvent" expected property "BackgroundFetchEndEvent" missing
-FAIL BackgroundFetchEndEvent interface: existence and properties of interface prototype object assert_own_property: self does not have own property "BackgroundFetchEndEvent" expected property "BackgroundFetchEndEvent" missing
-FAIL BackgroundFetchEndEvent interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "BackgroundFetchEndEvent" expected property "BackgroundFetchEndEvent" missing
-FAIL BackgroundFetchEndEvent interface: attribute completeFetches assert_own_property: self does not have own property "BackgroundFetchEndEvent" expected property "BackgroundFetchEndEvent" missing
-FAIL BackgroundFetchEndEvent interface: operation updateUI(DOMString) assert_own_property: self does not have own property "BackgroundFetchEndEvent" expected property "BackgroundFetchEndEvent" missing
-FAIL BackgroundFetchSettledFetches interface: existence and properties of interface object assert_own_property: self does not have own property "BackgroundFetchSettledFetches" expected property "BackgroundFetchSettledFetches" missing
-FAIL BackgroundFetchSettledFetches interface object length assert_own_property: self does not have own property "BackgroundFetchSettledFetches" expected property "BackgroundFetchSettledFetches" missing
-FAIL BackgroundFetchSettledFetches interface object name assert_own_property: self does not have own property "BackgroundFetchSettledFetches" expected property "BackgroundFetchSettledFetches" missing
-FAIL BackgroundFetchSettledFetches interface: existence and properties of interface prototype object assert_own_property: self does not have own property "BackgroundFetchSettledFetches" expected property "BackgroundFetchSettledFetches" missing
-FAIL BackgroundFetchSettledFetches interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "BackgroundFetchSettledFetches" expected property "BackgroundFetchSettledFetches" missing
-FAIL BackgroundFetchSettledFetches interface: attribute response assert_own_property: self does not have own property "BackgroundFetchSettledFetches" expected property "BackgroundFetchSettledFetches" missing
-FAIL BackgroundFetchFailEvent interface: existence and properties of interface object assert_own_property: self does not have own property "BackgroundFetchFailEvent" expected property "BackgroundFetchFailEvent" missing
-FAIL BackgroundFetchFailEvent interface object length assert_own_property: self does not have own property "BackgroundFetchFailEvent" expected property "BackgroundFetchFailEvent" missing
-FAIL BackgroundFetchFailEvent interface object name assert_own_property: self does not have own property "BackgroundFetchFailEvent" expected property "BackgroundFetchFailEvent" missing
-FAIL BackgroundFetchFailEvent interface: existence and properties of interface prototype object assert_own_property: self does not have own property "BackgroundFetchFailEvent" expected property "BackgroundFetchFailEvent" missing
-FAIL BackgroundFetchFailEvent interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "BackgroundFetchFailEvent" expected property "BackgroundFetchFailEvent" missing
-FAIL BackgroundFetchFailEvent interface: attribute failedFetches assert_own_property: self does not have own property "BackgroundFetchFailEvent" expected property "BackgroundFetchFailEvent" missing
-FAIL BackgroundFetchClickEvent interface: existence and properties of interface object assert_own_property: self does not have own property "BackgroundFetchClickEvent" expected property "BackgroundFetchClickEvent" missing
-FAIL BackgroundFetchClickEvent interface object length assert_own_property: self does not have own property "BackgroundFetchClickEvent" expected property "BackgroundFetchClickEvent" missing
-FAIL BackgroundFetchClickEvent interface object name assert_own_property: self does not have own property "BackgroundFetchClickEvent" expected property "BackgroundFetchClickEvent" missing
-FAIL BackgroundFetchClickEvent interface: existence and properties of interface prototype object assert_own_property: self does not have own property "BackgroundFetchClickEvent" expected property "BackgroundFetchClickEvent" missing
-FAIL BackgroundFetchClickEvent interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "BackgroundFetchClickEvent" expected property "BackgroundFetchClickEvent" missing
-FAIL BackgroundFetchClickEvent interface: attribute state assert_own_property: self does not have own property "BackgroundFetchClickEvent" expected property "BackgroundFetchClickEvent" missing
+PASS BackgroundFetchEvent interface: existence and properties of interface object 
+PASS BackgroundFetchEndEvent interface: existence and properties of interface object 
+PASS BackgroundFetchSettledFetches interface: existence and properties of interface object 
+PASS BackgroundFetchFailEvent interface: existence and properties of interface object 
+PASS BackgroundFetchClickEvent interface: existence and properties of interface object 
 

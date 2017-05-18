@@ -2,6 +2,5 @@ Blocked access to external URL http://www.localhost:8800/FileAPI/support/incumbe
 CONSOLE MESSAGE: line 19: TypeError: frames[0].createBlobURL is not a function. (In 'frames[0].createBlobURL()', 'frames[0].createBlobURL' is undefined)
 
 
-Harness Error (FAIL), message = TypeError: frames[0].createBlobURL is not a function. (In 'frames[0].createBlobURL()', 'frames[0].createBlobURL' is undefined)
-
+FAIL Blob URL serialization (specifically the origin) in multi-global situations TypeError: frames[0].createBlobURL is not a function. (In 'frames[0].createBlobURL()', 'frames[0].createBlobURL' is undefined)
 

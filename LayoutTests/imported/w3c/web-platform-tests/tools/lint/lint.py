@@ -45,7 +45,7 @@ setup_logging()
 
 
 ERROR_MSG = """You must fix all errors; for details on how to fix them, see
-https://github.com/w3c/web-platform-tests/blob/master/docs/lint-tool.md
+http://web-platform-tests.org/writing-tests/lint-tool.html
 
 However, instead of fixing a particular error, it's sometimes
 OK to add a line to the lint.whitelist file in the root of the

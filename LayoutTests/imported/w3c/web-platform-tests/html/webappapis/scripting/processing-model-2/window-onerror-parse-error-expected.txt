@@ -1,6 +1,7 @@
 CONSOLE MESSAGE: line 34: SyntaxError: Unexpected identifier 'script'
+CONSOLE MESSAGE: line 1321: Error: Tried to create a test with file_is_test
+CONSOLE MESSAGE: line 1321: Error: Tried to create a test with file_is_test
+CONSOLE MESSAGE: line 1321: Error: Tried to create a test with file_is_test
 
-PASS correct url passed to window.onerror 
-PASS correct line number passed to window.onerror 
-PASS correct number of calls to window.onerror 
+PASS window.onerror: parse errors 
 

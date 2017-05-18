@@ -595,12 +595,8 @@ class Element(object):
         self.send_element_command("POST", self.url("clear"), {})
 
     @command
-    def send_keys(self, keys):
-        if isinstance(keys, (str, unicode)):
-            keys = [char for char in keys]
-
-        body = {"value": keys}
-        return self.send_element_command("POST", "value", body)
+    def send_keys(self, text):
+        return self.send_element_command("POST", "value", {"text": text})
 
     @property
     @command

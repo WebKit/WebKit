@@ -2,6 +2,5 @@ CONSOLE MESSAGE: line 198: Unhandled Promise Rejection: DataError (DOM Exception
 deriveBits Tests for ECDH
 
 
-Harness Error (FAIL), message = Data provided to an operation does not meet requirements
-
+FAIL WebCryptoAPI: deriveBits() Using ECDH Data provided to an operation does not meet requirements
 

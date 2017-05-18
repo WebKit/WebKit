@@ -1,5 +1,4 @@
 CONSOLE MESSAGE: line 16: TypeError: fd.delete is not a function. (In 'fd.delete('n2')', 'fd.delete' is undefined)
 
-Harness Error (FAIL), message = TypeError: fd.delete is not a function. (In 'fd.delete('n2')', 'fd.delete' is undefined)
-
+FAIL FormData: foreach TypeError: fd.delete is not a function. (In 'fd.delete('n2')', 'fd.delete' is undefined)
 

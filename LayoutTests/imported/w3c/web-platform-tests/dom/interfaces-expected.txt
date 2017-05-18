@@ -27,8 +27,6 @@ PASS Event interface: operation preventDefault()
 PASS Event interface: attribute defaultPrevented 
 PASS Event interface: attribute timeStamp 
 PASS Event interface: operation initEvent(DOMString,boolean,boolean) 
-PASS Event must be primary interface of document.createEvent("Event") 
-PASS Stringification of document.createEvent("Event") 
 PASS Event interface: document.createEvent("Event") must inherit property "type" with the proper type (0) 
 PASS Event interface: document.createEvent("Event") must inherit property "target" with the proper type (1) 
 PASS Event interface: document.createEvent("Event") must inherit property "currentTarget" with the proper type (2) 
@@ -47,8 +45,6 @@ PASS Event interface: document.createEvent("Event") must have own property "isTr
 PASS Event interface: document.createEvent("Event") must inherit property "timeStamp" with the proper type (15) 
 PASS Event interface: document.createEvent("Event") must inherit property "initEvent" with the proper type (16) 
 PASS Event interface: calling initEvent(DOMString,boolean,boolean) on document.createEvent("Event") with too few arguments must throw TypeError 
-PASS Event must be primary interface of new Event("foo") 
-PASS Stringification of new Event("foo") 
 PASS Event interface: new Event("foo") must inherit property "type" with the proper type (0) 
 PASS Event interface: new Event("foo") must inherit property "target" with the proper type (1) 
 PASS Event interface: new Event("foo") must inherit property "currentTarget" with the proper type (2) 
@@ -74,8 +70,6 @@ PASS CustomEvent interface: existence and properties of interface prototype obje
 PASS CustomEvent interface: existence and properties of interface prototype object's "constructor" property 
 PASS CustomEvent interface: attribute detail 
 PASS CustomEvent interface: operation initCustomEvent(DOMString,boolean,boolean,any) 
-PASS CustomEvent must be primary interface of new CustomEvent("foo") 
-PASS Stringification of new CustomEvent("foo") 
 PASS CustomEvent interface: new CustomEvent("foo") must inherit property "detail" with the proper type (0) 
 PASS CustomEvent interface: new CustomEvent("foo") must inherit property "initCustomEvent" with the proper type (1) 
 PASS CustomEvent interface: calling initCustomEvent(DOMString,boolean,boolean,any) on new CustomEvent("foo") with too few arguments must throw TypeError 
@@ -116,8 +110,6 @@ PASS NodeList interface: existence and properties of interface prototype object
 PASS NodeList interface: existence and properties of interface prototype object's "constructor" property 
 PASS NodeList interface: operation item(unsigned long) 
 PASS NodeList interface: attribute length 
-PASS NodeList must be primary interface of document.querySelectorAll("script") 
-PASS Stringification of document.querySelectorAll("script") 
 PASS NodeList interface: document.querySelectorAll("script") must inherit property "item" with the proper type (0) 
 PASS NodeList interface: calling item(unsigned long) on document.querySelectorAll("script") with too few arguments must throw TypeError 
 PASS NodeList interface: document.querySelectorAll("script") must inherit property "length" with the proper type (1) 
@@ -129,8 +121,6 @@ PASS HTMLCollection interface: existence and properties of interface prototype o
 PASS HTMLCollection interface: attribute length 
 PASS HTMLCollection interface: operation item(unsigned long) 
 PASS HTMLCollection interface: operation namedItem(DOMString) 
-PASS HTMLCollection must be primary interface of document.body.children 
-PASS Stringification of document.body.children 
 PASS HTMLCollection interface: document.body.children must inherit property "length" with the proper type (0) 
 PASS HTMLCollection interface: document.body.children must inherit property "item" with the proper type (1) 
 PASS HTMLCollection interface: calling item(unsigned long) on document.body.children with too few arguments must throw TypeError 
@@ -271,8 +261,6 @@ PASS Document interface: operation prepend([object Object],[object Object])
 PASS Document interface: operation append([object Object],[object Object]) 
 PASS Document interface: operation querySelector(DOMString) 
 PASS Document interface: operation querySelectorAll(DOMString) 
-PASS Document must be primary interface of new Document() 
-PASS Stringification of new Document() 
 PASS Document interface: new Document() must inherit property "implementation" with the proper type (0) 
 PASS Document interface: new Document() must inherit property "URL" with the proper type (1) 
 PASS Document interface: new Document() must inherit property "documentURI" with the proper type (2) 
@@ -403,8 +391,6 @@ PASS XMLDocument interface object length
 PASS XMLDocument interface object name 
 PASS XMLDocument interface: existence and properties of interface prototype object 
 PASS XMLDocument interface: existence and properties of interface prototype object's "constructor" property 
-PASS XMLDocument must be primary interface of xmlDoc 
-PASS Stringification of xmlDoc 
 PASS Document interface: xmlDoc must inherit property "implementation" with the proper type (0) 
 PASS Document interface: xmlDoc must inherit property "URL" with the proper type (1) 
 PASS Document interface: xmlDoc must inherit property "documentURI" with the proper type (2) 
@@ -539,8 +525,6 @@ PASS DOMImplementation interface: operation createDocumentType(DOMString,DOMStri
 PASS DOMImplementation interface: operation createDocument(DOMString,DOMString,DocumentType) 
 PASS DOMImplementation interface: operation createHTMLDocument(DOMString) 
 PASS DOMImplementation interface: operation hasFeature() 
-PASS DOMImplementation must be primary interface of document.implementation 
-PASS Stringification of document.implementation 
 PASS DOMImplementation interface: document.implementation must inherit property "createDocumentType" with the proper type (0) 
 PASS DOMImplementation interface: calling createDocumentType(DOMString,DOMString,DOMString) on document.implementation with too few arguments must throw TypeError 
 PASS DOMImplementation interface: document.implementation must inherit property "createDocument" with the proper type (1) 
@@ -560,8 +544,6 @@ PASS DocumentType interface: operation before([object Object],[object Object])
 PASS DocumentType interface: operation after([object Object],[object Object]) 
 PASS DocumentType interface: operation replaceWith([object Object],[object Object]) 
 PASS DocumentType interface: operation remove() 
-PASS DocumentType must be primary interface of document.doctype 
-PASS Stringification of document.doctype 
 PASS DocumentType interface: document.doctype must inherit property "name" with the proper type (0) 
 PASS DocumentType interface: document.doctype must inherit property "publicId" with the proper type (1) 
 PASS DocumentType interface: document.doctype must inherit property "systemId" with the proper type (2) 
@@ -652,8 +634,6 @@ PASS DocumentFragment interface: operation prepend([object Object],[object Objec
 PASS DocumentFragment interface: operation append([object Object],[object Object]) 
 PASS DocumentFragment interface: operation querySelector(DOMString) 
 PASS DocumentFragment interface: operation querySelectorAll(DOMString) 
-PASS DocumentFragment must be primary interface of document.createDocumentFragment() 
-PASS Stringification of document.createDocumentFragment() 
 PASS DocumentFragment interface: document.createDocumentFragment() must inherit property "getElementById" with the proper type (0) 
 PASS DocumentFragment interface: calling getElementById(DOMString) on document.createDocumentFragment() with too few arguments must throw TypeError 
 PASS DocumentFragment interface: document.createDocumentFragment() must inherit property "children" with the proper type (1) 
@@ -795,8 +775,6 @@ PASS Element interface: operation after([object Object],[object Object])
 PASS Element interface: operation replaceWith([object Object],[object Object]) 
 PASS Element interface: operation remove() 
 PASS Element interface: attribute assignedSlot 
-PASS Element must be primary interface of element 
-PASS Stringification of element 
 PASS Element interface: element must inherit property "namespaceURI" with the proper type (0) 
 PASS Element interface: element must inherit property "prefix" with the proper type (1) 
 PASS Element interface: element must inherit property "localName" with the proper type (2) 
@@ -966,8 +944,6 @@ PASS Attr interface: attribute name
 PASS Attr interface: attribute value 
 PASS Attr interface: attribute ownerElement 
 PASS Attr interface: attribute specified 
-PASS Attr must be primary interface of document.querySelector("[id]").attributes[0] 
-PASS Stringification of document.querySelector("[id]").attributes[0] 
 PASS Attr interface: document.querySelector("[id]").attributes[0] must inherit property "namespaceURI" with the proper type (0) 
 PASS Attr interface: document.querySelector("[id]").attributes[0] must inherit property "prefix" with the proper type (1) 
 PASS Attr interface: document.querySelector("[id]").attributes[0] must inherit property "localName" with the proper type (2) 
@@ -1067,8 +1043,6 @@ PASS Text interface: existence and properties of interface prototype object's "c
 PASS Text interface: operation splitText(unsigned long) 
 PASS Text interface: attribute wholeText 
 PASS Text interface: attribute assignedSlot 
-PASS Text must be primary interface of document.createTextNode("abc") 
-PASS Stringification of document.createTextNode("abc") 
 PASS Text interface: document.createTextNode("abc") must inherit property "splitText" with the proper type (0) 
 PASS Text interface: calling splitText(unsigned long) on document.createTextNode("abc") with too few arguments must throw TypeError 
 PASS Text interface: document.createTextNode("abc") must inherit property "wholeText" with the proper type (1) 
@@ -1171,8 +1145,6 @@ PASS ProcessingInstruction interface object name
 PASS ProcessingInstruction interface: existence and properties of interface prototype object 
 PASS ProcessingInstruction interface: existence and properties of interface prototype object's "constructor" property 
 PASS ProcessingInstruction interface: attribute target 
-PASS ProcessingInstruction must be primary interface of xmlDoc.createProcessingInstruction("abc", "def") 
-PASS Stringification of xmlDoc.createProcessingInstruction("abc", "def") 
 PASS ProcessingInstruction interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "target" with the proper type (0) 
 PASS CharacterData interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "data" with the proper type (0) 
 PASS CharacterData interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "length" with the proper type (1) 
@@ -1266,8 +1238,6 @@ PASS Comment interface object length
 PASS Comment interface object name 
 PASS Comment interface: existence and properties of interface prototype object 
 PASS Comment interface: existence and properties of interface prototype object's "constructor" property 
-PASS Comment must be primary interface of document.createComment("abc") 
-PASS Stringification of document.createComment("abc") 
 PASS CharacterData interface: document.createComment("abc") must inherit property "data" with the proper type (0) 
 PASS CharacterData interface: document.createComment("abc") must inherit property "length" with the proper type (1) 
 PASS CharacterData interface: document.createComment("abc") must inherit property "substringData" with the proper type (2) 
@@ -1395,8 +1365,6 @@ PASS Range interface: operation isPointInRange(Node,unsigned long)
 PASS Range interface: operation comparePoint(Node,unsigned long) 
 PASS Range interface: operation intersectsNode(Node) 
 PASS Range interface: stringifier 
-PASS Range must be primary interface of document.createRange() 
-PASS Stringification of document.createRange() 
 PASS Range interface: document.createRange() must inherit property "startContainer" with the proper type (0) 
 PASS Range interface: document.createRange() must inherit property "startOffset" with the proper type (1) 
 PASS Range interface: document.createRange() must inherit property "endContainer" with the proper type (2) 
@@ -1442,8 +1410,6 @@ PASS Range interface: document.createRange() must inherit property "comparePoint
 PASS Range interface: calling comparePoint(Node,unsigned long) on document.createRange() with too few arguments must throw TypeError 
 PASS Range interface: document.createRange() must inherit property "intersectsNode" with the proper type (29) 
 PASS Range interface: calling intersectsNode(Node) on document.createRange() with too few arguments must throw TypeError 
-PASS Range must be primary interface of detachedRange 
-PASS Stringification of detachedRange 
 PASS Range interface: detachedRange must inherit property "startContainer" with the proper type (0) 
 PASS Range interface: detachedRange must inherit property "startOffset" with the proper type (1) 
 PASS Range interface: detachedRange must inherit property "endContainer" with the proper type (2) 
@@ -1502,8 +1468,6 @@ PASS NodeIterator interface: attribute filter
 PASS NodeIterator interface: operation nextNode() 
 PASS NodeIterator interface: operation previousNode() 
 PASS NodeIterator interface: operation detach() 
-PASS NodeIterator must be primary interface of document.createNodeIterator(document.body, NodeFilter.SHOW_ALL, null, false) 
-PASS Stringification of document.createNodeIterator(document.body, NodeFilter.SHOW_ALL, null, false) 
 PASS NodeIterator interface: document.createNodeIterator(document.body, NodeFilter.SHOW_ALL, null, false) must inherit property "root" with the proper type (0) 
 PASS NodeIterator interface: document.createNodeIterator(document.body, NodeFilter.SHOW_ALL, null, false) must inherit property "referenceNode" with the proper type (1) 
 PASS NodeIterator interface: document.createNodeIterator(document.body, NodeFilter.SHOW_ALL, null, false) must inherit property "pointerBeforeReferenceNode" with the proper type (2) 
@@ -1528,8 +1492,6 @@ PASS TreeWalker interface: operation previousSibling()
 PASS TreeWalker interface: operation nextSibling() 
 PASS TreeWalker interface: operation previousNode() 
 PASS TreeWalker interface: operation nextNode() 
-PASS TreeWalker must be primary interface of document.createTreeWalker(document.body, NodeFilter.SHOW_ALL, null, false) 
-PASS Stringification of document.createTreeWalker(document.body, NodeFilter.SHOW_ALL, null, false) 
 PASS TreeWalker interface: document.createTreeWalker(document.body, NodeFilter.SHOW_ALL, null, false) must inherit property "root" with the proper type (0) 
 PASS TreeWalker interface: document.createTreeWalker(document.body, NodeFilter.SHOW_ALL, null, false) must inherit property "whatToShow" with the proper type (1) 
 PASS TreeWalker interface: document.createTreeWalker(document.body, NodeFilter.SHOW_ALL, null, false) must inherit property "filter" with the proper type (2) 
@@ -1593,8 +1555,6 @@ PASS DOMTokenList interface: operation replace(DOMString,DOMString)
 PASS DOMTokenList interface: operation supports(DOMString) 
 PASS DOMTokenList interface: attribute value 
 PASS DOMTokenList interface: stringifier 
-PASS DOMTokenList must be primary interface of document.body.classList 
-PASS Stringification of document.body.classList 
 PASS DOMTokenList interface: document.body.classList must inherit property "length" with the proper type (0) 
 PASS DOMTokenList interface: document.body.classList must inherit property "item" with the proper type (1) 
 PASS DOMTokenList interface: calling item(unsigned long) on document.body.classList with too few arguments must throw TypeError 

@@ -1,5 +1,4 @@
 CONSOLE MESSAGE: line 12: ReferenceError: Can't find variable: SharedWorker
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: SharedWorker
-
+FAIL Fetch in sharedworker: integrity handling ReferenceError: Can't find variable: SharedWorker
 

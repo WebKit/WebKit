@@ -1,15 +1,15 @@
 CONSOLE MESSAGE: line 12: Unhandled Promise Rejection: TypeError: The WritableStream.ready getter can only be used on instances of WritableStream
 CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
-CONSOLE MESSAGE: line 2684: TypeError: undefined is not an object (evaluating 'e.message')
+CONSOLE MESSAGE: line 2765: TypeError: undefined is not an object (evaluating 'e.error')
 CONSOLE MESSAGE: Unhandled Promise Rejection: undefined
-CONSOLE MESSAGE: line 2684: TypeError: undefined is not an object (evaluating 'e.message')
+CONSOLE MESSAGE: line 2765: TypeError: undefined is not an object (evaluating 'e.error')
 CONSOLE MESSAGE: Unhandled Promise Rejection: undefined
 CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
-CONSOLE MESSAGE: line 2684: TypeError: undefined is not an object (evaluating 'e.message')
+CONSOLE MESSAGE: line 2765: TypeError: undefined is not an object (evaluating 'e.error')
 CONSOLE MESSAGE: Unhandled Promise Rejection: undefined
-CONSOLE MESSAGE: line 2684: TypeError: undefined is not an object (evaluating 'e.message')
+CONSOLE MESSAGE: line 2765: TypeError: undefined is not an object (evaluating 'e.error')
 CONSOLE MESSAGE: Unhandled Promise Rejection: undefined
-CONSOLE MESSAGE: line 2684: TypeError: undefined is not an object (evaluating 'e.message')
+CONSOLE MESSAGE: line 2765: TypeError: undefined is not an object (evaluating 'e.error')
 CONSOLE MESSAGE: Unhandled Promise Rejection: undefined
 
 Harness Error (FAIL), message = The WritableStream.ready getter can only be used on instances of WritableStream

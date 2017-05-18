@@ -30,8 +30,6 @@ PASS RTCDataChannel interface: operation send(USVString)
 PASS RTCDataChannel interface: operation send(Blob) 
 PASS RTCDataChannel interface: operation send(ArrayBuffer) 
 PASS RTCDataChannel interface: operation send(ArrayBufferView) 
-PASS RTCDataChannel must be primary interface of channel 
-FAIL Stringification of channel undefined is not an object (evaluating 'this.array.members[this.base].has_stringifier')
 PASS RTCDataChannel interface: channel must inherit property "label" with the proper type (0) 
 PASS RTCDataChannel interface: channel must inherit property "ordered" with the proper type (1) 
 PASS RTCDataChannel interface: channel must inherit property "maxPacketLifeTime" with the proper type (2) 

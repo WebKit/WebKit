@@ -1,3 +1,12 @@
+2017-05-18  Chris Dumez  <cdumez@apple.com>
+
+        Update web-platform-tests tools
+        https://bugs.webkit.org/show_bug.cgi?id=172247
+
+        Reviewed by Youenn Fablet.
+
+        * platform/mac/imported/w3c/web-platform-tests/media-source/interfaces-expected.txt:
+
 2017-05-18  Antti Koivisto  <antti@apple.com>
 
         Design mode should not affect UA shadow trees

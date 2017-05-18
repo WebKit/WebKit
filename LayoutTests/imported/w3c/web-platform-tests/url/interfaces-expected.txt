@@ -20,8 +20,6 @@ PASS URL interface: attribute search
 PASS URL interface: attribute searchParams 
 PASS URL interface: attribute hash 
 PASS URL interface: operation toJSON() 
-PASS URL must be primary interface of new URL("http://foo") 
-PASS Stringification of new URL("http://foo") 
 PASS URL interface: new URL("http://foo") must inherit property "href" with the proper type (0) 
 PASS URL interface: new URL("http://foo") must inherit property "origin" with the proper type (1) 
 PASS URL interface: new URL("http://foo") must inherit property "protocol" with the proper type (2) 
@@ -47,9 +45,9 @@ PASS URLSearchParams interface: operation getAll(USVString)
 PASS URLSearchParams interface: operation has(USVString) 
 PASS URLSearchParams interface: operation set(USVString,USVString) 
 FAIL Testing Symbol.iterator property of iterable interface URLSearchParams assert_equals: @@iterator function does not have the right name expected "entries" but got "[Symbol.Iterator]"
-FAIL Testing pair iterable interface URLSearchParams assert_equals: entries method is not the same as @@iterator expected function "function [Symbol.Iterator]() {
+FAIL Testing pair iterable interface URLSearchParams assert_equals: entries method is not the same as @@iterator expected function "function entries() {
     [native code]
-}" but got function "function entries() {
+}" but got function "function [Symbol.Iterator]() {
     [native code]
 }"
 PASS URLSearchParams interface: stringifier 

@@ -12,8 +12,6 @@ PASS TextDecoder interface: attribute encoding
 PASS TextDecoder interface: attribute fatal 
 PASS TextDecoder interface: attribute ignoreBOM 
 PASS TextDecoder interface: operation decode(BufferSource,TextDecodeOptions) 
-PASS TextDecoder must be primary interface of new TextDecoder() 
-PASS Stringification of new TextDecoder() 
 PASS TextDecoder interface: new TextDecoder() must inherit property "encoding" with the proper type (0) 
 PASS TextDecoder interface: new TextDecoder() must inherit property "fatal" with the proper type (1) 
 PASS TextDecoder interface: new TextDecoder() must inherit property "ignoreBOM" with the proper type (2) 
@@ -26,8 +24,6 @@ PASS TextEncoder interface: existence and properties of interface prototype obje
 PASS TextEncoder interface: existence and properties of interface prototype object's "constructor" property 
 PASS TextEncoder interface: attribute encoding 
 PASS TextEncoder interface: operation encode(USVString) 
-PASS TextEncoder must be primary interface of new TextEncoder() 
-PASS Stringification of new TextEncoder() 
 PASS TextEncoder interface: new TextEncoder() must inherit property "encoding" with the proper type (0) 
 PASS TextEncoder interface: new TextEncoder() must inherit property "encode" with the proper type (1) 
 PASS TextEncoder interface: calling encode(USVString) on new TextEncoder() with too few arguments must throw TypeError 

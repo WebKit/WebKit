@@ -14,8 +14,6 @@ PASS Blob interface: existence and properties of interface prototype object's "c
 PASS Blob interface: attribute size 
 PASS Blob interface: attribute type 
 PASS Blob interface: operation slice(long long,long long,DOMString) 
-PASS Blob must be primary interface of new Blob(["TEST"]) 
-PASS Stringification of new Blob(["TEST"]) 
 PASS Blob interface: new Blob(["TEST"]) must inherit property "size" with the proper type (0) 
 PASS Blob interface: new Blob(["TEST"]) must inherit property "type" with the proper type (1) 
 PASS Blob interface: new Blob(["TEST"]) must inherit property "slice" with the proper type (2) 
@@ -27,8 +25,6 @@ FAIL File interface: existence and properties of interface prototype object asse
 FAIL File interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "File" expected property "File" missing
 FAIL File interface: attribute name assert_own_property: self does not have own property "File" expected property "File" missing
 FAIL File interface: attribute lastModified assert_own_property: self does not have own property "File" expected property "File" missing
-FAIL File must be primary interface of new File(["myFileBits"], "myFileName") assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: File"
-FAIL Stringification of new File(["myFileBits"], "myFileName") assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: File"
 FAIL File interface: new File(["myFileBits"], "myFileName") must inherit property "name" with the proper type (0) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: File"
 FAIL File interface: new File(["myFileBits"], "myFileName") must inherit property "lastModified" with the proper type (1) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: File"
 FAIL Blob interface: new File(["myFileBits"], "myFileName") must inherit property "size" with the proper type (0) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: File"
@@ -67,8 +63,6 @@ PASS FileReader interface: attribute onload
 PASS FileReader interface: attribute onabort 
 PASS FileReader interface: attribute onerror 
 PASS FileReader interface: attribute onloadend 
-PASS FileReader must be primary interface of new FileReader() 
-PASS Stringification of new FileReader() 
 PASS FileReader interface: new FileReader() must inherit property "readAsArrayBuffer" with the proper type (0) 
 PASS FileReader interface: calling readAsArrayBuffer(Blob) on new FileReader() with too few arguments must throw TypeError 
 PASS FileReader interface: new FileReader() must inherit property "readAsBinaryString" with the proper type (1) 
@@ -99,8 +93,6 @@ PASS FileReaderSync interface: operation readAsArrayBuffer(Blob)
 PASS FileReaderSync interface: operation readAsBinaryString(Blob) 
 PASS FileReaderSync interface: operation readAsText(Blob,DOMString) 
 PASS FileReaderSync interface: operation readAsDataURL(Blob) 
-PASS FileReaderSync must be primary interface of new FileReaderSync() 
-PASS Stringification of new FileReaderSync() 
 PASS FileReaderSync interface: new FileReaderSync() must inherit property "readAsArrayBuffer" with the proper type (0) 
 PASS FileReaderSync interface: calling readAsArrayBuffer(Blob) on new FileReaderSync() with too few arguments must throw TypeError 
 PASS FileReaderSync interface: new FileReaderSync() must inherit property "readAsBinaryString" with the proper type (1) 

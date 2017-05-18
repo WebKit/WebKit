@@ -1,46 +1,25 @@
-CONSOLE MESSAGE: line 403: Blocked a frame with origin "http://localhost:8800" from accessing a frame with origin "http://127.0.0.1:8800". Protocols, domains, and ports must match.
-CONSOLE MESSAGE: line 403: Blocked a frame with origin "http://localhost:8800" from accessing a frame with origin "http://127.0.0.1:8800". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: line 384: Blocked a frame with origin "http://localhost:8800" from accessing a frame with origin "http://127.0.0.1:8800". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: line 384: Blocked a frame with origin "http://localhost:8800" from accessing a frame with origin "http://127.0.0.1:8800". Protocols, domains, and ports must match.
 
 PASS Basic sanity-checking 
-PASS Basic sanity-checking (exception type) 
 PASS Only whitelisted properties are accessible cross-origin 
-PASS Only whitelisted properties are accessible cross-origin (exception type) 
 PASS [[GetPrototypeOf]] should return null 
-PASS [[GetPrototypeOf]] should return null (exception type) 
 PASS [[SetPrototypeOf]] should return false 
-PASS [[SetPrototypeOf]] should return false (exception type) 
 PASS [[IsExtensible]] should return true for cross-origin objects 
-PASS [[IsExtensible]] should return true for cross-origin objects (exception type) 
 PASS [[PreventExtensions]] should throw for cross-origin objects 
-PASS [[PreventExtensions]] should throw for cross-origin objects (exception type) 
 PASS [[GetOwnProperty]] - Properties on cross-origin objects should be reported |own| 
-PASS [[GetOwnProperty]] - Properties on cross-origin objects should be reported |own| (exception type) 
 PASS [[GetOwnProperty]] - Property descriptors for cross-origin properties should be set up correctly 
-PASS [[GetOwnProperty]] - Property descriptors for cross-origin properties should be set up correctly (exception type) 
 PASS [[Delete]] Should throw on cross-origin objects 
-PASS [[Delete]] Should throw on cross-origin objects (exception type) 
 PASS [[DefineOwnProperty]] Should throw for cross-origin objects 
-PASS [[DefineOwnProperty]] Should throw for cross-origin objects (exception type) 
 PASS [[Enumerate]] should return an empty iterator 
-PASS [[Enumerate]] should return an empty iterator (exception type) 
 PASS [[OwnPropertyKeys]] should return all properties from cross-origin objects 
-PASS [[OwnPropertyKeys]] should return all properties from cross-origin objects (exception type) 
 PASS [[OwnPropertyKeys]] should return the right symbol-named properties for cross-origin objects 
-PASS [[OwnPropertyKeys]] should return the right symbol-named properties for cross-origin objects (exception type) 
 PASS [[OwnPropertyKeys]] should place the symbols after the property names after the subframe indices 
-PASS [[OwnPropertyKeys]] should place the symbols after the property names after the subframe indices (exception type) 
 PASS A and B jointly observe the same identity for cross-origin Window and Location 
-PASS A and B jointly observe the same identity for cross-origin Window and Location (exception type) 
 PASS Cross-origin functions get local Function.prototype 
-PASS Cross-origin functions get local Function.prototype (exception type) 
 PASS Cross-origin Window accessors get local Function.prototype 
-PASS Cross-origin Window accessors get local Function.prototype (exception type) 
 PASS Same-origin observers get different functions for cross-origin objects 
-PASS Same-origin observers get different functions for cross-origin objects (exception type) 
 PASS Same-origin observers get different accessors for cross-origin Window 
-PASS Same-origin observers get different accessors for cross-origin Window (exception type) 
 PASS Same-origin observers get different accessors for cross-origin Location 
-PASS Same-origin observers get different accessors for cross-origin Location (exception type) 
 PASS {}.toString.call() does the right thing on cross-origin objects 
-PASS {}.toString.call() does the right thing on cross-origin objects (exception type) 
  

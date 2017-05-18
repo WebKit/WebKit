@@ -59,6 +59,8 @@ Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-m
 Access-Control-Allow-Origin handling
 
 
+Harness Error (FAIL), message = 1 duplicate test name: "Disallow origin: localhost:8800"
+
 FAIL Allow origin: * The operation was aborted.
 FAIL Allow origin: _*__ The operation was aborted.
 FAIL Allow origin: [tab]* The operation was aborted.
