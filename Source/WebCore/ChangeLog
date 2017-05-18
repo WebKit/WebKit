@@ -1,5 +1,22 @@
 2017-05-18  Daniel Bates  <dabates@apple.com>
 
+        Cleanup: Remove unnecessary call to AddToImplIncludes("RuntimeEnabledFeatures.h") in GenerateImplementation()
+        https://bugs.webkit.org/show_bug.cgi?id=172236
+
+        Reviewed by Chris Dumez.
+
+        It is unnecessary for GenerateImplementation() to explicitly call AddToImplIncludes("RuntimeEnabledFeatures.h")
+        to add the header RuntimeEnabledFeatures.h to the list of headers in the generated implementation
+        as this header is added when GetRuntimeEnableFunctionName() is called. And GenerateImplementation()
+        calls GetRuntimeEnableFunctionName().
+
+        No functionality changed. So, no new tests.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+
+2017-05-18  Daniel Bates  <dabates@apple.com>
+
         REGRESSION (r209608): Cross-origin plugin document opened in child window blocked by parent
         window CSP when object-src 'none' is set
         https://bugs.webkit.org/show_bug.cgi?id=172038

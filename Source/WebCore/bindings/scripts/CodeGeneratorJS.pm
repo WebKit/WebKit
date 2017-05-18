@@ -3419,7 +3419,6 @@ sub GenerateImplementation
         foreach my $functionOrAttribute (@runtimeEnabledProperties) {
             my $conditionalString = $codeGenerator->GenerateConditionalString($functionOrAttribute);
             push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
-            AddToImplIncludes("RuntimeEnabledFeatures.h");
             my $enable_function_result = GetRuntimeEnableFunctionName($functionOrAttribute);
             my $name = $functionOrAttribute->name;
             push(@implContent, "    if (!${enable_function_result}) {\n");
