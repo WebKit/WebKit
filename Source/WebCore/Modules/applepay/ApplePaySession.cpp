@@ -783,13 +783,14 @@ ExceptionOr<void> ApplePaySession::completePayment(ApplePayPaymentAuthorizationR
     if (!canCompletePayment())
         return Exception { INVALID_ACCESS_ERR };
 
-    auto convertedResult = convertAndValidate(WTFMove(result));
-    if (convertedResult.hasException())
-        return convertedResult.releaseException();
+    auto convertedResultOrException = convertAndValidate(WTFMove(result));
+    if (convertedResultOrException.hasException())
+        return convertedResultOrException.releaseException();
 
-    bool isFinalState = isFinalStateResult(convertedResult.releaseReturnValue());
+    auto&& convertedResult = convertedResultOrException.releaseReturnValue();
+    bool isFinalState = isFinalStateResult(convertedResult);
 
-    paymentCoordinator().completePaymentSession(convertedResult.releaseReturnValue());
+    paymentCoordinator().completePaymentSession(WTFMove(convertedResult));
 
     if (!isFinalState) {
         m_state = State::Active;
