@@ -62,6 +62,7 @@ public:
 
     static ptrdiff_t offsetOfSize() { return OBJECT_OFFSETOF(JSWebAssemblyTable, m_size); }
     static ptrdiff_t offsetOfFunctions() { return OBJECT_OFFSETOF(JSWebAssemblyTable, m_functions); }
+    static ptrdiff_t offsetOfJSFunctions() { return OBJECT_OFFSETOF(JSWebAssemblyTable, m_jsFunctions); }
 
     static bool isValidSize(uint32_t size)
     {

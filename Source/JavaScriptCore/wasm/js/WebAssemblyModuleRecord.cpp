@@ -117,7 +117,7 @@ void WebAssemblyModuleRecord::link(ExecState* exec, JSWebAssemblyModule* module,
                     exportedValue = functionImport;
                 else {
                     Wasm::SignatureIndex signatureIndex = module->signatureIndexFromFunctionIndexSpace(functionIndex);
-                    exportedValue = WebAssemblyWrapperFunction::create(vm, globalObject, functionImport, functionIndex, codeBlock, signatureIndex);
+                    exportedValue = WebAssemblyWrapperFunction::create(vm, globalObject, functionImport, functionIndex, instance, signatureIndex);
                 }
             } else {
                 //   iii. Otherwise:
@@ -264,7 +264,7 @@ JSValue WebAssemblyModuleRecord::evaluate(ExecState* exec)
                     }
 
                     table->setFunction(vm, tableIndex,
-                        WebAssemblyWrapperFunction::create(vm, m_instance->globalObject(), functionImport, functionIndex, codeBlock, signatureIndex));
+                        WebAssemblyWrapperFunction::create(vm, m_instance->globalObject(), functionImport, functionIndex, m_instance.get(), signatureIndex));
                     ++tableIndex;
                     continue;
                 }

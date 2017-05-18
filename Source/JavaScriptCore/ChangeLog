@@ -1,3 +1,46 @@
+2017-05-17  Saam Barati  <sbarati@apple.com>
+
+        We don't do context switches for Wasm->Wasm call indirect
+        https://bugs.webkit.org/show_bug.cgi?id=172188
+        <rdar://problem/32231828>
+
+        Reviewed by Keith Miller.
+
+        We did not do a context switch when doing an indirect call. 
+        This is clearly wrong, since the thing we're making an indirect
+        call to could be from another instance. This patch fixes this
+        oversight by doing a very simple context switch. I've also opened
+        a bug to make indirect calls fast: https://bugs.webkit.org/show_bug.cgi?id=172197
+        since this patch adds yet another branch to the indirect call path.
+        I've also added tests that either throw or crash before this change.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * wasm/WasmB3IRGenerator.cpp:
+        * wasm/js/JSWebAssemblyTable.h:
+        (JSC::JSWebAssemblyTable::offsetOfJSFunctions):
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::WebAssemblyFunction::visitChildren):
+        (JSC::WebAssemblyFunction::finishCreation): Deleted.
+        * wasm/js/WebAssemblyFunction.h:
+        (JSC::WebAssemblyFunction::instance): Deleted.
+        (JSC::WebAssemblyFunction::offsetOfInstance): Deleted.
+        * wasm/js/WebAssemblyFunctionBase.cpp: Added.
+        (JSC::WebAssemblyFunctionBase::WebAssemblyFunctionBase):
+        (JSC::WebAssemblyFunctionBase::visitChildren):
+        (JSC::WebAssemblyFunctionBase::finishCreation):
+        * wasm/js/WebAssemblyFunctionBase.h: Added.
+        (JSC::WebAssemblyFunctionBase::instance):
+        (JSC::WebAssemblyFunctionBase::offsetOfInstance):
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::link):
+        (JSC::WebAssemblyModuleRecord::evaluate):
+        * wasm/js/WebAssemblyWrapperFunction.cpp:
+        (JSC::WebAssemblyWrapperFunction::create):
+        (JSC::WebAssemblyWrapperFunction::finishCreation):
+        (JSC::WebAssemblyWrapperFunction::visitChildren):
+        * wasm/js/WebAssemblyWrapperFunction.h:
+
 2017-05-17  Filip Pizlo  <fpizlo@apple.com>
 
         JSC: Incorrect LoadVarargs handling in ArgumentsEliminationPhase::transform

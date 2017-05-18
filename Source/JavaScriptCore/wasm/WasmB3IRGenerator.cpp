@@ -1089,12 +1089,15 @@ auto B3IRGenerator::addCallIndirect(const Signature& signature, Vector<Expressio
     ASSERT(signature.argumentCount() == args.size());
 
     ExpressionType callableFunctionBuffer;
+    ExpressionType jsFunctionBuffer;
     ExpressionType callableFunctionBufferSize;
     {
         ExpressionType table = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(),
             m_instanceValue, safeCast<int32_t>(JSWebAssemblyInstance::offsetOfTable()));
         callableFunctionBuffer = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(),
             table, safeCast<int32_t>(JSWebAssemblyTable::offsetOfFunctions()));
+        jsFunctionBuffer = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(),
+            table, safeCast<int32_t>(JSWebAssemblyTable::offsetOfJSFunctions()));
         callableFunctionBufferSize = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int32, origin(),
             table, safeCast<int32_t>(JSWebAssemblyTable::offsetOfSize()));
     }
@@ -1140,10 +1143,56 @@ auto B3IRGenerator::addCallIndirect(const Signature& signature, Vector<Expressio
         });
     }
 
+    // Do a context switch if needed.
+    {
+        Value* offset = m_currentBlock->appendNew<Value>(m_proc, Mul, origin(),
+            m_currentBlock->appendNew<Value>(m_proc, ZExt32, origin(), calleeIndex),
+            constant(pointerType(), sizeof(WriteBarrier<JSObject>)));
+        Value* jsObject = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(),
+            m_currentBlock->appendNew<Value>(m_proc, Add, origin(), jsFunctionBuffer, offset));
+
+        BasicBlock* continuation = m_proc.addBlock();
+        BasicBlock* doContextSwitch = m_proc.addBlock();
+
+        Value* newContext = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(),
+            jsObject, safeCast<int32_t>(WebAssemblyFunctionBase::offsetOfInstance()));
+        Value* isSameContext = m_currentBlock->appendNew<Value>(m_proc, Equal, origin(),
+            newContext, m_instanceValue);
+        m_currentBlock->appendNewControlValue(m_proc, B3::Branch, origin(),
+            isSameContext, FrequentedBlock(continuation), FrequentedBlock(doContextSwitch));
+
+        PatchpointValue* patchpoint = doContextSwitch->appendNew<PatchpointValue>(m_proc, B3::Void, origin());
+        patchpoint->effects.writesPinned = true;
+        // We pessimistically assume we're calling something with BoundsChecking memory.
+        // FIXME: We shouldn't have to do this: https://bugs.webkit.org/show_bug.cgi?id=172181
+        patchpoint->clobber(PinnedRegisterInfo::get().toSave(MemoryMode::BoundsChecking));
+        patchpoint->clobber(RegisterSet::macroScratchRegisters());
+        patchpoint->append(newContext, ValueRep::SomeRegister);
+        patchpoint->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
+            GPRReg newContext = params[0].gpr();
+            const PinnedRegisterInfo& pinnedRegs = PinnedRegisterInfo::get();
+            const auto& sizeRegs = pinnedRegs.sizeRegisters;
+            GPRReg baseMemory = pinnedRegs.baseMemoryPointer;
+            ASSERT(newContext != baseMemory);
+
+            jit.storeWasmContext(newContext);
+            jit.loadPtr(CCallHelpers::Address(newContext, Context::offsetOfMemory()), baseMemory); // JSWebAssemblyMemory*.
+            ASSERT(sizeRegs.size() == 1);
+            ASSERT(sizeRegs[0].sizeRegister != baseMemory);
+            ASSERT(sizeRegs[0].sizeRegister != newContext);
+            ASSERT(!sizeRegs[0].sizeOffset);
+            jit.loadPtr(CCallHelpers::Address(baseMemory, JSWebAssemblyMemory::offsetOfSize()), sizeRegs[0].sizeRegister); // Memory size.
+            jit.loadPtr(CCallHelpers::Address(baseMemory, JSWebAssemblyMemory::offsetOfMemory()), baseMemory); // WasmMemory::void*.
+        });
+        doContextSwitch->appendNewControlValue(m_proc, Jump, origin(), continuation);
+
+        m_currentBlock = continuation;
+    }
+
     ExpressionType calleeCode = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(),
         m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), callableFunction,
             safeCast<int32_t>(OBJECT_OFFSETOF(CallableFunction, code))));
-
 
     Type returnType = signature.returnType();
     result = wasmCallingConvention().setupCall(m_proc, m_currentBlock, origin(), args, toB3Type(returnType),

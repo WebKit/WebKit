@@ -31,6 +31,7 @@
 #include "Error.h"
 #include "FunctionPrototype.h"
 #include "JSCInlines.h"
+#include "JSWebAssemblyInstance.h"
 
 namespace JSC {
 
@@ -57,23 +58,22 @@ WebAssemblyWrapperFunction::WebAssemblyWrapperFunction(VM& vm, JSGlobalObject* g
     , m_wasmFunction(wasmFunction)
 { }
 
-WebAssemblyWrapperFunction* WebAssemblyWrapperFunction::create(VM& vm, JSGlobalObject* globalObject, JSObject* function, unsigned importIndex, JSWebAssemblyCodeBlock* codeBlock, Wasm::SignatureIndex signatureIndex)
+WebAssemblyWrapperFunction* WebAssemblyWrapperFunction::create(VM& vm, JSGlobalObject* globalObject, JSObject* function, unsigned importIndex, JSWebAssemblyInstance* instance, Wasm::SignatureIndex signatureIndex)
 {
     ASSERT_WITH_MESSAGE(!function->inherits(vm, WebAssemblyWrapperFunction::info()), "We should never double wrap a wrapper function.");
     String name = "";
     NativeExecutable* executable = vm.getHostFunction(callWebAssemblyWrapperFunction, NoIntrinsic, callHostFunctionAsConstructor, nullptr, name);
-    WebAssemblyWrapperFunction* result = new (NotNull, allocateCell<WebAssemblyWrapperFunction>(vm.heap)) WebAssemblyWrapperFunction(vm, globalObject, globalObject->webAssemblyWrapperFunctionStructure(), Wasm::CallableFunction(signatureIndex, codeBlock->wasmToJsCallStubForImport(importIndex)));
+    WebAssemblyWrapperFunction* result = new (NotNull, allocateCell<WebAssemblyWrapperFunction>(vm.heap)) WebAssemblyWrapperFunction(vm, globalObject, globalObject->webAssemblyWrapperFunctionStructure(), Wasm::CallableFunction(signatureIndex, instance->codeBlock()->wasmToJsCallStubForImport(importIndex)));
     const Wasm::Signature& signature = Wasm::SignatureInformation::get(signatureIndex);
-    result->finishCreation(vm, executable, signature.argumentCount(), name, function, codeBlock);
+    result->finishCreation(vm, executable, signature.argumentCount(), name, function, instance);
     return result;
 }
 
-void WebAssemblyWrapperFunction::finishCreation(VM& vm, NativeExecutable* executable, unsigned length, const String& name, JSObject* function, JSWebAssemblyCodeBlock* codeBlock)
+void WebAssemblyWrapperFunction::finishCreation(VM& vm, NativeExecutable* executable, unsigned length, const String& name, JSObject* function, JSWebAssemblyInstance* instance)
 {
-    Base::finishCreation(vm, executable, length, name);
+    Base::finishCreation(vm, executable, length, name, instance);
     RELEASE_ASSERT(JSValue(function).isFunction());
     m_function.set(vm, this, function);
-    m_codeBlock.set(vm, this, codeBlock);
 }
 
 Structure* WebAssemblyWrapperFunction::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
@@ -88,7 +88,6 @@ void WebAssemblyWrapperFunction::visitChildren(JSCell* cell, SlotVisitor& visito
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
 
-    visitor.append(thisObject->m_codeBlock);
     visitor.append(thisObject->m_function);
 }
 

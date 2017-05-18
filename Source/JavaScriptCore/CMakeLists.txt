@@ -981,6 +981,7 @@ set(JavaScriptCore_SOURCES
     wasm/js/WebAssemblyCompileErrorConstructor.cpp
     wasm/js/WebAssemblyCompileErrorPrototype.cpp
     wasm/js/WebAssemblyFunction.cpp
+    wasm/js/WebAssemblyFunctionBase.cpp
     wasm/js/WebAssemblyInstanceConstructor.cpp
     wasm/js/WebAssemblyInstancePrototype.cpp
     wasm/js/WebAssemblyLinkErrorConstructor.cpp

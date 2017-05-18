@@ -27,8 +27,8 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "JSFunction.h"
 #include "WasmCallee.h"
+#include "WebAssemblyFunctionBase.h"
 #include <wtf/Noncopyable.h>
 
 namespace JSC {
@@ -41,9 +41,9 @@ namespace B3 {
 class Compilation;
 }
 
-class WebAssemblyFunction : public JSFunction {
+class WebAssemblyFunction : public WebAssemblyFunctionBase {
 public:
-    typedef JSFunction Base;
+    using Base = WebAssemblyFunctionBase;
 
     const static unsigned StructureFlags = Base::StructureFlags;
 
@@ -52,25 +52,20 @@ public:
     JS_EXPORT_PRIVATE static WebAssemblyFunction* create(VM&, JSGlobalObject*, unsigned, const String&, JSWebAssemblyInstance*, Wasm::Callee& jsEntrypoint, Wasm::WasmEntrypointLoadLocation, Wasm::SignatureIndex);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
-    JSWebAssemblyInstance* instance() const { return m_instance.get(); }
     Wasm::SignatureIndex signatureIndex() const { return m_wasmFunction.signatureIndex; }
     Wasm::WasmEntrypointLoadLocation wasmEntrypointLoadLocation() const { return m_wasmFunction.code; }
     Wasm::CallableFunction callableFunction() const { return m_wasmFunction; }
 
     void* jsEntrypoint() { return m_jsEntrypoint; }
 
-    static ptrdiff_t offsetOfInstance() { return OBJECT_OFFSETOF(WebAssemblyFunction, m_instance); }
     static ptrdiff_t offsetOfWasmEntrypointLoadLocation() { return OBJECT_OFFSETOF(WebAssemblyFunction, m_wasmFunction) + Wasm::CallableFunction::offsetOfWasmEntrypointLoadLocation(); }
 
 protected:
     static void visitChildren(JSCell*, SlotVisitor&);
 
-    void finishCreation(VM&, NativeExecutable*, unsigned length, const String& name, JSWebAssemblyInstance*);
-
 private:
     WebAssemblyFunction(VM&, JSGlobalObject*, Structure*, Wasm::Callee& jsEntrypoint, Wasm::WasmEntrypointLoadLocation, Wasm::SignatureIndex);
 
-    WriteBarrier<JSWebAssemblyInstance> m_instance;
     // It's safe to just hold the raw CallableFunction/jsEntrypoint because we have a reference
     // to our Instance, which points to the Module that exported us, which
     // ensures that the actual Signature/code doesn't get deallocated.

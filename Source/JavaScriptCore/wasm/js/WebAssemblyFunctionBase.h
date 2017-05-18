@@ -27,40 +27,29 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "JSWebAssemblyCodeBlock.h"
-#include "WebAssemblyFunctionBase.h"
+#include "JSFunction.h"
 
 namespace JSC {
 
-class WebAssemblyWrapperFunction : public WebAssemblyFunctionBase {
+class JSGlobalObject;
+class JSWebAssemblyInstance;
+
+class WebAssemblyFunctionBase : public JSFunction {
 public:
-    using Base = WebAssemblyFunctionBase;
+    using Base = JSFunction;
 
     const static unsigned StructureFlags = Base::StructureFlags;
 
     DECLARE_INFO;
 
-    static WebAssemblyWrapperFunction* create(VM&, JSGlobalObject*, JSObject*, unsigned importIndex, JSWebAssemblyInstance*, Wasm::SignatureIndex);
-    static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
-
-    Wasm::SignatureIndex signatureIndex() const { return m_wasmFunction.signatureIndex; }
-    Wasm::WasmEntrypointLoadLocation  wasmEntrypointLoadLocation() const { return m_wasmFunction.code; }
-    Wasm::CallableFunction callableFunction() const { return m_wasmFunction; }
-    JSObject* function() { return m_function.get(); }
+    JSWebAssemblyInstance* instance() const { return m_instance.get(); }
+    static ptrdiff_t offsetOfInstance() { return OBJECT_OFFSETOF(WebAssemblyFunctionBase, m_instance); }
 
 protected:
     static void visitChildren(JSCell*, SlotVisitor&);
-
-    void finishCreation(VM&, NativeExecutable*, unsigned length, const String& name, JSObject*, JSWebAssemblyInstance*);
-
-private:
-    WebAssemblyWrapperFunction(VM&, JSGlobalObject*, Structure*, Wasm::CallableFunction);
-
-    WriteBarrier<JSObject> m_function;
-    // It's safe to just hold the raw CallableFunction because we have a reference
-    // to our Instance, which points to the CodeBlock, which points to the Module
-    // that exported us, which ensures that the actual Signature/code doesn't get deallocated.
-    Wasm::CallableFunction m_wasmFunction;
+    void finishCreation(VM&, NativeExecutable*, unsigned length, const String& name, JSWebAssemblyInstance*);
+    WebAssemblyFunctionBase(VM&, JSGlobalObject*, Structure*);
+    WriteBarrier<JSWebAssemblyInstance> m_instance;
 };
 
 } // namespace JSC

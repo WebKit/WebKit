@@ -1325,6 +1325,8 @@
 		4443AE3316E188D90076F110 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51F0EB6105C86C6B00E6DF1B /* Foundation.framework */; };
 		451539B912DC994500EF7AC4 /* Yarr.h in Headers */ = {isa = PBXBuildFile; fileRef = 451539B812DC994500EF7AC4 /* Yarr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		473DA4A4764C45FE871B0485 /* DefinePropertyAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = 169948EDE68D4054B01EF797 /* DefinePropertyAttributes.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		521322451ECBCE8200F65615 /* WebAssemblyFunctionBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 521322431ECBCE8200F65615 /* WebAssemblyFunctionBase.cpp */; };
+		521322461ECBCE8200F65615 /* WebAssemblyFunctionBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 521322441ECBCE8200F65615 /* WebAssemblyFunctionBase.h */; };
 		5250D2D11E8DA05A0029A932 /* WasmThunks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5250D2CF1E8DA05A0029A932 /* WasmThunks.cpp */; };
 		5250D2D21E8DA05A0029A932 /* WasmThunks.h in Headers */ = {isa = PBXBuildFile; fileRef = 5250D2D01E8DA05A0029A932 /* WasmThunks.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		525C0DD91E935847002184CD /* WasmCallee.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 525C0DD71E935847002184CD /* WasmCallee.cpp */; };
@@ -1346,7 +1348,7 @@
 		52C952B719A289850069B386 /* TypeProfiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 52C952B619A289850069B386 /* TypeProfiler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		52C952B919A28A1C0069B386 /* TypeProfiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52C952B819A28A1C0069B386 /* TypeProfiler.cpp */; };
 		52F6C35D1E71EB080081F4CC /* WebAssemblyWrapperFunction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52F6C35B1E71EB080081F4CC /* WebAssemblyWrapperFunction.cpp */; };
-		52F6C35E1E71EB080081F4CC /* WebAssemblyWrapperFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = 52F6C35C1E71EB080081F4CC /* WebAssemblyWrapperFunction.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		52F6C35E1E71EB080081F4CC /* WebAssemblyWrapperFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = 52F6C35C1E71EB080081F4CC /* WebAssemblyWrapperFunction.h */; };
 		530FB3021E7A0B6E003C19DD /* WasmWorklist.h in Headers */ = {isa = PBXBuildFile; fileRef = 530FB3011E7A0B6E003C19DD /* WasmWorklist.h */; };
 		530FB3041E7A1146003C19DD /* WasmWorklist.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 530FB3031E7A1146003C19DD /* WasmWorklist.cpp */; };
 		5311BD4A1EA581E500525281 /* WasmOMGPlan.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5311BD481EA581E500525281 /* WasmOMGPlan.cpp */; };
@@ -3873,6 +3875,8 @@
 		4CE978E385A8498199052153 /* ModuleNamespaceAccessCase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModuleNamespaceAccessCase.h; sourceTree = "<group>"; };
 		51F0EB6105C86C6B00E6DF1B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		51F0EC0705C86C9A00E6DF1B /* libobjc.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libobjc.dylib; path = /usr/lib/libobjc.dylib; sourceTree = "<absolute>"; };
+		521322431ECBCE8200F65615 /* WebAssemblyFunctionBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebAssemblyFunctionBase.cpp; path = js/WebAssemblyFunctionBase.cpp; sourceTree = "<group>"; };
+		521322441ECBCE8200F65615 /* WebAssemblyFunctionBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebAssemblyFunctionBase.h; path = js/WebAssemblyFunctionBase.h; sourceTree = "<group>"; };
 		5250D2CF1E8DA05A0029A932 /* WasmThunks.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmThunks.cpp; sourceTree = "<group>"; };
 		5250D2D01E8DA05A0029A932 /* WasmThunks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmThunks.h; sourceTree = "<group>"; };
 		525C0DD71E935847002184CD /* WasmCallee.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmCallee.cpp; sourceTree = "<group>"; };
@@ -8089,6 +8093,8 @@
 				AD2FCBB31DB58DA400B3E736 /* WebAssemblyCompileErrorPrototype.h */,
 				AD4937C91DDD27340077C807 /* WebAssemblyFunction.cpp */,
 				AD4937CA1DDD27340077C807 /* WebAssemblyFunction.h */,
+				521322431ECBCE8200F65615 /* WebAssemblyFunctionBase.cpp */,
+				521322441ECBCE8200F65615 /* WebAssemblyFunctionBase.h */,
 				AD2FCBB41DB58DA400B3E736 /* WebAssemblyInstanceConstructor.cpp */,
 				AD2FCBB51DB58DA400B3E736 /* WebAssemblyInstanceConstructor.h */,
 				AD2FCBB61DB58DA400B3E736 /* WebAssemblyInstancePrototype.cpp */,
@@ -8703,6 +8709,7 @@
 				0F34B14A16D42013001CDA5A /* DFGUseKind.h in Headers */,
 				0F9715311EB28BEE00A1645D /* GCRequest.h in Headers */,
 				0F3B3A2C15475002003ED0FF /* DFGValidate.h in Headers */,
+				521322461ECBCE8200F65615 /* WebAssemblyFunctionBase.h in Headers */,
 				0F2BDC481522802900CD8910 /* DFGValueSource.h in Headers */,
 				0F0123331944EA1B00843A0C /* DFGValueStrength.h in Headers */,
 				0FE254F71ABDDD2200A7C6D2 /* DFGVarargsForwardingPhase.h in Headers */,
@@ -10571,6 +10578,7 @@
 				A5398FAC1C750DA60060A963 /* HeapProfiler.cpp in Sources */,
 				A54C2AB01C6544EE00A18D78 /* HeapSnapshot.cpp in Sources */,
 				A5311C371C77CECA00E6B1B6 /* HeapSnapshotBuilder.cpp in Sources */,
+				521322451ECBCE8200F65615 /* WebAssemblyFunctionBase.cpp in Sources */,
 				0F4680D414BBD24900BFE272 /* HostCallReturnValue.cpp in Sources */,
 				DC2143081CA32E58000A8869 /* ICStats.cpp in Sources */,
 				147F39CE107EC37600427A48 /* Identifier.cpp in Sources */,
