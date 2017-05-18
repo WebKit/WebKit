@@ -3972,6 +3972,21 @@ void Internals::simulateWebGLContextChanged(WebGLRenderingContext& context)
 }
 #endif
 
+void Internals::setPageVisibility(bool isVisible)
+{
+    auto* document = contextDocument();
+    if (!document || !document->page())
+        return;
+    auto& page = *document->page();
+    auto state = page.activityState();
+
+    if (!isVisible)
+        state &= ~ActivityState::IsVisible;
+    else
+        state |= ActivityState::IsVisible;
+
+    page.setActivityState(state);
+}
 
 #if ENABLE(MEDIA_STREAM)
 void Internals::observeMediaStreamTrack(MediaStreamTrack& track)
@@ -4026,22 +4041,6 @@ ExceptionOr<void> Internals::setMediaDeviceState(const String& id, const String&
         return result.releaseException();
 
     return { };
-}
-
-void Internals::setPageVisibility(bool isVisible)
-{
-    auto* document = contextDocument();
-    if (!document || !document->page())
-        return;
-    auto& page = *document->page();
-    auto state = page.activityState();
-
-    if (!isVisible)
-        state &= ~ActivityState::IsVisible;
-    else
-        state |= ActivityState::IsVisible;
-
-    page.setActivityState(state);
 }
 
 void Internals::delayMediaStreamTrackSamples(MediaStreamTrack& track, float delay)

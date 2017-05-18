@@ -1,3 +1,13 @@
+2017-05-17  Youenn Fablet  <youenn@apple.com>
+
+        r216999 broke win build
+        https://bugs.webkit.org/show_bug.cgi?id=172257
+
+        Unreviewed.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::setPageVisibility): Moving setPageVisibility out of MEDIA_STREAM compilation flag.
+
 2017-05-17  Andy Estes  <aestes@apple.com>
 
         [Cocoa] errors are not propagated to PassKit when calling ApplePaySession.completePayment()
