@@ -89,6 +89,8 @@ private:
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
+    void grandfatherExistingWebsiteData();
+
     void writeStoreToDisk();
     void writeEncoderToDisk(WebCore::KeyedEncoder&, const String& label) const;
     std::unique_ptr<WebCore::KeyedDecoder> createDecoderFromDisk(const String& label) const;
@@ -103,9 +105,6 @@ private:
     Ref<WTF::WorkQueue> m_statisticsQueue;
     String m_statisticsStoragePath;
     bool m_resourceLoadStatisticsEnabled { false };
-
-    double m_lastTimeDataRecordsWereRemoved { 0 };
-    bool m_dataRecordsRemovalPending { false };
 };
 
 } // namespace WebKit

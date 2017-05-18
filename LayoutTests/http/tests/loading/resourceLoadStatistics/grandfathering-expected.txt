@@ -1,0 +1,43 @@
+main frame - didStartProvisionalLoadForFrame
+main frame - didCommitLoadForFrame
+main frame - didReceiveTitle: Test for Grandfathering
+main frame - didChangeLocationWithinPageForFrame
+main frame - willPerformClientRedirectToURL: http://localhost:8000/loading/resourceLoadStatistics/resources/set-cookie.php?name=firstPartyCookie&value=value#http://localhost:8000/loading/resourceLoadStatistics/grandfathering.html#step2 
+main frame - didFinishDocumentLoadForFrame
+main frame - didFinishLoadForFrame
+main frame - didStartProvisionalLoadForFrame
+main frame - didCancelClientRedirectForFrame
+main frame - didCommitLoadForFrame
+main frame - didFinishDocumentLoadForFrame
+main frame - didHandleOnloadEventsForFrame
+main frame - didFinishLoadForFrame
+main frame - willPerformClientRedirectToURL: http://localhost:8000/loading/resourceLoadStatistics/grandfathering.html#step2 
+main frame - didStartProvisionalLoadForFrame
+main frame - didCancelClientRedirectForFrame
+main frame - didCommitLoadForFrame
+main frame - didReceiveTitle: Test for Grandfathering
+main frame - didChangeLocationWithinPageForFrame
+main frame - didChangeLocationWithinPageForFrame
+main frame - didFinishDocumentLoadForFrame
+main frame - didHandleOnloadEventsForFrame
+main frame - didFinishLoadForFrame
+main frame - didChangeLocationWithinPageForFrame
+main frame - willPerformClientRedirectToURL: http://127.0.0.1:8000/loading/resourceLoadStatistics/resources/set-cookie.php?name=thirdPartyCookie&value=value#http://localhost:8000/loading/resourceLoadStatistics/grandfathering.html#step6 
+main frame - didStartProvisionalLoadForFrame
+main frame - didCancelClientRedirectForFrame
+main frame - didCommitLoadForFrame
+main frame - didFinishDocumentLoadForFrame
+main frame - didHandleOnloadEventsForFrame
+main frame - didFinishLoadForFrame
+main frame - willPerformClientRedirectToURL: http://localhost:8000/loading/resourceLoadStatistics/grandfathering.html#step6 
+main frame - didStartProvisionalLoadForFrame
+main frame - didCancelClientRedirectForFrame
+main frame - didCommitLoadForFrame
+main frame - didReceiveTitle: Test for Grandfathering
+main frame - didChangeLocationWithinPageForFrame
+main frame - didChangeLocationWithinPageForFrame
+main frame - didFinishDocumentLoadForFrame
+main frame - didHandleOnloadEventsForFrame
+main frame - didFinishLoadForFrame
+PASS Grandfathered cookie was not purged.
+

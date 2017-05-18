@@ -519,6 +519,20 @@ void WebsiteDataStore::fetchDataForTopPrivatelyControlledDomains(OptionSet<Websi
     });
 }
     
+void WebsiteDataStore::topPrivatelyControlledDomainsWithWebsiteData(OptionSet<WebsiteDataType> dataTypes, OptionSet<WebsiteDataFetchOption> fetchOptions, std::function<void(HashSet<String>&&)> completionHandler)
+{
+    fetchData(dataTypes, fetchOptions, [completionHandler, this](auto&& existingDataRecords) {
+        HashSet<String> domainsWithDataRecords;
+        for (auto&& dataRecord : existingDataRecords) {
+            String domain = dataRecord.topPrivatelyControlledDomain();
+            if (domain.isEmpty())
+                continue;
+            domainsWithDataRecords.add(domain);
+        }
+        completionHandler(WTFMove(domainsWithDataRecords));
+    });
+}
+
 static ProcessAccessType computeNetworkProcessAccessTypeForDataRemoval(OptionSet<WebsiteDataType> dataTypes, bool isNonPersistentStore)
 {
     ProcessAccessType processAccessType = ProcessAccessType::None;

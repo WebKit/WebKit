@@ -2208,6 +2208,16 @@ bool TestController::isStatisticsHasHadUserInteraction(WKStringRef hostName)
     return WKResourceLoadStatisticsManagerIsHasHadUserInteraction(hostName);
 }
 
+void TestController::setStatisticsGrandfathered(WKStringRef hostName, bool value)
+{
+    WKResourceLoadStatisticsManagerSetGrandfathered(hostName, value);
+}
+
+bool TestController::isStatisticsGrandfathered(WKStringRef hostName)
+{
+    return WKResourceLoadStatisticsManagerIsGrandfathered(hostName);
+}
+
 void TestController::setStatisticsSubframeUnderTopFrameOrigin(WKStringRef hostName, WKStringRef topFrameHostName)
 {
     WKResourceLoadStatisticsManagerSetSubframeUnderTopFrameOrigin(hostName, topFrameHostName);
@@ -2261,6 +2271,11 @@ void TestController::setStatisticsShouldClassifyResourcesBeforeDataRecordsRemova
 void TestController::setStatisticsMinimumTimeBetweeenDataRecordsRemoval(double seconds)
 {
     WKResourceLoadStatisticsManagerSetMinimumTimeBetweeenDataRecordsRemoval(seconds);
+}
+
+void TestController::setStatisticsGrandfatheringTime(double seconds)
+{
+    WKResourceLoadStatisticsManagerSetGrandfatheringTime(seconds);
 }
 
 void TestController::statisticsClearInMemoryAndPersistentStore()

@@ -137,4 +137,23 @@ bool WebsiteDataRecord::matchesTopPrivatelyControlledDomain(const String& topPri
     return false;
 }
 
+String WebsiteDataRecord::topPrivatelyControlledDomain()
+{
+#if ENABLE(PUBLIC_SUFFIX_LIST)
+    if (!cookieHostNames.isEmpty())
+        return WebCore::topPrivatelyControlledDomain(cookieHostNames.takeAny());
+    
+    if (!origins.isEmpty())
+        return WebCore::topPrivatelyControlledDomain(origins.takeAny().securityOrigin().get().host());
+    
+#if ENABLE(NETSCAPE_PLUGIN_API)
+    if (!pluginDataHostNames.isEmpty())
+        return WebCore::topPrivatelyControlledDomain(pluginDataHostNames.takeAny());
+#endif
+    
+#endif // ENABLE(PUBLIC_SUFFIX_LIST)
+    
+    return emptyString();
+}
+    
 }

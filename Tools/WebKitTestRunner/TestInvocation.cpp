@@ -953,6 +953,29 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return result;
     }
     
+    if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsGrandfathered")) {
+        ASSERT(WKGetTypeID(messageBody) == WKDictionaryGetTypeID());
+        
+        WKDictionaryRef messageBodyDictionary = static_cast<WKDictionaryRef>(messageBody);
+        WKRetainPtr<WKStringRef> hostNameKey(AdoptWK, WKStringCreateWithUTF8CString("HostName"));
+        WKRetainPtr<WKStringRef> valueKey(AdoptWK, WKStringCreateWithUTF8CString("Value"));
+        
+        WKStringRef hostName = static_cast<WKStringRef>(WKDictionaryGetItemForKey(messageBodyDictionary, hostNameKey.get()));
+        WKBooleanRef value = static_cast<WKBooleanRef>(WKDictionaryGetItemForKey(messageBodyDictionary, valueKey.get()));
+        
+        TestController::singleton().setStatisticsGrandfathered(hostName, WKBooleanGetValue(value));
+        return nullptr;
+    }
+    
+    if (WKStringIsEqualToUTF8CString(messageName, "IsStatisticsGrandfathered")) {
+        ASSERT(WKGetTypeID(messageBody) == WKStringGetTypeID());
+        
+        WKStringRef hostName = static_cast<WKStringRef>(messageBody);
+        bool isGrandfathered = TestController::singleton().isStatisticsGrandfathered(hostName);
+        WKRetainPtr<WKTypeRef> result(AdoptWK, WKBooleanCreate(isGrandfathered));
+        return result;
+    }
+    
     if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsSubframeUnderTopFrameOrigin")) {
         ASSERT(WKGetTypeID(messageBody) == WKDictionaryGetTypeID());
         
@@ -1051,6 +1074,13 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         ASSERT(WKGetTypeID(messageBody) == WKDoubleGetTypeID());
         WKDoubleRef seconds = static_cast<WKDoubleRef>(messageBody);
         TestController::singleton().setStatisticsMinimumTimeBetweeenDataRecordsRemoval(WKDoubleGetValue(seconds));
+        return nullptr;
+    }
+    
+    if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsGrandfatheringTime")) {
+        ASSERT(WKGetTypeID(messageBody) == WKDoubleGetTypeID());
+        WKDoubleRef seconds = static_cast<WKDoubleRef>(messageBody);
+        TestController::singleton().setStatisticsGrandfatheringTime(WKDoubleGetValue(seconds));
         return nullptr;
     }
     
