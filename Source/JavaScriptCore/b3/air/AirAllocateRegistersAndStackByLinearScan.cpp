@@ -237,9 +237,8 @@ private:
             
             auto record = [&] (unsigned instIndex) {
                 // FIXME: This could get the register sets from somewhere else, like the
-                // liveness constraints. Except we want those constraints to be laid out like
-                // how they would have been by RegLiveness, since we want to separate the lates
-                // of one inst from the earlies of the next.
+                // liveness constraints. Except we want those constraints to separate the late
+                // actions of one instruction from the early actions of the next.
                 // https://bugs.webkit.org/show_bug.cgi?id=170850
                 const RegisterSet& regs = localCalc.live();
                 if (Inst* prev = block->get(instIndex - 1)) {

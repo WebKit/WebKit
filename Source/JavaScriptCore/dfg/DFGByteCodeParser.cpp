@@ -64,6 +64,23 @@
 
 namespace JSC { namespace DFG {
 
+namespace {
+
+NO_RETURN_DUE_TO_CRASH NEVER_INLINE void crash()
+{
+    CRASH();
+}
+
+#undef RELEASE_ASSERT
+#define RELEASE_ASSERT(assertion) do { \
+    if (UNLIKELY(!(assertion))) { \
+        WTFReportAssertionFailure(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, #assertion); \
+        crash(); \
+    } \
+} while (0)
+
+} // anonymous namespace
+
 static const bool verbose = false;
 
 class ConstantBufferKey {
@@ -1189,6 +1206,7 @@ private:
             , m_operand(operand)
             , m_value(value)
         {
+            RELEASE_ASSERT(operand.isValid());
         }
         
         Node* execute(ByteCodeParser* parser, SetMode setMode = NormalSet)
@@ -2146,6 +2164,18 @@ bool ByteCodeParser::handleMinMax(int resultOperand, NodeType op, int registerOf
 template<typename ChecksFunctor>
 bool ByteCodeParser::handleIntrinsicCall(Node* callee, int resultOperand, Intrinsic intrinsic, int registerOffset, int argumentCountIncludingThis, SpeculatedType prediction, const ChecksFunctor& insertChecks)
 {
+    if (Options::verboseDFGByteCodeParsing())
+        dataLog("       The intrinsic is ", intrinsic, "\n");
+    
+    // It so happens that the code below doesn't handle the invalid result case. We could fix that, but
+    // it would only benefit intrinsics called as setters, like if you do:
+    //
+    //     o.__defineSetter__("foo", Math.pow)
+    //
+    // Which is extremely amusing, but probably not worth optimizing.
+    if (!VirtualRegister(resultOperand).isValid())
+        return false;
+    
     switch (intrinsic) {
 
     // Intrinsic Functions:
@@ -3078,8 +3108,13 @@ bool ByteCodeParser::handleConstantInternalFunction(
     Node* callTargetNode, int resultOperand, InternalFunction* function, int registerOffset,
     int argumentCountIncludingThis, CodeSpecializationKind kind, SpeculatedType prediction, const ChecksFunctor& insertChecks)
 {
-    if (verbose)
+    if (Options::verboseDFGByteCodeParsing())
         dataLog("    Handling constant internal function ", JSValue(function), "\n");
+    
+    // It so happens that the code below assumes that the result operand is valid. It's extremely
+    // unlikely that the result operand would be invalid - you'd have to call this via a setter call.
+    if (!VirtualRegister(resultOperand).isValid())
+        return false;
 
     if (kind == CodeForConstruct) {
         Node* newTargetNode = get(virtualRegisterForArgument(0, registerOffset));

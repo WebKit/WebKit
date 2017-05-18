@@ -192,6 +192,7 @@
 		0F25F1B2181635F300522F39 /* FTLSlowPathCall.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F25F1AB181635F300522F39 /* FTLSlowPathCall.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F25F1B3181635F300522F39 /* FTLSlowPathCallKey.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F25F1AC181635F300522F39 /* FTLSlowPathCallKey.cpp */; };
 		0F25F1B4181635F300522F39 /* FTLSlowPathCallKey.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F25F1AD181635F300522F39 /* FTLSlowPathCallKey.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F275F2D1ECE079800620D47 /* Intrinsic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F275F2C1ECE079600620D47 /* Intrinsic.cpp */; };
 		0F2AC5661E8A0B770001EE3F /* AirFixSpillsAfterTerminals.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F2AC5641E8A0B760001EE3F /* AirFixSpillsAfterTerminals.cpp */; };
 		0F2AC5671E8A0B790001EE3F /* AirFixSpillsAfterTerminals.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2AC5651E8A0B760001EE3F /* AirFixSpillsAfterTerminals.h */; };
 		0F2AC56A1E8A0BD30001EE3F /* AirAllocateRegistersAndStackByLinearScan.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F2AC5681E8A0BD10001EE3F /* AirAllocateRegistersAndStackByLinearScan.cpp */; };
@@ -2772,6 +2773,7 @@
 		0F25F1AB181635F300522F39 /* FTLSlowPathCall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLSlowPathCall.h; path = ftl/FTLSlowPathCall.h; sourceTree = "<group>"; };
 		0F25F1AC181635F300522F39 /* FTLSlowPathCallKey.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLSlowPathCallKey.cpp; path = ftl/FTLSlowPathCallKey.cpp; sourceTree = "<group>"; };
 		0F25F1AD181635F300522F39 /* FTLSlowPathCallKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLSlowPathCallKey.h; path = ftl/FTLSlowPathCallKey.h; sourceTree = "<group>"; };
+		0F275F2C1ECE079600620D47 /* Intrinsic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Intrinsic.cpp; sourceTree = "<group>"; };
 		0F2AC5641E8A0B760001EE3F /* AirFixSpillsAfterTerminals.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AirFixSpillsAfterTerminals.cpp; path = b3/air/AirFixSpillsAfterTerminals.cpp; sourceTree = "<group>"; };
 		0F2AC5651E8A0B760001EE3F /* AirFixSpillsAfterTerminals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirFixSpillsAfterTerminals.h; path = b3/air/AirFixSpillsAfterTerminals.h; sourceTree = "<group>"; };
 		0F2AC5681E8A0BD10001EE3F /* AirAllocateRegistersAndStackByLinearScan.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AirAllocateRegistersAndStackByLinearScan.cpp; path = b3/air/AirAllocateRegistersAndStackByLinearScan.cpp; sourceTree = "<group>"; };
@@ -6599,9 +6601,9 @@
 				A7E5A3A61797432D00E893C0 /* CompilationResult.h */,
 				969A09220ED1E09C00F1F681 /* Completion.cpp */,
 				F5BB2BC5030F772101FCFE1D /* Completion.h */,
+				0FDB2CE9174896C7007B3C1B /* ConcurrentJSLock.h */,
 				658824B01E5CFDF400FB7359 /* ConfigFile.cpp */,
 				658824AE1E5CFDB000FB7359 /* ConfigFile.h */,
-				0FDB2CE9174896C7007B3C1B /* ConcurrentJSLock.h */,
 				A5B6A74C18C6DBA600F11E91 /* ConsoleClient.cpp */,
 				A53CE08918BC21C300BEDF76 /* ConsoleClient.h */,
 				A55714BC1CD8048E0004D2C6 /* ConsoleObject.cpp */,
@@ -6627,8 +6629,6 @@
 				14A1563010966365006FA260 /* DateInstanceCache.h */,
 				BCD203470E17135E002C7E82 /* DatePrototype.cpp */,
 				BCD203480E17135E002C7E82 /* DatePrototype.h */,
-				534638761E71E06E00F12AC1 /* PromiseDeferredTimer.cpp */,
-				534638741E70DDEC00F12AC1 /* PromiseDeferredTimer.h */,
 				169948EDE68D4054B01EF797 /* DefinePropertyAttributes.h */,
 				0FE0500F1AA9091100D33B33 /* DirectArguments.cpp */,
 				0FE050101AA9091100D33B33 /* DirectArguments.h */,
@@ -6718,9 +6718,9 @@
 				E178633F0D9BEC0000D74E75 /* InitializeThreading.h */,
 				E35E035D1B7AB43E0073AD2A /* InspectorInstrumentationObject.cpp */,
 				E35E035E1B7AB43E0073AD2A /* InspectorInstrumentationObject.h */,
+				A7A8AF2B17ADB5F3005AB174 /* Int8Array.h */,
 				A7A8AF2C17ADB5F3005AB174 /* Int16Array.h */,
 				A7A8AF2D17ADB5F3005AB174 /* Int32Array.h */,
-				A7A8AF2B17ADB5F3005AB174 /* Int8Array.h */,
 				BC9BB95B0E19680600DF8855 /* InternalFunction.cpp */,
 				BC11667A0E199C05008066DD /* InternalFunction.h */,
 				A1B9E2331B4E0D6700BC7FED /* IntlCollator.cpp */,
@@ -6744,6 +6744,7 @@
 				A12BBFF31B044A9800664B69 /* IntlObject.cpp */,
 				A12BBFF11B044A8B00664B69 /* IntlObject.h */,
 				708EBE231CE8F35000453146 /* IntlObjectInlines.h */,
+				0F275F2C1ECE079600620D47 /* Intrinsic.cpp */,
 				86BF642A148DB2B5004DE36A /* Intrinsic.h */,
 				8B9F6D551D5912FA001C739F /* IterationKind.h */,
 				FE4D55B71AE716CA0052E459 /* IterationStatus.h */,
@@ -6815,9 +6816,9 @@
 				BC756FC60E2031B200DE7D12 /* JSGlobalObjectFunctions.cpp */,
 				BC756FC70E2031B200DE7D12 /* JSGlobalObjectFunctions.h */,
 				79B819921DD25CF500DDC714 /* JSGlobalObjectInlines.h */,
+				0F2B66C917B6B5AB00A7AE3F /* JSInt8Array.h */,
 				0F2B66CA17B6B5AB00A7AE3F /* JSInt16Array.h */,
 				0F2B66CB17B6B5AB00A7AE3F /* JSInt32Array.h */,
-				0F2B66C917B6B5AB00A7AE3F /* JSInt8Array.h */,
 				E33F507E1B8429A400413856 /* JSInternalPromise.cpp */,
 				E33F507F1B8429A400413856 /* JSInternalPromise.h */,
 				E33F50761B84225700413856 /* JSInternalPromiseConstructor.cpp */,
@@ -6865,6 +6866,8 @@
 				E3EF88731B66DF23003F26CB /* JSPropertyNameIterator.h */,
 				862553CE16136AA5009F17D0 /* JSProxy.cpp */,
 				862553CF16136AA5009F17D0 /* JSProxy.h */,
+				534638721E70D01500F12AC1 /* JSRunLoopTimer.cpp */,
+				534638701E70CF3D00F12AC1 /* JSRunLoopTimer.h */,
 				14874AE115EBDE4A002E3587 /* JSScope.cpp */,
 				14874AE215EBDE4A002E3587 /* JSScope.h */,
 				11C197C2624848EDA84CED7F /* JSScriptFetcher.cpp */,
@@ -6905,10 +6908,10 @@
 				53F256E11B87E28000B4B768 /* JSTypedArrayViewPrototype.cpp */,
 				53917E7C1B791106000EBD33 /* JSTypedArrayViewPrototype.h */,
 				6507D2970E871E4A00D7D896 /* JSTypeInfo.h */,
-				0F2B66D417B6B5AB00A7AE3F /* JSUint16Array.h */,
-				0F2B66D517B6B5AB00A7AE3F /* JSUint32Array.h */,
 				0F2B66D217B6B5AB00A7AE3F /* JSUint8Array.h */,
 				0F2B66D317B6B5AB00A7AE3F /* JSUint8ClampedArray.h */,
+				0F2B66D417B6B5AB00A7AE3F /* JSUint16Array.h */,
+				0F2B66D517B6B5AB00A7AE3F /* JSUint32Array.h */,
 				A7CA3AE117DA41AE006538AF /* JSWeakMap.cpp */,
 				A7CA3AE217DA41AE006538AF /* JSWeakMap.h */,
 				709FB8611AE335C60039D069 /* JSWeakSet.cpp */,
@@ -6926,6 +6929,7 @@
 				A7E2EA690FB460CF00601F06 /* LiteralParser.h */,
 				F692A8680255597D01FF60F7 /* Lookup.cpp */,
 				F692A8690255597D01FF60F7 /* Lookup.h */,
+				28806E21155E478A93FA7B02 /* MachineContext.h */,
 				795B19951D78BE3500262FA0 /* MapBase.cpp */,
 				795B19961D78BE3500262FA0 /* MapBase.h */,
 				A700873717CBE85300C3E643 /* MapConstructor.cpp */,
@@ -6979,6 +6983,8 @@
 				868916A9155F285400CB2B9A /* PrivateName.h */,
 				147341DF1DC2CE9600AA29BA /* ProgramExecutable.cpp */,
 				147341D31DC02E6D00AA29BA /* ProgramExecutable.h */,
+				534638761E71E06E00F12AC1 /* PromiseDeferredTimer.cpp */,
+				534638741E70DDEC00F12AC1 /* PromiseDeferredTimer.h */,
 				A7FB60A3103F7DC20017A286 /* PropertyDescriptor.cpp */,
 				A7FB604B103F5EAB0017A286 /* PropertyDescriptor.h */,
 				BC95437C0EBA70FD0072B6D3 /* PropertyMapHashTable.h */,
@@ -7021,8 +7027,6 @@
 				0F7C39FC1C8F659500480151 /* RegExpObjectInlines.h */,
 				BCD202BF0E1706A7002C7E82 /* RegExpPrototype.cpp */,
 				BCD202C00E1706A7002C7E82 /* RegExpPrototype.h */,
-				534638721E70D01500F12AC1 /* JSRunLoopTimer.cpp */,
-				534638701E70CF3D00F12AC1 /* JSRunLoopTimer.h */,
 				70B0A9D01A9B66200001306A /* RuntimeFlags.h */,
 				527773DD1AAF83AC00BDE7E8 /* RuntimeType.cpp */,
 				52C0611D1AA51E1B00B4ADBA /* RuntimeType.h */,
@@ -7119,11 +7123,11 @@
 				0F2D4DE019832D91007D4B19 /* TypeProfilerLog.h */,
 				0F2D4DE319832D91007D4B19 /* TypeSet.cpp */,
 				0F2D4DE419832D91007D4B19 /* TypeSet.h */,
+				A7A8AF3017ADB5F3005AB174 /* Uint8Array.h */,
+				A7A8AF3117ADB5F3005AB174 /* Uint8ClampedArray.h */,
 				A7A8AF3217ADB5F3005AB174 /* Uint16Array.h */,
 				866739D113BFDE710023D87C /* Uint16WithFraction.h */,
 				A7A8AF3317ADB5F3005AB174 /* Uint32Array.h */,
-				A7A8AF3017ADB5F3005AB174 /* Uint8Array.h */,
-				A7A8AF3117ADB5F3005AB174 /* Uint8ClampedArray.h */,
 				0FE050231AA9095600D33B33 /* VarOffset.cpp */,
 				0FE050241AA9095600D33B33 /* VarOffset.h */,
 				E18E3A570DF9278C00D90B34 /* VM.cpp */,
@@ -7149,7 +7153,6 @@
 				709FB8661AE335C60039D069 /* WeakSetPrototype.h */,
 				A7DCB77912E3D90500911940 /* WriteBarrier.h */,
 				C2B6D75218A33793004A9301 /* WriteBarrierInlines.h */,
-				28806E21155E478A93FA7B02 /* MachineContext.h */,
 			);
 			path = runtime;
 			sourceTree = "<group>";
@@ -11067,6 +11070,7 @@
 				863C6D9C1521111A00585E4E /* YarrCanonicalizeUCS2.cpp in Sources */,
 				65FB63A41C8EA09C0020719B /* YarrCanonicalizeUnicode.cpp in Sources */,
 				86704B8412DBA33700A9FE7B /* YarrInterpreter.cpp in Sources */,
+				0F275F2D1ECE079800620D47 /* Intrinsic.cpp in Sources */,
 				86704B8612DBA33700A9FE7B /* YarrJIT.cpp in Sources */,
 				86704B8912DBA33700A9FE7B /* YarrPattern.cpp in Sources */,
 				86704B4212DB8A8100A9FE7B /* YarrSyntaxChecker.cpp in Sources */,

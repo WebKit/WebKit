@@ -753,6 +753,7 @@ set(JavaScriptCore_SOURCES
     runtime/InitializeThreading.cpp
     runtime/InspectorInstrumentationObject.cpp
     runtime/InternalFunction.cpp
+    runtime/Intrinsic.cpp
     runtime/IntlCollator.cpp
     runtime/IntlCollatorConstructor.cpp
     runtime/IntlCollatorPrototype.cpp
