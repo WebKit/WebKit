@@ -33,9 +33,22 @@
 #include "DFGNaturalLoops.h"
 #include "DFGPhase.h"
 #include "FTLCapabilities.h"
+#include "FunctionWhitelist.h"
 #include "JSCInlines.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace JSC { namespace DFG {
+
+static FunctionWhitelist& ensureGlobalFTLWhitelist()
+{
+    static LazyNeverDestroyed<FunctionWhitelist> ftlWhitelist;
+    static std::once_flag initializeWhitelistFlag;
+    std::call_once(initializeWhitelistFlag, [] {
+        const char* functionWhitelistFile = Options::ftlWhitelist();
+        ftlWhitelist.construct(functionWhitelistFile);
+    });
+    return ftlWhitelist;
+}
 
 class TierUpCheckInjectionPhase : public Phase {
 public:
@@ -55,6 +68,9 @@ public:
             return false;
 
         if (!Options::bytecodeRangeToFTLCompile().isInRange(m_graph.m_profiledBlock->instructionCount()))
+            return false;
+
+        if (!ensureGlobalFTLWhitelist().contains(m_graph.m_profiledBlock))
             return false;
 
 #if ENABLE(FTL_JIT)

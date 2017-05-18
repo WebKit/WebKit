@@ -75,7 +75,6 @@ FunctionWhitelist::FunctionWhitelist(const char* filename)
 
 bool FunctionWhitelist::contains(CodeBlock* codeBlock) const
 {
-    ASSERT(!isCompilationThread());
     if (!m_hasActiveWhitelist)
         return true;
 

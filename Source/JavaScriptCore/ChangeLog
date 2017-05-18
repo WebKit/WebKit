@@ -1,3 +1,17 @@
+2017-05-18  Michael Saboff  <msaboff@apple.com>
+
+        Add FTL whitelist debugging option
+        https://bugs.webkit.org/show_bug.cgi?id=172321
+
+        Reviewed by Saam Barati.
+
+        * dfg/DFGTierUpCheckInjectionPhase.cpp:
+        (JSC::DFG::ensureGlobalFTLWhitelist):
+        (JSC::DFG::TierUpCheckInjectionPhase::run):
+        * runtime/Options.h:
+        * tools/FunctionWhitelist.cpp:
+        (JSC::FunctionWhitelist::contains):
+
 2017-05-18  Filip Pizlo  <fpizlo@apple.com>
 
         Constructor calls set this too early
