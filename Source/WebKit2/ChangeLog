@@ -1,3 +1,17 @@
+2017-05-17  Chris Dumez  <cdumez@apple.com>
+
+        Fix unsafe lambda capture in ContentRuleListStore::lookupContentRuleList()
+        https://bugs.webkit.org/show_bug.cgi?id=172258
+
+        Reviewed by Brady Eidson.
+
+        Fix unsafe lambda capture in ContentRuleListStore::lookupContentRuleList(). The String
+        was moved instead of calling isolatedCopy(), even though we're passing the String to
+        another thread.
+
+        * UIProcess/API/APIContentRuleListStore.cpp:
+        (API::ContentRuleListStore::lookupContentRuleList):
+
 2017-05-16  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC][DFG][DOMJIT] Extend CheckDOM to CheckSubClass

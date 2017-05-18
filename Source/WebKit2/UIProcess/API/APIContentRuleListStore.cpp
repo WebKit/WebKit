@@ -401,7 +401,7 @@ void ContentRuleListStore::lookupContentRuleList(const WTF::String& identifier, 
             return;
         }
         
-        RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), identifier = WTFMove(identifier), fileData = WTFMove(fileData), metaData = WTFMove(metaData), completionHandler = WTFMove(completionHandler)] {
+        RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), identifier = identifier.isolatedCopy(), fileData = WTFMove(fileData), metaData = WTFMove(metaData), completionHandler = WTFMove(completionHandler)] {
             completionHandler(createExtension(identifier, metaData, fileData), { });
         });
     });
