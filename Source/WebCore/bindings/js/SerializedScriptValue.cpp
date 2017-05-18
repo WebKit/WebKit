@@ -2996,8 +2996,11 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(ExecState&
         if (auto arrayBuffer = toPossiblySharedArrayBuffer(vm, transferable.get())) {
             if (arrayBuffer->isNeutered())
                 return Exception { DATA_CLONE_ERR };
-            if (arrayBuffer->isShared())
-                return Exception { TypeError };
+            if (arrayBuffer->isLocked()) {
+                auto scope = DECLARE_THROW_SCOPE(vm);
+                throwVMTypeError(&state, scope, errorMesasgeForTransfer(arrayBuffer));
+                return Exception { ExistingExceptionError };
+            }
             arrayBuffers.append(WTFMove(arrayBuffer));
             continue;
         }

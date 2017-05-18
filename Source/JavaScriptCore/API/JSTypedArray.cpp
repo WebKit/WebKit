@@ -317,7 +317,7 @@ JSObjectRef JSObjectMakeArrayBufferWithBytesNoCopy(JSContextRef ctx, void* bytes
     return toRef(jsBuffer);
 }
 
-void* JSObjectGetArrayBufferBytesPtr(JSContextRef ctx, JSObjectRef objectRef, JSValueRef*)
+void* JSObjectGetArrayBufferBytesPtr(JSContextRef ctx, JSObjectRef objectRef, JSValueRef* exception)
 {
     ExecState* exec = toJS(ctx);
     VM& vm = exec->vm();
@@ -326,6 +326,11 @@ void* JSObjectGetArrayBufferBytesPtr(JSContextRef ctx, JSObjectRef objectRef, JS
 
     if (JSArrayBuffer* jsBuffer = jsDynamicCast<JSArrayBuffer*>(vm, object)) {
         ArrayBuffer* buffer = jsBuffer->impl();
+        if (buffer->isWasmMemory()) {
+            setException(exec, exception, createTypeError(exec, ASCIILiteral("Cannot get the backing buffer for a WebAssembly.Memory")));
+            return nullptr;
+        }
+
         buffer->pinAndLock();
         return buffer->data();
     }

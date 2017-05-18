@@ -68,6 +68,7 @@ JSArrayBuffer* JSWebAssemblyMemory::buffer(VM& vm, JSGlobalObject* globalObject)
     Ref<Wasm::Memory> protectedMemory = m_memory.get();
     auto destructor = [protectedMemory = WTFMove(protectedMemory)] (void*) { };
     m_buffer = ArrayBuffer::createFromBytes(memory().memory(), memory().size(), WTFMove(destructor));
+    m_buffer->makeWasmMemory();
     m_bufferWrapper.set(vm, this, JSArrayBuffer::create(vm, globalObject->m_arrayBufferStructure.get(), m_buffer.get()));
     RELEASE_ASSERT(m_bufferWrapper);
     return m_bufferWrapper.get();
@@ -110,8 +111,7 @@ Wasm::PageCount JSWebAssemblyMemory::grow(VM& vm, ExecState* exec, uint32_t delt
     // to stale memory.
     // Neuter the old array.
     if (m_buffer) {
-        ArrayBufferContents dummyContents;
-        m_buffer->transferTo(vm, dummyContents);
+        m_buffer->neuter(vm);
         m_buffer = nullptr;
         m_bufferWrapper.clear();
     }

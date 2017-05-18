@@ -1,3 +1,30 @@
+2017-05-18  Keith Miller  <keith_miller@apple.com>
+
+        WebAssembly API: test with neutered inputs
+        https://bugs.webkit.org/show_bug.cgi?id=163899
+
+        Reviewed by JF Bastien.
+
+        Add tests to check that we properly throw a type error when
+        we get a transferred ArrayBuffer. Also, we should make sure
+        we cannot post message a wasm memory's ArrayBuffer.
+
+        * API/JSTypedArray.cpp:
+        (JSObjectGetArrayBufferBytesPtr):
+        * runtime/ArrayBuffer.cpp:
+        (JSC::ArrayBuffer::makeShared):
+        (JSC::ArrayBuffer::makeWasmMemory):
+        (JSC::ArrayBuffer::transferTo):
+        (JSC::ArrayBuffer::neuter):
+        (JSC::ArrayBuffer::notifyIncommingReferencesOfTransfer):
+        (JSC::errorMesasgeForTransfer):
+        * runtime/ArrayBuffer.h:
+        (JSC::ArrayBuffer::isLocked):
+        (JSC::ArrayBuffer::isWasmMemory):
+        * wasm/js/JSWebAssemblyMemory.cpp:
+        (JSC::JSWebAssemblyMemory::buffer):
+        (JSC::JSWebAssemblyMemory::grow):
+
 2017-05-18  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remote Inspector: Be stricter about checking message types

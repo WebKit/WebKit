@@ -1,3 +1,16 @@
+2017-05-18  Keith Miller  <keith_miller@apple.com>
+
+        WebAssembly API: test with neutered inputs
+        https://bugs.webkit.org/show_bug.cgi?id=163899
+
+        Reviewed by JF Bastien.
+
+        * wasm/js-api/neutered-inputs.js: Added.
+        (const.testFunction):
+        (const.testConstructor):
+        * wasm/js-api/test_basic_api.js:
+        (const.c.in.constructorProperties.switch):
+
 2017-05-18  Filip Pizlo  <fpizlo@apple.com>
 
         DFG inlining should be hardened for the no-result case

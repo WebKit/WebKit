@@ -61,7 +61,6 @@ for (const c in constructorProperties) {
             // FIXME the following should be WebAssembly.CompileError. https://bugs.webkit.org/show_bug.cgi?id=163768
             assert.throws(() => new WebAssembly[c](buffer), Error, `WebAssembly.Module doesn't parse at byte 0 / 0: expected a module of at least 8 bytes (evaluating 'new WebAssembly[c](buffer)')`);
         assert.instanceof(new WebAssembly[c](emptyModuleArray), WebAssembly.Module);
-        // FIXME test neutered TypedArray and TypedArrayView. https://bugs.webkit.org/show_bug.cgi?id=163899
         break;
     case "Instance":
         for (const invalid of invalidConstructorInputs)

@@ -248,6 +248,7 @@ RefPtr<ArrayBuffer> ArrayBuffer::tryCreate(unsigned numElements, unsigned elemen
 ArrayBuffer::ArrayBuffer(ArrayBufferContents&& contents)
     : m_contents(WTFMove(contents))
     , m_pinCount(0)
+    , m_isWasmMemory(false)
     , m_locked(false)
 {
 }
@@ -273,6 +274,13 @@ RefPtr<ArrayBuffer> ArrayBuffer::sliceImpl(unsigned begin, unsigned end) const
 void ArrayBuffer::makeShared()
 {
     m_contents.makeShared();
+    m_locked = true;
+}
+
+void ArrayBuffer::makeWasmMemory()
+{
+    m_locked = true;
+    m_isWasmMemory = true;
 }
 
 void ArrayBuffer::setSharingMode(ArrayBufferSharingMode newSharingMode)
@@ -319,6 +327,21 @@ bool ArrayBuffer::transferTo(VM& vm, ArrayBufferContents& result)
     }
 
     m_contents.transferTo(result);
+    notifyIncommingReferencesOfTransfer(vm);
+    return true;
+}
+
+// We allow neutering wasm memory ArrayBuffers even though they are locked.
+void ArrayBuffer::neuter(VM& vm)
+{
+    ASSERT(isWasmMemory());
+    ArrayBufferContents unused;
+    m_contents.transferTo(unused);
+    notifyIncommingReferencesOfTransfer(vm);
+}
+
+void ArrayBuffer::notifyIncommingReferencesOfTransfer(VM& vm)
+{
     for (size_t i = numberOfIncomingReferences(); i--;) {
         JSCell* cell = incomingReferenceAt(i);
         if (JSArrayBufferView* view = jsDynamicCast<JSArrayBufferView*>(vm, cell))
@@ -326,7 +349,16 @@ bool ArrayBuffer::transferTo(VM& vm, ArrayBufferContents& result)
         else if (ArrayBufferNeuteringWatchpoint* watchpoint = jsDynamicCast<ArrayBufferNeuteringWatchpoint*>(vm, cell))
             watchpoint->fireAll();
     }
-    return true;
+}
+
+ASCIILiteral errorMesasgeForTransfer(ArrayBuffer* buffer)
+{
+    ASSERT(buffer->isLocked());
+    if (buffer->isShared())
+        return ASCIILiteral("Cannot transfer a SharedArrayBuffer");
+    if (buffer->isWasmMemory())
+        return ASCIILiteral("Cannot transfer a WebAssembly.Memory");
+    return ASCIILiteral("Cannot transfer an ArrayBuffer whose backing store has been accessed by the JavaScriptCore C API");
 }
 
 } // namespace JSC
