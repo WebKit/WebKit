@@ -40,6 +40,7 @@
 #include "StylePendingResources.h"
 #include "StyleResolver.h"
 #include "StyleScope.h"
+#include "TranslateTransformOperation.h"
 #include "WillChangeData.h"
 
 namespace WebCore {
@@ -58,6 +59,7 @@ KeyframeAnimation::KeyframeAnimation(const Animation& animation, RenderElement* 
     checkForMatchingBackdropFilterFunctionLists();
 #endif
     computeStackingContextImpact();
+    computeLayoutDependency();
 }
 
 KeyframeAnimation::~KeyframeAnimation()
@@ -73,6 +75,33 @@ void KeyframeAnimation::computeStackingContextImpact()
         if (WillChangeData::propertyCreatesStackingContext(propertyID)) {
             m_triggersStackingContext = true;
             break;
+        }
+    }
+}
+
+void KeyframeAnimation::computeLayoutDependency()
+{
+    if (!m_keyframes.containsProperty(CSSPropertyTransform))
+        return;
+
+    size_t numKeyframes = m_keyframes.size();
+    for (size_t i = 0; i < numKeyframes; i++) {
+        auto* keyframeStyle = m_keyframes[i].style();
+        if (!keyframeStyle) {
+            ASSERT_NOT_REACHED();
+            continue;
+        }
+        if (keyframeStyle->hasTransform()) {
+            auto& transformOperations = keyframeStyle->transform();
+            for (auto operation : transformOperations.operations()) {
+                if (operation->isTranslateTransformOperationType()) {
+                    auto translation = downcast<TranslateTransformOperation>(operation.get());
+                    if (translation->x().isPercent() || translation->y().isPercent()) {
+                        m_dependsOnLayout = true;
+                        return;
+                    }
+                }
+            }
         }
     }
 }

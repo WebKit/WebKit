@@ -106,6 +106,8 @@ public:
     bool allowsNewAnimationsWhileSuspended() const { return m_allowsNewAnimationsWhileSuspended; }
     void setAllowsNewAnimationsWhileSuspended(bool);
 
+    void setRequiresLayout() { m_requiresLayout = true; }
+
 #if ENABLE(CSS_ANIMATIONS_LEVEL_2)
     bool wantsScrollUpdates() const { return !m_animationsDependentOnScroll.isEmpty(); }
     void addToAnimationsDependentOnScroll(AnimationBase*);
@@ -147,6 +149,7 @@ private:
 
     bool m_waitingForAsyncStartNotification;
     bool m_isSuspended { false };
+    bool m_requiresLayout { false };
 
     // Used to flag whether we should revert to previous buggy
     // behavior of allowing new transitions and animations to

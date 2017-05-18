@@ -261,6 +261,17 @@ void CSSAnimationControllerPrivate::animationTimerFired()
     // We need to keep the frame alive, since it owns us.
     Ref<Frame> protector(m_frame);
 
+    // The animation timer might fire before the layout timer, in
+    // which case we might create some animations with incorrect
+    // values if we don't layout first.
+    if (m_requiresLayout) {
+        if (auto* frameView = m_frame.document()->view()) {
+            if (frameView->needsLayout())
+                frameView->forceLayout();
+        }
+        m_requiresLayout = false;
+    }
+
     // Make sure animationUpdateTime is updated, so that it is current even if no
     // styleChange has happened (e.g. accelerated animations)
     AnimationPrivateUpdateBlock updateBlock(*this);
@@ -657,8 +668,11 @@ bool CSSAnimationController::updateAnimations(RenderElement& renderer, const Ren
     bool animationStateChanged = rendererAnimations.animate(renderer, oldStyle, newStyle, animatedStyle);
 
     if (renderer.parent() || newStyle.animations() || (oldStyle && oldStyle->animations())) {
+        auto& frameView = renderer.view().frameView();
+        if (rendererAnimations.hasAnimationThatDependsOnLayout())
+            m_data->setRequiresLayout();
         m_data->updateAnimationTimerForRenderer(renderer);
-        renderer.view().frameView().scheduleAnimation();
+        frameView.scheduleAnimation();
     }
 
     return animationStateChanged;

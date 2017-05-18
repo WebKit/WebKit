@@ -1,3 +1,18 @@
+2017-05-18  Dean Jackson  <dino@apple.com>
+
+        Transform misplaces element 50% of the time
+        https://bugs.webkit.org/show_bug.cgi?id=172300
+        <rdar://problem/29835668>
+
+        Reviewed by Simon Fraser.
+
+        A test case which has an animation that relies on
+        translation percentages. If all goes well, the
+        animating element will be completely obscured.
+
+        * animations/needs-layout-expected.html: Added.
+        * animations/needs-layout.html: Added.
+
 2017-05-18  Daniel Bates  <dabates@apple.com>
 
         Improve error message for Access-Control-Allow-Origin violation due to misconfigured server

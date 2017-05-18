@@ -56,7 +56,8 @@ public:
     bool hasAnimationForProperty(CSSPropertyID) const;
 
     bool triggersStackingContext() const { return m_triggersStackingContext; }
-    
+    bool dependsOnLayout() const { return m_dependsOnLayout; }
+
     void setUnanimatedStyle(std::unique_ptr<RenderStyle> style) { m_unanimatedStyle = WTFMove(style); }
     RenderStyle* unanimatedStyle() const { return m_unanimatedStyle.get(); }
 
@@ -83,6 +84,7 @@ protected:
     bool computeExtentOfAnimationForMatchingTransformLists(const FloatRect& rendererBox, LayoutRect&) const;
 
     void computeStackingContextImpact();
+    void computeLayoutDependency();
     void resolveKeyframeStyles();
     void validateTransformFunctionList();
     void checkForMatchingFilterFunctionLists();
@@ -102,6 +104,7 @@ private:
 
     bool m_startEventDispatched { false };
     bool m_triggersStackingContext { false };
+    bool m_dependsOnLayout { false };
 };
 
 } // namespace WebCore
