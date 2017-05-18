@@ -161,9 +161,9 @@ class HashMapBuffer {
 public:
     HashMapBuffer() = delete;
 
-    static size_t allocationSize(uint32_t capacity)
+    static size_t allocationSize(Checked<size_t> capacity)
     {
-        return capacity * sizeof(BucketType*);
+        return (capacity * sizeof(BucketType*)).unsafeGet();
     }
 
     ALWAYS_INLINE BucketType** buffer() const

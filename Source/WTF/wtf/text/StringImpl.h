@@ -27,6 +27,7 @@
 #include <unicode/uchar.h>
 #include <unicode/ustring.h>
 #include <wtf/ASCIICType.h>
+#include <wtf/CheckedArithmetic.h>
 #include <wtf/Forward.h>
 #include <wtf/Hasher.h>
 #include <wtf/MathExtras.h>
@@ -767,13 +768,13 @@ protected:
     }
 
     template<typename T>
-    static size_t allocationSize(unsigned tailElementCount)
+    static size_t allocationSize(Checked<size_t> tailElementCount)
     {
-        return tailOffset<T>() + tailElementCount * sizeof(T);
+        return (tailOffset<T>() + tailElementCount * sizeof(T)).unsafeGet();
     }
 
     template<typename T>
-    static ptrdiff_t tailOffset()
+    static size_t tailOffset()
     {
 #if COMPILER(MSVC)
         // MSVC doesn't support alignof yet.

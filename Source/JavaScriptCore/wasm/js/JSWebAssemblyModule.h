@@ -100,9 +100,9 @@ private:
         return WTF::roundUpToMultipleOf<sizeof(WriteBarrier<JSWebAssemblyCallee>)>(sizeof(JSWebAssemblyModule));
     }
 
-    static size_t allocationSize(unsigned numCallees)
+    static size_t allocationSize(Checked<size_t> numCallees)
     {
-        return offsetOfCallees() + sizeof(WriteBarrier<JSWebAssemblyCallee>) * numCallees * 2;
+        return (offsetOfCallees() + sizeof(WriteBarrier<JSWebAssemblyCallee>) * numCallees * 2U).unsafeGet();
     }
 
     class UnconditionalFinalizer : public JSC::UnconditionalFinalizer { 

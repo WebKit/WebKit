@@ -127,12 +127,12 @@ public:
         return WTF::roundUpToMultipleOf<sizeof(WriteBarrier<Unknown>)>(sizeof(DirectArguments));
     }
     
-    static size_t offsetOfSlot(uint32_t index)
+    static size_t offsetOfSlot(Checked<size_t> index)
     {
-        return storageOffset() + sizeof(WriteBarrier<Unknown>) * index;
+        return (storageOffset() + sizeof(WriteBarrier<Unknown>) * index).unsafeGet();
     }
     
-    static size_t allocationSize(uint32_t capacity)
+    static size_t allocationSize(Checked<size_t> capacity)
     {
         return offsetOfSlot(capacity);
     }

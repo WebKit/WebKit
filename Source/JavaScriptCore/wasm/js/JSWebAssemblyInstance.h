@@ -100,9 +100,9 @@ protected:
         return WTF::roundUpToMultipleOf<sizeof(WriteBarrier<JSCell>)>(sizeof(JSWebAssemblyInstance));
     }
 
-    static size_t allocationSize(unsigned numImportFunctions)
+    static size_t allocationSize(Checked<size_t> numImportFunctions)
     {
-        return offsetOfImportFunctions() + sizeof(WriteBarrier<JSCell>) * numImportFunctions;
+        return (offsetOfImportFunctions() + sizeof(WriteBarrier<JSCell>) * numImportFunctions).unsafeGet();
     }
 
 private:
