@@ -1,3 +1,16 @@
+2017-05-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Selection around attachment elements should not persist when beginning a drag
+        https://bugs.webkit.org/show_bug.cgi?id=172319
+        <rdar://problem/32283008>
+
+        Reviewed by Tim Horton.
+
+        Tests that temporary selection around an attachment does not persist longer than it needs to.
+
+        * TestWebKitAPI/Tests/ios/DataInteractionTests.mm:
+        (TestWebKitAPI::TEST):
+
 2017-05-18  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Grandfather domains for existing data records

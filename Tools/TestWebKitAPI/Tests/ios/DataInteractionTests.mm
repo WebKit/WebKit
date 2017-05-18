@@ -644,6 +644,7 @@ TEST(DataInteractionTests, AttachmentElementItemProviders)
     [dataInteractionSimulator runFrom:CGPointMake(50, 50) to:CGPointMake(50, 400)];
 
     EXPECT_WK_STREQ("hello", [injectedString UTF8String]);
+    EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"getSelection().isCollapsed"].boolValue);
 }
 
 TEST(DataInteractionTests, LargeImageToTargetDiv)
