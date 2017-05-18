@@ -43,12 +43,6 @@ namespace WebCore {
 class RuntimeEnabledFeatures {
     WTF_MAKE_NONCOPYABLE(RuntimeEnabledFeatures);
 public:
-    void setDOMIteratorEnabled(bool isEnabled) { m_isDOMIteratorEnabled = isEnabled; }
-    bool domIteratorEnabled() const { return m_isDOMIteratorEnabled; }
-
-    void setGeolocationEnabled(bool isEnabled) { m_isGeolocationEnabled = isEnabled; }
-    bool geolocationEnabled() const { return m_isGeolocationEnabled; }
-
     void setLinkPreloadEnabled(bool isEnabled) { m_isLinkPreloadEnabled = isEnabled; }
     bool linkPreloadEnabled() const { return m_isLinkPreloadEnabled; }
 
@@ -200,12 +194,6 @@ public:
 
 #if ENABLE(VIDEO)
     bool audioEnabled() const;
-    bool htmlMediaElementEnabled() const;
-    bool htmlVideoElementEnabled() const;
-    bool htmlSourceElementEnabled() const;
-    bool mediaControllerEnabled() const;
-    bool mediaErrorEnabled() const;
-    bool timeRangesEnabled() const;
 #endif
 
 #if ENABLE(WEB_SOCKETS)
@@ -225,8 +213,6 @@ private:
     bool m_isInteractiveFormValidationEnabled { false };
     bool m_isCredentialManagementEnabled { false };
 
-    bool m_isDOMIteratorEnabled { true };
-    bool m_isGeolocationEnabled { true };
     bool m_isShadowDOMEnabled { true };
     bool m_areCustomElementsEnabled { true };
     bool m_inputEventsEnabled { true };

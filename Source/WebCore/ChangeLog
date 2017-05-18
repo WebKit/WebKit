@@ -1,5 +1,25 @@
 2017-05-18  Daniel Bates  <dabates@apple.com>
 
+        Cleanup: Remove unused functions from RuntimeEnabledFeatures
+        https://bugs.webkit.org/show_bug.cgi?id=172315
+
+        Reviewed by Jer Noble.
+
+        * page/RuntimeEnabledFeatures.cpp:
+        (WebCore::RuntimeEnabledFeatures::htmlMediaElementEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::htmlVideoElementEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::htmlSourceElementEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::mediaControllerEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::mediaErrorEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::timeRangesEnabled): Deleted.
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setDOMIteratorEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::domIteratorEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::setGeolocationEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::geolocationEnabled): Deleted.
+
+2017-05-18  Daniel Bates  <dabates@apple.com>
+
         Improve error message for Access-Control-Allow-Origin violation due to misconfigured server
         https://bugs.webkit.org/show_bug.cgi?id=162819
         <rdar://problem/28575938>
