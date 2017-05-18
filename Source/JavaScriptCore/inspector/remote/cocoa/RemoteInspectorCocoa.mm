@@ -43,6 +43,14 @@
 #import <wtf/spi/darwin/XPCSPI.h>
 #import <wtf/text/WTFString.h>
 
+#define BAIL_IF_UNEXPECTED_TYPE(expr, classExpr)          \
+    do {                                                  \
+        id value = (expr);                                \
+        id classValue = (classExpr);                      \
+        if (![value isKindOfClass:classValue])            \
+            return;                                       \
+    } while (0);
+
 namespace Inspector {
 
 static bool canAccessWebInspectorMachPort()
@@ -449,16 +457,21 @@ void RemoteInspector::pushListingsSoon()
 
 void RemoteInspector::receivedSetupMessage(NSDictionary *userInfo)
 {
-    unsigned targetIdentifier = [[userInfo objectForKey:WIRTargetIdentifierKey] unsignedIntegerValue];
+    NSNumber *targetIdentifierNumber = userInfo[WIRTargetIdentifierKey];
+    BAIL_IF_UNEXPECTED_TYPE(targetIdentifierNumber, [NSNumber class]);
+
+    NSString *connectionIdentifier = userInfo[WIRConnectionIdentifierKey];
+    BAIL_IF_UNEXPECTED_TYPE(connectionIdentifier, [NSString class]);
+
+    NSString *sender = userInfo[WIRSenderKey];
+    BAIL_IF_UNEXPECTED_TYPE(sender, [NSString class]);
+
+    NSNumber *automaticallyPauseNumber = userInfo[WIRAutomaticallyPause];
+    BAIL_IF_UNEXPECTED_TYPE(automaticallyPauseNumber, [NSNumber class]);
+    BOOL automaticallyPause = automaticallyPauseNumber.boolValue;
+
+    unsigned targetIdentifier = targetIdentifierNumber.unsignedIntValue;
     if (!targetIdentifier)
-        return;
-
-    NSString *connectionIdentifier = [userInfo objectForKey:WIRConnectionIdentifierKey];
-    if (!connectionIdentifier)
-        return;
-
-    NSString *sender = [userInfo objectForKey:WIRSenderKey];
-    if (!sender)
         return;
 
     if (m_targetConnectionMap.contains(targetIdentifier))
@@ -474,7 +487,6 @@ void RemoteInspector::receivedSetupMessage(NSDictionary *userInfo)
 
     if (is<RemoteInspectionTarget>(target)) {
         bool isAutomaticInspection = m_automaticInspectionCandidateTargetIdentifier == target->targetIdentifier();
-        bool automaticallyPause = [[userInfo objectForKey:WIRAutomaticallyPause] boolValue];
 
         if (!connectionToTarget->setup(isAutomaticInspection, automaticallyPause)) {
             connectionToTarget->close();
@@ -495,7 +507,13 @@ void RemoteInspector::receivedSetupMessage(NSDictionary *userInfo)
 
 void RemoteInspector::receivedDataMessage(NSDictionary *userInfo)
 {
-    unsigned targetIdentifier = [[userInfo objectForKey:WIRTargetIdentifierKey] unsignedIntegerValue];
+    NSNumber *targetIdentifierNumber = userInfo[WIRTargetIdentifierKey];
+    BAIL_IF_UNEXPECTED_TYPE(targetIdentifierNumber, [NSNumber class]);
+
+    NSData *data = userInfo[WIRSocketDataKey];
+    BAIL_IF_UNEXPECTED_TYPE(data, [NSData class]);
+
+    unsigned targetIdentifier = targetIdentifierNumber.unsignedIntValue;
     if (!targetIdentifier)
         return;
 
@@ -503,19 +521,20 @@ void RemoteInspector::receivedDataMessage(NSDictionary *userInfo)
     if (!connectionToTarget)
         return;
 
-    NSData *data = [userInfo objectForKey:WIRSocketDataKey];
     RetainPtr<NSString> message = adoptNS([[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
     connectionToTarget->sendMessageToTarget(message.get());
 }
 
 void RemoteInspector::receivedDidCloseMessage(NSDictionary *userInfo)
 {
-    unsigned targetIdentifier = [[userInfo objectForKey:WIRTargetIdentifierKey] unsignedIntegerValue];
-    if (!targetIdentifier)
-        return;
+    NSNumber *targetIdentifierNumber = userInfo[WIRTargetIdentifierKey];
+    BAIL_IF_UNEXPECTED_TYPE(targetIdentifierNumber, [NSNumber class]);
 
-    NSString *connectionIdentifier = [userInfo objectForKey:WIRConnectionIdentifierKey];
-    if (!connectionIdentifier)
+    NSString *connectionIdentifier = userInfo[WIRConnectionIdentifierKey];
+    BAIL_IF_UNEXPECTED_TYPE(connectionIdentifier, [NSString class]);
+
+    unsigned targetIdentifier = targetIdentifierNumber.unsignedIntValue;
+    if (!targetIdentifier)
         return;
 
     auto connectionToTarget = m_targetConnectionMap.get(targetIdentifier);
@@ -538,18 +557,23 @@ void RemoteInspector::receivedGetListingMessage(NSDictionary *)
 
 void RemoteInspector::receivedIndicateMessage(NSDictionary *userInfo)
 {
-    unsigned identifier = [[userInfo objectForKey:WIRTargetIdentifierKey] unsignedIntegerValue];
-    if (!identifier)
-        return;
+    NSNumber *targetIdentifierNumber = userInfo[WIRTargetIdentifierKey];
+    BAIL_IF_UNEXPECTED_TYPE(targetIdentifierNumber, [NSNumber class]);
 
-    BOOL indicateEnabled = [[userInfo objectForKey:WIRIndicateEnabledKey] boolValue];
+    NSNumber *indicateEnabledNumber = userInfo[WIRIndicateEnabledKey];
+    BAIL_IF_UNEXPECTED_TYPE(indicateEnabledNumber, [NSNumber class]);
+    BOOL indicateEnabled = indicateEnabledNumber.boolValue;
+
+    unsigned targetIdentifier = targetIdentifierNumber.unsignedIntValue;
+    if (!targetIdentifier)
+        return;
 
     callOnWebThreadOrDispatchAsyncOnMainThread(^{
         RemoteControllableTarget* target = nullptr;
         {
             std::lock_guard<Lock> lock(m_mutex);
 
-            auto findResult = m_targetMap.find(identifier);
+            auto findResult = m_targetMap.find(targetIdentifier);
             if (findResult == m_targetMap.end())
                 return;
 
@@ -588,9 +612,8 @@ void RemoteInspector::receivedProxyApplicationSetupMessage(NSDictionary *)
 
 void RemoteInspector::receivedConnectionDiedMessage(NSDictionary *userInfo)
 {
-    NSString *connectionIdentifier = [userInfo objectForKey:WIRConnectionIdentifierKey];
-    if (!connectionIdentifier)
-        return;
+    NSString *connectionIdentifier = userInfo[WIRConnectionIdentifierKey];
+    BAIL_IF_UNEXPECTED_TYPE(connectionIdentifier, [NSString class]);
 
     auto it = m_targetConnectionMap.begin();
     auto end = m_targetConnectionMap.end();
@@ -611,7 +634,10 @@ void RemoteInspector::receivedConnectionDiedMessage(NSDictionary *userInfo)
 
 void RemoteInspector::receivedAutomaticInspectionConfigurationMessage(NSDictionary *userInfo)
 {
-    m_automaticInspectionEnabled = [[userInfo objectForKey:WIRAutomaticInspectionEnabledKey] boolValue];
+    NSNumber *automaticInspectionEnabledNumber = userInfo[WIRAutomaticInspectionEnabledKey];
+    BAIL_IF_UNEXPECTED_TYPE(automaticInspectionEnabledNumber, [NSNumber class]);
+
+    m_automaticInspectionEnabled = automaticInspectionEnabledNumber.boolValue;
 
     if (!m_automaticInspectionEnabled && m_automaticInspectionPaused)
         m_automaticInspectionPaused = false;
@@ -619,23 +645,27 @@ void RemoteInspector::receivedAutomaticInspectionConfigurationMessage(NSDictiona
 
 void RemoteInspector::receivedAutomaticInspectionRejectMessage(NSDictionary *userInfo)
 {
-    unsigned rejectionIdentifier = [[userInfo objectForKey:WIRTargetIdentifierKey] unsignedIntValue];
+    NSNumber *targetIdentifierNumber = userInfo[WIRTargetIdentifierKey];
+    BAIL_IF_UNEXPECTED_TYPE(targetIdentifierNumber, [NSNumber class]);
 
-    ASSERT(rejectionIdentifier == m_automaticInspectionCandidateTargetIdentifier);
-    if (rejectionIdentifier == m_automaticInspectionCandidateTargetIdentifier)
+    unsigned targetIdentifier = targetIdentifierNumber.unsignedIntValue;
+    if (!targetIdentifier)
+        return;
+
+    ASSERT(targetIdentifier == m_automaticInspectionCandidateTargetIdentifier);
+    if (targetIdentifier == m_automaticInspectionCandidateTargetIdentifier)
         m_automaticInspectionPaused = false;
 }
 
 void RemoteInspector::receivedAutomationSessionRequestMessage(NSDictionary *userInfo)
 {
+    NSString *suggestedSessionIdentifier = userInfo[WIRSessionIdentifierKey];
+    BAIL_IF_UNEXPECTED_TYPE(suggestedSessionIdentifier, [NSString class]);
+
     if (!m_client)
         return;
 
     if (!m_clientCapabilities || !m_clientCapabilities->remoteAutomationAllowed)
-        return;
-
-    NSString *suggestedSessionIdentifier = [userInfo objectForKey:WIRSessionIdentifierKey];
-    if (!suggestedSessionIdentifier)
         return;
 
     m_client->requestAutomationSession(suggestedSessionIdentifier);

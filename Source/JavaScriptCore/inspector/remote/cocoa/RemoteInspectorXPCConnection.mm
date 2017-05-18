@@ -144,6 +144,7 @@ NSDictionary *RemoteInspectorXPCConnection::deserializeMessage(xpc_object_t obje
 
     RetainPtr<CFDictionaryRef> dictionary = adoptCF((CFDictionaryRef)_CFXPCCreateCFObjectFromXPCMessage(xpcDictionary));
     ASSERT_WITH_MESSAGE(dictionary, "Unable to deserialize xpc message");
+    ASSERT(CFGetTypeID(dictionary.get()) == CFDictionaryGetTypeID());
     return (NSDictionary *)dictionary.autorelease();
 }
 
@@ -182,12 +183,18 @@ void RemoteInspectorXPCConnection::handleEvent(xpc_object_t object)
     }
 #endif
 
-    NSDictionary *dataDictionary = deserializeMessage(object);
-    if (!dataDictionary)
+    NSDictionary *dictionary = deserializeMessage(object);
+    if (![dictionary isKindOfClass:[NSDictionary class]])
         return;
 
-    NSString *message = [dataDictionary objectForKey:RemoteInspectorXPCConnectionMessageNameKey];
-    NSDictionary *userInfo = [dataDictionary objectForKey:RemoteInspectorXPCConnectionUserInfoKey];
+    NSString *message = dictionary[RemoteInspectorXPCConnectionMessageNameKey];
+    if (![message isKindOfClass:[NSString class]])
+        return;
+
+    NSDictionary *userInfo = dictionary[RemoteInspectorXPCConnectionUserInfoKey];
+    if (userInfo && ![userInfo isKindOfClass:[NSDictionary class]])
+        return;
+
     std::lock_guard<Lock> lock(m_mutex);
     if (m_client)
         m_client->xpcConnectionReceivedMessage(this, message, userInfo);
@@ -199,11 +206,12 @@ void RemoteInspectorXPCConnection::sendMessage(NSString *messageName, NSDictiona
     if (m_closed)
         return;
 
-    NSMutableDictionary *dictionary = [NSMutableDictionary dictionaryWithObject:messageName forKey:RemoteInspectorXPCConnectionMessageNameKey];
+    RetainPtr<NSMutableDictionary> dictionary = adoptNS([[NSMutableDictionary alloc] init]);
+    [dictionary setObject:messageName forKey:RemoteInspectorXPCConnectionMessageNameKey];
     if (userInfo)
         [dictionary setObject:userInfo forKey:RemoteInspectorXPCConnectionUserInfoKey];
 
-    xpc_object_t xpcDictionary = _CFXPCCreateXPCMessageWithCFObject((CFDictionaryRef)dictionary);
+    xpc_object_t xpcDictionary = _CFXPCCreateXPCMessageWithCFObject((CFDictionaryRef)dictionary.get());
     ASSERT_WITH_MESSAGE(xpcDictionary && xpc_get_type(xpcDictionary) == XPC_TYPE_DICTIONARY, "Unable to serialize xpc message");
     if (!xpcDictionary)
         return;
