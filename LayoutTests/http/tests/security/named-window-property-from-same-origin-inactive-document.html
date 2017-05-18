@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test-pre.js"></script>
+<script>
+window.jsTestIsAsync = true;
+</script>
+</head>
+<body>
+<script>
+description("This tests that an inactive document can access a named element in a same-origin active document.");
+
+var frame = document.body.appendChild(document.createElement("iframe")); // Loads about:blank
+
+var frameDocument = frame.contentDocument;
+var elementAInInactiveDocument = frameDocument.createElement("div");
+elementAInInactiveDocument.id = "A";
+frameDocument.body.appendChild(elementAInInactiveDocument);
+
+var elementAInActiveDocumentFunction = frame.contentWindow.Function("return A;");
+var elementBInActiveDocumentFunction = frame.contentWindow.Function("return B;");
+
+frame.onload = function ()
+{
+    debug("Lookup named element whose name corresponds to an element in the initial about:blank document:");
+    shouldNotBe("frame.contentDocument.getElementById('A')", "elementAInInactiveDocument");
+    shouldBe("elementAInActiveDocumentFunction()", "frame.contentDocument.getElementById('A')");
+
+    debug("<br>Lookup named element whose name does not correspond to an element in the initial about:blank document:");
+    shouldBe("elementBInActiveDocumentFunction()", "frame.contentDocument.getElementById('B')");
+
+    finishJSTest();
+}
+
+frame.src = "http://127.0.0.1:8000/security/resources/innocent-victim-with-named-elements.html"; // about:blank becomes the inactive document
+</script>
+<script src="/js-test-resources/js-test-post.js"></script>
+</body>
+</html>

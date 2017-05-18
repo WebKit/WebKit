@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test-pre.js"></script>
+<script>
+window.jsTestIsAsync = true;
+</script>
+</head>
+<body>
+<script>
+description("This tests that an inactive document cannot access a named element in a cross-origin active document.");
+
+var frame = document.body.appendChild(document.createElement("iframe")); // Loads about:blank
+
+var frameDocument = frame.contentDocument;
+var elementAInInactiveDocument = frameDocument.createElement("div");
+elementAInInactiveDocument.id = "A";
+frameDocument.body.appendChild(elementAInInactiveDocument);
+
+var elementAInActiveDocumentFunction = frame.contentWindow.Function("return A;");
+var elementBInActiveDocumentFunction = frame.contentWindow.Function("return B;");
+
+frame.onload = function ()
+{
+    debug("Lookup named element whose name corresponds to an element in the initial about:blank document:")
+    shouldThrow("elementAInActiveDocumentFunction()", '"SecurityError (DOM Exception 18): Blocked a frame with origin \\"http://127.0.0.1:8000\\" from accessing a frame with origin \\"http://localhost:8000\\". Protocols, domains, and ports must match."');
+
+    debug("<br>Lookup named element whose name does not correspond to an element in the initial about:blank document:");
+    shouldThrow("elementBInActiveDocumentFunction()", '"SecurityError (DOM Exception 18): Blocked a frame with origin \\"http://127.0.0.1:8000\\" from accessing a frame with origin \\"http://localhost:8000\\". Protocols, domains, and ports must match."');
+
+    finishJSTest();
+}
+
+frame.src = "http://localhost:8000/security/resources/innocent-victim-with-named-elements.html"; // about:blank becomes the inactive document
+</script>
+<script src="/js-test-resources/js-test-post.js"></script>
+</body>
+</html>
