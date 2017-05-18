@@ -1,3 +1,10 @@
+2017-05-17  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Unreviewed, rebaseline for newly added ClassInfo
+        https://bugs.webkit.org/show_bug.cgi?id=172098
+
+        * wasm/js/WebAssemblyFunctionBase.cpp:
+
 2017-05-16  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC][DFG][DOMJIT] Extend CheckDOM to CheckSubClass
