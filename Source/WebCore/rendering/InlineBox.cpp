@@ -39,7 +39,7 @@ struct SameSizeAsInlineBox {
     void* a[4];
     FloatPoint b;
     float c[2];
-    unsigned d : 20;
+    unsigned d : 23;
 #if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
     unsigned s;
     bool f;
