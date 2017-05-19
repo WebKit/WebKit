@@ -2,8 +2,6 @@ CONSOLE MESSAGE: MockPageOverlayClient::drawRect dirtyRect (0, 0, 512, 512)
 CONSOLE MESSAGE: MockPageOverlayClient::drawRect dirtyRect (512, 0, 512, 512)
 CONSOLE MESSAGE: MockPageOverlayClient::drawRect dirtyRect (0, 512, 512, 512)
 CONSOLE MESSAGE: MockPageOverlayClient::drawRect dirtyRect (512, 512, 512, 512)
-CONSOLE MESSAGE: MockPageOverlayClient::drawRect dirtyRect (0, 0, 800, 600)
-CONSOLE MESSAGE: MockPageOverlayClient::drawRect dirtyRect (0, 0, 800, 600)
 Initial layers
 
 View-relative:

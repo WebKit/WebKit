@@ -2766,9 +2766,6 @@ fast/css/deferred-parsing/hover-test.html [ Skip ]
 # New Encrypted Media API not enabled on iOS
 media/encrypted-media/mock-navigator-requestMediaKeySystemAccess.html [ Skip ]
 
-# editing/caret/ios/emoji.html is used instead.
-editing/caret/emoji.html [ Failure ]
-
 fast/media/video-element-in-details-collapse.html [ Skip ]
 webkit.org/b/167795 http/tests/security/bypassing-cors-checks-for-extension-urls.html [ Skip ]
 
@@ -2779,3 +2776,6 @@ imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal
 media/media-fullscreen-loop-inline.html [ Failure ]
 editing/caret/emoji.html [ Timeout ]
 media/audio-dealloc-crash.html [ Timeout ]
+compositing/geometry/fixed-in-composited.html [ Failure ]
+
+webkit.org/b/168924 scrollingcoordinator/ios/non-stable-viewport-scroll.html [ Pass Failure ]
