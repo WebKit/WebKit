@@ -340,14 +340,13 @@ Suites.push({
             }
         }),
         new BenchmarkTestStep('CompletingAllItems', function (newTodo, contentWindow, contentDocument) {
-            var checkboxes = contentDocument.querySelectorAll('.toggle');
+            var checkboxes = contentDocument.getElementsByClassName('toggle');
             for (var i = 0; i < checkboxes.length; i++)
                 checkboxes[i].click();
         }),
         new BenchmarkTestStep('DeletingAllItems', function (newTodo, contentWindow, contentDocument) {
-            var deleteButtons = contentDocument.querySelectorAll('.destroy');
-            for (var i = 0; i < deleteButtons.length; i++)
-                deleteButtons[i].click();
+            for (var i = 0; i < numberOfItemsToAdd; i++)
+                contentDocument.querySelector('.destroy').click();
         }),
     ]
 })
@@ -408,8 +407,8 @@ Suites.push({
         }),
         new BenchmarkTestStep('DeletingItems', function (params, contentWindow, contentDocument) {
             var deleteButtons = contentDocument.querySelectorAll('.destroy');
-            for (var i = 0; i < deleteButtons.length; i++)
-                deleteButtons[i].click();
+            for (var i = 0; i < numberOfItemsToAdd; i++)
+                contentDocument.querySelector('.destroy').click();
         }),
     ]
 });
