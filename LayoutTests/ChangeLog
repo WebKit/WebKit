@@ -29,6 +29,12 @@
 
         Unreviewed gardening on ApplePaySession.html after r217078.
 
+        * TestExpectations: Expect failure until webkit.org/b/172344 is fixed.
+
+2017-05-18  Andy Estes  <aestes@apple.com>
+
+        Unreviewed gardening on ApplePaySession.html after r217078.
+
         The ApplePayError tests are only expected to pass when APPLE_PAY_DELEGATE is enabled, so
         this breaks them out into their own file so that they can be skipped independently from
         ApplePaySession.html.
