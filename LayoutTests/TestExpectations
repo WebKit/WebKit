@@ -1298,5 +1298,3 @@ webkit.org/b/171031 imported/w3c/web-platform-tests/XMLHttpRequest/getallrespons
 webkit.org/b/170701 webrtc/datachannel/bufferedAmountLowThreshold.html [ Pass Failure ]
 
 webkit.org/b/170835 fast/mediacapturefromelement/CanvasCaptureMediaStream-2d-events.html [ Pass Failure ]
-
-webkit.org/b/172344 http/tests/ssl/applepay/ApplePaySession.html [ Failure ]

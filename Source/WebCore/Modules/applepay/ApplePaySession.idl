@@ -25,7 +25,7 @@
 
 [
     ActiveDOMObject,
-    Conditional=APPLE_PAY_DELEGATE,
+    Conditional=APPLE_PAY,
     Constructor(unsigned long version, ApplePayPaymentRequest paymentRequest),
     ConstructorCallWith=Document,
     ConstructorMayThrowException,
