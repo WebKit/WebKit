@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+
+    description("Test basic creation of an ApplePayError object.");
+
+    window.jsTestIsAsync = true;
+
+    function logAndShouldThrow(setup, test) {
+        debug("SETUP: " + setup)
+        eval(setup);
+        shouldThrow(test);
+        debug("")
+    }
+
+    function logAndShouldNotThrow(setup, test) {
+        debug("SETUP: " + setup)
+        eval(setup);
+        shouldNotThrow(test);
+        debug("")
+    }
+
+    function go() {
+        debug("Testing ApplePayError")
+        debug("");
+        logAndShouldThrow("", "new ApplePayError()")
+        logAndShouldThrow("", "new ApplePayError([])")
+        logAndShouldThrow("", "new ApplePayError('')")
+        logAndShouldNotThrow("", "new ApplePayError('unknown')")
+        logAndShouldNotThrow("", "new ApplePayError('shippingContactInvalid')")
+        logAndShouldNotThrow("", "new ApplePayError('billingContactInvalid')")
+        logAndShouldNotThrow("", "new ApplePayError('addressUnserviceable')")
+        logAndShouldThrow("", "new ApplePayError('unknown', [])")
+        logAndShouldThrow("", "new ApplePayError('unknown', '')")
+        logAndShouldNotThrow("", "new ApplePayError('unknown', 'phoneNumber')")
+        logAndShouldNotThrow("", "new ApplePayError('unknown', 'emailAddress')")
+        logAndShouldNotThrow("", "new ApplePayError('unknown', 'name')")
+        logAndShouldNotThrow("", "new ApplePayError('unknown', 'postalAddress')")
+        logAndShouldNotThrow("", "new ApplePayError('unknown', 'addressLines')")
+        logAndShouldNotThrow("", "new ApplePayError('unknown', 'locality')")
+        logAndShouldNotThrow("", "new ApplePayError('unknown', 'postalCode')")
+        logAndShouldNotThrow("", "new ApplePayError('unknown', 'administrativeArea')")
+        logAndShouldNotThrow("", "new ApplePayError('unknown', 'country')")
+        logAndShouldNotThrow("", "new ApplePayError('unknown', 'countryCode')")
+
+        document.querySelector("button").remove();
+
+        finishJSTest();
+    }
+
+    function clickElement(element) {
+        let x = element.offsetLeft + 2;
+        let y = element.offsetTop + 2;
+
+        var supportsTouchEvents = "TouchEvent" in window;
+        if (supportsTouchEvents && window.testRunner && testRunner.runUIScript) {
+            testRunner.runUIScript(`(function() { uiController.singleTapAtPoint(${x}, ${y}, function() { }); })();`, function () { });
+        } else if (window.eventSender) {
+            eventSender.mouseMoveTo(x, y);
+            eventSender.mouseDown();
+            eventSender.mouseUp();
+        }
+    }
+
+    window.onload = function() {
+        clickElement(document.querySelector("button"));
+    }
+
+</script>
+<button onclick='go()'>Go</button>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

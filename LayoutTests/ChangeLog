@@ -1,3 +1,17 @@
+2017-05-18  Andy Estes  <aestes@apple.com>
+
+        Unreviewed gardening on ApplePaySession.html after r217078.
+
+        The ApplePayError tests are only expected to pass when APPLE_PAY_DELEGATE is enabled, so
+        this breaks them out into their own file so that they can be skipped independently from
+        ApplePaySession.html.
+
+        * http/tests/ssl/applepay/ApplePayError-expected.txt: Added.
+        * http/tests/ssl/applepay/ApplePayError.html: Added.
+        * http/tests/ssl/applepay/ApplePaySession-expected.txt:
+        * http/tests/ssl/applepay/ApplePaySession.html:
+        * platform/mac-wk2/TestExpectations:
+
 2017-05-18  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline js/dom/global-constructors-attributes.html after r217078.
