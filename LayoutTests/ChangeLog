@@ -1,3 +1,14 @@
+2017-05-19  Ryan Haddad  <ryanhaddad@apple.com>
+
+        LayoutTest js/Promise-types.html is a flaky failure (Unhandled Promise Rejection messages)
+        https://bugs.webkit.org/show_bug.cgi?id=171739
+
+        Reviewed by Joseph Pecoraro.
+
+        Silence the console messages for unhandled rejections in this LayoutTest.
+
+        * js/script-tests/Promise-types.js:
+
 2017-05-19  Zalan Bujtas  <zalan@apple.com>
 
         LayoutTests/accessibility/mac/aria-multiple-liveregions-notification.html should force layout after r216726.

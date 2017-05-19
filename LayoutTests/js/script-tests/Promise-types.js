@@ -5,6 +5,9 @@ debug("");
 debug("Promises");
 debug("");
 
+// Silence unhandled rejection messages.
+window.onunhandledrejection = () => false;
+
 // Promises should be of type Promise.
 
 var aPromise = new Promise(function(resolve, reject) { resolve(1); });
