@@ -1,3 +1,18 @@
+2017-05-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Speedometer 2.0: Vanilla JS test doesn't mark all todo items as completed
+        https://bugs.webkit.org/show_bug.cgi?id=172348
+
+        Reviewed by Antti Koivisto.
+
+        The bug was caused by the in-memory store class using the milisecond precision timestamp as an ID.
+        Because we inserts 50 items all at once, this can result in multiple data items sharing a single ID.
+
+        Fixed the bug by using a mononotically increasing ID instead.
+
+        * Speedometer/resources/todomvc/vanilla-examples/vanillajs/js/store.js:
+        (Store.prototype.save):
+
 2017-05-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION (r216694 - 216712): Performance test Speedometer/Full.html is failing

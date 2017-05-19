@@ -3,6 +3,8 @@
     'use strict';
 
     var MemoryStorage = {};
+    var id = 1;
+
     /**
      * Creates a new client side storage object and will create an empty
      * collection if no collection already exists.
@@ -96,7 +98,7 @@
             callback.call(this, todos);
         } else {
             // Generate an ID
-            updateData.id = new Date().getTime();
+            updateData.id = id++;
 
             todos.push(updateData);
             MemoryStorage[this._dbName] = JSON.stringify(data);
