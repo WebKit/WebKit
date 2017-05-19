@@ -65,6 +65,7 @@
 #include "PluginDocument.h"
 #include "PluginViewBase.h"
 #include "Position.h"
+#include "RenderAttachment.h"
 #include "RenderFileUploadControl.h"
 #include "RenderImage.h"
 #include "RenderView.h"
@@ -1056,6 +1057,10 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     if (is<HTMLAttachmentElement>(element) && m_dragSourceAction & DragSourceActionAttachment) {
+        auto* attachmentRenderer = downcast<HTMLAttachmentElement>(element).renderer();
+        if (!attachmentRenderer)
+            return false;
+
         src.editor().setIgnoreSelectionChanges(true);
         auto previousSelection = src.selection().selection();
         if (!dataTransfer.pasteboard().hasData()) {
@@ -1079,7 +1084,9 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
         
         if (!dragImage) {
             TextIndicatorData textIndicator;
+            attachmentRenderer->setShouldDrawBorder(false);
             dragImage = DragImage { dissolveDragImageToFraction(createDragImageForSelection(src, textIndicator), DragImageAlpha) };
+            attachmentRenderer->setShouldDrawBorder(true);
             if (textIndicator.contentImage)
                 dragImage.setIndicatorData(textIndicator);
             dragLoc = dragLocForSelectionDrag(src);

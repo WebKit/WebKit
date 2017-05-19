@@ -1,3 +1,19 @@
+2017-05-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Attachment drag preview should not have the attachment outline
+        https://bugs.webkit.org/show_bug.cgi?id=172327
+        <rdar://problem/32282831>
+
+        Reviewed by Tim Horton.
+
+        When creating a drag image for an attachment element, don't include borders around the attachment.
+
+        * page/DragController.cpp:
+        (WebCore::DragController::startDrag):
+        * rendering/RenderAttachment.h:
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::paintAttachment):
+
 2017-05-18  Youenn Fablet  <youenn@apple.com>
 
         Make WebRTC logging happen in Release
