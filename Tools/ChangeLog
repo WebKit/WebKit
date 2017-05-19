@@ -1,5 +1,12 @@
 2017-05-19  Jonathan Bedard  <jbedard@apple.com>
 
+        Unreviewed infrastructure fix.
+
+        * Scripts/webkitpy/port/ios_simulator.py:
+        (IOSSimulatorPort._create_devices): Ignore failure to open Simulator.app.
+
+2017-05-19  Jonathan Bedard  <jbedard@apple.com>
+
         webkitpy: Use simctl boot to run multiple simulators at once
         https://bugs.webkit.org/show_bug.cgi?id=172374
 

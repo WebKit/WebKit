@@ -227,7 +227,7 @@ class IOSSimulatorPort(IOSPort):
                 time.sleep(2.5)
 
         if not self.use_multiple_simulator_apps():
-            self._executive.run_command(['open', '-g', '-b', self.SIMULATOR_BUNDLE_ID])
+            self._executive.run_command(['open', '-g', '-b', self.SIMULATOR_BUNDLE_ID], return_exit_code=True)
 
         _log.info('Waiting for all iOS Simulators to finish booting.')
         for i in xrange(self.child_processes()):
