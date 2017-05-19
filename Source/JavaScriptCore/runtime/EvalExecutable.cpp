@@ -31,7 +31,7 @@
 
 namespace JSC {
 
-const ClassInfo EvalExecutable::s_info = { "EvalExecutable", &ScriptExecutable::s_info, 0, CREATE_METHOD_TABLE(EvalExecutable) };
+const ClassInfo EvalExecutable::s_info = { "EvalExecutable", &ScriptExecutable::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(EvalExecutable) };
 
 EvalExecutable::EvalExecutable(ExecState* exec, const SourceCode& source, bool inStrictContext, DerivedContextType derivedContextType, bool isArrowFunctionContext, EvalContextType evalContextType)
     : ScriptExecutable(exec->vm().evalExecutableStructure.get(), exec->vm(), source, inStrictContext, derivedContextType, isArrowFunctionContext, evalContextType, NoIntrinsic)

@@ -40,7 +40,7 @@
 
 namespace JSC {
 
-const ClassInfo ModuleProgramExecutable::s_info = { "ModuleProgramExecutable", &ScriptExecutable::s_info, 0, CREATE_METHOD_TABLE(ModuleProgramExecutable) };
+const ClassInfo ModuleProgramExecutable::s_info = { "ModuleProgramExecutable", &ScriptExecutable::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(ModuleProgramExecutable) };
 
 ModuleProgramExecutable::ModuleProgramExecutable(ExecState* exec, const SourceCode& source)
     : ScriptExecutable(exec->vm().moduleProgramExecutableStructure.get(), exec->vm(), source, false, DerivedContextType::None, false, EvalContextType::None, NoIntrinsic)

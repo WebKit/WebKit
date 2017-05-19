@@ -159,7 +159,7 @@ private:
                 break;
             }
 
-            case CheckDOM: {
+            case CheckSubClass: {
                 JSValue constant = m_state.forNode(node->child1()).value();
                 if (constant) {
                     if (constant.isCell() && constant.asCell()->inherits(m_graph.m_vm, node->classInfo())) {

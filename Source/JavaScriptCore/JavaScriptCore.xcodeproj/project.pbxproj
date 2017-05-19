@@ -2360,6 +2360,7 @@
 		E322E5A31DA64439006E7709 /* DFGDOMJITPatchpointParams.h in Headers */ = {isa = PBXBuildFile; fileRef = E322E5A11DA64435006E7709 /* DFGDOMJITPatchpointParams.h */; };
 		E322E5A61DA644A8006E7709 /* FTLDOMJITPatchpointParams.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E322E5A41DA644A4006E7709 /* FTLDOMJITPatchpointParams.cpp */; };
 		E322E5A71DA644A8006E7709 /* FTLDOMJITPatchpointParams.h in Headers */ = {isa = PBXBuildFile; fileRef = E322E5A51DA644A4006E7709 /* FTLDOMJITPatchpointParams.h */; };
+		E326C4971ECBEF6300A9A905 /* ClassInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E326C4961ECBEF5700A9A905 /* ClassInfo.cpp */; };
 		E328C6C71DA4304500D255FD /* MaxFrameExtentForSlowPathCall.h in Headers */ = {isa = PBXBuildFile; fileRef = 65860177185A8F5E00030EEE /* MaxFrameExtentForSlowPathCall.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E328C6C81DA4306100D255FD /* RegisterAtOffsetList.h in Headers */ = {isa = PBXBuildFile; fileRef = 6540C79D1B82D99D000F6B79 /* RegisterAtOffsetList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E328C6C91DA432F900D255FD /* RegisterAtOffset.h in Headers */ = {isa = PBXBuildFile; fileRef = 6540C79F1B82D9CE000F6B79 /* RegisterAtOffset.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4990,6 +4991,7 @@
 		E322E5A11DA64435006E7709 /* DFGDOMJITPatchpointParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGDOMJITPatchpointParams.h; path = dfg/DFGDOMJITPatchpointParams.h; sourceTree = "<group>"; };
 		E322E5A41DA644A4006E7709 /* FTLDOMJITPatchpointParams.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLDOMJITPatchpointParams.cpp; path = ftl/FTLDOMJITPatchpointParams.cpp; sourceTree = "<group>"; };
 		E322E5A51DA644A4006E7709 /* FTLDOMJITPatchpointParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLDOMJITPatchpointParams.h; path = ftl/FTLDOMJITPatchpointParams.h; sourceTree = "<group>"; };
+		E326C4961ECBEF5700A9A905 /* ClassInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ClassInfo.cpp; sourceTree = "<group>"; };
 		E33637A31B63220200EE0840 /* ReflectObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReflectObject.cpp; sourceTree = "<group>"; };
 		E33637A41B63220200EE0840 /* ReflectObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReflectObject.h; sourceTree = "<group>"; };
 		E33B3E251B7ABD750048DB2E /* InspectorInstrumentationObject.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorInstrumentationObject.lut.h; sourceTree = "<group>"; };
@@ -6584,6 +6586,7 @@
 				145C507F0D9DF63B0088F6B9 /* CallData.h */,
 				FE80C1981D775FB4008510C0 /* CatchScope.cpp */,
 				FE80C1961D775B27008510C0 /* CatchScope.h */,
+				E326C4961ECBEF5700A9A905 /* ClassInfo.cpp */,
 				BC6AAAE40E1F426500AD87D8 /* ClassInfo.h */,
 				0FE0501C1AA9095600D33B33 /* ClonedArguments.cpp */,
 				0FE0501D1AA9095600D33B33 /* ClonedArguments.h */,
@@ -10201,6 +10204,7 @@
 				0FEC850F1BDACDAC0080FF74 /* B3Const64Value.cpp in Sources */,
 				0FF4B4CA1E889D7B00DBBE86 /* B3VariableLiveness.cpp in Sources */,
 				0FEC85111BDACDAC0080FF74 /* B3ConstDoubleValue.cpp in Sources */,
+				E326C4971ECBEF6300A9A905 /* ClassInfo.cpp in Sources */,
 				53CA73091EA533D80076049D /* WasmBBQPlan.cpp in Sources */,
 				530FB3041E7A1146003C19DD /* WasmWorklist.cpp in Sources */,
 				43422A621C158E6A00E2EB98 /* B3ConstFloatValue.cpp in Sources */,

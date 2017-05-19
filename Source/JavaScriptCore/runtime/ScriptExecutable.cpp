@@ -42,7 +42,7 @@
 
 namespace JSC {
 
-const ClassInfo ScriptExecutable::s_info = { "ScriptExecutable", &ExecutableBase::s_info, 0, CREATE_METHOD_TABLE(ScriptExecutable) };
+const ClassInfo ScriptExecutable::s_info = { "ScriptExecutable", &ExecutableBase::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(ScriptExecutable) };
 
 ScriptExecutable::ScriptExecutable(Structure* structure, VM& vm, const SourceCode& source, bool isInStrictContext, DerivedContextType derivedContextType, bool isInArrowFunctionContext, EvalContextType evalContextType, Intrinsic intrinsic)
     : ExecutableBase(vm, structure, NUM_PARAMETERS_NOT_COMPILED, intrinsic)

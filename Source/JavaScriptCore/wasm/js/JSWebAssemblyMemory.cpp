@@ -35,7 +35,7 @@
 
 namespace JSC {
 
-const ClassInfo JSWebAssemblyMemory::s_info = { "WebAssembly.Memory", &Base::s_info, 0, CREATE_METHOD_TABLE(JSWebAssemblyMemory) };
+const ClassInfo JSWebAssemblyMemory::s_info = { "WebAssembly.Memory", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSWebAssemblyMemory) };
 
 JSWebAssemblyMemory* JSWebAssemblyMemory::create(VM& vm, Structure* structure, Ref<Wasm::Memory>&& memory)
 {

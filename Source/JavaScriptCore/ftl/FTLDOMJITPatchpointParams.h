@@ -29,6 +29,7 @@
 
 #include "B3StackmapGenerationParams.h"
 #include "DOMJITPatchpointParams.h"
+#include "FTLState.h"
 
 namespace JSC { namespace FTL {
 
@@ -37,7 +38,7 @@ class State;
 class DOMJITPatchpointParams : public DOMJIT::PatchpointParams {
 public:
     DOMJITPatchpointParams(State& state, const B3::StackmapGenerationParams& params, DFG::Node* node, Box<CCallHelpers::JumpList> exceptions, Vector<DOMJIT::Value>&& regs, Vector<GPRReg>&& gpScratch, Vector<FPRReg>&& fpScratch)
-        : DOMJIT::PatchpointParams(WTFMove(regs), WTFMove(gpScratch), WTFMove(fpScratch))
+        : DOMJIT::PatchpointParams(state.vm(), WTFMove(regs), WTFMove(gpScratch), WTFMove(fpScratch))
         , m_state(state)
         , m_params(params)
         , m_node(node)

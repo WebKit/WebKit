@@ -210,7 +210,7 @@ unsigned int ObjcArray::getLength() const
     return [_array.get() count];
 }
 
-const ClassInfo ObjcFallbackObjectImp::s_info = { "ObjcFallbackObject", &Base::s_info, 0, CREATE_METHOD_TABLE(ObjcFallbackObjectImp) };
+const ClassInfo ObjcFallbackObjectImp::s_info = { "ObjcFallbackObject", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(ObjcFallbackObjectImp) };
 
 ObjcFallbackObjectImp::ObjcFallbackObjectImp(JSGlobalObject* globalObject, Structure* structure, ObjcInstance* i, const String& propertyName)
     : JSDestructibleObject(globalObject->vm(), structure)

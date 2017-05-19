@@ -42,7 +42,7 @@ using namespace JSC;
 
 namespace WebCore {
 
-Ref<JSC::DOMJIT::Patchpoint> DocumentDocumentElementDOMJIT::checkDOM()
+RefPtr<JSC::DOMJIT::Patchpoint> checkSubClassPatchpointForJSDocument()
 {
     return DOMJIT::checkDOM<Document>();
 }
@@ -72,11 +72,6 @@ Ref<JSC::DOMJIT::CallDOMGetterPatchpoint> DocumentDocumentElementDOMJIT::callDOM
     });
     patchpoint->effect = JSC::DOMJIT::Effect::forDef(DOMJIT::AbstractHeapRepository::Document_documentElement);
     return patchpoint;
-}
-
-Ref<JSC::DOMJIT::Patchpoint> DocumentBodyDOMJIT::checkDOM()
-{
-    return DOMJIT::checkDOM<Document>();
 }
 
 static void loadLocalName(CCallHelpers& jit, GPRReg htmlElement, GPRReg localNameImpl)

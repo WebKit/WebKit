@@ -49,7 +49,7 @@ namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSModuleLoader);
 
-const ClassInfo JSModuleLoader::s_info = { "ModuleLoader", &Base::s_info, nullptr, CREATE_METHOD_TABLE(JSModuleLoader) };
+const ClassInfo JSModuleLoader::s_info = { "ModuleLoader", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSModuleLoader) };
 
 JSModuleLoader::JSModuleLoader(VM& vm, Structure* structure)
     : JSNonFinalObject(vm, structure)

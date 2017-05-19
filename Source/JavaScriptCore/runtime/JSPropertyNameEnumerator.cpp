@@ -32,7 +32,7 @@
 
 namespace JSC {
 
-const ClassInfo JSPropertyNameEnumerator::s_info = { "JSPropertyNameEnumerator", 0, 0, CREATE_METHOD_TABLE(JSPropertyNameEnumerator) };
+const ClassInfo JSPropertyNameEnumerator::s_info = { "JSPropertyNameEnumerator", nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(JSPropertyNameEnumerator) };
 
 JSPropertyNameEnumerator* JSPropertyNameEnumerator::create(VM& vm)
 {

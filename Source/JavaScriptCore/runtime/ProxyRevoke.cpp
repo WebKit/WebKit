@@ -33,7 +33,7 @@ namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(ProxyRevoke);
 
-const ClassInfo ProxyRevoke::s_info = { "ProxyRevoke", &Base::s_info, 0, CREATE_METHOD_TABLE(ProxyRevoke) };
+const ClassInfo ProxyRevoke::s_info = { "ProxyRevoke", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(ProxyRevoke) };
 
 ProxyRevoke* ProxyRevoke::create(VM& vm, Structure* structure, ProxyObject* proxy)
 {

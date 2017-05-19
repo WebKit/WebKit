@@ -21,6 +21,7 @@
 [
     CustomIsReachable,
     CustomToJSObject,
+    DOMJIT,
     ExportMacro=WEBCORE_EXPORT,
     JSCustomHeader,
     JSCustomMarkFunction,

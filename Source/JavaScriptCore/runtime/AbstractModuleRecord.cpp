@@ -36,7 +36,7 @@
 
 namespace JSC {
 
-const ClassInfo AbstractModuleRecord::s_info = { "AbstractModuleRecord", &Base::s_info, 0, CREATE_METHOD_TABLE(AbstractModuleRecord) };
+const ClassInfo AbstractModuleRecord::s_info = { "AbstractModuleRecord", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(AbstractModuleRecord) };
 
 AbstractModuleRecord::AbstractModuleRecord(VM& vm, Structure* structure, const Identifier& moduleKey)
     : Base(vm, structure)

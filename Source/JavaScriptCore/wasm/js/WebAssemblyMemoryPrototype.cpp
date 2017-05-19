@@ -44,7 +44,7 @@ static EncodedJSValue JSC_HOST_CALL webAssemblyMemoryProtoFuncBuffer(ExecState*)
 
 namespace JSC {
 
-const ClassInfo WebAssemblyMemoryPrototype::s_info = { "WebAssembly.Memory.prototype", &Base::s_info, &prototypeTableWebAssemblyMemory, CREATE_METHOD_TABLE(WebAssemblyMemoryPrototype) };
+const ClassInfo WebAssemblyMemoryPrototype::s_info = { "WebAssembly.Memory.prototype", &Base::s_info, &prototypeTableWebAssemblyMemory, nullptr, CREATE_METHOD_TABLE(WebAssemblyMemoryPrototype) };
 
 /* Source for WebAssemblyMemoryPrototype.lut.h
 @begin prototypeTableWebAssemblyMemory

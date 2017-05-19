@@ -68,7 +68,7 @@ bool JSAPIWrapperObjectHandleOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::
 
 namespace JSC {
     
-template <> const ClassInfo JSCallbackObject<JSAPIWrapperObject>::s_info = { "JSAPIWrapperObject", &Base::s_info, 0, CREATE_METHOD_TABLE(JSCallbackObject) };
+template <> const ClassInfo JSCallbackObject<JSAPIWrapperObject>::s_info = { "JSAPIWrapperObject", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSCallbackObject) };
 
 template<> const bool JSCallbackObject<JSAPIWrapperObject>::needsDestruction = true;
 

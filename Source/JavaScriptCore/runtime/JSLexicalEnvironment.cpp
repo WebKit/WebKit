@@ -37,7 +37,7 @@ using namespace std;
 
 namespace JSC {
 
-const ClassInfo JSLexicalEnvironment::s_info = { "JSLexicalEnvironment", &Base::s_info, 0, CREATE_METHOD_TABLE(JSLexicalEnvironment) };
+const ClassInfo JSLexicalEnvironment::s_info = { "JSLexicalEnvironment", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSLexicalEnvironment) };
 
 void JSLexicalEnvironment::getOwnNonIndexPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {

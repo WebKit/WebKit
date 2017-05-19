@@ -34,7 +34,7 @@ namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSProxy);
 
-const ClassInfo JSProxy::s_info = { "JSProxy", &Base::s_info, 0, CREATE_METHOD_TABLE(JSProxy) };
+const ClassInfo JSProxy::s_info = { "JSProxy", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSProxy) };
 
 void JSProxy::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {

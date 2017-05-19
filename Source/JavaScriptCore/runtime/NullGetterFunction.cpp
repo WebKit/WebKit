@@ -31,7 +31,7 @@
 
 namespace JSC {
 
-const ClassInfo NullGetterFunction::s_info = { "Function", &Base::s_info, 0, CREATE_METHOD_TABLE(NullGetterFunction) };
+const ClassInfo NullGetterFunction::s_info = { "Function", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(NullGetterFunction) };
 
 static EncodedJSValue JSC_HOST_CALL callReturnUndefined(ExecState*)
 {

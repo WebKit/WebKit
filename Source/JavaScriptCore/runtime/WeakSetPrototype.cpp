@@ -32,7 +32,7 @@
 
 namespace JSC {
 
-const ClassInfo WeakSetPrototype::s_info = { "WeakSet", &Base::s_info, 0, CREATE_METHOD_TABLE(WeakSetPrototype) };
+const ClassInfo WeakSetPrototype::s_info = { "WeakSet", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WeakSetPrototype) };
 
 static EncodedJSValue JSC_HOST_CALL protoFuncWeakSetDelete(ExecState*);
 static EncodedJSValue JSC_HOST_CALL protoFuncWeakSetHas(ExecState*);

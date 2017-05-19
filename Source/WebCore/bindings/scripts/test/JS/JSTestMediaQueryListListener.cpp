@@ -85,7 +85,7 @@ template<> void JSTestMediaQueryListListenerConstructor::initializeProperties(VM
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
 }
 
-template<> const ClassInfo JSTestMediaQueryListListenerConstructor::s_info = { "TestMediaQueryListListener", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestMediaQueryListListenerConstructor) };
+template<> const ClassInfo JSTestMediaQueryListListenerConstructor::s_info = { "TestMediaQueryListListener", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestMediaQueryListListenerConstructor) };
 
 /* Hash table for prototype */
 
@@ -95,7 +95,7 @@ static const HashTableValue JSTestMediaQueryListListenerPrototypeTableValues[] =
     { "method", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestMediaQueryListListenerPrototypeFunctionMethod), (intptr_t) (1) } },
 };
 
-const ClassInfo JSTestMediaQueryListListenerPrototype::s_info = { "TestMediaQueryListListenerPrototype", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestMediaQueryListListenerPrototype) };
+const ClassInfo JSTestMediaQueryListListenerPrototype::s_info = { "TestMediaQueryListListenerPrototype", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestMediaQueryListListenerPrototype) };
 
 void JSTestMediaQueryListListenerPrototype::finishCreation(VM& vm)
 {
@@ -103,7 +103,7 @@ void JSTestMediaQueryListListenerPrototype::finishCreation(VM& vm)
     reifyStaticProperties(vm, JSTestMediaQueryListListenerPrototypeTableValues, *this);
 }
 
-const ClassInfo JSTestMediaQueryListListener::s_info = { "TestMediaQueryListListener", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestMediaQueryListListener) };
+const ClassInfo JSTestMediaQueryListListener::s_info = { "TestMediaQueryListListener", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestMediaQueryListListener) };
 
 JSTestMediaQueryListListener::JSTestMediaQueryListListener(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestMediaQueryListListener>&& impl)
     : JSDOMWrapper<TestMediaQueryListListener>(structure, globalObject, WTFMove(impl))

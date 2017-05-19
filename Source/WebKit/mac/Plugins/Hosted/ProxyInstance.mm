@@ -210,7 +210,7 @@ private:
     }
 };
 
-const ClassInfo ProxyRuntimeMethod::s_info = { "ProxyRuntimeMethod", &RuntimeMethod::s_info, 0, CREATE_METHOD_TABLE(ProxyRuntimeMethod) };
+const ClassInfo ProxyRuntimeMethod::s_info = { "ProxyRuntimeMethod", &RuntimeMethod::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(ProxyRuntimeMethod) };
 
 JSValue ProxyInstance::getMethod(JSC::ExecState* exec, PropertyName propertyName)
 {

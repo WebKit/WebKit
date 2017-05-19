@@ -1632,7 +1632,7 @@ template<> void JSTestObjConstructor::initializeProperties(VM& vm, JSDOMGlobalOb
     reifyStaticProperties(vm, JSTestObjConstructorTableValues, *this);
 }
 
-template<> const ClassInfo JSTestObjConstructor::s_info = { "TestObject", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestObjConstructor) };
+template<> const ClassInfo JSTestObjConstructor::s_info = { "TestObject", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestObjConstructor) };
 
 /* Hash table for prototype */
 
@@ -1947,7 +1947,7 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "readonly", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, { (long long)(0) } },
 };
 
-const ClassInfo JSTestObjPrototype::s_info = { "TestObjectPrototype", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestObjPrototype) };
+const ClassInfo JSTestObjPrototype::s_info = { "TestObjectPrototype", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestObjPrototype) };
 
 void JSTestObjPrototype::finishCreation(VM& vm, JSDOMGlobalObject& globalObject)
 {
@@ -1998,7 +1998,7 @@ void JSTestObjPrototype::finishCreation(VM& vm, JSDOMGlobalObject& globalObject)
     putDirectWithoutTransition(vm, vm.propertyNames->unscopablesSymbol, &unscopables, DontEnum | ReadOnly);
 }
 
-const ClassInfo JSTestObj::s_info = { "TestObject", &Base::s_info, &JSTestObjTable, CREATE_METHOD_TABLE(JSTestObj) };
+const ClassInfo JSTestObj::s_info = { "TestObject", &Base::s_info, &JSTestObjTable, nullptr, CREATE_METHOD_TABLE(JSTestObj) };
 
 JSTestObj::JSTestObj(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestObj>&& impl)
     : JSDOMWrapper<TestObj>(structure, globalObject, WTFMove(impl))

@@ -1,3 +1,320 @@
+2017-05-19  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC][DFG][DOMJIT] Extend CheckDOM to CheckSubClass
+        https://bugs.webkit.org/show_bug.cgi?id=172098
+
+        Reviewed by Saam Barati.
+
+        In this patch, we generalize CheckDOM to CheckSubClass.
+        It can accept any ClassInfo and perform ClassInfo check
+        in DFG / FTL. Now, we add a new function pointer to ClassInfo,
+        checkSubClassPatchpoint. It can create DOMJIT patchpoint
+        for that ClassInfo. It it natural that ClassInfo holds the
+        way to emit DOMJIT::Patchpoint to perform CheckSubClass
+        rather than having it in each DOMJIT getter / function
+        signature annotation.
+
+        One problem is that it enlarges the size of ClassInfo.
+        But this is the best place to put this function pointer.
+        By doing so, we can add a patchpoint for CheckSubClass
+        in an non-intrusive manner: WebCore can inject patchpoints
+        without interactive JSC.
+
+        We still have a way to reduce the size of ClassInfo if
+        we move ArrayBuffer related methods out to the other places.
+
+        This patch touches many files because we add a new function
+        pointer to ClassInfo. But they are basically mechanical change.
+
+        * API/JSAPIWrapperObject.mm:
+        * API/JSCallbackConstructor.cpp:
+        * API/JSCallbackFunction.cpp:
+        * API/JSCallbackObject.cpp:
+        * API/ObjCCallbackFunction.mm:
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.cpp:
+        * bytecode/DOMJITAccessCasePatchpointParams.h:
+        (JSC::DOMJITAccessCasePatchpointParams::DOMJITAccessCasePatchpointParams):
+        * bytecode/EvalCodeBlock.cpp:
+        * bytecode/FunctionCodeBlock.cpp:
+        * bytecode/GetterSetterAccessCase.cpp:
+        (JSC::GetterSetterAccessCase::emitDOMJITGetter):
+        * bytecode/ModuleProgramCodeBlock.cpp:
+        * bytecode/ProgramCodeBlock.cpp:
+        * bytecode/UnlinkedCodeBlock.cpp:
+        * bytecode/UnlinkedEvalCodeBlock.cpp:
+        * bytecode/UnlinkedFunctionCodeBlock.cpp:
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        * bytecode/UnlinkedModuleProgramCodeBlock.cpp:
+        * bytecode/UnlinkedProgramCodeBlock.cpp:
+        * debugger/DebuggerScope.cpp:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleDOMJITGetter):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGDOMJITPatchpointParams.h:
+        (JSC::DFG::DOMJITPatchpointParams::DOMJITPatchpointParams):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::attemptToMakeCallDOM):
+        (JSC::DFG::FixupPhase::fixupCheckSubClass):
+        (JSC::DFG::FixupPhase::fixupCheckDOM): Deleted.
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasClassInfo):
+        (JSC::DFG::Node::classInfo):
+        (JSC::DFG::Node::hasCheckDOMPatchpoint): Deleted.
+        (JSC::DFG::Node::checkDOMPatchpoint): Deleted.
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCheckSubClass):
+        (JSC::DFG::SpeculativeJIT::compileCheckDOM): Deleted.
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::vm):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * domjit/DOMJITGetterSetter.h:
+        * domjit/DOMJITPatchpointParams.h:
+        (JSC::DOMJIT::PatchpointParams::PatchpointParams):
+        (JSC::DOMJIT::PatchpointParams::vm):
+        * domjit/DOMJITSignature.h:
+        (JSC::DOMJIT::Signature::Signature):
+        (JSC::DOMJIT::Signature::checkDOM): Deleted.
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLDOMJITPatchpointParams.h:
+        (JSC::FTL::DOMJITPatchpointParams::DOMJITPatchpointParams):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCheckSubClass):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCheckDOM): Deleted.
+        * inspector/JSInjectedScriptHost.cpp:
+        * inspector/JSInjectedScriptHostPrototype.cpp:
+        * inspector/JSJavaScriptCallFrame.cpp:
+        * inspector/JSJavaScriptCallFramePrototype.cpp:
+        * jsc.cpp:
+        (WTF::DOMJITNode::checkSubClassPatchpoint):
+        (WTF::DOMJITFunctionObject::checkSubClassPatchpoint):
+        (WTF::DOMJITFunctionObject::finishCreation):
+        (WTF::DOMJITCheckSubClassObject::DOMJITCheckSubClassObject):
+        (WTF::DOMJITCheckSubClassObject::createStructure):
+        (WTF::DOMJITCheckSubClassObject::create):
+        (WTF::DOMJITCheckSubClassObject::safeFunction):
+        (WTF::DOMJITCheckSubClassObject::unsafeFunction):
+        (WTF::DOMJITCheckSubClassObject::finishCreation):
+        (GlobalObject::finishCreation):
+        (functionCreateDOMJITCheckSubClassObject):
+        (WTF::DOMJITNode::checkDOMJITNode): Deleted.
+        (WTF::DOMJITFunctionObject::checkDOMJITNode): Deleted.
+        * runtime/AbstractModuleRecord.cpp:
+        * runtime/ArrayBufferNeuteringWatchpoint.cpp:
+        * runtime/ArrayConstructor.cpp:
+        * runtime/ArrayIteratorPrototype.cpp:
+        * runtime/ArrayPrototype.cpp:
+        * runtime/AsyncFunctionConstructor.cpp:
+        * runtime/AsyncFunctionPrototype.cpp:
+        * runtime/AtomicsObject.cpp:
+        * runtime/BooleanConstructor.cpp:
+        * runtime/BooleanObject.cpp:
+        * runtime/BooleanPrototype.cpp:
+        * runtime/ClassInfo.cpp: Copied from Source/JavaScriptCore/tools/JSDollarVM.cpp.
+        (JSC::ClassInfo::dump):
+        * runtime/ClassInfo.h:
+        (JSC::ClassInfo::offsetOfParentClass):
+        * runtime/ClonedArguments.cpp:
+        * runtime/ConsoleObject.cpp:
+        * runtime/CustomGetterSetter.cpp:
+        * runtime/DateConstructor.cpp:
+        * runtime/DateInstance.cpp:
+        * runtime/DatePrototype.cpp:
+        * runtime/DirectArguments.cpp:
+        * runtime/Error.cpp:
+        * runtime/ErrorConstructor.cpp:
+        * runtime/ErrorInstance.cpp:
+        * runtime/ErrorPrototype.cpp:
+        * runtime/EvalExecutable.cpp:
+        * runtime/Exception.cpp:
+        * runtime/ExceptionHelpers.cpp:
+        * runtime/ExecutableBase.cpp:
+        * runtime/FunctionConstructor.cpp:
+        * runtime/FunctionExecutable.cpp:
+        * runtime/FunctionPrototype.cpp:
+        * runtime/FunctionRareData.cpp:
+        * runtime/GeneratorFunctionConstructor.cpp:
+        * runtime/GeneratorFunctionPrototype.cpp:
+        * runtime/GeneratorPrototype.cpp:
+        * runtime/GetterSetter.cpp:
+        * runtime/HashMapImpl.cpp:
+        * runtime/HashMapImpl.h:
+        * runtime/InferredType.cpp:
+        (JSC::InferredType::create):
+        * runtime/InferredTypeTable.cpp:
+        * runtime/InferredValue.cpp:
+        * runtime/InspectorInstrumentationObject.cpp:
+        * runtime/InternalFunction.cpp:
+        * runtime/IntlCollator.cpp:
+        * runtime/IntlCollatorConstructor.cpp:
+        * runtime/IntlCollatorPrototype.cpp:
+        * runtime/IntlDateTimeFormat.cpp:
+        * runtime/IntlDateTimeFormatConstructor.cpp:
+        * runtime/IntlDateTimeFormatPrototype.cpp:
+        * runtime/IntlNumberFormat.cpp:
+        * runtime/IntlNumberFormatConstructor.cpp:
+        * runtime/IntlNumberFormatPrototype.cpp:
+        * runtime/IntlObject.cpp:
+        * runtime/IteratorPrototype.cpp:
+        * runtime/JSAPIValueWrapper.cpp:
+        * runtime/JSArray.cpp:
+        * runtime/JSArrayBuffer.cpp:
+        * runtime/JSArrayBufferConstructor.cpp:
+        * runtime/JSArrayBufferPrototype.cpp:
+        * runtime/JSArrayBufferView.cpp:
+        * runtime/JSAsyncFunction.cpp:
+        * runtime/JSBoundFunction.cpp:
+        * runtime/JSCallee.cpp:
+        * runtime/JSCustomGetterSetterFunction.cpp:
+        * runtime/JSDataView.cpp:
+        * runtime/JSDataViewPrototype.cpp:
+        * runtime/JSEnvironmentRecord.cpp:
+        * runtime/JSFixedArray.cpp:
+        * runtime/JSFunction.cpp:
+        * runtime/JSGeneratorFunction.cpp:
+        * runtime/JSGlobalLexicalEnvironment.cpp:
+        * runtime/JSGlobalObject.cpp:
+        * runtime/JSInternalPromise.cpp:
+        * runtime/JSInternalPromiseConstructor.cpp:
+        * runtime/JSInternalPromiseDeferred.cpp:
+        * runtime/JSInternalPromisePrototype.cpp:
+        * runtime/JSLexicalEnvironment.cpp:
+        * runtime/JSMap.cpp:
+        * runtime/JSMapIterator.cpp:
+        * runtime/JSModuleEnvironment.cpp:
+        * runtime/JSModuleLoader.cpp:
+        * runtime/JSModuleNamespaceObject.cpp:
+        * runtime/JSModuleRecord.cpp:
+        * runtime/JSNativeStdFunction.cpp:
+        * runtime/JSONObject.cpp:
+        * runtime/JSObject.cpp:
+        * runtime/JSPromise.cpp:
+        * runtime/JSPromiseConstructor.cpp:
+        * runtime/JSPromiseDeferred.cpp:
+        * runtime/JSPromisePrototype.cpp:
+        * runtime/JSPropertyNameEnumerator.cpp:
+        * runtime/JSPropertyNameIterator.cpp:
+        * runtime/JSProxy.cpp:
+        * runtime/JSScriptFetcher.cpp:
+        * runtime/JSSet.cpp:
+        * runtime/JSSetIterator.cpp:
+        * runtime/JSSourceCode.cpp:
+        * runtime/JSString.cpp:
+        * runtime/JSStringIterator.cpp:
+        * runtime/JSSymbolTableObject.cpp:
+        * runtime/JSTemplateRegistryKey.cpp:
+        * runtime/JSTypedArrayConstructors.cpp:
+        * runtime/JSTypedArrayPrototypes.cpp:
+        * runtime/JSTypedArrayViewConstructor.cpp:
+        * runtime/JSTypedArrays.cpp:
+        * runtime/JSWeakMap.cpp:
+        * runtime/JSWeakSet.cpp:
+        * runtime/JSWithScope.cpp:
+        * runtime/MapConstructor.cpp:
+        * runtime/MapIteratorPrototype.cpp:
+        * runtime/MapPrototype.cpp:
+        * runtime/MathObject.cpp:
+        * runtime/ModuleLoaderPrototype.cpp:
+        * runtime/ModuleProgramExecutable.cpp:
+        * runtime/NativeErrorConstructor.cpp:
+        * runtime/NativeExecutable.cpp:
+        * runtime/NativeStdFunctionCell.cpp:
+        * runtime/NullGetterFunction.cpp:
+        * runtime/NullSetterFunction.cpp:
+        * runtime/NumberConstructor.cpp:
+        * runtime/NumberObject.cpp:
+        * runtime/NumberPrototype.cpp:
+        * runtime/ObjectConstructor.cpp:
+        * runtime/ObjectPrototype.cpp:
+        * runtime/ProgramExecutable.cpp:
+        * runtime/PropertyTable.cpp:
+        * runtime/ProxyConstructor.cpp:
+        * runtime/ProxyObject.cpp:
+        * runtime/ProxyRevoke.cpp:
+        * runtime/ReflectObject.cpp:
+        * runtime/RegExp.cpp:
+        * runtime/RegExpConstructor.cpp:
+        * runtime/RegExpObject.cpp:
+        * runtime/RegExpPrototype.cpp:
+        * runtime/ScopedArguments.cpp:
+        * runtime/ScopedArgumentsTable.cpp:
+        * runtime/ScriptExecutable.cpp:
+        * runtime/SetConstructor.cpp:
+        * runtime/SetIteratorPrototype.cpp:
+        * runtime/SetPrototype.cpp:
+        * runtime/SparseArrayValueMap.cpp:
+        * runtime/StrictEvalActivation.cpp:
+        * runtime/StringConstructor.cpp:
+        * runtime/StringIteratorPrototype.cpp:
+        * runtime/StringObject.cpp:
+        * runtime/StringPrototype.cpp:
+        * runtime/Structure.cpp:
+        * runtime/StructureChain.cpp:
+        * runtime/StructureRareData.cpp:
+        * runtime/Symbol.cpp:
+        * runtime/SymbolConstructor.cpp:
+        * runtime/SymbolObject.cpp:
+        * runtime/SymbolPrototype.cpp:
+        * runtime/SymbolTable.cpp:
+        * runtime/WeakMapConstructor.cpp:
+        * runtime/WeakMapData.cpp:
+        * runtime/WeakMapPrototype.cpp:
+        * runtime/WeakSetConstructor.cpp:
+        * runtime/WeakSetPrototype.cpp:
+        * testRegExp.cpp:
+        * tools/JSDollarVM.cpp:
+        * tools/JSDollarVMPrototype.cpp:
+        * wasm/JSWebAssembly.cpp:
+        * wasm/js/JSWebAssemblyCodeBlock.cpp:
+        * wasm/js/JSWebAssemblyCompileError.cpp:
+        * wasm/js/JSWebAssemblyInstance.cpp:
+        * wasm/js/JSWebAssemblyLinkError.cpp:
+        * wasm/js/JSWebAssemblyMemory.cpp:
+        * wasm/js/JSWebAssemblyModule.cpp:
+        * wasm/js/JSWebAssemblyRuntimeError.cpp:
+        * wasm/js/JSWebAssemblyTable.cpp:
+        * wasm/js/WebAssemblyCompileErrorConstructor.cpp:
+        * wasm/js/WebAssemblyCompileErrorPrototype.cpp:
+        * wasm/js/WebAssemblyFunction.cpp:
+        * wasm/js/WebAssemblyFunctionBase.cpp:
+        * wasm/js/WebAssemblyInstanceConstructor.cpp:
+        * wasm/js/WebAssemblyInstancePrototype.cpp:
+        * wasm/js/WebAssemblyLinkErrorConstructor.cpp:
+        * wasm/js/WebAssemblyLinkErrorPrototype.cpp:
+        * wasm/js/WebAssemblyMemoryConstructor.cpp:
+        * wasm/js/WebAssemblyMemoryPrototype.cpp:
+        * wasm/js/WebAssemblyModuleConstructor.cpp:
+        * wasm/js/WebAssemblyModulePrototype.cpp:
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        * wasm/js/WebAssemblyPrototype.cpp:
+        * wasm/js/WebAssemblyRuntimeErrorConstructor.cpp:
+        * wasm/js/WebAssemblyRuntimeErrorPrototype.cpp:
+        * wasm/js/WebAssemblyTableConstructor.cpp:
+        * wasm/js/WebAssemblyTablePrototype.cpp:
+        * wasm/js/WebAssemblyToJSCallee.cpp:
+        * wasm/js/WebAssemblyWrapperFunction.cpp:
+
 2017-05-18  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: exports is a getter

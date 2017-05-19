@@ -35,8 +35,8 @@ struct AccessGenerationState;
 
 class DOMJITAccessCasePatchpointParams : public DOMJIT::PatchpointParams {
 public:
-    DOMJITAccessCasePatchpointParams(Vector<DOMJIT::Value>&& regs, Vector<GPRReg>&& gpScratch, Vector<FPRReg>&& fpScratch)
-        : DOMJIT::PatchpointParams(WTFMove(regs), WTFMove(gpScratch), WTFMove(fpScratch))
+    DOMJITAccessCasePatchpointParams(VM& vm, Vector<DOMJIT::Value>&& regs, Vector<GPRReg>&& gpScratch, Vector<FPRReg>&& fpScratch)
+        : DOMJIT::PatchpointParams(vm, WTFMove(regs), WTFMove(gpScratch), WTFMove(fpScratch))
     {
     }
 

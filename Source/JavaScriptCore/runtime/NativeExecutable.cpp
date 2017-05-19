@@ -38,7 +38,7 @@
 
 namespace JSC {
 
-const ClassInfo NativeExecutable::s_info = { "NativeExecutable", &ExecutableBase::s_info, 0, CREATE_METHOD_TABLE(NativeExecutable) };
+const ClassInfo NativeExecutable::s_info = { "NativeExecutable", &ExecutableBase::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(NativeExecutable) };
 
 NativeExecutable* NativeExecutable::create(VM& vm, Ref<JITCode>&& callThunk, NativeFunction function, Ref<JITCode>&& constructThunk, NativeFunction constructor, Intrinsic intrinsic, const DOMJIT::Signature* signature, const String& name)
 {

@@ -22,7 +22,6 @@
 #include "JSTestDOMJIT.h"
 
 #include "DOMJITAbstractHeapRepository.h"
-#include "DOMJITCheckDOM.h"
 #include "DOMJITIDLConvert.h"
 #include "DOMJITIDLType.h"
 #include "DOMJITIDLTypeFilter.h"
@@ -96,35 +95,15 @@ JSC::EncodedJSValue jsTestDOMJITNodeNullableAttr(JSC::ExecState*, JSC::EncodedJS
 JSC::EncodedJSValue jsTestDOMJITConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestDOMJITConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
-#if ENABLE(JIT)
-static const JSC::DOMJIT::Signature DOMJITSignatureForTestDOMJITGetAttribute((uintptr_t)unsafeJsTestDOMJITPrototypeFunctionGetAttribute, DOMJIT::checkDOM<TestDOMJIT>, JSTestDOMJIT::info(), JSC::DOMJIT::Effect::forRead(DOMJIT::AbstractHeapRepository::DOM), DOMJIT::IDLResultTypeFilter<IDLNullable<IDLDOMString>>::value, DOMJIT::IDLArgumentTypeFilter<IDLDOMString>::value);
-#else
-static const JSC::DOMJIT::Signature DOMJITSignatureForTestDOMJITGetAttribute((uintptr_t)unsafeJsTestDOMJITPrototypeFunctionGetAttribute, nullptr, JSTestDOMJIT::info(), JSC::DOMJIT::Effect::forRead(DOMJIT::AbstractHeapRepository::DOM), DOMJIT::IDLResultTypeFilter<IDLNullable<IDLDOMString>>::value, DOMJIT::IDLArgumentTypeFilter<IDLDOMString>::value);
-#endif
+static const JSC::DOMJIT::Signature DOMJITSignatureForTestDOMJITGetAttribute((uintptr_t)unsafeJsTestDOMJITPrototypeFunctionGetAttribute, JSTestDOMJIT::info(), JSC::DOMJIT::Effect::forRead(DOMJIT::AbstractHeapRepository::DOM), DOMJIT::IDLResultTypeFilter<IDLNullable<IDLDOMString>>::value, DOMJIT::IDLArgumentTypeFilter<IDLDOMString>::value);
 
-#if ENABLE(JIT)
-static const JSC::DOMJIT::Signature DOMJITSignatureForTestDOMJITItem((uintptr_t)unsafeJsTestDOMJITPrototypeFunctionItem, DOMJIT::checkDOM<TestDOMJIT>, JSTestDOMJIT::info(), JSC::DOMJIT::Effect::forRead(DOMJIT::AbstractHeapRepository::DOM), DOMJIT::IDLResultTypeFilter<IDLDOMString>::value, DOMJIT::IDLArgumentTypeFilter<IDLUnsignedShort>::value, DOMJIT::IDLArgumentTypeFilter<IDLUnsignedShort>::value);
-#else
-static const JSC::DOMJIT::Signature DOMJITSignatureForTestDOMJITItem((uintptr_t)unsafeJsTestDOMJITPrototypeFunctionItem, nullptr, JSTestDOMJIT::info(), JSC::DOMJIT::Effect::forRead(DOMJIT::AbstractHeapRepository::DOM), DOMJIT::IDLResultTypeFilter<IDLDOMString>::value, DOMJIT::IDLArgumentTypeFilter<IDLUnsignedShort>::value, DOMJIT::IDLArgumentTypeFilter<IDLUnsignedShort>::value);
-#endif
+static const JSC::DOMJIT::Signature DOMJITSignatureForTestDOMJITItem((uintptr_t)unsafeJsTestDOMJITPrototypeFunctionItem, JSTestDOMJIT::info(), JSC::DOMJIT::Effect::forRead(DOMJIT::AbstractHeapRepository::DOM), DOMJIT::IDLResultTypeFilter<IDLDOMString>::value, DOMJIT::IDLArgumentTypeFilter<IDLUnsignedShort>::value, DOMJIT::IDLArgumentTypeFilter<IDLUnsignedShort>::value);
 
-#if ENABLE(JIT)
-static const JSC::DOMJIT::Signature DOMJITSignatureForTestDOMJITHasAttribute((uintptr_t)unsafeJsTestDOMJITPrototypeFunctionHasAttribute, DOMJIT::checkDOM<TestDOMJIT>, JSTestDOMJIT::info(), JSC::DOMJIT::Effect::forRead(DOMJIT::AbstractHeapRepository::DOM), DOMJIT::IDLResultTypeFilter<IDLBoolean>::value);
-#else
-static const JSC::DOMJIT::Signature DOMJITSignatureForTestDOMJITHasAttribute((uintptr_t)unsafeJsTestDOMJITPrototypeFunctionHasAttribute, nullptr, JSTestDOMJIT::info(), JSC::DOMJIT::Effect::forRead(DOMJIT::AbstractHeapRepository::DOM), DOMJIT::IDLResultTypeFilter<IDLBoolean>::value);
-#endif
+static const JSC::DOMJIT::Signature DOMJITSignatureForTestDOMJITHasAttribute((uintptr_t)unsafeJsTestDOMJITPrototypeFunctionHasAttribute, JSTestDOMJIT::info(), JSC::DOMJIT::Effect::forRead(DOMJIT::AbstractHeapRepository::DOM), DOMJIT::IDLResultTypeFilter<IDLBoolean>::value);
 
-#if ENABLE(JIT)
-static const JSC::DOMJIT::Signature DOMJITSignatureForTestDOMJITGetElementById((uintptr_t)unsafeJsTestDOMJITPrototypeFunctionGetElementById, DOMJIT::checkDOM<TestDOMJIT>, JSTestDOMJIT::info(), JSC::DOMJIT::Effect::forRead(DOMJIT::AbstractHeapRepository::DOM), DOMJIT::IDLResultTypeFilter<IDLInterface<Element>>::value, DOMJIT::IDLArgumentTypeFilter<IDLRequiresExistingAtomicStringAdaptor<IDLDOMString>>::value);
-#else
-static const JSC::DOMJIT::Signature DOMJITSignatureForTestDOMJITGetElementById((uintptr_t)unsafeJsTestDOMJITPrototypeFunctionGetElementById, nullptr, JSTestDOMJIT::info(), JSC::DOMJIT::Effect::forRead(DOMJIT::AbstractHeapRepository::DOM), DOMJIT::IDLResultTypeFilter<IDLInterface<Element>>::value, DOMJIT::IDLArgumentTypeFilter<IDLRequiresExistingAtomicStringAdaptor<IDLDOMString>>::value);
-#endif
+static const JSC::DOMJIT::Signature DOMJITSignatureForTestDOMJITGetElementById((uintptr_t)unsafeJsTestDOMJITPrototypeFunctionGetElementById, JSTestDOMJIT::info(), JSC::DOMJIT::Effect::forRead(DOMJIT::AbstractHeapRepository::DOM), DOMJIT::IDLResultTypeFilter<IDLInterface<Element>>::value, DOMJIT::IDLArgumentTypeFilter<IDLRequiresExistingAtomicStringAdaptor<IDLDOMString>>::value);
 
-#if ENABLE(JIT)
-static const JSC::DOMJIT::Signature DOMJITSignatureForTestDOMJITGetElementsByName((uintptr_t)unsafeJsTestDOMJITPrototypeFunctionGetElementsByName, DOMJIT::checkDOM<TestDOMJIT>, JSTestDOMJIT::info(), JSC::DOMJIT::Effect::forRead(DOMJIT::AbstractHeapRepository::DOM), DOMJIT::IDLResultTypeFilter<IDLInterface<NodeList>>::value, DOMJIT::IDLArgumentTypeFilter<IDLAtomicStringAdaptor<IDLDOMString>>::value);
-#else
-static const JSC::DOMJIT::Signature DOMJITSignatureForTestDOMJITGetElementsByName((uintptr_t)unsafeJsTestDOMJITPrototypeFunctionGetElementsByName, nullptr, JSTestDOMJIT::info(), JSC::DOMJIT::Effect::forRead(DOMJIT::AbstractHeapRepository::DOM), DOMJIT::IDLResultTypeFilter<IDLInterface<NodeList>>::value, DOMJIT::IDLArgumentTypeFilter<IDLAtomicStringAdaptor<IDLDOMString>>::value);
-#endif
+static const JSC::DOMJIT::Signature DOMJITSignatureForTestDOMJITGetElementsByName((uintptr_t)unsafeJsTestDOMJITPrototypeFunctionGetElementsByName, JSTestDOMJIT::info(), JSC::DOMJIT::Effect::forRead(DOMJIT::AbstractHeapRepository::DOM), DOMJIT::IDLResultTypeFilter<IDLInterface<NodeList>>::value, DOMJIT::IDLArgumentTypeFilter<IDLAtomicStringAdaptor<IDLDOMString>>::value);
 
 class JSTestDOMJITPrototype : public JSC::JSNonFinalObject {
 public:
@@ -165,7 +144,7 @@ template<> void JSTestDOMJITConstructor::initializeProperties(VM& vm, JSDOMGloba
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
 }
 
-template<> const ClassInfo JSTestDOMJITConstructor::s_info = { "TestDOMJIT", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestDOMJITConstructor) };
+template<> const ClassInfo JSTestDOMJITConstructor::s_info = { "TestDOMJIT", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestDOMJITConstructor) };
 
 /* Hash table for prototype */
 
@@ -214,7 +193,7 @@ static const HashTableValue JSTestDOMJITPrototypeTableValues[] =
     { "getElementsByName", JSC::Function | DOMJITFunction, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestDOMJITPrototypeFunctionGetElementsByName), (intptr_t) static_cast<const JSC::DOMJIT::Signature*>(&DOMJITSignatureForTestDOMJITGetElementsByName) } },
 };
 
-const ClassInfo JSTestDOMJITPrototype::s_info = { "TestDOMJITPrototype", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestDOMJITPrototype) };
+const ClassInfo JSTestDOMJITPrototype::s_info = { "TestDOMJITPrototype", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestDOMJITPrototype) };
 
 void JSTestDOMJITPrototype::finishCreation(VM& vm)
 {
@@ -222,7 +201,7 @@ void JSTestDOMJITPrototype::finishCreation(VM& vm)
     reifyStaticProperties(vm, JSTestDOMJITPrototypeTableValues, *this);
 }
 
-const ClassInfo JSTestDOMJIT::s_info = { "TestDOMJIT", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestDOMJIT) };
+const ClassInfo JSTestDOMJIT::s_info = { "TestDOMJIT", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestDOMJIT) };
 
 JSTestDOMJIT::JSTestDOMJIT(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestDOMJIT>&& impl)
     : JSNode(structure, globalObject, WTFMove(impl))

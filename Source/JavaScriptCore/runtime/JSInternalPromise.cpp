@@ -31,7 +31,7 @@
 
 namespace JSC {
 
-const ClassInfo JSInternalPromise::s_info = { "InternalPromise", &Base::s_info, nullptr, CREATE_METHOD_TABLE(JSInternalPromise) };
+const ClassInfo JSInternalPromise::s_info = { "InternalPromise", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSInternalPromise) };
 
 JSInternalPromise* JSInternalPromise::create(VM& vm, Structure* structure)
 {

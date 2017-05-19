@@ -1,3 +1,13 @@
+2017-05-19  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC][DFG][DOMJIT] Extend CheckDOM to CheckSubClass
+        https://bugs.webkit.org/show_bug.cgi?id=172098
+
+        Reviewed by Saam Barati.
+
+        * WebProcess/Plugins/Netscape/JSNPMethod.cpp:
+        * WebProcess/Plugins/Netscape/JSNPObject.cpp:
+
 2017-05-18  Andreas Kling  <akling@apple.com>
 
         [WK2] Notify WebPageProxy client when an active process goes over the inactive memory limit

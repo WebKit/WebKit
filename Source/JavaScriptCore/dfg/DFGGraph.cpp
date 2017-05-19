@@ -238,6 +238,8 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node, DumpContext* 
         out.print(comma, "id", node->identifierNumber(), "{", identifiers()[node->identifierNumber()], "}");
     if (node->hasPromotedLocationDescriptor())
         out.print(comma, node->promotedLocationDescriptor());
+    if (node->hasClassInfo())
+        out.print(comma, *node->classInfo());
     if (node->hasStructureSet())
         out.print(comma, inContext(node->structureSet().toStructureSet(), context));
     if (node->hasStructure())

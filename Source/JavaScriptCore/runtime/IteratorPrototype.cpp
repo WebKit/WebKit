@@ -33,7 +33,7 @@
 
 namespace JSC {
 
-const ClassInfo IteratorPrototype::s_info = { "Iterator", &Base::s_info, nullptr, CREATE_METHOD_TABLE(IteratorPrototype) };
+const ClassInfo IteratorPrototype::s_info = { "Iterator", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(IteratorPrototype) };
 
 void IteratorPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {

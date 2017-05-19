@@ -26,7 +26,14 @@
 #include "ConstructData.h"
 #include "JSCell.h"
 
+namespace WTF {
+class PrintStream;
+};
+
 namespace JSC {
+namespace DOMJIT {
+class Patchpoint;
+}
 
 class HeapSnapshotBuilder;
 class JSArrayBufferView;
@@ -190,6 +197,11 @@ struct ClassInfo {
     // nullptrif there is none.
     const ClassInfo* parentClass;
 
+    static ptrdiff_t offsetOfParentClass()
+    {
+        return OBJECT_OFFSETOF(ClassInfo, parentClass);
+    }
+
     bool isSubClassOf(const ClassInfo* other) const
     {
         for (const ClassInfo* ci = this; ci; ci = ci->parentClass) {
@@ -199,9 +211,14 @@ struct ClassInfo {
         return false;
     }
 
+    JS_EXPORT_PRIVATE void dump(PrintStream&) const;
+
     JS_EXPORT_PRIVATE bool hasStaticSetterOrReadonlyProperties() const;
 
     const HashTable* staticPropHashTable;
+
+    typedef RefPtr<DOMJIT::Patchpoint> (*CheckSubClassPatchpointFunctionPtr)(void);
+    CheckSubClassPatchpointFunctionPtr checkSubClassPatchpoint;
 
     MethodTable methodTable;
 

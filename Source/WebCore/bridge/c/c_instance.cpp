@@ -146,7 +146,7 @@ private:
 
 };
 
-const ClassInfo CRuntimeMethod::s_info = { "CRuntimeMethod", &RuntimeMethod::s_info, 0, CREATE_METHOD_TABLE(CRuntimeMethod) };
+const ClassInfo CRuntimeMethod::s_info = { "CRuntimeMethod", &RuntimeMethod::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(CRuntimeMethod) };
 
 JSValue CInstance::getMethod(ExecState* exec, PropertyName propertyName)
 {

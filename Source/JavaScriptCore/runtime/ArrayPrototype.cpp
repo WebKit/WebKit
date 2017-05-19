@@ -62,7 +62,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncLastIndexOf(ExecState*);
 
 // ------------------------------ ArrayPrototype ----------------------------
 
-const ClassInfo ArrayPrototype::s_info = {"Array", &JSArray::s_info, nullptr, CREATE_METHOD_TABLE(ArrayPrototype)};
+const ClassInfo ArrayPrototype::s_info = {"Array", &JSArray::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(ArrayPrototype)};
 
 ArrayPrototype* ArrayPrototype::create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
 {

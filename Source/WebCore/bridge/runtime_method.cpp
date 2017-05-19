@@ -39,7 +39,7 @@ namespace JSC {
 
 using namespace Bindings;
 
-WEBCORE_EXPORT const ClassInfo RuntimeMethod::s_info = { "RuntimeMethod", &InternalFunction::s_info, 0, CREATE_METHOD_TABLE(RuntimeMethod) };
+WEBCORE_EXPORT const ClassInfo RuntimeMethod::s_info = { "RuntimeMethod", &InternalFunction::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(RuntimeMethod) };
 
 RuntimeMethod::RuntimeMethod(JSGlobalObject* globalObject, Structure* structure, Method* method)
     // Callers will need to pass in the right global object corresponding to this native object "method".

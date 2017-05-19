@@ -49,7 +49,7 @@ static EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatConstructorFuncSupportedLo
 
 namespace JSC {
 
-const ClassInfo IntlDateTimeFormatConstructor::s_info = { "Function", &InternalFunction::s_info, &dateTimeFormatConstructorTable, CREATE_METHOD_TABLE(IntlDateTimeFormatConstructor) };
+const ClassInfo IntlDateTimeFormatConstructor::s_info = { "Function", &InternalFunction::s_info, &dateTimeFormatConstructorTable, nullptr, CREATE_METHOD_TABLE(IntlDateTimeFormatConstructor) };
 
 /* Source for IntlDateTimeFormatConstructor.lut.h
 @begin dateTimeFormatConstructorTable

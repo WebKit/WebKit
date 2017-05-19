@@ -31,7 +31,7 @@
 
 namespace JSC {
 
-const ClassInfo JSFixedArray::s_info = { "JSFixedArray", nullptr, nullptr, CREATE_METHOD_TABLE(JSFixedArray) };
+const ClassInfo JSFixedArray::s_info = { "JSFixedArray", nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(JSFixedArray) };
 
 void JSFixedArray::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {

@@ -30,7 +30,7 @@
 
 namespace JSC {
 
-const ClassInfo JSMap::s_info = { "Map", &Base::s_info, 0, CREATE_METHOD_TABLE(JSMap) };
+const ClassInfo JSMap::s_info = { "Map", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSMap) };
 
 String JSMap::toStringName(const JSObject*, ExecState*)
 {

@@ -1,3 +1,13 @@
+2017-05-19  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC][DFG][DOMJIT] Extend CheckDOM to CheckSubClass
+        https://bugs.webkit.org/show_bug.cgi?id=172098
+
+        Reviewed by Saam Barati.
+
+        * Plugins/Hosted/ProxyInstance.mm:
+        * Plugins/Hosted/ProxyRuntimeObject.mm:
+
 2017-05-18  Andy Estes  <aestes@apple.com>
 
         ENABLE(APPLE_PAY_DELEGATE) should be NO on macOS Sierra and earlier

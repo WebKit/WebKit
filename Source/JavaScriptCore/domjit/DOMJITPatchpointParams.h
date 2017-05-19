@@ -47,12 +47,15 @@ public:
     GPRReg gpScratch(unsigned index) const { return m_gpScratch[index]; }
     FPRReg fpScratch(unsigned index) const { return m_fpScratch[index]; }
 
-    PatchpointParams(Vector<Value>&& regs, Vector<GPRReg>&& gpScratch, Vector<FPRReg>&& fpScratch)
-        : m_regs(WTFMove(regs))
+    PatchpointParams(VM& vm, Vector<Value>&& regs, Vector<GPRReg>&& gpScratch, Vector<FPRReg>&& fpScratch)
+        : m_vm(vm)
+        , m_regs(WTFMove(regs))
         , m_gpScratch(WTFMove(gpScratch))
         , m_fpScratch(WTFMove(fpScratch))
     {
     }
+
+    VM& vm() { return m_vm; }
 
     template<typename FunctionType, typename ResultType, typename... Arguments>
     void addSlowPathCall(CCallHelpers::JumpList from, CCallHelpers& jit, FunctionType function, ResultType result, Arguments... arguments)
@@ -65,6 +68,7 @@ private:
     DOMJIT_SLOW_PATH_CALLS(JSC_DEFINE_CALL_OPERATIONS)
 #undef JSC_DEFINE_CALL_OPERATIONS
 
+    VM& m_vm;
     Vector<Value> m_regs;
     Vector<GPRReg> m_gpScratch;
     Vector<FPRReg> m_fpScratch;

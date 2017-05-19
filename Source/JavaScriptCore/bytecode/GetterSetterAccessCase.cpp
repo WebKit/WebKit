@@ -220,7 +220,7 @@ void GetterSetterAccessCase::emitDOMJITGetter(AccessGenerationState& state, GPRR
         registersToSpillForCCall.set(reg);
     registersToSpillForCCall.exclude(RegisterSet::registersToNotSaveForCCall());
 
-    DOMJITAccessCasePatchpointParams params(WTFMove(regs), WTFMove(gpScratch), WTFMove(fpScratch));
+    DOMJITAccessCasePatchpointParams params(state.m_vm, WTFMove(regs), WTFMove(gpScratch), WTFMove(fpScratch));
     patchpoint->generator()->run(jit, params);
     allocator.restoreReusedRegistersByPopping(jit, preservedState);
     state.succeed();

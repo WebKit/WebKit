@@ -33,7 +33,7 @@
 
 namespace JSC {
 
-const ClassInfo WebAssemblyToJSCallee::s_info = { "WebAssemblyToJSCallee", &Base::s_info, 0, CREATE_METHOD_TABLE(WebAssemblyToJSCallee) };
+const ClassInfo WebAssemblyToJSCallee::s_info = { "WebAssemblyToJSCallee", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WebAssemblyToJSCallee) };
 
 WebAssemblyToJSCallee* WebAssemblyToJSCallee::create(VM& vm, JSWebAssemblyModule* module)
 {

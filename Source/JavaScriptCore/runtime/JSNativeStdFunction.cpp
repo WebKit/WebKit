@@ -35,7 +35,7 @@
 
 namespace JSC {
 
-const ClassInfo JSNativeStdFunction::s_info = { "Function", &Base::s_info, nullptr, CREATE_METHOD_TABLE(JSNativeStdFunction) };
+const ClassInfo JSNativeStdFunction::s_info = { "Function", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSNativeStdFunction) };
 
 JSNativeStdFunction::JSNativeStdFunction(VM& vm, JSGlobalObject* globalObject, Structure* structure)
     : Base(vm, globalObject, structure)

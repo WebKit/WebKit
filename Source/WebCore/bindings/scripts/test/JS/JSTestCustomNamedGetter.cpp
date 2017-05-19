@@ -84,7 +84,7 @@ template<> void JSTestCustomNamedGetterConstructor::initializeProperties(VM& vm,
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
 }
 
-template<> const ClassInfo JSTestCustomNamedGetterConstructor::s_info = { "TestCustomNamedGetter", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestCustomNamedGetterConstructor) };
+template<> const ClassInfo JSTestCustomNamedGetterConstructor::s_info = { "TestCustomNamedGetter", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestCustomNamedGetterConstructor) };
 
 /* Hash table for prototype */
 
@@ -94,7 +94,7 @@ static const HashTableValue JSTestCustomNamedGetterPrototypeTableValues[] =
     { "anotherFunction", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestCustomNamedGetterPrototypeFunctionAnotherFunction), (intptr_t) (1) } },
 };
 
-const ClassInfo JSTestCustomNamedGetterPrototype::s_info = { "TestCustomNamedGetterPrototype", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestCustomNamedGetterPrototype) };
+const ClassInfo JSTestCustomNamedGetterPrototype::s_info = { "TestCustomNamedGetterPrototype", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestCustomNamedGetterPrototype) };
 
 void JSTestCustomNamedGetterPrototype::finishCreation(VM& vm)
 {
@@ -102,7 +102,7 @@ void JSTestCustomNamedGetterPrototype::finishCreation(VM& vm)
     reifyStaticProperties(vm, JSTestCustomNamedGetterPrototypeTableValues, *this);
 }
 
-const ClassInfo JSTestCustomNamedGetter::s_info = { "TestCustomNamedGetter", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestCustomNamedGetter) };
+const ClassInfo JSTestCustomNamedGetter::s_info = { "TestCustomNamedGetter", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestCustomNamedGetter) };
 
 JSTestCustomNamedGetter::JSTestCustomNamedGetter(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestCustomNamedGetter>&& impl)
     : JSDOMWrapper<TestCustomNamedGetter>(structure, globalObject, WTFMove(impl))

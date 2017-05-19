@@ -29,6 +29,6 @@ namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSAPIValueWrapper);
 
-const ClassInfo JSAPIValueWrapper::s_info = { "API Wrapper", 0, 0, CREATE_METHOD_TABLE(JSAPIValueWrapper) };
+const ClassInfo JSAPIValueWrapper::s_info = { "API Wrapper", nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(JSAPIValueWrapper) };
 
 } // namespace JSC

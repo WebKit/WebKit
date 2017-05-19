@@ -30,7 +30,7 @@
 
 namespace JSC {
 
-const ClassInfo InferredValue::s_info = { "InferredValue", 0, 0, CREATE_METHOD_TABLE(InferredValue) };
+const ClassInfo InferredValue::s_info = { "InferredValue", nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(InferredValue) };
 
 InferredValue* InferredValue::create(VM& vm)
 {

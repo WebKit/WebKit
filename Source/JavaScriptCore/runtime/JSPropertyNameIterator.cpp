@@ -34,7 +34,7 @@ namespace JSC {
 
 static EncodedJSValue JSC_HOST_CALL propertyNameIteratorFuncNext(ExecState*);
 
-const ClassInfo JSPropertyNameIterator::s_info = { "PropertyName Iterator", &Base::s_info, 0, CREATE_METHOD_TABLE(JSPropertyNameIterator) };
+const ClassInfo JSPropertyNameIterator::s_info = { "PropertyName Iterator", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSPropertyNameIterator) };
 
 JSPropertyNameIterator::JSPropertyNameIterator(VM& vm, Structure* structure, JSObject* object, JSPropertyNameEnumerator* enumerator)
     : Base(vm, structure)

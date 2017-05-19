@@ -589,7 +589,7 @@ public:
     }
 
 #if ENABLE(JIT)
-    static Ref<DOMJIT::Patchpoint> checkDOMJITNode()
+    static RefPtr<DOMJIT::Patchpoint> checkSubClassPatchpoint()
     {
         Ref<DOMJIT::Patchpoint> patchpoint = DOMJIT::Patchpoint::create();
         patchpoint->setGenerator([=](CCallHelpers& jit, DOMJIT::PatchpointParams& params) {
@@ -600,7 +600,7 @@ public:
                 CCallHelpers::TrustedImm32(JSC::JSType(LastJSCObjectType + 1))));
             return failureCases;
         });
-        return patchpoint;
+        return WTFMove(patchpoint);
     }
 #endif
 
@@ -653,11 +653,6 @@ public:
         }
 
 #if ENABLE(JIT)
-        Ref<DOMJIT::Patchpoint> checkDOM() override
-        {
-            return DOMJITNode::checkDOMJITNode();
-        }
-
         static EncodedJSValue JIT_OPERATION slowCall(ExecState* exec, void* pointer)
         {
             NativeCallFrameTracer tracer(&exec->vm(), exec);
@@ -738,11 +733,6 @@ public:
         }
 
 #if ENABLE(JIT)
-        Ref<DOMJIT::Patchpoint> checkDOM() override
-        {
-            return DOMJITNode::checkDOMJITNode();
-        }
-
         static EncodedJSValue JIT_OPERATION slowCall(ExecState* exec, void* pointer)
         {
             VM& vm = exec->vm();
@@ -856,19 +846,19 @@ public:
         return JSValue::encode(jsNumber(thisObject->value()));
     }
 
-#if ENABLE(JIT)
     static EncodedJSValue JIT_OPERATION unsafeFunction(ExecState* exec, DOMJITNode* node)
     {
         NativeCallFrameTracer tracer(&exec->vm(), exec);
         return JSValue::encode(jsNumber(node->value()));
     }
 
-    static Ref<DOMJIT::Patchpoint> checkDOMJITNode()
+#if ENABLE(JIT)
+    static RefPtr<DOMJIT::Patchpoint> checkSubClassPatchpoint()
     {
-        static const double value = 42.0;
         Ref<DOMJIT::Patchpoint> patchpoint = DOMJIT::Patchpoint::create();
         patchpoint->numFPScratchRegisters = 1;
         patchpoint->setGenerator([=](CCallHelpers& jit, DOMJIT::PatchpointParams& params) {
+            static const double value = 42.0;
             CCallHelpers::JumpList failureCases;
             // May use scratch registers.
             jit.loadDouble(CCallHelpers::TrustedImmPtr(&value), params.fpScratch(0));
@@ -878,7 +868,7 @@ public:
                 CCallHelpers::TrustedImm32(JSC::JSType(LastJSCObjectType + 1))));
             return failureCases;
         });
-        return patchpoint;
+        return WTFMove(patchpoint);
     }
 #endif
 
@@ -886,32 +876,87 @@ private:
     void finishCreation(VM&, JSGlobalObject*);
 };
 
-#if ENABLE(JIT)
-static const DOMJIT::Signature DOMJITFunctionObjectSignature((uintptr_t)DOMJITFunctionObject::unsafeFunction, DOMJITFunctionObject::checkDOMJITNode, DOMJITFunctionObject::info(), DOMJIT::Effect::forRead(DOMJIT::HeapRange::top()), SpecInt32Only);
-#endif
+static const DOMJIT::Signature DOMJITFunctionObjectSignature((uintptr_t)DOMJITFunctionObject::unsafeFunction, DOMJITFunctionObject::info(), DOMJIT::Effect::forRead(DOMJIT::HeapRange::top()), SpecInt32Only);
 
 void DOMJITFunctionObject::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
-#if ENABLE(JIT)
     putDirectNativeFunction(vm, globalObject, Identifier::fromString(&vm, "func"), 0, safeFunction, NoIntrinsic, &DOMJITFunctionObjectSignature, ReadOnly);
-#else
-    putDirectNativeFunction(vm, globalObject, Identifier::fromString(&vm, "func"), 0, safeFunction, NoIntrinsic, nullptr, ReadOnly);
-#endif
 }
 
+class DOMJITCheckSubClassObject : public DOMJITNode {
+public:
+    DOMJITCheckSubClassObject(VM& vm, Structure* structure)
+        : Base(vm, structure)
+    {
+    }
 
-const ClassInfo Element::s_info = { "Element", &Base::s_info, nullptr, CREATE_METHOD_TABLE(Element) };
-const ClassInfo Masquerader::s_info = { "Masquerader", &Base::s_info, nullptr, CREATE_METHOD_TABLE(Masquerader) };
-const ClassInfo Root::s_info = { "Root", &Base::s_info, nullptr, CREATE_METHOD_TABLE(Root) };
-const ClassInfo ImpureGetter::s_info = { "ImpureGetter", &Base::s_info, nullptr, CREATE_METHOD_TABLE(ImpureGetter) };
-const ClassInfo CustomGetter::s_info = { "CustomGetter", &Base::s_info, nullptr, CREATE_METHOD_TABLE(CustomGetter) };
-const ClassInfo DOMJITNode::s_info = { "DOMJITNode", &Base::s_info, nullptr, CREATE_METHOD_TABLE(DOMJITNode) };
-const ClassInfo DOMJITGetter::s_info = { "DOMJITGetter", &Base::s_info, nullptr, CREATE_METHOD_TABLE(DOMJITGetter) };
-const ClassInfo DOMJITGetterComplex::s_info = { "DOMJITGetterComplex", &Base::s_info, nullptr, CREATE_METHOD_TABLE(DOMJITGetterComplex) };
-const ClassInfo DOMJITFunctionObject::s_info = { "DOMJITFunctionObject", &Base::s_info, nullptr, CREATE_METHOD_TABLE(DOMJITFunctionObject) };
-const ClassInfo RuntimeArray::s_info = { "RuntimeArray", &Base::s_info, nullptr, CREATE_METHOD_TABLE(RuntimeArray) };
-const ClassInfo SimpleObject::s_info = { "SimpleObject", &Base::s_info, nullptr, CREATE_METHOD_TABLE(SimpleObject) };
+    DECLARE_INFO;
+    typedef DOMJITNode Base;
+    static const unsigned StructureFlags = Base::StructureFlags;
+
+
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+    {
+        return Structure::create(vm, globalObject, prototype, TypeInfo(JSC::JSType(LastJSCObjectType + 1), StructureFlags), info());
+    }
+
+    static DOMJITCheckSubClassObject* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
+    {
+        DOMJITCheckSubClassObject* object = new (NotNull, allocateCell<DOMJITCheckSubClassObject>(vm.heap, sizeof(DOMJITCheckSubClassObject))) DOMJITCheckSubClassObject(vm, structure);
+        object->finishCreation(vm, globalObject);
+        return object;
+    }
+
+    static EncodedJSValue JSC_HOST_CALL safeFunction(ExecState* exec)
+    {
+        VM& vm = exec->vm();
+        auto scope = DECLARE_THROW_SCOPE(vm);
+
+        auto* thisObject = jsDynamicCast<DOMJITCheckSubClassObject*>(vm, exec->thisValue());
+        if (!thisObject)
+            return throwVMTypeError(exec, scope);
+        return JSValue::encode(jsNumber(thisObject->value()));
+    }
+
+    static EncodedJSValue JIT_OPERATION unsafeFunction(ExecState* exec, DOMJITNode* node)
+    {
+        NativeCallFrameTracer tracer(&exec->vm(), exec);
+        return JSValue::encode(jsNumber(node->value()));
+    }
+
+private:
+    void finishCreation(VM&, JSGlobalObject*);
+};
+
+static const DOMJIT::Signature DOMJITCheckSubClassObjectSignature((uintptr_t)DOMJITCheckSubClassObject::unsafeFunction, DOMJITCheckSubClassObject::info(), DOMJIT::Effect::forRead(DOMJIT::HeapRange::top()), SpecInt32Only);
+
+void DOMJITCheckSubClassObject::finishCreation(VM& vm, JSGlobalObject* globalObject)
+{
+    Base::finishCreation(vm);
+    putDirectNativeFunction(vm, globalObject, Identifier::fromString(&vm, "func"), 0, safeFunction, NoIntrinsic, &DOMJITCheckSubClassObjectSignature, ReadOnly);
+}
+
+const ClassInfo Element::s_info = { "Element", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(Element) };
+const ClassInfo Masquerader::s_info = { "Masquerader", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(Masquerader) };
+const ClassInfo Root::s_info = { "Root", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(Root) };
+const ClassInfo ImpureGetter::s_info = { "ImpureGetter", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(ImpureGetter) };
+const ClassInfo CustomGetter::s_info = { "CustomGetter", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(CustomGetter) };
+#if ENABLE(JIT)
+const ClassInfo DOMJITNode::s_info = { "DOMJITNode", &Base::s_info, nullptr, &DOMJITNode::checkSubClassPatchpoint, CREATE_METHOD_TABLE(DOMJITNode) };
+#else
+const ClassInfo DOMJITNode::s_info = { "DOMJITNode", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(DOMJITNode) };
+#endif
+const ClassInfo DOMJITGetter::s_info = { "DOMJITGetter", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(DOMJITGetter) };
+const ClassInfo DOMJITGetterComplex::s_info = { "DOMJITGetterComplex", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(DOMJITGetterComplex) };
+#if ENABLE(JIT)
+const ClassInfo DOMJITFunctionObject::s_info = { "DOMJITFunctionObject", &Base::s_info, nullptr, &DOMJITFunctionObject::checkSubClassPatchpoint, CREATE_METHOD_TABLE(DOMJITFunctionObject) };
+#else
+const ClassInfo DOMJITFunctionObject::s_info = { "DOMJITFunctionObject", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(DOMJITFunctionObject) };
+#endif
+const ClassInfo DOMJITCheckSubClassObject::s_info = { "DOMJITCheckSubClassObject", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(DOMJITCheckSubClassObject) };
+const ClassInfo RuntimeArray::s_info = { "RuntimeArray", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(RuntimeArray) };
+const ClassInfo SimpleObject::s_info = { "SimpleObject", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(SimpleObject) };
 static unsigned asyncTestPasses { 0 };
 static unsigned asyncTestExpectedPasses { 0 };
 
@@ -1003,6 +1048,7 @@ static EncodedJSValue JSC_HOST_CALL functionCreateDOMJITNodeObject(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionCreateDOMJITGetterObject(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionCreateDOMJITGetterComplexObject(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionCreateDOMJITFunctionObject(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionCreateDOMJITCheckSubClassObject(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionCreateBuiltin(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionCreateGlobalObject(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionSetImpureGetterDelegate(ExecState*);
@@ -1318,6 +1364,7 @@ protected:
         addFunction(vm, "createDOMJITGetterObject", functionCreateDOMJITGetterObject, 0);
         addFunction(vm, "createDOMJITGetterComplexObject", functionCreateDOMJITGetterComplexObject, 0);
         addFunction(vm, "createDOMJITFunctionObject", functionCreateDOMJITFunctionObject, 0);
+        addFunction(vm, "createDOMJITCheckSubClassObject", functionCreateDOMJITCheckSubClassObject, 0);
         addFunction(vm, "createBuiltin", functionCreateBuiltin, 2);
         addFunction(vm, "createGlobalObject", functionCreateGlobalObject, 0);
         addFunction(vm, "setImpureGetterDelegate", functionSetImpureGetterDelegate, 2);
@@ -1426,7 +1473,7 @@ protected:
     static JSInternalPromise* moduleLoaderFetch(JSGlobalObject*, ExecState*, JSModuleLoader*, JSValue, JSValue);
 };
 
-const ClassInfo GlobalObject::s_info = { "global", &JSGlobalObject::s_info, nullptr, CREATE_METHOD_TABLE(GlobalObject) };
+const ClassInfo GlobalObject::s_info = { "global", &JSGlobalObject::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(GlobalObject) };
 const GlobalObjectMethodTable GlobalObject::s_globalObjectMethodTable = {
     &supportsRichSourceInfo,
     &shouldInterruptScript,
@@ -1998,6 +2045,14 @@ EncodedJSValue JSC_HOST_CALL functionCreateDOMJITFunctionObject(ExecState* exec)
     JSLockHolder lock(exec);
     Structure* structure = DOMJITFunctionObject::createStructure(exec->vm(), exec->lexicalGlobalObject(), jsNull());
     DOMJITFunctionObject* result = DOMJITFunctionObject::create(exec->vm(), exec->lexicalGlobalObject(), structure);
+    return JSValue::encode(result);
+}
+
+EncodedJSValue JSC_HOST_CALL functionCreateDOMJITCheckSubClassObject(ExecState* exec)
+{
+    JSLockHolder lock(exec);
+    Structure* structure = DOMJITCheckSubClassObject::createStructure(exec->vm(), exec->lexicalGlobalObject(), jsNull());
+    DOMJITCheckSubClassObject* result = DOMJITCheckSubClassObject::create(exec->vm(), exec->lexicalGlobalObject(), structure);
     return JSValue::encode(result);
 }
 
