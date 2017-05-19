@@ -1,3 +1,16 @@
+2017-05-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add Speedometer 2.0 to browserbench.org for final testing
+        https://bugs.webkit.org/show_bug.cgi?id=172335
+
+        Rubber-stamped by Chris Dumez.
+
+        Stage Speedometer 2.0 here for the final testing before we call it official.
+
+        * Speedometer2.0: Copied from PerformanceTests/Speedometer.
+        * Speedometer2.0/Full.html: Removed.
+        * Speedometer2.0/index.html: Copied from PerformanceTests/Speedometer/index.html.
+
 2017-05-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         browserbench.org/Speedometer/ should show the benchmark not an index of files

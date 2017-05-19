@@ -1,0 +1,52 @@
+{
+  "name": "preact-todomvc",
+  "version": "0.2.0",
+  "description": "TodoMVC done in Preact",
+  "main": "index.js",
+  "scripts": {
+    "dev": "webpack-dev-server",
+    "start": "http-server build -p ${PORT:-8080}",
+    "prestart": "npm run build",
+    "build": "npm run -s build:rollup",
+    "build:webpack": "mkdirp build && ncp src/index.html build/index.html && webpack -p",
+    "build:rollup": "rm -rf build && mkdirp build/todomvc-common && ncp src/index.html build/index.html && rollup -c rollup.config.js && cp node_modules/todomvc-common/base.{js,css} build/todomvc-common/ && cp node_modules/todomvc-app-css/index.css build/todomvc.css && npm run postbuild",
+    "postbuild": "uglifyjs build/app.js --pure-funcs classCallCheck Object.defineProperty Object.freeze invariant warning -c unsafe,collapse_vars,evaluate,screw_ie8,loops,keep_fargs=false,pure_getters,unused,dead_code -m -o build/app.js -p relative --in-source-map build/app.js.map --source-map build/app.js.map",
+    "deploy": "gh-pages -d build"
+  },
+  "keywords": [
+    "preact"
+  ],
+  "author": "The TodoMVC authors",
+  "license": "MIT",
+  "devDependencies": {
+    "babel-core": "^6.5.2",
+    "babel-loader": "^6.2.3",
+    "babel-plugin-transform-class-properties": "^6.5.2",
+    "babel-plugin-transform-decorators-legacy": "^1.3.4",
+    "babel-plugin-transform-react-jsx": "^6.5.2",
+    "babel-preset-babili": "0.0.9",
+    "babel-preset-es2015": "^6.5.0",
+    "babel-preset-es2015-loose": "^8.0.0",
+    "babel-preset-stage-0": "^6.5.0",
+    "css-loader": "^0.26.0",
+    "extract-text-webpack-plugin": "^1.0.1",
+    "gh-pages": "^0.12.0",
+    "http-server": "^0.9.0",
+    "mkdirp": "^0.5.1",
+    "ncp": "^2.0.0",
+    "replace-bundle-webpack-plugin": "^1.0.0",
+    "rollup": "^0.36.4",
+    "rollup-plugin-babel": "^2.6.1",
+    "rollup-plugin-commonjs": "^5.0.5",
+    "rollup-plugin-node-resolve": "^2.0.0",
+    "style-loader": "^0.13.0",
+    "webpack": "^1.12.14",
+    "webpack-dev-server": "^1.14.1"
+  },
+  "dependencies": {
+    "preact": "^7.1.0",
+    "preact-router": "^2.3.2",
+    "todomvc-app-css": "^2.0.3",
+    "todomvc-common": "^1.0.2"
+  }
+}

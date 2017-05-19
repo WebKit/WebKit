@@ -1,0 +1,2 @@
+.toggle-graph{float:left;margin-left:16px;cursor:pointer;position:relative;z-index:1}.toggle-graph svg{height:20px;width:20px}.toggle-graph svg path{fill:#777}.toggle-graph.active svg path,.toggle-graph:focus svg path,.toggle-graph:hover svg path{fill:#000}
+/*# sourceMappingURL=styles.app.73bcc5d3c1d07180f0e3.css.map*/
