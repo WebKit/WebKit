@@ -1029,11 +1029,11 @@
    since most ports try to support sub-project independence, adding new headers
    to WTF causes many ports to break, and so this way we can address the build
    breakages one port at a time. */
-#if !defined(USE_EXPORT_MACROS) && (PLATFORM(COCOA) || PLATFORM(WIN))
+#if !defined(USE_EXPORT_MACROS) && (PLATFORM(COCOA) || OS(WINDOWS))
 #define USE_EXPORT_MACROS 1
 #endif
 
-#if !defined(USE_EXPORT_MACROS_FOR_TESTING) && (PLATFORM(GTK) || PLATFORM(WIN))
+#if !defined(USE_EXPORT_MACROS_FOR_TESTING) && (PLATFORM(GTK) || OS(WINDOWS))
 #define USE_EXPORT_MACROS_FOR_TESTING 1
 #endif
 
@@ -1216,7 +1216,10 @@
 #endif
 
 #if WTF_DEFAULT_EVENT_LOOP
-#if PLATFORM(WIN)
+#if USE(GLIB)
+/* Use GLib's event loop abstraction. Primarily GTK port uses it. */
+#define USE_GLIB_EVENT_LOOP 1
+#elif OS(WINDOWS)
 /* Use Windows message pump abstraction.
  * Even if the port is AppleWin, we use the Windows message pump system for the event loop,
  * so that USE(WINDOWS_EVENT_LOOP) && USE(CF) can be true.
@@ -1227,9 +1230,6 @@
 #elif PLATFORM(COCOA)
 /* OS X and IOS. Use CoreFoundation & GCD abstraction. */
 #define USE_COCOA_EVENT_LOOP 1
-#elif USE(GLIB)
-/* Use GLib's event loop abstraction. Primarily GTK port uses it. */
-#define USE_GLIB_EVENT_LOOP 1
 #else
 #define USE_GENERIC_EVENT_LOOP 1
 #endif

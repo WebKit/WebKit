@@ -1,5 +1,16 @@
 2017-05-19  Don Olmstead  <don.olmstead@am.sony.com>
 
+        [WTF] Remove PLATFORM(WIN) references
+        https://bugs.webkit.org/show_bug.cgi?id=172301
+
+        Reviewed by Yusuke Suzuki.
+
+        * wtf/MemoryPressureHandler.cpp:
+        * wtf/MemoryPressureHandler.h:
+        * wtf/Platform.h:
+
+2017-05-19  Don Olmstead  <don.olmstead@am.sony.com>
+
         [CMake] Add HAVE check for __int128_t
         https://bugs.webkit.org/show_bug.cgi?id=172317
 

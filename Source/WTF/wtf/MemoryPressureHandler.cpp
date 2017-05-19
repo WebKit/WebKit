@@ -277,7 +277,7 @@ void MemoryPressureHandler::ReliefLogger::logMemoryUsageChange()
         m_initialMemory->physical, currentMemory->physical, physicalDiff);
 }
 
-#if !PLATFORM(COCOA) && !OS(LINUX) && !PLATFORM(WIN)
+#if !PLATFORM(COCOA) && !OS(LINUX) && !OS(WINDOWS)
 void MemoryPressureHandler::install() { }
 void MemoryPressureHandler::uninstall() { }
 void MemoryPressureHandler::holdOff(unsigned) { }
@@ -286,7 +286,7 @@ void MemoryPressureHandler::platformReleaseMemory(Critical) { }
 std::optional<MemoryPressureHandler::ReliefLogger::MemoryUsage> MemoryPressureHandler::ReliefLogger::platformMemoryUsage() { return std::nullopt; }
 #endif
 
-#if !PLATFORM(WIN)
+#if !OS(WINDOWS)
 void MemoryPressureHandler::platformInitialize() { }
 #endif
 

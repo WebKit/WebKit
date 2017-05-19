@@ -39,7 +39,7 @@
 #include <wtf/glib/GRefPtr.h>
 #endif
 
-#if PLATFORM(WIN)
+#if OS(WINDOWS)
 #include <wtf/win/Win32Handle.h>
 #endif
 
