@@ -1771,9 +1771,11 @@ bool RenderThemeIOS::paintAttachment(const RenderObject& renderer, const PaintIn
 
     context.translate(toFloatSize(paintRect.location()));
 
-    Path borderPath = attachmentBorderPath(info);
-    paintAttachmentBorder(context, borderPath);
-    context.clipPath(borderPath);
+    if (attachment.shouldDrawBorder()) {
+        auto borderPath = attachmentBorderPath(info);
+        paintAttachmentBorder(context, borderPath);
+        context.clipPath(borderPath);
+    }
 
     context.translate(FloatSize(0, info.contentYOrigin));
 

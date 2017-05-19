@@ -38,6 +38,9 @@ public:
 
     HTMLAttachmentElement& attachmentElement() const;
 
+    void setShouldDrawBorder(bool drawBorder) { m_shouldDrawBorder = drawBorder; }
+    bool shouldDrawBorder() const { return m_shouldDrawBorder; }
+
     void invalidate();
 
 private:
@@ -52,6 +55,7 @@ private:
     int baselinePosition(FontBaseline, bool, LineDirectionMode, LinePositionMode) const override;
 
     LayoutUnit m_minimumIntrinsicWidth;
+    bool m_shouldDrawBorder { true };
 };
 
 inline RenderAttachment* HTMLAttachmentElement::renderer() const
