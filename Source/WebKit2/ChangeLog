@@ -1,3 +1,15 @@
+2017-05-18  Tim Horton  <timothy_horton@apple.com>
+
+        Data interaction conclusion snapshot has too much margin
+        https://bugs.webkit.org/show_bug.cgi?id=172323
+        <rdar://problem/32283772>
+
+        Reviewed by Beth Dakin.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::didConcludeEditDataInteraction):
+        Disable the default TextIndicator margin.
+
 2017-05-18  Andy Estes  <aestes@apple.com>
 
         ENABLE(APPLE_PAY_DELEGATE) should be NO on macOS Sierra and earlier
