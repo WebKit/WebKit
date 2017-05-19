@@ -839,8 +839,6 @@ fast/table/hittest-tablecell-with-borders-right-edge.html [ Pass Failure ]
 fast/table/hittest-tablecell-right-edge.html [ Pass Failure ]
 fast/css/appearance-apple-pay-button.html [ ImageOnlyFailure ]
 
-webkit.org/b/150598 fast/repaint/table-hover-on-link.html [ Pass Failure ]
-
 webkit.org/b/151949 streams/reference-implementation/pipe-to.html [ Pass Failure ]
 webkit.org/b/154687 streams/pipe-to.html [ Slow ]
 
@@ -1298,3 +1296,12 @@ webkit.org/b/171031 imported/w3c/web-platform-tests/XMLHttpRequest/getallrespons
 webkit.org/b/170701 webrtc/datachannel/bufferedAmountLowThreshold.html [ Pass Failure ]
 
 webkit.org/b/170835 fast/mediacapturefromelement/CanvasCaptureMediaStream-2d-events.html [ Pass Failure ]
+
+webkit.org/b/172378 fast/loader/recursive-before-unload-crash.html [ Skip ]
+webkit.org/b/172378 fast/repaint/table-hover-on-link.html [ Skip ]
+webkit.org/b/172378 http/tests/misc/slow-loading-mask.html [ Skip ]
+webkit.org/b/172378 http/tests/multipart/policy-ignore-crash.php [ Skip ]
+webkit.org/b/172378 http/tests/navigation/back-twice-without-commit.html [ Skip ]
+webkit.org/b/172378 imported/blink/fast/block/float/float-mark-descendants-for-layout-crash.html [ Skip ]
+webkit.org/b/172378 imported/blink/fast/frames/freed-frame.html [ Skip ]
+webkit.org/b/172378 imported/blink/printing/print-document-without-documentElement-crash.html [ Skip ]

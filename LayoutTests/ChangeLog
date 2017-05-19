@@ -1,5 +1,17 @@
 2017-05-19  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Skip tests that are reporting FailureNotTested.
+        https://bugs.webkit.org/show_bug.cgi?id=172378
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+        * platform/ios-wk2/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+
+2017-05-19  Ryan Haddad  <ryanhaddad@apple.com>
+
         LayoutTest js/Promise-types.html is a flaky failure (Unhandled Promise Rejection messages)
         https://bugs.webkit.org/show_bug.cgi?id=171739
 

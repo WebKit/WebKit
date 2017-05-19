@@ -2069,7 +2069,6 @@ compositing/overflow/updating-scrolling-content.html
 http/tests/misc/favicon-as-image.html [ Failure ]
 http/tests/misc/iframe404.html [ Failure ]
 http/tests/misc/slow-loading-image-in-pattern.html [ Failure ]
-http/tests/misc/slow-loading-mask.html [ Failure ]
 http/tests/uri/css-href.php [ Failure ]
 ietestcenter/css3/bordersbackgrounds/background-attachment-local-scrolling.htm [ Failure ]
 svg/W3C-SVG-1.1/animate-elem-04-t.svg [ Failure ]
