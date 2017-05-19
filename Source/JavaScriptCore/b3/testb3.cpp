@@ -4445,6 +4445,17 @@ void testFloorArgWithEffectfulDoubleConversion(float a)
     CHECK(isIdentical(effect, static_cast<double>(floorf(a))));
 }
 
+double correctSqrt(double value)
+{
+#if CPU(X86) || CPU(X86_64)
+    double result;
+    asm ("sqrtsd %1, %0" : "=x"(result) : "x"(value));
+    return result;
+#else    
+    return sqrt(value);
+#endif
+}
+
 void testSqrtArg(double a)
 {
     Procedure proc;
@@ -4455,7 +4466,7 @@ void testSqrtArg(double a)
             proc, Sqrt, Origin(),
                 root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR0)));
 
-    CHECK(isIdentical(compileAndRun<double>(proc, a), sqrt(a)));
+    CHECK(isIdentical(compileAndRun<double>(proc, a), correctSqrt(a)));
 }
 
 void testSqrtImm(double a)
@@ -4467,7 +4478,7 @@ void testSqrtImm(double a)
         proc, Return, Origin(),
         root->appendNew<Value>(proc, Sqrt, Origin(), argument));
 
-    CHECK(isIdentical(compileAndRun<double>(proc), sqrt(a)));
+    CHECK(isIdentical(compileAndRun<double>(proc), correctSqrt(a)));
 }
 
 void testSqrtMem(double a)
@@ -4480,7 +4491,7 @@ void testSqrtMem(double a)
         proc, Return, Origin(),
         root->appendNew<Value>(proc, Sqrt, Origin(), loadDouble));
 
-    CHECK(isIdentical(compileAndRun<double>(proc, &a), sqrt(a)));
+    CHECK(isIdentical(compileAndRun<double>(proc, &a), correctSqrt(a)));
 }
 
 void testSqrtArg(float a)
@@ -4494,7 +4505,7 @@ void testSqrtArg(float a)
     Value* result32 = root->appendNew<Value>(proc, BitwiseCast, Origin(), result);
     root->appendNewControlValue(proc, Return, Origin(), result32);
 
-    CHECK(isIdentical(compileAndRun<int32_t>(proc, bitwise_cast<int32_t>(a)), bitwise_cast<int32_t>(static_cast<float>(sqrt(a)))));
+    CHECK(isIdentical(compileAndRun<int32_t>(proc, bitwise_cast<int32_t>(a)), bitwise_cast<int32_t>(static_cast<float>(correctSqrt(a)))));
 }
 
 void testSqrtImm(float a)
@@ -4506,7 +4517,7 @@ void testSqrtImm(float a)
     Value* result32 = root->appendNew<Value>(proc, BitwiseCast, Origin(), result);
     root->appendNewControlValue(proc, Return, Origin(), result32);
 
-    CHECK(isIdentical(compileAndRun<int32_t>(proc, bitwise_cast<int32_t>(a)), bitwise_cast<int32_t>(static_cast<float>(sqrt(a)))));
+    CHECK(isIdentical(compileAndRun<int32_t>(proc, bitwise_cast<int32_t>(a)), bitwise_cast<int32_t>(static_cast<float>(correctSqrt(a)))));
 }
 
 void testSqrtMem(float a)
@@ -4519,7 +4530,7 @@ void testSqrtMem(float a)
     Value* result32 = root->appendNew<Value>(proc, BitwiseCast, Origin(), result);
     root->appendNewControlValue(proc, Return, Origin(), result32);
 
-    CHECK(isIdentical(compileAndRun<int32_t>(proc, &a), bitwise_cast<int32_t>(static_cast<float>(sqrt(a)))));
+    CHECK(isIdentical(compileAndRun<int32_t>(proc, &a), bitwise_cast<int32_t>(static_cast<float>(correctSqrt(a)))));
 }
 
 void testSqrtArgWithUselessDoubleConversion(float a)
@@ -4535,7 +4546,7 @@ void testSqrtArgWithUselessDoubleConversion(float a)
     Value* result32 = root->appendNew<Value>(proc, BitwiseCast, Origin(), floatResult);
     root->appendNewControlValue(proc, Return, Origin(), result32);
 
-    CHECK(isIdentical(compileAndRun<int32_t>(proc, bitwise_cast<int32_t>(a)), bitwise_cast<int32_t>(static_cast<float>(sqrt(a)))));
+    CHECK(isIdentical(compileAndRun<int32_t>(proc, bitwise_cast<int32_t>(a)), bitwise_cast<int32_t>(static_cast<float>(correctSqrt(a)))));
 }
 
 void testSqrtArgWithEffectfulDoubleConversion(float a)
@@ -4555,8 +4566,9 @@ void testSqrtArgWithEffectfulDoubleConversion(float a)
 
     double effect = 0;
     int32_t resultValue = compileAndRun<int32_t>(proc, bitwise_cast<int32_t>(a), &effect);
-    CHECK(isIdentical(resultValue, bitwise_cast<int32_t>(static_cast<float>(sqrt(a)))));
-    CHECK(isIdentical(effect, static_cast<double>(sqrt(a))));
+    CHECK(isIdentical(resultValue, bitwise_cast<int32_t>(static_cast<float>(correctSqrt(a)))));
+    double expected = static_cast<double>(correctSqrt(a));
+    CHECK(isIdentical(effect, expected));
 }
 
 void testCompareTwoFloatToDouble(float a, float b)
@@ -5793,6 +5805,8 @@ void testStoreRelAddLoadAcq32(int amount)
         checkUsesInstruction(*code, "lda");
         checkUsesInstruction(*code, "stl");
     }
+    if (isX86())
+        checkUsesInstruction(*code, "xchg");
     CHECK(!invoke<int>(*code, amount));
     CHECK(slot == 37 + amount);
 }
@@ -5866,6 +5880,8 @@ void testStoreRelAddLoadAcq8(int amount, B3::Opcode loadOpcode)
         checkUsesInstruction(*code, "lda");
         checkUsesInstruction(*code, "stl");
     }
+    if (isX86())
+        checkUsesInstruction(*code, "xchg");
     CHECK(!invoke<int>(*code, amount));
     CHECK(slot == 37 + amount);
 }
@@ -5905,6 +5921,8 @@ void testStoreRelAddFenceLoadAcq8(int amount, B3::Opcode loadOpcode)
         checkUsesInstruction(*code, "lda");
         checkUsesInstruction(*code, "stl");
     }
+    if (isX86())
+        checkUsesInstruction(*code, "xchg");
     CHECK(!invoke<int>(*code, amount));
     CHECK(slot == 37 + amount);
 }
@@ -5978,6 +5996,8 @@ void testStoreRelAddLoadAcq16(int amount, B3::Opcode loadOpcode)
         checkUsesInstruction(*code, "lda");
         checkUsesInstruction(*code, "stl");
     }
+    if (isX86())
+        checkUsesInstruction(*code, "xchg");
     CHECK(!invoke<int>(*code, amount));
     CHECK(slot == 37 + amount);
 }
@@ -6047,6 +6067,8 @@ void testStoreRelAddLoadAcq64(int amount)
         checkUsesInstruction(*code, "lda");
         checkUsesInstruction(*code, "stl");
     }
+    if (isX86())
+        checkUsesInstruction(*code, "xchg");
     CHECK(!invoke<int>(*code, amount));
     CHECK(slot == 37000000000ll + amount);
 }
@@ -13979,7 +14001,7 @@ void testTrappingLoad()
     unsigned trapsCount = 0;
     for (Air::BasicBlock* block : proc.code()) {
         for (Air::Inst& inst : *block) {
-            if (inst.kind.traps)
+            if (inst.kind.effects)
                 trapsCount++;
         }
     }
@@ -14012,7 +14034,7 @@ void testTrappingStore()
     unsigned trapsCount = 0;
     for (Air::BasicBlock* block : proc.code()) {
         for (Air::Inst& inst : *block) {
-            if (inst.kind.traps)
+            if (inst.kind.effects)
                 trapsCount++;
         }
     }
@@ -14038,7 +14060,7 @@ void testTrappingLoadAddStore()
     bool traps = false;
     for (Air::BasicBlock* block : proc.code()) {
         for (Air::Inst& inst : *block) {
-            if (inst.kind.traps)
+            if (inst.kind.effects)
                 traps = true;
         }
     }
@@ -14058,7 +14080,7 @@ void testTrappingLoadDCE()
     unsigned trapsCount = 0;
     for (Air::BasicBlock* block : proc.code()) {
         for (Air::Inst& inst : *block) {
-            if (inst.kind.traps)
+            if (inst.kind.effects)
                 trapsCount++;
         }
     }

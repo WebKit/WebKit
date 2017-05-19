@@ -95,8 +95,8 @@ void lowerMacros(Code& code)
                 Arg resultDst = value->type() == Void ? Arg() : inst.args[1];
                 
                 inst = buildCCall(code, inst.origin, destinations);
-                if (oldKind.traps)
-                    inst.kind.traps = true;
+                if (oldKind.effects)
+                    inst.kind.effects = true;
 
                 Tmp result = cCallResult(value->type());
                 switch (value->type()) {

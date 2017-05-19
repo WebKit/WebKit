@@ -101,8 +101,9 @@ public:
                     break;
                 case Shuffle:
                     // We can't handle trapping shuffles because of how we lower them. That could
-                    // be fixed though.
-                    VALIDATE(!inst.kind.traps, ("At ", inst, " in ", *block));
+                    // be fixed though. Ditto for shuffles that would do fences, which is the other
+                    // use of this bit.
+                    VALIDATE(!inst.kind.effects, ("At ", inst, " in ", *block));
                     break;
                 default:
                     break;

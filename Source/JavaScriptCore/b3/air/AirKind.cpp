@@ -37,8 +37,8 @@ void Kind::dump(PrintStream& out) const
     out.print(opcode);
     
     CommaPrinter comma(", ", "<");
-    if (traps)
-        out.print(comma, "Traps");
+    if (effects)
+        out.print(comma, "Effects");
     if (comma.didPrint())
         out.print(">");
 }

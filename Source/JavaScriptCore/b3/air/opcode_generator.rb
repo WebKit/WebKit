@@ -1126,7 +1126,7 @@ writeH("OpcodeGenerated") {
     
     outp.puts "bool Inst::hasNonArgNonControlEffects()"
     outp.puts "{"
-    outp.puts "if (kind.traps)"
+    outp.puts "if (kind.effects)"
     outp.puts "return true;"
     outp.puts "switch (kind.opcode) {"
     foundTrue = false
@@ -1154,7 +1154,7 @@ writeH("OpcodeGenerated") {
     
     outp.puts "bool Inst::hasNonArgEffects()"
     outp.puts "{"
-    outp.puts "if (kind.traps)"
+    outp.puts "if (kind.effects)"
     outp.puts "return true;"
     outp.puts "switch (kind.opcode) {"
     foundTrue = false

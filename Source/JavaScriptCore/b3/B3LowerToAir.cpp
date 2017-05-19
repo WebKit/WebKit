@@ -272,7 +272,7 @@ private:
         Inst inst(Args&&... args)
         {
             Inst result(std::forward<Args>(args)...);
-            result.kind.traps |= m_traps;
+            result.kind.effects |= m_traps;
             m_wasWrapped = true;
             return result;
         }
@@ -568,7 +568,7 @@ private:
     Inst trappingInst(bool traps, Args&&... args)
     {
         Inst result(std::forward<Args>(args)...);
-        result.kind.traps |= traps;
+        result.kind.effects |= traps;
         return result;
     }
     
@@ -961,8 +961,7 @@ private:
         if (opcode == Air::Oops)
             return false;
         
-        // On x86, all stores have fences, and this isn't reordering the store itself.
-        if (!isX86() && m_value->as<MemoryValue>()->hasFence())
+        if (m_value->as<MemoryValue>()->hasFence())
             return false;
         
         Arg storeAddr = addr(m_value);
@@ -1017,29 +1016,28 @@ private:
         return true;
     }
 
-    Inst createStore(Air::Opcode move, Value* value, const Arg& dest)
+    Inst createStore(Air::Kind move, Value* value, const Arg& dest)
     {
-        if (imm(value) && isValidForm(move, Arg::Imm, dest.kind()))
+        if (imm(value) && isValidForm(move.opcode, Arg::Imm, dest.kind()))
             return Inst(move, m_value, imm(value), dest);
 
         return Inst(move, m_value, tmp(value), dest);
     }
     
-    Air::Opcode storeOpcode(Width width, Bank bank, bool release)
+    Air::Opcode storeOpcode(Width width, Bank bank)
     {
         switch (width) {
         case Width8:
             RELEASE_ASSERT(bank == GP);
-            return release ? StoreRel8 : Air::Store8;
+            return Air::Store8;
         case Width16:
             RELEASE_ASSERT(bank == GP);
-            return release ? StoreRel16 : Air::Store16;
+            return Air::Store16;
         case Width32:
             switch (bank) {
             case GP:
-                return release ? StoreRel32 : Move32;
+                return Move32;
             case FP:
-                RELEASE_ASSERT(!release);
                 return MoveFloat;
             }
             break;
@@ -1047,9 +1045,8 @@ private:
             RELEASE_ASSERT(is64Bit());
             switch (bank) {
             case GP:
-                return release ? StoreRel64 : Move;
+                return Move;
             case FP:
-                RELEASE_ASSERT(!release);
                 return MoveDouble;
             }
             break;
@@ -1057,25 +1054,33 @@ private:
         RELEASE_ASSERT_NOT_REACHED();
     }
     
-    Air::Opcode storeOpcode(Value* value)
+    void appendStore(Value* value, const Arg& dest)
     {
         MemoryValue* memory = value->as<MemoryValue>();
         RELEASE_ASSERT(memory->isStore());
-        return storeOpcode(memory->accessWidth(), memory->accessBank(), memory->hasFence());
+
+        Air::Kind kind;
+        if (memory->hasFence()) {
+            RELEASE_ASSERT(memory->accessBank() == GP);
+            
+            if (isX86()) {
+                kind = OPCODE_FOR_WIDTH(Xchg, memory->accessWidth());
+                kind.effects = true;
+                Tmp swapTmp = m_code.newTmp(GP);
+                append(relaxedMoveForType(memory->accessType()), tmp(memory->child(0)), swapTmp);
+                append(kind, swapTmp, dest);
+                return;
+            }
+            
+            kind = OPCODE_FOR_WIDTH(StoreRel, memory->accessWidth());
+        } else
+            kind = storeOpcode(memory->accessWidth(), memory->accessBank());
+        
+        kind.effects |= memory->traps();
+        
+        append(createStore(kind, memory->child(0), dest));
     }
 
-    Inst createStore(Value* value, const Arg& dest)
-    {
-        Air::Opcode moveOpcode = storeOpcode(value);
-        return createStore(moveOpcode, value->child(0), dest);
-    }
-
-    template<typename... Args>
-    void appendStore(Args&&... args)
-    {
-        append(trappingInst(m_value, createStore(std::forward<Args>(args)...)));
-    }
-    
     Air::Opcode moveForType(Type type)
     {
         switch (type) {
@@ -1151,15 +1156,15 @@ private:
 #endif // ENABLE(MASM_PROBE)
 
     template<typename... Arguments>
-    void append(Air::Opcode opcode, Arguments&&... arguments)
+    void append(Air::Kind kind, Arguments&&... arguments)
     {
-        m_insts.last().append(Inst(opcode, m_value, std::forward<Arguments>(arguments)...));
+        m_insts.last().append(Inst(kind, m_value, std::forward<Arguments>(arguments)...));
     }
     
     template<typename... Arguments>
-    void appendTrapping(Air::Opcode opcode, Arguments&&... arguments)
+    void appendTrapping(Air::Kind kind, Arguments&&... arguments)
     {
-        m_insts.last().append(trappingInst(m_value, opcode, m_value, std::forward<Arguments>(arguments)...));
+        m_insts.last().append(trappingInst(m_value, kind, m_value, std::forward<Arguments>(arguments)...));
     }
     
     void append(Inst&& inst)
@@ -1254,7 +1259,7 @@ private:
                 break;
             case ValueRep::StackArgument:
                 arg = Arg::callArg(value.rep().offsetFromSP());
-                appendStore(moveForType(value.value()->type()), value.value(), arg);
+                append(trappingInst(m_value, createStore(moveForType(value.value()->type()), value.value(), arg)));
                 break;
             default:
                 RELEASE_ASSERT_NOT_REACHED();
@@ -2414,46 +2419,73 @@ private:
             
         case Load: {
             MemoryValue* memory = m_value->as<MemoryValue>();
-            Air::Opcode opcode = Air::Oops;
+            Air::Kind kind = moveForType(memory->type());
             if (memory->hasFence()) {
-                switch (memory->type()) {
-                case Int32:
-                    opcode = LoadAcq32;
-                    break;
-                case Int64:
-                    opcode = LoadAcq64;
-                    break;
-                default:
-                    RELEASE_ASSERT_NOT_REACHED();
-                    break;
+                if (isX86())
+                    kind.effects = true;
+                else {
+                    switch (memory->type()) {
+                    case Int32:
+                        kind = LoadAcq32;
+                        break;
+                    case Int64:
+                        kind = LoadAcq64;
+                        break;
+                    default:
+                        RELEASE_ASSERT_NOT_REACHED();
+                        break;
+                    }
                 }
-            } else
-                opcode = moveForType(memory->type());
-            append(trappingInst(m_value, opcode, m_value, addr(m_value), tmp(m_value)));
+            }
+            append(trappingInst(m_value, kind, m_value, addr(m_value), tmp(m_value)));
             return;
         }
             
         case Load8S: {
-            Air::Opcode opcode = m_value->as<MemoryValue>()->hasFence() ? LoadAcq8SignedExtendTo32 : Load8SignedExtendTo32;
-            append(trappingInst(m_value, opcode, m_value, addr(m_value), tmp(m_value)));
+            Air::Kind kind = Load8SignedExtendTo32;
+            if (m_value->as<MemoryValue>()->hasFence()) {
+                if (isX86())
+                    kind.effects = true;
+                else
+                    kind = LoadAcq8SignedExtendTo32;
+            }
+            append(trappingInst(m_value, kind, m_value, addr(m_value), tmp(m_value)));
             return;
         }
 
         case Load8Z: {
-            Air::Opcode opcode = m_value->as<MemoryValue>()->hasFence() ? LoadAcq8 : Load8;
-            append(trappingInst(m_value, opcode, m_value, addr(m_value), tmp(m_value)));
+            Air::Kind kind = Load8;
+            if (m_value->as<MemoryValue>()->hasFence()) {
+                if (isX86())
+                    kind.effects = true;
+                else
+                    kind = LoadAcq8;
+            }
+            append(trappingInst(m_value, kind, m_value, addr(m_value), tmp(m_value)));
             return;
         }
 
         case Load16S: {
-            Air::Opcode opcode = m_value->as<MemoryValue>()->hasFence() ? LoadAcq16SignedExtendTo32 : Load16SignedExtendTo32;
-            append(trappingInst(m_value, opcode, m_value, addr(m_value), tmp(m_value)));
+            Air::Kind kind = Load16SignedExtendTo32;
+            if (m_value->as<MemoryValue>()->hasFence()) {
+                if (isX86())
+                    kind.effects = true;
+                else
+                    kind = LoadAcq16SignedExtendTo32;
+            }
+            append(trappingInst(m_value, kind, m_value, addr(m_value), tmp(m_value)));
             return;
         }
 
         case Load16Z: {
-            Air::Opcode opcode = m_value->as<MemoryValue>()->hasFence() ? LoadAcq16 : Load16;
-            append(trappingInst(m_value, opcode, m_value, addr(m_value), tmp(m_value)));
+            Air::Kind kind = Load16;
+            if (m_value->as<MemoryValue>()->hasFence()) {
+                if (isX86())
+                    kind.effects = true;
+                else
+                    kind = LoadAcq16;
+            }
+            append(trappingInst(m_value, kind, m_value, addr(m_value), tmp(m_value)));
             return;
         }
             

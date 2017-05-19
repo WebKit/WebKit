@@ -723,9 +723,7 @@ Load8 U:G:8, ZD:G:32
     Addr, Tmp
     Index, Tmp
 
-LoadAcq8 U:G:8, ZD:G:32 /effects
-    x86: Addr, Tmp
-    x86: Index, Tmp
+arm: LoadAcq8 U:G:8, ZD:G:32 /effects
     SimpleAddr, Tmp
 
 Store8 U:G:8, D:G:8
@@ -734,38 +732,28 @@ Store8 U:G:8, D:G:8
     x86: Imm, Index
     x86: Imm, Addr
 
-StoreRel8 U:G:8, D:G:8 /effects
-    x86: Tmp, Index
-    x86: Tmp, Addr
-    x86: Imm, Index
-    x86: Imm, Addr
+arm: StoreRel8 U:G:8, D:G:8 /effects
     Tmp, SimpleAddr
 
 Load8SignedExtendTo32 U:G:8, ZD:G:32
     Addr, Tmp
     Index, Tmp
 
-LoadAcq8SignedExtendTo32 U:G:8, ZD:G:32 /effects
-    x86: Addr, Tmp
-    x86: Index, Tmp
+arm: LoadAcq8SignedExtendTo32 U:G:8, ZD:G:32 /effects
     SimpleAddr, Tmp
 
 Load16 U:G:16, ZD:G:32
     Addr, Tmp
     Index, Tmp
 
-LoadAcq16 U:G:16, ZD:G:32 /effects
-    x86: Addr, Tmp
-    x86: Index, Tmp
+arm: LoadAcq16 U:G:16, ZD:G:32 /effects
     SimpleAddr, Tmp
 
 Load16SignedExtendTo32 U:G:16, ZD:G:32
     Addr, Tmp
     Index, Tmp
 
-LoadAcq16SignedExtendTo32 U:G:16, ZD:G:32 /effects
-    x86: Addr, Tmp
-    x86: Index, Tmp
+arm: LoadAcq16SignedExtendTo32 U:G:16, ZD:G:32 /effects
     SimpleAddr, Tmp
 
 Store16 U:G:16, D:G:16
@@ -774,36 +762,36 @@ Store16 U:G:16, D:G:16
     x86: Imm, Index
     x86: Imm, Addr
 
-StoreRel16 U:G:16, D:G:16 /effects
-    x86: Tmp, Index
-    x86: Tmp, Addr
-    x86: Imm, Index
-    x86: Imm, Addr
+arm: StoreRel16 U:G:16, D:G:16 /effects
     Tmp, SimpleAddr
 
-LoadAcq32 U:G:32, ZD:G:32 /effects
-    x86: Addr, Tmp
-    x86: Index, Tmp
+arm: LoadAcq32 U:G:32, ZD:G:32 /effects
     SimpleAddr, Tmp
 
-StoreRel32 U:G:32, ZD:G:32 /effects
-    x86: Tmp, Addr
-    x86: Tmp, Index
-    x86: Imm, Addr
-    x86: Imm, Index
+arm: StoreRel32 U:G:32, ZD:G:32 /effects
     Tmp, SimpleAddr
 
-64: LoadAcq64 U:G:64, ZD:G:64 /effects
-    x86: Addr, Tmp
-    x86: Index, Tmp
+arm64: LoadAcq64 U:G:64, ZD:G:64 /effects
     SimpleAddr, Tmp
 
-64: StoreRel64 U:G:64, ZD:G:64 /effects
-    x86: Tmp, Addr
-    x86: Tmp, Index
-    x86: Imm, Addr
-    x86: Imm, Index
+arm64: StoreRel64 U:G:64, ZD:G:64 /effects
     Tmp, SimpleAddr
+
+x86: Xchg8 UD:G:8, UD:G:8 /effects
+    Tmp, Addr
+    Tmp, Index
+
+x86: Xchg16 UD:G:16, UD:G:16 /effects
+    Tmp, Addr
+    Tmp, Index
+
+x86: Xchg32 UD:G:32, UD:G:32 /effects
+    Tmp, Addr
+    Tmp, Index
+
+x86_64: Xchg64 UD:G:64, UD:G:64 /effects
+    Tmp, Addr
+    Tmp, Index
 
 # The first operand is rax.
 # FIXME: This formulation means that the boolean result cannot be put in eax, even though all users

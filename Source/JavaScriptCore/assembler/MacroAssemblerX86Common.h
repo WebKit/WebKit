@@ -3013,6 +3013,36 @@ public:
         m_assembler.nop();
     }
     
+    void xchg8(RegisterID reg, Address address)
+    {
+        m_assembler.xchgb_rm(reg, address.offset, address.base);
+    }
+    
+    void xchg8(RegisterID reg, BaseIndex address)
+    {
+        m_assembler.xchgb_rm(reg, address.offset, address.base, address.index, address.scale);
+    }
+    
+    void xchg16(RegisterID reg, Address address)
+    {
+        m_assembler.xchgw_rm(reg, address.offset, address.base);
+    }
+    
+    void xchg16(RegisterID reg, BaseIndex address)
+    {
+        m_assembler.xchgw_rm(reg, address.offset, address.base, address.index, address.scale);
+    }
+    
+    void xchg32(RegisterID reg, Address address)
+    {
+        m_assembler.xchgl_rm(reg, address.offset, address.base);
+    }
+    
+    void xchg32(RegisterID reg, BaseIndex address)
+    {
+        m_assembler.xchgl_rm(reg, address.offset, address.base, address.index, address.scale);
+    }
+    
     // We take memoryFence to mean acqrel. This has acqrel semantics on x86.
     void memoryFence()
     {
@@ -3736,116 +3766,6 @@ public:
     {
         m_assembler.lock();
         m_assembler.xchgl_rm(reg, address.offset, address.base, address.index, address.scale);
-    }
-    
-    void loadAcq8(Address src, RegisterID dest)
-    {
-        load8(src, dest);
-    }
-    
-    void loadAcq8(BaseIndex src, RegisterID dest)
-    {
-        load8(src, dest);
-    }
-    
-    void loadAcq8SignedExtendTo32(Address src, RegisterID dest)
-    {
-        load8SignedExtendTo32(src, dest);
-    }
-    
-    void loadAcq8SignedExtendTo32(BaseIndex src, RegisterID dest)
-    {
-        load8SignedExtendTo32(src, dest);
-    }
-    
-    void loadAcq16(Address src, RegisterID dest)
-    {
-        load16(src, dest);
-    }
-    
-    void loadAcq16(BaseIndex src, RegisterID dest)
-    {
-        load16(src, dest);
-    }
-    
-    void loadAcq16SignedExtendTo32(Address src, RegisterID dest)
-    {
-        load16SignedExtendTo32(src, dest);
-    }
-    
-    void loadAcq16SignedExtendTo32(BaseIndex src, RegisterID dest)
-    {
-        load16SignedExtendTo32(src, dest);
-    }
-    
-    void loadAcq32(Address src, RegisterID dest)
-    {
-        load32(src, dest);
-    }
-    
-    void loadAcq32(BaseIndex src, RegisterID dest)
-    {
-        load32(src, dest);
-    }
-    
-    void storeRel8(RegisterID src, Address dest)
-    {
-        store8(src, dest);
-    }
-    
-    void storeRel8(RegisterID src, BaseIndex dest)
-    {
-        store8(src, dest);
-    }
-    
-    void storeRel8(TrustedImm32 imm, Address dest)
-    {
-        store8(imm, dest);
-    }
-    
-    void storeRel8(TrustedImm32 imm, BaseIndex dest)
-    {
-        store8(imm, dest);
-    }
-    
-    void storeRel16(RegisterID src, Address dest)
-    {
-        store16(src, dest);
-    }
-    
-    void storeRel16(RegisterID src, BaseIndex dest)
-    {
-        store16(src, dest);
-    }
-    
-    void storeRel16(TrustedImm32 imm, Address dest)
-    {
-        store16(imm, dest);
-    }
-    
-    void storeRel16(TrustedImm32 imm, BaseIndex dest)
-    {
-        store16(imm, dest);
-    }
-    
-    void storeRel32(RegisterID src, Address dest)
-    {
-        store32(src, dest);
-    }
-    
-    void storeRel32(RegisterID src, BaseIndex dest)
-    {
-        store32(src, dest);
-    }
-    
-    void storeRel32(TrustedImm32 imm, Address dest)
-    {
-        store32(imm, dest);
-    }
-    
-    void storeRel32(TrustedImm32 imm, BaseIndex dest)
-    {
-        store32(imm, dest);
     }
     
     // We take this to mean that it prevents motion of normal stores. So, it's a no-op on x86.

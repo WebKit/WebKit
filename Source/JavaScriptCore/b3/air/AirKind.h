@@ -42,7 +42,7 @@ namespace JSC { namespace B3 { namespace Air {
 struct Kind {
     Kind(Opcode opcode)
         : opcode(opcode)
-        , traps(false)
+        , effects(false)
     {
     }
     
@@ -54,7 +54,7 @@ struct Kind {
     bool operator==(const Kind& other) const
     {
         return opcode == other.opcode
-            && traps == other.traps;
+            && effects == other.effects;
     }
     
     bool operator!=(const Kind& other) const
@@ -64,7 +64,7 @@ struct Kind {
     
     unsigned hash() const
     {
-        return static_cast<unsigned>(opcode) + (static_cast<unsigned>(traps) << 16);
+        return static_cast<unsigned>(opcode) + (static_cast<unsigned>(effects) << 16);
     }
     
     explicit operator bool() const
@@ -76,17 +76,11 @@ struct Kind {
     
     Opcode opcode;
     
-    // This is an opcode-agnostic flag that indicates that we expect that this instruction will
-    // trap. This causes the compiler to assume that this side-exits and therefore has non-control
-    // non-arg effects. This also causes the compiler to tell you about all of these instructions.
-    // Note that this is just one of several ways of supporting trapping in Air, and it's the less
-    // precise variant because it's origin-based. This means that if an instruction was fused out
-    // of B3 values that had different origins, then the origin at which you'll appear to trap
-    // will be somewhat random. The upside of this approach is that it imposes by far the least
-    // overhead on the compiler.
-    // FIXME: Make this completely work.
-    // https://bugs.webkit.org/show_bug.cgi?id=162689
-    bool traps : 1;
+    // This is an opcode-agnostic flag that indicates that we expect that this instruction will do
+    // any of the following:
+    // - Trap.
+    // - Perform some non-arg non-control effect.
+    bool effects : 1;
 };
 
 } } } // namespace JSC::B3::Air

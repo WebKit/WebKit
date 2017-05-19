@@ -1,3 +1,81 @@
+2017-05-18  Filip Pizlo  <fpizlo@apple.com>
+
+        B3::Value::effects() says that having a fence range implies the fence bit, but on x86_64 we lower loadAcq/storeRel to load/store so the store-before-load fence bit orderings won't be honored
+        https://bugs.webkit.org/show_bug.cgi?id=172306
+
+        Reviewed by Michael Saboff.
+        
+        This changes B3 to emit xchg and its variants for fenced stores on x86. This ensures that
+        fenced stores cannot be reordered around other fenced instructions. Previously, B3 emitted
+        normal store instructions for fenced stores. That's wrong because then you get reorderings
+        that are possible in TSO but impossible in SC. Fenced instructions are supposed to be SC
+        with respect for each other.
+        
+        This is imprecise. If you really just wanted a store-release, then every X86 store does this.
+        But, in B3, fenced stores are ARM-style store-release, meaning that they are fenced with
+        respect to all other fences. If we ever did want to say that something is a store release in
+        the traditional sense, then we'd want MemoryValue to have a fence flag. Then, having a fence
+        range without the fence flag would mean the traditional store-release, which lowers to a
+        normal store on x86. But to my knowledge, that traditional store-release is only useful for
+        unlocking spinlocks. We don't use spinlocks in JSC. Adaptive locks require CAS for unlock,
+        and B3 CAS is plenty fast. I think it's OK to have this small imprecision of giving clients
+        an ARM-style store-release on x86 using xchg.
+        
+        The implication of this change is that the FTL no longer violates the SAB memory model.
+
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::xchg8):
+        (JSC::MacroAssemblerX86Common::xchg16):
+        (JSC::MacroAssemblerX86Common::xchg32):
+        (JSC::MacroAssemblerX86Common::loadAcq8): Deleted.
+        (JSC::MacroAssemblerX86Common::loadAcq8SignedExtendTo32): Deleted.
+        (JSC::MacroAssemblerX86Common::loadAcq16): Deleted.
+        (JSC::MacroAssemblerX86Common::loadAcq16SignedExtendTo32): Deleted.
+        (JSC::MacroAssemblerX86Common::loadAcq32): Deleted.
+        (JSC::MacroAssemblerX86Common::storeRel8): Deleted.
+        (JSC::MacroAssemblerX86Common::storeRel16): Deleted.
+        (JSC::MacroAssemblerX86Common::storeRel32): Deleted.
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::xchg64):
+        (JSC::MacroAssemblerX86_64::loadAcq64): Deleted.
+        (JSC::MacroAssemblerX86_64::storeRel64): Deleted.
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::ArgPromise::inst):
+        (JSC::B3::Air::LowerToAir::trappingInst):
+        (JSC::B3::Air::LowerToAir::tryAppendStoreBinOp):
+        (JSC::B3::Air::LowerToAir::createStore):
+        (JSC::B3::Air::LowerToAir::storeOpcode):
+        (JSC::B3::Air::LowerToAir::appendStore):
+        (JSC::B3::Air::LowerToAir::append):
+        (JSC::B3::Air::LowerToAir::appendTrapping):
+        (JSC::B3::Air::LowerToAir::fillStackmap):
+        (JSC::B3::Air::LowerToAir::lower):
+        * b3/air/AirKind.cpp:
+        (JSC::B3::Air::Kind::dump):
+        * b3/air/AirKind.h:
+        (JSC::B3::Air::Kind::Kind):
+        (JSC::B3::Air::Kind::operator==):
+        (JSC::B3::Air::Kind::hash):
+        * b3/air/AirLowerAfterRegAlloc.cpp:
+        (JSC::B3::Air::lowerAfterRegAlloc):
+        * b3/air/AirLowerMacros.cpp:
+        (JSC::B3::Air::lowerMacros):
+        * b3/air/AirOpcode.opcodes:
+        * b3/air/AirValidate.cpp:
+        * b3/air/opcode_generator.rb:
+        * b3/testb3.cpp:
+        (JSC::B3::correctSqrt):
+        (JSC::B3::testSqrtArg):
+        (JSC::B3::testSqrtImm):
+        (JSC::B3::testSqrtMem):
+        (JSC::B3::testSqrtArgWithUselessDoubleConversion):
+        (JSC::B3::testSqrtArgWithEffectfulDoubleConversion):
+        (JSC::B3::testStoreRelAddLoadAcq32):
+        (JSC::B3::testTrappingLoad):
+        (JSC::B3::testTrappingStore):
+        (JSC::B3::testTrappingLoadAddStore):
+        (JSC::B3::testTrappingLoadDCE):
+
 2017-05-19  Don Olmstead  <don.olmstead@am.sony.com>
 
         [JSC] Remove PLATFORM(WIN) references
