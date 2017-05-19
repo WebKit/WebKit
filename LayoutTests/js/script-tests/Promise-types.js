@@ -6,7 +6,7 @@ debug("Promises");
 debug("");
 
 // Silence unhandled rejection messages.
-window.onunhandledrejection = () => false;
+onunhandledrejection = () => false;
 
 // Promises should be of type Promise.
 
