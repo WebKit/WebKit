@@ -29,6 +29,7 @@
 #include "config.h"
 #include "JSSQLStatementErrorCallback.h"
 
+#include "JSDOMConvertInterface.h"
 #include "JSDOMExceptionHandling.h"
 #include "JSSQLError.h"
 #include "JSSQLTransaction.h"
@@ -41,7 +42,7 @@ namespace WebCore {
 
 using namespace JSC;
 
-bool JSSQLStatementErrorCallback::handleEvent(SQLTransaction* transaction, SQLError* error)
+bool JSSQLStatementErrorCallback::handleEvent(SQLTransaction& transaction, SQLError& error)
 {
     if (!m_data || !m_data->globalObject() || !canInvokeCallback())
         return true;
@@ -52,8 +53,8 @@ bool JSSQLStatementErrorCallback::handleEvent(SQLTransaction* transaction, SQLEr
 
     ExecState* exec = m_data->globalObject()->globalExec();
     MarkedArgumentBuffer args;
-    args.append(toJS(exec, m_data->globalObject(), transaction));
-    args.append(toJS(exec, m_data->globalObject(), error));
+    args.append(toJS<IDLInterface<SQLTransaction>>(*exec, *m_data->globalObject(), transaction));
+    args.append(toJS<IDLInterface<SQLError>>(*exec, *m_data->globalObject(), error));
 
     NakedPtr<JSC::Exception> returnedException;
     JSValue result = m_data->invokeCallback(args, JSCallbackData::CallbackType::Function, Identifier(), returnedException);

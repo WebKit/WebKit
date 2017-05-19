@@ -38,7 +38,7 @@ using namespace JSC;
 // FIXME: The bindings generator is currently not able to generate
 // callback function calls if they return something other than a
 // boolean.
-uint16_t JSNodeFilter::acceptNode(Node* node)
+unsigned short JSNodeFilter::acceptNode(Node& node)
 {
     Ref<JSNodeFilter> protectedThis(*this);
 

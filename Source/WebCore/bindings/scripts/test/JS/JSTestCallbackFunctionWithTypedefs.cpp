@@ -52,7 +52,7 @@ JSTestCallbackFunctionWithTypedefs::~JSTestCallbackFunctionWithTypedefs()
 #endif
 }
 
-bool JSTestCallbackFunctionWithTypedefs::handleEvent(Vector<int32_t> sequenceArg, int32_t longArg)
+bool JSTestCallbackFunctionWithTypedefs::handleEvent(typename IDLSequence<IDLNullable<IDLLong>>::ParameterType sequenceArg, typename IDLLong::ParameterType longArg)
 {
     if (!canInvokeCallback())
         return true;

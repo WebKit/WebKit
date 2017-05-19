@@ -682,7 +682,7 @@ void Database::runTransaction(RefPtr<SQLTransactionCallback>&& callback, RefPtr<
         if (errorCallback) {
             RefPtr<SQLTransactionErrorCallback> errorCallbackProtector = WTFMove(errorCallback);
             m_scriptExecutionContext->postTask([errorCallbackProtector](ScriptExecutionContext&) {
-                errorCallbackProtector->handleEvent(SQLError::create(SQLError::UNKNOWN_ERR, "database has been closed").ptr());
+                errorCallbackProtector->handleEvent(SQLError::create(SQLError::UNKNOWN_ERR, "database has been closed"));
             });
         }
         return;

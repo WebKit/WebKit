@@ -1492,10 +1492,7 @@ sub GenerateDefaultValue
 
     if ($defaultValue eq "[]") {
         my $IDLType = GetIDLType($typeScope, $type);
-        return "Converter<${IDLType}>::ReturnType{ }" if $codeGenerator->IsSequenceOrFrozenArrayType($type);
-
-        my $nativeType = GetNativeType($typeScope, $type);
-        return "$nativeType()"
+        return "Converter<${IDLType}>::ReturnType{ }";
     }
 
     return "jsUndefined()" if $defaultValue eq "undefined";
@@ -1842,17 +1839,17 @@ sub GenerateHeader
 
     # JSValue to implementation type
     if (ShouldGenerateToWrapped($hasParent, $interface)) {
-        my $nativeType = GetNativeType($interface, $interface->type);
-
         # FIXME: Add extended attribute for this.
         my @toWrappedArguments = ();
         push(@toWrappedArguments, "JSC::VM&");
         push(@toWrappedArguments, "JSC::ExecState&") if $interface->type->name eq "XPathNSResolver";
         push(@toWrappedArguments, "JSC::JSValue");
 
+        my $toWrappedType = $interface->type->name eq "XPathNSResolver" ? "RefPtr<${implType}>" : "${implType}*";
+
         my $export = "";
         $export = "WEBCORE_EXPORT " if $interface->extendedAttributes->{ExportToWrappedFunction};
-        push(@headerContent, "    static $export$nativeType toWrapped(" . join(", ", @toWrappedArguments) . ");\n");
+        push(@headerContent, "    static ${export}${toWrappedType} toWrapped(" . join(", ", @toWrappedArguments) . ");\n");
     }
 
     $headerTrailingIncludes{"${className}Custom.h"} = 1 if $interface->extendedAttributes->{JSCustomHeader};
@@ -2271,9 +2268,11 @@ sub GenerateHeader
     }
 
     if (NeedsImplementationClass($interface)) {
+        my $toWrappedType = $interface->type->name eq "XPathNSResolver" ? "RefPtr<${implType}>" : "${implType}*";
+    
         push(@headerContent, "template<> struct JSDOMWrapperConverterTraits<${implType}> {\n");
         push(@headerContent, "    using WrapperClass = ${className};\n");
-        push(@headerContent, "    using ToWrappedReturnType = " . GetNativeType($interface, $interface->type) . ";\n");
+        push(@headerContent, "    using ToWrappedReturnType = ${toWrappedType};\n");
         push(@headerContent, "};\n");
     }
 
@@ -4257,22 +4256,12 @@ END
                     my $type = $argument->type;
                     my $name = $argument->name;
                     my $encodedName = "encoded" . $codeGenerator->WK_ucfirst($name);
-                    my $nativeType = GetNativeType($interface, $argument->type);
                     my $shouldPassByReference = ShouldPassArgumentByReference($argument);
 
-                    if (!$shouldPassByReference && ($codeGenerator->IsWrapperType($type) || $codeGenerator->IsTypedArrayType($type))) {
-                        $implIncludes{"<runtime/Error.h>"} = 1;
-                        my ($nativeValue, $mayThrowException) = UnsafeToNative($interface, $argument, $encodedName, $function->extendedAttributes->{Conditional});
-                        push(@implContent, "    $nativeType $name = nullptr;\n");
-                        push(@implContent, "    $name = $nativeValue;\n");
-                        push(@implContent, "    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());\n") if $mayThrowException;
-                        $value = "WTFMove($name)";
-                    } else {
-                        my ($nativeValue, $mayThrowException) = UnsafeToNative($interface, $argument, $encodedName, $function->extendedAttributes->{Conditional});
-                        push(@implContent, "    auto $name = ${nativeValue};\n");
-                        $value = "WTFMove($name)";
-                        push(@implContent, "    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());\n") if $mayThrowException;
-                    }
+                    my ($nativeValue, $mayThrowException) = UnsafeToNative($interface, $argument, $encodedName, $function->extendedAttributes->{Conditional});
+                    push(@implContent, "    auto $name = ${nativeValue};\n");
+                    push(@implContent, "    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());\n") if $mayThrowException;
+                    $value = "WTFMove($name)";
 
                     if ($shouldPassByReference) {
                         $value = "*$name";
@@ -4947,41 +4936,40 @@ sub GenerateParametersCheck
 
             push(@$outputArray, "    }\n") if $indent ne "";
         } else {
-            my $outer;
-            my $inner;
-            my $nativeType = GetNativeType($interface, $argument->type);
-
-            die "Variadic argument is already handled here" if $argument->isVariadic;
-            my $argumentLookupMethod = $argument->isOptional ? "argument" : "uncheckedArgument";
+            my $argumentLookupForConversion;
+            my $optionalCheck;
             my $nativeValueCastFunction;
 
-            if ($argument->isOptional && defined($argument->default) && !WillConvertUndefinedToDefaultParameterValue($type, $argument->default)) {
-                my $defaultValue = $argument->default;
+            if ($argument->isOptional) {
+                if (defined($argument->default)) {
+                    if (WillConvertUndefinedToDefaultParameterValue($type, $argument->default)) {
+                        $argumentLookupForConversion = "state->argument($argumentIndex)";
+                    } else {
+                        my $defaultValue = GenerateDefaultValue($interface, $argument, $argument->type, $argument->default);
+                        $optionalCheck = "state->argument($argumentIndex).isUndefined() ? $defaultValue : ";
+                        $argumentLookupForConversion = "state->uncheckedArgument($argumentIndex)"
+                    }
+                } else {
+                    my $argumentIDLType = GetIDLType($interface, $argument->type);
+                    my $defaultValue = "std::optional<Converter<$argumentIDLType>::ReturnType>()";
 
-                $defaultValue = GenerateDefaultValue($interface, $argument, $argument->type, $argument->default);
-
-                $outer = "state->$argumentLookupMethod($argumentIndex).isUndefined() ? $defaultValue : ";
-                $inner = "state->uncheckedArgument($argumentIndex)";
-            } elsif ($argument->isOptional && !defined($argument->default)) {
-                # Use std::optional<>() for optional arguments that are missing or undefined and that do not have a default value in the IDL.
-                $outer = "state->$argumentLookupMethod($argumentIndex).isUndefined() ? std::optional<$nativeType>() : ";
-                $nativeValueCastFunction = "std::optional<$nativeType>";
-                $inner = "state->uncheckedArgument($argumentIndex)";
+                    $optionalCheck = "state->argument($argumentIndex).isUndefined() ? $defaultValue : ";
+                    $argumentLookupForConversion = "state->uncheckedArgument($argumentIndex)";
+                    $nativeValueCastFunction = "std::optional<Converter<$argumentIDLType>::ReturnType>";
+                }
             } else {
-                $outer = "";
-                $inner = "state->$argumentLookupMethod($argumentIndex)";
+                $argumentLookupForConversion = "state->uncheckedArgument($argumentIndex)";
             }
-
+    
             my $globalObjectReference = $function->isStatic ? "*jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject())" : "*castedThis->globalObject()";
             my $argumentExceptionThrower = GetArgumentExceptionThrower($interface, $argument, $argumentIndex, $quotedFunctionName);
 
-            my ($nativeValue, $mayThrowException) = JSValueToNative($interface, $argument, $inner, $conditional, "state", "*state", "*castedThis", $globalObjectReference, $argumentExceptionThrower);
+            my ($nativeValue, $mayThrowException) = JSValueToNative($interface, $argument, $argumentLookupForConversion, $conditional, "state", "*state", "*castedThis", $globalObjectReference, $argumentExceptionThrower);
 
-            if (defined $nativeValueCastFunction) {
-                push(@$outputArray, "    auto $name = ${outer}$nativeValueCastFunction(${nativeValue});\n");
-            } else {
-                push(@$outputArray, "    auto $name = ${outer}${nativeValue};\n");
-            }
+            $nativeValue = "${nativeValueCastFunction}(" . $nativeValue . ")" if defined $nativeValueCastFunction;
+            $nativeValue = $optionalCheck . $nativeValue if defined $optionalCheck;
+
+            push(@$outputArray, "    auto $name = ${nativeValue};\n");
             push(@$outputArray, "    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());\n") if $mayThrowException;
 
             $value = PassArgumentExpression($name, $argument);
@@ -5146,11 +5134,12 @@ sub GenerateCallbackHeaderContent
     my $className = "JS${name}";
 
     $includesRef->{"ActiveDOMCallback.h"} = 1;
+    $includesRef->{"IDLTypes.h"} = 1;
     $includesRef->{"JSCallbackData.h"} = 1;
     $includesRef->{"<wtf/Forward.h>"} = 1;
     $includesRef->{"${name}.h"} = 1;
 
-    push(@$contentRef, "class $className : public ${name}, public ActiveDOMCallback {\n");
+    push(@$contentRef, "class $className final : public ${name}, public ActiveDOMCallback {\n");
     push(@$contentRef, "public:\n");
 
     # The static create() method.
@@ -5167,7 +5156,7 @@ sub GenerateCallbackHeaderContent
 
     push(@$contentRef, "    static JSC::JSValue getConstructor(JSC::VM&, const JSC::JSGlobalObject*);\n") if @{$constants};
 
-    push(@$contentRef, "    virtual bool operator==(const ${name}&) const;\n\n") if $interfaceOrCallback->extendedAttributes->{CallbackNeedsOperatorEqual};
+    push(@$contentRef, "    virtual bool operator==(const ${name}&) const override;\n\n") if $interfaceOrCallback->extendedAttributes->{CallbackNeedsOperatorEqual};
 
     # Functions
     my $numFunctions = @{$functions};
@@ -5176,16 +5165,17 @@ sub GenerateCallbackHeaderContent
         foreach my $function (@{$functions}) {
             my @arguments = ();
             foreach my $argument (@{$function->arguments}) {
-                push(@arguments, GetNativeTypeForCallbacks($argument->type, $interfaceOrCallback) . " " . $argument->name);
+                my $IDLType = GetIDLType($interfaceOrCallback, $argument->type);
+                push(@arguments, "typename ${IDLType}::ParameterType " . $argument->name);
             }
 
             # FIXME: Add support for non-void return types (the bool actually is returning exception state), for non-custom functions.
-            my $nativeReturnType = $function->extendedAttributes->{Custom} ? GetNativeTypeForCallbacks($function->type, $interfaceOrCallback) : "bool";
+            my $nativeReturnType = $function->extendedAttributes->{Custom} ? "typename " . GetIDLType($interfaceOrCallback, $function->type) . "::ImplementationType" : "bool";
             
             # FIXME: Change the default name (used for callback functions) to something other than handleEvent. It makes little sense.
             my $functionName = $function->name ? $function->name : "handleEvent";
 
-            push(@$contentRef, "    virtual ${nativeReturnType} ${functionName}(" . join(", ", @arguments) . ");\n");
+            push(@$contentRef, "    virtual ${nativeReturnType} ${functionName}(" . join(", ", @arguments) . ") override;\n");
         }
     }
 
@@ -5305,12 +5295,18 @@ sub GenerateCallbackImplementationContent
             # FIXME: Change the default name (used for callback functions) to something other than handleEvent. It makes little sense.
             my $functionName = $function->name ? $function->name : "handleEvent";
 
+            # FIXME: Add support for non-void return types (the bool actually is returning exception state), for non-custom functions.
+            my $nativeReturnType = "bool";
+
             my @args = ();
             foreach my $argument (@{$function->arguments}) {
                 AddToIncludesForIDLType($argument->type, $includesRef, 1);
-                push(@args, GetNativeTypeForCallbacks($argument->type, $interfaceOrCallback) . " " . $argument->name);
+
+                my $IDLType = GetIDLType($interfaceOrCallback, $argument->type);
+                push(@args, "typename ${IDLType}::ParameterType " . $argument->name);
             }
-            push(@$contentRef, "bool ${className}::${functionName}(" . join(", ", @args) . ")\n");
+            
+            push(@$contentRef, "${nativeReturnType} ${className}::${functionName}(" . join(", ", @args) . ")\n");
             push(@$contentRef, "{\n");
             push(@$contentRef, "    if (!canInvokeCallback())\n");
             push(@$contentRef, "        return true;\n\n");
@@ -5457,31 +5453,6 @@ END
     }
 }
 
-my %nativeType = (
-    "ByteString" => "String",
-    "DOMString" => "String",
-    "USVString" => "String",
-    "Date" => "double",
-    "EventListener" => "RefPtr<EventListener>",
-    "SerializedScriptValue" => "RefPtr<SerializedScriptValue>",
-    "XPathNSResolver" => "RefPtr<XPathNSResolver>",
-    "any" => "JSC::JSValue",
-    "object" => "JSC::Strong<JSC::JSObject>",
-    "boolean" => "bool",
-    "byte" => "int8_t",
-    "double" => "double",
-    "float" => "float",
-    "long long" => "int64_t",
-    "long" => "int32_t",
-    "octet" => "uint8_t",
-    "short" => "int16_t",
-    "unrestricted double" => "double",
-    "unrestricted float" => "float",
-    "unsigned long long" => "uint64_t",
-    "unsigned long" => "uint32_t",
-    "unsigned short" => "uint16_t",
-);
-
 # http://heycam.github.io/webidl/#dfn-flattened-union-member-types
 sub GetFlattenedMemberTypes
 {
@@ -5625,54 +5596,6 @@ sub GetIDLType
     my $baseIDLType = GetIDLTypeExcludingNullability($interface, $type);
     $baseIDLType = "IDLNullable<" . $baseIDLType . ">" if $type->isNullable;
     return $baseIDLType;
-}
-
-sub GetNativeType
-{
-    my ($interface, $type) = @_;
-
-    assert("Not a type") if ref($type) ne "IDLType";
-
-    my $typeName = $type->name;
-
-    return $nativeType{$typeName} if exists $nativeType{$typeName};
-
-    return GetEnumerationClassName($type, $interface) if $codeGenerator->IsEnumType($type);
-    return GetDictionaryClassName($type, $interface) if $codeGenerator->IsDictionaryType($type);
-    return "Vector<" . GetNativeInnerType(@{$type->subtypes}[0], $interface) . ">" if $codeGenerator->IsSequenceOrFrozenArrayType($type);
-    return "Vector<WTF::KeyValuePair<" . GetNativeInnerType(@{$type->subtypes}[0], $interface) . ", " . GetNativeInnerType(@{$type->subtypes}[1], $interface) . ">>" if $codeGenerator->IsRecordType($type);
-
-    if ($type->isUnion) {
-        my $IDLType = GetIDLType($interface, $type);
-        return "Converter<$IDLType>::ReturnType";
-    }
-    
-    return "RefPtr<${typeName}>" if $codeGenerator->IsTypedArrayType($type) and $typeName ne "ArrayBuffer";
-    return "${typeName}*";
-}
-
-sub GetNativeInnerType
-{
-    my ($innerType, $interface) = @_;
-
-    my $innerTypeName = $innerType->name;
-
-    return $nativeType{$innerTypeName} if exists $nativeType{$innerTypeName};
-
-    return GetEnumerationClassName($innerType, $interface) if $codeGenerator->IsEnumType($innerType);
-    return GetDictionaryClassName($innerType, $interface) if $codeGenerator->IsDictionaryType($innerType);
-    return "Vector<" . GetNativeInnerType(@{$innerType->subtypes}[0], $interface) . ">" if $codeGenerator->IsSequenceOrFrozenArrayType($innerType);
-    return "Vector<WTF::KeyValuePair<" . GetNativeInnerType(@{$innerType->subtypes}[0], $interface) . ", " . GetNativeInnerType(@{$innerType->subtypes}[1], $interface) . ">>" if $codeGenerator->IsRecordType($innerType);
-    return "RefPtr<$innerTypeName>";
-}
-
-sub GetNativeTypeForCallbacks
-{
-    my ($type, $interface) = @_;
-
-    return "RefPtr<SerializedScriptValue>&&" if $type->name eq "SerializedScriptValue";
-    return "const String&" if $codeGenerator->IsStringType($type);
-    return GetNativeType($interface, $type);
 }
 
 sub ShouldPassArgumentByReference

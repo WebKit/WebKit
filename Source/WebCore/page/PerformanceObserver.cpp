@@ -99,7 +99,7 @@ void PerformanceObserver::deliver()
 
     Vector<RefPtr<PerformanceEntry>> entries = WTFMove(m_entriesToDeliver);
     auto list = PerformanceObserverEntryList::create(WTFMove(entries));
-    m_callback->handleEvent(list.ptr(), this);
+    m_callback->handleEvent(list, *this);
 }
 
 } // namespace WebCore

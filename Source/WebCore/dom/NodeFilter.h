@@ -33,7 +33,7 @@ class Node;
 class NodeFilter : public RefCounted<NodeFilter> {
 public:
     virtual ~NodeFilter() { }
-    virtual uint16_t acceptNode(Node*) = 0;
+    virtual unsigned short acceptNode(Node&) = 0;
 
     /*
      * The following constants are returned by the acceptNode()

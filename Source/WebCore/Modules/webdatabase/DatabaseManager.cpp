@@ -217,7 +217,7 @@ ExceptionOr<Ref<Database>> DatabaseManager::openDatabase(ScriptExecutionContext&
         LOG(StorageAPI, "Scheduling DatabaseCreationCallbackTask for database %p\n", database.get());
         database->setHasPendingCreationEvent(true);
         database->m_scriptExecutionContext->postTask([creationCallback, database] (ScriptExecutionContext&) {
-            creationCallback->handleEvent(database.get());
+            creationCallback->handleEvent(*database);
             database->setHasPendingCreationEvent(false);
         });
     }

@@ -41,5 +41,5 @@
     const unsigned long SHOW_DOCUMENT_FRAGMENT = 0x00000400;
     const unsigned long SHOW_NOTATION = 0x00000800; // Historical.
 
-    [Custom] unsigned short acceptNode(optional Node node);
+    [Custom] unsigned short acceptNode(Node node);
 };

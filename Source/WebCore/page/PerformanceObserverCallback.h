@@ -37,7 +37,7 @@ class PerformanceObserverEntryList;
 class PerformanceObserverCallback : public RefCounted<PerformanceObserverCallback> {
 public:
     virtual ~PerformanceObserverCallback() { }
-    virtual bool handleEvent(PerformanceObserverEntryList*, PerformanceObserver*) = 0;
+    virtual bool handleEvent(PerformanceObserverEntryList&, PerformanceObserver&) = 0;
 };
 
 } // namespace WebCore

@@ -38,7 +38,7 @@ class IntersectionObserverEntry;
 class IntersectionObserverCallback : public RefCounted<IntersectionObserverCallback> {
 public:
     virtual ~IntersectionObserverCallback() { }
-    virtual bool handleEvent(Vector<RefPtr<IntersectionObserverEntry>>, IntersectionObserver*) = 0;
+    virtual bool handleEvent(const Vector<RefPtr<IntersectionObserverEntry>>&, IntersectionObserver&) = 0;
 };
 
 } // namespace WebCore

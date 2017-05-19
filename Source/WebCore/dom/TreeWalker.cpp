@@ -55,7 +55,7 @@ Node* TreeWalker::parentNode()
         node = node->parentNode();
         if (!node)
             return nullptr;
-        short acceptNodeResult = acceptNode(node.get());
+        short acceptNodeResult = acceptNode(*node);
         if (acceptNodeResult == NodeFilter::FILTER_ACCEPT)
             return setCurrent(node.releaseNonNull());
     }
@@ -65,7 +65,7 @@ Node* TreeWalker::parentNode()
 Node* TreeWalker::firstChild()
 {
     for (RefPtr<Node> node = m_current->firstChild(); node; ) {
-        short acceptNodeResult = acceptNode(node.get());
+        short acceptNodeResult = acceptNode(*node);
         switch (acceptNodeResult) {
             case NodeFilter::FILTER_ACCEPT:
                 m_current = node.releaseNonNull();
@@ -96,7 +96,7 @@ Node* TreeWalker::firstChild()
 Node* TreeWalker::lastChild()
 {
     for (RefPtr<Node> node = m_current->lastChild(); node; ) {
-        short acceptNodeResult = acceptNode(node.get());
+        short acceptNodeResult = acceptNode(*node);
         switch (acceptNodeResult) {
             case NodeFilter::FILTER_ACCEPT:
                 m_current = node.releaseNonNull();
@@ -133,7 +133,7 @@ template<TreeWalker::SiblingTraversalType type> Node* TreeWalker::traverseSiblin
     auto isNext = type == SiblingTraversalType::Next;
     while (true) {
         for (RefPtr<Node> sibling = isNext ? node->nextSibling() : node->previousSibling(); sibling; ) {
-            short acceptNodeResult = acceptNode(sibling.get());
+            short acceptNodeResult = acceptNode(*sibling);
             if (acceptNodeResult == NodeFilter::FILTER_ACCEPT) {
                 m_current = sibling.releaseNonNull();
                 return m_current.ptr();
@@ -146,7 +146,7 @@ template<TreeWalker::SiblingTraversalType type> Node* TreeWalker::traverseSiblin
         node = node->parentNode();
         if (!node || node == &root())
             return nullptr;
-        short acceptNodeResult = acceptNode(node.get());
+        short acceptNodeResult = acceptNode(*node);
         if (acceptNodeResult == NodeFilter::FILTER_ACCEPT)
             return nullptr;
     }
@@ -168,12 +168,12 @@ Node* TreeWalker::previousNode()
     while (node != &root()) {
         while (Node* previousSibling = node->previousSibling()) {
             node = previousSibling;
-            short acceptNodeResult = acceptNode(node.get());
+            short acceptNodeResult = acceptNode(*node);
             if (acceptNodeResult == NodeFilter::FILTER_REJECT)
                 continue;
             while (Node* lastChild = node->lastChild()) {
                 node = lastChild;
-                acceptNodeResult = acceptNode(node.get());
+                acceptNodeResult = acceptNode(*node);
                 if (acceptNodeResult == NodeFilter::FILTER_REJECT)
                     break;
             }
@@ -188,7 +188,7 @@ Node* TreeWalker::previousNode()
         if (!parent)
             return nullptr;
         node = parent;
-        short acceptNodeResult = acceptNode(node.get());
+        short acceptNodeResult = acceptNode(*node);
         if (acceptNodeResult == NodeFilter::FILTER_ACCEPT)
             return setCurrent(node.releaseNonNull());
     }
@@ -201,7 +201,7 @@ Node* TreeWalker::nextNode()
 Children:
     while (Node* firstChild = node->firstChild()) {
         node = firstChild;
-        short acceptNodeResult = acceptNode(node.get());
+        short acceptNodeResult = acceptNode(*node);
         if (acceptNodeResult == NodeFilter::FILTER_ACCEPT)
             return setCurrent(node.releaseNonNull());
         if (acceptNodeResult == NodeFilter::FILTER_REJECT)
@@ -209,7 +209,7 @@ Children:
     }
     while (Node* nextSibling = NodeTraversal::nextSkippingChildren(*node, &root())) {
         node = nextSibling;
-        short acceptNodeResult = acceptNode(node.get());
+        short acceptNodeResult = acceptNode(*node);
         if (acceptNodeResult == NodeFilter::FILTER_ACCEPT)
             return setCurrent(node.releaseNonNull());
         if (acceptNodeResult == NodeFilter::FILTER_SKIP)

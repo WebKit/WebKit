@@ -79,7 +79,7 @@ void GeoNotifier::runSuccessCallback(Geoposition* position)
     m_successCallback->handleEvent(position);
 }
 
-void GeoNotifier::runErrorCallback(PositionError* error)
+void GeoNotifier::runErrorCallback(PositionError& error)
 {
     if (m_errorCallback)
         m_errorCallback->handleEvent(error);
@@ -106,7 +106,7 @@ void GeoNotifier::timerFired()
     // Test for fatal error first. This is required for the case where the Frame is
     // disconnected and requests are cancelled.
     if (m_fatalError) {
-        runErrorCallback(m_fatalError.get());
+        runErrorCallback(*m_fatalError);
         // This will cause this notifier to be deleted.
         m_geolocation->fatalErrorOccurred(this);
         return;
@@ -121,8 +121,8 @@ void GeoNotifier::timerFired()
     }
     
     if (m_errorCallback) {
-        RefPtr<PositionError> error = PositionError::create(PositionError::TIMEOUT, ASCIILiteral("Timeout expired"));
-        m_errorCallback->handleEvent(error.get());
+        auto error = PositionError::create(PositionError::TIMEOUT, ASCIILiteral("Timeout expired"));
+        m_errorCallback->handleEvent(error);
     }
     m_geolocation->requestTimedOut(this);
 }

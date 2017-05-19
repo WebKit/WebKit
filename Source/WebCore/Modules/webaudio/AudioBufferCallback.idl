@@ -22,7 +22,12 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// FIXME: According to the latest WebAudio spec, this should be split into two
+// callbacks, DecodeSuccessCallback which takes a non-nullable AudioBuffer, and
+// DecodeErrorCallback, which takes DOMException. Currently, we pass an AudioBuffer
+// on success and null on failure.
+
 [
     Conditional=WEB_AUDIO,
     JSGenerateToJSObject,
-] callback AudioBufferCallback = void (AudioBuffer audioBuffer);
+] callback AudioBufferCallback = void (AudioBuffer? audioBuffer);

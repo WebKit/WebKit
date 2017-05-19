@@ -1,3 +1,121 @@
+2017-05-18  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Remove the need for the generator to know about native type mapping
+        https://bugs.webkit.org/show_bug.cgi?id=172310
+
+        Reviewed by Darin Adler.
+
+        Replace the use of explicit typename to native type mappings in CodeGeneratorJS.pm
+        with use of IDLTypes and Converter, which already need the mapping. This allows us
+        to have the information in only one spot.
+
+        Also, callback generation to account for nullability and update the IDLs to correctly
+        annotate only the types that need to be nullable. 
+
+        * Modules/geolocation/GeoNotifier.cpp:
+        * Modules/geolocation/GeoNotifier.h:
+        * Modules/geolocation/Geolocation.cpp:
+        * Modules/geolocation/Geolocation.h:
+        * Modules/geolocation/PositionCallback.idl:
+        * Modules/geolocation/PositionErrorCallback.h:
+        Use references where possible in the Geolocation code. It was almost possible
+        to make PositionCallback take a non-nullable position, but some odd logic in
+        Geolocation::makeCachedPositionCallbacks() implies that there is a path where
+        passing null is possible, though it would assert. Added FIXME's to return to
+        this in a follow up.
+
+        * Modules/webaudio/AudioBufferCallback.idl:
+        Add nullable annotation and FIXME explaining that the latest spec splits the callback
+        into two separate ones.
+
+        * Modules/webdatabase/Database.cpp:
+        (WebCore::Database::runTransaction):
+        * Modules/webdatabase/DatabaseCallback.h:
+        * Modules/webdatabase/DatabaseManager.cpp:
+        (WebCore::DatabaseManager::openDatabase):
+        * Modules/webdatabase/SQLStatement.cpp:
+        (WebCore::SQLStatement::performCallback):
+        * Modules/webdatabase/SQLStatementCallback.h:
+        * Modules/webdatabase/SQLStatementErrorCallback.h:
+        * Modules/webdatabase/SQLTransaction.cpp:
+        (WebCore::SQLTransaction::deliverTransactionCallback):
+        (WebCore::SQLTransaction::deliverTransactionErrorCallback):
+        * Modules/webdatabase/SQLTransactionCallback.h:
+        * Modules/webdatabase/SQLTransactionErrorCallback.h:
+        * inspector/InspectorDatabaseAgent.cpp:
+        * bindings/js/JSSQLStatementErrorCallbackCustom.cpp:
+        (WebCore::JSSQLStatementErrorCallback::handleEvent):
+        Update to pass callback parameters as references, since they are never null.
+
+        * bindings/IDLTypes.h:
+        Add NullableParameterType to allow customization of nullable parameters (in much
+        the same way we allow customization of the nullable implementation type).
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateDefaultValue):
+        Use Converter<>::ReturnType{ } for default values rather than ${GetNativeType..}().
+
+        (GenerateHeader):
+        Remove use of GetNativeType for toWrapped by using the impl type, since this will never
+        be a complex type.
+
+        (GenerateImplementation):
+        Simplify DOMJIT UnsafeToNative by merging two identical paths and using auto.
+
+        (GenerateParametersCheck):
+        Rework parameter checks to use more specific variable names, make branches more clear,
+        and use Converter<>::ReturnType rather than GetNativeType.
+
+        (GenerateCallbackHeaderContent):
+        (GenerateCallbackImplementationContent):
+        Switch to using typename ${IDLType}::ParameterType as the parameters for callback functions. Also
+        add final and override to make sure the generated function matches the user provided base class.
+        (GetNativeType): Deleted.
+        (GetNativeInnerType): Deleted.
+        (GetNativeTypeForCallbacks): Deleted.
+        Remove native type mappings.
+
+        * css/MediaQueryListListener.h:
+        * css/MediaQueryListListener.idl:
+        * css/MediaQueryMatcher.cpp:
+        Update MediaQueryListListener to take a non-nullable MediaQueryList.
+        
+        * dom/NativeNodeFilter.cpp:
+        * dom/NativeNodeFilter.h:
+        * dom/NodeFilter.h:
+        * dom/NodeFilter.idl:
+        * dom/NodeIterator.cpp:
+        * dom/Traversal.cpp:
+        * dom/Traversal.h:
+        * dom/TreeWalker.cpp:
+        * bindings/js/JSNodeFilterCustom.cpp:
+        Update acceptNode to be non-nullable and pass the Node by reference.
+
+        * dom/StringCallback.cpp:
+        * dom/StringCallback.h:
+        Pass the ScriptExecutionContext by reference.
+
+        * page/IntersectionObserverCallback.h:
+        Update to match new parameter types and pass IntersectionObserver by reference.
+
+        * page/PerformanceObserver.cpp:
+        * page/PerformanceObserverCallback.h:
+        Update to pass PerformanceObserverEntryList and PerformanceObserver by reference.
+
+        * bindings/scripts/test/JS/JSTestCallbackFunction.cpp:
+        * bindings/scripts/test/JS/JSTestCallbackFunction.h:
+        * bindings/scripts/test/JS/JSTestCallbackFunctionWithTypedefs.cpp:
+        * bindings/scripts/test/JS/JSTestCallbackFunctionWithTypedefs.h:
+        * bindings/scripts/test/JS/JSTestCallbackInterface.cpp:
+        * bindings/scripts/test/JS/JSTestCallbackInterface.h:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        Update test results.
+
+        * bindings/scripts/test/TestCallbackInterface.idl:
+        Update test to refer to actual interfaces as we now do lookup on these parameter 
+        types rather than blindly assuming they are interfaces.
+
 2017-05-19  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r217098, r217111, r217113, and

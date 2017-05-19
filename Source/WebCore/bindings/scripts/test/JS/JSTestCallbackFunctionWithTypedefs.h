@@ -21,13 +21,14 @@
 #pragma once
 
 #include "ActiveDOMCallback.h"
+#include "IDLTypes.h"
 #include "JSCallbackData.h"
 #include "TestCallbackFunctionWithTypedefs.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
 
-class JSTestCallbackFunctionWithTypedefs : public TestCallbackFunctionWithTypedefs, public ActiveDOMCallback {
+class JSTestCallbackFunctionWithTypedefs final : public TestCallbackFunctionWithTypedefs, public ActiveDOMCallback {
 public:
     static Ref<JSTestCallbackFunctionWithTypedefs> create(JSC::JSObject* callback, JSDOMGlobalObject* globalObject)
     {
@@ -40,7 +41,7 @@ public:
     JSCallbackDataStrong* callbackData() { return m_data; }
 
     // Functions
-    virtual bool handleEvent(Vector<int32_t> sequenceArg, int32_t longArg);
+    virtual bool handleEvent(typename IDLSequence<IDLNullable<IDLLong>>::ParameterType sequenceArg, typename IDLLong::ParameterType longArg) override;
 
 private:
     JSTestCallbackFunctionWithTypedefs(JSC::JSObject*, JSDOMGlobalObject*);

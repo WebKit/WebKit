@@ -27,6 +27,7 @@
 
 #import "DOM.h"
 
+#import "ExceptionHandlers.h"
 #import "DOMElementInternal.h"
 #import "DOMHTMLCanvasElement.h"
 #import "DOMHTMLTableCellElementInternal.h"
@@ -858,7 +859,9 @@ WebCore::NodeFilter* core(DOMNodeFilter *wrapper)
 
 - (short)acceptNode:(DOMNode *)node
 {
-    return core(self)->acceptNode(core(node));
+    if (!node)
+        raiseTypeErrorException();
+    return core(self)->acceptNode(*core(node));
 }
 
 @end

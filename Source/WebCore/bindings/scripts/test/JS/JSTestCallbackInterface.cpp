@@ -112,7 +112,7 @@ bool JSTestCallbackInterface::callbackWithNoParam()
     return !returnedException;
 }
 
-bool JSTestCallbackInterface::callbackWithArrayParam(RefPtr<Float32Array> arrayParam)
+bool JSTestCallbackInterface::callbackWithArrayParam(typename IDLInterface<Float32Array>::ParameterType arrayParam)
 {
     if (!canInvokeCallback())
         return true;
@@ -132,7 +132,7 @@ bool JSTestCallbackInterface::callbackWithArrayParam(RefPtr<Float32Array> arrayP
     return !returnedException;
 }
 
-bool JSTestCallbackInterface::callbackWithSerializedScriptValueParam(RefPtr<SerializedScriptValue>&& srzParam, const String& strParam)
+bool JSTestCallbackInterface::callbackWithSerializedScriptValueParam(typename IDLSerializedScriptValue<SerializedScriptValue>::ParameterType srzParam, typename IDLDOMString::ParameterType strParam)
 {
     if (!canInvokeCallback())
         return true;
@@ -153,7 +153,7 @@ bool JSTestCallbackInterface::callbackWithSerializedScriptValueParam(RefPtr<Seri
     return !returnedException;
 }
 
-bool JSTestCallbackInterface::callbackWithStringList(DOMStringList* listParam)
+bool JSTestCallbackInterface::callbackWithStringList(typename IDLInterface<DOMStringList>::ParameterType listParam)
 {
     if (!canInvokeCallback())
         return true;
@@ -173,7 +173,7 @@ bool JSTestCallbackInterface::callbackWithStringList(DOMStringList* listParam)
     return !returnedException;
 }
 
-bool JSTestCallbackInterface::callbackWithBoolean(bool boolParam)
+bool JSTestCallbackInterface::callbackWithBoolean(typename IDLBoolean::ParameterType boolParam)
 {
     if (!canInvokeCallback())
         return true;
@@ -193,7 +193,7 @@ bool JSTestCallbackInterface::callbackWithBoolean(bool boolParam)
     return !returnedException;
 }
 
-bool JSTestCallbackInterface::callbackRequiresThisToPass(int32_t longParam, TestNode* testNodeParam)
+bool JSTestCallbackInterface::callbackRequiresThisToPass(typename IDLLong::ParameterType longParam, typename IDLInterface<TestNode>::ParameterType testNodeParam)
 {
     if (!canInvokeCallback())
         return true;

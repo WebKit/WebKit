@@ -37,11 +37,11 @@ NodeIteratorBase::NodeIteratorBase(Node& rootNode, unsigned whatToShow, RefPtr<N
 {
 }
 
-short NodeIteratorBase::acceptNode(Node* node) const
+short NodeIteratorBase::acceptNode(Node& node) const
 {
     // The bit twiddling here is done to map DOM node types, which are given as integers from
     // 1 through 14, to whatToShow bit masks.
-    if (!(((1 << (node->nodeType() - 1)) & m_whatToShow)))
+    if (!(((1 << (node.nodeType() - 1)) & m_whatToShow)))
         return NodeFilter::FILTER_SKIP;
     if (!m_filter)
         return NodeFilter::FILTER_ACCEPT;

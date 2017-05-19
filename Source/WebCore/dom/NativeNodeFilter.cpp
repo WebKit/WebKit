@@ -30,12 +30,13 @@ namespace WebCore {
 
 NativeNodeFilter::NativeNodeFilter(RefPtr<NodeFilterCondition>&& condition)
     : m_condition(condition)
-{ }
+{
+}
 
-uint16_t NativeNodeFilter::acceptNode(Node* node)
+unsigned short NativeNodeFilter::acceptNode(Node& node)
 {
     // cast to short silences "enumeral and non-enumeral types in return" warning
-    return m_condition ? m_condition->acceptNode(node) : static_cast<uint16_t>(FILTER_ACCEPT);
+    return m_condition ? m_condition->acceptNode(&node) : static_cast<unsigned short>(FILTER_ACCEPT);
 }
 
 } // namespace WebCore

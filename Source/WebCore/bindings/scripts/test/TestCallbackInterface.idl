@@ -37,7 +37,7 @@
     void callbackWithNoParam();
     void callbackWithArrayParam(Float32Array arrayParam);
     void callbackWithSerializedScriptValueParam(SerializedScriptValue srzParam, DOMString strParam);
-    [Custom] long customCallback(Class5 class5Param, Class6 class6Param);
+    [Custom] long customCallback(TestObj testObjParam, TestNode testNodeParam);
     void callbackWithStringList(DOMStringList listParam);
     void callbackWithBoolean(boolean boolParam);
     void callbackRequiresThisToPass(long longParam, TestNode testNodeParam);

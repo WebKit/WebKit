@@ -41,7 +41,7 @@ public:
 
 protected:
     NodeIteratorBase(Node&, unsigned whatToShow, RefPtr<NodeFilter>&&);
-    short acceptNode(Node*) const;
+    short acceptNode(Node&) const;
 
 private:
     Ref<Node> m_root;

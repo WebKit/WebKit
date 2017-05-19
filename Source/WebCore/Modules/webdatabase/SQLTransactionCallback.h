@@ -37,7 +37,7 @@ class SQLTransaction;
 class SQLTransactionCallback : public ThreadSafeRefCounted<SQLTransactionCallback> {
 public:
     virtual ~SQLTransactionCallback() { }
-    virtual bool handleEvent(SQLTransaction*) = 0;
+    virtual bool handleEvent(SQLTransaction&) = 0;
 };
 
 } // namespace WebCore

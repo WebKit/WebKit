@@ -127,7 +127,7 @@ void MediaQueryMatcher::styleResolverChanged()
         bool notify;
         listener.query->evaluate(evaluator, notify);
         if (notify)
-            listener.listener->handleEvent(listener.query.ptr());
+            listener.listener->handleEvent(listener.query);
     }
 }
 

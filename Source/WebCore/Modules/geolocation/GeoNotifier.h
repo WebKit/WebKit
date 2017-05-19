@@ -55,8 +55,8 @@ public:
     bool useCachedPosition() const { return m_useCachedPosition; }
     void setUseCachedPosition();
 
-    void runSuccessCallback(Geoposition*);
-    void runErrorCallback(PositionError*);
+    void runSuccessCallback(Geoposition*); // FIXME: This should take a reference.
+    void runErrorCallback(PositionError&);
 
     void startTimerIfNeeded();
     void stopTimer();

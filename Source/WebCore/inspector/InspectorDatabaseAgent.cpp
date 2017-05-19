@@ -55,11 +55,11 @@ using ExecuteSQLCallback = Inspector::DatabaseBackendDispatcherHandler::ExecuteS
 
 namespace {
 
-void reportTransactionFailed(ExecuteSQLCallback& requestCallback, SQLError* error)
+void reportTransactionFailed(ExecuteSQLCallback& requestCallback, SQLError& error)
 {
     auto errorObject = Inspector::Protocol::Database::Error::create()
-        .setMessage(error->message())
-        .setCode(error->code())
+        .setMessage(error.message())
+        .setCode(error.code())
         .release();
     requestCallback.sendSuccess(nullptr, nullptr, WTFMove(errorObject));
 }
@@ -75,9 +75,9 @@ private:
     StatementCallback(Ref<ExecuteSQLCallback>&& requestCallback)
         : m_requestCallback(WTFMove(requestCallback)) { }
 
-    bool handleEvent(SQLTransaction*, SQLResultSet* resultSet) final
+    bool handleEvent(SQLTransaction&, SQLResultSet& resultSet) final
     {
-        auto& rowList = resultSet->rows();
+        auto& rowList = resultSet.rows();
 
         auto columnNames = Inspector::Protocol::Array<String>::create();
         for (auto& column : rowList.columnNames())
@@ -110,7 +110,7 @@ private:
     StatementErrorCallback(Ref<ExecuteSQLCallback>&& requestCallback)
         : m_requestCallback(WTFMove(requestCallback)) { }
 
-    bool handleEvent(SQLTransaction*, SQLError* error) final
+    bool handleEvent(SQLTransaction&, SQLError& error) final
     {
         reportTransactionFailed(m_requestCallback.copyRef(), error);
         return true;
@@ -131,14 +131,14 @@ private:
         : m_sqlStatement(sqlStatement)
         , m_requestCallback(WTFMove(requestCallback)) { }
 
-    bool handleEvent(SQLTransaction* transaction) final
+    bool handleEvent(SQLTransaction& transaction) final
     {
         if (!m_requestCallback->isActive())
             return true;
 
         Ref<SQLStatementCallback> callback(StatementCallback::create(m_requestCallback.copyRef()));
         Ref<SQLStatementErrorCallback> errorCallback(StatementErrorCallback::create(m_requestCallback.copyRef()));
-        transaction->executeSql(m_sqlStatement, { }, WTFMove(callback), WTFMove(errorCallback));
+        transaction.executeSql(m_sqlStatement, { }, WTFMove(callback), WTFMove(errorCallback));
         return true;
     }
 
@@ -157,7 +157,7 @@ private:
     TransactionErrorCallback(Ref<ExecuteSQLCallback>&& requestCallback)
         : m_requestCallback(WTFMove(requestCallback)) { }
 
-    bool handleEvent(SQLError* error) final
+    bool handleEvent(SQLError& error) final
     {
         reportTransactionFailed(m_requestCallback.get(), error);
         return true;

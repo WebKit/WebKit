@@ -371,7 +371,7 @@ void SQLTransaction::deliverTransactionCallback()
     RefPtr<SQLTransactionCallback> callback = m_callbackWrapper.unwrap();
     if (callback) {
         m_executeSqlAllowed = true;
-        shouldDeliverErrorCallback = !callback->handleEvent(this);
+        shouldDeliverErrorCallback = !callback->handleEvent(*this);
         m_executeSqlAllowed = false;
     }
 
@@ -392,7 +392,7 @@ void SQLTransaction::deliverTransactionErrorCallback()
     // error to have occurred in this transaction.
     RefPtr<SQLTransactionErrorCallback> errorCallback = m_errorCallbackWrapper.unwrap();
     if (errorCallback)
-        errorCallback->handleEvent(m_transactionError.get());
+        errorCallback->handleEvent(*m_transactionError);
 
     clearCallbackWrappers();
 

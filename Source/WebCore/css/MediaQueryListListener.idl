@@ -19,5 +19,5 @@
 
 [
     CallbackNeedsOperatorEqual
-] callback MediaQueryListListener = void (optional MediaQueryList? list = null);
+] callback MediaQueryListListener = void (MediaQueryList list);
 

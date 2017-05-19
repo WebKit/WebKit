@@ -34,7 +34,7 @@ namespace WebCore {
     class PositionErrorCallback : public RefCounted<PositionErrorCallback> {
     public:
         virtual ~PositionErrorCallback() { }
-        virtual bool handleEvent(PositionError*) = 0;
+        virtual bool handleEvent(PositionError&) = 0;
     };
 
 } // namespace WebCore

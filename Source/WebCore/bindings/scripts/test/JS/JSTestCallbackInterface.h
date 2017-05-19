@@ -23,13 +23,14 @@
 #if ENABLE(SPEECH_SYNTHESIS)
 
 #include "ActiveDOMCallback.h"
+#include "IDLTypes.h"
 #include "JSCallbackData.h"
 #include "TestCallbackInterface.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
 
-class JSTestCallbackInterface : public TestCallbackInterface, public ActiveDOMCallback {
+class JSTestCallbackInterface final : public TestCallbackInterface, public ActiveDOMCallback {
 public:
     static Ref<JSTestCallbackInterface> create(JSC::JSObject* callback, JSDOMGlobalObject* globalObject)
     {
@@ -43,13 +44,13 @@ public:
     static JSC::JSValue getConstructor(JSC::VM&, const JSC::JSGlobalObject*);
 
     // Functions
-    virtual bool callbackWithNoParam();
-    virtual bool callbackWithArrayParam(RefPtr<Float32Array> arrayParam);
-    virtual bool callbackWithSerializedScriptValueParam(RefPtr<SerializedScriptValue>&& srzParam, const String& strParam);
-    virtual int32_t customCallback(Class5* class5Param, Class6* class6Param);
-    virtual bool callbackWithStringList(DOMStringList* listParam);
-    virtual bool callbackWithBoolean(bool boolParam);
-    virtual bool callbackRequiresThisToPass(int32_t longParam, TestNode* testNodeParam);
+    virtual bool callbackWithNoParam() override;
+    virtual bool callbackWithArrayParam(typename IDLInterface<Float32Array>::ParameterType arrayParam) override;
+    virtual bool callbackWithSerializedScriptValueParam(typename IDLSerializedScriptValue<SerializedScriptValue>::ParameterType srzParam, typename IDLDOMString::ParameterType strParam) override;
+    virtual typename IDLLong::ImplementationType customCallback(typename IDLInterface<TestObj>::ParameterType testObjParam, typename IDLInterface<TestNode>::ParameterType testNodeParam) override;
+    virtual bool callbackWithStringList(typename IDLInterface<DOMStringList>::ParameterType listParam) override;
+    virtual bool callbackWithBoolean(typename IDLBoolean::ParameterType boolParam) override;
+    virtual bool callbackRequiresThisToPass(typename IDLLong::ParameterType longParam, typename IDLInterface<TestNode>::ParameterType testNodeParam) override;
 
 private:
     JSTestCallbackInterface(JSC::JSObject*, JSDOMGlobalObject*);

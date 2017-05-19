@@ -38,7 +38,7 @@ class SQLError;
 class SQLStatementErrorCallback : public ThreadSafeRefCounted<SQLStatementErrorCallback> {
 public:
     virtual ~SQLStatementErrorCallback() { }
-    virtual bool handleEvent(SQLTransaction*, SQLError*) = 0;
+    virtual bool handleEvent(SQLTransaction&, SQLError&) = 0;
 };
 
 } // namespace WebCore

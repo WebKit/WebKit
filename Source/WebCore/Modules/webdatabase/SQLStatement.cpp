@@ -213,10 +213,10 @@ bool SQLStatement::performCallback(SQLTransaction* transaction)
     // because then we need to jump to the transaction error callback.
     if (error) {
         if (errorCallback)
-            callbackError = errorCallback->handleEvent(transaction, error.get());
+            callbackError = errorCallback->handleEvent(*transaction, *error);
     } else if (callback) {
         RefPtr<SQLResultSet> resultSet = sqlResultSet();
-        callbackError = !callback->handleEvent(transaction, resultSet.get());
+        callbackError = !callback->handleEvent(*transaction, *resultSet);
     }
 
     return callbackError;

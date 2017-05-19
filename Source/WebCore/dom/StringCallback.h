@@ -43,7 +43,7 @@ public:
     virtual bool handleEvent(const String& data) = 0;
 
     // Helper to post callback task.
-    void scheduleCallback(ScriptExecutionContext*, const String& data);
+    void scheduleCallback(ScriptExecutionContext&, const String& data);
 };
 
 } // namespace WebCore
