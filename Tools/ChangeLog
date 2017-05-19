@@ -1,3 +1,19 @@
+2017-05-19  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Layout tests which have no output will succeed
+        https://bugs.webkit.org/show_bug.cgi?id=172322
+        <rdar://problem/32258350>
+
+        Reviewed by David Kilzer.
+
+        * Scripts/webkitpy/layout_tests/controllers/single_test_runner.py:
+        (SingleTestRunner._compare_text): Add FailreNotTested to failures if test has no output.
+        * Scripts/webkitpy/layout_tests/models/test_failures.py:
+        (determine_result_type): FailureNotTested means that the test could not be loaded. This
+        is classified as a MISSING failure.
+        (FailureNotTested): Added.
+        (FailureNotTested.message):
+
 2017-05-19  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Add SixSpeed benchmark to PerformanceTests
