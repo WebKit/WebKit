@@ -1,3 +1,14 @@
+2017-05-19  Zalan Bujtas  <zalan@apple.com>
+
+        Redundant ellipsis box triggers ASSERT_WITH_SECURITY_IMPLICATION in InlineBox::parent().
+        https://bugs.webkit.org/show_bug.cgi?id=172309
+        <rdar://problem/32262357>
+
+        Reviewed by Simon Fraser.
+
+        * fast/inline/redundant-ellipsis-triggers-assert-incorrectly-expected.txt: Added.
+        * fast/inline/redundant-ellipsis-triggers-assert-incorrectly.html: Added.
+
 2017-05-19  Ryan Haddad  <ryanhaddad@apple.com>
 
         LayoutTest js/Promise-types.html is a flaky failure
