@@ -8,7 +8,8 @@ PASS document.cookie is ""
 document.cookie = 'key=value'
 PASS document.cookie is "key=value"
 document.cookie = null
-FAIL document.cookie should be key=value; null=. Was key=value; null.
+PASS document.cookie.indexOf('key=value') != -1 is true
+FAIL document.cookie.indexOf('null=') != -1 should be true. Was false.
 
 * title attribute
 PASS document.title is ""

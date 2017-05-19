@@ -1,3 +1,11 @@
+2017-05-19  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK+ gardening.
+
+        * platform/gtk/TestExpectations: Skip Apple Pay layout tests. Update one
+        http/tests/loading/resourceLoadStatistics test expectation.
+        * platform/gtk/http/tests/dom/document-attributes-null-handling-expected.txt: Update after r217091.
+
 2017-05-18  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r217079.
