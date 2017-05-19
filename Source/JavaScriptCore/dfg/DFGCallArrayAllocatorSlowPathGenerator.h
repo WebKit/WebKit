@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -57,9 +57,8 @@ protected:
         for (unsigned i = 0; i < m_plans.size(); ++i)
             jit->silentSpill(m_plans[i]);
         jit->callOperation(m_function, m_resultGPR, m_structure, m_size, m_storageGPR);
-        GPRReg canTrample = SpeculativeJIT::pickCanTrample(m_resultGPR);
         for (unsigned i = m_plans.size(); i--;)
-            jit->silentFill(m_plans[i], canTrample);
+            jit->silentFill(m_plans[i]);
         jit->m_jit.exceptionCheck();
         jit->m_jit.loadPtr(MacroAssembler::Address(m_resultGPR, JSObject::butterflyOffset()), m_storageGPR);
         jumpTo(jit);
@@ -107,9 +106,8 @@ protected:
         } else
             jit->m_jit.move(SpeculativeJIT::TrustedImmPtr(m_contiguousStructure), scratchGPR);
         jit->callOperation(m_function, m_resultGPR, scratchGPR, m_sizeGPR, m_storageGPR);
-        GPRReg canTrample = SpeculativeJIT::pickCanTrample(m_resultGPR);
         for (unsigned i = m_plans.size(); i--;)
-            jit->silentFill(m_plans[i], canTrample);
+            jit->silentFill(m_plans[i]);
         jit->m_jit.exceptionCheck();
         jumpTo(jit);
     }
@@ -128,16 +126,15 @@ class CallArrayAllocatorWithVariableStructureVariableSizeSlowPathGenerator : pub
 public:
     CallArrayAllocatorWithVariableStructureVariableSizeSlowPathGenerator(
         MacroAssembler::JumpList from, SpeculativeJIT* jit, P_JITOperation_EStZB function,
-        GPRReg resultGPR, GPRReg structureGPR, GPRReg sizeGPR, GPRReg storageGPR, GPRReg scratchGPR)
+        GPRReg resultGPR, GPRReg structureGPR, GPRReg sizeGPR, GPRReg storageGPR)
         : JumpingSlowPathGenerator<MacroAssembler::JumpList>(from, jit)
         , m_function(function)
         , m_resultGPR(resultGPR)
         , m_structureGPR(structureGPR)
         , m_sizeGPR(sizeGPR)
         , m_storageGPR(storageGPR)
-        , m_scratchGPR(scratchGPR)
     {
-        jit->silentSpillAllRegistersImpl(false, m_plans, resultGPR, m_scratchGPR);
+        jit->silentSpillAllRegistersImpl(false, m_plans, resultGPR);
     }
 
 protected:
@@ -148,7 +145,7 @@ protected:
             jit->silentSpill(m_plans[i]);
         jit->callOperation(m_function, m_resultGPR, m_structureGPR, m_sizeGPR, m_storageGPR);
         for (unsigned i = m_plans.size(); i--;)
-            jit->silentFill(m_plans[i], m_scratchGPR);
+            jit->silentFill(m_plans[i]);
         jit->m_jit.exceptionCheck();
         jumpTo(jit);
     }
@@ -159,7 +156,6 @@ private:
     GPRReg m_structureGPR;
     GPRReg m_sizeGPR;
     GPRReg m_storageGPR;
-    GPRReg m_scratchGPR;
     Vector<SilentRegisterSavePlan, 2> m_plans;
 };
 

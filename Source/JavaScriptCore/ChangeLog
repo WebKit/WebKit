@@ -1,3 +1,62 @@
+2017-05-19  Mark Lam  <mark.lam@apple.com>
+
+        DFG::SpeculativeJIT::pickCanTrample() is wrongly ignoring result registers.
+        https://bugs.webkit.org/show_bug.cgi?id=172383
+        <rdar://problem/31418651>
+
+        Reviewed by Filip Pizlo.
+
+        pickCanTrample() is wrongly assuming that one of regT0 and regT1 is always
+        available as a scratch register.  This assumption is wrong if this canTrample
+        register is used for a silentFill() after an operation that returns a result in
+        regT0 or regT1.
+
+        Turns out the only reason we need the canTrample register is for
+        SetDoubleConstant.  We can remove the need for this canTrample register by
+        introducing a moveDouble() pseudo instruction in the MacroAssembler to do the
+        job using the scratchRegister() on X86_64 or the dataMemoryTempRegister() on
+        ARM64.  In so doing, we can simplify the silentFill() code and eliminate the bug.
+
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::moveDouble):
+        * dfg/DFGArrayifySlowPathGenerator.h:
+        * dfg/DFGCallArrayAllocatorSlowPathGenerator.h:
+        (JSC::DFG::CallArrayAllocatorWithVariableStructureVariableSizeSlowPathGenerator::CallArrayAllocatorWithVariableStructureVariableSizeSlowPathGenerator):
+        * dfg/DFGCallCreateDirectArgumentsSlowPathGenerator.h:
+        * dfg/DFGSaneStringGetByValSlowPathGenerator.h:
+        * dfg/DFGSlowPathGenerator.h:
+        (JSC::DFG::CallSlowPathGenerator::tearDown):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::silentFill):
+        (JSC::DFG::SpeculativeJIT::compileToLowerCase):
+        (JSC::DFG::SpeculativeJIT::compileValueToInt32):
+        (JSC::DFG::SpeculativeJIT::compileInstanceOfForObject):
+        (JSC::DFG::SpeculativeJIT::emitUntypedBitOp):
+        (JSC::DFG::SpeculativeJIT::emitUntypedRightShiftBitOp):
+        (JSC::DFG::SpeculativeJIT::compileArithDiv):
+        (JSC::DFG::SpeculativeJIT::compileArraySlice):
+        (JSC::DFG::SpeculativeJIT::emitSwitchImm):
+        (JSC::DFG::SpeculativeJIT::emitSwitchStringOnString):
+        (JSC::DFG::SpeculativeJIT::compileStoreBarrier):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::silentFill):
+        (JSC::DFG::SpeculativeJIT::silentSpillAllRegisters):
+        (JSC::DFG::SpeculativeJIT::silentFillAllRegisters):
+        (JSC::DFG::SpeculativeJIT::pickCanTrample): Deleted.
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranch):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeStrictEq):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeStrictEq):
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranch):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeStrictEq):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeStrictEq):
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::convertAnyInt):
+
 2017-05-19  Filip Pizlo  <fpizlo@apple.com>
 
         Deduplicate some code in arrayProtoPrivateFuncConcatMemcpy

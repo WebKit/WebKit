@@ -625,11 +625,8 @@ void SpeculativeJIT::silentSpill(const SilentRegisterSavePlan& plan)
     }
 }
     
-void SpeculativeJIT::silentFill(const SilentRegisterSavePlan& plan, GPRReg canTrample)
+void SpeculativeJIT::silentFill(const SilentRegisterSavePlan& plan)
 {
-#if USE(JSVALUE32_64)
-    UNUSED_PARAM(canTrample);
-#endif
     switch (plan.fillAction()) {
     case DoNothingForFill:
         break;
@@ -659,8 +656,7 @@ void SpeculativeJIT::silentFill(const SilentRegisterSavePlan& plan, GPRReg canTr
         m_jit.move(valueOfJSConstantAsImm64(plan.node()), plan.gpr());
         break;
     case SetDoubleConstant:
-        m_jit.move(Imm64(reinterpretDoubleToInt64(plan.node()->asNumber())), canTrample);
-        m_jit.move64ToDouble(canTrample, plan.fpr());
+        m_jit.moveDouble(Imm64(reinterpretDoubleToInt64(plan.node()->asNumber())), plan.fpr());
         break;
     case Load32PayloadBoxInt:
         m_jit.load32(JITCompiler::payloadFor(plan.node()->virtualRegister()), plan.gpr());
@@ -1534,7 +1530,7 @@ void SpeculativeJIT::compileToLowerCase(Node* node)
     slowPath.link(&m_jit);
     silentSpillAllRegisters(lengthGPR);
     callOperation(operationToLowerCase, lengthGPR, stringGPR, indexGPR);
-    silentFillAllRegisters(lengthGPR);
+    silentFillAllRegisters();
     m_jit.exceptionCheck();
     auto done = m_jit.jump();
 
@@ -2269,7 +2265,7 @@ void SpeculativeJIT::compileValueToInt32(Node* node)
 
             silentSpillAllRegisters(resultGpr);
             callOperation(operationToInt32, resultGpr, fpr);
-            silentFillAllRegisters(resultGpr);
+            silentFillAllRegisters();
 
             converted.append(m_jit.jump());
 
@@ -2328,7 +2324,7 @@ void SpeculativeJIT::compileValueToInt32(Node* node)
 
                 silentSpillAllRegisters(resultGpr);
                 callOperation(operationToInt32, resultGpr, fpr);
-                silentFillAllRegisters(resultGpr);
+                silentFillAllRegisters();
 
                 converted.append(m_jit.jump());
 
@@ -3124,7 +3120,7 @@ void SpeculativeJIT::compileInstanceOfForObject(Node*, GPRReg valueReg, GPRReg p
     performDefaultHasInstance.link(&m_jit);
     silentSpillAllRegisters(scratchReg);
     callOperation(operationDefaultHasInstance, scratchReg, valueReg, prototypeReg); 
-    silentFillAllRegisters(scratchReg);
+    silentFillAllRegisters();
     m_jit.exceptionCheck();
 #if USE(JSVALUE64)
     m_jit.or32(TrustedImm32(ValueFalse), scratchReg);
@@ -3357,7 +3353,7 @@ void SpeculativeJIT::emitUntypedBitOp(Node* node)
 
     callOperation(snippetSlowPathFunction, resultRegs, leftRegs, rightRegs);
 
-    silentFillAllRegisters(resultRegs);
+    silentFillAllRegisters();
     m_jit.exceptionCheck();
 
     gen.endJumpList().link(&m_jit);
@@ -3511,7 +3507,7 @@ void SpeculativeJIT::emitUntypedRightShiftBitOp(Node* node)
 
     callOperation(snippetSlowPathFunction, resultRegs, leftRegs, rightRegs);
 
-    silentFillAllRegisters(resultRegs);
+    silentFillAllRegisters();
     m_jit.exceptionCheck();
 
     gen.endJumpList().link(&m_jit);
@@ -4865,7 +4861,7 @@ void SpeculativeJIT::compileArithDiv(Node* node)
 
         callOperation(operationValueDiv, resultRegs, leftRegs, rightRegs);
 
-        silentFillAllRegisters(resultRegs);
+        silentFillAllRegisters();
         m_jit.exceptionCheck();
 
         gen.endJumpList().link(&m_jit);
@@ -7397,7 +7393,7 @@ void SpeculativeJIT::compileArraySlice(Node* node)
             m_jit.mutatorFence(*m_jit.vm());
 
             addSlowPathGenerator(std::make_unique<CallArrayAllocatorWithVariableStructureVariableSizeSlowPathGenerator>(
-                slowCases, this, operationNewArrayWithSize, resultGPR, tempValue, sizeGPR, storageResultGPR, scratchGPR));
+                slowCases, this, operationNewArrayWithSize, resultGPR, tempValue, sizeGPR, storageResultGPR));
         }
     }
 
@@ -8937,7 +8933,7 @@ void SpeculativeJIT::emitSwitchImm(Node* node, SwitchData* data)
             data->fallThrough.block);
         silentSpillAllRegisters(scratch);
         callOperation(operationFindSwitchImmTargetForDouble, scratch, valueRegs.gpr(), data->switchTableIndex);
-        silentFillAllRegisters(scratch);
+        silentFillAllRegisters();
         m_jit.jump(scratch);
 #else
         JITCompiler::Jump notInt = m_jit.branch32(
@@ -8951,7 +8947,7 @@ void SpeculativeJIT::emitSwitchImm(Node* node, SwitchData* data)
             data->fallThrough.block);
         silentSpillAllRegisters(scratch);
         callOperation(operationFindSwitchImmTargetForDouble, scratch, valueRegs, data->switchTableIndex);
-        silentFillAllRegisters(scratch);
+        silentFillAllRegisters();
 
         m_jit.jump(scratch);
 #endif
@@ -9249,7 +9245,7 @@ void SpeculativeJIT::emitSwitchStringOnString(SwitchData* data, GPRReg string)
     slowCases.link(&m_jit);
     silentSpillAllRegisters(string);
     callOperation(operationSwitchString, string, data->switchTableIndex, string);
-    silentFillAllRegisters(string);
+    silentFillAllRegisters();
     m_jit.exceptionCheck();
     m_jit.jump(string);
 }
@@ -9378,7 +9374,7 @@ void SpeculativeJIT::compileStoreBarrier(Node* node)
 
     silentSpillAllRegisters(InvalidGPRReg);
     callOperation(operationWriteBarrierSlowPath, baseGPR);
-    silentFillAllRegisters(InvalidGPRReg);
+    silentFillAllRegisters();
 
     ok.link(&m_jit);
 
