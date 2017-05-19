@@ -23,9 +23,20 @@ require.config({
     }
 });
 
+function checkReady(count) {
+    if (window.checkLoadedTimeoutId)
+        return setTimeout(checkReady.bind(this, 0), 50);
+    if (count < 5)
+        return setTimeout(checkReady.bind(this, count + 1), 10);
+
+    var dummyNodeToNotifyAppIsReady = document.createElement('div');
+    dummyNodeToNotifyAppIsReady.id = 'appIsReady';
+    document.body.appendChild(dummyNodeToNotifyAppIsReady);
+}
+
 require([], function () {
     require(['app/page/app'],function(App){
         App.initialize();
-        console.log(App);
+        checkReady(0);
     });
 });

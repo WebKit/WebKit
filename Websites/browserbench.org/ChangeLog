@@ -1,3 +1,20 @@
+2017-05-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Merge Speedometer 2.0 fixes up to r217121 to browserbench.org
+        https://bugs.webkit.org/show_bug.cgi?id=172389
+
+        Rubber-stamped by Chris Dumez.
+
+        Merged the various fixes for Speedometer 2.0 starting from r217107 through r217121.
+
+        * Speedometer2.0/InteractiveRunner.html:
+        * Speedometer2.0/resources/benchmark-runner.js:
+        * Speedometer2.0/resources/tests.js:
+        * Speedometer2.0/resources/todomvc/dependency-examples/flight/flight/app/js/main.js:
+        * Speedometer2.0/resources/todomvc/dependency-examples/flight/flight/node_modules/requirejs/require.js:
+        * Speedometer2.0/resources/todomvc/functional-prog-examples/elm/dist/elm.js:
+        * Speedometer2.0/resources/todomvc/vanilla-examples/vanillajs/js/store.js:
+
 2017-05-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add Speedometer 2.0 to browserbench.org for final testing

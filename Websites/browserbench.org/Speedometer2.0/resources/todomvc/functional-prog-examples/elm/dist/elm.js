@@ -2678,7 +2678,7 @@ function work()
     }
     setTimeout(work, 0);
 }
-
+window.elmWork = work;
 
 return {
     succeed: succeed,
@@ -7009,9 +7009,7 @@ function on(node)
     };
 }
 
-var rAF = typeof requestAnimationFrame !== 'undefined'
-    ? requestAnimationFrame
-    : function(callback) { callback(); };
+var rAF = function(callback) { callback(); };
 
 function withNode(id, doStuff)
 {
@@ -7485,10 +7483,10 @@ function renderer(parent, tagger, initialVirtualNode)
 }
 
 
-var rAF =
-    typeof requestAnimationFrame !== 'undefined'
-        ? requestAnimationFrame
-        : function(cb) { setTimeout(cb, 1000 / 60); };
+window.rAFCallbackList = [];
+var rAF = function (callback) {
+    window.rAFCallbackList.push(callback);
+}
 
 
 

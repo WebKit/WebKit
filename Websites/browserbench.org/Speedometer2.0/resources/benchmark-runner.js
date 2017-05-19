@@ -192,6 +192,7 @@ BenchmarkRunner.prototype.step = function (state) {
     }
 
     if (state.isFirstTest()) {
+        this._removeFrame();
         this._masuredValuesForCurrentSuite = {};
         var self = this;
         return state.prepareCurrentSuite(this, this._appendFrame()).then(function (prepareReturnValue) {
@@ -251,8 +252,6 @@ BenchmarkRunner.prototype._runTestAndRecordResults = function (state) {
                 self._client.didRunTest(suite, test);
 
             state.next();
-            if (state.currentSuite() != suite)
-                self._removeFrame();
             promise.resolve(state);
         });
     }, 0);
