@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: line 1: Calling CSSStyleSheet.insertRule() with one argument is deprecated. Please pass the index argument as well: insertRule(x, 0).
 This tests the behavior of non-numeric values in contexts where the DOM has a numeric parameter.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

@@ -1,3 +1,18 @@
+2017-05-19  Chris Dumez  <cdumez@apple.com>
+
+        CSSOM insertRule() index argument is optional with default 0
+        https://bugs.webkit.org/show_bug.cgi?id=172219
+
+        Reviewed by Sam Weinig.
+
+        Update / Rebaseline existing tests to reflect behavior change.
+
+        * fast/css/CSSSupportsRule-parameters-expected.txt:
+        * fast/css/CSSSupportsRule-parameters.html:
+        * fast/css/stylesheet-parameters-expected.txt:
+        * fast/css/stylesheet-parameters.html:
+        * fast/dom/non-numeric-values-numeric-parameters-expected.txt:
+
 2017-05-19  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK+ gardening. Adding or updating test expectations for

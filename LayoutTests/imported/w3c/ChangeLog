@@ -1,3 +1,172 @@
+2017-05-19  Chris Dumez  <cdumez@apple.com>
+
+        CSSOM insertRule() index argument is optional with default 0
+        https://bugs.webkit.org/show_bug.cgi?id=172219
+
+        Reviewed by Sam Weinig.
+
+        Import cssom web-platform-tests. The insertRule* tests include coverage
+        for this change.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/cssom/CSS-expected.txt: Added.
+        * web-platform-tests/cssom/CSS.html: Added.
+        * web-platform-tests/cssom/CSSKeyframeRule-expected.txt: Added.
+        * web-platform-tests/cssom/CSSKeyframeRule.html: Added.
+        * web-platform-tests/cssom/CSSKeyframesRule-expected.txt: Added.
+        * web-platform-tests/cssom/CSSKeyframesRule.html: Added.
+        * web-platform-tests/cssom/CSSNamespaceRule-expected.txt: Added.
+        * web-platform-tests/cssom/CSSNamespaceRule.html: Added.
+        * web-platform-tests/cssom/CSSRuleList-expected.txt: Added.
+        * web-platform-tests/cssom/CSSRuleList.html: Added.
+        * web-platform-tests/cssom/CSSStyleRule-expected.txt: Added.
+        * web-platform-tests/cssom/CSSStyleRule.html: Added.
+        * web-platform-tests/cssom/CSSStyleSheet-expected.txt: Added.
+        * web-platform-tests/cssom/CSSStyleSheet.html: Added.
+        * web-platform-tests/cssom/MediaList-expected.txt: Added.
+        * web-platform-tests/cssom/MediaList.html: Added.
+        * web-platform-tests/cssom/MediaList.xhtml: Added.
+        * web-platform-tests/cssom/OWNERS: Added.
+        * web-platform-tests/cssom/StyleSheetList-expected.txt: Added.
+        * web-platform-tests/cssom/StyleSheetList.html: Added.
+        * web-platform-tests/cssom/computed-style-001-expected.txt: Added.
+        * web-platform-tests/cssom/computed-style-001.html: Added.
+        * web-platform-tests/cssom/css-style-attribute-modifications-expected.txt: Added.
+        * web-platform-tests/cssom/css-style-attribute-modifications.html: Added.
+        * web-platform-tests/cssom/css-style-declaration-modifications-expected.txt: Added.
+        * web-platform-tests/cssom/css-style-declaration-modifications.html: Added.
+        * web-platform-tests/cssom/cssimportrule-expected.txt: Added.
+        * web-platform-tests/cssom/cssimportrule.html: Added.
+        * web-platform-tests/cssom/cssom-cssText-serialize-expected.txt: Added.
+        * web-platform-tests/cssom/cssom-cssText-serialize.html: Added.
+        * web-platform-tests/cssom/cssom-cssstyledeclaration-set-expected.txt: Added.
+        * web-platform-tests/cssom/cssom-cssstyledeclaration-set.html: Added.
+        * web-platform-tests/cssom/cssom-fontfacerule-constructors-expected.txt: Added.
+        * web-platform-tests/cssom/cssom-fontfacerule-constructors.html: Added.
+        * web-platform-tests/cssom/cssom-fontfacerule-expected.txt: Added.
+        * web-platform-tests/cssom/cssom-fontfacerule.html: Added.
+        * web-platform-tests/cssom/cssom-setProperty-shorthand-expected.txt: Added.
+        * web-platform-tests/cssom/cssom-setProperty-shorthand.html: Added.
+        * web-platform-tests/cssom/cssstyledeclaration-csstext-expected.txt: Added.
+        * web-platform-tests/cssom/cssstyledeclaration-csstext.html: Added.
+        * web-platform-tests/cssom/cssstyledeclaration-mutability-expected.txt: Added.
+        * web-platform-tests/cssom/cssstyledeclaration-mutability.html: Added.
+        * web-platform-tests/cssom/escape-expected.txt: Added.
+        * web-platform-tests/cssom/escape.html: Added.
+        * web-platform-tests/cssom/getComputedStyle-pseudo-expected.txt: Added.
+        * web-platform-tests/cssom/getComputedStyle-pseudo.html: Added.
+        * web-platform-tests/cssom/historical-expected.txt: Added.
+        * web-platform-tests/cssom/historical.html: Added.
+        * web-platform-tests/cssom/index-001-expected.txt: Added.
+        * web-platform-tests/cssom/index-001.html: Added.
+        * web-platform-tests/cssom/index-002-expected.txt: Added.
+        * web-platform-tests/cssom/index-002.html: Added.
+        * web-platform-tests/cssom/index-003-expected.txt: Added.
+        * web-platform-tests/cssom/index-003.html: Added.
+        * web-platform-tests/cssom/inline-style-001-expected.txt: Added.
+        * web-platform-tests/cssom/inline-style-001.html: Added.
+        * web-platform-tests/cssom/insertRule-charset-no-index-expected.txt: Added.
+        * web-platform-tests/cssom/insertRule-charset-no-index.html: Added.
+        * web-platform-tests/cssom/insertRule-import-no-index-expected.txt: Added.
+        * web-platform-tests/cssom/insertRule-import-no-index.html: Added.
+        * web-platform-tests/cssom/insertRule-namespace-no-index-expected.txt: Added.
+        * web-platform-tests/cssom/insertRule-namespace-no-index.html: Added.
+        * web-platform-tests/cssom/insertRule-no-index-expected.txt: Added.
+        * web-platform-tests/cssom/insertRule-no-index.html: Added.
+        * web-platform-tests/cssom/interfaces-expected.txt: Added.
+        * web-platform-tests/cssom/interfaces.html: Added.
+        * web-platform-tests/cssom/medialist-interfaces-001-expected.txt: Added.
+        * web-platform-tests/cssom/medialist-interfaces-001.html: Added.
+        * web-platform-tests/cssom/medialist-interfaces-002-expected.txt: Added.
+        * web-platform-tests/cssom/medialist-interfaces-002.html: Added.
+        * web-platform-tests/cssom/medialist-interfaces-003-expected.txt: Added.
+        * web-platform-tests/cssom/medialist-interfaces-003.html: Added.
+        * web-platform-tests/cssom/medialist-interfaces-004-expected.txt: Added.
+        * web-platform-tests/cssom/medialist-interfaces-004.html: Added.
+        * web-platform-tests/cssom/overflow-serialization-expected.txt: Added.
+        * web-platform-tests/cssom/overflow-serialization.html: Added.
+        * web-platform-tests/cssom/selectorSerialize-expected.txt: Added.
+        * web-platform-tests/cssom/selectorSerialize.html: Added.
+        * web-platform-tests/cssom/serialization-CSSDeclaration-with-important-expected.txt: Added.
+        * web-platform-tests/cssom/serialization-CSSDeclaration-with-important.html: Added.
+        * web-platform-tests/cssom/serialize-namespaced-type-selectors-expected.txt: Added.
+        * web-platform-tests/cssom/serialize-namespaced-type-selectors.html: Added.
+        * web-platform-tests/cssom/serialize-values-expected.txt: Added.
+        * web-platform-tests/cssom/serialize-values.html: Added.
+        * web-platform-tests/cssom/serialize-variable-reference-expected.txt: Added.
+        * web-platform-tests/cssom/serialize-variable-reference.html: Added.
+        * web-platform-tests/cssom/shorthand-serialization-expected.txt: Added.
+        * web-platform-tests/cssom/shorthand-serialization.html: Added.
+        * web-platform-tests/cssom/style-sheet-interfaces-001-expected.txt: Added.
+        * web-platform-tests/cssom/style-sheet-interfaces-001.html: Added.
+        * web-platform-tests/cssom/style-sheet-interfaces-002-expected.txt: Added.
+        * web-platform-tests/cssom/style-sheet-interfaces-002.html: Added.
+        * web-platform-tests/cssom/stylesheet-same-origin.css: Added.
+        (body):
+        * web-platform-tests/cssom/stylesheet-same-origin.sub-expected.txt: Added.
+        * web-platform-tests/cssom/stylesheet-same-origin.sub.html: Added.
+        * web-platform-tests/cssom/support/1x1-green.png: Added.
+        * web-platform-tests/cssom/support/1x1-lime.png: Added.
+        * web-platform-tests/cssom/support/1x1-maroon.png: Added.
+        * web-platform-tests/cssom/support/1x1-navy.png: Added.
+        * web-platform-tests/cssom/support/1x1-red.png: Added.
+        * web-platform-tests/cssom/support/1x1-white.png: Added.
+        * web-platform-tests/cssom/support/60x60-gg-rr.png: Added.
+        * web-platform-tests/cssom/support/60x60-green.png: Added.
+        * web-platform-tests/cssom/support/60x60-red.png: Added.
+        * web-platform-tests/cssom/support/README: Added.
+        * web-platform-tests/cssom/support/a-green.css: Added.
+        (.a):
+        * web-platform-tests/cssom/support/b-green.css: Added.
+        (.b):
+        * web-platform-tests/cssom/support/c-red.css: Added.
+        (.c):
+        * web-platform-tests/cssom/support/cat.png: Added.
+        * web-platform-tests/cssom/support/import-charset.css: Added.
+        * web-platform-tests/cssom/support/import-green.css: Added.
+        (.import):
+        * web-platform-tests/cssom/support/import-red.css: Added.
+        (.import):
+        * web-platform-tests/cssom/support/pattern-grg-rgr-grg.png: Added.
+        * web-platform-tests/cssom/support/pattern-grg-rrg-rgg.png: Added.
+        * web-platform-tests/cssom/support/pattern-rgr-grg-rgr.png: Added.
+        * web-platform-tests/cssom/support/pattern-tr.png: Added.
+        * web-platform-tests/cssom/support/ruler-h-50%.png: Added.
+        * web-platform-tests/cssom/support/ruler-h-50px.png: Added.
+        * web-platform-tests/cssom/support/ruler-v-100px.png: Added.
+        * web-platform-tests/cssom/support/ruler-v-50px.png: Added.
+        * web-platform-tests/cssom/support/square-purple.png: Added.
+        * web-platform-tests/cssom/support/square-teal.png: Added.
+        * web-platform-tests/cssom/support/square-white.png: Added.
+        * web-platform-tests/cssom/support/support/README: Added.
+        * web-platform-tests/cssom/support/support/swatch-green.png: Added.
+        * web-platform-tests/cssom/support/support/swatch-red.png: Added.
+        * web-platform-tests/cssom/support/support/w3c-import.log: Added.
+        * web-platform-tests/cssom/support/swatch-blue.png: Added.
+        * web-platform-tests/cssom/support/swatch-green.png: Added.
+        * web-platform-tests/cssom/support/swatch-lime.png: Added.
+        * web-platform-tests/cssom/support/swatch-orange.png: Added.
+        * web-platform-tests/cssom/support/swatch-red.png: Added.
+        * web-platform-tests/cssom/support/swatch-teal.png: Added.
+        * web-platform-tests/cssom/support/swatch-white.png: Added.
+        * web-platform-tests/cssom/support/swatch-yellow.png: Added.
+        * web-platform-tests/cssom/support/test-bl.png: Added.
+        * web-platform-tests/cssom/support/test-br.png: Added.
+        * web-platform-tests/cssom/support/test-inner-half-size.png: Added.
+        * web-platform-tests/cssom/support/test-outer.png: Added.
+        * web-platform-tests/cssom/support/test-tl.png: Added.
+        * web-platform-tests/cssom/support/test-tr.png: Added.
+        * web-platform-tests/cssom/support/w3c-import.log: Added.
+        * web-platform-tests/cssom/ttwf-cssom-doc-ext-load-count-expected.txt: Added.
+        * web-platform-tests/cssom/ttwf-cssom-doc-ext-load-count.html: Added.
+        * web-platform-tests/cssom/ttwf-cssom-doc-ext-load-tree-order-expected.txt: Added.
+        * web-platform-tests/cssom/ttwf-cssom-doc-ext-load-tree-order.html: Added.
+        * web-platform-tests/cssom/ttwf-cssom-document-extension-expected.txt: Added.
+        * web-platform-tests/cssom/ttwf-cssom-document-extension.html: Added.
+        * web-platform-tests/cssom/variable-names-expected.txt: Added.
+        * web-platform-tests/cssom/variable-names.html: Added.
+        * web-platform-tests/cssom/w3c-import.log: Added.
+
 2017-05-18  Chris Dumez  <cdumez@apple.com>
 
         Update webidl2.js from upstream web-platform-tests

@@ -1,0 +1,5 @@
+
+PASS CSS.escape 
+FAIL CSS.supports, one argument form assert_equals: CSS.supports: Single-argument form allows for declarations without enclosing parentheses expected true but got false
+FAIL CSS.supports, two argument form assert_equals: CSS.supports: two argument form succeeds for custom property expected true but got false
+

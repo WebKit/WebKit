@@ -11,7 +11,9 @@ var stylesheet = styleElement.sheet;
 shouldBe("stylesheet.__proto__", "CSSStyleSheet.prototype");
 shouldThrow("stylesheet.deleteRule()", "'TypeError: Not enough arguments'");
 shouldThrow("stylesheet.insertRule()", "'TypeError: Not enough arguments'");
-shouldThrow("stylesheet.insertRule('body { margin: 0; }')", "'TypeError: Not enough arguments'");
+shouldBe("stylesheet.rules.length", "0");
+shouldNotThrow("stylesheet.insertRule('body { margin: 0; }')");
+shouldBe("stylesheet.rules.length", "1");
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </body>

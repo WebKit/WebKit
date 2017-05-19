@@ -1,0 +1,191 @@
+
+PASS Document interface: attribute styleSheets 
+FAIL Document must be primary interface of document assert_equals: document's prototype is not Document.prototype expected object "[object DocumentPrototype]" but got object "[object HTMLDocumentPrototype]"
+FAIL Stringification of document assert_equals: class string of document expected "[object Document]" but got "[object HTMLDocument]"
+PASS Document interface: document must inherit property "styleSheets" with the proper type (0) 
+PASS Document must be primary interface of new Document() 
+PASS Stringification of new Document() 
+PASS Document interface: new Document() must inherit property "styleSheets" with the proper type (0) 
+PASS ProcessingInstruction interface: attribute sheet 
+PASS HTMLElement interface: attribute style 
+PASS SVGElement interface: attribute style 
+PASS Window interface: operation getComputedStyle(Element,DOMString) 
+PASS MediaList interface: existence and properties of interface object 
+PASS MediaList interface object length 
+PASS MediaList interface object name 
+FAIL MediaList interface: existence and properties of interface prototype object assert_equals: prototype of MediaList.prototype is not Array.prototype expected [] but got object "[object Object]"
+PASS MediaList interface: existence and properties of interface prototype object's "constructor" property 
+PASS MediaList interface: attribute mediaText 
+FAIL MediaList interface: stringifier assert_own_property: interface prototype object missing non-static operation expected property "toString" missing
+PASS MediaList interface: attribute length 
+PASS MediaList interface: operation item(unsigned long) 
+PASS MediaList interface: operation appendMedium(DOMString) 
+PASS MediaList interface: operation deleteMedium(DOMString) 
+PASS StyleSheet interface: existence and properties of interface object 
+PASS StyleSheet interface object length 
+PASS StyleSheet interface object name 
+PASS StyleSheet interface: existence and properties of interface prototype object 
+PASS StyleSheet interface: existence and properties of interface prototype object's "constructor" property 
+PASS StyleSheet interface: attribute type 
+PASS StyleSheet interface: attribute href 
+PASS StyleSheet interface: attribute ownerNode 
+PASS StyleSheet interface: attribute parentStyleSheet 
+PASS StyleSheet interface: attribute title 
+FAIL StyleSheet interface: attribute media assert_equals: setter must be function for PutForwards, Replaceable, or non-readonly attributes expected "function" but got "undefined"
+PASS StyleSheet interface: attribute disabled 
+PASS CSSStyleSheet interface: existence and properties of interface object 
+PASS CSSStyleSheet interface object length 
+PASS CSSStyleSheet interface object name 
+PASS CSSStyleSheet interface: existence and properties of interface prototype object 
+PASS CSSStyleSheet interface: existence and properties of interface prototype object's "constructor" property 
+PASS CSSStyleSheet interface: attribute ownerRule 
+PASS CSSStyleSheet interface: attribute cssRules 
+FAIL CSSStyleSheet interface: operation insertRule(DOMString,unsigned long) assert_equals: property has wrong .length expected 2 but got 1
+PASS CSSStyleSheet interface: operation deleteRule(unsigned long) 
+PASS CSSStyleSheet interface: style_element.sheet must inherit property "ownerRule" with the proper type (0) 
+PASS CSSStyleSheet interface: style_element.sheet must inherit property "cssRules" with the proper type (1) 
+PASS CSSStyleSheet interface: style_element.sheet must inherit property "insertRule" with the proper type (2) 
+FAIL CSSStyleSheet interface: calling insertRule(DOMString,unsigned long) on style_element.sheet with too few arguments must throw TypeError assert_throws: Called with 1 arguments function "function () {
+            fn.apply(obj, args);
+        }" threw object "SyntaxError (DOM Exception 12): The string did not match the expected pattern." ("SyntaxError") expected object "TypeError" ("TypeError")
+PASS CSSStyleSheet interface: style_element.sheet must inherit property "deleteRule" with the proper type (3) 
+PASS CSSStyleSheet interface: calling deleteRule(unsigned long) on style_element.sheet with too few arguments must throw TypeError 
+PASS StyleSheet interface: style_element.sheet must inherit property "type" with the proper type (0) 
+PASS StyleSheet interface: style_element.sheet must inherit property "href" with the proper type (1) 
+PASS StyleSheet interface: style_element.sheet must inherit property "ownerNode" with the proper type (2) 
+PASS StyleSheet interface: style_element.sheet must inherit property "parentStyleSheet" with the proper type (3) 
+PASS StyleSheet interface: style_element.sheet must inherit property "title" with the proper type (4) 
+PASS StyleSheet interface: style_element.sheet must inherit property "media" with the proper type (5) 
+PASS StyleSheet interface: style_element.sheet must inherit property "disabled" with the proper type (6) 
+PASS StyleSheetList interface: existence and properties of interface object 
+PASS StyleSheetList interface object length 
+PASS StyleSheetList interface object name 
+FAIL StyleSheetList interface: existence and properties of interface prototype object assert_equals: prototype of StyleSheetList.prototype is not Array.prototype expected [] but got object "[object Object]"
+PASS StyleSheetList interface: existence and properties of interface prototype object's "constructor" property 
+PASS StyleSheetList interface: operation item(unsigned long) 
+PASS StyleSheetList interface: attribute length 
+PASS StyleSheetList interface: document.styleSheets must inherit property "item" with the proper type (0) 
+PASS StyleSheetList interface: calling item(unsigned long) on document.styleSheets with too few arguments must throw TypeError 
+PASS StyleSheetList interface: document.styleSheets must inherit property "length" with the proper type (1) 
+PASS CSSRuleList interface: existence and properties of interface object 
+PASS CSSRuleList interface object length 
+PASS CSSRuleList interface object name 
+FAIL CSSRuleList interface: existence and properties of interface prototype object assert_equals: prototype of CSSRuleList.prototype is not Array.prototype expected [] but got object "[object Object]"
+PASS CSSRuleList interface: existence and properties of interface prototype object's "constructor" property 
+PASS CSSRuleList interface: operation item(unsigned long) 
+PASS CSSRuleList interface: attribute length 
+PASS CSSRuleList interface: style_element.sheet.cssRules must inherit property "item" with the proper type (0) 
+PASS CSSRuleList interface: calling item(unsigned long) on style_element.sheet.cssRules with too few arguments must throw TypeError 
+PASS CSSRuleList interface: style_element.sheet.cssRules must inherit property "length" with the proper type (1) 
+PASS CSSRule interface: existence and properties of interface object 
+PASS CSSRule interface object length 
+PASS CSSRule interface object name 
+PASS CSSRule interface: existence and properties of interface prototype object 
+PASS CSSRule interface: existence and properties of interface prototype object's "constructor" property 
+PASS CSSRule interface: constant STYLE_RULE on interface object 
+PASS CSSRule interface: constant STYLE_RULE on interface prototype object 
+PASS CSSRule interface: constant CHARSET_RULE on interface object 
+PASS CSSRule interface: constant CHARSET_RULE on interface prototype object 
+PASS CSSRule interface: constant IMPORT_RULE on interface object 
+PASS CSSRule interface: constant IMPORT_RULE on interface prototype object 
+PASS CSSRule interface: constant MEDIA_RULE on interface object 
+PASS CSSRule interface: constant MEDIA_RULE on interface prototype object 
+PASS CSSRule interface: constant FONT_FACE_RULE on interface object 
+PASS CSSRule interface: constant FONT_FACE_RULE on interface prototype object 
+PASS CSSRule interface: constant PAGE_RULE on interface object 
+PASS CSSRule interface: constant PAGE_RULE on interface prototype object 
+FAIL CSSRule interface: constant MARGIN_RULE on interface object assert_own_property: expected property "MARGIN_RULE" missing
+FAIL CSSRule interface: constant MARGIN_RULE on interface prototype object assert_own_property: expected property "MARGIN_RULE" missing
+PASS CSSRule interface: constant NAMESPACE_RULE on interface object 
+PASS CSSRule interface: constant NAMESPACE_RULE on interface prototype object 
+PASS CSSRule interface: attribute type 
+PASS CSSRule interface: attribute cssText 
+PASS CSSRule interface: attribute parentRule 
+PASS CSSRule interface: attribute parentStyleSheet 
+PASS CSSStyleRule interface: existence and properties of interface object 
+PASS CSSStyleRule interface object length 
+PASS CSSStyleRule interface object name 
+PASS CSSStyleRule interface: existence and properties of interface prototype object 
+PASS CSSStyleRule interface: existence and properties of interface prototype object's "constructor" property 
+PASS CSSStyleRule interface: attribute selectorText 
+FAIL CSSStyleRule interface: attribute style assert_equals: setter must be function for PutForwards, Replaceable, or non-readonly attributes expected "function" but got "undefined"
+PASS CSSStyleRule interface: style_element.sheet.cssRules[0] must inherit property "selectorText" with the proper type (0) 
+PASS CSSStyleRule interface: style_element.sheet.cssRules[0] must inherit property "style" with the proper type (1) 
+PASS CSSRule interface: style_element.sheet.cssRules[0] must inherit property "STYLE_RULE" with the proper type (0) 
+PASS CSSRule interface: style_element.sheet.cssRules[0] must inherit property "CHARSET_RULE" with the proper type (1) 
+PASS CSSRule interface: style_element.sheet.cssRules[0] must inherit property "IMPORT_RULE" with the proper type (2) 
+PASS CSSRule interface: style_element.sheet.cssRules[0] must inherit property "MEDIA_RULE" with the proper type (3) 
+PASS CSSRule interface: style_element.sheet.cssRules[0] must inherit property "FONT_FACE_RULE" with the proper type (4) 
+PASS CSSRule interface: style_element.sheet.cssRules[0] must inherit property "PAGE_RULE" with the proper type (5) 
+FAIL CSSRule interface: style_element.sheet.cssRules[0] must inherit property "MARGIN_RULE" with the proper type (6) assert_inherits: property "MARGIN_RULE" not found in prototype chain
+PASS CSSRule interface: style_element.sheet.cssRules[0] must inherit property "NAMESPACE_RULE" with the proper type (7) 
+PASS CSSRule interface: style_element.sheet.cssRules[0] must inherit property "type" with the proper type (8) 
+PASS CSSRule interface: style_element.sheet.cssRules[0] must inherit property "cssText" with the proper type (9) 
+PASS CSSRule interface: style_element.sheet.cssRules[0] must inherit property "parentRule" with the proper type (10) 
+PASS CSSRule interface: style_element.sheet.cssRules[0] must inherit property "parentStyleSheet" with the proper type (11) 
+PASS CSSImportRule interface: existence and properties of interface object 
+PASS CSSImportRule interface object length 
+PASS CSSImportRule interface object name 
+PASS CSSImportRule interface: existence and properties of interface prototype object 
+PASS CSSImportRule interface: existence and properties of interface prototype object's "constructor" property 
+PASS CSSImportRule interface: attribute href 
+FAIL CSSImportRule interface: attribute media assert_equals: setter must be function for PutForwards, Replaceable, or non-readonly attributes expected "function" but got "undefined"
+PASS CSSImportRule interface: attribute styleSheet 
+FAIL CSSGroupingRule interface: existence and properties of interface object assert_own_property: self does not have own property "CSSGroupingRule" expected property "CSSGroupingRule" missing
+FAIL CSSGroupingRule interface object length assert_own_property: self does not have own property "CSSGroupingRule" expected property "CSSGroupingRule" missing
+FAIL CSSGroupingRule interface object name assert_own_property: self does not have own property "CSSGroupingRule" expected property "CSSGroupingRule" missing
+FAIL CSSGroupingRule interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CSSGroupingRule" expected property "CSSGroupingRule" missing
+FAIL CSSGroupingRule interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "CSSGroupingRule" expected property "CSSGroupingRule" missing
+FAIL CSSGroupingRule interface: attribute cssRules assert_own_property: self does not have own property "CSSGroupingRule" expected property "CSSGroupingRule" missing
+FAIL CSSGroupingRule interface: operation insertRule(DOMString,unsigned long) assert_own_property: self does not have own property "CSSGroupingRule" expected property "CSSGroupingRule" missing
+FAIL CSSGroupingRule interface: operation deleteRule(unsigned long) assert_own_property: self does not have own property "CSSGroupingRule" expected property "CSSGroupingRule" missing
+FAIL CSSMediaRule interface: existence and properties of interface object assert_own_property: should inherit from CSSGroupingRule, but self has no such property expected property "CSSGroupingRule" missing
+PASS CSSMediaRule interface object length 
+PASS CSSMediaRule interface object name 
+FAIL CSSMediaRule interface: existence and properties of interface prototype object assert_own_property: should inherit from CSSGroupingRule, but self has no such property expected property "CSSGroupingRule" missing
+PASS CSSMediaRule interface: existence and properties of interface prototype object's "constructor" property 
+FAIL CSSMediaRule interface: attribute media assert_equals: setter must be function for PutForwards, Replaceable, or non-readonly attributes expected "function" but got "undefined"
+FAIL CSSPageRule interface: existence and properties of interface object assert_own_property: should inherit from CSSGroupingRule, but self has no such property expected property "CSSGroupingRule" missing
+PASS CSSPageRule interface object length 
+PASS CSSPageRule interface object name 
+FAIL CSSPageRule interface: existence and properties of interface prototype object assert_own_property: should inherit from CSSGroupingRule, but self has no such property expected property "CSSGroupingRule" missing
+PASS CSSPageRule interface: existence and properties of interface prototype object's "constructor" property 
+PASS CSSPageRule interface: attribute selectorText 
+FAIL CSSPageRule interface: attribute style assert_equals: setter must be function for PutForwards, Replaceable, or non-readonly attributes expected "function" but got "undefined"
+FAIL CSSMarginRule interface: existence and properties of interface object assert_own_property: self does not have own property "CSSMarginRule" expected property "CSSMarginRule" missing
+FAIL CSSMarginRule interface object length assert_own_property: self does not have own property "CSSMarginRule" expected property "CSSMarginRule" missing
+FAIL CSSMarginRule interface object name assert_own_property: self does not have own property "CSSMarginRule" expected property "CSSMarginRule" missing
+FAIL CSSMarginRule interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CSSMarginRule" expected property "CSSMarginRule" missing
+FAIL CSSMarginRule interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "CSSMarginRule" expected property "CSSMarginRule" missing
+FAIL CSSMarginRule interface: attribute name assert_own_property: self does not have own property "CSSMarginRule" expected property "CSSMarginRule" missing
+FAIL CSSMarginRule interface: attribute style assert_own_property: self does not have own property "CSSMarginRule" expected property "CSSMarginRule" missing
+PASS CSSNamespaceRule interface: existence and properties of interface object 
+PASS CSSNamespaceRule interface object length 
+PASS CSSNamespaceRule interface object name 
+PASS CSSNamespaceRule interface: existence and properties of interface prototype object 
+PASS CSSNamespaceRule interface: existence and properties of interface prototype object's "constructor" property 
+PASS CSSNamespaceRule interface: attribute namespaceURI 
+PASS CSSNamespaceRule interface: attribute prefix 
+PASS CSSStyleDeclaration interface: existence and properties of interface object 
+PASS CSSStyleDeclaration interface object length 
+PASS CSSStyleDeclaration interface object name 
+PASS CSSStyleDeclaration interface: existence and properties of interface prototype object 
+PASS CSSStyleDeclaration interface: existence and properties of interface prototype object's "constructor" property 
+PASS CSSStyleDeclaration interface: attribute cssText 
+PASS CSSStyleDeclaration interface: attribute length 
+PASS CSSStyleDeclaration interface: operation item(unsigned long) 
+PASS CSSStyleDeclaration interface: operation getPropertyValue(DOMString) 
+PASS CSSStyleDeclaration interface: operation getPropertyPriority(DOMString) 
+PASS CSSStyleDeclaration interface: operation setProperty(DOMString,DOMString,DOMString) 
+FAIL CSSStyleDeclaration interface: operation setPropertyValue(DOMString,DOMString) assert_own_property: interface prototype object missing non-static operation expected property "setPropertyValue" missing
+FAIL CSSStyleDeclaration interface: operation setPropertyPriority(DOMString,DOMString) assert_own_property: interface prototype object missing non-static operation expected property "setPropertyPriority" missing
+PASS CSSStyleDeclaration interface: operation removeProperty(DOMString) 
+PASS CSSStyleDeclaration interface: attribute parentRule 
+FAIL CSSStyleDeclaration interface: attribute cssFloat assert_true: The prototype object must have a property "cssFloat" expected true got false
+PASS CSS interface: existence and properties of interface object 
+PASS CSS interface object length 
+PASS CSS interface object name 
+PASS CSS interface: existence and properties of interface prototype object 
+PASS CSS interface: existence and properties of interface prototype object's "constructor" property 
+PASS CSS interface: operation escape(DOMString) 
+

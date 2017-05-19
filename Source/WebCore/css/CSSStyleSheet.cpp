@@ -272,14 +272,6 @@ RefPtr<CSSRuleList> CSSStyleSheet::rules()
     return ruleList;
 }
 
-ExceptionOr<unsigned> CSSStyleSheet::deprecatedInsertRule(const String& ruleString)
-{
-    if (auto* document = ownerDocument())
-        document->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, ASCIILiteral("Calling CSSStyleSheet.insertRule() with one argument is deprecated. Please pass the index argument as well: insertRule(x, 0)."));
-
-    return insertRule(ruleString, 0);
-}
-
 ExceptionOr<unsigned> CSSStyleSheet::insertRule(const String& ruleString, unsigned index)
 {
     ASSERT(m_childRuleCSSOMWrappers.isEmpty() || m_childRuleCSSOMWrappers.size() == m_contents->ruleCount());

@@ -56,7 +56,7 @@
     "web-platform-tests/css/css-scoping1": "import", 
     "web-platform-tests/css/geometry-1/": "import", 
     "web-platform-tests/css/selectors4": "import", 
-    "web-platform-tests/cssom": "skip", 
+    "web-platform-tests/cssom": "import", 
     "web-platform-tests/cssom-view": "import", 
     "web-platform-tests/custom-elements": "import", 
     "web-platform-tests/custom-elements/v0": "skip", 

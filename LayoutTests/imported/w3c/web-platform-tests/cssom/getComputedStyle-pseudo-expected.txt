@@ -1,0 +1,4 @@
+
+PASS Resolution of width is correct for ::before and ::after pseudo-elements 
+PASS Resolution of width is correct for ::before and ::after pseudo-elements of display: contents elements 
+

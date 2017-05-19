@@ -1,0 +1,3 @@
+
+PASS CSSStyleDeclaration values are represented within CSSFontFaceRule 
+

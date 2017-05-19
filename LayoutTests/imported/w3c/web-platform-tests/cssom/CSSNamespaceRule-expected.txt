@@ -1,0 +1,3 @@
+
+FAIL CSSOM - CSSNamespaceRule interface assert_equals: CSSNamespaceRule cssText attribute expected "@namespace svg url(\"http://servo\");" but got "@namespace svg url('http://servo');"
+
