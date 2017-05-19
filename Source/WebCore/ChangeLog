@@ -1,3 +1,12 @@
+2017-05-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Add a newline after the URL in showLayerTree output.
+
+        Reviewed by Zalan Bujtas.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::showLayerTree):
+
 2017-05-18  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Attachment drag preview should not have the attachment outline
