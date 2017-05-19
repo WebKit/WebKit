@@ -652,7 +652,7 @@ size_t VM::updateSoftReservedZoneSize(size_t softReservedZoneSize)
     return oldSoftReservedZoneSize;
 }
 
-#if PLATFORM(WIN)
+#if OS(WINDOWS)
 // On Windows the reserved stack space consists of committed memory, a guard page, and uncommitted memory,
 // where the guard page is a barrier between committed and uncommitted memory.
 // When data from the guard page is read or written, the guard page is moved, and memory is committed.
@@ -679,7 +679,7 @@ static void preCommitStackMemory(void* stackLimit)
 
 inline void VM::updateStackLimits()
 {
-#if PLATFORM(WIN)
+#if OS(WINDOWS)
     void* lastSoftStackLimit = m_softStackLimit;
 #endif
 
@@ -694,7 +694,7 @@ inline void VM::updateStackLimits()
         m_stackLimit = wtfThreadData().stack().recursionLimit(reservedZoneSize);
     }
 
-#if PLATFORM(WIN)
+#if OS(WINDOWS)
     // We only need to precommit stack memory dictated by the VM::m_softStackLimit limit.
     // This is because VM::m_softStackLimit applies to stack usage by LLINT asm or JIT
     // generated code which can allocate stack space that the C++ compiler does not know

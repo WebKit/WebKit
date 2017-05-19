@@ -1,3 +1,17 @@
+2017-05-19  Don Olmstead  <don.olmstead@am.sony.com>
+
+        [JSC] Remove PLATFORM(WIN) references
+        https://bugs.webkit.org/show_bug.cgi?id=172294
+
+        Reviewed by Yusuke Suzuki.
+
+        * heap/MachineStackMarker.cpp:
+        (JSC::MachineThreads::removeThread):
+        * llint/LLIntOfflineAsmConfig.h:
+        * runtime/ConfigFile.h:
+        * runtime/VM.cpp:
+        (JSC::VM::updateStackLimits):
+
 2017-05-19  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC][DFG][DOMJIT] Extend CheckDOM to CheckSubClass

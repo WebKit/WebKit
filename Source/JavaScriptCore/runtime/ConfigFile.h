@@ -40,7 +40,7 @@ public:
 private:
     void canonicalizePaths();
 
-#if PLATFORM(WIN)
+#if OS(WINDOWS)
     static const size_t s_maxPathLength = 260; // Windows value for "MAX_PATH"
 #else
     static const size_t s_maxPathLength = PATH_MAX;

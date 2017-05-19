@@ -162,7 +162,7 @@ void THREAD_SPECIFIC_CALL MachineThreads::removeThread(void* p)
         // may not be found in this MachineThreads registry. We only need to
         // do a removal if this thread is found in it.
 
-#if PLATFORM(WIN)
+#if OS(WINDOWS)
         // On Windows the thread specific destructor is also called when the
         // main thread is exiting. This may lead to the main thread waiting
         // forever for the machine thread lock when exiting, if the sampling
