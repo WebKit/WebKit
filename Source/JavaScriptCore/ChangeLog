@@ -1,3 +1,14 @@
+2017-05-18  Saam Barati  <sbarati@apple.com>
+
+        Proxy's [[Get]] passes incorrect receiver
+        https://bugs.webkit.org/show_bug.cgi?id=164849
+        <rdar://problem/31767058>
+
+        Reviewed by Yusuke Suzuki.
+
+        * runtime/ProxyObject.cpp:
+        (JSC::performProxyGet):
+
 2017-05-18  Andy Estes  <aestes@apple.com>
 
         ENABLE(APPLE_PAY_DELEGATE) should be NO on macOS Sierra and earlier

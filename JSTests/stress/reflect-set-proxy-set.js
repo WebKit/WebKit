@@ -364,6 +364,7 @@ function assert(b) {
 
 {
     let called = false;
+    let throughProxy = false;
     let target = {
         set x(v) {
             assert(this === target);
@@ -371,7 +372,10 @@ function assert(b) {
             called = true;
         },
         get x() {
-            assert(this === target);
+            if (throughProxy)
+                assert(this === proxy);
+            else
+                assert(this === target);
             return this._x;
         }
     };
@@ -389,7 +393,9 @@ function assert(b) {
     for (let i = 0; i < 1000; i++) {
         shouldBe(Reflect.set(proxy, 'x', i), true);
         assert(called);
+        throughProxy = true;
         assert(proxy.x === i);
+        throughProxy = false;
         assert(target.x === i);
         assert(proxy._x === i);
         assert(target._x === i);
