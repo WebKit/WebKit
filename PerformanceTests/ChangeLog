@@ -1,3 +1,13 @@
+2017-05-18  Addy Osmani  <addyosmani@gmail.com>
+
+        Speedometer: check-in missing React TodoMVC dependency
+        https://bugs.webkit.org/show_bug.cgi?id=172213
+
+        Reviewed by Ryosuke Niwa.
+
+        * Speedometer/resources/todomvc/architecture-examples/react/index.html: fix director.min.js path.
+        * Speedometer/resources/todomvc/architecture-examples/react/node_modules/director/director.min.js: Added.
+
 2017-05-17  Addy Osmani  <addyosmani@gmail.com>
 
         Speedometer: adjust Ember TodoMVC to use full path
