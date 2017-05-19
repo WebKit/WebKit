@@ -947,6 +947,7 @@ void WebProcessPool::pageAddedToProcess(WebPageProxy& page)
     if (sessionID.isEphemeral()) {
         // FIXME: Merge NetworkProcess::EnsurePrivateBrowsingSession and NetworkProcess::AddWebsiteDataStore into one message type.
         // They do basically the same thing.
+        ASSERT(page.websiteDataStore().parameters().sessionID == sessionID);
         sendToNetworkingProcess(Messages::NetworkProcess::EnsurePrivateBrowsingSession(page.websiteDataStore().parameters()));
         page.process().send(Messages::WebProcess::EnsurePrivateBrowsingSession(sessionID), 0);
     } else if (sessionID != SessionID::defaultSessionID()) {

@@ -1299,9 +1299,10 @@ void WebsiteDataStore::removePendingCookie(const WebCore::Cookie& cookie)
 #if !PLATFORM(COCOA)
 WebsiteDataStoreParameters WebsiteDataStore::parameters()
 {
-    // FIXME: Implement.
-
-    return { };
+    // FIXME: Implement cookies.
+    WebsiteDataStoreParameters parameters;
+    parameters.sessionID = m_sessionID;
+    return parameters;
 }
 #endif
 

@@ -1,5 +1,23 @@
 2017-05-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        REGRESSION(r216977): [GTK] Ephemeral sessions broken after r216977
+        https://bugs.webkit.org/show_bug.cgi?id=172345
+
+        Reviewed by Michael Catanzaro.
+
+        Since r216977, WebProcessPool sends the page session ID to the web process, but the WebsiteDataStoreParameters
+        session ID to the network process. WebsiteDataStoreParameters is only implemented for Cocoa, so we are sending 0
+        session ID to the network process, while using the right session ID everywhere else.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::pageAddedToProcess): Add an ASSERT to ensure we are sending the same session ID to Web
+        and Network processes.
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::parameters): Add minimal implementation for non-Cocoa ports to at least set the
+        session ID.
+
+2017-05-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Add more input validation in Connection::processMessage()
         https://bugs.webkit.org/show_bug.cgi?id=171682
 
