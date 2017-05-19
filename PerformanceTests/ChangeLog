@@ -1,3 +1,23 @@
+2017-05-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Speedometer 2.0: Elem test isn't updating DOM during the measurement
+        https://bugs.webkit.org/show_bug.cgi?id=172343
+
+        Reviewed by Antti Koivisto.
+
+        Elem test wasn't doing much work because it simply enqueues items into the work queue, which doesn't get
+        executed until the next requestAnimationFrame or setTimeout callback happens.
+
+        Expose elm's work function as contentWindow.elemWork and make the first use of rAF a synchronous callback
+        just as it would when requestAnimationFrame isn't defined, and make the second use of rAF queue up to
+        an array of callbacks, and have the test runner manually invoke each callback.
+
+        This increases the runtime of the Elm suite from 100ms to 300ms on Safari.
+
+        * Speedometer/resources/tests.js:
+        (processElmWorkQueue): Added. A helper which processes Elm's work queue and manually invokes render callbacks.
+        * Speedometer/resources/todomvc/functional-prog-examples/elm/dist/elm.js:
+
 2017-05-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         Speedometer 2.0: Flight.js test is sometime broken

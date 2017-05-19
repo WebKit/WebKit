@@ -413,6 +413,18 @@ Suites.push({
     ]
 });
 
+function processElmWorkQueue(contentWindow)
+{
+    contentWindow.elmWork();
+    var callbacks = contentWindow.rAFCallbackList;
+    var i = 0;
+    while (i < callbacks.length) {
+        callbacks[i]();
+        i++;
+    }
+    contentWindow.rAFCallbackList = [];
+}
+
 Suites.push({
     name: 'Elm-TodoMVC',
     url: 'todomvc/functional-prog-examples/elm/index.html',
@@ -430,18 +442,23 @@ Suites.push({
                   bubbles: true,
                   cancelable: true
                 }));
+                processElmWorkQueue(contentWindow);
                 triggerEnter(newTodo, 'keydown');
+                processElmWorkQueue(contentWindow);
             }
         }),
         new BenchmarkTestStep('CompletingAllItems', function (params, contentWindow, contentDocument) {
             var checkboxes = contentDocument.querySelectorAll('.toggle');
-            for (var i = 0; i < checkboxes.length; i++)
+            for (var i = 0; i < checkboxes.length; i++) {
                 checkboxes[i].click();
+                processElmWorkQueue(contentWindow);
+            }
         }),
         new BenchmarkTestStep('DeletingItems', function (params, contentWindow, contentDocument) {
-            var deleteButtons = contentDocument.querySelectorAll('.destroy');
-            for (var i = 0; i < deleteButtons.length; i++)
-                deleteButtons[i].click();
+            for (var i = 0; i < numberOfItemsToAdd; i++) {
+                contentDocument.querySelector('.destroy').click();
+                processElmWorkQueue(contentWindow);
+            }
         }),
     ]
 });
