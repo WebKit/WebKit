@@ -66,12 +66,20 @@ void ObjectInitializationScope::verifyPropertiesAreInitialized(JSObject* object)
         // Nothing to verify.
     } else if (LIKELY(!hasAnyArrayStorage(indexingType))) {
         auto data = butterfly->contiguous().data();
-        for (unsigned i = 0; i < vectorLength; ++i)
-            ASSERT(!isScribbledValue(data[i].get()));
+        for (unsigned i = 0; i < vectorLength; ++i) {
+            if (isScribbledValue(data[i].get())) {
+                dataLog("Found scribbled value at i = ", i, "\n");
+                ASSERT_NOT_REACHED();
+            }
+        }
     } else {
         ArrayStorage* storage = butterfly->arrayStorage();
-        for (unsigned i = 0; i < vectorLength; ++i)
-            ASSERT(!isScribbledValue(storage->m_vector[i].get()));
+        for (unsigned i = 0; i < vectorLength; ++i) {
+            if (isScribbledValue(storage->m_vector[i].get())) {
+                dataLog("Found scribbled value at i = ", i, "\n");
+                ASSERT_NOT_REACHED();
+            }
+        }
     }
 }
 #endif

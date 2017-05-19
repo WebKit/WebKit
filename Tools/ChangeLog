@@ -1,3 +1,15 @@
+2017-05-19  Filip Pizlo  <fpizlo@apple.com>
+
+        arrayProtoPrivateFuncConcatMemcpy needs to be down with firstArray being undecided
+        https://bugs.webkit.org/show_bug.cgi?id=172369
+
+        Reviewed by Mark Lam.
+        
+        Because I wrote a test that relies on the NoCJIT config scribbling free cells, I thought it
+        would be a good idea to write this down.
+
+        * Scripts/run-jsc-stress-tests:
+
 2017-05-19  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Layout tests which have no output will succeed

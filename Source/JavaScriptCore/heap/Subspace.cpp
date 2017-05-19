@@ -93,30 +93,42 @@ void Subspace::destroy(VM& vm, JSCell* cell)
 // need the deferralContext.
 void* Subspace::allocate(size_t size)
 {
+    void* result;
     if (MarkedAllocator* allocator = tryAllocatorFor(size))
-        return allocator->allocate();
-    return allocateSlow(nullptr, size);
+        result = allocator->allocate();
+    else
+        result = allocateSlow(nullptr, size);
+    return result;
 }
 
 void* Subspace::allocate(GCDeferralContext* deferralContext, size_t size)
 {
+    void *result;
     if (MarkedAllocator* allocator = tryAllocatorFor(size))
-        return allocator->allocate(deferralContext);
-    return allocateSlow(deferralContext, size);
+        result = allocator->allocate(deferralContext);
+    else
+        result = allocateSlow(deferralContext, size);
+    return result;
 }
 
 void* Subspace::tryAllocate(size_t size)
 {
+    void* result;
     if (MarkedAllocator* allocator = tryAllocatorFor(size))
-        return allocator->tryAllocate();
-    return tryAllocateSlow(nullptr, size);
+        result = allocator->tryAllocate();
+    else
+        result = tryAllocateSlow(nullptr, size);
+    return result;
 }
 
 void* Subspace::tryAllocate(GCDeferralContext* deferralContext, size_t size)
 {
+    void* result;
     if (MarkedAllocator* allocator = tryAllocatorFor(size))
-        return allocator->tryAllocate(deferralContext);
-    return tryAllocateSlow(deferralContext, size);
+        result = allocator->tryAllocate(deferralContext);
+    else
+        result = tryAllocateSlow(deferralContext, size);
+    return result;
 }
 
 MarkedAllocator* Subspace::allocatorForSlow(size_t size)

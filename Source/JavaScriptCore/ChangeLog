@@ -1,3 +1,18 @@
+2017-05-19  Filip Pizlo  <fpizlo@apple.com>
+
+        arrayProtoPrivateFuncConcatMemcpy needs to be down with firstArray being undecided
+        https://bugs.webkit.org/show_bug.cgi?id=172369
+
+        Reviewed by Mark Lam.
+
+        * heap/Subspace.cpp: Reshaped the code a bit to aid debugging.
+        (JSC::Subspace::allocate):
+        (JSC::Subspace::tryAllocate):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoPrivateFuncConcatMemcpy): Fix the bug!
+        * runtime/ObjectInitializationScope.cpp: Provide even better feedback.
+        (JSC::ObjectInitializationScope::verifyPropertiesAreInitialized):
+
 2017-05-18  Filip Pizlo  <fpizlo@apple.com>
 
         B3::Value::effects() says that having a fence range implies the fence bit, but on x86_64 we lower loadAcq/storeRel to load/store so the store-before-load fence bit orderings won't be honored
