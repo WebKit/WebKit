@@ -1,3 +1,26 @@
+2017-05-18  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [REGRESSION](r216901): Delete ImageDecoder if BitmapImage::destroyDecodedData() was called to destroy all the decoded frames
+        https://bugs.webkit.org/show_bug.cgi?id=172325
+
+        Reviewed by Simon Fraser.
+
+        When calling BitmapImage::destroyDecodedData() with destroyAll = true, the
+        current ImageDecoder has to be deleted regardless the current frame needs
+        to be cached or not. This is true except when the image is animating.
+        Creating a new ImageDecoder for the animated image will lead to decoding
+        all the frames from frame-zero till the current frame.
+
+        Deleting the current ImageDecoder has the benefit of releasing its raster
+        data. We also must delete the current ImageDecoder when the CachedImage
+        switched its data SharedBuffer.
+
+        The fix is return the condition in BitmapImage::destroyDecodedData() to 
+        be as it was before r216901.
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::destroyDecodedData):
+
 2017-05-18  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r217079.

@@ -79,17 +79,16 @@ void BitmapImage::destroyDecodedData(bool destroyAll)
 
     if (!destroyAll)
         m_source.destroyDecodedDataBeforeFrame(m_currentFrame);
-    else if (!canDestroyDecodedData()) {
+    else if (!canDestroyDecodedData())
         m_source.destroyAllDecodedDataExcludeFrame(m_currentFrame);
-        destroyAll = false;
-    } else {
+    else {
         m_source.destroyAllDecodedData();
         m_currentFrameDecodingStatus = ImageFrame::DecodingStatus::Invalid;
     }
 
     // There's no need to throw away the decoder unless we're explicitly asked
     // to destroy all of the frames.
-    if (!destroyAll)
+    if (!destroyAll || m_source.hasAsyncDecodingQueue())
         m_source.clearFrameBufferCache(m_currentFrame);
     else
         m_source.clear(data());
