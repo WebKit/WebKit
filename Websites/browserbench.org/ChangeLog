@@ -1,5 +1,17 @@
 2017-05-19  Ryosuke Niwa  <rniwa@webkit.org>
 
+        REGRESSION(r217118): Speedometer 2.0: Flight.js test is broken
+        https://bugs.webkit.org/show_bug.cgi?id=172394
+
+        Reviewed by Chris Dumez.
+
+        Merge the fix.
+
+        * Speedometer2.0/resources/todomvc/dependency-examples/flight/flight/node_modules/requirejs/require.js:
+        (newContext.checkLoaded):
+
+2017-05-19  Ryosuke Niwa  <rniwa@webkit.org>
+
         Merge Speedometer 2.0 fixes up to r217121 to browserbench.org
         https://bugs.webkit.org/show_bug.cgi?id=172389
 
