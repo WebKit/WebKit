@@ -1,3 +1,31 @@
+2017-05-19  Chris Dumez  <cdumez@apple.com>
+
+        Make sure implementation of InitializeWebKit2() always run on the main thread
+        https://bugs.webkit.org/show_bug.cgi?id=172362
+        <rdar://problem/32295678>
+
+        Reviewed by Geoffrey Garen.
+
+        Add logic in InitializeWebKit2() for Cocoa ports to always run the initialization code
+        is only called once, and on the main thread. If we are called from a non-main thread,
+        we will dispatch synchronously to the main thread to run the initialization code.
+
+        This is needed because WebKit2Initialize() is called from the API::Object constructor.
+        API::Object is thread-safe RefCounted and those objects are sometimes initialized on
+        non-main thread. If the first of such objects happened to be initialized on a non-main
+        thread, then we would run the initialization code for the first time on a non-main
+        thread. This would lead to hard to debug issues because code such as
+        RunLoop::initializeMainRunLoop() is only safe to call on the main thread because it
+        stores a pointer to the current thread's RunLoop in a static variable for later use
+        (i.e. for RunLoop::main()).
+
+        * Shared/Cocoa/WebKit2InitializeCocoa.mm: Copied from Source/WebKit2/Shared/WebKit2Initialize.cpp.
+        (WebKit::runInitializationCode):
+        (WebKit::InitializeWebKit2):
+        * Shared/WebKit2Initialize.cpp:
+        (WebKit::InitializeWebKit2):
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2017-05-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r216977): [GTK] Ephemeral sessions broken after r216977

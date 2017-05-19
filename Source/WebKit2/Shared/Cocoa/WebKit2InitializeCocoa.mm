@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,21 +23,32 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebKit2Initialize.h"
+#import "config.h"
+#import "WebKit2Initialize.h"
 
-#include "LogInitialization.h"
-#include <WebCore/LogInitialization.h>
-#include <runtime/InitializeThreading.h>
-#include <wtf/MainThread.h>
-#include <wtf/RunLoop.h>
+#import "LogInitialization.h"
+#import "WebSystemInterface.h"
+#import <WebCore/LogInitialization.h>
+#import <mutex>
+#import <runtime/InitializeThreading.h>
+#import <wtf/MainThread.h>
+#import <wtf/RunLoop.h>
+
+#if PLATFORM(IOS)
+#import <WebCore/WebCoreThreadSystemInterface.h>
+#endif
 
 namespace WebKit {
 
-#if !PLATFORM(COCOA)
+static std::once_flag flag;
 
-void InitializeWebKit2()
+static void runInitializationCode(void* = nullptr)
 {
+    InitWebCoreSystemInterface();
+#if PLATFORM(IOS)
+    InitWebCoreThreadSystemInterface();
+#endif
+
     JSC::initializeThreading();
     RunLoop::initializeMainRunLoop();
 
@@ -47,6 +58,16 @@ void InitializeWebKit2()
 #endif // !LOG_DISABLED || !RELEASE_LOG_DISABLED
 }
 
-#endif // !PLATFORM(COCOA)
+void InitializeWebKit2()
+{
+    // Make sure the initialization code is run only once and on the main thread since things like RunLoop::initializeMainRunLoop()
+    // are only safe to call on the main thread.
+    std::call_once(flag, [] {
+        if ([NSThread isMainThread])
+            runInitializationCode();
+        else
+            dispatch_sync_f(dispatch_get_main_queue(), nullptr, runInitializationCode);
+    });
+}
 
-} // namespace WebKit
+}

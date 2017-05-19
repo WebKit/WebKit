@@ -902,6 +902,7 @@
 		4450AEC01DC3FAE5009943F2 /* SharedMemoryCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4450AEBF1DC3FAE5009943F2 /* SharedMemoryCocoa.cpp */; };
 		463FD4801EB9459600A2982C /* WKProcessTerminationReason.h in Headers */ = {isa = PBXBuildFile; fileRef = 463FD47F1EB9458400A2982C /* WKProcessTerminationReason.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		463FD4821EB94EC000A2982C /* ProcessTerminationReason.h in Headers */ = {isa = PBXBuildFile; fileRef = 463FD4811EB94EAD00A2982C /* ProcessTerminationReason.h */; };
+		465250E61ECF52DC002025CB /* WebKit2InitializeCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 465250E51ECF52CD002025CB /* WebKit2InitializeCocoa.mm */; };
 		46A2B6081E5676A600C3DEDA /* BackgroundProcessResponsivenessTimer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46A2B6061E5675A200C3DEDA /* BackgroundProcessResponsivenessTimer.cpp */; };
 		46A2B6091E5676A600C3DEDA /* BackgroundProcessResponsivenessTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 46A2B6071E5675A200C3DEDA /* BackgroundProcessResponsivenessTimer.h */; };
 		4A3CC18A19B063E700D14AEF /* UserMediaPermissionRequestManagerProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4A410F3919AF7B04002EBAB5 /* UserMediaPermissionRequestManagerProxy.cpp */; };
@@ -3128,6 +3129,7 @@
 		4450AEBF1DC3FAE5009943F2 /* SharedMemoryCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SharedMemoryCocoa.cpp; path = cocoa/SharedMemoryCocoa.cpp; sourceTree = "<group>"; };
 		463FD47F1EB9458400A2982C /* WKProcessTerminationReason.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKProcessTerminationReason.h; sourceTree = "<group>"; };
 		463FD4811EB94EAD00A2982C /* ProcessTerminationReason.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcessTerminationReason.h; sourceTree = "<group>"; };
+		465250E51ECF52CD002025CB /* WebKit2InitializeCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebKit2InitializeCocoa.mm; sourceTree = "<group>"; };
 		46A2B6061E5675A200C3DEDA /* BackgroundProcessResponsivenessTimer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BackgroundProcessResponsivenessTimer.cpp; sourceTree = "<group>"; };
 		46A2B6071E5675A200C3DEDA /* BackgroundProcessResponsivenessTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BackgroundProcessResponsivenessTimer.h; sourceTree = "<group>"; };
 		4A410F3519AF7AC3002EBAB5 /* WKUserMediaPermissionRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKUserMediaPermissionRequest.cpp; sourceTree = "<group>"; };
@@ -5764,6 +5766,7 @@
 				378E1A3F181EDA010031007A /* WKObject.h */,
 				374436871820E7240049579F /* WKObject.mm */,
 				7AF236221E79A43100438A05 /* WebErrorsCocoa.mm */,
+				465250E51ECF52CD002025CB /* WebKit2InitializeCocoa.mm */,
 			);
 			name = cocoa;
 			path = Cocoa;
@@ -10234,6 +10237,7 @@
 				BCE469791214F2B4000B98EB /* WebFrameListenerProxy.cpp in Sources */,
 				BC111A5F112F4FBB00337BAB /* WebFrameLoaderClient.cpp in Sources */,
 				2D28F3E71885CCC1004B9EAE /* WebFrameLoaderClientIOS.mm in Sources */,
+				465250E61ECF52DC002025CB /* WebKit2InitializeCocoa.mm in Sources */,
 				9391F2CA121B679A00EBF7E8 /* WebFrameNetworkingContext.mm in Sources */,
 				BCB9F6A11123A84B00A137E0 /* WebFramePolicyListenerProxy.cpp in Sources */,
 				BC111B0E112F5E4F00337BAB /* WebFrameProxy.cpp in Sources */,
