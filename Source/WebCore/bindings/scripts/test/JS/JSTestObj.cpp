@@ -1108,6 +1108,7 @@ template<> TestObj::ConditionalDictionaryC convertDictionary<TestObj::Conditiona
 #if ENABLE(TEST_FEATURE)
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionEnabledAtRuntimeOperation(JSC::ExecState*);
 #endif
+JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionEnabledInSpecificWorldWhenRuntimeFeatureEnabled(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWorldSpecificMethod(JSC::ExecState*);
 #if ENABLE(TEST_FEATURE)
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionEnabledBySettingOperation(JSC::ExecState*);
@@ -1765,6 +1766,7 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
+    { "enabledInSpecificWorldWhenRuntimeFeatureEnabled", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionEnabledInSpecificWorldWhenRuntimeFeatureEnabled), (intptr_t) (1) } },
     { "worldSpecificMethod", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionWorldSpecificMethod), (intptr_t) (1) } },
 #if ENABLE(TEST_FEATURE)
     { "enabledBySettingOperation", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionEnabledBySettingOperation), (intptr_t) (1) } },
@@ -1960,6 +1962,11 @@ void JSTestObjPrototype::finishCreation(VM& vm, JSDOMGlobalObject& globalObject)
         JSObject::deleteProperty(this, globalObject()->globalExec(), propertyName);
     }
 #endif
+    if (!(worldForDOMObject(this).someWorld() && RuntimeEnabledFeatures::sharedFeatures().testFeatureEnabled())) {
+        Identifier propertyName = Identifier::fromString(&vm, reinterpret_cast<const LChar*>("enabledInSpecificWorldWhenRuntimeFeatureEnabled"), strlen("enabledInSpecificWorldWhenRuntimeFeatureEnabled"));
+        VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
+        JSObject::deleteProperty(this, globalObject()->globalExec(), propertyName);
+    }
     if (!worldForDOMObject(this).someWorld()) {
         Identifier propertyName = Identifier::fromString(&vm, reinterpret_cast<const LChar*>("worldSpecificMethod"), strlen("worldSpecificMethod"));
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
@@ -5372,6 +5379,26 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionEnabledAtRuntimeOperation
     return argsCount < 1 ? throwVMError(state, throwScope, createNotEnoughArgumentsError(state)) : throwVMTypeError(state, throwScope);
 }
 #endif
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionEnabledInSpecificWorldWhenRuntimeFeatureEnabledCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
+EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionEnabledInSpecificWorldWhenRuntimeFeatureEnabled(ExecState* state)
+{
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionEnabledInSpecificWorldWhenRuntimeFeatureEnabledCaller>(state, "enabledInSpecificWorldWhenRuntimeFeatureEnabled");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionEnabledInSpecificWorldWhenRuntimeFeatureEnabledCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
+    UNUSED_PARAM(throwScope);
+    auto& impl = castedThis->wrapped();
+    if (UNLIKELY(state->argumentCount() < 1))
+        return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
+    auto testParam = convert<IDLLong>(*state, state->uncheckedArgument(0));
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    impl.enabledInSpecificWorldWhenRuntimeFeatureEnabled(WTFMove(testParam));
+    return JSValue::encode(jsUndefined());
+}
 
 static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWorldSpecificMethodCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
 

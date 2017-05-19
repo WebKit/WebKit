@@ -37,6 +37,9 @@
 
     [EnabledForWorld=specificWorld] void enabledInSpecificWorld(long testParam);
 
+    [EnabledForWorld=specificWorld, EnabledAtRuntime=TestFeature] void enabledInSpecificWorldWhenRuntimeFeatureEnabled(long testParam);
+    [EnabledForWorld=specificWorld, EnabledAtRuntime=TestFeature&TestFeature1] void enabledInSpecificWorldWhenRuntimeFeaturesEnabled(long testParam);
+
     [PrivateIdentifier, Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature] void testPrivateFunction();
     [JSBuiltin, Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature] void testJSBuiltinFunction();
 };

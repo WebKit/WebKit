@@ -1,3 +1,43 @@
+2017-05-19  Daniel Bates  <dabates@apple.com>
+
+        Bindings: Support runtime-enabled features in specific worlds
+        https://bugs.webkit.org/show_bug.cgi?id=172235
+
+        Reviewed by Chris Dumez.
+
+        Currently a function, attribute, or interface can be annotated with either EnabledAtRuntime
+        or EnabledForWorld (not both) to expose/conceal it depending on the state of a runtime
+        feature flag or the DOM world associated with the running JavaScript code, respectively.
+        Even though we do not have any functions, attributes, or interfaces that are annotated
+        with both EnabledAtRuntime and EnabledForWorld at the time of writing, it seems reasonable
+        to support such a combination of annotations. This also has the benefit of making it
+        straightforward to support the extended attribute SecureContext by generalizing the logic
+        that generates the code to expose/conceal a function, attribute, or interface.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateRuntimeEnableConditionalString): Use an array to build up all the conjuncts in
+        the conditional expression.
+        (GenerateImplementation): Substitute GenerateRuntimeEnableConditionalString() and $runtimeEnableConditionalString
+        for GetRuntimeEnableFunctionName() and $enable_function_result, respectively.
+        (GetRuntimeEnableFunctionName): Deleted.
+
+        * bindings/scripts/test/JS/JSTestGlobalObject.cpp:
+         (WebCore::JSTestGlobalObject::finishCreation):
+         (WebCore::jsTestGlobalObjectInstanceFunctionEnabledInSpecificWorldWhenRuntimeFeatureEnabled):
+         (WebCore::jsTestGlobalObjectInstanceFunctionEnabledInSpecificWorldWhenRuntimeFeatureEnabledCaller):
+         (WebCore::jsTestGlobalObjectInstanceFunctionEnabledInSpecificWorldWhenRuntimeFeaturesEnabled):
+         (WebCore::jsTestGlobalObjectInstanceFunctionEnabledInSpecificWorldWhenRuntimeFeaturesEnabledCaller):
+         Update expected results.
+
+         * bindings/scripts/test/JS/JSTestObj.cpp:
+         (WebCore::JSTestObjPrototype::finishCreation):
+         (WebCore::jsTestObjPrototypeFunctionEnabledInSpecificWorldWhenRuntimeFeatureEnabled):
+         (WebCore::jsTestObjPrototypeFunctionEnabledInSpecificWorldWhenRuntimeFeatureEnabledCaller):
+         Ditto.
+
+         * bindings/scripts/test/TestGlobalObject.idl: Added test cases.
+         * bindings/scripts/test/TestObj.idl: Added test case.
+
 2017-05-19  Jeremy Jones  <jeremyj@apple.com>
 
         Fix macos build after r217143

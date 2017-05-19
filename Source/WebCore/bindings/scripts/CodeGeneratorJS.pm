@@ -2966,31 +2966,34 @@ sub ToMethodName
     return $ret;
 }
 
-# Returns the RuntimeEnabledFeatures function name that is hooked up to check if a method/attribute is enabled.
+# Returns the conditional string that determines whether a method/attribute is enabled at runtime.
+# A method/attribute is enabled at runtime if either its RuntimeEnabledFeatures function returns
+# true or its EnabledForWorld function returns true (or both).
 # NOTE: Parameter passed in must have an 'extendedAttributes' property.
-#  (e.g. DOMInterface, DOMAttribute, DOMOperation, DOMIterable, etc.)
-sub GetRuntimeEnableFunctionName
+# (e.g. DOMInterface, DOMAttribute, DOMOperation, DOMIterable, etc.)
+sub GenerateRuntimeEnableConditionalString
 {
     my $context = shift;
 
     AddToImplIncludes("RuntimeEnabledFeatures.h");
 
+    my @conjuncts;
     if ($context->extendedAttributes->{EnabledForWorld}) {
         assert("Must specify value for EnabledForWorld.") if $context->extendedAttributes->{EnabledForWorld} eq "VALUE_IS_MISSING";
-        return "worldForDOMObject(this)." . ToMethodName($context->extendedAttributes->{EnabledForWorld}) . "()";
+        push @conjuncts, "worldForDOMObject(this)." . ToMethodName($context->extendedAttributes->{EnabledForWorld}) . "()";
     }
 
     if ($context->extendedAttributes->{EnabledAtRuntime}) {
         assert("Must specify value for EnabledAtRuntime.") if $context->extendedAttributes->{EnabledAtRuntime} eq "VALUE_IS_MISSING";
         my @flags = split /&/, $context->extendedAttributes->{EnabledAtRuntime};
-        my $result = "";
         foreach my $flag (@flags) {
-            $result .= " && " unless length $result eq 0;
-            $result .= "RuntimeEnabledFeatures::sharedFeatures()." . ToMethodName($flag) . "Enabled()"
+            push @conjuncts, "RuntimeEnabledFeatures::sharedFeatures()." . ToMethodName($flag) . "Enabled()";
         }
-        $result = "(" . $result . ")" unless scalar @flags eq 1;
-        return $result;
     }
+
+    my $result = join(" && ", @conjuncts);
+    $result = "($result)" if @conjuncts > 1;
+    return $result;
 }
 
 sub GetCastingHelperForThisObject
@@ -3418,9 +3421,9 @@ sub GenerateImplementation
         foreach my $functionOrAttribute (@runtimeEnabledProperties) {
             my $conditionalString = $codeGenerator->GenerateConditionalString($functionOrAttribute);
             push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
-            my $enable_function_result = GetRuntimeEnableFunctionName($functionOrAttribute);
+            my $runtimeEnableConditionalString = GenerateRuntimeEnableConditionalString($functionOrAttribute);
             my $name = $functionOrAttribute->name;
-            push(@implContent, "    if (!${enable_function_result}) {\n");
+            push(@implContent, "    if (!${runtimeEnableConditionalString}) {\n");
             push(@implContent, "        Identifier propertyName = Identifier::fromString(&vm, reinterpret_cast<const LChar*>(\"$name\"), strlen(\"$name\"));\n");
             push(@implContent, "        VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);\n");
             push(@implContent, "        JSObject::deleteProperty(this, globalObject()->globalExec(), propertyName);\n");
@@ -3561,9 +3564,9 @@ sub GenerateImplementation
 
         my $conditionalString = $codeGenerator->GenerateConditionalString($attribute);
         push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
-        my $enable_function_result = GetRuntimeEnableFunctionName($attribute);
+        my $runtimeEnableConditionalString = GenerateRuntimeEnableConditionalString($attribute);
         my $attributeName = $attribute->name;
-        push(@implContent, "    if (${enable_function_result}) {\n");
+        push(@implContent, "    if (${runtimeEnableConditionalString}) {\n");
         my $getter = GetAttributeGetterName($interface, $className, $attribute);
         my $setter = IsReadonly($attribute) ? "nullptr" : GetAttributeSetterName($interface, $className, $attribute);
         push(@implContent, "        auto* customGetterSetter = CustomGetterSetter::create(vm, $getter, $setter);\n");
@@ -3596,12 +3599,12 @@ sub GenerateImplementation
 
         my $conditionalString = $codeGenerator->GenerateConditionalString($function);
         push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
-        my $enable_function_result = GetRuntimeEnableFunctionName($function);
+        my $runtimeEnableConditionalString = GenerateRuntimeEnableConditionalString($function);
         my $functionName = $function->name;
         my $implementationFunction = GetFunctionName($interface, $className, $function);
         my $functionLength = GetFunctionLength($function);
         my $jsAttributes = ComputeFunctionSpecial($interface, $function);
-        push(@implContent, "    if (${enable_function_result})\n");
+        push(@implContent, "    if (${runtimeEnableConditionalString})\n");
 
         my $propertyName = "vm.propertyNames->$functionName";
         $propertyName = "static_cast<JSVMClientData*>(vm.clientData)->builtinNames()." . $functionName . "PrivateName()" if $function->extendedAttributes->{PrivateIdentifier};
