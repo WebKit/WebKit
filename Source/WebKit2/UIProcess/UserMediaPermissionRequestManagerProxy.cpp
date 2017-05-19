@@ -261,7 +261,7 @@ void UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame(
         denyRequest(userMediaID, UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::InvalidConstraint, invalidConstraint);
     };
 
-    auto validHandler = [this, userMediaID, frameID, userMediaDocumentOriginIdentifier, topLevelDocumentOriginIdentifier](const Vector<String>&& audioDeviceUIDs, const Vector<String>&& videoDeviceUIDs) {
+    auto validHandler = [this, userMediaID, frameID, userMediaDocumentOriginIdentifier, topLevelDocumentOriginIdentifier](const Vector<String>& audioDeviceUIDs, const Vector<String>&  videoDeviceUIDs) {
         if (!m_page.isValid())
             return;
 
@@ -343,8 +343,6 @@ void UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame(
 #if ENABLE(MEDIA_STREAM)
 void UserMediaPermissionRequestManagerProxy::getUserMediaPermissionInfo(uint64_t userMediaID, uint64_t frameID, UserMediaPermissionCheckProxy::CompletionHandler&& handler, String&& userMediaDocumentOriginIdentifier, String&& topLevelDocumentOriginIdentifier)
 {
-    UserMediaPermissionCheckProxy::CompletionHandler failureHandler = handler;
-
     auto request = UserMediaPermissionCheckProxy::create(userMediaID, frameID, WTFMove(handler), String(userMediaDocumentOriginIdentifier), String(topLevelDocumentOriginIdentifier));
     m_pendingDeviceRequests.add(userMediaID, request.ptr());
 
@@ -352,7 +350,7 @@ void UserMediaPermissionRequestManagerProxy::getUserMediaPermissionInfo(uint64_t
     auto topLevelOrigin = API::SecurityOrigin::create(SecurityOriginData::fromDatabaseIdentifier(topLevelDocumentOriginIdentifier).value_or(SecurityOriginData()).securityOrigin());
 
     if (!m_page.uiClient().checkUserMediaPermissionForOrigin(m_page, *m_page.process().webFrame(frameID), *userMediaOrigin.get(), *topLevelOrigin.get(), request.get()))
-        failureHandler(userMediaID, String(), false);
+        request->failed();
 }
 #endif
 

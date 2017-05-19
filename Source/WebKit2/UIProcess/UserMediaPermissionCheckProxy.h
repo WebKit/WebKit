@@ -27,6 +27,7 @@
 #define UserMediaPermissionCheckProxy_h
 
 #include "APIObject.h"
+#include <wtf/Function.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -40,7 +41,7 @@ class UserMediaPermissionRequestManagerProxy;
 class UserMediaPermissionCheckProxy : public API::ObjectImpl<API::Object::Type::UserMediaPermissionCheck> {
 public:
 
-    using CompletionHandler = std::function<void(uint64_t, String&&, bool allowed)>;
+    using CompletionHandler = WTF::Function<void(uint64_t, String&&, bool allowed)>;
 
     static Ref<UserMediaPermissionCheckProxy> create(uint64_t userMediaID, uint64_t frameID, CompletionHandler&& handler, String&& userMediaDocumentOriginIdentifier, String&& topLevelDocumentOriginIdentifier)
     {
@@ -49,6 +50,7 @@ public:
 
     void setUserMediaAccessInfo(String&&, bool allowed);
     void invalidate();
+    void failed();
 
     uint64_t frameID() const { return m_frameID; }
     WebCore::SecurityOrigin* userMediaDocumentSecurityOrigin() { return &m_userMediaDocumentSecurityOrigin.get(); }

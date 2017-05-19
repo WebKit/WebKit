@@ -1,3 +1,17 @@
+2017-05-18  Youenn Fablet  <youenn@apple.com>
+
+        Media Capture: MobileSafari crashes when trying to invoke gUM.
+        rdar://problem/32261722.
+
+        Reduced version of r216952.
+
+        * UIProcess/UserMediaPermissionCheckProxy.cpp:
+        (WebKit::UserMediaPermissionCheckProxy::failed): Added to not require copy the completionHandler.
+        * UIProcess/UserMediaPermissionCheckProxy.h: Moving completion handle to WTF::Function to better handle moves.
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame):
+        (WebKit::UserMediaPermissionRequestManagerProxy::getUserMediaPermissionInfo): Using failed() to not copy the handler.
+
 2017-05-17  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r216898. rdar://problem/32231650

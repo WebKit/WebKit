@@ -52,6 +52,15 @@ void UserMediaPermissionCheckProxy::setUserMediaAccessInfo(String&& mediaDeviceI
     m_completionHandler = nullptr;
 }
 
+void UserMediaPermissionCheckProxy::failed()
+{
+    if (!m_completionHandler)
+        return;
+
+    m_completionHandler(m_userMediaID, { }, false);
+    m_completionHandler = nullptr;
+}
+
 void UserMediaPermissionCheckProxy::invalidate()
 {
     m_completionHandler = nullptr;

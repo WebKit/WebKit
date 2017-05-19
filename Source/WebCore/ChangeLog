@@ -1,3 +1,12 @@
+2017-05-18  Youenn Fablet  <youenn@apple.com>
+
+        Media Capture: MobileSafari crashes when trying to invoke gUM.
+        rdar://problem/32261722.
+
+        Reduced version of r216952.
+
+        * platform/mediastream/RealtimeMediaSourceCenter.h: Using more WTF::Function.
+
 2017-05-18  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r217074. rdar://problem/32282945
