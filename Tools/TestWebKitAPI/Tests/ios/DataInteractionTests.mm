@@ -283,7 +283,8 @@ TEST(DataInteractionTests, LinkToInput)
 
     __block bool doneLoadingURL = false;
     UIItemProvider *sourceItemProvider = [dataInteractionSimulator sourceItemProviders].firstObject;
-    [sourceItemProvider loadObjectOfClass:[NSURL class] completionHandler:^(NSURL *url, NSError *error) {
+    [sourceItemProvider loadObjectOfClass:[NSURL class] completionHandler:^(id object, NSError *error) {
+        NSURL *url = object;
         EXPECT_WK_STREQ("Hello world", url._title.UTF8String ?: "");
         doneLoadingURL = true;
     }];

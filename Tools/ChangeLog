@@ -1,3 +1,10 @@
+2017-05-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, fix the build on the latest internal SDK.
+
+        * TestWebKitAPI/Tests/ios/DataInteractionTests.mm:
+        (TestWebKitAPI::TEST):
+
 2017-05-19  Filip Pizlo  <fpizlo@apple.com>
 
         arrayProtoPrivateFuncConcatMemcpy needs to be down with firstArray being undecided
