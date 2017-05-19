@@ -64,16 +64,9 @@ RealtimeMediaSourceCenter& RealtimeMediaSourceCenter::platformCenter()
 
 RealtimeMediaSourceCenterMac::RealtimeMediaSourceCenterMac()
 {
-    m_supportedConstraints.setSupportsWidth(true);
-    m_supportedConstraints.setSupportsHeight(true);
-    m_supportedConstraints.setSupportsAspectRatio(true);
-    m_supportedConstraints.setSupportsFrameRate(true);
-    m_supportedConstraints.setSupportsFacingMode(true);
-    m_supportedConstraints.setSupportsVolume(true);
     m_supportedConstraints.setSupportsSampleRate(false);
     m_supportedConstraints.setSupportsSampleSize(false);
     m_supportedConstraints.setSupportsEchoCancellation(false);
-    m_supportedConstraints.setSupportsDeviceId(true);
     m_supportedConstraints.setSupportsGroupId(true);
 }
 
@@ -81,51 +74,6 @@ RealtimeMediaSourceCenterMac::~RealtimeMediaSourceCenterMac()
 {
 }
 
-void RealtimeMediaSourceCenterMac::createMediaStream(NewMediaStreamHandler&& completionHandler, const String& audioDeviceID, const String& videoDeviceID, const MediaConstraints* audioConstraints, const MediaConstraints* videoConstraints)
-{
-    Vector<Ref<RealtimeMediaSource>> audioSources;
-    Vector<Ref<RealtimeMediaSource>> videoSources;
-    String invalidConstraint;
-
-    if (!audioDeviceID.isEmpty()) {
-        auto audioSource = audioFactory().createAudioCaptureSource(audioDeviceID, audioConstraints);
-        if (audioSource)
-            audioSources.append(audioSource.source());
-        else {
-#if !LOG_DISABLED
-            if (!audioSource.errorMessage.isEmpty())
-                LOG(Media, "RealtimeMediaSourceCenterMac::createMediaStream(%p), audio constraints failed to apply: %s", this, audioSource.errorMessage.utf8().data());
-#endif
-            completionHandler(nullptr);
-            return;
-        }
-    }
-    if (!videoDeviceID.isEmpty()) {
-        auto videoSource = videoFactory().createVideoCaptureSource(videoDeviceID, videoConstraints);
-        if (videoSource)
-            videoSources.append(videoSource.source());
-        else {
-#if !LOG_DISABLED
-            if (!videoSource.errorMessage.isEmpty())
-                LOG(Media, "RealtimeMediaSourceCenterMac::createMediaStream(%p), video constraints failed to apply: %s", this, videoSource.errorMessage.utf8().data());
-#endif
-            completionHandler(nullptr);
-            return;
-        }
-    }
-
-    completionHandler(MediaStreamPrivate::create(audioSources, videoSources));
-}
-
-Vector<CaptureDevice> RealtimeMediaSourceCenterMac::getMediaStreamDevices()
-{
-    Vector<CaptureDevice> result;
-
-    result.appendVector(audioCaptureDeviceManager().getAudioSourcesInfo());
-    result.appendVector(videoCaptureDeviceManager().getVideoSourcesInfo());
-
-    return result;
-}
 
 RealtimeMediaSource::AudioCaptureFactory& RealtimeMediaSourceCenterMac::defaultAudioFactory()
 {

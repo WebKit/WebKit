@@ -29,6 +29,8 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "CaptureDeviceManager.h"
+#include "MockRealtimeAudioSource.h"
+#include "MockRealtimeVideoSource.h"
 #include "RealtimeMediaSourceCenter.h"
 
 namespace WebCore {
@@ -38,28 +40,25 @@ public:
     WEBCORE_EXPORT static void setMockRealtimeMediaSourceCenterEnabled(bool);
 
 private:
+    MockRealtimeMediaSourceCenter() = default;
     friend NeverDestroyed<MockRealtimeMediaSourceCenter>;
-    MockRealtimeMediaSourceCenter();
 
-    Vector<CaptureDevice> getMediaStreamDevices() final;
-    void createMediaStream(NewMediaStreamHandler&&, const String& audioDeviceID, const String& videoDeviceID, const MediaConstraints* audioConstraints, const MediaConstraints* videoConstraints) final;
+    RealtimeMediaSource::AudioCaptureFactory& defaultAudioFactory() final { return MockRealtimeAudioSource::factory(); }
+    RealtimeMediaSource::VideoCaptureFactory& defaultVideoFactory() final { return MockRealtimeVideoSource::factory(); }
+    CaptureDeviceManager& defaultAudioCaptureDeviceManager() final { return m_defaultAudioCaptureDeviceManager; }
+    CaptureDeviceManager& defaultVideoCaptureDeviceManager() final { return m_defaultVideoCaptureDeviceManager; }
 
-    RealtimeMediaSource::AudioCaptureFactory& defaultAudioFactory() final;
-    RealtimeMediaSource::VideoCaptureFactory& defaultVideoFactory() final;
-    CaptureDeviceManager& defaultAudioCaptureDeviceManager() final;
-    CaptureDeviceManager& defaultVideoCaptureDeviceManager() final;
-
-    ExceptionOr<void> setDeviceEnabled(const String& persistentID, bool) final;
-
-    class MockCaptureDeviceManager final : public CaptureDeviceManager {
+    class MockAudioCaptureDeviceManager final : public CaptureDeviceManager {
     private:
-        Vector<CaptureDevice>& captureDevices() final { return m_devices; }
-
-        Vector<CaptureDevice> m_devices;
+        Vector<CaptureDevice>& captureDevices() final { return MockRealtimeMediaSource::audioDevices(); }
+    };
+    class MockVideoCaptureDeviceManager final : public CaptureDeviceManager {
+    private:
+        Vector<CaptureDevice>& captureDevices() final { return MockRealtimeMediaSource::videoDevices(); }
     };
 
-    MockCaptureDeviceManager m_defaultAudioCaptureDeviceManager;
-    MockCaptureDeviceManager m_defaultVideoCaptureDeviceManager;
+    MockAudioCaptureDeviceManager m_defaultAudioCaptureDeviceManager;
+    MockVideoCaptureDeviceManager m_defaultVideoCaptureDeviceManager;
 };
 
 }

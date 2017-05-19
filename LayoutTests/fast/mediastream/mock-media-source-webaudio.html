@@ -64,8 +64,8 @@
                 test.done();
             };
 
-            var timeout = setTimeout(done, 3000);
-            var interval = setInterval(analyse, 1000 / 30);
+            var timeout = setTimeout(() => { done(); }, 3000);
+            var interval = setInterval(() => { analyse(); }, 1000 / 30);
             analyse();
         });
     }, "Basic getUserMedia to Web Audio test");

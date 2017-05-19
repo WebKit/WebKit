@@ -50,9 +50,6 @@ private:
     RealtimeMediaSourceCenterMac();
     ~RealtimeMediaSourceCenterMac();
 
-    void createMediaStream(NewMediaStreamHandler&&, const String& audioDeviceID, const String& videoDeviceID, const MediaConstraints* audioConstraints, const MediaConstraints* videoConstraints) final;
-    Vector<CaptureDevice> getMediaStreamDevices() final;
-
     RealtimeMediaSource::AudioCaptureFactory& defaultAudioFactory() final;
     RealtimeMediaSource::VideoCaptureFactory& defaultVideoFactory() final;
 
