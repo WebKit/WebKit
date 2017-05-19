@@ -51,6 +51,7 @@ V8_PATH = PERFORMANCETESTS_PATH + "SunSpider" + "tests" + "v8-v6"
 MICROBENCHMARKS_PATH = OPENSOURCE_PATH + "JSTests" + "microbenchmarks"
 OCTANE_WRAPPER_PATH = PERFORMANCETESTS_PATH + "Octane" + "wrappers"
 JSBENCH_PATH = PERFORMANCETESTS_PATH + "JSBench"
+SIXSPEED_PATH = PERFORMANCETESTS_PATH + "SixSpeed" + "tests"
 SIXSPEED_WRAPPER_PATH = PERFORMANCETESTS_PATH + "SixSpeed" + "wrappers"
 
 TEMP_PATH = OPENSOURCE_PATH + "BenchmarkTemp"
@@ -1650,13 +1651,14 @@ end
 class SixSpeedBenchmark
   include Benchmark
 
-  def initialize(name, iterations)
+  def initialize(name, path, iterations)
     @name = name
+    @path = path
     @iterations = iterations
   end
 
   def emitRunCode(plan)
-    emitBenchRunCode(fullname, plan, MultiFileTimedBenchmarkParameters.new([ensureFile("SixSpeed-#{@name}-wrapper", "#{SIXSPEED_WRAPPER_PATH}/wrapper.js"), ensureFile("SixSpeed-#{@name}", "#{SIXSPEED_PATH}/#{@name}")], simpleCommand("jscRun(#{@iterations});")))
+    emitBenchRunCode(fullname, plan, MultiFileTimedBenchmarkParameters.new([ensureFile("SixSpeed-#{@name}-wrapper", "#{SIXSPEED_WRAPPER_PATH}/wrapper.js"), ensureFile("SixSpeed-#{@name}", "#{SIXSPEED_PATH}/#{@path}")], simpleCommand("jscRun(#{@iterations});")))
   end
 end
 
@@ -2880,7 +2882,6 @@ begin
   BROWSERMARK_DOM_PATH = pathname_if_exist(config["BrowserMarkDOMPath"])
   ASMBENCH_PATH = pathname_if_exist(config["AsmBenchPath"])
   COMPRESSIONBENCH_PATH = pathname_if_exist(config["CompressionBenchPath"])
-  SIXSPEED_PATH = pathname_if_exist(config["SixSpeedPath"])
   DSPJS_FILTRR_PATH = pathname_if_exist(config["DSPJSFiltrrPath"])
   DSPJS_ROUTE9_PATH = pathname_if_exist(config["DSPJSRoute9Path"])
   DSPJS_STARFIELD_PATH = pathname_if_exist(config["DSPJSStarfieldPath"])
@@ -3052,39 +3053,37 @@ begin
   }
 
   SIXSPEED = BenchmarkSuite.new("SixSpeed", :geometricMean, 0)
-  if SIXSPEED_PATH
-    [[ "template_string", 200000000 ],
-     [ "defaults", 100000000 ],
-     [ "map-set-lookup", 200000 ],
-     [ "spread", 1000000 ],
-     [ "object-assign", 600000 ],
-     [ "spread-literal", 1000000 ],
-     [ "map-set", 10000 ],
-     [ "destructuring-simple", 20000000 ],
-     [ "super", 3000000 ],
-     [ "for-of-object", 1000000 ],
-     [ "rest", 500000 ],
-     [ "regex-u", 1000000 ],
-     [ "arrow", 20000000 ],
-     [ "bindings-compound", 20000000 ],
-     [ "classes", 10000000 ],
-     [ "template_string_tag", 2000000 ],
-     [ "map-string", 30000000 ],
-     [ "arrow-declare", 30000000 ],
-     [ "spread-generator", 1000000 ],
-     [ "object-literal-ext", 1000000 ],
-     [ "generator", 3000000 ],
-     [ "arrow-args", 20000000 ],
-     [ "for-of-array", 5000000 ],
-     [ "bindings", 20000000 ],
-     [ "destructuring", 20000000 ],
-     [ "map-set-object", 5000 ],
-    ].each {
-      | name, iterations |
-      SIXSPEED.add SixSpeedBenchmark.new("#{name}.es5", iterations)
-      SIXSPEED.add SixSpeedBenchmark.new("#{name}.es6", iterations)
-    }
-  end
+  [[ "template_string", 200000000 ],
+   [ "defaults", 100000000 ],
+   [ "map-set-lookup", 200000 ],
+   [ "spread", 1000000 ],
+   [ "object-assign", 600000 ],
+   [ "spread-literal", 1000000 ],
+   [ "map-set", 10000 ],
+   [ "destructuring-simple", 20000000 ],
+   [ "super", 3000000 ],
+   [ "for-of-object", 1000000 ],
+   [ "rest", 500000 ],
+   [ "regex-u", 1000000 ],
+   [ "arrow", 20000000 ],
+   [ "bindings-compound", 20000000 ],
+   [ "classes", 10000000 ],
+   [ "template_string_tag", 2000000 ],
+   [ "map-string", 30000000 ],
+   [ "arrow-declare", 30000000 ],
+   [ "spread-generator", 1000000 ],
+   [ "object-literal-ext", 1000000 ],
+   [ "generator", 3000000 ],
+   [ "arrow-args", 20000000 ],
+   [ "for-of-array", 5000000 ],
+   [ "bindings", 20000000 ],
+   [ "destructuring", 20000000 ],
+   [ "map-set-object", 5000 ],
+  ].each {
+    | name, iterations |
+    SIXSPEED.add SixSpeedBenchmark.new("#{name}.es5", "#{name}/#{name}.es5", iterations)
+    SIXSPEED.add SixSpeedBenchmark.new("#{name}.es6", "#{name}/#{name}.es6", iterations)
+  }
 
   DSPJS = BenchmarkSuite.new("DSP", :geometricMean, 0)
   DSPJS.add DSPJSFiltrrBenchmark.new("filtrr-posterize-tint", "e2")

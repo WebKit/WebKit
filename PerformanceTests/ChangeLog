@@ -1,3 +1,77 @@
+2017-05-19  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Add SixSpeed benchmark to PerformanceTests
+        https://bugs.webkit.org/show_bug.cgi?id=172326
+
+        Reviewed by Sam Weinig.
+
+        This patch imports SixSpeed benchmark into WebKit tree.
+        It is a collection of ES6 microbenchmarks. While the scripts are very tiny,
+        it sometimes hits our missing care for optimization. So including it is useful.
+
+        The benchmark is released under MIT license.
+
+        * SixSpeed/LICENSE: Added.
+        * SixSpeed/REVISION: Added.
+        * SixSpeed/ReadMe.md: Added.
+        * SixSpeed/tests/.eslintrc: Added.
+        * SixSpeed/tests/arrow-args/arrow-args.es5: Added.
+        * SixSpeed/tests/arrow-args/arrow-args.es6: Added.
+        * SixSpeed/tests/arrow-declare/arrow-declare.es5: Added.
+        * SixSpeed/tests/arrow-declare/arrow-declare.es6: Added.
+        * SixSpeed/tests/arrow/arrow.es5: Added.
+        * SixSpeed/tests/arrow/arrow.es6: Added.
+        * SixSpeed/tests/bindings-compound/bindings-compound.es5: Added.
+        * SixSpeed/tests/bindings-compound/bindings-compound.es6: Added.
+        * SixSpeed/tests/bindings/bindings.es5: Added.
+        * SixSpeed/tests/bindings/bindings.es6: Added.
+        * SixSpeed/tests/classes/classes.es5: Added.
+        * SixSpeed/tests/classes/classes.es6: Added.
+        * SixSpeed/tests/defaults/defaults.es5: Added.
+        * SixSpeed/tests/defaults/defaults.es6: Added.
+        * SixSpeed/tests/destructuring-simple/destructuring-simple.es5: Added.
+        * SixSpeed/tests/destructuring-simple/destructuring-simple.es6: Added.
+        * SixSpeed/tests/destructuring/destructuring.es5: Added.
+        * SixSpeed/tests/destructuring/destructuring.es6: Added.
+        * SixSpeed/tests/for-of-array/for-of-array.es5: Added.
+        * SixSpeed/tests/for-of-array/for-of-array.es6: Added.
+        * SixSpeed/tests/for-of-object/for-of-object.es5: Added.
+        * SixSpeed/tests/for-of-object/for-of-object.es6: Added.
+        * SixSpeed/tests/generator/generator.es5: Added.
+        * SixSpeed/tests/generator/generator.es6: Added.
+        * SixSpeed/tests/map-set-lookup/map-set-lookup.es5: Added.
+        * SixSpeed/tests/map-set-lookup/map-set-lookup.es6: Added.
+        * SixSpeed/tests/map-set-object/map-set-object.es5: Added.
+        * SixSpeed/tests/map-set-object/map-set-object.es6: Added.
+        * SixSpeed/tests/map-set/map-set.es5: Added.
+        * SixSpeed/tests/map-set/map-set.es6: Added.
+        * SixSpeed/tests/map-string/map-string.es5: Added.
+        * SixSpeed/tests/map-string/map-string.es6: Added.
+        * SixSpeed/tests/new-target/defaults.es5: Added.
+        * SixSpeed/tests/new-target/defaults.es6: Added.
+        * SixSpeed/tests/object-assign/object-assign.es5: Added.
+        * SixSpeed/tests/object-assign/object-assign.es6: Added.
+        * SixSpeed/tests/object-literal-ext/object-literal-ext.es5: Added.
+        * SixSpeed/tests/object-literal-ext/object-literal-ext.es6: Added.
+        * SixSpeed/tests/regex-u/regex-u.es5: Added.
+        * SixSpeed/tests/regex-u/regex-u.es6: Added.
+        * SixSpeed/tests/rest/rest.es5: Added.
+        * SixSpeed/tests/rest/rest.es6: Added.
+        * SixSpeed/tests/spread-generator/spread-generator.es5: Added.
+        * SixSpeed/tests/spread-generator/spread-generator.es6: Added.
+        * SixSpeed/tests/spread-literal/spread-literal.es5: Added.
+        * SixSpeed/tests/spread-literal/spread-literal.es6: Added.
+        * SixSpeed/tests/spread/spread.es5: Added.
+        * SixSpeed/tests/spread/spread.es6: Added.
+        * SixSpeed/tests/super/super.es5: Added.
+        * SixSpeed/tests/super/super.es6: Added.
+        * SixSpeed/tests/template_string/template_string.es5: Added.
+        * SixSpeed/tests/template_string/template_string.es6: Added.
+        * SixSpeed/tests/template_string_tag/template_string_tag.es5: Added.
+        * SixSpeed/tests/template_string_tag/template_string_tag.es6: Added.
+        * SixSpeed/wrappers/wrapper.js:
+        (test):
+
 2017-05-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         Speedometer 2.0: Angular v1 test only deletes the second item

@@ -6,6 +6,7 @@ var targetFunction;
 function test(fn)
 {
     targetFunction = fn;
+    noInline(targetFunction);
 }
 
 function jscRun(iterations)
