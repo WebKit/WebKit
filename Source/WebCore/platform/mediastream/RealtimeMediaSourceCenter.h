@@ -58,9 +58,9 @@ public:
     WEBCORE_EXPORT static RealtimeMediaSourceCenter& singleton();
     static void setSharedStreamCenterOverride(RealtimeMediaSourceCenter*);
 
-    using ValidConstraintsHandler = WTF::Function<void(Vector<String>&& audioDeviceUIDs, Vector<String>&& videoDeviceUIDs)>;
+    using ValidConstraintsHandler = WTF::Function<void(Vector<String>&& audioDeviceUIDs, Vector<String>&& videoDeviceUIDs, String&&)>;
     using InvalidConstraintsHandler = WTF::Function<void(const String& invalidConstraint)>;
-    virtual void validateRequestConstraints(ValidConstraintsHandler&&, InvalidConstraintsHandler&&, const MediaConstraints& audioConstraints, const MediaConstraints& videoConstraints);
+    virtual void validateRequestConstraints(ValidConstraintsHandler&&, InvalidConstraintsHandler&&, const MediaConstraints& audioConstraints, const MediaConstraints& videoConstraints, String&&);
 
     using NewMediaStreamHandler = std::function<void(RefPtr<MediaStreamPrivate>&&)>;
     virtual void createMediaStream(NewMediaStreamHandler&&, const String& audioDeviceID, const String& videoDeviceID, const MediaConstraints* audioConstraints, const MediaConstraints* videoConstraints) = 0;

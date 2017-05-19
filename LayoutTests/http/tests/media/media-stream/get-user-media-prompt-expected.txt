@@ -17,9 +17,9 @@ PASS numberOfTimesGetUserMediaHasBeenCalled() is 2
 PASS stream.getAudioTracks().length is 0
 PASS stream.getVideoTracks().length is 1
 
-** Request a stream with video and audio, the user should be not prompted **
+** Request a stream with video and audio, the user should be prompted again **
 PASS navigator.mediaDevices.getUserMedia({audio:true, video:true}).then(gotStream3); did not throw exception.
-PASS numberOfTimesGetUserMediaHasBeenCalled() is 2
+PASS numberOfTimesGetUserMediaHasBeenCalled() is 3
 PASS stream.getAudioTracks().length is 1
 PASS stream.getVideoTracks().length is 1
 

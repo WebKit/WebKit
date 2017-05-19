@@ -27,11 +27,6 @@
                 finishJSTest();
             }
 
-            function validStream(e) {
-                testPassed("Stream generated because page has already authenticated.");
-                finishJSTest();
-            }
-
             function error1(e) {
                 testFailed(`Error callback called, error = ${e}`);
                 finishJSTest();
@@ -42,12 +37,7 @@
                 errorArg = e;
                 shouldBeEqualToString("errorArg.name", "Error");
 
-                // We tell LayoutTestRunner to deny user media requests but expect the gUM call to succeed
-                // as it should not see the request because the current browsing context has already
-                // successfully created a stream for the mock audio device.
-                setUserMediaPermission(false);
-                debug("");
-                shouldNotThrow("navigator.mediaDevices.getUserMedia({audio:true}).then(validStream).catch(error1);");
+                finishJSTest();
             }
 
             function errorWithConstraints1() {

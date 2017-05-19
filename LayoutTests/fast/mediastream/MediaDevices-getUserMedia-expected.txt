@@ -49,9 +49,6 @@ PASS Error callback called.
 PASS navigator.mediaDevices.getUserMedia({audio:false, video:videoConstraints}).then(invalidGotStream).catch(errorWithConstraints2) did not throw exception.
 PASS Error callback called.
 PASS errorArg.name is "Error"
-
-PASS navigator.mediaDevices.getUserMedia({audio:true}).then(validStream).catch(error1); did not throw exception.
-PASS Stream generated because page has already authenticated.
 PASS successfullyParsed is true
 
 TEST COMPLETE

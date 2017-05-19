@@ -33,9 +33,9 @@ class UserMediaPermissionRequestManagerProxy;
 
 class UserMediaPermissionRequestProxy : public API::ObjectImpl<API::Object::Type::UserMediaPermissionRequest> {
 public:
-    static Ref<UserMediaPermissionRequestProxy> create(UserMediaPermissionRequestManagerProxy& manager, uint64_t userMediaID, uint64_t frameID, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, Vector<String>&& videoDeviceUIDs, Vector<String>&& audioDeviceUIDs)
+    static Ref<UserMediaPermissionRequestProxy> create(UserMediaPermissionRequestManagerProxy& manager, uint64_t userMediaID, uint64_t frameID, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, Vector<String>&& videoDeviceUIDs, Vector<String>&& audioDeviceUIDs, String&& deviceIDHashSalt)
     {
-        return adoptRef(*new UserMediaPermissionRequestProxy(manager, userMediaID, frameID, WTFMove(userMediaDocumentOrigin), WTFMove(topLevelDocumentOrigin), WTFMove(videoDeviceUIDs), WTFMove(audioDeviceUIDs)));
+        return adoptRef(*new UserMediaPermissionRequestProxy(manager, userMediaID, frameID, WTFMove(userMediaDocumentOrigin), WTFMove(topLevelDocumentOrigin), WTFMove(videoDeviceUIDs), WTFMove(audioDeviceUIDs), WTFMove(deviceIDHashSalt)));
     }
 
     void allow(const String& videoDeviceUID, const String& audioDeviceUID);
@@ -55,8 +55,10 @@ public:
     WebCore::SecurityOrigin& userMediaDocumentSecurityOrigin() { return m_userMediaDocumentSecurityOrigin.get(); }
     WebCore::SecurityOrigin& topLevelDocumentSecurityOrigin() { return m_topLevelDocumentSecurityOrigin.get(); }
 
+    const String& deviceIdentifierHashSalt() const { return m_deviceIdentifierHashSalt; }
+
 private:
-    UserMediaPermissionRequestProxy(UserMediaPermissionRequestManagerProxy&, uint64_t userMediaID, uint64_t frameID, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, Vector<String>&& videoDeviceUIDs, Vector<String>&& audioDeviceUIDs);
+    UserMediaPermissionRequestProxy(UserMediaPermissionRequestManagerProxy&, uint64_t userMediaID, uint64_t frameID, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, Vector<String>&& videoDeviceUIDs, Vector<String>&& audioDeviceUIDs, String&&);
 
     UserMediaPermissionRequestManagerProxy* m_manager;
     uint64_t m_userMediaID;
@@ -65,6 +67,7 @@ private:
     Ref<WebCore::SecurityOrigin> m_topLevelDocumentSecurityOrigin;
     Vector<String> m_videoDeviceUIDs;
     Vector<String> m_audioDeviceUIDs;
+    String m_deviceIdentifierHashSalt;
 };
 
 } // namespace WebKit

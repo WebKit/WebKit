@@ -15,7 +15,7 @@
             function gotStream3(s)
             {
                 stream = s;
-                shouldBe("numberOfTimesGetUserMediaHasBeenCalled()", "2");
+                shouldBe("numberOfTimesGetUserMediaHasBeenCalled()", "3");
                 shouldBe("stream.getAudioTracks().length", "1");
                 shouldBe("stream.getVideoTracks().length", "1");
 
@@ -30,7 +30,7 @@
                 shouldBe("stream.getAudioTracks().length", "0");
                 shouldBe("stream.getVideoTracks().length", "1");
 
-                debug("<br>** Request a stream with video and audio, the user should be not prompted **");
+                debug("<br>** Request a stream with video and audio, the user should be prompted again **");
                 shouldNotThrow("navigator.mediaDevices.getUserMedia({audio:true, video:true}).then(gotStream3);");
             }
 

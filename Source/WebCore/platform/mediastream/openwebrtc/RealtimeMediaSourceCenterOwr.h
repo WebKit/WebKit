@@ -53,7 +53,7 @@ public:
     RealtimeMediaSourceCenterOwr();
     ~RealtimeMediaSourceCenterOwr();
 
-    void validateRequestConstraints(ValidConstraintsHandler&& validHandler, InvalidConstraintsHandler&& invalidHandler, const MediaConstraints& audioConstraints, const MediaConstraints& videoConstraints) final;
+    void validateRequestConstraints(ValidConstraintsHandler&& validHandler, InvalidConstraintsHandler&& invalidHandler, const MediaConstraints& audioConstraints, const MediaConstraints& videoConstraints, String&&) final;
 
     void createMediaStream(NewMediaStreamHandler&&, const String& audioDeviceID, const String& videoDeviceID, const MediaConstraints* videoConstraints, const MediaConstraints* audioConstraints) final;
 

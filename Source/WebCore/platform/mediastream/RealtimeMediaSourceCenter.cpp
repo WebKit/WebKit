@@ -206,7 +206,7 @@ void RealtimeMediaSourceCenter::captureDevicesChanged()
         it.value();
 }
 
-void RealtimeMediaSourceCenter::validateRequestConstraints(ValidConstraintsHandler&& validHandler, InvalidConstraintsHandler&& invalidHandler, const MediaConstraints& audioConstraints, const MediaConstraints& videoConstraints)
+void RealtimeMediaSourceCenter::validateRequestConstraints(ValidConstraintsHandler&& validHandler, InvalidConstraintsHandler&& invalidHandler, const MediaConstraints& audioConstraints, const MediaConstraints& videoConstraints, String&& deviceIdentifierHashSalt)
 {
     struct DeviceInfo {
         unsigned fitnessScore;
@@ -265,7 +265,7 @@ void RealtimeMediaSourceCenter::validateRequestConstraints(ValidConstraintsHandl
             videoSourceIds.uncheckedAppend(WTFMove(info.id));
     }
 
-    validHandler(WTFMove(audioSourceIds), WTFMove(videoSourceIds));
+    validHandler(WTFMove(audioSourceIds), WTFMove(videoSourceIds), WTFMove(deviceIdentifierHashSalt));
 }
 
 void RealtimeMediaSourceCenter::setVisibility(bool isVisible)

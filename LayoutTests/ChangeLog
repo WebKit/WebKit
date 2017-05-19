@@ -1,3 +1,15 @@
+2017-05-18  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] do not cache gUM permissions
+        https://bugs.webkit.org/show_bug.cgi?id=172245
+
+        Reviewed by Youenn Fablet.
+
+        * fast/mediastream/MediaDevices-getUserMedia-expected.txt: Updated.
+        * fast/mediastream/MediaDevices-getUserMedia.html:
+        * http/tests/media/media-stream/get-user-media-prompt-expected.txt:
+        * http/tests/media/media-stream/get-user-media-prompt.html:
+
 2017-05-18  Zalan Bujtas  <zalan@apple.com>
 
         Redundant ellipsis box triggers ASSERT_WITH_SECURITY_IMPLICATION in InlineBox::parent().
