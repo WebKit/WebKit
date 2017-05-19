@@ -6128,8 +6128,6 @@
 		CD5596921475B678001D0BD0 /* AudioFileReaderIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = CD5596901475B678001D0BD0 /* AudioFileReaderIOS.h */; };
 		CD5896E11CD2B15100B3BCC8 /* WebPlaybackControlsManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD5896DF1CD2B15100B3BCC8 /* WebPlaybackControlsManager.mm */; };
 		CD5896E21CD2B15100B3BCC8 /* WebPlaybackControlsManager.h in Headers */ = {isa = PBXBuildFile; fileRef = CD5896E01CD2B15100B3BCC8 /* WebPlaybackControlsManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		CD5D27771E8318E000D80A3D /* WebCoreDecompressionSession.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD5D27751E8318E000D80A3D /* WebCoreDecompressionSession.mm */; };
-		CD5D27781E8318E000D80A3D /* WebCoreDecompressionSession.h in Headers */ = {isa = PBXBuildFile; fileRef = CD5D27761E8318E000D80A3D /* WebCoreDecompressionSession.h */; };
 		CD5E5B5F1A15CE54000C609E /* PageConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = CD5E5B5E1A15CE54000C609E /* PageConfiguration.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CD5E5B611A15F156000C609E /* PageConfiguration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD5E5B601A15F156000C609E /* PageConfiguration.cpp */; };
 		CD60C0C6193E87C7003C656B /* MediaTimeQTKit.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD60C0C4193E87C7003C656B /* MediaTimeQTKit.mm */; };
@@ -6231,8 +6229,6 @@
 		CDC8B5AA18047FF10016E685 /* SourceBufferPrivateAVFObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDC8B5A818047FF10016E685 /* SourceBufferPrivateAVFObjC.mm */; };
 		CDC8B5AB18047FF10016E685 /* SourceBufferPrivateAVFObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = CDC8B5A918047FF10016E685 /* SourceBufferPrivateAVFObjC.h */; };
 		CDC8B5AD1804AE5D0016E685 /* SourceBufferPrivateClient.h in Headers */ = {isa = PBXBuildFile; fileRef = CDC8B5AC1804AE5D0016E685 /* SourceBufferPrivateClient.h */; };
-		CDC939A71E9BDFB100BB768D /* VideoToolboxSoftLink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDC939A51E9BDFB100BB768D /* VideoToolboxSoftLink.cpp */; };
-		CDC939A81E9BDFB100BB768D /* VideoToolboxSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = CDC939A61E9BDFB100BB768D /* VideoToolboxSoftLink.h */; };
 		CDC979F41C498C0900DB50D4 /* WebCoreNSErrorExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDC979F21C498C0900DB50D4 /* WebCoreNSErrorExtras.mm */; };
 		CDC979F51C498C0900DB50D4 /* WebCoreNSErrorExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = CDC979F31C498C0900DB50D4 /* WebCoreNSErrorExtras.h */; };
 		CDCA98EB18B2C8EB00C12FF9 /* LegacyCDMPrivateMediaPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDCA98EA18B2C8EB00C12FF9 /* LegacyCDMPrivateMediaPlayer.cpp */; };
@@ -14625,8 +14621,6 @@
 		CD5596901475B678001D0BD0 /* AudioFileReaderIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioFileReaderIOS.h; sourceTree = "<group>"; };
 		CD5896DF1CD2B15100B3BCC8 /* WebPlaybackControlsManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPlaybackControlsManager.mm; sourceTree = "<group>"; };
 		CD5896E01CD2B15100B3BCC8 /* WebPlaybackControlsManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPlaybackControlsManager.h; sourceTree = "<group>"; };
-		CD5D27751E8318E000D80A3D /* WebCoreDecompressionSession.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreDecompressionSession.mm; sourceTree = "<group>"; };
-		CD5D27761E8318E000D80A3D /* WebCoreDecompressionSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreDecompressionSession.h; sourceTree = "<group>"; };
 		CD5E5B5E1A15CE54000C609E /* PageConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageConfiguration.h; sourceTree = "<group>"; };
 		CD5E5B601A15F156000C609E /* PageConfiguration.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageConfiguration.cpp; sourceTree = "<group>"; };
 		CD60C0C4193E87C7003C656B /* MediaTimeQTKit.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MediaTimeQTKit.mm; sourceTree = "<group>"; };
@@ -14747,8 +14741,6 @@
 		CDC8B5A818047FF10016E685 /* SourceBufferPrivateAVFObjC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SourceBufferPrivateAVFObjC.mm; sourceTree = "<group>"; };
 		CDC8B5A918047FF10016E685 /* SourceBufferPrivateAVFObjC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SourceBufferPrivateAVFObjC.h; sourceTree = "<group>"; };
 		CDC8B5AC1804AE5D0016E685 /* SourceBufferPrivateClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SourceBufferPrivateClient.h; sourceTree = "<group>"; };
-		CDC939A51E9BDFB100BB768D /* VideoToolboxSoftLink.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = VideoToolboxSoftLink.cpp; sourceTree = "<group>"; };
-		CDC939A61E9BDFB100BB768D /* VideoToolboxSoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VideoToolboxSoftLink.h; sourceTree = "<group>"; };
 		CDC979F21C498C0900DB50D4 /* WebCoreNSErrorExtras.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreNSErrorExtras.mm; sourceTree = "<group>"; };
 		CDC979F31C498C0900DB50D4 /* WebCoreNSErrorExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreNSErrorExtras.h; sourceTree = "<group>"; };
 		CDCA98E918B2C8D000C12FF9 /* LegacyCDMPrivateMediaPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LegacyCDMPrivateMediaPlayer.h; sourceTree = "<group>"; };
@@ -21129,8 +21121,6 @@
 				52D5A1A41C57488900DE34A3 /* WebVideoFullscreenModel.h */,
 				52D5A1A51C57488900DE34A3 /* WebVideoFullscreenModelVideoElement.h */,
 				52D5A1A61C57488900DE34A3 /* WebVideoFullscreenModelVideoElement.mm */,
-				CDC939A51E9BDFB100BB768D /* VideoToolboxSoftLink.cpp */,
-				CDC939A61E9BDFB100BB768D /* VideoToolboxSoftLink.h */,
 			);
 			path = cocoa;
 			sourceTree = "<group>";
@@ -23372,8 +23362,6 @@
 				2D3EF4451917915C00034184 /* WebActionDisablingCALayerDelegate.mm */,
 				2D3EF4461917915C00034184 /* WebCoreCALayerExtras.h */,
 				2D3EF4471917915C00034184 /* WebCoreCALayerExtras.mm */,
-				CD5D27751E8318E000D80A3D /* WebCoreDecompressionSession.mm */,
-				CD5D27761E8318E000D80A3D /* WebCoreDecompressionSession.h */,
 				316BDB8A1E6E153000DE0D5A /* WebGPULayer.h */,
 				316BDB891E6E153000DE0D5A /* WebGPULayer.mm */,
 			);
@@ -27085,7 +27073,6 @@
 				E4AE7C1A17D232350009FB31 /* ElementAncestorIterator.h in Headers */,
 				E440AA961C68420800A265CC /* ElementAndTextDescendantIterator.h in Headers */,
 				E46A2B1E17CA76B1000DBCD8 /* ElementChildIterator.h in Headers */,
-				CD5D27781E8318E000D80A3D /* WebCoreDecompressionSession.h in Headers */,
 				B5B7A17117C10AC000E4AA0A /* ElementData.h in Headers */,
 				93D437A11D57B3F400AB85EA /* ElementDescendantIterator.h in Headers */,
 				E4AE7C1617D1BB950009FB31 /* ElementIterator.h in Headers */,
@@ -28580,7 +28567,6 @@
 				517139061BF64DEC000D5F01 /* MemoryObjectStoreCursor.h in Headers */,
 				413E00791DB0E4F2002341D2 /* MemoryRelease.h in Headers */,
 				93309DFA099E64920056E581 /* MergeIdenticalElementsCommand.h in Headers */,
-				CDC939A81E9BDFB100BB768D /* VideoToolboxSoftLink.h in Headers */,
 				E1ADECCE0E76AD8B004A1A5E /* MessageChannel.h in Headers */,
 				75793E840D0CE0B3007FC0AC /* MessageEvent.h in Headers */,
 				E1ADECBF0E76ACF1004A1A5E /* MessagePort.h in Headers */,
@@ -30967,7 +30953,6 @@
 				FD31602D12B0267600C1A359 /* DelayNode.cpp in Sources */,
 				FD31603012B0267600C1A359 /* DelayProcessor.cpp in Sources */,
 				93309DDE099E64920056E581 /* DeleteFromTextNodeCommand.cpp in Sources */,
-				CDC939A71E9BDFB100BB768D /* VideoToolboxSoftLink.cpp in Sources */,
 				93309DE0099E64920056E581 /* DeleteSelectionCommand.cpp in Sources */,
 				9479493C1E045CF300018D85 /* DeprecatedCSSOMPrimitiveValue.cpp in Sources */,
 				947949241E0308A400018D85 /* DeprecatedCSSOMValue.cpp in Sources */,
@@ -33401,7 +33386,6 @@
 				7C39C3761DDBB90D00FEFB29 /* SVGStringListValues.cpp in Sources */,
 				B2227AB70D00BF220071B782 /* SVGStyleElement.cpp in Sources */,
 				B2227ABA0D00BF220071B782 /* SVGSVGElement.cpp in Sources */,
-				CD5D27771E8318E000D80A3D /* WebCoreDecompressionSession.mm in Sources */,
 				B2227ABD0D00BF220071B782 /* SVGSwitchElement.cpp in Sources */,
 				B2227AC00D00BF220071B782 /* SVGSymbolElement.cpp in Sources */,
 				B2227AC40D00BF220071B782 /* SVGTests.cpp in Sources */,

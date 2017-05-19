@@ -29,10 +29,8 @@
 #if ENABLE(MEDIA_SOURCE) && USE(AVFOUNDATION)
 
 #import "AVFoundationSPI.h"
-#import "AudioTrackPrivateMediaSourceAVFObjC.h"
 #import "CDMSessionAVContentKeySession.h"
 #import "CDMSessionMediaSourceAVFObjC.h"
-#import "InbandTextTrackPrivateAVFObjC.h"
 #import "Logging.h"
 #import "MediaDescription.h"
 #import "MediaPlayerPrivateMediaSourceAVFObjC.h"
@@ -44,19 +42,20 @@
 #import "SoftLinking.h"
 #import "SourceBufferPrivateClient.h"
 #import "TimeRanges.h"
+#import "AudioTrackPrivateMediaSourceAVFObjC.h"
 #import "VideoTrackPrivateMediaSourceAVFObjC.h"
-#import "WebCoreDecompressionSession.h"
+#import "InbandTextTrackPrivateAVFObjC.h"
 #import <AVFoundation/AVAssetTrack.h>
 #import <QuartzCore/CALayer.h>
-#import <map>
 #import <objc/runtime.h>
 #import <runtime/TypedArrayInlines.h>
+#import <wtf/text/AtomicString.h>
+#import <wtf/text/CString.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/HashCountedSet.h>
 #import <wtf/MainThread.h>
 #import <wtf/WeakPtr.h>
-#import <wtf/text/AtomicString.h>
-#import <wtf/text/CString.h>
+#import <map>
 
 #pragma mark - Soft Linking
 
@@ -652,11 +651,14 @@ void SourceBufferPrivateAVFObjC::destroyParser()
 
 void SourceBufferPrivateAVFObjC::destroyRenderers()
 {
-    if (m_displayLayer)
-        setVideoLayer(nullptr);
-
-    if (m_decompressionSession)
-        setDecompressionSession(nullptr);
+    if (m_displayLayer) {
+        if (m_mediaSource)
+            m_mediaSource->player()->removeDisplayLayer(m_displayLayer.get());
+        [m_displayLayer flush];
+        [m_displayLayer stopRequestingMediaData];
+        [m_errorListener stopObservingLayer:m_displayLayer.get()];
+        m_displayLayer = nullptr;
+    }
 
     for (auto& renderer : m_audioRenderers.values()) {
         if (m_mediaSource)
@@ -694,11 +696,6 @@ bool SourceBufferPrivateAVFObjC::hasVideo() const
     return m_client && m_client->sourceBufferPrivateHasVideo();
 }
 
-bool SourceBufferPrivateAVFObjC::hasSelectedVideo() const
-{
-    return m_enabledVideoTrackID != -1;
-}
-
 bool SourceBufferPrivateAVFObjC::hasAudio() const
 {
     return m_client && m_client->sourceBufferPrivateHasAudio();
@@ -710,21 +707,24 @@ void SourceBufferPrivateAVFObjC::trackDidChangeEnabled(VideoTrackPrivateMediaSou
     if (!track->selected() && m_enabledVideoTrackID == trackID) {
         m_enabledVideoTrackID = -1;
         [m_parser setShouldProvideMediaData:NO forTrackID:trackID];
-
-        if (m_decompressionSession)
-            m_decompressionSession->stopRequestingMediaData();
+        if (m_mediaSource)
+            m_mediaSource->player()->removeDisplayLayer(m_displayLayer.get());
     } else if (track->selected()) {
         m_enabledVideoTrackID = trackID;
         [m_parser setShouldProvideMediaData:YES forTrackID:trackID];
-
-        if (m_decompressionSession) {
-            m_decompressionSession->requestMediaDataWhenReady([this, trackID] {
+        if (!m_displayLayer) {
+            m_displayLayer = adoptNS([allocAVSampleBufferDisplayLayerInstance() init]);
+#ifndef NDEBUG
+            [m_displayLayer setName:@"SourceBufferPrivateAVFObjC AVSampleBufferDisplayLayer"];
+#endif
+            [m_displayLayer requestMediaDataWhenReadyOnQueue:dispatch_get_main_queue() usingBlock:^{
                 didBecomeReadyForMoreSamples(trackID);
-            });
+            }];
+            [m_errorListener beginObservingLayer:m_displayLayer.get()];
         }
+        if (m_mediaSource)
+            m_mediaSource->player()->addDisplayLayer(m_displayLayer.get());
     }
-
-    m_mediaSource->hasSelectedVideoChanged(*this);
 }
 
 void SourceBufferPrivateAVFObjC::trackDidChangeEnabled(AudioTrackPrivateMediaSourceAVFObjC* track)
@@ -793,14 +793,6 @@ void SourceBufferPrivateAVFObjC::flush()
     if (m_displayLayer)
         [m_displayLayer flushAndRemoveImage];
 
-    if (m_decompressionSession) {
-        m_decompressionSession->flush();
-        m_decompressionSession->notifyWhenHasAvailableVideoFrame([weakThis = createWeakPtr()] {
-            if (weakThis && weakThis->m_mediaSource)
-                weakThis->m_mediaSource->player()->setHasAvailableVideoFrame(true);
-        });
-    }
-
     for (auto& renderer : m_audioRenderers.values())
         [renderer flush];
 }
@@ -860,16 +852,9 @@ void SourceBufferPrivateAVFObjC::flush(const AtomicString& trackIDString)
     int trackID = trackIDString.toInt();
     LOG(MediaSource, "SourceBufferPrivateAVFObjC::flush(%p) - trackId: %d", this, trackID);
 
-    if (trackID == m_enabledVideoTrackID) {
+    if (trackID == m_enabledVideoTrackID)
         flush(m_displayLayer.get());
-        if (m_decompressionSession) {
-            m_decompressionSession->flush();
-            m_decompressionSession->notifyWhenHasAvailableVideoFrame([weakThis = createWeakPtr()] {
-                if (weakThis && weakThis->m_mediaSource)
-                    weakThis->m_mediaSource->player()->setHasAvailableVideoFrame(true);
-            });
-        }
-    } else if (m_audioRenderers.contains(trackID))
+    else if (m_audioRenderers.contains(trackID))
         flush(m_audioRenderers.get(trackID).get());
 }
 
@@ -919,14 +904,9 @@ void SourceBufferPrivateAVFObjC::enqueueSample(Ref<MediaSample>&& sample, const 
             }
         }
 
-        if (m_decompressionSession)
-            m_decompressionSession->enqueueSample(platformSample.sample.cmSampleBuffer);
-
-        if (m_displayLayer) {
-            [m_displayLayer enqueueSampleBuffer:platformSample.sample.cmSampleBuffer];
-            if (m_mediaSource)
-                m_mediaSource->player()->setHasAvailableVideoFrame(!sample->isNonDisplaying());
-        }
+        [m_displayLayer enqueueSampleBuffer:platformSample.sample.cmSampleBuffer];
+        if (m_mediaSource)
+            m_mediaSource->player()->setHasAvailableVideoFrame(!sample->isNonDisplaying());
     } else {
         auto renderer = m_audioRenderers.get(trackID);
         [renderer enqueueSampleBuffer:platformSample.sample.cmSampleBuffer];
@@ -939,9 +919,8 @@ bool SourceBufferPrivateAVFObjC::isReadyForMoreSamples(const AtomicString& track
 {
     int trackID = trackIDString.toInt();
     if (trackID == m_enabledVideoTrackID)
-        return !m_decompressionSession || m_decompressionSession->isReadyForMoreMediaData();
-
-    if (m_audioRenderers.contains(trackID))
+        return [m_displayLayer isReadyForMoreMediaData];
+    else if (m_audioRenderers.contains(trackID))
         return [m_audioRenderers.get(trackID) isReadyForMoreMediaData];
 
     return false;
@@ -982,12 +961,9 @@ FloatSize SourceBufferPrivateAVFObjC::naturalSize()
 
 void SourceBufferPrivateAVFObjC::didBecomeReadyForMoreSamples(int trackID)
 {
-    LOG(Media, "SourceBufferPrivateAVFObjC::didBecomeReadyForMoreSamples(%p) - track(%d)", this, trackID);
-    if (trackID == m_enabledVideoTrackID) {
-        if (m_decompressionSession)
-            m_decompressionSession->stopRequestingMediaData();
+    if (trackID == m_enabledVideoTrackID)
         [m_displayLayer stopRequestingMediaData];
-    } else if (m_audioRenderers.contains(trackID))
+    else if (m_audioRenderers.contains(trackID))
         [m_audioRenderers.get(trackID) stopRequestingMediaData];
     else {
         ASSERT_NOT_REACHED();
@@ -1002,74 +978,14 @@ void SourceBufferPrivateAVFObjC::notifyClientWhenReadyForMoreSamples(const Atomi
 {
     int trackID = trackIDString.toInt();
     if (trackID == m_enabledVideoTrackID) {
-        if (m_decompressionSession) {
-            m_decompressionSession->requestMediaDataWhenReady([this, trackID] {
-                didBecomeReadyForMoreSamples(trackID);
-            });
-        }
-        if (m_displayLayer) {
-            [m_displayLayer requestMediaDataWhenReadyOnQueue:dispatch_get_main_queue() usingBlock:^ {
-                didBecomeReadyForMoreSamples(trackID);
-            }];
-        }
+        [m_displayLayer requestMediaDataWhenReadyOnQueue:dispatch_get_main_queue() usingBlock:^{
+            didBecomeReadyForMoreSamples(trackID);
+        }];
     } else if (m_audioRenderers.contains(trackID)) {
-        [m_audioRenderers.get(trackID) requestMediaDataWhenReadyOnQueue:dispatch_get_main_queue() usingBlock:^ {
+        [m_audioRenderers.get(trackID) requestMediaDataWhenReadyOnQueue:dispatch_get_main_queue() usingBlock:^{
             didBecomeReadyForMoreSamples(trackID);
         }];
     }
-}
-
-void SourceBufferPrivateAVFObjC::setVideoLayer(AVSampleBufferDisplayLayer* layer)
-{
-    if (layer == m_displayLayer)
-        return;
-
-    ASSERT(!layer || !m_decompressionSession || hasSelectedVideo());
-
-    if (m_displayLayer) {
-        [m_displayLayer flush];
-        [m_displayLayer stopRequestingMediaData];
-        [m_errorListener stopObservingLayer:m_displayLayer.get()];
-    }
-
-    m_displayLayer = layer;
-
-    if (m_displayLayer) {
-        [m_displayLayer requestMediaDataWhenReadyOnQueue:dispatch_get_main_queue() usingBlock:^ {
-            didBecomeReadyForMoreSamples(m_enabledVideoTrackID);
-        }];
-        [m_errorListener beginObservingLayer:m_displayLayer.get()];
-        if (m_client)
-            m_client->sourceBufferPrivateReenqueSamples(AtomicString::number(m_enabledVideoTrackID));
-    }
-}
-
-void SourceBufferPrivateAVFObjC::setDecompressionSession(WebCoreDecompressionSession* decompressionSession)
-{
-    if (m_decompressionSession == decompressionSession)
-        return;
-
-    if (m_decompressionSession) {
-        m_decompressionSession->stopRequestingMediaData();
-        m_decompressionSession->invalidate();
-    }
-
-    m_decompressionSession = decompressionSession;
-
-    if (!m_decompressionSession)
-        return;
-
-    WeakPtr<SourceBufferPrivateAVFObjC> weakThis = createWeakPtr();
-    m_decompressionSession->requestMediaDataWhenReady([weakThis] {
-        if (weakThis)
-            weakThis->didBecomeReadyForMoreSamples(weakThis->m_enabledVideoTrackID);
-    });
-    m_decompressionSession->notifyWhenHasAvailableVideoFrame([weakThis = createWeakPtr()] {
-        if (weakThis && weakThis->m_mediaSource)
-            weakThis->m_mediaSource->player()->setHasAvailableVideoFrame(true);
-    });
-    if (m_client)
-        m_client->sourceBufferPrivateReenqueSamples(AtomicString::number(m_enabledVideoTrackID));
 }
 
 }
