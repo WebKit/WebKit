@@ -53,21 +53,25 @@
     function textChangeOperation() {
         // this should trigger a live region change for a text change.
         document.getElementById("innerlive").innerText = "changed text";
+        document.body.offsetHeight;
     }
 
     function newElementOperation() {
         // this should trigger a live region change for a new element.
         document.getElementById("liveregion1").innerHTML += "new text element";
+        document.body.offsetHeight;
     }
 
     function alternativeChangeOperation() {
         // this should also trigger a live region change because its a text alternative change. 
         document.getElementById("image").setAttribute('alt', "new image text");
+        document.body.offsetHeight;
     }
 
     function removeElementOperation() {
         // this should trigger a live region change for a removed element.
         document.getElementById("liveregion2").removeChild(document.getElementById("image")); 
+        document.body.offsetHeight;
     }
 
     function finishTest() {
