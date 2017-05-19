@@ -399,7 +399,7 @@ bool HTMLVideoElement::webkitSupportsPresentationMode(VideoPresentationMode mode
             return false;
 #endif
 
-        return mediaSession().allowsPictureInPicture(*this) && supportsFullscreen(HTMLMediaElementEnums::VideoFullscreenModePictureInPicture);
+        return supportsFullscreen(HTMLMediaElementEnums::VideoFullscreenModePictureInPicture);
     }
 
     if (mode == VideoPresentationMode::Inline)

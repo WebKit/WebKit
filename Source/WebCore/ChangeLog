@@ -1,5 +1,22 @@
 2017-05-19  Jeremy Jones  <jeremyj@apple.com>
 
+        HTMLVideoElement::webkitSupportsPresentationMode allowsPictureInPicture() check is redundant.
+        https://bugs.webkit.org/show_bug.cgi?id=172330
+        rdar://problem/32285443
+
+        Reviewed by Eric Carlson.
+
+        No new tests because no behavior change.
+
+        This removes a redundant call to allowsPictureInPicture() to make it
+        more clear that webkitSupportsPresentationMode gives the same result as 
+        webkitSupportsFullscreen(pipMode)
+
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::webkitSupportsPresentationMode):
+
+2017-05-19  Jeremy Jones  <jeremyj@apple.com>
+
         [WebRTC] Remove PiP support for video elements that are showing camera capture
         https://bugs.webkit.org/show_bug.cgi?id=172336
 
