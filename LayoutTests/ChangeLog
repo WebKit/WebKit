@@ -1,3 +1,18 @@
+2017-05-19  Chris Dumez  <cdumez@apple.com>
+
+        URLSearchParams / Headers objects @@iterator is not as per Web IDL spec
+        https://bugs.webkit.org/show_bug.cgi?id=172218
+
+        Reviewed by Youenn Fablet.
+
+        * fast/text/font-face-set-javascript-expected.txt:
+        * fast/text/font-face-set-javascript.html:
+        Fix FontFaceSet test which wrong expected FontFaceSet's entries() to return
+        a pair iterator. It does not make sense to return a pair iterator here given
+        that this is not a key-value structure. FontFaceSet should not even have an
+        entries() method but this is an artifact of us using iterable<FontFace> instead of
+        setlike<FontFace> until we support setlike<> (Bug 159140).
+
 2017-05-19  Zalan Bujtas  <zalan@apple.com>
 
         Redundant ellipsis box triggers ASSERT_WITH_SECURITY_IMPLICATION in InlineBox::parent().

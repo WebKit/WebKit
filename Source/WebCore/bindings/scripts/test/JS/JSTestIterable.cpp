@@ -27,6 +27,7 @@
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMIterator.h"
 #include "JSDOMWrapperCache.h"
+#include <builtins/BuiltinNames.h>
 #include <runtime/FunctionPrototype.h>
 #include <wtf/GetPtr.h>
 
@@ -106,7 +107,7 @@ void JSTestIterablePrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     reifyStaticProperties(vm, JSTestIterablePrototypeTableValues, *this);
-    putDirect(vm, vm.propertyNames->iteratorSymbol, JSFunction::create(vm, globalObject(), 0, ASCIILiteral("[Symbol.Iterator]"), jsTestIterablePrototypeFunctionSymbolIterator), DontEnum);
+    putDirect(vm, vm.propertyNames->iteratorSymbol, getDirect(vm, vm.propertyNames->builtinNames().entriesPublicName()), DontEnum);
 }
 
 const ClassInfo JSTestIterable::s_info = { "TestIterable", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestIterable) };
@@ -188,19 +189,9 @@ const JSC::ClassInfo TestIterableIterator::s_info = { "TestIterable Iterator", &
 template<>
 const JSC::ClassInfo TestIterableIteratorPrototype::s_info = { "TestIterable Iterator", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(TestIterableIteratorPrototype) };
 
-static inline EncodedJSValue jsTestIterablePrototypeFunctionSymbolIteratorCaller(ExecState*, JSTestIterable* thisObject, JSC::ThrowScope&)
-{
-    return JSValue::encode(iteratorCreate<TestIterableIterator>(*thisObject, IterationKind::Value));
-}
-
-JSC::EncodedJSValue JSC_HOST_CALL jsTestIterablePrototypeFunctionSymbolIterator(JSC::ExecState* state)
-{
-    return BindingCaller<JSTestIterable>::callOperation<jsTestIterablePrototypeFunctionSymbolIteratorCaller>(state, "[Symbol.Iterator]");
-}
-
 static inline EncodedJSValue jsTestIterablePrototypeFunctionEntriesCaller(ExecState*, JSTestIterable* thisObject, JSC::ThrowScope&)
 {
-    return JSValue::encode(iteratorCreate<TestIterableIterator>(*thisObject, IterationKind::KeyValue));
+    return JSValue::encode(iteratorCreate<TestIterableIterator>(*thisObject, IterationKind::Value));
 }
 
 JSC::EncodedJSValue JSC_HOST_CALL jsTestIterablePrototypeFunctionEntries(JSC::ExecState* state)

@@ -10,9 +10,7 @@ PASS x = { [Symbol.iterator]: null }; new FontFaceSet(x) threw exception TypeErr
 PASS x = { [Symbol.iterator]: function*() { yield fontFace1; throw {name: 'SomeError', toString: () => 'Some error'}; } }; new FontFaceSet(x) threw exception Some error.
 PASS fontFaceSet.status is "loaded"
 PASS item.done is false
-PASS item.value.length is 2
-PASS item.value[0] is fontFace1
-PASS item.value[1] is fontFace1
+PASS item.value is fontFace1
 PASS item.done is true
 PASS item.value is undefined
 PASS item.done is false

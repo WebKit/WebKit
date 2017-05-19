@@ -3465,13 +3465,12 @@ sub GenerateImplementation
         }
 
         if (InterfaceNeedsIterator($interface)) {
+            AddToImplIncludes("<builtins/BuiltinNames.h>");
             if (IsKeyValueIterableInterface($interface)) {
-                my $functionName = GetFunctionName($interface, $className, @{$interface->iterable->functions}[0]);
-                push(@implContent, "    putDirect(vm, vm.propertyNames->iteratorSymbol, JSFunction::create(vm, globalObject(), 0, ASCIILiteral(\"[Symbol.Iterator]\"), $functionName), DontEnum);\n");
+                push(@implContent, "    putDirect(vm, vm.propertyNames->iteratorSymbol, getDirect(vm, vm.propertyNames->builtinNames().entriesPublicName()), DontEnum);\n");
             } elsif ($interface->mapLike) {
                 push(@implContent, "    putDirect(vm, vm.propertyNames->iteratorSymbol, getDirect(vm, vm.propertyNames->builtinNames().valuesPublicName()), DontEnum);\n");
             } else {
-                AddToImplIncludes("<builtins/BuiltinNames.h>");
                 push(@implContent, "    putDirect(vm, vm.propertyNames->iteratorSymbol, globalObject()->arrayPrototype()->getDirect(vm, vm.propertyNames->builtinNames().valuesPrivateName()), DontEnum);\n");
             }
         }
@@ -5423,6 +5422,8 @@ END
         my $propertyName = $function->name;
         my $functionName = GetFunctionName($interface, $className, $function);
 
+        next if $propertyName eq "[Symbol.Iterator]";
+
         if ($propertyName eq "forEach") {
             push(@implContent,  <<END);
 static inline EncodedJSValue ${functionName}Caller(ExecState* state, JS$interfaceName* thisObject, JSC::ThrowScope& throwScope)
@@ -5435,7 +5436,7 @@ END
             my $iterationKind = "KeyValue";
             $iterationKind = "Key" if $propertyName eq "keys";
             $iterationKind = "Value" if $propertyName eq "values";
-            $iterationKind = "Value" if $propertyName eq "[Symbol.Iterator]" and not $interface->iterable->isKeyValue;
+            $iterationKind = "Value" if $propertyName eq "entries" and not $interface->iterable->isKeyValue;
 
             push(@implContent,  <<END);
 static inline EncodedJSValue ${functionName}Caller(ExecState*, JS$interfaceName* thisObject, JSC::ThrowScope&)

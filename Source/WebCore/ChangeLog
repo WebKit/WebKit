@@ -1,3 +1,42 @@
+2017-05-19  Chris Dumez  <cdumez@apple.com>
+
+        URLSearchParams / Headers objects @@iterator is not as per Web IDL spec
+        https://bugs.webkit.org/show_bug.cgi?id=172218
+
+        Reviewed by Youenn Fablet.
+
+        Both URLSearchParams and Headers interfaces are iterable as per their
+        respective specification, and they both have a pair iterator:
+        - https://url.spec.whatwg.org/#interface-urlsearchparams
+        - https://fetch.spec.whatwg.org/#headers-class
+
+        As per the WebIDL specification for 'entries'[1], "If the interface has a pair
+        iterator, then the Function object is the value of the @@iterator property",
+        the value of @@iterator being defined at [2]. In WebKit, we were using
+        different values/functions for 'entries' and @@iterator, although those
+        functions were doing the same thing (and the right thing).
+
+        Also, as per [2], the name of the @@iterator function should be "entries",
+        which I also implemented in this patch. Previously, we were using
+        "[Symbol.Iterator]" as function name.
+
+        [1] https://heycam.github.io/webidl/#es-iterable-entries
+        [2] https://heycam.github.io/webidl/#es-iterator
+
+        No new tests, rebaselined existing tests.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        (GenerateImplementationIterableFunctions):
+        * bindings/scripts/test/JS/JSMapLike.cpp:
+        * bindings/scripts/test/JS/JSReadOnlyMapLike.cpp:
+        * bindings/scripts/test/JS/JSTestIterable.cpp:
+        (WebCore::JSTestIterablePrototype::finishCreation):
+        (WebCore::jsTestIterablePrototypeFunctionEntriesCaller):
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        (WebCore::JSTestNodePrototype::finishCreation):
+        (WebCore::jsTestNodePrototypeFunctionEntriesCaller):
+
 2017-05-19  Zalan Bujtas  <zalan@apple.com>
 
         Redundant ellipsis box triggers ASSERT_WITH_SECURITY_IMPLICATION in InlineBox::parent().

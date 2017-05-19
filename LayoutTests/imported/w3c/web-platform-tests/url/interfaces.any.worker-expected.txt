@@ -43,12 +43,8 @@ PASS URLSearchParams interface: operation getAll(USVString)
 PASS URLSearchParams interface: operation has(USVString) 
 PASS URLSearchParams interface: operation set(USVString,USVString) 
 PASS URLSearchParams interface: operation sort() 
-FAIL Testing Symbol.iterator property of iterable interface URLSearchParams assert_equals: @@iterator function does not have the right name expected "entries" but got "[Symbol.Iterator]"
-FAIL Testing pair iterable interface URLSearchParams assert_equals: entries method is not the same as @@iterator expected function "function entries() {
-    [native code]
-}" but got function "function [Symbol.Iterator]() {
-    [native code]
-}"
+PASS Testing Symbol.iterator property of iterable interface URLSearchParams 
+PASS Testing pair iterable interface URLSearchParams 
 PASS URLSearchParams interface: stringifier 
 PASS URLSearchParams interface: operation entries() 
 PASS URLSearchParams interface: operation keys() 

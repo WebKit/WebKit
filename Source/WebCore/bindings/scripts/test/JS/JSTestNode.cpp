@@ -30,6 +30,7 @@
 #include "JSDOMPromiseDeferred.h"
 #include "JSDOMWrapperCache.h"
 #include "RuntimeEnabledFeatures.h"
+#include <builtins/BuiltinNames.h>
 #include <runtime/Error.h>
 #include <runtime/ObjectConstructor.h>
 #include <wtf/GetPtr.h>
@@ -147,7 +148,7 @@ void JSTestNodePrototype::finishCreation(VM& vm)
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         JSObject::deleteProperty(this, globalObject()->globalExec(), propertyName);
     }
-    putDirect(vm, vm.propertyNames->iteratorSymbol, JSFunction::create(vm, globalObject(), 0, ASCIILiteral("[Symbol.Iterator]"), jsTestNodePrototypeFunctionSymbolIterator), DontEnum);
+    putDirect(vm, vm.propertyNames->iteratorSymbol, getDirect(vm, vm.propertyNames->builtinNames().entriesPublicName()), DontEnum);
 }
 
 const ClassInfo JSTestNode::s_info = { "TestNode", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNode) };
@@ -287,19 +288,9 @@ const JSC::ClassInfo TestNodeIterator::s_info = { "TestNode Iterator", &Base::s_
 template<>
 const JSC::ClassInfo TestNodeIteratorPrototype::s_info = { "TestNode Iterator", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(TestNodeIteratorPrototype) };
 
-static inline EncodedJSValue jsTestNodePrototypeFunctionSymbolIteratorCaller(ExecState*, JSTestNode* thisObject, JSC::ThrowScope&)
-{
-    return JSValue::encode(iteratorCreate<TestNodeIterator>(*thisObject, IterationKind::Value));
-}
-
-JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionSymbolIterator(JSC::ExecState* state)
-{
-    return BindingCaller<JSTestNode>::callOperation<jsTestNodePrototypeFunctionSymbolIteratorCaller>(state, "[Symbol.Iterator]");
-}
-
 static inline EncodedJSValue jsTestNodePrototypeFunctionEntriesCaller(ExecState*, JSTestNode* thisObject, JSC::ThrowScope&)
 {
-    return JSValue::encode(iteratorCreate<TestNodeIterator>(*thisObject, IterationKind::KeyValue));
+    return JSValue::encode(iteratorCreate<TestNodeIterator>(*thisObject, IterationKind::Value));
 }
 
 JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionEntries(JSC::ExecState* state)

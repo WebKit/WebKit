@@ -27,12 +27,12 @@ shouldThrowErrorName("x = { [Symbol.iterator]: function*() { yield fontFace1; th
 var fontFaceSet = new FontFaceSet([]);
 shouldBeEqualToString("fontFaceSet.status", "loaded");
 fontFaceSet.add(fontFace1);
+
+// FIXME: FontFaceSet should use setlike<FontFace>, not iterable<FontFace> and should not have an entries() method.
 var iterator = fontFaceSet.entries();
 var item = iterator.next();
 shouldBeFalse("item.done");
-shouldBe("item.value.length", "2");
-shouldBe("item.value[0]", "fontFace1");
-shouldBe("item.value[1]", "fontFace1");
+shouldBe("item.value", "fontFace1");
 item = iterator.next();
 shouldBeTrue("item.done");
 shouldBe("item.value", "undefined");
