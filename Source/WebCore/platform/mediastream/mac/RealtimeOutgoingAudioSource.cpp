@@ -93,8 +93,10 @@ void RealtimeOutgoingAudioSource::audioSamplesAvailable(const MediaTime&, const 
         status = m_sampleConverter->setOutputFormat(m_outputStreamDescription.streamDescription());
         ASSERT(!status);
     }
-
-    m_sampleConverter->pushSamples(MediaTime(m_writeCount, LibWebRTCAudioFormat::sampleRate), audioData, sampleCount);
+    
+    // If we change the audio track or its sample rate changes, the timestamp based on m_writeCount may be wrong.
+    // FIXME: We should update m_writeCount to be valid according the new sampleRate.
+    m_sampleConverter->pushSamples(MediaTime(m_writeCount, static_cast<uint32_t>(m_inputStreamDescription.sampleRate())), audioData, sampleCount);
     m_writeCount += sampleCount;
 
     LibWebRTCProvider::callOnWebRTCSignalingThread([protectedThis = makeRef(*this)] {
