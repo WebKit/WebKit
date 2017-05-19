@@ -379,6 +379,7 @@ public:
     bool isUsingHighPerformanceWebGL() const { return m_isUsingHighPerformanceWebGL; }
 
     void didExceedInactiveMemoryLimitWhileActive();
+    void didExceedBackgroundCPULimitWhileInForeground();
 
     void closePage(bool stopResponsivenessTimer);
 
@@ -1706,7 +1707,7 @@ private:
     ProcessThrottler::ForegroundActivityToken m_activityToken;
 #endif
     bool m_initialCapitalizationEnabled;
-    std::optional<double> m_backgroundCPULimit;
+    std::optional<double> m_cpuLimit;
     Ref<WebBackForwardList> m_backForwardList;
         
     bool m_maintainsInactiveSelection;

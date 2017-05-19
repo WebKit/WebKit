@@ -973,7 +973,7 @@ public:
 #endif
 
     WebURLSchemeHandlerProxy* urlSchemeHandlerForScheme(const String&);
-    std::optional<double> backgroundCPULimit() const { return m_backgroundCPULimit; }
+    std::optional<double> cpuLimit() const { return m_cpuLimit; }
 
     static PluginView* pluginViewForFrame(WebCore::Frame*);
 
@@ -1561,7 +1561,7 @@ private:
     WebCore::UserInterfaceLayoutDirection m_userInterfaceLayoutDirection { WebCore::UserInterfaceLayoutDirection::LTR };
 
     const String m_overrideContentSecurityPolicy;
-    const std::optional<double> m_backgroundCPULimit;
+    const std::optional<double> m_cpuLimit;
 
     HashMap<String, std::unique_ptr<WebURLSchemeHandlerProxy>> m_schemeToURLSchemeHandlerProxyMap;
     HashMap<uint64_t, WebURLSchemeHandlerProxy*> m_identifierToURLSchemeHandlerProxyMap;

@@ -1211,24 +1211,33 @@ void WebProcessProxy::didExceedInactiveMemoryLimit()
     requestTermination(ProcessTerminationReason::ExceededMemoryLimit);
 }
 
-void WebProcessProxy::didExceedBackgroundCPULimit()
+void WebProcessProxy::didExceedCPULimit()
 {
     for (auto& page : pages()) {
-        if (page->isViewVisible())
-            return;
-
         if (page->isPlayingAudio()) {
-            RELEASE_LOG(PerformanceLogging, "%p - WebProcessProxy::didExceedBackgroundCPULimit() WebProcess has exceeded the background CPU limit but we are not terminating it because there is audio playing", this);
+            RELEASE_LOG(PerformanceLogging, "%p - WebProcessProxy::didExceedCPULimit() WebProcess has exceeded the background CPU limit but we are not terminating it because there is audio playing", this);
             return;
         }
 
         if (page->hasActiveAudioStream() || page->hasActiveVideoStream()) {
-            RELEASE_LOG(PerformanceLogging, "%p - WebProcessProxy::didExceedBackgroundCPULimit() WebProcess has exceeded the background CPU limit but we are not terminating it because it is capturing audio / video", this);
+            RELEASE_LOG(PerformanceLogging, "%p - WebProcessProxy::didExceedCPULimit() WebProcess has exceeded the background CPU limit but we are not terminating it because it is capturing audio / video", this);
             return;
         }
     }
 
-    RELEASE_LOG_ERROR(PerformanceLogging, "%p - WebProcessProxy::didExceedBackgroundCPULimit() Terminating background WebProcess that has exceeded the background CPU limit", this);
+    bool hasVisiblePage = false;
+    for (auto& page : pages()) {
+        if (page->isViewVisible()) {
+            page->didExceedBackgroundCPULimitWhileInForeground();
+            hasVisiblePage = true;
+        }
+    }
+
+    // We only notify the client that the process exceeded the CPU limit when it is visible, we do not terminate it.
+    if (hasVisiblePage)
+        return;
+
+    RELEASE_LOG_ERROR(PerformanceLogging, "%p - WebProcessProxy::didExceedCPULimit() Terminating background WebProcess that has exceeded the background CPU limit", this);
     logDiagnosticMessageForResourceLimitTermination(DiagnosticLoggingKeys::exceededBackgroundCPULimitKey());
     requestTermination(ProcessTerminationReason::ExceededCPULimit);
 }

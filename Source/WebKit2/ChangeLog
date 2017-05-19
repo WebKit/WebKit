@@ -1,3 +1,53 @@
+2017-05-19  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Notify client when a process exceeds background CPU limit while in the foreground
+        https://bugs.webkit.org/show_bug.cgi?id=172246
+        <rdar://problem/32235411>
+
+        Reviewed by Geoffrey Garen.
+
+        When there is a background CPU limit set by the client, we now monitor the CPU
+        usages of all WebContent processes, not just the non-visible ones. This way, we
+        are now able to notify the client a process has exceeded the background CPU
+        limit while in the foreground, via the UIClient's didExceedBackgroundResourceLimitWhileInForeground
+        function, passing kWKResourceLimitCPU.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/API/APIPageConfiguration.cpp:
+        (API::PageConfiguration::copy):
+        * UIProcess/API/APIPageConfiguration.h:
+        (API::PageConfiguration::cpuLimit):
+        (API::PageConfiguration::setCPULimit):
+        * UIProcess/API/C/WKPageConfigurationRef.cpp:
+        (WKPageConfigurationSetBackgroundCPULimit):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::updateThrottleState):
+        (WebKit::WebPageProxy::creationParameters):
+        (WebKit::WebPageProxy::didExceedInactiveMemoryLimitWhileActive):
+        (WebKit::WebPageProxy::didExceedBackgroundCPULimitWhileInForeground):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didExceedCPULimit):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.messages.in:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_cpuLimit):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::cpuLimit):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::createWebPage):
+        (WebKit::WebProcess::removeWebPage):
+        (WebKit::WebProcess::updateCPULimit):
+        (WebKit::WebProcess::updateCPUMonitorState):
+        (WebKit::WebProcess::pageActivityStateDidChange):
+        * WebProcess/WebProcess.h:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::updateCPULimit):
+        (WebKit::WebProcess::updateCPUMonitorState):
+
 2017-05-19  Jeremy Jones  <jeremyj@apple.com>
 
         Remove defunct WebVideoFullscreenInterface

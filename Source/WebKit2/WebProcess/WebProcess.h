@@ -317,8 +317,9 @@ private:
 
     void logDiagnosticMessageForNetworkProcessCrash();
     bool hasVisibleWebPage() const;
-    void updateBackgroundCPULimit();
-    void updateBackgroundCPUMonitorState();
+    void updateCPULimit();
+    enum class CPUMonitorUpdateReason { LimitHasChanged, VisibilityHasChanged };
+    void updateCPUMonitorState(CPUMonitorUpdateReason);
 
     // ChildProcess
     void initializeProcess(const ChildProcessInitializationParameters&) override;
@@ -420,8 +421,8 @@ private:
     unsigned m_pagesMarkingLayersAsVolatile { 0 };
     bool m_suppressMemoryPressureHandler { false };
 #if PLATFORM(MAC)
-    std::unique_ptr<WebCore::CPUMonitor> m_backgroundCPUMonitor;
-    std::optional<double> m_backgroundCPULimit;
+    std::unique_ptr<WebCore::CPUMonitor> m_cpuMonitor;
+    std::optional<double> m_cpuLimit;
 #endif
 
     HashMap<WebCore::UserGestureToken *, uint64_t> m_userGestureTokens;

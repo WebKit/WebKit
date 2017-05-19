@@ -179,7 +179,7 @@ public:
 
     void processTerminated();
 
-    void didExceedBackgroundCPULimit();
+    void didExceedCPULimit();
     void didExceedActiveMemoryLimit();
     void didExceedInactiveMemoryLimit();
 

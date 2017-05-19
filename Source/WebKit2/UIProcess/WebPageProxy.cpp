@@ -191,7 +191,7 @@
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_process->connection())
 #define MESSAGE_CHECK_URL(url) MESSAGE_CHECK_BASE(m_process->checkURLReceivedFromWebProcess(url), m_process->connection())
 
-#define RELEASE_LOG_IF_ALLOWED(...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), ProcessSuspension, __VA_ARGS__)
+#define RELEASE_LOG_IF_ALLOWED(channel, ...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), channel, __VA_ARGS__)
 
 using namespace WebCore;
 
@@ -355,7 +355,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_alwaysRunsAtForegroundPriority(m_configuration->alwaysRunsAtForegroundPriority())
 #endif
     , m_initialCapitalizationEnabled(m_configuration->initialCapitalizationEnabled())
-    , m_backgroundCPULimit(m_configuration->backgroundCPULimit())
+    , m_cpuLimit(m_configuration->cpuLimit())
     , m_backForwardList(WebBackForwardList::create(*this))
     , m_maintainsInactiveSelection(false)
     , m_waitsForPaintAfterViewDidMoveToWindow(m_configuration->waitsForPaintAfterViewDidMoveToWindow())
@@ -1605,16 +1605,16 @@ void WebPageProxy::updateThrottleState()
     bool isCapturingMedia = m_activityState & ActivityState::IsCapturingMedia;
     if (!isViewVisible() && !m_alwaysRunsAtForegroundPriority && !isCapturingMedia) {
         if (m_activityToken) {
-            RELEASE_LOG_IF_ALLOWED("%p - UIProcess is releasing a foreground assertion because the view is no longer visible", this);
+            RELEASE_LOG_IF_ALLOWED(ProcessSuspension, "%p - UIProcess is releasing a foreground assertion because the view is no longer visible", this);
             m_activityToken = nullptr;
         }
     } else if (!m_activityToken) {
         if (isViewVisible())
-            RELEASE_LOG_IF_ALLOWED("%p - UIProcess is taking a foreground assertion because the view is visible", this);
+            RELEASE_LOG_IF_ALLOWED(ProcessSuspension, "%p - UIProcess is taking a foreground assertion because the view is visible", this);
         else if (isCapturingMedia)
-            RELEASE_LOG_IF_ALLOWED("%p - UIProcess is taking a foreground assertion because media capture is active", this);
+            RELEASE_LOG_IF_ALLOWED(ProcessSuspension, "%p - UIProcess is taking a foreground assertion because media capture is active", this);
         else
-            RELEASE_LOG_IF_ALLOWED("%p - UIProcess is taking a foreground assertion even though the view is not visible because m_alwaysRunsAtForegroundPriority is true", this);
+            RELEASE_LOG_IF_ALLOWED(ProcessSuspension, "%p - UIProcess is taking a foreground assertion even though the view is not visible because m_alwaysRunsAtForegroundPriority is true", this);
         m_activityToken = m_process->throttler().foregroundActivityToken();
     }
 #endif
@@ -5602,7 +5602,7 @@ WebPageCreationParameters WebPageProxy::creationParameters()
     parameters.userInterfaceLayoutDirection = m_pageClient.userInterfaceLayoutDirection();
     parameters.observedLayoutMilestones = m_observedLayoutMilestones;
     parameters.overrideContentSecurityPolicy = m_overrideContentSecurityPolicy;
-    parameters.backgroundCPULimit = m_backgroundCPULimit;
+    parameters.cpuLimit = m_cpuLimit;
 
     for (auto& iterator : m_urlSchemeHandlersByScheme)
         parameters.urlSchemeHandlers.set(iterator.key, iterator.value->identifier());
@@ -6708,7 +6708,14 @@ void WebPageProxy::setShouldPlayToPlaybackTarget(uint64_t contextId, bool should
 
 void WebPageProxy::didExceedInactiveMemoryLimitWhileActive()
 {
+    RELEASE_LOG_IF_ALLOWED(PerformanceLogging, "%p - WebPageProxy::didExceedInactiveMemoryLimitWhileActive()", this);
     m_uiClient->didExceedBackgroundResourceLimitWhileInForeground(*this, kWKResourceLimitMemory);
+}
+
+void WebPageProxy::didExceedBackgroundCPULimitWhileInForeground()
+{
+    RELEASE_LOG_IF_ALLOWED(PerformanceLogging, "%p - WebPageProxy::didExceedBackgroundCPULimitWhileInForeground()", this);
+    m_uiClient->didExceedBackgroundResourceLimitWhileInForeground(*this, kWKResourceLimitCPU);
 }
 
 void WebPageProxy::didChangeBackgroundColor()

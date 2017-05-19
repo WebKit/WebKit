@@ -148,7 +148,7 @@ struct WebPageCreationParameters {
     WebCore::LayoutMilestones observedLayoutMilestones;
 
     String overrideContentSecurityPolicy;
-    std::optional<double> backgroundCPULimit;
+    std::optional<double> cpuLimit;
 
     HashMap<String, uint64_t> urlSchemeHandlers;
 
