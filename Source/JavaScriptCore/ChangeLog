@@ -1,5 +1,17 @@
 2017-05-19  Filip Pizlo  <fpizlo@apple.com>
 
+        Deduplicate some code in arrayProtoPrivateFuncConcatMemcpy
+        https://bugs.webkit.org/show_bug.cgi?id=172382
+
+        Reviewed by Saam Barati.
+        
+        This is just a small clean-up - my last patch here created some unnecessary code duplication.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoPrivateFuncConcatMemcpy):
+
+2017-05-19  Filip Pizlo  <fpizlo@apple.com>
+
         arrayProtoPrivateFuncConcatMemcpy needs to be down with firstArray being undecided
         https://bugs.webkit.org/show_bug.cgi?id=172369
 
