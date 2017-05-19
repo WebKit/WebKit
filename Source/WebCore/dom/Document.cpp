@@ -6388,10 +6388,14 @@ bool Document::processingUserGestureForMedia() const
     if (ScriptController::processingUserGestureForMedia())
         return true;
 
-    if (!settings().mediaUserGestureInheritsFromDocument())
-        return false;
+    if (settings().mediaUserGestureInheritsFromDocument())
+        return topDocument().hasHadUserInteraction();
 
-    return topDocument().hasHadUserInteraction();
+    auto* loader = this->loader();
+    if (loader && loader->allowsAutoplayQuirks())
+        return topDocument().hasHadUserInteraction();
+
+    return false;
 }
 
 void Document::startTrackingStyleRecalcs()

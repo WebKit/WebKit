@@ -1,3 +1,15 @@
+2017-05-19  Matt Rajca  <mrajca@apple.com>
+
+        Inherit media user gestures from the top document when autoplay quirks are allowed.
+        https://bugs.webkit.org/show_bug.cgi?id=172375
+
+        Reviewed by Eric Carlson.
+
+        Added API test.
+
+        * dom/Document.cpp:
+        (WebCore::Document::processingUserGestureForMedia):
+
 2017-05-19  Youenn Fablet  <youenn@apple.com>
 
         Align MockRealtimeMediaSourceCenter with RealtimeMediaSourceCenter
