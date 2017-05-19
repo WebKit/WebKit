@@ -412,8 +412,6 @@ protected:
     bool extracted() const { return m_bitfields.extracted(); }
 
 #if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
-protected:
-    bool m_isEverInChildList { true };
 private:
     static constexpr unsigned deletionSentinelNotDeletedValue = 0xF0F0F0F0U;
     static constexpr unsigned deletionSentinelDeletedValue = 0xF0DEADF0U;
