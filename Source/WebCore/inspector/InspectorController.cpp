@@ -202,8 +202,6 @@ InspectorController::~InspectorController()
 
 void InspectorController::inspectedPageDestroyed()
 {
-    m_injectedScriptManager->disconnect();
-
     // Clean up resources and disconnect local and remote frontends.
     disconnectAllFrontends();
 
@@ -283,8 +281,9 @@ void InspectorController::disconnectFrontend(FrontendChannel* frontendChannel)
         // Notify agents first.
         m_agents.willDestroyFrontendAndBackend(DisconnectReason::InspectorDestroyed);
 
-        // Destroy the inspector overlay's page.
+        // Clean up inspector resources.
         m_overlay->freePage();
+        m_injectedScriptManager->discardInjectedScripts();
 
         // Unplug all instrumentations since they aren't needed now.
         InspectorInstrumentation::unregisterInstrumentingAgents(m_instrumentingAgents.get());
@@ -317,8 +316,9 @@ void InspectorController::disconnectAllFrontends()
     // Notify agents first, since they may need to use InspectorClient.
     m_agents.willDestroyFrontendAndBackend(DisconnectReason::InspectedTargetDestroyed);
 
-    // Destroy the inspector overlay's page.
+    // Clean up inspector resources.
     m_overlay->freePage();
+    m_injectedScriptManager->disconnect();
 
     // Disconnect any remaining remote frontends.
     m_frontendRouter->disconnectAllFrontends();

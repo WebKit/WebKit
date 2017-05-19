@@ -1,3 +1,20 @@
+2017-05-18  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Release InjectedScripts when frontends close
+        https://bugs.webkit.org/show_bug.cgi?id=172313
+
+        Reviewed by Andreas Kling.
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::disconnectFrontend):
+        Release inspector resources together, including discarding injected
+        scripts so that they may be collected.
+
+        (WebCore::InspectorController::inspectedPageDestroyed):
+        (WebCore::InspectorController::disconnectAllFrontends):
+        Move the disconnect call inside of disconnectAllFrontends to establish
+        a pattern of releasing web inspector resources together.
+
 2017-05-18  Simon Fraser  <simon.fraser@apple.com>
 
         Add a newline after the URL in showLayerTree output.
