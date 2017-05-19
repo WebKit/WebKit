@@ -1,3 +1,11 @@
+2017-05-19  Youenn Fablet  <youenn@apple.com>
+
+        Disabling WritableStream and ReadableByteStream.
+
+        * Modules/streams/ReadableStream.js:
+        (initializeReadableStream): Throwing in case the source type is bytes.
+        * Modules/streams/WritableStream.idl: Making it dependent on writable stream API flag.
+
 2017-05-17  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r216726. rdar://problem/31971324
