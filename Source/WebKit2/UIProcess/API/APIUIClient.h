@@ -177,6 +177,8 @@ public:
     virtual void didClickAutoFillButton(WebKit::WebPageProxy&, API::Object*) { }
 
     virtual void imageOrMediaDocumentSizeChanged(const WebCore::IntSize&) { }
+
+    virtual void didExceedBackgroundResourceLimitWhileInForeground(WebKit::WebPageProxy&, WKResourceLimit) { }
 };
 
 } // namespace API

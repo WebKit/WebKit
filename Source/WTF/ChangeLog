@@ -1,3 +1,25 @@
+2017-05-18  Andreas Kling  <akling@apple.com>
+
+        [WK2] Notify WebPageProxy client when an active process goes over the inactive memory limit
+        https://bugs.webkit.org/show_bug.cgi?id=172244
+        <rdar://problem/31800943>
+
+        Reviewed by Geoffrey Garen.
+
+        Add an installable callback to MemoryPressureHandler that gets invoked when an active process
+        exceeds the kill limit for an inactive process.
+
+        This allows a UI client to become aware that backgrounding a tab may cause it to get killed.
+
+        * wtf/MemoryPressureHandler.cpp:
+        (WTF::thresholdForMemoryKillWithProcessState):
+        (WTF::MemoryPressureHandler::thresholdForMemoryKill):
+        (WTF::MemoryPressureHandler::measurementTimerFired):
+        (WTF::MemoryPressureHandler::doesExceedInactiveLimitWhileActive):
+        (WTF::MemoryPressureHandler::doesNotExceedInactiveLimitWhileActive):
+        * wtf/MemoryPressureHandler.h:
+        (WTF::MemoryPressureHandler::setDidExceedInactiveLimitWhileActiveCallback):
+
 2017-05-18  Geoffrey Garen  <ggaren@apple.com>
 
         AutomaticThread should wait longer before timing out

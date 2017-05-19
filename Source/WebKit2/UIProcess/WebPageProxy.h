@@ -378,6 +378,8 @@ public:
     void setIsUsingHighPerformanceWebGL(bool value) { m_isUsingHighPerformanceWebGL = value; }
     bool isUsingHighPerformanceWebGL() const { return m_isUsingHighPerformanceWebGL; }
 
+    void didExceedInactiveMemoryLimitWhileActive();
+
     void closePage(bool stopResponsivenessTimer);
 
     void addPlatformLoadParameters(LoadParameters&);

@@ -56,4 +56,5 @@ messages -> WebProcessProxy LegacyReceiver {
     DidReceiveBackgroundResponsivenessPing()
 
     MemoryPressureStatusChanged(bool isUnderMemoryPressure)
+    DidExceedInactiveMemoryLimitWhileActive()
 }

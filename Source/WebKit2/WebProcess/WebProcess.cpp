@@ -278,6 +278,9 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
             else
                 parentProcessConnection()->send(Messages::WebProcessProxy::DidExceedInactiveMemoryLimit(), 0);
         });
+        memoryPressureHandler.setDidExceedInactiveLimitWhileActiveCallback([this] () {
+            parentProcessConnection()->send(Messages::WebProcessProxy::DidExceedInactiveMemoryLimitWhileActive(), 0);
+        });
 #endif
         memoryPressureHandler.setMemoryPressureStatusChangedCallback([this](bool isUnderMemoryPressure) {
             if (parentProcessConnection())

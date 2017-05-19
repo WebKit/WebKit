@@ -1191,6 +1191,12 @@ void WebProcessProxy::logDiagnosticMessageForResourceLimitTermination(const Stri
         (*pages().begin())->logDiagnosticMessage(DiagnosticLoggingKeys::simulatedPageCrashKey(), limitKey, ShouldSample::No);
 }
 
+void WebProcessProxy::didExceedInactiveMemoryLimitWhileActive()
+{
+    for (auto& page : pages())
+        page->didExceedInactiveMemoryLimitWhileActive();
+}
+
 void WebProcessProxy::didExceedActiveMemoryLimit()
 {
     RELEASE_LOG_ERROR(PerformanceLogging, "%p - WebProcessProxy::didExceedActiveMemoryLimit() Terminating WebProcess that has exceeded the active memory limit", this);

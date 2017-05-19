@@ -72,6 +72,7 @@ public:
 
     void setMemoryKillCallback(WTF::Function<void()> function) { m_memoryKillCallback = WTFMove(function); }
     void setMemoryPressureStatusChangedCallback(WTF::Function<void(bool)> function) { m_memoryPressureStatusChangedCallback = WTFMove(function); }
+    void setDidExceedInactiveLimitWhileActiveCallback(WTF::Function<void()> function) { m_didExceedInactiveLimitWhileActiveCallback = WTFMove(function); }
 
     void setLowMemoryHandler(LowMemoryHandler&& handler)
     {
@@ -157,6 +158,8 @@ private:
     void measurementTimerFired();
     void shrinkOrDie();
     void setMemoryUsagePolicyBasedOnFootprint(size_t);
+    void doesExceedInactiveLimitWhileActive();
+    void doesNotExceedInactiveLimitWhileActive();
 
 #if OS(LINUX)
     class EventFDPoller {
@@ -190,6 +193,8 @@ private:
     MemoryUsagePolicy m_memoryUsagePolicy { MemoryUsagePolicy::Unrestricted };
     WTF::Function<void()> m_memoryKillCallback;
     WTF::Function<void(bool)> m_memoryPressureStatusChangedCallback;
+    WTF::Function<void()> m_didExceedInactiveLimitWhileActiveCallback;
+    bool m_hasInvokedDidExceedInactiveLimitWhileActiveCallback { false };
 
 #if OS(WINDOWS)
     void windowsMeasurementTimerFired();

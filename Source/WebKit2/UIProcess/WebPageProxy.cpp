@@ -6706,6 +6706,11 @@ void WebPageProxy::setShouldPlayToPlaybackTarget(uint64_t contextId, bool should
 }
 #endif
 
+void WebPageProxy::didExceedInactiveMemoryLimitWhileActive()
+{
+    m_uiClient->didExceedBackgroundResourceLimitWhileInForeground(*this, kWKResourceLimitMemory);
+}
+
 void WebPageProxy::didChangeBackgroundColor()
 {
     m_pageClient.didChangeBackgroundColor();

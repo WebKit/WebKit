@@ -63,6 +63,12 @@ enum {
 };
 typedef uint32_t WKAutoplayEventFlags;
 
+enum {
+    kWKResourceLimitMemory,
+    kWKResourceLimitCPU,
+};
+typedef uint32_t WKResourceLimit;
+
 WK_EXPORT WKTypeID WKPageRunBeforeUnloadConfirmPanelResultListenerGetTypeID();
 WK_EXPORT void WKPageRunBeforeUnloadConfirmPanelResultListenerCall(WKPageRunBeforeUnloadConfirmPanelResultListenerRef listener, bool result);
 
@@ -122,6 +128,7 @@ typedef void (*WKFullscreenMayReturnToInlineCallback)(WKPageRef page, const void
 typedef void (*WKRequestPointerLockCallback)(WKPageRef page, const void* clientInfo);
 typedef void (*WKDidLosePointerLockCallback)(WKPageRef page, const void* clientInfo);
 typedef void (*WKHasVideoInPictureInPictureDidChangeCallback)(WKPageRef page, bool hasVideoInPictureInPicture, const void* clientInfo);
+typedef void (*WKDidExceedBackgroundResourceLimitWhileInForegroundCallback)(WKPageRef page, WKResourceLimit limit, const void* clientInfo);
     
 // Deprecated
 typedef WKPageRef (*WKPageCreateNewPageCallback_deprecatedForUseWithV0)(WKPageRef page, WKDictionaryRef features, WKEventModifiers modifiers, WKEventMouseButton mouseButton, const void *clientInfo);
@@ -926,6 +933,7 @@ typedef struct WKPageUIClientV10 {
     
     // Version 10.
     WKHasVideoInPictureInPictureDidChangeCallback                             hasVideoInPictureInPictureDidChange;
+    WKDidExceedBackgroundResourceLimitWhileInForegroundCallback         didExceedBackgroundResourceLimitWhileInForeground;
 } WKPageUIClientV10;
     
 #ifdef __cplusplus

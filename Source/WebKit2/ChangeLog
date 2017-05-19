@@ -1,3 +1,41 @@
+2017-05-18  Andreas Kling  <akling@apple.com>
+
+        [WK2] Notify WebPageProxy client when an active process goes over the inactive memory limit
+        https://bugs.webkit.org/show_bug.cgi?id=172244
+        <rdar://problem/31800943>
+
+        Reviewed by Geoffrey Garen.
+
+        Add a WKPageUIClient callback that is invoked when an active process exceeds the inactive memory limit.
+
+        With the current state of the implementation, this means that a UI client can learn that backgrounding
+        a non-audible, non-capturing tab may cause it to get killed once the active/inactive hysteresis time
+        is over (8 minutes.)
+
+        The callback can be invoked multiple times if we exceed the limit, and then go under, and exceed again.
+
+        This is the callback:
+
+            didExceedBackgroundResourceLimitWhileInForeground(WKPageRef, WKResourceLimit)
+
+        Where WKResourceLimit is one of { kWKResourceLimitMemory, kWKResourceLimitCPU }
+        The CPU enum value is a placeholder pending implementation soon.
+
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::didExceedBackgroundResourceLimitWhileInForeground):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageUIClient):
+        * UIProcess/API/C/WKPageUIClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didExceedInactiveMemoryLimitWhileActive):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didExceedInactiveMemoryLimitWhileActive):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.messages.in:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+
 2017-05-18  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] do not cache gUM permissions

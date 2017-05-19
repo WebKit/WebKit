@@ -75,15 +75,21 @@ static const char* toString(MemoryUsagePolicy policy)
 }
 #endif
 
-size_t MemoryPressureHandler::thresholdForMemoryKill()
+static size_t thresholdForMemoryKillWithProcessState(WebsamProcessState processState)
 {
 #if CPU(X86_64) || CPU(ARM64)
-    if (m_processState == WebsamProcessState::Active)
+    if (processState == WebsamProcessState::Active)
         return 4 * GB;
     return 2 * GB;
 #else
+    UNUSED_PARAM(processState);
     return 3 * GB;
 #endif
+}
+
+size_t MemoryPressureHandler::thresholdForMemoryKill()
+{
+    return thresholdForMemoryKillWithProcessState(m_processState);
 }
 
 static size_t thresholdForPolicy(MemoryUsagePolicy policy)
@@ -163,6 +169,25 @@ void MemoryPressureHandler::measurementTimerFired()
         releaseMemory(Critical::Yes, Synchronous::No);
         break;
     }
+
+    if (processState() == WebsamProcessState::Active && footprint.value() > thresholdForMemoryKillWithProcessState(WebsamProcessState::Inactive))
+        doesExceedInactiveLimitWhileActive();
+    else
+        doesNotExceedInactiveLimitWhileActive();
+}
+
+void MemoryPressureHandler::doesExceedInactiveLimitWhileActive()
+{
+    if (m_hasInvokedDidExceedInactiveLimitWhileActiveCallback)
+        return;
+    if (m_didExceedInactiveLimitWhileActiveCallback)
+        m_didExceedInactiveLimitWhileActiveCallback();
+    m_hasInvokedDidExceedInactiveLimitWhileActiveCallback = true;
+}
+
+void MemoryPressureHandler::doesNotExceedInactiveLimitWhileActive()
+{
+    m_hasInvokedDidExceedInactiveLimitWhileActiveCallback = false;
 }
 
 void MemoryPressureHandler::setProcessState(WebsamProcessState state)
