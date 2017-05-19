@@ -1,5 +1,22 @@
 2017-05-18  Chris Dumez  <cdumez@apple.com>
 
+        Update webidl2.js from upstream web-platform-tests
+        https://bugs.webkit.org/show_bug.cgi?id=172342
+
+        Reviewed by Sam Weinig.
+
+        * web-platform-tests/fetch/api/headers/headers-idl.html:
+        Re-sync test from upstream 11216539e as the test would break otherwise with the new webidl2.js. 
+
+        * web-platform-tests/resources/webidl2/*:
+        Re-sync webidl2.js from upstream web-platform-tests 11216539e.
+
+        * web-platform-tests/url/interfaces.any-expected.txt:
+        * web-platform-tests/url/interfaces.any.worker-expected.txt:
+        Rebaseline tests that are now actually working. They relied on this new webidl2.js version.
+
+2017-05-18  Chris Dumez  <cdumez@apple.com>
+
         Re-sync url web-platform-tests
         https://bugs.webkit.org/show_bug.cgi?id=172333
 

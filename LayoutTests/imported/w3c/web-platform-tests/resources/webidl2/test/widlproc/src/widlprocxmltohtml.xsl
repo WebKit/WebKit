@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- ====================================================================
+<!--====================================================================
 $Id: widlprocxmltohtml.xsl 407 2009-10-26 13:48:48Z tpr $
 Copyright 2009 Aplix Corporation. All rights reserved.
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 XSLT stylesheet to convert widlprocxml into html documentation.
-===================================================================== -->
+=====================================================================-->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
 <xsl:output method="html" encoding="utf-8" indent="yes" doctype-public="html"/>
 
@@ -21,7 +21,7 @@ XSLT stylesheet to convert widlprocxml into html documentation.
 
 <xsl:variable name="title" select="concat('The ',/Definitions/descriptive/name,' Module - Version ',/Definitions/descriptive/version)"/>
 
-<!-- Root of document. -->
+<!--Root of document.-->
 <xsl:template match="/">
     <html>
         <head>
@@ -36,7 +36,7 @@ XSLT stylesheet to convert widlprocxml into html documentation.
     </html>
 </xsl:template>
 
-<!-- Root of Definitions. -->
+<!--Root of Definitions.-->
 <xsl:template match="Definitions">
     <div class="api" id="{@id}">
         <a href="http://bondi.omtp.org"><img src="http://www.omtp.org/images/BondiSmall.jpg" alt="Bondi logo"/></a>
@@ -186,7 +186,7 @@ XSLT stylesheet to convert widlprocxml into html documentation.
     </div>
 </xsl:template>
 
-<!-- def-api-feature-set -->
+<!--def-api-feature-set-->
 <xsl:template match="def-api-feature-set">
       <dl class="def-api-feature-set">
           <dt><xsl:value-of select="@identifier"/></dt>
@@ -210,7 +210,7 @@ XSLT stylesheet to convert widlprocxml into html documentation.
       </dl>
 </xsl:template>
 
-<!-- def-api-feature -->
+<!--def-api-feature-->
 <xsl:template match="def-api-feature">
       <dl class="def-api-feature">
           <dt><xsl:value-of select="@identifier"/></dt>
@@ -234,7 +234,7 @@ XSLT stylesheet to convert widlprocxml into html documentation.
       </dl>
 </xsl:template>
 
-<!-- def-device-cap -->
+<!--def-device-cap-->
 <xsl:template match="def-device-cap">
     <dt class="def-device-cap"><code><xsl:value-of select="@identifier"/></code></dt>
     <dd>
@@ -252,15 +252,15 @@ XSLT stylesheet to convert widlprocxml into html documentation.
     </dd>
 </xsl:template>
 
-<!-- Exception: not implemented -->
-<!-- Valuetype: not implemented -->
+<!--Exception: not implemented-->
+<!--Valuetype: not implemented-->
 <xsl:template match="Exception|Valuetype|Const">
     <xsl:if test="descriptive">
         <xsl:message terminate="yes">element <xsl:value-of select="name()"/> not supported</xsl:message>
     </xsl:if>
 </xsl:template>
 
-<!-- Typedef. -->
+<!--Typedef.-->
 <xsl:template match="Typedef[descriptive]">
     <div class="typedef" id="{@id}">
         <h3>2.<xsl:number value="position()"/>. <code><xsl:value-of select="@name"/></code></h3>
@@ -271,7 +271,7 @@ XSLT stylesheet to convert widlprocxml into html documentation.
     </div>
 </xsl:template>
 
-<!-- Interface. -->
+<!--Interface.-->
 <xsl:template match="Interface[descriptive]">
     <xsl:variable name="name" select="@name"/>
     <div class="interface" id="{@id}">
@@ -319,7 +319,7 @@ XSLT stylesheet to convert widlprocxml into html documentation.
 <xsl:template match="Interface[not(descriptive)]">
 </xsl:template>
 
-<!-- Dictionary. -->
+<!--Dictionary.-->
 <xsl:template match="Dictionary[descriptive]">
     <xsl:variable name="name" select="@name"/>
     <div class="dictionary" id="{@id}">
@@ -360,7 +360,7 @@ XSLT stylesheet to convert widlprocxml into html documentation.
               </p>
 </xsl:template>
 
-<!-- Attribute -->
+<!--Attribute-->
 <xsl:template match="Attribute">
     <dt class="attribute" id="{@name}">
         <code>
@@ -383,7 +383,7 @@ XSLT stylesheet to convert widlprocxml into html documentation.
         </dd>
 </xsl:template>
 
-<!-- Const -->
+<!--Const-->
 <xsl:template match="Const">
   <dt class="const" id="{@id}">
     <code>
@@ -399,7 +399,7 @@ XSLT stylesheet to convert widlprocxml into html documentation.
   </dd>
 </xsl:template>
 
-<!-- ExtendedAttribute name==Constructor || name==NamedConstructor -->
+<!--ExtendedAttribute name==Constructor || name==NamedConstructor-->
 <xsl:template match="ExtendedAttributeList/ExtendedAttribute">
     <dt class="constructor" id="{concat(@name,generate-id(.))}">
         <code>
@@ -429,7 +429,7 @@ XSLT stylesheet to convert widlprocxml into html documentation.
     </dd>
 </xsl:template>
 
-<!-- Operation -->
+<!--Operation-->
 <xsl:template match="Operation">
     <dt class="method" id="{concat(@name,generate-id(.))}">
         <code>
@@ -489,7 +489,7 @@ XSLT stylesheet to convert widlprocxml into html documentation.
     </dd>
 </xsl:template>
 
-<!-- Callback -->
+<!--Callback-->
 <xsl:template match="Callback">
     <xsl:variable name="name" select="@name"/>
     <div class="callback" id="{@id}">
@@ -525,13 +525,13 @@ XSLT stylesheet to convert widlprocxml into html documentation.
 	</div>
 </xsl:template>
 
-<!-- ArgumentList. This is passed $nodesc=true to output just the argument
-    types and names, and not any documentation for them. -->
+<!--ArgumentList. This is passed $nodesc=true to output just the argument
+    types and names, and not any documentation for them.-->
 <xsl:template match="ArgumentList">
     <xsl:param name="nodesc"/>
     <xsl:choose>
         <xsl:when test="$nodesc">
-            <!-- $nodesc is true: just output the types and names -->
+            <!--$nodesc is true: just output the types and names-->
             <xsl:apply-templates select="Argument[1]">
                 <xsl:with-param name="nodesc" select="'nocomma'"/>
             </xsl:apply-templates>
@@ -540,7 +540,7 @@ XSLT stylesheet to convert widlprocxml into html documentation.
             </xsl:apply-templates>
         </xsl:when>
         <xsl:when test="Argument">
-            <!-- $nodesc is false: output the documentation -->
+            <!--$nodesc is false: output the documentation-->
             <div class="parameters">
                 <h6>Parameters</h6>
                 <ul>
@@ -551,16 +551,16 @@ XSLT stylesheet to convert widlprocxml into html documentation.
     </xsl:choose>
 </xsl:template>
 
-<!-- Argument. This is passed $nodesc=false to output the documentation,
+<!--Argument. This is passed $nodesc=false to output the documentation,
     or $nodesc="nocomma" to output the type and name, or $nodesc="comma"
-    to output a comma then the type and name.  -->
+    to output a comma then the type and name. -->
 <xsl:template match="Argument">
     <xsl:param name="nodesc"/>
     <xsl:choose>
         <xsl:when test="$nodesc">
-            <!-- $nodesc is true: just output the types and names -->
+            <!--$nodesc is true: just output the types and names-->
             <xsl:if test="$nodesc = 'comma'">
-                <!-- Need a comma first. -->
+                <!--Need a comma first.-->
                 <xsl:text>, </xsl:text>
             </xsl:if>
             <xsl:if test="@in"><xsl:value-of select="concat(@in, ' ')"/></xsl:if>
@@ -577,7 +577,7 @@ XSLT stylesheet to convert widlprocxml into html documentation.
 	    </xsl:if>	    
         </xsl:when>
         <xsl:otherwise>
-            <!-- $nodesc is false: output the documentation -->
+            <!--$nodesc is false: output the documentation-->
             <li class="param">
                 <xsl:value-of select="@name"/>:
                 <xsl:apply-templates select="descriptive"/>
@@ -586,8 +586,8 @@ XSLT stylesheet to convert widlprocxml into html documentation.
     </xsl:choose>
 </xsl:template>
 
-<!-- Raises (for an Operation). It is already known that the list
-    is not empty. -->
+<!--Raises (for an Operation). It is already known that the list
+    is not empty.-->
 <xsl:template match="Raises">
     <div class="exceptionlist">
         <h5>Exceptions</h5>
@@ -597,7 +597,7 @@ XSLT stylesheet to convert widlprocxml into html documentation.
     </div>
 </xsl:template>
 
-<!-- RaiseException, the name of an exception in a Raises. -->
+<!--RaiseException, the name of an exception in a Raises.-->
 <xsl:template match="RaiseException">
     <li class="exception">
         <xsl:value-of select="@name"/>:
@@ -605,7 +605,7 @@ XSLT stylesheet to convert widlprocxml into html documentation.
     </li>
 </xsl:template>
 
-<!-- Type. -->
+<!--Type.-->
 <xsl:template match="Type">
     <xsl:choose>
         <xsl:when test="Type">
@@ -623,7 +623,7 @@ XSLT stylesheet to convert widlprocxml into html documentation.
     </xsl:choose>
 </xsl:template>
 
-<!-- Enum. -->
+<!--Enum.-->
 <xsl:template match="Enum[descriptive]">
     <xsl:variable name="name" select="@name"/>
     <div class="enum" id="{@id}">
@@ -643,7 +643,7 @@ XSLT stylesheet to convert widlprocxml into html documentation.
 <xsl:template match="Enum[not(descriptive)]">
 </xsl:template>
 
-<!-- EnumValue -->
+<!--EnumValue-->
 <xsl:template match="EnumValue">
   <dt class="enumvalue" id="{@id}">
     <code>
@@ -664,7 +664,7 @@ XSLT stylesheet to convert widlprocxml into html documentation.
   <xsl:apply-templates select="description"/>
 </xsl:template>
 
-<!-- brief -->
+<!--brief-->
 <xsl:template match="brief">
     <div class="brief">
         <p>
@@ -673,10 +673,10 @@ XSLT stylesheet to convert widlprocxml into html documentation.
     </div>
 </xsl:template>
 
-<!-- description in ReturnType or Argument or ScopedName -->
+<!--description in ReturnType or Argument or ScopedName-->
 <xsl:template match="Type/descriptive/description|Argument/descriptive/description|Name/descriptive/description">
-    <!-- If the description contains just a single <p> then we omit
-        the <p> and just do its contents. -->
+    <!--If the description contains just a single <p> then we omit
+        the <p> and just do its contents.-->
     <xsl:choose>
         <xsl:when test="p and count(*) = 1">
             <xsl:apply-templates select="p/*|p/text()"/>
@@ -689,14 +689,14 @@ XSLT stylesheet to convert widlprocxml into html documentation.
     </xsl:choose>
 </xsl:template>
 
-<!-- Other description -->
+<!--Other description-->
 <xsl:template match="description">
     <div class="description">
         <xsl:apply-templates/>
     </div>
 </xsl:template>
 
-<!-- Code -->
+<!--Code-->
 <xsl:template match="Code">
     <div class="example">
     	<xsl:choose>
@@ -711,18 +711,18 @@ XSLT stylesheet to convert widlprocxml into html documentation.
     </div>
 </xsl:template>
 
-<!-- webidl : literal Web IDL from input -->
+<!--webidl : literal Web IDL from input-->
 <xsl:template match="webidl">
     <h5>WebIDL</h5>
     <pre class="webidl"><xsl:apply-templates/></pre>
 </xsl:template>
 
-<!-- author -->
+<!--author-->
 <xsl:template match="author">
     <li class="author"><xsl:apply-templates/></li>
 </xsl:template>
 
-<!-- version -->
+<!--version-->
 <xsl:template match="version">
     <div class="version">
         <h2>
@@ -731,7 +731,7 @@ XSLT stylesheet to convert widlprocxml into html documentation.
     </div>
 </xsl:template>
 
-<!-- api-feature -->
+<!--api-feature-->
 <xsl:template match="api-feature">
     <dt>
         <xsl:value-of select="@identifier"/>
@@ -741,7 +741,7 @@ XSLT stylesheet to convert widlprocxml into html documentation.
     </dd>
 </xsl:template>
 
-<!-- param -->
+<!--param-->
 <xsl:template match="param">
     <li>
         <code><xsl:value-of select="@identifier"/></code>:
@@ -749,9 +749,9 @@ XSLT stylesheet to convert widlprocxml into html documentation.
     </li>
 </xsl:template>
 
-<!-- def-instantiated.
+<!--def-instantiated.
     This assumes that only one interface in the module has a def-instantiated,
-    and that interface contains just one attribute. -->
+    and that interface contains just one attribute.-->
 <xsl:template match="def-instantiated">
     <xsl:variable name="ifacename" select="../../@name"/>
     <p>
@@ -782,7 +782,7 @@ XSLT stylesheet to convert widlprocxml into html documentation.
 
 
 
-<!-- html elements -->
+<!--html elements-->
 <xsl:template match="a|b|br|dd|dl|dt|em|li|p|table|td|th|tr|ul">
     <xsl:element name="{name()}"><xsl:for-each select="@*"><xsl:attribute name="{name()}"><xsl:value-of select="."/></xsl:attribute></xsl:for-each><xsl:apply-templates/></xsl:element>
 </xsl:template>
@@ -817,7 +817,7 @@ XSLT stylesheet to convert widlprocxml into html documentation.
   </table>
 </xsl:template>
 
-<!-- <ref> element in literal Web IDL. -->
+<!--<ref> element in literal Web IDL.-->
 <xsl:template match="ref[@ref]">
     <a href="{@ref}">
         <xsl:apply-templates/>

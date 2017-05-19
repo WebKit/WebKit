@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<!-- ====================================================================
+<!--====================================================================
 Copyright 2009 Aplix Corporation. All rights reserved.
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -10,7 +10,7 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-===================================================================== -->
+=====================================================================-->
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=us-ascii">
@@ -976,7 +976,7 @@ representing an operation's return type.
 
 <p>The <em>ExtendedAttributeList</em> element provides the optional extended attributes that can be defined for a type through typedef, &agrave; la <code>typedef [Clamp] octet Value;</code>.</p>
 
-<!--  can't use enumerated values for the values of type, since DTD don't allow enumerated values to have space in them (which would be needed e.g. for "long long")  -->
+<!-- can't use enumerated values for the values of type, since DTD don't allow enumerated values to have space in them (which would be needed e.g. for "long long") -->
 <pre class="dtd">
 &lt;!ELEMENT Type (descriptive?, ExtendedAttributeList?, Type*) >
 &lt;!ATTLIST Type type CDATA #IMPLIED

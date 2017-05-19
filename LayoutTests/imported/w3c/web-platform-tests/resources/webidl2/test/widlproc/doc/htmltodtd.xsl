@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="us-ascii"?>
-<!-- ====================================================================
+<!--====================================================================
 $Id$
 Copyright 2009 Aplix Corporation. All rights reserved.
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,16 +13,16 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 Stylesheet to extract DTD for widlprocxml from widlproc.html
-===================================================================== -->
+=====================================================================-->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
 <xsl:output method="text" encoding="us-ascii" indent="no"/>
 
-<!--  <pre class="dtd"> element  -->
+<!-- <pre class="dtd"> element -->
 <xsl:template match="pre[@class='dtd']">
     <xsl:value-of select="."/>
 </xsl:template>
 
-<!-- Ignore other text.  -->
+<!--Ignore other text. -->
 <xsl:template match="text()" priority="-100"/>
 
 </xsl:stylesheet>
