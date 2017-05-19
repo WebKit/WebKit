@@ -1,5 +1,15 @@
 2017-05-19  Mark Lam  <mark.lam@apple.com>
 
+        Add missing exception check.
+        https://bugs.webkit.org/show_bug.cgi?id=172346
+        <rdar://problem/32289640>
+
+        Reviewed by Geoffrey Garen.
+
+        * stress/regress-172346.js: Added.
+
+2017-05-19  Mark Lam  <mark.lam@apple.com>
+
         DFG::SpeculativeJIT::pickCanTrample() is wrongly ignoring result registers.
         https://bugs.webkit.org/show_bug.cgi?id=172383
         <rdar://problem/31418651>

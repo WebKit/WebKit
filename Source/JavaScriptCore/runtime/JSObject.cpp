@@ -2036,6 +2036,7 @@ bool JSObject::hasInstance(ExecState* exec, JSValue value, JSValue hasInstanceVa
         MarkedArgumentBuffer args;
         args.append(value);
         JSValue result = call(exec, hasInstanceValue, callType, callData, this, args);
+        RETURN_IF_EXCEPTION(scope, false);
         return result.toBoolean(exec);
     }
 
