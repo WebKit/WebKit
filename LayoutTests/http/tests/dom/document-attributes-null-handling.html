@@ -10,7 +10,8 @@ shouldBeEqualToString("document.cookie", "");
 evalAndLog("document.cookie = 'key=value'");
 shouldBeEqualToString("document.cookie", "key=value");
 evalAndLog("document.cookie = null");
-shouldBeEqualToString("document.cookie", "key=value; null=");
+shouldBeTrue("document.cookie.indexOf('key=value') != -1");
+shouldBeTrue("document.cookie.indexOf('null=') != -1");
 
 debug("");
 debug("* title attribute");

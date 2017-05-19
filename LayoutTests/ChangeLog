@@ -1,3 +1,17 @@
+2017-05-18  Chris Dumez  <cdumez@apple.com>
+
+        [macOS Sierra] Layout Test http/tests/dom/document-attributes-null-handling.html is flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=172311
+
+        Reviewed by Andreas Kling.
+
+        Not sure why the cookies are sometimes returned by CFNetwork in a different order. However,
+        what matters and what we want to test is that the cookie was actually added so make the
+        test not rely on a specific order to address flakiness.
+
+        * http/tests/dom/document-attributes-null-handling-expected.txt:
+        * http/tests/dom/document-attributes-null-handling.html:
+
 2017-05-18  Andy Estes  <aestes@apple.com>
 
         Unreviewed gardening on ApplePaySession.html after r217078.
