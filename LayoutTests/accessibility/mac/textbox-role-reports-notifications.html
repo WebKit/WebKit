@@ -1,20 +1,17 @@
-<!DOCTYPE HTML PUBLIC>
+<!DOCTYPE html>
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body>
-This tests that the AXValueChanged notification is correctly reported for non-native text boxes when content is changed.<br>
+<div>This tests that the AXValueChanged notification is correctly reported for non-native text boxes when content is changed.</div>
 <div role="textbox" id="ariaTextBox" aria-multiline="false" tabindex="0">Some text in a textbox.</div>
-<div id="console"></div>
-<div id="notifications"></div>
+<div id="console"</div>
 <script>
     var textboxAxElement;
     if (window.testRunner && window.accessibilityController) {
-        window.testRunner.waitUntilDone();
-
+        jsTestIsAsync = true;
         accessibilityController.logAccessibilityEvents();
-        window.testRunner.dumpAsText();
 
         var ariaTextBox = document.getElementById("ariaTextBox");
         ariaTextBox.focus();
@@ -28,17 +25,15 @@ This tests that the AXValueChanged notification is correctly reported for non-na
 
     function logNotification(notification) {
         if (notification == "AXValueChanged") {
-            document.getElementById("notifications").innerHTML += "Successfully received AXValueChanged.<br>";
+            debug("Successfully received AXValueChanged.");
             pendingNotifications--;
             if (pendingNotifications == 0) {
                 textboxAxElement.removeNotificationListener();
-                window.testRunner.notifyDone();
+                finishJSTest();
             }
         }
     }
 
 </script>
-
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>

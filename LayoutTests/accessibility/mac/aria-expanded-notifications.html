@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body id="body">
 
@@ -42,15 +42,13 @@
         else if (notifyCount == 3) {
             shouldBeEqualToString("notifyName", "AXRowExpanded");
             accessibilityController.removeNotificationListener();
-            var scriptElement = document.createElement("script");
-            scriptElement.src = "../../resources/js-test-post-async.js";
-            document.body.appendChild(scriptElement);
+            finishJSTest();
         }
         notifyCount++;
     }
 
     if (window.accessibilityController) {
-        window.testRunner.waitUntilDone();
+        jsTestIsAsync = true;
 
         var domTree = document.getElementById("tree0");
         domTree.focus();
@@ -68,6 +66,5 @@
     }
 
 </script>
-
 </body>
 </html>

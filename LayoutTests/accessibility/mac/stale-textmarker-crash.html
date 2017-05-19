@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body id="body" onload="setTimeout('runTest();', 1)">
 
@@ -17,9 +17,7 @@
 
     var cachedMarker1 = 0;
     var cachedMarker2 = 0;
-    if (window.accessibilityController && window.testRunner) {
-        window.jsTestIsAsync = true;
-    }
+    jsTestIsAsync = true;
 
     function runTest() {
 
@@ -52,12 +50,9 @@
         var index2 = console.indexForTextMarker(cachedMarker2);
         debug("Text marker 2 is valid: " + console.isTextMarkerValid(cachedMarker2));
 
-        window.testRunner.notifyDone();
         finishJSTest();
     }
 
 </script>
-
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

@@ -1,3 +1,104 @@
+2017-05-19  Alexey Proskuryakov  <ap@apple.com>
+
+        Many accessibility js-tests use waitUntilDone
+        https://bugs.webkit.org/show_bug.cgi?id=172372
+
+        Reviewed by Tim Horton.
+
+        Corrected the use of js-test harness, updated the tests to use js-test.js instead
+        of js-test-pre.js where possible.
+
+        * accessibility/anonymous-render-block-in-continuation-causes-crash-expected.txt:
+        * accessibility/anonymous-render-block-in-continuation-causes-crash.html:
+        * accessibility/aria-checkbox-sends-notification.html:
+        * accessibility/aria-invalid.html:
+        * accessibility/aria-switch-sends-notification.html:
+        * accessibility/deleting-iframe-destroys-axcache.html:
+        * accessibility/file-upload-button-with-axpress.html:
+        * accessibility/frame-disconnect-textmarker-cache-crash-expected.txt:
+        * accessibility/frame-disconnect-textmarker-cache-crash.html:
+        * accessibility/gtk/aria-listbox-crash.html:
+        * accessibility/heading-title-includes-links-expected.txt:
+        * accessibility/heading-title-includes-links.html:
+        * accessibility/image-map-update-parent-crash-expected.txt:
+        * accessibility/image-map-update-parent-crash.html:
+        * accessibility/insert-children-assert-expected.txt:
+        * accessibility/insert-children-assert.html:
+        * accessibility/ios-simulator/focus-change-notifications.html:
+        * accessibility/label-element-press.html:
+        * accessibility/loading-iframe-updates-axtree.html:
+        * accessibility/mac/aria-expanded-notifications.html:
+        * accessibility/mac/aria-listbox-selectedchildren-change.html:
+        * accessibility/mac/aria-liveregion-on-image.html:
+        * accessibility/mac/aria-liveregions-addedelement.html:
+        * accessibility/mac/aria-liveregions-changedalt.html:
+        * accessibility/mac/aria-liveregions-changedtext.html:
+        * accessibility/mac/aria-liveregions-removedelement.html:
+        * accessibility/mac/combobox-activedescendant-notifications-expected.txt:
+        * accessibility/mac/combobox-activedescendant-notifications.html:
+        * accessibility/mac/focus-setting-selection-syncronizing-not-clearing-expected.txt:
+        * accessibility/mac/focus-setting-selection-syncronizing-not-clearing.html:
+        * accessibility/mac/html-slider-indicator.html:
+        * accessibility/mac/input-replacevalue-userinfo-expected.txt:
+        * accessibility/mac/input-replacevalue-userinfo.html:
+        * accessibility/mac/ordered-textmarker-crash-expected.txt:
+        * accessibility/mac/ordered-textmarker-crash.html:
+        * accessibility/mac/search-with-frames-expected.txt:
+        * accessibility/mac/search-with-frames.html:
+        * accessibility/mac/selection-boundary-userinfo.html:
+        * accessibility/mac/selection-change-userinfo.html:
+        * accessibility/mac/selection-element-tabbing-to-link.html:
+        * accessibility/mac/selection-value-changes-for-aria-textbox.html:
+        * accessibility/mac/stale-textmarker-crash-expected.txt:
+        * accessibility/mac/stale-textmarker-crash.html:
+        * accessibility/mac/textbox-role-reports-notifications-expected.txt:
+        * accessibility/mac/textbox-role-reports-notifications.html:
+        * accessibility/mac/value-change/value-change-user-info-contenteditable.html:
+        * accessibility/mac/value-change/value-change-user-info-textarea.html:
+        * accessibility/mac/value-change/value-change-user-info-textfield.html:
+        * accessibility/media-element.html:
+        * accessibility/menu-list-sends-change-notification.html:
+        * accessibility/multiselect-list-reports-active-option.html:
+        * accessibility/paragraph-with-linebreaks.html:
+        * accessibility/platform-name.html:
+        * accessibility/radio-button-group-members.html:
+        * accessibility/radio-button-title-label.html:
+        * accessibility/selection-states-expected.txt:
+        * accessibility/selection-states.html:
+        * accessibility/spinbutton-value.html:
+        * accessibility/svg-bounds.html:
+        * accessibility/table-cell-for-column-and-row-crash.html:
+        * accessibility/table-cells-roles.html:
+        * accessibility/table-roles-hierarchy.html:
+        * accessibility/table-with-aria-role.html:
+        * accessibility/textarea-insertion-point-line-number.html:
+        * accessibility/textbox-role-reports-selection.html:
+        * accessibility/title-ui-element-correctness.html:
+        * accessibility/unknown-roles-not-exposed-expected.txt:
+        * accessibility/unknown-roles-not-exposed.html:
+        * accessibility/win/bstr-elements-role.html:
+        * accessibility/win/detached-object-notification-crash.html:
+        * accessibility/win/heading-elements.html:
+        * accessibility/win/img-alt-attribute.html:
+        * accessibility/win/linked-elements.html:
+        * accessibility/win/list-item-role.html:
+        * accessibility/win/list-marker-role.html:
+        * accessibility/win/list-role.html:
+        * accessibility/win/multiple-select-element-role.html:
+        * accessibility/win/option-element-position-and-size.html:
+        * accessibility/win/parent-element.html:
+        * accessibility/win/select-element-role.html:
+        * accessibility/win/selection-and-focus.html:
+        * accessibility/win/single-select-children-changed.html:
+        * accessibility/win/single-select-children.html:
+        * accessibility/win/text-role.html:
+        * platform/mac-wk1/accessibility/loading-iframe-updates-axtree-expected.txt:
+        * platform/mac-wk2/accessibility/deleting-iframe-destroys-axcache-expected.txt:
+        * platform/mac/accessibility/deleting-iframe-destroys-axcache-expected.txt:
+        * platform/mac/accessibility/media-element-expected.txt:
+        * platform/mac/accessibility/table-cells-roles-expected.txt:
+        * platform/mac/accessibility/table-roles-hierarchy-expected.txt:
+
 2017-05-19  Matt Lewis  <jlewis3@apple.com>
 
         Rebaselined js/dom/global-constructors-attributes.html after revision 217129

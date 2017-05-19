@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body id="body">
 
@@ -18,12 +18,12 @@
     function ariaCallback(notification) {
         if (notification == "AXLiveRegionChanged") {
             image.removeNotificationListener();
-            window.testRunner.notifyDone();
+            finishJSTest();
         }
     }
 
     if (window.accessibilityController) {
-        window.testRunner.waitUntilDone();
+        jsTestIsAsync = true;
 
         document.getElementById("image").focus();
         image = window.accessibilityController.focusedElement;
@@ -36,7 +36,5 @@
     }
 
 </script>
-
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

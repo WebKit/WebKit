@@ -1,9 +1,8 @@
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
 <script>
-    if (window.testRunner)
-        testRunner.waitUntilDone();
+    jsTestIsAsync = true;
 
     function runTest() {
         description("This tests that navigating in a multiselect list updates selection and the active selected option and sends a notification.");
@@ -55,11 +54,9 @@
 
         // Make the test finish quickly whether we get the notification or not.
         window.setTimeout(function() {
-            debug('<br /><span class="pass">TEST COMPLETE</span>');
             if (window.accessibilityController)
                 accessibleMenulist.removeNotificationListener();
-            if (window.testRunner)
-                testRunner.notifyDone();
+            finishJSTest();
         }, 10);
     }
 

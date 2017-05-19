@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
 </head>
 
 <body id="body">
@@ -16,8 +16,6 @@
 description("This tests that retrieving a cell for a table multiple times doesn't crash.");
 
 if (window.testRunner) {
-  testRunner.dumpAsText();
-
   if (window.accessibilityController) {
     document.getElementById("body").focus();
     var axBody = accessibilityController.focusedElement;
@@ -39,7 +37,5 @@ if (window.testRunner) {
   }
 }
 </script>
-
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>

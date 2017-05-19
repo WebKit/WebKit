@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC>
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body>
 
@@ -31,7 +31,7 @@
            debug("Received notification: " + notification); 
            if (notification == "AXSelectedChildrenChanged") {
                 combo.removeNotificationListener();
-                window.testRunner.notifyDone();
+                finishJSTest();
            }
         });
 
@@ -43,7 +43,5 @@
     }
 
 </script>
-
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

@@ -1,6 +1,6 @@
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
 </head>
 <body>
 
@@ -22,8 +22,6 @@
 description("This test checks that linebreaks explicitly set by the author are properly exposed to ATs.");
 
 if (window.testRunner) {
-  testRunner.dumpAsText();
-
   if (window.accessibilityController) {
 
     document.body.focus();
@@ -41,8 +39,5 @@ if (window.testRunner) {
   }
 }
 </script>
-
-<script src="../resources/js-test-post.js"></script>
-
 </body>
 </html>

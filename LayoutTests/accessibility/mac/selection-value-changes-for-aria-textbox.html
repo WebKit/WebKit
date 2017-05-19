@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body id="body">
 
@@ -22,7 +22,7 @@ content inside
         if (notification == "AXValueChanged") {
            document.getElementById("notifications").innerHTML += "Successfully received " + notification + "<br>";
            axTextbox.removeNotificationListener();
-           window.testRunner.notifyDone();
+           finishJSTest();
         }
         else if (notification == "AXSelectedTextChanged") {
            document.getElementById("notifications").innerHTML += "Successfully received " + notification + "<br>";
@@ -30,7 +30,7 @@ content inside
     }
 
     if (window.accessibilityController) {
-        window.testRunner.waitUntilDone();
+        jsTestIsAsync = true;
 
         textbox = document.getElementById("textbox");
         textbox.focus();
@@ -52,7 +52,5 @@ content inside
     }
 
 </script>
-
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

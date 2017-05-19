@@ -1,10 +1,9 @@
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
 
   <script>
-    if (window.testRunner)
-        testRunner.waitUntilDone();
+    jsTestIsAsync = true;
 
     function runTest()
     {
@@ -33,9 +32,7 @@
                 shouldBeTrue("newSubwebarea.childrenCount > 0");
             }
 
-            debug('<br /><span class="pass">TEST COMPLETE</span>');
-            if (window.testRunner)
-                testRunner.notifyDone();
+            finishJSTest();
         }, false);
 
         // Load content into the iframe. This will trigger the event

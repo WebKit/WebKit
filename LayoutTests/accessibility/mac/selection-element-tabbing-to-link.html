@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body id="body">
 
@@ -48,13 +48,13 @@
                 linkOne = accessibilityController.accessibleElementById("one");
                 shouldBe("ancestorWithRole(changeElementTwo, \"AXRole: AXLink\").isEqual(linkOne)", "true");
                 webArea.removeNotificationListener();
-                testRunner.notifyDone();
+                finishJSTest();
             }
         }
     }
 
     if (window.accessibilityController) {
-        testRunner.waitUntilDone();
+        jsTestIsAsync = true;
         testRunner.overridePreference("WebKitTabToLinksPreferenceKey", 1);
 
         accessibilityController.enableEnhancedAccessibility(true);
@@ -72,7 +72,5 @@
     }
 
 </script>
-
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

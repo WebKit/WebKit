@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 <body>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
 
 <div id="container">
 
@@ -45,8 +45,6 @@
 description("This tests that titleUIElement works correctly even when things change dynamically.");
 
 if (window.testRunner && window.accessibilityController) {
-    testRunner.dumpAsText();
-
     function hasTitleUIElement(axElement) {
         var label1 = accessibilityController.accessibleElementById("label1");
         var titleUIElement = axElement.titleUIElement();
@@ -107,7 +105,5 @@ if (window.testRunner && window.accessibilityController) {
 }
 
 </script>
-
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>

@@ -1,9 +1,9 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
-<body id="body" onload="setTimeout('runTest();', 1)">
+<body id="body" onload="runTest()">
 
 <div id="content1">
 <iframe src="data:text/html,<body><div>hello</div>"></iframe>
@@ -15,9 +15,7 @@
 
     description("This tests that comparing text markers that have no common tree scope won't crash");
 
-    if (window.accessibilityController && window.testRunner) {
-        window.jsTestIsAsync = true;
-    }
+    jsTestIsAsync = true;
 
     function runTest() {
 
@@ -38,12 +36,10 @@
         // Ask for the text marker range with the markers in a different tree.
         // This should NOT crash!
         var range = accessibilityController.rootElement.childAtIndex(0).textMarkerRangeForMarkers(marker1, marker2);
-        window.testRunner.notifyDone();
+
         finishJSTest();
     }
 
 </script>
-
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

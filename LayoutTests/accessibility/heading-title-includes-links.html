@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
 </head>
 <body id="body" onload="setTimeout('runTest()', 0);">
 
@@ -16,21 +16,17 @@
 
 <script>
 
-if (window.testRunner && window.accessibilityController) {
-    window.testRunner.waitUntilDone();
-}
+jsTestIsAsync = true;
 
 function runTest() {
     description("This tests that the title of a heading will include links if available.");
 
-    if (window.accessibilityController) {
-
+    if (window.accessibilityController)
         debug("Heading title: " + accessibilityController.accessibleElementById("heading").title);
-    }
-    window.testRunner.notifyDone();
+
+    finishJSTest();
 }
 
 </script>
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>

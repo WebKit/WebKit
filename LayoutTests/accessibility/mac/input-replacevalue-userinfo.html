@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-    <script src="../../resources/js-test-pre.js"></script>
+    <script src="../../resources/js-test.js"></script>
     <script src="../../editing/editing.js"></script>
 </head>
 <body id="body">
@@ -47,7 +47,7 @@
                     shouldBe("results[resultIndex][\"AXTextChangeValues\"][0][\"AXTextEditType\"]", "AXTextEditTypeInsert");
 
                     webArea.removeNotificationListener();
-                    window.testRunner.notifyDone();
+                    finishJSTest();
                 }
             }
         }
@@ -64,7 +64,7 @@
         document.getElementById("securevaluetest").value = "0";
 
         if (window.accessibilityController) {
-             window.testRunner.waitUntilDone();
+            jsTestIsAsync = true;
 
             accessibilityController.enableEnhancedAccessibility(true);
 
@@ -77,7 +77,5 @@
             setsecurevalue();
         }
     </script>
-
-    <script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
 <script src="../resources/accessibility-helper.js"></script>
 <script>
 var successfullyParsed = false;
@@ -23,10 +23,9 @@ body {
 
 <script>
     description("This tests that we only insert valid children when building ax tree.");
-    
+    jsTestIsAsync = true;
+
     if ("webkitRequestFullScreen" in Element.prototype) {
-        if (window.testRunner)
-            testRunner.waitUntilDone();
         var content = accessibilityController.accessibleElementById("content");
         var value = "AXValue: d";
         document.body.offsetTop;
@@ -37,10 +36,8 @@ body {
                 setTimeout(function () {
                     document.webkitCancelFullScreen();
                 }, 0)
-            } else {
-                if (window.testRunner)
-                    testRunner.notifyDone();
-            }
+            } else
+                finishJSTest();
             shouldBe("valueOccuranceInElementTree(content, value)", "1");
         };
 

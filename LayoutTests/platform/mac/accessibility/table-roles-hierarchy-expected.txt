@@ -83,4 +83,7 @@ role: AXRole: AXTable
             role: AXRole: AXStaticText
         role: AXRole: AXCell
             role: AXRole: AXStaticText
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

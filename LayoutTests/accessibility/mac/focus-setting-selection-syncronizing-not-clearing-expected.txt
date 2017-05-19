@@ -10,8 +10,8 @@ PASS addedNotification is true
 PASS axTextStateSyncOne is undefined
 PASS accessibilityController.accessibleElementById("1").isFocusable is true
 PASS accessibilityController.focusedElement.isEqual(accessibilityController.accessibleElementById("1")) is true
+PASS axTextStateSyncTwo is undefined
 PASS successfullyParsed is true
 
 TEST COMPLETE
-PASS axTextStateSyncTwo is undefined
 

@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../resources/js-test.js"></script>
     <script src="../../../editing/editing.js"></script>
     <script src="value-change-helpers.js"></script>
 </head>
@@ -60,13 +60,13 @@
                     shouldBeInsertReplace("2", "3");
 
                     webArea.removeNotificationListener();
-                    window.testRunner.notifyDone();
+                    finishJSTest();
                 }
             }
         }
 
         if (window.accessibilityController) {
-             window.testRunner.waitUntilDone();
+            jsTestIsAsync = true;
 
             accessibilityController.enableEnhancedAccessibility(true);
 
@@ -102,7 +102,5 @@
             execRedoCommand();
         }
     </script>
-
-    <script src="../../../resources/js-test-post.js"></script>
 </body>
 </html>

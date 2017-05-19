@@ -92,4 +92,7 @@ State at 'canplaythrough' event:
             role: AXRole: AXButton
 
 
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

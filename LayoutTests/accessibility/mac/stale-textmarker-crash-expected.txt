@@ -7,4 +7,7 @@ Text marker 1 is valid: true
 Text marker 2 is valid: true
 Text marker 1 is valid: false
 Text marker 2 is valid: false
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

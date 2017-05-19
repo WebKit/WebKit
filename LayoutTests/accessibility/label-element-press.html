@@ -1,12 +1,12 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
 </head>
 
 <body id="body">
 
-<label tabindex=0 onclick="performEvent();" id="labelElement">label</label>
+<label tabindex=0 onclick="finishJSTest()" id="labelElement">label</label>
 
 <p id="description"></p>
 <div id="console"></div>
@@ -14,14 +14,9 @@
 <script>
 
     description("This tests that a label element without a corresponding control will perform a press action on itself instead of nothing.");
- 
-    function performEvent() {
-       testRunner.notifyDone();
-    }
+    jsTestIsAsync = true;
 
     if (window.accessibilityController) {
- 
-        testRunner.waitUntilDone();
         document.getElementById("body").focus();
         var body = accessibilityController.focusedElement;
         var label = body.childAtIndex(0).childAtIndex(0);
@@ -31,7 +26,5 @@
     }
 
 </script>
-
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>

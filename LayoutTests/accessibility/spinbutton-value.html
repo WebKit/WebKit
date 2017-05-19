@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 <body>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
 
 <button id="untitled"></button>
 
@@ -18,8 +18,6 @@
 description("This tests that a spin button supports range value attributes.")
 
 if (window.testRunner && window.accessibilityController) {
-    window.testRunner.dumpAsText();
-
     function endsWith(str, suffix) {
         str = '' + str;
         return str.substr(str.length - suffix.length) == suffix;
@@ -45,7 +43,5 @@ if (window.testRunner && window.accessibilityController) {
 }
 
 </script>
-
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>

@@ -1,9 +1,8 @@
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
 <script>
-    if (window.testRunner)
-        testRunner.waitUntilDone();
+    jsTestIsAsync = true;
 
     function walkAccessibilityTree(accessibilityObject) {
         var count = accessibilityObject.childrenCount;
@@ -17,9 +16,7 @@
         window.root = accessibilityController.rootElement;
         walkAccessibilityTree(root);
 
-        debug('<br /><span class="pass">TEST COMPLETE</span>');
-        if (window.testRunner)
-            testRunner.notifyDone();
+        finishJSTest();
     }
 
     if (window.testRunner && window.accessibilityController) {

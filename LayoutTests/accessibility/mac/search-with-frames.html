@@ -1,10 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script>
-var successfullyParsed = false;
-</script>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body id="body">
 
@@ -16,7 +13,7 @@ var successfullyParsed = false;
 <div id="console"></div>
 
 <script>
-    window.testRunner.waitUntilDone();
+    jsTestIsAsync = true;
 
     // We have to play some games to get these frames to load their sources in a timely fashion.
     document.getElementById("frame1").src = "data:text/html,<body id='body1'><button id=button1>button1</button><BR><BR><BR></body>";
@@ -112,11 +109,9 @@ function runTest() {
     }
 
     successfullyParsed = true;
-    window.testRunner.notifyDone();
+    finishJSTest();
 }
 
 </script>
-
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

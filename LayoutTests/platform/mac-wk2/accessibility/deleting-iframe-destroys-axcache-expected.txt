@@ -40,6 +40,7 @@ PASS root.isEqual(newRoot) is true
 PASS body.isEqual(newBody) is true
 PASS before.isEqual(newBefore) is true
 PASS after.isEqual(newAfter) is true
+PASS successfullyParsed is true
 
 TEST COMPLETE
 

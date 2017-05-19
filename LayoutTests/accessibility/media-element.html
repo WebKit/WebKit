@@ -6,10 +6,7 @@
             var vidAXObject;
             var indentLevel = 0;
 
-            if (window.testRunner) {
-                testRunner.dumpAsText();
-                testRunner.waitUntilDone();
-            }
+            jsTestIsAsync = true;
 
             function indent(count)
             {
@@ -62,8 +59,8 @@
                 
                 dumpChildren(vidAXObject);
 
-                if (window.testRunner && event.type == 'canplaythrough')
-                    testRunner.notifyDone();     
+                if (event.type == 'canplaythrough')
+                    finishJSTest();
             }
         </script>
     </head>
@@ -77,6 +74,7 @@
     
     <div id=console></div>
 
+    <script src="../resources/js-test-post.js"></script>
 </body>
 </html>
 

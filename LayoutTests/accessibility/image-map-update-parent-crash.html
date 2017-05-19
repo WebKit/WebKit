@@ -1,15 +1,12 @@
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
 <script src="../resources/accessibility-helper.js"></script>
 <script>
 
-if (window.testRunner)
-  testRunner.waitUntilDone();
+jsTestIsAsync = true;
 
 function runAXTest() {
-
-
    description("This tests that an image map's hold on it's parent will be cleared if the parent goes away.");
 
    // First access all children using AX
@@ -20,21 +17,18 @@ function runAXTest() {
    // Now verify we haven't crashed.
    touchAccessibilityTree(accessibilityController.rootElement);
 
-   if (window.testRunner)
-       testRunner.notifyDone();
+   finishJSTest();
 }
 </script>
 
 </head>
-<body>
+<body onload="runAXTest()">
 
 <map name="map">
 <div id="o7"></div>
 <area id="o20" href="#"></area></map>
 
 <img id="img" usemap="#map"><span></span> 
-
-<script>setTimeout("runAXTest();", 1);</script> 
 
 <p id="description"></p>
 <div id="console"></div>

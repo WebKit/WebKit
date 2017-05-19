@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body id="body">
 
@@ -148,13 +148,13 @@
                 shouldBeResults(true);
 
                 webArea.removeNotificationListener();
-                window.testRunner.notifyDone();
+                finishJSTest();
             }
         }
     }
 
     if (window.accessibilityController) {
-        window.testRunner.waitUntilDone();
+        jsTestIsAsync = true;
 
         accessibilityController.enableEnhancedAccessibility(true);
 
@@ -179,7 +179,5 @@
     }
 
 </script>
-
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

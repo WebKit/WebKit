@@ -1,9 +1,8 @@
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
 <script>
-    if (window.testRunner)
-        testRunner.waitUntilDone();
+    jsTestIsAsync = true;
 
     function runTest() {
         description("This tests that changing the value of a menu list sends a notification even when it's not popped open.");
@@ -15,9 +14,7 @@
         function listener(notification) {
             document.getElementById("console").innerText += "Got notification: " + notification + "\n";
             accessibleMenulist.removeNotificationListener(listener);
-            debug('<br /><span class="pass">TEST COMPLETE</span>');
-            if (window.testRunner)
-                testRunner.notifyDone();
+            finishJSTest();
         }
         accessibleMenulist.addNotificationListener(listener);
 
@@ -26,8 +23,7 @@
 
         // Make the test finish quickly whether we get the notification or not.
         window.setTimeout(function() {
-            if (window.testRunner)
-                testRunner.notifyDone();
+            finishJSTest();
         }, 10);
     }
 

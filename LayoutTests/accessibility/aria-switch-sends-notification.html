@@ -1,10 +1,9 @@
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
 <script>
     function runTest() {
-        if (window.testRunner)
-            testRunner.waitUntilDone();
+        jsTestIsAsync = true;
 
         description("This tests that toggling an aria switch sends a notification.");
 
@@ -19,8 +18,7 @@
 
             if (notificationCount == 2) {
                 widget.removeNotificationListener(listener);
-                if (window.testRunner)
-                    testRunner.notifyDone();
+                finishJSTest();
             }
         }
         widget.addNotificationListener(listener);
@@ -30,15 +28,11 @@
     };
 </script>
 </head>
-<body>
+<body onload="runTest()">
 
 <div id="switch" role="switch" aria-checked="false">Test Switch</div>
 
 <p id="description"></p>
 <div id="console"></div>
-<script>
-    runTest();
-</script>
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>

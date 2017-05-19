@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body id="body">
 
@@ -27,13 +27,13 @@
             // We should get a total of 4 live region changes.
             if (notificationCount == 2) {
                window.accessibilityController.removeNotificationListener();
-               window.testRunner.notifyDone();
+               finishJSTest();
             }
         }
     }
 
     if (window.accessibilityController) {
-        window.testRunner.waitUntilDone();
+        jsTestIsAsync = true;
 
         document.getElementById("listbox").focus();
         listbox = window.accessibilityController.focusedElement;
@@ -47,7 +47,5 @@
     }
 
 </script>
-
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

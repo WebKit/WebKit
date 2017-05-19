@@ -9,4 +9,7 @@ PASS combo.isEqual(accessibilityController.focusedElement) is true
 The ComboBox should still be the focused element even after the aria-activedescendant was changed.
 PASS combo.isEqual(accessibilityController.focusedElement) is true
 Received notification: AXSelectedChildrenChanged
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

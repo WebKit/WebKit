@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 <body>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
 <script src="../resources/accessibility-helper.js"></script>
 
 <div id="container" style="position: relative; top: 100px; left: 600px; width:400px; height: 400px;" role="group" tabindex="0">
@@ -36,8 +36,6 @@ function pageY(element) {
 }
 
 if (window.testRunner && window.accessibilityController) {
-    window.testRunner.dumpAsText();
- 
     var container = accessibilityController.accessibleElementById("svgroot");
 
     var x = pageX(container) - 1;
@@ -91,8 +89,6 @@ if (window.testRunner && window.accessibilityController) {
 }
 
 </script>
-
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>
 

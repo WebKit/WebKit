@@ -6,4 +6,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS string is 'hello'
 PASS string is 'test text'
 TEST PASSED: NO CRASH
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

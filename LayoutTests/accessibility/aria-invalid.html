@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
 </head>
 <body id="body">
 
@@ -53,7 +53,7 @@
             $("notifications").innerHTML += "Notification received successfully.";
             axNotificationElement.removeNotificationListener();
             $("examples").hidden = true;
-            window.testRunner.notifyDone();
+            finishJSTest();
         }
     }
 
@@ -66,7 +66,7 @@
     }
 
     if (window.accessibilityController) {
-        window.testRunner.waitUntilDone();
+        jsTestIsAsync = true;
 
         var examples = document.querySelectorAll(".ex");
         for (var i = 0, c = examples.length; i < c; i++) {
@@ -87,7 +87,5 @@
     }
 
 </script>
-
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>

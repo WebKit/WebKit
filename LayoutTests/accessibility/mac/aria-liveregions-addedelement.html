@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body id="body">
 
@@ -23,12 +23,12 @@
         if (notification == "AXLiveRegionChanged") {
            document.getElementById("notifications").innerHTML += "Successfully received " + notification;
            liveRegion.removeNotificationListener();
-           window.testRunner.notifyDone();
+           finishJSTest();
         }
     }
 
     if (window.accessibilityController) {
-        window.testRunner.waitUntilDone();
+        jsTestIsAsync = true;
 
         document.getElementById("liveregion").focus();
         liveRegion = window.accessibilityController.focusedElement;
@@ -41,7 +41,5 @@
     }
 
 </script>
-
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

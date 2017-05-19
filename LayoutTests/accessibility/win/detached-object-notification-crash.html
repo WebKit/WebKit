@@ -1,6 +1,6 @@
 <html>
 <head>
-    <script src="../../resources/js-test-pre.js"></script>
+    <script src="../../resources/js-test.js"></script>
 </head>
 
 <body id="body">
@@ -22,13 +22,12 @@ not cause a crash.</p>
             return;
 
         debug("PASS: Didn't crash.");
-        testRunner.notifyDone();
+        finishJSTest();
     }
     if (window.testRunner && window.accessibilityController) {
         document.getElementById("notDRT").style.visibility = "hidden";
 
-        testRunner.dumpAsText();
-        testRunner.waitUntilDone();
+        jsTestIsAsync = true;
 
         var element = document.getElementById("avnElement");
         element.focus();

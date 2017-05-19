@@ -1,12 +1,8 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
 <script>
-
-if (window.testRunner)
-  testRunner.dumpAsText();
-
 function findUnknownChild(accessibilityObject) {
     if (accessibilityObject.role == "AXRole: AXUnknown")
         return accessibilityObject;
@@ -39,6 +35,5 @@ function runTest()
 description("This tests accessibility objects with role 'unknown' are not being exposed.");
 
 </script>
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>
