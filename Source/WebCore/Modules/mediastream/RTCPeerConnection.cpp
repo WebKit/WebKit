@@ -214,7 +214,7 @@ Ref<RTCRtpTransceiver> RTCPeerConnection::completeAddTransceiver(Ref<RTCRtpSende
 
 void RTCPeerConnection::queuedCreateOffer(RTCOfferOptions&& options, SessionDescriptionPromise&& promise)
 {
-    LOG(WebRTC, "Creating offer\n");
+    RELEASE_LOG(WebRTC, "Creating offer\n");
     if (isClosed()) {
         promise.reject(INVALID_STATE_ERR);
         return;
@@ -225,7 +225,7 @@ void RTCPeerConnection::queuedCreateOffer(RTCOfferOptions&& options, SessionDesc
 
 void RTCPeerConnection::queuedCreateAnswer(RTCAnswerOptions&& options, SessionDescriptionPromise&& promise)
 {
-    LOG(WebRTC, "Creating answer\n");
+    RELEASE_LOG(WebRTC, "Creating answer\n");
     if (isClosed()) {
         promise.reject(INVALID_STATE_ERR);
         return;
@@ -236,7 +236,7 @@ void RTCPeerConnection::queuedCreateAnswer(RTCAnswerOptions&& options, SessionDe
 
 void RTCPeerConnection::queuedSetLocalDescription(RTCSessionDescription& description, DOMPromiseDeferred<void>&& promise)
 {
-    LOG(WebRTC, "Setting local description:\n%s\n", description.sdp().utf8().data());
+    RELEASE_LOG(WebRTC, "Setting local description:\n%s\n", description.sdp().utf8().data());
     if (isClosed()) {
         promise.reject(INVALID_STATE_ERR);
         return;
@@ -262,7 +262,7 @@ RefPtr<RTCSessionDescription> RTCPeerConnection::pendingLocalDescription() const
 
 void RTCPeerConnection::queuedSetRemoteDescription(RTCSessionDescription& description, DOMPromiseDeferred<void>&& promise)
 {
-    LOG(WebRTC, "Setting remote description:\n%s\n", description.sdp().utf8().data());
+    RELEASE_LOG(WebRTC, "Setting remote description:\n%s\n", description.sdp().utf8().data());
 
     if (isClosed()) {
         promise.reject(INVALID_STATE_ERR);
@@ -288,7 +288,7 @@ RefPtr<RTCSessionDescription> RTCPeerConnection::pendingRemoteDescription() cons
 
 void RTCPeerConnection::queuedAddIceCandidate(RTCIceCandidate* rtcCandidate, DOMPromiseDeferred<void>&& promise)
 {
-    LOG(WebRTC, "Received ice candidate:\n%s\n", rtcCandidate ? rtcCandidate->candidate().utf8().data() : "null");
+    RELEASE_LOG(WebRTC, "Received ice candidate:\n%s\n", rtcCandidate ? rtcCandidate->candidate().utf8().data() : "null");
 
     if (isClosed()) {
         promise.reject(INVALID_STATE_ERR);
