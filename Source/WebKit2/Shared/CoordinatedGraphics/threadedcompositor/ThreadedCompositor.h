@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ThreadedCompositor_h
-#define ThreadedCompositor_h
+#pragma once
 
 #if USE(COORDINATED_GRAPHICS_THREADED)
 
@@ -42,11 +41,6 @@
 #include <WebCore/DisplayRefreshMonitor.h>
 #endif
 
-#if PLATFORM(WPE)
-#include "CompositingManager.h"
-#include <WebCore/PlatformDisplayWPE.h>
-#endif
-
 namespace WebCore {
 struct CoordinatedGraphicsState;
 }
@@ -58,11 +52,7 @@ class CoordinatedGraphicsSceneClient;
 class ThreadedDisplayRefreshMonitor;
 class WebPage;
 
-class ThreadedCompositor : public CoordinatedGraphicsSceneClient, public ThreadSafeRefCounted<ThreadedCompositor>
-#if PLATFORM(WPE)
-    , public WebCore::PlatformDisplayWPE::EGLTarget::Client
-#endif
-    {
+class ThreadedCompositor : public CoordinatedGraphicsSceneClient, public ThreadSafeRefCounted<ThreadedCompositor> {
     WTF_MAKE_NONCOPYABLE(ThreadedCompositor);
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -70,11 +60,17 @@ public:
     public:
         virtual void renderNextFrame() = 0;
         virtual void commitScrollOffset(uint32_t layerID, const WebCore::IntSize& offset) = 0;
+
+        virtual uint64_t nativeSurfaceHandleForCompositing() = 0;
+        virtual void didDestroyGLContext() = 0;
+
+        virtual void willRenderFrame() = 0;
+        virtual void didRenderFrame() = 0;
     };
 
     enum class ShouldDoFrameSync { No, Yes };
 
-    static Ref<ThreadedCompositor> create(Client&, WebPage&, const WebCore::IntSize&, float scaleFactor, uint64_t nativeSurfaceHandle = 0, ShouldDoFrameSync = ShouldDoFrameSync::Yes, WebCore::TextureMapper::PaintFlags = 0);
+    static Ref<ThreadedCompositor> create(Client&, WebPage&, const WebCore::IntSize&, float scaleFactor, ShouldDoFrameSync = ShouldDoFrameSync::Yes, WebCore::TextureMapper::PaintFlags = 0);
     virtual ~ThreadedCompositor();
 
     void setNativeSurfaceHandleForCompositing(uint64_t);
@@ -97,18 +93,15 @@ public:
     void coordinateUpdateCompletionWithClient();
 #endif
 
+    void frameComplete();
+
 private:
-    ThreadedCompositor(Client&, WebPage&, const WebCore::IntSize&, float scaleFactor, uint64_t nativeSurfaceHandle, ShouldDoFrameSync, WebCore::TextureMapper::PaintFlags);
+    ThreadedCompositor(Client&, WebPage&, const WebCore::IntSize&, float scaleFactor, ShouldDoFrameSync, WebCore::TextureMapper::PaintFlags);
 
     // CoordinatedGraphicsSceneClient
     void renderNextFrame() override;
     void updateViewport() override;
     void commitScrollOffset(uint32_t layerID, const WebCore::IntSize& offset) override;
-
-#if PLATFORM(WPE)
-    // WebCore::PlatformDisplayWPE::Surface::Client
-    void frameComplete() override;
-#endif
 
     void renderLayerTree();
     void sceneUpdateFinished();
@@ -117,12 +110,6 @@ private:
 
     Client& m_client;
     RefPtr<CoordinatedGraphicsScene> m_scene;
-
-#if PLATFORM(WPE)
-    CompositingManager m_compositingManager;
-    std::unique_ptr<WebCore::PlatformDisplayWPE::EGLTarget> m_target;
-#endif
-
     std::unique_ptr<WebCore::GLContext> m_context;
 
     WebCore::IntSize m_viewportSize;
@@ -147,6 +134,5 @@ private:
 
 } // namespace WebKit
 
-#endif
+#endif // USE(COORDINATED_GRAPHICS_THREADED)
 
-#endif // ThreadedCompositor_h

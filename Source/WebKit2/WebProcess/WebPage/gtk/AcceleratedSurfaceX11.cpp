@@ -41,11 +41,11 @@ using namespace WebCore;
 
 namespace WebKit {
 
-std::unique_ptr<AcceleratedSurfaceX11> AcceleratedSurfaceX11::create(WebPage& webPage)
+std::unique_ptr<AcceleratedSurfaceX11> AcceleratedSurfaceX11::create(WebPage& webPage, Client& client)
 {
     if (!downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay()).supportsXComposite())
         return nullptr;
-    return std::unique_ptr<AcceleratedSurfaceX11>(new AcceleratedSurfaceX11(webPage));
+    return std::unique_ptr<AcceleratedSurfaceX11>(new AcceleratedSurfaceX11(webPage, client));
 }
 
 static GdkVisual* defaultVisual()
@@ -55,8 +55,8 @@ static GdkVisual* defaultVisual()
     return gdk_screen_get_system_visual(gdk_screen_get_default());
 }
 
-AcceleratedSurfaceX11::AcceleratedSurfaceX11(WebPage& webPage)
-    : AcceleratedSurface(webPage)
+AcceleratedSurfaceX11::AcceleratedSurfaceX11(WebPage& webPage, Client& client)
+    : AcceleratedSurface(webPage, client)
     , m_display(downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay()).native())
 {
     Screen* screen = DefaultScreenOfDisplay(m_display);
@@ -149,6 +149,12 @@ bool AcceleratedSurfaceX11::resize(const IntSize& size)
     return true;
 }
 
-} // namespace WebCore
+void AcceleratedSurfaceX11::didRenderFrame()
+{
+    // FIXME: frameComplete() should be called when the frame was actually rendered in the screen.
+    m_client.frameComplete();
+}
+
+} // namespace WebKit
 
 #endif // USE(REDIRECTED_XCOMPOSITE_WINDOW)

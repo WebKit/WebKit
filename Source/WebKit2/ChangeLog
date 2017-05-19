@@ -1,3 +1,70 @@
+2017-05-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [Threaded Compositor] Remove platform ifdefs from threaded compositor implementation
+        https://bugs.webkit.org/show_bug.cgi?id=172265
+
+        Reviewed by Žan Doberšek.
+
+        Add AcceleratedSurfaceWPE implementation that is equivalent to the PlatformDisplayWPE::EGLTarget. Since WPE needs the
+        surface to be initialized/finalized in the compositing thread, two new virtual methods has been added to
+        AcceleratedSurface initialize/finalize that are only implemented by WPE. The threaded compositor no longer
+        receives a native surface handle as contructor parameter, it now asks the client for it from the compositing
+        thread, right after it's created.
+
+        * PlatformWPE.cmake:
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        (WebKit::ThreadedCompositor::create): Remove ativeSurfaceHandle parameter.
+        (WebKit::ThreadedCompositor::ThreadedCompositor): Initialize m_nativeSurfaceHandle from the compositing thread
+        asking the client for it.
+        (WebKit::ThreadedCompositor::createGLContext): Remove the WPE implementation.
+        (WebKit::ThreadedCompositor::invalidate): Notify the client that the GL context has been destroyed.
+        (WebKit::ThreadedCompositor::setNativeSurfaceHandleForCompositing): Remove GTK ifdefs.
+        (WebKit::ThreadedCompositor::setViewportSize): Remove WPE implementation.
+        (WebKit::ThreadedCompositor::renderLayerTree): Notify the client the frame will be rendered, and when it has
+        been rendered.
+        (WebKit::ThreadedCompositor::frameComplete): Remove WPE ifdefs.
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.h:
+        * WebProcess/WebPage/AcceleratedSurface.cpp:
+        (WebKit::AcceleratedSurface::create): Add client parameter.
+        (WebKit::AcceleratedSurface::AcceleratedSurface): Create a AcceleratedSurfaceWPE if display is WPE.
+        * WebProcess/WebPage/AcceleratedSurface.h:
+        (WebKit::AcceleratedSurface::surfaceID):
+        (WebKit::AcceleratedSurface::initialize):
+        (WebKit::AcceleratedSurface::finalize):
+        (WebKit::AcceleratedSurface::willRenderFrame):
+        (WebKit::AcceleratedSurface::didRenderFrame):
+        * WebProcess/WebPage/CoordinatedGraphics/ThreadedCoordinatedLayerTreeHost.cpp:
+        (WebKit::ThreadedCoordinatedLayerTreeHost::ThreadedCoordinatedLayerTreeHost): Pass this as client of AcceleratedSurface.
+        (WebKit::ThreadedCoordinatedLayerTreeHost::frameComplete): Notify the compositor.
+        (WebKit::ThreadedCoordinatedLayerTreeHost::nativeSurfaceHandleForCompositing): Initialize the surface and return
+        the window handler.
+        (WebKit::ThreadedCoordinatedLayerTreeHost::didDestroyGLContext): Finalize the surface.
+        (WebKit::ThreadedCoordinatedLayerTreeHost::willRenderFrame): Notify the surface.
+        (WebKit::ThreadedCoordinatedLayerTreeHost::didRenderFrame): Ditto.
+        * WebProcess/WebPage/CoordinatedGraphics/ThreadedCoordinatedLayerTreeHost.h:
+        * WebProcess/WebPage/gtk/AcceleratedSurfaceWayland.cpp:
+        (WebKit::AcceleratedSurfaceWayland::create): Add client parameter.
+        (WebKit::AcceleratedSurfaceWayland::AcceleratedSurfaceWayland): Ditto.
+        (WebKit::AcceleratedSurfaceWayland::didRenderFrame): Call Client::frameComplete().
+        * WebProcess/WebPage/gtk/AcceleratedSurfaceWayland.h:
+        * WebProcess/WebPage/gtk/AcceleratedSurfaceX11.cpp:
+        (WebKit::AcceleratedSurfaceX11::create): Add client parameter.
+        (WebKit::AcceleratedSurfaceX11::AcceleratedSurfaceX11): Ditto.
+        (WebKit::AcceleratedSurfaceX11::didRenderFrame): Call Client::frameComplete().
+        * WebProcess/WebPage/gtk/AcceleratedSurfaceX11.h:
+        * WebProcess/WebPage/wpe/AcceleratedSurfaceWPE.cpp: Added.
+        (WebKit::AcceleratedSurfaceWPE::create):
+        (WebKit::AcceleratedSurfaceWPE::AcceleratedSurfaceWPE):
+        (WebKit::AcceleratedSurfaceWPE::~AcceleratedSurfaceWPE):
+        (WebKit::AcceleratedSurfaceWPE::initialize):
+        (WebKit::AcceleratedSurfaceWPE::finalize):
+        (WebKit::AcceleratedSurfaceWPE::window):
+        (WebKit::AcceleratedSurfaceWPE::surfaceID):
+        (WebKit::AcceleratedSurfaceWPE::resize):
+        (WebKit::AcceleratedSurfaceWPE::willRenderFrame):
+        (WebKit::AcceleratedSurfaceWPE::didRenderFrame):
+        * WebProcess/WebPage/wpe/AcceleratedSurfaceWPE.h: Copied from Source/WebKit2/WebProcess/WebPage/gtk/AcceleratedSurfaceX11.h.
+
 2017-05-19  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC][DFG][DOMJIT] Extend CheckDOM to CheckSubClass

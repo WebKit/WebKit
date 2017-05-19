@@ -25,11 +25,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ThreadedCoordinatedLayerTreeHost_h
-#define ThreadedCoordinatedLayerTreeHost_h
+#pragma once
 
 #if USE(COORDINATED_GRAPHICS_THREADED)
 
+#include "AcceleratedSurface.h"
 #include "CoordinatedLayerTreeHost.h"
 #include "SimpleViewportController.h"
 #include "ThreadedCompositor.h"
@@ -43,10 +43,9 @@ struct CoordinatedGraphicsState;
 
 namespace WebKit {
 
-class AcceleratedSurface;
 class WebPage;
 
-class ThreadedCoordinatedLayerTreeHost final : public CoordinatedLayerTreeHost {
+class ThreadedCoordinatedLayerTreeHost final : public CoordinatedLayerTreeHost, public AcceleratedSurface::Client {
 public:
     static Ref<ThreadedCoordinatedLayerTreeHost> create(WebPage&);
     virtual ~ThreadedCoordinatedLayerTreeHost();
@@ -92,6 +91,26 @@ private:
             m_layerTreeHost.commitScrollOffset(layerID, offset);
         }
 
+        uint64_t nativeSurfaceHandleForCompositing() override
+        {
+            return m_layerTreeHost.nativeSurfaceHandleForCompositing();
+        }
+
+        void didDestroyGLContext() override
+        {
+            m_layerTreeHost.didDestroyGLContext();
+        }
+
+        void willRenderFrame() override
+        {
+            m_layerTreeHost.willRenderFrame();
+        }
+
+        void didRenderFrame() override
+        {
+            m_layerTreeHost.didRenderFrame();
+        }
+
         ThreadedCoordinatedLayerTreeHost& m_layerTreeHost;
     };
 
@@ -105,6 +124,14 @@ private:
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     RefPtr<WebCore::DisplayRefreshMonitor> createDisplayRefreshMonitor(WebCore::PlatformDisplayID) override;
 #endif
+
+    // AcceleratedSurface::Client
+    void frameComplete() override;
+
+    uint64_t nativeSurfaceHandleForCompositing();
+    void didDestroyGLContext();
+    void willRenderFrame();
+    void didRenderFrame();
 
     enum class DiscardableSyncActions {
         UpdateSize = 1 << 1,
@@ -126,5 +153,3 @@ private:
 } // namespace WebKit
 
 #endif // USE(COORDINATED_GRAPHICS_THREADED)
-
-#endif // ThreadedCoordinatedLayerTreeHost_h

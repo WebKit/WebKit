@@ -44,16 +44,15 @@ using namespace WebCore;
 
 namespace WebKit {
 
-Ref<ThreadedCompositor> ThreadedCompositor::create(Client& client, WebPage& webPage, const IntSize& viewportSize, float scaleFactor, uint64_t nativeSurfaceHandle, ShouldDoFrameSync doFrameSync, TextureMapper::PaintFlags paintFlags)
+Ref<ThreadedCompositor> ThreadedCompositor::create(Client& client, WebPage& webPage, const IntSize& viewportSize, float scaleFactor, ShouldDoFrameSync doFrameSync, TextureMapper::PaintFlags paintFlags)
 {
-    return adoptRef(*new ThreadedCompositor(client, webPage, viewportSize, scaleFactor, nativeSurfaceHandle, doFrameSync, paintFlags));
+    return adoptRef(*new ThreadedCompositor(client, webPage, viewportSize, scaleFactor, doFrameSync, paintFlags));
 }
 
-ThreadedCompositor::ThreadedCompositor(Client& client, WebPage& webPage, const IntSize& viewportSize, float scaleFactor, uint64_t nativeSurfaceHandle, ShouldDoFrameSync doFrameSync, TextureMapper::PaintFlags paintFlags)
+ThreadedCompositor::ThreadedCompositor(Client& client, WebPage& webPage, const IntSize& viewportSize, float scaleFactor, ShouldDoFrameSync doFrameSync, TextureMapper::PaintFlags paintFlags)
     : m_client(client)
     , m_viewportSize(viewportSize)
     , m_scaleFactor(scaleFactor)
-    , m_nativeSurfaceHandle(nativeSurfaceHandle)
     , m_doFrameSync(doFrameSync)
     , m_paintFlags(paintFlags)
     , m_needsResize(!viewportSize.isEmpty())
@@ -65,21 +64,14 @@ ThreadedCompositor::ThreadedCompositor(Client& client, WebPage& webPage, const I
     m_clientRendersNextFrame.store(false);
     m_coordinateUpdateCompletionWithClient.store(false);
 
-#if PLATFORM(WPE)
-    m_compositingManager.establishConnection(webPage);
-#endif
-
     m_compositingRunLoop->performTaskSync([this, protectedThis = makeRef(*this)] {
         m_scene = adoptRef(new CoordinatedGraphicsScene(this));
-#if PLATFORM(GTK)
+        m_nativeSurfaceHandle = m_client.nativeSurfaceHandleForCompositing();
         if (m_nativeSurfaceHandle) {
             createGLContext();
             m_scene->setActive(true);
         } else
             m_scene->setActive(false);
-#elif PLATFORM(WPE)
-        m_scene->setActive(true);
-#endif
     });
 }
 
@@ -91,7 +83,6 @@ void ThreadedCompositor::createGLContext()
 {
     ASSERT(!isMainThread());
 
-#if PLATFORM(GTK)
     ASSERT(m_nativeSurfaceHandle);
 
     m_context = GLContext::createContextForWindow(reinterpret_cast<GLNativeWindowType>(m_nativeSurfaceHandle), &PlatformDisplay::sharedDisplayForCompositing());
@@ -102,22 +93,6 @@ void ThreadedCompositor::createGLContext()
         if (m_context->makeContextCurrent())
             m_context->swapInterval(0);
     }
-#endif
-
-#if PLATFORM(WPE)
-    auto& platformDisplay = PlatformDisplay::sharedDisplay();
-    RELEASE_ASSERT(is<PlatformDisplayWPE>(platformDisplay));
-    m_target = downcast<PlatformDisplayWPE>(platformDisplay).createEGLTarget(*this, m_compositingManager.releaseConnectionFd());
-    ASSERT(m_target);
-    m_target->initialize(m_viewportSize);
-
-    m_context = GLContext::createContextForWindow(m_target->nativeWindow(), &platformDisplay);
-    if (!m_context)
-        return;
-
-    if (!m_context->makeContextCurrent())
-        return;
-#endif
 }
 
 void ThreadedCompositor::invalidate()
@@ -130,9 +105,7 @@ void ThreadedCompositor::invalidate()
     m_compositingRunLoop->performTaskSync([this, protectedThis = makeRef(*this)] {
         m_scene->purgeGLResources();
         m_context = nullptr;
-#if PLATFORM(WPE)
-        m_target = nullptr;
-#endif
+        m_client.didDestroyGLContext();
         m_scene = nullptr;
     });
     m_compositingRunLoop = nullptr;
@@ -140,7 +113,6 @@ void ThreadedCompositor::invalidate()
 
 void ThreadedCompositor::setNativeSurfaceHandleForCompositing(uint64_t handle)
 {
-#if PLATFORM(GTK)
     m_compositingRunLoop->stopUpdates();
     m_compositingRunLoop->performTaskSync([this, protectedThis = makeRef(*this), handle] {
         // A new native handle can't be set without destroying the previous one first if any.
@@ -154,7 +126,6 @@ void ThreadedCompositor::setNativeSurfaceHandleForCompositing(uint64_t handle)
             m_context = nullptr;
         }
     });
-#endif
 }
 
 void ThreadedCompositor::setScaleFactor(float scale)
@@ -178,10 +149,6 @@ void ThreadedCompositor::setViewportSize(const IntSize& viewportSize, float scal
 {
     m_compositingRunLoop->performTaskSync([this, protectedThis = makeRef(*this), viewportSize, scale] {
         m_viewportSize = viewportSize;
-#if PLATFORM(WPE)
-        if (m_target)
-            m_target->resize(viewportSize);
-#endif
         m_scaleFactor = scale;
         m_needsResize = true;
         m_compositingRunLoop->scheduleUpdate();
@@ -226,17 +193,10 @@ void ThreadedCompositor::renderLayerTree()
     if (!m_scene || !m_scene->isActive())
         return;
 
-#if PLATFORM(WPE)
-    if (!m_context)
-        createGLContext();
-#endif
-
     if (!m_context || !m_context->makeContextCurrent())
         return;
 
-#if PLATFORM(WPE)
-    m_target->frameWillRender();
-#endif
+    m_client.willRenderFrame();
 
     if (m_needsResize) {
         glViewport(0, 0, m_viewportSize.width(), m_viewportSize.height());
@@ -257,14 +217,8 @@ void ThreadedCompositor::renderLayerTree()
 
     m_context->swapBuffers();
 
-#if PLATFORM(WPE)
-    m_target->frameRendered();
-#endif
-
-#if PLATFORM(GTK)
     if (m_scene->isActive())
-        sceneUpdateFinished();
-#endif
+        m_client.didRenderFrame();
 }
 
 void ThreadedCompositor::sceneUpdateFinished()
@@ -334,13 +288,11 @@ void ThreadedCompositor::coordinateUpdateCompletionWithClient()
 }
 #endif
 
-#if PLATFORM(WPE)
 void ThreadedCompositor::frameComplete()
 {
     ASSERT(!isMainThread());
     sceneUpdateFinished();
 }
-#endif
 
 }
 #endif // USE(COORDINATED_GRAPHICS_THREADED)

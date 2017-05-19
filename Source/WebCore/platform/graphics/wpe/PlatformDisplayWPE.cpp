@@ -55,62 +55,9 @@ void PlatformDisplayWPE::initialize(int hostFd)
     PlatformDisplay::initializeEGLDisplay();
 }
 
-std::unique_ptr<PlatformDisplayWPE::EGLTarget> PlatformDisplayWPE::createEGLTarget(EGLTarget::Client& client, int hostFd)
-{
-    return std::make_unique<EGLTarget>(*this, client, hostFd);
-}
-
 std::unique_ptr<PlatformDisplayWPE::EGLOffscreenTarget> PlatformDisplayWPE::createEGLOffscreenTarget()
 {
     return std::make_unique<EGLOffscreenTarget>(*this);
-}
-
-PlatformDisplayWPE::EGLTarget::EGLTarget(const PlatformDisplayWPE& display, PlatformDisplayWPE::EGLTarget::Client& client, int hostFd)
-    : m_display(display)
-    , m_client(client)
-{
-    m_backend = wpe_renderer_backend_egl_target_create(hostFd);
-
-    static struct wpe_renderer_backend_egl_target_client s_client = {
-        // frame_complete
-        [](void* data)
-        {
-            auto& surface = *reinterpret_cast<EGLTarget*>(data);
-            surface.m_client.frameComplete();
-        },
-    };
-    wpe_renderer_backend_egl_target_set_client(m_backend, &s_client, this);
-}
-
-PlatformDisplayWPE::EGLTarget::~EGLTarget()
-{
-    wpe_renderer_backend_egl_target_destroy(m_backend);
-}
-
-void PlatformDisplayWPE::EGLTarget::initialize(const IntSize& size)
-{
-    wpe_renderer_backend_egl_target_initialize(m_backend, m_display.m_backend,
-        std::max(0, size.width()), std::max(0, size.height()));
-}
-
-EGLNativeWindowType PlatformDisplayWPE::EGLTarget::nativeWindow() const
-{
-    return wpe_renderer_backend_egl_target_get_native_window(m_backend);
-}
-
-void PlatformDisplayWPE::EGLTarget::resize(const IntSize& size)
-{
-    wpe_renderer_backend_egl_target_resize(m_backend, std::max(0, size.width()), std::max(0, size.height()));
-}
-
-void PlatformDisplayWPE::EGLTarget::frameWillRender()
-{
-    wpe_renderer_backend_egl_target_frame_will_render(m_backend);
-}
-
-void PlatformDisplayWPE::EGLTarget::frameRendered()
-{
-    wpe_renderer_backend_egl_target_frame_rendered(m_backend);
 }
 
 PlatformDisplayWPE::EGLOffscreenTarget::EGLOffscreenTarget(const PlatformDisplayWPE& display)

@@ -85,13 +85,13 @@ static std::unique_ptr<WaylandCompositorDisplay>& waylandCompositorDisplay()
     return waylandDisplay;
 }
 
-std::unique_ptr<AcceleratedSurfaceWayland> AcceleratedSurfaceWayland::create(WebPage& webPage)
+std::unique_ptr<AcceleratedSurfaceWayland> AcceleratedSurfaceWayland::create(WebPage& webPage, Client& client)
 {
-    return waylandCompositorDisplay() ? std::unique_ptr<AcceleratedSurfaceWayland>(new AcceleratedSurfaceWayland(webPage)) : nullptr;
+    return waylandCompositorDisplay() ? std::unique_ptr<AcceleratedSurfaceWayland>(new AcceleratedSurfaceWayland(webPage, client)) : nullptr;
 }
 
-AcceleratedSurfaceWayland::AcceleratedSurfaceWayland(WebPage& webPage)
-    : AcceleratedSurface(webPage)
+AcceleratedSurfaceWayland::AcceleratedSurfaceWayland(WebPage& webPage, Client& client)
+    : AcceleratedSurface(webPage, client)
     , m_surface(waylandCompositorDisplay()->createSurface())
     , m_window(wl_egl_window_create(m_surface.get(), std::max(1, m_size.width()), std::max(1, m_size.height())))
 {
@@ -110,6 +110,12 @@ bool AcceleratedSurfaceWayland::resize(const IntSize& size)
 
     wl_egl_window_resize(m_window, m_size.width(), m_size.height(), 0, 0);
     return true;
+}
+
+void AcceleratedSurfaceWayland::didRenderFrame()
+{
+    // FIXME: frameComplete() should be called when the frame was actually rendered in the screen.
+    m_client.frameComplete();
 }
 
 } // namespace WebKit

@@ -37,7 +37,7 @@ namespace WebKit {
 class AcceleratedSurfaceWayland final : public AcceleratedSurface {
     WTF_MAKE_NONCOPYABLE(AcceleratedSurfaceWayland); WTF_MAKE_FAST_ALLOCATED;
 public:
-    static std::unique_ptr<AcceleratedSurfaceWayland> create(WebPage&);
+    static std::unique_ptr<AcceleratedSurfaceWayland> create(WebPage&, Client&);
     ~AcceleratedSurfaceWayland();
 
     uint64_t window() const override { return reinterpret_cast<uint64_t>(m_window); }
@@ -45,8 +45,10 @@ public:
     bool resize(const WebCore::IntSize&) override;
     bool shouldPaintMirrored() const override { return true; }
 
+    void didRenderFrame() override;
+
 private:
-    AcceleratedSurfaceWayland(WebPage&);
+    AcceleratedSurfaceWayland(WebPage&, Client&);
 
     WebCore::WlUniquePtr<struct wl_surface> m_surface;
     struct wl_egl_window* m_window { nullptr };

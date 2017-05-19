@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Igalia S.L.
+ * Copyright (C) 2017 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,40 +25,40 @@
 
 #pragma once
 
-#include <WebCore/IntSize.h>
-#include <wtf/Noncopyable.h>
+#if PLATFORM(WPE)
+
+#include "AcceleratedSurface.h"
+#include "CompositingManager.h"
+
+struct wpe_renderer_backend_egl_target;
 
 namespace WebKit {
 
 class WebPage;
 
-class AcceleratedSurface {
-    WTF_MAKE_NONCOPYABLE(AcceleratedSurface); WTF_MAKE_FAST_ALLOCATED;
+class AcceleratedSurfaceWPE final : public AcceleratedSurface {
+    WTF_MAKE_NONCOPYABLE(AcceleratedSurfaceWPE); WTF_MAKE_FAST_ALLOCATED;
 public:
-    class Client {
-    public:
-        virtual void frameComplete() = 0;
-    };
+    static std::unique_ptr<AcceleratedSurfaceWPE> create(WebPage&, Client&);
+    ~AcceleratedSurfaceWPE();
 
-    static std::unique_ptr<AcceleratedSurface> create(WebPage&, Client&);
-    virtual ~AcceleratedSurface() = default;
+    uint64_t window() const override;
+    uint64_t surfaceID() const override;
+    bool resize(const WebCore::IntSize&) override;
+    bool shouldPaintMirrored() const override { return false; }
 
-    virtual uint64_t window() const { ASSERT_NOT_REACHED(); return 0; }
-    virtual uint64_t surfaceID() const { ASSERT_NOT_REACHED(); return 0; }
-    virtual bool resize(const WebCore::IntSize&);
-    virtual bool shouldPaintMirrored() const { return false; }
+    void initialize() override;
+    void finalize() override;
+    void willRenderFrame() override;
+    void didRenderFrame() override;
 
-    virtual void initialize() { }
-    virtual void finalize() { }
-    virtual void willRenderFrame() { }
-    virtual void didRenderFrame() { }
+private:
+    AcceleratedSurfaceWPE(WebPage&, Client&);
 
-protected:
-    AcceleratedSurface(WebPage&, Client&);
-
-    WebPage& m_webPage;
-    Client& m_client;
-    WebCore::IntSize m_size;
+    CompositingManager m_compositingManager;
+    struct wpe_renderer_backend_egl_target* m_backend { nullptr };
 };
 
 } // namespace WebKit
+
+#endif // PLATFORM(WPE)

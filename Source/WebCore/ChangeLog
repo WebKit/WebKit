@@ -1,3 +1,15 @@
+2017-05-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [Threaded Compositor] Remove platform ifdefs from threaded compositor implementation
+        https://bugs.webkit.org/show_bug.cgi?id=172265
+
+        Reviewed by Žan Doberšek.
+
+        Remove PlatformDisplayWPE::EGLTarget.
+
+        * platform/graphics/wpe/PlatformDisplayWPE.cpp:
+        * platform/graphics/wpe/PlatformDisplayWPE.h:
+
 2017-05-19  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed build fix; add undefined functions and constants to the CoreMediaSoftLink.h, and use the

@@ -41,7 +41,7 @@ class WebPage;
 class AcceleratedSurfaceX11 final : public AcceleratedSurface {
     WTF_MAKE_NONCOPYABLE(AcceleratedSurfaceX11); WTF_MAKE_FAST_ALLOCATED;
 public:
-    static std::unique_ptr<AcceleratedSurfaceX11> create(WebPage&);
+    static std::unique_ptr<AcceleratedSurfaceX11> create(WebPage&, Client&);
     ~AcceleratedSurfaceX11();
 
     uint64_t window() const override { return m_window.get(); }
@@ -49,8 +49,10 @@ public:
     bool resize(const WebCore::IntSize&) override;
     bool shouldPaintMirrored() const override { return false; }
 
+    void didRenderFrame() override;
+
 private:
-    AcceleratedSurfaceX11(WebPage&);
+    AcceleratedSurfaceX11(WebPage&, Client&);
 
     void createPixmap();
 

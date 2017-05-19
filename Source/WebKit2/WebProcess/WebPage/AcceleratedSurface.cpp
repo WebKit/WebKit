@@ -37,25 +37,34 @@
 #include "AcceleratedSurfaceX11.h"
 #endif
 
+#if PLATFORM(WPE)
+#include "AcceleratedSurfaceWPE.h"
+#endif
+
 using namespace WebCore;
 
 namespace WebKit {
 
-std::unique_ptr<AcceleratedSurface> AcceleratedSurface::create(WebPage& webPage)
+std::unique_ptr<AcceleratedSurface> AcceleratedSurface::create(WebPage& webPage, Client& client)
 {
 #if PLATFORM(WAYLAND)
     if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::Wayland)
-        return AcceleratedSurfaceWayland::create(webPage);
+        return AcceleratedSurfaceWayland::create(webPage, client);
 #endif
 #if USE(REDIRECTED_XCOMPOSITE_WINDOW)
     if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::X11)
-        return AcceleratedSurfaceX11::create(webPage);
+        return AcceleratedSurfaceX11::create(webPage, client);
+#endif
+#if PLATFORM(WPE)
+    if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::WPE)
+        return AcceleratedSurfaceWPE::create(webPage, client);
 #endif
     return nullptr;
 }
 
-AcceleratedSurface::AcceleratedSurface(WebPage& webPage)
+AcceleratedSurface::AcceleratedSurface(WebPage& webPage, Client& client)
     : m_webPage(webPage)
+    , m_client(client)
     , m_size(webPage.size())
 {
     m_size.scale(m_webPage.deviceScaleFactor());

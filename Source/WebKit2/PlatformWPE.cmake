@@ -162,6 +162,7 @@ list(APPEND WebKit2_SOURCES
 
     WebProcess/WebPage/gstreamer/WebPageGStreamer.cpp
 
+    WebProcess/WebPage/wpe/AcceleratedSurfaceWPE.cpp
     WebProcess/WebPage/wpe/CompositingManager.cpp
     WebProcess/WebPage/wpe/DrawingAreaWPE.cpp
     WebProcess/WebPage/wpe/WebInspectorUIWPE.cpp
