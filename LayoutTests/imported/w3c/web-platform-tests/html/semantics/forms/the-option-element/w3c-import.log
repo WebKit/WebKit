@@ -14,7 +14,9 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-option-element/option-element-constructor.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-option-element/option-form.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-option-element/option-index.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-option-element/option-label-value.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-option-element/option-label.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-option-element/option-selected.html

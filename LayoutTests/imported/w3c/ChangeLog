@@ -1,5 +1,20 @@
 2017-05-19  Chris Dumez  <cdumez@apple.com>
 
+        Option() named constructor is not per spec
+        https://bugs.webkit.org/show_bug.cgi?id=172185
+
+        Reviewed by Sam Weinig.
+
+        Import test coverage from upstream web-platform-tests at 8b69df3a68.
+
+        * web-platform-tests/html/semantics/forms/the-option-element/option-element-constructor-expected.txt: Added.
+        * web-platform-tests/html/semantics/forms/the-option-element/option-element-constructor.html: Added.
+        * web-platform-tests/html/semantics/forms/the-option-element/option-index-expected.txt: Added.
+        * web-platform-tests/html/semantics/forms/the-option-element/option-index.html: Added.
+        * web-platform-tests/html/semantics/forms/the-option-element/w3c-import.log:
+
+2017-05-19  Chris Dumez  <cdumez@apple.com>
+
         URLSearchParams / Headers objects @@iterator is not as per Web IDL spec
         https://bugs.webkit.org/show_bug.cgi?id=172218
 
