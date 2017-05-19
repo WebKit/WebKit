@@ -1,3 +1,24 @@
+2017-05-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Speedometer 2.0: Flight.js test is sometime broken
+        https://bugs.webkit.org/show_bug.cgi?id=172347
+
+        Reviewed by Antti Koivisto.
+
+        The bug was caused by the test runner only waiting for #new-todo, which happens before all other states are
+        updated in the Flight.js dependency example. As done in Speedometer v1, insert a dummy element with id set
+        to appIsReady and wait for this element to appear in the benchmark harness.
+
+        * Speedometer/resources/tests.js: Wait for #appIsReady.
+        * Speedometer/resources/todomvc/dependency-examples/flight/flight/app/js/main.js: Removed the superflous call
+        to console.log.
+        (checkReady): Added. Insert #appIsReady if checkLoaded is no longer running at 50ms interval. Because this
+        could happen asynchronously, we check the absense of checkLoadedTimeoutId Ωevery 10ms for 5 times for
+        the total duration of 50ms. If checkLoadedTimeoutId was never present, we call it ready. If we ever observed
+        the presence of checkLoadedTimeoutId, wait another 50ms and start over.
+        * Speedometer/resources/todomvc/dependency-examples/flight/flight/node_modules/requirejs/require.js:
+        (.newContext.checkLoaded): Expose checkLoadedTimeoutId which is a timer ID used to check the dependency.
+
 2017-05-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         Speedometer 2.0: jQuery and Inferno tests don't delete all ToDo items

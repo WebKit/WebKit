@@ -450,9 +450,10 @@ Suites.push({
     name: 'Flight-TodoMVC',
     url: 'todomvc/dependency-examples/flight/flight/index.html',
     prepare: function (runner, contentWindow, contentDocument) {
-        return runner.waitForElement('#new-todo').then(function (element) {
-            element.focus();
-            return element;
+        return runner.waitForElement('#appIsReady').then(function (element) {
+            var newTodo = contentDocument.getElementById('new-todo');
+            newTodo.focus();
+            return newTodo;
         });
     },
     tests: [
