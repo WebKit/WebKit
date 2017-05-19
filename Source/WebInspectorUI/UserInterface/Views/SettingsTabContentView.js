@@ -35,22 +35,8 @@ WebInspector.SettingsTabContentView = class SettingsTabContentView extends WebIn
         // Ensures that the Settings tab is displayable from a pinned tab bar item.
         tabBarItem.representedObject = this;
 
-        let boundNeedsLayout = this.needsLayout.bind(this, WebInspector.View.LayoutReason.Dirty);
-        WebInspector.notifications.addEventListener(WebInspector.Notification.DebugUIEnabledDidChange, boundNeedsLayout);
-        WebInspector.settings.zoomFactor.addEventListener(WebInspector.Setting.Event.Changed, boundNeedsLayout);
-
-        this._navigationBar = new WebInspector.NavigationBar;
-        this._navigationBar.addEventListener(WebInspector.NavigationBar.Event.NavigationItemSelected, this._navigationItemSelected, this);
-
         this._selectedSettingsView = null;
         this._settingsViews = [];
-
-        this.addSubview(this._navigationBar);
-
-        let generalSettingsView = new WebInspector.GeneralSettingsView;
-        this.addSettingsView(generalSettingsView);
-
-        this.selectedSettingsView = generalSettingsView;
     }
 
     static tabInfo()
@@ -164,6 +150,23 @@ WebInspector.SettingsTabContentView = class SettingsTabContentView extends WebIn
             this.selectedSettingsView = this._settingsViews[nextIndex];
             return;
         }
+    }
+
+    // Protected
+
+    initialLayout()
+    {
+        this._navigationBar = new WebInspector.NavigationBar;
+        this._navigationBar.addEventListener(WebInspector.NavigationBar.Event.NavigationItemSelected, this._navigationItemSelected, this);
+
+        this.addSubview(this._navigationBar);
+
+        let generalSettingsView = new WebInspector.GeneralSettingsView;
+        this.addSettingsView(generalSettingsView);
+
+        this.selectedSettingsView = generalSettingsView;
+
+        WebInspector.notifications.addEventListener(WebInspector.Notification.DebugUIEnabledDidChange, this.needsLayout.bind(this, WebInspector.View.LayoutReason.Dirty));
     }
 
     // Private

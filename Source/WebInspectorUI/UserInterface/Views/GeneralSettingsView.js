@@ -79,8 +79,9 @@ WebInspector.GeneralSettingsView = class GeneralSettingsView extends WebInspecto
         const zoomValues = zoomLevels.map((level) => [level, Number.percentageString(level, 0)]);
 
         let [/* unused */, zoomEditor] = this.addGroupWithCustomSetting(WebInspector.UIString("Zoom:"), WebInspector.SettingEditor.Type.Select, {values: zoomValues});
-        zoomEditor.value = WebInspector.settings.zoomFactor.value;
+        zoomEditor.value = WebInspector.getZoomFactor();
         zoomEditor.addEventListener(WebInspector.SettingEditor.Event.ValueDidChange, () => { WebInspector.setZoomFactor(zoomEditor.value); });
+        WebInspector.settings.zoomFactor.addEventListener(WebInspector.Setting.Event.Changed, () => { zoomEditor.value = WebInspector.getZoomFactor().maxDecimals(2); });
 
         this.addSeparator();
 
