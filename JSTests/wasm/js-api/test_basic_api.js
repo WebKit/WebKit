@@ -14,6 +14,14 @@ const checkOwnPropertyDescriptor = (obj, prop, expect) => {
     assert.eq(descriptor.enumerable, expect.enumerable);
 };
 
+const checkAccessorOwnPropertyDescriptor = (obj, prop, expect) => {
+    const descriptor = Object.getOwnPropertyDescriptor(obj, prop);
+    assert.eq(typeof descriptor.value, "undefined");
+    assert.eq(typeof descriptor.writable, "undefined");
+    assert.eq(descriptor.configurable, expect.configurable);
+    assert.eq(descriptor.enumerable, expect.enumerable);
+};
+
 const functionProperties = {
     "validate": { length: 1 },
     "compile":  { length: 1 },
@@ -70,7 +78,9 @@ for (const c in constructorProperties) {
         for (const invalid of invalidInstanceImports)
             assert.throws(() => new WebAssembly[c](new WebAssembly.Module(emptyModuleArray), invalid), TypeError, `second argument to WebAssembly.Instance must be undefined or an Object (evaluating 'new WebAssembly[c](new WebAssembly.Module(emptyModuleArray), invalid)')`);
         assert.isNotUndef(instance.exports);
-        checkOwnPropertyDescriptor(instance, "exports", { typeofvalue: "object", writable: true, configurable: true, enumerable: true });
+        checkAccessorOwnPropertyDescriptor(WebAssembly.Instance.prototype, "exports", { configurable: true, enumerable: false });
+        assert.throws(() => WebAssembly.Instance.prototype.exports = undefined, TypeError, `Attempted to assign to readonly property.`);
+        assert.throws(() => WebAssembly.Instance.prototype.exports, TypeError, `expected |this| value to be an instance of WebAssembly.Instance`);
         assert.isUndef(instance.exports.__proto__);
         assert.eq(Reflect.isExtensible(instance.exports), false);
         assert.eq(Symbol.iterator in instance.exports, false);

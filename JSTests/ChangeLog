@@ -1,3 +1,15 @@
+2017-05-18  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: exports is a getter
+        https://bugs.webkit.org/show_bug.cgi?id=172129
+
+        Reviewed by Saam Barati.
+
+        Update test to reflect new semantics.
+
+        * wasm/js-api/test_basic_api.js:
+        (const.c.in.constructorProperties.switch):
+
 2017-05-18  Saam Barati  <sbarati@apple.com>
 
         Proxy's [[Get]] passes incorrect receiver

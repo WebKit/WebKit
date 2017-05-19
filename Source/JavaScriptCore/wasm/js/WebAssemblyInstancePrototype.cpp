@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,12 @@
 
 #include "FunctionPrototype.h"
 #include "JSCInlines.h"
+#include "JSModuleNamespaceObject.h"
+#include "JSWebAssemblyInstance.h"
+
+namespace JSC {
+static EncodedJSValue JSC_HOST_CALL webAssemblyInstanceProtoFuncExports(ExecState*);
+}
 
 #include "WebAssemblyInstancePrototype.lut.h"
 
@@ -39,8 +45,31 @@ const ClassInfo WebAssemblyInstancePrototype::s_info = { "WebAssembly.Instance.p
 
 /* Source for WebAssemblyInstancePrototype.lut.h
  @begin prototypeTableWebAssemblyInstance
+ exports webAssemblyInstanceProtoFuncExports DontEnum|Accessor 0
  @end
  */
+
+static ALWAYS_INLINE JSWebAssemblyInstance* getInstance(ExecState* exec, VM& vm, JSValue v)
+{
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    JSWebAssemblyInstance* result = jsDynamicCast<JSWebAssemblyInstance*>(vm, v);
+    if (!result) {
+        throwException(exec, throwScope, 
+            createTypeError(exec, ASCIILiteral("expected |this| value to be an instance of WebAssembly.Instance")));
+        return nullptr;
+    }
+    return result;
+}
+
+static EncodedJSValue JSC_HOST_CALL webAssemblyInstanceProtoFuncExports(ExecState* exec)
+{
+    VM& vm = exec->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+
+    JSWebAssemblyInstance* instance = getInstance(exec, vm, exec->thisValue()); 
+    RETURN_IF_EXCEPTION(throwScope, { });
+    return JSValue::encode(instance->moduleNamespaceObject());
+}
 
 WebAssemblyInstancePrototype* WebAssemblyInstancePrototype::create(VM& vm, JSGlobalObject*, Structure* structure)
 {

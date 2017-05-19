@@ -53,9 +53,8 @@ const ClassInfo WebAssemblyMemoryPrototype::s_info = { "WebAssembly.Memory.proto
 @end
 */
 
-ALWAYS_INLINE JSWebAssemblyMemory* getMemory(ExecState* exec, JSValue value)
+ALWAYS_INLINE JSWebAssemblyMemory* getMemory(ExecState* exec, VM& vm, JSValue value)
 {
-    VM& vm = exec->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     JSWebAssemblyMemory* memory = jsDynamicCast<JSWebAssemblyMemory*>(vm, value); 
@@ -72,7 +71,7 @@ EncodedJSValue JSC_HOST_CALL webAssemblyMemoryProtoFuncGrow(ExecState* exec)
     VM& vm = exec->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    JSWebAssemblyMemory* memory = getMemory(exec, exec->thisValue()); 
+    JSWebAssemblyMemory* memory = getMemory(exec, vm, exec->thisValue()); 
     RETURN_IF_EXCEPTION(throwScope, { });
     
     uint32_t delta = toNonWrappingUint32(exec, exec->argument(0));
@@ -90,7 +89,7 @@ EncodedJSValue JSC_HOST_CALL webAssemblyMemoryProtoFuncBuffer(ExecState* exec)
     VM& vm = exec->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    JSWebAssemblyMemory* memory = getMemory(exec, exec->thisValue()); 
+    JSWebAssemblyMemory* memory = getMemory(exec, vm, exec->thisValue()); 
     RETURN_IF_EXCEPTION(throwScope, { });
     return JSValue::encode(memory->buffer(exec->vm(), exec->lexicalGlobalObject()));
 }

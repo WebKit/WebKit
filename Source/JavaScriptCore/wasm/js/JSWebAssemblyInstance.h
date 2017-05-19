@@ -55,6 +55,8 @@ public:
 
     JSObject* importFunction(unsigned idx) { RELEASE_ASSERT(idx < m_numImportFunctions); return importFunctions()[idx].get(); }
 
+    JSModuleNamespaceObject* moduleNamespaceObject() { return m_moduleNamespaceObject.get(); }
+
     JSWebAssemblyMemory* memory() { return m_memory.get(); }
     void setMemory(VM& vm, JSWebAssemblyMemory* value) { ASSERT(!memory()); m_memory.set(vm, this, value); }
     Wasm::MemoryMode memoryMode() { return memory()->memory().mode(); }

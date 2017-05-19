@@ -69,7 +69,6 @@ void JSWebAssemblyInstance::finishCreation(VM& vm, JSWebAssemblyModule* module, 
 
     m_moduleNamespaceObject.set(vm, this, moduleNamespaceObject);
     m_callee.set(vm, this, module->callee());
-    putDirect(vm, Identifier::fromString(&vm, "exports"), moduleNamespaceObject, None);
 }
 
 void JSWebAssemblyInstance::destroy(JSCell* cell)
