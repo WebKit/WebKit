@@ -1,0 +1,27 @@
+
+Harness Error (FAIL), message = Unterminated generic type record, line 20 (tokens: ', USVString> ')
+[
+    {
+        "type": "other",
+        "value": ","
+    },
+    {
+        "type": "whitespace",
+        "value": " "
+    },
+    {
+        "type": "identifier",
+        "value": "USVString"
+    },
+    {
+        "type": "other",
+        "value": ">"
+    },
+    {
+        "type": "whitespace",
+        "value": " "
+    }
+]
+
+PASS Untitled 
+

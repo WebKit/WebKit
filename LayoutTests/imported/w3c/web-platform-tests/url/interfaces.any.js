@@ -1,15 +1,8 @@
-<!doctype html>
-<title>URL IDL tests</title>
-<script src=/resources/testharness.js></script>
-<script src=/resources/testharnessreport.js></script>
-<script src=/resources/WebIDLParser.js></script>
-<script src=/resources/idlharness.js></script>
+// META: script=/resources/WebIDLParser.js
+// META: script=/resources/idlharness.js
 
-<h1>URL IDL tests</h1>
-<div id=log></div>
-
-<script type=text/plain>
-[Constructor(USVString url, optional USVString base),
+let idlArray,
+    idl = `[Constructor(USVString url, optional USVString base),
  Exposed=(Window,Worker)]
 interface URL {
   stringifier attribute USVString href;
@@ -28,7 +21,7 @@ interface URL {
   USVString toJSON();
 };
 
-[Constructor(optional (USVString or URLSearchParams) init = ""),
+[Constructor(optional (sequence<sequence<USVString>> or record<USVString, USVString> or USVString) init = ""),
  Exposed=(Window,Worker)]
 interface URLSearchParams {
   void append(USVString name, USVString value);
@@ -37,28 +30,21 @@ interface URLSearchParams {
   sequence<USVString> getAll(USVString name);
   boolean has(USVString name);
   void set(USVString name, USVString value);
+
+  void sort();
+
   iterable<USVString, USVString>;
   stringifier;
-};
-</script>
-<script>
-"use strict";
-var idlArray;
+};`;
 setup(function() {
   idlArray = new IdlArray();
-  [].forEach.call(document.querySelectorAll("script[type=text\\/plain]"), function(node) {
-    if (node.className == "untested") {
-      idlArray.add_untested_idls(node.textContent);
-    } else {
-      idlArray.add_idls(node.textContent);
-    }
-  });
+  idlArray.add_idls(idl);
 }, {explicit_done:true});
-window.onload = function() {
-  idlArray.add_objects({
-    URL: ['new URL("http://foo")']
-  });
-  idlArray.test();
-  done();
-};
-</script>
+
+idlArray.add_objects({
+  URL: ['new URL("http://foo")'],
+  URLSearchParams: ['new URLSearchParams("hi=there&thank=you")']
+});
+idlArray.test();
+
+done();
