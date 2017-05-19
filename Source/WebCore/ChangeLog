@@ -1,3 +1,30 @@
+2017-05-18  Zalan Bujtas  <zalan@apple.com>
+
+        Redundant ellipsis box triggers ASSERT_WITH_SECURITY_IMPLICATION in InlineBox::parent().
+        https://bugs.webkit.org/show_bug.cgi?id=172309
+        <rdar://problem/32262357>
+
+        Reviewed by Simon Fraser.
+
+        This patch stops the redundant ellipsis box trigger ASSERT_WITH_SECURITY_IMPLICATION.
+
+        In RootInlineBox::placeEllipsis we construct an ellipsis box and append it to a static HashMap which
+        keeps track of the ellipsis boxes on each line. However when the line already has an ellipsis, we
+        re-use the existing one and this newly constructed (but redundant) box gets destroyed as we return from this function.
+        In InlineBox's d'tor, we let the parent know that now it has a dangling child and we assert on it
+        later, while accessing the children list. However this redundant ellipsis box was never added to the line,
+        so the assertion hits incorrectly.
+
+        Test: fast/inline/redundant-ellipsis-triggers-assert-incorrectly.html
+
+        * rendering/EllipsisBox.cpp:
+        (WebCore::EllipsisBox::EllipsisBox):
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::invalidateParentChildList):
+        * rendering/InlineBox.h:
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::placeEllipsis): Use the newly created ellipsis box instead.
+
 2017-05-18  Andy Estes  <aestes@apple.com>
 
         ENABLE(APPLE_PAY_DELEGATE) should be NO on macOS Sierra and earlier
