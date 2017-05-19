@@ -404,4 +404,9 @@ static BOOL areEssentiallyEqual(double a, double b)
     return response == NSAlertFirstButtonReturn;
 }
 
+- (NSUInteger)webView:(WebView *)webView dragDestinationActionMaskForDraggingInfo:(id <NSDraggingInfo>)draggingInfo
+{
+    return WebDragDestinationActionAny;
+}
+
 @end
