@@ -1076,7 +1076,7 @@ void WebsiteDataStore::removeDataForTopPrivatelyControlledDomains(OptionSet<Webs
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
 void WebsiteDataStore::shouldPartitionCookiesForTopPrivatelyOwnedDomains(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, bool clearFirst)
 {
-    for (auto& processPool : processPools())
+    for (auto& processPool : WebProcessPool::allProcessPools())
         processPool->sendToNetworkingProcess(Messages::NetworkProcess::ShouldPartitionCookiesForTopPrivatelyOwnedDomains(domainsToRemove, domainsToAdd, clearFirst));
 }
 #endif
