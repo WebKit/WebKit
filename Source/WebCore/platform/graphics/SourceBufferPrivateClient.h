@@ -68,6 +68,7 @@ public:
     virtual bool sourceBufferPrivateHasAudio() const = 0;
     virtual bool sourceBufferPrivateHasVideo() const = 0;
 
+    virtual void sourceBufferPrivateReenqueSamples(const AtomicString& trackID) = 0;
     virtual void sourceBufferPrivateDidBecomeReadyForMoreSamples(const AtomicString& trackID) = 0;
 
     virtual MediaTime sourceBufferPrivateFastSeekTimeForMediaTime(const MediaTime& time, const MediaTime&, const MediaTime&) { return time; }
