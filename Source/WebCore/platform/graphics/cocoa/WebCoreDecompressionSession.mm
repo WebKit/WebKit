@@ -360,7 +360,7 @@ RetainPtr<CVPixelBufferRef> WebCoreDecompressionSession::imageForTime(const Medi
     bool allowEarlier = flags == WebCoreDecompressionSession::AllowEarlier;
     bool allowLater = flags == WebCoreDecompressionSession::AllowLater;
 
-    MediaTime startTime = toMediaTime(CMBufferQueueGetFirstDecodeTimeStamp(m_producerQueue.get()));
+    MediaTime startTime = toMediaTime(CMBufferQueueGetFirstPresentationTimeStamp(m_producerQueue.get()));
     MediaTime endTime = toMediaTime(CMBufferQueueGetEndPresentationTimeStamp(m_producerQueue.get()));
     if (!allowLater && time < startTime) {
         LOG(Media, "WebCoreDecompressionSession::imageForTime(%p) - time(%s) too early for queue(%s -> %s)", this, toString(time).utf8().data(), toString(startTime).utf8().data(), toString(endTime).utf8().data());

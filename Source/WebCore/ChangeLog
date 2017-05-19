@@ -1,3 +1,13 @@
+2017-05-19  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed build fix; add undefined functions and constants to the CoreMediaSoftLink.h, and use the
+        correct (and previously soft-linked) method in WebCoreDecompressionSession.
+
+        * platform/cf/CoreMediaSoftLink.cpp:
+        * platform/cf/CoreMediaSoftLink.h:
+        * platform/graphics/cocoa/WebCoreDecompressionSession.mm:
+        (WebCore::WebCoreDecompressionSession::imageForTime):
+
 2017-05-19  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC][DFG][DOMJIT] Extend CheckDOM to CheckSubClass

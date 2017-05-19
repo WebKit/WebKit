@@ -79,6 +79,8 @@ SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CoreMedia, CMBufferQueueGetBufferCount, C
 #define CMBufferQueueGetBufferCount softLink_CoreMedia_CMBufferQueueGetBufferCount
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CoreMedia, CMBufferQueueGetFirstPresentationTimeStamp, CMTime, (CMBufferQueueRef queue), (queue))
 #define CMBufferQueueGetFirstPresentationTimeStamp softLink_CoreMedia_CMBufferQueueGetFirstPresentationTimeStamp
+SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CoreMedia, CMBufferQueueGetEndPresentationTimeStamp, CMTime, (CMBufferQueueRef queue), (queue))
+#define CMBufferQueueGetEndPresentationTimeStamp softLink_CoreMedia_CMBufferQueueGetEndPresentationTimeStamp
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CoreMedia, CMBufferQueueInstallTriggerWithIntegerThreshold, OSStatus, (CMBufferQueueRef queue, CMBufferQueueTriggerCallback triggerCallback, void* triggerRefcon, CMBufferQueueTriggerCondition triggerCondition, CMItemCount triggerThreshold, CMBufferQueueTriggerToken* triggerTokenOut), (queue, triggerCallback, triggerRefcon, triggerCondition, triggerThreshold, triggerTokenOut))
 #define CMBufferQueueInstallTriggerWithIntegerThreshold softLink_CoreMedia_CMBufferQueueInstallTriggerWithIntegerThreshold
 
@@ -126,6 +128,8 @@ SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, CoreMedia, kCMTimeInvalid, CMTime)
 #define kCMTimeInvalid get_CoreMedia_kCMTimeInvalid()
 SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, CoreMedia, kCMTimeZero, CMTime)
 #define kCMTimeZero get_CoreMedia_kCMTimeZero()
+SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, CoreMedia, kCMTimePositiveInfinity, CMTime)
+#define kCMTimePositiveInfinity get_CoreMedia_kCMTimePositiveInfinity()
 
 #if PLATFORM(COCOA)
 

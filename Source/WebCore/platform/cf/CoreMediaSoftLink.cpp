@@ -55,6 +55,7 @@ SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, CoreMedia, CMBufferQueueEnqueue, OSStatus
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, CoreMedia, CMBufferQueueIsEmpty, Boolean, (CMBufferQueueRef queue), (queue))
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, CoreMedia, CMBufferQueueGetBufferCount, CMItemCount, (CMBufferQueueRef queue), (queue))
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, CoreMedia, CMBufferQueueGetFirstPresentationTimeStamp, CMTime, (CMBufferQueueRef queue), (queue))
+SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, CoreMedia, CMBufferQueueGetEndPresentationTimeStamp, CMTime, (CMBufferQueueRef queue), (queue))
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, CoreMedia, CMBufferQueueInstallTriggerWithIntegerThreshold, OSStatus, (CMBufferQueueRef queue, CMBufferQueueTriggerCallback triggerCallback, void* triggerRefcon, CMBufferQueueTriggerCondition triggerCondition, CMItemCount triggerThreshold, CMBufferQueueTriggerToken* triggerTokenOut), (queue, triggerCallback, triggerRefcon, triggerCondition, triggerThreshold, triggerTokenOut))
 
 SOFT_LINK_CONSTANT_FOR_SOURCE(WebCore, CoreMedia, kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms, CFStringRef)
@@ -79,6 +80,7 @@ SOFT_LINK_CONSTANT_FOR_SOURCE(WebCore, CoreMedia, kCMTextVerticalLayout_LeftToRi
 SOFT_LINK_CONSTANT_FOR_SOURCE(WebCore, CoreMedia, kCMTextVerticalLayout_RightToLeft, CFStringRef)
 SOFT_LINK_CONSTANT_FOR_SOURCE(WebCore, CoreMedia, kCMTimeInvalid, CMTime)
 SOFT_LINK_CONSTANT_FOR_SOURCE(WebCore, CoreMedia, kCMTimeZero, CMTime)
+SOFT_LINK_CONSTANT_FOR_SOURCE(WebCore, CoreMedia, kCMTimePositiveInfinity, CMTime)
 
 #if PLATFORM(COCOA)
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, CoreMedia, CMFormatDescriptionGetMediaSubType, FourCharCode, (CMFormatDescriptionRef desc), (desc))
