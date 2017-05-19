@@ -1,3 +1,13 @@
+2017-05-19  Jer Noble  <jer.noble@apple.com>
+
+        [MSE][Mac] Support painting MSE video-element to canvas
+        https://bugs.webkit.org/show_bug.cgi?id=125157
+        <rdar://problem/23062016>
+
+        Reviewed by Eric Carlson.
+
+        * media/media-source/content/test-fragmented.mp4:
+
 2017-04-11  Jer Noble  <jer.noble@apple.com>
 
         [MSE][Mac] Support painting MSE video-element to canvas
