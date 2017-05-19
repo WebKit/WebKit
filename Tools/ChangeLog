@@ -1,3 +1,22 @@
+2017-05-19  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Use simctl boot to run multiple simulators at once
+        https://bugs.webkit.org/show_bug.cgi?id=172374
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/common/system/platforminfo.py:
+        (PlatformInfo.xcode_version): Return the current version of Xcode.
+        * Scripts/webkitpy/common/system/platforminfo_mock.py:
+        (MockPlatformInfo.xcode_version): Return version 8.0 for testing.
+        * Scripts/webkitpy/port/ios_simulator.py:
+        (IOSSimulatorPort.use_multiple_simulator_apps): Return true if we need to
+        run multiple Simulator.app instances.
+        (IOSSimulatorPort._create_simulators): Only copy the simulator app for older
+        versions of Xcode.
+        (IOSSimulatorPort._create_devices): Use 'simctl boot' directly unless using
+        an older version of Xcode.
+
 2017-05-19  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, fix the build on the latest internal SDK.

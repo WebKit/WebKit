@@ -133,6 +133,11 @@ class PlatformInfo(object):
         output = self._executive.run_command(['xcrun', 'simctl', 'list'], return_stderr=False)
         return (line for line in output.splitlines())
 
+    def xcode_version(self):
+        if not self.is_mac():
+            raise NotImplementedError
+        return self._executive.run_command(['xcodebuild', '-version']).split()[1]
+
     def _determine_os_name(self, sys_platform):
         if sys_platform == 'darwin':
             return 'mac'

@@ -170,6 +170,9 @@ class IOSSimulatorPort(IOSPort):
             except:
                 _log.warning('Unable to remove Simulator' + str(i))
 
+    def use_multiple_simulator_apps(self):
+        return int(self.host.platform.xcode_version().split('.')[0]) < 9
+
     def _create_simulators(self):
         if (self.default_child_processes() < self.child_processes()):
             _log.warn('You have specified very high value({0}) for --child-processes'.format(self.child_processes()))
@@ -178,7 +181,9 @@ class IOSSimulatorPort(IOSPort):
 
         if self._using_dedicated_simulators():
             atexit.register(lambda: self._teardown_managed_simulators())
-            self._createSimulatorApps()
+
+            if self.use_multiple_simulator_apps():
+                self._createSimulatorApps()
 
             for i in xrange(self.child_processes()):
                 self._create_device(i)
@@ -211,16 +216,23 @@ class IOSSimulatorPort(IOSPort):
             _log.debug('testing device %s has udid %s', i, device_udid)
 
             # FIXME: <rdar://problem/20916140> Switch to using CoreSimulator.framework for launching and quitting iOS Simulator
-            self._executive.run_command([
-                'open', '-g', '-b', self.SIMULATOR_BUNDLE_ID + str(i),
-                '--args', '-CurrentDeviceUDID', device_udid])
+            if self.use_multiple_simulator_apps():
+                self._executive.run_command([
+                    'open', '-g', '-b', self.SIMULATOR_BUNDLE_ID + str(i),
+                    '--args', '-CurrentDeviceUDID', device_udid])
+            else:
+                self._executive.run_command(['xcrun', 'simctl', 'boot', device_udid])
 
             if mac_os_version in ['elcapitan', 'yosemite', 'mavericks']:
                 time.sleep(2.5)
 
+        if not self.use_multiple_simulator_apps():
+            self._executive.run_command(['open', '-g', '-b', self.SIMULATOR_BUNDLE_ID])
+
         _log.info('Waiting for all iOS Simulators to finish booting.')
         for i in xrange(self.child_processes()):
             Simulator.wait_until_device_is_booted(Simulator.managed_devices[i].udid)
+        _log.info('All simulators have booted.')
 
         IOSSimulatorPort._DEVICE_MAP = {}
         for i in xrange(self.child_processes()):
