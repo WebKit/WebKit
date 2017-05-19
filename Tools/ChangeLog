@@ -1,3 +1,22 @@
+2017-05-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION (r216694 - 216712): Performance test Speedometer/Full.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=172077
+
+        Reviewed by Chris Dumez.
+
+        Fixed perftest.py by updating the lines to ignore in Speedometer.
+
+        Also start report the results as "Speedometer" instead of "DoYouEvenBench/Full.html" to perf.webkit.org.
+
+        * Scripts/webkitpy/performance_tests/perftest.py:
+        (PerfTest._lines_to_ignore_in_parser_result): Updated for Speedometer 2.0.
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner._collect_tests): Use "Speedometer" instead of "Speedometer/index.html" as the test name.
+        (_generate_results_dict): Removed the workaround to keep reporting Speedometer as DoYouEvenBench.
+        * Scripts/webkitpy/performance_tests/perftestsrunner_unittest.py:
+        (MainTest.test_collect_tests_with_index_html_and_resources): Added.
+
 2017-05-18  Andy Estes  <aestes@apple.com>
 
         ENABLE(APPLE_PAY_DELEGATE) should be NO on macOS Sierra and earlier

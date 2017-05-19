@@ -80,6 +80,14 @@ class MainTest(unittest.TestCase):
         port.host.filesystem.chdir(runner._port.perf_tests_dir()[:runner._port.perf_tests_dir().rfind(runner._host.filesystem.sep)])
         self.assertItemsEqual(self._collect_tests_and_sort_test_name(runner), ['test1.html', 'test2.html'])
 
+    def test_collect_tests_with_index_html_and_resources(self):
+        runner, port = self.create_runner()
+        self._add_file(runner, 'Speedometer', 'index.html', 'test content')
+        self._add_file(runner, 'Speedometer/resources', 'resource.html', 'resource content')
+        tests = runner._collect_tests()
+        self.assertEqual(len(tests), 1)
+        self.assertEqual(tests[0].test_name(), 'Speedometer')
+
     def test_collect_tests_with_skipped_list(self):
         runner, port = self.create_runner()
 

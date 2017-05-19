@@ -1,3 +1,14 @@
+2017-05-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION (r216694 - 216712): Performance test Speedometer/Full.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=172077
+
+        Reviewed by Chris Dumez.
+
+        Rename Full.html to index.html to match the convention of other benchmarks.
+
+        * Speedometer/index.html: Renamed from PerformanceTests/Speedometer/Full.html.
+
 2017-05-18  Addy Osmani  <addyosmani@gmail.com>
 
         Speedometer: check-in missing React TodoMVC dependency
