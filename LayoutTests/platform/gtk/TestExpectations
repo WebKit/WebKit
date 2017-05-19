@@ -245,6 +245,7 @@ webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-end
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-errors.html [ Failure ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-getvideoplaybackquality.html [ Failure ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-is-type-supported.html [ Failure ]
+webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-play-then-seek-back.html [ Failure ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-preload.html [ Failure ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-remove.html [ Failure ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-seekable.html [ Failure ]
@@ -1468,8 +1469,8 @@ webkit.org/b/163782 media/video-played-ranges-1.html [ Crash Pass ]
 webkit.org/b/168171 http/tests/loading/resourceLoadStatistics [ Crash ]
 webkit.org/b/168171 http/tests/loading/resourceLoadStatistics/grandfathering.html [ Timeout ]
 
-webkit.org/b/167576 imported/w3c/IndexedDB-private-browsing/idbcursor_iterating.html [ Crash ]
-webkit.org/b/167576 imported/w3c/IndexedDB-private-browsing/idbcursor_iterating_index.html [ Crash ]
+webkit.org/b/167576 imported/w3c/IndexedDB-private-browsing/idbcursor_iterating.html [ Crash Timeout ]
+webkit.org/b/167576 imported/w3c/IndexedDB-private-browsing/idbcursor_iterating_index.html [ Crash Timeout ]
 webkit.org/b/167576 storage/indexeddb/modern/index-3-private.html [ Crash ]
 
 webkit.org/b/169811 fast/mediacapturefromelement/CanvasCaptureMediaStream-capture-out-of-DOM-element.html [ Crash ]
@@ -2020,6 +2021,7 @@ webkit.org/b/168780 fast/forms/input-first-letter-edit.html [ ImageOnlyFailure P
 webkit.org/b/116277 media/video-buffered.html [ Pass Failure ]
 
 webkit.org/b/169621 imported/w3c/web-platform-tests/IndexedDB/fire-error-event-exception.html [ Pass Failure ]
+webkit.org/b/169621 imported/w3c/web-platform-tests/IndexedDB/fire-success-event-exception.html [ Pass Failure ]
 
 webkit.org/b/170337 fast/repaint/obscured-background-no-repaint.html [ Pass Failure ]
 
