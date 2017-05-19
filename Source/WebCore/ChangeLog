@@ -1,3 +1,19 @@
+2017-05-19  Jeremy Jones  <jeremyj@apple.com>
+
+        [WebRTC] Remove PiP support for video elements that are showing camera capture
+        https://bugs.webkit.org/show_bug.cgi?id=172336
+
+        Reviewed by Eric Carlson.
+
+        No new tests because no effect on the DOM. This just changes a value sent to the platform interface layer.
+
+        Ask video element if it supports picture-in-picture instead of asking the mediaSession directly.
+        This allows the video element to give a more robust answer.
+
+        * html/HTMLVideoElement.h:
+        * platform/ios/WebVideoFullscreenControllerAVKit.mm:
+        (WebVideoFullscreenControllerContext::setUpFullscreen):
+
 2017-05-18  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Remove the need for the generator to know about native type mapping

@@ -76,7 +76,7 @@ public:
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     enum class VideoPresentationMode { Fullscreen, PictureInPicture, Inline };
-    bool webkitSupportsPresentationMode(VideoPresentationMode) const;
+    WEBCORE_EXPORT bool webkitSupportsPresentationMode(VideoPresentationMode) const;
     void webkitSetPresentationMode(VideoPresentationMode);
     VideoPresentationMode webkitPresentationMode() const;
     void setFullscreenMode(VideoFullscreenMode);
