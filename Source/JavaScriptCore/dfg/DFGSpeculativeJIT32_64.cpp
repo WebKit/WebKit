@@ -478,7 +478,7 @@ void SpeculativeJIT::nonSpeculativePeepholeBranch(Node* node, Node* branchNode, 
             silentSpillAllRegisters(resultGPR);
             callOperation(helperFunction, resultGPR, arg1Regs, arg2Regs);
             m_jit.exceptionCheck();
-            silentFillAllRegisters();
+            silentFillAllRegisters(resultGPR);
         
             branchTest32(callResultCondition, resultGPR, taken);
         }
@@ -607,8 +607,8 @@ void SpeculativeJIT::nonSpeculativePeepholeStrictEq(Node* node, Node* branchNode
         silentSpillAllRegisters(resultPayloadGPR);
         callOperation(operationCompareStrictEqCell, resultPayloadGPR, arg1Regs, arg2Regs);
         m_jit.exceptionCheck();
-        silentFillAllRegisters();
-
+        silentFillAllRegisters(resultPayloadGPR);
+        
         branchTest32(invert ? JITCompiler::Zero : JITCompiler::NonZero, resultPayloadGPR, taken);
     } else {
         // FIXME: Add fast paths for twoCells, number etc.
@@ -616,8 +616,8 @@ void SpeculativeJIT::nonSpeculativePeepholeStrictEq(Node* node, Node* branchNode
         silentSpillAllRegisters(resultPayloadGPR);
         callOperation(operationCompareStrictEq, resultPayloadGPR, arg1Regs, arg2Regs);
         m_jit.exceptionCheck();
-        silentFillAllRegisters();
-
+        silentFillAllRegisters(resultPayloadGPR);
+        
         branchTest32(invert ? JITCompiler::Zero : JITCompiler::NonZero, resultPayloadGPR, taken);
     }
     
@@ -653,8 +653,8 @@ void SpeculativeJIT::nonSpeculativeNonPeepholeStrictEq(Node* node, bool invert)
         silentSpillAllRegisters(resultPayloadGPR);
         callOperation(operationCompareStrictEqCell, resultPayloadGPR, arg1Regs, arg2Regs);
         m_jit.exceptionCheck();
-        silentFillAllRegisters();
-
+        silentFillAllRegisters(resultPayloadGPR);
+        
         m_jit.andPtr(JITCompiler::TrustedImm32(1), resultPayloadGPR);
         
         done.link(&m_jit);
@@ -663,7 +663,7 @@ void SpeculativeJIT::nonSpeculativeNonPeepholeStrictEq(Node* node, bool invert)
 
         silentSpillAllRegisters(resultPayloadGPR);
         callOperation(operationCompareStrictEq, resultPayloadGPR, arg1Regs, arg2Regs);
-        silentFillAllRegisters();
+        silentFillAllRegisters(resultPayloadGPR);
         m_jit.exceptionCheck();
         
         m_jit.andPtr(JITCompiler::TrustedImm32(1), resultPayloadGPR);
@@ -1041,7 +1041,7 @@ void SpeculativeJIT::emitCall(Node* node)
             
             silentSpillAllRegisters(InvalidGPRReg);
             callOperation(operationLinkDirectCall, info, calleePayloadGPR);
-            silentFillAllRegisters();
+            silentFillAllRegisters(InvalidGPRReg);
             m_jit.exceptionCheck();
             m_jit.jump().linkTo(mainPath, &m_jit);
             
@@ -3750,7 +3750,7 @@ void SpeculativeJIT::compile(Node* node)
             notNumber.link(&m_jit);
             silentSpillAllRegisters(resultRegs);
             callOperation(operationToNumber, resultRegs, argumentRegs);
-            silentFillAllRegisters();
+            silentFillAllRegisters(resultRegs);
             m_jit.exceptionCheck();
 
             done.link(&m_jit);
@@ -5174,7 +5174,7 @@ void SpeculativeJIT::compile(Node* node)
             keyRegs = JSValueRegs(tempGPR, keyRegs.payloadGPR());
         }
         callOperation(operationHasOwnProperty, resultGPR, objectGPR, keyRegs);
-        silentFillAllRegisters();
+        silentFillAllRegisters(resultGPR);
         m_jit.exceptionCheck();
 
         done.link(&m_jit);

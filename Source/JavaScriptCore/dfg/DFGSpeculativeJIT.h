@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -387,7 +387,7 @@ public:
     SilentRegisterSavePlan silentSavePlanForGPR(VirtualRegister spillMe, GPRReg source);
     SilentRegisterSavePlan silentSavePlanForFPR(VirtualRegister spillMe, FPRReg source);
     void silentSpill(const SilentRegisterSavePlan&);
-    void silentFill(const SilentRegisterSavePlan&);
+    void silentFill(const SilentRegisterSavePlan&, GPRReg canTrample);
 
     template<typename CollectionType>
     void silentSpill(const CollectionType& savePlans)
@@ -397,10 +397,11 @@ public:
     }
 
     template<typename CollectionType>
-    void silentFill(const CollectionType& savePlans)
+    void silentFill(const CollectionType& savePlans, GPRReg exclude = InvalidGPRReg)
     {
+        GPRReg canTrample = SpeculativeJIT::pickCanTrample(exclude);
         for (unsigned i = savePlans.size(); i--;)
-            silentFill(savePlans[i]);
+            silentFill(savePlans[i], canTrample);
     }
 
     template<typename CollectionType>
@@ -461,12 +462,53 @@ public:
         silentSpillAllRegisters(exclude.payloadGPR(), exclude.tagGPR());
 #endif
     }
-
-    void silentFillAllRegisters()
+    
+    static GPRReg pickCanTrample(GPRReg exclude)
     {
+        GPRReg result = GPRInfo::regT0;
+        if (result == exclude)
+            result = GPRInfo::regT1;
+        return result;
+    }
+    static GPRReg pickCanTrample(FPRReg)
+    {
+        return GPRInfo::regT0;
+    }
+    static GPRReg pickCanTrample(NoResultTag)
+    {
+        return GPRInfo::regT0;
+    }
+
+#if USE(JSVALUE64)
+    static GPRReg pickCanTrample(JSValueRegs exclude)
+    {
+        return pickCanTrample(exclude.payloadGPR());
+    }
+#else
+    static GPRReg pickCanTrample(JSValueRegs exclude)
+    {
+        GPRReg result = GPRInfo::regT0;
+        if (result == exclude.tagGPR()) {
+            result = GPRInfo::regT1;
+            if (result == exclude.payloadGPR())
+                result = GPRInfo::regT2;
+        } else if (result == exclude.payloadGPR()) {
+            result = GPRInfo::regT1;
+            if (result == exclude.tagGPR())
+                result = GPRInfo::regT2;
+        }
+        return result;
+    }
+#endif
+    
+    template<typename RegisterType>
+    void silentFillAllRegisters(RegisterType exclude)
+    {
+        GPRReg canTrample = pickCanTrample(exclude);
+        
         while (!m_plans.isEmpty()) {
             SilentRegisterSavePlan& plan = m_plans.last();
-            silentFill(plan);
+            silentFill(plan, canTrample);
             m_plans.removeLast();
         }
     }

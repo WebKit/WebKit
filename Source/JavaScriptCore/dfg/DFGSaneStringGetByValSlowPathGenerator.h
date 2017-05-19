@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -72,8 +72,9 @@ protected:
         for (unsigned i = 0; i < m_plans.size(); ++i)
             jit->silentSpill(m_plans[i]);
         jit->callOperation(operationGetByValStringInt, extractResult(m_resultRegs), m_baseReg, m_propertyReg);
+        GPRReg canTrample = SpeculativeJIT::pickCanTrample(extractResult(m_resultRegs));
         for (unsigned i = m_plans.size(); i--;)
-            jit->silentFill(m_plans[i]);
+            jit->silentFill(m_plans[i], canTrample);
         jit->m_jit.exceptionCheck();
         
         jumpTo(jit);
