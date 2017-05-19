@@ -1060,6 +1060,8 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     if (is<HTMLAttachmentElement>(element) && m_dragSourceAction & DragSourceActionAttachment) {
+        src.editor().setIgnoreSelectionChanges(true);
+        auto previousSelection = src.selection().selection();
         if (!dataTransfer.pasteboard().hasData()) {
             selectElement(element);
             if (!attachmentURL.isEmpty()) {
@@ -1088,6 +1090,8 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
             m_dragOffset = IntPoint(dragOrigin.x() - dragLoc.x(), dragOrigin.y() - dragLoc.y());
         }
         doSystemDrag(WTFMove(dragImage), dragLoc, dragOrigin, { }, dataTransfer, src, DragSourceActionAttachment);
+        src.selection().setSelection(previousSelection);
+        src.editor().setIgnoreSelectionChanges(false);
         return true;
     }
 #endif
