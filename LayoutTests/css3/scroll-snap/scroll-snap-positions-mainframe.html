@@ -1,5 +1,4 @@
 <html>
-
 <head>
     <style>
         body {
@@ -14,7 +13,7 @@
         }
     </style>
 
-    <script src="../../resources/js-test-pre.js"></script>
+    <script src="../../resources/js-test.js"></script>
     <script>
     function runTest()
     {
@@ -24,12 +23,9 @@
 
     function setup()
     {
-        if (window.testRunner) {
-            window.jsTestIsAsync = true;
-            testRunner.dumpAsText();
-            testRunner.waitUntilDone();
+        jsTestIsAsync = true;
+        if (window.testRunner)
             setTimeout(runTest, 0);
-        }
     }
     </script>
 </head>
@@ -41,7 +37,5 @@
     <div id="child03" class="vertical"></div>
     <div id="child04" class="vertical"></div>
     <div id="child05" class="vertical"></div>
-    <script src="../../resources/js-test-post.js"></script>
 </body>
-
 </html>

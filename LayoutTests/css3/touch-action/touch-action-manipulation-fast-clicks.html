@@ -4,7 +4,7 @@
 <meta name="viewport" content="initial-scale=1.0">
 
 <head>
-    <script src="../../resources/js-test-pre.js"></script>
+    <script src="../../resources/js-test.js"></script>
     <script id="ui-script" type="text/plain">
         (function() {
             var count = 0;
@@ -23,8 +23,7 @@
     <script>
     var scriptCompleted = false;
     var clickCount = 0;
-    if (window.testRunner)
-        testRunner.waitUntilDone();
+    jsTestIsAsync = true;
 
     function getUIScript() {
         return document.getElementById("ui-script").text;
@@ -35,7 +34,7 @@
             testRunner.runUIScript(getUIScript(), function(result) {
                 scriptCompleted = true;
                 if (clickCount == 3)
-                    testRunner.notifyDone();
+                    finishJSTest();
             });
     }
     function handleClicked() {
@@ -43,7 +42,7 @@
         document.body.appendChild(document.createTextNode("Click!"));
         document.body.appendChild(document.createElement("br"));
         if (clickCount == 3 && scriptCompleted)
-            testRunner.notifyDone();
+            finishJSTest();
     }
     </script>
 
@@ -64,7 +63,6 @@
     <button id="target" onclick="handleClicked()"></button>
     <p>Repeatedly tapping on the button should fire click events.</p>
     <p>This test is best run in WebKitTestRunner. If you are running this test manually, verify that tapping the button causes a "Click!" message to appear below, and that click occurred without the regular 350ms delay for double tapping.</p>
-    <script src="../../resources/js-test-post.js"></script>
 </body>
 
 </html>

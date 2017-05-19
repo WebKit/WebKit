@@ -62,4 +62,7 @@ PASS window.internals.counterValue(document.getElementById('test58a')) is '5.2'
 PASS window.internals.counterValue(document.getElementById('none58')) is '5.2'
 PASS window.internals.counterValue(document.getElementById('none58a')) is '5.7'
 PASS window.internals.counterValue(document.getElementById('test58b')) is '5.12'
+PASS successfullyParsed is true
+
+TEST COMPLETE
     

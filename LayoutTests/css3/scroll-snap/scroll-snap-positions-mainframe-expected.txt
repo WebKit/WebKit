@@ -1,6 +1,3 @@
-PASS successfullyParsed is true
-
-TEST COMPLETE
 Scroll-snap offsets: vertical = { 0, 600, 1200, 1800, 2400, 3000 }
 PASS successfullyParsed is true
 

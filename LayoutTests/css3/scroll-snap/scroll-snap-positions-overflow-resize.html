@@ -1,5 +1,4 @@
 <html>
-
 <head>
     <style>
         #container {
@@ -15,10 +14,11 @@
             scroll-snap-align: start;
         }
     </style>
-    <script src="../../resources/js-test-pre.js"></script>
+    <script src="../../resources/js-test.js"></script>
     <script>
     function setup()
     {
+        jsTestIsAsync = true;
         var container = document.getElementById("container");
 
         function dumpSnapOffsetsAndFinishTest()
@@ -35,12 +35,8 @@
         }
 
         container.scrollTop = 800;
-        if (window.testRunner) {
-            window.jsTestIsAsync = true;
-            testRunner.dumpAsText();
-            testRunner.waitUntilDone();
+        if (window.testRunner)
             setTimeout(dumpSnapOffsetsAndResizeElement, 0);
-        }
     }
     </script>
 </head>
@@ -54,7 +50,5 @@
         <div class="cell"></div>
         <div class="cell"></div>
     </div>
-    <script src="../../resources/js-test-post.js"></script>
 </body>
-
 </html>

@@ -27,12 +27,11 @@
 		}
 	</style>
 
-	<script src="../../resources/js-test-pre.js"></script>
+	<script src="../../resources/js-test.js"></script>
 </head>
 
 <script type="text/javascript">
-	if (window.testRunner)
-		testRunner.waitUntilDone();
+	jsTestIsAsync = true;
 
 	function beginTest() {
 		if (window.eventSender) {
@@ -62,8 +61,7 @@
 
 	        eventSender.mouseUp(0);
 
-	        if (window.testRunner)
-				setTimeout("testRunner.notifyDone()", 0);
+            setTimeout(finishJSTest, 0);
 		}
 	}
 

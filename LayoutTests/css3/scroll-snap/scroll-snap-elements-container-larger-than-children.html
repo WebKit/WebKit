@@ -20,7 +20,7 @@
                 scroll-snap-align: start;
             }
         </style>
-        <script src="../../resources/js-test-pre.js"></script>
+        <script src="../../resources/js-test.js"></script>
         <script>
             function runTest()
             {
@@ -28,17 +28,13 @@
                 debug("Scroll-snap offsets: " + window.internals.scrollSnapOffsets(container));
 
                 finishJSTest();
-                testRunner.notifyDone();
             }
 
             function onLoad()
             {
-                if (window.testRunner) {
-                    window.jsTestIsAsync = true;
-                    testRunner.dumpAsText();
-                    testRunner.waitUntilDone();
+                jsTestIsAsync = true;
+                if (window.testRunner)
                     setTimeout(runTest, 0);
-                }
             }
         </script>
     </head>
@@ -55,6 +51,5 @@
                 </div>
             </div>
         </div>
-        <script src="../../resources/js-test-post.js"></script>
     </body>
 </html>

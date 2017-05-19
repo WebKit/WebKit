@@ -56,7 +56,7 @@
             #itemH4, #itemV4 { background-color: yellow; }
             #itemH5, #itemV5 { background-color: fuchsia; }
         </style>
-        <script src="../../resources/js-test-pre.js"></script>
+        <script src="../../resources/js-test.js"></script>
         <script>
         function reportResult(horizontalTargetID, verticalTargetID)
         {
@@ -76,17 +76,13 @@
             reportResult('horizontalRotatedTarget', 'verticalRotatedTarget')
 
             finishJSTest();
-            testRunner.notifyDone();
         }
 
         function onLoad()
         {
-            if (window.testRunner) {
-                window.jsTestIsAsync = true;
-                testRunner.dumpAsText();
-                testRunner.waitUntilDone();
+            jsTestIsAsync = true;
+            if (window.testRunner)
                 setTimeout(runTest, 0);
-            }
         }
         </script>
     </head>
@@ -195,6 +191,5 @@
             </div>
             <div id="console"></div>
         </div>
-        <script src="../../resources/js-test-post.js"></script>
     </body>
 </html>

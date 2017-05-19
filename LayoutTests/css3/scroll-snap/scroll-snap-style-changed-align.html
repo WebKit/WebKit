@@ -25,9 +25,10 @@
             #child04 { background-color: #0000DD; left: 0; top: 1200px; }
             #child05 { background-color: #6666FF; left: 0; top: 1500px; }
         </style>
-        <script src="../../resources/js-test-pre.js"></script>
+        <script src="../../resources/js-test.js"></script>
         <script>
         function setup() {
+            window.jsTestIsAsync = true;
             var gallery = document.getElementById("gallery");
             var coordinateChildElements = document.getElementsByClassName("vertical");
 
@@ -46,15 +47,10 @@
             function dumpGalleryAndFinishTest() {
                 debug("Updated alignment to `center`: " + snapOffsets());
                 finishJSTest();
-                testRunner.notifyDone();
             }
 
-            if (window.testRunner) {
-                window.jsTestIsAsync = true;
-                testRunner.dumpAsText();
-                testRunner.waitUntilDone();
+            if (window.testRunner)
                 setTimeout(dumpGalleryAndUpdateCoordinates, 0);
-            }
         }
         </script>
     </head>
@@ -68,7 +64,6 @@
             <div class="vertical" id="child04"></div>
             <div class="vertical" id="child05"></div>
         </div>
-        <script src="../../resources/js-test-post.js"></script>
     </body>
 
 </html>

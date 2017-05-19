@@ -16,15 +16,12 @@
 }
 
 </style>
-<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test.js"></script>
 <script type="text/javascript">
 
 description("This test passes if both the first and the second counter are 1000.");
 
-if (window.testRunner) {
-    testRunner.dumpAsText();
-    testRunner.waitUntilDone();
-}
+jsTestIsAsync = true;
 
 function run()
 {
@@ -33,8 +30,7 @@ function run()
         return;
     shouldBe("window.internals.counterValue(document.getElementById('testView'))", "'1000 1000'");
 
-    if (window.testRunner)
-        testRunner.notifyDone();
+    finishJSTest();
 }
 
 window.onload = run;
@@ -43,6 +39,5 @@ window.onload = run;
 </head>
 <body>
 <div id="testView" class="counter1"></div>
-<script src="../../../resources/js-test-post.js"></script>
 </body>
 </html>

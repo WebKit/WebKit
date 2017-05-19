@@ -87,7 +87,7 @@
             height: 1px;
         }
     </style>
-        <script src="../../resources/js-test-pre.js"></script>
+        <script src="../../resources/js-test.js"></script>
         <script>
         function runTest()
         {
@@ -95,17 +95,13 @@
             debug("Scroll-snap offsets for 'container': " + window.internals.scrollSnapOffsets(container));
 
             finishJSTest();
-            testRunner.notifyDone();
         }
 
         function onLoad()
         {
-            if (window.testRunner) {
-                window.jsTestIsAsync = true;
-                testRunner.dumpAsText();
-                testRunner.waitUntilDone();
+            jsTestIsAsync = true;
+            if (window.testRunner)
                 setTimeout(runTest, 0);
-            }
         }
         </script>
 </head>
@@ -151,6 +147,5 @@
         <div style="border-bottom: 2px green solid; top: 150px;" class="alignment-marker"></div>
         <div style="border-bottom: 2px blue solid; top: 300px;" class="alignment-marker"></div>
     </div>
-    <script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

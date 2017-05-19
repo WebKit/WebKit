@@ -2,20 +2,14 @@
     <style>
         .c0:after { counter-increment:section; content: counter(section); }
     </style>
-    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../resources/js-test.js"></script>
     <script>
-        if (window.testRunner) {
-            testRunner.dumpAsText();
-            testRunner.waitUntilDone();
-        }
+        jsTestIsAsync = true;
+
         function run()
         {
             shouldBe("window.internals.counterValue(document.getElementById('c2'))", "'2'");
-
-            debug('');
-            debug('TEST COMPLETE');
-            if (window.testRunner)
-                testRunner.notifyDone();
+            finishJSTest();
         }
     </script>
 </head><body onload="setTimeout('run()', 0);">

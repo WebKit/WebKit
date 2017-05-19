@@ -35,24 +35,19 @@
                 background-color: red;
             }
         </style>
-        <script src="../../../resources/js-test.js"></script>
+        <script src="../../resources/js-test.js"></script>
         <script>
-        let write = s => output.innerHTML += s + "<br>";
-        if (window.testRunner) {
-            testRunner.dumpAsText();
-            testRunner.waitUntilDone();
-        }
-
         function run() {
+            jsTestIsAsync = true;
             if (!window.testRunner || !window.internals) {
-                write(`To manually test, verify that scrolling in the container snaps so that each colored box can fill
+                debug(`To manually test, verify that scrolling in the container snaps so that each colored box can fill
                     the scroll container.`);
                 return;
             }
 
             setTimeout(() => {
-                write(`The scroll offsets are: ${internals.scrollSnapOffsets(container)}`);
-                testRunner.notifyDone();
+                debug(`The scroll offsets are: ${internals.scrollSnapOffsets(container)}`);
+                finishJSTest();
             }, 1000);
         }
         </script>

@@ -1,11 +1,9 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head id="myhead">
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 <script>
-if (window.testRunner) {
-    window.testRunner.waitUntilDone();
-}
+jsTestIsAsync = true;
 
 var count = 0;
 var maxCount = 10;
@@ -41,10 +39,7 @@ function waitForStylesheetLoad()
 
     if (document.defaultView.getComputedStyle(document.getElementById('description'), null).color == "rgb(0, 128, 0)") {
         shouldBe("document.defaultView.getComputedStyle(document.getElementById('description'), null).color", "'rgb(0, 128, 0)'");
-        isSuccessfullyParsed();
-        if (window.testRunner) {
-            window.testRunner.notifyDone();
-        }
+        finishJSTest();
         return;
     }
 

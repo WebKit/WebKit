@@ -28,7 +28,7 @@
 		}
 	</style>
 
-	<script src="../../resources/js-test-pre.js"></script>
+	<script src="../../resources/js-test.js"></script>
 </head>
 
 <script type="text/javascript">
@@ -44,8 +44,7 @@
 	<div id="after_hoverTest" class="box">This is here to show the layout being recomputed</div>
 
 	<script type="text/javascript">
-		if (window.testRunner)
-			testRunner.waitUntilDone();
+		jsTestIsAsync = true;
 
 		function beginTest() {
 			if (window.eventSender) {
@@ -72,8 +71,7 @@
 				for (var element, i = 0; element = elementsToHide[i]; i++)
 				    element.style.visibility = "hidden";
 
-				if (window.testRunner)
-					testRunner.notifyDone();
+				finishJSTest();
 			}
 		}
 

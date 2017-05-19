@@ -1,3 +1,55 @@
+2017-05-19  Alexey Proskuryakov  <ap@apple.com>
+
+        Many CSS js-tests use waitUntilDone
+        https://bugs.webkit.org/show_bug.cgi?id=172379
+
+        Reviewed by Tim Horton.
+
+        Corrected the use of js-test harness, updated the tests to use js-test.js instead
+        of js-test-pre.js where possible.
+
+        * css3/filters/should-not-have-compositing-layer-expected.txt:
+        * css3/filters/should-not-have-compositing-layer.html:
+        * css3/scroll-snap/nested-elements-expected.txt:
+        * css3/scroll-snap/nested-elements.html:
+        * css3/scroll-snap/scroll-snap-2d-change-axis-type-expected.txt:
+        * css3/scroll-snap/scroll-snap-2d-change-axis-type.html:
+        * css3/scroll-snap/scroll-snap-2d-offsets-computed-independently-expected.txt:
+        * css3/scroll-snap/scroll-snap-2d-offsets-computed-independently.html:
+        * css3/scroll-snap/scroll-snap-elements-container-larger-than-children-expected.txt:
+        * css3/scroll-snap/scroll-snap-elements-container-larger-than-children.html:
+        * css3/scroll-snap/scroll-snap-mismatch-expected.txt:
+        * css3/scroll-snap/scroll-snap-mismatch.html:
+        * css3/scroll-snap/scroll-snap-offsets-expected.txt:
+        * css3/scroll-snap/scroll-snap-offsets.html:
+        * css3/scroll-snap/scroll-snap-positions-expected.txt:
+        * css3/scroll-snap/scroll-snap-positions-mainframe-expected.txt:
+        * css3/scroll-snap/scroll-snap-positions-mainframe.html:
+        * css3/scroll-snap/scroll-snap-positions-overflow-resize-expected.txt:
+        * css3/scroll-snap/scroll-snap-positions-overflow-resize.html:
+        * css3/scroll-snap/scroll-snap-positions.html:
+        * css3/scroll-snap/scroll-snap-style-changed-align-expected.txt:
+        * css3/scroll-snap/scroll-snap-style-changed-align.html:
+        * css3/touch-action/touch-action-manipulation-fast-clicks.html:
+        * fast/css/counters/2displays-expected.txt:
+        * fast/css/counters/2displays.html:
+        * fast/css/counters/after-continuation-expected.txt:
+        * fast/css/counters/after-continuation.html:
+        * fast/css/counters/counter-increment-inherit-expected.txt:
+        * fast/css/counters/counter-increment-inherit.htm:
+        * fast/css/counters/counter-increment-tests-expected.txt:
+        * fast/css/counters/counter-increment-tests.htm:
+        * fast/css/device-aspect-ratio.html:
+        * fast/css/hover-display-block-inline-expected.txt:
+        * fast/css/hover-display-block-inline.html:
+        * fast/css/hover-display-block-none-expected.txt:
+        * fast/css/hover-display-block-none.html:
+        * fast/css/image-resolution/image-resolution.html:
+        * fast/css/max-device-aspect-ratio.html:
+        * fast/css/min-device-aspect-ratio.html:
+        * fast/css/pseudo-target-indirect-sibling-001.html:
+        * fast/css/pseudo-target-indirect-sibling-002.html:
+
 2017-05-19  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skip tests that are reporting FailureNotTested.

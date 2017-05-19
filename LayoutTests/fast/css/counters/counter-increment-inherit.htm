@@ -4,12 +4,10 @@
         <title>CSS Test: Counter-increment tests</title>
         <link rel="author" title="Microsoft" href="http://www.microsoft.com/">
         <link rel="help" href="http://www.w3.org/TR/CSS21/generate.html#counters">
-        <script src="../../../resources/js-test-pre.js"></script>
+        <script src="../../../resources/js-test.js"></script>
         <script>
-            if (window.testRunner) {
-                testRunner.dumpAsText();
-                testRunner.waitUntilDone();
-            }
+            jsTestIsAsync = true;
+
             function run()
             {
                 // Some extra WebKit testing for counter-increment inherit
@@ -19,8 +17,7 @@
                 shouldBe("window.internals.counterValue(document.getElementById('wrapper91'))", "'10'");
                 shouldBe("window.internals.counterValue(document.getElementById('test91'))", "'20'");
                 shouldBe("window.internals.counterValue(document.getElementById('test91a'))", "'30'");
-                if (window.testRunner)
-                    testRunner.notifyDone();
+                finishJSTest();
             }
         </script>
         <style type="text/css">

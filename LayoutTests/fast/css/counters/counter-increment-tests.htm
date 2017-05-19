@@ -4,12 +4,10 @@
         <title>CSS Test: Counter-increment tests</title>
         <link rel="author" title="Microsoft" href="http://www.microsoft.com/">
         <link rel="help" href="http://www.w3.org/TR/CSS21/generate.html#counters">
-        <script src="../../../resources/js-test-pre.js"></script>
+        <script src="../../../resources/js-test.js"></script>
         <script>
-            if (window.testRunner) {
-                testRunner.dumpAsText();
-                testRunner.waitUntilDone();
-            }
+            jsTestIsAsync = true;
+
             function run()
             {
                 /* These are text versions of the counter-increment-* tests in the CSS 2.1 test suite.
@@ -79,8 +77,7 @@
                 shouldBe("window.internals.counterValue(document.getElementById('none58'))", "'5.2'");
                 shouldBe("window.internals.counterValue(document.getElementById('none58a'))", "'5.7'");
                 shouldBe("window.internals.counterValue(document.getElementById('test58b'))", "'5.12'");
-                if (window.testRunner)
-                    testRunner.notifyDone();
+                finishJSTest();
             }
         </script>
         <style type="text/css">

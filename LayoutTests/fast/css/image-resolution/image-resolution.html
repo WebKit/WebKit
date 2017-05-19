@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test.js"></script>
 </head>
 <body>
 <script>
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-}
+jsTestIsAsync = true;
 
 function testCompleted()
 {
@@ -109,7 +107,7 @@ img.onload = function() {
         shouldBe('img.offsetHeight', stringify(expectedHeight));
     });
     document.body.removeChild(img);
-    testCompleted();
+    finishJSTest();
 };
 
 document.body.appendChild(img);
