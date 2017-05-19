@@ -46,8 +46,7 @@ class WebPlaybackSessionInterfaceMac;
 class WebVideoFullscreenChangeObserver;
 
 class WEBCORE_EXPORT WebVideoFullscreenInterfaceMac
-    : public WebVideoFullscreenInterface
-    , public WebVideoFullscreenModelClient
+    : public WebVideoFullscreenModelClient
     , private WebPlaybackSessionModelClient
     , public RefCounted<WebVideoFullscreenInterfaceMac> {
 

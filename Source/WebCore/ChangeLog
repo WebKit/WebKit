@@ -1,5 +1,17 @@
 2017-05-19  Jeremy Jones  <jeremyj@apple.com>
 
+        Fix macos build after r217143
+        https://bugs.webkit.org/show_bug.cgi?id=172380
+
+        unreviewed.
+
+        Remove reference to WebVideoFullscreenInterface for mac build.
+
+        * html/HTMLMediaElement.cpp:
+        * platform/mac/WebVideoFullscreenInterfaceMac.h:
+
+2017-05-19  Jeremy Jones  <jeremyj@apple.com>
+
         Remove defunct WebVideoFullscreenInterface
         https://bugs.webkit.org/show_bug.cgi?id=172254
 
