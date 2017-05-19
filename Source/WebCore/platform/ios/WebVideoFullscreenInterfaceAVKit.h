@@ -34,7 +34,6 @@
 #include "PlatformLayer.h"
 #include "Timer.h"
 #include "WebPlaybackSessionInterfaceAVKit.h"
-#include "WebVideoFullscreenInterface.h"
 #include "WebVideoFullscreenModel.h"
 #include <functional>
 #include <objc/objc.h>
@@ -63,8 +62,7 @@ class WebVideoFullscreenModel;
 class WebVideoFullscreenChangeObserver;
     
 class WEBCORE_EXPORT WebVideoFullscreenInterfaceAVKit final
-    : public WebVideoFullscreenInterface
-    , public WebVideoFullscreenModelClient
+    : public WebVideoFullscreenModelClient
     , public WebPlaybackSessionModelClient
     , public ThreadSafeRefCounted<WebVideoFullscreenInterfaceAVKit> {
 

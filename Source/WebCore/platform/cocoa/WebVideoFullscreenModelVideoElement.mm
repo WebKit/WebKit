@@ -33,7 +33,6 @@
 #import "Logging.h"
 #import "MediaControlsHost.h"
 #import "WebPlaybackSessionModelMediaElement.h"
-#import "WebVideoFullscreenInterface.h"
 #import <QuartzCore/CoreAnimation.h>
 #import <WebCore/Event.h>
 #import <WebCore/EventListener.h>

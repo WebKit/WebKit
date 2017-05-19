@@ -1,5 +1,17 @@
 2017-05-19  Jeremy Jones  <jeremyj@apple.com>
 
+        Remove defunct WebVideoFullscreenInterface
+        https://bugs.webkit.org/show_bug.cgi?id=172254
+
+        Reviewed by Jon Lee.
+
+        Remove reference to WebVideoFullscreenInterface. It has long since been replaced by
+        WebVideoFullscreenModelClient.
+
+        * WebProcess/cocoa/WebVideoFullscreenManager.h:
+
+2017-05-19  Jeremy Jones  <jeremyj@apple.com>
+
         [WebRTC] Remove PiP support for video elements that are showing camera capture
         https://bugs.webkit.org/show_bug.cgi?id=172336
 

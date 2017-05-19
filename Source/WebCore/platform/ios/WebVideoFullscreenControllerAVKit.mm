@@ -99,8 +99,7 @@ class WebVideoFullscreenControllerContext;
 @end
 
 class WebVideoFullscreenControllerContext final
-    : private WebVideoFullscreenInterface
-    , private WebVideoFullscreenModel
+    : private WebVideoFullscreenModel
     , private WebVideoFullscreenModelClient
     , private WebVideoFullscreenChangeObserver
     , private WebPlaybackSessionModel

@@ -31,7 +31,6 @@
 #include "HTMLMediaElementEnums.h"
 #include "WebPlaybackSessionInterfaceMac.h"
 #include "WebPlaybackSessionModel.h"
-#include "WebVideoFullscreenInterface.h"
 #include "WebVideoFullscreenModel.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>

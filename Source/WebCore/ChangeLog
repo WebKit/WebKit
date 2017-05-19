@@ -1,5 +1,27 @@
 2017-05-19  Jeremy Jones  <jeremyj@apple.com>
 
+        Remove defunct WebVideoFullscreenInterface
+        https://bugs.webkit.org/show_bug.cgi?id=172254
+
+        Reviewed by Jon Lee.
+
+        No new tests because no behavior change.
+
+        WebVideoFullscreenInterface has long since been replaced by WebVideoFullscreenModelClient.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLMediaElement.cpp:
+        * html/HTMLVideoElement.cpp:
+        * platform/cocoa/WebPlaybackSessionModelMediaElement.mm:
+        * platform/cocoa/WebVideoFullscreenInterface.h: Removed.
+        * platform/cocoa/WebVideoFullscreenModel.h:
+        * platform/cocoa/WebVideoFullscreenModelVideoElement.mm:
+        * platform/ios/WebVideoFullscreenControllerAVKit.mm:
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.h:
+        * platform/mac/WebVideoFullscreenInterfaceMac.h:
+
+2017-05-19  Jeremy Jones  <jeremyj@apple.com>
+
         HTMLVideoElement::webkitSupportsPresentationMode allowsPictureInPicture() check is redundant.
         https://bugs.webkit.org/show_bug.cgi?id=172330
         rdar://problem/32285443

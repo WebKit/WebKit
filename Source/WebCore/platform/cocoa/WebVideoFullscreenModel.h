@@ -61,6 +61,8 @@ public:
     virtual void videoDimensionsChanged(const FloatSize&) = 0;
 };
 
+WEBCORE_EXPORT bool supportsPictureInPicture();
+    
 }
 
 #endif

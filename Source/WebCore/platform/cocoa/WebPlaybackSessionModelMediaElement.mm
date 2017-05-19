@@ -42,7 +42,6 @@
 #import "SoftLinking.h"
 #import "TextTrackList.h"
 #import "TimeRanges.h"
-#import "WebVideoFullscreenInterface.h"
 #import <QuartzCore/CoreAnimation.h>
 #import <wtf/NeverDestroyed.h>
 

@@ -31,7 +31,6 @@
 #include <WebCore/EventListener.h>
 #include <WebCore/HTMLMediaElementEnums.h>
 #include <WebCore/PlatformCALayer.h>
-#include <WebCore/WebVideoFullscreenInterface.h>
 #include <WebCore/WebVideoFullscreenModelVideoElement.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
@@ -59,7 +58,6 @@ class WebVideoFullscreenManager;
 
 class WebVideoFullscreenInterfaceContext
     : public RefCounted<WebVideoFullscreenInterfaceContext>
-    , public WebCore::WebVideoFullscreenInterface
     , public WebCore::WebVideoFullscreenModelClient {
 public:
     static Ref<WebVideoFullscreenInterfaceContext> create(WebVideoFullscreenManager& manager, uint64_t contextId)

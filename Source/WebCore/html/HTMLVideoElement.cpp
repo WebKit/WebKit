@@ -48,7 +48,7 @@
 #include <wtf/NeverDestroyed.h>
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
-#include "WebVideoFullscreenInterface.h"
+#include "WebVideoFullscreenModel.h"
 #endif
 
 namespace WebCore {
