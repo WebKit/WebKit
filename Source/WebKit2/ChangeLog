@@ -1,3 +1,13 @@
+2017-05-20  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        -Wreturn-type warning triggered by WKNotification.cpp:77
+        https://bugs.webkit.org/show_bug.cgi?id=172414
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/C/WKNotification.cpp:
+        (WKNotificationCopyDir):
+
 2017-05-19  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Use WebProcessPool::allProcessPools() when sending message to network process about partitioning

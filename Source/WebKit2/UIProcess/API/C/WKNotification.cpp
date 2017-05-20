@@ -74,6 +74,8 @@ WKStringRef WKNotificationCopyDir(WKNotificationRef notification)
     case WebCore::NotificationDirection::Rtl:
         return WKStringCreateWithUTF8CString("rtl");
     }
+
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 WKSecurityOriginRef WKNotificationGetSecurityOrigin(WKNotificationRef notification)
