@@ -1459,3 +1459,5 @@ http/tests/loading/preload-css-with-csp-nonce.html [ Failure ]
 [ Yosemite ] fast/text/complex-text-opacity.html [ Failure ]
 
 [ Sierra ] js/intl-datetimeformat.html [ Failure ]
+
+streams/readable-byte-stream-controller.html [ Failure ]
