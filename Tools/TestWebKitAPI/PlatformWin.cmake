@@ -36,13 +36,13 @@ set(test_webcore_LIBRARIES
     Usp10
     WebCore${DEBUG_SUFFIX}
     WebCoreDerivedSources${DEBUG_SUFFIX}
-    WebKit${DEBUG_SUFFIX}
     WindowsCodecs
     gtest
 )
 
 set(TestWebCoreLib_SOURCES
     ${test_main_SOURCES}
+    win/TestWebCoreStubs.cpp
     ${TESTWEBKITAPI_DIR}/TestsController.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/AffineTransform.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/CalculationValue.cpp
@@ -140,6 +140,11 @@ if (${WTF_PLATFORM_WIN_CAIRO})
     )
 endif ()
 
+set(test_webkit_LIBRARIES
+    WebCoreTestSupport
+    WebKit${DEBUG_SUFFIX}
+    gtest
+)
 add_library(TestWebKitLib SHARED
     ${test_main_SOURCES}
     ${TESTWEBKITAPI_DIR}/TestsController.cpp
@@ -148,7 +153,7 @@ add_library(TestWebKitLib SHARED
     ${TESTWEBKITAPI_DIR}/win/HostWindow.cpp
 )
 
-target_link_libraries(TestWebKitLib ${test_webcore_LIBRARIES})
+target_link_libraries(TestWebKitLib ${test_webkit_LIBRARIES})
 
 add_executable(TestWebKit
     ${TOOLS_DIR}/win/DLLLauncher/DLLLauncherMain.cpp

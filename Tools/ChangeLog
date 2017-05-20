@@ -1,3 +1,24 @@
+2017-05-19  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] error LNK2005: WebCore::JSNode::checkSubClassPatchpoint() already defined in WebKit.lib
+        https://bugs.webkit.org/show_bug.cgi?id=172267
+
+        Reviewed by Per Arne Vollan.
+
+        TestWebCoreLib and TestWebKitLib have linked both WebCore and WebKit.
+        TestWebCoreLib should link only with WebCore. And, TestWebKitLib
+        should link only with WebKit.
+
+        Unfortunately, there is a layer violation at the moment.
+        WebCore::Image::loadPlatformResource needs loadResourceIntoBuffer
+        in WebKit. This change contains a stub of loadResourceIntoBuffer
+        in TestWebCoreLib for the workaround.
+
+        * TestWebKitAPI/PlatformWin.cmake: Do not link WebKit to
+        TestWebCoreLib. Do not link WebCore to TestWebKitLib.
+        * TestWebKitAPI/win/TestWebCoreStubs.cpp: Added.
+        (loadResourceIntoBuffer): Added a stub.
+
 2017-05-19  Simon Fraser  <simon.fraser@apple.com>
 
         Fix dump-class-layout to handle different file architectures
