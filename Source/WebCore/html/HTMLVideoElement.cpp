@@ -398,7 +398,7 @@ URL HTMLVideoElement::posterImageURL() const
 bool HTMLVideoElement::webkitSupportsPresentationMode(VideoPresentationMode mode) const
 {
     if (mode == VideoPresentationMode::Fullscreen)
-        return mediaSession().fullscreenPermitted(*this) && supportsFullscreen(HTMLMediaElementEnums::VideoFullscreenModeStandard);
+        return supportsFullscreen(HTMLMediaElementEnums::VideoFullscreenModeStandard);
 
     if (mode == VideoPresentationMode::PictureInPicture) {
 #if PLATFORM(COCOA)

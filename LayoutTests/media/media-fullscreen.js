@@ -54,9 +54,12 @@ function canplaythrough()
 
     if (movie.type == 'video') {
         testExpected("mediaElement.webkitSupportsFullscreen", movie.supportsFS);
+        if (mediaElement.webkitSupportsPresentationMode)
+            testExpected("mediaElement.webkitSupportsPresentationMode('fullscreen')", movie.supportsFS);
         testExpected("mediaElement.webkitDisplayingFullscreen", false);
     } else {
         testExpected("mediaElement.webkitSupportsFullscreen", undefined);
+        testExpected("mediaElement.webkitSupportsPresentationMode", undefined);
         testExpected("mediaElement.webkitDisplayingFullscreen", undefined);
     }
     

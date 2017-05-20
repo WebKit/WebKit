@@ -1,5 +1,26 @@
 2017-05-19  Jeremy Jones  <jeremyj@apple.com>
 
+        webkitSupportsFullscreen and webkitSupportsPresentationMode('fullscreen') disagree.
+        https://bugs.webkit.org/show_bug.cgi?id=172329
+        rdar://problem/32260891
+
+        Reviewed by Darin Adler.
+
+        Updated tests:
+        * media/media-fullscreen-inline-expected.txt:
+        * media/media-fullscreen-not-in-document-expected.txt:
+        * media/media-fullscreen.js:
+
+        webkitSupportsPresentationMode('fullscreen') should delegate to webkitSupportsFullscreen.
+        The additional mediaSession().fullscreenPermitted() check causes it to return false when
+        not handling a user gesture, which isn't helpful to deciding to show a button in controls
+        or not.
+
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::webkitSupportsPresentationMode):
+
+2017-05-19  Jeremy Jones  <jeremyj@apple.com>
+
         Prevent javascript interface from activating picture-in-picture for video elements that are showing capture camera on ios.
         https://bugs.webkit.org/show_bug.cgi?id=172328
 
