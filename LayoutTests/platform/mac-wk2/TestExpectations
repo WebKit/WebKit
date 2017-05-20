@@ -691,3 +691,5 @@ webkit.org/b/170699 [ Release ] imported/w3c/web-platform-tests/html/webappapis/
 webkit.org/b/168937 [ Debug ] tiled-drawing/scrolling/fast-scroll-iframe-latched-mainframe.html [ Pass Failure ]
 
 webkit.org/b/172034 [ Sierra Release ] webrtc/closing-peerconnection.html [ Pass Timeout ]
+
+webkit.org/b/171061 webrtc/datachannel/filter-ice-candidate.html [ Pass Timeout ]

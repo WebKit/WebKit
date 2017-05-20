@@ -1985,3 +1985,5 @@ webkit.org/b/171951 [ Debug ] fast/hidpi/filters-and-image-buffer-resolution.htm
 webkit.org/b/171957 [ Debug ] fast/animation/request-animation-frame-time-unit.html [ Pass Failure ]
 
 webkit.org/b/172094 [ Debug ] imported/w3c/web-platform-tests/webrtc/interfaces.html [ Pass Crash ]
+
+webkit.org/b/171061 webrtc/datachannel/filter-ice-candidate.html [ Pass Timeout ]
