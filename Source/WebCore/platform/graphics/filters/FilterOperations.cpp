@@ -152,6 +152,15 @@ bool FilterOperations::hasFilterThatMovesPixels() const
     return false;
 }
 
+bool FilterOperations::hasFilterThatShouldBeRestrictedBySecurityOrigin() const
+{
+    for (auto& operation : m_operations) {
+        if (operation->shouldBeRestrictedBySecurityOrigin())
+            return true;
+    }
+    return false;
+}
+
 TextStream& operator<<(TextStream& ts, const FilterOperations& filters)
 {
     for (size_t i = 0; i < filters.size(); ++i) {

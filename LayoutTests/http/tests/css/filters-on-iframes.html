@@ -1,0 +1,54 @@
+<style>
+body {
+    margin: 0;
+    padding: 0;
+}
+iframe {
+    border: none;
+}
+div {
+    display: inline-block;
+}
+.filtered {
+    filter: url(#noop);
+}
+svg {
+    display: none;
+}
+</style>
+
+<div>
+    <iframe src="resources/solid-red.html"></iframe>
+</div>
+
+<div class="filtered">
+    <iframe src="resources/solid-red.html"></iframe>
+</div>
+
+<br>
+
+<div>
+    <iframe src="http://localhost:8000/css/resources/solid-red.html"></iframe>
+</div>
+
+<div class="filtered">
+    <iframe src="http://localhost:8000/css/resources/solid-red.html"></iframe>
+</div>
+
+<br>
+
+<div>
+    <iframe src="resources/references-external.html"></iframe>
+</div>
+
+<div class="filtered">
+    <iframe src="resources/references-external.html"></iframe>
+</div>
+
+<svg>
+    <defs>
+        <filter id="noop">
+            <feMorphology operator="dilate" in="SourceGraphic" radius="0"/>
+        </filter>
+    </defs>
+</svg>

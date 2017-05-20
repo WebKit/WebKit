@@ -170,7 +170,7 @@ private:
 
     // WebCore::Widget
     void setFrameRect(const WebCore::IntRect&) override;
-    void paint(WebCore::GraphicsContext&, const WebCore::IntRect&) override;
+    void paint(WebCore::GraphicsContext&, const WebCore::IntRect&, WebCore::Widget::SecurityOriginPaintPolicy) override;
     void invalidateRect(const WebCore::IntRect&) override;
     void setFocus(bool) override;
     void frameRectsChanged() override;

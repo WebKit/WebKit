@@ -128,6 +128,7 @@ RefPtr<FilterEffect> FilterEffectRenderer::buildReferenceFilter(RenderElement* r
 bool FilterEffectRenderer::build(RenderElement* renderer, const FilterOperations& operations, FilterConsumer consumer)
 {
     m_hasFilterThatMovesPixels = operations.hasFilterThatMovesPixels();
+    m_hasFilterThatShouldBeRestrictedBySecurityOrigin = operations.hasFilterThatShouldBeRestrictedBySecurityOrigin();
     if (m_hasFilterThatMovesPixels)
         m_outsets = operations.outsets();
 

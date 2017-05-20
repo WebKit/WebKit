@@ -84,6 +84,7 @@ private:
 class FilterEffectRenderer final : public Filter {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    bool hasFilterThatShouldBeRestrictedBySecurityOrigin() const { return m_hasFilterThatShouldBeRestrictedBySecurityOrigin; }
     static RefPtr<FilterEffectRenderer> create()
     {
         return adoptRef(new FilterEffectRenderer);
@@ -145,6 +146,7 @@ private:
 
     bool m_graphicsBufferAttached { false };
     bool m_hasFilterThatMovesPixels { false };
+    bool m_hasFilterThatShouldBeRestrictedBySecurityOrigin { false };
 };
 
 } // namespace WebCore

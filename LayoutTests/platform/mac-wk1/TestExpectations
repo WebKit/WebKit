@@ -317,3 +317,6 @@ streams/reference-implementation/readable-stream-templated.html [ Failure ]
 streams/reference-implementation/writable-stream-abort.html [ Failure ]
 streams/reference-implementation/writable-stream.html [ Failure ]
 streams/shadowing-Promise.html [ Failure ]
+
+# This was a WK2-only fix.
+http/tests/css/filters-on-iframes.html [ Skip ]
