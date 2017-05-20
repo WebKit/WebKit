@@ -45,8 +45,6 @@
 
     // Additional constructors
 
-    attribute DOMURLConstructor webkitURL; // FIXME: deprecate this.
-
     // FIXME: Automatically generate these once we can drop the IndexedDBWorkers runtime flag.
     [Conditional=INDEXED_DATABASE_IN_WORKERS, EnabledAtRuntime=IndexedDBWorkers] attribute IDBCursorConstructor IDBCursor;
     [Conditional=INDEXED_DATABASE_IN_WORKERS, EnabledAtRuntime=IndexedDBWorkers] attribute IDBCursorWithValueConstructor IDBCursorWithValue;

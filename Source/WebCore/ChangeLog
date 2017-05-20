@@ -1,3 +1,18 @@
+2017-05-19  Chris Dumez  <cdumez@apple.com>
+
+        Consider not exposing webkitURL in workers
+        https://bugs.webkit.org/show_bug.cgi?id=172166
+
+        Reviewed by Geoffrey Garen.
+
+        Drop webkitURL alias for URL in workers, to match other browsers. The risk should
+        be low given that this only impacts workers, we expose URL to workers and Blink
+        does not have this alias. We still support the webkitURL alias for URL on Window.
+
+        No new tests, rebaselined existing test.
+
+        * workers/WorkerGlobalScope.idl:
+
 2017-05-19  Youenn Fablet  <youenn@apple.com>
 
         Add RTCPeerConnection connection state change logging
