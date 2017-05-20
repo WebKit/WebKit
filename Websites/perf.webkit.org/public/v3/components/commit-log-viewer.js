@@ -9,6 +9,13 @@ class CommitLogViewer extends ComponentBase {
         this._fetchingPromise = null;
         this._commits = null;
         this._renderCommitListLazily = new LazilyEvaluatedFunction(this._renderCommitList.bind(this));
+        this._showRepositoryName = true;
+    }
+
+    setShowRepositoryName(shouldShow)
+    {
+        this._showRepositoryName = shouldShow;
+        this.enqueueToRender();
     }
 
     view(repository, precedingRevision, lastRevision)
@@ -55,7 +62,7 @@ class CommitLogViewer extends ComponentBase {
 
     render()
     {
-        const shouldShowRepositoryName = this._repository && (this._commits || this._fetchingPromise);
+        const shouldShowRepositoryName = this._repository && (this._commits || this._fetchingPromise) && this._showRepositoryName;
         this.content('repository-name').textContent = shouldShowRepositoryName ? this._repository.name() : '';
         this.content('spinner-container').style.display = this._fetchingPromise ? null : 'none';
         this._renderCommitListLazily.evaluate(this._commits);

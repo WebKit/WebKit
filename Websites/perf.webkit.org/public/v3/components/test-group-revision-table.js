@@ -99,10 +99,19 @@ class TestGroupRevisionTable extends ComponentBase {
 
     _buildCommitCell(entry, repository)
     {
+        const element = ComponentBase.createElement;
+        const link = ComponentBase.createLink;
+
         if (entry.repositoriesToSkip.has(repository))
             return [];
         const commit = entry.commitSet.commitForRepository(repository);
-        return ComponentBase.createElement('td', {rowspan: entry.rowCountByRepository.get(repository)}, commit ? commit.label() : '');
+        let content = '';
+        if (commit) {
+            content = commit.label();
+            if (commit.url())
+                content = link(content, commit.url());
+        }
+        return element('td', {rowspan: entry.rowCountByRepository.get(repository)}, content);
     }
 
     _buildCustomRootsCell(entry)

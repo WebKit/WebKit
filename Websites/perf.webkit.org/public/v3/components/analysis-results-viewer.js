@@ -12,6 +12,7 @@ class AnalysisResultsViewer extends ResultsTable {
         this._selectedRange = {};
         this._expandedPoints = new Set;
         this._groupToCellMap = new Map;
+        this._selectorRadioButtonList = {};
 
         this._renderTestGroupsLazily = new LazilyEvaluatedFunction(this.renderTestGroups.bind(this));
     }
@@ -34,6 +35,13 @@ class AnalysisResultsViewer extends ResultsTable {
     {
         this._testGroups = testGroups;
         this._currentTestGroup = currentTestGroup;
+        if (currentTestGroup && this._rangeSelectorLabels.length) {
+            const commitSets = currentTestGroup.requestedCommitSets();
+            this._selectedRange = {
+                [this._rangeSelectorLabels[0]]: commitSets[0],
+                [this._rangeSelectorLabels[1]]: commitSets[1]
+            };
+        }
         this.enqueueToRender();
     }
 
@@ -51,6 +59,15 @@ class AnalysisResultsViewer extends ResultsTable {
 
         this._renderTestGroupsLazily.evaluate(this._testGroups,
             this._startPoint, this._endPoint, this._metric, this._analysisResultsView, this._expandedPoints);
+
+        for (const label of this._rangeSelectorLabels) {
+            const commitSet = this._selectedRange[label];
+            const list = this._selectorRadioButtonList[label] || [];
+            for (const item of list) {
+                if (item.commitSet.equals(commitSet))
+                    item.radio.checked = true;
+            }
+        }
 
         const selectedCell = this.content().querySelector('td.selected');
         if (selectedCell)
@@ -98,6 +115,9 @@ class AnalysisResultsViewer extends ResultsTable {
 
         const [additionalColumnsByRow, columnCount] = AnalysisResultsViewer._layoutBlocks(rows.length, testGroups.map((group) => testGroupLayoutMap.get(group)));
 
+        for (const label of this._rangeSelectorLabels)
+            this._selectorRadioButtonList[label] = [];
+
         const element = ComponentBase.createElement;
         const buildHeaders = (headers) => {
             return [
@@ -111,12 +131,12 @@ class AnalysisResultsViewer extends ResultsTable {
                 this._rangeSelectorLabels.map((label) => {
                     if (!row.commitSet())
                         return element('td', '');
-                    const checked = this._selectedRange[label] == row.commitSet();
-                    const onchange = () => {
+                    const radio = element('input', {type: 'radio', name: label, onchange: () => {
                         this._selectedRange[label] = row.commitSet();
                         this.dispatchAction('rangeSelectorClick', label, row);
-                    };
-                    return element('td', element('input', {type: 'radio', name: label, checked, onchange}));
+                    }});
+                    this._selectorRadioButtonList[label].push({radio, commitSet: row.commitSet()});
+                    return element('td', radio);
                 }),
                 columns,
                 additionalColumnsByRow[rowIndex],

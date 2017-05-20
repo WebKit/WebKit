@@ -61,11 +61,15 @@ class AnalysisTaskResultsPane extends ComponentBase {
     {
         super('analysis-task-results-pane');
         this._showForm = false;
+        this._repositoryList = [];
+        this._renderRepositoryListLazily = new LazilyEvaluatedFunction(this._renderRepositoryList.bind(this));
+        this._updateCommitViewerLazily = new LazilyEvaluatedFunction(this._updateCommitViewer.bind(this));
     }
 
     setPoints(startPoint, endPoint, metric)
     {
         const resultsViewer = this.part('results-viewer');
+        this._repositoryList = startPoint ? Repository.sortByNamePreferringOnesWithURL(startPoint.commitSet().repositories()) : [];
         resultsViewer.setPoints(startPoint, endPoint, metric);
         resultsViewer.enqueueToRender();
     }
@@ -91,9 +95,16 @@ class AnalysisTaskResultsPane extends ComponentBase {
     didConstructShadowTree()
     {
         const resultsViewer = this.part('results-viewer');
-        resultsViewer.listenToAction('testGroupClick', (testGroup) => this.dispatchAction('showTestGroup', testGroup));
+        resultsViewer.listenToAction('testGroupClick', (testGroup) => {
+            this.enqueueToRender();
+            this.dispatchAction('showTestGroup', testGroup)
+        });
         resultsViewer.setRangeSelectorLabels(['A', 'B']);
         resultsViewer.listenToAction('rangeSelectorClick', () => this.enqueueToRender());
+
+        const repositoryPicker = this.content('commit-viewer-repository');
+        repositoryPicker.addEventListener('change', () => this.enqueueToRender());
+        this.part('commit-viewer').setShowRepositoryName(false);
 
         this.part('form').listenToAction('startTesting', (repetitionCount, name, commitSetMap) => {
             this.dispatchAction('newTestGroup', name, repetitionCount, commitSetMap);
@@ -102,7 +113,12 @@ class AnalysisTaskResultsPane extends ComponentBase {
 
     render()
     {
-        this.part('results-viewer').enqueueToRender();
+        const resultsViewer = this.part('results-viewer');
+
+        const repositoryPicker = this._renderRepositoryListLazily.evaluate(this._repositoryList);
+        const repository = Repository.findById(repositoryPicker.value);
+        const range = resultsViewer.selectedRange();
+        this._updateCommitViewerLazily.evaluate(repository, range['A'], range['B']);
 
         this.content('form').style.display = this._showForm ? null : 'none';
         if (!this._showForm)
@@ -116,14 +132,58 @@ class AnalysisTaskResultsPane extends ComponentBase {
         form.enqueueToRender();
     }
 
+    _renderRepositoryList(repositoryList)
+    {
+        const element = ComponentBase.createElement;
+        const selectElement = this.content('commit-viewer-repository');
+        this.renderReplace(selectElement,
+            repositoryList.map((repository) => {
+                return element('option', {value: repository.id()}, repository.label());
+            }));
+        return selectElement;
+    }
+
+    _updateCommitViewer(repository, preceedingCommitSet, lastCommitSet)
+    {
+        if (repository && preceedingCommitSet && lastCommitSet && !preceedingCommitSet.equals(lastCommitSet)) {
+            const precedingRevision = preceedingCommitSet.revisionForRepository(repository);
+            const lastRevision = lastCommitSet.revisionForRepository(repository);
+            if (precedingRevision && lastRevision && precedingRevision != lastRevision) {
+                this.part('commit-viewer').view(repository, precedingRevision, lastRevision);
+                return;
+            }
+        }
+        this.part('commit-viewer').view(null, null, null);
+    }
+
     static htmlTemplate()
     {
-        return `<analysis-results-viewer id="results-viewer"></analysis-results-viewer><customizable-test-group-form id="form"></customizable-test-group-form>`;
+        return `
+            <div id="results-container">
+                <analysis-results-viewer id="results-viewer"></analysis-results-viewer>
+                <div id="commit-pane">
+                    <select id="commit-viewer-repository"></select>
+                    <commit-log-viewer id="commit-viewer"></commit-log-viewer>
+                </div>
+            </div>
+            <customizable-test-group-form id="form"></customizable-test-group-form>
+        `;
     }
 
     static cssTemplate()
     {
         return `
+            #results-container {
+                position: relative;
+                text-align: center;
+            }
+            #commit-pane {
+                position: absolute;
+                width: 20rem;
+                height: 100%;
+                top: 0;
+                right: 0;
+            }
             #form {
                 margin: 0.5rem;
             }
@@ -359,7 +419,7 @@ class AnalysisTaskTestGroupPane extends ComponentBase {
             #test-group-details {
                 display: table-cell;
                 margin-bottom: 1rem;
-                padding: 0;
+                padding: 0 0.5rem;
                 margin: 0;
             }
 
@@ -564,7 +624,8 @@ class AnalysisTaskPage extends PageWithHeading {
         this.content().querySelector('.error-message').textContent = this._errorMessage || '';
 
         this._renderTaskNameAndStatusLazily.evaluate(this._task, this._task ? this._task.name() : null, this._task ? this._task.changeType() : null);
-        this._renderCauseAndFixesLazily.evaluate(this._startPoint, this._task);
+        this._renderCauseAndFixesLazily.evaluate(this._startPoint, this._task, this.part('cause-list'), this._task ? this._task.causes() : []);
+        this._renderCauseAndFixesLazily.evaluate(this._startPoint, this._task, this.part('fix-list'), this._task ? this._task.fixes() : []);
         this._renderRelatedTasksLazily.evaluate(this._task, this._relatedTasks);
 
         this.content('chart-pane').style.display = this._task && !this._task.isCustom() ? null : 'none';
@@ -607,7 +668,7 @@ class AnalysisTaskPage extends PageWithHeading {
             }));
     }
 
-    _renderCauseAndFixes(startPoint, task)
+    _renderCauseAndFixes(startPoint, task, list, commits)
     {
         const hasData = startPoint && task;
         this.content('cause-fix').style.display = hasData ? null : 'none';
@@ -622,13 +683,8 @@ class AnalysisTaskPage extends PageWithHeading {
                 'Disassociate this commit', this._dissociateCommit.bind(this, commit));
         }
 
-        const causeList = this.part('cause-list');
-        causeList.setKindList(repositoryList);
-        causeList.setList(task.causes().map((commit) => makeItem(commit)));
-
-        const fixList = this.part('fix-list');
-        fixList.setKindList(repositoryList);
-        fixList.setList(task.fixes().map((commit) => makeItem(commit)));
+        list.setKindList(repositoryList);
+        list.setList(commits.map((commit) => makeItem(commit)));
     }
 
     _showTestGroup(testGroup)

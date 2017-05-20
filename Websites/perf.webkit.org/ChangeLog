@@ -1,3 +1,61 @@
+2017-05-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add a commit log viewer next to the analysis results viewer
+        https://bugs.webkit.org/show_bug.cgi?id=172399
+
+        Reviewed by Chris Dumez.
+
+        Add a commit log viewer next to the analysis results viewer, which visualizes the A/B testing results.
+
+        Also linkify the revisions in the table that shows the status of each A/B testing job,
+        and allow the prefix of "r" when associating a Subversion revision.
+
+        Finally, Fixed a bug that the list of commits associated with the analysis task were not re-rendered
+        when the list was updated by the user.
+
+        * public/v3/components/analysis-results-viewer.js:
+        (AnalysisResultsViewer): Added _selectorRadioButtonList as an instance variable. It's a list of radio
+        buttons to select a configuration (A/B) with a commit set. It's added to update the checked status of
+        radio buttons upon changing the currently selected test group.
+        (AnalysisResultsViewer.prototype.setTestGroups): Update the selected range to that of the currently
+        selected group.
+        (AnalysisResultsViewer.prototype.render): Fill _selectorRadioButtonList with radio buttons.
+
+        * public/v3/components/commit-log-viewer.js:
+        (CommitLogViewer): Added _showRepositoryName as an instance variable.
+        (CommitLogViewer.prototype.setShowRepositoryName): Added.
+        (CommitLogViewer.prototype.render): Hide the repository name when _showRepositoryName is false. This
+        is used in the newly added commit log viewer for the analysis results since we're showing a select
+        element with all the names of repositories above this component.
+
+        * public/v3/components/test-group-revision-table.js:
+        (TestGroupRevisionTable.prototype._buildCommitCell): Linkify the revisions if possible.
+
+        * public/v3/models/analysis-task.js:
+        (AnalysisTask.prototype.associateCommit): Strip "r" at the beginning for a Subversion like r12345
+        since that's the format we use to show to the user. This makes copy & paste easier.
+
+        * public/v3/pages/analysis-task-page.js:
+        (AnalysisTaskResultsPane): Added a bunch of new instance variables to show and update the commit log
+        viewer next to the analysis results viewer.
+        (AnalysisTaskResultsPane.prototype.setPoints): Create the list of repositories to show details.
+        (AnalysisTaskResultsPane.prototype.didConstructShadowTree): Re-render when the current selected test
+        group changes since that may have updated the selected range for A/B testing. Also re-render when
+        a new repository is selected to show details.
+        (AnalysisTaskResultsPane.prototype.render): Update the list of repositories and the commit log viewer.
+        (AnalysisTaskResultsPane.prototype._renderRepositoryList): Renders the list of repositories.
+        (AnalysisTaskResultsPane.prototype._updateCommitViewer): Updates the commit log viewer given the range
+        selected in the analysis results viewer.
+        (AnalysisTaskResultsPane.htmlTemplate): Updated the template.
+        (AnalysisTaskResultsPane.cssTemplate): Ditto.
+        (AnalysisTaskTestGroupPane.cssTemplate): Add a little space between the list of results and the table
+        of A/B testing jobs with revisions.
+        (AnalysisTaskPage.prototype.render): Fixed the bug that the list of commits associated with the task
+        is not updated when the list changes the task or the start point never changed when the list of commits
+        associated with the task changed. Make the lazily evaluated function compare the actual list of commits
+        so that it will invoke _renderCauseAndFixes when the list changes.
+        (AnalysisTaskPage.prototype._renderCauseAndFixes): Now renders a specific list.
+
 2017-05-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         Another build fix. Added a missing null check.

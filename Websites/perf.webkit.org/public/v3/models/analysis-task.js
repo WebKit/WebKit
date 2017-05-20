@@ -126,14 +126,16 @@ class AnalysisTask extends LabeledObject {
     {
         console.assert(kind == 'cause' || kind == 'fix');
         console.assert(repository instanceof Repository);
-        var id = this.id();
+        if (revision.startsWith('r'))
+            revision = revision.substring(1);
+        const id = this.id();
         return PrivilegedAPI.sendRequest('associate-commit', {
             task: id,
             repository: repository.id(),
             revision: revision,
             kind: kind,
-        }).then(function (data) {
-            return AnalysisTask.cachedFetch('/api/analysis-tasks', {id: id}, true)
+        }).then((data) => {
+            return AnalysisTask.cachedFetch('/api/analysis-tasks', {id}, true)
                 .then(AnalysisTask._constructAnalysisTasksFromRawData.bind(AnalysisTask));
         });
     }
