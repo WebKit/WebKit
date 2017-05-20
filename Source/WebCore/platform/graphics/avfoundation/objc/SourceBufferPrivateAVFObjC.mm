@@ -175,8 +175,7 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSampleBufferDisplayLayerFailedToDecodeNotific
     ASSERT_UNUSED(streamDataParser, streamDataParser == _parser);
 
     RetainPtr<CMSampleBufferRef> protectedSample = sample;
-    String mediaType = nsMediaType;
-    callOnMainThread([parent = _parent, protectedSample = WTFMove(protectedSample), trackID, mediaType, flags] {
+    callOnMainThread([parent = _parent, protectedSample = WTFMove(protectedSample), trackID, mediaType = String(nsMediaType), flags] {
         if (parent)
             parent->didProvideMediaDataForTrackID(trackID, protectedSample.get(), mediaType, flags);
     });
@@ -186,8 +185,7 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSampleBufferDisplayLayerFailedToDecodeNotific
 {
     ASSERT_UNUSED(streamDataParser, streamDataParser == _parser);
 
-    String mediaType = nsMediaType;
-    callOnMainThread([parent = _parent, trackID, mediaType] {
+    callOnMainThread([parent = _parent, trackID, mediaType = String(nsMediaType)] {
         if (parent)
             parent->didReachEndOfTrackWithTrackID(trackID, mediaType);
     });

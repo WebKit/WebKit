@@ -1,3 +1,15 @@
+2017-05-19  Joseph Pecoraro  <pecoraro@apple.com>
+
+        WebAVStreamDataParserListener String leak
+        https://bugs.webkit.org/show_bug.cgi?id=172395
+
+        Reviewed by Chris Dumez.
+
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (-[WebAVStreamDataParserListener streamDataParser:didProvideMediaData:forTrackID:mediaType:flags:]):
+        (-[WebAVStreamDataParserListener streamDataParser:didReachEndOfTrackWithTrackID:mediaType:]):
+        Use an isolated String in a lambda used across threads.
+
 2017-05-19  Chris Dumez  <cdumez@apple.com>
 
         Consider not exposing webkitURL in workers
