@@ -807,6 +807,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncPropertyIsEnumerable(ExecState* exec)
     auto propertyName = exec->uncheckedArgument(1).toPropertyKey(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
+    scope.release();
     PropertyDescriptor descriptor;
     bool enumerable = object->getOwnPropertyDescriptor(exec, propertyName, descriptor) && descriptor.enumerable();
     return JSValue::encode(jsBoolean(enumerable));

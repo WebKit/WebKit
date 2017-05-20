@@ -270,6 +270,8 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncPropertyIsEnumerable(ExecState* exec
 
     JSObject* thisObject = exec->thisValue().toThis(exec, StrictMode).toObject(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
+
+    scope.release();
     PropertyDescriptor descriptor;
     bool enumerable = thisObject->getOwnPropertyDescriptor(exec, propertyName, descriptor) && descriptor.enumerable();
     return JSValue::encode(jsBoolean(enumerable));
