@@ -417,7 +417,7 @@ void SpeculativeJIT::nonSpeculativePeepholeBranch(Node* node, Node* branchNode, 
     
             silentSpillAllRegisters(resultGPR);
             callOperation(helperFunction, resultGPR, arg1GPR, arg2GPR);
-            silentFillAllRegisters(resultGPR);
+            silentFillAllRegisters();
             m_jit.exceptionCheck();
         
             branchTest32(callResultCondition, resultGPR, taken);
@@ -538,7 +538,7 @@ void SpeculativeJIT::nonSpeculativePeepholeStrictEq(Node* node, Node* branchNode
         
         silentSpillAllRegisters(resultGPR);
         callOperation(operationCompareStrictEqCell, resultGPR, arg1GPR, arg2GPR);
-        silentFillAllRegisters(resultGPR);
+        silentFillAllRegisters();
         m_jit.exceptionCheck();
         
         branchTest32(invert ? JITCompiler::Zero : JITCompiler::NonZero, resultGPR, taken);
@@ -565,7 +565,7 @@ void SpeculativeJIT::nonSpeculativePeepholeStrictEq(Node* node, Node* branchNode
         
         silentSpillAllRegisters(resultGPR);
         callOperation(operationCompareStrictEq, resultGPR, arg1GPR, arg2GPR);
-        silentFillAllRegisters(resultGPR);
+        silentFillAllRegisters();
         m_jit.exceptionCheck();
         
         branchTest32(invert ? JITCompiler::Zero : JITCompiler::NonZero, resultGPR, taken);
@@ -601,7 +601,7 @@ void SpeculativeJIT::nonSpeculativeNonPeepholeStrictEq(Node* node, bool invert)
         
         silentSpillAllRegisters(resultGPR);
         callOperation(operationCompareStrictEqCell, resultGPR, arg1GPR, arg2GPR);
-        silentFillAllRegisters(resultGPR);
+        silentFillAllRegisters();
         m_jit.exceptionCheck();
         
         m_jit.and64(JITCompiler::TrustedImm32(1), resultGPR);
@@ -996,7 +996,7 @@ void SpeculativeJIT::emitCall(Node* node)
             
             silentSpillAllRegisters(InvalidGPRReg);
             callOperation(operationLinkDirectCall, callLinkInfo, calleeGPR);
-            silentFillAllRegisters(InvalidGPRReg);
+            silentFillAllRegisters();
             m_jit.exceptionCheck();
             m_jit.jump().linkTo(mainPath, &m_jit);
             
@@ -3371,7 +3371,7 @@ void SpeculativeJIT::compile(Node* node)
             for (unsigned i = numExtraArgs; i--;)
                 m_jit.boxInt32(argGPRs[i], JSValueRegs(argGPRs[i]));
             callSlowPath();
-            silentFillAllRegisters(resultGPR);
+            silentFillAllRegisters();
             m_jit.exceptionCheck();
         }
         
@@ -3958,7 +3958,7 @@ void SpeculativeJIT::compile(Node* node)
             notNumber.link(&m_jit);
             silentSpillAllRegisters(resultGPR);
             callOperation(operationToNumber, resultGPR, argumentGPR);
-            silentFillAllRegisters(resultGPR);
+            silentFillAllRegisters();
             m_jit.exceptionCheck();
 
             done.link(&m_jit);
@@ -5070,7 +5070,7 @@ void SpeculativeJIT::compile(Node* node)
             slowPath.link(&m_jit);
             silentSpillAllRegisters(resultGPR);
             callOperation(operationMapHash, resultGPR, JSValueRegs(inputGPR));
-            silentFillAllRegisters(resultGPR);
+            silentFillAllRegisters();
             m_jit.exceptionCheck();
 
             done.link(&m_jit);
@@ -5118,7 +5118,7 @@ void SpeculativeJIT::compile(Node* node)
         slowPath.link(&m_jit);
         silentSpillAllRegisters(resultGPR);
         callOperation(operationMapHash, resultGPR, JSValueRegs(inputGPR));
-        silentFillAllRegisters(resultGPR);
+        silentFillAllRegisters();
         m_jit.exceptionCheck();
 
         done.link(&m_jit);
@@ -5245,7 +5245,7 @@ void SpeculativeJIT::compile(Node* node)
                 callOperation(operationJSMapFindBucket, resultGPR, mapGPR, keyGPR, hashGPR);
             else
                 callOperation(operationJSSetFindBucket, resultGPR, mapGPR, keyGPR, hashGPR);
-            silentFillAllRegisters(indexGPR);
+            silentFillAllRegisters();
             m_jit.exceptionCheck();
             done.append(m_jit.jump());
         }
@@ -5562,7 +5562,7 @@ void SpeculativeJIT::compile(Node* node)
         slowPath.link(&m_jit);
         silentSpillAllRegisters(resultGPR);
         callOperation(operationHasOwnProperty, resultGPR, objectGPR, keyGPR);
-        silentFillAllRegisters(resultGPR);
+        silentFillAllRegisters();
         m_jit.exceptionCheck();
 
         done.link(&m_jit);
@@ -6023,7 +6023,7 @@ void SpeculativeJIT::compile(Node* node)
         silentSpillAllRegisters(InvalidGPRReg);
         m_jit.setupArgumentsExecState();
         appendCall(triggerTierUpNow);
-        silentFillAllRegisters(InvalidGPRReg);
+        silentFillAllRegisters();
         
         done.link(&m_jit);
         break;
@@ -6151,7 +6151,7 @@ void SpeculativeJIT::convertAnyInt(Edge valueEdge, GPRReg resultGPR)
     notInt32.link(&m_jit);
     silentSpillAllRegisters(resultGPR);
     callOperation(operationConvertBoxedDoubleToInt52, resultGPR, valueGPR);
-    silentFillAllRegisters(resultGPR);
+    silentFillAllRegisters();
 
     DFG_TYPE_CHECK(
         JSValueRegs(valueGPR), valueEdge, SpecInt32Only | SpecAnyIntAsDouble,

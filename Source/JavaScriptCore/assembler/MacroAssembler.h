@@ -1328,6 +1328,14 @@ public:
             move(imm.asTrustedImm64(), dest);
     }
 
+#if CPU(X86_64) || CPU(ARM64)
+    void moveDouble(Imm64 imm, FPRegisterID dest)
+    {
+        move(imm, scratchRegister());
+        move64ToDouble(scratchRegister(), dest);
+    }
+#endif
+
     void and64(Imm32 imm, RegisterID dest)
     {
         if (shouldBlind(imm)) {
