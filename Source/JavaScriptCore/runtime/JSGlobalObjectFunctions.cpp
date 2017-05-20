@@ -797,4 +797,19 @@ EncodedJSValue JSC_HOST_CALL globalFuncImportModule(ExecState* exec)
     return JSValue::encode(promise->promise());
 }
 
+EncodedJSValue JSC_HOST_CALL globalFuncPropertyIsEnumerable(ExecState* exec)
+{
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    RELEASE_ASSERT(exec->argumentCount() == 2);
+    JSObject* object = jsCast<JSObject*>(exec->uncheckedArgument(0));
+    auto propertyName = exec->uncheckedArgument(1).toPropertyKey(exec);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+
+    PropertyDescriptor descriptor;
+    bool enumerable = object->getOwnPropertyDescriptor(exec, propertyName, descriptor) && descriptor.enumerable();
+    return JSValue::encode(jsBoolean(enumerable));
+}
+
 } // namespace JSC

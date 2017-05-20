@@ -35,8 +35,7 @@ function enumerableOwnProperties(object, kind)
     for (let i = 0, keysLength = ownKeys.length; i < keysLength; ++i) {
         let nextKey = ownKeys[i];
         if (typeof nextKey === 'string') {
-            let descriptor = @Reflect.@getOwnPropertyDescriptor(obj, nextKey);
-            if (descriptor !== @undefined && descriptor.enumerable) {
+            if (@propertyIsEnumerable(obj, nextKey)) {
                 if (kind === @iterationKindValue)
                     properties.@push(obj[nextKey]);
                 else if (kind === @iterationKindKeyValue)
@@ -83,8 +82,7 @@ function assign(target/*[*/, /*...*/sources/*] */)
             let keys = @Reflect.@ownKeys(from);
             for (let i = 0, keysLength = keys.length; i < keysLength; ++i) {
                 let nextKey = keys[i];
-                let descriptor = @Reflect.@getOwnPropertyDescriptor(from, nextKey);
-                if (descriptor !== @undefined && descriptor.enumerable)
+                if (@propertyIsEnumerable(from, nextKey))
                     objTarget[nextKey] = from[nextKey];
             }
         }

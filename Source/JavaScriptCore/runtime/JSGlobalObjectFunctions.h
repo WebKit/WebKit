@@ -52,6 +52,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncProtoSetter(ExecState*);
 EncodedJSValue JSC_HOST_CALL globalFuncHostPromiseRejectionTracker(ExecState*);
 EncodedJSValue JSC_HOST_CALL globalFuncBuiltinLog(ExecState*);
 EncodedJSValue JSC_HOST_CALL globalFuncImportModule(ExecState*);
+EncodedJSValue JSC_HOST_CALL globalFuncPropertyIsEnumerable(ExecState*);
 
 double jsToNumber(StringView);
 

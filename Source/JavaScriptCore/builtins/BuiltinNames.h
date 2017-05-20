@@ -162,6 +162,7 @@ namespace JSC {
     macro(makeBoundFunction) \
     macro(hasOwnLengthProperty) \
     macro(importModule) \
+    macro(propertyIsEnumerable) \
     macro(WebAssembly) \
     macro(Module) \
     macro(Instance) \

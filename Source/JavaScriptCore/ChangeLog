@@ -1,3 +1,39 @@
+2017-05-20  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Speedup Object.assign for slow case by using propertyIsEnumerable
+        https://bugs.webkit.org/show_bug.cgi?id=172411
+
+        Reviewed by Sam Weinig.
+
+        We use @Reflect.@getOwnPropertyDescriptor() to check
+
+        1. the descriptor exists,
+        2. and the descriptor.enumrable is true
+
+        But Object::propertyIsEnumerable does the completely same thing without
+        allocating a new object for property descriptor.
+
+        In this patch, we add a new private function @propertyIsEnumerable, and
+        use it in Object.assign implementation. It does not allocate unnecessary
+        objects. It is good for GC-pressure and performance.
+
+        This patch improves SixSpeed object-assign.es6 by 1.7x. While this patch
+        does not introduce a fast path for objects that do not have accessors,
+        and it could speed up things further, this patch can speed up the common
+        slow path cases that is the current implementation of Object.assign.
+
+            object-assign.es6     1103.2487+-21.5602    ^    621.8478+-34.9875       ^ definitely 1.7741x faster
+
+        * builtins/BuiltinNames.h:
+        * builtins/ObjectConstructor.js:
+        (globalPrivate.enumerableOwnProperties):
+        (assign):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncPropertyIsEnumerable):
+        * runtime/JSGlobalObjectFunctions.h:
+
 2017-05-19  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Enable testapi on Mac CMake build
