@@ -1,3 +1,17 @@
+2017-05-20  Jer Noble  <jer.noble@apple.com>
+
+        [MSE][Mac] Support painting MSE video-element to canvas
+        https://bugs.webkit.org/show_bug.cgi?id=125157
+        <rdar://problem/23062016>
+
+        Reviewed by Eric Carlson.
+
+        * media/media-source/content/test-fragmented.mp4: Add a 'edts' atom to move the presentation time for the
+            first sample to 0:00.
+        * media/media-source/content/test-fragmented-manifest.json: 
+        * media/media-source/media-source-paint-to-canvas-expected.txt: Added.
+        * media/media-source/media-source-paint-to-canvas.html: Added.
+
 2017-05-19  Chris Dumez  <cdumez@apple.com>
 
         Consider not exposing webkitURL in workers
@@ -361,19 +375,6 @@
         Reviewed by Eric Carlson.
 
         * media/media-source/content/test-fragmented.mp4:
-
-2017-04-11  Jer Noble  <jer.noble@apple.com>
-
-        [MSE][Mac] Support painting MSE video-element to canvas
-        https://bugs.webkit.org/show_bug.cgi?id=125157
-        <rdar://problem/23062016>
-
-        Reviewed by Eric Carlson.
-
-        * media/media-source/content/test-fragmented.mp4: Add a 'edts' atom to move the presentation time for the
-            first sample to 0:00.
-        * media/media-source/media-source-paint-to-canvas-expected.txt: Added.
-        * media/media-source/media-source-paint-to-canvas.html: Added.
 
 2017-05-19  Zan Dobersek  <zdobersek@igalia.com>
 

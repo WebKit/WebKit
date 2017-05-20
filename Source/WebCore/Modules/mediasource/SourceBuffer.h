@@ -129,6 +129,7 @@ private:
     void sourceBufferPrivateDidReceiveSample(MediaSample&) final;
     bool sourceBufferPrivateHasAudio() const final;
     bool sourceBufferPrivateHasVideo() const final;
+    void sourceBufferPrivateReenqueSamples(const AtomicString& trackID) final;
     void sourceBufferPrivateDidBecomeReadyForMoreSamples(const AtomicString& trackID) final;
     MediaTime sourceBufferPrivateFastSeekTimeForMediaTime(const MediaTime&, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold) final;
     void sourceBufferPrivateAppendComplete(AppendResult) final;

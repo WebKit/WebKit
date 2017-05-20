@@ -233,6 +233,7 @@ void MediaSource::seekToTime(const MediaTime& time)
     // ↳ Otherwise
     // Continue
 
+    m_private->waitForSeekCompleted();
     completeSeek();
 }
 

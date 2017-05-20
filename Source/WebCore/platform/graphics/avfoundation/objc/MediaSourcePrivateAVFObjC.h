@@ -35,6 +35,7 @@
 #include <wtf/Vector.h>
 
 OBJC_CLASS AVAsset;
+OBJC_CLASS AVSampleBufferDisplayLayer;
 OBJC_CLASS AVStreamDataParser;
 OBJC_CLASS NSError;
 OBJC_CLASS NSObject;
@@ -47,6 +48,7 @@ class MediaPlayerPrivateMediaSourceAVFObjC;
 class MediaSourcePrivateClient;
 class SourceBufferPrivateAVFObjC;
 class TimeRanges;
+class WebCoreDecompressionSession;
 
 class MediaSourcePrivateAVFObjC final : public MediaSourcePrivate {
 public:
@@ -71,11 +73,16 @@ public:
 
     bool hasAudio() const;
     bool hasVideo() const;
+    bool hasSelectedVideo() const;
 
     void willSeek();
     void seekToTime(const MediaTime&);
     MediaTime fastSeekTimeForMediaTime(const MediaTime&, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold);
     FloatSize naturalSize() const;
+
+    void hasSelectedVideoChanged(SourceBufferPrivateAVFObjC&);
+    void setVideoLayer(AVSampleBufferDisplayLayer*);
+    void setDecompressionSession(WebCoreDecompressionSession*);
 
 private:
     MediaSourcePrivateAVFObjC(MediaPlayerPrivateMediaSourceAVFObjC*, MediaSourcePrivateClient*);
@@ -88,6 +95,8 @@ private:
     void monitorSourceBuffers();
     void removeSourceBuffer(SourceBufferPrivate*);
 
+    void setSourceBufferWithSelectedVideo(SourceBufferPrivateAVFObjC*);
+
     friend class SourceBufferPrivateAVFObjC;
 
     MediaPlayerPrivateMediaSourceAVFObjC* m_player;
@@ -95,6 +104,7 @@ private:
     Vector<RefPtr<SourceBufferPrivateAVFObjC>> m_sourceBuffers;
     Vector<SourceBufferPrivateAVFObjC*> m_activeSourceBuffers;
     Deque<SourceBufferPrivateAVFObjC*> m_sourceBuffersNeedingSessions;
+    SourceBufferPrivateAVFObjC* m_sourceBufferWithSelectedVideo { nullptr };
     bool m_isEnded;
 };
 

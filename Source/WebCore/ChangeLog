@@ -1,3 +1,106 @@
+2017-05-20  Jer Noble  <jer.noble@apple.com>
+
+        [MSE][Mac] Support painting MSE video-element to canvas
+        https://bugs.webkit.org/show_bug.cgi?id=125157
+        <rdar://problem/23062016>
+
+        Reviewed by Eric Carlson.
+
+        Test: media/media-source/media-source-paint-to-canvas.html
+
+        In order to have access to decoded video data for painting, decode the encoded samples manually
+        instead of adding them to the AVSampleBufferDisplayLayer. To facilitate doing so, add a new
+        utility class WebCoreDecompressionSession, which can decode samples and store them.
+
+        For the purposes of this patch, to avoid double-decoding of video data and to avoid severe complication
+        of our sample delivery pipeline, we will only support painting of decoded video samples when the video is
+        not displayed in the DOM.
+
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::seekToTime): Always send waitForSeekCompleted() to give private a chance to delay seek completion.
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::sourceBufferPrivateReenqueSamples): Added.
+        * Modules/mediasource/SourceBuffer.h:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/cf/CoreMediaSoftLink.cpp: Added new soft link macros.
+        * platform/cf/CoreMediaSoftLink.h: Ditto.
+        * platform/cocoa/CoreVideoSoftLink.cpp: Ditto.
+        * platform/cocoa/CoreVideoSoftLink.h: Ditto.
+        * platform/graphics/SourceBufferPrivateClient.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.h:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::sampleBufferDisplayLayer): Simple accessor.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::decompressionSession): Ditto.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::load): Update whether we should be displaying in a layer or decompression session..
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::setVisible): Ditto.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::waitForSeekCompleted): m_seeking is now an enum.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::seeking): Ditto.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::seekCompleted): Ditto. If waiting for a video frame, delay completing seek.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::nativeImageForCurrentTime): Call updateLastImage() and return result.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::updateLastImage): Fetch the image for the current time.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::paint): Pass to paintCurrentFrameInCanvas.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::paintCurrentFrameInContext): Get a native image, and render it.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::acceleratedRenderingStateChanged): Create or destroy a layer or decompression session as appropriate.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::ensureLayer): Creates a layer.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::destroyLayer): Destroys a layer.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::ensureDecompressionSession): Creates a decompression session.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::destroyDecompressionSession): Destroys a decompression session.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::setHasAvailableVideoFrame): If seek completion delayed, complete now. Ditto for ready state change.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::setReadyState): If waiting for a video frame, delay ready state change.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::addDisplayLayer): Deleted.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::removeDisplayLayer): Deleted.
+        * platform/graphics/avfoundation/objc/MediaSourcePrivateAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaSourcePrivateAVFObjC.mm:
+        (WebCore::MediaSourcePrivateAVFObjC::hasVideo): Promote to a class function.
+        (WebCore::MediaSourcePrivateAVFObjC::hasSelectedVideo): Return whether any of the active source buffers have video and are selected.
+        (WebCore::MediaSourcePrivateAVFObjC::hasSelectedVideoChanged): Call setSourceBufferWithSelectedVideo().
+        (WebCore::MediaSourcePrivateAVFObjC::setVideoLayer): Set (or clear) the layer on the selected buffer.
+        (WebCore::MediaSourcePrivateAVFObjC::setDecompressionSession): Ditto for decompression session.
+        (WebCore::MediaSourcePrivateAVFObjC::setSourceBufferWithSelectedVideo): Remove the layer and decompression session from the unselected
+
+                buffer and add the decompression session or layer to the newly selected buffer.
+        (WebCore::MediaSourcePrivateAVFObjCHasVideo): Deleted.
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.h:
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (WebCore::SourceBufferPrivateAVFObjC::destroyRenderers): Clear the videoLayer and decompressionSession.
+        (WebCore::SourceBufferPrivateAVFObjC::hasSelectedVideo): Return whether the buffer has a selected video track.
+        (WebCore::SourceBufferPrivateAVFObjC::trackDidChangeEnabled): The media player now manages the video layer and decompression session lifetimes.
+        (WebCore::SourceBufferPrivateAVFObjC::flush): Flush the decompression session, if it exists.
+        (WebCore::SourceBufferPrivateAVFObjC::enqueueSample): Enqueue to the decompression session, if it exists.
+        (WebCore::SourceBufferPrivateAVFObjC::isReadyForMoreSamples): As the decompression session, if it exists.
+        (WebCore::SourceBufferPrivateAVFObjC::didBecomeReadyForMoreSamples): Tell the decompression session to stop requesting data, if it exists.
+        (WebCore::SourceBufferPrivateAVFObjC::notifyClientWhenReadyForMoreSamples): Request media data from the decompression session, if it exists.
+        (WebCore::SourceBufferPrivateAVFObjC::setVideoLayer): Added.
+        (WebCore::SourceBufferPrivateAVFObjC::setDecompressionSession): Added.
+        * platform/graphics/cocoa/WebCoreDecompressionSession.h: Added.
+        (WebCore::WebCoreDecompressionSession::create):
+        (WebCore::WebCoreDecompressionSession::isInvalidated):
+        (WebCore::WebCoreDecompressionSession::createWeakPtr):
+        * platform/graphics/cocoa/WebCoreDecompressionSession.mm: Added.
+        (WebCore::WebCoreDecompressionSession::WebCoreDecompressionSession): Register for media data requests.
+        (WebCore::WebCoreDecompressionSession::invalidate):  Unregister for same.
+        (WebCore::WebCoreDecompressionSession::maybeBecomeReadyForMoreMediaDataCallback): Pass to maybeBecomeReadyForMoreMediaData.
+        (WebCore::WebCoreDecompressionSession::maybeBecomeReadyForMoreMediaData): Check in-flight decodes, and decoded frame counts.
+        (WebCore::WebCoreDecompressionSession::enqueueSample): Pass the sample to be decoded on a background queue.
+        (WebCore::WebCoreDecompressionSession::decodeSample): Decode the sample.
+        (WebCore::WebCoreDecompressionSession::decompressionOutputCallback): Call handleDecompressionOutput.
+        (WebCore::WebCoreDecompressionSession::handleDecompressionOutput): Pass decoded sample to be enqueued on the main thread.
+        (WebCore::WebCoreDecompressionSession::getFirstVideoFrame):
+        (WebCore::WebCoreDecompressionSession::enqueueDecodedSample): Enqueue the frame (if it's a displayed frame).
+        (WebCore::WebCoreDecompressionSession::isReadyForMoreMediaData): Return whether we've hit our high water sample count.
+        (WebCore::WebCoreDecompressionSession::requestMediaDataWhenReady):
+        (WebCore::WebCoreDecompressionSession::stopRequestingMediaData): Unset the same.
+        (WebCore::WebCoreDecompressionSession::notifyWhenHasAvailableVideoFrame): Set a callback to notify when a decoded frame has been enqueued.
+        (WebCore::WebCoreDecompressionSession::imageForTime): Successively dequeue images until reaching one at or beyond the requested time.
+        (WebCore::WebCoreDecompressionSession::flush): Synchronously empty the producer and consumer queues.
+        (WebCore::WebCoreDecompressionSession::getDecodeTime): Utility method.
+        (WebCore::WebCoreDecompressionSession::getPresentationTime): Ditto.
+        (WebCore::WebCoreDecompressionSession::getDuration): Ditto.
+        (WebCore::WebCoreDecompressionSession::compareBuffers): Ditto.
+        * platform/cocoa/VideoToolboxSoftLink.cpp: Added.
+        * platform/cocoa/VideoToolboxSoftLink.h: Added.
+
 2017-05-19  Joseph Pecoraro  <pecoraro@apple.com>
 
         WebAVStreamDataParserListener String leak
