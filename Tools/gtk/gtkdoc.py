@@ -378,6 +378,7 @@ class GTKDoc(object):
 
     def _run_gtkdoc_fixxref(self):
         args = ['gtkdoc-fixxref',
+                '--module=%s' % self.module_name,
                 '--module-dir=html',
                 '--html-dir=html']
         args.extend(['--extra-dir=%s' % extra_dir for extra_dir in self.cross_reference_deps])

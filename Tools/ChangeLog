@@ -1,3 +1,13 @@
+2017-05-20  Ting-Wei Lan  <lantw44@gmail.com>
+
+        [GTK] gtkdoc-fixxref needs --module argument to work
+        https://bugs.webkit.org/show_bug.cgi?id=172415
+
+        Reviewed by Michael Catanzaro.
+
+        * gtk/gtkdoc.py:
+        (GTKDoc._run_gtkdoc_fixxref):
+
 2017-05-20  Alexey Proskuryakov  <ap@apple.com>
 
         make-new-script-test should create tests that use js-test.js, not js-test-pre.js
