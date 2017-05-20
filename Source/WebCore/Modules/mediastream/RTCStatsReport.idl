@@ -23,6 +23,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// FIXME: This should not be marked as [NoInterfaceObject].
 [
     NoInterfaceObject,
     Conditional=WEB_RTC,

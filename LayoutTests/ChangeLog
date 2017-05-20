@@ -1,3 +1,14 @@
+2017-05-20  Chris Dumez  <cdumez@apple.com>
+
+        Value for iterator property is wrong for maplike interfaces
+        https://bugs.webkit.org/show_bug.cgi?id=172410
+
+        Reviewed by Sam Weinig.
+
+        Extend test coverage to test the RTCStatsReport iterator.
+
+        * webrtc/video-stats.html:
+
 2017-05-20  Jer Noble  <jer.noble@apple.com>
 
         [MSE][Mac] Support painting MSE video-element to canvas

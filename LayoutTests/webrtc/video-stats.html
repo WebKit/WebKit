@@ -10,9 +10,18 @@
         <script src ="routines.js"></script>
         <script>
 
+function checkStatsReportIterator(report)
+{
+    assert_equals(Object.getOwnPropertyDescriptor(report.__proto__, Symbol.iterator).value, Object.getOwnPropertyDescriptor(report.__proto__, 'entries').value);
+    assert_equals(Object.getOwnPropertyDescriptor(report.__proto__, Symbol.iterator).value.name, "entries");
+    for (let pair of report)
+        assert_equals(pair.length, 2);
+}
+
 function getInboundRTPStats(connection)
 {
     return connection.getStats().then((report) => {
+        checkStatsReportIterator(report);
         var stats;
         report.forEach((statItem) => {
             if (statItem.type === "inbound-rtp") {
@@ -26,6 +35,7 @@ function getInboundRTPStats(connection)
 function getOutboundRTPStats(connection)
 {
     return connection.getStats().then((report) => {
+        checkStatsReportIterator(report);
         var stats;
         report.forEach((statItem) => {
             if (statItem.type === "outbound-rtp") {

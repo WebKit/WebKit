@@ -120,7 +120,7 @@ void JSMapLikePrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     reifyStaticProperties(vm, JSMapLikePrototypeTableValues, *this);
-    putDirect(vm, vm.propertyNames->iteratorSymbol, getDirect(vm, vm.propertyNames->builtinNames().valuesPublicName()), DontEnum);
+    putDirect(vm, vm.propertyNames->iteratorSymbol, getDirect(vm, vm.propertyNames->builtinNames().entriesPublicName()), DontEnum);
 }
 
 const ClassInfo JSMapLike::s_info = { "MapLike", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSMapLike) };

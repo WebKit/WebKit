@@ -3060,10 +3060,10 @@ sub InterfaceNeedsIterator
 {
     my ($interface) = @_;
 
-    # FIXME: This should return 1 for maplike once we support them.
+    # FIXME: This should return 1 for setlike once we support it.
     return 1 if $interface->mapLike;
-
     return 1 if $interface->iterable;
+
     if (GetIndexedGetterFunction($interface)) {
         my $lengthAttribute = GetAttributeWithName($interface, "length");
         return 1 if $lengthAttribute and $codeGenerator->IsIntegerType($lengthAttribute->type);
@@ -3466,10 +3466,8 @@ sub GenerateImplementation
 
         if (InterfaceNeedsIterator($interface)) {
             AddToImplIncludes("<builtins/BuiltinNames.h>");
-            if (IsKeyValueIterableInterface($interface)) {
+            if (IsKeyValueIterableInterface($interface) or $interface->mapLike) {
                 push(@implContent, "    putDirect(vm, vm.propertyNames->iteratorSymbol, getDirect(vm, vm.propertyNames->builtinNames().entriesPublicName()), DontEnum);\n");
-            } elsif ($interface->mapLike) {
-                push(@implContent, "    putDirect(vm, vm.propertyNames->iteratorSymbol, getDirect(vm, vm.propertyNames->builtinNames().valuesPublicName()), DontEnum);\n");
             } else {
                 push(@implContent, "    putDirect(vm, vm.propertyNames->iteratorSymbol, globalObject()->arrayPrototype()->getDirect(vm, vm.propertyNames->builtinNames().valuesPrivateName()), DontEnum);\n");
             }
