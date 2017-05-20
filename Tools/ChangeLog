@@ -1,3 +1,12 @@
+2017-05-20  Alexey Proskuryakov  <ap@apple.com>
+
+        make-new-script-test should create tests that use js-test.js, not js-test-pre.js
+        https://bugs.webkit.org/show_bug.cgi?id=172416
+
+        Reviewed by Daniel Bates.
+
+        * Scripts/make-new-script-test:
+
 2017-05-19  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win] error LNK2005: WebCore::JSNode::checkSubClassPatchpoint() already defined in WebKit.lib
