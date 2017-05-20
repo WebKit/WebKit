@@ -50,7 +50,6 @@ void addValueIterableMethods(JSC::JSGlobalObject& globalObject, JSC::JSObject& p
     copyProperty(vm.propertyNames->builtinNames().forEachPrivateName(), vm.propertyNames->builtinNames().forEachPublicName());
     copyProperty(vm.propertyNames->builtinNames().keysPrivateName(), vm.propertyNames->builtinNames().keysPublicName());
     copyProperty(vm.propertyNames->builtinNames().valuesPrivateName(), vm.propertyNames->builtinNames().valuesPublicName());
-    copyProperty(vm.propertyNames->builtinNames().valuesPrivateName(), vm.propertyNames->builtinNames().iteratorSymbol(), JSC::DontEnum);
 }
 
 }
