@@ -153,14 +153,21 @@ void HTMLVideoElement::parseAttribute(const QualifiedName& name, const AtomicStr
 
 bool HTMLVideoElement::supportsFullscreen(HTMLMediaElementEnums::VideoFullscreenMode videoFullscreenMode) const
 {
-    if (videoFullscreenMode == HTMLMediaElementEnums::VideoFullscreenModePictureInPicture && !mediaSession().allowsPictureInPicture(*this))
+    if (!player())
         return false;
+    
+    if (videoFullscreenMode == HTMLMediaElementEnums::VideoFullscreenModePictureInPicture) {
+        if (!mediaSession().allowsPictureInPicture(*this))
+            return false;
+        if (!player()->supportsPictureInPicture())
+            return false;
+    }
 
     Page* page = document().page();
     if (!page) 
         return false;
 
-    if (!player() || !player()->supportsFullscreen())
+    if (!player()->supportsFullscreen())
         return false;
 
 #if PLATFORM(IOS)

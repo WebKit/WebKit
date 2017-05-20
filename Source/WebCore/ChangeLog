@@ -1,3 +1,32 @@
+2017-05-19  Jeremy Jones  <jeremyj@apple.com>
+
+        Prevent javascript interface from activating picture-in-picture for video elements that are showing capture camera on ios.
+        https://bugs.webkit.org/show_bug.cgi?id=172328
+
+        Reviewed by Eric Carlson.
+
+        This change allows MediaPlayers to decide if they support pictureInPicture.
+        And check this from supportsFullscreen().
+
+        In MediaPlayerPrivateMediaStreamAVFObjC disable pip if there is a capture video track.
+        Elsewhere, leave it enabled.
+
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::supportsFullscreen): Added Check.
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::supportsPictureInPicture): Added.
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::supportsPictureInPicture): Added.
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::supportsPictureInPicture): Added
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivateQTKit::supportsFullscreen): Deleted. Moved inline.
+
 2017-05-19  Chris Dumez  <cdumez@apple.com>
 
         Do not fire load event for SVGElements that are detached or in frameless documents

@@ -912,7 +912,12 @@ void MediaPlayer::getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& t
 bool MediaPlayer::isAvailable()
 {
     return !installedMediaEngines().isEmpty();
-} 
+}
+
+bool MediaPlayer::supportsPictureInPicture() const
+{
+    return m_private->supportsPictureInPicture();
+}
 
 #if USE(NATIVE_FULLSCREEN_VIDEO)
 void MediaPlayer::enterFullscreen()

@@ -863,6 +863,18 @@ void MediaPlayerPrivateMediaStreamAVFObjC::readyStateChanged(MediaStreamTrackPri
     });
 }
 
+bool MediaPlayerPrivateMediaStreamAVFObjC::supportsPictureInPicture() const
+{
+#if PLATFORM(IOS)
+    for (const auto& track : m_videoTrackMap.values()) {
+        if (track->streamTrack().isCaptureTrack())
+            return false;
+    }
+#endif
+    
+    return true;
+}
+
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 void MediaPlayerPrivateMediaStreamAVFObjC::setVideoFullscreenLayer(PlatformLayer* videoFullscreenLayer, std::function<void()> completionHandler)
 {

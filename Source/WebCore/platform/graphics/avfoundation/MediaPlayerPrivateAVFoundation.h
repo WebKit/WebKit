@@ -198,6 +198,7 @@ protected:
     MediaPlayer::MovieLoadType movieLoadType() const override;
     void prepareForRendering() override;
 
+    bool supportsPictureInPicture() const override { return true; }
     bool supportsFullscreen() const override;
     bool supportsScanning() const override { return true; }
     unsigned long long fileSize() const override { return totalBytes(); }

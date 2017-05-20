@@ -301,6 +301,7 @@ public:
     static void clearMediaCacheForOrigins(const String& path, const HashSet<RefPtr<SecurityOrigin>>&);
     static bool supportsKeySystem(const String& keySystem, const String& mimeType);
 
+    bool supportsPictureInPicture() const;
     bool supportsFullscreen() const;
     bool supportsScanning() const;
     bool canSaveMediaData() const;
