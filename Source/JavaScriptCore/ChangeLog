@@ -1,3 +1,24 @@
+2017-05-19  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Enable testapi on Mac CMake build
+        https://bugs.webkit.org/show_bug.cgi?id=172354
+
+        Reviewed by Alex Christensen.
+
+        This patch makes testapi buildable and runnable for Mac CMake port.
+
+        * API/tests/DateTests.mm:
+        (+[DateTests JSDateToNSDateTest]):
+        (+[DateTests roundTripThroughJSDateTest]):
+        This test only works with the en_US locale.
+
+        * shell/CMakeLists.txt:
+        * shell/PlatformMac.cmake:
+        Some of tests rely on ARC. We enable ARC for those files.
+
+        * shell/PlatformWin.cmake:
+        Clean up.
+
 2017-05-19  Mark Lam  <mark.lam@apple.com>
 
         [Re-landing] DFG::SpeculativeJIT::pickCanTrample() is wrongly ignoring result registers.
