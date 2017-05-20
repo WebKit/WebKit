@@ -147,7 +147,7 @@ EncodedJSValue JSC_HOST_CALL mapProtoFuncSize(CallFrame* callFrame)
     JSMap* map = getMap(callFrame, callFrame->thisValue());
     if (!map)
         return JSValue::encode(jsUndefined());
-    return JSValue::encode(jsNumber(map->size(callFrame)));
+    return JSValue::encode(jsNumber(map->size()));
 }
 
 EncodedJSValue JSC_HOST_CALL mapProtoFuncValues(CallFrame* callFrame)

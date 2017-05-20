@@ -68,7 +68,7 @@ static EncodedJSValue JSC_HOST_CALL constructSet(ExecState* exec)
     if (iterable.isUndefinedOrNull())
         return JSValue::encode(set);
 
-    JSValue adderFunction = set->get(exec, vm.propertyNames->add);
+    JSValue adderFunction = set->JSObject::get(exec, vm.propertyNames->add);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     CallData adderFunctionCallData;

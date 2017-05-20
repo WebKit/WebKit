@@ -25,15 +25,15 @@
 
 #pragma once
 
+#include "HashMapImpl.h"
 #include "JSObject.h"
-#include "MapBase.h"
 
 namespace JSC {
 
 class JSMapIterator;
 
-class JSMap : public MapBase<HashMapBucket<HashMapBucketDataKeyValue>> {
-    typedef MapBase<HashMapBucket<HashMapBucketDataKeyValue>> Base;
+class JSMap : public HashMapImpl<HashMapBucket<HashMapBucketDataKeyValue>> {
+    using Base = HashMapImpl<HashMapBucket<HashMapBucketDataKeyValue>>;
 public:
     friend class JSMapIterator;
 
@@ -51,14 +51,9 @@ public:
         return instance;
     }
 
-    ALWAYS_INLINE JSValue get(ExecState* exec, JSValue key)
-    {
-        return m_map->get(exec, key);
-    }
-
     ALWAYS_INLINE void set(ExecState* exec, JSValue key, JSValue value)
     {
-        m_map->add(exec, key, value);
+        add(exec, key, value);
     }
 
 private:

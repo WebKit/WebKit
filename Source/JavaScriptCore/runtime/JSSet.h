@@ -25,15 +25,15 @@
 
 #pragma once
 
+#include "HashMapImpl.h"
 #include "JSObject.h"
-#include "MapBase.h"
 
 namespace JSC {
 
 class JSSetIterator;
 
-class JSSet : public MapBase<HashMapBucket<HashMapBucketDataKey>> {
-    typedef MapBase<HashMapBucket<HashMapBucketDataKey>> Base;
+class JSSet : public HashMapImpl<HashMapBucket<HashMapBucketDataKey>> {
+    using Base = HashMapImpl<HashMapBucket<HashMapBucketDataKey>>;
 public:
 
     friend class JSSetIterator;
@@ -50,11 +50,6 @@ public:
         JSSet* instance = new (NotNull, allocateCell<JSSet>(vm.heap)) JSSet(vm, structure);
         instance->finishCreation(exec, vm);
         return instance;
-    }
-
-    ALWAYS_INLINE void add(ExecState* exec, JSValue key)
-    {
-        m_map->add(exec, key);
     }
 
 private:

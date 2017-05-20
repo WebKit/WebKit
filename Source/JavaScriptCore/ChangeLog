@@ -1,5 +1,54 @@
 2017-05-20  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [JSC] Drop MapBase
+        https://bugs.webkit.org/show_bug.cgi?id=172417
+
+        Reviewed by Sam Weinig.
+
+        MapBase is a purely additional indirection. JSMap and JSSet can directly inherit HashMapImpl.
+        Thus MapBase is unnecessary. This patch drops it.
+        It is good because we can eliminate one indirection when accessing to map implementation.
+        Moreover, we can drop one unnecessary allocation per Map and Set.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetMapBucket):
+        * runtime/HashMapImpl.cpp:
+        (JSC::HashMapImpl<HashMapBucket>::estimatedSize):
+        (JSC::getHashMapImplKeyClassInfo): Deleted.
+        (JSC::getHashMapImplKeyValueClassInfo): Deleted.
+        * runtime/HashMapImpl.h:
+        (JSC::HashMapImpl::finishCreation):
+        (JSC::HashMapImpl::get):
+        (JSC::HashMapImpl::info): Deleted.
+        (JSC::HashMapImpl::createStructure): Deleted.
+        (JSC::HashMapImpl::create): Deleted.
+        * runtime/JSMap.h:
+        (JSC::JSMap::set):
+        (JSC::JSMap::get): Deleted.
+        * runtime/JSMapIterator.cpp:
+        (JSC::JSMapIterator::finishCreation):
+        * runtime/JSSet.h:
+        (JSC::JSSet::add): Deleted.
+        * runtime/JSSetIterator.cpp:
+        (JSC::JSSetIterator::finishCreation):
+        * runtime/MapBase.cpp: Removed.
+        * runtime/MapBase.h: Removed.
+        * runtime/MapPrototype.cpp:
+        (JSC::mapProtoFuncSize):
+        * runtime/SetConstructor.cpp:
+        (JSC::constructSet):
+        * runtime/SetPrototype.cpp:
+        (JSC::setProtoFuncSize):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+
+2017-05-20  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [JSC] Speedup Object.assign for slow case by using propertyIsEnumerable
         https://bugs.webkit.org/show_bug.cgi?id=172411
 

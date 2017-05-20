@@ -37,7 +37,7 @@ void JSSetIterator::finishCreation(VM& vm, JSSet* iteratedObject)
 {
     Base::finishCreation(vm);
     m_set.set(vm, this, iteratedObject);
-    setIterator(vm, m_set->impl()->head());
+    setIterator(vm, m_set->head());
 }
 
 void JSSetIterator::visitChildren(JSCell* cell, SlotVisitor& visitor)

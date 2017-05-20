@@ -269,9 +269,9 @@ ALWAYS_INLINE std::optional<uint32_t> concurrentJSMapHash(JSValue key)
 }
 
 template <typename HashMapBucketType>
-class HashMapImpl : public JSCell {
-    typedef JSCell Base;
-    typedef HashMapBuffer<HashMapBucketType> HashMapBufferType;
+class HashMapImpl : public JSNonFinalObject {
+    using Base = JSNonFinalObject;
+    using HashMapBufferType = HashMapBuffer<HashMapBucketType>;
 
     template <typename T = HashMapBucketType>
     static typename std::enable_if<std::is_same<T, HashMapBucket<HashMapBucketDataKey>>::value, Structure*>::type selectStructure(VM& vm)
@@ -286,34 +286,11 @@ class HashMapImpl : public JSCell {
     }
 
 public:
-    static const ClassInfo s_info; // This is never accessed directly, since that would break linkage on some compilers.
-
-    static const ClassInfo* info()
-    {
-        switch (HashMapBucketType::Type) {
-        case HashTableType::Key:
-            return getHashMapImplKeyClassInfo();
-        case HashTableType::KeyValue:
-            return getHashMapImplKeyValueClassInfo();
-        }
-        RELEASE_ASSERT_NOT_REACHED();
-    }
-
-    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
-    {
-        return Structure::create(vm, globalObject, prototype, TypeInfo(CellType, StructureFlags), info());
-    }
-
-    static HashMapImpl* create(ExecState* exec, VM& vm)
-    {
-        ASSERT_WITH_MESSAGE(HashMapBucket<HashMapBucketDataKey>::offsetOfKey() == HashMapBucket<HashMapBucketDataKeyValue>::offsetOfKey(), "We assume this to be true in the DFG and FTL JIT.");
-
-        HashMapImpl* impl = new (NotNull, allocateCell<HashMapImpl>(vm.heap)) HashMapImpl(vm, selectStructure(vm));
-        impl->finishCreation(exec, vm);
-        return impl;
-    }
+    using BucketType = HashMapBucketType;
 
     static void visitChildren(JSCell*, SlotVisitor&);
+
+    static size_t estimatedSize(JSCell*);
 
     HashMapImpl(VM& vm, Structure* structure)
         : Base(vm, structure)
@@ -330,6 +307,8 @@ public:
 
     void finishCreation(ExecState* exec, VM& vm)
     {
+        ASSERT_WITH_MESSAGE(HashMapBucket<HashMapBucketDataKey>::offsetOfKey() == HashMapBucket<HashMapBucketDataKeyValue>::offsetOfKey(), "We assume this to be true in the DFG and FTL JIT.");
+
         auto scope = DECLARE_THROW_SCOPE(vm);
         Base::finishCreation(vm);
 
@@ -382,7 +361,8 @@ public:
         return findBucketAlreadyHashedAndNormalized(exec, key, hash);
     }
 
-    ALWAYS_INLINE JSValue get(ExecState* exec, JSValue key)
+    template <typename T = HashMapBucketType>
+    ALWAYS_INLINE typename std::enable_if<std::is_same<T, HashMapBucket<HashMapBucketDataKeyValue>>::value, JSValue>::type get(ExecState* exec, JSValue key)
     {
         if (HashMapBucketType** bucket = findBucket(exec, key))
             return (*bucket)->value();
