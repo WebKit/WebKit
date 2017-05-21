@@ -3510,9 +3510,8 @@ void FrameView::flushPostLayoutTasksQueue()
 
 void FrameView::performPostLayoutTasks()
 {
-    LOG(Layout, "FrameView %p performPostLayoutTasks", this);
-
     // FIXME: We should not run any JavaScript code in this function.
+    LOG(Layout, "FrameView %p performPostLayoutTasks", this);
 
     m_postLayoutTasksTimer.stop();
 
@@ -3547,11 +3546,6 @@ void FrameView::performPostLayoutTasks()
 #if ENABLE(CSS_SCROLL_SNAP)
     updateSnapOffsets();
 #endif
-
-    // layout() protects FrameView, but it still can get destroyed when updateEmbeddedObjects()
-    // is called through the post layout timer.
-    Ref<FrameView> protectedThis(*this);
-
     m_updateEmbeddedObjectsTimer.startOneShot(0_s);
 
     if (auto* page = frame().page()) {
