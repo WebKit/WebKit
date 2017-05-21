@@ -1,3 +1,41 @@
+2017-05-21  Saam Barati  <sbarati@apple.com>
+
+        We overwrite the callee save space on the stack when throwing stack overflow from wasm
+        https://bugs.webkit.org/show_bug.cgi?id=172316
+
+        Reviewed by Mark Lam.
+
+        When throwing a stack overflow exception, the overflow
+        thunk would do the following:
+          move fp, sp
+          populate argument registers
+          call C code
+        
+        However, the C function is allowed to clobber our spilled
+        callee saves that live below fp. The reason I did this move is that
+        when we jump to this code, we've proven that sp is out of bounds on
+        the stack. So we're not allowed to just use its value or keep growing
+        the stack from that point. However, this patch revises this approach
+        to be the same in spirit, but actually correct. We conservatively assume
+        the B3 function we're coming from could have saved all callee saves.
+        So we emit code like this now:
+          add -maxNumCalleeSaveSpace, fp, sp
+          populate argument registers
+          call C code
+        
+        This ensures our callee saves will not be overwritten. Note
+        that fp is still in a valid stack range here, since the thing
+        calling the wasm code did a stack check. Also note that maxNumCalleeSaveSpace
+        is less than our redzone size, so it's safe to decrement sp by 
+        this amount.
+        
+        The previously added wasm stack overflow test is an instance crash
+        without this change on arm64. It also appears that this test crashed
+        on some other x86 devices.
+
+        * wasm/WasmThunks.cpp:
+        (JSC::Wasm::throwStackOverflowFromWasmThunkGenerator):
+
 2017-05-20  Chris Dumez  <cdumez@apple.com>
 
         Drop [NoInterfaceObject] from RTCDTMFSender and RTCStatsReport

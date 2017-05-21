@@ -93,7 +93,9 @@ MacroAssemblerCodeRef throwStackOverflowFromWasmThunkGenerator(const AbstractLoc
 {
     CCallHelpers jit;
 
-    jit.move(GPRInfo::callFrameRegister, MacroAssembler::stackPointerRegister);
+    int32_t stackSpace = WTF::roundUpToMultipleOf(stackAlignmentBytes(), RegisterSet::calleeSaveRegisters().numberOfSetRegisters() * sizeof(Register));
+    ASSERT(static_cast<unsigned>(stackSpace) < Options::softReservedZoneSize());
+    jit.addPtr(CCallHelpers::TrustedImm32(-stackSpace), GPRInfo::callFrameRegister, MacroAssembler::stackPointerRegister);
     jit.move(CCallHelpers::TrustedImm32(static_cast<uint32_t>(ExceptionType::StackOverflow)), GPRInfo::argumentGPR1);
     auto jumpToExceptionHandler = jit.jump();
     LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID);
