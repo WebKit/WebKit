@@ -1,3 +1,10 @@
+2017-05-20  Alexey Proskuryakov  <ap@apple.com>
+
+        Correct line endings in a couple files.
+
+        * fast/canvas/script-tests/canvas-gradient-without-path.js:
+        * fast/dom/Geolocation/page-reload-cancel-permission-requests.html:
+
 2017-05-20  Chris Dumez  <cdumez@apple.com>
 
         Drop [NoInterfaceObject] from RTCDTMFSender and RTCStatsReport
