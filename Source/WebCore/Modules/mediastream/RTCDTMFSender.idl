@@ -28,7 +28,6 @@
     ActiveDOMObject,
     Conditional=WEB_RTC_DTMF,
     EnabledAtRuntime=PeerConnection,
-    NoInterfaceObject,
 ] interface RTCDTMFSender : EventTarget {
     // FIXME 169662: change to unsigned long with defaults
     [MayThrowException] void insertDTMF(DOMString tones, optional long duration, optional long interToneGap);

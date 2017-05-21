@@ -1313,6 +1313,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'RTCSessionDescription').hasOwnProp
 PASS Object.getOwnPropertyDescriptor(global, 'RTCSessionDescription').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'RTCSessionDescription').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'RTCSessionDescription').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'RTCStatsReport').value is RTCStatsReport
+PASS Object.getOwnPropertyDescriptor(global, 'RTCStatsReport').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'RTCStatsReport').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'RTCStatsReport').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'RTCStatsReport').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'RTCTrackEvent').value is RTCTrackEvent
 PASS Object.getOwnPropertyDescriptor(global, 'RTCTrackEvent').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'RTCTrackEvent').hasOwnProperty('set') is false

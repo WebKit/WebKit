@@ -104,6 +104,7 @@
     macro(Response) \
     macro(RTCDataChannel) \
     macro(RTCDataChannelEvent) \
+    macro(RTCDTMFSender) \
     macro(RTCDTMFToneChangeEvent) \
     macro(RTCIceCandidate) \
     macro(RTCIceTransport) \
@@ -112,6 +113,7 @@
     macro(RTCRtpSender) \
     macro(RTCRtpTransceiver) \
     macro(RTCSessionDescription) \
+    macro(RTCStatsReport) \
     macro(RTCTrackEvent) \
     macro(Set)\
     macro(SetIterator)\

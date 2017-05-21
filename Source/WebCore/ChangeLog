@@ -1,5 +1,33 @@
 2017-05-20  Chris Dumez  <cdumez@apple.com>
 
+        Drop [NoInterfaceObject] from RTCDTMFSender and RTCStatsReport
+        https://bugs.webkit.org/show_bug.cgi?id=172418
+
+        Reviewed by Youenn Fablet.
+
+        Drop [NoInterfaceObject] from RTCDTMFSender and RTCStatsReport to match the specification:
+        - https://www.w3.org/TR/webrtc/#rtcdtmfsender
+        - https://www.w3.org/TR/webrtc/#rtcstatsreport-object
+
+        Firefox exposes both RTCDTMFSender and RTCStatsReport. Chrome exposes RTCStatsReport only.
+        RTCDTMFSender seems to be currently disabled at build time currently so the change to
+        its interface does not currently impact Web-exposed behavior, only the change to the
+        RTCStatsReport interface currently does.
+
+        No new tests, rebaselined existing test.
+
+        * Modules/mediastream/RTCDTMFSender.idl:
+        * Modules/mediastream/RTCStatsReport.idl:
+        Drop [NoInterfaceObject].
+
+        * Modules/mediastream/RTCIceCandidateEvent.cpp: Removed.
+        * Modules/mediastream/RTCIceCandidateEvent.h: Removed.
+        * Modules/mediastream/RTCIceCandidateEvent.idl: Removed.
+        Drop class and IDL that are no longer used. They were not even part of any project files.
+        RTCIceCandidateEvent has been renamed to RTCPeerConnectionIceEvent, which we support.
+
+2017-05-20  Chris Dumez  <cdumez@apple.com>
+
         Value for iterator property is wrong for maplike interfaces
         https://bugs.webkit.org/show_bug.cgi?id=172410
 

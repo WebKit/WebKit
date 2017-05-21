@@ -1,3 +1,14 @@
+2017-05-20  Chris Dumez  <cdumez@apple.com>
+
+        Drop [NoInterfaceObject] from RTCDTMFSender and RTCStatsReport
+        https://bugs.webkit.org/show_bug.cgi?id=172418
+
+        Reviewed by Youenn Fablet.
+
+        Add CommonIdentifiers that are now needed.
+
+        * runtime/CommonIdentifiers.h:
+
 2017-05-20  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, add scope.release() to propertyIsEnumerable functions.
