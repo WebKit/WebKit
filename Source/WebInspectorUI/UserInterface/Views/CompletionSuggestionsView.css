@@ -27,6 +27,8 @@
     position: absolute;
     display: block;
 
+    text-align: left;
+
     background-color: hsla(0, 0%, 100%, 0.9);
     border-radius: 5px;
 
