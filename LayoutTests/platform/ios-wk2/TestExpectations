@@ -1987,3 +1987,6 @@ webkit.org/b/171957 [ Debug ] fast/animation/request-animation-frame-time-unit.h
 webkit.org/b/172094 [ Debug ] imported/w3c/web-platform-tests/webrtc/interfaces.html [ Pass Crash ]
 
 webkit.org/b/171061 webrtc/datachannel/filter-ice-candidate.html [ Pass Timeout ]
+
+webkit.org/b/171605 imported/w3c/web-platform-tests/webrtc/datachannel-emptystring.html [ Pass Failure ]
+webkit.org/b/171605 imported/w3c/web-platform-tests/webrtc/promises-call.html [ Pass Failure ]
