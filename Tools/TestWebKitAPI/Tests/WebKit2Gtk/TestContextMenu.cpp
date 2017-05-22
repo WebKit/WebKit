@@ -136,8 +136,13 @@ public:
         WebKitContextMenuItem* item = WEBKIT_CONTEXT_MENU_ITEM(items->data);
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(item));
 
+        G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
         GtkAction* action = webkit_context_menu_item_get_action(item);
         g_assert(GTK_IS_ACTION(action));
+        G_GNUC_END_IGNORE_DEPRECATIONS;
+
+        GAction* gAction = webkit_context_menu_item_get_gaction(item);
+        g_assert(G_IS_ACTION(gAction));
 
         g_assert_cmpint(webkit_context_menu_item_get_stock_action(item), ==, stockAction);
 
@@ -154,8 +159,21 @@ public:
         WebKitContextMenuItem* item = WEBKIT_CONTEXT_MENU_ITEM(items->data);
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(item));
 
+        G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
         GtkAction* action = webkit_context_menu_item_get_action(item);
         g_assert(GTK_IS_ACTION(action));
+        G_GNUC_END_IGNORE_DEPRECATIONS;
+
+        GAction* gAction = webkit_context_menu_item_get_gaction(item);
+        g_assert(G_IS_ACTION(gAction));
+        g_assert_cmpstr(gtk_action_get_name(action), ==, g_action_get_name(gAction));
+        g_assert(gtk_action_get_sensitive(action) == g_action_get_enabled(gAction));
+        if (GTK_IS_TOGGLE_ACTION(action)) {
+            g_assert(g_variant_type_equal(g_action_get_state_type(gAction), G_VARIANT_TYPE_BOOLEAN));
+            GRefPtr<GVariant> state = adoptGRef(g_action_get_state(gAction));
+            g_assert(gtk_toggle_action_get_active(GTK_TOGGLE_ACTION(action)) == g_variant_get_boolean(state.get()));
+        } else
+            g_assert(!g_action_get_state_type(gAction));
 
         g_assert_cmpint(webkit_context_menu_item_get_stock_action(item), ==, WEBKIT_CONTEXT_MENU_ACTION_CUSTOM);
         g_assert_cmpstr(gtk_action_get_label(action), ==, label);
@@ -173,10 +191,15 @@ public:
         WebKitContextMenuItem* item = WEBKIT_CONTEXT_MENU_ITEM(items->data);
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(item));
 
+        G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
         GtkAction* action = webkit_context_menu_item_get_action(item);
         g_assert(GTK_IS_ACTION(action));
-
         g_assert_cmpstr(gtk_action_get_label(action), ==, label);
+        G_GNUC_END_IGNORE_DEPRECATIONS;
+
+        GAction* gAction = webkit_context_menu_item_get_gaction(item);
+        g_assert(G_IS_ACTION(gAction));
+
         checkActionState(action, state);
 
         WebKitContextMenu* subMenu = webkit_context_menu_item_get_submenu(item);
@@ -499,17 +522,15 @@ class ContextMenuCustomTest: public ContextMenuTest {
 public:
     MAKE_GLIB_TEST_FIXTURE(ContextMenuCustomTest);
 
-    ContextMenuCustomTest()
-        : m_itemToActivateLabel(0)
-        , m_activated(false)
-        , m_toggled(false)
-    {
-    }
-
     bool contextMenu(WebKitContextMenu* contextMenu, GdkEvent*, WebKitHitTestResult* hitTestResult)
     {
         // Append our custom item to the default menu.
-        webkit_context_menu_append(contextMenu, webkit_context_menu_item_new(m_action.get()));
+        G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+        if (m_action)
+            webkit_context_menu_append(contextMenu, webkit_context_menu_item_new(m_action.get()));
+        else if (m_gAction)
+            webkit_context_menu_append(contextMenu, webkit_context_menu_item_new_from_gaction(m_gAction.get(), m_gActionTitle.data(), m_expectedTarget.get()));
+        G_GNUC_END_IGNORE_DEPRECATIONS;
         quitMainLoop();
 
         return false;
@@ -533,7 +554,7 @@ public:
         GtkMenu* menu = getPopupMenu();
         GtkMenuItem* item = getMenuItem(menu, m_itemToActivateLabel);
         gtk_menu_shell_activate_item(GTK_MENU_SHELL(menu), GTK_WIDGET(item), TRUE);
-        m_itemToActivateLabel = 0;
+        m_itemToActivateLabel = nullptr;
     }
 
     static gboolean activateMenuItemIdleCallback(gpointer userData)
@@ -556,12 +577,24 @@ public:
         activateCustomMenuItemAndWaitUntilActivated(actionLabel);
     }
 
-    static void actionActivatedCallback(GtkAction*, ContextMenuCustomTest* test)
+    static void actionActivatedCallback(ContextMenuCustomTest* test, GVariant* target)
     {
-        test->m_activated = true;
+        if (test->m_gAction) {
+            if (g_action_get_state_type(test->m_gAction.get())) {
+                GRefPtr<GVariant> state = adoptGRef(g_action_get_state(test->m_gAction.get()));
+                g_action_change_state(test->m_gAction.get(), g_variant_new_boolean(!g_variant_get_boolean(state.get())));
+            } else {
+                test->m_activated = true;
+                if (test->m_expectedTarget)
+                    g_assert(g_variant_equal(test->m_expectedTarget.get(), target));
+                else
+                    g_assert(!target);
+            }
+        } else
+            test->m_activated = true;
     }
 
-    static void actionToggledCallback(GtkAction*, ContextMenuCustomTest* test)
+    static void actionToggledCallback(ContextMenuCustomTest* test)
     {
         test->m_toggled = true;
     }
@@ -569,16 +602,32 @@ public:
     void setAction(GtkAction* action)
     {
         m_action = action;
+        m_gAction = nullptr;
+        m_expectedTarget = nullptr;
         if (GTK_IS_TOGGLE_ACTION(action))
-            g_signal_connect(action, "toggled", G_CALLBACK(actionToggledCallback), this);
+            g_signal_connect_swapped(action, "toggled", G_CALLBACK(actionToggledCallback), this);
         else
-            g_signal_connect(action, "activate", G_CALLBACK(actionActivatedCallback), this);
+            g_signal_connect_swapped(action, "activate", G_CALLBACK(actionActivatedCallback), this);
+    }
+
+    void setAction(GAction* action, const char* title, GVariant* target = nullptr)
+    {
+        m_gAction = action;
+        m_gActionTitle = title;
+        m_action = nullptr;
+        m_expectedTarget = target;
+        g_signal_connect_swapped(action, "activate", G_CALLBACK(actionActivatedCallback), this);
+        if (g_action_get_state_type(action))
+            g_signal_connect_swapped(action, "change-state", G_CALLBACK(actionToggledCallback), this);
     }
 
     GRefPtr<GtkAction> m_action;
-    const char* m_itemToActivateLabel;
-    bool m_activated;
-    bool m_toggled;
+    GRefPtr<GAction> m_gAction;
+    CString m_gActionTitle;
+    GRefPtr<GVariant> m_expectedTarget;
+    const char* m_itemToActivateLabel { nullptr };
+    bool m_activated { false };
+    bool m_toggled { false };
 };
 
 static void testContextMenuPopulateMenu(ContextMenuCustomTest* test, gconstpointer)
@@ -589,7 +638,7 @@ static void testContextMenuPopulateMenu(ContextMenuCustomTest* test, gconstpoint
     test->waitUntilLoadFinished();
 
     // Create a custom menu item.
-    GRefPtr<GtkAction> action = adoptGRef(gtk_action_new("WebKitGTK+CustomAction", "Custom _Action", 0, 0));
+    GRefPtr<GtkAction> action = adoptGRef(gtk_action_new("WebKitGTK+CustomAction", "Custom _Action", nullptr, nullptr));
     test->setAction(action.get());
     test->showContextMenuAndWaitUntilFinished();
     test->activateCustomMenuItemAndWaitUntilActivated(gtk_action_get_label(action.get()));
@@ -597,12 +646,35 @@ static void testContextMenuPopulateMenu(ContextMenuCustomTest* test, gconstpoint
     g_assert(!test->m_toggled);
 
     // Create a custom toggle menu item.
-    GRefPtr<GtkAction> toggleAction = adoptGRef(GTK_ACTION(gtk_toggle_action_new("WebKitGTK+CustomToggleAction", "Custom _Toggle Action", 0, 0)));
+    GRefPtr<GtkAction> toggleAction = adoptGRef(GTK_ACTION(gtk_toggle_action_new("WebKitGTK+CustomToggleAction", "Custom _Toggle Action", nullptr, nullptr)));
     test->setAction(toggleAction.get());
     test->showContextMenuAndWaitUntilFinished();
     test->toggleCustomMenuItemAndWaitUntilToggled(gtk_action_get_label(toggleAction.get()));
     g_assert(!test->m_activated);
     g_assert(test->m_toggled);
+
+    // Create a custom menu item using GAction.
+    GRefPtr<GAction> gAction = adoptGRef(G_ACTION(g_simple_action_new("WebKitGTK+CustomGAction", nullptr)));
+    test->setAction(gAction.get(), "Custom _GAction");
+    test->showContextMenuAndWaitUntilFinished();
+    test->activateCustomMenuItemAndWaitUntilActivated("Custom _GAction");
+    g_assert(test->m_activated);
+    g_assert(!test->m_toggled);
+
+    // Create a custom toggle menu item using GAction.
+    GRefPtr<GAction> toggleGAction = adoptGRef(G_ACTION(g_simple_action_new_stateful("WebKitGTK+CustomToggleGAction", nullptr, g_variant_new_boolean(FALSE))));
+    test->setAction(toggleGAction.get(), "Custom _Toggle GAction");
+    test->showContextMenuAndWaitUntilFinished();
+    test->toggleCustomMenuItemAndWaitUntilToggled("Custom _Toggle GAction");
+    g_assert(!test->m_activated);
+    g_assert(test->m_toggled);
+
+    // Create a custom menu item using GAction with a target.
+    gAction = adoptGRef(G_ACTION(g_simple_action_new("WebKitGTK+CustomGActionWithTarget", G_VARIANT_TYPE_STRING)));
+    test->setAction(gAction.get(), "Custom _GAction With Target", g_variant_new_string("WebKitGTK+CustomGActionTarget"));
+    test->showContextMenuAndWaitUntilFinished();
+    test->activateCustomMenuItemAndWaitUntilActivated("Custom _GAction With Target");
+    g_assert(test->m_activated);
 }
 
 class ContextMenuCustomFullTest: public ContextMenuTest {
@@ -621,13 +693,21 @@ public:
         webkit_context_menu_insert(contextMenu, webkit_context_menu_item_new_separator(), 2);
 
         // Add custom actions.
-        GRefPtr<GtkAction> action = adoptGRef(gtk_action_new("WebKitGTK+CustomAction", "Custom _Action", 0, 0));
+        G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+        GRefPtr<GtkAction> action = adoptGRef(gtk_action_new("WebKitGTK+CustomAction", "Custom _Action", nullptr, nullptr));
         gtk_action_set_sensitive(action.get(), FALSE);
         webkit_context_menu_insert(contextMenu, webkit_context_menu_item_new(action.get()), -1);
-        GRefPtr<GtkAction> toggleAction = adoptGRef(GTK_ACTION(gtk_toggle_action_new("WebKitGTK+CustomToggleAction", "Custom _Toggle Action", 0, 0)));
+        GRefPtr<GtkAction> toggleAction = adoptGRef(GTK_ACTION(gtk_toggle_action_new("WebKitGTK+CustomToggleAction", "Custom _Toggle Action", nullptr, nullptr)));
         gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(toggleAction.get()), TRUE);
         webkit_context_menu_append(contextMenu, webkit_context_menu_item_new(toggleAction.get()));
         webkit_context_menu_append(contextMenu, webkit_context_menu_item_new_separator());
+        GRefPtr<GAction> gAction = adoptGRef(G_ACTION(g_simple_action_new("WebKitGTK+CustomGAction", nullptr)));
+        g_simple_action_set_enabled(G_SIMPLE_ACTION(gAction.get()), FALSE);
+        webkit_context_menu_insert(contextMenu, webkit_context_menu_item_new_from_gaction(gAction.get(), "Custom _GAction", nullptr), -1);
+        GRefPtr<GAction> toggleGAction = adoptGRef(G_ACTION(g_simple_action_new_stateful("WebKitGTK+CustomToggleGAction", nullptr, g_variant_new_boolean(TRUE))));
+        webkit_context_menu_append(contextMenu, webkit_context_menu_item_new_from_gaction(toggleGAction.get(), "Custom T_oggle GAction", nullptr));
+        webkit_context_menu_append(contextMenu, webkit_context_menu_item_new_separator());
+        G_GNUC_END_IGNORE_DEPRECATIONS;
 
         // Add a submenu.
         GRefPtr<WebKitContextMenu> subMenu = adoptGRef(webkit_context_menu_new());
@@ -660,6 +740,9 @@ public:
 
         iter = checkCurrentItemIsCustomActionAndGetNext(iter, "Custom _Action", Visible);
         iter = checkCurrentItemIsCustomActionAndGetNext(iter, "Custom _Toggle Action", Visible | Enabled | Checked);
+        iter = checkCurrentItemIsSeparatorAndGetNext(iter);
+        iter = checkCurrentItemIsCustomActionAndGetNext(iter, "Custom _GAction", Visible);
+        iter = checkCurrentItemIsCustomActionAndGetNext(iter, "Custom T_oggle GAction", Visible | Enabled | Checked);
         g_assert(!iter);
 
         quitMainLoop();

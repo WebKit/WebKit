@@ -32,7 +32,6 @@
 
 typedef struct _GtkAction GtkAction;
 typedef struct _GAction GAction;
-typedef struct _GSimpleAction GSimpleAction;
 
 namespace WebKit {
 
@@ -43,18 +42,21 @@ public:
     WebContextMenuItemGtk(const WebContextMenuItemData&);
     WebContextMenuItemGtk(const WebContextMenuItemGtk&, Vector<WebContextMenuItemGtk>&& submenu);
     WebContextMenuItemGtk(GtkAction*);
+    WebContextMenuItemGtk(GAction*, const String& title, GVariant* target = nullptr);
     ~WebContextMenuItemGtk();
 
     // We don't use the SubmenuType internally, so check if we have submenu items.
     WebCore::ContextMenuItemType type() const { return m_submenuItems.isEmpty() ? WebContextMenuItemData::type() : WebCore::SubmenuType; }
     GtkAction* gtkAction() const { return m_gtkAction; }
-    GAction* gAction() const { return reinterpret_cast<GAction*>(m_gAction.get()); }
+    GAction* gAction() const { return m_gAction.get(); }
+    GVariant* gActionTarget() const { return m_gActionTarget.get(); }
     const Vector<WebContextMenuItemGtk>& submenuItems() const { return m_submenuItems; }
 
 private:
     void createActionIfNeeded();
 
-    GRefPtr<GSimpleAction> m_gAction;
+    GRefPtr<GAction> m_gAction;
+    GRefPtr<GVariant> m_gActionTarget;
     GtkAction* m_gtkAction { nullptr };
     Vector<WebContextMenuItemGtk> m_submenuItems;
 };

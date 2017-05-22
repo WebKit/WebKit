@@ -60,8 +60,13 @@ struct _WebKitContextMenuItemClass {
 WEBKIT_API GType
 webkit_context_menu_item_get_type                         (void);
 
-WEBKIT_API WebKitContextMenuItem *
+WEBKIT_DEPRECATED_FOR(webkit_context_menu_item_new_from_gaction) WebKitContextMenuItem *
 webkit_context_menu_item_new                              (GtkAction              *action);
+
+WEBKIT_API WebKitContextMenuItem *
+webkit_context_menu_item_new_from_gaction                 (GAction                *action,
+                                                           const gchar            *label,
+                                                           GVariant               *target);
 
 WEBKIT_API WebKitContextMenuItem *
 webkit_context_menu_item_new_from_stock_action            (WebKitContextMenuAction action);
@@ -77,8 +82,11 @@ webkit_context_menu_item_new_with_submenu                 (const gchar          
 WEBKIT_API WebKitContextMenuItem *
 webkit_context_menu_item_new_separator                    (void);
 
-WEBKIT_API GtkAction *
+WEBKIT_DEPRECATED_FOR(webkit_context_menu_item_get_gactionwebkit_context_menu_item_get_gaction) GtkAction *
 webkit_context_menu_item_get_action                       (WebKitContextMenuItem  *item);
+
+WEBKIT_API GAction *
+webkit_context_menu_item_get_gaction                      (WebKitContextMenuItem  *item);
 
 WEBKIT_API WebKitContextMenuAction
 webkit_context_menu_item_get_stock_action                 (WebKitContextMenuItem  *item);

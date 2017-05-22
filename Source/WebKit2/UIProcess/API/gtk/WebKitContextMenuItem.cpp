@@ -131,6 +131,8 @@ WebContextMenuItemData webkitContextMenuItemToWebContextMenuItemData(WebKitConte
  * Creates a new #WebKitContextMenuItem for the given @action.
  *
  * Returns: the newly created #WebKitContextMenuItem object.
+ *
+ * Deprecated: 2.18: Use webkit_context_menu_item_new_from_gaction() instead.
  */
 WebKitContextMenuItem* webkit_context_menu_item_new(GtkAction* action)
 {
@@ -138,6 +140,32 @@ WebKitContextMenuItem* webkit_context_menu_item_new(GtkAction* action)
 
     WebKitContextMenuItem* item = WEBKIT_CONTEXT_MENU_ITEM(g_object_new(WEBKIT_TYPE_CONTEXT_MENU_ITEM, nullptr));
     item->priv->menuItem = std::make_unique<WebContextMenuItemGtk>(action);
+
+    return item;
+}
+
+/**
+ * webkit_context_menu_item_new_from_gaction:
+ * @action: a #GAction
+ * @label: the menu item label text
+ * @target: (allow-none): a #GVariant to use as the action target
+ *
+ * Creates a new #WebKitContextMenuItem for the given @action and @label. On activation
+ * @target will be passed as parameter to the callback.
+ *
+ * Returns: the newly created #WebKitContextMenuItem object.
+ *
+ * Since: 2.18
+ */
+WebKitContextMenuItem* webkit_context_menu_item_new_from_gaction(GAction* action, const gchar* label, GVariant* target)
+{
+    g_return_val_if_fail(G_IS_ACTION(action), nullptr);
+    g_return_val_if_fail(!g_action_get_state_type(action) || g_variant_type_equal(g_action_get_state_type(action), G_VARIANT_TYPE_BOOLEAN), nullptr);
+    g_return_val_if_fail(label, nullptr);
+    g_return_val_if_fail(!target || g_variant_is_of_type(target, g_action_get_parameter_type(action)), nullptr);
+
+    WebKitContextMenuItem* item = WEBKIT_CONTEXT_MENU_ITEM(g_object_new(WEBKIT_TYPE_CONTEXT_MENU_ITEM, nullptr));
+    item->priv->menuItem = std::make_unique<WebContextMenuItemGtk>(action, String::fromUTF8(label), target);
 
     return item;
 }
@@ -235,16 +263,36 @@ WebKitContextMenuItem* webkit_context_menu_item_new_separator(void)
  * webkit_context_menu_item_get_action:
  * @item: a #WebKitContextMenuItem
  *
- * Gets the action associated to @item.
+ * Gets the action associated to @item as a #GtkAction.
  *
  * Returns: (transfer none): the #GtkAction associated to the #WebKitContextMenuItem,
  *    or %NULL if @item is a separator.
+ *
+ * Deprecated: 2.18: Use webkit_context_menu_item_get_gaction() instead.
  */
 GtkAction* webkit_context_menu_item_get_action(WebKitContextMenuItem* item)
 {
     g_return_val_if_fail(WEBKIT_IS_CONTEXT_MENU_ITEM(item), nullptr);
 
     return item->priv->menuItem->gtkAction();
+}
+
+/**
+ * webkit_context_menu_item_get_gaction:
+ * @item: a #WebKitContextMenuItem
+ *
+ * Gets the action associated to @item as a #GAction.
+ *
+ * Returns: (transfer none): the #GAction associated to the #WebKitContextMenuItem,
+ *    or %NULL if @item is a separator.
+ *
+ * Since: 2.18
+ */
+GAction* webkit_context_menu_item_get_gaction(WebKitContextMenuItem* item)
+{
+    g_return_val_if_fail(WEBKIT_IS_CONTEXT_MENU_ITEM(item), nullptr);
+
+    return item->priv->menuItem->gAction();
 }
 
 /**

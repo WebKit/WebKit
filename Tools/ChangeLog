@@ -1,3 +1,15 @@
+2017-05-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add webkit_context_menu_item_new_from_gaction
+        https://bugs.webkit.org/show_bug.cgi?id=159631
+
+        Reviewed by Michael Catanzaro.
+
+        Update context menu tests to check the new GAction API.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestContextMenu.cpp:
+        (testContextMenuPopulateMenu):
+
 2017-05-21  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Remove Firefox user agent quirk for Google domains

@@ -1,3 +1,30 @@
+2017-05-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add webkit_context_menu_item_new_from_gaction
+        https://bugs.webkit.org/show_bug.cgi?id=159631
+
+        Reviewed by Michael Catanzaro.
+
+        Add new API to create a WebKitContextMenuItem from a GAction and also to get the associated GAction.
+
+        * Shared/gtk/WebContextMenuItemGtk.cpp:
+        (WebKit::WebContextMenuItemGtk::WebContextMenuItemGtk): Add constructor that receives a GAction.
+        (WebKit::isGActionChecked): Helper to check if a stateful GAction is checked or not.
+        (WebKit::WebContextMenuItemGtk::createActionIfNeeded): When creating a GAction from a GtkAtion, use the
+        GtkAction name instead of adding a new one. Do not create the GAction if we already have one.
+        * Shared/gtk/WebContextMenuItemGtk.h:
+        (WebKit::WebContextMenuItemGtk::gAction):
+        (WebKit::WebContextMenuItemGtk::gActionTarget):
+        * UIProcess/API/gtk/WebKitContextMenuItem.cpp:
+        (webkit_context_menu_item_new_from_gaction):
+        (webkit_context_menu_item_get_gaction):
+        * UIProcess/API/gtk/WebKitContextMenuItem.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0-sections.txt: Add new symbols.
+        * UIProcess/gtk/WebContextMenuProxyGtk.cpp:
+        (WebKit::contextMenuItemActivatedCallback): Update the state of the internal GAction in case of toggle menu items.
+        (WebKit::WebContextMenuProxyGtk::append): Pass the GAction target to g_menu_item_set_action_and_target_value. Do
+        not connect to activate signal of actions provided by the user.
+
 2017-05-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Add more input validation in Connection::readBytesFromSocket()

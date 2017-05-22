@@ -134,7 +134,7 @@ WebContextMenuItemGtk::WebContextMenuItemGtk(const WebContextMenuItemData& data)
 WebContextMenuItemGtk::WebContextMenuItemGtk(const WebContextMenuItemGtk& data, Vector<WebContextMenuItemGtk>&& submenu)
     : WebContextMenuItemData(ActionType, data.action(), data.title(), data.enabled(), false)
 {
-    m_gAction = G_SIMPLE_ACTION(data.gAction());
+    m_gAction = data.gAction();
     m_gtkAction = data.gtkAction();
     m_submenuItems = WTFMove(submenu);
 }
@@ -147,6 +147,24 @@ WebContextMenuItemGtk::WebContextMenuItemGtk(GtkAction* action)
     g_object_set_data_full(G_OBJECT(m_gAction.get()), "webkit-gtk-action", g_object_ref(m_gtkAction), g_object_unref);
 }
 
+static bool isGActionChecked(GAction* action)
+{
+    if (!g_action_get_state_type(action))
+        return false;
+
+    ASSERT(g_variant_type_equal(g_action_get_state_type(action), G_VARIANT_TYPE_BOOLEAN));
+    GRefPtr<GVariant> state = adoptGRef(g_action_get_state(action));
+    return g_variant_get_boolean(state.get());
+}
+
+WebContextMenuItemGtk::WebContextMenuItemGtk(GAction* action, const String& title, GVariant* target)
+    : WebContextMenuItemData(g_action_get_state_type(action) ? CheckableActionType : ActionType, ContextMenuItemBaseApplicationTag, title, g_action_get_enabled(action), isGActionChecked(action))
+    , m_gAction(action)
+    , m_gActionTarget(target)
+{
+    createActionIfNeeded();
+}
+
 WebContextMenuItemGtk::~WebContextMenuItemGtk()
 {
 }
@@ -157,20 +175,26 @@ void WebContextMenuItemGtk::createActionIfNeeded()
         return;
 
     static uint64_t actionID = 0;
-    GUniquePtr<char> actionName(g_strdup_printf("action-%" PRIu64, ++actionID));
-    if (type() == CheckableActionType)
-        m_gAction = adoptGRef(g_simple_action_new_stateful(actionName.get(), nullptr, g_variant_new_boolean(checked())));
-    else
-        m_gAction = adoptGRef(g_simple_action_new(actionName.get(), nullptr));
-    g_simple_action_set_enabled(m_gAction.get(), enabled());
+    if (!m_gAction) {
+        GUniquePtr<char> actionName;
+        if (m_gtkAction)
+            actionName.reset(g_strdup(gtk_action_get_name(m_gtkAction)));
+        else
+            actionName.reset(g_strdup_printf("action-%" PRIu64, ++actionID));
+        if (type() == CheckableActionType)
+            m_gAction = adoptGRef(G_ACTION(g_simple_action_new_stateful(actionName.get(), nullptr, g_variant_new_boolean(checked()))));
+        else
+            m_gAction = adoptGRef(G_ACTION(g_simple_action_new(actionName.get(), nullptr)));
+        g_simple_action_set_enabled(G_SIMPLE_ACTION(m_gAction.get()), enabled());
+    }
 
     // Create the GtkAction for backwards compatibility only.
     if (!m_gtkAction) {
         if (type() == CheckableActionType) {
-            m_gtkAction = GTK_ACTION(gtk_toggle_action_new(actionName.get(), title().utf8().data(), nullptr, gtkStockIDFromContextMenuAction(action())));
+            m_gtkAction = GTK_ACTION(gtk_toggle_action_new(g_action_get_name(m_gAction.get()), title().utf8().data(), nullptr, gtkStockIDFromContextMenuAction(action())));
             gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(m_gtkAction), checked());
         } else
-            m_gtkAction = gtk_action_new(actionName.get(), title().utf8().data(), 0, gtkStockIDFromContextMenuAction(action()));
+            m_gtkAction = gtk_action_new(g_action_get_name(m_gAction.get()), title().utf8().data(), 0, gtkStockIDFromContextMenuAction(action()));
         gtk_action_set_sensitive(m_gtkAction, enabled());
         g_object_set_data_full(G_OBJECT(m_gAction.get()), "webkit-gtk-action", m_gtkAction, g_object_unref);
     }
