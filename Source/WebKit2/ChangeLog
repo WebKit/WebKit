@@ -1,3 +1,18 @@
+2017-05-22  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        Need a way to allow WKWebView to load request with ShouldOpenExternalURLsPolicy::ShouldAllow.
+        https://bugs.webkit.org/show_bug.cgi?id=172460
+
+        Add an new method [WKWebView _loadRequest:shouldOpenExternalURLs:] to WKWebView; a WebKit client
+        can use this to load request that allows opening external URLs.
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _loadRequest:shouldOpenExternalURLs:]): When calling WebPageProxy::loadRequest, also
+            set ShouldOpenExternalURLsPolicy based on the value of shouldOpenExternalURLs.
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h: Add [WKWebView _loadRequest:shouldOpenExternalURLs:].
+
 2017-05-22  Youenn Fablet  <youenn@apple.com>
 
         Remove AVAudioCaptureSource

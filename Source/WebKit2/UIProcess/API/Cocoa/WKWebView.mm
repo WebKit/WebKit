@@ -3702,6 +3702,15 @@ WEBCORE_COMMAND(yankAndSelect)
     return [wrapper(*navigation.leakRef()) autorelease];
 }
 
+- (WKNavigation *)_loadRequest:(NSURLRequest *)request shouldOpenExternalURLs:(BOOL)shouldOpenExternalURLs
+{
+    auto navigation = _page->loadRequest(request, shouldOpenExternalURLs ? WebCore::ShouldOpenExternalURLsPolicy::ShouldAllow : WebCore::ShouldOpenExternalURLsPolicy::ShouldNotAllow);
+    if (!navigation)
+        return nil;
+
+    return [wrapper(*navigation.leakRef()) autorelease];
+}
+
 - (NSArray *)_certificateChain
 {
     if (WebKit::WebFrameProxy* mainFrame = _page->mainFrame())
