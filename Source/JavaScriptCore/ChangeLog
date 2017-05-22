@@ -1,3 +1,41 @@
+2017-05-19  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Make get_by_val & string "499" to number 499
+        https://bugs.webkit.org/show_bug.cgi?id=172225
+
+        Reviewed by Saam Barati.
+
+        Property subscript will be converted by ToString. So JS code is not aware of
+        the original type of the subscript value. But our get_by_val can leverage
+        information if the given subscript is number. Thus, passing number instead of
+        string can improve the performance of get_by_val in all the tiers.
+
+        In this patch, we add BytecodeGenerator::emitNodeForProperty. It attempts to
+        convert the given value to Int32 index constant if the given value is a string
+        that can be converted to Int32.
+
+        This patch improves SixSpeed map-string.es5 by 9.8x. This accessing form can
+        appear in some code like accessing the result of JSON.
+
+            map-string.es5     1640.6738+-110.9182   ^    167.4121+-23.8328       ^ definitely 9.8002x faster
+
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::emitNodeForProperty):
+        (JSC::BytecodeGenerator::emitNodeForLeftHandSideForProperty):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::TaggedTemplateNode::emitBytecode):
+        (JSC::BracketAccessorNode::emitBytecode):
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_putByValDirect):
+        (JSC::FunctionCallBracketNode::emitBytecode):
+        (JSC::PostfixNode::emitBracket):
+        (JSC::PrefixNode::emitBracket):
+        (JSC::AssignBracketNode::emitBytecode):
+        (JSC::ReadModifyBracketNode::emitBytecode):
+        (JSC::ForInNode::emitLoopHeader):
+        (JSC::ForOfNode::emitBytecode):
+        (JSC::ObjectPatternNode::bindValue):
+        (JSC::AssignmentElementNode::bindValue):
+
 2017-05-21  Saam Barati  <sbarati@apple.com>
 
         We overwrite the callee save space on the stack when throwing stack overflow from wasm

@@ -504,6 +504,20 @@ namespace JSC {
             return emitNodeInTailPosition(nullptr, n);
         }
 
+        RegisterID* emitNodeForProperty(RegisterID* dst, ExpressionNode* node)
+        {
+            if (node->isString()) {
+                if (std::optional<uint32_t> index = parseIndex(static_cast<StringNode*>(node)->value()))
+                    return emitLoad(dst, jsNumber(index.value()));
+            }
+            return emitNode(dst, node);
+        }
+
+        RegisterID* emitNodeForProperty(ExpressionNode* n)
+        {
+            return emitNodeForProperty(nullptr, n);
+        }
+
         void emitNodeInConditionContext(ExpressionNode* n, Label& trueTarget, Label& falseTarget, FallThroughMode fallThroughMode)
         {
             if (UNLIKELY(!m_vm->isSafeToRecurse())) {
@@ -560,6 +574,17 @@ namespace JSC {
             }
 
             return emitNode(n);
+        }
+
+        ALWAYS_INLINE RefPtr<RegisterID> emitNodeForLeftHandSideForProperty(ExpressionNode* n, bool rightHasAssignments, bool rightIsPure)
+        {
+            if (leftHandSideNeedsCopy(rightHasAssignments, rightIsPure)) {
+                RefPtr<RegisterID> dst = newTemporary();
+                emitNodeForProperty(dst.get(), n);
+                return dst;
+            }
+
+            return emitNodeForProperty(n);
         }
 
         void hoistSloppyModeFunctionIfNecessary(const Identifier& functionName);

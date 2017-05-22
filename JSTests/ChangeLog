@@ -1,3 +1,19 @@
+2017-05-19  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Make get_by_val & string "499" to number 499
+        https://bugs.webkit.org/show_bug.cgi?id=172225
+
+        Reviewed by Saam Barati.
+
+        * stress/get-by-val-string.js: Added.
+        (shouldBe):
+        (shouldThrow):
+        (object.43):
+        (Hello):
+        (Hello.prototype.get 42):
+        (Hello.prototype.43):
+        (Derived):
+
 2017-05-19  Mark Lam  <mark.lam@apple.com>
 
         [Re-landing] DFG::SpeculativeJIT::pickCanTrample() is wrongly ignoring result registers.
