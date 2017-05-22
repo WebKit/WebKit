@@ -15,4 +15,7 @@ PASS illegal loop: loopStartFrame > loopEndFrame
 PASS illegal loop: loopStartFrame == loopEndFrame
 PASS illegal loop: loopStartFrame < 0
 PASS illegal loop: loopEndFrame > bufferLength
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

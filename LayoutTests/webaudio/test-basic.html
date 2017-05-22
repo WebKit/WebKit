@@ -8,7 +8,7 @@ The left channel will be a 880Hz tone, while the right will be 440Hz.
 
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
 <script type="text/javascript" src="resources/audio-testing.js"></script>
 
 </head>
@@ -46,16 +46,11 @@ function runTest() {
 
     var audioData = createAudioData(audioBuffer);
     testRunner.setAudioResult(audioData);
-
-    testRunner.notifyDone();
 }
 
 runTest();
 
 </script>
-
-<script src="../resources/js-test-post.js"></script>
-
 <body>
 </body>
 </html>

@@ -2,7 +2,7 @@
 
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
 <script src="resources/audio-testing.js"></script>
 </head>
 
@@ -42,11 +42,6 @@ function testFinished() {
 }
 
 function runTest() {
-    if (window.testRunner) {
-        testRunner.dumpAsText();
-        testRunner.waitUntilDone();
-    }
-
     window.jsTestIsAsync = true;
 
     // Create offline audio context, the destination is mono.
@@ -69,7 +64,5 @@ function runTest() {
 runTest();
 
 </script>
-
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>

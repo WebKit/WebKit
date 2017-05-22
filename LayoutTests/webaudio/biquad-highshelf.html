@@ -3,7 +3,7 @@
 <html>
 <head>
 <script src="resources/audio-testing.js"></script>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
 <script src="resources/biquad-testing.js"></script>
 </head>
 
@@ -16,11 +16,6 @@
 description("Tests Biquad highshelf filter.");
 
 function runTest() {
-    if (window.testRunner) {
-        testRunner.dumpAsText();
-        testRunner.waitUntilDone();
-    }
-    
     window.jsTestIsAsync = true;
         
     // Create offline audio context.
@@ -39,10 +34,7 @@ function runTest() {
 }
 
 runTest();
-successfullyParsed = true;
 
 </script>
-
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>

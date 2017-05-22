@@ -1,3 +1,97 @@
+2017-05-22  Alexey Proskuryakov  <ap@apple.com>
+
+        Many WebAudio js-tests use waitUntilDone
+        https://bugs.webkit.org/show_bug.cgi?id=172398
+
+        Reviewed by Sam Weinig.
+
+        Corrected the use of js-test harness, updated the tests to use js-test.js instead
+        of js-test-pre.js where possible.
+
+        * resources/js-test.js: (shouldReject): Copied some funcitonality form js-test-pre.js
+        that wasn't present here.
+
+        * webaudio/analyser-exception.html:
+        * webaudio/audiobuffer-neuter-expected.txt:
+        * webaudio/audiobuffer-neuter.html:
+        * webaudio/audiobuffersource-channels.html:
+        * webaudio/audiobuffersource-ended-expected.txt:
+        * webaudio/audiobuffersource-ended.html:
+        * webaudio/audiobuffersource-exception.html:
+        * webaudio/audiobuffersource-loop-comprehensive-expected.txt:
+        * webaudio/audiobuffersource-loop-comprehensive.html:
+        * webaudio/audiobuffersource-negative-playbackrate-expected.txt:
+        * webaudio/audiobuffersource-negative-playbackrate-interpolated-expected.txt:
+        * webaudio/audiobuffersource-negative-playbackrate-interpolated-loop-expected.txt:
+        * webaudio/audiobuffersource-negative-playbackrate-interpolated-loop.html:
+        * webaudio/audiobuffersource-negative-playbackrate-interpolated.html:
+        * webaudio/audiobuffersource-negative-playbackrate-loop-expected.txt:
+        * webaudio/audiobuffersource-negative-playbackrate-loop.html:
+        * webaudio/audiobuffersource-negative-playbackrate.html:
+        * webaudio/audiobuffersource-playbackState.html:
+        * webaudio/audiobuffersource-start-expected.txt:
+        * webaudio/audiobuffersource-start.html:
+        * webaudio/audiochannelmerger-basic.html:
+        * webaudio/audiochannelmerger-stereo.html:
+        * webaudio/audiochannelsplitter.html:
+        * webaudio/audiocontext-promise-throwing.html:
+        * webaudio/audiocontext-promise.html:
+        * webaudio/audiocontext-restriction-audiobuffersourcenode-start.html:
+        * webaudio/audiocontext-restriction.html:
+        * webaudio/audiocontext-state-interrupted.html:
+        * webaudio/audiocontext-state.html:
+        * webaudio/audionode-channel-rules.html:
+        * webaudio/audionode-connect-order.html:
+        * webaudio/audionode.html:
+        * webaudio/audioparam-connect-audioratesignal.html:
+        * webaudio/audioparam-summingjunction.html:
+        * webaudio/audioprocessingevent.html:
+        * webaudio/automatic-pull-node.html:
+        * webaudio/biquad-allpass.html:
+        * webaudio/biquad-bandpass.html:
+        * webaudio/biquad-getFrequencyResponse.html:
+        * webaudio/biquad-highpass.html:
+        * webaudio/biquad-highshelf.html:
+        * webaudio/biquad-lowpass.html:
+        * webaudio/biquad-lowshelf.html:
+        * webaudio/biquad-notch.html:
+        * webaudio/biquad-peaking.html:
+        * webaudio/biquadfilternode-basic.html:
+        * webaudio/convolution-mono-mono.html:
+        * webaudio/decode-audio-data-basic.html:
+        * webaudio/decode-audio-data-too-short.html:
+        * webaudio/delaynode-max-default-delay.html:
+        * webaudio/delaynode-max-nondefault-delay.html:
+        * webaudio/delaynode-maxdelay.html:
+        * webaudio/delaynode-maxdelaylimit.html:
+        * webaudio/delaynode-scheduling.html:
+        * webaudio/delaynode.html:
+        * webaudio/distance-exponential.html:
+        * webaudio/distance-inverse.html:
+        * webaudio/distance-linear.html:
+        * webaudio/dynamicscompressor-basic.html:
+        * webaudio/javascriptaudionode-downmix8-2channel-input.html:
+        * webaudio/javascriptaudionode-upmix2-8channel-input.html:
+        * webaudio/javascriptaudionode-zero-input-channels.html:
+        * webaudio/javascriptaudionode.html:
+        * webaudio/mediaelementaudiosourcenode.html:
+        * webaudio/oscillator-basic.html:
+        * webaudio/oscillator-ended-expected.txt:
+        * webaudio/oscillator-ended.html:
+        * webaudio/page-canstartmedia.html:
+        * webaudio/panner-equalpower-stereo.html:
+        * webaudio/panner-equalpower.html:
+        * webaudio/panner-loop.html:
+        * webaudio/pannernode-basic.html:
+        * webaudio/realtimeanalyser-fft-scaling.html:
+        * webaudio/realtimeanalyser-fft-sizing.html:
+        * webaudio/resources/audiobuffersource-testing.js:
+        (checkAllTests):
+        * webaudio/sample-accurate-scheduling.html:
+        * webaudio/stereo2mono-down-mixing.html:
+        * webaudio/test-basic.html:
+        * webaudio/waveshaper.html:
+
 2017-05-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Enable the woff2-variations @font-face format identifier

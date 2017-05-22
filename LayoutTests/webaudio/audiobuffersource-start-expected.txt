@@ -7,4 +7,7 @@ PASS start(when, 0): play whole buffer from beginning to end explicitly giving o
 PASS start(when, 0, 8_frames): play whole buffer from beginning to end explicitly giving offset of 0 and duration of 8 frames
 PASS start(when, 4_frames): play with explicit non-zero offset
 PASS start(when, 4_frames, 4_frames): play with explicit non-zero offset and duration
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

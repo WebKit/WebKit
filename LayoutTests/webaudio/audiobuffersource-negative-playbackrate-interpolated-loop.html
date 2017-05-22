@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>audiobuffersource-negative-playbackrate-interpolated-loop</title>
-    <script src="../resources/js-test-pre.js"></script>
+    <script src="../resources/js-test.js"></script>
     <script src="resources/audio-testing.js"></script>
     <script src="resources/audiobuffersource-testing.js"></script>
 
@@ -24,10 +24,7 @@
     }];
 
     function go() {
-        if (window.testRunner) {
-            testRunner.dumpAsText();
-            testRunner.waitUntilDone();
-        }
+        jsTestIsAsync = true;
 
         context = new webkitOfflineAudioContext(1, renderFrames, sampleRate);
 

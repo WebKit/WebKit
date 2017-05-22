@@ -88,11 +88,6 @@ function checkResult() {
 }
 
 function runTests() {
-    if (window.testRunner) {
-        testRunner.dumpAsText();
-        testRunner.waitUntilDone();
-    }
-
     window.jsTestIsAsync = true;
 
     context = new webkitOfflineAudioContext(1, 2048, sampleRate);
@@ -118,7 +113,6 @@ function runTests() {
 }
 
 runTests();
-successfullyParsed = true;
     </script>
   </body>
 </html>

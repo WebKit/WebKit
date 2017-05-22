@@ -2,7 +2,7 @@
 
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
 <script type="text/javascript" src="resources/audio-testing.js"></script>
 </head>
 
@@ -272,11 +272,6 @@ function checkResult(event) {
 }
 
 function runTest() {
-    if (window.testRunner) {
-        testRunner.dumpAsText();
-        testRunner.waitUntilDone();
-    }
-
     window.jsTestIsAsync = true;
 
     // Create 8-channel offline audio context.
@@ -312,7 +307,5 @@ function runTest() {
 runTest();
 
 </script>
-
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>

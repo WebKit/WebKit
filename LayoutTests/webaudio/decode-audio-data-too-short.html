@@ -1,17 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
 <script type="text/javascript" src="resources/audio-testing.js"></script>
 </head>
 <body>
 <script>
 description("Test that decoding an audio file which is too short does not cause a crash.");
-
-if (window.testRunner) {
-    testRunner.dumpAsText();
-    testRunner.waitUntilDone();
-}
 
 window.jsTestIsAsync = true;
 
@@ -26,6 +21,5 @@ request.onload = function() {
 request.send();
 
 </script>
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>

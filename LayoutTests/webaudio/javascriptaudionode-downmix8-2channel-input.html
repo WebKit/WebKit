@@ -2,7 +2,7 @@
 
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
 <script src="resources/audio-testing.js"></script>
 <script type="text/javascript" src="resources/javascriptaudionode-testing.js"></script>
 </head>
@@ -21,11 +21,6 @@ var inputChannels = 2;
 var outputChannels = 6;
 
 function runTest() {
-    if (window.testRunner) {
-        testRunner.dumpAsText();
-        testRunner.waitUntilDone();
-    }
-
     window.jsTestIsAsync = true;
 
     runJSNodeTest();
@@ -34,7 +29,5 @@ function runTest() {
 runTest();
 
 </script>
-
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>

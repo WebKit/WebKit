@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <head>
-    <script src="../resources/js-test-pre.js"></script>
+    <script src="../resources/js-test.js"></script>
     <script src="resources/audio-testing.js"></script>
     <script src="resources/audiobuffersource-testing.js"></script>
     <script>
@@ -12,10 +12,7 @@
 
         function runTest()
         {
-            if (window.testRunner) {
-                testRunner.dumpAsText();
-                testRunner.waitUntilDone();
-            }
+            jsTestIsAsync = true;
 
             var numberOfFrames = sampleRate * lengthInSeconds;
             context = new webkitOfflineAudioContext(1, numberOfFrames, sampleRate);
@@ -58,15 +55,11 @@
                 if (expectedData[i] != renderedData[i]) {
                     testFailed('expected: ' + expectedData[i] + ' actual: ' + renderedData[i]);
                     finishJSTest();
-                    if (window.testRunner)
-                        testRunner.notifyDone();
                 }
             }
 
             testPassed('Output matches expectations.');
             finishJSTest();
-            if (window.testRunner)
-                testRunner.notifyDone();
         }
 
     </script>

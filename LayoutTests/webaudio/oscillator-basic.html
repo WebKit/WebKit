@@ -6,7 +6,7 @@ Create an oscillator of each type and verify that the type is set correctly.
 <html>
 <head>
 <script type="text/javascript" src="resources/audio-testing.js"></script>
-<script type="text/javascript" src="../resources/js-test-pre.js"></script>
+<script type="text/javascript" src="../resources/js-test.js"></script>
 </head>
 
 <body>
@@ -27,11 +27,6 @@ var oscTypes = [{type: "sine", name: "SINE"},
 
 function runTest() 
 {
-    if (window.testRunner) {
-        testRunner.dumpAsText();
-        testRunner.waitUntilDone();
-    }
-    
     window.jsTestIsAsync = true;
         
     // Create offline audio context.
@@ -78,8 +73,5 @@ runTest();
 successfullyParsed = true;
 
 </script>
-
-<script src="../resources/js-test-post.js"></script>
-
 </body>
 </html>

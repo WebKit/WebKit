@@ -2,7 +2,7 @@
 
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
 <script src="resources/audio-testing.js"></script>
 <script src="resources/audiobuffersource-testing.js"></script>
 </head>
@@ -18,11 +18,6 @@ description("Tests that AudioBufferSourceNode validates start and stop calls.");
 var bufferSource;
 
 function runTest() {
-    if (window.testRunner) {
-        testRunner.dumpAsText();
-        testRunner.waitUntilDone();
-    }
-
     window.jsTestIsAsync = true;
 
     var sampleRate = 44100.0;
@@ -50,7 +45,5 @@ function runTest() {
 runTest();
 
 </script>
-
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>
