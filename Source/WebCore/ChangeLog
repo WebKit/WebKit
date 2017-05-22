@@ -1,3 +1,18 @@
+2017-05-22  Zalan Bujtas  <zalan@apple.com>
+
+        SameSizeAsInlineBox mismatch on ARMV7.
+        https://bugs.webkit.org/show_bug.cgi?id=172459
+
+        Reviewed by Simon Fraser.
+
+        Due to the ARMV7/i386 padding behaviour mismatch, forcing m_bitfields to be 32bits does not always
+        produce the desired padding.
+        Move the bool to the end of the member list and let m_deletionSentinel (4bytes) force
+        padding.
+
+        * rendering/InlineBox.cpp:
+        * rendering/InlineBox.h:
+
 2017-05-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Enable the woff2-variations @font-face format identifier

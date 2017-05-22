@@ -39,11 +39,11 @@ struct SameSizeAsInlineBox {
     void* a[4];
     FloatPoint b;
     float c[2];
-    unsigned d; /*InlineBoxBitfields m_bitfields is padded to 32bits*/
+    unsigned d : 23;
 #if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
-    bool i;
     unsigned s;
     bool f;
+    bool i;
 #endif
 };
 
