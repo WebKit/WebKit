@@ -181,7 +181,12 @@ WebKitDOMNode* webkit_dom_tree_walker_parent_node(WebKitDOMTreeWalker* self)
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_TREE_WALKER(self), 0);
     WebCore::TreeWalker* item = WebKit::core(self);
-    RefPtr<WebCore::Node> gobjectResult = WTF::getPtr(item->parentNode());
+
+    auto result = item->parentNode();
+    if (result.hasException())
+        return nullptr;
+
+    RefPtr<WebCore::Node> gobjectResult = WTF::getPtr(result.releaseReturnValue());
     return WebKit::kit(gobjectResult.get());
 }
 
@@ -190,7 +195,12 @@ WebKitDOMNode* webkit_dom_tree_walker_first_child(WebKitDOMTreeWalker* self)
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_TREE_WALKER(self), 0);
     WebCore::TreeWalker* item = WebKit::core(self);
-    RefPtr<WebCore::Node> gobjectResult = WTF::getPtr(item->firstChild());
+
+    auto result = item->firstChild();
+    if (result.hasException())
+        return nullptr;
+
+    RefPtr<WebCore::Node> gobjectResult = WTF::getPtr(result.releaseReturnValue());
     return WebKit::kit(gobjectResult.get());
 }
 
@@ -199,7 +209,12 @@ WebKitDOMNode* webkit_dom_tree_walker_last_child(WebKitDOMTreeWalker* self)
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_TREE_WALKER(self), 0);
     WebCore::TreeWalker* item = WebKit::core(self);
-    RefPtr<WebCore::Node> gobjectResult = WTF::getPtr(item->lastChild());
+
+    auto result = item->lastChild();
+    if (result.hasException())
+        return nullptr;
+
+    RefPtr<WebCore::Node> gobjectResult = WTF::getPtr(result.releaseReturnValue());
     return WebKit::kit(gobjectResult.get());
 }
 
@@ -208,7 +223,12 @@ WebKitDOMNode* webkit_dom_tree_walker_previous_sibling(WebKitDOMTreeWalker* self
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_TREE_WALKER(self), 0);
     WebCore::TreeWalker* item = WebKit::core(self);
-    RefPtr<WebCore::Node> gobjectResult = WTF::getPtr(item->previousSibling());
+
+    auto result = item->previousSibling();
+    if (result.hasException())
+        return nullptr;
+
+    RefPtr<WebCore::Node> gobjectResult = WTF::getPtr(result.releaseReturnValue());
     return WebKit::kit(gobjectResult.get());
 }
 
@@ -217,7 +237,12 @@ WebKitDOMNode* webkit_dom_tree_walker_next_sibling(WebKitDOMTreeWalker* self)
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_TREE_WALKER(self), 0);
     WebCore::TreeWalker* item = WebKit::core(self);
-    RefPtr<WebCore::Node> gobjectResult = WTF::getPtr(item->nextSibling());
+
+    auto result = item->nextSibling();
+    if (result.hasException())
+        return nullptr;
+
+    RefPtr<WebCore::Node> gobjectResult = WTF::getPtr(result.releaseReturnValue());
     return WebKit::kit(gobjectResult.get());
 }
 
@@ -226,7 +251,12 @@ WebKitDOMNode* webkit_dom_tree_walker_previous_node(WebKitDOMTreeWalker* self)
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_TREE_WALKER(self), 0);
     WebCore::TreeWalker* item = WebKit::core(self);
-    RefPtr<WebCore::Node> gobjectResult = WTF::getPtr(item->previousNode());
+
+    auto result = item->previousNode();
+    if (result.hasException())
+        return nullptr;
+
+    RefPtr<WebCore::Node> gobjectResult = WTF::getPtr(result.releaseReturnValue());
     return WebKit::kit(gobjectResult.get());
 }
 
@@ -235,7 +265,12 @@ WebKitDOMNode* webkit_dom_tree_walker_next_node(WebKitDOMTreeWalker* self)
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_TREE_WALKER(self), 0);
     WebCore::TreeWalker* item = WebKit::core(self);
-    RefPtr<WebCore::Node> gobjectResult = WTF::getPtr(item->nextNode());
+
+    auto result = item->nextNode();
+    if (result.hasException())
+        return nullptr;
+
+    RefPtr<WebCore::Node> gobjectResult = WTF::getPtr(result.releaseReturnValue());
     return WebKit::kit(gobjectResult.get());
 }
 

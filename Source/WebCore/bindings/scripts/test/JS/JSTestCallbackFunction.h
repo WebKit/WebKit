@@ -20,8 +20,6 @@
 
 #pragma once
 
-#if ENABLE(SPEECH_SYNTHESIS)
-
 #include "ActiveDOMCallback.h"
 #include "IDLTypes.h"
 #include "JSCallbackData.h"
@@ -43,7 +41,7 @@ public:
     JSCallbackDataStrong* callbackData() { return m_data; }
 
     // Functions
-    virtual bool handleEvent(typename IDLInterface<Float32Array>::ParameterType arrayParam, typename IDLSerializedScriptValue<SerializedScriptValue>::ParameterType srzParam, typename IDLDOMString::ParameterType strArg, typename IDLBoolean::ParameterType boolParam, typename IDLLong::ParameterType longParam, typename IDLInterface<TestNode>::ParameterType testNodeParam) override;
+    virtual CallbackResult<typename IDLDOMString::ImplementationType> handleEvent(typename IDLLong::ParameterType argument) override;
 
 private:
     JSTestCallbackFunction(JSC::JSObject*, JSDOMGlobalObject*);
@@ -55,5 +53,3 @@ JSC::JSValue toJS(TestCallbackFunction&);
 inline JSC::JSValue toJS(TestCallbackFunction* impl) { return impl ? toJS(*impl) : JSC::jsNull(); }
 
 } // namespace WebCore
-
-#endif // ENABLE(SPEECH_SYNTHESIS)

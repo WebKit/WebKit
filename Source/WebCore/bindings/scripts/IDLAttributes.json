@@ -376,6 +376,9 @@
         "RequiresExistingAtomicString": {
             "contextsAllowed": ["type"]
         },
+        "RethrowException": {
+            "contextsAllowed": ["operation", "callback-function"]
+        },
         "SameObject": {
             "contextsAllowed": ["attribute"],
             "standard": {
@@ -396,6 +399,9 @@
         },
         "SetterMayThrowException": {
             "contextsAllowed": ["attribute"]
+        },
+        "SkipCallbackInvokeCheck": {
+            "contextsAllowed": ["operation", "callback-function"]
         },
         "SkipVTableValidation": {
             "contextsAllowed": ["interface"]

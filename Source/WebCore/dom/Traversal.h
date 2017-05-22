@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "CallbackResult.h"
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -41,7 +42,7 @@ public:
 
 protected:
     NodeIteratorBase(Node&, unsigned whatToShow, RefPtr<NodeFilter>&&);
-    short acceptNode(Node&) const;
+    CallbackResult<unsigned short> acceptNode(Node&) const;
 
 private:
     Ref<Node> m_root;

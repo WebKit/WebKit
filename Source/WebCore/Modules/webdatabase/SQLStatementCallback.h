@@ -28,6 +28,7 @@
 
 #pragma once
 
+#include "CallbackResult.h"
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
@@ -38,7 +39,7 @@ class SQLResultSet;
 class SQLStatementCallback : public ThreadSafeRefCounted<SQLStatementCallback> {
 public:
     virtual ~SQLStatementCallback() { }
-    virtual bool handleEvent(SQLTransaction&, SQLResultSet&) = 0;
+    virtual CallbackResult<void> handleEvent(SQLTransaction&, SQLResultSet&) = 0;
 };
 
 } // namespace WebCore

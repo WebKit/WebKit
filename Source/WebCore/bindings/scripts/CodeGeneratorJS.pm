@@ -416,7 +416,7 @@ sub GenerateIndexedGetter
     my $attributeString = ((@attributes > 0) ? join(" | ", @attributes) : "0");
 
     my $indexedGetterFunctionName = $indexedGetterFunction->name || "item";
-    my $nativeToJSConversion = NativeToJSValueUsingPointers($indexedGetterFunction, $interface, "thisObject->wrapped().${indexedGetterFunctionName}(index)", "thisObject");
+    my $nativeToJSConversion = NativeToJSValueUsingPointers($indexedGetterFunction, $interface, "thisObject->wrapped().${indexedGetterFunctionName}(index)", "*thisObject->globalObject()");
 
     push(@output, "        slot.setValue(thisObject, ${attributeString}, ${nativeToJSConversion});\n");
     push(@output, "        return true;\n");
@@ -459,7 +459,7 @@ sub GenerateNamedGetter
         my $IDLType = GetIDLType($interface, $namedGetterFunction->type);
         push(@output, "        if (!${IDLType}::isNullValue(${itemVariable})) {\n");
 
-        my $nativeToJSConversion = NativeToJSValueUsingPointers($namedGetterFunction, $interface, $itemVariable, "thisObject", 1);
+        my $nativeToJSConversion = NativeToJSValueUsingPointers($namedGetterFunction, $interface, $itemVariable, "*thisObject->globalObject()", 1);
         push(@output, "            slot.setValue(thisObject, ${attributeString}, ${nativeToJSConversion});\n");
     }
     
@@ -3825,7 +3825,7 @@ sub GenerateImplementation
                 }
 
                 unshift(@arguments, @callWithArgs);
-                my $jsType = NativeToJSValueUsingReferences($attribute, $interface, "${functionName}(" . join(", ", @arguments) . ")", "thisObject");
+                my $jsType = NativeToJSValueUsingReferences($attribute, $interface, "${functionName}(" . join(", ", @arguments) . ")", "*thisObject.globalObject()");
                 push(@implContent, "    auto& impl = thisObject.wrapped();\n") unless $attribute->isStatic or $attribute->isMapLike;
                 push(@implContent, "    JSValue result = $jsType;\n");
 
@@ -4270,7 +4270,7 @@ END
                 }
                 my $functionString = "$implFunctionName(" . join(", ", @arguments) . ")";
                 $functionString = "propagateException(*state, throwScope, $functionString)" if NeedsExplicitPropagateExceptionCall($function);
-                push(@implContent, "    return JSValue::encode(" . NativeToJSValueUsingPointers($function, $interface, $functionString, "castedThis") . ");\n");
+                push(@implContent, "    return JSValue::encode(" . NativeToJSValueUsingPointers($function, $interface, $functionString, "*castedThis->globalObject()") . ");\n");
                 push(@implContent, "}\n\n");
             }
 
@@ -5169,8 +5169,7 @@ sub GenerateCallbackHeaderContent
                 push(@arguments, "typename ${IDLType}::ParameterType " . $argument->name);
             }
 
-            # FIXME: Add support for non-void return types (the bool actually is returning exception state), for non-custom functions.
-            my $nativeReturnType = $function->extendedAttributes->{Custom} ? "typename " . GetIDLType($interfaceOrCallback, $function->type) . "::ImplementationType" : "bool";
+            my $nativeReturnType = "CallbackResult<typename " . GetIDLType($interfaceOrCallback, $function->type) . "::ImplementationType>";
             
             # FIXME: Change the default name (used for callback functions) to something other than handleEvent. It makes little sense.
             my $functionName = $function->name ? $function->name : "handleEvent";
@@ -5288,15 +5287,12 @@ sub GenerateCallbackImplementationContent
         foreach my $function (@{$functions}) {
             next if $function->extendedAttributes->{Custom};
         
-            assert("Unsupport return type: " . $function->type->name . ".") unless $function->type->name eq "void";
-
             AddToIncludesForIDLType($function->type, $includesRef);
+
+            my $nativeReturnType = "CallbackResult<typename " . GetIDLType($interfaceOrCallback, $function->type) . "::ImplementationType>";
             
             # FIXME: Change the default name (used for callback functions) to something other than handleEvent. It makes little sense.
             my $functionName = $function->name ? $function->name : "handleEvent";
-
-            # FIXME: Add support for non-void return types (the bool actually is returning exception state), for non-custom functions.
-            my $nativeReturnType = "bool";
 
             my @args = ();
             foreach my $argument (@{$function->arguments}) {
@@ -5308,32 +5304,68 @@ sub GenerateCallbackImplementationContent
             
             push(@$contentRef, "${nativeReturnType} ${className}::${functionName}(" . join(", ", @args) . ")\n");
             push(@$contentRef, "{\n");
-            push(@$contentRef, "    if (!canInvokeCallback())\n");
-            push(@$contentRef, "        return true;\n\n");
+
+            # FIXME: This is needed for NodeFilter, which works even for disconnected iframes. We should investigate
+            # if that behavior is needed for other callbacks.
+            if (!$function->extendedAttributes->{SkipCallbackInvokeCheck}) {
+                push(@$contentRef, "    if (!canInvokeCallback())\n");
+                push(@$contentRef, "        return CallbackResultType::UnableToExecute;\n\n");
+            }
+
             push(@$contentRef, "    Ref<$className> protectedThis(*this);\n\n");
-            push(@$contentRef, "    JSLockHolder lock(m_data->globalObject()->vm());\n\n");
-            push(@$contentRef, "    ExecState* state = m_data->globalObject()->globalExec();\n");
+            push(@$contentRef, "    auto& globalObject = *m_data->globalObject();\n");
+            push(@$contentRef, "    auto& vm = globalObject.vm();\n\n");
+            push(@$contentRef, "    JSLockHolder lock(vm);\n");
+
+            push(@$contentRef, "    auto& state = *globalObject.globalExec();\n");
             push(@$contentRef, "    MarkedArgumentBuffer args;\n");
 
             foreach my $argument (@{$function->arguments}) {
-                push(@$contentRef, "    args.append(" . NativeToJSValueUsingPointers($argument, $interfaceOrCallback, $argument->name, "m_data") . ");\n");
+                push(@$contentRef, "    args.append(" . NativeToJSValueUsingReferences($argument, $interfaceOrCallback, $argument->name, "globalObject") . ");\n");
             }
 
             push(@$contentRef, "\n    NakedPtr<JSC::Exception> returnedException;\n");
 
+            my $callbackInvocation;
             if (ref($interfaceOrCallback) eq "IDLCallbackFunction") {
-                push(@$contentRef, "    m_data->invokeCallback(args, JSCallbackData::CallbackType::Function, Identifier(), returnedException);\n");
+                $callbackInvocation = "m_data->invokeCallback(args, JSCallbackData::CallbackType::Function, Identifier(), returnedException)";
             } else {
                 my $callbackType = $numFunctions > 1 ? "Object" : "FunctionOrObject";
-                push(@$contentRef, "    m_data->invokeCallback(args, JSCallbackData::CallbackType::${callbackType}, Identifier::fromString(state, \"${functionName}\"), returnedException);\n");
+                $callbackInvocation = "m_data->invokeCallback(args, JSCallbackData::CallbackType::${callbackType}, Identifier::fromString(&vm, \"${functionName}\"), returnedException)";
             }
 
-            # FIXME: We currently just report the exception. We should probably add an extended attribute to indicate when
-            # we want the exception to be rethrown instead.
+            if ($function->type->name eq "void") {
+                push(@$contentRef, "    ${callbackInvocation};\n");
+            } else {
+                push(@$contentRef, "    auto jsResult = ${callbackInvocation};\n");
+            }
+
             $includesRef->{"JSDOMExceptionHandling.h"} = 1;
-            push(@$contentRef, "    if (returnedException)\n");
-            push(@$contentRef, "        reportException(state, returnedException);\n");
-            push(@$contentRef, "    return !returnedException;\n");
+            push(@$contentRef, "    if (returnedException) {\n");
+            if ($function->extendedAttributes->{RethrowException}) {
+                push(@$contentRef, "        auto throwScope = DECLARE_THROW_SCOPE(vm);\n");
+                push(@$contentRef, "        throwException(&state, throwScope, returnedException);\n");
+            } else {
+                push(@$contentRef, "        reportException(&state, returnedException);\n");
+            }
+            push(@$contentRef, "        return CallbackResultType::ExceptionThrown;\n");
+            push(@$contentRef, "     }\n\n");
+
+            if ($function->type->name eq "void") {
+                push(@$contentRef, "    return { };\n");
+            } else {
+                my ($nativeValue, $mayThrowException) = JSValueToNative($interfaceOrCallback, $function, "jsResult", "", "&state", "state");
+            
+                if ($mayThrowException) {
+                    push(@$contentRef, "    auto throwScope = DECLARE_THROW_SCOPE(vm);\n");
+                    push(@$contentRef, "    auto returnValue = ${nativeValue};\n");
+                    push(@$contentRef, "    RETURN_IF_EXCEPTION(throwScope, CallbackResultType::ExceptionThrown);\n");
+                    push(@$contentRef, "    return WTFMove(returnValue);\n");
+                } else {
+                    push(@$contentRef, "    return ${nativeValue};\n");
+                }
+            }
+
             push(@$contentRef, "}\n\n");
         }
     }
@@ -5355,8 +5387,8 @@ sub GenerateImplementationFunctionCall
         push(@implContent, $indent . "$functionString;\n");
         push(@implContent, $indent . "return JSValue::encode(jsUndefined());\n");
     } else {
-        my $thisObject = $function->isStatic ? 0 : "castedThis";
-        push(@implContent, $indent . "return JSValue::encode(" . NativeToJSValueUsingPointers($function, $interface, $functionString, $thisObject) . ");\n");
+        my $globalObjectReference = $function->isStatic ? "*jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject())" : "*castedThis->globalObject()";
+        push(@implContent, $indent . "return JSValue::encode(" . NativeToJSValueUsingPointers($function, $interface, $functionString, $globalObjectReference) . ");\n");
     }
 }
 
@@ -5537,6 +5569,7 @@ sub GetBaseIDLType
     }
 
     my %IDLTypes = (
+        "void" => "IDLVoid",
         "any" => "IDLAny",
         "boolean" => "IDLBoolean",
         "byte" => "IDLByte",
@@ -5634,7 +5667,7 @@ sub JSValueToNativeDOMConvertNeedsGlobalObject
 sub IsValidContextForJSValueToNative
 {
     my $context = shift;
-    return ref($context) eq "IDLAttribute" || ref($context) eq "IDLArgument" || ref($context) eq "IDLDictionaryMember";
+    return ref($context) eq "IDLAttribute" || ref($context) eq "IDLArgument" || ref($context) eq "IDLDictionaryMember" || ref($context) eq "IDLOperation";
 }
 
 # Returns (convertString, mayThrowException).
@@ -5764,23 +5797,17 @@ sub NativeToJSValueDOMConvertNeedsGlobalObject
 
 sub NativeToJSValueUsingReferences
 {
-    my ($context, $interface, $value, $thisValue, $suppressExceptionCheck) = @_;
-    my $stateReference = "state";
-    my $wrapped = "$thisValue.wrapped()";
-    my $globalObjectReference = $thisValue ? "*$thisValue.globalObject()" : "*jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject())";
+    my ($context, $interface, $value, $globalObjectReference, $suppressExceptionCheck) = @_;
 
-    return NativeToJSValue($context, $interface, $value, $stateReference, $wrapped, $globalObjectReference, $suppressExceptionCheck);
+    return NativeToJSValue($context, $interface, $value, "state", $globalObjectReference, $suppressExceptionCheck);
 }
 
 # FIXME: We should remove NativeToJSValueUsingPointers and combine NativeToJSValueUsingReferences and NativeToJSValue
 sub NativeToJSValueUsingPointers
 {
-    my ($context, $interface, $value, $thisValue, $suppressExceptionCheck) = @_;
-    my $stateReference = "*state";
-    my $wrapped = "$thisValue->wrapped()";
-    my $globalObjectReference = $thisValue ? "*$thisValue->globalObject()" : "*jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject())";
+    my ($context, $interface, $value, $globalObjectReference, $suppressExceptionCheck) = @_;
 
-    return NativeToJSValue($context, $interface, $value, $stateReference, $wrapped, $globalObjectReference, $suppressExceptionCheck);
+    return NativeToJSValue($context, $interface, $value, "*state", $globalObjectReference, $suppressExceptionCheck);
 }
 
 sub IsValidContextForNativeToJSValue
@@ -5792,7 +5819,7 @@ sub IsValidContextForNativeToJSValue
 
 sub NativeToJSValue
 {
-    my ($context, $interface, $value, $stateReference, $wrapped, $globalObjectReference, $suppressExceptionCheck) = @_;
+    my ($context, $interface, $value, $stateReference, $globalObjectReference, $suppressExceptionCheck) = @_;
 
     assert("Invalid context type") if !IsValidContextForNativeToJSValue($context);
 

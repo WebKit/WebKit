@@ -79,6 +79,8 @@ struct IDLAny : IDLType<JSC::Strong<JSC::Unknown>> {
     template<typename U> static inline U&& extractValueFromNullable(U&& value) { return std::forward<U>(value); }
 };
 
+struct IDLVoid : IDLType<void> { };
+
 struct IDLBoolean : IDLType<bool> { };
 
 template<typename NumericType> struct IDLNumber : IDLType<NumericType> { };

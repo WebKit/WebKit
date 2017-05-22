@@ -19,25 +19,30 @@
 */
 
 #include "config.h"
-#include "JSTestCallbackFunction.h"
+
+#if ENABLE(TEST_CONDITIONAL)
+
+#include "JSTestVoidCallbackFunction.h"
 
 #include "JSDOMConvert.h"
 #include "JSDOMExceptionHandling.h"
+#include "JSTestNode.h"
 #include "ScriptExecutionContext.h"
+#include "SerializedScriptValue.h"
 #include <runtime/JSLock.h>
 
 using namespace JSC;
 
 namespace WebCore {
 
-JSTestCallbackFunction::JSTestCallbackFunction(JSObject* callback, JSDOMGlobalObject* globalObject)
-    : TestCallbackFunction()
+JSTestVoidCallbackFunction::JSTestVoidCallbackFunction(JSObject* callback, JSDOMGlobalObject* globalObject)
+    : TestVoidCallbackFunction()
     , ActiveDOMCallback(globalObject->scriptExecutionContext())
     , m_data(new JSCallbackDataStrong(callback, globalObject, this))
 {
 }
 
-JSTestCallbackFunction::~JSTestCallbackFunction()
+JSTestVoidCallbackFunction::~JSTestVoidCallbackFunction()
 {
     ScriptExecutionContext* context = scriptExecutionContext();
     // When the context is destroyed, all tasks with a reference to a callback
@@ -51,12 +56,12 @@ JSTestCallbackFunction::~JSTestCallbackFunction()
 #endif
 }
 
-CallbackResult<typename IDLDOMString::ImplementationType> JSTestCallbackFunction::handleEvent(typename IDLLong::ParameterType argument)
+CallbackResult<typename IDLVoid::ImplementationType> JSTestVoidCallbackFunction::handleEvent(typename IDLInterface<Float32Array>::ParameterType arrayParam, typename IDLSerializedScriptValue<SerializedScriptValue>::ParameterType srzParam, typename IDLDOMString::ParameterType strArg, typename IDLBoolean::ParameterType boolParam, typename IDLLong::ParameterType longParam, typename IDLInterface<TestNode>::ParameterType testNodeParam)
 {
     if (!canInvokeCallback())
         return CallbackResultType::UnableToExecute;
 
-    Ref<JSTestCallbackFunction> protectedThis(*this);
+    Ref<JSTestVoidCallbackFunction> protectedThis(*this);
 
     auto& globalObject = *m_data->globalObject();
     auto& vm = globalObject.vm();
@@ -64,28 +69,32 @@ CallbackResult<typename IDLDOMString::ImplementationType> JSTestCallbackFunction
     JSLockHolder lock(vm);
     auto& state = *globalObject.globalExec();
     MarkedArgumentBuffer args;
-    args.append(toJS<IDLLong>(argument));
+    args.append(toJS<IDLInterface<Float32Array>>(state, globalObject, arrayParam));
+    args.append(toJS<IDLSerializedScriptValue<SerializedScriptValue>>(state, globalObject, srzParam));
+    args.append(toJS<IDLDOMString>(state, strArg));
+    args.append(toJS<IDLBoolean>(boolParam));
+    args.append(toJS<IDLLong>(longParam));
+    args.append(toJS<IDLInterface<TestNode>>(state, globalObject, testNodeParam));
 
     NakedPtr<JSC::Exception> returnedException;
-    auto jsResult = m_data->invokeCallback(args, JSCallbackData::CallbackType::Function, Identifier(), returnedException);
+    m_data->invokeCallback(args, JSCallbackData::CallbackType::Function, Identifier(), returnedException);
     if (returnedException) {
         reportException(&state, returnedException);
         return CallbackResultType::ExceptionThrown;
      }
 
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto returnValue = convert<IDLDOMString>(state, jsResult);
-    RETURN_IF_EXCEPTION(throwScope, CallbackResultType::ExceptionThrown);
-    return WTFMove(returnValue);
+    return { };
 }
 
-JSC::JSValue toJS(TestCallbackFunction& impl)
+JSC::JSValue toJS(TestVoidCallbackFunction& impl)
 {
-    if (!static_cast<JSTestCallbackFunction&>(impl).callbackData())
+    if (!static_cast<JSTestVoidCallbackFunction&>(impl).callbackData())
         return jsNull();
 
-    return static_cast<JSTestCallbackFunction&>(impl).callbackData()->callback();
+    return static_cast<JSTestVoidCallbackFunction&>(impl).callbackData()->callback();
 
 }
 
 } // namespace WebCore
+
+#endif // ENABLE(TEST_CONDITIONAL)

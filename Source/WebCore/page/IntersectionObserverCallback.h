@@ -27,6 +27,7 @@
 
 #if ENABLE(INTERSECTION_OBSERVER)
 
+#include "CallbackResult.h"
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
@@ -38,7 +39,7 @@ class IntersectionObserverEntry;
 class IntersectionObserverCallback : public RefCounted<IntersectionObserverCallback> {
 public:
     virtual ~IntersectionObserverCallback() { }
-    virtual bool handleEvent(const Vector<RefPtr<IntersectionObserverEntry>>&, IntersectionObserver&) = 0;
+    virtual CallbackResult<void> handleEvent(const Vector<RefPtr<IntersectionObserverEntry>>&, IntersectionObserver&) = 0;
 };
 
 } // namespace WebCore

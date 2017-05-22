@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "CallbackResult.h"
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -33,7 +34,7 @@ class Node;
 class NodeFilter : public RefCounted<NodeFilter> {
 public:
     virtual ~NodeFilter() { }
-    virtual unsigned short acceptNode(Node&) = 0;
+    virtual CallbackResult<unsigned short> acceptNode(Node&) = 0;
 
     /*
      * The following constants are returned by the acceptNode()

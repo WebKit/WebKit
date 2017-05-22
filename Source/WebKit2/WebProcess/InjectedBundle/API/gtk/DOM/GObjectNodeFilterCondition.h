@@ -28,15 +28,14 @@ class Node;
 
 namespace WebKit {
 
-class GObjectNodeFilterCondition : public WebCore::NodeFilterCondition {
+class GObjectNodeFilterCondition final : public WebCore::NodeFilterCondition {
 public:
-
     static Ref<GObjectNodeFilterCondition> create(WebKitDOMNodeFilter* filter)
     {
         return adoptRef(*new GObjectNodeFilterCondition(filter));
     }
 
-    short acceptNode(WebCore::Node*) const override;
+    unsigned short acceptNode(WebCore::Node&) const override;
 
 private:
     GObjectNodeFilterCondition(WebKitDOMNodeFilter* filter)

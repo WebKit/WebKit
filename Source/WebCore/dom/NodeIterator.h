@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "ExceptionOr.h"
 #include "NodeFilter.h"
 #include "ScriptWrappable.h"
 #include "Traversal.h"
@@ -35,8 +36,8 @@ public:
     static Ref<NodeIterator> create(Node&, unsigned whatToShow, RefPtr<NodeFilter>&&);
     WEBCORE_EXPORT ~NodeIterator();
 
-    WEBCORE_EXPORT RefPtr<Node> nextNode();
-    WEBCORE_EXPORT RefPtr<Node> previousNode();
+    WEBCORE_EXPORT ExceptionOr<RefPtr<Node>> nextNode();
+    WEBCORE_EXPORT ExceptionOr<RefPtr<Node>> previousNode();
     void detach() { } // This is now a no-op as per the DOM specification.
 
     Node* referenceNode() const { return m_referenceNode.node.get(); }

@@ -94,13 +94,23 @@
 - (DOMNode *)nextNode
 {
     WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(IMPL->nextNode()));
+    
+    auto result = IMPL->nextNode();
+    if (result.hasException())
+        return nil;
+    
+    return kit(WTF::getPtr(result.releaseReturnValue()));
 }
 
 - (DOMNode *)previousNode
 {
     WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(IMPL->previousNode()));
+
+    auto result = IMPL->previousNode();
+    if (result.hasException())
+        return nil;
+    
+    return kit(WTF::getPtr(result.releaseReturnValue()));
 }
 
 - (void)detach

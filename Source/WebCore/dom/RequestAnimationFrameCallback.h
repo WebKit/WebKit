@@ -30,6 +30,7 @@
 
 #pragma once
 
+#include "CallbackResult.h"
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -37,7 +38,7 @@ namespace WebCore {
 class RequestAnimationFrameCallback : public RefCounted<RequestAnimationFrameCallback> {
 public:
     virtual ~RequestAnimationFrameCallback() { }
-    virtual bool handleEvent(double highResTimeMs) = 0;
+    virtual CallbackResult<void> handleEvent(double highResTimeMs) = 0;
 
     int m_id;
     bool m_firedOrCancelled;

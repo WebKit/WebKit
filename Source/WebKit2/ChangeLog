@@ -1,3 +1,18 @@
+2017-05-22  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Support callbacks with arbitrary return types
+        https://bugs.webkit.org/show_bug.cgi?id=172407
+
+        Reviewed by Chris Dumez.
+
+        * WebProcess/InjectedBundle/API/gtk/DOM/GObjectNodeFilterCondition.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/GObjectNodeFilterCondition.h:
+        Update to match new interface of NodeFilterCondition.
+
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMNodeIterator.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMTreeWalker.cpp:
+        Update to account for new WebCore implementation return types.
+
 2017-05-22  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         -Wreturn-type warning triggered by WKPage.cpp:2277

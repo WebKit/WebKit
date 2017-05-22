@@ -26,6 +26,4 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Custom
-] callback SQLStatementErrorCallback = boolean (SQLTransaction transaction, SQLError error);
+callback SQLStatementErrorCallback = boolean (SQLTransaction transaction, SQLError error);

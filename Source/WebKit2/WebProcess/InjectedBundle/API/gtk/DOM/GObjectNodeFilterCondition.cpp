@@ -31,11 +31,9 @@ GObjectNodeFilterCondition::~GObjectNodeFilterCondition()
     g_object_set_data(G_OBJECT(m_filter.get()), "webkit-core-node-filter", nullptr);
 }
 
-short GObjectNodeFilterCondition::acceptNode(Node* node) const
+unsigned short GObjectNodeFilterCondition::acceptNode(Node& node) const
 {
-    if (!node)
-        return NodeFilter::FILTER_REJECT;
-    return webkit_dom_node_filter_accept_node(m_filter.get(), WebKit::kit(node));
+    return webkit_dom_node_filter_accept_node(m_filter.get(), WebKit::kit(&node));
 }
 
 } // namespace WebKit

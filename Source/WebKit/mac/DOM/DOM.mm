@@ -861,7 +861,9 @@ WebCore::NodeFilter* core(DOMNodeFilter *wrapper)
 {
     if (!node)
         raiseTypeErrorException();
-    return core(self)->acceptNode(*core(node));
+    
+    auto result = core(self)->acceptNode(*core(node));
+    return result.type() == CallbackResultType::Success ? result.releaseReturnValue() : NodeFilter::FILTER_REJECT;
 }
 
 @end

@@ -20,36 +20,40 @@
 
 #pragma once
 
+#if ENABLE(TEST_CONDITIONAL)
+
 #include "ActiveDOMCallback.h"
 #include "IDLTypes.h"
 #include "JSCallbackData.h"
-#include "TestCallbackFunctionWithTypedefs.h"
+#include "TestVoidCallbackFunction.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
 
-class JSTestCallbackFunctionWithTypedefs final : public TestCallbackFunctionWithTypedefs, public ActiveDOMCallback {
+class JSTestVoidCallbackFunction final : public TestVoidCallbackFunction, public ActiveDOMCallback {
 public:
-    static Ref<JSTestCallbackFunctionWithTypedefs> create(JSC::JSObject* callback, JSDOMGlobalObject* globalObject)
+    static Ref<JSTestVoidCallbackFunction> create(JSC::JSObject* callback, JSDOMGlobalObject* globalObject)
     {
-        return adoptRef(*new JSTestCallbackFunctionWithTypedefs(callback, globalObject));
+        return adoptRef(*new JSTestVoidCallbackFunction(callback, globalObject));
     }
 
     virtual ScriptExecutionContext* scriptExecutionContext() const { return ContextDestructionObserver::scriptExecutionContext(); }
 
-    virtual ~JSTestCallbackFunctionWithTypedefs();
+    virtual ~JSTestVoidCallbackFunction();
     JSCallbackDataStrong* callbackData() { return m_data; }
 
     // Functions
-    virtual CallbackResult<typename IDLVoid::ImplementationType> handleEvent(typename IDLSequence<IDLNullable<IDLLong>>::ParameterType sequenceArg, typename IDLLong::ParameterType longArg) override;
+    virtual CallbackResult<typename IDLVoid::ImplementationType> handleEvent(typename IDLInterface<Float32Array>::ParameterType arrayParam, typename IDLSerializedScriptValue<SerializedScriptValue>::ParameterType srzParam, typename IDLDOMString::ParameterType strArg, typename IDLBoolean::ParameterType boolParam, typename IDLLong::ParameterType longParam, typename IDLInterface<TestNode>::ParameterType testNodeParam) override;
 
 private:
-    JSTestCallbackFunctionWithTypedefs(JSC::JSObject*, JSDOMGlobalObject*);
+    JSTestVoidCallbackFunction(JSC::JSObject*, JSDOMGlobalObject*);
 
     JSCallbackDataStrong* m_data;
 };
 
-JSC::JSValue toJS(TestCallbackFunctionWithTypedefs&);
-inline JSC::JSValue toJS(TestCallbackFunctionWithTypedefs* impl) { return impl ? toJS(*impl) : JSC::jsNull(); }
+JSC::JSValue toJS(TestVoidCallbackFunction&);
+inline JSC::JSValue toJS(TestVoidCallbackFunction* impl) { return impl ? toJS(*impl) : JSC::jsNull(); }
 
 } // namespace WebCore
+
+#endif // ENABLE(TEST_CONDITIONAL)

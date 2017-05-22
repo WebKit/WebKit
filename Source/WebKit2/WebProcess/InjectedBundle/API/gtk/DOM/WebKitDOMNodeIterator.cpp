@@ -196,7 +196,12 @@ WebKitDOMNode* webkit_dom_node_iterator_next_node(WebKitDOMNodeIterator* self, G
     g_return_val_if_fail(WEBKIT_DOM_IS_NODE_ITERATOR(self), 0);
     UNUSED_PARAM(error);
     WebCore::NodeIterator* item = WebKit::core(self);
-    RefPtr<WebCore::Node> gobjectResult = WTF::getPtr(item->nextNode());
+
+    auto result = item->nextNode();
+    if (result.hasException())
+        return nullptr;
+
+    RefPtr<WebCore::Node> gobjectResult = WTF::getPtr(result.releaseReturnValue());
     return WebKit::kit(gobjectResult.get());
 }
 
@@ -206,7 +211,12 @@ WebKitDOMNode* webkit_dom_node_iterator_previous_node(WebKitDOMNodeIterator* sel
     g_return_val_if_fail(WEBKIT_DOM_IS_NODE_ITERATOR(self), 0);
     UNUSED_PARAM(error);
     WebCore::NodeIterator* item = WebKit::core(self);
-    RefPtr<WebCore::Node> gobjectResult = WTF::getPtr(item->previousNode());
+
+    auto result = item->previousNode();
+    if (result.hasException())
+        return nullptr;
+
+    RefPtr<WebCore::Node> gobjectResult = WTF::getPtr(result.releaseReturnValue());
     return WebKit::kit(gobjectResult.get());
 }
 

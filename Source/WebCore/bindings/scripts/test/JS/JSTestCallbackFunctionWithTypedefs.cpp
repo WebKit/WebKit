@@ -52,25 +52,30 @@ JSTestCallbackFunctionWithTypedefs::~JSTestCallbackFunctionWithTypedefs()
 #endif
 }
 
-bool JSTestCallbackFunctionWithTypedefs::handleEvent(typename IDLSequence<IDLNullable<IDLLong>>::ParameterType sequenceArg, typename IDLLong::ParameterType longArg)
+CallbackResult<typename IDLVoid::ImplementationType> JSTestCallbackFunctionWithTypedefs::handleEvent(typename IDLSequence<IDLNullable<IDLLong>>::ParameterType sequenceArg, typename IDLLong::ParameterType longArg)
 {
     if (!canInvokeCallback())
-        return true;
+        return CallbackResultType::UnableToExecute;
 
     Ref<JSTestCallbackFunctionWithTypedefs> protectedThis(*this);
 
-    JSLockHolder lock(m_data->globalObject()->vm());
+    auto& globalObject = *m_data->globalObject();
+    auto& vm = globalObject.vm();
 
-    ExecState* state = m_data->globalObject()->globalExec();
+    JSLockHolder lock(vm);
+    auto& state = *globalObject.globalExec();
     MarkedArgumentBuffer args;
-    args.append(toJS<IDLSequence<IDLNullable<IDLLong>>>(*state, *m_data->globalObject(), sequenceArg));
+    args.append(toJS<IDLSequence<IDLNullable<IDLLong>>>(state, globalObject, sequenceArg));
     args.append(toJS<IDLLong>(longArg));
 
     NakedPtr<JSC::Exception> returnedException;
     m_data->invokeCallback(args, JSCallbackData::CallbackType::Function, Identifier(), returnedException);
-    if (returnedException)
-        reportException(state, returnedException);
-    return !returnedException;
+    if (returnedException) {
+        reportException(&state, returnedException);
+        return CallbackResultType::ExceptionThrown;
+     }
+
+    return { };
 }
 
 JSC::JSValue toJS(TestCallbackFunctionWithTypedefs& impl)

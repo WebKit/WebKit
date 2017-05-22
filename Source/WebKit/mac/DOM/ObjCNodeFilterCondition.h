@@ -33,24 +33,24 @@
 
 namespace WebCore {
 
-    class Node;
+class Node;
 
-    class ObjCNodeFilterCondition : public NodeFilterCondition {
-    public:
-        static Ref<ObjCNodeFilterCondition> create(id <DOMNodeFilter> filter)
-        {
-            return adoptRef(*new ObjCNodeFilterCondition(filter));
-        }
+class ObjCNodeFilterCondition final : public NodeFilterCondition {
+public:
+    static Ref<ObjCNodeFilterCondition> create(id <DOMNodeFilter> filter)
+    {
+        return adoptRef(*new ObjCNodeFilterCondition(filter));
+    }
 
-        virtual short acceptNode(Node*) const;
+    unsigned short acceptNode(Node&) const override;
 
-    private:
-        ObjCNodeFilterCondition(id <DOMNodeFilter> filter)
-            : m_filter(filter)
-        {
-        }
+private:
+    ObjCNodeFilterCondition(id <DOMNodeFilter> filter)
+        : m_filter(filter)
+    {
+    }
 
-        RetainPtr<id <DOMNodeFilter> > m_filter;
-    };
+    RetainPtr<id <DOMNodeFilter> > m_filter;
+};
 
 } // namespace WebCore

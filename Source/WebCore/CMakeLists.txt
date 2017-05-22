@@ -1201,7 +1201,6 @@ set(WebCore_SOURCES
     bindings/js/JSMutationCallback.cpp
     bindings/js/JSMutationObserverCustom.cpp
     bindings/js/JSNodeCustom.cpp
-    bindings/js/JSNodeFilterCustom.cpp
     bindings/js/JSNodeIteratorCustom.cpp
     bindings/js/JSNodeListCustom.cpp
     bindings/js/JSPerformanceEntryCustom.cpp
@@ -1209,7 +1208,6 @@ set(WebCore_SOURCES
     bindings/js/JSPopStateEventCustom.cpp
     bindings/js/JSReadableStreamPrivateConstructors.cpp
     bindings/js/JSReadableStreamSourceCustom.cpp
-    bindings/js/JSSQLStatementErrorCallbackCustom.cpp
     bindings/js/JSSVGPathSegCustom.cpp
     bindings/js/JSStorageCustom.cpp
     bindings/js/JSStyleSheetCustom.cpp

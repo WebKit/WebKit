@@ -199,27 +199,39 @@ bool SQLStatement::execute(Database& db)
     return true;
 }
 
-bool SQLStatement::performCallback(SQLTransaction* transaction)
+bool SQLStatement::performCallback(SQLTransaction& transaction)
 {
-    ASSERT(transaction);
-
-    bool callbackError = false;
-
-    RefPtr<SQLStatementCallback> callback = m_statementCallbackWrapper.unwrap();
-    RefPtr<SQLStatementErrorCallback> errorCallback = m_statementErrorCallbackWrapper.unwrap();
-    RefPtr<SQLError> error = sqlError();
-
     // Call the appropriate statement callback and track if it resulted in an error,
     // because then we need to jump to the transaction error callback.
-    if (error) {
-        if (errorCallback)
-            callbackError = errorCallback->handleEvent(*transaction, *error);
-    } else if (callback) {
-        RefPtr<SQLResultSet> resultSet = sqlResultSet();
-        callbackError = !callback->handleEvent(*transaction, *resultSet);
+
+    if (m_error) {
+        if (auto errorCallback = m_statementErrorCallbackWrapper.unwrap()) {
+            auto result = errorCallback->handleEvent(transaction, *m_error);
+
+            // The spec says:
+            // "If the error callback returns false, then move on to the next statement..."
+            // "Otherwise, the error callback did not return false, or there was no error callback"
+            // Therefore an exception and returning true are the same thing - so, return true on an exception
+
+            switch (result.type()) {
+            case CallbackResultType::Success:
+                return result.releaseReturnValue();
+            case CallbackResultType::ExceptionThrown:
+            case CallbackResultType::UnableToExecute:
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    if (auto callback = m_statementCallbackWrapper.unwrap()) {
+        ASSERT(m_resultSet);
+
+        auto result = callback->handleEvent(transaction, *m_resultSet);
+        return result.type() == CallbackResultType::ExceptionThrown;
     }
 
-    return callbackError;
+    return false;
 }
 
 void SQLStatement::setDatabaseDeletedError()

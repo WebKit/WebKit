@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include "CallbackResult.h"
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -31,7 +32,7 @@ public:
         JSMediaQueryListListenerType
     };
 
-    virtual bool handleEvent(MediaQueryList&) = 0;
+    virtual CallbackResult<void> handleEvent(MediaQueryList&) = 0;
     virtual bool operator==(const MediaQueryListListener&) const = 0;
     virtual ~MediaQueryListListener() { }
 

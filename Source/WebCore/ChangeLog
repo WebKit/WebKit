@@ -1,3 +1,150 @@
+2017-05-22  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Support callbacks with arbitrary return types
+        https://bugs.webkit.org/show_bug.cgi?id=172407
+
+        Reviewed by Chris Dumez.
+
+        - Adds and adopts CallbackResult<> template class that encapsulates a return value
+          and status from a javascript callback.
+        - Updates NodeIterator/TreeWalker to explicitly propagate exceptions thrown from
+          a JSNodeFilter, rather than relying on the JSNodeFilter to catch them (seemingly
+          accidentally).
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        Update file lists.
+
+        * Modules/geolocation/PositionCallback.h:
+        * Modules/geolocation/PositionErrorCallback.h:
+        * Modules/notifications/NotificationPermissionCallback.h:
+        * Modules/webaudio/AudioBufferCallback.h:
+        * Modules/webdatabase/DatabaseCallback.h:
+        * dom/RequestAnimationFrameCallback.h:
+        * dom/StringCallback.h:
+        * dom/Traversal.cpp:
+        * fileapi/BlobCallback.h:
+        * html/VoidCallback.h:
+        * page/IntersectionObserverCallback.h:
+        * page/PerformanceObserverCallback.h:
+        * css/MediaQueryListListener.h:
+        * Modules/webdatabase/SQLStatement.h:
+        * Modules/webdatabase/SQLStatementCallback.h:
+        * Modules/webdatabase/SQLStatementErrorCallback.h:
+        * Modules/webdatabase/SQLTransaction.cpp:
+        * Modules/webdatabase/SQLTransactionCallback.h:
+        * Modules/webdatabase/SQLTransactionErrorCallback.h:
+        * inspector/InspectorDatabaseAgent.cpp:
+        Adopt CallbackResult.
+
+        * Modules/webdatabase/SQLStatementErrorCallback.idl:
+        Remove Custom extended attribute annotation.
+
+        * Modules/webdatabase/SQLStatement.cpp:
+        (WebCore::SQLStatement::performCallback):
+        Adopt CallbackResult, migrating logic from JSSQLStatementErrorCallbackCustom
+        into the implementation, by way of the status enum.
+
+        * bindings/IDLTypes.h:
+        Add IDLVoid type.
+
+        * bindings/js/JSNodeFilterCustom.cpp: Removed.
+        * bindings/js/JSSQLStatementErrorCallbackCustom.cpp: Removed.
+        Remove now unneeded custom bindings.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateIndexedGetter):
+        (GenerateNamedGetter):
+        (GenerateImplementation):
+        (GenerateImplementationFunctionCall):
+        Update for new NativeToJSValue arguments.
+
+        (GenerateCallbackHeaderContent):
+        (GenerateCallbackImplementationContent):
+        Remove requirement of only void return types and update return type to use CallbackFunction.
+        Also adds necessary conversion of return value.
+
+        (GetBaseIDLType):
+        Add void IDL type mapping.
+
+        (IsValidContextForJSValueToNative):
+        Add operation as valid context, as that is what the callback return type's context is.
+
+        (NativeToJSValueUsingReferences):
+        (NativeToJSValueUsingPointers):
+        (NativeToJSValue):
+        Rework NativeToJSValueUsingReferences/NativeToJSValueUsingPointers to take a global object reference
+        accessor rather than a thisObject accessor, as a thisObject is not always available, and what the function
+        actually wants is the global object.
+
+        * bindings/scripts/IDLAttributes.json:
+        Add new RethrowException attribute to instruct the callback function to re-throw, rather than
+        just report, exceptions thrown in the callback and SkipCallbackInvokeCheck which instructs the
+        callback function to not check canInvokeCallback() before calling. These will both be needed to retain
+        the behavior of NodeFilter, and should be investigated further.
+
+        * bindings/scripts/test/JS/JSTestCallbackFunction.cpp:
+        * bindings/scripts/test/JS/JSTestCallbackFunction.h:
+        * bindings/scripts/test/JS/JSTestCallbackFunctionRethrow.cpp: Added.
+        * bindings/scripts/test/JS/JSTestCallbackFunctionRethrow.h: Added.
+        * bindings/scripts/test/JS/JSTestCallbackFunctionWithTypedefs.cpp:
+        * bindings/scripts/test/JS/JSTestCallbackFunctionWithTypedefs.h:
+        * bindings/scripts/test/JS/JSTestCallbackInterface.cpp:
+        * bindings/scripts/test/JS/JSTestCallbackInterface.h:
+        * bindings/scripts/test/JS/JSTestVoidCallbackFunction.cpp: Added.
+        * bindings/scripts/test/JS/JSTestVoidCallbackFunction.h: Added.
+        * bindings/scripts/test/TestCallbackFunction.idl:
+        * bindings/scripts/test/TestCallbackInterface.idl:
+        * bindings/scripts/test/TestVoidCallbackFunction.idl: Copied from Source/WebCore/bindings/scripts/test/TestCallbackFunction.idl.
+        Update test results and add some additional test cases for callback functions and callback interface functions that return
+        non-void and use the RethrowExceptions.
+
+        * dom/CallbackResult.h: Added.
+        (WebCore::CallbackResult<ReturnType>::CallbackResult):
+        (WebCore::CallbackResult<ReturnType>::type):
+        (WebCore::CallbackResult<void>::CallbackResult):
+        (WebCore::CallbackResult<void>::type):
+        New class to encapsulate the return value and status of a callback function. Modeled loosely on
+        ExceptionOr, but is simpler since it does not need to handle complex exception objects.
+
+        * dom/NativeNodeFilter.cpp:
+        * dom/NativeNodeFilter.h:
+        Adopt CallbackResult, matching other NodeFiltering code by using
+        unsigned short rather than short, remove unused functions, and convert 
+        condition member to a Ref, allowing us to get rid of the branch acceptNode.
+
+        * dom/NodeFilter.h:
+        Adopt CallbackResult.
+
+        * dom/NodeFilter.idl:
+        Replace Custom extended attribute with SkipCallbackInvokeCheck and RethrowException.
+
+        * dom/NodeFilterCondition.cpp:
+        * dom/NodeFilterCondition.h:
+        Modernize to take a Node reference and match other filtering code
+        by returning an unsigned short.
+
+        * dom/Traversal.cpp:
+        * dom/Traversal.h:
+        Adopt CallbackResult and match other node filtering code by using unsigned short 
+        rather than short.
+
+        * dom/NodeIterator.cpp:
+        * dom/NodeIterator.h:
+        * dom/NodeIterator.idl:
+        * dom/TreeWalker.cpp:
+        * dom/TreeWalker.h:
+        * dom/TreeWalker.idl:
+        Change functions that callout to javascript via the NodeFilter to 
+        return ExceptionOr<Node>. Check the result of CallbackResult for a
+        thrown exception, and bail, returning Exception { ExistingExceptionError }
+        which acts as an indicator to the bindings that an exception was thrown.
+        (In actuality, the specific exception code does not matter. All that matters
+        is that an ExceptionOr<> is returned, which triggers, via overload, a path
+        in toJS() that calls propagateException(), which in turn, checks to see if
+        an exception is on the stack. But, having an explicit code here helps debugging).
+
 2017-05-22  Simon Fraser  <simon.fraser@apple.com>
 
         Support transform-box to switch sizing box in SVG

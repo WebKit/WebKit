@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CallbackResult.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
@@ -36,7 +37,7 @@ class ScriptExecutionContext;
 class BlobCallback : public RefCounted<BlobCallback> {
 public:
     virtual ~BlobCallback() { }
-    virtual bool handleEvent(Blob*) = 0;
+    virtual CallbackResult<void> handleEvent(Blob*) = 0;
 
     void scheduleCallback(ScriptExecutionContext&, RefPtr<Blob>&&);
 };

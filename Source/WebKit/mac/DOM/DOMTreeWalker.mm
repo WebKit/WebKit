@@ -94,43 +94,78 @@
 - (DOMNode *)parentNode
 {
     WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(IMPL->parentNode()));
+
+    auto result = IMPL->parentNode();
+    if (result.hasException())
+        return nil;
+    
+    return kit(WTF::getPtr(result.releaseReturnValue()));
 }
 
 - (DOMNode *)firstChild
 {
     WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(IMPL->firstChild()));
+
+    auto result = IMPL->firstChild();
+    if (result.hasException())
+        return nil;
+    
+    return kit(WTF::getPtr(result.releaseReturnValue()));
 }
 
 - (DOMNode *)lastChild
 {
     WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(IMPL->lastChild()));
+
+    auto result = IMPL->lastChild();
+    if (result.hasException())
+        return nil;
+    
+    return kit(WTF::getPtr(result.releaseReturnValue()));
 }
 
 - (DOMNode *)previousSibling
 {
     WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(IMPL->previousSibling()));
+
+    auto result = IMPL->previousSibling();
+    if (result.hasException())
+        return nil;
+    
+    return kit(WTF::getPtr(result.releaseReturnValue()));
 }
 
 - (DOMNode *)nextSibling
 {
     WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(IMPL->nextSibling()));
+
+    auto result = IMPL->nextSibling();
+    if (result.hasException())
+        return nil;
+    
+    return kit(WTF::getPtr(result.releaseReturnValue()));
 }
 
 - (DOMNode *)previousNode
 {
     WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(IMPL->previousNode()));
+
+    auto result = IMPL->previousNode();
+    if (result.hasException())
+        return nil;
+    
+    return kit(WTF::getPtr(result.releaseReturnValue()));
 }
 
 - (DOMNode *)nextNode
 {
     WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(IMPL->nextNode()));
+
+    auto result = IMPL->nextNode();
+    if (result.hasException())
+        return nil;
+    
+    return kit(WTF::getPtr(result.releaseReturnValue()));
 }
 
 @end

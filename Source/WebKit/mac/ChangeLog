@@ -1,3 +1,25 @@
+2017-05-22  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Support callbacks with arbitrary return types
+        https://bugs.webkit.org/show_bug.cgi?id=172407
+
+        Reviewed by Chris Dumez.
+
+        * DOM/DOM.mm:
+        (-[DOMNodeFilter acceptNode:]):
+        Update for CallbackResult adoption in the base class.
+
+        * DOM/DOMNodeIterator.mm:
+        * DOM/DOMTreeWalker.mm:
+        Update to account for new WebCore implementation return types. We return nil
+        if there was an exception, since retains the existing behavior if a javascript
+        NodeFilter had been used (an exception would cause all nodes to be rejected,
+        thus returning nullptr).
+
+        * DOM/ObjCNodeFilterCondition.h:
+        * DOM/ObjCNodeFilterCondition.mm:
+        Update to match new interface of NodeFilterCondition.
+
 2017-05-18  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Remove the need for the generator to know about native type mapping

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CallbackResult.h"
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -32,7 +33,7 @@ namespace WebCore {
 class VoidCallback : public RefCounted<VoidCallback> {
 public:
     virtual ~VoidCallback() { }
-    virtual bool handleEvent() = 0;
+    virtual CallbackResult<void> handleEvent() = 0;
 };
 
 } // namespace WebCore

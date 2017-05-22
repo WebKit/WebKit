@@ -23,33 +23,33 @@
 #include "ActiveDOMCallback.h"
 #include "IDLTypes.h"
 #include "JSCallbackData.h"
-#include "TestCallbackFunctionWithTypedefs.h"
+#include "TestCallbackFunctionRethrow.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
 
-class JSTestCallbackFunctionWithTypedefs final : public TestCallbackFunctionWithTypedefs, public ActiveDOMCallback {
+class JSTestCallbackFunctionRethrow final : public TestCallbackFunctionRethrow, public ActiveDOMCallback {
 public:
-    static Ref<JSTestCallbackFunctionWithTypedefs> create(JSC::JSObject* callback, JSDOMGlobalObject* globalObject)
+    static Ref<JSTestCallbackFunctionRethrow> create(JSC::JSObject* callback, JSDOMGlobalObject* globalObject)
     {
-        return adoptRef(*new JSTestCallbackFunctionWithTypedefs(callback, globalObject));
+        return adoptRef(*new JSTestCallbackFunctionRethrow(callback, globalObject));
     }
 
     virtual ScriptExecutionContext* scriptExecutionContext() const { return ContextDestructionObserver::scriptExecutionContext(); }
 
-    virtual ~JSTestCallbackFunctionWithTypedefs();
+    virtual ~JSTestCallbackFunctionRethrow();
     JSCallbackDataStrong* callbackData() { return m_data; }
 
     // Functions
-    virtual CallbackResult<typename IDLVoid::ImplementationType> handleEvent(typename IDLSequence<IDLNullable<IDLLong>>::ParameterType sequenceArg, typename IDLLong::ParameterType longArg) override;
+    virtual CallbackResult<typename IDLDOMString::ImplementationType> handleEvent(typename IDLSequence<IDLLong>::ParameterType argument) override;
 
 private:
-    JSTestCallbackFunctionWithTypedefs(JSC::JSObject*, JSDOMGlobalObject*);
+    JSTestCallbackFunctionRethrow(JSC::JSObject*, JSDOMGlobalObject*);
 
     JSCallbackDataStrong* m_data;
 };
 
-JSC::JSValue toJS(TestCallbackFunctionWithTypedefs&);
-inline JSC::JSValue toJS(TestCallbackFunctionWithTypedefs* impl) { return impl ? toJS(*impl) : JSC::jsNull(); }
+JSC::JSValue toJS(TestCallbackFunctionRethrow&);
+inline JSC::JSValue toJS(TestCallbackFunctionRethrow* impl) { return impl ? toJS(*impl) : JSC::jsNull(); }
 
 } // namespace WebCore

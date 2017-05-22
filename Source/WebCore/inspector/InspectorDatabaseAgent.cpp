@@ -75,7 +75,7 @@ private:
     StatementCallback(Ref<ExecuteSQLCallback>&& requestCallback)
         : m_requestCallback(WTFMove(requestCallback)) { }
 
-    bool handleEvent(SQLTransaction&, SQLResultSet& resultSet) final
+    CallbackResult<void> handleEvent(SQLTransaction&, SQLResultSet& resultSet) final
     {
         auto& rowList = resultSet.rows();
 
@@ -93,7 +93,7 @@ private:
             values->addItem(WTFMove(inspectorValue));
         }
         m_requestCallback->sendSuccess(WTFMove(columnNames), WTFMove(values), nullptr);
-        return true;
+        return { };
     }
 
     Ref<ExecuteSQLCallback> m_requestCallback;
@@ -110,7 +110,7 @@ private:
     StatementErrorCallback(Ref<ExecuteSQLCallback>&& requestCallback)
         : m_requestCallback(WTFMove(requestCallback)) { }
 
-    bool handleEvent(SQLTransaction&, SQLError& error) final
+    CallbackResult<bool> handleEvent(SQLTransaction&, SQLError& error) final
     {
         reportTransactionFailed(m_requestCallback.copyRef(), error);
         return true;
@@ -131,15 +131,15 @@ private:
         : m_sqlStatement(sqlStatement)
         , m_requestCallback(WTFMove(requestCallback)) { }
 
-    bool handleEvent(SQLTransaction& transaction) final
+    CallbackResult<void> handleEvent(SQLTransaction& transaction) final
     {
         if (!m_requestCallback->isActive())
-            return true;
+            return { };
 
         Ref<SQLStatementCallback> callback(StatementCallback::create(m_requestCallback.copyRef()));
         Ref<SQLStatementErrorCallback> errorCallback(StatementErrorCallback::create(m_requestCallback.copyRef()));
         transaction.executeSql(m_sqlStatement, { }, WTFMove(callback), WTFMove(errorCallback));
-        return true;
+        return { };
     }
 
     String m_sqlStatement;
@@ -157,10 +157,10 @@ private:
     TransactionErrorCallback(Ref<ExecuteSQLCallback>&& requestCallback)
         : m_requestCallback(WTFMove(requestCallback)) { }
 
-    bool handleEvent(SQLError& error) final
+    CallbackResult<void> handleEvent(SQLError& error) final
     {
         reportTransactionFailed(m_requestCallback.get(), error);
-        return true;
+        return { };
     }
 
     Ref<ExecuteSQLCallback> m_requestCallback;
@@ -173,7 +173,7 @@ public:
         return adoptRef(*new TransactionSuccessCallback());
     }
 
-    bool handleEvent() final { return false; }
+    CallbackResult<void> handleEvent() final { return { }; }
 
 private:
     TransactionSuccessCallback() { }

@@ -27,6 +27,7 @@
 
 #if ENABLE(NOTIFICATIONS)
 
+#include "CallbackResult.h"
 #include "Notification.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
@@ -36,7 +37,7 @@ namespace WebCore {
 class NotificationPermissionCallback : public RefCounted<NotificationPermissionCallback> {
 public:
     virtual ~NotificationPermissionCallback() { }
-    virtual bool handleEvent(Notification::Permission) = 0;
+    virtual CallbackResult<void> handleEvent(Notification::Permission) = 0;
 };
 
 } // namespace WebCore

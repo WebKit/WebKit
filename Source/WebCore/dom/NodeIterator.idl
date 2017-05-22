@@ -29,8 +29,8 @@
     readonly attribute unsigned long whatToShow;
     readonly attribute NodeFilter? filter;
 
-    Node? nextNode();
-    Node? previousNode();
+    [MayThrowException] Node? nextNode();
+    [MayThrowException] Node? previousNode();
 
     void detach();
 };

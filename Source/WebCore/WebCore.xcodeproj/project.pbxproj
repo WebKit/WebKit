@@ -2446,7 +2446,6 @@
 		51E3F9D60DA05E1D00250911 /* JSStorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51E3F9D40DA05E1D00250911 /* JSStorage.cpp */; };
 		51E4143416A6596300C633C7 /* ResourceHandleTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E4143216A6595100C633C7 /* ResourceHandleTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51E6821016387302003BBF3C /* LoaderStrategy.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E6820F16387302003BBF3C /* LoaderStrategy.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		51EC92650CE90DD400F90308 /* JSSQLStatementErrorCallbackCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51EC925D0CE90DD400F90308 /* JSSQLStatementErrorCallbackCustom.cpp */; };
 		51EE7B381AA50B0500F92B21 /* ResourceLoadInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 51EE7B371AA50B0500F92B21 /* ResourceLoadInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51EE7B3A1AA5123100F92B21 /* ResourceLoadInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51EE7B391AA5123100F92B21 /* ResourceLoadInfo.cpp */; };
 		51EEAA731BEFFAB100218008 /* IndexValueEntry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51EEAA711BEFFA7900218008 /* IndexValueEntry.cpp */; };
@@ -3075,6 +3074,7 @@
 		7BE7427381FA906FBB4F0F2C /* JSSVGGraphicsElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 950C4C02BED8936F818E2F99 /* JSSVGGraphicsElement.h */; };
 		7C1843FD1C8B7283002EB973 /* Autofill.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C1843FB1C8B7283002EB973 /* Autofill.cpp */; };
 		7C1843FE1C8B7283002EB973 /* Autofill.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C1843FC1C8B7283002EB973 /* Autofill.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7C1E8D011ED0C2DA00B1D983 /* CallbackResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C1E8D001ED0C2BE00B1D983 /* CallbackResult.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C1E97271A9F9834007BF0FB /* AutoFillButtonElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C1E97251A9F9834007BF0FB /* AutoFillButtonElement.cpp */; };
 		7C1E97281A9F9834007BF0FB /* AutoFillButtonElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C1E97261A9F9834007BF0FB /* AutoFillButtonElement.h */; };
 		7C2BDD3D17C7F98C0038FF15 /* JSDOMGlobalObjectTask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C2BDD3B17C7F98B0038FF15 /* JSDOMGlobalObjectTask.cpp */; };
@@ -3402,7 +3402,6 @@
 		83D35AF21C718D9000F70D5A /* JSXMLHttpRequestEventTarget.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D35AF01C718D8400F70D5A /* JSXMLHttpRequestEventTarget.h */; };
 		83E359A21BB1031D002CEB98 /* JSHTMLTimeElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E359A01BB1031D002CEB98 /* JSHTMLTimeElement.h */; };
 		83E359A31BB1031D002CEB98 /* JSHTMLTimeElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83E359A11BB1031D002CEB98 /* JSHTMLTimeElement.cpp */; };
-		83F1206B1B8C104700D75F63 /* JSNodeFilterCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83F1206A1B8C103600D75F63 /* JSNodeFilterCustom.cpp */; };
 		83FE7CA71DA9F1A70037237C /* UIEventInit.h in Headers */ = {isa = PBXBuildFile; fileRef = 83FE7CA41DA9F1660037237C /* UIEventInit.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		83FE7CA81DA9F1B60037237C /* EventModifierInit.h in Headers */ = {isa = PBXBuildFile; fileRef = 83FE7CA31DA9F1650037237C /* EventModifierInit.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		83FE90271E307C30003E9199 /* PerformanceMonitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 83FE90261E307C1C003E9199 /* PerformanceMonitor.h */; };
@@ -10177,7 +10176,6 @@
 		51E4143216A6595100C633C7 /* ResourceHandleTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceHandleTypes.h; sourceTree = "<group>"; };
 		51E6820F16387302003BBF3C /* LoaderStrategy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoaderStrategy.h; sourceTree = "<group>"; };
 		51EAC5B018163F4E004F1BA4 /* IDBRecordIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBRecordIdentifier.h; sourceTree = "<group>"; };
-		51EC925D0CE90DD400F90308 /* JSSQLStatementErrorCallbackCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSQLStatementErrorCallbackCustom.cpp; sourceTree = "<group>"; };
 		51EE7B371AA50B0500F92B21 /* ResourceLoadInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceLoadInfo.h; sourceTree = "<group>"; };
 		51EE7B391AA5123100F92B21 /* ResourceLoadInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceLoadInfo.cpp; sourceTree = "<group>"; };
 		51EEAA711BEFFA7900218008 /* IndexValueEntry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IndexValueEntry.cpp; sourceTree = "<group>"; };
@@ -11084,6 +11082,8 @@
 		7C0CEF301E4A58F1008DEB80 /* JSDOMConstructorWithDocument.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMConstructorWithDocument.cpp; sourceTree = "<group>"; };
 		7C1843FB1C8B7283002EB973 /* Autofill.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Autofill.cpp; sourceTree = "<group>"; };
 		7C1843FC1C8B7283002EB973 /* Autofill.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Autofill.h; sourceTree = "<group>"; };
+		7C1E8CFF1ED0C2BE00B1D983 /* BeforeUnloadEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BeforeUnloadEvent.idl; sourceTree = "<group>"; };
+		7C1E8D001ED0C2BE00B1D983 /* CallbackResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallbackResult.h; sourceTree = "<group>"; };
 		7C1E97251A9F9834007BF0FB /* AutoFillButtonElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AutoFillButtonElement.cpp; sourceTree = "<group>"; };
 		7C1E97261A9F9834007BF0FB /* AutoFillButtonElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutoFillButtonElement.h; sourceTree = "<group>"; };
 		7C2BDD3B17C7F98B0038FF15 /* JSDOMGlobalObjectTask.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMGlobalObjectTask.cpp; sourceTree = "<group>"; };
@@ -11469,7 +11469,6 @@
 		83E959E11B8BC22B004D9385 /* NativeNodeFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NativeNodeFilter.h; sourceTree = "<group>"; };
 		83E9B3001DA5A51E00FFE8F6 /* JSScrollToOptions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSScrollToOptions.cpp; sourceTree = "<group>"; };
 		83E9B3011DA5A51E00FFE8F6 /* JSScrollToOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSScrollToOptions.h; sourceTree = "<group>"; };
-		83F1206A1B8C103600D75F63 /* JSNodeFilterCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSNodeFilterCustom.cpp; sourceTree = "<group>"; };
 		83F570AD1C53268E007FD6CB /* JSXMLDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSXMLDocument.h; sourceTree = "<group>"; };
 		83F570AE1C53268E007FD6CB /* JSXMLDocument.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSXMLDocument.cpp; sourceTree = "<group>"; };
 		83FE7CA31DA9F1650037237C /* EventModifierInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventModifierInit.h; sourceTree = "<group>"; };
@@ -23537,7 +23536,6 @@
 				C6F0917E143A2BB900685849 /* JSMutationObserverCustom.cpp */,
 				BCD9C2600C17AA67005C90A2 /* JSNodeCustom.cpp */,
 				BC9439C2116CF4940048C750 /* JSNodeCustom.h */,
-				83F1206A1B8C103600D75F63 /* JSNodeFilterCustom.cpp */,
 				A85F22081430377D007CC884 /* JSPopStateEventCustom.cpp */,
 				418C395D1C8F0AAB0051C8A3 /* JSReadableStreamSourceCustom.cpp */,
 				51D0C5150DAA90B7003B3831 /* JSStorageCustom.cpp */,
@@ -23872,7 +23870,6 @@
 				935F45410F7C3B5F00D7C1FB /* JSLazyEventListener.h */,
 				C6F420A016B7164E0052A9F2 /* JSMutationCallback.cpp */,
 				C6F420A116B7164E0052A9F2 /* JSMutationCallback.h */,
-				51EC925D0CE90DD400F90308 /* JSSQLStatementErrorCallbackCustom.cpp */,
 				BCA378BA0D15F64200B793D6 /* ScheduledAction.cpp */,
 				BCA378BB0D15F64200B793D6 /* ScheduledAction.h */,
 			);
@@ -25469,6 +25466,8 @@
 				AB23A32609BBA7D00067CC53 /* BeforeTextInsertedEvent.h */,
 				85031B260A44EFC700F992E0 /* BeforeUnloadEvent.cpp */,
 				85031B270A44EFC700F992E0 /* BeforeUnloadEvent.h */,
+				7C1E8CFF1ED0C2BE00B1D983 /* BeforeUnloadEvent.idl */,
+				7C1E8D001ED0C2BE00B1D983 /* CallbackResult.h */,
 				6550B693099DF0270090D781 /* CDATASection.cpp */,
 				6550B694099DF0270090D781 /* CDATASection.h */,
 				85089CC90A98C2AB00A275AA /* CDATASection.idl */,
@@ -27264,6 +27263,7 @@
 				9746AF2A14F4DDE6003E7A70 /* Geoposition.h in Headers */,
 				086BBD0F136039C2008B15D8 /* Glyph.h in Headers */,
 				B2C3DA6C0D006CD600EF6F26 /* GlyphBuffer.h in Headers */,
+				7C1E8D011ED0C2DA00B1D983 /* CallbackResult.h in Headers */,
 				C5D4AA7A116BAFB60069CA93 /* GlyphMetricsMap.h in Headers */,
 				0873B86B136064EA00A522C2 /* GlyphPage.h in Headers */,
 				311518FC1E78C15F00EC514A /* GPUBasedCanvasRenderingContext.h in Headers */,
@@ -31994,7 +31994,6 @@
 				BCD9C2640C17AA67005C90A2 /* JSNodeCustom.cpp in Sources */,
 				E3150EA61DA7219000194012 /* JSNodeDOMJIT.cpp in Sources */,
 				14115B7209F84CD600CA4FC1 /* JSNodeFilter.cpp in Sources */,
-				83F1206B1B8C104700D75F63 /* JSNodeFilterCustom.cpp in Sources */,
 				1A750D8D0A90E521000FF215 /* JSNodeIterator.cpp in Sources */,
 				1A750DD40A90E729000FF215 /* JSNodeIteratorCustom.cpp in Sources */,
 				BCD9C2C20C17B69E005C90A2 /* JSNodeList.cpp in Sources */,
@@ -32105,7 +32104,6 @@
 				1AFE11990CBFFCC4003017FA /* JSSQLResultSetRowList.cpp in Sources */,
 				B59DD6A611902A62007E9684 /* JSSQLStatementCallback.cpp in Sources */,
 				B59DD6AA11902A71007E9684 /* JSSQLStatementErrorCallback.cpp in Sources */,
-				51EC92650CE90DD400F90308 /* JSSQLStatementErrorCallbackCustom.cpp in Sources */,
 				514C76380CE9225E007EF3CD /* JSSQLTransaction.cpp in Sources */,
 				B59DD69E11902A42007E9684 /* JSSQLTransactionCallback.cpp in Sources */,
 				B59DD6A211902A52007E9684 /* JSSQLTransactionErrorCallback.cpp in Sources */,
