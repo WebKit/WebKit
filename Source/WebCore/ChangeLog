@@ -1,3 +1,22 @@
+2017-05-22  Gwang Yoon Hwang  <yoon@igalia.com>
+
+        [CoordinatedGraphics] BitmapTexturePool does not release textures properly
+        https://bugs.webkit.org/show_bug.cgi?id=172428
+
+        Reviewed by Žan Doberšek.
+
+        No new tests because no behavior change.
+
+        * platform/graphics/texmap/BitmapTexturePool.cpp:
+        (WebCore::BitmapTexturePool::BitmapTexturePool):
+        Use the RunLoopTimer instead of Timer, because BitmapTexturePool would
+        run on the compositing thread in Coordinated Graphics case.
+        (WebCore::BitmapTexturePool::releaseUnusedTexturesTimerFired):
+        We should check not only the last used time but also the refcounts of the
+        texture when selecting textures to remove.
+        * platform/graphics/texmap/BitmapTexturePool.h:
+        (WebCore::BitmapTexturePool::Entry::canBeReleased): Added.
+
 2017-05-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [WPE] Use surfaceless context for sharing and offscreen context if available
