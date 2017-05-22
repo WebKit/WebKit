@@ -37,6 +37,7 @@ class CSSStyleSheet;
 class CachedCSSStyleSheet;
 class CachedResource;
 class Document;
+class FrameLoader;
 class Node;
 class SecurityOrigin;
 class StyleRuleBase;
@@ -71,7 +72,7 @@ public:
     bool isCacheable() const;
 
     bool isLoading() const;
-    bool subresourcesAllowReuse(CachePolicy) const;
+    bool subresourcesAllowReuse(CachePolicy, FrameLoader&) const;
     WEBCORE_EXPORT bool isLoadingSubresources() const;
 
     void checkLoaded();

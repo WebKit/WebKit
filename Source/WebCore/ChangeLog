@@ -1,5 +1,31 @@
 2017-05-22  Chris Dumez  <cdumez@apple.com>
 
+        Resources in cached parsed stylesheets may bypass content blockers
+        https://bugs.webkit.org/show_bug.cgi?id=172468
+        <rdar://problem/31972693>
+
+        Reviewed by Geoffrey Garen.
+
+        Resources in cached parsed stylesheets could bypass content blockers when they were in the memory cache and
+        they did not need revalidation.
+
+        To address the issue, I made StyleSheetContents::subresourcesAllowReuse() to check content blockers.
+        If a subresource in the cached stylesheet is blocked, then we return false in subresourcesAllowReuse() and
+        the cached parsed stylesheet will not be used.
+
+        No new tests, not currently testable.
+
+        * css/StyleSheetContents.cpp:
+        (WebCore::StyleSheetContents::subresourcesAllowReuse):
+        * css/StyleSheetContents.h:
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::setCSSStyleSheet):
+        * loader/cache/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::restoreParsedStyleSheet):
+        * loader/cache/CachedCSSStyleSheet.h:
+
+2017-05-22  Chris Dumez  <cdumez@apple.com>
+
         ASSERTION FAILED: tokens.find(item) == notFound in WebCore::DOMTokenList::replace
         https://bugs.webkit.org/show_bug.cgi?id=172473
 

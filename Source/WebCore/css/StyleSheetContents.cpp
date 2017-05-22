@@ -26,10 +26,13 @@
 #include "CSSStyleSheet.h"
 #include "CachedCSSStyleSheet.h"
 #include "Document.h"
+#include "Frame.h"
+#include "FrameLoader.h"
 #include "MediaList.h"
 #include "Node.h"
 #include "Page.h"
 #include "PageConsoleClient.h"
+#include "ResourceLoadInfo.h"
 #include "RuleSet.h"
 #include "SecurityOrigin.h"
 #include "StyleProperties.h"
@@ -38,6 +41,10 @@
 #include <wtf/Deque.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Ref.h>
+
+#if ENABLE(CONTENT_EXTENSIONS)
+#include "UserContentController.h"
+#endif
 
 namespace WebCore {
 
@@ -487,14 +494,29 @@ bool StyleSheetContents::traverseSubresources(const std::function<bool (const Ca
     return traverseSubresourcesInRules(m_childRules, handler);
 }
 
-bool StyleSheetContents::subresourcesAllowReuse(CachePolicy cachePolicy) const
+bool StyleSheetContents::subresourcesAllowReuse(CachePolicy cachePolicy, FrameLoader& loader) const
 {
-    bool hasFailedOrExpiredResources = traverseSubresources([cachePolicy](const CachedResource& resource) {
+    bool hasFailedOrExpiredResources = traverseSubresources([cachePolicy, &loader](const CachedResource& resource) {
         if (resource.loadFailedOrCanceled())
             return true;
         // We can't revalidate subresources individually so don't use reuse the parsed sheet if they need revalidation.
         if (resource.makeRevalidationDecision(cachePolicy) != CachedResource::RevalidationDecision::No)
             return true;
+
+#if ENABLE(CONTENT_EXTENSIONS)
+        // If a cached subresource is blocked or made HTTPS by a content blocker, we cannot reuse the cached stylesheet.
+        auto* page = loader.frame().page();
+        auto* documentLoader = loader.documentLoader();
+        if (page && documentLoader) {
+            const auto& request = resource.resourceRequest();
+            auto blockedStatus = page->userContentProvider().processContentExtensionRulesForLoad(request.url(), toResourceType(resource.type()), *documentLoader);
+            if (blockedStatus.blockedLoad || blockedStatus.madeHTTPS)
+                return true;
+        }
+#else
+        UNUSED_PARAM(loader);
+#endif
+
         return false;
     });
     return !hasFailedOrExpiredResources;
