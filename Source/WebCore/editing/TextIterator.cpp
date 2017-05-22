@@ -444,6 +444,11 @@ static inline Node* parentNodeOrShadowHost(TextIteratorBehavior options, Node& n
     return node.parentOrShadowHostNode();
 }
 
+static inline bool hasDisplayContents(Node& node)
+{
+    return is<Element>(node) && downcast<Element>(node).hasDisplayContents();
+}
+
 void TextIterator::advance()
 {
     ASSERT(!atEnd());
@@ -491,12 +496,12 @@ void TextIterator::advance()
         }
         
         auto* renderer = m_node->renderer();
-        if (!renderer) {
-            m_handledNode = true;
-            m_handledChildren = !(is<Element>(*m_node) && downcast<Element>(*m_node).hasDisplayContents());
-        } else {
-            // handle current node according to its type
-            if (!m_handledNode) {
+        if (!m_handledNode) {
+            if (!renderer) {
+                m_handledNode = true;
+                m_handledChildren = !hasDisplayContents(*m_node);
+            } else {
+                // handle current node according to its type
                 if (renderer->isText() && m_node->isTextNode())
                     m_handledNode = handleTextNode();
                 else if (isRendererReplacedElement(renderer))

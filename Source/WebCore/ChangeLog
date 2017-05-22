@@ -1,3 +1,19 @@
+2017-05-22  Emilio Cobos Álvarez  <ecobos@igalia.com>
+
+        Don't unconditionally reset TextIterator::m_handledChildren for display: contents nodes.
+        https://bugs.webkit.org/show_bug.cgi?id=172443
+
+        This avoids an infinite hang when enabling display: contents in bug 171984.
+
+        Reviewed by Antti Koivisto.
+
+        No new tests. Relanding bug 171984 will add test coverage for this.
+
+        * editing/TextIterator.cpp:
+        (WebCore::hasDisplayContents):
+        (WebCore::fullyClipsContents):
+        (WebCore::TextIterator::advance):
+
 2017-05-22  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Support callbacks with arbitrary return types
