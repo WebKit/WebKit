@@ -1,3 +1,19 @@
+2017-05-22  Alexey Proskuryakov  <ap@apple.com>
+
+        Remove Java tests.
+
+        Rubber-stamped by Tim Horton.
+
+        These tests were disabled on all platforms for a long long time now.
+
+        * TestExpectations:
+        * java: Removed.
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wk2/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2017-05-22  Brian Burg  <bburg@apple.com>
 
         Web Inspector: webkit reload policy should match default behavior

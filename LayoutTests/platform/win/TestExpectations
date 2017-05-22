@@ -148,9 +148,6 @@ http/tests/notifications/ [ Skip ]
 fast/history/page-cache-notification-non-suspendable.html [ Skip ]
 fast/history/page-cache-notification-suspendable.html [ Skip ]
 
-# TODO DumpRenderTree code to enable Java is currently a no-op. Windows doesn't come with Java by default.
-java/ [ Skip ]
-
 # TODO No support for print-to-pdf in Windows DRT
 printing/compositing-layer-printing.html [ Skip ]
 printing/media-queries-print.html [ Skip ]
