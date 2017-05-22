@@ -231,6 +231,7 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyTextTransform,
     CSSPropertyTop,
     CSSPropertyTransform,
+    CSSPropertyTransformBox,
     CSSPropertyTransformOrigin,
     CSSPropertyTransformStyle,
     CSSPropertyTransitionDelay,
@@ -3682,6 +3683,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
             return cssValuePool.createValue(style->speak());
         case CSSPropertyTransform:
             return computedTransform(renderer, *style);
+        case CSSPropertyTransformBox:
+            return CSSPrimitiveValue::create(style->transformBox());
         case CSSPropertyTransformOrigin: {
             auto list = CSSValueList::createSpaceSeparated();
             if (renderer) {

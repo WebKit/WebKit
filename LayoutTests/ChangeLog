@@ -1,3 +1,22 @@
+2017-05-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Support transform-box to switch sizing box in SVG
+        https://bugs.webkit.org/show_bug.cgi?id=145783
+
+        Reviewed by Dean Jackson.
+
+        Modify tests that relied on the old "% values relative to the bounding box" behavior,
+        and new tests for parsing and rendering with transform-box.
+
+        * fast/css/transform-box-parsing.html: Added.
+        * svg/transforms/change-transform-origin-css.xhtml:
+        * svg/transforms/change-transform-origin-presentation-attribute.xhtml:
+        * svg/transforms/percent-transform-values.xhtml:
+        * svg/transforms/svg-transform-box-expected.html: Added.
+        * svg/transforms/svg-transform-box.html: Added.
+        * svg/transforms/transform-origin-css-property.xhtml:
+        * transforms/svg-vs-css.xhtml:
+
 2017-05-22  Antti Koivisto  <antti@apple.com>
 
         Crash in WebCore::StyleRuleKeyframes::findKeyframeIndex

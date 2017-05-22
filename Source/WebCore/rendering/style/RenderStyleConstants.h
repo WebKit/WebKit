@@ -583,7 +583,13 @@ enum ETransformStyle3D {
 enum EBackfaceVisibility {
     BackfaceVisibilityVisible, BackfaceVisibilityHidden
 };
-    
+
+enum class TransformBox {
+    BorderBox,
+    FillBox,
+    ViewBox
+};
+
 enum ELineClampType { LineClampLineCount, LineClampPercentage };
 
 enum Hyphens { HyphensNone, HyphensManual, HyphensAuto };

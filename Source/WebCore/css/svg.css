@@ -72,12 +72,8 @@ text, tspan, tref {
     outline: auto 5px -webkit-focus-ring-color
 }
 
-/* CSS transform specification: "transform-origin 0 0 for SVG elements without associated CSS layout box, 50% 50% for all other elements". */
- 
-* {
-    -webkit-transform-origin: 0 0;
-}
-
-html|* > svg {
-    -webkit-transform-origin: 50% 50%;
+*:not(svg),
+*:not(foreignObject) > svg {
+    transform-origin: 0 0;
+    transform-box: view-box;
 }

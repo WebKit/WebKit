@@ -4414,6 +4414,42 @@ template<> inline CSSPrimitiveValue::operator ETransformStyle3D() const
     return TransformStyle3DFlat;
 }
 
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(TransformBox box)
+    : CSSValue(PrimitiveClass)
+{
+    m_primitiveUnitType = CSS_VALUE_ID;
+    switch (box) {
+    case TransformBox::BorderBox:
+        m_value.valueID = CSSValueBorderBox;
+        break;
+    case TransformBox::FillBox:
+        m_value.valueID = CSSValueFillBox;
+        break;
+    case TransformBox::ViewBox:
+        m_value.valueID = CSSValueViewBox;
+        break;
+    }
+}
+
+template<> inline CSSPrimitiveValue::operator TransformBox() const
+{
+    ASSERT(isValueID());
+
+    switch (m_value.valueID) {
+    case CSSValueBorderBox:
+        return TransformBox::BorderBox;
+    case CSSValueFillBox:
+        return TransformBox::FillBox;
+    case CSSValueViewBox:
+        return TransformBox::ViewBox;
+    default:
+        break;
+    }
+
+    ASSERT_NOT_REACHED();
+    return TransformBox::BorderBox;
+}
+
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ColumnAxis e)
     : CSSValue(PrimitiveClass)
 {

@@ -5953,6 +5953,19 @@
                 "url": "https://www.w3.org/TR/css-transforms-1/#transform-property"
             }
         },
+        "transform-box": {
+            "values" : [
+                "border-box",
+                "fill-box",
+                "view-box"
+            ],
+            "codegen-properties": {
+            },
+            "specification": {
+                "category": "css-transforms",
+                "url": "https://www.w3.org/TR/css-transforms/#propdef-transform-box"
+            }
+        },
         "transform-origin": {
             "codegen-properties": {
                 "aliases": [

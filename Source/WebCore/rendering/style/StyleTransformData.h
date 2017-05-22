@@ -25,6 +25,7 @@
 #pragma once
 
 #include "Length.h"
+#include "RenderStyleConstants.h"
 #include "TransformOperations.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -48,6 +49,7 @@ public:
     Length x;
     Length y;
     float z;
+    TransformBox transformBox;
 
 private:
     StyleTransformData();

@@ -1,6 +1,6 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <body>
-  <p>Test for bug <a href="">79068</a> - SVG should support transform-origin and relative values
+  <p>Test for bug <a href="http://webkit.org/b/79068">79068</a> - SVG should support transform-origin and relative values
   Verify that CSS transform translate values can be specified with percentages.
   </p>
   You should see a series of "PASS" messages and one 80x60 green rectangle.   The green rectangle obscures two
@@ -8,9 +8,9 @@
   <p>
   </p>
   <svg style="position:absolute; left:0px; top:0px;" xmlns="http://www.w3.org/2000/svg">
-    <rect id="r1" x="10" y="200" width="80" height="60" fill="red" style="-webkit-transform: translate(50%)"/>
-    <rect id="r2" x="90" y="260" width="80" height="60" fill="red" style="-webkit-transform: translate(-50%, -100%)"/>
-    <rect id="r3" x="10" y="200" width="80" height="60" fill="green" style="-webkit-transform: translate(50%, 0%)"/>
+    <rect id="r1" x="10" y="200" width="80" height="60" fill="red" style="transform-box: fill-box; transform: translate(50%)"/>
+    <rect id="r2" x="90" y="260" width="80" height="60" fill="red" style="transform-box: fill-box; transform: translate(-50%, -100%)"/>
+    <rect id="r3" x="10" y="200" width="80" height="60" fill="green" style="transform-box: fill-box; transform: translate(50%, 0%)"/>
   </svg>
   <pre id="log"></pre>
 </body>

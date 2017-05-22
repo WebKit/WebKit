@@ -31,6 +31,7 @@ StyleTransformData::StyleTransformData()
     , x(RenderStyle::initialTransformOriginX())
     , y(RenderStyle::initialTransformOriginY())
     , z(RenderStyle::initialTransformOriginZ())
+    , transformBox(RenderStyle::initialTransformBox())
 {
 }
 
@@ -40,6 +41,7 @@ inline StyleTransformData::StyleTransformData(const StyleTransformData& other)
     , x(other.x)
     , y(other.y)
     , z(other.z)
+    , transformBox(other.transformBox)
 {
 }
 
@@ -50,7 +52,7 @@ Ref<StyleTransformData> StyleTransformData::copy() const
 
 bool StyleTransformData::operator==(const StyleTransformData& other) const
 {
-    return x == other.x && y == other.y && z == other.z && operations == other.operations;
+    return x == other.x && y == other.y && z == other.z && transformBox == other.transformBox && operations == other.operations;
 }
 
 } // namespace WebCore

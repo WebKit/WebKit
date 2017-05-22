@@ -1130,24 +1130,20 @@ void RenderStyle::applyTransform(TransformationMatrix& transform, const FloatRec
 {
     auto& operations = m_rareNonInheritedData->transform->operations.operations();
     bool applyTransformOrigin = requireTransformOrigin(operations, applyOrigin);
-
-    float offsetX = transformOriginX().isPercent() ? boundingBox.x() : 0;
-    float offsetY = transformOriginY().isPercent() ? boundingBox.y() : 0;
-
+    
+    FloatPoint3D originTranslate;
     if (applyTransformOrigin) {
-        transform.translate3d(floatValueForLength(transformOriginX(), boundingBox.width()) + offsetX,
-                              floatValueForLength(transformOriginY(), boundingBox.height()) + offsetY,
-                              transformOriginZ());
+        originTranslate.setX(boundingBox.x() + floatValueForLength(transformOriginX(), boundingBox.width()));
+        originTranslate.setY(boundingBox.y() + floatValueForLength(transformOriginY(), boundingBox.height()));
+        originTranslate.setZ(transformOriginZ());
+        transform.translate3d(originTranslate.x(), originTranslate.y(), originTranslate.z());
     }
 
     for (auto& operation : operations)
         operation->apply(transform, boundingBox.size());
 
-    if (applyTransformOrigin) {
-        transform.translate3d(-floatValueForLength(transformOriginX(), boundingBox.width()) - offsetX,
-                              -floatValueForLength(transformOriginY(), boundingBox.height()) - offsetY,
-                              -transformOriginZ());
-    }
+    if (applyTransformOrigin)
+        transform.translate3d(-originTranslate.x(), -originTranslate.y(), -originTranslate.z());
 }
 
 void RenderStyle::setPageScaleTransform(float scale)

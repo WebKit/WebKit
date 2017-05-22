@@ -4071,6 +4071,8 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
         return consumeLineWidth(m_range, m_context.mode, UnitlessQuirk::Forbid);
     case CSSPropertyTransform:
         return consumeTransform(m_range, m_context.mode);
+    case CSSPropertyTransformBox:
+        return consumeIdent<CSSValueBorderBox, CSSValueViewBox, CSSValueFillBox>(m_range);
     case CSSPropertyTransformOriginX:
     case CSSPropertyPerspectiveOriginX:
         return consumePositionX(m_range, m_context.mode);

@@ -1247,6 +1247,11 @@ translateY
 translateZ
 translate3d
 
+// transform-box
+// border-box
+// view-box
+fill-box
+
 // motion path
 path
 

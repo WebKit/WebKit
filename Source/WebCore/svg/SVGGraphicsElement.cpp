@@ -27,6 +27,7 @@
 #include "SVGNames.h"
 #include "SVGPathData.h"
 #include "SVGRect.h"
+#include "SVGSVGElement.h"
 #include "SVGStringList.h"
 #include <wtf/NeverDestroyed.h>
 
@@ -79,10 +80,26 @@ AffineTransform SVGGraphicsElement::animatedLocalTransform() const
 
     // If CSS property was set, use that, otherwise fallback to attribute (if set).
     if (style && style->hasTransform()) {
+        
+        FloatRect boundingBox;
+        switch (style->transformBox()) {
+        case TransformBox::FillBox:
+            boundingBox = renderer()->objectBoundingBox();
+            break;
+        case TransformBox::BorderBox:
+            // For SVG elements without an associated CSS layout box, the used value for border-box is view-box.
+        case TransformBox::ViewBox:
+            if (auto *viewportElement = nearestViewportElement()) {
+                if (is<SVGSVGElement>(*viewportElement))
+                    boundingBox = downcast<SVGSVGElement>(*viewportElement).viewBox();
+            }
+            break;
+        }
+        
         // Note: objectBoundingBox is an emptyRect for elements like pattern or clipPath.
         // See the "Object bounding box units" section of http://dev.w3.org/csswg/css3-transforms/
         TransformationMatrix transform;
-        style->applyTransform(transform, renderer()->objectBoundingBox());
+        style->applyTransform(transform, boundingBox);
 
         // Flatten any 3D transform.
         matrix = transform.toAffineTransform();

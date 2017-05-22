@@ -608,10 +608,11 @@ public:
     ColumnSpan columnSpan() const { return static_cast<ColumnSpan>(m_rareNonInheritedData->multiCol->columnSpan); }
 
     const TransformOperations& transform() const { return m_rareNonInheritedData->transform->operations; }
+    bool hasTransform() const { return !m_rareNonInheritedData->transform->operations.operations().isEmpty(); }
     const Length& transformOriginX() const { return m_rareNonInheritedData->transform->x; }
     const Length& transformOriginY() const { return m_rareNonInheritedData->transform->y; }
     float transformOriginZ() const { return m_rareNonInheritedData->transform->z; }
-    bool hasTransform() const { return !m_rareNonInheritedData->transform->operations.operations().isEmpty(); }
+    TransformBox transformBox() const { return m_rareNonInheritedData->transform->transformBox; }
 
     TextEmphasisFill textEmphasisFill() const { return static_cast<TextEmphasisFill>(m_rareInheritedData->textEmphasisFill); }
     TextEmphasisMark textEmphasisMark() const;
@@ -1135,10 +1136,13 @@ public:
     void resetColumnRule() { SET_NESTED_VAR(m_rareNonInheritedData, multiCol, rule, BorderValue()); }
     void setColumnSpan(ColumnSpan columnSpan) { SET_NESTED_VAR(m_rareNonInheritedData, multiCol, columnSpan, columnSpan); }
     void inheritColumnPropertiesFrom(const RenderStyle& parent) { m_rareNonInheritedData.access().multiCol = parent.m_rareNonInheritedData->multiCol; }
+
     void setTransform(const TransformOperations& ops) { SET_NESTED_VAR(m_rareNonInheritedData, transform, operations, ops); }
     void setTransformOriginX(Length&& length) { SET_NESTED_VAR(m_rareNonInheritedData, transform, x, WTFMove(length)); }
     void setTransformOriginY(Length&& length) { SET_NESTED_VAR(m_rareNonInheritedData, transform, y, WTFMove(length)); }
     void setTransformOriginZ(float f) { SET_NESTED_VAR(m_rareNonInheritedData, transform, z, f); }
+    void setTransformBox(TransformBox box) { SET_NESTED_VAR(m_rareNonInheritedData, transform, transformBox, box); }
+
     void setSpeak(ESpeak s) { SET_VAR(m_rareInheritedData, speak, s); }
     void setTextCombine(TextCombine v) { SET_VAR(m_rareNonInheritedData, textCombine, v); }
     void setTextDecorationColor(const Color& c) { SET_VAR(m_rareNonInheritedData, textDecorationColor, c); }
@@ -1532,6 +1536,7 @@ public:
     static const TransformOperations& initialTransform() { static NeverDestroyed<TransformOperations> ops; return ops; }
     static Length initialTransformOriginX() { return Length(50.0f, Percent); }
     static Length initialTransformOriginY() { return Length(50.0f, Percent); }
+    static TransformBox initialTransformBox() { return TransformBox::BorderBox; }
     static EPointerEvents initialPointerEvents() { return PE_AUTO; }
     static float initialTransformOriginZ() { return 0; }
     static ETransformStyle3D initialTransformStyle3D() { return TransformStyle3DFlat; }
