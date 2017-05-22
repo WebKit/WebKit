@@ -81,7 +81,6 @@ struct DragState;
         DragSourceAction dragSourceAction() const { return m_dragSourceAction; }
 
         enum class DragHandlingMethod { None, EditPlainText, EditRichText, UploadFile, PageLoad, SetColor, NonDefault };
-        bool documentIsHandlingNonDefaultDrag() const { return m_dragHandlingMethod == DragHandlingMethod::NonDefault; }
         Document* documentUnderMouse() const { return m_documentUnderMouse.get(); }
         DragDestinationAction dragDestinationAction() const { return m_dragDestinationAction; }
         DragSourceAction delegateDragSourceAction(const IntPoint& rootViewPoint);

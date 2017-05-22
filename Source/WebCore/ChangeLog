@@ -1,3 +1,16 @@
+2017-05-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Remove unused documentIsHandlingNonDefaultDrag plumbing for WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=172453
+
+        Reviewed by Tim Horton.
+
+        Removes unused plumbing that was originally added to support file uploads. No new tests, since there is no
+        change in behavior.
+
+        * page/DragController.h:
+        (WebCore::DragController::documentIsHandlingNonDefaultDrag): Deleted.
+
 2017-05-22  Jer Noble  <jer.noble@apple.com>
 
         Media element thinks its hidden when in PiP mode and tab is backgrounded.

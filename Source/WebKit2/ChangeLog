@@ -1,3 +1,22 @@
+2017-05-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Remove unused documentIsHandlingNonDefaultDrag plumbing for WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=172453
+
+        Reviewed by Tim Horton.
+
+        Removes unused plumbing that was originally added to support file uploads.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didPerformDragControllerAction):
+        (WebKit::WebPageProxy::resetCurrentDragInformation):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::currentDragCaretRect):
+        (WebKit::WebPageProxy::documentIsHandlingNonDefaultDrag): Deleted.
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::performDragControllerAction):
+
 2017-05-22  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Add even more input validation in Connection::processMessage()
