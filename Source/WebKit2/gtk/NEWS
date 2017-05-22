@@ -1,4 +1,19 @@
 =================
+WebKitGTK+ 2.17.3
+=================
+
+What's new in WebKitGTK+ 2.17.3?
+
+  - Add new API to create a WebKitContextMenuItem from a GAction.
+  - Fix graphics repaint hungs in accelerated compositing mode after a resize.
+  - Fix rendering glitches in HiDPI in long GitHub Gist pages when focusing the comments textarea.
+  - Remove Firefox user agent quirk for Google domains.
+  - Remove LATEST_RECORD_VERSION from GnuTLS priority string.
+  - Improve colors of inspector SVG icons.
+  - Fix several crashes and rendering issues.
+  - Translation updates: French.
+
+=================
 WebKitGTK+ 2.17.2
 =================
 
