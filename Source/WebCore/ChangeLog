@@ -1,3 +1,18 @@
+2017-05-22  Zan Dobersek  <zdobersek@igalia.com>
+
+        NavigatorEME: null RefPtr<> dereference due to different calling conventions
+        https://bugs.webkit.org/show_bug.cgi?id=172352
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Modules/encryptedmedia/NavigatorEME.cpp:
+        (WebCore::tryNextSupportedConfiguration): Avoid crashes when constructing
+        the MediaKeySystemAccess::create() arguments that can occur for targets with
+        calling conventions that might release the implementation RefPtr<> before it's
+        dereferenced to retrieve the key system string. Simply acquire the reference
+        to the key system String object before the MediaKeySystem::create() call
+        expression that releases the problematic RefPtr<>.
+
 2017-05-22  Gwang Yoon Hwang  <yoon@igalia.com>
 
         [CoordinatedGraphics] Clear UpdateAtlases for each tests
