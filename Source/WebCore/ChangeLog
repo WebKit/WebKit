@@ -1,3 +1,18 @@
+2017-05-22  Chris Dumez  <cdumez@apple.com>
+
+        ASSERTION FAILED: tokens.find(item) == notFound in WebCore::DOMTokenList::replace
+        https://bugs.webkit.org/show_bug.cgi?id=172473
+
+        Reviewed by Ryosuke Niwa.
+
+        Fix bad assertion in DOMTokenList::replace(). If item == replacement, then the
+        assertion was wrong.
+
+        No new tests, unskipped existing test.
+
+        * html/DOMTokenList.cpp:
+        (WebCore::DOMTokenList::replace):
+
 2017-05-22  Youenn Fablet  <youenn@apple.com>
 
         Remove AVAudioCaptureSource

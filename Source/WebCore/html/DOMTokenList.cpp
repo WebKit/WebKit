@@ -179,7 +179,7 @@ ExceptionOr<void> DOMTokenList::replace(const AtomicString& item, const AtomicSt
 
     tokens[index] = replacement;
     tokens.removeFirstMatching(matchesItemOrReplacement, index + 1);
-    ASSERT(tokens.find(item) == notFound);
+    ASSERT(item == replacement || tokens.find(item) == notFound);
     ASSERT(tokens.reverseFind(replacement) == index);
 
     updateAssociatedAttributeFromTokens();

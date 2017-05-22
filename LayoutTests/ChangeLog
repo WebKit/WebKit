@@ -1,3 +1,13 @@
+2017-05-22  Chris Dumez  <cdumez@apple.com>
+
+        ASSERTION FAILED: tokens.find(item) == notFound in WebCore::DOMTokenList::replace
+        https://bugs.webkit.org/show_bug.cgi?id=172473
+
+        Reviewed by Ryosuke Niwa.
+
+        * TestExpectations:
+        Unskip test.
+
 2017-05-22  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark http/tests/loading/resourceLoadStatistics/grandfathering.html as flaky.

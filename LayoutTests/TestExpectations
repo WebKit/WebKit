@@ -805,7 +805,6 @@ imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/hist
 
 [ Debug ] imported/w3c/web-platform-tests/html/semantics/forms/form-control-infrastructure/form_attribute.html [ Skip ]
 [ Debug ] imported/w3c/web-platform-tests/html/semantics/forms/form-control-infrastructure/form_owner_and_table_2.html [ Skip ]
-[ Debug ] imported/w3c/web-platform-tests/dom/nodes/Element-classlist.html [ Failure ]
 
 # FIXME: The following failures need individual bugs.
 webkit.org/b/148805 imported/w3c/css/css-multicol-1/multicol-inherit-003.xht [ ImageOnlyFailure ]
