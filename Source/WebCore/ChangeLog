@@ -1,3 +1,28 @@
+2017-05-22  Youenn Fablet  <youenn@apple.com>
+
+        Remove AVAudioCaptureSource
+        https://bugs.webkit.org/show_bug.cgi?id=172360
+
+        Reviewed by Sam Weinig.
+
+        No change of behavior, this class is no longer used by default as it does not support echo cancellation.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/Settings.cpp:
+        (WebCore::Settings::setMediaCaptureRequiresSecureConnection):
+        (WebCore::Settings::useAVFoundationAudioCapture): Deleted.
+        (WebCore::Settings::setUseAVFoundationAudioCapture): Deleted.
+        * page/Settings.h:
+        * platform/mediastream/mac/AVAudioCaptureSource.h: Removed.
+        * platform/mediastream/mac/AVAudioCaptureSource.mm: Removed.
+        * platform/mediastream/mac/AVCaptureDeviceManager.h:
+        * platform/mediastream/mac/AVCaptureDeviceManager.mm:
+        * platform/mediastream/mac/RealtimeMediaSourceCenterMac.cpp:
+        (WebCore::RealtimeMediaSourceCenterMac::defaultAudioFactory):
+        (WebCore::RealtimeMediaSourceCenterMac::defaultAudioCaptureDeviceManager):
+        (WebCore::RealtimeMediaSourceCenterMac::setUseAVFoundationAudioCapture): Deleted.
+        * platform/mediastream/mac/RealtimeMediaSourceCenterMac.h:
+
 2017-05-22  Brian Burg  <bburg@apple.com>
 
         Web Inspector: webkit reload policy should match default behavior

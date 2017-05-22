@@ -98,7 +98,6 @@ bool Settings::gMockScrollAnimatorEnabled = false;
 #if ENABLE(MEDIA_STREAM)
 bool Settings::gMockCaptureDevicesEnabled = false;
 bool Settings::gMediaCaptureRequiresSecureConnection = true;
-bool Settings::gUseAVFoundationAudioCapture = false;
 #endif
 
 #if PLATFORM(WIN)
@@ -619,19 +618,6 @@ bool Settings::mediaCaptureRequiresSecureConnection() const
 void Settings::setMediaCaptureRequiresSecureConnection(bool mediaCaptureRequiresSecureConnection)
 {
     gMediaCaptureRequiresSecureConnection = mediaCaptureRequiresSecureConnection;
-}
-
-bool Settings::useAVFoundationAudioCapture()
-{
-    return gUseAVFoundationAudioCapture;
-}
-
-void Settings::setUseAVFoundationAudioCapture(bool useAVFoundationAudioCapture)
-{
-    gUseAVFoundationAudioCapture = useAVFoundationAudioCapture;
-#if USE(AVFOUNDATION)
-    RealtimeMediaSourceCenterMac::singleton().setUseAVFoundationAudioCapture(useAVFoundationAudioCapture);
-#endif
 }
 #endif
 

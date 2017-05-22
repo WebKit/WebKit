@@ -1611,16 +1611,6 @@ bool WKPreferencesGetMediaCaptureRequiresSecureConnection(WKPreferencesRef prefe
     return toImpl(preferencesRef)->mediaCaptureRequiresSecureConnection();
 }
 
-void WKPreferencesSetUseAVFoundationAudioCapture(WKPreferencesRef preferencesRef, bool enabled)
-{
-    toImpl(preferencesRef)->setUseAVFoundationAudioCapture(enabled);
-}
-
-bool WKPreferencesGetUseAVFoundationAudioCapture(WKPreferencesRef preferencesRef)
-{
-    return toImpl(preferencesRef)->useAVFoundationAudioCapture();
-}
-
 void WKPreferencesSetFetchAPIEnabled(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setFetchAPIEnabled(flag);

@@ -44,7 +44,6 @@ class RealtimeMediaSourceCenterMac final : public RealtimeMediaSourceCenter {
 public:
     WEBCORE_EXPORT static RealtimeMediaSourceCenterMac& singleton();
 
-    WEBCORE_EXPORT void setUseAVFoundationAudioCapture(bool enabled);
 private:
     friend class NeverDestroyed<RealtimeMediaSourceCenterMac>;
     RealtimeMediaSourceCenterMac();
@@ -55,8 +54,6 @@ private:
 
     CaptureDeviceManager& defaultAudioCaptureDeviceManager() final;
     CaptureDeviceManager& defaultVideoCaptureDeviceManager() final;
-
-    bool m_useAVFoundationAudioCapture { false };
 };
 
 } // namespace WebCore

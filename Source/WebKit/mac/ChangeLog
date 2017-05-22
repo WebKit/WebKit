@@ -1,3 +1,21 @@
+2017-05-22  Youenn Fablet  <youenn@apple.com>
+
+        Remove AVAudioCaptureSource
+        https://bugs.webkit.org/show_bug.cgi?id=172360
+
+        Reviewed by Sam Weinig.
+
+        Removing the handling of AVAudio/CoreAudio capture source dynamic switch.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences useAVFoundationAudioCapture]): Deleted.
+        (-[WebPreferences setUseAVFoundationAudioCapture:]): Deleted.
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
 2017-05-22  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Support callbacks with arbitrary return types

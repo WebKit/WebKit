@@ -310,9 +310,6 @@ public:
 
     bool mediaCaptureRequiresSecureConnection() const;
     WEBCORE_EXPORT static void setMediaCaptureRequiresSecureConnection(bool);
-
-    static bool useAVFoundationAudioCapture();
-    WEBCORE_EXPORT static void setUseAVFoundationAudioCapture(bool);
 #endif
 
 #if ENABLE(APPLE_PAY)
@@ -418,7 +415,6 @@ private:
     String m_mediaDeviceIdentifierStorageDirectory;
     static bool gMockCaptureDevicesEnabled;
     static bool gMediaCaptureRequiresSecureConnection;
-    static bool gUseAVFoundationAudioCapture;
 #endif
 
 #if ENABLE(APPLE_PAY)

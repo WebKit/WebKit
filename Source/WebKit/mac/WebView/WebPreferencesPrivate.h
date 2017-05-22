@@ -514,9 +514,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (void)setMediaCaptureRequiresSecureConnection:(BOOL)flag;
 - (BOOL)mediaCaptureRequiresSecureConnection;
 
-- (void)setUseAVFoundationAudioCapture:(BOOL)flag;
-- (BOOL)useAVFoundationAudioCapture;
-
 - (void)setShadowDOMEnabled:(BOOL)flag;
 - (BOOL)shadowDOMEnabled;
 

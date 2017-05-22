@@ -33,7 +33,6 @@
 #if ENABLE(MEDIA_STREAM)
 #include "RealtimeMediaSourceCenterMac.h"
 
-#include "AVAudioCaptureSource.h"
 #include "AVAudioSessionCaptureDeviceManager.h"
 #include "AVCaptureDeviceManager.h"
 #include "AVVideoCaptureSource.h"
@@ -44,11 +43,6 @@
 #include <wtf/MainThread.h>
 
 namespace WebCore {
-
-void RealtimeMediaSourceCenterMac::setUseAVFoundationAudioCapture(bool enabled)
-{
-    m_useAVFoundationAudioCapture = enabled;
-}
 
 RealtimeMediaSourceCenterMac& RealtimeMediaSourceCenterMac::singleton()
 {
@@ -77,7 +71,7 @@ RealtimeMediaSourceCenterMac::~RealtimeMediaSourceCenterMac()
 
 RealtimeMediaSource::AudioCaptureFactory& RealtimeMediaSourceCenterMac::defaultAudioFactory()
 {
-    return m_useAVFoundationAudioCapture ? AVAudioCaptureSource::factory() : CoreAudioCaptureSource::factory();
+    return CoreAudioCaptureSource::factory();
 }
 
 RealtimeMediaSource::VideoCaptureFactory& RealtimeMediaSourceCenterMac::defaultVideoFactory()
@@ -87,8 +81,6 @@ RealtimeMediaSource::VideoCaptureFactory& RealtimeMediaSourceCenterMac::defaultV
 
 CaptureDeviceManager& RealtimeMediaSourceCenterMac::defaultAudioCaptureDeviceManager()
 {
-    if (m_useAVFoundationAudioCapture)
-        return AVCaptureDeviceManager::singleton();
 #if PLATFORM(MAC)
     return CoreAudioCaptureDeviceManager::singleton();
 #else
