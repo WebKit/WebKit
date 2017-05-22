@@ -512,6 +512,8 @@ static void* multiVMThreadMain(void* okPtr)
 
 static void testObjectiveCAPIMain()
 {
+    runJSExportTests();
+
     @autoreleasepool {
         JSVirtualMachine* vm = [[JSVirtualMachine alloc] init];
         JSContext* context = [[JSContext alloc] initWithVirtualMachine:vm];
@@ -1468,7 +1470,7 @@ static void testObjectiveCAPIMain()
 
         checkResult(@"Ran code in five concurrent VMs that GC'd", ok);
     }
-    
+
     currentThisInsideBlockGetterTest();
     runDateTests();
     runJSExportTests();
@@ -1506,6 +1508,7 @@ static void checkNegativeNSIntegers()
     
     checkResult(@"Negative number maintained its original value", [[result toString] isEqualToString:@"-1"]);
 }
+
 
 void testObjectiveCAPI()
 {

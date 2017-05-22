@@ -1,3 +1,53 @@
+2017-05-22  Keith Miller  <keith_miller@apple.com>
+
+        [Cocoa] An exported Objective C class’s prototype and constructor don't persist across JSContext deallocation
+        https://bugs.webkit.org/show_bug.cgi?id=167708
+
+        Reviewed by Geoffrey Garen.
+
+        This patch moves the Objective C wrapper map to the global object. In order to make this work the JSWrapperMap
+        class no longer holds a reference to the JSContext. Instead, the context must be provided when getting a wrapper.
+
+        Also, this patch fixes a "bug" where we would observe changes to the Object property on the global object when
+        creating a wrapper for NSObject.
+
+        * API/APICast.h:
+        (toJSGlobalObject):
+        * API/JSContext.mm:
+        (-[JSContext ensureWrapperMap]):
+        (-[JSContext initWithVirtualMachine:]):
+        (-[JSContext dealloc]):
+        (-[JSContext wrapperMap]):
+        (-[JSContext initWithGlobalContextRef:]):
+        (-[JSContext wrapperForObjCObject:]):
+        (-[JSContext wrapperForJSObject:]):
+        * API/JSWrapperMap.h:
+        * API/JSWrapperMap.mm:
+        (-[JSObjCClassInfo initForClass:]):
+        (-[JSObjCClassInfo allocateConstructorAndPrototypeInContext:]):
+        (-[JSObjCClassInfo wrapperForObject:inContext:]):
+        (-[JSObjCClassInfo constructorInContext:]):
+        (-[JSObjCClassInfo prototypeInContext:]):
+        (-[JSWrapperMap initWithGlobalContextRef:]):
+        (-[JSWrapperMap classInfoForClass:]):
+        (-[JSWrapperMap jsWrapperForObject:inContext:]):
+        (-[JSWrapperMap objcWrapperForJSValueRef:inContext:]):
+        (-[JSObjCClassInfo initWithContext:forClass:]): Deleted.
+        (-[JSObjCClassInfo allocateConstructorAndPrototype]): Deleted.
+        (-[JSObjCClassInfo wrapperForObject:]): Deleted.
+        (-[JSObjCClassInfo constructor]): Deleted.
+        (-[JSObjCClassInfo prototype]): Deleted.
+        (-[JSWrapperMap initWithContext:]): Deleted.
+        (-[JSWrapperMap jsWrapperForObject:]): Deleted.
+        (-[JSWrapperMap objcWrapperForJSValueRef:]): Deleted.
+        * API/tests/JSExportTests.mm:
+        (wrapperLifetimeIsTiedToGlobalObject):
+        (runJSExportTests):
+        * API/tests/testapi.mm:
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::wrapperMap):
+        (JSC::JSGlobalObject::setWrapperMap):
+
 2017-05-22  Filip Pizlo  <fpizlo@apple.com>
 
         FTL stack overflow handling should not assume that B3 never selects callee-saves in the prologue

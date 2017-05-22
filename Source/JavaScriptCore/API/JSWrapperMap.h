@@ -31,11 +31,11 @@
 
 @interface JSWrapperMap : NSObject
 
-- (id)initWithContext:(JSContext *)context;
+- (id)initWithGlobalContextRef:(JSGlobalContextRef)context;
 
-- (JSValue *)jsWrapperForObject:(id)object;
+- (JSValue *)jsWrapperForObject:(id)object inContext:(JSContext *)context;
 
-- (JSValue *)objcWrapperForJSValueRef:(JSValueRef)value;
+- (JSValue *)objcWrapperForJSValueRef:(JSValueRef)value inContext:(JSContext *)context;
 
 @end
 

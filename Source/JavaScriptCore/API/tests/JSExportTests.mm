@@ -125,6 +125,46 @@ extern "C" void checkResult(NSString *description, bool passed);
 }
 @end
 
+@protocol AJSExport <JSExport>
+- (instancetype)init;
+@end
+
+@interface A : NSObject <AJSExport>
+@end
+
+@implementation A
+@end
+
+static void wrapperLifetimeIsTiedToGlobalObject()
+{
+    JSGlobalContextRef contextRef;
+    @autoreleasepool {
+        JSContext *context = [[JSContext alloc] init];
+        contextRef = JSGlobalContextRetain(context.JSGlobalContextRef);
+        context[@"A"] = A.class;
+        checkResult(@"Initial wrapper's constructor is itself", [[context evaluateScript:@"new A().constructor === A"] toBool]);
+    }
+
+    @autoreleasepool {
+        JSContext *context = [JSContext contextWithJSGlobalContextRef:contextRef];
+        checkResult(@"New context's wrapper's constructor is itself", [[context evaluateScript:@"new A().constructor === A"] toBool]);
+    }
+
+    JSGlobalContextRelease(contextRef);
+}
+
+static void wrapperForNSObjectisObject()
+{
+    @autoreleasepool {
+        JSContext *context = [[JSContext alloc] init];
+        context[@"Object"] = [[NSNull alloc] init];
+        context.exception = nil;
+
+        context[@"A"] = NSObject.class;
+        NSLog(@"here: %@", [context exception]);
+    }
+}
+
 void runJSExportTests()
 {
     @autoreleasepool {
@@ -132,6 +172,8 @@ void runJSExportTests()
         [JSExportTests exportInstanceMethodWithClassProtocolTest];
         [JSExportTests exportDynamicallyGeneratedProtocolTest];
     }
+    wrapperLifetimeIsTiedToGlobalObject();
+    wrapperForNSObjectisObject();
 }
 
 #endif // JSC_OBJC_API_ENABLED

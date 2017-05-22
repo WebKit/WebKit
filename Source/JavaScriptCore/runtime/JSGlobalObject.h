@@ -45,9 +45,11 @@
 #include <JavaScriptCore/JSBase.h>
 #include <array>
 #include <wtf/HashSet.h>
+#include <wtf/RetainPtr.h>
 
 struct OpaqueJSClass;
 struct OpaqueJSClassContextData;
+OBJC_CLASS JSWrapperMap;
 
 namespace Inspector {
 class JSGlobalObjectInspectorController;
@@ -829,6 +831,11 @@ public:
 
     bool needsSiteSpecificQuirks() const { return m_needsSiteSpecificQuirks; }
 
+#if JSC_OBJC_API_ENABLED
+    JSWrapperMap* wrapperMap() const { return m_wrapperMap.get(); }
+    void setWrapperMap(JSWrapperMap* map) { m_wrapperMap = map; }
+#endif
+
 protected:
     struct GlobalPropertyInfo {
         GlobalPropertyInfo(const Identifier& i, JSValue v, unsigned a)
@@ -858,6 +865,9 @@ private:
     JS_EXPORT_PRIVATE static void clearRareData(JSCell*);
 
     bool m_needsSiteSpecificQuirks { false };
+#if JSC_OBJC_API_ENABLED
+    RetainPtr<JSWrapperMap> m_wrapperMap;
+#endif
 };
 
 JSGlobalObject* asGlobalObject(JSValue);

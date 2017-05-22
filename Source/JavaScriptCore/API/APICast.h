@@ -60,6 +60,11 @@ inline JSC::ExecState* toJS(JSGlobalContextRef c)
     return reinterpret_cast<JSC::ExecState*>(c);
 }
 
+inline JSC::JSGlobalObject* toJSGlobalObject(JSGlobalContextRef context)
+{
+    return toJS(context)->lexicalGlobalObject();
+}
+
 inline JSC::JSValue toJS(JSC::ExecState* exec, JSValueRef v)
 {
     ASSERT_UNUSED(exec, exec);

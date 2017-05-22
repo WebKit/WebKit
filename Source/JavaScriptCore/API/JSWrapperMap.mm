@@ -35,6 +35,7 @@
 #import "JSWrapperMap.h"
 #import "ObjCCallbackFunction.h"
 #import "ObjcRuntimeExtras.h"
+#import "ObjectConstructor.h"
 #import "WeakGCMap.h"
 #import "WeakGCMapInlines.h"
 #import <wtf/Vector.h>
@@ -363,7 +364,6 @@ static void copyPrototypeProperties(JSContext *context, Class objcClass, Protoco
 }
 
 @interface JSObjCClassInfo : NSObject {
-    JSContext *m_context;
     Class m_class;
     bool m_block;
     JSClassRef m_classRef;
@@ -371,23 +371,22 @@ static void copyPrototypeProperties(JSContext *context, Class objcClass, Protoco
     JSC::Weak<JSC::JSObject> m_constructor;
 }
 
-- (id)initWithContext:(JSContext *)context forClass:(Class)cls;
-- (JSC::JSObject *)wrapperForObject:(id)object;
-- (JSC::JSObject *)constructor;
-- (JSC::JSObject *)prototype;
+- (id)initForClass:(Class)cls;
+- (JSC::JSObject *)wrapperForObject:(id)object inContext:(JSContext *)context;
+- (JSC::JSObject *)constructorInContext:(JSContext *)context;
+- (JSC::JSObject *)prototypeInContext:(JSContext *)context;
 
 @end
 
 @implementation JSObjCClassInfo
 
-- (id)initWithContext:(JSContext *)context forClass:(Class)cls
+- (id)initForClass:(Class)cls
 {
     self = [super init];
     if (!self)
         return nil;
 
     const char* className = class_getName(cls);
-    m_context = context;
     m_class = cls;
     m_block = [cls isSubclassOfClass:getNSBlockClass()];
     JSClassDefinition definition;
@@ -458,9 +457,9 @@ static JSC::JSObject* allocateConstructorForCustomClass(JSContext *context, cons
 
 typedef std::pair<JSC::JSObject*, JSC::JSObject*> ConstructorPrototypePair;
 
-- (ConstructorPrototypePair)allocateConstructorAndPrototype
+- (ConstructorPrototypePair)allocateConstructorAndPrototypeInContext:(JSContext *)context
 {
-    JSObjCClassInfo* superClassInfo = [m_context.wrapperMap classInfoForClass:class_getSuperclass(m_class)];
+    JSObjCClassInfo* superClassInfo = [context.wrapperMap classInfoForClass:class_getSuperclass(m_class)];
 
     ASSERT(!m_constructor || !m_prototype);
     ASSERT((m_class == [NSObject class]) == !superClassInfo);
@@ -469,39 +468,36 @@ typedef std::pair<JSC::JSObject*, JSC::JSObject*> ConstructorPrototypePair;
     JSC::JSObject* jsConstructor = m_constructor.get();
 
     if (!superClassInfo) {
-        JSContextRef cContext = [m_context JSGlobalContextRef];
-        JSValue *constructor = m_context[@"Object"];
+        JSC::JSGlobalObject* globalObject = toJSGlobalObject([context JSGlobalContextRef]);
         if (!jsConstructor)
-            jsConstructor = toJS(JSValueToObject(cContext, valueInternalValue(constructor), 0));
+            jsConstructor = globalObject->objectConstructor();
 
-        if (!jsPrototype) {
-            JSValue *prototype = constructor[@"prototype"];
-            jsPrototype = toJS(JSValueToObject(cContext, valueInternalValue(prototype), 0));
-        }
+        if (!jsPrototype)
+            jsPrototype = globalObject->objectPrototype();
     } else {
         const char* className = class_getName(m_class);
 
         // Create or grab the prototype/constructor pair.
         if (!jsPrototype)
-            jsPrototype = objectWithCustomBrand(m_context, [NSString stringWithFormat:@"%sPrototype", className]);
+            jsPrototype = objectWithCustomBrand(context, [NSString stringWithFormat:@"%sPrototype", className]);
 
         if (!jsConstructor)
-            jsConstructor = allocateConstructorForCustomClass(m_context, className, m_class);
+            jsConstructor = allocateConstructorForCustomClass(context, className, m_class);
 
-        JSValue* prototype = [JSValue valueWithJSValueRef:toRef(jsPrototype) inContext:m_context];
-        JSValue* constructor = [JSValue valueWithJSValueRef:toRef(jsConstructor) inContext:m_context];
+        JSValue* prototype = [JSValue valueWithJSValueRef:toRef(jsPrototype) inContext:context];
+        JSValue* constructor = [JSValue valueWithJSValueRef:toRef(jsConstructor) inContext:context];
         putNonEnumerable(prototype, @"constructor", constructor);
         putNonEnumerable(constructor, @"prototype", prototype);
 
         Protocol *exportProtocol = getJSExportProtocol();
         forEachProtocolImplementingProtocol(m_class, exportProtocol, ^(Protocol *protocol){
-            copyPrototypeProperties(m_context, m_class, protocol, prototype);
-            copyMethodsToObject(m_context, m_class, protocol, NO, constructor);
+            copyPrototypeProperties(context, m_class, protocol, prototype);
+            copyMethodsToObject(context, m_class, protocol, NO, constructor);
         });
 
         // Set [Prototype].
-        JSC::JSObject* superClassPrototype = [superClassInfo prototype];
-        JSObjectSetPrototype([m_context JSGlobalContextRef], toRef(jsPrototype), toRef(superClassPrototype));
+        JSC::JSObject* superClassPrototype = [superClassInfo prototypeInContext:context];
+        JSObjectSetPrototype([context JSGlobalContextRef], toRef(jsPrototype), toRef(superClassPrototype));
     }
 
     m_prototype = jsPrototype;
@@ -509,41 +505,41 @@ typedef std::pair<JSC::JSObject*, JSC::JSObject*> ConstructorPrototypePair;
     return ConstructorPrototypePair(jsConstructor, jsPrototype);
 }
 
-- (JSC::JSObject*)wrapperForObject:(id)object
+- (JSC::JSObject*)wrapperForObject:(id)object inContext:(JSContext *)context
 {
     ASSERT([object isKindOfClass:m_class]);
     ASSERT(m_block == [object isKindOfClass:getNSBlockClass()]);
     if (m_block) {
-        if (JSObjectRef method = objCCallbackFunctionForBlock(m_context, object)) {
-            JSValue *constructor = [JSValue valueWithJSValueRef:method inContext:m_context];
-            JSValue *prototype = [JSValue valueWithNewObjectInContext:m_context];
+        if (JSObjectRef method = objCCallbackFunctionForBlock(context, object)) {
+            JSValue *constructor = [JSValue valueWithJSValueRef:method inContext:context];
+            JSValue *prototype = [JSValue valueWithNewObjectInContext:context];
             putNonEnumerable(constructor, @"prototype", prototype);
             putNonEnumerable(prototype, @"constructor", constructor);
             return toJS(method);
         }
     }
 
-    JSC::JSObject* prototype = [self prototype];
+    JSC::JSObject* prototype = [self prototypeInContext:context];
 
-    JSC::JSObject* wrapper = makeWrapper([m_context JSGlobalContextRef], m_classRef, object);
-    JSObjectSetPrototype([m_context JSGlobalContextRef], toRef(wrapper), toRef(prototype));
+    JSC::JSObject* wrapper = makeWrapper([context JSGlobalContextRef], m_classRef, object);
+    JSObjectSetPrototype([context JSGlobalContextRef], toRef(wrapper), toRef(prototype));
     return wrapper;
 }
 
-- (JSC::JSObject*)constructor
+- (JSC::JSObject*)constructorInContext:(JSContext *)context
 {
     JSC::JSObject* constructor = m_constructor.get();
     if (!constructor)
-        constructor = [self allocateConstructorAndPrototype].first;
+        constructor = [self allocateConstructorAndPrototypeInContext:context].first;
     ASSERT(!!constructor);
     return constructor;
 }
 
-- (JSC::JSObject*)prototype
+- (JSC::JSObject*)prototypeInContext:(JSContext *)context
 {
     JSC::JSObject* prototype = m_prototype.get();
     if (!prototype)
-        prototype = [self allocateConstructorAndPrototype].second;
+        prototype = [self allocateConstructorAndPrototypeInContext:context].second;
     ASSERT(!!prototype);
     return prototype;
 }
@@ -551,13 +547,12 @@ typedef std::pair<JSC::JSObject*, JSC::JSObject*> ConstructorPrototypePair;
 @end
 
 @implementation JSWrapperMap {
-    JSContext *m_context;
     NSMutableDictionary *m_classMap;
     std::unique_ptr<JSC::WeakGCMap<id, JSC::JSObject>> m_cachedJSWrappers;
     NSMapTable *m_cachedObjCWrappers;
 }
 
-- (id)initWithContext:(JSContext *)context
+- (id)initWithGlobalContextRef:(JSGlobalContextRef)context
 {
     self = [super init];
     if (!self)
@@ -567,9 +562,10 @@ typedef std::pair<JSC::JSObject*, JSC::JSObject*> ConstructorPrototypePair;
     NSPointerFunctionsOptions valueOptions = NSPointerFunctionsWeakMemory | NSPointerFunctionsObjectPersonality;
     m_cachedObjCWrappers = [[NSMapTable alloc] initWithKeyOptions:keyOptions valueOptions:valueOptions capacity:0];
 
-    m_cachedJSWrappers = std::make_unique<JSC::WeakGCMap<id, JSC::JSObject>>(toJS([context JSGlobalContextRef])->vm());
+    m_cachedJSWrappers = std::make_unique<JSC::WeakGCMap<id, JSC::JSObject>>(toJS(context)->vm());
 
-    m_context = context;
+    ASSERT(!toJSGlobalObject(context)->wrapperMap());
+    toJSGlobalObject(context)->setWrapperMap(self);
     m_classMap = [[NSMutableDictionary alloc] init];
     return self;
 }
@@ -594,20 +590,21 @@ typedef std::pair<JSC::JSObject*, JSC::JSObject*> ConstructorPrototypePair;
     if ('_' == *class_getName(cls))
         return m_classMap[cls] = [self classInfoForClass:class_getSuperclass(cls)];
 
-    return m_classMap[cls] = [[[JSObjCClassInfo alloc] initWithContext:m_context forClass:cls] autorelease];
+    return m_classMap[cls] = [[[JSObjCClassInfo alloc] initForClass:cls] autorelease];
 }
 
-- (JSValue *)jsWrapperForObject:(id)object
+- (JSValue *)jsWrapperForObject:(id)object inContext:(JSContext *)context
 {
+    ASSERT(toJSGlobalObject([context JSGlobalContextRef])->wrapperMap() == self);
     JSC::JSObject* jsWrapper = m_cachedJSWrappers->get(object);
     if (jsWrapper)
-        return [JSValue valueWithJSValueRef:toRef(jsWrapper) inContext:m_context];
+        return [JSValue valueWithJSValueRef:toRef(jsWrapper) inContext:context];
 
     if (class_isMetaClass(object_getClass(object)))
-        jsWrapper = [[self classInfoForClass:(Class)object] constructor];
+        jsWrapper = [[self classInfoForClass:(Class)object] constructorInContext:context];
     else {
         JSObjCClassInfo* classInfo = [self classInfoForClass:[object class]];
-        jsWrapper = [classInfo wrapperForObject:object];
+        jsWrapper = [classInfo wrapperForObject:object inContext:context];
     }
 
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=105891
@@ -616,14 +613,15 @@ typedef std::pair<JSC::JSObject*, JSC::JSObject*> ConstructorPrototypePair;
     // (2) A long lived object may rack up many JSValues. When the contexts are released these will unprotect the associated JavaScript objects,
     //     but still, would probably nicer if we made it so that only one associated object was required, broadcasting object dealloc.
     m_cachedJSWrappers->set(object, jsWrapper);
-    return [JSValue valueWithJSValueRef:toRef(jsWrapper) inContext:m_context];
+    return [JSValue valueWithJSValueRef:toRef(jsWrapper) inContext:context];
 }
 
-- (JSValue *)objcWrapperForJSValueRef:(JSValueRef)value
+- (JSValue *)objcWrapperForJSValueRef:(JSValueRef)value inContext:context
 {
+    ASSERT(toJSGlobalObject([context JSGlobalContextRef])->wrapperMap() == self);
     JSValue *wrapper = static_cast<JSValue *>(NSMapGet(m_cachedObjCWrappers, value));
     if (!wrapper) {
-        wrapper = [[[JSValue alloc] initWithValue:value inContext:m_context] autorelease];
+        wrapper = [[[JSValue alloc] initWithValue:value inContext:context] autorelease];
         NSMapInsert(m_cachedObjCWrappers, value, wrapper);
     }
     return wrapper;
