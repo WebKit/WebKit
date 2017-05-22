@@ -1,3 +1,16 @@
+2017-05-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Add more input validation in Connection::readBytesFromSocket()
+        https://bugs.webkit.org/show_bug.cgi?id=171871
+
+        Reviewed by Michael Catanzaro.
+
+        Check the control message length is in the limits. Credit to Nathan Crandall for reporting this issue and
+        submitting an equivalent fix.
+
+        * Platform/IPC/unix/ConnectionUnix.cpp:
+        (IPC::readBytesFromSocket):
+
 2017-05-20  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         -Wreturn-type warning triggered by WKNotification.cpp:77
