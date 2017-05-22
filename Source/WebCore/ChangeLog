@@ -1,3 +1,18 @@
+2017-05-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Enable the woff2-variations @font-face format identifier
+        https://bugs.webkit.org/show_bug.cgi?id=172425
+
+        Reviewed by Andreas Kling.
+
+        We support woff2, and woff-variations, but not woff2-variations.
+        https://github.com/w3c/csswg-drafts/commit/5c914a8a0382734bd420090a89bc19b32e6c302d
+
+        Test: fast/text/variations/font-face-format-woff2.html
+
+        * platform/graphics/mac/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::supportsFormat):
+
 2017-05-22  Antoine Quint  <graouts@apple.com>
 
         [mac-wk1] LayoutTest media/modern-media-controls/airplay-button/airplay-button.html is a flaky timeout

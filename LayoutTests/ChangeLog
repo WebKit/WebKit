@@ -1,3 +1,14 @@
+2017-05-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Enable the woff2-variations @font-face format identifier
+        https://bugs.webkit.org/show_bug.cgi?id=172425
+
+        Reviewed by Andreas Kling.
+
+        * fast/text/variations/font-face-format-woff2-expected.html: Added.
+        * fast/text/variations/font-face-format-woff2.html: Added.
+        * platform/mac/TestExpectations:
+
 2017-05-22  Simon Fraser  <simon.fraser@apple.com>
 
         Support transform-box to switch sizing box in SVG
