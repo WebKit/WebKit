@@ -101,30 +101,6 @@
                         r"|Source/WebCore/dom/NamedNodeMap\.(cpp|h|idl)"
                         r"|Source/WebCore/dom/Element\.(cpp|h|idl)",
         },
-        "EFL": {
-            "filename": r"Source/WebCore/platform/efl/"
-                        r"|Source/WTF/wtf/efl/"
-                        r"|LayoutTests/platform/efl/",
-        },
-        "EFLWebKit2PublicAPI": {
-            "filename": r"Source/WebKit2/WebProcess/InjectedBundle/API/efl/"
-                        r"|Source/WebKit2/UIProcess/API/efl/"
-                        r"|Source/WebKit2/UIProcess/API/C/efl/",
-        },
-        "EFLWebKit2PlatformSpecific": {
-            "filename": r"Source/WebKit2/.*\.(cmake|txt)"
-                        r"|Source/WebKit2/Platform/efl/"
-                        r"|Source/WebKit2/efl/"
-                        r"|Source/WebKit2/Shared/API/c/efl/"
-                        r"|Source/WebKit2/Shared/efl/"
-                        r"|Source/WebKit2/WebProcess/InjectedBundle/efl/"
-                        r"|Source/WebKit2/WebProcess/WebPage/efl/"
-                        r"|Source/WebKit2/WebProcess/efl/"
-                        r"|Source/WebKit2/WebProcess/Downloads/efl/"
-                        r"|Source/WebKit2/WebProcess/WebCoreSupport/efl/"
-                        r"|Source/WebKit2/UIProcess/efl/"
-                        r"|Source/WebKit2/UIProcess/Launcher/efl/",
-        },
         "CMake": {
             "filename": r".*CMakeLists\w*\.txt"
                         r"|.*\w+\.cmake"
@@ -373,9 +349,6 @@
         "cURLNetwork": [ "galpeter@inf.u-szeged.hu" ],
         "DOM": [ "esprehn+autocc@chromium.org", "kangil.han@samsung.com", "cdumez@apple.com", "dbates@webkit.org" ],
         "DOMAttributes": [ "cmarcelo@webkit.org", "cdumez@apple.com" ],
-        "EFL": [ "gyuyoung.kim@webkit.org", "ryuan.choi@gmail.com", "sergio.correia@openbossa.org" ],
-        "EFLWebKit2PlatformSpecific": [ "gyuyoung.kim@webkit.org", "ryuan.choi@gmail.com", "sergio.correia@openbossa.org" ],
-        "EFLWebKit2PublicAPI": [ "gyuyoung.kim@webkit.org", "ryuan.choi@gmail.com", "sergio.correia@openbossa.org" ],
         "Editing": [ "mifenton@rim.com" ],
         "Filters": [ "dino@apple.com", "kondapallykalyan@gmail.com" ],
         "Forms": [ "tkent@chromium.org", "mifenton@rim.com", "cdumez@apple.com", "dbates@webkit.org" ],

@@ -170,7 +170,7 @@ def dirContainsdwo(directory):
 
 
 def archiveBuiltProduct(configuration, platform, fullPlatform):
-    assert platform in ('mac', 'win', 'gtk', 'efl', 'ios', 'wpe')
+    assert platform in ('mac', 'win', 'gtk', 'ios', 'wpe')
 
     if platform == 'ios':
         combinedDirectory = os.path.join(_topLevelBuildDirectory, 'combined-mac-and-ios')
@@ -198,8 +198,8 @@ def archiveBuiltProduct(configuration, platform, fullPlatform):
 
         shutil.rmtree(thinDirectory)
 
-    elif platform == 'gtk' or platform == 'efl' or platform == 'wpe':
-        # On GTK+/EFL we don't need the intermediate step of creating a thinDirectory
+    elif platform == 'gtk' or platform == 'wpe':
+        # On GTK+/WPE we don't need the intermediate step of creating a thinDirectory
         # to be compressed in a ZIP file, because we can create the ZIP directly.
         # This is faster and requires less disk resources.
         neededDirectories = ['bin', 'lib']
@@ -232,7 +232,7 @@ def unzipArchive(directoryToExtractTo, configuration):
 
 
 def extractBuiltProduct(configuration, platform):
-    assert platform in ('mac', 'win', 'gtk', 'efl', 'ios', 'wpe')
+    assert platform in ('mac', 'win', 'gtk', 'ios', 'wpe')
 
     archiveFile = os.path.join(_topLevelBuildDirectory, configuration + '.zip')
 
@@ -241,7 +241,7 @@ def extractBuiltProduct(configuration, platform):
 
     if platform in ('mac', 'ios'):
         return unzipArchive(_topLevelBuildDirectory, configuration)
-    elif platform == 'win' or platform == 'gtk' or platform == 'efl' or platform == 'wpe':
+    elif platform == 'win' or platform == 'gtk' or platform == 'wpe':
         print 'Extracting', _configurationBuildDirectory
         return unzipArchive(_configurationBuildDirectory, configuration)
 

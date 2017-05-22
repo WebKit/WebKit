@@ -49,7 +49,6 @@ Usage: $programName [options]
   -h|--help             Show this help message
   --top-level           Show the top-level build directory
 
-  --efl                 Find the build directory for the EFL port
   --gtk                 Find the build directory for the GTK+ port
   --wincairo            Find the build directory for using Cairo (rather than CoreGraphics) on Windows
 

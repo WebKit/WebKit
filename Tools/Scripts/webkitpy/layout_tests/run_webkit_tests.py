@@ -104,11 +104,6 @@ def parse_args(args):
     option_group_definitions.append(("Configuration options", configuration_options()))
     option_group_definitions.append(("Printing Options", printing.print_options()))
 
-    option_group_definitions.append(("EFL-specific Options", [
-        optparse.make_option("--webprocess-cmd-prefix", type="string",
-            default=False, help="Prefix used when spawning the Web process (Debug mode only)"),
-    ]))
-
     option_group_definitions.append(("Feature Switches", [
         optparse.make_option("--complex-text", action="store_true", default=False,
             help="Use the complex text code path for all text (OS X and Windows only)"),
@@ -424,8 +419,8 @@ def _set_up_derived_options(port, options):
     if options.run_singly:
         options.verbose = True
 
-    # The GTK+ and EFL ports only support WebKit2 so they always use WKTR.
-    if options.platform in ["efl", "gtk", "wpe"]:
+    # The GTK+ and WPE ports only support WebKit2 so they always use WKTR.
+    if options.platform in ["gtk", "wpe"]:
         options.webkit_test_runner = True
 
 

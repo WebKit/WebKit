@@ -27,8 +27,6 @@ import sys
 jhbuild_revision = 'e58ee087e92789bd2151132cac926f31cc0102d8'
 
 def determine_platform():
-    if '--efl' in sys.argv:
-        return "efl";
     if '--gtk' in sys.argv:
         return "gtk";
     if '--wpe' in sys.argv:

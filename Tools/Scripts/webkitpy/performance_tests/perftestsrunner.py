@@ -69,8 +69,8 @@ class PerfTestsRunner(object):
         # Timeouts are controlled by the Python Driver, so DRT/WTR runs with no-timeout.
         self._options.additional_drt_flag.append('--no-timeout')
 
-        # The GTK+ and EFL ports only supports WebKit2, so they always use WKTR.
-        if self._port.name().startswith("gtk") or self._port.name().startswith("efl"):
+        # The GTK+ port only supports WebKit2, so it always uses WKTR.
+        if self._port.name().startswith("gtk"):
             self._options.webkit_test_runner = True
 
         self._host.initialize_scm()

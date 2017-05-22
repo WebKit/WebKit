@@ -1,3 +1,31 @@
+2017-05-22  Tomas Popela  <tpopela@redhat.com>
+
+        Remove some of the EFL port leftovers
+        https://bugs.webkit.org/show_bug.cgi?id=172440
+
+        Reviewed by Carlos Garcia Campos.
+
+        * BuildSlaveSupport/built-product-archive:
+        (archiveBuiltProduct):
+        (extractBuiltProduct):
+        * BuildSlaveSupport/test-result-archive:
+        (archiveTestResults):
+        * ImageDiff/PlatformEfl.cmake: Removed.
+        * Scripts/run-efl-tests: Removed.
+        * Scripts/webkit-build-directory:
+        * Scripts/webkitpy/common/config/contributionareas.py:
+        * Scripts/webkitpy/common/config/watchlist:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (parse_args):
+        (_set_up_derived_options):
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner.__init__):
+        * Scripts/webkitpy/style/checker.py:
+        * Scripts/webkitpy/style/checker_unittest.py:
+        (GlobalVariablesTest.test_path_rules_specifier):
+        * gtk/manifest.txt.in:
+        * jhbuild/jhbuild-wrapper:
+
 2017-05-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Do not include WPE files in GTK+ tarballs.

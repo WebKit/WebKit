@@ -171,23 +171,6 @@ _PATH_RULES_SPECIFIER = [
      ["-readability/parameter_name",
       "-whitespace/parens"]),
 
-    ([# The EFL APIs use EFL naming style, which includes
-      # both lower-cased and camel-cased, underscore-sparated
-      # values.
-      os.path.join('Source', 'WebKit2', 'UIProcess', 'API', 'efl'),
-      os.path.join('Source', 'WebKit2', 'WebProcess', 'InjectedBundle', 'API', 'efl')],
-     ["-readability/naming",
-      "-readability/parameter_name"]),
-    ([# MiniBrowser/efl are EFL simple application.
-      # They need to use efl coding style and they don't have config.h.
-      os.path.join('Tools', 'MiniBrowser', 'efl')],
-     ["-readability/naming",
-      "-readability/parameter_name",
-      "-runtime/ctype_function",
-      "-whitespace/declaration",
-      "-whitespace/indent",
-      "-build/include_order"]),
-
     # WebKit2 rules:
     # WebKit2 and certain directories have idiosyncracies.
     ([# NPAPI has function names with underscores.

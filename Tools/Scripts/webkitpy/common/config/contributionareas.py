@@ -92,7 +92,6 @@ contribution_areas = [
     _Area('DOM Storage', ['storage']),
     _Area('Drag and Drop', ['drag']),
     _Area('DumpRenderTree'),
-    _Area('EFL', ['efl']),
     _Area('Editing / Selection', ['editing']),
     _Area('Event Handling', ['event']),
     _Area('FastMalloc'),
@@ -136,7 +135,6 @@ contribution_areas = [
 # FIXME: 'Text Encoding'
 # FIXME: 'Text Layout'
     _Area('The Chromium Port', ['chromium']),
-    _Area('The EFLWebKit Port', ['efl']),
     _Area('The WebKitGTK+ Port', ['gtk']),
     _Area('The Haiku Port', ['haiku']),
     _Area('The QtWebKit Port', ['qt']),
