@@ -57,6 +57,9 @@ PASS rule.cssText is '100% { left: 20px; }'
 Try to find a rule that doesn't exist
 PASS Non-existent rule was not found
 
+Try to find a rule using a malformed key
+PASS rule is null
+
 Delete a rule
 PASS rules2.length is 2
 PASS rules2.item(0).type is window.CSSRule.KEYFRAME_RULE

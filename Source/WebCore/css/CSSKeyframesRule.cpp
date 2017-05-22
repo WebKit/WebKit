@@ -105,6 +105,9 @@ size_t StyleRuleKeyframes::findKeyframeIndex(const String& key) const
 
     auto keys = CSSParser::parseKeyframeKeyList(key);
 
+    if (!keys)
+        return notFound;
+
     for (size_t i = m_keyframes.size(); i--; ) {
         if (m_keyframes[i]->keys() == *keys)
             return i;

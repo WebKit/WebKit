@@ -1,3 +1,17 @@
+2017-05-22  Antti Koivisto  <antti@apple.com>
+
+        Crash in WebCore::StyleRuleKeyframes::findKeyframeIndex
+        https://bugs.webkit.org/show_bug.cgi?id=170756
+        <rdar://problem/31573157>
+
+        Reviewed by Andreas Kling.
+
+        Using a malformed key with CSSKeyframesRule.findRule crashes because
+        CSSParser::parseKeyframeKeyList returns null which is then dereferenced.
+
+        * css/CSSKeyframesRule.cpp:
+        (WebCore::StyleRuleKeyframes::findKeyframeIndex): Null test.
+
 2017-05-22  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Remove unused documentIsHandlingNonDefaultDrag plumbing for WebKit2

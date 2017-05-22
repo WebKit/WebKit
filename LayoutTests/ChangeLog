@@ -1,3 +1,16 @@
+2017-05-22  Antti Koivisto  <antti@apple.com>
+
+        Crash in WebCore::StyleRuleKeyframes::findKeyframeIndex
+        https://bugs.webkit.org/show_bug.cgi?id=170756
+        <rdar://problem/31573157>
+
+        Reviewed by Andreas Kling.
+
+        Expand the tests to cover the malformed key case.
+
+        * animations/keyframes-rule.html:
+        * animations/unprefixed-keyframes-rule.html:
+
 2017-05-22  youenn fablet  <youenn@apple.com>
 
         Resync web-platform-tests up to 8df7c9c215678328212f232ce0b5270c505a8563
