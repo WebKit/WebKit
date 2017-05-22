@@ -5,6 +5,7 @@ exclude CMakeLists.txt.user
 exclude Makefile
 exclude PlatformAppleWin.cmake
 exclude PlatformMac.cmake
+exclude PlatformWPE.cmake
 exclude PlatformWin.cmake
 exclude PlatformWinCairo.cmake
 exclude tags$
@@ -42,7 +43,7 @@ exclude \.xcconfig$
 exclude \.xcodeproj$
 
 # Exclude directories from other ports
-exclude .*\/(Configurations|mac|ios|cf|cg|cocoa|Cocoa|objc|avfoundation|ca|curl|efl|win)\/.*$
+exclude .*\/(Configurations|mac|ios|cf|cg|cocoa|Cocoa|objc|avfoundation|ca|curl|efl|win|wpe)\/.*$
 
 directory Source
 exclude Source/JavaScriptCore/tests
@@ -58,6 +59,7 @@ exclude Source/cmake/OptionsWinCairo.cmake$
 exclude Source/cmake/OptionsWindows.cmake$
 exclude Source/cmake/OptionsAppleWin.cmake$
 exclude Source/cmake/OptionsEfl.cmake$
+exclude Source/cmake/OptionsWPE.cmake$
 exclude Source/cmake/eflsymbols.filter$
 exclude Source/WebInspectorUI/Tools
 exclude Source/WebInspectorUI/UserInterface/Images

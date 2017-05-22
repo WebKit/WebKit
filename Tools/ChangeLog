@@ -1,5 +1,11 @@
 2017-05-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Do not include WPE files in GTK+ tarballs.
+
+        * gtk/manifest.txt.in:
+
+2017-05-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Add webkit_context_menu_item_new_from_gaction
         https://bugs.webkit.org/show_bug.cgi?id=159631
 
