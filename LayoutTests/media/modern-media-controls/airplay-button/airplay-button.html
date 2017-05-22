@@ -5,47 +5,9 @@
 <body>
 <script type="text/javascript">
 
-let reachedEndOfTest = false;
-let receivedRAFDidFireEvent = false;
-
 window.jsTestIsAsync = true;
-scheduler.debug = debug;
 
 description("Testing the <code>AirplayButton</code> class.");
-
-document.addEventListener("visibilitychange", (event) => {
-    debug("visibilitychange");
-    dumpVisibility();
-});
-
-function dumpVisibility()
-{
-    debug(`document.hidden = ${document.hidden}`);
-    debug(`document.visibilityState = ${document.visibilityState}`);
-}
-
-dumpVisibility();
-
-if (window.internals) {
-    ["raf-suspend", "raf-resume", "raf-add-throttling-reason", "raf-remove-throttling-reason", "raf-register-callback", "raf-cancel-callback", "raf-did-cancel-callback", "raf-service-scripted-animations", "raf-will-fire", "raf-did-fire", "raf-schedule-animation", "raf-schedule-animation-display-refresh-monitor", "raf-schedule-animation-timer", "raf-schedule-animation-frame-view", "raf-no-page", "raf-scripted-animations-suspended-on-page"].forEach(eventType => document.addEventListener(eventType, handleRAFEvent));
-    window.internals.settings.setShouldDispatchRequestAnimationFrameEvents(true);
-}
-
-function handleRAFEvent(event)
-{
-    debug(`[ScriptedAnimationController] ${event.type}`);
-    if (event.type === "raf-did-fire") {
-        receivedRAFDidFireEvent = true;
-        considerFinishingTest();
-    } else if (event.type === "raf-suspend")
-    dumpVisibility();
-}
-
-function considerFinishingTest()
-{
-    if (reachedEndOfTest && receivedRAFDidFireEvent)
-        finishJSTest();
-}
 
 const airplayButton = new AirplayButton({ layoutTraits: LayoutTraits.macOS });
 
@@ -53,43 +15,14 @@ shouldBeEqualToString("airplayButton.element.localName", "button");
 shouldBeTrue('airplayButton.element.classList.contains("icon")');
 shouldBeTrue('airplayButton.element.classList.contains("airplay")');
 shouldBe("airplayButton.iconName", "Icons.Airplay");
-shouldBe("airplayButton.width", "0");
-shouldBe("airplayButton.height", "0");
-shouldBe("airplayButton._image", "iconService.imageForIconNameAndLayoutTraits(Icons.Airplay.name, LayoutTraits.macOS)");
-shouldNotBeEqualToString("airplayButton._image.src", "");
-shouldBeFalse("airplayButton._image.complete");
 
-// const macOSFullscreenAirplayButton = new AirplayButton({ layoutTraits: LayoutTraits.macOS | LayoutTraits.Fullscreen });
-// const iOSAirplayButton = new AirplayButton({ layoutTraits: LayoutTraits.iOS });
+const macOSFullscreenAirplayButton = new AirplayButton({ layoutTraits: LayoutTraits.macOS | LayoutTraits.Fullscreen });
+const iOSAirplayButton = new AirplayButton({ layoutTraits: LayoutTraits.iOS });
 
-airplayButton._image.addEventListener("load", event => {
-    shouldNotBe("airplayButton.width", "0");
-    shouldNotBe("airplayButton.height", "0");
-    shouldBeTrue("airplayButton.needsLayout");
-    shouldBeTrue("scheduler.hasScheduledLayoutCallbacks");
-    shouldBe("scheduler._layoutCallbacks.size", "1");
-    shouldNotBe("scheduler._frameID", "-1");
-    shouldBeTrue("dirtyNodes.has(airplayButton)");
-    scheduler.frameWillFire = function() {
-        debug("frameWillFire()");
-        shouldBeTrue("dirtyNodes.has(airplayButton)");
-        shouldBeTrue("airplayButton.needsLayout");
-    }
-    scheduler.frameDidFire = function() {
-        debug("frameDidFire()");
-        shouldBeFalse("dirtyNodes.has(airplayButton)");
-        shouldBeFalse("airplayButton.needsLayout");
-        shouldBeEqualToString("airplayButton.element.getAttribute('aria-label')", "AirPlay");
-    }
-    shouldBecomeEqual('airplayButton.element.style.webkitMaskImage.includes("macOS/airplay@")', "true", () => {
-        reachedEndOfTest = true;
-        considerFinishingTest();
+shouldBecomeEqual('airplayButton.element.style.webkitMaskImage.includes("macOS/airplay@")', "true", () => {
+    shouldBecomeEqual('macOSFullscreenAirplayButton.element.style.webkitMaskImage.includes("macOS/airplay-fullscreen@")', "true", () => {
+        shouldBecomeEqual('iOSAirplayButton.element.style.webkitMaskImage.includes("iOS/airplay@")', "true", finishJSTest);
     });
-    // shouldBecomeEqual('airplayButton.element.style.webkitMaskImage.includes("macOS/airplay@")', "true", () => {
-    //     shouldBecomeEqual('macOSFullscreenAirplayButton.element.style.webkitMaskImage.includes("macOS/airplay-fullscreen@")', "true", () => {
-    //         shouldBecomeEqual('iOSAirplayButton.element.style.webkitMaskImage.includes("iOS/airplay@")', "true", finishJSTest);
-    //     });
-    // });
 });
 
 </script>

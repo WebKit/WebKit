@@ -253,8 +253,6 @@ void InternalSettings::resetToConsistentState()
     m_page->mainFrame().setPageAndTextZoomFactors(1, 1);
     m_page->setCanStartMedia(true);
 
-    settings().setShouldDispatchRequestAnimationFrameEvents(false);
-
     settings().setForcePendingWebGLPolicy(false);
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     settings().setAllowsAirPlayForMediaPlayback(false);
@@ -709,16 +707,6 @@ void InternalSettings::setWebGPUEnabled(bool enabled)
 #else
     UNUSED_PARAM(enabled);
 #endif
-}
-
-bool InternalSettings::shouldDispatchRequestAnimationFrameEvents()
-{
-    return settings().shouldDispatchRequestAnimationFrameEvents();
-}
-
-void InternalSettings::setShouldDispatchRequestAnimationFrameEvents(bool shouldDispatchRequestAnimationFrameEvents)
-{
-    settings().setShouldDispatchRequestAnimationFrameEvents(shouldDispatchRequestAnimationFrameEvents);
 }
 
 ExceptionOr<String> InternalSettings::userInterfaceDirectionPolicy()

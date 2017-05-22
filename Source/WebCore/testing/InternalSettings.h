@@ -109,9 +109,6 @@ public:
     ForcedAccessibilityValue forcedPrefersReducedMotionAccessibilityValue() const;
     void setForcedPrefersReducedMotionAccessibilityValue(ForcedAccessibilityValue);
 
-    bool shouldDispatchRequestAnimationFrameEvents();
-    void setShouldDispatchRequestAnimationFrameEvents(bool);
-
     // RuntimeEnabledFeatures.
     static void setIndexedDBWorkersEnabled(bool);
     static void setCSSGridLayoutEnabled(bool);

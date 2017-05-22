@@ -7,53 +7,9 @@ PASS airplayButton.element.localName is "button"
 PASS airplayButton.element.classList.contains("icon") is true
 PASS airplayButton.element.classList.contains("airplay") is true
 PASS airplayButton.iconName is Icons.Airplay
-PASS airplayButton.width is 0
-PASS airplayButton.height is 0
-PASS airplayButton._image is iconService.imageForIconNameAndLayoutTraits(Icons.Airplay.name, LayoutTraits.macOS)
-PASS airplayButton._image.src is not ""
-PASS airplayButton._image.complete is false
-scheduleLayout() - start
-_requestFrameIfNeeded()
-[ScriptedAnimationController] raf-register-callback
-[ScriptedAnimationController] raf-schedule-animation
-_requestFrameIfNeeded() - registered rAF, _frameID = 1
-scheduleLayout() - _layoutCallbacks.size = 1
-scheduleLayout() - end
-scheduleLayout() - start
-_requestFrameIfNeeded()
-_requestFrameIfNeeded() - failed to register rAF call, _frameID = 1, _layoutCallbacks.size = 1
-scheduleLayout() - _layoutCallbacks.size = 1
-scheduleLayout() - end
-scheduleLayout() - start
-_requestFrameIfNeeded()
-_requestFrameIfNeeded() - failed to register rAF call, _frameID = 1, _layoutCallbacks.size = 1
-scheduleLayout() - _layoutCallbacks.size = 1
-scheduleLayout() - end
-PASS airplayButton.width is not 0
-PASS airplayButton.height is not 0
-PASS airplayButton.needsLayout is true
-PASS scheduler.hasScheduledLayoutCallbacks is true
-PASS scheduler._layoutCallbacks.size is 1
-PASS scheduler._frameID is not -1
-PASS dirtyNodes.has(airplayButton) is true
 PASS airplayButton.element.style.webkitMaskImage.includes("macOS/airplay@") became true
-[ScriptedAnimationController] raf-service-scripted-animations
-[ScriptedAnimationController] raf-will-fire
-_frameDidFire() - start
-frameWillFire()
-PASS dirtyNodes.has(airplayButton) is true
-PASS airplayButton.needsLayout is true
-_layout() - start
-_layout() - layoutCallbacks.size = 1
-_layout() - end
-_requestFrameIfNeeded()
-_requestFrameIfNeeded() - failed to register rAF call, _frameID = -1, _layoutCallbacks.size = 0
-frameDidFire()
-PASS dirtyNodes.has(airplayButton) is false
-PASS airplayButton.needsLayout is false
-PASS airplayButton.element.getAttribute('aria-label') is "AirPlay"
-_frameDidFire() - end
-[ScriptedAnimationController] raf-did-fire
+PASS macOSFullscreenAirplayButton.element.style.webkitMaskImage.includes("macOS/airplay-fullscreen@") became true
+PASS iOSAirplayButton.element.style.webkitMaskImage.includes("iOS/airplay@") became true
 PASS successfullyParsed is true
 
 TEST COMPLETE

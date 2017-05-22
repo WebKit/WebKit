@@ -6065,13 +6065,6 @@ int Document::requestAnimationFrame(Ref<RequestAnimationFrameCallback>&& callbac
 
         if (!topOrigin().canAccess(securityOrigin()) && !hasHadUserInteraction())
             m_scriptedAnimationController->addThrottlingReason(ScriptedAnimationController::ThrottlingReason::NonInteractedCrossOriginFrame);
-
-        if (settings().shouldDispatchRequestAnimationFrameEvents()) {
-            if (!page())
-                dispatchEvent(Event::create("raf-no-page", false, false));
-            else if (page()->scriptedAnimationsSuspended())
-                dispatchEvent(Event::create("raf-scripted-animations-suspended-on-page", false, false));
-        }
     }
 
     return m_scriptedAnimationController->registerCallback(WTFMove(callback));

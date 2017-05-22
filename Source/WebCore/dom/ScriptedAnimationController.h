@@ -98,7 +98,6 @@ private:
     int m_suspendCount { 0 };
 
     void scheduleAnimation();
-    void dispatchLoggingEventIfRequired(const AtomicString&);
 
 #if USE(REQUEST_ANIMATION_FRAME_TIMER)
     void animationTimerFired();
