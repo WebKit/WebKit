@@ -7,8 +7,7 @@ InspectorTest.Replay.runSingleSegmentRefTest = function(stateComparator)
     var stateDuringCapturing = null;
     var stateDuringReplaying = null;
 
-    var ignoreCacheOnReload = true;
-    InspectorTest.reloadPage(ignoreCacheOnReload)
+    InspectorTest.reloadPage({ignoreCache: true})
     .then(function() {
         return new Promise(function waitForMainResourceBeforeStarting(resolve, reject) {
             InspectorTest.eventDispatcher.addEventListener(InspectorTest.EventDispatcher.Event.TestPageDidLoad, resolve);

@@ -113,9 +113,10 @@
             "name": "reload",
             "parameters": [
                 { "name": "ignoreCache", "type": "boolean", "optional": true, "description": "If true, browser cache is ignored (as if the user pressed Shift+refresh)." },
+                { "name": "revalidateAllResources", "type": "boolean", "optional": true, "description": "If true, all cached subresources will be revalidated when the main resource loads. Otherwise, only expired cached subresources will be revalidated (the default behavior for most WebKit clients)." },
                 { "name": "scriptToEvaluateOnLoad", "type": "string", "optional": true, "description": "If set, the script will be injected into all frames of the inspected page after reload." }
             ],
-            "description": "Reloads given page optionally ignoring the cache."
+            "description": "Reloads the main frame of the inspected page."
         },
         {
             "name": "navigate",

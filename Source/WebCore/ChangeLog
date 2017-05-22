@@ -1,3 +1,20 @@
+2017-05-22  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: webkit reload policy should match default behavior
+        https://bugs.webkit.org/show_bug.cgi?id=171385
+        <rdar://problem/31871515>
+
+        Reviewed by Joseph Pecoraro.
+
+        Add an option to PageAgent.reload that tells the backend to use the old
+        behavior that revalidates unexpired cached subresources. This used by tests.
+
+        Covered by existing network/memory/disk cache tests.
+
+        * inspector/InspectorPageAgent.h:
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::reload):
+
 2017-05-22  Yoav Weiss  <yoav@yoav.ws>
 
         [preload] Add media and type attribute support.

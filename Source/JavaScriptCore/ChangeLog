@@ -1,3 +1,19 @@
+2017-05-22  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: webkit reload policy should match default behavior
+        https://bugs.webkit.org/show_bug.cgi?id=171385
+        <rdar://problem/31871515>
+
+        Reviewed by Joseph Pecoraro.
+
+        Add a new option to Page.reload that allows the test harness
+        to reload its test page using the old reload behavior.
+
+        The new behavior of revalidating expired cached subresources only
+        is the current default, since only the test harness needs the old behavior.
+
+        * inspector/protocol/Page.json:
+
 2017-05-22  Keith Miller  <keith_miller@apple.com>
 
         [Cocoa] An exported Objective C class’s prototype and constructor don't persist across JSContext deallocation

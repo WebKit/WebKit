@@ -24,8 +24,9 @@ function test()
         size: 27,
         resourceLoader() {
             const ignoreCache = false;
+            const revalidateAllResources = true;
             const pattern = /cached-script\.js$/;
-            InspectorTest.reloadPage(ignoreCache);
+            InspectorTest.reloadPage({ignoreCache, revalidateAllResources});
             return InspectorTest.awaitEvent("LoadComplete").then((event) => {
                 let resource = null;
                 for (let item of WebInspector.frameResourceManager.mainFrame.resourceCollection.items) {

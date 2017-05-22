@@ -399,13 +399,19 @@ void InspectorPageAgent::removeScriptToEvaluateOnLoad(ErrorString& error, const 
     m_scriptsToEvaluateOnLoad->remove(identifier);
 }
 
-void InspectorPageAgent::reload(ErrorString&, const bool* const optionalIgnoreCache, const String* optionalScriptToEvaluateOnLoad)
+void InspectorPageAgent::reload(ErrorString&, const bool* const optionalIgnoreCache, const bool* const optionalRevalidateAllResources, const String* optionalScriptToEvaluateOnLoad)
 {
     m_pendingScriptToEvaluateOnLoadOnce = optionalScriptToEvaluateOnLoad ? *optionalScriptToEvaluateOnLoad : emptyString();
 
+    bool reloadFromOrigin = optionalIgnoreCache && *optionalIgnoreCache;
+    bool revalidateAllResources = optionalRevalidateAllResources && *optionalRevalidateAllResources;
+
     OptionSet<ReloadOption> reloadOptions;
-    if (optionalIgnoreCache && *optionalIgnoreCache)
+    if (reloadFromOrigin)
         reloadOptions |= ReloadOption::FromOrigin;
+    if (!revalidateAllResources)
+        reloadOptions |= ReloadOption::ExpiredOnly;
+
     m_page.mainFrame().loader().reload(reloadOptions);
 }
 

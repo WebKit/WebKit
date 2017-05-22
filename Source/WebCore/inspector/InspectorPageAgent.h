@@ -93,7 +93,7 @@ public:
     void disable(ErrorString&) override;
     void addScriptToEvaluateOnLoad(ErrorString&, const String& source, String* result) override;
     void removeScriptToEvaluateOnLoad(ErrorString&, const String& identifier) override;
-    void reload(ErrorString&, const bool* const optionalIgnoreCache, const String* const optionalScriptToEvaluateOnLoad) override;
+    void reload(ErrorString&, const bool* const optionalIgnoreCache, const bool* const optionalRevalidateAllResources, const String* const optionalScriptToEvaluateOnLoad) override;
     void navigate(ErrorString&, const String& url) override;
     void getCookies(ErrorString&, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Page::Cookie>>& cookies) override;
     void deleteCookie(ErrorString&, const String& cookieName, const String& url) override;

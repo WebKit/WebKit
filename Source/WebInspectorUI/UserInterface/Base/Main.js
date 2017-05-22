@@ -1909,7 +1909,7 @@ WebInspector._reloadPage = function(event)
 WebInspector._reloadPageClicked = function(event)
 {
     // Ignore cache when the shift key is pressed.
-    PageAgent.reload(window.event ? window.event.shiftKey : false);
+    PageAgent.reload.invoke({shouldIgnoreCache: window.event ? window.event.shiftKey : false});
 };
 
 WebInspector._reloadPageIgnoringCache = function(event)

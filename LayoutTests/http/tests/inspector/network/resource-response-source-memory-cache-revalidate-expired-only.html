@@ -15,7 +15,7 @@ function test()
         suite.addTestCase({
             name, description,
             test(resolve, reject) {
-                InspectorTest.reloadPage({ignoreCache});
+                InspectorTest.reloadPage({ignoreCache, revalidateAllResources: true});
                 InspectorTest.awaitEvent("LoadComplete").then((event) => {
                     let resource = null;
                     for (let item of WebInspector.frameResourceManager.mainFrame.resourceCollection.items) {
@@ -43,7 +43,7 @@ function test()
         pattern: /cached-script\.js$/,
         ignoreCache: false,
         responseSource: WebInspector.Resource.ResponseSource.MemoryCache,
-        statusCode: 200,
+        statusCode: 304,
     });
 
     suite.runTestCasesAndFinish();

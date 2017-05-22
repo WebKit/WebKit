@@ -18,7 +18,7 @@ function test()
             name, description, setup,
             test(resolve, reject) {
                 NetworkAgent.setResourceCachingDisabled(true);
-                InspectorTest.reloadPage(ignoreCache);
+                InspectorTest.reloadPage({ignoreCache});
                 InspectorTest.awaitEvent("LoadComplete").then((event) => {
                     let resource = null;
                     for (let item of WebInspector.frameResourceManager.mainFrame.resourceCollection.items) {
