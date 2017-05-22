@@ -1,5 +1,15 @@
 2017-05-22  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        -Wreturn-type warning triggered by WKPage.cpp:2277
+        https://bugs.webkit.org/show_bug.cgi?id=171866
+
+        Reviewed by Žan Doberšek.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageUIClient):
+
+2017-05-22  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         -Wreturn-type warning triggered by WebAutomationSession.cpp:851
         https://bugs.webkit.org/show_bug.cgi?id=171867
 

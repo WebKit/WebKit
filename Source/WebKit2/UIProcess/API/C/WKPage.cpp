@@ -2276,6 +2276,8 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
             case WebCore::AutoplayEvent::UserNeverPlayedMediaPreventedFromPlaying:
                 return kWKAutoplayEventUserNeverPlayedMediaPreventedFromPlaying;
             }
+
+            RELEASE_ASSERT_NOT_REACHED();
         }
 
         void handleAutoplayEvent(WebPageProxy& page, WebCore::AutoplayEvent event, OptionSet<WebCore::AutoplayEventFlags> flags) override
