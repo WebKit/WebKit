@@ -1,3 +1,19 @@
+2017-05-22  Tim Horton  <timothy_horton@apple.com>
+
+        ExplicitSnapshotsChangeUponNavigation API test often fails
+        https://bugs.webkit.org/show_bug.cgi?id=172475
+        <rdar://problem/31688322>
+
+        Reviewed by Simon Fraser.
+
+        * TestWebKitAPI/cocoa/TestWKWebView.mm:
+        (-[TestWKWebView _setUpTestWindow:]):
+        Make TestWKWebView's window layer-backed. This is now the default,
+        and it's also easy to accidentally write a test that depends on it
+        (for example, ExplicitSnapshotsChangeUponNavigation adds an NSBox,
+        which becomes layer backed, just like the WKWebView, but with no
+        common layer-backed ancestor).
+
 2017-05-22  youenn fablet  <youenn@apple.com>
 
         Resync web-platform-tests up to 8df7c9c215678328212f232ce0b5270c505a8563
