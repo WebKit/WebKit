@@ -62,6 +62,8 @@ class AnalysisResultsViewer extends ResultsTable {
 
         for (const label of this._rangeSelectorLabels) {
             const commitSet = this._selectedRange[label];
+            if (!commitSet)
+                continue;
             const list = this._selectorRadioButtonList[label] || [];
             for (const item of list) {
                 if (item.commitSet.equals(commitSet))

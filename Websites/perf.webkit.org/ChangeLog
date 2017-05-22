@@ -1,3 +1,21 @@
+2017-05-22  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Fix the bug that sometimes analysis task results pane is missing.
+        https://bugs.webkit.org/show_bug.cgi?id=172404
+
+        Reviewed by Ryosuke Niwa.
+
+        AnalysisTaskPage._didFetchTask and AnalaysisTaskPage._fetchRelatedInfoForTaskId should be called in order.
+        The race between those two functions causes the analysis task results pane sometimes missing.
+
+        * public/v3/components/analysis-results-viewer.js:
+        (AnalysisResultsViewer.prototype.render): Fix the bug in r217173 that commitSet can be undefined.
+        * public/v3/pages/analysis-task-page.js:
+        (AnalysisTaskPage.prototype.updateFromSerializedState): Use arrow function to get rid of self variable.
+        Use `const` instead of var for constant variable. And call _didFetchTask before calling _fetchRelatedInfoForTaskId.
+        (AnalysisTaskPage.prototype._renderTaskNameAndStatus):
+        (AnalysisTaskPage.cssTemplate):
+
 2017-05-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add a commit log viewer next to the analysis results viewer

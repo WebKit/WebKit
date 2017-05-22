@@ -222,7 +222,7 @@ class AnalysisTaskConfiguratorPane extends ComponentBase {
     {
         super.render();
     }
-    
+
     static htmlTemplate()
     {
         return `<custom-configuration-test-group-form id="form"></custom-configuration-test-group-form>`;
@@ -465,21 +465,21 @@ class AnalysisTaskPage extends PageWithHeading {
 
     updateFromSerializedState(state)
     {
-        var self = this;
         if (state.remainingRoute) {
-            var taskId = parseInt(state.remainingRoute);
-            AnalysisTask.fetchById(taskId).then(this._didFetchTask.bind(this), function (error) {
-                self._errorMessage = `Failed to fetch the analysis task ${state.remainingRoute}: ${error}`;
-                self.enqueueToRender();
+            const taskId = parseInt(state.remainingRoute);
+            AnalysisTask.fetchById(taskId).then(this._didFetchTask.bind(this)).then(() => {
+                this._fetchRelatedInfoForTaskId(taskId);
+            }, (error) => {
+                this._errorMessage = `Failed to fetch the analysis task ${state.remainingRoute}: ${error}`;
+                this.enqueueToRender();
             });
-            this._fetchRelatedInfoForTaskId(taskId);
         } else if (state.buildRequest) {
-            var buildRequestId = parseInt(state.buildRequest);
-            AnalysisTask.fetchByBuildRequestId(buildRequestId).then(this._didFetchTask.bind(this)).then(function (task) {
-                self._fetchRelatedInfoForTaskId(task.id());
-            }, function (error) {
-                self._errorMessage = `Failed to fetch the analysis task for the build request ${buildRequestId}: ${error}`;
-                self.enqueueToRender();
+            const buildRequestId = parseInt(state.buildRequest);
+            AnalysisTask.fetchByBuildRequestId(buildRequestId).then(this._didFetchTask.bind(this)).then((task) => {
+                this._fetchRelatedInfoForTaskId(task.id());
+            }, (error) => {
+                this._errorMessage = `Failed to fetch the analysis task for the build request ${buildRequestId}: ${error}`;
+                this.enqueueToRender();
             });
         }
     }
@@ -647,7 +647,7 @@ class AnalysisTaskPage extends PageWithHeading {
             const platform = task.platform();
             const metric = task.metric();
             const subtitle = `${metric.fullName()} on ${platform.label()}`;
-            this.renderReplace(this.content('platform-metric-names'), 
+            this.renderReplace(this.content('platform-metric-names'),
                 link(subtitle, this.router().url('charts', ChartsPage.createStateForAnalysisTask(task))));
         }
         this.content('change-type').value = changeType || 'unconfirmed';
@@ -957,7 +957,7 @@ class AnalysisTaskPage extends PageWithHeading {
                 padding: 0 1rem;
                 border-bottom: solid 1px #ccc;
             }
-            
+
             #results-pane {
                 margin-top: 1rem;
             }
