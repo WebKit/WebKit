@@ -1,3 +1,15 @@
+2017-05-22  Gwang Yoon Hwang  <yoon@igalia.com>
+
+        [CMake] Do not use a --no-keep-memory linker flag in 64bit system
+        https://bugs.webkit.org/show_bug.cgi?id=172429
+
+        Reviewed by Michael Catanzaro.
+
+        * Source/cmake/OptionsCommon.cmake:
+        In x86_64, cmake accidentally applies --no-keep-memory since MATCHES
+        uses the given value as a regex. It reduces linking performance
+        due to the frequent disk operations in x86_64.
+
 2017-05-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.17.3 release.
