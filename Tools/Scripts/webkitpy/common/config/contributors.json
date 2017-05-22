@@ -3453,7 +3453,8 @@
       "nicks" : [
          "annulen"
       ],
-      "status" : "committer"
+      "expertise" : "CMake build system, Perl scripts",
+      "status" : "reviewer"
    },
    "Kristof Kosztyo" : {
       "emails" : [
