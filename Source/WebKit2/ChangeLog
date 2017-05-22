@@ -1,3 +1,19 @@
+2017-05-22  Brian Burg  <bburg@apple.com>
+
+        Web Automation: characters produced with shift modifier on QWERTY keyboard should be delivered as shift-down, char-down, char-up, shift-up events
+        https://bugs.webkit.org/show_bug.cgi?id=172299
+        <rdar://problem/32277988>
+
+        Reviewed by Joseph Pecoraro.
+
+        WebDriver tests expect some ASCII characters to be produced using the shift key,
+        regardless of the actual keyboard layout. Emit extra events when simulating these
+        keystrokes if the shift key is not already pressed.
+
+        * UIProcess/Automation/mac/WebAutomationSessionMac.mm:
+        (WebKit::characterIsProducedUsingShift):
+        (WebKit::WebAutomationSession::platformSimulateKeySequence):
+
 2017-05-22  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Support callbacks with arbitrary return types

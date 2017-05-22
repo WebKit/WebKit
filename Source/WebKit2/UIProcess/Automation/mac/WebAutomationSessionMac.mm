@@ -483,6 +483,47 @@ void WebAutomationSession::platformSimulateKeyStroke(WebPageProxy& page, Inspect
     sendSynthesizedEventsToPage(page, eventsToBeSent.get());
 }
 
+static BOOL characterIsProducedUsingShift(NSString *characters)
+{
+    ASSERT(characters.length == 1);
+
+    // Per the WebDriver specification, keystrokes are assumed to be produced a standard 108-key US keyboard layout.
+    // If this is no longer the case, then we'll need to use system keyboard SPI to decompose modifiers from keystrokes.
+    unichar c = [characters characterAtIndex:0];
+    if (c > 128)
+        return NO;
+
+    if (c >= 'A' && c <= 'Z')
+        return YES;
+
+    switch (c) {
+    case '~':
+    case '!':
+    case '@':
+    case '#':
+    case '$':
+    case '%':
+    case '^':
+    case '&':
+    case '*':
+    case '(':
+    case ')':
+    case '_':
+    case '+':
+    case '{':
+    case '}':
+    case '|':
+    case ':':
+    case '"':
+    case '<':
+    case '>':
+    case '?':
+        return YES;
+    default:
+        return NO;
+    }
+}
+
 void WebAutomationSession::platformSimulateKeySequence(WebPageProxy& page, const String& keySequence)
 {
     auto eventsToBeSent = adoptNS([[NSMutableArray alloc] init]);
@@ -501,8 +542,22 @@ void WebAutomationSession::platformSimulateKeySequence(WebPageProxy& page, const
     NSPoint eventPosition = NSMakePoint(0, window.frame.size.height);
 
     [text enumerateSubstringsInRange:NSMakeRange(0, text.length) options:NSStringEnumerationByComposedCharacterSequences usingBlock:^(NSString *substring, NSRange substringRange, NSRange enclosingRange, BOOL *stop) {
-        [eventsToBeSent addObject:[NSEvent keyEventWithType:NSEventTypeKeyDown location:eventPosition modifierFlags:modifiers timestamp:timestamp windowNumber:windowNumber context:nil characters:substring charactersIgnoringModifiers:substring isARepeat:NO keyCode:0]];
-        [eventsToBeSent addObject:[NSEvent keyEventWithType:NSEventTypeKeyUp location:eventPosition modifierFlags:modifiers timestamp:timestamp windowNumber:windowNumber context:nil characters:substring charactersIgnoringModifiers:substring isARepeat:NO keyCode:0]];
+    
+        // For ASCII characters that are produced using Shift on a US-108 key keyboard layout,
+        // WebDriver expects these to be delivered as [shift-down, key-down, key-up, shift-up]
+        // keystrokes unless the shift key is already pressed down from an earlier interaction.
+        BOOL shiftAlreadyPressed = modifiers & NSEventModifierFlagShift;
+        BOOL shouldPressShift = !shiftAlreadyPressed && substringRange.length == 1 && characterIsProducedUsingShift(substring);
+        NSEventModifierFlags modifiersForKeystroke = shouldPressShift ? modifiers | NSEventModifierFlagShift : modifiers;
+
+        if (shouldPressShift)
+            [eventsToBeSent addObject:[NSEvent keyEventWithType:NSEventTypeFlagsChanged location:eventPosition modifierFlags:modifiersForKeystroke timestamp:timestamp windowNumber:windowNumber context:nil characters:@"" charactersIgnoringModifiers:@"" isARepeat:NO keyCode:kVK_Shift]];
+
+        [eventsToBeSent addObject:[NSEvent keyEventWithType:NSEventTypeKeyDown location:eventPosition modifierFlags:modifiersForKeystroke timestamp:timestamp windowNumber:windowNumber context:nil characters:substring charactersIgnoringModifiers:substring isARepeat:NO keyCode:0]];
+        [eventsToBeSent addObject:[NSEvent keyEventWithType:NSEventTypeKeyUp location:eventPosition modifierFlags:modifiersForKeystroke timestamp:timestamp windowNumber:windowNumber context:nil characters:substring charactersIgnoringModifiers:substring isARepeat:NO keyCode:0]];
+        
+        if (shouldPressShift)
+            [eventsToBeSent addObject:[NSEvent keyEventWithType:NSEventTypeFlagsChanged location:eventPosition modifierFlags:modifiers timestamp:timestamp windowNumber:windowNumber context:nil characters:@"" charactersIgnoringModifiers:@"" isARepeat:NO keyCode:kVK_Shift]];
     }];
 
     sendSynthesizedEventsToPage(page, eventsToBeSent.get());
