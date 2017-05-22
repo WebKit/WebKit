@@ -27,7 +27,7 @@ WebInspector.ResourceContentView = class ResourceContentView extends WebInspecto
 {
     constructor(resource, styleClassName)
     {
-        console.assert(resource instanceof WebInspector.Resource, resource);
+        console.assert(resource instanceof WebInspector.Resource || resource instanceof WebInspector.CSSStyleSheet, resource);
         console.assert(typeof styleClassName === "string");
 
         super(resource);

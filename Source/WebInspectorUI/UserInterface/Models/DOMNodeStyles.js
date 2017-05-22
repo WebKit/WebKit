@@ -765,8 +765,12 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
             sourceCodeLocation = this._createSourceCodeLocation(payload.sourceURL, payload.sourceLine);
         }
 
-        if (styleSheet)
+        if (styleSheet) {
+            if (!sourceCodeLocation && styleSheet.isInspectorStyleSheet())
+                sourceCodeLocation = styleSheet.createSourceCodeLocation(sourceRange.startLine, sourceRange.startColumn)
+
             sourceCodeLocation = styleSheet.offsetSourceCodeLocation(sourceCodeLocation);
+        }
 
         var mediaList = [];
         for (var i = 0; payload.media && i < payload.media.length; ++i) {

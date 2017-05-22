@@ -167,7 +167,7 @@ WebInspector.CSSStyleManager = class CSSStyleManager extends WebInspector.Object
         return styles;
     }
 
-    preferredInspectorStyleSheetForFrame(frame, callback)
+    preferredInspectorStyleSheetForFrame(frame, callback, doNotCreateIfMissing)
     {
         var inspectorStyleSheets = this._inspectorStyleSheetsForFrame(frame);
         for (let styleSheet of inspectorStyleSheets) {
@@ -176,6 +176,9 @@ WebInspector.CSSStyleManager = class CSSStyleManager extends WebInspector.Object
                 return;
             }
         }
+
+        if (doNotCreateIfMissing)
+            return;
 
         if (CSSAgent.createStyleSheet) {
             CSSAgent.createStyleSheet(frame.id, function(error, styleSheetId) {
@@ -494,31 +497,38 @@ WebInspector.CSSStyleManager = class CSSStyleManager extends WebInspector.Object
 
         function fetchedStyleSheetContent(parameters)
         {
-            var styleSheet = parameters.sourceCode;
-            var content = parameters.content;
+            let representedObject = parameters.sourceCode;
+            representedObject.__pendingChangeTimeout = undefined;
 
-            styleSheet.__pendingChangeTimeout = undefined;
-
-            console.assert(styleSheet.url);
-            if (!styleSheet.url)
+            console.assert(representedObject.url);
+            if (!representedObject.url)
                 return;
 
-            var resource = styleSheet.parentFrame.resourceForURL(styleSheet.url);
-            if (!resource)
-                return;
+            if (!styleSheet.isInspectorStyleSheet()) {
+                representedObject = representedObject.parentFrame.resourceForURL(representedObject.url);
+                if (!representedObject)
+                    return;
 
-            // Only try to update stylesheet resources. Other resources, like documents, can contain
-            // multiple stylesheets and we don't have the source ranges to update those.
-            if (resource.type !== WebInspector.Resource.Type.Stylesheet)
-                return;
+                // Only try to update stylesheet resources. Other resources, like documents, can contain
+                // multiple stylesheets and we don't have the source ranges to update those.
+                if (representedObject.type !== WebInspector.Resource.Type.Stylesheet)
+                    return;
+            }
 
-            if (resource.__ignoreNextUpdateResourceContent) {
-                resource.__ignoreNextUpdateResourceContent = false;
+            if (representedObject.__ignoreNextUpdateResourceContent) {
+                representedObject.__ignoreNextUpdateResourceContent = false;
                 return;
             }
 
-            this._ignoreResourceContentDidChangeEventForResource = resource;
-            WebInspector.branchManager.currentBranch.revisionForRepresentedObject(resource).content = content;
+            this._ignoreResourceContentDidChangeEventForResource = representedObject;
+
+            let revision = WebInspector.branchManager.currentBranch.revisionForRepresentedObject(representedObject);
+            if (styleSheet.isInspectorStyleSheet()) {
+                revision.content = representedObject.content;
+                styleSheet.dispatchEventToListeners(WebInspector.SourceCode.Event.ContentDidChange);
+            } else
+                revision.content = parameters.content;
+
             this._ignoreResourceContentDidChangeEventForResource = null;
         }
 

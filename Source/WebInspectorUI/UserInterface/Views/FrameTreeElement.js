@@ -53,14 +53,20 @@ WebInspector.FrameTreeElement = class FrameTreeElement extends WebInspector.Reso
         this.registerFolderizeSettings("flows", WebInspector.UIString("Flows"), this._frame.domTree.contentFlowCollection, WebInspector.ContentFlowTreeElement);
         this.registerFolderizeSettings("extra-scripts", WebInspector.UIString("Extra Scripts"), this._frame.extraScriptCollection, WebInspector.ScriptTreeElement);
 
+        function forwardingConstructor(representedObject, ...extraArguments) {
+            if (representedObject instanceof WebInspector.CSSStyleSheet)
+                return new WebInspector.CSSStyleSheetTreeElement(representedObject, ...extraArguments);
+            return new WebInspector.ResourceTreeElement(representedObject, ...extraArguments);
+        }
+
         for (let [key, value] of Object.entries(WebInspector.Resource.Type)) {
             let folderName = WebInspector.Resource.displayNameForType(value, true);
 
-            let treeElementConstructor = WebInspector.ResourceTreeElement;
+            let treeElementConstructor = forwardingConstructor;
             if (value === WebInspector.Resource.Type.WebSocket)
                 treeElementConstructor = WebInspector.WebSocketResourceTreeElement;
 
-            this.registerFolderizeSettings(key, folderName, this._frame.resourceCollectionForType(value), treeElementConstructor);
+            this.registerFolderizeSettings(key, folderName, this._frame.resourceCollectionForType(value), forwardingConstructor);
         }
 
         this.updateParentStatus();
@@ -113,6 +119,15 @@ WebInspector.FrameTreeElement = class FrameTreeElement extends WebInspector.Reso
     {
         // Immediate superclasses are skipped, since Frames handle their own SourceMapResources.
         WebInspector.GeneralTreeElement.prototype.onattach.call(this);
+
+        WebInspector.cssStyleManager.addEventListener(WebInspector.CSSStyleManager.Event.StyleSheetAdded, this._styleSheetAdded, this);
+    }
+
+    ondetach()
+    {
+        WebInspector.cssStyleManager.removeEventListener(WebInspector.CSSStyleManager.Event.StyleSheetAdded, this._styleSheetAdded, this);
+
+        super.ondetach();
     }
 
     // Overrides from FolderizedTreeElement (Protected).
@@ -170,6 +185,9 @@ WebInspector.FrameTreeElement = class FrameTreeElement extends WebInspector.Reso
             if (extraScript.sourceURL || extraScript.sourceMappingURL)
                 this.addChildForRepresentedObject(extraScript);
         }
+
+        const doNotCreateIfMissing = true;
+        WebInspector.cssStyleManager.preferredInspectorStyleSheetForFrame(this._frame, this.addRepresentedObjectToNewChildQueue.bind(this), doNotCreateIfMissing);
     }
 
     onexpand()
@@ -252,5 +270,13 @@ WebInspector.FrameTreeElement = class FrameTreeElement extends WebInspector.Reso
     {
         if (this.expanded)
             this._frame.domTree.requestContentFlowList();
+    }
+
+    _styleSheetAdded(event)
+    {
+        if (!event.data.styleSheet.isInspectorStyleSheet())
+            return;
+
+        this.addRepresentedObjectToNewChildQueue(event.data.styleSheet);
     }
 };

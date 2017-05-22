@@ -516,6 +516,8 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
             this.mimeType = this._sourceCode.syntheticMIMEType;
         else if (this._sourceCode instanceof WebInspector.Script)
             this.mimeType = "text/javascript";
+        else if (this._sourceCode instanceof WebInspector.CSSStyleSheet)
+            this.mimeType = "text/css";
 
         // Decide to automatically format the content if it looks minified and it can be formatted.
         console.assert(!this.formatted);
@@ -969,7 +971,7 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
     {
         if (this._sourceCode instanceof WebInspector.SourceMapResource)
             return sourceCodeLocation.displaySourceCode === this._sourceCode;
-        if (this._sourceCode instanceof WebInspector.Resource || this._sourceCode instanceof WebInspector.Script)
+        if (this._sourceCode instanceof WebInspector.Resource || this._sourceCode instanceof WebInspector.Script || this._sourceCode instanceof WebInspector.CSSStyleSheet)
             return sourceCodeLocation.sourceCode.url === this._sourceCode.url;
         return false;
     }
@@ -978,7 +980,7 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
     {
         if (this._sourceCode instanceof WebInspector.SourceMapResource)
             return sourceCodeLocation.displaySourceCode === this._sourceCode;
-        if (this._sourceCode instanceof WebInspector.Resource)
+        if (this._sourceCode instanceof WebInspector.Resource || this._sourceCode instanceof WebInspector.CSSStyleSheet)
             return sourceCodeLocation.sourceCode.url === this._sourceCode.url;
         if (this._sourceCode instanceof WebInspector.Script)
             return sourceCodeLocation.sourceCode === this._sourceCode;

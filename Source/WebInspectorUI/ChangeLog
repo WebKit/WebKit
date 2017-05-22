@@ -1,3 +1,80 @@
+2017-05-22  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: New CSS Rules should go into a new Stylesheet Resource that can be viewed/edited/saved
+        https://bugs.webkit.org/show_bug.cgi?id=138810
+
+        Reviewed by Joseph Pecoraro.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+        * UserInterface/Controllers/CSSStyleManager.js:
+        (WebInspector.CSSStyleManager):
+        (WebInspector.CSSStyleManager.prototype.preferredInspectorStyleSheetForFrame):
+        (WebInspector.CSSStyleManager.prototype._updateResourceContent.fetchedStyleSheetContent):
+        Manually dispatch a change event for modifications to CSSStyleSheet objects since they are
+        not covered by the listener for Resource changes.
+
+        * UserInterface/Main.html:
+        Include WebInspector.CSSStyleSheetTreeElement.
+
+        * UserInterface/Models/Collection.js:
+        (WebInspector.Collection.TypeVerifier):
+        * UserInterface/Models/ResourceCollection.js:
+        (WebInspector.ResourceCollection.TypeVerifier.Stylesheet):
+        Add TypeVerifier for CSSStyleSheet.
+
+        * UserInterface/Models/DOMNodeStyles.js:
+        (WebInspector.DOMNodeStyles.prototype._parseRulePayload):
+        Manually create a SourceCodeLocation object for Inspector Style Sheets.
+
+        * UserInterface/Views/CSSStyleSheetTreeElement.js: Added.
+        (WebInspector.CSSStyleSheetTreeElement):
+
+        * UserInterface/Views/ResourceIcons.css:
+        (:matches(.resource-icon.resource-type-stylesheet, .stylessheet-icon) .icon):
+
+        * UserInterface/Views/FrameTreeElement.js:
+        (WebInspector.FrameTreeElement.forwardingConstructor):
+        (WebInspector.FrameTreeElement):
+        (WebInspector.FrameTreeElement.prototype.onattach):
+        (WebInspector.FrameTreeElement.prototype.ondetach):
+        (WebInspector.FrameTreeElement.prototype.onpopulate):
+        (WebInspector.FrameTreeElement.prototype._styleSheetAdded):
+        * UserInterface/Views/ResourceSidebarPanel.js:
+        (WebInspector.ResourceSidebarPanel):
+        (WebInspector.ResourceSidebarPanel.prototype._styleSheetAdded):
+        (WebInspector.ResourceSidebarPanel.prototype._treeSelectionDidChange):
+        Listen for the creation of CSSStyleSheet objects and add them to the sidebar if they are an
+        Inspector Style Sheet.  Regular style sheets are added via their respective resources.
+
+        * UserInterface/Views/NavigationSidebarPanel.js:
+        (WebInspector.NavigationSidebarPanel.prototype._isTreeElementWithoutRepresentedObject):
+        Prevent CSSStyleSheetTreeElement instances from attempting to save state to a cookie.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.tabContentViewClassForRepresentedObject):
+        (WebInspector.createSourceCodeLocationLink):
+        * UserInterface/Views/ContentView.js:
+        (WebInspector.ContentView.createFromRepresentedObject):
+        (WebInspector.ContentView.isViewable):
+        * UserInterface/Views/CSSStyleDeclarationSection.js:
+        (WebInspector.CSSStyleDeclarationSection.prototype.refresh):
+        * UserInterface/Views/ResourcesTabContentView.js:
+        (WebInspector.ResourcesTabContentView.prototype.canShowRepresentedObject):
+        * UserInterface/Views/ResourceContentView.js:
+        (WebInspector.ResourceContentView):
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor.prototype._prepareEditorForInitialContent):
+        (WebInspector.SourceCodeTextEditor.prototype._looselyMatchesSourceCodeLocation):
+        (WebInspector.SourceCodeTextEditor.prototype._matchesSourceCodeLocation):
+        * UserInterface/Views/TextResourceContentView.js:
+        (WebInspector.TextResourceContentView):
+        (WebInspector.TextResourceContentView.prototype.get supportsSave):
+        (WebInspector.TextResourceContentView.prototype.get saveData):
+        (WebInspector.TextResourceContentView.prototype._contentWillPopulate):
+        (WebInspector.TextResourceContentView.prototype._shouldBeEditable):
+        Support editing and saving an Inspector Style Sheet via its CSSStyleSheet object.
+
 2017-05-22  Brian Burg  <bburg@apple.com>
 
         Web Inspector: webkit reload policy should match default behavior

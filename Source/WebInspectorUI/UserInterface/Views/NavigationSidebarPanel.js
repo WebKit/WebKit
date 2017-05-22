@@ -645,6 +645,7 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
             || treeElement instanceof WebInspector.IdleTreeElement
             || treeElement instanceof WebInspector.DOMBreakpointTreeElement
             || treeElement instanceof WebInspector.XHRBreakpointTreeElement
+            || treeElement instanceof WebInspector.CSSStyleSheetTreeElement
             || typeof treeElement.representedObject === "string"
             || treeElement.representedObject instanceof String;
     }

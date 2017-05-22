@@ -460,6 +460,7 @@ localizedStrings["Initiated"] = "Initiated";
 localizedStrings["Initiator"] = "Initiator";
 localizedStrings["Input: "] = "Input: ";
 localizedStrings["Inset"] = "Inset";
+localizedStrings["Inspector Style Sheet"] = "Inspector Style Sheet";
 localizedStrings["Instances"] = "Instances";
 localizedStrings["Invalid"] = "Invalid";
 localizedStrings["Invalid characters"] = "Invalid characters";

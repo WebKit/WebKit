@@ -188,7 +188,11 @@ WebInspector.ResourceCollection = class ResourceCollection extends WebInspector.
 
 WebInspector.ResourceCollection.TypeVerifier = {
     Document: (object) => WebInspector.Collection.TypeVerifier.Resource(object) && object.type === WebInspector.Resource.Type.Document,
-    Stylesheet: (object) => WebInspector.Collection.TypeVerifier.Resource(object) && object.type === WebInspector.Resource.Type.Stylesheet,
+    Stylesheet: (object) => {
+        if (WebInspector.Collection.TypeVerifier.CSSStyleSheet(object))
+            return true;
+        return WebInspector.Collection.TypeVerifier.Resource(object) && object.type === WebInspector.Resource.Type.Stylesheet
+    },
     Image: (object) => WebInspector.Collection.TypeVerifier.Resource(object) && object.type === WebInspector.Resource.Type.Image,
     Font: (object) => WebInspector.Collection.TypeVerifier.Resource(object) && object.type === WebInspector.Resource.Type.Font,
     Script: (object) => WebInspector.Collection.TypeVerifier.Resource(object) && object.type === WebInspector.Resource.Type.Script,

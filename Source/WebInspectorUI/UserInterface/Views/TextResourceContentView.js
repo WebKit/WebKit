@@ -38,6 +38,7 @@ WebInspector.TextResourceContentView = class TextResourceContentView extends Web
         this._textEditor.addEventListener(WebInspector.TextEditor.Event.FormattingDidChange, this._textEditorFormattingDidChange, this);
         this._textEditor.addEventListener(WebInspector.SourceCodeTextEditor.Event.ContentWillPopulate, this._contentWillPopulate, this);
         this._textEditor.addEventListener(WebInspector.SourceCodeTextEditor.Event.ContentDidPopulate, this._contentDidPopulate, this);
+        this._textEditor.readOnly = !this._shouldBeEditable();
 
         WebInspector.probeManager.addEventListener(WebInspector.ProbeManager.Event.ProbeSetAdded, this._probeSetsChanged, this);
         WebInspector.probeManager.addEventListener(WebInspector.ProbeManager.Event.ProbeSetRemoved, this._probeSetsChanged, this);
@@ -126,8 +127,15 @@ WebInspector.TextResourceContentView = class TextResourceContentView extends Web
         this._textEditor.close();
     }
 
+    get supportsSave()
+    {
+        return super.supportsSave || this.resource instanceof WebInspector.CSSStyleSheet;
+    }
+
     get saveData()
     {
+        if (this.resource instanceof WebInspector.CSSStyleSheet)
+            return {url: "web-inspector:///InspectorStyleSheet.css", content: this._textEditor.string, forceSaveAs: true};
         return {url: this.resource.url, content: this._textEditor.string};
     }
 
@@ -182,14 +190,6 @@ WebInspector.TextResourceContentView = class TextResourceContentView extends Web
     {
         if (this._textEditor.parentView === this)
             return;
-
-        // Check the MIME-type for CSS since Resource.Type.Stylesheet also includes XSL, which we can't edit yet.
-        if (this.resource.type === WebInspector.Resource.Type.Stylesheet && this.resource.syntheticMIMEType === "text/css")
-            this._textEditor.readOnly = false;
-
-        // Allow editing any local file since edits can be saved and reloaded right from the Inspector.
-        if (this.resource.urlComponents.scheme === "file")
-            this._textEditor.readOnly = false;
 
         this.element.removeChildren();
         this.addSubview(this._textEditor);
@@ -273,5 +273,21 @@ WebInspector.TextResourceContentView = class TextResourceContentView extends Web
         var breakpoint = event.data.probeSet.breakpoint;
         if (breakpoint.sourceCodeLocation.sourceCode === this.resource)
             this.dispatchEventToListeners(WebInspector.ContentView.Event.SupplementalRepresentedObjectsDidChange);
+    }
+
+    _shouldBeEditable()
+    {
+        if (this.resource instanceof WebInspector.CSSStyleSheet)
+            return true;
+
+        // Check the MIME-type for CSS since Resource.Type.Stylesheet also includes XSL, which we can't edit yet.
+        if (this.resource.type === WebInspector.Resource.Type.Stylesheet && this.resource.syntheticMIMEType === "text/css")
+            return true;
+
+        // Allow editing any local file since edits can be saved and reloaded right from the Inspector.
+        if (this.resource.urlComponents.scheme === "file")
+            return true;
+
+        return false;
     }
 };

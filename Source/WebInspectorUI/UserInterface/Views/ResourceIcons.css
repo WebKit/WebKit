@@ -39,7 +39,7 @@
     content: image-set(url(../Images/DocumentFont.png) 1x, url(../Images/DocumentFont@2x.png) 2x);
 }
 
-.resource-icon.resource-type-stylesheet .icon {
+:matches(.resource-icon.resource-type-stylesheet, .stylesheet-icon) .icon {
     content: image-set(url(../Images/DocumentCSS.png) 1x, url(../Images/DocumentCSS@2x.png) 2x);
 }
 

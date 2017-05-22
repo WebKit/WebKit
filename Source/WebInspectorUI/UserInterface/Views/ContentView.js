@@ -54,6 +54,9 @@ WebInspector.ContentView = class ContentView extends WebInspector.View
         if (representedObject instanceof WebInspector.Script)
             return new WebInspector.ScriptContentView(representedObject, extraArguments);
 
+        if (representedObject instanceof WebInspector.CSSStyleSheet)
+            return new WebInspector.TextResourceContentView(representedObject, extraArguments);
+
         if (representedObject instanceof WebInspector.TimelineRecording)
             return new WebInspector.TimelineRecordingContentView(representedObject, extraArguments);
 
@@ -233,6 +236,8 @@ WebInspector.ContentView = class ContentView extends WebInspector.View
         if (representedObject instanceof WebInspector.Resource)
             return true;
         if (representedObject instanceof WebInspector.Script)
+            return true;
+        if (representedObject instanceof WebInspector.CSSStyleSheet)
             return true;
         if (representedObject instanceof WebInspector.TimelineRecording)
             return true;
