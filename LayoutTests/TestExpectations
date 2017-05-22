@@ -803,8 +803,8 @@ imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/test_ecdsa.html [ Pass 
 imported/w3c/web-platform-tests/WebCryptoAPI/import_export/test_rsa_importKey.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_go_zero.html [ Pass Failure ]
 
-[ Debug ] imported/w3c/web-platform-tests/html/semantics/forms/form-control-infrastructure/form_attribute.html [ Failure ]
-[ Debug ] imported/w3c/web-platform-tests/html/semantics/forms/form-control-infrastructure/form_owner_and_table_2.html [ Failure ]
+[ Debug ] imported/w3c/web-platform-tests/html/semantics/forms/form-control-infrastructure/form_attribute.html [ Skip ]
+[ Debug ] imported/w3c/web-platform-tests/html/semantics/forms/form-control-infrastructure/form_owner_and_table_2.html [ Skip ]
 [ Debug ] imported/w3c/web-platform-tests/dom/nodes/Element-classlist.html [ Failure ]
 
 # FIXME: The following failures need individual bugs.
