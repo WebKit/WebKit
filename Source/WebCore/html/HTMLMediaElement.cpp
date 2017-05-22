@@ -5352,7 +5352,7 @@ void HTMLMediaElement::mediaVolumeDidChange()
 
 void HTMLMediaElement::visibilityStateChanged()
 {
-    m_elementIsHidden = document().hidden();
+    m_elementIsHidden = document().hidden() && m_videoFullscreenMode == VideoFullscreenModeNone;
     LOG(Media, "HTMLMediaElement::visibilityStateChanged(%p) - visible = %s", this, boolString(!m_elementIsHidden));
     updateSleepDisabling();
     m_mediaSession->visibilityChanged();
@@ -7480,6 +7480,7 @@ void HTMLMediaElement::fullscreenModeChanged(VideoFullscreenMode mode)
         return;
 
     m_videoFullscreenMode = mode;
+    visibilityStateChanged();
     m_mediaSession->scheduleClientDataBufferingCheck();
     scheduleUpdatePlaybackControlsManager();
 }
