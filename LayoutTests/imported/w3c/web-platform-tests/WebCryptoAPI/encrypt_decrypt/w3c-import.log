@@ -24,7 +24,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/rsa.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/rsa.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/rsa_vectors.js
-/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/test_aes_cbc.html
-/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/test_aes_ctr.html
-/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/test_aes_gcm.html
-/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/test_rsa_oaep.html
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/test_aes_cbc.https.html
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/test_aes_ctr.https.html
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/test_aes_gcm.https.html
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/test_rsa_oaep.https.html

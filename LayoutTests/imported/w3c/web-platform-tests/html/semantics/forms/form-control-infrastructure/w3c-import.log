@@ -16,3 +16,6 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-control-infrastructure/contains.json
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-control-infrastructure/form.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-control-infrastructure/form_attribute.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-control-infrastructure/form_owner_and_table.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-control-infrastructure/form_owner_and_table_2.html

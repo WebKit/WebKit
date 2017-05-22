@@ -1,0 +1,4 @@
+
+PASS HTMLAnchorElement.rel setter 
+PASS Test anchor's rel setter 
+

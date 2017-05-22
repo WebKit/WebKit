@@ -16,6 +16,7 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/Document-defaultView.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/Window-document.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/historical.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/window-aliases.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/window-indexed-properties-strict.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/window-indexed-properties.html

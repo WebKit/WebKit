@@ -3,6 +3,8 @@ FAIL form autocomplete attribute missing assert_equals: expected "on" but got ""
 FAIL form autocomplete attribute on assert_equals: expected "on" but got ""
 FAIL form autocomplete attribute off assert_equals: expected "off" but got ""
 FAIL form autocomplete attribute invalid assert_equals: expected "on" but got ""
+PASS on is an allowed autocomplete field name 
+PASS off is an allowed autocomplete field name 
 PASS name is an allowed autocomplete field name 
 PASS honorific-prefix is an allowed autocomplete field name 
 PASS given-name is an allowed autocomplete field name 

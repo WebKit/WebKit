@@ -9,10 +9,11 @@ import subprocess
 import sys
 import tarfile
 import zipfile
+from ConfigParser import RawConfigParser, SafeConfigParser
 from abc import ABCMeta, abstractmethod
 from cStringIO import StringIO as CStringIO
 from collections import defaultdict, OrderedDict
-from ConfigParser import RawConfigParser
+from distutils.spawn import find_executable
 from io import BytesIO, StringIO
 
 import requests
@@ -31,6 +32,7 @@ wpt_root = None
 wptrunner_root = None
 
 logger = None
+
 
 def do_delayed_imports():
     """Import and set up modules only needed if execution gets to this point."""
@@ -171,6 +173,12 @@ class Browser(object):
     def wptrunner_args(self):
         return NotImplemented
 
+    def prepare_environment(self):
+        """Do any additional setup of the environment required to start the
+           browser successfully
+        """
+        pass
+
 
 class Firefox(Browser):
     """Firefox-specific interface.
@@ -181,6 +189,9 @@ class Firefox(Browser):
     product = "firefox"
     binary = "%s/firefox/firefox"
     platform_ini = "%s/firefox/platform.ini"
+
+    def __init__(self, **kwargs):
+        pass
 
     def install(self):
         """Install Firefox."""
@@ -252,6 +263,9 @@ class Chrome(Browser):
     product = "chrome"
     binary = "/usr/bin/google-chrome"
 
+    def __init__(self, **kwargs):
+        pass
+
     def install(self):
         """Install Chrome."""
 
@@ -279,6 +293,73 @@ class Chrome(Browser):
             "product": "chrome",
             "binary": self.binary,
             "webdriver_binary": "%s/chromedriver" % root,
+            "test_types": ["testharness", "reftest"]
+        }
+
+    def prepare_environment(self):
+        # https://bugs.chromium.org/p/chromium/issues/detail?id=713947
+        logger.debug("DBUS_SESSION_BUS_ADDRESS %s" % os.environ.get("DBUS_SESSION_BUS_ADDRESS"))
+        if "DBUS_SESSION_BUS_ADDRESS" not in os.environ:
+            if find_executable("dbus-launch"):
+                logger.debug("Attempting to start dbus")
+                dbus_conf = subprocess.check_output(["dbus-launch"])
+                logger.debug(dbus_conf)
+
+                # From dbus-launch(1):
+                #
+                # > When dbus-launch prints bus information to standard output,
+                # > by default it is in a simple key-value pairs format.
+                for line in dbus_conf.strip().split("\n"):
+                    key, _, value = line.partition("=")
+                    os.environ[key] = value
+            else:
+                logger.critical("dbus not running and can't be started")
+                sys.exit(1)
+
+
+class Sauce(Browser):
+    """Sauce-specific interface.
+
+    Includes installation and wptrunner setup methods.
+    """
+
+    product = "sauce"
+
+    def __init__(self, **kwargs):
+        browser = kwargs["product"].split(":")
+        self.browser_name = browser[1]
+        self.browser_version = browser[2]
+        self.sauce_platform = kwargs["sauce_platform"]
+        self.sauce_build = kwargs["sauce_build_number"]
+        self.sauce_key = kwargs["sauce_key"]
+        self.sauce_user = kwargs["sauce_user"]
+        self.sauce_build_tags = kwargs["sauce_build_tags"]
+        self.sauce_tunnel_id = kwargs["sauce_tunnel_identifier"]
+
+    def install(self):
+        """Install sauce selenium python deps."""
+        call("pip", "install", "-r", os.path.join(wptrunner_root, "requirements_sauce.txt"))
+
+    def install_webdriver(self):
+        """No need to install webdriver locally."""
+        pass
+
+    def version(self, root):
+        """Retrieve the release version of the browser under test."""
+        return self.browser_version
+
+    def wptrunner_args(self, root):
+        """Return Sauce-specific wptrunner arguments."""
+        return {
+            "product": "sauce",
+            "sauce_browser": self.browser_name,
+            "sauce_build": self.sauce_build,
+            "sauce_key": self.sauce_key,
+            "sauce_platform": self.sauce_platform,
+            "sauce_tags": self.sauce_build_tags,
+            "sauce_tunnel_id": self.sauce_tunnel_id,
+            "sauce_user": self.sauce_user,
+            "sauce_version": self.browser_version,
             "test_types": ["testharness", "reftest"]
         }
 
@@ -383,10 +464,7 @@ def build_manifest():
 
 
 def install_wptrunner():
-    """Clone and install wptrunner."""
-    call("git", "clone", "--depth=1", "https://github.com/w3c/wptrunner.git", wptrunner_root)
-    git = get_git_cmd(wptrunner_root)
-    git("submodule", "update", "--init", "--recursive")
+    """Install wptrunner."""
     call("pip", "install", wptrunner_root)
 
 
@@ -439,30 +517,52 @@ def get_branch_point(user):
     return branch_point
 
 
-def get_files_changed(branch_point):
-    """Get and return files changed since current branch diverged from master."""
+def get_files_changed(branch_point, ignore_changes):
+    """Get and return files changed since current branch diverged from master,
+    excluding those that are located within any directory specifed by
+    `ignore_changes`."""
     root = os.path.abspath(os.curdir)
     git = get_git_cmd(wpt_root)
     files = git("diff", "--name-only", "-z", "%s..." % branch_point)
     if not files:
-        return []
+        return [], []
     assert files[-1] == "\0"
-    return [os.path.join(wpt_root, item)
-            for item in files[:-1].split("\0")]
+
+    changed = []
+    ignored = []
+    for item in files[:-1].split("\0"):
+        fullpath = os.path.join(wpt_root, item)
+        topmost_dir = item.split(os.sep, 1)[0]
+        if topmost_dir in ignore_changes:
+            ignored.append(fullpath)
+        else:
+            changed.append(fullpath)
+
+    return changed, ignored
 
 
-def get_affected_testfiles(files_changed):
+def _in_repo_root(full_path):
+    rel_path = os.path.relpath(full_path, wpt_root)
+    path_components = rel_path.split(os.sep)
+    return len(path_components) < 2
+
+
+def get_affected_testfiles(files_changed, skip_tests):
     """Determine and return list of test files that reference changed files."""
     affected_testfiles = set()
+    # Exclude files that are in the repo root, because
+    # they are not part of any test.
+    files_changed = [f for f in files_changed if not _in_repo_root(f)]
     nontests_changed = set(files_changed)
     manifest_file = os.path.join(wpt_root, "MANIFEST.json")
-    skip_dirs = ["conformance-checkers", "docs", "tools"]
     test_types = ["testharness", "reftest", "wdspec"]
 
     wpt_manifest = manifest.load(wpt_root, manifest_file)
 
     support_files = {os.path.join(wpt_root, path)
                      for _, path, _ in wpt_manifest.itertypes("support")}
+    wdspec_test_files = {os.path.join(wpt_root, path)
+                         for _, path, _ in wpt_manifest.itertypes("wdspec")}
     test_files = {os.path.join(wpt_root, path)
                   for _, path, _ in wpt_manifest.itertypes(*test_types)}
 
@@ -472,27 +572,42 @@ def get_affected_testfiles(files_changed):
     for full_path in nontests_changed:
         rel_path = os.path.relpath(full_path, wpt_root)
         path_components = rel_path.split(os.sep)
-        if len(path_components) < 2:
-            # This changed file is in the repo root, so skip it
-            # (because it's not part of any test).
-            continue
         top_level_subdir = path_components[0]
-        if top_level_subdir in skip_dirs:
+        if top_level_subdir in skip_tests:
             continue
         repo_path = "/" + os.path.relpath(full_path, wpt_root).replace(os.path.sep, "/")
         nontest_changed_paths.add((full_path, repo_path))
 
+    def affected_by_wdspec(test):
+        affected = False
+        if test in wdspec_test_files:
+            for support_full_path, _ in nontest_changed_paths:
+                # parent of support file or of "support" directory
+                parent = os.path.dirname(support_full_path)
+                if os.path.basename(parent) == "support":
+                    parent = os.path.dirname(parent)
+                relpath = os.path.relpath(test, parent)
+                if not relpath.startswith(os.pardir):
+                    # testfile is in subtree of support file
+                    affected = True
+                    break
+        return affected
+
     for root, dirs, fnames in os.walk(wpt_root):
         # Walk top_level_subdir looking for test files containing either the
-        # relative filepath or absolute filepatch to the changed files.
+        # relative filepath or absolute filepath to the changed files.
         if root == wpt_root:
-            for dir_name in skip_dirs:
+            for dir_name in skip_tests:
                 dirs.remove(dir_name)
         for fname in fnames:
             test_full_path = os.path.join(root, fname)
             # Skip any file that's not a test file.
             if test_full_path not in test_files:
                 continue
+            if affected_by_wdspec(test_full_path):
+                affected_testfiles.add(test_full_path)
+                continue
+
             with open(test_full_path, "rb") as fh:
                 file_contents = fh.read()
                 if file_contents.startswith("\xfe\xff"):
@@ -621,7 +736,7 @@ def format_comment_title(product):
     title = parts[0].title()
 
     if len(parts) > 1:
-       title += " (%s channel)" % parts[1]
+       title += " (%s)" % parts[1]
 
     return "# %s #" % title
 
@@ -632,6 +747,7 @@ def markdown_adjust(s):
     s = s.replace('\n', u'\\n')
     s = s.replace('\r', u'\\r')
     s = s.replace('`',  u'')
+    s = s.replace('|', u'\\|')
     return s
 
 
@@ -650,6 +766,7 @@ def table(headings, data, log):
     for row in data:
         log("|%s|" % "|".join(" %s" % row[i].ljust(max_widths[i] - 1) for i in cols))
     log("")
+
 
 def write_inconsistent(inconsistent, iterations):
     """Output inconsistent tests to logger.error."""
@@ -706,7 +823,9 @@ def write_results(results, iterations, comment_pr):
 
 def get_parser():
     """Create and return script-specific argument parser."""
-    parser = argparse.ArgumentParser()
+    description = """Detect instabilities in new tests by executing tests
+    repeatedly and comparing results between executions."""
+    parser = argparse.ArgumentParser(description=description)
     parser.add_argument("--root",
                         action="store",
                         default=os.path.join(os.path.expanduser("~"), "build"),
@@ -730,6 +849,35 @@ def get_parser():
                         action="store",
                         type=int,
                         help="Maximum number of bytes to write to standard output/error")
+    parser.add_argument("--config-file",
+                        action="store",
+                        type=str,
+                        help="Location of ini-formatted configuration file",
+                        default="check_stability.ini")
+    parser.add_argument("--sauce-platform",
+                        action="store",
+                        default=os.environ.get("PLATFORM"),
+                        help="Sauce Labs OS")
+    parser.add_argument("--sauce-build-number",
+                        action="store",
+                        default=os.environ.get("TRAVIS_BUILD_NUMBER"),
+                        help="Sauce Labs build identifier")
+    parser.add_argument("--sauce-build-tags",
+                        action="store", nargs="*",
+                        default=[os.environ.get("TRAVIS_PYTHON_VERSION")],
+                        help="Sauce Labs build tag")
+    parser.add_argument("--sauce-tunnel-identifier",
+                        action="store",
+                        default=os.environ.get("TRAVIS_JOB_NUMBER"),
+                        help="Sauce Connect tunnel identifier")
+    parser.add_argument("--sauce-user",
+                        action="store",
+                        default=os.environ.get("SAUCE_USERNAME"),
+                        help="Sauce Labs user name")
+    parser.add_argument("--sauce-key",
+                        action="store",
+                        default=os.environ.get("SAUCE_ACCESS_KEY"),
+                        help="Sauce Labs access key")
     parser.add_argument("product",
                         action="store",
                         help="Product to run against (`browser-name` or 'browser-name:channel')")
@@ -746,6 +894,12 @@ def main():
     parser = get_parser()
     args = parser.parse_args()
 
+    with open(args.config_file, 'r') as config_fp:
+        config = SafeConfigParser()
+        config.readfp(config_fp)
+        skip_tests = config.get("file detection", "skip_tests").split()
+        ignore_changes = set(config.get("file detection", "ignore_changes").split())
+
     if args.output_bytes is not None:
         replace_streams(args.output_bytes,
                         "Log reached capacity (%s bytes); output disabled." % args.output_bytes)
@@ -754,21 +908,25 @@ def main():
     setup_logging()
 
     wpt_root = os.path.abspath(os.curdir)
-    wptrunner_root = os.path.normpath(os.path.join(wpt_root, "..", "wptrunner"))
+    wptrunner_root = os.path.normpath(os.path.join(wpt_root, "tools", "wptrunner"))
 
     if not os.path.exists(args.root):
         logger.critical("Root directory %s does not exist" % args.root)
         return 1
 
     os.chdir(args.root)
-
     browser_name = args.product.split(":")[0]
+
+    if browser_name == "sauce" and not args.sauce_key:
+        logger.warning("Cannot run tests on Sauce Labs. No access key.")
+        return retcode
 
     with TravisFold("browser_setup"):
         logger.info(format_comment_title(args.product))
 
         browser_cls = {"firefox": Firefox,
-                       "chrome": Chrome}.get(browser_name)
+                       "chrome": Chrome,
+                       "sauce": Sauce}.get(browser_name)
         if browser_cls is None:
             logger.critical("Unrecognised browser %s" % browser_name)
             return 1
@@ -782,7 +940,11 @@ def main():
 
         # For now just pass the whole list of changed files to wptrunner and
         # assume that it will run everything that's actually a test
-        files_changed = get_files_changed(branch_point)
+        files_changed, files_ignored = get_files_changed(branch_point, ignore_changes)
+
+        if files_ignored:
+            logger.info("Ignoring %s changed files:\n%s" % (len(files_ignored),
+                                                            "".join(" * %s\n" % item for item in files_ignored)))
 
         if not files_changed:
             logger.info("No files changed")
@@ -792,7 +954,7 @@ def main():
         install_wptrunner()
         do_delayed_imports()
 
-        browser = browser_cls()
+        browser = browser_cls(**vars(args))
         browser.install()
         browser.install_webdriver()
 
@@ -804,7 +966,7 @@ def main():
 
         logger.debug("Files changed:\n%s" % "".join(" * %s\n" % item for item in files_changed))
 
-        affected_testfiles = get_affected_testfiles(files_changed)
+        affected_testfiles = get_affected_testfiles(files_changed, skip_tests)
 
         logger.debug("Affected tests:\n%s" % "".join(" * %s\n" % item for item in affected_testfiles))
 
@@ -814,6 +976,8 @@ def main():
                                 files_changed,
                                 args.iterations,
                                 browser)
+
+        browser.prepare_environment()
 
     with TravisFold("running_tests"):
         logger.info("Starting %i test iterations" % args.iterations)
@@ -855,6 +1019,8 @@ if __name__ == "__main__":
     try:
         retcode = main()
     except:
-        raise
+        import traceback
+        traceback.print_exc()
+        sys.exit(1)
     else:
         sys.exit(retcode)

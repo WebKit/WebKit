@@ -1,7 +1,6 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
-Instead, create a pull request on the W3C CSS or WPT github:
-	https://github.com/w3c/csswg-test
+Instead, create a pull request on the WPT github:
 	https://github.com/w3c/web-platform-tests
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
@@ -41,9 +40,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/json/iterable.json
 /LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/json/iterator.json
 /LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/json/legacyiterable.json
-/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/json/map.json
 /LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/json/maplike.json
 /LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/json/namedconstructor.json
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/json/namespace.json
 /LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/json/nointerfaceobject.json
 /LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/json/nullable.json
 /LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/json/nullableobjects.json
@@ -54,6 +53,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/json/primitives.json
 /LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/json/prototyperoot.json
 /LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/json/putforwards.json
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/json/record.json
 /LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/json/reg-operations.json
 /LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/json/replaceable.json
 /LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/json/sequence.json
@@ -65,7 +65,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/json/stringifier.json
 /LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/json/treatasnull.json
 /LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/json/treatasundefined.json
-/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/json/typedef-nested.json
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/json/typedef-union.json
 /LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/json/typedef.json
 /LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/json/typesuffixes.json
 /LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/json/uniontype.json

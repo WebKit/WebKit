@@ -5,4 +5,5 @@ PASS pipeThrough generically calls pipeTo with the appropriate args
 PASS pipeThrough can handle calling a pipeTo that returns a non-promise object 
 PASS pipeThrough can handle calling a pipeTo that returns a non-promise thenable object 
 PASS pipeThrough should mark a real promise from a fake readable as handled 
+PASS pipeThrough should not be fooled by an object whose instanceof Promise returns true 
 

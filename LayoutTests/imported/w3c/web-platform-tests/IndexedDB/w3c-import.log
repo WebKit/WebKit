@@ -140,8 +140,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbdatabase_transaction4.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbdatabase_transaction5.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbfactory-deleteDatabase-opaque-origin.html
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbfactory-deleteDatabase-request-success.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbfactory-open-error-properties.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbfactory-open-opaque-origin.html
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbfactory-open-request-error.html
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbfactory-open-request-success.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbfactory_cmp.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbfactory_cmp2.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbfactory_cmp3.htm
@@ -210,6 +213,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbobjectstore-deleteIndex-exception-order.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbobjectstore-getAll-enforcerange.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbobjectstore-getAllKeys-enforcerange.html
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbobjectstore-index-finished.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbobjectstore-query-exception-order.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbobjectstore-rename-abort.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbobjectstore-rename-errors.html
@@ -296,6 +300,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbrequest_error.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbrequest_result.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbtransaction-objectStore-exception-order.html
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbtransaction-objectStore-finished.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbtransaction-oncomplete.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbtransaction.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbtransaction_abort.htm
@@ -326,6 +331,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/objectstore_keyorder.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/open-request-queue.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/parallel-cursors-upgrade.html
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/request-abort-ordering.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/request_bubble-and-capture.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/string-list-ordering.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/support-promises.js

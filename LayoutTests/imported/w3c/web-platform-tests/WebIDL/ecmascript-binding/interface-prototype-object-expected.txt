@@ -1,0 +1,3 @@
+
+FAIL The class string of an interface prototype object is the concatenation of the interface's identifier and the string 'Prototype'. assert_true: An interface prototype object should have toStringTag property. expected true got false
+

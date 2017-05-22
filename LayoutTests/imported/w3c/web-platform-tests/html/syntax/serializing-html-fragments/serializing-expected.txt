@@ -102,7 +102,6 @@ PASS innerHTML Void context node img
 PASS innerHTML Void context node input 
 PASS innerHTML Void context node keygen 
 PASS innerHTML Void context node link 
-FAIL innerHTML Void context node menuitem assert_equals: expected "" but got "<a><!--abc--></a><b><c>abc</c></b>"
 PASS innerHTML Void context node meta 
 PASS innerHTML Void context node param 
 PASS innerHTML Void context node source 
@@ -121,7 +120,6 @@ PASS innerHTML void as first child with following siblings img
 PASS innerHTML void as first child with following siblings input 
 PASS innerHTML void as first child with following siblings keygen 
 PASS innerHTML void as first child with following siblings link 
-FAIL innerHTML void as first child with following siblings menuitem assert_equals: expected "<menuitem><a>test</a><b></b>" but got "<menuitem><a><!--abc--></a><b><c>abc</c></b></menuitem><a>test</a><b></b>"
 PASS innerHTML void as first child with following siblings meta 
 PASS innerHTML void as first child with following siblings param 
 PASS innerHTML void as first child with following siblings source 
@@ -140,7 +138,6 @@ PASS innerHTML void as second child with following siblings img
 PASS innerHTML void as second child with following siblings input 
 PASS innerHTML void as second child with following siblings keygen 
 PASS innerHTML void as second child with following siblings link 
-FAIL innerHTML void as second child with following siblings menuitem assert_equals: expected "<a>test</a><menuitem><b></b>" but got "<a>test</a><menuitem><a><!--abc--></a><b><c>abc</c></b></menuitem><b></b>"
 PASS innerHTML void as second child with following siblings meta 
 PASS innerHTML void as second child with following siblings param 
 PASS innerHTML void as second child with following siblings source 
@@ -159,7 +156,6 @@ PASS innerHTML void as last child with preceding siblings img
 PASS innerHTML void as last child with preceding siblings input 
 PASS innerHTML void as last child with preceding siblings keygen 
 PASS innerHTML void as last child with preceding siblings link 
-FAIL innerHTML void as last child with preceding siblings menuitem assert_equals: expected "<a>test</a><b></b><menuitem>" but got "<a>test</a><b></b><menuitem><a><!--abc--></a><b><c>abc</c></b></menuitem>"
 PASS innerHTML void as last child with preceding siblings meta 
 PASS innerHTML void as last child with preceding siblings param 
 PASS innerHTML void as last child with preceding siblings source 
@@ -178,7 +174,6 @@ PASS outerHTML Void context node img
 PASS outerHTML Void context node input 
 PASS outerHTML Void context node keygen 
 PASS outerHTML Void context node link 
-FAIL outerHTML Void context node menuitem assert_equals: expected "<menuitem>" but got "<menuitem><a><!--abc--></a><b><c>abc</c></b></menuitem>"
 PASS outerHTML Void context node meta 
 PASS outerHTML Void context node param 
 PASS outerHTML Void context node source 
@@ -197,7 +192,6 @@ PASS outerHTML void as first child with following siblings img
 PASS outerHTML void as first child with following siblings input 
 PASS outerHTML void as first child with following siblings keygen 
 PASS outerHTML void as first child with following siblings link 
-FAIL outerHTML void as first child with following siblings menuitem assert_equals: expected "<span><menuitem><a>test</a><b></b></span>" but got "<span><menuitem><a><!--abc--></a><b><c>abc</c></b></menuitem><a>test</a><b></b></span>"
 PASS outerHTML void as first child with following siblings meta 
 PASS outerHTML void as first child with following siblings param 
 PASS outerHTML void as first child with following siblings source 
@@ -216,7 +210,6 @@ PASS outerHTML void as second child with following siblings img
 PASS outerHTML void as second child with following siblings input 
 PASS outerHTML void as second child with following siblings keygen 
 PASS outerHTML void as second child with following siblings link 
-FAIL outerHTML void as second child with following siblings menuitem assert_equals: expected "<span><a>test</a><menuitem><b></b></span>" but got "<span><a>test</a><menuitem><a><!--abc--></a><b><c>abc</c></b></menuitem><b></b></span>"
 PASS outerHTML void as second child with following siblings meta 
 PASS outerHTML void as second child with following siblings param 
 PASS outerHTML void as second child with following siblings source 
@@ -235,7 +228,6 @@ PASS outerHTML void as last child with preceding siblings img
 PASS outerHTML void as last child with preceding siblings input 
 PASS outerHTML void as last child with preceding siblings keygen 
 PASS outerHTML void as last child with preceding siblings link 
-FAIL outerHTML void as last child with preceding siblings menuitem assert_equals: expected "<span><a>test</a><b></b><menuitem></span>" but got "<span><a>test</a><b></b><menuitem><a><!--abc--></a><b><c>abc</c></b></menuitem></span>"
 PASS outerHTML void as last child with preceding siblings meta 
 PASS outerHTML void as last child with preceding siblings param 
 PASS outerHTML void as last child with preceding siblings source 

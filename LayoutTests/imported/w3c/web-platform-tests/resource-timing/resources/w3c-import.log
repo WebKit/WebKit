@@ -14,9 +14,19 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/resources/TAOResponse.py
 /LayoutTests/imported/w3c/web-platform-tests/resource-timing/resources/fake_responses.html
 /LayoutTests/imported/w3c/web-platform-tests/resource-timing/resources/fake_responses.py
 /LayoutTests/imported/w3c/web-platform-tests/resource-timing/resources/gzip_xml.py
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/resources/iframe_TAO_match_origin.html
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/resources/iframe_TAO_match_wildcard.html
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/resources/iframe_TAO_multi.html
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/resources/iframe_TAO_null.html
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/resources/iframe_TAO_origin.html
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/resources/iframe_TAO_origin_uppercase.html
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/resources/iframe_TAO_space.html
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/resources/iframe_TAO_wildcard.html
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/resources/iframe_TAO_zero.html
 /LayoutTests/imported/w3c/web-platform-tests/resource-timing/resources/inject_resource_test.html
 /LayoutTests/imported/w3c/web-platform-tests/resource-timing/resources/resource_timing_test0.css
 /LayoutTests/imported/w3c/web-platform-tests/resource-timing/resources/resource_timing_test0.html

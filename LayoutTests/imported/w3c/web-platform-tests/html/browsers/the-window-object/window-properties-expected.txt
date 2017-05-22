@@ -60,7 +60,6 @@ PASS Window method: matchMedia
 PASS Window method: scroll 
 PASS Window method: scrollTo 
 PASS Window method: scrollBy 
-PASS Window method: showModalDialog 
 PASS Window readonly attribute: history 
 PASS Window readonly attribute: frameElement 
 PASS Window readonly attribute: navigator 

@@ -24,7 +24,6 @@ FAIL Check referrerPolicy init value of strict-origin-when-cross-origin and asso
 PASS Check mode init value of same-origin and associated getter 
 PASS Check mode init value of no-cors and associated getter 
 PASS Check mode init value of cors and associated getter 
-FAIL Check mode init value of navigate and associated getter Request constructor does not accept navigate fetch mode.
 PASS Check credentials init value of omit and associated getter 
 PASS Check credentials init value of same-origin and associated getter 
 PASS Check credentials init value of include and associated getter 

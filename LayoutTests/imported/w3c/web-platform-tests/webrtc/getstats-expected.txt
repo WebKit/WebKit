@@ -1,5 +1,7 @@
 
-FAIL Can get stats from a basic WebRTC call. assert_unreached: Error: assert_not_equals: Did not find peer-connection stats got disallowed value null:  Reached unreachable code
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Can get stats from a basic WebRTC call. Test timed out
 Retrieved stats info
 
   

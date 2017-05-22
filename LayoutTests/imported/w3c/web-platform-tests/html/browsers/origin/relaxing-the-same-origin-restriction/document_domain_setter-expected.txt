@@ -1,0 +1,6 @@
+Blocked access to external URL http://www1.localhost:8800/html/browsers/origin/relaxing-the-same-origin-restriction/document_domain_setter_iframe.html
+
+
+FAIL failed setting of document.domain assert_throws: function "function () { document.domain = SUFFIX_HOST; }" did not throw
+FAIL same-origin-domain iframe assert_equals: expected null but got Document node with 1 child
+

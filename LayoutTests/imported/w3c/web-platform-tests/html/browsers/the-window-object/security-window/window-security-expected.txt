@@ -111,7 +111,6 @@ PASS A SecurityError exception must be thrown when window.scrollTo is accessed f
 PASS A SecurityError exception must be thrown when window.scrollBy is accessed from a different origin. 
 PASS A SecurityError exception must be thrown when window.setInterval is accessed from a different origin. 
 PASS A SecurityError exception must be thrown when window.setTimeout is accessed from a different origin. 
-PASS A SecurityError exception must be thrown when window.showModalDialog is accessed from a different origin. 
 PASS A SecurityError exception must be thrown when window.stop is accessed from a different origin. 
 PASS A SecurityError exception should not be thrown when window.closed is accessed from a different origin. 
 PASS A SecurityError exception should not be thrown when window.frames is accessed from a different origin. 

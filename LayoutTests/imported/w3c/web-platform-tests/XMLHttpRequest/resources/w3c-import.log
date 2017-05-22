@@ -17,6 +17,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/resources/accept-language.py
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/resources/accept.py
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/resources/authentication.py
+/LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/resources/base.xml
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/resources/chunked.py
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/resources/conditional.py
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/resources/content.py

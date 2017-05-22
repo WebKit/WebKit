@@ -25,7 +25,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/rsa_pkcs_vectors.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/rsa_pss.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/rsa_pss_vectors.js
-/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/test_ecdsa.html
-/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/test_hmac.html
-/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/test_rsa_pkcs.html
-/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/test_rsa_pss.html
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/test_ecdsa.https.html
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/test_hmac.https.html
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/test_rsa_pkcs.https.html
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/test_rsa_pss.https.html

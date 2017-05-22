@@ -1,9 +1,11 @@
 
-PASS Setting iceCandidatePoolSize to a valid value: 10 
-PASS Setting iceCandidatePoolSize to a valid value: 0 
-PASS Setting iceCandidatePoolSize to a valid value: null 
-PASS Setting iceCandidatePoolSize to a valid value: undefined 
-PASS Setting iceCandidatePoolSize to an invalid value: -1 
-PASS Setting iceCandidatePoolSize to an invalid value: 1000 
-PASS Setting iceCandidatePoolSize to an invalid value: string 
+PASS Initialize a new RTCPeerConnection with no iceCandidatePoolSize 
+PASS Initialize a new RTCPeerConnection with iceCandidatePoolSize: 0 
+PASS Initialize a new RTCPeerConnection with iceCandidatePoolSize: 255 
+PASS Initialize a new RTCPeerConnection with iceCandidatePoolSize: -1 (Out Of Range) 
+PASS Initialize a new RTCPeerConnection with iceCandidatePoolSize: 256 (Out Of Range) 
+PASS Reconfigure RTCPeerConnection instance iceCandidatePoolSize to 0 
+PASS Reconfigure RTCPeerConnection instance iceCandidatePoolSize to 255 
+PASS Reconfigure RTCPeerConnection instance iceCandidatePoolSize to -1 (Out Of Range) 
+PASS Reconfigure RTCPeerConnection instance iceCandidatePoolSize to 256 (Out Of Range) 
 

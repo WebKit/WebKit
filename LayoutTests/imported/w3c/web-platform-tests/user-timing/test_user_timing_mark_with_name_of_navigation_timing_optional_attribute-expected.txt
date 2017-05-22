@@ -1,9 +1,9 @@
+CONSOLE MESSAGE: line 58: ReferenceError: Can't find variable: wp_test
+CONSOLE MESSAGE: line 30: ReferenceError: Can't find variable: test_true
 Description
 
 This test validates exception scenarios of invoking performance.mark() with param of "secureConnectionStart".
 
 
-PASS window.performance is defined 
-PASS window.performance.mark("secureConnectionStart") threw an exception when secureConnectionStart attribute of Navigation Timing is supported. 
-PASS window.performance.mark("secureConnectionStart") threw a SYNTAX_ERR when secureConnectionStart attribute of Navigation Timing is supported. 
+FAIL exception test of performance.mark ReferenceError: Can't find variable: wp_test
 

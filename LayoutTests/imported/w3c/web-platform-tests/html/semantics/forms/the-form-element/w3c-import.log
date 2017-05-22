@@ -14,7 +14,10 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-form-element/form-action-url.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-form-element/form-action-reflection-with-base-url.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-form-element/form-action-reflection.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-form-element/form-action-submission-with-base-url.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-form-element/form-action-submission.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-form-element/form-autocomplete.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-form-element/form-elements-interfaces-01.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-form-element/form-elements-matches.html

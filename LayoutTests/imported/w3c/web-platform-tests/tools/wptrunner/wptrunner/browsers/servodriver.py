@@ -39,7 +39,7 @@ def check_args(**kwargs):
     require_arg(kwargs, "binary")
 
 
-def browser_kwargs(**kwargs):
+def browser_kwargs(test_type, run_info_data, **kwargs):
     return {
         "binary": kwargs["binary"],
         "debug_info": kwargs["debug_info"],
@@ -91,7 +91,7 @@ class ServoWebDriverBrowser(Browser):
         self.command = None
         self.user_stylesheets = user_stylesheets if user_stylesheets else []
 
-    def start(self):
+    def start(self, **kwargs):
         self.webdriver_port = get_free_port(4444, exclude=self.used_ports)
         self.used_ports.add(self.webdriver_port)
 

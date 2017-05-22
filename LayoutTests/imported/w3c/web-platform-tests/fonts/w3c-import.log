@@ -14,6 +14,5 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/fonts/CanvasTest.sfd
 /LayoutTests/imported/w3c/web-platform-tests/fonts/CanvasTest.ttf
 /LayoutTests/imported/w3c/web-platform-tests/fonts/OWNERS

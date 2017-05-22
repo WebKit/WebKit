@@ -1,3 +1,13 @@
+2017-05-22  youenn fablet  <youenn@apple.com>
+
+        Resync web-platform-tests up to 8df7c9c215678328212f232ce0b5270c505a8563
+        https://bugs.webkit.org/show_bug.cgi?id=172426
+
+        Reviewed by Chris Dumez.
+
+        * Scripts/webkitpy/w3c/test_importer.py:
+        (TestImporter.remove_deleted_files): Outputting warning when trying to delete a file that no longer exists.
+
 2017-05-22  Konstantin Tokarev  <annulen@yandex.ru>
 
         Unreviewed, change my status to reviewer and fill "expertise" field

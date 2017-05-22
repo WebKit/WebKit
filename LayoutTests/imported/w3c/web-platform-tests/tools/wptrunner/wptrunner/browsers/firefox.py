@@ -5,6 +5,7 @@ import subprocess
 import sys
 
 import mozinfo
+import mozleak
 from mozprocess import ProcessHandler
 from mozprofile import FirefoxProfile, Preferences
 from mozprofile.permissions import ServerLocations
@@ -41,13 +42,26 @@ __wptrunner__ = {"product": "firefox",
                  "update_properties": "update_properties"}
 
 
+def get_timeout_multiplier(test_type, run_info_data, **kwargs):
+    if kwargs["timeout_multiplier"] is not None:
+        return kwargs["timeout_multiplier"]
+    if test_type == "reftest":
+        if run_info_data["debug"] or run_info_data.get("asan"):
+            return 4
+        else:
+            return 2
+    elif run_info_data["debug"] or run_info_data.get("asan"):
+        return 3
+    return 1
+
+
 def check_args(**kwargs):
     require_arg(kwargs, "binary")
     if kwargs["ssl_type"] != "none":
         require_arg(kwargs, "certutil_binary")
 
 
-def browser_kwargs(**kwargs):
+def browser_kwargs(test_type, run_info_data, **kwargs):
     return {"binary": kwargs["binary"],
             "prefs_root": kwargs["prefs_root"],
             "extra_prefs": kwargs["extra_prefs"],
@@ -58,7 +72,11 @@ def browser_kwargs(**kwargs):
             "ca_certificate_path": kwargs["ssl_env"].ca_cert_path(),
             "e10s": kwargs["gecko_e10s"],
             "stackfix_dir": kwargs["stackfix_dir"],
-            "binary_args": kwargs["binary_args"]}
+            "binary_args": kwargs["binary_args"],
+            "timeout_multiplier": get_timeout_multiplier(test_type,
+                                                         run_info_data,
+                                                         **kwargs),
+            "leak_check": kwargs["leak_check"]}
 
 
 def executor_kwargs(test_type, server_config, cache_manager, run_info_data,
@@ -66,14 +84,9 @@ def executor_kwargs(test_type, server_config, cache_manager, run_info_data,
     executor_kwargs = base_executor_kwargs(test_type, server_config,
                                            cache_manager, **kwargs)
     executor_kwargs["close_after_done"] = test_type != "reftest"
-    if kwargs["timeout_multiplier"] is None:
-        if test_type == "reftest":
-            if run_info_data["debug"] or run_info_data.get("asan"):
-                executor_kwargs["timeout_multiplier"] = 4
-            else:
-                executor_kwargs["timeout_multiplier"] = 2
-        elif run_info_data["debug"] or run_info_data.get("asan"):
-            executor_kwargs["timeout_multiplier"] = 3
+    executor_kwargs["timeout_multiplier"] = get_timeout_multiplier(test_type,
+                                                                   run_info_data,
+                                                                   **kwargs)
     if test_type == "wdspec":
         executor_kwargs["binary"] = kwargs["binary"]
         executor_kwargs["webdriver_binary"] = kwargs.get("webdriver_binary")
@@ -119,7 +132,7 @@ class FirefoxBrowser(Browser):
     def __init__(self, logger, binary, prefs_root, extra_prefs=None, debug_info=None,
                  symbols_path=None, stackwalk_binary=None, certutil_binary=None,
                  ca_certificate_path=None, e10s=False, stackfix_dir=None,
-                 binary_args=None):
+                 binary_args=None, timeout_multiplier=None, leak_check=False):
         Browser.__init__(self, logger)
         self.binary = binary
         self.prefs_root = prefs_root
@@ -140,9 +153,19 @@ class FirefoxBrowser(Browser):
         else:
             self.stack_fixer = None
 
-    def start(self):
-        self.marionette_port = get_free_port(2828, exclude=self.used_ports)
-        self.used_ports.add(self.marionette_port)
+        if timeout_multiplier:
+            self.init_timeout = self.init_timeout * timeout_multiplier
+
+        self.leak_report_file = None
+        self.leak_check = leak_check
+
+    def settings(self, test):
+        return {"check_leaks": self.leak_check and not test.leaks}
+
+    def start(self, **kwargs):
+        if self.marionette_port is None:
+            self.marionette_port = get_free_port(2828, exclude=self.used_ports)
+            self.used_ports.add(self.marionette_port)
 
         env = os.environ.copy()
         env["MOZ_DISABLE_NONLOCAL_CONNECTIONS"] = "1"
@@ -153,14 +176,21 @@ class FirefoxBrowser(Browser):
 
         self.profile = FirefoxProfile(locations=locations,
                                       preferences=preferences)
-        self.profile.set_preferences({"marionette.enabled": True,
-                                      "marionette.port": self.marionette_port,
+        self.profile.set_preferences({"marionette.port": self.marionette_port,
                                       "dom.disable_open_during_load": False,
                                       "network.dns.localDomains": ",".join(hostnames),
                                       "network.proxy.type": 0,
                                       "places.history.enabled": False})
         if self.e10s:
             self.profile.set_preferences({"browser.tabs.remote.autostart": True})
+
+        if self.leak_check and kwargs.get("check_leaks", True):
+            self.leak_report_file = os.path.join(self.profile.profile, "runtests_leaks.log")
+            if os.path.exists(self.leak_report_file):
+                os.remove(self.leak_report_file)
+            env["XPCOM_MEM_BLOAT_LOG"] = self.leak_report_file
+        else:
+            self.leak_report_file = None
 
         # Bug 1262954: winxp + e10s, disable hwaccel
         if (self.e10s and platform.system() in ("Windows", "Microsoft") and
@@ -217,6 +247,24 @@ class FirefoxBrowser(Browser):
             except OSError:
                 # This can happen on Windows if the process is already dead
                 pass
+        self.logger.debug("stopped")
+
+    def process_leaks(self):
+        self.logger.debug("PROCESS LEAKS %s" % self.leak_report_file)
+        if self.leak_report_file is None:
+            return
+        mozleak.process_leak_log(
+            self.leak_report_file,
+            leak_thresholds={
+                "default": 0,
+                "tab": 10000,  # See dependencies of bug 1051230.
+                # GMP rarely gets a log, but when it does, it leaks a little.
+                "geckomediaplugin": 20000,
+            },
+            ignore_missing_leaks=["geckomediaplugin"],
+            log=self.logger,
+            stack_fixer=self.stack_fixer
+        )
 
     def pid(self):
         if self.runner.process_handler is None:
@@ -243,6 +291,7 @@ class FirefoxBrowser(Browser):
 
     def cleanup(self):
         self.stop()
+        self.process_leaks()
 
     def executor_browser(self):
         assert self.marionette_port is not None

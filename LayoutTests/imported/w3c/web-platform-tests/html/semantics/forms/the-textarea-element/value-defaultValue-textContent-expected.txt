@@ -1,0 +1,7 @@
+
+PASS defaultValue and value are the empty string by default 
+PASS defaultValue and value are affected by setting textContent 
+PASS defaultValue and value are affected by textContent in combination with appending a text node 
+PASS defaultValue and value treat CRLF differently 
+PASS tests for the value setter 
+

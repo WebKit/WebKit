@@ -15,10 +15,6 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/sslutils/__init__.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/sslutils/__init__.pyc
 /LayoutTests/imported/w3c/web-platform-tests/tools/sslutils/base.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/sslutils/base.pyc
 /LayoutTests/imported/w3c/web-platform-tests/tools/sslutils/openssl.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/sslutils/openssl.pyc
 /LayoutTests/imported/w3c/web-platform-tests/tools/sslutils/pregenerated.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/sslutils/pregenerated.pyc

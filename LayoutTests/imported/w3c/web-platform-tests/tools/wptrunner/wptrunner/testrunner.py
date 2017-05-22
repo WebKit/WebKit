@@ -153,10 +153,19 @@ class BrowserManager(object):
         self.logger = logger
         self.browser = browser
         self.no_timeout = no_timeout
+        self.browser_settings = None
 
         self.started = False
 
         self.init_timer = None
+
+    def update_settings(self, test):
+        browser_settings = self.browser.settings(test)
+        restart_required = ((self.browser_settings is not None and
+                             self.browser_settings != browser_settings) or
+                            test.expected() == "CRASH")
+        self.browser_settings = browser_settings
+        return restart_required
 
     def init(self):
         """Launch the browser that is being tested,
@@ -178,7 +187,8 @@ class BrowserManager(object):
             try:
                 if self.init_timer is not None:
                     self.init_timer.start()
-                self.browser.start()
+                self.logger.debug("Starting browser with settings %r" % self.browser_settings)
+                self.browser.start(**self.browser_settings)
                 self.browser_pid = self.browser.pid()
             except:
                 self.logger.warning("Failure during init %s" % traceback.format_exc())
@@ -437,6 +447,8 @@ class TestRunnerManager(threading.Thread):
             self.logger.error("Max restarts exceeded")
             return RunnerManagerState.error()
 
+        self.browser.update_settings(self.state.test)
+
         result = self.browser.init()
         if result is Stop:
             return RunnerManagerState.error()
@@ -495,14 +507,20 @@ class TestRunnerManager(threading.Thread):
                     return None, None
             try:
                 # Need to block here just to allow for contention with other processes
-                test = test_queue.get(block=True, timeout=1)
+                test = test_queue.get(block=True, timeout=2)
             except Empty:
-                pass
+                if test_queue.empty():
+                    test_queue = None
         return test, test_queue
 
     def run_test(self):
         assert isinstance(self.state, RunnerManagerState.running)
         assert self.state.test is not None
+
+        if self.browser.update_settings(self.state.test):
+            self.logger.info("Restarting browser for new test environment")
+            return RunnerManagerState.restarting(self.state.test,
+                                                 self.state.test_queue)
 
         self.logger.test_start(self.state.test.id)
         self.send_message("run_test", self.state.test)

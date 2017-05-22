@@ -16,4 +16,4 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/digest/digest.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/digest/digest.worker.js
-/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/digest/test_digest.html
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/digest/test_digest.https.html

@@ -561,6 +561,9 @@ class TestImporter(object):
         for deleted_file in deleted_files:
             _log.info('Deleting file removed from the W3C repo: %s', deleted_file)
             deleted_file = self.filesystem.join(self._webkit_root, deleted_file[1:])
+            if not self.filesystem.exists(deleted_file):
+                _log.warning('%s no longer exists', deleted_file)
+                continue
             self.filesystem.remove(deleted_file)
 
     def write_import_log(self, import_directory, file_list, prop_list, property_values_list):

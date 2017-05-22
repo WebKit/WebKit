@@ -23,5 +23,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/connected-callbacks.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/custom-element-reaction-queue.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/disconnected-callbacks.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/microtasks-and-constructors.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/reaction-timing.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/upgrading.html

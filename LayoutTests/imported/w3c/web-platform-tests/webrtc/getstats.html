@@ -66,6 +66,7 @@ This test uses data only, and thus does not require fake media devices.
       for (let stats of report.values()) {
         reportDictionary[stats.id] = stats;
       }
+      showStats.innerHTML = JSON.stringify(reportDictionary, null, 2);
       // Check the stats properties.
       assert_not_equals(report, null);
       let sessionStat = getStatsRecordByType(report, 'peer-connection');

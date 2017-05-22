@@ -142,6 +142,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/send-content-type-charset.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/send-content-type-string.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/send-data-arraybuffer.htm
+/LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/send-data-arraybufferview.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/send-data-blob.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/send-data-es-object.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/send-data-formdata.htm

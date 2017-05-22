@@ -1,9 +1,8 @@
+CONSOLE MESSAGE: line 58: ReferenceError: Can't find variable: wp_test
 Description
 
 This test validates exception scenarios of invoking mark() and measure() with timing attributes as value.
 
 
-PASS window.performance is defined 
-FAIL performance.mark and performance.measure should throw if used with timing attribute values assert_throws: function "function () { window.performance.measure(timingAttributes[i]); }" did not throw
-PASS performance.mark and performance.measure should not throw if used with timing attribute values in workers 
+FAIL exception test of performance.mark and performance.measure ReferenceError: Can't find variable: wp_test
 

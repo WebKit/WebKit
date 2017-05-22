@@ -799,7 +799,12 @@ webkit.org/b/148823 imported/w3c/css/css-multicol-1/multicol-span-all-margin-nes
 webkit.org/b/148950 imported/w3c/web-platform-tests/html/semantics/document-metadata/the-base-element/base_href_specified.sub.html [ Skip ]
 
 imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/test_ecdsa.html [ Pass Failure ]
+imported/w3c/web-platform-tests/WebCryptoAPI/import_export/test_rsa_importKey.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_go_zero.html [ Pass Failure ]
+
+[ Debug ] imported/w3c/web-platform-tests/html/semantics/forms/form-control-infrastructure/form_attribute.html [ Failure ]
+[ Debug ] imported/w3c/web-platform-tests/html/semantics/forms/form-control-infrastructure/form_owner_and_table_2.html [ Failure ]
+[ Debug ] imported/w3c/web-platform-tests/dom/nodes/Element-classlist.html [ Failure ]
 
 # FIXME: The following failures need individual bugs.
 webkit.org/b/148805 imported/w3c/css/css-multicol-1/multicol-inherit-003.xht [ ImageOnlyFailure ]
@@ -1114,6 +1119,17 @@ webkit.org/b/168175 imported/w3c/web-platform-tests/html/browsers/browsing-the-w
 webkit.org/b/168175 imported/w3c/web-platform-tests/html/browsers/offline/browser-state/navigator_online_online.html [ Pass Failure ]
 webkit.org/b/168175 imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-a-element/a-download-click.html [ Timeout Pass Failure ]
 webkit.org/b/169264 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/persisted-user-state-restoration/scroll-restoration-navigation-samedoc.html [ Failure ]
+
+imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-synconmain.html [ Failure ]
+imported/w3c/web-platform-tests/cssom/MediaList.html [ Failure ]
+imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/007.html [ Failure ]
+imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/joint_session_history/001.html [ Failure ]
+imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/joint_session_history/002.html [ Failure ]
+imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/reload_post_1.html [ Failure ]
+imported/w3c/web-platform-tests/html/browsers/origin/cross-origin-objects/cross-origin-objects-on-new-window.html [ Failure ]
+imported/w3c/web-platform-tests/html/browsers/windows/noreferrer-window-name.html [ Failure ]
+imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_loadedmetadata.html [ Failure ]
+imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/document-adopt-base-url.html [ ImageOnlyFailure ]
 
 webkit.org/b/168066 performance-api/performance-now-api.html [ Pass Failure ]
 webkit.org/b/168005 performance-api/performance-now-time-origin-in-worker.html [ Pass Failure ]

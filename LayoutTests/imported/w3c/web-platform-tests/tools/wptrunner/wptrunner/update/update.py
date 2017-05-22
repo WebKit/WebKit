@@ -73,6 +73,8 @@ class SyncFromUpstream(Step):
             state.target_rev = kwargs["rev"]
             state.no_patch = kwargs["no_patch"]
             state.suite_name = kwargs["suite_name"]
+            state.path_excludes = kwargs["exclude"]
+            state.path_includes = kwargs["include"]
             runner = SyncFromUpstreamRunner(self.logger, state)
             runner.run()
 

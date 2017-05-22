@@ -312,9 +312,8 @@ class GitTree(object):
 
         for repo_path in repo_paths:
             paths = vcs.git("ls-tree", "-r", "--name-only", "HEAD", repo=repo_path).split("\n")
-            rel_path = os.path.relpath(repo_path, self.root)
-            rv.extend(os.path.join(rel_path, item.strip()) for item in paths if item.strip())
-
+            rv.extend(os.path.relpath(os.path.join(repo_path, item), self.root) for item in paths
+                      if item.strip())
         return rv
 
     def submodules(self):

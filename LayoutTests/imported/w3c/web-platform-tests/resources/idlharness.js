@@ -617,7 +617,7 @@ IdlArray.prototype.assert_type_is = function(value, type)
             return;
 
         case "object":
-            assert_true(typeof value == "object" || typeof value == "function", "wrong type: not object or function");
+            assert_in_array(typeof value, ["object", "function"], "wrong type: not object or function");
             return;
     }
 
@@ -633,7 +633,7 @@ IdlArray.prototype.assert_type_is = function(value, type)
         // in an infinite loop.  TODO: This means we don't have tests for
         // NoInterfaceObject interfaces, and we also can't test objects that
         // come from another self.
-        assert_true(typeof value == "object" || typeof value == "function", "wrong type: not object or function");
+        assert_in_array(typeof value, ["object", "function"], "wrong type: not object or function");
         if (value instanceof Object
         && !this.members[type].has_extended_attribute("NoInterfaceObject")
         && type in self)
@@ -972,6 +972,58 @@ IdlInterface.prototype.test_self = function()
         }.bind(this), this.name + " interface object name");
     }
 
+
+    if (this.has_extended_attribute("LegacyWindowAlias")) {
+        test(function()
+        {
+            var aliasAttrs = this.extAttrs.filter(function(o) { return o.name === "LegacyWindowAlias"; });
+            if (aliasAttrs.length > 1) {
+                throw "Invalid IDL: multiple LegacyWindowAlias extended attributes on " + this.name;
+            }
+            if (this.is_callback()) {
+                throw "Invalid IDL: LegacyWindowAlias extended attribute on non-interface " + this.name;
+            }
+            if (this.exposureSet.indexOf("Window") === -1) {
+                throw "Invalid IDL: LegacyWindowAlias extended attribute on " + this.name + " which is not exposed in Window";
+            }
+            // TODO: when testing of [NoInterfaceObject] interfaces is supported,
+            // check that it's not specified together with LegacyWindowAlias.
+
+            // TODO: maybe check that [LegacyWindowAlias] is not specified on a partial interface.
+
+            var rhs = aliasAttrs[0].rhs;
+            if (!rhs) {
+                throw "Invalid IDL: LegacyWindowAlias extended attribute on " + this.name + " without identifier";
+            }
+            var aliases;
+            if (rhs.type === "identifier-list") {
+                aliases = rhs.value;
+            } else { // rhs.type === identifier
+                aliases = [ rhs.value ];
+            }
+
+            // OK now actually check the aliases...
+            var alias;
+            if (exposed_in(exposure_set(this, this.exposureSet)) && 'document' in self) {
+                for (alias of aliases) {
+                    assert_true(alias in self, alias + " should exist");
+                    assert_equals(self[alias], self[this.name], "self." + alias + " should be the same value as self." + this.name);
+                    var desc = Object.getOwnPropertyDescriptor(self, alias);
+                    assert_equals(desc.value, self[this.name], "wrong value in " + alias + " property descriptor");
+                    assert_true(desc.writable, alias + " is not writable");
+                    assert_false(desc.enumerable, alias + " is enumerable");
+                    assert_true(desc.configurable, alias + " is not configurable");
+                    assert_false('get' in desc, alias + " has a getter");
+                    assert_false('set' in desc, alias + " has a setter");
+                }
+            } else {
+                for (alias of aliases) {
+                    assert_false(alias in self, alias + " should not exist");
+                }
+            }
+
+        }.bind(this), this.name + " interface: legacy window alias");
+    }
     // TODO: Test named constructors if I find any interfaces that have them.
 
     test(function()

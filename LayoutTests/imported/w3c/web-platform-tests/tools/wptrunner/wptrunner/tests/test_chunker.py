@@ -12,6 +12,8 @@ from wptrunner.testloader import EqualTimeChunker
 structured.set_default_logger(structured.structuredlog.StructuredLogger("TestChunker"))
 
 class MockTest(object):
+    default_timeout = 10
+
     def __init__(self, id, timeout=10):
         self.id = id
         self.item_type = "testharness"

@@ -15,6 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/accept-header.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/block-mime-as-script.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/conditional-get.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/error-after-response.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/integrity-sharedworker.html

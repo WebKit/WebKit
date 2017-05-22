@@ -24,6 +24,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/method.py
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/preflight.py
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/redirect.py
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/script-with-header.py
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/status.py
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/top.txt
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/trickle.py

@@ -231,8 +231,6 @@ PASS Should throw NOT_SUPPORTED_ERR for non-legacy event interface "CommandEvent
 PASS Should throw NOT_SUPPORTED_ERR for pluralized non-legacy event interface "CommandEvents" 
 PASS Should throw NOT_SUPPORTED_ERR for non-legacy event interface "DataContainerEvent" 
 PASS Should throw NOT_SUPPORTED_ERR for pluralized non-legacy event interface "DataContainerEvents" 
-PASS Should throw NOT_SUPPORTED_ERR for non-legacy event interface "DeviceLightEvent" 
-PASS Should throw NOT_SUPPORTED_ERR for pluralized non-legacy event interface "DeviceLightEvents" 
 PASS Should throw NOT_SUPPORTED_ERR for non-legacy event interface "ExtendableEvent" 
 PASS Should throw NOT_SUPPORTED_ERR for pluralized non-legacy event interface "ExtendableEvents" 
 PASS Should throw NOT_SUPPORTED_ERR for non-legacy event interface "ExtendableMessageEvent" 

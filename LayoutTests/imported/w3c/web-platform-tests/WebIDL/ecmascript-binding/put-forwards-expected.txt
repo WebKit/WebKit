@@ -1,0 +1,14 @@
+
+FAIL Overriding getter of [PutForwards] attribute assert_true: Overridden getter should be called expected true got false
+FAIL Overriding setter of [PutForwards] target attribute assert_true: Overridden setter should be called expected true got false
+FAIL Overriding target of [PutForwards] attribute assert_equals: Original value intact expected "" but got "color: green;"
+FAIL Exception propagation from getter of [PutForwards] attribute assert_throws: function "() => {
+    element.style = "color: green";
+  }" did not throw
+FAIL Exception propagation from setter of [PutForwards] target attribute assert_throws: function "() => {
+    element.style = "color: green";
+  }" did not throw
+FAIL TypeError when getter of [PutForwards] attribute returns non-object assert_throws: function "() => {
+    element.style = "color: green";
+  }" did not throw
+

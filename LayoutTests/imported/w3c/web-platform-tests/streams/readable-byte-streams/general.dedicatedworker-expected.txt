@@ -66,6 +66,7 @@ PASS ReadableStream with byte source: Throwing in pull function must error the s
 PASS ReadableStream with byte source: Throwing in pull in response to read() must be ignored if the stream is errored in it 
 FAIL ReadableStream with byte source: Throwing in pull in response to read(view) function must error the stream ReadableStreamBYOBReader read() is not implemented
 FAIL ReadableStream with byte source: Throwing in pull in response to read(view) must be ignored if the stream is errored in it ReadableStreamBYOBReader read() is not implemented
+PASS ReadableStream with byte source: default reader + autoAllocateChunkSize + byobRequest interaction 
 PASS ReadableStreamBYOBReader can be constructed directly 
 PASS ReadableStreamBYOBReader constructor requires a ReadableStream argument 
 PASS ReadableStreamBYOBReader constructor requires an unlocked ReadableStream 

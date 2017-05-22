@@ -14,4 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-form-element/resources/form-action-url-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-form-element/resources/form-no-action-with-base.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-form-element/resources/form-no-action.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-form-element/resources/form-with-action-and-base.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-form-element/resources/form-with-action.sub.html

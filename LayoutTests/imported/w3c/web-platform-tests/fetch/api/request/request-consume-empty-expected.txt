@@ -2,8 +2,10 @@
 PASS Consume request's body as text 
 PASS Consume request's body as blob 
 PASS Consume request's body as arrayBuffer 
-PASS Consume request's body as json 
-FAIL Consume request's body as formData request.formData is not a function. (In 'request.formData()', 'request.formData' is undefined)
+PASS Consume request's body as json (error case) 
+FAIL Consume request's body as formData with correct multipart type (error case) request.formData is not a function. (In 'request.formData()', 'request.formData' is undefined)
+FAIL Consume request's body as formData with correct urlencoded type request.formData is not a function. (In 'request.formData()', 'request.formData' is undefined)
+FAIL Consume request's body as formData without correct type (error case) request.formData is not a function. (In 'request.formData()', 'request.formData' is undefined)
 PASS Consume empty blob request body as arrayBuffer 
 PASS Consume empty text request body as arrayBuffer 
 PASS Consume empty blob request body as text 

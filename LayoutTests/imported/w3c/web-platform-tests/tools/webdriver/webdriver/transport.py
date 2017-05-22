@@ -41,6 +41,7 @@ class Response(object):
 
         return cls(status, body)
 
+
 class HTTPWireProtocol(object):
     """Transports messages (commands and responses) over the WebDriver
     wire protocol.

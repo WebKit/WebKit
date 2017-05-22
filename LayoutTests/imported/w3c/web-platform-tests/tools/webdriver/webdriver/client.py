@@ -121,6 +121,10 @@ class ActionSequence(object):
     def _pointer_action(self, subtype, button):
         self._actions.append({"type": subtype, "button": button})
 
+    def pause(self, duration):
+        self._actions.append({"type": "pause", "duration": duration})
+        return self
+
     def pointer_move(self, x, y, duration=None, origin=None):
         """Queue a pointerMove action.
 
@@ -143,21 +147,37 @@ class ActionSequence(object):
         self._actions.append(action)
         return self
 
-    def pointer_up(self, button):
+    def pointer_up(self, button=0):
         """Queue a pointerUp action for `button`.
 
         :param button: Pointer button to perform action with.
+                       Default: 0, which represents main device button.
         """
         self._pointer_action("pointerUp", button)
         return self
 
-    def pointer_down(self, button):
+    def pointer_down(self, button=0):
         """Queue a pointerDown action for `button`.
 
         :param button: Pointer button to perform action with.
+                       Default: 0, which represents main device button.
         """
         self._pointer_action("pointerDown", button)
         return self
+
+    def click(self, element=None, button=0):
+        """Queue a click with the specified button.
+
+        If an element is given, move the pointer to that element first,
+        otherwise click current pointer coordinates.
+
+        :param element: Optional element to click.
+        :param button: Integer representing pointer button to perform action
+                       with. Default: 0, which represents main device button.
+        """
+        if element:
+            self.pointer_move(0, 0, origin=element)
+        return self.pointer_down(button).pointer_up(button)
 
     def key_up(self, value):
         """Queue a keyUp action for `value`.

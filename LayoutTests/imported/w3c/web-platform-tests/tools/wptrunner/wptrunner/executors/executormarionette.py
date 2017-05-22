@@ -48,12 +48,13 @@ def do_delayed_imports():
 
 
 class MarionetteProtocol(Protocol):
-    def __init__(self, executor, browser):
+    def __init__(self, executor, browser, timeout_multiplier=1):
         do_delayed_imports()
 
         Protocol.__init__(self, executor, browser)
         self.marionette = None
         self.marionette_port = browser.marionette_port
+        self.timeout_multiplier = timeout_multiplier
         self.timeout = None
         self.runner_handle = None
 
@@ -62,14 +63,16 @@ class MarionetteProtocol(Protocol):
         Protocol.setup(self, runner)
 
         self.logger.debug("Connecting to Marionette on port %i" % self.marionette_port)
+        startup_timeout = marionette.Marionette.DEFAULT_STARTUP_TIMEOUT * self.timeout_multiplier
         self.marionette = marionette.Marionette(host='localhost',
                                                 port=self.marionette_port,
-                                                socket_timeout=None)
+                                                socket_timeout=None,
+                                                startup_timeout=startup_timeout)
 
         # XXX Move this timeout somewhere
         self.logger.debug("Waiting for Marionette connection")
         while True:
-            success = self.marionette.wait_for_port(60)
+            success = self.marionette.wait_for_port(60 * self.timeout_multiplier)
             #When running in a debugger wait indefinitely for firefox to start
             if success or self.executor.debug_info is None:
                 break
@@ -407,7 +410,7 @@ class MarionetteTestharnessExecutor(TestharnessExecutor):
                                      timeout_multiplier=timeout_multiplier,
                                      debug_info=debug_info)
 
-        self.protocol = MarionetteProtocol(self, browser)
+        self.protocol = MarionetteProtocol(self, browser, timeout_multiplier)
         self.script = open(os.path.join(here, "testharness_marionette.js")).read()
         self.close_after_done = close_after_done
         self.window_id = str(uuid.uuid4())

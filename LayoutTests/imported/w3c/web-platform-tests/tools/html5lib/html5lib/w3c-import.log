@@ -15,16 +15,10 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/html5lib/html5lib/__init__.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/html5lib/html5lib/__init__.pyc
 /LayoutTests/imported/w3c/web-platform-tests/tools/html5lib/html5lib/constants.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/html5lib/html5lib/constants.pyc
 /LayoutTests/imported/w3c/web-platform-tests/tools/html5lib/html5lib/html5parser.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/html5lib/html5lib/html5parser.pyc
 /LayoutTests/imported/w3c/web-platform-tests/tools/html5lib/html5lib/ihatexml.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/html5lib/html5lib/inputstream.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/html5lib/html5lib/inputstream.pyc
 /LayoutTests/imported/w3c/web-platform-tests/tools/html5lib/html5lib/sanitizer.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/html5lib/html5lib/tokenizer.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/html5lib/html5lib/tokenizer.pyc
 /LayoutTests/imported/w3c/web-platform-tests/tools/html5lib/html5lib/utils.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/html5lib/html5lib/utils.pyc

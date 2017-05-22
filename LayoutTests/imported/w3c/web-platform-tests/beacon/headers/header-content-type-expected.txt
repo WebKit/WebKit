@@ -1,0 +1,5 @@
+
+FAIL Test content-type header for a body string navigator.sendBeacon is not a function. (In 'navigator.sendBeacon(testUrl, what)', 'navigator.sendBeacon' is undefined)
+FAIL Test content-type header for a body ArrayBuffer navigator.sendBeacon is not a function. (In 'navigator.sendBeacon(testUrl, what)', 'navigator.sendBeacon' is undefined)
+FAIL Test content-type header for a body FormData navigator.sendBeacon is not a function. (In 'navigator.sendBeacon(testUrl, what)', 'navigator.sendBeacon' is undefined)
+

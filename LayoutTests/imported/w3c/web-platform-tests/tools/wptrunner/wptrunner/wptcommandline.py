@@ -177,6 +177,8 @@ scheme host and port.""")
     gecko_group.add_argument("--setpref", dest="extra_prefs", action='append',
                              default=[], metavar="PREF=VALUE",
                              help="Defines an extra user preference (overrides those in prefs_root)")
+    gecko_group.add_argument("--leak-check", dest="leak_check", action="store_true",
+                             help="Enable leak checking")
 
     servo_group = parser.add_argument_group("Servo-specific")
     servo_group.add_argument("--user-stylesheet",
@@ -424,6 +426,10 @@ def create_parser_update(product_choices=None):
     parser.add_argument("--ignore-existing", action="store_true", help="When updating test results only consider results from the logfiles provided, not existing expectations.")
     parser.add_argument("--continue", action="store_true", help="Continue a previously started run of the update script")
     parser.add_argument("--abort", action="store_true", help="Clear state from a previous incomplete run of the update script")
+    parser.add_argument("--exclude", action="store", nargs="*",
+                        help="List of glob-style paths to exclude when syncing tests")
+    parser.add_argument("--include", action="store", nargs="*",
+                        help="List of glob-style paths to include which would otherwise be excluded when syncing tests")
     # Should make this required iff run=logfile
     parser.add_argument("run_log", nargs="*", type=abs_path,
                         help="Log file from run of tests")

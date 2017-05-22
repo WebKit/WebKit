@@ -1,3 +1,13 @@
+2017-05-22  youenn fablet  <youenn@apple.com>
+
+        Resync web-platform-tests up to 8df7c9c215678328212f232ce0b5270c505a8563
+        https://bugs.webkit.org/show_bug.cgi?id=172426
+
+        Reviewed by Chris Dumez.
+
+        * TestExpectations:
+        * tests-options.json:
+
 2017-05-22  Antti Koivisto  <antti@apple.com>
 
         [macOS Sierra Wk1] LayoutTest/animations/animation-initial-inheritance.html is a flaky image failure.

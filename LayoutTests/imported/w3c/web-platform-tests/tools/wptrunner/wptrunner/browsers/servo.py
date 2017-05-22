@@ -27,7 +27,7 @@ def check_args(**kwargs):
     require_arg(kwargs, "binary")
 
 
-def browser_kwargs(**kwargs):
+def browser_kwargs(test_type, run_info_data, **kwargs):
     return {
         "binary": kwargs["binary"],
         "debug_info": kwargs["debug_info"],

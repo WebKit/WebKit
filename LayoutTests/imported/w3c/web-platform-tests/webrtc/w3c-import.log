@@ -18,6 +18,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCConfiguration-iceCandidatePoolSize.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCDataChannel-id.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCDataChannelEvent-constructor.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCIceCandidate-constructor.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-addIceCandidate.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-canTrickleIceCandidates.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-constructor.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-createDataChannel.html

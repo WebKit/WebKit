@@ -1,7 +1,6 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
-Instead, create a pull request on the W3C CSS or WPT github:
-	https://github.com/w3c/csswg-test
+Instead, create a pull request on the WPT github:
 	https://github.com/w3c/web-platform-tests
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
@@ -23,6 +22,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/json/nonnullableobjects.json
 /LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/json/raises.json
 /LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/json/readonly-iterable.json
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/json/record-key.json
 /LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/json/scopedname.json
 /LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/json/sequenceAsAttribute.json
 /LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/invalid/json/setlike-2types.json

@@ -1,0 +1,14 @@
+
+PASS ImageData(w, h), width cannot be 0 
+PASS ImageData(w, h), height cannot be 0 
+PASS ImageData(w, h), exposed attributes check 
+PASS ImageData(buffer, w), the buffer size must be a multiple of 4 
+FAIL ImageData(buffer, w), buffer size must be a multiple of the image width assert_throws: function "function () {
+        new ImageData(new Uint8ClampedArray(16), 3);
+    }" threw object "InvalidStateError (DOM Exception 11): The object is in an invalid state." that is not a DOMException IndexSizeError: property "code" is equal to 11, expected 1
+PASS ImageData(buffer, w, h), buffer.lenght == 4 * w * h must be true 
+FAIL ImageData(buffer, w, opt h), Uint8ClampedArray argument type check assert_throws: function "function () {
+        new ImageData(new Int8Array(1), 1);
+    }" threw object "IndexSizeError (DOM Exception 1): The index is not in the allowed range." ("IndexSizeError") expected object "TypeError" ("TypeError")
+PASS ImageData(buffer, w, opt h), exposed attributes check 
+

@@ -2,18 +2,21 @@
     {
         "name": "web-platform-tests",
         "url": "https://github.com/w3c/web-platform-tests.git",
-        "revision": "23cd07d4685d81024b7440e042f8bbdb33e7ddec",
+        "revision": "8df7c9c215678328212f232ce0b5270c505a8563",
         "paths_to_skip": [
             "conformance-checkers",
             "docs",
-            "old-tests"
+            "old-tests",
+            "resources/testharness.css",
+            "resources/testharnessreport.js"
         ],
         "paths_to_import": [
             "common",
+            "config.default.json",
             "fonts",
             "images",
             "resources",
-            "config.default.json",
+            "tools",
             "serve.py"
         ],
         "import_options": ["generate_init_py"]

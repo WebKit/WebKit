@@ -20,6 +20,15 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/resource-timing/iframe-setdomain.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/resource-timing/resource-timing.html
 /LayoutTests/imported/w3c/web-platform-tests/resource-timing/resource-timing.js
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/resource_TAO_match_origin.htm
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/resource_TAO_match_wildcard.htm
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/resource_TAO_multi.htm
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/resource_TAO_null.htm
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/resource_TAO_origin.htm
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/resource_TAO_origin_uppercase.htm
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/resource_TAO_space.htm
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/resource_TAO_wildcard.htm
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/resource_TAO_zero.htm
 /LayoutTests/imported/w3c/web-platform-tests/resource-timing/resource_cached.htm
 /LayoutTests/imported/w3c/web-platform-tests/resource-timing/resource_connection_reuse.html
 /LayoutTests/imported/w3c/web-platform-tests/resource-timing/resource_dynamic_insertion.html

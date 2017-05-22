@@ -1,11 +1,9 @@
+CONSOLE MESSAGE: line 58: ReferenceError: Can't find variable: wp_test
+CONSOLE MESSAGE: line 25: ReferenceError: Can't find variable: test_true
 Description
 
 This test validates exception scenarios of invoking mark() and measure() without parameter.
 
 
-PASS window.performance is defined 
-PASS window.performance.mark() threw an exception when invoke without a parameter. 
-PASS window.performance.mark() threw a TYPE_ERR exception when invoke without a parameter. 
-PASS window.performance.measure() threw an exception when invoke without a parameter. 
-PASS window.performance.measure() threw a TYPE_ERR exception when invoke without a parameter. 
+FAIL exception test of performance.mark and performance.measure ReferenceError: Can't find variable: wp_test
 
