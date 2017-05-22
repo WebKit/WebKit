@@ -154,8 +154,6 @@ typedef USVString CSSOMString;
     [Replaceable] readonly attribute  boolean offscreenBuffering;
     [Replaceable] readonly attribute long screenLeft;
     [Replaceable] readonly attribute long screenTop;
-    attribute DOMURLConstructor webkitURL; // FIXME: Deprecate this.
-    attribute MutationObserverConstructor WebKitMutationObserver; // FIXME: Remove once we prove it is not needed for compatibility with legacy content.
     long webkitRequestAnimationFrame(RequestAnimationFrameCallback callback);
     [ImplementedAs=cancelAnimationFrame] void webkitCancelAnimationFrame(long id);
     [ImplementedAs=cancelAnimationFrame] void webkitCancelRequestAnimationFrame(long id);
@@ -176,9 +174,6 @@ typedef USVString CSSOMString;
     // FIXME: Blink has already dropped these (https://bugs.chromium.org/p/chromium/issues/detail?id=398352).
     WebKitPoint webkitConvertPointFromPageToNode(optional Node? node = null, optional WebKitPoint? p = null);
     WebKitPoint webkitConvertPointFromNodeToPage(optional Node? node = null, optional WebKitPoint? p = null);
-
-    // Alias for background compatibility as we use to have a SVGDocument interface.
-    attribute XMLDocumentConstructor SVGDocument;
 
     // Internal operations, not exposed to the Web.
     [MayThrowException, EnabledForWorld=shadowRootIsAlwaysOpen] NodeList collectMatchingElementsInFlatTree(Node scope, DOMString selectors);

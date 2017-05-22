@@ -127,7 +127,7 @@ foreach my $idlFile (sort keys %idlFileHash) {
             my $exposedAttribute = $extendedAttributes->{"Exposed"} || "Window";
             $exposedAttribute = substr($exposedAttribute, 1, -1) if substr($exposedAttribute, 0, 1) eq "(";
             my @globalContexts = split(",", $exposedAttribute);
-            my $attributeCode = GenerateConstructorAttribute($interfaceName, $extendedAttributes);
+            my ($attributeCode, $windowAliases) = GenerateConstructorAttributes($interfaceName, $extendedAttributes);
             foreach my $globalContext (@globalContexts) {
                 if ($globalContext eq "Window") {
                     $windowConstructorsCode .= $attributeCode;
@@ -139,6 +139,7 @@ foreach my $idlFile (sort keys %idlFileHash) {
                     die "Unsupported global context '$globalContext' used in [Exposed] at $idlFile";
                 }
             }
+            $windowConstructorsCode .= $windowAliases if $windowAliases;
         }
     }
 }
@@ -238,7 +239,7 @@ sub GeneratePartialInterface
     $supplementalDependencies{$fullPath} = [$interfaceName] if $interfaceNameToIdlFile{$interfaceName};
 }
 
-sub GenerateConstructorAttribute
+sub GenerateConstructorAttributes
 {
     my $interfaceName = shift;
     my $extendedAttributes = shift;
@@ -266,7 +267,20 @@ sub GenerateConstructorAttribute
         $code .= "[" . join(', ', @extendedAttributesList) . "] " if @extendedAttributesList;
         $code .= "attribute " . $originalInterfaceName . "NamedConstructor $constructorName;\n";
     }
-    return $code;
+    
+    my $windowAliasesCode;
+    if ($extendedAttributes->{"LegacyWindowAlias"}) {
+        my $attributeValue = $extendedAttributes->{"LegacyWindowAlias"};
+        $attributeValue = substr($attributeValue, 1, -1) if substr($attributeValue, 0, 1) eq "(";
+        my @windowAliases = split(",", $attributeValue);
+        foreach my $windowAlias (@windowAliases) {
+            $windowAliasesCode .= "    ";
+            $windowAliasesCode .= "[" . join(', ', @extendedAttributesList) . "] " if @extendedAttributesList;
+            $windowAliasesCode .= "attribute " . $originalInterfaceName . "Constructor $windowAlias; // Legacy Window alias.\n";
+        }
+    }
+    
+    return ($code, $windowAliasesCode);
 }
 
 sub getFileContents

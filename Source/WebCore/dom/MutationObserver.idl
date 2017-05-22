@@ -32,6 +32,7 @@
     CustomConstructor(MutationCallback callback),
     CustomIsReachable,
     ImplementationLacksVTable,
+    LegacyWindowAlias=WebKitMutationObserver,
 ] interface MutationObserver {
     [MayThrowException] void observe(Node target, optional MutationObserverInit options);
     void disconnect();

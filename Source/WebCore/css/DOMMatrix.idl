@@ -24,6 +24,7 @@
  */
 
 // FIXME: Should be exposed to workers as well.
+// FIXME: Should be [LegacyWindowAlias=(SVGMatrix, WebKitCSSMatrix)].
 [
     Constructor(optional (DOMString or sequence<unrestricted double>) init),
     ConstructorMayThrowException,

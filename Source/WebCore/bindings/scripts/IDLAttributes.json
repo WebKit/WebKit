@@ -272,6 +272,13 @@
                 "url": "https://heycam.github.io/webidl/#LegacyUnenumerableNamedProperties"
             }
         },
+        "LegacyWindowAlias": {
+            "contextsAllowed": ["interface"],
+            "values": ["*"],
+            "standard": {
+                "url": "https://heycam.github.io/webidl/#LegacyWindowAlias"
+            }
+        },
         "LenientSetter": {
             "contextsAllowed": ["attribute"],
             "standard": {
