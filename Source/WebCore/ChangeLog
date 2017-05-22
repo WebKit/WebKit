@@ -1,3 +1,19 @@
+2017-05-21  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Remove Firefox user agent quirk for Google domains
+        https://bugs.webkit.org/show_bug.cgi?id=171941
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/UserAgentQuirks.cpp:
+        (WebCore::UserAgentQuirks::quirksForURL):
+        (WebCore::UserAgentQuirks::stringForQuirk):
+        (WebCore::urlRequiresFirefoxBrowser): Deleted.
+        (WebCore::UserAgentQuirks::firefoxRevisionString): Deleted.
+        * platform/UserAgentQuirks.h:
+        * platform/gtk/UserAgentGtk.cpp:
+        (WebCore::buildUserAgentString):
+
 2017-05-21  Antti Koivisto  <antti@apple.com>
 
         matchMedia('print').addListener() fires in WK1 but never in WK2 when printing (breaks printing Google maps, QuickLooks)

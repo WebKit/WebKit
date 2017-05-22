@@ -1,3 +1,14 @@
+2017-05-21  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Remove Firefox user agent quirk for Google domains
+        https://bugs.webkit.org/show_bug.cgi?id=171941
+
+        Reviewed by Carlos Garcia Campos.
+
+        * TestWebKitAPI/Tests/WebCore/UserAgentQuirks.cpp:
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::assertUserAgentForURLHasFirefoxBrowserQuirk): Deleted.
+
 2017-05-20  Ting-Wei Lan  <lantw44@gmail.com>
 
         [GTK] gtkdoc-fixxref needs --module argument to work

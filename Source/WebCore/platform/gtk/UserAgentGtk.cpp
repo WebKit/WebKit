@@ -91,31 +91,20 @@ static String buildUserAgentString(const UserAgentQuirks& quirks)
         uaString.append(platformVersionForUAString());
     }
 
-    if (quirks.contains(UserAgentQuirks::NeedsFirefoxBrowser)) {
-        uaString.appendLiteral("; ");
-        uaString.append(UserAgentQuirks::firefoxRevisionString());
-        uaString.appendLiteral(") ");
-    } else {
-        uaString.appendLiteral(") AppleWebKit/");
-        uaString.append(versionForUAString());
-        uaString.appendLiteral(" (KHTML, like Gecko) ");
-    }
+    uaString.appendLiteral(") AppleWebKit/");
+    uaString.append(versionForUAString());
+    uaString.appendLiteral(" (KHTML, like Gecko) ");
 
     // Note that Chrome UAs advertise *both* Chrome and Safari.
     if (quirks.contains(UserAgentQuirks::NeedsChromeBrowser)) {
         uaString.append(UserAgentQuirks::stringForQuirk(UserAgentQuirks::NeedsChromeBrowser));
         uaString.appendLiteral(" ");
-    } else if (quirks.contains(UserAgentQuirks::NeedsFirefoxBrowser)) {
-        uaString.append(UserAgentQuirks::stringForQuirk(UserAgentQuirks::NeedsFirefoxBrowser));
-        uaString.appendLiteral(" ");
     }
 
-    if (!quirks.contains(UserAgentQuirks::NeedsFirefoxBrowser)) {
-        // Version/X is mandatory *before* Safari/X to be a valid Safari UA. See
-        // https://bugs.webkit.org/show_bug.cgi?id=133403 for details.
-        uaString.appendLiteral("Version/11.0 Safari/");
-        uaString.append(versionForUAString());
-    }
+    // Version/X is mandatory *before* Safari/X to be a valid Safari UA. See
+    // https://bugs.webkit.org/show_bug.cgi?id=133403 for details.
+    uaString.appendLiteral("Version/11.0 Safari/");
+    uaString.append(versionForUAString());
 
     return uaString.toString();
 }

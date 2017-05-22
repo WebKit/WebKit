@@ -42,17 +42,6 @@ static void assertUserAgentForURLHasChromeBrowserQuirk(const char* url)
     EXPECT_FALSE(uaString.contains("Firefox"));
 }
 
-static void assertUserAgentForURLHasFirefoxBrowserQuirk(const char* url)
-{
-    String uaString = standardUserAgentForURL(URL(ParsedURLString, url));
-
-    EXPECT_FALSE(uaString.contains("Chrome"));
-    EXPECT_FALSE(uaString.contains("Safari"));
-    EXPECT_FALSE(uaString.contains("Chromium"));
-    EXPECT_FALSE(uaString.contains("AppleWebKit"));
-    EXPECT_TRUE(uaString.contains("Firefox"));
-}
-
 static void assertUserAgentForURLHasLinuxPlatformQuirk(const char* url)
 {
     String uaString = standardUserAgentForURL(URL(ParsedURLString, url));
@@ -83,21 +72,14 @@ TEST(UserAgentTest, Quirks)
     String uaString = standardUserAgentForURL(URL(ParsedURLString, "http://www.webkit.org/"));
     EXPECT_TRUE(uaString.isNull());
 
+#if !OS(LINUX) || !CPU(X86_64)
     // Google quirk should not affect sites with similar domains.
     uaString = standardUserAgentForURL(URL(ParsedURLString, "http://www.googleblog.com/"));
-    EXPECT_FALSE(uaString.contains("Firefox"));
-
-    // Nor should it affect accounts.google.com due to bug #171770.
-    uaString = standardUserAgentForURL(URL(ParsedURLString, "http://accounts.google.com/"));
-    EXPECT_FALSE(uaString.contains("Firefox"));
+    EXPECT_FALSE(uaString.contains("Linux x86_64"));
+#endif
 
     assertUserAgentForURLHasChromeBrowserQuirk("http://typekit.com/");
     assertUserAgentForURLHasChromeBrowserQuirk("http://typekit.net/");
-
-    assertUserAgentForURLHasFirefoxBrowserQuirk("http://www.google.com/");
-    assertUserAgentForURLHasFirefoxBrowserQuirk("http://www.google.es/");
-    assertUserAgentForURLHasFirefoxBrowserQuirk("http://calendar.google.com/");
-    assertUserAgentForURLHasFirefoxBrowserQuirk("http://plus.google.com/");
 
     assertUserAgentForURLHasLinuxPlatformQuirk("http://www.google.com/");
     assertUserAgentForURLHasLinuxPlatformQuirk("http://www.google.es/");
