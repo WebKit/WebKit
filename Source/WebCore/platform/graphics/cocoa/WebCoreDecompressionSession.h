@@ -34,7 +34,6 @@
 #include <wtf/Ref.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
-#include <wtf/WeakPtr.h>
 
 typedef CFTypeRef CMBufferRef;
 typedef struct opaqueCMBufferQueue *CMBufferQueueRef;
@@ -75,7 +74,6 @@ private:
 
     void decodeSample(CMSampleBufferRef, bool displaying);
     void enqueueDecodedSample(CMSampleBufferRef, bool displaying);
-    WeakPtr<WebCoreDecompressionSession> createWeakPtr() { return m_weakFactory.createWeakPtr(); }
     void handleDecompressionOutput(bool displaying, OSStatus, VTDecodeInfoFlags, CVImageBufferRef, CMTime presentationTimeStamp, CMTime presentationDuration);
     RetainPtr<CVPixelBufferRef> getFirstVideoFrame();
     void resetAutomaticDequeueTimer();
@@ -103,7 +101,6 @@ private:
     OSObjectPtr<dispatch_source_t> m_timerSource;
     std::function<void()> m_notificationCallback;
     std::function<void()> m_hasAvailableFrameCallback;
-    WeakPtrFactory<WebCoreDecompressionSession> m_weakFactory;
     CMBufferQueueTriggerToken m_didBecomeReadyTrigger { nullptr };
 
     bool m_invalidated { false };

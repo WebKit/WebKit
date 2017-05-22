@@ -1,3 +1,18 @@
+2017-05-22  Jer Noble  <jer.noble@apple.com>
+
+        ASSERTION FAILED: m_boundThread == currentThread() in WTF::WeakReference<WebCore::WebCoreDecompressionSession>::clear()
+        https://bugs.webkit.org/show_bug.cgi?id=172457
+        <rdar://problem/32329436>
+
+        Reviewed by Eric Carlson.
+
+        Remove vestigal WeakPtrFactory that was entirely unused.
+
+        * platform/graphics/cocoa/WebCoreDecompressionSession.h:
+        (WebCore::WebCoreDecompressionSession::createWeakPtr): Deleted.
+        * platform/graphics/cocoa/WebCoreDecompressionSession.mm:
+        (WebCore::WebCoreDecompressionSession::WebCoreDecompressionSession):
+
 2017-05-22  Antti Koivisto  <antti@apple.com>
 
         Crash in WebCore::StyleRuleKeyframes::findKeyframeIndex
