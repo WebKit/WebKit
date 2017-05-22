@@ -1,3 +1,26 @@
+2017-05-21  Saam Barati  <sbarati@apple.com>
+
+        We incorrectly throw a syntax error when declaring a top level for-loop iteration variable the same as a parameter
+        https://bugs.webkit.org/show_bug.cgi?id=171041
+        <rdar://problem/32082516>
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/lexical-scoping-for-loop.js: Added.
+        (assert):
+        (test1):
+        (test2):
+        (test3):
+        (test4):
+        (test5):
+        (test6):
+        (let.test7):
+        (let.test8):
+        (let.test9):
+        (let.test10):
+        (let.test11):
+        (let.test12):
+
 2017-05-19  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Make get_by_val & string "499" to number 499

@@ -1,3 +1,31 @@
+2017-05-21  Saam Barati  <sbarati@apple.com>
+
+        We incorrectly throw a syntax error when declaring a top level for-loop iteration variable the same as a parameter
+        https://bugs.webkit.org/show_bug.cgi?id=171041
+        <rdar://problem/32082516>
+
+        Reviewed by Yusuke Suzuki.
+
+        We were treating a for-loop variable declaration potentially as a top
+        level statement, e.g, in a program like this:
+        ```
+        function foo() {
+            for (let variable of expr) { }
+        }
+        ```
+        But we should not be. This had the consequence of making this type of program
+        throw a syntax error:
+        ```
+        function foo(arg) {
+            for (let arg of expr) { }
+        }
+        ```
+        even though it should not. The fix is simple, we just need to increment the
+        statement depth before parsing anything inside the for loop.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseForStatement):
+
 2017-05-19  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Make get_by_val & string "499" to number 499

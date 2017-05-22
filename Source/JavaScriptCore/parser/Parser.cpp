@@ -1133,6 +1133,10 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseForStatement(
     JSTokenLocation location(tokenLocation());
     int startLine = tokenLine();
     next();
+
+    DepthManager statementDepth(&m_statementDepth);
+    m_statementDepth++;
+
     handleProductionOrFail(OPENPAREN, "(", "start", "for-loop header");
     int nonLHSCount = m_parserState.nonLHSCount;
     int declarations = 0;
