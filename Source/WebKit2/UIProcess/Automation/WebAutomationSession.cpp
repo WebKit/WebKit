@@ -855,6 +855,8 @@ static WebEvent::Modifiers protocolModifierToWebEventModifier(Inspector::Protoco
     case Inspector::Protocol::Automation::KeyModifier::CapsLock:
         return WebEvent::CapsLockKey;
     }
+
+    RELEASE_ASSERT_NOT_REACHED();
 }
 #endif // USE(APPKIT)
 
