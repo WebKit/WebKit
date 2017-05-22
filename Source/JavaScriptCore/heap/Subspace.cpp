@@ -98,6 +98,7 @@ void* Subspace::allocate(size_t size)
         result = allocator->allocate();
     else
         result = allocateSlow(nullptr, size);
+    didAllocate(result);
     return result;
 }
 
@@ -108,6 +109,7 @@ void* Subspace::allocate(GCDeferralContext* deferralContext, size_t size)
         result = allocator->allocate(deferralContext);
     else
         result = allocateSlow(deferralContext, size);
+    didAllocate(result);
     return result;
 }
 
@@ -118,6 +120,7 @@ void* Subspace::tryAllocate(size_t size)
         result = allocator->tryAllocate();
     else
         result = tryAllocateSlow(nullptr, size);
+    didAllocate(result);
     return result;
 }
 
@@ -128,6 +131,7 @@ void* Subspace::tryAllocate(GCDeferralContext* deferralContext, size_t size)
         result = allocator->tryAllocate(deferralContext);
     else
         result = tryAllocateSlow(deferralContext, size);
+    didAllocate(result);
     return result;
 }
 
@@ -202,6 +206,14 @@ void* Subspace::tryAllocateSlow(GCDeferralContext* deferralContext, size_t size)
     m_largeAllocations.append(allocation);
         
     return allocation->cell();
+}
+
+ALWAYS_INLINE void Subspace::didAllocate(void* ptr)
+{
+    UNUSED_PARAM(ptr);
+    
+    // This is useful for logging allocations, or doing other kinds of debugging hacks. Just make
+    // sure you JSC_forceGCSlowPaths=true.
 }
 
 } // namespace JSC

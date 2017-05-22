@@ -1,3 +1,28 @@
+2017-05-22  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL stack overflow handling should not assume that B3 never selects callee-saves in the prologue
+        https://bugs.webkit.org/show_bug.cgi?id=172455
+
+        Reviewed by Mark Lam.
+        
+        The FTL needs to run B3's callee-save register restoration before it runs the exception
+        handler's callee-save register restoration.  This exposes B3's callee-save register
+        algorithm in AssemblyHelpers so that the FTL can call it.
+
+        * b3/air/AirGenerate.cpp:
+        (JSC::B3::Air::generate):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::lower): Fix the bug.
+        * heap/Subspace.cpp: Added some debugging support.
+        (JSC::Subspace::allocate):
+        (JSC::Subspace::tryAllocate):
+        (JSC::Subspace::didAllocate):
+        * heap/Subspace.h:
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::addressFor):
+        (JSC::AssemblyHelpers::emitSave):
+        (JSC::AssemblyHelpers::emitRestore):
+
 2017-05-20  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [FTL] Support GetByVal with ArrayStorage and SlowPutArrayStorage

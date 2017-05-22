@@ -229,6 +229,31 @@ public:
         store32(TrustedImm32(value.payload()), address.withOffset(PayloadOffset));
 #endif
     }
+    
+    Address addressFor(const RegisterAtOffset& entry)
+    {
+        return Address(GPRInfo::callFrameRegister, entry.offset());
+    }
+    
+    void emitSave(const RegisterAtOffsetList& list)
+    {
+        for (const RegisterAtOffset& entry : list) {
+            if (entry.reg().isGPR())
+                storePtr(entry.reg().gpr(), addressFor(entry));
+            else
+                storeDouble(entry.reg().fpr(), addressFor(entry));
+        }
+    }
+    
+    void emitRestore(const RegisterAtOffsetList& list)
+    {
+        for (const RegisterAtOffset& entry : list) {
+            if (entry.reg().isGPR())
+                loadPtr(addressFor(entry), entry.reg().gpr());
+            else
+                loadDouble(addressFor(entry), entry.reg().fpr());
+        }
+    }
 
     void emitSaveCalleeSavesFor(CodeBlock* codeBlock)
     {

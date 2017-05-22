@@ -226,6 +226,13 @@ public:
                     AllowMacroScratchRegisterUsage allowScratch(jit);
 
                     stackOverflow.link(&jit);
+                    
+                    // FIXME: We would not have to do this if the stack check was part of the Air
+                    // prologue. Then, we would know that there is no way for the callee-saves to
+                    // get clobbered.
+                    // https://bugs.webkit.org/show_bug.cgi?id=172456
+                    jit.emitRestore(params.proc().calleeSaveRegisterAtOffsetList());
+                    
                     jit.store32(
                         MacroAssembler::TrustedImm32(callSiteIndex.bits()),
                         CCallHelpers::tagFor(VirtualRegister(CallFrameSlot::argumentCount)));

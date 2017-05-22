@@ -94,6 +94,8 @@ private:
     void* allocateSlow(GCDeferralContext*, size_t);
     void* tryAllocateSlow(GCDeferralContext*, size_t);
     
+    void didAllocate(void*);
+    
     MarkedSpace& m_space;
     
     CString m_name;

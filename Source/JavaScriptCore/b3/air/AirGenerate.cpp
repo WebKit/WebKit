@@ -168,10 +168,6 @@ void generate(Code& code, CCallHelpers& jit)
 
     DisallowMacroScratchRegisterUsage disallowScratch(jit);
 
-    auto argFor = [&] (const RegisterAtOffset& entry) -> CCallHelpers::Address {
-        return CCallHelpers::Address(GPRInfo::callFrameRegister, entry.offset());
-    };
-    
     // And now, we generate code.
     GenerationContext context;
     context.code = &code;
@@ -222,12 +218,7 @@ void generate(Code& code, CCallHelpers& jit)
                 jit.addPtr(CCallHelpers::TrustedImm32(-code.frameSize()), MacroAssembler::stackPointerRegister);
             }
             
-            for (const RegisterAtOffset& entry : code.calleeSaveRegisterAtOffsetList()) {
-                if (entry.reg().isGPR())
-                    jit.storePtr(entry.reg().gpr(), argFor(entry));
-                else
-                    jit.storeDouble(entry.reg().fpr(), argFor(entry));
-            }
+            jit.emitSave(code.calleeSaveRegisterAtOffsetList());
 
             if (disassembler)
                 disassembler->endEntrypoint(jit); 
@@ -259,12 +250,7 @@ void generate(Code& code, CCallHelpers& jit)
             // have this override.
             auto start = jit.labelIgnoringWatchpoints();
             if (code.frameSize()) {
-                for (const RegisterAtOffset& entry : code.calleeSaveRegisterAtOffsetList()) {
-                    if (entry.reg().isGPR())
-                        jit.loadPtr(argFor(entry), entry.reg().gpr());
-                    else
-                        jit.loadDouble(argFor(entry), entry.reg().fpr());
-                }
+                jit.emitRestore(code.calleeSaveRegisterAtOffsetList());
                 jit.emitFunctionEpilogue();
             } else
                 jit.emitFunctionEpilogueWithEmptyFrame();
