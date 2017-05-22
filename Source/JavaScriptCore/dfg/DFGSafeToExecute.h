@@ -417,6 +417,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case GetByVal:
     case GetIndexedPropertyStorage:
     case GetArrayLength:
+    case GetVectorLength:
     case ArrayPush:
     case ArrayPop:
     case StringCharAt:

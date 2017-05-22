@@ -2279,6 +2279,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
 
+    case GetVectorLength: {
+        forNode(node).setType(SpecInt32Only);
+        break;
+    }
+
     case DeleteById:
     case DeleteByVal: {
         // FIXME: This could decide if the delete will be successful based on the set of structures that

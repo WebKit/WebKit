@@ -1,3 +1,57 @@
+2017-05-20  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [FTL] Support GetByVal with ArrayStorage and SlowPutArrayStorage
+        https://bugs.webkit.org/show_bug.cgi?id=172216
+
+        Reviewed by Saam Barati.
+
+        This patch adds GetByVal support for ArrayStorage and SlowPutArrayStorage.
+        To lower CheckInBounds in FTL, we add a new GetVectorLength op. It only accepts
+        ArrayStorage and SlowPutArrayStorage, then it produces vector length.
+        CheckInBounds uses this vector length to perform bound checking for ArrayStorage
+        and SlowPutArrayStorage.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGArrayMode.cpp:
+        (JSC::DFG::permitsBoundsCheckLowering):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGHeapLocation.cpp:
+        (WTF::printInternal):
+        * dfg/DFGHeapLocation.h:
+        * dfg/DFGIntegerRangeOptimizationPhase.cpp:
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasArrayMode):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSSALoweringPhase.cpp:
+        (JSC::DFG::SSALoweringPhase::lowerBoundsCheck):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLAbstractHeapRepository.h:
+        (JSC::FTL::AbstractHeapRepository::forIndexingType):
+        (JSC::FTL::AbstractHeapRepository::forArrayType):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetVectorLength):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetByVal):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitArrayStoragePutByVal):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emitArrayStorageLoad):
+        (JSC::JIT::emitArrayStoragePutByVal):
+
 2017-05-21  Saam Barati  <sbarati@apple.com>
 
         We incorrectly throw a syntax error when declaring a top level for-loop iteration variable the same as a parameter

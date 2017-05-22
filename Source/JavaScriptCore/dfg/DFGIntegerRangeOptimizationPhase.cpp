@@ -1485,7 +1485,8 @@ private:
             break;
         }
             
-        case GetArrayLength: {
+        case GetArrayLength:
+        case GetVectorLength: {
             setRelationship(Relationship(node, m_zero, Relationship::GreaterThan, -1));
             break;
         }

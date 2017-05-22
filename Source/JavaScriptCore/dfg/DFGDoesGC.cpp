@@ -218,6 +218,7 @@ bool doesGC(Graph& graph, Node* node)
     case GetByValWithThis:
     case GetIndexedPropertyStorage:
     case GetArrayLength:
+    case GetVectorLength:
     case ArrayPush:
     case ArrayPop:
     case StringCharAt:

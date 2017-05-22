@@ -1502,7 +1502,7 @@ public:
         m_jit.setupArgumentsWithExecState(arg1);
         return appendCallSetResult(operation, result);
     }
-    JITCompiler::Call callOperation(J_JITOperation_EAZ operation, GPRReg result, GPRReg arg1, GPRReg arg2)
+    JITCompiler::Call callOperation(J_JITOperation_EOZ operation, GPRReg result, GPRReg arg1, GPRReg arg2)
     {
         m_jit.setupArgumentsWithExecState(arg1, arg2);
         return appendCallSetResult(operation, result);
@@ -2062,7 +2062,7 @@ public:
         m_jit.setupArgumentsWithExecState(arg1);
         return appendCallSetResult(operation, result.payloadGPR(), result.tagGPR());
     }
-    JITCompiler::Call callOperation(J_JITOperation_EAZ operation, JSValueRegs result, GPRReg arg1, GPRReg arg2)
+    JITCompiler::Call callOperation(J_JITOperation_EOZ operation, JSValueRegs result, GPRReg arg1, GPRReg arg2)
     {
         m_jit.setupArgumentsWithExecState(arg1, arg2);
         return appendCallSetResult(operation, result.payloadGPR(), result.tagGPR());

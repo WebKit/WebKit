@@ -37,6 +37,7 @@ enum LocationKind {
     InvalidLocationKind,
     
     ArrayLengthLoc,
+    VectorLengthLoc,
     ButterflyLoc,
     CheckTypeInfoFlagsLoc,
     OverridesHasInstanceLoc,

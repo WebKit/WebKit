@@ -1139,6 +1139,21 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
             return;
         }
     }
+
+    case GetVectorLength: {
+        ArrayMode mode = node->arrayMode();
+        switch (mode.type()) {
+        case Array::ArrayStorage:
+        case Array::SlowPutArrayStorage:
+            read(Butterfly_vectorLength);
+            def(HeapLocation(VectorLengthLoc, Butterfly_vectorLength, node->child1()), LazyNode(node));
+            return;
+
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            return;
+        }
+    }
         
     case GetClosureVar:
         read(AbstractHeap(ScopeProperties, node->scopeOffset().offset()));

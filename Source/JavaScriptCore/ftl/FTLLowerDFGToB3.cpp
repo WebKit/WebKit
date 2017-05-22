@@ -671,6 +671,9 @@ private:
         case GetArrayLength:
             compileGetArrayLength();
             break;
+        case GetVectorLength:
+            compileGetVectorLength();
+            break;
         case CheckInBounds:
             compileCheckInBounds();
             break;
@@ -3350,6 +3353,18 @@ private:
             return;
         }
     }
+
+    void compileGetVectorLength()
+    {
+        switch (m_node->arrayMode().type()) {
+        case Array::ArrayStorage:
+        case Array::SlowPutArrayStorage:
+            setInt32(m_out.load32NonNegative(lowStorage(m_node->child2()), m_heaps.Butterfly_vectorLength));
+            return;
+        default:
+            return;
+        }
+    }
     
     void compileCheckInBounds()
     {
@@ -3403,7 +3418,7 @@ private:
             
             m_out.appendTo(slowCase, continuation);
             ValueFromBlock slowResult = m_out.anchor(
-                vmCall(Int64, m_out.operation(operationGetByValArrayInt), m_callFrame, base, index));
+                vmCall(Int64, m_out.operation(operationGetByValObjectInt), m_callFrame, base, index));
             m_out.jump(continuation);
             
             m_out.appendTo(continuation, lastNext);
@@ -3455,7 +3470,7 @@ private:
             
             m_out.appendTo(slowCase, continuation);
             ValueFromBlock slowResult = m_out.anchor(
-                vmCall(Int64, m_out.operation(operationGetByValArrayInt), m_callFrame, base, index));
+                vmCall(Int64, m_out.operation(operationGetByValObjectInt), m_callFrame, base, index));
             m_out.jump(continuation);
             
             m_out.appendTo(continuation, lastNext);
@@ -3547,6 +3562,47 @@ private:
             setJSValue(vmCall(
                 Int64, m_out.operation(operationGetByVal), m_callFrame,
                 lowJSValue(m_node->child1()), lowJSValue(m_node->child2())));
+            return;
+        }
+
+        case Array::ArrayStorage:
+        case Array::SlowPutArrayStorage: {
+            LValue index = lowInt32(m_node->child2());
+            LValue storage = lowStorage(m_node->child3());
+
+            IndexedAbstractHeap& heap = m_heaps.ArrayStorage_vector;
+
+            if (m_node->arrayMode().isInBounds()) {
+                LValue result = m_out.load64(baseIndex(heap, storage, index, m_node->child2()));
+                speculate(LoadFromHole, noValue(), 0, m_out.isZero64(result));
+                setJSValue(result);
+                break;
+            }
+
+            LValue base = lowCell(m_node->child1());
+
+            LBasicBlock inBounds = m_out.newBlock();
+            LBasicBlock slowCase = m_out.newBlock();
+            LBasicBlock continuation = m_out.newBlock();
+
+            m_out.branch(
+                m_out.aboveOrEqual(index, m_out.load32NonNegative(storage, m_heaps.Butterfly_vectorLength)),
+                rarely(slowCase), usually(inBounds));
+
+            LBasicBlock lastNext = m_out.appendTo(inBounds, slowCase);
+            LValue result = m_out.load64(baseIndex(heap, storage, index, m_node->child2()));
+            ValueFromBlock fastResult = m_out.anchor(result);
+            m_out.branch(
+                m_out.isZero64(result),
+                rarely(slowCase), usually(continuation));
+
+            m_out.appendTo(slowCase, continuation);
+            ValueFromBlock slowResult = m_out.anchor(
+                vmCall(Int64, m_out.operation(operationGetByValObjectInt), m_callFrame, base, index));
+            m_out.jump(continuation);
+
+            m_out.appendTo(continuation, lastNext);
+            setJSValue(m_out.phi(Int64, fastResult, slowResult));
             return;
         }
             

@@ -313,6 +313,11 @@ public:
                     VALIDATE((node), !!m_graph.m_vm.hasOwnPropertyCache());
                     break;
                 }
+                case GetVectorLength: {
+                    Array::Type type = node->arrayMode().type();
+                    VALIDATE((node), type == Array::ArrayStorage || type == Array::SlowPutArrayStorage);
+                    break;
+                }
                 default:
                     break;
                 }

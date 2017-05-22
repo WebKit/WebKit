@@ -714,6 +714,8 @@ bool permitsBoundsCheckLowering(Array::Type type)
     case Array::Int32:
     case Array::Double:
     case Array::Contiguous:
+    case Array::ArrayStorage:
+    case Array::SlowPutArrayStorage:
     case Array::Int8Array:
     case Array::Int16Array:
     case Array::Int32Array:
@@ -727,9 +729,7 @@ bool permitsBoundsCheckLowering(Array::Type type)
         return true;
     default:
         // These don't allow for bounds check lowering either because the bounds
-        // check involves something other than GetArrayLength (like ArrayStorage),
-        // or because the bounds check isn't a speculation (like String, sort of),
-        // or because the type implies an impure access.
+        // check isn't a speculation (like String, sort of) or because the type implies an impure access.
         return false;
     }
 }

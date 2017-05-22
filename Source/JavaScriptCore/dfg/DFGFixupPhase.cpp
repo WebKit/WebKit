@@ -1550,6 +1550,7 @@ private:
         case PhantomClonedArguments:
         case GetMyArgumentByVal:
         case GetMyArgumentByValOutOfBounds:
+        case GetVectorLength:
         case PutHint:
         case CheckStructureImmediate:
         case MaterializeNewObject:

@@ -119,6 +119,7 @@ namespace JSC { namespace FTL {
     macro(JSFixedArray_size, JSFixedArray::offsetOfSize()) \
 
 #define FOR_EACH_INDEXED_ABSTRACT_HEAP(macro) \
+    macro(ArrayStorage_vector, ArrayStorage::vectorOffset(), sizeof(WriteBarrier<Unknown>)) \
     macro(DirectArguments_storage, DirectArguments::storageOffset(), sizeof(EncodedJSValue)) \
     macro(JSEnvironmentRecord_variables, JSEnvironmentRecord::offsetOfVariables(), sizeof(EncodedJSValue)) \
     macro(JSPropertyNameEnumerator_cachedPropertyNamesVectorContents, 0, sizeof(WriteBarrier<JSString>)) \
@@ -131,7 +132,6 @@ namespace JSC { namespace FTL {
     macro(indexedInt32Properties, 0, sizeof(EncodedJSValue)) \
     macro(indexedDoubleProperties, 0, sizeof(double)) \
     macro(indexedContiguousProperties, 0, sizeof(EncodedJSValue)) \
-    macro(indexedArrayStorageProperties, 0, sizeof(EncodedJSValue)) \
     macro(scopedArgumentsTableArguments, 0, sizeof(int32_t)) \
     macro(singleCharacterStrings, 0, sizeof(JSString*)) \
     macro(structureTable, 0, sizeof(Structure*)) \
@@ -190,7 +190,7 @@ public:
             return &indexedContiguousProperties;
             
         case ALL_ARRAY_STORAGE_INDEXING_TYPES:
-            return &indexedArrayStorageProperties;
+            return &ArrayStorage_vector;
             
         default:
             RELEASE_ASSERT_NOT_REACHED();
@@ -209,7 +209,7 @@ public:
             return indexedContiguousProperties;
         case DFG::Array::ArrayStorage:
         case DFG::Array::SlowPutArrayStorage:
-            return indexedArrayStorageProperties;
+            return ArrayStorage_vector;
         default:
             RELEASE_ASSERT_NOT_REACHED();
             return indexedInt32Properties;

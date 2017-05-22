@@ -1804,6 +1804,7 @@ public:
         switch (op()) {
         case GetIndexedPropertyStorage:
         case GetArrayLength:
+        case GetVectorLength:
         case In:
         case PutByValDirect:
         case PutByVal:

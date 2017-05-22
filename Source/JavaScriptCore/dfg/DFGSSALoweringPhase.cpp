@@ -114,8 +114,18 @@ private:
         if (!m_node->arrayMode().lengthNeedsStorage())
             storage = Edge();
         
+        NodeType op = GetArrayLength;
+        switch (m_node->arrayMode().type()) {
+        case Array::ArrayStorage:
+        case Array::SlowPutArrayStorage:
+            op = GetVectorLength;
+            break;
+        default:
+            break;
+        }
+
         Node* length = m_insertionSet.insertNode(
-            m_nodeIndex, SpecInt32Only, GetArrayLength, m_node->origin,
+            m_nodeIndex, SpecInt32Only, op, m_node->origin,
             OpInfo(m_node->arrayMode().asWord()), base, storage);
         m_insertionSet.insertNode(
             m_nodeIndex, SpecInt32Only, CheckInBounds, m_node->origin,

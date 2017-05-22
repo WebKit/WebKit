@@ -573,7 +573,7 @@ ALWAYS_INLINE EncodedJSValue getByValCellInt(ExecState* exec, JSCell* base, int3
     return JSValue::encode(JSValue(base).get(exec, static_cast<unsigned>(index)));
 }
 
-EncodedJSValue JIT_OPERATION operationGetByValArrayInt(ExecState* exec, JSArray* base, int32_t index)
+EncodedJSValue JIT_OPERATION operationGetByValObjectInt(ExecState* exec, JSObject* base, int32_t index)
 {
     return getByValCellInt(exec, base, index);
 }

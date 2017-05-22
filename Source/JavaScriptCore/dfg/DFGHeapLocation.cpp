@@ -87,6 +87,10 @@ void printInternal(PrintStream& out, LocationKind kind)
     case ArrayLengthLoc:
         out.print("ArrayLengthLoc");
         return;
+
+    case VectorLengthLoc:
+        out.print("VectorLengthLoc");
+        return;
         
     case ButterflyLoc:
         out.print("ButterflyLoc");

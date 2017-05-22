@@ -124,7 +124,7 @@ typedef char* UnusedPtr;
 typedef CallFrame* (JIT_OPERATION *F_JITOperation_EFJZZ)(ExecState*, CallFrame*, EncodedJSValue, int32_t, int32_t);
 typedef EncodedJSValue (JIT_OPERATION *J_JITOperation_E)(ExecState*);
 typedef EncodedJSValue (JIT_OPERATION *J_JITOperation_EA)(ExecState*, JSArray*);
-typedef EncodedJSValue (JIT_OPERATION *J_JITOperation_EAZ)(ExecState*, JSArray*, int32_t);
+typedef EncodedJSValue (JIT_OPERATION *J_JITOperation_EOZ)(ExecState*, JSObject*, int32_t);
 typedef EncodedJSValue (JIT_OPERATION *J_JITOperation_EAapJ)(ExecState*, ArrayAllocationProfile*, EncodedJSValue);
 typedef EncodedJSValue (JIT_OPERATION *J_JITOperation_EAapJcpZ)(ExecState*, ArrayAllocationProfile*, const JSValue*, int32_t);
 typedef EncodedJSValue (JIT_OPERATION *J_JITOperation_EC)(ExecState*, JSCell*);

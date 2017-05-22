@@ -342,6 +342,15 @@ inline CapabilityLevel canCompile(Node* node)
             return CannotCompile;
         }
         break;
+    case GetVectorLength:
+        switch (node->arrayMode().type()) {
+        case Array::ArrayStorage:
+        case Array::SlowPutArrayStorage:
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+        break;
     case HasIndexedProperty:
         switch (node->arrayMode().type()) {
         case Array::ForceExit:
@@ -364,6 +373,8 @@ inline CapabilityLevel canCompile(Node* node)
         case Array::Undecided:
         case Array::DirectArguments:
         case Array::ScopedArguments:
+        case Array::ArrayStorage:
+        case Array::SlowPutArrayStorage:
             break;
         default:
             if (isTypedView(node->arrayMode().typedArrayType()))
