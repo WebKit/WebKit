@@ -25,6 +25,10 @@
 
 #pragma once
 
+#if USE(CG)
+typedef struct CGImageSource* CGImageSourceRef;
+#endif
+
 namespace WebCore {
 
 // There are four subsampling levels: 0 = 1x, 1 = 0.5x, 2 = 0.25x, 3 = 0.125x.

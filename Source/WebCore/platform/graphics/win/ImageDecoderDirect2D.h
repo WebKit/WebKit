@@ -41,7 +41,7 @@ class ImageDecoder : public ThreadSafeRefCounted<ImageDecoder> {
 public:
     ImageDecoder();
     
-    static Ref<ImageDecoder> create(const SharedBuffer&, const URL&, AlphaOption, GammaAndColorProfileOption)
+    static Ref<ImageDecoder> create(SharedBuffer&, AlphaOption, GammaAndColorProfileOption)
     {
         return adoptRef(*new ImageDecoder());
     }

@@ -30,11 +30,11 @@
 
 #include "ImageIOSPI.h"
 #include "ImageOrientation.h"
+#include "ImageSourceCG.h"
 #include "IntPoint.h"
 #include "IntSize.h"
 #include "Logging.h"
 #include "SharedBuffer.h"
-#include "URL.h"
 #include <wtf/NeverDestroyed.h>
 
 #if !PLATFORM(IOS)
@@ -148,11 +148,9 @@ void sharedBufferRelease(void* info)
 }
 #endif
 
-ImageDecoder::ImageDecoder(const URL& sourceURL, AlphaOption, GammaAndColorProfileOption)
+ImageDecoder::ImageDecoder(SharedBuffer& data, AlphaOption, GammaAndColorProfileOption)
 {
-#if 0
-    RetainPtr<CFURLRef> url = sourceURL.createCFURL();
-    RetainPtr<CFStringRef> utiHint = adoptCF(CGImageSourceGetTypeWithURL(url.get(), nullptr));
+    RetainPtr<CFStringRef> utiHint = adoptCF(CGImageSourceGetTypeWithData(data.createCFData().get(), nullptr, nullptr));
     
     if (utiHint) {
         const void* key = kCGImageSourceTypeIdentifierHint;
@@ -161,10 +159,6 @@ ImageDecoder::ImageDecoder(const URL& sourceURL, AlphaOption, GammaAndColorProfi
         m_nativeDecoder = adoptCF(CGImageSourceCreateIncremental(options.get()));
     } else
         m_nativeDecoder = adoptCF(CGImageSourceCreateIncremental(nullptr));
-#else
-    UNUSED_PARAM(sourceURL);
-    m_nativeDecoder = adoptCF(CGImageSourceCreateIncremental(nullptr));
-#endif
 }
 
 size_t ImageDecoder::bytesDecodedToDetermineProperties()

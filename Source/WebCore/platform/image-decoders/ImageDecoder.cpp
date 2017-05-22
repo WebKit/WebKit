@@ -98,7 +98,7 @@ bool matchesCURSignature(char* contents)
 
 }
 
-RefPtr<ImageDecoder> ImageDecoder::create(const SharedBuffer& data, const URL&, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
+RefPtr<ImageDecoder> ImageDecoder::create(SharedBuffer& data, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
 {
     static const unsigned lengthOfLongestSignature = 14; // To wit: "RIFF????WEBPVP"
     char contents[lengthOfLongestSignature];

@@ -25,24 +25,27 @@
 
 #pragma once
 
-#include "ImageSourceCG.h"
+#include "DecodingOptions.h"
+#include "ImageOrientation.h"
+#include "ImageTypes.h"
+#include "IntPoint.h"
 #include "IntSize.h"
-
+#include "NativeImage.h"
 #include <wtf/Optional.h>
-
-typedef struct CGImageSource* CGImageSourceRef;
-typedef const struct __CFData* CFDataRef;
+#include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
-
+    
+class SharedBuffer;
+    
 class ImageDecoder : public ThreadSafeRefCounted<ImageDecoder> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ImageDecoder(const URL& sourceURL, AlphaOption, GammaAndColorProfileOption);
+    ImageDecoder(SharedBuffer& data, AlphaOption, GammaAndColorProfileOption);
 
-    static Ref<ImageDecoder> create(const SharedBuffer&, const URL& sourceURL, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
+    static Ref<ImageDecoder> create(SharedBuffer& data, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
     {
-        return adoptRef(*new ImageDecoder(sourceURL, alphaOption, gammaAndColorProfileOption));
+        return adoptRef(*new ImageDecoder(data, alphaOption, gammaAndColorProfileOption));
     }
     
     static size_t bytesDecodedToDetermineProperties();

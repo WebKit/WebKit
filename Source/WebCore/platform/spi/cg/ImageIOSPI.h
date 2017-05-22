@@ -39,5 +39,5 @@ IMAGEIO_EXTERN const CFStringRef kCGImageSourceShouldCacheImmediately;
 #endif
 
 WTF_EXTERN_C_BEGIN
-CFStringRef CGImageSourceGetTypeWithURL(CFURLRef, CFStringRef);
+CFStringRef CGImageSourceGetTypeWithData(CFDataRef, CFStringRef, bool*);
 WTF_EXTERN_C_END

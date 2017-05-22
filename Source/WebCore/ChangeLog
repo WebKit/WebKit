@@ -1,3 +1,33 @@
+2017-05-22  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [CG] Use the SPI CGImageSourceGetTypeWithData() to get the typeIdentifierHint of an image
+        https://bugs.webkit.org/show_bug.cgi?id=172405
+
+        Reviewed by Simon Fraser.
+
+        Use CGImageSourceGetTypeWithData() to get the typeIdentifierHint which will
+        be passed to CGImageSourceCreateIncremental(). If data is insufficient to
+        guess typeIdentifierHint, that means the image size is still not available.
+        In this case, CachedImage::addIncrementalDataBuffer() will call error()
+        which will call clear() which will call Image::destroyDecodedData()
+        which will delete the current ImageDecoder and creates a new one. So we
+        don't need to check the return value insufficientData.
+
+        * platform/graphics/DecodingOptions.h: Fix the header file dependencies.
+        * platform/graphics/ImageSource.cpp:
+        (WebCore::ImageSource::ensureDecoderAvailable): No need for the URL parameter.
+        * platform/graphics/ImageTypes.h: Move a typedef from ImageDecoderCG.h to ImageTypes.h.
+        * platform/graphics/cg/ImageDecoderCG.cpp:
+        (WebCore::ImageDecoder::ImageDecoder): Pass the SharedBuffer data to the constructor.
+        * platform/graphics/cg/ImageDecoderCG.h:
+        (WebCore::ImageDecoder::create): No need for the URL argument.
+        * platform/graphics/win/ImageDecoderDirect2D.h:
+        (WebCore::ImageDecoder::create): Remove the URL argument from the function signature.
+        * platform/image-decoders/ImageDecoder.cpp:
+        (WebCore::ImageDecoder::create): Remove the URL argument from the function signature.
+        * platform/image-decoders/ImageDecoder.h:
+        * platform/spi/cg/ImageIOSPI.h: Add the prototype of CGImageSourceGetTypeWithData().
+
 2017-05-22  Zalan Bujtas  <zalan@apple.com>
 
         SameSizeAsInlineBox mismatch on ARMV7.

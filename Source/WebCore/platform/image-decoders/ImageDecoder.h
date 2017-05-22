@@ -41,8 +41,6 @@
 
 namespace WebCore {
 
-class URL;
-
 // ImageDecoder is a base for all format-specific decoders
 // (e.g. JPEGImageDecoder). This base manages the ImageFrame cache.
 //
@@ -64,7 +62,7 @@ public:
 
     // Returns nullptr if we can't sniff a supported type from the provided data (possibly
     // because there isn't enough data yet).
-    static RefPtr<ImageDecoder> create(const SharedBuffer& data, const URL&, AlphaOption, GammaAndColorProfileOption);
+    static RefPtr<ImageDecoder> create(SharedBuffer& data, AlphaOption, GammaAndColorProfileOption);
 
     virtual String filenameExtension() const = 0;
 

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "IntSize.h"
+#include <wtf/Optional.h>
 #include <wtf/Variant.h>
 
 namespace WebCore {
