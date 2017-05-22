@@ -150,7 +150,7 @@ WebInspector.ScriptTimelineDataGridNode = class ScriptTimelineDataGridNode exten
             return isNaN(value) ? emDash : Number.secondsToString(value, true);
 
         case "callCount":
-            return isNaN(value) ? emDash : value;
+            return isNaN(value) ? emDash : value.toLocaleString();
         }
 
         return super.createCellContent(columnIdentifier, cell);

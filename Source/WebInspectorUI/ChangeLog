@@ -1,3 +1,13 @@
+2017-05-22  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: RTL: In Timelines > JavaScript & Events, digits for sample count are not localized
+        https://bugs.webkit.org/show_bug.cgi?id=171819
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/ScriptTimelineDataGridNode.js:
+        (WebInspector.ScriptTimelineDataGridNode.prototype.createCellContent):
+
 2017-05-22  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: RTL: Text in autocomplete popover should be aligned left
