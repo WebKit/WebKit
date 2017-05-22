@@ -189,9 +189,6 @@ WTF_EXPORT_PRIVATE void WTFInstallReportBacktraceOnCrashHook();
 
 WTF_EXPORT_PRIVATE bool WTFIsDebuggerAttached();
 
-#ifndef CRASH
-
-#if defined(NDEBUG) && OS(DARWIN)
 #if CPU(X86_64) || CPU(X86)
 #define WTFBreakpointTrap()  __asm__ volatile ("int3")
 #elif CPU(ARM_THUMB2)
@@ -199,9 +196,12 @@ WTF_EXPORT_PRIVATE bool WTFIsDebuggerAttached();
 #elif CPU(ARM64)
 #define WTFBreakpointTrap()  __asm__ volatile ("brk #0")
 #else
-#error "Unsupported CPU".
+#define WTFBreakpointTrap() WTFCrash() // Not implemented.
 #endif
 
+#ifndef CRASH
+
+#if defined(NDEBUG) && OS(DARWIN)
 // Crash with a SIGTRAP i.e EXC_BREAKPOINT.
 // We are not using __builtin_trap because it is only guaranteed to abort, but not necessarily
 // trigger a SIGTRAP. Instead, we use inline asm to ensure that we trigger the SIGTRAP.
@@ -213,7 +213,7 @@ WTF_EXPORT_PRIVATE bool WTFIsDebuggerAttached();
 #define CRASH() WTFCrash()
 #endif
 
-#endif // CRASH
+#endif // !defined(CRASH)
 
 WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH void WTFCrash();
 

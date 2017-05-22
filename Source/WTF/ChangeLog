@@ -1,3 +1,21 @@
+2017-05-22  Brian Burg  <bburg@apple.com>
+
+        Add a debugging macro that sleeps a thread until a debugger attaches
+        https://bugs.webkit.org/show_bug.cgi?id=171575
+
+        Reviewed by Mark Lam.
+
+        This is really useful for debugging early errors if for some reason you can't
+        launch a process directly from the debugger easily, such as Web Content processes.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/Assertions.h:
+        Always define the WTFBreakpointTrap() macro. Still make it an error if the CPU
+        type isn't supported for OS(DARWIN); if used on other platforms, cause a WTFCrash()
+        with a comment that indicates this is not implemented.
+
+        * wtf/DebugUtilities.h: Added.
+
 2017-05-19  Don Olmstead  <don.olmstead@am.sony.com>
 
         [WTF] Remove PLATFORM(WIN) references

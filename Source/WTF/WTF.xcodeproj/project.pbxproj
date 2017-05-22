@@ -337,6 +337,7 @@
 		93DDE9311CDC052D00FD3491 /* dyldSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dyldSPI.h; sourceTree = "<group>"; };
 		93F1993D19D7958D00C2390B /* StringView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringView.cpp; sourceTree = "<group>"; };
 		974CFC8D16A4F327006D5404 /* WeakPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakPtr.h; sourceTree = "<group>"; };
+		996B17841EBA441C007E10EB /* DebugUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebugUtilities.h; sourceTree = "<group>"; };
 		9BC70F04176C379D00101DEC /* AtomicStringTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AtomicStringTable.cpp; sourceTree = "<group>"; };
 		9BD8F40A176C2AD80002D865 /* AtomicStringTable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AtomicStringTable.h; sourceTree = "<group>"; };
 		9C67C542589348E285B49699 /* IndexedContainerIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IndexedContainerIterator.h; sourceTree = "<group>"; };
@@ -759,6 +760,7 @@
 				A8A47278151A825A004123FF /* DataLog.h */,
 				A8A47279151A825A004123FF /* DateMath.cpp */,
 				A8A4727A151A825A004123FF /* DateMath.h */,
+				996B17841EBA441C007E10EB /* DebugUtilities.h */,
 				A8A4727B151A825A004123FF /* DecimalNumber.cpp */,
 				A8A4727C151A825A004123FF /* DecimalNumber.h */,
 				E3E158251EADA53C004A079D /* SystemFree.h */,
