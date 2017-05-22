@@ -447,6 +447,15 @@ void CompositingCoordinator::releaseAtlases(ReleaseAtlasPolicy policy)
         m_client.releaseUpdateAtlases(WTFMove(m_atlasesToRemove));
 }
 
+void CompositingCoordinator::clearUpdateAtlases()
+{
+    if (m_isPurging)
+        return;
+
+    m_releaseInactiveAtlasesTimer.stop();
+    m_updateAtlases.clear();
+}
+
 } // namespace WebKit
 
 #endif // USE(COORDINATED_GRAPHICS)

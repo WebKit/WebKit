@@ -1,3 +1,36 @@
+2017-05-22  Gwang Yoon Hwang  <yoon@igalia.com>
+
+        [CoordinatedGraphics] Clear UpdateAtlases for each tests
+        https://bugs.webkit.org/show_bug.cgi?id=172119
+
+        Reviewed by Carlos Garcia Campos.
+
+        In Coordinated Graphics, we reuses at least one update atlas to
+        render root compositing layer for several tests. So if one of the
+        test cases breaks the internal states of Cairo's states, other
+        followed test cases runs on same instance of WebKitTestRunner will
+        be effected by broken states of Cairo. Because it increases test
+        flaknesses, we should drop update atlases after each tests.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp: Remove a redundant
+        include statement for Coordinated graphics
+        (WebKit::WebChromeClient::resetUpdateAtlasForTesting): Added.
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/AcceleratedDrawingArea.cpp:
+        (WebKit::AcceleratedDrawingArea::resetUpdateAtlasForTesting): Added.
+        * WebProcess/WebPage/AcceleratedDrawingArea.h:
+        * WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.cpp:
+        (WebKit::CompositingCoordinator::clearUpdateAtlases): Added.
+        * WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.h:
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+        (WebKit::CoordinatedLayerTreeHost::clearUpdateAtlases): Added.
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.h:
+        * WebProcess/WebPage/DrawingArea.h:
+        * WebProcess/WebPage/LayerTreeHost.h:
+        * WebProcess/WebPage/wpe/DrawingAreaWPE.cpp:
+        (WebKit::DrawingAreaWPE::resetUpdateAtlasForTesting):
+        * WebProcess/WebPage/wpe/DrawingAreaWPE.h:
+
 2017-05-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.17.3 release.

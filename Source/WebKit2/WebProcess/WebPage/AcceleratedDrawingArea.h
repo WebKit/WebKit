@@ -73,8 +73,9 @@ protected:
 
     void layerHostDidFlushLayers() override;
 
-#if USE(COORDINATED_GRAPHICS_THREADED)
+#if USE(COORDINATED_GRAPHICS)
     void didChangeViewportAttributes(WebCore::ViewportAttributes&&) override;
+    void resetUpdateAtlasForTesting() override;
 #endif
 
 #if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)

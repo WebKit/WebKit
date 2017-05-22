@@ -57,6 +57,8 @@ protected:
     void deviceOrPageScaleFactorChanged() override;
     void pageBackgroundTransparencyChanged() override;
 
+    void clearUpdateAtlases() override;
+
     void setVisibleContentsRect(const WebCore::FloatRect&, const WebCore::FloatPoint&);
     void renderNextFrame();
     void commitScrollOffset(uint32_t layerID, const WebCore::IntSize& offset);

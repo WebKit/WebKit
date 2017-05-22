@@ -67,6 +67,7 @@ public:
     virtual ~CompositingCoordinator();
 
     void invalidate();
+    void clearUpdateAtlases();
 
     void setRootCompositingLayer(WebCore::GraphicsLayer*);
     void setViewOverlayRootLayer(WebCore::GraphicsLayer*);

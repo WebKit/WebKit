@@ -242,5 +242,10 @@ void CoordinatedLayerTreeHost::commitScrollOffset(uint32_t layerID, const WebCor
     m_coordinator.commitScrollOffset(layerID, offset);
 }
 
+void CoordinatedLayerTreeHost::clearUpdateAtlases()
+{
+    m_coordinator.clearUpdateAtlases();
+}
+
 } // namespace WebKit
 #endif // USE(COORDINATED_GRAPHICS)

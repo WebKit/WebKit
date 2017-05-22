@@ -85,10 +85,6 @@
 #include "RemoteScrollingCoordinator.h"
 #endif
 
-#if USE(COORDINATED_GRAPHICS)
-#include "LayerTreeHost.h"
-#endif
-
 #if PLATFORM(GTK)
 #include "PrinterListGtk.h"
 #endif
@@ -530,6 +526,11 @@ void WebChromeClient::scroll(const IntSize& scrollDelta, const IntRect& scrollRe
 void WebChromeClient::delegatedScrollRequested(const IntPoint& scrollOffset)
 {
     m_page.pageDidRequestScroll(scrollOffset);
+}
+
+void WebChromeClient::resetUpdateAtlasForTesting()
+{
+    m_page.drawingArea()->resetUpdateAtlasForTesting();
 }
 #endif
 

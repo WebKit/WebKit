@@ -1,5 +1,18 @@
 2017-05-22  Gwang Yoon Hwang  <yoon@igalia.com>
 
+        [CoordinatedGraphics] Clear UpdateAtlases for each tests
+        https://bugs.webkit.org/show_bug.cgi?id=172119
+
+        Reviewed by Carlos Garcia Campos.
+
+        * loader/EmptyClients.h:
+        * page/ChromeClient.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::resetToConsistentState): Clears update atlases
+        while resetting states of the test runner.
+
+2017-05-22  Gwang Yoon Hwang  <yoon@igalia.com>
+
         [CoordinatedGraphics] BitmapTexturePool does not release textures properly
         https://bugs.webkit.org/show_bug.cgi?id=172428
 

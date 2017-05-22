@@ -72,6 +72,7 @@ private:
 
 #if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
     void deviceOrPageScaleFactorChanged() override;
+    void resetUpdateAtlasForTesting() override;
 #endif
 
     void updateBackingStoreState(uint64_t, bool, float, const WebCore::IntSize&, const WebCore::IntSize&) override;

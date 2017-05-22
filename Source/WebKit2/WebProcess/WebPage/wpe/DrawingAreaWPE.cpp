@@ -189,4 +189,12 @@ void DrawingAreaWPE::enterAcceleratedCompositingMode(GraphicsLayer* graphicsLaye
     m_layerTreeHost->sizeDidChange(m_webPage.size());
 }
 
+#if USE(COORDINATED_GRAPHICS)
+void DrawingAreaWPE::resetUpdateAtlasForTesting()
+{
+    ASSERT(m_layerTreeHost);
+    m_layerTreeHost->clearUpdateAtlases();
+}
+#endif
+
 } // namespace WebKit
