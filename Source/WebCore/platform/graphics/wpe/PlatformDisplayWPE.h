@@ -29,19 +29,9 @@
 
 #include "PlatformDisplay.h"
 
-// FIXME: For now default to the GBM EGL platform, but this should really be
-// somehow deducible from the build configuration.
-#define __GBM__ 1
-#include <EGL/eglplatform.h>
-
 struct wpe_renderer_backend_egl;
-struct wpe_renderer_backend_egl_target;
-struct wpe_renderer_backend_egl_offscreen_target;
 
 namespace WebCore {
-
-class GLContext;
-class IntSize;
 
 class PlatformDisplayWPE final : public PlatformDisplay {
 public:
@@ -49,19 +39,6 @@ public:
     virtual ~PlatformDisplayWPE();
 
     void initialize(int);
-
-    class EGLOffscreenTarget {
-    public:
-        EGLOffscreenTarget(const PlatformDisplayWPE&);
-        ~EGLOffscreenTarget();
-
-        EGLNativeWindowType nativeWindow() const;
-
-    private:
-        struct wpe_renderer_backend_egl_offscreen_target* m_target;
-    };
-
-    std::unique_ptr<EGLOffscreenTarget> createEGLOffscreenTarget();
 
     struct wpe_renderer_backend_egl* backend() const { return m_backend; }
 

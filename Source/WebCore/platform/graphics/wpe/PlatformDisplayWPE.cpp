@@ -29,7 +29,9 @@
 #if PLATFORM(WPE)
 
 #include "GLContextEGL.h"
-#include "IntSize.h"
+// FIXME: For now default to the GBM EGL platform, but this should really be
+// somehow deducible from the build configuration.
+#define __GBM__ 1
 #include <EGL/egl.h>
 #include <wpe/renderer-backend-egl.h>
 
@@ -53,27 +55,6 @@ void PlatformDisplayWPE::initialize(int hostFd)
     }
 
     PlatformDisplay::initializeEGLDisplay();
-}
-
-std::unique_ptr<PlatformDisplayWPE::EGLOffscreenTarget> PlatformDisplayWPE::createEGLOffscreenTarget()
-{
-    return std::make_unique<EGLOffscreenTarget>(*this);
-}
-
-PlatformDisplayWPE::EGLOffscreenTarget::EGLOffscreenTarget(const PlatformDisplayWPE& display)
-{
-    m_target = wpe_renderer_backend_egl_offscreen_target_create();
-    wpe_renderer_backend_egl_offscreen_target_initialize(m_target, display.m_backend);
-}
-
-PlatformDisplayWPE::EGLOffscreenTarget::~EGLOffscreenTarget()
-{
-    wpe_renderer_backend_egl_offscreen_target_destroy(m_target);
-}
-
-EGLNativeWindowType PlatformDisplayWPE::EGLOffscreenTarget::nativeWindow() const
-{
-    return wpe_renderer_backend_egl_offscreen_target_get_native_window(m_target);
 }
 
 } // namespace WebCore

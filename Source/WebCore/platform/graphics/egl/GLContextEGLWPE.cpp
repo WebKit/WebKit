@@ -22,30 +22,68 @@
 #if USE(EGL) && PLATFORM(WPE)
 
 #include "PlatformDisplayWPE.h"
+// FIXME: For now default to the GBM EGL platform, but this should really be
+// somehow deducible from the build configuration.
+#define __GBM__ 1
+#include <EGL/egl.h>
+#include <wpe/renderer-backend-egl.h>
 
 namespace WebCore {
 
+GLContextEGL::GLContextEGL(PlatformDisplay& display, EGLContext context, EGLSurface surface, struct wpe_renderer_backend_egl_offscreen_target* target)
+    : GLContext(display)
+    , m_context(context)
+    , m_surface(surface)
+    , m_type(WindowSurface)
+    , m_wpeTarget(target)
+{
+}
+
+EGLSurface GLContextEGL::createWindowSurfaceWPE(EGLDisplay display, EGLConfig config, GLNativeWindowType window)
+{
+    return eglCreateWindowSurface(display, config, reinterpret_cast<EGLNativeWindowType>(window), nullptr);
+}
+
 std::unique_ptr<GLContextEGL> GLContextEGL::createWPEContext(PlatformDisplay& platformDisplay, EGLContext sharingContext)
 {
-    auto offscreenTarget = downcast<PlatformDisplayWPE>(platformDisplay).createEGLOffscreenTarget();
+    EGLDisplay display = platformDisplay.eglDisplay();
+    EGLConfig config;
+    if (!getEGLConfig(display, &config, WindowSurface))
+        return nullptr;
 
-    std::unique_ptr<GLContextEGL> context;
-    if (offscreenTarget->nativeWindow())
-        context = createWindowContext(offscreenTarget->nativeWindow(), platformDisplay, sharingContext);
-    if (!context)
-        context = createPbufferContext(platformDisplay, sharingContext);
+    static const EGLint contextAttributes[] = {
+#if USE(OPENGL_ES_2)
+        EGL_CONTEXT_CLIENT_VERSION, 2,
+#endif
+        EGL_NONE
+    };
 
-    // FIXME: if available, we could also fallback to the surfaceless-based GLContext
-    // before falling back to the pbuffer-based one.
+    EGLContext context = eglCreateContext(display, config, sharingContext, contextAttributes);
+    if (context == EGL_NO_CONTEXT)
+        return nullptr;
 
-    if (context)
-        context->m_wpeTarget = WTFMove(offscreenTarget);
-    return context;
+    auto* target = wpe_renderer_backend_egl_offscreen_target_create();
+    wpe_renderer_backend_egl_offscreen_target_initialize(target, downcast<PlatformDisplayWPE>(platformDisplay).backend());
+    EGLNativeWindowType window = wpe_renderer_backend_egl_offscreen_target_get_native_window(target);
+    if (!window) {
+        wpe_renderer_backend_egl_offscreen_target_destroy(target);
+        return nullptr;
+    }
+
+    EGLSurface surface = eglCreateWindowSurface(display, config, static_cast<EGLNativeWindowType>(window), nullptr);
+    if (surface == EGL_NO_SURFACE) {
+        eglDestroyContext(display, context);
+        wpe_renderer_backend_egl_offscreen_target_destroy(target);
+        return nullptr;
+    }
+
+    return std::unique_ptr<GLContextEGL>(new GLContextEGL(platformDisplay, context, surface, target));
 }
 
 void GLContextEGL::destroyWPETarget()
 {
-    m_wpeTarget = nullptr;
+    if (m_wpeTarget)
+        wpe_renderer_backend_egl_offscreen_target_destroy(m_wpeTarget);
 }
 
 } // namespace WebCore

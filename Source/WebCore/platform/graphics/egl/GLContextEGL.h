@@ -33,7 +33,7 @@ struct wl_egl_window;
 #endif
 
 #if PLATFORM(WPE)
-#include "PlatformDisplayWPE.h"
+struct wpe_renderer_backend_egl_offscreen_target;
 #endif
 
 typedef void *EGLConfig;
@@ -78,6 +78,7 @@ private:
     void destroyWaylandWindow();
 #endif
 #if PLATFORM(WPE)
+    GLContextEGL(PlatformDisplay&, EGLContext, EGLSurface, struct wpe_renderer_backend_egl_offscreen_target*);
     void destroyWPETarget();
 #endif
 
@@ -94,6 +95,7 @@ private:
 #endif
 #if PLATFORM(WPE)
     static std::unique_ptr<GLContextEGL> createWPEContext(PlatformDisplay&, EGLContext sharingContext = nullptr);
+    static EGLSurface createWindowSurfaceWPE(EGLDisplay, EGLConfig, GLNativeWindowType);
 #endif
 
     static bool getEGLConfig(EGLDisplay, EGLConfig*, EGLSurfaceType);
@@ -109,7 +111,7 @@ private:
     struct wl_egl_window* m_wlWindow { nullptr };
 #endif
 #if PLATFORM(WPE)
-    std::unique_ptr<PlatformDisplayWPE::EGLOffscreenTarget> m_wpeTarget;
+    struct wpe_renderer_backend_egl_offscreen_target* m_wpeTarget { nullptr };
 #endif
 #if USE(CAIRO)
     cairo_device_t* m_cairoDevice { nullptr };

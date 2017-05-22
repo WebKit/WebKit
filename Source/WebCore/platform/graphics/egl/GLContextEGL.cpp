@@ -115,6 +115,9 @@ std::unique_ptr<GLContextEGL> GLContextEGL::createWindowContext(GLNativeWindowTy
     if (platformDisplay.type() == PlatformDisplay::Type::Wayland)
         surface = createWindowSurfaceWayland(display, config, window);
 #endif
+#elif PLATFORM(WPE)
+    if (platformDisplay.type() == PlatformDisplay::Type::WPE)
+        surface = createWindowSurfaceWPE(display, config, window);
 #else
     surface = eglCreateWindowSurface(display, config, static_cast<EGLNativeWindowType>(window), nullptr);
 #endif
@@ -189,6 +192,10 @@ std::unique_ptr<GLContextEGL> GLContextEGL::createContext(GLNativeWindowType win
         if (platformDisplay.type() == PlatformDisplay::Type::Wayland)
             context = createWaylandContext(platformDisplay, eglSharingContext);
 #endif
+#if PLATFORM(WPE)
+        if (platformDisplay.type() == PlatformDisplay::Type::WPE)
+            context = createWPEContext(platformDisplay, eglSharingContext);
+#endif
     }
     if (!context)
         context = createPbufferContext(platformDisplay, eglSharingContext);
@@ -204,13 +211,6 @@ std::unique_ptr<GLContextEGL> GLContextEGL::createSharingContext(PlatformDisplay
     if (eglBindAPI(gEGLAPIVersion) == EGL_FALSE)
         return nullptr;
 
-#if PLATFORM(WPE)
-    if (platformDisplay.type() == PlatformDisplay::Type::WPE) {
-        if (auto context = createWPEContext(platformDisplay))
-            return context;
-    }
-#endif
-
     auto context = createSurfacelessContext(platformDisplay);
     if (!context) {
 #if PLATFORM(X11)
@@ -220,6 +220,10 @@ std::unique_ptr<GLContextEGL> GLContextEGL::createSharingContext(PlatformDisplay
 #if PLATFORM(WAYLAND)
         if (platformDisplay.type() == PlatformDisplay::Type::Wayland)
             context = createWaylandContext(platformDisplay);
+#endif
+#if PLATFORM(WPE)
+        if (platformDisplay.type() == PlatformDisplay::Type::WPE)
+            context = createWPEContext(platformDisplay);
 #endif
     }
     if (!context)

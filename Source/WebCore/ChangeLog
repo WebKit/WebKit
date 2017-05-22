@@ -1,3 +1,32 @@
+2017-05-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WPE] Use surfaceless context for sharing and offscreen context if available
+        https://bugs.webkit.org/show_bug.cgi?id=172268
+
+        Reviewed by Žan Doberšek.
+
+        Like GTK+ port does, WPE should use surfaceless contexts when possible, and only create a native offscreen
+        context as a fallback. We don't need to do anything special in WPE port, just to make it consistent with the
+        Wayland and X11 implementations. We should also avoid including EGL.h in headers, we added
+        GLContextEGLWayland.cpp and GLContextEGLX11.cpp to avoid that. PlatformDisplayWPE::EGLOffscreenTarget is quite
+        simple and only used by GLContextEGLWPE, so we could move it there like we do for Wayland and X11.
+
+        * platform/graphics/GLContext.h: Remove EGL header includes.
+        * platform/graphics/egl/GLContextEGL.cpp:
+        (WebCore::GLContextEGL::createWindowContext): Use createWindowSurfaceWPE() in WPE.
+        (WebCore::GLContextEGL::createContext): Use createWPEContext in WPE.
+        (WebCore::GLContextEGL::createSharingContext): Move the WPE code below to ensure we try
+        createSurfacelessContext() first.
+        * platform/graphics/egl/GLContextEGL.h:
+        * platform/graphics/egl/GLContextEGLWPE.cpp:
+        (WebCore::GLContextEGL::GLContextEGL): Add constructor for WPE that receives a struct wpe_renderer_backend_egl_offscreen_target*
+        (WebCore::GLContextEGL::createWindowSurfaceWPE): Added implementation here because eglCreateWindowSurface needs
+        the platform specific EGL includes and definitions.
+        (WebCore::GLContextEGL::createWPEContext): Create a GLContext using WPE backend API directly here.
+        (WebCore::GLContextEGL::destroyWPETarget): Add null check.
+        * platform/graphics/wpe/PlatformDisplayWPE.cpp: Remove EGLOffscreenTarget.
+        * platform/graphics/wpe/PlatformDisplayWPE.h:
+
 2017-05-21  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Remove Firefox user agent quirk for Google domains
