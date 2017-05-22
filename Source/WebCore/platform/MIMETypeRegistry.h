@@ -47,6 +47,9 @@ public:
     // image (e.g., <img> tags).
     WEBCORE_EXPORT static bool isSupportedImageMIMEType(const String& mimeType);
 
+    // Check to see if a MIME type is suitable for being loaded as an image, including SVG.
+    WEBCORE_EXPORT static bool isSupportedImageOrSVGMIMEType(const String& mimeType);
+
     // Check to see if a MIME type is suitable for being loaded as an image
     // document in a frame.
     WEBCORE_EXPORT static bool isSupportedImageResourceMIMEType(const String& mimeType);
@@ -58,12 +61,21 @@ public:
     static bool isSupportedJavaScriptMIMEType(const String& mimeType);
     static bool isSupportedJSONMIMEType(const String& mimeType);
 
+    // Check to see if a MIME type is suitable for being loaded as a style sheet.
+    static bool isSupportedStyleSheetMIMEType(const String& mimeType);
+
+    // Check to see if a MIME type is suitable for being loaded as a font.
+    static bool isSupportedFontMIMEType(const String& mimeType);
+
     // Check to see if a non-image MIME type is suitable for being loaded as a
     // document in a frame. Includes supported JavaScript MIME types.
     WEBCORE_EXPORT static bool isSupportedNonImageMIMEType(const String& mimeType);
 
     // Check to see if a MIME type is suitable for being loaded using <video> and <audio>.
     WEBCORE_EXPORT static bool isSupportedMediaMIMEType(const String& mimeType);
+
+    // Check to see if a MIME type is suitable for being loaded using <track>>.
+    WEBCORE_EXPORT static bool isSupportedTextTrackMIMEType(const String& mimeType);
 
     // Check to see if a MIME type is a valid Java applet mime type.
     WEBCORE_EXPORT static bool isJavaAppletMIMEType(const String& mimeType);

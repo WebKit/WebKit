@@ -674,7 +674,7 @@ void FrameLoader::receivedFirstData()
     auto& document = *m_frame.document();
 
     ASSERT(m_frame.document());
-    LinkLoader::loadLinksFromHeader(m_documentLoader->response().httpHeaderField(HTTPHeaderName::Link), m_frame.document()->url(), *m_frame.document());
+    LinkLoader::loadLinksFromHeader(m_documentLoader->response().httpHeaderField(HTTPHeaderName::Link), m_frame.document()->url(), *m_frame.document(), LinkLoader::MediaAttributeCheck::MediaAttributeEmpty);
 
     double delay;
     String urlString;

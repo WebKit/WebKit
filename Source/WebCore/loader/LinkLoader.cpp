@@ -46,6 +46,8 @@
 #include "LinkHeader.h"
 #include "LinkPreloadResourceClients.h"
 #include "LinkRelAttribute.h"
+#include "MIMETypeRegistry.h"
+#include "MediaQueryEvaluator.h"
 #include "RuntimeEnabledFeatures.h"
 #include "Settings.h"
 #include "StyleResolver.h"
@@ -84,7 +86,7 @@ void LinkLoader::notifyFinished(CachedResource& resource)
     m_cachedLinkResource = nullptr;
 }
 
-void LinkLoader::loadLinksFromHeader(const String& headerValue, const URL& baseURL, Document& document)
+void LinkLoader::loadLinksFromHeader(const String& headerValue, const URL& baseURL, Document& document, MediaAttributeCheck mediaAttributeCheck)
 {
     if (headerValue.isEmpty())
         return;
@@ -92,13 +94,20 @@ void LinkLoader::loadLinksFromHeader(const String& headerValue, const URL& baseU
     for (auto& header : headerSet) {
         if (!header.valid() || header.url().isEmpty() || header.rel().isEmpty())
             continue;
+        if (mediaAttributeCheck == MediaAttributeCheck::MediaAttributeNotEmpty) {
+            if (header.media().isEmpty())
+                continue;
+        } else {
+            if (!header.media().isEmpty())
+                continue;
+        }
 
         LinkRelAttribute relAttribute(header.rel());
         URL url(baseURL, header.url());
         // Sanity check to avoid re-entrancy here.
         if (equalIgnoringFragmentIdentifier(url, baseURL))
             continue;
-        preloadIfNeeded(relAttribute, url, document, header.as(), header.crossOrigin(), nullptr, nullptr);
+        preloadIfNeeded(relAttribute, url, document, header.as(), header.media(), header.mimeType(), header.crossOrigin(), nullptr, nullptr);
     }
 }
 
@@ -158,7 +167,34 @@ static std::unique_ptr<LinkPreloadResourceClient> createLinkPreloadResourceClien
     return nullptr;
 }
 
-std::unique_ptr<LinkPreloadResourceClient> LinkLoader::preloadIfNeeded(const LinkRelAttribute& relAttribute, const URL& href, Document& document, const String& as, const String& crossOriginMode, LinkLoader* loader, LinkLoaderClient* client)
+bool LinkLoader::isSupportedType(CachedResource::Type resourceType, const String& mimeType)
+{
+    if (mimeType.isEmpty())
+        return true;
+    switch (resourceType) {
+    case CachedResource::ImageResource:
+        return MIMETypeRegistry::isSupportedImageOrSVGMIMEType(mimeType);
+    case CachedResource::Script:
+        return MIMETypeRegistry::isSupportedJavaScriptMIMEType(mimeType);
+    case CachedResource::CSSStyleSheet:
+        return MIMETypeRegistry::isSupportedStyleSheetMIMEType(mimeType);
+    case CachedResource::FontResource:
+        return MIMETypeRegistry::isSupportedFontMIMEType(mimeType);
+    case CachedResource::MediaResource:
+        return MIMETypeRegistry::isSupportedMediaMIMEType(mimeType);
+#if ENABLE(VIDEO_TRACK)
+    case CachedResource::TextTrackResource:
+        return MIMETypeRegistry::isSupportedTextTrackMIMEType(mimeType);
+#endif
+    case CachedResource::RawResource:
+        return true;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+    return false;
+}
+
+std::unique_ptr<LinkPreloadResourceClient> LinkLoader::preloadIfNeeded(const LinkRelAttribute& relAttribute, const URL& href, Document& document, const String& as, const String& media, const String& mimeType, const String& crossOriginMode, LinkLoader* loader, LinkLoaderClient* client)
 {
     if (!document.loader() || !relAttribute.isLinkPreload)
         return nullptr;
@@ -175,6 +211,10 @@ std::unique_ptr<LinkPreloadResourceClient> LinkLoader::preloadIfNeeded(const Lin
             client->linkLoadingErrored();
         return nullptr;
     }
+    if (!MediaQueryEvaluator::mediaAttributeMatches(document, media))
+        return nullptr;
+    if (!isSupportedType(type.value(), mimeType))
+        return nullptr;
 
     ResourceRequest resourceRequest(document.completeURL(href));
     resourceRequest.setIgnoreForRequestCount(true);
@@ -196,7 +236,7 @@ void LinkLoader::cancelLoad()
         m_preloadResourceClient->clear();
 }
 
-bool LinkLoader::loadLink(const LinkRelAttribute& relAttribute, const URL& href, const String& as, const String& crossOrigin, Document& document)
+bool LinkLoader::loadLink(const LinkRelAttribute& relAttribute, const URL& href, const String& as, const String& media, const String& mimeType, const String& crossOrigin, Document& document)
 {
     if (relAttribute.isDNSPrefetch) {
         // FIXME: The href attribute of the link element can be in "//hostname" form, and we shouldn't attempt
@@ -206,7 +246,7 @@ bool LinkLoader::loadLink(const LinkRelAttribute& relAttribute, const URL& href,
     }
 
     if (m_client.shouldLoadLink()) {
-        auto resourceClient = preloadIfNeeded(relAttribute, href, document, as, crossOrigin, this, &m_client);
+        auto resourceClient = preloadIfNeeded(relAttribute, href, document, as, media, mimeType, crossOrigin, this, &m_client);
         if (resourceClient)
             m_preloadResourceClient = WTFMove(resourceClient);
         else if (m_preloadResourceClient)

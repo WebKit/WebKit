@@ -162,7 +162,7 @@ ImageCandidate HTMLImageElement::bestFitSourceFromPictureElement()
             String type = typeAttribute.string();
             type.truncate(type.find(';'));
             type = stripLeadingAndTrailingHTMLSpaces(type);
-            if (!type.isEmpty() && !MIMETypeRegistry::isSupportedImageMIMEType(type) && !equalLettersIgnoringASCIICase(type, "image/svg+xml"))
+            if (!type.isEmpty() && !MIMETypeRegistry::isSupportedImageOrSVGMIMEType(type))
                 continue;
         }
 

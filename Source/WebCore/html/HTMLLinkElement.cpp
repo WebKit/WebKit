@@ -232,7 +232,7 @@ void HTMLLinkElement::process()
 
     URL url = getNonEmptyURLAttribute(hrefAttr);
 
-    if (!m_linkLoader.loadLink(m_relAttribute, url, attributeWithoutSynchronization(asAttr), attributeWithoutSynchronization(crossoriginAttr), document()))
+    if (!m_linkLoader.loadLink(m_relAttribute, url, attributeWithoutSynchronization(asAttr), attributeWithoutSynchronization(mediaAttr), attributeWithoutSynchronization(typeAttr), attributeWithoutSynchronization(crossoriginAttr), document()))
         return;
 
     bool treatAsStyleSheet = m_relAttribute.isStyleSheet

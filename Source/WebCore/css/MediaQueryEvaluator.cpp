@@ -734,4 +734,11 @@ bool MediaQueryEvaluator::evaluate(const MediaQueryExpression& expression) const
     return function(expression.value(), { m_style, document.documentElement()->renderStyle(), document.renderView(), 1, false }, *m_frame, NoPrefix);
 }
 
+bool MediaQueryEvaluator::mediaAttributeMatches(Document& document, const String& attributeValue)
+{
+    ASSERT(document.renderView());
+    auto mediaQueries = MediaQuerySet::create(attributeValue);
+    return MediaQueryEvaluator { "screen", document, &document.renderView()->style() }.evaluate(mediaQueries.get());
+}
+
 } // namespace

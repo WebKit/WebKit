@@ -483,6 +483,11 @@ bool MIMETypeRegistry::isSupportedImageMIMEType(const String& mimeType)
     return supportedImageMIMETypes->contains(getNormalizedMIMEType(mimeType));
 }
 
+bool MIMETypeRegistry::isSupportedImageOrSVGMIMEType(const String& mimeType)
+{
+    return isSupportedImageMIMEType(mimeType) || equalLettersIgnoringASCIICase(mimeType, "image/svg+xml");
+}
+
 bool MIMETypeRegistry::isSupportedImageResourceMIMEType(const String& mimeType)
 {
     if (mimeType.isEmpty())
@@ -510,6 +515,24 @@ bool MIMETypeRegistry::isSupportedJavaScriptMIMEType(const String& mimeType)
     if (!supportedJavaScriptMIMETypes)
         initializeMIMETypeRegistry();
     return supportedJavaScriptMIMETypes->contains(mimeType);
+}
+
+bool MIMETypeRegistry::isSupportedStyleSheetMIMEType(const String& mimeType)
+{
+    return equalLettersIgnoringASCIICase(mimeType, "text/css");
+}
+
+bool MIMETypeRegistry::isSupportedFontMIMEType(const String& mimeType)
+{
+    static const unsigned fontLen = 5;
+    if (!mimeType.startsWithIgnoringASCIICase("font/"))
+        return false;
+    String subType = mimeType.substring(fontLen);
+    return equalLettersIgnoringASCIICase(subType, "woff")
+        || equalLettersIgnoringASCIICase(subType, "woff2")
+        || equalLettersIgnoringASCIICase(subType, "otf")
+        || equalLettersIgnoringASCIICase(subType, "ttf")
+        || equalLettersIgnoringASCIICase(subType, "sfnt");
 }
 
 bool MIMETypeRegistry::isSupportedJSONMIMEType(const String& mimeType)
@@ -546,6 +569,11 @@ bool MIMETypeRegistry::isSupportedMediaMIMEType(const String& mimeType)
     if (!supportedMediaMIMETypes)
         initializeSupportedMediaMIMETypes();
     return supportedMediaMIMETypes->contains(mimeType);
+}
+
+bool MIMETypeRegistry::isSupportedTextTrackMIMEType(const String& mimeType)
+{
+    return equalLettersIgnoringASCIICase(mimeType, "text/vtt");
 }
 
 bool MIMETypeRegistry::isUnsupportedTextMIMEType(const String& mimeType)

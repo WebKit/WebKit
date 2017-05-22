@@ -1,3 +1,22 @@
+2017-05-22  Yoav Weiss  <yoav@yoav.ws>
+
+        [preload] Add media and type attribute support.
+        https://bugs.webkit.org/show_bug.cgi?id=171720
+
+        Reviewed by Youenn Fablet.
+
+        * TestExpectations: Skip http/tests/preload/viewport as meta viewport is turned off in most platforms.
+        * http/wpt/preload/media-attribute-expected.txt: Added.
+        * http/wpt/preload/media-attribute.html: Added.
+        * http/wpt/preload/type-attribute-expected.txt: Added.
+        * http/wpt/preload/type-attribute.html: Added.
+        * http/wpt/preload/resources/square.png: Added.
+        * http/wpt/preload/resources/dummy.js: Added.
+        * http/tests/preload/viewport/meta-viewport-link-headers-expected.txt: Added.
+        * http/tests/preload/viewport/meta-viewport-link-headers.php: Added.
+        * platform/ios-simulator/TestExpectations: Turn on http/tests/preload/viewport for ios-simulator.
+        * platform/ios/TestExpectations: Turn on http/tests/preload/viewport for ios.
+
 2017-05-22  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark imported/w3c/web-platform-tests/WebCryptoAPI/import_export/test_rsa_importKey.https.html as a timeout on El Capitan.

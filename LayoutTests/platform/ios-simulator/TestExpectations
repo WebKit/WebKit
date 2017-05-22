@@ -5,3 +5,5 @@
 
 fast/multicol/flexbox-rows.html [ Skip ]
 workers/wasm-mem-post-message.html [ Failure ]
+
+http/tests/preload/viewport [ Pass ]

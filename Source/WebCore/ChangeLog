@@ -1,3 +1,45 @@
+2017-05-22  Yoav Weiss  <yoav@yoav.ws>
+
+        [preload] Add media and type attribute support.
+        https://bugs.webkit.org/show_bug.cgi?id=171720
+
+        Reviewed by Youenn Fablet.
+
+        Tests: http/wpt/preload/media-attribute.html
+               http/wpt/preload/type-attribute.html
+               http/tests/preload/viewport/meta-viewport-link-headers.php
+
+        * css/MediaQueryEvaluator.cpp: Move the mediaAttributeMatches code from HTMLResourcePreloader to a central location.
+        (WebCore::MediaQueryEvaluator::mediaAttributeMatches):
+        * css/MediaQueryEvaluator.h:
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::bestFitSourceFromPictureElement): Use isSupportedImageOrSVGMIMEType() instead of checking SVG MIME type specifically.
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::process): Call loadLink() with the media and type attributes.
+        * html/parser/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::pumpTokenizer): Trigger Link header based preload for links that have the media attribute.
+        * html/parser/HTMLPreloadScanner.cpp:
+        (WebCore::TokenPreloadScanner::StartTagScanner::createPreloadRequest): Avoid preloading link resources with non-matching type.
+        (WebCore::TokenPreloadScanner::StartTagScanner::processAttribute): Collect the type attribute for link resources.
+        * html/parser/HTMLResourcePreloader.cpp:
+        (WebCore::HTMLResourcePreloader::preload): Use MediaQueryEvaluator::mediaAttributeMatches instead of the local one.
+        (WebCore::mediaAttributeMatches): Deleted.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::receivedFirstData): Indicate that only link preloads with no media attribute should be loaded here.
+        * loader/LinkLoader.cpp:
+        (WebCore::LinkLoader::loadLinksFromHeader): Load only links with or without media attributes, according to mode. Also send media and
+        type attributes to preloadIfNeeded().
+        (WebCore::LinkLoader::isSupportedType): Check if the MIME type is supported for the CachedResource::Type.
+        (WebCore::LinkLoader::preloadIfNeeded): Get the media and type attributes and only trigger a preload if media matches and type is supported.
+        (WebCore::LinkLoader::loadLink): Pass along the media and type attributes.
+        * loader/LinkLoader.h:
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::MIMETypeRegistry::isSupportedImageOrSVGMIMEType): Check if MIME type is supported for an image, or is an SVG mime type.
+        (WebCore::MIMETypeRegistry::isSupportedStyleSheetMIMEType): Check if MIME type is supported for a stylesheet.
+        (WebCore::MIMETypeRegistry::isSupportedFontMIMEType): Check if MIME type is supported for a font.
+        (WebCore::MIMETypeRegistry::isSupportedTextTrackMIMEType): Check if MIME type is supported for a text track.
+        * platform/MIMETypeRegistry.h:
+
 2017-05-22  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         [CG] Use the SPI CGImageSourceGetTypeWithData() to get the typeIdentifierHint of an image
