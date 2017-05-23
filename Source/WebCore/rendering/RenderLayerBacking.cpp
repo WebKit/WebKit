@@ -2545,7 +2545,7 @@ void RenderLayerBacking::paintIntoLayer(const GraphicsLayer* graphicsLayer, Grap
 }
 
 // Up-call from compositing layer drawing callback.
-void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, GraphicsContext& context, GraphicsLayerPaintingPhase paintingPhase, const FloatRect& clip)
+void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, GraphicsContext& context, GraphicsLayerPaintingPhase paintingPhase, const FloatRect& clip, GraphicsLayerPaintFlags flags)
 {
 #ifndef NDEBUG
     renderer().page().setIsPainting(true);
@@ -2568,7 +2568,11 @@ void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, Graph
             dirtyRect.intersect(enclosingIntRect(compositedBoundsIncludingMargin()));
 
         // We have to use the same root as for hit testing, because both methods can compute and cache clipRects.
-        paintIntoLayer(graphicsLayer, context, dirtyRect, PaintBehaviorNormal, paintingPhase);
+        PaintBehavior behavior = PaintBehaviorNormal;
+        if (flags == GraphicsLayerPaintFlags::Snapshotting)
+            behavior |= PaintBehaviorSnapshotting;
+
+        paintIntoLayer(graphicsLayer, context, dirtyRect, behavior, paintingPhase);
 
         InspectorInstrumentation::didPaint(renderer(), dirtyRect);
     } else if (graphicsLayer == layerForHorizontalScrollbar()) {

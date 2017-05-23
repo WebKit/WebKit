@@ -29,7 +29,10 @@
 #include <QuartzCore/QuartzCore.h>
 
 #ifdef __OBJC__
-@interface WebSimpleLayer : CALayer
+@interface WebSimpleLayer : CALayer {
+    BOOL _isRenderingInContext;
+}
+@property (nonatomic, readonly) BOOL isRenderingInContext;
 @end
 
 @interface WebLayer : WebSimpleLayer

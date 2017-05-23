@@ -712,7 +712,7 @@ void TileGrid::drawTileMapContents(CGContextRef context, CGRect layerBounds) con
     }
 }
 
-void TileGrid::platformCALayerPaintContents(PlatformCALayer* platformCALayer, GraphicsContext& context, const FloatRect&)
+void TileGrid::platformCALayerPaintContents(PlatformCALayer* platformCALayer, GraphicsContext& context, const FloatRect&, GraphicsLayerPaintFlags flags)
 {
 #if PLATFORM(IOS)
     if (pthread_main_np())
@@ -727,7 +727,7 @@ void TileGrid::platformCALayerPaintContents(PlatformCALayer* platformCALayer, Gr
         context.scale(m_scale);
 
         PlatformCALayer::RepaintRectList dirtyRects = PlatformCALayer::collectRectsToPaint(context.platformContext(), platformCALayer);
-        PlatformCALayer::drawLayerContents(context.platformContext(), &m_controller.rootLayer(), dirtyRects);
+        PlatformCALayer::drawLayerContents(context.platformContext(), &m_controller.rootLayer(), dirtyRects, flags);
     }
 
     int repaintCount = platformCALayerIncrementRepaintCount(platformCALayer);

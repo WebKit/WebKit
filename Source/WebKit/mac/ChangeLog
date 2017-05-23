@@ -1,3 +1,30 @@
+2017-05-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Snapshotting via -renderInContext: should do synchronous image decodes
+        https://bugs.webkit.org/show_bug.cgi?id=172485
+        rdar://problem/32276146
+
+        Reviewed by Tim Horton.
+
+        Remove the _setIncludesFlattenedCompositingLayersWhenDrawingToBitmap: SPI that no longer
+        has any callers.
+
+        * Plugins/WebBaseNetscapePluginView.h:
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView inFlatteningPaint]): Deleted.
+        * WebView/WebFrame.mm:
+        (-[WebFrame _paintBehaviorForDestinationContext:]):
+        (-[WebFrame _drawRect:contentsOnly:]):
+        (-[WebFrame _shouldFlattenCompositingLayers:]): Deleted.
+        * WebView/WebHTMLView.mm:
+        (imageFromRect):
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+        (-[WebView _setIncludesFlattenedCompositingLayersWhenDrawingToBitmap:]): Deleted.
+        (-[WebView _includesFlattenedCompositingLayersWhenDrawingToBitmap]): Deleted.
+        * WebView/WebViewData.h:
+        * WebView/WebViewPrivate.h:
+
 2017-05-23  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Remove dead ENABLE(FONT_LOAD_EVENTS) code

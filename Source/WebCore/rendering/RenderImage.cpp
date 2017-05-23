@@ -475,7 +475,7 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
     if (clip)
         context.clip(contentBoxRect);
 
-    paintIntoRect(context, snapRectToDevicePixels(replacedContentRect, deviceScaleFactor));
+    paintIntoRect(paintInfo, snapRectToDevicePixels(replacedContentRect, deviceScaleFactor));
     
     if (cachedImage() && paintInfo.phase == PaintPhaseForeground) {
         // For now, count images as unpainted if they are still progressively loading. We may want 
@@ -559,7 +559,7 @@ void RenderImage::areaElementFocusChanged(HTMLAreaElement* element)
     repaint();
 }
 
-void RenderImage::paintIntoRect(GraphicsContext& context, const FloatRect& rect)
+void RenderImage::paintIntoRect(PaintInfo& paintInfo, const FloatRect& rect)
 {
     if (!imageResource().cachedImage() || imageResource().errorOccurred() || rect.width() <= 0 || rect.height() <= 0)
         return;
@@ -573,7 +573,7 @@ void RenderImage::paintIntoRect(GraphicsContext& context, const FloatRect& rect)
 
     // FIXME: Document when image != img.get().
     Image* image = imageResource().image().get();
-    InterpolationQuality interpolation = image ? chooseInterpolationQuality(context, *image, image, LayoutSize(rect.size())) : InterpolationDefault;
+    InterpolationQuality interpolation = image ? chooseInterpolationQuality(paintInfo.context(), *image, image, LayoutSize(rect.size())) : InterpolationDefault;
 
 #if USE(CG)
     if (is<PDFDocumentImage>(image))
@@ -584,8 +584,9 @@ void RenderImage::paintIntoRect(GraphicsContext& context, const FloatRect& rect)
         downcast<BitmapImage>(*image).updateFromSettings(settings());
 
     ImageOrientationDescription orientationDescription(shouldRespectImageOrientation(), style().imageOrientation());
-    auto decodingMode = (view().frameView().paintBehavior() & PaintBehaviorFlattenCompositingLayers) ? DecodingMode::Synchronous : DecodingMode::Asynchronous;
-    context.drawImage(*img, rect, ImagePaintingOptions(compositeOperator, BlendModeNormal, decodingMode, orientationDescription, interpolation));
+
+    auto decodingMode = (paintInfo.paintBehavior & (PaintBehaviorFlattenCompositingLayers | PaintBehaviorSnapshotting)) ? DecodingMode::Synchronous : DecodingMode::Asynchronous;
+    paintInfo.context().drawImage(*img, rect, ImagePaintingOptions(compositeOperator, BlendModeNormal, decodingMode, orientationDescription, interpolation));
 }
 
 bool RenderImage::boxShadowShouldBeAppliedToBackground(const LayoutPoint& paintOffset, BackgroundBleedAvoidance bleedAvoidance, InlineFlowBox*) const

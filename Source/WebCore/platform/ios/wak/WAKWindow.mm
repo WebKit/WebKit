@@ -438,6 +438,16 @@ static id<OrientationProvider> gOrientationProvider;
     _tileCache->setTilesOpaque(opaque);
 }
 
+- (void)setIsInSnapshottingPaint:(BOOL)isInSnapshottingPaint
+{
+    _isInSnapshottingPaint = isInSnapshottingPaint;
+}
+
+- (BOOL)isInSnapshottingPaint
+{
+    return _isInSnapshottingPaint;
+}
+
 - (void)setEntireWindowVisibleForTesting:(BOOL)entireWindowVisible
 {
     _entireWindowVisibleForTesting = entireWindowVisible;

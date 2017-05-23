@@ -505,7 +505,7 @@ static CGInterpolationQuality toCGInterpolationQuality(WebCore::InterpolationQua
     sInterpolationQuality = toCGInterpolationQuality((WebCore::InterpolationQuality)quality);
 }
 
-- (void)_drawRect:(NSRect)dirtyRect context:(CGContextRef)context lockFocus:(bool)lockFocus
+- (void)_drawRect:(NSRect)dirtyRect context:(CGContextRef)context lockFocus:(BOOL)lockFocus
 {
     if (_isHidden)
         return;

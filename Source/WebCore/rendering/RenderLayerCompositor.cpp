@@ -2863,7 +2863,7 @@ void paintScrollbar(Scrollbar* scrollbar, GraphicsContext& context, const IntRec
     context.restore();
 }
 
-void RenderLayerCompositor::paintContents(const GraphicsLayer* graphicsLayer, GraphicsContext& context, GraphicsLayerPaintingPhase, const FloatRect& clip)
+void RenderLayerCompositor::paintContents(const GraphicsLayer* graphicsLayer, GraphicsContext& context, GraphicsLayerPaintingPhase, const FloatRect& clip, GraphicsLayerPaintFlags)
 {
     IntRect pixelSnappedRectForIntegralPositionedItems = snappedIntRect(LayoutRect(clip));
     if (graphicsLayer == layerForHorizontalScrollbar())

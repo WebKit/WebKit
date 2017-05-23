@@ -4389,10 +4389,13 @@ void FrameView::willPaintContents(GraphicsContext& context, const IntRect&, Pain
     if (FrameView* parentView = parentFrameView()) {
         if (parentView->paintBehavior() & PaintBehaviorFlattenCompositingLayers)
             m_paintBehavior |= PaintBehaviorFlattenCompositingLayers;
+            
+        if (parentView->paintBehavior() & PaintBehaviorSnapshotting)
+            m_paintBehavior |= PaintBehaviorSnapshotting;
     }
 
     if (document->printing())
-        m_paintBehavior |= PaintBehaviorFlattenCompositingLayers;
+        m_paintBehavior |= (PaintBehaviorFlattenCompositingLayers | PaintBehaviorSnapshotting);
 
     paintingState.isFlatteningPaintOfRootFrame = (m_paintBehavior & PaintBehaviorFlattenCompositingLayers) && !frame().ownerElement();
     if (paintingState.isFlatteningPaintOfRootFrame)
@@ -4519,7 +4522,7 @@ void FrameView::paintContentsForSnapshot(GraphicsContext& context, const IntRect
 
     // Cache paint behavior and set a new behavior appropriate for snapshots.
     PaintBehavior oldBehavior = paintBehavior();
-    setPaintBehavior(oldBehavior | PaintBehaviorFlattenCompositingLayers);
+    setPaintBehavior(oldBehavior | (PaintBehaviorFlattenCompositingLayers | PaintBehaviorSnapshotting));
 
     // If the snapshot should exclude selection, then we'll clear the current selection
     // in the render tree only. This will allow us to restore the selection from the DOM

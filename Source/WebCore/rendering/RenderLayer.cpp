@@ -4383,6 +4383,9 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
         else if (localPaintFlags & PaintLayerPaintingRootBackgroundOnly)
             paintBehavior |= PaintBehaviorRootBackgroundOnly;
 
+        if (paintingInfo.paintBehavior & PaintBehaviorSnapshotting)
+            paintBehavior |= PaintBehaviorSnapshotting;
+
         if (paintingInfo.paintBehavior & PaintBehaviorExcludeSelection)
             paintBehavior |= PaintBehaviorExcludeSelection;
 
@@ -4784,6 +4787,9 @@ void RenderLayer::paintForegroundForFragments(const LayerFragments& layerFragmen
 
     if (localPaintingInfo.paintBehavior & PaintBehaviorExcludeSelection)
         localPaintBehavior |= PaintBehaviorExcludeSelection;
+
+    if (localPaintingInfo.paintBehavior & PaintBehaviorSnapshotting)
+        localPaintBehavior |= PaintBehaviorSnapshotting;
 
     // Optimize clipping for the single fragment case.
     bool shouldClip = localPaintingInfo.clipToDirtyRect && layerFragments.size() == 1 && layerFragments[0].shouldPaintContent && !layerFragments[0].foregroundRect.isEmpty();

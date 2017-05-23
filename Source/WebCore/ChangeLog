@@ -1,3 +1,104 @@
+2017-05-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Snapshotting via -renderInContext: should do synchronous image decodes
+        https://bugs.webkit.org/show_bug.cgi?id=172485
+        rdar://problem/32276146
+
+        Reviewed by Tim Horton.
+
+        When UIWebView clients snapshot the view via -renderInContext: on the UIView's layer,
+        WebKit should do synchronous image decodes so that the images show in the snapshot.
+
+        Fix by plumbing through a "snapshotting" paint behavior flag from two source locations:
+        WebSimpleLayer, used by compositing layers, and LegacyTileLayer, used for the WK1 tile cache.
+        On WebSimpleLayer the flag propagates through PlatformCALayer to GraphicsLayer, and on LegacyTileLayer
+        it sets some state on the WAKWindow, which is detected by -[WebFrame _paintBehaviorForDestinationContext:].
+        In both cases, the flag becomes PaintBehaviorSnapshotting which is passed down through painting
+        in PaintInfo.paintBehavior.
+
+        Fix code that was checking paintBehavior on the FrameView to just looking at PaintInfo.paintBehavior,
+        which required passing PaintInfo along in RenderImage::paintIntoRect().
+
+        We can't just use the PaintBehaviorFlattenCompositingLayers flag, because that triggers
+        a flattening paint of compositing layers, and we don't want that behavior for -renderInContext:,
+        since CoreAnimation calls -renderInContext: on each of our layers and we need to avoid double-painting.
+        So PaintBehaviorSnapshotting is now added to the call sites that also set PaintBehaviorFlattenCompositingLayers
+        in most cases.
+
+        Tested by SnapshotViaRenderInContext API test.
+
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlTextTrackContainerElement::createTextTrackRepresentationImage):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::willPaintContents):
+        (WebCore::FrameView::paintContentsForSnapshot):
+        * page/PageOverlayController.cpp:
+        (WebCore::PageOverlayController::paintContents):
+        * page/PageOverlayController.h:
+        * page/mac/ServicesOverlayController.h:
+        * page/mac/ServicesOverlayController.mm:
+        (WebCore::ServicesOverlayController::Highlight::paintContents):
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::paintGraphicsLayerContents):
+        * platform/graphics/GraphicsLayer.h:
+        * platform/graphics/GraphicsLayerClient.h:
+        (WebCore::GraphicsLayerClient::paintContents):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::recursiveCommitChanges):
+        (WebCore::GraphicsLayerCA::platformCALayerPaintContents):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        * platform/graphics/ca/PlatformCALayer.h:
+        * platform/graphics/ca/PlatformCALayerClient.h:
+        * platform/graphics/ca/TileCoverageMap.cpp:
+        (WebCore::TileCoverageMap::platformCALayerPaintContents):
+        * platform/graphics/ca/TileCoverageMap.h:
+        * platform/graphics/ca/TileGrid.cpp:
+        (WebCore::TileGrid::platformCALayerPaintContents):
+        * platform/graphics/ca/TileGrid.h:
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+        (PlatformCALayer::drawLayerContents):
+        * platform/graphics/mac/WebLayer.mm:
+        (-[WebLayer drawInContext:]):
+        (-[WebSimpleLayer renderInContext:]):
+        (-[WebSimpleLayer drawInContext:]):
+        * platform/ios/LegacyTileCache.h: Use initializers.
+        * platform/ios/LegacyTileCache.mm:
+        (WebCore::LegacyTileCache::LegacyTileCache):
+        (WebCore::LegacyTileCache::drawWindowContent):
+        (WebCore::LegacyTileCache::drawLayer):
+        * platform/ios/LegacyTileLayer.h:
+        * platform/ios/LegacyTileLayer.mm:
+        (-[LegacyTileHostLayer renderInContext:]):
+        (-[LegacyTileLayer renderInContext:]):
+        (-[LegacyTileLayer drawInContext:]):
+        (+[LegacyTileLayer layerBeingPainted]): Deleted. There were no callers.
+        * platform/ios/wak/WAKView.mm:
+        (-[WAKView _drawRect:context:lockFocus:]): bool -> BOOL
+        * platform/ios/wak/WAKWindow.h:
+        * platform/ios/wak/WAKWindow.mm:
+        (-[WAKWindow setIsInSnapshottingPaint:]):
+        (-[WAKWindow isInSnapshottingPaint]):
+        * rendering/PaintPhase.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintMaskImages):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintReplaced):
+        (WebCore::RenderImage::paintIntoRect):
+        * rendering/RenderImage.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayerContents):
+        (WebCore::RenderLayer::paintForegroundForFragments):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::paintContents):
+        * rendering/RenderLayerBacking.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::paintContents):
+        * rendering/RenderLayerCompositor.h:
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::paintReplaced):
+
 2017-05-23  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Remove dead ENABLE(FONT_LOAD_EVENTS) code

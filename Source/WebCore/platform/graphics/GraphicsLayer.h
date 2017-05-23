@@ -442,7 +442,7 @@ public:
 
     // Transitions are identified by a special animation name that cannot clash with a keyframe identifier.
     static String animationNameForTransition(AnimatedPropertyID);
-    
+
     // Return true if the animation is handled by the compositing system. If this returns
     // false, the animation will be run by CSSAnimationController.
     // These methods handle both transitions and keyframe animations.
@@ -452,7 +452,7 @@ public:
 
     WEBCORE_EXPORT virtual void suspendAnimations(double time);
     WEBCORE_EXPORT virtual void resumeAnimations();
-    
+
     // Layer contents
     virtual void setContentsToImage(Image*) { }
     virtual bool shouldDirectlyCompositeImage(Image*) const { return true; }
@@ -465,11 +465,11 @@ public:
     virtual bool usesContentsLayer() const { return false; }
 
     // Callback from the underlying graphics system to draw layer contents.
-    void paintGraphicsLayerContents(GraphicsContext&, const FloatRect& clip);
-    
+    void paintGraphicsLayerContents(GraphicsContext&, const FloatRect& clip, GraphicsLayerPaintFlags = GraphicsLayerPaintFlags::None);
+
     // For hosting this GraphicsLayer in a native layer hierarchy.
     virtual PlatformLayer* platformLayer() const { return 0; }
-    
+
     enum CompositingCoordinatesOrientation { CompositingCoordinatesTopDown, CompositingCoordinatesBottomUp };
 
     // Flippedness of the contents of this layer. Does not affect sublayer geometry.
