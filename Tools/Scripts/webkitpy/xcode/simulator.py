@@ -174,8 +174,8 @@ class Simulator(object):
     device_type_re = re.compile('(?P<name>.+)\((?P<identifier>[^)]+)\)')
     # FIXME: runtime_re parses the version from the runtime name, but that does not contain the full version number
     # (it can omit the revision). We should instead parse the version from the number contained in parentheses.
-    runtime_re = re.compile(
-        '(i|watch|tv)OS (?P<version>\d+\.\d)(?P<internal> Internal)? \(\d+\.\d+(\.\d+)? - (?P<build_version>[^)]+)\) \((?P<identifier>[^)]+)\)( \((?P<availability>[^)]+)\))?')
+    runtime_re = re.compile('(i|watch|tv)OS (?P<version>\d+\.\d)(?P<internal> Internal)? \(\d+\.\d+(\.\d+)? - (?P<build_version>[^)]+)\) \((?P<identifier>[^)]+)\)( \((?P<availability>[^)]+)\))?')
+    new_runtime_re = re.compile('(i|watch|tv)OS (?P<version>\d+\.\d)(?P<internal> Internal)? \(\d+\.\d+(\.\d+)? - (?P<build_version>[^)]+)\) - (?P<identifier>[^)]+)( \((?P<availability>[^)]+)\))?')
     unavailable_version_re = re.compile('-- Unavailable: (?P<identifier>[^ ]+) --')
     version_re = re.compile('-- (i|watch|tv)OS (?P<version>\d+\.\d+)(?P<internal> Internal)? --')
     devices_re = re.compile(
@@ -329,7 +329,7 @@ class Simulator(object):
         :return: None
         """
         for line in lines:
-            runtime_match = self.runtime_re.match(line)
+            runtime_match = self.runtime_re.match(line) or self.new_runtime_re.match(line)
             if not runtime_match:
                 if line != '== Devices ==':
                     raise RuntimeError('Expected == Devices == header but got: "{}"'.format(line))
