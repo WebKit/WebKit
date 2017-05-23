@@ -35,40 +35,8 @@ WebInspector.NetworkSidebarPanel = class NetworkSidebarPanel extends WebInspecto
 
         this.filterBar.placeholder = WebInspector.UIString("Filter Resource List");
 
-        this._navigationBar = new WebInspector.NavigationBar;
-        this.addSubview(this._navigationBar);
-
-        this._resourcesTitleBarElement = document.createElement("div");
-        this._resourcesTitleBarElement.textContent = WebInspector.UIString("Name");
-        this._resourcesTitleBarElement.classList.add("title-bar");
-        this.element.appendChild(this._resourcesTitleBarElement);
-
-        var scopeItemPrefix = "network-sidebar-";
-        var scopeBarItems = [];
-
-        scopeBarItems.push(new WebInspector.ScopeBarItem(scopeItemPrefix + "type-all", WebInspector.UIString("All Resources"), true));
-
-        for (var key in WebInspector.Resource.Type) {
-            var value = WebInspector.Resource.Type[key];
-            var scopeBarItem = new WebInspector.ScopeBarItem(scopeItemPrefix + value, WebInspector.Resource.displayNameForType(value, true));
-            scopeBarItem[WebInspector.NetworkSidebarPanel.ResourceTypeSymbol] = value;
-            scopeBarItems.push(scopeBarItem);
-        }
-
-        this._scopeBar = new WebInspector.ScopeBar("network-sidebar-scope-bar", scopeBarItems, scopeBarItems[0], true);
-        this._scopeBar.addEventListener(WebInspector.ScopeBar.Event.SelectionChanged, this._scopeBarSelectionDidChange, this);
-
-        this._navigationBar.addNavigationItem(this._scopeBar);
-
         this.contentTreeOutline.element.classList.add("network-grid");
         this.contentTreeOutline.disclosureButtons = false;
-
-        this.contentBrowser.addEventListener(WebInspector.ContentBrowser.Event.CurrentContentViewDidChange, this._contentBrowserCurrentContentViewDidChange, this);
-
-        var networkTimeline = WebInspector.timelineManager.persistentNetworkTimeline;
-        networkTimeline.addEventListener(WebInspector.Timeline.Event.Reset, this._networkTimelineReset, this);
-
-        this._networkGridView = new WebInspector.NetworkGridContentView(null, {networkSidebarPanel: this});
     }
 
     // Public
@@ -80,6 +48,9 @@ WebInspector.NetworkSidebarPanel = class NetworkSidebarPanel extends WebInspecto
 
     showDefaultContentView()
     {
+        if (!this._networkGridView)
+            this._networkGridView = new WebInspector.NetworkGridContentView(null, {networkSidebarPanel: this});
+
         this.contentBrowser.showContentView(this._networkGridView);
     }
 
@@ -95,6 +66,39 @@ WebInspector.NetworkSidebarPanel = class NetworkSidebarPanel extends WebInspecto
     }
 
     // Protected
+
+    initialLayout()
+    {
+        this._navigationBar = new WebInspector.NavigationBar;
+        this.addSubview(this._navigationBar);
+
+        this._resourcesTitleBarElement = document.createElement("div");
+        this._resourcesTitleBarElement.textContent = WebInspector.UIString("Name");
+        this._resourcesTitleBarElement.classList.add("title-bar");
+        this.element.appendChild(this._resourcesTitleBarElement);
+
+        let scopeItemPrefix = "network-sidebar-";
+        let scopeBarItems = [];
+
+        scopeBarItems.push(new WebInspector.ScopeBarItem(scopeItemPrefix + "type-all", WebInspector.UIString("All Resources"), true));
+
+        for (let key in WebInspector.Resource.Type) {
+            let value = WebInspector.Resource.Type[key];
+            let scopeBarItem = new WebInspector.ScopeBarItem(scopeItemPrefix + value, WebInspector.Resource.displayNameForType(value, true));
+            scopeBarItem[WebInspector.NetworkSidebarPanel.ResourceTypeSymbol] = value;
+            scopeBarItems.push(scopeBarItem);
+        }
+
+        this._scopeBar = new WebInspector.ScopeBar("network-sidebar-scope-bar", scopeBarItems, scopeBarItems[0], true);
+        this._scopeBar.addEventListener(WebInspector.ScopeBar.Event.SelectionChanged, this._scopeBarSelectionDidChange, this);
+
+        this._navigationBar.addNavigationItem(this._scopeBar);
+
+        WebInspector.timelineManager.persistentNetworkTimeline.addEventListener(WebInspector.Timeline.Event.Reset, this._networkTimelineReset, this);
+
+        this.contentBrowser.addEventListener(WebInspector.ContentBrowser.Event.CurrentContentViewDidChange, this._contentBrowserCurrentContentViewDidChange, this);
+        this._contentBrowserCurrentContentViewDidChange();
+    }
 
     saveStateToCookie(cookie)
     {
