@@ -838,6 +838,11 @@ sub GetArgumentExceptionFunction
         return "throwArgumentTypeError(state, scope, ${argumentIndex}, \"${name}\", \"${visibleInterfaceName}\", ${quotedFunctionName}, \"${typeName}\");";
     }
 
+    if ($codeGenerator->IsEnumType($argument->type)) {
+        my $className = GetEnumerationClassName($argument->type, $interface);
+        return "throwArgumentMustBeEnumError(state, scope, ${argumentIndex}, \"${name}\", \"${visibleInterfaceName}\", ${quotedFunctionName}, expectedEnumerationValues<${className}>());";
+    }
+
     return undef;
 }
 
@@ -877,7 +882,7 @@ sub PassArgumentExpression
 
     my $type = $context->type;
 
-    return "${name}.value()" if $codeGenerator->IsEnumType($type);
+    return "${name}.value()" if $codeGenerator->IsEnumType($type) && ref($context) eq "IDLAttribute";
     return "WTFMove(${name})" if $type->isNullable;
     
     if ($codeGenerator->IsTypedArrayType($type)) {
@@ -1361,18 +1366,6 @@ sub GenerateEnumerationImplementationContent
     $result .= "    return std::nullopt;\n";
     $result .= "}\n\n";
 
-    $result .= "template<> $className convertEnumeration<$className>(ExecState& state, JSValue value)\n";
-    $result .= "{\n";
-    $result .= "    VM& vm = state.vm();\n";
-    $result .= "    auto throwScope = DECLARE_THROW_SCOPE(vm);\n";
-    $result .= "    auto result = parseEnumeration<$className>(state, value);\n";
-    $result .= "    if (UNLIKELY(!result)) {\n";
-    $result .= "        throwTypeError(&state, throwScope);\n";
-    $result .= "        return { };\n";
-    $result .= "    }\n";
-    $result .= "    return result.value();\n";
-    $result .= "}\n\n";
-
     $result .= "template<> const char* expectedEnumerationValues<$className>()\n";
     $result .= "{\n";
     $result .= "    return \"\\\"" . join ("\\\", \\\"", @{$enumeration->values}) . "\\\"\";\n";
@@ -1413,7 +1406,6 @@ sub GenerateEnumerationHeaderContent
 
     $result .= "template<> ${exportMacro}JSC::JSString* convertEnumerationToJS(JSC::ExecState&, $className);\n\n";
     $result .= "template<> ${exportMacro}std::optional<$className> parseEnumeration<$className>(JSC::ExecState&, JSC::JSValue);\n";
-    $result .= "template<> ${exportMacro}$className convertEnumeration<$className>(JSC::ExecState&, JSC::JSValue);\n";
     $result .= "template<> ${exportMacro}const char* expectedEnumerationValues<$className>();\n\n";
     $result .= "#endif\n\n" if $conditionalString;
     
@@ -4894,47 +4886,6 @@ sub GenerateParametersCheck
             push(@$outputArray, "    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());\n");
 
             $value = "WTFMove(${name}.arguments.value())";
-
-        } elsif ($codeGenerator->IsEnumType($type)) {
-            AddToImplIncludes("<runtime/Error.h>", $conditional);
-
-            my $className = GetEnumerationClassName($type, $interface);
-            my $nativeType = $className;
-            my $optionalValue = "optionalValue";
-            my $defineOptionalValue = "auto optionalValue";
-            my $indent = "";
-
-            die "Variadic argument is already handled here" if $argument->isVariadic;
-            my $argumentLookupMethod = $argument->isOptional ? "argument" : "uncheckedArgument";
-
-            if ($argument->isOptional && !defined($argument->default)) {
-                $nativeType = "std::optional<$className>";
-                $optionalValue = $name;
-                $defineOptionalValue = $name;
-            }
-
-            push(@$outputArray, "    auto ${name}Value = state->$argumentLookupMethod($argumentIndex);\n");
-            push(@$outputArray, "    $nativeType $name;\n");
-
-            if ($argument->isOptional) {
-                if (!defined $argument->default) {
-                    push(@$outputArray, "    if (!${name}Value.isUndefined()) {\n");
-                } else {
-                    push(@$outputArray, "    if (${name}Value.isUndefined())\n");
-                    push(@$outputArray, "        $name = " . GenerateDefaultValue($interface, $argument, $argument->type, $argument->default) . ";\n");
-                    push(@$outputArray, "    else {\n");
-                }
-                $indent = "    ";
-            }
-
-            $implIncludes{"JS$className.h"} = 1 if $codeGenerator->IsExternalEnumType($type);
-            push(@$outputArray, "$indent    $defineOptionalValue = parseEnumeration<$className>(*state, ${name}Value);\n");
-            push(@$outputArray, "$indent    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());\n");
-            push(@$outputArray, "$indent    if (UNLIKELY(!$optionalValue))\n");
-            push(@$outputArray, "$indent        return throwArgumentMustBeEnumError(*state, throwScope, $argumentIndex, \"$name\", \"$visibleInterfaceName\", $quotedFunctionName, expectedEnumerationValues<$className>());\n");
-            push(@$outputArray, "$indent    $name = optionalValue.value();\n") if $optionalValue ne $name;
-
-            push(@$outputArray, "    }\n") if $indent ne "";
         } else {
             my $argumentLookupForConversion;
             my $optionalCheck;
@@ -5687,9 +5638,7 @@ sub JSValueToNative
 
     AddToImplIncludesForIDLType($type, $conditional);
 
-    # parseEnumeration<> returns a std::optional. For dictionary members we need convert<IDLEnumeration>() which guarantee
-    # the enum, or throws a TypeError. Bypass this check for IDLDictionaryMembers.
-    if ($codeGenerator->IsEnumType($type) && ref($context) ne "IDLDictionaryMember") {
+    if ($codeGenerator->IsEnumType($type) && ref($context) eq "IDLAttribute") {
         return ("parseEnumeration<" . GetEnumerationClassName($type, $interface) . ">($stateReference, $value)", 1);
     }
 

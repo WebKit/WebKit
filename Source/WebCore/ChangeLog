@@ -1,3 +1,65 @@
+2017-05-23  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Remove some unnecessary specialization for enum types
+        https://bugs.webkit.org/show_bug.cgi?id=172482
+
+        Reviewed by Chris Dumez.
+
+        - Removes convertEnumeration template function and generated specialization.
+          convert<IDLEnumeration<T>> now does the entire check, and can have specialized
+          exceptions.
+        - Treats enums more like all other types, removing enum specific code in the
+          generator.
+
+        Also fixes some order of exception bugs as the convertEnumeration<T> implementations
+        were not correctly catching exceptions thrown in parseEnumeration<T>.
+
+        * bindings/js/JSDOMConvertEnumeration.h:
+        (WebCore::Converter<IDLEnumeration<T>>::convert):
+        Remove convertEnumeration and move implementation to convert. Add ExceptionThrower
+        parameter to retain argument conversion exception specialization and allow future
+        specialization for other contexts.
+
+        * bindings/js/JSSubtleCryptoCustom.cpp:
+        (WebCore::jsSubtleCryptoFunctionImportKeyPromise):
+        (WebCore::jsSubtleCryptoFunctionExportKeyPromise):
+        (WebCore::jsSubtleCryptoFunctionWrapKeyPromise):
+        (WebCore::jsSubtleCryptoFunctionUnwrapKeyPromise):
+        Switch from convertEnumeration<T> to convert<IDLEnumeration<T>>.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GetArgumentExceptionFunction):
+        Add (really move from GenerateParametersCheck) enum specific argument conversion exception.
+
+        (PassArgumentExpression):
+        Allow the enum specific code for attributes to remain by explicitly checking the context.
+        Attribute setters use parseEnumeration<T> explicitly, as WebIDL mandates slightly different
+        behavior, specially that they don't throw.
+
+        (GenerateEnumerationImplementationContent):
+        (GenerateEnumerationHeaderContent):
+        Remove convertEnumeration<T>.
+
+        (GenerateParametersCheck):
+        Remove entire branch devoted to enums. The main parameter check is now mature enough
+        to handle them.
+
+        (JSValueToNative):
+        Like in PassArgumentExpression, we need to retain the specialize behavior for attributes.
+        Before, JSValueToNative was only called for enums with a context of IDLAttribute or IDLDictionaryMember,
+        but now that we use if IDLArguments as well, it makes more sense to make this check in terms
+        of the odd man out, IDLAttribute.
+
+        * bindings/scripts/test/JS/JSTestCallbackInterface.cpp:
+        * bindings/scripts/test/JS/JSTestCallbackInterface.h:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/JS/JSTestStandaloneDictionary.cpp:
+        * bindings/scripts/test/JS/JSTestStandaloneDictionary.h:
+        * bindings/scripts/test/JS/JSTestStandaloneEnumeration.cpp:
+        * bindings/scripts/test/JS/JSTestStandaloneEnumeration.h:
+        Update test results.
+
 2017-05-23  Romain Bellessort  <romain.bellessort@crf.canon.fr>
 
         [Readable Streams API] Align respondInClosedState with spec

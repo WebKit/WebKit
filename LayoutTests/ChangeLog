@@ -1,3 +1,17 @@
+2017-05-23  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Remove some unnecessary specialization for enum types
+        https://bugs.webkit.org/show_bug.cgi?id=172482
+
+        Reviewed by Chris Dumez.
+
+        * crypto/subtle/import-key-malformed-parameters-expected.txt:
+        * fast/files/blob-constructor-expected.txt:
+        * fast/files/script-tests/blob-constructor.js:
+        Update test and results for improved order of exceptions. In this case, the conversion
+        to String throws before the failure to parse the enumeration (which is what the
+        plain TypeError was).
+
 2017-05-23  Emilio Cobos Álvarez  <ecobos@igalia.com>
 
         Import the css-display-3 css tests.

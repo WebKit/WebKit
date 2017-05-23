@@ -35,14 +35,14 @@ shouldThrow("new Blob([throwingObj])", "'Error'");
 // Test some invalid property bags
 shouldBeTrue("(new Blob([], {unknownKey:'value'})) instanceof window.Blob");    // Ignore invalid keys
 shouldThrow("new Blob([], {endings:'illegalValue'})", "'TypeError: Type error'");
-shouldThrow("new Blob([], {endings:throwingObj})", "'TypeError: Type error'");
+shouldThrow("new Blob([], {endings:throwingObj})", "'Error'");
 shouldThrow("new Blob([], {type:throwingObj})", "'Error'");
 
 // Test that order of property bag evaluation is lexigraphical
 var throwingObj1 = { toString: function() { throw "Error 1"; } };
 var throwingObj2 = { toString: function() { throw "Error 2"; } };
-shouldThrow("new Blob([], {endings:throwingObj1, type:throwingObj2})", "'TypeError: Type error'");
-shouldThrow("new Blob([], {type:throwingObj2, endings:throwingObj1})", "'TypeError: Type error'");
+shouldThrow("new Blob([], {endings:throwingObj1, type:throwingObj2})", "'Error 1'");
+shouldThrow("new Blob([], {type:throwingObj2, endings:throwingObj1})", "'Error 1'");
 shouldThrow("new Blob([], {type:throwingObj2, endings:'illegal'})", "'TypeError: Type error'");
 
 // Test various non-object literals being used as property bags

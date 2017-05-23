@@ -938,7 +938,7 @@ static void jsSubtleCryptoFunctionImportKeyPromise(ExecState& state, Ref<Deferre
         return;
     }
 
-    auto format = convertEnumeration<SubtleCrypto::KeyFormat>(state, state.uncheckedArgument(0));
+    auto format = convert<IDLEnumeration<SubtleCrypto::KeyFormat>>(state, state.uncheckedArgument(0));
     RETURN_IF_EXCEPTION(scope, void());
 
     auto keyData = toKeyData(state, format, state.uncheckedArgument(1));
@@ -986,7 +986,7 @@ static void jsSubtleCryptoFunctionExportKeyPromise(ExecState& state, Ref<Deferre
         return;
     }
 
-    auto format = convertEnumeration<SubtleCrypto::KeyFormat>(state, state.uncheckedArgument(0));
+    auto format = convert<IDLEnumeration<SubtleCrypto::KeyFormat>>(state, state.uncheckedArgument(0));
     RETURN_IF_EXCEPTION(scope, void());
 
     auto key = toCryptoKey(state, state.uncheckedArgument(1));
@@ -1041,7 +1041,7 @@ static void jsSubtleCryptoFunctionWrapKeyPromise(ExecState& state, Ref<DeferredP
         return;
     }
 
-    auto format = convertEnumeration<SubtleCrypto::KeyFormat>(state, state.uncheckedArgument(0));
+    auto format = convert<IDLEnumeration<SubtleCrypto::KeyFormat>>(state, state.uncheckedArgument(0));
     RETURN_IF_EXCEPTION(scope, void());
 
     auto key = toCryptoKey(state, state.uncheckedArgument(1));
@@ -1148,7 +1148,7 @@ static void jsSubtleCryptoFunctionUnwrapKeyPromise(ExecState& state, Ref<Deferre
         return;
     }
 
-    auto format = convertEnumeration<SubtleCrypto::KeyFormat>(state, state.uncheckedArgument(0));
+    auto format = convert<IDLEnumeration<SubtleCrypto::KeyFormat>>(state, state.uncheckedArgument(0));
     RETURN_IF_EXCEPTION(scope, void());
 
     auto wrappedKey = toVector(state, state.uncheckedArgument(1));

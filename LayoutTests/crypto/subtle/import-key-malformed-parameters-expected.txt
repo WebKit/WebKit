@@ -12,7 +12,7 @@ PASS crypto.subtle.importKey(1, rawKey, "aes-cbc", extractable, ["encrypt", "dec
 PASS crypto.subtle.importKey(true, rawKey, "aes-cbc", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"]) rejected promise  with TypeError: Type error.
 PASS crypto.subtle.importKey(null, rawKey, "aes-cbc", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"]) rejected promise  with TypeError: Type error.
 PASS crypto.subtle.importKey(undefined, rawKey, "aes-cbc", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"]) rejected promise  with TypeError: Type error.
-PASS crypto.subtle.importKey(Symbol(), rawKey, "aes-cbc", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"]) rejected promise  with TypeError: Type error.
+PASS crypto.subtle.importKey(Symbol(), rawKey, "aes-cbc", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"]) rejected promise  with TypeError: Cannot convert a symbol to a string.
 PASS crypto.subtle.importKey({ }, rawKey, "aes-cbc", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"]) rejected promise  with TypeError: Type error.
 PASS crypto.subtle.importKey("foo", rawKey, "aes-cbc", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"]) rejected promise  with TypeError: Type error.
 PASS crypto.subtle.importKey("raw", jwkKey, "aes-cbc", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"]) rejected promise  with TypeError: Type error.

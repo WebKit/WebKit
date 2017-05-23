@@ -124,18 +124,6 @@ template<> std::optional<TestObj::EnumType> parseEnumeration<TestObj::EnumType>(
     return std::nullopt;
 }
 
-template<> TestObj::EnumType convertEnumeration<TestObj::EnumType>(ExecState& state, JSValue value)
-{
-    VM& vm = state.vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto result = parseEnumeration<TestObj::EnumType>(state, value);
-    if (UNLIKELY(!result)) {
-        throwTypeError(&state, throwScope);
-        return { };
-    }
-    return result.value();
-}
-
 template<> const char* expectedEnumerationValues<TestObj::EnumType>()
 {
     return "\"\", \"enumValue1\", \"EnumValue2\", \"EnumValue3\"";
@@ -171,18 +159,6 @@ template<> std::optional<TestObj::Optional> parseEnumeration<TestObj::Optional>(
     return std::nullopt;
 }
 
-template<> TestObj::Optional convertEnumeration<TestObj::Optional>(ExecState& state, JSValue value)
-{
-    VM& vm = state.vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto result = parseEnumeration<TestObj::Optional>(state, value);
-    if (UNLIKELY(!result)) {
-        throwTypeError(&state, throwScope);
-        return { };
-    }
-    return result.value();
-}
-
 template<> const char* expectedEnumerationValues<TestObj::Optional>()
 {
     return "\"\", \"OptionalValue1\", \"OptionalValue2\", \"OptionalValue3\"";
@@ -210,18 +186,6 @@ template<> std::optional<AlternateEnumName> parseEnumeration<AlternateEnumName>(
     return std::nullopt;
 }
 
-template<> AlternateEnumName convertEnumeration<AlternateEnumName>(ExecState& state, JSValue value)
-{
-    VM& vm = state.vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto result = parseEnumeration<AlternateEnumName>(state, value);
-    if (UNLIKELY(!result)) {
-        throwTypeError(&state, throwScope);
-        return { };
-    }
-    return result.value();
-}
-
 template<> const char* expectedEnumerationValues<AlternateEnumName>()
 {
     return "\"enumValue1\", \"EnumValue2\"";
@@ -245,18 +209,6 @@ template<> std::optional<TestObj::EnumA> parseEnumeration<TestObj::EnumA>(ExecSt
     if (stringValue == "A")
         return TestObj::EnumA::A;
     return std::nullopt;
-}
-
-template<> TestObj::EnumA convertEnumeration<TestObj::EnumA>(ExecState& state, JSValue value)
-{
-    VM& vm = state.vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto result = parseEnumeration<TestObj::EnumA>(state, value);
-    if (UNLIKELY(!result)) {
-        throwTypeError(&state, throwScope);
-        return { };
-    }
-    return result.value();
 }
 
 template<> const char* expectedEnumerationValues<TestObj::EnumA>()
@@ -286,18 +238,6 @@ template<> std::optional<TestObj::EnumB> parseEnumeration<TestObj::EnumB>(ExecSt
     return std::nullopt;
 }
 
-template<> TestObj::EnumB convertEnumeration<TestObj::EnumB>(ExecState& state, JSValue value)
-{
-    VM& vm = state.vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto result = parseEnumeration<TestObj::EnumB>(state, value);
-    if (UNLIKELY(!result)) {
-        throwTypeError(&state, throwScope);
-        return { };
-    }
-    return result.value();
-}
-
 template<> const char* expectedEnumerationValues<TestObj::EnumB>()
 {
     return "\"B\"";
@@ -323,18 +263,6 @@ template<> std::optional<TestObj::EnumC> parseEnumeration<TestObj::EnumC>(ExecSt
     if (stringValue == "C")
         return TestObj::EnumC::C;
     return std::nullopt;
-}
-
-template<> TestObj::EnumC convertEnumeration<TestObj::EnumC>(ExecState& state, JSValue value)
-{
-    VM& vm = state.vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto result = parseEnumeration<TestObj::EnumC>(state, value);
-    if (UNLIKELY(!result)) {
-        throwTypeError(&state, throwScope);
-        return { };
-    }
-    return result.value();
 }
 
 template<> const char* expectedEnumerationValues<TestObj::EnumC>()
@@ -366,18 +294,6 @@ template<> std::optional<TestObj::Kind> parseEnumeration<TestObj::Kind>(ExecStat
     return std::nullopt;
 }
 
-template<> TestObj::Kind convertEnumeration<TestObj::Kind>(ExecState& state, JSValue value)
-{
-    VM& vm = state.vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto result = parseEnumeration<TestObj::Kind>(state, value);
-    if (UNLIKELY(!result)) {
-        throwTypeError(&state, throwScope);
-        return { };
-    }
-    return result.value();
-}
-
 template<> const char* expectedEnumerationValues<TestObj::Kind>()
 {
     return "\"quick\", \"dead\"";
@@ -405,18 +321,6 @@ template<> std::optional<TestObj::Size> parseEnumeration<TestObj::Size>(ExecStat
     return std::nullopt;
 }
 
-template<> TestObj::Size convertEnumeration<TestObj::Size>(ExecState& state, JSValue value)
-{
-    VM& vm = state.vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto result = parseEnumeration<TestObj::Size>(state, value);
-    if (UNLIKELY(!result)) {
-        throwTypeError(&state, throwScope);
-        return { };
-    }
-    return result.value();
-}
-
 template<> const char* expectedEnumerationValues<TestObj::Size>()
 {
     return "\"small\", \"much-much-larger\"";
@@ -442,18 +346,6 @@ template<> std::optional<TestObj::Confidence> parseEnumeration<TestObj::Confiden
     if (stringValue == "kinda-low")
         return TestObj::Confidence::KindaLow;
     return std::nullopt;
-}
-
-template<> TestObj::Confidence convertEnumeration<TestObj::Confidence>(ExecState& state, JSValue value)
-{
-    VM& vm = state.vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto result = parseEnumeration<TestObj::Confidence>(state, value);
-    if (UNLIKELY(!result)) {
-        throwTypeError(&state, throwScope);
-        return { };
-    }
-    return result.value();
 }
 
 template<> const char* expectedEnumerationValues<TestObj::Confidence>()
@@ -5746,14 +5638,9 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithEnumArgCal
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
-    auto enumArgValue = state->uncheckedArgument(0);
-    TestObj::EnumType enumArg;
-    auto optionalValue = parseEnumeration<TestObj::EnumType>(*state, enumArgValue);
+    auto enumArg = convert<IDLEnumeration<TestObj::EnumType>>(*state, state->uncheckedArgument(0), [](JSC::ExecState& state, JSC::ThrowScope& scope) { throwArgumentMustBeEnumError(state, scope, 0, "enumArg", "TestObject", "methodWithEnumArg", expectedEnumerationValues<TestObj::EnumType>()); });
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    if (UNLIKELY(!optionalValue))
-        return throwArgumentMustBeEnumError(*state, throwScope, 0, "enumArg", "TestObject", "methodWithEnumArg", expectedEnumerationValues<TestObj::EnumType>());
-    enumArg = optionalValue.value();
-    impl.methodWithEnumArg(enumArg);
+    impl.methodWithEnumArg(WTFMove(enumArg));
     return JSValue::encode(jsUndefined());
 }
 
@@ -5771,14 +5658,9 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithStandalone
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
-    auto enumArgValue = state->uncheckedArgument(0);
-    TestStandaloneEnumeration enumArg;
-    auto optionalValue = parseEnumeration<TestStandaloneEnumeration>(*state, enumArgValue);
+    auto enumArg = convert<IDLEnumeration<TestStandaloneEnumeration>>(*state, state->uncheckedArgument(0), [](JSC::ExecState& state, JSC::ThrowScope& scope) { throwArgumentMustBeEnumError(state, scope, 0, "enumArg", "TestObject", "methodWithStandaloneEnumArg", expectedEnumerationValues<TestStandaloneEnumeration>()); });
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    if (UNLIKELY(!optionalValue))
-        return throwArgumentMustBeEnumError(*state, throwScope, 0, "enumArg", "TestObject", "methodWithStandaloneEnumArg", expectedEnumerationValues<TestStandaloneEnumeration>());
-    enumArg = optionalValue.value();
-    impl.methodWithStandaloneEnumArg(enumArg);
+    impl.methodWithStandaloneEnumArg(WTFMove(enumArg));
     return JSValue::encode(jsUndefined());
 }
 
@@ -5794,15 +5676,9 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalEn
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = castedThis->wrapped();
-    auto enumArgValue = state->argument(0);
-    std::optional<TestObj::EnumType> enumArg;
-    if (!enumArgValue.isUndefined()) {
-        enumArg = parseEnumeration<TestObj::EnumType>(*state, enumArgValue);
-        RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-        if (UNLIKELY(!enumArg))
-            return throwArgumentMustBeEnumError(*state, throwScope, 0, "enumArg", "TestObject", "methodWithOptionalEnumArg", expectedEnumerationValues<TestObj::EnumType>());
-    }
-    impl.methodWithOptionalEnumArg(enumArg);
+    auto enumArg = state->argument(0).isUndefined() ? std::optional<Converter<IDLEnumeration<TestObj::EnumType>>::ReturnType>() : std::optional<Converter<IDLEnumeration<TestObj::EnumType>>::ReturnType>(convert<IDLEnumeration<TestObj::EnumType>>(*state, state->uncheckedArgument(0), [](JSC::ExecState& state, JSC::ThrowScope& scope) { throwArgumentMustBeEnumError(state, scope, 0, "enumArg", "TestObject", "methodWithOptionalEnumArg", expectedEnumerationValues<TestObj::EnumType>()); }));
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    impl.methodWithOptionalEnumArg(WTFMove(enumArg));
     return JSValue::encode(jsUndefined());
 }
 
@@ -5818,18 +5694,9 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalEn
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = castedThis->wrapped();
-    auto enumArgValue = state->argument(0);
-    TestObj::EnumType enumArg;
-    if (enumArgValue.isUndefined())
-        enumArg = TestObj::EnumType::EnumValue1;
-    else {
-        auto optionalValue = parseEnumeration<TestObj::EnumType>(*state, enumArgValue);
-        RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-        if (UNLIKELY(!optionalValue))
-            return throwArgumentMustBeEnumError(*state, throwScope, 0, "enumArg", "TestObject", "methodWithOptionalEnumArgAndDefaultValue", expectedEnumerationValues<TestObj::EnumType>());
-        enumArg = optionalValue.value();
-    }
-    impl.methodWithOptionalEnumArgAndDefaultValue(enumArg);
+    auto enumArg = state->argument(0).isUndefined() ? TestObj::EnumType::EnumValue1 : convert<IDLEnumeration<TestObj::EnumType>>(*state, state->uncheckedArgument(0), [](JSC::ExecState& state, JSC::ThrowScope& scope) { throwArgumentMustBeEnumError(state, scope, 0, "enumArg", "TestObject", "methodWithOptionalEnumArgAndDefaultValue", expectedEnumerationValues<TestObj::EnumType>()); });
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    impl.methodWithOptionalEnumArgAndDefaultValue(WTFMove(enumArg));
     return JSValue::encode(jsUndefined());
 }
 

@@ -53,18 +53,6 @@ template<> std::optional<TestStandaloneEnumeration> parseEnumeration<TestStandal
     return std::nullopt;
 }
 
-template<> TestStandaloneEnumeration convertEnumeration<TestStandaloneEnumeration>(ExecState& state, JSValue value)
-{
-    VM& vm = state.vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto result = parseEnumeration<TestStandaloneEnumeration>(state, value);
-    if (UNLIKELY(!result)) {
-        throwTypeError(&state, throwScope);
-        return { };
-    }
-    return result.value();
-}
-
 template<> const char* expectedEnumerationValues<TestStandaloneEnumeration>()
 {
     return "\"enumValue1\", \"enumValue2\"";

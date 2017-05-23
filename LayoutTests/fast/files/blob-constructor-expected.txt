@@ -25,10 +25,10 @@ PASS (new Blob([toStringingObj])).size is 8
 PASS new Blob([throwingObj]) threw exception Error.
 PASS (new Blob([], {unknownKey:'value'})) instanceof window.Blob is true
 PASS new Blob([], {endings:'illegalValue'}) threw exception TypeError: Type error.
-PASS new Blob([], {endings:throwingObj}) threw exception TypeError: Type error.
+PASS new Blob([], {endings:throwingObj}) threw exception Error.
 PASS new Blob([], {type:throwingObj}) threw exception Error.
-PASS new Blob([], {endings:throwingObj1, type:throwingObj2}) threw exception TypeError: Type error.
-PASS new Blob([], {type:throwingObj2, endings:throwingObj1}) threw exception TypeError: Type error.
+PASS new Blob([], {endings:throwingObj1, type:throwingObj2}) threw exception Error 1.
+PASS new Blob([], {type:throwingObj2, endings:throwingObj1}) threw exception Error 1.
 PASS new Blob([], {type:throwingObj2, endings:'illegal'}) threw exception TypeError: Type error.
 PASS (new Blob([], null)) instanceof window.Blob is true
 PASS (new Blob([], undefined)) instanceof window.Blob is true

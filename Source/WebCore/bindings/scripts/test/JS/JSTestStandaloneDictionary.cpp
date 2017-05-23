@@ -86,18 +86,6 @@ template<> std::optional<TestStandaloneDictionary::EnumInStandaloneDictionaryFil
     return std::nullopt;
 }
 
-template<> TestStandaloneDictionary::EnumInStandaloneDictionaryFile convertEnumeration<TestStandaloneDictionary::EnumInStandaloneDictionaryFile>(ExecState& state, JSValue value)
-{
-    VM& vm = state.vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto result = parseEnumeration<TestStandaloneDictionary::EnumInStandaloneDictionaryFile>(state, value);
-    if (UNLIKELY(!result)) {
-        throwTypeError(&state, throwScope);
-        return { };
-    }
-    return result.value();
-}
-
 template<> const char* expectedEnumerationValues<TestStandaloneDictionary::EnumInStandaloneDictionaryFile>()
 {
     return "\"enumValue1\", \"enumValue2\"";

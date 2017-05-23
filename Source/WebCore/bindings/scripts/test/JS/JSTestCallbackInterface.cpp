@@ -61,18 +61,6 @@ template<> std::optional<TestCallbackInterface::Enum> parseEnumeration<TestCallb
     return std::nullopt;
 }
 
-template<> TestCallbackInterface::Enum convertEnumeration<TestCallbackInterface::Enum>(ExecState& state, JSValue value)
-{
-    VM& vm = state.vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto result = parseEnumeration<TestCallbackInterface::Enum>(state, value);
-    if (UNLIKELY(!result)) {
-        throwTypeError(&state, throwScope);
-        return { };
-    }
-    return result.value();
-}
-
 template<> const char* expectedEnumerationValues<TestCallbackInterface::Enum>()
 {
     return "\"value1\", \"value2\"";
