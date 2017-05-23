@@ -59,7 +59,7 @@
     "web-platform-tests/css-values": "skip", 
     "web-platform-tests/css/css-display-3": "import", 
     "web-platform-tests/css/css-grid-1": "import", 
-    "web-platform-tests/css/css-scoping1": "import", 
+    "web-platform-tests/css/css-scoping-1": "import", 
     "web-platform-tests/css/geometry-1/": "import", 
     "web-platform-tests/css/reference": "import", 
     "web-platform-tests/css/selectors4": "import", 
