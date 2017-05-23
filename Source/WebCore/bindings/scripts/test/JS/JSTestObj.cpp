@@ -3653,11 +3653,12 @@ static inline bool setJSTestObjEnumAttrFunction(ExecState& state, JSTestObj& thi
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = parseEnumeration<TestObj::EnumType>(state, value);
+    auto optionalNativeValue = parseEnumeration<TestObj::EnumType>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    if (UNLIKELY(!nativeValue))
+    if (UNLIKELY(!optionalNativeValue))
         return false;
-    impl.setEnumAttr(nativeValue.value());
+    auto nativeValue = optionalNativeValue.value();
+    impl.setEnumAttr(WTFMove(nativeValue));
     return true;
 }
 
@@ -4168,11 +4169,12 @@ static inline bool setJSTestObjImplementationEnumAttrFunction(ExecState& state, 
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = parseEnumeration<AlternateEnumName>(state, value);
+    auto optionalNativeValue = parseEnumeration<AlternateEnumName>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    if (UNLIKELY(!nativeValue))
+    if (UNLIKELY(!optionalNativeValue))
         return false;
-    impl.setImplementationEnumAttr(nativeValue.value());
+    auto nativeValue = optionalNativeValue.value();
+    impl.setImplementationEnumAttr(WTFMove(nativeValue));
     return true;
 }
 
@@ -5130,11 +5132,12 @@ static inline bool setJSTestObjAttributeWithReservedEnumTypeFunction(ExecState& 
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = parseEnumeration<TestObj::Optional>(state, value);
+    auto optionalNativeValue = parseEnumeration<TestObj::Optional>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    if (UNLIKELY(!nativeValue))
+    if (UNLIKELY(!optionalNativeValue))
         return false;
-    impl.setAttributeWithReservedEnumType(nativeValue.value());
+    auto nativeValue = optionalNativeValue.value();
+    impl.setAttributeWithReservedEnumType(WTFMove(nativeValue));
     return true;
 }
 

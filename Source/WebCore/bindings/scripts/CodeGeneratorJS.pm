@@ -648,12 +648,12 @@ sub GeneratePut
         } else {
             # The second argument of the indexed setter function is the argument being converted.
             my $argument = @{$indexedSetterFunction->arguments}[1];
-            my ($nativeValue, $mayThrowException) = JSValueToNative($interface, $argument, "value", $indexedSetterFunction->extendedAttributes->{Conditional}, "state", "*state", "thisObject", "", "");
+            my $nativeValue = JSValueToNative($interface, $argument, "value", $indexedSetterFunction->extendedAttributes->{Conditional}, "state", "*state", "thisObject", "", "");
 
             push(@output, "    if (auto index = parseIndex(propertyName)) {\n");
             push(@output, "        auto throwScope = DECLARE_THROW_SCOPE(state->vm());\n");
             push(@output, "        auto nativeValue = ${nativeValue};\n");
-            push(@output, "        RETURN_IF_EXCEPTION(throwScope, true);\n") if $mayThrowException;
+            push(@output, "        RETURN_IF_EXCEPTION(throwScope, true);\n");
 
             my $indexedSetterFunctionName = $indexedSetterFunction->name || "setItem";
             my $functionString = "${indexedSetterFunctionName}(index, WTFMove(nativeValue))";
@@ -699,12 +699,12 @@ sub GeneratePutByIndex
         } else {
             # The second argument of the indexed setter function is the argument being converted.
             my $argument = @{$indexedSetterFunction->arguments}[1];
-            my ($nativeValue, $mayThrowException) = JSValueToNative($interface, $argument, "value", $indexedSetterFunction->extendedAttributes->{Conditional}, "state", "*state", "thisObject", "", "");
+            my $nativeValue = JSValueToNative($interface, $argument, "value", $indexedSetterFunction->extendedAttributes->{Conditional}, "state", "*state", "thisObject", "", "");
 
             push(@output, "    if (LIKELY(index <= MAX_ARRAY_INDEX)) {\n");
             push(@output, "        auto throwScope = DECLARE_THROW_SCOPE(state->vm());\n");
             push(@output, "        auto nativeValue = ${nativeValue};\n");
-            push(@output, "        RETURN_IF_EXCEPTION(throwScope, true);\n") if $mayThrowException;
+            push(@output, "        RETURN_IF_EXCEPTION(throwScope, true);\n");
 
             my $indexedSetterFunctionName = $indexedSetterFunction->name || "setItem";
             my $functionString = "${indexedSetterFunctionName}(index, WTFMove(nativeValue))";
@@ -882,7 +882,6 @@ sub PassArgumentExpression
 
     my $type = $context->type;
 
-    return "${name}.value()" if $codeGenerator->IsEnumType($type) && ref($context) eq "IDLAttribute";
     return "WTFMove(${name})" if $type->isNullable;
     
     if ($codeGenerator->IsTypedArrayType($type)) {
@@ -1602,7 +1601,7 @@ sub GenerateDictionaryImplementationContent
             # 5.3. If value is not undefined, then:
             $result .= "    if (!${key}Value.isUndefined()) {\n";
 
-            my ($nativeValue, $mayThrowException) = JSValueToNative($typeScope, $member, "${key}Value", $member->extendedAttributes->{Conditional}, "&state", "state");
+            my $nativeValue = JSValueToNative($typeScope, $member, "${key}Value", $member->extendedAttributes->{Conditional}, "&state", "state");
             $result .= "        result.$implementedAsKey = $nativeValue;\n";
             $result .= "        RETURN_IF_EXCEPTION(throwScope, { });\n";
 
@@ -4010,17 +4009,21 @@ sub GenerateImplementation
                     }
                 }
 
-                my $globalObjectReference = $attribute->isStatic ? "*jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject())" : "*thisObject.globalObject()";
-                my $exceptionThrower = GetAttributeExceptionThrower($interface, $attribute);
-
-                my ($nativeValue, $mayThrowException) = JSValueToNative($interface, $attribute, "value", $attribute->extendedAttributes->{Conditional}, "&state", "state", "thisObject", $globalObjectReference, $exceptionThrower);
-
-                push(@implContent, "    auto nativeValue = $nativeValue;\n");
-                push(@implContent, "    RETURN_IF_EXCEPTION(throwScope, false);\n") if $mayThrowException;
-
                 if ($codeGenerator->IsEnumType($type)) {
-                    push (@implContent, "    if (UNLIKELY(!nativeValue))\n");
-                    push (@implContent, "        return false;\n");
+                    # As per section 3.5.6 of https://heycam.github.io/webidl/#dfn-attribute-setter, enumerations do not use
+                    # the standard conversion, but rather silently fail on invalid enumeration values.
+                    push(@implContent, "    auto optionalNativeValue = parseEnumeration<" . GetEnumerationClassName($type, $interface) . ">(state, value);\n");
+                    push(@implContent, "    RETURN_IF_EXCEPTION(throwScope, false);\n");
+                    push(@implContent, "    if (UNLIKELY(!optionalNativeValue))\n");
+                    push(@implContent, "        return false;\n");
+                    push(@implContent, "    auto nativeValue = optionalNativeValue.value();\n");
+                } else {
+                    my $globalObjectReference = $attribute->isStatic ? "*jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject())" : "*thisObject.globalObject()";
+                    my $exceptionThrower = GetAttributeExceptionThrower($interface, $attribute);
+
+                    my $nativeValue = JSValueToNative($interface, $attribute, "value", $attribute->extendedAttributes->{Conditional}, "&state", "state", "thisObject", $globalObjectReference, $exceptionThrower);
+                    push(@implContent, "    auto nativeValue = $nativeValue;\n");
+                    push(@implContent, "    RETURN_IF_EXCEPTION(throwScope, false);\n");
                 }
 
                 my ($functionName, @arguments) = $codeGenerator->SetterExpression(\%implIncludes, $interfaceName, $attribute);
@@ -4915,13 +4918,13 @@ sub GenerateParametersCheck
             my $globalObjectReference = $function->isStatic ? "*jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject())" : "*castedThis->globalObject()";
             my $argumentExceptionThrower = GetArgumentExceptionThrower($interface, $argument, $argumentIndex, $quotedFunctionName);
 
-            my ($nativeValue, $mayThrowException) = JSValueToNative($interface, $argument, $argumentLookupForConversion, $conditional, "state", "*state", "*castedThis", $globalObjectReference, $argumentExceptionThrower);
+            my $nativeValue = JSValueToNative($interface, $argument, $argumentLookupForConversion, $conditional, "state", "*state", "*castedThis", $globalObjectReference, $argumentExceptionThrower);
 
             $nativeValue = "${nativeValueCastFunction}(" . $nativeValue . ")" if defined $nativeValueCastFunction;
             $nativeValue = $optionalCheck . $nativeValue if defined $optionalCheck;
 
             push(@$outputArray, "    auto $name = ${nativeValue};\n");
-            push(@$outputArray, "    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());\n") if $mayThrowException;
+            push(@$outputArray, "    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());\n");
 
             $value = PassArgumentExpression($name, $argument);
         }
@@ -5305,16 +5308,12 @@ sub GenerateCallbackImplementationContent
             if ($function->type->name eq "void") {
                 push(@$contentRef, "    return { };\n");
             } else {
-                my ($nativeValue, $mayThrowException) = JSValueToNative($interfaceOrCallback, $function, "jsResult", "", "&state", "state");
+                my $nativeValue = JSValueToNative($interfaceOrCallback, $function, "jsResult", "", "&state", "state");
             
-                if ($mayThrowException) {
-                    push(@$contentRef, "    auto throwScope = DECLARE_THROW_SCOPE(vm);\n");
-                    push(@$contentRef, "    auto returnValue = ${nativeValue};\n");
-                    push(@$contentRef, "    RETURN_IF_EXCEPTION(throwScope, CallbackResultType::ExceptionThrown);\n");
-                    push(@$contentRef, "    return WTFMove(returnValue);\n");
-                } else {
-                    push(@$contentRef, "    return ${nativeValue};\n");
-                }
+                push(@$contentRef, "    auto throwScope = DECLARE_THROW_SCOPE(vm);\n");
+                push(@$contentRef, "    auto returnValue = ${nativeValue};\n");
+                push(@$contentRef, "    RETURN_IF_EXCEPTION(throwScope, CallbackResultType::ExceptionThrown);\n");
+                push(@$contentRef, "    return WTFMove(returnValue);\n");
             }
 
             push(@$contentRef, "}\n\n");
@@ -5618,10 +5617,8 @@ sub JSValueToNativeDOMConvertNeedsGlobalObject
 sub IsValidContextForJSValueToNative
 {
     my $context = shift;
-    return ref($context) eq "IDLAttribute" || ref($context) eq "IDLArgument" || ref($context) eq "IDLDictionaryMember" || ref($context) eq "IDLOperation";
+    return (ref($context) eq "IDLAttribute" && !$codeGenerator->IsEnumType($context->type)) || ref($context) eq "IDLArgument" || ref($context) eq "IDLDictionaryMember" || ref($context) eq "IDLOperation";
 }
-
-# Returns (convertString, mayThrowException).
 
 sub JSValueToNative
 {
@@ -5638,10 +5635,6 @@ sub JSValueToNative
 
     AddToImplIncludesForIDLType($type, $conditional);
 
-    if ($codeGenerator->IsEnumType($type) && ref($context) eq "IDLAttribute") {
-        return ("parseEnumeration<" . GetEnumerationClassName($type, $interface) . ">($stateReference, $value)", 1);
-    }
-
     AddToImplIncludes("JSDOMConvert.h");
 
     my $IDLType = GetIDLType($interface, $type);
@@ -5653,7 +5646,7 @@ sub JSValueToNative
     push(@conversionArguments, $globalObjectReference) if JSValueToNativeDOMConvertNeedsGlobalObject($type);
     push(@conversionArguments, $exceptionThrower) if $exceptionThrower;
 
-    return ("convert<$IDLType>(" . join(", ", @conversionArguments) . ")", 1);
+    return "convert<$IDLType>(" . join(", ", @conversionArguments) . ")";
 }
 
 sub UnsafeToNative
