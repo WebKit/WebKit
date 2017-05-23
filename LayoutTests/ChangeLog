@@ -1,3 +1,19 @@
+2017-05-23  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Turn off all tests
+        https://bugs.webkit.org/show_bug.cgi?id=172447
+
+        Reviewed by Jon Lee.
+
+        Due to the high number of timeouts and random failures with the current tests, we turn off
+        all modern-media-controls tests while we wait on a more permanent solution.
+
+        * TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2017-05-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Update font-style's implementation in the font selection algorithm

@@ -157,7 +157,6 @@ http/tests/quicklook/submit-form-blocked.html [ Skip ]
 http/tests/quicklook/top-navigation-blocked.html [ Skip ]
 http/tests/quicklook/hide-referer-on-navigation.html [ Skip ]
 imported/w3c/web-platform-tests/touch-events [ Skip ]
-media/modern-media-controls/media-controller/media-controller-ios-only-enable-tap-gesture-recognizer-with-fades-when-idle.html [ Skip ]
 platform/ios/ios/fast/forms/range-input-container-touches.html [ Skip ]
 platform/ios/ios/fast/forms/range-input-readonly-and-disabled.html [ Skip ]
 platform/ios/ios/fast/forms/range-input-touches.html [ Skip ]
@@ -2795,87 +2794,6 @@ fast/selectors/040.html
 webkit.org/b/165691 http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-iframe-in-main-frame.html [ Pass Failure ]
 
 fast/css/deferred-parsing/hover-test.html [ Skip ]
-
-# iOS-specific test
-media/modern-media-controls/media-controller/media-controller-scale-factor.html [ Pass ]
-media/modern-media-controls/media-controller/media-controller-scale-factor-audio.html [ Pass ]
-
-# The tracks menu is never used in media controls on iOS
-media/modern-media-controls/tracks-panel [ Skip ]
-media/modern-media-controls/tracks-support [ Skip ]
-
-# There is no mute button or volume scrubber on iOS
-media/modern-media-controls/mute-button [ Skip ]
-media/modern-media-controls/mute-support [ Skip ]
-media/modern-media-controls/volume-slider [ Skip ]
-media/modern-media-controls/volume-support [ Skip ]
-
-# Fullscreen is handled natively on iOS, so no need to test fullscreen or controls only shown in fullscreen
-media/modern-media-controls/macos-fullscreen-media-controls [ Skip ]
-media/modern-media-controls/media-controller/media-controller-fade-controls-when-entering-fullscreen.html [ Skip ]
-media/modern-media-controls/media-controller/media-controller-fullscreen-change.html [ Skip ]
-media/modern-media-controls/media-controller/media-controller-fullscreen-ltr.html [ Skip ]
-media/modern-media-controls/media-controller/media-controller-inline-to-fullscreen-to-inline.html [ Skip ]
-media/modern-media-controls/media-controller/media-controller-inline-to-fullscreen-to-pip-to-inline.html [ Skip ]
-media/modern-media-controls/seek-backward-support [ Skip ]
-media/modern-media-controls/seek-forward-support [ Skip ]
-media/modern-media-controls/start-support/start-support-fullscreen.html [ Skip ]
-media/modern-media-controls/volume-down-support [ Skip ]
-media/modern-media-controls/volume-up-support [ Skip ]
-media/modern-media-controls/controls-visibility-support/controls-visibility-support-fullscreen-on-video.html [ Skip ]
-media/modern-media-controls/controls-visibility-support/controls-visibility-support-fullscreen-on-parent-element.html [ Skip ]
-http/tests/media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-live-broadcast.html [ Skip ]
-
-# These tests are macOS-specific or mouse-specific
-media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-leave-after-play.html [ Skip ]
-media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-enter-and-mouse-leave.html [ Skip ]
-media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-enter-over-controls-bar.html [ Skip ]
-media/modern-media-controls/media-controller/media-controller-auto-hide-rewind-with-mouse-enter.html [ Skip ]
-media/modern-media-controls/scrubber-support/scrubber-support-click.html [ Skip ]
-media/modern-media-controls/media-documents/click-on-video-should-not-pause.html [ Skip ]
-media/modern-media-controls/media-controller/media-controller-click-on-video-background-should-pause.html [ Skip ]
-media/modern-media-controls/media-controller/media-controller-click-on-video-background-should-pause-fullscreen.html [ Skip ]
-media/modern-media-controls/media-controller/media-controller-click-on-video-background-to-dismiss-tracks-panel-should-not-toggle-playback.html [ Skip ]
-media/modern-media-controls/media-controller/media-controller-click-on-video-controls-should-not-pause.html [ Skip ]
-media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-audio-background.html [ Skip ]
-
-# Tests designed for macOS that have iOS equivalents in "ipad" directories
-media/modern-media-controls/fullscreen-support/fullscreen-support-click.html [ Skip ]
-media/modern-media-controls/pip-support/pip-support-click.html [ Skip ]
-media/modern-media-controls/pip-support/pip-support-enabled.html [ Skip ]
-media/modern-media-controls/placard-support/placard-support-pip.html [ Skip ]
-media/modern-media-controls/scrubber-support/scrubber-support-drag.html [ Skip ]
-media/modern-media-controls/scrubber-support/ipad/scrubber-support-drag.html [ Skip ]
-media/modern-media-controls/media-documents/media-document-audio-mac-sizing.html [ Skip ]
-media/modern-media-controls/media-documents/media-document-video-mac-sizing.html [ Skip ]
-
-# These tests use uiController and need to be skipped in open-source
-media/modern-media-controls/placard-support/ipad/placard-support-pip.html [ Skip ]
-media/modern-media-controls/icon-button/icon-button-active-state.html [ Skip ]
-media/modern-media-controls/pip-support/ipad/pip-support-tap.html [ Skip ]
-media/modern-media-controls/playback-support/playback-support-button-click.html [ Skip ]
-media/modern-media-controls/fullscreen-support/ipad/fullscreen-support-tap.html [ Skip ]
-media/modern-media-controls/start-support/start-support-click-to-start.html [ Skip ]
-media/modern-media-controls/start-support/start-support-lowPowerMode.html [ Skip ]
-media/modern-media-controls/button/button.html [ Skip ]
-
-# iPad-specific tests that need to be skipped in open-source
-media/modern-media-controls/media-documents/ipad/media-document-audio-ios-sizing.html [ Skip ]
-media/modern-media-controls/media-documents/ipad/media-document-video-ios-sizing.html [ Skip ]
-
-# AirPlay cannot be tested on iOS
-webkit.org/b/166062 media/modern-media-controls/airplay-placard/airplay-placard-text-section.html [ Skip ]
-webkit.org/b/166062 media/modern-media-controls/airplay-support/airplay-support.html [ Skip ]
-webkit.org/b/166062 media/modern-media-controls/placard-support/placard-support-airplay.html [ Skip ]
-webkit.org/b/166062 media/modern-media-controls/audio/audio-controls-buttons.html [ Skip ]
-
-# There is no compact, reduced padding or tight padding mode on iOS.
-media/modern-media-controls/icon-button/icon-button-change-layout-traits.html [ Skip ]
-media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-compact-buttons-styles.html [ Skip ]
-media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-compact-controls-bar-styles.html [ Skip ]
-media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-compact.html [ Skip ]
-media/modern-media-controls/media-controller/media-controller-compact.html [ Skip ]
-media/modern-media-controls/media-controller/media-controller-tight-padding.html [ Skip ]
 
 # Form validation popover does not obey minimum font size setting on iOS but Dynamic Type instead.
 fast/forms/validation-message-minimum-font-size.html [ Skip ]

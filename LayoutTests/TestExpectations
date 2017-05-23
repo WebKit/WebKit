@@ -104,9 +104,6 @@ http/tests/ssl/applepay/ [ Skip ]
 fast/visual-viewport/rubberbanding-viewport-rects.html [ Skip ]
 fast/visual-viewport/rubberbanding-viewport-rects-header-footer.html  [ Skip ]
 
-# FKA focus ring only make sense on Mac
-media/modern-media-controls/icon-button/icon-button-focus-state.html [ Skip ]
-
 # DataDetectors tests only make sense on Mac
 fast/events/do-not-drag-and-drop-data-detectors-link.html [ Skip ]
 
@@ -1102,10 +1099,6 @@ webkit.org/b/165195 fast/css/parsing-css-allowed-string-characters.html [ Pass F
 webkit.org/b/165460 compositing/repaint/scroll-fixed-layer-no-content.html [ Failure ]
 webkit.org/b/165460 compositing/repaint/scroll-fixed-layer-out-of-view.html [ Failure ]
 
-# iOS-specific test
-media/modern-media-controls/media-controller/media-controller-scale-factor.html [ Skip ]
-media/modern-media-controls/media-controller/media-controller-scale-factor-audio.html [ Skip ]
-
 webkit.org/b/166911 fast/dom/Window/window-properties-performance.html [ Pass Failure ]
 webkit.org/b/166911 fast/dom/Window/window-properties-performance-resource-timing.html [ Pass Failure ]
 
@@ -1282,10 +1275,14 @@ webkit.org/b/5991 imported/w3c/web-platform-tests/cssom-view/scrollingElement.ht
 # FileAPI
 webkit.org/b/172099 imported/w3c/web-platform-tests/FileAPI/url/url_xmlhttprequest_img.html [ ImageOnlyFailure ]
 
+# All modern-media-controls tests are disabled for the time being.
+http/tests/media/modern-media-controls [ Skip ]
+media/modern-media-controls [ Skip ]
+
 ### END OF -disabled tests
 ########################################
 
-webkit.org/b/168409 media/modern-media-controls/airplay-button/airplay-button.html [ Pass Failure ]
+webkit.org/b/168409 media/modern-media-controls/airplay-button/airplay-button.html [ Pass Timeout ]
 
 webkit.org/b/169625 imported/w3c/web-platform-tests/cors/status.htm [ Pass Failure ]
 

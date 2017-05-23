@@ -21,8 +21,7 @@ media.addEventListener("loadedmetadata", () => {
         shouldBeTrue("media.webkitDisplayingFullscreen");
         shouldBe("media.volume", "1");
 
-        media.addEventListener("volumechange", () => {
-            shouldBeCloseTo("media.volume", 0, 0.1);
+        shouldBeCloseTo("media.volume", "0", () => {
             debug("");
             media.remove();
             button.remove();

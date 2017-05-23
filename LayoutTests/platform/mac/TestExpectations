@@ -27,8 +27,6 @@ fast/attachment/attachment-subtitle-resize.html [ Pass ]
 
 fast/harness/uiscriptcontroller [ Pass ]
 
-media/modern-media-controls/icon-button/icon-button-focus-state.html [ Pass ]
-
 fast/events/do-not-drag-and-drop-data-detectors-link.html [ Pass ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
@@ -1450,48 +1448,6 @@ webkit.org/b/165222 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/idbindex
 webkit.org/b/165530 compositing/layer-creation/fixed-position-out-of-view-scaled.html [ Failure ]
 webkit.org/b/165530 compositing/layer-creation/fixed-position-out-of-view-scaled-scroll.html [ Failure ]
 
-# picture-in-picture is not supported prior to Sierra.
-[ ElCapitan ] media/modern-media-controls/pip-support [ Skip ]
-[ ElCapitan ] http/tests/media/modern-media-controls/pip-support [ Skip ]
-[ ElCapitan ] media/modern-media-controls/media-controller/media-controller-inline-to-fullscreen-to-pip-to-inline.html [ Skip ]
-[ ElCapitan ] media/modern-media-controls/placard-support/placard-support-pip.html [ Skip ]
-
-# iOS or iPad-specific tests
-media/modern-media-controls/fullscreen-support/ipad/fullscreen-support-tap.html [ Skip ]
-media/modern-media-controls/pip-support/ipad/pip-support-enabled.html [ Skip ]
-media/modern-media-controls/pip-support/ipad/pip-support-tap.html [ Skip ]
-media/modern-media-controls/placard-support/ipad/placard-support-pip.html [ Skip ]
-media/modern-media-controls/scrubber-support/ipad/scrubber-support-drag.html [ Skip ]
-media/modern-media-controls/ios-inline-media-controls/ios-inline-media-controls-audio-background.html [ Skip ]
-media/modern-media-controls/media-controller/media-controller-ios-only-enable-tap-gesture-recognizer-with-fades-when-idle.html [ Skip ]
-media/modern-media-controls/media-controller/media-controller-ios-do-not-hide-controls-when-tapping-button.html [ Skip ]
-media/modern-media-controls/media-controller/media-controller-tight-padding.html [ Skip ]
-media/modern-media-controls/media-documents/media-document-audio-ios-sizing.html [ Skip ]
-media/modern-media-controls/media-documents/media-document-video-ios-sizing.html [ Skip ]
-media/modern-media-controls/media-documents/ipad/media-document-audio-ios-sizing.html [ Skip ]
-media/modern-media-controls/media-documents/ipad/media-document-video-ios-sizing.html [ Skip ]
-media/modern-media-controls/audio/audio-controls-styles.html [ Skip ]
-
-webkit.org/b/169677 [ Release ] http/tests/media/modern-media-controls/time-labels-support/long-time.html [ Pass Timeout ]
-
-webkit.org/b/169118 [ Debug ] media/modern-media-controls/fullscreen-support/fullscreen-support-click.html [ Pass Timeout ]
-
-webkit.org/b/167266 media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-enter-over-controls-bar.html [ Pass Failure ]
-webkit.org/b/168540 media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-leave-after-play.html [ Pass Failure ]
-
-webkit.org/b/165311 [ Sierra Debug ] media/modern-media-controls/pip-support/pip-support-click.html [ Pass Failure Timeout ]
-
-webkit.org/b/165386 media/modern-media-controls/seek-backward-support/seek-backward-support.html [ Pass Timeout ]
-
-webkit.org/b/169679 [ Debug ] media/modern-media-controls/time-label/time-label-white-space-nowrap.html [ Pass Failure ]
-
-webkit.org/b/169109 media/modern-media-controls/tracks-support/tracks-support-click-track-in-panel.html [ Pass Timeout ]
-webkit.org/b/169158 media/modern-media-controls/tracks-support/tracks-support-show-panel-after-dragging-controls.html [ Pass Failure ]
-
-webkit.org/b/164229 [ Debug ] media/modern-media-controls/volume-support/volume-support-click.html [ Pass Timeout ]
-
-webkit.org/b/169568 media/modern-media-controls/volume-down-support/volume-down-support.html [ Pass Failure ]
-
 webkit.org/b/165874 streams/pipe-to.html [ Pass Failure ]
 
 # New Encrypted Media API not enabled on Mac
@@ -1583,7 +1539,5 @@ webkit.org/b/171465 media/track/track-in-band-style.html [ Pass Timeout ]
 webkit.org/b/171760 imported/w3c/i18n/bidi/bidi-plaintext-011.html [ ImageOnlyFailure ]
 
 webkit.org/b/171886 imported/w3c/web-platform-tests/streams/readable-byte-streams/general.html [ Pass Failure ]
-
-webkit.org/b/169876 media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-enter-and-mouse-leave.html [ Pass Timeout ]
 
 webkit.org/b/172469 [ ElCapitan ] imported/w3c/web-platform-tests/WebCryptoAPI/import_export/test_rsa_importKey.https.html [ Timeout ]
