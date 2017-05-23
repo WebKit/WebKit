@@ -1,3 +1,28 @@
+2017-05-23  Romain Bellessort  <romain.bellessort@crf.canon.fr>
+
+        [Readable Streams API] Align respondInClosedState with spec
+        https://bugs.webkit.org/show_bug.cgi?id=172288
+
+        Reviewed by Chris Dumez.
+
+        Two changes are implemented in this patch:
+        - Change #1: An issue was reported to GH [1] while working on respondInClosedState 
+        implementation. This issue has now been fixed, and this patch aligns implementation 
+        with spec [2].
+        - Change #2: In addition, this patch also fixes a bug that went unnoticed as code 
+        is not yet reachable (usage of controller.@reader is not valid and is therefore 
+        replaced by controller.@controlledReadableStream.@reader).
+
+        [1] https://github.com/whatwg/streams/issues/686
+        [2] https://streams.spec.whatwg.org/#readable-byte-stream-controller-respond-in-closed-state
+
+        No added test as:
+        - Change #1 does not change behavior;
+        - Change #2 is not testable as the code is not yet reachable.
+
+        * Modules/streams/ReadableByteStreamInternals.js:
+        (readableByteStreamControllerRespondInClosedState): Aligned with spec.
+
 2017-05-22 Emilio Cobos Álvarez  <ecobos@igalia.com>
 
         Add a RuntimeEnabledFeature for display: contents, defaulted to false.

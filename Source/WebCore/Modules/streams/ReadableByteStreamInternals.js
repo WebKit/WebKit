@@ -456,16 +456,11 @@ function readableByteStreamControllerRespondInClosedState(controller, firstDescr
     firstDescriptor.buffer = @transferBufferToCurrentRealm(firstDescriptor.buffer);
     @assert(firstDescriptor.bytesFilled === 0);
 
-    // FIXME: Spec does not describe below test. However, only ReadableStreamBYOBReader has a readIntoRequests
-    // property. This issue has been reported through WHATWG/streams GitHub
-    // (https://github.com/whatwg/streams/issues/686), but no solution has been provided for the moment.
-    // Therefore, below test is added as a temporary fix.
-    if (!@isReadableStreamBYOBReader(controller.@reader))
-        return;
-
-    while (controller.@reader.@readIntoRequests.length > 0) {
-        let pullIntoDescriptor = @readableByteStreamControllerShiftPendingDescriptor(controller);
-        @readableByteStreamControllerCommitDescriptor(controller.@controlledReadableStream, pullIntoDescriptor);
+    if (@readableStreamHasBYOBReader(controller.@controlledReadableStream)) {
+        while (controller.@controlledReadableStream.@reader.@readIntoRequests.length > 0) {
+            let pullIntoDescriptor = @readableByteStreamControllerShiftPendingDescriptor(controller);
+            @readableByteStreamControllerCommitDescriptor(controller.@controlledReadableStream, pullIntoDescriptor);
+        }
     }
 }
 
