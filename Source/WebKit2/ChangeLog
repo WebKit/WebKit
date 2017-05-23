@@ -1,3 +1,15 @@
+2017-05-23  Brent Fulgham  <bfulgham@apple.com>
+
+        [WK2][iOS] Add a mach-lookup exception for 'com.apple.analyticsd'
+        https://bugs.webkit.org/show_bug.cgi?id=172462
+        <rdar://problem/32331638>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Databases.sb:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2017-05-22  Brent Fulgham  <bfulgham@apple.com>
 
         [WK2][iOS] Adopt a whitelist for XPC services
