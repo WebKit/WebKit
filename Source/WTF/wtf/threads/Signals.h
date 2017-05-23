@@ -85,7 +85,7 @@ using SignalHandler = Function<SignalAction(int, siginfo_t*, void*)>;
 // Note: Your signal handler will be called every time the handler for the desired signal is called.
 // Thus it is your responsibility to discern if the signal fired was yours.
 // This function is currently a one way street i.e. once installed, a signal handler cannot be uninstalled.
-void installSignalHandler(Signal, SignalHandler&&);
+WTF_EXPORT_PRIVATE void installSignalHandler(Signal, SignalHandler&&);
 
 } // namespace WTF
 

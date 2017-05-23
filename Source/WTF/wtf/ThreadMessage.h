@@ -46,7 +46,7 @@ enum class MessageStatus {
 // This method allows us to send a message which will be run in a signal handler on the desired thread.
 // There are several caveates to this method however, This function uses signals so your message should
 // be sync signal safe.
-MessageStatus sendMessageScoped(Thread&, const ThreadMessage&);
+WTF_EXPORT_PRIVATE MessageStatus sendMessageScoped(Thread&, const ThreadMessage&);
 
 template<typename Functor>
 MessageStatus sendMessage(Thread& targetThread, const Functor& func)

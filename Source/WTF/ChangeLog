@@ -1,3 +1,13 @@
+2017-05-23  Don Olmstead  <don.olmstead@am.sony.com>
+
+        [WTF] Export additional symbols in threading
+        https://bugs.webkit.org/show_bug.cgi?id=171952
+
+        Reviewed by Konstantin Tokarev.
+
+        * wtf/ThreadMessage.h:
+        * wtf/threads/Signals.h:
+
 2017-05-23  Tomas Popela  <tpopela@redhat.com>
 
         [WTF] Compilation fails with system malloc
