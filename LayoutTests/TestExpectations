@@ -796,8 +796,6 @@ webkit.org/b/148823 imported/w3c/css/css-multicol-1/multicol-span-all-margin-nes
 # Causes the following test to be flaky.
 webkit.org/b/148950 imported/w3c/web-platform-tests/html/semantics/document-metadata/the-base-element/base_href_specified.sub.html [ Skip ]
 
-imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/test_ecdsa.html [ Pass Failure ]
-imported/w3c/web-platform-tests/WebCryptoAPI/import_export/test_rsa_importKey.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_go_zero.html [ Pass Failure ]
 
 [ Debug ] imported/w3c/web-platform-tests/html/semantics/forms/form-control-infrastructure/form_attribute.html [ Skip ]
@@ -1015,19 +1013,15 @@ workers/wasm-long-compile.html [ Slow ]
 
 # WebCryptoAPI tests that take too long to complete
 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.worker.html [ Slow ]
-imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/test_pbkdf2.html [ Slow ]
 imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-OAEP.worker.html [ Skip ]
 imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSASSA-PKCS1-v1_5.worker.html [ Slow ]
-imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_successes_RSA-OAEP.html [ Skip ]
 imported/w3c/web-platform-tests/WebCryptoAPI/import_export/rsa_importKey.worker.html [ Slow ]
-imported/w3c/web-platform-tests/WebCryptoAPI/import_export/test_rsa_importKey.html [ Slow ]
+imported/w3c/web-platform-tests/WebCryptoAPI/import_export/test_rsa_importKey.https.html [ Slow ]
 
 # WebCryptoAPI tests that we haven't fully supported yet
 imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/wrapKey_unwrapKey.worker.html [ Skip ]
 
 # WebCryptoAPI superset tests
-imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_failures.html [ Skip ]
-imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_successes.html [ Skip ]
 imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes.worker.html [ Skip ]
 imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures.worker.html [ Skip ]
 
