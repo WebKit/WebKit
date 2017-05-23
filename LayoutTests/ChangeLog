@@ -1,3 +1,35 @@
+2017-05-23  Alexey Proskuryakov  <ap@apple.com>
+
+        Many editing js-tests use waitUntilDone
+        https://bugs.webkit.org/show_bug.cgi?id=172401
+
+        Reviewed by Ryosuke Niwa.
+
+        Corrected the use of js-test harness, updated the tests to use js-test.js instead
+        of js-test-pre.js where possible.
+
+        * editing/caret/ios/absolute-caret-position-after-scroll.html:
+        * editing/caret/ios/fixed-caret-position-after-scroll.html:
+        * editing/input/style-change-during-input.html:
+        * editing/inserting/insert-html-crash.html:
+        * editing/mac/input/undo-grouping-on-text-insertion.html:
+        * editing/mac/selection/context-menu-select-editability-expected.txt:
+        * editing/mac/selection/context-menu-select-editability.html:
+        * editing/mac/spelling/accept-candidate-undo-does-not-select.html:
+        * editing/mac/spelling/autocorrection-respets-undo-expected.txt:
+        * editing/mac/spelling/autocorrection-respets-undo.html:
+        * editing/pasteboard/drag-and-drop-attachment-contenteditable.html:
+        * editing/pasteboard/drag-and-drop-image-contenteditable.html:
+        * editing/pasteboard/drag-and-drop-inputimage-contenteditable.html:
+        * editing/pasteboard/drag-and-drop-objectimage-contenteditable.html:
+        * editing/pasteboard/drag-link-with-data-transfer-adds-trusted-link-to-pasteboard-expected.txt:
+        * editing/pasteboard/drag-link-with-data-transfer-adds-trusted-link-to-pasteboard.html:
+        * editing/selection/ios/absolute-selection-after-scroll.html:
+        * editing/selection/ios/fixed-selection-after-scroll.html:
+        * editing/spelling/copy-paste-crash-expected.txt:
+        * editing/spelling/copy-paste-crash.html:
+        * editing/style/apply-style-join-child-text-nodes-crash.html:
+
 2017-05-23  Jiewen Tan  <jiewen_tan@apple.com>
 
         Unreviewed, test gardening after r217225

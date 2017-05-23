@@ -1,14 +1,11 @@
 <html>
 <head>
 <script src=../../editing.js></script>
-<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test.js"></script>
 <script>
 
 function editingTest() {
-    if (window.testRunner) {
-        testRunner.waitUntilDone();
-        testRunner.dumpAsText(true);
-    }
+    jsTestIsAsync = true;
 
     edit = document.getElementById('edit');
     edit.focus();
@@ -33,7 +30,7 @@ function editingTest() {
         // If the undo wrongly left "goo didea" selected, this will replace it.
         typeCharacterCommand('.');
 
-        testRunner.notifyDone();
+        finishJSTest();
     }, 100);
 }
 
@@ -47,6 +44,5 @@ function editingTest() {
 <script>
 runEditingTest();
 </script>
-<script src="../../../resources/js-test-post.js"></script>
 </body>
 </html>

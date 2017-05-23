@@ -4,12 +4,12 @@
 <p>Test that undoing autocorrection from "wellcome" to "welcome" and typing a space doesn't re-autocorrect "wellcome".<br>
 To manually test, type "testt " and observe that it's auto-corrected to "test ". Then undo the auto-correction and type a space again. You should see "testt ".</p>
 <div id="editor" contenteditable></div>
-<script src="../../../resources/js-test-pre.js"></script>
+<div id="console"></div>
+<script src="../../../resources/js-test.js"></script>
 <script>
 
 if (window.testRunner) {
-    testRunner.dumpAsText();
-    testRunner.waitUntilDone();
+    jsTestIsAsync = true;
 
     var editor = document.getElementById('editor');
     editor.focus();
@@ -21,11 +21,9 @@ if (window.testRunner) {
         document.execCommand('undo', false, null);
         document.execCommand('insertText', false, ' ');
         shouldBe("editor.innerText", "'wellcome\xa0'");
-        if (window.testRunner)
-            testRunner.notifyDone();
+        finishJSTest();
     }, 100); // The delay is needed to separate the autocorrection from typing "wellcome" in NSUndoManager.
 }
-
 </script>
 </body>
 </html>

@@ -1,6 +1,6 @@
 <html>
 <head>
-<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test.js"></script>
 <style>
 body { margin: 0; padding: 0 }
 </style>
@@ -12,9 +12,7 @@ body { margin: 0; padding: 0 }
 <script type="text/javascript">
 
     description("When inserting text with the undo insertion attribute, each blob of inserted text should create an undo group so that, sending an undo command will undo just that last text insertion.");
-    var jsTestIsAsync = true;
-    window.jsTestIsAsync = true;
-    testRunner.waitUntilDone();
+    jsTestIsAsync = true;
 
     var undoCount = 0;
     var textArea;
@@ -31,12 +29,10 @@ body { margin: 0; padding: 0 }
 
         document.execCommand("Undo");
         undoCount++;
-        if (undoCount == 4) {
-            testRunner.notifyDone();
+        if (undoCount == 4)
             finishJSTest();
-        } else {
+        else
             setTimeout("undoNow()", 1);
-        }
     }
 
     if (window.testRunner) {

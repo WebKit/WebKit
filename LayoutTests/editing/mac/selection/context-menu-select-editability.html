@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test.js"></script>
 </head>
 <body onload="onLoad()">
 <p>This test checks that conext menu selection allows whitespace for non-editable fields.
@@ -13,7 +13,6 @@ To test manually, right click on the blank text in the input box.</p>
 <pre>The crowd says: New York, New York<span id="readOnlyWhitespace">    </span>is a helluva town!</pre>
 </div>
 <div id="console">
-</body>
 <script>
 
 function getSelectionForId(elementId)
@@ -39,14 +38,10 @@ function performTest()
 
 function onLoad()
 {
-    if (window.testRunner) {
-        window.jsTestIsAsync = true;
-        testRunner.waitUntilDone();
-    }
+    jsTestIsAsync = true;
 
     setTimeout(performTest, 500); // Wait for page to display
 }
 </script>
-<script src="../../../resources/js-test-post.js"></script>
 </body>
 </html>

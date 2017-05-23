@@ -1,6 +1,6 @@
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 <style>
 body[style] { }
 </style>
@@ -12,8 +12,6 @@ body[style] { }
 <script>
 document.getElementById("target").addEventListener("textInput", function (evt) { evt.target.style.width = 100; });
 if (window.testRunner) {
-    testRunner.dumpAsText();
-    testRunner.waitUntilDone();
     window.target = document.getElementById("target");
     window.setTimeout(function() {
         window.target.focus();
@@ -29,6 +27,5 @@ if (window.testRunner) {
 
 window.jsTestIsAsync = true;
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

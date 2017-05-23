@@ -5,7 +5,7 @@
     if (window.internals)
         window.internals.settings.setAttachmentElementEnabled(true)
 </script>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 <style>
 #target {
     height: 200px;
@@ -43,8 +43,6 @@ function runTest() {
     target.addEventListener('DOMNodeInserted', contentInserted, false);
     if (!window.testRunner)
         return;
-    
-    testRunner.waitUntilDone();
 
     e = document.getElementById("attachment");
     x = e.offsetLeft + e.offsetWidth / 2;
@@ -61,6 +59,5 @@ function runTest() {
     eventSender.mouseUp();
 }
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

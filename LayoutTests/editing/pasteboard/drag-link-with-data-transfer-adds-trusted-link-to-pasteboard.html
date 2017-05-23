@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
 <html>
 <head>
-    <script src="../../resources/js-test-pre.js"></script>
+    <script src="../../resources/js-test.js"></script>
 </head>
 <body>
 <input id="destination" type="text" style="height: 256px; width: 256px; border: 1px dashed black;" />
@@ -57,6 +57,7 @@
 </div>
 
 -->
+<div id="console"></div>
 <script>
     var TEXT_TO_SET_IN_DATA_TRANSFER = "javascript:alert('Set by data transfer');";
     var URL_TO_SET_IN_DATA_TRANSFER = "http://webkit.org/setByDataTransfer";
@@ -118,8 +119,7 @@
     }
 
     if (window.testRunner && eventSender) {
-        testRunner.dumpAsText();
-        testRunner.waitUntilDone();
+        jsTestIsAsync = true;
 
         dragAndDropElement("firstAnchorSource");
         dragAndDropElement("secondAnchorSource");
@@ -137,7 +137,7 @@
             }
         });
 
-        testRunner.notifyDone();
+        finishJSTest();
     }
 </script>
 </body>
