@@ -1,3 +1,13 @@
+2017-05-23  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, roll out r215229
+
+        It caused CachedScripts in MemoryCache to be reused with different encodings
+        even though CachedScript potentially has already decoded data or cached hash
+        with a previous encoding.
+
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/script-charset-01-expected.txt:
+
 2017-05-23 Emilio Cobos Álvarez  <ecobos@igalia.com>
 
         Import the css-display-3 css tests.

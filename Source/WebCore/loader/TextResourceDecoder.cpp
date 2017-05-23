@@ -355,7 +355,6 @@ void TextResourceDecoder::setEncoding(const TextEncoding& encoding, EncodingSour
     else
         m_encoding = encoding;
 
-    m_encodingSet = true;
     m_codec = nullptr;
     m_source = source;
 }

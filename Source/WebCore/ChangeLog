@@ -1,3 +1,26 @@
+2017-05-23  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, roll out r215229
+
+        It caused CachedScripts in MemoryCache to be reused with different encodings
+        even though CachedScript potentially has already decoded data or cached hash
+        with a previous encoding.
+
+        * loader/TextResourceDecoder.cpp:
+        (WebCore::TextResourceDecoder::setEncoding):
+        * loader/TextResourceDecoder.h:
+        (WebCore::TextResourceDecoder::sawError):
+        (WebCore::TextResourceDecoder::encodingSet): Deleted.
+        * loader/cache/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::setEncoding):
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::CachedResource):
+        * loader/cache/CachedResource.h:
+        (WebCore::CachedResource::hasUnknownEncoding):
+        (WebCore::CachedResource::setHasUnknownEncoding):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::determineRevalidationPolicy):
+
 2017-05-23  Zalan Bujtas  <zalan@apple.com>
 
         ASSERTION FAILED: !renderer().view().needsLayout() while running media/video-main-content-autoplay.html

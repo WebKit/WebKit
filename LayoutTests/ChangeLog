@@ -1,3 +1,17 @@
+2017-05-23  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, roll out r215229
+
+        It caused CachedScripts in MemoryCache to be reused with different encodings
+        even though CachedScript potentially has already decoded data or cached hash
+        with a previous encoding.
+
+        * TestExpectations:
+        * fast/loader/cache-encoding-expected.txt:
+        * fast/loader/cache-encoding.html:
+        * http/tests/preload/preload-encoding-expected.txt:
+        * http/tests/preload/preload-encoding.php:
+
 2017-05-23  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skip LayoutTest imported/w3c/web-platform-tests/innerText/getter.html.

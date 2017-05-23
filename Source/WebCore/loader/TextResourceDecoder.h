@@ -68,7 +68,6 @@ public:
    
     void useLenientXMLDecoding() { m_useLenientXMLDecoding = true; }
     bool sawError() const { return m_sawError; }
-    bool encodingSet() const { return m_encodingSet; }
 
 private:
     WEBCORE_EXPORT TextResourceDecoder(const String& mimeType, const TextEncoding& defaultEncoding, bool usesEncodingDetector);
@@ -96,7 +95,6 @@ private:
     bool m_useLenientXMLDecoding; // Don't stop on XML decoding errors.
     bool m_sawError;
     bool m_usesEncodingDetector;
-    bool m_encodingSet { false };
 
     std::unique_ptr<HTMLMetaCharsetParser> m_charsetParser;
 };

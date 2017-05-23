@@ -19,10 +19,8 @@ function appendScriptWithCharset(charset, onload)
 
 function test()
 {
-    appendScriptWithCharset("utf-8", function () {
-        shouldBeTrue("scriptSuccess");
-        scriptSuccess = false;
-        appendScriptWithCharset("utf-16", function () {
+    appendScriptWithCharset("utf-16", function () {
+        appendScriptWithCharset("utf-8", function () {
             shouldBeTrue("scriptSuccess");
             finishJSTest();
         });
