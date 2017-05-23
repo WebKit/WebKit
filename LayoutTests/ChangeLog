@@ -1,3 +1,28 @@
+2017-05-23  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r215229): ASSERTION FAILED: !m_scriptHash || m_scriptHash == m_script.impl()->hash()
+        https://bugs.webkit.org/show_bug.cgi?id=171091
+        <rdar://problem/31752046>
+
+        Reviewed by Geoffrey Garen.
+
+        * fast/dom/resources/script-with-unicode.js: Added.
+        * fast/dom/script-charset-update-expected.txt: Added.
+        * fast/dom/script-charset-update.html: Added.
+        Add test that was consistently hitting the assertion in debug builds before
+        r215229 was rolled out.
+
+        * fast/loader/cache-encoding-expected.txt:
+        * fast/loader/cache-encoding.html:
+        Improve test to check that it is actually getting a SyntaxError the first time,
+        when it loads the script with the wrong encoding. Apparently this test was not
+        clear enough because it was updated / disabled in r215229, but was showing a
+        real bug.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        Unskip test was should no longer be flaky now that r215229 has been rolled out.
+
 2017-05-23  Matt Lewis  <jlewis3@apple.com>
 
         Marked imported/w3c/web-platform-tests/webrtc/getstats.html as flaky.

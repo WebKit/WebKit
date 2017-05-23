@@ -325,8 +325,6 @@ webkit.org/b/156077 inspector/heap/getRemoteObject.html [ Pass Failure ]
 # Video fullscreen is not implemented for mac wk2 in webkittestrunner
 media/media-fullscreen-loop-inline.html [ Skip ]
 
-webkit.org/b/172094 [ Debug ] imported/w3c/web-platform-tests/webrtc/interfaces.html [ Pass Crash ]
-
 ### END OF (1) Classified failures with bug reports
 ########################################
 
