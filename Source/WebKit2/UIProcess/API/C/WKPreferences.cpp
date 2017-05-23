@@ -1621,6 +1621,16 @@ bool WKPreferencesGetFetchAPIEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->fetchAPIEnabled();
 }
 
+void WKPreferencesSetDisplayContentsEnabled(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setDisplayContentsEnabled(flag);
+}
+
+bool WKPreferencesGetDisplayContentsEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->displayContentsEnabled();
+}
+
 void WKPreferencesSetDownloadAttributeEnabled(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setDownloadAttributeEnabled(flag);

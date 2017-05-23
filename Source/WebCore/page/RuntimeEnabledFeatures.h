@@ -43,6 +43,9 @@ namespace WebCore {
 class RuntimeEnabledFeatures {
     WTF_MAKE_NONCOPYABLE(RuntimeEnabledFeatures);
 public:
+    void setDisplayContentsEnabled(bool isEnabled) { m_isDisplayContentsEnabled = isEnabled; }
+    bool displayContentsEnabled() const { return m_isDisplayContentsEnabled; }
+
     void setLinkPreloadEnabled(bool isEnabled) { m_isLinkPreloadEnabled = isEnabled; }
     bool linkPreloadEnabled() const { return m_isLinkPreloadEnabled; }
 
@@ -213,6 +216,7 @@ private:
     bool m_isInteractiveFormValidationEnabled { false };
     bool m_isCredentialManagementEnabled { false };
 
+    bool m_isDisplayContentsEnabled { false };
     bool m_isShadowDOMEnabled { true };
     bool m_areCustomElementsEnabled { true };
     bool m_inputEventsEnabled { true };

@@ -105,6 +105,7 @@
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "RuleSet.h"
+#include "RuntimeEnabledFeatures.h"
 #include "SVGDocument.h"
 #include "SVGDocumentExtensions.h"
 #include "SVGFontFaceElement.h"
@@ -795,7 +796,7 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
 
     if (style.display() == CONTENTS) {
         // FIXME: Enable for all elements.
-        bool elementSupportsDisplayContents = is<HTMLSlotElement>(element);
+        bool elementSupportsDisplayContents = is<HTMLSlotElement>(element) || RuntimeEnabledFeatures::sharedFeatures().displayContentsEnabled();
         if (!elementSupportsDisplayContents)
             style.setDisplay(INLINE);
     }
