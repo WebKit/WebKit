@@ -1,5 +1,14 @@
 2017-05-23  Fujii Hironori  <Hironori.Fujii@sony.com>
 
+        [GTK] Web Inspector: Add a new icon DockLeft.svg
+        https://bugs.webkit.org/show_bug.cgi?id=172492
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UserInterface/Images/gtk/DockLeft.svg: Added.
+
+2017-05-23  Fujii Hironori  <Hironori.Fujii@sony.com>
+
         [GTK] Web Inspector: Add a new icon CSSVariable.svg
         https://bugs.webkit.org/show_bug.cgi?id=172491
 
