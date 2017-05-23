@@ -1,3 +1,12 @@
+2017-05-23  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Import css/css-grid-1/alignment/ from WPT (8df7c9c215)
+        https://bugs.webkit.org/show_bug.cgi?id=172494
+
+        Reviewed by Youenn Fablet.
+
+        * TestExpectations: Mark as failure a few tests due to bug #172493.
+
 2017-05-23  Alexey Proskuryakov  <ap@apple.com>
 
         Many editing js-tests use waitUntilDone
