@@ -1,3 +1,11 @@
+2017-05-22  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, attempt to fix test runner by removing Unicode character from stderr output
+        https://bugs.webkit.org/show_bug.cgi?id=168409
+
+        * page/Page.cpp:
+        (WebCore::Page::suspendScriptedAnimations):
+
 2017-05-22  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Avoid moving to the second frame of an animated image before the first frame has finished decoding
