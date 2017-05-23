@@ -1,3 +1,19 @@
+2017-05-22  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Avoid moving to the second frame of an animated image before the first frame has finished decoding
+        https://bugs.webkit.org/show_bug.cgi?id=172461
+
+        Reviewed by Simon Fraser.
+
+        Sometimes the frameCount of an animated image gets changed when more data
+        is received. The problem is we may start decoding the image as if it were
+        a static large image and the decoding of this first frame finishes after 
+        the image starts animating.
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::draw):
+        (WebCore::BitmapImage::imageFrameAvailableAtIndex):
+
 2017-05-20  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION(r215686): O(n^2) algorithm in CachedRawResource::addDataBuffer

@@ -181,7 +181,7 @@ void BitmapImage::draw(GraphicsContext& context, const FloatRect& destRect, cons
 
     FloatSize scaleFactorForDrawing = context.scaleFactorForDrawing(destRect, srcRect);
     IntSize sizeForDrawing = expandedIntSize(size() * scaleFactorForDrawing);
-    
+
     m_currentSubsamplingLevel = m_allowSubsampling ? m_source.subsamplingLevelForScaleFactor(context, scaleFactorForDrawing) : SubsamplingLevel::Default;
     LOG(Images, "BitmapImage::%s - %p - url: %s [subsamplingLevel = %d scaleFactorForDrawing = (%.4f, %.4f)]", __FUNCTION__, this, sourceURL().string().utf8().data(), static_cast<int>(m_currentSubsamplingLevel), scaleFactorForDrawing.width(), scaleFactorForDrawing.height());
 
@@ -210,7 +210,7 @@ void BitmapImage::draw(GraphicsContext& context, const FloatRect& destRect, cons
         LOG(Images, "BitmapImage::%s - %p - url: %s [a decoded image frame is available for drawing]", __FUNCTION__, this, sourceURL().string().utf8().data());
     } else {
         StartAnimationStatus status = internalStartAnimation();
-        ASSERT_IMPLIES(status == StartAnimationStatus::DecodingActive, frameHasFullSizeNativeImageAtIndex(m_currentFrame, m_currentSubsamplingLevel));
+        ASSERT_IMPLIES(status == StartAnimationStatus::DecodingActive, (!m_currentFrame && !m_repetitionsComplete) || frameHasFullSizeNativeImageAtIndex(m_currentFrame, m_currentSubsamplingLevel));
 
         if (status == StartAnimationStatus::DecodingActive && m_showDebugBackground) {
             fillWithSolidColor(context, destRect, Color(Color::yellow).colorWithAlpha(0.5), op);
@@ -469,26 +469,32 @@ void BitmapImage::resetAnimation()
 
 void BitmapImage::imageFrameAvailableAtIndex(size_t index)
 {
-    UNUSED_PARAM(index);
     LOG(Images, "BitmapImage::%s - %p - url: %s [requested frame %ld is now available]", __FUNCTION__, this, sourceURL().string().utf8().data(), index);
 
     if (canAnimate()) {
-        ASSERT(index == (m_currentFrame + 1) % frameCount());
-        
-        // Don't advance to nextFrame unless the timer was fired before its decoding finishes.
-        if (canAnimate() && !m_frameTimer)
-            internalAdvanceAnimation();
-        else
-            LOG(Images, "BitmapImage::%s - %p - url: %s [earlyFrameCount = %ld nextFrame = %ld]", __FUNCTION__, this, sourceURL().string().utf8().data(), ++m_earlyFrameCount, index);
-    } else {
-        ASSERT(index == m_currentFrame && !m_currentFrame);
-        if (m_source.isAsyncDecodingQueueIdle())
-            m_source.stopAsyncDecodingQueue();
-        if (m_currentFrameDecodingStatus == ImageFrame::DecodingStatus::Decoding)
-            m_currentFrameDecodingStatus = frameDecodingStatusAtIndex(m_currentFrame);
-        if (imageObserver())
-            imageObserver()->imageFrameAvailable(*this, ImageAnimatingState::No);
+        if (index == (m_currentFrame + 1) % frameCount()) {
+            // Don't advance to nextFrame unless the timer was fired before its decoding finishes.
+            if (!m_frameTimer)
+                internalAdvanceAnimation();
+            else
+                LOG(Images, "BitmapImage::%s - %p - url: %s [earlyFrameCount = %ld nextFrame = %ld]", __FUNCTION__, this, sourceURL().string().utf8().data(), ++m_earlyFrameCount, index);
+            return;
+        }
+
+        // Because of image partial loading, an image may start decoding as a large static image. But
+        // when more data is received, frameCount() changes to be > 1 so the image starts animating.
+        // The animation may even start before finishing the decoding of the first frame.
+        ASSERT(!m_repetitionsComplete);
+        LOG(Images, "BitmapImage::%s - %p - url: %s [More data makes frameCount() > 1]", __FUNCTION__, this, sourceURL().string().utf8().data());
     }
+
+    ASSERT(index == m_currentFrame && !m_currentFrame);
+    if (m_source.isAsyncDecodingQueueIdle())
+        m_source.stopAsyncDecodingQueue();
+    if (m_currentFrameDecodingStatus == ImageFrame::DecodingStatus::Decoding)
+        m_currentFrameDecodingStatus = frameDecodingStatusAtIndex(m_currentFrame);
+    if (imageObserver())
+        imageObserver()->imageFrameAvailable(*this, ImageAnimatingState::No);
 }
 
 void BitmapImage::dump(TextStream& ts) const
