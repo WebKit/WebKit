@@ -1,5 +1,68 @@
 2017-05-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Update font-style's implementation in the font selection algorithm
+        https://bugs.webkit.org/show_bug.cgi?id=169453
+
+        Reviewed by Simon Fraser.
+
+        Previously, we were treating "font-style: oblique" exactly the same as "font-style: italic".
+        These values were parsed to the same internal data type. However, variation fonts may have two
+        distinct axes: 'slnt' and 'ital'. Therefore, we need to keep a bool of state which represents
+        which of these two axes we should be setting when we apply font variations. We can do this by
+        making the "font-style" parser a "custom" parser. The implementation of these custom functions
+        will set both the italic value on the FontDescription as well as this extra bool.
+
+        We don't, however, want to treat these values as distinct for the purposese of font selection.
+        The fact that we treat oblique fonts the same as italic fonts is a feature, not a bug. Therefore,
+        the font selection algorithm is not made aware of this distinction. This is why we don't want to
+        package up the bool and FontSelectionValue into a class: font selection only cares about the
+        FontSelectionValue, so conceptually they shouldn't be joined. (The FontSelectionValue already
+        exists within a collection of all the things font selection needs to know about.)
+
+        Now that there is this extra bit of state on the FontDescription, we can do a little better when
+        computing the result of getComputedStyle(). Previously, we were always returning "italic" even
+        when "oblique" was specified. Now, we can return the correct one. However, this extra bit of
+        state is not kept on the CSSFontFace (because it doesn't need to be), which means we can only
+        improve the computed style of an element, rather than the cssText of an @font-face rule.
+
+        Test: fast/text/font-style-parse.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::fontStyleFromStyleValue):
+        (WebCore::fontStyleFromStyle):
+        (WebCore::fontShorthandValueForSelectionProperties):
+        * css/CSSComputedStyleDeclaration.h:
+        * css/CSSFontFaceSet.h:
+        * css/CSSProperties.json:
+        * css/FontFace.cpp:
+        (WebCore::FontFace::style):
+        * css/FontSelectionValueInlines.h:
+        (WebCore::fontStyleKeyword):
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertFontStyle): Deleted.
+        * css/StyleBuilderCustom.h:
+        (WebCore::StyleBuilderCustom::applyInitialFontStyle):
+        (WebCore::StyleBuilderCustom::applyInheritFontStyle):
+        (WebCore::StyleBuilderCustom::applyValueFontStyle):
+        * platform/graphics/FontCache.h:
+        (WebCore::FontDescriptionKey::makeFlagsKey):
+        * platform/graphics/FontDescription.cpp:
+        (WebCore::FontDescription::FontDescription):
+        * platform/graphics/FontDescription.h:
+        (WebCore::FontDescription::shouldUseItalicVariationAxis):
+        (WebCore::FontDescription::setShouldUseItalicVariationAxis):
+        (WebCore::FontDescription::operator==):
+        (WebCore::FontCascadeDescription::initialShouldUseItalicVariationAxis):
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::preparePlatformFont):
+        (WebCore::fontWithFamily):
+        (WebCore::FontCache::createFontPlatformData):
+        (WebCore::FontCache::systemFallbackForCharacters):
+        * platform/graphics/mac/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData):
+
+2017-05-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
         Support calc() in font-variation-settings and font-feature-settings
         https://bugs.webkit.org/show_bug.cgi?id=171032
 

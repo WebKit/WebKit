@@ -1,3 +1,14 @@
+2017-05-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Update font-style's implementation in the font selection algorithm
+        https://bugs.webkit.org/show_bug.cgi?id=169453
+
+        Reviewed by Simon Fraser.
+
+        * fast/text/font-style-parse-expected.txt:
+        * fast/text/font-style-parse.html:
+        * platform/mac-elcapitan/fast/text/font-style-parse-expected.txt:
+
 2017-05-22  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Update expectations for layout tests.

@@ -52,10 +52,6 @@ public:
     }
     ~CSSFontFaceSet();
 
-    static FontSelectionValue convertFontWeightFromValue(const CSSValue&);
-    static FontSelectionValue convertFontStretchFromValue(const CSSValue&);
-    static FontSelectionValue convertFontStyleFromValue(const CSSValue&);
-
     void addClient(CSSFontFaceSetClient&);
     void removeClient(CSSFontFaceSetClient&);
 

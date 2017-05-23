@@ -96,6 +96,7 @@ public:
             variantEastAsianRuby() };
     }
     FontOpticalSizing opticalSizing() const { return static_cast<FontOpticalSizing>(m_opticalSizing); }
+    FontStyleAxis fontStyleAxis() const { return m_fontStyleAxis ? FontStyleAxis::ital : FontStyleAxis::slnt; }
 
     void setComputedSize(float s) { m_computedSize = clampToFloat(s); }
     void setItalic(FontSelectionValue italic) { m_fontSelectionRequest.slope = italic; }
@@ -129,6 +130,7 @@ public:
     void setVariantEastAsianWidth(FontVariantEastAsianWidth variant) { m_variantEastAsianWidth = static_cast<unsigned>(variant); }
     void setVariantEastAsianRuby(FontVariantEastAsianRuby variant) { m_variantEastAsianRuby = static_cast<unsigned>(variant); }
     void setOpticalSizing(FontOpticalSizing sizing) { m_opticalSizing = static_cast<unsigned>(sizing); }
+    void setFontStyleAxis(FontStyleAxis axis) { m_fontStyleAxis = axis == FontStyleAxis::ital; }
 
 private:
     // FIXME: Investigate moving these into their own object on the heap (to save memory).
@@ -161,6 +163,7 @@ private:
     unsigned m_variantEastAsianWidth : 2; // FontVariantEastAsianWidth
     unsigned m_variantEastAsianRuby : 1; // FontVariantEastAsianRuby
     unsigned m_opticalSizing : 1; // FontOpticalSizing
+    unsigned m_fontStyleAxis : 1; // Whether "font-style: italic" or "font-style: oblique 20deg" was specified
 };
 
 inline bool FontDescription::operator==(const FontDescription& other) const
@@ -193,7 +196,8 @@ inline bool FontDescription::operator==(const FontDescription& other) const
         && m_variantEastAsianVariant == other.m_variantEastAsianVariant
         && m_variantEastAsianWidth == other.m_variantEastAsianWidth
         && m_variantEastAsianRuby == other.m_variantEastAsianRuby
-        && m_opticalSizing == other.m_opticalSizing;
+        && m_opticalSizing == other.m_opticalSizing
+        && m_fontStyleAxis == other.m_fontStyleAxis;
 }
 
 // FIXME: Move to a file of its own.
@@ -265,6 +269,7 @@ public:
 
     // Initial values for font properties.
     static FontSelectionValue initialItalic() { return normalItalicValue(); }
+    static FontStyleAxis initialFontStyleAxis() { return FontStyleAxis::slnt; }
     static FontSelectionValue initialWeight() { return normalWeightValue(); }
     static FontSelectionValue initialStretch() { return normalStretchValue(); }
     static FontSmallCaps initialSmallCaps() { return FontSmallCapsOff; }

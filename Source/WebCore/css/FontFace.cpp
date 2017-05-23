@@ -289,8 +289,8 @@ String FontFace::style() const
     m_backing->updateStyleIfNeeded();
     auto style = m_backing->italic();
 
-    auto minimum = ComputedStyleExtractor::fontStyleFromStyleValue(style.minimum);
-    auto maximum = ComputedStyleExtractor::fontStyleFromStyleValue(style.maximum);
+    auto minimum = ComputedStyleExtractor::fontStyleFromStyleValue(style.minimum, FontStyleAxis::ital);
+    auto maximum = ComputedStyleExtractor::fontStyleFromStyleValue(style.maximum, FontStyleAxis::ital);
 
     if (minimum.get().equals(maximum.get()))
         return minimum->cssText();

@@ -307,10 +307,9 @@
                 "oblique"
             ],
             "codegen-properties": {
-                "name-for-methods": "Italic",
+                "custom": "All",
                 "font-property": true,
-                "high-priority": true,
-                "converter": "FontStyle"
+                "high-priority": true
             },
             "specification": {
                 "category": "css-fonts",

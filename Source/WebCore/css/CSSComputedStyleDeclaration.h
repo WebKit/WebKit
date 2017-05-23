@@ -21,6 +21,7 @@
 #pragma once
 
 #include "CSSStyleDeclaration.h"
+#include "FontDescription.h"
 #include "RenderStyleConstants.h"
 #include "SVGRenderStyleDefs.h"
 #include <wtf/RefPtr.h>
@@ -71,7 +72,7 @@ public:
     static Ref<CSSPrimitiveValue> fontNonKeywordStretchFromStyleValue(FontSelectionValue);
     static Ref<CSSPrimitiveValue> fontStretchFromStyleValue(FontSelectionValue);
     static Ref<CSSFontStyleValue> fontNonKeywordStyleFromStyleValue(FontSelectionValue);
-    static Ref<CSSFontStyleValue> fontStyleFromStyleValue(FontSelectionValue);
+    static Ref<CSSFontStyleValue> fontStyleFromStyleValue(FontSelectionValue, FontStyleAxis);
 
 private:
     // The styled element is either the element passed into computedPropertyValue, or the

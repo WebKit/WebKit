@@ -81,6 +81,7 @@ public:
     DECLARE_PROPERTY_CUSTOM_HANDLERS(Fill);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(FontFamily);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(FontSize);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(FontStyle);
 #if ENABLE(CSS_IMAGE_RESOLUTION)
     DECLARE_PROPERTY_CUSTOM_HANDLERS(ImageResolution);
 #endif
@@ -1580,6 +1581,31 @@ inline float StyleBuilderCustom::determineRubyTextSizeMultiplier(StyleResolver& 
         }
     }
     return 0.25f;
+}
+
+inline void StyleBuilderCustom::applyInitialFontStyle(StyleResolver& styleResolver)
+{
+    auto fontDescription = styleResolver.fontDescription();
+    fontDescription.setItalic(FontCascadeDescription::initialItalic());
+    fontDescription.setFontStyleAxis(FontCascadeDescription::initialFontStyleAxis());
+    styleResolver.setFontDescription(fontDescription);
+}
+
+inline void StyleBuilderCustom::applyInheritFontStyle(StyleResolver& styleResolver)
+{
+    auto fontDescription = styleResolver.fontDescription();
+    fontDescription.setItalic(styleResolver.parentFontDescription().italic());
+    fontDescription.setFontStyleAxis(styleResolver.parentFontDescription().fontStyleAxis());
+    styleResolver.setFontDescription(fontDescription);
+}
+
+inline void StyleBuilderCustom::applyValueFontStyle(StyleResolver& styleResolver, CSSValue& value)
+{
+    auto& fontStyleValue = downcast<CSSFontStyleValue>(value);
+    auto fontDescription = styleResolver.fontDescription();
+    fontDescription.setItalic(StyleBuilderConverter::convertFontStyleFromValue(fontStyleValue));
+    fontDescription.setFontStyleAxis(fontStyleValue.fontStyleValue->valueID() == CSSValueItalic ? FontStyleAxis::ital : FontStyleAxis::slnt);
+    styleResolver.setFontDescription(fontDescription);
 }
 
 inline void StyleBuilderCustom::applyValueFontSize(StyleResolver& styleResolver, CSSValue& value)

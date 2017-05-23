@@ -78,6 +78,7 @@ FontDescription::FontDescription()
     , m_variantEastAsianWidth(static_cast<unsigned>(FontVariantEastAsianWidth::Normal))
     , m_variantEastAsianRuby(static_cast<unsigned>(FontVariantEastAsianRuby::Normal))
     , m_opticalSizing(static_cast<unsigned>(FontOpticalSizing::Enabled))
+    , m_fontStyleAxis(FontCascadeDescription::initialFontStyleAxis() == FontStyleAxis::ital)
 {
 }
 

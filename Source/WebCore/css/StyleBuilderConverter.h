@@ -1238,11 +1238,6 @@ inline FontSelectionValue StyleBuilderConverter::convertFontStretch(StyleResolve
     return convertFontStretchFromValue(value);
 }
 
-inline FontSelectionValue StyleBuilderConverter::convertFontStyle(StyleResolver&, const CSSValue& value)
-{
-    return convertFontStyleFromValue(value);
-}
-
 #if ENABLE(VARIATION_FONTS)
 inline FontVariationSettings StyleBuilderConverter::convertFontVariationSettings(StyleResolver&, const CSSValue& value)
 {

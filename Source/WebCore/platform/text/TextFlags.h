@@ -356,4 +356,10 @@ enum class FontOpticalSizing {
     Disabled
 };
 
+// https://www.microsoft.com/typography/otspec/fvar.htm#VAT
+enum class FontStyleAxis {
+    slnt,
+    ital
+};
+
 }
