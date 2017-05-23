@@ -1,3 +1,14 @@
+2017-05-23  Dean Jackson  <dino@apple.com>
+
+        checkGPUStatus needs to exercise instancing calls
+        https://bugs.webkit.org/show_bug.cgi?id=172520
+        <rdar://problem/23118395>
+
+        Reviewed by Brent Fulgham.
+
+        * fast/canvas/webgl/lose-context-on-status-failure-expected.txt: Added.
+        * fast/canvas/webgl/lose-context-on-status-failure.html: Added.
+
 2017-05-23  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Import css/css-grid-1/alignment/ from WPT (8df7c9c215)

@@ -1,0 +1,75 @@
+CONSOLE MESSAGE: line 67: WebGL: CONTEXT_LOST_WEBGL: loseContext: context lost
+CONSOLE MESSAGE: line 98: WebGL: CONTEXT_LOST_WEBGL: loseContext: context lost
+CONSOLE MESSAGE: line 124: WebGL: CONTEXT_LOST_WEBGL: loseContext: context lost
+CONSOLE MESSAGE: line 156: WebGL: CONTEXT_LOST_WEBGL: loseContext: context lost
+Checks that a GPU status check failure will lose the context.
+NOTE: This only passes in the test harness because it requires Internals.
+
+
+Test drawArrays.
+
+Do five 'safe' drawArrays.
+PASS gl.isContextLost() is false
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.isContextLost() is false
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.isContextLost() is false
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.isContextLost() is false
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.isContextLost() is false
+PASS gl.getError() is gl.NO_ERROR
+Now force failure after the next drawArrays.
+PASS gl.isContextLost() is true
+PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
+
+Test drawElements.
+
+Do two 'safe' drawElements.
+PASS gl.isContextLost() is false
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.isContextLost() is false
+PASS gl.getError() is gl.NO_ERROR
+Now force failure after the next drawElements.
+PASS gl.isContextLost() is true
+PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
+
+Test drawArraysInstanced.
+
+Do four 'safe' drawArraysInstancedANGLE.
+PASS gl.isContextLost() is false
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.isContextLost() is false
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.isContextLost() is false
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.isContextLost() is false
+PASS gl.getError() is gl.NO_ERROR
+Now force failure after the next drawArraysInstancedANGLE.
+PASS gl.isContextLost() is true
+PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
+
+Test drawElementsInstanced.
+
+Do seven 'safe' drawElementsInstancedANGLE.
+PASS gl.isContextLost() is false
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.isContextLost() is false
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.isContextLost() is false
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.isContextLost() is false
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.isContextLost() is false
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.isContextLost() is false
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.isContextLost() is false
+PASS gl.getError() is gl.NO_ERROR
+Now force failure after the next drawElementsInstancedANGLE.
+PASS gl.isContextLost() is true
+PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

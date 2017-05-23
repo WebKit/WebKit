@@ -564,6 +564,7 @@ public:
 
 #if ENABLE(WEBGL)
     void simulateWebGLContextChanged(WebGLRenderingContext&);
+    void failNextGPUStatusCheck(WebGLRenderingContext&);
 #endif
 
     void setPageVisibility(bool isVisible);

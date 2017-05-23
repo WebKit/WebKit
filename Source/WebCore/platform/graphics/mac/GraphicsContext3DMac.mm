@@ -62,6 +62,8 @@
 
 namespace WebCore {
 
+static const unsigned statusCheckThreshold = 5;
+
 #if PLATFORM(MAC)
 
 enum {
@@ -304,10 +306,7 @@ void GraphicsContext3DManager::recycleContextIfNecessary()
     }
 }
 
-const int GPUStatusCheckThreshold = 5;
-int GraphicsContext3D::GPUCheckCounter = 0;
-
-// FIXME: This class is currently empty on Mac, but will get populated as 
+// FIXME: This class is currently empty on Mac, but will get populated as
 // the restructuring in https://bugs.webkit.org/show_bug.cgi?id=66903 is done
 class GraphicsContext3DPrivate {
 public:
@@ -636,13 +635,25 @@ bool GraphicsContext3D::makeContextCurrent()
     return true;
 }
 
-void GraphicsContext3D::checkGPUStatusIfNecessary()
+void GraphicsContext3D::checkGPUStatus()
 {
-    bool needsCheck = !GPUCheckCounter;
-    GPUCheckCounter = (GPUCheckCounter + 1) % GPUStatusCheckThreshold;
-
-    if (!needsCheck)
+    if (m_failNextStatusCheck) {
+        LOG(WebGL, "Pretending the GPU has reset (%p). Lose the context.", this);
+        m_failNextStatusCheck = false;
+        forceContextLost();
+#if PLATFORM(MAC)
+        CGLSetCurrentContext(0);
+#else
+        [EAGLContext setCurrentContext:0];
+#endif
         return;
+    }
+
+    // Only do the check every statusCheckThreshold calls.
+    if (m_statusCheckCount)
+        return;
+
+    m_statusCheckCount = (m_statusCheckCount + 1) % statusCheckThreshold;
 
     GLint restartStatus = 0;
 #if PLATFORM(MAC)
@@ -656,7 +667,7 @@ void GraphicsContext3D::checkGPUStatusIfNecessary()
         forceContextLost();
         CGLSetCurrentContext(0);
     }
-#elif PLATFORM(IOS)
+#else
     EAGLContext* currentContext = static_cast<EAGLContext*>(PlatformGraphicsContext3D());
     [currentContext getParameter:kEAGLCPGPURestartStatus to:&restartStatus];
     if (restartStatus == kEAGLCPGPURestartStatusCaused || restartStatus == kEAGLCPGPURestartStatusBlacklisted) {

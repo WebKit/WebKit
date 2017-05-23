@@ -377,7 +377,7 @@ bool GraphicsContext3D::makeContextCurrent()
     return false;
 }
 
-void GraphicsContext3D::checkGPUStatusIfNecessary()
+void GraphicsContext3D::checkGPUStatus()
 {
 }
 

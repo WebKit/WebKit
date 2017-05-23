@@ -380,7 +380,7 @@ bool GraphicsContext3D::makeContextCurrent()
     return m_private->makeContextCurrent();
 }
 
-void GraphicsContext3D::checkGPUStatusIfNecessary()
+void GraphicsContext3D::checkGPUStatus()
 {
 }
 

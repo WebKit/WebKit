@@ -1266,9 +1266,10 @@ public:
         unsigned m_imageSourceUnpackAlignment;
     };
 
+    void setFailNextGPUStatusCheck() { m_failNextStatusCheck = true; }
+
 private:
     GraphicsContext3D(GraphicsContext3DAttributes, HostWindow*, RenderStyle = RenderOffscreen);
-    static int GPUCheckCounter;
 
     // Helper for packImageData/extractImageData/extractTextureData which implement packing of pixel
     // data into the specified OpenGL destination format and type.
@@ -1284,8 +1285,8 @@ private:
     void validateDepthStencil(const char* packedDepthStencilExtension);
     void validateAttributes();
     
-    // Call to make during draw calls to check on the GPU's status.
-    void checkGPUStatusIfNecessary();
+    // Did the most recent drawing operation leave the GPU in an acceptable state?
+    void checkGPUStatus();
 
     // Read rendering results into a pixel array with the same format as the
     // backbuffer.
@@ -1436,6 +1437,9 @@ private:
 
     bool m_isForWebGL2 { false };
     bool m_usingCoreProfile { false };
+
+    unsigned m_statusCheckCount { 0 };
+    bool m_failNextStatusCheck { false };
 
 #if USE(CAIRO)
     Platform3DObject m_vao { 0 };

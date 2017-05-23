@@ -5912,6 +5912,14 @@ void WebGLRenderingContextBase::activityStateDidChange(ActivityState::Flags oldA
         m_context->setContextVisibility(newActivityState & ActivityState::IsVisible);
 }
 
+void WebGLRenderingContextBase::setFailNextGPUStatusCheck()
+{
+    if (!m_context)
+        return;
+
+    m_context->setFailNextGPUStatusCheck();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEBGL)

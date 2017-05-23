@@ -1,3 +1,48 @@
+2017-05-23  Dean Jackson  <dino@apple.com>
+
+        checkGPUStatus needs to exercise instancing calls
+        https://bugs.webkit.org/show_bug.cgi?id=172520
+        <rdar://problem/23118395>
+
+        Reviewed by Brent Fulgham.
+
+        The checkGPUStatus method (formerly checkGPUStatusIfNecessary) was
+        not being called after the drawArrays/Elements instancing calls.
+
+        I also added a test case to exercise the recovery logic.
+
+        Test: fast/canvas/webgl/lose-context-on-status-failure.html
+
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::setFailNextGPUStatusCheck): Force
+        the next checkGPUStatus on the GC3D to fail.
+        * html/canvas/WebGLRenderingContextBase.h:
+        * platform/graphics/GraphicsContext3D.h: Rename a function, and make
+        the number of calls we wait before checking per instance, rather than
+        static (which might have meant we're only ever checking after one canvas on
+        a page with multiple contexts).
+        (WebCore::GraphicsContext3D::setFailNextGPUStatusCheck):
+        * platform/graphics/cairo/GraphicsContext3DCairo.cpp:
+        (WebCore::GraphicsContext3D::checkGPUStatus): Renamed.
+        (WebCore::GraphicsContext3D::checkGPUStatusIfNecessary): Deleted.
+        * platform/graphics/mac/GraphicsContext3DMac.mm:
+        (WebCore::GraphicsContext3D::checkGPUStatus): Improve the logic.
+        (WebCore::GraphicsContext3D::checkGPUStatusIfNecessary): Deleted.
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::clear):
+        (WebCore::GraphicsContext3D::drawArrays):
+        (WebCore::GraphicsContext3D::drawElements):
+        (WebCore::GraphicsContext3D::drawArraysInstanced): Add a call to checkGPUStatus.
+        (WebCore::GraphicsContext3D::drawElementsInstanced): Ditto.
+        * platform/graphics/opengl/GraphicsContext3DOpenGLES.cpp:
+        (WebCore::GraphicsContext3D::checkGPUStatus):
+        (WebCore::GraphicsContext3D::checkGPUStatusIfNecessary): Deleted.
+        * testing/Internals.cpp: Implement the internal call to cause the next
+        check to fail.
+        (WebCore::Internals::failNextGPUStatusCheck):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2017-05-23  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Further cleanup enumeration handling

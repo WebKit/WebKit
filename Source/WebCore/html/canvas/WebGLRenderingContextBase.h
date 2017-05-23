@@ -358,6 +358,9 @@ public:
     void drawElementsInstanced(GC3Denum mode, GC3Dsizei count, GC3Denum type, long long offset, GC3Dsizei primcount);
     void vertexAttribDivisor(GC3Duint index, GC3Duint divisor);
 
+    // Used for testing only, from Internals.
+    WEBCORE_EXPORT void setFailNextGPUStatusCheck();
+
 protected:
     WebGLRenderingContextBase(HTMLCanvasElement&, WebGLContextAttributes);
     WebGLRenderingContextBase(HTMLCanvasElement&, Ref<GraphicsContext3D>&&, WebGLContextAttributes);

@@ -529,6 +529,7 @@ enum EventThrottlingBehavior {
     void setSpeculativeTilingDelayDisabledForTesting(boolean disabled);
 
     [Conditional=WEBGL] void simulateWebGLContextChanged(WebGLRenderingContext context);
+    [Conditional=WEBGL] void failNextGPUStatusCheck(WebGLRenderingContext context);
 
     void setPageVisibility(boolean isVisible);
 

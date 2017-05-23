@@ -3985,6 +3985,11 @@ void Internals::simulateWebGLContextChanged(WebGLRenderingContext& context)
 {
     context.simulateContextChanged();
 }
+
+void Internals::failNextGPUStatusCheck(WebGLRenderingContext& context)
+{
+    context.setFailNextGPUStatusCheck();
+}
 #endif
 
 void Internals::setPageVisibility(bool isVisible)

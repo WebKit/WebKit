@@ -595,6 +595,7 @@ void GraphicsContext3D::clear(GC3Dbitfield mask)
 {
     makeContextCurrent();
     ::glClear(mask);
+    checkGPUStatus();
 }
 
 void GraphicsContext3D::clearStencil(GC3Dint s)
@@ -738,14 +739,14 @@ void GraphicsContext3D::drawArrays(GC3Denum mode, GC3Dint first, GC3Dsizei count
 {
     makeContextCurrent();
     ::glDrawArrays(mode, first, count);
-    checkGPUStatusIfNecessary();
+    checkGPUStatus();
 }
 
 void GraphicsContext3D::drawElements(GC3Denum mode, GC3Dsizei count, GC3Denum type, GC3Dintptr offset)
 {
     makeContextCurrent();
     ::glDrawElements(mode, count, type, reinterpret_cast<GLvoid*>(static_cast<intptr_t>(offset)));
-    checkGPUStatusIfNecessary();
+    checkGPUStatus();
 }
 
 void GraphicsContext3D::enable(GC3Denum cap)
@@ -1912,11 +1913,13 @@ void GraphicsContext3D::texImage2DDirect(GC3Denum target, GC3Dint level, GC3Denu
 void GraphicsContext3D::drawArraysInstanced(GC3Denum mode, GC3Dint first, GC3Dsizei count, GC3Dsizei primcount)
 {
     getExtensions().drawArraysInstanced(mode, first, count, primcount);
+    checkGPUStatus();
 }
 
 void GraphicsContext3D::drawElementsInstanced(GC3Denum mode, GC3Dsizei count, GC3Denum type, GC3Dintptr offset, GC3Dsizei primcount)
 {
     getExtensions().drawElementsInstanced(mode, count, type, offset, primcount);
+    checkGPUStatus();
 }
 
 void GraphicsContext3D::vertexAttribDivisor(GC3Duint index, GC3Duint divisor)
