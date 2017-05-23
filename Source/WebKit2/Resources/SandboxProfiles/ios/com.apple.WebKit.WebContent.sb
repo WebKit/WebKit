@@ -25,6 +25,8 @@
 (deny default (with partial-symbolication))
 (allow system-audit file-read-metadata)
 
+(deny mach-lookup (xpc-service-name-prefix ""))
+
 (import "UIKit-apps.sb")
 (import "removed-dev-nodes.sb")
 
