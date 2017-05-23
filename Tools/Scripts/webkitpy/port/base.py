@@ -57,7 +57,7 @@ from webkitpy.port import driver
 from webkitpy.port import image_diff
 from webkitpy.port import server_process
 from webkitpy.port.factory import PortFactory
-from webkitpy.layout_tests.servers import apache_http_server, http_server
+from webkitpy.layout_tests.servers import apache_http_server, http_server, http_server_base
 from webkitpy.layout_tests.servers import web_platform_test_server
 from webkitpy.layout_tests.servers import websocket_server
 
@@ -969,6 +969,12 @@ class Port(object):
 
         server.start()
         self._http_server = server
+
+    def is_http_server_running(self):
+        return http_server_base.is_http_server_running()
+
+    def is_wpt_server_running(self):
+        return web_platform_test_server.is_wpt_server_running(self)
 
     def _extract_certificate_from_pem(self, pem_file, destination_certificate_file):
         return self._executive.run_command(['openssl', 'x509', '-outform', 'pem', '-in', pem_file, '-out', destination_certificate_file], return_exit_code=True) == 0

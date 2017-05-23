@@ -55,6 +55,11 @@ def base_url(port_obj):
     return "http://" + config["host"] + ":" + str(ports["http"][0]) + "/"
 
 
+def is_wpt_server_running(port_obj):
+    config = wpt_config_json(port_obj)
+    return http_server_base.HttpServerBase._is_running_on_port(config["ports"]["http"][0])
+
+
 class WebPlatformTestServer(http_server_base.HttpServerBase):
     def __init__(self, port_obj, name, pidfile=None):
         http_server_base.HttpServerBase.__init__(self, port_obj)

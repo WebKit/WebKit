@@ -482,9 +482,50 @@ function layoutTestsBasePath()
     return basePath;
 }
 
+var mappings = {
+    "http/tests/ssl/": "https://127.0.0.1:8443/ssl/",
+    "http/tests/": "http://127.0.0.1:8000/",
+    "http/wpt/": "http://localhost:8800/WebKit/",
+    "imported/w3c/web-platform-tests/": "http://localhost:8800/"
+}
+
+function testToURL(test, layoutTestsPath)
+{
+    for (let key in mappings) {
+        if (test.startsWith(key))
+            return mappings[key] + test.substring(key.length);
+
+    }
+    return "file://" + layoutTestsPath + "/" + test
+}
+
+function layoutTestURL(test)
+{
+    if (shouldUseTracLinks())
+        return layoutTestsBasePath() + test;
+    return testToURL(test, layoutTestsBasePath());
+}
+
+function checkServerIsRunning(event)
+{
+    if (shouldUseTracLinks())
+        return;
+
+    var url = event.target.href;
+    if (url.startsWith("file://"))
+        return;
+
+    event.preventDefault();
+    fetch(url, {mode: "no-cors"}).then(() => {
+        window.location = url;
+    }, () => {
+        alert("HTTP server does not seem to be running, please use the run-webkit-httpd script");
+    });
+}
+
 function testLink(test)
 {
-    return '<a class=test-link href="' + layoutTestsBasePath() + test + '">' + test + '</a><span class=flag onclick="unflag(this)"> \u2691</span>';
+    return '<a class=test-link onclick="checkServerIsRunning(event)" href="' + layoutTestURL(test) + '">' + test + '</a><span class=flag onclick="unflag(this)"> \u2691</span>';
 }
 
 function unflag(flag)

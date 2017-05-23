@@ -1,3 +1,62 @@
+2017-05-23  youenn fablet  <youenn@apple.com>
+
+        There should be an easy way to run HTTP/WPT served tests on a browser
+        https://bugs.webkit.org/show_bug.cgi?id=172068
+
+        Reviewed by Sam Weinig.
+
+        Adding a new script open-layout-test to open a layout-test in a
+        browser and making sure it is served as done through run-webkit-tests.
+        In case tests should be run using a server, detecting whether the
+        server are running. If not, calling run-webkit-httpd to run the
+        servers and open the URL in a browser.
+        Otherwise, open directly the URL.
+
+        Adding an option in run-webkit-httpd to open an URL after having
+        started the servers.
+
+        Adding the --no-http-servers option in run-webkit-tests to not start any HTTP server.
+        This allows running run-webkit-httpd once and not having to restart
+        servers everytime a test should be served.
+
+        Moving most of run-webkit-httpd logic in its own python file to reuse
+        it in open-layout-test script.
+
+        Adding routines to check whether HTTP and WPT servers are running.
+
+        * Scripts/open-layout-test: Added.
+        (parse_args):
+        (main):
+        * Scripts/run-webkit-httpd:
+        (main):
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_finder.py:
+        (LayoutTestFinder.find_tests):
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_runner.py:
+        (LayoutTestRunner.run_tests):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (parse_args):
+        * Scripts/webkitpy/layout_tests/servers/http_server_base.py:
+        (HttpServerBase._is_server_running_on_all_ports):
+        (HttpServerBase):
+        (HttpServerBase._is_running_on_port):
+        (HttpServerBase._check_that_all_ports_are_available):
+        (is_http_server_running):
+        * Scripts/webkitpy/layout_tests/servers/run_webkit_httpd.py: Copied from Tools/Scripts/run-webkit-httpd.
+        (parse_args):
+        (main):
+        (run_server):
+        * Scripts/webkitpy/layout_tests/servers/web_platform_test_server.py:
+        (is_wpt_server_running):
+        * Scripts/webkitpy/port/base.py:
+        (Port.to.is_http_server_running):
+        (Port.to):
+        (Port.to.is_wpt_server_running):
+        (Port.to.start_web_platform_test_server):
+        * Scripts/webkitpy/port/driver.py:
+        (DriverProxy.is_web_platform_test):
+        (DriverProxy):
+        (DriverProxy.is_webkit_specific_web_platform_test):
+
 2017-05-23  Emilio Cobos Álvarez  <ecobos@igalia.com>
 
         Add a RuntimeEnabledFeature for display: contents, defaulted to false.

@@ -45,7 +45,7 @@ class LayoutTestFinder(object):
 
     def find_tests(self, options, args):
         paths = self._strip_test_dir_prefixes(args)
-        if options.test_list:
+        if options and options.test_list:
             paths += self._strip_test_dir_prefixes(self._read_test_names_from_file(options.test_list, self._port.TEST_PATH_SEPARATOR))
         test_files = self._port.tests(paths)
         return (paths, test_files)

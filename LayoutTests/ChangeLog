@@ -1,3 +1,14 @@
+2017-05-23  youenn fablet  <youenn@apple.com>
+
+        There should be an easy way to run HTTP/WPT served tests on a browser
+        https://bugs.webkit.org/show_bug.cgi?id=172068
+
+        Reviewed by Sam Weinig.
+
+        * fast/harness/results.html: In case results.html is opened locallly,
+        open HTTP/WPT urls as served by their related servers.
+        Adding a check that the servers are running before opening the related test.
+
 2017-05-23  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Turn off all tests

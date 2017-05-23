@@ -661,6 +661,12 @@ class DriverProxy(object):
     def is_http_test(self, test_name):
         return self._driver.is_http_test(test_name)
 
+    def is_web_platform_test(self, test_name):
+        return self._driver.is_web_platform_test(test_name)
+
+    def is_webkit_specific_web_platform_test(self, test_name):
+        return self._driver.is_webkit_specific_web_platform_test(test_name)
+
     # FIXME: this should be a @classmethod (or implemented on Port instead).
     def test_to_uri(self, test_name):
         return self._driver.test_to_uri(test_name)

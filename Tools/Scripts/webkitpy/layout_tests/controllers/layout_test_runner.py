@@ -108,7 +108,8 @@ class LayoutTestRunner(object):
         all_shards = self._sharder.shard_tests(test_inputs, int(self._options.child_processes), self._options.fully_parallel)
 
         if (self._needs_http and self._options.http) or self._needs_web_platform_test_server:
-            self.start_servers()
+            if self._port.get_option("start_http_servers_if_needed"):
+                self.start_servers()
 
         self._printer.print_workers_and_shards(num_workers, len(all_shards))
 

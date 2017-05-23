@@ -199,6 +199,8 @@ def parse_args(args):
             default=True, help="Run HTTP and WebSocket tests (default)"),
         optparse.make_option("--no-http", action="store_false", dest="http",
             help="Don't run HTTP and WebSocket tests"),
+        optparse.make_option("--no-http-servers", action="store_false", dest="start_http_servers_if_needed",
+            default=True, help="Don't start HTTP servers"),
         optparse.make_option("--ignore-metrics", action="store_true", dest="ignore_metrics",
             default=False, help="Ignore rendering metrics related information from test "
             "output, only compare the structure of the rendertree."),

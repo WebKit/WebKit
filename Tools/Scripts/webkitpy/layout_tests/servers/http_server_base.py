@@ -200,18 +200,23 @@ class HttpServerBase(object):
             raise ServerError("Server exited")
 
         for mapping in self._mappings:
-            s = socket.socket()
-            port = mapping['port']
-            try:
-                s.connect(('localhost', port))
-                _log.debug("Server running on %d" % port)
-            except IOError, e:
-                if e.errno not in (errno.ECONNREFUSED, errno.ECONNRESET):
-                    raise
-                _log.debug("Server NOT running on %d: %s" % (port, e))
+            if not self._is_running_on_port(mapping['port']):
                 return False
-            finally:
-                s.close()
+        return True
+
+    @classmethod
+    def _is_running_on_port(cls, port):
+        s = socket.socket()
+        try:
+            s.connect(('localhost', port))
+            _log.debug("Server running on %d" % port)
+        except IOError, e:
+            if e.errno not in (errno.ECONNREFUSED, errno.ECONNRESET):
+                raise
+            _log.debug("Server NOT running on %d: %s" % (port, e))
+            return False
+        finally:
+            s.close()
         return True
 
     def _check_that_all_ports_are_available(self):
@@ -230,3 +235,7 @@ class HttpServerBase(object):
                     raise
             finally:
                 s.close()
+
+
+def is_http_server_running():
+    return HttpServerBase._is_running_on_port(HttpServerBase.HTTP_SERVER_PORT)
