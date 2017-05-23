@@ -14,8 +14,8 @@ CALL STACK:
 -- Running test teardown.
 
 -- Running test case: BreakOnXMLHttpRequestContainingText
-PASS: Breakpoint should not be disabled initially.
 PASS: Added breakpoint for URL: data
+PASS: Breakpoint should not be disabled initially.
 Sending XMLHttpRequest.
 PAUSED:
 PASS: Pause reason should be XHR.
@@ -26,8 +26,8 @@ CALL STACK:
 -- Running test teardown.
 
 -- Running test case: BreakOnXMLHttpRequestMatchingRegularExpression
-PASS: Breakpoint should not be disabled initially.
 PASS: Added breakpoint for URL: data[A-Z]*.(json|txt|png)
+PASS: Breakpoint should not be disabled initially.
 Sending XMLHttpRequest.
 PAUSED:
 PASS: Pause reason should be XHR.
@@ -38,27 +38,35 @@ CALL STACK:
 -- Running test teardown.
 
 -- Running test case: ShouldNotPauseOnDisabledBreakpoint
-PASS: Breakpoint should not be disabled initially.
-Disabling breakpoint.
 PASS: Added breakpoint for URL: data
+PASS: Breakpoint should not be disabled initially.
+Breakpoint disabled.
 Sending XMLHttpRequest.
 Wait for evaluate in page to return.
 PASS: Should not pause for disabled breakpoint.
 -- Running test teardown.
 
 -- Running test case: ShouldNotPauseOnXMLHttpRequestNotContainingURL
-PASS: Breakpoint should not be disabled initially.
 PASS: Added breakpoint for URL: nonexistant-url
+PASS: Breakpoint should not be disabled initially.
 Sending XMLHttpRequest.
 Wait for evaluate in page to return.
 PASS: Should not pause for breakpoint with different URL.
 -- Running test teardown.
 
 -- Running test case: RemoveBreakpoint
-PASS: Breakpoint should not be disabled initially.
 PASS: Added breakpoint for URL: data
-Remove breakpoint.
+PASS: Breakpoint should not be disabled initially.
+Breakpoint removed.
 Wait for evaluate in page to return.
 PASS: Should not pause for removed breakpoint.
 -- Running test teardown.
+
+-- Running test case: RemoveDisabledBreakpoint
+PASS: Added breakpoint for URL: data
+PASS: Breakpoint should not be disabled initially.
+Breakpoint disabled.
+Breakpoint removed.
+Wait for evaluate in page to return.
+PASS: Should not pause for removed disabled breakpoint.
 

@@ -221,10 +221,16 @@ WebInspector.DOMDebuggerManager = class DOMDebuggerManager extends WebInspector.
 
         this._xhrBreakpoints.remove(breakpoint, true);
 
-        this.dispatchEventToListeners(WebInspector.DOMDebuggerManager.Event.DOMBreakpointRemoved, {breakpoint});
-
-        this._detachXHRBreakpoint(breakpoint);
         this._saveXHRBreakpoints();
+        this.dispatchEventToListeners(WebInspector.DOMDebuggerManager.Event.XHRBreakpointRemoved, {breakpoint});
+
+        if (breakpoint.disabled)
+            return;
+
+        DOMDebuggerAgent.removeXHRBreakpoint(breakpoint.url, (error) => {
+            if (error)
+                console.error(error);
+        });
     }
 
     // Private
@@ -339,19 +345,6 @@ WebInspector.DOMDebuggerManager = class DOMDebuggerManager extends WebInspector.
             DOMDebuggerAgent.removeDOMBreakpoint(nodeIdentifier, breakpoint.type, breakpointUpdated);
         else
             DOMDebuggerAgent.setDOMBreakpoint(nodeIdentifier, breakpoint.type, breakpointUpdated);
-    }
-
-    _detachXHRBreakpoint(breakpoint)
-    {
-        if (breakpoint.disabled)
-            return;
-
-        DOMDebuggerAgent.removeXHRBreakpoint(breakpoint.url, (error) => {
-            if (error)
-                console.error(error);
-
-            this.dispatchEventToListeners(WebInspector.DOMDebuggerManager.Event.XHRBreakpointRemoved, {breakpoint});
-        });
     }
 
     _updateXHRBreakpoint(breakpoint, callback)

@@ -1,3 +1,22 @@
+2017-05-23  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Cannot delete a disabled XHR breakpoint
+        https://bugs.webkit.org/show_bug.cgi?id=171971
+        <rdar://problem/32129527>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Controllers/DOMDebuggerManager.js:
+        (WebInspector.DOMDebuggerManager.prototype.removeXHRBreakpoint):
+        Dispatch XHRBreakpointRemoved event before removing the breakpoint from
+        the backend. A disabled breakpoint will have already been removed, and
+        an enabled breakpoint that fails to get removed from the backend should
+        be removed from the frontend, to prevent it being resolved in the future.
+        Drive-by fix: remove spurious dispatch of DOMBreakpointRemoved event.
+
+        (WebInspector.DOMDebuggerManager.prototype._detachXHRBreakpoint): Deleted.
+        Merged with removeXHRBreakpoint to simplify implementation.
+
 2017-05-23  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: use initialLayout for NetworkSidebarPanel

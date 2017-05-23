@@ -41,7 +41,7 @@ function test()
         });
     }
 
-    function addBreakpoint(type, url, disabled) {
+    function addBreakpoint(type, url) {
         return new Promise((resolve, reject) => {
             let mainFrame = WebInspector.frameResourceManager.mainFrame;
             InspectorTest.assert(mainFrame, "Missing main frame.");
@@ -51,14 +51,8 @@ function test()
             let breakpoint = new WebInspector.XHRBreakpoint(type, url);
             WebInspector.domDebuggerManager.awaitEvent(WebInspector.DOMDebuggerManager.Event.XHRBreakpointAdded)
             .then(() => {
-                InspectorTest.expectFalse(breakpoint.disabled, "Breakpoint should not be disabled initially.");
-
-                if (disabled) {
-                    InspectorTest.log("Disabling breakpoint.");
-                    breakpoint.disabled = true;
-                }
-
                 InspectorTest.pass("Added breakpoint for URL: " + url);
+                InspectorTest.expectFalse(breakpoint.disabled, "Breakpoint should not be disabled initially.");
                 resolve(breakpoint);
             });
 
@@ -153,9 +147,11 @@ function test()
         description: "Check that debugger does not pause for disabled breakpoint.",
         teardown,
         test(resolve, reject) {
-            const disabled = true;
-            addBreakpoint(WebInspector.XHRBreakpoint.Type.Text, "data", disabled)
+            addBreakpoint(WebInspector.XHRBreakpoint.Type.Text, "data")
             .then((breakpoint) => {
+                breakpoint.disabled = true;
+                InspectorTest.log("Breakpoint disabled.");
+
                 InspectorTest.log("Sending XMLHttpRequest.");
                 return Promise.race([awaitEvaluateInPage("loadResourceXHR()"), rejectOnPause()]);
             })
@@ -192,15 +188,35 @@ function test()
         test(resolve, reject) {
             addBreakpoint(WebInspector.XHRBreakpoint.Type.Text, "data")
             .then((breakpoint) => {
-                let promise = WebInspector.domDebuggerManager.awaitEvent(WebInspector.DOMDebuggerManager.Event.XHRBreakpointRemoved);
-
-                InspectorTest.log("Remove breakpoint.");
                 WebInspector.domDebuggerManager.removeXHRBreakpoint(breakpoint);
-                return promise;
+                InspectorTest.log("Breakpoint removed.");
+
+                return Promise.race([awaitEvaluateInPage("loadResourceXHR()"), rejectOnPause()]);
             })
-            .then(() => Promise.race([awaitEvaluateInPage("loadResourceXHR()"), rejectOnPause()]))
             .then(() => {
                 InspectorTest.pass("Should not pause for removed breakpoint.");
+                resolve();
+            })
+            .catch(reject);
+        }
+    });
+
+    suite.addTestCase({
+        name: "RemoveDisabledBreakpoint",
+        description: "Check that a disabled breakpoint can be removed.",
+        test(resolve, reject) {
+            addBreakpoint(WebInspector.XHRBreakpoint.Type.Text, "data")
+            .then((breakpoint) => {
+                breakpoint.disabled = true;
+                InspectorTest.log("Breakpoint disabled.");
+
+                WebInspector.domDebuggerManager.removeXHRBreakpoint(breakpoint);
+                InspectorTest.log("Breakpoint removed.");
+
+                return Promise.race([awaitEvaluateInPage("loadResourceXHR()"), rejectOnPause()]);
+            })
+            .then(() => {
+                InspectorTest.pass("Should not pause for removed disabled breakpoint.");
                 resolve();
             })
             .catch(reject);

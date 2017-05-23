@@ -1,3 +1,14 @@
+2017-05-23  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Cannot delete a disabled XHR breakpoint
+        https://bugs.webkit.org/show_bug.cgi?id=171971
+        <rdar://problem/32129527>
+
+        Reviewed by Devin Rousso.
+
+        * inspector/dom-debugger/xhr-breakpoints-expected.txt:
+        * inspector/dom-debugger/xhr-breakpoints.html:
+
 2017-05-23  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skip crashing css-display-3/display-contents tests.
