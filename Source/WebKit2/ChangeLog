@@ -1,5 +1,23 @@
 2017-05-23  Tim Horton  <timothy_horton@apple.com>
 
+        Zoom in/out is slow in Safari with large PDFs
+        https://bugs.webkit.org/show_bug.cgi?id=172495
+        <rdar://problem/32338631>
+
+        Reviewed by Simon Fraser.
+
+        No tests; just a performance improvement.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::computePageBoxes):
+        Use PDFKit instead of CGPDF to compute the first page box, so we can take
+        advantage of PDFKit optimizations. PDFKit also handles box fallback,
+        so we don't need to do that ourselves. Stop fetching all the boxes, as
+        we only seem to use the first one.
+
+2017-05-23  Tim Horton  <timothy_horton@apple.com>
+
         REGRESSION: API test WebKit2.WKObject is failing
         https://bugs.webkit.org/show_bug.cgi?id=172497
         <rdar://problem/31694641>

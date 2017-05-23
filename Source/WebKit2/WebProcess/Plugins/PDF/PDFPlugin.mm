@@ -54,6 +54,7 @@
 #import <WebCore/AXObjectCache.h>
 #import <WebCore/ArchiveResource.h>
 #import <WebCore/Chrome.h>
+#import <WebCore/CoreGraphicsSPI.h>
 #import <WebCore/Cursor.h>
 #import <WebCore/DictionaryLookup.h>
 #import <WebCore/DocumentLoader.h>
@@ -684,18 +685,17 @@ void PDFPlugin::updateScrollbars()
 
     IntSize scrollbarSpace = scrollbarIntrusion();
 
-    int pageStep = m_pageBoxes.isEmpty() ? 0 : m_pageBoxes[0].height();
-
     if (m_horizontalScrollbar) {
-        m_horizontalScrollbar->setSteps(Scrollbar::pixelsPerLineStep(), pageStep);
+        m_horizontalScrollbar->setSteps(Scrollbar::pixelsPerLineStep(), m_firstPageHeight);
         m_horizontalScrollbar->setProportion(m_size.width() - scrollbarSpace.width(), m_pdfDocumentSize.width());
         IntRect scrollbarRect(pluginView()->x(), pluginView()->y() + m_size.height() - m_horizontalScrollbar->height(), m_size.width(), m_horizontalScrollbar->height());
         if (m_verticalScrollbar)
             scrollbarRect.contract(m_verticalScrollbar->width(), 0);
         m_horizontalScrollbar->setFrameRect(scrollbarRect);
     }
+
     if (m_verticalScrollbar) {
-        m_verticalScrollbar->setSteps(Scrollbar::pixelsPerLineStep(), pageStep);
+        m_verticalScrollbar->setSteps(Scrollbar::pixelsPerLineStep(), m_firstPageHeight);
         m_verticalScrollbar->setProportion(m_size.height() - scrollbarSpace.height(), m_pdfDocumentSize.height());
         IntRect scrollbarRect(IntRect(pluginView()->x() + m_size.width() - m_verticalScrollbar->width(), pluginView()->y(), m_verticalScrollbar->width(), m_size.height()));
         if (m_horizontalScrollbar)
@@ -1149,30 +1149,15 @@ void PDFPlugin::contentsScaleFactorChanged(float)
     updatePageAndDeviceScaleFactors();
 }
 
-void PDFPlugin::computePageBoxes()
-{
-    size_t pageCount = CGPDFDocumentGetNumberOfPages([m_pdfDocument documentRef]);
-    for (size_t i = 0; i < pageCount; ++i) {
-        CGPDFPageRef pdfPage = CGPDFDocumentGetPage([m_pdfDocument documentRef], i + 1);
-        ASSERT(pdfPage);
-
-        CGRect box = CGPDFPageGetBoxRect(pdfPage, kCGPDFCropBox);
-        if (CGRectIsEmpty(box))
-            box = CGPDFPageGetBoxRect(pdfPage, kCGPDFMediaBox);
-        m_pageBoxes.append(IntRect(box));
-    }
-}
-
 void PDFPlugin::calculateSizes()
 {
     if ([pdfDocument() isLocked]) {
+        m_firstPageHeight = 0;
         setPDFDocumentSize(IntSize(0, 0));
         return;
     }
 
-    // FIXME: This should come straight from PDFKit.
-    computePageBoxes();
-
+    m_firstPageHeight = [m_pdfDocument pageCount] ? static_cast<unsigned>(CGCeiling([[m_pdfDocument pageAtIndex:0] boundsForBox:kPDFDisplayBoxCropBox].size.height)) : 0;
     setPDFDocumentSize(IntSize([m_pdfLayerController contentSizeRespectingZoom]));
 }
 

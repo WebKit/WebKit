@@ -231,7 +231,6 @@ private:
     void destroyScrollbar(WebCore::ScrollbarOrientation);
     void pdfDocumentDidLoad();
     void addArchiveResource();
-    void computePageBoxes();
     void calculateSizes();
     void runScriptsInPDFDocument();
 
@@ -322,7 +321,7 @@ private:
     RetainPtr<CFMutableDataRef> m_data;
 
     RetainPtr<PDFDocument> m_pdfDocument;
-    Vector<WebCore::IntRect> m_pageBoxes;
+    unsigned m_firstPageHeight { 0 };
     WebCore::IntSize m_pdfDocumentSize; // All pages, including gaps.
 
     RefPtr<WebCore::Scrollbar> m_horizontalScrollbar;
