@@ -160,4 +160,42 @@ TEST_F(SharedBufferTest, copy)
     ASSERT_EQ(length * 5, clone->size());
 }
 
+static void checkBuffer(const char* buffer, size_t bufferLength, const char* expected)
+{
+    // expected is null terminated, buffer is not.
+    size_t length = strlen(expected);
+    EXPECT_EQ(length, bufferLength);
+    for (size_t i = 0; i < length; ++i)
+        EXPECT_EQ(buffer[i], expected[i]);
+}
+
+TEST_F(SharedBufferTest, getSomeData)
+{
+    Vector<char> s1 = {'a', 'b', 'c', 'd'};
+    Vector<char> s2 = {'e', 'f', 'g', 'h'};
+    Vector<char> s3 = {'i', 'j', 'k', 'l'};
+    
+    auto buffer = SharedBuffer::create();
+    buffer->append(WTFMove(s1));
+    buffer->append(WTFMove(s2));
+    buffer->append(WTFMove(s3));
+    
+    auto abcd = buffer->getSomeData(0);
+    auto gh = buffer->getSomeData(6);
+    auto h = buffer->getSomeData(7);
+    auto ijkl = buffer->getSomeData(8);
+    auto kl = buffer->getSomeData(10);
+    auto abcdefghijkl = buffer->data();
+    auto ghijkl = buffer->getSomeData(6);
+    auto l = buffer->getSomeData(11);
+    checkBuffer(abcd.data(), abcd.size(), "abcd");
+    checkBuffer(gh.data(), gh.size(), "gh");
+    checkBuffer(h.data(), h.size(), "h");
+    checkBuffer(ijkl.data(), ijkl.size(), "ijkl");
+    checkBuffer(kl.data(), kl.size(), "kl");
+    checkBuffer(abcdefghijkl, buffer->size(), "abcdefghijkl");
+    checkBuffer(ghijkl.data(), ghijkl.size(), "ghijkl");
+    checkBuffer(l.data(), l.size(), "l");
+}
+
 }

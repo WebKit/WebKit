@@ -44,16 +44,12 @@ CachedRawResource::CachedRawResource(CachedResourceRequest&& request, Type type,
     ASSERT(isMainOrMediaOrRawResource());
 }
 
-const char* CachedRawResource::calculateIncrementalDataChunk(SharedBuffer* data, unsigned& incrementalDataLength)
+std::optional<SharedBufferDataView> CachedRawResource::calculateIncrementalDataChunk(const SharedBuffer* data) const
 {
-    incrementalDataLength = 0;
-    if (!data)
-        return nullptr;
-
-    unsigned previousDataLength = encodedSize();
-    ASSERT(data->size() >= previousDataLength);
-    incrementalDataLength = data->size() - previousDataLength;
-    return data->data() + previousDataLength;
+    size_t previousDataLength = encodedSize();
+    if (!data || data->size() <= previousDataLength)
+        return std::nullopt;
+    return data->getSomeData(previousDataLength);
 }
 
 void CachedRawResource::addDataBuffer(SharedBuffer& data)
@@ -62,10 +58,10 @@ void CachedRawResource::addDataBuffer(SharedBuffer& data)
     ASSERT(dataBufferingPolicy() == BufferData);
     m_data = &data;
 
-    unsigned incrementalDataLength;
-    const char* incrementalData = calculateIncrementalDataChunk(&data, incrementalDataLength);
+    auto incrementalData = calculateIncrementalDataChunk(&data);
     setEncodedSize(data.size());
-    notifyClientsDataWasReceived(incrementalData, incrementalDataLength);
+    if (incrementalData)
+        notifyClientsDataWasReceived(incrementalData->data(), incrementalData->size());
     if (dataBufferingPolicy() == DoNotBufferData) {
         if (m_loader)
             m_loader->setDataBufferingPolicy(DoNotBufferData);
@@ -90,11 +86,10 @@ void CachedRawResource::finishLoading(SharedBuffer* data)
     if (dataBufferingPolicy == BufferData) {
         m_data = data;
 
-        unsigned incrementalDataLength;
-        const char* incrementalData = calculateIncrementalDataChunk(data, incrementalDataLength);
-        if (data)
+        if (auto incrementalData = calculateIncrementalDataChunk(data)) {
             setEncodedSize(data->size());
-        notifyClientsDataWasReceived(incrementalData, incrementalDataLength);
+            notifyClientsDataWasReceived(incrementalData->data(), incrementalData->size());
+        }
     }
 
 #if USE(QUICK_LOOK)

@@ -91,16 +91,10 @@ void TextTrackLoader::processNewCueData(CachedResource& resource)
     if (!m_cueParser)
         m_cueParser = std::make_unique<WebVTTParser>(static_cast<WebVTTParserClient*>(this), m_scriptExecutionContext);
 
-    auto bytesToSkip = m_parseOffset;
-    for (const auto& segment : *buffer) {
-        if (bytesToSkip > segment->size()) {
-            bytesToSkip -= segment->size();
-            continue;
-        }
-        auto bytesToUse = segment->size() - bytesToSkip;
-        m_cueParser->parseBytes(segment->data() + bytesToSkip, bytesToUse);
-        bytesToSkip = 0;
-        m_parseOffset += bytesToUse;
+    while (m_parseOffset < buffer->size()) {
+        auto data = buffer->getSomeData(m_parseOffset);
+        m_cueParser->parseBytes(data.data(), data.size());
+        m_parseOffset += data.size();
     }
 }
 

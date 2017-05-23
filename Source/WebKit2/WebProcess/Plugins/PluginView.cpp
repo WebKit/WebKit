@@ -1311,8 +1311,8 @@ void PluginView::redeliverManualStream()
 
     // Deliver the data.
     if (m_manualStreamData) {
-        for (const auto& segment : *m_manualStreamData)
-            manualLoadDidReceiveData(segment->data(), segment->size());
+        for (const auto& element : *m_manualStreamData)
+            manualLoadDidReceiveData(element.segment->data(), element.segment->size());
         m_manualStreamData = nullptr;
     }
 

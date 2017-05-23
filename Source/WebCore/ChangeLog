@@ -1,3 +1,54 @@
+2017-05-20  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION(r215686): O(n^2) algorithm in CachedRawResource::addDataBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=172406
+        <rdar://32109532>
+
+        Reviewed by Brady Eidson.
+
+        CachedRawResource::calculateIncrementalDataChunk was calling SharedBuffer::data each time the data
+        was appended to the SharedBuffer. This causes the data to be copied from two segments to one segment,
+        which causes the O(n^2) behavior I was worried about in r215686. These append/data/append/data calls
+        used to cause O(1) copies per byte which was amortized because of the exponential growth of the buffer.
+        After this change, there should be 0 copies per byte here, and instead a O(log(n)) binary search in the
+        call to std::upper_bound to find the next segment of data with a given starting location in the SharedBuffer.
+        We need to store the additional information of the offsets of the beginnings of the segments in a
+        SharedBuffer. This doesn't asymptotically increase our memory usage, but it does allow us to asymptotically
+        decrease the amount of time it takes to find data at a given offset in a SharedBuffer from O(n) to O(log(n)).
+
+        This allows us to complete http://speedtest.xfinity.com and new functionality in SharedBuffer is covered by API tests.
+
+        * loader/TextTrackLoader.cpp:
+        (WebCore::TextTrackLoader::processNewCueData):
+        * loader/cache/CachedRawResource.cpp:
+        (WebCore::CachedRawResource::calculateIncrementalDataChunk):
+        (WebCore::CachedRawResource::addDataBuffer):
+        (WebCore::CachedRawResource::finishLoading):
+        * loader/cache/CachedRawResource.h:
+        * platform/SharedBuffer.cpp:
+        (WebCore::SharedBuffer::SharedBuffer):
+        (WebCore::SharedBuffer::combineIntoOneSegment):
+        (WebCore::SharedBuffer::data):
+        (WebCore::SharedBuffer::getSomeData):
+        (WebCore::SharedBuffer::tryCreateArrayBuffer):
+        (WebCore::SharedBuffer::append):
+        (WebCore::SharedBuffer::clear):
+        (WebCore::SharedBuffer::copy):
+        (WebCore::SharedBuffer::internallyConsistent):
+        (WebCore::SharedBuffer::hintMemoryNotNeededSoon):
+        (WebCore::SharedBufferDataView::SharedBufferDataView):
+        (WebCore::SharedBufferDataView::size):
+        (WebCore::SharedBufferDataView::data):
+        * platform/SharedBuffer.h:
+        * platform/cf/SharedBufferCF.cpp:
+        (WebCore::SharedBuffer::createCFData):
+        (WebCore::SharedBuffer::hintMemoryNotNeededSoon):
+        (WebCore::SharedBuffer::append):
+        * platform/cocoa/SharedBufferCocoa.mm:
+        (WebCore::SharedBuffer::createNSData):
+        (WebCore::SharedBuffer::createCFData):
+        (WebCore::SharedBuffer::createNSDataArray):
+
 2017-05-22  Chris Dumez  <cdumez@apple.com>
 
         Resources in cached parsed stylesheets may bypass content blockers

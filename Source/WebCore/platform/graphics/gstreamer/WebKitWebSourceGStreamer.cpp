@@ -1206,8 +1206,8 @@ void ResourceHandleStreamingClient::didReceiveBuffer(ResourceHandle*, Ref<Shared
     if (!m_resource)
         return;
 
-    for (const auto& segment : buffer.get())
-        handleDataReceived(segment->data(), segment->size());
+    for (const auto& element : buffer.get())
+        handleDataReceived(element.segment->data(), element.segment->size());
 }
 
 void ResourceHandleStreamingClient::didFinishLoading(ResourceHandle*)

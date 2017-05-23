@@ -47,8 +47,8 @@ void SharedBufferDataReference::encode(Encoder& encoder) const
     encoder.reserve(bufferSize + sizeof(uint64_t));
     encoder << bufferSize;
 
-    for (const auto& segment : *m_buffer)
-        encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(segment->data()), segment->size(), 1);
+    for (const auto& element : *m_buffer)
+        encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(element.segment->data()), element.segment->size(), 1);
 }
 
 } // namespace IPC

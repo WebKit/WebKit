@@ -41,10 +41,10 @@ SharedBuffer::SharedBuffer(CFDataRef data)
 // Using Foundation allows for an even more efficient implementation of this function,
 // so only use this version for non-Foundation.
 #if !USE(FOUNDATION)
-RetainPtr<CFDataRef> SharedBuffer::createCFData()
+RetainPtr<CFDataRef> SharedBuffer::createCFData() const
 {
     if (m_segments.size() == 1) {
-        if (auto data = WTF::get_if<RetainPtr<CFDataRef>>(m_segments[0]->m_immutableData))
+        if (auto data = WTF::get_if<RetainPtr<CFDataRef>>(m_segments[0].segment->m_immutableData))
             return *data;
     }
     return adoptCF(CFDataCreate(nullptr, reinterpret_cast<const UInt8*>(data()), size()));
@@ -56,11 +56,11 @@ Ref<SharedBuffer> SharedBuffer::create(CFDataRef data)
     return adoptRef(*new SharedBuffer(data));
 }
 
-void SharedBuffer::hintMemoryNotNeededSoon()
+void SharedBuffer::hintMemoryNotNeededSoon() const
 {
-    for (const auto& segment : m_segments) {
-        if (segment->hasOneRef()) {
-            if (auto data = WTF::get_if<RetainPtr<CFDataRef>>(segment->m_immutableData))
+    for (const auto& entry : m_segments) {
+        if (entry.segment->hasOneRef()) {
+            if (auto data = WTF::get_if<RetainPtr<CFDataRef>>(entry.segment->m_immutableData))
                 OSAllocator::hintMemoryNotNeededSoon(const_cast<UInt8*>(CFDataGetBytePtr(data->get())), CFDataGetLength(data->get()));
         }
     }
@@ -68,10 +68,12 @@ void SharedBuffer::hintMemoryNotNeededSoon()
 
 void SharedBuffer::append(CFDataRef data)
 {
+    ASSERT(!m_hasBeenCombinedIntoOneSegment);
     if (data) {
+        m_segments.append({m_size, DataSegment::create(data)});
         m_size += CFDataGetLength(data);
-        m_segments.append(DataSegment::create(data));
     }
+    ASSERT(internallyConsistent());
 }
 
 }

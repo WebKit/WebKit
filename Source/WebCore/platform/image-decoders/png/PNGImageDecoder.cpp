@@ -158,15 +158,17 @@ public:
             return decoder->setFailed();
 
         auto bytesToSkip = m_readOffset;
-        for (const auto& segment : data) {
-            if (bytesToSkip > segment->size()) {
-                bytesToSkip -= segment->size();
+        
+        // FIXME: Use getSomeData which is O(log(n)) instead of skipping bytes which is O(n).
+        for (const auto& element : data) {
+            if (bytesToSkip > element.segment->size()) {
+                bytesToSkip -= element.segment->size();
                 continue;
             }
-            auto bytesToUse = segment->size() - bytesToSkip;
+            auto bytesToUse = element.segment->size() - bytesToSkip;
             m_readOffset += bytesToUse;
             m_currentBufferSize = m_readOffset;
-            png_process_data(m_png, m_info, reinterpret_cast<png_bytep>(const_cast<char*>(segment->data() + bytesToSkip)), bytesToUse);
+            png_process_data(m_png, m_info, reinterpret_cast<png_bytep>(const_cast<char*>(element.segment->data() + bytesToSkip)), bytesToUse);
             bytesToSkip = 0;
             // We explicitly specify the superclass encodedDataStatus() because we
             // merely want to check if we've managed to set the size, not

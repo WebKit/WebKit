@@ -49,7 +49,9 @@ OBJC_CLASS NSData;
 #endif
 
 namespace WebCore {
-    
+
+class SharedBufferDataView;
+
 class WEBCORE_EXPORT SharedBuffer : public RefCounted<SharedBuffer> {
 public:
     static Ref<SharedBuffer> create() { return adoptRef(*new SharedBuffer); }
@@ -60,12 +62,12 @@ public:
     static Ref<SharedBuffer> create(Vector<char>&&);
     
 #if USE(FOUNDATION)
-    RetainPtr<NSData> createNSData();
+    RetainPtr<NSData> createNSData() const;
     RetainPtr<NSArray> createNSDataArray() const;
     static Ref<SharedBuffer> create(NSData *);
 #endif
 #if USE(CF)
-    RetainPtr<CFDataRef> createCFData();
+    RetainPtr<CFDataRef> createCFData() const;
     static Ref<SharedBuffer> create(CFDataRef);
     void append(CFDataRef);
 #endif
@@ -138,11 +140,18 @@ public:
         friend class SharedBuffer;
     };
 
-    using DataSegmentVector = Vector<Ref<DataSegment>, 1>;
+    struct DataSegmentVectorEntry {
+        size_t beginPosition;
+        Ref<DataSegment> segment;
+    };
+    using DataSegmentVector = Vector<DataSegmentVectorEntry, 1>;
     DataSegmentVector::const_iterator begin() const { return m_segments.begin(); }
     DataSegmentVector::const_iterator end() const { return m_segments.end(); }
+    
+    // begin and end take O(1) time, this takes O(log(N)) time.
+    SharedBufferDataView getSomeData(size_t position) const;
 
-    void hintMemoryNotNeededSoon();
+    void hintMemoryNotNeededSoon() const;
 
 private:
     explicit SharedBuffer() = default;
@@ -163,6 +172,21 @@ private:
 
     size_t m_size { 0 };
     mutable DataSegmentVector m_segments;
+
+#if !ASSERT_DISABLED
+    mutable bool m_hasBeenCombinedIntoOneSegment { false };
+    bool internallyConsistent() const;
+#endif
+};
+
+class WEBCORE_EXPORT SharedBufferDataView {
+public:
+    SharedBufferDataView(Ref<SharedBuffer::DataSegment>&&, size_t);
+    size_t size() const;
+    const char* data() const;
+private:
+    size_t m_positionWithinSegment;
+    Ref<SharedBuffer::DataSegment> m_segment;
 };
 
 RefPtr<SharedBuffer> utf8Buffer(const String&);

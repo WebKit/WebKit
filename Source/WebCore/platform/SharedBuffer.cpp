@@ -50,7 +50,7 @@ SharedBuffer::SharedBuffer(const unsigned char* data, size_t size)
 SharedBuffer::SharedBuffer(MappedFileData&& fileData)
     : m_size(fileData.size())
 {
-    m_segments.append(DataSegment::create(WTFMove(fileData)));
+    m_segments.append({0, DataSegment::create(WTFMove(fileData))});
 }
 
 SharedBuffer::SharedBuffer(Vector<char>&& data)
@@ -76,17 +76,23 @@ Ref<SharedBuffer> SharedBuffer::create(Vector<char>&& vector)
 
 void SharedBuffer::combineIntoOneSegment() const
 {
+#if !ASSERT_DISABLED
+    // FIXME: We ought to be able to set this to true and have no assertions fire.
+    // Remove all instances of appending after calling this, because they are all O(n^2) algorithms since r215686.
+    // m_hasBeenCombinedIntoOneSegment = true;
+#endif
     if (m_segments.size() <= 1)
         return;
 
     Vector<char> combinedData;
     combinedData.reserveInitialCapacity(m_size);
     for (const auto& segment : m_segments)
-        combinedData.append(segment->data(), segment->size());
+        combinedData.append(segment.segment->data(), segment.segment->size());
     ASSERT(combinedData.size() == m_size);
     m_segments.clear();
-    m_segments.append(DataSegment::create(WTFMove(combinedData)));
+    m_segments.append({0, DataSegment::create(WTFMove(combinedData))});
     ASSERT(m_segments.size() == 1);
+    ASSERT(internallyConsistent());
 }
 
 const char* SharedBuffer::data() const
@@ -94,7 +100,19 @@ const char* SharedBuffer::data() const
     if (!m_segments.size())
         return nullptr;
     combineIntoOneSegment();
-    return m_segments[0]->data();
+    ASSERT(internallyConsistent());
+    return m_segments[0].segment->data();
+}
+
+SharedBufferDataView SharedBuffer::getSomeData(size_t position) const
+{
+    RELEASE_ASSERT(position < m_size);
+    auto comparator = [](const size_t& position, const DataSegmentVectorEntry& entry) {
+        return position < entry.beginPosition;
+    };
+    const DataSegmentVectorEntry* element = std::upper_bound(m_segments.begin(), m_segments.end(), position, comparator);
+    element--; // std::upper_bound gives a pointer to the element that is greater than position. We want the element just before that.
+    return { element->segment.copyRef(), position - element->beginPosition };
 }
 
 RefPtr<ArrayBuffer> SharedBuffer::tryCreateArrayBuffer() const
@@ -107,40 +125,50 @@ RefPtr<ArrayBuffer> SharedBuffer::tryCreateArrayBuffer() const
 
     size_t position = 0;
     for (const auto& segment : m_segments) {
-        memcpy(static_cast<char*>(arrayBuffer->data()) + position, segment->data(), segment->size());
-        position += segment->size();
+        memcpy(static_cast<char*>(arrayBuffer->data()) + position, segment.segment->data(), segment.segment->size());
+        position += segment.segment->size();
     }
 
     ASSERT(position == m_size);
+    ASSERT(internallyConsistent());
     return arrayBuffer;
 }
 
 void SharedBuffer::append(const SharedBuffer& data)
 {
-    m_size += data.m_size;
+    ASSERT(!m_hasBeenCombinedIntoOneSegment);
     m_segments.reserveCapacity(m_segments.size() + data.m_segments.size());
-    for (const auto& segment : data.m_segments)
-        m_segments.uncheckedAppend(segment.copyRef());
+    for (const auto& element : data.m_segments) {
+        m_segments.uncheckedAppend({m_size, element.segment.copyRef()});
+        m_size += element.segment->size();
+    }
+    ASSERT(internallyConsistent());
 }
 
 void SharedBuffer::append(const char* data, size_t length)
 {
-    m_size += length;
+    ASSERT(!m_hasBeenCombinedIntoOneSegment);
     Vector<char> vector;
     vector.append(data, length);
-    m_segments.append(DataSegment::create(WTFMove(vector)));
+    m_segments.append({m_size, DataSegment::create(WTFMove(vector))});
+    m_size += length;
+    ASSERT(internallyConsistent());
 }
 
 void SharedBuffer::append(Vector<char>&& data)
 {
-    m_size += data.size();
-    m_segments.append(DataSegment::create(WTFMove(data)));
+    ASSERT(!m_hasBeenCombinedIntoOneSegment);
+    auto dataSize = data.size();
+    m_segments.append({m_size, DataSegment::create(WTFMove(data))});
+    m_size += dataSize;
+    ASSERT(internallyConsistent());
 }
 
 void SharedBuffer::clear()
 {
     m_size = 0;
     m_segments.clear();
+    ASSERT(internallyConsistent());
 }
 
 Ref<SharedBuffer> SharedBuffer::copy() const
@@ -148,10 +176,25 @@ Ref<SharedBuffer> SharedBuffer::copy() const
     Ref<SharedBuffer> clone = adoptRef(*new SharedBuffer);
     clone->m_size = m_size;
     clone->m_segments.reserveInitialCapacity(m_segments.size());
-    for (const auto& segment : m_segments)
-        clone->m_segments.uncheckedAppend(segment.copyRef());
+    for (const auto& element : m_segments)
+        clone->m_segments.uncheckedAppend({element.beginPosition, element.segment.copyRef()});
+    ASSERT(clone->internallyConsistent());
+    ASSERT(internallyConsistent());
     return clone;
 }
+
+#if !ASSERT_DISABLED
+bool SharedBuffer::internallyConsistent() const
+{
+    size_t position = 0;
+    for (const auto& element : m_segments) {
+        if (element.beginPosition != position)
+            return false;
+        position += element.segment->size();
+    }
+    return position == m_size;
+}
+#endif
 
 const char* SharedBuffer::DataSegment::data() const
 {
@@ -169,7 +212,7 @@ const char* SharedBuffer::DataSegment::data() const
 }
 
 #if !USE(CF)
-void SharedBuffer::hintMemoryNotNeededSoon()
+void SharedBuffer::hintMemoryNotNeededSoon() const
 {
 }
 #endif
@@ -187,6 +230,23 @@ size_t SharedBuffer::DataSegment::size() const
         [](const MappedFileData& data) { return data.size(); }
     );
     return WTF::visit(visitor, m_immutableData);
+}
+
+SharedBufferDataView::SharedBufferDataView(Ref<SharedBuffer::DataSegment>&& segment, size_t positionWithinSegment)
+    : m_positionWithinSegment(positionWithinSegment)
+    , m_segment(WTFMove(segment))
+{
+    ASSERT(positionWithinSegment < m_segment->size());
+}
+
+size_t SharedBufferDataView::size() const
+{
+    return m_segment->size() - m_positionWithinSegment;
+}
+
+const char* SharedBufferDataView::data() const
+{
+    return m_segment->data() + m_positionWithinSegment;
 }
 
 RefPtr<SharedBuffer> utf8Buffer(const String& string)

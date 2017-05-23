@@ -28,6 +28,7 @@ namespace WebCore {
 
 class CachedResourceClient;
 class ResourceTiming;
+class SharedBufferDataView;
 class SubresourceLoader;
 
 class CachedRawResource final : public CachedResource {
@@ -69,7 +70,7 @@ private:
     void switchClientsToRevalidatedResource() override;
     bool mayTryReplaceEncodedData() const override { return m_allowEncodedDataReplacement; }
 
-    const char* calculateIncrementalDataChunk(SharedBuffer*, unsigned& incrementalDataLength);
+    std::optional<SharedBufferDataView> calculateIncrementalDataChunk(const SharedBuffer*) const;
     void notifyClientsDataWasReceived(const char* data, unsigned length);
 
 #if USE(SOUP)

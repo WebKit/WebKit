@@ -30,7 +30,7 @@ SharedBuffer::SharedBuffer(SoupBuffer* soupBuffer)
 {
     ASSERT(soupBuffer);
     m_size = soupBuffer->length;
-    m_segments.append(DataSegment::create(GUniquePtr<SoupBuffer>(soupBuffer)));
+    m_segments.append({0, DataSegment::create(GUniquePtr<SoupBuffer>(soupBuffer))});
 }
 
 Ref<SharedBuffer> SharedBuffer::wrapSoupBuffer(SoupBuffer* soupBuffer)

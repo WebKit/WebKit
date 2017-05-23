@@ -1,3 +1,16 @@
+2017-05-20  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION(r215686): O(n^2) algorithm in CachedRawResource::addDataBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=172406
+        <rdar://32109532>
+
+        Reviewed by Brady Eidson.
+
+        * Platform/IPC/DataReference.cpp:
+        (IPC::SharedBufferDataReference::encode):
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::redeliverManualStream):
+
 2017-05-22  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         Need a way to allow WKWebView to load request with ShouldOpenExternalURLsPolicy::ShouldAllow.

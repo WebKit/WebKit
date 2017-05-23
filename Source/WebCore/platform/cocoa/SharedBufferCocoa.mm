@@ -88,18 +88,18 @@ Ref<SharedBuffer> SharedBuffer::create(NSData *nsData)
     return adoptRef(*new SharedBuffer((CFDataRef)nsData));
 }
 
-RetainPtr<NSData> SharedBuffer::createNSData()
+RetainPtr<NSData> SharedBuffer::createNSData() const
 {
     return adoptNS((NSData *)createCFData().leakRef());
 }
 
-RetainPtr<CFDataRef> SharedBuffer::createCFData()
+RetainPtr<CFDataRef> SharedBuffer::createCFData() const
 {
     combineIntoOneSegment();
     if (!m_segments.size())
         return adoptCF(CFDataCreate(nullptr, nullptr, 0));
     ASSERT(m_segments.size() == 1);
-    return adoptCF((CFDataRef)adoptNS([[WebCoreSharedBufferData alloc] initWithSharedBufferDataSegment:m_segments[0]]).leakRef());
+    return adoptCF((CFDataRef)adoptNS([[WebCoreSharedBufferData alloc] initWithSharedBufferDataSegment:m_segments[0].segment]).leakRef());
 }
 
 RefPtr<SharedBuffer> SharedBuffer::createFromReadingFile(const String& filePath)
@@ -114,7 +114,7 @@ RetainPtr<NSArray> SharedBuffer::createNSDataArray() const
 {
     auto dataArray = adoptNS([[NSMutableArray alloc] initWithCapacity:m_segments.size()]);
     for (const auto& segment : m_segments)
-        [dataArray addObject:adoptNS([[WebCoreSharedBufferData alloc] initWithSharedBufferDataSegment:segment]).get()];
+        [dataArray addObject:adoptNS([[WebCoreSharedBufferData alloc] initWithSharedBufferDataSegment:segment.segment]).get()];
     return WTFMove(dataArray);
 }
 
