@@ -1,3 +1,33 @@
+2017-05-23  Saam Barati  <sbarati@apple.com>
+
+        CFGSimplificationPhase should not merge a block with itself
+        https://bugs.webkit.org/show_bug.cgi?id=172508
+        <rdar://problem/28424006>
+
+        Reviewed by Keith Miller.
+
+        CFGSimplificationPhase can run into or create IR that ends up with a
+        block that has a Jump to itself, and no other predecessors. It should
+        gracefully handle such IR. Before this patch, it would not. The only criteria
+        for merging 'block' with 'targetBlock' used to be that 'targetBlock.predecessors.size() == 1'.
+        The code is written in such a way that if we merge a block with itself, we
+        will infinite loop until we run out of memory.
+        
+        Merging a block with itself does not make sense for a few reasons. First,
+        we're joining the contents of two blocks. What is the definition of joining
+        a block with itself? I suppose we could simply unroll this self loop
+        one level, but that would not be wise because this self loop is by definition
+        unreachable unless it's the root block in the graph (which I think is
+        invalid IR since we'd never generate bytecode that would do this).
+        
+        This patch employs an easy fix: we can't merge a block with itself.
+
+        * dfg/DFGCFGSimplificationPhase.cpp:
+        (JSC::DFG::CFGSimplificationPhase::canMergeBlocks):
+        (JSC::DFG::CFGSimplificationPhase::run):
+        (JSC::DFG::CFGSimplificationPhase::convertToJump):
+        (JSC::DFG::CFGSimplificationPhase::mergeBlocks):
+
 2017-05-22  Brian Burg  <bburg@apple.com>
 
         Web Inspector: webkit reload policy should match default behavior
