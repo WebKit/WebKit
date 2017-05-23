@@ -1,3 +1,19 @@
+2017-05-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Support calc() in font-variation-settings and font-feature-settings
+        https://bugs.webkit.org/show_bug.cgi?id=171032
+
+        Reviewed by David Hyatt.
+
+        Tests: css3/font-feature-settings-calc.html
+               fast/text/variations/calc.html
+
+        We can use the convenience functions in CSSPropertyParserHelpers.cpp.
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeFontFeatureTag):
+        (WebCore::consumeFontVariationTag):
+
 2017-05-22  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, attempt to fix test runner by removing Unicode character from stderr output

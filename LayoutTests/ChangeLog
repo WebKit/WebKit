@@ -1,3 +1,15 @@
+2017-05-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Support calc() in font-variation-settings and font-feature-settings
+        https://bugs.webkit.org/show_bug.cgi?id=171032
+
+        Reviewed by David Hyatt.
+
+        * css3/font-feature-settings-calc-expected.html: Added.
+        * css3/font-feature-settings-calc.html: Added.
+        * fast/text/variations/calc-expected.html: Added.
+        * fast/text/variations/calc.html: Added.
+
 2017-05-22  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark to imported/w3c/web-platform-tests/webrtc tests as failing on ios-wk2.
