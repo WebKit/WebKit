@@ -1,3 +1,30 @@
+2017-05-22  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r216992. rdar://problem/32258716
+
+    2017-05-22  Jiewen Tan  <jiewen_tan@apple.com>
+
+            Replace CryptoOperationData with BufferSource for WebKitSubtleCrypto
+            https://bugs.webkit.org/show_bug.cgi?id=172146
+            <rdar://problem/32122256>
+
+            Reviewed by Brent Fulgham.
+
+            In this patch, we replaces CryptoOperationData with BufferSource for WebKitSubtleCrypto in
+            the custom binding codes.
+
+            Test: crypto/webkitSubtle/import-export-raw-key-leak.html
+
+            * bindings/js/JSWebKitSubtleCryptoCustom.cpp:
+            (WebCore::JSWebKitSubtleCrypto::encrypt):
+            (WebCore::JSWebKitSubtleCrypto::decrypt):
+            (WebCore::JSWebKitSubtleCrypto::sign):
+            (WebCore::JSWebKitSubtleCrypto::verify):
+            (WebCore::JSWebKitSubtleCrypto::digest):
+            (WebCore::JSWebKitSubtleCrypto::importKey):
+            (WebCore::JSWebKitSubtleCrypto::unwrapKey):
+            * crypto/WebKitSubtleCrypto.idl:
+
 2017-05-18  Dean Jackson  <dino@apple.com>
 
         Restrict SVG filters to accessible security origins

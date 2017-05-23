@@ -1,0 +1,7 @@
+Sending Worker Message
+Worker Terminated
+PASS exportedKey.byteLength is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

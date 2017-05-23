@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../resources/js-test-pre.js"></script>
+    <script type="text/javascript">
+    jsTestIsAsync = true;
+
+    var keySize = 0x100;
+    var blob = new Blob([""], {type : 'application/javascript'});
+    var worker = new Worker(URL.createObjectURL(blob));
+
+    function run()
+    {
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        function arrayBufferNeuter(ab)
+        {
+            /* Neuter the ArrayBuffer */
+            debug("Sending Worker Message");
+            worker.postMessage(ab, [ab]);
+            worker.terminate();
+            debug("Worker Terminated");
+        }
+
+        var a = new ArrayBuffer(keySize);
+        var b = { };
+        b.__defineGetter__('name', function(){
+            arrayBufferNeuter(a);
+            return "AES-CBC";
+        });
+        var result = window.crypto.webkitSubtle.importKey("raw", a, b, true);
+        result.then(function(key) {
+            window.crypto.webkitSubtle.exportKey("raw", key).then(function(result) {
+                exportedKey = result;
+                shouldBeZero("exportedKey.byteLength");
+                finishJSTest();
+            });
+        });
+    }
+    </script>
+    <script src="../../resources/js-test-post.js"></script>
+</head>
+<body onload="run()"></body>
+</html>
