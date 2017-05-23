@@ -1,3 +1,10 @@
+2017-05-23  Emilio Cobos Álvarez  <ecobos@igalia.com>
+
+        Import the css-display-3 css tests.
+        https://bugs.webkit.org/show_bug.cgi?id=172212
+
+        Reviewed by Chris Dumez.
+
 2017-05-23  youenn fablet  <youenn@apple.com>
 
         There should be an easy way to run HTTP/WPT served tests on a browser

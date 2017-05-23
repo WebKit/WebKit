@@ -57,6 +57,7 @@
     "web-platform-tests/css-timing": "skip", 
     "web-platform-tests/css-typed-om": "skip", 
     "web-platform-tests/css-values": "skip", 
+    "web-platform-tests/css/css-display-3": "import", 
     "web-platform-tests/css/css-grid-1": "import", 
     "web-platform-tests/css/css-scoping1": "import", 
     "web-platform-tests/css/geometry-1/": "import", 

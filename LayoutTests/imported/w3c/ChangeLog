@@ -1,3 +1,143 @@
+2017-05-23 Emilio Cobos Álvarez  <ecobos@igalia.com>
+
+        Import the css-display-3 css tests.
+        https://bugs.webkit.org/show_bug.cgi?id=172212
+
+        Reviewed by Chris Dumez.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/css/css-display-3/OWNERS: Added.
+        * web-platform-tests/css/css-display-3/display-contents-alignment-001-expected.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-alignment-001.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-alignment-002-expected.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-alignment-002.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-before-after-001-expected.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-before-after-001.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-before-after-002-expected.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-before-after-002.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-block-001-expected.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-block-001.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-block-002-expected.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-block-002.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-computed-style-expected.txt: Added.
+        * web-platform-tests/css/css-display-3/display-contents-computed-style.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-dynamic-before-after-001-expected.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-dynamic-before-after-001.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-dynamic-before-after-first-letter-001-expected.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-dynamic-before-after-first-letter-001.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-dynamic-flex-001-inline-expected.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-dynamic-flex-001-inline.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-dynamic-flex-001-none-expected.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-dynamic-flex-001-none.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-dynamic-flex-002-inline-expected.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-dynamic-flex-002-inline.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-dynamic-flex-002-none-expected.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-dynamic-flex-002-none.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-dynamic-flex-003-inline-expected.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-dynamic-flex-003-inline.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-dynamic-flex-003-none-expected.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-dynamic-flex-003-none.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-dynamic-inline-flex-001-inline-expected.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-dynamic-inline-flex-001-inline.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-dynamic-inline-flex-001-none-expected.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-dynamic-inline-flex-001-none.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-dynamic-list-001-inline-expected.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-dynamic-list-001-inline.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-dynamic-list-001-none-expected.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-dynamic-list-001-none.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-dynamic-multicol-001-inline-expected.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-dynamic-multicol-001-inline.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-dynamic-multicol-001-none-expected.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-dynamic-multicol-001-none.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-dynamic-table-001-inline-expected.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-dynamic-table-001-inline.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-dynamic-table-001-none-expected.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-dynamic-table-001-none.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-dynamic-table-002-inline-expected.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-dynamic-table-002-inline.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-dynamic-table-002-none-expected.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-dynamic-table-002-none.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-first-letter-001-expected.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-first-letter-001.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-first-line-001-expected.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-first-line-001.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-flex-001-expected.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-flex-001.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-flex-002-expected.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-flex-002.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-flex-003-expected.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-flex-003.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-float-001-expected.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-float-001.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-inline-001-expected.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-inline-001.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-inline-flex-001-expected.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-inline-flex-001.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-list-001-expected.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-list-001.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-multicol-001-expected.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-multicol-001.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-oof-001-expected.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-oof-001.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-oof-002-expected.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-oof-002.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-replaced-001-expected.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-replaced-001.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-state-change-001-expected.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-state-change-001.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-table-001-expected.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-table-001.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-table-002-expected.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-table-002.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-td-001-expected.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-td-001.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-text-only-001-expected.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-text-only-001.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-tr-001-expected.html: Added.
+        * web-platform-tests/css/css-display-3/display-contents-tr-001.html: Added.
+        * web-platform-tests/css/css-display-3/display-flow-root-001-expected.html: Added.
+        * web-platform-tests/css/css-display-3/display-flow-root-001.html: Added.
+        * web-platform-tests/css/css-display-3/support/acid.css: Added.
+        (html, body):
+        (body):
+        (.table):
+        (.itable):
+        (.caption):
+        (.cell):
+        (.row):
+        (.rowg):
+        (.head):
+        (.foot):
+        (.col):
+        (.colg):
+        (.flex):
+        (.iflex):
+        (.li):
+        (.ib):
+        (.inline):
+        (.columns):
+        (.contents):
+        (.c1):
+        (.c2):
+        (.c3):
+        (.c4):
+        (.c5):
+        (.c6):
+        (.c7):
+        (.c8):
+        (.c9):
+        (.c10):
+        (.b):
+        (.ref .c2):
+        (.ref .b):
+        (.ref div.contents):
+        (.ref span.contents):
+        * web-platform-tests/css/css-display-3/support/swatch-orange.png: Added.
+        * web-platform-tests/css/css-display-3/support/util.js: Added.
+        (eachDisplayContentsElementIn):
+        * web-platform-tests/css/css-display-3/support/w3c-import.log: Added.
+        * web-platform-tests/css/css-display-3/w3c-import.log: Added.
+
 2017-05-23  Romain Bellessort  <romain.bellessort@crf.canon.fr>
 
         [GTK] Test gardening after r217225
