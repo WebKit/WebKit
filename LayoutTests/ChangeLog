@@ -1,3 +1,12 @@
+2017-05-22  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Update expectations for layout tests.
+        https://bugs.webkit.org/show_bug.cgi?id=172437
+
+        Unreviewed test gardening, update test expectations for failing tests.
+
+        * platform/win/TestExpectations:
+
 2017-05-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Support calc() in font-variation-settings and font-feature-settings
