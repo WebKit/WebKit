@@ -179,6 +179,9 @@ Trac.prototype = {
         if (title.firstChild && title.firstChild.nodeType == Node.TEXT_NODE && title.firstChild.textContent.length > 0 && title.firstChild.textContent[0] == "\n")
             title.firstChild.textContent = title.firstChild.textContent.substring(1);
 
+        // We have an overidden timeline.rss that adds git branches to the Trac timeline RSS output (rdar://problem/23853623).
+        var gitBranches = doc.evaluate("./branches", commitElement, null, XPathResult.STRING_TYPE).stringValue;
+
         var result = {
             revisionNumber: revisionNumber,
             link: link,
@@ -190,7 +193,7 @@ Trac.prototype = {
             branches: []
         };
 
-        if (result.containsBranchLocation) {
+        if (result.containsBranchLocation && !gitBranches) {
             console.assert(location[location.length - 1] !== "/");
             location = location += "/";
             if (location.startsWith("tags/"))
@@ -210,7 +213,6 @@ Trac.prototype = {
             }
         }
 
-        var gitBranches = doc.evaluate("./branches", commitElement, null, XPathResult.STRING_TYPE).stringValue;
         if (gitBranches) {
             result.containsBranchLocation = true;
             result.branches = result.branches.concat(gitBranches.split(", "));
