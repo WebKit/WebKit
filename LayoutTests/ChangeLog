@@ -1,3 +1,12 @@
+2017-05-23  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Skip crashing css-display-3/display-contents tests.
+        https://bugs.webkit.org/show_bug.cgi?id=172503
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+
 2017-05-23  Matt Lewis  <jlewis3@apple.com>
 
         Marked imported/w3c/web-platform-tests/css/css-display-3/display-contents-dynamic-flex-002-inline.html as failing.
