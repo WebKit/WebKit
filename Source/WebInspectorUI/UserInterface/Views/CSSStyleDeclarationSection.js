@@ -303,6 +303,11 @@ WebInspector.CSSStyleDeclarationSection = class CSSStyleDeclarationSection exten
             this._selectorInput.value = this._selectorElement.textContent;
     }
 
+    refreshEditor()
+    {
+        this._propertiesTextEditor.refresh();
+    }
+
     highlightProperty(property)
     {
         if (this._propertiesTextEditor.highlightProperty(property)) {

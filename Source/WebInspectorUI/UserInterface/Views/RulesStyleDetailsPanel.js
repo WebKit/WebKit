@@ -320,6 +320,8 @@ WebInspector.RulesStyleDetailsPanel = class RulesStyleDetailsPanel extends WebIn
             if (section !== focusedSection)
                 section.clearSelection();
         }
+
+        this._sectionWithActiveEditor = focusedSection;
     }
 
     cssStyleDeclarationSectionEditorNextRule(currentSection)
@@ -433,6 +435,11 @@ WebInspector.RulesStyleDetailsPanel = class RulesStyleDetailsPanel extends WebIn
             section.style.__rulesSection = section;
             section.updateLayout();
         }
+
+        // If there was an active section and the panel was hidden, refresh the section in case
+        // changes were made to the underlying resource.
+        if (this._sectionWithActiveEditor)
+            this._sectionWithActiveEditor.refreshEditor();
     }
 
     hidden()
