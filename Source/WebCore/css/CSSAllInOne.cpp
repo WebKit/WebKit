@@ -39,7 +39,6 @@
 #include "CSSDefaultStyleSheets.cpp"
 #include "CSSFilterImageValue.cpp"
 #include "CSSFontFace.cpp"
-#include "CSSFontFaceLoadEvent.cpp"
 #include "CSSFontFaceRule.cpp"
 #include "CSSFontFaceSet.cpp"
 #include "CSSFontFaceSource.cpp"

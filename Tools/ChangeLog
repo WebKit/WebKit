@@ -1,3 +1,12 @@
+2017-05-23  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Remove dead ENABLE(FONT_LOAD_EVENTS) code
+        https://bugs.webkit.org/show_bug.cgi?id=172517
+
+        Rubber-stamped by Simon Fraser.
+
+        * TestWebKitAPI/Configurations/FeatureDefines.xcconfig:
+
 2017-05-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Multiple links should be inserted separately when performing data interaction

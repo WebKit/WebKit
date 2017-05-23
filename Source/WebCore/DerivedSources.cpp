@@ -113,9 +113,6 @@
 #include "JSCompositionEvent.cpp"
 #include "JSCoordinates.cpp"
 #include "JSCrypto.cpp"
-#if ENABLE(FONT_LOAD_EVENTS)
-#include "JSCSSFontFaceLoadEvent.cpp"
-#endif
 #include "JSCSSFontFaceRule.cpp"
 #include "JSCSSImportRule.cpp"
 #include "JSCSSKeyframeRule.cpp"

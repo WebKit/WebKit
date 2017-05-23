@@ -80,11 +80,6 @@ public:
     bool indexedDBWorkersEnabled() const { return m_isIndexedDBWorkersEnabled; }
 #endif
 
-#if ENABLE(FONT_LOAD_EVENTS)
-    void setFontLoadEventsEnabled(bool isEnabled) { m_isFontLoadEventsEnabled = isEnabled; }
-    bool fontLoadEventsEnabled() const { return m_isFontLoadEventsEnabled; }
-#endif
-
 #if ENABLE(MEDIA_STREAM)
     bool mediaDevicesEnabled() const { return m_isMediaDevicesEnabled; }
     void setMediaDevicesEnabled(bool isEnabled) { m_isMediaDevicesEnabled = isEnabled; }
@@ -261,10 +256,6 @@ private:
 
 #if ENABLE(INPUT_TYPE_WEEK)
     bool m_isInputTypeWeekEnabled { true };
-#endif
-
-#if ENABLE(FONT_LOAD_EVENTS)
-    bool m_isFontLoadEventsEnabled { true };
 #endif
 
 #if ENABLE(GAMEPAD)

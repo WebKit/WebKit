@@ -1,3 +1,28 @@
+2017-05-23  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Remove dead ENABLE(FONT_LOAD_EVENTS) code
+        https://bugs.webkit.org/show_bug.cgi?id=172517
+
+        Rubber-stamped by Simon Fraser.
+
+        No new tests because there is no behavior change.
+
+        * CMakeLists.txt:
+        * Configurations/FeatureDefines.xcconfig:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSAllInOne.cpp:
+        * css/CSSFontFaceLoadEvent.cpp: Removed.
+        * css/CSSFontFaceLoadEvent.h: Removed.
+        * css/CSSFontFaceLoadEvent.idl: Removed.
+        * dom/EventNames.in:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::performPostLayoutTasks):
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setFontLoadEventsEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::fontLoadEventsEnabled): Deleted.
+
 2017-05-23  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, roll out r215229
