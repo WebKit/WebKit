@@ -1,3 +1,14 @@
+2017-05-22  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: New Tab contents not centered vertically
+        https://bugs.webkit.org/show_bug.cgi?id=172486
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/NewTabContentView.css:
+        (.new-tab.tab.content-view):
+        Use align-items instead of align-content.
+
 2017-05-22  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: New CSS Rules should go into a new Stylesheet Resource that can be viewed/edited/saved
