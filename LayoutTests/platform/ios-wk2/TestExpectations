@@ -1990,3 +1990,5 @@ webkit.org/b/171061 webrtc/datachannel/filter-ice-candidate.html [ Pass Timeout 
 
 webkit.org/b/171605 imported/w3c/web-platform-tests/webrtc/datachannel-emptystring.html [ Pass Failure ]
 webkit.org/b/171605 imported/w3c/web-platform-tests/webrtc/promises-call.html [ Pass Failure ]
+
+webkit.org/b/172f21 imported/w3c/web-platform-tests/webrtc/getstats.html [ Pass Failure ]
