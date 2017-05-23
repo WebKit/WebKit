@@ -1,3 +1,38 @@
+2017-05-23  Chris Dumez  <cdumez@apple.com>
+
+        ASSERT(!m_timeoutTimer.isActive()) hit in BackgroundProcessResponsivenessTimer::responsivenessCheckTimerFired()
+        https://bugs.webkit.org/show_bug.cgi?id=172509
+        <rdar://problem/32251578>
+
+        Reviewed by Geoffrey Garen.
+
+        In the BackgroundProcessResponsivenessTimer class, we have 2 timers:
+        - m_responsivenessCheckTimer that causes us to do an IPC handshake with
+          the WebProcess.
+        - m_timeoutTimer that is started when we send the IPC message to the
+          WebProcess and which is stopped when we get the response from the
+          WebProcess. If we do not get the response by the time m_timeoutTimer
+          fires, then we mark the process as unresponsive.
+
+        As a result, of the behavior above, whenever the BackgroundProcessResponsivenessTimer
+        is considered "active", there should be one of the 2 timers above that
+        is active, and only one.
+
+        The assertion hit showed that we decided to start the m_responsivenessCheckTimer
+        timer even though the m_timeoutTimer timer is still active (we are still waiting
+        for an IPC message from the WebProcess and the process is not considered
+        unresponsive yet), which is wrong. The reason was that in
+        BackgroundProcessResponsivenessTimer::updateState(), if we should be active,
+        we would start the m_responsivenessCheckTimer if m_responsivenessCheckTimer is
+        not already active, without checking if m_timeoutTimer is active. So if
+        updateState() was called while the IPC handshake was in process, we would have
+        both timers running at the same time.
+
+        * UIProcess/BackgroundProcessResponsivenessTimer.cpp:
+        (WebKit::BackgroundProcessResponsivenessTimer::updateState):
+        (WebKit::BackgroundProcessResponsivenessTimer::isActive):
+        * UIProcess/BackgroundProcessResponsivenessTimer.h:
+
 2017-05-22  Simon Fraser  <simon.fraser@apple.com>
 
         Snapshotting via -renderInContext: should do synchronous image decodes

@@ -60,10 +60,8 @@ void BackgroundProcessResponsivenessTimer::updateState()
         return;
     }
 
-    if (!m_responsivenessCheckTimer.isActive()) {
-        ASSERT(!m_timeoutTimer.isActive());
+    if (!isActive())
         m_responsivenessCheckTimer.startOneShot(m_checkingInterval);
-    }
 }
 
 void BackgroundProcessResponsivenessTimer::didReceiveBackgroundResponsivenessPong()
@@ -139,6 +137,11 @@ bool BackgroundProcessResponsivenessTimer::shouldBeActive() const
     // Disable background process responsiveness checking on iOS since such processes usually get suspended.
     return false;
 #endif
+}
+
+bool BackgroundProcessResponsivenessTimer::isActive() const
+{
+    return m_responsivenessCheckTimer.isActive() || m_timeoutTimer.isActive();
 }
 
 void BackgroundProcessResponsivenessTimer::scheduleNextResponsivenessCheck()

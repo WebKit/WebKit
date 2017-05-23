@@ -50,6 +50,7 @@ private:
     void setResponsive(bool);
 
     bool shouldBeActive() const;
+    bool isActive() const;
     void scheduleNextResponsivenessCheck();
     ResponsivenessTimer::Client& client() const;
 
