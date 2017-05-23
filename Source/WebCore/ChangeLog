@@ -1,3 +1,25 @@
+2017-05-23  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Multiple links should be inserted separately when performing data interaction
+        https://bugs.webkit.org/show_bug.cgi?id=172489
+        <rdar://problem/31510832>
+
+        Reviewed by Dan Bernstein.
+
+        In WebContentReader, URLs are currently always inserted inline. When inserting multiple items, this causes
+        adjacent links to be inserted on a single line with no break, which is undesirable. To address this, when
+        appending links from additional items to the existing document fragment in WebContentReader, insert a new space
+        prior to inserting the anchor element.
+
+        New unit test: DataInteractionTests.ExternalSourceMultipleURLsToContentEditable
+
+        * editing/ios/EditorIOS.mm:
+        (WebCore::Editor::WebContentReader::addFragment):
+
+        Tweak to add all children of the new fragment, rather than just the first child.
+
+        (WebCore::Editor::WebContentReader::readURL):
+
 2017-05-23  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Remove some unnecessary specialization for enum types

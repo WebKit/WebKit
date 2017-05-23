@@ -1,3 +1,16 @@
+2017-05-23  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Multiple links should be inserted separately when performing data interaction
+        https://bugs.webkit.org/show_bug.cgi?id=172489
+        <rdar://problem/31510832>
+
+        Reviewed by Dan Bernstein.
+
+        Adds a new test that performs data interaction in a contenteditable with multiple items containing URLs.
+
+        * TestWebKitAPI/Tests/ios/DataInteractionTests.mm:
+        (TestWebKitAPI::TEST):
+
 2017-05-23  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION: API test WebKit2.WKObject is failing

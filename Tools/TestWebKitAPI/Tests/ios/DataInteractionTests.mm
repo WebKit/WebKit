@@ -485,6 +485,29 @@ TEST(DataInteractionTests, ExternalSourceImageAndHTMLToUploadArea)
     EXPECT_WK_STREQ("image/jpeg, text/html, text/html", outputValue.UTF8String);
 }
 
+TEST(DataInteractionTests, ExternalSourceMultipleURLsToContentEditable)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView synchronouslyLoadTestPageNamed:@"autofocus-contenteditable"];
+    [webView stringByEvaluatingJavaScript:@"getSelection().removeAllRanges()"];
+
+    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    auto firstItem = adoptNS([[UIItemProvider alloc] init]);
+    [firstItem registerObject:[NSURL URLWithString:@"https://www.apple.com/iphone/"] visibility:UIItemProviderRepresentationOptionsVisibilityAll];
+    auto secondItem = adoptNS([[UIItemProvider alloc] init]);
+    [secondItem registerObject:[NSURL URLWithString:@"https://www.apple.com/mac/"] visibility:UIItemProviderRepresentationOptionsVisibilityAll];
+    auto thirdItem = adoptNS([[UIItemProvider alloc] init]);
+    [thirdItem registerObject:[NSURL URLWithString:@"https://webkit.org/"] visibility:UIItemProviderRepresentationOptionsVisibilityAll];
+    [dataInteractionSimulator setExternalItemProviders:@[ firstItem.get(), secondItem.get(), thirdItem.get() ]];
+    [dataInteractionSimulator runFrom:CGPointMake(300, 400) to:CGPointMake(100, 300)];
+
+    NSArray *separatedLinks = [[webView stringByEvaluatingJavaScript:@"editor.textContent"] componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    EXPECT_EQ(3UL, separatedLinks.count);
+    EXPECT_WK_STREQ("https://www.apple.com/iphone/", separatedLinks[0]);
+    EXPECT_WK_STREQ("https://www.apple.com/mac/", separatedLinks[1]);
+    EXPECT_WK_STREQ("https://webkit.org/", separatedLinks[2]);
+}
+
 TEST(DataInteractionTests, RespectsExternalSourceFidelityRankings)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);

@@ -244,11 +244,18 @@ private:
 
 void Editor::WebContentReader::addFragment(RefPtr<DocumentFragment>&& newFragment)
 {
-    if (fragment) {
-        if (newFragment && newFragment->firstChild())
-            fragment->appendChild(*newFragment->firstChild());
-    } else
+    if (!newFragment)
+        return;
+
+    if (!fragment) {
         fragment = WTFMove(newFragment);
+        return;
+    }
+
+    while (auto* firstChild = newFragment->firstChild()) {
+        if (fragment->appendChild(*firstChild).hasException())
+            break;
+    }
 }
 
 bool Editor::WebContentReader::readWebArchive(SharedBuffer* buffer)
@@ -337,6 +344,8 @@ bool Editor::WebContentReader::readURL(const URL& url, const String& title)
     anchor->appendChild(frame.document()->createTextNode(linkText));
 
     auto newFragment = frame.document()->createDocumentFragment();
+    if (fragment)
+        newFragment->appendChild(Text::create(*frame.document(), { &space, 1 }));
     newFragment->appendChild(anchor);
     addFragment(WTFMove(newFragment));
     return true;
