@@ -1580,9 +1580,9 @@ void FrameView::layout(bool allowSubtree)
             // can make us need to update again, and we can get stuck in a nasty cycle unless
             // we call it through the timer here.
             m_postLayoutTasksTimer.startOneShot(0_s);
-            if (needsLayout())
-                layout();
         }
+        if (needsLayout())
+            layout();
     }
 
     InspectorInstrumentation::didLayout(cookie, *root);

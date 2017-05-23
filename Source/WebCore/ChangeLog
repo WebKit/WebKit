@@ -1,3 +1,24 @@
+2017-05-23  Zalan Bujtas  <zalan@apple.com>
+
+        ASSERTION FAILED: !renderer().view().needsLayout() while running media/video-main-content-autoplay.html
+        https://bugs.webkit.org/show_bug.cgi?id=172476
+
+        Reviewed by Simon Fraser.
+
+        This patch decouples the layout call logic from the post layout task timer setup.
+        Just because we are switching over to asynchronous performPostLayoutTasks() it should not stop us from
+        running layout on a dirty tree (we could encounter a forced layout (which sets m_postLayoutTasksTimer active)
+        and a subsequent tree mutation during performPostLayoutTasks()). 
+
+        There are a few different ways to end up here:
+        root layout is done -> call performPostLayoutTasks() synchronously -> 
+        1. tree stays clean -> no action needed.
+        2. tree gets dirty -> setup performPostLayoutTasks timer -> run nested layout -> since m_postLayoutTasksTimer is active()
+        we don't try to run performPostLayoutTasks() while in the nested layout and we return with a clean tree.         
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+
 2017-05-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Multiple links should be inserted separately when performing data interaction
