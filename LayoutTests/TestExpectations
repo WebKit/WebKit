@@ -1171,7 +1171,7 @@ webkit.org/b/157477 imported/w3c/web-platform-tests/css/css-display-3/display-co
 webkit.org/b/157477 imported/w3c/web-platform-tests/css/css-display-3/display-contents-dynamic-table-001-none.html [ ImageOnlyFailure ]
 webkit.org/b/157477 imported/w3c/web-platform-tests/css/css-display-3/display-contents-state-change-001.html [ ImageOnlyFailure ]
 
-webkit.org/b/172503 imported/w3c/web-platform-tests/css/css-display-3/display-contents-dynamic-flex-002-inline.html [ Crash ]
+webkit.org/b/172503 imported/w3c/web-platform-tests/css/css-display-3/display-contents-dynamic-flex-002-inline.html [ ImageOnlyFailure Crash ]
 webkit.org/b/172503 imported/w3c/web-platform-tests/css/css-display-3/display-contents-dynamic-flex-003-inline.html [ Crash ]
 webkit.org/b/172503 imported/w3c/web-platform-tests/css/css-display-3/display-contents-dynamic-list-001-inline.html [ Crash ]
 webkit.org/b/172503 imported/w3c/web-platform-tests/css/css-display-3/display-contents-dynamic-list-001-none.html [ Crash ]

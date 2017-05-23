@@ -1,3 +1,12 @@
+2017-05-23  Matt Lewis  <jlewis3@apple.com>
+
+        Marked imported/w3c/web-platform-tests/css/css-display-3/display-contents-dynamic-flex-002-inline.html as failing.
+        https://bugs.webkit.org/show_bug.cgi?id=172515
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+
 2017-05-23  Chris Dumez  <cdumez@apple.com>
 
         Regression(r215229): ASSERTION FAILED: !m_scriptHash || m_scriptHash == m_script.impl()->hash()
