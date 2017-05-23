@@ -1353,3 +1353,5 @@ webkit.org/b/172378 http/tests/navigation/back-twice-without-commit.html [ Skip 
 webkit.org/b/172378 imported/blink/fast/block/float/float-mark-descendants-for-layout-crash.html [ Skip ]
 webkit.org/b/172378 imported/blink/fast/frames/freed-frame.html [ Skip ]
 webkit.org/b/172378 imported/blink/printing/print-document-without-documentElement-crash.html [ Skip ]
+
+webkit.org/b/172514 imported/w3c/web-platform-tests/innerText/getter.html [ Skip ]
