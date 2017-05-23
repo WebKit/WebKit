@@ -41,6 +41,16 @@ using namespace WebKit;
     return (NSString *)string.createCFString().leakRef();
 }
 
+- (Class)superclass
+{
+    return [NSString superclass];
+}
+
+- (Class)class
+{
+    return [NSString class];
+}
+
 #pragma mark NSCopying protocol implementation
 
 - (id)copyWithZone:(NSZone *)zone

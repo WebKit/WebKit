@@ -38,6 +38,7 @@ TEST(WebKit2, WKObject)
 {
     WKStringRef stringRef = WKStringCreateWithUTF8CString("just testing");
     ASSERT_TRUE([@"just testing" isEqualToString:(NSString *)stringRef]);
+    ASSERT_TRUE([(NSString *)stringRef isKindOfClass:[NSString class]]);
 
     NSString *weakString = nil;
 
