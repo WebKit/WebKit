@@ -1,3 +1,16 @@
+2017-05-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Stop consulting -viewsNeedDisplay when doing layer flushing in WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=172522
+        rdar://problem/31071812
+
+        Reviewed by Sam Weinig.
+
+        Remove NSWindowStyleMaskFullSizeContentView which is no longer referenced in code.
+        We set this in the .xib file now.
+
+        * MiniBrowser/mac/MiniBrowser_Prefix.pch:
+
 2017-05-22  Simon Fraser  <simon.fraser@apple.com>
 
         Snapshotting via -renderInContext: should do synchronous image decodes
