@@ -312,7 +312,10 @@ CGColorSpaceRef linearRGBColorSpaceRef()
     RetainPtr<NSData> iccProfileData = adoptNS([[NSData alloc] initWithContentsOfFile:iccProfilePath.get()]);
 
     if (iccProfileData)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         linearSRGBSpace = CGColorSpaceCreateWithICCProfile((CFDataRef)iccProfileData.get());
+#pragma clang diagnostic pop
 
     // If we fail to load the linearized sRGB ICC profile, fall back to sRGB.
     if (!linearSRGBSpace)

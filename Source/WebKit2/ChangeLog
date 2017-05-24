@@ -1,3 +1,10 @@
+2017-05-24  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, suppress deprecation warnings to fix the build.
+
+        * Shared/mac/ColorSpaceData.mm:
+        (WebKit::ColorSpaceData::decode):
+
 2017-05-24  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Plumb additional image metadata to item providers when beginning data interaction on an image

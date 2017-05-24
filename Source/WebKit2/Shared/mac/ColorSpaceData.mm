@@ -90,7 +90,10 @@ bool ColorSpaceData::decode(IPC::Decoder& decoder, ColorSpaceData& colorSpaceDat
         if (!IPC::decode(decoder, data))
             return false;
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         colorSpaceData.cgColorSpace = adoptCF(CGColorSpaceCreateWithICCProfile(data.get()));
+#pragma clang diagnostic pop
         return true;
     }
 
