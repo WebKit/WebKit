@@ -1,3 +1,15 @@
+2017-05-24  David Keijser  <keijser@gmail.com>
+
+        [GTK] Provide details on javascript exception
+        https://bugs.webkit.org/show_bug.cgi?id=161187
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewRunJavaScriptCallback):
+        (webkit_web_view_run_javascript):
+        (resourcesStreamReadCallback):
+
 2017-05-24  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, suppress deprecation warnings to fix the build.

@@ -69,10 +69,12 @@
 #include <WebCore/GUniquePtrGtk.h>
 #include <WebCore/GUniquePtrSoup.h>
 #include <WebCore/GtkUtilities.h>
+#include <WebCore/JSDOMExceptionHandling.h>
 #include <WebCore/RefPtrCairo.h>
 #include <glib/gi18n-lib.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/StringBuilder.h>
 
 #if USE(LIBNOTIFY)
 #include <libnotify/notify.h>
@@ -3128,14 +3130,28 @@ JSGlobalContextRef webkit_web_view_get_javascript_global_context(WebKitWebView* 
     return webView->priv->javascriptGlobalContext;
 }
 
-static void webkitWebViewRunJavaScriptCallback(API::SerializedScriptValue* wkSerializedScriptValue, GTask* task)
+static void webkitWebViewRunJavaScriptCallback(API::SerializedScriptValue* wkSerializedScriptValue, const WebCore::ExceptionDetails& exceptionDetails, GTask* task)
 {
     if (g_task_return_error_if_cancelled(task))
         return;
 
     if (!wkSerializedScriptValue) {
+        StringBuilder builder;
+        if (!exceptionDetails.sourceURL.isEmpty()) {
+            builder.append(exceptionDetails.sourceURL);
+            if (exceptionDetails.lineNumber > 0) {
+                builder.append(':');
+                builder.appendNumber(exceptionDetails.lineNumber);
+            }
+            if (exceptionDetails.columnNumber > 0) {
+                builder.append(':');
+                builder.appendNumber(exceptionDetails.columnNumber);
+            }
+            builder.appendLiteral(": ");
+        }
+        builder.append(exceptionDetails.message);
         g_task_return_new_error(task, WEBKIT_JAVASCRIPT_ERROR, WEBKIT_JAVASCRIPT_ERROR_SCRIPT_FAILED,
-            _("An exception was raised in JavaScript"));
+            "%s", builder.toString().utf8().data());
         return;
     }
 
@@ -3165,8 +3181,8 @@ void webkit_web_view_run_javascript(WebKitWebView* webView, const gchar* script,
     g_return_if_fail(script);
 
     GTask* task = g_task_new(webView, cancellable, callback, userData);
-    getPage(webView)->runJavaScriptInMainFrame(String::fromUTF8(script), [task](API::SerializedScriptValue* serializedScriptValue, bool, const WebCore::ExceptionDetails&, WebKit::CallbackBase::Error) {
-        webkitWebViewRunJavaScriptCallback(serializedScriptValue, adoptGRef(task).get());
+    getPage(webView)->runJavaScriptInMainFrame(String::fromUTF8(script), [task](API::SerializedScriptValue* serializedScriptValue, bool, const WebCore::ExceptionDetails& exceptionDetails, WebKit::CallbackBase::Error) {
+        webkitWebViewRunJavaScriptCallback(serializedScriptValue, exceptionDetails, adoptGRef(task).get());
     });
 }
 
@@ -3256,8 +3272,8 @@ static void resourcesStreamReadCallback(GObject* object, GAsyncResult* result, g
     WebKitWebView* webView = WEBKIT_WEB_VIEW(g_task_get_source_object(task.get()));
     gpointer outputStreamData = g_memory_output_stream_get_data(G_MEMORY_OUTPUT_STREAM(object));
     getPage(webView)->runJavaScriptInMainFrame(String::fromUTF8(reinterpret_cast<const gchar*>(outputStreamData)),
-        [task](API::SerializedScriptValue* serializedScriptValue, bool, const WebCore::ExceptionDetails&, WebKit::CallbackBase::Error) {
-            webkitWebViewRunJavaScriptCallback(serializedScriptValue, task.get());
+        [task](API::SerializedScriptValue* serializedScriptValue, bool, const WebCore::ExceptionDetails& exceptionDetails, WebKit::CallbackBase::Error) {
+            webkitWebViewRunJavaScriptCallback(serializedScriptValue, exceptionDetails, task.get());
         });
 }
 
