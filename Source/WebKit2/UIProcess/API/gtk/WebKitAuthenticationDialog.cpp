@@ -183,8 +183,6 @@ static void webkitAuthenticationDialogInitialize(WebKitAuthenticationDialog* aut
         gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(priv->rememberCheckButton), TRUE);
     }
 
-    gtk_widget_grab_focus(priv->loginEntry);
-
     gtk_box_pack_start(GTK_BOX(vBox), authBox, TRUE, TRUE, 0);
     gtk_widget_show(authBox);
 
@@ -226,6 +224,7 @@ static gboolean webkitAuthenticationDialogDraw(GtkWidget* widget, cairo_t* cr)
 static void webkitAuthenticationDialogMap(GtkWidget* widget)
 {
     WebKitAuthenticationDialogPrivate* priv = WEBKIT_AUTHENTICATION_DIALOG(widget)->priv;
+    gtk_widget_grab_focus(priv->loginEntry);
     gtk_widget_grab_default(priv->defaultButton);
 
     GTK_WIDGET_CLASS(webkit_authentication_dialog_parent_class)->map(widget);
