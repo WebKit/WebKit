@@ -3483,10 +3483,19 @@ void Document::updateIsPlayingMedia(uint64_t sourceElementID)
     if (state == m_mediaState)
         return;
 
+#if ENABLE(MEDIA_STREAM)
+    bool captureStateChanged = MediaProducer::isCapturing(m_mediaState) != MediaProducer::isCapturing(state);
+#endif
+    
     m_mediaState = state;
 
     if (page())
         page()->updateIsPlayingMedia(sourceElementID);
+
+#if ENABLE(MEDIA_STREAM)
+    if (captureStateChanged)
+        mediaStreamCaptureStateChanged();
+#endif
 }
 
 void Document::pageMutedStateDidChange()
@@ -7010,6 +7019,22 @@ void Document::stopMediaCapture()
         if (stream.document() == this)
             stream.endCaptureTracks();
     });
+}
+
+void Document::registerForMediaStreamStateChangeCallbacks(HTMLMediaElement& element)
+{
+    m_mediaStreamStateChangeElements.add(&element);
+}
+
+void Document::unregisterForMediaStreamStateChangeCallbacks(HTMLMediaElement& element)
+{
+    m_mediaStreamStateChangeElements.remove(&element);
+}
+
+void Document::mediaStreamCaptureStateChanged()
+{
+    for (auto* mediaElement : m_mediaStreamStateChangeElements)
+        mediaElement->mediaStreamCaptureStateChanged();
 }
 #endif
 

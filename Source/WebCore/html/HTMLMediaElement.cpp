@@ -686,6 +686,10 @@ void HTMLMediaElement::registerWithDocument(Document& document)
 
     document.addAudioProducer(this);
     addElementToDocumentMap(*this, document);
+
+#if ENABLE(MEDIA_STREAM)
+    document.registerForMediaStreamStateChangeCallbacks(*this);
+#endif
 }
 
 void HTMLMediaElement::unregisterWithDocument(Document& document)
@@ -721,6 +725,11 @@ void HTMLMediaElement::unregisterWithDocument(Document& document)
 
     document.removeAudioProducer(this);
     removeElementFromDocumentMap(*this, document);
+
+#if ENABLE(MEDIA_STREAM)
+    document.unregisterForMediaStreamStateChangeCallbacks(*this);
+#endif
+
 }
 
 void HTMLMediaElement::didMoveToNewDocument(Document& oldDocument)
@@ -7476,6 +7485,13 @@ void HTMLMediaElement::fullscreenModeChanged(VideoFullscreenMode mode)
     m_mediaSession->scheduleClientDataBufferingCheck();
     scheduleUpdatePlaybackControlsManager();
 }
+
+#if ENABLE(MEDIA_STREAM)
+void HTMLMediaElement::mediaStreamCaptureStateChanged()
+{
+    resumeAutoplaying();
+}
+#endif
 
 }
 

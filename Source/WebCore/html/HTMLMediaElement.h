@@ -515,6 +515,7 @@ public:
     WEBCORE_EXPORT const MediaResourceLoader* lastMediaResourceLoaderForTesting() const;
 
 #if ENABLE(MEDIA_STREAM)
+    void mediaStreamCaptureStateChanged();
     bool hasMediaStreamSrcObject() const { return !!m_mediaStreamSrcObject; }
 #endif
 
