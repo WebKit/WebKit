@@ -1,3 +1,17 @@
+2017-05-24  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r217319.
+        https://bugs.webkit.org/show_bug.cgi?id=172538
+
+        This patch broke iOS Simulator Debug build (Requested by fredw
+        on #webkit).
+
+        Reverted changeset:
+
+        "CoreAudioCaptureSource is ducking system sound"
+        https://bugs.webkit.org/show_bug.cgi?id=172512
+        http://trac.webkit.org/changeset/217319
+
 2017-05-24  Antoine Quint  <graouts@apple.com>
 
         [mac-wk1] LayoutTest media/modern-media-controls/airplay-button/airplay-button.html is a flaky timeout
