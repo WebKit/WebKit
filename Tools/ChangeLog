@@ -1,3 +1,16 @@
+2017-05-23  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Increase test timeout for slow tests.
+        https://bugs.webkit.org/show_bug.cgi?id=172449
+
+        Reviewed by Alexey Proskuryakov.
+
+        Instead of using a fixed timeout of 30 seconds for all tests, we should use the
+        timeout member in the TestRunner class.
+
+        * DumpRenderTree/win/TestRunnerWin.cpp:
+        (TestRunner::setWaitToDump):
+
 2017-05-15  Matt Rajca  <mrajca@apple.com>
 
         Replace autoplay events that fire at navigation with a DidAutoplayMediaPastThreshold event.

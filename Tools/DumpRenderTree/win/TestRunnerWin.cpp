@@ -944,8 +944,6 @@ void TestRunner::setViewSize(double width, double height)
     ::SetWindowPos(webViewWindow, 0, 0, 0, width, height, SWP_NOMOVE);
 }
 
-static const CFTimeInterval waitToDumpWatchdogInterval = 30.0;
-
 static void CALLBACK waitUntilDoneWatchdogFired(HWND, UINT, UINT_PTR, DWORD)
 {
     gTestRunner->waitToDumpWatchdogTimerFired();
@@ -955,7 +953,7 @@ void TestRunner::setWaitToDump(bool waitUntilDone)
 {
     m_waitToDump = waitUntilDone;
     if (m_waitToDump && !waitToDumpWatchdog)
-        waitToDumpWatchdog = SetTimer(0, 0, waitToDumpWatchdogInterval * 1000, waitUntilDoneWatchdogFired);
+        waitToDumpWatchdog = SetTimer(0, 0, m_timeout, waitUntilDoneWatchdogFired);
 }
 
 int TestRunner::windowCount()
