@@ -1,3 +1,19 @@
+2017-05-24  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Don't load the active recording until a Timeline view needs to be shown
+        https://bugs.webkit.org/show_bug.cgi?id=172467
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/TimelineTabContentView.js:
+        (WebInspector.TimelineTabContentView):
+        (WebInspector.TimelineTabContentView.prototype.restoreFromCookie):
+        (WebInspector.TimelineTabContentView.prototype._showTimelineViewForType):
+        Move the call to `_recordingLoaded` to when a timeline view needs to be shown and only if
+        `_displayedRecording` isn't already set. This delays the creation of the content view for
+        the recording to right before it needs to be displayed.
+
+
 2017-05-23  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: content views are not restored on reload if its tree element is filtered out
