@@ -1,5 +1,42 @@
 2017-05-24  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Opening an analysis task from the queue page is broken
+        https://bugs.webkit.org/show_bug.cgi?id=172559
+        <rdar://problem/32389708>
+
+        Rubber-stamped by Chris Dumez.
+
+        Fix the bug that opening the analysis task page from the queue page results in multiple assertion failures
+        as well as the list of test groups in the analysis task page not getting updated.
+
+        * public/v3/models/build-request.js:
+        (BuildRequest.prototype.updateSingleton): Because /api/build-requests/ do not include test groups, it's
+        possible for testGroup to be dynamically updated upon loading an analysis task page. Update _testGroup in
+        such instances instead of asserting that it doesn't happen.
+
+        * public/v3/models/data-model.js:
+        (DataModelObject.cachedFetch): Because various code to create model objects from the result of a JSON API
+        modify the fetched content in irreversible manner, e.g. `object.platform = Platform.findById(object.platform)`
+        we must return a fresh new content each time even if the result had been cached.
+
+        * public/v3/models/test-group.js:
+        (TestGroup.prototype.platform): Return this._platform as that's not available.
+
+        * public/v3/pages/analysis-task-page.js:
+        (AnalysisTaskPage):
+        (AnalysisTaskPage.prototype._resetVariables): Extracted from the constructor.
+        (AnalysisTaskPage.prototype.updateFromSerializedState): Reset all instance variables when opening a new
+        analysis task page. This would avoid showing the stale result even when fetching new test groups had failed.
+
+        * unit-tests/test-groups-tests.js: Added a test case for fetching the same test group twice. This used to hit
+        a problem in BuildRequest.constructBuildRequestsFromData which overrode platform property of each raw content
+        with a Platform model object because in the case of a cached fetch, we end up trying to look up the platform
+        again using the result of stringifying the Platform object instead of the platform ID included in the original
+        fetched content.
+        (sampleTestGroup): Added "platform" as included in the JSON API's response now.
+
+2017-05-24  Ryosuke Niwa  <rniwa@webkit.org>
+
         The commit log viewer can overlap the analysis results viewer
         https://bugs.webkit.org/show_bug.cgi?id=172534
 

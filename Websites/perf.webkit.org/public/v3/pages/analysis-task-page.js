@@ -447,6 +447,17 @@ class AnalysisTaskPage extends PageWithHeading {
     constructor()
     {
         super('Analysis Task');
+        this._renderTaskNameAndStatusLazily = new LazilyEvaluatedFunction(this._renderTaskNameAndStatus.bind(this));
+        this._renderCauseAndFixesLazily = new LazilyEvaluatedFunction(this._renderCauseAndFixes.bind(this));
+        this._renderRelatedTasksLazily = new LazilyEvaluatedFunction(this._renderRelatedTasks.bind(this));
+        this._resetVariables();
+    }
+
+    title() { return this._task ? this._task.label() : 'Analysis Task'; }
+    routeName() { return 'analysis/task'; }
+
+    _resetVariables()
+    {
         this._task = null;
         this._metric = null;
         this._triggerable = null;
@@ -461,17 +472,11 @@ class AnalysisTaskPage extends PageWithHeading {
         this._currentTestGroup = null;
         this._filteredTestGroups = null;
         this._showHiddenTestGroups = false;
-
-        this._renderTaskNameAndStatusLazily = new LazilyEvaluatedFunction(this._renderTaskNameAndStatus.bind(this));
-        this._renderCauseAndFixesLazily = new LazilyEvaluatedFunction(this._renderCauseAndFixes.bind(this));
-        this._renderRelatedTasksLazily = new LazilyEvaluatedFunction(this._renderRelatedTasks.bind(this));
     }
-
-    title() { return this._task ? this._task.label() : 'Analysis Task'; }
-    routeName() { return 'analysis/task'; }
 
     updateFromSerializedState(state)
     {
+        this._resetVariables();
         if (state.remainingRoute) {
             const taskId = parseInt(state.remainingRoute);
             AnalysisTask.fetchById(taskId).then(this._didFetchTask.bind(this)).then(() => {

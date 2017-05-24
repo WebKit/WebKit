@@ -1,15 +1,17 @@
 'use strict';
 
-var assert = require('assert');
+const assert = require('assert');
 
 require('../tools/js/v3-models.js');
-let MockModels = require('./resources/mock-v3-models.js').MockModels;
+const MockModels = require('./resources/mock-v3-models.js').MockModels;
+const MockRemoteAPI = require('./resources/mock-remote-api.js').MockRemoteAPI;
 
 function sampleTestGroup() {
     return {
         "testGroups": [{
             "id": "2128",
             "task": "1376",
+            "platform": "31",
             "name": "Confirm",
             "author": "rniwa",
             "createdAt": 1458688514000,
@@ -104,6 +106,37 @@ function sampleTestGroup() {
 
 describe('TestGroup', function () {
     MockModels.inject();
+
+    describe('fetchForTask', () => {
+        const requests = MockRemoteAPI.inject('https://perf.webkit.org');
+
+        it('should be able to fetch the list of test groups for the same task twice using cache', () => {
+            const fetchPromise = TestGroup.fetchForTask(1376);
+            assert.equal(requests.length, 1);
+            assert.equal(requests[0].method, 'GET');
+            assert.equal(requests[0].url, '/api/test-groups?task=1376');
+            requests[0].resolve(sampleTestGroup());
+
+            let assertTestGroups = (testGroups) => {
+                assert.equal(testGroups.length, 1);
+                assert.equal(testGroups[0].platform(), MockModels.elCapitan);
+                const buildRequests = testGroups[0].buildRequests();
+                assert.equal(buildRequests.length, 4);
+                for (let request of buildRequests) {
+                    assert.equal(buildRequests[0].triggerable(), MockModels.triggerable);
+                    assert.equal(buildRequests[0].test(), MockModels.plt);
+                    assert.equal(buildRequests[0].platform(), MockModels.elCapitan);
+                }
+            }
+
+            return fetchPromise.then((testGroups) => {
+                assertTestGroups(testGroups);
+                return TestGroup.fetchForTask(1376);
+            }).then((testGroups) => {
+                assertTestGroups(testGroups);
+            });
+        });
+    });
 
     describe('_createModelsFromFetchedTestGroups', function () {
         it('should create test groups', function () {

@@ -77,7 +77,9 @@ class DataModelObject {
         if (!cacheMap[path])
             cacheMap[path] = RemoteAPI.getJSONWithStatus(path);
 
-        return cacheMap[path];
+        return cacheMap[path].then((content) => {
+            return JSON.parse(JSON.stringify(content));
+        });
     }
 
 }
