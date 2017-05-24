@@ -1,5 +1,16 @@
 2017-05-23  Saam Barati  <sbarati@apple.com>
 
+        We should not mmap zero bytes for a memory in Wasm
+        https://bugs.webkit.org/show_bug.cgi?id=172528
+        <rdar://problem/32257076>
+
+        Reviewed by Mark Lam.
+
+        * wasm/js-api/dont-mmap-zero-byte-memory.js: Added.
+        (testMems):
+
+2017-05-23  Saam Barati  <sbarati@apple.com>
+
         CFGSimplificationPhase should not merge a block with itself
         https://bugs.webkit.org/show_bug.cgi?id=172508
         <rdar://problem/28424006>

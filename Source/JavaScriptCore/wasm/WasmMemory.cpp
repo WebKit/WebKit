@@ -413,6 +413,8 @@ RefPtr<Memory> Memory::create(VM& vm, PageCount initial, PageCount maximum)
 
     // We're stuck with a slow memory which may be slower or impossible to grow.
     if (!memory) {
+        if (!initialBytes)
+            return adoptRef(new Memory(initial, maximum));
         memory = tryGetSlowMemory(initialBytes);
         if (memory) {
             mappedCapacityBytes = initialBytes;

@@ -1,3 +1,19 @@
+2017-05-23  Saam Barati  <sbarati@apple.com>
+
+        We should not mmap zero bytes for a memory in Wasm
+        https://bugs.webkit.org/show_bug.cgi?id=172528
+        <rdar://problem/32257076>
+
+        Reviewed by Mark Lam.
+
+        This patch fixes a bug where we would call into mmap with zero bytes
+        when creating a slow WasmMemory with zero initial page size. This fix
+        is simple: if we don't have any initial bytes, we just call the constructor
+        in WasmMemory that's meant to handle this case.
+
+        * wasm/WasmMemory.cpp:
+        (JSC::Wasm::Memory::create):
+
 2017-05-23  Brian Burg  <bburg@apple.com>
 
         REGRESSION(r217051): Automation sessions fail to complete bootstrap
