@@ -149,6 +149,7 @@ void WebResourceLoadStatisticsManager::resetToConsistentState()
     WebCore::ResourceLoadObserver::sharedObserver().setTimeToLiveUserInteraction(2592000);
     WebCore::ResourceLoadObserver::sharedObserver().setTimeToLiveCookiePartitionFree(86400);
     WebCore::ResourceLoadObserver::sharedObserver().setMinimumTimeBetweeenDataRecordsRemoval(60);
+    WebCore::ResourceLoadObserver::sharedObserver().setGrandfatheringTime(3600);
     WebResourceLoadStatisticsStore::setNotifyPagesWhenDataRecordsWereScanned(false);
     WebResourceLoadStatisticsStore::setShouldClassifyResourcesBeforeDataRecordsRemoval(true);
     WebCore::ResourceLoadObserver::sharedObserver().clearInMemoryStore();

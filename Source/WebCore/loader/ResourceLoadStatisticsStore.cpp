@@ -39,10 +39,11 @@
 namespace WebCore {
 
 static const auto statisticsModelVersion = 4;
-static const auto secondsPerDay = 24 * 3600;
+static const auto secondsPerHour = 3600;
+static const auto secondsPerDay = 24 * secondsPerHour;
 static auto timeToLiveUserInteraction = 30 * secondsPerDay;
 static auto timeToLiveCookiePartitionFree = 1 * secondsPerDay;
-static auto grandfatheringTime = 3 * secondsPerDay;
+static auto grandfatheringTime = 1 * secondsPerHour;
 static auto minimumTimeBetweeenDataRecordsRemoval = 60;
 
 Ref<ResourceLoadStatisticsStore> ResourceLoadStatisticsStore::create()

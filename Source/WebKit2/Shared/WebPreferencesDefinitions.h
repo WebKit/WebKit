@@ -287,7 +287,7 @@
     macro(ResourceLoadStatisticsTimeToLiveUserInteraction, resourceLoadStatisticsTimeToLiveUserInteraction, Double, double, 2592000, "", "") \
     macro(ResourceLoadStatisticsTimeToLiveCookiePartitionFree, resourceLoadStatisticsTimeToLiveCookiePartitionFree, Double, double, 86400, "", "") \
     macro(ResourceLoadStatisticsReducedTimestampResolution, resourceLoadStatisticsReducedTimestampResolution, Double, double, 3600, "", "") \
-    macro(ResourceLoadStatisticsGrandfatheringTime, resourceLoadStatisticsGrandfatheringTime, Double, double, 259200, "", "") \
+    macro(ResourceLoadStatisticsGrandfatheringTime, resourceLoadStatisticsGrandfatheringTime, Double, double, 3600, "", "") \
 \
 
 #define FOR_EACH_WEBKIT_UINT32_PREFERENCE(macro) \

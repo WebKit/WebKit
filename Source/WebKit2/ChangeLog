@@ -1,3 +1,15 @@
+2017-05-24  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Change grandfathering default to one hour
+        https://bugs.webkit.org/show_bug.cgi?id=172524
+        <rdar://problem/32360462>
+
+        Reviewed by Brent Fulgham.
+
+        * Shared/WebPreferencesDefinitions.h:
+        * UIProcess/WebResourceLoadStatisticsManager.cpp:
+        (WebKit::WebResourceLoadStatisticsManager::resetToConsistentState):
+
 2017-05-24  Jer Noble  <jer.noble@apple.com>
 
         Rename DisplaySleepDisabler -> SleepDisabler
