@@ -1,0 +1,28 @@
+<meta name="viewport" content="width=device-width">
+<style>
+    img {
+        width: 100%;
+        height: 200px;
+    }
+    input {
+        width: 100%;
+        height: 200px;
+    }
+    #output {
+        font-family: -apple-system;
+        font-size: 1em;
+    }
+</style>
+
+<body>
+    <div><img src="apple.gif"></img></div>
+    <div><input id="input" type="file"></input></div>
+    <div id="output"></div>
+</body>
+
+<script>
+input.addEventListener("change", () => {
+    let file = input.files[0];
+    output.textContent = `${file.name} (${file.type})`;
+});
+</script>

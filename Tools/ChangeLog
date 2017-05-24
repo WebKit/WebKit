@@ -1,3 +1,24 @@
+2017-05-24  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Respect image UTIs when writing to item providers when beginning data interaction on an image
+        https://bugs.webkit.org/show_bug.cgi?id=172436
+        <rdar://problem/31786569>
+
+        Reviewed by Beth Dakin.
+
+        Tweaks existing unit tests and adds a new test for image data interaction. See WebCore ChangeLog for more
+        details.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/apple.gif: Added.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/gif-and-file-input.html: Added.
+
+        Create a new test page containing a GIF and a file input.
+
+        * TestWebKitAPI/Tests/ios/DataInteractionTests.mm:
+        (checkTypeIdentifierIsRegisteredAtIndex):
+        (TestWebKitAPI::TEST):
+
 2017-05-23  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Increase test timeout for slow tests.

@@ -263,13 +263,15 @@ void PlatformPasteboard::writeObjectRepresentations(const PasteboardImage& paste
 #if ENABLE(DATA_INTERACTION)
     RetainPtr<WebItemProviderRegistrationInfoList> itemsToRegister = adoptNS([[WebItemProviderRegistrationInfoList alloc] init]);
 
-    if (!pasteboardImage.resourceMIMEType.isNull())
-        [itemsToRegister addData:pasteboardImage.resourceData->createNSData().get() forType:pasteboardImage.resourceMIMEType];
-
-    if (auto nativeImage = pasteboardImage.image->nativeImage()) {
-        UIImage *uiImage = (UIImage *)[getUIImageClass() imageWithCGImage:nativeImage.get()];
-        if (uiImage)
-            [itemsToRegister addRepresentingObject:uiImage];
+    if (auto image = pasteboardImage.image) {
+        NSString *mimeType = pasteboardImage.resourceMIMEType;
+        if (UTTypeIsDeclared((CFStringRef)mimeType)) {
+            auto imageData = pasteboardImage.resourceData->createNSData();
+            [itemsToRegister addData:imageData.get() forType:mimeType];
+        } else if (auto nativeImage = image->nativeImage()) {
+            if (auto uiImage = adoptNS([allocUIImageInstance() initWithCGImage:nativeImage.get()]))
+                [itemsToRegister addRepresentingObject:uiImage.get()];
+        }
     }
 
     if (!pasteboardImage.url.url.isEmpty()) {

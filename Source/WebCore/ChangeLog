@@ -1,3 +1,23 @@
+2017-05-24  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Respect image UTIs when writing to item providers when beginning data interaction on an image
+        https://bugs.webkit.org/show_bug.cgi?id=172436
+        <rdar://problem/31786569>
+
+        Reviewed by Beth Dakin.
+
+        Previously, when beginning writing images to the WebItemProviderPasteboard, we would create a new UIImage and
+        use standard UIImage UIItemProviderWriting utilities to register the image to the pasteboard. This is lossy for
+        gifs, since UIImage doesn't inherently know how to represent gifs. Instead, register the raw image data directly
+        to the UTI type corresponding to the MIME type of the image, and use UIImage's item provider writing capability
+        as a fallback when the raw resourceData is unavailable.
+
+        Augments existing unit tests, and also adds a new unit test:
+        DataInteractionTests.ImageDoesNotUseElementSizeAsEstimatedSize
+
+        * platform/ios/PlatformPasteboardIOS.mm:
+        (WebCore::PlatformPasteboard::writeObjectRepresentations):
+
 2017-05-23  Eric Carlson  <eric.carlson@apple.com>
 
         CoreAudioCaptureSource is ducking system sound

@@ -95,6 +95,13 @@ static void checkTypeIdentifierPrecedesOtherTypeIdentifier(DataInteractionSimula
     EXPECT_TRUE([registeredTypes indexOfObject:firstType] < [registeredTypes indexOfObject:secondType]);
 }
 
+static void checkTypeIdentifierIsRegisteredAtIndex(DataInteractionSimulator *simulator, NSString *type, NSUInteger index)
+{
+    NSArray *registeredTypes = [simulator.sourceItemProviders.firstObject registeredTypeIdentifiers];
+    EXPECT_GT(registeredTypes.count, index);
+    EXPECT_WK_STREQ(type.UTF8String, [registeredTypes[index] UTF8String]);
+}
+
 namespace TestWebKitAPI {
 
 TEST(DataInteractionTests, ImageToContentEditable)
@@ -144,6 +151,7 @@ TEST(DataInteractionTests, ImageInLinkToInput)
 
     EXPECT_WK_STREQ("https://www.apple.com/", [webView editorValue].UTF8String);
     checkSelectionRectsWithLogging(@[ makeCGRectValue(101, 241, 2057, 232) ], [dataInteractionSimulator finalSelectionRects]);
+    checkTypeIdentifierIsRegisteredAtIndex(dataInteractionSimulator.get(), (NSString *)kUTTypePNG, 0);
 }
 
 TEST(DataInteractionTests, ImageInLinkWithoutHREFToInput)
@@ -157,6 +165,18 @@ TEST(DataInteractionTests, ImageInLinkWithoutHREFToInput)
 
     NSURL *imageURL = [NSURL fileURLWithPath:[webView editorValue]];
     EXPECT_WK_STREQ("icon.png", imageURL.lastPathComponent);
+    checkTypeIdentifierIsRegisteredAtIndex(dataInteractionSimulator.get(), (NSString *)kUTTypePNG, 0);
+}
+
+TEST(DataInteractionTests, ImageDoesNotUseElementSizeAsEstimatedSize)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView synchronouslyLoadTestPageNamed:@"gif-and-file-input"];
+
+    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    [dataInteractionSimulator runFrom: { 100, 100 } to: { 100, 300 }];
+
+    checkTypeIdentifierIsRegisteredAtIndex(dataInteractionSimulator.get(), (NSString *)kUTTypeGIF, 0);
 }
 
 TEST(DataInteractionTests, ContentEditableToContentEditable)
@@ -295,7 +315,7 @@ TEST(DataInteractionTests, LinkToInput)
     EXPECT_TRUE([observedEventNames containsObject:DataInteractionOverEventName]);
     EXPECT_TRUE([observedEventNames containsObject:DataInteractionPerformOperationEventName]);
     checkSelectionRectsWithLogging(@[ makeCGRectValue(101, 273, 2057, 232) ], [dataInteractionSimulator finalSelectionRects]);
-    checkTypeIdentifierPrecedesOtherTypeIdentifier(dataInteractionSimulator.get(), (NSString *)kUTTypeURL, (NSString *)kUTTypeUTF8PlainText);
+    checkTypeIdentifierIsRegisteredAtIndex(dataInteractionSimulator.get(), (NSString *)kUTTypeURL, 0);
 }
 
 TEST(DataInteractionTests, BackgroundImageLinkToInput)
@@ -313,7 +333,7 @@ TEST(DataInteractionTests, BackgroundImageLinkToInput)
     EXPECT_TRUE([observedEventNames containsObject:DataInteractionOverEventName]);
     EXPECT_TRUE([observedEventNames containsObject:DataInteractionPerformOperationEventName]);
     checkSelectionRectsWithLogging(@[ makeCGRectValue(101, 241, 2057, 232) ], [dataInteractionSimulator finalSelectionRects]);
-    checkTypeIdentifierPrecedesOtherTypeIdentifier(dataInteractionSimulator.get(), (NSString *)kUTTypeURL, (NSString *)kUTTypeUTF8PlainText);
+    checkTypeIdentifierIsRegisteredAtIndex(dataInteractionSimulator.get(), (NSString *)kUTTypeURL, 0);
 }
 
 TEST(DataInteractionTests, CanPreventStart)
