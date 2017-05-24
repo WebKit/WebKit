@@ -1,3 +1,17 @@
+2017-05-15  Matt Rajca  <mrajca@apple.com>
+
+        Replace autoplay events that fire at navigation with a DidAutoplayMediaPastThreshold event.
+        https://bugs.webkit.org/show_bug.cgi?id=172138
+
+        Reviewed by Alex Christensen.
+
+        Updated auto-play event types.
+
+        * Shared/WebCoreArgumentCoders.h:
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageUIClient):
+        * UIProcess/API/C/WKPageUIClient.h:
+
 2017-05-23  Chris Dumez  <cdumez@apple.com>
 
         ASSERT(!m_timeoutTimer.isActive()) hit in BackgroundProcessResponsivenessTimer::responsivenessCheckTimerFired()

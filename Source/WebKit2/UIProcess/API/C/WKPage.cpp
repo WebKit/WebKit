@@ -2265,16 +2265,14 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
         static WKAutoplayEvent toWKAutoplayEvent(WebCore::AutoplayEvent event)
         {
             switch (event) {
-            case WebCore::AutoplayEvent::DidEndMediaPlaybackWithoutUserInterference:
-                return kWKAutoplayEventDidEndMediaPlaybackWithoutUserInterference;
+            case WebCore::AutoplayEvent::DidAutoplayMediaPastThresholdWithoutUserInterference:
+                return kWKAutoplayEventDidAutoplayMediaPastThresholdWithoutUserInterference;
             case WebCore::AutoplayEvent::DidPlayMediaPreventedFromPlaying:
                 return kWKAutoplayEventDidPlayMediaPreventedFromAutoplaying;
             case WebCore::AutoplayEvent::DidPreventMediaFromPlaying:
                 return kWKAutoplayEventDidPreventFromAutoplaying;
             case WebCore::AutoplayEvent::UserDidInterfereWithPlayback:
                 return kWKAutoplayEventUserDidInterfereWithPlayback;
-            case WebCore::AutoplayEvent::UserNeverPlayedMediaPreventedFromPlaying:
-                return kWKAutoplayEventUserNeverPlayedMediaPreventedFromPlaying;
             }
 
             RELEASE_ASSERT_NOT_REACHED();

@@ -702,9 +702,8 @@ template<> struct EnumTraits<WebCore::AutoplayEvent> {
         WebCore::AutoplayEvent,
         WebCore::AutoplayEvent::DidPreventMediaFromPlaying,
         WebCore::AutoplayEvent::DidPlayMediaPreventedFromPlaying,
-        WebCore::AutoplayEvent::DidEndMediaPlaybackWithoutUserInterference,
-        WebCore::AutoplayEvent::UserDidInterfereWithPlayback,
-        WebCore::AutoplayEvent::UserNeverPlayedMediaPreventedFromPlaying
+        WebCore::AutoplayEvent::DidAutoplayMediaPastThresholdWithoutUserInterference,
+        WebCore::AutoplayEvent::UserDidInterfereWithPlayback
     >;
 };
 

@@ -165,6 +165,7 @@ static const Seconds SeekRepeatDelay { 100_ms };
 static const double SeekTime = 0.2;
 static const Seconds ScanRepeatDelay { 1.5_s };
 static const double ScanMaximumRate = 8;
+static const double AutoplayInterferenceTimeThreshold = 10;
 
 static const Seconds hideMediaControlsAfterEndedDelay { 6_s };
 
@@ -3573,6 +3574,11 @@ void HTMLMediaElement::playbackProgressTimerFired()
     if (m_mediaSource)
         m_mediaSource->monitorSourceBuffers();
 #endif
+
+    if (!seeking() && m_playbackWithoutUserGesture == PlaybackWithoutUserGesture::Started && currentTime() - m_playbackWithoutUserGestureStartedTime->toDouble() > AutoplayInterferenceTimeThreshold) {
+        handleAutoplayEvent(AutoplayEvent::DidAutoplayMediaPastThresholdWithoutUserInterference);
+        setPlaybackWithoutUserGesture(PlaybackWithoutUserGesture::None);
+    }
 }
 
 void HTMLMediaElement::scheduleTimeupdateEvent(bool periodicEvent)
@@ -4472,9 +4478,6 @@ void HTMLMediaElement::mediaPlayerTimeChanged(MediaPlayer*)
                 if (!wasSeeking)
                     addBehaviorRestrictionsOnEndIfNecessary();
 
-                if (m_playbackWithoutUserGesture == PlaybackWithoutUserGesture::Started)
-                    handleAutoplayEvent(AutoplayEvent::DidEndMediaPlaybackWithoutUserInterference);
-
                 setPlaybackWithoutUserGesture(PlaybackWithoutUserGesture::None);
             }
             // If the media element has a current media controller, then report the controller state
@@ -5233,17 +5236,6 @@ void HTMLMediaElement::stopWithoutDestroyingMediaPlayer()
     setPlaying(false);
     setPausedInternal(true);
     m_mediaSession->clientWillPausePlayback();
-
-    switch (m_playbackWithoutUserGesture) {
-    case PlaybackWithoutUserGesture::Started:
-        handleAutoplayEvent(AutoplayEvent::DidEndMediaPlaybackWithoutUserInterference);
-        break;
-    case PlaybackWithoutUserGesture::Prevented:
-        handleAutoplayEvent(AutoplayEvent::UserNeverPlayedMediaPreventedFromPlaying);
-        break;
-    case PlaybackWithoutUserGesture::None:
-        break;
-    }
 
     setPlaybackWithoutUserGesture(PlaybackWithoutUserGesture::None);
 
@@ -7208,7 +7200,7 @@ void HTMLMediaElement::userDidInterfereWithAutoplay()
         return;
 
     // Only consider interference in the first 10 seconds of automatic playback.
-    if (currentTime() - m_playbackWithoutUserGestureStartedTime->toDouble() > 10)
+    if (currentTime() - m_playbackWithoutUserGestureStartedTime->toDouble() > AutoplayInterferenceTimeThreshold)
         return;
 
     handleAutoplayEvent(AutoplayEvent::UserDidInterfereWithPlayback);
