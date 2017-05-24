@@ -2,8 +2,26 @@
 
 class Manifest {
 
+    static reset()
+    {
+        AnalysisTask._fetchAllPromise = null;
+        AnalysisTask.clearStaticMap();
+        BuildRequest.clearStaticMap();
+        CommitLog.clearStaticMap();
+        Metric.clearStaticMap();
+        Platform.clearStaticMap();
+        Repository.clearStaticMap();
+        CommitSet.clearStaticMap();
+        Test.clearStaticMap();
+        TestGroup.clearStaticMap();
+        Triggerable.clearStaticMap();
+        TriggerableRepositoryGroup.clearStaticMap();
+        UploadedFile.clearStaticMap();
+    }
+
     static fetch()
     {
+        this.reset();
         return RemoteAPI.getJSON('/data/manifest.json').catch(function () {
             return RemoteAPI.getJSON('/api/manifest/');
         }).then(this._didFetchManifest.bind(this));

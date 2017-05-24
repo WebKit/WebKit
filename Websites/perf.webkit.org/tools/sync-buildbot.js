@@ -21,20 +21,6 @@ function main(argv)
 
 function syncLoop(options)
 {
-    // FIXME: Fix Manifest.fetch() to use ensureSingleton to create model objects.
-    global.AnalysisTask._fetchAllPromise = null;
-    global.AnalysisTask.clearStaticMap();
-    global.BuildRequest.clearStaticMap();
-    global.CommitLog.clearStaticMap();
-    global.Metric.clearStaticMap();
-    global.Platform.clearStaticMap();
-    global.Repository.clearStaticMap();
-    global.CommitSet.clearStaticMap();
-    global.Test.clearStaticMap();
-    global.TestGroup.clearStaticMap();
-    global.Triggerable.clearStaticMap();
-    global.TriggerableRepositoryGroup.clearStaticMap();
-
     let serverConfig = JSON.parse(fs.readFileSync(options['--server-config-json'], 'utf8'));
     let buildbotConfig = JSON.parse(fs.readFileSync(options['--buildbot-config-json'], 'utf8'));
     let buildbotRemote = new RemoteAPI(buildbotConfig.server);
@@ -44,19 +30,23 @@ function syncLoop(options)
 
     console.log(`Fetching the manifest...`);
 
-    let triggerable;
-    Manifest.fetch().then(function () {
-        triggerable = new BuildbotTriggerable(buildbotConfig, global.RemoteAPI, buildbotRemote, serverConfig.slave, console);
-        return triggerable.updateTriggerable();
-    }).then(function () {
+    const makeTriggerable = function () {
+        return new BuildbotTriggerable(buildbotConfig, global.RemoteAPI, buildbotRemote, serverConfig.slave, console)
+    }
+
+    Manifest.fetch().then(() => {
+        return makeTriggerable().updateTriggerable();
+    }).then(() => {
+        return Manifest.fetch();
+    }).then(() => {
         return triggerable.syncOnce();
-    }).catch(function (error) {
+    }).catch((error) => {
         console.error(error);
         if (typeof(error.stack) == 'string') {
             for (let line of error.stack.split('\n'))
                 console.error(line);
         }
-    }).then(function () {
+    }).then(() => {
         setTimeout(syncLoop.bind(global, options), options['--seconds-to-sleep'] * 1000);
     });
 }

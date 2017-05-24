@@ -19,7 +19,7 @@ class UploadedFile extends DataModelObject {
     author() { return this._author; }
     size() { return this._size; }
     label() { return this.filename(); }
-    url() { return `/api/uploaded-file/${this.id()}`; }
+    url() { return RemoteAPI.url(`/api/uploaded-file/${this.id()}`); }
 
     static uploadFile(file, uploadProgressCallback = null)
     {

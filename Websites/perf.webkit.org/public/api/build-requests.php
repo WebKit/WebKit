@@ -46,8 +46,20 @@ function update_builds($db, $updates) {
         $status = $info['status'];
         $url = array_get($info, 'url');
         if ($status == 'failedIfNotCompleted') {
-            $db->query_and_get_affected_rows('UPDATE build_requests SET (request_status, request_url) = ($1, $2)
-                WHERE request_id = $3 AND request_status != $4', array('failed', $url, $id, 'completed'));
+            $request_row = $db->select_first_row('build_requests', 'request', array('id' => $id));
+            if (!$request_row) {
+                $db->rollback_transaction();
+                exit_with_error('FailedToFindBuildRequest', array('buildRequest' => $id));
+            }
+            if ($request_row['request_status'] == 'completed')
+                continue;
+            $is_build = $request_row['request_order'] < 0;
+            if ($is_build) {
+                $db->query_and_fetch_all('UPDATE build_requests SET request_status = \'failed\'
+                    WHERE request_group = $1 AND request_order > $2',
+                    array($request_row['request_group'], $request_row['request_order']));
+            }
+            $db->update_row('build_requests', 'request', array('id' => $id), array('status' => 'failed', 'url' => $url));
         } else {
             if (!in_array($status, array('pending', 'scheduled', 'running', 'failed', 'completed'))) {
                 $db->rollback_transaction();

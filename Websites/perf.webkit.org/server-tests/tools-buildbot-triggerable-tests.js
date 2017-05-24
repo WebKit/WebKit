@@ -951,8 +951,28 @@ describe('BuildbotTriggerable', function () {
 
                 const config = MockData.mockTestSyncConfigWithSingleBuilder();
                 config.repositoryGroups = {
-                    'system-and-roots': {description: 'Custom Roots', repositories: {'macOS': {}}, properties: {'os': '<macOS>'}, acceptsRoots: true},
-                    'system-and-webkit': {repositories: {'WebKit': {acceptsPatch: true}, 'macOS': {}}, properties: {'os': '<macOS>', 'wk': '<WebKit>'}}
+                    'system-and-roots': {
+                        description: 'Custom Roots',
+                        repositories: {'macOS': {}},
+                        testProperties: {
+                            'os': {'revision': 'macOS'},
+                            'roots': {'roots': {}}
+                        },
+                        acceptsRoots: true
+                    },
+                    'system-and-webkit': {
+                        repositories: {'WebKit': {'acceptsPatch': true}, 'macOS': {}},
+                        testProperties: {
+                            'os': {'revision': 'macOS'},
+                            'wk': {'revision': 'WebKit'},
+                            'roots': {'roots': {}},
+                        },
+                        buildProperties: {
+                            'wk': {'revision': 'WebKit'},
+                            'wk-patch': {'patch': 'WebKit'},
+                        },
+                        acceptsRoots: true
+                    }
                 }
 
                 const logger = new MockLogger;
@@ -975,7 +995,7 @@ describe('BuildbotTriggerable', function () {
                 assert.equal(groups[0].acceptsCustomRoots(), true);
                 assert.equal(groups[1].name(), 'system-and-webkit');
                 assert.deepEqual(groups[1].repositories(), [webkit, macos]);
-                assert.equal(groups[1].acceptsCustomRoots(), false);
+                assert.equal(groups[1].acceptsCustomRoots(), true);
 
                 const config = MockData.mockTestSyncConfigWithSingleBuilder();
                 config.repositoryGroups = [ ];

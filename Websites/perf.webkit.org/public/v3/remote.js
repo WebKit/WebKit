@@ -2,6 +2,13 @@
 
 class BrowserRemoteAPI extends CommonRemoteAPI {
 
+    url(path)
+    {
+        if (path.charAt(0) != '/')
+            path = '/' + path;
+        return `${location.protocol}//${location.host}${path}`;
+    }
+
     sendHttpRequest(path, method, contentType, content, options = {})
     {
         console.assert(!path.startsWith('http:') && !path.startsWith('https:') && !path.startsWith('file:'));

@@ -1,3 +1,122 @@
+2017-05-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add the support for perf try bots to sync-buildbot.js
+        https://bugs.webkit.org/show_bug.cgi?id=172529
+
+        Rubber-stamped by Chris Dumez.
+
+        Make sync-buildbot.js schedule an A/B testing job with a patch or roots to buildbot.
+
+        Change the buildbot property format in the syncing script's configuration again to use a dictionary
+        with a single key of "revision", "patch", or "roots" to specify a revision, a patch, or a set of roots,
+        and simplified the structure of the configuration by always having "types" and "builders", and
+        make each entry in "configurations" refer to a list of types, platforms, and builders.
+
+        Since now there are build requests to build patches and run tests, "configurations" has been renamed to
+        "testConfigurations" and "buildConfigurations" have been added. Each entry in "buildConfigurations"
+        specifies a list of platforms and builders. Similarly in repository group configurations, the buildbot
+        properties for testing is now specified as "testProperties" and ones for building a patch is specified
+        in newly introduced "buildProperties".
+
+        * public/api/build-requests.php:
+        (update_builds): When a build request to build a patch fails, mark all subsequent requests as failed
+        since there is no way to run tests without a successful build.
+
+        * public/api/update-triggerable.php:
+        (main): Re-generate manifest.json after updating the triggerable. The lack of this re-generation was
+        the reason we had to manually GET /api/manifest in api-update-triggerable-tests.js.
+
+        * public/v3/models/build-request.js:
+        (BuildRequest.prototype.hasCompleted): Added.
+
+        * public/v3/models/manifest.js:
+        (Manifest.reset): Added. Extracted from MockData.resetV3Models in unit-tests/mock-data.js and
+        syncLoop in tools/sync-buildbot.js
+        (Manifest.fetch): Reset V3 models before fetching the manifest. This eliminates the need to manually
+        reset V3 models in syncLoop.
+
+        * public/v3/models/uploaded-file.js:
+        (UploadedFile.prototype.url): Use RemoteAPI.url to get the full URL instead of just a path.
+
+        * public/v3/remote.js:
+        (BrowserRemoteAPI.prototype.url): Added. Constructs the full URL.
+
+        * server-tests/api-update-triggerable-tests.js:
+        (.refetchManifest): Deleted. Now that /api/manifest re-generates manifest.json, we can simply call
+        Manifest.fetch instead.
+
+        * server-tests/resources/mock-data.js:
+        (MockData.resetV3Models): Calls Manifest.reset().
+        (MockData.addMockConfiguration): Extracted from addMockData.
+        (MockData.addMockData): Updated per the format change.
+        (MockData.mockTestSyncConfigWithSingleBuilder): Ditto.
+        (MockData.mockTestSyncConfigWithTwoBuilders): Ditto.
+        (MockData.runningBuild): Make buildNumber specifiable.
+        (MockData.finishedBuild): Ditto.
+
+        * server-tests/tools-buildbot-triggerable-tests.js: Updated configurations per the format change.
+        Now that now acceptsCustomRoots() for "system-and-webkit" must be true since we can't have a
+        repository group that which accepts a patch and not take roots.
+
+        * server-tests/tools-sync-buildbot-integration-tests.js: Added.
+        (createTriggerable): Added.
+        (createTestGroupWihPatch): Added.
+        (uploadRoot): Added.
+        (.assertAndResolveRequest): Added.
+        (.assertTestBuildHasFailed): Added.
+
+        * tools/js/buildbot-syncer.js:
+        (BuildbotSyncer): Added. _type as an instance variable to identify whether this buildbot builder
+        is a "builder" which builds a patch, builder, or a "tester" which runs a test. Also renamed
+        _testConfigurations to _configurations.
+        (BuildbotSyncer.prototype.addTestConfiguration): Assert that either the type of this syncer hasn't
+        been set or it's a tester.
+        (BuildbotSyncer.prototype.testConfigurations): Return [] when it's a builder.
+        (BuildbotSyncer.prototype.addBuildConfiguration): Added. Adds a platform to a builder.
+        (BuildbotSyncer.prototype.buildConfigurations): Added. Returns the list of configurations if this
+        syncer is a builder. Otherwise returns [].
+        (BuildbotSyncer.prototype.isTester): Added.
+        (BuildbotSyncer.prototype.matchesConfiguration):
+        (BuildbotSyncer.prototype._propertiesForBuildRequest): Updated to support the new format.
+        (BuildbotSyncer._loadConfig): Ditto. Optionally parse buildConfigurations.
+        (BuildbotSyncer._resolveBuildersWithPlatforms): Added. For each test or build configuration entry,
+        creates the list of configurations per builder and platform.
+        (BuildbotSyncer._parseRepositoryGroup): Added the support for parsing the new format with revision,
+        roots, and patch option types with a lot of validations as we're seeing a bit of combinatorial
+        explosion in the number of things that can go wrong. Also parse buildProperties optionally.
+        (BuildbotSyncer._parseRepositoryGroupPropertyTemplate): Added. A helper function to parse a set of
+        buildbot properties, validates its content, and invokes a callback if it's an dynamically resolved
+        type such as "revision" and "patch".
+        (BuildbotSyncer._validateAndMergeConfig): Updated per the format change. No longer allows "types",
+        "type", "platforms", and "platform" as they're explicity resolved in _resolveBuildersWithPlatforms.
+
+        * tools/js/buildbot-triggerable.js:
+        (BuildbotTriggerable.prototype.syncOnce):
+        (BuildbotTriggerable.prototype._validateRequests): Handle the case when a build request is not
+        associated with any test.
+        (BuildbotTriggerable.prototype._nextRequestInGroup): Return null when there is a build request to
+        build a patch which has not been completed (pending, scheduled, running, or failed). Since all
+        requests to build a patch has a negative order, those requests should all show up at the beginning.
+        (BuildbotTriggerable.prototype._scheduleRequestIfSlaveIsAvailable): Pick a new buildbot syncer when
+        scheduling the first request to build a patch or the first request to run a test. The first request
+        to run a test will always have order of 0, so it's a sufficient condition to find such a request.
+        On the other hand, the first request to build a patch can have a negative order number so we must
+        explicitly check if it's the first item in the ordered list of requests in the test group.
+
+        * tools/remote-server-relay.log: Added.
+
+        * tools/sync-buildbot.js:
+        (syncLoop): Fixed a bug we were not re-fetching the triggerable after updating the triggerable so
+        that Triggerable and related objects we have in the memory may not reflect what we just synced to
+        the perf dashboard. Also, we don't reset V3 models manually any more since Manifest.fetch does that.
+
+        * unit-tests/buildbot-syncer-tests.js: Added more test cases and updated existing test cases to test
+        exception messages explicitly since allowing any exception was resulting in some tests passing a
+        result of unrelated parsing error being thrown, etc...
+        (sampleiOSConfig): Updated per the format change.
+        (sampleiOSConfigWithExpansions): Ditto.
+        (smallConfiguration): Ditto.
+
 2017-05-22  Dewei Zhu  <dewei_zhu@apple.com>
 
         Fix the bug that sometimes analysis task results pane is missing.

@@ -52,6 +52,7 @@ class BuildRequest extends DataModelObject {
 
     status() { return this._status; }
     hasFinished() { return this._status == 'failed' || this._status == 'completed' || this._status == 'canceled'; }
+    hasCompleted() { return this._status == 'completed'; }
     hasStarted() { return this._status != 'pending'; }
     isScheduled() { return this._status == 'scheduled'; }
     isPending() { return this._status == 'pending'; }

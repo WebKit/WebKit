@@ -330,12 +330,6 @@ describe('/api/update-triggerable/', function () {
         return map;
     }
 
-    function refetchManifest()
-    {
-        MockData.resetV3Models();
-        return TestServer.remoteAPI().getJSON('/api/manifest').then((content) => Manifest._didFetchManifest(content));
-    }
-
     it('should update the acceptable of custom roots and patches', () => {
         const db = TestServer.database();
         const initialUpdate = updateWithMacWebKitRepositoryGroups();
@@ -346,7 +340,7 @@ describe('/api/update-triggerable/', function () {
             return addSlaveForReport(initialUpdate);
         }).then(() => {
             return TestServer.remoteAPI().postJSONWithStatus('/api/update-triggerable/', initialUpdate);
-        }).then(() => refetchManifest()).then(() => {
+        }).then(() => Manifest.fetch()).then(() => {
             const repositoryGroups = TriggerableRepositoryGroup.sortByName(TriggerableRepositoryGroup.all());
             const webkit = Repository.findTopLevelByName('WebKit');
             const macos = Repository.findTopLevelByName('macOS');
@@ -365,7 +359,7 @@ describe('/api/update-triggerable/', function () {
             assert.equal(repositoryGroups[1].acceptsPatchForRepository(webkit), false);
             assert.equal(repositoryGroups[1].acceptsPatchForRepository(macos), false);
             return TestServer.remoteAPI().postJSONWithStatus('/api/update-triggerable/', secondUpdate);
-        }).then(() => refetchManifest()).then(() => {
+        }).then(() => Manifest.fetch()).then(() => {
             const repositoryGroups = TriggerableRepositoryGroup.sortByName(TriggerableRepositoryGroup.all());
             const webkit = Repository.findTopLevelByName('WebKit');
             const macos = Repository.findTopLevelByName('macOS');
