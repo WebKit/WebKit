@@ -1,3 +1,17 @@
+2017-05-24  Andreas Kling  <akling@apple.com>
+
+        Disable memory kill mechanisms when running with FastMalloc disabled.
+        https://bugs.webkit.org/show_bug.cgi?id=172550
+        <rdar://problem/32181908>
+
+        Reviewed by Antti Koivisto.
+
+        If someone is using WebKit with a non-standard allocator, they are likely trying to debug
+        or test something, and suddenly getting killed is not gonna help with that.
+
+        * wtf/MemoryPressureHandler.cpp:
+        (WTF::MemoryPressureHandler::setShouldUsePeriodicMemoryMonitor):
+
 2017-05-22  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebCrypto] Support RSA-PSS

@@ -57,6 +57,12 @@ MemoryPressureHandler::MemoryPressureHandler()
 
 void MemoryPressureHandler::setShouldUsePeriodicMemoryMonitor(bool use)
 {
+    if (!isFastMallocEnabled()) {
+        // If we're running with FastMalloc disabled, some kind of testing or debugging is probably happening.
+        // Let's be nice and not enable the memory kill mechanism.
+        return;
+    }
+
     if (use) {
         m_measurementTimer = std::make_unique<RunLoop::Timer<MemoryPressureHandler>>(RunLoop::main(), this, &MemoryPressureHandler::measurementTimerFired);
         m_measurementTimer->startRepeating(30);
