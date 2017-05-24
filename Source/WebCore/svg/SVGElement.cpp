@@ -595,6 +595,9 @@ bool SVGElement::shouldMoveToFlowThread(const RenderStyle& styleToUse) const
 
 void SVGElement::sendSVGLoadEventIfPossible(bool sendParentLoadEvents)
 {
+    if (!inDocument() || !document().frame())
+        return;
+
     RefPtr<SVGElement> currentTarget = this;
     while (currentTarget && currentTarget->haveLoadedRequiredResources()) {
         RefPtr<Element> parent;
