@@ -102,6 +102,14 @@ static void checkTypeIdentifierIsRegisteredAtIndex(DataInteractionSimulator *sim
     EXPECT_WK_STREQ(type.UTF8String, [registeredTypes[index] UTF8String]);
 }
 
+static void checkSuggestedNameAndEstimatedSize(DataInteractionSimulator *simulator, NSString *suggestedName, CGSize estimatedSize)
+{
+    UIItemProvider *sourceItemProvider = [simulator sourceItemProviders].firstObject;
+    EXPECT_WK_STREQ(suggestedName.UTF8String, sourceItemProvider.suggestedName.UTF8String);
+    EXPECT_EQ(estimatedSize.width, sourceItemProvider.estimatedDisplayedSize.width);
+    EXPECT_EQ(estimatedSize.height, sourceItemProvider.estimatedDisplayedSize.height);
+}
+
 namespace TestWebKitAPI {
 
 TEST(DataInteractionTests, ImageToContentEditable)
@@ -120,6 +128,7 @@ TEST(DataInteractionTests, ImageToContentEditable)
     EXPECT_TRUE([observedEventNames containsObject:DataInteractionPerformOperationEventName]);
     checkSelectionRectsWithLogging(@[ makeCGRectValue(1, 201, 215, 174) ], [dataInteractionSimulator finalSelectionRects]);
     checkTypeIdentifierPrecedesOtherTypeIdentifier(dataInteractionSimulator.get(), (NSString *)kUTTypePNG, (NSString *)kUTTypeFileURL);
+    checkSuggestedNameAndEstimatedSize(dataInteractionSimulator.get(), @"icon.png", { 215, 174 });
 }
 
 TEST(DataInteractionTests, ImageToTextarea)
@@ -139,6 +148,7 @@ TEST(DataInteractionTests, ImageToTextarea)
     EXPECT_TRUE([observedEventNames containsObject:DataInteractionPerformOperationEventName]);
 
     checkTypeIdentifierPrecedesOtherTypeIdentifier(dataInteractionSimulator.get(), (NSString *)kUTTypePNG, (NSString *)kUTTypeFileURL);
+    checkSuggestedNameAndEstimatedSize(dataInteractionSimulator.get(), @"icon.png", { 215, 174 });
 }
 
 TEST(DataInteractionTests, ImageInLinkToInput)
@@ -151,6 +161,7 @@ TEST(DataInteractionTests, ImageInLinkToInput)
 
     EXPECT_WK_STREQ("https://www.apple.com/", [webView editorValue].UTF8String);
     checkSelectionRectsWithLogging(@[ makeCGRectValue(101, 241, 2057, 232) ], [dataInteractionSimulator finalSelectionRects]);
+    checkSuggestedNameAndEstimatedSize(dataInteractionSimulator.get(), @"icon.png", { 215, 174 });
     checkTypeIdentifierIsRegisteredAtIndex(dataInteractionSimulator.get(), (NSString *)kUTTypePNG, 0);
 }
 
@@ -165,6 +176,7 @@ TEST(DataInteractionTests, ImageInLinkWithoutHREFToInput)
 
     NSURL *imageURL = [NSURL fileURLWithPath:[webView editorValue]];
     EXPECT_WK_STREQ("icon.png", imageURL.lastPathComponent);
+    checkSuggestedNameAndEstimatedSize(dataInteractionSimulator.get(), @"icon.png", { 215, 174 });
     checkTypeIdentifierIsRegisteredAtIndex(dataInteractionSimulator.get(), (NSString *)kUTTypePNG, 0);
 }
 
@@ -177,6 +189,8 @@ TEST(DataInteractionTests, ImageDoesNotUseElementSizeAsEstimatedSize)
     [dataInteractionSimulator runFrom: { 100, 100 } to: { 100, 300 }];
 
     checkTypeIdentifierIsRegisteredAtIndex(dataInteractionSimulator.get(), (NSString *)kUTTypeGIF, 0);
+    checkSuggestedNameAndEstimatedSize(dataInteractionSimulator.get(), @"apple.gif", { 52, 64 });
+    EXPECT_WK_STREQ("apple.gif (image/gif)", [webView stringByEvaluatingJavaScript:@"output.textContent"]);
 }
 
 TEST(DataInteractionTests, ContentEditableToContentEditable)
@@ -703,6 +717,7 @@ TEST(DataInteractionTests, LargeImageToTargetDiv)
     [dataInteractionSimulator runFrom:CGPointMake(200, 400) to:CGPointMake(200, 150)];
     EXPECT_WK_STREQ("PASS", [webView stringByEvaluatingJavaScript:@"target.textContent"].UTF8String);
     checkTypeIdentifierPrecedesOtherTypeIdentifier(dataInteractionSimulator.get(), (NSString *)kUTTypePNG, (NSString *)kUTTypeFileURL);
+    checkSuggestedNameAndEstimatedSize(dataInteractionSimulator.get(), @"large-red-square.png", { 2000, 2000 });
 }
 
 TEST(DataInteractionTests, LinkWithEmptyHREF)

@@ -111,6 +111,7 @@ struct PasteboardImage {
     RefPtr<SharedBuffer> resourceData;
     String resourceMIMEType;
 #endif
+    String suggestedName;
 };
 
 // For reading from the pasteboard.

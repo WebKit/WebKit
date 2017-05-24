@@ -204,8 +204,10 @@ void Editor::writeImageToPasteboard(Pasteboard& pasteboard, Element& imageElemen
         return;
     ASSERT(cachedImage);
 
-    pasteboardImage.url.url = url.isEmpty() ? imageElement.document().completeURL(stripLeadingAndTrailingHTMLSpaces(imageElement.imageSourceURL())) : url;
+    auto imageSourceURL = imageElement.document().completeURL(stripLeadingAndTrailingHTMLSpaces(imageElement.imageSourceURL()));
+    pasteboardImage.url.url = url.isEmpty() ? imageSourceURL : url;
     pasteboardImage.url.title = title;
+    pasteboardImage.suggestedName = imageSourceURL.lastPathComponent();
     pasteboardImage.resourceMIMEType = pasteboard.resourceMIMEType(cachedImage->response().mimeType());
     pasteboardImage.resourceData = cachedImage->resourceBuffer();
 
