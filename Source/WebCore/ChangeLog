@@ -1,3 +1,16 @@
+2017-05-23  Eric Carlson  <eric.carlson@apple.com>
+
+        CoreAudioCaptureSource is ducking system sound
+        https://bugs.webkit.org/show_bug.cgi?id=172512
+
+        Reviewed by Youenn Fablet.
+
+        Manual testing.
+
+        * platform/mediastream/mac/CoreAudioCaptureSource.cpp:
+        (WebCore::CoreAudioSharedUnit::setupAudioUnit):
+        (WebCore::CoreAudioSharedUnit::defaultOutputDevice):
+
 2017-05-23  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         [iOS] Speculative fix for a PLT regression

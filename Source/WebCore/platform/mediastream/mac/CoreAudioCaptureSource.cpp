@@ -47,6 +47,12 @@
 #include <wtf/NeverDestroyed.h>
 #include "CoreMediaSoftLink.h"
 
+extern "C" {
+typedef UInt32 AudioObjectID;
+typedef AudioObjectID AudioDeviceID;
+extern OSStatus AudioDeviceDuck(AudioDeviceID inDevice, Float32 inDuckedLevel, const AudioTimeStamp* inStartTime, Float32 inRampDuration);
+}
+
 namespace WebCore {
 
 class CoreAudioCaptureSourceFactory : public RealtimeMediaSource::AudioCaptureFactory
@@ -126,7 +132,9 @@ private:
     enum QueueAction { Add, Remove };
     Vector<std::pair<QueueAction, Ref<AudioSampleDataSource>>> m_pendingSources;
 
+#if PLATFORM(MAC)
     uint32_t m_captureDeviceID { 0 };
+#endif
 
     CAAudioStreamDescription m_microphoneProcFormat;
     RefPtr<AudioSampleBufferList> m_microphoneSampleBuffer;
@@ -143,7 +151,6 @@ private:
     Lock m_pendingSourceQueueLock;
     Lock m_internalStateLock;
 
-    int32_t m_suspendCount { 0 };
     int32_t m_producingCount { 0 };
 
     mutable std::unique_ptr<RealtimeMediaSourceCapabilities> m_capabilities;
@@ -292,6 +299,10 @@ OSStatus CoreAudioSharedUnit::setupAudioUnit()
         return err;
     }
     m_ioUnitInitialized = true;
+
+    uint32_t outputDevice;
+    if (!defaultOutputDevice(&outputDevice))
+        AudioDeviceDuck(outputDevice, 1.0, nullptr, 0);
 
     return err;
 }
@@ -608,6 +619,22 @@ OSStatus CoreAudioSharedUnit::defaultInputDevice(uint32_t* deviceID)
     if (err)
         LOG(Media, "CoreAudioSharedUnit::defaultInputDevice(%p) unable to get default input device ID, error %d (%.4s)", this, (int)err, (char*)&err);
 
+    return err;
+}
+
+OSStatus CoreAudioSharedUnit::defaultOutputDevice(uint32_t* deviceID)
+{
+    OSErr err = -1;
+#if PLATFORM(MAC)
+    AudioObjectPropertyAddress address = { kAudioHardwarePropertyDefaultOutputDevice, kAudioObjectPropertyScopeGlobal, kAudioObjectPropertyElementMaster };
+
+    if (AudioObjectHasProperty(kAudioObjectSystemObject, &address)) {
+        UInt32 propertySize = sizeof(AudioDeviceID);
+        err = AudioObjectGetPropertyData(kAudioObjectSystemObject, &address, 0, nullptr, &propertySize, deviceID);
+    }
+#else
+    UNUSED_PARAM(deviceID);
+#endif
     return err;
 }
 
