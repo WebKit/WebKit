@@ -1,3 +1,16 @@
+2017-05-23  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [iOS] Speculative fix for a PLT regression
+        <rdar://problem/32361890>
+
+        Unreviewed.
+
+        Make sure CGImageSourceGetTypeWithData() is called with a buffer which is
+        32 bytes or more.
+
+        * platform/graphics/cg/ImageDecoderCG.cpp:
+        (WebCore::ImageDecoder::ImageDecoder):
+
 2017-05-22  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebCrypto] Support RSA-PSS

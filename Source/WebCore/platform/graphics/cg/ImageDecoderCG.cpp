@@ -150,7 +150,9 @@ void sharedBufferRelease(void* info)
 
 ImageDecoder::ImageDecoder(SharedBuffer& data, AlphaOption, GammaAndColorProfileOption)
 {
-    RetainPtr<CFStringRef> utiHint = adoptCF(CGImageSourceGetTypeWithData(data.createCFData().get(), nullptr, nullptr));
+    RetainPtr<CFStringRef> utiHint;
+    if (data.size() >= 32)
+        utiHint = adoptCF(CGImageSourceGetTypeWithData(data.createCFData().get(), nullptr, nullptr));
     
     if (utiHint) {
         const void* key = kCGImageSourceTypeIdentifierHint;
