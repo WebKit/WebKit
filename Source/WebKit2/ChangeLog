@@ -1,3 +1,16 @@
+2017-05-22  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Add even more input validation in Connection::processMessage()
+        https://bugs.webkit.org/show_bug.cgi?id=171682
+
+        Reviewed by Carlos Garcia Campos.
+
+        Verify that the size of the out-of-line message body matches the size of the AttachmentInfo
+        that is containing it.
+
+        * Platform/IPC/unix/ConnectionUnix.cpp:
+        (IPC::Connection::processMessage):
+
 2017-05-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Add more input validation in Connection::readBytesFromSocket()
