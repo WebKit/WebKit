@@ -1141,10 +1141,6 @@ void Page::removeActivityStateChangeObserver(ActivityStateChangeObserver& observ
 
 void Page::suspendScriptedAnimations()
 {
-    // Temporarily report the backtrace so we might gather insight as to why
-    // some tests fail due to rAF callbacks not being serviced (webkit.org/b/168409).
-    WTFLogAlways("Page::suspendScriptedAnimations() - webkit.org/b/168409");
-    WTFReportBacktrace();
     m_scriptedAnimationsSuspended = true;
     for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (frame->document())
