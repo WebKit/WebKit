@@ -1,3 +1,21 @@
+2017-05-24  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [ATK] Gardening needed after r217171
+        https://bugs.webkit.org/show_bug.cgi?id=172539
+
+        Unreviewed test gardening after r217171.
+
+        Add "PASS successfullyParsed is true" and "TEST COMPLETE" lines for
+        tests with platform-specific expectations.
+
+        * accessibility/multiselect-list-reports-active-option-expected.txt:
+        * accessibility/table-cells-roles-expected.txt:
+        * platform/gtk/accessibility/aria-checkbox-sends-notification-expected.txt:
+        * platform/gtk/accessibility/aria-switch-sends-notification-expected.txt:
+        * platform/gtk/accessibility/deleting-iframe-destroys-axcache-expected.txt:
+        * platform/gtk/accessibility/menu-list-sends-change-notification-expected.txt:
+        * platform/gtk/accessibility/table-roles-hierarchy-expected.txt:
+
 2017-05-24  Javier Fernandez  <jfernandez@igalia.com>
 
         [css-grid] Ignore collapsed tracks on content-distribution alignment

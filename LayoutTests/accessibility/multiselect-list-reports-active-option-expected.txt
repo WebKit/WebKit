@@ -24,6 +24,7 @@ PASS accessibleThree.isSelected is true
 PASS accessibleThree.isSelectedOptionActive is true
 List notification: AXSelectedChildrenChanged
 List notification: AXSelectedChildrenChanged
+PASS successfullyParsed is true
 
 TEST COMPLETE
 

@@ -28,4 +28,7 @@ role: AXRole: AXTable
         role: AXRole: AXRowHeader
         role: AXRole: AXCell
         role: AXRole: AXCell
+PASS successfullyParsed is true
+
+TEST COMPLETE
 
