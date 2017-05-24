@@ -459,6 +459,12 @@ std::optional<IntPoint> ImageFrameCache::hotSpot()
 
 IntSize ImageFrameCache::size()
 {
+#if !USE(CG)
+    // It's possible that we have decoded the metadata, but not frame contents yet. In that case ImageDecoder claims to
+    // have the size available, but the frame cache is empty. Return the decoder size without caching in such case.
+    if (m_frames.isEmpty() && isDecoderAvailable())
+        return m_decoder->size();
+#endif
     return frameMetadataAtIndexCacheIfNeeded<IntSize>(0, (&ImageFrame::size), &m_size, ImageFrame::Caching::Metadata, SubsamplingLevel::Default);
 }
 
