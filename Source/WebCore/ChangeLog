@@ -1,3 +1,57 @@
+2017-05-24  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Overloaded functions unnecessarily duplicate argument checks
+        https://bugs.webkit.org/show_bug.cgi?id=172481
+
+        Reviewed by Chris Dumez.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GeneratePropertiesHashTable):
+        Update for rename of GetConditionalForFunctionConsideringOverloads.
+
+        (AreTypesDistinguishableForOverloadResolution):
+        Remove unnecessary subroutine isDictionary that can be replaced by
+        a direct call to $codeGenerator->IsDictionaryType().
+
+        (GetConditionalForFunctionConsideringOverloads):
+        Renamed from getConditionalForFunctionConsideringOverloads.
+
+        (GenerateOverloadDispatcher):
+        Renamed from GenerateOverloadedFunctionOrConstructor. Moved Constructor/Operation/LegacyCaller
+        specific code out, and into parameters.
+
+        (GenerateImplementation):
+        Moved operation generation out into its own subroutine.
+
+        (GenerateOperationDefinition): Added.
+        Moved from GenerateImplementation.
+
+        (GenerateLegacyCallerDefinitions):
+        Pass function name and signature to GenerateOverloadDispatcher.
+
+        (GenerateArgumentsCountCheck):
+        Don't generate an argument check if this is an overloaded function. The argument
+        checks happen in the overload dispatcher.
+
+        (NeedsExplicitPropagateExceptionCall):
+        (GenerateParametersCheck):
+        (GenerateImplementationFunctionCall):
+        Replace IsReturningPromise with more direct check.
+
+        (GenerateConstructorDefinitions):
+        Pass function name and signature to GenerateOverloadDispatcher.
+
+        (getConditionalForFunctionConsideringOverloads): Renamed to GetConditionalForFunctionConsideringOverloads.
+        (GenerateOverloadedFunctionOrConstructor): Renamed to GenerateOverloadDispatcher.
+        (IsReturningPromise): Deleted.
+
+        * bindings/scripts/test/JS/JSTestGlobalObject.cpp:
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/TestInterface.idl:
+        Update test results.
+
 2017-05-24  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r217319.
