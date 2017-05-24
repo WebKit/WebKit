@@ -334,6 +334,7 @@ bool CompositeAnimation::animate(RenderElement& renderer, const RenderStyle* cur
                 animationStateChanged = true;
 
             forceStackingContext |= didBlendStyle && keyframeAnim->triggersStackingContext();
+            m_hasAnimationThatDependsOnLayout |= keyframeAnim->dependsOnLayout();
         }
     }
 
