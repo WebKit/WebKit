@@ -161,6 +161,13 @@ else
   testPassed("Non-existent rule was not found");
 
 debug("");
+debug("Try to find a rule using a malformed key");
+
+rule = keyframes2.findRule("1");
+
+shouldBe("rule", "null");
+
+debug("");
 debug("Delete a rule");
 
 keyframes2.deleteRule("50%");
