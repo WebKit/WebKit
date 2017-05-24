@@ -1,3 +1,14 @@
+2017-05-24  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] AcceleratedCompositingContext.h: error C3668: 'AcceleratedCompositingContext::paintContents': method with override specifier 'override' did not override any base class methods
+        https://bugs.webkit.org/show_bug.cgi?id=172535
+
+        Reviewed by Konstantin Tokarev.
+
+        * WebCoreSupport/AcceleratedCompositingContext.cpp:
+        (AcceleratedCompositingContext::paintContents): Append the fifth argument.
+        * WebCoreSupport/AcceleratedCompositingContext.h: Ditto.
+
 2017-05-14  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] fast/cookies/local-file-can-set-cookies.html is flaky.
