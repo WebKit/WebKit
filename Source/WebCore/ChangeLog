@@ -1,3 +1,30 @@
+2017-03-16  Dean Jackson  <dino@apple.com>
+
+        WebGL: Improve index validation when using uint index values
+        https://bugs.webkit.org/show_bug.cgi?id=169798
+
+        Reviewed by Simon Fraser.
+
+        Make sure that we test index validation with the correct type.
+        Also stop using -1 in WebGLBuffer to indicate non-existant values.
+
+        Test: fast/canvas/webgl/draw-elements-out-of-bounds-uint-index.html
+
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::validateIndexArrayConservative): Use optional<> and
+        unsigned values.
+        * html/canvas/WebGLBuffer.cpp: Use unsigned for maxIndex (they can't be negative)
+        and optional<> to indicate unknown value.
+        (WebCore::WebGLBuffer::getCachedMaxIndex):
+        (WebCore::WebGLBuffer::setCachedMaxIndex):
+        * html/canvas/WebGLBuffer.h:
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::validateIndexArrayConservative): Use optional<> and
+        unsigned values.
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::validateVertexAttributes): No need to check if
+        an unsigned value is less than zero.
+
 2017-03-15  Daniel Bates  <dabates@apple.com>
 
         Iteratively dispatch DOM events after restoring a cached page
