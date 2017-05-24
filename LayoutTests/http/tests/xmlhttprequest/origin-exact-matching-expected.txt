@@ -12,19 +12,19 @@ CONSOLE MESSAGE: line 1: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhtt
 CONSOLE MESSAGE: line 1: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=http%3A%2F%2Flocalhost%3A8000%23. Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
 CONSOLE MESSAGE: line 1: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=http%3A%2F%2Flocalhost%3A8000%2523. Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
 CONSOLE MESSAGE: line 1: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=http%3A%2F%2Flocalhost%3A8000%3A80. Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
-CONSOLE MESSAGE: line 1: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=http%3A%2F%2Flocalhost%3A8000%2C%20*. Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: line 1: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=http%3A%2F%2Flocalhost%3A8000%00. Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
 CONSOLE MESSAGE: line 1: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=HTTP%3A%2F%2FLOCALHOST%3A8000. Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
 CONSOLE MESSAGE: line 1: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=HTTP%3A%2F%2Flocalhost%3A8000. Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
 CONSOLE MESSAGE: line 1: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=-. Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
 CONSOLE MESSAGE: line 1: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=**. Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
 CONSOLE MESSAGE: line 1: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=%00*. Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: line 1: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=*%00. Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
 CONSOLE MESSAGE: line 1: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=%27*%27. Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
 CONSOLE MESSAGE: line 1: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=%22*%22. Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
 CONSOLE MESSAGE: line 1: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=*%20*. Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
 CONSOLE MESSAGE: line 1: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=*http%3A%2F%2F*. Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
 CONSOLE MESSAGE: line 1: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=*http%3A%2F%2Flocalhost%3A8000. Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
 CONSOLE MESSAGE: line 1: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=*%20http%3A%2F%2Flocalhost%3A8000. Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
-CONSOLE MESSAGE: line 1: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=*%2C%20http%3A%2F%2Flocalhost%3A8000. Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
 CONSOLE MESSAGE: line 1: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=%00http%3A%2F%2Flocalhost%3A8000. Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
 CONSOLE MESSAGE: line 1: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=null%20http%3A%2F%2Flocalhost%3A8000. Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
 CONSOLE MESSAGE: line 1: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=http%3A%2F%2Fexample.net. Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
@@ -33,6 +33,16 @@ CONSOLE MESSAGE: line 1: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhtt
 CONSOLE MESSAGE: line 1: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=http%3A%2F%2Flocalhost%3A8000%2Fxmlhttprequest%2Fresources%2Forigin-exact-matching-iframe.html. Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
 CONSOLE MESSAGE: line 1: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=http%3A%2F%2Flocalhost%3A8000%2Fxmlhttprequest%2Fresources%2F. Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
 CONSOLE MESSAGE: line 1: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=http%3A%2F%2Flocalhost%3A8000%2Fxmlhttprequest%2Fresources%2Forigin-exact-matching-iframe.html. Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: line 1: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=http%3A%2F%2Flocalhost%3A8000%2C%20*. Access-Control-Allow-Origin cannot contain more than one origin.
+CONSOLE MESSAGE: line 1: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=http%3A%2F%2Flocalhost%3A8000%2C*. Access-Control-Allow-Origin cannot contain more than one origin.
+CONSOLE MESSAGE: line 1: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=*%2C%20http%3A%2F%2Flocalhost%3A8000. Access-Control-Allow-Origin cannot contain more than one origin.
+CONSOLE MESSAGE: line 1: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=*%2Chttp%3A%2F%2Flocalhost%3A8000. Access-Control-Allow-Origin cannot contain more than one origin.
+CONSOLE MESSAGE: line 1: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=http%3A%2F%2Flocalhost%3A8000%2Chttp%3A%2F%2Flocalhost%3A8000. Access-Control-Allow-Origin cannot contain more than one origin.
+CONSOLE MESSAGE: line 1: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=http%3A%2F%2Flocalhost%3A8000%2Chttp%3A%2F%2Fexample.net. Access-Control-Allow-Origin cannot contain more than one origin.
+CONSOLE MESSAGE: line 1: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=http%3A%2F%2Fexample.net%2Chttp%3A%2F%2Flocalhost%3A8000. Access-Control-Allow-Origin cannot contain more than one origin.
+CONSOLE MESSAGE: line 1: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=%2C. Access-Control-Allow-Origin cannot contain more than one origin.
+CONSOLE MESSAGE: line 1: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=%2Chttp%3A%2F%2Flocalhost%3A8000. Access-Control-Allow-Origin cannot contain more than one origin.
+CONSOLE MESSAGE: line 1: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=http%3A%2F%2Flocalhost%3A8000%2C. Access-Control-Allow-Origin cannot contain more than one origin.
 
 
 --------
@@ -85,7 +95,7 @@ Should disallow origin: 'http://localhost:8000%23'
 PASS xhr.send(null) threw exception NetworkError (DOM Exception 19):  A network error occurred..
 Should disallow origin: 'http://localhost:8000:80'
 PASS xhr.send(null) threw exception NetworkError (DOM Exception 19):  A network error occurred..
-Should disallow origin: 'http://localhost:8000, *'
+Should disallow origin: 'http://localhost:8000'
 PASS xhr.send(null) threw exception NetworkError (DOM Exception 19):  A network error occurred..
 Should disallow origin: 'HTTP://LOCALHOST:8000'
 PASS xhr.send(null) threw exception NetworkError (DOM Exception 19):  A network error occurred..
@@ -94,6 +104,8 @@ PASS xhr.send(null) threw exception NetworkError (DOM Exception 19):  A network 
 Should disallow origin: '-'
 PASS xhr.send(null) threw exception NetworkError (DOM Exception 19):  A network error occurred..
 Should disallow origin: '**'
+PASS xhr.send(null) threw exception NetworkError (DOM Exception 19):  A network error occurred..
+Should disallow origin: '*'
 PASS xhr.send(null) threw exception NetworkError (DOM Exception 19):  A network error occurred..
 Should disallow origin: '*'
 PASS xhr.send(null) threw exception NetworkError (DOM Exception 19):  A network error occurred..
@@ -108,8 +120,6 @@ PASS xhr.send(null) threw exception NetworkError (DOM Exception 19):  A network 
 Should disallow origin: '*http://localhost:8000'
 PASS xhr.send(null) threw exception NetworkError (DOM Exception 19):  A network error occurred..
 Should disallow origin: '* http://localhost:8000'
-PASS xhr.send(null) threw exception NetworkError (DOM Exception 19):  A network error occurred..
-Should disallow origin: '*, http://localhost:8000'
 PASS xhr.send(null) threw exception NetworkError (DOM Exception 19):  A network error occurred..
 Should disallow origin: 'http://localhost:8000'
 PASS xhr.send(null) threw exception NetworkError (DOM Exception 19):  A network error occurred..
@@ -126,6 +136,26 @@ PASS xhr.send(null) threw exception NetworkError (DOM Exception 19):  A network 
 Should disallow origin: 'http://localhost:8000/xmlhttprequest/resources/'
 PASS xhr.send(null) threw exception NetworkError (DOM Exception 19):  A network error occurred..
 Should disallow origin: 'http://localhost:8000/xmlhttprequest/resources/origin-exact-matching-iframe.html'
+PASS xhr.send(null) threw exception NetworkError (DOM Exception 19):  A network error occurred..
+Should disallow origin: 'http://localhost:8000, *'
+PASS xhr.send(null) threw exception NetworkError (DOM Exception 19):  A network error occurred..
+Should disallow origin: 'http://localhost:8000,*'
+PASS xhr.send(null) threw exception NetworkError (DOM Exception 19):  A network error occurred..
+Should disallow origin: '*, http://localhost:8000'
+PASS xhr.send(null) threw exception NetworkError (DOM Exception 19):  A network error occurred..
+Should disallow origin: '*,http://localhost:8000'
+PASS xhr.send(null) threw exception NetworkError (DOM Exception 19):  A network error occurred..
+Should disallow origin: 'http://localhost:8000,http://localhost:8000'
+PASS xhr.send(null) threw exception NetworkError (DOM Exception 19):  A network error occurred..
+Should disallow origin: 'http://localhost:8000,http://example.net'
+PASS xhr.send(null) threw exception NetworkError (DOM Exception 19):  A network error occurred..
+Should disallow origin: 'http://example.net,http://localhost:8000'
+PASS xhr.send(null) threw exception NetworkError (DOM Exception 19):  A network error occurred..
+Should disallow origin: ','
+PASS xhr.send(null) threw exception NetworkError (DOM Exception 19):  A network error occurred..
+Should disallow origin: ',http://localhost:8000'
+PASS xhr.send(null) threw exception NetworkError (DOM Exception 19):  A network error occurred..
+Should disallow origin: 'http://localhost:8000,'
 PASS xhr.send(null) threw exception NetworkError (DOM Exception 19):  A network error occurred..
 PASS successfullyParsed is true
 

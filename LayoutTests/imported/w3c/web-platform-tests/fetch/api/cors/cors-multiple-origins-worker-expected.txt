@@ -1,9 +1,9 @@
-CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
-CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
-CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
-CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
-CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
-CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Access-Control-Allow-Origin cannot contain more than one origin.
+CONSOLE MESSAGE: Access-Control-Allow-Origin cannot contain more than one origin.
+CONSOLE MESSAGE: Access-Control-Allow-Origin cannot contain more than one origin.
+CONSOLE MESSAGE: Access-Control-Allow-Origin cannot contain more than one origin.
+CONSOLE MESSAGE: Access-Control-Allow-Origin cannot contain more than one origin.
+CONSOLE MESSAGE: Access-Control-Allow-Origin cannot contain more than one origin.
 
 FAIL 3 origins allowed, match the 3rd (http://localhost:8800) promise_test: Unhandled rejection with value: object "TypeError: Type error"
 FAIL 3 origins allowed, match the 3rd ("*") promise_test: Unhandled rejection with value: object "TypeError: Type error"

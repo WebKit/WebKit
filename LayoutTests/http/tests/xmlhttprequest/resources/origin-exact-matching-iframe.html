@@ -22,13 +22,15 @@ function shouldFail(origin) {
     shouldThrow("xhr.send(null)");
 }
 
-shouldPass('*');
-shouldPass(' *  ');
-shouldPass('	*');
-shouldPass(location.protocol + "//" + location.host);
-shouldPass(" "+location.protocol + "//" + location.host);
-shouldPass(" "+location.protocol + "//" + location.host + "   	 ");
-shouldPass("	"+location.protocol + "//" + location.host);
+var pageOrigin = document.origin;
+
+shouldPass("*");
+shouldPass(" *  ");
+shouldPass("	*");
+shouldPass(pageOrigin);
+shouldPass(" " + pageOrigin);
+shouldPass(" " + pageOrigin + "   	 ");
+shouldPass("	" + pageOrigin);
 shouldFail(location.protocol + "//www2." + location.host);
 shouldFail("//" + location.host);
 shouldFail("://" + location.host);
@@ -37,35 +39,45 @@ shouldFail("http:://" + location.host);
 shouldFail("http:/" + location.host);
 shouldFail("http:" + location.host);
 shouldFail(location.host);
-shouldFail(location.protocol + "//" + location.host + "?");
-shouldFail(location.protocol + "//" + location.host + "/");
-shouldFail(location.protocol + "//" + location.host + " /");
-shouldFail(location.protocol + "//" + location.host + "#");
-shouldFail(location.protocol + "//" + location.host + "%23");
-shouldFail(location.protocol + "//" + location.host + ":80");
-shouldFail(location.protocol + "//" + location.host + ", *");
-//shouldFail(location.protocol + "//" + location.host + "\0"); // Doesn't fail in chromium-linux. See http://wkbug.com/88688 and http://wkbug.com/88139
-shouldFail((location.protocol + "//" + location.host).toUpperCase());
+shouldFail(pageOrigin + "?");
+shouldFail(pageOrigin + "/");
+shouldFail(pageOrigin + " /");
+shouldFail(pageOrigin + "#");
+shouldFail(pageOrigin + "%23");
+shouldFail(pageOrigin + ":80");
+shouldFail(pageOrigin + "\0");
+shouldFail(pageOrigin.toUpperCase());
 shouldFail(location.protocol.toUpperCase() + "//" + location.host);
 shouldFail("-");
 shouldFail("**");
 shouldFail("\0*");
-//shouldFail("*\0"); // Doesn't fail in chromium-linux. http://wkbug.com/88688 and http://wkbug.com/88139
+shouldFail("*\0");
 shouldFail("'*'");
 shouldFail('"*"');
 shouldFail("* *");
 shouldFail("*" + location.protocol + "//" + "*");
-shouldFail("*" + location.protocol + "//" + location.host);
-shouldFail("* " + location.protocol + "//" + location.host);
-shouldFail("*, " + location.protocol + "//" + location.host);
-shouldFail("\0" + location.protocol + "//" + location.host);
-shouldFail("null " + location.protocol + "//" + location.host);
-shouldFail('http://example.net');
-shouldFail('null');
-shouldFail('');
+shouldFail("*" + pageOrigin);
+shouldFail("* " + pageOrigin);
+shouldFail("\0" + pageOrigin);
+shouldFail("null " + pageOrigin);
+shouldFail("http://example.net");
+shouldFail("null");
+shouldFail("");
 shouldFail(location.href);
 shouldFail(location.href.replace(/\/[^\/]*$/, '/'));
 shouldFail(location.href.replace(location.hostname, "localhost"));
+
+// Tests with multiple Access-Control-Allow-Origin headers (expected to fail)
+shouldFail(pageOrigin + ", *");
+shouldFail(pageOrigin + ",*");
+shouldFail("*, " + pageOrigin);
+shouldFail("*," + pageOrigin);
+shouldFail(pageOrigin + "," + pageOrigin);
+shouldFail(pageOrigin + ",http://example.net");
+shouldFail("http://example.net," + pageOrigin);
+shouldFail(",");
+shouldFail("," + pageOrigin);
+shouldFail(pageOrigin + ",");
 
 </script>
 <script src="../../js-test-resources/js-test-post.js"></script>
