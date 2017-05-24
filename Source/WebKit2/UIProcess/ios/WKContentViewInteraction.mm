@@ -1143,23 +1143,16 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
 
 - (void)_displayFormNodeInputView
 {
-    BOOL shouldZoomToFocusRect = YES;
-#if ENABLE(DATA_INTERACTION)
-    // FIXME: We need to teach WKWebView to properly zoom and scroll during a data interaction operation.
-    shouldZoomToFocusRect = !_dataInteractionState.isPerformingOperation;
-#endif
-    if (shouldZoomToFocusRect) {
-        // In case user scaling is force enabled, do not use that scaling when zooming in with an input field.
-        // Zooming above the page's default scale factor should only happen when the user performs it.
-        [self _zoomToFocusRect:_assistedNodeInformation.elementRect
-                 selectionRect: _didAccessoryTabInitiateFocus ? IntRect() : _assistedNodeInformation.selectionRect
-                   insideFixed:_assistedNodeInformation.insideFixedPosition
-                      fontSize:_assistedNodeInformation.nodeFontSize
-                  minimumScale:_assistedNodeInformation.minimumScaleFactor
-                  maximumScale:_assistedNodeInformation.maximumScaleFactorIgnoringAlwaysScalable
-                  allowScaling:(_assistedNodeInformation.allowsUserScalingIgnoringAlwaysScalable && !UICurrentUserInterfaceIdiomIsPad())
-                   forceScroll:[self requiresAccessoryView]];
-    }
+    // In case user scaling is force enabled, do not use that scaling when zooming in with an input field.
+    // Zooming above the page's default scale factor should only happen when the user performs it.
+    [self _zoomToFocusRect:_assistedNodeInformation.elementRect
+             selectionRect:_didAccessoryTabInitiateFocus ? IntRect() : _assistedNodeInformation.selectionRect
+               insideFixed:_assistedNodeInformation.insideFixedPosition
+                  fontSize:_assistedNodeInformation.nodeFontSize
+              minimumScale:_assistedNodeInformation.minimumScaleFactor
+              maximumScale:_assistedNodeInformation.maximumScaleFactorIgnoringAlwaysScalable
+              allowScaling:(_assistedNodeInformation.allowsUserScalingIgnoringAlwaysScalable && !UICurrentUserInterfaceIdiomIsPad())
+               forceScroll:[self requiresAccessoryView]];
 
     _didAccessoryTabInitiateFocus = NO;
     [self _ensureFormAccessoryView];
