@@ -1,3 +1,30 @@
+2017-05-23  Chris Dumez  <cdumez@apple.com>
+
+        Some async tests ignore jsTestIsAsync when ported from js-test-pre.js / js-test-post.js to js-test.js
+        https://bugs.webkit.org/show_bug.cgi?id=172523
+
+        Reviewed by Ryosuke Niwa.
+
+        * TestExpectations:
+        This test used to be flaky because jsTestIsAsync was ignored. It now consistently times out.
+
+        * fast/dom/script-charset-update.html:
+        Port test to js-test.js instead of js-test-pre.js / js-test-post.js now that it works.
+
+        * fast/mediacapturefromelement/CanvasCaptureMediaStream-webgl-events-expected.txt:
+        Rebaseline test now that it actually runs to the end.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        Remove expectation for a test that is now skipped in root TestExpectations file.
+
+        * resources/js-test.js:
+        Call testRunner.waitUntilDone() in the DOMContentLoader event listener if jsTestIsAsync is already
+        set then, instead of waiting for the load event listener to do so. This is needed because some
+        tests may decide to complete *before* the load event has fired, such as the test updated in this
+        patch. We still need to call testRunner.waitUntilDone() in the load event listener as well because
+        some tests only set jsTestIsAsync in a load event handler.
+
 2017-05-23  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline tests for iOS simulator.

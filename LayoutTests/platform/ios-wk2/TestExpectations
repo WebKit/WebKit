@@ -1938,8 +1938,6 @@ webkit.org/b/169640 imported/w3c/web-platform-tests/html/webappapis/scripting/ev
 
 webkit.org/b/169558 fast/history/ios/history-scroll-restoration.html [ Pass Failure ]
 
-webkit.org/b/169719 fast/mediacapturefromelement/CanvasCaptureMediaStream-request-frame-events.html [ Pass Failure ]
-
 webkit.org/b/171301 [ Release ] http/tests/security/contentSecurityPolicy/1.1/module-scriptnonce-invalidnonce.html [ Pass Timeout ]
 
 webkit.org/b/171353 [ Release ] http/tests/local/blob/send-hybrid-blob-using-open-panel.html [ Pass Timeout ]

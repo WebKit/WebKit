@@ -109,6 +109,11 @@ var unexpectedErrorMessage; // set by onerror when expectingError is not true
 
     if (!isWorker()) {
         window.addEventListener('DOMContentLoaded', function() {
+            // Call waitUntilDone() as early as possible otherwise some tests may complete before
+            // the load event has fired.
+            if (window.jsTestIsAsync && window.testRunner)
+                testRunner.waitUntilDone();
+
             // Some tests set jsTestIsAsync in load event handler. Adding the listener late
             // makes handleTestFinished() run after the test handles load events.
             window.addEventListener("load", handleTestFinished, false);

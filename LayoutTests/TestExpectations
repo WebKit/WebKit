@@ -140,6 +140,9 @@ webkit.org/b/139590 animations/cross-fade-webkit-mask-image.html [ Pass Failure 
 # The test frequently times out, and is just unsuccessful at detecting incorrect behavior when it passes.
 webkit.org/b/72698 media/audio-garbage-collect.html [ Skip ]
 
+# This test times out.
+webkit.org/b/172527 fast/mediacapturefromelement/CanvasCaptureMediaStream-request-frame-events.html [ Skip ]
+
 webkit.org/b/53990 fast/forms/search-event-delay.html [ Pass Failure ]
 
 webkit.org/b/126142 css3/calc/transitions-dependent.html [ Pass Failure ]
