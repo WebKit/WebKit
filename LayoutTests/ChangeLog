@@ -1,3 +1,16 @@
+2017-05-23  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline tests for iOS simulator.
+
+        Unreviewed test gardening.
+
+        * fast/events/ios/rotation/basic-rotation-expected.txt:
+        * fast/events/touch/ios/block-without-overflow-scroll-and-passive-observer-on-block-scrolling-state-expected.txt:
+        * fast/events/touch/ios/block-without-overflow-scroll-and-passive-observer-on-document-scrolling-state-expected.txt:
+        * fast/events/touch/ios/block-without-overflow-scroll-scrolling-state-expected.txt:
+        * fast/events/touch/ios/tap-with-active-touch-end-listener-expected.txt:
+        * fast/visual-viewport/ios/zoomed-focus-in-fixed-expected.txt:
+
 2017-05-23  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Cannot delete a disabled XHR breakpoint

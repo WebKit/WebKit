@@ -3,11 +3,18 @@ Tap on Target1 (green)
 (Frame scrolling node
   (scrollable area size 800 600)
   (contents size 800 600)
+  (scrollable area parameters 
+    (horizontal scroll elasticity 1)
+    (vertical scroll elasticity 1)
+    (horizontal scrollbar mode 0)
+    (vertical scrollbar mode 0))
+  (visual viewport enabled 1)
   (layout viewport at (0,0) size 800x600)
   (min layout viewport origin (0,0))
   (max layout viewport origin (0,0))
   (synchronous event dispatch region for event touchend
     at (0,0) size 300x100)
+  (behavior for fixed 0)
 )
 Listener target1 received cancelable event touchend targetting eventTarget1
 Done
@@ -16,11 +23,18 @@ Tap on Target2 (red)
 (Frame scrolling node
   (scrollable area size 800 600)
   (contents size 800 600)
+  (scrollable area parameters 
+    (horizontal scroll elasticity 1)
+    (vertical scroll elasticity 1)
+    (horizontal scrollbar mode 0)
+    (vertical scrollbar mode 0))
+  (visual viewport enabled 1)
   (layout viewport at (0,0) size 800x600)
   (min layout viewport origin (0,0))
   (max layout viewport origin (0,0))
   (synchronous event dispatch region for event touchend
     at (0,0) size 300x100)
+  (behavior for fixed 0)
 )
 Listener target1 received cancelable event touchend targetting eventTarget2
 Done
@@ -29,11 +43,18 @@ Tap on Target3 (blue)
 (Frame scrolling node
   (scrollable area size 800 600)
   (contents size 800 600)
+  (scrollable area parameters 
+    (horizontal scroll elasticity 1)
+    (vertical scroll elasticity 1)
+    (horizontal scrollbar mode 0)
+    (vertical scrollbar mode 0))
+  (visual viewport enabled 1)
   (layout viewport at (0,0) size 800x600)
   (min layout viewport origin (0,0))
   (max layout viewport origin (0,0))
   (synchronous event dispatch region for event touchend
     at (0,0) size 300x100)
+  (behavior for fixed 0)
 )
 Listener target1 received cancelable event touchend targetting eventTarget3
 
