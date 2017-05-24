@@ -117,7 +117,6 @@ public:
         bool breakFirstWordOnOverflow;
         bool breakNBSP;
         bool keepAllWordsForCJK;
-        float spaceWidth;
         float wordSpacing;
         unsigned tabWidth;
         bool shouldHyphenate;
