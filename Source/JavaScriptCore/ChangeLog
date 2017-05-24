@@ -1,3 +1,16 @@
+2017-05-24  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r217016. rdar://problem/32380054
+
+    2017-05-17  Filip Pizlo  <fpizlo@apple.com>
+
+            JSC: Incorrect LoadVarargs handling in ArgumentsEliminationPhase::transform
+            https://bugs.webkit.org/show_bug.cgi?id=172208
+
+            Reviewed by Saam Barati.
+
+            * dfg/DFGArgumentsEliminationPhase.cpp:
+
 2017-05-17  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r211063. rdar://problem/32228083
