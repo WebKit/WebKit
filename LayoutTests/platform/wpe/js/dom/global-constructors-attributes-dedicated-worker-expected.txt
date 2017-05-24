@@ -379,11 +379,6 @@ PASS [Worker] Object.getOwnPropertyDescriptor(global, 'XMLHttpRequestEventTarget
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'XMLHttpRequestEventTarget').hasOwnProperty('set') is false
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'XMLHttpRequestEventTarget').enumerable is false
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'XMLHttpRequestEventTarget').configurable is true
-PASS [Worker] Object.getOwnPropertyDescriptor(global, 'webkitURL').value is webkitURL
-PASS [Worker] Object.getOwnPropertyDescriptor(global, 'webkitURL').hasOwnProperty('get') is false
-PASS [Worker] Object.getOwnPropertyDescriptor(global, 'webkitURL').hasOwnProperty('set') is false
-PASS [Worker] Object.getOwnPropertyDescriptor(global, 'webkitURL').enumerable is false
-PASS [Worker] Object.getOwnPropertyDescriptor(global, 'webkitURL').configurable is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

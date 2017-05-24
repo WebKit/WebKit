@@ -1,5 +1,13 @@
 2017-05-24  Claudio Saavedra  <csaavedra@igalia.com>
 
+        [WPE] Rebaseline test after r217181
+
+        Unreviewed gardening.
+
+        * platform/wpe/js/dom/global-constructors-attributes-dedicated-worker-expected.txt:
+
+2017-05-24  Claudio Saavedra  <csaavedra@igalia.com>
+
         [WPE] Remove baseline for test that passes now
 
         Unreviewed gardening.
