@@ -39,7 +39,7 @@ function syncLoop(options)
     }).then(() => {
         return Manifest.fetch();
     }).then(() => {
-        return triggerable.syncOnce();
+        return makeTriggerable().syncOnce();
     }).catch((error) => {
         console.error(error);
         if (typeof(error.stack) == 'string') {

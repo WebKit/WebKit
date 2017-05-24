@@ -1,3 +1,10 @@
+2017-05-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Sycning script build fix after r217378.
+
+        * tools/sync-buildbot.js:
+        (syncLoop):
+
 2017-05-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add the support for perf try bots to sync-buildbot.js
