@@ -1,5 +1,19 @@
 2017-05-24  Ryosuke Niwa  <rniwa@webkit.org>
 
+        The commit log viewer can overlap the analysis results viewer
+        https://bugs.webkit.org/show_bug.cgi?id=172534
+
+        Rubber-stamped by Chris Dumez.
+
+        Allocate the padding on the right for the commit log viewer, and add a horizontal scrollbar
+        to the analysis results viewer instead of letting it expand beneath the commit log viewer.
+
+        * public/v3/pages/analysis-task-page.js:
+        (AnalysisTaskResultsPane.htmlTemplate):
+        (AnalysisTaskResultsPane.cssTemplate):
+
+2017-05-24  Ryosuke Niwa  <rniwa@webkit.org>
+
         Sycning script build fix after r217378.
 
         * tools/sync-buildbot.js:

@@ -160,7 +160,9 @@ class AnalysisTaskResultsPane extends ComponentBase {
     {
         return `
             <div id="results-container">
-                <analysis-results-viewer id="results-viewer"></analysis-results-viewer>
+                <div id="results-viewer-container">
+                    <analysis-results-viewer id="results-viewer"></analysis-results-viewer>
+                </div>
                 <div id="commit-pane">
                     <select id="commit-viewer-repository"></select>
                     <commit-log-viewer id="commit-viewer"></commit-log-viewer>
@@ -176,6 +178,11 @@ class AnalysisTaskResultsPane extends ComponentBase {
             #results-container {
                 position: relative;
                 text-align: center;
+                padding-right: 20rem;
+            }
+            #results-viewer-container {
+                overflow-x: scroll;
+                overflow-y: hidden;
             }
             #commit-pane {
                 position: absolute;
