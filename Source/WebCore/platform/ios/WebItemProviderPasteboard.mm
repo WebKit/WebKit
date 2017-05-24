@@ -131,10 +131,8 @@ static BOOL isImageType(NSString *type)
 
 - (instancetype)init
 {
-    if (self = [super init]) {
+    if (self = [super init])
         _items = adoptNS([[NSMutableArray alloc] init]);
-        _estimatedDisplayedSize = CGSizeZero;
-    }
 
     return self;
 }
@@ -295,8 +293,6 @@ static BOOL isImageType(NSString *type)
                 return nil;
             }];
         }];
-        [itemProvider setEstimatedDisplayedSize:itemList.estimatedDisplayedSize];
-        [itemProvider setSuggestedName:itemList.suggestedName];
         [providers addObject:itemProvider.get()];
     }
 
@@ -420,11 +416,8 @@ static NSURL *temporaryFileURLForDataInteractionContent(NSURL *url, NSString *su
     if (!temporaryDataInteractionDirectory)
         return nil;
 
-    suggestedName = suggestedName ?: defaultDataInteractionFileName;
-    if (![suggestedName containsString:@"."])
-        suggestedName = [suggestedName stringByAppendingPathExtension:url.pathExtension];
-
-    return [NSURL fileURLWithPath:[temporaryDataInteractionDirectory stringByAppendingPathComponent:suggestedName ?: url.lastPathComponent]];
+    suggestedName = [suggestedName ?: defaultDataInteractionFileName stringByAppendingPathExtension:url.pathExtension];
+    return [NSURL fileURLWithPath:[temporaryDataInteractionDirectory stringByAppendingPathComponent:url.lastPathComponent ?: suggestedName]];
 }
 
 - (void)doAfterLoadingProvidedContentIntoFileURLs:(WebItemProviderFileLoadBlock)action

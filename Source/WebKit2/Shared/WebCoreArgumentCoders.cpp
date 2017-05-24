@@ -1471,7 +1471,6 @@ void ArgumentCoder<PasteboardImage>::encode(Encoder& encoder, const PasteboardIm
     encoder << pasteboardImage.url.url;
     encoder << pasteboardImage.url.title;
     encoder << pasteboardImage.resourceMIMEType;
-    encoder << pasteboardImage.suggestedName;
     if (pasteboardImage.resourceData)
         encodeSharedBuffer(encoder, pasteboardImage.resourceData.get());
 }
@@ -1485,8 +1484,6 @@ bool ArgumentCoder<PasteboardImage>::decode(Decoder& decoder, PasteboardImage& p
     if (!decoder.decode(pasteboardImage.url.title))
         return false;
     if (!decoder.decode(pasteboardImage.resourceMIMEType))
-        return false;
-    if (!decoder.decode(pasteboardImage.suggestedName))
         return false;
     if (!decodeSharedBuffer(decoder, pasteboardImage.resourceData))
         return false;
