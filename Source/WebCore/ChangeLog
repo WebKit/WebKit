@@ -1,3 +1,24 @@
+2017-03-22  Jiewen Tan  <jiewen_tan@apple.com>
+
+        ASSERT_WITH_SECURITY_IMPLICATION hit when removing an <input type="range"> while dragging on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=165535
+        <rdar://problem/29559749>
+
+        Reviewed by Ryosuke Niwa.
+
+        Utimately we should prevent SliderThumbElement::unregisterForTouchEvents() being called while
+        updating render tree. A quick fix for this is to move dispatchFormControlChangeEvent for input
+        from stopDragging up to the callers which really needs to dispatch this event, i.e., finishing
+        dragging the slider. It is clear that not every caller of stopDragging wants to
+        dispatchFormControlChangeEvent.
+
+        Test: fast/forms/range/range-remove-on-drag.html
+
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::SliderThumbElement::stopDragging):
+        (WebCore::SliderThumbElement::defaultEventHandler):
+        (WebCore::SliderThumbElement::handleTouchEndAndCancel):
+
 2017-03-16  Dean Jackson  <dino@apple.com>
 
         WebGL: Improve index validation when using uint index values

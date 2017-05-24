@@ -97,6 +97,9 @@ http/tests/ssl/applepay/ [ Skip ]
 fast/visual-viewport/rubberbanding-viewport-rects.html [ Skip ]
 fast/visual-viewport/rubberbanding-viewport-rects-header-footer.html  [ Skip ]
 
+# Test only works on iOS WK2. webkit.org/b/165535
+fast/forms/range/range-remove-on-drag.html [ Skip ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific tests.
 #//////////////////////////////////////////////////////////////////////////////////////////
