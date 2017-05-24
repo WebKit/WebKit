@@ -32,9 +32,6 @@ use File::Basename;
 use File::Spec;
 use File::Find;
 use Getopt::Long;
-use threads;
-use threads::shared;
-use Thread::Queue;
 
 my $perl = $^X;
 my $scriptDir = $FindBin::Bin;
@@ -121,13 +118,18 @@ my @idlFilesToUpdate = grep &{sub {
                 implicitDependencies($depFile));
     needsUpdate(\@output, \@deps);
 }}, @idlFiles;
-my $queue = Thread::Queue->new(@idlFilesToUpdate);
-my $abort :shared = 0;
-my $totalCount = @idlFilesToUpdate;
-my $currentCount :shared = 0;
 
-my @threadPool = map { threads->create(\&worker) } (1 .. $numOfJobs);
-$_->join for @threadPool;
+my $abort = 0;
+my $totalCount = @idlFilesToUpdate;
+my $currentCount = 0;
+
+spawnGenerateBindingsIfNeeded() for (1 .. $numOfJobs);
+while (waitpid(-1, 0) != -1) {
+    if ($?) {
+        $abort = 1;
+    }
+    spawnGenerateBindingsIfNeeded();
+}
 exit $abort;
 
 sub needsUpdate
@@ -157,20 +159,16 @@ sub mtime
     return (stat $file)[9];
 }
 
-sub worker {
-    while (my $file = $queue->dequeue_nb()) {
-        last if $abort;
-        eval {
-            $currentCount++;
-            my $basename = basename($file);
-            printProgress("[$currentCount/$totalCount] $basename");
-            executeCommand($perl, @args, $file) == 0 or die;
-        };
-        if ($@) {
-            $abort = 1;
-            die;
-        }
-    }
+sub spawnGenerateBindingsIfNeeded
+{
+    return if $abort;
+    return unless @idlFilesToUpdate;
+    my $file = shift @idlFilesToUpdate;
+    $currentCount++;
+    my $basename = basename($file);
+    printProgress("[$currentCount/$totalCount] $basename");
+    my $pid = spawnCommand($perl, @args, $file);
+    $abort = 1 unless defined $pid;
 }
 
 sub buildDirectoryCache
@@ -196,20 +194,21 @@ sub implicitDependencies
 
 sub executeCommand
 {
-    if ($^O eq 'cygwin') {
-        # 'system' of Cygwin Perl doesn't seem thread-safe
-        my $pid = fork();
-        defined($pid) or die;
-        if ($pid == 0) {
-            exec(@_) or die;
-        }
-        waitpid($pid, 0);
-        return $?;
-    }
     if ($^O eq 'MSWin32') {
         return system(quoteCommand(@_));
     }
     return system(@_);
+}
+
+sub spawnCommand
+{
+    my $pid = fork();
+    if ($pid == 0) {
+        @_ = quoteCommand(@_) if ($^O eq 'MSWin32');
+        exec(@_);
+        die "Cannot exec";
+    }
+    return $pid;
 }
 
 sub quoteCommand
