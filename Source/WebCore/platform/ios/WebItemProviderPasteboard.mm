@@ -131,8 +131,10 @@ static BOOL isImageType(NSString *type)
 
 - (instancetype)init
 {
-    if (self = [super init])
+    if (self = [super init]) {
         _items = adoptNS([[NSMutableArray alloc] init]);
+        _estimatedDisplayedSize = CGSizeZero;
+    }
 
     return self;
 }
@@ -293,6 +295,7 @@ static BOOL isImageType(NSString *type)
                 return nil;
             }];
         }];
+        [itemProvider setEstimatedDisplayedSize:itemList.estimatedDisplayedSize];
         [providers addObject:itemProvider.get()];
     }
 
