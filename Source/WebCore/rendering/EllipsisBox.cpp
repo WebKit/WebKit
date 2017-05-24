@@ -38,6 +38,9 @@ EllipsisBox::EllipsisBox(RenderBlockFlow& renderer, const AtomicString& ellipsis
     , m_str(ellipsisStr)
     , m_selectionState(RenderObject::SelectionNone)
 {
+#if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
+    m_isEverInChildList = false;
+#endif
 }
 
 void EllipsisBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, LayoutUnit lineTop, LayoutUnit lineBottom)
