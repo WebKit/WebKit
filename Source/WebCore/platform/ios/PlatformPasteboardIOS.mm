@@ -254,6 +254,8 @@ void PlatformPasteboard::writeObjectRepresentations(const PasteboardImage& paste
         UIImage *uiImage = (UIImage *)[getUIImageClass() imageWithCGImage:nativeImage.get()];
         if (uiImage)
             [itemsToRegister addRepresentingObject:uiImage];
+        [itemsToRegister setEstimatedDisplayedSize:image->size()];
+        [itemsToRegister setSuggestedName:pasteboardImage.suggestedName];
     }
 
     if (!pasteboardImage.url.url.isEmpty()) {

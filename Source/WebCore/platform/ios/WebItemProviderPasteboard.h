@@ -30,6 +30,8 @@
 @class UIItemProvider;
 @protocol UIItemProviderWriting;
 
+struct CGSize;
+
 NS_ASSUME_NONNULL_BEGIN
 
 /*! A WebItemProviderRegistrationInfo represents a single call to register something to an item provider.
@@ -57,6 +59,9 @@ WEBCORE_EXPORT @interface WebItemProviderRegistrationInfoList : NSObject
 
 - (void)addRepresentingObject:(id <UIItemProviderWriting>)object;
 - (void)addData:(NSData *)data forType:(NSString *)typeIdentifier;
+
+@property (nonatomic) CGSize estimatedDisplayedSize;
+@property (nonatomic, strong) NSString *suggestedName;
 
 - (NSUInteger)numberOfItems;
 - (nullable WebItemProviderRegistrationInfo *)itemAtIndex:(NSUInteger)index;
