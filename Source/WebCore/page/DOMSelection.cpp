@@ -304,7 +304,11 @@ ExceptionOr<Ref<Range>> DOMSelection::getRangeAt(unsigned index)
         return Range::create(shadowAncestor->document(), container, offset, container, offset);
     }
 
-    return m_frame->selection().selection().firstRange().releaseNonNull();
+    auto firstRange = m_frame->selection().selection().firstRange();
+    ASSERT(firstRange);
+    if (!firstRange)
+        return Exception { INDEX_SIZE_ERR };
+    return firstRange.releaseNonNull();
 }
 
 void DOMSelection::removeAllRanges()
