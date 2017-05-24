@@ -1,3 +1,24 @@
+2017-05-24  Sergey Shekyan  <shekyan@gmail.com>
+
+        navigator.webdriver should return false if the page is not controlled by automation
+        https://bugs.webkit.org/show_bug.cgi?id=171997
+
+        Reviewed by Chris Dumez.
+
+        Per WebDriver Specification at https://www.w3.org/TR/webdriver/#interface
+
+        Test: js/dom/navigator-webdriver.html
+        Rebaseled fast/dom/navigator-detached-no-crash.html
+
+        * Modules/webdriver/NavigatorWebDriver.cpp:
+        (WebCore::NavigatorWebDriver::NavigatorWebDriver):
+        (WebCore::NavigatorWebDriver::isControlledByAutomation):
+        (WebCore::NavigatorWebDriver::from):
+        (WebCore::NavigatorWebDriver::webdriver):
+        (WebCore::JSNavigator::webdriver): Deleted.
+        * Modules/webdriver/NavigatorWebDriver.h:
+        * Modules/webdriver/NavigatorWebDriver.idl:
+
 2017-05-24  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, suppress deprecation warnings to fix the build.

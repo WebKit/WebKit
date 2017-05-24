@@ -27,17 +27,14 @@
 #include "NavigatorWebDriver.h"
 
 #include "Frame.h"
-#include "JSNavigator.h"
 #include "Navigator.h"
 #include "Page.h"
-#include <JavaScriptCore/JSCInlines.h>
 
 using namespace JSC;
 
 namespace WebCore {
 
-NavigatorWebDriver::NavigatorWebDriver(Frame* frame)
-    : m_frame(frame)
+NavigatorWebDriver::NavigatorWebDriver()
 {
 }
 
@@ -50,29 +47,29 @@ const char* NavigatorWebDriver::supplementName()
     return "NavigatorWebDriver";
 }
 
-bool NavigatorWebDriver::isControlledByAutomation() const
+bool NavigatorWebDriver::isControlledByAutomation(const Navigator& navigator)
 {
-    if (!m_frame || !m_frame->page())
+    auto* frame = navigator.frame();
+    if (!frame || !frame->page())
         return false;
 
-    return m_frame->page()->isControlledByAutomation();
+    return frame->page()->isControlledByAutomation();
 }
 
 NavigatorWebDriver* NavigatorWebDriver::from(Navigator* navigator)
 {
     NavigatorWebDriver* supplement = static_cast<NavigatorWebDriver*>(Supplement<Navigator>::from(navigator, supplementName()));
     if (!supplement) {
-        auto newSupplement = std::make_unique<NavigatorWebDriver>(navigator->frame());
+        auto newSupplement = std::make_unique<NavigatorWebDriver>();
         supplement = newSupplement.get();
         provideTo(navigator, supplementName(), WTFMove(newSupplement));
     }
     return supplement;
 }
 
-JSValue JSNavigator::webdriver(ExecState&) const
+bool NavigatorWebDriver::webdriver(const Navigator& navigator)
 {
-    bool isControlledByAutomation = NavigatorWebDriver::from(&wrapped())->isControlledByAutomation();
-    return isControlledByAutomation ? jsBoolean(true) : jsUndefined();
+    return NavigatorWebDriver::isControlledByAutomation(navigator);
 }
 
 } // namespace WebCore

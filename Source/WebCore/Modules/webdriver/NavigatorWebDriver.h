@@ -29,22 +29,18 @@
 
 namespace WebCore {
 
-class Frame;
 class Navigator;
 
 class NavigatorWebDriver final : public Supplement<Navigator> {
 public:
-    explicit NavigatorWebDriver(Frame*);
+    NavigatorWebDriver();
     virtual ~NavigatorWebDriver();
 
-    bool isControlledByAutomation() const;
-
     static NavigatorWebDriver* from(Navigator*);
-    static bool isControlledByAutomation(Navigator& navigator);
+    static bool webdriver(const Navigator&);
 private:
     static const char* supplementName();
-
-    Frame* m_frame { nullptr };
+    static bool isControlledByAutomation(const Navigator&);
 };
 
 } // namespace WebCore
