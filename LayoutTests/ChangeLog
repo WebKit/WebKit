@@ -1,3 +1,14 @@
+2017-05-24  Javier Fernandez  <jfernandez@igalia.com>
+
+        [css-grid] Ignore collapsed tracks on content-distribution alignment
+        https://bugs.webkit.org/show_bug.cgi?id=172493
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Unskip the web-platform-tests related to content-alignment and collapsed tracks.
+
+        * TestExpectations:
+
 2017-05-22  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebCrypto] Support RSA-PSS

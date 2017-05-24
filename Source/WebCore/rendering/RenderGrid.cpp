@@ -1075,8 +1075,9 @@ void RenderGrid::populateGridPositionsForDirection(GridTrackSizingDirection dire
     unsigned numberOfTracks = tracks.size();
     unsigned numberOfLines = numberOfTracks + 1;
     unsigned lastLine = numberOfLines - 1;
-
-    ContentAlignmentData offset = computeContentPositionAndDistributionOffset(direction, m_trackSizingAlgorithm.freeSpace(direction).value(), numberOfTracks);
+    bool hasCollapsedTracks = m_grid.hasAutoRepeatEmptyTracks(direction);
+    size_t numberOfCollapsedTracks = hasCollapsedTracks ? m_grid.autoRepeatEmptyTracks(direction)->size() : 0;
+    ContentAlignmentData offset = computeContentPositionAndDistributionOffset(direction, m_trackSizingAlgorithm.freeSpace(direction).value(), numberOfTracks - numberOfCollapsedTracks);
     auto& positions = isRowAxis ? m_columnPositions : m_rowPositions;
     positions.resize(numberOfLines);
     auto borderAndPadding = isRowAxis ? borderAndPaddingLogicalLeft() : borderAndPaddingBefore();
@@ -1084,7 +1085,6 @@ void RenderGrid::populateGridPositionsForDirection(GridTrackSizingDirection dire
     if (numberOfLines > 1) {
         // If we have collapsed tracks we just ignore gaps here and add them later as we might not
         // compute the gap between two consecutive tracks without examining the surrounding ones.
-        bool hasCollapsedTracks = m_grid.hasAutoRepeatEmptyTracks(direction);
         LayoutUnit gap = !hasCollapsedTracks ? gridGap(direction) : LayoutUnit();
         unsigned nextToLastLine = numberOfLines - 2;
         for (unsigned i = 0; i < nextToLastLine; ++i)
@@ -1095,21 +1095,23 @@ void RenderGrid::populateGridPositionsForDirection(GridTrackSizingDirection dire
         // coincide exactly) except on the edges of the grid where they become 0.
         if (hasCollapsedTracks) {
             gap = gridGap(direction);
-            unsigned remainingEmptyTracks = m_grid.autoRepeatEmptyTracks(direction)->size();
+            unsigned remainingEmptyTracks = numberOfCollapsedTracks;
+            LayoutUnit offsetAccumulator;
             LayoutUnit gapAccumulator;
             for (unsigned i = 1; i < lastLine; ++i) {
-                if (m_grid.isEmptyAutoRepeatTrack(direction, i - 1))
+                if (m_grid.isEmptyAutoRepeatTrack(direction, i - 1)) {
                     --remainingEmptyTracks;
-                else {
+                    offsetAccumulator += offset.distributionOffset;
+                } else {
                     // Add gap between consecutive non empty tracks. Add it also just once for an
                     // arbitrary number of empty tracks between two non empty ones.
                     bool allRemainingTracksAreEmpty = remainingEmptyTracks == (lastLine - i);
                     if (!allRemainingTracksAreEmpty || !m_grid.isEmptyAutoRepeatTrack(direction, i))
                         gapAccumulator += gap;
                 }
-                positions[i] += gapAccumulator;
+                positions[i] += gapAccumulator - offsetAccumulator;
             }
-            positions[lastLine] += gapAccumulator;
+            positions[lastLine] += gapAccumulator - offsetAccumulator;
         }
     }
     auto& offsetBetweenTracks = isRowAxis ? m_offsetBetweenColumns : m_offsetBetweenRows;
