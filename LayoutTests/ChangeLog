@@ -1,5 +1,13 @@
 2017-05-24  Claudio Saavedra  <csaavedra@igalia.com>
 
+        [WPE] Rebaseline test
+
+        Unreviewed gardening after a series of changes to dom static properties.
+
+        * platform/wpe/js/dom/dom-static-property-for-in-iteration-expected.txt:
+
+2017-05-24  Claudio Saavedra  <csaavedra@igalia.com>
+
         [WPE] Rebaseline test after r217181
 
         Unreviewed gardening.
