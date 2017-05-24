@@ -100,9 +100,12 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
         return this._contentTreeOutlineGroup.items;
     }
 
-    get hasSelectedElement()
+    get currentRepresentedObject()
     {
-        return !!this._contentTreeOutlineGroup.selectedTreeElement
+        if (!this._contentBrowser)
+            return null;
+
+        return this._contentBrowser.currentRepresentedObjects[0] || null;
     }
 
     get filterBar()
@@ -204,26 +207,21 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
     {
         console.assert(cookie);
 
-        // This does not save folder selections, which lack a represented object and content view.
-        var selectedTreeElement = null;
-        this.contentTreeOutlines.forEach(function(outline) {
-            if (outline.selectedTreeElement)
-                selectedTreeElement = outline.selectedTreeElement;
-        });
-
-        if (!selectedTreeElement)
+        if (!this._contentBrowser)
             return;
 
-        if (this._isTreeElementWithoutRepresentedObject(selectedTreeElement))
+        let representedObject = this.currentRepresentedObject;
+        if (!representedObject)
             return;
 
-        var representedObject = selectedTreeElement.representedObject;
         cookie[WebInspector.TypeIdentifierCookieKey] = representedObject.constructor.TypeIdentifier;
 
-        if (representedObject.saveIdentityToCookie)
+        if (representedObject.saveIdentityToCookie) {
             representedObject.saveIdentityToCookie(cookie);
-        else
-            console.error("Error: TreeElement.representedObject is missing a saveIdentityToCookie implementation. TreeElement.constructor: ", selectedTreeElement.constructor);
+            return;
+        }
+
+        console.error("NavigationSidebarPanel representedObject is missing a saveIdentityToCookie implementation.", representedObject);
     }
 
     // This can be supplemented by subclasses that admit a simpler strategy for static tree elements.
@@ -425,11 +423,6 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
 
     // Protected
 
-    representedObjectWasFiltered(representedObject, filtered)
-    {
-        // Implemented by subclasses if needed.
-    }
-
     pruneStaleResourceTreeElements()
     {
         if (this._checkForStaleResourcesTimeoutIdentifier) {
@@ -570,7 +563,7 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
                     const currentTreeElementWasHidden = currentTreeElement.hidden;
                     this.applyFiltersToTreeElement(currentTreeElement);
                     if (currentTreeElementWasHidden !== currentTreeElement.hidden)
-                        this.representedObjectWasFiltered(currentTreeElement.representedObject, currentTreeElement.hidden);
+                        this._treeElementWasFiltered(currentTreeElement);
                 }
 
                 currentTreeElement = currentTreeElement.traverseNextTreeElement(false, null, dontPopulate);
@@ -595,7 +588,7 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
                 const currentTreeElementWasHidden = currentTreeElement.hidden;
                 this.applyFiltersToTreeElement(currentTreeElement);
                 if (currentTreeElementWasHidden !== currentTreeElement.hidden)
-                    this.representedObjectWasFiltered(currentTreeElement.representedObject, currentTreeElement.hidden);
+                    this._treeElementWasFiltered(currentTreeElement);
             }
 
             currentTreeElement = currentTreeElement.traverseNextTreeElement(false, treeElement, dontPopulate);
@@ -744,6 +737,22 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
         emptyContentPlaceholderElement.appendChild(emptyContentPlaceholderMessageElement);
 
         return emptyContentPlaceholderElement;
+    }
+
+    _treeElementWasFiltered(treeElement)
+    {
+        if (treeElement.selected || treeElement.hidden)
+            return;
+
+        let representedObject = this.currentRepresentedObject;
+        if (!representedObject || treeElement.representedObject !== representedObject)
+            return;
+
+        const omitFocus = true;
+        const selectedByUser = false;
+        const suppressOnSelect = true;
+        const suppressOnDeselect = true;
+        treeElement.revealAndSelect(omitFocus, selectedByUser, suppressOnSelect, suppressOnDeselect);
     }
 };
 
