@@ -1,3 +1,18 @@
+2017-05-24  Eric Carlson  <eric.carlson@apple.com>
+
+        CoreAudioCaptureSource is ducking system sound
+        https://bugs.webkit.org/show_bug.cgi?id=172512
+
+        Reviewed by Youenn Fablet.
+
+        Manual testing.
+
+        * Configurations/WebCore.xcconfig: Adding CoreAudio as framework for iOS.
+        * platform/mediastream/mac/CoreAudioCaptureSource.cpp:
+        (WebCore::CoreAudioSharedUnit::setupAudioUnit):
+        (WebCore::CoreAudioSharedUnit::defaultOutputDevice):
+        * platform/spi/cf/CoreAudioSPI.h: Added.
+
 2017-05-24  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Change grandfathering default to one hour

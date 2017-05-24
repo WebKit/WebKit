@@ -9393,6 +9393,7 @@
 		41A1B00D1E52656E007F3769 /* LibWebRTCProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LibWebRTCProvider.cpp; path = libwebrtc/LibWebRTCProvider.cpp; sourceTree = "<group>"; };
 		41A1B01A1E542396007F3769 /* JSDOMGuardedObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMGuardedObject.h; sourceTree = "<group>"; };
 		41A1B01B1E542396007F3769 /* JSDOMGuardedObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMGuardedObject.cpp; sourceTree = "<group>"; };
+		41A21F671ED5F46D008F2420 /* CoreAudioSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreAudioSPI.h; sourceTree = "<group>"; };
 		41A3D58C101C152D00316D07 /* DedicatedWorkerThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DedicatedWorkerThread.cpp; sourceTree = "<group>"; };
 		41A3D58D101C152D00316D07 /* DedicatedWorkerThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DedicatedWorkerThread.h; sourceTree = "<group>"; };
 		41A48A9C1E83129100D2AC2D /* RTCPeerConnectionState.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RTCPeerConnectionState.idl; sourceTree = "<group>"; };
@@ -18685,6 +18686,7 @@
 				A10D7FEB1C2676D100C6C115 /* CFNetworkConnectionCacheSPI.h */,
 				CE12525A1A1C018200864480 /* CFNetworkSPI.h */,
 				1AFFC4561D5E83A700267A66 /* CFUtilitiesSPI.h */,
+				41A21F671ED5F46D008F2420 /* CoreAudioSPI.h */,
 				4449A4041A964B0000B64AD5 /* CoreMediaSPI.h */,
 			);
 			path = cf;
