@@ -22,9 +22,9 @@ for (var i = 0; i < 100000; ++i) {
     var result = baz();
     if (result.ftl) {
         if (result.result != 4)
-            throw "Error: bad result in loop in DFG: " + result;
+            throw "Error: bad result in loop in DFG: " + result.result;
     } else {
         if (result.result != 1)
-            throw "Error: bad result in loop before DFG: " + result;
+            throw "Error: bad result in loop before DFG: " + result.result;
     }
 }
