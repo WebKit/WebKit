@@ -31,30 +31,12 @@
 #include "CommonCryptoDERUtilities.h"
 #include "CommonCryptoUtilities.h"
 #include "CryptoAlgorithmEcdsaParams.h"
+#include "CryptoDigestAlgorithm.h"
 #include "CryptoKeyEC.h"
 #include "ExceptionCode.h"
 #include "ScriptExecutionContext.h"
-#include <pal/crypto/CryptoDigest.h>
 
 namespace WebCore {
-
-inline std::optional<PAL::CryptoDigest::Algorithm> cryptoDigestAlgorithm(CryptoAlgorithmIdentifier hashFunction)
-{
-    switch (hashFunction) {
-    case CryptoAlgorithmIdentifier::SHA_1:
-        return PAL::CryptoDigest::Algorithm::SHA_1;
-    case CryptoAlgorithmIdentifier::SHA_224:
-        return PAL::CryptoDigest::Algorithm::SHA_224;
-    case CryptoAlgorithmIdentifier::SHA_256:
-        return PAL::CryptoDigest::Algorithm::SHA_256;
-    case CryptoAlgorithmIdentifier::SHA_384:
-        return PAL::CryptoDigest::Algorithm::SHA_384;
-    case CryptoAlgorithmIdentifier::SHA_512:
-        return PAL::CryptoDigest::Algorithm::SHA_512;
-    default:
-        return std::nullopt;
-    }
-}
 
 static ExceptionOr<Vector<uint8_t>> signECDSA(CryptoAlgorithmIdentifier hash, const PlatformECKey key, size_t keyLengthInBytes, const Vector<uint8_t>& data)
 {

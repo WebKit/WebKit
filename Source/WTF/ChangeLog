@@ -1,3 +1,14 @@
+2017-05-22  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebCrypto] Support RSA-PSS
+        https://bugs.webkit.org/show_bug.cgi?id=170869
+        <rdar://problem/31640672>
+
+        Reviewed by Brent Fulgham.
+
+        * wtf/Platform.h:
+        Add a flag to enable RSA-PSS in the future.
+
 2017-05-23  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Remove dead ENABLE(FONT_LOAD_EVENTS) code

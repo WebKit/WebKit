@@ -394,6 +394,7 @@ if (ENABLE_SUBTLE_CRYPTO)
         crypto/algorithms/CryptoAlgorithmRSAES_PKCS1_v1_5.cpp
         crypto/algorithms/CryptoAlgorithmRSASSA_PKCS1_v1_5.cpp
         crypto/algorithms/CryptoAlgorithmRSA_OAEP.cpp
+        crypto/algorithms/CryptoAlgorithmRSA_PSS.cpp
         crypto/algorithms/CryptoAlgorithmSHA1.cpp
         crypto/algorithms/CryptoAlgorithmSHA224.cpp
         crypto/algorithms/CryptoAlgorithmSHA256.cpp

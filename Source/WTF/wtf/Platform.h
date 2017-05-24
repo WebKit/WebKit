@@ -1257,4 +1257,8 @@
 #define USE_LIBWEBRTC 1
 #endif
 
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
+#define HAVE_RSA_PSS 1
+#endif
+
 #endif /* WTF_Platform_h */

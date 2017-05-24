@@ -359,6 +359,7 @@ set(WebCore_NON_SVG_IDL_FILES
     crypto/parameters/RsaHashedKeyGenParams.idl
     crypto/parameters/RsaKeyGenParams.idl
     crypto/parameters/RsaOaepParams.idl
+    crypto/parameters/RsaPssParams.idl
 
     css/CSSFontFaceRule.idl
     css/CSSImportRule.idl

@@ -50,6 +50,7 @@
 #include "JSRsaHashedKeyGenParams.h"
 #include "JSRsaKeyGenParams.h"
 #include "JSRsaOaepParams.h"
+#include "JSRsaPssParams.h"
 #include "ScriptState.h"
 #include <runtime/Error.h>
 #include <runtime/JSArray.h>
@@ -158,7 +159,12 @@ static std::unique_ptr<CryptoAlgorithmParameters> normalizeCryptoAlgorithmParame
                 RETURN_IF_EXCEPTION(scope, nullptr);
                 result = std::make_unique<CryptoAlgorithmEcdsaParams>(params);
                 break;
-
+            }
+            case CryptoAlgorithmIdentifier::RSA_PSS: {
+                auto params = convertDictionary<CryptoAlgorithmRsaPssParams>(state, value);
+                RETURN_IF_EXCEPTION(scope, nullptr);
+                result = std::make_unique<CryptoAlgorithmRsaPssParams>(params);
+                break;
             }
             default:
                 throwNotSupportedError(state, scope);

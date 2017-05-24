@@ -300,6 +300,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/crypto/parameters/RsaHashedKeyGenParams.idl \
     $(WebCore)/crypto/parameters/RsaKeyGenParams.idl \
     $(WebCore)/crypto/parameters/RsaOaepParams.idl \
+    $(WebCore)/crypto/parameters/RsaPssParams.idl \
     $(WebCore)/css/CSSFontFaceRule.idl \
     $(WebCore)/css/CSSImportRule.idl \
     $(WebCore)/css/CSSKeyframeRule.idl \

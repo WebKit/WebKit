@@ -49,6 +49,12 @@ shouldReject('crypto.subtle.generateKey({name: "RSA-OAEP", modulusLength: 2048, 
 shouldReject('crypto.subtle.generateKey({name: "RSA-OAEP", modulusLength: 2048, publicExponent: publicExponent, hash: "sha-1"}, extractable, ["verify"])');
 shouldReject('crypto.subtle.generateKey({name: "RSA-OAEP", modulusLength: 2048, publicExponent: publicExponent, hash: "sha-1"}, extractable, ["deriveKey"])');
 shouldReject('crypto.subtle.generateKey({name: "RSA-OAEP", modulusLength: 2048, publicExponent: publicExponent, hash: "sha-1"}, extractable, ["deriveBits"])');
+shouldReject('crypto.subtle.generateKey({name: "RSA-PSS", modulusLength: 2048, publicExponent: publicExponent, hash: "sha-1"}, extractable, ["encrypt"])');
+shouldReject('crypto.subtle.generateKey({name: "RSA-PSS", modulusLength: 2048, publicExponent: publicExponent, hash: "sha-1"}, extractable, ["decrypt"])');
+shouldReject('crypto.subtle.generateKey({name: "RSA-PSS", modulusLength: 2048, publicExponent: publicExponent, hash: "sha-1"}, extractable, ["deriveKey"])');
+shouldReject('crypto.subtle.generateKey({name: "RSA-PSS", modulusLength: 2048, publicExponent: publicExponent, hash: "sha-1"}, extractable, ["deriveBits"])');
+shouldReject('crypto.subtle.generateKey({name: "RSA-PSS", modulusLength: 2048, publicExponent: publicExponent, hash: "sha-1"}, extractable, ["wrapKey"])');
+shouldReject('crypto.subtle.generateKey({name: "RSA-PSS", modulusLength: 2048, publicExponent: publicExponent, hash: "sha-1"}, extractable, ["unwrapKey"])');
 // modulusLength = 0
 shouldReject('crypto.subtle.generateKey({name: "RSASSA-PKCS1-v1_5", modulusLength: 0, publicExponent: publicExponent, hash: "sha-1"}, extractable, ["sign", "verify"])').then(finishJSTest);
 </script>

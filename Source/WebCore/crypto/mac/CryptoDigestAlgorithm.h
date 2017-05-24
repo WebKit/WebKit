@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,49 +25,32 @@
 
 #pragma once
 
-#include "CryptoAlgorithmIdentifier.h"
-#include <wtf/TypeCasts.h>
-#include <wtf/text/WTFString.h>
+#include <pal/crypto/CryptoDigest.h>
 
 #if ENABLE(SUBTLE_CRYPTO)
 
+#include "CryptoAlgorithm.h"
+
 namespace WebCore {
 
-class CryptoAlgorithmParameters {
-public:
-    enum class Class {
-        None,
-        AesCbcCfbParams,
-        AesCtrParams,
-        AesGcmParams,
-        AesKeyParams,
-        EcKeyParams,
-        EcdhKeyDeriveParams,
-        EcdsaParams,
-        HkdfParams,
-        HmacKeyParams,
-        Pbkdf2Params,
-        RsaHashedKeyGenParams,
-        RsaHashedImportParams,
-        RsaKeyGenParams,
-        RsaOaepParams,
-        RsaPssParams,
-    };
-
-    // FIXME: Consider merging name and identifier.
-    String name;
-    CryptoAlgorithmIdentifier identifier;
-
-    virtual ~CryptoAlgorithmParameters() { }
-
-    virtual Class parametersClass() const { return Class::None; }
-};
+static std::optional<PAL::CryptoDigest::Algorithm> cryptoDigestAlgorithm(CryptoAlgorithmIdentifier hashFunction)
+{
+    switch (hashFunction) {
+    case CryptoAlgorithmIdentifier::SHA_1:
+        return PAL::CryptoDigest::Algorithm::SHA_1;
+    case CryptoAlgorithmIdentifier::SHA_224:
+        return PAL::CryptoDigest::Algorithm::SHA_224;
+    case CryptoAlgorithmIdentifier::SHA_256:
+        return PAL::CryptoDigest::Algorithm::SHA_256;
+    case CryptoAlgorithmIdentifier::SHA_384:
+        return PAL::CryptoDigest::Algorithm::SHA_384;
+    case CryptoAlgorithmIdentifier::SHA_512:
+        return PAL::CryptoDigest::Algorithm::SHA_512;
+    default:
+        return std::nullopt;
+    }
+}
 
 } // namespace WebCore
-
-#define SPECIALIZE_TYPE_TRAITS_CRYPTO_ALGORITHM_PARAMETERS(ToClassName) \
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::CryptoAlgorithm##ToClassName) \
-static bool isType(const WebCore::CryptoAlgorithmParameters& parameters) { return parameters.parametersClass() == WebCore::CryptoAlgorithmParameters::Class::ToClassName; } \
-SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(SUBTLE_CRYPTO)

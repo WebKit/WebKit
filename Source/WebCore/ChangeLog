@@ -1,3 +1,73 @@
+2017-05-22  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebCrypto] Support RSA-PSS
+        https://bugs.webkit.org/show_bug.cgi?id=170869
+        <rdar://problem/31640672>
+
+        Reviewed by Brent Fulgham.
+
+        This patch implements RSA-PSS according to the spec: https://www.w3.org/TR/WebCryptoAPI/#rsa-pss.
+        Supported operations include sign, verify, generateKey, importKey and exportKey.
+
+        Tests: crypto/subtle/rsa-pss-generate-export-key-jwk-sha1.html
+               crypto/subtle/rsa-pss-generate-export-key-jwk-sha224.html
+               crypto/subtle/rsa-pss-generate-export-key-jwk-sha256.html
+               crypto/subtle/rsa-pss-generate-export-key-jwk-sha384.html
+               crypto/subtle/rsa-pss-generate-export-key-jwk-sha512.html
+               crypto/subtle/rsa-pss-generate-export-key-pkcs8.html
+               crypto/subtle/rsa-pss-generate-export-key-spki.html
+               crypto/subtle/rsa-pss-generate-key.html
+               crypto/subtle/rsa-pss-import-jwk-private-key.html
+               crypto/subtle/rsa-pss-import-jwk-public-key-empty-usages.html
+               crypto/subtle/rsa-pss-import-jwk-public-key-sha1.html
+               crypto/subtle/rsa-pss-import-jwk-public-key-sha224.html
+               crypto/subtle/rsa-pss-import-jwk-public-key-sha256.html
+               crypto/subtle/rsa-pss-import-jwk-public-key-sha384.html
+               crypto/subtle/rsa-pss-import-jwk-public-key-sha512.html
+               crypto/subtle/rsa-pss-import-key-sign-large-salt.html
+               crypto/subtle/rsa-pss-import-key-sign.html
+               crypto/subtle/rsa-pss-import-key-verify.html
+               crypto/subtle/rsa-pss-import-pkcs8-key.html
+               crypto/subtle/rsa-pss-import-spki-key-empty-usages.html
+               crypto/subtle/rsa-pss-import-spki-key.html
+               crypto/workers/subtle/rsa-pss-import-key-sign.html
+               crypto/workers/subtle/rsa-pss-import-key-verify.html
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * PlatformGTK.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSSubtleCryptoCustom.cpp:
+        (WebCore::normalizeCryptoAlgorithmParameters):
+        * crypto/CryptoAlgorithmParameters.h:
+        * crypto/algorithms/CryptoAlgorithmRSA_PSS.cpp: Added.
+        (WebCore::CryptoAlgorithmRSA_PSS::create):
+        (WebCore::CryptoAlgorithmRSA_PSS::identifier):
+        (WebCore::CryptoAlgorithmRSA_PSS::sign):
+        (WebCore::CryptoAlgorithmRSA_PSS::verify):
+        (WebCore::CryptoAlgorithmRSA_PSS::generateKey):
+        (WebCore::CryptoAlgorithmRSA_PSS::importKey):
+        (WebCore::CryptoAlgorithmRSA_PSS::exportKey):
+        * crypto/algorithms/CryptoAlgorithmRSA_PSS.h: Added.
+        * crypto/mac/CryptoAlgorithmECDSAMac.cpp:
+        (WebCore::cryptoDigestAlgorithm): Deleted.
+        Extract function cryptoDigestAlgorithm to a separate file.
+        * crypto/mac/CryptoAlgorithmRSASSA_PKCS1_v1_5Mac.cpp:
+        (WebCore::cryptoDigestAlgorithm): Deleted.
+        Extract function cryptoDigestAlgorithm to a separate file.
+        * crypto/mac/CryptoAlgorithmRSA_PSSMac.cpp: Added.
+        (WebCore::signRSA_PSS):
+        (WebCore::verifyRSA_PSS):
+        (WebCore::CryptoAlgorithmRSA_PSS::platformSign):
+        (WebCore::CryptoAlgorithmRSA_PSS::platformVerify):
+        * crypto/mac/CryptoAlgorithmRegistryMac.cpp:
+        (WebCore::CryptoAlgorithmRegistry::platformRegisterAlgorithms):
+        * crypto/mac/CryptoDigestAlgorithm.h: Added.
+        (WebCore::cryptoDigestAlgorithm):
+        Have cryptoDigestAlgorithm in a separate file.
+        * crypto/parameters/CryptoAlgorithmRsaPssParams.h: Added.
+        * crypto/parameters/RsaPssParams.idl: Added.
+
 2017-05-23  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Allow transition from autoplay to play when a capture stream begins.
