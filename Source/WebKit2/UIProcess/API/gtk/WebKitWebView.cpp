@@ -329,7 +329,7 @@ static GtkWidget* webkitWebViewCreateJavaScriptDialog(WebKitWebView* webView, Gt
         GTK_DIALOG_DESTROY_WITH_PARENT, type, buttons, "%s", primaryText);
     if (secondaryText)
         gtk_message_dialog_format_secondary_text(GTK_MESSAGE_DIALOG(dialog), "%s", secondaryText);
-    GUniquePtr<char> title(g_strdup_printf("JavaScript - %s", webkit_web_view_get_uri(webView)));
+    GUniquePtr<char> title(g_strdup_printf("JavaScript - %s", getPage(webView)->pageLoadState().url().utf8().data()));
     gtk_window_set_title(GTK_WINDOW(dialog), title.get());
     if (buttons != GTK_BUTTONS_NONE)
         gtk_dialog_set_default_response(GTK_DIALOG(dialog), defaultResponse);
