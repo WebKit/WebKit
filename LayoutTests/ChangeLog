@@ -1,5 +1,14 @@
 2017-05-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] ASSERTION FAILED: !m_flushingLayers
+        https://bugs.webkit.org/show_bug.cgi?id=172025
+
+        Reviewed by Žan Doberšek.
+
+        * platform/gtk/TestExpectations:
+
+2017-05-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] GIF images are not properly loaded the first time
         https://bugs.webkit.org/show_bug.cgi?id=170432
 
