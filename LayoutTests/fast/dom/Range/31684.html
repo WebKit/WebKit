@@ -4,7 +4,18 @@
 <script src="../../../resources/js-test-pre.js"></script>
 </head>
 <body>
-<script src="script-tests/31684.js"></script>
+<script>
+description(
+    "This test checks an orphan text node cannot be surrounded by the range. (bug31684)"
+);
+
+var range = document.createRange();
+var text = document.createTextNode('hello');
+var element = document.createElement("div");
+range.selectNodeContents(text);
+
+shouldThrow("range.surroundContents(element)", '"HierarchyRequestError (DOM Exception 3): The operation would yield an incorrect node tree."');
+</script>
 <script src="../../../resources/js-test-post.js"></script>
 </body>
 </html>

@@ -15,7 +15,45 @@
 <div id="invalid3" style="color: #green">This style is "color: #green"</div>
 <div id="invalid4" style="color: #FFAALL">This style is "color: #FFAALL"</div>
 
-<script src="script-tests/invalid-predefined-color.js"></script>
+<script>
+
+description(
+
+"This test checks hexadecimal color parsing."
+
+);
+
+
+
+var red = "rgb(255, 0, 0)";
+
+var black = "rgb(0, 0, 0)";
+
+
+
+for (var i=1;i<=5;i++)
+
+{
+
+    var div = document.getElementById("valid"+i);
+
+    shouldBe("getComputedStyle(div, null).color", "red");
+
+}
+
+
+
+for (var i=1;i<=4;i++)
+
+{
+
+    var div = document.getElementById("invalid"+i);
+
+    shouldBe("getComputedStyle(div, null).color", "black");
+
+}
+
+</script>
 <script src="../../resources/js-test-post.js"></script>
 
 </body>

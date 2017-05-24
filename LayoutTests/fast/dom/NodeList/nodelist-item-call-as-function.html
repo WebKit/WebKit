@@ -4,7 +4,13 @@
 <script src="../../../resources/js-test-pre.js"></script>
 </head>
 <body>
-<script src="script-tests/nodelist-item-call-as-function.js"></script>
+<script>
+description('This tests that items in a NodeList cannot be called indexed using [[Call]].');
+
+var nodeList = document.childNodes;
+shouldThrow("nodeList(0)");
+
+</script>
 <script src="../../../resources/js-test-post.js"></script>
 </body>
 </html>

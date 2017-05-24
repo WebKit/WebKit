@@ -4,7 +4,26 @@
 <script src="../../../resources/js-test-pre.js"></script>
 </head>
 <body>
-<script src="script-tests/enabled.js"></script>
+<script>
+description("Tests that the navigator.geolocation object is present.");
+
+function hasGeolocationProperty()
+{
+    for (var property in navigator) {
+        if (property == "geolocation")
+            return true;
+    }
+    return false;
+}
+
+shouldBeTrue("typeof navigator.geolocation == 'object'");
+shouldBeTrue("hasGeolocationProperty()");
+shouldBeTrue("'geolocation' in navigator");
+shouldBeFalse("navigator.hasOwnProperty('geolocation')");
+shouldBeTrue("navigator.__proto__.hasOwnProperty('geolocation')");
+
+window.jsTestIsAsync = false;
+</script>
 <script src="../../../resources/js-test-post.js"></script>
 </body>
 </html>

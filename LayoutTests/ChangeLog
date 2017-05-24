@@ -1,3 +1,18 @@
+2017-05-24  Alexey Proskuryakov  <ap@apple.com>
+
+        Merge split script tests
+        https://bugs.webkit.org/show_bug.cgi?id=172423
+
+        Reviewed by Sam Weinig.
+
+        In the past, many tests were being split into HTML and JS parts for no good reason.
+        This makes it hard to see what those tests are doing.
+
+        This is first part of the change, only including files where JS and HTML counterparts
+        have matching names. Custom cases will be completed in a follow-up.
+
+        Long change list omitted.
+
 2017-05-24  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark http/tests/xmlhttprequest/xmlhttprequest-50ms-download-dispatch.html as failing on iOS.

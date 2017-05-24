@@ -4,7 +4,22 @@
 <script src="../../../resources/js-test-pre.js"></script>
 </head>
 <body>
-<script src="script-tests/get-href-attribute-port.js"></script>
+<script>
+description('Test getting the port attribute of the URL in HTMLAnchorElement.');
+
+var a = document.createElement('a');
+
+debug("Default port is empty");
+shouldBe("a.port", "''");
+
+debug("Unspecified port should return empty string");
+a.href = "http://example.com/";
+shouldBe("a.port", "''");
+
+debug("Empty port should be empty");
+a.href = "http://example.com:/";
+shouldBe("a.port", "''");
+</script>
 <script src="../../../resources/js-test-post.js"></script>
 </body>
 </html>

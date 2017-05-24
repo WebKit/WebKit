@@ -4,7 +4,11 @@
 <script src="../../../resources/js-test-pre.js"></script>
 </head>
 <body>
-<script src="script-tests/replaceChild-null-oldChild.js"></script>
+<script>
+description('Test behavior of Document.replaceChild() when oldChild is null.');
+
+shouldThrow('document.replaceChild(document.firstChild, null)');
+</script>
 <script src="../../../resources/js-test-post.js"></script>
 </body>
 </html>

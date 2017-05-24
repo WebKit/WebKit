@@ -4,7 +4,20 @@
 <script src="../../../resources/js-test-pre.js"></script>
 </head>
 <body>
-<script src="script-tests/cross-frame-callable.js"></script>
+<script>
+function doTest(childRegExp)
+{
+    re = childRegExp;
+    shouldThrow("re('a')");
+    shouldBe("re.exec('a')", "['a']");
+}
+
+var iframe = document.createElement('iframe');
+document.body.appendChild(iframe);
+iframe.contentDocument.write('<script>top.doTest(/a/)</scr' + 'ipt>');
+iframe.contentDocument.close();
+document.write('DONE');
+</script>
 <script src="../../../resources/js-test-post.js"></script>
 </body>
 </html>

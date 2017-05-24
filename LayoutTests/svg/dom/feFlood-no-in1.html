@@ -6,7 +6,14 @@
 <body>
 <p id="description"></p>
 <div id="console"></div>
-<script src="script-tests/feFlood-no-in1.js"></script>
+<script>
+description("This test checks that an SVGFEFloodElement object has no in1 property.");
+
+var feFlood = document.createElementNS("http://www.w3.org/2000/svg", "feFlood");
+shouldBe("feFlood.in1", "undefined");
+
+successfullyParsed = true;
+</script>
 <script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

@@ -4,7 +4,18 @@
 <script src="../../../resources/js-test-pre.js"></script>
 </head>
 <body>
-<script src="script-tests/DOMNodeRemovedEvent.js"></script>
+<script>
+description("This test checks that DOMNodeRemovedEvent is emitted once (and only once).");
+
+var div = document.createElement("div");
+document.body.appendChild(div);
+
+var count = 0;
+document.body.addEventListener("DOMNodeRemoved", function () { count++; }, false);
+document.body.removeChild(div);
+
+shouldBe("count", "1");
+</script>
 <script src="../../../resources/js-test-post.js"></script>
 </body>
 </html>
