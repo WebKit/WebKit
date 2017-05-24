@@ -39,7 +39,7 @@ TransformSource::TransformSource(const PlatformTransformSource& source)
 
 TransformSource::~TransformSource()
 {
-    xmlFreeDoc((xmlDocPtr)m_source);
+    xmlFreeDoc(m_source);
 }
 
 }
