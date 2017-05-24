@@ -80,8 +80,7 @@ WebInspector.LogContentView = class LogContentView extends WebInspector.ContentV
         this._garbageCollectNavigationItem = new WebInspector.ButtonNavigationItem("clear-log", WebInspector.UIString("Collect garbage"), "Images/NavigationItemGarbageCollect.svg", 16, 16);
         this._garbageCollectNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._garbageCollect, this);
 
-        let clearImageDimensions = WebInspector.Platform.name === "mac" ? 16 : 15;
-        this._clearLogNavigationItem = new WebInspector.ButtonNavigationItem("clear-log", WebInspector.UIString("Clear log (%s or %s)").format(WebInspector.clearKeyboardShortcut.displayName, this._logViewController.messagesAlternateClearKeyboardShortcut.displayName), "Images/NavigationItemClear.svg", clearImageDimensions, clearImageDimensions);
+        this._clearLogNavigationItem = new WebInspector.ButtonNavigationItem("clear-log", WebInspector.UIString("Clear log (%s or %s)").format(WebInspector.clearKeyboardShortcut.displayName, this._logViewController.messagesAlternateClearKeyboardShortcut.displayName), "Images/NavigationItemClear.svg", 16, 16);
         this._clearLogNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._clearLog, this);
 
         this._showConsoleTabNavigationItem = new WebInspector.ButtonNavigationItem("show-tab", WebInspector.UIString("Show Console tab"), "Images/SplitToggleUp.svg", 16, 16);
