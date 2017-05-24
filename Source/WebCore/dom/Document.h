@@ -1299,6 +1299,8 @@ private:
     friend class IgnoreDestructiveWriteCountIncrementer;
     friend class IgnoreOpensDuringUnloadCountIncrementer;
 
+    bool shouldInheritContentSecurityPolicyFromOwner() const;
+
     void detachFromFrame() { observeFrame(nullptr); }
 
     void updateTitleElement(Element* newTitleElement);

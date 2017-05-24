@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline'; object-src 'none'">
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.setCanOpenWindows();
+    testRunner.setCloseRemainingWindowsWhenComplete(true);
+    testRunner.waitUntilDone();
+}
+</script>
+</head>
+<body>
+<pre id="console"></pre>
+<script>
+var childWindow = window.open("about:blank");
+var markup = [
+    '<object data="data:application/x-webkit-test-netscape,alertwhenloaded"></object>',
+    '<script>',
+    'function done()',
+    '{',
+    '    if (window.testRunner)',
+    '        testRunner.notifyDone();',
+    '}',
+    'window.setTimeout(done, 500);',
+    '<' + '/script>',
+]
+childWindow.document.write(markup.join("\n"));
+</script>
+</body>
+</html>
