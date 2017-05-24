@@ -1,4 +1,4 @@
-function runTest()
+function runTest(window)
 {
     function eventHandler(event)
     {
@@ -15,6 +15,8 @@ function runTest()
     window.addEventListener("beforeinput", eventHandler, true);
     window.addEventListener("input", eventHandler, true);
 
+    var document = window.document;
+
     console.log("Dispatching untrusted keypress event.");
     var keyPressEvent = new KeyboardEvent("keypress");
     document.body.dispatchEvent(keyPressEvent);
@@ -30,6 +32,13 @@ function runTest()
     console.log("Pressing \"a\".");
     eventSender.keyDown("a");
 
+    // FIXME: Composition events trigger assertions when performed in subframes.
+    // See <https://webkit.org/b/132297>.
+    if (window !== window.top) {
+        console.log("Input element value after text input events: \"" + textInput.value + "\".");
+        return;
+    }
+
     console.log("Setting marked text to \"b\".");
     textInputController.setMarkedText("b", 0, 1);
 
@@ -37,4 +46,18 @@ function runTest()
     textInputController.insertText("c");
 
     console.log("Input element value after text input events: \"" + textInput.value + "\".");
+}
+
+function waitForProvisionalNavigation(completionHandler)
+{
+    // This exploits the fact that XHRs are cancelled when a location change begins.
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (this.readyState === this.DONE)
+            window.setTimeout(completionHandler, 0);
+    };
+    xhr.open("GET", "resources/never-respond.php");
+    xhr.send();
+
+    window.location = "resources/never-respond.php";
 }
