@@ -1,3 +1,17 @@
+2017-05-24  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Create unique network storage session for each DRT.
+        https://bugs.webkit.org/show_bug.cgi?id=172540
+
+        Reviewed by Brent Fulgham.
+
+        During layout testing, each DRT instance should have its own network storage session.
+
+        * Interfaces/IWebPreferencesPrivate.idl:
+        * WebPreferences.cpp:
+        (WebPreferences::switchNetworkLoaderToNewTestingSession):
+        * WebPreferences.h:
+
 2017-05-24  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] AcceleratedCompositingContext.h: error C3668: 'AcceleratedCompositingContext::paintContents': method with override specifier 'override' did not override any base class methods

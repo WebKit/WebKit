@@ -1,3 +1,15 @@
+2017-05-24  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Create unique network storage session for each DRT.
+        https://bugs.webkit.org/show_bug.cgi?id=172540
+
+        Reviewed by Brent Fulgham.
+
+        During layout testing, each DRT instance should have its own network storage session.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (prepareConsistentTestingEnvironment):
+
 2017-05-24  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Respect image UTIs when writing to item providers when beginning data interaction on an image

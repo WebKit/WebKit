@@ -252,6 +252,7 @@ public:
     virtual HRESULT STDMETHODCALLTYPE linkPreloadEnabled(_Out_ BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setLinkPreloadEnabled(BOOL);
     virtual HRESULT STDMETHODCALLTYPE clearNetworkLoaderSession();
+    virtual HRESULT STDMETHODCALLTYPE switchNetworkLoaderToNewTestingSession();
 
     // WebPreferences
 

@@ -1464,6 +1464,9 @@ static void prepareConsistentTestingEnvironment(IWebPreferences* standardPrefere
     ASSERT(standardPreferencesPrivate);
     standardPreferences->setAutosaves(FALSE);
 
+    COMPtr<IWebPreferencesPrivate4> prefsPrivate4(Query, standardPreferences);
+    prefsPrivate4->switchNetworkLoaderToNewTestingSession();
+
     standardPreferences->setJavaScriptEnabled(TRUE);
     standardPreferences->setDefaultFontSize(16);
 #if USE(CG)

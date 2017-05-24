@@ -2019,6 +2019,12 @@ HRESULT WebPreferences::clearNetworkLoaderSession()
     return S_OK;
 }
 
+HRESULT WebPreferences::switchNetworkLoaderToNewTestingSession()
+{
+    NetworkStorageSession::switchToNewTestingSession();
+    return S_OK;
+}
+
 HRESULT WebPreferences::setApplicationId(BSTR applicationId)
 {
     m_applicationId = String(applicationId).createCFString();

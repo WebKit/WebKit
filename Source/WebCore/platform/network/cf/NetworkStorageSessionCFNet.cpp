@@ -92,7 +92,7 @@ void NetworkStorageSession::switchToNewTestingSession()
 #if PLATFORM(COCOA)
     session = adoptCF(wkCreatePrivateStorageSession(sessionName.createCFString().get()));
 #else
-    session = adoptCF(wkCreatePrivateStorageSession(sessionName.createCFString().get(), defaultNetworkStorageSession()->platformSession()));
+    session = adoptCF(wkCreatePrivateStorageSession(sessionName.createCFString().get(), defaultStorageSession().platformSession()));
 #endif
 
     RetainPtr<CFHTTPCookieStorageRef> cookieStorage;

@@ -1,3 +1,15 @@
+2017-05-24  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Create unique network storage session for each DRT.
+        https://bugs.webkit.org/show_bug.cgi?id=172540
+
+        Reviewed by Brent Fulgham.
+
+        During layout testing, each DRT instance should have its own network storage session.
+
+        * platform/network/cf/NetworkStorageSessionCFNet.cpp:
+        (WebCore::NetworkStorageSession::switchToNewTestingSession):
+
 2017-05-24  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Overloaded functions unnecessarily duplicate argument checks
