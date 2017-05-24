@@ -1,4 +1,16 @@
 ==================
+WebKitGTK+  2.16.3
+==================
+
+  - Fix URL shown in the title of beforeunload dialogs.
+  - Focus first input field of HTTP authentication dialog.
+  - Fix rendering glitches in HiDPI in long GitHub Gist pages when focusing the comments textarea.
+  - Remove Firefox user agent quirk for Google domains.
+  - Remove LATEST_RECORD_VERSION from GnuTLS priority string.
+  - Fix several crashes and rendering issues.
+  - Security fixes: CVE-2017-2496, CVE-2017-2539, CVE-2017-2510.
+
+==================
 WebKitGTK+  2.16.2
 ==================
 
