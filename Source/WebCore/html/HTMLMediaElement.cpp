@@ -41,7 +41,6 @@
 #include "CookieJar.h"
 #include "DiagnosticLoggingClient.h"
 #include "DiagnosticLoggingKeys.h"
-#include "DisplaySleepDisabler.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "ElementIterator.h"
@@ -85,6 +84,7 @@
 #include "SessionID.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
+#include "SleepDisabler.h"
 #include "TimeRanges.h"
 #include "UserContentController.h"
 #include "UserGestureIndicator.h"
@@ -6350,7 +6350,7 @@ void HTMLMediaElement::updateSleepDisabling()
     if (!shouldDisableSleep && m_sleepDisabler)
         m_sleepDisabler = nullptr;
     else if (shouldDisableSleep && !m_sleepDisabler)
-        m_sleepDisabler = DisplaySleepDisabler::create("com.apple.WebCore: HTMLMediaElement playback");
+        m_sleepDisabler = SleepDisabler::create("com.apple.WebCore: HTMLMediaElement playback");
 
     if (m_player)
         m_player->setShouldDisableSleep(shouldDisableSleep);

@@ -36,11 +36,11 @@
 #import "WebFullScreenManagerProxy.h"
 #import "WebPageProxy.h"
 #import <QuartzCore/QuartzCore.h>
-#import <WebCore/DisplaySleepDisabler.h>
 #import <WebCore/FloatRect.h>
 #import <WebCore/GeometryUtilities.h>
 #import <WebCore/IntRect.h>
 #import <WebCore/LocalizedStrings.h>
+#import <WebCore/SleepDisabler.h>
 #import <WebCore/WebCoreFullScreenPlaceholderView.h>
 #import <WebCore/WebCoreFullScreenWindow.h>
 #import <wtf/BlockObjCExceptions.h>

@@ -32,8 +32,8 @@
 #import <wtf/RefPtr.h>
 
 namespace WebCore {
-    class DisplaySleepDisabler;
-    class HTMLVideoElement;
+class SleepDisabler;
+class HTMLVideoElement;
 }
 
 @protocol WebVideoFullscreenControllerDelegate;
@@ -54,7 +54,7 @@ WEBCORE_EXPORT @interface WebVideoFullscreenController : NSWindowController {
     BOOL _isEndingFullscreen;
     BOOL _forceDisableAnimation;
 
-    std::unique_ptr<WebCore::DisplaySleepDisabler> _displaySleepDisabler;
+    std::unique_ptr<WebCore::SleepDisabler> _displaySleepDisabler;
 }
 
 - (id <WebVideoFullscreenControllerDelegate>)delegate;

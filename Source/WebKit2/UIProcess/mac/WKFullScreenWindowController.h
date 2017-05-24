@@ -34,7 +34,7 @@ class WebPageProxy;
 }
 
 namespace WebCore {
-class DisplaySleepDisabler;
+class SleepDisabler;
 class IntRect;
 }
 

@@ -23,24 +23,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "DisplaySleepDisabler.h"
+#pragma once
 
 namespace WebCore {
 
-#if !PLATFORM(COCOA)
-std::unique_ptr<DisplaySleepDisabler> DisplaySleepDisabler::create(const char* reason)
-{
-    return std::unique_ptr<DisplaySleepDisabler>(new DisplaySleepDisabler(reason));
-}
-#endif // !PLATFORM(COCOA)
+class SleepDisabler {
+public:
+    static std::unique_ptr<SleepDisabler> create(const char*);
+    WEBCORE_EXPORT virtual ~SleepDisabler();
 
-DisplaySleepDisabler::DisplaySleepDisabler(const char*)
-{
-}
-
-DisplaySleepDisabler::~DisplaySleepDisabler()
-{
-}
+protected:
+    WEBCORE_EXPORT SleepDisabler(const char*);
+};
 
 }

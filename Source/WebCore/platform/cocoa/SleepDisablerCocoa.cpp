@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "DisplaySleepDisablerCocoa.h"
+#include "SleepDisablerCocoa.h"
 
 #if PLATFORM(COCOA)
 
@@ -33,20 +33,20 @@
 
 namespace WebCore {
 
-std::unique_ptr<DisplaySleepDisabler> DisplaySleepDisabler::create(const char* reason)
+std::unique_ptr<SleepDisabler> SleepDisabler::create(const char* reason)
 {
-    return std::unique_ptr<DisplaySleepDisabler>(new DisplaySleepDisablerCocoa(reason));
+    return std::unique_ptr<SleepDisabler>(new SleepDisablerCocoa(reason));
 }
 
-DisplaySleepDisablerCocoa::DisplaySleepDisablerCocoa(const char* reason)
-    : DisplaySleepDisabler(reason)
+SleepDisablerCocoa::SleepDisablerCocoa(const char* reason)
+    : SleepDisabler(reason)
     , m_disableDisplaySleepAssertion(0)
 {
     RetainPtr<CFStringRef> reasonCF = adoptCF(CFStringCreateWithCString(kCFAllocatorDefault, reason, kCFStringEncodingUTF8));
     IOPMAssertionCreateWithDescription(kIOPMAssertionTypePreventUserIdleDisplaySleep, reasonCF.get(), nullptr, nullptr, nullptr, 0, nullptr, &m_disableDisplaySleepAssertion);
 }
 
-DisplaySleepDisablerCocoa::~DisplaySleepDisablerCocoa()
+SleepDisablerCocoa::~SleepDisablerCocoa()
 {
     IOPMAssertionRelease(m_disableDisplaySleepAssertion);
 }

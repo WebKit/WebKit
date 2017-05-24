@@ -1,3 +1,13 @@
+2017-05-24  Jer Noble  <jer.noble@apple.com>
+
+        Rename DisplaySleepDisabler -> SleepDisabler
+        https://bugs.webkit.org/show_bug.cgi?id=172478
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/mac/WKFullScreenWindowController.h:
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+
 2017-05-23  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Don't include HSTS cache data in website data removal

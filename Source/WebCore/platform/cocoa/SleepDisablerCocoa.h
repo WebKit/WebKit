@@ -23,19 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DisplaySleepDisablerCocoa_h
-#define DisplaySleepDisablerCocoa_h
+#pragma once
 
 #if PLATFORM(COCOA)
 
-#include "DisplaySleepDisabler.h"
+#include "SleepDisabler.h"
 
 namespace WebCore {
 
-class DisplaySleepDisablerCocoa : public DisplaySleepDisabler {
+class SleepDisablerCocoa : public SleepDisabler {
 public:
-    DisplaySleepDisablerCocoa(const char*);
-    virtual ~DisplaySleepDisablerCocoa();
+    SleepDisablerCocoa(const char*);
+    virtual ~SleepDisablerCocoa();
 
 private:
     uint32_t m_disableDisplaySleepAssertion;
@@ -44,5 +43,3 @@ private:
 }
 
 #endif // PLATFORM(COCOA)
-
-#endif // DisplaySleepDisablerCocoa_h

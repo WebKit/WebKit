@@ -338,7 +338,6 @@ list(APPEND WebCore_SOURCES
 
     platform/cocoa/ContentFilterUnblockHandlerCocoa.mm
     platform/cocoa/CoreVideoSoftLink.cpp
-    platform/cocoa/DisplaySleepDisablerCocoa.cpp
     platform/cocoa/FileSystemCocoa.mm
     platform/cocoa/KeyEventCocoa.mm
     platform/cocoa/LocalizedStringsCocoa.mm
@@ -351,6 +350,7 @@ list(APPEND WebCore_SOURCES
     platform/cocoa/ScrollSnapAnimatorState.mm
     platform/cocoa/SearchPopupMenuCocoa.mm
     platform/cocoa/SharedBufferCocoa.mm
+    platform/cocoa/SleepDisablerCocoa.cpp
     platform/cocoa/SystemVersion.mm
     platform/cocoa/TelephoneNumberDetectorCocoa.cpp
     platform/cocoa/ThemeCocoa.mm
@@ -753,8 +753,8 @@ set(WebCore_FORWARDING_HEADERS_FILES
 
     loader/mac/LoaderNSURLExtras.h
 
-    platform/DisplaySleepDisabler.h
     platform/PlatformExportMacros.h
+    platform/SleepDisabler.h
 
     platform/audio/AudioHardwareListener.h
 
