@@ -176,8 +176,9 @@ void ImageFrameCache::didDecodeProperties(unsigned decodedPropertiesSize)
 void ImageFrameCache::growFrames()
 {
     ASSERT(isSizeAvailable());
-    ASSERT(m_frames.size() <= frameCount());
-    m_frames.grow(frameCount());
+    auto newSize = frameCount();
+    if (newSize > m_frames.size())
+        m_frames.grow(newSize);
 }
 
 void ImageFrameCache::setNativeImage(NativeImagePtr&& nativeImage)

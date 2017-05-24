@@ -1,3 +1,22 @@
+2017-05-24  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        REGRESSION (r206481): Don't assume frameCount() is larger than or equal to the size of the image frame cache
+        https://bugs.webkit.org/show_bug.cgi?id=172552
+
+        Reviewed by Geoffrey Garen.
+
+        If an image with many cached ImageFrames is cached but its encoded data is
+        freed, then the same image is reused, the encoded data will be fetched.
+        But the initial frameCount() might be less than the current size of the
+        ImageFrames cache.
+
+        This was causing an assertion in the debug build and crash in the release
+        build. Vector::grow() does not handle the case where the new size is smaller
+        than the current size safely.
+
+        * platform/graphics/ImageFrameCache.cpp:
+        (WebCore::ImageFrameCache::growFrames):
+
 2017-05-24  Sergey Shekyan  <shekyan@gmail.com>
 
         navigator.webdriver should return false if the page is not controlled by automation
