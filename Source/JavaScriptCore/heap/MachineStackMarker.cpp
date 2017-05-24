@@ -945,6 +945,23 @@ void MachineThreads::tryCopyOtherThreadStack(Thread* thread, void* buffer, size_
 {
     Thread::Registers registers;
     size_t registersSize = thread->getRegisters(registers);
+
+    // This is a workaround for <rdar://problem/27607384>. During thread initialization,
+    // for some target platforms, thread state is momentarily set to 0 before being
+    // filled in with the target thread's real register values. As a result, there's
+    // a race condition that may result in us getting a null stackPointer.
+    // This issue may manifest with workqueue threads where the OS may choose to recycle
+    // a thread for an expired task.
+    //
+    // The workaround is simply to indicate that there's nothing to copy and return.
+    // This is correct because we will only ever observe a null pointer during thread
+    // initialization. Hence, by definition, there's nothing there that we need to scan
+    // yet, and therefore, nothing that needs to be copied.
+    if (UNLIKELY(!registers.stackPointer())) {
+        *size = 0;
+        return;
+    }
+
     std::pair<void*, size_t> stack = thread->captureStack(registers.stackPointer());
 
     bool canCopy = *size + registersSize + stack.second <= capacity;
