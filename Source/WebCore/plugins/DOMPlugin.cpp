@@ -58,7 +58,7 @@ unsigned DOMPlugin::length() const
 
 RefPtr<DOMMimeType> DOMPlugin::item(unsigned index)
 {
-    if (index >= m_pluginInfo.mimes.size())
+    if (index >= m_pluginInfo.mimes.size() || !m_frame || !m_frame->page())
         return nullptr;
 
     MimeClassInfo mime = m_pluginInfo.mimes[index];
@@ -76,6 +76,9 @@ RefPtr<DOMMimeType> DOMPlugin::item(unsigned index)
 
 RefPtr<DOMMimeType> DOMPlugin::namedItem(const AtomicString& propertyName)
 {
+    if (!m_frame || !m_frame->page())
+        return nullptr;
+
     Vector<MimeClassInfo> mimes;
     Vector<size_t> mimePluginIndices;
     m_pluginData->getWebVisibleMimesAndPluginIndices(mimes, mimePluginIndices);
