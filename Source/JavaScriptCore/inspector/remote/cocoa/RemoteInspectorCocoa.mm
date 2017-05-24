@@ -51,6 +51,21 @@
             return;                                       \
     } while (0);
 
+#define BAIL_IF_UNEXPECTED_TYPE_ALLOWING_NIL(expr, classExpr)   \
+    do {                                                        \
+        id value = (expr);                                      \
+        id classValue = (classExpr);                            \
+        if (value && ![value isKindOfClass:classValue])         \
+            return;                                             \
+    } while (0);
+
+#define CONVERT_NSNULL_TO_NIL(expr)          \
+    do {                                     \
+        if ([expr isEqual:[NSNull null]])    \
+            expr = nil;                      \
+    } while (0);
+
+
 namespace Inspector {
 
 static bool canAccessWebInspectorMachPort()
@@ -467,7 +482,8 @@ void RemoteInspector::receivedSetupMessage(NSDictionary *userInfo)
     BAIL_IF_UNEXPECTED_TYPE(sender, [NSString class]);
 
     NSNumber *automaticallyPauseNumber = userInfo[WIRAutomaticallyPause];
-    BAIL_IF_UNEXPECTED_TYPE(automaticallyPauseNumber, [NSNumber class]);
+    CONVERT_NSNULL_TO_NIL(automaticallyPauseNumber);
+    BAIL_IF_UNEXPECTED_TYPE_ALLOWING_NIL(automaticallyPauseNumber, [NSNumber class]);
     BOOL automaticallyPause = automaticallyPauseNumber.boolValue;
 
     unsigned targetIdentifier = targetIdentifierNumber.unsignedIntValue;
