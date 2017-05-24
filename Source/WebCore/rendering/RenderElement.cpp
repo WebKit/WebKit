@@ -81,9 +81,7 @@
 namespace WebCore {
 
 struct SameSizeAsRenderElement : public RenderObject {
-    uint8_t bitfields0;
-    uint8_t bitfields1;
-    uint8_t bitfields2;
+    uint32_t bitfields;
     void* firstChild;
     void* lastChild;
     RenderStyle style;
@@ -102,6 +100,7 @@ inline RenderElement::RenderElement(ContainerNode& elementOrDocument, RenderStyl
     , m_baseTypeFlags(baseTypeFlags)
     , m_ancestorLineBoxDirty(false)
     , m_hasInitializedStyle(false)
+    , m_hasInitialAnimatedStyle(false)
     , m_renderInlineAlwaysCreatesLineBoxes(false)
     , m_renderBoxNeedsLazyRepaint(false)
     , m_hasPausedImageAnimations(false)
