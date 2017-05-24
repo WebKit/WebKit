@@ -91,7 +91,6 @@ static inline void initializeDataTypesToRemove()
     dataTypesToRemove |= WebsiteDataType::WebSQLDatabases;
     dataTypesToRemove |= WebsiteDataType::IndexedDBDatabases;
     dataTypesToRemove |= WebsiteDataType::MediaKeys;
-    dataTypesToRemove |= WebsiteDataType::HSTSCache;
     dataTypesToRemove |= WebsiteDataType::SearchFieldRecentSearches;
 #if ENABLE(NETSCAPE_PLUGIN_API)
     dataTypesToRemove |= WebsiteDataType::PlugInData;
