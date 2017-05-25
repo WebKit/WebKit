@@ -875,6 +875,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
         case FeedRole:
         case FigureRole:
         case FooterRole:
+        case FootnoteRole:
         case FormRole:
         case GridRole:
         case GridCellRole:

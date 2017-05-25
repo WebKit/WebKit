@@ -637,6 +637,10 @@ static AtkRole atkRole(AccessibilityObject* coreObject)
 #if ATK_CHECK_VERSION(2, 11, 3)
         return ATK_ROLE_BLOCK_QUOTE;
 #endif
+    case FootnoteRole:
+#if ATK_CHECK_VERSION(2, 25, 2)
+        return ATK_ROLE_FOOTNOTE;
+#endif
     case ApplicationTextGroupRole:
     case DivRole:
     case PreRole:

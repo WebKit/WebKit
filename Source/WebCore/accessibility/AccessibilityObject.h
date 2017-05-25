@@ -133,6 +133,7 @@ enum AccessibilityRole {
     FeedRole,
     FigureRole,
     FooterRole,
+    FootnoteRole,
     FormRole,
     GridRole,
     GridCellRole,

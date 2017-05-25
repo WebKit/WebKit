@@ -562,6 +562,10 @@ const gchar* roleToString(AtkObject* object)
     case ATK_ROLE_SUPERSCRIPT:
         return "AXSuperscript";
 #endif
+#if ATK_CHECK_VERSION(2, 25, 2)
+    case ATK_ROLE_FOOTNOTE:
+        return "AXFootnote";
+#endif
     default:
         // We want to distinguish ATK_ROLE_UNKNOWN from a known AtkRole which
         // our DRT isn't properly handling.

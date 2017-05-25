@@ -587,7 +587,7 @@ div[role=doc-example]
       AXRole: AXSection
       
 div[role=doc-footnote]
-      AXRole: AXSection
+      AXRole: AXFootnote
       
 div[role=doc-foreword]
       AXRole: AXLandmarkRegion

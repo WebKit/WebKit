@@ -1944,6 +1944,7 @@ static const AccessibilityRoleMap& createAccessibilityRoleMap()
         { TimeRole, NSAccessibilityGroupRole },
         { FeedRole, NSAccessibilityGroupRole },
         { FigureRole, NSAccessibilityGroupRole },
+        { FootnoteRole, NSAccessibilityGroupRole },
     };
     AccessibilityRoleMap& roleMap = *new AccessibilityRoleMap;
     
@@ -2060,6 +2061,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         case ApplicationGroupRole:
         case ApplicationTextGroupRole:
         case FeedRole:
+        case FootnoteRole:
             return @"AXApplicationGroup";
         case ApplicationLogRole:
             return @"AXApplicationLog";
