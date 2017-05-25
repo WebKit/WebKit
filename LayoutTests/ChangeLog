@@ -1,3 +1,13 @@
+2017-05-25  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION(r217390): "Broke internal Production builds that ran run-jsc-stress-tests" (Requested by ddkilzer on #webkit).
+        <https://bugs.webkit.org/show_bug.cgi?id=172584>
+
+        * fast/regex/:
+        * fast/regex/script-tests:
+        - Rollback changes in r217390 for Bug 172423 to these
+          directories.
+
 2017-05-24  Chris Dumez  <cdumez@apple.com>
 
         ResourceResponses for data URLs have their Source marked as Unknown

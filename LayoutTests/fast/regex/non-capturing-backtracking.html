@@ -4,14 +4,7 @@
 <script src="../../resources/js-test-pre.js"></script>
 </head>
 <body>
-<script>
-description(
-"This page tests for proper backtracking with greedy quantifiers and non-capturing parentheses."
-);
-
-var re = /(?:a*)a/;
-shouldBe("re.exec('a')", "['a']");
-</script>
+<script src="script-tests/non-capturing-backtracking.js"></script>
 <script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

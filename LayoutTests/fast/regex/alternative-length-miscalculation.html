@@ -4,18 +4,7 @@
 <script src="../../resources/js-test-pre.js"></script>
 </head>
 <body>
-<script>
-description(
-"This page tests for length miscalculations in regular expression processing."
-);
-
-var re = /b|[^b]/g;
-re.lastIndex = 1;
-shouldBe("re.exec('a')", "null");
-
-var re2 = /[^a]|ab/;
-shouldBe("re2.test('')", "false");
-</script>
+<script src="script-tests/alternative-length-miscalculation.js"></script>
 <script src="../../resources/js-test-post.js"></script>
 </body>
 </html>
