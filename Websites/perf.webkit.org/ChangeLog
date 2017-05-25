@@ -1,3 +1,32 @@
+2017-05-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Syncing script shouldn't schedule a build request when there is a build from another test group in progress
+        https://bugs.webkit.org/show_bug.cgi?id=172577
+        <rdar://problem/32395049>
+
+        Reviewed by Chris Dumez.
+
+        When a buildbot master gets restarted while there is an in-progress build and a pending build, the master will
+        re-schedule the currently running build, and this can result in multiple build requests from different test
+        groups being scheduled simultaneously.
+
+        sync-buildbot.js was supposed to recover from this state by only processing build requests from one test group
+        at a time and eventually come back to a state where only a single test group is running per buildbot slave.
+
+        We had a test for this particular case but it wasn't testing what it claimed to test. Rewriten the test case
+        and fixed the bug by explicitly checking this condition and treating it as if there is a pending build already
+        scheduled in the builder in this case.
+
+        * public/api/test-groups.php:
+        (main): Fixed a regression from r217397. Return the platform ID of the first request when none of the requets
+        have been processed yet or all of them had failed.
+        * server-tests/tools-buildbot-triggerable-tests.js: Rewritten a test case intended to cover this bug.
+        (.assertRequestAndResolve): Added.
+        * tools/js/buildbot-syncer.js:
+        (BuildbotSyncer.prototype.scheduleRequestInGroupIfAvailable): Fixed the bug. Avoid scheduling a new request on
+        this syncer if there is a build in progress for a test group different from that of the new request. Reuse the
+        code we had to deal with a pending build for this purpose.
+
 2017-05-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         Opening an analysis task from the queue page is broken

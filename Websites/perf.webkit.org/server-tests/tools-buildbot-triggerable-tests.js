@@ -9,6 +9,13 @@ const TestServer = require('./resources/test-server.js');
 const prepareServerTest = require('./resources/common-operations.js').prepareServerTest;
 const MockLogger = require('./resources/mock-logger.js').MockLogger;
 
+function assertRequestAndResolve(request, method, url, content)
+{
+    assert.equal(request.method, method);
+    assert.equal(request.url, url);
+    request.resolve(content);
+}
+
 describe('BuildbotTriggerable', function () {
     prepareServerTest(this);
 
@@ -683,7 +690,10 @@ describe('BuildbotTriggerable', function () {
 
         it('should recover from multiple test groups running simultenously', () => {
             const db = TestServer.database();
+            const requests = MockRemoteAPI.requests;
+
             let syncPromise;
+            let triggerable;
             return Promise.all([
                 MockData.addMockData(db, ['completed', 'pending', 'pending', 'pending']),
                 MockData.addAnotherMockTestGroup(db, ['completed', 'pending', 'pending', 'pending'])
@@ -693,70 +703,54 @@ describe('BuildbotTriggerable', function () {
                 const config = MockData.mockTestSyncConfigWithSingleBuilder();
                 const logger = new MockLogger;
                 const slaveInfo = {name: 'sync-slave', password: 'password'};
-                const triggerable = new BuildbotTriggerable(config, TestServer.remoteAPI(), MockRemoteAPI, slaveInfo, logger);
+                triggerable = new BuildbotTriggerable(config, TestServer.remoteAPI(), MockRemoteAPI, slaveInfo, logger);
                 syncPromise = triggerable.syncOnce();
                 return MockRemoteAPI.waitForRequest();
             }).then(() => {
-                assert.equal(MockRemoteAPI.requests.length, 1);
-                assert.equal(MockRemoteAPI.requests[0].method, 'GET');
-                assert.equal(MockRemoteAPI.requests[0].url, '/json/builders/some-builder-1/pendingBuilds');
-                MockRemoteAPI.requests[0].resolve([MockData.pendingBuild({buildRequestId: 711})]);
+                assert.equal(requests.length, 1);
+                assertRequestAndResolve(requests[0], 'GET', '/json/builders/some-builder-1/pendingBuilds', []);
                 return MockRemoteAPI.waitForRequest();
             }).then(() => {
-                assert.equal(MockRemoteAPI.requests.length, 2);
-                assert.equal(MockRemoteAPI.requests[1].method, 'GET');
-                assert.equal(MockRemoteAPI.requests[1].url, '/json/builders/some-builder-1/builds/?select=-1&select=-2');
-                MockRemoteAPI.requests[1].resolve({[-1]: MockData.runningBuild({buildRequestId: 700}), [-2]: MockData.finishedBuild({buildRequestId: 710})});
+                assert.equal(requests.length, 2);
+                assertRequestAndResolve(requests[1], 'GET', '/json/builders/some-builder-1/builds/?select=-1&select=-2',
+                    {[-1]: MockData.runningBuild({buildRequestId: 700}), [-2]: MockData.finishedBuild({buildRequestId: 710})});
                 return MockRemoteAPI.waitForRequest();
             }).then(() => {
-                assert.equal(MockRemoteAPI.requests.length, 3);
-                assert.equal(MockRemoteAPI.requests[2].method, 'GET');
-                assert.equal(MockRemoteAPI.requests[2].url, '/json/builders/some-builder-1/pendingBuilds');
-                MockRemoteAPI.requests[2].resolve([MockData.pendingBuild({buildRequestId: 701})]);
+                assert.equal(requests.length, 3);
+                assertRequestAndResolve(requests[2], 'POST', '/builders/some-builder-1/force');
+                assert.deepEqual(requests[2].data, {'wk': '192736', 'os': '10.11 15A284', 'build-request-id': '701'});
                 return MockRemoteAPI.waitForRequest();
             }).then(() => {
-                assert.equal(MockRemoteAPI.requests.length, 4);
-                assert.equal(MockRemoteAPI.requests[3].method, 'GET');
-                assert.equal(MockRemoteAPI.requests[3].url, '/json/builders/some-builder-1/builds/?select=-1&select=-2');
-                MockRemoteAPI.requests[3].resolve({[-1]: MockData.runningBuild({buildRequestId: 700}), [-2]: MockData.finishedBuild({buildRequestId: 710})});
+                assert.equal(requests.length, 4);
+                assertRequestAndResolve(requests[3], 'GET', '/json/builders/some-builder-1/pendingBuilds',
+                    [MockData.pendingBuild({buildRequestId: 701})]);
+                return MockRemoteAPI.waitForRequest();
+            }).then(() => {
+                assert.equal(requests.length, 5);
+                assertRequestAndResolve(requests[4], 'GET', '/json/builders/some-builder-1/builds/?select=-1&select=-2',
+                    {[-1]: MockData.runningBuild({buildRequestId: 700}), [-2]: MockData.finishedBuild({buildRequestId: 710})});
                 return syncPromise;
             }).then(() => {
-                assert.equal(BuildRequest.all().length, 8);
-                assert.equal(BuildRequest.findById(700).status(), 'completed');
-                assert.equal(BuildRequest.findById(700).statusUrl(), null);
-                assert.equal(BuildRequest.findById(701).status(), 'pending');
-                assert.equal(BuildRequest.findById(701).statusUrl(), null);
-                assert.equal(BuildRequest.findById(702).status(), 'pending');
-                assert.equal(BuildRequest.findById(702).statusUrl(), null);
-                assert.equal(BuildRequest.findById(703).status(), 'pending');
-                assert.equal(BuildRequest.findById(703).statusUrl(), null);
-                assert.equal(BuildRequest.findById(710).status(), 'completed');
-                assert.equal(BuildRequest.findById(710).statusUrl(), null);
-                assert.equal(BuildRequest.findById(711).status(), 'pending');
-                assert.equal(BuildRequest.findById(711).statusUrl(), null);
-                assert.equal(BuildRequest.findById(712).status(), 'pending');
-                assert.equal(BuildRequest.findById(712).statusUrl(), null);
-                assert.equal(BuildRequest.findById(713).status(), 'pending');
-                assert.equal(BuildRequest.findById(713).statusUrl(), null);
-                return BuildRequest.fetchForTriggerable(MockData.mockTestSyncConfigWithTwoBuilders().triggerableName);
+                syncPromise = triggerable.syncOnce();
+                return MockRemoteAPI.waitForRequest();
             }).then(() => {
-                assert.equal(BuildRequest.all().length, 8);
-                assert.equal(BuildRequest.findById(700).status(), 'completed');
-                assert.equal(BuildRequest.findById(700).statusUrl(), 'http://build.webkit.org/builders/some-builder-1/builds/124');
-                assert.equal(BuildRequest.findById(701).status(), 'scheduled');
-                assert.equal(BuildRequest.findById(701).statusUrl(), 'http://build.webkit.org/builders/some-builder-1/');
-                assert.equal(BuildRequest.findById(702).status(), 'pending');
-                assert.equal(BuildRequest.findById(702).statusUrl(), null);
-                assert.equal(BuildRequest.findById(703).status(), 'pending');
-                assert.equal(BuildRequest.findById(703).statusUrl(), null);
-                assert.equal(BuildRequest.findById(710).status(), 'completed');
-                assert.equal(BuildRequest.findById(710).statusUrl(), 'http://build.webkit.org/builders/some-builder-1/builds/123');
-                assert.equal(BuildRequest.findById(711).status(), 'pending');
-                assert.equal(BuildRequest.findById(711).statusUrl(), null);
-                assert.equal(BuildRequest.findById(712).status(), 'pending');
-                assert.equal(BuildRequest.findById(712).statusUrl(), null);
-                assert.equal(BuildRequest.findById(713).status(), 'pending');
-                assert.equal(BuildRequest.findById(713).statusUrl(), null);
+                assert.equal(requests.length, 6);
+                assertRequestAndResolve(requests[5], 'GET', '/json/builders/some-builder-1/pendingBuilds', []);
+                return MockRemoteAPI.waitForRequest();
+            }).then(() => {
+                assert.equal(requests.length, 7);
+                assertRequestAndResolve(requests[6], 'GET', '/json/builders/some-builder-1/builds/?select=-1&select=-2',
+                    {[-1]: MockData.runningBuild({buildRequestId: 701}), [-2]: MockData.runningBuild({buildRequestId: 700})});
+                return MockRemoteAPI.waitForRequest();
+            }).then(() => {
+                assert.equal(requests.length, 8);
+                assertRequestAndResolve(requests[7], 'GET', '/json/builders/some-builder-1/pendingBuilds', []);
+                return MockRemoteAPI.waitForRequest();
+            }).then(() => {
+                assert.equal(requests.length, 9);
+                assertRequestAndResolve(requests[8], 'GET', '/json/builders/some-builder-1/builds/?select=-1&select=-2',
+                    {[-1]: MockData.runningBuild({buildRequestId: 701}), [-2]: MockData.runningBuild({buildRequestId: 700})});
+                return syncPromise;
             });
         });
 

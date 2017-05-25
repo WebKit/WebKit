@@ -43,6 +43,11 @@ function main($path) {
             WHERE run_config = config_id AND run_build = request_build AND request_group = $1', array($group_id));
         if ($platforms)
             $group['platform'] = $platforms[0]['config_platform'];
+        else {
+            $first_request = $db->select_first_row('build_requests', 'request', array('group' => $group_id), 'order');
+            if ($first_request)
+                $group['platform'] = $first_request['request_platform'];
+        }
     }
 
     $build_requests = $build_requests_fetcher->results();

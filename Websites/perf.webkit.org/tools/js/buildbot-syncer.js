@@ -124,7 +124,13 @@ class BuildbotSyncer {
         let hasPendingBuildsWithoutSlaveNameSpecified = false;
         let usedSlaves = new Set;
         for (let entry of this._entryList) {
-            if (entry.isPending()) {
+            let entryPreventsNewRequest = entry.isPending();
+            if (entry.isInProgress()) {
+                const requestInProgress = BuildRequest.findById(entry.buildRequestId());
+                if (!requestInProgress || requestInProgress.testGroupId() != newRequest.testGroupId())
+                    entryPreventsNewRequest = true;
+            }
+            if (entryPreventsNewRequest) {
                 if (!entry.slaveName())
                     hasPendingBuildsWithoutSlaveNameSpecified = true;
                 usedSlaves.add(entry.slaveName());
