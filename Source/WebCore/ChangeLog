@@ -1,3 +1,24 @@
+2017-05-25  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r217439. rdar://problem/32089229
+
+    2017-05-24  Jiewen Tan  <jiewen_tan@apple.com>
+
+            Crash on WebCore::FrameSelection::setSelectionWithoutUpdatingAppearance + 1195
+            https://bugs.webkit.org/show_bug.cgi?id=172555
+            <rdar://problem/32004724>
+
+            Reviewed by Ryosuke Niwa.
+
+            setSelectionWithoutUpdatingAppearance could dispatch a synchronous focusin event,
+            which could invoke an event handler that deteles the frame. Therefore, add a
+            protector before the call.
+
+            Test: editing/selection/select-iframe-focusin-document-crash.html
+
+            * editing/FrameSelection.cpp:
+            (WebCore::FrameSelection::setSelection):
+
 2017-05-25  Matthew Hanson  <matthew_hanson@apple.com>
 
         Cherry-pick r217392. rdar://problem/32391206
