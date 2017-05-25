@@ -46,7 +46,7 @@ typedef enum { Sync, Async } ScavengeMode;
 class VMHeap {
 public:
     SmallPage* allocateSmallPage(std::lock_guard<StaticMutex>&, size_t);
-    void deallocateSmallPage(std::unique_lock<StaticMutex>&, size_t, SmallPage*, ScavengeMode);
+    void deallocateSmallPage(std::unique_lock<StaticMutex>&, size_t, SmallPage*);
 
     LargeRange tryAllocateLargeChunk(std::lock_guard<StaticMutex>&, size_t alignment, size_t);
     
@@ -70,13 +70,11 @@ inline SmallPage* VMHeap::allocateSmallPage(std::lock_guard<StaticMutex>& lock, 
     return page;
 }
 
-inline void VMHeap::deallocateSmallPage(std::unique_lock<StaticMutex>& lock, size_t pageClass, SmallPage* page, ScavengeMode scavengeMode)
+inline void VMHeap::deallocateSmallPage(std::unique_lock<StaticMutex>& lock, size_t pageClass, SmallPage* page)
 {
-    if (scavengeMode == Async)
-        lock.unlock();
+    lock.unlock();
     vmDeallocatePhysicalPagesSloppy(page->begin()->begin(), pageSize(pageClass));
-    if (scavengeMode == Async)
-        lock.lock();
+    lock.lock();
     
     m_smallPages[pageClass].push(page);
 }

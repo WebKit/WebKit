@@ -1,3 +1,84 @@
+2017-05-25  Geoffrey Garen  <ggaren@apple.com> and Michael Saboff  <msaboff@apple.com>
+
+        bmalloc: scavenger runs too much on JetStream
+        https://bugs.webkit.org/show_bug.cgi?id=172373
+
+        Reviewed by Geoffrey Garen.
+
+        Instruments says that JetStream on macOS spends about 3% of its time in
+        madvise.
+
+        In <https://bugs.webkit.org/show_bug.cgi?id=160098>, Ben saw some
+        evidence that madvise was the reason that switching to bmalloc for
+        DFG::Node allocations was a slowdown the first time around.
+
+        In <https://bugs.webkit.org/show_bug.cgi?id=172124>, Michael saw that
+        scavening policy can affect JetStream.
+
+        Intuitively, it seems wrong for the heap to idle shrink during hardcore
+        benchmarking.
+
+        The strategy here is to back off in response to any heap growth event,
+        and to wait 2s instead of 0.5s for heap growth to take place -- but we
+        scavenge immediately in response to critical memory pressure, to avoid
+        jetsam.
+
+        One hole in this strategy is that a workload with a perfectly
+        unfragmented heap that allocates and deallocates ~16kB every 2s will
+        never shrink its heap. This doesn't seem to be a problem in practice.
+
+        This looks like a 2% - 4% speedup on JetStream on Mac Pro and MacBook Air.
+
+        * bmalloc/AsyncTask.h:
+        (bmalloc::AsyncTask::willRun):
+        (bmalloc::AsyncTask::willRunSoon):
+        (bmalloc::Function>::AsyncTask):
+        (bmalloc::Function>::run):
+        (bmalloc::Function>::runSoon):
+        (bmalloc::Function>::threadRunLoop):
+        (bmalloc::Function>::runSlowCase): Deleted. Added a "run soon" state
+        so that execution delay is modeled directly instead of implicitly
+        through sleep events. This enables the Heap to issue a "run now" event
+        at any moment in response ot memory pressure.
+
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::Heap): Don't call into our own API -- that's a layering
+        violation.
+
+        (bmalloc::Heap::updateMemoryInUseParameters): No need for
+        m_scavengeSleepDuration anymore.
+
+        (bmalloc::Heap::concurrentScavenge): Added a back-off policy when the
+        heap is growing.
+        (bmalloc::Heap::scavenge):
+
+        (bmalloc::Heap::scavengeSmallPages):
+        (bmalloc::Heap::scavengeLargeObjects): Don't try to give up in the middle
+        of a scavenge event. Our new backoff policy supplants that design. Also,
+        it's easier to profile and understand scavenging behavior if it always
+        runs to completion once started.
+
+        (bmalloc::Heap::scheduleScavenger):
+        (bmalloc::Heap::scheduleScavengerIfUnderMemoryPressure): Added a
+        synchronous amortized check for memory pressure. This check has the
+        benefit that it runs immediately during high rates of heap activity,
+        so we can detect memory pressure right away and wake the scavenger
+        instead of waiting for the scavenger to wake up.
+
+        (bmalloc::Heap::allocateSmallPage):
+        (bmalloc::Heap::deallocateSmallLine):
+        (bmalloc::Heap::splitAndAllocate):
+        (bmalloc::Heap::tryAllocateLarge):
+        (bmalloc::Heap::shrinkLarge):
+        (bmalloc::Heap::deallocateLarge):
+        * bmalloc/Heap.h:
+        (bmalloc::Heap::isUnderMemoryPressure):
+        * bmalloc/Sizes.h:
+        * bmalloc/VMHeap.h:
+        (bmalloc::VMHeap::deallocateSmallPage):
+        * bmalloc/bmalloc.h:
+        (bmalloc::api::scavenge): Updated for API changes above.
+
 2017-05-17  Michael Saboff  <msaboff@apple.com>
 
         [iOS] The Garbage Collector shouldn't rely on the bmalloc scavenger for up to date memory footprint info (172186)

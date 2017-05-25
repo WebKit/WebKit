@@ -70,13 +70,12 @@ public:
     size_t largeSize(std::lock_guard<StaticMutex>&, void*);
     void shrinkLarge(std::lock_guard<StaticMutex>&, const Range&, size_t);
 
-    void scavenge(std::unique_lock<StaticMutex>&, ScavengeMode);
+    void scavenge(std::unique_lock<StaticMutex>&);
 
-#if BPLATFORM(IOS)
     size_t memoryFootprint();
     double percentAvailableMemoryInUse();
-#endif
-
+    bool isUnderMemoryPressure();
+    
 #if BOS(DARWIN)
     void setScavengerThreadQOSClass(qos_class_t overrideClass) { m_requestedScavengerThreadQOSClass = overrideClass; }
 #endif
@@ -110,10 +109,13 @@ private:
 
     LargeRange splitAndAllocate(LargeRange&, size_t alignment, size_t);
 
+    void scheduleScavenger(size_t);
+    void scheduleScavengerIfUnderMemoryPressure(size_t);
+    
     void concurrentScavenge();
-    void scavengeSmallPages(std::unique_lock<StaticMutex>&, ScavengeMode);
-    void scavengeLargeObjects(std::unique_lock<StaticMutex>&, ScavengeMode);
-
+    void scavengeSmallPages(std::unique_lock<StaticMutex>&);
+    void scavengeLargeObjects(std::unique_lock<StaticMutex>&);
+    
 #if BPLATFORM(IOS)
     void updateMemoryInUseParameters();
 #endif
@@ -130,15 +132,13 @@ private:
 
     Map<Chunk*, ObjectType, ChunkHash> m_objectTypes;
 
-    std::array<bool, pageClassCount> m_isAllocatingPages;
-    bool m_isAllocatingLargePages;
-
+    size_t m_scavengerBytes { 0 };
+    bool m_isGrowing { false };
+    
     AsyncTask<Heap, decltype(&Heap::concurrentScavenge)> m_scavenger;
 
     Environment m_environment;
     DebugHeap* m_debugHeap;
-
-    std::chrono::milliseconds m_scavengeSleepDuration = { maxScavengeSleepDuration };
 
 #if BPLATFORM(IOS)
     size_t m_maxAvailableMemory;
@@ -170,6 +170,15 @@ inline void Heap::derefSmallLine(std::lock_guard<StaticMutex>& lock, Object obje
     deallocateSmallLine(lock, object);
 }
 
+inline bool Heap::isUnderMemoryPressure()
+{
+#if BPLATFORM(IOS)
+    return percentAvailableMemoryInUse() > memoryPressureThreshold;
+#else
+    return false;
+#endif
+}
+    
 #if BPLATFORM(IOS)
 inline size_t Heap::memoryFootprint()
 {

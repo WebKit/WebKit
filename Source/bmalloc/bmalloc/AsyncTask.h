@@ -29,6 +29,7 @@
 #include "BAssert.h"
 #include "Inline.h"
 #include "Mutex.h"
+#include "Sizes.h"
 #include <atomic>
 #include <condition_variable>
 #include <thread>
@@ -40,14 +41,19 @@ class AsyncTask {
 public:
     AsyncTask(Object&, const Function&);
     ~AsyncTask();
-
+    
+    bool willRun() { return m_state == State::Run; }
     void run();
-
+    
+    bool willRunSoon() { return m_state > State::Sleep; }
+    void runSoon();
+    
 private:
-    enum State { Sleeping, Running, RunRequested };
-
+    enum class State { Sleep, Run, RunSoon };
+    
     void runSlowCase();
-
+    void runSoonSlowCase();
+    
     static void threadEntryPoint(AsyncTask*);
     void threadRunLoop();
 
@@ -64,7 +70,7 @@ private:
 
 template<typename Object, typename Function>
 AsyncTask<Object, Function>::AsyncTask(Object& object, const Function& function)
-    : m_state(Running)
+    : m_state(State::Sleep)
     , m_condition()
     , m_thread(std::thread(&AsyncTask::threadEntryPoint, this))
     , m_object(object)
@@ -81,21 +87,19 @@ AsyncTask<Object, Function>::~AsyncTask()
 }
 
 template<typename Object, typename Function>
-inline void AsyncTask<Object, Function>::run()
+void AsyncTask<Object, Function>::run()
 {
-    if (m_state == RunRequested)
-        return;
-    runSlowCase();
+    m_state = State::Run;
+    
+    std::lock_guard<Mutex> lock(m_conditionMutex);
+    m_condition.notify_all();
 }
-
+    
 template<typename Object, typename Function>
-NO_INLINE void AsyncTask<Object, Function>::runSlowCase()
+void AsyncTask<Object, Function>::runSoon()
 {
-    State oldState = m_state.exchange(RunRequested);
-    if (oldState == RunRequested || oldState == Running)
-        return;
-
-    BASSERT(oldState == Sleeping);
+    m_state = State::RunSoon;
+    
     std::lock_guard<Mutex> lock(m_conditionMutex);
     m_condition.notify_all();
 }
@@ -115,20 +119,23 @@ void AsyncTask<Object, Function>::threadRunLoop()
 {
     // This loop ratchets downward from most active to least active state. While
     // we ratchet downward, any other thread may reset our state.
-
+    
     // We require any state change while we are sleeping to signal to our
     // condition variable and wake us up.
-
+    
     while (1) {
-        State expectedState = RunRequested;
-        if (m_state.compare_exchange_weak(expectedState, Running))
-            (m_object.*m_function)();
-
-        expectedState = Running;
-        if (m_state.compare_exchange_weak(expectedState, Sleeping)) {
+        if (m_state == State::Sleep) {
             std::unique_lock<Mutex> lock(m_conditionMutex);
-            m_condition.wait(lock, [&]() { return m_state != Sleeping; });
+            m_condition.wait(lock, [&]() { return m_state != State::Sleep; });
         }
+        
+        if (m_state == State::RunSoon) {
+            std::unique_lock<Mutex> lock(m_conditionMutex);
+            m_condition.wait_for(lock, asyncTaskSleepDuration, [&]() { return m_state != State::RunSoon; });
+        }
+        
+        m_state = State::Sleep;
+        (m_object.*m_function)();
     }
 }
 

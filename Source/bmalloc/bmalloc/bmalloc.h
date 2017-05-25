@@ -77,7 +77,7 @@ inline void scavenge()
     scavengeThisThread();
 
     std::unique_lock<StaticMutex> lock(PerProcess<Heap>::mutex());
-    PerProcess<Heap>::get()->scavenge(lock, Sync);
+    PerProcess<Heap>::get()->scavenge(lock);
 }
 
 inline bool isEnabled()
