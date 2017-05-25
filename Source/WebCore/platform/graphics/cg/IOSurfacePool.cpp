@@ -30,11 +30,10 @@
 
 #include "GraphicsContextCG.h"
 #include <CoreGraphics/CoreGraphics.h>
-#include <chrono>
 #include <wtf/NeverDestroyed.h>
 
 static const Seconds collectionInterval { 500_ms };
-const std::chrono::seconds surfaceAgeBeforeMarkingPurgeable = 2s;
+static const Seconds surfaceAgeBeforeMarkingPurgeable { 2_s };
 const size_t defaultMaximumBytesCached = 1024 * 1024 * 64;
 
 // We'll never allow more than 1/2 of the cache to be filled with in-use surfaces, because
@@ -288,7 +287,7 @@ void IOSurfacePool::collectInUseSurfaces()
 bool IOSurfacePool::markOlderSurfacesPurgeable()
 {
     bool markedAllSurfaces = true;
-    auto markTime = std::chrono::steady_clock::now();
+    auto markTime = MonotonicTime::now();
 
     for (auto& surfaceAndDetails : m_surfaceDetails) {
         if (surfaceAndDetails.value.hasMarkedPurgeable)

@@ -35,7 +35,6 @@
 #include "Timer.h"
 #include "URL.h"
 #include "WritingMode.h"
-#include <chrono>
 #include <runtime/RuntimeFlags.h>
 #include <unicode/uscript.h>
 #include <wtf/HashMap.h>

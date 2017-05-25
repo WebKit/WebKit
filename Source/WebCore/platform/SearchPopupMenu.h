@@ -18,8 +18,7 @@
  *
  */
 
-#ifndef SearchPopupMenu_h
-#define SearchPopupMenu_h
+#pragma once
 
 #include <chrono>
 #include <wtf/Forward.h>
@@ -45,5 +44,3 @@ public:
 };
 
 }
-
-#endif // SearchPopupMenu_h

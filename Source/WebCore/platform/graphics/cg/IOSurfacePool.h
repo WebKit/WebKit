@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IOSurfacePool_h
-#define IOSurfacePool_h
+#pragma once
 
 #if USE(IOSURFACE)
 
@@ -61,9 +60,9 @@ private:
             : hasMarkedPurgeable(false)
         { }
 
-        void resetLastUseTime() { lastUseTime = std::chrono::steady_clock::now(); }
+        void resetLastUseTime() { lastUseTime = MonotonicTime::now(); }
 
-        std::chrono::steady_clock::time_point lastUseTime;
+        MonotonicTime lastUseTime;
         bool hasMarkedPurgeable;
     };
 
@@ -105,5 +104,3 @@ private:
 
 }
 #endif // USE(IOSURFACE)
-
-#endif // IOSurfacePool_h

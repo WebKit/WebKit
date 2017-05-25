@@ -52,7 +52,6 @@
 #include "TreeScope.h"
 #include "UserActionElementSet.h"
 #include "ViewportArguments.h"
-#include <chrono>
 #include <memory>
 #include <wtf/Deque.h>
 #include <wtf/HashCountedSet.h>

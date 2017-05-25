@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PlatformCookieJar_h
-#define PlatformCookieJar_h
+#pragma once
 
 #include <chrono>
 #include <wtf/Forward.h>
@@ -52,5 +51,3 @@ WEBCORE_EXPORT void deleteAllCookies(const NetworkStorageSession&);
 WEBCORE_EXPORT void deleteAllCookiesModifiedSince(const NetworkStorageSession&, std::chrono::system_clock::time_point);
 
 }
-
-#endif

@@ -1,3 +1,32 @@
+2017-05-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Some <chrono> and ProgressTracker cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=172582
+
+        Reviewed by Sam Weinig.
+
+        Remove some unnecessary <chrono> includes.
+        Convert some std::chrono to use MonotonicTime/Seconds.
+        Clean up ProgressTracker.
+        Some #pragma once.
+
+        * dom/Document.h:
+        * loader/ProgressTracker.cpp:
+        (WebCore::ProgressTracker::ProgressTracker):
+        (WebCore::ProgressTracker::reset):
+        (WebCore::ProgressTracker::progressStarted):
+        (WebCore::ProgressTracker::finalProgressComplete):
+        (WebCore::ProgressTracker::incrementProgress):
+        * loader/ProgressTracker.h:
+        * page/Settings.h:
+        * platform/SearchPopupMenu.h:
+        * platform/Timer.h:
+        * platform/graphics/cg/IOSurfacePool.cpp:
+        (WebCore::IOSurfacePool::markOlderSurfacesPurgeable):
+        * platform/graphics/cg/IOSurfacePool.h:
+        (WebCore::IOSurfacePool::CachedSurfaceDetails::resetLastUseTime):
+        * platform/network/PlatformCookieJar.h:
+
 2017-05-25  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [ATK] Expose doc-footnote ARIA role with ATK_ROLE_FOOTNOTE

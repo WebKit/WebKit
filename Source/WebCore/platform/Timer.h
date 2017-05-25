@@ -23,10 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef Timer_h
-#define Timer_h
+#pragma once
 
-#include <chrono>
 #include <functional>
 #include <wtf/MonotonicTime.h>
 #include <wtf/Noncopyable.h>
@@ -203,5 +201,3 @@ private:
 };
 
 }
-
-#endif

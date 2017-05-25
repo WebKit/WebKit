@@ -60,7 +60,7 @@ static const unsigned loadStalledHeartbeatCount = 4;
 // How many bytes are required between heartbeats to consider it progress.
 static const unsigned minumumBytesPerHeartbeatForProgress = 1024;
 
-static const auto progressNotificationTimeInterval = 200ms;
+static const Seconds progressNotificationTimeInterval { 200_ms };
 
 struct ProgressItem {
     WTF_MAKE_NONCOPYABLE(ProgressItem); WTF_MAKE_FAST_ALLOCATED;
@@ -79,16 +79,7 @@ unsigned long ProgressTracker::s_uniqueIdentifier = 0;
 
 ProgressTracker::ProgressTracker(ProgressTrackerClient& client)
     : m_client(client)
-    , m_totalPageAndResourceBytesToLoad(0)
-    , m_totalBytesReceived(0)
-    , m_lastNotifiedProgressValue(0)
-    , m_finalProgressChangedSent(false)
-    , m_progressValue(0)
-    , m_numProgressTrackedFrames(0)
     , m_progressHeartbeatTimer(*this, &ProgressTracker::progressHeartbeatTimerFired)
-    , m_heartbeatsWithNoProgress(0)
-    , m_totalBytesReceivedBeforePreviousHeartbeat(0)
-    , m_isMainLoad(false)
 {
 }
 
@@ -108,15 +99,17 @@ void ProgressTracker::reset()
 
     m_totalPageAndResourceBytesToLoad = 0;
     m_totalBytesReceived = 0;
-    m_progressValue = 0;
+    m_totalBytesReceivedBeforePreviousHeartbeat = 0;
+
     m_lastNotifiedProgressValue = 0;
-    m_lastNotifiedProgressTime = std::chrono::steady_clock::time_point();
+    m_progressValue = 0;
+
+    m_lastNotifiedProgressTime = MonotonicTime();
     m_finalProgressChangedSent = false;
     m_numProgressTrackedFrames = 0;
     m_originatingProgressFrame = nullptr;
 
     m_heartbeatsWithNoProgress = 0;
-    m_totalBytesReceivedBeforePreviousHeartbeat = 0;
     m_progressHeartbeatTimer.stop();
 }
 
@@ -135,9 +128,9 @@ void ProgressTracker::progressStarted(Frame& frame)
         m_originatingProgressFrame->loader().loadProgressingStatusChanged();
 
         bool isMainFrame = !m_originatingProgressFrame->tree().parent();
-        auto elapsedTimeSinceMainLoadComplete = std::chrono::steady_clock::now() - m_mainLoadCompletionTime;
+        auto elapsedTimeSinceMainLoadComplete = MonotonicTime::now() - m_mainLoadCompletionTime;
 
-        static const auto subframePartOfMainLoadThreshold = 1s;
+        static const auto subframePartOfMainLoadThreshold = 1_s;
         m_isMainLoad = isMainFrame || elapsedTimeSinceMainLoadComplete < subframePartOfMainLoadThreshold;
 
         m_client.progressStarted(*m_originatingProgressFrame);
@@ -180,7 +173,7 @@ void ProgressTracker::finalProgressComplete()
     reset();
 
     if (m_isMainLoad)
-        m_mainLoadCompletionTime = std::chrono::steady_clock::now();
+        m_mainLoadCompletionTime = MonotonicTime::now();
 
     frame->loader().client().setMainFrameDocumentReady(true);
     m_client.progressFinished(*frame);
@@ -253,7 +246,7 @@ void ProgressTracker::incrementProgress(unsigned long identifier, unsigned bytes
     
     m_totalBytesReceived += bytesReceived;
     
-    auto now = std::chrono::steady_clock::now();
+    auto now = MonotonicTime::now();
     auto notifiedProgressTimeDelta = now - m_lastNotifiedProgressTime;
     
     LOG(Progress, "Progress incremented (%p) - value %f, tracked frames %d", this, m_progressValue, m_numProgressTrackedFrames);
