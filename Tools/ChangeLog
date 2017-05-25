@@ -1,3 +1,19 @@
+2017-05-25  Jer Noble  <jer.noble@apple.com>
+
+        System sleeps while playing to wireless target, ending stream.
+        https://bugs.webkit.org/show_bug.cgi?id=172541
+
+        Reviewed by Eric Carlson.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/mac/MediaPlaybackSleepAssertion.html: Added.
+        * TestWebKitAPI/Tests/mac/MediaPlaybackSleepAssertion.mm: Added.
+        (-[MediaPlaybackSleepAssertionLoadDelegate webView:didCreateJavaScriptContext:forFrame:]):
+        (-[MediaPlaybackSleepAssertionPolicyDelegate webView:decidePolicyForNavigationAction:request:frame:decisionListener:]):
+        (TestWebKitAPI::simulateKeyDown):
+        (TestWebKitAPI::hasAssertionType):
+        (TestWebKitAPI::TEST):
+
 2017-05-25  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r217423 and r217424.

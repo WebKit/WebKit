@@ -362,7 +362,7 @@ static NSWindow *createBackgroundFullscreenWindow(NSRect frame, int level)
     
     if (rate && !_isEndingFullscreen) {
         if (!_displaySleepDisabler)
-            _displaySleepDisabler = SleepDisabler::create("com.apple.WebCore - Fullscreen video");
+            _displaySleepDisabler = SleepDisabler::create("com.apple.WebCore - Fullscreen video", SleepDisabler::Type::Display);
     } else
 #endif
         _displaySleepDisabler = nullptr;

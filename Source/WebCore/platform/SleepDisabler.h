@@ -29,11 +29,18 @@ namespace WebCore {
 
 class SleepDisabler {
 public:
-    static std::unique_ptr<SleepDisabler> create(const char*);
+    enum class Type {
+        System,
+        Display,
+    };
+    static std::unique_ptr<SleepDisabler> create(const char*, Type);
     WEBCORE_EXPORT virtual ~SleepDisabler();
 
+    Type type() const { return m_type; }
+
 protected:
-    WEBCORE_EXPORT SleepDisabler(const char*);
+    WEBCORE_EXPORT SleepDisabler(const char*, Type);
+    Type m_type;
 };
 
 }

@@ -41,6 +41,7 @@ typedef uint32_t IOPMAssertionID;
 WTF_EXTERN_C_BEGIN
 
 const CFStringRef kIOPMAssertionTypePreventUserIdleDisplaySleep = CFSTR("PreventUserIdleDisplaySleep");
+const CFStringRef kIOPMAssertionTypePreventUserIdleSystemSleep = CFSTR("PreventUserIdleSystemSleep");
 
 WTF_EXTERN_C_END
 

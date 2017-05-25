@@ -33,22 +33,36 @@
 
 namespace WebCore {
 
-std::unique_ptr<SleepDisabler> SleepDisabler::create(const char* reason)
+std::unique_ptr<SleepDisabler> SleepDisabler::create(const char* reason, Type type)
 {
-    return std::unique_ptr<SleepDisabler>(new SleepDisablerCocoa(reason));
+    return std::unique_ptr<SleepDisabler>(new SleepDisablerCocoa(reason, type));
 }
 
-SleepDisablerCocoa::SleepDisablerCocoa(const char* reason)
-    : SleepDisabler(reason)
-    , m_disableDisplaySleepAssertion(0)
+SleepDisablerCocoa::SleepDisablerCocoa(const char* reason, Type type)
+    : SleepDisabler(reason, type)
+    , m_sleepAssertion(0)
 {
     RetainPtr<CFStringRef> reasonCF = adoptCF(CFStringCreateWithCString(kCFAllocatorDefault, reason, kCFStringEncodingUTF8));
-    IOPMAssertionCreateWithDescription(kIOPMAssertionTypePreventUserIdleDisplaySleep, reasonCF.get(), nullptr, nullptr, nullptr, 0, nullptr, &m_disableDisplaySleepAssertion);
+
+    CFStringRef assertionType;
+    switch (type) {
+    case Type::Display:
+        assertionType = kIOPMAssertionTypePreventUserIdleDisplaySleep;
+        break;
+    case Type::System:
+        assertionType = kIOPMAssertionTypePreventUserIdleSystemSleep;
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        assertionType = nullptr;
+        break;
+    }
+    IOPMAssertionCreateWithDescription(assertionType, reasonCF.get(), nullptr, nullptr, nullptr, 0, nullptr, &m_sleepAssertion);
 }
 
 SleepDisablerCocoa::~SleepDisablerCocoa()
 {
-    IOPMAssertionRelease(m_disableDisplaySleepAssertion);
+    IOPMAssertionRelease(m_sleepAssertion);
 }
 
 }

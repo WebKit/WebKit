@@ -5422,6 +5422,7 @@ void HTMLMediaElement::mediaPlayerCurrentPlaybackTargetIsWirelessChanged(MediaPl
     m_mediaSession->isPlayingToWirelessPlaybackTargetChanged(m_isPlayingToWirelessTarget);
     m_mediaSession->canProduceAudioChanged();
     updateMediaState(UpdateState::Asynchronously);
+    updateSleepDisabling();
 }
 
 bool HTMLMediaElement::dispatchEvent(Event& event)
@@ -6347,26 +6348,40 @@ void HTMLMediaElement::applyMediaFragmentURI()
 
 void HTMLMediaElement::updateSleepDisabling()
 {
-    bool shouldDisableSleep = this->shouldDisableSleep();
-    if (!shouldDisableSleep && m_sleepDisabler)
+    SleepType shouldDisableSleep = this->shouldDisableSleep();
+    if (shouldDisableSleep == SleepType::None && m_sleepDisabler)
         m_sleepDisabler = nullptr;
-    else if (shouldDisableSleep && !m_sleepDisabler)
-        m_sleepDisabler = SleepDisabler::create("com.apple.WebCore: HTMLMediaElement playback");
+    else if (shouldDisableSleep != SleepType::None) {
+        auto type = shouldDisableSleep == SleepType::Display ? SleepDisabler::Type::Display : SleepDisabler::Type::System;
+        if (!m_sleepDisabler || m_sleepDisabler->type() != type)
+            m_sleepDisabler = SleepDisabler::create("com.apple.WebCore: HTMLMediaElement playback", type);
+    }
 
     if (m_player)
-        m_player->setShouldDisableSleep(shouldDisableSleep);
+        m_player->setShouldDisableSleep(shouldDisableSleep == SleepType::Display);
 }
 
-bool HTMLMediaElement::shouldDisableSleep() const
+HTMLMediaElement::SleepType HTMLMediaElement::shouldDisableSleep() const
 {
 #if !PLATFORM(COCOA)
-    return false;
+    return SleepType::None;
+#endif
+    if (!m_player || m_player->paused() || loop())
+        return SleepType::None;
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    // If the media is playing remotely, we can't know definitively whether it has audio or video tracks.
+    if (m_isPlayingToWirelessTarget)
+        return SleepType::System;
 #endif
 
-    if (m_elementIsHidden)
-        return false;
+    if (!hasVideo() || !hasAudio())
+        return SleepType::None;
 
-    return m_player && !m_player->paused() && hasVideo() && hasAudio() && !loop();
+    if (m_elementIsHidden)
+        return SleepType::System;
+
+    return SleepType::Display;
 }
 
 String HTMLMediaElement::mediaPlayerReferrer() const

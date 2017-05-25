@@ -33,11 +33,11 @@ namespace WebCore {
 
 class SleepDisablerCocoa : public SleepDisabler {
 public:
-    SleepDisablerCocoa(const char*);
+    SleepDisablerCocoa(const char*, Type);
     virtual ~SleepDisablerCocoa();
 
 private:
-    uint32_t m_disableDisplaySleepAssertion;
+    uint32_t m_sleepAssertion;
 };
 
 }

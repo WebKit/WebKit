@@ -1,3 +1,37 @@
+2017-05-25  Jer Noble  <jer.noble@apple.com>
+
+        System sleeps while playing to wireless target, ending stream.
+        https://bugs.webkit.org/show_bug.cgi?id=172541
+
+        Reviewed by Eric Carlson.
+
+        API test: Tests/mac/MediaPlaybackSleepAssertion.mm
+
+        Keep the system from sleeping (but allow the display to sleep) while playing media to a wireless target.
+
+        Give the SleepDisabler a Type, either System or Display, which indicates what kind of sleep to disable.
+        Update HTMLMediaElement::shouldDisableSleep() to differentiate between a video which is playing locally,
+        one that is playing but not visible, and one that is playing remotely.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaPlayerCurrentPlaybackTargetIsWirelessChanged):
+        (WebCore::HTMLMediaElement::updateSleepDisabling):
+        (WebCore::HTMLMediaElement::shouldDisableSleep):
+        * html/HTMLMediaElement.h:
+        * platform/SleepDisabler.cpp:
+        (WebCore::SleepDisabler::create):
+        (WebCore::SleepDisabler::SleepDisabler):
+        * platform/SleepDisabler.h:
+        (WebCore::SleepDisabler::type):
+        * platform/cocoa/SleepDisablerCocoa.cpp:
+        (WebCore::SleepDisabler::create):
+        (WebCore::SleepDisablerCocoa::SleepDisablerCocoa):
+        (WebCore::SleepDisablerCocoa::~SleepDisablerCocoa):
+        * platform/cocoa/SleepDisablerCocoa.h:
+        * platform/mac/WebVideoFullscreenController.mm:
+        (-[WebVideoFullscreenController updatePowerAssertions]):
+        * platform/spi/cocoa/IOPMLibSPI.h:
+
 2017-05-25  Chris Dumez  <cdumez@apple.com>
 
         DocumentThreadableLoader::redirectReceived() should not rely on the resource's loader
