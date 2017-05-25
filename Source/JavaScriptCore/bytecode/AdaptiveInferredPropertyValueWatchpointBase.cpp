@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -57,12 +57,20 @@ void AdaptiveInferredPropertyValueWatchpointBase::fire(const FireDetail& detail)
     if (m_propertyWatchpoint.isOnList())
         m_propertyWatchpoint.remove();
 
+    if (!isValid())
+        return;
+
     if (m_key.isWatchable(PropertyCondition::EnsureWatchability)) {
         install();
         return;
     }
 
     handleFire(detail);
+}
+
+bool AdaptiveInferredPropertyValueWatchpointBase::isValid() const
+{
+    return true;
 }
 
 void AdaptiveInferredPropertyValueWatchpointBase::StructureWatchpoint::fireInternal(const FireDetail& detail)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,24 @@
 #include "FreeList.h"
 
 namespace JSC {
+
+bool FreeList::contains(const void* target) const
+{
+    if (remaining) {
+        const void* start = (payloadEnd - remaining);
+        const void* end = payloadEnd;
+        return (start <= target) && (target < end);
+    }
+
+    FreeCell* candidate = head;
+    while (candidate) {
+        if (candidate == target)
+            return true;
+        candidate = candidate->next;
+    }
+
+    return false;
+}
 
 void FreeList::dump(PrintStream& out) const
 {

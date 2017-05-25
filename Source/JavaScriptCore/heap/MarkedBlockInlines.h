@@ -117,6 +117,12 @@ inline bool MarkedBlock::Handle::isLiveCell(HeapVersion markingVersion, bool isM
     return isLive(markingVersion, isMarking, static_cast<const HeapCell*>(p));
 }
 
+inline bool MarkedBlock::Handle::isFreeListedCell(const void* target) const
+{
+    ASSERT(isFreeListed());
+    return m_allocator->isFreeListedCell(target);
+}
+
 // The following has to be true for specialization to kick in:
 //
 // sweepMode == SweepToFreeList

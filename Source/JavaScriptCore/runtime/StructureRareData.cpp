@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -90,6 +90,7 @@ public:
     ObjectToStringAdaptiveInferredPropertyValueWatchpoint(const ObjectPropertyCondition&, StructureRareData*);
 
 private:
+    bool isValid() const override;
     void handleFire(const FireDetail&) override;
 
     StructureRareData* m_structureRareData;
@@ -210,6 +211,11 @@ ObjectToStringAdaptiveInferredPropertyValueWatchpoint::ObjectToStringAdaptiveInf
     : Base(key)
     , m_structureRareData(structureRareData)
 {
+}
+
+bool ObjectToStringAdaptiveInferredPropertyValueWatchpoint::isValid() const
+{
+    return m_structureRareData->isLive();
 }
 
 void ObjectToStringAdaptiveInferredPropertyValueWatchpoint::handleFire(const FireDetail& detail)

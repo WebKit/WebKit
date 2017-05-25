@@ -156,6 +156,8 @@ public:
     void* tryAllocate(GCDeferralContext* = nullptr);
     Heap* heap() { return m_heap; }
 
+    bool isFreeListedCell(const void* target) const { return m_freeList.contains(target); }
+
     template<typename Functor> void forEachBlock(const Functor&);
     template<typename Functor> void forEachNotEmptyBlock(const Functor&);
     

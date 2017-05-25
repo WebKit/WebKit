@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,10 +28,20 @@
 #include "CellContainer.h"
 #include "HeapCell.h"
 #include "LargeAllocation.h"
-#include "MarkedBlock.h"
+#include "MarkedBlockInlines.h"
 #include "VM.h"
 
 namespace JSC {
+
+ALWAYS_INLINE bool HeapCell::isLive()
+{
+    if (isLargeAllocation())
+        return largeAllocation().isLive();
+    auto& markedBlockHandle = markedBlock().handle();
+    if (markedBlockHandle.isFreeListed())
+        return !markedBlockHandle.isFreeListedCell(this);
+    return markedBlockHandle.isLive(this);
+}
 
 ALWAYS_INLINE bool HeapCell::isLargeAllocation() const
 {

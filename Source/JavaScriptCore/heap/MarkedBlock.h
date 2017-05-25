@@ -166,6 +166,8 @@ public:
         bool isLive(const HeapCell*);
         bool isLiveCell(const void*);
 
+        bool isFreeListedCell(const void* target) const;
+
         bool isNewlyAllocated(const void*);
         void setNewlyAllocated(const void*);
         void clearNewlyAllocated(const void*);

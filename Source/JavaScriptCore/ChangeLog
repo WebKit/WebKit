@@ -1,3 +1,87 @@
+2017-05-25  Mark Lam  <mark.lam@apple.com>
+
+        ObjectToStringAdaptiveInferredPropertyValueWatchpoint should not reinstall itself nor handleFire if it's dying shortly.
+        https://bugs.webkit.org/show_bug.cgi?id=172548
+        <rdar://problem/31458393>
+
+        Reviewed by Filip Pizlo.
+
+        Consider the following scenario:
+
+        1. A ObjectToStringAdaptiveInferredPropertyValueWatchpoint O1, watches for
+           structure transitions, e.g. structure S2 transitioning to structure S3.
+           In this case, O1 would be installed in S2's watchpoint set.
+        2. When the structure transition happens, structure S2 will fire watchpoint O1.
+        3. O1's handler will normally re-install itself in the watchpoint set of the new
+           "transitioned to" structure S3.
+        4. "Installation" here requires writing into the StructureRareData SD3 of the new
+           structure S3.  If SD3 does not exist yet, the installation process will trigger
+           the allocation of StructureRareData SD3.
+        5. It is possible that the Structure S1, and StructureRareData SD1 that owns the
+           ObjectToStringAdaptiveInferredPropertyValueWatchpoint O1 is no longer reachable
+           by the GC, and therefore will be collected soon.
+        6. The allocation of SD3 in (4) may trigger the sweeping of the StructureRareData
+           SD1.  This, in turn, triggers the deletion of the
+           ObjectToStringAdaptiveInferredPropertyValueWatchpoint O1.
+
+        After O1 is deleted in (6) and SD3 is allocated in (4), execution continues in
+        AdaptiveInferredPropertyValueWatchpointBase::fire() where O1 gets installed in
+        structure S3's watchpoint set.  This is obviously incorrect because O1 is already
+        deleted.  The result is that badness happens later when S3's watchpoint set fires
+        its watchpoints and accesses the deleted O1.
+
+        The fix is to enhance AdaptiveInferredPropertyValueWatchpointBase::fire() to
+        check if "this" is still valid before proceeding to re-install itself or to
+        invoke its handleFire() method.
+
+        ObjectToStringAdaptiveInferredPropertyValueWatchpoint (which extends
+        AdaptiveInferredPropertyValueWatchpointBase) will override its isValid() method,
+        and return false its owner StructureRareData is no longer reachable by the GC.
+        This ensures that it won't be deleted while it's installed to any watchpoint set.
+
+        Additional considerations and notes:
+        1. In the above, I talked about the ObjectToStringAdaptiveInferredPropertyValueWatchpoint
+           being installed in watchpoint sets.  What actually happens is that
+           ObjectToStringAdaptiveInferredPropertyValueWatchpoint has 2 members
+           (m_structureWatchpoint and m_propertyWatchpoint) which may be installed in
+           watchpoint sets.  The ObjectToStringAdaptiveInferredPropertyValueWatchpoint is
+           not itself a Watchpoint object.
+
+           But for brevity, in the above, I refer to the ObjectToStringAdaptiveInferredPropertyValueWatchpoint
+           instead of its Watchpoint members.  The description of the issue is still
+           accurate given the life-cycle of the Watchpoint members are embedded in the
+           enclosing ObjectToStringAdaptiveInferredPropertyValueWatchpoint object, and
+           hence, they share the same life-cycle.
+
+        2. The top of AdaptiveInferredPropertyValueWatchpointBase::fire() removes its
+           m_structureWatchpoint and m_propertyWatchpoint if they have been added to any
+           watchpoint sets.  This is safe to do even if the owner StructureRareData is no
+           longer reachable by the GC.
+
+           This is because the only way we can get to AdaptiveInferredPropertyValueWatchpointBase::fire()
+           is if its Watchpoint members are still installed in some watchpoint set that
+           fired.  This means that the AdaptiveInferredPropertyValueWatchpointBase
+           instance has not been deleted yet, because its destructor will automatically
+           remove the Watchpoint members from any watchpoint sets.
+
+        * bytecode/AdaptiveInferredPropertyValueWatchpointBase.cpp:
+        (JSC::AdaptiveInferredPropertyValueWatchpointBase::fire):
+        (JSC::AdaptiveInferredPropertyValueWatchpointBase::isValid):
+        * bytecode/AdaptiveInferredPropertyValueWatchpointBase.h:
+        * heap/FreeList.cpp:
+        (JSC::FreeList::contains):
+        * heap/FreeList.h:
+        * heap/HeapCell.h:
+        * heap/HeapCellInlines.h:
+        (JSC::HeapCell::isLive):
+        * heap/MarkedAllocator.h:
+        (JSC::MarkedAllocator::isFreeListedCell):
+        * heap/MarkedBlock.h:
+        * heap/MarkedBlockInlines.h:
+        (JSC::MarkedBlock::Handle::isFreeListedCell):
+        * runtime/StructureRareData.cpp:
+        (JSC::ObjectToStringAdaptiveInferredPropertyValueWatchpoint::isValid):
+
 2017-05-23  Saam Barati  <sbarati@apple.com>
 
         We should not mmap zero bytes for a memory in Wasm
