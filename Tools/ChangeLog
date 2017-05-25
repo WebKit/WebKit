@@ -1,5 +1,11 @@
 2017-05-25  Jer Noble  <jer.noble@apple.com>
 
+        Unreviewed build fix after r217447; only run test where JSC's ObjC API is available.
+
+        * TestWebKitAPI/Tests/mac/MediaPlaybackSleepAssertion.mm:
+
+2017-05-25  Jer Noble  <jer.noble@apple.com>
+
         System sleeps while playing to wireless target, ending stream.
         https://bugs.webkit.org/show_bug.cgi?id=172541
 

@@ -25,6 +25,8 @@
 
 #import "config.h"
 
+#if JSC_OBJC_API_ENABLED
+
 #import "PlatformUtilities.h"
 #import "WebCoreTestSupport.h"
 #import <HIToolbox/CarbonEvents.h>
@@ -191,3 +193,4 @@ TEST(WebKit1, MediaPlaybackSleepAssertion)
 
 }
 
+#endif // JSC_OBJC_API_ENABLED
