@@ -3946,6 +3946,18 @@ fast/text/simple-line-layout-simple-text-but-complex-font-path.html [ ImageOnlyF
 fast/text/variations/font-face-format.html [ ImageOnlyFailure ]
 fast/text/variations/font-face-format-woff2.html [ ImageOnlyFailure ]
 fast/text/web-font-load-fallback-during-loading.html [ ImageOnlyFailure ]
+imported/blink/scrollbars/avoid-double-scrollbars-when-html-element-is-not-the-renderview.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-display-3/display-contents-block-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-display-3/display-contents-dynamic-flex-001-inline.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-display-3/display-contents-first-letter-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-display-3/display-contents-flex-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-display-3/display-contents-float-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-display-3/display-contents-inline-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-display-3/display-contents-oof-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-display-3/display-contents-oof-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-display-3/display-contents-td-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-display-3/display-contents-text-only-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-display-3/display-contents-tr-001.html [ ImageOnlyFailure ]
 imported/w3c/i18n/bidi/bidi-plaintext-011.html [ ImageOnlyFailure ]
 svg/custom/anchor-on-use.svg [ ImageOnlyFailure ]
 # Unexpected timeouts tracked in webkit.org/b/172437.
@@ -3979,6 +3991,12 @@ http/tests/websocket/tests/hybi/inspector/binary.html [ Skip ]
 http/tests/websocket/tests/hybi/inspector/client-close.html [ Skip ]
 http/tests/websocket/tests/hybi/inspector/send-and-receive.html [ Skip ]
 http/tests/websocket/tests/hybi/inspector/server-close.html [ Skip ]
+# Unexpected flakiness tracked in webkit.org/b/172437.
+fast/shadow-dom/fullscreen-in-slot-fullscreenElement.html [ Failure Pass ]
+imported/w3c/web-platform-tests/fetch/api/credentials/cookies.any.html [ Failure Pass ]
+imported/w3c/web-platform-tests/html/semantics/embedded-content/the-area-element/area-shape.html [ Failure Pass ]
+imported/w3c/web-platform-tests/resource-timing/rt-resource-errors.html [ Failure Pass ]
+http/tests/websocket/tests/hybi/workers/close-code-and-reason.html [ Timeout Pass ]
 
 
 # html/syntax web platform tests are failing on Windows.
