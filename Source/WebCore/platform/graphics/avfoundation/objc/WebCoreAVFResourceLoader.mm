@@ -199,9 +199,12 @@ void WebCoreAVFResourceLoader::fulfillRequestWithResource(CachedResource& resour
         }
         [dataRequest respondWithData:[segment subdataWithRange:NSMakeRange(0, remainingLength)]];
         remainingLength = 0;
-        if (!remainingLength)
-            break;
+        break;
     }
+
+    // There was not enough data in the buffer to satisfy the data request.
+    if (remainingLength)
+        return;
 
     if (dataRequest.currentOffset + dataRequest.requestedLength >= dataRequest.requestedOffset) {
         [m_avRequest.get() finishLoading];

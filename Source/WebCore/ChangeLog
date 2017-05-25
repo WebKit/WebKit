@@ -1,3 +1,37 @@
+2017-05-25  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r215686): Videos sometimes do not load in iBooks
+        https://bugs.webkit.org/show_bug.cgi?id=172604
+        <rdar://problem/32003717>
+
+        Reviewed by Geoffrey Garen.
+
+        Before r215686, the loop would have a check at the beginning to check if the
+        dataRequest's currentOffset was greater than the buffer length and would
+        cause the function to return early.
+
+        This check was dropped in r215686, which caused us in some cases to call
+        finishLoading / stopLoading() after the loop, even though we did not have
+        enough data in the buffer to satisfy the data request.
+
+        To address the issue, we now return early after the loop if remainingLength
+        is greater than 0, meaning that we could not satisfy the request. This makes
+        sure we do not call finishLoading / stopLoading() prematurely.
+
+        Note that before r215686, the condition of the while loop was 
+        "while (remainingLength)" so the only way to get out of the loop was to:
+        1. Get remainingLength to 0, in which case we would fall through and
+           potentially call finishLoading / stopLoading() after the loop.
+        2. Fail the "(data->size() <= [dataRequest currentOffset] - responseOffset)"
+           check at the beginning of the loop, meaning that we ran out of data in
+           the buffer. This would cause us to return from the function, not fall
+           through, so we would not call finishLoading / stopLoading().
+
+        No new tests, I do not know how to write a test for this.
+
+        * platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.mm:
+        (WebCore::WebCoreAVFResourceLoader::fulfillRequestWithResource):
+
 2017-05-25  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Use the term 'operation' more consistently
