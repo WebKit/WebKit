@@ -1,5 +1,16 @@
 2017-05-24  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Merge r217165.
+
+    2017-05-19  Jonathan Bedard  <jbedard@apple.com>
+
+            Unreviewed infrastructure fix.
+
+            * Scripts/webkitpy/port/ios_simulator.py:
+            (IOSSimulatorPort._create_devices): Ignore failure to open Simulator.app.
+
+2017-05-24  Ryan Haddad  <ryanhaddad@apple.com>
+
         Merge r217147.
 
     2017-05-19  Jonathan Bedard  <jbedard@apple.com>
