@@ -98,6 +98,9 @@ private:
     Timer m_blackFrameTimer;
     rtc::scoped_refptr<webrtc::VideoFrameBuffer> m_blackFrame;
     bool m_shouldApplyRotation { false };
+#if !RELEASE_LOG_DISABLED
+    size_t m_numberOfFrames { 0 };
+#endif
 };
 
 } // namespace WebCore

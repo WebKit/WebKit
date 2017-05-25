@@ -1,3 +1,30 @@
+2017-05-25  youenn fablet  <youenn@apple.com>
+
+        Add some release logging for media elements
+        https://bugs.webkit.org/show_bug.cgi?id=172581
+
+        Reviewed by Eric Carlson.
+
+        No change of behavior.
+
+         Adding logging for getUserMedia, video autoplay and incoming/outgoing webrtc video tracks.
+
+        * Modules/mediastream/UserMediaRequest.cpp:
+        (WebCore::UserMediaRequest::allow):
+        (WebCore::UserMediaRequest::deny):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::canTransitionFromAutoplayToPlay):
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::playbackPermitted):
+        * platform/Logging.h:
+        * platform/mediastream/mac/RealtimeIncomingVideoSource.cpp:
+        (WebCore::RealtimeIncomingVideoSource::OnFrame):
+        * platform/mediastream/mac/RealtimeIncomingVideoSource.h:
+        * platform/mediastream/mac/RealtimeOutgoingVideoSource.cpp:
+        (WebCore::RealtimeOutgoingVideoSource::sendOneBlackFrame):
+        (WebCore::RealtimeOutgoingVideoSource::videoSampleAvailable):
+        * platform/mediastream/mac/RealtimeOutgoingVideoSource.h:
+
 2017-05-25  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Do a pass of cleanup in the bindings generator

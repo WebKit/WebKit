@@ -31,6 +31,7 @@
 
 #if USE(LIBWEBRTC)
 
+#include "Logging.h"
 #include <webrtc/api/video/i420_buffer.h>
 #include <webrtc/common_video/include/corevideo_frame_buffer.h>
 #include <webrtc/common_video/libyuv/include/webrtc_libyuv.h>
@@ -147,6 +148,7 @@ void RealtimeOutgoingVideoSource::sendBlackFrames()
 
 void RealtimeOutgoingVideoSource::sendOneBlackFrame()
 {
+    RELEASE_LOG(MediaStream, "RealtimeOutgoingVideoSource::sendOneBlackFrame");
     sendFrame(rtc::scoped_refptr<webrtc::VideoFrameBuffer>(m_blackFrame));
 }
 
@@ -170,6 +172,11 @@ void RealtimeOutgoingVideoSource::videoSampleAvailable(MediaSample& sample)
 
     if (m_muted || !m_enabled)
         return;
+
+#if !RELEASE_LOG_DISABLED
+    if (!(++m_numberOfFrames % 30))
+        RELEASE_LOG(MediaStream, "RealtimeOutgoingVideoSource::sendFrame %zu frame", m_numberOfFrames);
+#endif
 
     switch (sample.videoRotation()) {
     case MediaSample::VideoRotation::None:

@@ -78,6 +78,9 @@ private:
     RetainPtr<CVPixelBufferRef> m_blackFrame;
     int m_blackFrameWidth { 0 };
     int m_blackFrameHeight { 0 };
+#if !RELEASE_LOG_DISABLED
+    size_t m_numberOfFrames { 0 };
+#endif
 };
 
 } // namespace WebCore

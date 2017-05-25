@@ -157,7 +157,7 @@ SuccessOr<MediaPlaybackDenialReason> MediaElementSession::playbackPermitted(cons
         return { };
 
     if (requiresFullscreenForVideoPlayback(element) && !fullscreenPermitted(element)) {
-        LOG(Media, "MediaElementSession::playbackPermitted - returning FALSE because of fullscreen restriction");
+        RELEASE_LOG(Media, "MediaElementSession::playbackPermitted - returning FALSE because of fullscreen restriction");
         return MediaPlaybackDenialReason::FullscreenRequired;
     }
 
@@ -174,17 +174,17 @@ SuccessOr<MediaPlaybackDenialReason> MediaElementSession::playbackPermitted(cons
 #endif
 
     if (m_restrictions & RequireUserGestureForVideoRateChange && element.isVideo() && !element.document().processingUserGestureForMedia()) {
-        LOG(Media, "MediaElementSession::playbackPermitted - returning FALSE because of video rate change restriction");
+        RELEASE_LOG(Media, "MediaElementSession::playbackPermitted - returning FALSE because of video rate change restriction");
         return MediaPlaybackDenialReason::UserGestureRequired;
     }
 
     if (m_restrictions & RequireUserGestureForAudioRateChange && (!element.isVideo() || element.hasAudio()) && !element.muted() && element.volume() && !element.document().processingUserGestureForMedia()) {
-        LOG(Media, "MediaElementSession::playbackPermitted - returning FALSE because of audio rate change restriction");
+        RELEASE_LOG(Media, "MediaElementSession::playbackPermitted - returning FALSE because of audio rate change restriction");
         return MediaPlaybackDenialReason::UserGestureRequired;
     }
 
     if (m_restrictions & RequireUserGestureForVideoDueToLowPowerMode && element.isVideo() && !element.document().processingUserGestureForMedia()) {
-        LOG(Media, "MediaElementSession::playbackPermitted - returning FALSE because of video low power mode restriction");
+        RELEASE_LOG(Media, "MediaElementSession::playbackPermitted - returning FALSE because of video low power mode restriction");
         return MediaPlaybackDenialReason::UserGestureRequired;
     }
 

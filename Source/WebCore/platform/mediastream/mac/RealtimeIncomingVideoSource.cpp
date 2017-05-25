@@ -38,6 +38,7 @@
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "IntRect.h"
+#include "Logging.h"
 #include "MediaSampleAVFObjC.h"
 #include <webrtc/common_video/include/corevideo_frame_buffer.h>
 #include <webrtc/common_video/libyuv/include/webrtc_libyuv.h>
@@ -127,6 +128,11 @@ void RealtimeIncomingVideoSource::OnFrame(const webrtc::VideoFrame& frame)
 {
     if (!isProducingData())
         return;
+
+#if !RELEASE_LOG_DISABLED
+    if (!(++m_numberOfFrames % 30))
+        RELEASE_LOG(MediaStream, "RealtimeIncomingVideoSource::OnFrame %zu frame", m_numberOfFrames);
+#endif
 
     auto pixelBuffer = pixelBufferFromVideoFrame(frame);
 

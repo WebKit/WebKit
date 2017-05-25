@@ -2332,6 +2332,7 @@ SuccessOr<MediaPlaybackDenialReason> HTMLMediaElement::canTransitionFromAutoplay
      && !document().isSandboxed(SandboxAutomaticFeatures))
         return mediaSession().playbackPermitted(*this);
 
+    RELEASE_LOG(Media, "HTMLMediaElement::canTransitionFromAutoplayToPlay - page consent required");
     return MediaPlaybackDenialReason::PageConsentRequired;
 }
 
