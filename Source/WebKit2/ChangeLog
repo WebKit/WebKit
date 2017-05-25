@@ -1,3 +1,16 @@
+2017-05-25  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Avoid setting contentsScale and rasterizationScale on CATransformLayers
+        https://bugs.webkit.org/show_bug.cgi?id=172569
+
+        Reviewed by Dean Jackson.
+
+        Setting contentsScale and rasterizationScale on CATransformLayers is a waste of CPU time,
+        and triggers unwanted logging, so don't do it.
+
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.cpp:
+        (WebKit::PlatformCALayerRemote::PlatformCALayerRemote):
+
 2017-05-25  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r217409.
