@@ -1,3 +1,11 @@
+2017-05-25  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [WPE] Build fix after r217404
+
+        Unreviewed
+
+        * PlatformWPE.cmake: Include missing cairo cmake file.
+
 2017-05-24  Chris Dumez  <cdumez@apple.com>
 
         ResourceResponses for data URLs have their Source marked as Unknown

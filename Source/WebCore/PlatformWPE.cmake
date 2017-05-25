@@ -1,3 +1,4 @@
+include(platform/Cairo.cmake)
 include(platform/GStreamer.cmake)
 include(platform/ImageDecoders.cmake)
 include(platform/Linux.cmake)
