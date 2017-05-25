@@ -40,7 +40,6 @@
 #if PLATFORM(WIN)
 #define USE_CF 1 
 #if PLATFORM(WIN_CAIRO)
-#define USE_CAIRO 1
 #define USE_CURL 1
 #else
 #define USE_CG 1

@@ -79,6 +79,7 @@ find_package(EGL REQUIRED)
 
 find_package(WPEBackend REQUIRED)
 
+set(USE_CAIRO ON)
 set(USE_XDGMIME ON)
 
 if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)

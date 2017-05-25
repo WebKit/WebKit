@@ -139,3 +139,9 @@ if (ENABLE_LEGACY_ENCRYPTED_MEDIA OR ENABLE_ENCRYPTED_MEDIA)
         ${LIBGCRYPT_LIBRARIES} -lgpg-error
     )
 endif ()
+
+if (USE_CAIRO)
+    list(APPEND WebCore_SOURCES
+        platform/graphics/gstreamer/ImageGStreamerCairo.cpp
+    )
+endif ()

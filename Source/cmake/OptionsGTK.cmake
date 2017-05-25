@@ -54,6 +54,7 @@ find_package(OpenGLES2)
 
 WEBKIT_OPTION_BEGIN()
 
+set(USE_CAIRO ON)
 set(USE_WOFF2 ON)
 set(USE_XDGMIME ON)
 

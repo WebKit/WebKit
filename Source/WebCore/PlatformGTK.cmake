@@ -1,3 +1,4 @@
+include(platform/Cairo.cmake)
 include(platform/GStreamer.cmake)
 include(platform/ImageDecoders.cmake)
 include(platform/Linux.cmake)
@@ -14,13 +15,11 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/accessibility/atk"
     "${WEBCORE_DIR}/editing/atk"
     "${WEBCORE_DIR}/page/gtk"
-    "${WEBCORE_DIR}/platform/cairo"
     "${WEBCORE_DIR}/platform/gamepad"
     "${WEBCORE_DIR}/platform/gamepad/deprecated"
     "${WEBCORE_DIR}/platform/gamepad/glib"
     "${WEBCORE_DIR}/platform/geoclue"
     "${WEBCORE_DIR}/platform/gtk"
-    "${WEBCORE_DIR}/platform/graphics/cairo"
     "${WEBCORE_DIR}/platform/graphics/egl"
     "${WEBCORE_DIR}/platform/graphics/glx"
     "${WEBCORE_DIR}/platform/graphics/gtk"
@@ -87,25 +86,8 @@ list(APPEND WebCore_SOURCES
     platform/graphics/GLContext.cpp
     platform/graphics/GraphicsContext3DPrivate.cpp
 
-    platform/graphics/cairo/BackingStoreBackendCairoImpl.cpp
     platform/graphics/cairo/BackingStoreBackendCairoX11.cpp
-    platform/graphics/cairo/CairoUtilities.cpp
-    platform/graphics/cairo/FloatRectCairo.cpp
-    platform/graphics/cairo/FontCairo.cpp
     platform/graphics/cairo/FontCairoHarfbuzzNG.cpp
-    platform/graphics/cairo/GradientCairo.cpp
-    platform/graphics/cairo/GraphicsContext3DCairo.cpp
-    platform/graphics/cairo/GraphicsContextCairo.cpp
-    platform/graphics/cairo/ImageBufferCairo.cpp
-    platform/graphics/cairo/ImageCairo.cpp
-    platform/graphics/cairo/IntRectCairo.cpp
-    platform/graphics/cairo/NativeImageCairo.cpp
-    platform/graphics/cairo/PathCairo.cpp
-    platform/graphics/cairo/PatternCairo.cpp
-    platform/graphics/cairo/PlatformContextCairo.cpp
-    platform/graphics/cairo/PlatformPathCairo.cpp
-    platform/graphics/cairo/RefPtrCairo.cpp
-    platform/graphics/cairo/TransformationMatrixCairo.cpp
 
     platform/graphics/egl/GLContextEGL.cpp
     platform/graphics/egl/GLContextEGLWayland.cpp
@@ -144,8 +126,6 @@ list(APPEND WebCore_SOURCES
     platform/gtk/ScrollAnimatorGtk.cpp
     platform/gtk/SelectionData.cpp
     platform/gtk/UserAgentGtk.cpp
-
-    platform/image-decoders/cairo/ImageBackingStoreCairo.cpp
 
     platform/network/soup/AuthenticationChallengeSoup.cpp
     platform/network/soup/CertificateInfo.cpp

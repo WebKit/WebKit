@@ -52,3 +52,9 @@ if (WEBP_FOUND)
         ${WEBP_LIBRARIES}
     )
 endif ()
+
+if (USE_CAIRO)
+    list(APPEND WebCore_SOURCES
+        platform/image-decoders/cairo/ImageBackingStoreCairo.cpp
+    )
+endif ()

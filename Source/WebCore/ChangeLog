@@ -1,3 +1,20 @@
+2017-05-24  Don Olmstead  <don.olmstead@am.sony.com>
+
+        [CMake] Consolidate CMake code related to Cairo
+        https://bugs.webkit.org/show_bug.cgi?id=172568
+
+        Reviewed by Alex Christensen.
+
+        No new tests. No change in behavior.
+
+        * PlatformGTK.cmake:
+        * PlatformWPE.cmake:
+        * PlatformWinCairo.cmake:
+        * config.h:
+        * platform/Cairo.cmake: Added.
+        * platform/GStreamer.cmake:
+        * platform/ImageDecoders.cmake:
+
 2017-05-24  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         REGRESSION (r206481): Don't assume frameCount() is larger than or equal to the size of the image frame cache
