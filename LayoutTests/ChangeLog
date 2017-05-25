@@ -1,3 +1,10 @@
+2017-05-25  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GTK] Update baseline
+
+        Unreviewed gardening. Update after r217272.
+        * platform/gtk/fast/text/font-style-parse-expected.txt:
+
 2017-05-25  Dave Hyatt  <hyatt@apple.com>
 
         Baseline of number inputs not right.
