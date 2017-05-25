@@ -1,3 +1,18 @@
+2017-05-24  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] An assertion fails if the custom cursor image isn't loaded yet
+        https://bugs.webkit.org/show_bug.cgi?id=172209
+
+        Reviewed by Said Abou-Hallawa.
+
+        Windows port have the same issue Qt port had had several years ago
+        (Bug 68223). I'd like to reuse the test case. But, current CSS
+        parser rejects invalid 'cursor' property value which consists of
+        a single URL but no keywords.
+
+        * fast/css/crash-on-custom-cursor-when-loading.html: Fix invalid
+        'cursor' property by appending a fallback keyword.
+
 2017-05-24  Alexey Proskuryakov  <ap@apple.com>
 
         Merge split script tests

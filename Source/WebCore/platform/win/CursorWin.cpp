@@ -257,9 +257,10 @@ void Cursor::ensurePlatformCursor() const
         m_platformCursor = loadCursorByName("zoomOutCursor", 7, 7);
         break;
     case Cursor::Custom:
-        m_platformCursor = createSharedCursor(m_image.get(), m_hotSpot);
-        if (!m_platformCursor)
+        if (m_image->isNull())
             m_platformCursor = loadSharedCursor(0, IDC_ARROW);
+        else
+            m_platformCursor = createSharedCursor(m_image.get(), m_hotSpot);
         break;
     default:
         ASSERT_NOT_REACHED();

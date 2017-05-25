@@ -1,3 +1,22 @@
+2017-05-24  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] An assertion fails if the custom cursor image isn't loaded yet
+        https://bugs.webkit.org/show_bug.cgi?id=172209
+
+        Reviewed by Said Abou-Hallawa.
+
+        Test: fast/css/crash-on-custom-cursor-when-loading.html
+
+        A custom cursor image can be zero dimension if it is loading or
+        decoding. Cursor::ensurePlatformCursor of Windows port should
+        handle such case properly.
+
+        * platform/win/CursorWin.cpp:
+        (WebCore::Cursor::ensurePlatformCursor): Load a stock cursor if
+        the custom cursor image has zero dimension. Do not do null-check
+        of the return value of createSharedCursor() because it never
+        returns null.
+
 2017-05-24  Don Olmstead  <don.olmstead@am.sony.com>
 
         [CMake] Consolidate CMake code related to Cairo
