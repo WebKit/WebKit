@@ -1,3 +1,9 @@
+2017-05-25  David Kilzer  <ddkilzer@apple.com>
+
+        Make a change to force a build on the Apple bots
+
+        * wtf/text/WTFString.h: Use #pragma once.
+
 2017-05-24  Andreas Kling  <akling@apple.com>
 
         Disable memory kill mechanisms when running with FastMalloc disabled.
