@@ -1,3 +1,11 @@
+2017-05-25  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [WPE] Unreviewed gardening
+
+        Update rebaseline after r216817.
+
+        * platform/wpe/fast/transforms/bounding-rect-zoom-expected.txt:
+
 2017-05-25  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Update expectations for layout tests.
