@@ -1,5 +1,11 @@
 2017-05-25  David Kilzer  <ddkilzer@apple.com>
 
+        REGRESSION (r217416): Using #pragma once in WTFString.h broke the build
+
+        * wtf/text/WTFString.h: Switch back to #ifndef/#define/#endif.
+
+2017-05-25  David Kilzer  <ddkilzer@apple.com>
+
         Make a change to force a build on the Apple bots
 
         * wtf/text/WTFString.h: Use #pragma once.
