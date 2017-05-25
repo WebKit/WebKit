@@ -55,6 +55,9 @@
 #placeSelfSafe {
   place-self: safe;
 }
+#placeSelfBaselineSafe {
+  place-self: baseline safe;
+}
 #placeSelfStartSafe {
   place-self: start safe;
 }
@@ -207,8 +210,8 @@ test(function() {
 }, "Test setting 'start safe' as incorrect value through CSS.");
 
 test(function() {
-  checkValues(placeSelfStartSafe, "placeSelf", "place-self", "", "normal normal");
-  checkPlaceSelfValues(placeSelfStartSafe, "", "normal", "normal");
+  checkValues(placeSelfBaselineSafe, "placeSelf", "place-self", "", "normal normal");
+  checkPlaceSelfValues(placeSelfBaselineSafe, "", "normal", "normal");
 }, "Test setting 'baseline safe' as incorrect value through CSS.");
 
 test(function() {

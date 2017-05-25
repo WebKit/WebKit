@@ -52,6 +52,9 @@
 #placeContentSafe {
     place-content: safe;
 }
+#placeContentBaselineSafe {
+    place-content: baseline safe;
+}
 #placeContentStartSafe {
     place-content: start safe;
 }
@@ -232,8 +235,8 @@ test(function() {
 }, "Test setting 'start safe' as incorrect value through CSS.");
 
 test(function() {
-    checkValues(placeContentStartSafe, "placeContent", "place-content", "", "normal normal");
-    checkPlaceContentValues(placeContentStartSafe, "", "normal", "normal");
+    checkValues(placeContentBaselineSafe, "placeContent", "place-content", "", "normal normal");
+    checkPlaceContentValues(placeContentBaselineSafe, "", "normal", "normal");
 }, "Test setting 'baseline safe' as incorrect value through CSS.");
 
 test(function() {

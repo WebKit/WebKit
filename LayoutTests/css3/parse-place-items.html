@@ -58,6 +58,9 @@
 #placeItemsStartSafe {
   place-items: start safe;
 }
+#placeItemsBaselineSafe {
+  place-items: baseline safe;
+}
 #placeItemsStartEndLeft {
   place-items: start end left;
 }
@@ -207,8 +210,8 @@ test(function() {
 }, "Test setting 'start safe' as incorrect value through CSS.");
 
 test(function() {
-  checkValues(placeItemsStartSafe, "placeItems", "place-items", "", "normal normal");
-  checkPlaceItemsValues(placeItemsStartSafe, "", "normal", "normal");
+  checkValues(placeItemsBaselineSafe, "placeItems", "place-items", "", "normal normal");
+  checkPlaceItemsValues(placeItemsBaselineSafe, "", "normal", "normal");
 }, "Test setting 'baseline safe' as incorrect value through CSS.");
 
 test(function() {
