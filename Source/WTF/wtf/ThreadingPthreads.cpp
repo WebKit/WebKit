@@ -99,6 +99,11 @@ static StaticWordLock globalSuspendLock;
 #pragma GCC diagnostic ignored "-Wreturn-local-addr"
 #endif // COMPILER(GCC)
 
+#if COMPILER(CLANG)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wreturn-stack-address"
+#endif // COMPILER(CLANG)
+
 static UNUSED_FUNCTION NEVER_INLINE void* getApproximateStackPointer()
 {
     volatile void* stackLocation = nullptr;
@@ -108,6 +113,10 @@ static UNUSED_FUNCTION NEVER_INLINE void* getApproximateStackPointer()
 #if COMPILER(GCC)
 #pragma GCC diagnostic pop
 #endif // COMPILER(GCC)
+
+#if COMPILER(CLANG)
+#pragma clang diagnostic pop
+#endif // COMPILER(CLANG)
 
 static UNUSED_FUNCTION bool isOnAlternativeSignalStack()
 {
