@@ -1,3 +1,25 @@
+2017-05-25  Chris Dumez  <cdumez@apple.com>
+
+        DocumentThreadableLoader::redirectReceived() should not rely on the resource's loader
+        https://bugs.webkit.org/show_bug.cgi?id=172578
+        <rdar://problem/30754582>
+
+        Reviewed by Youenn Fablet.
+
+        DocumentThreadableLoader::redirectReceived() should not rely on the resource's loader. The rest of the methods do not.
+        It is unsafe for it to rely on the resource's loader because it gets cleared when the load completes. A CachedRawresource
+        may be reused from the memory cache once its load has completed.
+
+        This would cause crashes in CachedRawResource::didAddClient() when replaying the redirects because it would call
+        DocumentThreadableLoader::redirectReceived() and potentially not have a loader anymore. To hit this exact code path,
+        you would need to make repeated XHR to a cacheable simple cross-origin resource that has cacheable redirect.
+
+        Test: http/tests/xmlhttprequest/cacheable-cross-origin-redirect-crash.html
+
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::redirectReceived):
+        * loader/DocumentThreadableLoader.h:
+
 2017-05-25  Zalan Bujtas  <zalan@apple.com>
 
         ASSERTION FAILED: !needsStyleRecalc() || !document().childNeedsStyleRecalc()
