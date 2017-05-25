@@ -22,7 +22,6 @@
 #include "JSTestClassWithJSBuiltinConstructor.h"
 
 #include "JSDOMBinding.h"
-#include "JSDOMBindingCaller.h"
 #include "JSDOMBuiltinConstructor.h"
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMWrapperCache.h"

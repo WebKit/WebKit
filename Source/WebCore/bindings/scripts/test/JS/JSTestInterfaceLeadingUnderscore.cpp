@@ -21,8 +21,8 @@
 #include "config.h"
 #include "JSTestInterfaceLeadingUnderscore.h"
 
+#include "JSDOMAttribute.h"
 #include "JSDOMBinding.h"
-#include "JSDOMBindingCaller.h"
 #include "JSDOMConstructorNotConstructable.h"
 #include "JSDOMConvert.h"
 #include "JSDOMExceptionHandling.h"
@@ -128,7 +128,7 @@ void JSTestInterfaceLeadingUnderscore::destroy(JSC::JSCell* cell)
     thisObject->JSTestInterfaceLeadingUnderscore::~JSTestInterfaceLeadingUnderscore();
 }
 
-template<> inline JSTestInterfaceLeadingUnderscore* BindingCaller<JSTestInterfaceLeadingUnderscore>::castForAttribute(ExecState& state, EncodedJSValue thisValue)
+template<> inline JSTestInterfaceLeadingUnderscore* IDLAttribute<JSTestInterfaceLeadingUnderscore>::cast(ExecState& state, EncodedJSValue thisValue)
 {
     return jsDynamicDowncast<JSTestInterfaceLeadingUnderscore*>(state.vm(), JSValue::decode(thisValue));
 }
@@ -137,7 +137,7 @@ static inline JSValue jsTestInterfaceLeadingUnderscoreReadonlyGetter(ExecState&,
 
 EncodedJSValue jsTestInterfaceLeadingUnderscoreReadonly(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    return BindingCaller<JSTestInterfaceLeadingUnderscore>::attribute<jsTestInterfaceLeadingUnderscoreReadonlyGetter>(state, thisValue, "readonly");
+    return IDLAttribute<JSTestInterfaceLeadingUnderscore>::get<jsTestInterfaceLeadingUnderscoreReadonlyGetter>(*state, thisValue, "readonly");
 }
 
 static inline JSValue jsTestInterfaceLeadingUnderscoreReadonlyGetter(ExecState& state, JSTestInterfaceLeadingUnderscore& thisObject, ThrowScope& throwScope)

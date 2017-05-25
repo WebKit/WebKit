@@ -22,7 +22,6 @@
 #include "JSTestNamedConstructor.h"
 
 #include "JSDOMBinding.h"
-#include "JSDOMBindingCaller.h"
 #include "JSDOMConstructorNotConstructable.h"
 #include "JSDOMConvert.h"
 #include "JSDOMExceptionHandling.h"

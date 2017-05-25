@@ -70,7 +70,9 @@ public:
     JSC::JSValue customMethod(JSC::ExecState&);
     JSC::JSValue customMethodWithArgs(JSC::ExecState&);
     static JSC::JSValue classMethod2(JSC::ExecState&);
-    JSC::JSValue testCustomPromiseFunction(JSC::ExecState&);
+    JSC::JSValue testCustomPromiseFunction(JSC::ExecState&, Ref<DeferredPromise>&&);
+    static JSC::JSValue testStaticCustomPromiseFunction(JSC::ExecState&, Ref<DeferredPromise>&&);
+    JSC::JSValue testCustomReturnsOwnPromiseFunction(JSC::ExecState&);
 public:
     static const unsigned StructureFlags = JSC::HasStaticPropertyTable | JSC::InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | JSC::OverridesGetOwnPropertySlot | JSC::OverridesGetPropertyNames | JSC::TypeOfShouldCallGetCallData | Base::StructureFlags;
 protected:

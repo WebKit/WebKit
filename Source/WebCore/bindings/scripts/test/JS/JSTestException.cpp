@@ -21,8 +21,8 @@
 #include "config.h"
 #include "JSTestException.h"
 
+#include "JSDOMAttribute.h"
 #include "JSDOMBinding.h"
-#include "JSDOMBindingCaller.h"
 #include "JSDOMConstructorNotConstructable.h"
 #include "JSDOMConvert.h"
 #include "JSDOMExceptionHandling.h"
@@ -141,7 +141,7 @@ void JSTestException::destroy(JSC::JSCell* cell)
     thisObject->JSTestException::~JSTestException();
 }
 
-template<> inline JSTestException* BindingCaller<JSTestException>::castForAttribute(ExecState& state, EncodedJSValue thisValue)
+template<> inline JSTestException* IDLAttribute<JSTestException>::cast(ExecState& state, EncodedJSValue thisValue)
 {
     return jsDynamicDowncast<JSTestException*>(state.vm(), JSValue::decode(thisValue));
 }
@@ -150,7 +150,7 @@ static inline JSValue jsTestExceptionNameGetter(ExecState&, JSTestException&, Th
 
 EncodedJSValue jsTestExceptionName(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    return BindingCaller<JSTestException>::attribute<jsTestExceptionNameGetter>(state, thisValue, "name");
+    return IDLAttribute<JSTestException>::get<jsTestExceptionNameGetter>(*state, thisValue, "name");
 }
 
 static inline JSValue jsTestExceptionNameGetter(ExecState& state, JSTestException& thisObject, ThrowScope& throwScope)

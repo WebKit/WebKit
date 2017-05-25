@@ -1260,65 +1260,76 @@ static void jsSubtleCryptoFunctionUnwrapKeyPromise(ExecState& state, Ref<Deferre
     unwrapAlgorithm->decrypt(WTFMove(unwrapParams), unwrappingKey.releaseNonNull(), WTFMove(wrappedKey), WTFMove(callback), WTFMove(exceptionCallback), *scriptExecutionContextFromExecState(&state), subtle->wrapped().workQueue());
 }
 
-JSValue JSSubtleCrypto::encrypt(ExecState& state)
+JSValue JSSubtleCrypto::encrypt(ExecState& state, Ref<DeferredPromise>&& promise)
 {
-    return callPromiseFunction<jsSubtleCryptoFunctionEncryptPromise, PromiseExecutionScope::WindowOrWorker>(state);
+    jsSubtleCryptoFunctionEncryptPromise(state, WTFMove(promise));
+    return jsUndefined();
 }
 
-JSValue JSSubtleCrypto::decrypt(ExecState& state)
+JSValue JSSubtleCrypto::decrypt(ExecState& state, Ref<DeferredPromise>&& promise)
 {
-    return callPromiseFunction<jsSubtleCryptoFunctionDecryptPromise, PromiseExecutionScope::WindowOrWorker>(state);
+    jsSubtleCryptoFunctionDecryptPromise(state, WTFMove(promise));
+    return jsUndefined();
 }
 
-JSValue JSSubtleCrypto::sign(ExecState& state)
+JSValue JSSubtleCrypto::sign(ExecState& state, Ref<DeferredPromise>&& promise)
 {
-    return callPromiseFunction<jsSubtleCryptoFunctionSignPromise, PromiseExecutionScope::WindowOrWorker>(state);
+    jsSubtleCryptoFunctionSignPromise(state, WTFMove(promise));
+    return jsUndefined();
 }
 
-JSValue JSSubtleCrypto::verify(ExecState& state)
+JSValue JSSubtleCrypto::verify(ExecState& state, Ref<DeferredPromise>&& promise)
 {
-    return callPromiseFunction<jsSubtleCryptoFunctionVerifyPromise, PromiseExecutionScope::WindowOrWorker>(state);
+    jsSubtleCryptoFunctionVerifyPromise(state, WTFMove(promise));
+    return jsUndefined();
 }
 
-JSValue JSSubtleCrypto::digest(ExecState& state)
+JSValue JSSubtleCrypto::digest(ExecState& state, Ref<DeferredPromise>&& promise)
 {
-    return callPromiseFunction<jsSubtleCryptoFunctionDigestPromise, PromiseExecutionScope::WindowOrWorker>(state);
+    jsSubtleCryptoFunctionDigestPromise(state, WTFMove(promise));
+    return jsUndefined();
 }
 
-
-JSValue JSSubtleCrypto::generateKey(ExecState& state)
+JSValue JSSubtleCrypto::generateKey(ExecState& state, Ref<DeferredPromise>&& promise)
 {
-    return callPromiseFunction<jsSubtleCryptoFunctionGenerateKeyPromise, PromiseExecutionScope::WindowOrWorker>(state);
+    jsSubtleCryptoFunctionGenerateKeyPromise(state, WTFMove(promise));
+    return jsUndefined();
 }
 
-JSValue JSSubtleCrypto::deriveKey(ExecState& state)
+JSValue JSSubtleCrypto::deriveKey(ExecState& state, Ref<DeferredPromise>&& promise)
 {
-    return callPromiseFunction<jsSubtleCryptoFunctionDeriveKeyPromise, PromiseExecutionScope::WindowOrWorker>(state);
+    jsSubtleCryptoFunctionDeriveKeyPromise(state, WTFMove(promise));
+    return jsUndefined();
 }
 
-JSValue JSSubtleCrypto::deriveBits(ExecState& state)
+JSValue JSSubtleCrypto::deriveBits(ExecState& state, Ref<DeferredPromise>&& promise)
 {
-    return callPromiseFunction<jsSubtleCryptoFunctionDeriveBitsPromise, PromiseExecutionScope::WindowOrWorker>(state);
+    jsSubtleCryptoFunctionDeriveBitsPromise(state, WTFMove(promise));
+    return jsUndefined();
 }
 
-JSValue JSSubtleCrypto::importKey(ExecState& state)
+JSValue JSSubtleCrypto::importKey(ExecState& state, Ref<DeferredPromise>&& promise)
 {
-    return callPromiseFunction<jsSubtleCryptoFunctionImportKeyPromise, PromiseExecutionScope::WindowOrWorker>(state);
+    jsSubtleCryptoFunctionImportKeyPromise(state, WTFMove(promise));
+    return jsUndefined();
 }
 
-JSValue JSSubtleCrypto::exportKey(ExecState& state)
+JSValue JSSubtleCrypto::exportKey(ExecState& state, Ref<DeferredPromise>&& promise)
 {
-    return callPromiseFunction<jsSubtleCryptoFunctionExportKeyPromise, PromiseExecutionScope::WindowOrWorker>(state);
+    jsSubtleCryptoFunctionExportKeyPromise(state, WTFMove(promise));
+    return jsUndefined();
 }
 
-JSValue JSSubtleCrypto::wrapKey(ExecState& state)
+JSValue JSSubtleCrypto::wrapKey(ExecState& state, Ref<DeferredPromise>&& promise)
 {
-    return callPromiseFunction<jsSubtleCryptoFunctionWrapKeyPromise, PromiseExecutionScope::WindowOrWorker>(state);
+    jsSubtleCryptoFunctionWrapKeyPromise(state, WTFMove(promise));
+    return jsUndefined();
 }
 
-JSValue JSSubtleCrypto::unwrapKey(ExecState& state)
+JSValue JSSubtleCrypto::unwrapKey(ExecState& state, Ref<DeferredPromise>&& promise)
 {
-    return callPromiseFunction<jsSubtleCryptoFunctionUnwrapKeyPromise, PromiseExecutionScope::WindowOrWorker>(state);
+    jsSubtleCryptoFunctionUnwrapKeyPromise(state, WTFMove(promise));
+    return jsUndefined();
 }
 
 } // namespace WebCore

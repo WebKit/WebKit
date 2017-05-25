@@ -417,6 +417,8 @@ enum TestConfidence { "high", "kinda-low" };
     static Promise<void> testStaticPromiseFunction();
     [MayThrowException] static Promise<void> testStaticPromiseFunctionWithException();
     [Custom] Promise<void> testCustomPromiseFunction();
+    [Custom] static Promise<void> testStaticCustomPromiseFunction();
+    [Custom, ReturnsOwnPromise] Promise<void> testCustomReturnsOwnPromiseFunction();
 
     // PutForwards
     [PutForwards=name] readonly attribute TestNode putForwardsAttribute;

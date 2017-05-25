@@ -21,8 +21,8 @@
 #include "config.h"
 #include "JSTestPromiseRejectionEvent.h"
 
+#include "JSDOMAttribute.h"
 #include "JSDOMBinding.h"
-#include "JSDOMBindingCaller.h"
 #include "JSDOMConstructor.h"
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMPromise.h"
@@ -191,7 +191,7 @@ JSObject* JSTestPromiseRejectionEvent::prototype(VM& vm, JSDOMGlobalObject& glob
     return getDOMPrototype<JSTestPromiseRejectionEvent>(vm, globalObject);
 }
 
-template<> inline JSTestPromiseRejectionEvent* BindingCaller<JSTestPromiseRejectionEvent>::castForAttribute(ExecState& state, EncodedJSValue thisValue)
+template<> inline JSTestPromiseRejectionEvent* IDLAttribute<JSTestPromiseRejectionEvent>::cast(ExecState& state, EncodedJSValue thisValue)
 {
     return jsDynamicDowncast<JSTestPromiseRejectionEvent*>(state.vm(), JSValue::decode(thisValue));
 }
@@ -200,7 +200,7 @@ static inline JSValue jsTestPromiseRejectionEventPromiseGetter(ExecState&, JSTes
 
 EncodedJSValue jsTestPromiseRejectionEventPromise(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    return BindingCaller<JSTestPromiseRejectionEvent>::attribute<jsTestPromiseRejectionEventPromiseGetter, CastedThisErrorBehavior::RejectPromise>(state, thisValue, "promise");
+    return IDLAttribute<JSTestPromiseRejectionEvent>::get<jsTestPromiseRejectionEventPromiseGetter, CastedThisErrorBehavior::RejectPromise>(*state, thisValue, "promise");
 }
 
 static inline JSValue jsTestPromiseRejectionEventPromiseGetter(ExecState& state, JSTestPromiseRejectionEvent& thisObject, ThrowScope& throwScope)
@@ -216,7 +216,7 @@ static inline JSValue jsTestPromiseRejectionEventReasonGetter(ExecState&, JSTest
 
 EncodedJSValue jsTestPromiseRejectionEventReason(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    return BindingCaller<JSTestPromiseRejectionEvent>::attribute<jsTestPromiseRejectionEventReasonGetter>(state, thisValue, "reason");
+    return IDLAttribute<JSTestPromiseRejectionEvent>::get<jsTestPromiseRejectionEventReasonGetter>(*state, thisValue, "reason");
 }
 
 static inline JSValue jsTestPromiseRejectionEventReasonGetter(ExecState& state, JSTestPromiseRejectionEvent& thisObject, ThrowScope& throwScope)

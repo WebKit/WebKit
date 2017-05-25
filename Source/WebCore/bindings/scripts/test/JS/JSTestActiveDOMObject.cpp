@@ -21,12 +21,13 @@
 #include "config.h"
 #include "JSTestActiveDOMObject.h"
 
+#include "JSDOMAttribute.h"
 #include "JSDOMBinding.h"
-#include "JSDOMBindingCaller.h"
 #include "JSDOMBindingSecurity.h"
 #include "JSDOMConstructorNotConstructable.h"
 #include "JSDOMConvert.h"
 #include "JSDOMExceptionHandling.h"
+#include "JSDOMOperation.h"
 #include "JSDOMWrapperCache.h"
 #include "JSNode.h"
 #include <runtime/Error.h>
@@ -151,12 +152,12 @@ void JSTestActiveDOMObject::destroy(JSC::JSCell* cell)
     thisObject->JSTestActiveDOMObject::~JSTestActiveDOMObject();
 }
 
-template<> inline JSTestActiveDOMObject* BindingCaller<JSTestActiveDOMObject>::castForAttribute(ExecState& state, EncodedJSValue thisValue)
+template<> inline JSTestActiveDOMObject* IDLAttribute<JSTestActiveDOMObject>::cast(ExecState& state, EncodedJSValue thisValue)
 {
     return jsDynamicDowncast<JSTestActiveDOMObject*>(state.vm(), JSValue::decode(thisValue));
 }
 
-template<> inline JSTestActiveDOMObject* BindingCaller<JSTestActiveDOMObject>::castForOperation(ExecState& state)
+template<> inline JSTestActiveDOMObject* IDLOperation<JSTestActiveDOMObject>::cast(ExecState& state)
 {
     return jsDynamicDowncast<JSTestActiveDOMObject*>(state.vm(), state.thisValue());
 }
@@ -165,7 +166,7 @@ static inline JSValue jsTestActiveDOMObjectExcitingAttrGetter(ExecState&, JSTest
 
 EncodedJSValue jsTestActiveDOMObjectExcitingAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    return BindingCaller<JSTestActiveDOMObject>::attribute<jsTestActiveDOMObjectExcitingAttrGetter>(state, thisValue, "excitingAttr");
+    return IDLAttribute<JSTestActiveDOMObject>::get<jsTestActiveDOMObjectExcitingAttrGetter>(*state, thisValue, "excitingAttr");
 }
 
 static inline JSValue jsTestActiveDOMObjectExcitingAttrGetter(ExecState& state, JSTestActiveDOMObject& thisObject, ThrowScope& throwScope)
@@ -208,14 +209,7 @@ JSValue JSTestActiveDOMObject::getConstructor(VM& vm, const JSGlobalObject* glob
     return getDOMConstructor<JSTestActiveDOMObjectConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
-static inline JSC::EncodedJSValue jsTestActiveDOMObjectPrototypeFunctionExcitingFunctionCaller(JSC::ExecState*, JSTestActiveDOMObject*, JSC::ThrowScope&);
-
-EncodedJSValue JSC_HOST_CALL jsTestActiveDOMObjectPrototypeFunctionExcitingFunction(ExecState* state)
-{
-    return BindingCaller<JSTestActiveDOMObject>::callOperation<jsTestActiveDOMObjectPrototypeFunctionExcitingFunctionCaller>(state, "excitingFunction");
-}
-
-static inline JSC::EncodedJSValue jsTestActiveDOMObjectPrototypeFunctionExcitingFunctionCaller(JSC::ExecState* state, JSTestActiveDOMObject* castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestActiveDOMObjectPrototypeFunctionExcitingFunctionCaller(JSC::ExecState* state, typename IDLOperation<JSTestActiveDOMObject>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -230,14 +224,12 @@ static inline JSC::EncodedJSValue jsTestActiveDOMObjectPrototypeFunctionExciting
     return JSValue::encode(jsUndefined());
 }
 
-static inline JSC::EncodedJSValue jsTestActiveDOMObjectPrototypeFunctionPostMessageCaller(JSC::ExecState*, JSTestActiveDOMObject*, JSC::ThrowScope&);
-
-EncodedJSValue JSC_HOST_CALL jsTestActiveDOMObjectPrototypeFunctionPostMessage(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestActiveDOMObjectPrototypeFunctionExcitingFunction(ExecState* state)
 {
-    return BindingCaller<JSTestActiveDOMObject>::callOperation<jsTestActiveDOMObjectPrototypeFunctionPostMessageCaller>(state, "postMessage");
+    return IDLOperation<JSTestActiveDOMObject>::call<jsTestActiveDOMObjectPrototypeFunctionExcitingFunctionCaller>(*state, "excitingFunction");
 }
 
-static inline JSC::EncodedJSValue jsTestActiveDOMObjectPrototypeFunctionPostMessageCaller(JSC::ExecState* state, JSTestActiveDOMObject* castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestActiveDOMObjectPrototypeFunctionPostMessageCaller(JSC::ExecState* state, typename IDLOperation<JSTestActiveDOMObject>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -248,6 +240,11 @@ static inline JSC::EncodedJSValue jsTestActiveDOMObjectPrototypeFunctionPostMess
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     impl.postMessage(WTFMove(message));
     return JSValue::encode(jsUndefined());
+}
+
+EncodedJSValue JSC_HOST_CALL jsTestActiveDOMObjectPrototypeFunctionPostMessage(ExecState* state)
+{
+    return IDLOperation<JSTestActiveDOMObject>::call<jsTestActiveDOMObjectPrototypeFunctionPostMessageCaller>(*state, "postMessage");
 }
 
 bool JSTestActiveDOMObjectOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)

@@ -21,11 +21,12 @@
 #include "config.h"
 #include "JSTestSerialization.h"
 
+#include "JSDOMAttribute.h"
 #include "JSDOMBinding.h"
-#include "JSDOMBindingCaller.h"
 #include "JSDOMConstructorNotConstructable.h"
 #include "JSDOMConvert.h"
 #include "JSDOMExceptionHandling.h"
+#include "JSDOMOperation.h"
 #include "JSDOMWrapperCache.h"
 #include "JSTestException.h"
 #include <runtime/FunctionPrototype.h>
@@ -151,12 +152,12 @@ void JSTestSerialization::destroy(JSC::JSCell* cell)
     thisObject->JSTestSerialization::~JSTestSerialization();
 }
 
-template<> inline JSTestSerialization* BindingCaller<JSTestSerialization>::castForAttribute(ExecState& state, EncodedJSValue thisValue)
+template<> inline JSTestSerialization* IDLAttribute<JSTestSerialization>::cast(ExecState& state, EncodedJSValue thisValue)
 {
     return jsDynamicDowncast<JSTestSerialization*>(state.vm(), JSValue::decode(thisValue));
 }
 
-template<> inline JSTestSerialization* BindingCaller<JSTestSerialization>::castForOperation(ExecState& state)
+template<> inline JSTestSerialization* IDLOperation<JSTestSerialization>::cast(ExecState& state)
 {
     return jsDynamicDowncast<JSTestSerialization*>(state.vm(), state.thisValue());
 }
@@ -165,7 +166,7 @@ static inline JSValue jsTestSerializationFirstStringAttributeGetter(ExecState&, 
 
 EncodedJSValue jsTestSerializationFirstStringAttribute(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    return BindingCaller<JSTestSerialization>::attribute<jsTestSerializationFirstStringAttributeGetter>(state, thisValue, "firstStringAttribute");
+    return IDLAttribute<JSTestSerialization>::get<jsTestSerializationFirstStringAttributeGetter>(*state, thisValue, "firstStringAttribute");
 }
 
 static inline JSValue jsTestSerializationFirstStringAttributeGetter(ExecState& state, JSTestSerialization& thisObject, ThrowScope& throwScope)
@@ -181,7 +182,7 @@ static inline JSValue jsTestSerializationSecondLongAttributeGetter(ExecState&, J
 
 EncodedJSValue jsTestSerializationSecondLongAttribute(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    return BindingCaller<JSTestSerialization>::attribute<jsTestSerializationSecondLongAttributeGetter>(state, thisValue, "secondLongAttribute");
+    return IDLAttribute<JSTestSerialization>::get<jsTestSerializationSecondLongAttributeGetter>(*state, thisValue, "secondLongAttribute");
 }
 
 static inline JSValue jsTestSerializationSecondLongAttributeGetter(ExecState& state, JSTestSerialization& thisObject, ThrowScope& throwScope)
@@ -197,7 +198,7 @@ static inline JSValue jsTestSerializationThirdUnserializableAttributeGetter(Exec
 
 EncodedJSValue jsTestSerializationThirdUnserializableAttribute(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    return BindingCaller<JSTestSerialization>::attribute<jsTestSerializationThirdUnserializableAttributeGetter>(state, thisValue, "thirdUnserializableAttribute");
+    return IDLAttribute<JSTestSerialization>::get<jsTestSerializationThirdUnserializableAttributeGetter>(*state, thisValue, "thirdUnserializableAttribute");
 }
 
 static inline JSValue jsTestSerializationThirdUnserializableAttributeGetter(ExecState& state, JSTestSerialization& thisObject, ThrowScope& throwScope)
@@ -213,7 +214,7 @@ static inline JSValue jsTestSerializationFourthUnrestrictedDoubleAttributeGetter
 
 EncodedJSValue jsTestSerializationFourthUnrestrictedDoubleAttribute(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    return BindingCaller<JSTestSerialization>::attribute<jsTestSerializationFourthUnrestrictedDoubleAttributeGetter>(state, thisValue, "fourthUnrestrictedDoubleAttribute");
+    return IDLAttribute<JSTestSerialization>::get<jsTestSerializationFourthUnrestrictedDoubleAttributeGetter>(*state, thisValue, "fourthUnrestrictedDoubleAttribute");
 }
 
 static inline JSValue jsTestSerializationFourthUnrestrictedDoubleAttributeGetter(ExecState& state, JSTestSerialization& thisObject, ThrowScope& throwScope)
@@ -229,7 +230,7 @@ static inline JSValue jsTestSerializationFifthLongAttributeGetter(ExecState&, JS
 
 EncodedJSValue jsTestSerializationFifthLongAttribute(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    return BindingCaller<JSTestSerialization>::attribute<jsTestSerializationFifthLongAttributeGetter>(state, thisValue, "fifthLongAttribute");
+    return IDLAttribute<JSTestSerialization>::get<jsTestSerializationFifthLongAttributeGetter>(*state, thisValue, "fifthLongAttribute");
 }
 
 static inline JSValue jsTestSerializationFifthLongAttributeGetter(ExecState& state, JSTestSerialization& thisObject, ThrowScope& throwScope)
@@ -245,7 +246,7 @@ static inline JSValue jsTestSerializationSixthTypedefAttributeGetter(ExecState&,
 
 EncodedJSValue jsTestSerializationSixthTypedefAttribute(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    return BindingCaller<JSTestSerialization>::attribute<jsTestSerializationSixthTypedefAttributeGetter>(state, thisValue, "sixthTypedefAttribute");
+    return IDLAttribute<JSTestSerialization>::get<jsTestSerializationSixthTypedefAttributeGetter>(*state, thisValue, "sixthTypedefAttribute");
 }
 
 static inline JSValue jsTestSerializationSixthTypedefAttributeGetter(ExecState& state, JSTestSerialization& thisObject, ThrowScope& throwScope)
@@ -285,7 +286,7 @@ static inline bool setJSTestSerializationFirstStringAttributeFunction(ExecState&
 
 bool setJSTestSerializationFirstStringAttribute(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
-    return BindingCaller<JSTestSerialization>::setAttribute<setJSTestSerializationFirstStringAttributeFunction>(state, thisValue, encodedValue, "firstStringAttribute");
+    return IDLAttribute<JSTestSerialization>::set<setJSTestSerializationFirstStringAttributeFunction>(*state, thisValue, encodedValue, "firstStringAttribute");
 }
 
 static inline bool setJSTestSerializationFirstStringAttributeFunction(ExecState& state, JSTestSerialization& thisObject, JSValue value, ThrowScope& throwScope)
@@ -304,7 +305,7 @@ static inline bool setJSTestSerializationSecondLongAttributeFunction(ExecState&,
 
 bool setJSTestSerializationSecondLongAttribute(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
-    return BindingCaller<JSTestSerialization>::setAttribute<setJSTestSerializationSecondLongAttributeFunction>(state, thisValue, encodedValue, "secondLongAttribute");
+    return IDLAttribute<JSTestSerialization>::set<setJSTestSerializationSecondLongAttributeFunction>(*state, thisValue, encodedValue, "secondLongAttribute");
 }
 
 static inline bool setJSTestSerializationSecondLongAttributeFunction(ExecState& state, JSTestSerialization& thisObject, JSValue value, ThrowScope& throwScope)
@@ -323,7 +324,7 @@ static inline bool setJSTestSerializationThirdUnserializableAttributeFunction(Ex
 
 bool setJSTestSerializationThirdUnserializableAttribute(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
-    return BindingCaller<JSTestSerialization>::setAttribute<setJSTestSerializationThirdUnserializableAttributeFunction>(state, thisValue, encodedValue, "thirdUnserializableAttribute");
+    return IDLAttribute<JSTestSerialization>::set<setJSTestSerializationThirdUnserializableAttributeFunction>(*state, thisValue, encodedValue, "thirdUnserializableAttribute");
 }
 
 static inline bool setJSTestSerializationThirdUnserializableAttributeFunction(ExecState& state, JSTestSerialization& thisObject, JSValue value, ThrowScope& throwScope)
@@ -342,7 +343,7 @@ static inline bool setJSTestSerializationFourthUnrestrictedDoubleAttributeFuncti
 
 bool setJSTestSerializationFourthUnrestrictedDoubleAttribute(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
-    return BindingCaller<JSTestSerialization>::setAttribute<setJSTestSerializationFourthUnrestrictedDoubleAttributeFunction>(state, thisValue, encodedValue, "fourthUnrestrictedDoubleAttribute");
+    return IDLAttribute<JSTestSerialization>::set<setJSTestSerializationFourthUnrestrictedDoubleAttributeFunction>(*state, thisValue, encodedValue, "fourthUnrestrictedDoubleAttribute");
 }
 
 static inline bool setJSTestSerializationFourthUnrestrictedDoubleAttributeFunction(ExecState& state, JSTestSerialization& thisObject, JSValue value, ThrowScope& throwScope)
@@ -361,7 +362,7 @@ static inline bool setJSTestSerializationFifthLongAttributeFunction(ExecState&, 
 
 bool setJSTestSerializationFifthLongAttribute(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
-    return BindingCaller<JSTestSerialization>::setAttribute<setJSTestSerializationFifthLongAttributeFunction>(state, thisValue, encodedValue, "fifthLongAttribute");
+    return IDLAttribute<JSTestSerialization>::set<setJSTestSerializationFifthLongAttributeFunction>(*state, thisValue, encodedValue, "fifthLongAttribute");
 }
 
 static inline bool setJSTestSerializationFifthLongAttributeFunction(ExecState& state, JSTestSerialization& thisObject, JSValue value, ThrowScope& throwScope)
@@ -380,7 +381,7 @@ static inline bool setJSTestSerializationSixthTypedefAttributeFunction(ExecState
 
 bool setJSTestSerializationSixthTypedefAttribute(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
-    return BindingCaller<JSTestSerialization>::setAttribute<setJSTestSerializationSixthTypedefAttributeFunction>(state, thisValue, encodedValue, "sixthTypedefAttribute");
+    return IDLAttribute<JSTestSerialization>::set<setJSTestSerializationSixthTypedefAttributeFunction>(*state, thisValue, encodedValue, "sixthTypedefAttribute");
 }
 
 static inline bool setJSTestSerializationSixthTypedefAttributeFunction(ExecState& state, JSTestSerialization& thisObject, JSValue value, ThrowScope& throwScope)
@@ -435,7 +436,7 @@ static inline EncodedJSValue jsTestSerializationPrototypeFunctionToJSONCaller(Ex
 
 EncodedJSValue JSC_HOST_CALL jsTestSerializationPrototypeFunctionToJSON(ExecState* state)
 {
-    return BindingCaller<JSTestSerialization>::callOperation<jsTestSerializationPrototypeFunctionToJSONCaller>(state, "toJSON");
+    return IDLOperation<JSTestSerialization>::call<jsTestSerializationPrototypeFunctionToJSONCaller>(*state, "toJSON");
 }
 
 bool JSTestSerializationOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)

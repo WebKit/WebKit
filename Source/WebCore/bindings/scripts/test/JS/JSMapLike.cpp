@@ -21,12 +21,13 @@
 #include "config.h"
 #include "JSMapLike.h"
 
+#include "JSDOMAttribute.h"
 #include "JSDOMBinding.h"
-#include "JSDOMBindingCaller.h"
 #include "JSDOMConstructorNotConstructable.h"
 #include "JSDOMConvert.h"
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMMapLike.h"
+#include "JSDOMOperation.h"
 #include "JSDOMWrapperCache.h"
 #include <builtins/BuiltinNames.h>
 #include <runtime/Error.h>
@@ -154,12 +155,12 @@ void JSMapLike::destroy(JSC::JSCell* cell)
     thisObject->JSMapLike::~JSMapLike();
 }
 
-template<> inline JSMapLike* BindingCaller<JSMapLike>::castForAttribute(ExecState& state, EncodedJSValue thisValue)
+template<> inline JSMapLike* IDLAttribute<JSMapLike>::cast(ExecState& state, EncodedJSValue thisValue)
 {
     return jsDynamicDowncast<JSMapLike*>(state.vm(), JSValue::decode(thisValue));
 }
 
-template<> inline JSMapLike* BindingCaller<JSMapLike>::castForOperation(ExecState& state)
+template<> inline JSMapLike* IDLOperation<JSMapLike>::cast(ExecState& state)
 {
     return jsDynamicDowncast<JSMapLike*>(state.vm(), state.thisValue());
 }
@@ -168,7 +169,7 @@ static inline JSValue jsMapLikeSizeGetter(ExecState&, JSMapLike&, ThrowScope& th
 
 EncodedJSValue jsMapLikeSize(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    return BindingCaller<JSMapLike>::attribute<jsMapLikeSizeGetter>(state, thisValue, "size");
+    return IDLAttribute<JSMapLike>::get<jsMapLikeSizeGetter>(*state, thisValue, "size");
 }
 
 static inline JSValue jsMapLikeSizeGetter(ExecState& state, JSMapLike& thisObject, ThrowScope& throwScope)
@@ -208,14 +209,7 @@ JSValue JSMapLike::getConstructor(VM& vm, const JSGlobalObject* globalObject)
     return getDOMConstructor<JSMapLikeConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
-static inline JSC::EncodedJSValue jsMapLikePrototypeFunctionGetCaller(JSC::ExecState*, JSMapLike*, JSC::ThrowScope&);
-
-EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionGet(ExecState* state)
-{
-    return BindingCaller<JSMapLike>::callOperation<jsMapLikePrototypeFunctionGetCaller>(state, "get");
-}
-
-static inline JSC::EncodedJSValue jsMapLikePrototypeFunctionGetCaller(JSC::ExecState* state, JSMapLike* castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsMapLikePrototypeFunctionGetCaller(JSC::ExecState* state, typename IDLOperation<JSMapLike>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -226,14 +220,12 @@ static inline JSC::EncodedJSValue jsMapLikePrototypeFunctionGetCaller(JSC::ExecS
     return JSValue::encode(toJS<IDLAny>(forwardGetToMapLike(*state, *castedThis, WTFMove(key))));
 }
 
-static inline JSC::EncodedJSValue jsMapLikePrototypeFunctionHasCaller(JSC::ExecState*, JSMapLike*, JSC::ThrowScope&);
-
-EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionHas(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionGet(ExecState* state)
 {
-    return BindingCaller<JSMapLike>::callOperation<jsMapLikePrototypeFunctionHasCaller>(state, "has");
+    return IDLOperation<JSMapLike>::call<jsMapLikePrototypeFunctionGetCaller>(*state, "get");
 }
 
-static inline JSC::EncodedJSValue jsMapLikePrototypeFunctionHasCaller(JSC::ExecState* state, JSMapLike* castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsMapLikePrototypeFunctionHasCaller(JSC::ExecState* state, typename IDLOperation<JSMapLike>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -244,56 +236,48 @@ static inline JSC::EncodedJSValue jsMapLikePrototypeFunctionHasCaller(JSC::ExecS
     return JSValue::encode(toJS<IDLAny>(forwardHasToMapLike(*state, *castedThis, WTFMove(key))));
 }
 
-static inline JSC::EncodedJSValue jsMapLikePrototypeFunctionEntriesCaller(JSC::ExecState*, JSMapLike*, JSC::ThrowScope&);
-
-EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionEntries(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionHas(ExecState* state)
 {
-    return BindingCaller<JSMapLike>::callOperation<jsMapLikePrototypeFunctionEntriesCaller>(state, "entries");
+    return IDLOperation<JSMapLike>::call<jsMapLikePrototypeFunctionHasCaller>(*state, "has");
 }
 
-static inline JSC::EncodedJSValue jsMapLikePrototypeFunctionEntriesCaller(JSC::ExecState* state, JSMapLike* castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsMapLikePrototypeFunctionEntriesCaller(JSC::ExecState* state, typename IDLOperation<JSMapLike>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     return JSValue::encode(toJS<IDLAny>(forwardEntriesToMapLike(*state, *castedThis)));
 }
 
-static inline JSC::EncodedJSValue jsMapLikePrototypeFunctionKeysCaller(JSC::ExecState*, JSMapLike*, JSC::ThrowScope&);
-
-EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionKeys(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionEntries(ExecState* state)
 {
-    return BindingCaller<JSMapLike>::callOperation<jsMapLikePrototypeFunctionKeysCaller>(state, "keys");
+    return IDLOperation<JSMapLike>::call<jsMapLikePrototypeFunctionEntriesCaller>(*state, "entries");
 }
 
-static inline JSC::EncodedJSValue jsMapLikePrototypeFunctionKeysCaller(JSC::ExecState* state, JSMapLike* castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsMapLikePrototypeFunctionKeysCaller(JSC::ExecState* state, typename IDLOperation<JSMapLike>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     return JSValue::encode(toJS<IDLAny>(forwardKeysToMapLike(*state, *castedThis)));
 }
 
-static inline JSC::EncodedJSValue jsMapLikePrototypeFunctionValuesCaller(JSC::ExecState*, JSMapLike*, JSC::ThrowScope&);
-
-EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionValues(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionKeys(ExecState* state)
 {
-    return BindingCaller<JSMapLike>::callOperation<jsMapLikePrototypeFunctionValuesCaller>(state, "values");
+    return IDLOperation<JSMapLike>::call<jsMapLikePrototypeFunctionKeysCaller>(*state, "keys");
 }
 
-static inline JSC::EncodedJSValue jsMapLikePrototypeFunctionValuesCaller(JSC::ExecState* state, JSMapLike* castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsMapLikePrototypeFunctionValuesCaller(JSC::ExecState* state, typename IDLOperation<JSMapLike>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     return JSValue::encode(toJS<IDLAny>(forwardValuesToMapLike(*state, *castedThis)));
 }
 
-static inline JSC::EncodedJSValue jsMapLikePrototypeFunctionForEachCaller(JSC::ExecState*, JSMapLike*, JSC::ThrowScope&);
-
-EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionForEach(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionValues(ExecState* state)
 {
-    return BindingCaller<JSMapLike>::callOperation<jsMapLikePrototypeFunctionForEachCaller>(state, "forEach");
+    return IDLOperation<JSMapLike>::call<jsMapLikePrototypeFunctionValuesCaller>(*state, "values");
 }
 
-static inline JSC::EncodedJSValue jsMapLikePrototypeFunctionForEachCaller(JSC::ExecState* state, JSMapLike* castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsMapLikePrototypeFunctionForEachCaller(JSC::ExecState* state, typename IDLOperation<JSMapLike>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -304,14 +288,12 @@ static inline JSC::EncodedJSValue jsMapLikePrototypeFunctionForEachCaller(JSC::E
     return JSValue::encode(toJS<IDLAny>(forwardForEachToMapLike(*state, *castedThis, WTFMove(callback))));
 }
 
-static inline JSC::EncodedJSValue jsMapLikePrototypeFunctionAddCaller(JSC::ExecState*, JSMapLike*, JSC::ThrowScope&);
-
-EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionAdd(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionForEach(ExecState* state)
 {
-    return BindingCaller<JSMapLike>::callOperation<jsMapLikePrototypeFunctionAddCaller>(state, "add");
+    return IDLOperation<JSMapLike>::call<jsMapLikePrototypeFunctionForEachCaller>(*state, "forEach");
 }
 
-static inline JSC::EncodedJSValue jsMapLikePrototypeFunctionAddCaller(JSC::ExecState* state, JSMapLike* castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsMapLikePrototypeFunctionAddCaller(JSC::ExecState* state, typename IDLOperation<JSMapLike>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -322,14 +304,12 @@ static inline JSC::EncodedJSValue jsMapLikePrototypeFunctionAddCaller(JSC::ExecS
     return JSValue::encode(toJS<IDLAny>(forwardAddToMapLike(*state, *castedThis, WTFMove(key))));
 }
 
-static inline JSC::EncodedJSValue jsMapLikePrototypeFunctionClearCaller(JSC::ExecState*, JSMapLike*, JSC::ThrowScope&);
-
-EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionClear(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionAdd(ExecState* state)
 {
-    return BindingCaller<JSMapLike>::callOperation<jsMapLikePrototypeFunctionClearCaller>(state, "clear");
+    return IDLOperation<JSMapLike>::call<jsMapLikePrototypeFunctionAddCaller>(*state, "add");
 }
 
-static inline JSC::EncodedJSValue jsMapLikePrototypeFunctionClearCaller(JSC::ExecState* state, JSMapLike* castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsMapLikePrototypeFunctionClearCaller(JSC::ExecState* state, typename IDLOperation<JSMapLike>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -337,14 +317,12 @@ static inline JSC::EncodedJSValue jsMapLikePrototypeFunctionClearCaller(JSC::Exe
     return JSValue::encode(jsUndefined());
 }
 
-static inline JSC::EncodedJSValue jsMapLikePrototypeFunctionDeleteCaller(JSC::ExecState*, JSMapLike*, JSC::ThrowScope&);
-
-EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionDelete(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionClear(ExecState* state)
 {
-    return BindingCaller<JSMapLike>::callOperation<jsMapLikePrototypeFunctionDeleteCaller>(state, "delete");
+    return IDLOperation<JSMapLike>::call<jsMapLikePrototypeFunctionClearCaller>(*state, "clear");
 }
 
-static inline JSC::EncodedJSValue jsMapLikePrototypeFunctionDeleteCaller(JSC::ExecState* state, JSMapLike* castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsMapLikePrototypeFunctionDeleteCaller(JSC::ExecState* state, typename IDLOperation<JSMapLike>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -353,6 +331,11 @@ static inline JSC::EncodedJSValue jsMapLikePrototypeFunctionDeleteCaller(JSC::Ex
     auto key = convert<IDLDOMString>(*state, state->uncheckedArgument(0));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     return JSValue::encode(toJS<IDLAny>(forwardDeleteToMapLike(*state, *castedThis, WTFMove(key))));
+}
+
+EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionDelete(ExecState* state)
+{
+    return IDLOperation<JSMapLike>::call<jsMapLikePrototypeFunctionDeleteCaller>(*state, "delete");
 }
 
 bool JSMapLikeOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)

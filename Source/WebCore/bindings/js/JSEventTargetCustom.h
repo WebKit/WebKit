@@ -27,8 +27,8 @@
 
 #include "DOMWindow.h"
 #include "JSDOMBinding.h"
-#include "JSDOMBindingCaller.h"
 #include "JSDOMBindingSecurity.h"
+#include "JSDOMOperation.h"
 
 namespace WebCore {
 
@@ -52,27 +52,30 @@ private:
 
 std::unique_ptr<JSEventTargetWrapper> jsEventTargetCast(JSC::VM&, JSC::JSValue thisValue);
 
-template<> struct BindingCaller<JSEventTarget> {
-    using OperationCallerFunction = JSC::EncodedJSValue(JSC::ExecState*, JSEventTargetWrapper*, JSC::ThrowScope&);
+template<> class IDLOperation<JSEventTarget> {
+public:
+    using ClassParameter = JSEventTargetWrapper*;
+    using Operation = JSC::EncodedJSValue(JSC::ExecState*, ClassParameter, JSC::ThrowScope&);
 
-    template<OperationCallerFunction operationCaller>
-    static JSC::EncodedJSValue callOperation(JSC::ExecState* state, const char* operationName)
+    template<Operation operation, CastedThisErrorBehavior shouldThrow = CastedThisErrorBehavior::Throw>
+    static JSC::EncodedJSValue call(JSC::ExecState& state, const char* operationName)
     {
-        ASSERT(state);
-        JSC::VM& vm = state->vm();
+        JSC::VM& vm = state.vm();
         auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-        auto thisObject = jsEventTargetCast(vm, state->thisValue().toThis(state, JSC::NotStrictMode));
+        auto thisObject = jsEventTargetCast(vm, state.thisValue().toThis(&state, JSC::NotStrictMode));
         if (UNLIKELY(!thisObject))
-            return throwThisTypeError(*state, throwScope, "EventTarget", operationName);
+            return throwThisTypeError(state, throwScope, "EventTarget", operationName);
 
         if (auto* window = thisObject->wrapped().toDOMWindow()) {
-            if (!window->frame() || !BindingSecurity::shouldAllowAccessToDOMWindow(state, *window, ThrowSecurityError))
+            if (!window->frame() || !BindingSecurity::shouldAllowAccessToDOMWindow(&state, *window, ThrowSecurityError))
                 return JSC::JSValue::encode(JSC::jsUndefined());
         }
 
-        return operationCaller(state, thisObject.get(), throwScope);
+        return operation(&state, thisObject.get(), throwScope);
     }
+
 };
+
 
 } // namespace WebCore

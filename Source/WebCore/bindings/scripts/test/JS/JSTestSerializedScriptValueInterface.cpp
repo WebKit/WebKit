@@ -24,11 +24,12 @@
 
 #include "JSTestSerializedScriptValueInterface.h"
 
+#include "JSDOMAttribute.h"
 #include "JSDOMBinding.h"
-#include "JSDOMBindingCaller.h"
 #include "JSDOMConstructorNotConstructable.h"
 #include "JSDOMConvert.h"
 #include "JSDOMExceptionHandling.h"
+#include "JSDOMOperation.h"
 #include "JSDOMWrapperCache.h"
 #include "JSMessagePort.h"
 #include "SerializedScriptValue.h"
@@ -152,12 +153,12 @@ void JSTestSerializedScriptValueInterface::destroy(JSC::JSCell* cell)
     thisObject->JSTestSerializedScriptValueInterface::~JSTestSerializedScriptValueInterface();
 }
 
-template<> inline JSTestSerializedScriptValueInterface* BindingCaller<JSTestSerializedScriptValueInterface>::castForAttribute(ExecState& state, EncodedJSValue thisValue)
+template<> inline JSTestSerializedScriptValueInterface* IDLAttribute<JSTestSerializedScriptValueInterface>::cast(ExecState& state, EncodedJSValue thisValue)
 {
     return jsDynamicDowncast<JSTestSerializedScriptValueInterface*>(state.vm(), JSValue::decode(thisValue));
 }
 
-template<> inline JSTestSerializedScriptValueInterface* BindingCaller<JSTestSerializedScriptValueInterface>::castForOperation(ExecState& state)
+template<> inline JSTestSerializedScriptValueInterface* IDLOperation<JSTestSerializedScriptValueInterface>::cast(ExecState& state)
 {
     return jsDynamicDowncast<JSTestSerializedScriptValueInterface*>(state.vm(), state.thisValue());
 }
@@ -166,7 +167,7 @@ static inline JSValue jsTestSerializedScriptValueInterfaceValueGetter(ExecState&
 
 EncodedJSValue jsTestSerializedScriptValueInterfaceValue(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    return BindingCaller<JSTestSerializedScriptValueInterface>::attribute<jsTestSerializedScriptValueInterfaceValueGetter>(state, thisValue, "value");
+    return IDLAttribute<JSTestSerializedScriptValueInterface>::get<jsTestSerializedScriptValueInterfaceValueGetter>(*state, thisValue, "value");
 }
 
 static inline JSValue jsTestSerializedScriptValueInterfaceValueGetter(ExecState& state, JSTestSerializedScriptValueInterface& thisObject, ThrowScope& throwScope)
@@ -182,7 +183,7 @@ static inline JSValue jsTestSerializedScriptValueInterfaceReadonlyValueGetter(Ex
 
 EncodedJSValue jsTestSerializedScriptValueInterfaceReadonlyValue(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    return BindingCaller<JSTestSerializedScriptValueInterface>::attribute<jsTestSerializedScriptValueInterfaceReadonlyValueGetter>(state, thisValue, "readonlyValue");
+    return IDLAttribute<JSTestSerializedScriptValueInterface>::get<jsTestSerializedScriptValueInterfaceReadonlyValueGetter>(*state, thisValue, "readonlyValue");
 }
 
 static inline JSValue jsTestSerializedScriptValueInterfaceReadonlyValueGetter(ExecState& state, JSTestSerializedScriptValueInterface& thisObject, ThrowScope& throwScope)
@@ -198,7 +199,7 @@ static inline JSValue jsTestSerializedScriptValueInterfaceCachedValueGetter(Exec
 
 EncodedJSValue jsTestSerializedScriptValueInterfaceCachedValue(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    return BindingCaller<JSTestSerializedScriptValueInterface>::attribute<jsTestSerializedScriptValueInterfaceCachedValueGetter>(state, thisValue, "cachedValue");
+    return IDLAttribute<JSTestSerializedScriptValueInterface>::get<jsTestSerializedScriptValueInterfaceCachedValueGetter>(*state, thisValue, "cachedValue");
 }
 
 static inline JSValue jsTestSerializedScriptValueInterfaceCachedValueGetter(ExecState& state, JSTestSerializedScriptValueInterface& thisObject, ThrowScope& throwScope)
@@ -217,7 +218,7 @@ static inline JSValue jsTestSerializedScriptValueInterfacePortsGetter(ExecState&
 
 EncodedJSValue jsTestSerializedScriptValueInterfacePorts(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    return BindingCaller<JSTestSerializedScriptValueInterface>::attribute<jsTestSerializedScriptValueInterfacePortsGetter>(state, thisValue, "ports");
+    return IDLAttribute<JSTestSerializedScriptValueInterface>::get<jsTestSerializedScriptValueInterfacePortsGetter>(*state, thisValue, "ports");
 }
 
 static inline JSValue jsTestSerializedScriptValueInterfacePortsGetter(ExecState& state, JSTestSerializedScriptValueInterface& thisObject, ThrowScope& throwScope)
@@ -233,7 +234,7 @@ static inline JSValue jsTestSerializedScriptValueInterfaceCachedReadonlyValueGet
 
 EncodedJSValue jsTestSerializedScriptValueInterfaceCachedReadonlyValue(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    return BindingCaller<JSTestSerializedScriptValueInterface>::attribute<jsTestSerializedScriptValueInterfaceCachedReadonlyValueGetter>(state, thisValue, "cachedReadonlyValue");
+    return IDLAttribute<JSTestSerializedScriptValueInterface>::get<jsTestSerializedScriptValueInterfaceCachedReadonlyValueGetter>(*state, thisValue, "cachedReadonlyValue");
 }
 
 static inline JSValue jsTestSerializedScriptValueInterfaceCachedReadonlyValueGetter(ExecState& state, JSTestSerializedScriptValueInterface& thisObject, ThrowScope& throwScope)
@@ -276,7 +277,7 @@ static inline bool setJSTestSerializedScriptValueInterfaceValueFunction(ExecStat
 
 bool setJSTestSerializedScriptValueInterfaceValue(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
-    return BindingCaller<JSTestSerializedScriptValueInterface>::setAttribute<setJSTestSerializedScriptValueInterfaceValueFunction>(state, thisValue, encodedValue, "value");
+    return IDLAttribute<JSTestSerializedScriptValueInterface>::set<setJSTestSerializedScriptValueInterfaceValueFunction>(*state, thisValue, encodedValue, "value");
 }
 
 static inline bool setJSTestSerializedScriptValueInterfaceValueFunction(ExecState& state, JSTestSerializedScriptValueInterface& thisObject, JSValue value, ThrowScope& throwScope)
@@ -295,7 +296,7 @@ static inline bool setJSTestSerializedScriptValueInterfaceCachedValueFunction(Ex
 
 bool setJSTestSerializedScriptValueInterfaceCachedValue(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
-    return BindingCaller<JSTestSerializedScriptValueInterface>::setAttribute<setJSTestSerializedScriptValueInterfaceCachedValueFunction>(state, thisValue, encodedValue, "cachedValue");
+    return IDLAttribute<JSTestSerializedScriptValueInterface>::set<setJSTestSerializedScriptValueInterfaceCachedValueFunction>(*state, thisValue, encodedValue, "cachedValue");
 }
 
 static inline bool setJSTestSerializedScriptValueInterfaceCachedValueFunction(ExecState& state, JSTestSerializedScriptValueInterface& thisObject, JSValue value, ThrowScope& throwScope)
@@ -315,14 +316,7 @@ JSValue JSTestSerializedScriptValueInterface::getConstructor(VM& vm, const JSGlo
     return getDOMConstructor<JSTestSerializedScriptValueInterfaceConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
-static inline JSC::EncodedJSValue jsTestSerializedScriptValueInterfacePrototypeFunctionFunctionCaller(JSC::ExecState*, JSTestSerializedScriptValueInterface*, JSC::ThrowScope&);
-
-EncodedJSValue JSC_HOST_CALL jsTestSerializedScriptValueInterfacePrototypeFunctionFunction(ExecState* state)
-{
-    return BindingCaller<JSTestSerializedScriptValueInterface>::callOperation<jsTestSerializedScriptValueInterfacePrototypeFunctionFunctionCaller>(state, "function");
-}
-
-static inline JSC::EncodedJSValue jsTestSerializedScriptValueInterfacePrototypeFunctionFunctionCaller(JSC::ExecState* state, JSTestSerializedScriptValueInterface* castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestSerializedScriptValueInterfacePrototypeFunctionFunctionCaller(JSC::ExecState* state, typename IDLOperation<JSTestSerializedScriptValueInterface>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -335,19 +329,22 @@ static inline JSC::EncodedJSValue jsTestSerializedScriptValueInterfacePrototypeF
     return JSValue::encode(jsUndefined());
 }
 
-static inline JSC::EncodedJSValue jsTestSerializedScriptValueInterfacePrototypeFunctionFunctionReturningCaller(JSC::ExecState*, JSTestSerializedScriptValueInterface*, JSC::ThrowScope&);
-
-EncodedJSValue JSC_HOST_CALL jsTestSerializedScriptValueInterfacePrototypeFunctionFunctionReturning(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestSerializedScriptValueInterfacePrototypeFunctionFunction(ExecState* state)
 {
-    return BindingCaller<JSTestSerializedScriptValueInterface>::callOperation<jsTestSerializedScriptValueInterfacePrototypeFunctionFunctionReturningCaller>(state, "functionReturning");
+    return IDLOperation<JSTestSerializedScriptValueInterface>::call<jsTestSerializedScriptValueInterfacePrototypeFunctionFunctionCaller>(*state, "function");
 }
 
-static inline JSC::EncodedJSValue jsTestSerializedScriptValueInterfacePrototypeFunctionFunctionReturningCaller(JSC::ExecState* state, JSTestSerializedScriptValueInterface* castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestSerializedScriptValueInterfacePrototypeFunctionFunctionReturningCaller(JSC::ExecState* state, typename IDLOperation<JSTestSerializedScriptValueInterface>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = castedThis->wrapped();
     return JSValue::encode(toJS<IDLSerializedScriptValue<SerializedScriptValue>>(*state, *castedThis->globalObject(), impl.functionReturning()));
+}
+
+EncodedJSValue JSC_HOST_CALL jsTestSerializedScriptValueInterfacePrototypeFunctionFunctionReturning(ExecState* state)
+{
+    return IDLOperation<JSTestSerializedScriptValueInterface>::call<jsTestSerializedScriptValueInterfacePrototypeFunctionFunctionReturningCaller>(*state, "functionReturning");
 }
 
 void JSTestSerializedScriptValueInterface::visitChildren(JSCell* cell, SlotVisitor& visitor)

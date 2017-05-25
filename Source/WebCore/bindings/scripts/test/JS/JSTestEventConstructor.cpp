@@ -21,8 +21,8 @@
 #include "config.h"
 #include "JSTestEventConstructor.h"
 
+#include "JSDOMAttribute.h"
 #include "JSDOMBinding.h"
-#include "JSDOMBindingCaller.h"
 #include "JSDOMConstructor.h"
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMWrapperCache.h"
@@ -195,7 +195,7 @@ JSObject* JSTestEventConstructor::prototype(VM& vm, JSDOMGlobalObject& globalObj
     return getDOMPrototype<JSTestEventConstructor>(vm, globalObject);
 }
 
-template<> inline JSTestEventConstructor* BindingCaller<JSTestEventConstructor>::castForAttribute(ExecState& state, EncodedJSValue thisValue)
+template<> inline JSTestEventConstructor* IDLAttribute<JSTestEventConstructor>::cast(ExecState& state, EncodedJSValue thisValue)
 {
     return jsDynamicDowncast<JSTestEventConstructor*>(state.vm(), JSValue::decode(thisValue));
 }
@@ -204,7 +204,7 @@ static inline JSValue jsTestEventConstructorAttr1Getter(ExecState&, JSTestEventC
 
 EncodedJSValue jsTestEventConstructorAttr1(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    return BindingCaller<JSTestEventConstructor>::attribute<jsTestEventConstructorAttr1Getter>(state, thisValue, "attr1");
+    return IDLAttribute<JSTestEventConstructor>::get<jsTestEventConstructorAttr1Getter>(*state, thisValue, "attr1");
 }
 
 static inline JSValue jsTestEventConstructorAttr1Getter(ExecState& state, JSTestEventConstructor& thisObject, ThrowScope& throwScope)
@@ -220,7 +220,7 @@ static inline JSValue jsTestEventConstructorAttr2Getter(ExecState&, JSTestEventC
 
 EncodedJSValue jsTestEventConstructorAttr2(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    return BindingCaller<JSTestEventConstructor>::attribute<jsTestEventConstructorAttr2Getter>(state, thisValue, "attr2");
+    return IDLAttribute<JSTestEventConstructor>::get<jsTestEventConstructorAttr2Getter>(*state, thisValue, "attr2");
 }
 
 static inline JSValue jsTestEventConstructorAttr2Getter(ExecState& state, JSTestEventConstructor& thisObject, ThrowScope& throwScope)
@@ -237,7 +237,7 @@ static inline JSValue jsTestEventConstructorAttr3Getter(ExecState&, JSTestEventC
 
 EncodedJSValue jsTestEventConstructorAttr3(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    return BindingCaller<JSTestEventConstructor>::attribute<jsTestEventConstructorAttr3Getter>(state, thisValue, "attr3");
+    return IDLAttribute<JSTestEventConstructor>::get<jsTestEventConstructorAttr3Getter>(*state, thisValue, "attr3");
 }
 
 static inline JSValue jsTestEventConstructorAttr3Getter(ExecState& state, JSTestEventConstructor& thisObject, ThrowScope& throwScope)

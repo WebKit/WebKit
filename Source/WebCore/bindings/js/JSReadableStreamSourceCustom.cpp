@@ -35,43 +35,26 @@ using namespace JSC;
 
 namespace WebCore {
 
-static void startReadableStream(JSC::ExecState& state, Ref<DeferredPromise>&& promise)
+JSValue JSReadableStreamSource::start(ExecState& state, Ref<DeferredPromise>&& promise)
 {
     VM& vm = state.vm();
-    JSReadableStreamSource* source = jsDynamicDowncast<JSReadableStreamSource*>(vm, state.thisValue());
-    ASSERT(source);
-
-    ASSERT(state.argumentCount());
-    JSReadableStreamDefaultController* controller = jsDynamicDowncast<JSReadableStreamDefaultController*>(vm, state.uncheckedArgument(0));
-    ASSERT(controller);
-
-    source->wrapped().start(ReadableStreamDefaultController(controller), WTFMove(promise));
-}
-
-JSValue JSReadableStreamSource::start(ExecState& state)
-{
-    VM& vm = state.vm();
+    
+    // FIXME: Why is it ok to ASSERT the argument count here?
     ASSERT(state.argumentCount());
     JSReadableStreamDefaultController* controller = jsDynamicDowncast<JSReadableStreamDefaultController*>(vm, state.uncheckedArgument(0));
     ASSERT(controller);
 
     m_controller.set(vm, this, controller);
 
-    return callPromiseFunction<startReadableStream, PromiseExecutionScope::WindowOrWorker>(state);
+    wrapped().start(ReadableStreamDefaultController(controller), WTFMove(promise));
+
+    return jsUndefined();
 }
 
-static void pullReadableStream(JSC::ExecState& state, Ref<DeferredPromise>&& promise)
+JSValue JSReadableStreamSource::pull(ExecState&, Ref<DeferredPromise>&& promise)
 {
-    VM& vm = state.vm();
-    JSReadableStreamSource* source = jsDynamicDowncast<JSReadableStreamSource*>(vm, state.thisValue());
-    ASSERT(source);
-
-    source->wrapped().pull(WTFMove(promise));
-}
-
-JSValue JSReadableStreamSource::pull(ExecState& state)
-{
-    return callPromiseFunction<pullReadableStream, PromiseExecutionScope::WindowOrWorker>(state);
+    wrapped().pull(WTFMove(promise));
+    return jsUndefined();
 }
 
 JSValue JSReadableStreamSource::controller(ExecState&) const

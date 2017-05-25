@@ -28,14 +28,14 @@
     GenerateIsReachable=ImplDocument,
     NoInterfaceObject,
 ] interface WebKitSubtleCrypto {
-    [Custom] Promise<ArrayBuffer> encrypt(AlgorithmIdentifier algorithm, Key key, sequence<BufferSource> data);
-    [Custom] Promise<ArrayBuffer> decrypt(AlgorithmIdentifier algorithm, Key key, sequence<BufferSource> data);
-    [Custom] Promise<ArrayBuffer> sign(AlgorithmIdentifier algorithm, Key key, sequence<BufferSource> data);
-    [Custom] Promise<boolean> verify(AlgorithmIdentifier algorithm, Key key, BufferSource signature, sequence<BufferSource> data);
-    [Custom] Promise<ArrayBuffer> digest(AlgorithmIdentifier algorithm, sequence<BufferSource> data);
-    [Custom] Promise<(CryptoKey or CryptoKeyPair)> generateKey(AlgorithmIdentifier algorithm, optional boolean extractable, optional sequence<KeyUsage> keyUsages);
-    [Custom] Promise<CryptoKey> importKey(KeyFormat format, BufferSource keyData, AlgorithmIdentifier? algorithm, optional boolean extractable, optional sequence<KeyUsage> keyUsages);
-    [Custom] Promise<ArrayBuffer> exportKey(KeyFormat format, Key key);
-    [Custom] Promise<ArrayBuffer> wrapKey(KeyFormat format, Key key, Key wrappingKey, AlgorithmIdentifier wrapAlgorithm);
-    [Custom] Promise<CryptoKey> unwrapKey(KeyFormat format, BufferSource wrappedKey, Key unwrappingKey, AlgorithmIdentifier unwrapAlgorithm, AlgorithmIdentifier? unwrappedKeyAlgorithm, optional boolean extractable, optional sequence<KeyUsage> keyUsages);
+    [Custom, ReturnsOwnPromise] Promise<ArrayBuffer> encrypt(AlgorithmIdentifier algorithm, Key key, sequence<BufferSource> data);
+    [Custom, ReturnsOwnPromise] Promise<ArrayBuffer> decrypt(AlgorithmIdentifier algorithm, Key key, sequence<BufferSource> data);
+    [Custom, ReturnsOwnPromise] Promise<ArrayBuffer> sign(AlgorithmIdentifier algorithm, Key key, sequence<BufferSource> data);
+    [Custom, ReturnsOwnPromise] Promise<boolean> verify(AlgorithmIdentifier algorithm, Key key, BufferSource signature, sequence<BufferSource> data);
+    [Custom, ReturnsOwnPromise] Promise<ArrayBuffer> digest(AlgorithmIdentifier algorithm, sequence<BufferSource> data);
+    [Custom, ReturnsOwnPromise] Promise<(CryptoKey or CryptoKeyPair)> generateKey(AlgorithmIdentifier algorithm, optional boolean extractable, optional sequence<KeyUsage> keyUsages);
+    [Custom, ReturnsOwnPromise] Promise<CryptoKey> importKey(KeyFormat format, BufferSource keyData, AlgorithmIdentifier? algorithm, optional boolean extractable, optional sequence<KeyUsage> keyUsages);
+    [Custom, ReturnsOwnPromise] Promise<ArrayBuffer> exportKey(KeyFormat format, Key key);
+    [Custom, ReturnsOwnPromise] Promise<ArrayBuffer> wrapKey(KeyFormat format, Key key, Key wrappingKey, AlgorithmIdentifier wrapAlgorithm);
+    [Custom, ReturnsOwnPromise] Promise<CryptoKey> unwrapKey(KeyFormat format, BufferSource wrappedKey, Key unwrappingKey, AlgorithmIdentifier unwrapAlgorithm, AlgorithmIdentifier? unwrappedKeyAlgorithm, optional boolean extractable, optional sequence<KeyUsage> keyUsages);
 };

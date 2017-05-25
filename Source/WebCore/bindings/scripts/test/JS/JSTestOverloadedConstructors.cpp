@@ -23,7 +23,6 @@
 
 #include "JSBlob.h"
 #include "JSDOMBinding.h"
-#include "JSDOMBindingCaller.h"
 #include "JSDOMConstructor.h"
 #include "JSDOMConvert.h"
 #include "JSDOMConvertVariadic.h"

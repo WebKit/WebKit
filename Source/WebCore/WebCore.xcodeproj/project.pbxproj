@@ -3110,7 +3110,6 @@
 		7C45C9D21E3EFE0800AAB558 /* JSDOMExceptionHandling.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C45C9CC1E3E8F0800AAB558 /* JSDOMExceptionHandling.cpp */; };
 		7C45C9D31E3FCBD700AAB558 /* JSDOMWrapperCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C45C9C81E3E8B5100AAB558 /* JSDOMWrapperCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C45C9D41E3FCBDF00AAB558 /* JSDOMBindingSecurity.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C45C9C91E3E8CD700AAB558 /* JSDOMBindingSecurity.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		7C45C9D51E3FCBE400AAB558 /* JSDOMBindingCaller.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C45C9C61E3E8ABA00AAB558 /* JSDOMBindingCaller.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C45C9D61E3FCBF800AAB558 /* JSDOMExceptionHandling.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C45C9C71E3E8AFF00AAB558 /* JSDOMExceptionHandling.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C48A6D0191C9D6500026674 /* WebKitNamespace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C48A6CE191C9D6500026674 /* WebKitNamespace.cpp */; };
 		7C48A6D1191C9D6500026674 /* WebKitNamespace.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C48A6CF191C9D6500026674 /* WebKitNamespace.h */; };
@@ -3170,6 +3169,10 @@
 		7C77C3DC1DEF86D700A50BFA /* JSBlobLineEndings.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C77C3DA1DEF86D700A50BFA /* JSBlobLineEndings.h */; };
 		7C7941E41C56C29300A4C58E /* DataDetectorsCoreSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C7941E21C56C29300A4C58E /* DataDetectorsCoreSoftLink.mm */; };
 		7C7941E51C56C29300A4C58E /* DataDetectorsCoreSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C7941E31C56C29300A4C58E /* DataDetectorsCoreSoftLink.h */; };
+		7C8139A61ED6286A00CE26E8 /* JSDOMAttribute.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C8139A31ED6281D00CE26E8 /* JSDOMAttribute.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7C8139A71ED6287400CE26E8 /* JSDOMOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C8139A41ED6281D00CE26E8 /* JSDOMOperation.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7C8139A81ED6287400CE26E8 /* JSDOMOperationReturningPromise.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C8139A51ED6281D00CE26E8 /* JSDOMOperationReturningPromise.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7C8139AA1ED6604B00CE26E8 /* JSDOMCastedThisErrorBehavior.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C8139A91ED62DF200CE26E8 /* JSDOMCastedThisErrorBehavior.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C83DE861D04CC5D00FEBCF3 /* SpringSolver.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C83DE851D04CBD400FEBCF3 /* SpringSolver.h */; };
 		7C8E34AD1E4A33AF0054CE23 /* JSDOMConvertAny.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C8E34921E4A338E0054CE23 /* JSDOMConvertAny.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C8E34AE1E4A33AF0054CE23 /* JSDOMConvertBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C8E34931E4A338E0054CE23 /* JSDOMConvertBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -11124,7 +11127,6 @@
 		7C3F01C01C8E5AB100ADD962 /* UserContentProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserContentProvider.h; sourceTree = "<group>"; };
 		7C4189AB1B07C170000FA757 /* GlobalEventHandlers.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = GlobalEventHandlers.idl; sourceTree = "<group>"; };
 		7C4189AC1B07CBF2000FA757 /* WindowEventHandlers.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WindowEventHandlers.idl; sourceTree = "<group>"; };
-		7C45C9C61E3E8ABA00AAB558 /* JSDOMBindingCaller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMBindingCaller.h; sourceTree = "<group>"; };
 		7C45C9C71E3E8AFF00AAB558 /* JSDOMExceptionHandling.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMExceptionHandling.h; sourceTree = "<group>"; };
 		7C45C9C81E3E8B5100AAB558 /* JSDOMWrapperCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMWrapperCache.h; sourceTree = "<group>"; };
 		7C45C9C91E3E8CD700AAB558 /* JSDOMBindingSecurity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMBindingSecurity.h; sourceTree = "<group>"; };
@@ -11212,6 +11214,10 @@
 		7C77C3DA1DEF86D700A50BFA /* JSBlobLineEndings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSBlobLineEndings.h; sourceTree = "<group>"; };
 		7C7941E21C56C29300A4C58E /* DataDetectorsCoreSoftLink.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DataDetectorsCoreSoftLink.mm; sourceTree = "<group>"; };
 		7C7941E31C56C29300A4C58E /* DataDetectorsCoreSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataDetectorsCoreSoftLink.h; sourceTree = "<group>"; };
+		7C8139A31ED6281D00CE26E8 /* JSDOMAttribute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMAttribute.h; sourceTree = "<group>"; };
+		7C8139A41ED6281D00CE26E8 /* JSDOMOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMOperation.h; sourceTree = "<group>"; };
+		7C8139A51ED6281D00CE26E8 /* JSDOMOperationReturningPromise.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMOperationReturningPromise.h; sourceTree = "<group>"; };
+		7C8139A91ED62DF200CE26E8 /* JSDOMCastedThisErrorBehavior.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMCastedThisErrorBehavior.h; sourceTree = "<group>"; };
 		7C83DE851D04CBD400FEBCF3 /* SpringSolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpringSolver.h; sourceTree = "<group>"; };
 		7C8E34921E4A338E0054CE23 /* JSDOMConvertAny.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMConvertAny.h; sourceTree = "<group>"; };
 		7C8E34931E4A338E0054CE23 /* JSDOMConvertBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMConvertBase.h; sourceTree = "<group>"; };
@@ -23422,7 +23428,8 @@
 				9BD4E9141C462872005065BC /* JSCustomElementInterface.cpp */,
 				9BD4E9151C462872005065BC /* JSCustomElementInterface.h */,
 				93B70D4809EB0C7C009D8468 /* JSDOMBinding.h */,
-				7C45C9C61E3E8ABA00AAB558 /* JSDOMBindingCaller.h */,
+				7C8139A91ED62DF200CE26E8 /* JSDOMCastedThisErrorBehavior.h */,
+				7C8139A31ED6281D00CE26E8 /* JSDOMAttribute.h */,
 				41DEFCB21E56C1B9000D9E5F /* JSDOMBindingInternals.js */,
 				7C45C9CA1E3E8D2E00AAB558 /* JSDOMBindingSecurity.cpp */,
 				7C45C9C91E3E8CD700AAB558 /* JSDOMBindingSecurity.h */,
@@ -23438,6 +23445,8 @@
 				4138F8561D253EEE001CB61E /* JSDOMIterator.h */,
 				41DEFCB31E56C1B9000D9E5F /* JSDOMMapLike.cpp */,
 				41DEFCB41E56C1B9000D9E5F /* JSDOMMapLike.h */,
+				7C8139A41ED6281D00CE26E8 /* JSDOMOperation.h */,
+				7C8139A51ED6281D00CE26E8 /* JSDOMOperationReturningPromise.h */,
 				E37C864F1EB63E2D0087C6CA /* JSDOMPromise.h */,
 				E172AF8D1811BC3700FBADB9 /* JSDOMPromiseDeferred.cpp */,
 				E172AF8E1811BC3700FBADB9 /* JSDOMPromiseDeferred.h */,
@@ -27492,6 +27501,7 @@
 				5185FC8D1BB4C4E80012898F /* IDBFactory.h in Headers */,
 				519DBC6F1DC011A700329BF5 /* IDBGetAllRecordsData.h in Headers */,
 				519DBC721DC10F5200329BF5 /* IDBGetAllResult.h in Headers */,
+				7C8139AA1ED6604B00CE26E8 /* JSDOMCastedThisErrorBehavior.h in Headers */,
 				5105F0691D4BA9D900FB80BC /* IDBGetRecordData.h in Headers */,
 				5185FC8F1BB4C4E80012898F /* IDBGetResult.h in Headers */,
 				5185FC911BB4C4E80012898F /* IDBIndex.h in Headers */,
@@ -27600,6 +27610,7 @@
 				7A74ECBB101839A600BF939E /* InspectorDOMStorageAgent.h in Headers */,
 				F344C7141125B82C00F26EEE /* InspectorFrontendClient.h in Headers */,
 				F344C75311294D9D00F26EEE /* InspectorFrontendClientLocal.h in Headers */,
+				7C8139A71ED6287400CE26E8 /* JSDOMOperation.h in Headers */,
 				7A0E770F10C00A8800A0276E /* InspectorFrontendHost.h in Headers */,
 				7A54858014E02D51006AE05A /* InspectorHistory.h in Headers */,
 				7ACD88D414C08BD60084EDD2 /* InspectorIndexedDBAgent.h in Headers */,
@@ -27748,7 +27759,6 @@
 				65DF31F609D1CC60000BE325 /* JSDocumentType.h in Headers */,
 				1AC2260D0DB69F190089B669 /* JSDOMApplicationCache.h in Headers */,
 				93B70D6409EB0C7C009D8468 /* JSDOMBinding.h in Headers */,
-				7C45C9D51E3FCBE400AAB558 /* JSDOMBindingCaller.h in Headers */,
 				416E6FE81BBD12DF000A3F65 /* JSDOMBindingInternalsBuiltins.h in Headers */,
 				7C45C9D41E3FCBDF00AAB558 /* JSDOMBindingSecurity.h in Headers */,
 				413C2C341BC29A8F0075204C /* JSDOMConstructor.h in Headers */,
@@ -29206,6 +29216,7 @@
 				44C991860F3D1EBE00586670 /* ScrollbarThemeIOS.h in Headers */,
 				BC8B853E0E7C7F1100AB6984 /* ScrollbarThemeMac.h in Headers */,
 				0FE71406142170B800DB33BA /* ScrollbarThemeMock.h in Headers */,
+				7C8139A61ED6286A00CE26E8 /* JSDOMAttribute.h in Headers */,
 				1AA84F05143BA7BD0051D153 /* ScrollController.h in Headers */,
 				0F605AED15F94848004DF0C0 /* ScrollingConstraints.h in Headers */,
 				1AF62EE814DA22A70041556C /* ScrollingCoordinator.h in Headers */,
@@ -29349,6 +29360,7 @@
 				1A22464C0CC98DDB00C05240 /* SQLiteStatement.h in Headers */,
 				1A22464E0CC98DDB00C05240 /* SQLiteTransaction.h in Headers */,
 				97BC6A421505F081001B74AC /* SQLResultSet.h in Headers */,
+				7C8139A81ED6287400CE26E8 /* JSDOMOperationReturningPromise.h in Headers */,
 				97BC6A451505F081001B74AC /* SQLResultSetRowList.h in Headers */,
 				FE8A674816CDD19E00930BF8 /* SQLStatement.h in Headers */,
 				97BC6A491505F081001B74AC /* SQLStatementCallback.h in Headers */,

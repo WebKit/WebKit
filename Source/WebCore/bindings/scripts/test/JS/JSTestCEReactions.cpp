@@ -23,11 +23,12 @@
 
 #include "CustomElementReactionQueue.h"
 #include "HTMLNames.h"
+#include "JSDOMAttribute.h"
 #include "JSDOMBinding.h"
-#include "JSDOMBindingCaller.h"
 #include "JSDOMConstructorNotConstructable.h"
 #include "JSDOMConvert.h"
 #include "JSDOMExceptionHandling.h"
+#include "JSDOMOperation.h"
 #include "JSDOMWrapperCache.h"
 #include "JSTestCEReactionsStringifier.h"
 #include <runtime/Error.h>
@@ -144,12 +145,12 @@ void JSTestCEReactions::destroy(JSC::JSCell* cell)
     thisObject->JSTestCEReactions::~JSTestCEReactions();
 }
 
-template<> inline JSTestCEReactions* BindingCaller<JSTestCEReactions>::castForAttribute(ExecState& state, EncodedJSValue thisValue)
+template<> inline JSTestCEReactions* IDLAttribute<JSTestCEReactions>::cast(ExecState& state, EncodedJSValue thisValue)
 {
     return jsDynamicDowncast<JSTestCEReactions*>(state.vm(), JSValue::decode(thisValue));
 }
 
-template<> inline JSTestCEReactions* BindingCaller<JSTestCEReactions>::castForOperation(ExecState& state)
+template<> inline JSTestCEReactions* IDLOperation<JSTestCEReactions>::cast(ExecState& state)
 {
     return jsDynamicDowncast<JSTestCEReactions*>(state.vm(), state.thisValue());
 }
@@ -158,7 +159,7 @@ static inline JSValue jsTestCEReactionsAttributeWithCEReactionsGetter(ExecState&
 
 EncodedJSValue jsTestCEReactionsAttributeWithCEReactions(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    return BindingCaller<JSTestCEReactions>::attribute<jsTestCEReactionsAttributeWithCEReactionsGetter>(state, thisValue, "attributeWithCEReactions");
+    return IDLAttribute<JSTestCEReactions>::get<jsTestCEReactionsAttributeWithCEReactionsGetter>(*state, thisValue, "attributeWithCEReactions");
 }
 
 static inline JSValue jsTestCEReactionsAttributeWithCEReactionsGetter(ExecState& state, JSTestCEReactions& thisObject, ThrowScope& throwScope)
@@ -174,7 +175,7 @@ static inline JSValue jsTestCEReactionsReflectAttributeWithCEReactionsGetter(Exe
 
 EncodedJSValue jsTestCEReactionsReflectAttributeWithCEReactions(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    return BindingCaller<JSTestCEReactions>::attribute<jsTestCEReactionsReflectAttributeWithCEReactionsGetter>(state, thisValue, "reflectAttributeWithCEReactions");
+    return IDLAttribute<JSTestCEReactions>::get<jsTestCEReactionsReflectAttributeWithCEReactionsGetter>(*state, thisValue, "reflectAttributeWithCEReactions");
 }
 
 static inline JSValue jsTestCEReactionsReflectAttributeWithCEReactionsGetter(ExecState& state, JSTestCEReactions& thisObject, ThrowScope& throwScope)
@@ -190,7 +191,7 @@ static inline JSValue jsTestCEReactionsStringifierAttributeGetter(ExecState&, JS
 
 EncodedJSValue jsTestCEReactionsStringifierAttribute(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    return BindingCaller<JSTestCEReactions>::attribute<jsTestCEReactionsStringifierAttributeGetter>(state, thisValue, "stringifierAttribute");
+    return IDLAttribute<JSTestCEReactions>::get<jsTestCEReactionsStringifierAttributeGetter>(*state, thisValue, "stringifierAttribute");
 }
 
 static inline JSValue jsTestCEReactionsStringifierAttributeGetter(ExecState& state, JSTestCEReactions& thisObject, ThrowScope& throwScope)
@@ -230,7 +231,7 @@ static inline bool setJSTestCEReactionsAttributeWithCEReactionsFunction(ExecStat
 
 bool setJSTestCEReactionsAttributeWithCEReactions(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
-    return BindingCaller<JSTestCEReactions>::setAttribute<setJSTestCEReactionsAttributeWithCEReactionsFunction>(state, thisValue, encodedValue, "attributeWithCEReactions");
+    return IDLAttribute<JSTestCEReactions>::set<setJSTestCEReactionsAttributeWithCEReactionsFunction>(*state, thisValue, encodedValue, "attributeWithCEReactions");
 }
 
 static inline bool setJSTestCEReactionsAttributeWithCEReactionsFunction(ExecState& state, JSTestCEReactions& thisObject, JSValue value, ThrowScope& throwScope)
@@ -250,7 +251,7 @@ static inline bool setJSTestCEReactionsReflectAttributeWithCEReactionsFunction(E
 
 bool setJSTestCEReactionsReflectAttributeWithCEReactions(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
-    return BindingCaller<JSTestCEReactions>::setAttribute<setJSTestCEReactionsReflectAttributeWithCEReactionsFunction>(state, thisValue, encodedValue, "reflectAttributeWithCEReactions");
+    return IDLAttribute<JSTestCEReactions>::set<setJSTestCEReactionsReflectAttributeWithCEReactionsFunction>(*state, thisValue, encodedValue, "reflectAttributeWithCEReactions");
 }
 
 static inline bool setJSTestCEReactionsReflectAttributeWithCEReactionsFunction(ExecState& state, JSTestCEReactions& thisObject, JSValue value, ThrowScope& throwScope)
@@ -270,7 +271,7 @@ static inline bool setJSTestCEReactionsStringifierAttributeFunction(ExecState&, 
 
 bool setJSTestCEReactionsStringifierAttribute(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
-    return BindingCaller<JSTestCEReactions>::setAttribute<setJSTestCEReactionsStringifierAttributeFunction>(state, thisValue, encodedValue, "stringifierAttribute");
+    return IDLAttribute<JSTestCEReactions>::set<setJSTestCEReactionsStringifierAttributeFunction>(*state, thisValue, encodedValue, "stringifierAttribute");
 }
 
 static inline bool setJSTestCEReactionsStringifierAttributeFunction(ExecState& state, JSTestCEReactions& thisObject, JSValue value, ThrowScope& throwScope)
@@ -292,21 +293,19 @@ JSValue JSTestCEReactions::getConstructor(VM& vm, const JSGlobalObject* globalOb
     return getDOMConstructor<JSTestCEReactionsConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
-static inline JSC::EncodedJSValue jsTestCEReactionsPrototypeFunctionMethodWithCEReactionsCaller(JSC::ExecState*, JSTestCEReactions*, JSC::ThrowScope&);
-
-EncodedJSValue JSC_HOST_CALL jsTestCEReactionsPrototypeFunctionMethodWithCEReactions(ExecState* state)
-{
-    CustomElementReactionStack customElementReactionStack;
-    return BindingCaller<JSTestCEReactions>::callOperation<jsTestCEReactionsPrototypeFunctionMethodWithCEReactionsCaller>(state, "methodWithCEReactions");
-}
-
-static inline JSC::EncodedJSValue jsTestCEReactionsPrototypeFunctionMethodWithCEReactionsCaller(JSC::ExecState* state, JSTestCEReactions* castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestCEReactionsPrototypeFunctionMethodWithCEReactionsCaller(JSC::ExecState* state, typename IDLOperation<JSTestCEReactions>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
+    CustomElementReactionStack customElementReactionStack;
     auto& impl = castedThis->wrapped();
     impl.methodWithCEReactions();
     return JSValue::encode(jsUndefined());
+}
+
+EncodedJSValue JSC_HOST_CALL jsTestCEReactionsPrototypeFunctionMethodWithCEReactions(ExecState* state)
+{
+    return IDLOperation<JSTestCEReactions>::call<jsTestCEReactionsPrototypeFunctionMethodWithCEReactionsCaller>(*state, "methodWithCEReactions");
 }
 
 bool JSTestCEReactionsOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)

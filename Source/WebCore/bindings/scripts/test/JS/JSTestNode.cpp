@@ -21,13 +21,14 @@
 #include "config.h"
 #include "JSTestNode.h"
 
+#include "JSDOMAttribute.h"
 #include "JSDOMBinding.h"
-#include "JSDOMBindingCaller.h"
 #include "JSDOMConstructor.h"
 #include "JSDOMConvert.h"
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMIterator.h"
-#include "JSDOMPromiseDeferred.h"
+#include "JSDOMOperation.h"
+#include "JSDOMOperationReturningPromise.h"
 #include "JSDOMWrapperCache.h"
 #include "RuntimeEnabledFeatures.h"
 #include <builtins/BuiltinNames.h>
@@ -175,12 +176,12 @@ JSObject* JSTestNode::prototype(VM& vm, JSDOMGlobalObject& globalObject)
     return getDOMPrototype<JSTestNode>(vm, globalObject);
 }
 
-template<> inline JSTestNode* BindingCaller<JSTestNode>::castForAttribute(ExecState& state, EncodedJSValue thisValue)
+template<> inline JSTestNode* IDLAttribute<JSTestNode>::cast(ExecState& state, EncodedJSValue thisValue)
 {
     return jsDynamicDowncast<JSTestNode*>(state.vm(), JSValue::decode(thisValue));
 }
 
-template<> inline JSTestNode* BindingCaller<JSTestNode>::castForOperation(ExecState& state)
+template<> inline JSTestNode* IDLOperation<JSTestNode>::cast(ExecState& state)
 {
     return jsDynamicDowncast<JSTestNode*>(state.vm(), state.thisValue());
 }
@@ -189,7 +190,7 @@ static inline JSValue jsTestNodeNameGetter(ExecState&, JSTestNode&, ThrowScope& 
 
 EncodedJSValue jsTestNodeName(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    return BindingCaller<JSTestNode>::attribute<jsTestNodeNameGetter>(state, thisValue, "name");
+    return IDLAttribute<JSTestNode>::get<jsTestNodeNameGetter>(*state, thisValue, "name");
 }
 
 static inline JSValue jsTestNodeNameGetter(ExecState& state, JSTestNode& thisObject, ThrowScope& throwScope)
@@ -229,7 +230,7 @@ static inline bool setJSTestNodeNameFunction(ExecState&, JSTestNode&, JSValue, T
 
 bool setJSTestNodeName(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
-    return BindingCaller<JSTestNode>::setAttribute<setJSTestNodeNameFunction>(state, thisValue, encodedValue, "name");
+    return IDLAttribute<JSTestNode>::set<setJSTestNodeNameFunction>(*state, thisValue, encodedValue, "name");
 }
 
 static inline bool setJSTestNodeNameFunction(ExecState& state, JSTestNode& thisObject, JSValue value, ThrowScope& throwScope)
@@ -249,28 +250,18 @@ JSValue JSTestNode::getConstructor(VM& vm, const JSGlobalObject* globalObject)
     return getDOMConstructor<JSTestNodeConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
-static inline JSC::EncodedJSValue jsTestNodePrototypeFunctionTestWorkerPromiseCaller(JSC::ExecState*, JSTestNode*, Ref<DeferredPromise>&&, JSC::ThrowScope&);
-
-static EncodedJSValue jsTestNodePrototypeFunctionTestWorkerPromisePromise(ExecState*, Ref<DeferredPromise>&&);
-
-EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionTestWorkerPromise(ExecState* state)
-{
-    ASSERT(state);
-    return JSValue::encode(callPromiseFunction<jsTestNodePrototypeFunctionTestWorkerPromisePromise, PromiseExecutionScope::WindowOrWorker>(*state));
-}
-
-static inline EncodedJSValue jsTestNodePrototypeFunctionTestWorkerPromisePromise(ExecState* state, Ref<DeferredPromise>&& promise)
-{
-    return BindingCaller<JSTestNode>::callPromiseOperation<jsTestNodePrototypeFunctionTestWorkerPromiseCaller>(state, WTFMove(promise), "testWorkerPromise");
-}
-
-static inline JSC::EncodedJSValue jsTestNodePrototypeFunctionTestWorkerPromiseCaller(JSC::ExecState* state, JSTestNode* castedThis, Ref<DeferredPromise>&& promise, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestNodePrototypeFunctionTestWorkerPromiseCaller(JSC::ExecState* state, typename IDLOperationReturningPromise<JSTestNode>::ClassParameter castedThis, Ref<DeferredPromise>&& promise, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = castedThis->wrapped();
     impl.testWorkerPromise(WTFMove(promise));
     return JSValue::encode(jsUndefined());
+}
+
+EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionTestWorkerPromise(ExecState* state)
+{
+    return IDLOperationReturningPromise<JSTestNode>::call<jsTestNodePrototypeFunctionTestWorkerPromiseCaller, PromiseExecutionScope::WindowOrWorker>(*state, "testWorkerPromise");
 }
 
 struct TestNodeIteratorTraits {
@@ -295,7 +286,7 @@ static inline EncodedJSValue jsTestNodePrototypeFunctionEntriesCaller(ExecState*
 
 JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionEntries(JSC::ExecState* state)
 {
-    return BindingCaller<JSTestNode>::callOperation<jsTestNodePrototypeFunctionEntriesCaller>(state, "entries");
+    return IDLOperation<JSTestNode>::call<jsTestNodePrototypeFunctionEntriesCaller>(*state, "entries");
 }
 
 static inline EncodedJSValue jsTestNodePrototypeFunctionKeysCaller(ExecState*, JSTestNode* thisObject, JSC::ThrowScope&)
@@ -305,7 +296,7 @@ static inline EncodedJSValue jsTestNodePrototypeFunctionKeysCaller(ExecState*, J
 
 JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionKeys(JSC::ExecState* state)
 {
-    return BindingCaller<JSTestNode>::callOperation<jsTestNodePrototypeFunctionKeysCaller>(state, "keys");
+    return IDLOperation<JSTestNode>::call<jsTestNodePrototypeFunctionKeysCaller>(*state, "keys");
 }
 
 static inline EncodedJSValue jsTestNodePrototypeFunctionValuesCaller(ExecState*, JSTestNode* thisObject, JSC::ThrowScope&)
@@ -315,7 +306,7 @@ static inline EncodedJSValue jsTestNodePrototypeFunctionValuesCaller(ExecState*,
 
 JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionValues(JSC::ExecState* state)
 {
-    return BindingCaller<JSTestNode>::callOperation<jsTestNodePrototypeFunctionValuesCaller>(state, "values");
+    return IDLOperation<JSTestNode>::call<jsTestNodePrototypeFunctionValuesCaller>(*state, "values");
 }
 
 static inline EncodedJSValue jsTestNodePrototypeFunctionForEachCaller(ExecState* state, JSTestNode* thisObject, JSC::ThrowScope& throwScope)
@@ -325,7 +316,7 @@ static inline EncodedJSValue jsTestNodePrototypeFunctionForEachCaller(ExecState*
 
 JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionForEach(JSC::ExecState* state)
 {
-    return BindingCaller<JSTestNode>::callOperation<jsTestNodePrototypeFunctionForEachCaller>(state, "forEach");
+    return IDLOperation<JSTestNode>::call<jsTestNodePrototypeFunctionForEachCaller>(*state, "forEach");
 }
 
 JSC::JSObject* JSTestNode::serialize(ExecState* state, JSTestNode* thisObject, ThrowScope& throwScope)
@@ -347,7 +338,7 @@ static inline EncodedJSValue jsTestNodePrototypeFunctionToJSONCaller(ExecState* 
 
 EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionToJSON(ExecState* state)
 {
-    return BindingCaller<JSTestNode>::callOperation<jsTestNodePrototypeFunctionToJSONCaller>(state, "toJSON");
+    return IDLOperation<JSTestNode>::call<jsTestNodePrototypeFunctionToJSONCaller>(*state, "toJSON");
 }
 
 void JSTestNode::visitChildren(JSCell* cell, SlotVisitor& visitor)

@@ -1,3 +1,128 @@
+2017-05-25  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Do a pass of cleanup in the bindings generator
+        https://bugs.webkit.org/show_bug.cgi?id=172566
+
+        Reviewed by Chris Dumez.
+
+        - Split JSDOMBindingCaller.h into four new files to allow for less 
+          header inclusion (one includes a bunch of promise stuff that usually
+          isn't needed): 
+            - JSDOMCastedThisErrorBehavior (with shared casting enum)
+            - JSDOMAttribute (for attribute getting / setting)
+            - JSDOMOperation (for normal operations)
+            - JSDOMOperationReturningPromise (for operations returning promises, obviously).
+
+          In addition to separating the files, rename to be more consistent with modern
+          bindings conventions (new classes are IDLAttribute, IDLOperation, and 
+          IDLOperationReturningPromise) and simplify function names
+            - 'callOperation' becomes 'call'
+            - 'attribute' becomes 'get'
+            - 'setAttribute' becomes 'set'
+
+        - Remove extra generated trampoline function for operations returning promises
+          by making JSDOMOperationReturningPromise handle all the promise related overhead.
+
+        - Make [Custom] operations returning promises go through the normal IDLOperationReturningPromise
+          code path (simplifying JSReadableStreamSource and JSSubtleCrypto). Added [ReturnsOwnPromise]
+          extended attribute to allow some functions that want to retain specialized behavior to do so
+
+        - Swap order of trampoline and implementation of operation, to avoid the need for
+          a forward declaration and make reading more straightforward.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Add / remove files.
+
+        * bindings/js/JSDOMBindingCaller.h: Removed.
+
+        * bindings/js/JSDOMCastedThisErrorBehavior.h: Added.
+        Shared header for enum needed by JSDOMAttribute, JSDOMOperation and JSDOMOperationReturningPromise.
+
+        * bindings/js/JSDOMAttribute.h: Added.
+        * bindings/js/JSDOMOperation.h: Added.
+        * bindings/js/JSDOMOperationReturningPromise.h: Added.
+        Split out JSDOMBindingCaller implementations into own classes / files. Simplify
+        naming.
+    
+        * bindings/js/JSDOMPromiseDeferred.h:
+        (WebCore::callPromiseFunction):
+        Add a variant of callPromiseFunction that takes a lambda.
+
+        * bindings/js/JSEventTargetCustom.h:
+        (WebCore::IDLOperation<JSEventTarget>::call):
+        Update operation specialization to use new class.
+
+        * bindings/js/JSReadableStreamSourceCustom.cpp:
+        * bindings/js/JSSubtleCryptoCustom.cpp:
+        Simplify now that the callPromiseFunction is called for us.
+
+        * crypto/WebKitSubtleCrypto.idl:
+        * css/FontFace.idl:
+        * dom/CustomElementRegistry.idl:
+        Add [ReturnsOwnPromise] to retain custom promise behavior.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        Update header generation to account for custom functions that return promises now
+        having a Ref<DeferredPromise>&& parameter.
+
+        (GenerateImplementation):
+        - Update for new naming of cast functions.
+        - Use AddToImplIncludes (and pass in conditional) rather than using $implIncludes
+          directly, #includes to be grouped correctly.
+        - Remove dead $inAppleCopyright code (it was moved to GenerateOperationDefinition 
+          earlier).
+
+        (GenerateOperationDefinition):
+        - Use $codeGenerator->IsPromiseType() rather than directly comparing to "Promise" string.
+        - Restructure code to allow trampoline (the code that calls IDLOperation) to come after
+          the main operation implementation (the part that calls into the impl).
+        - Support custom functions returning promises (and the [ReturnsOwnPromise] variant).
+
+        (GenerateImplementationIterableFunctions):
+        Update for name change to IDLOperation.
+
+        * bindings/scripts/IDLAttributes.json:
+        Add [ReturnsOwnPromise].
+
+        * bindings/scripts/test/JS/JSInterfaceName.cpp:
+        * bindings/scripts/test/JS/JSMapLike.cpp:
+        * bindings/scripts/test/JS/JSReadOnlyMapLike.cpp:
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        * bindings/scripts/test/JS/JSTestCEReactions.cpp:
+        * bindings/scripts/test/JS/JSTestCEReactionsStringifier.cpp:
+        * bindings/scripts/test/JS/JSTestClassWithJSBuiltinConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestCustomConstructorWithNoInterfaceObject.cpp:
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.cpp:
+        * bindings/scripts/test/JS/JSTestDOMJIT.cpp:
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        * bindings/scripts/test/JS/JSTestException.cpp:
+        * bindings/scripts/test/JS/JSTestGenerateIsReachable.cpp:
+        * bindings/scripts/test/JS/JSTestGlobalObject.cpp:
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        * bindings/scripts/test/JS/JSTestInterfaceLeadingUnderscore.cpp:
+        * bindings/scripts/test/JS/JSTestIterable.cpp:
+        * bindings/scripts/test/JS/JSTestJSBuiltinConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        * bindings/scripts/test/JS/JSTestOverloadedConstructorsWithSequence.cpp:
+        * bindings/scripts/test/JS/JSTestOverrideBuiltins.cpp:
+        * bindings/scripts/test/JS/JSTestPromiseRejectionEvent.cpp:
+        * bindings/scripts/test/JS/JSTestSerialization.cpp:
+        * bindings/scripts/test/JS/JSTestSerializationInherit.cpp:
+        * bindings/scripts/test/JS/JSTestSerializationInheritFinal.cpp:
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        Update test results.
+
+        * bindings/scripts/test/TestObj.idl:
+        Add additional test cases for operations returning promises.
+
 2017-05-25  Simon Fraser  <simon.fraser@apple.com>
 
         Some <chrono> and ProgressTracker cleanup

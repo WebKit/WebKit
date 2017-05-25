@@ -379,6 +379,9 @@
         "RethrowException": {
             "contextsAllowed": ["operation", "callback-function"]
         },
+        "ReturnsOwnPromise": {
+            "contextsAllowed": ["operation"]
+        },
         "SameObject": {
             "contextsAllowed": ["attribute"],
             "standard": {

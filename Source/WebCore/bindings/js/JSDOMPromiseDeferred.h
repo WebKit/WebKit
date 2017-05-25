@@ -242,6 +242,26 @@ inline JSC::JSValue callPromiseFunction(JSC::ExecState& state)
     return promiseDeferred->promise();
 }
 
+template<PromiseExecutionScope executionScope, typename PromiseFunctor>
+inline JSC::JSValue callPromiseFunction(JSC::ExecState& state, PromiseFunctor functor)
+{
+    JSC::VM& vm = state.vm();
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+
+    JSDOMGlobalObject& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject());
+    JSC::JSPromiseDeferred* promiseDeferred = JSC::JSPromiseDeferred::create(&state, &globalObject);
+
+    // promiseDeferred can be null when terminating a Worker abruptly.
+    if (executionScope == PromiseExecutionScope::WindowOrWorker && !promiseDeferred)
+        return JSC::jsUndefined();
+
+    functor(state, DeferredPromise::create(globalObject, *promiseDeferred));
+
+    rejectPromiseWithExceptionIfAny(state, globalObject, *promiseDeferred);
+    ASSERT_UNUSED(scope, !scope.exception());
+    return promiseDeferred->promise();
+}
+
 using BindingPromiseFunction = JSC::EncodedJSValue(JSC::ExecState*, Ref<DeferredPromise>&&);
 template<BindingPromiseFunction bindingFunction>
 inline void bindingPromiseFunctionAdapter(JSC::ExecState& state, Ref<DeferredPromise>&& promise)

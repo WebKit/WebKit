@@ -22,10 +22,10 @@
 #include "JSTestOverrideBuiltins.h"
 
 #include "JSDOMBinding.h"
-#include "JSDOMBindingCaller.h"
 #include "JSDOMConstructorNotConstructable.h"
 #include "JSDOMConvert.h"
 #include "JSDOMExceptionHandling.h"
+#include "JSDOMOperation.h"
 #include "JSDOMWrapperCache.h"
 #include "JSNode.h"
 #include <runtime/Error.h>
@@ -173,7 +173,7 @@ void JSTestOverrideBuiltins::getOwnPropertyNames(JSObject* object, ExecState* st
     Base::getOwnPropertyNames(thisObject, state, propertyNames, mode);
 }
 
-template<> inline JSTestOverrideBuiltins* BindingCaller<JSTestOverrideBuiltins>::castForOperation(ExecState& state)
+template<> inline JSTestOverrideBuiltins* IDLOperation<JSTestOverrideBuiltins>::cast(ExecState& state)
 {
     return jsDynamicDowncast<JSTestOverrideBuiltins*>(state.vm(), state.thisValue());
 }
@@ -207,14 +207,7 @@ JSValue JSTestOverrideBuiltins::getConstructor(VM& vm, const JSGlobalObject* glo
     return getDOMConstructor<JSTestOverrideBuiltinsConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
-static inline JSC::EncodedJSValue jsTestOverrideBuiltinsPrototypeFunctionNamedItemCaller(JSC::ExecState*, JSTestOverrideBuiltins*, JSC::ThrowScope&);
-
-EncodedJSValue JSC_HOST_CALL jsTestOverrideBuiltinsPrototypeFunctionNamedItem(ExecState* state)
-{
-    return BindingCaller<JSTestOverrideBuiltins>::callOperation<jsTestOverrideBuiltinsPrototypeFunctionNamedItemCaller>(state, "namedItem");
-}
-
-static inline JSC::EncodedJSValue jsTestOverrideBuiltinsPrototypeFunctionNamedItemCaller(JSC::ExecState* state, JSTestOverrideBuiltins* castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestOverrideBuiltinsPrototypeFunctionNamedItemCaller(JSC::ExecState* state, typename IDLOperation<JSTestOverrideBuiltins>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -224,6 +217,11 @@ static inline JSC::EncodedJSValue jsTestOverrideBuiltinsPrototypeFunctionNamedIt
     auto name = convert<IDLDOMString>(*state, state->uncheckedArgument(0));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     return JSValue::encode(toJS<IDLInterface<Node>>(*state, *castedThis->globalObject(), impl.namedItem(WTFMove(name))));
+}
+
+EncodedJSValue JSC_HOST_CALL jsTestOverrideBuiltinsPrototypeFunctionNamedItem(ExecState* state)
+{
+    return IDLOperation<JSTestOverrideBuiltins>::call<jsTestOverrideBuiltinsPrototypeFunctionNamedItemCaller>(*state, "namedItem");
 }
 
 bool JSTestOverrideBuiltinsOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
