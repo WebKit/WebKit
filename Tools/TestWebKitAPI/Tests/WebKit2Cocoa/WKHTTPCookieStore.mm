@@ -193,7 +193,7 @@ TEST(WebKit2, WKHTTPCookieStoreWithoutProcessPool)
         [ephemeralStoreWithIndependentCookieStorage.httpCookieStore getAllCookies:^(NSArray<NSHTTPCookie *> *cookies) {
             ASSERT_EQ(cookies.count, 0u);
             
-            atuo configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+            auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
             configuration.get().websiteDataStore = ephemeralStoreWithCookies;
             WKWebView *view = [[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()];
             auto delegate = adoptNS([[CookieUIDelegate alloc] init]);
