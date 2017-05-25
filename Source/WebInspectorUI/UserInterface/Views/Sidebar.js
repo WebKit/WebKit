@@ -286,10 +286,13 @@ WebInspector.Sidebar = class Sidebar extends WebInspector.View
         newWidth = Math.ceil(Number.constrain(newWidth, this.minimumWidth + 1, this.maximumWidth));
         this.element.style.width = `${newWidth}px`;
 
-        if (!this.collapsed && this._navigationBar)
+        if (this.collapsed)
+            return;
+
+        if (this._navigationBar)
             this._navigationBar.updateLayoutIfNeeded(WebInspector.View.LayoutReason.Resize);
 
-        if (!this.collapsed && this._selectedSidebarPanel)
+        if (this._selectedSidebarPanel)
             this._selectedSidebarPanel.updateLayoutIfNeeded(WebInspector.View.LayoutReason.Resize);
 
         this.dispatchEventToListeners(WebInspector.Sidebar.Event.WidthDidChange, {newWidth});

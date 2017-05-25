@@ -1,3 +1,13 @@
+2017-05-25  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Changing the width of a Sidebar when it's collapsed shouldn't trigger a layout
+        https://bugs.webkit.org/show_bug.cgi?id=172606
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/Sidebar.js:
+        (WebInspector.Sidebar.prototype._recalculateWidth):
+
 2017-05-25  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [GTK] Web Inspector: Add ListStylePositionInside.svg and ListStylePositionOutside.svg
