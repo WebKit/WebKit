@@ -59,7 +59,7 @@ function testIt(formIndex, colIndex, ofsX, expected)
     const spin = document.getElementById(spinId);
 
     const clickX = pageX(column) + colWidth * colIndex + ofsX;
-    const clickY = pageY(column) + Math.floor(spin.offsetHeight / 3);
+    const clickY = pageY(column) + Math.floor(spin.offsetHeight / 3) + 2;
 
     eventSender.mouseMoveTo(clickX, clickY);
     eventSender.mouseDown();

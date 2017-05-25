@@ -1,3 +1,13 @@
+2017-05-25  Dave Hyatt  <hyatt@apple.com>
+
+        Baseline of number inputs not right.
+        https://bugs.webkit.org/show_bug.cgi?id=172237
+
+        Reviewed by Dean Jackson.
+
+        * fast/forms/baseline-of-number-inputs-expected.html: Added.
+        * fast/forms/baseline-of-number-inputs.html: Added.
+
 2017-05-25  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Update expectations for layout tests.

@@ -33,8 +33,6 @@ public:
     virtual ~RenderTextControlSingleLine();
 
 protected:
-    virtual void centerContainerIfNeeded(RenderBox*) const { }
-    virtual LayoutUnit computeLogicalHeightLimit() const;
     void centerRenderer(RenderBox& renderer) const;
     HTMLElement* containerElement() const;
     HTMLElement* innerBlockElement() const;

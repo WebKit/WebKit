@@ -538,7 +538,6 @@ input::-webkit-inner-spin-button {
      * use RenderTextControlSingleLine as renderer which sets height of spin
      * button in layout(). */
     height: 1.5em;
-    vertical-align: top;
     flex: none;
     -webkit-user-select: none;
 }

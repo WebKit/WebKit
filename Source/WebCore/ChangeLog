@@ -1,3 +1,25 @@
+2017-05-25  Dave Hyatt  <hyatt@apple.com>
+
+        Baseline of number inputs not right.
+        https://bugs.webkit.org/show_bug.cgi?id=172237
+
+        Reviewed by Dean Jackson.
+
+        Added fast/forms/baseline-of-number-inputs.html
+
+        * css/html.css:
+        (input::-webkit-inner-spin-button):
+        * rendering/RenderSearchField.cpp:
+        (WebCore::RenderSearchField::computeLogicalHeightLimit): Deleted.
+        (WebCore::RenderSearchField::centerContainerIfNeeded): Deleted.
+        * rendering/RenderSearchField.h:
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::centerRenderer):
+        (WebCore::RenderTextControlSingleLine::layout):
+        (WebCore::RenderTextControlSingleLine::computeLogicalHeightLimit): Deleted.
+        * rendering/RenderTextControlSingleLine.h:
+        (WebCore::RenderTextControlSingleLine::centerContainerIfNeeded): Deleted.
+
 2017-05-25  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Fix behavior of positioned items without specific dimensions

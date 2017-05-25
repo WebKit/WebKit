@@ -362,22 +362,4 @@ Ref<Scrollbar> RenderSearchField::createScrollbar(ScrollableArea& scrollableArea
     return Scrollbar::createNativeScrollbar(scrollableArea, orientation, controlSize);
 }
 
-LayoutUnit RenderSearchField::computeLogicalHeightLimit() const
-{
-    return logicalHeight();
-}
-
-void RenderSearchField::centerContainerIfNeeded(RenderBox* containerRenderer) const
-{
-    if (!containerRenderer)
-        return;
-
-    if (containerRenderer->logicalHeight() <= contentLogicalHeight())
-        return;
-
-    // A quirk for find-in-page box on Safari Windows.
-    // http://webkit.org/b/63157
-    centerRenderer(*containerRenderer);
-}
-
 }
