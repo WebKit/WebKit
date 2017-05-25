@@ -1368,6 +1368,16 @@ fast/canvas/webgpu [ Skip ]
 # We don't support APPLE_PAY.
 http/tests/ssl/applepay [ Skip ]
 
+webkit.org/b/172594 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/test_hkdf.https.html [ Failure ]
+webkit.org/b/172594 imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/test_aes_cbc.https.html [ Failure ]
+webkit.org/b/172594 imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/test_aes_ctr.https.html [ Failure ]
+webkit.org/b/172594 imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/test_rsa_oaep.https.html [ Failure ]
+webkit.org/b/172594 imported/w3c/web-platform-tests/WebCryptoAPI/import_export/test_ec_importKey.https.html [ Failure ]
+webkit.org/b/172594 imported/w3c/web-platform-tests/WebCryptoAPI/import_export/test_rsa_importKey.https.html [ Failure ]
+webkit.org/b/172594 imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/test_ecdsa.https.html [ Failure ]
+webkit.org/b/172594 imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/test_rsa_pkcs.https.html [ Failure ]
+webkit.org/b/172594 imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/test_rsa_pss.https.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////
