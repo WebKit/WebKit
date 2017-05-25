@@ -33,6 +33,7 @@
 #include "WebProcessPool.h"
 #include "WebUserContentControllerProxy.h"
 
+using namespace WebCore;
 using namespace WebKit;
 
 namespace API {
@@ -154,10 +155,7 @@ void PageConfiguration::setWebsiteDataStore(API::WebsiteDataStore* websiteDataSt
 
 WebCore::SessionID PageConfiguration::sessionID()
 {
-#if !ASSERT_DISABLED
-    if (m_websiteDataStore)
-        ASSERT(m_websiteDataStore->websiteDataStore().sessionID() == m_sessionID);
-#endif
+    ASSERT(!m_websiteDataStore || m_websiteDataStore->websiteDataStore().sessionID() == m_sessionID || m_sessionID == SessionID::legacyPrivateSessionID());
 
     return m_sessionID;
 }

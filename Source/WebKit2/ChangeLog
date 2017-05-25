@@ -1,3 +1,23 @@
+2017-05-25  Chris Dumez  <cdumez@apple.com>
+
+        ASSERT(m_websiteDataStore->websiteDataStore().sessionID() == m_sessionID) in PageConfiguration::sessionID()
+        https://bugs.webkit.org/show_bug.cgi?id=172615
+        <rdar://problem/32277488>
+
+        Reviewed by Brady Eidson.
+
+        Fix assertion added in r215923 to take into account the fact that the PageConfiguration's sessionID
+        is SessionID::legacyPrivateSessionID() when private browsing is enabled, instead of being the
+        WebsiteDataStore's sessionID.
+
+        See code in WebProcessPool::createWebPage():
+        """
+        pageConfiguration->setSessionID(pageConfiguration->preferences()->privateBrowsingEnabled() ? SessionID::legacyPrivateSessionID() : m_websiteDataStore->websiteDataStore().sessionID());
+        """
+
+        * UIProcess/API/APIPageConfiguration.cpp:
+        (API::PageConfiguration::sessionID):
+
 2017-05-25  Brent Fulgham  <bfulgham@apple.com>
 
         [WK2][iOS] Add a mach-lookup exception for 'com.apple.lsd.mapdb' to Network sandbox
