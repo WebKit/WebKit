@@ -1,3 +1,15 @@
+2017-05-25  Matt Lewis  <jlewis3@apple.com>
+
+        Unreviewed, rolling out r217409.
+
+        The revision caused api failures
+
+        Reverted changeset:
+
+        "_WKUserStyleSheet leaks string data"
+        https://bugs.webkit.org/show_bug.cgi?id=172583
+        http://trac.webkit.org/changeset/217409
+
 2017-05-25  Joseph Pecoraro  <pecoraro@apple.com>
 
         _WKUserStyleSheet leaks string data

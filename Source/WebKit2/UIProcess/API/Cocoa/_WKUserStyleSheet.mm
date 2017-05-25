@@ -75,13 +75,6 @@
     return self;
 }
 
-- (void)dealloc
-{
-    _userStyleSheet->~UserStyleSheet();
-
-    [super dealloc];
-}
-
 - (NSString *)source
 {
     return _userStyleSheet->userStyleSheet().source();
