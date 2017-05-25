@@ -948,6 +948,10 @@ void JIT::emit_op_check_traps(Instruction*)
     addSlowCase(branchTest8(NonZero, AbsoluteAddress(m_vm->needTrapHandlingAddress())));
 }
 
+void JIT::emit_op_nop(Instruction*)
+{
+}
+
 void JIT::emitSlow_op_check_traps(Instruction*, Vector<SlowCaseEntry>::iterator& iter)
 {
     linkSlowCase(iter);

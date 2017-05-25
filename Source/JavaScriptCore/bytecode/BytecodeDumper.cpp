@@ -1265,6 +1265,10 @@ void BytecodeDumper<Block>::dumpBytecode(PrintStream& out, const typename Block:
         printLocationAndOp(out, location, it, "check_traps");
         break;
     }
+    case op_nop: {
+        printLocationAndOp(out, location, it, "nop");
+        break;
+    }
     case op_log_shadow_chicken_prologue: {
         int r0 = (++it)->u.operand;
         printLocationAndOp(out, location, it, "log_shadow_chicken_prologue");
