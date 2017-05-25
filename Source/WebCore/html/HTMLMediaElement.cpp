@@ -7486,13 +7486,6 @@ void HTMLMediaElement::fullscreenModeChanged(VideoFullscreenMode mode)
     scheduleUpdatePlaybackControlsManager();
 }
 
-#if ENABLE(MEDIA_STREAM)
-void HTMLMediaElement::mediaStreamCaptureStateChanged()
-{
-    resumeAutoplaying();
-}
-#endif
-
 }
 
 #endif

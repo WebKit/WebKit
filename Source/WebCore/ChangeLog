@@ -1,3 +1,23 @@
+2017-05-25  youenn fablet  <youenn@apple.com>
+
+        [macOS WK2 Debug] Layout Test webrtc/video.html is crashing.
+        https://bugs.webkit.org/show_bug.cgi?id=172560
+        <rdar://problem/32392611>
+
+        Reviewed by Eric Carlson.
+
+        webrtc/multiple-video.html is no longer crashing.
+
+        Allow autoplay only from going to not capture to capture, and not the reverse.
+        Renamed HTMLMediaElement::mediaStreamCaptureStateChanged to mediaStreamCaptureStarted.
+
+        * dom/Document.cpp:
+        (WebCore::Document::mediaStreamCaptureStateChanged):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaStreamCaptureStateChanged): Deleted.
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::mediaStreamCaptureStarted):
+
 2017-05-25  Dave Hyatt  <hyatt@apple.com>
 
         Baseline of number inputs not right.

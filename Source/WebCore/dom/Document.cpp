@@ -7033,8 +7033,11 @@ void Document::unregisterForMediaStreamStateChangeCallbacks(HTMLMediaElement& el
 
 void Document::mediaStreamCaptureStateChanged()
 {
+    if (!MediaProducer::isCapturing(m_mediaState))
+        return;
+
     for (auto* mediaElement : m_mediaStreamStateChangeElements)
-        mediaElement->mediaStreamCaptureStateChanged();
+        mediaElement->mediaStreamCaptureStarted();
 }
 #endif
 
