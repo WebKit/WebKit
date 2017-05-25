@@ -319,11 +319,6 @@ public:
     void setOverrideContainingBlockContentLogicalHeight(std::optional<LayoutUnit>);
     void clearContainingBlockOverrideSize();
     void clearOverrideContainingBlockContentLogicalHeight();
-    LayoutUnit extraInlineOffset() const;
-    LayoutUnit extraBlockOffset() const;
-    void setExtraInlineOffset(LayoutUnit);
-    void setExtraBlockOffset(LayoutUnit);
-    void clearExtraInlineAndBlockOffests();
 
     LayoutSize offsetFromContainer(RenderElement&, const LayoutPoint&, bool* offsetDependsOnPoint = nullptr) const override;
     

@@ -940,28 +940,30 @@ void RenderGrid::prepareChildForPositionedLayout(RenderBox& child)
 
 void RenderGrid::layoutPositionedObject(RenderBox& child, bool relayoutChildren, bool fixedPositionObjectsOnly)
 {
-    // FIXME: Properly support orthogonal writing mode.
-    if (!isOrthogonalChild(child)) {
-        LayoutUnit columnOffset = LayoutUnit();
-        LayoutUnit columnBreadth = LayoutUnit();
-        offsetAndBreadthForPositionedChild(child, ForColumns, columnOffset, columnBreadth);
-        LayoutUnit rowOffset = LayoutUnit();
-        LayoutUnit rowBreadth = LayoutUnit();
-        offsetAndBreadthForPositionedChild(child, ForRows, rowOffset, rowBreadth);
-
-        child.setOverrideContainingBlockContentLogicalWidth(columnBreadth);
-        child.setOverrideContainingBlockContentLogicalHeight(rowBreadth);
-        child.setExtraInlineOffset(columnOffset);
-        child.setExtraBlockOffset(rowOffset);
-
-        if (child.parent() == this) {
-            auto& childLayer = *child.layer();
-            childLayer.setStaticInlinePosition(borderStart() + columnOffset);
-            childLayer.setStaticBlockPosition(borderBefore() + rowOffset);
-        }
+    if (isOrthogonalChild(child)) {
+        // FIXME: Properly support orthogonal writing mode.
+        RenderBlock::layoutPositionedObject(child, relayoutChildren, fixedPositionObjectsOnly);
+        return;
     }
 
+    LayoutUnit columnOffset;
+    LayoutUnit columnBreadth;
+    offsetAndBreadthForPositionedChild(child, ForColumns, columnOffset, columnBreadth);
+    LayoutUnit rowOffset;
+    LayoutUnit rowBreadth;
+    offsetAndBreadthForPositionedChild(child, ForRows, rowOffset, rowBreadth);
+
+    child.setOverrideContainingBlockContentLogicalWidth(columnBreadth);
+    child.setOverrideContainingBlockContentLogicalHeight(rowBreadth);
+
+    // Mark for layout as we're resetting the position before and we relay in generic layout logic
+    // for positioned items in order to get the offsets properly resolved.
+    child.setChildNeedsLayout(MarkOnlyThis);
+
+    // FIXME: If possible it'd be nice to avoid this layout here when it's not needed.
     RenderBlock::layoutPositionedObject(child, relayoutChildren, fixedPositionObjectsOnly);
+
+    child.setLogicalLocation(LayoutPoint(child.logicalLeft() + columnOffset, child.logicalTop() + rowOffset));
 }
 
 void RenderGrid::offsetAndBreadthForPositionedChild(const RenderBox& child, GridTrackSizingDirection direction, LayoutUnit& offset, LayoutUnit& breadth)
@@ -1029,9 +1031,8 @@ void RenderGrid::offsetAndBreadthForPositionedChild(const RenderBox& child, Grid
     breadth = end - start;
     offset = start;
 
-    if (isRowAxis && !style().isLeftToRightDirection() && !child.style().hasStaticInlinePosition(child.isHorizontalWritingMode())) {
-        // If the child doesn't have a static inline position (i.e. "left" and/or "right" aren't "auto",
-        // we need to calculate the offset from the left (even if we're in RTL).
+    if (isRowAxis && !style().isLeftToRightDirection()) {
+        // We always want to calculate the static position from the left (even if we're in RTL).
         if (endIsAuto)
             offset = LayoutUnit();
         else {

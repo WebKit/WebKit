@@ -102,8 +102,6 @@ static OverrideSizeMap* gOverrideWidthMap = nullptr;
 typedef WTF::HashMap<const RenderBox*, std::optional<LayoutUnit>> OverrideOptionalSizeMap;
 static OverrideOptionalSizeMap* gOverrideContainingBlockLogicalHeightMap = nullptr;
 static OverrideOptionalSizeMap* gOverrideContainingBlockLogicalWidthMap = nullptr;
-static OverrideSizeMap* gExtraInlineOffsetMap = nullptr;
-static OverrideSizeMap* gExtraBlockOffsetMap = nullptr;
 
 // Size of border belt for autoscroll. When mouse pointer in border belt,
 // autoscroll is started.
@@ -155,7 +153,6 @@ void RenderBox::willBeDestroyed()
 
     clearOverrideSize();
     clearContainingBlockOverrideSize();
-    clearExtraInlineAndBlockOffests();
 
     RenderBlock::removePercentHeightDescendantIfNeeded(*this);
 
@@ -1185,38 +1182,6 @@ void RenderBox::clearOverrideContainingBlockContentLogicalHeight()
 {
     if (gOverrideContainingBlockLogicalHeightMap)
         gOverrideContainingBlockLogicalHeightMap->remove(this);
-}
-
-LayoutUnit RenderBox::extraInlineOffset() const
-{
-    return gExtraInlineOffsetMap ? gExtraInlineOffsetMap->get(this) : LayoutUnit();
-}
-
-LayoutUnit RenderBox::extraBlockOffset() const
-{
-    return gExtraBlockOffsetMap ? gExtraBlockOffsetMap->get(this) : LayoutUnit();
-}
-
-void RenderBox::setExtraInlineOffset(LayoutUnit inlineOffest)
-{
-    if (!gExtraInlineOffsetMap)
-        gExtraInlineOffsetMap = new OverrideSizeMap;
-    gExtraInlineOffsetMap->set(this, inlineOffest);
-}
-
-void RenderBox::setExtraBlockOffset(LayoutUnit blockOffest)
-{
-    if (!gExtraBlockOffsetMap)
-        gExtraBlockOffsetMap = new OverrideSizeMap;
-    gExtraBlockOffsetMap->set(this, blockOffest);
-}
-
-void RenderBox::clearExtraInlineAndBlockOffests()
-{
-    if (gExtraInlineOffsetMap)
-        gExtraInlineOffsetMap->remove(this);
-    if (gExtraBlockOffsetMap)
-        gExtraBlockOffsetMap->remove(this);
 }
 
 LayoutUnit RenderBox::adjustBorderBoxLogicalWidthForBoxSizing(LayoutUnit width) const
@@ -3446,10 +3411,25 @@ static void computeInlineStaticDistance(Length& logicalLeft, Length& logicalRigh
     if (!logicalLeft.isAuto() || !logicalRight.isAuto())
         return;
 
+    RenderObject* parent = child->parent();
+    TextDirection parentDirection = parent->style().direction();
+
+    // This method is using enclosingBox() which is wrong for absolutely
+    // positioned grid items, as they rely on the grid area. So for grid items if
+    // both "left" and "right" properties are "auto", we can consider that one of
+    // them (depending on the direction) is simply "0".
+    if (parent->isRenderGrid() && parent == child->containingBlock()) {
+        if (parentDirection == LTR)
+            logicalLeft.setValue(Fixed, 0);
+        else
+            logicalRight.setValue(Fixed, 0);
+        return;
+    }
+
     // FIXME: The static distance computation has not been patched for mixed writing modes yet.
-    if (child->parent()->style().direction() == LTR) {
+    if (parentDirection == LTR) {
         LayoutUnit staticPosition = child->layer()->staticInlinePosition() - containerBlock.borderLogicalLeft();
-        for (auto* current = child->parent(); current && current != &containerBlock; current = current->container()) {
+        for (auto* current = parent; current && current != &containerBlock; current = current->container()) {
             if (!is<RenderBox>(*current))
                 continue;
             const auto& renderBox = downcast<RenderBox>(*current);
@@ -3467,7 +3447,7 @@ static void computeInlineStaticDistance(Length& logicalLeft, Length& logicalRigh
         logicalLeft.setValue(Fixed, staticPosition);
     } else {
         LayoutUnit staticPosition = child->layer()->staticInlinePosition() + containerLogicalWidth + containerBlock.borderLogicalLeft();
-        auto& enclosingBox = child->parent()->enclosingBox();
+        auto& enclosingBox = parent->enclosingBox();
         if (&enclosingBox != &containerBlock && containerBlock.isDescendantOf(&enclosingBox)) {
             logicalRight.setValue(Fixed, staticPosition);
             return;
@@ -3613,9 +3593,6 @@ void RenderBox::computePositionedLogicalWidth(LogicalExtentComputedValues& compu
             computedValues.m_margins.m_end = minValues.m_margins.m_end;
         }
     }
-
-    if (!style().hasStaticInlinePosition(isHorizontal))
-        computedValues.m_position += extraInlineOffset();
 
     computedValues.m_extent += bordersPlusPadding;
     if (is<RenderBox>(containerBlock)) {
@@ -3945,9 +3922,6 @@ void RenderBox::computePositionedLogicalHeight(LogicalExtentComputedValues& comp
             computedValues.m_margins.m_after = minValues.m_margins.m_after;
         }
     }
-
-    if (!style().hasStaticBlockPosition(isHorizontalWritingMode()))
-        computedValues.m_position += extraBlockOffset();
 
     // Set final height value.
     computedValues.m_extent += bordersPlusPadding;

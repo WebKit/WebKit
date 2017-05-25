@@ -1,3 +1,38 @@
+2017-05-25  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Fix behavior of positioned items without specific dimensions
+        https://bugs.webkit.org/show_bug.cgi?id=172117
+
+        Reviewed by Sergio Villar Senin.
+
+        Currently positioned items that doesn't have specific dimensions
+        are not properly sized. This patch fixes the issues with them.
+
+        The patch removes the extraInline|BlockOffsets from RenderBox,
+        so now RenderGrid is responsible of setting the location of the positioned item.
+        This will be useful to add alignment support for positioned items later.
+        It also removes grid specific logic from RenderBox.
+
+        RenderBox::computeInlineStaticDistance() was modified too.
+        The problem here was that the containing block of the positioned gird items
+        is the grid area (and not the grid container). The method didn't know
+        anything about grid, so it was using the grid container causing wrong values
+        when resolving "auto" in both left and right offset properties.
+
+        Note that after this patch we match Chrome and Firefox behavior on these cases.
+
+        Test: fast/css-grid-layout/positioned-grid-items-sizing.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::willBeDestroyed):
+        (WebCore::computeInlineStaticDistance):
+        (WebCore::RenderBox::computePositionedLogicalWidth):
+        (WebCore::RenderBox::computePositionedLogicalHeight):
+        * rendering/RenderBox.h:
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::layoutPositionedObject):
+        (WebCore::RenderGrid::offsetAndBreadthForPositionedChild):
+
 2017-05-25  Claudio Saavedra  <csaavedra@igalia.com>
 
         [WPE] Build fix after r217404
