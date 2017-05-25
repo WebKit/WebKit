@@ -1,3 +1,15 @@
+2017-05-25  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [GTK] Web Inspector: Add new icons AnimationPlayStatePaused.svg and AnimationPlayStateRunning.svg
+        https://bugs.webkit.org/show_bug.cgi?id=172579
+
+        Reviewed by Michael Catanzaro.
+
+        Add more free icons for the Web Inspector of GTK+ port.
+
+        * UserInterface/Images/gtk/AnimationPlayStatePaused.svg: Added.
+        * UserInterface/Images/gtk/AnimationPlayStateRunning.svg: Added.
+
 2017-05-24  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [GTK] Web Inspector: Add new GTK+ icons for garbage collect and clean buttons in Console
