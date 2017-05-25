@@ -1,3 +1,16 @@
+2017-05-24  Chris Dumez  <cdumez@apple.com>
+
+        ResourceResponses for data URLs have their Source marked as Unknown
+        https://bugs.webkit.org/show_bug.cgi?id=172573
+        <rdar://problem/31786198>
+
+        Reviewed by Geoffrey Garen.
+
+        Add layout test coverage.
+
+        * fast/url/data-url-source-expected.txt: Added.
+        * fast/url/data-url-source.html: Added.
+
 2017-05-24  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win] An assertion fails if the custom cursor image isn't loaded yet

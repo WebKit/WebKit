@@ -1,3 +1,21 @@
+2017-05-24  Chris Dumez  <cdumez@apple.com>
+
+        ResourceResponses for data URLs have their Source marked as Unknown
+        https://bugs.webkit.org/show_bug.cgi?id=172573
+        <rdar://problem/31786198>
+
+        Reviewed by Geoffrey Garen.
+
+        ResourceResponses for data URLs have their Source marked as Unknown.
+
+        Now set their source to Network to maintain previous behavior when
+        we used to decode those data URLs on Network process side.
+
+        Test: fast/url/data-url-source.html
+
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::loadDataURL):
+
 2017-05-24  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win] An assertion fails if the custom cursor image isn't loaded yet

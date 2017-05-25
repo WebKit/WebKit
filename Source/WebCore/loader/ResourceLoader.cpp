@@ -267,6 +267,7 @@ void ResourceLoader::loadDataURL()
         dataResponse.setHTTPStatusCode(200);
         dataResponse.setHTTPStatusText(ASCIILiteral("OK"));
         dataResponse.setHTTPHeaderField(HTTPHeaderName::ContentType, result.contentType);
+        dataResponse.setSource(ResourceResponse::Source::Network);
         protectedThis->didReceiveResponse(dataResponse);
 
         if (!protectedThis->reachedTerminalState() && dataSize)
