@@ -44,6 +44,13 @@
 
 2017-05-25  Claudio Saavedra  <csaavedra@igalia.com>
 
+        [WPE] Add missing test baseline.
+
+        Unreviewed gardening.
+        * platform/wpe/fast/text/zero-font-size-expected.txt: Added.
+
+2017-05-25  Claudio Saavedra  <csaavedra@igalia.com>
+
         [WPE] Unreviewed gardening
 
         Update rebaseline after r216817.
