@@ -1,3 +1,21 @@
+2017-05-25  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r217423 and r217424.
+        https://bugs.webkit.org/show_bug.cgi?id=172607
+
+        These caused an api failure on all testers. (Requested by
+        mlewis13 on #webkit).
+
+        Reverted changesets:
+
+        "REGRESSION (r216977): 4 leaks introduced in new
+        WebKit2_WKHTTPCookieStoreWithoutProcessPool_Test"
+        https://bugs.webkit.org/show_bug.cgi?id=172558
+        http://trac.webkit.org/changeset/217423
+
+        "REGRESSION (r217423): Fix last-second typo in 'auto'"
+        http://trac.webkit.org/changeset/217424
+
 2017-05-25  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [ATK] Expose doc-footnote ARIA role with ATK_ROLE_FOOTNOTE

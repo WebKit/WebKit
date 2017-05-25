@@ -193,11 +193,10 @@ TEST(WebKit2, WKHTTPCookieStoreWithoutProcessPool)
         [ephemeralStoreWithIndependentCookieStorage.httpCookieStore getAllCookies:^(NSArray<NSHTTPCookie *> *cookies) {
             ASSERT_EQ(cookies.count, 0u);
             
-            auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-            configuration.get().websiteDataStore = ephemeralStoreWithCookies;
-            WKWebView *view = [[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()];
-            auto delegate = adoptNS([[CookieUIDelegate alloc] init]);
-            view.UIDelegate = delegate.get();
+            WKWebViewConfiguration *configuration = [[WKWebViewConfiguration alloc] init];
+            configuration.websiteDataStore = ephemeralStoreWithCookies;
+            WKWebView *view = [[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration];
+            view.UIDelegate = [[CookieUIDelegate alloc] init];
 
             [view loadHTMLString:alertCookieHTML baseURL:[NSURL URLWithString:@"http://127.0.0.1/"]];
         }];
@@ -212,11 +211,10 @@ TEST(WebKit2, WKHTTPCookieStoreWithoutProcessPool)
         [defaultStore.httpCookieStore getAllCookies:^(NSArray<NSHTTPCookie *> *cookies) {
             ASSERT_EQ(cookies.count, 1u);
             
-            auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-            configuration.get().websiteDataStore = defaultStore;
-            WKWebView *view = [[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()];
-            auto delegate = adoptNS([[CookieUIDelegate alloc] init]);
-            view.UIDelegate = delegate.get();
+            WKWebViewConfiguration *configuration = [[WKWebViewConfiguration alloc] init];
+            configuration.websiteDataStore = defaultStore;
+            WKWebView *view = [[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration];
+            view.UIDelegate = [[CookieUIDelegate alloc] init];
             
             [view loadHTMLString:alertCookieHTML baseURL:[NSURL URLWithString:@"http://127.0.0.1/"]];
         }];
