@@ -378,8 +378,9 @@ Element* FocusController::findFocusableElementDescendingDownIntoFrameDocument(Fo
     // 2) the deepest-nested HTMLFrameOwnerElement.
     while (is<HTMLFrameOwnerElement>(element)) {
         HTMLFrameOwnerElement& owner = downcast<HTMLFrameOwnerElement>(*element);
-        if (!owner.contentFrame())
+        if (!owner.contentFrame() || !owner.contentFrame()->document())
             break;
+        owner.contentFrame()->document()->updateLayoutIgnorePendingStylesheets();
         Element* foundElement = findFocusableElementWithinScope(direction, FocusNavigationScope::scopeOwnedByIFrame(owner), nullptr, event);
         if (!foundElement)
             break;
