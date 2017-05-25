@@ -1,3 +1,15 @@
+2017-05-24  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Crash on WebCore::FrameSelection::setSelectionWithoutUpdatingAppearance + 1195
+        https://bugs.webkit.org/show_bug.cgi?id=172555
+        <rdar://problem/32004724>
+
+        Reviewed by Ryosuke Niwa.
+
+        * editing/selection/resources/select-iframe-focusin-document-crash-frame.html: Added.
+        * editing/selection/select-iframe-focusin-document-crash-expected.txt: Added.
+        * editing/selection/select-iframe-focusin-document-crash.html: Added.
+
 2017-05-25  Javier Fernandez  <jfernandez@igalia.com>
 
         [css-align] Fixed errors in the CSS parsing tests of the "place-XXX" shorthands
