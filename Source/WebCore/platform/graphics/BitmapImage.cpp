@@ -62,6 +62,7 @@ BitmapImage::~BitmapImage()
 {
     invalidatePlatformData();
     clearTimer();
+    m_source.clearImage();
     m_source.stopAsyncDecodingQueue();
 }
 
@@ -91,7 +92,7 @@ void BitmapImage::destroyDecodedData(bool destroyAll)
     if (!destroyAll || m_source.hasAsyncDecodingQueue())
         m_source.clearFrameBufferCache(m_currentFrame);
     else
-        m_source.clear(data());
+        m_source.resetData(data());
 
     invalidatePlatformData();
 }
@@ -391,7 +392,7 @@ BitmapImage::StartAnimationStatus BitmapImage::internalStartAnimation()
 
         m_desiredFrameDecodeTimeForTesting = time + std::max(m_frameDecodingDurationForTesting, 0_s);
         if (m_clearDecoderAfterAsyncFrameRequestForTesting)
-            m_source.clear(data());
+            m_source.resetData(data());
     }
 
     ASSERT(!m_frameTimer);

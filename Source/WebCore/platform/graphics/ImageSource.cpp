@@ -70,13 +70,6 @@ void ImageSource::clearFrameBufferCache(size_t clearBeforeFrame)
     m_decoder->clearFrameBufferCache(clearBeforeFrame);
 }
 
-void ImageSource::clear(SharedBuffer* data)
-{
-    m_decoder = nullptr;
-    m_frameCache->setDecoder(nullptr);
-    setData(data, isAllDataReceived());
-}
-
 bool ImageSource::ensureDecoderAvailable(SharedBuffer* data)
 {
     if (!data || isDecoderAvailable())
@@ -109,6 +102,13 @@ void ImageSource::setData(SharedBuffer* data, bool allDataReceived)
         return;
 
     m_decoder->setData(*data, allDataReceived);
+}
+
+void ImageSource::resetData(SharedBuffer* data)
+{
+    m_decoder = nullptr;
+    m_frameCache->setDecoder(nullptr);
+    setData(data, isAllDataReceived());
 }
 
 EncodedDataStatus ImageSource::dataChanged(SharedBuffer* data, bool allDataReceived)

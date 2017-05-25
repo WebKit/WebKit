@@ -67,8 +67,9 @@ public:
 
     void growFrames();
     void clearMetadata();
+    void clearImage() { m_image = nullptr; }
     URL sourceURL() const;
-    
+
     // Asynchronous image decoding
     void startAsyncDecodingQueue();
     void requestFrameAsyncDecodingAtIndex(size_t, SubsamplingLevel, const std::optional<IntSize>&);
@@ -85,7 +86,7 @@ public:
     String uti();
     String filenameExtension();
     std::optional<IntPoint> hotSpot();
-    
+
     // Image metadata which is calculated from the first ImageFrame.
     IntSize size();
     IntSize sizeRespectingOrientation();

@@ -58,13 +58,14 @@ public:
     void destroyAllDecodedDataExcludeFrame(size_t excludeFrame) { m_frameCache->destroyAllDecodedDataExcludeFrame(excludeFrame); }
     void destroyDecodedDataBeforeFrame(size_t beforeFrame) { m_frameCache->destroyDecodedDataBeforeFrame(beforeFrame); }
     void destroyIncompleteDecodedData() { m_frameCache->destroyIncompleteDecodedData(); }
+    void clearImage() { m_frameCache->clearImage(); }
     void clearFrameBufferCache(size_t);
-    void clear(SharedBuffer* data);
 
     bool ensureDecoderAvailable(SharedBuffer*);
     bool isDecoderAvailable() const { return m_decoder.get(); }
 
     void setData(SharedBuffer* data, bool allDataReceived);
+    void resetData(SharedBuffer* data);
     EncodedDataStatus dataChanged(SharedBuffer* data, bool allDataReceived);
 
     unsigned decodedSize() const { return m_frameCache->decodedSize(); }
