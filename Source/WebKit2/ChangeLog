@@ -1,3 +1,12 @@
+2017-05-25  Youenn Fablet  <youenn@apple.com>
+
+        com.apple.coremedia.videoencoder XPC service should be allowed by WebProcess sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=172599
+
+        Reviewed by Alex Christensen.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2017-05-25  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Avoid setting contentsScale and rasterizationScale on CATransformLayers
