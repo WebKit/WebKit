@@ -1,3 +1,13 @@
+2017-05-24  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Increase the headerpad for WebKit XPC Services
+        https://bugs.webkit.org/show_bug.cgi?id=172571
+
+        Reviewed by Dan Bernstein.
+
+        * Configurations/BaseXPCService.xcconfig:
+        Increase the headerpad to make room for additional dyld commands.
+
 2017-05-24  David Keijser  <keijser@gmail.com>
 
         [GTK] Provide details on javascript exception
