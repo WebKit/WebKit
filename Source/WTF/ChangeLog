@@ -1,3 +1,50 @@
+2017-05-25  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [Win] ASSERTION FAILED: !HashTranslator::equal(KeyTraits::emptyValue(), key)
+        https://bugs.webkit.org/show_bug.cgi?id=172586
+
+        Reviewed by Brent Fulgham.
+
+        In ThreadHolder for Windows, we need to construct HashMap<ThreadIdentifier, ThreadHolder*>.
+        The problem is that ThreadHolder::platformInitialize touches Thread::id() even before Thread
+        is not established. In that case, id() returns incorrect value.
+
+        But, calling ThreadHolder::initialize() after waiting for completion of Thread::establish() is
+        not a good idea. Since we already have NewThreadContext->creationMutex, we can wait for completion
+        of Thread::establish() easily. However, if we do so, Thread::create() returns RefPtr<Thread> that
+        may not call ThreadHolder::initialize() in its thread yet. In that case, ThreadHolder::get() fails.
+        Thus, Windows WTF::waitForThreadCompletion implementation becomes broken. We can add a new mutex
+        to wait for completion of ThreadHolder::initialize in the creator of the thread (like a ping-pong!).
+        But it overly complicates the implementation.
+
+        The following is overly complicated initialization phase.
+
+        Creator -> AC mutex(1) -------> establishment -> RL mutex(1) ----------------------> AC mutex(2) ->
+
+                               Thread -----------------> AC mutex(1) -> ThreadHolder init -> RL mutex(2) ->
+
+        So, instead, in this patch, we just use Thread::currentID(). When calling ThreadHolder::initialize(),
+        we pass ThreadIdentifier by using Thread::currentID(). This implementation works great because,
+
+        1. ThreadHolder::initialize requires ThreadIdentifier only in Windows environment because Pthread
+           ThreadHolder does not create HashMap<>. And this is used for obsolete Threading APIs. Thus this
+           hack will be removed in the near future.
+
+        2. In Windows, Thread::currentID() can return a valid value without using ThreadHolder. And it does
+           not require Thread establishment. So, calling currentID() to initialize ThreadHolder is ok in
+           Windows.
+
+        * wtf/ThreadHolder.cpp:
+        (WTF::ThreadHolder::initialize): Deleted.
+        * wtf/ThreadHolder.h:
+        * wtf/ThreadHolderPthreads.cpp:
+        (WTF::ThreadHolder::initialize):
+        * wtf/ThreadHolderWin.cpp:
+        (WTF::ThreadHolder::initialize):
+        (WTF::ThreadHolder::platformInitialize): Deleted.
+        * wtf/ThreadingWin.cpp:
+        (WTF::wtfThreadEntryPoint):
+
 2017-05-25  Adrian Perez de Castro  <aperez@igalia.com>
 
         Clang warns about (intended) returning pointer to stack location in WTF/wtf/ThreadingPthreads.cpp

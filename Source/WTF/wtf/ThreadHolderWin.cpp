@@ -80,10 +80,23 @@ RefPtr<Thread> ThreadHolder::get(ThreadIdentifier id)
     return nullptr;
 }
 
-void ThreadHolder::platformInitialize(ThreadHolder* holder)
+void ThreadHolder::initialize(Thread& thread, ThreadIdentifier id)
 {
-    std::unique_lock<std::mutex> locker(threadMapMutex());
-    threadMap().add(holder->thread().id(), holder);
+    if (!current()) {
+        // Ideally we'd have this as a release assert everywhere, but that would hurt performance.
+        // Having this release assert here means that we will catch "didn't call
+        // WTF::initializeThreading() soon enough" bugs in release mode.
+        ASSERT(m_key != InvalidThreadSpecificKey);
+        // FIXME: Remove this workaround code once <rdar://problem/31793213> is fixed.
+        auto* holder = new ThreadHolder(thread);
+        threadSpecificSet(m_key, holder);
+
+        // Since Thread is not established yet, we use the given id instead of thread->id().
+        {
+            std::unique_lock<std::mutex> locker(threadMapMutex());
+            threadMap().add(id, holder);
+        }
+    }
 }
 
 void ThreadHolder::destruct(void* data)

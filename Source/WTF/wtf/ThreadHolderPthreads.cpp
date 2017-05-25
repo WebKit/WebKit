@@ -47,6 +47,17 @@ ThreadHolder* ThreadHolder::current()
     return static_cast<ThreadHolder*>(threadSpecificGet(m_key));
 }
 
+void ThreadHolder::initialize(Thread& thread)
+{
+    if (!current()) {
+        // Ideally we'd have this as a release assert everywhere, but that would hurt performance.
+        // Having this release assert here means that we will catch "didn't call
+        // WTF::initializeThreading() soon enough" bugs in release mode.
+        ASSERT(m_key != InvalidThreadSpecificKey);
+        threadSpecificSet(m_key, new ThreadHolder(thread));
+    }
+}
+
 void ThreadHolder::destruct(void* data)
 {
     ThreadHolder* threadIdentifierData = static_cast<ThreadHolder*>(data);

@@ -155,7 +155,7 @@ static unsigned __stdcall wtfThreadEntryPoint(void* param)
     // Balanced by .leakPtr() in Thread::createInternal.
     auto invocation = std::unique_ptr<ThreadFunctionInvocation>(static_cast<ThreadFunctionInvocation*>(param));
 
-    ThreadHolder::initialize(*invocation->thread);
+    ThreadHolder::initialize(*invocation->thread, Thread::currentID());
     invocation->thread = nullptr;
 
     invocation->function(invocation->data);
@@ -272,7 +272,7 @@ Thread& Thread::current()
     RELEASE_ASSERT(isSuccessful);
 
     thread->establish(handle, currentID());
-    ThreadHolder::initialize(thread.get());
+    ThreadHolder::initialize(thread.get(), Thread::currentID());
     return thread.get();
 }
 
