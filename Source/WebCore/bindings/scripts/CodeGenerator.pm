@@ -765,17 +765,17 @@ sub NamespaceForAttributeName
 
 # Identifies overloaded functions and for each function adds an array with
 # links to its respective overloads (including itself).
-sub LinkOverloadedFunctions
+sub LinkOverloadedOperations
 {
     my ($object, $interface) = @_;
 
-    my %nameToFunctionsMap = ();
-    foreach my $function (@{$interface->functions}) {
-        my $name = $function->name;
-        $nameToFunctionsMap{$name} = [] if !exists $nameToFunctionsMap{$name};
-        push(@{$nameToFunctionsMap{$name}}, $function);
-        $function->{overloads} = $nameToFunctionsMap{$name};
-        $function->{overloadIndex} = @{$nameToFunctionsMap{$name}};
+    my %nameToOperationsMap = ();
+    foreach my $operation (@{$interface->operations}) {
+        my $name = $operation->name;
+        $nameToOperationsMap{$name} = [] if !exists $nameToOperationsMap{$name};
+        push(@{$nameToOperationsMap{$name}}, $operation);
+        $operation->{overloads} = $nameToOperationsMap{$name};
+        $operation->{overloadIndex} = @{$nameToOperationsMap{$name}};
     }
 
     my $index = 1;

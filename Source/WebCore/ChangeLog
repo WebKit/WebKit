@@ -1,3 +1,19 @@
+2017-05-25  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Use the term 'operation' more consistently
+        https://bugs.webkit.org/show_bug.cgi?id=172601
+
+        Reviewed by Chris Dumez.
+
+        We were using the term 'operation', a WebIDL term for function-like
+        constructs, inconsistently in the code generator. Now, when we use
+        'operation' when referring to the IDL concept (usually the object the
+        parser produces) and 'function' when referring to code being generated.
+
+        * bindings/scripts/CodeGenerator.pm:
+        * bindings/scripts/IDLParser.pm:
+        * bindings/scripts/generate-bindings.pl:
+
 2017-05-25  Jer Noble  <jer.noble@apple.com>
 
         System sleeps while playing to wireless target, ending stream.

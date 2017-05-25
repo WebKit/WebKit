@@ -180,17 +180,17 @@ foreach my $idlFile (@supplementedIdlFiles) {
             }
 
             # Support for methods of partial interfaces.
-            foreach my $function (@{$interface->functions}) {
-                next unless shouldPropertyBeExposed($function, \@targetGlobalContexts);
+            foreach my $operation (@{$interface->operations}) {
+                next unless shouldPropertyBeExposed($operation, \@targetGlobalContexts);
 
                 # Record that this method is implemented by $interfaceName.
-                $function->extendedAttributes->{"ImplementedBy"} = $interfaceName if $interface->isPartial;
+                $operation->extendedAttributes->{"ImplementedBy"} = $interfaceName if $interface->isPartial;
 
                 # Add interface-wide extended attributes to each method.
                 foreach my $extendedAttributeName (keys %{$interface->extendedAttributes}) {
-                    $function->extendedAttributes->{$extendedAttributeName} = $interface->extendedAttributes->{$extendedAttributeName};
+                    $operation->extendedAttributes->{$extendedAttributeName} = $interface->extendedAttributes->{$extendedAttributeName};
                 }
-                push(@{$targetDataNode->functions}, $function);
+                push(@{$targetDataNode->operations}, $operation);
             }
 
             # Support for constants of partial interfaces.

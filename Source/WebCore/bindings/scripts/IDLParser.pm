@@ -59,8 +59,8 @@ struct( IDLInterface => {
     type => 'IDLType',
     parentType => 'IDLType',
     constants => '@',    # List of 'IDLConstant'
-    functions => '@',    # List of 'IDLOperation'
-    anonymousFunctions => '@', # List of 'IDLOperation'
+    operations => '@',    # List of 'IDLOperation'
+    anonymousOperations => '@', # List of 'IDLOperation'
     attributes => '@',    # List of 'IDLAttribute'
     constructors => '@', # Constructors, list of 'IDLOperation'
     customConstructors => '@', # Custom constructors, list of 'IDLOperation'
@@ -113,7 +113,7 @@ struct( IDLIterable => {
     isKeyValue => '$',
     keyType => 'IDLType',
     valueType => 'IDLType',
-    functions => '@', # Iterable functions (entries, keys, values, [Symbol.Iterator], forEach)
+    operations => '@', # Iterable operations (entries, keys, values, [Symbol.Iterator], forEach)
     extendedAttributes => '$',
 });
 
@@ -123,7 +123,7 @@ struct( IDLMapLike => {
     keyType => 'IDLType',
     valueType => 'IDLType',
     attributes => '@', # MapLike attributes (size)
-    functions => '@', # MapLike functions (entries, keys, values, forEach, get, has and if not readonly, delete, set and clear)
+    operations => '@', # MapLike operations (entries, keys, values, forEach, get, has and if not readonly, delete, set and clear)
     extendedAttributes => '$',
 });
 
@@ -133,7 +133,7 @@ struct( IDLSerializable => {
     hasAttribute => '$', # serializer = { attribute }
     hasInherit => '$', # serializer = { inherit }
     hasGetter => '$', # serializer = { getter }
-    functions => '@', # toJSON function
+    operations => '@', # toJSON operation
 });
 
 # https://heycam.github.io/webidl/#idl-constants
@@ -634,7 +634,7 @@ sub applyTypedefs
             foreach my $attribute (@{$definition->attributes}) {
                 $attribute->type($self->typeByApplyingTypedefs($attribute->type));
             }
-            foreach my $operation (@{$definition->functions}, @{$definition->anonymousFunctions}, @{$definition->constructors}, @{$definition->customConstructors}) {
+            foreach my $operation (@{$definition->operations}, @{$definition->anonymousOperations}, @{$definition->constructors}, @{$definition->customConstructors}) {
                 $self->applyTypedefsToOperation($operation);
             }
         } elsif (ref($definition) eq "IDLDictionary") {
@@ -1350,13 +1350,13 @@ sub parseSerializer
             $newDataNode = IDLSerializable->new();
         }
 
-        my $toJSONFunction = IDLOperation->new();
-        $toJSONFunction->name("toJSON");
+        my $toJSONOperation = IDLOperation->new();
+        $toJSONOperation->name("toJSON");
 
         $self->assertExtendedAttributesValidForContext($extendedAttributeList, "operation");
-        $toJSONFunction->extendedAttributes($extendedAttributeList);
-        $toJSONFunction->isSerializer(1);
-        push(@{$newDataNode->functions}, $toJSONFunction);
+        $toJSONOperation->extendedAttributes($extendedAttributeList);
+        $toJSONOperation->isSerializer(1);
+        push(@{$newDataNode->operations}, $toJSONOperation);
 
         $self->assertTokenValue($self->getToken(), ";", __LINE__);
         return $newDataNode;
@@ -1725,40 +1725,40 @@ sub parseOptionalIterableInterface
     }
     $self->assertTokenValue($self->getToken(), ">", __LINE__);
 
-    my $symbolIteratorFunction = IDLOperation->new();
-    $symbolIteratorFunction->name("[Symbol.Iterator]");
-    $symbolIteratorFunction->extendedAttributes($extendedAttributeList);
-    $symbolIteratorFunction->isIterable(1);
+    my $symbolIteratorOperation = IDLOperation->new();
+    $symbolIteratorOperation->name("[Symbol.Iterator]");
+    $symbolIteratorOperation->extendedAttributes($extendedAttributeList);
+    $symbolIteratorOperation->isIterable(1);
 
-    my $entriesFunction = IDLOperation->new();
-    $entriesFunction->name("entries");
-    $entriesFunction->extendedAttributes($extendedAttributeList);
-    $entriesFunction->isIterable(1);
+    my $entriesOperation = IDLOperation->new();
+    $entriesOperation->name("entries");
+    $entriesOperation->extendedAttributes($extendedAttributeList);
+    $entriesOperation->isIterable(1);
 
-    my $keysFunction = IDLOperation->new();
-    $keysFunction->name("keys");
-    $keysFunction->extendedAttributes($extendedAttributeList);
-    $keysFunction->isIterable(1);
+    my $keysOperation = IDLOperation->new();
+    $keysOperation->name("keys");
+    $keysOperation->extendedAttributes($extendedAttributeList);
+    $keysOperation->isIterable(1);
 
-    my $valuesFunction = IDLOperation->new();
-    $valuesFunction->name("values");
-    $valuesFunction->extendedAttributes($extendedAttributeList);
-    $valuesFunction->isIterable(1);
+    my $valuesOperation = IDLOperation->new();
+    $valuesOperation->name("values");
+    $valuesOperation->extendedAttributes($extendedAttributeList);
+    $valuesOperation->isIterable(1);
 
-    my $forEachFunction = IDLOperation->new();
-    $forEachFunction->name("forEach");
-    $forEachFunction->extendedAttributes($extendedAttributeList);
-    $forEachFunction->isIterable(1);
+    my $forEachOperation = IDLOperation->new();
+    $forEachOperation->name("forEach");
+    $forEachOperation->extendedAttributes($extendedAttributeList);
+    $forEachOperation->isIterable(1);
     my $forEachArgument = IDLArgument->new();
     $forEachArgument->name("callback");
     $forEachArgument->type(makeSimpleType("any"));
-    push(@{$forEachFunction->arguments}, ($forEachArgument));
+    push(@{$forEachOperation->arguments}, ($forEachArgument));
 
-    push(@{$newDataNode->functions}, $symbolIteratorFunction);
-    push(@{$newDataNode->functions}, $entriesFunction);
-    push(@{$newDataNode->functions}, $keysFunction);
-    push(@{$newDataNode->functions}, $valuesFunction);
-    push(@{$newDataNode->functions}, $forEachFunction);
+    push(@{$newDataNode->operations}, $symbolIteratorOperation);
+    push(@{$newDataNode->operations}, $entriesOperation);
+    push(@{$newDataNode->operations}, $keysOperation);
+    push(@{$newDataNode->operations}, $valuesOperation);
+    push(@{$newDataNode->operations}, $forEachOperation);
 
     return $newDataNode;
 }
@@ -1806,98 +1806,98 @@ sub parseMapLikeProperties
     $sizeAttribute->type(makeSimpleType("any"));
     push(@{$newDataNode->attributes}, $sizeAttribute);
 
-    my $getFunction = IDLOperation->new();
-    $getFunction->name("get");
-    $getFunction->isMapLike(1);
+    my $getOperation = IDLOperation->new();
+    $getOperation->name("get");
+    $getOperation->isMapLike(1);
     my $getArgument = IDLArgument->new();
     $getArgument->name("key");
     $getArgument->type($newDataNode->keyType);
     $getArgument->extendedAttributes($extendedAttributeList);
-    push(@{$getFunction->arguments}, ($getArgument));
-    $getFunction->extendedAttributes($notEnumerableExtendedAttributeList);
-    $getFunction->type(makeSimpleType("any"));
+    push(@{$getOperation->arguments}, ($getArgument));
+    $getOperation->extendedAttributes($notEnumerableExtendedAttributeList);
+    $getOperation->type(makeSimpleType("any"));
 
-    my $hasFunction = IDLOperation->new();
-    $hasFunction->name("has");
-    $hasFunction->isMapLike(1);
+    my $hasOperation = IDLOperation->new();
+    $hasOperation->name("has");
+    $hasOperation->isMapLike(1);
     my $hasArgument = IDLArgument->new();
     $hasArgument->name("key");
     $hasArgument->type($newDataNode->keyType);
     $hasArgument->extendedAttributes($extendedAttributeList);
-    push(@{$hasFunction->arguments}, ($hasArgument));
-    $hasFunction->extendedAttributes($notEnumerableExtendedAttributeList);
-    $hasFunction->type(makeSimpleType("any"));
+    push(@{$hasOperation->arguments}, ($hasArgument));
+    $hasOperation->extendedAttributes($notEnumerableExtendedAttributeList);
+    $hasOperation->type(makeSimpleType("any"));
 
-    my $entriesFunction = IDLOperation->new();
-    $entriesFunction->name("entries");
-    $entriesFunction->isMapLike(1);
-    $entriesFunction->extendedAttributes($notEnumerableExtendedAttributeList);
-    $entriesFunction->type(makeSimpleType("any"));
+    my $entriesOperation = IDLOperation->new();
+    $entriesOperation->name("entries");
+    $entriesOperation->isMapLike(1);
+    $entriesOperation->extendedAttributes($notEnumerableExtendedAttributeList);
+    $entriesOperation->type(makeSimpleType("any"));
 
-    my $keysFunction = IDLOperation->new();
-    $keysFunction->name("keys");
-    $keysFunction->isMapLike(1);
-    $keysFunction->extendedAttributes($notEnumerableExtendedAttributeList);
-    $keysFunction->type(makeSimpleType("any"));
+    my $keysOperation = IDLOperation->new();
+    $keysOperation->name("keys");
+    $keysOperation->isMapLike(1);
+    $keysOperation->extendedAttributes($notEnumerableExtendedAttributeList);
+    $keysOperation->type(makeSimpleType("any"));
 
-    my $valuesFunction = IDLOperation->new();
-    $valuesFunction->name("values");
-    $valuesFunction->isMapLike(1);
-    $valuesFunction->extendedAttributes($extendedAttributeList);
-    $valuesFunction->extendedAttributes->{NotEnumerable} = 1;
-    $valuesFunction->type(makeSimpleType("any"));
+    my $valuesOperation = IDLOperation->new();
+    $valuesOperation->name("values");
+    $valuesOperation->isMapLike(1);
+    $valuesOperation->extendedAttributes($extendedAttributeList);
+    $valuesOperation->extendedAttributes->{NotEnumerable} = 1;
+    $valuesOperation->type(makeSimpleType("any"));
 
-    my $forEachFunction = IDLOperation->new();
-    $forEachFunction->name("forEach");
-    $forEachFunction->isMapLike(1);
-    $forEachFunction->extendedAttributes({});
-    $forEachFunction->type(makeSimpleType("any"));
+    my $forEachOperation = IDLOperation->new();
+    $forEachOperation->name("forEach");
+    $forEachOperation->isMapLike(1);
+    $forEachOperation->extendedAttributes({});
+    $forEachOperation->type(makeSimpleType("any"));
     my $forEachArgument = IDLArgument->new();
     $forEachArgument->name("callback");
     $forEachArgument->type(makeSimpleType("any"));
     $forEachArgument->extendedAttributes($extendedAttributeList);
-    push(@{$forEachFunction->arguments}, ($forEachArgument));
+    push(@{$forEachOperation->arguments}, ($forEachArgument));
 
-    push(@{$newDataNode->functions}, $getFunction);
-    push(@{$newDataNode->functions}, $hasFunction);
-    push(@{$newDataNode->functions}, $entriesFunction);
-    push(@{$newDataNode->functions}, $keysFunction);
-    push(@{$newDataNode->functions}, $valuesFunction);
-    push(@{$newDataNode->functions}, $forEachFunction);
+    push(@{$newDataNode->operations}, $getOperation);
+    push(@{$newDataNode->operations}, $hasOperation);
+    push(@{$newDataNode->operations}, $entriesOperation);
+    push(@{$newDataNode->operations}, $keysOperation);
+    push(@{$newDataNode->operations}, $valuesOperation);
+    push(@{$newDataNode->operations}, $forEachOperation);
 
     return $newDataNode if $isReadOnly;
 
-    my $addFunction = IDLOperation->new();
-    $addFunction->name("add");
-    $addFunction->isMapLike(1);
+    my $addOperation = IDLOperation->new();
+    $addOperation->name("add");
+    $addOperation->isMapLike(1);
     my $addArgument = IDLArgument->new();
     $addArgument->name("key");
     $addArgument->type($newDataNode->keyType);
     $addArgument->extendedAttributes($extendedAttributeList);
-    push(@{$addFunction->arguments}, ($addArgument));
-    $addFunction->extendedAttributes($notEnumerableExtendedAttributeList);
-    $addFunction->type(makeSimpleType("any"));
+    push(@{$addOperation->arguments}, ($addArgument));
+    $addOperation->extendedAttributes($notEnumerableExtendedAttributeList);
+    $addOperation->type(makeSimpleType("any"));
 
-    my $clearFunction = IDLOperation->new();
-    $clearFunction->name("clear");
-    $clearFunction->isMapLike(1);
-    $clearFunction->extendedAttributes($notEnumerableExtendedAttributeList);
-    $clearFunction->type(makeSimpleType("void"));
+    my $clearOperation = IDLOperation->new();
+    $clearOperation->name("clear");
+    $clearOperation->isMapLike(1);
+    $clearOperation->extendedAttributes($notEnumerableExtendedAttributeList);
+    $clearOperation->type(makeSimpleType("void"));
 
-    my $deleteFunction = IDLOperation->new();
-    $deleteFunction->name("delete");
-    $deleteFunction->isMapLike(1);
+    my $deleteOperation = IDLOperation->new();
+    $deleteOperation->name("delete");
+    $deleteOperation->isMapLike(1);
     my $deleteArgument = IDLArgument->new();
     $deleteArgument->name("key");
     $deleteArgument->type($newDataNode->keyType);
     $deleteArgument->extendedAttributes($extendedAttributeList);
-    push(@{$deleteFunction->arguments}, ($deleteArgument));
-    $deleteFunction->extendedAttributes($notEnumerableExtendedAttributeList);
-    $deleteFunction->type(makeSimpleType("any"));
+    push(@{$deleteOperation->arguments}, ($deleteArgument));
+    $deleteOperation->extendedAttributes($notEnumerableExtendedAttributeList);
+    $deleteOperation->type(makeSimpleType("any"));
 
-    push(@{$newDataNode->functions}, $addFunction);
-    push(@{$newDataNode->functions}, $clearFunction);
-    push(@{$newDataNode->functions}, $deleteFunction);
+    push(@{$newDataNode->operations}, $addOperation);
+    push(@{$newDataNode->operations}, $clearOperation);
+    push(@{$newDataNode->operations}, $deleteOperation);
 
     return $newDataNode;
 }
@@ -2762,9 +2762,9 @@ sub applyMemberList
         }
         if (ref($item) eq "IDLOperation") {
             if ($item->name eq "") {
-                push(@{$interface->anonymousFunctions}, $item);
+                push(@{$interface->anonymousOperations}, $item);
             } else {
-                push(@{$interface->functions}, $item);
+                push(@{$interface->operations}, $item);
             }
             next;
         }
