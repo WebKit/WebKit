@@ -1,3 +1,16 @@
+2017-05-25  Brent Fulgham  <bfulgham@apple.com>
+
+        [WK2][iOS] Add a mach-lookup exception for 'com.apple.lsd.mapdb' to Network sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=172465
+        <rdar://problem/32332836>
+
+        Reviewed by Alex Christensen.
+
+        Expand sandbox to allow lookup of the mapdb that contains UTI information used
+        by the Network process.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+
 2017-05-25  Youenn Fablet  <youenn@apple.com>
 
         com.apple.coremedia.videoencoder XPC service should be allowed by WebProcess sandbox
