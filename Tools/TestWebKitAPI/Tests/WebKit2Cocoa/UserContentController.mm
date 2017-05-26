@@ -36,7 +36,6 @@
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKUserContentWorld.h>
 #import <WebKit/_WKUserStyleSheet.h>
-#import <WebKit/_WKUserStyleSheet.h>
 #import <wtf/RetainPtr.h>
 
 #if WK_API_ENABLED
@@ -94,7 +93,7 @@ TEST(WKUserContentController, ScriptMessageHandlerBasicPost)
 
 TEST(WKUserContentController, ScriptMessageHandlerBasicPostIsolatedWorld)
 {
-    RetainPtr<_WKUserContentWorld> world = adoptNS([_WKUserContentWorld worldWithName:@"TestWorld"]);
+    RetainPtr<_WKUserContentWorld> world = [_WKUserContentWorld worldWithName:@"TestWorld"];
 
     RetainPtr<ScriptMessageHandler> handler = adoptNS([[ScriptMessageHandler alloc] init]);
     RetainPtr<WKUserScript> userScript = adoptNS([[WKUserScript alloc] _initWithSource:@"window.webkit.messageHandlers.testHandler.postMessage('Hello')" injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:NO legacyWhitelist:@[] legacyBlacklist:@[] userContentWorld:world.get()]);
@@ -364,7 +363,7 @@ TEST(WKUserContentController, AddUserStyleSheetBeforeCreatingView)
 
 TEST(WKUserContentController, NonCanonicalizedURL)
 {
-    RetainPtr<_WKUserContentWorld> world = adoptNS([_WKUserContentWorld worldWithName:@"TestWorld"]);
+    RetainPtr<_WKUserContentWorld> world = [_WKUserContentWorld worldWithName:@"TestWorld"];
     RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forMainFrameOnly:NO legacyWhitelist:@[] legacyBlacklist:@[] baseURL:[[NSURL alloc] initWithString:@"http://CamelCase/"] userContentWorld:world.get()]);
 }
 
@@ -439,7 +438,7 @@ TEST(WKUserContentController, UserStyleSheetRemoveAll)
 {
     RetainPtr<WKUserContentController> userContentController = adoptNS([[WKUserContentController alloc] init]);
 
-    RetainPtr<_WKUserContentWorld> world = adoptNS([_WKUserContentWorld worldWithName:@"TestWorld"]);
+    RetainPtr<_WKUserContentWorld> world = [_WKUserContentWorld worldWithName:@"TestWorld"];
 
     RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forMainFrameOnly:NO]);
     RetainPtr<_WKUserStyleSheet> styleSheetAssociatedWithWorld = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forMainFrameOnly:NO legacyWhitelist:@[] legacyBlacklist:@[] userContentWorld:world.get()]);
@@ -460,7 +459,7 @@ TEST(WKUserContentController, UserStyleSheetRemoveAllByWorld)
 {
     RetainPtr<WKUserContentController> userContentController = adoptNS([[WKUserContentController alloc] init]);
 
-    RetainPtr<_WKUserContentWorld> world = adoptNS([_WKUserContentWorld worldWithName:@"TestWorld"]);
+    RetainPtr<_WKUserContentWorld> world = [_WKUserContentWorld worldWithName:@"TestWorld"];
 
     RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forMainFrameOnly:NO]);
     RetainPtr<_WKUserStyleSheet> styleSheetAssociatedWithWorld = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forMainFrameOnly:NO legacyWhitelist:@[] legacyBlacklist:@[] userContentWorld:world.get()]);
@@ -485,7 +484,7 @@ TEST(WKUserContentController, UserStyleSheetRemoveAllByNormalWorld)
 {
     RetainPtr<WKUserContentController> userContentController = adoptNS([[WKUserContentController alloc] init]);
 
-    RetainPtr<_WKUserContentWorld> world = adoptNS([_WKUserContentWorld worldWithName:@"TestWorld"]);
+    RetainPtr<_WKUserContentWorld> world = [_WKUserContentWorld worldWithName:@"TestWorld"];
 
     RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forMainFrameOnly:NO]);
     RetainPtr<_WKUserStyleSheet> styleSheetAssociatedWithWorld = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forMainFrameOnly:NO legacyWhitelist:@[] legacyBlacklist:@[] userContentWorld:world.get()]);
@@ -525,7 +524,7 @@ TEST(WKUserContentController, UserScriptRemoveAll)
 {
     RetainPtr<WKUserContentController> userContentController = adoptNS([[WKUserContentController alloc] init]);
 
-    RetainPtr<_WKUserContentWorld> world = adoptNS([_WKUserContentWorld worldWithName:@"TestWorld"]);
+    RetainPtr<_WKUserContentWorld> world = [_WKUserContentWorld worldWithName:@"TestWorld"];
 
     RetainPtr<WKUserScript> userScript = adoptNS([[WKUserScript alloc] initWithSource:@"" injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:NO]);
     RetainPtr<WKUserScript> userScriptAssociatedWithWorld = adoptNS([[WKUserScript alloc] _initWithSource:@"" injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:NO legacyWhitelist:@[] legacyBlacklist:@[] userContentWorld:world.get()]);
@@ -546,7 +545,7 @@ TEST(WKUserContentController, UserScriptRemoveAllByWorld)
 {
     RetainPtr<WKUserContentController> userContentController = adoptNS([[WKUserContentController alloc] init]);
 
-    RetainPtr<_WKUserContentWorld> world = adoptNS([_WKUserContentWorld worldWithName:@"TestWorld"]);
+    RetainPtr<_WKUserContentWorld> world = [_WKUserContentWorld worldWithName:@"TestWorld"];
 
     RetainPtr<WKUserScript> userScript = adoptNS([[WKUserScript alloc] initWithSource:@"" injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:NO]);
     RetainPtr<WKUserScript> userScriptAssociatedWithWorld = adoptNS([[WKUserScript alloc] _initWithSource:@"" injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:NO legacyWhitelist:@[] legacyBlacklist:@[] userContentWorld:world.get()]);
@@ -571,7 +570,7 @@ TEST(WKUserContentController, UserScriptRemoveAllByNormalWorld)
 {
     RetainPtr<WKUserContentController> userContentController = adoptNS([[WKUserContentController alloc] init]);
 
-    RetainPtr<_WKUserContentWorld> world = adoptNS([_WKUserContentWorld worldWithName:@"TestWorld"]);
+    RetainPtr<_WKUserContentWorld> world = [_WKUserContentWorld worldWithName:@"TestWorld"];
 
     RetainPtr<WKUserScript> userScript = adoptNS([[WKUserScript alloc] initWithSource:@"" injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:NO]);
     RetainPtr<WKUserScript> userScriptAssociatedWithWorld = adoptNS([[WKUserScript alloc] _initWithSource:@"" injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:NO legacyWhitelist:@[] legacyBlacklist:@[] userContentWorld:world.get()]);

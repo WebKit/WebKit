@@ -28,7 +28,6 @@
 #if WK_API_ENABLED
 
 #import "APIUserStyleSheet.h"
-#import <wtf/RetainPtr.h>
 
 namespace API {
 

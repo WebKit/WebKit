@@ -42,6 +42,13 @@
     return self;
 }
 
+- (void)dealloc
+{
+    _userScript->~UserScript();
+
+    [super dealloc];
+}
+
 - (NSString *)source
 {
     return _userScript->userScript().source();
