@@ -429,6 +429,9 @@ WebInspector.ResourceSidebarPanel = class ResourceSidebarPanel extends WebInspec
 
     _treeSelectionDidChange(event)
     {
+        if (!this.visible)
+            return;
+
         let treeElement = event.data.selectedElement;
         if (!treeElement)
             return;

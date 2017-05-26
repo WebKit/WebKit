@@ -351,6 +351,9 @@ WebInspector.SearchSidebarPanel = class SearchSidebarPanel extends WebInspector.
 
     _treeSelectionDidChange(event)
     {
+        if (!this.visible)
+            return;
+
         let treeElement = event.data.selectedElement;
         if (!treeElement || treeElement instanceof WebInspector.FolderTreeElement)
             return;

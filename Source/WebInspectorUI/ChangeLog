@@ -1,5 +1,20 @@
 2017-05-26  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Reloading the page after switching from the Resource tab switches back
+        https://bugs.webkit.org/show_bug.cgi?id=172622
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WebInspector.DebuggerSidebarPanel.prototype._treeSelectionDidChange):
+        * UserInterface/Views/ResourceSidebarPanel.js:
+        (WebInspector.ResourceSidebarPanel.prototype._treeSelectionDidChange):
+        * UserInterface/Views/SearchSidebarPanel.js:
+        (WebInspector.SearchSidebarPanel.prototype._treeSelectionDidChange):
+        Don't show the newly selected tree element's represented object if the sidebar is not visible.
+
+2017-05-26  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: New Tab contents have extra vertical spacing when wrapped
         https://bugs.webkit.org/show_bug.cgi?id=172530
 
