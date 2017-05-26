@@ -295,7 +295,10 @@ static BOOL isImageType(NSString *type)
                 return nil;
             }];
         }];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         [itemProvider setEstimatedDisplayedSize:itemList.estimatedDisplayedSize];
+#pragma clang diagnostic pop
         [itemProvider setSuggestedName:itemList.suggestedName];
         [providers addObject:itemProvider.get()];
     }
