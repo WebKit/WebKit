@@ -196,6 +196,14 @@ int dayInYear(double ms, int year)
     return static_cast<int>(msToDays(ms) - daysFrom1970ToYear(year));
 }
 
+static inline double msToMilliseconds(double ms)
+{
+    double result = fmod(ms, msPerDay);
+    if (result < 0)
+        result += msPerDay;
+    return result;
+}
+
 int msToMinutes(double ms)
 {
     double result = fmod(floor(ms / msPerMinute), minutesPerHour);
@@ -504,6 +512,22 @@ LocalTimeOffset calculateLocalTimeOffset(double ms, TimeType inputTimeType)
 #endif
     if (inputTimeType == LocalTime)
         ms -= localToUTCTimeOffset;
+
+    // On Mac OS X, the call to localtime (see calculateDSTOffset) will return historically accurate
+    // DST information (e.g. New Zealand did not have DST from 1946 to 1974) however the JavaScript
+    // standard explicitly dictates that historical information should not be considered when
+    // determining DST. For this reason we shift away from years that localtime can handle but would
+    // return historically accurate information.
+    int year = msToYear(ms);
+    int equivalentYear = equivalentYearForDST(year);
+    if (year != equivalentYear) {
+        bool leapYear = isLeapYear(year);
+        int dayInYearLocal = dayInYear(ms, year);
+        int dayInMonth = dayInMonthFromDayInYear(dayInYearLocal, leapYear);
+        int month = monthFromDayInYear(dayInYearLocal, leapYear);
+        double day = dateToDaysFrom1970(equivalentYear, month, dayInMonth);
+        ms = (day * msPerDay) + msToMilliseconds(ms);
+    }
 
     double localTimeSeconds = ms / msPerSecond;
     if (localTimeSeconds > maxUnixTime)

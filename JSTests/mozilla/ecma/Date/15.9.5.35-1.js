@@ -58,12 +58,10 @@ function getTestCases() {
                     UTCDateFromTime(SetUTCMonth(0,11)),
                     LocalDateFromTime(SetUTCMonth(0,11)) );
 
-// This test is commented out because it relies on non-historical data, which is allowed now.
-/*
     addNewTestCase( "TDATE = new Date(0);(TDATE).setUTCMonth(3,4);TDATE",
                     UTCDateFromTime(SetUTCMonth(0,3,4)),
                     LocalDateFromTime(SetUTCMonth(0,3,4)) );
-*/
+
 }
 
 function addNewTestCase( DateString, UTCDate, LocalDate) {
