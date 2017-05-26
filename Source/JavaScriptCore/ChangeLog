@@ -1,3 +1,20 @@
+2017-05-26  Mark Lam  <mark.lam@apple.com>
+
+        REGRESSION(216914): testCFStrings encounters an invalid ExecState callee pointer.
+        https://bugs.webkit.org/show_bug.cgi?id=172651
+
+        Reviewed by Saam Barati.
+
+        This is because the assertion utility functions used in testCFStrings() expects
+        to get the JSGlobalContextRef from the global context variable.  However,
+        testCFStrings() creates its own JSGlobalContextRef but does not set the global
+        context variable to it.
+
+        The fix is to make testCFStrings() initialize the global context variable properly.
+
+        * API/tests/testapi.c:
+        (testCFStrings):
+
 2017-05-26  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Give ModuleProgram the same treatment that we did for ProgramCode in bug#167725

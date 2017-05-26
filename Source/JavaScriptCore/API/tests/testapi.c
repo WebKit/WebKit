@@ -1239,7 +1239,10 @@ static void testMarkingConstraintsAndHeapFinalizers(void)
 #if USE(CF)
 static void testCFStrings(void)
 {
-    JSGlobalContextRef context = JSGlobalContextCreate(0);
+    /* The assertion utility functions we use below expects to get the JSGlobalContextRef
+       from the global context variable. */
+    JSGlobalContextRef oldContext = context;
+    context = JSGlobalContextCreate(0);
 
     UniChar singleUniChar = 65; // Capital A
     CFMutableStringRef cfString = CFStringCreateMutableWithExternalCharactersNoCopy(kCFAllocatorDefault, &singleUniChar, 1, 1, kCFAllocatorNull);
@@ -1332,6 +1335,7 @@ static void testCFStrings(void)
     CFRelease(cfEmptyString);
 
     JSGlobalContextRelease(context);
+    context = oldContext;
 }
 #endif
 
