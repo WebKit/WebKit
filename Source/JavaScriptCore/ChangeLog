@@ -1,3 +1,17 @@
+2017-05-26  Oleksandr Skachkov  <gskachkov@gmail.com>
+
+        Prevent async methods named 'function'
+        https://bugs.webkit.org/show_bug.cgi?id=172598
+
+        Reviewed by Mark Lam.
+
+        Prevent async method named 'function' in class.
+        Link to change in ecma262 specification
+        https://github.com/tc39/ecma262/pull/884
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseClass):
+
 2017-05-25  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, build fix for GCC

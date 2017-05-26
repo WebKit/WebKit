@@ -2691,6 +2691,7 @@ parseMethod:
                 parseMode = SourceParseMode::AsyncMethodMode;
                 semanticFailIfTrue(*ident == m_vm->propertyNames->prototype, "Cannot declare an async method named 'prototype'");
                 semanticFailIfTrue(*ident == m_vm->propertyNames->constructor, "Cannot declare an async method named 'constructor'");
+                semanticFailIfTrue(*ident == m_vm->propertyNames->functionKeyword, "Cannot declare an async method named 'function'");
             } else if (isGenerator) {
                 isConstructor = false;
                 parseMode = SourceParseMode::GeneratorWrapperMethodMode;
