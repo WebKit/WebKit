@@ -219,7 +219,7 @@ class TestGroup extends LabeledObject {
             name: name,
             repetitionCount: repetitionCount,
             revisionSets: revisionSets,
-        }).then((data) => this.fetchForTask(task.id(), true));
+        }).then((data) => this.fetchForTask(data['taskId'], true));
     }
 
     static _revisionSetsFromCommitSets(commitSets)

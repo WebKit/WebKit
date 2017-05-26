@@ -1,3 +1,18 @@
+2017-05-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        The queue page is broke when there is a custom analysis task
+        https://bugs.webkit.org/show_bug.cgi?id=172631
+
+        Reviewed by Antti Koivisto.
+
+        Fix the bug that we were always assuming each build request to have a test associated.
+
+        * public/v3/models/test-group.js:
+        (TestGroup.createAndRefetchTestGroups): Fixed the bug that we were referring to a non-existent variable task.
+        * public/v3/pages/build-request-queue-page.js:
+        (BuildRequestQueuePage.prototype._constructBuildRequestTable): Fixed the bug. Collect every request in the group
+        and then find the first test request's test name. Make it clear that we're waiting for a build as needed.
+
 2017-05-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         Syncing script shouldn't schedule a build request when there is a build from another test group in progress

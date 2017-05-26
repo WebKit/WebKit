@@ -42,14 +42,18 @@ class BuildRequestQueuePage extends PageWithHeading {
 
         const rowList = [];
         const requestCountForGroup = {};
+        const requestsByGroup = {};
         let previousRow = null;
         let requestCount = 0;
-        for (let request of buildRequests) {
+        for (const request of buildRequests) {
             const groupId = request.testGroupId();
-            if (groupId in requestCountForGroup)
+            if (groupId in requestCountForGroup) {
                 requestCountForGroup[groupId]++;
-            else
-                requestCountForGroup[groupId] = 1
+                requestsByGroup[groupId].push(request);
+            } else {
+                requestCountForGroup[groupId] = 1;
+                requestsByGroup[groupId] = [request];
+            }
 
             if (request.hasFinished())
                 continue;
@@ -90,13 +94,22 @@ class BuildRequestQueuePage extends PageWithHeading {
                 const request = entry.request;
                 const taskId = request.analysisTaskId();
                 const task = AnalysisTask.findById(taskId);
+                const requestsForGroup = requestsByGroup[request.testGroupId()];
+                const firstOrder = requestsForGroup[0].order();
+                let testName = null;
+                if (request.test())
+                    testName = request.test().fullName();
+                else {
+                    const firstRequestToTest = requestsForGroup.find((request) => !!request.test());
+                    testName = `Building (for ${firstRequestToTest.test().fullName()})`;
+                }
                 return element('tr', [
                     element('td', {class: 'request-id'}, request.id()),
                     element('td', {class: 'platform'}, request.platform().name()),
-                    element('td', {class: 'test'}, request.test().fullName()),
+                    element('td', {class: 'test'}, testName),
                     element('td', {class: 'task'}, !task ? taskId : link(task.name(), router.url(`analysis/task/${task.id()}`))),
                     element('td', {class: 'test-group'}, request.testGroupId()),
-                    element('td', {class: 'order'}, `${request.order() + 1} of ${requestCountForGroup[request.testGroupId()]}`),
+                    element('td', {class: 'order'}, `${request.order() - firstOrder + 1} of ${requestCountForGroup[request.testGroupId()]}`),
                     element('td', {class: 'status'}, request.statusLabel()),
                     element('td', {class: 'wait'}, request.waitingTime(referenceTime))]);
             }))]);
