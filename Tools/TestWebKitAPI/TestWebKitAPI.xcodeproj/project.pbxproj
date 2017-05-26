@@ -617,6 +617,8 @@
 		F42DA5161D8CEFE400336F40 /* large-input-field-focus-onload.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F42DA5151D8CEFDB00336F40 /* large-input-field-focus-onload.html */; };
 		F4451C761EB8FD890020C5DA /* two-paragraph-contenteditable.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4451C751EB8FD7C0020C5DA /* two-paragraph-contenteditable.html */; };
 		F4538EF71E8473E600B5C953 /* large-red-square.png in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4538EF01E846B4100B5C953 /* large-red-square.png */; };
+		F46A095A1ED8A6E600D4AA55 /* apple.gif in Copy Resources */ = {isa = PBXBuildFile; fileRef = F47D30EB1ED28619000482E1 /* apple.gif */; };
+		F46A095B1ED8A6E600D4AA55 /* gif-and-file-input.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F47D30ED1ED28A6C000482E1 /* gif-and-file-input.html */; };
 		F47728991E4AE3C1007ABF6A /* full-page-contenteditable.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F47728981E4AE3AD007ABF6A /* full-page-contenteditable.html */; };
 		F4856CA31E649EA8009D7EE7 /* attachment-element.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4856CA21E6498A8009D7EE7 /* attachment-element.html */; };
 		F4BFA68E1E4AD08000154298 /* DragAndDropPasteboardTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4BFA68C1E4AD08000154298 /* DragAndDropPasteboardTests.mm */; };
@@ -700,6 +702,8 @@
 			dstSubfolderSpec = 7;
 			files = (
 				93E2D2761ED7D53200FA76F6 /* offscreen-iframe-of-media-document.html in Copy Resources */,
+				F46A095A1ED8A6E600D4AA55 /* apple.gif in Copy Resources */,
+				F46A095B1ED8A6E600D4AA55 /* gif-and-file-input.html in Copy Resources */,
 				CDA3159A1ED548F1009F60D3 /* MediaPlaybackSleepAssertion.html in Copy Resources */,
 				C9B1043E1ECF9848000520FA /* autoplay-inherits-gesture-from-document.html in Copy Resources */,
 				3FCC4FE81EC4E8CA0076E37C /* PictureInPictureDelegate.html in Copy Resources */,

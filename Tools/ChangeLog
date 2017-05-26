@@ -1,3 +1,14 @@
+2017-05-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add test resources back into TestWebKitAPI Copy Resources phase
+
+        Rubber-stamped by Beth Dakin.
+
+        Add two files back into the Copy Resources phase after they were unintentionally
+        removed in r217447 and r217496.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+
 2017-05-26  Beth Dakin  <bdakin@apple.com>
 
         Media documents inside iframes should not get controls in the TouchBar unless the 
