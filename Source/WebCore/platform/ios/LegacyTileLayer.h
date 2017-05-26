@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LegacyTileLayer_h
-#define LegacyTileLayer_h
+#pragma once
 
 #if PLATFORM(IOS)
 
@@ -37,10 +36,11 @@ class LegacyTileGrid;
 @interface LegacyTileLayer : CALayer {
     WebCore::LegacyTileGrid* _tileGrid;
     unsigned _paintCount;
+    BOOL _isRenderingInContext;
 }
 @property (nonatomic) unsigned paintCount;
 @property (nonatomic) WebCore::LegacyTileGrid* tileGrid;
-+ (LegacyTileLayer *)layerBeingPainted;
+@property (nonatomic, readonly) BOOL isRenderingInContext;
 @end
 
 @interface LegacyTileHostLayer : CALayer {
@@ -50,4 +50,4 @@ class LegacyTileGrid;
 @end
 
 #endif // PLATFORM(IOS)
-#endif // TileLayer_h
+

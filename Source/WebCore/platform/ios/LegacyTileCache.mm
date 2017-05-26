@@ -70,25 +70,9 @@ namespace WebCore {
 
 LegacyTileCache::LegacyTileCache(WAKWindow* window)
     : m_window(window)
-    , m_keepsZoomedOutTiles(false)
-    , m_hasPendingLayoutTiles(false)
-    , m_hasPendingUpdateTilingMode(false)
     , m_tombstone(adoptNS([[LegacyTileCacheTombstone alloc] init]))
-    , m_tilingMode(Normal)
-    , m_tilingDirection(TilingDirectionDown)
-    , m_tileSize(512, 512)
-    , m_tilesOpaque(true)
-    , m_tileBordersVisible(false)
-    , m_tilePaintCountersVisible(false)
-    , m_acceleratedDrawingEnabled(false)
-    , m_isSpeculativeTileCreationEnabled(true)
-    , m_didCallWillStartScrollingOrZooming(false)
     , m_zoomedOutTileGrid(std::make_unique<LegacyTileGrid>(*this, m_tileSize))
     , m_tileCreationTimer(*this, &LegacyTileCache::tileCreationTimerFired)
-    , m_currentScale(1.f)
-    , m_pendingScale(0)
-    , m_pendingZoomedOutScale(0)
-    , m_tileControllerShouldUseLowScaleTiles(false)
 {
     [hostLayer() insertSublayer:m_zoomedOutTileGrid->tileHostLayer() atIndex:0];
     hostLayerSizeChanged();
@@ -520,14 +504,18 @@ void LegacyTileCache::drawReplacementImage(LegacyTileLayer* layer, CGContextRef 
     CGContextDrawImage(context, imageRect, image);
 }
 
-void LegacyTileCache::drawWindowContent(LegacyTileLayer* layer, CGContextRef context, CGRect dirtyRect)
+void LegacyTileCache::drawWindowContent(LegacyTileLayer* layer, CGContextRef context, CGRect dirtyRect, DrawingFlags drawingFlags)
 {
     CGRect frame = [layer frame];
     FontAntialiasingStateSaver fontAntialiasingState(context, [m_window useOrientationDependentFontAntialiasing] && [layer isOpaque]);
     fontAntialiasingState.setup([WAKWindow hasLandscapeOrientation]);
 
+    if (drawingFlags == DrawingFlags::Snapshotting)
+        [m_window setIsInSnapshottingPaint:YES];
+        
     CGSRegionObj drawRegion = (CGSRegionObj)[layer regionBeingDrawn];
     CGFloat contentsScale = [layer contentsScale];
+    
     if (drawRegion && shouldRepaintInPieces(dirtyRect, drawRegion, contentsScale)) {
         // Use fine grained repaint rectangles to minimize the amount of painted pixels.
         CGSRegionEnumeratorObj enumerator = CGSRegionEnumerator(drawRegion);
@@ -550,9 +538,12 @@ void LegacyTileCache::drawWindowContent(LegacyTileLayer* layer, CGContextRef con
     }
 
     fontAntialiasingState.restore();
+    
+    if (drawingFlags == DrawingFlags::Snapshotting)
+        [m_window setIsInSnapshottingPaint:NO];
 }
 
-void LegacyTileCache::drawLayer(LegacyTileLayer* layer, CGContextRef context)
+void LegacyTileCache::drawLayer(LegacyTileLayer* layer, CGContextRef context, DrawingFlags drawingFlags)
 {
     // The web lock unlock observer runs after CA commit observer.
     if (!WebThreadIsLockedOrDisabled()) {
@@ -571,7 +562,7 @@ void LegacyTileCache::drawLayer(LegacyTileLayer* layer, CGContextRef context)
     if (RetainPtr<CGImage> contentReplacementImage = this->contentReplacementImage())
         drawReplacementImage(layer, context, contentReplacementImage.get());
     else
-        drawWindowContent(layer, context, dirtyRect);
+        drawWindowContent(layer, context, dirtyRect, drawingFlags);
 
     ++layer.paintCount;
     if (m_tilePaintCountersVisible) {

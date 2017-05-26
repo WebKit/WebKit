@@ -1369,7 +1369,6 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 #else
     _private->backgroundColor = CGColorRetain(cachedCGColor(Color::white));
 #endif
-    _private->includesFlattenedCompositingLayersWhenDrawingToBitmap = YES;
 
 #if PLATFORM(MAC)
     _private->windowVisibilityObserver = adoptNS([[WebWindowVisibilityObserver alloc] initWithView:self]);
@@ -4502,16 +4501,6 @@ static inline IMP getMethod(id o, SEL s)
     }
 
     return YES;
-}
-
-- (void)_setIncludesFlattenedCompositingLayersWhenDrawingToBitmap:(BOOL)flag
-{
-    _private->includesFlattenedCompositingLayersWhenDrawingToBitmap = flag;
-}
-
-- (BOOL)_includesFlattenedCompositingLayersWhenDrawingToBitmap
-{
-    return _private->includesFlattenedCompositingLayersWhenDrawingToBitmap;
 }
 
 - (void)setTracksRepaints:(BOOL)flag

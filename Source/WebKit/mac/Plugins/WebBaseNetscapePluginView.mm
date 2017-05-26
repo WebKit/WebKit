@@ -438,14 +438,6 @@ using namespace WebCore;
     return !window || [window isMiniaturized] || [NSApp isHidden] || ![self isDescendantOf:[[self window] contentView]] || [self isHiddenOrHasHiddenAncestor];
 }
 
-- (BOOL)inFlatteningPaint
-{
-    auto* renderer = _element->renderer();
-    if (!is<RenderEmbeddedObject>(renderer))
-        return NO;
-    return !!(downcast<RenderEmbeddedObject>(*renderer).view().frameView().paintBehavior() & PaintBehaviorFlattenCompositingLayers);
-}
-
 - (BOOL)supportsSnapshotting
 {
     return [_pluginPackage.get() supportsSnapshotting];

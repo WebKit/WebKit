@@ -882,7 +882,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
                 downcast<BitmapImage>(*image).updateFromSettings(settings());
 
             auto interpolation = chooseInterpolationQuality(context, *image, &bgLayer, geometry.tileSize());
-            auto decodingMode = (view().frameView().paintBehavior() & PaintBehaviorFlattenCompositingLayers) ? DecodingMode::Synchronous : DecodingMode::Asynchronous;
+            auto decodingMode = (paintInfo.paintBehavior & (PaintBehaviorFlattenCompositingLayers | PaintBehaviorSnapshotting)) ? DecodingMode::Synchronous : DecodingMode::Asynchronous;
             context.drawTiledImage(*image, geometry.destRect(), toLayoutPoint(geometry.relativePhase()), geometry.tileSize(), geometry.spaceSize(), ImagePaintingOptions(compositeOp, bgLayer.blendMode(), decodingMode, ImageOrientationDescription(), interpolation));
         }
     }

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PlatformCALayerClient_h
-#define PlatformCALayerClient_h
+#pragma once
 
 #include "GraphicsLayer.h"
 
@@ -44,7 +43,7 @@ public:
     virtual void platformCALayerAnimationStarted(const String& /*animationKey*/, CFTimeInterval) { }
     virtual void platformCALayerAnimationEnded(const String& /*animationKey*/) { }
     virtual GraphicsLayer::CompositingCoordinatesOrientation platformCALayerContentsOrientation() const { return GraphicsLayer::CompositingCoordinatesTopDown; }
-    virtual void platformCALayerPaintContents(PlatformCALayer*, GraphicsContext&, const FloatRect& inClip) = 0;
+    virtual void platformCALayerPaintContents(PlatformCALayer*, GraphicsContext&, const FloatRect& inClip, GraphicsLayerPaintFlags) = 0;
     virtual bool platformCALayerShowDebugBorders() const { return false; }
     virtual bool platformCALayerShowRepaintCounter(PlatformCALayer*) const { return false; }
     virtual int platformCALayerIncrementRepaintCount(PlatformCALayer*) { return 0; }
@@ -72,4 +71,3 @@ protected:
 
 }
 
-#endif // PlatformCALayerClient_h

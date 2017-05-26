@@ -133,7 +133,9 @@ public:
 
     // Internal
     void doLayoutTiles();
-    void drawLayer(LegacyTileLayer*, CGContextRef);
+    
+    enum class DrawingFlags { None, Snapshotting };
+    void drawLayer(LegacyTileLayer*, CGContextRef, DrawingFlags);
     void prepareToDraw();
     void finishedCreatingTiles(bool didCreateTiles, bool createMore);
     FloatRect visibleRectInLayer(CALayer *) const;
@@ -172,33 +174,33 @@ private:
     void tileCreationTimerFired();
 
     void drawReplacementImage(LegacyTileLayer*, CGContextRef, CGImageRef);
-    void drawWindowContent(LegacyTileLayer*, CGContextRef, CGRect dirtyRect);
+    void drawWindowContent(LegacyTileLayer*, CGContextRef, CGRect dirtyRect, DrawingFlags);
 
-    WAKWindow* m_window;
+    WAKWindow* m_window { nullptr };
 
     RetainPtr<CGImageRef> m_contentReplacementImage;
 
-    bool m_keepsZoomedOutTiles;
-
-    bool m_hasPendingLayoutTiles;
-    bool m_hasPendingUpdateTilingMode;
     // Ensure there are no async calls on a dead tile cache.
     RetainPtr<LegacyTileCacheTombstone> m_tombstone;
 
     std::optional<FloatRect> m_overrideVisibleRect;
 
-    TilingMode m_tilingMode;
-    TilingDirection m_tilingDirection;
-
-    IntSize m_tileSize;
-    bool m_tilesOpaque;
-
-    bool m_tileBordersVisible;
-    bool m_tilePaintCountersVisible;
-    bool m_acceleratedDrawingEnabled;
-    bool m_isSpeculativeTileCreationEnabled;
-
-    bool m_didCallWillStartScrollingOrZooming;
+    IntSize m_tileSize { 512, 512 };
+    
+    TilingMode m_tilingMode { Normal };
+    TilingDirection m_tilingDirection { TilingDirectionDown };
+    
+    bool m_keepsZoomedOutTiles { false };
+    bool m_hasPendingLayoutTiles { false };
+    bool m_hasPendingUpdateTilingMode { false };
+    bool m_tilesOpaque { true };
+    bool m_tileBordersVisible { false };
+    bool m_tilePaintCountersVisible { false };
+    bool m_acceleratedDrawingEnabled { false };
+    bool m_isSpeculativeTileCreationEnabled { true };
+    bool m_tileControllerShouldUseLowScaleTiles { false };
+    bool m_didCallWillStartScrollingOrZooming { false };
+    
     std::unique_ptr<LegacyTileGrid> m_zoomedOutTileGrid;
     std::unique_ptr<LegacyTileGrid> m_zoomedInTileGrid;
 
@@ -206,16 +208,14 @@ private:
 
     Vector<IntRect> m_savedDisplayRects;
 
-    float m_currentScale;
+    float m_currentScale { 1 };
 
-    float m_pendingScale;
-    float m_pendingZoomedOutScale;
+    float m_pendingScale { 0 };
+    float m_pendingZoomedOutScale { 0 };
 
     mutable Lock m_tileMutex;
     mutable Lock m_savedDisplayRectMutex;
     mutable Lock m_contentReplacementImageMutex;
-
-    bool m_tileControllerShouldUseLowScaleTiles;
 };
 
 } // namespace WebCore

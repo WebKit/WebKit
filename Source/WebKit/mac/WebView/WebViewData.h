@@ -307,8 +307,6 @@ private:
 
     BOOL shouldUpdateWhileOffscreen;
 
-    BOOL includesFlattenedCompositingLayersWhenDrawingToBitmap;
-
     // When this flag is set, next time a WebHTMLView draws, it needs to temporarily disable screen updates
     // so that the NSView drawing is visually synchronized with CALayer updates.
     BOOL needsOneShotDrawingSynchronization;

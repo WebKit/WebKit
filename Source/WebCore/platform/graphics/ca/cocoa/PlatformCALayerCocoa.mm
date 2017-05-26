@@ -1112,7 +1112,7 @@ PlatformCALayer::RepaintRectList PlatformCALayer::collectRectsToPaint(CGContextR
     return dirtyRects;
 }
 
-void PlatformCALayer::drawLayerContents(CGContextRef context, WebCore::PlatformCALayer* platformCALayer, RepaintRectList& dirtyRects)
+void PlatformCALayer::drawLayerContents(CGContextRef context, WebCore::PlatformCALayer* platformCALayer, RepaintRectList& dirtyRects, GraphicsLayerPaintFlags flags)
 {
     WebCore::PlatformCALayerClient* layerContents = platformCALayer->owner();
     if (!layerContents)
@@ -1159,7 +1159,7 @@ void PlatformCALayer::drawLayerContents(CGContextRef context, WebCore::PlatformC
             GraphicsContextStateSaver stateSaver(graphicsContext);
             graphicsContext.clip(rect);
             
-            layerContents->platformCALayerPaintContents(platformCALayer, graphicsContext, rect);
+            layerContents->platformCALayerPaintContents(platformCALayer, graphicsContext, rect, flags);
         }
         
 #if PLATFORM(IOS)

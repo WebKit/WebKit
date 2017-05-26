@@ -187,7 +187,7 @@ private:
     WEBCORE_EXPORT void platformCALayerAnimationStarted(const String& animationKey, CFTimeInterval beginTime) override;
     WEBCORE_EXPORT void platformCALayerAnimationEnded(const String& animationKey) override;
     CompositingCoordinatesOrientation platformCALayerContentsOrientation() const override { return contentsOrientation(); }
-    WEBCORE_EXPORT void platformCALayerPaintContents(PlatformCALayer*, GraphicsContext&, const FloatRect& clip) override;
+    WEBCORE_EXPORT void platformCALayerPaintContents(PlatformCALayer*, GraphicsContext&, const FloatRect& clip, GraphicsLayerPaintFlags) override;
     bool platformCALayerShowDebugBorders() const override { return isShowingDebugBorder(); }
     WEBCORE_EXPORT bool platformCALayerShowRepaintCounter(PlatformCALayer*) const override;
     int platformCALayerIncrementRepaintCount(PlatformCALayer*) override { return incrementRepaintCount(); }

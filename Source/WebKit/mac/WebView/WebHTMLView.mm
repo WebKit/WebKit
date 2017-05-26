@@ -7297,8 +7297,8 @@ static CGImageRef imageFromRect(Frame* frame, CGRect rect)
     WebHTMLView *view = (WebHTMLView *)documentView;
     
     PaintBehavior oldPaintBehavior = frame->view()->paintBehavior();
-    frame->view()->setPaintBehavior(oldPaintBehavior | PaintBehaviorFlattenCompositingLayers);
-    
+    frame->view()->setPaintBehavior(oldPaintBehavior | PaintBehaviorFlattenCompositingLayers | PaintBehaviorSnapshotting);
+
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     
     CGRect bounds = [view bounds];
