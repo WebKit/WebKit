@@ -1,3 +1,9 @@
+2017-05-26  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, land TestExpectations for rdar://problem/30555012.
+
+        * platform/ios-simulator/TestExpectations:
+
 2017-05-25  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r217439. rdar://problem/32089229

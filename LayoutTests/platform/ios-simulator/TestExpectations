@@ -2778,3 +2778,5 @@ editing/caret/emoji.html [ Timeout ]
 media/audio-dealloc-crash.html [ Timeout ]
 compositing/geometry/fixed-in-composited.html [ Failure ]
 streams/readable-byte-stream-controller.html [ Failure ]
+
+[ Debug ] fast/frames/frame-base-url.html [ Skip ]
