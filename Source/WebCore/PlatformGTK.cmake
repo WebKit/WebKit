@@ -1,4 +1,5 @@
 include(platform/Cairo.cmake)
+include(platform/FreeType.cmake)
 include(platform/GStreamer.cmake)
 include(platform/ImageDecoders.cmake)
 include(platform/Linux.cmake)
@@ -23,9 +24,6 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/graphics/egl"
     "${WEBCORE_DIR}/platform/graphics/glx"
     "${WEBCORE_DIR}/platform/graphics/gtk"
-    "${WEBCORE_DIR}/platform/graphics/freetype"
-    "${WEBCORE_DIR}/platform/graphics/harfbuzz/"
-    "${WEBCORE_DIR}/platform/graphics/harfbuzz/ng"
     "${WEBCORE_DIR}/platform/graphics/opengl"
     "${WEBCORE_DIR}/platform/graphics/opentype"
     "${WEBCORE_DIR}/platform/graphics/wayland"
@@ -87,26 +85,14 @@ list(APPEND WebCore_SOURCES
     platform/graphics/GraphicsContext3DPrivate.cpp
 
     platform/graphics/cairo/BackingStoreBackendCairoX11.cpp
-    platform/graphics/cairo/FontCairoHarfbuzzNG.cpp
 
     platform/graphics/egl/GLContextEGL.cpp
     platform/graphics/egl/GLContextEGLWayland.cpp
     platform/graphics/egl/GLContextEGLX11.cpp
 
-    platform/graphics/freetype/FontCacheFreeType.cpp
-    platform/graphics/freetype/FontCustomPlatformDataFreeType.cpp
-    platform/graphics/freetype/FontPlatformDataFreeType.cpp
-    platform/graphics/freetype/GlyphPageTreeNodeFreeType.cpp
-    platform/graphics/freetype/SimpleFontDataFreeType.cpp
-
     platform/graphics/glx/GLContextGLX.cpp
 
     platform/graphics/gstreamer/ImageGStreamerCairo.cpp
-
-    platform/graphics/harfbuzz/ComplexTextControllerHarfBuzz.cpp
-    platform/graphics/harfbuzz/HarfBuzzFace.cpp
-    platform/graphics/harfbuzz/HarfBuzzFaceCairo.cpp
-    platform/graphics/harfbuzz/HarfBuzzShaper.cpp
 
     platform/graphics/opengl/Extensions3DOpenGLCommon.cpp
     platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp
@@ -222,15 +208,12 @@ list(APPEND WebCore_LIBRARIES
     ${ATK_LIBRARIES}
     ${CAIRO_LIBRARIES}
     ${ENCHANT_LIBRARIES}
-    ${FONTCONFIG_LIBRARIES}
-    ${FREETYPE2_LIBRARIES}
     ${GEOCLUE_LIBRARIES}
     ${GLIB_GIO_LIBRARIES}
     ${GLIB_GMODULE_LIBRARIES}
     ${GLIB_GOBJECT_LIBRARIES}
     ${GLIB_LIBRARIES}
     ${GUDEV_LIBRARIES}
-    ${HARFBUZZ_LIBRARIES}
     ${LIBGCRYPT_LIBRARIES}
     ${LIBSECRET_LIBRARIES}
     ${LIBSOUP_LIBRARIES}
@@ -253,12 +236,10 @@ list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
     ${ATK_INCLUDE_DIRS}
     ${CAIRO_INCLUDE_DIRS}
     ${ENCHANT_INCLUDE_DIRS}
-    ${FREETYPE2_INCLUDE_DIRS}
     ${GEOCLUE_INCLUDE_DIRS}
     ${GIO_UNIX_INCLUDE_DIRS}
     ${GLIB_INCLUDE_DIRS}
     ${GUDEV_INCLUDE_DIRS}
-    ${HARFBUZZ_INCLUDE_DIRS}
     ${LIBGCRYPT_INCLUDE_DIRS}
     ${LIBSECRET_INCLUDE_DIRS}
     ${LIBSOUP_INCLUDE_DIRS}

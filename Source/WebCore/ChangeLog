@@ -1,3 +1,16 @@
+2017-05-26  Don Olmstead  <don.olmstead@am.sony.com>
+
+        [CMake] Consolidate CMake code related to FreeType
+        https://bugs.webkit.org/show_bug.cgi?id=172656
+
+        Reviewed by Michael Catanzaro.
+
+        No new tests. No change in behavior.
+
+        * PlatformGTK.cmake:
+        * PlatformWPE.cmake:
+        * platform/FreeType.cmake: Added.
+
 2017-05-26  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Another bindings cleanup pass, this time focusing on attributes

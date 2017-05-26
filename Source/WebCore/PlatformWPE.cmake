@@ -1,4 +1,5 @@
 include(platform/Cairo.cmake)
+include(platform/FreeType.cmake)
 include(platform/GStreamer.cmake)
 include(platform/ImageDecoders.cmake)
 include(platform/Linux.cmake)
@@ -32,10 +33,7 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${THIRDPARTY_DIR}/ANGLE/include/KHR"
     "${WEBCORE_DIR}/platform/graphics/egl"
     "${WEBCORE_DIR}/platform/graphics/glx"
-    "${WEBCORE_DIR}/platform/graphics/freetype"
     "${WEBCORE_DIR}/platform/graphics/gstreamer"
-    "${WEBCORE_DIR}/platform/graphics/harfbuzz/"
-    "${WEBCORE_DIR}/platform/graphics/harfbuzz/ng"
     "${WEBCORE_DIR}/platform/graphics/opengl"
     "${WEBCORE_DIR}/platform/graphics/opentype"
     "${WEBCORE_DIR}/platform/graphics/wpe"
@@ -82,20 +80,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/PlatformDisplay.cpp
     platform/graphics/WOFFFileFormat.cpp
 
-    platform/graphics/cairo/FontCairoHarfbuzzNG.cpp
-
     platform/graphics/egl/GLContextEGL.cpp
-
-    platform/graphics/freetype/FontCacheFreeType.cpp
-    platform/graphics/freetype/FontCustomPlatformDataFreeType.cpp
-    platform/graphics/freetype/FontPlatformDataFreeType.cpp
-    platform/graphics/freetype/GlyphPageTreeNodeFreeType.cpp
-    platform/graphics/freetype/SimpleFontDataFreeType.cpp
-
-    platform/graphics/harfbuzz/ComplexTextControllerHarfBuzz.cpp
-    platform/graphics/harfbuzz/HarfBuzzFace.cpp
-    platform/graphics/harfbuzz/HarfBuzzFaceCairo.cpp
-    platform/graphics/harfbuzz/HarfBuzzShaper.cpp
 
     platform/graphics/opengl/Extensions3DOpenGLCommon.cpp
     platform/graphics/opengl/Extensions3DOpenGLES.cpp
@@ -175,14 +160,11 @@ set(WebCore_USER_AGENT_SCRIPTS_DEPENDENCIES ${WEBCORE_DIR}/platform/wpe/RenderTh
 list(APPEND WebCore_LIBRARIES
     ${CAIRO_LIBRARIES}
     ${EGL_LIBRARIES}
-    ${FONTCONFIG_LIBRARIES}
-    ${FREETYPE2_LIBRARIES}
     ${GLIB_GIO_LIBRARIES}
     ${GLIB_GMODULE_LIBRARIES}
     ${GLIB_GOBJECT_LIBRARIES}
     ${GLIB_LIBRARIES}
     ${GNUTLS_LIBRARIES}
-    ${HARFBUZZ_LIBRARIES}
     ${ICU_LIBRARIES}
     ${LIBGCRYPT_LIBRARIES}
     ${LIBSOUP_LIBRARIES}
@@ -195,11 +177,8 @@ list(APPEND WebCore_LIBRARIES
 list(APPEND WebCore_INCLUDE_DIRECTORIES
     ${CAIRO_INCLUDE_DIRS}
     ${EGL_INCLUDE_DIRS}
-    ${FONTCONFIG_INCLUDE_DIRS}
-    ${FREETYPE2_INCLUDE_DIRS}
     ${GLIB_INCLUDE_DIRS}
     ${GNUTLS_INCLUDE_DIRS}
-    ${HARFBUZZ_INCLUDE_DIRS}
     ${ICU_INCLUDE_DIRS}
     ${LIBGCRYPT_INCLUDE_DIRS}
     ${LIBSOUP_INCLUDE_DIRS}
