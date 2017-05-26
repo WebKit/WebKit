@@ -117,6 +117,7 @@ list(APPEND WebKit2_SOURCES
     Shared/Cocoa/WKNSURLRequest.mm
     Shared/Cocoa/WKObject.mm
     Shared/Cocoa/WebErrorsCocoa.mm
+    Shared/Cocoa/WebKit2InitializeCocoa.mm
 
     Shared/Plugins/Netscape/mac/NetscapePluginModuleMac.mm
     Shared/Plugins/Netscape/mac/PluginInformationMac.mm
