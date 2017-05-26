@@ -1224,7 +1224,7 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
     return checkedReturn(result);
 }
 
-JSValue Interpreter::execute(ModuleProgramExecutable* executable, CallFrame* callFrame, JSModuleEnvironment* scope)
+JSValue Interpreter::executeModuleProgram(ModuleProgramExecutable* executable, CallFrame* callFrame, JSModuleEnvironment* scope)
 {
     VM& vm = *scope->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);

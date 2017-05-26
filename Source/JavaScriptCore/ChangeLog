@@ -1,3 +1,27 @@
+2017-05-26  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Give ModuleProgram the same treatment that we did for ProgramCode in bug#167725
+        https://bugs.webkit.org/show_bug.cgi?id=167805
+
+        Reviewed by Saam Barati.
+
+        Since ModuleProgramExecutable is executed only once, we can skip compiling
+        code unreachable from the current program count. This can skip massive
+        initialization code.
+
+        We already do this for global code in bug#167725. This patch extends it to
+        module code.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::executeModuleProgram):
+        * interpreter/Interpreter.h:
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * runtime/JSModuleRecord.cpp:
+        (JSC::JSModuleRecord::evaluate):
+        * runtime/JSModuleRecord.h:
+        (JSC::JSModuleRecord::moduleProgramExecutable): Deleted.
+
 2017-05-26  Oleksandr Skachkov  <gskachkov@gmail.com>
 
         Prevent async methods named 'function'

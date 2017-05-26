@@ -50,8 +50,6 @@ public:
     const VariableEnvironment& declaredVariables() const { return m_declaredVariables; }
     const VariableEnvironment& lexicalVariables() const { return m_lexicalVariables; }
 
-    ModuleProgramExecutable* moduleProgramExecutable() const { return m_moduleProgramExecutable.get(); }
-
 private:
     JSModuleRecord(VM&, Structure*, const Identifier&, const SourceCode&, const VariableEnvironment&, const VariableEnvironment&);
 

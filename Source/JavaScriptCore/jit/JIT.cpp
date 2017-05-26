@@ -41,6 +41,7 @@
 #include "JSFunction.h"
 #include "LinkBuffer.h"
 #include "MaxFrameExtentForSlowPathCall.h"
+#include "ModuleProgramCodeBlock.h"
 #include "PCToCodeOriginMap.h"
 #include "ProfilerDatabase.h"
 #include "ProgramCodeBlock.h"
@@ -187,7 +188,7 @@ void JIT::privateCompileMainPass()
     m_callLinkInfoIndex = 0;
 
     unsigned startBytecodeOffset = 0;
-    if (m_loopOSREntryBytecodeOffset && m_codeBlock->inherits(*m_codeBlock->vm(), ProgramCodeBlock::info())) {
+    if (m_loopOSREntryBytecodeOffset && (m_codeBlock->inherits(*m_codeBlock->vm(), ProgramCodeBlock::info()) || m_codeBlock->inherits(*m_codeBlock->vm(), ModuleProgramCodeBlock::info()))) {
         // We can only do this optimization because we execute ProgramCodeBlock's exactly once.
         // This optimization would be invalid otherwise. When the LLInt determines it wants to
         // do OSR entry into the baseline JIT in a loop, it will pass in the bytecode offset it

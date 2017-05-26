@@ -1,3 +1,12 @@
+2017-05-26  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Give ModuleProgram the same treatment that we did for ProgramCode in bug#167725
+        https://bugs.webkit.org/show_bug.cgi?id=167805
+
+        Reviewed by Saam Barati.
+
+        * modules/module-jit-reachability.js: Added.
+
 2017-05-26  Oleksandr Skachkov  <gskachkov@gmail.com>
 
         Prevent async methods named 'function'
