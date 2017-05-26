@@ -1,5 +1,24 @@
 2017-05-26  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Show patches applied in each A/B testing build requests
+        https://bugs.webkit.org/show_bug.cgi?id=172636
+
+        Reviewed by Antti Koivisto.
+
+        List patches applied along side revisions inn the list of revisions for an A/B tesing build requests if there
+        are any patches applied.
+
+        * public/v3/components/test-group-revision-table.js:
+        (TestGroupRevisionTable.prototype._renderTable): Indicate which request is to build a patch and which one is
+        to run tests.
+        (TestGroupRevisionTable.prototype._buildCommitCell): Include the patch file's information when there is one.
+        We need to use the requested commit set instead of the one reported by testers or builders since they don't
+        include patch or root information.
+        (TestGroupRevisionTable.prototype._buildCustomRootsCell):
+        (TestGroupRevisionTable.prototype._buildFileInfo): Extracted from _buildCustomRootsCell.
+
+2017-05-26  Ryosuke Niwa  <rniwa@webkit.org>
+
         The queue page is broke when there is a custom analysis task
         https://bugs.webkit.org/show_bug.cgi?id=172631
 

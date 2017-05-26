@@ -34,18 +34,23 @@ class TestGroupRevisionTable extends ComponentBase {
 
         const requestedRepositorySet = new Set;
         const additionalRepositorySet = new Set;
-        let hasCustomRoots = false;
         for (const commitSet of commitSets) {
-            if (commitSet.customRoots().length)
-                hasCustomRoots = true;
             for (const repository of commitSet.repositories())
                 requestedRepositorySet.add(repository);
         }
 
         const rowEntries = [];
+        let hasCustomRoots = false;
+        let firstRequest = null;
         commitSets.forEach((commitSet, commitSetIndex) => {
             const setLabel = testGroup.labelForCommitSet(commitSet);
             const buildRequests = testGroup.requestsForCommitSet(commitSet);
+
+            if (commitSet.customRoots().length)
+                hasCustomRoots = true;
+            if (!firstRequest)
+                firstRequest = buildRequests[0];
+
             buildRequests.forEach((request, i) => {
                 const resultCommitSet = analysisResults ? analysisResults.commitSetForRequest(request) : null;
                 if (resultCommitSet) {
@@ -54,11 +59,17 @@ class TestGroupRevisionTable extends ComponentBase {
                             additionalRepositorySet.add(repository);
                     }
                 }
+                let label = (1 + request.order()).toString();
+                if (request.order() < 0)
+                    label = `Build ${request.order() - firstRequest.order() + 1}`;
+                else if (firstRequest.isBuild())
+                    label = `Test ${label}`;
                 rowEntries.push({
                     groupHeader: !i ? setLabel : null,
                     groupRowCount: buildRequests.length,
-                    label: (1 + +request.order()).toString(),
+                    label,
                     commitSet: resultCommitSet || commitSet,
+                    requestedCommitSet: commitSet,
                     customRoots: commitSet.customRoots(), // FIXME: resultCommitSet should also report roots that got installed.
                     rowCountByRepository: new Map,
                     repositoriesToSkip: new Set,
@@ -90,7 +101,7 @@ class TestGroupRevisionTable extends ComponentBase {
                     entry.groupHeader ? element('td', {rowspan: entry.groupRowCount}, entry.groupHeader) : [],
                     requestedRepositoryList.map((repository) => this._buildCommitCell(entry, repository)),
                     hasCustomRoots ? this._buildCustomRootsCell(entry) : [],
-                    element('td', 1 + +request.order()),
+                    element('td', entry.label),
                     element('td', request.statusUrl() ? link(request.statusLabel(), request.statusUrl()) : request.statusLabel()),
                     additionalRepositoryList.map((repository) => this._buildCommitCell(entry, repository)),
                 ]);
@@ -104,6 +115,7 @@ class TestGroupRevisionTable extends ComponentBase {
 
         if (entry.repositoriesToSkip.has(repository))
             return [];
+
         const commit = entry.commitSet.commitForRepository(repository);
         let content = '';
         if (commit) {
@@ -111,6 +123,11 @@ class TestGroupRevisionTable extends ComponentBase {
             if (commit.url())
                 content = link(content, commit.url());
         }
+
+        const patch = entry.requestedCommitSet.patchForRepository(repository);
+        if (patch)
+            content = [content, ' with ', this._buildFileInfo(patch)];
+
         return element('td', {rowspan: entry.rowCountByRepository.get(repository)}, content);
     }
 
@@ -119,18 +136,25 @@ class TestGroupRevisionTable extends ComponentBase {
         const rowspan = entry.customRootsRowCount;
         if (!rowspan)
             return [];
-        const element = ComponentBase.createElement;
-        const link = ComponentBase.createLink;
 
+        const element = ComponentBase.createElement;
         if (!entry.customRoots.length)
             return element('td', {class: 'roots', rowspan});
 
         return element('td', {class: 'roots', rowspan},
             element('ul', entry.customRoots.map((customRoot) => {
-                if (customRoot.deletedAt())
-                    return [customRoot.label(), ' ', element('span', {class: 'purged'}, '(Purged)')];
-                return link(customRoot.label(), customRoot.filename(), customRoot.url());
+                return this._buildFileInfo(customRoot);
             }).map((content) => element('li', content))));
+    }
+
+    _buildFileInfo(file)
+    {
+        const element = ComponentBase.createElement;
+        const link = ComponentBase.createLink;
+
+        if (file.deletedAt())
+            return [file.label(), ' ', element('span', {class: 'purged'}, '(Purged)')];
+        return link(file.label(), file.url());
     }
 
     _mergeCellsWithSameCommitsAcrossRows(rowEntries)
@@ -141,11 +165,13 @@ class TestGroupRevisionTable extends ComponentBase {
                 if (entry.repositoriesToSkip.has(repository))
                     continue;
                 const commit = entry.commitSet.commitForRepository(repository);
+                const patch = entry.commitSet.patchForRepository(repository);
                 let rowCount = 1;
                 for (let otherRowIndex = rowIndex + 1; otherRowIndex < rowEntries.length; otherRowIndex++) {
                     const otherEntry = rowEntries[otherRowIndex];
                     const otherCommit = otherEntry.commitSet.commitForRepository(repository);
-                    if (commit != otherCommit)
+                    const otherPatch = otherEntry.commitSet.patchForRepository(repository);
+                    if (commit != otherCommit || patch != otherPatch)
                         break;
                     otherEntry.repositoriesToSkip.add(repository);
                     rowCount++;
