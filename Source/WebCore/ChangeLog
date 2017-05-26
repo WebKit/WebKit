@@ -1,3 +1,12 @@
+2017-05-25  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Unreviewed, build fix in GTK and WPE ports
+        https://bugs.webkit.org/show_bug.cgi?id=172580
+
+        Missing RenderSVGResourceMode declaration in SVGInlineTextBox.h.
+
+        * rendering/svg/SVGInlineTextBox.h:
+
 2017-05-25  Simon Fraser  <simon.fraser@apple.com>
 
         Use a typedef for SVG resource mode flags union

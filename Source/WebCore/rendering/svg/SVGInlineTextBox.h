@@ -24,6 +24,7 @@
 #include "InlineTextBox.h"
 #include "SVGTextLayoutEngine.h"
 #include "RenderSVGInlineText.h"
+#include "RenderSVGResource.h"
 
 namespace WebCore {
 
