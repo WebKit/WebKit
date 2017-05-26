@@ -2882,3 +2882,5 @@ webkit.org/b/171760 imported/w3c/i18n/bidi/block-plaintext-005.html [ ImageOnlyF
 webkit.org/b/172019 imported/w3c/web-platform-tests/cssom-view/elementFromPoint.html [ Failure ]
 
 webkit.org/b/172547 http/tests/xmlhttprequest/xmlhttprequest-50ms-download-dispatch.html [ Failure ]
+
+webkit.org/b/172610 media/ios/autoplay-only-in-main-document.html [ Skip ]

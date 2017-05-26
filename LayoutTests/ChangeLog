@@ -1,3 +1,12 @@
+2017-05-25  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Skip two LayoutTests that are failing due missing results.
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+        * platform/ios/TestExpectations:
+
 2017-05-26  Claudio Saavedra  <csaavedra@igalia.com>
 
         [WPE] Mark animations/animation-delay-changed.htm as flaky
