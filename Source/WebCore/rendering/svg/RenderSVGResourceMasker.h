@@ -44,7 +44,7 @@ public:
 
     void removeAllClientsFromCache(bool markForInvalidation = true) override;
     void removeClientFromCache(RenderElement&, bool markForInvalidation = true) override;
-    bool applyResource(RenderElement&, const RenderStyle&, GraphicsContext*&, unsigned short resourceMode) override;
+    bool applyResource(RenderElement&, const RenderStyle&, GraphicsContext*&, OptionSet<RenderSVGResourceMode>) override;
     FloatRect resourceBoundingBox(const RenderObject&) override;
 
     SVGUnitTypes::SVGUnitType maskUnits() const { return maskElement().maskUnits(); }

@@ -36,16 +36,16 @@ RenderSVGResourceSolidColor::~RenderSVGResourceSolidColor()
 {
 }
 
-bool RenderSVGResourceSolidColor::applyResource(RenderElement& renderer, const RenderStyle& style, GraphicsContext*& context, unsigned short resourceMode)
+bool RenderSVGResourceSolidColor::applyResource(RenderElement& renderer, const RenderStyle& style, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode)
 {
     ASSERT(context);
-    ASSERT(resourceMode != ApplyToDefaultMode);
+    ASSERT(resourceMode != RenderSVGResourceMode::ApplyToDefault);
 
     const SVGRenderStyle& svgStyle = style.svgStyle();
 
     bool isRenderingMask = renderer.view().frameView().paintBehavior() & PaintBehaviorRenderingSVGMask;
 
-    if (resourceMode & ApplyToFillMode) {
+    if (resourceMode.contains(RenderSVGResourceMode::ApplyToFill)) {
         if (!isRenderingMask)
             context->setAlpha(svgStyle.fillOpacity());
         else
@@ -54,9 +54,9 @@ bool RenderSVGResourceSolidColor::applyResource(RenderElement& renderer, const R
         if (!isRenderingMask)
             context->setFillRule(svgStyle.fillRule());
 
-        if (resourceMode & ApplyToTextMode)
+        if (resourceMode.contains(RenderSVGResourceMode::ApplyToText))
             context->setTextDrawingMode(TextModeFill);
-    } else if (resourceMode & ApplyToStrokeMode) {
+    } else if (resourceMode.contains(RenderSVGResourceMode::ApplyToStroke)) {
         // When rendering the mask for a RenderSVGResourceClipper, the stroke code path is never hit.
         ASSERT(!isRenderingMask);
         context->setAlpha(svgStyle.strokeOpacity());
@@ -64,25 +64,25 @@ bool RenderSVGResourceSolidColor::applyResource(RenderElement& renderer, const R
 
         SVGRenderSupport::applyStrokeStyleToContext(context, style, renderer);
 
-        if (resourceMode & ApplyToTextMode)
+        if (resourceMode.contains(RenderSVGResourceMode::ApplyToText))
             context->setTextDrawingMode(TextModeStroke);
     }
 
     return true;
 }
 
-void RenderSVGResourceSolidColor::postApplyResource(RenderElement&, GraphicsContext*& context, unsigned short resourceMode, const Path* path, const RenderSVGShape* shape)
+void RenderSVGResourceSolidColor::postApplyResource(RenderElement&, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode, const Path* path, const RenderSVGShape* shape)
 {
     ASSERT(context);
-    ASSERT(resourceMode != ApplyToDefaultMode);
+    ASSERT(resourceMode != RenderSVGResourceMode::ApplyToDefault);
 
-    if (resourceMode & ApplyToFillMode) {
+    if (resourceMode.contains(RenderSVGResourceMode::ApplyToFill)) {
         if (path)
             context->fillPath(*path);
         else if (shape)
             shape->fillShape(*context);
     }
-    if (resourceMode & ApplyToStrokeMode) {
+    if (resourceMode.contains(RenderSVGResourceMode::ApplyToStroke)) {
         if (path)
             context->strokePath(*path);
         else if (shape)

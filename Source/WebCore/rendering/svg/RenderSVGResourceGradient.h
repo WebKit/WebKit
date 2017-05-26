@@ -46,8 +46,8 @@ public:
     void removeAllClientsFromCache(bool markForInvalidation = true) final;
     void removeClientFromCache(RenderElement&, bool markForInvalidation = true) final;
 
-    bool applyResource(RenderElement&, const RenderStyle&, GraphicsContext*&, unsigned short resourceMode) final;
-    void postApplyResource(RenderElement&, GraphicsContext*&, unsigned short resourceMode, const Path*, const RenderSVGShape*) final;
+    bool applyResource(RenderElement&, const RenderStyle&, GraphicsContext*&, OptionSet<RenderSVGResourceMode>) final;
+    void postApplyResource(RenderElement&, GraphicsContext*&, OptionSet<RenderSVGResourceMode>, const Path*, const RenderSVGShape*) final;
     FloatRect resourceBoundingBox(const RenderObject&) final { return FloatRect(); }
 
 protected:

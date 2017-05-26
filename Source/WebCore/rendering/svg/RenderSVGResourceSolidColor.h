@@ -33,8 +33,8 @@ public:
     void removeAllClientsFromCache(bool = true) override { }
     void removeClientFromCache(RenderElement&, bool = true) override { }
 
-    bool applyResource(RenderElement&, const RenderStyle&, GraphicsContext*&, unsigned short resourceMode) override;
-    void postApplyResource(RenderElement&, GraphicsContext*&, unsigned short resourceMode, const Path*, const RenderSVGShape*) override;
+    bool applyResource(RenderElement&, const RenderStyle&, GraphicsContext*&, OptionSet<RenderSVGResourceMode>) override;
+    void postApplyResource(RenderElement&, GraphicsContext*&, OptionSet<RenderSVGResourceMode>, const Path*, const RenderSVGShape*) override;
     FloatRect resourceBoundingBox(const RenderObject&) override { return FloatRect(); }
 
     RenderSVGResourceType resourceType() const override { return SolidColorResourceType; }

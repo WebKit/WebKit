@@ -1,3 +1,60 @@
+2017-05-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Use a typedef for SVG resource mode flags union
+        https://bugs.webkit.org/show_bug.cgi?id=172580
+
+        Reviewed by Sam Weinig.
+
+        Use an OptionSet<> for RenderSVGResourceModes flags, and use it in render
+        SVG resource classes.
+
+        * rendering/svg/RenderSVGResource.cpp:
+        (WebCore::requestPaintingResource):
+        (WebCore::RenderSVGResource::fillPaintingResource):
+        (WebCore::RenderSVGResource::strokePaintingResource):
+        * rendering/svg/RenderSVGResource.h:
+        (WebCore::RenderSVGResource::postApplyResource):
+        * rendering/svg/RenderSVGResourceClipper.cpp:
+        (WebCore::RenderSVGResourceClipper::applyResource):
+        * rendering/svg/RenderSVGResourceClipper.h:
+        * rendering/svg/RenderSVGResourceFilter.cpp:
+        (WebCore::RenderSVGResourceFilter::applyResource):
+        (WebCore::RenderSVGResourceFilter::postApplyResource):
+        * rendering/svg/RenderSVGResourceFilter.h:
+        * rendering/svg/RenderSVGResourceGradient.cpp:
+        (WebCore::RenderSVGResourceGradient::applyResource):
+        * rendering/svg/RenderSVGResourceGradient.h:
+        * rendering/svg/RenderSVGResourceMarker.h:
+        * rendering/svg/RenderSVGResourceMasker.cpp:
+        (WebCore::RenderSVGResourceMasker::applyResource):
+        * rendering/svg/RenderSVGResourceMasker.h:
+        * rendering/svg/RenderSVGResourcePattern.cpp:
+        (WebCore::RenderSVGResourcePattern::buildPattern):
+        (WebCore::RenderSVGResourcePattern::applyResource):
+        (WebCore::RenderSVGResourcePattern::postApplyResource):
+        * rendering/svg/RenderSVGResourcePattern.h:
+        * rendering/svg/RenderSVGResourceSolidColor.cpp:
+        (WebCore::RenderSVGResourceSolidColor::applyResource):
+        (WebCore::RenderSVGResourceSolidColor::postApplyResource):
+        * rendering/svg/RenderSVGResourceSolidColor.h:
+        * rendering/svg/RenderSVGShape.cpp:
+        (WebCore::RenderSVGShape::fillShape):
+        (WebCore::RenderSVGShape::strokeShape):
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::SVGInlineTextBox):
+        (WebCore::SVGInlineTextBox::paintSelectionBackground):
+        (WebCore::SVGInlineTextBox::paint):
+        (WebCore::SVGInlineTextBox::acquirePaintingResource):
+        (WebCore::SVGInlineTextBox::releasePaintingResource):
+        (WebCore::SVGInlineTextBox::paintDecoration):
+        (WebCore::SVGInlineTextBox::paintDecorationWithStyle):
+        * rendering/svg/SVGInlineTextBox.h:
+        * rendering/svg/SVGRenderingContext.cpp:
+        (WebCore::SVGRenderingContext::~SVGRenderingContext):
+        (WebCore::SVGRenderingContext::prepareToRenderSVGContent):
+        (WebCore::SVGRenderingContext::renderSubtreeToImageBuffer): Avoid needless IntPoint -> LayoutPoint
+        conversion.
+
 2017-05-25  Chris Dumez  <cdumez@apple.com>
 
         Regression(r215686): Videos sometimes do not load in iBooks

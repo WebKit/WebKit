@@ -50,10 +50,8 @@ COMPILE_ASSERT(sizeof(SVGInlineTextBox) == sizeof(ExpectedSVGInlineTextBoxSize),
 
 SVGInlineTextBox::SVGInlineTextBox(RenderSVGInlineText& renderer)
     : InlineTextBox(renderer)
-    , m_logicalHeight(0)
-    , m_paintingResourceMode(ApplyToDefaultMode)
+    , m_paintingResourceMode(OptionSet<RenderSVGResourceMode>(RenderSVGResourceMode::ApplyToDefault).toRaw())
     , m_startsNewTextChunk(false)
-    , m_paintingResource(nullptr)
 {
 }
 
@@ -226,7 +224,7 @@ void SVGInlineTextBox::paintSelectionBackground(PaintInfo& paintInfo)
         paintInfo.context().setFillColor(backgroundColor);
         paintInfo.context().fillRect(selectionRectForTextFragment(fragment, fragmentStartPosition, fragmentEndPosition, style), backgroundColor);
 
-        m_paintingResourceMode = ApplyToDefaultMode;
+        setPaintingResourceMode(RenderSVGResourceMode::ApplyToDefault);
     }
 
     ASSERT(!m_paintingResource);
@@ -305,14 +303,14 @@ void SVGInlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
             case PaintType::Fill:
                 if (!hasFill)
                     continue;
-                m_paintingResourceMode = ApplyToFillMode | ApplyToTextMode;
+                setPaintingResourceMode({ RenderSVGResourceMode::ApplyToFill, RenderSVGResourceMode::ApplyToText });
                 ASSERT(selectionStyle);
                 paintText(paintInfo.context(), style, *selectionStyle, fragment, hasSelection, paintSelectedTextOnly);
                 break;
             case PaintType::Stroke:
                 if (!hasVisibleStroke)
                     continue;
-                m_paintingResourceMode = ApplyToStrokeMode | ApplyToTextMode;
+                setPaintingResourceMode({ RenderSVGResourceMode::ApplyToStroke, RenderSVGResourceMode::ApplyToText});
                 ASSERT(selectionStyle);
                 paintText(paintInfo.context(), style, *selectionStyle, fragment, hasSelection, paintSelectedTextOnly);
                 break;
@@ -325,7 +323,7 @@ void SVGInlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
         if (decorations & TextDecorationLineThrough)
             paintDecoration(paintInfo.context(), TextDecorationLineThrough, fragment);
 
-        m_paintingResourceMode = ApplyToDefaultMode;
+        setPaintingResourceMode(RenderSVGResourceMode::ApplyToDefault);
     }
 
     // Finally, paint the outline if any.
@@ -338,12 +336,12 @@ void SVGInlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
 bool SVGInlineTextBox::acquirePaintingResource(GraphicsContext*& context, float scalingFactor, RenderBoxModelObject& renderer, const RenderStyle& style)
 {
     ASSERT(scalingFactor);
-    ASSERT(m_paintingResourceMode != ApplyToDefaultMode);
+    ASSERT(paintingResourceMode() != RenderSVGResourceMode::ApplyToDefault);
 
     Color fallbackColor;
-    if (m_paintingResourceMode & ApplyToFillMode)
+    if (paintingResourceMode().contains(RenderSVGResourceMode::ApplyToFill))
         m_paintingResource = RenderSVGResource::fillPaintingResource(renderer, style, fallbackColor);
-    else if (m_paintingResourceMode & ApplyToStrokeMode)
+    else if (paintingResourceMode().contains(RenderSVGResourceMode::ApplyToStroke))
         m_paintingResource = RenderSVGResource::strokePaintingResource(renderer, style, fallbackColor);
     else {
         // We're either called for stroking or filling.
@@ -353,17 +351,17 @@ bool SVGInlineTextBox::acquirePaintingResource(GraphicsContext*& context, float 
     if (!m_paintingResource)
         return false;
 
-    if (!m_paintingResource->applyResource(renderer, style, context, m_paintingResourceMode)) {
+    if (!m_paintingResource->applyResource(renderer, style, context, paintingResourceMode())) {
         if (fallbackColor.isValid()) {
             RenderSVGResourceSolidColor* fallbackResource = RenderSVGResource::sharedSolidPaintingResource();
             fallbackResource->setColor(fallbackColor);
 
             m_paintingResource = fallbackResource;
-            m_paintingResource->applyResource(renderer, style, context, m_paintingResourceMode);
+            m_paintingResource->applyResource(renderer, style, context, paintingResourceMode());
         }
     }
 
-    if (scalingFactor != 1 && m_paintingResourceMode & ApplyToStrokeMode)
+    if (scalingFactor != 1 && paintingResourceMode().contains(RenderSVGResourceMode::ApplyToStroke))
         context->setStrokeThickness(context->strokeThickness() * scalingFactor);
 
     return true;
@@ -373,7 +371,7 @@ void SVGInlineTextBox::releasePaintingResource(GraphicsContext*& context, const 
 {
     ASSERT(m_paintingResource);
 
-    m_paintingResource->postApplyResource(parent()->renderer(), context, m_paintingResourceMode, path, /*RenderSVGShape*/ nullptr);
+    m_paintingResource->postApplyResource(parent()->renderer(), context, paintingResourceMode(), path, /*RenderSVGShape*/ nullptr);
     m_paintingResource = nullptr;
 }
 
@@ -492,12 +490,12 @@ void SVGInlineTextBox::paintDecoration(GraphicsContext& context, TextDecoration 
     bool hasVisibleDecorationStroke = decorationStyle.hasVisibleStroke();
 
     if (hasDecorationFill) {
-        m_paintingResourceMode = ApplyToFillMode;
+        setPaintingResourceMode(RenderSVGResourceMode::ApplyToFill);
         paintDecorationWithStyle(context, decoration, fragment, decorationRenderer);
     }
 
     if (hasVisibleDecorationStroke) {
-        m_paintingResourceMode = ApplyToStrokeMode;
+        setPaintingResourceMode(RenderSVGResourceMode::ApplyToStroke);
         paintDecorationWithStyle(context, decoration, fragment, decorationRenderer);
     }
 }
@@ -505,7 +503,7 @@ void SVGInlineTextBox::paintDecoration(GraphicsContext& context, TextDecoration 
 void SVGInlineTextBox::paintDecorationWithStyle(GraphicsContext& context, TextDecoration decoration, const SVGTextFragment& fragment, RenderBoxModelObject& decorationRenderer)
 {
     ASSERT(!m_paintingResource);
-    ASSERT(m_paintingResourceMode != ApplyToDefaultMode);
+    ASSERT(paintingResourceMode() != RenderSVGResourceMode::ApplyToDefault);
 
     auto& decorationStyle = decorationRenderer.style();
 

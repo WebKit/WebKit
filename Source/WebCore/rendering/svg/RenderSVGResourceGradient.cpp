@@ -95,10 +95,10 @@ static inline AffineTransform clipToTextMask(GraphicsContext& context, std::uniq
 }
 #endif
 
-bool RenderSVGResourceGradient::applyResource(RenderElement& renderer, const RenderStyle& style, GraphicsContext*& context, unsigned short resourceMode)
+bool RenderSVGResourceGradient::applyResource(RenderElement& renderer, const RenderStyle& style, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode)
 {
     ASSERT(context);
-    ASSERT(resourceMode != ApplyToDefaultMode);
+    ASSERT(resourceMode != RenderSVGResourceMode::ApplyToDefault);
 
     // Be sure to synchronize all SVG properties on the gradientElement _before_ processing any further.
     // Otherwhise the call to collectGradientAttributes() in createTileImage(), may cause the SVG DOM property
@@ -122,7 +122,7 @@ bool RenderSVGResourceGradient::applyResource(RenderElement& renderer, const Ren
     if (!gradientData)
         gradientData = std::make_unique<GradientData>();
 
-    bool isPaintingText = resourceMode & ApplyToTextMode;
+    bool isPaintingText = resourceMode.contains(RenderSVGResourceMode::ApplyToText);
 
     // Create gradient object
     if (!gradientData->gradient) {
@@ -168,16 +168,16 @@ bool RenderSVGResourceGradient::applyResource(RenderElement& renderer, const Ren
         }
 #endif
 
-        context->setTextDrawingMode(resourceMode & ApplyToFillMode ? TextModeFill : TextModeStroke);
+        context->setTextDrawingMode(resourceMode.contains(RenderSVGResourceMode::ApplyToFill) ? TextModeFill : TextModeStroke);
     }
 
     const SVGRenderStyle& svgStyle = style.svgStyle();
 
-    if (resourceMode & ApplyToFillMode) {
+    if (resourceMode.contains(RenderSVGResourceMode::ApplyToFill)) {
         context->setAlpha(svgStyle.fillOpacity());
         context->setFillGradient(*gradientData->gradient);
         context->setFillRule(svgStyle.fillRule());
-    } else if (resourceMode & ApplyToStrokeMode) {
+    } else if (resourceMode.contains(RenderSVGResourceMode::ApplyToStroke)) {
         if (svgStyle.vectorEffect() == VE_NON_SCALING_STROKE)
             gradientData->gradient->setGradientSpaceTransform(transformOnNonScalingStroke(&renderer, gradientData->userspaceTransform));
         context->setAlpha(svgStyle.strokeOpacity());
@@ -188,12 +188,12 @@ bool RenderSVGResourceGradient::applyResource(RenderElement& renderer, const Ren
     return true;
 }
 
-void RenderSVGResourceGradient::postApplyResource(RenderElement& renderer, GraphicsContext*& context, unsigned short resourceMode, const Path* path, const RenderSVGShape* shape)
+void RenderSVGResourceGradient::postApplyResource(RenderElement& renderer, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode, const Path* path, const RenderSVGShape* shape)
 {
     ASSERT(context);
-    ASSERT(resourceMode != ApplyToDefaultMode);
+    ASSERT(resourceMode != RenderSVGResourceMode::ApplyToDefault);
 
-    if (resourceMode & ApplyToTextMode) {
+    if (resourceMode.contains(RenderSVGResourceMode::ApplyToText)) {
 #if USE(CG)
         // CG requires special handling for gradient on text
         GradientData* gradientData;
@@ -216,13 +216,13 @@ void RenderSVGResourceGradient::postApplyResource(RenderElement& renderer, Graph
         UNUSED_PARAM(renderer);
 #endif
     } else {
-        if (resourceMode & ApplyToFillMode) {
+        if (resourceMode.contains(RenderSVGResourceMode::ApplyToFill)) {
             if (path)
                 context->fillPath(*path);
             else if (shape)
                 shape->fillShape(*context);
         }
-        if (resourceMode & ApplyToStrokeMode) {
+        if (resourceMode.contains(RenderSVGResourceMode::ApplyToStroke)) {
             if (path)
                 context->strokePath(*path);
             else if (shape)

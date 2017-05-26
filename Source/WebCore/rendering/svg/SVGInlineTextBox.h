@@ -64,7 +64,10 @@ public:
 
     int offsetForPositionInFragment(const SVGTextFragment&, float position, bool includePartialGlyphs) const;
     FloatRect selectionRectForTextFragment(const SVGTextFragment&, unsigned fragmentStartPosition, unsigned fragmentEndPosition, const RenderStyle&) const;
-
+    
+    OptionSet<RenderSVGResourceMode> paintingResourceMode() const { return OptionSet<RenderSVGResourceMode>::fromRaw(m_paintingResourceMode); }
+    void setPaintingResourceMode(OptionSet<RenderSVGResourceMode> mode) { m_paintingResourceMode = mode.toRaw(); }
+    
 private:
     bool isSVGInlineTextBox() const override { return true; }
 
@@ -84,10 +87,10 @@ private:
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom, HitTestAction) override;
 
 private:
-    float m_logicalHeight;
-    unsigned m_paintingResourceMode : 4;
+    float m_logicalHeight { 0 };
+    unsigned m_paintingResourceMode : 4; // RenderSVGResourceMode
     unsigned m_startsNewTextChunk : 1;
-    RenderSVGResource* m_paintingResource;
+    RenderSVGResource* m_paintingResource { nullptr };
     Vector<SVGTextFragment> m_textFragments;
 };
 

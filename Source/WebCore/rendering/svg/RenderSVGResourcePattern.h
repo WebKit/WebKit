@@ -46,8 +46,8 @@ public:
     void removeAllClientsFromCache(bool markForInvalidation = true) override;
     void removeClientFromCache(RenderElement&, bool markForInvalidation = true) override;
 
-    bool applyResource(RenderElement&, const RenderStyle&, GraphicsContext*&, unsigned short resourceMode) override;
-    void postApplyResource(RenderElement&, GraphicsContext*&, unsigned short resourceMode, const Path*, const RenderSVGShape*) override;
+    bool applyResource(RenderElement&, const RenderStyle&, GraphicsContext*&, OptionSet<RenderSVGResourceMode>) override;
+    void postApplyResource(RenderElement&, GraphicsContext*&, OptionSet<RenderSVGResourceMode>, const Path*, const RenderSVGShape*) override;
     FloatRect resourceBoundingBox(const RenderObject&) override { return FloatRect(); }
 
     RenderSVGResourceType resourceType() const override { return PatternResourceType; }
@@ -62,7 +62,7 @@ private:
 
     std::unique_ptr<ImageBuffer> createTileImage(const PatternAttributes&, const FloatRect& tileBoundaries, const FloatRect& absoluteTileBoundaries, const AffineTransform& tileImageTransform, FloatRect& clampedAbsoluteTileBoundaries, RenderingMode) const;
 
-    PatternData* buildPattern(RenderElement&, unsigned short resourceMode, GraphicsContext&);
+    PatternData* buildPattern(RenderElement&, OptionSet<RenderSVGResourceMode>, GraphicsContext&);
 
     bool m_shouldCollectPatternAttributes : 1;
     PatternAttributes m_attributes;

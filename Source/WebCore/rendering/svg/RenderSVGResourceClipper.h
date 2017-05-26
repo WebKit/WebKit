@@ -42,7 +42,7 @@ public:
     void removeAllClientsFromCache(bool markForInvalidation = true) override;
     void removeClientFromCache(RenderElement&, bool markForInvalidation = true) override;
 
-    bool applyResource(RenderElement&, const RenderStyle&, GraphicsContext*&, unsigned short resourceMode) override;
+    bool applyResource(RenderElement&, const RenderStyle&, GraphicsContext*&, OptionSet<RenderSVGResourceMode>) override;
     // clipPath can be clipped too, but don't have a boundingBox or repaintRect. So we can't call
     // applyResource directly and use the rects from the object, since they are empty for RenderSVGResources
     // FIXME: We made applyClippingToContext public because we cannot call applyResource on HTML elements (it asserts on RenderObject::objectBoundingBox)

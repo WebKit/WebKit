@@ -96,10 +96,10 @@ std::unique_ptr<SVGFilterBuilder> RenderSVGResourceFilter::buildPrimitives(SVGFi
     return builder;
 }
 
-bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const RenderStyle&, GraphicsContext*& context, unsigned short resourceMode)
+bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const RenderStyle&, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode)
 {
     ASSERT(context);
-    ASSERT_UNUSED(resourceMode, resourceMode == ApplyToDefaultMode);
+    ASSERT_UNUSED(resourceMode, resourceMode == RenderSVGResourceMode::ApplyToDefault);
 
     if (m_filter.contains(&renderer)) {
         FilterData* filterData = m_filter.get(&renderer);
@@ -210,10 +210,10 @@ bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const Rende
     return true;
 }
 
-void RenderSVGResourceFilter::postApplyResource(RenderElement& renderer, GraphicsContext*& context, unsigned short resourceMode, const Path*, const RenderSVGShape*)
+void RenderSVGResourceFilter::postApplyResource(RenderElement& renderer, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode, const Path*, const RenderSVGShape*)
 {
     ASSERT(context);
-    ASSERT_UNUSED(resourceMode, resourceMode == ApplyToDefaultMode);
+    ASSERT_UNUSED(resourceMode, resourceMode == RenderSVGResourceMode::ApplyToDefault);
 
     FilterData* filterData = m_filter.get(&renderer);
     if (!filterData)
