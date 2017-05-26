@@ -1,3 +1,12 @@
+2017-05-26  Don Olmstead  <don.olmstead@am.sony.com>
+
+        [CMake] Wrap CODE_GENERATOR_PREPROCESSOR_EXECUTABLE on Windows hosts
+        https://bugs.webkit.org/show_bug.cgi?id=172553
+
+        Reviewed by Brent Fulgham.
+
+        * Source/cmake/OptionsCommon.cmake:
+
 2017-05-26  Adrian Perez de Castro  <aperez@igalia.com>
 
         [CMake] Pass -fdiagnostics-color=always to GCC when building with Ninja

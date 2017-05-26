@@ -1,3 +1,17 @@
+2017-05-26  Don Olmstead  <don.olmstead@am.sony.com>
+
+        [CMake] Wrap CODE_GENERATOR_PREPROCESSOR_EXECUTABLE on Windows hosts
+        https://bugs.webkit.org/show_bug.cgi?id=172553
+
+        Reviewed by Brent Fulgham.
+
+        No new tests. No change in behavior.
+
+        * bindings/scripts/preprocessor.pm:
+        (applyPreprocessor): Use shellwords() instead of splitting
+        preprocessor command by space. Combine it back in open3() call on
+        Windows to work around Cygwin-specific issue.
+
 2017-05-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, fix the build using the latest SDK
