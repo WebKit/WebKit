@@ -180,6 +180,7 @@ volatile bool done;
 NavigationController* gNavigationController = nullptr;
 RefPtr<TestRunner> gTestRunner;
 
+std::optional<TestOptions> mainFrameTestOptions;
 WebFrame *mainFrame = nil;
 // This is the topmost frame that is loading, during a given load, or nil when no load is 
 // in progress.  Usually this is the same as the main frame, but not always.  In the case
@@ -290,7 +291,7 @@ static bool shouldIgnoreWebCoreNodeLeaks(const string& URLString)
         // Keeping this infrastructure around in case we ever need it again.
     };
     static const int ignoreSetCount = sizeof(ignoreSet) / sizeof(char*);
-    
+
     for (int i = 0; i < ignoreSetCount; i++) {
         // FIXME: ignore case
         string curIgnore(ignoreSet[i]);
@@ -425,7 +426,7 @@ static NSSet *allowedFontFamilySet()
         @"Zapf Dingbats",
         @"Zapfino",
         nil] retain];
-    
+
     return fontFamilySet;
 }
 
@@ -647,7 +648,7 @@ static void adjustWebDocumentForStandardViewport(UIWebBrowserView *webBrowserVie
     CGFloat minKnobSize = isHorizontal ? bounds.size.height : bounds.size.width;
     CGFloat knobLength = max(minKnobSize, static_cast<CGFloat>(round(trackLength * [self knobProportion])));
     CGFloat knobPosition = static_cast<CGFloat>((round([self doubleValue] * (trackLength - knobLength))));
-    
+
     if (isHorizontal)
         return NSMakeRect(bounds.origin.x + knobPosition, bounds.origin.y, knobLength, bounds.size.height);
 
@@ -660,7 +661,7 @@ static void adjustWebDocumentForStandardViewport(UIWebBrowserView *webBrowserVie
         return;
 
     NSRect knobRect = [self rectForPart:NSScrollerKnob];
-    
+
     static NSColor *knobColor = [[NSColor colorWithDeviceRed:0x80 / 255.0 green:0x80 / 255.0 blue:0x80 / 255.0 alpha:1] retain];
     [knobColor set];
 
@@ -678,7 +679,7 @@ static void adjustWebDocumentForStandardViewport(UIWebBrowserView *webBrowserVie
         [disabledTrackColor set];
 
     NSRectFill(dirtyRect);
-    
+
     [self drawKnob];
 }
 
@@ -714,7 +715,7 @@ WebView *createWebViewAndOffscreenWindow()
     [WebView registerURLSchemeAsLocal:@"feed"];
     [WebView registerURLSchemeAsLocal:@"feeds"];
     [WebView registerURLSchemeAsLocal:@"feedsearch"];
-    
+
 #if PLATFORM(MAC)
     [WebView _setFontWhitelist:fontWhitelist()];
 #endif
@@ -731,7 +732,7 @@ WebView *createWebViewAndOffscreenWindow()
     [webView setDefersCallbacks:NO];
     [webView setInteractiveFormValidationEnabled:YES];
     [webView setValidationMessageTimerMagnification:-1];
-    
+
     // To make things like certain NSViews, dragging, and plug-ins work, put the WebView a window, but put it off-screen so you don't see it.
     // Put it at -10000, -10000 in "flipped coordinates", since WebCore and the DOM use flipped coordinates.
     NSScreen *firstScreen = [[NSScreen screens] firstObject];
@@ -776,7 +777,7 @@ WebView *createWebViewAndOffscreenWindow()
 
     adjustWebDocumentForStandardViewport(webBrowserView, scrollView);
 #endif
-    
+
 #if !PLATFORM(IOS)
     // For reasons that are not entirely clear, the following pair of calls makes WebView handle its
     // dynamic scrollbars properly. Without it, every frame will always have scrollbars.
@@ -1128,7 +1129,7 @@ static void initializeGlobalsFromCommandLineOptions(int argc, const char *argv[]
         {"print-test-count", no_argument, &printTestCount, YES},
         {nullptr, 0, nullptr, 0}
     };
-    
+
     int option;
     while ((option = getopt_long(argc, (char * const *)argv, "", options, nullptr)) != -1) {
         switch (option) {
@@ -1211,9 +1212,9 @@ static void prepareConsistentTestingEnvironment()
 #else
     activateFontsIOS();
 #endif
-    
+
     allocateGlobalControllers();
-    
+
 #if PLATFORM(MAC)
     NSActivityOptions options = (NSActivityUserInitiatedAllowingIdleSystemSleep | NSActivityLatencyCritical) & ~(NSActivitySuddenTerminationDisabled | NSActivityAutomaticTerminationDisabled);
     static id assertion = [[[NSProcessInfo processInfo] beginActivityWithOptions:options reason:@"DumpRenderTree should not be subject to process suppression"] retain];
@@ -1257,9 +1258,6 @@ void dumpRenderTree(int argc, const char *argv[])
     [NSSound _setAlertType:0];
 #endif
 
-    WebView *webView = createWebViewAndOffscreenWindow();
-    mainFrame = [webView mainFrame];
-
     [[NSURLCache sharedURLCache] removeAllCachedResponses];
     [WebCache empty];
 
@@ -1284,10 +1282,10 @@ void dumpRenderTree(int argc, const char *argv[])
     if (threaded)
         stopJavaScriptThreads();
 
-    destroyWebViewAndOffscreenWindow(webView);
-    
+    destroyWebViewAndOffscreenWindow([mainFrame webView]);
+
     releaseGlobalControllers();
-    
+
 #if !PLATFORM(IOS)
     [DumpRenderTreePasteboard releaseLocalPasteboards];
 #endif
@@ -1406,7 +1404,7 @@ static NSInteger compareHistoryItems(id item1, id item2, void *context)
 static NSData *dumpAudio()
 {
     const vector<char>& dataVector = gTestRunner->audioResult();
-    
+
     NSData *data = [NSData dataWithBytes:dataVector.data() length:dataVector.size()];
     return data;
 }
@@ -1420,13 +1418,13 @@ static void dumpHistoryItem(WebHistoryItem *item, int indent, BOOL current)
     }
     for (int i = start; i < indent; i++)
         putchar(' ');
-    
+
     NSString *urlString = [item URLString];
     if ([[NSURL URLWithString:urlString] isFileURL]) {
         NSRange range = [urlString rangeOfString:@"/LayoutTests/"];
         urlString = [@"(file test):" stringByAppendingString:[urlString substringFromIndex:(range.length + range.location)]];
     }
-    
+
     printf("%s", [urlString UTF8String]);
     NSString *target = [item target];
     if (target && [target length] > 0)
@@ -1551,7 +1549,7 @@ static void dumpBackForwardListForWebView(WebView *view)
         assert(item != prevTestBFItem);
         [itemsToPrint addObject:item];
     }
-            
+
     assert([bfList currentItem] != prevTestBFItem);
     [itemsToPrint addObject:[bfList currentItem]];
     int currentItemIndex = [itemsToPrint count] - 1;
@@ -1810,9 +1808,12 @@ static void resetWebViewToConsistentStateBeforeTesting(const TestOptions& option
     [webView setTracksRepaints:NO];
 
     [WebCache clearCachedCredentials];
-    
+
     resetWebPreferencesToConsistentValues();
     setWebPreferencesForTestOptions(options);
+#if PLATFORM(MAC)
+    [webView setWantsLayer:options.layerBackedWebView];
+#endif
 
     TestRunner::setSerializeHTTPLoads(false);
     TestRunner::setAllowsAnySSLCertificate(false);
@@ -1845,7 +1846,7 @@ static void resetWebViewToConsistentStateBeforeTesting(const TestOptions& option
 
     [[MockGeolocationProvider shared] stopTimer];
     [[MockWebNotificationProvider shared] reset];
-    
+
 #if !PLATFORM(IOS)
     // Clear the contents of the general pasteboard
     [[NSPasteboard generalPasteboard] declareTypes:[NSArray arrayWithObject:NSStringPboardType] owner:nil];
@@ -1879,7 +1880,7 @@ static void WebThreadLockAfterDelegateCallbacksHaveCompleted()
     }
 
     WebThreadLock();
-    
+
     dispatch_release(delegateSemaphore);
 }
 #endif
@@ -1949,6 +1950,14 @@ static void runTest(const string& inputLine)
     WKSetCrashReportApplicationSpecificInformation((CFStringRef)informationString);
 
     TestOptions options(url, command);
+    if (!mainFrameTestOptions || !options.webViewIsCompatibleWithOptions(mainFrameTestOptions.value())) {
+        if (mainFrame)
+            destroyWebViewAndOffscreenWindow([mainFrame webView]);
+        WebView *pristineWebView = createWebViewAndOffscreenWindow();
+        mainFrame = [pristineWebView mainFrame];
+    }
+    mainFrameTestOptions = options;
+
     resetWebViewToConsistentStateBeforeTesting(options);
 
     const char* testURL([[url absoluteString] UTF8String]);
@@ -2056,7 +2065,7 @@ static void runTest(const string& inputLine)
             // Don't try to close the main window
             if (window == [[mainFrame webView] window])
                 continue;
-            
+
 #if !PLATFORM(IOS)
             WebView *webView = [[[window contentView] subviews] objectAtIndex:0];
 #else

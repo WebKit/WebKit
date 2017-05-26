@@ -1,3 +1,39 @@
+2017-05-25  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WK1] iframes in layer-backed NSViews are not cleared between successive draws
+        https://bugs.webkit.org/show_bug.cgi?id=172554
+        <rdar://problem/31247133>
+
+        Reviewed by Simon Fraser.
+
+        Previously, there was no way to make DumpRenderTree's views layer-backed. Unfortunately,
+        simply setting [WebView setWantsLayer:] is insufficient; turning it on and then off again
+        leaves some state around inside the NSWindow which isn't easily cleaned up. Instead,
+        we should just tear down and rebuild the window whenever we need a layer-backed WebView.
+        We can also use the "webkit-test-runner" header comment to trigger this new layer-backed
+        codepath.
+
+        * DumpRenderTree/TestOptions.h:
+        * DumpRenderTree/TestOptions.mm:
+        (TestOptions::TestOptions):
+        (TestOptions::webViewIsCompatibleWithOptions):
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (shouldIgnoreWebCoreNodeLeaks):
+        (allowedFontFamilySet):
+        (-[DRTMockScroller rectForPart:]):
+        (-[DRTMockScroller drawKnob]):
+        (-[DRTMockScroller drawRect:]):
+        (createWebViewAndOffscreenWindow):
+        (initializeGlobalsFromCommandLineOptions):
+        (prepareConsistentTestingEnvironment):
+        (dumpRenderTree):
+        (dumpAudio):
+        (dumpHistoryItem):
+        (dumpBackForwardListForWebView):
+        (resetWebViewToConsistentStateBeforeTesting):
+        (WebThreadLockAfterDelegateCallbacksHaveCompleted):
+        (runTest):
+
 2017-05-25  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Use the term 'operation' more consistently

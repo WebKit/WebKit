@@ -684,9 +684,14 @@ extern NSString *NSTextInputReplacementRangeAttributeName;
 @interface NSView (WebNSViewDetails)
 - (void)_recursiveDisplayRectIfNeededIgnoringOpacity:(NSRect)rect isVisibleRect:(BOOL)isVisibleRect rectIsVisibleRectForView:(NSView *)visibleView topView:(BOOL)topView;
 - (void)_recursiveDisplayAllDirtyWithLockFocus:(BOOL)needsLockFocus visRect:(NSRect)visRect;
-#if !PLATFORM(IOS)
+#if PLATFORM(MAC)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+- (void)_recursive:(BOOL)recurse displayRectIgnoringOpacity:(NSRect)displayRect inContext:(NSGraphicsContext *)context shouldChangeFontReferenceColor:(BOOL)shouldChangeFontReferenceColor;
+- (void)_recursive:(BOOL)recurseX displayRectIgnoringOpacity:(NSRect)displayRect inGraphicsContext:(NSGraphicsContext *)graphicsContext CGContext:(CGContextRef)ctx shouldChangeFontReferenceColor:(BOOL)shouldChangeFontReferenceColor;
+#else
 - (void)_recursive:(BOOL)recurse displayRectIgnoringOpacity:(NSRect)displayRect inContext:(NSGraphicsContext *)context topView:(BOOL)topView;
 - (void)_recursive:(BOOL)recurseX displayRectIgnoringOpacity:(NSRect)displayRect inGraphicsContext:(NSGraphicsContext *)graphicsContext CGContext:(CGContextRef)ctx topView:(BOOL)isTopView shouldChangeFontReferenceColor:(BOOL)shouldChangeFontReferenceColor;
+#endif
 #endif
 - (NSRect)_dirtyRect;
 - (void)_setDrawsOwnDescendants:(BOOL)drawsOwnDescendants;
@@ -1836,15 +1841,27 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
 }
 
 // Don't let AppKit even draw subviews. We take care of that.
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+- (void)_recursive:(BOOL)recurse displayRectIgnoringOpacity:(NSRect)displayRect inContext:(NSGraphicsContext *)context shouldChangeFontReferenceColor:(BOOL)shouldChangeFontReferenceColor
+#else
 - (void)_recursive:(BOOL)recurse displayRectIgnoringOpacity:(NSRect)displayRect inContext:(NSGraphicsContext *)context topView:(BOOL)topView
+#endif
 {
     [self _setAsideSubviews];
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+    [super _recursive:recurse displayRectIgnoringOpacity:displayRect inContext:context shouldChangeFontReferenceColor:shouldChangeFontReferenceColor];
+#else
     [super _recursive:recurse displayRectIgnoringOpacity:displayRect inContext:context topView:topView];
+#endif
     [self _restoreSubviews];
 }
 
 // Don't let AppKit even draw subviews. We take care of that.
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+- (void)_recursive:(BOOL)recurseX displayRectIgnoringOpacity:(NSRect)displayRect inGraphicsContext:(NSGraphicsContext *)graphicsContext CGContext:(CGContextRef)ctx shouldChangeFontReferenceColor:(BOOL)shouldChangeFontReferenceColor
+#else
 - (void)_recursive:(BOOL)recurseX displayRectIgnoringOpacity:(NSRect)displayRect inGraphicsContext:(NSGraphicsContext *)graphicsContext CGContext:(CGContextRef)ctx topView:(BOOL)isTopView shouldChangeFontReferenceColor:(BOOL)shouldChangeFontReferenceColor
+#endif
 {
     BOOL didSetAsideSubviews = NO;
 
@@ -1853,7 +1870,11 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
         didSetAsideSubviews = YES;
     }
     
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+    [super _recursive:recurseX displayRectIgnoringOpacity:displayRect inGraphicsContext:graphicsContext CGContext:ctx shouldChangeFontReferenceColor:shouldChangeFontReferenceColor];
+#else
     [super _recursive:recurseX displayRectIgnoringOpacity:displayRect inGraphicsContext:graphicsContext CGContext:ctx topView:isTopView shouldChangeFontReferenceColor:shouldChangeFontReferenceColor];
+#endif
 
     if (didSetAsideSubviews)
         [self _restoreSubviews];

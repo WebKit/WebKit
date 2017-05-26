@@ -34,6 +34,8 @@ struct TestOptions {
     bool enablePointerLock { false };
     bool enableCredentialManagement { false };
     bool enableDragDestinationActionLoad { false };
+    bool layerBackedWebView { false };
 
     TestOptions(NSURL*, const TestCommand&);
+    bool webViewIsCompatibleWithOptions(const TestOptions&) const;
 };

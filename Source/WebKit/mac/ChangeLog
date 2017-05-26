@@ -1,3 +1,19 @@
+2017-05-25  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WK1] iframes in layer-backed NSViews are not cleared between successive draws
+        https://bugs.webkit.org/show_bug.cgi?id=172554
+        <rdar://problem/31247133>
+
+        Reviewed by Simon Fraser.
+
+        Update an overridden internal AppKit function to the new signature.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _recursive:displayRectIgnoringOpacity:inContext:shouldChangeFontReferenceColor:_recursive:displayRectIgnoringOpacity:inContext:topView:]):
+        (-[WebHTMLView _recursive:displayRectIgnoringOpacity:inGraphicsContext:CGContext:shouldChangeFontReferenceColor:_recursive:displayRectIgnoringOpacity:inGraphicsContext:CGContext:topView:shouldChangeFontReferenceColor:]):
+        (-[WebHTMLView _recursive:displayRectIgnoringOpacity:inContext:topView:]): Deleted.
+        (-[WebHTMLView _recursive:displayRectIgnoringOpacity:inGraphicsContext:CGContext:topView:shouldChangeFontReferenceColor:]): Deleted.
+
 2017-05-24  Jer Noble  <jer.noble@apple.com>
 
         Rename DisplaySleepDisabler -> SleepDisabler
