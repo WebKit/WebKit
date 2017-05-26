@@ -214,7 +214,6 @@ inline void ElementRareData::setAfterPseudoElement(RefPtr<PseudoElement>&& pseud
 inline void ElementRareData::resetComputedStyle()
 {
     m_computedStyle = nullptr;
-    m_hasDisplayContents = false;
 }
 
 inline void ElementRareData::resetStyleRelations()

@@ -1,3 +1,12 @@
+2017-05-25  Emilio Cobos Álvarez  <ecobos@igalia.com>
+
+        Don't reset m_hasDisplayContents on ElementRareData::resetComputedStyle.
+        https://bugs.webkit.org/show_bug.cgi?id=172503
+
+        Reviewed by Antti Koivisto.
+
+        * TestExpectations:
+
 2017-05-25  Sam Weinig  <sam@webkit.org>
 
         Fix MediaDeviceInfo's extended attributes so they make sense

@@ -1159,7 +1159,6 @@ webkit.org/b/157477 imported/w3c/web-platform-tests/css/css-display-3/display-co
 webkit.org/b/157477 imported/w3c/web-platform-tests/css/css-display-3/display-contents-inline-flex-001.html [ ImageOnlyFailure ]
 webkit.org/b/157477 imported/w3c/web-platform-tests/css/css-display-3/display-contents-dynamic-before-after-first-letter-001.html [ ImageOnlyFailure ]
 webkit.org/b/157477 imported/w3c/web-platform-tests/css/css-display-3/display-contents-dynamic-before-after-001.html [ ImageOnlyFailure ]
-webkit.org/b/157477 imported/w3c/web-platform-tests/css/css-display-3/display-contents-dynamic-flex-001-none.html [ ImageOnlyFailure ]
 webkit.org/b/157477 imported/w3c/web-platform-tests/css/css-display-3/display-contents-dynamic-table-002-none.html [ ImageOnlyFailure ]
 webkit.org/b/157477 imported/w3c/web-platform-tests/css/css-display-3/display-contents-flex-003.html [ ImageOnlyFailure ]
 webkit.org/b/157477 imported/w3c/web-platform-tests/css/css-display-3/display-contents-alignment-001.html [ ImageOnlyFailure ]
@@ -1177,13 +1176,12 @@ webkit.org/b/157477 imported/w3c/web-platform-tests/css/css-display-3/display-co
 webkit.org/b/157477 imported/w3c/web-platform-tests/css/css-display-3/display-contents-dynamic-flex-003-none.html [ ImageOnlyFailure ]
 webkit.org/b/157477 imported/w3c/web-platform-tests/css/css-display-3/display-contents-dynamic-table-001-none.html [ ImageOnlyFailure ]
 webkit.org/b/157477 imported/w3c/web-platform-tests/css/css-display-3/display-contents-state-change-001.html [ ImageOnlyFailure ]
+webkit.org/b/157477 imported/w3c/web-platform-tests/css/css-display-3/display-contents-dynamic-flex-002-inline.html [ ImageOnlyFailure ]
+webkit.org/b/157477 imported/w3c/web-platform-tests/css/css-display-3/display-contents-dynamic-flex-003-inline.html [ ImageOnlyFailure ]
+webkit.org/b/157477 imported/w3c/web-platform-tests/css/css-display-3/display-contents-dynamic-list-001-inline.html [ ImageOnlyFailure ]
+webkit.org/b/157477 imported/w3c/web-platform-tests/css/css-display-3/display-contents-dynamic-list-001-none.html [ ImageOnlyFailure ]
 
-webkit.org/b/172503 imported/w3c/web-platform-tests/css/css-display-3/display-contents-dynamic-flex-002-inline.html [ Skip ]
-webkit.org/b/172503 imported/w3c/web-platform-tests/css/css-display-3/display-contents-dynamic-flex-003-inline.html [ Skip ]
-webkit.org/b/172503 imported/w3c/web-platform-tests/css/css-display-3/display-contents-dynamic-list-001-inline.html [ Skip ]
-webkit.org/b/172503 imported/w3c/web-platform-tests/css/css-display-3/display-contents-dynamic-list-001-none.html [ Skip ]
-webkit.org/b/172503 imported/w3c/web-platform-tests/css/css-display-3/display-contents-dynamic-multicol-001-inline.html [ Skip ]
-webkit.org/b/172503 imported/w3c/web-platform-tests/css/css-display-3/display-contents-replaced-001.html [ Skip ]
+webkit.org/b/172596 imported/w3c/web-platform-tests/css/css-display-3/display-contents-replaced-001.html [ Skip ]
 
 ### END OF display: contents failures
 ########################################
@@ -1374,5 +1372,3 @@ webkit.org/b/172378 http/tests/navigation/back-twice-without-commit.html [ Skip 
 webkit.org/b/172378 imported/blink/fast/block/float/float-mark-descendants-for-layout-crash.html [ Skip ]
 webkit.org/b/172378 imported/blink/fast/frames/freed-frame.html [ Skip ]
 webkit.org/b/172378 imported/blink/printing/print-document-without-documentElement-crash.html [ Skip ]
-
-webkit.org/b/172514 imported/w3c/web-platform-tests/innerText/getter.html [ Skip ]

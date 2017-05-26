@@ -1,3 +1,23 @@
+2017-05-25  Emilio Cobos Álvarez  <ecobos@igalia.com>
+
+        Don't reset m_hasDisplayContents on ElementRareData::resetComputedStyle.
+        https://bugs.webkit.org/show_bug.cgi?id=172503
+
+        Reviewed by Antti Koivisto.
+
+        We use that bit of information to determine whether we need to tear
+        down the renderers of a display: contents subtree, so better for it to
+        not change until the render tree is updated.
+
+        In practice, we may want to remove that bit and use ElementRareData's
+        RenderStyle instead (keeping it around as appropriate), to ensure they
+        don't go out of sync, but that's out of scope of this patch for now.
+
+        Tests: imported/w3c/web-platform-tests/css/css-display-3
+
+        * dom/ElementRareData.h:
+        (WebCore::ElementRareData::resetComputedStyle):
+
 2017-05-25  Sam Weinig  <sam@webkit.org>
 
         Fix MediaDeviceInfo's extended attributes so they make sense
