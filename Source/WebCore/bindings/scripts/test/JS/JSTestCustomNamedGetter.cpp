@@ -126,6 +126,11 @@ JSObject* JSTestCustomNamedGetter::prototype(VM& vm, JSDOMGlobalObject& globalOb
     return getDOMPrototype<JSTestCustomNamedGetter>(vm, globalObject);
 }
 
+JSValue JSTestCustomNamedGetter::getConstructor(VM& vm, const JSGlobalObject* globalObject)
+{
+    return getDOMConstructor<JSTestCustomNamedGetterConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+}
+
 void JSTestCustomNamedGetter::destroy(JSC::JSCell* cell)
 {
     JSTestCustomNamedGetter* thisObject = static_cast<JSTestCustomNamedGetter*>(cell);
@@ -176,29 +181,23 @@ EncodedJSValue jsTestCustomNamedGetterConstructor(ExecState* state, EncodedJSVal
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    JSTestCustomNamedGetterPrototype* domObject = jsDynamicDowncast<JSTestCustomNamedGetterPrototype*>(vm, JSValue::decode(thisValue));
-    if (UNLIKELY(!domObject))
+    auto* prototype = jsDynamicDowncast<JSTestCustomNamedGetterPrototype*>(vm, JSValue::decode(thisValue));
+    if (UNLIKELY(!prototype))
         return throwVMTypeError(state, throwScope);
-    return JSValue::encode(JSTestCustomNamedGetter::getConstructor(state->vm(), domObject->globalObject()));
+    return JSValue::encode(JSTestCustomNamedGetter::getConstructor(state->vm(), prototype->globalObject()));
 }
 
 bool setJSTestCustomNamedGetterConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    JSValue value = JSValue::decode(encodedValue);
-    JSTestCustomNamedGetterPrototype* domObject = jsDynamicDowncast<JSTestCustomNamedGetterPrototype*>(vm, JSValue::decode(thisValue));
-    if (UNLIKELY(!domObject)) {
+    auto* prototype = jsDynamicDowncast<JSTestCustomNamedGetterPrototype*>(vm, JSValue::decode(thisValue));
+    if (UNLIKELY(!prototype)) {
         throwVMTypeError(state, throwScope);
         return false;
     }
     // Shadowing a built-in constructor
-    return domObject->putDirect(state->vm(), state->propertyNames().constructor, value);
-}
-
-JSValue JSTestCustomNamedGetter::getConstructor(VM& vm, const JSGlobalObject* globalObject)
-{
-    return getDOMConstructor<JSTestCustomNamedGetterConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return prototype->putDirect(state->vm(), state->propertyNames().constructor, JSValue::decode(encodedValue));
 }
 
 static inline JSC::EncodedJSValue jsTestCustomNamedGetterPrototypeFunctionAnotherFunctionCaller(JSC::ExecState* state, typename IDLOperation<JSTestCustomNamedGetter>::ClassParameter castedThis, JSC::ThrowScope& throwScope)

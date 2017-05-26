@@ -49,9 +49,9 @@ JSC::EncodedJSValue JSC_HOST_CALL jsReadOnlyMapLikePrototypeFunctionForEach(JSC:
 
 // Attributes
 
-JSC::EncodedJSValue jsReadOnlyMapLikeSize(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 JSC::EncodedJSValue jsReadOnlyMapLikeConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSReadOnlyMapLikeConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue jsReadOnlyMapLikeSize(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 
 class JSReadOnlyMapLikePrototype : public JSC::JSNonFinalObject {
 public:
@@ -143,6 +143,11 @@ JSObject* JSReadOnlyMapLike::prototype(VM& vm, JSDOMGlobalObject& globalObject)
     return getDOMPrototype<JSReadOnlyMapLike>(vm, globalObject);
 }
 
+JSValue JSReadOnlyMapLike::getConstructor(VM& vm, const JSGlobalObject* globalObject)
+{
+    return getDOMConstructor<JSReadOnlyMapLikeConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+}
+
 void JSReadOnlyMapLike::destroy(JSC::JSCell* cell)
 {
     JSReadOnlyMapLike* thisObject = static_cast<JSReadOnlyMapLike*>(cell);
@@ -159,11 +164,27 @@ template<> inline JSReadOnlyMapLike* IDLOperation<JSReadOnlyMapLike>::cast(ExecS
     return jsDynamicDowncast<JSReadOnlyMapLike*>(state.vm(), state.thisValue());
 }
 
-static inline JSValue jsReadOnlyMapLikeSizeGetter(ExecState&, JSReadOnlyMapLike&, ThrowScope& throwScope);
-
-EncodedJSValue jsReadOnlyMapLikeSize(ExecState* state, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsReadOnlyMapLikeConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    return IDLAttribute<JSReadOnlyMapLike>::get<jsReadOnlyMapLikeSizeGetter>(*state, thisValue, "size");
+    VM& vm = state->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    auto* prototype = jsDynamicDowncast<JSReadOnlyMapLikePrototype*>(vm, JSValue::decode(thisValue));
+    if (UNLIKELY(!prototype))
+        return throwVMTypeError(state, throwScope);
+    return JSValue::encode(JSReadOnlyMapLike::getConstructor(state->vm(), prototype->globalObject()));
+}
+
+bool setJSReadOnlyMapLikeConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+{
+    VM& vm = state->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    auto* prototype = jsDynamicDowncast<JSReadOnlyMapLikePrototype*>(vm, JSValue::decode(thisValue));
+    if (UNLIKELY(!prototype)) {
+        throwVMTypeError(state, throwScope);
+        return false;
+    }
+    // Shadowing a built-in constructor
+    return prototype->putDirect(state->vm(), state->propertyNames().constructor, JSValue::decode(encodedValue));
 }
 
 static inline JSValue jsReadOnlyMapLikeSizeGetter(ExecState& state, JSReadOnlyMapLike& thisObject, ThrowScope& throwScope)
@@ -174,33 +195,9 @@ static inline JSValue jsReadOnlyMapLikeSizeGetter(ExecState& state, JSReadOnlyMa
     return result;
 }
 
-EncodedJSValue jsReadOnlyMapLikeConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsReadOnlyMapLikeSize(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    JSReadOnlyMapLikePrototype* domObject = jsDynamicDowncast<JSReadOnlyMapLikePrototype*>(vm, JSValue::decode(thisValue));
-    if (UNLIKELY(!domObject))
-        return throwVMTypeError(state, throwScope);
-    return JSValue::encode(JSReadOnlyMapLike::getConstructor(state->vm(), domObject->globalObject()));
-}
-
-bool setJSReadOnlyMapLikeConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
-{
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    JSValue value = JSValue::decode(encodedValue);
-    JSReadOnlyMapLikePrototype* domObject = jsDynamicDowncast<JSReadOnlyMapLikePrototype*>(vm, JSValue::decode(thisValue));
-    if (UNLIKELY(!domObject)) {
-        throwVMTypeError(state, throwScope);
-        return false;
-    }
-    // Shadowing a built-in constructor
-    return domObject->putDirect(state->vm(), state->propertyNames().constructor, value);
-}
-
-JSValue JSReadOnlyMapLike::getConstructor(VM& vm, const JSGlobalObject* globalObject)
-{
-    return getDOMConstructor<JSReadOnlyMapLikeConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return IDLAttribute<JSReadOnlyMapLike>::get<jsReadOnlyMapLikeSizeGetter>(*state, thisValue, "size");
 }
 
 static inline JSC::EncodedJSValue jsReadOnlyMapLikePrototypeFunctionGetCaller(JSC::ExecState* state, typename IDLOperation<JSReadOnlyMapLike>::ClassParameter castedThis, JSC::ThrowScope& throwScope)

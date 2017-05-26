@@ -1,3 +1,69 @@
+2017-05-26  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Another bindings cleanup pass, this time focusing on attributes
+        https://bugs.webkit.org/show_bug.cgi?id=172619
+
+        Reviewed by Chris Dumez.
+
+        - Moved attribute getter / setter generation into their own subroutines.
+        - As was done for operations, moved trampoline functions for attributes
+          below their implementation functions to avoid unseemly forward declaration.
+        - Changed to place the getter and setter for an attribute next to each other,
+          rather than having all the getters and then all the setters.
+        - Moved JSFoo::getConstructor and JSFoo::getNamedConstructor up to be with other
+          member functions.
+        - Fix an issue where we were generating a setJSFooConstructor function and not
+          installing it anywhere. Now we always generate either both the getter and setter
+          or neither for the constructor property. Also moved their definition to just above
+          all the attributes, rather than the odd placements of between the getters and
+          setters which is where they had been.
+        - Made InstanceNeedsVisitChildren a complete answer, rather than relying on some
+          loop of the attributes to update needsVisitChildren bit.
+        - Move use of passing conditionals when adding headers.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (InstanceNeedsVisitChildren):
+        (GenerateHeader):
+        (GenerateImplementation):
+        (GenerateAttributeGetterDefinition):
+        (GenerateAttributeSetterDefinition):
+        (NeedsConstructorProperty):
+
+        * bindings/scripts/test/JS/JSInterfaceName.cpp:
+        * bindings/scripts/test/JS/JSMapLike.cpp:
+        * bindings/scripts/test/JS/JSReadOnlyMapLike.cpp:
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        * bindings/scripts/test/JS/JSTestCEReactions.cpp:
+        * bindings/scripts/test/JS/JSTestCEReactionsStringifier.cpp:
+        * bindings/scripts/test/JS/JSTestClassWithJSBuiltinConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestCustomConstructorWithNoInterfaceObject.cpp:
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.cpp:
+        * bindings/scripts/test/JS/JSTestDOMJIT.cpp:
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        * bindings/scripts/test/JS/JSTestException.cpp:
+        * bindings/scripts/test/JS/JSTestGenerateIsReachable.cpp:
+        * bindings/scripts/test/JS/JSTestGlobalObject.cpp:
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        * bindings/scripts/test/JS/JSTestInterfaceLeadingUnderscore.cpp:
+        * bindings/scripts/test/JS/JSTestIterable.cpp:
+        * bindings/scripts/test/JS/JSTestJSBuiltinConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        * bindings/scripts/test/JS/JSTestOverloadedConstructorsWithSequence.cpp:
+        * bindings/scripts/test/JS/JSTestOverrideBuiltins.cpp:
+        * bindings/scripts/test/JS/JSTestPromiseRejectionEvent.cpp:
+        * bindings/scripts/test/JS/JSTestSerialization.cpp:
+        * bindings/scripts/test/JS/JSTestSerializationInherit.cpp:
+        * bindings/scripts/test/JS/JSTestSerializationInheritFinal.cpp:
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        Update test results.
+
 2017-05-26  Don Olmstead  <don.olmstead@am.sony.com>
 
         [CMake] Wrap CODE_GENERATOR_PREPROCESSOR_EXECUTABLE on Windows hosts

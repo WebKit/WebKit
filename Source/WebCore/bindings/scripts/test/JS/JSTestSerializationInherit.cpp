@@ -41,10 +41,10 @@ JSC::EncodedJSValue JSC_HOST_CALL jsTestSerializationInheritPrototypeFunctionToJ
 
 // Attributes
 
-JSC::EncodedJSValue jsTestSerializationInheritInheritLongAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestSerializationInheritInheritLongAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestSerializationInheritConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestSerializationInheritConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue jsTestSerializationInheritInheritLongAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
+bool setJSTestSerializationInheritInheritLongAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
 class JSTestSerializationInheritPrototype : public JSC::JSNonFinalObject {
 public:
@@ -128,6 +128,11 @@ JSObject* JSTestSerializationInherit::prototype(VM& vm, JSDOMGlobalObject& globa
     return getDOMPrototype<JSTestSerializationInherit>(vm, globalObject);
 }
 
+JSValue JSTestSerializationInherit::getConstructor(VM& vm, const JSGlobalObject* globalObject)
+{
+    return getDOMConstructor<JSTestSerializationInheritConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+}
+
 template<> inline JSTestSerializationInherit* IDLAttribute<JSTestSerializationInherit>::cast(ExecState& state, EncodedJSValue thisValue)
 {
     return jsDynamicDowncast<JSTestSerializationInherit*>(state.vm(), JSValue::decode(thisValue));
@@ -138,11 +143,27 @@ template<> inline JSTestSerializationInherit* IDLOperation<JSTestSerializationIn
     return jsDynamicDowncast<JSTestSerializationInherit*>(state.vm(), state.thisValue());
 }
 
-static inline JSValue jsTestSerializationInheritInheritLongAttributeGetter(ExecState&, JSTestSerializationInherit&, ThrowScope& throwScope);
-
-EncodedJSValue jsTestSerializationInheritInheritLongAttribute(ExecState* state, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestSerializationInheritConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    return IDLAttribute<JSTestSerializationInherit>::get<jsTestSerializationInheritInheritLongAttributeGetter>(*state, thisValue, "inheritLongAttribute");
+    VM& vm = state->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    auto* prototype = jsDynamicDowncast<JSTestSerializationInheritPrototype*>(vm, JSValue::decode(thisValue));
+    if (UNLIKELY(!prototype))
+        return throwVMTypeError(state, throwScope);
+    return JSValue::encode(JSTestSerializationInherit::getConstructor(state->vm(), prototype->globalObject()));
+}
+
+bool setJSTestSerializationInheritConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+{
+    VM& vm = state->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    auto* prototype = jsDynamicDowncast<JSTestSerializationInheritPrototype*>(vm, JSValue::decode(thisValue));
+    if (UNLIKELY(!prototype)) {
+        throwVMTypeError(state, throwScope);
+        return false;
+    }
+    // Shadowing a built-in constructor
+    return prototype->putDirect(state->vm(), state->propertyNames().constructor, JSValue::decode(encodedValue));
 }
 
 static inline JSValue jsTestSerializationInheritInheritLongAttributeGetter(ExecState& state, JSTestSerializationInherit& thisObject, ThrowScope& throwScope)
@@ -154,38 +175,12 @@ static inline JSValue jsTestSerializationInheritInheritLongAttributeGetter(ExecS
     return result;
 }
 
-EncodedJSValue jsTestSerializationInheritConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestSerializationInheritInheritLongAttribute(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    JSTestSerializationInheritPrototype* domObject = jsDynamicDowncast<JSTestSerializationInheritPrototype*>(vm, JSValue::decode(thisValue));
-    if (UNLIKELY(!domObject))
-        return throwVMTypeError(state, throwScope);
-    return JSValue::encode(JSTestSerializationInherit::getConstructor(state->vm(), domObject->globalObject()));
+    return IDLAttribute<JSTestSerializationInherit>::get<jsTestSerializationInheritInheritLongAttributeGetter>(*state, thisValue, "inheritLongAttribute");
 }
 
-bool setJSTestSerializationInheritConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
-{
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    JSValue value = JSValue::decode(encodedValue);
-    JSTestSerializationInheritPrototype* domObject = jsDynamicDowncast<JSTestSerializationInheritPrototype*>(vm, JSValue::decode(thisValue));
-    if (UNLIKELY(!domObject)) {
-        throwVMTypeError(state, throwScope);
-        return false;
-    }
-    // Shadowing a built-in constructor
-    return domObject->putDirect(state->vm(), state->propertyNames().constructor, value);
-}
-
-static inline bool setJSTestSerializationInheritInheritLongAttributeFunction(ExecState&, JSTestSerializationInherit&, JSValue, ThrowScope&);
-
-bool setJSTestSerializationInheritInheritLongAttribute(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
-{
-    return IDLAttribute<JSTestSerializationInherit>::set<setJSTestSerializationInheritInheritLongAttributeFunction>(*state, thisValue, encodedValue, "inheritLongAttribute");
-}
-
-static inline bool setJSTestSerializationInheritInheritLongAttributeFunction(ExecState& state, JSTestSerializationInherit& thisObject, JSValue value, ThrowScope& throwScope)
+static inline bool setJSTestSerializationInheritInheritLongAttributeSetter(ExecState& state, JSTestSerializationInherit& thisObject, JSValue value, ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -196,10 +191,9 @@ static inline bool setJSTestSerializationInheritInheritLongAttributeFunction(Exe
     return true;
 }
 
-
-JSValue JSTestSerializationInherit::getConstructor(VM& vm, const JSGlobalObject* globalObject)
+bool setJSTestSerializationInheritInheritLongAttribute(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
-    return getDOMConstructor<JSTestSerializationInheritConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return IDLAttribute<JSTestSerializationInherit>::set<setJSTestSerializationInheritInheritLongAttributeSetter>(*state, thisValue, encodedValue, "inheritLongAttribute");
 }
 
 JSC::JSObject* JSTestSerializationInherit::serialize(ExecState* state, JSTestSerializationInherit* thisObject, ThrowScope& throwScope)
