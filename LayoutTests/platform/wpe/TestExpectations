@@ -39,6 +39,8 @@ Bug(WPE) animations/font-variations/font-variation-settings-unlike.html [ Failur
 Bug(WPE) animations/fill-forwards-auto-height.html [ ImageOnlyFailure Pass ]
 Bug(WPE) animations/negative-delay.html [ Failure ]
 
+webkit.org/b/111612 animations/animation-delay-changed.html [ Failure Pass ]
+
 Bug(WPE) transforms/hittest-translated-content-off-to-infinity-and-back.html [ Failure ]
 
 Bug(WPE) canvas/philip/tests/2d.composite.operation.clear.html [ Failure ]

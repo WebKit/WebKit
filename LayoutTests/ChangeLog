@@ -1,3 +1,11 @@
+2017-05-26  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [WPE] Mark animations/animation-delay-changed.htm as flaky
+
+        Unreviewed gardening. It's flaky on all platforms so why bother.
+
+        * platform/wpe/TestExpectations:
+
 2017-05-26  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Add support for orthogonal positioned grid items
