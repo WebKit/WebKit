@@ -228,7 +228,7 @@ void DocumentThreadableLoader::redirectReceived(CachedResource& resource, Resour
     ASSERT_UNUSED(resource, &resource == m_resource);
 
     Ref<DocumentThreadableLoader> protectedThis(*this);
-    ++m_redirectCount;
+    --m_options.maxRedirectCount;
 
     // FIXME: We restrict this check to Fetch API for the moment, as this might disrupt WorkerScriptLoader.
     // Reassess this check based on https://github.com/whatwg/fetch/issues/393 discussions.
@@ -258,7 +258,7 @@ void DocumentThreadableLoader::redirectReceived(CachedResource& resource, Resour
     // Use a unique for subsequent loads if needed.
     // https://fetch.spec.whatwg.org/#concept-http-redirect-fetch (Step 10).
     ASSERT(m_options.mode == FetchOptions::Mode::Cors);
-    if (!securityOrigin().canRequest(redirectResponse.url()) && !SecurityOrigin::create(redirectResponse.url())->canRequest(request.url()))
+    if (!securityOrigin().canRequest(redirectResponse.url()) && !protocolHostAndPortAreEqual(redirectResponse.url(), request.url()))
         m_origin = SecurityOrigin::createUnique();
 
     // Except in case where preflight is needed, loading should be able to continue on its own.
@@ -267,8 +267,6 @@ void DocumentThreadableLoader::redirectReceived(CachedResource& resource, Resour
         return;
 
     m_options.allowCredentials = DoNotAllowStoredCredentials;
-    m_options.maxRedirectCount -= m_redirectCount;
-    m_redirectCount = 0;
 
     clearResource();
 

@@ -1,5 +1,29 @@
 2017-05-26  Youenn Fablet  <youenn@apple.com>
 
+        Minor clean-up related to DocumentThreadableLoader redirections
+        https://bugs.webkit.org/show_bug.cgi?id=172647
+
+        Reviewed by Chris Dumez.
+
+        No change of behavior.
+
+        Decrementing m_options redirect count directly instead of using an
+        additional counter.
+
+        To compare whether two URLs are same-origin, use scheme+host+port check
+        as per the spec.
+        This is fine as only the initial origin may have specific rules and we
+        are using the scheme+host+port checks when already being gone to
+        another origin.
+
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::redirectReceived):
+        * loader/DocumentThreadableLoader.h:
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::checkRedirectionCrossOriginAccessControl):
+
+2017-05-26  Youenn Fablet  <youenn@apple.com>
+
         Fix memory leaks in MediaSampleAVFObjC::create
         https://bugs.webkit.org/show_bug.cgi?id=172600
 
