@@ -512,8 +512,6 @@ static void* multiVMThreadMain(void* okPtr)
 
 static void testObjectiveCAPIMain()
 {
-    runJSExportTests();
-
     @autoreleasepool {
         JSVirtualMachine* vm = [[JSVirtualMachine alloc] init];
         JSContext* context = [[JSContext alloc] initWithVirtualMachine:vm];

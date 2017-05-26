@@ -161,7 +161,7 @@ static void wrapperForNSObjectisObject()
         context.exception = nil;
 
         context[@"A"] = NSObject.class;
-        NSLog(@"here: %@", [context exception]);
+        checkResult(@"Should not throw an exception when wrapping NSObject and Object has been changed", [context exception]);
     }
 }
 
