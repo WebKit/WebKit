@@ -204,6 +204,8 @@ namespace JSC {
 
     class StructureForInContext : public ForInContext {
     public:
+        using GetInst = std::tuple<unsigned, int, UnlinkedValueProfile>;
+
         StructureForInContext(RegisterID* localRegister, RegisterID* indexRegister, RegisterID* propertyRegister, RegisterID* enumeratorRegister)
             : ForInContext(localRegister)
             , m_indexRegister(indexRegister)
@@ -223,7 +225,7 @@ namespace JSC {
 
         void addGetInst(unsigned instIndex, int propertyRegIndex, UnlinkedValueProfile valueProfile)
         {
-            m_getInsts.append({ instIndex, propertyRegIndex, valueProfile });
+            m_getInsts.append(GetInst { instIndex, propertyRegIndex, valueProfile });
         }
 
         void finalize(BytecodeGenerator&);
@@ -232,7 +234,7 @@ namespace JSC {
         RefPtr<RegisterID> m_indexRegister;
         RefPtr<RegisterID> m_propertyRegister;
         RefPtr<RegisterID> m_enumeratorRegister;
-        Vector<std::tuple<unsigned, int, UnlinkedValueProfile>> m_getInsts;
+        Vector<GetInst> m_getInsts;
     };
 
     class IndexedForInContext : public ForInContext {

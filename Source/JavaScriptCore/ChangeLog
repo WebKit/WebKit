@@ -1,3 +1,14 @@
+2017-05-25  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Unreviewed, build fix for GCC
+
+        std::tuple does not have implicit constructor.
+        Thus, we cannot use implicit construction with initializer brace.
+        We should specify the name like `GetInst { }`.
+
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::StructureForInContext::addGetInst):
+
 2017-05-25  Keith Miller  <keith_miller@apple.com>
 
         Cleanup tests after r217240
