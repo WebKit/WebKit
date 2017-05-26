@@ -43,29 +43,33 @@ static inline void releaseUint8Vector(void *array, const void*)
 
 RefPtr<MediaSampleAVFObjC> MediaSampleAVFObjC::createImageSample(Vector<uint8_t>&& array, unsigned long width, unsigned long height)
 {
-    CVPixelBufferRef imageBuffer = nullptr;
-    auto status = CVPixelBufferCreateWithBytes(kCFAllocatorDefault, width, height, kCVPixelFormatType_32BGRA, array.data(), width * 4, releaseUint8Vector, array.releaseBuffer().leakPtr(), NULL, &imageBuffer);
+    CVPixelBufferRef pixelBuffer = nullptr;
+    auto status = CVPixelBufferCreateWithBytes(kCFAllocatorDefault, width, height, kCVPixelFormatType_32BGRA, array.data(), width * 4, releaseUint8Vector, array.releaseBuffer().leakPtr(), NULL, &pixelBuffer);
+    auto imageBuffer = adoptCF(pixelBuffer);
 
     ASSERT_UNUSED(status, !status);
     if (!imageBuffer)
         return nullptr;
 
     CMVideoFormatDescriptionRef formatDescription = nullptr;
-    status = CMVideoFormatDescriptionCreateForImageBuffer(kCFAllocatorDefault, imageBuffer, &formatDescription);
+    status = CMVideoFormatDescriptionCreateForImageBuffer(kCFAllocatorDefault, imageBuffer.get(), &formatDescription);
     ASSERT(!status);
 
     CMSampleTimingInfo sampleTimingInformation = { kCMTimeInvalid, kCMTimeInvalid, kCMTimeInvalid };
 
-    CMSampleBufferRef sample;
-    status = CMSampleBufferCreateReadyWithImageBuffer(kCFAllocatorDefault, imageBuffer, formatDescription, &sampleTimingInformation, &sample);
+    CMSampleBufferRef sampleBuffer;
+    status = CMSampleBufferCreateReadyWithImageBuffer(kCFAllocatorDefault, imageBuffer.get(), formatDescription, &sampleTimingInformation, &sampleBuffer);
+    CFRelease(formatDescription);
     ASSERT(!status);
 
-    CFArrayRef attachmentsArray = CMSampleBufferGetSampleAttachmentsArray(sample, true);
+    auto sample = adoptCF(sampleBuffer);
+
+    CFArrayRef attachmentsArray = CMSampleBufferGetSampleAttachmentsArray(sample.get(), true);
     for (CFIndex i = 0; i < CFArrayGetCount(attachmentsArray); ++i) {
         CFMutableDictionaryRef attachments = (CFMutableDictionaryRef)CFArrayGetValueAtIndex(attachmentsArray, i);
         CFDictionarySetValue(attachments, kCMSampleAttachmentKey_DisplayImmediately, kCFBooleanTrue);
     }
-    return create(sample);
+    return create(sample.get());
 }
 
 MediaTime MediaSampleAVFObjC::presentationTime() const
