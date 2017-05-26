@@ -1,5 +1,15 @@
 2017-05-26  Mark Lam  <mark.lam@apple.com>
 
+        Temporarily commenting out a JSExportTest test until webkit.org/b/172654 is fixed.
+        https://bugs.webkit.org/show_bug.cgi?id=172655
+
+        Reviewed by Saam Barati.
+
+        * API/tests/JSExportTests.mm:
+        (wrapperForNSObjectisObject):
+
+2017-05-26  Mark Lam  <mark.lam@apple.com>
+
         REGRESSION(216914): testCFStrings encounters an invalid ExecState callee pointer.
         https://bugs.webkit.org/show_bug.cgi?id=172651
 
