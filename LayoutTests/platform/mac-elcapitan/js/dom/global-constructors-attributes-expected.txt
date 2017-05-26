@@ -993,6 +993,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'MediaController').hasOwnProperty('
 PASS Object.getOwnPropertyDescriptor(global, 'MediaController').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'MediaController').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'MediaController').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'MediaDeviceInfo').value is MediaDeviceInfo
+PASS Object.getOwnPropertyDescriptor(global, 'MediaDeviceInfo').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'MediaDeviceInfo').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'MediaDeviceInfo').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'MediaDeviceInfo').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'MediaElementAudioSourceNode').value is MediaElementAudioSourceNode
 PASS Object.getOwnPropertyDescriptor(global, 'MediaElementAudioSourceNode').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'MediaElementAudioSourceNode').hasOwnProperty('set') is false
