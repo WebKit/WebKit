@@ -1,3 +1,22 @@
+2017-05-26  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [GTK] Web Inspector: Add new GTK+ icons for Web Sockets
+        https://bugs.webkit.org/show_bug.cgi?id=172296
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add more free icons for the Web Inspector of GTK+ port.
+
+        * UserInterface/Images/gtk/WebSocket.png: Added.
+        * UserInterface/Images/gtk/WebSocket@2x.png: Added.
+        * UserInterface/Images/gtk/WebSocketLarge.png: Added.
+        * UserInterface/Images/gtk/WebSocketLarge@2x.png: Added.
+        * UserInterface/Views/ResourceIcons.css:
+        (.resource-icon.resource-type-websocket .icon):
+        (.large .resource-icon.resource-type-websocket .icon):
+        (body:matches(.mac-platform, .windows-platform) .resource-icon.resource-type-websocket .icon): Deleted.
+        (body:matches(.mac-platform, .windows-platform) .large .resource-icon.resource-type-websocket .icon): Deleted.
+
 2017-05-25  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Don't create DetailsSidebarPanel classes until they are needed by a Tab

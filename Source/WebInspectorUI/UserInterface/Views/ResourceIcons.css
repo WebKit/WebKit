@@ -67,8 +67,7 @@
     content: image-set(url(../Images/WorkerScript.png) 1x, url(../Images/WorkerScript@2x.png) 2x);
 }
 
-/* FIXME: <https://webkit.org/b/172296> [GTK] Web Inspector: Add new GTK+ icons for Web Sockets */
-body:matches(.mac-platform, .windows-platform) .resource-icon.resource-type-websocket .icon {
+.resource-icon.resource-type-websocket .icon {
     content: image-set(url(../Images/WebSocket.png) 1x, url(../Images/WebSocket@2x.png) 2x);
 }
 
@@ -116,7 +115,6 @@ body:matches(.mac-platform, .windows-platform) .resource-icon.resource-type-webs
     content: image-set(url(../Images/WorkerScriptLarge.png) 1x, url(../Images/WorkerScriptLarge@2x.png) 2x);
 }
 
-/* FIXME: <https://webkit.org/b/172296> [GTK] Web Inspector: Add new GTK+ icons for Web Sockets */
-body:matches(.mac-platform, .windows-platform) .large .resource-icon.resource-type-websocket .icon {
+.large .resource-icon.resource-type-websocket .icon {
     content: image-set(url(../Images/WebSocketLarge.png) 1x, url(../Images/WebSocketLarge@2x.png) 2x);
 }
