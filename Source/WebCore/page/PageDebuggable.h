@@ -47,7 +47,7 @@ public:
     String url() const override;
     bool hasLocalDebugger() const override;
 
-    void connect(Inspector::FrontendChannel*, bool isAutomaticConnection = false) override;
+    void connect(Inspector::FrontendChannel*, bool isAutomaticConnection = false, bool immediatelyPause = false) override;
     void disconnect(Inspector::FrontendChannel*) override;
     void dispatchMessageFromRemote(const String& message) override;
     void setIndicating(bool) override;

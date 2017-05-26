@@ -90,7 +90,7 @@ public:
     bool hasLocalFrontend() const;
     bool hasRemoteFrontend() const;
 
-    WEBCORE_EXPORT void connectFrontend(Inspector::FrontendChannel*, bool isAutomaticInspection = false);
+    WEBCORE_EXPORT void connectFrontend(Inspector::FrontendChannel*, bool isAutomaticInspection = false, bool immediatelyPause = false);
     WEBCORE_EXPORT void disconnectFrontend(Inspector::FrontendChannel*);
     WEBCORE_EXPORT void disconnectAllFrontends();
     void setProcessId(long);
@@ -147,6 +147,7 @@ private:
 
     bool m_isUnderTest { false };
     bool m_isAutomaticInspection { false };
+    bool m_pauseAfterInitialization = { false };
 };
 
 } // namespace WebCore

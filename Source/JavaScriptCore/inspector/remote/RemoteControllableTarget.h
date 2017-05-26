@@ -45,7 +45,7 @@ public:
     void init();
     void update();
 
-    virtual void connect(FrontendChannel*, bool isAutomaticConnection = false) = 0;
+    virtual void connect(FrontendChannel*, bool isAutomaticConnection = false, bool immediatelyPause = false) = 0;
     virtual void disconnect(FrontendChannel*) = 0;
 
     unsigned targetIdentifier() const { return m_identifier; }

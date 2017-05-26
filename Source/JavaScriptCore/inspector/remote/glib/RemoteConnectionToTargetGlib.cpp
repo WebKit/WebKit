@@ -56,11 +56,8 @@ bool RemoteConnectionToTarget::setup(bool isAutomaticInspection, bool automatica
         m_target = nullptr;
     } else if (is<RemoteInspectionTarget>(m_target)) {
         auto target = downcast<RemoteInspectionTarget>(m_target);
-        target->connect(this, isAutomaticInspection);
+        target->connect(this, isAutomaticInspection, automaticallyPause);
         m_connected = true;
-
-        if (automaticallyPause)
-            target->pause();
 
         RemoteInspector::singleton().updateTargetListing(targetIdentifier);
     } else if (is<RemoteAutomationTarget>(m_target)) {

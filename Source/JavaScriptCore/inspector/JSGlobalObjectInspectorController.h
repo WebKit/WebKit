@@ -68,7 +68,7 @@ public:
     JSGlobalObjectInspectorController(JSC::JSGlobalObject&);
     ~JSGlobalObjectInspectorController();
 
-    void connectFrontend(FrontendChannel*, bool isAutomaticInspection);
+    void connectFrontend(FrontendChannel*, bool isAutomaticInspection, bool immediatelyPause);
     void disconnectFrontend(FrontendChannel*);
 
     void dispatchMessageFromFrontend(const String&);
@@ -78,7 +78,6 @@ public:
     bool includesNativeCallStackWhenReportingExceptions() const { return m_includeNativeCallStackWithExceptions; }
     void setIncludesNativeCallStackWhenReportingExceptions(bool includesNativeCallStack) { m_includeNativeCallStackWithExceptions = includesNativeCallStack; }
 
-    void pause();
     void reportAPIException(JSC::ExecState*, JSC::Exception*);
 
     JSC::ConsoleClient* consoleClient() const;
@@ -124,6 +123,7 @@ private:
 
     bool m_includeNativeCallStackWithExceptions { true };
     bool m_isAutomaticInspection { false };
+    bool m_pauseAfterInitialization { false };
 
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
     AugmentableInspectorControllerClient* m_augmentingClient { nullptr };

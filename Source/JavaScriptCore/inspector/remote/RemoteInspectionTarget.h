@@ -51,7 +51,6 @@ public:
     virtual bool hasLocalDebugger() const = 0;
 
     virtual void setIndicating(bool) { } // Default is to do nothing.
-    virtual void pause() { };
 
     virtual bool automaticInspectionAllowed() const { return false; }
     virtual void pauseWaitingForAutomaticInspection();

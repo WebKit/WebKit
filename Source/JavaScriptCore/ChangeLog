@@ -1,3 +1,40 @@
+2017-05-26  Joseph Pecoraro  <pecoraro@apple.com>
+
+        JSContext Inspector: Improve the reliability of automatically pausing in auto-attach
+        https://bugs.webkit.org/show_bug.cgi?id=172664
+        <rdar://problem/32362933>
+
+        Reviewed by Matt Baker.
+
+        Automatically pause on connection was triggering a pause before the
+        frontend may have initialized. Often during frontend initialization
+        the frontend may perform an action that clears the pause state requested
+        by the developer. This change defers the pause until after the frontend
+        has initialized, right before returning to the application's code.
+
+        * inspector/remote/RemoteControllableTarget.h:
+        * inspector/remote/RemoteInspectionTarget.h:
+        * inspector/remote/cocoa/RemoteConnectionToTargetCocoa.mm:
+        (Inspector::RemoteConnectionToTarget::setup):
+        * inspector/remote/glib/RemoteConnectionToTargetGlib.cpp:
+        (Inspector::RemoteConnectionToTarget::setup):
+        * runtime/JSGlobalObjectDebuggable.cpp:
+        (JSC::JSGlobalObjectDebuggable::connect):
+        (JSC::JSGlobalObjectDebuggable::pause): Deleted.
+        * runtime/JSGlobalObjectDebuggable.h:
+        Pass an immediatelyPause boolean on to the controller. Remove
+        the current path that invokes a pause before initialization.
+
+        * inspector/JSGlobalObjectInspectorController.h:
+        * inspector/JSGlobalObjectInspectorController.cpp:
+        (Inspector::JSGlobalObjectInspectorController::connectFrontend):
+        (Inspector::JSGlobalObjectInspectorController::disconnectFrontend):
+        Manage should immediately pause state.
+
+        (Inspector::JSGlobalObjectInspectorController::frontendInitialized):
+        (Inspector::JSGlobalObjectInspectorController::pause): Deleted.
+        When initialized, trigger a pause if requested.
+
 2017-05-26  Mark Lam  <mark.lam@apple.com>
 
         Temporarily commenting out a JSExportTest test until webkit.org/b/172654 is fixed.
