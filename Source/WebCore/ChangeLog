@@ -1,3 +1,22 @@
+2017-05-25  Chris Dumez  <cdumez@apple.com>
+
+        imported/w3c/web-platform-tests/html/semantics/forms/form-control-infrastructure/form_owner_and_table_2.html is crashing
+        https://bugs.webkit.org/show_bug.cgi?id=172628
+        <rdar://problem/32418707>
+
+        Reviewed by Sam Weinig.
+
+        In the event where a form is removed synchronously by a script during parsing,
+        FormAssociatedElement::m_formSetByParser may end up referring to a form that
+        is no longer in the document. As a result, we should make sure m_formSetByParser
+        is still connected in FormAssociatedElement::insertedInto() before we call
+        FormAssociatedElement::setForm(m_formSetByParser).
+
+        Test: fast/dom/HTMLFormElement/form-removed-during-parsing-crash.html
+
+        * html/FormAssociatedElement.cpp:
+        (WebCore::FormAssociatedElement::insertedInto):
+
 2017-05-25  Zalan Bujtas  <zalan@apple.com>
 
         Frame's composited content is visible when the frame has visibility: hidden.

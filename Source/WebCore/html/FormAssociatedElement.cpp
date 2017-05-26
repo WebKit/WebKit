@@ -71,7 +71,9 @@ void FormAssociatedElement::insertedInto(ContainerNode& insertionPoint)
 {
     HTMLElement& element = asHTMLElement();
     if (m_formSetByParser) {
-        setForm(m_formSetByParser);
+        // The form could have been removed by a script during parsing.
+        if (m_formSetByParser->isConnected())
+            setForm(m_formSetByParser);
         m_formSetByParser = nullptr;
     }
 
