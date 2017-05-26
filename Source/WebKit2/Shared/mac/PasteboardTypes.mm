@@ -28,8 +28,6 @@
 
 #if PLATFORM(MAC)
 
-#import <wtf/RetainPtr.h>
-
 namespace WebKit {
 
 NSString * const PasteboardTypes::WebArchivePboardType = @"Apple Web Archive pasteboard type";

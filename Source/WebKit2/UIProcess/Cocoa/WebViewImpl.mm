@@ -3804,8 +3804,8 @@ void WebViewImpl::setFileAndURLTypes(NSString *filename, NSString *extension, NS
     [pasteboard setString:visibleURL forType:NSStringPboardType];
     [pasteboard setString:visibleURL forType:PasteboardTypes::WebURLPboardType];
     [pasteboard setString:title forType:PasteboardTypes::WebURLNamePboardType];
-    [pasteboard setPropertyList:[NSArray arrayWithObjects:[NSArray arrayWithObject:visibleURL], [NSArray arrayWithObject:title], nil] forType:PasteboardTypes::WebURLsWithTitlesPboardType];
-    [pasteboard setPropertyList:[NSArray arrayWithObject:extension] forType:NSFilesPromisePboardType];
+    [pasteboard setPropertyList:@[@[visibleURL], @[title]] forType:PasteboardTypes::WebURLsWithTitlesPboardType];
+    [pasteboard setPropertyList:@[extension] forType:NSFilesPromisePboardType];
     m_promisedFilename = filename;
     m_promisedURL = url;
 }
@@ -3833,11 +3833,8 @@ void WebViewImpl::setPromisedDataForAttachment(NSString *filename, NSString *ext
     [types addObjectsFromArray:PasteboardTypes::forURL()];
     [pasteboard declareTypes:types.get() owner:m_view];
     setFileAndURLTypes(filename, extension, title, url, visibleURL, pasteboard);
-    
-    RetainPtr<NSMutableArray> paths = adoptNS([[NSMutableArray alloc] init]);
-    [paths addObject:title];
-    [pasteboard setPropertyList:paths.get() forType:NSFilenamesPboardType];
-    
+    [pasteboard setPropertyList:@[title] forType:NSFilenamesPboardType];
+
     m_promisedImage = nullptr;
 }
 #endif
