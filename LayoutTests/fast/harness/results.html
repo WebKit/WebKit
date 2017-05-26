@@ -1297,12 +1297,24 @@ OptionWriter.save = function()
         var option = options[i];
         data[option.id] = option.checked;
     }
-    localStorage.setItem(OptionWriter._key, JSON.stringify(data));
+    try {
+        localStorage.setItem(OptionWriter._key, JSON.stringify(data));
+    } catch (err) {
+        if (err.name != "SecurityError")
+            throw err;
+    }
 }
 
 OptionWriter.apply = function()
 {
-    var json = localStorage.getItem(OptionWriter._key);
+    var json;
+    try {
+        json = localStorage.getItem(OptionWriter._key);
+    } catch (err) {
+       if (err.name != "SecurityError")
+          throw err;
+    }
+
     if (!json) {
         updateAllOptions();
         return;

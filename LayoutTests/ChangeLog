@@ -1,3 +1,18 @@
+2017-05-25  Brent Fulgham  <bfulgham@apple.com>
+
+        Gracefully handle missing localStorage support in results.html
+        https://bugs.webkit.org/show_bug.cgi?id=172625
+        <rdar://problem/32118243>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Handle the case where localStorage generates a SecurityError DOMException, treating this
+        as a non-fatal error.
+
+        * fast/harness/results.html:
+        (OptionWriter.save): Treat "SecurityError" as an expected condition.
+        (OptionWriter.apply): Ditto.
+
 2017-05-25  Alexey Proskuryakov  <ap@apple.com>
 
         Merge split script tests, part 2
