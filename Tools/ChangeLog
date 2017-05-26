@@ -1,3 +1,18 @@
+2017-05-26  Beth Dakin  <bdakin@apple.com>
+
+        Media documents inside iframes should not get controls in the TouchBar unless the 
+        video is playing
+        https://bugs.webkit.org/show_bug.cgi?id=172620
+        -and corresponding-
+        rdar://problem/32165477
+
+        Reviewed by Jon Lee.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/VideoControlsManager.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit2Cocoa/offscreen-iframe-of-media-document.html: Added.
+
 2017-05-25  Joseph Pecoraro  <pecoraro@apple.com>
 
         _WKUserStyleSheet and WKUserScript leak string data

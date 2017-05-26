@@ -275,7 +275,7 @@ bool MediaElementSession::canShowControlsManager(PlaybackControlsPurpose purpose
         return false;
     }
 
-    if (m_element.document().isMediaDocument()) {
+    if (m_element.document().isMediaDocument() && (m_element.document().frame() && m_element.document().frame()->isMainFrame())) {
         LOG(Media, "MediaElementSession::canShowControlsManager - returning TRUE: Is media document");
         return true;
     }

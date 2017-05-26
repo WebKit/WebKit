@@ -413,6 +413,15 @@ TEST(VideoControlsManager, VideoControlsManagerSmallVideoInMediaDocument)
     // We expect the media controller to be present because this is a media document.
     EXPECT_TRUE([webView _hasActiveVideoForControlsManager]);
 }
+    
+TEST(VideoControlsManager, VideoControlsManagerOffscreenIframeMediaDocument)
+{
+    RetainPtr<VideoControlsManagerTestWebView*> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 800, 600));
+    [webView loadTestPageNamed:@"offscreen-iframe-of-media-document"];
+    
+    // We do not expect a controls manager becuase the media document is in an iframe.
+    [webView expectControlsManager:NO afterReceivingMessage:@"loaded"];
+}
 
 TEST(VideoControlsManager, VideoControlsManagerLongSkinnyVideoInWideMainFrame)
 {
