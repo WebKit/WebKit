@@ -169,6 +169,18 @@ void DrawingAreaImpl::forceRepaint()
     }
 }
 
+void DrawingAreaImpl::mainFrameContentSizeChanged(const WebCore::IntSize& newSize)
+{
+#if USE(COORDINATED_GRAPHICS_THREADED)
+    if (m_layerTreeHost)
+        m_layerTreeHost->contentsSizeChanged(newSize);
+    else if (m_previousLayerTreeHost)
+        m_previousLayerTreeHost->contentsSizeChanged(newSize);
+#else
+    UNUSED_PARAM(newSize);
+#endif
+}
+
 void DrawingAreaImpl::updatePreferences(const WebPreferencesStore& store)
 {
     Settings& settings = m_webPage.corePage()->settings();

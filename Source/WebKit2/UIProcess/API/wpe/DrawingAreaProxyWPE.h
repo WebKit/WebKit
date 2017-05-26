@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,24 +23,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DrawingAreaType_h
-#define DrawingAreaType_h
+#pragma once
+
+#include "DrawingAreaProxy.h"
+
+#include "LayerTreeContext.h"
 
 namespace WebKit {
 
-enum DrawingAreaType {
-#if PLATFORM(COCOA)
-#if !PLATFORM(IOS)
-    DrawingAreaTypeTiledCoreAnimation,
-#endif
-    DrawingAreaTypeRemoteLayerTree,
-#elif PLATFORM(WPE)
-    DrawingAreaTypeWPE
-#else
-    DrawingAreaTypeImpl
-#endif
+class DrawingAreaProxyWPE final : public DrawingAreaProxy {
+public:
+    explicit DrawingAreaProxyWPE(WebPageProxy&);
+    virtual ~DrawingAreaProxyWPE();
+
+private:
+    // DrawingAreaProxy
+    void deviceScaleFactorDidChange() override;
+    void sizeDidChange() override;
+    void dispatchAfterEnsuringDrawing(std::function<void(CallbackBase::Error)>) override;
+
+    // IPC message handlers
+    void update(uint64_t backingStoreStateID, const UpdateInfo&) override;
+    void didUpdateBackingStoreState(uint64_t backingStoreStateID, const UpdateInfo&, const LayerTreeContext&) override;
+    void enterAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext&) override;
+    void exitAcceleratedCompositingMode(uint64_t backingStoreStateID, const UpdateInfo&) override;
+    void updateAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext&) override;
+
+    // The current layer tree context.
+    LayerTreeContext m_layerTreeContext;
 };
 
-} // namespace WebKit
-
-#endif // DrawingAreaType_h
+}

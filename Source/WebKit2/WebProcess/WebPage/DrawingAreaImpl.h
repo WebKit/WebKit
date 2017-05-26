@@ -49,6 +49,7 @@ private:
     void scroll(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollDelta) override;
     void forceRepaint() override;
 
+    void mainFrameContentSizeChanged(const WebCore::IntSize&) override;
     void updatePreferences(const WebPreferencesStore&) override;
 
     void setRootCompositingLayer(WebCore::GraphicsLayer*) override;

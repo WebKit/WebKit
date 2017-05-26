@@ -90,7 +90,6 @@ list(APPEND WebKit2_SOURCES
     Shared/wpe/ProcessExecutablePathWPE.cpp
     Shared/wpe/WebEventFactory.cpp
 
-    UIProcess/AcceleratedDrawingAreaProxy.cpp
     UIProcess/BackingStore.cpp
     UIProcess/DefaultUndoController.cpp
     UIProcess/LegacySessionStateCodingNone.cpp
@@ -106,6 +105,7 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/C/wpe/WKView.cpp
 
     UIProcess/API/wpe/CompositingManagerProxy.cpp
+    UIProcess/API/wpe/DrawingAreaProxyWPE.cpp
     UIProcess/API/wpe/PageClientImpl.cpp
     UIProcess/API/wpe/ScrollGestureController.cpp
     UIProcess/API/wpe/WPEView.cpp
@@ -152,7 +152,6 @@ list(APPEND WebKit2_SOURCES
     WebProcess/WebCoreSupport/wpe/WebEditorClientWPE.cpp
     WebProcess/WebCoreSupport/wpe/WebPopupMenuWPE.cpp
 
-    WebProcess/WebPage/AcceleratedDrawingArea.cpp
     WebProcess/WebPage/AcceleratedSurface.cpp
 
     WebProcess/WebPage/CoordinatedGraphics/AreaAllocator.cpp
@@ -165,6 +164,7 @@ list(APPEND WebKit2_SOURCES
 
     WebProcess/WebPage/wpe/AcceleratedSurfaceWPE.cpp
     WebProcess/WebPage/wpe/CompositingManager.cpp
+    WebProcess/WebPage/wpe/DrawingAreaWPE.cpp
     WebProcess/WebPage/wpe/WebInspectorUIWPE.cpp
     WebProcess/WebPage/wpe/WebPageWPE.cpp
 
