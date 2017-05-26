@@ -2775,15 +2775,15 @@ RegisterID* BytecodeGenerator::emitDeleteById(RegisterID* dst, RegisterID* base,
 
 RegisterID* BytecodeGenerator::emitGetByVal(RegisterID* dst, RegisterID* base, RegisterID* property)
 {
-    for (size_t i = m_forInContextStack.size(); i > 0; i--) {
-        ForInContext* context = m_forInContextStack[i - 1].get();
+    for (size_t i = m_forInContextStack.size(); i--; ) {
+        ForInContext* context = m_forInContextStack[i].get();
         if (context->local() != property)
             continue;
 
-        if (!context->isValid())
-            break;
+        unsigned instIndex = instructions().size();
 
         if (context->type() == ForInContext::IndexedForInContextType) {
+            static_cast<IndexedForInContext*>(context)->addGetInst(instIndex, property->index());
             property = static_cast<IndexedForInContext*>(context)->index();
             break;
         }
@@ -2797,6 +2797,8 @@ RegisterID* BytecodeGenerator::emitGetByVal(RegisterID* dst, RegisterID* base, R
         instructions().append(structureContext->index()->index());
         instructions().append(structureContext->enumerator()->index());
         instructions().append(profile);
+
+        structureContext->addGetInst(instIndex, property->index(), profile);
         return dst;
     }
 
@@ -4594,6 +4596,9 @@ void BytecodeGenerator::popIndexedForInScope(RegisterID* localRegister)
 {
     if (!localRegister)
         return;
+
+    ASSERT(m_forInContextStack.last()->type() == ForInContext::IndexedForInContextType);
+    static_cast<IndexedForInContext*>(m_forInContextStack.last().get())->finalize(*this);
     m_forInContextStack.removeLast();
 }
 
@@ -4702,6 +4707,8 @@ void BytecodeGenerator::popStructureForInScope(RegisterID* localRegister)
 {
     if (!localRegister)
         return;
+    ASSERT(m_forInContextStack.last()->type() == ForInContext::StructureForInContextType);
+    static_cast<StructureForInContext*>(m_forInContextStack.last().get())->finalize(*this);
     m_forInContextStack.removeLast();
 }
 
@@ -4718,8 +4725,8 @@ void BytecodeGenerator::invalidateForInContextForLocal(RegisterID* localRegister
     // to perform some flow-sensitive analysis to see if/when the loop iteration variable was 
     // reassigned, or we'd have to resort to runtime checks to see if the variable had been 
     // reassigned from its original value.
-    for (size_t i = m_forInContextStack.size(); i > 0; i--) {
-        ForInContext* context = m_forInContextStack[i - 1].get();
+    for (size_t i = m_forInContextStack.size(); i--; ) {
+        ForInContext* context = m_forInContextStack[i].get();
         if (context->local() != localRegister)
             continue;
         context->invalidate();
@@ -4939,6 +4946,51 @@ void BytecodeGenerator::emitGeneratorStateChange(int32_t state)
 {
     RegisterID* completedState = emitLoad(nullptr, jsNumber(state));
     emitPutById(generatorRegister(), propertyNames().builtinNames().generatorStatePrivateName(), completedState);
+}
+
+void StructureForInContext::finalize(BytecodeGenerator& generator)
+{
+    if (isValid())
+        return;
+
+    for (const auto& instTuple : m_getInsts) {
+        unsigned instIndex = std::get<0>(instTuple);
+        int propertyRegIndex = std::get<1>(instTuple);
+        UnlinkedValueProfile valueProfile = std::get<2>(instTuple);
+        OpcodeID op = generator.instructions()[instIndex].u.opcode;
+        RELEASE_ASSERT(op == op_get_direct_pname);
+        ASSERT(opcodeLength(op_get_direct_pname) == 7);
+        ASSERT(opcodeLength(op_get_by_val) == 6);
+
+        // 0. Change the opcode to get_by_val.
+        generator.instructions()[instIndex].u.opcode = op_get_by_val;
+        // 1. dst stays the same.
+        // 2. base stays the same.
+        // 3. property gets switched to the original property.
+        generator.instructions()[instIndex + 3].u.operand = propertyRegIndex;
+        // 4. add an array profile.
+        generator.instructions()[instIndex + 4].u.operand = generator.newArrayProfile();
+        // 5. set the result value profile.
+        generator.instructions()[instIndex + 5].u.operand = valueProfile;
+        // 6. nop out the last instruction word.
+        generator.instructions()[instIndex + 6].u.opcode = op_nop;
+    }
+}
+
+void IndexedForInContext::finalize(BytecodeGenerator& generator)
+{
+    if (isValid())
+        return;
+
+    for (const auto& instPair : m_getInsts) {
+        unsigned instIndex = instPair.first;
+        int propertyRegIndex = instPair.second;
+        OpcodeID op = generator.instructions()[instIndex].u.opcode;
+        RELEASE_ASSERT(op == op_get_by_val);
+        // We just need to perform the get_by_val with the original property here,
+        // not the indexed one.
+        generator.instructions()[instIndex + 3].u.operand = propertyRegIndex;
+    }
 }
 
 } // namespace JSC

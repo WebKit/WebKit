@@ -1,3 +1,34 @@
+2017-05-25  Saam Barati  <sbarati@apple.com>
+
+        Cherry-pick r217438. rdar://problem/32385704
+
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitGetByVal):
+        (JSC::BytecodeGenerator::popIndexedForInScope):
+        (JSC::BytecodeGenerator::popStructureForInScope):
+        (JSC::BytecodeGenerator::invalidateForInContextForLocal):
+        (JSC::StructureForInContext::finalize):
+        (JSC::IndexedForInContext::finalize):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::StructureForInContext::addGetInst):
+        (JSC::IndexedForInContext::addGetInst):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_nop):
+        * llint/LowLevelInterpreter.asm:
+
 2017-05-24  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r217016. rdar://problem/32380054

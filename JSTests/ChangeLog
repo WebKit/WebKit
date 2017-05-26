@@ -1,3 +1,12 @@
+2017-05-25  Saam Barati  <sbarati@apple.com>
+
+        Cherry-pick r217438. rdar://problem/32385704
+
+        * stress/for-in-invalidation-for-any-write.js: Added.
+        (assert):
+        (test):
+        (test.i):
+
 2017-05-24  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r217018. rdar://problem/32380054
