@@ -1,3 +1,19 @@
+2017-05-26  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Add support for orthogonal positioned grid items
+        https://bugs.webkit.org/show_bug.cgi?id=172591
+
+        Reviewed by Sergio Villar Senin.
+
+        This patch adds support for positioned grid items with orthogonal flows.
+        Basically it just needs to check if the item is orthogonal to use
+        the column or row offset as logical left or top depending on the case.
+
+        Tests: imported/w3c/web-platform-tests/css/css-grid-1/abspos/orthogonal-positioned-grid-items-***.html
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::layoutPositionedObject):
+
 2017-05-25  Emilio Cobos Álvarez  <ecobos@igalia.com>
 
         Don't reset m_hasDisplayContents on ElementRareData::resetComputedStyle.

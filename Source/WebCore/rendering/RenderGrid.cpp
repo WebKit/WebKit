@@ -940,12 +940,6 @@ void RenderGrid::prepareChildForPositionedLayout(RenderBox& child)
 
 void RenderGrid::layoutPositionedObject(RenderBox& child, bool relayoutChildren, bool fixedPositionObjectsOnly)
 {
-    if (isOrthogonalChild(child)) {
-        // FIXME: Properly support orthogonal writing mode.
-        RenderBlock::layoutPositionedObject(child, relayoutChildren, fixedPositionObjectsOnly);
-        return;
-    }
-
     LayoutUnit columnOffset;
     LayoutUnit columnBreadth;
     offsetAndBreadthForPositionedChild(child, ForColumns, columnOffset, columnBreadth);
@@ -963,12 +957,14 @@ void RenderGrid::layoutPositionedObject(RenderBox& child, bool relayoutChildren,
     // FIXME: If possible it'd be nice to avoid this layout here when it's not needed.
     RenderBlock::layoutPositionedObject(child, relayoutChildren, fixedPositionObjectsOnly);
 
-    child.setLogicalLocation(LayoutPoint(child.logicalLeft() + columnOffset, child.logicalTop() + rowOffset));
+    bool isOrthogonal = isOrthogonalChild(child);
+    LayoutUnit logicalLeft = child.logicalLeft() + (isOrthogonal ? rowOffset : columnOffset);
+    LayoutUnit logicalTop = child.logicalTop() + (isOrthogonal ? columnOffset : rowOffset);
+    child.setLogicalLocation(LayoutPoint(logicalLeft, logicalTop));
 }
 
 void RenderGrid::offsetAndBreadthForPositionedChild(const RenderBox& child, GridTrackSizingDirection direction, LayoutUnit& offset, LayoutUnit& breadth)
 {
-    ASSERT(!isOrthogonalChild(child));
     bool isRowAxis = direction == ForColumns;
 
     unsigned autoRepeatCount = m_grid.autoRepeatTracks(direction);

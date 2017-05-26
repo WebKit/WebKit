@@ -1,3 +1,49 @@
+2017-05-26  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Add support for orthogonal positioned grid items
+        https://bugs.webkit.org/show_bug.cgi?id=172591
+
+        Reviewed by Sergio Villar Senin.
+
+        Imported new tests for this feature from WPT repository.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/css/css-grid-1/abspos/orthogonal-positioned-grid-items-001-expected.html: Added.
+        * web-platform-tests/css/css-grid-1/abspos/orthogonal-positioned-grid-items-001.html: Added.
+        * web-platform-tests/css/css-grid-1/abspos/orthogonal-positioned-grid-items-002-expected.html: Added.
+        * web-platform-tests/css/css-grid-1/abspos/orthogonal-positioned-grid-items-002.html: Added.
+        * web-platform-tests/css/css-grid-1/abspos/orthogonal-positioned-grid-items-003-expected.html: Added.
+        * web-platform-tests/css/css-grid-1/abspos/orthogonal-positioned-grid-items-003.html: Added.
+        * web-platform-tests/css/css-grid-1/abspos/orthogonal-positioned-grid-items-004-expected.html: Added.
+        * web-platform-tests/css/css-grid-1/abspos/orthogonal-positioned-grid-items-004.html: Added.
+        * web-platform-tests/css/css-grid-1/abspos/orthogonal-positioned-grid-items-005-expected.html: Added.
+        * web-platform-tests/css/css-grid-1/abspos/orthogonal-positioned-grid-items-005.html: Added.
+        * web-platform-tests/css/css-grid-1/abspos/orthogonal-positioned-grid-items-006-expected.html: Added.
+        * web-platform-tests/css/css-grid-1/abspos/orthogonal-positioned-grid-items-006.html: Added.
+        * web-platform-tests/css/css-grid-1/abspos/orthogonal-positioned-grid-items-007-expected.html: Added.
+        * web-platform-tests/css/css-grid-1/abspos/orthogonal-positioned-grid-items-007.html: Added.
+        * web-platform-tests/css/css-grid-1/abspos/orthogonal-positioned-grid-items-008-expected.html: Added.
+        * web-platform-tests/css/css-grid-1/abspos/orthogonal-positioned-grid-items-008.html: Added.
+        * web-platform-tests/css/css-grid-1/abspos/orthogonal-positioned-grid-items-009-expected.html: Added.
+        * web-platform-tests/css/css-grid-1/abspos/orthogonal-positioned-grid-items-009.html: Added.
+        * web-platform-tests/css/css-grid-1/abspos/orthogonal-positioned-grid-items-010-expected.html: Added.
+        * web-platform-tests/css/css-grid-1/abspos/orthogonal-positioned-grid-items-010.html: Added.
+        * web-platform-tests/css/css-grid-1/abspos/orthogonal-positioned-grid-items-011-expected.html: Added.
+        * web-platform-tests/css/css-grid-1/abspos/orthogonal-positioned-grid-items-011.html: Added.
+        * web-platform-tests/css/css-grid-1/abspos/orthogonal-positioned-grid-items-012-expected.html: Added.
+        * web-platform-tests/css/css-grid-1/abspos/orthogonal-positioned-grid-items-012.html: Added.
+        * web-platform-tests/css/css-grid-1/abspos/orthogonal-positioned-grid-items-013-expected.html: Added.
+        * web-platform-tests/css/css-grid-1/abspos/orthogonal-positioned-grid-items-013.html: Added.
+        * web-platform-tests/css/css-grid-1/abspos/orthogonal-positioned-grid-items-014-expected.html: Added.
+        * web-platform-tests/css/css-grid-1/abspos/orthogonal-positioned-grid-items-014.html: Added.
+        * web-platform-tests/css/css-grid-1/abspos/orthogonal-positioned-grid-items-015-expected.html: Added.
+        * web-platform-tests/css/css-grid-1/abspos/orthogonal-positioned-grid-items-015.html: Added.
+        * web-platform-tests/css/css-grid-1/abspos/orthogonal-positioned-grid-items-016-expected.html: Added.
+        * web-platform-tests/css/css-grid-1/abspos/orthogonal-positioned-grid-items-016.html: Added.
+        * web-platform-tests/css/css-grid-1/abspos/orthogonal-positioned-grid-items-017-expected.html: Added.
+        * web-platform-tests/css/css-grid-1/abspos/orthogonal-positioned-grid-items-017.html: Added.
+        * web-platform-tests/css/css-grid-1/abspos/w3c-import.log:
+
 2017-05-23  Manuel Rego Casasnovas  <rego@igalia.com>
 
         Move css-scoping-1 test suite to WPT

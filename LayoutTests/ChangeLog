@@ -1,3 +1,15 @@
+2017-05-26  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Add support for orthogonal positioned grid items
+        https://bugs.webkit.org/show_bug.cgi?id=172591
+
+        Reviewed by Sergio Villar Senin.
+
+        Two of the new imported tests are failing due to an issue with margins
+        and orthogonal items, which is unrelated to this patch (see bug #172590).
+
+        * TestExpectations:
+
 2017-05-25  Emilio Cobos Álvarez  <ecobos@igalia.com>
 
         Don't reset m_hasDisplayContents on ElementRareData::resetComputedStyle.
