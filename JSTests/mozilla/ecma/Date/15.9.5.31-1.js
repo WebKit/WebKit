@@ -89,11 +89,13 @@ function getTestCases() {
                     UTCDateFromTime(SetUTCHours(28800000,-8670)),
                     LocalDateFromTime(SetUTCHours(28800000,-8670)) );
 
+// This test is commented out because it relies on non-historical data, which is allowed now.
+/*
     addNewTestCase( 946684800000, 1234567, void 0, void 0, void 0,
                     "TDATE = new Date(946684800000);(TDATE).setUTCHours(1234567);TDATE",
                     UTCDateFromTime(SetUTCHours(946684800000,1234567)),
                     LocalDateFromTime(SetUTCHours(946684800000,1234567)) );
-
+*/
     addNewTestCase( -2208988800000, 59, 999, void 0, void 0,
                     "TDATE = new Date(-2208988800000);(TDATE).setUTCHours(59,999);TDATE",
                     UTCDateFromTime(SetUTCHours(-2208988800000,59,999)),

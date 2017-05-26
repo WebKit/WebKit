@@ -1,3 +1,18 @@
+2017-05-25  Keith Miller  <keith_miller@apple.com>
+
+        Date should use historical data if it's available.
+        https://bugs.webkit.org/show_bug.cgi?id=172592
+
+        Reviewed by Mark Lam.
+
+        Remove parts of the date tests that rely on the absence of
+        historical data in Date.
+
+        * mozilla/ecma/Date/15.9.5.31-1.js:
+        (getTestCases):
+        * mozilla/ecma/Date/15.9.5.35-1.js:
+        (getTestCases):
+
 2017-05-25  Saam Barati  <sbarati@apple.com>
 
         Our for-in optimization in the bytecode generator does its static analysis incorrectly

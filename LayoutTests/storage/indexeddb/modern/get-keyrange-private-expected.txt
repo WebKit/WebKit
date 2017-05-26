@@ -123,13 +123,13 @@ Success getting keyRange [Infinity (Closed), a (Open)]
 Result is PosInf
 Success getting keyRange [Infinity (Open), a (Open)]
 Result is Flux capacitor
-Success getting keyRange [Fri Nov 04 1955 17:00:00 GMT-0700 (PDT) (Closed), Wed Oct 21 2015 09:00:00 GMT-0700 (PDT) (Closed)]
+Success getting keyRange [Fri Nov 04 1955 16:00:00 GMT-0800 (PST) (Closed), Wed Oct 21 2015 09:00:00 GMT-0700 (PDT) (Closed)]
 Result is Flux capacitor
-Success getting keyRange [Fri Nov 04 1955 17:00:00 GMT-0700 (PDT) (Open), Wed Oct 21 2015 09:00:00 GMT-0700 (PDT) (Closed)]
+Success getting keyRange [Fri Nov 04 1955 16:00:00 GMT-0800 (PST) (Open), Wed Oct 21 2015 09:00:00 GMT-0700 (PDT) (Closed)]
 Result is Fish under the sea
-Success getting keyRange [Fri Nov 04 1955 17:00:00 GMT-0700 (PDT) (Closed), Wed Oct 21 2015 09:00:00 GMT-0700 (PDT) (Open)]
+Success getting keyRange [Fri Nov 04 1955 16:00:00 GMT-0800 (PST) (Closed), Wed Oct 21 2015 09:00:00 GMT-0700 (PDT) (Open)]
 Result is Flux capacitor
-Success getting keyRange [Fri Nov 04 1955 17:00:00 GMT-0700 (PDT) (Open), Wed Oct 21 2015 09:00:00 GMT-0700 (PDT) (Open)]
+Success getting keyRange [Fri Nov 04 1955 16:00:00 GMT-0800 (PST) (Open), Wed Oct 21 2015 09:00:00 GMT-0700 (PDT) (Open)]
 Result is Fish under the sea
 readonly transaction complete
 PASS successfullyParsed is true

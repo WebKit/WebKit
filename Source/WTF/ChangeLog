@@ -1,3 +1,19 @@
+2017-05-25  Keith Miller  <keith_miller@apple.com>
+
+        Date should use historical data if it's available.
+        https://bugs.webkit.org/show_bug.cgi?id=172592
+
+        Reviewed by Mark Lam.
+
+        The spec previously disallowed using historical data for Dates.
+        This is no longer the case. Additionally, not using historical
+        data, when available, seems unfortunate for users. This patch
+        removes the code dropping historical data.
+
+        * wtf/DateMath.cpp:
+        (WTF::calculateLocalTimeOffset):
+        (WTF::msToMilliseconds): Deleted.
+
 2017-05-25  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [Win] ASSERTION FAILED: !HashTranslator::equal(KeyTraits::emptyValue(), key)
