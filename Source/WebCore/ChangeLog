@@ -1,3 +1,22 @@
+2017-05-25  Zalan Bujtas  <zalan@apple.com>
+
+        Frame's composited content is visible when the frame has visibility: hidden.
+        https://bugs.webkit.org/show_bug.cgi?id=125565
+        <rdar://problem/32196849>
+
+        Reviewed by Simon Fraser.
+
+        Do not construct composited layers for hidden RenderWidgets (frameset, iframe, object).
+        Note that we still construct layers for the associated renderers as usual. 
+
+        Tests: compositing/visibility/frameset-visibility-hidden.html
+               compositing/visibility/iframe-visibility-hidden.html
+               compositing/visibility/object-visibility-hidden.html
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::requiresCompositingForPlugin):
+        (WebCore::RenderLayerCompositor::requiresCompositingForFrame):
+
 2017-05-25  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, build fix in GTK and WPE ports
