@@ -379,7 +379,9 @@ void RemoteLayerTreeDrawingArea::flushLayers()
     RemoteLayerTreeTransaction layerTransaction;
     layerTransaction.setTransactionID(takeNextTransactionID());
     layerTransaction.setCallbackIDs(WTFMove(m_pendingCallbackIDs));
+    m_remoteLayerTreeContext->setNextFlushIsForImmediatePaint(m_nextFlushIsForImmediatePaint);
     m_remoteLayerTreeContext->buildTransaction(layerTransaction, *downcast<GraphicsLayerCARemote>(*m_rootLayer).platformCALayer());
+    m_remoteLayerTreeContext->setNextFlushIsForImmediatePaint(false);
     backingStoreCollection.willCommitLayerTree(layerTransaction);
     m_webPage.willCommitLayerTree(layerTransaction);
 
@@ -392,6 +394,7 @@ void RemoteLayerTreeDrawingArea::flushLayers()
         downcast<RemoteScrollingCoordinator>(*m_webPage.scrollingCoordinator()).buildTransaction(scrollingTransaction);
 #endif
 
+    m_nextFlushIsForImmediatePaint = false;
     m_waitingForBackingStoreSwap = true;
 
     m_webPage.send(Messages::RemoteLayerTreeDrawingAreaProxy::WillCommitLayerTree(layerTransaction.transactionID()));
@@ -499,8 +502,10 @@ void RemoteLayerTreeDrawingArea::activityStateDidChange(ActivityState::Flags, bo
 {
     // FIXME: Should we suspend painting while not visible, like TiledCoreAnimationDrawingArea? Probably.
 
-    if (wantsDidUpdateActivityState)
+    if (wantsDidUpdateActivityState) {
+        m_nextFlushIsForImmediatePaint = true;
         scheduleCompositingLayerFlushImmediately();
+    }
 }
 
 void RemoteLayerTreeDrawingArea::addTransactionCallbackID(uint64_t callbackID)

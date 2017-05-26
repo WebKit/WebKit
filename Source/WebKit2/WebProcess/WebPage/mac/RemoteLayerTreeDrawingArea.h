@@ -153,6 +153,7 @@ private:
 
     bool m_waitingForBackingStoreSwap;
     bool m_hadFlushDeferredWhileWaitingForBackingStoreSwap;
+    bool m_nextFlushIsForImmediatePaint { false };
 
     dispatch_queue_t m_commitQueue;
     RefPtr<BackingStoreFlusher> m_pendingBackingStoreFlusher;

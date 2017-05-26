@@ -335,22 +335,24 @@ void RemoteLayerBackingStore::drawInContext(GraphicsContext& context, CGImageRef
 #endif
 
     context.scale(m_scale);
-
+    
+    auto flags = m_layer->context() && m_layer->context()->nextFlushIsForImmediatePaint() ? WebCore::GraphicsLayerPaintFlags::Snapshotting : WebCore::GraphicsLayerPaintFlags::None;
+    
     // FIXME: This should be moved to PlatformCALayerRemote for better layering.
     switch (m_layer->layerType()) {
     case PlatformCALayer::LayerTypeSimpleLayer:
     case PlatformCALayer::LayerTypeTiledBackingTileLayer:
-        m_layer->owner()->platformCALayerPaintContents(m_layer, context, dirtyBounds, GraphicsLayerPaintFlags::None);
+        m_layer->owner()->platformCALayerPaintContents(m_layer, context, dirtyBounds, flags);
         break;
     case PlatformCALayer::LayerTypeWebLayer:
     case PlatformCALayer::LayerTypeBackdropLayer:
-        PlatformCALayer::drawLayerContents(cgContext, m_layer, m_paintingRects, GraphicsLayerPaintFlags::None);
+        PlatformCALayer::drawLayerContents(cgContext, m_layer, m_paintingRects, flags);
         break;
     case PlatformCALayer::LayerTypeDarkSystemBackdropLayer:
     case PlatformCALayer::LayerTypeLightSystemBackdropLayer:
         // FIXME: These have a more complicated layer hierarchy. We need to paint into
         // a child layer in order to see the rendered results.
-        PlatformCALayer::drawLayerContents(cgContext, m_layer, m_paintingRects, GraphicsLayerPaintFlags::None);
+        PlatformCALayer::drawLayerContents(cgContext, m_layer, m_paintingRects, flags);
         break;
     case PlatformCALayer::LayerTypeLayer:
     case PlatformCALayer::LayerTypeTransformLayer:

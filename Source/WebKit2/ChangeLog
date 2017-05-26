@@ -1,3 +1,29 @@
+2017-05-25  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [iOS] Disbale async image decoding when synchronously painting a newly parented WebView
+        https://bugs.webkit.org/show_bug.cgi?id=172626
+
+        Reviewed by Simon Fraser.
+
+        Large images have to be synchronously decoded when bringing a WebView to 
+        the foreground because the whole page will be painted when we unblock the
+        UI process.
+
+        * Shared/mac/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::drawInContext): Get nextFlushIsForImmediatePaint
+        from RemoteLayerTreeContext and pass the correct GraphicsLayerPaintFlags
+        to drawLayerContents().
+        * WebProcess/WebPage/mac/RemoteLayerTreeContext.h:
+        (WebKit::RemoteLayerTreeContext::setNextFlushIsForImmediatePaint):
+        (WebKit::RemoteLayerTreeContext::nextFlushIsForImmediatePaint):
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.h:
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::flushLayers): Pass
+        m_nextFlushIsForImmediatePaint to RemoteLayerTreeContext and then reset it.
+        (WebKit::RemoteLayerTreeDrawingArea::activityStateDidChange):
+        Set m_nextFlushIsForImmediatePaint to true to say that in the next flush,
+        large images have to be synchronously decoded.
+
 2017-05-25  Joseph Pecoraro  <pecoraro@apple.com>
 
         _WKUserStyleSheet and WKUserScript leak string data

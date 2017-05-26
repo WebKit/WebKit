@@ -69,6 +69,9 @@ public:
     void willStartAnimationOnLayer(PlatformCALayerRemote&);
 
     RemoteLayerBackingStoreCollection& backingStoreCollection() { return m_backingStoreCollection; }
+    
+    void setNextFlushIsForImmediatePaint(bool nextFlushIsForImmediatePaint) { m_nextFlushIsForImmediatePaint = nextFlushIsForImmediatePaint; }
+    bool nextFlushIsForImmediatePaint() const { return m_nextFlushIsForImmediatePaint; }
 
 private:
     // WebCore::GraphicsLayerFactory
@@ -87,6 +90,8 @@ private:
     RemoteLayerTreeTransaction* m_currentTransaction;
 
     WebCore::LayerPool m_layerPool;
+    
+    bool m_nextFlushIsForImmediatePaint { false };
 };
 
 } // namespace WebKit
