@@ -25,7 +25,7 @@
 
 WebInspector.ContentBrowserTabContentView = class ContentBrowserTabContentView extends WebInspector.TabContentView
 {
-    constructor(identifier, styleClassNames, tabBarItem, navigationSidebarPanelClass, detailsSidebarPanels, disableBackForward)
+    constructor(identifier, styleClassNames, tabBarItem, navigationSidebarPanelClass, detailsSidebarPanelConstructors, disableBackForward)
     {
         if (typeof styleClassNames === "string")
             styleClassNames = [styleClassNames];
@@ -35,7 +35,7 @@ WebInspector.ContentBrowserTabContentView = class ContentBrowserTabContentView e
         var contentBrowser = new WebInspector.ContentBrowser(null, null, disableBackForward);
         var navigationSidebarPanel = navigationSidebarPanelClass ? new navigationSidebarPanelClass(contentBrowser) : null;
 
-        super(identifier, styleClassNames, tabBarItem, navigationSidebarPanel, detailsSidebarPanels);
+        super(identifier, styleClassNames, tabBarItem, navigationSidebarPanel, detailsSidebarPanelConstructors);
 
         this._contentBrowser = contentBrowser;
         this._contentBrowser.delegate = this;
@@ -66,7 +66,7 @@ WebInspector.ContentBrowserTabContentView = class ContentBrowserTabContentView e
             WebInspector.navigationSidebar.addEventListener(WebInspector.Sidebar.Event.CollapsedStateDidChange, this._navigationSidebarCollapsedStateDidChange, this);
         }
 
-        if (detailsSidebarPanels && detailsSidebarPanels.length) {
+        if (detailsSidebarPanelConstructors && detailsSidebarPanelConstructors.length) {
             let showToolTip = WebInspector.UIString("Show the details sidebar (%s)").format(WebInspector.detailsSidebarKeyboardShortcut.displayName);
             let hideToolTip = WebInspector.UIString("Hide the details sidebar (%s)").format(WebInspector.detailsSidebarKeyboardShortcut.displayName);
             let image = WebInspector.resolvedLayoutDirection() == WebInspector.LayoutDirection.RTL ? "Images/ToggleLeftSidebar.svg" : "Images/ToggleRightSidebar.svg";

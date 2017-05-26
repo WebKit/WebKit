@@ -1,5 +1,42 @@
 2017-05-25  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Don't create DetailsSidebarPanel classes until they are needed by a Tab
+        https://bugs.webkit.org/show_bug.cgi?id=172393
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.contentLoaded):
+        Remove global instantiation of all DetailsSidebarPanel objects.
+
+        (WebInspector.instanceForClass):
+        Utility function for creating and accessing an instance of a given class.
+
+        * UserInterface/Views/ContentBrowserTabContentView.js:
+        (WebInspector.ContentBrowserTabContentView):
+        * UserInterface/Views/DebuggerTabContentView.js:
+        (WebInspector.DebuggerTabContentView):
+        (WebInspector.DebuggerTabContentView.prototype.showDetailsSidebarPanels):
+        * UserInterface/Views/ElementsTabContentView.js:
+        (WebInspector.ElementsTabContentView):
+        * UserInterface/Views/NetworkTabContentView.js:
+        (WebInspector.NetworkTabContentView):
+        * UserInterface/Views/ResourcesTabContentView.js:
+        (WebInspector.ResourcesTabContentView):
+        * UserInterface/Views/SearchTabContentView.js:
+        (WebInspector.SearchTabContentView):
+        * UserInterface/Views/StorageTabContentView.js:
+        (WebInspector.StorageTabContentView):
+        * UserInterface/Views/TabContentView.js:
+        (WebInspector.TabContentView):
+        (WebInspector.TabContentView.prototype.get detailsSidebarPanels):
+        * UserInterface/Views/TimelineTabContentView.js:
+        (WebInspector.TimelineTabContentView):
+        Now accepts an array of DetailsSidebarPanel classes that are all instantiated when they are
+        about to be added to the DetailsSidebar.
+
+2017-05-25  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Changing the width of a Sidebar when it's collapsed shouldn't trigger a layout
         https://bugs.webkit.org/show_bug.cgi?id=172606
 

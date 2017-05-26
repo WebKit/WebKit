@@ -25,13 +25,13 @@
 
 WebInspector.TabContentView = class TabContentView extends WebInspector.ContentView
 {
-    constructor(identifier, styleClassNames, tabBarItem, navigationSidebarPanel, detailsSidebarPanels)
+    constructor(identifier, styleClassNames, tabBarItem, navigationSidebarPanel, detailsSidebarPanelConstructors)
     {
         console.assert(typeof identifier === "string");
         console.assert(typeof styleClassNames === "string" || styleClassNames.every((className) => typeof className === "string"));
         console.assert(tabBarItem instanceof WebInspector.TabBarItem);
         console.assert(!navigationSidebarPanel || navigationSidebarPanel instanceof WebInspector.NavigationSidebarPanel);
-        console.assert(!detailsSidebarPanels || detailsSidebarPanels.every((detailsSidebarPanel) => detailsSidebarPanel instanceof WebInspector.DetailsSidebarPanel));
+        console.assert(!detailsSidebarPanelConstructors || detailsSidebarPanelConstructors.every((detailsSidebarPanelConstructor) => typeof detailsSidebarPanelConstructor === "function"));
 
         super(null);
 
@@ -45,7 +45,7 @@ WebInspector.TabContentView = class TabContentView extends WebInspector.ContentV
         this._identifier = identifier;
         this._tabBarItem = tabBarItem;
         this._navigationSidebarPanel = navigationSidebarPanel || null;
-        this._detailsSidebarPanels = detailsSidebarPanels || [];
+        this._detailsSidebarPanelConstructors = detailsSidebarPanelConstructors || [];
 
         const defaultSidebarWidth = 300;
 
@@ -177,7 +177,13 @@ WebInspector.TabContentView = class TabContentView extends WebInspector.ContentV
     get navigationSidebarCollapsedSetting() { return this._navigationSidebarCollapsedSetting; }
     get navigationSidebarWidthSetting() { return this._navigationSidebarWidthSetting; }
 
-    get detailsSidebarPanels() { return this._detailsSidebarPanels; }
+    get detailsSidebarPanels()
+    {
+        if (!this._detailsSidebarPanels)
+            this._detailsSidebarPanels = this._detailsSidebarPanelConstructors.map(constructor => WebInspector.instanceForClass(constructor));
+
+        return this._detailsSidebarPanels;
+    }
     get detailsSidebarCollapsedSetting() { return this._detailsSidebarCollapsedSetting; }
     get detailsSidebarSelectedPanelSetting() { return this._detailsSidebarSelectedPanelSetting; }
     get detailsSidebarWidthSetting() { return this._detailsSidebarWidthSetting; }

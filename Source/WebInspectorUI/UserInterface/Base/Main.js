@@ -425,17 +425,6 @@ WebInspector.contentLoaded = function()
 
     this.toolbar.addToolbarItem(this._searchToolbarItem, WebInspector.Toolbar.Section.Right);
 
-    this.resourceDetailsSidebarPanel = new WebInspector.ResourceDetailsSidebarPanel;
-    this.domNodeDetailsSidebarPanel = new WebInspector.DOMNodeDetailsSidebarPanel;
-    this.cssStyleDetailsSidebarPanel = new WebInspector.CSSStyleDetailsSidebarPanel;
-    this.applicationCacheDetailsSidebarPanel = new WebInspector.ApplicationCacheDetailsSidebarPanel;
-    this.indexedDatabaseDetailsSidebarPanel = new WebInspector.IndexedDatabaseDetailsSidebarPanel;
-    this.scopeChainDetailsSidebarPanel = new WebInspector.ScopeChainDetailsSidebarPanel;
-    this.probeDetailsSidebarPanel = new WebInspector.ProbeDetailsSidebarPanel;
-
-    if (window.LayerTreeAgent)
-        this.layerTreeDetailsSidebarPanel = new WebInspector.LayerTreeDetailsSidebarPanel;
-
     this.modifierKeys = {altKey: false, metaKey: false, shiftKey: false};
 
     let dockedResizerElement = document.getElementById("docked-resizer");
@@ -524,6 +513,20 @@ WebInspector.contentLoaded = function()
 
     if (this.runBootstrapOperations)
         this.runBootstrapOperations();
+};
+
+// This function returns a lazily constructed instance of a class scoped to this WebInspector
+// instance. In the unlikely event that we ever need to construct multiple WebInspector instances
+// this allows us to scope objects within the WebInspector.
+// Currently it is only used for sidebars.
+WebInspector.instanceForClass = function(constructor)
+{
+    console.assert(typeof constructor === "function");
+
+    let key = `__${constructor.name}`;
+    if (!WebInspector[key])
+        WebInspector[key] = new constructor;
+    return WebInspector[key];
 };
 
 WebInspector.isTabTypeAllowed = function(tabType)

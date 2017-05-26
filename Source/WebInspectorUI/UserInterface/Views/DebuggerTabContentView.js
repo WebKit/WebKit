@@ -29,9 +29,9 @@ WebInspector.DebuggerTabContentView = class DebuggerTabContentView extends WebIn
     {
         let {image, title} = WebInspector.DebuggerTabContentView.tabInfo();
         let tabBarItem = new WebInspector.GeneralTabBarItem(image, title);
-        let detailsSidebarPanels = [WebInspector.scopeChainDetailsSidebarPanel, WebInspector.resourceDetailsSidebarPanel, WebInspector.probeDetailsSidebarPanel];
+        let detailsSidebarPanelConstructors = [WebInspector.ScopeChainDetailsSidebarPanel, WebInspector.ResourceDetailsSidebarPanel, WebInspector.ProbeDetailsSidebarPanel];
 
-        super(identifier || "debugger", "debugger", tabBarItem, WebInspector.DebuggerSidebarPanel, detailsSidebarPanels);
+        super(identifier || "debugger", "debugger", tabBarItem, WebInspector.DebuggerSidebarPanel, detailsSidebarPanelConstructors);
     }
 
     static tabInfo()
@@ -69,10 +69,14 @@ WebInspector.DebuggerTabContentView = class DebuggerTabContentView extends WebIn
     {
         super.showDetailsSidebarPanels();
 
-        if (!this._showScopeChainDetailsSidebarPanel || !WebInspector.scopeChainDetailsSidebarPanel.parentSidebar)
+        if (!this._showScopeChainDetailsSidebarPanel)
             return;
 
-        WebInspector.scopeChainDetailsSidebarPanel.show();
+        let scopeChainDetailsSidebarPanel = WebInspector.instanceForClass(WebInspector.ScopeChainDetailsSidebarPanel);
+        if (!scopeChainDetailsSidebarPanel.parentSidebar)
+            return;
+
+        scopeChainDetailsSidebarPanel.show();
 
         this._showScopeChainDetailsSidebarPanel = false;
     }
