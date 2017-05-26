@@ -1,3 +1,18 @@
+2017-05-25  Sam Weinig  <sam@webkit.org>
+
+        Fix MediaDeviceInfo's extended attributes so they make sense
+        https://bugs.webkit.org/show_bug.cgi?id=172629
+
+        Reviewed by Daniel Bates.
+
+        MediaDeviceInfo.idl had both a Constructor and NoInterfaceObject, which
+        doesn't really make sense. Either way, the spec says it should have 
+        neither, so remove both. And, while were there, add missing serializer.
+
+        Test: fast/mediastream/media-device-info.html
+
+        * Modules/mediastream/MediaDeviceInfo.idl:
+
 2017-05-25  Chris Dumez  <cdumez@apple.com>
 
         imported/w3c/web-platform-tests/html/semantics/forms/form-control-infrastructure/form_owner_and_table_2.html is crashing
