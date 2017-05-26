@@ -1,3 +1,83 @@
+2017-05-25  Alexey Proskuryakov  <ap@apple.com>
+
+        Merge split script tests, part 2
+        https://bugs.webkit.org/show_bug.cgi?id=172423
+
+        Reviewed by Tim Horton.
+
+        Fix the few remaining special cases of split tests.
+
+        * editing/pasteboard/drop-text-events-sideeffect-crash.html:
+        * editing/pasteboard/script-tests/drop-text-events-sideeffect.js: Removed.
+        This JS file used to be shared between this test and editing/pasteboard/drop-text-events-sideeffect.html.
+        Now it's inlined in both.
+
+        * fast/canvas/canvas-ellipse-connecting-line-expected.html:
+        * fast/canvas/script-tests/js-ellipse-implementation.js: Removed.
+        This was really a resource, not a scrip test, and it was only only used in one test.
+
+        * fast/dom/HTMLElement/class-list-quirks.html:
+        * fast/dom/HTMLElement/script-tests/class-list.js: Removed.
+        Another JS that used to be shared (with fast/dom/HTMLElement/class-list.html).
+
+        * fast/dom/Window/resources/postmessage-test.js: Copied from LayoutTests/fast/dom/Window/script-tests/postmessage-test.js.
+        * fast/dom/Window/script-tests/postmessage-test.js: Removed.
+        Moved a shared resource to its proper location.
+
+        * fast/dom/Window/script-tests/postmessage-clone-deep-array.js: Removed.
+        * fast/dom/Window/script-tests/postmessage-clone-really-deep-array.js: Removed.
+        * fast/dom/Window/script-tests/postmessage-clone.js: Removed.
+        * fast/dom/Window/window-postmessage-clone-deep-array.html:
+        * fast/dom/Window/window-postmessage-clone-really-deep-array.html:
+        * fast/dom/Window/window-postmessage-clone.html:
+        Straightforward js-tests with file names that didn't match.
+        
+        * fast/table/resources/min-width-helpers.js: Copied from LayoutTests/fast/table/script-tests/min-width-helpers.js.
+        * fast/table/script-tests/min-width-helpers.js: Removed.
+        Moved a shared resource to its proper location.
+
+        * fast/table/min-width-css-block-table.html:
+        * fast/table/min-width-css-inline-table.html:
+        * fast/table/min-width-html-block-table.html:
+        * fast/table/min-width-html-inline-table.html:
+        * fast/table/script-tests/min-width-css-block-table.js: Removed.
+        * fast/table/script-tests/min-width-css-inline-table.js: Removed.
+        * fast/table/script-tests/min-width-html-block-table.js: Removed.
+        * fast/table/script-tests/min-width-html-inline-table.js: Removed.
+        Straightforward JS tests, weren't moved previously because my script was confused by min-width-helpers.js.
+
+        * printing/break-after-avoid-expected.txt:
+        * printing/break-after-avoid-page-expected.txt:
+        * printing/break-after-avoid-page.html:
+        * printing/break-after-avoid.html:
+        * printing/script-tests/break-after-avoid-page.js: Removed.
+        * printing/script-tests/break-after-avoid.js: Removed.
+        * printing/script-tests/page-break-after-avoid.js: Removed.
+        * printing/script-tests/page-break-always-for-overflow.js: Removed.
+        These had a number of copy/paste mistakes, so the tests werent's actually testing what they said they did.
+
+        * svg/dom/SVGAnimatedEnumeration-SVGMaskElement-expected.txt:
+        * svg/dom/SVGAnimatedEnumeration-SVGMaskElement.html:
+        * svg/dom/SVGAnimatedEnumeration-SVGPatternElement-expected.txt:
+        * svg/dom/SVGAnimatedEnumeration-SVGPatternElement.html:
+        * svg/dom/script-tests/SVGAnimatedEnumeration-SVGMaskElement.js: Removed.
+        * svg/dom/script-tests/SVGAnimatedEnumeration-SVGPatternElement.js: Removed.
+        These tests were mixed up - pattern was being tested instead of mask, and vice versa.
+        
+        * svg/dom/script-tests/SVGColor.js: Removed.
+        * svg/dom/script-tests/SVGPaint.js: Removed.
+        Removed unused files.
+
+        * svg/dynamic-updates/SVGFEFloodElement-inherit-flood-color.html:
+        * svg/dynamic-updates/SVGFEGaussianBlurElement-dom-stdDeviation-call.html:
+        * svg/dynamic-updates/SVGFESpecularLightingElement-dom-suraceScale-attr.html:
+        * svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-suraceScale-prop.html:
+        * svg/dynamic-updates/script-tests/SVGFEFloodElement-inherit-flood-color-css-prop.js: Removed.
+        * svg/dynamic-updates/script-tests/SVGFEGaussianBlurElement-svgdom-stdDeviation-call.js: Removed.
+        * svg/dynamic-updates/script-tests/SVGFESpecularLightingElement-dom-surfaceScale-attr.js: Removed.
+        * svg/dynamic-updates/script-tests/SVGFESpecularLightingElement-svgdom-surfaceScale-prop.js: Removed.
+        Straightforward js-tests with mismatching names.
+
 2017-05-25  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WK1] iframes in layer-backed NSViews are not cleared between successive draws

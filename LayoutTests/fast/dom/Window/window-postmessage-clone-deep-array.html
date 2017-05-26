@@ -4,7 +4,14 @@
 <div id="description"></div>
 <input type="file" id="fileInput" multiple></input>
 <div id="console"></div>
-<script src="script-tests/postmessage-test.js"></script>
-<script src="script-tests/postmessage-clone-deep-array.js"></script>
+<script src="resources/postmessage-test.js"></script>
+<script>
+document.getElementById("description").innerHTML = "Tests that we support cloning deep(ish) arrays.";
+deepArray=[];
+for (var i = 0; i < 10000; i++)
+    deepArray=[deepArray];
+tryPostMessage('deepArray');
+tryPostMessage('"done"');
+</script>
 </body>
 </html>
