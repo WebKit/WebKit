@@ -161,8 +161,7 @@ static void wrapperForNSObjectisObject()
         context.exception = nil;
 
         context[@"A"] = NSObject.class;
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=172654
-        // checkResult(@"Should not throw an exception when wrapping NSObject and Object has been changed", [context exception]);
+        checkResult(@"Should not throw an exception when wrapping NSObject and Object has been changed", ![context exception]);
     }
 }
 

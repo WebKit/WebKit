@@ -1,3 +1,17 @@
+2017-05-26  Keith Miller  <keith_miller@apple.com>
+
+        REEGRESSION(r217459): testapi fails in JSExportTest's wrapperForNSObjectisObject().
+        https://bugs.webkit.org/show_bug.cgi?id=172654
+
+        Reviewed by Mark Lam.
+
+        The test's intent is to assert that an exception has not been
+        thrown (as indicated by the message string), but the test was
+        erroneously checking for ! the right condition. This is now fixed.
+
+        * API/tests/JSExportTests.mm:
+        (wrapperForNSObjectisObject):
+
 2017-05-26  Joseph Pecoraro  <pecoraro@apple.com>
 
         JSContext Inspector: Improve the reliability of automatically pausing in auto-attach
