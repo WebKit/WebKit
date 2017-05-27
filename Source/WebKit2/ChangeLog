@@ -1,3 +1,17 @@
+2017-05-26  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Simply some NSNumber usage
+        https://bugs.webkit.org/show_bug.cgi?id=172677
+
+        Reviewed by Sam Weinig.
+
+        * PluginProcess/mac/PluginControllerProxyMac.mm:
+        (WebKit::PluginControllerProxy::platformGeometryDidChange):
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::registerUserDefaultsIfNeeded):
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObjectMac.mm:
+        (-[WKAccessibilityWebPageObject accessibilityAttributeValue:]):
+
 2017-05-26  Brent Fulgham  <bfulgham@apple.com>
 
         [WK2] Address thread safety issues with ResourceLoadStatistics

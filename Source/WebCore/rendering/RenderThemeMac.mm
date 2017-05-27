@@ -1077,8 +1077,7 @@ NSLevelIndicatorCell* RenderThemeMac::levelIndicatorFor(const RenderMeter& rende
     [cell setBaseWritingDirection:style.isLeftToRightDirection() ? NSWritingDirectionLeftToRight : NSWritingDirectionRightToLeft];
     [cell setMinValue:element->min()];
     [cell setMaxValue:element->max()];
-    RetainPtr<NSNumber> valueObject = [NSNumber numberWithDouble:value];
-    [cell setObjectValue:valueObject.get()];
+    [cell setObjectValue:@(value)];
 
     return cell;
 }

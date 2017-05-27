@@ -105,12 +105,12 @@ static void registerUserDefaultsIfNeeded()
     didRegister = true;
     NSMutableDictionary *registrationDictionary = [NSMutableDictionary dictionary];
     
-    [registrationDictionary setObject:[NSNumber numberWithBool:YES] forKey:WebKitJSCJITEnabledDefaultsKey];
-    [registrationDictionary setObject:[NSNumber numberWithBool:YES] forKey:WebKitJSCFTLJITEnabledDefaultsKey];
+    [registrationDictionary setObject:@YES forKey:WebKitJSCJITEnabledDefaultsKey];
+    [registrationDictionary setObject:@YES forKey:WebKitJSCFTLJITEnabledDefaultsKey];
 
 #if ENABLE(NETWORK_CACHE)
-    [registrationDictionary setObject:[NSNumber numberWithBool:YES] forKey:WebKitNetworkCacheEnabledDefaultsKey];
-    [registrationDictionary setObject:[NSNumber numberWithBool:NO] forKey:WebKitNetworkCacheEfficacyLoggingEnabledDefaultsKey];
+    [registrationDictionary setObject:@YES forKey:WebKitNetworkCacheEnabledDefaultsKey];
+    [registrationDictionary setObject:@NO forKey:WebKitNetworkCacheEfficacyLoggingEnabledDefaultsKey];
 #endif
 
     [[NSUserDefaults standardUserDefaults] registerDefaults:registrationDictionary];

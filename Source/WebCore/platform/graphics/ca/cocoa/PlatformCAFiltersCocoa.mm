@@ -158,7 +158,7 @@ void PlatformCAFilters::setFiltersOnLayer(PlatformLayer* layer, const FilterOper
             [filter setValue:[NSNumber numberWithFloat:floatValueForLength(blurOperation.stdDeviation(), 0)] forKey:@"inputRadius"];
 #if ENABLE(FILTERS_LEVEL_2)
             if ([layer isKindOfClass:[CABackdropLayer class]])
-                [filter setValue:[NSNumber numberWithBool:YES] forKey:@"inputNormalizeEdges"];
+                [filter setValue:@YES forKey:@"inputNormalizeEdges"];
 #endif
             [filter setName:filterName];
             [array.get() addObject:filter];

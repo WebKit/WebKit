@@ -824,7 +824,7 @@ static void AXAttributeStringSetStyle(NSMutableAttributedString* attrString, Ren
     
     // set shadow
     if (style.textShadow())
-        AXAttributeStringSetNumber(attrString, NSAccessibilityShadowTextAttribute, [NSNumber numberWithBool:YES], range);
+        AXAttributeStringSetNumber(attrString, NSAccessibilityShadowTextAttribute, @YES, range);
     else
         [attrString removeAttribute:NSAccessibilityShadowTextAttribute range:range];
     
@@ -845,12 +845,12 @@ static void AXAttributeStringSetStyle(NSMutableAttributedString* attrString, Ren
         auto decorationStyles = TextDecorationPainter::stylesForRenderer(*renderer, decor);
 
         if ((decor & TextDecorationUnderline) != 0) {
-            AXAttributeStringSetNumber(attrString, NSAccessibilityUnderlineTextAttribute, [NSNumber numberWithBool:YES], range);
+            AXAttributeStringSetNumber(attrString, NSAccessibilityUnderlineTextAttribute, @YES, range);
             AXAttributeStringSetColor(attrString, NSAccessibilityUnderlineColorTextAttribute, nsColor(decorationStyles.underlineColor), range);
         }
         
         if ((decor & TextDecorationLineThrough) != 0) {
-            AXAttributeStringSetNumber(attrString, NSAccessibilityStrikethroughTextAttribute, [NSNumber numberWithBool:YES], range);
+            AXAttributeStringSetNumber(attrString, NSAccessibilityStrikethroughTextAttribute, @YES, range);
             AXAttributeStringSetColor(attrString, NSAccessibilityStrikethroughColorTextAttribute, nsColor(decorationStyles.linethroughColor), range);
         }
     }
@@ -858,7 +858,7 @@ static void AXAttributeStringSetStyle(NSMutableAttributedString* attrString, Ren
     // Indicate background highlighting.
     for (Node* node = renderer->node(); node; node = node->parentNode()) {
         if (node->hasTagName(markTag))
-            AXAttributeStringSetNumber(attrString, @"AXHighlight", [NSNumber numberWithBool:YES], range);
+            AXAttributeStringSetNumber(attrString, @"AXHighlight", @YES, range);
     }
 }
 
@@ -887,12 +887,11 @@ static void AXAttributeStringSetSpelling(NSMutableAttributedString* attrString, 
         checkTextOfParagraph(*checker, text, TextCheckingTypeSpelling, results, node->document().frame()->selection().selection());
         
         size_t size = results.size();
-        NSNumber* trueValue = [NSNumber numberWithBool:YES];
         for (unsigned i = 0; i < size; i++) {
             const TextCheckingResult& result = results[i];
-            AXAttributeStringSetNumber(attrString, NSAccessibilityMisspelledTextAttribute, trueValue, NSMakeRange(result.location + range.location, result.length));
+            AXAttributeStringSetNumber(attrString, NSAccessibilityMisspelledTextAttribute, @YES, NSMakeRange(result.location + range.location, result.length));
 #if PLATFORM(MAC)
-            AXAttributeStringSetNumber(attrString, NSAccessibilityMarkedMisspelledTextAttribute, trueValue, NSMakeRange(result.location + range.location, result.length));
+            AXAttributeStringSetNumber(attrString, NSAccessibilityMarkedMisspelledTextAttribute, @YES, NSMakeRange(result.location + range.location, result.length));
 #endif
         }
         return;
@@ -906,9 +905,9 @@ static void AXAttributeStringSetSpelling(NSMutableAttributedString* attrString, 
             break;
         
         NSRange spellRange = NSMakeRange(range.location + currentPosition + misspellingLocation, misspellingLength);
-        AXAttributeStringSetNumber(attrString, NSAccessibilityMisspelledTextAttribute, [NSNumber numberWithBool:YES], spellRange);
+        AXAttributeStringSetNumber(attrString, NSAccessibilityMisspelledTextAttribute, @YES, spellRange);
 #if PLATFORM(MAC)
-        AXAttributeStringSetNumber(attrString, NSAccessibilityMarkedMisspelledTextAttribute, [NSNumber numberWithBool:YES], spellRange);
+        AXAttributeStringSetNumber(attrString, NSAccessibilityMarkedMisspelledTextAttribute, @YES, spellRange);
 #endif
 
         currentPosition += misspellingLocation + misspellingLength;

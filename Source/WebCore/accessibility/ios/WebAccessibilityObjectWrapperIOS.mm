@@ -2027,7 +2027,7 @@ static RenderObject* rendererForView(WAKView* view)
         return YES;
     
     // Explicity set that this is now an element (in case other logic tries to override).
-    [wrapper setValue:[NSNumber numberWithBool:YES] forKey:@"isAccessibilityElement"];    
+    [wrapper setValue:@YES forKey:@"isAccessibilityElement"];    
     [array addObject:wrapper];
     return YES;
 }
@@ -2120,9 +2120,9 @@ static void AXAttributeStringSetFont(NSMutableAttributedString* attrString, CTFo
     if ([size boolValue])
         [attrString addAttribute:UIAccessibilityTokenFontSize value:size range:range];
     if ([bold boolValue] || (traits & kCTFontTraitBold))
-        [attrString addAttribute:UIAccessibilityTokenBold value:[NSNumber numberWithBool:YES] range:range];
+        [attrString addAttribute:UIAccessibilityTokenBold value:@YES range:range];
     if (traits & kCTFontTraitItalic)
-        [attrString addAttribute:UIAccessibilityTokenItalic value:[NSNumber numberWithBool:YES] range:range];
+        [attrString addAttribute:UIAccessibilityTokenItalic value:@YES range:range];
 
 }
 
@@ -2143,7 +2143,7 @@ static void AXAttributeStringSetStyle(NSMutableAttributedString* attrString, Ren
                 
     int decor = style.textDecorationsInEffect();
     if (decor & TextDecorationUnderline)
-        AXAttributeStringSetNumber(attrString, UIAccessibilityTokenUnderline, [NSNumber numberWithBool:YES], range);
+        AXAttributeStringSetNumber(attrString, UIAccessibilityTokenUnderline, @YES, range);
 }
 
 static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, Node* node, NSString *text)

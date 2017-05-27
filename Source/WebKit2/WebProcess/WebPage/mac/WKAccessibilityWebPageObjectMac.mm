@@ -137,7 +137,7 @@ using namespace WebKit;
         return NSAccessibilityRoleDescription(NSAccessibilityGroupRole, nil);
     
     if ([attribute isEqualToString:NSAccessibilityFocusedAttribute])
-        return [NSNumber numberWithBool:NO];
+        return @NO;
     
     if (!m_page)
         return nil;

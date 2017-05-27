@@ -364,7 +364,7 @@ void AXObjectCache::postTextStateChangePlatformNotification(AccessibilityObject*
 
     NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] initWithCapacity:5];
     if (m_isSynchronizingSelection)
-        [userInfo setObject:[NSNumber numberWithBool:YES] forKey:NSAccessibilityTextStateSyncKey];
+        [userInfo setObject:@YES forKey:NSAccessibilityTextStateSyncKey];
     if (intent.type != AXTextStateChangeTypeUnknown) {
         [userInfo setObject:@(platformChangeTypeForWebCoreChangeType(intent.type)) forKey:NSAccessibilityTextStateChangeTypeKey];
         switch (intent.type) {

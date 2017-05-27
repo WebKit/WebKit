@@ -1,3 +1,25 @@
+2017-05-26  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Simply some NSNumber usage
+        https://bugs.webkit.org/show_bug.cgi?id=172677
+
+        Reviewed by Sam Weinig.
+
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper _addAccessibilityObject:toTextMarkerArray:]):
+        (AXAttributeStringSetFont):
+        (AXAttributeStringSetStyle):
+        * accessibility/mac/AXObjectCacheMac.mm:
+        (WebCore::AXObjectCache::postTextStateChangePlatformNotification):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (AXAttributeStringSetStyle):
+        (AXAttributeStringSetSpelling):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL):
+        * platform/graphics/ca/cocoa/PlatformCAFiltersCocoa.mm:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::levelIndicatorFor):
+
 2017-05-26  Youenn Fablet  <youenn@apple.com>
 
         WebRTC stats should be in milliseconds
