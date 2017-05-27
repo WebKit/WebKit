@@ -1,3 +1,13 @@
+2017-05-26  Youenn Fablet  <youenn@apple.com>
+
+        WebRTC stats should be in milliseconds
+        https://bugs.webkit.org/show_bug.cgi?id=172644
+
+        Reviewed by Eric Carlson.
+
+        * TestExpectations:
+        * webrtc/video-stats.html: Making it less flaky prone.
+
 2017-05-26  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Overloaded functions should throw this object check exception before argument check exception

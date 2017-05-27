@@ -46,6 +46,32 @@ function getOutboundRTPStats(connection)
     });
 }
 
+function checkInboundFramesNumberIncreased(secondConnection, statsSecondConnection, count)
+{
+    return getInboundRTPStats(secondConnection).then((stats) => {
+        if (stats.timestamp > statsSecondConnection.timestamp && stats.framesDecoded > statsSecondConnection.framesDecoded)
+            return;
+        if (++count === 20)
+            return Promise.reject("checking inbound stats frame number increasing timed out");
+        return waitFor(50).then(() => {
+            return checkInboundFramesNumberIncreased(secondConnection, statsSecondConnection, count)
+        });
+    });
+}
+
+function checkOutboundFramesNumberIncreased(firstConnection, statsFirstConnection, count)
+{
+    return getOutboundRTPStats(firstConnection).then((stats) => {
+        if (stats.timestamp > statsFirstConnection.timestamp && stats.framesEncoded > statsFirstConnection.framesEncoded)
+            return;
+        if (++count === 20)
+            return Promise.reject("checking outbound stats frame number increasing timed out");
+        return waitFor(50).then(() => {
+            return checkOutboundFramesNumberIncreased(firstConnection, statsFirstConnection, count)
+        });
+    });
+}
+
 var firstConnection, secondConnection;
 promise_test((test) => {
     if (window.testRunner)
@@ -73,24 +99,21 @@ promise_test((test) => {
         assert_true(!!stats, "outbound-rtp stats should not be null");
         assert_true(Number.isInteger(stats.framesEncoded), "framesEncoded should be an integer");
         assert_true(Number.isInteger(stats.qpSum), "outbound qpSum should be an integer");
+        assert_false(Number.isInteger(stats.timestamp), "timestamp should be a double");
+        assert_true(typeof stats.timestamp === "number", "timestamp should be a double");
         statsFirstConnection = stats;
         return getInboundRTPStats(secondConnection);
     }).then((stats) => {
         assert_true(!!stats, "inbound-rtp stats should not be null");
         assert_true(Number.isInteger(stats.framesDecoded), "framesDecoded should be an integer");
         assert_true(Number.isInteger(stats.qpSum), "inbound qpSum should be an integer");
+        assert_false(Number.isInteger(stats.timestamp), "timestamp should be a double");
+        assert_true(typeof stats.timestamp === "number", "timestamp should be a double");
         statsSecondConnection = stats;
-        return waitFor(300);
     }).then(() => {
-        return getOutboundRTPStats(firstConnection);
-    }).then((stats) => {
-        assert_true(stats.timestamp > statsFirstConnection.timestamp, "Timestamp for first connection should have increased");
-        assert_true(stats.framesEncoded > statsFirstConnection.framesEncoded, "Number of encoded frames should have increased");
-
-        return getInboundRTPStats(secondConnection);
-    }).then((stats) => {
-        assert_true(stats.timestamp > statsSecondConnection.timestamp, "Timestamp for second connection should have increased");
-        assert_true(stats.framesDecoded > statsSecondConnection.framesDecoded, "Number of decoded frames should have increased");
+        return checkInboundFramesNumberIncreased(secondConnection, statsSecondConnection, 0);
+    }).then(() => {
+        return checkOutboundFramesNumberIncreased(firstConnection, statsFirstConnection, 0);
     });
 }, "Basic video stats");
         </script>

@@ -239,7 +239,7 @@ static inline String fromStdString(const std::string& value)
 
 static inline void fillRTCStats(RTCStatsReport::Stats& stats, const webrtc::RTCStats& rtcStats)
 {
-    stats.timestamp = rtcStats.timestamp_us();
+    stats.timestamp = rtcStats.timestamp_us() / 1000.0;
     stats.id = fromStdString(rtcStats.id());
 }
 

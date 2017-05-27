@@ -53,7 +53,7 @@ public:
         Certificate
     };
     struct Stats {
-        unsigned long long timestamp;
+        double timestamp;
         Type type;
         String id;
     };

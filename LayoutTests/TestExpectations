@@ -735,7 +735,6 @@ media/session [ Skip ]
 
 webrtc/negotiatedneeded-event-addStream.html [ Pass Crash ]
 webrtc/video-replace-track.html [ Pass Failure ]
-webrtc/video-stats.html [ Pass Failure ]
 webrtc/video-getParameters.html [ Failure ]
 webrtc/peer-connection-audio-mute2.html [ Pass Failure ]
 webrtc/peer-connection-remote-audio-mute2.html [ Pass Failure ]

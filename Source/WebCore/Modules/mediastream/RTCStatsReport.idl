@@ -45,9 +45,10 @@ enum RTCStatsType {
     "certificate"
 };
 
+typedef double DOMHighResTimeStamp;
+
 dictionary RTCStats {
-    // FIXME 169662: change type to DOMHighResTimeStamp
-    unsigned long long timestamp;
+    DOMHighResTimeStamp timestamp;
     RTCStatsType type;
     DOMString id;
 
