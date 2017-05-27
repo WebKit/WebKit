@@ -32,7 +32,7 @@ namespace JSC {
 
 class JSSetIterator;
 
-class JSSet : public HashMapImpl<HashMapBucket<HashMapBucketDataKey>> {
+class JSSet final : public HashMapImpl<HashMapBucket<HashMapBucketDataKey>> {
     using Base = HashMapImpl<HashMapBucket<HashMapBucketDataKey>>;
 public:
 
@@ -52,6 +52,9 @@ public:
         return instance;
     }
 
+    bool canCloneFastAndNonObservable(Structure*);
+    JSSet* clone(ExecState*, VM&, Structure*);
+
 private:
     JSSet(VM& vm, Structure* structure)
         : Base(vm, structure)
@@ -60,5 +63,23 @@ private:
 
     static String toStringName(const JSObject*, ExecState*);
 };
+
+template<typename To, typename From>
+inline typename std::enable_if<std::is_same<typename std::remove_pointer<To>::type, JSSet>::value, To>::type jsDynamicCast(VM&, From* from)
+{
+    static_assert(std::is_final<JSSet>::value, "");
+    if (LIKELY(from->type() == JSSetType))
+        return static_cast<To>(from);
+    return nullptr;
+}
+
+template<>
+inline JSSet* jsDynamicCast<JSSet*>(VM&, JSValue from)
+{
+    static_assert(std::is_final<JSSet>::value, "");
+    if (LIKELY(from.isCell() && from.asCell()->type() == JSSetType))
+        return static_cast<JSSet*>(from.asCell());
+    return nullptr;
+}
 
 } // namespace JSC

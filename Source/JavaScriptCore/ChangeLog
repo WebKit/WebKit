@@ -1,5 +1,117 @@
 2017-05-27  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [JSC] Map and Set constructors should have fast path for cloning
+        https://bugs.webkit.org/show_bug.cgi?id=172413
+
+        Reviewed by Saam Barati.
+
+        In this patch, we add a fast path for cloning in Set and Map constructors.
+
+        In ARES-6 Air, we have code like `new Set(set)` to clone the given set.
+        At that time, our generic path just iterates the given set object and add
+        it to the newly created one. It is quite slow because we need to follow
+        the iterator protocol inside C++ and we need to call set.add() repeatedly
+        while the given set guarantees the elements are unique.
+
+        This patch implements clone() function to JSMap and JSSet. Cloning JSMap
+        and JSSet are done really fast without invoking any observable JS functions.
+        To check whether we can use this clone() function in Set and Map constructors,
+        we set several watchpoints.
+
+        In the case of Set,
+
+        1. Set.prototype[Symbol.iterator] is not changed.
+        2. SetIterator.prototype.next is not changed.
+        3. Set.prototype.add is not changed.
+        4. The given Set does not have [Symbol.iterator] function in its instance.
+        5. The given Set's [[Prototype]] is Set.prototype.
+        6. Newly created set's [[Prototype]] is Set.prototype.
+
+        If the above requirements are met, cloning the given Set is not observable to users.
+        Thus we can take a fast path.
+
+        Currently, we do not integrate this optimization into DFG and FTL.
+        And we do not optimize other iterables. For example, we can optimize Set
+        constructor taking Int32 Array. And we should optimize generic iterator cases too.
+        They are planned as part of a separate bug[1].
+
+        This change improves ARES-6 Air by 5.3% in steady state.
+
+        Baseline:
+            Running... Air ( 1  to go)
+            firstIteration:     76.41 +- 15.60 ms
+            averageWorstCase:   40.63 +- 7.54 ms
+            steadyState:        9.13 +- 0.51 ms
+
+
+        Patched:
+            Running... Air ( 1  to go)
+            firstIteration:     75.00 +- 22.54 ms
+            averageWorstCase:   39.18 +- 8.45 ms
+            steadyState:        8.67 +- 0.28 ms
+
+        [1]: https://bugs.webkit.org/show_bug.cgi?id=172419
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/ArrayIteratorAdaptiveWatchpoint.cpp: Removed.
+        * runtime/HashMapImpl.h:
+        (JSC::HashMapBucket::extractValue):
+        (JSC::HashMapImpl::finishCreation):
+        (JSC::HashMapImpl::add):
+        (JSC::HashMapImpl::setUpHeadAndTail):
+        (JSC::HashMapImpl::addNormalizedNonExistingForCloning):
+        (JSC::HashMapImpl::addNormalizedInternal):
+        * runtime/InternalFunction.cpp:
+        (JSC::InternalFunction::createSubclassStructureSlow):
+        (JSC::InternalFunction::createSubclassStructure): Deleted.
+        * runtime/InternalFunction.h:
+        (JSC::InternalFunction::createSubclassStructure):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::JSGlobalObject):
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::mapIteratorProtocolWatchpoint):
+        (JSC::JSGlobalObject::setIteratorProtocolWatchpoint):
+        (JSC::JSGlobalObject::mapSetWatchpoint):
+        (JSC::JSGlobalObject::setAddWatchpoint):
+        (JSC::JSGlobalObject::mapPrototype):
+        (JSC::JSGlobalObject::jsSetPrototype):
+        (JSC::JSGlobalObject::setStructure):
+        * runtime/JSGlobalObjectInlines.h:
+        (JSC::JSGlobalObject::isMapPrototypeIteratorProtocolFastAndNonObservable):
+        (JSC::JSGlobalObject::isSetPrototypeIteratorProtocolFastAndNonObservable):
+        (JSC::JSGlobalObject::isMapPrototypeSetFastAndNonObservable):
+        (JSC::JSGlobalObject::isSetPrototypeAddFastAndNonObservable):
+        * runtime/JSMap.cpp:
+        (JSC::JSMap::clone):
+        (JSC::JSMap::canCloneFastAndNonObservable):
+        * runtime/JSMap.h:
+        (JSC::jsDynamicCast):
+        (JSC::>):
+        (JSC::JSMap::createStructure): Deleted.
+        (JSC::JSMap::create): Deleted.
+        (JSC::JSMap::set): Deleted.
+        (JSC::JSMap::JSMap): Deleted.
+        * runtime/JSSet.cpp:
+        (JSC::JSSet::clone):
+        (JSC::JSSet::canCloneFastAndNonObservable):
+        * runtime/JSSet.h:
+        (JSC::jsDynamicCast):
+        (JSC::>):
+        (JSC::JSSet::createStructure): Deleted.
+        (JSC::JSSet::create): Deleted.
+        (JSC::JSSet::JSSet): Deleted.
+        * runtime/MapConstructor.cpp:
+        (JSC::constructMap):
+        * runtime/ObjectPropertyChangeAdaptiveWatchpoint.h: Renamed from Source/JavaScriptCore/runtime/ArrayIteratorAdaptiveWatchpoint.h.
+        (JSC::ObjectPropertyChangeAdaptiveWatchpoint::ObjectPropertyChangeAdaptiveWatchpoint):
+        * runtime/SetConstructor.cpp:
+        (JSC::constructSet):
+
+2017-05-27  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [DOMJIT] Move DOMJIT patchpoint infrastructure out of domjit
         https://bugs.webkit.org/show_bug.cgi?id=172260
 

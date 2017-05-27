@@ -27,6 +27,7 @@
 #include "JSSet.h"
 
 #include "JSCInlines.h"
+#include "SetPrototype.h"
 
 namespace JSC {
 
@@ -35,6 +36,48 @@ const ClassInfo JSSet::s_info = { "Set", &Base::s_info, nullptr, nullptr, CREATE
 String JSSet::toStringName(const JSObject*, ExecState*)
 {
     return ASCIILiteral("Object");
+}
+
+JSSet* JSSet::clone(ExecState* exec, VM& vm, Structure* structure)
+{
+    JSSet* instance = new (NotNull, allocateCell<JSSet>(vm.heap)) JSSet(vm, structure);
+    instance->finishCreation(exec, vm, this);
+    return instance;
+}
+
+bool JSSet::canCloneFastAndNonObservable(Structure* structure)
+{
+    auto isIteratorProtocolFastAndNonObservable = [&] () {
+        JSGlobalObject* globalObject = this->globalObject();
+        if (!globalObject->isSetPrototypeIteratorProtocolFastAndNonObservable())
+            return false;
+
+        Structure* structure = this->structure();
+        // This is the fast case. Many sets will be an original set.
+        if (structure == globalObject->setStructure())
+            return true;
+
+        if (structure->storedPrototype() != globalObject->jsSetPrototype())
+            return false;
+
+        if (getDirectOffset(globalObject->vm(), globalObject->vm().propertyNames->iteratorSymbol) != invalidOffset)
+            return false;
+
+        return true;
+    };
+
+    auto addFastAndNonObservable = [&] (Structure* structure) {
+        JSGlobalObject* globalObject = structure->globalObject();
+        if (!globalObject->isSetPrototypeAddFastAndNonObservable())
+            return false;
+
+        if (structure->storedPrototype() != globalObject->jsSetPrototype())
+            return false;
+
+        return true;
+    };
+
+    return isIteratorProtocolFastAndNonObservable() && addFastAndNonObservable(structure);
 }
 
 }

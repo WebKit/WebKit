@@ -1343,8 +1343,6 @@
 		52B310FF1975B4240080857C /* TypeLocationCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52B310FE1975B4240080857C /* TypeLocationCache.cpp */; };
 		52B311011975B4670080857C /* TypeLocationCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 52B311001975B4670080857C /* TypeLocationCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		52B717B51A0597E1007AF4F3 /* ControlFlowProfiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52B717B41A0597E1007AF4F3 /* ControlFlowProfiler.cpp */; };
-		52B74B4A1DCC04690034157D /* ArrayIteratorAdaptiveWatchpoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52B74B481DCC04690034157D /* ArrayIteratorAdaptiveWatchpoint.cpp */; };
-		52B74B4B1DCC04690034157D /* ArrayIteratorAdaptiveWatchpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 52B74B491DCC04690034157D /* ArrayIteratorAdaptiveWatchpoint.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		52C0611F1AA51E1C00B4ADBA /* RuntimeType.h in Headers */ = {isa = PBXBuildFile; fileRef = 52C0611D1AA51E1B00B4ADBA /* RuntimeType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		52C952B719A289850069B386 /* TypeProfiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 52C952B619A289850069B386 /* TypeProfiler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		52C952B919A28A1C0069B386 /* TypeProfiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52C952B819A28A1C0069B386 /* TypeProfiler.cpp */; };
@@ -2406,6 +2404,7 @@
 		E3BFD0BB1DAF80870065DEA2 /* AccessCaseSnippetParams.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3BFD0B91DAF807C0065DEA2 /* AccessCaseSnippetParams.cpp */; };
 		E3BFD0BC1DAF808E0065DEA2 /* AccessCaseSnippetParams.h in Headers */ = {isa = PBXBuildFile; fileRef = E3BFD0BA1DAF807C0065DEA2 /* AccessCaseSnippetParams.h */; };
 		E3C79CAB1DB9A4DC00D1ECA4 /* DOMJITEffect.h in Headers */ = {isa = PBXBuildFile; fileRef = E3C79CAA1DB9A4D600D1ECA4 /* DOMJITEffect.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E3C295DD1ED2CBDA00D3016F /* ObjectPropertyChangeAdaptiveWatchpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = E3C295DC1ED2CBAA00D3016F /* ObjectPropertyChangeAdaptiveWatchpoint.h */; };
 		E3D239C81B829C1C00BBEF67 /* JSModuleEnvironment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3D239C61B829C1C00BBEF67 /* JSModuleEnvironment.cpp */; };
 		E3D239C91B829C1C00BBEF67 /* JSModuleEnvironment.h in Headers */ = {isa = PBXBuildFile; fileRef = E3D239C71B829C1C00BBEF67 /* JSModuleEnvironment.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3D877731E65C09E00BE945A /* BytecodeDumper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3D877711E65C08900BE945A /* BytecodeDumper.cpp */; };
@@ -3892,8 +3891,6 @@
 		52B310FE1975B4240080857C /* TypeLocationCache.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TypeLocationCache.cpp; sourceTree = "<group>"; };
 		52B311001975B4670080857C /* TypeLocationCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TypeLocationCache.h; sourceTree = "<group>"; };
 		52B717B41A0597E1007AF4F3 /* ControlFlowProfiler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ControlFlowProfiler.cpp; sourceTree = "<group>"; };
-		52B74B481DCC04690034157D /* ArrayIteratorAdaptiveWatchpoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ArrayIteratorAdaptiveWatchpoint.cpp; sourceTree = "<group>"; };
-		52B74B491DCC04690034157D /* ArrayIteratorAdaptiveWatchpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArrayIteratorAdaptiveWatchpoint.h; sourceTree = "<group>"; };
 		52C0611D1AA51E1B00B4ADBA /* RuntimeType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RuntimeType.h; sourceTree = "<group>"; };
 		52C952B619A289850069B386 /* TypeProfiler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TypeProfiler.h; sourceTree = "<group>"; };
 		52C952B819A28A1C0069B386 /* TypeProfiler.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TypeProfiler.cpp; sourceTree = "<group>"; };
@@ -5027,6 +5024,7 @@
 		E3A421421D6F588F0007C617 /* PreciseJumpTargetsInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreciseJumpTargetsInlines.h; sourceTree = "<group>"; };
 		E3BFD0B91DAF807C0065DEA2 /* AccessCaseSnippetParams.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessCaseSnippetParams.cpp; sourceTree = "<group>"; };
 		E3BFD0BA1DAF807C0065DEA2 /* AccessCaseSnippetParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessCaseSnippetParams.h; sourceTree = "<group>"; };
+		E3C295DC1ED2CBAA00D3016F /* ObjectPropertyChangeAdaptiveWatchpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectPropertyChangeAdaptiveWatchpoint.h; sourceTree = "<group>"; };
 		E3C79CAA1DB9A4D600D1ECA4 /* DOMJITEffect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMJITEffect.h; sourceTree = "<group>"; };
 		E3D239C61B829C1C00BBEF67 /* JSModuleEnvironment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSModuleEnvironment.cpp; sourceTree = "<group>"; };
 		E3D239C71B829C1C00BBEF67 /* JSModuleEnvironment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSModuleEnvironment.h; sourceTree = "<group>"; };
@@ -6551,8 +6549,6 @@
 				BC7952070E15E8A800A898AB /* ArrayConstructor.h */,
 				0FB415831D78F98200DF8D09 /* ArrayConventions.cpp */,
 				0FB7F38915ED8E3800F167B2 /* ArrayConventions.h */,
-				52B74B481DCC04690034157D /* ArrayIteratorAdaptiveWatchpoint.cpp */,
-				52B74B491DCC04690034157D /* ArrayIteratorAdaptiveWatchpoint.h */,
 				A7BDAEC217F4EA1400F6140C /* ArrayIteratorPrototype.cpp */,
 				A7BDAEC317F4EA1400F6140C /* ArrayIteratorPrototype.h */,
 				F692A84D0255597D01FF60F7 /* ArrayPrototype.cpp */,
@@ -6973,6 +6969,7 @@
 				BC2680C70E16D4E900A06E92 /* ObjectConstructor.h */,
 				FE48E6371EB118AD005D7A96 /* ObjectInitializationScope.cpp */,
 				FE48E6361EB1188F005D7A96 /* ObjectInitializationScope.h */,
+				E3C295DC1ED2CBAA00D3016F /* ObjectPropertyChangeAdaptiveWatchpoint.h */,
 				BC2680C80E16D4E900A06E92 /* ObjectPrototype.cpp */,
 				BC2680C90E16D4E900A06E92 /* ObjectPrototype.h */,
 				F692A8770255597D01FF60F7 /* Operations.cpp */,
@@ -8278,7 +8275,6 @@
 				BC18C3E60E16F5CD00B34460 /* ArrayConstructor.h in Headers */,
 				996B73171BDA067F00331B84 /* ArrayConstructor.lut.h in Headers */,
 				0FB7F39515ED8E4600F167B2 /* ArrayConventions.h in Headers */,
-				52B74B4B1DCC04690034157D /* ArrayIteratorAdaptiveWatchpoint.h in Headers */,
 				A7BDAEC917F4EA1400F6140C /* ArrayIteratorPrototype.h in Headers */,
 				996B73181BDA068000331B84 /* ArrayIteratorPrototype.lut.h in Headers */,
 				0F63945515D07057006A597C /* ArrayProfile.h in Headers */,
@@ -8461,6 +8457,7 @@
 				0FC97F34182020D7002C9B26 /* CodeBlockJettisoningWatchpoint.h in Headers */,
 				0FD8A31417D4326C00CA2C40 /* CodeBlockSet.h in Headers */,
 				0F664CE81DA304EF00B00A11 /* CodeBlockSetInlines.h in Headers */,
+				E3C295DD1ED2CBDA00D3016F /* ObjectPropertyChangeAdaptiveWatchpoint.h in Headers */,
 				0F96EBB316676EF6008BADE3 /* CodeBlockWithJITType.h in Headers */,
 				A77F1822164088B200640A47 /* CodeCache.h in Headers */,
 				99CC0B6318BE9950006CEBCC /* CodeGeneratorReplayInputs.py in Headers */,
@@ -10168,7 +10165,6 @@
 				A7A8AF3617ADB5F3005AB174 /* ArrayBufferView.cpp in Sources */,
 				147F39BF107EC37600427A48 /* ArrayConstructor.cpp in Sources */,
 				0FB415841D78FB4C00DF8D09 /* ArrayConventions.cpp in Sources */,
-				52B74B4A1DCC04690034157D /* ArrayIteratorAdaptiveWatchpoint.cpp in Sources */,
 				A7BDAEC817F4EA1400F6140C /* ArrayIteratorPrototype.cpp in Sources */,
 				0F63945415D07055006A597C /* ArrayProfile.cpp in Sources */,
 				147F39C0107EC37600427A48 /* ArrayPrototype.cpp in Sources */,

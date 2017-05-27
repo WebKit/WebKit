@@ -31,7 +31,6 @@
 #include "JSGlobalObject.h"
 
 #include "ArrayConstructor.h"
-#include "ArrayIteratorAdaptiveWatchpoint.h"
 #include "ArrayIteratorPrototype.h"
 #include "ArrayPrototype.h"
 #include "AtomicsObject.h"
@@ -135,6 +134,7 @@
 #include "NumberPrototype.h"
 #include "ObjCCallbackFunction.h"
 #include "ObjectConstructor.h"
+#include "ObjectPropertyChangeAdaptiveWatchpoint.h"
 #include "ObjectPropertyConditionSet.h"
 #include "ObjectPrototype.h"
 #include "ParserError.h"
@@ -323,6 +323,10 @@ JSGlobalObject::JSGlobalObject(VM& vm, Structure* structure, const GlobalObjectM
     , m_varInjectionWatchpoint(adoptRef(new WatchpointSet(IsWatched)))
     , m_weakRandom(Options::forceWeakRandomSeed() ? Options::forcedWeakRandomSeed() : static_cast<unsigned>(randomNumber() * (std::numeric_limits<unsigned>::max() + 1.0)))
     , m_arrayIteratorProtocolWatchpoint(IsWatched)
+    , m_mapIteratorProtocolWatchpoint(IsWatched)
+    , m_setIteratorProtocolWatchpoint(IsWatched)
+    , m_mapSetWatchpoint(IsWatched)
+    , m_setAddWatchpoint(IsWatched)
     , m_arraySpeciesWatchpoint(ClearWatchpoint)
     , m_templateRegistry(vm)
     , m_evalEnabled(true)
@@ -582,11 +586,17 @@ void JSGlobalObject::init(VM& vm)
     m_sharedArrayBufferPrototype.set(vm, this, JSArrayBufferPrototype::create(vm, this, JSArrayBufferPrototype::createStructure(vm, this, m_objectPrototype.get()), ArrayBufferSharingMode::Shared));
     m_sharedArrayBufferStructure.set(vm, this, JSArrayBuffer::createStructure(vm, this, m_sharedArrayBufferPrototype.get()));
 
+    m_iteratorPrototype.set(vm, this, IteratorPrototype::create(vm, this, IteratorPrototype::createStructure(vm, this, m_objectPrototype.get())));
+
+    m_propertyNameIteratorStructure.set(vm, this, JSPropertyNameIterator::createStructure(vm, this, m_iteratorPrototype.get()));
+    m_generatorPrototype.set(vm, this, GeneratorPrototype::create(vm, this, GeneratorPrototype::createStructure(vm, this, m_iteratorPrototype.get())));
+
 #define CREATE_PROTOTYPE_FOR_SIMPLE_TYPE(capitalName, lowerName, properName, instanceType, jsName, prototypeBase) \
 m_ ## lowerName ## Prototype.set(vm, this, capitalName##Prototype::create(vm, this, capitalName##Prototype::createStructure(vm, this, m_ ## prototypeBase ## Prototype.get()))); \
 m_ ## properName ## Structure.set(vm, this, instanceType::createStructure(vm, this, m_ ## lowerName ## Prototype.get()));
     
     FOR_EACH_SIMPLE_BUILTIN_TYPE(CREATE_PROTOTYPE_FOR_SIMPLE_TYPE)
+    FOR_EACH_BUILTIN_DERIVED_ITERATOR_TYPE(CREATE_PROTOTYPE_FOR_SIMPLE_TYPE)
     
 #undef CREATE_PROTOTYPE_FOR_SIMPLE_TYPE
 
@@ -602,19 +612,6 @@ m_ ## properName ## Structure.set(vm, this, instanceType::createStructure(vm, th
     
 #undef CREATE_PROTOTYPE_FOR_LAZY_TYPE
     
-    m_iteratorPrototype.set(vm, this, IteratorPrototype::create(vm, this, IteratorPrototype::createStructure(vm, this, m_objectPrototype.get())));
-
-#define CREATE_PROTOTYPE_FOR_DERIVED_ITERATOR_TYPE(capitalName, lowerName, properName, instanceType, jsName, prototypeBase) \
-    m_ ## lowerName ## Structure.initLater( \
-        [] (const Initializer<Structure>& init) { \
-            JSObject* prototype = capitalName ## Prototype::create(init.vm, init.owner, capitalName ## Prototype::createStructure(init.vm, init.owner, init.owner->m_iteratorPrototype.get())); \
-            init.set(instanceType::createStructure(init.vm, init.owner, prototype)); \
-        });
-    FOR_EACH_BUILTIN_DERIVED_ITERATOR_TYPE(CREATE_PROTOTYPE_FOR_DERIVED_ITERATOR_TYPE)
-#undef CREATE_PROTOTYPE_FOR_DERIVED_ITERATOR_TYPE
-
-    m_propertyNameIteratorStructure.set(vm, this, JSPropertyNameIterator::createStructure(vm, this, m_iteratorPrototype.get()));
-    m_generatorPrototype.set(vm, this, GeneratorPrototype::create(vm, this, GeneratorPrototype::createStructure(vm, this, m_iteratorPrototype.get())));
     m_moduleLoaderPrototype.set(vm, this, ModuleLoaderPrototype::create(vm, this, ModuleLoaderPrototype::createStructure(vm, this, m_objectPrototype.get())));
     
     // Constructors
@@ -939,15 +936,50 @@ putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Construct
 
         {
             ObjectPropertyCondition condition = setupAdaptiveWatchpoint(arrayIteratorPrototype, m_vm.propertyNames->next);
-            m_arrayIteratorPrototypeNext = std::make_unique<ArrayIteratorAdaptiveWatchpoint>(condition, this);
+            m_arrayIteratorPrototypeNext = std::make_unique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(vm, condition, m_arrayIteratorProtocolWatchpoint);
             m_arrayIteratorPrototypeNext->install();
         }
 
         {
-            ArrayPrototype* arrayPrototype = this->arrayPrototype();
-            ObjectPropertyCondition condition = setupAdaptiveWatchpoint(arrayPrototype, m_vm.propertyNames->iteratorSymbol);
-            m_arrayPrototypeSymbolIteratorWatchpoint = std::make_unique<ArrayIteratorAdaptiveWatchpoint>(condition, this);
+            ObjectPropertyCondition condition = setupAdaptiveWatchpoint(this->arrayPrototype(), m_vm.propertyNames->iteratorSymbol);
+            m_arrayPrototypeSymbolIteratorWatchpoint = std::make_unique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(vm, condition, m_arrayIteratorProtocolWatchpoint);
             m_arrayPrototypeSymbolIteratorWatchpoint->install();
+        }
+
+        {
+            ObjectPropertyCondition condition = setupAdaptiveWatchpoint(m_mapIteratorPrototype.get(), m_vm.propertyNames->next);
+            m_mapIteratorPrototypeNextWatchpoint = std::make_unique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(vm, condition, m_mapIteratorProtocolWatchpoint);
+            m_mapIteratorPrototypeNextWatchpoint->install();
+        }
+
+        {
+            ObjectPropertyCondition condition = setupAdaptiveWatchpoint(m_mapPrototype.get(), m_vm.propertyNames->iteratorSymbol);
+            m_mapPrototypeSymbolIteratorWatchpoint = std::make_unique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(vm, condition, m_mapIteratorProtocolWatchpoint);
+            m_mapPrototypeSymbolIteratorWatchpoint->install();
+        }
+
+        {
+            ObjectPropertyCondition condition = setupAdaptiveWatchpoint(m_setIteratorPrototype.get(), m_vm.propertyNames->next);
+            m_setIteratorPrototypeNextWatchpoint = std::make_unique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(vm, condition, m_setIteratorProtocolWatchpoint);
+            m_setIteratorPrototypeNextWatchpoint->install();
+        }
+
+        {
+            ObjectPropertyCondition condition = setupAdaptiveWatchpoint(m_setPrototype.get(), m_vm.propertyNames->iteratorSymbol);
+            m_setPrototypeSymbolIteratorWatchpoint = std::make_unique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(vm, condition, m_setIteratorProtocolWatchpoint);
+            m_setPrototypeSymbolIteratorWatchpoint->install();
+        }
+
+        {
+            ObjectPropertyCondition condition = setupAdaptiveWatchpoint(m_mapPrototype.get(), m_vm.propertyNames->set);
+            m_mapPrototypeSetWatchpoint = std::make_unique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(vm, condition, m_mapSetWatchpoint);
+            m_mapPrototypeSetWatchpoint->install();
+        }
+
+        {
+            ObjectPropertyCondition condition = setupAdaptiveWatchpoint(m_setPrototype.get(), m_vm.propertyNames->add);
+            m_setPrototypeAddWatchpoint = std::make_unique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(vm, condition, m_setAddWatchpoint);
+            m_setPrototypeAddWatchpoint->install();
         }
     }
 
@@ -1268,6 +1300,7 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(thisObject->m_ ## properName ## Structure); \
 
     FOR_EACH_SIMPLE_BUILTIN_TYPE(VISIT_SIMPLE_TYPE)
+    FOR_EACH_BUILTIN_DERIVED_ITERATOR_TYPE(VISIT_SIMPLE_TYPE)
     
 #if ENABLE(WEBASSEMBLY)
     visitor.append(thisObject->m_webAssemblyStructure);
@@ -1284,7 +1317,6 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     thisObject->m_ ## properName ## Structure.visit(visitor);
     
     FOR_EACH_LAZY_BUILTIN_TYPE(VISIT_LAZY_TYPE)
-    FOR_EACH_BUILTIN_DERIVED_ITERATOR_TYPE(VISIT_LAZY_TYPE)
 
 #undef VISIT_LAZY_TYPE
 

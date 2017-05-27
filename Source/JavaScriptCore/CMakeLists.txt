@@ -683,7 +683,6 @@ set(JavaScriptCore_SOURCES
     runtime/ArrayBufferView.cpp
     runtime/ArrayConstructor.cpp
     runtime/ArrayConventions.cpp
-    runtime/ArrayIteratorAdaptiveWatchpoint.cpp
     runtime/ArrayIteratorPrototype.cpp
     runtime/ArrayPrototype.cpp
     runtime/AtomicsObject.cpp

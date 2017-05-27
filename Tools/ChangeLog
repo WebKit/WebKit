@@ -1,3 +1,13 @@
+2017-05-27  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Map and Set constructors should have fast path for cloning
+        https://bugs.webkit.org/show_bug.cgi?id=172413
+
+        Reviewed by Saam Barati.
+
+        * TestWebKitAPI/Tests/WTF/MathExtras.cpp:
+        (TestWebKitAPI::TEST):
+
 2017-05-27  Zalan Bujtas  <zalan@apple.com>
 
         enclosingIntRect returns a rect with -1 width/height when the input FloatRect overflows integer.

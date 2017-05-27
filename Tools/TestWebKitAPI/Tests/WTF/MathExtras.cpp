@@ -174,4 +174,11 @@ TEST(WTF, clampToUnsignedLongLong)
     EXPECT_EQ(clampTo<unsigned>(-1), 0u);
 }
 
+TEST(WTF, roundUpToPowerOfTwo)
+{
+    EXPECT_EQ(WTF::roundUpToPowerOfTwo(UINT32_MAX), 0U);
+    EXPECT_EQ(WTF::roundUpToPowerOfTwo(1U << 31), (1U << 31));
+    EXPECT_EQ(WTF::roundUpToPowerOfTwo((1U << 31) + 1), 0U);
+}
+
 } // namespace TestWebKitAPI

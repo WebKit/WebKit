@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Yusuke Suzuki <utatane.tea@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,26 +20,35 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ArrayIteratorAdaptiveWatchpoint.h"
+#pragma once
 
-#include "JSGlobalObject.h"
+#include "AdaptiveInferredPropertyValueWatchpointBase.h"
 
 namespace JSC {
 
-ArrayIteratorAdaptiveWatchpoint::ArrayIteratorAdaptiveWatchpoint(const ObjectPropertyCondition& condition, JSGlobalObject* globalObject)
-    : Base(condition)
-    , m_globalObject(globalObject)
-{
-    RELEASE_ASSERT(m_globalObject->arrayIteratorProtocolWatchpoint().stateOnJSThread() == IsWatched);
-}
+template<typename Watchpoint>
+class ObjectPropertyChangeAdaptiveWatchpoint : public AdaptiveInferredPropertyValueWatchpointBase {
+public:
+    using Base = AdaptiveInferredPropertyValueWatchpointBase;
+    ObjectPropertyChangeAdaptiveWatchpoint(VM& vm, const ObjectPropertyCondition& condition, Watchpoint& watchpoint)
+        : Base(condition)
+        , m_vm(vm)
+        , m_watchpoint(watchpoint)
+    {
+        RELEASE_ASSERT(watchpoint.stateOnJSThread() == IsWatched);
+    }
 
-void ArrayIteratorAdaptiveWatchpoint::handleFire(const FireDetail&)
-{
-    m_globalObject->arrayIteratorProtocolWatchpoint().fireAll(m_globalObject->vm(), StringFireDetail("Array iterator protocol changed."));
-}
+private:
+    void handleFire(const FireDetail&) override
+    {
+        m_watchpoint.fireAll(m_vm, StringFireDetail("Object Property is changed."));
+    }
+
+    VM& m_vm;
+    Watchpoint& m_watchpoint;
+};
 
 } // namespace JSC

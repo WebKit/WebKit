@@ -58,7 +58,6 @@ class JSGlobalObjectInspectorController;
 namespace JSC {
 class ArrayConstructor;
 class ArrayPrototype;
-class ArrayIteratorAdaptiveWatchpoint;
 class AsyncFunctionPrototype;
 class BooleanPrototype;
 class ConsoleClient;
@@ -91,6 +90,7 @@ class JSTypedArrayViewConstructor;
 class JSTypedArrayViewPrototype;
 class DirectEvalExecutable;
 class LLIntOffsetsExtractor;
+class MapPrototype;
 class Microtask;
 class ModuleLoaderPrototype;
 class ModuleProgramExecutable;
@@ -102,11 +102,14 @@ class ProgramCodeBlock;
 class ProgramExecutable;
 class RegExpConstructor;
 class RegExpPrototype;
+class SetPrototype;
 class SourceCode;
 class UnlinkedModuleProgramCodeBlock;
 class VariableEnvironment;
 struct ActivationStackNode;
 struct HashTable;
+
+template<typename Watchpoint> class ObjectPropertyChangeAdaptiveWatchpoint;
 
 #define DEFINE_STANDARD_BUILTIN(macro, upperName, lowerName) macro(upperName, lowerName, lowerName, JS ## upperName, upperName, object)
 
@@ -116,23 +119,19 @@ struct HashTable;
     macro(Number, number, numberObject, NumberObject, Number, object) \
     macro(Error, error, error, ErrorInstance, Error, object) \
     macro(Map, map, map, JSMap, Map, object) \
+    macro(Set, set, set, JSSet, Set, object) \
     macro(JSPromise, promise, promise, JSPromise, Promise, object)
 
 #define FOR_EACH_BUILTIN_DERIVED_ITERATOR_TYPE(macro) \
-    DEFINE_STANDARD_BUILTIN(macro, MapIterator, mapIterator) \
-    DEFINE_STANDARD_BUILTIN(macro, SetIterator, setIterator) \
-    DEFINE_STANDARD_BUILTIN(macro, StringIterator, stringIterator) \
-
-#define FOR_EACH_BUILTIN_ITERATOR_TYPE(macro) \
-    DEFINE_STANDARD_BUILTIN(macro, Iterator, iterator) \
-    FOR_EACH_BUILTIN_DERIVED_ITERATOR_TYPE(macro) \
+    macro(MapIterator, mapIterator, mapIterator, JSMapIterator, MapIterator, iterator) \
+    macro(SetIterator, setIterator, setIterator, JSSetIterator, SetIterator, iterator) \
+    macro(StringIterator, stringIterator, stringIterator, JSStringIterator, StringIterator, iterator) \
 
 #define FOR_EACH_SIMPLE_BUILTIN_TYPE(macro) \
     FOR_EACH_SIMPLE_BUILTIN_TYPE_WITH_CONSTRUCTOR(macro) \
     macro(JSInternalPromise, internalPromise, internalPromise, JSInternalPromise, InternalPromise, object) \
 
 #define FOR_EACH_LAZY_BUILTIN_TYPE(macro) \
-    macro(Set, set, set, JSSet, Set, object) \
     macro(Date, date, date, DateInstance, Date, object) \
     macro(Boolean, boolean, booleanObject, BooleanObject, Boolean, object) \
     DEFINE_STANDARD_BUILTIN(macro, WeakMap, weakMap) \
@@ -347,6 +346,7 @@ public:
     WriteBarrier<Structure> m_ ## properName ## Structure;
 
     FOR_EACH_SIMPLE_BUILTIN_TYPE(DEFINE_STORAGE_FOR_SIMPLE_TYPE)
+    FOR_EACH_BUILTIN_DERIVED_ITERATOR_TYPE(DEFINE_STORAGE_FOR_SIMPLE_TYPE)
     
 #if ENABLE(WEBASSEMBLY)
     WriteBarrier<Structure> m_webAssemblyStructure;
@@ -359,11 +359,6 @@ public:
 
 #undef DEFINE_STORAGE_FOR_SIMPLE_TYPE
 
-#define DEFINE_STORAGE_FOR_ITERATOR_TYPE(capitalName, lowerName, properName, instanceType, jsName, prototypeBase) \
-    LazyProperty<JSGlobalObject, Structure> m_ ## properName ## Structure;
-    FOR_EACH_BUILTIN_DERIVED_ITERATOR_TYPE(DEFINE_STORAGE_FOR_ITERATOR_TYPE)
-#undef DEFINE_STORAGE_FOR_ITERATOR_TYPE
-    
 #define DEFINE_STORAGE_FOR_LAZY_TYPE(capitalName, lowerName, properName, instanceType, jsName, prototypeBase) \
     LazyClassStructure m_ ## properName ## Structure;
     FOR_EACH_LAZY_BUILTIN_TYPE(DEFINE_STORAGE_FOR_LAZY_TYPE)
@@ -411,15 +406,33 @@ public:
     WeakRandom m_weakRandom;
 
     InlineWatchpointSet& arrayIteratorProtocolWatchpoint() { return m_arrayIteratorProtocolWatchpoint; }
+    InlineWatchpointSet& mapIteratorProtocolWatchpoint() { return m_mapIteratorProtocolWatchpoint; }
+    InlineWatchpointSet& setIteratorProtocolWatchpoint() { return m_setIteratorProtocolWatchpoint; }
+    InlineWatchpointSet& mapSetWatchpoint() { return m_mapSetWatchpoint; }
+    InlineWatchpointSet& setAddWatchpoint() { return m_setAddWatchpoint; }
     InlineWatchpointSet& arraySpeciesWatchpoint() { return m_arraySpeciesWatchpoint; }
     // If this hasn't been invalidated, it means the array iterator protocol
     // is not observable to user code yet.
     InlineWatchpointSet m_arrayIteratorProtocolWatchpoint;
+    InlineWatchpointSet m_mapIteratorProtocolWatchpoint;
+    InlineWatchpointSet m_setIteratorProtocolWatchpoint;
+    InlineWatchpointSet m_mapSetWatchpoint;
+    InlineWatchpointSet m_setAddWatchpoint;
     InlineWatchpointSet m_arraySpeciesWatchpoint;
-    std::unique_ptr<ArrayIteratorAdaptiveWatchpoint> m_arrayPrototypeSymbolIteratorWatchpoint;
-    std::unique_ptr<ArrayIteratorAdaptiveWatchpoint> m_arrayIteratorPrototypeNext;
+    std::unique_ptr<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>> m_arrayPrototypeSymbolIteratorWatchpoint;
+    std::unique_ptr<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>> m_arrayIteratorPrototypeNext;
+    std::unique_ptr<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>> m_mapPrototypeSymbolIteratorWatchpoint;
+    std::unique_ptr<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>> m_mapIteratorPrototypeNextWatchpoint;
+    std::unique_ptr<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>> m_setPrototypeSymbolIteratorWatchpoint;
+    std::unique_ptr<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>> m_setIteratorPrototypeNextWatchpoint;
+    std::unique_ptr<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>> m_mapPrototypeSetWatchpoint;
+    std::unique_ptr<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>> m_setPrototypeAddWatchpoint;
 
     bool isArrayPrototypeIteratorProtocolFastAndNonObservable();
+    bool isMapPrototypeIteratorProtocolFastAndNonObservable();
+    bool isSetPrototypeIteratorProtocolFastAndNonObservable();
+    bool isMapPrototypeSetFastAndNonObservable();
+    bool isSetPrototypeAddFastAndNonObservable();
 
     TemplateRegistry m_templateRegistry;
 
@@ -548,6 +561,9 @@ public:
     GeneratorFunctionPrototype* generatorFunctionPrototype() const { return m_generatorFunctionPrototype.get(); }
     GeneratorPrototype* generatorPrototype() const { return m_generatorPrototype.get(); }
     AsyncFunctionPrototype* asyncFunctionPrototype() const { return m_asyncFunctionPrototype.get(); }
+    MapPrototype* mapPrototype() const { return m_mapPrototype.get(); }
+    // Workaround for the name conflict between JSCell::setPrototype.
+    SetPrototype* jsSetPrototype() const { return m_setPrototype.get(); }
 
     Structure* debuggerScopeStructure() const { return m_debuggerScopeStructure.get(this); }
     Structure* withScopeStructure() const { return m_withScopeStructure.get(this); }
@@ -608,7 +624,7 @@ public:
     Structure* regExpStructure() const { return m_regExpStructure.get(); }
     Structure* generatorFunctionStructure() const { return m_generatorFunctionStructure.get(); }
     Structure* asyncFunctionStructure() const { return m_asyncFunctionStructure.get(); }
-    Structure* setStructure() const { return m_setStructure.get(this); }
+    Structure* setStructure() const { return m_setStructure.get(); }
     Structure* stringObjectStructure() const { return m_stringObjectStructure.get(); }
     Structure* symbolObjectStructure() const { return m_symbolObjectStructure.get(); }
     Structure* iteratorResultObjectStructure() const { return m_iteratorResultObjectStructure.get(); }
@@ -678,15 +694,9 @@ public:
 
     FOR_EACH_SIMPLE_BUILTIN_TYPE(DEFINE_ACCESSORS_FOR_SIMPLE_TYPE)
     FOR_EACH_WEBASSEMBLY_CONSTRUCTOR_TYPE(DEFINE_ACCESSORS_FOR_SIMPLE_TYPE)
+    FOR_EACH_BUILTIN_DERIVED_ITERATOR_TYPE(DEFINE_ACCESSORS_FOR_SIMPLE_TYPE)
 
 #undef DEFINE_ACCESSORS_FOR_SIMPLE_TYPE
-
-#define DEFINE_ACCESSORS_FOR_ITERATOR_TYPE(capitalName, lowerName, properName, instanceType, jsName, prototypeBase) \
-    Structure* properName ## Structure() { return m_ ## properName ## Structure.get(this); }
-
-    FOR_EACH_BUILTIN_DERIVED_ITERATOR_TYPE(DEFINE_ACCESSORS_FOR_ITERATOR_TYPE)
-
-#undef DEFINE_ACCESSORS_FOR_ITERATOR_TYPE
 
 #define DEFINE_ACCESSORS_FOR_LAZY_TYPE(capitalName, lowerName, properName, instanceType, jsName, prototypeBase) \
     Structure* properName ## Structure() { return m_ ## properName ## Structure.get(this); }

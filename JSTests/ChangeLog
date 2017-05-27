@@ -1,3 +1,42 @@
+2017-05-27  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Map and Set constructors should have fast path for cloning
+        https://bugs.webkit.org/show_bug.cgi?id=172413
+
+        Reviewed by Saam Barati.
+
+        * stress/map-clone-instance-iterator-change.js: Added.
+        (shouldBe):
+        (map.Symbol.iterator):
+        * stress/map-clone-iterator-change.js: Added.
+        (shouldBe):
+        (Map.prototype.Symbol.iterator):
+        * stress/map-clone-next-change.js: Added.
+        (shouldBe):
+        (map.Symbol.iterator.__proto__.next):
+        * stress/map-clone.js: Added.
+        (shouldBe):
+        (Map.prototype):
+        * stress/map-inherit-set.js: Added.
+        (shouldBe):
+        (DerivedMap):
+        (set for):
+        * stress/set-clone-instance-iterator-change.js: Added.
+        (shouldBe):
+        (set Symbol.iterator):
+        * stress/set-clone-iterator-change.js: Added.
+        (shouldBe):
+        (set Set.prototype.Symbol.iterator):
+        * stress/set-clone-next-change.js: Added.
+        (shouldBe):
+        (set Symbol.iterator.__proto__.next):
+        * stress/set-clone.js: Added.
+        (shouldBe):
+        (set Set.prototype.add):
+        * stress/set-inherit-add.js: Added.
+        (shouldBe):
+        (DerivedSet.set add):
+
 2017-05-26  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r217458.

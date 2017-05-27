@@ -32,7 +32,7 @@ namespace JSC {
 
 class JSMapIterator;
 
-class JSMap : public HashMapImpl<HashMapBucket<HashMapBucketDataKeyValue>> {
+class JSMap final : public HashMapImpl<HashMapBucket<HashMapBucketDataKeyValue>> {
     using Base = HashMapImpl<HashMapBucket<HashMapBucketDataKeyValue>>;
 public:
     friend class JSMapIterator;
@@ -56,6 +56,9 @@ public:
         add(exec, key, value);
     }
 
+    bool canCloneFastAndNonObservable(Structure*);
+    JSMap* clone(ExecState*, VM&, Structure*);
+
 private:
     JSMap(VM& vm, Structure* structure)
         : Base(vm, structure)
@@ -64,5 +67,23 @@ private:
 
     static String toStringName(const JSObject*, ExecState*);
 };
+
+template<typename To, typename From>
+inline typename std::enable_if<std::is_same<typename std::remove_pointer<To>::type, JSMap>::value, To>::type jsDynamicCast(VM&, From* from)
+{
+    static_assert(std::is_final<JSMap>::value, "");
+    if (LIKELY(from->type() == JSMapType))
+        return static_cast<To>(from);
+    return nullptr;
+}
+
+template<>
+inline JSMap* jsDynamicCast<JSMap*>(VM&, JSValue from)
+{
+    static_assert(std::is_final<JSMap>::value, "");
+    if (LIKELY(from.isCell() && from.asCell()->type() == JSMapType))
+        return static_cast<JSMap*>(from.asCell());
+    return nullptr;
+}
 
 } // namespace JSC
