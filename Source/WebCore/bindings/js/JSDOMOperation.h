@@ -33,6 +33,7 @@ class IDLOperation {
 public:
     using ClassParameter = JSClass*;
     using Operation = JSC::EncodedJSValue(JSC::ExecState*, ClassParameter, JSC::ThrowScope&);
+    using StaticOperation = JSC::EncodedJSValue(JSC::ExecState*, JSC::ThrowScope&);
 
     static JSClass* cast(JSC::ExecState&);
 
@@ -50,6 +51,15 @@ public:
         
         // FIXME: We should refactor the binding generated code to use references for state and thisObject.
         return operation(&state, thisObject, throwScope);
+    }
+
+    template<StaticOperation operation, CastedThisErrorBehavior shouldThrow = CastedThisErrorBehavior::Throw>
+    static JSC::EncodedJSValue callStatic(JSC::ExecState& state, const char*)
+    {
+        auto throwScope = DECLARE_THROW_SCOPE(state.vm());
+
+        // FIXME: We should refactor the binding generated code to use references for state.
+        return operation(&state, throwScope);
     }
 };
 

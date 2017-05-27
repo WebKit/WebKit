@@ -31,7 +31,6 @@
 #include "JSDOMOperation.h"
 #include "JSDOMWrapperCache.h"
 #include "JSTestCEReactionsStringifier.h"
-#include <runtime/Error.h>
 #include <runtime/FunctionPrototype.h>
 #include <wtf/GetPtr.h>
 
@@ -277,7 +276,7 @@ bool setJSTestCEReactionsStringifierAttribute(ExecState* state, EncodedJSValue t
     return IDLAttribute<JSTestCEReactions>::set<setJSTestCEReactionsStringifierAttributeSetter>(*state, thisValue, encodedValue, "stringifierAttribute");
 }
 
-static inline JSC::EncodedJSValue jsTestCEReactionsPrototypeFunctionMethodWithCEReactionsCaller(JSC::ExecState* state, typename IDLOperation<JSTestCEReactions>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestCEReactionsPrototypeFunctionMethodWithCEReactionsBody(JSC::ExecState* state, typename IDLOperation<JSTestCEReactions>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -289,7 +288,7 @@ static inline JSC::EncodedJSValue jsTestCEReactionsPrototypeFunctionMethodWithCE
 
 EncodedJSValue JSC_HOST_CALL jsTestCEReactionsPrototypeFunctionMethodWithCEReactions(ExecState* state)
 {
-    return IDLOperation<JSTestCEReactions>::call<jsTestCEReactionsPrototypeFunctionMethodWithCEReactionsCaller>(*state, "methodWithCEReactions");
+    return IDLOperation<JSTestCEReactions>::call<jsTestCEReactionsPrototypeFunctionMethodWithCEReactionsBody>(*state, "methodWithCEReactions");
 }
 
 bool JSTestCEReactionsOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)

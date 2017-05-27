@@ -208,14 +208,14 @@ JSC::JSObject* JSTestSerializationInherit::serialize(ExecState* state, JSTestSer
     return result;
 }
 
-static inline EncodedJSValue jsTestSerializationInheritPrototypeFunctionToJSONCaller(ExecState* state, JSTestSerializationInherit* thisObject, JSC::ThrowScope& throwScope)
+static inline EncodedJSValue jsTestSerializationInheritPrototypeFunctionToJSONBody(ExecState* state, JSTestSerializationInherit* thisObject, JSC::ThrowScope& throwScope)
 {
     return JSValue::encode(JSTestSerializationInherit::serialize(state, thisObject, throwScope));
 }
 
 EncodedJSValue JSC_HOST_CALL jsTestSerializationInheritPrototypeFunctionToJSON(ExecState* state)
 {
-    return IDLOperation<JSTestSerializationInherit>::call<jsTestSerializationInheritPrototypeFunctionToJSONCaller>(*state, "toJSON");
+    return IDLOperation<JSTestSerializationInherit>::call<jsTestSerializationInheritPrototypeFunctionToJSONBody>(*state, "toJSON");
 }
 
 

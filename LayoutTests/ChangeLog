@@ -1,3 +1,17 @@
+2017-05-26  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Overloaded functions should throw this object check exception before argument check exception
+        https://bugs.webkit.org/show_bug.cgi?id=172480
+
+        Reviewed by Chris Dumez.
+
+        Add test case that shows that using the wrong this object on an overloaded function,
+        even if you are passing the wrong number of arguments, results in an invalid this
+        object exception.
+
+        * js/dom/overloaded-operation-exception-order-expected.txt: Added.
+        * js/dom/overloaded-operation-exception-order.html: Added.
+
 2017-05-26  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skip fast/events/before-unload-returnValue.html on iOS.

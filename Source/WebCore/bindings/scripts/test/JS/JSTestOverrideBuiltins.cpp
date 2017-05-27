@@ -28,7 +28,6 @@
 #include "JSDOMOperation.h"
 #include "JSDOMWrapperCache.h"
 #include "JSNode.h"
-#include <runtime/Error.h>
 #include <runtime/FunctionPrototype.h>
 #include <wtf/GetPtr.h>
 
@@ -206,7 +205,7 @@ bool setJSTestOverrideBuiltinsConstructor(ExecState* state, EncodedJSValue thisV
     return prototype->putDirect(state->vm(), state->propertyNames().constructor, JSValue::decode(encodedValue));
 }
 
-static inline JSC::EncodedJSValue jsTestOverrideBuiltinsPrototypeFunctionNamedItemCaller(JSC::ExecState* state, typename IDLOperation<JSTestOverrideBuiltins>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestOverrideBuiltinsPrototypeFunctionNamedItemBody(JSC::ExecState* state, typename IDLOperation<JSTestOverrideBuiltins>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -220,7 +219,7 @@ static inline JSC::EncodedJSValue jsTestOverrideBuiltinsPrototypeFunctionNamedIt
 
 EncodedJSValue JSC_HOST_CALL jsTestOverrideBuiltinsPrototypeFunctionNamedItem(ExecState* state)
 {
-    return IDLOperation<JSTestOverrideBuiltins>::call<jsTestOverrideBuiltinsPrototypeFunctionNamedItemCaller>(*state, "namedItem");
+    return IDLOperation<JSTestOverrideBuiltins>::call<jsTestOverrideBuiltinsPrototypeFunctionNamedItemBody>(*state, "namedItem");
 }
 
 bool JSTestOverrideBuiltinsOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)

@@ -398,14 +398,14 @@ JSC::JSObject* JSTestSerialization::serialize(ExecState* state, JSTestSerializat
     return result;
 }
 
-static inline EncodedJSValue jsTestSerializationPrototypeFunctionToJSONCaller(ExecState* state, JSTestSerialization* thisObject, JSC::ThrowScope& throwScope)
+static inline EncodedJSValue jsTestSerializationPrototypeFunctionToJSONBody(ExecState* state, JSTestSerialization* thisObject, JSC::ThrowScope& throwScope)
 {
     return JSValue::encode(JSTestSerialization::serialize(state, thisObject, throwScope));
 }
 
 EncodedJSValue JSC_HOST_CALL jsTestSerializationPrototypeFunctionToJSON(ExecState* state)
 {
-    return IDLOperation<JSTestSerialization>::call<jsTestSerializationPrototypeFunctionToJSONCaller>(*state, "toJSON");
+    return IDLOperation<JSTestSerialization>::call<jsTestSerializationPrototypeFunctionToJSONBody>(*state, "toJSON");
 }
 
 bool JSTestSerializationOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)

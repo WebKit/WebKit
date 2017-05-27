@@ -525,7 +525,7 @@ bool setJSTestTypedefsStringAttrWithSetterException(ExecState* state, EncodedJSV
     return IDLAttribute<JSTestTypedefs>::set<setJSTestTypedefsStringAttrWithSetterExceptionSetter>(*state, thisValue, encodedValue, "stringAttrWithSetterException");
 }
 
-static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionFuncCaller(JSC::ExecState* state, typename IDLOperation<JSTestTypedefs>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionFuncBody(JSC::ExecState* state, typename IDLOperation<JSTestTypedefs>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -538,10 +538,10 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionFuncCaller(JSC:
 
 EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionFunc(ExecState* state)
 {
-    return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunctionFuncCaller>(*state, "func");
+    return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunctionFuncBody>(*state, "func");
 }
 
-static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionSetShadowCaller(JSC::ExecState* state, typename IDLOperation<JSTestTypedefs>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionSetShadowBody(JSC::ExecState* state, typename IDLOperation<JSTestTypedefs>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -564,10 +564,10 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionSetShadowCaller
 
 EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionSetShadow(ExecState* state)
 {
-    return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunctionSetShadowCaller>(*state, "setShadow");
+    return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunctionSetShadowBody>(*state, "setShadow");
 }
 
-static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionMethodWithSequenceArgCaller(JSC::ExecState* state, typename IDLOperation<JSTestTypedefs>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionMethodWithSequenceArgBody(JSC::ExecState* state, typename IDLOperation<JSTestTypedefs>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -581,10 +581,10 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionMethodWithSeque
 
 EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionMethodWithSequenceArg(ExecState* state)
 {
-    return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunctionMethodWithSequenceArgCaller>(*state, "methodWithSequenceArg");
+    return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunctionMethodWithSequenceArgBody>(*state, "methodWithSequenceArg");
 }
 
-static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionNullableSequenceArgCaller(JSC::ExecState* state, typename IDLOperation<JSTestTypedefs>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionNullableSequenceArgBody(JSC::ExecState* state, typename IDLOperation<JSTestTypedefs>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -599,10 +599,10 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionNullableSequenc
 
 EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionNullableSequenceArg(ExecState* state)
 {
-    return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunctionNullableSequenceArgCaller>(*state, "nullableSequenceArg");
+    return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunctionNullableSequenceArgBody>(*state, "nullableSequenceArg");
 }
 
-static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionSequenceOfNullablesArgCaller(JSC::ExecState* state, typename IDLOperation<JSTestTypedefs>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionSequenceOfNullablesArgBody(JSC::ExecState* state, typename IDLOperation<JSTestTypedefs>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -617,10 +617,10 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionSequenceOfNulla
 
 EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionSequenceOfNullablesArg(ExecState* state)
 {
-    return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunctionSequenceOfNullablesArgCaller>(*state, "sequenceOfNullablesArg");
+    return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunctionSequenceOfNullablesArgBody>(*state, "sequenceOfNullablesArg");
 }
 
-static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionNullableSequenceOfNullablesArgCaller(JSC::ExecState* state, typename IDLOperation<JSTestTypedefs>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionNullableSequenceOfNullablesArgBody(JSC::ExecState* state, typename IDLOperation<JSTestTypedefs>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -635,10 +635,10 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionNullableSequenc
 
 EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionNullableSequenceOfNullablesArg(ExecState* state)
 {
-    return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunctionNullableSequenceOfNullablesArgCaller>(*state, "nullableSequenceOfNullablesArg");
+    return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunctionNullableSequenceOfNullablesArgBody>(*state, "nullableSequenceOfNullablesArg");
 }
 
-static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionNullableSequenceOfUnionsArgCaller(JSC::ExecState* state, typename IDLOperation<JSTestTypedefs>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionNullableSequenceOfUnionsArgBody(JSC::ExecState* state, typename IDLOperation<JSTestTypedefs>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -653,10 +653,10 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionNullableSequenc
 
 EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionNullableSequenceOfUnionsArg(ExecState* state)
 {
-    return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunctionNullableSequenceOfUnionsArgCaller>(*state, "nullableSequenceOfUnionsArg");
+    return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunctionNullableSequenceOfUnionsArgBody>(*state, "nullableSequenceOfUnionsArg");
 }
 
-static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionUnionArgCaller(JSC::ExecState* state, typename IDLOperation<JSTestTypedefs>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionUnionArgBody(JSC::ExecState* state, typename IDLOperation<JSTestTypedefs>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -671,10 +671,10 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionUnionArgCaller(
 
 EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionUnionArg(ExecState* state)
 {
-    return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunctionUnionArgCaller>(*state, "unionArg");
+    return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunctionUnionArgBody>(*state, "unionArg");
 }
 
-static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionFuncWithClampCaller(JSC::ExecState* state, typename IDLOperation<JSTestTypedefs>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionFuncWithClampBody(JSC::ExecState* state, typename IDLOperation<JSTestTypedefs>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -691,10 +691,10 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionFuncWithClampCa
 
 EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionFuncWithClamp(ExecState* state)
 {
-    return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunctionFuncWithClampCaller>(*state, "funcWithClamp");
+    return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunctionFuncWithClampBody>(*state, "funcWithClamp");
 }
 
-static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionFuncWithClampInTypedefCaller(JSC::ExecState* state, typename IDLOperation<JSTestTypedefs>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionFuncWithClampInTypedefBody(JSC::ExecState* state, typename IDLOperation<JSTestTypedefs>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -709,10 +709,10 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionFuncWithClampIn
 
 EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionFuncWithClampInTypedef(ExecState* state)
 {
-    return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunctionFuncWithClampInTypedefCaller>(*state, "funcWithClampInTypedef");
+    return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunctionFuncWithClampInTypedefBody>(*state, "funcWithClampInTypedef");
 }
 
-static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionPointFunctionCaller(JSC::ExecState* state, typename IDLOperation<JSTestTypedefs>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionPointFunctionBody(JSC::ExecState* state, typename IDLOperation<JSTestTypedefs>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -722,10 +722,10 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionPointFunctionCa
 
 EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionPointFunction(ExecState* state)
 {
-    return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunctionPointFunctionCaller>(*state, "pointFunction");
+    return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunctionPointFunctionBody>(*state, "pointFunction");
 }
 
-static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionStringSequenceFunctionCaller(JSC::ExecState* state, typename IDLOperation<JSTestTypedefs>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionStringSequenceFunctionBody(JSC::ExecState* state, typename IDLOperation<JSTestTypedefs>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -739,10 +739,10 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionStringSequenceF
 
 EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionStringSequenceFunction(ExecState* state)
 {
-    return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunctionStringSequenceFunctionCaller>(*state, "stringSequenceFunction");
+    return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunctionStringSequenceFunctionBody>(*state, "stringSequenceFunction");
 }
 
-static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionStringSequenceFunction2Caller(JSC::ExecState* state, typename IDLOperation<JSTestTypedefs>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionStringSequenceFunction2Body(JSC::ExecState* state, typename IDLOperation<JSTestTypedefs>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -756,10 +756,10 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionStringSequenceF
 
 EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionStringSequenceFunction2(ExecState* state)
 {
-    return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunctionStringSequenceFunction2Caller>(*state, "stringSequenceFunction2");
+    return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunctionStringSequenceFunction2Body>(*state, "stringSequenceFunction2");
 }
 
-static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionCallWithSequenceThatRequiresIncludeCaller(JSC::ExecState* state, typename IDLOperation<JSTestTypedefs>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionCallWithSequenceThatRequiresIncludeBody(JSC::ExecState* state, typename IDLOperation<JSTestTypedefs>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -773,10 +773,10 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionCallWithSequenc
 
 EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionCallWithSequenceThatRequiresInclude(ExecState* state)
 {
-    return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunctionCallWithSequenceThatRequiresIncludeCaller>(*state, "callWithSequenceThatRequiresInclude");
+    return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunctionCallWithSequenceThatRequiresIncludeBody>(*state, "callWithSequenceThatRequiresInclude");
 }
 
-static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionMethodWithExceptionCaller(JSC::ExecState* state, typename IDLOperation<JSTestTypedefs>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionMethodWithExceptionBody(JSC::ExecState* state, typename IDLOperation<JSTestTypedefs>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -787,7 +787,7 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionMethodWithExcep
 
 EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionMethodWithException(ExecState* state)
 {
-    return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunctionMethodWithExceptionCaller>(*state, "methodWithException");
+    return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunctionMethodWithExceptionBody>(*state, "methodWithException");
 }
 
 bool JSTestTypedefsOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)

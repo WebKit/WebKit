@@ -30,7 +30,6 @@
 #include "JSDOMOperation.h"
 #include "JSDOMWrapperCache.h"
 #include "JSNode.h"
-#include <runtime/Error.h>
 #include <runtime/FunctionPrototype.h>
 #include <wtf/GetPtr.h>
 
@@ -206,7 +205,7 @@ EncodedJSValue jsTestActiveDOMObjectExcitingAttr(ExecState* state, EncodedJSValu
     return IDLAttribute<JSTestActiveDOMObject>::get<jsTestActiveDOMObjectExcitingAttrGetter>(*state, thisValue, "excitingAttr");
 }
 
-static inline JSC::EncodedJSValue jsTestActiveDOMObjectPrototypeFunctionExcitingFunctionCaller(JSC::ExecState* state, typename IDLOperation<JSTestActiveDOMObject>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestActiveDOMObjectPrototypeFunctionExcitingFunctionBody(JSC::ExecState* state, typename IDLOperation<JSTestActiveDOMObject>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -223,10 +222,10 @@ static inline JSC::EncodedJSValue jsTestActiveDOMObjectPrototypeFunctionExciting
 
 EncodedJSValue JSC_HOST_CALL jsTestActiveDOMObjectPrototypeFunctionExcitingFunction(ExecState* state)
 {
-    return IDLOperation<JSTestActiveDOMObject>::call<jsTestActiveDOMObjectPrototypeFunctionExcitingFunctionCaller>(*state, "excitingFunction");
+    return IDLOperation<JSTestActiveDOMObject>::call<jsTestActiveDOMObjectPrototypeFunctionExcitingFunctionBody>(*state, "excitingFunction");
 }
 
-static inline JSC::EncodedJSValue jsTestActiveDOMObjectPrototypeFunctionPostMessageCaller(JSC::ExecState* state, typename IDLOperation<JSTestActiveDOMObject>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestActiveDOMObjectPrototypeFunctionPostMessageBody(JSC::ExecState* state, typename IDLOperation<JSTestActiveDOMObject>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -241,7 +240,7 @@ static inline JSC::EncodedJSValue jsTestActiveDOMObjectPrototypeFunctionPostMess
 
 EncodedJSValue JSC_HOST_CALL jsTestActiveDOMObjectPrototypeFunctionPostMessage(ExecState* state)
 {
-    return IDLOperation<JSTestActiveDOMObject>::call<jsTestActiveDOMObjectPrototypeFunctionPostMessageCaller>(*state, "postMessage");
+    return IDLOperation<JSTestActiveDOMObject>::call<jsTestActiveDOMObjectPrototypeFunctionPostMessageBody>(*state, "postMessage");
 }
 
 bool JSTestActiveDOMObjectOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)

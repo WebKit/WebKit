@@ -28,7 +28,6 @@
 #include "JSDOMOperation.h"
 #include "JSDOMWrapperCache.h"
 #include "TestJSBuiltinConstructorBuiltins.h"
-#include <runtime/Error.h>
 #include <runtime/FunctionPrototype.h>
 #include <wtf/GetPtr.h>
 
@@ -218,7 +217,7 @@ bool setJSTestJSBuiltinConstructorTestAttributeRWCustom(ExecState* state, Encode
     return IDLAttribute<JSTestJSBuiltinConstructor>::set<setJSTestJSBuiltinConstructorTestAttributeRWCustomSetter>(*state, thisValue, encodedValue, "testAttributeRWCustom");
 }
 
-static inline JSC::EncodedJSValue jsTestJSBuiltinConstructorPrototypeFunctionTestCustomFunctionCaller(JSC::ExecState* state, typename IDLOperation<JSTestJSBuiltinConstructor>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestJSBuiltinConstructorPrototypeFunctionTestCustomFunctionBody(JSC::ExecState* state, typename IDLOperation<JSTestJSBuiltinConstructor>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -227,7 +226,7 @@ static inline JSC::EncodedJSValue jsTestJSBuiltinConstructorPrototypeFunctionTes
 
 EncodedJSValue JSC_HOST_CALL jsTestJSBuiltinConstructorPrototypeFunctionTestCustomFunction(ExecState* state)
 {
-    return IDLOperation<JSTestJSBuiltinConstructor>::call<jsTestJSBuiltinConstructorPrototypeFunctionTestCustomFunctionCaller>(*state, "testCustomFunction");
+    return IDLOperation<JSTestJSBuiltinConstructor>::call<jsTestJSBuiltinConstructorPrototypeFunctionTestCustomFunctionBody>(*state, "testCustomFunction");
 }
 
 void JSTestJSBuiltinConstructor::visitChildren(JSCell* cell, SlotVisitor& visitor)

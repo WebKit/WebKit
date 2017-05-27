@@ -793,7 +793,7 @@ bool setJSTestInterfaceSupplementalNode(ExecState* state, EncodedJSValue thisVal
 #endif
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
-static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunctionImplementsMethod1Caller(JSC::ExecState* state, typename IDLOperation<JSTestInterface>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunctionImplementsMethod1Body(JSC::ExecState* state, typename IDLOperation<JSTestInterface>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -804,13 +804,13 @@ static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunctionImplementsMeth
 
 EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionImplementsMethod1(ExecState* state)
 {
-    return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunctionImplementsMethod1Caller>(*state, "implementsMethod1");
+    return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunctionImplementsMethod1Body>(*state, "implementsMethod1");
 }
 
 #endif
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
-static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunctionImplementsMethod2Caller(JSC::ExecState* state, typename IDLOperation<JSTestInterface>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunctionImplementsMethod2Body(JSC::ExecState* state, typename IDLOperation<JSTestInterface>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -829,13 +829,13 @@ static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunctionImplementsMeth
 
 EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionImplementsMethod2(ExecState* state)
 {
-    return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunctionImplementsMethod2Caller>(*state, "implementsMethod2");
+    return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunctionImplementsMethod2Body>(*state, "implementsMethod2");
 }
 
 #endif
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
-static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunctionImplementsMethod3Caller(JSC::ExecState* state, typename IDLOperation<JSTestInterface>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunctionImplementsMethod3Body(JSC::ExecState* state, typename IDLOperation<JSTestInterface>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -844,25 +844,29 @@ static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunctionImplementsMeth
 
 EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionImplementsMethod3(ExecState* state)
 {
-    return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunctionImplementsMethod3Caller>(*state, "implementsMethod3");
+    return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunctionImplementsMethod3Body>(*state, "implementsMethod3");
 }
 
 #endif
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
-EncodedJSValue JSC_HOST_CALL jsTestInterfaceConstructorFunctionImplementsMethod4(ExecState* state)
+static inline JSC::EncodedJSValue jsTestInterfaceConstructorFunctionImplementsMethod4Body(JSC::ExecState* state, JSC::ThrowScope& throwScope)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     TestInterface::implementsMethod4();
     return JSValue::encode(jsUndefined());
 }
 
+EncodedJSValue JSC_HOST_CALL jsTestInterfaceConstructorFunctionImplementsMethod4(ExecState* state)
+{
+    return IDLOperation<JSTestInterface>::callStatic<jsTestInterfaceConstructorFunctionImplementsMethod4Body>(*state, "implementsMethod4");
+}
+
 #endif
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
-static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunctionSupplementalMethod1Caller(JSC::ExecState* state, typename IDLOperation<JSTestInterface>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunctionSupplementalMethod1Body(JSC::ExecState* state, typename IDLOperation<JSTestInterface>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -873,13 +877,13 @@ static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunctionSupplementalMe
 
 EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod1(ExecState* state)
 {
-    return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunctionSupplementalMethod1Caller>(*state, "supplementalMethod1");
+    return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunctionSupplementalMethod1Body>(*state, "supplementalMethod1");
 }
 
 #endif
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
-static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunctionSupplementalMethod2Caller(JSC::ExecState* state, typename IDLOperation<JSTestInterface>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunctionSupplementalMethod2Body(JSC::ExecState* state, typename IDLOperation<JSTestInterface>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -898,13 +902,13 @@ static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunctionSupplementalMe
 
 EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod2(ExecState* state)
 {
-    return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunctionSupplementalMethod2Caller>(*state, "supplementalMethod2");
+    return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunctionSupplementalMethod2Body>(*state, "supplementalMethod2");
 }
 
 #endif
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
-static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunctionSupplementalMethod3Caller(JSC::ExecState* state, typename IDLOperation<JSTestInterface>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunctionSupplementalMethod3Body(JSC::ExecState* state, typename IDLOperation<JSTestInterface>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -913,19 +917,23 @@ static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunctionSupplementalMe
 
 EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod3(ExecState* state)
 {
-    return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunctionSupplementalMethod3Caller>(*state, "supplementalMethod3");
+    return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunctionSupplementalMethod3Body>(*state, "supplementalMethod3");
 }
 
 #endif
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
-EncodedJSValue JSC_HOST_CALL jsTestInterfaceConstructorFunctionSupplementalMethod4(ExecState* state)
+static inline JSC::EncodedJSValue jsTestInterfaceConstructorFunctionSupplementalMethod4Body(JSC::ExecState* state, JSC::ThrowScope& throwScope)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     WebCore::TestSupplemental::supplementalMethod4();
     return JSValue::encode(jsUndefined());
+}
+
+EncodedJSValue JSC_HOST_CALL jsTestInterfaceConstructorFunctionSupplementalMethod4(ExecState* state)
+{
+    return IDLOperation<JSTestInterface>::callStatic<jsTestInterfaceConstructorFunctionSupplementalMethod4Body>(*state, "supplementalMethod4");
 }
 
 #endif

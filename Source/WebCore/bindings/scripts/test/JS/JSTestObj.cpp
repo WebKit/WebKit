@@ -4774,7 +4774,7 @@ bool setJSTestObjStringifierAttribute(ExecState* state, EncodedJSValue thisValue
 }
 
 #if ENABLE(TEST_FEATURE)
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionEnabledAtRuntimeOperation1Caller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionEnabledAtRuntimeOperation1Body(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -4785,15 +4785,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionEnabledAtRuntimeOper
     return JSValue::encode(jsUndefined());
 }
 
-static inline EncodedJSValue jsTestObjPrototypeFunctionEnabledAtRuntimeOperation1(ExecState* state)
-{
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionEnabledAtRuntimeOperation1Caller>(*state, "enabledAtRuntimeOperation");
-}
-
 #endif
 
 #if ENABLE(TEST_FEATURE)
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionEnabledAtRuntimeOperation2Caller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionEnabledAtRuntimeOperation2Body(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -4804,35 +4799,38 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionEnabledAtRuntimeOper
     return JSValue::encode(jsUndefined());
 }
 
-static inline EncodedJSValue jsTestObjPrototypeFunctionEnabledAtRuntimeOperation2(ExecState* state)
-{
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionEnabledAtRuntimeOperation2Caller>(*state, "enabledAtRuntimeOperation");
-}
-
 #endif
 
 #if ENABLE(TEST_FEATURE)
-EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionEnabledAtRuntimeOperation(ExecState* state)
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionEnabledAtRuntimeOperationOverloadDispatcher(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
+    VM& vm = state->vm();
+    UNUSED_PARAM(vm);
     size_t argsCount = std::min<size_t>(1, state->argumentCount());
     if (argsCount == 1) {
         JSValue distinguishingArg = state->uncheckedArgument(0);
 #if ENABLE(TEST_FEATURE)
         if (distinguishingArg.isNumber())
-            return jsTestObjPrototypeFunctionEnabledAtRuntimeOperation2(state);
+            return jsTestObjPrototypeFunctionEnabledAtRuntimeOperation2Body(state, castedThis, throwScope);
 #endif
 #if ENABLE(TEST_FEATURE)
-        return jsTestObjPrototypeFunctionEnabledAtRuntimeOperation1(state);
+        return jsTestObjPrototypeFunctionEnabledAtRuntimeOperation1Body(state, castedThis, throwScope);
 #endif
     }
     return argsCount < 1 ? throwVMError(state, throwScope, createNotEnoughArgumentsError(state)) : throwVMTypeError(state, throwScope);
 }
+
+EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionEnabledAtRuntimeOperation(ExecState* state)
+{
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionEnabledAtRuntimeOperationOverloadDispatcher>(*state, "enabledAtRuntimeOperation");
+}
+
 #endif
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionEnabledInSpecificWorldWhenRuntimeFeatureEnabledCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionEnabledInSpecificWorldWhenRuntimeFeatureEnabledBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -4847,10 +4845,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionEnabledInSpecificWor
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionEnabledInSpecificWorldWhenRuntimeFeatureEnabled(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionEnabledInSpecificWorldWhenRuntimeFeatureEnabledCaller>(*state, "enabledInSpecificWorldWhenRuntimeFeatureEnabled");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionEnabledInSpecificWorldWhenRuntimeFeatureEnabledBody>(*state, "enabledInSpecificWorldWhenRuntimeFeatureEnabled");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWorldSpecificMethodCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWorldSpecificMethodBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -4865,11 +4863,11 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWorldSpecificMethodC
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWorldSpecificMethod(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionWorldSpecificMethodCaller>(*state, "worldSpecificMethod");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionWorldSpecificMethodBody>(*state, "worldSpecificMethod");
 }
 
 #if ENABLE(TEST_FEATURE)
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionEnabledBySettingOperationCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionEnabledBySettingOperationBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -4884,12 +4882,12 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionEnabledBySettingOper
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionEnabledBySettingOperation(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionEnabledBySettingOperationCaller>(*state, "enabledBySettingOperation");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionEnabledBySettingOperationBody>(*state, "enabledBySettingOperation");
 }
 
 #endif
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionVoidMethodCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionVoidMethodBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -4900,10 +4898,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionVoidMethodCaller(JSC
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVoidMethod(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionVoidMethodCaller>(*state, "voidMethod");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionVoidMethodBody>(*state, "voidMethod");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionVoidMethodWithArgsCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionVoidMethodWithArgsBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -4922,10 +4920,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionVoidMethodWithArgsCa
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVoidMethodWithArgs(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionVoidMethodWithArgsCaller>(*state, "voidMethodWithArgs");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionVoidMethodWithArgsBody>(*state, "voidMethodWithArgs");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionByteMethodCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionByteMethodBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -4935,10 +4933,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionByteMethodCaller(JSC
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionByteMethod(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionByteMethodCaller>(*state, "byteMethod");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionByteMethodBody>(*state, "byteMethod");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionByteMethodWithArgsCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionByteMethodWithArgsBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -4956,10 +4954,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionByteMethodWithArgsCa
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionByteMethodWithArgs(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionByteMethodWithArgsCaller>(*state, "byteMethodWithArgs");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionByteMethodWithArgsBody>(*state, "byteMethodWithArgs");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOctetMethodCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOctetMethodBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -4969,10 +4967,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOctetMethodCaller(JS
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOctetMethod(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionOctetMethodCaller>(*state, "octetMethod");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionOctetMethodBody>(*state, "octetMethod");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOctetMethodWithArgsCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOctetMethodWithArgsBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -4990,10 +4988,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOctetMethodWithArgsC
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOctetMethodWithArgs(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionOctetMethodWithArgsCaller>(*state, "octetMethodWithArgs");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionOctetMethodWithArgsBody>(*state, "octetMethodWithArgs");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionLongMethodCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionLongMethodBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -5003,10 +5001,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionLongMethodCaller(JSC
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionLongMethod(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionLongMethodCaller>(*state, "longMethod");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionLongMethodBody>(*state, "longMethod");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionLongMethodWithArgsCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionLongMethodWithArgsBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -5024,10 +5022,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionLongMethodWithArgsCa
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionLongMethodWithArgs(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionLongMethodWithArgsCaller>(*state, "longMethodWithArgs");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionLongMethodWithArgsBody>(*state, "longMethodWithArgs");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionObjMethodCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionObjMethodBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -5037,10 +5035,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionObjMethodCaller(JSC:
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionObjMethod(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionObjMethodCaller>(*state, "objMethod");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionObjMethodBody>(*state, "objMethod");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionObjMethodWithArgsCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionObjMethodWithArgsBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -5058,10 +5056,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionObjMethodWithArgsCal
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionObjMethodWithArgs(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionObjMethodWithArgsCaller>(*state, "objMethodWithArgs");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionObjMethodWithArgsBody>(*state, "objMethodWithArgs");
 }
 
-static inline JSC::EncodedJSValue jsTestObjInstanceFunctionUnforgeableMethodCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjInstanceFunctionUnforgeableMethodBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -5071,10 +5069,10 @@ static inline JSC::EncodedJSValue jsTestObjInstanceFunctionUnforgeableMethodCall
 
 EncodedJSValue JSC_HOST_CALL jsTestObjInstanceFunctionUnforgeableMethod(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjInstanceFunctionUnforgeableMethodCaller>(*state, "unforgeableMethod");
+    return IDLOperation<JSTestObj>::call<jsTestObjInstanceFunctionUnforgeableMethodBody>(*state, "unforgeableMethod");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithArgTreatingNullAsEmptyStringCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithArgTreatingNullAsEmptyStringBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -5089,10 +5087,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithArgTreatin
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithArgTreatingNullAsEmptyString(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithArgTreatingNullAsEmptyStringCaller>(*state, "methodWithArgTreatingNullAsEmptyString");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithArgTreatingNullAsEmptyStringBody>(*state, "methodWithArgTreatingNullAsEmptyString");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithXPathNSResolverParameterCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithXPathNSResolverParameterBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -5107,10 +5105,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithXPathNSRes
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithXPathNSResolverParameter(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithXPathNSResolverParameterCaller>(*state, "methodWithXPathNSResolverParameter");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithXPathNSResolverParameterBody>(*state, "methodWithXPathNSResolverParameter");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionNullableStringMethodCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionNullableStringMethodBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -5120,18 +5118,22 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionNullableStringMethod
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionNullableStringMethod(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionNullableStringMethodCaller>(*state, "nullableStringMethod");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionNullableStringMethodBody>(*state, "nullableStringMethod");
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionNullableStringStaticMethod(ExecState* state)
+static inline JSC::EncodedJSValue jsTestObjConstructorFunctionNullableStringStaticMethodBody(JSC::ExecState* state, JSC::ThrowScope& throwScope)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     return JSValue::encode(toJS<IDLNullable<IDLDOMString>>(*state, TestObj::nullableStringStaticMethod()));
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionNullableStringSpecialMethodCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionNullableStringStaticMethod(ExecState* state)
+{
+    return IDLOperation<JSTestObj>::callStatic<jsTestObjConstructorFunctionNullableStringStaticMethodBody>(*state, "nullableStringStaticMethod");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionNullableStringSpecialMethodBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -5145,10 +5147,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionNullableStringSpecia
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionNullableStringSpecialMethod(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionNullableStringSpecialMethodCaller>(*state, "nullableStringSpecialMethod");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionNullableStringSpecialMethodBody>(*state, "nullableStringSpecialMethod");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithEnumArgCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithEnumArgBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -5163,10 +5165,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithEnumArgCal
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithEnumArg(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithEnumArgCaller>(*state, "methodWithEnumArg");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithEnumArgBody>(*state, "methodWithEnumArg");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithStandaloneEnumArgCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithStandaloneEnumArgBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -5181,10 +5183,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithStandalone
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithStandaloneEnumArg(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithStandaloneEnumArgCaller>(*state, "methodWithStandaloneEnumArg");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithStandaloneEnumArgBody>(*state, "methodWithStandaloneEnumArg");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalEnumArgCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalEnumArgBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -5197,10 +5199,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalEn
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalEnumArg(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithOptionalEnumArgCaller>(*state, "methodWithOptionalEnumArg");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithOptionalEnumArgBody>(*state, "methodWithOptionalEnumArg");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalEnumArgAndDefaultValueCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalEnumArgAndDefaultValueBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -5213,10 +5215,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalEn
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalEnumArgAndDefaultValue(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithOptionalEnumArgAndDefaultValueCaller>(*state, "methodWithOptionalEnumArgAndDefaultValue");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithOptionalEnumArgAndDefaultValueBody>(*state, "methodWithOptionalEnumArgAndDefaultValue");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodThatRequiresAllArgsAndThrowsCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodThatRequiresAllArgsAndThrowsBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -5232,10 +5234,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodThatRequiresAl
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodThatRequiresAllArgsAndThrows(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodThatRequiresAllArgsAndThrowsCaller>(*state, "methodThatRequiresAllArgsAndThrows");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodThatRequiresAllArgsAndThrowsBody>(*state, "methodThatRequiresAllArgsAndThrows");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithUSVStringArgCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithUSVStringArgBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -5250,10 +5252,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithUSVStringA
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithUSVStringArg(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithUSVStringArgCaller>(*state, "methodWithUSVStringArg");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithUSVStringArgBody>(*state, "methodWithUSVStringArg");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithNullableUSVStringArgCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithNullableUSVStringArgBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -5268,10 +5270,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithNullableUS
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNullableUSVStringArg(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithNullableUSVStringArgCaller>(*state, "methodWithNullableUSVStringArg");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithNullableUSVStringArgBody>(*state, "methodWithNullableUSVStringArg");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithUSVStringArgTreatingNullAsEmptyStringCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithUSVStringArgTreatingNullAsEmptyStringBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -5286,10 +5288,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithUSVStringA
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithUSVStringArgTreatingNullAsEmptyString(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithUSVStringArgTreatingNullAsEmptyStringCaller>(*state, "methodWithUSVStringArgTreatingNullAsEmptyString");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithUSVStringArgTreatingNullAsEmptyStringBody>(*state, "methodWithUSVStringArgTreatingNullAsEmptyString");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithByteStringArgCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithByteStringArgBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -5304,10 +5306,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithByteString
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithByteStringArg(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithByteStringArgCaller>(*state, "methodWithByteStringArg");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithByteStringArgBody>(*state, "methodWithByteStringArg");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithNullableByteStringArgCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithNullableByteStringArgBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -5322,10 +5324,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithNullableBy
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNullableByteStringArg(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithNullableByteStringArgCaller>(*state, "methodWithNullableByteStringArg");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithNullableByteStringArgBody>(*state, "methodWithNullableByteStringArg");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithByteStringArgTreatingNullAsEmptyStringCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithByteStringArgTreatingNullAsEmptyStringBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -5340,10 +5342,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithByteString
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithByteStringArgTreatingNullAsEmptyString(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithByteStringArgTreatingNullAsEmptyStringCaller>(*state, "methodWithByteStringArgTreatingNullAsEmptyString");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithByteStringArgTreatingNullAsEmptyStringBody>(*state, "methodWithByteStringArgTreatingNullAsEmptyString");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionSerializedValueCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionSerializedValueBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -5358,10 +5360,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionSerializedValueCalle
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionSerializedValue(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionSerializedValueCaller>(*state, "serializedValue");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionSerializedValueBody>(*state, "serializedValue");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithRecordCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithRecordBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -5376,10 +5378,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithRecordCall
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithRecord(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithRecordCaller>(*state, "methodWithRecord");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithRecordBody>(*state, "methodWithRecord");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithExceptionCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithExceptionBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -5390,10 +5392,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithExceptionC
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithException(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithExceptionCaller>(*state, "methodWithException");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithExceptionBody>(*state, "methodWithException");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithExceptionReturningLongCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithExceptionReturningLongBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -5403,10 +5405,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithExceptionR
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithExceptionReturningLong(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithExceptionReturningLongCaller>(*state, "methodWithExceptionReturningLong");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithExceptionReturningLongBody>(*state, "methodWithExceptionReturningLong");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithExceptionReturningObjectCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithExceptionReturningObjectBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -5416,10 +5418,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithExceptionR
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithExceptionReturningObject(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithExceptionReturningObjectCaller>(*state, "methodWithExceptionReturningObject");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithExceptionReturningObjectBody>(*state, "methodWithExceptionReturningObject");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionCustomMethodCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionCustomMethodBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -5428,10 +5430,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionCustomMethodCaller(J
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionCustomMethod(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionCustomMethodCaller>(*state, "customMethod");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionCustomMethodBody>(*state, "customMethod");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionCustomMethodWithArgsCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionCustomMethodWithArgsBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -5440,10 +5442,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionCustomMethodWithArgs
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionCustomMethodWithArgs(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionCustomMethodWithArgsCaller>(*state, "customMethodWithArgs");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionCustomMethodWithArgsBody>(*state, "customMethodWithArgs");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionPrivateMethodCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionPrivateMethodBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -5457,10 +5459,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionPrivateMethodCaller(
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionPrivateMethod(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionPrivateMethodCaller, CastedThisErrorBehavior::Assert>(*state, "privateMethod");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionPrivateMethodBody, CastedThisErrorBehavior::Assert>(*state, "privateMethod");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionPublicAndPrivateMethodCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionPublicAndPrivateMethodBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -5474,10 +5476,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionPublicAndPrivateMeth
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionPublicAndPrivateMethod(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionPublicAndPrivateMethodCaller>(*state, "publicAndPrivateMethod");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionPublicAndPrivateMethodBody>(*state, "publicAndPrivateMethod");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionAddEventListenerCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionAddEventListenerBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -5496,10 +5498,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionAddEventListenerCall
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionAddEventListener(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionAddEventListenerCaller>(*state, "addEventListener");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionAddEventListenerBody>(*state, "addEventListener");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionRemoveEventListenerCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionRemoveEventListenerBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -5518,10 +5520,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionRemoveEventListenerC
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionRemoveEventListener(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionRemoveEventListenerCaller>(*state, "removeEventListener");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionRemoveEventListenerBody>(*state, "removeEventListener");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithScriptStateVoidCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithScriptStateVoidBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -5532,10 +5534,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithScriptStateVoidC
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptStateVoid(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionWithScriptStateVoidCaller>(*state, "withScriptStateVoid");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionWithScriptStateVoidBody>(*state, "withScriptStateVoid");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithScriptStateObjCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithScriptStateObjBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -5545,10 +5547,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithScriptStateObjCa
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptStateObj(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionWithScriptStateObjCaller>(*state, "withScriptStateObj");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionWithScriptStateObjBody>(*state, "withScriptStateObj");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithScriptStateVoidExceptionCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithScriptStateVoidExceptionBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -5559,10 +5561,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithScriptStateVoidE
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptStateVoidException(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionWithScriptStateVoidExceptionCaller>(*state, "withScriptStateVoidException");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionWithScriptStateVoidExceptionBody>(*state, "withScriptStateVoidException");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithScriptStateObjExceptionCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithScriptStateObjExceptionBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -5572,10 +5574,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithScriptStateObjEx
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptStateObjException(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionWithScriptStateObjExceptionCaller>(*state, "withScriptStateObjException");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionWithScriptStateObjExceptionBody>(*state, "withScriptStateObjException");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithScriptExecutionContextCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithScriptExecutionContextBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -5589,10 +5591,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithScriptExecutionC
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptExecutionContext(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionWithScriptExecutionContextCaller>(*state, "withScriptExecutionContext");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionWithScriptExecutionContextBody>(*state, "withScriptExecutionContext");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithScriptExecutionContextAndScriptStateCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithScriptExecutionContextAndScriptStateBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -5606,10 +5608,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithScriptExecutionC
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptExecutionContextAndScriptState(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionWithScriptExecutionContextAndScriptStateCaller>(*state, "withScriptExecutionContextAndScriptState");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionWithScriptExecutionContextAndScriptStateBody>(*state, "withScriptExecutionContextAndScriptState");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithScriptExecutionContextAndScriptStateObjExceptionCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithScriptExecutionContextAndScriptStateObjExceptionBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -5622,10 +5624,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithScriptExecutionC
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptExecutionContextAndScriptStateObjException(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionWithScriptExecutionContextAndScriptStateObjExceptionCaller>(*state, "withScriptExecutionContextAndScriptStateObjException");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionWithScriptExecutionContextAndScriptStateObjExceptionBody>(*state, "withScriptExecutionContextAndScriptStateObjException");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithScriptExecutionContextAndScriptStateWithSpacesCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithScriptExecutionContextAndScriptStateWithSpacesBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -5638,10 +5640,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithScriptExecutionC
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptExecutionContextAndScriptStateWithSpaces(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionWithScriptExecutionContextAndScriptStateWithSpacesCaller>(*state, "withScriptExecutionContextAndScriptStateWithSpaces");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionWithScriptExecutionContextAndScriptStateWithSpacesBody>(*state, "withScriptExecutionContextAndScriptStateWithSpaces");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithScriptArgumentsAndCallStackCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithScriptArgumentsAndCallStackBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -5653,10 +5655,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithScriptArgumentsA
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptArgumentsAndCallStack(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionWithScriptArgumentsAndCallStackCaller>(*state, "withScriptArgumentsAndCallStack");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionWithScriptArgumentsAndCallStackBody>(*state, "withScriptArgumentsAndCallStack");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithDocumentArgumentCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithDocumentArgumentBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -5672,10 +5674,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithDocumentArgument
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithDocumentArgument(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionWithDocumentArgumentCaller>(*state, "withDocumentArgument");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionWithDocumentArgumentBody>(*state, "withDocumentArgument");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithCallerDocumentArgumentCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithCallerDocumentArgumentBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -5689,10 +5691,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithCallerDocumentAr
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithCallerDocumentArgument(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionWithCallerDocumentArgumentCaller>(*state, "withCallerDocumentArgument");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionWithCallerDocumentArgumentBody>(*state, "withCallerDocumentArgument");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithCallerWindowArgumentCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithCallerWindowArgumentBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -5703,10 +5705,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithCallerWindowArgu
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithCallerWindowArgument(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionWithCallerWindowArgumentCaller>(*state, "withCallerWindowArgument");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionWithCallerWindowArgumentBody>(*state, "withCallerWindowArgument");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalArgCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalArgBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -5719,10 +5721,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalAr
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalArg(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithOptionalArgCaller>(*state, "methodWithOptionalArg");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithOptionalArgBody>(*state, "methodWithOptionalArg");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalArgAndDefaultValueCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalArgAndDefaultValueBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -5735,10 +5737,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalAr
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalArgAndDefaultValue(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithOptionalArgAndDefaultValueCaller>(*state, "methodWithOptionalArgAndDefaultValue");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithOptionalArgAndDefaultValueBody>(*state, "methodWithOptionalArgAndDefaultValue");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithNonOptionalArgAndOptionalArgCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithNonOptionalArgAndOptionalArgBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -5755,10 +5757,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithNonOptiona
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonOptionalArgAndOptionalArg(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithNonOptionalArgAndOptionalArgCaller>(*state, "methodWithNonOptionalArgAndOptionalArg");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithNonOptionalArgAndOptionalArgBody>(*state, "methodWithNonOptionalArgAndOptionalArg");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithNonOptionalArgAndTwoOptionalArgsCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithNonOptionalArgAndTwoOptionalArgsBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -5777,10 +5779,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithNonOptiona
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonOptionalArgAndTwoOptionalArgs(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithNonOptionalArgAndTwoOptionalArgsCaller>(*state, "methodWithNonOptionalArgAndTwoOptionalArgs");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithNonOptionalArgAndTwoOptionalArgsBody>(*state, "methodWithNonOptionalArgAndTwoOptionalArgs");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalStringCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalStringBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -5793,10 +5795,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalSt
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalString(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithOptionalStringCaller>(*state, "methodWithOptionalString");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithOptionalStringBody>(*state, "methodWithOptionalString");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalUSVStringCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalUSVStringBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -5809,10 +5811,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalUS
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalUSVString(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithOptionalUSVStringCaller>(*state, "methodWithOptionalUSVString");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithOptionalUSVStringBody>(*state, "methodWithOptionalUSVString");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalAtomicStringCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalAtomicStringBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -5825,10 +5827,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalAt
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalAtomicString(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithOptionalAtomicStringCaller>(*state, "methodWithOptionalAtomicString");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithOptionalAtomicStringBody>(*state, "methodWithOptionalAtomicString");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalStringAndDefaultValueCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalStringAndDefaultValueBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -5841,10 +5843,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalSt
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalStringAndDefaultValue(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithOptionalStringAndDefaultValueCaller>(*state, "methodWithOptionalStringAndDefaultValue");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithOptionalStringAndDefaultValueBody>(*state, "methodWithOptionalStringAndDefaultValue");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalAtomicStringAndDefaultValueCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalAtomicStringAndDefaultValueBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -5857,10 +5859,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalAt
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalAtomicStringAndDefaultValue(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithOptionalAtomicStringAndDefaultValueCaller>(*state, "methodWithOptionalAtomicStringAndDefaultValue");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithOptionalAtomicStringAndDefaultValueBody>(*state, "methodWithOptionalAtomicStringAndDefaultValue");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalStringIsNullCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalStringIsNullBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -5873,10 +5875,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalSt
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalStringIsNull(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithOptionalStringIsNullCaller>(*state, "methodWithOptionalStringIsNull");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithOptionalStringIsNullBody>(*state, "methodWithOptionalStringIsNull");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalStringIsUndefinedCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalStringIsUndefinedBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -5889,10 +5891,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalSt
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalStringIsUndefined(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithOptionalStringIsUndefinedCaller>(*state, "methodWithOptionalStringIsUndefined");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithOptionalStringIsUndefinedBody>(*state, "methodWithOptionalStringIsUndefined");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalAtomicStringIsNullCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalAtomicStringIsNullBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -5905,10 +5907,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalAt
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalAtomicStringIsNull(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithOptionalAtomicStringIsNullCaller>(*state, "methodWithOptionalAtomicStringIsNull");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithOptionalAtomicStringIsNullBody>(*state, "methodWithOptionalAtomicStringIsNull");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalStringIsEmptyStringCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalStringIsEmptyStringBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -5921,10 +5923,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalSt
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalStringIsEmptyString(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithOptionalStringIsEmptyStringCaller>(*state, "methodWithOptionalStringIsEmptyString");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithOptionalStringIsEmptyStringBody>(*state, "methodWithOptionalStringIsEmptyString");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalUSVStringIsEmptyStringCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalUSVStringIsEmptyStringBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -5937,10 +5939,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalUS
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalUSVStringIsEmptyString(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithOptionalUSVStringIsEmptyStringCaller>(*state, "methodWithOptionalUSVStringIsEmptyString");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithOptionalUSVStringIsEmptyStringBody>(*state, "methodWithOptionalUSVStringIsEmptyString");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalAtomicStringIsEmptyStringCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalAtomicStringIsEmptyStringBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -5953,10 +5955,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalAt
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalAtomicStringIsEmptyString(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithOptionalAtomicStringIsEmptyStringCaller>(*state, "methodWithOptionalAtomicStringIsEmptyString");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithOptionalAtomicStringIsEmptyStringBody>(*state, "methodWithOptionalAtomicStringIsEmptyString");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalDoubleIsNaNCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalDoubleIsNaNBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -5969,10 +5971,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalDo
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalDoubleIsNaN(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithOptionalDoubleIsNaNCaller>(*state, "methodWithOptionalDoubleIsNaN");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithOptionalDoubleIsNaNBody>(*state, "methodWithOptionalDoubleIsNaN");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalFloatIsNaNCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalFloatIsNaNBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -5985,10 +5987,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalFl
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalFloatIsNaN(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithOptionalFloatIsNaNCaller>(*state, "methodWithOptionalFloatIsNaN");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithOptionalFloatIsNaNBody>(*state, "methodWithOptionalFloatIsNaN");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalLongLongCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalLongLongBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -6001,10 +6003,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalLo
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalLongLong(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithOptionalLongLongCaller>(*state, "methodWithOptionalLongLong");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithOptionalLongLongBody>(*state, "methodWithOptionalLongLong");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalLongLongIsZeroCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalLongLongIsZeroBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -6017,10 +6019,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalLo
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalLongLongIsZero(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithOptionalLongLongIsZeroCaller>(*state, "methodWithOptionalLongLongIsZero");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithOptionalLongLongIsZeroBody>(*state, "methodWithOptionalLongLongIsZero");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalUnsignedLongLongCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalUnsignedLongLongBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -6033,10 +6035,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalUn
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalUnsignedLongLong(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithOptionalUnsignedLongLongCaller>(*state, "methodWithOptionalUnsignedLongLong");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithOptionalUnsignedLongLongBody>(*state, "methodWithOptionalUnsignedLongLong");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalUnsignedLongLongIsZeroCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalUnsignedLongLongIsZeroBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -6049,10 +6051,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalUn
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalUnsignedLongLongIsZero(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithOptionalUnsignedLongLongIsZeroCaller>(*state, "methodWithOptionalUnsignedLongLongIsZero");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithOptionalUnsignedLongLongIsZeroBody>(*state, "methodWithOptionalUnsignedLongLongIsZero");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalSequenceCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalSequenceBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -6065,10 +6067,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalSe
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalSequence(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithOptionalSequenceCaller>(*state, "methodWithOptionalSequence");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithOptionalSequenceBody>(*state, "methodWithOptionalSequence");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalSequenceIsEmptyCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalSequenceIsEmptyBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -6081,10 +6083,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalSe
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalSequenceIsEmpty(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithOptionalSequenceIsEmptyCaller>(*state, "methodWithOptionalSequenceIsEmpty");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithOptionalSequenceIsEmptyBody>(*state, "methodWithOptionalSequenceIsEmpty");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalBooleanCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalBooleanBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -6097,10 +6099,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalBo
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalBoolean(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithOptionalBooleanCaller>(*state, "methodWithOptionalBoolean");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithOptionalBooleanBody>(*state, "methodWithOptionalBoolean");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalBooleanIsFalseCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalBooleanIsFalseBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -6113,10 +6115,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalBo
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalBooleanIsFalse(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithOptionalBooleanIsFalseCaller>(*state, "methodWithOptionalBooleanIsFalse");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithOptionalBooleanIsFalseBody>(*state, "methodWithOptionalBooleanIsFalse");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalAnyCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalAnyBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -6129,10 +6131,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalAn
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalAny(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithOptionalAnyCaller>(*state, "methodWithOptionalAny");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithOptionalAnyBody>(*state, "methodWithOptionalAny");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalObjectCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalObjectBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -6145,10 +6147,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalOb
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalObject(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithOptionalObjectCaller>(*state, "methodWithOptionalObject");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithOptionalObjectBody>(*state, "methodWithOptionalObject");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalNullableWrapperCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalNullableWrapperBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -6161,10 +6163,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalNu
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalNullableWrapper(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithOptionalNullableWrapperCaller>(*state, "methodWithOptionalNullableWrapper");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithOptionalNullableWrapperBody>(*state, "methodWithOptionalNullableWrapper");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalNullableWrapperIsNullCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalNullableWrapperIsNullBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -6177,10 +6179,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalNu
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalNullableWrapperIsNull(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithOptionalNullableWrapperIsNullCaller>(*state, "methodWithOptionalNullableWrapperIsNull");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithOptionalNullableWrapperIsNullBody>(*state, "methodWithOptionalNullableWrapperIsNull");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalXPathNSResolverCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalXPathNSResolverBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -6193,10 +6195,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalXP
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalXPathNSResolver(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithOptionalXPathNSResolverCaller>(*state, "methodWithOptionalXPathNSResolver");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithOptionalXPathNSResolverBody>(*state, "methodWithOptionalXPathNSResolver");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalRecordCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalRecordBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -6209,10 +6211,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalRe
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalRecord(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithOptionalRecordCaller>(*state, "methodWithOptionalRecord");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithOptionalRecordBody>(*state, "methodWithOptionalRecord");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithCallbackArgCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithCallbackArgBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -6227,10 +6229,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithCallbackAr
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithCallbackArg(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithCallbackArgCaller>(*state, "methodWithCallbackArg");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithCallbackArgBody>(*state, "methodWithCallbackArg");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithNonCallbackArgAndCallbackArgCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithNonCallbackArgAndCallbackArgBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -6247,10 +6249,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithNonCallbac
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonCallbackArgAndCallbackArg(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithNonCallbackArgAndCallbackArgCaller>(*state, "methodWithNonCallbackArgAndCallbackArg");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithNonCallbackArgAndCallbackArgBody>(*state, "methodWithNonCallbackArgAndCallbackArg");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithCallbackAndOptionalArgCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithCallbackAndOptionalArgBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -6263,10 +6265,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithCallbackAn
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithCallbackAndOptionalArg(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithCallbackAndOptionalArgCaller>(*state, "methodWithCallbackAndOptionalArg");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithCallbackAndOptionalArgBody>(*state, "methodWithCallbackAndOptionalArg");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithCallbackFunctionArgCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithCallbackFunctionArgBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -6281,10 +6283,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithCallbackFu
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithCallbackFunctionArg(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithCallbackFunctionArgCaller>(*state, "methodWithCallbackFunctionArg");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithCallbackFunctionArgBody>(*state, "methodWithCallbackFunctionArg");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithNonCallbackArgAndCallbackFunctionArgCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithNonCallbackArgAndCallbackFunctionArgBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -6301,10 +6303,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithNonCallbac
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonCallbackArgAndCallbackFunctionArg(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithNonCallbackArgAndCallbackFunctionArgCaller>(*state, "methodWithNonCallbackArgAndCallbackFunctionArg");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithNonCallbackArgAndCallbackFunctionArgBody>(*state, "methodWithNonCallbackArgAndCallbackFunctionArg");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithCallbackFunctionAndOptionalArgCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithCallbackFunctionAndOptionalArgBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -6317,13 +6319,12 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithCallbackFu
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithCallbackFunctionAndOptionalArg(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithCallbackFunctionAndOptionalArgCaller>(*state, "methodWithCallbackFunctionAndOptionalArg");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithCallbackFunctionAndOptionalArgBody>(*state, "methodWithCallbackFunctionAndOptionalArg");
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionStaticMethodWithCallbackAndOptionalArg(ExecState* state)
+static inline JSC::EncodedJSValue jsTestObjConstructorFunctionStaticMethodWithCallbackAndOptionalArgBody(JSC::ExecState* state, JSC::ThrowScope& throwScope)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto callback = convert<IDLNullable<IDLCallbackInterface<JSTestCallbackInterface>>>(*state, state->argument(0), *jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject()), [](JSC::ExecState& state, JSC::ThrowScope& scope) { throwArgumentMustBeFunctionError(state, scope, 0, "callback", "TestObject", "staticMethodWithCallbackAndOptionalArg"); });
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
@@ -6331,10 +6332,14 @@ EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionStaticMethodWithCallbac
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionStaticMethodWithCallbackArg(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionStaticMethodWithCallbackAndOptionalArg(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return IDLOperation<JSTestObj>::callStatic<jsTestObjConstructorFunctionStaticMethodWithCallbackAndOptionalArgBody>(*state, "staticMethodWithCallbackAndOptionalArg");
+}
+
+static inline JSC::EncodedJSValue jsTestObjConstructorFunctionStaticMethodWithCallbackArgBody(JSC::ExecState* state, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -6344,8 +6349,13 @@ EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionStaticMethodWithCallbac
     return JSValue::encode(jsUndefined());
 }
 
+EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionStaticMethodWithCallbackArg(ExecState* state)
+{
+    return IDLOperation<JSTestObj>::callStatic<jsTestObjConstructorFunctionStaticMethodWithCallbackArgBody>(*state, "staticMethodWithCallbackArg");
+}
+
 #if ENABLE(Condition1)
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionConditionalMethod1Caller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionConditionalMethod1Body(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -6355,13 +6365,13 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionConditionalMethod1Ca
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConditionalMethod1(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionConditionalMethod1Caller>(*state, "conditionalMethod1");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionConditionalMethod1Body>(*state, "conditionalMethod1");
 }
 
 #endif
 
 #if ENABLE(Condition1) && ENABLE(Condition2)
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionConditionalMethod2Caller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionConditionalMethod2Body(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -6372,13 +6382,13 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionConditionalMethod2Ca
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConditionalMethod2(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionConditionalMethod2Caller>(*state, "conditionalMethod2");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionConditionalMethod2Body>(*state, "conditionalMethod2");
 }
 
 #endif
 
 #if ENABLE(Condition1) || ENABLE(Condition2)
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionConditionalMethod3Caller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionConditionalMethod3Body(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -6389,12 +6399,12 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionConditionalMethod3Ca
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConditionalMethod3(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionConditionalMethod3Caller>(*state, "conditionalMethod3");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionConditionalMethod3Body>(*state, "conditionalMethod3");
 }
 
 #endif
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod1Caller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod1Body(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -6407,12 +6417,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod1Cal
     return JSValue::encode(jsUndefined());
 }
 
-static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod1(ExecState* state)
-{
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionOverloadedMethod1Caller>(*state, "overloadedMethod");
-}
-
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod2Caller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod2Body(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -6425,12 +6430,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod2Cal
     return JSValue::encode(jsUndefined());
 }
 
-static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod2(ExecState* state)
-{
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionOverloadedMethod2Caller>(*state, "overloadedMethod");
-}
-
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod3Caller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod3Body(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -6441,12 +6441,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod3Cal
     return JSValue::encode(jsUndefined());
 }
 
-static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod3(ExecState* state)
-{
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionOverloadedMethod3Caller>(*state, "overloadedMethod");
-}
-
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod4Caller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod4Body(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -6457,12 +6452,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod4Cal
     return JSValue::encode(jsUndefined());
 }
 
-static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod4(ExecState* state)
-{
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionOverloadedMethod4Caller>(*state, "overloadedMethod");
-}
-
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod5Caller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod5Body(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -6473,12 +6463,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod5Cal
     return JSValue::encode(jsUndefined());
 }
 
-static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod5(ExecState* state)
-{
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionOverloadedMethod5Caller>(*state, "overloadedMethod");
-}
-
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod6Caller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod6Body(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -6489,12 +6474,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod6Cal
     return JSValue::encode(jsUndefined());
 }
 
-static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod6(ExecState* state)
-{
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionOverloadedMethod6Caller>(*state, "overloadedMethod");
-}
-
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod7Caller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod7Body(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -6505,12 +6485,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod7Cal
     return JSValue::encode(jsUndefined());
 }
 
-static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod7(ExecState* state)
-{
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionOverloadedMethod7Caller>(*state, "overloadedMethod");
-}
-
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod8Caller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod8Body(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -6521,12 +6496,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod8Cal
     return JSValue::encode(jsUndefined());
 }
 
-static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod8(ExecState* state)
-{
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionOverloadedMethod8Caller>(*state, "overloadedMethod");
-}
-
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod9Caller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod9Body(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -6537,12 +6507,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod9Cal
     return JSValue::encode(jsUndefined());
 }
 
-static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod9(ExecState* state)
-{
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionOverloadedMethod9Caller>(*state, "overloadedMethod");
-}
-
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod10Caller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod10Body(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -6553,12 +6518,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod10Ca
     return JSValue::encode(jsUndefined());
 }
 
-static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod10(ExecState* state)
-{
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionOverloadedMethod10Caller>(*state, "overloadedMethod");
-}
-
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod11Caller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod11Body(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -6569,12 +6529,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod11Ca
     return JSValue::encode(jsUndefined());
 }
 
-static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod11(ExecState* state)
-{
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionOverloadedMethod11Caller>(*state, "overloadedMethod");
-}
-
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod12Caller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod12Body(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -6585,12 +6540,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod12Ca
     return JSValue::encode(jsUndefined());
 }
 
-static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod12(ExecState* state)
-{
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionOverloadedMethod12Caller>(*state, "overloadedMethod");
-}
-
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod13Caller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod13Body(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -6601,58 +6551,59 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod13Ca
     return JSValue::encode(jsUndefined());
 }
 
-static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod13(ExecState* state)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodOverloadDispatcher(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionOverloadedMethod13Caller>(*state, "overloadedMethod");
-}
-
-EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod(ExecState* state)
-{
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
+    VM& vm = state->vm();
+    UNUSED_PARAM(vm);
     size_t argsCount = std::min<size_t>(2, state->argumentCount());
     if (argsCount == 0) {
-        return jsTestObjPrototypeFunctionOverloadedMethod13(state);
+        return jsTestObjPrototypeFunctionOverloadedMethod13Body(state, castedThis, throwScope);
     }
     if (argsCount == 1) {
         JSValue distinguishingArg = state->uncheckedArgument(0);
         if (distinguishingArg.isUndefinedOrNull())
-            return jsTestObjPrototypeFunctionOverloadedMethod2(state);
+            return jsTestObjPrototypeFunctionOverloadedMethod2Body(state, castedThis, throwScope);
         if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(vm, JSTestObj::info()))
-            return jsTestObjPrototypeFunctionOverloadedMethod2(state);
+            return jsTestObjPrototypeFunctionOverloadedMethod2Body(state, castedThis, throwScope);
         if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(vm, JSTestCallbackInterface::info()))
-            return jsTestObjPrototypeFunctionOverloadedMethod5(state);
+            return jsTestObjPrototypeFunctionOverloadedMethod5Body(state, castedThis, throwScope);
         if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(vm, JSDOMStringList::info()))
-            return jsTestObjPrototypeFunctionOverloadedMethod6(state);
+            return jsTestObjPrototypeFunctionOverloadedMethod6Body(state, castedThis, throwScope);
         if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(vm, JSTestObj::info()))
-            return jsTestObjPrototypeFunctionOverloadedMethod8(state);
+            return jsTestObjPrototypeFunctionOverloadedMethod8Body(state, castedThis, throwScope);
         if (distinguishingArg.isObject() && (asObject(distinguishingArg)->inherits(vm, JSDOMWindowShell::info()) || asObject(distinguishingArg)->inherits(vm, JSDOMWindow::info())))
-            return jsTestObjPrototypeFunctionOverloadedMethod9(state);
+            return jsTestObjPrototypeFunctionOverloadedMethod9Body(state, castedThis, throwScope);
         if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(vm, JSBlob::info()))
-            return jsTestObjPrototypeFunctionOverloadedMethod13(state);
+            return jsTestObjPrototypeFunctionOverloadedMethod13Body(state, castedThis, throwScope);
         if (hasIteratorMethod(*state, distinguishingArg))
-            return jsTestObjPrototypeFunctionOverloadedMethod7(state);
+            return jsTestObjPrototypeFunctionOverloadedMethod7Body(state, castedThis, throwScope);
         if (distinguishingArg.isObject() && asObject(distinguishingArg)->type() != RegExpObjectType)
-            return jsTestObjPrototypeFunctionOverloadedMethod5(state);
+            return jsTestObjPrototypeFunctionOverloadedMethod5Body(state, castedThis, throwScope);
         if (distinguishingArg.isNumber())
-            return jsTestObjPrototypeFunctionOverloadedMethod4(state);
-        return jsTestObjPrototypeFunctionOverloadedMethod3(state);
+            return jsTestObjPrototypeFunctionOverloadedMethod4Body(state, castedThis, throwScope);
+        return jsTestObjPrototypeFunctionOverloadedMethod3Body(state, castedThis, throwScope);
     }
     if (argsCount == 2) {
         JSValue distinguishingArg = state->uncheckedArgument(1);
         if (distinguishingArg.isUndefined())
-            return jsTestObjPrototypeFunctionOverloadedMethod2(state);
+            return jsTestObjPrototypeFunctionOverloadedMethod2Body(state, castedThis, throwScope);
         if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(vm, JSBlob::info()))
-            return jsTestObjPrototypeFunctionOverloadedMethod13(state);
+            return jsTestObjPrototypeFunctionOverloadedMethod13Body(state, castedThis, throwScope);
         if (distinguishingArg.isNumber())
-            return jsTestObjPrototypeFunctionOverloadedMethod2(state);
-        return jsTestObjPrototypeFunctionOverloadedMethod1(state);
+            return jsTestObjPrototypeFunctionOverloadedMethod2Body(state, castedThis, throwScope);
+        return jsTestObjPrototypeFunctionOverloadedMethod1Body(state, castedThis, throwScope);
     }
     return throwVMTypeError(state, throwScope);
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter1Caller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod(ExecState* state)
+{
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionOverloadedMethodOverloadDispatcher>(*state, "overloadedMethod");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter1Body(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -6665,12 +6616,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodWith
     return JSValue::encode(jsUndefined());
 }
 
-static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter1(ExecState* state)
-{
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter1Caller>(*state, "overloadedMethodWithOptionalParameter");
-}
-
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter2Caller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter2Body(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -6683,37 +6629,38 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodWith
     return JSValue::encode(jsUndefined());
 }
 
-static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter2(ExecState* state)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameterOverloadDispatcher(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter2Caller>(*state, "overloadedMethodWithOptionalParameter");
-}
-
-EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter(ExecState* state)
-{
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
+    VM& vm = state->vm();
+    UNUSED_PARAM(vm);
     size_t argsCount = std::min<size_t>(2, state->argumentCount());
     if (argsCount == 1) {
         JSValue distinguishingArg = state->uncheckedArgument(0);
         if (distinguishingArg.isUndefinedOrNull())
-            return jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter2(state);
+            return jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter2Body(state, castedThis, throwScope);
         if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(vm, JSTestObj::info()))
-            return jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter2(state);
-        return jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter1(state);
+            return jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter2Body(state, castedThis, throwScope);
+        return jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter1Body(state, castedThis, throwScope);
     }
     if (argsCount == 2) {
         JSValue distinguishingArg = state->uncheckedArgument(0);
         if (distinguishingArg.isUndefinedOrNull())
-            return jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter2(state);
+            return jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter2Body(state, castedThis, throwScope);
         if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(vm, JSTestObj::info()))
-            return jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter2(state);
-        return jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter1(state);
+            return jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter2Body(state, castedThis, throwScope);
+        return jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter1Body(state, castedThis, throwScope);
     }
     return argsCount < 1 ? throwVMError(state, throwScope, createNotEnoughArgumentsError(state)) : throwVMTypeError(state, throwScope);
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodWithDistinguishingUnion1Caller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter(ExecState* state)
+{
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameterOverloadDispatcher>(*state, "overloadedMethodWithOptionalParameter");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodWithDistinguishingUnion1Body(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -6724,12 +6671,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodWith
     return JSValue::encode(jsUndefined());
 }
 
-static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodWithDistinguishingUnion1(ExecState* state)
-{
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionOverloadedMethodWithDistinguishingUnion1Caller>(*state, "overloadedMethodWithDistinguishingUnion");
-}
-
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodWithDistinguishingUnion2Caller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodWithDistinguishingUnion2Body(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -6740,31 +6682,32 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodWith
     return JSValue::encode(jsUndefined());
 }
 
-static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodWithDistinguishingUnion2(ExecState* state)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodWithDistinguishingUnionOverloadDispatcher(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionOverloadedMethodWithDistinguishingUnion2Caller>(*state, "overloadedMethodWithDistinguishingUnion");
-}
-
-EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethodWithDistinguishingUnion(ExecState* state)
-{
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
+    VM& vm = state->vm();
+    UNUSED_PARAM(vm);
     size_t argsCount = std::min<size_t>(1, state->argumentCount());
     if (argsCount == 1) {
         JSValue distinguishingArg = state->uncheckedArgument(0);
         if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(vm, JSTestObj::info()))
-            return jsTestObjPrototypeFunctionOverloadedMethodWithDistinguishingUnion1(state);
+            return jsTestObjPrototypeFunctionOverloadedMethodWithDistinguishingUnion1Body(state, castedThis, throwScope);
         if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(vm, JSTestNode::info()))
-            return jsTestObjPrototypeFunctionOverloadedMethodWithDistinguishingUnion1(state);
+            return jsTestObjPrototypeFunctionOverloadedMethodWithDistinguishingUnion1Body(state, castedThis, throwScope);
         if (distinguishingArg.isNumber())
-            return jsTestObjPrototypeFunctionOverloadedMethodWithDistinguishingUnion2(state);
-        return jsTestObjPrototypeFunctionOverloadedMethodWithDistinguishingUnion2(state);
+            return jsTestObjPrototypeFunctionOverloadedMethodWithDistinguishingUnion2Body(state, castedThis, throwScope);
+        return jsTestObjPrototypeFunctionOverloadedMethodWithDistinguishingUnion2Body(state, castedThis, throwScope);
     }
     return argsCount < 1 ? throwVMError(state, throwScope, createNotEnoughArgumentsError(state)) : throwVMTypeError(state, throwScope);
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodWith2DistinguishingUnions1Caller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethodWithDistinguishingUnion(ExecState* state)
+{
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionOverloadedMethodWithDistinguishingUnionOverloadDispatcher>(*state, "overloadedMethodWithDistinguishingUnion");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodWith2DistinguishingUnions1Body(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -6775,12 +6718,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodWith
     return JSValue::encode(jsUndefined());
 }
 
-static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodWith2DistinguishingUnions1(ExecState* state)
-{
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionOverloadedMethodWith2DistinguishingUnions1Caller>(*state, "overloadedMethodWith2DistinguishingUnions");
-}
-
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodWith2DistinguishingUnions2Caller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodWith2DistinguishingUnions2Body(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -6791,33 +6729,34 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodWith
     return JSValue::encode(jsUndefined());
 }
 
-static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodWith2DistinguishingUnions2(ExecState* state)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodWith2DistinguishingUnionsOverloadDispatcher(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionOverloadedMethodWith2DistinguishingUnions2Caller>(*state, "overloadedMethodWith2DistinguishingUnions");
-}
-
-EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethodWith2DistinguishingUnions(ExecState* state)
-{
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
+    VM& vm = state->vm();
+    UNUSED_PARAM(vm);
     size_t argsCount = std::min<size_t>(1, state->argumentCount());
     if (argsCount == 1) {
         JSValue distinguishingArg = state->uncheckedArgument(0);
         if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(vm, JSTestObj::info()))
-            return jsTestObjPrototypeFunctionOverloadedMethodWith2DistinguishingUnions1(state);
+            return jsTestObjPrototypeFunctionOverloadedMethodWith2DistinguishingUnions1Body(state, castedThis, throwScope);
         if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(vm, JSTestNode::info()))
-            return jsTestObjPrototypeFunctionOverloadedMethodWith2DistinguishingUnions1(state);
+            return jsTestObjPrototypeFunctionOverloadedMethodWith2DistinguishingUnions1Body(state, castedThis, throwScope);
         if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(vm, JSTestInterface::info()))
-            return jsTestObjPrototypeFunctionOverloadedMethodWith2DistinguishingUnions2(state);
+            return jsTestObjPrototypeFunctionOverloadedMethodWith2DistinguishingUnions2Body(state, castedThis, throwScope);
         if (distinguishingArg.isNumber())
-            return jsTestObjPrototypeFunctionOverloadedMethodWith2DistinguishingUnions2(state);
-        return jsTestObjPrototypeFunctionOverloadedMethodWith2DistinguishingUnions2(state);
+            return jsTestObjPrototypeFunctionOverloadedMethodWith2DistinguishingUnions2Body(state, castedThis, throwScope);
+        return jsTestObjPrototypeFunctionOverloadedMethodWith2DistinguishingUnions2Body(state, castedThis, throwScope);
     }
     return argsCount < 1 ? throwVMError(state, throwScope, createNotEnoughArgumentsError(state)) : throwVMTypeError(state, throwScope);
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodWithNonDistinguishingUnion1Caller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethodWith2DistinguishingUnions(ExecState* state)
+{
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionOverloadedMethodWith2DistinguishingUnionsOverloadDispatcher>(*state, "overloadedMethodWith2DistinguishingUnions");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodWithNonDistinguishingUnion1Body(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -6830,12 +6769,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodWith
     return JSValue::encode(jsUndefined());
 }
 
-static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodWithNonDistinguishingUnion1(ExecState* state)
-{
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionOverloadedMethodWithNonDistinguishingUnion1Caller>(*state, "overloadedMethodWithNonDistinguishingUnion");
-}
-
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodWithNonDistinguishingUnion2Caller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodWithNonDistinguishingUnion2Body(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -6848,28 +6782,29 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodWith
     return JSValue::encode(jsUndefined());
 }
 
-static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodWithNonDistinguishingUnion2(ExecState* state)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodWithNonDistinguishingUnionOverloadDispatcher(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionOverloadedMethodWithNonDistinguishingUnion2Caller>(*state, "overloadedMethodWithNonDistinguishingUnion");
-}
-
-EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethodWithNonDistinguishingUnion(ExecState* state)
-{
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
+    VM& vm = state->vm();
+    UNUSED_PARAM(vm);
     size_t argsCount = std::min<size_t>(2, state->argumentCount());
     if (argsCount == 2) {
         JSValue distinguishingArg = state->uncheckedArgument(1);
         if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(vm, JSTestObj::info()))
-            return jsTestObjPrototypeFunctionOverloadedMethodWithNonDistinguishingUnion1(state);
+            return jsTestObjPrototypeFunctionOverloadedMethodWithNonDistinguishingUnion1Body(state, castedThis, throwScope);
         if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(vm, JSTestNode::info()))
-            return jsTestObjPrototypeFunctionOverloadedMethodWithNonDistinguishingUnion2(state);
+            return jsTestObjPrototypeFunctionOverloadedMethodWithNonDistinguishingUnion2Body(state, castedThis, throwScope);
     }
     return argsCount < 2 ? throwVMError(state, throwScope, createNotEnoughArgumentsError(state)) : throwVMTypeError(state, throwScope);
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadWithNullableUnion1Caller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethodWithNonDistinguishingUnion(ExecState* state)
+{
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionOverloadedMethodWithNonDistinguishingUnionOverloadDispatcher>(*state, "overloadedMethodWithNonDistinguishingUnion");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadWithNullableUnion1Body(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -6880,12 +6815,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadWithNullable
     return JSValue::encode(jsUndefined());
 }
 
-static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadWithNullableUnion1(ExecState* state)
-{
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionOverloadWithNullableUnion1Caller>(*state, "overloadWithNullableUnion");
-}
-
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadWithNullableUnion2Caller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadWithNullableUnion2Body(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -6896,33 +6826,34 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadWithNullable
     return JSValue::encode(jsUndefined());
 }
 
-static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadWithNullableUnion2(ExecState* state)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadWithNullableUnionOverloadDispatcher(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionOverloadWithNullableUnion2Caller>(*state, "overloadWithNullableUnion");
-}
-
-EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadWithNullableUnion(ExecState* state)
-{
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
+    VM& vm = state->vm();
+    UNUSED_PARAM(vm);
     size_t argsCount = std::min<size_t>(1, state->argumentCount());
     if (argsCount == 1) {
         JSValue distinguishingArg = state->uncheckedArgument(0);
         if (distinguishingArg.isUndefinedOrNull())
-            return jsTestObjPrototypeFunctionOverloadWithNullableUnion1(state);
+            return jsTestObjPrototypeFunctionOverloadWithNullableUnion1Body(state, castedThis, throwScope);
         if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(vm, JSTestObj::info()))
-            return jsTestObjPrototypeFunctionOverloadWithNullableUnion1(state);
+            return jsTestObjPrototypeFunctionOverloadWithNullableUnion1Body(state, castedThis, throwScope);
         if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(vm, JSTestNode::info()))
-            return jsTestObjPrototypeFunctionOverloadWithNullableUnion1(state);
+            return jsTestObjPrototypeFunctionOverloadWithNullableUnion1Body(state, castedThis, throwScope);
         if (distinguishingArg.isNumber())
-            return jsTestObjPrototypeFunctionOverloadWithNullableUnion2(state);
-        return jsTestObjPrototypeFunctionOverloadWithNullableUnion2(state);
+            return jsTestObjPrototypeFunctionOverloadWithNullableUnion2Body(state, castedThis, throwScope);
+        return jsTestObjPrototypeFunctionOverloadWithNullableUnion2Body(state, castedThis, throwScope);
     }
     return argsCount < 1 ? throwVMError(state, throwScope, createNotEnoughArgumentsError(state)) : throwVMTypeError(state, throwScope);
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadWithOptionalUnion1Caller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadWithNullableUnion(ExecState* state)
+{
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionOverloadWithNullableUnionOverloadDispatcher>(*state, "overloadWithNullableUnion");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadWithOptionalUnion1Body(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -6933,12 +6864,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadWithOptional
     return JSValue::encode(jsUndefined());
 }
 
-static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadWithOptionalUnion1(ExecState* state)
-{
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionOverloadWithOptionalUnion1Caller>(*state, "overloadWithOptionalUnion");
-}
-
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadWithOptionalUnion2Caller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadWithOptionalUnion2Body(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -6949,34 +6875,35 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadWithOptional
     return JSValue::encode(jsUndefined());
 }
 
-static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadWithOptionalUnion2(ExecState* state)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadWithOptionalUnionOverloadDispatcher(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionOverloadWithOptionalUnion2Caller>(*state, "overloadWithOptionalUnion");
-}
-
-EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadWithOptionalUnion(ExecState* state)
-{
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
+    VM& vm = state->vm();
+    UNUSED_PARAM(vm);
     size_t argsCount = std::min<size_t>(1, state->argumentCount());
     if (argsCount == 0) {
-        return jsTestObjPrototypeFunctionOverloadWithOptionalUnion1(state);
+        return jsTestObjPrototypeFunctionOverloadWithOptionalUnion1Body(state, castedThis, throwScope);
     }
     if (argsCount == 1) {
         JSValue distinguishingArg = state->uncheckedArgument(0);
         if (distinguishingArg.isUndefined())
-            return jsTestObjPrototypeFunctionOverloadWithOptionalUnion1(state);
+            return jsTestObjPrototypeFunctionOverloadWithOptionalUnion1Body(state, castedThis, throwScope);
         if (distinguishingArg.isBoolean())
-            return jsTestObjPrototypeFunctionOverloadWithOptionalUnion1(state);
+            return jsTestObjPrototypeFunctionOverloadWithOptionalUnion1Body(state, castedThis, throwScope);
         if (distinguishingArg.isNumber())
-            return jsTestObjPrototypeFunctionOverloadWithOptionalUnion2(state);
-        return jsTestObjPrototypeFunctionOverloadWithOptionalUnion1(state);
+            return jsTestObjPrototypeFunctionOverloadWithOptionalUnion2Body(state, castedThis, throwScope);
+        return jsTestObjPrototypeFunctionOverloadWithOptionalUnion1Body(state, castedThis, throwScope);
     }
     return throwVMTypeError(state, throwScope);
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadWithNullableNonDistinguishingParameter1Caller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadWithOptionalUnion(ExecState* state)
+{
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionOverloadWithOptionalUnionOverloadDispatcher>(*state, "overloadWithOptionalUnion");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadWithNullableNonDistinguishingParameter1Body(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -6989,12 +6916,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadWithNullable
     return JSValue::encode(jsUndefined());
 }
 
-static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadWithNullableNonDistinguishingParameter1(ExecState* state)
-{
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionOverloadWithNullableNonDistinguishingParameter1Caller>(*state, "overloadWithNullableNonDistinguishingParameter");
-}
-
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadWithNullableNonDistinguishingParameter2Caller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadWithNullableNonDistinguishingParameter2Body(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -7007,62 +6929,72 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadWithNullable
     return JSValue::encode(jsUndefined());
 }
 
-static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadWithNullableNonDistinguishingParameter2(ExecState* state)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadWithNullableNonDistinguishingParameterOverloadDispatcher(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionOverloadWithNullableNonDistinguishingParameter2Caller>(*state, "overloadWithNullableNonDistinguishingParameter");
-}
-
-EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadWithNullableNonDistinguishingParameter(ExecState* state)
-{
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
+    VM& vm = state->vm();
+    UNUSED_PARAM(vm);
     size_t argsCount = std::min<size_t>(2, state->argumentCount());
     if (argsCount == 2) {
         JSValue distinguishingArg = state->uncheckedArgument(1);
         if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(vm, JSTestNode::info()))
-            return jsTestObjPrototypeFunctionOverloadWithNullableNonDistinguishingParameter1(state);
+            return jsTestObjPrototypeFunctionOverloadWithNullableNonDistinguishingParameter1Body(state, castedThis, throwScope);
         if (distinguishingArg.isNumber())
-            return jsTestObjPrototypeFunctionOverloadWithNullableNonDistinguishingParameter2(state);
-        return jsTestObjPrototypeFunctionOverloadWithNullableNonDistinguishingParameter2(state);
+            return jsTestObjPrototypeFunctionOverloadWithNullableNonDistinguishingParameter2Body(state, castedThis, throwScope);
+        return jsTestObjPrototypeFunctionOverloadWithNullableNonDistinguishingParameter2Body(state, castedThis, throwScope);
     }
     return argsCount < 2 ? throwVMError(state, throwScope, createNotEnoughArgumentsError(state)) : throwVMTypeError(state, throwScope);
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionClassMethod(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadWithNullableNonDistinguishingParameter(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionOverloadWithNullableNonDistinguishingParameterOverloadDispatcher>(*state, "overloadWithNullableNonDistinguishingParameter");
+}
+
+static inline JSC::EncodedJSValue jsTestObjConstructorFunctionClassMethodBody(JSC::ExecState* state, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     TestObj::classMethod();
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionClassMethodWithOptional(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionClassMethod(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return IDLOperation<JSTestObj>::callStatic<jsTestObjConstructorFunctionClassMethodBody>(*state, "classMethod");
+}
+
+static inline JSC::EncodedJSValue jsTestObjConstructorFunctionClassMethodWithOptionalBody(JSC::ExecState* state, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto arg = state->argument(0).isUndefined() ? std::optional<Converter<IDLLong>::ReturnType>() : std::optional<Converter<IDLLong>::ReturnType>(convert<IDLLong>(*state, state->uncheckedArgument(0)));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     return JSValue::encode(toJS<IDLLong>(TestObj::classMethodWithOptional(WTFMove(arg))));
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionClassMethod2(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionClassMethodWithOptional(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return IDLOperation<JSTestObj>::callStatic<jsTestObjConstructorFunctionClassMethodWithOptionalBody>(*state, "classMethodWithOptional");
+}
+
+static inline JSC::EncodedJSValue jsTestObjConstructorFunctionClassMethod2Body(JSC::ExecState* state, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    if (UNLIKELY(state->argumentCount() < 1))
-        return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
     return JSValue::encode(JSTestObj::classMethod2(*state));
 }
 
-#if ENABLE(Condition1)
-static inline EncodedJSValue jsTestObjConstructorFunctionOverloadedMethod11(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionClassMethod2(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return IDLOperation<JSTestObj>::callStatic<jsTestObjConstructorFunctionClassMethod2Body>(*state, "classMethod2");
+}
+
+#if ENABLE(Condition1)
+static inline JSC::EncodedJSValue jsTestObjConstructorFunctionOverloadedMethod11Body(JSC::ExecState* state, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto arg = convert<IDLLong>(*state, state->uncheckedArgument(0));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
@@ -7073,10 +7005,9 @@ static inline EncodedJSValue jsTestObjConstructorFunctionOverloadedMethod11(Exec
 #endif
 
 #if ENABLE(Condition1)
-static inline EncodedJSValue jsTestObjConstructorFunctionOverloadedMethod12(ExecState* state)
+static inline JSC::EncodedJSValue jsTestObjConstructorFunctionOverloadedMethod12Body(JSC::ExecState* state, JSC::ThrowScope& throwScope)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto type = convert<IDLDOMString>(*state, state->uncheckedArgument(0));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
@@ -7087,27 +7018,35 @@ static inline EncodedJSValue jsTestObjConstructorFunctionOverloadedMethod12(Exec
 #endif
 
 #if ENABLE(Condition1)
-EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionOverloadedMethod1(ExecState* state)
+
+static inline JSC::EncodedJSValue jsTestObjConstructorFunctionOverloadedMethod1OverloadDispatcher(JSC::ExecState* state, JSC::ThrowScope& throwScope)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
+    VM& vm = state->vm();
+    UNUSED_PARAM(vm);
     size_t argsCount = std::min<size_t>(1, state->argumentCount());
     if (argsCount == 1) {
         JSValue distinguishingArg = state->uncheckedArgument(0);
 #if ENABLE(Condition1)
         if (distinguishingArg.isNumber())
-            return jsTestObjConstructorFunctionOverloadedMethod11(state);
+            return jsTestObjConstructorFunctionOverloadedMethod11Body(state, throwScope);
 #endif
 #if ENABLE(Condition1)
-        return jsTestObjConstructorFunctionOverloadedMethod12(state);
+        return jsTestObjConstructorFunctionOverloadedMethod12Body(state, throwScope);
 #endif
     }
     return argsCount < 1 ? throwVMError(state, throwScope, createNotEnoughArgumentsError(state)) : throwVMTypeError(state, throwScope);
 }
+
+EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionOverloadedMethod1(ExecState* state)
+{
+    return IDLOperation<JSTestObj>::callStatic<jsTestObjConstructorFunctionOverloadedMethod1OverloadDispatcher>(*state, "overloadedMethod1");
+}
+
 #endif
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionClassMethodWithClampCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionClassMethodWithClampBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -7124,10 +7063,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionClassMethodWithClamp
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionClassMethodWithClamp(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionClassMethodWithClampCaller>(*state, "classMethodWithClamp");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionClassMethodWithClampBody>(*state, "classMethodWithClamp");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionClassMethodWithClampOnOptionalCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionClassMethodWithClampOnOptionalBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -7140,10 +7079,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionClassMethodWithClamp
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionClassMethodWithClampOnOptional(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionClassMethodWithClampOnOptionalCaller>(*state, "classMethodWithClampOnOptional");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionClassMethodWithClampOnOptionalBody>(*state, "classMethodWithClampOnOptional");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionClassMethodWithEnforceRangeCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionClassMethodWithEnforceRangeBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -7160,10 +7099,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionClassMethodWithEnfor
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionClassMethodWithEnforceRange(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionClassMethodWithEnforceRangeCaller>(*state, "classMethodWithEnforceRange");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionClassMethodWithEnforceRangeBody>(*state, "classMethodWithEnforceRange");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionClassMethodWithEnforceRangeOnOptionalCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionClassMethodWithEnforceRangeOnOptionalBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -7176,10 +7115,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionClassMethodWithEnfor
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionClassMethodWithEnforceRangeOnOptional(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionClassMethodWithEnforceRangeOnOptionalCaller>(*state, "classMethodWithEnforceRangeOnOptional");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionClassMethodWithEnforceRangeOnOptionalBody>(*state, "classMethodWithEnforceRangeOnOptional");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithUnsignedLongSequenceCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithUnsignedLongSequenceBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -7194,10 +7133,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithUnsignedLo
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithUnsignedLongSequence(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithUnsignedLongSequenceCaller>(*state, "methodWithUnsignedLongSequence");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithUnsignedLongSequenceBody>(*state, "methodWithUnsignedLongSequence");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionStringArrayFunctionCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionStringArrayFunctionBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -7211,10 +7150,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionStringArrayFunctionC
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionStringArrayFunction(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionStringArrayFunctionCaller>(*state, "stringArrayFunction");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionStringArrayFunctionBody>(*state, "stringArrayFunction");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionDomStringListFunctionCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionDomStringListFunctionBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -7228,10 +7167,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionDomStringListFunctio
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionDomStringListFunction(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionDomStringListFunctionCaller>(*state, "domStringListFunction");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionDomStringListFunctionBody>(*state, "domStringListFunction");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOperationWithOptionalUnionParameterCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOperationWithOptionalUnionParameterBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -7244,10 +7183,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOperationWithOptiona
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOperationWithOptionalUnionParameter(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionOperationWithOptionalUnionParameterCaller>(*state, "operationWithOptionalUnionParameter");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionOperationWithOptionalUnionParameterBody>(*state, "operationWithOptionalUnionParameter");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithAndWithoutNullableSequenceCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithAndWithoutNullableSequenceBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -7264,10 +7203,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithAndWithout
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithAndWithoutNullableSequence(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithAndWithoutNullableSequenceCaller>(*state, "methodWithAndWithoutNullableSequence");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithAndWithoutNullableSequenceBody>(*state, "methodWithAndWithoutNullableSequence");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionGetElementByIdCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionGetElementByIdBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -7281,10 +7220,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionGetElementByIdCaller
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionGetElementById(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionGetElementByIdCaller>(*state, "getElementById");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionGetElementByIdBody>(*state, "getElementById");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionGetSVGDocumentCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionGetSVGDocumentBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -7294,10 +7233,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionGetSVGDocumentCaller
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionGetSVGDocument(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionGetSVGDocumentCaller>(*state, "getSVGDocument");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionGetSVGDocumentBody>(*state, "getSVGDocument");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionConvert1Caller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionConvert1Body(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -7312,10 +7251,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionConvert1Caller(JSC::
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConvert1(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionConvert1Caller>(*state, "convert1");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionConvert1Body>(*state, "convert1");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionConvert2Caller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionConvert2Body(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -7330,10 +7269,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionConvert2Caller(JSC::
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConvert2(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionConvert2Caller>(*state, "convert2");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionConvert2Body>(*state, "convert2");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionConvert3Caller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionConvert3Body(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -7348,10 +7287,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionConvert3Caller(JSC::
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConvert3(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionConvert3Caller>(*state, "convert3");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionConvert3Body>(*state, "convert3");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionConvert4Caller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionConvert4Body(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -7366,10 +7305,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionConvert4Caller(JSC::
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConvert4(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionConvert4Caller>(*state, "convert4");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionConvert4Body>(*state, "convert4");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMutablePointFunctionCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMutablePointFunctionBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -7379,10 +7318,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMutablePointFunction
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMutablePointFunction(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMutablePointFunctionCaller>(*state, "mutablePointFunction");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMutablePointFunctionBody>(*state, "mutablePointFunction");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOrangeCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOrangeBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -7393,10 +7332,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOrangeCaller(JSC::Ex
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOrange(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionOrangeCaller>(*state, "orange");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionOrangeBody>(*state, "orange");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionVariadicStringMethodCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionVariadicStringMethodBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -7413,10 +7352,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionVariadicStringMethod
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVariadicStringMethod(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionVariadicStringMethodCaller>(*state, "variadicStringMethod");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionVariadicStringMethodBody>(*state, "variadicStringMethod");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionVariadicDoubleMethodCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionVariadicDoubleMethodBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -7433,10 +7372,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionVariadicDoubleMethod
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVariadicDoubleMethod(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionVariadicDoubleMethodCaller>(*state, "variadicDoubleMethod");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionVariadicDoubleMethodBody>(*state, "variadicDoubleMethod");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionVariadicNodeMethodCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionVariadicNodeMethodBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -7453,10 +7392,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionVariadicNodeMethodCa
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVariadicNodeMethod(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionVariadicNodeMethodCaller>(*state, "variadicNodeMethod");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionVariadicNodeMethodBody>(*state, "variadicNodeMethod");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionVariadicUnionMethodCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionVariadicUnionMethodBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -7473,10 +7412,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionVariadicUnionMethodC
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVariadicUnionMethod(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionVariadicUnionMethodCaller>(*state, "variadicUnionMethod");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionVariadicUnionMethodBody>(*state, "variadicUnionMethod");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionAnyCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionAnyBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -7493,10 +7432,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionAnyCaller(JSC::ExecS
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionAny(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionAnyCaller>(*state, "any");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionAnyBody>(*state, "any");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionCaller(JSC::ExecState* state, typename IDLOperationReturningPromise<JSTestObj>::ClassParameter castedThis, Ref<DeferredPromise>&& promise, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionBody(JSC::ExecState* state, typename IDLOperationReturningPromise<JSTestObj>::ClassParameter castedThis, Ref<DeferredPromise>&& promise, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -7507,10 +7446,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionC
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionTestPromiseFunction(ExecState* state)
 {
-    return IDLOperationReturningPromise<JSTestObj>::call<jsTestObjPrototypeFunctionTestPromiseFunctionCaller, PromiseExecutionScope::WindowOnly>(*state, "testPromiseFunction");
+    return IDLOperationReturningPromise<JSTestObj>::call<jsTestObjPrototypeFunctionTestPromiseFunctionBody, PromiseExecutionScope::WindowOnly>(*state, "testPromiseFunction");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionWithFloatArgumentCaller(JSC::ExecState* state, typename IDLOperationReturningPromise<JSTestObj>::ClassParameter castedThis, Ref<DeferredPromise>&& promise, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionWithFloatArgumentBody(JSC::ExecState* state, typename IDLOperationReturningPromise<JSTestObj>::ClassParameter castedThis, Ref<DeferredPromise>&& promise, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -7525,10 +7464,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionW
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionTestPromiseFunctionWithFloatArgument(ExecState* state)
 {
-    return IDLOperationReturningPromise<JSTestObj>::call<jsTestObjPrototypeFunctionTestPromiseFunctionWithFloatArgumentCaller, PromiseExecutionScope::WindowOnly>(*state, "testPromiseFunctionWithFloatArgument");
+    return IDLOperationReturningPromise<JSTestObj>::call<jsTestObjPrototypeFunctionTestPromiseFunctionWithFloatArgumentBody, PromiseExecutionScope::WindowOnly>(*state, "testPromiseFunctionWithFloatArgument");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionWithExceptionCaller(JSC::ExecState* state, typename IDLOperationReturningPromise<JSTestObj>::ClassParameter castedThis, Ref<DeferredPromise>&& promise, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionWithExceptionBody(JSC::ExecState* state, typename IDLOperationReturningPromise<JSTestObj>::ClassParameter castedThis, Ref<DeferredPromise>&& promise, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -7539,10 +7478,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionW
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionTestPromiseFunctionWithException(ExecState* state)
 {
-    return IDLOperationReturningPromise<JSTestObj>::call<jsTestObjPrototypeFunctionTestPromiseFunctionWithExceptionCaller, PromiseExecutionScope::WindowOnly>(*state, "testPromiseFunctionWithException");
+    return IDLOperationReturningPromise<JSTestObj>::call<jsTestObjPrototypeFunctionTestPromiseFunctionWithExceptionBody, PromiseExecutionScope::WindowOnly>(*state, "testPromiseFunctionWithException");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionWithOptionalIntArgumentCaller(JSC::ExecState* state, typename IDLOperationReturningPromise<JSTestObj>::ClassParameter castedThis, Ref<DeferredPromise>&& promise, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionWithOptionalIntArgumentBody(JSC::ExecState* state, typename IDLOperationReturningPromise<JSTestObj>::ClassParameter castedThis, Ref<DeferredPromise>&& promise, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -7555,10 +7494,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionW
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionTestPromiseFunctionWithOptionalIntArgument(ExecState* state)
 {
-    return IDLOperationReturningPromise<JSTestObj>::call<jsTestObjPrototypeFunctionTestPromiseFunctionWithOptionalIntArgumentCaller, PromiseExecutionScope::WindowOnly>(*state, "testPromiseFunctionWithOptionalIntArgument");
+    return IDLOperationReturningPromise<JSTestObj>::call<jsTestObjPrototypeFunctionTestPromiseFunctionWithOptionalIntArgumentBody, PromiseExecutionScope::WindowOnly>(*state, "testPromiseFunctionWithOptionalIntArgument");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionTestPromiseOverloadedFunction1Caller(JSC::ExecState* state, typename IDLOperationReturningPromise<JSTestObj>::ClassParameter castedThis, Ref<DeferredPromise>&& promise, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionTestPromiseOverloadedFunction1Body(JSC::ExecState* state, typename IDLOperationReturningPromise<JSTestObj>::ClassParameter castedThis, Ref<DeferredPromise>&& promise, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -7569,12 +7508,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionTestPromiseOverloade
     return JSValue::encode(jsUndefined());
 }
 
-static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseOverloadedFunction1(ExecState* state)
-{
-    return IDLOperationReturningPromise<JSTestObj>::call<jsTestObjPrototypeFunctionTestPromiseOverloadedFunction1Caller, PromiseExecutionScope::WindowOnly>(*state, "testPromiseOverloadedFunction");
-}
-
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionTestPromiseOverloadedFunction2Caller(JSC::ExecState* state, typename IDLOperationReturningPromise<JSTestObj>::ClassParameter castedThis, Ref<DeferredPromise>&& promise, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionTestPromiseOverloadedFunction2Body(JSC::ExecState* state, typename IDLOperationReturningPromise<JSTestObj>::ClassParameter castedThis, Ref<DeferredPromise>&& promise, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -7585,32 +7519,32 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionTestPromiseOverloade
     return JSValue::encode(jsUndefined());
 }
 
-static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseOverloadedFunction2(ExecState* state)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionTestPromiseOverloadedFunctionOverloadDispatcher(JSC::ExecState* state, typename IDLOperationReturningPromise<JSTestObj>::ClassParameter castedThis, Ref<DeferredPromise>&& promise, JSC::ThrowScope& throwScope)
 {
-    return IDLOperationReturningPromise<JSTestObj>::call<jsTestObjPrototypeFunctionTestPromiseOverloadedFunction2Caller, PromiseExecutionScope::WindowOnly>(*state, "testPromiseOverloadedFunction");
-}
-
-EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionTestPromiseOverloadedFunction(ExecState* state)
-{
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
+    VM& vm = state->vm();
+    UNUSED_PARAM(vm);
     size_t argsCount = std::min<size_t>(1, state->argumentCount());
     if (argsCount == 1) {
         JSValue distinguishingArg = state->uncheckedArgument(0);
         if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(vm, JSFetchRequest::info()))
-            return jsTestObjPrototypeFunctionTestPromiseOverloadedFunction2(state);
+            return jsTestObjPrototypeFunctionTestPromiseOverloadedFunction2Body(state, castedThis, WTFMove(promise), throwScope);
         if (distinguishingArg.isNumber())
-            return jsTestObjPrototypeFunctionTestPromiseOverloadedFunction1(state);
-        return jsTestObjPrototypeFunctionTestPromiseOverloadedFunction1(state);
+            return jsTestObjPrototypeFunctionTestPromiseOverloadedFunction1Body(state, castedThis, WTFMove(promise), throwScope);
+        return jsTestObjPrototypeFunctionTestPromiseOverloadedFunction1Body(state, castedThis, WTFMove(promise), throwScope);
     }
     return argsCount < 1 ? throwVMError(state, throwScope, createNotEnoughArgumentsError(state)) : throwVMTypeError(state, throwScope);
 }
 
-static inline EncodedJSValue jsTestObjConstructorFunctionTestStaticPromiseFunctionPromise(ExecState* state, Ref<DeferredPromise>&& promise)
+EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionTestPromiseOverloadedFunction(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return IDLOperationReturningPromise<JSTestObj>::call<jsTestObjPrototypeFunctionTestPromiseOverloadedFunctionOverloadDispatcher, PromiseExecutionScope::WindowOnly>(*state, "testPromiseOverloadedFunction");
+}
+
+static inline JSC::EncodedJSValue jsTestObjConstructorFunctionTestStaticPromiseFunctionBody(JSC::ExecState* state, Ref<DeferredPromise>&& promise, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     TestObj::testStaticPromiseFunction(WTFMove(promise));
     return JSValue::encode(jsUndefined());
@@ -7618,13 +7552,12 @@ static inline EncodedJSValue jsTestObjConstructorFunctionTestStaticPromiseFuncti
 
 EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionTestStaticPromiseFunction(ExecState* state)
 {
-    return JSValue::encode(callPromiseFunction<jsTestObjConstructorFunctionTestStaticPromiseFunctionPromise, PromiseExecutionScope::WindowOnly>(*state));
+    return IDLOperationReturningPromise<JSTestObj>::callStatic<jsTestObjConstructorFunctionTestStaticPromiseFunctionBody, PromiseExecutionScope::WindowOnly>(*state, "testStaticPromiseFunction");
 }
 
-static inline EncodedJSValue jsTestObjConstructorFunctionTestStaticPromiseFunctionWithExceptionPromise(ExecState* state, Ref<DeferredPromise>&& promise)
+static inline JSC::EncodedJSValue jsTestObjConstructorFunctionTestStaticPromiseFunctionWithExceptionBody(JSC::ExecState* state, Ref<DeferredPromise>&& promise, JSC::ThrowScope& throwScope)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     propagateException(*state, throwScope, TestObj::testStaticPromiseFunctionWithException(WTFMove(promise)));
     return JSValue::encode(jsUndefined());
@@ -7632,10 +7565,10 @@ static inline EncodedJSValue jsTestObjConstructorFunctionTestStaticPromiseFuncti
 
 EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionTestStaticPromiseFunctionWithException(ExecState* state)
 {
-    return JSValue::encode(callPromiseFunction<jsTestObjConstructorFunctionTestStaticPromiseFunctionWithExceptionPromise, PromiseExecutionScope::WindowOnly>(*state));
+    return IDLOperationReturningPromise<JSTestObj>::callStatic<jsTestObjConstructorFunctionTestStaticPromiseFunctionWithExceptionBody, PromiseExecutionScope::WindowOnly>(*state, "testStaticPromiseFunctionWithException");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionTestCustomPromiseFunctionCaller(JSC::ExecState* state, typename IDLOperationReturningPromise<JSTestObj>::ClassParameter castedThis, Ref<DeferredPromise>&& promise, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionTestCustomPromiseFunctionBody(JSC::ExecState* state, typename IDLOperationReturningPromise<JSTestObj>::ClassParameter castedThis, Ref<DeferredPromise>&& promise, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -7644,23 +7577,22 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionTestCustomPromiseFun
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionTestCustomPromiseFunction(ExecState* state)
 {
-    return IDLOperationReturningPromise<JSTestObj>::call<jsTestObjPrototypeFunctionTestCustomPromiseFunctionCaller, PromiseExecutionScope::WindowOnly>(*state, "testCustomPromiseFunction");
+    return IDLOperationReturningPromise<JSTestObj>::call<jsTestObjPrototypeFunctionTestCustomPromiseFunctionBody, PromiseExecutionScope::WindowOnly>(*state, "testCustomPromiseFunction");
 }
 
-static inline EncodedJSValue jsTestObjConstructorFunctionTestStaticCustomPromiseFunctionPromise(ExecState* state, Ref<DeferredPromise>&& promise)
+static inline JSC::EncodedJSValue jsTestObjConstructorFunctionTestStaticCustomPromiseFunctionBody(JSC::ExecState* state, Ref<DeferredPromise>&& promise, JSC::ThrowScope& throwScope)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     return JSValue::encode(JSTestObj::testStaticCustomPromiseFunction(*state, WTFMove(promise)));
 }
 
 EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionTestStaticCustomPromiseFunction(ExecState* state)
 {
-    return JSValue::encode(callPromiseFunction<jsTestObjConstructorFunctionTestStaticCustomPromiseFunctionPromise, PromiseExecutionScope::WindowOnly>(*state));
+    return IDLOperationReturningPromise<JSTestObj>::callStatic<jsTestObjConstructorFunctionTestStaticCustomPromiseFunctionBody, PromiseExecutionScope::WindowOnly>(*state, "testStaticCustomPromiseFunction");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionTestCustomReturnsOwnPromiseFunctionCaller(JSC::ExecState* state, typename IDLOperationReturningPromise<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionTestCustomReturnsOwnPromiseFunctionBody(JSC::ExecState* state, typename IDLOperationReturningPromise<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -7669,11 +7601,11 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionTestCustomReturnsOwn
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionTestCustomReturnsOwnPromiseFunction(ExecState* state)
 {
-    return IDLOperationReturningPromise<JSTestObj>::callReturningOwnPromise<jsTestObjPrototypeFunctionTestCustomReturnsOwnPromiseFunctionCaller>(*state, "testCustomReturnsOwnPromiseFunction");
+    return IDLOperationReturningPromise<JSTestObj>::callReturningOwnPromise<jsTestObjPrototypeFunctionTestCustomReturnsOwnPromiseFunctionBody>(*state, "testCustomReturnsOwnPromiseFunction");
 }
 
 #if ENABLE(CONDITION1)
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionConditionalOverload1Caller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionConditionalOverload1Body(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -7684,15 +7616,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionConditionalOverload1
     return JSValue::encode(jsUndefined());
 }
 
-static inline EncodedJSValue jsTestObjPrototypeFunctionConditionalOverload1(ExecState* state)
-{
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionConditionalOverload1Caller>(*state, "conditionalOverload");
-}
-
 #endif
 
 #if ENABLE(CONDITION2)
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionConditionalOverload2Caller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionConditionalOverload2Body(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -7703,35 +7630,38 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionConditionalOverload2
     return JSValue::encode(jsUndefined());
 }
 
-static inline EncodedJSValue jsTestObjPrototypeFunctionConditionalOverload2(ExecState* state)
-{
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionConditionalOverload2Caller>(*state, "conditionalOverload");
-}
-
 #endif
 
 #if ENABLE(CONDITION1) || ENABLE(CONDITION2)
-EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConditionalOverload(ExecState* state)
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionConditionalOverloadOverloadDispatcher(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
+    VM& vm = state->vm();
+    UNUSED_PARAM(vm);
     size_t argsCount = std::min<size_t>(1, state->argumentCount());
     if (argsCount == 1) {
         JSValue distinguishingArg = state->uncheckedArgument(0);
 #if ENABLE(CONDITION2)
         if (distinguishingArg.isNumber())
-            return jsTestObjPrototypeFunctionConditionalOverload2(state);
+            return jsTestObjPrototypeFunctionConditionalOverload2Body(state, castedThis, throwScope);
 #endif
 #if ENABLE(CONDITION1)
-        return jsTestObjPrototypeFunctionConditionalOverload1(state);
+        return jsTestObjPrototypeFunctionConditionalOverload1Body(state, castedThis, throwScope);
 #endif
     }
     return argsCount < 1 ? throwVMError(state, throwScope, createNotEnoughArgumentsError(state)) : throwVMTypeError(state, throwScope);
 }
+
+EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConditionalOverload(ExecState* state)
+{
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionConditionalOverloadOverloadDispatcher>(*state, "conditionalOverload");
+}
+
 #endif
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionSingleConditionalOverload1Caller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionSingleConditionalOverload1Body(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -7742,13 +7672,8 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionSingleConditionalOve
     return JSValue::encode(jsUndefined());
 }
 
-static inline EncodedJSValue jsTestObjPrototypeFunctionSingleConditionalOverload1(ExecState* state)
-{
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionSingleConditionalOverload1Caller>(*state, "singleConditionalOverload");
-}
-
 #if ENABLE(CONDITION)
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionSingleConditionalOverload2Caller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionSingleConditionalOverload2Body(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -7759,31 +7684,32 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionSingleConditionalOve
     return JSValue::encode(jsUndefined());
 }
 
-static inline EncodedJSValue jsTestObjPrototypeFunctionSingleConditionalOverload2(ExecState* state)
-{
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionSingleConditionalOverload2Caller>(*state, "singleConditionalOverload");
-}
-
 #endif
 
-EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionSingleConditionalOverload(ExecState* state)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionSingleConditionalOverloadOverloadDispatcher(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
+    VM& vm = state->vm();
+    UNUSED_PARAM(vm);
     size_t argsCount = std::min<size_t>(1, state->argumentCount());
     if (argsCount == 1) {
         JSValue distinguishingArg = state->uncheckedArgument(0);
 #if ENABLE(CONDITION)
         if (distinguishingArg.isNumber())
-            return jsTestObjPrototypeFunctionSingleConditionalOverload2(state);
+            return jsTestObjPrototypeFunctionSingleConditionalOverload2Body(state, castedThis, throwScope);
 #endif
-        return jsTestObjPrototypeFunctionSingleConditionalOverload1(state);
+        return jsTestObjPrototypeFunctionSingleConditionalOverload1Body(state, castedThis, throwScope);
     }
     return argsCount < 1 ? throwVMError(state, throwScope, createNotEnoughArgumentsError(state)) : throwVMTypeError(state, throwScope);
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionAttachShadowRootCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionSingleConditionalOverload(ExecState* state)
+{
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionSingleConditionalOverloadOverloadDispatcher>(*state, "singleConditionalOverload");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionAttachShadowRootBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -7798,10 +7724,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionAttachShadowRootCall
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionAttachShadowRoot(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionAttachShadowRootCaller>(*state, "attachShadowRoot");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionAttachShadowRootBody>(*state, "attachShadowRoot");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOperationWithExternalDictionaryParameterCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOperationWithExternalDictionaryParameterBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -7816,10 +7742,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOperationWithExterna
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOperationWithExternalDictionaryParameter(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionOperationWithExternalDictionaryParameterCaller>(*state, "operationWithExternalDictionaryParameter");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionOperationWithExternalDictionaryParameterBody>(*state, "operationWithExternalDictionaryParameter");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionBufferSourceParameterCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionBufferSourceParameterBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -7834,10 +7760,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionBufferSourceParamete
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionBufferSourceParameter(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionBufferSourceParameterCaller>(*state, "bufferSourceParameter");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionBufferSourceParameterBody>(*state, "bufferSourceParameter");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionLegacyCallerNamedCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionLegacyCallerNamedBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -7852,10 +7778,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionLegacyCallerNamedCal
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionLegacyCallerNamed(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionLegacyCallerNamedCaller>(*state, "legacyCallerNamed");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionLegacyCallerNamedBody>(*state, "legacyCallerNamed");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionToStringCaller(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionToStringBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -7865,7 +7791,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionToStringCaller(JSC::
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionToString(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionToStringCaller>(*state, "toString");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionToStringBody>(*state, "toString");
 }
 
 static inline EncodedJSValue callJSTestObj1(ExecState* state)
@@ -7955,14 +7881,14 @@ JSC::JSObject* JSTestObj::serialize(ExecState* state, JSTestObj* thisObject, Thr
     return result;
 }
 
-static inline EncodedJSValue jsTestObjPrototypeFunctionToJSONCaller(ExecState* state, JSTestObj* thisObject, JSC::ThrowScope& throwScope)
+static inline EncodedJSValue jsTestObjPrototypeFunctionToJSONBody(ExecState* state, JSTestObj* thisObject, JSC::ThrowScope& throwScope)
 {
     return JSValue::encode(JSTestObj::serialize(state, thisObject, throwScope));
 }
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionToJSON(ExecState* state)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionToJSONCaller>(*state, "toJSON");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionToJSONBody>(*state, "toJSON");
 }
 
 void JSTestObj::visitChildren(JSCell* cell, SlotVisitor& visitor)

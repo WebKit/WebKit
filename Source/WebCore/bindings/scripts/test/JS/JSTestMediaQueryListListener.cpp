@@ -28,7 +28,6 @@
 #include "JSDOMOperation.h"
 #include "JSDOMWrapperCache.h"
 #include "JSMediaQueryListListener.h"
-#include <runtime/Error.h>
 #include <runtime/FunctionPrototype.h>
 #include <wtf/GetPtr.h>
 
@@ -166,7 +165,7 @@ bool setJSTestMediaQueryListListenerConstructor(ExecState* state, EncodedJSValue
     return prototype->putDirect(state->vm(), state->propertyNames().constructor, JSValue::decode(encodedValue));
 }
 
-static inline JSC::EncodedJSValue jsTestMediaQueryListListenerPrototypeFunctionMethodCaller(JSC::ExecState* state, typename IDLOperation<JSTestMediaQueryListListener>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestMediaQueryListListenerPrototypeFunctionMethodBody(JSC::ExecState* state, typename IDLOperation<JSTestMediaQueryListListener>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -181,7 +180,7 @@ static inline JSC::EncodedJSValue jsTestMediaQueryListListenerPrototypeFunctionM
 
 EncodedJSValue JSC_HOST_CALL jsTestMediaQueryListListenerPrototypeFunctionMethod(ExecState* state)
 {
-    return IDLOperation<JSTestMediaQueryListListener>::call<jsTestMediaQueryListListenerPrototypeFunctionMethodCaller>(*state, "method");
+    return IDLOperation<JSTestMediaQueryListListener>::call<jsTestMediaQueryListListenerPrototypeFunctionMethodBody>(*state, "method");
 }
 
 bool JSTestMediaQueryListListenerOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)

@@ -33,7 +33,6 @@
 #include "JSDOMWrapperCache.h"
 #include "JSMessagePort.h"
 #include "SerializedScriptValue.h"
-#include <runtime/Error.h>
 #include <runtime/FunctionPrototype.h>
 #include <runtime/JSArray.h>
 #include <wtf/GetPtr.h>
@@ -299,7 +298,7 @@ EncodedJSValue jsTestSerializedScriptValueInterfaceCachedReadonlyValue(ExecState
     return IDLAttribute<JSTestSerializedScriptValueInterface>::get<jsTestSerializedScriptValueInterfaceCachedReadonlyValueGetter>(*state, thisValue, "cachedReadonlyValue");
 }
 
-static inline JSC::EncodedJSValue jsTestSerializedScriptValueInterfacePrototypeFunctionFunctionCaller(JSC::ExecState* state, typename IDLOperation<JSTestSerializedScriptValueInterface>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestSerializedScriptValueInterfacePrototypeFunctionFunctionBody(JSC::ExecState* state, typename IDLOperation<JSTestSerializedScriptValueInterface>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -314,10 +313,10 @@ static inline JSC::EncodedJSValue jsTestSerializedScriptValueInterfacePrototypeF
 
 EncodedJSValue JSC_HOST_CALL jsTestSerializedScriptValueInterfacePrototypeFunctionFunction(ExecState* state)
 {
-    return IDLOperation<JSTestSerializedScriptValueInterface>::call<jsTestSerializedScriptValueInterfacePrototypeFunctionFunctionCaller>(*state, "function");
+    return IDLOperation<JSTestSerializedScriptValueInterface>::call<jsTestSerializedScriptValueInterfacePrototypeFunctionFunctionBody>(*state, "function");
 }
 
-static inline JSC::EncodedJSValue jsTestSerializedScriptValueInterfacePrototypeFunctionFunctionReturningCaller(JSC::ExecState* state, typename IDLOperation<JSTestSerializedScriptValueInterface>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestSerializedScriptValueInterfacePrototypeFunctionFunctionReturningBody(JSC::ExecState* state, typename IDLOperation<JSTestSerializedScriptValueInterface>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -327,7 +326,7 @@ static inline JSC::EncodedJSValue jsTestSerializedScriptValueInterfacePrototypeF
 
 EncodedJSValue JSC_HOST_CALL jsTestSerializedScriptValueInterfacePrototypeFunctionFunctionReturning(ExecState* state)
 {
-    return IDLOperation<JSTestSerializedScriptValueInterface>::call<jsTestSerializedScriptValueInterfacePrototypeFunctionFunctionReturningCaller>(*state, "functionReturning");
+    return IDLOperation<JSTestSerializedScriptValueInterface>::call<jsTestSerializedScriptValueInterfacePrototypeFunctionFunctionReturningBody>(*state, "functionReturning");
 }
 
 void JSTestSerializedScriptValueInterface::visitChildren(JSCell* cell, SlotVisitor& visitor)

@@ -244,7 +244,7 @@ bool setJSTestNodeName(ExecState* state, EncodedJSValue thisValue, EncodedJSValu
     return IDLAttribute<JSTestNode>::set<setJSTestNodeNameSetter>(*state, thisValue, encodedValue, "name");
 }
 
-static inline JSC::EncodedJSValue jsTestNodePrototypeFunctionTestWorkerPromiseCaller(JSC::ExecState* state, typename IDLOperationReturningPromise<JSTestNode>::ClassParameter castedThis, Ref<DeferredPromise>&& promise, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestNodePrototypeFunctionTestWorkerPromiseBody(JSC::ExecState* state, typename IDLOperationReturningPromise<JSTestNode>::ClassParameter castedThis, Ref<DeferredPromise>&& promise, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -255,7 +255,7 @@ static inline JSC::EncodedJSValue jsTestNodePrototypeFunctionTestWorkerPromiseCa
 
 EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionTestWorkerPromise(ExecState* state)
 {
-    return IDLOperationReturningPromise<JSTestNode>::call<jsTestNodePrototypeFunctionTestWorkerPromiseCaller, PromiseExecutionScope::WindowOrWorker>(*state, "testWorkerPromise");
+    return IDLOperationReturningPromise<JSTestNode>::call<jsTestNodePrototypeFunctionTestWorkerPromiseBody, PromiseExecutionScope::WindowOrWorker>(*state, "testWorkerPromise");
 }
 
 struct TestNodeIteratorTraits {
@@ -325,14 +325,14 @@ JSC::JSObject* JSTestNode::serialize(ExecState* state, JSTestNode* thisObject, T
     return result;
 }
 
-static inline EncodedJSValue jsTestNodePrototypeFunctionToJSONCaller(ExecState* state, JSTestNode* thisObject, JSC::ThrowScope& throwScope)
+static inline EncodedJSValue jsTestNodePrototypeFunctionToJSONBody(ExecState* state, JSTestNode* thisObject, JSC::ThrowScope& throwScope)
 {
     return JSValue::encode(JSTestNode::serialize(state, thisObject, throwScope));
 }
 
 EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionToJSON(ExecState* state)
 {
-    return IDLOperation<JSTestNode>::call<jsTestNodePrototypeFunctionToJSONCaller>(*state, "toJSON");
+    return IDLOperation<JSTestNode>::call<jsTestNodePrototypeFunctionToJSONBody>(*state, "toJSON");
 }
 
 void JSTestNode::visitChildren(JSCell* cell, SlotVisitor& visitor)

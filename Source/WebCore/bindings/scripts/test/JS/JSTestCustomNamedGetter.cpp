@@ -27,7 +27,6 @@
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMOperation.h"
 #include "JSDOMWrapperCache.h"
-#include <runtime/Error.h>
 #include <runtime/FunctionPrototype.h>
 #include <wtf/GetPtr.h>
 
@@ -200,7 +199,7 @@ bool setJSTestCustomNamedGetterConstructor(ExecState* state, EncodedJSValue this
     return prototype->putDirect(state->vm(), state->propertyNames().constructor, JSValue::decode(encodedValue));
 }
 
-static inline JSC::EncodedJSValue jsTestCustomNamedGetterPrototypeFunctionAnotherFunctionCaller(JSC::ExecState* state, typename IDLOperation<JSTestCustomNamedGetter>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestCustomNamedGetterPrototypeFunctionAnotherFunctionBody(JSC::ExecState* state, typename IDLOperation<JSTestCustomNamedGetter>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -215,7 +214,7 @@ static inline JSC::EncodedJSValue jsTestCustomNamedGetterPrototypeFunctionAnothe
 
 EncodedJSValue JSC_HOST_CALL jsTestCustomNamedGetterPrototypeFunctionAnotherFunction(ExecState* state)
 {
-    return IDLOperation<JSTestCustomNamedGetter>::call<jsTestCustomNamedGetterPrototypeFunctionAnotherFunctionCaller>(*state, "anotherFunction");
+    return IDLOperation<JSTestCustomNamedGetter>::call<jsTestCustomNamedGetterPrototypeFunctionAnotherFunctionBody>(*state, "anotherFunction");
 }
 
 bool JSTestCustomNamedGetterOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)

@@ -33,6 +33,7 @@ class IDLOperationReturningPromise {
 public:
     using ClassParameter = JSClass*;
     using Operation = JSC::EncodedJSValue(JSC::ExecState*, ClassParameter, Ref<DeferredPromise>&&, JSC::ThrowScope&);
+    using StaticOperation = JSC::EncodedJSValue(JSC::ExecState*, Ref<DeferredPromise>&&, JSC::ThrowScope&);
 
     template<Operation operation, PromiseExecutionScope executionScope, CastedThisErrorBehavior shouldThrow = CastedThisErrorBehavior::RejectPromise>
     static JSC::EncodedJSValue call(JSC::ExecState& state, const char* operationName)
@@ -68,6 +69,28 @@ public:
 
         // FIXME: We should refactor the binding generated code to use references for state and thisObject.
         return operation(&state, thisObject, throwScope);
+    }
+
+    template<StaticOperation operation, PromiseExecutionScope executionScope, CastedThisErrorBehavior shouldThrow = CastedThisErrorBehavior::RejectPromise>
+    static JSC::EncodedJSValue callStatic(JSC::ExecState& state, const char*)
+    {
+        return JSC::JSValue::encode(callPromiseFunction<executionScope>(state, [] (JSC::ExecState& state, Ref<DeferredPromise>&& promise) {
+            auto throwScope = DECLARE_THROW_SCOPE(state.vm());
+            
+            // FIXME: We should refactor the binding generated code to use references for state.
+            return operation(&state, WTFMove(promise), throwScope);
+        }));
+    }
+
+    // This function is a special case for custom operations want to handle the creation of the promise themselves.
+    // It is triggered via the extended attribute [ReturnsOwnPromise].
+    template<typename IDLOperation<JSClass>::StaticOperation operation, CastedThisErrorBehavior shouldThrow = CastedThisErrorBehavior::RejectPromise>
+    static JSC::EncodedJSValue callStaticReturningOwnPromise(JSC::ExecState& state, const char*)
+    {
+        auto throwScope = DECLARE_THROW_SCOPE(state.vm());
+
+        // FIXME: We should refactor the binding generated code to use references for state.
+        return operation(&state, throwScope);
     }
 };
 

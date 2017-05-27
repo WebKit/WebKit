@@ -30,7 +30,6 @@
 #include "JSDOMWrapperCache.h"
 #include "RuntimeEnabledFeatures.h"
 #include "WebCoreJSClientData.h"
-#include <runtime/Error.h>
 #include <runtime/FunctionPrototype.h>
 #include <wtf/GetPtr.h>
 
@@ -358,7 +357,7 @@ bool setJSTestGlobalObjectEnabledAtRuntimeAttribute(ExecState* state, EncodedJSV
 
 #endif
 
-static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunctionRegularOperationCaller(JSC::ExecState* state, typename IDLOperation<JSTestGlobalObject>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunctionRegularOperationBody(JSC::ExecState* state, typename IDLOperation<JSTestGlobalObject>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -373,11 +372,11 @@ static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunctionRegularOpera
 
 EncodedJSValue JSC_HOST_CALL jsTestGlobalObjectInstanceFunctionRegularOperation(ExecState* state)
 {
-    return IDLOperation<JSTestGlobalObject>::call<jsTestGlobalObjectInstanceFunctionRegularOperationCaller>(*state, "regularOperation");
+    return IDLOperation<JSTestGlobalObject>::call<jsTestGlobalObjectInstanceFunctionRegularOperationBody>(*state, "regularOperation");
 }
 
 #if ENABLE(TEST_FEATURE)
-static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunctionEnabledAtRuntimeOperation1Caller(JSC::ExecState* state, typename IDLOperation<JSTestGlobalObject>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunctionEnabledAtRuntimeOperation1Body(JSC::ExecState* state, typename IDLOperation<JSTestGlobalObject>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -388,15 +387,10 @@ static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunctionEnabledAtRun
     return JSValue::encode(jsUndefined());
 }
 
-static inline EncodedJSValue jsTestGlobalObjectInstanceFunctionEnabledAtRuntimeOperation1(ExecState* state)
-{
-    return IDLOperation<JSTestGlobalObject>::call<jsTestGlobalObjectInstanceFunctionEnabledAtRuntimeOperation1Caller>(*state, "enabledAtRuntimeOperation");
-}
-
 #endif
 
 #if ENABLE(TEST_FEATURE)
-static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunctionEnabledAtRuntimeOperation2Caller(JSC::ExecState* state, typename IDLOperation<JSTestGlobalObject>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunctionEnabledAtRuntimeOperation2Body(JSC::ExecState* state, typename IDLOperation<JSTestGlobalObject>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -407,35 +401,38 @@ static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunctionEnabledAtRun
     return JSValue::encode(jsUndefined());
 }
 
-static inline EncodedJSValue jsTestGlobalObjectInstanceFunctionEnabledAtRuntimeOperation2(ExecState* state)
-{
-    return IDLOperation<JSTestGlobalObject>::call<jsTestGlobalObjectInstanceFunctionEnabledAtRuntimeOperation2Caller>(*state, "enabledAtRuntimeOperation");
-}
-
 #endif
 
 #if ENABLE(TEST_FEATURE)
-EncodedJSValue JSC_HOST_CALL jsTestGlobalObjectInstanceFunctionEnabledAtRuntimeOperation(ExecState* state)
+
+static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunctionEnabledAtRuntimeOperationOverloadDispatcher(JSC::ExecState* state, typename IDLOperation<JSTestGlobalObject>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
+    VM& vm = state->vm();
+    UNUSED_PARAM(vm);
     size_t argsCount = std::min<size_t>(1, state->argumentCount());
     if (argsCount == 1) {
         JSValue distinguishingArg = state->uncheckedArgument(0);
 #if ENABLE(TEST_FEATURE)
         if (distinguishingArg.isNumber())
-            return jsTestGlobalObjectInstanceFunctionEnabledAtRuntimeOperation2(state);
+            return jsTestGlobalObjectInstanceFunctionEnabledAtRuntimeOperation2Body(state, castedThis, throwScope);
 #endif
 #if ENABLE(TEST_FEATURE)
-        return jsTestGlobalObjectInstanceFunctionEnabledAtRuntimeOperation1(state);
+        return jsTestGlobalObjectInstanceFunctionEnabledAtRuntimeOperation1Body(state, castedThis, throwScope);
 #endif
     }
     return argsCount < 1 ? throwVMError(state, throwScope, createNotEnoughArgumentsError(state)) : throwVMTypeError(state, throwScope);
 }
+
+EncodedJSValue JSC_HOST_CALL jsTestGlobalObjectInstanceFunctionEnabledAtRuntimeOperation(ExecState* state)
+{
+    return IDLOperation<JSTestGlobalObject>::call<jsTestGlobalObjectInstanceFunctionEnabledAtRuntimeOperationOverloadDispatcher>(*state, "enabledAtRuntimeOperation");
+}
+
 #endif
 
-static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunctionEnabledInSpecificWorldCaller(JSC::ExecState* state, typename IDLOperation<JSTestGlobalObject>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunctionEnabledInSpecificWorldBody(JSC::ExecState* state, typename IDLOperation<JSTestGlobalObject>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -450,10 +447,10 @@ static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunctionEnabledInSpe
 
 EncodedJSValue JSC_HOST_CALL jsTestGlobalObjectInstanceFunctionEnabledInSpecificWorld(ExecState* state)
 {
-    return IDLOperation<JSTestGlobalObject>::call<jsTestGlobalObjectInstanceFunctionEnabledInSpecificWorldCaller>(*state, "enabledInSpecificWorld");
+    return IDLOperation<JSTestGlobalObject>::call<jsTestGlobalObjectInstanceFunctionEnabledInSpecificWorldBody>(*state, "enabledInSpecificWorld");
 }
 
-static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunctionEnabledInSpecificWorldWhenRuntimeFeatureEnabledCaller(JSC::ExecState* state, typename IDLOperation<JSTestGlobalObject>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunctionEnabledInSpecificWorldWhenRuntimeFeatureEnabledBody(JSC::ExecState* state, typename IDLOperation<JSTestGlobalObject>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -468,10 +465,10 @@ static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunctionEnabledInSpe
 
 EncodedJSValue JSC_HOST_CALL jsTestGlobalObjectInstanceFunctionEnabledInSpecificWorldWhenRuntimeFeatureEnabled(ExecState* state)
 {
-    return IDLOperation<JSTestGlobalObject>::call<jsTestGlobalObjectInstanceFunctionEnabledInSpecificWorldWhenRuntimeFeatureEnabledCaller>(*state, "enabledInSpecificWorldWhenRuntimeFeatureEnabled");
+    return IDLOperation<JSTestGlobalObject>::call<jsTestGlobalObjectInstanceFunctionEnabledInSpecificWorldWhenRuntimeFeatureEnabledBody>(*state, "enabledInSpecificWorldWhenRuntimeFeatureEnabled");
 }
 
-static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunctionEnabledInSpecificWorldWhenRuntimeFeaturesEnabledCaller(JSC::ExecState* state, typename IDLOperation<JSTestGlobalObject>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunctionEnabledInSpecificWorldWhenRuntimeFeaturesEnabledBody(JSC::ExecState* state, typename IDLOperation<JSTestGlobalObject>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -486,11 +483,11 @@ static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunctionEnabledInSpe
 
 EncodedJSValue JSC_HOST_CALL jsTestGlobalObjectInstanceFunctionEnabledInSpecificWorldWhenRuntimeFeaturesEnabled(ExecState* state)
 {
-    return IDLOperation<JSTestGlobalObject>::call<jsTestGlobalObjectInstanceFunctionEnabledInSpecificWorldWhenRuntimeFeaturesEnabledCaller>(*state, "enabledInSpecificWorldWhenRuntimeFeaturesEnabled");
+    return IDLOperation<JSTestGlobalObject>::call<jsTestGlobalObjectInstanceFunctionEnabledInSpecificWorldWhenRuntimeFeaturesEnabledBody>(*state, "enabledInSpecificWorldWhenRuntimeFeaturesEnabled");
 }
 
 #if ENABLE(TEST_FEATURE)
-static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunctionTestPrivateFunctionCaller(JSC::ExecState* state, typename IDLOperation<JSTestGlobalObject>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunctionTestPrivateFunctionBody(JSC::ExecState* state, typename IDLOperation<JSTestGlobalObject>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -501,7 +498,7 @@ static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunctionTestPrivateF
 
 EncodedJSValue JSC_HOST_CALL jsTestGlobalObjectInstanceFunctionTestPrivateFunction(ExecState* state)
 {
-    return IDLOperation<JSTestGlobalObject>::call<jsTestGlobalObjectInstanceFunctionTestPrivateFunctionCaller, CastedThisErrorBehavior::Assert>(*state, "testPrivateFunction");
+    return IDLOperation<JSTestGlobalObject>::call<jsTestGlobalObjectInstanceFunctionTestPrivateFunctionBody, CastedThisErrorBehavior::Assert>(*state, "testPrivateFunction");
 }
 
 #endif

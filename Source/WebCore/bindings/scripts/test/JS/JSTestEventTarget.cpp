@@ -28,7 +28,6 @@
 #include "JSDOMOperation.h"
 #include "JSDOMWrapperCache.h"
 #include "JSNode.h"
-#include <runtime/Error.h>
 #include <runtime/PropertyNameArray.h>
 #include <wtf/GetPtr.h>
 
@@ -207,7 +206,7 @@ bool setJSTestEventTargetConstructor(ExecState* state, EncodedJSValue thisValue,
     return prototype->putDirect(state->vm(), state->propertyNames().constructor, JSValue::decode(encodedValue));
 }
 
-static inline JSC::EncodedJSValue jsTestEventTargetPrototypeFunctionItemCaller(JSC::ExecState* state, typename IDLOperation<JSTestEventTarget>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestEventTargetPrototypeFunctionItemBody(JSC::ExecState* state, typename IDLOperation<JSTestEventTarget>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -221,7 +220,7 @@ static inline JSC::EncodedJSValue jsTestEventTargetPrototypeFunctionItemCaller(J
 
 EncodedJSValue JSC_HOST_CALL jsTestEventTargetPrototypeFunctionItem(ExecState* state)
 {
-    return IDLOperation<JSTestEventTarget>::call<jsTestEventTargetPrototypeFunctionItemCaller>(*state, "item");
+    return IDLOperation<JSTestEventTarget>::call<jsTestEventTargetPrototypeFunctionItemBody>(*state, "item");
 }
 
 void JSTestEventTarget::visitChildren(JSCell* cell, SlotVisitor& visitor)

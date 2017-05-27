@@ -1,3 +1,85 @@
+2017-05-26  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Overloaded functions should throw this object check exception before argument check exception
+        https://bugs.webkit.org/show_bug.cgi?id=172480
+
+        Reviewed by Chris Dumez.
+
+        - Codifies naming for both parts of the operation/attribute function implementation:
+          - The 'trampoline' which is the actual host function and simply calls IDLOperation,
+            IDLOperationReturningPromise or IDLAttribute.
+          - The 'body' which is where argument checking and calling into the implementation
+            takes place.
+        - Made it so all operations, including static ones, use the trampoline / body model,
+          simplifying code generation. The one exception is for overloaded operations, which
+          now have a trampoline and body for the dispatcher, and only bodies for all the 
+          overloads. This is what fixes the bug, since now that the dispatcher has a trampoline,
+          it can do the correct this object checking via IDLOperation / IDLOperationReturningPromise.
+        - Split out code generation for trampoline and body into separate subroutines and 
+          simplified their implementations.
+        - Changed GenerateOverloadDispatcher to only generate the body of the function, leaving it
+          up to the caller to generate the signature, braces and conditionals if needed.
+        - Made more subroutines take an output array and indent, in support of future endeavors
+          that will need that support.
+        - Remove unnecessary #includes of <runtime/Error.h>, which gets included already by virtue
+          of JSDOMExceptionHandling.h
+
+        Test: js/dom/overloaded-operation-exception-order.html
+
+        * bindings/js/JSDOMOperation.h:
+        * bindings/js/JSDOMOperationReturningPromise.h:
+        Add no-op static versions of the bouncer functions.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateOverloadDispatcher):
+        (GenerateOperationTrampolineDefinition):
+        (GenerateOperationBodyDefinition):
+        (GenerateOperationDefinition):
+        (GenerateSerializerDefinition):
+        (GenerateLegacyCallerDefinitions):
+        (GenerateLegacyCallerDefinition):
+        (GenerateArgumentsCountCheck):
+        (GenerateParametersCheck):
+        (GenerateImplementationFunctionCall):
+        (GenerateImplementationCustomFunctionCall):
+        (GenerateConstructorDefinitions):
+        (GenerateConstructorDefinition):
+
+        * bindings/scripts/test/JS/JSInterfaceName.cpp:
+        * bindings/scripts/test/JS/JSMapLike.cpp:
+        * bindings/scripts/test/JS/JSReadOnlyMapLike.cpp:
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        * bindings/scripts/test/JS/JSTestCEReactions.cpp:
+        * bindings/scripts/test/JS/JSTestCEReactionsStringifier.cpp:
+        * bindings/scripts/test/JS/JSTestClassWithJSBuiltinConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestCustomConstructorWithNoInterfaceObject.cpp:
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.cpp:
+        * bindings/scripts/test/JS/JSTestDOMJIT.cpp:
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        * bindings/scripts/test/JS/JSTestException.cpp:
+        * bindings/scripts/test/JS/JSTestGenerateIsReachable.cpp:
+        * bindings/scripts/test/JS/JSTestGlobalObject.cpp:
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        * bindings/scripts/test/JS/JSTestInterfaceLeadingUnderscore.cpp:
+        * bindings/scripts/test/JS/JSTestIterable.cpp:
+        * bindings/scripts/test/JS/JSTestJSBuiltinConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        * bindings/scripts/test/JS/JSTestOverloadedConstructorsWithSequence.cpp:
+        * bindings/scripts/test/JS/JSTestOverrideBuiltins.cpp:
+        * bindings/scripts/test/JS/JSTestPromiseRejectionEvent.cpp:
+        * bindings/scripts/test/JS/JSTestSerialization.cpp:
+        * bindings/scripts/test/JS/JSTestSerializationInherit.cpp:
+        * bindings/scripts/test/JS/JSTestSerializationInheritFinal.cpp:
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        Update test results.
+
 2017-05-26  Brent Fulgham  <bfulgham@apple.com>
 
         [WK2] Address thread safety issues with ResourceLoadStatistics

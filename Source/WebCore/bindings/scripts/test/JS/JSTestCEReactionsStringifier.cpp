@@ -29,7 +29,6 @@
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMOperation.h"
 #include "JSDOMWrapperCache.h"
-#include <runtime/Error.h>
 #include <runtime/FunctionPrototype.h>
 #include <wtf/GetPtr.h>
 
@@ -206,7 +205,7 @@ bool setJSTestCEReactionsStringifierValue(ExecState* state, EncodedJSValue thisV
     return IDLAttribute<JSTestCEReactionsStringifier>::set<setJSTestCEReactionsStringifierValueSetter>(*state, thisValue, encodedValue, "value");
 }
 
-static inline JSC::EncodedJSValue jsTestCEReactionsStringifierPrototypeFunctionToStringCaller(JSC::ExecState* state, typename IDLOperation<JSTestCEReactionsStringifier>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestCEReactionsStringifierPrototypeFunctionToStringBody(JSC::ExecState* state, typename IDLOperation<JSTestCEReactionsStringifier>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -216,7 +215,7 @@ static inline JSC::EncodedJSValue jsTestCEReactionsStringifierPrototypeFunctionT
 
 EncodedJSValue JSC_HOST_CALL jsTestCEReactionsStringifierPrototypeFunctionToString(ExecState* state)
 {
-    return IDLOperation<JSTestCEReactionsStringifier>::call<jsTestCEReactionsStringifierPrototypeFunctionToStringCaller>(*state, "toString");
+    return IDLOperation<JSTestCEReactionsStringifier>::call<jsTestCEReactionsStringifierPrototypeFunctionToStringBody>(*state, "toString");
 }
 
 bool JSTestCEReactionsStringifierOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
