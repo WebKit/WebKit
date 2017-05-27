@@ -17,14 +17,6 @@
     to {color: red}
 }
 </style>
-<script>
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    requestAnimationFrame(() => {
-        testRunner.notifyDone();
-    });
-}
-</script>
 </head>
 <body>
 <div id=test1>
@@ -35,5 +27,11 @@ This shouldn't be initially visible
 This should be initially green
 <div>This should be initially green</div>
 </div>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    test2.onanimationstart = () => testRunner.notifyDone();
+}
+</script>
 </body>
 </html>
