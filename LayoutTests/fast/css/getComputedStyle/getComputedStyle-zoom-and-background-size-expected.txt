@@ -34,8 +34,6 @@ outline-width	PASS	2px	2px
 position	PASS	absolute	absolute
 left	PASS	20px	20px
 top	PASS	20px	20px
-right	PASS	50px	50px
-bottom	PASS	50px	50px
 font-size	PASS	20px	20px
 width	PASS	400px	400px
 max-width	PASS	900px	900px
@@ -89,8 +87,6 @@ outline-width	PASS	2px	2px
 position	PASS	absolute	absolute
 left	PASS	20px	20px
 top	PASS	20px	20px
-right	PASS	50px	50px
-bottom	PASS	50px	50px
 font-size	PASS	20px	20px
 width	PASS	400px	400px
 max-width	PASS	900px	900px

@@ -32,10 +32,10 @@
                 var innerElem = document.getElementById('innerElem');
                 var calculatedStyle = window.getComputedStyle(innerElem);
     
-                if (calculatedStyle.getPropertyValue('left') == "auto")
+                if (calculatedStyle.getPropertyValue('left') == "0px")
                     log("PASSED: Calculated style of inner element is correct");
                 else
-                    log("FAILED: Calculated style of inner element is wrong, should be 'left: auto'");
+                    log("FAILED: Calculated style of inner element is wrong, should be 'left: 0px'");
             }
         
             function runTest() {

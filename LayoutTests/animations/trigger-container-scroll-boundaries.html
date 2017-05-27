@@ -48,8 +48,8 @@ function runTest() {
     results = document.getElementById("results");
     box = document.getElementById("box");
     var leftValue = window.getComputedStyle(box).left;
-    if (leftValue == "auto")
-        results.innerHTML = "PASS: Value before animation is applied is auto<br>";
+    if (leftValue == "0px")
+        results.innerHTML = "PASS: Value before animation is applied is 0px<br>";
     else
         results.innerHTML = "FAIL: Value before animation is applied should be auto, was " + leftValue + "<br>";
     box.className = "animating";

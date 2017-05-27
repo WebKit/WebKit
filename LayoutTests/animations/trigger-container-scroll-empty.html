@@ -44,7 +44,7 @@ if (window.internals)
 function runTest() {
     results = document.getElementById("results");
     box = document.getElementById("box");
-    results.innerHTML = "Value before animation is applied: " + window.getComputedStyle(box).left + " (should be auto)<br>";
+    results.innerHTML = "Value before animation is applied: " + window.getComputedStyle(box).left + " (should be 0px)<br>";
     box.className = "animating";
     setTimeout(checkValueWithoutScroll, 0);
 }

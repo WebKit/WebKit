@@ -1,3 +1,31 @@
+2017-05-27  Simon Fraser  <simon.fraser@apple.com>
+
+        getComputedStyle returns percentage values for left / right / top / bottom
+        https://bugs.webkit.org/show_bug.cgi?id=29084
+
+        Reviewed by Zalan Bujtas.
+
+        Some new baselines, a new test, and an improved test.
+
+        * animations/trigger-container-scroll-boundaries-expected.txt:
+        * animations/trigger-container-scroll-boundaries.html:
+        * animations/trigger-container-scroll-empty-expected.txt:
+        * animations/trigger-container-scroll-empty.html:
+        * animations/trigger-container-scroll-simple-expected.txt:
+        * animations/trigger-container-scroll-simple.html:
+        * fast/css/getComputedStyle/computed-style-expected.txt:
+        * fast/css/getComputedStyle/computed-style-negative-top-expected.txt:
+        * fast/css/getComputedStyle/computed-style-negative-top.html: Convert to a real JS test, add more cases.
+        * fast/css/getComputedStyle/getComputedStyle-offsets-expected.txt: Added.
+        * fast/css/getComputedStyle/getComputedStyle-offsets.html: Added.
+        * fast/css/getComputedStyle/getComputedStyle-zoom-and-background-size-expected.txt:
+        * fast/css/getComputedStyle/getComputedStyle-zoom-and-background-size.html:  It doesn't make any sense to test right/bottom.
+        * fast/css/hover-affects-child-expected.txt:
+        * fast/css/hover-affects-child.html:
+        * platform/mac-elcapitan/fast/css/getComputedStyle/computed-style-expected.txt:
+        * transitions/transition-to-from-auto-expected.txt:
+        * transitions/transition-to-from-auto.html:
+
 2017-05-26  Youenn Fablet  <youenn@apple.com>
 
         WebRTC stats should be in milliseconds

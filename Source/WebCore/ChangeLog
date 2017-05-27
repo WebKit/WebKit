@@ -1,3 +1,28 @@
+2017-05-26  Simon Fraser  <simon.fraser@apple.com>
+
+        getComputedStyle returns percentage values for left / right / top / bottom
+        https://bugs.webkit.org/show_bug.cgi?id=29084
+
+        Reviewed by Zalan Bujtas.
+        
+        Fix getComputedStyle() to return pixel values for left / right / top / bottom, per spec.
+
+        This is mostly a merge of https://codereview.chromium.org/13871003/.
+
+        Behavior now matches Chrome and Firefox.
+
+        Test: fast/css/getComputedStyle/getComputedStyle-offsets.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::getOffsetComputedLength):
+        (WebCore::getOffsetUsedStyleRelative):
+        (WebCore::getOffsetUsedStyleAbsolute):
+        (WebCore::positionOffsetValue):
+        (WebCore::positionOffsetValueIsRendererDependent):
+        (WebCore::isNonReplacedInline):
+        (WebCore::isLayoutDependent):
+        (WebCore::ComputedStyleExtractor::propertyValue):
+
 2017-05-27  Zalan Bujtas  <zalan@apple.com>
 
         enclosingIntRect returns a rect with -1 width/height when the input FloatRect overflows integer.
