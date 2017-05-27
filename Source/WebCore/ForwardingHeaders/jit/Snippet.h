@@ -23,40 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#if ENABLE(FTL_JIT)
-
-#include "B3StackmapGenerationParams.h"
-#include "DOMJITPatchpointParams.h"
-#include "FTLState.h"
-
-namespace JSC { namespace FTL {
-
-class State;
-
-class DOMJITPatchpointParams : public DOMJIT::PatchpointParams {
-public:
-    DOMJITPatchpointParams(State& state, const B3::StackmapGenerationParams& params, DFG::Node* node, Box<CCallHelpers::JumpList> exceptions, Vector<DOMJIT::Value>&& regs, Vector<GPRReg>&& gpScratch, Vector<FPRReg>&& fpScratch)
-        : DOMJIT::PatchpointParams(state.vm(), WTFMove(regs), WTFMove(gpScratch), WTFMove(fpScratch))
-        , m_state(state)
-        , m_params(params)
-        , m_node(node)
-        , m_exceptions(exceptions)
-    {
-    }
-
-private:
-#define JSC_DEFINE_CALL_OPERATIONS(OperationType, ResultType, ...) void addSlowPathCallImpl(CCallHelpers::JumpList, CCallHelpers&, OperationType, ResultType, std::tuple<__VA_ARGS__> args) override;
-    DOMJIT_SLOW_PATH_CALLS(JSC_DEFINE_CALL_OPERATIONS)
-#undef JSC_DEFINE_CALL_OPERATIONS
-
-    State& m_state;
-    const B3::StackmapGenerationParams& m_params;
-    DFG::Node* m_node;
-    Box<CCallHelpers::JumpList> m_exceptions;
-};
-
-} }
-
+#ifndef WebCore_FWD_Snippet_h
+#define WebCore_FWD_Snippet_h
+#include <JavaScriptCore/Snippet.h>
 #endif

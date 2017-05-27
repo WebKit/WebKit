@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Yusuke Suzuki <utatane.tea@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,31 +28,9 @@
 
 #if ENABLE(JIT)
 
-#include "DOMJITEffect.h"
-#include "DOMJITPatchpoint.h"
-#include "RegisterSet.h"
-
-namespace JSC { namespace DOMJIT {
-
-class CallDOMGetterPatchpoint : public Patchpoint {
-public:
-    static Ref<CallDOMGetterPatchpoint> create()
-    {
-        return adoptRef(*new CallDOMGetterPatchpoint());
-    }
-
-    // To look up DOMWrapper cache, GlobalObject is required.
-    // FIXME: Later, we will extend this patchpoint to represent the result type by DOMJIT::Signature.
-    // And after that, we will automatically pass a global object when the result type includes a DOM wrapper thing.
-    // https://bugs.webkit.org/show_bug.cgi?id=162980
-    bool requireGlobalObject { true };
-
-    Effect effect { };
-
-private:
-    CallDOMGetterPatchpoint() = default;
-};
-
-} }
+// macro(OperationType, ArgType1, ArgType2, ...)
+#define SNIPPET_SLOW_PATH_CALLS(macro) \
+    macro(J_JITOperation_EP, JSValueRegs, GPRReg) \
+    macro(J_JITOperation_EGP, JSValueRegs, GPRReg, GPRReg) \
 
 #endif

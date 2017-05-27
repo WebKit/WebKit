@@ -1,3 +1,46 @@
+2017-05-27  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DOMJIT] Move DOMJIT patchpoint infrastructure out of domjit
+        https://bugs.webkit.org/show_bug.cgi?id=172260
+
+        Reviewed by Filip Pizlo.
+
+        * ForwardingHeaders/jit/Snippet.h: Renamed from Source/WebCore/ForwardingHeaders/domjit/DOMJITPatchpoint.h.
+        * ForwardingHeaders/jit/SnippetParams.h: Renamed from Source/WebCore/ForwardingHeaders/domjit/DOMJITPatchpointParams.h.
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GenerateImplementation):
+        * bindings/scripts/test/JS/JSTestDOMJIT.h:
+        * domjit/DOMJITCheckDOM.h:
+        (WebCore::DOMJIT::checkDOM):
+        * domjit/DOMJITHelpers.h:
+        (WebCore::DOMJIT::toWrapper):
+        * domjit/JSDocumentDOMJIT.cpp:
+        (WebCore::checkSubClassSnippetForJSDocument):
+        (WebCore::DocumentDocumentElementDOMJIT::callDOMGetter):
+        (WebCore::DocumentBodyDOMJIT::callDOMGetter):
+        (WebCore::checkSubClassPatchpointForJSDocument): Deleted.
+        * domjit/JSDocumentFragmentDOMJIT.cpp:
+        (WebCore::checkSubClassSnippetForJSDocumentFragment):
+        (WebCore::checkSubClassPatchpointForJSDocumentFragment): Deleted.
+        * domjit/JSElementDOMJIT.cpp:
+        (WebCore::checkSubClassSnippetForJSElement):
+        (WebCore::checkSubClassPatchpointForJSElement): Deleted.
+        * domjit/JSEventDOMJIT.cpp:
+        (WebCore::checkSubClassSnippetForJSEvent):
+        (WebCore::checkSubClassPatchpointForJSEvent): Deleted.
+        * domjit/JSNodeDOMJIT.cpp:
+        (WebCore::checkSubClassSnippetForJSNode):
+        (WebCore::createCallDOMGetterForOffsetAccess):
+        (WebCore::NodeFirstChildDOMJIT::callDOMGetter):
+        (WebCore::NodeLastChildDOMJIT::callDOMGetter):
+        (WebCore::NodeNextSiblingDOMJIT::callDOMGetter):
+        (WebCore::NodePreviousSiblingDOMJIT::callDOMGetter):
+        (WebCore::NodeParentNodeDOMJIT::callDOMGetter):
+        (WebCore::NodeNodeTypeDOMJIT::callDOMGetter):
+        (WebCore::NodeOwnerDocumentDOMJIT::callDOMGetter):
+        (WebCore::checkSubClassPatchpointForJSNode): Deleted.
+
 2017-05-26  Simon Fraser  <simon.fraser@apple.com>
 
         getComputedStyle returns percentage values for left / right / top / bottom

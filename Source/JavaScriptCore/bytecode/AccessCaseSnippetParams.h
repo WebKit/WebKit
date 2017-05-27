@@ -23,31 +23,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "DFGDOMJITPatchpointParams.h"
+#pragma once
 
-#if ENABLE(DFG_JIT)
+#if ENABLE(JIT)
 
-#include "DFGSlowPathGenerator.h"
-#include "DFGSpeculativeJIT.h"
+#include "SnippetParams.h"
 
-namespace JSC { namespace DFG {
+namespace JSC {
 
-template<typename OperationType, typename ResultType, typename Arguments, size_t... ArgumentsIndex>
-static void dispatch(SpeculativeJIT* jit, CCallHelpers::JumpList from, OperationType operation, ResultType result, Arguments arguments, std::index_sequence<ArgumentsIndex...>)
-{
-    jit->addSlowPathGenerator(slowPathCall(from, jit, operation, result, std::get<ArgumentsIndex>(arguments)...));
-}
+struct AccessGenerationState;
 
-#define JSC_DEFINE_CALL_OPERATIONS(OperationType, ResultType, ...) \
-    void DOMJITPatchpointParams::addSlowPathCallImpl(CCallHelpers::JumpList from, CCallHelpers&, OperationType operation, ResultType result, std::tuple<__VA_ARGS__> args) \
-    { \
-        dispatch(m_jit, from, operation, result, args, std::make_index_sequence<std::tuple_size<decltype(args)>::value>()); \
-    } \
+class AccessCaseSnippetParams : public SnippetParams {
+public:
+    AccessCaseSnippetParams(VM& vm, Vector<Value>&& regs, Vector<GPRReg>&& gpScratch, Vector<FPRReg>&& fpScratch)
+        : SnippetParams(vm, WTFMove(regs), WTFMove(gpScratch), WTFMove(fpScratch))
+    {
+    }
 
-DOMJIT_SLOW_PATH_CALLS(JSC_DEFINE_CALL_OPERATIONS)
+    class SlowPathCallGenerator {
+    public:
+        virtual ~SlowPathCallGenerator() { }
+        virtual CCallHelpers::JumpList generate(AccessGenerationState&, const RegisterSet& usedRegistersBySnippet, CCallHelpers&) = 0;
+    };
+
+    CCallHelpers::JumpList emitSlowPathCalls(AccessGenerationState&, const RegisterSet& usedRegistersBySnippet, CCallHelpers&);
+
+private:
+#define JSC_DEFINE_CALL_OPERATIONS(OperationType, ResultType, ...) void addSlowPathCallImpl(CCallHelpers::JumpList, CCallHelpers&, OperationType, ResultType, std::tuple<__VA_ARGS__> args) override;
+    SNIPPET_SLOW_PATH_CALLS(JSC_DEFINE_CALL_OPERATIONS)
 #undef JSC_DEFINE_CALL_OPERATIONS
+    Vector<std::unique_ptr<SlowPathCallGenerator>> m_generators;
+};
 
-} }
+}
 
 #endif

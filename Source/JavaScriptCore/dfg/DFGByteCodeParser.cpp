@@ -2975,8 +2975,8 @@ bool ByteCodeParser::handleIntrinsicGetter(int resultOperand, const GetByIdVaria
 
 static void blessCallDOMGetter(Node* node)
 {
-    DOMJIT::CallDOMGetterPatchpoint* patchpoint = node->callDOMGetterData()->patchpoint;
-    if (!patchpoint->effect.mustGenerate())
+    DOMJIT::CallDOMGetterSnippet* snippet = node->callDOMGetterData()->snippet;
+    if (!snippet->effect.mustGenerate())
         node->clearFlags(NodeMustGenerate);
 }
 
@@ -2997,16 +2997,16 @@ bool ByteCodeParser::handleDOMJITGetter(int resultOperand, const GetByIdVariant&
     addToGraph(CheckSubClass, OpInfo(domJIT->thisClassInfo()), thisNode);
 
     CallDOMGetterData* callDOMGetterData = m_graph.m_callDOMGetterData.add();
-    Ref<DOMJIT::CallDOMGetterPatchpoint> callDOMGetterPatchpoint = domJIT->callDOMGetter();
-    m_graph.m_domJITPatchpoints.append(callDOMGetterPatchpoint.ptr());
+    Ref<DOMJIT::CallDOMGetterSnippet> callDOMGetterSnippet = domJIT->callDOMGetter();
+    m_graph.m_domJITSnippets.append(callDOMGetterSnippet.copyRef());
 
     callDOMGetterData->domJIT = domJIT;
-    callDOMGetterData->patchpoint = callDOMGetterPatchpoint.ptr();
+    callDOMGetterData->snippet = callDOMGetterSnippet.ptr();
     callDOMGetterData->identifierNumber = identifierNumber;
 
     Node* callDOMGetterNode = nullptr;
     // GlobalObject of thisNode is always used to create a DOMWrapper.
-    if (callDOMGetterPatchpoint->requireGlobalObject) {
+    if (callDOMGetterSnippet->requireGlobalObject) {
         Node* globalObject = addToGraph(GetGlobalObject, thisNode);
         callDOMGetterNode = addToGraph(CallDOMGetter, OpInfo(callDOMGetterData), OpInfo(prediction), thisNode, globalObject);
     } else

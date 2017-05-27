@@ -64,14 +64,15 @@ namespace JSC {
 
 namespace DOMJIT {
 class GetterSetter;
-class Patchpoint;
-class CallDOMGetterPatchpoint;
+class CallDOMGetterSnippet;
 class Signature;
 }
 
 namespace Profiler {
 class ExecutionCounter;
 }
+
+class Snippet;
 
 namespace DFG {
 
@@ -239,7 +240,7 @@ struct StackAccessData {
 
 struct CallDOMGetterData {
     DOMJIT::GetterSetter* domJIT { nullptr };
-    DOMJIT::CallDOMGetterPatchpoint* patchpoint { nullptr };
+    DOMJIT::CallDOMGetterSnippet* snippet { nullptr };
     unsigned identifierNumber { 0 };
 };
 

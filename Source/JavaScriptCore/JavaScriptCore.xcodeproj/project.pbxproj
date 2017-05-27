@@ -2354,10 +2354,10 @@
 		E18E3A590DF9278C00D90B34 /* VM.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E18E3A570DF9278C00D90B34 /* VM.cpp */; };
 		E318CBC01B8AEF5100A2929D /* JSModuleNamespaceObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E318CBBE1B8AEF5100A2929D /* JSModuleNamespaceObject.cpp */; };
 		E318CBC11B8AEF5100A2929D /* JSModuleNamespaceObject.h in Headers */ = {isa = PBXBuildFile; fileRef = E318CBBF1B8AEF5100A2929D /* JSModuleNamespaceObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		E322E5A21DA64439006E7709 /* DFGDOMJITPatchpointParams.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E322E5A01DA64435006E7709 /* DFGDOMJITPatchpointParams.cpp */; };
-		E322E5A31DA64439006E7709 /* DFGDOMJITPatchpointParams.h in Headers */ = {isa = PBXBuildFile; fileRef = E322E5A11DA64435006E7709 /* DFGDOMJITPatchpointParams.h */; };
-		E322E5A61DA644A8006E7709 /* FTLDOMJITPatchpointParams.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E322E5A41DA644A4006E7709 /* FTLDOMJITPatchpointParams.cpp */; };
-		E322E5A71DA644A8006E7709 /* FTLDOMJITPatchpointParams.h in Headers */ = {isa = PBXBuildFile; fileRef = E322E5A51DA644A4006E7709 /* FTLDOMJITPatchpointParams.h */; };
+		E322E5A21DA64439006E7709 /* DFGSnippetParams.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E322E5A01DA64435006E7709 /* DFGSnippetParams.cpp */; };
+		E322E5A31DA64439006E7709 /* DFGSnippetParams.h in Headers */ = {isa = PBXBuildFile; fileRef = E322E5A11DA64435006E7709 /* DFGSnippetParams.h */; };
+		E322E5A61DA644A8006E7709 /* FTLSnippetParams.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E322E5A41DA644A4006E7709 /* FTLSnippetParams.cpp */; };
+		E322E5A71DA644A8006E7709 /* FTLSnippetParams.h in Headers */ = {isa = PBXBuildFile; fileRef = E322E5A51DA644A4006E7709 /* FTLSnippetParams.h */; };
 		E326C4971ECBEF6300A9A905 /* ClassInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E326C4961ECBEF5700A9A905 /* ClassInfo.cpp */; };
 		E328C6C71DA4304500D255FD /* MaxFrameExtentForSlowPathCall.h in Headers */ = {isa = PBXBuildFile; fileRef = 65860177185A8F5E00030EEE /* MaxFrameExtentForSlowPathCall.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E328C6C81DA4306100D255FD /* RegisterAtOffsetList.h in Headers */ = {isa = PBXBuildFile; fileRef = 6540C79D1B82D99D000F6B79 /* RegisterAtOffsetList.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2368,7 +2368,6 @@
 		E328DAEA1D38D005001A2529 /* BytecodeRewriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3D264291D38C042000BE174 /* BytecodeRewriter.cpp */; };
 		E328DAEB1D38D005001A2529 /* BytecodeRewriter.h in Headers */ = {isa = PBXBuildFile; fileRef = E3D2642A1D38C042000BE174 /* BytecodeRewriter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E32AB2441DCD75F400D7533A /* MacroAssemblerHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = E380A76B1DCD7195000F89E6 /* MacroAssemblerHelpers.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		E32FF1EA1DA7571C00A8BF21 /* DOMJITSlowPathCalls.h in Headers */ = {isa = PBXBuildFile; fileRef = E3CB1E241DA7540A00FA1E56 /* DOMJITSlowPathCalls.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E33637A51B63220200EE0840 /* ReflectObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E33637A31B63220200EE0840 /* ReflectObject.cpp */; };
 		E33637A61B63220200EE0840 /* ReflectObject.h in Headers */ = {isa = PBXBuildFile; fileRef = E33637A41B63220200EE0840 /* ReflectObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E33B3E261B7ABD750048DB2E /* InspectorInstrumentationObject.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = E33B3E251B7ABD750048DB2E /* InspectorInstrumentationObject.lut.h */; };
@@ -2388,7 +2387,7 @@
 		E34EDBF71DB5FFC900DC87A5 /* FrameTracers.h in Headers */ = {isa = PBXBuildFile; fileRef = E34EDBF61DB5FFC100DC87A5 /* FrameTracers.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E350708A1DC49BBF0089BCD6 /* DOMJITSignature.h in Headers */ = {isa = PBXBuildFile; fileRef = E35070891DC49BB60089BCD6 /* DOMJITSignature.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E354622B1B6065D100545386 /* ConstructAbility.h in Headers */ = {isa = PBXBuildFile; fileRef = E354622A1B6065D100545386 /* ConstructAbility.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		E3555B8A1DAE03A500F36921 /* DOMJITCallDOMGetterPatchpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = E3555B891DAE03A200F36921 /* DOMJITCallDOMGetterPatchpoint.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E3555B8A1DAE03A500F36921 /* DOMJITCallDOMGetterSnippet.h in Headers */ = {isa = PBXBuildFile; fileRef = E3555B891DAE03A200F36921 /* DOMJITCallDOMGetterSnippet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E355F3521B7DC85300C50DC5 /* ModuleLoaderPrototype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E355F3501B7DC85300C50DC5 /* ModuleLoaderPrototype.cpp */; };
 		E355F3531B7DC85300C50DC5 /* ModuleLoaderPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = E355F3511B7DC85300C50DC5 /* ModuleLoaderPrototype.h */; };
 		E35CA1531DBC3A5C00F83516 /* DOMJITHeapRange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E35CA1511DBC3A5600F83516 /* DOMJITHeapRange.cpp */; };
@@ -2399,16 +2398,13 @@
 		E35E03601B7AB43E0073AD2A /* InspectorInstrumentationObject.h in Headers */ = {isa = PBXBuildFile; fileRef = E35E035E1B7AB43E0073AD2A /* InspectorInstrumentationObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3794E751B77EB97005543AE /* ModuleAnalyzer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3794E731B77EB97005543AE /* ModuleAnalyzer.cpp */; };
 		E3794E761B77EB97005543AE /* ModuleAnalyzer.h in Headers */ = {isa = PBXBuildFile; fileRef = E3794E741B77EB97005543AE /* ModuleAnalyzer.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		E37AD83C1DA4928600F3D412 /* DOMJITPatchpointParams.h in Headers */ = {isa = PBXBuildFile; fileRef = E37AD83A1DA4928000F3D412 /* DOMJITPatchpointParams.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		E37AD83D1DA4928600F3D412 /* DOMJITReg.h in Headers */ = {isa = PBXBuildFile; fileRef = E37AD83B1DA4928000F3D412 /* DOMJITReg.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3963CEE1B73F75000EB4CE5 /* NodesAnalyzeModule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3963CEC1B73F75000EB4CE5 /* NodesAnalyzeModule.cpp */; };
 		E39D45F51D39005600B3B377 /* InterpreterInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E39D9D841D39000600667282 /* InterpreterInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E39DA4A61B7E8B7C0084F33A /* JSModuleRecord.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E39DA4A41B7E8B7C0084F33A /* JSModuleRecord.cpp */; };
 		E39DA4A71B7E8B7C0084F33A /* JSModuleRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = E39DA4A51B7E8B7C0084F33A /* JSModuleRecord.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3A421431D6F58930007C617 /* PreciseJumpTargetsInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E3A421421D6F588F0007C617 /* PreciseJumpTargetsInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		E3BFD0BB1DAF80870065DEA2 /* DOMJITAccessCasePatchpointParams.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3BFD0B91DAF807C0065DEA2 /* DOMJITAccessCasePatchpointParams.cpp */; };
-		E3BFD0BC1DAF808E0065DEA2 /* DOMJITAccessCasePatchpointParams.h in Headers */ = {isa = PBXBuildFile; fileRef = E3BFD0BA1DAF807C0065DEA2 /* DOMJITAccessCasePatchpointParams.h */; };
-		E3C08E3C1DA41B810039478F /* DOMJITPatchpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = E3C08E3B1DA41B7B0039478F /* DOMJITPatchpoint.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E3BFD0BB1DAF80870065DEA2 /* AccessCaseSnippetParams.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3BFD0B91DAF807C0065DEA2 /* AccessCaseSnippetParams.cpp */; };
+		E3BFD0BC1DAF808E0065DEA2 /* AccessCaseSnippetParams.h in Headers */ = {isa = PBXBuildFile; fileRef = E3BFD0BA1DAF807C0065DEA2 /* AccessCaseSnippetParams.h */; };
 		E3C79CAB1DB9A4DC00D1ECA4 /* DOMJITEffect.h in Headers */ = {isa = PBXBuildFile; fileRef = E3C79CAA1DB9A4D600D1ECA4 /* DOMJITEffect.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3D239C81B829C1C00BBEF67 /* JSModuleEnvironment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3D239C61B829C1C00BBEF67 /* JSModuleEnvironment.cpp */; };
 		E3D239C91B829C1C00BBEF67 /* JSModuleEnvironment.h in Headers */ = {isa = PBXBuildFile; fileRef = E3D239C71B829C1C00BBEF67 /* JSModuleEnvironment.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2416,8 +2412,11 @@
 		E3D877741E65C0A000BE945A /* BytecodeDumper.h in Headers */ = {isa = PBXBuildFile; fileRef = E3D877721E65C08900BE945A /* BytecodeDumper.h */; };
 		E3EF88741B66DF23003F26CB /* JSPropertyNameIterator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3EF88721B66DF23003F26CB /* JSPropertyNameIterator.cpp */; };
 		E3EF88751B66DF23003F26CB /* JSPropertyNameIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = E3EF88731B66DF23003F26CB /* JSPropertyNameIterator.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E3F23A7F1ECF13EE00978D99 /* SnippetSlowPathCalls.h in Headers */ = {isa = PBXBuildFile; fileRef = E3F23A7E1ECF13E500978D99 /* SnippetSlowPathCalls.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E3F23A801ECF13F500978D99 /* SnippetReg.h in Headers */ = {isa = PBXBuildFile; fileRef = E3F23A7D1ECF13E500978D99 /* SnippetReg.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E3F23A811ECF13FA00978D99 /* SnippetParams.h in Headers */ = {isa = PBXBuildFile; fileRef = E3F23A7C1ECF13E500978D99 /* SnippetParams.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E3F23A821ECF13FE00978D99 /* Snippet.h in Headers */ = {isa = PBXBuildFile; fileRef = E3F23A7B1ECF13E500978D99 /* Snippet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3FF75331D9CEA1800C7E16D /* DOMJITGetterSetter.h in Headers */ = {isa = PBXBuildFile; fileRef = E3FF752F1D9CEA1200C7E16D /* DOMJITGetterSetter.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		E3FFC8531DAD7D1500DEA53E /* DOMJITValue.h in Headers */ = {isa = PBXBuildFile; fileRef = E3FFC8521DAD7D1000DEA53E /* DOMJITValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E49DC16B12EF293E00184A1F /* SourceProviderCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E49DC15512EF277200184A1F /* SourceProviderCache.cpp */; };
 		E49DC16C12EF294E00184A1F /* SourceProviderCache.h in Headers */ = {isa = PBXBuildFile; fileRef = E49DC15112EF272200184A1F /* SourceProviderCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E49DC16D12EF295300184A1F /* SourceProviderCacheItem.h in Headers */ = {isa = PBXBuildFile; fileRef = E49DC14912EF261A00184A1F /* SourceProviderCacheItem.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4983,10 +4982,10 @@
 		E30677971B8BC6F5003F87F0 /* ModuleLoaderPrototype.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = ModuleLoaderPrototype.js; sourceTree = "<group>"; };
 		E318CBBE1B8AEF5100A2929D /* JSModuleNamespaceObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSModuleNamespaceObject.cpp; sourceTree = "<group>"; };
 		E318CBBF1B8AEF5100A2929D /* JSModuleNamespaceObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSModuleNamespaceObject.h; sourceTree = "<group>"; };
-		E322E5A01DA64435006E7709 /* DFGDOMJITPatchpointParams.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGDOMJITPatchpointParams.cpp; path = dfg/DFGDOMJITPatchpointParams.cpp; sourceTree = "<group>"; };
-		E322E5A11DA64435006E7709 /* DFGDOMJITPatchpointParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGDOMJITPatchpointParams.h; path = dfg/DFGDOMJITPatchpointParams.h; sourceTree = "<group>"; };
-		E322E5A41DA644A4006E7709 /* FTLDOMJITPatchpointParams.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLDOMJITPatchpointParams.cpp; path = ftl/FTLDOMJITPatchpointParams.cpp; sourceTree = "<group>"; };
-		E322E5A51DA644A4006E7709 /* FTLDOMJITPatchpointParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLDOMJITPatchpointParams.h; path = ftl/FTLDOMJITPatchpointParams.h; sourceTree = "<group>"; };
+		E322E5A01DA64435006E7709 /* DFGSnippetParams.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGSnippetParams.cpp; path = dfg/DFGSnippetParams.cpp; sourceTree = "<group>"; };
+		E322E5A11DA64435006E7709 /* DFGSnippetParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGSnippetParams.h; path = dfg/DFGSnippetParams.h; sourceTree = "<group>"; };
+		E322E5A41DA644A4006E7709 /* FTLSnippetParams.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLSnippetParams.cpp; path = ftl/FTLSnippetParams.cpp; sourceTree = "<group>"; };
+		E322E5A51DA644A4006E7709 /* FTLSnippetParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLSnippetParams.h; path = ftl/FTLSnippetParams.h; sourceTree = "<group>"; };
 		E326C4961ECBEF5700A9A905 /* ClassInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ClassInfo.cpp; sourceTree = "<group>"; };
 		E33637A31B63220200EE0840 /* ReflectObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReflectObject.cpp; sourceTree = "<group>"; };
 		E33637A41B63220200EE0840 /* ReflectObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReflectObject.h; sourceTree = "<group>"; };
@@ -5008,7 +5007,7 @@
 		E34EDBF61DB5FFC100DC87A5 /* FrameTracers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrameTracers.h; sourceTree = "<group>"; };
 		E35070891DC49BB60089BCD6 /* DOMJITSignature.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMJITSignature.h; sourceTree = "<group>"; };
 		E354622A1B6065D100545386 /* ConstructAbility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConstructAbility.h; sourceTree = "<group>"; };
-		E3555B891DAE03A200F36921 /* DOMJITCallDOMGetterPatchpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMJITCallDOMGetterPatchpoint.h; sourceTree = "<group>"; };
+		E3555B891DAE03A200F36921 /* DOMJITCallDOMGetterSnippet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMJITCallDOMGetterSnippet.h; sourceTree = "<group>"; };
 		E355F3501B7DC85300C50DC5 /* ModuleLoaderPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ModuleLoaderPrototype.cpp; sourceTree = "<group>"; };
 		E355F3511B7DC85300C50DC5 /* ModuleLoaderPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModuleLoaderPrototype.h; sourceTree = "<group>"; };
 		E35CA14F1DBC3A5600F83516 /* DOMJITAbstractHeap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMJITAbstractHeap.cpp; sourceTree = "<group>"; };
@@ -5020,19 +5019,15 @@
 		E35E03611B7AB4850073AD2A /* InspectorInstrumentationObject.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = InspectorInstrumentationObject.js; sourceTree = "<group>"; };
 		E3794E731B77EB97005543AE /* ModuleAnalyzer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ModuleAnalyzer.cpp; sourceTree = "<group>"; };
 		E3794E741B77EB97005543AE /* ModuleAnalyzer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModuleAnalyzer.h; sourceTree = "<group>"; };
-		E37AD83A1DA4928000F3D412 /* DOMJITPatchpointParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMJITPatchpointParams.h; sourceTree = "<group>"; };
-		E37AD83B1DA4928000F3D412 /* DOMJITReg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMJITReg.h; sourceTree = "<group>"; };
 		E380A76B1DCD7195000F89E6 /* MacroAssemblerHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacroAssemblerHelpers.h; sourceTree = "<group>"; };
 		E3963CEC1B73F75000EB4CE5 /* NodesAnalyzeModule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NodesAnalyzeModule.cpp; sourceTree = "<group>"; };
 		E39D9D841D39000600667282 /* InterpreterInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InterpreterInlines.h; sourceTree = "<group>"; };
 		E39DA4A41B7E8B7C0084F33A /* JSModuleRecord.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSModuleRecord.cpp; sourceTree = "<group>"; };
 		E39DA4A51B7E8B7C0084F33A /* JSModuleRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSModuleRecord.h; sourceTree = "<group>"; };
 		E3A421421D6F588F0007C617 /* PreciseJumpTargetsInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreciseJumpTargetsInlines.h; sourceTree = "<group>"; };
-		E3BFD0B91DAF807C0065DEA2 /* DOMJITAccessCasePatchpointParams.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMJITAccessCasePatchpointParams.cpp; sourceTree = "<group>"; };
-		E3BFD0BA1DAF807C0065DEA2 /* DOMJITAccessCasePatchpointParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMJITAccessCasePatchpointParams.h; sourceTree = "<group>"; };
-		E3C08E3B1DA41B7B0039478F /* DOMJITPatchpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMJITPatchpoint.h; sourceTree = "<group>"; };
+		E3BFD0B91DAF807C0065DEA2 /* AccessCaseSnippetParams.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessCaseSnippetParams.cpp; sourceTree = "<group>"; };
+		E3BFD0BA1DAF807C0065DEA2 /* AccessCaseSnippetParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessCaseSnippetParams.h; sourceTree = "<group>"; };
 		E3C79CAA1DB9A4D600D1ECA4 /* DOMJITEffect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMJITEffect.h; sourceTree = "<group>"; };
-		E3CB1E241DA7540A00FA1E56 /* DOMJITSlowPathCalls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMJITSlowPathCalls.h; sourceTree = "<group>"; };
 		E3D239C61B829C1C00BBEF67 /* JSModuleEnvironment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSModuleEnvironment.cpp; sourceTree = "<group>"; };
 		E3D239C71B829C1C00BBEF67 /* JSModuleEnvironment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSModuleEnvironment.h; sourceTree = "<group>"; };
 		E3D264261D38C042000BE174 /* BytecodeGeneratorification.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BytecodeGeneratorification.cpp; sourceTree = "<group>"; };
@@ -5044,8 +5039,11 @@
 		E3D877721E65C08900BE945A /* BytecodeDumper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BytecodeDumper.h; sourceTree = "<group>"; };
 		E3EF88721B66DF23003F26CB /* JSPropertyNameIterator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPropertyNameIterator.cpp; sourceTree = "<group>"; };
 		E3EF88731B66DF23003F26CB /* JSPropertyNameIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPropertyNameIterator.h; sourceTree = "<group>"; };
+		E3F23A7B1ECF13E500978D99 /* Snippet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Snippet.h; sourceTree = "<group>"; };
+		E3F23A7C1ECF13E500978D99 /* SnippetParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SnippetParams.h; sourceTree = "<group>"; };
+		E3F23A7D1ECF13E500978D99 /* SnippetReg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SnippetReg.h; sourceTree = "<group>"; };
+		E3F23A7E1ECF13E500978D99 /* SnippetSlowPathCalls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SnippetSlowPathCalls.h; sourceTree = "<group>"; };
 		E3FF752F1D9CEA1200C7E16D /* DOMJITGetterSetter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMJITGetterSetter.h; sourceTree = "<group>"; };
-		E3FFC8521DAD7D1000DEA53E /* DOMJITValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMJITValue.h; sourceTree = "<group>"; };
 		E49DC14912EF261A00184A1F /* SourceProviderCacheItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SourceProviderCacheItem.h; sourceTree = "<group>"; };
 		E49DC15112EF272200184A1F /* SourceProviderCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SourceProviderCache.h; sourceTree = "<group>"; };
 		E49DC15512EF277200184A1F /* SourceProviderCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SourceProviderCache.cpp; sourceTree = "<group>"; };
@@ -5397,8 +5395,6 @@
 				0FEA0A211709606900BB722C /* FTLCommonValues.h */,
 				0FB387911BFD31A100E3AB1E /* FTLCompile.cpp */,
 				0FEA0A01170513DB00BB722C /* FTLCompile.h */,
-				E322E5A41DA644A4006E7709 /* FTLDOMJITPatchpointParams.cpp */,
-				E322E5A51DA644A4006E7709 /* FTLDOMJITPatchpointParams.h */,
 				0F9D4C0A1C3E1C11006CD984 /* FTLExceptionTarget.cpp */,
 				0F9D4C0B1C3E1C11006CD984 /* FTLExceptionTarget.h */,
 				0F235BBD17178E1C00690C7F /* FTLExitArgument.cpp */,
@@ -5453,6 +5449,8 @@
 				0F25F1AB181635F300522F39 /* FTLSlowPathCall.h */,
 				0F25F1AC181635F300522F39 /* FTLSlowPathCallKey.cpp */,
 				0F25F1AD181635F300522F39 /* FTLSlowPathCallKey.h */,
+				E322E5A41DA644A4006E7709 /* FTLSnippetParams.cpp */,
+				E322E5A51DA644A4006E7709 /* FTLSnippetParams.h */,
 				0F235BC117178E1C00690C7F /* FTLStackmapArgumentList.h */,
 				0FEA0A151706BB9000BB722C /* FTLState.cpp */,
 				0FEA0A07170513DB00BB722C /* FTLState.h */,
@@ -5972,7 +5970,11 @@
 				0FEE98421A89227500754E93 /* SetupVarargsFrame.cpp */,
 				0FEE98401A8865B600754E93 /* SetupVarargsFrame.h */,
 				A709F2EF17A0AC0400512E98 /* SlowPathCall.h */,
+				E3F23A7B1ECF13E500978D99 /* Snippet.h */,
 				FE187A0C1C02EBA70038BBCA /* SnippetOperand.h */,
+				E3F23A7C1ECF13E500978D99 /* SnippetParams.h */,
+				E3F23A7D1ECF13E500978D99 /* SnippetReg.h */,
+				E3F23A7E1ECF13E500978D99 /* SnippetSlowPathCalls.h */,
 				A7386551118697B400540279 /* SpecializedThunkJIT.h */,
 				A7FF647A18C52E8500B55307 /* SpillRegistersMode.h */,
 				DC7997811CDE9F9E004D4A09 /* TagRegistersMode.cpp */,
@@ -7307,8 +7309,8 @@
 				0F5A1271192D9FDF008764A3 /* DFGDoesGC.cpp */,
 				0F5A1272192D9FDF008764A3 /* DFGDoesGC.h */,
 				0FD81AD0154FB4EB00983E72 /* DFGDominators.h */,
-				E322E5A01DA64435006E7709 /* DFGDOMJITPatchpointParams.cpp */,
-				E322E5A11DA64435006E7709 /* DFGDOMJITPatchpointParams.h */,
+				E322E5A01DA64435006E7709 /* DFGSnippetParams.cpp */,
+				E322E5A11DA64435006E7709 /* DFGSnippetParams.h */,
 				0F1E3A441534CBAD000F9456 /* DFGDoubleFormatState.h */,
 				0FD3C82014115CF800FD81CB /* DFGDriver.cpp */,
 				0FD3C82214115D0E00FD81CB /* DFGDriver.h */,
@@ -7698,8 +7700,8 @@
 				0FBC0AE51496C7C100D4FBDD /* DFGExitProfile.h */,
 				0F2EBBAA1DEDF94E00990369 /* DirectEvalCodeCache.cpp */,
 				969A07920ED1D3AE00F1F681 /* DirectEvalCodeCache.h */,
-				E3BFD0B91DAF807C0065DEA2 /* DOMJITAccessCasePatchpointParams.cpp */,
-				E3BFD0BA1DAF807C0065DEA2 /* DOMJITAccessCasePatchpointParams.h */,
+				E3BFD0B91DAF807C0065DEA2 /* AccessCaseSnippetParams.cpp */,
+				E3BFD0BA1DAF807C0065DEA2 /* AccessCaseSnippetParams.h */,
 				14AD91121DCA97FD0014F9FE /* EvalCodeBlock.cpp */,
 				14AD91061DCA92940014F9FE /* EvalCodeBlock.h */,
 				14142E521B796EDD00F4BF4B /* ExecutableInfo.h */,
@@ -8169,17 +8171,12 @@
 			children = (
 				E35CA14F1DBC3A5600F83516 /* DOMJITAbstractHeap.cpp */,
 				E35CA1501DBC3A5600F83516 /* DOMJITAbstractHeap.h */,
-				E3555B891DAE03A200F36921 /* DOMJITCallDOMGetterPatchpoint.h */,
+				E3555B891DAE03A200F36921 /* DOMJITCallDOMGetterSnippet.h */,
 				E3C79CAA1DB9A4D600D1ECA4 /* DOMJITEffect.h */,
 				E3FF752F1D9CEA1200C7E16D /* DOMJITGetterSetter.h */,
 				E35CA1511DBC3A5600F83516 /* DOMJITHeapRange.cpp */,
 				E35CA1521DBC3A5600F83516 /* DOMJITHeapRange.h */,
-				E3C08E3B1DA41B7B0039478F /* DOMJITPatchpoint.h */,
-				E37AD83A1DA4928000F3D412 /* DOMJITPatchpointParams.h */,
-				E37AD83B1DA4928000F3D412 /* DOMJITReg.h */,
 				E35070891DC49BB60089BCD6 /* DOMJITSignature.h */,
-				E3CB1E241DA7540A00FA1E56 /* DOMJITSlowPathCalls.h */,
-				E3FFC8521DAD7D1000DEA53E /* DOMJITValue.h */,
 			);
 			path = domjit;
 			sourceTree = "<group>";
@@ -8557,6 +8554,7 @@
 				0F8364B7164B0C110053329A /* DFGBranchDirection.h in Headers */,
 				86EC9DC51328DF82002B2AD7 /* DFGByteCodeParser.h in Headers */,
 				0F256C361627B0AD007F2783 /* DFGCallArrayAllocatorSlowPathGenerator.h in Headers */,
+				E3F23A821ECF13FE00978D99 /* Snippet.h in Headers */,
 				0FBDB9AD1AB0FBC6000B57E5 /* DFGCallCreateDirectArgumentsSlowPathGenerator.h in Headers */,
 				0F7B294B14C3CD2F007C3DB1 /* DFGCapabilities.h in Headers */,
 				0FFFC95814EF90A200C72532 /* DFGCFAPhase.h in Headers */,
@@ -8588,7 +8586,7 @@
 				0F5A1274192D9FDF008764A3 /* DFGDoesGC.h in Headers */,
 				FE1BD0251E72053800134BC9 /* HeapVerifier.h in Headers */,
 				0FD81AD3154FB4F000983E72 /* DFGDominators.h in Headers */,
-				E322E5A31DA64439006E7709 /* DFGDOMJITPatchpointParams.h in Headers */,
+				E322E5A31DA64439006E7709 /* DFGSnippetParams.h in Headers */,
 				0F1E3A471534CBB9000F9456 /* DFGDoubleFormatState.h in Headers */,
 				0FD3C82814115D4F00FD81CB /* DFGDriver.h in Headers */,
 				0F66E16C14DF3F1600B7B2E4 /* DFGEdge.h in Headers */,
@@ -8728,20 +8726,15 @@
 				0F37308F1C0CD68500052BFA /* DisallowMacroScratchRegisterUsage.h in Headers */,
 				0FF42731158EBD54004CB9FF /* Disassembler.h in Headers */,
 				E35CA1561DBC3A5F00F83516 /* DOMJITAbstractHeap.h in Headers */,
-				E3BFD0BC1DAF808E0065DEA2 /* DOMJITAccessCasePatchpointParams.h in Headers */,
-				E3555B8A1DAE03A500F36921 /* DOMJITCallDOMGetterPatchpoint.h in Headers */,
+				E3BFD0BC1DAF808E0065DEA2 /* AccessCaseSnippetParams.h in Headers */,
+				E3555B8A1DAE03A500F36921 /* DOMJITCallDOMGetterSnippet.h in Headers */,
 				E3C79CAB1DB9A4DC00D1ECA4 /* DOMJITEffect.h in Headers */,
 				E3FF75331D9CEA1800C7E16D /* DOMJITGetterSetter.h in Headers */,
 				E35CA1541DBC3A5C00F83516 /* DOMJITHeapRange.h in Headers */,
 				0F5CF9891E9ED65200C18692 /* AirStackAllocation.h in Headers */,
-				E3C08E3C1DA41B810039478F /* DOMJITPatchpoint.h in Headers */,
 				534638711E70CF3D00F12AC1 /* JSRunLoopTimer.h in Headers */,
 				FE6F56DE1E64EAD600D17801 /* VMTraps.h in Headers */,
-				E37AD83C1DA4928600F3D412 /* DOMJITPatchpointParams.h in Headers */,
-				E37AD83D1DA4928600F3D412 /* DOMJITReg.h in Headers */,
 				E350708A1DC49BBF0089BCD6 /* DOMJITSignature.h in Headers */,
-				E32FF1EA1DA7571C00A8BF21 /* DOMJITSlowPathCalls.h in Headers */,
-				E3FFC8531DAD7D1500DEA53E /* DOMJITValue.h in Headers */,
 				A70447EE17A0BD7000F5898E /* DumpContext.h in Headers */,
 				FE318FE01CAC982F00DFCC54 /* ECMAScriptSpecInternalFunctions.h in Headers */,
 				2A83638618D7D0EE0000EBCC /* EdenGCActivityCallback.h in Headers */,
@@ -8759,6 +8752,7 @@
 				147341D21DC02E2E00AA29BA /* EvalExecutable.h in Headers */,
 				A54982041891D0B00081E5B8 /* EventLoop.h in Headers */,
 				FE1C0FFD1B193E9800B53FCA /* Exception.h in Headers */,
+				E3F23A7F1ECF13EE00978D99 /* SnippetSlowPathCalls.h in Headers */,
 				FE6029D91D6E1E4F0030204D /* ExceptionEventLocation.h in Headers */,
 				0F12DE101979D5FD0006FF4E /* ExceptionFuzz.h in Headers */,
 				BC18C4000E16F5CD00B34460 /* ExceptionHelpers.h in Headers */,
@@ -8784,7 +8778,7 @@
 				0FEA0A0A170513DB00BB722C /* FTLCapabilities.h in Headers */,
 				0FEA0A231709606900BB722C /* FTLCommonValues.h in Headers */,
 				0FEA0A0C170513DB00BB722C /* FTLCompile.h in Headers */,
-				E322E5A71DA644A8006E7709 /* FTLDOMJITPatchpointParams.h in Headers */,
+				E322E5A71DA644A8006E7709 /* FTLSnippetParams.h in Headers */,
 				0F9D4C0D1C3E1C11006CD984 /* FTLExceptionTarget.h in Headers */,
 				AD412B341E7B2E9E008AF157 /* WasmContext.h in Headers */,
 				0F235BD417178E1C00690C7F /* FTLExitArgument.h in Headers */,
@@ -8906,6 +8900,7 @@
 				0F32BD111BB34F190093A57F /* HeapHelperPool.h in Headers */,
 				526AC4B71E977C5D003500E1 /* WasmCodeBlock.h in Headers */,
 				C2DA778318E259990066FCB6 /* HeapInlines.h in Headers */,
+				E3F23A811ECF13FA00978D99 /* SnippetParams.h in Headers */,
 				2AD8932B17E3868F00668276 /* HeapIterationScope.h in Headers */,
 				A5339EC91BB4B4600054F005 /* HeapObserver.h in Headers */,
 				A5398FAB1C750DA40060A963 /* HeapProfiler.h in Headers */,
@@ -9111,6 +9106,7 @@
 				E33F50851B8437A000413856 /* JSInternalPromiseDeferred.h in Headers */,
 				E33F50751B8421C000413856 /* JSInternalPromisePrototype.h in Headers */,
 				A503FA1E188E0FB000110F14 /* JSJavaScriptCallFramePrototype.h in Headers */,
+				E3F23A801ECF13F500978D99 /* SnippetReg.h in Headers */,
 				7013CA8C1B491A9400CAE613 /* JSJob.h in Headers */,
 				BC18C4160E16F5CD00B34460 /* JSLexicalEnvironment.h in Headers */,
 				534E034E1E4D4B1600213F64 /* AccessCase.h in Headers */,
@@ -10369,7 +10365,7 @@
 				C2981FD817BAEE4B00A3BC98 /* DFGDesiredWeakReferences.cpp in Sources */,
 				0FF427641591A1CC004CB9FF /* DFGDisassembler.cpp in Sources */,
 				0F5A1273192D9FDF008764A3 /* DFGDoesGC.cpp in Sources */,
-				E322E5A21DA64439006E7709 /* DFGDOMJITPatchpointParams.cpp in Sources */,
+				E322E5A21DA64439006E7709 /* DFGSnippetParams.cpp in Sources */,
 				0FD3C82614115D4000FD81CB /* DFGDriver.cpp in Sources */,
 				0FF0F19E16B72A0B005DF95B /* DFGEdge.cpp in Sources */,
 				0F8F14331ADF090100ED792C /* DFGEpoch.cpp in Sources */,
@@ -10483,7 +10479,7 @@
 				14386A741DD69895008652C4 /* DirectEvalExecutable.cpp in Sources */,
 				0F9D3370165DBB90005AD387 /* Disassembler.cpp in Sources */,
 				E35CA1551DBC3A5F00F83516 /* DOMJITAbstractHeap.cpp in Sources */,
-				E3BFD0BB1DAF80870065DEA2 /* DOMJITAccessCasePatchpointParams.cpp in Sources */,
+				E3BFD0BB1DAF80870065DEA2 /* AccessCaseSnippetParams.cpp in Sources */,
 				E35CA1531DBC3A5C00F83516 /* DOMJITHeapRange.cpp in Sources */,
 				A70447ED17A0BD7000F5898E /* DumpContext.cpp in Sources */,
 				FE318FDF1CAC982700DFCC54 /* ECMAScriptSpecInternalFunctions.cpp in Sources */,
@@ -10518,7 +10514,7 @@
 				0FEA0A09170513DB00BB722C /* FTLCapabilities.cpp in Sources */,
 				0FEA0A271709623B00BB722C /* FTLCommonValues.cpp in Sources */,
 				0FB387921BFD31A100E3AB1E /* FTLCompile.cpp in Sources */,
-				E322E5A61DA644A8006E7709 /* FTLDOMJITPatchpointParams.cpp in Sources */,
+				E322E5A61DA644A8006E7709 /* FTLSnippetParams.cpp in Sources */,
 				0F9D4C0C1C3E1C11006CD984 /* FTLExceptionTarget.cpp in Sources */,
 				0F235BD317178E1C00690C7F /* FTLExitArgument.cpp in Sources */,
 				0F235BD517178E1C00690C7F /* FTLExitArgumentForOperand.cpp in Sources */,

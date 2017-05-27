@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "DOMJITAccessCasePatchpointParams.h"
+#include "AccessCaseSnippetParams.h"
 
 #include "LinkBuffer.h"
 #include "PolymorphicAccess.h"
@@ -35,7 +35,7 @@
 namespace JSC {
 
 template<typename JumpType, typename FunctionType, typename ResultType, typename... Arguments>
-class SlowPathCallGeneratorWithArguments : public DOMJITAccessCasePatchpointParams::SlowPathCallGenerator {
+class SlowPathCallGeneratorWithArguments : public AccessCaseSnippetParams::SlowPathCallGenerator {
 public:
     SlowPathCallGeneratorWithArguments(JumpType from, CCallHelpers::Label to, FunctionType function, ResultType result, std::tuple<Arguments...> arguments)
         : m_from(from)
@@ -47,11 +47,11 @@ public:
     }
 
     template<size_t... ArgumentsIndex>
-    CCallHelpers::JumpList generateImpl(AccessGenerationState& state, const RegisterSet& usedRegistersByPatchpoint, CCallHelpers& jit, std::index_sequence<ArgumentsIndex...>)
+    CCallHelpers::JumpList generateImpl(AccessGenerationState& state, const RegisterSet& usedRegistersBySnippet, CCallHelpers& jit, std::index_sequence<ArgumentsIndex...>)
     {
         CCallHelpers::JumpList exceptions;
-        // We spill (1) the used registers by IC and (2) the used registers by DOMJIT::Patchpoint.
-        AccessGenerationState::SpillState spillState = state.preserveLiveRegistersToStackForCall(usedRegistersByPatchpoint);
+        // We spill (1) the used registers by IC and (2) the used registers by Snippet.
+        AccessGenerationState::SpillState spillState = state.preserveLiveRegistersToStackForCall(usedRegistersBySnippet);
 
         jit.store32(
             CCallHelpers::TrustedImm32(state.callSiteIndexForExceptionHandlingOrOriginal().bits()),
@@ -86,10 +86,10 @@ public:
         return exceptions;
     }
 
-    CCallHelpers::JumpList generate(AccessGenerationState& state, const RegisterSet& usedRegistersByPatchpoint, CCallHelpers& jit) override
+    CCallHelpers::JumpList generate(AccessGenerationState& state, const RegisterSet& usedRegistersBySnippet, CCallHelpers& jit) override
     {
         m_from.link(&jit);
-        CCallHelpers::JumpList exceptions = generateImpl(state, usedRegistersByPatchpoint, jit, std::make_index_sequence<std::tuple_size<std::tuple<Arguments...>>::value>());
+        CCallHelpers::JumpList exceptions = generateImpl(state, usedRegistersBySnippet, jit, std::make_index_sequence<std::tuple_size<std::tuple<Arguments...>>::value>());
         jit.jump().linkTo(m_to, &jit);
         return exceptions;
     }
@@ -103,20 +103,20 @@ protected:
 };
 
 #define JSC_DEFINE_CALL_OPERATIONS(OperationType, ResultType, ...) \
-    void DOMJITAccessCasePatchpointParams::addSlowPathCallImpl(CCallHelpers::JumpList from, CCallHelpers& jit, OperationType operation, ResultType result, std::tuple<__VA_ARGS__> args) \
+    void AccessCaseSnippetParams::addSlowPathCallImpl(CCallHelpers::JumpList from, CCallHelpers& jit, OperationType operation, ResultType result, std::tuple<__VA_ARGS__> args) \
     { \
         CCallHelpers::Label to = jit.label(); \
         m_generators.append(std::make_unique<SlowPathCallGeneratorWithArguments<CCallHelpers::JumpList, OperationType, ResultType, __VA_ARGS__>>(from, to, operation, result, args)); \
     } \
 
-DOMJIT_SLOW_PATH_CALLS(JSC_DEFINE_CALL_OPERATIONS)
+SNIPPET_SLOW_PATH_CALLS(JSC_DEFINE_CALL_OPERATIONS)
 #undef JSC_DEFINE_CALL_OPERATIONS
 
-CCallHelpers::JumpList DOMJITAccessCasePatchpointParams::emitSlowPathCalls(AccessGenerationState& state, const RegisterSet& usedRegistersByPatchpoint, CCallHelpers& jit)
+CCallHelpers::JumpList AccessCaseSnippetParams::emitSlowPathCalls(AccessGenerationState& state, const RegisterSet& usedRegistersBySnippet, CCallHelpers& jit)
 {
     CCallHelpers::JumpList exceptions;
     for (auto& generator : m_generators)
-        exceptions.append(generator->generate(state, usedRegistersByPatchpoint, jit));
+        exceptions.append(generator->generate(state, usedRegistersBySnippet, jit));
     return exceptions;
 }
 

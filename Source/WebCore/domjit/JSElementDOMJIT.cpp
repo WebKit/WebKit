@@ -34,7 +34,7 @@ using namespace JSC;
 
 namespace WebCore {
 
-RefPtr<JSC::DOMJIT::Patchpoint> checkSubClassPatchpointForJSElement()
+Ref<JSC::Snippet> checkSubClassSnippetForJSElement()
 {
     return DOMJIT::checkDOM<Element>();
 }

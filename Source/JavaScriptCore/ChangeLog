@@ -1,3 +1,80 @@
+2017-05-27  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DOMJIT] Move DOMJIT patchpoint infrastructure out of domjit
+        https://bugs.webkit.org/show_bug.cgi?id=172260
+
+        Reviewed by Filip Pizlo.
+
+        DOMJIT::Patchpoint is now used for generalized CheckSubClass. And it becomes mature enough
+        to be used as a general-purpose injectable compiler over all the JIT tiers.
+
+        We extract DOMJIT::Patchpoint to jit/ and rename it JSC::Snippet.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/AccessCaseSnippetParams.cpp: Renamed from Source/JavaScriptCore/bytecode/DOMJITAccessCasePatchpointParams.cpp.
+        (JSC::SlowPathCallGeneratorWithArguments::generateImpl):
+        (JSC::AccessCaseSnippetParams::emitSlowPathCalls):
+        * bytecode/AccessCaseSnippetParams.h: Renamed from Source/JavaScriptCore/bytecode/DOMJITAccessCasePatchpointParams.h.
+        (JSC::AccessCaseSnippetParams::AccessCaseSnippetParams):
+        * bytecode/GetterSetterAccessCase.cpp:
+        (JSC::GetterSetterAccessCase::emitDOMJITGetter):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::blessCallDOMGetter):
+        (JSC::DFG::ByteCodeParser::handleDOMJITGetter):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGGraph.h:
+        * dfg/DFGNode.h:
+        * dfg/DFGSnippetParams.cpp: Renamed from Source/JavaScriptCore/dfg/DFGDOMJITPatchpointParams.cpp.
+        * dfg/DFGSnippetParams.h: Renamed from Source/JavaScriptCore/dfg/DFGDOMJITPatchpointParams.h.
+        (JSC::DFG::SnippetParams::SnippetParams):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::allocateTemporaryRegistersForSnippet):
+        (JSC::DFG::SpeculativeJIT::compileCallDOMGetter):
+        (JSC::DFG::SpeculativeJIT::compileCheckSubClass):
+        (JSC::DFG::allocateTemporaryRegistersForPatchpoint): Deleted.
+        * domjit/DOMJITCallDOMGetterSnippet.h: Renamed from Source/JavaScriptCore/domjit/DOMJITCallDOMGetterPatchpoint.h.
+        (JSC::DOMJIT::CallDOMGetterSnippet::create):
+        * domjit/DOMJITGetterSetter.h:
+        * domjit/DOMJITSignature.h:
+        * domjit/DOMJITValue.h: Removed.
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCheckSubClass):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallDOMGetter):
+        * ftl/FTLSnippetParams.cpp: Renamed from Source/JavaScriptCore/ftl/FTLDOMJITPatchpointParams.cpp.
+        * ftl/FTLSnippetParams.h: Renamed from Source/JavaScriptCore/ftl/FTLDOMJITPatchpointParams.h.
+        (JSC::FTL::SnippetParams::SnippetParams):
+        * jit/Snippet.h: Renamed from Source/JavaScriptCore/domjit/DOMJITPatchpoint.h.
+        (JSC::Snippet::create):
+        (JSC::Snippet::setGenerator):
+        (JSC::Snippet::generator):
+        * jit/SnippetParams.h: Renamed from Source/JavaScriptCore/domjit/DOMJITPatchpointParams.h.
+        (JSC::SnippetParams::~SnippetParams):
+        (JSC::SnippetParams::Value::Value):
+        (JSC::SnippetParams::Value::isGPR):
+        (JSC::SnippetParams::Value::isFPR):
+        (JSC::SnippetParams::Value::isJSValueRegs):
+        (JSC::SnippetParams::Value::gpr):
+        (JSC::SnippetParams::Value::fpr):
+        (JSC::SnippetParams::Value::jsValueRegs):
+        (JSC::SnippetParams::Value::reg):
+        (JSC::SnippetParams::Value::value):
+        (JSC::SnippetParams::SnippetParams):
+        * jit/SnippetReg.h: Renamed from Source/JavaScriptCore/domjit/DOMJITReg.h.
+        (JSC::SnippetReg::SnippetReg):
+        * jit/SnippetSlowPathCalls.h: Renamed from Source/JavaScriptCore/domjit/DOMJITSlowPathCalls.h.
+        * jsc.cpp:
+        (WTF::DOMJITNode::checkSubClassSnippet):
+        (WTF::DOMJITFunctionObject::checkSubClassSnippet):
+        (WTF::DOMJITNode::checkSubClassPatchpoint): Deleted.
+        (WTF::DOMJITFunctionObject::checkSubClassPatchpoint): Deleted.
+        * runtime/ClassInfo.h:
+
 2017-05-26  Keith Miller  <keith_miller@apple.com>
 
         REEGRESSION(r217459): testapi fails in JSExportTest's wrapperForNSObjectisObject().

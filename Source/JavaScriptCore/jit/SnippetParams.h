@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Yusuke Suzuki <utatane.tea@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,17 +29,52 @@
 #if ENABLE(JIT)
 
 #include "CCallHelpers.h"
-#include "DOMJITSlowPathCalls.h"
-#include "DOMJITValue.h"
 #include "JITOperations.h"
 #include "RegisterSet.h"
+#include "SnippetReg.h"
+#include "SnippetSlowPathCalls.h"
 
-namespace JSC { namespace DOMJIT {
+namespace JSC {
 
-class PatchpointParams {
-WTF_MAKE_NONCOPYABLE(PatchpointParams);
+class SnippetParams {
+WTF_MAKE_NONCOPYABLE(SnippetParams);
 public:
-    virtual ~PatchpointParams() { }
+    virtual ~SnippetParams() { }
+
+    class Value {
+    public:
+        Value(SnippetReg reg)
+            : m_reg(reg)
+        {
+        }
+
+        Value(SnippetReg reg, JSValue value)
+            : m_reg(reg)
+            , m_value(value)
+        {
+        }
+
+        bool isGPR() const { return m_reg.isGPR(); }
+        bool isFPR() const { return m_reg.isFPR(); }
+        bool isJSValueRegs() const { return m_reg.isJSValueRegs(); }
+        GPRReg gpr() const { return m_reg.gpr(); }
+        FPRReg fpr() const { return m_reg.fpr(); }
+        JSValueRegs jsValueRegs() const { return m_reg.jsValueRegs(); }
+
+        SnippetReg reg() const
+        {
+            return m_reg;
+        }
+
+        JSValue value() const
+        {
+            return m_value;
+        }
+
+    private:
+        SnippetReg m_reg;
+        JSValue m_value;
+    };
 
     unsigned size() const { return m_regs.size(); }
     const Value& at(unsigned index) const { return m_regs[index]; }
@@ -47,7 +83,7 @@ public:
     GPRReg gpScratch(unsigned index) const { return m_gpScratch[index]; }
     FPRReg fpScratch(unsigned index) const { return m_fpScratch[index]; }
 
-    PatchpointParams(VM& vm, Vector<Value>&& regs, Vector<GPRReg>&& gpScratch, Vector<FPRReg>&& fpScratch)
+    SnippetParams(VM& vm, Vector<Value>&& regs, Vector<GPRReg>&& gpScratch, Vector<FPRReg>&& fpScratch)
         : m_vm(vm)
         , m_regs(WTFMove(regs))
         , m_gpScratch(WTFMove(gpScratch))
@@ -65,7 +101,7 @@ public:
 
 private:
 #define JSC_DEFINE_CALL_OPERATIONS(OperationType, ResultType, ...) JS_EXPORT_PRIVATE virtual void addSlowPathCallImpl(CCallHelpers::JumpList, CCallHelpers&, OperationType, ResultType, std::tuple<__VA_ARGS__> args) = 0;
-    DOMJIT_SLOW_PATH_CALLS(JSC_DEFINE_CALL_OPERATIONS)
+    SNIPPET_SLOW_PATH_CALLS(JSC_DEFINE_CALL_OPERATIONS)
 #undef JSC_DEFINE_CALL_OPERATIONS
 
     VM& m_vm;
@@ -74,6 +110,6 @@ private:
     Vector<FPRReg> m_fpScratch;
 };
 
-} }
+}
 
 #endif

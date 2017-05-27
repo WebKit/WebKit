@@ -31,12 +31,10 @@ class PrintStream;
 };
 
 namespace JSC {
-namespace DOMJIT {
-class Patchpoint;
-}
 
 class HeapSnapshotBuilder;
 class JSArrayBufferView;
+class Snippet;
 struct HashTable;
 
 struct MethodTable {
@@ -217,8 +215,8 @@ struct ClassInfo {
 
     const HashTable* staticPropHashTable;
 
-    typedef RefPtr<DOMJIT::Patchpoint> (*CheckSubClassPatchpointFunctionPtr)(void);
-    CheckSubClassPatchpointFunctionPtr checkSubClassPatchpoint;
+    typedef Ref<Snippet> (*CheckSubClassSnippetFunctionPtr)(void);
+    CheckSubClassSnippetFunctionPtr checkSubClassSnippet;
 
     MethodTable methodTable;
 

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Yusuke Suzuki <utatane.tea@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,18 +31,18 @@
 
 #if ENABLE(JIT)
 
-namespace JSC { namespace DOMJIT {
+namespace JSC {
 
 // It is quite unfortunate that 32 bit environment exists on DFG! This means that JSValueRegs contains 2 registers
-// in such an environment. If we use GPRReg and FPRReg in DOMJITPatchpointParams, DOMJITPatchpointParams may contain
+// in such an environment. If we use GPRReg and FPRReg in SnippetParams, SnippetParams may contain
 // different number of registers in 32bit and 64bit environments when we pass JSValueRegs, it is confusing.
-// Therefore, we introduce an abstraction that DOMJIT::Reg, which is a polymorphic register class. It can refer FPRReg,
+// Therefore, we introduce an abstraction that SnippetReg, which is a polymorphic register class. It can refer FPRReg,
 // GPRReg, and "JSValueRegs". Note that isGPR() will return false if the target Reg is "JSValueRegs" even if the
 // environment is 64bit.
 //
 // FIXME: Eventually we should move this class into JSC and make is available for other JIT code.
 // https://bugs.webkit.org/show_bug.cgi?id=162990
-class Reg {
+class SnippetReg {
 public:
     enum class Type : uint8_t {
         GPR = 0,
@@ -49,17 +50,17 @@ public:
         JSValue = 2,
     };
 
-    Reg(GPRReg reg)
+    SnippetReg(GPRReg reg)
         : m_variant(reg)
     {
     }
 
-    Reg(FPRReg reg)
+    SnippetReg(FPRReg reg)
         : m_variant(reg)
     {
     }
 
-    Reg(JSValueRegs regs)
+    SnippetReg(JSValueRegs regs)
         : m_variant(regs)
     {
     }
@@ -88,6 +89,6 @@ private:
     Variant<GPRReg, FPRReg, JSValueRegs> m_variant;
 };
 
-} }
+}
 
 #endif

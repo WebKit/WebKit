@@ -35,23 +35,23 @@
 #include "JSDOMWrapper.h"
 #include "JSElement.h"
 #include "JSHTMLElement.h"
-#include <domjit/DOMJITPatchpoint.h>
-#include <domjit/DOMJITPatchpointParams.h>
+#include <jit/Snippet.h>
+#include <jit/SnippetParams.h>
 
 using namespace JSC;
 
 namespace WebCore {
 
-RefPtr<JSC::DOMJIT::Patchpoint> checkSubClassPatchpointForJSDocument()
+Ref<JSC::Snippet> checkSubClassSnippetForJSDocument()
 {
     return DOMJIT::checkDOM<Document>();
 }
 
-Ref<JSC::DOMJIT::CallDOMGetterPatchpoint> DocumentDocumentElementDOMJIT::callDOMGetter()
+Ref<JSC::DOMJIT::CallDOMGetterSnippet> DocumentDocumentElementDOMJIT::callDOMGetter()
 {
-    Ref<JSC::DOMJIT::CallDOMGetterPatchpoint> patchpoint = JSC::DOMJIT::CallDOMGetterPatchpoint::create();
-    patchpoint->numGPScratchRegisters = 1;
-    patchpoint->setGenerator([=](CCallHelpers& jit, JSC::DOMJIT::PatchpointParams& params) {
+    Ref<JSC::DOMJIT::CallDOMGetterSnippet> snippet = JSC::DOMJIT::CallDOMGetterSnippet::create();
+    snippet->numGPScratchRegisters = 1;
+    snippet->setGenerator([=](CCallHelpers& jit, JSC::SnippetParams& params) {
         JSValueRegs result = params[0].jsValueRegs();
         GPRReg document = params[1].gpr();
         GPRReg globalObject = params[2].gpr();
@@ -70,8 +70,8 @@ Ref<JSC::DOMJIT::CallDOMGetterPatchpoint> DocumentDocumentElementDOMJIT::callDOM
 
         return CCallHelpers::JumpList();
     });
-    patchpoint->effect = JSC::DOMJIT::Effect::forDef(DOMJIT::AbstractHeapRepository::Document_documentElement);
-    return patchpoint;
+    snippet->effect = JSC::DOMJIT::Effect::forDef(DOMJIT::AbstractHeapRepository::Document_documentElement);
+    return snippet;
 }
 
 static void loadLocalName(CCallHelpers& jit, GPRReg htmlElement, GPRReg localNameImpl)
@@ -80,11 +80,11 @@ static void loadLocalName(CCallHelpers& jit, GPRReg htmlElement, GPRReg localNam
     jit.loadPtr(CCallHelpers::Address(localNameImpl, QualifiedName::QualifiedNameImpl::localNameMemoryOffset()), localNameImpl);
 }
 
-Ref<JSC::DOMJIT::CallDOMGetterPatchpoint> DocumentBodyDOMJIT::callDOMGetter()
+Ref<JSC::DOMJIT::CallDOMGetterSnippet> DocumentBodyDOMJIT::callDOMGetter()
 {
-    Ref<JSC::DOMJIT::CallDOMGetterPatchpoint> patchpoint = JSC::DOMJIT::CallDOMGetterPatchpoint::create();
-    patchpoint->numGPScratchRegisters = 2;
-    patchpoint->setGenerator([=](CCallHelpers& jit, JSC::DOMJIT::PatchpointParams& params) {
+    Ref<JSC::DOMJIT::CallDOMGetterSnippet> snippet = JSC::DOMJIT::CallDOMGetterSnippet::create();
+    snippet->numGPScratchRegisters = 2;
+    snippet->setGenerator([=](CCallHelpers& jit, JSC::SnippetParams& params) {
         JSValueRegs result = params[0].jsValueRegs();
         GPRReg document = params[1].gpr();
         GPRReg globalObject = params[2].gpr();
@@ -137,8 +137,8 @@ Ref<JSC::DOMJIT::CallDOMGetterPatchpoint> DocumentBodyDOMJIT::callDOMGetter()
 
         return CCallHelpers::JumpList();
     });
-    patchpoint->effect = JSC::DOMJIT::Effect::forDef(DOMJIT::AbstractHeapRepository::Document_body);
-    return patchpoint;
+    snippet->effect = JSC::DOMJIT::Effect::forDef(DOMJIT::AbstractHeapRepository::Document_body);
+    return snippet;
 }
 
 }

@@ -1883,9 +1883,9 @@ private:
         }
 
         case CallDOMGetter: {
-            DOMJIT::CallDOMGetterPatchpoint* patchpoint = node->callDOMGetterData()->patchpoint;
+            DOMJIT::CallDOMGetterSnippet* snippet = node->callDOMGetterData()->snippet;
             fixEdge<CellUse>(node->child1()); // DOM.
-            if (patchpoint->requireGlobalObject)
+            if (snippet->requireGlobalObject)
                 fixEdge<KnownCellUse>(node->child2()); // GlobalObject.
             break;
         }

@@ -23,38 +23,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "DFGSnippetParams.h"
 
-#if ENABLE(JIT)
+#if ENABLE(DFG_JIT)
 
-#include "DOMJITPatchpointParams.h"
+#include "DFGSlowPathGenerator.h"
+#include "DFGSpeculativeJIT.h"
 
-namespace JSC {
+namespace JSC { namespace DFG {
 
-struct AccessGenerationState;
-
-class DOMJITAccessCasePatchpointParams : public DOMJIT::PatchpointParams {
-public:
-    DOMJITAccessCasePatchpointParams(VM& vm, Vector<DOMJIT::Value>&& regs, Vector<GPRReg>&& gpScratch, Vector<FPRReg>&& fpScratch)
-        : DOMJIT::PatchpointParams(vm, WTFMove(regs), WTFMove(gpScratch), WTFMove(fpScratch))
-    {
-    }
-
-    class SlowPathCallGenerator {
-    public:
-        virtual ~SlowPathCallGenerator() { }
-        virtual CCallHelpers::JumpList generate(AccessGenerationState&, const RegisterSet& usedRegistersByPatchpoint, CCallHelpers&) = 0;
-    };
-
-    CCallHelpers::JumpList emitSlowPathCalls(AccessGenerationState&, const RegisterSet& usedRegistersByPatchpoint, CCallHelpers&);
-
-private:
-#define JSC_DEFINE_CALL_OPERATIONS(OperationType, ResultType, ...) void addSlowPathCallImpl(CCallHelpers::JumpList, CCallHelpers&, OperationType, ResultType, std::tuple<__VA_ARGS__> args) override;
-    DOMJIT_SLOW_PATH_CALLS(JSC_DEFINE_CALL_OPERATIONS)
-#undef JSC_DEFINE_CALL_OPERATIONS
-    Vector<std::unique_ptr<SlowPathCallGenerator>> m_generators;
-};
-
+template<typename OperationType, typename ResultType, typename Arguments, size_t... ArgumentsIndex>
+static void dispatch(SpeculativeJIT* jit, CCallHelpers::JumpList from, OperationType operation, ResultType result, Arguments arguments, std::index_sequence<ArgumentsIndex...>)
+{
+    jit->addSlowPathGenerator(slowPathCall(from, jit, operation, result, std::get<ArgumentsIndex>(arguments)...));
 }
+
+#define JSC_DEFINE_CALL_OPERATIONS(OperationType, ResultType, ...) \
+    void SnippetParams::addSlowPathCallImpl(CCallHelpers::JumpList from, CCallHelpers&, OperationType operation, ResultType result, std::tuple<__VA_ARGS__> args) \
+    { \
+        dispatch(m_jit, from, operation, result, args, std::make_index_sequence<std::tuple_size<decltype(args)>::value>()); \
+    } \
+
+SNIPPET_SLOW_PATH_CALLS(JSC_DEFINE_CALL_OPERATIONS)
+#undef JSC_DEFINE_CALL_OPERATIONS
+
+} }
 
 #endif

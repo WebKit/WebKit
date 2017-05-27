@@ -28,23 +28,24 @@
 #if ENABLE(DFG_JIT)
 
 #include "DFGSpeculativeJIT.h"
-#include "DOMJITPatchpointParams.h"
+#include "Snippet.h"
+#include "SnippetParams.h"
 
 namespace JSC { namespace DFG {
     
 class SpeculativeJIT;
 
-class DOMJITPatchpointParams : public DOMJIT::PatchpointParams {
+class SnippetParams : public JSC::SnippetParams {
 public:
-    DOMJITPatchpointParams(SpeculativeJIT* jit, Vector<DOMJIT::Value>&& regs, Vector<GPRReg>&& gpScratch, Vector<FPRReg>&& fpScratch)
-        : DOMJIT::PatchpointParams(jit->vm(), WTFMove(regs), WTFMove(gpScratch), WTFMove(fpScratch))
+    SnippetParams(SpeculativeJIT* jit, Vector<Value>&& regs, Vector<GPRReg>&& gpScratch, Vector<FPRReg>&& fpScratch)
+        : JSC::SnippetParams(jit->vm(), WTFMove(regs), WTFMove(gpScratch), WTFMove(fpScratch))
         , m_jit(jit)
     {
     }
 
 private:
 #define JSC_DEFINE_CALL_OPERATIONS(OperationType, ResultType, ...) void addSlowPathCallImpl(CCallHelpers::JumpList, CCallHelpers&, OperationType, ResultType, std::tuple<__VA_ARGS__> args) override;
-    DOMJIT_SLOW_PATH_CALLS(JSC_DEFINE_CALL_OPERATIONS)
+    SNIPPET_SLOW_PATH_CALLS(JSC_DEFINE_CALL_OPERATIONS)
 #undef JSC_DEFINE_CALL_OPERATIONS
 
     SpeculativeJIT* m_jit;

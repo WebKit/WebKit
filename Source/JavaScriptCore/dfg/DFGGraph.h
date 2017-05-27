@@ -979,7 +979,7 @@ public:
     HashMap<CodeBlock*, std::unique_ptr<BytecodeKills>> m_bytecodeKills;
     HashSet<std::pair<JSObject*, PropertyOffset>> m_safeToLoad;
     HashMap<PropertyTypeKey, InferredType::Descriptor> m_inferredTypes;
-    Vector<RefPtr<DOMJIT::Patchpoint>> m_domJITPatchpoints;
+    Vector<Ref<Snippet>> m_domJITSnippets;
     std::unique_ptr<Dominators> m_dominators;
     std::unique_ptr<PrePostNumbering> m_prePostNumbering;
     std::unique_ptr<NaturalLoops> m_naturalLoops;

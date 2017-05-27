@@ -82,13 +82,13 @@ struct TypeChecker<Element> {
 };
 
 template<typename DOMInterface>
-Ref<JSC::DOMJIT::Patchpoint> checkDOM()
+Ref<JSC::Snippet> checkDOM()
 {
-    Ref<JSC::DOMJIT::Patchpoint> patchpoint = JSC::DOMJIT::Patchpoint::create();
-    patchpoint->setGenerator([=](CCallHelpers& jit, JSC::DOMJIT::PatchpointParams& params) {
+    Ref<JSC::Snippet> snippet = JSC::Snippet::create();
+    snippet->setGenerator([=](CCallHelpers& jit, JSC::SnippetParams& params) {
         return TypeChecker<DOMInterface>::branchIfFail(jit, params[0].gpr());
     });
-    return patchpoint;
+    return snippet;
 }
 
 } }

@@ -34,12 +34,11 @@
 #include "DFGCallArrayAllocatorSlowPathGenerator.h"
 #include "DFGCallCreateDirectArgumentsSlowPathGenerator.h"
 #include "DFGCapabilities.h"
-#include "DFGDOMJITPatchpointParams.h"
 #include "DFGMayExit.h"
 #include "DFGOSRExitFuzz.h"
 #include "DFGSaneStringGetByValSlowPathGenerator.h"
 #include "DFGSlowPathGenerator.h"
-#include "DOMJITPatchpoint.h"
+#include "DFGSnippetParams.h"
 #include "DirectArguments.h"
 #include "JITAddGenerator.h"
 #include "JITBitAndGenerator.h"
@@ -7771,15 +7770,15 @@ void SpeculativeJIT::compileGetButterfly(Node* node)
     storageResult(resultGPR, node);
 }
 
-static void allocateTemporaryRegistersForPatchpoint(SpeculativeJIT* jit, Vector<GPRTemporary>& gpHolders, Vector<FPRTemporary>& fpHolders, Vector<GPRReg>& gpScratch, Vector<FPRReg>& fpScratch, DOMJIT::Patchpoint& patchpoint)
+static void allocateTemporaryRegistersForSnippet(SpeculativeJIT* jit, Vector<GPRTemporary>& gpHolders, Vector<FPRTemporary>& fpHolders, Vector<GPRReg>& gpScratch, Vector<FPRReg>& fpScratch, Snippet& snippet)
 {
-    for (unsigned i = 0; i < patchpoint.numGPScratchRegisters; ++i) {
+    for (unsigned i = 0; i < snippet.numGPScratchRegisters; ++i) {
         GPRTemporary temporary(jit);
         gpScratch.append(temporary.gpr());
         gpHolders.append(WTFMove(temporary));
     }
 
-    for (unsigned i = 0; i < patchpoint.numFPScratchRegisters; ++i) {
+    for (unsigned i = 0; i < snippet.numFPScratchRegisters; ++i) {
         FPRTemporary temporary(jit);
         fpScratch.append(temporary.fpr());
         fpHolders.append(WTFMove(temporary));
@@ -7870,38 +7869,38 @@ void SpeculativeJIT::compileCallDOM(Node* node)
 
 void SpeculativeJIT::compileCallDOMGetter(Node* node)
 {
-    DOMJIT::CallDOMGetterPatchpoint* patchpoint = node->callDOMGetterData()->patchpoint;
+    DOMJIT::CallDOMGetterSnippet* snippet = node->callDOMGetterData()->snippet;
 
     Vector<GPRReg> gpScratch;
     Vector<FPRReg> fpScratch;
-    Vector<DOMJIT::Value> regs;
+    Vector<SnippetParams::Value> regs;
 
     JSValueRegsTemporary result(this);
     regs.append(result.regs());
 
     Edge& baseEdge = node->child1();
     SpeculateCellOperand base(this, baseEdge);
-    regs.append(DOMJIT::Value(base.gpr(), m_state.forNode(baseEdge).value()));
+    regs.append(SnippetParams::Value(base.gpr(), m_state.forNode(baseEdge).value()));
 
     std::optional<SpeculateCellOperand> globalObject;
-    if (patchpoint->requireGlobalObject) {
+    if (snippet->requireGlobalObject) {
         Edge& globalObjectEdge = node->child2();
         globalObject.emplace(this, globalObjectEdge);
-        regs.append(DOMJIT::Value(globalObject->gpr(), m_state.forNode(globalObjectEdge).value()));
+        regs.append(SnippetParams::Value(globalObject->gpr(), m_state.forNode(globalObjectEdge).value()));
     }
 
     Vector<GPRTemporary> gpTempraries;
     Vector<FPRTemporary> fpTempraries;
-    allocateTemporaryRegistersForPatchpoint(this, gpTempraries, fpTempraries, gpScratch, fpScratch, *patchpoint);
-    DOMJITPatchpointParams params(this, WTFMove(regs), WTFMove(gpScratch), WTFMove(fpScratch));
-    patchpoint->generator()->run(m_jit, params);
+    allocateTemporaryRegistersForSnippet(this, gpTempraries, fpTempraries, gpScratch, fpScratch, *snippet);
+    SnippetParams params(this, WTFMove(regs), WTFMove(gpScratch), WTFMove(fpScratch));
+    snippet->generator()->run(m_jit, params);
     jsValueResult(result.regs(), node);
 }
 
 void SpeculativeJIT::compileCheckSubClass(Node* node)
 {
     const ClassInfo* classInfo = node->classInfo();
-    if (!classInfo->checkSubClassPatchpoint) {
+    if (!classInfo->checkSubClassSnippet) {
         SpeculateCellOperand base(this, node->child1());
         GPRTemporary other(this);
         GPRTemporary specified(this);
@@ -7924,22 +7923,22 @@ void SpeculativeJIT::compileCheckSubClass(Node* node)
         return;
     }
 
-    RefPtr<DOMJIT::Patchpoint> patchpoint = classInfo->checkSubClassPatchpoint();
+    Ref<Snippet> snippet = classInfo->checkSubClassSnippet();
 
     Vector<GPRReg> gpScratch;
     Vector<FPRReg> fpScratch;
-    Vector<DOMJIT::Value> regs;
+    Vector<SnippetParams::Value> regs;
 
     SpeculateCellOperand base(this, node->child1());
     GPRReg baseGPR = base.gpr();
-    regs.append(DOMJIT::Value(baseGPR, m_state.forNode(node->child1()).value()));
+    regs.append(SnippetParams::Value(baseGPR, m_state.forNode(node->child1()).value()));
 
     Vector<GPRTemporary> gpTempraries;
     Vector<FPRTemporary> fpTempraries;
-    allocateTemporaryRegistersForPatchpoint(this, gpTempraries, fpTempraries, gpScratch, fpScratch, *patchpoint);
+    allocateTemporaryRegistersForSnippet(this, gpTempraries, fpTempraries, gpScratch, fpScratch, snippet.get());
 
-    DOMJITPatchpointParams params(this, WTFMove(regs), WTFMove(gpScratch), WTFMove(fpScratch));
-    CCallHelpers::JumpList failureCases = patchpoint->generator()->run(m_jit, params);
+    SnippetParams params(this, WTFMove(regs), WTFMove(gpScratch), WTFMove(fpScratch));
+    CCallHelpers::JumpList failureCases = snippet->generator()->run(m_jit, params);
     speculationCheck(BadType, JSValueSource::unboxedCell(baseGPR), node->child1(), failureCases);
     noResult(node);
 }

@@ -2229,11 +2229,11 @@ sub GenerateHeader
         }
     }
 
-    # CheckSubClass Patchpoint function.
+    # CheckSubClass Snippet function.
     if ($interface->extendedAttributes->{DOMJIT}) {
-        $headerIncludes{"<domjit/DOMJITPatchpoint.h>"} = 1;
+        $headerIncludes{"<jit/Snippet.h>"} = 1;
         push(@headerContent, "#if ENABLE(JIT)\n");
-        push(@headerContent, "RefPtr<JSC::DOMJIT::Patchpoint> checkSubClassPatchpointFor${className}();\n");
+        push(@headerContent, "Ref<JSC::Snippet> checkSubClassSnippetFor${className}();\n");
         push(@headerContent, "#endif\n");
     }
 
@@ -2254,7 +2254,7 @@ sub GenerateHeader
             push(@headerContent, "public:\n");
             push(@headerContent, "    ${domJITClassName}();\n");
             push(@headerContent, "#if ENABLE(JIT)\n");
-            push(@headerContent, "    Ref<JSC::DOMJIT::CallDOMGetterPatchpoint> callDOMGetter() override;\n");
+            push(@headerContent, "    Ref<JSC::DOMJIT::CallDOMGetterSnippet> callDOMGetter() override;\n");
             push(@headerContent, "#endif\n");
             push(@headerContent, "};\n\n");
         }
@@ -3462,7 +3462,7 @@ sub GenerateImplementation
     if ($interface->extendedAttributes->{DOMJIT}) {
         push(@implContent, "\n");
         push(@implContent, "#if ENABLE(JIT)\n");
-        push(@implContent, ", &checkSubClassPatchpointFor${className}\n");
+        push(@implContent, ", &checkSubClassSnippetFor${className}\n");
         push(@implContent, "#else\n");
         push(@implContent, ", nullptr\n");
         push(@implContent, "#endif\n");

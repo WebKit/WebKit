@@ -2406,8 +2406,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     }
     case CallDOMGetter: {
         CallDOMGetterData* callDOMGetterData = node->callDOMGetterData();
-        DOMJIT::CallDOMGetterPatchpoint* patchpoint = callDOMGetterData->patchpoint;
-        if (patchpoint->effect.writes)
+        DOMJIT::CallDOMGetterSnippet* snippet = callDOMGetterData->snippet;
+        if (snippet->effect.writes)
             clobberWorld(node->origin.semantic, clobberLimit);
         forNode(node).setType(m_graph, callDOMGetterData->domJIT->resultType());
         break;

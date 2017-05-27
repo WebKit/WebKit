@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "DOMJITCallDOMGetterPatchpoint.h"
+#include "DOMJITCallDOMGetterSnippet.h"
 #include "PropertySlot.h"
 #include "PutPropertySlot.h"
 #include "SpeculatedType.h"
@@ -53,7 +53,7 @@ public:
     SpeculatedType resultType() const { return m_resultType; }
 
 #if ENABLE(JIT)
-    virtual Ref<DOMJIT::CallDOMGetterPatchpoint> callDOMGetter() = 0;
+    virtual Ref<CallDOMGetterSnippet> callDOMGetter() = 0;
 #endif
 
 private:

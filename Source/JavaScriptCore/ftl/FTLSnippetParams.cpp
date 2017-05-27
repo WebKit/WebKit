@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "FTLDOMJITPatchpointParams.h"
+#include "FTLSnippetParams.h"
 
 #if ENABLE(FTL_JIT)
 
@@ -50,12 +50,12 @@ static void dispatch(CCallHelpers& jit, FTL::State* state, const B3::StackmapGen
 }
 
 #define JSC_DEFINE_CALL_OPERATIONS(OperationType, ResultType, ...) \
-    void DOMJITPatchpointParams::addSlowPathCallImpl(CCallHelpers::JumpList from, CCallHelpers& jit, OperationType operation, ResultType result, std::tuple<__VA_ARGS__> args) \
+    void SnippetParams::addSlowPathCallImpl(CCallHelpers::JumpList from, CCallHelpers& jit, OperationType operation, ResultType result, std::tuple<__VA_ARGS__> args) \
     { \
         dispatch(jit, &m_state, m_params, m_node, m_exceptions, from, operation, result, args, std::make_index_sequence<std::tuple_size<decltype(args)>::value>()); \
     } \
 
-DOMJIT_SLOW_PATH_CALLS(JSC_DEFINE_CALL_OPERATIONS)
+SNIPPET_SLOW_PATH_CALLS(JSC_DEFINE_CALL_OPERATIONS)
 #undef JSC_DEFINE_CALL_OPERATIONS
 
 } }

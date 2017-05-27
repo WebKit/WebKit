@@ -28,9 +28,9 @@
 
 #include "JSDOMWrapper.h"
 #include "Node.h"
-#include <domjit/DOMJITPatchpoint.h>
-#include <domjit/DOMJITPatchpointParams.h>
 #include <interpreter/FrameTracers.h>
+#include <jit/Snippet.h>
+#include <jit/SnippetParams.h>
 
 #if ENABLE(JIT)
 
@@ -73,7 +73,7 @@ void tryLookUpWrapperCache(CCallHelpers& jit, CCallHelpers::JumpList& failureCas
 }
 
 template<typename WrappedType, typename ToJSFunction>
-void toWrapper(CCallHelpers& jit, JSC::DOMJIT::PatchpointParams& params, GPRReg wrapped, GPRReg globalObject, JSValueRegs result, ToJSFunction function, JSC::JSValue globalObjectConstant)
+void toWrapper(CCallHelpers& jit, JSC::SnippetParams& params, GPRReg wrapped, GPRReg globalObject, JSValueRegs result, ToJSFunction function, JSC::JSValue globalObjectConstant)
 {
     ASSERT(wrapped != result.payloadGPR());
     ASSERT(globalObject != result.payloadGPR());

@@ -25,45 +25,37 @@
 
 #pragma once
 
-#include "DOMJITReg.h"
+#if ENABLE(FTL_JIT)
 
-#if ENABLE(JIT)
+#include "B3StackmapGenerationParams.h"
+#include "FTLState.h"
+#include "Snippet.h"
+#include "SnippetParams.h"
 
-namespace JSC { namespace DOMJIT {
+namespace JSC { namespace FTL {
 
-class Value {
+class State;
+
+class SnippetParams : public JSC::SnippetParams {
 public:
-    Value(Reg reg)
-        : m_reg(reg)
+    SnippetParams(State& state, const B3::StackmapGenerationParams& params, DFG::Node* node, Box<CCallHelpers::JumpList> exceptions, Vector<Value>&& regs, Vector<GPRReg>&& gpScratch, Vector<FPRReg>&& fpScratch)
+        : JSC::SnippetParams(state.vm(), WTFMove(regs), WTFMove(gpScratch), WTFMove(fpScratch))
+        , m_state(state)
+        , m_params(params)
+        , m_node(node)
+        , m_exceptions(exceptions)
     {
-    }
-
-    Value(Reg reg, JSValue value)
-        : m_reg(reg)
-        , m_value(value)
-    {
-    }
-
-    bool isGPR() const { return m_reg.isGPR(); }
-    bool isFPR() const { return m_reg.isFPR(); }
-    bool isJSValueRegs() const { return m_reg.isJSValueRegs(); }
-    GPRReg gpr() const { return m_reg.gpr(); }
-    FPRReg fpr() const { return m_reg.fpr(); }
-    JSValueRegs jsValueRegs() const { return m_reg.jsValueRegs(); }
-
-    Reg reg() const
-    {
-        return m_reg;
-    }
-
-    JSValue value() const
-    {
-        return m_value;
     }
 
 private:
-    Reg m_reg;
-    JSValue m_value;
+#define JSC_DEFINE_CALL_OPERATIONS(OperationType, ResultType, ...) void addSlowPathCallImpl(CCallHelpers::JumpList, CCallHelpers&, OperationType, ResultType, std::tuple<__VA_ARGS__> args) override;
+    SNIPPET_SLOW_PATH_CALLS(JSC_DEFINE_CALL_OPERATIONS)
+#undef JSC_DEFINE_CALL_OPERATIONS
+
+    State& m_state;
+    const B3::StackmapGenerationParams& m_params;
+    DFG::Node* m_node;
+    Box<CCallHelpers::JumpList> m_exceptions;
 };
 
 } }

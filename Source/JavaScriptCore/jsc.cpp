@@ -31,8 +31,6 @@
 #include "Completion.h"
 #include "ConfigFile.h"
 #include "DOMJITGetterSetter.h"
-#include "DOMJITPatchpoint.h"
-#include "DOMJITPatchpointParams.h"
 #include "Disassembler.h"
 #include "Exception.h"
 #include "ExceptionHelpers.h"
@@ -68,6 +66,8 @@
 #include "ReleaseHeapAccessScope.h"
 #include "SamplingProfiler.h"
 #include "ShadowChicken.h"
+#include "Snippet.h"
+#include "SnippetParams.h"
 #include "StackVisitor.h"
 #include "StructureInlines.h"
 #include "StructureRareDataInlines.h"
@@ -589,10 +589,10 @@ public:
     }
 
 #if ENABLE(JIT)
-    static RefPtr<DOMJIT::Patchpoint> checkSubClassPatchpoint()
+    static Ref<Snippet> checkSubClassSnippet()
     {
-        Ref<DOMJIT::Patchpoint> patchpoint = DOMJIT::Patchpoint::create();
-        patchpoint->setGenerator([=](CCallHelpers& jit, DOMJIT::PatchpointParams& params) {
+        Ref<Snippet> snippet = Snippet::create();
+        snippet->setGenerator([=](CCallHelpers& jit, SnippetParams& params) {
             CCallHelpers::JumpList failureCases;
             failureCases.append(jit.branch8(
                 CCallHelpers::NotEqual,
@@ -600,7 +600,7 @@ public:
                 CCallHelpers::TrustedImm32(JSC::JSType(LastJSCObjectType + 1))));
             return failureCases;
         });
-        return WTFMove(patchpoint);
+        return snippet;
     }
 #endif
 
@@ -659,18 +659,18 @@ public:
             return JSValue::encode(jsNumber(static_cast<DOMJITGetter*>(pointer)->value()));
         }
 
-        Ref<DOMJIT::CallDOMGetterPatchpoint> callDOMGetter() override
+        Ref<DOMJIT::CallDOMGetterSnippet> callDOMGetter() override
         {
-            Ref<DOMJIT::CallDOMGetterPatchpoint> patchpoint = DOMJIT::CallDOMGetterPatchpoint::create();
-            patchpoint->requireGlobalObject = false;
-            patchpoint->setGenerator([=](CCallHelpers& jit, DOMJIT::PatchpointParams& params) {
+            Ref<DOMJIT::CallDOMGetterSnippet> snippet = DOMJIT::CallDOMGetterSnippet::create();
+            snippet->requireGlobalObject = false;
+            snippet->setGenerator([=](CCallHelpers& jit, SnippetParams& params) {
                 JSValueRegs results = params[0].jsValueRegs();
                 GPRReg dom = params[1].gpr();
                 params.addSlowPathCall(jit.jump(), jit, slowCall, results, dom);
                 return CCallHelpers::JumpList();
 
             });
-            return patchpoint;
+            return snippet;
         }
 #endif
     };
@@ -747,23 +747,23 @@ public:
             return JSValue::encode(jsNumber(object->value()));
         }
 
-        Ref<DOMJIT::CallDOMGetterPatchpoint> callDOMGetter() override
+        Ref<DOMJIT::CallDOMGetterSnippet> callDOMGetter() override
         {
-            RefPtr<DOMJIT::CallDOMGetterPatchpoint> patchpoint = DOMJIT::CallDOMGetterPatchpoint::create();
+            RefPtr<DOMJIT::CallDOMGetterSnippet> snippet = DOMJIT::CallDOMGetterSnippet::create();
             static_assert(GPRInfo::numberOfRegisters >= 4, "Number of registers should be larger or equal to 4.");
-            patchpoint->numGPScratchRegisters = GPRInfo::numberOfRegisters - 4;
-            patchpoint->numFPScratchRegisters = 3;
-            patchpoint->setGenerator([=](CCallHelpers& jit, DOMJIT::PatchpointParams& params) {
+            snippet->numGPScratchRegisters = GPRInfo::numberOfRegisters - 4;
+            snippet->numFPScratchRegisters = 3;
+            snippet->setGenerator([=](CCallHelpers& jit, SnippetParams& params) {
                 JSValueRegs results = params[0].jsValueRegs();
                 GPRReg domGPR = params[1].gpr();
-                for (unsigned i = 0; i < patchpoint->numGPScratchRegisters; ++i)
+                for (unsigned i = 0; i < snippet->numGPScratchRegisters; ++i)
                     jit.move(CCallHelpers::TrustedImm32(42), params.gpScratch(i));
 
                 params.addSlowPathCall(jit.jump(), jit, slowCall, results, domGPR);
                 return CCallHelpers::JumpList();
 
             });
-            return *patchpoint.get();
+            return *snippet.get();
         }
 #endif
     };
@@ -853,11 +853,11 @@ public:
     }
 
 #if ENABLE(JIT)
-    static RefPtr<DOMJIT::Patchpoint> checkSubClassPatchpoint()
+    static Ref<Snippet> checkSubClassSnippet()
     {
-        Ref<DOMJIT::Patchpoint> patchpoint = DOMJIT::Patchpoint::create();
-        patchpoint->numFPScratchRegisters = 1;
-        patchpoint->setGenerator([=](CCallHelpers& jit, DOMJIT::PatchpointParams& params) {
+        Ref<Snippet> snippet = Snippet::create();
+        snippet->numFPScratchRegisters = 1;
+        snippet->setGenerator([=](CCallHelpers& jit, SnippetParams& params) {
             static const double value = 42.0;
             CCallHelpers::JumpList failureCases;
             // May use scratch registers.
@@ -868,7 +868,7 @@ public:
                 CCallHelpers::TrustedImm32(JSC::JSType(LastJSCObjectType + 1))));
             return failureCases;
         });
-        return WTFMove(patchpoint);
+        return snippet;
     }
 #endif
 
@@ -943,14 +943,14 @@ const ClassInfo Root::s_info = { "Root", &Base::s_info, nullptr, nullptr, CREATE
 const ClassInfo ImpureGetter::s_info = { "ImpureGetter", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(ImpureGetter) };
 const ClassInfo CustomGetter::s_info = { "CustomGetter", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(CustomGetter) };
 #if ENABLE(JIT)
-const ClassInfo DOMJITNode::s_info = { "DOMJITNode", &Base::s_info, nullptr, &DOMJITNode::checkSubClassPatchpoint, CREATE_METHOD_TABLE(DOMJITNode) };
+const ClassInfo DOMJITNode::s_info = { "DOMJITNode", &Base::s_info, nullptr, &DOMJITNode::checkSubClassSnippet, CREATE_METHOD_TABLE(DOMJITNode) };
 #else
 const ClassInfo DOMJITNode::s_info = { "DOMJITNode", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(DOMJITNode) };
 #endif
 const ClassInfo DOMJITGetter::s_info = { "DOMJITGetter", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(DOMJITGetter) };
 const ClassInfo DOMJITGetterComplex::s_info = { "DOMJITGetterComplex", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(DOMJITGetterComplex) };
 #if ENABLE(JIT)
-const ClassInfo DOMJITFunctionObject::s_info = { "DOMJITFunctionObject", &Base::s_info, nullptr, &DOMJITFunctionObject::checkSubClassPatchpoint, CREATE_METHOD_TABLE(DOMJITFunctionObject) };
+const ClassInfo DOMJITFunctionObject::s_info = { "DOMJITFunctionObject", &Base::s_info, nullptr, &DOMJITFunctionObject::checkSubClassSnippet, CREATE_METHOD_TABLE(DOMJITFunctionObject) };
 #else
 const ClassInfo DOMJITFunctionObject::s_info = { "DOMJITFunctionObject", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(DOMJITFunctionObject) };
 #endif

@@ -37,10 +37,6 @@ namespace JSC { namespace DOMJIT {
 #define JSC_DOMJIT_SIGNATURE_MAX_ARGUMENTS 2
 #define JSC_DOMJIT_SIGNATURE_MAX_ARGUMENTS_INCLUDING_THIS (1 + JSC_DOMJIT_SIGNATURE_MAX_ARGUMENTS)
 
-class Patchpoint;
-
-typedef Ref<Patchpoint> CheckDOMGeneratorFunction(void);
-
 class Signature {
 public:
     template<typename... Arguments>
