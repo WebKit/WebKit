@@ -363,3 +363,5 @@ webkit.org/b/171814 http/tests/media/hls/video-duration-accessibility.html [ Fai
 webkit.org/b/172241 http/tests/appcache/404-resource-with-slow-main-resource.php [ Pass Failure ]
 
 webkit.org/b/171061 webrtc/datachannel/filter-ice-candidate.html [ Pass Timeout ]
+
+webkit.org/b/172331 workers/wasm-long-compile-many.html [ Pass Timeout ]
