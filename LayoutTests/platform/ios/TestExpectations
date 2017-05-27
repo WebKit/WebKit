@@ -2884,3 +2884,4 @@ webkit.org/b/172019 imported/w3c/web-platform-tests/cssom-view/elementFromPoint.
 webkit.org/b/172547 http/tests/xmlhttprequest/xmlhttprequest-50ms-download-dispatch.html [ Failure ]
 
 webkit.org/b/172610 media/ios/autoplay-only-in-main-document.html [ Skip ]
+webkit.org/b/172672 fast/events/before-unload-returnValue.html [ Skip ]
