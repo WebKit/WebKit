@@ -1,3 +1,15 @@
+2017-05-27  Zalan Bujtas  <zalan@apple.com>
+
+        enclosingIntRect returns a rect with -1 width/height when the input FloatRect overflows integer.
+        https://bugs.webkit.org/show_bug.cgi?id=172676
+
+        Reviewed by Simon Fraser.
+
+        Clamp integer values soon after the enclosing rectangle is resolved.
+
+        * platform/graphics/FloatRect.cpp:
+        (WebCore::enclosingIntRect):
+
 2017-05-26  Joseph Pecoraro  <pecoraro@apple.com>
 
         Simply some NSNumber usage

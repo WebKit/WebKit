@@ -1,3 +1,13 @@
+2017-05-27  Zalan Bujtas  <zalan@apple.com>
+
+        enclosingIntRect returns a rect with -1 width/height when the input FloatRect overflows integer.
+        https://bugs.webkit.org/show_bug.cgi?id=172676
+
+        Reviewed by Simon Fraser.
+
+        * TestWebKitAPI/Tests/WebCore/FloatRect.cpp:
+        (TestWebKitAPI::TEST):
+
 2017-05-26  Zalan Bujtas  <zalan@apple.com>
 
         TestWebKitAPI: EnclosingIntRect and RoundedIntRect should use EXPECT_EQ.

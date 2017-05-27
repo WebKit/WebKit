@@ -766,6 +766,17 @@ TEST(FloatRect, EnclosingIntRect)
     EXPECT_EQ(20, enclosed.y());
     EXPECT_EQ(1035, enclosed.maxX());
     EXPECT_EQ(789, enclosed.maxY());
+
+    WebCore::FloatRect maxIntRect(INT_MIN, INT_MIN, 0, 0);
+    maxIntRect.shiftMaxXEdgeTo(INT_MAX);
+    maxIntRect.shiftMaxYEdgeTo(INT_MAX);
+
+    auto enclosed2 = WebCore::enclosingIntRect(maxIntRect);
+
+    EXPECT_EQ(INT_MIN, enclosed2.x());
+    EXPECT_EQ(INT_MIN, enclosed2.y());
+    EXPECT_EQ(INT_MAX, enclosed2.width());
+    EXPECT_EQ(INT_MAX, enclosed2.height());
 }
 
 TEST(FloatRect, RoundedIntRect)
