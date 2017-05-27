@@ -1,3 +1,67 @@
+2017-05-26  Brent Fulgham  <bfulgham@apple.com>
+
+        [WK2] Address thread safety issues with ResourceLoadStatistics
+        https://bugs.webkit.org/show_bug.cgi?id=172519
+        <rdar://problem/31707642>
+
+        Reviewed by Chris Dumez.
+
+        * loader/ResourceLoadObserver.cpp:
+        (WebCore::ResourceLoadObserver::setStatisticsQueue): Added.
+        (WebCore::ResourceLoadObserver::clearInMemoryStore): Only interact with the HashTable on the statistics queue.
+        (WebCore::ResourceLoadObserver::clearInMemoryAndPersistentStore): Ditto.
+        (WebCore::ResourceLoadObserver::logFrameNavigation): Ditto.
+        (WebCore::ResourceLoadObserver::logSubresourceLoading): Ditto.
+        (WebCore::ResourceLoadObserver::logWebSocketLoading): Ditto.
+        (WebCore::ResourceLoadObserver::logUserInteractionWithReducedTimeResolution): Ditto.
+        (WebCore::ResourceLoadObserver::logUserInteraction): Ditto.
+        (WebCore::ResourceLoadObserver::clearUserInteraction): Protect HashTable while reading.
+        (WebCore::ResourceLoadObserver::hasHadUserInteraction): Ditto.
+        (WebCore::ResourceLoadObserver::setPrevalentResource): Ditto.
+        (WebCore::ResourceLoadObserver::isPrevalentResource): Ditto.
+        (WebCore::ResourceLoadObserver::clearPrevalentResource): Ditto.
+        (WebCore::ResourceLoadObserver::setGrandfathered): Ditto.
+        (WebCore::ResourceLoadObserver::isGrandfathered): Ditto.
+        (WebCore::ResourceLoadObserver::setSubframeUnderTopFrameOrigin): Only interact with the HashTable on the statistics queue.
+        (WebCore::ResourceLoadObserver::setSubresourceUnderTopFrameOrigin): Ditto.
+        (WebCore::ResourceLoadObserver::setSubresourceUniqueRedirectTo): Ditto.
+        (WebCore::ResourceLoadObserver::fireDataModificationHandler): ASSERT this is only called from the main thread, since this is
+        only meant to be used as part of the testing harness.
+        (WebCore::ResourceLoadObserver::fireShouldPartitionCookiesHandler): Ditto.
+        (WebCore::ResourceLoadObserver::fireShouldPartitionCookiesHandler): Ditto.
+        * loader/ResourceLoadObserver.h:
+        * loader/ResourceLoadStatisticsStore.cpp:
+        (WebCore::ResourceLoadStatisticsStore::isPrevalentResource): Protect HashTable while using it.
+        (WebCore::ResourceLoadStatisticsStore::ensureResourceStatisticsForPrimaryDomain): Ditto.
+        (WebCore::ResourceLoadStatisticsStore::setResourceStatisticsForPrimaryDomain): Ditto.
+        (WebCore::ResourceLoadStatisticsStore::createEncoderFromData): ASSERT this isn't being done on the main thread, and
+        protect HashTable while using it.
+        (WebCore::ResourceLoadStatisticsStore::readDataFromDecoder): Ditto.
+        (WebCore::ResourceLoadStatisticsStore::clearInMemory): Ditto.
+        (WebCore::ResourceLoadStatisticsStore::clearInMemoryAndPersistent): Ditto.
+        (WebCore::ResourceLoadStatisticsStore::statisticsForOrigin): Protect HashTable while using it.
+        (WebCore::ResourceLoadStatisticsStore::takeStatistics): Ditto.
+        (WebCore::ResourceLoadStatisticsStore::mergeStatistics): Ditto.
+        (WebCore::ResourceLoadStatisticsStore::setNotificationCallback): Use WTF::Function.
+        (WebCore::ResourceLoadStatisticsStore::setShouldPartitionCookiesCallback): Ditto.
+        (WebCore::ResourceLoadStatisticsStore::setWritePersistentStoreCallback): Ditto.
+        (WebCore::ResourceLoadStatisticsStore::setGrandfatherExistingWebsiteDataCallback): Ditto.
+        (WebCore::ResourceLoadStatisticsStore::fireDataModificationHandler): ASSERT this is not called on the main thread,
+        but dispatch the registered handler on the main thread.
+        (WebCore::ResourceLoadStatisticsStore::fireShouldPartitionCookiesHandler): Ditto.
+        (WebCore::ResourceLoadStatisticsStore::processStatistics): ASSERT this isn't being done on the main thread, and
+        protect the HashTable while using it. Also switch to WTF::Function.
+        (WebCore::ResourceLoadStatisticsStore::hasHadRecentUserInteraction): Make const correct.
+        (WebCore::ResourceLoadStatisticsStore::topPrivatelyControlledDomainsToRemoveWebsiteDataFor): Protect HashTable while using it.
+        (WebCore::ResourceLoadStatisticsStore::updateStatisticsForRemovedDataRecords): Ditto.
+        (WebCore::ResourceLoadStatisticsStore::handleFreshStartWithEmptyOrNoStore): Ditto.
+        (WebCore::ResourceLoadStatisticsStore::shouldRemoveDataRecords): Make const correct. ASSERT this is not being called
+        on the main thread.
+        (WebCore::ResourceLoadStatisticsStore::dataRecordsBeingRemoved): ASSERT this is not being called on the main thread.
+        (WebCore::ResourceLoadStatisticsStore::dataRecordsWereRemoved): Ditto.
+        (WebCore::ResourceLoadStatisticsStore::statisticsLock): Added.
+        * loader/ResourceLoadStatisticsStore.h:
+
 2017-05-26  Joseph Pecoraro  <pecoraro@apple.com>
 
         JSContext Inspector: Improve the reliability of automatically pausing in auto-attach

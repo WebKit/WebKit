@@ -33,8 +33,11 @@
 #include "ResourceLoadStatistics.h"
 #include "SharedBuffer.h"
 #include "URL.h"
+#include <wtf/CrossThreadCopier.h>
 #include <wtf/CurrentTime.h>
+#include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/RunLoop.h>
 
 namespace WebCore {
 
@@ -53,6 +56,7 @@ Ref<ResourceLoadStatisticsStore> ResourceLoadStatisticsStore::create()
     
 bool ResourceLoadStatisticsStore::isPrevalentResource(const String& primaryDomain) const
 {
+    auto locker = holdLock(m_statisticsLock);
     auto mapEntry = m_resourceStatisticsMap.find(primaryDomain);
     if (mapEntry == m_resourceStatisticsMap.end())
         return false;
@@ -62,6 +66,7 @@ bool ResourceLoadStatisticsStore::isPrevalentResource(const String& primaryDomai
     
 ResourceLoadStatistics& ResourceLoadStatisticsStore::ensureResourceStatisticsForPrimaryDomain(const String& primaryDomain)
 {
+    ASSERT(m_statisticsLock.isLocked());
     auto addResult = m_resourceStatisticsMap.ensure(primaryDomain, [&primaryDomain] {
         return ResourceLoadStatistics(primaryDomain);
     });
@@ -71,6 +76,8 @@ ResourceLoadStatistics& ResourceLoadStatisticsStore::ensureResourceStatisticsFor
 
 void ResourceLoadStatisticsStore::setResourceStatisticsForPrimaryDomain(const String& primaryDomain, ResourceLoadStatistics&& statistics)
 {
+    ASSERT(!isMainThread());
+    auto locker = holdLock(m_statisticsLock);
     m_resourceStatisticsMap.set(primaryDomain, WTFMove(statistics));
 }
 
@@ -78,10 +85,13 @@ typedef HashMap<String, ResourceLoadStatistics>::KeyValuePairType StatisticsValu
 
 std::unique_ptr<KeyedEncoder> ResourceLoadStatisticsStore::createEncoderFromData()
 {
+    ASSERT(!isMainThread());
     auto encoder = KeyedEncoder::encoder();
 
+    auto locker = holdLock(m_statisticsLock);
     encoder->encodeUInt32("version", statisticsModelVersion);
     encoder->encodeDouble("endOfGrandfatheringTimestamp", m_endOfGrandfatheringTimestamp);
+    
     encoder->encodeObjects("browsingStatistics", m_resourceStatisticsMap.begin(), m_resourceStatisticsMap.end(), [](KeyedEncoder& encoderInner, const StatisticsValue& origin) {
         origin.value.encode(encoderInner);
     });
@@ -91,6 +101,8 @@ std::unique_ptr<KeyedEncoder> ResourceLoadStatisticsStore::createEncoderFromData
 
 void ResourceLoadStatisticsStore::readDataFromDecoder(KeyedDecoder& decoder)
 {
+    ASSERT(!isMainThread());
+    ASSERT(m_statisticsLock.isLocked());
     if (m_resourceStatisticsMap.size())
         return;
 
@@ -117,6 +129,9 @@ void ResourceLoadStatisticsStore::readDataFromDecoder(KeyedDecoder& decoder)
 
     Vector<String> prevalentResourceDomainsWithoutUserInteraction;
     prevalentResourceDomainsWithoutUserInteraction.reserveInitialCapacity(loadedStatistics.size());
+    
+    {
+    auto locker = holdLock(m_statisticsLock);
     for (auto& statistics : loadedStatistics) {
         if (statistics.isPrevalentResource && !statistics.hadUserInteraction) {
             prevalentResourceDomainsWithoutUserInteraction.uncheckedAppend(statistics.highLevelDomain);
@@ -124,18 +139,25 @@ void ResourceLoadStatisticsStore::readDataFromDecoder(KeyedDecoder& decoder)
         }
         m_resourceStatisticsMap.set(statistics.highLevelDomain, statistics);
     }
-
+    }
+    
     fireShouldPartitionCookiesHandler({ }, prevalentResourceDomainsWithoutUserInteraction, true);
 }
 
 void ResourceLoadStatisticsStore::clearInMemory()
 {
+    ASSERT(!isMainThread());
+    {
+    auto locker = holdLock(m_statisticsLock);
     m_resourceStatisticsMap.clear();
+    }
+    
     fireShouldPartitionCookiesHandler({ }, { }, true);
 }
 
 void ResourceLoadStatisticsStore::clearInMemoryAndPersistent()
 {
+    ASSERT(!isMainThread());
     clearInMemory();
     if (m_writePersistentStoreHandler)
         m_writePersistentStoreHandler();
@@ -145,6 +167,7 @@ void ResourceLoadStatisticsStore::clearInMemoryAndPersistent()
 
 String ResourceLoadStatisticsStore::statisticsForOrigin(const String& origin)
 {
+    auto locker = holdLock(m_statisticsLock);
     auto iter = m_resourceStatisticsMap.find(origin);
     if (iter == m_resourceStatisticsMap.end())
         return emptyString();
@@ -155,17 +178,22 @@ String ResourceLoadStatisticsStore::statisticsForOrigin(const String& origin)
 Vector<ResourceLoadStatistics> ResourceLoadStatisticsStore::takeStatistics()
 {
     Vector<ResourceLoadStatistics> statistics;
+    
+    {
+    auto locker = holdLock(m_statisticsLock);
     statistics.reserveInitialCapacity(m_resourceStatisticsMap.size());
     for (auto& statistic : m_resourceStatisticsMap.values())
         statistics.uncheckedAppend(WTFMove(statistic));
 
     m_resourceStatisticsMap.clear();
-
+    }
+    
     return statistics;
 }
 
 void ResourceLoadStatisticsStore::mergeStatistics(const Vector<ResourceLoadStatistics>& statistics)
 {
+    auto locker = holdLock(m_statisticsLock);
     for (auto& statistic : statistics) {
         auto result = m_resourceStatisticsMap.ensure(statistic.highLevelDomain, [&statistic] {
             return ResourceLoadStatistics(statistic.highLevelDomain);
@@ -175,30 +203,33 @@ void ResourceLoadStatisticsStore::mergeStatistics(const Vector<ResourceLoadStati
     }
 }
 
-void ResourceLoadStatisticsStore::setNotificationCallback(std::function<void()> handler)
+void ResourceLoadStatisticsStore::setNotificationCallback(WTF::Function<void()>&& handler)
 {
     m_dataAddedHandler = WTFMove(handler);
 }
 
-void ResourceLoadStatisticsStore::setShouldPartitionCookiesCallback(std::function<void(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, bool clearFirst)>&& handler)
+void ResourceLoadStatisticsStore::setShouldPartitionCookiesCallback(WTF::Function<void(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, bool clearFirst)>&& handler)
 {
     m_shouldPartitionCookiesForDomainsHandler = WTFMove(handler);
 }
     
-void ResourceLoadStatisticsStore::setWritePersistentStoreCallback(std::function<void()>&& handler)
+void ResourceLoadStatisticsStore::setWritePersistentStoreCallback(WTF::Function<void()>&& handler)
 {
     m_writePersistentStoreHandler = WTFMove(handler);
 }
 
-void ResourceLoadStatisticsStore::setGrandfatherExistingWebsiteDataCallback(std::function<void()>&& handler)
+void ResourceLoadStatisticsStore::setGrandfatherExistingWebsiteDataCallback(WTF::Function<void()>&& handler)
 {
     m_grandfatherExistingWebsiteDataHandler = WTFMove(handler);
 }
 
 void ResourceLoadStatisticsStore::fireDataModificationHandler()
 {
-    if (m_dataAddedHandler)
-        m_dataAddedHandler();
+    ASSERT(!isMainThread());
+    RunLoop::main().dispatch([this, protectedThis = makeRef(*this)] () {
+        if (m_dataAddedHandler)
+            m_dataAddedHandler();
+    });
 }
 
 static inline bool shouldPartitionCookies(const ResourceLoadStatistics& statistic)
@@ -209,9 +240,11 @@ static inline bool shouldPartitionCookies(const ResourceLoadStatistics& statisti
 
 void ResourceLoadStatisticsStore::fireShouldPartitionCookiesHandler()
 {
+    ASSERT(!isMainThread());
     Vector<String> domainsToRemove;
     Vector<String> domainsToAdd;
     
+    auto locker = holdLock(m_statisticsLock);
     for (auto& resourceStatistic : m_resourceStatisticsMap.values()) {
         bool shouldPartition = shouldPartitionCookies(resourceStatistic);
         if (resourceStatistic.isMarkedForCookiePartitioning && !shouldPartition) {
@@ -226,18 +259,24 @@ void ResourceLoadStatisticsStore::fireShouldPartitionCookiesHandler()
     if (domainsToRemove.isEmpty() && domainsToAdd.isEmpty())
         return;
 
-    if (m_shouldPartitionCookiesForDomainsHandler)
-        m_shouldPartitionCookiesForDomainsHandler(domainsToRemove, domainsToAdd, false);
+    RunLoop::main().dispatch([this, protectedThis = makeRef(*this), domainsToRemove = CrossThreadCopier<Vector<String>>::copy(domainsToRemove), domainsToAdd = CrossThreadCopier<Vector<String>>::copy(domainsToAdd)] () {
+        if (m_shouldPartitionCookiesForDomainsHandler)
+            m_shouldPartitionCookiesForDomainsHandler(domainsToRemove, domainsToAdd, false);
+    });
 }
 
 void ResourceLoadStatisticsStore::fireShouldPartitionCookiesHandler(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, bool clearFirst)
 {
+    ASSERT(!isMainThread());
     if (domainsToRemove.isEmpty() && domainsToAdd.isEmpty())
         return;
     
-    if (m_shouldPartitionCookiesForDomainsHandler)
-        m_shouldPartitionCookiesForDomainsHandler(domainsToRemove, domainsToAdd, clearFirst);
-
+    RunLoop::main().dispatch([this, clearFirst, protectedThis = makeRef(*this), domainsToRemove = CrossThreadCopier<Vector<String>>::copy(domainsToRemove), domainsToAdd = CrossThreadCopier<Vector<String>>::copy(domainsToAdd)] () {
+        if (m_shouldPartitionCookiesForDomainsHandler)
+            m_shouldPartitionCookiesForDomainsHandler(domainsToRemove, domainsToAdd, clearFirst);
+    });
+    
+    auto locker = holdLock(m_statisticsLock);
     if (clearFirst) {
         for (auto& resourceStatistic : m_resourceStatisticsMap.values())
             resourceStatistic.isMarkedForCookiePartitioning = false;
@@ -274,13 +313,15 @@ void ResourceLoadStatisticsStore::setGrandfatheringTime(double seconds)
         grandfatheringTime = seconds;
 }
 
-void ResourceLoadStatisticsStore::processStatistics(std::function<void(ResourceLoadStatistics&)>&& processFunction)
+void ResourceLoadStatisticsStore::processStatistics(WTF::Function<void(ResourceLoadStatistics&)>&& processFunction)
 {
+    ASSERT(!isMainThread());
+    auto locker = holdLock(m_statisticsLock);
     for (auto& resourceStatistic : m_resourceStatisticsMap.values())
         processFunction(resourceStatistic);
 }
 
-bool ResourceLoadStatisticsStore::hasHadRecentUserInteraction(ResourceLoadStatistics& resourceStatistic)
+bool ResourceLoadStatisticsStore::hasHadRecentUserInteraction(ResourceLoadStatistics& resourceStatistic) const
 {
     if (!resourceStatistic.hadUserInteraction)
         return false;
@@ -307,6 +348,7 @@ Vector<String> ResourceLoadStatisticsStore::topPrivatelyControlledDomainsToRemov
         m_endOfGrandfatheringTimestamp = 0;
 
     Vector<String> prevalentResources;
+    auto locker = holdLock(m_statisticsLock);
     for (auto& statistic : m_resourceStatisticsMap.values()) {
         if (statistic.isPrevalentResource
             && !hasHadRecentUserInteraction(statistic)
@@ -322,6 +364,7 @@ Vector<String> ResourceLoadStatisticsStore::topPrivatelyControlledDomainsToRemov
 
 void ResourceLoadStatisticsStore::updateStatisticsForRemovedDataRecords(const Vector<String>& prevalentResourceDomains)
 {
+    auto locker = holdLock(m_statisticsLock);
     for (auto& prevalentResourceDomain : prevalentResourceDomains) {
         ResourceLoadStatistics& statistic = ensureResourceStatisticsForPrimaryDomain(prevalentResourceDomain);
         ++statistic.dataRecordsRemoved;
@@ -330,6 +373,7 @@ void ResourceLoadStatisticsStore::updateStatisticsForRemovedDataRecords(const Ve
 
 void ResourceLoadStatisticsStore::handleFreshStartWithEmptyOrNoStore(HashSet<String>&& topPrivatelyControlledDomainsToGrandfather)
 {
+    auto locker = holdLock(m_statisticsLock);
     for (auto& topPrivatelyControlledDomain : topPrivatelyControlledDomainsToGrandfather) {
         ResourceLoadStatistics& statistic = ensureResourceStatisticsForPrimaryDomain(topPrivatelyControlledDomain);
         statistic.grandfathered = true;
@@ -337,8 +381,9 @@ void ResourceLoadStatisticsStore::handleFreshStartWithEmptyOrNoStore(HashSet<Str
     m_endOfGrandfatheringTimestamp = std::floor(currentTime()) + grandfatheringTime;
 }
 
-bool ResourceLoadStatisticsStore::shouldRemoveDataRecords()
+bool ResourceLoadStatisticsStore::shouldRemoveDataRecords() const
 {
+    ASSERT(!isMainThread());
     if (m_dataRecordsRemovalPending)
         return false;
 
@@ -350,13 +395,20 @@ bool ResourceLoadStatisticsStore::shouldRemoveDataRecords()
 
 void ResourceLoadStatisticsStore::dataRecordsBeingRemoved()
 {
+    ASSERT(!isMainThread());
     m_lastTimeDataRecordsWereRemoved = currentTime();
     m_dataRecordsRemovalPending = true;
 }
 
 void ResourceLoadStatisticsStore::dataRecordsWereRemoved()
 {
+    ASSERT(!isMainThread());
     m_dataRecordsRemovalPending = false;
 }
-
+    
+WTF::RecursiveLockAdapter<Lock>& ResourceLoadStatisticsStore::statisticsLock()
+{
+    return m_statisticsLock;
+}
+    
 }

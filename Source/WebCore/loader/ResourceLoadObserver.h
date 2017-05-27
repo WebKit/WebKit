@@ -29,6 +29,11 @@
 #include <wtf/HashMap.h>
 #include <wtf/text/WTFString.h>
 
+namespace WTF {
+class Lock;
+class WorkQueue;
+}
+
 namespace WebCore {
 
 class Document;
@@ -75,6 +80,7 @@ public:
     WEBCORE_EXPORT void fireShouldPartitionCookiesHandler(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, bool clearFirst);
 
     WEBCORE_EXPORT void setStatisticsStore(Ref<ResourceLoadStatisticsStore>&&);
+    WEBCORE_EXPORT void setStatisticsQueue(Ref<WTF::WorkQueue>&&);
     WEBCORE_EXPORT void clearInMemoryStore();
     WEBCORE_EXPORT void clearInMemoryAndPersistentStore();
     WEBCORE_EXPORT void clearInMemoryAndPersistentStore(std::chrono::system_clock::time_point modifiedSince);
@@ -87,6 +93,7 @@ private:
     static String primaryDomain(const String& host);
 
     RefPtr<ResourceLoadStatisticsStore> m_store;
+    RefPtr<WTF::WorkQueue> m_queue;
     HashMap<String, size_t> m_originsVisitedMap;
 };
     

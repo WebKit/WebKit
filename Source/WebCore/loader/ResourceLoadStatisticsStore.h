@@ -26,7 +26,9 @@
 #pragma once
 
 #include "ResourceLoadStatistics.h"
+#include <wtf/Function.h>
 #include <wtf/HashSet.h>
+#include <wtf/RecursiveLockAdapter.h>
 
 namespace WebCore {
 
@@ -58,10 +60,10 @@ public:
     WEBCORE_EXPORT void mergeStatistics(const Vector<ResourceLoadStatistics>&);
     WEBCORE_EXPORT Vector<ResourceLoadStatistics> takeStatistics();
 
-    WEBCORE_EXPORT void setNotificationCallback(std::function<void()>);
-    WEBCORE_EXPORT void setShouldPartitionCookiesCallback(std::function<void(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, bool clearFirst)>&&);
-    WEBCORE_EXPORT void setWritePersistentStoreCallback(std::function<void()>&&);
-    WEBCORE_EXPORT void setGrandfatherExistingWebsiteDataCallback(std::function<void()>&&);
+    WEBCORE_EXPORT void setNotificationCallback(WTF::Function<void()>&&);
+    WEBCORE_EXPORT void setShouldPartitionCookiesCallback(WTF::Function<void(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, bool clearFirst)>&&);
+    WEBCORE_EXPORT void setWritePersistentStoreCallback(WTF::Function<void()>&&);
+    WEBCORE_EXPORT void setGrandfatherExistingWebsiteDataCallback(WTF::Function<void()>&&);
 
     void fireDataModificationHandler();
     void setTimeToLiveUserInteraction(double seconds);
@@ -71,24 +73,28 @@ public:
     WEBCORE_EXPORT void fireShouldPartitionCookiesHandler();
     void fireShouldPartitionCookiesHandler(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, bool clearFirst);
 
-    WEBCORE_EXPORT void processStatistics(std::function<void(ResourceLoadStatistics&)>&&);
+    WEBCORE_EXPORT void processStatistics(WTF::Function<void(ResourceLoadStatistics&)>&&);
 
-    WEBCORE_EXPORT bool hasHadRecentUserInteraction(ResourceLoadStatistics&);
+    WEBCORE_EXPORT bool hasHadRecentUserInteraction(ResourceLoadStatistics&) const;
     WEBCORE_EXPORT Vector<String> topPrivatelyControlledDomainsToRemoveWebsiteDataFor();
     WEBCORE_EXPORT void updateStatisticsForRemovedDataRecords(const Vector<String>& prevalentResourceDomains);
 
     WEBCORE_EXPORT void handleFreshStartWithEmptyOrNoStore(HashSet<String>&& topPrivatelyControlledDomainsToGrandfather);
-    WEBCORE_EXPORT bool shouldRemoveDataRecords();
+    WEBCORE_EXPORT bool shouldRemoveDataRecords() const;
     WEBCORE_EXPORT void dataRecordsBeingRemoved();
     WEBCORE_EXPORT void dataRecordsWereRemoved();
+    
+    WEBCORE_EXPORT WTF::RecursiveLockAdapter<Lock>& statisticsLock();
 private:
     ResourceLoadStatisticsStore() = default;
 
     HashMap<String, ResourceLoadStatistics> m_resourceStatisticsMap;
-    std::function<void()> m_dataAddedHandler;
-    std::function<void(const Vector<String>&, const Vector<String>&, bool clearFirst)> m_shouldPartitionCookiesForDomainsHandler;
-    std::function<void()> m_writePersistentStoreHandler;
-    std::function<void()> m_grandfatherExistingWebsiteDataHandler;
+    mutable WTF::RecursiveLockAdapter<Lock> m_statisticsLock;
+
+    WTF::Function<void()> m_dataAddedHandler;
+    WTF::Function<void(const Vector<String>&, const Vector<String>&, bool clearFirst)> m_shouldPartitionCookiesForDomainsHandler;
+    WTF::Function<void()> m_writePersistentStoreHandler;
+    WTF::Function<void()> m_grandfatherExistingWebsiteDataHandler;
 
     double m_endOfGrandfatheringTimestamp { 0 };
     double m_lastTimeDataRecordsWereRemoved { 0 };

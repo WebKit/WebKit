@@ -417,6 +417,7 @@ private:
 #endif
 
     Ref<WebCore::ResourceLoadStatisticsStore> m_resourceLoadStatisticsStore;
+    Ref<WTF::WorkQueue> m_statisticsQueue;
 
     unsigned m_pagesMarkingLayersAsVolatile { 0 };
     bool m_suppressMemoryPressureHandler { false };

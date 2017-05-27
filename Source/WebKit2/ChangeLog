@@ -1,3 +1,32 @@
+2017-05-26  Brent Fulgham  <bfulgham@apple.com>
+
+        [WK2] Address thread safety issues with ResourceLoadStatistics
+        https://bugs.webkit.org/show_bug.cgi?id=172519
+        <rdar://problem/31707642>
+
+        Reviewed by Chris Dumez.
+
+        Address some thread safety issues with the ResourceLoadStatistics architecture.
+
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::removeDataRecords): Assert that this is never called on the main thread. Also
+        ensure that coreStore is only accessed on the statistics queue, not the main thread.
+        (WebKit::WebResourceLoadStatisticsStore::processStatisticsAndDataRecords): Dispatch coreStore-accessing code
+        on the statistics queue.
+        (WebKit::WebResourceLoadStatisticsStore::resourceLoadStatisticsUpdated): Assert we do not hit this method
+        on the main thread.
+        (WebKit::WebResourceLoadStatisticsStore::registerSharedResourceLoadObserver): Assert that this is being called on the
+        main thread. Also ensure that coreStore is only accessed on the statistics queue, not the main thread.
+        (WebKit::WebResourceLoadStatisticsStore::grandfatherExistingWebsiteData): Dispatch coreStore-accessing code
+        on the statistics queue.
+        (WebKit::WebResourceLoadStatisticsStore::readDataFromDiskIfNeeded): Lock data before operating on it.
+        (WebKit::WebResourceLoadStatisticsStore::writeStoreToDisk): Assert we do not hit this method on the main thread.
+        (WebKit::WebResourceLoadStatisticsStore::writeEncoderToDisk): Ditto.
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+        * WebProcess/WebProcess.cpp: Add a queue for the local WebProcess ResourceLoadStatisticsStore to use while processing data.
+        (WebKit::m_statisticsQueue): Added.
+        * WebProcess/WebProcess.h:
+
 2017-05-26  Joseph Pecoraro  <pecoraro@apple.com>
 
         [Cocoa] Simplify some WebViewImpl pasteboard code

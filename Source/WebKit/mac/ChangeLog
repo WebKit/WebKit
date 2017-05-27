@@ -1,3 +1,16 @@
+2017-05-26  Brent Fulgham  <bfulgham@apple.com>
+
+        [WK2] Address thread safety issues with ResourceLoadStatistics
+        https://bugs.webkit.org/show_bug.cgi?id=172519
+        <rdar://problem/31707642>
+
+        Reviewed by Chris Dumez.
+
+        Create a new WorkQueue for the ResourceLoadStatistics store to use for processing data.
+
+        * WebView/WebView.mm:
+        (WebKitInitializeApplicationStatisticsStoragePathIfNecessary): Pass WorkQueue to the observer.
+
 2017-05-25  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WK1] iframes in layer-backed NSViews are not cleared between successive draws

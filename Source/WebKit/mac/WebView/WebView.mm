@@ -226,6 +226,7 @@
 #import <wtf/RunLoop.h>
 #import <wtf/SetForScope.h>
 #import <wtf/StdLibExtras.h>
+#import <wtf/WorkQueue.h>
 #import <wtf/spi/darwin/dyldSPI.h>
 
 #if !PLATFORM(IOS)
@@ -761,6 +762,7 @@ enum { WebViewVersion = 4 };
 
 static NSMutableSet *schemesWithRepresentationsSet;
 static WebCore::ResourceLoadStatisticsStore* resourceLoadStatisticsStore;
+static WTF::WorkQueue* statisticsQueue;
 
 #if !PLATFORM(IOS)
 NSString *_WebCanGoBackKey =            @"canGoBack";
@@ -1166,6 +1168,9 @@ static void WebKitInitializeApplicationStatisticsStoragePathIfNecessary()
     
     resourceLoadStatisticsStore = &WebCore::ResourceLoadStatisticsStore::create().leakRef();
     ResourceLoadObserver::sharedObserver().setStatisticsStore(*resourceLoadStatisticsStore);
+    
+    statisticsQueue = &WTF::WorkQueue::create("WebView ResourceLoadStatisticsStore Process Data Queue").leakRef();
+    ResourceLoadObserver::sharedObserver().setStatisticsQueue(*statisticsQueue);
     
     initialized = YES;
 }

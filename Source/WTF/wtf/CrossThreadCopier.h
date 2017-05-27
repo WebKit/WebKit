@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2009, 2010 Google Inc. All rights reserved.
- * Copyright (C) 2014, 2015, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -33,6 +33,7 @@
 
 #include <wtf/Assertions.h>
 #include <wtf/Forward.h>
+#include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Threading.h>
 #include <wtf/text/WTFString.h>
@@ -126,7 +127,19 @@ template<typename T> struct CrossThreadCopierBase<false, false, Vector<T>> {
         return destination;
     }
 };
-
+    
+// Default specialization for HashSets of CrossThreadCopyable classes
+template<typename T> struct CrossThreadCopierBase<false, false, HashSet<T> > {
+    typedef HashSet<T> Type;
+    static Type copy(const Type& source)
+    {
+        Type destination;
+        for (auto& object : source)
+            destination.add(CrossThreadCopier<T>::copy(object));
+        return destination;
+    }
+};
+    
 } // namespace WTF
 
 using WTF::CrossThreadCopierBaseHelper;

@@ -172,6 +172,7 @@ WebProcess::WebProcess()
     , m_webSQLiteDatabaseTracker(*this)
 #endif
     , m_resourceLoadStatisticsStore(WebCore::ResourceLoadStatisticsStore::create())
+    , m_statisticsQueue(WorkQueue::create("ResourceLoadStatisticsStore Process Data Queue"))
 {
     // Initialize our platform strategies.
     WebPlatformStrategies::initialize();
@@ -198,6 +199,7 @@ WebProcess::WebProcess()
     m_plugInAutoStartOriginHashes.add(SessionID::defaultSessionID(), HashMap<unsigned, double>());
 
     ResourceLoadObserver::sharedObserver().setStatisticsStore(m_resourceLoadStatisticsStore.copyRef());
+    ResourceLoadObserver::sharedObserver().setStatisticsQueue(m_statisticsQueue.copyRef());
     m_resourceLoadStatisticsStore->setNotificationCallback([this] {
         if (m_statisticsChangedTimer.isActive())
             return;
