@@ -65,7 +65,7 @@ public:
 
     void resetFormOwner();
 
-    void formRemovedFromTree(const Node* formRoot);
+    void formOwnerRemovedFromTree(const Node&);
 
     // ValidityState attribute implementations
     bool badInput() const { return hasBadInput(); }

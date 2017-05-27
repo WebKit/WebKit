@@ -15,7 +15,7 @@ PASS [BUTTON] Moving a control with form attribute within the document does not 
 PASS [BUTTON] When the id of a non-ancestor form changes from not being a match for the form attribute to being a match, the control's form owner is reset 
 PASS [BUTTON] When form element with same ID as the control's form attribute is inserted earlier in tree order, the form owner is changed to the inserted form 
 PASS [BUTTON] When non-form element with same ID as the control's form attribute is inserted earlier in tree order, the control does not have a form owner 
-FAIL [BUTTON] A control that is not in the document but has the form attribute set is associated with the nearest ancestor form if one exists assert_equals: expected Element node <form id="form1"><button form="form1"></button></form> but got null
+PASS [BUTTON] A control that is not in the document but has the form attribute set is associated with the nearest ancestor form if one exists 
 PASS [FIELDSET] Basic form association - control with no form attribute is associated with ancestor 
 PASS [FIELDSET] Form owner is reset to null when control's form attribute is set to an ID that does not exist in the document 
 PASS [FIELDSET] Control whose form attribute is an empty string has no form owner 
@@ -29,7 +29,7 @@ PASS [FIELDSET] Moving a control with form attribute within the document does no
 PASS [FIELDSET] When the id of a non-ancestor form changes from not being a match for the form attribute to being a match, the control's form owner is reset 
 PASS [FIELDSET] When form element with same ID as the control's form attribute is inserted earlier in tree order, the form owner is changed to the inserted form 
 PASS [FIELDSET] When non-form element with same ID as the control's form attribute is inserted earlier in tree order, the control does not have a form owner 
-FAIL [FIELDSET] A control that is not in the document but has the form attribute set is associated with the nearest ancestor form if one exists assert_equals: expected Element node <form id="form1"><fieldset form="form1"></fieldset></form> but got null
+PASS [FIELDSET] A control that is not in the document but has the form attribute set is associated with the nearest ancestor form if one exists 
 PASS [INPUT] Basic form association - control with no form attribute is associated with ancestor 
 PASS [INPUT] Form owner is reset to null when control's form attribute is set to an ID that does not exist in the document 
 PASS [INPUT] Control whose form attribute is an empty string has no form owner 
@@ -43,7 +43,7 @@ PASS [INPUT] Moving a control with form attribute within the document does not c
 PASS [INPUT] When the id of a non-ancestor form changes from not being a match for the form attribute to being a match, the control's form owner is reset 
 PASS [INPUT] When form element with same ID as the control's form attribute is inserted earlier in tree order, the form owner is changed to the inserted form 
 PASS [INPUT] When non-form element with same ID as the control's form attribute is inserted earlier in tree order, the control does not have a form owner 
-FAIL [INPUT] A control that is not in the document but has the form attribute set is associated with the nearest ancestor form if one exists assert_equals: expected Element node <form id="form1"><input form="form1"></form> but got null
+PASS [INPUT] A control that is not in the document but has the form attribute set is associated with the nearest ancestor form if one exists 
 PASS [OBJECT] Basic form association - control with no form attribute is associated with ancestor 
 PASS [OBJECT] Form owner is reset to null when control's form attribute is set to an ID that does not exist in the document 
 PASS [OBJECT] Control whose form attribute is an empty string has no form owner 
@@ -57,7 +57,7 @@ PASS [OBJECT] Moving a control with form attribute within the document does not 
 PASS [OBJECT] When the id of a non-ancestor form changes from not being a match for the form attribute to being a match, the control's form owner is reset 
 PASS [OBJECT] When form element with same ID as the control's form attribute is inserted earlier in tree order, the form owner is changed to the inserted form 
 PASS [OBJECT] When non-form element with same ID as the control's form attribute is inserted earlier in tree order, the control does not have a form owner 
-FAIL [OBJECT] A control that is not in the document but has the form attribute set is associated with the nearest ancestor form if one exists assert_equals: expected Element node <form id="form1"><object form="form1"></object></form> but got null
+PASS [OBJECT] A control that is not in the document but has the form attribute set is associated with the nearest ancestor form if one exists 
 PASS [OUTPUT] Basic form association - control with no form attribute is associated with ancestor 
 PASS [OUTPUT] Form owner is reset to null when control's form attribute is set to an ID that does not exist in the document 
 PASS [OUTPUT] Control whose form attribute is an empty string has no form owner 
@@ -71,7 +71,7 @@ PASS [OUTPUT] Moving a control with form attribute within the document does not 
 PASS [OUTPUT] When the id of a non-ancestor form changes from not being a match for the form attribute to being a match, the control's form owner is reset 
 PASS [OUTPUT] When form element with same ID as the control's form attribute is inserted earlier in tree order, the form owner is changed to the inserted form 
 PASS [OUTPUT] When non-form element with same ID as the control's form attribute is inserted earlier in tree order, the control does not have a form owner 
-FAIL [OUTPUT] A control that is not in the document but has the form attribute set is associated with the nearest ancestor form if one exists assert_equals: expected Element node <form id="form1"><output form="form1"></output></form> but got null
+PASS [OUTPUT] A control that is not in the document but has the form attribute set is associated with the nearest ancestor form if one exists 
 PASS [SELECT] Basic form association - control with no form attribute is associated with ancestor 
 PASS [SELECT] Form owner is reset to null when control's form attribute is set to an ID that does not exist in the document 
 PASS [SELECT] Control whose form attribute is an empty string has no form owner 
@@ -85,7 +85,7 @@ PASS [SELECT] Moving a control with form attribute within the document does not 
 PASS [SELECT] When the id of a non-ancestor form changes from not being a match for the form attribute to being a match, the control's form owner is reset 
 PASS [SELECT] When form element with same ID as the control's form attribute is inserted earlier in tree order, the form owner is changed to the inserted form 
 PASS [SELECT] When non-form element with same ID as the control's form attribute is inserted earlier in tree order, the control does not have a form owner 
-FAIL [SELECT] A control that is not in the document but has the form attribute set is associated with the nearest ancestor form if one exists assert_equals: expected Element node <form id="form1"><select form="form1"></select></form> but got null
+PASS [SELECT] A control that is not in the document but has the form attribute set is associated with the nearest ancestor form if one exists 
 PASS [TEXTAREA] Basic form association - control with no form attribute is associated with ancestor 
 PASS [TEXTAREA] Form owner is reset to null when control's form attribute is set to an ID that does not exist in the document 
 PASS [TEXTAREA] Control whose form attribute is an empty string has no form owner 
@@ -99,5 +99,5 @@ PASS [TEXTAREA] Moving a control with form attribute within the document does no
 PASS [TEXTAREA] When the id of a non-ancestor form changes from not being a match for the form attribute to being a match, the control's form owner is reset 
 PASS [TEXTAREA] When form element with same ID as the control's form attribute is inserted earlier in tree order, the form owner is changed to the inserted form 
 PASS [TEXTAREA] When non-form element with same ID as the control's form attribute is inserted earlier in tree order, the control does not have a form owner 
-FAIL [TEXTAREA] A control that is not in the document but has the form attribute set is associated with the nearest ancestor form if one exists assert_equals: expected Element node <form id="form1"><textarea form="form1"></textarea></form> but got null
+PASS [TEXTAREA] A control that is not in the document but has the form attribute set is associated with the nearest ancestor form if one exists 
 

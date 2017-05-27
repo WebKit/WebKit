@@ -194,6 +194,13 @@ inline bool Node::isTreeScope() const
     return &treeScope().rootNode() == this;
 }
 
+inline Node& Node::rootNode() const
+{
+    if (isInTreeScope())
+        return treeScope().rootNode();
+    return traverseToRootNode();
+}
+
 // This constant controls how much buffer is initially allocated
 // for a Node Vector that is used to store child Nodes of a given Node.
 // FIXME: Optimize the value.

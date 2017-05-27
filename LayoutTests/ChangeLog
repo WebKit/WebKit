@@ -1,3 +1,18 @@
+2017-05-27  Chris Dumez  <cdumez@apple.com>
+
+        imported/w3c/web-platform-tests/html/semantics/forms/form-control-infrastructure/form_attribute.html is crashing
+        https://bugs.webkit.org/show_bug.cgi?id=172472
+        <rdar://problem/32334831>
+
+        Reviewed by Ryosuke Niwa.
+
+        * TestExpectations:
+        Unskip test that is no longer crashing in Debug builds.
+
+        * fast/dom/HTMLFormElement/form-removal-duplicate-id-crash-expected.txt: Added.
+        * fast/dom/HTMLFormElement/form-removal-duplicate-id-crash.html: Added.
+        Add reduced test case reproducing the crash.
+
 2017-05-27  Simon Fraser  <simon.fraser@apple.com>
 
         getComputedStyle returns percentage values for left / right / top / bottom

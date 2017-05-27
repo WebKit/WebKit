@@ -1,3 +1,66 @@
+2017-05-27  Chris Dumez  <cdumez@apple.com>
+
+        imported/w3c/web-platform-tests/html/semantics/forms/form-control-infrastructure/form_attribute.html is crashing
+        https://bugs.webkit.org/show_bug.cgi?id=172472
+        <rdar://problem/32334831>
+
+        Reviewed by Ryosuke Niwa.
+
+        Fix assertion hit when running imported/w3c/web-platform-tests/html/semantics/forms/form-control-infrastructure/form_attribute.html.
+
+        When the form was removed from the document, A descendant would try to find a new form owner in the document. If the descendant had 
+        a form content attribute and there was another form in the document with this ID, then we would erroneously associate the descendant with
+        that other form, even though that descendant is being disconnected. This is because when the form with the given id is removed, we
+        notify the IdTargetObservers of the change. In this case, the form control is an IdTargetObserver and gets notified after
+        removedFrom() has been called on the form but *before* removedFrom() has been called on its descendant form control. As a result, the
+        form control still thinks it is in the tree (i.e. isConnected() wrongly returns true) and we make the wrong decision and try to
+        associate it with another form in the document.
+
+        To address the problem, we leverage the fact that when a form element is being removed, it already notifies its associated form
+        controls that it is being removed. When it does, we make sure to clear the control's id observer if the form is its ancestor.
+        The ID observer is no longer needed beyond this point since the control is now disconnected from the document, and the ID observer
+        callback would erroneously associate it with another form element in the document of the same ID because isConnected() still returns
+        true at that point.
+        As a result, the control's form owner is kept unchanged, which is the right thing to do here, since it is its ancestor, even
+        though both are detached.
+
+        Test: fast/dom/HTMLFormElement/form-removal-duplicate-id-crash.html
+
+        * dom/ContainerNode.h:
+        (WebCore::Node::rootNode):
+        Inline rootNode to avoid an extra function call in the fast path case. For the slow path, we now
+        call traverseToRootNode() to avoid duolicating logic.
+
+        * dom/Node.cpp:
+        (WebCore::Node::traverseToRootNode):
+        Add a traverseToRootNode() method which gets the root node by traversing the ancestors. This logic was duplicated in 3 places:
+        - Slow path in Node::rootNode()
+        - computeRootNode() in FormAssociatedElement.cpp
+        - findRoot() in HTMLFormElement.cpp
+        They are now consolidated in a single place to avoid duplication.
+
+        * dom/Node.h:
+        * html/FormAssociatedElement.cpp:
+        (WebCore::FormAssociatedElement::removedFrom):
+        Just simplify the logic a bit:
+        - Clear the id observer (i.e. m_formAttributeTargetObserver) no matter what. Since the element is no longer part of the document,
+          it is no longer needed. We would previously have checks that would basically avoid resetting m_formAttributeTargetObserver to
+          null if it is already null. Settign m_formAttributeTargetObserver to null is cheap so there is no reason for those checks. Those
+          checks were also confusing because they made it look like we would sometimes keep on id observer after being removed from the
+          document.
+        - Use new traverseToRootNode() utility function (no behavior change)
+        - Drop unnecessary |element| local variable
+
+        (WebCore::FormAssociatedElement::formOwnerRemovedFromTree):
+        - Rename to formOwnerRemovedFromTree() to make it clear that it is the element's form owner that is removed, and not just any form.
+        - As we traverse the tree up to find the root, also check if we find the form owner. If we do, clear the id observer since we are
+          effectively detached from the document and return early since there is no need to reset our form owner in this case.
+
+        * html/FormAssociatedElement.h:
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::removedFrom):
+        - Use new traverseToRootNode() utility function (no behavior change)
+
 2017-05-27  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DOMJIT] Move DOMJIT patchpoint infrastructure out of domjit

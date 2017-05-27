@@ -1223,11 +1223,8 @@ Element* Node::parentOrShadowHostElement() const
     return downcast<Element>(parent);
 }
 
-Node& Node::rootNode() const
+Node& Node::traverseToRootNode() const
 {
-    if (isInTreeScope())
-        return treeScope().rootNode();
-
     Node* node = const_cast<Node*>(this);
     Node* highest = node;
     for (; node; node = node->parentNode())

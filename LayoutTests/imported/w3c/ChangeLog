@@ -1,3 +1,16 @@
+2017-05-27  Chris Dumez  <cdumez@apple.com>
+
+        imported/w3c/web-platform-tests/html/semantics/forms/form-control-infrastructure/form_attribute.html is crashing
+        https://bugs.webkit.org/show_bug.cgi?id=172472
+        <rdar://problem/32334831>
+
+        Reviewed by Ryosuke Niwa.
+
+        * web-platform-tests/html/semantics/forms/form-control-infrastructure/form_attribute-expected.txt:
+        Rebaseline test now that more checks are passing. We were previously wrongly resetting the input form owner
+        to null when removing the form from the document and the input had a form attribute set and was a descendant
+        of the form.
+
 2017-05-27  Simon Fraser  <simon.fraser@apple.com>
 
         getComputedStyle returns percentage values for left / right / top / bottom
