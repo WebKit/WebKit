@@ -1,3 +1,13 @@
+2017-05-26  Zalan Bujtas  <zalan@apple.com>
+
+        TestWebKitAPI: EnclosingIntRect and RoundedIntRect should use EXPECT_EQ.
+        https://bugs.webkit.org/show_bug.cgi?id=172674
+
+        Reviewed by Simon Fraser.
+
+        * TestWebKitAPI/Tests/WebCore/FloatRect.cpp:
+        (TestWebKitAPI::TEST):
+
 2017-05-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add test resources back into TestWebKitAPI Copy Resources phase

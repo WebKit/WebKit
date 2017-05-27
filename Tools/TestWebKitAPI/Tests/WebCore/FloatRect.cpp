@@ -762,10 +762,10 @@ TEST(FloatRect, EnclosingIntRect)
 
     auto enclosed = WebCore::enclosingIntRect(rect);
 
-    EXPECT_FLOAT_EQ(10, enclosed.x());
-    EXPECT_FLOAT_EQ(20, enclosed.y());
-    EXPECT_FLOAT_EQ(1035, enclosed.maxX());
-    EXPECT_FLOAT_EQ(789, enclosed.maxY());
+    EXPECT_EQ(10, enclosed.x());
+    EXPECT_EQ(20, enclosed.y());
+    EXPECT_EQ(1035, enclosed.maxX());
+    EXPECT_EQ(789, enclosed.maxY());
 }
 
 TEST(FloatRect, RoundedIntRect)
@@ -774,10 +774,10 @@ TEST(FloatRect, RoundedIntRect)
 
     auto enclosed = WebCore::roundedIntRect(rect);
 
-    EXPECT_FLOAT_EQ(10, enclosed.x());
-    EXPECT_FLOAT_EQ(20, enclosed.y());
-    EXPECT_FLOAT_EQ(1034, enclosed.maxX());
-    EXPECT_FLOAT_EQ(789, enclosed.maxY());
+    EXPECT_EQ(10, enclosed.x());
+    EXPECT_EQ(20, enclosed.y());
+    EXPECT_EQ(1034, enclosed.maxX());
+    EXPECT_EQ(789, enclosed.maxY());
 }
 
 }
