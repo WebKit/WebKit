@@ -31,6 +31,7 @@
 #include "Interpreter.h"
 
 #include "BatchedTransitionOptimizer.h"
+#include "Bytecodes.h"
 #include "CallFrameClosure.h"
 #include "CodeBlock.h"
 #include "DirectArguments.h"
@@ -75,6 +76,7 @@
 
 #include <limits.h>
 #include <stdio.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/StackStats.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/StringPrintStream.h>
@@ -315,28 +317,43 @@ Interpreter::Interpreter(VM& vm)
 #if !ENABLE(JIT)
     , m_cloopStack(vm)
 #endif
-#if !ASSERT_DISABLED
-    , m_initialized(false)
+#if ENABLE(COMPUTED_GOTO_OPCODES)
+    , m_opcodeTable { LLInt::opcodeMap() }
+#if !USE(LLINT_EMBEDDED_OPCODE_ID) || !ASSERT_DISABLED
+    , m_opcodeIDTable { opcodeIDTable() }
+#endif
 #endif
 {
+#if !ASSERT_DISABLED
+    static std::once_flag assertOnceKey;
+    std::call_once(assertOnceKey, [this] {
+        for (unsigned i = 0; i < NUMBER_OF_BYTECODE_IDS; ++i)
+            RELEASE_ASSERT(getOpcodeID(m_opcodeTable[i]) == static_cast<OpcodeID>(i));
+    });
+#endif // USE(LLINT_EMBEDDED_OPCODE_ID)
 }
 
 Interpreter::~Interpreter()
 {
 }
 
-void Interpreter::initialize()
-{
 #if ENABLE(COMPUTED_GOTO_OPCODES)
-    m_opcodeTable = LLInt::opcodeMap();
-    for (int i = 0; i < numOpcodeIDs; ++i)
-        m_opcodeIDTable.add(m_opcodeTable[i], static_cast<OpcodeID>(i));
-#endif
+#if !USE(LLINT_EMBEDDED_OPCODE_ID) || !ASSERT_DISABLED
+HashMap<Opcode, OpcodeID>& Interpreter::opcodeIDTable()
+{
+    static NeverDestroyed<HashMap<Opcode, OpcodeID>> opcodeIDTable;
 
-#if !ASSERT_DISABLED
-    m_initialized = true;
-#endif
+    static std::once_flag initializeKey;
+    std::call_once(initializeKey, [&] {
+        const Opcode* opcodeTable = LLInt::opcodeMap();
+        for (unsigned i = 0; i < NUMBER_OF_BYTECODE_IDS; ++i)
+            opcodeIDTable.get().add(opcodeTable[i], static_cast<OpcodeID>(i));
+    });
+
+    return opcodeIDTable;
 }
+#endif // !USE(LLINT_EMBEDDED_OPCODE_ID) || !ASSERT_DISABLED
+#endif // ENABLE(COMPUTED_GOTO_OPCODES)
 
 #ifdef NDEBUG
 
@@ -449,6 +466,7 @@ void Interpreter::dumpRegisters(CallFrame* callFrame)
 
 #endif
 
+#if !ASSERT_DISABLED
 bool Interpreter::isOpcode(Opcode opcode)
 {
 #if ENABLE(COMPUTED_GOTO_OPCODES)
@@ -459,6 +477,7 @@ bool Interpreter::isOpcode(Opcode opcode)
     return opcode >= 0 && opcode <= op_end;
 #endif
 }
+#endif // !ASSERT_DISABLED
 
 class GetStackTraceFunctor {
 public:

@@ -1,6 +1,6 @@
 [
     {
-        "section" : "Bytecodes", "emitInHFile" : true, "emitInASMFile" : true, 
+        "section" : "Bytecodes", "emitInHFile" : true, "emitInASMFile" : true, "emitOpcodeIDStringValuesInHFile" : true,
         "macroNameComponent" : "BYTECODE", "asmPrefix" : "llint_", 
         "bytecodes" : [
             { "name" : "op_enter", "length" : 1 },
@@ -158,7 +158,7 @@
         ]
     },
     {
-        "section" : "CLoopHelpers", "emitInHFile" : true, "emitInASMFile" : false, "defaultLength" : 1,
+        "section" : "CLoopHelpers", "emitInHFile" : true, "emitInASMFile" : false, "emitOpcodeIDStringValuesInHFile" : false, "defaultLength" : 1,
         "macroNameComponent" : "CLOOP_BYTECODE_HELPER",
         "bytecodes" : [
             { "name" : "llint_entry" },
@@ -181,7 +181,7 @@
         ]
     },
     {
-        "section" : "NativeHelpers", "emitInHFile" : true, "emitInASMFile" : true, "defaultLength" : 1,
+        "section" : "NativeHelpers", "emitInHFile" : true, "emitInASMFile" : true, "emitOpcodeIDStringValuesInHFile" : false, "defaultLength" : 1,
         "macroNameComponent" : "BYTECODE_HELPER",
         "bytecodes" : [
             { "name" : "llint_program_prologue" },

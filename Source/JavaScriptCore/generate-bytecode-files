@@ -1,6 +1,6 @@
 #! /usr/bin/python
 
-# Copyright (C) 2014 Apple Inc. All rights reserved.
+# Copyright (C) 2014-2017 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -200,6 +200,15 @@ if __name__ == "__main__":
 
             bytecodeHFile.write("\n\n")
             bytecodeHFile.write("#define NUMBER_OF_{0}_IDS {1}\n\n".format(section["macroNameComponent"], bytecodeNum))
+
+        if bytecodeHFilename and section['emitOpcodeIDStringValuesInHFile']:
+            bytecodeNum = 0
+            for bytecode in section["bytecodes"]:
+                bytecodeHFile.write("#define {0}_value_string \"{1}\"\n".format(bytecode["name"], bytecodeNum))
+                firstMacro = False
+                bytecodeNum = bytecodeNum + 1
+
+            bytecodeHFile.write("\n")            
 
         if initASMFileName and section['emitInASMFile']:
             prefix = ""

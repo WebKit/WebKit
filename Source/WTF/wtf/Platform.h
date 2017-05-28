@@ -916,6 +916,15 @@
 #define ENABLE_COMPUTED_GOTO_OPCODES 1
 #endif
 
+#if ENABLE(JIT) && !COMPILER(MSVC) && \
+    (CPU(X86) || CPU(X86_64) || CPU(ARM64) || CPU(ARM_THUMB2)) && OS(DARWIN)
+/* This feature works by embedding the OpcodeID in the 32 bit just before the generated LLint code
+   that executes each opcode. It cannot be supported by the CLoop since there's no way to embed the
+   OpcodeID word in the CLoop's switch statement cases. It is also currently not implemented for MSVC.
+*/
+#define USE_LLINT_EMBEDDED_OPCODE_ID 1
+#endif
+
 /* Regular Expression Tracing - Set to 1 to trace RegExp's in jsc.  Results dumped at exit */
 #define ENABLE_REGEXP_TRACING 0
 

@@ -97,15 +97,12 @@ namespace JSC {
         Interpreter(VM &);
         ~Interpreter();
         
-        void initialize();
-
 #if !ENABLE(JIT)
         CLoopStack& cloopStack() { return m_cloopStack; }
 #endif
         
         Opcode getOpcode(OpcodeID id)
         {
-            ASSERT(m_initialized);
 #if ENABLE(COMPUTED_GOTO_OPCODES)
             return m_opcodeTable[id];
 #else
@@ -115,11 +112,22 @@ namespace JSC {
 
         OpcodeID getOpcodeID(Opcode opcode)
         {
-            ASSERT(m_initialized);
 #if ENABLE(COMPUTED_GOTO_OPCODES)
             ASSERT(isOpcode(opcode));
-            return m_opcodeIDTable.get(opcode);
+#if USE(LLINT_EMBEDDED_OPCODE_ID)
+            // The OpcodeID is embedded in the int32_t word preceding the location of
+            // the LLInt code for the opcode (see the EMBED_OPCODE_ID_IF_NEEDED macro
+            // in LowLevelInterpreter.cpp).
+            MacroAssemblerCodePtr codePtr(reinterpret_cast<void*>(opcode));
+            int32_t* opcodeIDAddress = reinterpret_cast<int32_t*>(codePtr.dataLocation()) - 1;
+            OpcodeID opcodeID = static_cast<OpcodeID>(*opcodeIDAddress);
+            ASSERT(opcodeID < NUMBER_OF_BYTECODE_IDS);
+            return opcodeID;
 #else
+            return m_opcodeIDTable.get(opcode);
+#endif // USE(LLINT_EMBEDDED_OPCODE_ID)
+
+#else // not ENABLE(COMPUTED_GOTO_OPCODES)
             return opcode;
 #endif
         }
@@ -127,7 +135,9 @@ namespace JSC {
         OpcodeID getOpcodeID(const Instruction&);
         OpcodeID getOpcodeID(const UnlinkedInstruction&);
 
+#if !ASSERT_DISABLED
         bool isOpcode(Opcode);
+#endif
 
         JSValue executeProgram(const SourceCode&, CallFrame*, JSObject* thisObj);
         JSValue executeModuleProgram(ModuleProgramExecutable*, CallFrame*, JSModuleEnvironment*);
@@ -170,13 +180,14 @@ namespace JSC {
 #endif
         
 #if ENABLE(COMPUTED_GOTO_OPCODES)
-        Opcode* m_opcodeTable; // Maps OpcodeID => Opcode for compiling
-        HashMap<Opcode, OpcodeID> m_opcodeIDTable; // Maps Opcode => OpcodeID for decompiling
-#endif
+        const Opcode* m_opcodeTable; // Maps OpcodeID => Opcode for compiling
 
-#if !ASSERT_DISABLED
-        bool m_initialized;
-#endif
+#if !USE(LLINT_EMBEDDED_OPCODE_ID) || !ASSERT_DISABLED
+        HashMap<Opcode, OpcodeID>& m_opcodeIDTable; // Maps Opcode => OpcodeID for decompiling
+
+        static HashMap<Opcode, OpcodeID>& opcodeIDTable();
+#endif // !USE(LLINT_EMBEDDED_OPCODE_ID) || !ASSERT_DISABLED
+#endif // ENABLE(COMPUTED_GOTO_OPCODES)
     };
 
     JSValue eval(CallFrame*);

@@ -1,3 +1,42 @@
+2017-05-28  Mark Lam  <mark.lam@apple.com>
+
+        Implement a faster Interpreter::getOpcodeID().
+        https://bugs.webkit.org/show_bug.cgi?id=172669
+
+        Reviewed by Saam Barati.
+
+        We can implement Interpreter::getOpcodeID() without a hash table lookup by always
+        embedding the OpcodeID in the 32-bit word just before the start of the LLInt
+        handler code that executes each opcode.  getOpcodeID() can therefore just read
+        the 32-bits before the opcode address to get its OpcodeID.
+
+        This is currently only enabled for CPU(X86), CPU(X86_64), CPU(ARM64),
+        CPU(ARM_THUMB2), and only for OS(DARWIN).  It'll probably just work for linux as
+        well, but I'll let the Linux folks turn that on after they have verified that it
+        works on linux too.
+
+        I'll also take this opportunity to clean up how we initialize the opcodeIDTable:
+        1. we only need to initialize it once per process, not once per VM / interpreter
+           instance.
+        2. we can initialize it in the Interpreter constructor instead of requiring a
+           separate call to an initialize() function.
+
+        On debug builds, the Interpreter constructor will also verify that getOpcodeID()
+        is working correctly for each opcode when USE(LLINT_EMBEDDED_OPCODE_ID).
+
+        * bytecode/BytecodeList.json:
+        * generate-bytecode-files:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::Interpreter):
+        (JSC::Interpreter::opcodeIDTable):
+        (JSC::Interpreter::initialize): Deleted.
+        * interpreter/Interpreter.h:
+        (JSC::Interpreter::getOpcode):
+        (JSC::Interpreter::getOpcodeID):
+        * llint/LowLevelInterpreter.cpp:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+
 2017-05-27  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Map and Set constructors should have fast path for cloning
