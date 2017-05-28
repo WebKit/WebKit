@@ -64,22 +64,16 @@ private:
     static String toStringName(const JSObject*, ExecState*);
 };
 
-template<typename To, typename From>
-inline typename std::enable_if<std::is_same<typename std::remove_pointer<To>::type, JSSet>::value, To>::type jsDynamicCast(VM&, From* from)
+inline bool isJSSet(JSCell* from)
 {
     static_assert(std::is_final<JSSet>::value, "");
-    if (LIKELY(from->type() == JSSetType))
-        return static_cast<To>(from);
-    return nullptr;
+    return from->type() == JSSetType;
 }
 
-template<>
-inline JSSet* jsDynamicCast<JSSet*>(VM&, JSValue from)
+inline bool isJSSet(JSValue from)
 {
     static_assert(std::is_final<JSSet>::value, "");
-    if (LIKELY(from.isCell() && from.asCell()->type() == JSSetType))
-        return static_cast<JSSet*>(from.asCell());
-    return nullptr;
+    return from.isCell() && from.asCell()->type() == JSSetType;
 }
 
 } // namespace JSC

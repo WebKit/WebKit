@@ -67,7 +67,8 @@ static EncodedJSValue JSC_HOST_CALL constructMap(ExecState* exec)
     if (iterable.isUndefinedOrNull())
         return JSValue::encode(JSMap::create(exec, vm, mapStructure));
 
-    if (JSMap* iterableMap = jsDynamicCast<JSMap*>(vm, iterable)) {
+    if (isJSMap(iterable)) {
+        JSMap* iterableMap = jsCast<JSMap*>(iterable);
         if (iterableMap->canCloneFastAndNonObservable(mapStructure))
             return JSValue::encode(iterableMap->clone(exec, vm, mapStructure));
     }

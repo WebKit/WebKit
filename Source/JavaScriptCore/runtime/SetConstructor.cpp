@@ -67,7 +67,8 @@ static EncodedJSValue JSC_HOST_CALL constructSet(ExecState* exec)
     if (iterable.isUndefinedOrNull())
         return JSValue::encode(JSSet::create(exec, vm, setStructure));
 
-    if (JSSet* iterableSet = jsDynamicCast<JSSet*>(vm, iterable)) {
+    if (isJSSet(iterable)) {
+        JSSet* iterableSet = jsCast<JSSet*>(iterable);
         if (iterableSet->canCloneFastAndNonObservable(setStructure))
             return JSValue::encode(iterableSet->clone(exec, vm, setStructure));
     }

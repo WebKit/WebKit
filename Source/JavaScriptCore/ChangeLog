@@ -1,3 +1,25 @@
+2017-05-28  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Unreviewed, build fix for Windows
+        https://bugs.webkit.org/show_bug.cgi?id=172413
+
+        Optimized jsDynamicCast for JSMap and JSSet will be handled in [1].
+
+        [1]: https://bugs.webkit.org/show_bug.cgi?id=172685
+
+        * runtime/JSMap.h:
+        (JSC::isJSMap):
+        (JSC::jsDynamicCast): Deleted.
+        (JSC::>): Deleted.
+        * runtime/JSSet.h:
+        (JSC::isJSSet):
+        (JSC::jsDynamicCast): Deleted.
+        (JSC::>): Deleted.
+        * runtime/MapConstructor.cpp:
+        (JSC::constructMap):
+        * runtime/SetConstructor.cpp:
+        (JSC::constructSet):
+
 2017-05-28  Mark Lam  <mark.lam@apple.com>
 
         Implement a faster Interpreter::getOpcodeID().
