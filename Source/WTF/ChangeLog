@@ -1,3 +1,21 @@
+2017-05-28  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC][Linux][FreeBSD] Use faster Interpreter::getOpcodeID()
+        https://bugs.webkit.org/show_bug.cgi?id=172686
+
+        Reviewed by Mark Lam.
+
+        As of r217526, JSC gets faster Interpreter::getOpcodeID() by
+        embedding OpcodeID value just before the LLInt machine code
+        handler pointer. By doing so, we can retrieve OpcodeID from
+        the LLInt machine code handler by dereferencing the code
+        pointer. `*((int*)ptr - 1)`.
+
+        This patch allows Linux and FreeBSD environments to use this
+        optimization.
+
+        * wtf/Platform.h:
+
 2017-05-28  Mark Lam  <mark.lam@apple.com>
 
         Implement a faster Interpreter::getOpcodeID().
