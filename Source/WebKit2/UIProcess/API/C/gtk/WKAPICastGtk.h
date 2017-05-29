@@ -37,8 +37,6 @@ typedef struct _WebKitWebViewBase WebKitWebViewBase;
 
 namespace WebKit {
 
-class WebGrammarDetail;
-
 WK_ADD_API_MAPPING(WKGrammarDetailRef, WebGrammarDetail)
 WK_ADD_API_MAPPING(WKViewRef, WebKitWebViewBase)
 

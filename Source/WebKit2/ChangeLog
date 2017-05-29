@@ -1,5 +1,14 @@
 2017-05-29  Claudio Saavedra  <csaavedra@igalia.com>
 
+        [GTK] Remove unneeded forward declaration
+
+        Rubber-stamped by Zan Dobersek.
+
+        * UIProcess/API/C/gtk/WKAPICastGtk.h: Remove WebGrammarDetail as
+        its header is included in the same file.
+
+2017-05-29  Claudio Saavedra  <csaavedra@igalia.com>
+
         [WPE] Build fix after r217531
 
         Unreviewed.
