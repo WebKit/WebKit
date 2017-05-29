@@ -31,6 +31,7 @@
 #endif
 
 #include "WKView.h"
+#include "WebGrammarDetail.h"
 #include <WebCore/ActivityState.h>
 
 namespace WKWPE {
@@ -39,7 +40,13 @@ class View;
 
 namespace WebKit {
 
+WK_ADD_API_MAPPING(WKGrammarDetailRef, WebGrammarDetail)
 WK_ADD_API_MAPPING(WKViewRef, WKWPE::View)
+
+inline ProxyingRefPtr<WebGrammarDetail> toAPI(const WebCore::GrammarDetail& grammarDetail)
+{
+    return ProxyingRefPtr<WebGrammarDetail>(WebGrammarDetail::create(grammarDetail));
+}
 
 inline WebCore::ActivityState::Flags toViewStateFlags(WKViewState wkViewState)
 {

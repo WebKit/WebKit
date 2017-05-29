@@ -1,3 +1,12 @@
+2017-05-29  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [WPE] Build fix after r217531
+
+        Unreviewed.
+
+        * UIProcess/API/C/wpe/WKAPICastWPE.h:
+        (WebKit::toAPI): Add missing WebGrammarDetail API cast.
+
 2017-05-28  Dan Bernstein  <mitz@apple.com>
 
         [Xcode] ALWAYS_SEARCH_USER_PATHS is set to YES
