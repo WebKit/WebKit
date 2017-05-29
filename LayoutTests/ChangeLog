@@ -2,6 +2,12 @@
 
         Unreviewed Windows test gardening, update expected results after r217418.
 
+        * platform/win/fast/block/float/032-expected.txt:
+
+2017-05-29  Per Arne Vollan  <pvollan@apple.com>
+
+        Unreviewed Windows test gardening, update expected results after r217418.
+
         * platform/win/fast/forms/input-appearance-spinbutton-expected.txt:
         * platform/win/fast/forms/input-appearance-spinbutton-up-expected.txt:
         * platform/win/fast/forms/number/number-appearance-rtl-expected.txt:
