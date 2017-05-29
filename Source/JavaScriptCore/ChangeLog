@@ -1,3 +1,49 @@
+2017-05-28  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Provide better type information of toLength and tighten bytecode
+        https://bugs.webkit.org/show_bug.cgi?id=172690
+
+        Reviewed by Sam Weinig.
+
+        In this patch, we carefully leverage operator + in order to
+
+        1. tighten bytecode
+
+        operator+ emits to_number bytecode. What this bytecode does is the same
+        to @Number() call. It is more efficient, and it is smaller bytecode
+        than @Number() call (load global variable @Number, set up arguments, and
+        call it).
+
+        2. offer better type prediction data
+
+        Now, we have code like
+
+            length > 0 ? (length < @MAX_SAFE_INTEGER ? length : @MAX_SAFE_INTEGER) : 0
+
+        This is not good because DFG prediction propagation phase predicts as Double
+        since @MAX_SAFE_INTEGER is double. But actually it rarely becomes Double.
+        Usually, the result becomes Int32. This patch leverages to_number in a bit
+        interesting way: to_number has value profiling to offer better type prediction.
+        This value profiling can offer a chance to change the prediction to Int32 efficiently.
+        It is a bit tricky. But it is worth doing to speed up our builtin functions,
+        which should leverage all the JSC's tricky things to be optimized.
+
+        Related microbenchmarks show performance improvement.
+
+                                                  baseline                  patched
+
+            array-prototype-forEach           50.2348+-2.2331           49.7568+-2.3507
+            array-prototype-map               51.0574+-1.8166           47.9531+-2.1653          might be 1.0647x faster
+            array-prototype-some              52.3926+-1.8882     ^     48.3632+-2.0852        ^ definitely 1.0833x faster
+            array-prototype-every             52.7394+-2.0712           50.2896+-2.1480          might be 1.0487x faster
+            array-prototype-reduce            54.9994+-2.3638           51.8716+-2.6253          might be 1.0603x faster
+            array-prototype-reduceRight      209.7594+-9.2594     ^     51.5867+-2.5745        ^ definitely 4.0662x faster
+
+
+        * builtins/GlobalOperations.js:
+        (globalPrivate.toInteger):
+        (globalPrivate.toLength):
+
 2017-05-28  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] @@iterator should only be accessed once when disambiguating a union type

@@ -30,7 +30,7 @@ function toInteger(target)
 {
     "use strict";
 
-    var numberValue = @Number(target);
+    var numberValue = +target;
 
     // isNaN(numberValue)
     if (numberValue !== numberValue)
@@ -45,7 +45,7 @@ function toLength(target)
 
     var length = @toInteger(target);
     // originally Math.min(Math.max(length, 0), maxSafeInteger));
-    return length > 0 ? (length < @MAX_SAFE_INTEGER ? length : @MAX_SAFE_INTEGER) : 0;
+    return +(length > 0 ? (length < @MAX_SAFE_INTEGER ? length : @MAX_SAFE_INTEGER) : 0);
 }
 
 @globalPrivate
