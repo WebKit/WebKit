@@ -1,3 +1,11 @@
+2017-05-29  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [WPE] Marking workers/bomb.html test as slow.
+
+        Unreviewed gardening.
+
+        * platform/wpe/TestExpectations:
+
 2017-05-29  Emilio Cobos Álvarez  <ecobos@igalia.com>
 
         Use the parent box style to adjust RenderStyle for alignment.

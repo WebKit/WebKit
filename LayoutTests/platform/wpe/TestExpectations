@@ -418,3 +418,5 @@ Bug(WPE) css3/font-variant-small-caps-synthesis.html [ ImageOnlyFailure ]
 Bug(WPE) css3/font-variant-synthesis-jdaggett.html [ ImageOnlyFailure ]
 Bug(WPE) css3/unicode-bidi-isolate-aharon-failing.html [ ImageOnlyFailure ]
 Bug(WPE) css3/zoom-coords.xhtml [ Failure ]
+
+webkit.org/b/159754 workers/bomb.html [ Slow ]
