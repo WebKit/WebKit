@@ -1,3 +1,36 @@
+2017-05-29  Emilio Cobos Álvarez  <ecobos@igalia.com>
+
+        Use the parent box style to adjust RenderStyle for alignment.
+        https://bugs.webkit.org/show_bug.cgi?id=172215
+
+        Reviewed by Antti Koivisto.
+
+        The css-flexbox spec defined align-self in terms of the parent
+        element, which is what this code did.
+
+        The css-align spec defines these properties in terms of the style of
+        the containing box instead, which means display: contents styles
+        should not be used for this adjustment, but the parent box style
+        instead.
+
+        For example, align-items is defined as:
+
+        > This property specifies the default align-self for all of the boxes
+        > (including anonymous boxes) participating in this box’s formatting
+        > context.
+
+        Note that the css-align spec was recently updated to align (no pun
+        intended) with Gecko, and make the |auto| value compute to itself.
+        This patch puts us in a more recent spec than before, but not totally
+        up-to-date.
+
+        Tests: imported/w3c/web-platform-tests/css/css-display-3/display-contents-alignment-001.html
+               imported/w3c/web-platform-tests/css/css-display-3/display-contents-alignment-002.html
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::adjustRenderStyle):
+        (WebCore::StyleResolver::adjustStyleForAlignment):
+
 2017-05-28  Dan Bernstein  <mitz@apple.com>
 
         [Xcode] ALWAYS_SEARCH_USER_PATHS is set to YES
