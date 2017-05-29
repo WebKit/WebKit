@@ -138,6 +138,8 @@ Bug(WPE) webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-video-
 Bug(WPE) webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba4444.html [ Timeout ]
 Bug(WPE) webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba5551.html [ Timeout ]
 Bug(WPE) webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-video.html [ Timeout ]
+#  Slow
+webkit.org/b/169917 webgl/1.0.2/conformance/uniforms/gl-uniform-arrays.html [ Slow ]
 
 # webgl/1.0.3:
 #  Failing:
@@ -176,6 +178,7 @@ Bug(WPE) webgl/many-contexts.html [ Failure ]
 Bug(WPE) webgl/max-active-contexts-console-warning.html [ Failure ]
 Bug(WPE) webgl/max-active-contexts-gc.html [ Failure ]
 Bug(WPE) webgl/max-active-contexts-oldest-context-lost.html [ Failure ]
+webkit.org/b/169917 webgl/max-active-contexts-webglcontextlost-prevent-default.html [ Timeout ]
 
 # WebGL2
 Bug(WPE) webgl/webgl-vertex-array-object-defined.html [ Failure ]
@@ -419,4 +422,5 @@ Bug(WPE) css3/font-variant-synthesis-jdaggett.html [ ImageOnlyFailure ]
 Bug(WPE) css3/unicode-bidi-isolate-aharon-failing.html [ ImageOnlyFailure ]
 Bug(WPE) css3/zoom-coords.xhtml [ Failure ]
 
+webkit.org/b/119264 transitions/created-while-suspended.html [ Pass Slow ]
 webkit.org/b/159754 workers/bomb.html [ Slow ]

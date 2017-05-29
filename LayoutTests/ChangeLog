@@ -1,5 +1,12 @@
 2017-05-29  Claudio Saavedra  <csaavedra@igalia.com>
 
+        [WPE] Mark a couple of tests as slow/timing out
+
+        Unreviewed gardening. These are all known ones.
+        * platform/wpe/TestExpectations:
+
+2017-05-29  Claudio Saavedra  <csaavedra@igalia.com>
+
         [WPE] Marking workers/bomb.html test as slow.
 
         Unreviewed gardening.
