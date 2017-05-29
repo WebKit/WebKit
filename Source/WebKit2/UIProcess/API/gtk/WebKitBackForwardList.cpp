@@ -20,6 +20,7 @@
 #include "config.h"
 #include "WebKitBackForwardList.h"
 
+#include "APIArray.h"
 #include "WebKitBackForwardListPrivate.h"
 #include "WebKitMarshal.h"
 #include "WebKitPrivate.h"

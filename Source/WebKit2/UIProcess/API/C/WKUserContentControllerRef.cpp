@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WKUserContentControllerRef.h"
 
+#include "APIArray.h"
 #include "APIContentRuleList.h"
 #include "APIUserScript.h"
 #include "WKAPICast.h"

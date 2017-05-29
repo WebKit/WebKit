@@ -1,3 +1,13 @@
+2017-05-28  Dan Bernstein  <mitz@apple.com>
+
+        [Xcode] ALWAYS_SEARCH_USER_PATHS is set to YES
+        https://bugs.webkit.org/show_bug.cgi?id=172691
+
+        Reviewed by Tim Horton.
+
+        * Configurations/Base.xcconfig: Set ALWAYS_SEARCH_USER_PATHS to NO.
+        * JavaScriptCore.xcodeproj/project.pbxproj: Added ParseInt.h to the JavaScriptCore target.
+
 2017-05-28  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Provide better type information of toLength and tighten bytecode

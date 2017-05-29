@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WKOpenPanelResultListener.h"
 
+#include "APIArray.h"
 #include "WKAPICast.h"
 #include "WebOpenPanelResultListenerProxy.h"
 #include <WebCore/URL.h>

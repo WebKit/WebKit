@@ -26,11 +26,14 @@
 #ifndef WebGrammarDetail_h
 #define WebGrammarDetail_h
 
-#include "APIArray.h"
 #include "APIObject.h"
 #include <WebCore/TextCheckerClient.h>
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
+
+namespace API {
+class Array;
+}
 
 namespace WebKit {
 

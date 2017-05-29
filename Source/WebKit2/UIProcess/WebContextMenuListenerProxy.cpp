@@ -28,6 +28,7 @@
 #include "config.h"
 #include "WebContextMenuListenerProxy.h"
 
+#include "APIArray.h"
 #include "WKAPICast.h"
 #include "WKArray.h"
 #include "WebContextMenuItem.h"

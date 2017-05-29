@@ -1,3 +1,36 @@
+2017-05-28  Dan Bernstein  <mitz@apple.com>
+
+        [Xcode] ALWAYS_SEARCH_USER_PATHS is set to YES
+        https://bugs.webkit.org/show_bug.cgi?id=172691
+
+        Reviewed by Tim Horton.
+
+        * Configurations/Base.xcconfig: Set ALWAYS_SEARCH_USER_PATHS to NO.
+
+        * UIProcess/API/C/WKAPICast.h: Moved GTK-only definitions that used WebGrammarDetail.h to
+          WKAPICastGtk.h. This had the effect of no longer including APIArray.h from this header.
+
+        * UIProcess/API/C/gtk/WKAPICastGtk.h: Moved GTK-only definitions to here.
+        (WebKit::toAPI):
+        * UIProcess/WebGrammarDetail.h: Replaced include of APIArray.h with a forward declaration.
+
+        * Shared/API/c/WKRenderLayer.cpp:
+        * Shared/API/c/WKRenderObject.cpp:
+        * UIProcess/API/C/WKApplicationCacheManager.cpp:
+        * UIProcess/API/C/WKContext.cpp:
+        * UIProcess/API/C/WKContextConfigurationRef.cpp:
+        * UIProcess/API/C/WKCookieManager.cpp:
+        * UIProcess/API/C/WKKeyValueStorageManager.cpp:
+        * UIProcess/API/C/WKNotificationManager.cpp:
+        * UIProcess/API/C/WKOpenPanelResultListener.cpp:
+        * UIProcess/API/C/WKPageGroup.cpp:
+        * UIProcess/API/C/WKResourceCacheManager.cpp:
+        * UIProcess/API/C/WKUserContentControllerRef.cpp:
+        * UIProcess/API/gtk/WebKitBackForwardList.cpp:
+        * UIProcess/WebContextMenuListenerProxy.cpp:
+
+          Added #include "APIArray.h" to these files now that WKAPICast.h does not include it.
+
 2017-05-26  Joseph Pecoraro  <pecoraro@apple.com>
 
         Simply some NSNumber usage

@@ -1,3 +1,15 @@
+2017-05-28  Dan Bernstein  <mitz@apple.com>
+
+        [Xcode] ALWAYS_SEARCH_USER_PATHS is set to YES
+        https://bugs.webkit.org/show_bug.cgi?id=172691
+
+        Reviewed by Tim Horton.
+
+        * Configurations/Base.xcconfig: Set ALWAYS_SEARCH_USER_PATHS to NO.
+        * WebCore.xcodeproj/project.pbxproj: Added DateTimeChooser.h, DateTimeChooserClient.h,
+          PerformanceMark.h, PerformanceMeasure.h, SVGUnknownElement.h, and MathMLUnknownElement.h
+          to the WebCore target.
+
 2017-05-28  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] @@iterator should only be accessed once when disambiguating a union type

@@ -1610,6 +1610,12 @@
 		37B327D31D17096A005737FA /* PIPSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 37B327D21D17096A005737FA /* PIPSPI.h */; };
 		37BAAE581980D1DD005DFE71 /* ProtectionSpace.h in Headers */ = {isa = PBXBuildFile; fileRef = 37BAAE571980D1DD005DFE71 /* ProtectionSpace.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		37C238221098C84200EF9F72 /* ComplexTextControllerCoreText.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37C238201098C84200EF9F72 /* ComplexTextControllerCoreText.mm */; };
+		37C738E91EDBD2FA003F2B0B /* PerformanceMark.h in Headers */ = {isa = PBXBuildFile; fileRef = 37C738E81EDBD2ED003F2B0B /* PerformanceMark.h */; };
+		37C738EB1EDBD384003F2B0B /* PerformanceMeasure.h in Headers */ = {isa = PBXBuildFile; fileRef = 37C738EA1EDBD381003F2B0B /* PerformanceMeasure.h */; };
+		37C738ED1EDBD5BC003F2B0B /* SVGUnknownElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 37C738EC1EDBD5B7003F2B0B /* SVGUnknownElement.h */; };
+		37C738EF1EDBD71B003F2B0B /* MathMLUnknownElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 37C738EE1EDBD718003F2B0B /* MathMLUnknownElement.h */; };
+		37C738F31EDBDE8A003F2B0B /* DateTimeChooser.h in Headers */ = {isa = PBXBuildFile; fileRef = 37C738F11EDBDE87003F2B0B /* DateTimeChooser.h */; };
+		37C738F41EDBDE8D003F2B0B /* DateTimeChooserClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 37C738F21EDBDE87003F2B0B /* DateTimeChooserClient.h */; };
 		37D456FD1A9A50D8003330A1 /* LocalizableStrings.pm in Copy Scripts */ = {isa = PBXBuildFile; fileRef = 37D456FB1A9A50B6003330A1 /* LocalizableStrings.pm */; };
 		37DDCD9E13844FFA0008B793 /* Archive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37DDCD9D13844FFA0008B793 /* Archive.cpp */; };
 		37E3524B12450C5200BAF5D9 /* InputType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E3524A12450C5200BAF5D9 /* InputType.cpp */; };
@@ -9244,6 +9250,12 @@
 		37B327D21D17096A005737FA /* PIPSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PIPSPI.h; sourceTree = "<group>"; };
 		37BAAE571980D1DD005DFE71 /* ProtectionSpace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProtectionSpace.h; sourceTree = "<group>"; };
 		37C238201098C84200EF9F72 /* ComplexTextControllerCoreText.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ComplexTextControllerCoreText.mm; sourceTree = "<group>"; };
+		37C738E81EDBD2ED003F2B0B /* PerformanceMark.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PerformanceMark.h; sourceTree = "<group>"; };
+		37C738EA1EDBD381003F2B0B /* PerformanceMeasure.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PerformanceMeasure.h; sourceTree = "<group>"; };
+		37C738EC1EDBD5B7003F2B0B /* SVGUnknownElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGUnknownElement.h; sourceTree = "<group>"; };
+		37C738EE1EDBD718003F2B0B /* MathMLUnknownElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MathMLUnknownElement.h; sourceTree = "<group>"; };
+		37C738F11EDBDE87003F2B0B /* DateTimeChooser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DateTimeChooser.h; sourceTree = "<group>"; };
+		37C738F21EDBDE87003F2B0B /* DateTimeChooserClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DateTimeChooserClient.h; sourceTree = "<group>"; };
 		37D456FB1A9A50B6003330A1 /* LocalizableStrings.pm */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = LocalizableStrings.pm; sourceTree = "<group>"; };
 		37DDCD9D13844FFA0008B793 /* Archive.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Archive.cpp; sourceTree = "<group>"; };
 		37E3524A12450C5200BAF5D9 /* InputType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InputType.cpp; sourceTree = "<group>"; };
@@ -19238,6 +19250,8 @@
 				86BE33FC15058CB200CE0FD8 /* PerformanceEntry.idl */,
 				AD5A0C211DECA10100707054 /* PerformanceLogging.cpp */,
 				AD5A0C201DECA0B500707054 /* PerformanceLogging.h */,
+				37C738E81EDBD2ED003F2B0B /* PerformanceMark.h */,
+				37C738EA1EDBD381003F2B0B /* PerformanceMeasure.h */,
 				83FE90251E307C1C003E9199 /* PerformanceMonitor.cpp */,
 				83FE90261E307C1C003E9199 /* PerformanceMonitor.h */,
 				8AF4E55211DC5A36000ED3DE /* PerformanceNavigation.cpp */,
@@ -22874,6 +22888,7 @@
 				B22279500D00BF210071B782 /* SVGTSpanElement.idl */,
 				B22279510D00BF210071B782 /* SVGUnitTypes.h */,
 				B22279520D00BF210071B782 /* SVGUnitTypes.idl */,
+				37C738EC1EDBD5B7003F2B0B /* SVGUnknownElement.h */,
 				B22279530D00BF210071B782 /* SVGURIReference.cpp */,
 				B22279540D00BF210071B782 /* SVGURIReference.h */,
 				B22279550D00BF210071B782 /* SVGURIReference.idl */,
@@ -23947,6 +23962,8 @@
 				F587868402DE3B8601EA4122 /* Cursor.h */,
 				A5732B08136A161D005C8D7C /* DateComponents.cpp */,
 				A5732B09136A161D005C8D7C /* DateComponents.h */,
+				37C738F11EDBDE87003F2B0B /* DateTimeChooser.h */,
+				37C738F21EDBDE87003F2B0B /* DateTimeChooserClient.h */,
 				45FEA5CD156DDE8C00654101 /* Decimal.cpp */,
 				45FEA5CE156DDE8C00654101 /* Decimal.h */,
 				CD52481818E200ED0008A07D /* SleepDisabler.cpp */,
@@ -25960,6 +25977,7 @@
 				FA654A6A1108ABED002615E0 /* MathMLTokenElement.h */,
 				FA654A691108ABED002626F1 /* MathMLUnderOverElement.cpp */,
 				FA654A6A1108ABED002626F1 /* MathMLUnderOverElement.h */,
+				37C738EE1EDBD718003F2B0B /* MathMLUnknownElement.h */,
 				FABE72F31059C1EB00D999DD /* mathtags.in */,
 			);
 			path = mathml;
@@ -26485,6 +26503,7 @@
 				BE88E0DC1715D2A200658D98 /* AudioTrackList.h in Headers */,
 				CD8B5A4C180E17C0008B8E65 /* AudioTrackMediaSource.h in Headers */,
 				BEF29EEB1715DD0900C4B4C9 /* AudioTrackPrivate.h in Headers */,
+				37C738ED1EDBD5BC003F2B0B /* SVGUnknownElement.h in Headers */,
 				CDE3A85417F5FCE600C5BE20 /* AudioTrackPrivateAVF.h in Headers */,
 				CDE3A85817F6020400C5BE20 /* AudioTrackPrivateAVFObjC.h in Headers */,
 				CD54A763180F9F7000B076C9 /* AudioTrackPrivateMediaSourceAVFObjC.h in Headers */,
@@ -27886,6 +27905,7 @@
 				D359D8BF129CA55C0006E5D2 /* JSHTMLDetailsElement.h in Headers */,
 				76808B50159DADFA002B5233 /* JSHTMLDialogElement.h in Headers */,
 				1A85B1E70A1B240500D8C87C /* JSHTMLDirectoryElement.h in Headers */,
+				37C738F31EDBDE8A003F2B0B /* DateTimeChooser.h in Headers */,
 				1A85B2B70A1B2AC700D8C87C /* JSHTMLDivElement.h in Headers */,
 				1A85B1E90A1B240500D8C87C /* JSHTMLDListElement.h in Headers */,
 				1A494E350A12358B00FDAFC1 /* JSHTMLDocument.h in Headers */,
@@ -28326,6 +28346,7 @@
 				49C7B9A51042D2D30009D447 /* JSWebGLTexture.h in Headers */,
 				6F995A381A70833700A735F4 /* JSWebGLTransformFeedback.h in Headers */,
 				0C45342810CDBBFA00869157 /* JSWebGLUniformLocation.h in Headers */,
+				37C738EF1EDBD71B003F2B0B /* MathMLUnknownElement.h in Headers */,
 				6F995A3A1A70833700A735F4 /* JSWebGLVertexArrayObject.h in Headers */,
 				77EF62F412F9DB7400C77BD2 /* JSWebGLVertexArrayObjectOES.h in Headers */,
 				31A089561E738D59003B6609 /* JSWebGPUBuffer.h in Headers */,
@@ -28615,6 +28636,7 @@
 				07EE76EC1BE96DB000F89133 /* MockRealtimeVideoSource.h in Headers */,
 				07EE76EF1BEA619800F89133 /* MockRealtimeVideoSourceMac.h in Headers */,
 				CDF2B0171820540700F2B424 /* MockSourceBufferPrivate.h in Headers */,
+				37C738F41EDBDE8D003F2B0B /* DateTimeChooserClient.h in Headers */,
 				CDF2B0191820540700F2B424 /* MockTracks.h in Headers */,
 				C6D74AD509AA282E000B0A52 /* ModifySelectionListLevel.h in Headers */,
 				709A01FE1E3D0BDD006B0D4C /* ModuleFetchFailureKind.h in Headers */,
@@ -28842,6 +28864,7 @@
 				BCEC01D70C274EB4009F4EC9 /* PlatformScreen.h in Headers */,
 				297BE3D516C03C08003316BD /* PlatformSpeechSynthesisUtterance.h in Headers */,
 				297BE3D616C03C0B003316BD /* PlatformSpeechSynthesisVoice.h in Headers */,
+				37C738E91EDBD2FA003F2B0B /* PerformanceMark.h in Headers */,
 				297BE3D716C03C0E003316BD /* PlatformSpeechSynthesizer.h in Headers */,
 				1AD8F81B11CAB9E900E93E54 /* PlatformStrategies.h in Headers */,
 				0F7D07331884C56C00B4AF86 /* PlatformTextTrack.h in Headers */,
@@ -29157,6 +29180,7 @@
 				078E094217D16E1C00420AA1 /* RTCPeerConnectionHandlerClient.h in Headers */,
 				078E092417D14D1C00420AA1 /* RTCPeerConnectionIceEvent.h in Headers */,
 				5E2C437C1BCF9A840001E2BC /* RTCPeerConnectionInternalsBuiltins.h in Headers */,
+				37C738EB1EDBD384003F2B0B /* PerformanceMeasure.h in Headers */,
 				5E2C43631BCEE32B0001E2BC /* RTCRtpReceiver.h in Headers */,
 				5E2C43611BCEE3230001E2BC /* RTCRtpSender.h in Headers */,
 				5E2C435F1BCEE31E0001E2BC /* RTCRtpSenderReceiverBase.h in Headers */,

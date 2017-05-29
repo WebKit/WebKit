@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WKPageGroup.h"
 
+#include "APIArray.h"
 #include "APIContentRuleList.h"
 #include "APIUserContentWorld.h"
 #include "APIUserScript.h"

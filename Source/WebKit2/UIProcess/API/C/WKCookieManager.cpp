@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WKCookieManager.h"
 
+#include "APIArray.h"
 #include "WKAPICast.h"
 #include "WebCookieManagerProxy.h"
 

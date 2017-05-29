@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WKNotificationManager.h"
 
+#include "APIArray.h"
 #include "WKAPICast.h"
 #include "WebNotification.h"
 #include "WebNotificationManagerProxy.h"

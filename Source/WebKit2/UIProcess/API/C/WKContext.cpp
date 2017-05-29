@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WKContextPrivate.h"
 
+#include "APIArray.h"
 #include "APIClient.h"
 #include "APIDownloadClient.h"
 #include "APILegacyContextHistoryClient.h"

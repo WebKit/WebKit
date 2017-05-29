@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WKRenderObject.h"
 
+#include "APIArray.h"
 #include "WKAPICast.h"
 #include "WebRenderObject.h"
 

@@ -31,11 +31,21 @@
 #error "Please #include \"WKAPICast.h\" instead of this file directly."
 #endif
 
+#include "WebGrammarDetail.h"
+
 typedef struct _WebKitWebViewBase WebKitWebViewBase;
 
 namespace WebKit {
 
+class WebGrammarDetail;
+
+WK_ADD_API_MAPPING(WKGrammarDetailRef, WebGrammarDetail)
 WK_ADD_API_MAPPING(WKViewRef, WebKitWebViewBase)
+
+inline ProxyingRefPtr<WebGrammarDetail> toAPI(const WebCore::GrammarDetail& grammarDetail)
+{
+    return ProxyingRefPtr<WebGrammarDetail>(WebGrammarDetail::create(grammarDetail));
+}
 
 template<>
 inline WKViewRef toAPI<>(WebKitWebViewBase* view)

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WKContextConfigurationRef.h"
 
+#include "APIArray.h"
 #include "APIProcessPoolConfiguration.h"
 #include "WKAPICast.h"
 

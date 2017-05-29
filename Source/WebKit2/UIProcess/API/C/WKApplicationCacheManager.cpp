@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WKApplicationCacheManager.h"
 
+#include "APIArray.h"
 #include "APIWebsiteDataStore.h"
 #include "WKAPICast.h"
 #include "WebsiteDataRecord.h"

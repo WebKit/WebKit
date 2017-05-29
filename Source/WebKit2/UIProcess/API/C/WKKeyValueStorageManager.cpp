@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WKKeyValueStorageManager.h"
 
+#include "APIArray.h"
 #include "APIDictionary.h"
 #include "APIWebsiteDataStore.h"
 #include "StorageManager.h"
