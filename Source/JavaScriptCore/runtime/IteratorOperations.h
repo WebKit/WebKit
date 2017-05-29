@@ -42,10 +42,15 @@ JS_EXPORT_PRIVATE JSObject* createIteratorResultObject(ExecState*, JSValue, bool
 
 Structure* createIteratorResultObjectStructure(VM&, JSGlobalObject&);
 
+JS_EXPORT_PRIVATE JSValue iteratorMethod(ExecState&, JSObject*);
+JS_EXPORT_PRIVATE JSValue iteratorForIterable(ExecState&, JSObject*, JSValue iteratorMethod);
+
+JS_EXPORT_PRIVATE JSValue iteratorMethod(ExecState&, JSObject*);
 JS_EXPORT_PRIVATE bool hasIteratorMethod(ExecState&, JSValue);
+
 JS_EXPORT_PRIVATE JSValue iteratorForIterable(ExecState*, JSValue iterable);
 
-template <typename CallBackType>
+template<typename CallBackType>
 void forEachInIterable(ExecState* exec, JSValue iterable, const CallBackType& callback)
 {
     auto& vm = exec->vm();
@@ -65,6 +70,31 @@ void forEachInIterable(ExecState* exec, JSValue iterable, const CallBackType& ca
         if (UNLIKELY(scope.exception())) {
             scope.release();
             iteratorClose(exec, iterator);
+            return;
+        }
+    }
+}
+
+template<typename CallBackType>
+void forEachInIterable(ExecState& state, JSObject* iterable, JSValue iteratorMethod, const CallBackType& callback)
+{
+    auto& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto iterator = iteratorForIterable(state, iterable, iteratorMethod);
+    RETURN_IF_EXCEPTION(scope, void());
+    while (true) {
+        JSValue next = iteratorStep(&state, iterator);
+        if (UNLIKELY(scope.exception()) || next.isFalse())
+            return;
+
+        JSValue nextValue = iteratorValue(&state, next);
+        RETURN_IF_EXCEPTION(scope, void());
+
+        callback(vm, state, nextValue);
+        if (UNLIKELY(scope.exception())) {
+            scope.release();
+            iteratorClose(&state, iterator);
             return;
         }
     }

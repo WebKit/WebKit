@@ -1,3 +1,45 @@
+2017-05-28  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] @@iterator should only be accessed once when disambiguating a union type
+        https://bugs.webkit.org/show_bug.cgi?id=172684
+
+        Reviewed by Yusuke Suzuki.
+
+        WebIDL specifies that when determining if the value you are converting to a union
+        is a sequence, you must get the @@iterator property and, should it exist, use it
+        to iterate the sequence. While we correctly accessing the property to make the 
+        determination, we were not passing it into the sequence conversion code, and thus
+        the sequence conversion code re-accessed it, which is observable and wrong.
+
+        This patch pipes the @@iterator method through the sequence conversion code to avoid
+        this.
+
+        Test: js/dom/sequence-in-union-iterator-access.html
+
+        * bindings/js/JSDOMConvertSequences.h:
+        (WebCore::Detail::GenericSequenceConverter::convert):
+        (WebCore::Detail::NumericSequenceConverter::convertArray):
+        (WebCore::Detail::NumericSequenceConverter::convert):
+        (WebCore::Detail::SequenceConverter::convertArray):
+        (WebCore::Detail::SequenceConverter::convert):
+        (WebCore::Detail::SequenceConverter<IDLLong>::convert):
+        (WebCore::Detail::SequenceConverter<IDLFloat>::convert):
+        (WebCore::Detail::SequenceConverter<IDLUnrestrictedFloat>::convert):
+        (WebCore::Detail::SequenceConverter<IDLDouble>::convert):
+        (WebCore::Detail::SequenceConverter<IDLUnrestrictedDouble>::convert):
+        (WebCore::Converter<IDLSequence<T>>::convert):
+        (WebCore::Converter<IDLFrozenArray<T>>::convert):
+        Add variants of convert that take a JSObject* (sequence) / JSValue (iterator method)
+        rather than just the JSValue (sequence). To avoid too much duplication, split some
+        parts of SequenceConverter and NumericSequenceConverter up so they could be reused.
+
+        * bindings/js/JSDOMConvertUnion.h:
+        - Fix incorrect step 3 (WebIDL got updated at some point and we didn't notice) to remove
+          records.
+        - Update sequence and FrozenArray checking/conversion to get the iterator method and pass
+          it along, using the new ConditionalSequenceConverter helper which forwards to the new
+          sequence converters that accept the iterator method.
+
 2017-05-27  Chris Dumez  <cdumez@apple.com>
 
         imported/w3c/web-platform-tests/html/semantics/forms/form-control-infrastructure/form_attribute.html is crashing

@@ -51,6 +51,26 @@ struct ConditionalConverter<ReturnType, T, false> {
     }
 };
 
+
+template<typename ReturnType, typename T, bool enabled>
+struct ConditionalSequenceConverter;
+
+template<typename ReturnType, typename T>
+struct ConditionalSequenceConverter<ReturnType, T, true> {
+    static std::optional<ReturnType> convert(JSC::ExecState& state, JSC::JSObject* object, JSC::JSValue method)
+    {
+        return ReturnType(Converter<T>::convert(state, object, method));
+    }
+};
+
+template<typename ReturnType, typename T>
+struct ConditionalSequenceConverter<ReturnType, T, false> {
+    static std::optional<ReturnType> convert(JSC::ExecState&, JSC::JSObject*, JSC::JSValue)
+    {
+        return std::nullopt;
+    }
+};
+
 namespace Detail {
 
 template<typename List, bool condition>
@@ -128,15 +148,10 @@ template<typename... T> struct Converter<IDLUnion<T...>> : DefaultConverter<IDLU
         // NOTE: Union is expected to be pre-flattented.
         
         // 3. If V is null or undefined then:
-        if (hasDictionaryType || hasRecordType) {
+        if (hasDictionaryType) {
             if (value.isUndefinedOrNull()) {
                 //     1. If types includes a dictionary type, then return the result of converting V to that dictionary type.
-                if (hasDictionaryType)
-                    return std::move<WTF::CheckMoveParameter>(ConditionalConverter<ReturnType, DictionaryType, hasDictionaryType>::convert(state, value).value());
-                
-                //     2. If types includes a record type, then return the result of converting V to that record type.
-                if (hasRecordType)
-                    return std::move<WTF::CheckMoveParameter>(ConditionalConverter<ReturnType, RecordType, hasRecordType>::convert(state, value).value());
+                return std::move<WTF::CheckMoveParameter>(ConditionalConverter<ReturnType, DictionaryType, hasDictionaryType>::convert(state, value).value());
             }
         }
 
@@ -173,8 +188,7 @@ template<typename... T> struct Converter<IDLUnion<T...>> : DefaultConverter<IDLU
             if (value.isCell()) {
                 JSC::JSCell* cell = value.asCell();
                 if (cell->isObject()) {
-                    // FIXME: We should be able to optimize the following code by making use
-                    // of the fact that we have proved that the value is an object. 
+                    auto object = asObject(value);
                 
                     //     1. If types includes a sequence type, then:
                     //         1. Let method be the result of GetMethod(V, @@iterator).
@@ -183,10 +197,10 @@ template<typename... T> struct Converter<IDLUnion<T...>> : DefaultConverter<IDLU
                     //            sequence of that type from V and method.        
                     constexpr bool hasSequenceType = numberOfSequenceTypes != 0;
                     if (hasSequenceType) {
-                        bool hasIterator = JSC::hasIteratorMethod(state, value);
+                        auto method = JSC::iteratorMethod(state, object);
                         RETURN_IF_EXCEPTION(scope, ReturnType());
-                        if (hasIterator)
-                            return std::move<WTF::CheckMoveParameter>(ConditionalConverter<ReturnType, SequenceType, hasSequenceType>::convert(state, value).value());
+                        if (!method.isUndefined())
+                            return std::move<WTF::CheckMoveParameter>(ConditionalSequenceConverter<ReturnType, SequenceType, hasSequenceType>::convert(state, object, method).value());
                     }
 
                     //     2. If types includes a frozen array type, then:
@@ -196,10 +210,10 @@ template<typename... T> struct Converter<IDLUnion<T...>> : DefaultConverter<IDLU
                     //            frozen array of that type from V and method.
                     constexpr bool hasFrozenArrayType = numberOfFrozenArrayTypes != 0;
                     if (hasFrozenArrayType) {
-                        bool hasIterator = JSC::hasIteratorMethod(state, value);
+                        auto method = JSC::iteratorMethod(state, object);
                         RETURN_IF_EXCEPTION(scope, ReturnType());
-                        if (hasIterator)
-                            return std::move<WTF::CheckMoveParameter>(ConditionalConverter<ReturnType, FrozenArrayType, hasFrozenArrayType>::convert(state, value).value());
+                        if (!method.isUndefined())
+                            return std::move<WTF::CheckMoveParameter>(ConditionalSequenceConverter<ReturnType, FrozenArrayType, hasFrozenArrayType>::convert(state, object, method).value());
                     }
 
                     //     3. If types includes a dictionary type, then return the result of

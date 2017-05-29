@@ -1,3 +1,15 @@
+2017-05-28  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] @@iterator should only be accessed once when disambiguating a union type
+        https://bugs.webkit.org/show_bug.cgi?id=172684
+
+        Reviewed by Yusuke Suzuki.
+
+        * js/dom/sequence-in-union-iterator-access-expected.txt: Added.
+        * js/dom/sequence-in-union-iterator-access.html: Added.
+        Add test case showing that @@iterator is only accessed once when converting a sequence
+        as part of a union.
+
 2017-05-27  Chris Dumez  <cdumez@apple.com>
 
         imported/w3c/web-platform-tests/html/semantics/forms/form-control-infrastructure/form_attribute.html is crashing

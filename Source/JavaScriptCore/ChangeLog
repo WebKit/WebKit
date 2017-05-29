@@ -1,3 +1,19 @@
+2017-05-28  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] @@iterator should only be accessed once when disambiguating a union type
+        https://bugs.webkit.org/show_bug.cgi?id=172684
+
+        Reviewed by Yusuke Suzuki.
+
+        * runtime/IteratorOperations.cpp:
+        (JSC::iteratorMethod):
+        (JSC::iteratorForIterable):
+        * runtime/IteratorOperations.h:
+        (JSC::forEachInIterable):
+        Add additional iterator helpers to allow union + sequence conversion code
+        to check for iterability by getting the iterator method, and iterate using
+        that method later on.
+
 2017-05-28  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, build fix for Windows
