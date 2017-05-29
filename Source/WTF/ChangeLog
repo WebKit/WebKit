@@ -1,3 +1,12 @@
+2017-05-29  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Unreviewed, disable faster Interpreter::getOpcodeID for ARM_THUMB2 with non-Darwin OSes
+        https://bugs.webkit.org/show_bug.cgi?id=172686
+
+        Because of test failures.
+
+        * wtf/Platform.h:
+
 2017-05-28  Dan Bernstein  <mitz@apple.com>
 
         [Xcode] ALWAYS_SEARCH_USER_PATHS is set to YES
