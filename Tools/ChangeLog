@@ -1,3 +1,10 @@
+2017-05-29  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed. Bumping the WPEBackend-mesa dependency version.
+
+        * wpe/jhbuild.modules: Use the latest version that uses proper GLib
+        priorities for IPC communication.
+
 2017-05-27  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Map and Set constructors should have fast path for cloning

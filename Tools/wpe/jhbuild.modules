@@ -241,6 +241,6 @@
       <dep package="xkbcommon" />
     </dependencies>
     <branch repo="github.com" module="WebPlatformForEmbedded/WPEBackend-mesa.git"
-            tag="9945753f9337fd67af098218b7819337aba21141" />
+            tag="daaee710314404cc84fcfd17cb963961d64abfba" />
   </cmake>
 </moduleset>
