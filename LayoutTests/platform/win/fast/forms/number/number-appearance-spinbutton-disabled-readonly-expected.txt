@@ -9,22 +9,22 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,34) size 784x32
         RenderInline {LABEL} at (0,0) size 319x18
           RenderTextControl {INPUT} at (2,2) size 231x28 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-            RenderFlexibleBox {DIV} at (2,3) size 227x22
-              RenderBlock {DIV} at (0,0) size 210x22
+            RenderFlexibleBox {DIV} at (2,0) size 227x28
+              RenderBlock {DIV} at (0,3) size 210x22
           RenderText {#text} at (235,9) size 84x18
             text run at (235,9) width 84: " Normal state"
       RenderBlock {DIV} at (0,66) size 784x32
         RenderInline {LABEL} at (0,0) size 327x18
           RenderTextControl {INPUT} at (2,2) size 231x28 [bgcolor=#EBEBE4] [border: (2px inset #000000)]
-            RenderFlexibleBox {DIV} at (2,3) size 227x22
-              RenderBlock {DIV} at (0,0) size 210x22
+            RenderFlexibleBox {DIV} at (2,0) size 227x28
+              RenderBlock {DIV} at (0,3) size 210x22
           RenderText {#text} at (235,9) size 92x18
             text run at (235,9) width 92: " Disabled state"
       RenderBlock {DIV} at (0,98) size 784x32
         RenderInline {LABEL} at (0,0) size 337x18
           RenderTextControl {INPUT} at (2,2) size 231x28 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-            RenderFlexibleBox {DIV} at (2,3) size 227x22
-              RenderBlock {DIV} at (0,0) size 210x22
+            RenderFlexibleBox {DIV} at (2,0) size 227x28
+              RenderBlock {DIV} at (0,3) size 210x22
           RenderText {#text} at (235,9) size 102x18
             text run at (235,9) width 102: " Read-only state"
 layer at (12,47) size 210x22
@@ -39,9 +39,9 @@ layer at (12,111) size 210x22
   RenderBlock {DIV} at (0,0) size 210x22
     RenderText {#text} at (0,0) size 11x22
       text run at (0,0) width 11: "0"
-layer at (222,46) size 17x24
-  RenderBlock (relative positioned) {DIV} at (210,-1) size 17x24
-layer at (222,78) size 17x24
-  RenderBlock (relative positioned) {DIV} at (210,-1) size 17x24
-layer at (222,110) size 17x24
-  RenderBlock (relative positioned) {DIV} at (210,-1) size 17x24
+layer at (222,43) size 17x30
+  RenderBlock (relative positioned) {DIV} at (210,-1) size 17x30
+layer at (222,75) size 17x30
+  RenderBlock (relative positioned) {DIV} at (210,-1) size 17x30
+layer at (222,107) size 17x30
+  RenderBlock (relative positioned) {DIV} at (210,-1) size 17x30

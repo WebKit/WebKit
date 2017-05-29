@@ -1,3 +1,14 @@
+2017-05-29  Per Arne Vollan  <pvollan@apple.com>
+
+        Unreviewed Windows test gardening, update expected results after r217418.
+
+        * platform/win/fast/forms/input-appearance-spinbutton-expected.txt:
+        * platform/win/fast/forms/input-appearance-spinbutton-up-expected.txt:
+        * platform/win/fast/forms/number/number-appearance-rtl-expected.txt:
+        * platform/win/fast/forms/number/number-appearance-spinbutton-disabled-readonly-expected.txt:
+        * platform/win/fast/forms/number/number-appearance-spinbutton-layer-expected.txt:
+        * platform/win/fast/forms/search-vertical-alignment-expected.txt:
+
 2017-05-28  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] @@iterator should only be accessed once when disambiguating a union type
