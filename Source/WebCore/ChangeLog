@@ -1,3 +1,20 @@
+2017-05-30  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION(r217515): Correct iterator invalidation bug (AGAIN)
+        https://bugs.webkit.org/show_bug.cgi?id=172722
+        <rdar://problem/32462876>
+
+        Reviewed by Zalan Bujtas.
+
+        Over-enthusiastic clean-up during r217515 re-introduced a bug caused by holding a reference
+        to an iterator that gets invalidated while handling the frame navigation. This patch returns
+        to the copy/set behavior used prior to r217515. 
+
+        * loader/ResourceLoadObserver.cpp:
+        (WebCore::ResourceLoadObserver::logFrameNavigation): Make a copy of the returned value, since
+        the iterator will be invalidated during the function call. Then set the copy back in the data
+        store with the updated counts.
+
 2017-05-30  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] TestWebKitAPI: SHOULD NEVER BE REACHED in WebCore::cairoSurfaceSize

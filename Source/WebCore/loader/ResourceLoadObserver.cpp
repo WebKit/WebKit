@@ -155,7 +155,8 @@ void ResourceLoadObserver::logFrameNavigation(const Frame& frame, const Frame& t
         
         {
         auto locker = holdLock(m_store->statisticsLock());
-        auto& targetStatistics = m_store->ensureResourceStatisticsForPrimaryDomain(targetPrimaryDomain);
+        // We must make a copy here, because later calls to 'ensureResourceStatisticsForPrimaryDomain' will invalidate the returned reference::
+        auto targetStatistics = m_store->ensureResourceStatisticsForPrimaryDomain(targetPrimaryDomain);
 
         // Always fire if we have previously removed data records for this domain
         shouldFireDataModificationHandler = targetStatistics.dataRecordsRemoved > 0;
@@ -205,6 +206,8 @@ void ResourceLoadObserver::logFrameNavigation(const Frame& frame, const Frame& t
                 }
             }
         }
+            
+        m_store->setResourceStatisticsForPrimaryDomain(targetPrimaryDomain, WTFMove(targetStatistics));
         } // Release lock
         
         if (shouldFireDataModificationHandler)
