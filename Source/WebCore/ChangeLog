@@ -1,3 +1,26 @@
+2017-05-29  Antti Koivisto  <antti@apple.com>
+
+        Crash on display-contents-replaced-001.html
+        https://bugs.webkit.org/show_bug.cgi?id=172596
+
+        Reviewed by Andreas Kling.
+
+        This is crashing because some code can't handle display:contents on form controls. Turns
+        out the draft specification tell us to disable it for them in any case.
+
+        See https://drafts.csswg.org/css-display-3/#unbox
+
+        * css/StyleResolver.cpp:
+        (WebCore::hasEffectiveDisplayNoneForDisplayContents):
+
+            For certain HTML elements (replaced elements, form controls) display:contents should
+            behave like display:none.
+            Also disable it for SVG and MathML elements.
+
+        (WebCore::StyleResolver::adjustRenderStyle):
+
+            Also compute to display:none when there is no associated element (pseudos etc).
+
 2017-05-30  Zan Dobersek  <zdobersek@igalia.com>
 
         [GCrypt] RSA-OAEP support

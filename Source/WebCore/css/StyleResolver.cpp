@@ -87,6 +87,7 @@
 #include "KeyframeList.h"
 #include "LinkHash.h"
 #include "LocaleToScriptMapping.h"
+#include "MathMLElement.h"
 #include "MathMLNames.h"
 #include "MediaList.h"
 #include "MediaQueryEvaluator.h"
@@ -784,6 +785,47 @@ void StyleResolver::adjustStyleForInterCharacterRuby()
         style->setWritingMode(LeftToRightWritingMode);
 }
 
+static bool hasEffectiveDisplayNoneForDisplayContents(const Element& element)
+{
+    // https://drafts.csswg.org/css-display-3/#unbox-html
+    static NeverDestroyed<HashSet<AtomicString>> tagNames = [] {
+        static const HTMLQualifiedName* const tagList[] = {
+            &brTag,
+            &wbrTag,
+            &meterTag,
+            &appletTag,
+            &progressTag,
+            &canvasTag,
+            &embedTag,
+            &objectTag,
+            &audioTag,
+            &iframeTag,
+            &imgTag,
+            &videoTag,
+            &frameTag,
+            &framesetTag,
+            &inputTag,
+            &textareaTag,
+            &selectTag,
+        };
+        HashSet<AtomicString> set;
+        for (auto& name : tagList)
+            set.add(name->localName());
+        return set;
+    }();
+
+    // https://drafts.csswg.org/css-display-3/#unbox-svg
+    // FIXME: <g>, <use> and <tspan> have special (?) behavior for display:contents in the current draft spec.
+    if (is<SVGElement>(element))
+        return true;
+    // Not sure MathML code can handle it.
+    if (is<MathMLElement>(element))
+        return true;
+    if (!is<HTMLElement>(element))
+        return false;
+    return tagNames.get().contains(element.localName());
+}
+
 void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& parentStyle, const RenderStyle* parentBoxStyle, const Element* element)
 {
     // If the composed tree parent has display:contents, the parent box style will be different from the parent style.
@@ -795,10 +837,11 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
     style.setOriginalDisplay(style.display());
 
     if (style.display() == CONTENTS) {
-        // FIXME: Enable for all elements.
         bool elementSupportsDisplayContents = is<HTMLSlotElement>(element) || RuntimeEnabledFeatures::sharedFeatures().displayContentsEnabled();
         if (!elementSupportsDisplayContents)
             style.setDisplay(INLINE);
+        else if (!element || hasEffectiveDisplayNoneForDisplayContents(*element))
+            style.setDisplay(NONE);
     }
 
     if (style.display() != NONE && style.display() != CONTENTS) {

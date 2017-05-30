@@ -1,3 +1,12 @@
+2017-05-29  Antti Koivisto  <antti@apple.com>
+
+        Crash on display-contents-replaced-001.html
+        https://bugs.webkit.org/show_bug.cgi?id=172596
+
+        Reviewed by Andreas Kling.
+
+        * TestExpectations: Enable the test.
+
 2017-05-30  Zan Dobersek  <zdobersek@igalia.com>
 
         [GCrypt] RSA-OAEP support
