@@ -1,5 +1,14 @@
 2017-05-30  Zan Dobersek  <zdobersek@igalia.com>
 
+        Unreviewed follow-up to r217546. Address some review comments that I forgot about.
+
+        * crypto/gcrypt/CryptoAlgorithmRSAES_PKCS1_v1_5GCrypt.cpp:
+        (WebCore::gcryptEncrypt): Use quotations when referencing s-expression names in
+        comments to avoid confusion.
+        (WebCore::gcryptDecrypt): Ditto.
+
+2017-05-30  Zan Dobersek  <zdobersek@igalia.com>
+
         [GCrypt] RSAES-PKCS1-v1_5 support
         https://bugs.webkit.org/show_bug.cgi?id=171219
 

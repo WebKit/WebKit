@@ -65,7 +65,7 @@ static std::optional<Vector<uint8_t>> mpiData(gcry_sexp_t paramSexp)
 
 static std::optional<Vector<uint8_t>> gcryptEncrypt(gcry_sexp_t keySexp, Vector<uint8_t>&& plainText)
 {
-    // Embed the plain-text data in a data s-expression using PKCS#1 padding.
+    // Embed the plain-text data in a `data` s-expression using PKCS#1 padding.
     PAL::GCrypt::Handle<gcry_sexp_t> dataSexp;
     gcry_error_t error = gcry_sexp_build(&dataSexp, nullptr, "(data(flags pkcs1)(value %b))",
         plainText.size(), plainText.data());
@@ -85,7 +85,7 @@ static std::optional<Vector<uint8_t>> gcryptEncrypt(gcry_sexp_t keySexp, Vector<
         return std::nullopt;
     }
 
-    // Return MPI data of the embedded a integer.
+    // Return MPI data of the embedded `a` integer.
     PAL::GCrypt::Handle<gcry_sexp_t> aSexp(gcry_sexp_find_token(cipherSexp, "a", 0));
     if (!aSexp)
         return std::nullopt;
@@ -95,7 +95,7 @@ static std::optional<Vector<uint8_t>> gcryptEncrypt(gcry_sexp_t keySexp, Vector<
 
 static std::optional<Vector<uint8_t>> gcryptDecrypt(gcry_sexp_t keySexp, Vector<uint8_t>&& cipherText)
 {
-    // Embed the cipher-text data in an enc-val s-expression using PKCS#1 padding.
+    // Embed the cipher-text data in an `enc-val` s-expression using PKCS#1 padding.
     PAL::GCrypt::Handle<gcry_sexp_t> encValSexp;
     gcry_error_t error = gcry_sexp_build(&encValSexp, nullptr, "(enc-val(flags pkcs1)(rsa(a %b)))",
         cipherText.size(), cipherText.data());
@@ -115,7 +115,7 @@ static std::optional<Vector<uint8_t>> gcryptDecrypt(gcry_sexp_t keySexp, Vector<
         return std::nullopt;
     }
 
-    // Return MPI data of the embedded value integer.
+    // Return MPI data of the embedded `value` integer.
     PAL::GCrypt::Handle<gcry_sexp_t> valueSexp(gcry_sexp_find_token(plainSexp, "value", 0));
     if (!valueSexp)
         return std::nullopt;
