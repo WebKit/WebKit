@@ -37,12 +37,14 @@
     macro(Boolean) \
     macro(Collator) \
     macro(Credential) \
+    macro(CredentialsContainer) \
     macro(CustomElementRegistry) \
     macro(Date) \
     macro(DateTimeFormat) \
     macro(DocumentTimeline) \
     macro(Error) \
     macro(EvalError) \
+    macro(FederatedCredential) \
     macro(Function) \
     macro(Gamepad) \
     macro(GamepadButton) \
@@ -81,6 +83,7 @@
     macro(MediaStreamEvent) \
     macro(ModernMediaControls) \
     macro(NaN) \
+    macro(NavigatorCredentials) \
     macro(NavigatorMediaDevices) \
     macro(NavigatorUserMedia) \
     macro(Number) \
@@ -119,7 +122,6 @@
     macro(SetIterator)\
     macro(ShadowRoot) \
     macro(SharedArrayBuffer) \
-    macro(SiteBoundCredential) \
     macro(StaticRange) \
     macro(String) \
     macro(Symbol) \

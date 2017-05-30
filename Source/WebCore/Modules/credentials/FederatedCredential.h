@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,26 +23,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "PasswordCredential.h"
+#pragma once
+
+#include "BasicCredential.h"
+#include "CredentialUserData.h"
+#include "FederatedCredentialInit.h"
 
 namespace WebCore {
 
-PasswordCredential::PasswordCredential(const PasswordCredentialData& data)
-    : BasicCredential(data, Type::Password)
-    , m_name(data.name)
-    , m_iconURL(data.iconURL)
-    , m_password(data.password)
-{
-}
+class FederatedCredential : public BasicCredential, public CredentialUserData {
+public:
+    ~FederatedCredential() override;
 
-PasswordCredential::PasswordCredential(const HTMLFormElement&)
-    : BasicCredential(PasswordCredentialData(), Type::Password)
-{
-}
+    static Ref<FederatedCredential> create(const FederatedCredentialInit& init) { return adoptRef(*new FederatedCredential(init)); }
 
-PasswordCredential::~PasswordCredential()
-{
-}
+    const String& name() const override { return m_name; }
+
+    const String& iconURL() const override { return m_iconURL; }
+
+    const String& provider() const { return m_provider; }
+
+    const String& protocol() const { return m_protocol; }
+
+private:
+    FederatedCredential(const FederatedCredentialInit&);
+
+    String m_name;
+    String m_iconURL;
+    String m_provider;
+    String m_protocol;
+};
 
 } // namespace WebCore

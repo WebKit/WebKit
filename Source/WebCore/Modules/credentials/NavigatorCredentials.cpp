@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,25 +24,48 @@
  */
 
 #include "config.h"
-#include "PasswordCredential.h"
+#include "NavigatorCredentials.h"
+
+#include "Navigator.h"
+
 
 namespace WebCore {
 
-PasswordCredential::PasswordCredential(const PasswordCredentialData& data)
-    : BasicCredential(data, Type::Password)
-    , m_name(data.name)
-    , m_iconURL(data.iconURL)
-    , m_password(data.password)
+NavigatorCredentials::NavigatorCredentials()
 {
 }
 
-PasswordCredential::PasswordCredential(const HTMLFormElement&)
-    : BasicCredential(PasswordCredentialData(), Type::Password)
+NavigatorCredentials::~NavigatorCredentials()
 {
 }
 
-PasswordCredential::~PasswordCredential()
+const char* NavigatorCredentials::supplementName()
 {
+    return "NavigatorCredentials";
+}
+
+CredentialsContainer* NavigatorCredentials::credentials()
+{
+    if (!m_credentialsContainer)
+        m_credentialsContainer = CredentialsContainer::create();
+
+    return m_credentialsContainer.get();
+}
+
+CredentialsContainer* NavigatorCredentials::credentials(Navigator& navigator)
+{
+    return NavigatorCredentials::from(&navigator)->credentials();
+}
+
+NavigatorCredentials* NavigatorCredentials::from(Navigator* navigator)
+{
+    NavigatorCredentials* supplement = static_cast<NavigatorCredentials*>(Supplement<Navigator>::from(navigator, supplementName()));
+    if (!supplement) {
+        auto newSupplement = std::make_unique<NavigatorCredentials>();
+        supplement = newSupplement.get();
+        provideTo(navigator, supplementName(), WTFMove(newSupplement));
+    }
+    return supplement;
 }
 
 } // namespace WebCore

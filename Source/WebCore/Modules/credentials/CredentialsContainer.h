@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,26 +23,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "PasswordCredential.h"
+#pragma once
+
+#include "CredentialCreationOptions.h"
+#include "CredentialRequestOptions.h"
+#include "JSDOMPromiseDeferred.h"
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-PasswordCredential::PasswordCredential(const PasswordCredentialData& data)
-    : BasicCredential(data, Type::Password)
-    , m_name(data.name)
-    , m_iconURL(data.iconURL)
-    , m_password(data.password)
-{
-}
+class BasicCredential;
 
-PasswordCredential::PasswordCredential(const HTMLFormElement&)
-    : BasicCredential(PasswordCredentialData(), Type::Password)
-{
-}
+class CredentialsContainer : public RefCounted<CredentialsContainer> {
+public:
+    static Ref<CredentialsContainer> create() { return adoptRef(*new CredentialsContainer); }
 
-PasswordCredential::~PasswordCredential()
-{
-}
+    void get(std::optional<CredentialRequestOptions>, DOMPromiseDeferred<IDLInterface<BasicCredential>>&&);
+
+    void store(const BasicCredential&, DOMPromiseDeferred<IDLInterface<BasicCredential>>&&);
+
+    void isCreate(std::optional<CredentialCreationOptions>, DOMPromiseDeferred<IDLInterface<BasicCredential>>&&);
+
+    void preventSilentAccess(DOMPromiseDeferred<IDLInterface<BasicCredential>>&&);
+private:
+    CredentialsContainer() { }
+};
 
 } // namespace WebCore

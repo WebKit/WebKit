@@ -1,3 +1,13 @@
+2017-05-30  Ali Juma  <ajuma@chromium.org>
+
+        [CredentialManagement] Incorporate IDL updates from latest spec
+        https://bugs.webkit.org/show_bug.cgi?id=172011
+
+        Reviewed by Daniel Bates.
+
+        * credentials/idlharness-expected.txt:
+        * credentials/idlharness.html:
+
 2017-05-30  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skip imported/w3c/web-platform-tests/innerText/getter.html.

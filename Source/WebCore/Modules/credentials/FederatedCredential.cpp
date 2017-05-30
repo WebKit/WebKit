@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,24 +24,20 @@
  */
 
 #include "config.h"
-#include "PasswordCredential.h"
+#include "FederatedCredential.h"
 
 namespace WebCore {
 
-PasswordCredential::PasswordCredential(const PasswordCredentialData& data)
-    : BasicCredential(data, Type::Password)
-    , m_name(data.name)
-    , m_iconURL(data.iconURL)
-    , m_password(data.password)
+FederatedCredential::FederatedCredential(const FederatedCredentialInit& init)
+    : BasicCredential(init, Type::Password)
+    , m_name(init.name)
+    , m_iconURL(init.iconURL)
+    , m_provider(init.provider)
+    , m_protocol(init.protocol)
 {
 }
 
-PasswordCredential::PasswordCredential(const HTMLFormElement&)
-    : BasicCredential(PasswordCredentialData(), Type::Password)
-{
-}
-
-PasswordCredential::~PasswordCredential()
+FederatedCredential::~FederatedCredential()
 {
 }
 

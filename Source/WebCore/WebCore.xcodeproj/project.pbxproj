@@ -2566,14 +2566,7 @@
 		57957CB61E972C78008072AB /* JSHkdfParams.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57957CB41E972C78008072AB /* JSHkdfParams.cpp */; };
 		57957CB71E972C78008072AB /* JSHkdfParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 57957CB51E972C78008072AB /* JSHkdfParams.h */; };
 		57A9C88E1DA70BF800BC7305 /* JSSubtleCryptoCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57A9C88D1DA70BF800BC7305 /* JSSubtleCryptoCustom.cpp */; };
-		57B5F7D41E57CF6800F34F90 /* SiteBoundCredential.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57B5F7D21E57CF6800F34F90 /* SiteBoundCredential.cpp */; };
-		57B5F7D51E57CF6800F34F90 /* SiteBoundCredential.h in Headers */ = {isa = PBXBuildFile; fileRef = 57B5F7D31E57CF6800F34F90 /* SiteBoundCredential.h */; };
 		57B5F7D81E57D3C900F34F90 /* CredentialData.h in Headers */ = {isa = PBXBuildFile; fileRef = 57B5F7D71E57D3C900F34F90 /* CredentialData.h */; };
-		57B5F7DB1E57D4CC00F34F90 /* SiteBoundCredentialData.h in Headers */ = {isa = PBXBuildFile; fileRef = 57B5F7DA1E57D4CC00F34F90 /* SiteBoundCredentialData.h */; };
-		57B5F7E01E57DBC800F34F90 /* JSSiteBoundCredential.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57B5F7DC1E57DBC800F34F90 /* JSSiteBoundCredential.cpp */; };
-		57B5F7E11E57DBC800F34F90 /* JSSiteBoundCredential.h in Headers */ = {isa = PBXBuildFile; fileRef = 57B5F7DD1E57DBC800F34F90 /* JSSiteBoundCredential.h */; };
-		57B5F7E21E57DBC800F34F90 /* JSSiteBoundCredentialData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57B5F7DE1E57DBC800F34F90 /* JSSiteBoundCredentialData.cpp */; };
-		57B5F7E31E57DBC800F34F90 /* JSSiteBoundCredentialData.h in Headers */ = {isa = PBXBuildFile; fileRef = 57B5F7DF1E57DBC800F34F90 /* JSSiteBoundCredentialData.h */; };
 		57B5F7E61E57DBE000F34F90 /* JSCredentialData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57B5F7E41E57DBE000F34F90 /* JSCredentialData.cpp */; };
 		57B5F7E71E57DBE000F34F90 /* JSCredentialData.h in Headers */ = {isa = PBXBuildFile; fileRef = 57B5F7E51E57DBE000F34F90 /* JSCredentialData.h */; };
 		57B5F7EC1E57F1E300F34F90 /* PasswordCredential.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57B5F7EA1E57F1E300F34F90 /* PasswordCredential.cpp */; };
@@ -3011,6 +3004,36 @@
 		77A17A7B12F2890B004E02F6 /* GraphicsTypes3D.h in Headers */ = {isa = PBXBuildFile; fileRef = 77A17A7A12F2890B004E02F6 /* GraphicsTypes3D.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		77A17AA612F28B2A004E02F6 /* JSOESVertexArrayObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77A17AA212F28B2A004E02F6 /* JSOESVertexArrayObject.cpp */; };
 		77A17AA712F28B2A004E02F6 /* JSOESVertexArrayObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 77A17AA312F28B2A004E02F6 /* JSOESVertexArrayObject.h */; };
+		77D5100D1ED5E29500DA4C87 /* CredentialCreationOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 77AAD6851ECFBD3900BFA2D1 /* CredentialCreationOptions.h */; };
+		77D5100B1ED5E28800DA4C87 /* CredentialRequestOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 77D50FFB1ED4F16C00DA4C87 /* CredentialRequestOptions.h */; };
+		77D510191ED715AC00DA4C87 /* CredentialsContainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77D510181ED7159900DA4C87 /* CredentialsContainer.cpp */; };
+		77D510171ED6022200DA4C87 /* CredentialsContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = 77D510161ED6021B00DA4C87 /* CredentialsContainer.h */; };
+		77D5100E1ED5E29B00DA4C87 /* CredentialUserData.h in Headers */ = {isa = PBXBuildFile; fileRef = 77AAD67D1ECDE8FB00BFA2D1 /* CredentialUserData.h */; };
+		77AAD6821ECF8D3800BFA2D1 /* FederatedCredential.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77AAD6811ECF8D3800BFA2D1 /* FederatedCredential.cpp */; };
+		77D5100F1ED5E2A200DA4C87 /* FederatedCredential.h in Headers */ = {isa = PBXBuildFile; fileRef = 77AAD6801ECF6C4100BFA2D1 /* FederatedCredential.h */; };
+		77D510101ED5E2C900DA4C87 /* FederatedCredentialInit.h in Headers */ = {isa = PBXBuildFile; fileRef = 77CD167E1ED3BE11009E9536 /* FederatedCredentialInit.h */; };
+		77D5100A1ED5E28500DA4C87 /* FederatedCredentialRequestOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 77D510091ED5E26F00DA4C87 /* FederatedCredentialRequestOptions.h */; };
+		77D510071ED4F72700DA4C87 /* JSCredentialCreationOptions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77D50FFC1ED4F70C00DA4C87 /* JSCredentialCreationOptions.cpp */; };
+		77D510061ED4F72500DA4C87 /* JSCredentialCreationOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 77D50FFD1ED4F70C00DA4C87 /* JSCredentialCreationOptions.h */; };
+		77D510051ED4F72200DA4C87 /* JSCredentialRequestOptions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77D50FFE1ED4F70C00DA4C87 /* JSCredentialRequestOptions.cpp */; };
+		77D510041ED4F71E00DA4C87 /* JSCredentialRequestOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 77D50FFF1ED4F70C00DA4C87 /* JSCredentialRequestOptions.h */; };
+		77D5101D1ED722C300DA4C87 /* JSCredentialsContainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77D5101A1ED722B500DA4C87 /* JSCredentialsContainer.cpp */; };
+		77D5101C1ED722BF00DA4C87 /* JSCredentialsContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = 77D5101B1ED722B500DA4C87 /* JSCredentialsContainer.h */; };
+		77D510031ED4F71B00DA4C87 /* JSCredentialUserData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77D510001ED4F70C00DA4C87 /* JSCredentialUserData.cpp */; };
+		77D510021ED4F71800DA4C87 /* JSCredentialUserData.h in Headers */ = {isa = PBXBuildFile; fileRef = 77D510011ED4F70C00DA4C87 /* JSCredentialUserData.h */; };
+		77D50FF71ED4D99D00DA4C87 /* JSFederatedCredential.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77534FEF1ED4C96B00A9646E /* JSFederatedCredential.cpp */; };
+		77D50FF61ED4D99B00DA4C87 /* JSFederatedCredential.h in Headers */ = {isa = PBXBuildFile; fileRef = 77534FF01ED4C96B00A9646E /* JSFederatedCredential.h */; };
+		77D50FF51ED4D99100DA4C87 /* JSFederatedCredentialInit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77534FF11ED4C96B00A9646E /* JSFederatedCredentialInit.cpp */; };
+		77D50FF41ED4D98D00DA4C87 /* JSFederatedCredentialInit.h in Headers */ = {isa = PBXBuildFile; fileRef = 77534FF21ED4C96B00A9646E /* JSFederatedCredentialInit.h */; };
+		77D510141ED5F4F100DA4C87 /* JSFederatedCredentialRequestOptions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77D510111ED5F4E700DA4C87 /* JSFederatedCredentialRequestOptions.cpp */; };
+		77D510131ED5F4ED00DA4C87 /* JSFederatedCredentialRequestOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 77D510121ED5F4E700DA4C87 /* JSFederatedCredentialRequestOptions.h */; };
+		77D510261ED74B5C00DA4C87 /* JSNavigatorCredentials.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77D510231ED74B5500DA4C87 /* JSNavigatorCredentials.cpp */; };
+		77D510251ED74B5800DA4C87 /* JSNavigatorCredentials.h in Headers */ = {isa = PBXBuildFile; fileRef = 77D510241ED74B5500DA4C87 /* JSNavigatorCredentials.h */; };
+		77D50FF91ED4D9A400DA4C87 /* JSPasswordCredentialData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77534FF31ED4C99F00A9646E /* JSPasswordCredentialData.cpp */; };
+		77D50FF81ED4D9A000DA4C87 /* JSPasswordCredentialData.h in Headers */ = {isa = PBXBuildFile; fileRef = 77534FF41ED4C99F00A9646E /* JSPasswordCredentialData.h */; };
+		77D5100C1ED5E29000DA4C87 /* PasswordCredentialData.h in Headers */ = {isa = PBXBuildFile; fileRef = 77CD16801ED3C32A009E9536 /* PasswordCredentialData.h */; };
+		77D510221ED7364500DA4C87 /* NavigatorCredentials.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77D510211ED7340A00DA4C87 /* NavigatorCredentials.cpp */; };
+		77D510201ED72D5F00DA4C87 /* NavigatorCredentials.h in Headers */ = {isa = PBXBuildFile; fileRef = 77D5101F1ED72D5C00DA4C87 /* NavigatorCredentials.h */; };
 		77EF62F312F9DB7400C77BD2 /* JSWebGLVertexArrayObjectOES.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77EF62F112F9DB7400C77BD2 /* JSWebGLVertexArrayObjectOES.cpp */; };
 		77EF62F412F9DB7400C77BD2 /* JSWebGLVertexArrayObjectOES.h in Headers */ = {isa = PBXBuildFile; fileRef = 77EF62F212F9DB7400C77BD2 /* JSWebGLVertexArrayObjectOES.h */; };
 		78D02BC5154A18DF00B62D05 /* CSSPropertyAnimation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 78D02BC3154A18DF00B62D05 /* CSSPropertyAnimation.cpp */; };
@@ -10321,17 +10344,8 @@
 		57957CB41E972C78008072AB /* JSHkdfParams.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHkdfParams.cpp; sourceTree = "<group>"; };
 		57957CB51E972C78008072AB /* JSHkdfParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHkdfParams.h; sourceTree = "<group>"; };
 		57A9C88D1DA70BF800BC7305 /* JSSubtleCryptoCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSubtleCryptoCustom.cpp; sourceTree = "<group>"; };
-		57B5F7D11E57CF0E00F34F90 /* SiteBoundCredential.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = SiteBoundCredential.idl; sourceTree = "<group>"; };
-		57B5F7D21E57CF6800F34F90 /* SiteBoundCredential.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SiteBoundCredential.cpp; sourceTree = "<group>"; };
-		57B5F7D31E57CF6800F34F90 /* SiteBoundCredential.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SiteBoundCredential.h; sourceTree = "<group>"; };
 		57B5F7D61E57D36A00F34F90 /* CredentialData.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = CredentialData.idl; sourceTree = "<group>"; };
 		57B5F7D71E57D3C900F34F90 /* CredentialData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CredentialData.h; sourceTree = "<group>"; };
-		57B5F7D91E57D44E00F34F90 /* SiteBoundCredentialData.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = SiteBoundCredentialData.idl; sourceTree = "<group>"; };
-		57B5F7DA1E57D4CC00F34F90 /* SiteBoundCredentialData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SiteBoundCredentialData.h; sourceTree = "<group>"; };
-		57B5F7DC1E57DBC800F34F90 /* JSSiteBoundCredential.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSiteBoundCredential.cpp; sourceTree = "<group>"; };
-		57B5F7DD1E57DBC800F34F90 /* JSSiteBoundCredential.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSiteBoundCredential.h; sourceTree = "<group>"; };
-		57B5F7DE1E57DBC800F34F90 /* JSSiteBoundCredentialData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSiteBoundCredentialData.cpp; sourceTree = "<group>"; };
-		57B5F7DF1E57DBC800F34F90 /* JSSiteBoundCredentialData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSiteBoundCredentialData.h; sourceTree = "<group>"; };
 		57B5F7E41E57DBE000F34F90 /* JSCredentialData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCredentialData.cpp; sourceTree = "<group>"; };
 		57B5F7E51E57DBE000F34F90 /* JSCredentialData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCredentialData.h; sourceTree = "<group>"; };
 		57B5F7E91E57E00000F34F90 /* PasswordCredential.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = PasswordCredential.idl; sourceTree = "<group>"; };
@@ -11015,6 +11029,45 @@
 		77A17A7A12F2890B004E02F6 /* GraphicsTypes3D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphicsTypes3D.h; sourceTree = "<group>"; };
 		77A17AA212F28B2A004E02F6 /* JSOESVertexArrayObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSOESVertexArrayObject.cpp; sourceTree = "<group>"; };
 		77A17AA312F28B2A004E02F6 /* JSOESVertexArrayObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSOESVertexArrayObject.h; sourceTree = "<group>"; };
+		77AAD6831ECFB66200BFA2D1 /* CredentialCreationOptions.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CredentialCreationOptions.idl; sourceTree = "<group>"; };
+		77AAD6851ECFBD3900BFA2D1 /* CredentialCreationOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CredentialCreationOptions.h; sourceTree = "<group>"; };
+		77D50FFB1ED4F16C00DA4C87 /* CredentialRequestOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CredentialRequestOptions.h; sourceTree = "<group>"; };
+		77D50FFA1ED4EC7800DA4C87 /* CredentialRequestOptions.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CredentialRequestOptions.idl; sourceTree = "<group>"; };
+		77D510181ED7159900DA4C87 /* CredentialsContainer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CredentialsContainer.cpp; sourceTree = "<group>"; };
+		77D510161ED6021B00DA4C87 /* CredentialsContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CredentialsContainer.h; sourceTree = "<group>"; };
+		77D510151ED6001B00DA4C87 /* CredentialsContainer.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CredentialsContainer.idl; sourceTree = "<group>"; };
+		77AAD67C1ECCF06E00BFA2D1 /* CredentialUserData.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CredentialUserData.idl; sourceTree = "<group>"; };
+		77AAD67D1ECDE8FB00BFA2D1 /* CredentialUserData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CredentialUserData.h; sourceTree = "<group>"; };
+		77AAD6811ECF8D3800BFA2D1 /* FederatedCredential.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FederatedCredential.cpp; sourceTree = "<group>"; };
+		77AAD6801ECF6C4100BFA2D1 /* FederatedCredential.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FederatedCredential.h; sourceTree = "<group>"; };
+		77AAD67F1ECF6A3D00BFA2D1 /* FederatedCredential.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = FederatedCredential.idl; sourceTree = "<group>"; };
+		77D510091ED5E26F00DA4C87 /* FederatedCredentialRequestOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FederatedCredentialRequestOptions.h; sourceTree = "<group>"; };
+		77D510081ED5E21800DA4C87 /* FederatedCredentialRequestOptions.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = FederatedCredentialRequestOptions.idl; sourceTree = "<group>"; };
+		77CD167E1ED3BE11009E9536 /* FederatedCredentialInit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FederatedCredentialInit.h; sourceTree = "<group>"; };
+		77CD167D1ED3BDB8009E9536 /* FederatedCredentialInit.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = FederatedCredentialInit.idl; sourceTree = "<group>"; };
+		77D50FFC1ED4F70C00DA4C87 /* JSCredentialCreationOptions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCredentialCreationOptions.cpp; sourceTree = "<group>"; };
+		77D50FFD1ED4F70C00DA4C87 /* JSCredentialCreationOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCredentialCreationOptions.h; sourceTree = "<group>"; };
+		77D50FFE1ED4F70C00DA4C87 /* JSCredentialRequestOptions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCredentialRequestOptions.cpp; sourceTree = "<group>"; };
+		77D50FFF1ED4F70C00DA4C87 /* JSCredentialRequestOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCredentialRequestOptions.h; sourceTree = "<group>"; };
+		77D5101A1ED722B500DA4C87 /* JSCredentialsContainer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCredentialsContainer.cpp; sourceTree = "<group>"; };
+		77D5101B1ED722B500DA4C87 /* JSCredentialsContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCredentialsContainer.h; sourceTree = "<group>"; };
+		77D510001ED4F70C00DA4C87 /* JSCredentialUserData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCredentialUserData.cpp; sourceTree = "<group>"; };
+		77D510011ED4F70C00DA4C87 /* JSCredentialUserData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCredentialUserData.h; sourceTree = "<group>"; };
+		77534FEF1ED4C96B00A9646E /* JSFederatedCredential.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFederatedCredential.cpp; sourceTree = "<group>"; };
+		77534FF01ED4C96B00A9646E /* JSFederatedCredential.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSFederatedCredential.h; sourceTree = "<group>"; };
+		77534FF11ED4C96B00A9646E /* JSFederatedCredentialInit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFederatedCredentialInit.cpp; sourceTree = "<group>"; };
+		77534FF21ED4C96B00A9646E /* JSFederatedCredentialInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSFederatedCredentialInit.h; sourceTree = "<group>"; };
+		77D510111ED5F4E700DA4C87 /* JSFederatedCredentialRequestOptions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFederatedCredentialRequestOptions.cpp; sourceTree = "<group>"; };
+		77D510121ED5F4E700DA4C87 /* JSFederatedCredentialRequestOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSFederatedCredentialRequestOptions.h; sourceTree = "<group>"; };
+		77D510231ED74B5500DA4C87 /* JSNavigatorCredentials.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSNavigatorCredentials.cpp; sourceTree = "<group>"; };
+		77D510241ED74B5500DA4C87 /* JSNavigatorCredentials.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSNavigatorCredentials.h; sourceTree = "<group>"; };
+		77534FF31ED4C99F00A9646E /* JSPasswordCredentialData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPasswordCredentialData.cpp; sourceTree = "<group>"; };
+		77534FF41ED4C99F00A9646E /* JSPasswordCredentialData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPasswordCredentialData.h; sourceTree = "<group>"; };
+		77D510211ED7340A00DA4C87 /* NavigatorCredentials.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NavigatorCredentials.cpp; sourceTree = "<group>"; wrapsLines = 1; };
+		77D5101F1ED72D5C00DA4C87 /* NavigatorCredentials.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigatorCredentials.h; sourceTree = "<group>"; };
+		77D5101E1ED72BDB00DA4C87 /* NavigatorCredentials.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NavigatorCredentials.idl; sourceTree = "<group>"; };
+		77CD16801ED3C32A009E9536 /* PasswordCredentialData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PasswordCredentialData.h; sourceTree = "<group>"; };
+		77CD167F1ED3C2DB009E9536 /* PasswordCredentialData.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PasswordCredentialData.idl; sourceTree = "<group>"; };
 		77EF62F112F9DB7400C77BD2 /* JSWebGLVertexArrayObjectOES.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGLVertexArrayObjectOES.cpp; sourceTree = "<group>"; };
 		77EF62F212F9DB7400C77BD2 /* JSWebGLVertexArrayObjectOES.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebGLVertexArrayObjectOES.h; sourceTree = "<group>"; };
 		78D02BC3154A18DF00B62D05 /* CSSPropertyAnimation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSPropertyAnimation.cpp; sourceTree = "<group>"; };
@@ -16145,8 +16198,8 @@
 		07221B9217CF0AD400848E51 /* mediastream */ = {
 			isa = PBXGroup;
 			children = (
-				415747421E38698000E914D8 /* libwebrtc */,
 				CDC6751F1EAEA99600727C84 /* ios */,
+				415747421E38698000E914D8 /* libwebrtc */,
 				0729B14D17CFCCA0004F1D60 /* mac */,
 				07D6A4F61BF2307D00174146 /* AudioTrackPrivateMediaStream.h */,
 				07B7116A1D899E63009F0FFB /* CaptureDevice.h */,
@@ -18558,16 +18611,32 @@
 				57C7A6931E578ACA00C67D71 /* BasicCredential.cpp */,
 				57C7A68B1E56967500C67D71 /* BasicCredential.h */,
 				57C7A6891E56946D00C67D71 /* BasicCredential.idl */,
+				77AAD6851ECFBD3900BFA2D1 /* CredentialCreationOptions.h */,
+				77AAD6831ECFB66200BFA2D1 /* CredentialCreationOptions.idl */,
 				57B5F7D71E57D3C900F34F90 /* CredentialData.h */,
 				57B5F7D61E57D36A00F34F90 /* CredentialData.idl */,
+				77D50FFB1ED4F16C00DA4C87 /* CredentialRequestOptions.h */,
+				77D50FFA1ED4EC7800DA4C87 /* CredentialRequestOptions.idl */,
+				77D510181ED7159900DA4C87 /* CredentialsContainer.cpp */,
+				77D510161ED6021B00DA4C87 /* CredentialsContainer.h */,
+				77D510151ED6001B00DA4C87 /* CredentialsContainer.idl */,
+				77AAD67D1ECDE8FB00BFA2D1 /* CredentialUserData.h */,
+				77AAD67C1ECCF06E00BFA2D1 /* CredentialUserData.idl */,
+				77AAD6811ECF8D3800BFA2D1 /* FederatedCredential.cpp */,
+				77AAD6801ECF6C4100BFA2D1 /* FederatedCredential.h */,
+				77AAD67F1ECF6A3D00BFA2D1 /* FederatedCredential.idl */,
+				77CD167E1ED3BE11009E9536 /* FederatedCredentialInit.h */,
+				77CD167D1ED3BDB8009E9536 /* FederatedCredentialInit.idl */,
+				77D510091ED5E26F00DA4C87 /* FederatedCredentialRequestOptions.h */,
+				77D510081ED5E21800DA4C87 /* FederatedCredentialRequestOptions.idl */,
+				77D510211ED7340A00DA4C87 /* NavigatorCredentials.cpp */,
+				77D5101F1ED72D5C00DA4C87 /* NavigatorCredentials.h */,
+				77D5101E1ED72BDB00DA4C87 /* NavigatorCredentials.idl */,
 				57B5F7EA1E57F1E300F34F90 /* PasswordCredential.cpp */,
 				57B5F7EB1E57F1E300F34F90 /* PasswordCredential.h */,
 				57B5F7E91E57E00000F34F90 /* PasswordCredential.idl */,
-				57B5F7D21E57CF6800F34F90 /* SiteBoundCredential.cpp */,
-				57B5F7D31E57CF6800F34F90 /* SiteBoundCredential.h */,
-				57B5F7D11E57CF0E00F34F90 /* SiteBoundCredential.idl */,
-				57B5F7DA1E57D4CC00F34F90 /* SiteBoundCredentialData.h */,
-				57B5F7D91E57D44E00F34F90 /* SiteBoundCredentialData.idl */,
+				77CD16801ED3C32A009E9536 /* PasswordCredentialData.h */,
+				77CD167F1ED3C2DB009E9536 /* PasswordCredentialData.idl */,
 			);
 			path = credentials;
 			sourceTree = "<group>";
@@ -18577,14 +18646,28 @@
 			children = (
 				57C7A69C1E57910D00C67D71 /* JSBasicCredential.cpp */,
 				57C7A69D1E57910D00C67D71 /* JSBasicCredential.h */,
+				77D50FFC1ED4F70C00DA4C87 /* JSCredentialCreationOptions.cpp */,
+				77D50FFD1ED4F70C00DA4C87 /* JSCredentialCreationOptions.h */,
 				57B5F7E41E57DBE000F34F90 /* JSCredentialData.cpp */,
 				57B5F7E51E57DBE000F34F90 /* JSCredentialData.h */,
+				77D50FFE1ED4F70C00DA4C87 /* JSCredentialRequestOptions.cpp */,
+				77D50FFF1ED4F70C00DA4C87 /* JSCredentialRequestOptions.h */,
+				77D5101A1ED722B500DA4C87 /* JSCredentialsContainer.cpp */,
+				77D5101B1ED722B500DA4C87 /* JSCredentialsContainer.h */,
+				77D510001ED4F70C00DA4C87 /* JSCredentialUserData.cpp */,
+				77D510011ED4F70C00DA4C87 /* JSCredentialUserData.h */,
+				77534FEF1ED4C96B00A9646E /* JSFederatedCredential.cpp */,
+				77534FF01ED4C96B00A9646E /* JSFederatedCredential.h */,
+				77534FF11ED4C96B00A9646E /* JSFederatedCredentialInit.cpp */,
+				77534FF21ED4C96B00A9646E /* JSFederatedCredentialInit.h */,
+				77D510111ED5F4E700DA4C87 /* JSFederatedCredentialRequestOptions.cpp */,
+				77D510121ED5F4E700DA4C87 /* JSFederatedCredentialRequestOptions.h */,
+				77D510231ED74B5500DA4C87 /* JSNavigatorCredentials.cpp */,
+				77D510241ED74B5500DA4C87 /* JSNavigatorCredentials.h */,
 				57B5F7EE1E5B8C5A00F34F90 /* JSPasswordCredential.cpp */,
 				57B5F7EF1E5B8C5A00F34F90 /* JSPasswordCredential.h */,
-				57B5F7DC1E57DBC800F34F90 /* JSSiteBoundCredential.cpp */,
-				57B5F7DD1E57DBC800F34F90 /* JSSiteBoundCredential.h */,
-				57B5F7DE1E57DBC800F34F90 /* JSSiteBoundCredentialData.cpp */,
-				57B5F7DF1E57DBC800F34F90 /* JSSiteBoundCredentialData.h */,
+				77534FF31ED4C99F00A9646E /* JSPasswordCredentialData.cpp */,
+				77534FF41ED4C99F00A9646E /* JSPasswordCredentialData.h */,
 			);
 			name = Credentials;
 			sourceTree = "<group>";
@@ -21106,8 +21189,6 @@
 				CD7D33461C7A16BF00041293 /* CoreVideoSoftLink.h */,
 				7C7941E31C56C29300A4C58E /* DataDetectorsCoreSoftLink.h */,
 				7C7941E21C56C29300A4C58E /* DataDetectorsCoreSoftLink.mm */,
-				5D8C4DBD1428222C0026CE72 /* SleepDisablerCocoa.cpp */,
-				5D8C4DBE1428222C0026CE72 /* SleepDisablerCocoa.h */,
 				514B3F750C722055000530DF /* FileSystemCocoa.mm */,
 				A5C974CF11485FF10066F2AB /* KeyEventCocoa.h */,
 				A5C974D011485FF10066F2AB /* KeyEventCocoa.mm */,
@@ -21128,12 +21209,16 @@
 				0E7058F31BC5CCD70045A507 /* SearchPopupMenuCocoa.h */,
 				0E7058ED1BC5BC190045A507 /* SearchPopupMenuCocoa.mm */,
 				1A4A95510B4EDCFF002D8C3C /* SharedBufferCocoa.mm */,
+				5D8C4DBD1428222C0026CE72 /* SleepDisablerCocoa.cpp */,
+				5D8C4DBE1428222C0026CE72 /* SleepDisablerCocoa.h */,
 				0A4844980CA44CB200B7BD48 /* SoftLinking.h */,
 				5D5975B119635F1100D00878 /* SystemVersion.h */,
 				5D5975B219635F1100D00878 /* SystemVersion.mm */,
 				7CC564B918BAC720001B9652 /* TelephoneNumberDetectorCocoa.cpp */,
 				310D71941B335C9D009C7B73 /* ThemeCocoa.h */,
 				310D71931B335C9D009C7B73 /* ThemeCocoa.mm */,
+				CDC939A51E9BDFB100BB768D /* VideoToolboxSoftLink.cpp */,
+				CDC939A61E9BDFB100BB768D /* VideoToolboxSoftLink.h */,
 				CDC979F31C498C0900DB50D4 /* WebCoreNSErrorExtras.h */,
 				CDC979F21C498C0900DB50D4 /* WebCoreNSErrorExtras.mm */,
 				5DFEBAB618592B6D00C75BEB /* WebKitAvailability.h */,
@@ -21145,8 +21230,6 @@
 				52D5A1A41C57488900DE34A3 /* WebVideoFullscreenModel.h */,
 				52D5A1A51C57488900DE34A3 /* WebVideoFullscreenModelVideoElement.h */,
 				52D5A1A61C57488900DE34A3 /* WebVideoFullscreenModelVideoElement.mm */,
-				CDC939A51E9BDFB100BB768D /* VideoToolboxSoftLink.cpp */,
-				CDC939A61E9BDFB100BB768D /* VideoToolboxSoftLink.h */,
 			);
 			path = cocoa;
 			sourceTree = "<group>";
@@ -21900,12 +21983,6 @@
 				BCC5BDFF0C0E93110011C2DB /* JSCSSStyleSheet.h */,
 				FD677736195CAB7D0072E0D3 /* JSCSSSupportsRule.cpp */,
 				FC84802E167AB444008CD100 /* JSCSSSupportsRule.h */,
-				836ACECD1ECAAB04004BD012 /* JSDOMMatrix.cpp */,
-				836ACECE1ECAAB04004BD012 /* JSDOMMatrix.h */,
-				835657C61ECAB0E800CDE72D /* JSDOMMatrixInit.cpp */,
-				836ACECF1ECAAB04004BD012 /* JSDOMMatrixInit.h */,
-				836ACED01ECAAB04004BD012 /* JSDOMMatrixReadOnly.cpp */,
-				836ACED11ECAAB04004BD012 /* JSDOMMatrixReadOnly.h */,
 				947949181E02F6DE00018D85 /* JSDeprecatedCSSOMCounter.cpp */,
 				947949191E02F6DE00018D85 /* JSDeprecatedCSSOMCounter.h */,
 				9479491A1E02F6DE00018D85 /* JSDeprecatedCSSOMPrimitiveValue.cpp */,
@@ -21920,6 +21997,12 @@
 				9479492C1E033B2800018D85 /* JSDeprecatedCSSOMValueList.h */,
 				FD677737195CAB7D0072E0D3 /* JSDOMCSSNamespace.cpp */,
 				FC9E0E4B16419C1E00392BE3 /* JSDOMCSSNamespace.h */,
+				836ACECD1ECAAB04004BD012 /* JSDOMMatrix.cpp */,
+				836ACECE1ECAAB04004BD012 /* JSDOMMatrix.h */,
+				835657C61ECAB0E800CDE72D /* JSDOMMatrixInit.cpp */,
+				836ACECF1ECAAB04004BD012 /* JSDOMMatrixInit.h */,
+				836ACED01ECAAB04004BD012 /* JSDOMMatrixReadOnly.cpp */,
+				836ACED11ECAAB04004BD012 /* JSDOMMatrixReadOnly.h */,
 				BC3C39B40C0D3D8D005F4D7A /* JSMediaList.cpp */,
 				BC3C39B50C0D3D8D005F4D7A /* JSMediaList.h */,
 				D3A94A42122DC40F00A37BBC /* JSMediaQueryList.cpp */,
@@ -23389,8 +23472,8 @@
 				2D3EF4451917915C00034184 /* WebActionDisablingCALayerDelegate.mm */,
 				2D3EF4461917915C00034184 /* WebCoreCALayerExtras.h */,
 				2D3EF4471917915C00034184 /* WebCoreCALayerExtras.mm */,
-				CD5D27751E8318E000D80A3D /* WebCoreDecompressionSession.mm */,
 				CD5D27761E8318E000D80A3D /* WebCoreDecompressionSession.h */,
+				CD5D27751E8318E000D80A3D /* WebCoreDecompressionSession.mm */,
 				316BDB8A1E6E153000DE0D5A /* WebGPULayer.h */,
 				316BDB891E6E153000DE0D5A /* WebGPULayer.mm */,
 			);
@@ -23442,12 +23525,12 @@
 				E125F83C182411E700D84CD9 /* JSCryptoOperationData.h */,
 				9BD4E9141C462872005065BC /* JSCustomElementInterface.cpp */,
 				9BD4E9151C462872005065BC /* JSCustomElementInterface.h */,
-				93B70D4809EB0C7C009D8468 /* JSDOMBinding.h */,
-				7C8139A91ED62DF200CE26E8 /* JSDOMCastedThisErrorBehavior.h */,
 				7C8139A31ED6281D00CE26E8 /* JSDOMAttribute.h */,
+				93B70D4809EB0C7C009D8468 /* JSDOMBinding.h */,
 				41DEFCB21E56C1B9000D9E5F /* JSDOMBindingInternals.js */,
 				7C45C9CA1E3E8D2E00AAB558 /* JSDOMBindingSecurity.cpp */,
 				7C45C9C91E3E8CD700AAB558 /* JSDOMBindingSecurity.h */,
+				7C8139A91ED62DF200CE26E8 /* JSDOMCastedThisErrorBehavior.h */,
 				7C45C9CC1E3E8F0800AAB558 /* JSDOMExceptionHandling.cpp */,
 				7C45C9C71E3E8AFF00AAB558 /* JSDOMExceptionHandling.h */,
 				E1C36CBC0EB08062007410BC /* JSDOMGlobalObject.cpp */,
@@ -23966,8 +24049,6 @@
 				37C738F21EDBDE87003F2B0B /* DateTimeChooserClient.h */,
 				45FEA5CD156DDE8C00654101 /* Decimal.cpp */,
 				45FEA5CE156DDE8C00654101 /* Decimal.h */,
-				CD52481818E200ED0008A07D /* SleepDisabler.cpp */,
-				CD52481918E200ED0008A07D /* SleepDisabler.h */,
 				A79546420B5C4CB4007B438F /* DragData.cpp */,
 				A7B6E69D0B291A9600D0529F /* DragData.h */,
 				A7CFB3CF0B7ED10A0070C32D /* DragImage.cpp */,
@@ -24081,6 +24162,8 @@
 				1A4A954B0B4EDCCB002D8C3C /* SharedBuffer.cpp */,
 				1A4A954C0B4EDCCB002D8C3C /* SharedBuffer.h */,
 				93309EA0099EB78C0056E581 /* SharedTimer.h */,
+				CD52481818E200ED0008A07D /* SleepDisabler.cpp */,
+				CD52481918E200ED0008A07D /* SleepDisabler.h */,
 				4B3043C60AE0370300A82647 /* Sound.h */,
 				F587866202DE3B1101EA4122 /* SSLKeyGenerator.h */,
 				F433E9041DBBDBC200EF0D14 /* StaticPasteboard.cpp */,
@@ -24307,10 +24390,10 @@
 		CDC6751F1EAEA99600727C84 /* ios */ = {
 			isa = PBXGroup;
 			children = (
-				CDC675241EAEA9D400727C84 /* AVAudioSessionCaptureDevice.mm */,
 				CDC675251EAEA9D400727C84 /* AVAudioSessionCaptureDevice.h */,
-				CDC675201EAEA9B700727C84 /* AVAudioSessionCaptureDeviceManager.mm */,
+				CDC675241EAEA9D400727C84 /* AVAudioSessionCaptureDevice.mm */,
 				CDC675211EAEA9B700727C84 /* AVAudioSessionCaptureDeviceManager.h */,
+				CDC675201EAEA9B700727C84 /* AVAudioSessionCaptureDeviceManager.mm */,
 			);
 			path = ios;
 			sourceTree = "<group>";
@@ -24477,8 +24560,8 @@
 				57777E371E71217D00EE1A8D /* CryptoAlgorithmPBKDF2.h */,
 				E1FE1368183FE1AB00892F13 /* CryptoAlgorithmRSA_OAEP.cpp */,
 				E1FE1369183FE1AB00892F13 /* CryptoAlgorithmRSA_OAEP.h */,
-				5790996B1ECD23DA00FC0768 /* CryptoAlgorithmRSA_PSS.h */,
 				5790996C1ECD23DA00FC0768 /* CryptoAlgorithmRSA_PSS.cpp */,
+				5790996B1ECD23DA00FC0768 /* CryptoAlgorithmRSA_PSS.h */,
 				E1233F0A185A3E3B008DFAF5 /* CryptoAlgorithmRSAES_PKCS1_v1_5.cpp */,
 				E1233F0B185A3E3B008DFAF5 /* CryptoAlgorithmRSAES_PKCS1_v1_5.h */,
 				E1BD3317182D8DDD00C05D9F /* CryptoAlgorithmRSASSA_PKCS1_v1_5.cpp */,
@@ -24547,8 +24630,8 @@
 				E1BD331D182D8F4200C05D9F /* CryptoAlgorithmRsaKeyGenParamsDeprecated.h */,
 				E1C266DA18319935003F8B33 /* CryptoAlgorithmRsaKeyParamsWithHashDeprecated.h */,
 				5706A6951DDE5C9500A03B14 /* CryptoAlgorithmRsaOaepParams.h */,
-				5721A9881ECE57040081295A /* CryptoAlgorithmRsaPssParams.h */,
 				E1FE1376184D1E3300892F13 /* CryptoAlgorithmRsaOaepParamsDeprecated.h */,
+				5721A9881ECE57040081295A /* CryptoAlgorithmRsaPssParams.h */,
 				E1BD331B182D8EE900C05D9F /* CryptoAlgorithmRsaSsaParamsDeprecated.h */,
 				576814281E6F98AD00E77754 /* EcdhKeyDeriveParams.idl */,
 				57EEAA4E1E9FFBFC00701124 /* EcdsaParams.idl */,
@@ -24754,10 +24837,10 @@
 				57FEDD401DB6D73A00EB96F5 /* JSRsaKeyGenParams.h */,
 				5706A6991DDE5E8500A03B14 /* JSRsaOaepParams.cpp */,
 				5706A6971DDE5E4600A03B14 /* JSRsaOaepParams.h */,
-				5754719A1ECE5D2A00DD63B2 /* JSRsaPssParams.cpp */,
-				575471991ECE5D2A00DD63B2 /* JSRsaPssParams.h */,
 				57E233601DC7D6AA00F28D01 /* JSRsaOtherPrimesInfo.cpp */,
 				57E2335C1DC7D60800F28D01 /* JSRsaOtherPrimesInfo.h */,
+				5754719A1ECE5D2A00DD63B2 /* JSRsaPssParams.cpp */,
+				575471991ECE5D2A00DD63B2 /* JSRsaPssParams.h */,
 				571F218A1DA57C7A005C9EFD /* JSSubtleCrypto.cpp */,
 				571F21881DA57C54005C9EFD /* JSSubtleCrypto.h */,
 				E1FF8F62180745D800132674 /* JSWebKitSubtleCrypto.cpp */,
@@ -25034,14 +25117,6 @@
 				9444CBDD1D8861580073A074 /* CSSVariableData.h */,
 				9444CBDC1D8861580073A074 /* CSSVariableReferenceValue.cpp */,
 				9444CBDB1D8861580073A074 /* CSSVariableReferenceValue.h */,
-				836ACEC41ECA6654004BD012 /* DOMMatrix.cpp */,
-				836ACEC51ECA6654004BD012 /* DOMMatrix.h */,
-				836ACEC61ECA6654004BD012 /* DOMMatrix.idl */,
-				836ACEC71ECA6654004BD012 /* DOMMatrixInit.h */,
-				836ACEC81ECA6654004BD012 /* DOMMatrixInit.idl */,
-				836ACEBF1ECA62B0004BD012 /* DOMMatrixReadOnly.cpp */,
-				836ACEC01ECA62B0004BD012 /* DOMMatrixReadOnly.h */,
-				836ACEC11ECA62B0004BD012 /* DOMMatrixReadOnly.idl */,
 				A80E6CE10A1989CA007FB8C5 /* DashboardRegion.h */,
 				9479492A1E032EDB00018D85 /* DeprecatedCSSOMCounter.h */,
 				930705C709E0C95F00B17FE4 /* DeprecatedCSSOMCounter.idl */,
@@ -25063,6 +25138,14 @@
 				FD677735195CAB200072E0D3 /* DOMCSSNamespace.cpp */,
 				FC9A0F72164094CF003D6B8D /* DOMCSSNamespace.h */,
 				FC9A0F73164094CF003D6B8D /* DOMCSSNamespace.idl */,
+				836ACEC41ECA6654004BD012 /* DOMMatrix.cpp */,
+				836ACEC51ECA6654004BD012 /* DOMMatrix.h */,
+				836ACEC61ECA6654004BD012 /* DOMMatrix.idl */,
+				836ACEC71ECA6654004BD012 /* DOMMatrixInit.h */,
+				836ACEC81ECA6654004BD012 /* DOMMatrixInit.idl */,
+				836ACEBF1ECA62B0004BD012 /* DOMMatrixReadOnly.cpp */,
+				836ACEC01ECA62B0004BD012 /* DOMMatrixReadOnly.h */,
+				836ACEC11ECA62B0004BD012 /* DOMMatrixReadOnly.idl */,
 				837DFB341EBFEA7000601385 /* ElementCSSInlineStyle.idl */,
 				FBDB619A16D6032A00BB3394 /* ElementRuleCollector.cpp */,
 				FBDB619E16D6036500BB3394 /* ElementRuleCollector.h */,
@@ -26503,7 +26586,6 @@
 				BE88E0DC1715D2A200658D98 /* AudioTrackList.h in Headers */,
 				CD8B5A4C180E17C0008B8E65 /* AudioTrackMediaSource.h in Headers */,
 				BEF29EEB1715DD0900C4B4C9 /* AudioTrackPrivate.h in Headers */,
-				37C738ED1EDBD5BC003F2B0B /* SVGUnknownElement.h in Headers */,
 				CDE3A85417F5FCE600C5BE20 /* AudioTrackPrivateAVF.h in Headers */,
 				CDE3A85817F6020400C5BE20 /* AudioTrackPrivateAVFObjC.h in Headers */,
 				CD54A763180F9F7000B076C9 /* AudioTrackPrivateMediaSourceAVFObjC.h in Headers */,
@@ -26524,6 +26606,8 @@
 				C9D467051E60C465008195FB /* AutoplayEvent.h in Headers */,
 				45830D4E1679B4F800ACF8C3 /* AutoscrollController.h in Headers */,
 				A8CFF04E0A154F09000A4234 /* AutoTableLayout.h in Headers */,
+				CDC675271EAEA9D400727C84 /* AVAudioSessionCaptureDevice.h in Headers */,
+				CDC675231EAEA9B700727C84 /* AVAudioSessionCaptureDeviceManager.h in Headers */,
 				070363E2181A1CDC00C074A5 /* AVCaptureDeviceManager.h in Headers */,
 				07F0B97C1AC5DB4600E535D9 /* AVFoundationSPI.h in Headers */,
 				07F0B97A1AC5DB3300E535D9 /* AVKitSPI.h in Headers */,
@@ -26619,6 +26703,7 @@
 				93F1995008245E59001E9ABC /* CachePolicy.h in Headers */,
 				E43AF8E71AC5B7EC00CA717E /* CacheValidation.h in Headers */,
 				49AE2D97134EE5F90072920A /* CalculationValue.h in Headers */,
+				7C1E8D011ED0C2DA00B1D983 /* CallbackResult.h in Headers */,
 				415CDAF51E6B8F8B004F11EE /* CanvasCaptureMediaStreamTrack.h in Headers */,
 				49484FC2102CF23C00187DD3 /* CanvasGradient.h in Headers */,
 				4671E0661D67A59600C6B497 /* CanvasPath.h in Headers */,
@@ -26692,6 +26777,7 @@
 				316FE1160E6E1DA700BF6088 /* CompositeAnimation.h in Headers */,
 				93309DDD099E64920056E581 /* CompositeEditCommand.h in Headers */,
 				79F2F5A21091939A000D87CB /* CompositionEvent.h in Headers */,
+				2DD5A7271EBEE47D009BA597 /* CompositionUnderline.h in Headers */,
 				FD31608F12B026F700C1A359 /* Cone.h in Headers */,
 				65C97AF308EA908800ACD273 /* config.h in Headers */,
 				2DAF343D1EA7E0F100382CD3 /* ConstantPropertyMap.h in Headers */,
@@ -26752,8 +26838,12 @@
 				514C766E0CE923A1007EF3CD /* Credential.h in Headers */,
 				3792917A1985EF3900F4B661 /* CredentialBase.h in Headers */,
 				3792917E1987678F00F4B661 /* CredentialCocoa.h in Headers */,
+				77D5100D1ED5E29500DA4C87 /* CredentialCreationOptions.h in Headers */,
 				57B5F7D81E57D3C900F34F90 /* CredentialData.h in Headers */,
+				77D5100B1ED5E28800DA4C87 /* CredentialRequestOptions.h in Headers */,
+				77D510171ED6022200DA4C87 /* CredentialsContainer.h in Headers */,
 				51A052331058774F00CC9E95 /* CredentialStorage.h in Headers */,
+				77D5100E1ED5E29B00DA4C87 /* CredentialUserData.h in Headers */,
 				2D481F02146B5C5500AA7834 /* CrossfadeGeneratedImage.h in Headers */,
 				E1C416120F6562FD0092D2FB /* CrossOriginAccessControl.h in Headers */,
 				41ABE67B1D0580DB006D862D /* CrossOriginPreflightChecker.h in Headers */,
@@ -26787,10 +26877,10 @@
 				573489391DAC6B6E00DC0667 /* CryptoAlgorithmParameters.h in Headers */,
 				E1C657271816F9FE00256CDD /* CryptoAlgorithmParametersDeprecated.h in Headers */,
 				57777E391E71217D00EE1A8D /* CryptoAlgorithmPBKDF2.h in Headers */,
-				836ACECB1ECA956D004BD012 /* DOMMatrixInit.h in Headers */,
 				57E657EC1E7162EA00F941CA /* CryptoAlgorithmPbkdf2Params.h in Headers */,
 				E1FF8F6D180DB5BE00132674 /* CryptoAlgorithmRegistry.h in Headers */,
 				E1FE136B183FE1AB00892F13 /* CryptoAlgorithmRSA_OAEP.h in Headers */,
+				5790996D1ECD23DA00FC0768 /* CryptoAlgorithmRSA_PSS.h in Headers */,
 				E1233F0D185A3E3B008DFAF5 /* CryptoAlgorithmRSAES_PKCS1_v1_5.h in Headers */,
 				57E2336E1DCD43FD00F28D01 /* CryptoAlgorithmRsaHashedImportParams.h in Headers */,
 				57FEDD3F1DB6D59200EB96F5 /* CryptoAlgorithmRsaKeyGenParams.h in Headers */,
@@ -26798,6 +26888,7 @@
 				E1C266DB18319935003F8B33 /* CryptoAlgorithmRsaKeyParamsWithHashDeprecated.h in Headers */,
 				5706A6961DDE5C9500A03B14 /* CryptoAlgorithmRsaOaepParams.h in Headers */,
 				E1FE1377184D1E3300892F13 /* CryptoAlgorithmRsaOaepParamsDeprecated.h in Headers */,
+				5721A98B1ECE57040081295A /* CryptoAlgorithmRsaPssParams.h in Headers */,
 				E1BD331A182D8DDD00C05D9F /* CryptoAlgorithmRSASSA_PKCS1_v1_5.h in Headers */,
 				E1BD331C182D8EE900C05D9F /* CryptoAlgorithmRsaSsaParamsDeprecated.h in Headers */,
 				E125F82C1822CFEC00D84CD9 /* CryptoAlgorithmSHA1.h in Headers */,
@@ -26805,6 +26896,7 @@
 				E19AC3F11824DC7900349426 /* CryptoAlgorithmSHA256.h in Headers */,
 				E19AC3F31824DC7900349426 /* CryptoAlgorithmSHA384.h in Headers */,
 				E19AC3F51824DC7900349426 /* CryptoAlgorithmSHA512.h in Headers */,
+				5721A9871ECE53B10081295A /* CryptoDigestAlgorithm.h in Headers */,
 				E157A8E518173A3A009F821D /* CryptoKey.h in Headers */,
 				E125F84E1824289D00D84CD9 /* CryptoKeyAES.h in Headers */,
 				E125F85E182C2DF600D84CD9 /* CryptoKeyData.h in Headers */,
@@ -26919,7 +27011,6 @@
 				A80E6CE90A1989CA007FB8C5 /* CSSValueList.h in Headers */,
 				E49BD9FA131FD2ED003C56F0 /* CSSValuePool.h in Headers */,
 				9444CBE81D8861C20073A074 /* CSSVariableData.h in Headers */,
-				5754719F1ECE628300DD63B2 /* JSRsaPssParams.h in Headers */,
 				9444CBDA1D88483A0073A074 /* CSSVariableParser.h in Headers */,
 				9444CBEA1D8861CA0073A074 /* CSSVariableReferenceValue.h in Headers */,
 				93F1992F08245E59001E9ABC /* Cursor.h in Headers */,
@@ -26957,6 +27048,8 @@
 				E4A007831B820EC8002C5A6E /* DataURLDecoder.h in Headers */,
 				A5732B0B136A161D005C8D7C /* DateComponents.h in Headers */,
 				F55B3DB61251F12D003EF269 /* DateInputType.h in Headers */,
+				37C738F31EDBDE8A003F2B0B /* DateTimeChooser.h in Headers */,
+				37C738F41EDBDE8D003F2B0B /* DateTimeChooserClient.h in Headers */,
 				453EB637159C570400001BB7 /* DateTimeFormat.h in Headers */,
 				F55B3DB81251F12D003EF269 /* DateTimeInputType.h in Headers */,
 				F55B3DBA1251F12D003EF269 /* DateTimeLocalInputType.h in Headers */,
@@ -27021,8 +27114,6 @@
 				2D29ECCA192F1F1D00984B78 /* DisplayRefreshMonitorIOS.h in Headers */,
 				2DE70023192FE82A00B0975C /* DisplayRefreshMonitorMac.h in Headers */,
 				2D29ECC8192ECC8300984B78 /* DisplayRefreshMonitorManager.h in Headers */,
-				CD52481B18E200ED0008A07D /* SleepDisabler.h in Headers */,
-				5D8C4DC01428222C0026CE72 /* SleepDisablerCocoa.h in Headers */,
 				FD31609112B026F700C1A359 /* Distance.h in Headers */,
 				84730D771248F0B300D3A9C9 /* DistantLightSource.h in Headers */,
 				B2F34FE60E82F81400F627CD /* DNS.h in Headers */,
@@ -27055,6 +27146,9 @@
 				E3A776671DC85D2800B690D8 /* DOMJITIDLConvert.h in Headers */,
 				E3A776681DC85D2800B690D8 /* DOMJITIDLType.h in Headers */,
 				E35802B61DC8435D00A9773C /* DOMJITIDLTypeFilter.h in Headers */,
+				836ACECA1ECA9569004BD012 /* DOMMatrix.h in Headers */,
+				836ACECB1ECA956D004BD012 /* DOMMatrixInit.h in Headers */,
+				836ACEC31ECA62C8004BD012 /* DOMMatrixReadOnly.h in Headers */,
 				A9C6E4E40D745E05006442E9 /* DOMMimeType.h in Headers */,
 				A9C6E4E80D745E18006442E9 /* DOMMimeTypeArray.h in Headers */,
 				52B6C9C315E3F4DF00690B05 /* DOMNamedFlowCollection.h in Headers */,
@@ -27062,7 +27156,6 @@
 				7A54881714E432A1006AE05A /* DOMPatchSupport.h in Headers */,
 				FB91392416AE4C17001FE682 /* DOMPath.h in Headers */,
 				A9C6E4EC0D745E2B006442E9 /* DOMPlugin.h in Headers */,
-				5721A9871ECE53B10081295A /* CryptoDigestAlgorithm.h in Headers */,
 				A9C6E4F00D745E38006442E9 /* DOMPluginArray.h in Headers */,
 				0F49669D1DB408C100A274BB /* DOMPoint.h in Headers */,
 				0F4966A31DB4091000A274BB /* DOMPointInit.h in Headers */,
@@ -27114,7 +27207,6 @@
 				E4AE7C1A17D232350009FB31 /* ElementAncestorIterator.h in Headers */,
 				E440AA961C68420800A265CC /* ElementAndTextDescendantIterator.h in Headers */,
 				E46A2B1E17CA76B1000DBCD8 /* ElementChildIterator.h in Headers */,
-				CD5D27781E8318E000D80A3D /* WebCoreDecompressionSession.h in Headers */,
 				B5B7A17117C10AC000E4AA0A /* ElementData.h in Headers */,
 				93D437A11D57B3F400AB85EA /* ElementDescendantIterator.h in Headers */,
 				E4AE7C1617D1BB950009FB31 /* ElementIterator.h in Headers */,
@@ -27168,6 +27260,9 @@
 				A75E8B8D0E1DE2D6007F2481 /* FEComponentTransfer.h in Headers */,
 				A75E8B8F0E1DE2D6007F2481 /* FEComposite.h in Headers */,
 				84730D791248F0B300D3A9C9 /* FEConvolveMatrix.h in Headers */,
+				77D5100F1ED5E2A200DA4C87 /* FederatedCredential.h in Headers */,
+				77D510101ED5E2C900DA4C87 /* FederatedCredentialInit.h in Headers */,
+				77D5100A1ED5E28500DA4C87 /* FederatedCredentialRequestOptions.h in Headers */,
 				84730D7B1248F0B300D3A9C9 /* FEDiffuseLighting.h in Headers */,
 				84730D7D1248F0B300D3A9C9 /* FEDisplacementMap.h in Headers */,
 				4358E8811360A31700E4748C /* FEDropShadow.h in Headers */,
@@ -27283,7 +27378,6 @@
 				C0C054CC1118C8E400CE2636 /* generate-bindings.pl in Headers */,
 				BC23F0DB0DAFF4A4009FDC91 /* GeneratedImage.h in Headers */,
 				830030F61B7D33B500ED3AAC /* GenericCachedHTMLCollection.h in Headers */,
-				E37C86501EB63E3F0087C6CA /* JSDOMPromise.h in Headers */,
 				0720B0A114D3323500642955 /* GenericEventQueue.h in Headers */,
 				CD62FB961AF018E70012ED7D /* GenericTaskQueue.h in Headers */,
 				9746AF2414F4DDE6003E7A70 /* Geolocation.h in Headers */,
@@ -27296,7 +27390,6 @@
 				9746AF2A14F4DDE6003E7A70 /* Geoposition.h in Headers */,
 				086BBD0F136039C2008B15D8 /* Glyph.h in Headers */,
 				B2C3DA6C0D006CD600EF6F26 /* GlyphBuffer.h in Headers */,
-				7C1E8D011ED0C2DA00B1D983 /* CallbackResult.h in Headers */,
 				C5D4AA7A116BAFB60069CA93 /* GlyphMetricsMap.h in Headers */,
 				0873B86B136064EA00A522C2 /* GlyphPage.h in Headers */,
 				311518FC1E78C15F00EC514A /* GPUBasedCanvasRenderingContext.h in Headers */,
@@ -27409,7 +27502,6 @@
 				A8EA7CB80A192B9C00A8EF5F /* HTMLHeadingElement.h in Headers */,
 				A8EA7CAF0A192B9C00A8EF5F /* HTMLHRElement.h in Headers */,
 				A871DE270A152AC800B12A68 /* HTMLHtmlElement.h in Headers */,
-				CDC675271EAEA9D400727C84 /* AVAudioSessionCaptureDevice.h in Headers */,
 				A871DE2A0A152AC800B12A68 /* HTMLIFrameElement.h in Headers */,
 				A8EA7D2D0A19385500A8EF5F /* HTMLImageElement.h in Headers */,
 				A8EA7D2B0A19385500A8EF5F /* HTMLImageLoader.h in Headers */,
@@ -27494,7 +27586,6 @@
 				5126E6BC0A2E3B12005C29FA /* IconDatabase.h in Headers */,
 				516953981329A3C800B92D04 /* IconDatabaseBase.h in Headers */,
 				51E1ECBE0C91C90400DC255B /* IconDatabaseClient.h in Headers */,
-				7CC2DE031ECA04A50027B774 /* NotificationDirection.h in Headers */,
 				513F14540AB634C400094DDF /* IconLoader.h in Headers */,
 				51E1ECC10C91C90400DC255B /* IconRecord.h in Headers */,
 				51714EA81CF4E4B1004723C4 /* IDBActiveDOMObject.h in Headers */,
@@ -27520,7 +27611,6 @@
 				5185FC8D1BB4C4E80012898F /* IDBFactory.h in Headers */,
 				519DBC6F1DC011A700329BF5 /* IDBGetAllRecordsData.h in Headers */,
 				519DBC721DC10F5200329BF5 /* IDBGetAllResult.h in Headers */,
-				7C8139AA1ED6604B00CE26E8 /* JSDOMCastedThisErrorBehavior.h in Headers */,
 				5105F0691D4BA9D900FB80BC /* IDBGetRecordData.h in Headers */,
 				5185FC8F1BB4C4E80012898F /* IDBGetResult.h in Headers */,
 				5185FC911BB4C4E80012898F /* IDBIndex.h in Headers */,
@@ -27629,7 +27719,6 @@
 				7A74ECBB101839A600BF939E /* InspectorDOMStorageAgent.h in Headers */,
 				F344C7141125B82C00F26EEE /* InspectorFrontendClient.h in Headers */,
 				F344C75311294D9D00F26EEE /* InspectorFrontendClientLocal.h in Headers */,
-				7C8139A71ED6287400CE26E8 /* JSDOMOperation.h in Headers */,
 				7A0E770F10C00A8800A0276E /* InspectorFrontendHost.h in Headers */,
 				7A54858014E02D51006AE05A /* InspectorHistory.h in Headers */,
 				7ACD88D414C08BD60084EDD2 /* InspectorIndexedDBAgent.h in Headers */,
@@ -27727,7 +27816,11 @@
 				FDA15EBE12B03F0B003A583A /* JSConvolverNode.h in Headers */,
 				FE6FD48E0F676E9300092873 /* JSCoordinates.h in Headers */,
 				14DCF3B31B6BE2080062D4C2 /* JSCountQueuingStrategy.h in Headers */,
+				77D510061ED4F72500DA4C87 /* JSCredentialCreationOptions.h in Headers */,
 				57B5F7E71E57DBE000F34F90 /* JSCredentialData.h in Headers */,
+				77D510041ED4F71E00DA4C87 /* JSCredentialRequestOptions.h in Headers */,
+				77D5101C1ED722BF00DA4C87 /* JSCredentialsContainer.h in Headers */,
+				77D510021ED4F71800DA4C87 /* JSCredentialUserData.h in Headers */,
 				975CA2A21303679D00E99AD9 /* JSCrypto.h in Headers */,
 				E157A8F118185425009F821D /* JSCryptoAlgorithmBuilder.h in Headers */,
 				E1C657131815F9DD00256CDD /* JSCryptoAlgorithmDictionary.h in Headers */,
@@ -27777,9 +27870,11 @@
 				1221E0601C02B444006A1A00 /* JSDocumentTimeline.h in Headers */,
 				65DF31F609D1CC60000BE325 /* JSDocumentType.h in Headers */,
 				1AC2260D0DB69F190089B669 /* JSDOMApplicationCache.h in Headers */,
+				7C8139A61ED6286A00CE26E8 /* JSDOMAttribute.h in Headers */,
 				93B70D6409EB0C7C009D8468 /* JSDOMBinding.h in Headers */,
 				416E6FE81BBD12DF000A3F65 /* JSDOMBindingInternalsBuiltins.h in Headers */,
 				7C45C9D41E3FCBDF00AAB558 /* JSDOMBindingSecurity.h in Headers */,
+				7C8139AA1ED6604B00CE26E8 /* JSDOMCastedThisErrorBehavior.h in Headers */,
 				413C2C341BC29A8F0075204C /* JSDOMConstructor.h in Headers */,
 				930841341CDDB15500B0958C /* JSDOMConvert.h in Headers */,
 				7C8E34AD1E4A33AF0054CE23 /* JSDOMConvertAny.h in Headers */,
@@ -27818,9 +27913,14 @@
 				65DF31F809D1CC60000BE325 /* JSDOMImplementation.h in Headers */,
 				4138F8581D253F0E001CB61E /* JSDOMIterator.h in Headers */,
 				41DEFCB61E56C1BD000D9E5F /* JSDOMMapLike.h in Headers */,
+				836ACED31ECAAB19004BD012 /* JSDOMMatrix.h in Headers */,
+				836ACED41ECAAB19004BD012 /* JSDOMMatrixInit.h in Headers */,
+				836ACED61ECAAB19004BD012 /* JSDOMMatrixReadOnly.h in Headers */,
 				A9D248070D757E7D00FDF959 /* JSDOMMimeType.h in Headers */,
 				A9D248090D757E7D00FDF959 /* JSDOMMimeTypeArray.h in Headers */,
 				52CCA9E315E3F62C0053C77F /* JSDOMNamedFlowCollection.h in Headers */,
+				7C8139A71ED6287400CE26E8 /* JSDOMOperation.h in Headers */,
+				7C8139A81ED6287400CE26E8 /* JSDOMOperationReturningPromise.h in Headers */,
 				1ACE53E00A8D18810022947D /* JSDOMParser.h in Headers */,
 				FB91392A16AE4FC0001FE682 /* JSDOMPath.h in Headers */,
 				A9D247FF0D757E6900FDF959 /* JSDOMPlugin.h in Headers */,
@@ -27828,6 +27928,7 @@
 				0F4966AB1DB40C4300A274BB /* JSDOMPoint.h in Headers */,
 				0F4966AD1DB40C4300A274BB /* JSDOMPointInit.h in Headers */,
 				0F4966AF1DB40C4300A274BB /* JSDOMPointReadOnly.h in Headers */,
+				E37C86501EB63E3F0087C6CA /* JSDOMPromise.h in Headers */,
 				E172AF901811BC3700FBADB9 /* JSDOMPromiseDeferred.h in Headers */,
 				0F4710BC1DB56BE8002DCEC3 /* JSDOMRect.h in Headers */,
 				0F4710BE1DB56BE8002DCEC3 /* JSDOMRectInit.h in Headers */,
@@ -27864,13 +27965,15 @@
 				724ED3321A3A8B2300F5F13C /* JSEXTBlendMinMax.h in Headers */,
 				5C4304B6191AEF46000E2BC0 /* JSEXTShaderTextureLOD.h in Headers */,
 				7728698414FD9ADA00F484DC /* JSEXTTextureFilterAnisotropic.h in Headers */,
+				77D50FF61ED4D99B00DA4C87 /* JSFederatedCredential.h in Headers */,
+				77D50FF41ED4D98D00DA4C87 /* JSFederatedCredentialInit.h in Headers */,
+				77D510131ED5F4ED00DA4C87 /* JSFederatedCredentialRequestOptions.h in Headers */,
 				7F4C96DD1AD4483500365A50 /* JSFetchBody.h in Headers */,
 				7D4C96DD1AD4483500365A50 /* JSFetchHeaders.h in Headers */,
 				7E4C96DD1AD4483500365A50 /* JSFetchRequest.h in Headers */,
 				8E4C96DD1AD4483500365A50 /* JSFetchResponse.h in Headers */,
 				BC00F0150E0A189500FD04E3 /* JSFile.h in Headers */,
 				2E3BC0CB117D3E0800B9409A /* JSFileError.h in Headers */,
-				7CC2DE011EC95A440027B774 /* JSNotificationPermission.h in Headers */,
 				898785F1122E1E87003AABDA /* JSFileException.h in Headers */,
 				BC00F0170E0A189500FD04E3 /* JSFileList.h in Headers */,
 				2E94F43C119207DA00B7F75D /* JSFileReader.h in Headers */,
@@ -27905,7 +28008,6 @@
 				D359D8BF129CA55C0006E5D2 /* JSHTMLDetailsElement.h in Headers */,
 				76808B50159DADFA002B5233 /* JSHTMLDialogElement.h in Headers */,
 				1A85B1E70A1B240500D8C87C /* JSHTMLDirectoryElement.h in Headers */,
-				37C738F31EDBDE8A003F2B0B /* DateTimeChooser.h in Headers */,
 				1A85B2B70A1B2AC700D8C87C /* JSHTMLDivElement.h in Headers */,
 				1A85B1E90A1B240500D8C87C /* JSHTMLDListElement.h in Headers */,
 				1A494E350A12358B00FDAFC1 /* JSHTMLDocument.h in Headers */,
@@ -28035,6 +28137,7 @@
 				C6F08FCA1431000D00685849 /* JSMutationRecord.h in Headers */,
 				BCD9C2C10C17B69E005C90A2 /* JSNamedNodeMap.h in Headers */,
 				A9D247F80D757E3400FDF959 /* JSNavigator.h in Headers */,
+				77D510251ED74B5800DA4C87 /* JSNavigatorCredentials.h in Headers */,
 				073BE34117D17E01002BD431 /* JSNavigatorUserMedia.h in Headers */,
 				BC9439C3116CF4940048C750 /* JSNodeCustom.h in Headers */,
 				14115B7309F84CD600CA4FC1 /* JSNodeFilter.h in Headers */,
@@ -28042,6 +28145,7 @@
 				BCD9C2C30C17B69E005C90A2 /* JSNodeList.h in Headers */,
 				AD20B18D18E9D237005A8083 /* JSNodeListCustom.h in Headers */,
 				33503CA410179AD7003B47E1 /* JSNotification.h in Headers */,
+				7CC2DE011EC95A440027B774 /* JSNotificationPermission.h in Headers */,
 				31EC1E2914FF60EE00C94662 /* JSNotificationPermissionCallback.h in Headers */,
 				7E46F6FB1627A2CA00062223 /* JSOESElementIndexUint.h in Headers */,
 				9001788112E0370700648462 /* JSOESStandardDerivatives.h in Headers */,
@@ -28052,7 +28156,6 @@
 				77A17AA712F28B2A004E02F6 /* JSOESVertexArrayObject.h in Headers */,
 				FDF6BAF9134A4C9800822920 /* JSOfflineAudioCompletionEvent.h in Headers */,
 				FDA9326716703BA9008982DC /* JSOfflineAudioContext.h in Headers */,
-				2DD5A7271EBEE47D009BA597 /* CompositionUnderline.h in Headers */,
 				57E233651DC7DB1F00F28D01 /* JsonWebKey.h in Headers */,
 				FDEA6243152102E200479DF0 /* JSOscillatorNode.h in Headers */,
 				0704A40C1D6DFC690086DCDB /* JSOverconstrainedError.h in Headers */,
@@ -28061,6 +28164,7 @@
 				E1284BB110449FFA00EAEB52 /* JSPageTransitionEvent.h in Headers */,
 				FDA15EB212B03EE1003A583A /* JSPannerNode.h in Headers */,
 				57B5F7F11E5B8C5A00F34F90 /* JSPasswordCredential.h in Headers */,
+				77D50FF81ED4D9A000DA4C87 /* JSPasswordCredentialData.h in Headers */,
 				57E657F01E71665400F941CA /* JSPbkdf2Params.h in Headers */,
 				8A9A587511E84C81008ACFD1 /* JSPerformance.h in Headers */,
 				CB38FD521CCF939400592A3F /* JSPerformanceEntry.h in Headers */,
@@ -28089,7 +28193,6 @@
 				7C4C96DD1AD4483500365A50 /* JSReadableStream.h in Headers */,
 				7C4C96DF1AD4483500363572 /* JSReadableStreamBYOBReader.h in Headers */,
 				6C4C96DF1AD4483500365672 /* JSReadableStreamBYOBRequest.h in Headers */,
-				836ACECA1ECA9569004BD012 /* DOMMatrix.h in Headers */,
 				6C4C96DF1AD4483500365A50 /* JSReadableStreamDefaultController.h in Headers */,
 				7C4C96DF1AD4483500365A50 /* JSReadableStreamDefaultReader.h in Headers */,
 				4129DF861BB5B80C00322A16 /* JSReadableStreamPrivateConstructors.h in Headers */,
@@ -28100,6 +28203,7 @@
 				57FEDD411DB6D73A00EB96F5 /* JSRsaKeyGenParams.h in Headers */,
 				5706A6981DDE5E4600A03B14 /* JSRsaOaepParams.h in Headers */,
 				57E2335D1DC7D60800F28D01 /* JSRsaOtherPrimesInfo.h in Headers */,
+				5754719F1ECE628300DD63B2 /* JSRsaPssParams.h in Headers */,
 				073794E619EE2FF200E5A045 /* JSRTCConfiguration.h in Headers */,
 				07969DAC17D14151007FF842 /* JSRTCDataChannel.h in Headers */,
 				07969DAE17D14151007FF842 /* JSRTCDataChannelEvent.h in Headers */,
@@ -28118,7 +28222,6 @@
 				5E2C43721BCF0D750001E2BD /* JSRTCRtpTransceiver.h in Headers */,
 				316DCB221E78CA55001B5F87 /* JSRTCRtpTransceiverDirection.h in Headers */,
 				07969DBC17D14151007FF842 /* JSRTCSessionDescription.h in Headers */,
-				836ACED41ECAAB19004BD012 /* JSDOMMatrixInit.h in Headers */,
 				316DCB501E7910A6001B5F87 /* JSRTCSignalingState.h in Headers */,
 				07969DC217D14151007FF842 /* JSRTCStatsReport.h in Headers */,
 				5E2C436C1BCF071E0001E2BC /* JSRTCTrackEvent.h in Headers */,
@@ -28128,8 +28231,6 @@
 				CED06AD11C77754800FDFAF1 /* JSSecurityPolicyViolationEvent.h in Headers */,
 				9BDA64D81B975CF2009C4387 /* JSShadowRoot.h in Headers */,
 				46DFF49C1DC2620B00B80B48 /* JSShadowRootMode.h in Headers */,
-				57B5F7E11E57DBC800F34F90 /* JSSiteBoundCredential.h in Headers */,
-				57B5F7E31E57DBC800F34F90 /* JSSiteBoundCredentialData.h in Headers */,
 				CD9DE17B17AAC75B00EA386D /* JSSourceBuffer.h in Headers */,
 				CD9DE17D17AAC75B00EA386D /* JSSourceBufferList.h in Headers */,
 				AA7FEEAD16A4E74B004C0C33 /* JSSpeechSynthesis.h in Headers */,
@@ -28346,7 +28447,6 @@
 				49C7B9A51042D2D30009D447 /* JSWebGLTexture.h in Headers */,
 				6F995A381A70833700A735F4 /* JSWebGLTransformFeedback.h in Headers */,
 				0C45342810CDBBFA00869157 /* JSWebGLUniformLocation.h in Headers */,
-				37C738EF1EDBD71B003F2B0B /* MathMLUnknownElement.h in Headers */,
 				6F995A3A1A70833700A735F4 /* JSWebGLVertexArrayObject.h in Headers */,
 				77EF62F412F9DB7400C77BD2 /* JSWebGLVertexArrayObjectOES.h in Headers */,
 				31A089561E738D59003B6609 /* JSWebGPUBuffer.h in Headers */,
@@ -28393,7 +28493,6 @@
 				83D35AF21C718D9000F70D5A /* JSXMLHttpRequestEventTarget.h in Headers */,
 				F916C48E0DB510F80076CD83 /* JSXMLHttpRequestProgressEvent.h in Headers */,
 				BCDFD4960E30592F009D10AD /* JSXMLHttpRequestUpload.h in Headers */,
-				836ACED31ECAAB19004BD012 /* JSDOMMatrix.h in Headers */,
 				1ACE53F70A8D19470022947D /* JSXMLSerializer.h in Headers */,
 				1A762C740A074F2600989F5B /* JSXPathEvaluator.h in Headers */,
 				BC60DB4A0D2A3D1E00B9918F /* JSXPathException.h in Headers */,
@@ -28402,7 +28501,6 @@
 				1A762C7A0A074F2600989F5B /* JSXPathResult.h in Headers */,
 				BCEFE1EB0DCA5F6400739219 /* JSXSLTProcessor.h in Headers */,
 				85031B440A44EFC700F992E0 /* KeyboardEvent.h in Headers */,
-				CDC675231EAEA9B700727C84 /* AVAudioSessionCaptureDeviceManager.h in Headers */,
 				1AE00D59182DAC8D00087DD7 /* KeyedCoding.h in Headers */,
 				517A63C51B74318F00E7DCDC /* KeyedDecoderCF.h in Headers */,
 				517A63C61B74319200E7DCDC /* KeyedEncoderCF.h in Headers */,
@@ -28461,6 +28559,7 @@
 				98CE432A129E00E5005821DC /* LinkLoader.h in Headers */,
 				984264F112D5280A000D88A4 /* LinkLoaderClient.h in Headers */,
 				CBB6B2D41CB7AE51009EDE1A /* LinkPreloadResourceClients.h in Headers */,
+				2D4AEA031EBC0FE900C4A93A /* LinkPresentationSPI.h in Headers */,
 				985BB96E13A94058007A0B69 /* LinkRelAttribute.h in Headers */,
 				BC7FA6210D1F0CBD00DB22A9 /* LiveNodeList.h in Headers */,
 				E3B2F0F01D7F4CB500B0C9D1 /* LoadableClassicScript.h in Headers */,
@@ -28506,6 +28605,7 @@
 				439176E012DA25E17BAF80A2 /* MathMLStyle.h in Headers */,
 				FA654A6C1108ABED002615E0 /* MathMLTokenElement.h in Headers */,
 				FA654A6C1108ABED002626F1 /* MathMLUnderOverElement.h in Headers */,
+				37C738EF1EDBD71B003F2B0B /* MathMLUnknownElement.h in Headers */,
 				439046EA12DA25E812AF80AC /* MathOperator.h in Headers */,
 				49D5DC2C0F423A73008F20FD /* Matrix3DTransformOperation.h in Headers */,
 				49E911C70EF86D47009D0CAF /* MatrixTransformOperation.h in Headers */,
@@ -28612,7 +28712,6 @@
 				517139061BF64DEC000D5F01 /* MemoryObjectStoreCursor.h in Headers */,
 				413E00791DB0E4F2002341D2 /* MemoryRelease.h in Headers */,
 				93309DFA099E64920056E581 /* MergeIdenticalElementsCommand.h in Headers */,
-				CDC939A81E9BDFB100BB768D /* VideoToolboxSoftLink.h in Headers */,
 				E1ADECCE0E76AD8B004A1A5E /* MessageChannel.h in Headers */,
 				75793E840D0CE0B3007FC0AC /* MessageEvent.h in Headers */,
 				E1ADECBF0E76ACF1004A1A5E /* MessagePort.h in Headers */,
@@ -28623,7 +28722,6 @@
 				CE1252491A16C3BC00864480 /* MobileGestaltSPI.h in Headers */,
 				CDF2B0111820540600F2B424 /* MockBox.h in Headers */,
 				CDF4B7241E03BF8100E235A2 /* MockCDMFactory.h in Headers */,
-				2D4AEA031EBC0FE900C4A93A /* LinkPresentationSPI.h in Headers */,
 				CDF4B7201E03BF6F00E235A2 /* MockCDMFactory.idl in Headers */,
 				51058AE01D67C229009A538C /* MockGamepad.h in Headers */,
 				51058AE21D67C229009A538C /* MockGamepadProvider.h in Headers */,
@@ -28636,7 +28734,6 @@
 				07EE76EC1BE96DB000F89133 /* MockRealtimeVideoSource.h in Headers */,
 				07EE76EF1BEA619800F89133 /* MockRealtimeVideoSourceMac.h in Headers */,
 				CDF2B0171820540700F2B424 /* MockSourceBufferPrivate.h in Headers */,
-				37C738F41EDBDE8D003F2B0B /* DateTimeChooserClient.h in Headers */,
 				CDF2B0191820540700F2B424 /* MockTracks.h in Headers */,
 				C6D74AD509AA282E000B0A52 /* ModifySelectionListLevel.h in Headers */,
 				709A01FE1E3D0BDD006B0D4C /* ModuleFetchFailureKind.h in Headers */,
@@ -28667,6 +28764,7 @@
 				979F43D41075E44A0000F83B /* NavigationScheduler.h in Headers */,
 				A9C6E5A60D746458006442E9 /* Navigator.h in Headers */,
 				E12719C70EEEC16800F61213 /* NavigatorBase.h in Headers */,
+				77D510201ED72D5F00DA4C87 /* NavigatorCredentials.h in Headers */,
 				9711460414EF009A00674FD9 /* NavigatorGeolocation.h in Headers */,
 				5EA725D61ACABD5700EAD17B /* NavigatorMediaDevices.h in Headers */,
 				996E59DF1DF0128D006612B9 /* NavigatorWebDriver.h in Headers */,
@@ -28697,6 +28795,8 @@
 				312C0C41146DC6CC0016C911 /* Notification.h in Headers */,
 				33503C9A10179A74003B47E1 /* NotificationClient.h in Headers */,
 				3128CA6B147331630074C72A /* NotificationController.h in Headers */,
+				7CC2DE031ECA04A50027B774 /* NotificationDirection.h in Headers */,
+				7CC2DDFB1EC9415A0027B774 /* NotificationPermission.h in Headers */,
 				31FE6DFA15004C2A0004EBC4 /* NotificationPermissionCallback.h in Headers */,
 				98EB1F951313FE0500D0E1EA /* NotImplemented.h in Headers */,
 				1A569D0B0D7E2B82007C3983 /* NP_jsobject.h in Headers */,
@@ -28755,6 +28855,7 @@
 				B2D3DA650D006CD600EF6F27 /* OpenTypeMathData.h in Headers */,
 				B2D3EA650D006CD600EF6F28 /* OpenTypeTypes.h in Headers */,
 				CDE7FC45181904B1002BBB77 /* OrderIterator.h in Headers */,
+				4184F5161EAF05A800F18BF0 /* OrientationNotifer.h in Headers */,
 				0014628B103CD1DE000B20DB /* OriginAccessEntry.h in Headers */,
 				FE9E89FC16E2DC0500A908F8 /* OriginLock.h in Headers */,
 				FD581FAF1520F91F003A7A75 /* OscillatorNode.h in Headers */,
@@ -28796,6 +28897,7 @@
 				536D5A23193E8E0C00CE4CAB /* ParsingUtilities.h in Headers */,
 				1AED3BDA1D3D5F260099FD78 /* PassKitSPI.h in Headers */,
 				57B5F7ED1E57F1E300F34F90 /* PasswordCredential.h in Headers */,
+				77D5100C1ED5E29000DA4C87 /* PasswordCredentialData.h in Headers */,
 				F55B3DCA1251F12D003EF269 /* PasswordInputType.h in Headers */,
 				4B2708C70AF19EE40065127F /* Pasteboard.h in Headers */,
 				C598905714E9C28000E8D18B /* PasteboardStrategy.h in Headers */,
@@ -28824,6 +28926,8 @@
 				8A844D0511D3C18E0014065C /* Performance.h in Headers */,
 				86BE340115058CB200CE0FD8 /* PerformanceEntry.h in Headers */,
 				AD5A0C251DECACCC00707054 /* PerformanceLogging.h in Headers */,
+				37C738E91EDBD2FA003F2B0B /* PerformanceMark.h in Headers */,
+				37C738EB1EDBD384003F2B0B /* PerformanceMeasure.h in Headers */,
 				83FE90271E307C30003E9199 /* PerformanceMonitor.h in Headers */,
 				8AF4E55611DC5A36000ED3DE /* PerformanceNavigation.h in Headers */,
 				A5A9933D1E37FB19005B5E4D /* PerformanceObserver.h in Headers */,
@@ -28864,7 +28968,6 @@
 				BCEC01D70C274EB4009F4EC9 /* PlatformScreen.h in Headers */,
 				297BE3D516C03C08003316BD /* PlatformSpeechSynthesisUtterance.h in Headers */,
 				297BE3D616C03C0B003316BD /* PlatformSpeechSynthesisVoice.h in Headers */,
-				37C738E91EDBD2FA003F2B0B /* PerformanceMark.h in Headers */,
 				297BE3D716C03C0E003316BD /* PlatformSpeechSynthesizer.h in Headers */,
 				1AD8F81B11CAB9E900E93E54 /* PlatformStrategies.h in Headers */,
 				0F7D07331884C56C00B4AF86 /* PlatformTextTrack.h in Headers */,
@@ -29180,7 +29283,6 @@
 				078E094217D16E1C00420AA1 /* RTCPeerConnectionHandlerClient.h in Headers */,
 				078E092417D14D1C00420AA1 /* RTCPeerConnectionIceEvent.h in Headers */,
 				5E2C437C1BCF9A840001E2BC /* RTCPeerConnectionInternalsBuiltins.h in Headers */,
-				37C738EB1EDBD384003F2B0B /* PerformanceMeasure.h in Headers */,
 				5E2C43631BCEE32B0001E2BC /* RTCRtpReceiver.h in Headers */,
 				5E2C43611BCEE3230001E2BC /* RTCRtpSender.h in Headers */,
 				5E2C435F1BCEE31E0001E2BC /* RTCRtpSenderReceiverBase.h in Headers */,
@@ -29240,7 +29342,6 @@
 				44C991860F3D1EBE00586670 /* ScrollbarThemeIOS.h in Headers */,
 				BC8B853E0E7C7F1100AB6984 /* ScrollbarThemeMac.h in Headers */,
 				0FE71406142170B800DB33BA /* ScrollbarThemeMock.h in Headers */,
-				7C8139A61ED6286A00CE26E8 /* JSDOMAttribute.h in Headers */,
 				1AA84F05143BA7BD0051D153 /* ScrollController.h in Headers */,
 				0F605AED15F94848004DF0C0 /* ScrollingConstraints.h in Headers */,
 				1AF62EE814DA22A70041556C /* ScrollingCoordinator.h in Headers */,
@@ -29262,7 +29363,6 @@
 				0FC4E411187F82E10045882C /* ScrollingTreeFrameScrollingNodeIOS.h in Headers */,
 				93C4A4151629DF5A00C3EB6E /* ScrollingTreeFrameScrollingNodeMac.h in Headers */,
 				0FC4E410187F82E10045882C /* ScrollingTreeIOS.h in Headers */,
-				836ACED61ECAAB19004BD012 /* JSDOMMatrixReadOnly.h in Headers */,
 				0FE5806419327A6200DE32EB /* ScrollingTreeMac.h in Headers */,
 				1AAADDE414DC8C8F00AF64B3 /* ScrollingTreeNode.h in Headers */,
 				0FEA3E80191B3169000F1B55 /* ScrollingTreeOverflowScrollingNode.h in Headers */,
@@ -29310,7 +29410,6 @@
 				B8DBDB4C130B0F8A00F5CDB1 /* SetSelectionCommand.h in Headers */,
 				93F1994F08245E59001E9ABC /* Settings.h in Headers */,
 				53EF766B16530A61004CBE49 /* SettingsMacros.h in Headers */,
-				5790996D1ECD23DA00FC0768 /* CryptoAlgorithmRSA_PSS.h in Headers */,
 				0F3DD45012F5EA1B000D9190 /* ShadowBlur.h in Headers */,
 				BC5EB8C40E82031B00B25965 /* ShadowData.h in Headers */,
 				A6D169641346B4C1000EB770 /* ShadowRoot.h in Headers */,
@@ -29333,11 +29432,11 @@
 				31741AAD16636609008A5B7E /* SimulatedClickOptions.h in Headers */,
 				FD00D7A514A3F61900734011 /* SincResampler.h in Headers */,
 				51327D6011A33A2B004F9D65 /* SinkDocument.h in Headers */,
-				57B5F7D51E57CF6800F34F90 /* SiteBoundCredential.h in Headers */,
-				57B5F7DB1E57D4CC00F34F90 /* SiteBoundCredentialData.h in Headers */,
 				9444CBD61D860C8B0073A074 /* SizesAttributeParser.h in Headers */,
 				9444CBD41D860C8B0073A074 /* SizesCalcParser.h in Headers */,
 				49E911CD0EF86D47009D0CAF /* SkewTransformOperation.h in Headers */,
+				CD52481B18E200ED0008A07D /* SleepDisabler.h in Headers */,
+				5D8C4DC01428222C0026CE72 /* SleepDisablerCocoa.h in Headers */,
 				4150F9F112B6E0E70008C860 /* SliderThumbElement.h in Headers */,
 				9B532EA41BA928570038A827 /* SlotAssignment.h in Headers */,
 				4B6FA6F40C39E48C00087011 /* SmartReplace.h in Headers */,
@@ -29384,7 +29483,6 @@
 				1A22464C0CC98DDB00C05240 /* SQLiteStatement.h in Headers */,
 				1A22464E0CC98DDB00C05240 /* SQLiteTransaction.h in Headers */,
 				97BC6A421505F081001B74AC /* SQLResultSet.h in Headers */,
-				7C8139A81ED6287400CE26E8 /* JSDOMOperationReturningPromise.h in Headers */,
 				97BC6A451505F081001B74AC /* SQLResultSetRowList.h in Headers */,
 				FE8A674816CDD19E00930BF8 /* SQLStatement.h in Headers */,
 				97BC6A491505F081001B74AC /* SQLStatementCallback.h in Headers */,
@@ -29433,7 +29531,6 @@
 				BC5EB8B90E8201BD00B25965 /* StyleDeprecatedFlexibleBoxData.h in Headers */,
 				319AE064142D6B24006563A1 /* StyleFilterData.h in Headers */,
 				5317612313C516690026E454 /* StyleFlexibleBoxData.h in Headers */,
-				5721A98B1ECE57040081295A /* CryptoAlgorithmRsaPssParams.h in Headers */,
 				E4D58EB917B4ED8900CBDCA8 /* StyleFontSizeFunctions.h in Headers */,
 				BCEF444A0E6745E0001C1287 /* StyleGeneratedImage.h in Headers */,
 				A10DC76B14747BAB005E2471 /* StyleGridData.h in Headers */,
@@ -29603,7 +29700,6 @@
 				436708EE12D9CA4B00044234 /* SVGMarkerData.h in Headers */,
 				B2227A440D00BF220071B782 /* SVGMarkerElement.h in Headers */,
 				B2227A470D00BF220071B782 /* SVGMaskElement.h in Headers */,
-				7CC2DDFB1EC9415A0027B774 /* NotificationPermission.h in Headers */,
 				0806E57A12893045007CED32 /* SVGMatrix.h in Headers */,
 				08CA3D4412894A3800FFF260 /* SVGMatrixTearOff.h in Headers */,
 				7CE58D5C1DD7EC9C00128552 /* SVGMatrixValue.h in Headers */,
@@ -29705,7 +29801,6 @@
 				081093DC1255F0E700ED9D29 /* SVGTextLayoutAttributesBuilder.h in Headers */,
 				081668DA125603D5006F25DE /* SVGTextLayoutEngine.h in Headers */,
 				080E49261255F3BD00EFCA27 /* SVGTextLayoutEngineBaseline.h in Headers */,
-				4184F5161EAF05A800F18BF0 /* OrientationNotifer.h in Headers */,
 				080E49281255F3BD00EFCA27 /* SVGTextLayoutEngineSpacing.h in Headers */,
 				08F0BFC61255C53C00075185 /* SVGTextMetrics.h in Headers */,
 				7117445914BC34EC00EE5FC8 /* SVGTextMetricsBuilder.h in Headers */,
@@ -29722,6 +29817,7 @@
 				B2227AE20D00BF220071B782 /* SVGTRefElement.h in Headers */,
 				B2227AE50D00BF220071B782 /* SVGTSpanElement.h in Headers */,
 				B2227AE70D00BF220071B782 /* SVGUnitTypes.h in Headers */,
+				37C738ED1EDBD5BC003F2B0B /* SVGUnknownElement.h in Headers */,
 				B2227AEA0D00BF220071B782 /* SVGURIReference.h in Headers */,
 				B2227AED0D00BF220071B782 /* SVGUseElement.h in Headers */,
 				B2227AF00D00BF220071B782 /* SVGViewElement.h in Headers */,
@@ -29744,7 +29840,6 @@
 				6550B6A6099DF0270090D781 /* Text.h in Headers */,
 				93309E17099E64920056E581 /* TextAffinity.h in Headers */,
 				CE7B2DB51586ABAD0098B3FA /* TextAlternativeWithRange.h in Headers */,
-				836ACEC31ECA62C8004BD012 /* DOMMatrixReadOnly.h in Headers */,
 				0F54DCE61881051D003EEDBB /* TextAutoSizing.h in Headers */,
 				B2C3DA340D006C1D00EF6F26 /* TextBoundaries.h in Headers */,
 				A7151BD812F1558F005A0F64 /* TextCheckerClient.h in Headers */,
@@ -29902,6 +29997,7 @@
 				BCA257151293C010007A263D /* VerticalPositionCache.h in Headers */,
 				CDE83DB2183C44060031EAA3 /* VideoPlaybackQuality.h in Headers */,
 				CD9D827A1C7B8EE1006FF066 /* VideoTextureCopierCV.h in Headers */,
+				CDC939A81E9BDFB100BB768D /* VideoToolboxSoftLink.h in Headers */,
 				BE88E0DF1715D2A200658D98 /* VideoTrack.h in Headers */,
 				BE88E0E21715D2A200658D98 /* VideoTrackList.h in Headers */,
 				CD8B5A46180DFF4E008B8E65 /* VideoTrackMediaSource.h in Headers */,
@@ -29945,6 +30041,7 @@
 				419BE7591BC7F42B00E1C85B /* WebCoreBuiltinNames.h in Headers */,
 				2D3EF44A1917915C00034184 /* WebCoreCALayerExtras.h in Headers */,
 				515F79541CFCA3D500CCED93 /* WebCoreCrossThreadCopier.h in Headers */,
+				CD5D27781E8318E000D80A3D /* WebCoreDecompressionSession.h in Headers */,
 				93F199A808245E59001E9ABC /* WebCoreFrameView.h in Headers */,
 				CDC69DDA16371FD4007C38DF /* WebCoreFullScreenPlaceholderView.h in Headers */,
 				CDC69DD61632026C007C38DF /* WebCoreFullScreenWarningView.h in Headers */,
@@ -30637,6 +30734,8 @@
 				7C1E97271A9F9834007BF0FB /* AutoFillButtonElement.cpp in Sources */,
 				45830D4D1679B4F800ACF8C3 /* AutoscrollController.cpp in Sources */,
 				A8CFF0500A154F09000A4234 /* AutoTableLayout.cpp in Sources */,
+				CDC675261EAEA9D400727C84 /* AVAudioSessionCaptureDevice.mm in Sources */,
+				CDC675221EAEA9B700727C84 /* AVAudioSessionCaptureDeviceManager.mm in Sources */,
 				070363E3181A1CDC00C074A5 /* AVCaptureDeviceManager.mm in Sources */,
 				0719427F1D088F21002AA51D /* AVFoundationMIMETypeCache.mm in Sources */,
 				070363E5181A1CDC00C074A5 /* AVMediaCaptureSource.mm in Sources */,
@@ -30714,7 +30813,6 @@
 				415CDAF41E6B8F87004F11EE /* CanvasCaptureMediaStreamTrack.cpp in Sources */,
 				49484FC1102CF23C00187DD3 /* CanvasGradient.cpp in Sources */,
 				4671E0651D67A59600C6B497 /* CanvasPath.cpp in Sources */,
-				CDC675261EAEA9D400727C84 /* AVAudioSessionCaptureDevice.mm in Sources */,
 				49484FC4102CF23C00187DD3 /* CanvasPattern.cpp in Sources */,
 				49C7B9DC1042D32F0009D447 /* CanvasRenderingContext.cpp in Sources */,
 				49484FCA102CF23C00187DD3 /* CanvasRenderingContext2D.cpp in Sources */,
@@ -30818,6 +30916,7 @@
 				D0B0556909C6700100307E43 /* CreateLinkCommand.cpp in Sources */,
 				514C766D0CE923A1007EF3CD /* CredentialBase.cpp in Sources */,
 				3792917D1987678F00F4B661 /* CredentialCocoa.mm in Sources */,
+				77D510191ED715AC00DA4C87 /* CredentialsContainer.cpp in Sources */,
 				51A052341058774F00CC9E95 /* CredentialStorage.cpp in Sources */,
 				7EE6846512D26E3800E79415 /* CredentialStorageCFNet.cpp in Sources */,
 				E1B4CD2510B322E200BFFD7E /* CredentialStorageMac.mm in Sources */,
@@ -30852,6 +30951,8 @@
 				E1BB84AD1822CA7400525043 /* CryptoAlgorithmRegistryMac.cpp in Sources */,
 				E1FE136A183FE1AB00892F13 /* CryptoAlgorithmRSA_OAEP.cpp in Sources */,
 				E1FE1370183FECF000892F13 /* CryptoAlgorithmRSA_OAEPMac.cpp in Sources */,
+				5790996E1ECD23DA00FC0768 /* CryptoAlgorithmRSA_PSS.cpp in Sources */,
+				5721A9851ECE4FB90081295A /* CryptoAlgorithmRSA_PSSMac.cpp in Sources */,
 				E1233F0C185A3E3B008DFAF5 /* CryptoAlgorithmRSAES_PKCS1_v1_5.cpp in Sources */,
 				E1233F10185A4130008DFAF5 /* CryptoAlgorithmRSAES_PKCS1_v1_5Mac.cpp in Sources */,
 				E1BD3319182D8DDD00C05D9F /* CryptoAlgorithmRSASSA_PKCS1_v1_5.cpp in Sources */,
@@ -30934,7 +31035,6 @@
 				977B3862122883E900B81FF8 /* CSSPreloadScanner.cpp in Sources */,
 				A80E6D050A1989CA007FB8C5 /* CSSPrimitiveValue.cpp in Sources */,
 				A80E6CF70A1989CA007FB8C5 /* CSSProperty.cpp in Sources */,
-				E3975B791EC9AF3F00847717 /* JSDocumentFragmentDOMJIT.cpp in Sources */,
 				78D02BC5154A18DF00B62D05 /* CSSPropertyAnimation.cpp in Sources */,
 				1ABA76CA11D20E50004C201C /* CSSPropertyNames.cpp in Sources */,
 				946D37451D6D01D40077084F /* CSSPropertyParser.cpp in Sources */,
@@ -30961,7 +31061,6 @@
 				371F53EA0D2704F900ECE0D5 /* CSSUnicodeRangeValue.cpp in Sources */,
 				BC7D8FEF1BD03B6400FFE540 /* CSSUnsetValue.cpp in Sources */,
 				AD03AAFA1468455300A39B5B /* CSSValue.cpp in Sources */,
-				5790996E1ECD23DA00FC0768 /* CryptoAlgorithmRSA_PSS.cpp in Sources */,
 				1ABA76CB11D20E57004C201C /* CSSValueKeywords.cpp in Sources */,
 				A80E6CE40A1989CA007FB8C5 /* CSSValueList.cpp in Sources */,
 				E49BDA0B131FD3E5003C56F0 /* CSSValuePool.cpp in Sources */,
@@ -31004,7 +31103,6 @@
 				FD31602D12B0267600C1A359 /* DelayNode.cpp in Sources */,
 				FD31603012B0267600C1A359 /* DelayProcessor.cpp in Sources */,
 				93309DDE099E64920056E581 /* DeleteFromTextNodeCommand.cpp in Sources */,
-				CDC939A71E9BDFB100BB768D /* VideoToolboxSoftLink.cpp in Sources */,
 				93309DE0099E64920056E581 /* DeleteSelectionCommand.cpp in Sources */,
 				9479493C1E045CF300018D85 /* DeprecatedCSSOMPrimitiveValue.cpp in Sources */,
 				947949241E0308A400018D85 /* DeprecatedCSSOMValue.cpp in Sources */,
@@ -31043,8 +31141,6 @@
 				0F97A658155DA81E00FADD4C /* DisplayRefreshMonitorIOS.mm in Sources */,
 				49AF2D6C14435D210016A784 /* DisplayRefreshMonitorMac.cpp in Sources */,
 				2D29ECC7192ECC8300984B78 /* DisplayRefreshMonitorManager.cpp in Sources */,
-				CD52481A18E200ED0008A07D /* SleepDisabler.cpp in Sources */,
-				5D8C4DBF1428222C0026CE72 /* SleepDisablerCocoa.cpp in Sources */,
 				FD31609012B026F700C1A359 /* Distance.cpp in Sources */,
 				A1E1154413015C3D0054AC8C /* DistantLightSource.cpp in Sources */,
 				B2F34FE90E82F82700F627CD /* DNSCFNet.cpp in Sources */,
@@ -31072,6 +31168,8 @@
 				2ED609BC1145B07100C8684E /* DOMFormData.cpp in Sources */,
 				A8185F3E09765766005826D9 /* DOMImplementation.cpp in Sources */,
 				E398FC241DC32A20003C4684 /* DOMJITHelpers.cpp in Sources */,
+				836ACEC91ECA9569004BD012 /* DOMMatrix.cpp in Sources */,
+				836ACEC21ECA62C8004BD012 /* DOMMatrixReadOnly.cpp in Sources */,
 				A9C6E4E30D745E05006442E9 /* DOMMimeType.cpp in Sources */,
 				A9C6E4E70D745E18006442E9 /* DOMMimeTypeArray.cpp in Sources */,
 				52B6C9C215E3F4DF00690B05 /* DOMNamedFlowCollection.cpp in Sources */,
@@ -31156,6 +31254,7 @@
 				A75E8B8C0E1DE2D6007F2481 /* FEComponentTransfer.cpp in Sources */,
 				A75E8B8E0E1DE2D6007F2481 /* FEComposite.cpp in Sources */,
 				84730D781248F0B300D3A9C9 /* FEConvolveMatrix.cpp in Sources */,
+				77AAD6821ECF8D3800BFA2D1 /* FederatedCredential.cpp in Sources */,
 				84730D7A1248F0B300D3A9C9 /* FEDiffuseLighting.cpp in Sources */,
 				84730D7C1248F0B300D3A9C9 /* FEDisplacementMap.cpp in Sources */,
 				4358E8801360A31700E4748C /* FEDropShadow.cpp in Sources */,
@@ -31252,7 +31351,6 @@
 				7EE6846612D26E3800E79415 /* FormDataStreamCFNet.cpp in Sources */,
 				514C764F0CE9234E007EF3CD /* FormDataStreamMac.mm in Sources */,
 				656D373B0ADBA5DE00A4554D /* FormState.cpp in Sources */,
-				E3975B7B1EC9AF3F00847717 /* JSEventDOMJIT.cpp in Sources */,
 				41885B9411B6FDA6003383BB /* FormSubmission.cpp in Sources */,
 				65BF022E0974816300C43196 /* Frame.cpp in Sources */,
 				974A862214B7ADBB003FDC76 /* FrameDestructionObserver.cpp in Sources */,
@@ -31345,7 +31443,6 @@
 				B2A015AA0AF6CD53006BCE0E /* GraphicsTypes.cpp in Sources */,
 				E112F4711E3A861200D6CDFD /* Grid.cpp in Sources */,
 				E175BA991E8AE3380071454F /* GridPosition.cpp in Sources */,
-				E3975B7A1EC9AF3F00847717 /* JSElementDOMJIT.cpp in Sources */,
 				CDF7483E18FEBCEC0006ECC0 /* GridPositionsResolver.cpp in Sources */,
 				E12DE7171E4B749C00F9ACCF /* GridTrackSizingAlgorithm.cpp in Sources */,
 				414C25D71E9EFEDE00BEE141 /* H264VideoToolBoxEncoder.mm in Sources */,
@@ -31703,7 +31800,11 @@
 				FDA15EBD12B03F0B003A583A /* JSConvolverNode.cpp in Sources */,
 				FE6FD48D0F676E9300092873 /* JSCoordinates.cpp in Sources */,
 				14DCF3B21B6BE2080062D4C2 /* JSCountQueuingStrategy.cpp in Sources */,
+				77D510071ED4F72700DA4C87 /* JSCredentialCreationOptions.cpp in Sources */,
 				57B5F7E61E57DBE000F34F90 /* JSCredentialData.cpp in Sources */,
+				77D510051ED4F72200DA4C87 /* JSCredentialRequestOptions.cpp in Sources */,
+				77D5101D1ED722C300DA4C87 /* JSCredentialsContainer.cpp in Sources */,
+				77D510031ED4F71B00DA4C87 /* JSCredentialUserData.cpp in Sources */,
 				975CA2A11303679D00E99AD9 /* JSCrypto.cpp in Sources */,
 				E157A8F018185425009F821D /* JSCryptoAlgorithmBuilder.cpp in Sources */,
 				E1C657121815F9DD00256CDD /* JSCryptoAlgorithmDictionary.cpp in Sources */,
@@ -31758,6 +31859,7 @@
 				E3B7C0631DC34160001FB0B8 /* JSDocumentDOMJIT.cpp in Sources */,
 				1A494EDE0A123F4C00FDAFC1 /* JSDocumentFragment.cpp in Sources */,
 				7C33F3621B4A050400502CAF /* JSDocumentFragmentCustom.cpp in Sources */,
+				E3975B791EC9AF3F00847717 /* JSDocumentFragmentDOMJIT.cpp in Sources */,
 				1221E05F1C02B444006A1A00 /* JSDocumentTimeline.cpp in Sources */,
 				65DF31F509D1CC60000BE325 /* JSDocumentType.cpp in Sources */,
 				1AC2260C0DB69F190089B669 /* JSDOMApplicationCache.cpp in Sources */,
@@ -31779,6 +31881,9 @@
 				65DF31F709D1CC60000BE325 /* JSDOMImplementation.cpp in Sources */,
 				4138F8571D253F08001CB61E /* JSDOMIterator.cpp in Sources */,
 				41DEFCB51E56C1BD000D9E5F /* JSDOMMapLike.cpp in Sources */,
+				836ACED21ECAAB19004BD012 /* JSDOMMatrix.cpp in Sources */,
+				835657C71ECAB10700CDE72D /* JSDOMMatrixInit.cpp in Sources */,
+				836ACED51ECAAB19004BD012 /* JSDOMMatrixReadOnly.cpp in Sources */,
 				A9D248060D757E7D00FDF959 /* JSDOMMimeType.cpp in Sources */,
 				A9D248080D757E7D00FDF959 /* JSDOMMimeTypeArray.cpp in Sources */,
 				52CCA9E215E3F62C0053C77F /* JSDOMNamedFlowCollection.cpp in Sources */,
@@ -31813,14 +31918,15 @@
 				5750A9811E6A150800705C4A /* JSEcKeyParams.cpp in Sources */,
 				65DF31F909D1CC60000BE325 /* JSElement.cpp in Sources */,
 				BC2ED5550C6B9BD300920BFF /* JSElementCustom.cpp in Sources */,
+				E3975B7A1EC9AF3F00847717 /* JSElementDOMJIT.cpp in Sources */,
 				2ECF7ADC10162B3800427DE7 /* JSErrorEvent.cpp in Sources */,
 				F3D461481161D53200CA0D09 /* JSErrorHandler.cpp in Sources */,
 				14E8378409F85D1C00B85AE4 /* JSEvent.cpp in Sources */,
 				BCEFAF4E0C317E6900FA81F6 /* JSEventCustom.cpp in Sources */,
+				E3975B7B1EC9AF3F00847717 /* JSEventDOMJIT.cpp in Sources */,
 				836D032F1DA8A13A00FFD96B /* JSEventInit.cpp in Sources */,
 				93B70D6909EB0C7C009D8468 /* JSEventListener.cpp in Sources */,
 				E0FEF372B47C53EAC1C1FBEE /* JSEventSource.cpp in Sources */,
-				7CC2DE001EC95A440027B774 /* JSNotificationPermission.cpp in Sources */,
 				C6A703325C9D0B6CDCBC4D77 /* JSEventTarget.cpp in Sources */,
 				BC6090200E91B8EC000C68B5 /* JSEventTargetCustom.cpp in Sources */,
 				3314ACEB10892086000F0E56 /* JSExceptionBase.cpp in Sources */,
@@ -31829,6 +31935,9 @@
 				5C4304B5191AEF46000E2BC0 /* JSEXTShaderTextureLOD.cpp in Sources */,
 				72E417631A2E8D2F004C562A /* JSEXTsRGB.cpp in Sources */,
 				7728698314FD9ADA00F484DC /* JSEXTTextureFilterAnisotropic.cpp in Sources */,
+				77D50FF71ED4D99D00DA4C87 /* JSFederatedCredential.cpp in Sources */,
+				77D50FF51ED4D99100DA4C87 /* JSFederatedCredentialInit.cpp in Sources */,
+				77D510141ED5F4F100DA4C87 /* JSFederatedCredentialRequestOptions.cpp in Sources */,
 				7F4C96DC1AD4483500365A50 /* JSFetchBody.cpp in Sources */,
 				7D4C96DC1AD4483500365A50 /* JSFetchHeaders.cpp in Sources */,
 				7E4C96DC1AD4483500365A50 /* JSFetchRequest.cpp in Sources */,
@@ -31849,7 +31958,6 @@
 				518F5003194CAC3A0081BAAE /* JSGamepadButton.cpp in Sources */,
 				516C62251950E2B900337E75 /* JSGamepadEvent.cpp in Sources */,
 				FE80DA630E9C4703000D6F75 /* JSGeolocation.cpp in Sources */,
-				836ACED51ECAAB19004BD012 /* JSDOMMatrixReadOnly.cpp in Sources */,
 				FE80DA650E9C4703000D6F75 /* JSGeoposition.cpp in Sources */,
 				0FDA7C1E188322FC00C954B5 /* JSGestureEvent.cpp in Sources */,
 				8482B7511198CB6B00BFB005 /* JSHashChangeEvent.cpp in Sources */,
@@ -31960,7 +32068,6 @@
 				511EF2C717F0FD3500E4FA16 /* JSIDBObjectStore.cpp in Sources */,
 				511EF2D117F0FDF100E4FA16 /* JSIDBObjectStoreCustom.cpp in Sources */,
 				511EF2C817F0FD3500E4FA16 /* JSIDBOpenDBRequest.cpp in Sources */,
-				7CF1589B1EBC4CFD00D4BFB7 /* SubresourceIntegrity.cpp in Sources */,
 				511EF2C917F0FD3500E4FA16 /* JSIDBRequest.cpp in Sources */,
 				511EF2CA17F0FD3500E4FA16 /* JSIDBTransaction.cpp in Sources */,
 				51E269331DD3BC4E006B6A58 /* JSIDBTransactionCustom.cpp in Sources */,
@@ -32029,6 +32136,7 @@
 				C6F08FC91431000D00685849 /* JSMutationRecord.cpp in Sources */,
 				BCD9C2C00C17B69E005C90A2 /* JSNamedNodeMap.cpp in Sources */,
 				A9D247F70D757E3400FDF959 /* JSNavigator.cpp in Sources */,
+				77D510261ED74B5C00DA4C87 /* JSNavigatorCredentials.cpp in Sources */,
 				073BE34017D17E01002BD431 /* JSNavigatorUserMedia.cpp in Sources */,
 				14DC0D3709FED073007B0235 /* JSNode.cpp in Sources */,
 				BCD9C2640C17AA67005C90A2 /* JSNodeCustom.cpp in Sources */,
@@ -32039,6 +32147,7 @@
 				BCD9C2C20C17B69E005C90A2 /* JSNodeList.cpp in Sources */,
 				BCD9C2650C17AA67005C90A2 /* JSNodeListCustom.cpp in Sources */,
 				33503CA310179AD7003B47E1 /* JSNotification.cpp in Sources */,
+				7CC2DE001EC95A440027B774 /* JSNotificationPermission.cpp in Sources */,
 				31EC1E2814FF60EE00C94662 /* JSNotificationPermissionCallback.cpp in Sources */,
 				7E46F6FA1627A2CA00062223 /* JSOESElementIndexUint.cpp in Sources */,
 				9001788012E0370700648462 /* JSOESStandardDerivatives.cpp in Sources */,
@@ -32056,6 +32165,7 @@
 				E1284BB210449FFA00EAEB52 /* JSPageTransitionEvent.cpp in Sources */,
 				FDA15EB112B03EE1003A583A /* JSPannerNode.cpp in Sources */,
 				57B5F7F01E5B8C5A00F34F90 /* JSPasswordCredential.cpp in Sources */,
+				77D50FF91ED4D9A400DA4C87 /* JSPasswordCredentialData.cpp in Sources */,
 				57E657EF1E71665400F941CA /* JSPbkdf2Params.cpp in Sources */,
 				E51A81DF17298D7700BFCA61 /* JSPerformance.cpp in Sources */,
 				CB38FD511CCF938900592A3F /* JSPerformanceEntry.cpp in Sources */,
@@ -32097,6 +32207,7 @@
 				57FEDD431DB6D76000EB96F5 /* JSRsaKeyGenParams.cpp in Sources */,
 				5706A69A1DDE5E8500A03B14 /* JSRsaOaepParams.cpp in Sources */,
 				57E233611DC7D6AA00F28D01 /* JSRsaOtherPrimesInfo.cpp in Sources */,
+				575471A01ECE628700DD63B2 /* JSRsaPssParams.cpp in Sources */,
 				316DCB311E78FB6C001B5F87 /* JSRTCAnswerOptions.cpp in Sources */,
 				073794E519EE2FF200E5A045 /* JSRTCConfiguration.cpp in Sources */,
 				07969DAB17D14151007FF842 /* JSRTCDataChannel.cpp in Sources */,
@@ -32120,7 +32231,6 @@
 				5E2C43711BCF0D750001E2BD /* JSRTCRtpTransceiver.cpp in Sources */,
 				316DCB211E78CA55001B5F87 /* JSRTCRtpTransceiverDirection.cpp in Sources */,
 				07969DBB17D14151007FF842 /* JSRTCSessionDescription.cpp in Sources */,
-				836ACEC21ECA62C8004BD012 /* DOMMatrixReadOnly.cpp in Sources */,
 				316DCB4F1E7910A6001B5F87 /* JSRTCSignalingState.cpp in Sources */,
 				07969DC117D14151007FF842 /* JSRTCStatsReport.cpp in Sources */,
 				5E2C436B1BCF071E0001E2BC /* JSRTCTrackEvent.cpp in Sources */,
@@ -32130,8 +32240,6 @@
 				CED06AD01C77754800FDFAF1 /* JSSecurityPolicyViolationEvent.cpp in Sources */,
 				9BDA64D71B975CE5009C4387 /* JSShadowRoot.cpp in Sources */,
 				46DFF49B1DC2620B00B80B48 /* JSShadowRootMode.cpp in Sources */,
-				57B5F7E01E57DBC800F34F90 /* JSSiteBoundCredential.cpp in Sources */,
-				57B5F7E21E57DBC800F34F90 /* JSSiteBoundCredentialData.cpp in Sources */,
 				CD9DE17A17AAC75B00EA386D /* JSSourceBuffer.cpp in Sources */,
 				CD9DE17C17AAC75B00EA386D /* JSSourceBufferList.cpp in Sources */,
 				AA7FEEA416A4E6F3004C0C33 /* JSSpeechSynthesis.cpp in Sources */,
@@ -32284,7 +32392,6 @@
 				B2FA3DFE0AB75A6F000E5AC4 /* JSSVGSwitchElement.cpp in Sources */,
 				B2FA3E000AB75A6F000E5AC4 /* JSSVGSymbolElement.cpp in Sources */,
 				B2FA3E020AB75A6F000E5AC4 /* JSSVGTextContentElement.cpp in Sources */,
-				5721A9851ECE4FB90081295A /* CryptoAlgorithmRSA_PSSMac.cpp in Sources */,
 				B2FA3E040AB75A6F000E5AC4 /* JSSVGTextElement.cpp in Sources */,
 				B22362280C3AF04A0008CA9B /* JSSVGTextPathElement.cpp in Sources */,
 				B2FA3E060AB75A6F000E5AC4 /* JSSVGTextPositioningElement.cpp in Sources */,
@@ -32465,7 +32572,6 @@
 				E4B65A5A132FAAF90070E7BE /* LegacyTileGrid.mm in Sources */,
 				E424A3A01330DF1E00CF6DC9 /* LegacyTileGridTile.mm in Sources */,
 				E4B65A5E132FADB60070E7BE /* LegacyTileLayer.mm in Sources */,
-				836ACED21ECAAB19004BD012 /* JSDOMMatrix.cpp in Sources */,
 				E4E39AFD1330EFC6003AB274 /* LegacyTileLayerPool.mm in Sources */,
 				512DD8F40D91E6AF000F89EE /* LegacyWebArchive.cpp in Sources */,
 				51B2417B0D931F3F00E83F5C /* LegacyWebArchiveMac.mm in Sources */,
@@ -32539,7 +32645,6 @@
 				49E911C60EF86D47009D0CAF /* MatrixTransformOperation.cpp in Sources */,
 				5CBC8DAC1AAA302200E1C803 /* MediaAccessibilitySoftLink.cpp in Sources */,
 				1BE5BFC21D515715001666D9 /* MediaConstraints.cpp in Sources */,
-				835657C71ECAB10700CDE72D /* JSDOMMatrixInit.cpp in Sources */,
 				417253AA1354BBBC00360F2A /* MediaControlElements.cpp in Sources */,
 				DEBCCDD516646EB200A452E1 /* MediaControlElementTypes.cpp in Sources */,
 				CD27F6E7145770D30078207D /* MediaController.cpp in Sources */,
@@ -32666,6 +32771,7 @@
 				979F43D31075E44A0000F83B /* NavigationScheduler.cpp in Sources */,
 				A9C6E5A50D746458006442E9 /* Navigator.cpp in Sources */,
 				E12719CA0EEEC21300F61213 /* NavigatorBase.cpp in Sources */,
+				77D510221ED7364500DA4C87 /* NavigatorCredentials.cpp in Sources */,
 				2D9BF7421DBFDC27007A7D99 /* NavigatorEME.cpp in Sources */,
 				51A4BB101954D62700FA5C2E /* NavigatorGamepad.cpp in Sources */,
 				9711460314EF009A00674FD9 /* NavigatorGeolocation.cpp in Sources */,
@@ -32737,7 +32843,6 @@
 				371E65CE13661EED00BEEDB0 /* PageSerializer.cpp in Sources */,
 				E1284AEA10447DEE00EAEB52 /* PageTransitionEvent.cpp in Sources */,
 				51E1ECC20C91C90400DC255B /* PageURLRecord.cpp in Sources */,
-				CDC675221EAEA9B700727C84 /* AVAudioSessionCaptureDeviceManager.mm in Sources */,
 				FD3160A212B026F700C1A359 /* Panner.cpp in Sources */,
 				FD31601912B0267600C1A359 /* PannerNode.cpp in Sources */,
 				A18890AE1AA13F250026C301 /* ParentalControlsContentFilter.mm in Sources */,
@@ -32831,7 +32936,6 @@
 				E4BBED0E14F4025D003F0B98 /* PropertySetCSSStyleDeclaration.cpp in Sources */,
 				514C76740CE923A1007EF3CD /* ProtectionSpaceBase.cpp in Sources */,
 				372ADA3B197F687600FC501E /* ProtectionSpaceCocoa.mm in Sources */,
-				836ACEC91ECA9569004BD012 /* DOMMatrix.cpp in Sources */,
 				1AF8E13312565A4400230FF7 /* ProxyServer.cpp in Sources */,
 				1AF8E1C3125673E000230FF7 /* ProxyServerCFNet.cpp in Sources */,
 				FF945ECB161F7F3600971BC8 /* PseudoElement.cpp in Sources */,
@@ -32953,7 +33057,6 @@
 				31955A86160D199000858025 /* RenderSnapshottedPlugIn.cpp in Sources */,
 				BC8C8FAD0DDCD31B00B592F4 /* RenderStyle.cpp in Sources */,
 				0FEF20D01BD4A64F00128E5D /* RenderStyleConstants.cpp in Sources */,
-				575471A01ECE628700DD63B2 /* JSRsaPssParams.cpp in Sources */,
 				0F4E57171313276200CF85AF /* RenderSVGAllInOne.cpp in Sources */,
 				A8DF4AEC0980C42C0052981B /* RenderTable.cpp in Sources */,
 				6ED878C4147493F4004C3597 /* RenderTableCaption.cpp in Sources */,
@@ -32993,7 +33096,6 @@
 				7EE6846B12D26E3800E79415 /* ResourceErrorCF.cpp in Sources */,
 				514C76500CE9234E007EF3CD /* ResourceErrorMac.mm in Sources */,
 				514C76780CE923A1007EF3CD /* ResourceHandle.cpp in Sources */,
-				A18F7A361ECA73640059E1E1 /* RuntimeApplicationChecks.cpp in Sources */,
 				7EE6846C12D26E3800E79415 /* ResourceHandleCFNet.cpp in Sources */,
 				26FAE4CC1852E3A5004C8C46 /* ResourceHandleCFURLConnectionDelegate.cpp in Sources */,
 				26C15CF61857E15D00F15C03 /* ResourceHandleCFURLConnectionDelegateWithOperationQueue.cpp in Sources */,
@@ -33059,6 +33161,7 @@
 				1A569D200D7E2B82007C3983 /* runtime_method.cpp in Sources */,
 				1A569D220D7E2B82007C3983 /* runtime_object.cpp in Sources */,
 				1A569D240D7E2B82007C3983 /* runtime_root.cpp in Sources */,
+				A18F7A361ECA73640059E1E1 /* RuntimeApplicationChecks.cpp in Sources */,
 				465A8E791C8A24CE00E7D3E4 /* RuntimeApplicationChecksCocoa.mm in Sources */,
 				7C52229D1E1DAE47002CB8F7 /* RuntimeEnabledFeatures.cpp in Sources */,
 				CDD7089618359F6F002B3DC6 /* SampleMap.cpp in Sources */,
@@ -33179,10 +33282,11 @@
 				572A7F231C6E5A66009C6149 /* SimulatedClick.cpp in Sources */,
 				FD00D7A414A3F61900734011 /* SincResampler.cpp in Sources */,
 				51327D6111A33A2B004F9D65 /* SinkDocument.cpp in Sources */,
-				57B5F7D41E57CF6800F34F90 /* SiteBoundCredential.cpp in Sources */,
 				9444CBD51D860C8B0073A074 /* SizesAttributeParser.cpp in Sources */,
 				9444CBD31D860C8B0073A074 /* SizesCalcParser.cpp in Sources */,
 				49E911CC0EF86D47009D0CAF /* SkewTransformOperation.cpp in Sources */,
+				CD52481A18E200ED0008A07D /* SleepDisabler.cpp in Sources */,
+				5D8C4DBF1428222C0026CE72 /* SleepDisablerCocoa.cpp in Sources */,
 				4150F9F212B6E0E70008C860 /* SliderThumbElement.cpp in Sources */,
 				9B532EA31BA928570038A827 /* SlotAssignment.cpp in Sources */,
 				4B6FA6F70C39E4A100087011 /* SmartReplaceCF.cpp in Sources */,
@@ -33288,6 +33392,7 @@
 				D000ED2711C1B9CD00C47726 /* SubframeLoader.cpp in Sources */,
 				1FC40FB91655CCB60040F29E /* SubimageCacheWithTimer.cpp in Sources */,
 				F55B3DD31251F12D003EF269 /* SubmitInputType.cpp in Sources */,
+				7CF1589B1EBC4CFD00D4BFB7 /* SubresourceIntegrity.cpp in Sources */,
 				93E227E40AF589AD00D48324 /* SubresourceLoader.cpp in Sources */,
 				7E8FADC4199A95B100714968 /* SubresourceLoaderCocoa.mm in Sources */,
 				5778BD841DA4817B009E3009 /* SubtleCrypto.cpp in Sources */,
@@ -33437,7 +33542,6 @@
 				7C39C3761DDBB90D00FEFB29 /* SVGStringListValues.cpp in Sources */,
 				B2227AB70D00BF220071B782 /* SVGStyleElement.cpp in Sources */,
 				B2227ABA0D00BF220071B782 /* SVGSVGElement.cpp in Sources */,
-				CD5D27771E8318E000D80A3D /* WebCoreDecompressionSession.mm in Sources */,
 				B2227ABD0D00BF220071B782 /* SVGSwitchElement.cpp in Sources */,
 				B2227AC00D00BF220071B782 /* SVGSymbolElement.cpp in Sources */,
 				B2227AC40D00BF220071B782 /* SVGTests.cpp in Sources */,
@@ -33607,6 +33711,7 @@
 				CDE83DB1183C44060031EAA3 /* VideoPlaybackQuality.cpp in Sources */,
 				CD9D82791C7B8EE1006FF066 /* VideoTextureCopierCV.cpp in Sources */,
 				41CAD71E1EA090A100178164 /* VideoToolBoxEncoderFactory.cpp in Sources */,
+				CDC939A71E9BDFB100BB768D /* VideoToolboxSoftLink.cpp in Sources */,
 				BE88E0DE1715D2A200658D98 /* VideoTrack.cpp in Sources */,
 				BE88E0E11715D2A200658D98 /* VideoTrackList.cpp in Sources */,
 				CD336F6717FA0AC600DDDCD0 /* VideoTrackPrivateAVFObjC.cpp in Sources */,
@@ -33645,6 +33750,7 @@
 				CD7E05221651C28200C1201F /* WebCoreAVFResourceLoader.mm in Sources */,
 				2D3EF44B1917915C00034184 /* WebCoreCALayerExtras.mm in Sources */,
 				515F79531CFCA3D000CCED93 /* WebCoreCrossThreadCopier.cpp in Sources */,
+				CD5D27771E8318E000D80A3D /* WebCoreDecompressionSession.mm in Sources */,
 				CDC69DDB16371FD4007C38DF /* WebCoreFullScreenPlaceholderView.mm in Sources */,
 				CDC69DD71632026C007C38DF /* WebCoreFullScreenWarningView.mm in Sources */,
 				CD127DED14F3097D00E84779 /* WebCoreFullScreenWindow.mm in Sources */,

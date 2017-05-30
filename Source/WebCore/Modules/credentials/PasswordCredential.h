@@ -25,8 +25,10 @@
 
 #pragma once
 
+#include "BasicCredential.h"
+#include "CredentialUserData.h"
 #include "DOMFormData.h"
-#include "SiteBoundCredential.h"
+#include "PasswordCredentialData.h"
 #include "URLSearchParams.h"
 #include <wtf/Variant.h>
 
@@ -34,32 +36,26 @@ namespace WebCore {
 
 class HTMLFormElement;
 
-class PasswordCredential : public SiteBoundCredential {
+class PasswordCredential : public BasicCredential, public CredentialUserData {
 public:
-    struct Data : public SiteBoundCredentialData {
-        String password;
-    };
+    ~PasswordCredential() override;
 
-    static Ref<PasswordCredential> create(const Data& data) { return adoptRef(*new PasswordCredential(data)); }
+    static Ref<PasswordCredential> create(const PasswordCredentialData& data) { return adoptRef(*new PasswordCredential(data)); }
     static Ref<PasswordCredential> create(const HTMLFormElement& form) { return adoptRef(*new PasswordCredential(form)); }
 
-    void setIdName(String&& idName) { m_idName = WTFMove(idName); }
-    const String& idName() const { return m_idName; }
+    const String& name() const override { return m_name; }
 
-    void setPasswordName(String&& passwordName) { m_passwordName = WTFMove(passwordName); }
-    const String& passwordName() const { return m_passwordName; }
+    const String& iconURL() const override { return m_iconURL; }
 
-    using CredentialBodyType = std::optional<Variant<RefPtr<DOMFormData>, RefPtr<URLSearchParams>>>;
-    void setAdditionalData(CredentialBodyType&& additionalData) { m_additionalData = WTFMove(additionalData); }
-    const CredentialBodyType& additionalData() const { return m_additionalData; }
+    const String& password() const { return m_password; }
 
 private:
-    PasswordCredential(const Data&);
+    PasswordCredential(const PasswordCredentialData&);
     PasswordCredential(const HTMLFormElement&);
 
-    String m_idName;
-    String m_passwordName;
-    CredentialBodyType m_additionalData;
+    String m_name;
+    String m_iconURL;
+    String m_password;
 };
 
 } // namespace WebCore

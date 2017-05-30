@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,26 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "PasswordCredential.h"
+#pragma once
+
+#include "CredentialsContainer.h"
+#include "Supplementable.h"
 
 namespace WebCore {
 
-PasswordCredential::PasswordCredential(const PasswordCredentialData& data)
-    : BasicCredential(data, Type::Password)
-    , m_name(data.name)
-    , m_iconURL(data.iconURL)
-    , m_password(data.password)
-{
-}
+class Navigator;
 
-PasswordCredential::PasswordCredential(const HTMLFormElement&)
-    : BasicCredential(PasswordCredentialData(), Type::Password)
-{
-}
+class NavigatorCredentials final : public Supplement<Navigator> {
+public:
+    NavigatorCredentials();
+    virtual ~NavigatorCredentials();
 
-PasswordCredential::~PasswordCredential()
-{
-}
+    CredentialsContainer* credentials();
+
+    static NavigatorCredentials* from(Navigator*);
+    static CredentialsContainer* credentials(Navigator&);
+private:
+    static const char* supplementName();
+
+    RefPtr<CredentialsContainer> m_credentialsContainer;
+};
 
 } // namespace WebCore

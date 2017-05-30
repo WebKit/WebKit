@@ -1,3 +1,74 @@
+2017-05-30  Ali Juma  <ajuma@chromium.org>
+
+        [CredentialManagement] Incorporate IDL updates from latest spec
+        https://bugs.webkit.org/show_bug.cgi?id=172011
+
+        Reviewed by Daniel Bates.
+
+        This patch adds IDL definitions for the CredentialsContainer, CredentialsUserData and
+        FederatedCredentials interfaces, the NavigatorCredentials partial interface, and the
+        CredentialCreationOptions, CredentialRequestOptions, FederatedCredentialRequestOptions,
+        and PasswordCredentialData dictionaries. It also deletes IDL definitions for the
+        SiteBoundCredential interface and the SiteBoundCredentialData dictionary.
+
+        Test: credentials/idlharness.html
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Modules/credentials/BasicCredential.idl:
+        * Modules/credentials/CredentialCreationOptions.h: Copied from Source/WebCore/Modules/credentials/PasswordCredential.cpp.
+        * Modules/credentials/CredentialCreationOptions.idl: Copied from Source/WebCore/Modules/credentials/SiteBoundCredentialData.h.
+        * Modules/credentials/CredentialRequestOptions.h: Copied from Source/WebCore/Modules/credentials/SiteBoundCredentialData.h.
+        * Modules/credentials/CredentialRequestOptions.idl: Copied from Source/WebCore/Modules/credentials/SiteBoundCredentialData.h.
+        * Modules/credentials/CredentialUserData.h: Copied from Source/WebCore/Modules/credentials/SiteBoundCredentialData.h.
+        (WebCore::CredentialUserData::~CredentialUserData):
+        * Modules/credentials/CredentialUserData.idl: Copied from Source/WebCore/Modules/credentials/SiteBoundCredential.idl.
+        * Modules/credentials/CredentialsContainer.cpp: Copied from Source/WebCore/Modules/credentials/PasswordCredential.cpp.
+        (WebCore::CredentialsContainer::get):
+        (WebCore::CredentialsContainer::store):
+        (WebCore::CredentialsContainer::isCreate):
+        (WebCore::CredentialsContainer::preventSilentAccess):
+        * Modules/credentials/CredentialsContainer.h: Copied from Source/WebCore/Modules/credentials/SiteBoundCredential.h.
+        (WebCore::CredentialsContainer::create):
+        (WebCore::CredentialsContainer::CredentialsContainer):
+        * Modules/credentials/CredentialsContainer.idl: Copied from Source/WebCore/Modules/credentials/SiteBoundCredential.idl.
+        * Modules/credentials/FederatedCredential.cpp: Copied from Source/WebCore/Modules/credentials/SiteBoundCredential.cpp.
+        (WebCore::FederatedCredential::FederatedCredential):
+        (WebCore::FederatedCredential::~FederatedCredential):
+        * Modules/credentials/FederatedCredential.h: Renamed from Source/WebCore/Modules/credentials/SiteBoundCredential.h.
+        (WebCore::FederatedCredential::create):
+        (WebCore::FederatedCredential::provider):
+        (WebCore::FederatedCredential::protocol):
+        * Modules/credentials/FederatedCredential.idl: Copied from Source/WebCore/Modules/credentials/BasicCredential.idl.
+        * Modules/credentials/FederatedCredentialInit.h: Copied from Source/WebCore/Modules/credentials/SiteBoundCredentialData.h.
+        * Modules/credentials/FederatedCredentialInit.idl: Copied from Source/WebCore/Modules/credentials/SiteBoundCredentialData.idl.
+        * Modules/credentials/FederatedCredentialRequestOptions.h: Copied from Source/WebCore/Modules/credentials/SiteBoundCredentialData.h.
+        * Modules/credentials/FederatedCredentialRequestOptions.idl: Added.
+        * Modules/credentials/NavigatorCredentials.cpp: Renamed from Source/WebCore/Modules/credentials/SiteBoundCredential.cpp.
+        (WebCore::NavigatorCredentials::NavigatorCredentials):
+        (WebCore::NavigatorCredentials::~NavigatorCredentials):
+        (WebCore::NavigatorCredentials::supplementName):
+        (WebCore::NavigatorCredentials::credentials):
+        (WebCore::NavigatorCredentials::from):
+        * Modules/credentials/NavigatorCredentials.h: Copied from Source/WebCore/Modules/credentials/SiteBoundCredentialData.h.
+        * Modules/credentials/NavigatorCredentials.idl: Renamed from Source/WebCore/Modules/credentials/SiteBoundCredential.idl.
+        * Modules/credentials/PasswordCredential.cpp:
+        (WebCore::PasswordCredential::PasswordCredential):
+        (WebCore::PasswordCredential::~PasswordCredential):
+        * Modules/credentials/PasswordCredential.h:
+        (WebCore::PasswordCredential::create):
+        (WebCore::PasswordCredential::password):
+        (WebCore::PasswordCredential::setIdName): Deleted.
+        (WebCore::PasswordCredential::idName): Deleted.
+        (WebCore::PasswordCredential::setPasswordName): Deleted.
+        (WebCore::PasswordCredential::passwordName): Deleted.
+        (WebCore::PasswordCredential::setAdditionalData): Deleted.
+        (WebCore::PasswordCredential::additionalData): Deleted.
+        * Modules/credentials/PasswordCredential.idl:
+        * Modules/credentials/PasswordCredentialData.h: Renamed from Source/WebCore/Modules/credentials/SiteBoundCredentialData.h.
+        * Modules/credentials/PasswordCredentialData.idl: Renamed from Source/WebCore/Modules/credentials/SiteBoundCredentialData.idl.
+        * WebCore.xcodeproj/project.pbxproj:
+
 2017-05-30  Alex Christensen  <achristensen@webkit.org>
 
         Update libwebrtc configuration

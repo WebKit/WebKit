@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,9 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    EnabledAtRuntime=CredentialManagement,
-] interface SiteBoundCredential : BasicCredential {
-    readonly attribute USVString name;
-    readonly attribute USVString iconURL;
+#pragma once
+
+#include "FederatedCredential.h"
+#include "HTMLFormElement.h"
+#include "PasswordCredential.h"
+#include <wtf/Variant.h>
+
+namespace WebCore {
+
+struct CredentialCreationOptions {
+    using PasswordCredentialInit = Variant<PasswordCredentialData, RefPtr<HTMLFormElement>>;
+
+    std::optional<PasswordCredentialInit> password;
+    std::optional<FederatedCredentialInit> federated;
 };
+
+} // namespace WebCore

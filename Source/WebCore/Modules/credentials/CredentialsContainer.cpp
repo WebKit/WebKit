@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,32 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#include "BasicCredential.h"
-#include "SecurityOrigin.h"
-#include "SiteBoundCredentialData.h"
-#include "URL.h"
+#include "config.h"
+#include "CredentialsContainer.h"
 
 namespace WebCore {
 
-class SiteBoundCredential : public BasicCredential {
-public:
-    virtual ~SiteBoundCredential();
+void CredentialsContainer::get(std::optional<CredentialRequestOptions>, DOMPromiseDeferred<IDLInterface<BasicCredential>>&&)
+{
+}
 
-    const String& name() const { return m_name; }
-    const URL& iconURL() const { return m_iconURL; }
+void CredentialsContainer::store(const BasicCredential&, DOMPromiseDeferred<IDLInterface<BasicCredential>>&&)
+{
+}
 
-    void setOrigin(const URL& origin) { m_origin = SecurityOrigin::create(origin); }
-    const SecurityOrigin& origin() const { return m_origin.get(); }
+void CredentialsContainer::isCreate(std::optional<CredentialCreationOptions>, DOMPromiseDeferred<IDLInterface<BasicCredential>>&&)
+{
+}
 
-protected:
-    SiteBoundCredential(const SiteBoundCredentialData&, Type);
-
-private:
-    String m_name;
-    URL m_iconURL;
-    Ref<SecurityOrigin> m_origin;
-};
+void CredentialsContainer::preventSilentAccess(DOMPromiseDeferred<IDLInterface<BasicCredential>>&&)
+{
+}
 
 } // namespace WebCore
