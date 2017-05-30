@@ -26,6 +26,8 @@
 #import "config.h"
 #import "DataDetection.h"
 
+#if ENABLE(DATA_DETECTION)
+
 #import "Attr.h"
 #import "CSSStyleDeclaration.h"
 #import "DataDetectorsSPI.h"
@@ -672,3 +674,6 @@ bool DataDetection::isDataDetectorURL(const URL& url)
 }
 
 } // namespace WebCore
+
+#endif
+

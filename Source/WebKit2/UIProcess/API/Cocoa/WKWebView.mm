@@ -51,7 +51,6 @@
 #import "WKBackForwardListInternal.h"
 #import "WKBackForwardListItemInternal.h"
 #import "WKBrowsingContextHandleInternal.h"
-#import "WKDataDetectorTypesInternal.h"
 #import "WKDragDestinationAction.h"
 #import "WKErrorInternal.h"
 #import "WKHistoryDelegatePrivate.h"
@@ -114,6 +113,10 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/SetForScope.h>
 #import <wtf/spi/darwin/dyldSPI.h>
+
+#if ENABLE(DATA_DETECTION)
+#import "WKDataDetectorTypesInternal.h"
+#endif
 
 #if PLATFORM(IOS)
 #import "InteractionInformationAtPosition.h"
@@ -3860,7 +3863,11 @@ static int32_t activeOrientation(WKWebView *webView)
 
 - (NSArray *)_dataDetectionResults
 {
+#if ENABLE(DATA_DETECTION)
     return [_contentView _dataDetectionResults];
+#else
+    return nil;
+#endif
 }
 
 - (void)_accessibilityRetrieveSpeakSelectionContent

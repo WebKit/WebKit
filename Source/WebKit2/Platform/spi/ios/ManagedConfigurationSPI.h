@@ -24,6 +24,7 @@
  */
 
 #import <Foundation/Foundation.h>
+#import <WebCore/SoftLinking.h>
 
 #if USE(APPLE_INTERNAL_SDK)
 

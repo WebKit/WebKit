@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(DATA_DETECTION)
+
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/WTFString.h>
@@ -71,3 +73,6 @@ public:
 };
 
 } // namespace WebCore
+
+#endif
+

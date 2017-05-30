@@ -1,3 +1,29 @@
+2017-05-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Only include DataDetectorsUI headers in iOS
+        https://bugs.webkit.org/show_bug.cgi?id=172633
+
+        Reviewed by David Kilzer.
+
+        Enable data detectors only on iOS and not other variants of iOS.
+
+        * Platform/spi/ios/ManagedConfigurationSPI.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _dataDetectionResults]):
+        * UIProcess/ios/WKActionSheetAssistant.h:
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (-[WKActionSheetAssistant showDataDetectorsSheet]):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _actionForLongPressFromPositionInformation:]):
+        (-[WKContentView _didNotHandleTapAsClick:]):
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInRangeHandle.mm:
+        (-[WKWebProcessPlugInRangeHandle detectDataWithTypes:context:]):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::handleTap):
+        (WebKit::WebPage::handleTwoFingerTapAtPoint):
+        (WebKit::WebPage::commitPotentialTap):
+
 2017-05-30  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION(r215946): Can't reference a table cell in Google spreadsheet

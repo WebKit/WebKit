@@ -1271,9 +1271,11 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
         return @selector(_showImageSheet);
 
     if (positionInformation.isLink) {
+#if ENABLE(DATA_DETECTION)
         NSURL *targetURL = [NSURL URLWithString:positionInformation.url];
         if ([[getDDDetectionControllerClass() tapAndHoldSchemes] containsObject:targetURL.scheme.lowercaseString])
             return @selector(_showDataDetectorsSheet);
+#endif
         return @selector(_showLinkSheet);
     }
     if (positionInformation.isAttachment)
@@ -1669,10 +1671,12 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 
     // FIXME: we should also take into account whether or not the UI delegate
     // has handled this notification.
+#if ENABLE(DATA_DETECTION)
     if (_hasValidPositionInformation && point == _positionInformation.request.point && _positionInformation.isDataDetectorLink) {
         [self _showDataDetectorsSheet];
         return;
     }
+#endif
 
     if (!_isDoubleTapPending)
         return;

@@ -532,6 +532,7 @@ static const CGFloat presentationElementRectPadding = 15;
 
 - (void)showDataDetectorsSheet
 {
+#if ENABLE(DATA_DETECTION)
     auto delegate = _delegate.get();
     if (!delegate)
         return;
@@ -590,6 +591,7 @@ static const CGFloat presentationElementRectPadding = 15;
 
     if (![_interactionSheet presentSheet:WKActionSheetPresentAtTouchLocation])
         [self cleanupSheet];
+#endif
 }
 
 - (void)cleanupSheet

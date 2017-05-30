@@ -613,11 +613,14 @@ void WebPage::handleTap(const IntPoint& point, uint64_t lastLayerTreeTransaction
 
     if (!frameRespondingToClick || lastLayerTreeTransactionId < WebFrame::fromCoreFrame(*frameRespondingToClick)->firstLayerTreeTransactionIDAfterDidCommitLoad())
         send(Messages::WebPageProxy::DidNotHandleTapAsClick(adjustedIntPoint));
+#if ENABLE(DATA_DETECTION)
     else if (is<Element>(*nodeRespondingToClick) && DataDetection::shouldCancelDefaultAction(downcast<Element>(*nodeRespondingToClick))) {
         InteractionInformationRequest request(adjustedIntPoint);
         requestPositionInformation(request);
         send(Messages::WebPageProxy::DidNotHandleTapAsClick(adjustedIntPoint));
-    } else
+    }
+#endif
+    else
         handleSyntheticClick(nodeRespondingToClick, adjustedPoint);
 }
 
@@ -699,11 +702,13 @@ void WebPage::handleTwoFingerTapAtPoint(const WebCore::IntPoint& point, uint64_t
         return;
     }
     sendTapHighlightForNodeIfNecessary(requestID, nodeRespondingToClick);
+#if ENABLE(DATA_DETECTION)
     if (is<Element>(*nodeRespondingToClick) && DataDetection::shouldCancelDefaultAction(downcast<Element>(*nodeRespondingToClick))) {
         InteractionInformationRequest request(roundedIntPoint(adjustedPoint));
         requestPositionInformation(request);
         send(Messages::WebPageProxy::DidNotHandleTapAsClick(roundedIntPoint(adjustedPoint)));
     } else
+#endif
         completeSyntheticClick(nodeRespondingToClick, adjustedPoint, WebCore::TwoFingerTap);
 }
 
@@ -734,11 +739,13 @@ void WebPage::commitPotentialTap(uint64_t lastLayerTreeTransactionId)
     }
 
     if (m_potentialTapNode == nodeRespondingToClick) {
+#if ENABLE(DATA_DETECTION)
         if (is<Element>(*nodeRespondingToClick) && DataDetection::shouldCancelDefaultAction(downcast<Element>(*nodeRespondingToClick))) {
             InteractionInformationRequest request(roundedIntPoint(m_potentialTapLocation));
             requestPositionInformation(request);
             commitPotentialTapFailed();
         } else
+#endif
             handleSyntheticClick(nodeRespondingToClick, adjustedPoint);
     } else
         commitPotentialTapFailed();

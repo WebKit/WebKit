@@ -1,3 +1,14 @@
+2017-05-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Only include DataDetectorsUI headers in iOS
+        https://bugs.webkit.org/show_bug.cgi?id=172633
+
+        Reviewed by David Kilzer.
+
+        Enable data detectors only on iOS and not other variants of iOS.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+
 2017-05-30  Alex Christensen  <achristensen@webkit.org>
 
         Update libwebrtc configuration

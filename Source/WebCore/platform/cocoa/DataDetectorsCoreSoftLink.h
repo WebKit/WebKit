@@ -23,8 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DataDetectorsCoreSoftLink_h
-#define DataDetectorsCoreSoftLink_h
+#pragma once
+
+#if ENABLE(DATA_DETECTION)
 
 #include "DataDetectorsCoreSPI.h"
 #include "SoftLinking.h"
@@ -72,4 +73,4 @@ SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, DataDetectorsCore, DDScannerEnableOptiona
 
 #endif // PLATFORM(IOS)
 
-#endif // DataDetectorsCoreSoftLink_h
+#endif

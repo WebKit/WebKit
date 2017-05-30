@@ -62,7 +62,11 @@ struct InteractionInformationAtPosition;
 
 @end
 
+#if ENABLE(DATA_DETECTION)
 @interface WKActionSheetAssistant : NSObject <WKActionSheetDelegate, DDDetectionControllerInteractionDelegate>
+#else
+@interface WKActionSheetAssistant : NSObject <WKActionSheetDelegate>
+#endif
 @property (nonatomic, weak) id <WKActionSheetAssistantDelegate> delegate;
 @property (nonatomic) BOOL needsLinkIndicator;
 - (id)initWithView:(UIView *)view;

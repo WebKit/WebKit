@@ -279,7 +279,9 @@ struct WKAutoCorrectionData {
 - (void)_disableInspectorNodeSearch;
 - (void)_becomeFirstResponderWithSelectionMovingForward:(BOOL)selectingForward completionHandler:(void (^)(BOOL didBecomeFirstResponder))completionHandler;
 - (void)_setDoubleTapGesturesEnabled:(BOOL)enabled;
+#if ENABLE(DATA_DETECTION)
 - (NSArray *)_dataDetectionResults;
+#endif
 - (NSArray<NSValue *> *)_uiTextSelectionRects;
 - (void)accessibilityRetrieveSpeakSelectionContent;
 - (void)_accessibilityRetrieveRectsEnclosingSelectionOffset:(NSInteger)offset withGranularity:(UITextGranularity)granularity;

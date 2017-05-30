@@ -516,9 +516,11 @@ void WebFrameLoaderClient::dispatchDidReceiveContentLength(DocumentLoader* loade
     }
 }
 
+#if ENABLE(DATA_DETECTION)
 void WebFrameLoaderClient::dispatchDidFinishDataDetection(NSArray *)
 {
 }
+#endif
 
 void WebFrameLoaderClient::dispatchDidFinishLoading(DocumentLoader* loader, unsigned long identifier)
 {

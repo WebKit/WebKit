@@ -89,7 +89,7 @@
 #include <wtf/SetForScope.h>
 #endif
 
-#if PLATFORM(COCOA)
+#if ENABLE(DATA_DETECTION)
 #include "DataDetection.h"
 #endif
 
@@ -101,7 +101,7 @@ bool isDraggableLink(const Element& element)
         auto& anchorElement = downcast<HTMLAnchorElement>(element);
         if (!anchorElement.isLiveLink())
             return false;
-#if PLATFORM(COCOA)
+#if ENABLE(DATA_DETECTION)
         return !DataDetection::isDataDetectorURL(anchorElement.href());
 #else
         return true;

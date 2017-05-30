@@ -23,8 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DataDetectorsCoreSPI_h
-#define DataDetectorsCoreSPI_h
+#pragma once
+
+#if ENABLE(DATA_DETECTION)
 
 typedef struct __DDResult *DDResultRef;
 
@@ -163,4 +164,5 @@ DDQueryRange DDResultGetQueryRangeForURLification(DDResultRef);
 
 WTF_EXTERN_C_END
 
-#endif // DataDetectorsCoreSPI_h
+#endif
+
