@@ -1,5 +1,39 @@
 2017-05-30  Zan Dobersek  <zdobersek@igalia.com>
 
+        [GCrypt] RSA-OAEP support
+        https://bugs.webkit.org/show_bug.cgi?id=171222
+
+        Reviewed by Michael Catanzaro.
+
+        Add RSA-OAEP support for configurations that use libgcrypt.
+
+        The encryption operation embeds the plain-text data into a data s-expression,
+        specifying OAEP as the padding method of choice and also adding information
+        about the hash algorithm and any label data. This is then passed to the
+        gcry_pk_encrypt() call together with the provided key, returning the enc-val
+        s-expression containing the resulting cipher text. That's retrieved from the
+        relevant MPI and returned to the caller.
+
+        The decryption operation embeds the cipher-text data into an enc-val
+        s-expression, again specifying the hash algorithm and also filling in any
+        label data. This is then passed, along with the key, to the gcry_pk_decrypt()
+        call. The returned data s-expression contains the decrypted plain-text data
+        inside the 'value' MPI, from which this data is extracted and returned to the
+        caller.
+
+        No new tests -- the revelant tests are passing and are unskipped, apart from
+        the ones using PKSC#8 and SPKI formats.
+
+        * crypto/gcrypt/CryptoAlgorithmRSA_OAEPGCrypt.cpp:
+        (WebCore::hashAlgorithmName):
+        (WebCore::mpiData):
+        (WebCore::gcryptEncrypt):
+        (WebCore::gcryptDecrypt):
+        (WebCore::CryptoAlgorithmRSA_OAEP::platformEncrypt):
+        (WebCore::CryptoAlgorithmRSA_OAEP::platformDecrypt):
+
+2017-05-30  Zan Dobersek  <zdobersek@igalia.com>
+
         Unreviewed follow-up to r217546. Address some review comments that I forgot about.
 
         * crypto/gcrypt/CryptoAlgorithmRSAES_PKCS1_v1_5GCrypt.cpp:
