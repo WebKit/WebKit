@@ -20,6 +20,10 @@ function testTypeAheadFind(keys, expectedMenuListText)
     if (!window.eventSender)
         return;
 
+    // Reset menu list to initial state.
+    menulist.selectedIndex = 0;
+    menulist.blur();
+
     eventSender.mouseMoveTo(menulist.offsetLeft + (menulist.offsetWidth / 2), menulist.offsetTop + (menulist.offsetHeight / 2));
     eventSender.mouseDown();
     eventSender.mouseUp();
