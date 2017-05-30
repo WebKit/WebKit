@@ -37,49 +37,49 @@
 
 namespace WebCore {
 
-static ExceptionOr<Vector<uint8_t>> signRSA_PSS(CryptoAlgorithmIdentifier, const PlatformRSAKey, size_t, const Vector<uint8_t>&, size_t)
+static ExceptionOr<Vector<uint8_t>> signRSA_PSS(CryptoAlgorithmIdentifier hash, const PlatformRSAKey key, size_t keyLength, const Vector<uint8_t>& data, size_t saltLength)
 {
-    // CCDigestAlgorithm digestAlgorithm;
-    // if (!getCommonCryptoDigestAlgorithm(hash, digestAlgorithm))
-    //     return Exception { OperationError };
-    // 
-    // auto cryptoDigestAlgorithm = WebCore::cryptoDigestAlgorithm(hash);
-    // if (!cryptoDigestAlgorithm)
-    //     return Exception { OperationError };
-    // auto digest = PAL::CryptoDigest::create(*cryptoDigestAlgorithm);
-    // if (!digest)
-    //     return Exception { OperationError };
-    // digest->addBytes(data.data(), data.size());
-    // auto digestData = digest->computeHash();
-    // 
-    // Vector<uint8_t> signature(keyLength / 8); // Per https://tools.ietf.org/html/rfc3447#section-8.1.1
-    // size_t signatureSize = signature.size();
-    // 
-    // CCCryptorStatus status = CCRSACryptorSign(key, ccRSAPSSPadding, digestData.data(), digestData.size(), digestAlgorithm, saltLength, signature.data(), &signatureSize);
-    // if (status)
+    CCDigestAlgorithm digestAlgorithm;
+    if (!getCommonCryptoDigestAlgorithm(hash, digestAlgorithm))
         return Exception { OperationError };
 
-    // return WTFMove(signature);
+    auto cryptoDigestAlgorithm = WebCore::cryptoDigestAlgorithm(hash);
+    if (!cryptoDigestAlgorithm)
+        return Exception { OperationError };
+    auto digest = PAL::CryptoDigest::create(*cryptoDigestAlgorithm);
+    if (!digest)
+        return Exception { OperationError };
+    digest->addBytes(data.data(), data.size());
+    auto digestData = digest->computeHash();
+
+    Vector<uint8_t> signature(keyLength / 8); // Per https://tools.ietf.org/html/rfc3447#section-8.1.1
+    size_t signatureSize = signature.size();
+
+    CCCryptorStatus status = CCRSACryptorSign(key, ccRSAPSSPadding, digestData.data(), digestData.size(), digestAlgorithm, saltLength, signature.data(), &signatureSize);
+    if (status)
+        return Exception { OperationError };
+
+    return WTFMove(signature);
 }
 
-static ExceptionOr<bool> verifyRSA_PSS(CryptoAlgorithmIdentifier, const PlatformRSAKey, const Vector<uint8_t>&, const Vector<uint8_t>&, size_t)
+static ExceptionOr<bool> verifyRSA_PSS(CryptoAlgorithmIdentifier hash, const PlatformRSAKey key, const Vector<uint8_t>& signature, const Vector<uint8_t>& data, size_t saltLength)
 {
-    // CCDigestAlgorithm digestAlgorithm;
-    // if (!getCommonCryptoDigestAlgorithm(hash, digestAlgorithm))
-    //     return Exception { OperationError };
-    // 
-    // auto cryptoDigestAlgorithm = WebCore::cryptoDigestAlgorithm(hash);
-    // if (!cryptoDigestAlgorithm)
-    //     return Exception { OperationError };
-    // auto digest = PAL::CryptoDigest::create(*cryptoDigestAlgorithm);
-    // if (!digest)
-    //     return Exception { OperationError };
-    // digest->addBytes(data.data(), data.size());
-    // auto digestData = digest->computeHash();
-    // 
-    // auto status = CCRSACryptorVerify(key, ccRSAPSSPadding, digestData.data(), digestData.size(), digestAlgorithm, saltLength, signature.data(), signature.size());
-    // if (!status)
-    //     return true;
+    CCDigestAlgorithm digestAlgorithm;
+    if (!getCommonCryptoDigestAlgorithm(hash, digestAlgorithm))
+        return Exception { OperationError };
+
+    auto cryptoDigestAlgorithm = WebCore::cryptoDigestAlgorithm(hash);
+    if (!cryptoDigestAlgorithm)
+        return Exception { OperationError };
+    auto digest = PAL::CryptoDigest::create(*cryptoDigestAlgorithm);
+    if (!digest)
+        return Exception { OperationError };
+    digest->addBytes(data.data(), data.size());
+    auto digestData = digest->computeHash();
+
+    auto status = CCRSACryptorVerify(key, ccRSAPSSPadding, digestData.data(), digestData.size(), digestAlgorithm, saltLength, signature.data(), signature.size());
+    if (!status)
+        return true;
     return false;
 }
 
