@@ -143,8 +143,9 @@ void MockRealtimeVideoSourceMac::updateSampleBuffer()
 
     auto pixelBuffer = pixelBufferFromCGImage(imageBuffer->copyImage()->nativeImage().get());
     auto sampleBuffer = CMSampleBufferFromPixelBuffer(pixelBuffer.get());
-    
-    videoSampleAvailable(MediaSampleAVFObjC::create(sampleBuffer.get()));
+
+    // We use m_deviceOrientation to emulate sensor orientation
+    videoSampleAvailable(MediaSampleAVFObjC::create(sampleBuffer.get(), m_deviceOrientation));
 }
 
 bool MockRealtimeVideoSourceMac::applySize(const IntSize& newSize)
@@ -174,6 +175,12 @@ void MockRealtimeVideoSourceMac::orientationChanged(int orientation)
     default:
         return;
     }
+}
+
+void MockRealtimeVideoSourceMac::monitorOrientation(OrientationNotifier& notifier)
+{
+    notifier.addObserver(*this);
+    orientationChanged(notifier.orientation());
 }
 
 } // namespace WebCore

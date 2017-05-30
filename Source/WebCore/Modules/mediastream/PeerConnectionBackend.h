@@ -110,6 +110,8 @@ public:
     void disableICECandidateFiltering();
     void enableICECandidateFiltering();
 
+    virtual void applyRotationForOutgoingVideoSources() { }
+
 protected:
     void fireICECandidateEvent(RefPtr<RTCIceCandidate>&&);
     void doneGatheringCandidates();

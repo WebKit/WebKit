@@ -73,6 +73,7 @@ private:
     RTCRtpParameters getParameters(RTCRtpSender&) const final;
 
     void emulatePlatformEvent(const String&) final { }
+    void applyRotationForOutgoingVideoSources() final;
 
     friend LibWebRTCMediaEndpoint;
     RTCPeerConnection& connection() { return m_peerConnection; }

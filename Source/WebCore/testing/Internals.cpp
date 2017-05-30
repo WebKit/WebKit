@@ -461,6 +461,9 @@ void Internals::resetToConsistentState(Page& page)
 
 Internals::Internals(Document& document)
     : ContextDestructionObserver(&document)
+#if ENABLE(MEDIA_STREAM)
+    , m_orientationNotifier(0)
+#endif
 {
 #if ENABLE(VIDEO_TRACK)
     if (document.page())
@@ -1326,6 +1329,10 @@ void Internals::stopPeerConnection(RTCPeerConnection& connection)
     object.stop();
 }
 
+void Internals::applyRotationForOutgoingVideoSources(RTCPeerConnection& connection)
+{
+    connection.applyRotationForOutgoingVideoSources();
+}
 #endif
 
 #if ENABLE(MEDIA_STREAM)
@@ -4009,6 +4016,16 @@ void Internals::setPageVisibility(bool isVisible)
 }
 
 #if ENABLE(MEDIA_STREAM)
+
+void Internals::setCameraMediaStreamTrackOrientation(MediaStreamTrack& track, int orientation)
+{
+    auto& source = track.source();
+    if (!source.isCaptureSource())
+        return;
+    m_orientationNotifier.orientationChanged(orientation);
+    source.monitorOrientation(m_orientationNotifier);
+}
+
 void Internals::observeMediaStreamTrack(MediaStreamTrack& track)
 {
     m_track = &track;

@@ -54,6 +54,8 @@ public:
     int AddRef() const final { ref(); return refCount(); }
     int Release() const final { deref(); return refCount(); }
 
+    void setApplyRotation(bool shouldApplyRotation) { m_shouldApplyRotation = shouldApplyRotation; }
+
 private:
     RealtimeOutgoingVideoSource(Ref<RealtimeMediaSource>&&);
 

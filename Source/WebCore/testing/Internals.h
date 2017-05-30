@@ -30,6 +30,7 @@
 #include "ContextDestructionObserver.h"
 #include "ExceptionOr.h"
 #include "JSDOMPromiseDeferred.h"
+#include "OrientationNotifer.h"
 #include "PageConsoleClient.h"
 #include "RealtimeMediaSource.h"
 #include <runtime/Float32Array.h>
@@ -429,6 +430,7 @@ public:
     void setICECandidateFiltering(bool);
     void setEnumeratingAllNetworkInterfacesEnabled(bool);
     void stopPeerConnection(RTCPeerConnection&);
+    void applyRotationForOutgoingVideoSources(RTCPeerConnection&);
 #endif
 
     String getImageSourceURL(Element&);
@@ -570,6 +572,7 @@ public:
     void setPageVisibility(bool isVisible);
 
 #if ENABLE(MEDIA_STREAM)
+    void setCameraMediaStreamTrackOrientation(MediaStreamTrack&, int orientation);
     ExceptionOr<void> setMediaDeviceState(const String& id, const String& property, bool value);
     unsigned long trackAudioSampleCount() const { return m_trackAudioSampleCount; }
     unsigned long trackVideoSampleCount() const { return m_trackVideoSampleCount; }
@@ -591,6 +594,7 @@ private:
     void videoSampleAvailable(MediaSample&) final;
     void audioSamplesAvailable(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t) final { m_trackAudioSampleCount++; }
 
+    OrientationNotifier m_orientationNotifier;
     unsigned long m_trackVideoSampleCount { 0 };
     unsigned long m_trackAudioSampleCount { 0 };
     RefPtr<MediaStreamTrack> m_track;

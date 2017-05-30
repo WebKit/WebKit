@@ -59,6 +59,7 @@ private:
     bool applySize(const IntSize&) final;
 
     void orientationChanged(int orientation) final;
+    void monitorOrientation(OrientationNotifier&) final;
 
     mutable RetainPtr<CGImageRef> m_previewImage;
     mutable RetainPtr<PlatformLayer> m_previewLayer;

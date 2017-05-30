@@ -155,6 +155,9 @@ private:
     void registerToController(RTCController&);
     void unregisterFromController();
 
+    friend class Internals;
+    void applyRotationForOutgoingVideoSources() { m_backend->applyRotationForOutgoingVideoSources(); }
+
     // EventTarget implementation.
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }

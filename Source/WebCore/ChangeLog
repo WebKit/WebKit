@@ -1,3 +1,36 @@
+2017-05-30  Youenn Fablet  <youenn@apple.com>
+
+        RealtimeOutgoingVideoSource should not rotate muted frames
+        https://bugs.webkit.org/show_bug.cgi?id=172659
+
+        Reviewed by Eric Carlson.
+
+        Test: webrtc/video-rotation.html
+
+        When sending black frames, it is unnecessary to rotate frames.
+        Instead, it is better to create frame with the expected width and height.
+        Making sure libwebrtc rotated images are not null, as only YUV rotation is supported.
+
+        Adding internals API to test part of that code path.
+        Full coverage should be added when mock source is producing YUV images.
+
+        * Modules/mediastream/PeerConnectionBackend.h:
+        (WebCore::PeerConnectionBackend::applyRotationForOutgoingVideoSources):
+        * Modules/mediastream/RTCPeerConnection.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp:
+        (WebCore::LibWebRTCPeerConnectionBackend::applyRotationForOutgoingVideoSources):
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.h:
+        * platform/mediastream/mac/RealtimeOutgoingVideoSource.cpp:
+        (WebCore::RealtimeOutgoingVideoSource::sendBlackFrames):
+        (WebCore::RealtimeOutgoingVideoSource::sendFrame):
+        * platform/mediastream/mac/RealtimeOutgoingVideoSource.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::Internals):
+        (WebCore::Internals::applyRotationForOutgoingVideoSources):
+        (WebCore::Internals::setCameraMediaStreamTrackOrientation):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2017-05-30  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed typo correction.

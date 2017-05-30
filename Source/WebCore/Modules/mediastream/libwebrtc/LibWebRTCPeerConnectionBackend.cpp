@@ -375,6 +375,12 @@ RTCRtpParameters LibWebRTCPeerConnectionBackend::getParameters(RTCRtpSender& sen
     return m_endpoint->getRTCRtpSenderParameters(sender);
 }
 
+void LibWebRTCPeerConnectionBackend::applyRotationForOutgoingVideoSources()
+{
+    for (auto& source : m_videoSources)
+        source->setApplyRotation(true);
+}
+
 } // namespace WebCore
 
 #endif // USE(LIBWEBRTC)

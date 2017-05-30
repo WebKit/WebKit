@@ -138,7 +138,11 @@ void RealtimeOutgoingVideoSource::RemoveSink(rtc::VideoSinkInterface<webrtc::Vid
 void RealtimeOutgoingVideoSource::sendBlackFrames()
 {
     if (!m_blackFrame) {
-        auto frame = m_bufferPool.CreateBuffer(m_width, m_height);
+        auto width = m_width;
+        auto height = m_height;
+        if (m_shouldApplyRotation && (m_currentRotation == webrtc::kVideoRotation_0 || m_currentRotation == webrtc::kVideoRotation_90))
+            std::swap(width, height);
+        auto frame = m_bufferPool.CreateBuffer(width, height);
         frame->SetToBlack();
         m_blackFrame = WTFMove(frame);
     }
@@ -154,13 +158,7 @@ void RealtimeOutgoingVideoSource::sendOneBlackFrame()
 
 void RealtimeOutgoingVideoSource::sendFrame(rtc::scoped_refptr<webrtc::VideoFrameBuffer>&& buffer)
 {
-    // FIXME: We should make AVVideoCaptureSource handle the rotation whenever possible.
-    if (m_shouldApplyRotation && m_currentRotation != webrtc::kVideoRotation_0) {
-        // This implementation is inefficient, we should rotate on the CMSampleBuffer directly instead of doing this double allocation.
-        buffer = buffer->NativeToI420Buffer();
-        buffer = webrtc::I420Buffer::Rotate(*buffer, m_currentRotation);
-    }
-    webrtc::VideoFrame frame(buffer, 0, 0, m_currentRotation);
+    webrtc::VideoFrame frame(buffer, 0, 0, m_shouldApplyRotation ? webrtc::kVideoRotation_0 : m_currentRotation);
     for (auto* sink : m_sinks)
         sink->OnFrame(frame);
 }
@@ -198,7 +196,15 @@ void RealtimeOutgoingVideoSource::videoSampleAvailable(MediaSample& sample)
     auto pixelFormatType = CVPixelBufferGetPixelFormatType(pixelBuffer);
 
     if (pixelFormatType == kCVPixelFormatType_420YpCbCr8Planar || pixelFormatType == kCVPixelFormatType_420YpCbCr8BiPlanarFullRange) {
-        sendFrame(new rtc::RefCountedObject<webrtc::CoreVideoFrameBuffer>(pixelBuffer));
+        rtc::scoped_refptr<webrtc::VideoFrameBuffer> buffer = new rtc::RefCountedObject<webrtc::CoreVideoFrameBuffer>(pixelBuffer);
+        if (m_shouldApplyRotation && m_currentRotation != webrtc::kVideoRotation_0) {
+            // FIXME: We should make AVVideoCaptureSource handle the rotation whenever possible.
+            // This implementation is inefficient, we should rotate on the CMSampleBuffer directly instead of doing this double allocation.
+            auto rotatedBuffer = buffer->NativeToI420Buffer();
+            ASSERT(rotatedBuffer);
+            buffer = webrtc::I420Buffer::Rotate(*rotatedBuffer, m_currentRotation);
+        }
+        sendFrame(WTFMove(buffer));
         return;
     }
 
@@ -213,6 +219,8 @@ void RealtimeOutgoingVideoSource::videoSampleAvailable(MediaSample& sample)
         webrtc::ConvertToI420(webrtc::kBGRA, source, 0, 0, m_width, m_height, 0, webrtc::kVideoRotation_0, newBuffer);
     }
     CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
+    if (m_shouldApplyRotation && m_currentRotation != webrtc::kVideoRotation_0)
+        newBuffer = webrtc::I420Buffer::Rotate(*newBuffer, m_currentRotation);
     sendFrame(WTFMove(newBuffer));
 }
 

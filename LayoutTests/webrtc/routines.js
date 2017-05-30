@@ -130,3 +130,18 @@ function waitFor(duration)
 {
     return new Promise((resolve) => setTimeout(resolve, duration));
 }
+
+function waitForVideoSize(video, width, height, count)
+{
+    if (video.videoWidth === width && video.videoHeight === height)
+        return Promise.resolve("video has expected size");
+
+    if (count === undefined)
+        count = 0;
+    if (++count > 20)
+        return Promise.reject("waitForVideoSize timed out");
+
+    return waitFor(50).then(() => {
+        return waitForVideoSize(video, width, height, count);
+    });
+}
