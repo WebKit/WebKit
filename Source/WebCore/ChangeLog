@@ -1,3 +1,21 @@
+2017-05-30  Jeremy Jones  <jeremyj@apple.com>
+
+        m_resourceSelectionTaskQueue tasks should be cleared when player is destroyed to prevent invalid state.
+        https://bugs.webkit.org/show_bug.cgi?id=172726
+        rdar://problem/30867764
+
+        Reviewed by Eric Carlson.
+
+        I haven't found a reproducible way to make a test case for this race condition.
+
+        If m_player is cleared while there is an outstanding task in m_resourceSelectionTaskQueue,
+        that task may assume m_player is not null and crash. It is better to cancel that task than
+        to perform it part way with null checks.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::~HTMLMediaElement):
+        (WebCore::HTMLMediaElement::clearMediaPlayer):
+
 2017-05-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         Only include DataDetectorsUI headers in iOS
