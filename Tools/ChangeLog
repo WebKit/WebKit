@@ -1,3 +1,18 @@
+2017-05-30  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] TestWebKitAPI: ASSERTION FAILED: m_eglDisplay == EGL_NO_DISPLAY
+        https://bugs.webkit.org/show_bug.cgi?id=172702
+
+        Reviewed by Alex Christensen.
+
+        EGL PlatformDisplay needs to be shut down before existing a
+        program on Windows.
+
+        * TestWebKitAPI/Tests/WebKit/win/ScaleWebView.cpp:
+        (TestWebKitAPI::ScaleWebView::TearDown): Call shutDownWebKit().
+        * TestWebKitAPI/Tests/WebKit/win/WebViewDestruction.cpp:
+        (TestWebKitAPI::WebViewDestruction::TearDown): Ditto.
+
 2017-05-30  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] fast/shadow-dom/fullscreen-in-slot-fullscreenElement.html is flaky.

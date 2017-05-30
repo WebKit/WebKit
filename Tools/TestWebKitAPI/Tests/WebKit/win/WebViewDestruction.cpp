@@ -127,6 +127,7 @@ void WebViewDestruction::TearDown()
     EXPECT_GT(currentWebViewCount, 0);
 
     m_webView = 0;
+    shutDownWebKit();
 
     EXPECT_EQ(webViewCount(), currentWebViewCount - 1);
 }

@@ -57,6 +57,7 @@ void ScaleWebView::SetUp()
 void ScaleWebView::TearDown()
 {
     m_webView = 0;
+    shutDownWebKit();
 }
 
 // Tests that scaling a WebView before calling IWebView::initWithFrame doesn't crash.
