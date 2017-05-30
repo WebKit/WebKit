@@ -1,3 +1,36 @@
+2017-05-30  Miguel Gomez  <magomez@igalia.com>
+
+        [GTK][WPE][GSTREAMER_GL] Do not use cairo to copy video textures to an accelerated canvas
+        https://bugs.webkit.org/show_bug.cgi?id=172542
+
+        Reviewed by Žan Doberšek.
+
+        When drawing gstreamer-gl video frames into an accelerated canvas, we are currently using cairo to copy
+        the video textures into a new texture that will be painted into de destination canvas. While this eases
+        the code, it doesn't allow us to control the copy process. This is a problem because in order to use
+        gstreamer-gl properly, we will need to perform colorspace transformations during the copy. So, remove
+        this cairo copy and use VideoTextureCopierGStreamer instead.
+
+        The usage of VideoTextureCopierGStreamer is pretty much the same than in the webgl case, except that
+        no destination texture is provided. For that case, add a custom texture to hold the result that can
+        be requested after the copy.
+
+        Covered by existent tests.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::copyVideoTextureToPlatformTexture):
+        (WebCore::MediaPlayerPrivateGStreamerBase::nativeImageForCurrentTime):
+        (WebCore::MediaPlayerPrivateGStreamerBase::prepareContextForCairoPaint): Deleted.
+        (WebCore::MediaPlayerPrivateGStreamerBase::paintToCairoSurface): Deleted.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+        (WebCore::MediaPlayerPrivateGStreamerBase::gstGLDisplay):
+        * platform/graphics/gstreamer/VideoTextureCopierGStreamer.cpp:
+        (WebCore::VideoTextureCopierGStreamer::VideoTextureCopierGStreamer):
+        (WebCore::VideoTextureCopierGStreamer::~VideoTextureCopierGStreamer):
+        (WebCore::VideoTextureCopierGStreamer::copyVideoTextureToPlatformTexture):
+        * platform/graphics/gstreamer/VideoTextureCopierGStreamer.h:
+        (WebCore::VideoTextureCopierGStreamer::resultTexture):
+
 2017-05-29  Antti Koivisto  <antti@apple.com>
 
         Crash on display-contents-replaced-001.html

@@ -41,6 +41,8 @@ VideoTextureCopierGStreamer::VideoTextureCopierGStreamer()
 
     m_framebuffer = m_context3D->createFramebuffer();
 
+    m_resultTexture = m_context3D->createTexture();
+
     static const GLfloat vertices[] = { 0, 0, 1, 0, 1, 1, 0, 1 };
     m_vbo = m_context3D->createBuffer();
     m_context3D->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, m_vbo);
@@ -59,6 +61,7 @@ VideoTextureCopierGStreamer::~VideoTextureCopierGStreamer()
 
     m_context3D->deleteFramebuffer(m_framebuffer);
     m_context3D->deleteBuffer(m_vbo);
+    m_context3D->deleteTexture(m_resultTexture);
     m_shaderProgram = nullptr;
     m_context3D = nullptr;
 
@@ -136,6 +139,10 @@ bool VideoTextureCopierGStreamer::copyVideoTextureToPlatformTexture(Platform3DOb
     m_context3D->getIntegerv(GraphicsContext3D::FRAMEBUFFER_BINDING, &boundFramebuffer);
     m_context3D->getIntegerv(GraphicsContext3D::TEXTURE_BINDING_2D, &boundTexture);
     m_context3D->getIntegerv(GraphicsContext3D::VIEWPORT, previousViewport);
+
+    // Use our own output texture if we are not given one.
+    if (!outputTexture)
+        outputTexture = m_resultTexture;
 
     // Set proper parameters to the output texture and allocate uninitialized memory for it.
     m_context3D->bindTexture(outputTarget, outputTexture);

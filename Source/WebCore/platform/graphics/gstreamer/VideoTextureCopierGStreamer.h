@@ -38,6 +38,7 @@ public:
     bool copyVideoTextureToPlatformTexture(Platform3DObject inputTexture, IntSize& frameSize, Platform3DObject outputTexture, GC3Denum outputTarget, GC3Dint level, GC3Denum internalFormat, GC3Denum format, GC3Denum type, bool flipY, ImageOrientation& sourceOrientation);
     void updateTextureSpaceMatrix();
     void updateTransformationMatrix();
+    Platform3DObject resultTexture() { return m_resultTexture; }
 
 private:
     RefPtr<GraphicsContext3D> m_context3D;
@@ -50,6 +51,7 @@ private:
     TransformationMatrix m_modelViewMatrix;
     TransformationMatrix m_projectionMatrix;
     TransformationMatrix m_textureSpaceMatrix;
+    Platform3DObject m_resultTexture { 0 };
 };
 
 } // namespace WebCore
