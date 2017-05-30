@@ -1335,7 +1335,7 @@ sub GenerateEnumerationImplementationContent
         if ($value eq "") {
             $result .= "        emptyString(),\n";
         } else {
-            $result .= "        ASCIILiteral(\"$value\"),\n";
+            $result .= "        MAKE_STATIC_STRING_IMPL(\"$value\"),\n";
         }
     }
     $result .= "    };\n";
@@ -1345,7 +1345,12 @@ sub GenerateEnumerationImplementationContent
         $result .= "    static_assert(static_cast<size_t>(${className}::$enumerationValueName) == $index, \"${className}::$enumerationValueName is not $index as expected\");\n";
         $index++;
     }
-    $result .= "    ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));\n";
+    # FIXME: This is a debugging aid for <rdar://problem/31193201>. Please revert when no longer needed.
+    if ($className eq "History::ScrollRestoration") {
+        $result .= "    RELEASE_ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));\n";
+    } else {
+        $result .= "    ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));\n";
+    }
     $result .= "    return jsStringWithCache(&state, values[static_cast<size_t>(enumerationValue)]);\n";
     $result .= "}\n\n";
 

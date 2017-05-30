@@ -1,3 +1,35 @@
+2017-05-30  Mark Lam  <mark.lam@apple.com>
+
+        convertEnumerationToJS() should not stash ASCIILiteral strings in NeverDestroyed arrays.
+        https://bugs.webkit.org/show_bug.cgi?id=172724
+        <rdar://problem/31193201>
+
+        Reviewed by Chris Dumez.
+
+        Use MAKE_STATIC_STRING_IMPL instead, which is guaranteed to be thread-safe and
+        satisfies the promise of immortality promised by NeverDestroyed (while ASCIILiteral
+        does not always satisfy this promise).
+
+        Also converted the ASSERT in convertEnumerationToJS() to a RELEASE_ASSERT as a
+        debugging aid to check if it is ever passed an invalid enumerationValue.
+
+        No new tests because this is a speculative fix for an issue observed in the wild
+        whose root cause is not known yet.  This patch also adds a release assert to
+        gather more info about the nature of the issue.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateEnumerationImplementationContent):
+
+        * bindings/scripts/test/JS/JSTestCallbackInterface.cpp:
+        (WebCore::convertEnumerationToJS):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::convertEnumerationToJS):
+        * bindings/scripts/test/JS/JSTestStandaloneDictionary.cpp:
+        (WebCore::convertEnumerationToJS):
+        * bindings/scripts/test/JS/JSTestStandaloneEnumeration.cpp:
+        (WebCore::convertEnumerationToJS):
+        - re-baselined these test results.
+
 2017-05-30  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         REGRESSION(r216882): No image decoding is needed if the BitmapImage is created with a NativeImage

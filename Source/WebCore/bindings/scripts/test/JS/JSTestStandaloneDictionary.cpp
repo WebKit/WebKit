@@ -67,8 +67,8 @@ template<> DictionaryImplName convertDictionary<DictionaryImplName>(ExecState& s
 template<> JSString* convertEnumerationToJS(ExecState& state, TestStandaloneDictionary::EnumInStandaloneDictionaryFile enumerationValue)
 {
     static NeverDestroyed<const String> values[] = {
-        ASCIILiteral("enumValue1"),
-        ASCIILiteral("enumValue2"),
+        MAKE_STATIC_STRING_IMPL("enumValue1"),
+        MAKE_STATIC_STRING_IMPL("enumValue2"),
     };
     static_assert(static_cast<size_t>(TestStandaloneDictionary::EnumInStandaloneDictionaryFile::EnumValue1) == 0, "TestStandaloneDictionary::EnumInStandaloneDictionaryFile::EnumValue1 is not 0 as expected");
     static_assert(static_cast<size_t>(TestStandaloneDictionary::EnumInStandaloneDictionaryFile::EnumValue2) == 1, "TestStandaloneDictionary::EnumInStandaloneDictionaryFile::EnumValue2 is not 1 as expected");

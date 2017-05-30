@@ -99,9 +99,9 @@ template<> JSString* convertEnumerationToJS(ExecState& state, TestObj::EnumType 
 {
     static NeverDestroyed<const String> values[] = {
         emptyString(),
-        ASCIILiteral("enumValue1"),
-        ASCIILiteral("EnumValue2"),
-        ASCIILiteral("EnumValue3"),
+        MAKE_STATIC_STRING_IMPL("enumValue1"),
+        MAKE_STATIC_STRING_IMPL("EnumValue2"),
+        MAKE_STATIC_STRING_IMPL("EnumValue3"),
     };
     static_assert(static_cast<size_t>(TestObj::EnumType::EmptyString) == 0, "TestObj::EnumType::EmptyString is not 0 as expected");
     static_assert(static_cast<size_t>(TestObj::EnumType::EnumValue1) == 1, "TestObj::EnumType::EnumValue1 is not 1 as expected");
@@ -134,9 +134,9 @@ template<> JSString* convertEnumerationToJS(ExecState& state, TestObj::Optional 
 {
     static NeverDestroyed<const String> values[] = {
         emptyString(),
-        ASCIILiteral("OptionalValue1"),
-        ASCIILiteral("OptionalValue2"),
-        ASCIILiteral("OptionalValue3"),
+        MAKE_STATIC_STRING_IMPL("OptionalValue1"),
+        MAKE_STATIC_STRING_IMPL("OptionalValue2"),
+        MAKE_STATIC_STRING_IMPL("OptionalValue3"),
     };
     static_assert(static_cast<size_t>(TestObj::Optional::EmptyString) == 0, "TestObj::Optional::EmptyString is not 0 as expected");
     static_assert(static_cast<size_t>(TestObj::Optional::OptionalValue1) == 1, "TestObj::Optional::OptionalValue1 is not 1 as expected");
@@ -168,8 +168,8 @@ template<> const char* expectedEnumerationValues<TestObj::Optional>()
 template<> JSString* convertEnumerationToJS(ExecState& state, AlternateEnumName enumerationValue)
 {
     static NeverDestroyed<const String> values[] = {
-        ASCIILiteral("enumValue1"),
-        ASCIILiteral("EnumValue2"),
+        MAKE_STATIC_STRING_IMPL("enumValue1"),
+        MAKE_STATIC_STRING_IMPL("EnumValue2"),
     };
     static_assert(static_cast<size_t>(AlternateEnumName::EnumValue1) == 0, "AlternateEnumName::EnumValue1 is not 0 as expected");
     static_assert(static_cast<size_t>(AlternateEnumName::EnumValue2) == 1, "AlternateEnumName::EnumValue2 is not 1 as expected");
@@ -197,7 +197,7 @@ template<> const char* expectedEnumerationValues<AlternateEnumName>()
 template<> JSString* convertEnumerationToJS(ExecState& state, TestObj::EnumA enumerationValue)
 {
     static NeverDestroyed<const String> values[] = {
-        ASCIILiteral("A"),
+        MAKE_STATIC_STRING_IMPL("A"),
     };
     static_assert(static_cast<size_t>(TestObj::EnumA::A) == 0, "TestObj::EnumA::A is not 0 as expected");
     ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
@@ -224,7 +224,7 @@ template<> const char* expectedEnumerationValues<TestObj::EnumA>()
 template<> JSString* convertEnumerationToJS(ExecState& state, TestObj::EnumB enumerationValue)
 {
     static NeverDestroyed<const String> values[] = {
-        ASCIILiteral("B"),
+        MAKE_STATIC_STRING_IMPL("B"),
     };
     static_assert(static_cast<size_t>(TestObj::EnumB::B) == 0, "TestObj::EnumB::B is not 0 as expected");
     ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
@@ -251,7 +251,7 @@ template<> const char* expectedEnumerationValues<TestObj::EnumB>()
 template<> JSString* convertEnumerationToJS(ExecState& state, TestObj::EnumC enumerationValue)
 {
     static NeverDestroyed<const String> values[] = {
-        ASCIILiteral("C"),
+        MAKE_STATIC_STRING_IMPL("C"),
     };
     static_assert(static_cast<size_t>(TestObj::EnumC::C) == 0, "TestObj::EnumC::C is not 0 as expected");
     ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
@@ -276,8 +276,8 @@ template<> const char* expectedEnumerationValues<TestObj::EnumC>()
 template<> JSString* convertEnumerationToJS(ExecState& state, TestObj::Kind enumerationValue)
 {
     static NeverDestroyed<const String> values[] = {
-        ASCIILiteral("quick"),
-        ASCIILiteral("dead"),
+        MAKE_STATIC_STRING_IMPL("quick"),
+        MAKE_STATIC_STRING_IMPL("dead"),
     };
     static_assert(static_cast<size_t>(TestObj::Kind::Quick) == 0, "TestObj::Kind::Quick is not 0 as expected");
     static_assert(static_cast<size_t>(TestObj::Kind::Dead) == 1, "TestObj::Kind::Dead is not 1 as expected");
@@ -303,8 +303,8 @@ template<> const char* expectedEnumerationValues<TestObj::Kind>()
 template<> JSString* convertEnumerationToJS(ExecState& state, TestObj::Size enumerationValue)
 {
     static NeverDestroyed<const String> values[] = {
-        ASCIILiteral("small"),
-        ASCIILiteral("much-much-larger"),
+        MAKE_STATIC_STRING_IMPL("small"),
+        MAKE_STATIC_STRING_IMPL("much-much-larger"),
     };
     static_assert(static_cast<size_t>(TestObj::Size::Small) == 0, "TestObj::Size::Small is not 0 as expected");
     static_assert(static_cast<size_t>(TestObj::Size::MuchMuchLarger) == 1, "TestObj::Size::MuchMuchLarger is not 1 as expected");
@@ -330,8 +330,8 @@ template<> const char* expectedEnumerationValues<TestObj::Size>()
 template<> JSString* convertEnumerationToJS(ExecState& state, TestObj::Confidence enumerationValue)
 {
     static NeverDestroyed<const String> values[] = {
-        ASCIILiteral("high"),
-        ASCIILiteral("kinda-low"),
+        MAKE_STATIC_STRING_IMPL("high"),
+        MAKE_STATIC_STRING_IMPL("kinda-low"),
     };
     static_assert(static_cast<size_t>(TestObj::Confidence::High) == 0, "TestObj::Confidence::High is not 0 as expected");
     static_assert(static_cast<size_t>(TestObj::Confidence::KindaLow) == 1, "TestObj::Confidence::KindaLow is not 1 as expected");

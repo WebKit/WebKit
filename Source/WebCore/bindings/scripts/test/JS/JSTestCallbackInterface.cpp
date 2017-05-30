@@ -42,8 +42,8 @@ namespace WebCore {
 template<> JSString* convertEnumerationToJS(ExecState& state, TestCallbackInterface::Enum enumerationValue)
 {
     static NeverDestroyed<const String> values[] = {
-        ASCIILiteral("value1"),
-        ASCIILiteral("value2"),
+        MAKE_STATIC_STRING_IMPL("value1"),
+        MAKE_STATIC_STRING_IMPL("value2"),
     };
     static_assert(static_cast<size_t>(TestCallbackInterface::Enum::Value1) == 0, "TestCallbackInterface::Enum::Value1 is not 0 as expected");
     static_assert(static_cast<size_t>(TestCallbackInterface::Enum::Value2) == 1, "TestCallbackInterface::Enum::Value2 is not 1 as expected");
