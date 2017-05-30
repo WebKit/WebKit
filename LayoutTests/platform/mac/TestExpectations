@@ -1541,3 +1541,5 @@ webkit.org/b/171760 imported/w3c/i18n/bidi/bidi-plaintext-011.html [ ImageOnlyFa
 webkit.org/b/171886 imported/w3c/web-platform-tests/streams/readable-byte-streams/general.html [ Pass Failure ]
 
 webkit.org/b/172469 [ ElCapitan ] imported/w3c/web-platform-tests/WebCryptoAPI/import_export/test_rsa_importKey.https.html [ Timeout ]
+
+webkit.org/b/172720 [ Sierra+ ] js/intl-datetimeformat.html [ Failure ]

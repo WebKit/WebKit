@@ -1,3 +1,13 @@
+2017-05-30  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Mark js/intl-datetimeformat.html as failing.
+        https://bugs.webkit.org/show_bug.cgi?id=172720
+
+        Unreviewed test gardening.
+
+        * js/script-tests/intl-datetimeformat.js:
+        * platform/mac/TestExpectations:
+
 2017-05-30  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] fast/shadow-dom/fullscreen-in-slot-fullscreenElement.html is flaky.
