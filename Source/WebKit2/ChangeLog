@@ -1,3 +1,14 @@
+2017-05-30  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Don't use designated initializers in WebBackForwardListProxy.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=172667
+
+        Reviewed by Alex Christensen.
+
+        * WebProcess/WebPage/WebBackForwardListProxy.cpp:
+        (WebKit::WebBackForwardListProxy::addItemFromUIProcess):
+        (WebKit::WebBackForwardListProxy::addItem):
+
 2017-05-30  Antti Koivisto  <antti@apple.com>
 
         REGRESSION(r191402?): Safari, Mail crash at com.apple.WebKit: WebKit::WebContextMenuListenerProxy::invalidate + 4
