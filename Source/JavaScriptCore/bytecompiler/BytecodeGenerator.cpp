@@ -2825,7 +2825,10 @@ void BytecodeGenerator::emitPutGeneratorFields(RegisterID* nextFunction)
 
     emitDirectPutById(m_generatorRegister, propertyNames().builtinNames().generatorNextPrivateName(), nextFunction, PropertyNode::KnownDirect);
 
-    emitDirectPutById(m_generatorRegister, propertyNames().builtinNames().generatorThisPrivateName(), &m_thisRegister, PropertyNode::KnownDirect);
+    // We do not store 'this' in arrow function within constructor,
+    // because it might be not initialized, if super is called later.
+    if (!(isDerivedConstructorContext() && m_codeBlock->parseMode() == SourceParseMode::AsyncArrowFunctionMode))
+        emitDirectPutById(m_generatorRegister, propertyNames().builtinNames().generatorThisPrivateName(), &m_thisRegister, PropertyNode::KnownDirect);
 
     emitDirectPutById(m_generatorRegister, propertyNames().builtinNames().generatorStatePrivateName(), emitLoad(nullptr, jsNumber(0)), PropertyNode::KnownDirect);
 
@@ -4591,11 +4594,12 @@ RegisterID* BytecodeGenerator::emitLoadDerivedConstructorFromArrowFunctionLexica
 
 RegisterID* BytecodeGenerator::ensureThis()
 {
-    if ((constructorKind() == ConstructorKind::Extends || isDerivedConstructorContext())  && needsToUpdateArrowFunctionContext() && isSuperCallUsedInInnerArrowFunction())
-        emitLoadThisFromArrowFunctionLexicalEnvironment();
+    if (constructorKind() == ConstructorKind::Extends || isDerivedConstructorContext()) {
+        if ((needsToUpdateArrowFunctionContext() && isSuperCallUsedInInnerArrowFunction()) || m_codeBlock->parseMode() == SourceParseMode::AsyncArrowFunctionBodyMode)
+            emitLoadThisFromArrowFunctionLexicalEnvironment();
 
-    if (constructorKind() == ConstructorKind::Extends || isDerivedConstructorContext())
         emitTDZCheck(thisRegister());
+    }
 
     return thisRegister();
 }

@@ -1,3 +1,42 @@
+2017-05-30  Oleksandr Skachkov  <gskachkov@gmail.com>
+
+        ASSERTION FAILED: generator.isConstructor() || generator.derivedContextType() == DerivedContextType::DerivedConstructorContext
+        https://bugs.webkit.org/show_bug.cgi?id=171274
+
+        Reviewed by Saam Barati.
+
+        * stress/async-arrow-functions-lexical-binding-in-class.js:
+        (shouldBeAsync):
+        (shouldBeAsyncAndStoreBind):
+        (promise.new.Promise):
+        (ChildClass4):
+        (ChildClass4.prototype.classValue):
+        (ChildClass4.prototype.get classProperty):
+        * stress/async-arrow-functions-lexical-super-binding.js:
+        (A):
+        (const.childA1.new.prototype.var.f.async):
+        (const.childA1.new.var):
+        (const.childA1.new):
+        (const.childA2.new.prototype.var.f.async):
+        (const.childA2.new.var):
+        (const.childA2.new):
+        (const.childA3.new.prototype.var.f.async):
+        (const.childA3.new.var):
+        (const.childA3.new):
+        (try.childA4.new.prototype.var.f.async):
+        (try.childA4.new.var):
+        (try.childA4.new):
+        (catch):
+        (const.childA5.new.prototype.var.f.async):
+        (const.childA5.new.var):
+        (const.childA5.new):
+        (checkClass):
+        (checkClass.new.prototype.var.f.async):
+        (checkClass.new.var):
+        (checkClass.new):
+        (checkClass.new.prototype.method):
+        (checkClass.new.prototype.prop):
+
 2017-05-27  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Map and Set constructors should have fast path for cloning

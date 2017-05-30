@@ -1,3 +1,22 @@
+2017-05-30  Oleksandr Skachkov  <gskachkov@gmail.com>
+
+        ASSERTION FAILED: generator.isConstructor() || generator.derivedContextType() == DerivedContextType::DerivedConstructorContext
+        https://bugs.webkit.org/show_bug.cgi?id=171274
+
+        Reviewed by Saam Barati.
+
+        Current patch allow to use async arrow function within constructor,
+        and allow to access to `this`. Current patch force load 'this' from 
+        virtual scope each time as we access to `this` in async arrow function
+        within constructor it is neccessary because async function can be 
+        suspended and `superCall` can be called and async function resumed. 
+   
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitPutGeneratorFields):
+        (JSC::BytecodeGenerator::ensureThis):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::makeFunction):
+
 2017-05-30  Ali Juma  <ajuma@chromium.org>
 
         [CredentialManagement] Incorporate IDL updates from latest spec

@@ -7,7 +7,7 @@ function shouldBe(expected, actual, msg) {
         throw new Error("bad value" + msg + ": " + actual + ". Expected " + expected);
 }
 
-function shouldBeAsync(expected, run, msg) {
+function shouldBeAsync(expected, run) {
     let actual;
     var hadError = false;
     run().then(function(value) { actual = value; },
@@ -17,10 +17,10 @@ function shouldBeAsync(expected, run, msg) {
     if (hadError)
         throw actual;
 
-    shouldBe(expected, actual, msg);
+    shouldBe(expected, actual);
 }
 
-class BaseWrongClassClass {
+class BaseWrongClass {
     baseClassValue() {
         return "wrong #1";
     }
@@ -29,17 +29,17 @@ class BaseWrongClassClass {
     }
 }
 
-function shouldBeAsyncAndStoreBind(expected, run, msg) {
-    shouldBeAsync(expected, run, msg);
-    shouldBeAsync(expected, run.bind({}), msg);
-    shouldBeAsync(expected, run.bind(1), msg);
-    shouldBeAsync(expected, run.bind(undefined), msg);
+function shouldBeAsyncAndStoreBind(expected, run) {
+    shouldBeAsync(expected, run);
+    shouldBeAsync(expected, run.bind({}));
+    shouldBeAsync(expected, run.bind(1));
+    shouldBeAsync(expected, run.bind(undefined));
     const obj = { 
         property : 'wrong value #1', 
         baseClassValue : () => 'worng value #2'
     };
-    shouldBeAsync(expected, run.bind(obj), msg);
-    shouldBeAsync(expected, run.bind(new BaseWrongClassClass()), msg);
+    shouldBeAsync(expected, run.bind(obj));
+    shouldBeAsync(expected, run.bind(new BaseWrongClass()));
 }
 
 class BaseClass {
@@ -180,3 +180,85 @@ class ChildClass3 extends BaseClass {
 }
 
 shouldBeAsyncAndStoreBind("classValue classProperty", new ChildClass3());
+
+var promiseHolder = {};
+var promise = new Promise((resolve, reject) => {
+    promiseHolder.resolve = resolve;
+    promiseHolder.reject = reject;
+});
+
+class ChildClass4 extends BaseClass {
+    constructor() {
+        var arr = async () => {
+            var doSomeStaff = () => {};
+            doSomeStaff();
+            await promise;
+            return this.classValue() + ' ' + this.classProperty;
+        };
+        arr();
+        super();
+        this.internalValue = 'internalValue';
+        return async () => {
+            await 'await';
+            promiseHolder.resolve();
+            return this.classValue() + ' ' + this.classProperty;;
+        };
+    }
+    classValue() {
+        return "classValue";
+    }
+    get classProperty() {
+        return "classProperty";
+    }
+}
+
+shouldBeAsyncAndStoreBind("classValue classProperty", new ChildClass4());
+
+class ChildClass5 extends BaseClass {
+    constructor(result) {
+        const arr = async () => this.id;
+        arr().then(()=>{}, e => { result.error = e; });
+    }
+}
+
+class ChildClass6 extends BaseClass {
+    constructor(result) {
+        const arr = async () => { 
+            let z = this.id;
+        };
+        arr().then(()=>{}, e => { result.error = e; });
+        super();
+    }
+}
+
+class ChildClass7 extends BaseClass {
+    constructor(result) {
+        const arr = async () => this.id;
+        arr().then(()=>{}, e => { result.error = e; });
+        super();
+    }
+}
+
+class ChildClass8 extends BaseClass {
+    constructor(result) {
+        const arr = async () => { let i  = this.id; super(); };
+        arr().then(()=>{}, e => { result.error = e; });
+    }
+}
+
+function checkTDZDuringCreate(klass) {
+    let asyncError = {};
+    try {
+        var c = new klass(asyncError);
+    } catch(e) {
+        // We do not care about this error
+    }
+    drainMicrotasks();
+    const error = asyncError.error instanceof ReferenceError && asyncError.error.toString() === 'ReferenceError: Cannot access uninitialized variable.';
+    if (!error) throw new Error('TDZ error is expected, but appeared:' + asyncError.error);
+}
+
+checkTDZDuringCreate(ChildClass5);
+checkTDZDuringCreate(ChildClass6);
+checkTDZDuringCreate(ChildClass7);
+checkTDZDuringCreate(ChildClass8);
