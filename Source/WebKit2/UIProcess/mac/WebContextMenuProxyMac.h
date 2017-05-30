@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebContextMenuProxyMac_h
-#define WebContextMenuProxyMac_h
+#pragma once
 
 #if PLATFORM(MAC)
 
@@ -48,7 +47,10 @@ class WebPageProxy;
 
 class WebContextMenuProxyMac : public WebContextMenuProxy {
 public:
-    WebContextMenuProxyMac(NSView*, WebPageProxy&, const ContextMenuContextData&, const UserData&);
+    static auto create(NSView* view, WebPageProxy& page, const ContextMenuContextData& context, const UserData& userData)
+    {
+        return adoptRef(*new WebContextMenuProxyMac(view, page, context, userData));
+    }
     ~WebContextMenuProxyMac();
 
     void contextMenuItemSelected(const WebContextMenuItemData&);
@@ -62,6 +64,7 @@ public:
     NSWindow *window() const;
 
 private:
+    WebContextMenuProxyMac(NSView*, WebPageProxy&, const ContextMenuContextData&, const UserData&);
     void show() override;
 
     RefPtr<WebContextMenuListenerProxy> m_contextMenuListener;
@@ -84,5 +87,3 @@ private:
 } // namespace WebKit
 
 #endif // PLATFORM(MAC)
-
-#endif // WebContextMenuProxyMac_h

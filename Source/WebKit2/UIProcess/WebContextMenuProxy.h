@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebContextMenuProxy_h
-#define WebContextMenuProxy_h
+#pragma once
 
 #if ENABLE(CONTEXT_MENUS)
 
@@ -36,7 +35,7 @@ namespace WebKit {
 
 class WebContextMenuItem;
 
-class WebContextMenuProxy {
+class WebContextMenuProxy : public RefCounted<WebContextMenuProxy> {
 public:
     virtual ~WebContextMenuProxy();
 
@@ -54,5 +53,3 @@ protected:
 } // namespace WebKit
 
 #endif
-
-#endif // WebPopupMenuProxy_h

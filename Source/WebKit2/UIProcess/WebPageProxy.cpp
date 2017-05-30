@@ -4594,6 +4594,8 @@ void WebPageProxy::internalShowContextMenu(const ContextMenuContextData& context
     // Since showContextMenu() can spin a nested run loop we need to turn off the responsiveness timer.
     m_process->responsivenessTimer().stop();
 
+    // m_activeContextMenu might get cleared if WebPageProxy code is re-entered from the menu runloop or delegates.
+    Ref<WebContextMenuProxy> protector(*m_activeContextMenu);
     m_activeContextMenu->show();
 }
 

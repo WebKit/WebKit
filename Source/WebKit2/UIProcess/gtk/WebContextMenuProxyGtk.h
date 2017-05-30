@@ -44,13 +44,17 @@ class WebPageProxy;
 
 class WebContextMenuProxyGtk : public WebContextMenuProxy {
 public:
-    WebContextMenuProxyGtk(GtkWidget*, WebPageProxy&, const ContextMenuContextData&, const UserData&);
+    static auto create(GtkWidget* widget, WebPageProxy& page, const ContextMenuContextData& context, const UserData& userData)
+    {
+        return adoptRef(*new WebContextMenuProxyGtk(widget, page, context, userData));
+    }
     ~WebContextMenuProxyGtk();
 
     void populate(const Vector<WebContextMenuItemGtk>&);
     GtkMenu* gtkMenu() const { return m_menu; }
 
 private:
+    WebContextMenuProxyGtk(GtkWidget*, WebPageProxy&, const ContextMenuContextData&, const UserData&);
     void show() override;
     void showContextMenuWithItems(const Vector<WebContextMenuItemData>&) override;
     void append(GMenu*, const WebContextMenuItemGtk&);

@@ -1,3 +1,35 @@
+2017-05-30  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION(r191402?): Safari, Mail crash at com.apple.WebKit: WebKit::WebContextMenuListenerProxy::invalidate + 4
+        https://bugs.webkit.org/show_bug.cgi?id=172704
+
+        Reviewed by Andreas Kling.
+
+        r191402 made WebContextMenuProxy non-refcounted. However there are several potential ways for WebContextMenuProxyMac::show()
+        to re-enter WebPageProxy and delete itself. This patch partially reverts r191402 bringing refcounting back and protects
+        WebContextMenuProxy during show().
+
+        Speculative fix. No test, can't repro the crash.
+
+        * UIProcess/PageClient.h:
+        * UIProcess/WebContextMenuProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::internalShowContextMenu):
+
+            Protect WebContextMenuProxy during show().
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/gtk/WebContextMenuProxyGtk.h:
+        (WebKit::WebContextMenuProxyGtk::create):
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::createContextMenuProxy):
+        * UIProcess/mac/PageClientImpl.h:
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::createContextMenuProxy):
+        * UIProcess/mac/WebContextMenuProxyMac.h:
+        (WebKit::WebContextMenuProxyMac::create):
+
 2017-05-30  Zan Dobersek  <zdobersek@igalia.com>
 
         Invalidate the LayerTreeHost when destroying the DrawingAreaWPE object.
