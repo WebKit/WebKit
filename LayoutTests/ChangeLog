@@ -1,3 +1,12 @@
+2017-05-30  Youenn Fablet  <youenn@apple.com>
+
+        Add support for Certificate and IceCandidatePair stats
+        https://bugs.webkit.org/show_bug.cgi?id=172734
+
+        Reviewed by Geoff Garen.
+
+        * webrtc/video-stats.html:
+
 2017-05-30  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION(r215946): Can't reference a table cell in Google spreadsheet

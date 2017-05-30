@@ -151,6 +151,53 @@ public:
         unsigned long long bytesReceived { 0 };
     };
 
+    enum class IceCandidatePairState {
+        Frozen,
+        Waiting,
+        Inprogress,
+        Failed,
+        Succeeded,
+        Cancelled
+    };
+
+    struct IceCandidatePairStats : Stats {
+        IceCandidatePairStats() { type = RTCStatsReport::Type::CandidatePair; }
+
+        String transportId;
+        String localCandidateId;
+        String remoteCandidateId;
+        IceCandidatePairState state;
+        unsigned long long priority { 0 };
+        bool nominated { false };
+        bool writable { false };
+        bool readable { false };
+        unsigned long long bytesSent { 0 };
+        unsigned long long bytesReceived { 0 };
+        double totalRoundTripTime { 0 };
+        double currentRoundTripTime { 0 };
+        double availableOutgoingBitrate { 0 };
+        double availableIncomingBitrate { 0 };
+        unsigned long long requestsReceived { 0 };
+        unsigned long long requestsSent { 0 };
+        unsigned long long responsesReceived { 0 };
+        unsigned long long responsesSent { 0 };
+        unsigned long long retransmissionsReceived { 0 };
+        unsigned long long retransmissionsSent { 0 };
+        unsigned long long consentRequestsReceived { 0 };
+        unsigned long long consentRequestsSent { 0 };
+        unsigned long long consentResponsesReceived { 0 };
+        unsigned long long consentResponsesSent { 0 };
+    };
+
+    struct CertificateStats : Stats {
+        CertificateStats() { type = RTCStatsReport::Type::Certificate; }
+
+        String fingerprint;
+        String fingerprintAlgorithm;
+        String base64Certificate;
+        String issuerCertificateId;
+    };
+
 private:
     RTCStatsReport() = default;
 

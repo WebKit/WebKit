@@ -133,11 +133,49 @@ dictionary RTCDataChannelStats : RTCStats {
     unsigned long long bytesReceived;
 };
 
+enum RTCStatsIceCandidatePairState {
+    "frozen",
+    "waiting",
+    "inprogress",
+    "failed",
+    "succeeded",
+    "cancelled"
+};
+
+[ JSGenerateToJSObject ]
+dictionary RTCIceCandidatePairStats : RTCStats {
+    DOMString transportId;
+    DOMString localCandidateId;
+    DOMString remoteCandidateId;
+    RTCStatsIceCandidatePairState state;
+    unsigned long long priority;
+    boolean nominated;
+    boolean writable;
+    boolean readable;
+    unsigned long long bytesSent;
+    unsigned long long bytesReceived;
+    double totalRoundTripTime;
+    double currentRoundTripTime;
+    double availableOutgoingBitrate;
+    double availableIncomingBitrate;
+    unsigned long long requestsReceived;
+    unsigned long long requestsSent;
+    unsigned long long responsesReceived;
+    unsigned long long responsesSent;
+    // FIXME: Expose other fields once libwebrtc support them.
+};
+
+[ JSGenerateToJSObject ]
+dictionary RTCCertificateStats : RTCStats {
+    DOMString fingerprint;
+    DOMString fingerprintAlgorithm;
+    DOMString base64Certificate;
+    DOMString issuerCertificateId;
+};
+
 // FIXME 169662: missing RTCCodecStats
 // FIXME 169662: missing RTCPeerConnectionStats
 // FIXME 169662: missing RTCMediaStreamStats
 // FIXME 169662: missing RTCTransportStats
 // FIXME 169662: missing RTCIceCandidateStats
-// FIXME 169662: missing RTCIceCandidatePairStats
 // FIXME 169662: missing RTCStatsIceCandidatePairState
-// FIXME 169662: missing RTCCertificateStats

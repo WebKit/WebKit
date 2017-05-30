@@ -386,6 +386,96 @@ static inline void fillRTCDataChannelStats(RTCStatsReport::DataChannelStats& sta
         stats.bytesReceived = *rtcStats.bytes_received;
 }
 
+static inline RTCStatsReport::IceCandidatePairState iceCandidatePairState(const std::string& state)
+{
+    if (state == "frozen")
+        return RTCStatsReport::IceCandidatePairState::Frozen;
+    if (state == "waiting")
+        return RTCStatsReport::IceCandidatePairState::Waiting;
+    if (state == "in-progress")
+        return RTCStatsReport::IceCandidatePairState::Inprogress;
+    if (state == "failed")
+        return RTCStatsReport::IceCandidatePairState::Failed;
+    if (state == "succeeded")
+        return RTCStatsReport::IceCandidatePairState::Succeeded;
+    if (state == "cancelled")
+        return RTCStatsReport::IceCandidatePairState::Cancelled;
+    ASSERT_NOT_REACHED();
+    return RTCStatsReport::IceCandidatePairState::Frozen;
+}
+
+static inline void fillRTCIceCandidatePairStats(RTCStatsReport::IceCandidatePairStats& stats, const webrtc::RTCIceCandidatePairStats& rtcStats)
+{
+    fillRTCStats(stats, rtcStats);
+
+    if (rtcStats.transport_id.is_defined())
+        stats.transportId = fromStdString(*rtcStats.transport_id);
+    if (rtcStats.local_candidate_id.is_defined())
+        stats.localCandidateId = fromStdString(*rtcStats.local_candidate_id);
+    if (rtcStats.remote_candidate_id.is_defined())
+        stats.remoteCandidateId = fromStdString(*rtcStats.remote_candidate_id);
+    if (rtcStats.state.is_defined())
+        stats.state = iceCandidatePairState(*rtcStats.state);
+
+    if (rtcStats.priority.is_defined())
+        stats.priority = *rtcStats.priority;
+    if (rtcStats.nominated.is_defined())
+        stats.nominated = *rtcStats.nominated;
+    if (rtcStats.writable.is_defined())
+        stats.writable = *rtcStats.writable;
+    if (rtcStats.readable.is_defined())
+        stats.readable = *rtcStats.readable;
+
+    if (rtcStats.bytes_sent.is_defined())
+        stats.bytesSent = *rtcStats.bytes_sent;
+    if (rtcStats.bytes_received.is_defined())
+        stats.bytesReceived = *rtcStats.bytes_received;
+    if (rtcStats.total_round_trip_time.is_defined())
+        stats.totalRoundTripTime = *rtcStats.total_round_trip_time;
+    if (rtcStats.current_round_trip_time.is_defined())
+        stats.currentRoundTripTime = *rtcStats.current_round_trip_time;
+    if (rtcStats.available_outgoing_bitrate.is_defined())
+        stats.availableOutgoingBitrate = *rtcStats.available_outgoing_bitrate;
+    if (rtcStats.available_incoming_bitrate.is_defined())
+        stats.availableIncomingBitrate = *rtcStats.available_incoming_bitrate;
+
+    if (rtcStats.requests_received.is_defined())
+        stats.requestsReceived = *rtcStats.requests_received;
+    if (rtcStats.requests_sent.is_defined())
+        stats.requestsSent = *rtcStats.requests_sent;
+    if (rtcStats.responses_received.is_defined())
+        stats.responsesReceived = *rtcStats.responses_received;
+    if (rtcStats.responses_sent.is_defined())
+        stats.responsesSent = *rtcStats.responses_sent;
+
+    if (rtcStats.requests_received.is_defined())
+        stats.retransmissionsReceived = *rtcStats.requests_received;
+    if (rtcStats.requests_sent.is_defined())
+        stats.retransmissionsSent = *rtcStats.requests_sent;
+    if (rtcStats.responses_received.is_defined())
+        stats.consentRequestsReceived = *rtcStats.responses_received;
+    if (rtcStats.responses_sent.is_defined())
+        stats.consentRequestsSent = *rtcStats.responses_sent;
+    if (rtcStats.responses_received.is_defined())
+        stats.consentResponsesReceived = *rtcStats.responses_received;
+    if (rtcStats.responses_sent.is_defined())
+        stats.consentResponsesSent = *rtcStats.responses_sent;
+}
+
+static inline void fillRTCCertificateStats(RTCStatsReport::CertificateStats& stats, const webrtc::RTCCertificateStats& rtcStats)
+{
+    fillRTCStats(stats, rtcStats);
+
+    if (rtcStats.fingerprint.is_defined())
+        stats.fingerprint = fromStdString(*rtcStats.fingerprint);
+    if (rtcStats.fingerprint_algorithm.is_defined())
+        stats.fingerprintAlgorithm = fromStdString(*rtcStats.fingerprint_algorithm);
+    if (rtcStats.base64_certificate.is_defined())
+        stats.base64Certificate = fromStdString(*rtcStats.base64_certificate);
+    if (rtcStats.issuer_certificate_id.is_defined())
+        stats.issuerCertificateId = fromStdString(*rtcStats.issuer_certificate_id);
+}
+
 void LibWebRTCMediaEndpoint::StatsCollector::OnStatsDelivered(const rtc::scoped_refptr<const webrtc::RTCStatsReport>& rtcReport)
 {
     callOnMainThread([protectedThis = rtc::scoped_refptr<LibWebRTCMediaEndpoint::StatsCollector>(this), rtcReport] {
@@ -413,6 +503,14 @@ void LibWebRTCMediaEndpoint::StatsCollector::OnStatsDelivered(const rtc::scoped_
                 RTCStatsReport::DataChannelStats stats;
                 fillRTCDataChannelStats(stats, static_cast<const webrtc::RTCDataChannelStats&>(rtcStats));
                 report->addStats<IDLDictionary<RTCStatsReport::DataChannelStats>>(WTFMove(stats));
+            } else if (rtcStats.type() == webrtc::RTCIceCandidatePairStats::kType) {
+                RTCStatsReport::IceCandidatePairStats stats;
+                fillRTCIceCandidatePairStats(stats, static_cast<const webrtc::RTCIceCandidatePairStats&>(rtcStats));
+                report->addStats<IDLDictionary<RTCStatsReport::IceCandidatePairStats>>(WTFMove(stats));
+            } else if (rtcStats.type() == webrtc::RTCCertificateStats::kType) {
+                RTCStatsReport::CertificateStats stats;
+                fillRTCCertificateStats(stats, static_cast<const webrtc::RTCCertificateStats&>(rtcStats));
+                report->addStats<IDLDictionary<RTCStatsReport::CertificateStats>>(WTFMove(stats));
             }
         }
     });

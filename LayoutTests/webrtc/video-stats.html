@@ -9,6 +9,17 @@
     <body>
         <script src ="routines.js"></script>
         <script>
+function getStatsType(connection)
+{
+    return connection.getStats().then((report) => {
+        var reportTypes = [];
+        report.forEach((statItem) => {
+            if (reportTypes.indexOf(statItem.type) === -1)
+                reportTypes.push(statItem.type);
+        });
+        return reportTypes.sort();
+    });
+}
 
 function checkStatsReportIterator(report)
 {
@@ -114,6 +125,14 @@ promise_test((test) => {
         return checkInboundFramesNumberIncreased(secondConnection, statsSecondConnection, 0);
     }).then(() => {
         return checkOutboundFramesNumberIncreased(firstConnection, statsFirstConnection, 0);
+    }).then(() => {
+        return getStatsType(firstConnection);
+    }).then((types) => {
+        assert_array_equals(types, ["candidate-pair", "certificate", "outbound-rtp"]);
+    }).then(() => {
+        return getStatsType(secondConnection);
+    }).then((types) => {
+        assert_array_equals(types, ["candidate-pair", "certificate", "inbound-rtp", "track"]);
     });
 }, "Basic video stats");
         </script>
