@@ -1348,6 +1348,8 @@ NSWindow *WebViewImpl::window()
 
 void WebViewImpl::processDidExit()
 {
+    dismissContentRelativeChildWindowsWithAnimation(true);
+
     notifyInputContextAboutDiscardedComposition();
 
     if (m_layerHostingView)

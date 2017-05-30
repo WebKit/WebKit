@@ -1,3 +1,42 @@
+2017-05-30  Tim Horton  <timothy_horton@apple.com>
+
+        Dictionary lookup disappears after a few seconds on observer.com
+        https://bugs.webkit.org/show_bug.cgi?id=172725
+        <rdar://problem/32328324>
+
+        Reviewed by Beth Dakin.
+
+        Only dismiss content-relative child windows on main frame loads,
+        not all subframes. This was causing e.g. dictionary popovers
+        relative to main-frame content to be dismissed when subframe
+        ads finished loading, which is likely the cause of most incidents
+        of this problem.
+
+        If the popover is relative to subframe content and the subframe
+        navigates out from under the popover, the popover will persist until
+        dismissed by the user (or one of the other automatic dismissal
+        mechanisms), but that seems preferable to the old behavior.
+
+        * UIProcess/Cocoa/WebViewImpl.h:
+        Remove an unimplemented and unused declaration.
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::processDidExit):
+        Move dismissContentRelativeChildWindows call here from WebPageProxy.
+
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+        (WebKit::WebPageProxy::resetStateAfterProcessExited):
+        * UIProcess/mac/PageClientImpl.h:
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::didCommitLoadForMainFrame):
+        (WebKit::PageClientImpl::navigationGestureDidBegin):
+        (WebKit::PageClientImpl::dismissContentRelativeChildWindows):
+        Remove dismissContentRelativeChildWindows from PageClient(Impl),
+        call it from inside PageClientImpl and other Mac-specific places
+        instead of inside ifdefs in WebPageProxy.
+
 2017-05-30  Konstantin Tokarev  <annulen@yandex.ru>
 
         Don't use designated initializers in WebBackForwardListProxy.cpp

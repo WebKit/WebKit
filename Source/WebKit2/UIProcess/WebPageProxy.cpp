@@ -3338,7 +3338,6 @@ void WebPageProxy::didCommitLoadForFrame(uint64_t frameID, uint64_t navigationID
     // FIXME (bug 59111): didCommitLoadForFrame comes too late when restoring a page from b/f cache, making us disable secure event mode in password fields.
     // FIXME: A load going on in one frame shouldn't affect text editing in other frames on the page.
     m_pageClient.resetSecureInputState();
-    m_pageClient.dismissContentRelativeChildWindows();
 #endif
 
     clearLoadDependentCallbacks();
@@ -5516,10 +5515,6 @@ void WebPageProxy::resetStateAfterProcessExited()
 
 #if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
     m_touchEventQueue.clear();
-#endif
-
-#if PLATFORM(MAC)
-    m_pageClient.dismissContentRelativeChildWindows();
 #endif
 
     PageLoadState::Transaction transaction = m_pageLoadState.transaction();

@@ -265,6 +265,7 @@ void PageClientImpl::toolTipChanged(const String& oldToolTip, const String& newT
 void PageClientImpl::didCommitLoadForMainFrame(const String& mimeType, bool useCustomContentProvider)
 {
     m_impl->updateSupportsArbitraryLayoutModes();
+    m_impl->dismissContentRelativeChildWindowsWithAnimation(true);
 }
 
 void PageClientImpl::didFinishLoadingDataForCustomContentProvider(const String& suggestedFilename, const IPC::DataReference& dataReference)
@@ -546,11 +547,6 @@ void PageClientImpl::didPerformDictionaryLookup(const DictionaryPopupInfo& dicti
     });
 }
 
-void PageClientImpl::dismissContentRelativeChildWindows(bool withAnimation)
-{
-    m_impl->dismissContentRelativeChildWindowsWithAnimation(withAnimation);
-}
-
 void PageClientImpl::showCorrectionPanel(AlternativeTextType type, const FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings)
 {
 #if USE(AUTOCORRECTION_PANEL)
@@ -698,7 +694,7 @@ void PageClientImpl::beganExitFullScreen(const IntRect& initialFrame, const IntR
 
 void PageClientImpl::navigationGestureDidBegin()
 {
-    dismissContentRelativeChildWindows();
+    m_impl->dismissContentRelativeChildWindowsWithAnimation(true);
 
 #if WK_API_ENABLED
     if (m_webView)

@@ -157,7 +157,6 @@ private:
     void setShouldSuppressFirstResponderChanges(bool shouldSuppress) override { m_shouldSuppressFirstResponderChanges = shouldSuppress; }
 
     void didPerformDictionaryLookup(const WebCore::DictionaryPopupInfo&) override;
-    void dismissContentRelativeChildWindows(bool withAnimation = true) override;
 
     void showCorrectionPanel(WebCore::AlternativeTextType, const WebCore::FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings) override;
     void dismissCorrectionPanel(WebCore::ReasonForDismissingAlternativeText) override;

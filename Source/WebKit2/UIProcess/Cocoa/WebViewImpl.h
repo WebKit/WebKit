@@ -332,7 +332,6 @@ public:
     void setTextIndicator(WebCore::TextIndicator&, WebCore::TextIndicatorWindowLifetime = WebCore::TextIndicatorWindowLifetime::Permanent);
     void clearTextIndicatorWithAnimation(WebCore::TextIndicatorWindowDismissalAnimation);
     void setTextIndicatorAnimationProgress(float);
-    void dismissContentRelativeChildWindows();
     void dismissContentRelativeChildWindowsFromViewOnly();
     void dismissContentRelativeChildWindowsWithAnimation(bool);
     void dismissContentRelativeChildWindowsWithAnimationFromViewOnly(bool);
