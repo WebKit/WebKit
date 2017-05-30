@@ -1461,3 +1461,5 @@ http/tests/loading/preload-css-with-csp-nonce.html [ Failure ]
 [ Sierra ] js/intl-datetimeformat.html [ Failure ]
 
 streams/readable-byte-stream-controller.html [ Failure ]
+
+webkit.org/b/166025 http/tests/fetch/fetching-same-resource-with-diffferent-options.html [ Pass Failure ]
