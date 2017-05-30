@@ -24,16 +24,16 @@
  */
 
 [
-    GenerateIsReachable=ImplElementRoot,
-    CustomDeleteProperty,
     CustomNamedSetter,
+    GenerateIsReachable=ImplElementRoot,
     OverrideBuiltins,
     SkipVTableValidation,
 ] interface DOMStringMap {
     getter DOMString (DOMString name);
 
-    // FIXME: Add support for the setter and deleter specials.
+    // FIXME: Add support for the named setter special.
     // [CEReactions] setter void (DOMString name, DOMString value);
-    // [CEReactions] deleter void (DOMString name);
+
+    [CEReactions] deleter void (DOMString name);
 };
 

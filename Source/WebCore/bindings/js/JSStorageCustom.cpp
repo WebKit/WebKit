@@ -36,33 +36,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-bool JSStorage::deleteProperty(JSCell* cell, ExecState* state, PropertyName propertyName)
-{
-    auto& thisObject = *jsCast<JSStorage*>(cell);
-
-    // Only perform the custom delete if the object doesn't have a native property by this name.
-    // Since hasProperty() would end up calling canGetItemsForName() and be fooled, we need to check
-    // the native property slots manually.
-    PropertySlot slot(&thisObject, PropertySlot::InternalMethodType::GetOwnProperty);
-
-    JSValue prototype = thisObject.getPrototypeDirect();
-    if (prototype.isObject() && asObject(prototype)->getPropertySlot(state, propertyName, slot))
-        return Base::deleteProperty(&thisObject, state, propertyName);
-
-    if (propertyName.isSymbol())
-        return Base::deleteProperty(&thisObject, state, propertyName);
-
-    VM& vm = state->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    propagateException(*state, scope, thisObject.wrapped().removeItem(propertyNameToString(propertyName)));
-    return true;
-}
-
-bool JSStorage::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned propertyName)
-{
-    return deleteProperty(cell, exec, Identifier::from(exec, propertyName));
-}
-
 void JSStorage::getOwnPropertyNames(JSObject* object, ExecState* state, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
     VM& vm = state->vm();
@@ -92,6 +65,9 @@ bool JSStorage::putDelegate(ExecState* state, PropertyName propertyName, JSValue
     VM& vm = state->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
+    if (propertyName.isSymbol())
+        return false;
+
     // Only perform the custom put if the object doesn't have a native property by this name.
     // Since hasProperty() would end up calling canGetItemsForName() and be fooled, we need to check
     // the native property slots manually.
@@ -101,10 +77,7 @@ bool JSStorage::putDelegate(ExecState* state, PropertyName propertyName, JSValue
     if (prototype.isObject() && asObject(prototype)->getPropertySlot(state, propertyName, slot))
         return false;
 
-    if (propertyName.isSymbol())
-        return false;
-
-    String stringValue = value.toWTFString(state);
+    auto stringValue = convert<IDLDOMString>(*state, value);
     RETURN_IF_EXCEPTION(scope, true);
 
     auto setItemResult = wrapped().setItem(propertyNameToString(propertyName), stringValue);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,41 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "JSDOMStringMap.h"
+interface TestNamedDeleterThrowingException {
+    [MayThrowException] deleter void (DOMString name);
 
-#include "CustomElementReactionQueue.h"
-#include "DOMStringMap.h"
-#include "JSDOMConvert.h"
-#include "JSNode.h"
-#include <runtime/IdentifierInlines.h>
-#include <wtf/text/AtomicString.h>
-
-using namespace JSC;
-
-namespace WebCore {
-
-bool JSDOMStringMap::putDelegate(ExecState* state, PropertyName propertyName, JSValue value, PutPropertySlot&, bool& putResult)
-{
-    VM& vm = state->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    if (propertyName.isSymbol())
-        return false;
-
-    CustomElementReactionStack customElementReactionStack;
-
-    String stringValue = value.toWTFString(state);
-    RETURN_IF_EXCEPTION(scope, true);
-
-    auto result = wrapped().setItem(propertyNameToString(propertyName), WTFMove(stringValue));
-    if (result.hasException()) {
-        propagateException(*state, scope, result.releaseException());
-        return true;
-    }
-
-    putResult = true;
-    return true;
-}
-
-} // namespace WebCore
+    // NOTE: Named deleters require the presence of a named getter as well.
+    getter DOMString (DOMString name);
+};

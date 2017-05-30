@@ -1,3 +1,99 @@
+2017-05-30  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Generate named property deleters
+        https://bugs.webkit.org/show_bug.cgi?id=172688
+
+        Reviewed by Chris Dumez.
+
+        Test: js/dom/named-property-deleter.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Add new file, JSDOMAbstractOperations.h
+
+        * bindings/js/JSDOMAbstractOperations.h: Added.
+        (WebCore::isVisibleNamedProperty):
+        Add an implementation of the abstract operation WebIDL calls the 'named property visibility algorithm'.
+        It is used by many WebIDL algorithms, but currently I am only using this implementation for deleters.
+        In the future, we should try and move the other property access generators to use it as well.
+
+        * bindings/js/JSDOMStringMapCustom.cpp:
+        (WebCore::JSDOMStringMap::deleteProperty): Deleted.
+        (WebCore::JSDOMStringMap::deletePropertyByIndex): Deleted.
+        * bindings/js/JSStorageCustom.cpp:
+        (WebCore::JSStorage::deleteProperty): Deleted.
+        (WebCore::JSStorage::deletePropertyByIndex): Deleted.
+        Remove now generated deleteProperty and deletePropertyByIndex implementations.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateDeletePropertyCommon):
+        (GenerateDeletePropertyDefinition):
+        (GenerateDeletePropertyByIndexDefinition):
+        (GenerateNamedDeleterDefinition):
+        Added generation for named deleters. We generate both deleteProperty and deletePropertyByIndex.
+
+        (InstanceOverridesDelete):
+        Add predicate for whether the header should declare deleteProperty and deletePropertyByIndex.
+
+        (GenerateHeader):
+        Move property access hook declarations closer to each other. Use new InstanceOverridesDelete
+        predicate for deleteProperty and deletePropertyByIndex.
+ 
+        (GenerateImplementation):
+        Add call to generate named deleter if one exists.
+
+        (GenerateConstructorHelperMethods):
+        Remove an old FIXME that that was no longer true, there are no more interfaces that inherit from
+        an interface with [NoInterfaceObject].
+
+        * dom/DOMStringMap.idl:
+        Removes CustomDeleteProperty and sorts extended attributes.
+
+        * dom/DatasetDOMStringMap.h:
+        * dom/DatasetDOMStringMap.cpp:
+        (WebCore::DatasetDOMStringMap::isSupportedPropertyName):
+        Added. This is a bindings support function (much like supportedPropertyNames()) that is
+        used JSDOMAbstractOperations.h's isVisibleNamedProperty.
+
+        (WebCore::DatasetDOMStringMap::supportedPropertyNames):
+        Convert to an early return.
+
+        (WebCore::DatasetDOMStringMap::deleteNamedProperty):
+        (WebCore::DatasetDOMStringMap::deleteItem): Deleted.
+        Renamed deleteItem to deleteNamedProperty, which is the name the bindings use for deleter
+        operations without an identifier.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::sessionStorage):
+        Fix incorrect indentation that bothered me.
+
+        * storage/Storage.cpp:
+        * storage/Storage.h:
+        - Remove isDisabledByPrivateBrowsing(), which had no definition.
+        - Add isSupportedPropertyName(), which the deleter code (via the isVisibleNamedProperty algorithm)
+          needs.
+        
+        * storage/Storage.idl:
+        Removes CustomDeleteProperty, sorts the extended attributes, adds 'deleter' special 
+        to the removeItem operation and adds a commented out 'setter' special to the 'setItem'
+        operation.
+
+        * bindings/scripts/test/JS/JSTestObj.h:
+        Update result for declarations moving around.
+
+        * bindings/scripts/test/JS/JSTestNamedDeleterNoIdentifier.cpp: Added.
+        * bindings/scripts/test/JS/JSTestNamedDeleterNoIdentifier.h: Added.
+        * bindings/scripts/test/JS/JSTestNamedDeleterThrowingException.cpp: Added.
+        * bindings/scripts/test/JS/JSTestNamedDeleterThrowingException.h: Added.
+        * bindings/scripts/test/JS/JSTestNamedDeleterWithIdentifier.cpp: Added.
+        * bindings/scripts/test/JS/JSTestNamedDeleterWithIdentifier.h: Added.
+        * bindings/scripts/test/JS/JSTestNamedDeleterWithIndexedGetter.cpp: Added.
+        * bindings/scripts/test/JS/JSTestNamedDeleterWithIndexedGetter.h: Added.
+        * bindings/scripts/test/TestNamedDeleterNoIdentifier.idl: Added.
+        * bindings/scripts/test/TestNamedDeleterThrowingException.idl: Added.
+        * bindings/scripts/test/TestNamedDeleterWithIdentifier.idl: Added.
+        * bindings/scripts/test/TestNamedDeleterWithIndexedGetter.idl: Added.
+        Add new tests for named deleters.
+
 2017-05-30  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: images dragged from Inspector to Desktop are named "Unknown.png"

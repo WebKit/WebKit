@@ -1,40 +1,59 @@
+<pre id='console'></pre>
 <script>
 function runTest() {
+    function log(msg)
+    {
+        document.getElementById('console').append(msg + '\n');
+    }
+
+    function logAndEval(str)
+    {
+        log(str);
+        eval(str);
+    }
+
     if (window.testRunner)
        testRunner.dumpAsText();
 
     if (!window.localStorage) {
-        console.log("window.localStorage DOES NOT exist");
+        log("window.localStorage DOES NOT exist");
         return;
     }
 
-    localStorage.clear();
-    console.log(Object.getOwnPropertyNames(localStorage));
+    logAndEval("localStorage.clear()");
+    log("Object.getOwnPropertyNames(localStorage) is (" + Object.getOwnPropertyNames(localStorage) + ")\n");
     
-    Object.defineProperty(localStorage, "1", {value: "present"});
-    console.log(Object.getOwnPropertyNames(localStorage));
+    logAndEval("Object.defineProperty(localStorage, '1', {value: 'present'})");
+    log("Object.getOwnPropertyNames(localStorage) is (" + Object.getOwnPropertyNames(localStorage) + ")");
+    // FIXME: This is incorrect. It should return 'present'. See https://webkit.org/b/172687.
+    log("localStorage.getItem('1') is " + localStorage.getItem('1') + "\n");
     
-    delete localStorage[1];
-    console.log(Object.getOwnPropertyNames(localStorage));
+    logAndEval("delete localStorage[1]");
+    log("Object.getOwnPropertyNames(localStorage) is (" + Object.getOwnPropertyNames(localStorage) + ")\n");
     
-    Object.defineProperty(localStorage, "2", {value: "present",  configurable: true});
-    console.log(Object.getOwnPropertyNames(localStorage));
+    logAndEval("Object.defineProperty(localStorage, '2', {value: 'present',  configurable: true})");
+    log("Object.getOwnPropertyNames(localStorage) is (" + Object.getOwnPropertyNames(localStorage) + ")");
+    // FIXME: This is incorrect. It should return 'present'. See https://webkit.org/b/172687.
+    log("localStorage.getItem('2') is " + localStorage.getItem('2') + "\n");
     
-    delete localStorage[2];
-    console.log(Object.getOwnPropertyNames(localStorage));
+    logAndEval("delete localStorage[2]");
+    log("Object.getOwnPropertyNames(localStorage) is (" + Object.getOwnPropertyNames(localStorage) + ")\n");
 
-    Object.defineProperty(localStorage, "Test", {value: "present",  configurable: true});
-    console.log(Object.getOwnPropertyNames(localStorage));
+    logAndEval("Object.defineProperty(localStorage, 'Test', {value: 'present',  configurable: true})");
+    log("Object.getOwnPropertyNames(localStorage) is (" + Object.getOwnPropertyNames(localStorage) + ")");
+    // FIXME: This is incorrect. It should return 'present'. See https://webkit.org/b/172687.
+    log("localStorage.getItem('Test') is " + localStorage.getItem('Test') + "\n");
   
-    delete localStorage["Test"];
-    console.log(Object.getOwnPropertyNames(localStorage));
+    logAndEval("delete localStorage['Test']");
+    log("Object.getOwnPropertyNames(localStorage) is (" + Object.getOwnPropertyNames(localStorage) + ")\n");
 
-    Object.defineProperty(localStorage, "Test1", {value: "present"});
-    console.log(Object.getOwnPropertyNames(localStorage));
+    logAndEval("Object.defineProperty(localStorage, 'Test1', {value: 'present'})");
+    log("Object.getOwnPropertyNames(localStorage) is (" + Object.getOwnPropertyNames(localStorage) + ")");
+    // FIXME: This is incorrect. It should return 'present'. See https://webkit.org/b/172687.
+    log("localStorage.getItem('Test1') is " + localStorage.getItem('Test1') + "\n");
   
-    delete localStorage["Test1"];
-    console.log(Object.getOwnPropertyNames(localStorage));
-
+    logAndEval("delete localStorage['Test1']");
+    log("Object.getOwnPropertyNames(localStorage) is (" + Object.getOwnPropertyNames(localStorage) + ")\n");
 }
 </script>
 <body onload="runTest();">

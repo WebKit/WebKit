@@ -120,4 +120,12 @@ ExceptionOr<bool> Storage::contains(const String& key) const
     return m_storageArea->contains(key);
 }
 
+bool Storage::isSupportedPropertyName(const String& propertyName) const
+{
+    if (!m_storageArea->canAccessStorage(m_frame))
+        return false;
+
+    return m_storageArea->contains(propertyName);
+}
+
 } // namespace WebCore

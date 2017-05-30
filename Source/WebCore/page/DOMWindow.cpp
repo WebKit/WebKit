@@ -879,7 +879,7 @@ ExceptionOr<Storage*> DOMWindow::sessionStorage() const
 
     if (m_sessionStorage) {
         if (!m_sessionStorage->area().canAccessStorage(m_frame))
-        return Exception { SECURITY_ERR };
+            return Exception { SECURITY_ERR };
         return m_sessionStorage.get();
     }
 

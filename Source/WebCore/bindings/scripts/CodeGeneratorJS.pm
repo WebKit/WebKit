@@ -730,6 +730,173 @@ sub GeneratePutByIndex
     return @output;
 }
 
+sub GenerateDeletePropertyCommon
+{
+    my ($outputArray, $interface, $className, $operation, $conditional) = @_;
+    
+    # This implements step 2 of https://heycam.github.io/webidl/#legacy-platform-object-delete
+    # so it can be shared between the generation of deleteProperty and deletePropertyByIndex.
+
+    # 2. If O supports named properties, O does not implement an interface with the
+    #    [Global] or [PrimaryGlobal] extended attribute and the result of calling the
+    #    named property visibility algorithm with property name P and object O is true,
+    #    then:
+    assert("Named property deleters are not allowed without a corresponding named property getter.") if !GetNamedGetterOperation($interface);
+    assert("Named property deleters are not allowed on global object interfaces.") if IsGlobalOrPrimaryGlobalInterface($interface);
+
+    AddToImplIncludes("JSDOMAbstractOperations.h", $conditional);
+    my $overrideBuiltin = $interface->extendedAttributes->{OverrideBuiltins} ? "true" : "false";
+    push(@$outputArray, "    if (isVisibleNamedProperty<${overrideBuiltin}>(*state, thisObject, propertyName)) {\n");
+
+    if ($operation->extendedAttributes->{CEReactions}) {
+        push(@$outputArray, "        CustomElementReactionStack customElementReactionStack;\n");
+        AddToImplIncludes("CustomElementReactionQueue.h", $conditional);
+    }
+
+    # 2.1. If O does not implement an interface with a named property deleter, then return false.
+    # 2.2. Let operation be the operation used to declare the named property deleter.
+    # NOTE: We only add a deleteProperty implementation of we have a named property deleter.
+
+    # 2.3. If operation was defined without an identifier, then:
+    #      1. Perform the steps listed in the interface description to delete an existing named
+    #         property with P as the name.
+    #      2. If the steps indicated that the deletion failed, then return false.
+    # 2.4. Otherwise, operation was defined with an identifier:
+    #      1. Perform the steps listed in the description of operation with P as the only argument
+    #         value.
+    #      2. If operation was declared with a return type of boolean and the steps returned false,
+    #         then return false.
+
+    my $functionImplementationName = $operation->extendedAttributes->{ImplementedAs} || $codeGenerator->WK_lcfirst($operation->name) || "deleteNamedProperty";
+    my $functionCall = "impl." . $functionImplementationName . "(propertyNameToString(propertyName))";
+
+    # NOTE: We expect the implementation function of named deleters without an identifier to
+    #       return either bool or ExceptionOr<bool>. the implementation function of named deleters
+    #       with an identifier have no restriction, but if the return value of the operation is
+    #       boolean, we return that value, otherwise it is ignored (as per section 4.2).
+
+    if ($operation->extendedAttributes->{MayThrowException}) {
+        push(@$outputArray, "        auto result = ${functionCall};\n");
+        push(@$outputArray, "        if (result.hasException()) {\n");
+        push(@$outputArray, "            auto throwScope = DECLARE_THROW_SCOPE(state->vm());\n");
+        push(@$outputArray, "            propagateException(*state, throwScope, result.releaseException());\n");
+        push(@$outputArray, "            return true;\n");
+        push(@$outputArray, "        }\n\n");
+
+        if (!$operation->name || $operation->name && $operation->type->name eq "boolean") {
+            push(@$outputArray, "        return result.releaseReturnValue();\n");
+        } else {
+            push(@$outputArray, "        return true;\n");
+        }
+    } else {
+        if (!$operation->name || $operation->name && $operation->type->name eq "boolean") {
+            push(@$outputArray, "        return ${functionCall};\n");
+        } else {
+            push(@$outputArray, "        ${functionCall};\n");
+            push(@$outputArray, "        return true;\n");
+        }
+    }
+
+    push(@$outputArray, "    }\n");
+}
+
+sub GenerateDeletePropertyDefinition
+{
+    my ($outputArray, $interface, $className, $operation, $conditional) = @_;
+
+    # This implements https://heycam.github.io/webidl/#legacy-platform-object-delete for the
+    # for the deleteProperty override hook.
+
+    push(@$outputArray, "bool ${className}::deleteProperty(JSCell* cell, ExecState* state, PropertyName propertyName)\n");
+    push(@$outputArray, "{\n");
+
+    push(@$outputArray, "    auto& thisObject = *jsCast<${className}*>(cell);\n");
+    push(@$outputArray, "    auto& impl = thisObject.wrapped();\n");
+
+    # 1. If O supports indexed properties and P is an array index property name, then:
+    #    1. Let index be the result of calling ToUint32(P).
+    #    2. If index is not a supported property index, then return true.
+    #    3. Return false.
+    if (GetIndexedGetterOperation($interface)) {
+        push(@$outputArray, "    if (auto index = parseIndex(propertyName))\n");
+        push(@$outputArray, "        return !impl.isSupportedPropertyIndex(index.value());\n");
+    }
+
+    # GenerateDeletePropertyCommon implements step 2.
+    GenerateDeletePropertyCommon($outputArray, $interface, $className, $operation, $conditional);
+
+    # FIXME: Instead of calling down Base::deleteProperty, perhaps we should implement
+    # the remained of the algorithm ourselves.
+    push(@$outputArray, "    return Base::deleteProperty(cell, state, propertyName);\n");
+    push(@$outputArray, "}\n\n");
+}
+
+sub GenerateDeletePropertyByIndexDefinition
+{
+    my ($outputArray, $interface, $className, $operation, $conditional) = @_;
+
+    # This implements https://heycam.github.io/webidl/#legacy-platform-object-delete for the
+    # for the deletePropertyByIndex override hook.
+
+    push(@$outputArray, "bool ${className}::deletePropertyByIndex(JSCell* cell, ExecState* state, unsigned index)\n");
+    push(@$outputArray, "{\n");
+
+    push(@$outputArray, "    auto& thisObject = *jsCast<${className}*>(cell);\n");
+    push(@$outputArray, "    auto& impl = thisObject.wrapped();\n");
+
+    # 1. If O supports indexed properties and P is an array index property name, then:
+    #    1. Let index be the result of calling ToUint32(P).
+    #    2. If index is not a supported property index, then return true.
+    #    3. Return false.
+
+    # NOTE: For deletePropertyByIndex, if there is an indexed getter, checking isSupportedPropertyIndex()
+    #       is all that needs to be done, no need to generate the .
+
+    if (GetIndexedGetterOperation($interface)) {
+        push(@$outputArray, "    return !impl.isSupportedPropertyIndex(index);\n");
+    } else {
+        push(@$outputArray, "    auto propertyName = Identifier::from(state, index);\n");
+
+        # GenerateDeletePropertyCommon implements step 2.
+        GenerateDeletePropertyCommon($outputArray, $interface, $className, $operation, $conditional);
+
+        # FIXME: Instead of calling down Base::deletePropertyByIndex, perhaps we should implement
+        # the remaineder of the algoritm (steps 3 and 4) ourselves.
+        
+        # 3. If O has an own property with name P, then:
+        #    1. If the property is not configurable, then return false.
+        #    2. Otherwise, remove the property from O.
+        # 3. Return true.
+        
+        push(@$outputArray, "    return Base::deletePropertyByIndex(cell, state, index);\n");
+    }
+
+    push(@$outputArray, "}\n\n");
+}
+
+
+sub GenerateNamedDeleterDefinition
+{
+    my ($outputArray, $interface, $className, $operation) = @_;
+
+    # This implements https://heycam.github.io/webidl/#legacy-platform-object-delete using
+    # the deleteProperty and deletePropertyByIndex override hooks.
+
+    assert("Named property deleters are not allowed without a corresponding named property getter.") if !GetNamedGetterOperation($interface);
+    assert("Named property deleters are not allowed on global object interfaces.") if IsGlobalOrPrimaryGlobalInterface($interface);
+
+    my $conditional = $operation->extendedAttributes->{Conditional};
+    if ($conditional) {
+        my $conditionalString = $codeGenerator->GenerateConditionalStringFromAttributeValue($conditional);
+        push(@$outputArray, "#if ${conditionalString}\n\n");;
+    }
+
+    GenerateDeletePropertyDefinition($outputArray, $interface, $className, $operation, $conditional);
+    GenerateDeletePropertyByIndexDefinition($outputArray, $interface, $className, $operation, $conditional);
+
+    push(@implContent, "#endif\n\n") if $conditional;
+}
+
 sub GenerateHeaderContentHeader
 {
     my $interface = shift;
@@ -1151,6 +1318,13 @@ sub InstanceOverridesPut
         || $interface->extendedAttributes->{CustomIndexedSetter}
         || GetIndexedSetterOperation($interface)
         || GetNamedSetterOperation($interface);
+}
+
+sub InstanceOverridesDelete
+{
+    my $interface = shift;
+    return $interface->extendedAttributes->{CustomDeleteProperty}
+        || GetNamedDeleterOperation($interface);
 }
 
 sub PrototypeHasStaticPropertyTable
@@ -1826,6 +2000,8 @@ sub GenerateHeader
     push(@headerContent, "    static const bool needsDestruction = false;\n\n") if IsDOMGlobalObject($interface);
 
     $structureFlags{"JSC::HasStaticPropertyTable"} = 1 if InstancePropertyCount($interface) > 0;
+    $structureFlags{"JSC::NewImpurePropertyFiresWatchpoints"} = 1 if $interface->extendedAttributes->{NewImpurePropertyFiresWatchpoints};
+    $structureFlags{"JSC::IsImmutablePrototypeExoticObject"} = 1 if $interface->extendedAttributes->{IsImmutablePrototypeExoticObject};
 
     # Prototype
     unless (ShouldUseGlobalObjectPrototype($interface)) {
@@ -1861,8 +2037,6 @@ sub GenerateHeader
         || $interface->extendedAttributes->{CustomGetOwnPropertySlot}
         || $hasNamedGetter;
 
-    my $hasGetter = InstanceOverridesGetOwnPropertySlot($interface);
-
     if ($hasNamedGetter) {
         if ($interface->extendedAttributes->{OverrideBuiltins}) {
             $structureFlags{"JSC::GetOwnPropertySlotIsImpure"} = 1;
@@ -1870,11 +2044,9 @@ sub GenerateHeader
             $structureFlags{"JSC::GetOwnPropertySlotIsImpureForPropertyAbsence"} = 1;
         }
     }
-    $structureFlags{"JSC::NewImpurePropertyFiresWatchpoints"} = 1 if $interface->extendedAttributes->{NewImpurePropertyFiresWatchpoints};
-    $structureFlags{"JSC::IsImmutablePrototypeExoticObject"} = 1 if $interface->extendedAttributes->{IsImmutablePrototypeExoticObject};
 
-    # Getters
-    if ($hasGetter) {
+    my $overridesGet = InstanceOverridesGetOwnPropertySlot($interface);
+    if ($overridesGet) {
         push(@headerContent, "    static bool getOwnPropertySlot(JSC::JSObject*, JSC::ExecState*, JSC::PropertyName, JSC::PropertySlot&);\n");
         $structureFlags{"JSC::OverridesGetOwnPropertySlot"} = 1;
 
@@ -1885,11 +2057,21 @@ sub GenerateHeader
     }
 
     my $overridesPut = InstanceOverridesPutDeclaration($interface);
-
-    # Getters
     if ($overridesPut) {
         push(@headerContent, "    static bool put(JSC::JSCell*, JSC::ExecState*, JSC::PropertyName, JSC::JSValue, JSC::PutPropertySlot&);\n");
         push(@headerContent, "    static bool putByIndex(JSC::JSCell*, JSC::ExecState*, unsigned propertyName, JSC::JSValue, bool shouldThrow);\n");
+    }
+
+    if (InstanceOverridesDelete($interface)) {
+        push(@headerContent, "    static bool deleteProperty(JSC::JSCell*, JSC::ExecState*, JSC::PropertyName);\n");
+        push(@headerContent, "    static bool deletePropertyByIndex(JSC::JSCell*, JSC::ExecState*, unsigned);\n");
+    }
+
+    # LegacyCaller and custom call functions
+    if (IsCallable($interface)) {
+        push(@headerContent, "    static JSC::CallType getCallData(JSC::JSCell*, JSC::CallData&);\n\n");
+        $headerIncludes{"<runtime/CallData.h>"} = 1;
+        $structureFlags{"JSC::TypeOfShouldCallGetCallData"} = 1;
     }
 
     if (!$hasParent) {
@@ -1926,17 +2108,6 @@ sub GenerateHeader
 
     # Custom pushEventHandlerScope function
     push(@headerContent, "    JSC::JSScope* pushEventHandlerScope(JSC::ExecState*, JSC::JSScope*) const;\n\n") if $interface->extendedAttributes->{JSCustomPushEventHandlerScope};
-
-    # LegacyCaller and custom call functions
-    if (IsCallable($interface)) {
-        push(@headerContent, "    static JSC::CallType getCallData(JSC::JSCell*, JSC::CallData&);\n\n");
-        $headerIncludes{"<runtime/CallData.h>"} = 1;
-        $structureFlags{"JSC::TypeOfShouldCallGetCallData"} = 1;
-    }
-
-    # Custom deleteProperty function
-    push(@headerContent, "    static bool deleteProperty(JSC::JSCell*, JSC::ExecState*, JSC::PropertyName);\n") if $interface->extendedAttributes->{CustomDeleteProperty};
-    push(@headerContent, "    static bool deletePropertyByIndex(JSC::JSCell*, JSC::ExecState*, unsigned);\n") if $interface->extendedAttributes->{CustomDeleteProperty};
 
     # Custom getPropertyNames function exists on DOMWindow
     if ($interfaceName eq "DOMWindow") {
@@ -3624,10 +3795,8 @@ sub GenerateImplementation
         push(@implContent, "}\n\n");
     }
 
-    my $hasGetter = InstanceOverridesGetOwnPropertySlot($interface);
-
-    # Attributes
-    if ($hasGetter) {
+    my $overridesGet = InstanceOverridesGetOwnPropertySlot($interface);
+    if ($overridesGet) {
         if (!$interface->extendedAttributes->{CustomGetOwnPropertySlot}) {
             push(@implContent, GenerateGetOwnPropertySlotBody($interface, $className, $indexedGetterOperation, $namedGetterOperation));
         }
@@ -3656,6 +3825,11 @@ sub GenerateImplementation
                 push(@implContent, GeneratePutByIndex($interface, $className, $indexedSetterOperation, $namedSetterOperation));
             }
         }
+    }
+
+    my $namedDeleterOperation = GetNamedDeleterOperation($interface);
+    if ($namedDeleterOperation) {
+        GenerateNamedDeleterDefinition(\@implContent, $interface, $className, $namedDeleterOperation);
     }
 
     if ($numAttributes > 0) {
@@ -6323,10 +6497,10 @@ sub GenerateConstructorHelperMethods
     # otherwise use FunctionPrototype: http://heycam.github.io/webidl/#interface-object
     push(@$outputArray, "template<> JSValue ${constructorClassName}::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)\n");
     push(@$outputArray, "{\n");
-    # FIXME: IDL does not allow an interface without [NoInterfaceObject] to inherit one that is marked as [NoInterfaceObject]
-    # so we should be able to use our parent's interface object no matter what. However, some of our IDL files (e.g. CanvasRenderingContext2D)
-    # are not valid so we need this check for now.
-    if ($interface->parentType && !$codeGenerator->GetInterfaceExtendedAttributesFromName($interface->parentType->name)->{NoInterfaceObject}) {
+
+    assert("An interface cannot inherit from another interface that is marked as [NoInterfaceObject]") if $interface->parentType && $codeGenerator->GetInterfaceExtendedAttributesFromName($interface->parentType->name)->{NoInterfaceObject};
+
+    if ($interface->parentType) {
         my $parentClassName = "JS" . $interface->parentType->name;
         push(@$outputArray, "    return ${parentClassName}::getConstructor(vm, &globalObject);\n");
     } else {

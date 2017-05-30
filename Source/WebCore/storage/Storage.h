@@ -47,12 +47,13 @@ public:
     ExceptionOr<void> clear();
     ExceptionOr<bool> contains(const String& key) const;
 
+    // Bindings support functions.
+    bool isSupportedPropertyName(const String&) const;
+
     StorageArea& area() const { return *m_storageArea; }
 
 private:
     Storage(Frame*, RefPtr<StorageArea>&&);
-
-    bool isDisabledByPrivateBrowsing() const;
 
     const RefPtr<StorageArea> m_storageArea;
 };

@@ -43,11 +43,12 @@ public:
     void ref();
     void deref();
 
+    bool isSupportedPropertyName(const String& name) const;
     Vector<String> supportedPropertyNames() const;
 
     String namedItem(const AtomicString& name) const;
     ExceptionOr<void> setItem(const String& name, const String& value);
-    bool deleteItem(const String& name);
+    bool deleteNamedProperty(const String& name);
 
     Element& element() { return m_element; }
 

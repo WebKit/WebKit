@@ -1,10 +1,32 @@
-CONSOLE MESSAGE: line 12: 
-CONSOLE MESSAGE: line 15: 1
-CONSOLE MESSAGE: line 18: 1
-CONSOLE MESSAGE: line 21: 1,2
-CONSOLE MESSAGE: line 24: 1,2
-CONSOLE MESSAGE: line 27: 1,2,Test
-CONSOLE MESSAGE: line 30: 1,2,Test
-CONSOLE MESSAGE: line 33: 1,2,Test,Test1
-CONSOLE MESSAGE: line 36: 1,2,Test,Test1
+localStorage.clear()
+Object.getOwnPropertyNames(localStorage) is ()
+
+Object.defineProperty(localStorage, '1', {value: 'present'})
+Object.getOwnPropertyNames(localStorage) is (1)
+localStorage.getItem('1') is null
+
+delete localStorage[1]
+Object.getOwnPropertyNames(localStorage) is (1)
+
+Object.defineProperty(localStorage, '2', {value: 'present',  configurable: true})
+Object.getOwnPropertyNames(localStorage) is (1,2)
+localStorage.getItem('2') is null
+
+delete localStorage[2]
+Object.getOwnPropertyNames(localStorage) is (1)
+
+Object.defineProperty(localStorage, 'Test', {value: 'present',  configurable: true})
+Object.getOwnPropertyNames(localStorage) is (1,Test)
+localStorage.getItem('Test') is null
+
+delete localStorage['Test']
+Object.getOwnPropertyNames(localStorage) is (1)
+
+Object.defineProperty(localStorage, 'Test1', {value: 'present'})
+Object.getOwnPropertyNames(localStorage) is (1,Test1)
+localStorage.getItem('Test1') is null
+
+delete localStorage['Test1']
+Object.getOwnPropertyNames(localStorage) is (1,Test1)
+
 

@@ -1,3 +1,20 @@
+2017-05-30  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Generate named property deleters
+        https://bugs.webkit.org/show_bug.cgi?id=172688
+
+        Reviewed by Chris Dumez.
+
+        * js/dom/named-property-deleter-expected.txt: Added.
+        * js/dom/named-property-deleter.html: Added.
+        Add test for various named deleter conditions.
+
+        * storage/domstorage/localstorage/delete-defineproperty-removal-expected.txt:
+        * storage/domstorage/localstorage/delete-defineproperty-removal.html:
+        Update test to log more information about what its doing and log it to the DOM rather
+        than the console, to make comparing results in browsers easier. Also, note in the
+        bug that the results are wrong, and have been wrong, due to https://webkit.org/b/172687.
+
 2017-05-30  Youenn Fablet  <youenn@apple.com>
 
         Add support for Certificate and IceCandidatePair stats
