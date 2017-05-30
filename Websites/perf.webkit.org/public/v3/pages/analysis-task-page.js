@@ -280,10 +280,10 @@ class AnalysisTaskTestGroupPane extends ComponentBase {
         this.enqueueToRender();
     }
 
-    setAnalysisResults(analysisResults, metric)
+    setAnalysisResults(analysisResults)
     {
         this.part('revision-table').setAnalysisResults(analysisResults);
-        this.part('results-viewer').setAnalysisResults(analysisResults, metric);
+        this.part('results-viewer').setAnalysisResults(analysisResults, null);
         this.enqueueToRender();
     }
 
@@ -369,15 +369,8 @@ class AnalysisTaskTestGroupPane extends ComponentBase {
                 font-size: 0.9rem;
             }
 
-            #new-container {
-                display: flex;
-            }
-
-            #new-container test-group-revision-table {
-                margin-left: 2rem;
-            }
-
             #test-group-list {
+                flex: none;
                 margin: 0;
                 padding: 0.2rem 0;
                 list-style: none;
@@ -617,12 +610,15 @@ class AnalysisTaskPage extends PageWithHeading {
 
     _assignTestResultsIfPossible()
     {
-        if (!this._task || !this._metric || !this._testGroups || !this._analysisResults)
+        if (!this._task || !this._testGroups || !this._analysisResults)
             return false;
 
-        const view = this._analysisResults.viewForMetric(this._metric);
-        this.part('group-pane').setAnalysisResults(this._analysisResults, this._metric);
-        this.part('results-pane').setAnalysisResultsView(view);
+        this.part('group-pane').setAnalysisResults(this._analysisResults);
+        let metric = this._metric;
+        if (metric) {
+            const view = this._analysisResults.viewForMetric(metric);
+            this.part('results-pane').setAnalysisResultsView(view);
+        }
 
         return true;
     }
@@ -791,11 +787,11 @@ class AnalysisTaskPage extends PageWithHeading {
     {
         const newName = this._createRetryNameForTestGroup(testGroup.name());
         const commitSetList = testGroup.requestedCommitSets();
-
-        const commitSetMap = {};
-        for (let commitSet of commitSetList)
-            commitSetMap[testGroup.labelForCommitSet(commitSet)] = commitSet;
-
+        const platform = this._task.platform() || testGroup.platform();
+        return TestGroup.createWithCustomConfiguration(this._task, platform, testGroup.test(), newName, repetitionCount, commitSetList)
+            .then(this._didFetchTestGroups.bind(this), function (error) {
+            alert('Failed to create a new test group: ' + error);
+        });
         return this._createTestGroupAfterVerifyingCommitSetList(newName, repetitionCount, commitSetMap);
     }
 
@@ -825,7 +821,7 @@ class AnalysisTaskPage extends PageWithHeading {
         for (let label in commitSetMap)
             commitSets.push(commitSetMap[label]);
 
-        TestGroup.createAndRefetchTestGroups(this._task, testGroupName, repetitionCount, commitSets)
+        return TestGroup.createAndRefetchTestGroups(this._task, testGroupName, repetitionCount, commitSets)
             .then(this._didFetchTestGroups.bind(this), function (error) {
             alert('Failed to create a new test group: ' + error);
         });

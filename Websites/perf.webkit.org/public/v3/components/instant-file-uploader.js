@@ -13,6 +13,12 @@ class InstantFileUploader extends ComponentBase {
         this._renderPreuploadFilesLazily = new LazilyEvaluatedFunction(this._renderPreuploadFiles.bind(this));
     }
 
+    clearUploads()
+    {
+        this._uploadedFiles = [];
+        this._preuploadFiles = [];
+        this._uploadProgress = new WeakMap;
+    }
     hasFileToUpload() { return !!this._preuploadFiles.length; }
     uploadedFiles() { return this._uploadedFiles; }
 
@@ -33,9 +39,23 @@ class InstantFileUploader extends ComponentBase {
 
     didConstructShadowTree()
     {
-        this.content('file-adder').onclick = () => {
+        const addButton = this.content('file-adder');
+        addButton.onclick = () => {
             inputElement.click();
         }
+        addButton.addEventListener('dragover', (event) => {
+            event.dataTransfer.dropEffect = 'copy';
+            event.preventDefault();
+        });
+        addButton.addEventListener('drop', (event) => {
+            event.preventDefault();
+            let files = event.dataTransfer.files;
+            if (!files.length)
+                return;
+            if (files.length > 1 && !this._allowMultipleFiles)
+                files = [files[0]];
+            this._uploadFiles(files);
+        });
         const inputElement = document.createElement('input');
         inputElement.type = 'file';
         inputElement.onchange = () => this._didFileInputChange(inputElement);
@@ -125,13 +145,23 @@ class InstantFileUploader extends ComponentBase {
     {
         if (!input.files.length)
             return;
+        this._uploadFiles(input.files);
+        input.value = null;
+        this.enqueueToRender();
+    }
+
+    _uploadFiles(files)
+    {
         const limit = UploadedFile.fileUploadSizeLimit;
-        for (let file of input.files) {
+        for (let file of files) {
             if (file.size > limit) {
                 alert(`The specified file "${file.name}" is too big (${this._fileSizeFormatter(file.size)}). It must be smaller than ${this._fileSizeFormatter(limit)}`);
-                input.value = null;
                 return;
             }
+        }
+
+        const uploadProgress = this._uploadProgress;
+        for (let file of files) {
             UploadedFile.fetchUnloadedFileWithIdenticalHash(file).then((uploadedFile) => {
                 if (uploadedFile) {
                     this._didUploadFile(file, uploadedFile);
@@ -139,20 +169,20 @@ class InstantFileUploader extends ComponentBase {
                 }
 
                 UploadedFile.uploadFile(file, (progress) => {
-                    this._uploadProgress.set(file, progress);
-                    this.enqueueToRender();
+                    uploadProgress.set(file, progress);
+                    if (this._uploadProgress == uploadProgress)
+                        this.enqueueToRender();
                 }).then((uploadedFile) => {
-                    this._didUploadFile(file, uploadedFile);
+                    if (this._uploadProgress == uploadProgress)
+                        this._didUploadFile(file, uploadedFile);
                 }, (error) => {
-                    this._uploadProgress.set(file, {error: error === 0 ? 'UnknownError' : error});
-                    this.enqueueToRender();
+                    uploadProgress.set(file, {error: error === 0 ? 'UnknownError' : error});
+                    if (this._uploadedProgress == uploadProgress)
+                        this.enqueueToRender();
                 });
             });
         }
-        this._preuploadFiles = Array.from(input.files);
-        input.value = null;
-
-        this.enqueueToRender();
+        this._preuploadFiles = Array.from(files);
     }
 
     _removeUploadedFile(uploadedFile)

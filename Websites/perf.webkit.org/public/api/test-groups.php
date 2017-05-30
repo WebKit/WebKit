@@ -38,16 +38,9 @@ function main($path) {
     foreach ($test_groups as &$group) {
         $group_id = $group['id'];
         $group_by_id[$group_id] = &$group;
-        $platforms = $db->query_and_fetch_all('SELECT DISTINCT(config_platform)
-            FROM test_configurations, test_runs, build_requests
-            WHERE run_config = config_id AND run_build = request_build AND request_group = $1', array($group_id));
-        if ($platforms)
-            $group['platform'] = $platforms[0]['config_platform'];
-        else {
-            $first_request = $db->select_first_row('build_requests', 'request', array('group' => $group_id), 'order');
-            if ($first_request)
-                $group['platform'] = $first_request['request_platform'];
-        }
+        $first_request = $db->select_first_row('build_requests', 'request', array('group' => $group_id), 'order');
+        if ($first_request)
+            $group['platform'] = $first_request['request_platform'];
     }
 
     $build_requests = $build_requests_fetcher->results();

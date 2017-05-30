@@ -12,6 +12,7 @@ class CustomAnalysisTaskConfigurator extends ComponentBase {
         this._commitSetMap = {};
         this._specifiedRevisions = {'Baseline': new Map, 'Comparison': new Map};
         this._patchUploaders = {'Baseline': new Map, 'Comparison': new Map};
+        this._customRootUploaders = {'Baseline': null, 'Comparison': null};
         this._fetchedRevisions = {'Baseline': new Map, 'Comparison': new Map};
         this._repositoryGroupByConfiguration = {'Baseline': null, 'Comparison': null};
         this._updateTriggerableLazily = new LazilyEvaluatedFunction(this._updateTriggerable.bind(this));
@@ -19,8 +20,6 @@ class CustomAnalysisTaskConfigurator extends ComponentBase {
         this._renderTriggerableTestsLazily = new LazilyEvaluatedFunction(this._renderTriggerableTests.bind(this));
         this._renderTriggerablePlatformsLazily = new LazilyEvaluatedFunction(this._renderTriggerablePlatforms.bind(this));
         this._renderRepositoryPanesLazily = new LazilyEvaluatedFunction(this._renderRepositoryPanes.bind(this));
-
-        this._customRootUploaders = {};
     }
 
     tests() { return this._selectedTests; }
@@ -65,27 +64,39 @@ class CustomAnalysisTaskConfigurator extends ComponentBase {
         const baselineRepositoryGroup = triggerable.repositoryGroups().find((repositoryGroup) => repositoryGroup.accepts(baselineCommitSet));
         if (baselineRepositoryGroup) {
             this._repositoryGroupByConfiguration['Baseline'] = baselineRepositoryGroup;
-            this._setUploadedFilesIfEmpty(this._customRootUploaders['Baseline'], baselineCommitSet);
+            this._setUploadedFilesToUploader(this._customRootUploaders['Baseline'], baselineCommitSet.customRoots());
             this._specifiedRevisions['Baseline'] = this._revisionMapFromCommitSet(baselineCommitSet);
+            this._setPatchFiles('Baseline', baselineCommitSet);
         }
 
         const comparisonRepositoryGroup = triggerable.repositoryGroups().find((repositoryGroup) => repositoryGroup.accepts(baselineCommitSet));
         if (comparisonRepositoryGroup) {
             this._repositoryGroupByConfiguration['Comparison'] = comparisonRepositoryGroup;
-            this._setUploadedFilesIfEmpty(this._customRootUploaders['Comparison'], comparisonCommitSet);
+            this._setUploadedFilesToUploader(this._customRootUploaders['Comparison'], comparisonCommitSet.customRoots());
             this._specifiedRevisions['Comparison'] = this._revisionMapFromCommitSet(comparisonCommitSet);
+            this._setPatchFiles('Comparison', comparisonCommitSet);
         }
 
         this._showComparison = true;
         this._updateCommitSetMap();
     }
 
-    _setUploadedFilesIfEmpty(uploader, commitSet)
+    _setUploadedFilesToUploader(uploader, files)
     {
         if (!uploader || uploader.hasFileToUpload() || uploader.uploadedFiles().length)
             return;
-        for (const uploadedFile of commitSet.customRoots())
+        uploader.clearUploads();
+        for (const uploadedFile of files)
             uploader.addUploadedFile(uploadedFile);
+    }
+
+    _setPatchFiles(configurationName, commitSet)
+    {
+        for (const repository of commitSet.repositories()) {
+            const patch = commitSet.patchForRepository(repository);
+            if (patch)
+                this._setUploadedFilesToUploader(this._ensurePatchUploader(configurationName, repository), [patch]);
+        }
     }
 
     _revisionMapFromCommitSet(commitSet)
@@ -109,11 +120,7 @@ class CustomAnalysisTaskConfigurator extends ComponentBase {
         }
 
         const baselineRootsUploader = createRootUploader();
-        baselineRootsUploader.listenToAction('uploadedFile', (uploadedFile) => {
-            comparisonRootsUploader.addUploadedFile(uploadedFile);
-            this._updateCommitSetMap();
-        });
-
+        baselineRootsUploader.listenToAction('uploadedFile', (uploadedFile) => this._updateCommitSetMap());
         this._customRootUploaders['Baseline'] = baselineRootsUploader;
 
         const comparisonRootsUploader = createRootUploader();
@@ -147,6 +154,19 @@ class CustomAnalysisTaskConfigurator extends ComponentBase {
         for (let key of specifiedBaselineRevisions.keys())
             specifiedComparisonRevisions.set(key, specifiedBaselineRevisions.get(key));
         this._specifiedRevisions['Comparison'] = specifiedComparisonRevisions;
+
+        for (const [repository, patchUploader] of this._patchUploaders['Baseline']) {
+            const files = patchUploader.uploadedFiles();
+            if (!files.length)
+                continue;
+            const comparisonPatchUploader = this._ensurePatchUploader('Comparison', repository);
+            for (const uploadedFile of files)
+                comparisonPatchUploader.addUploadedFile(uploadedFile);
+        }
+
+        const comparisonRootUploader = this._customRootUploaders['Comparison'];
+        for (const uploadedFile of this._customRootUploaders['Baseline'].uploadedFiles())
+            comparisonRootUploader.addUploadedFile(uploadedFile);
 
         this.enqueueToRender();
     }

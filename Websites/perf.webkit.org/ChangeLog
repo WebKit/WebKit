@@ -1,3 +1,50 @@
+2017-05-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Fix UI glitches with a custom analysis test group with a patch
+        https://bugs.webkit.org/show_bug.cgi?id=172694
+
+        Reviewed by Sam Weinig.
+
+        Fix the following UI glitches with perf try bots:
+         - Retrying an A/B testing with a patch fails.
+         - A patch specified in an test group does not get specified in the configurator.
+         - Drag & dropping a patch doesn't work.
+         - Results for custom analysis tasks don't get shown.
+
+        * public/api/test-groups.php:
+        (main): Fix a bug that test group's platform does not match that of the request'ed platform. Since each test
+        group is associated with platform, just use that instead of querying test_configurations. This resulted in
+        the configurator not being able to find a triggerable in some cases.
+
+        * public/v3/components/custom-analysis-task-configurator.js:
+        (CustomAnalysisTaskConfigurator):
+        (CustomAnalysisTaskConfigurator.prototype.setCommitSets): Add patches in the commit set.
+        (CustomAnalysisTaskConfigurator.prototype._setUploadedFilesToUploader): Now clears the exiting uploaded files
+        Also renamed from _setUploadedFilesIfEmpty.
+        (CustomAnalysisTaskConfigurator.prototype._setPatchFiles): Added.
+        (CustomAnalysisTaskConfigurator.prototype.didConstructShadowTree): We no longer update the list of roots
+        for the comparsion when a new root is added to the baseline.
+        (CustomAnalysisTaskConfigurator.prototype._configureComparison): Copy over the list of patches and roots when
+        starting to configure the comparsion.
+
+        * public/v3/components/instant-file-uploader.js:
+        (InstantFileUploader.prototype.clear): Added.
+        (InstantFileUploader.prototype.didConstructShadowTree): Added event handlers for dragover & drop events to
+        allow specifying a patch and root using drag & drop. Unfortunately, this still doesn't work in WebKit due to
+        a bug in our shadow DOM implementation.
+        (InstantFileUploader.prototype._didFileInputChange):
+        (InstantFileUploader.prototype._uploadFiles): Extracted from _didFileInputChange.
+
+        * public/v3/pages/analysis-task-page.js:
+        (AnalysisTaskTestGroupPane.prototype.setAnalysisResults): No longer takes metric.
+        (AnalysisTaskTestGroupPane.cssTemplate): Removed unused rules. Also disallow flexing on the list of test groups
+        to avoid the name of a test froup from overflowing on top of the results pane.
+        (AnalysisTaskPage.prototype._assignTestResultsIfPossible): Set setAnalysisResults even when metric is not set
+        as is the case for a custom analysis task.
+        (AnalysisTaskPage.prototype._retryCurrentTestGroup): Use createWithCustomConfiguration to allow retrying of
+        an A/B testing with a patch in a custom analysis task.
+        (AnalysisTaskPage.prototype._createTestGroupAfterVerifyingCommitSetList):
+
 2017-05-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Show patches applied in each A/B testing build requests
