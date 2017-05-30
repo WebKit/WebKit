@@ -1,3 +1,19 @@
+2017-05-30  Antti Koivisto  <antti@apple.com>
+
+        ASSERTION FAILED: !needsLayout() in com.apple.WebCore: WebCore::FrameView::paintContents in fast/events/tabindex-focus-blur-all.html on WK1
+        https://bugs.webkit.org/show_bug.cgi?id=172713
+
+        Reviewed by Zalan Bujtas.
+
+        * DumpRenderTree/mac/ResourceLoadDelegate.mm:
+        (-[ResourceLoadDelegate webView:plugInFailedWithError:dataSource:]):
+
+            Remove forced display from plugin resource load delegate. It is testing some long-obsolete
+            Safari WK1 behavior. Forcing display from this resource load delegate will hit the assertion
+            because on Mac WK1 it may get invoked from middle of a layout.
+
+            Painting code skips out after the assert so it doesn't indicate unsafe access of any sort.
+
 2017-05-30  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         Add a WPE EWS queue
