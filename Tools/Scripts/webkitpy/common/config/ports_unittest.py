@@ -49,3 +49,9 @@ class DeprecatedPortTest(unittest.TestCase):
         self.assertEqual(GtkWK2Port().run_webkit_tests_command(), DeprecatedPort().script_shell_command("run-webkit-tests") + ["--gtk"])
         self.assertEqual(GtkWK2Port().build_webkit_command(), DeprecatedPort().script_shell_command("build-webkit") + ["--gtk", "--update-gtk", DeprecatedPort().makeArgs()])
         self.assertEqual(GtkWK2Port().build_webkit_command(build_style="debug"), DeprecatedPort().script_shell_command("build-webkit") + ["--debug", "--gtk", "--update-gtk", DeprecatedPort().makeArgs()])
+
+    def test_wpe_port(self):
+        self.assertEqual(WpePort().flag(), "--port=wpe")
+        self.assertEqual(WpePort().run_webkit_tests_command(), DeprecatedPort().script_shell_command("run-webkit-tests") + ["--wpe"])
+        self.assertEqual(WpePort().build_webkit_command(), DeprecatedPort().script_shell_command("build-webkit") + ["--wpe", "--update-wpe", DeprecatedPort().makeArgs()])
+        self.assertEqual(WpePort().build_webkit_command(build_style="debug"), DeprecatedPort().script_shell_command("build-webkit") + ["--debug", "--wpe", "--update-wpe", DeprecatedPort().makeArgs()])

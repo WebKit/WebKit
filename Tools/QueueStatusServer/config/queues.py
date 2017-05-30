@@ -43,6 +43,7 @@ all_queue_names = [
     "mac-debug-ews",
     "mac-32bit-ews",
     "win-ews",
+    "wpe-ews",
 ]
 
 # If the patch is still active after this much time, then a bot must have frozen or rebooted,

@@ -185,6 +185,7 @@ Running: webkit-patch --status-host=example.com check-patch-relevance --quiet --
             'mac-32bit-ews',
             'bindings-ews',
             'jsc-ews',
+            'wpe-ews',
         }
         classes = AbstractEarlyWarningSystem.load_ews_classes()
         names = {cls.name for cls in classes}

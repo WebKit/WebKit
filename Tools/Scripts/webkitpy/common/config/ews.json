@@ -2,7 +2,7 @@
     "GTK WK2 EWS": {
         "port": "gtk-wk2",
         "watchers": [
-            "xan.lopez@gmail.com"
+            "bugs-noreply@webkitgtk.org"
         ]
     },
     "Win EWS": {
@@ -58,5 +58,11 @@
         "group": "bindings",
         "runTests": true,
         "shouldBuild": false
+    },
+    "WPE EWS": {
+        "port": "wpe",
+        "watchers": [
+            "bugs-noreply@webkitgtk.org"
+        ]
     }
 }
