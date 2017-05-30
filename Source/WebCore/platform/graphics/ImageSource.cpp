@@ -151,6 +151,8 @@ bool ImageSource::isAllDataReceived()
 
 bool ImageSource::shouldUseAsyncDecoding()
 {
+    if (!isDecoderAvailable())
+        return false;
     // FIXME: figure out the best heuristic for enabling async image decoding.
     return size().area() * sizeof(RGBA32) >= (frameCount() > 1 ? 100 * KB : 500 * KB);
 }

@@ -1,0 +1,16 @@
+<style>
+    .green-background {
+        width: 400px;
+        height: 400px;
+        background: -webkit-canvas(large-canvas) no-repeat 50% 50%;
+	}
+</style>
+<body>
+    <div class="green-background"></div>
+    <script>
+        var ctx = document.getCSSCanvasContext('2d', 'large-canvas', 400, 400);
+        ctx.fillStyle = 'green';
+        ctx.fillRect(0, 0, 400, 400);
+    </script>
+</body>
+

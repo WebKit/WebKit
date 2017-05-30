@@ -1,3 +1,18 @@
+2017-05-30  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        REGRESSION(r216882): No image decoding is needed if the BitmapImage is created with a NativeImage
+        https://bugs.webkit.org/show_bug.cgi?id=172670
+
+        Reviewed by Tim Horton.
+
+        Test: fast/images/large-image-webkit-canvas.html
+
+        Check whether the BitmapImage has created an ImageDecoder before trying 
+        to decode its image frame.
+
+        * platform/graphics/ImageSource.cpp:
+        (WebCore::ImageSource::shouldUseAsyncDecoding):
+
 2017-05-30  Youenn Fablet  <youenn@apple.com>
 
         RealtimeOutgoingVideoSource should not rotate muted frames

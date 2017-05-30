@@ -1,3 +1,17 @@
+2017-05-30  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        REGRESSION(r216882): No image decoding is needed if the BitmapImage is created with a NativeImage
+        https://bugs.webkit.org/show_bug.cgi?id=172670
+
+        Reviewed by Tim Horton.
+
+        Use the css property -webkit-canvas to force capturing the canvas context
+        in a NativeImage. This NativeImage will be used to create a BitmapImage
+        which will be later used as the background-image of an element.
+
+        * fast/images/large-image-webkit-canvas-expected.html: Added.
+        * fast/images/large-image-webkit-canvas.html: Added.
+
 2017-05-30  Matt Lewis  <jlewis3@apple.com>
 
         Changed Text Expectations of imported/blink/storage/indexeddb/blob-valid-after-deletion.html
