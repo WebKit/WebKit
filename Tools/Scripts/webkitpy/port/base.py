@@ -127,6 +127,7 @@ class Port(object):
         self._helper = None
         self._http_server = None
         self._websocket_server = None
+        self._websocket_secure_server = None
         self._web_platform_test_server = None
         self._image_differ = None
         self._server_process_constructor = server_process.ServerProcess  # overridable for testing
@@ -972,6 +973,13 @@ class Port(object):
 
     def is_http_server_running(self):
         return http_server_base.is_http_server_running()
+
+    def is_websocket_servers_running(self):
+        if self._websocket_secure_server and self._websocket_server:
+            return self._websocket_secure_server.is_running() and self._websocket_server.is_running()
+        elif self._websocket_server:
+            return self._websocket_server.is_running()
+        return False
 
     def is_wpt_server_running(self):
         return web_platform_test_server.is_wpt_server_running(self)

@@ -29,8 +29,10 @@
 
 """A class to help start/stop the PyWebSocket server used by layout tests."""
 
+import errno
 import logging
 import os
+import socket
 import sys
 import time
 
@@ -56,7 +58,7 @@ class PyWebSocket(http_server.Lighttpd):
           output_dir: the absolute path to the layout test result directory
         """
         http_server.Lighttpd.__init__(self, port_obj, output_dir,
-                                      port=PyWebSocket.DEFAULT_WS_PORT,
+                                      port=port,
                                       root=root)
         self._output_dir = output_dir
         self._pid_file = pidfile
@@ -105,6 +107,18 @@ class PyWebSocket(http_server.Lighttpd):
             self._log_prefix = _WSS_LOG_NAME
         else:
             self._log_prefix = _WS_LOG_NAME
+
+    def is_running(self):
+        s = socket.socket()
+        try:
+            s.connect(('localhost', self._port))
+        except IOError, e:
+            if e.errno not in (errno.ECONNREFUSED, errno.ECONNRESET):
+                raise
+            return False
+        finally:
+            s.close()
+        return True
 
     def ports_to_forward(self):
         return [self._port]

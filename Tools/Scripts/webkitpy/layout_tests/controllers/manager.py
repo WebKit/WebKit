@@ -85,7 +85,7 @@ class Manager(object):
         self.LAYOUT_TESTS_DIRECTORY = 'LayoutTests'
         self._results_directory = self._port.results_directory()
         self._finder = LayoutTestFinder(self._port, self._options)
-        self._runner = LayoutTestRunner(self._options, self._port, self._printer, self._results_directory, self._test_is_slow)
+        self._runner = None
 
         test_options_json_path = self._port.path_from_webkit_base(self.LAYOUT_TESTS_DIRECTORY, "tests-options.json")
         self._tests_options = json.loads(self._filesystem.read_text_file(test_options_json_path)) if self._filesystem.exists(test_options_json_path) else {}
@@ -233,6 +233,12 @@ class Manager(object):
         retry_results = None
         enabled_pixel_tests_in_retry = False
 
+        needs_http = any((self._is_http_test(test) and not self._needs_web_platform_test(test)) for test in tests_to_run)
+        needs_web_platform_test_server = any(self._needs_web_platform_test(test) for test in tests_to_run)
+        needs_websockets = any(self._is_websocket_test(test) for test in tests_to_run)
+        self._runner = LayoutTestRunner(self._options, self._port, self._printer, self._results_directory, self._test_is_slow,
+                                        needs_http=needs_http, needs_web_platform_test_server=needs_web_platform_test_server, needs_websockets=needs_websockets)
+
         if default_device_tests:
             _log.info('')
             _log.info("Running %s", pluralize(len(tests_to_run), "test"))
@@ -257,6 +263,7 @@ class Manager(object):
                 retry_results = retry_results.merge(device_retry_results) if retry_results else device_retry_results
                 enabled_pixel_tests_in_retry |= device_enabled_pixel_tests_in_retry
 
+        self._runner.stop_servers()
         end_time = time.time()
         return self._end_test_run(start_time, end_time, initial_results, retry_results, enabled_pixel_tests_in_retry)
 
@@ -318,13 +325,9 @@ class Manager(object):
         return test_run_results.RunDetails(exit_code, summarized_results, initial_results, retry_results, enabled_pixel_tests_in_retry)
 
     def _run_tests(self, tests_to_run, tests_to_skip, repeat_each, iterations, num_workers, retrying):
-        needs_http = any((self._is_http_test(test) and not self._needs_web_platform_test(test)) for test in tests_to_run)
-        needs_web_platform_test_server = any(self._needs_web_platform_test(test) for test in tests_to_run)
-        needs_websockets = any(self._is_websocket_test(test) for test in tests_to_run)
-
         test_inputs = self._get_test_inputs(tests_to_run, repeat_each, iterations)
 
-        return self._runner.run_tests(self._expectations, test_inputs, tests_to_skip, num_workers, needs_http, needs_websockets, needs_web_platform_test_server, retrying)
+        return self._runner.run_tests(self._expectations, test_inputs, tests_to_skip, num_workers, retrying)
 
     def _clean_up_run(self):
         _log.debug("Flushing stdout")

@@ -57,6 +57,8 @@ def base_url(port_obj):
 
 def is_wpt_server_running(port_obj):
     config = wpt_config_json(port_obj)
+    if not config:
+        return False
     return http_server_base.HttpServerBase._is_running_on_port(config["ports"]["http"][0])
 
 

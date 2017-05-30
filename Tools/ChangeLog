@@ -1,3 +1,35 @@
+2017-05-30  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Start servers before setting-up for testing
+        https://bugs.webkit.org/show_bug.cgi?id=172176
+        <rdar://problem/32225538>
+
+        Reviewed by Alexey Proskuryakov.
+
+        On-device testing requires that servers are started before ports set-up their
+        test environments.
+
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_runner.py:
+        (LayoutTestRunner.__init__): Start servers when initializing LayoutTestRunner.
+        Servers are unconditionally stopped on exit.
+        (LayoutTestRunner.run_tests): Move the starting of servers to the initializer. The
+        Manager now stops servers.
+        (LayoutTestRunner.start_servers): Set flag to indicate servers are running.
+        (LayoutTestRunner.stop_servers): Check flag, only shutdown servers if they are shutdown.
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager.__init__): Delay construction of the test runner until we can determine
+        if servers need to be started.
+        (Manager.run): Determine if servers need to be started and construct the test runner.
+        Shut servers down when the test run is finished.
+        (Manager._run_tests): Move the determination of servers to run into Manager.run.
+        * Scripts/webkitpy/layout_tests/servers/web_platform_test_server.py:
+        (is_wpt_server_running): Server is not running if no config is found.
+        * Scripts/webkitpy/layout_tests/servers/websocket_server.py:
+        (PyWebSocket.is_running): Check if this WebSocket server is running.
+        * Scripts/webkitpy/port/base.py:
+        (Port.__init__): Define secure WebSocket server.
+        (Port.to.is_websocket_server_running): Check if WebSocket servers are defined.
+
 2017-05-30  Daniel Bates  <dabates@apple.com>
 
         [WK2] Add runBeforeUnloadConfirmPanel WKUIDelegate SPI; support onbeforeunload confirm panel in MiniBrowser
