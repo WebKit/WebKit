@@ -1,3 +1,38 @@
+2017-05-30  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GCrypt] RSASSA-PKCS1-v1_5 support
+        https://bugs.webkit.org/show_bug.cgi?id=171220
+
+        Reviewed by Michael Catanzaro.
+
+        Add RSASSA-PKSC1-V_15 support for configurations that use libgcrypt.
+
+        The signing operation first digests data with the specified hash algorithm.
+        That's then embedded in the data s-expression. That's then passed to the
+        gcry_pk_sign() call together with the specified key, returning a sig-val
+        s-expression containing the signature. The signature data is then retrieved
+        from the relevant MPI and returned to the caller.
+
+        The verification operation first digests data with the specified hash
+        algorithm. That's then embedded in the data s-expression. A sig-val
+        s-expression is constructed, embedding the signature data. The data and
+        sig-val s-expressions are passed to the gcry_sexp_verify() call which returns
+        the resulting error code. The verification succeeds if the returned value is
+        GPG_ERR_NO_ERROR, fails if it's GPG_ERR_BAD_SIGNATURE, or errors out with an
+        OperationError otherwise.
+
+        No new tests -- the revelant tests are passing and are unskipped, apart from
+        the ones using PKCS#8 and SPKI formats.
+
+        * crypto/gcrypt/CryptoAlgorithmRSASSA_PKCS1_v1_5GCrypt.cpp:
+        (WebCore::hashCryptoDigestAlgorithm):
+        (WebCore::hashAlgorithmName):
+        (WebCore::mpiData):
+        (WebCore::gcryptSign):
+        (WebCore::gcryptVerify):
+        (WebCore::CryptoAlgorithmRSASSA_PKCS1_v1_5::platformSign):
+        (WebCore::CryptoAlgorithmRSASSA_PKCS1_v1_5::platformVerify):
+
 2017-05-29  Emilio Cobos Álvarez  <ecobos@igalia.com>
 
         Use the parent box style to adjust RenderStyle for alignment.
