@@ -35,43 +35,31 @@
 
 #define WEBKIT_DOM_CLIENT_RECT_LIST_GET_PRIVATE(obj) G_TYPE_INSTANCE_GET_PRIVATE(obj, WEBKIT_DOM_TYPE_CLIENT_RECT_LIST, WebKitDOMClientRectListPrivate)
 
-class ClientRectList : public RefCounted<ClientRectList> {
-public:
-    static Ref<ClientRectList> create(WTF::Vector<Ref<WebCore::DOMRect>>&& items)
-    {
-        return adoptRef(*new ClientRectList(WTFMove(items)));
-    }
-
-    const WTF::Vector<Ref<WebCore::DOMRect>>& items() const { return m_items; }
-
-private:
-    ClientRectList(WTF::Vector<Ref<WebCore::DOMRect>>&& items)
-        : m_items(WTFMove(items))
-    { }
-
-    WTF::Vector<Ref<WebCore::DOMRect>> m_items;
-};
-
 typedef struct _WebKitDOMClientRectListPrivate {
-    RefPtr<ClientRectList> coreObject;
+    RefPtr<WebCore::DOMRectList> coreObject;
 } WebKitDOMClientRectListPrivate;
 
 namespace WebKit {
 
-WebKitDOMClientRectList* kit(WTF::Vector<Ref<WebCore::DOMRect>>&& obj)
+WebKitDOMClientRectList* kit(WebCore::DOMRectList* obj)
 {
-    return wrapClientRectList(WTFMove(obj));
+    if (!obj)
+        return nullptr;
+
+    if (gpointer ret = DOMObjectCache::get(obj))
+        return WEBKIT_DOM_CLIENT_RECT_LIST(ret);
+
+    return wrapDOMRectList(obj);
 }
 
-static ClientRectList* core(WebKitDOMClientRectList* request)
+WebCore::DOMRectList* core(WebKitDOMClientRectList* request)
 {
-    return request ? static_cast<ClientRectList*>(WEBKIT_DOM_OBJECT(request)->coreObject) : nullptr;
+    return request ? static_cast<WebCore::DOMRectList*>(WEBKIT_DOM_OBJECT(request)->coreObject) : nullptr;
 }
 
-WebKitDOMClientRectList* wrapClientRectList(WTF::Vector<Ref<WebCore::DOMRect>>&& coreObject)
+WebKitDOMClientRectList* wrapDOMRectList(WebCore::DOMRectList* coreObject)
 {
-    auto list = ClientRectList::create(WTFMove(coreObject));
-    return WEBKIT_DOM_CLIENT_RECT_LIST(g_object_new(WEBKIT_DOM_TYPE_CLIENT_RECT_LIST, "core-object", list.ptr(), nullptr));
+    return WEBKIT_DOM_CLIENT_RECT_LIST(g_object_new(WEBKIT_DOM_TYPE_CLIENT_RECT_LIST, "core-object", coreObject, nullptr));
 }
 
 } // namespace WebKit
@@ -112,7 +100,8 @@ static void webkit_dom_client_rect_list_constructed(GObject* object)
     G_OBJECT_CLASS(webkit_dom_client_rect_list_parent_class)->constructed(object);
 
     WebKitDOMClientRectListPrivate* priv = WEBKIT_DOM_CLIENT_RECT_LIST_GET_PRIVATE(object);
-    priv->coreObject = static_cast<ClientRectList*>(WEBKIT_DOM_OBJECT(object)->coreObject);
+    priv->coreObject = static_cast<WebCore::DOMRectList*>(WEBKIT_DOM_OBJECT(object)->coreObject);
+    WebKit::DOMObjectCache::put(priv->coreObject.get(), object);
 }
 
 static void webkit_dom_client_rect_list_class_init(WebKitDOMClientRectListClass* requestClass)
@@ -145,8 +134,8 @@ WebKitDOMClientRect* webkit_dom_client_rect_list_item(WebKitDOMClientRectList* s
 {
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_CLIENT_RECT_LIST(self), nullptr);
-    auto& list = WebKit::core(self)->items();
-    RefPtr<WebCore::DOMRect> gobjectResult = index >= list.size() ? nullptr : list[index].ptr();
+    auto* list = WebKit::core(self);
+    RefPtr<WebCore::DOMRect> gobjectResult = WTF::getPtr(list->item(index));
     return WebKit::kit(gobjectResult.get());
 }
 
@@ -154,5 +143,5 @@ gulong webkit_dom_client_rect_list_get_length(WebKitDOMClientRectList* self)
 {
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_CLIENT_RECT_LIST(self), 0);
-    return WebKit::core(self)->items().size();
+    return WebKit::core(self)->length();
 }

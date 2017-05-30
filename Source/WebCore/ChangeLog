@@ -1,3 +1,55 @@
+2017-05-30  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION(r215946): Can't reference a table cell in Google spreadsheet
+        https://bugs.webkit.org/show_bug.cgi?id=172703
+        <rdar://problem/32458086>
+
+        Reviewed by Ryosuke Niwa.
+
+        We updated getClientRects() to return an array of DOMRect objects instead of
+        a ClientRectList type, to match the latest specification. As it turns out, this
+        is not Web-compatible as some content (as Google Spreadsheet) relies on the
+        return type having an item() operation.
+
+        This patch re-introduces a DOMRectList type, with an item() operation. The
+        DOMRectList name is currently not exposed to the Web as we do not know what's
+        going to get specified yet (https://github.com/w3c/csswg-drafts/issues/1479).
+
+        No new tests, updated existing tests.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/DOMRect.h:
+        * dom/DOMRectList.cpp: Copied from Source/WebCore/dom/DOMRect.cpp.
+        (WebCore::DOMRectList::DOMRectList):
+        (WebCore::DOMRectList::~DOMRectList):
+        * dom/DOMRectList.h: Copied from Source/WebCore/dom/DOMRect.cpp.
+        (WebCore::DOMRectList::create):
+        (WebCore::DOMRectList::length):
+        (WebCore::DOMRectList::item):
+        * dom/DOMRectList.idl: Renamed from Source/WebCore/dom/DOMRect.cpp.
+        * dom/Element.cpp:
+        (WebCore::Element::getClientRects):
+        * dom/Element.h:
+        * dom/Element.idl:
+        * dom/Range.cpp:
+        (WebCore::Range::getClientRects):
+        * dom/Range.h:
+        * dom/Range.idl:
+        * page/Page.cpp:
+        (WebCore::Page::nonFastScrollableRects):
+        (WebCore::Page::touchEventRectsForEvent):
+        (WebCore::Page::passiveTouchEventListenerRects):
+        * page/Page.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::inspectorHighlightRects):
+        (WebCore::Internals::touchEventRectsForEvent):
+        (WebCore::Internals::passiveTouchEventListenerRects):
+        (WebCore::Internals::nonFastScrollableRects):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2017-05-30  Ali Juma  <ajuma@chromium.org>
 
         [CredentialManagement] Incorporate IDL updates from latest spec

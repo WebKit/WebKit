@@ -44,6 +44,7 @@
 #include "Cursor.h"
 #include "DOMPath.h"
 #include "DOMRect.h"
+#include "DOMRectList.h"
 #include "DOMStringList.h"
 #include "DOMWindow.h"
 #include "DisplayList.h"
@@ -1362,7 +1363,7 @@ Ref<DOMRect> Internals::boundingBox(Element& element)
     return DOMRect::create(renderer->absoluteBoundingBoxRectIgnoringTransforms());
 }
 
-ExceptionOr<Vector<Ref<DOMRect>>> Internals::inspectorHighlightRects()
+ExceptionOr<Ref<DOMRectList>> Internals::inspectorHighlightRects()
 {
     Document* document = contextDocument();
     if (!document || !document->page())
@@ -1370,7 +1371,7 @@ ExceptionOr<Vector<Ref<DOMRect>>> Internals::inspectorHighlightRects()
 
     Highlight highlight;
     document->page()->inspectorController().getHighlight(highlight, InspectorOverlay::CoordinateSystem::View);
-    return createDOMRectVector(highlight.quads);
+    return DOMRectList::create(highlight.quads);
 }
 
 ExceptionOr<String> Internals::inspectorHighlightObject()
@@ -1806,7 +1807,7 @@ ExceptionOr<unsigned> Internals::touchEventHandlerCount()
     return document->touchEventHandlerCount();
 }
 
-ExceptionOr<Vector<Ref<DOMRect>>> Internals::touchEventRectsForEvent(const String& eventName)
+ExceptionOr<Ref<DOMRectList>> Internals::touchEventRectsForEvent(const String& eventName)
 {
     Document* document = contextDocument();
     if (!document || !document->page())
@@ -1815,7 +1816,7 @@ ExceptionOr<Vector<Ref<DOMRect>>> Internals::touchEventRectsForEvent(const Strin
     return document->page()->touchEventRectsForEvent(eventName);
 }
 
-ExceptionOr<Vector<Ref<DOMRect>>> Internals::passiveTouchEventListenerRects()
+ExceptionOr<Ref<DOMRectList>> Internals::passiveTouchEventListenerRects()
 {
     Document* document = contextDocument();
     if (!document || !document->page())
@@ -2337,7 +2338,7 @@ ExceptionOr<String> Internals::mainThreadScrollingReasons() const
     return page->synchronousScrollingReasonsAsText();
 }
 
-ExceptionOr<Vector<Ref<DOMRect>>> Internals::nonFastScrollableRects() const
+ExceptionOr<Ref<DOMRectList>> Internals::nonFastScrollableRects() const
 {
     Document* document = contextDocument();
     if (!document || !document->frame())
@@ -2345,7 +2346,7 @@ ExceptionOr<Vector<Ref<DOMRect>>> Internals::nonFastScrollableRects() const
 
     Page* page = document->page();
     if (!page)
-        return Vector<Ref<DOMRect>> { };
+        return DOMRectList::create();
 
     return page->nonFastScrollableRects();
 }

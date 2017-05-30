@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016, 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,37 +25,28 @@
 
 #pragma once
 
-#include "DOMRectReadOnly.h"
-#include "FloatRect.h"
-#include "IntRect.h"
+#include "FloatQuad.h"
+#include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
-class FloatQuad;
+class DOMRect;
 
-class DOMRect : public DOMRectReadOnly {
-    WTF_MAKE_FAST_ALLOCATED;
+class DOMRectList : public RefCounted<DOMRectList> {
 public:
-    static Ref<DOMRect> create() { return adoptRef(*new DOMRect()); }
-    static Ref<DOMRect> create(double x, double y, double width, double height) { return adoptRef(*new DOMRect(x, y, width, height)); }
-    static Ref<DOMRect> create(FloatRect rect) { return adoptRef(*new DOMRect(rect.x(), rect.y(), rect.width(), rect.height())); }
-    static Ref<DOMRect> create(IntRect rect) { return adoptRef(*new DOMRect(rect.x(), rect.y(), rect.width(), rect.height())); }
-    static Ref<DOMRect> fromRect(const DOMRectInit& init) { return create(init.x, init.y, init.width, init.height); }
+    static Ref<DOMRectList> create(const Vector<FloatQuad>& quads) { return adoptRef(*new DOMRectList(quads)); }
+    static Ref<DOMRectList> create() { return adoptRef(*new DOMRectList()); }
+    WEBCORE_EXPORT ~DOMRectList();
 
-    void setX(double x) { m_x = x; }
-    void setY(double y) { m_y = y; }
-
-    void setWidth(double width) { m_width = width; }
-    void setHeight(double height) { m_height = height; }
+    unsigned length() const { return m_items.size(); }
+    DOMRect* item(unsigned index) { return index < m_items.size() ? m_items[index].ptr() : nullptr; }
 
 private:
-    DOMRect(double x, double y, double width, double height)
-        : DOMRectReadOnly(x, y, width, height)
-    {
-    }
+    WEBCORE_EXPORT explicit DOMRectList(const Vector<FloatQuad>& quads);
+    DOMRectList() = default;
 
-    DOMRect() = default;
+    Vector<Ref<DOMRect>> m_items;
 };
 
 }

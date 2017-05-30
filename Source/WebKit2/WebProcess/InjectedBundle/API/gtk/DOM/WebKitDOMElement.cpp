@@ -1239,7 +1239,7 @@ WebKitDOMClientRectList* webkit_dom_element_get_client_rects(WebKitDOMElement* s
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_ELEMENT(self), nullptr);
     WebCore::Element* item = WebKit::core(self);
-    return WebKit::kit(item->getClientRects());
+    return WebKit::kit(item->getClientRects().ptr());
 }
 
 WebKitDOMElement* webkit_dom_element_get_offset_parent(WebKitDOMElement* self)

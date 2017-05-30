@@ -34,8 +34,9 @@
 
 namespace WebCore {
 
-class DOMRect;
 class ContainerNode;
+class DOMRect;
+class DOMRectList;
 class Document;
 class DocumentFragment;
 class FloatQuad;
@@ -141,7 +142,7 @@ public:
     // for details.
     WEBCORE_EXPORT ExceptionOr<void> expand(const String&);
 
-    Vector<Ref<DOMRect>> getClientRects() const;
+    Ref<DOMRectList> getClientRects() const;
     Ref<DOMRect> getBoundingClientRect() const;
 
 #if ENABLE(TREE_DEBUGGING)

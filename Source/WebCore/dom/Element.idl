@@ -68,7 +68,7 @@
     [MayThrowException] void insertAdjacentText(DOMString where, DOMString data); // Historical.
 
     // CSSOM-view extensions (https://drafts.csswg.org/cssom-view/#extension-to-the-element-interface).
-    sequence<DOMRect> getClientRects();
+    DOMRectList getClientRects();
     [NewObject] DOMRect getBoundingClientRect();
     void scrollIntoView(optional boolean alignWithTop = true); // FIXME: Parameter type should be (boolean or object).
     [ImplementedAs=scrollTo] void scroll(optional ScrollToOptions options);

@@ -38,6 +38,7 @@
 #include "CustomElementReactionQueue.h"
 #include "CustomElementRegistry.h"
 #include "DOMRect.h"
+#include "DOMRectList.h"
 #include "DOMTokenList.h"
 #include "DocumentAnimation.h"
 #include "DocumentSharedObjectPool.h"
@@ -1144,13 +1145,13 @@ LayoutRect Element::absoluteEventHandlerBounds(bool& includesFixedPositionElemen
     return absoluteEventBoundsOfElementAndDescendants(includesFixedPositionElements);
 }
 
-Vector<Ref<DOMRect>> Element::getClientRects()
+Ref<DOMRectList> Element::getClientRects()
 {
     document().updateLayoutIgnorePendingStylesheets();
 
     RenderBoxModelObject* renderBoxModelObject = this->renderBoxModelObject();
     if (!renderBoxModelObject)
-        return { };
+        return DOMRectList::create();
 
     // FIXME: Handle SVG elements.
     // FIXME: Handle table/inline-table with a caption.
@@ -1158,7 +1159,7 @@ Vector<Ref<DOMRect>> Element::getClientRects()
     Vector<FloatQuad> quads;
     renderBoxModelObject->absoluteQuads(quads);
     document().convertAbsoluteToClientQuads(quads, renderBoxModelObject->style());
-    return createDOMRectVector(quads);
+    return DOMRectList::create(quads);
 }
 
 Ref<DOMRect> Element::getBoundingClientRect()

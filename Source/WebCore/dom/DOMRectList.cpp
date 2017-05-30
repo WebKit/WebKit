@@ -24,19 +24,21 @@
  */
 
 #include "config.h"
-#include "DOMRect.h"
+#include "DOMRectList.h"
 
-#include "FloatQuad.h"
+#include "DOMRect.h"
 
 namespace WebCore {
 
-Vector<Ref<DOMRect>> createDOMRectVector(const Vector<FloatQuad>& quads)
+DOMRectList::DOMRectList(const Vector<FloatQuad>& quads)
 {
-    Vector<Ref<DOMRect>> result;
-    result.reserveInitialCapacity(quads.size());
+    m_items.reserveInitialCapacity(quads.size());
     for (auto& quad : quads)
-        result.uncheckedAppend(DOMRect::create(quad.boundingBox()));
-    return result;
+        m_items.uncheckedAppend(DOMRect::create(quad.boundingBox()));
 }
 
+DOMRectList::~DOMRectList()
+{
 }
+
+} // namespace WebCore

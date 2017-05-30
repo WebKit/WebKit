@@ -153,7 +153,7 @@ enum EventThrottlingBehavior {
 
     DOMRect boundingBox(Element element);
 
-    [MayThrowException] sequence<DOMRect> inspectorHighlightRects();
+    [MayThrowException] DOMRectList inspectorHighlightRects();
     [MayThrowException] DOMString inspectorHighlightObject();
 
     [MayThrowException] unsigned long markerCountForNode(Node node, DOMString markerType);
@@ -216,8 +216,8 @@ enum EventThrottlingBehavior {
     [MayThrowException] unsigned long wheelEventHandlerCount();
     [MayThrowException] unsigned long touchEventHandlerCount();
 
-    [MayThrowException] sequence<DOMRect> touchEventRectsForEvent(DOMString eventName);
-    [MayThrowException] sequence<DOMRect> passiveTouchEventListenerRects();
+    [MayThrowException] DOMRectList touchEventRectsForEvent(DOMString eventName);
+    [MayThrowException] DOMRectList passiveTouchEventListenerRects();
 
     [MayThrowException] NodeList? nodesFromRect(Document document, long x, long y,
         unsigned long topPadding, unsigned long rightPadding, unsigned long bottomPadding, unsigned long leftPadding,
@@ -274,7 +274,7 @@ enum EventThrottlingBehavior {
 
     [MayThrowException] DOMString scrollingStateTreeAsText();
     [MayThrowException] DOMString mainThreadScrollingReasons(); // FIXME: rename to synchronousScrollingReasons().
-    [MayThrowException] sequence<DOMRect> nonFastScrollableRects();
+    [MayThrowException] DOMRectList nonFastScrollableRects();
 
     [MayThrowException] DOMString repaintRectsAsText();
 

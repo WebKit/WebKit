@@ -1,3 +1,24 @@
+2017-05-30  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION(r215946): Can't reference a table cell in Google spreadsheet
+        https://bugs.webkit.org/show_bug.cgi?id=172703
+        <rdar://problem/32458086>
+
+        Reviewed by Ryosuke Niwa.
+
+        Fix GObject bindings accordingly.
+
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMClientRectList.cpp:
+        (WebKit::kit):
+        (WebKit::core):
+        (WebKit::wrapDOMRectList):
+        (webkit_dom_client_rect_list_constructed):
+        (webkit_dom_client_rect_list_item):
+        (webkit_dom_client_rect_list_get_length):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMClientRectListPrivate.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMElement.cpp:
+        (webkit_dom_element_get_client_rects):
+
 2017-05-30  Daniel Bates  <dabates@apple.com>
 
         [WK2] Add runBeforeUnloadConfirmPanel WKUIDelegate SPI; support onbeforeunload confirm panel in MiniBrowser

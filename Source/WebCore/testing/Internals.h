@@ -44,6 +44,7 @@ namespace WebCore {
 
 class AudioContext;
 class DOMRect;
+class DOMRectList;
 class DOMURL;
 class DOMWindow;
 class Document;
@@ -184,7 +185,7 @@ public:
 
     Ref<DOMRect> boundingBox(Element&);
 
-    ExceptionOr<Vector<Ref<DOMRect>>> inspectorHighlightRects();
+    ExceptionOr<Ref<DOMRectList>> inspectorHighlightRects();
     ExceptionOr<String> inspectorHighlightObject();
 
     ExceptionOr<unsigned> markerCountForNode(Node&, const String&);
@@ -244,8 +245,8 @@ public:
     ExceptionOr<unsigned> wheelEventHandlerCount();
     ExceptionOr<unsigned> touchEventHandlerCount();
 
-    ExceptionOr<Vector<Ref<DOMRect>>> touchEventRectsForEvent(const String&);
-    ExceptionOr<Vector<Ref<DOMRect>>> passiveTouchEventListenerRects();
+    ExceptionOr<Ref<DOMRectList>> touchEventRectsForEvent(const String&);
+    ExceptionOr<Ref<DOMRectList>> passiveTouchEventListenerRects();
 
     ExceptionOr<RefPtr<NodeList>> nodesFromRect(Document&, int x, int y, unsigned topPadding, unsigned rightPadding, unsigned bottomPadding, unsigned leftPadding, bool ignoreClipping, bool allowShadowContent, bool allowChildFrameContent) const;
 
@@ -299,7 +300,7 @@ public:
     ExceptionOr<String> repaintRectsAsText() const;
     ExceptionOr<String> scrollingStateTreeAsText() const;
     ExceptionOr<String> mainThreadScrollingReasons() const;
-    ExceptionOr<Vector<Ref<DOMRect>>> nonFastScrollableRects() const;
+    ExceptionOr<Ref<DOMRectList>> nonFastScrollableRects() const;
 
     ExceptionOr<void> setElementUsesDisplayListDrawing(Element&, bool usesDisplayListDrawing);
     ExceptionOr<void> setElementTracksDisplayListReplay(Element&, bool isTrackingReplay);

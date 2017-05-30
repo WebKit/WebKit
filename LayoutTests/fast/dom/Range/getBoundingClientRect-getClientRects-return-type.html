@@ -14,8 +14,8 @@ onload = function() {
     shouldBe("rect.__proto__", "DOMRect.prototype");
 
     rects = range.getClientRects();
-    shouldBe("rects.__proto__", "Array.prototype");
     shouldBeTrue("rects.length > 0");
+    shouldBe("rects[0]", "rects.item(0)");
     shouldBe("rects[0].__proto__", "DOMRect.prototype");
 
     finishJSTest();

@@ -1,3 +1,18 @@
+2017-05-30  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION(r215946): Can't reference a table cell in Google spreadsheet
+        https://bugs.webkit.org/show_bug.cgi?id=172703
+        <rdar://problem/32458086>
+
+        Reviewed by Ryosuke Niwa.
+
+        Update existing tests to reflect behavior change.
+
+        * fast/dom/Element/getClientRects-return-type-expected.txt:
+        * fast/dom/Element/getClientRects-return-type.html:
+        * fast/dom/Range/getBoundingClientRect-getClientRects-return-type-expected.txt:
+        * fast/dom/Range/getBoundingClientRect-getClientRects-return-type.html:
+
 2017-05-30  Javier Fernandez  <jfernandez@igalia.com>
 
         [css-align] Import W3C web platform tests for the CSS Box Alignment feature

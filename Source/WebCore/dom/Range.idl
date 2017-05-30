@@ -64,7 +64,7 @@
     DOMString toString(); // FIXME: Should be stringifier once we support it.
 
     // Extensions from CSSOM-view (https://drafts.csswg.org/cssom-view/#extensions-to-the-range-interface).
-    sequence<DOMRect> getClientRects();
+    DOMRectList getClientRects();
     [NewObject] DOMRect getBoundingClientRect();
 
     // Extensions from DOMParsing and Serialization specification (https://w3c.github.io/DOM-Parsing/#extensions-to-the-range-interface).
