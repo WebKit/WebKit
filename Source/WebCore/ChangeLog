@@ -1,3 +1,15 @@
+2017-05-30  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] TestWebKitAPI: SHOULD NEVER BE REACHED in WebCore::cairoSurfaceSize
+        https://bugs.webkit.org/show_bug.cgi?id=172699
+
+        Reviewed by Brent Fulgham.
+
+        Tests: WebCore.BitmapImageEmptyFrameTest in TestWebKitAPI
+
+        * platform/graphics/cairo/CairoUtilities.cpp:
+        (WebCore::cairoSurfaceSize): Added a case for win32 surface type.
+
 2017-05-30  Miguel Gomez  <magomez@igalia.com>
 
         [GTK][WPE][GSTREAMER_GL] Do not use cairo to copy video textures to an accelerated canvas
