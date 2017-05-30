@@ -1,3 +1,12 @@
+2017-05-30  Javier Fernandez  <jfernandez@igalia.com>
+
+        [css-align] Import W3C web platform tests for the CSS Box Alignment feature
+        https://bugs.webkit.org/show_bug.cgi?id=172705
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        * TestExpectations: Mark as failure a few tests due to bug #172707.
+
 2017-05-30  Ali Juma  <ajuma@chromium.org>
 
         [CredentialManagement] Incorporate IDL updates from latest spec

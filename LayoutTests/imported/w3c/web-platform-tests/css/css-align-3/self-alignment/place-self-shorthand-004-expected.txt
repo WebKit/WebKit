@@ -1,0 +1,6 @@
+
+PASS Verify overflow keywords are invalid 
+PASS Verify fallback values are invalid 
+PASS Verify numeric values are invalid 
+PASS Verify empty declaration is invalid 
+
