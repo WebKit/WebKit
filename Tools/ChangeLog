@@ -1,3 +1,19 @@
+2017-05-30  Daniel Bates  <dabates@apple.com>
+
+        Add unit test for WebKit2 C SPI runBeforeUnloadConfirmPanel()
+        https://bugs.webkit.org/show_bug.cgi?id=172671
+
+        Reviewed by Alex Christensen.
+
+        We should add a unit test to ensure we do not regress the WKPageUIClient runBeforeUnloadConfirmPanel() callback.
+        For completeness, the callback runBeforeUnloadConfirmPanel() existed since inception of WKPageUIClient (WKPageUIClientV0).
+
+        * TestWebKitAPI/Tests/WebKit2/ModalAlertsSPI.cpp:
+        (TestWebKitAPI::analyzeDialogArguments): Test the runBeforeUnloadConfirmPanel() callback last as we need
+        to trigger a navigation to test it.
+        (TestWebKitAPI::runBeforeUnloadConfirmPanel): Added.
+        (TestWebKitAPI::createNewPage): Wire up the runBeforeUnloadConfirmPanel callback.
+
 2017-05-30  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Start servers before setting-up for testing

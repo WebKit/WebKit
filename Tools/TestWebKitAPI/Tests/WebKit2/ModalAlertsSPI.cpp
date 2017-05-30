@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,9 +38,12 @@ namespace TestWebKitAPI {
 
 static bool done;
 static unsigned dialogsSeen;
-static const unsigned dialogsExpected = 3;
+static const unsigned dialogsExpected = 4;
+static const unsigned dialogsBeforeUnloadConfirmPanel = dialogsExpected - 1;
 
-static void analyzeDialogArguments(WKPageRef page, WKFrameRef frame, WKSecurityOriginRef securityOrigin)
+static std::unique_ptr<PlatformWebView> openedWebView;
+
+static void analyzeDialogArguments(WKPageRef page, WKFrameRef frame, WKSecurityOriginRef securityOrigin = nullptr)
 {
     EXPECT_EQ(page, WKFrameGetPage(frame));
 
@@ -48,15 +51,28 @@ static void analyzeDialogArguments(WKPageRef page, WKFrameRef frame, WKSecurityO
     WKRetainPtr<WKStringRef> urlString = adoptWK(WKURLCopyString(url.get()));
     EXPECT_WK_STREQ("about:blank", urlString.get());
 
-    WKRetainPtr<WKStringRef> protocol = adoptWK(WKSecurityOriginCopyProtocol(securityOrigin));
-    EXPECT_WK_STREQ("file", protocol.get());
+    if (securityOrigin) {
+        WKRetainPtr<WKStringRef> protocol = adoptWK(WKSecurityOriginCopyProtocol(securityOrigin));
+        EXPECT_WK_STREQ("file", protocol.get());
 
-    WKRetainPtr<WKStringRef> host = adoptWK(WKSecurityOriginCopyHost(securityOrigin));
-    EXPECT_WK_STREQ("", host.get());
+        WKRetainPtr<WKStringRef> host = adoptWK(WKSecurityOriginCopyHost(securityOrigin));
+        EXPECT_WK_STREQ("", host.get());
 
-    EXPECT_EQ(WKSecurityOriginGetPort(securityOrigin), 0);
+        EXPECT_EQ(WKSecurityOriginGetPort(securityOrigin), 0);
+    }
 
-    if (++dialogsSeen == dialogsExpected)
+    ++dialogsSeen;
+
+    // Test beforeunload last as we need to navigate the window to trigger it.
+    if (dialogsSeen == dialogsBeforeUnloadConfirmPanel) {
+        // User interaction is required to show the beforeunload prompt.
+        openedWebView->simulateButtonClick(kWKEventMouseButtonLeftButton, 5, 5, 0);
+        WKRetainPtr<WKURLRef> blankDataURL = adoptWK(WKURLCreateWithUTF8CString("data:text/html"));
+        WKPageLoadURL(page, blankDataURL.get());
+        return;
+    }
+
+    if (dialogsSeen == dialogsExpected)
         done = true;
 }
 
@@ -77,7 +93,11 @@ static WKStringRef runJavaScriptPrompt(WKPageRef page, WKStringRef, WKStringRef,
     return nullptr;
 }
 
-static std::unique_ptr<PlatformWebView> openedWebView;
+static bool runBeforeUnloadConfirmPanel(WKPageRef page, WKStringRef, WKFrameRef frame, const void*)
+{
+    analyzeDialogArguments(page, frame);
+    return false;
+}
 
 static WKPageRef createNewPage(WKPageRef page, WKURLRequestRef urlRequest, WKDictionaryRef features, WKEventModifiers modifiers, WKEventMouseButton mouseButton, const void *clientInfo)
 {
@@ -92,6 +112,7 @@ static WKPageRef createNewPage(WKPageRef page, WKURLRequestRef urlRequest, WKDic
     uiClient.runJavaScriptAlert = runJavaScriptAlert;
     uiClient.runJavaScriptConfirm = runJavaScriptConfirm;
     uiClient.runJavaScriptPrompt = runJavaScriptPrompt;
+    uiClient.runBeforeUnloadConfirmPanel = runBeforeUnloadConfirmPanel;
 
     WKPageSetPageUIClient(openedWebView->page(), &uiClient.base);
 
