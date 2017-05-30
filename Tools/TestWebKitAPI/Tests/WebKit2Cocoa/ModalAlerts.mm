@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #include "config.h"
 
 #import "PlatformUtilities.h"
+#import "TestWKWebView.h"
 #import <WebKit/WKPreferences.h>
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WKWebView.h>
@@ -37,15 +38,33 @@
 @class ModalAlertsUIDelegate;
 
 static bool isDone;
-static RetainPtr<WKWebView> openedWebView;
+static RetainPtr<TestWKWebView> openedWebView;
 static RetainPtr<ModalAlertsUIDelegate> sharedUIDelegate;
 
 static unsigned dialogsSeen;
+
+// FIXME: Remove this guard once we fix <https://bugs.webkit.org/show_bug.cgi?id=172614>.
+#if PLATFORM(MAC)
+static const unsigned dialogsExpected = 4;
+static const unsigned dialogsBeforeUnloadConfirmPanel = dialogsExpected - 1;
+#else
 static const unsigned dialogsExpected = 3;
+#endif
 
 static void sawDialog()
 {
-    if (++dialogsSeen == dialogsExpected)
+    ++dialogsSeen;
+
+    // FIXME: Remove this guard once we fix <https://bugs.webkit.org/show_bug.cgi?id=172614>.
+#if PLATFORM(MAC)
+    if (dialogsSeen == dialogsBeforeUnloadConfirmPanel) {
+        [openedWebView sendClicksAtPoint:NSMakePoint(5, 5) numberOfClicks:1];
+        [openedWebView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"data:text/html"]]];
+        return;
+    }
+#endif
+
+    if (dialogsSeen == dialogsExpected)
         isDone = true;
 }
 
@@ -56,7 +75,7 @@ static void sawDialog()
 
 - (WKWebView *)webView:(WKWebView *)webView createWebViewWithConfiguration:(WKWebViewConfiguration *)configuration forNavigationAction:(WKNavigationAction *)navigationAction windowFeatures:(WKWindowFeatures *)windowFeatures
 {
-    openedWebView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
+    openedWebView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
     [openedWebView setUIDelegate:sharedUIDelegate.get()];
     return openedWebView.get();
 }
@@ -79,7 +98,7 @@ static void sawDialog()
     EXPECT_STREQ([[[frame securityOrigin] host] UTF8String], "");
     EXPECT_EQ([[frame securityOrigin] port], 0);
 
-    completionHandler(true);
+    completionHandler(YES);
     sawDialog();
 }
 
@@ -93,6 +112,20 @@ static void sawDialog()
     completionHandler(@"");
     sawDialog();
 }
+
+// FIXME: Remove this guard once we fix <https://bugs.webkit.org/show_bug.cgi?id=172614>.
+#if PLATFORM(MAC)
+- (void)_webView:(WKWebView *)webView runBeforeUnloadConfirmPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(BOOL result))completionHandler
+{
+    EXPECT_STREQ([[[[frame request] URL] absoluteString] UTF8String], "about:blank");
+    EXPECT_STREQ([[[frame securityOrigin] protocol] UTF8String], "file");
+    EXPECT_STREQ([[[frame securityOrigin] host] UTF8String], "");
+    EXPECT_EQ([[frame securityOrigin] port], 0);
+
+    completionHandler(NO);
+    sawDialog();
+}
+#endif
 
 @end
 

@@ -86,7 +86,7 @@ private:
 
     bool canRunBeforeUnloadConfirmPanel() const override { return true; }
 
-    void runBeforeUnloadConfirmPanel(WebPageProxy*, const String& message, WebFrameProxy*, Function<void (bool)>&& completionHandler) override
+    void runBeforeUnloadConfirmPanel(WebPageProxy*, const String& message, WebFrameProxy*, const WebCore::SecurityOriginData&, Function<void (bool)>&& completionHandler) override
     {
         completionHandler(webkitWebViewRunJavaScriptBeforeUnloadConfirm(m_webView, message.utf8()));
     }

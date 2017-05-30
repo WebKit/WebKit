@@ -1,3 +1,54 @@
+2017-05-30  Daniel Bates  <dabates@apple.com>
+
+        [WK2] Add runBeforeUnloadConfirmPanel WKUIDelegate SPI; support onbeforeunload confirm panel in MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=172603
+        <rdar://problem/32471306>
+
+        Reviewed by Brady Eidson.
+
+        A page loaded in MiniBrowser using WebKit2 cannot show a beforeunload confirm panel (by registering
+        an onbeforeunload event handler) when it is unloaded. The same page loaded in MiniBrowser using
+        WebKit1 can show such a confirm panel. We need to add WKUIDelegate SPI so that an embedding client,
+        such as MiniBrowser, can register to receive a callback to show a beforeunload confirm panel.
+
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::runBeforeUnloadConfirmPanel): Modified to take a SecurityOriginData object. This
+        makes the API consistent with the existing JavaScript dialog callbacks.
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageUIClient):
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h: Add SPI -_webView:runBeforeUnloadConfirmPanelWithMessage:initiatedByFrame:completionHandler:.
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView setUIDelegate:]): Set the delegate of WebKit::UIDelegate to the specified WKUIDelegate
+        before we set the UI client on the page so as to ensure that API::UIClient callbacks that depend
+        -respondsToSelector: checks (e.g. API::UIClient::canRunBeforeUnloadConfirmPanel()) return the correct
+        result. To elaborate further, a API::UIClient client must override both canRunBeforeUnloadConfirmPanel()
+        and runBeforeUnloadConfirmPanel() to support running a beforeunload confirm dialog. When mapping
+        the Cocoa SPI, WKUIDelegatePrivate, to API::UIClient we implement API::UIClient::canRunBeforeUnloadConfirmPanel()
+        in terms of whether the Cocoa delegate responds at runtime to the selector -_webView:runBeforeUnloadConfirmPanelWithMessage:initiatedByFrame:completionHandler:.
+        We need to do such runtime checks before we pass the API::UIClient to the page. Otherwise, querying
+        API::UIClient::canRunBeforeUnloadConfirmPanel() will return the wrong result.
+        * UIProcess/API/gtk/WebKitUIClient.cpp: Modified runBeforeUnloadConfirmPanel() to take a SecurityOriginData object.
+        * UIProcess/Cocoa/UIDelegate.h: Add declarations for API::UIClient overrides: canRunBeforeUnloadConfirmPanel()
+        and runBeforeUnloadConfirmPanel(). Add a bit to m_delegateMethods as to whether the Cocoa delegate
+        responds to selector -_webView:runBeforeUnloadConfirmPanelWithMessage:initiatedByFrame:completionHandler:.
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::setDelegate): Set the above m_delegateMethods bit if the Cocoa delegate responds
+        to selector -_webView:runBeforeUnloadConfirmPanelWithMessage:initiatedByFrame:completionHandler:.
+        (WebKit::UIDelegate::UIClient::canRunBeforeUnloadConfirmPanel): Return whether the above m_delegateMethods
+        bit was set.
+        (WebKit::UIDelegate::UIClient::runBeforeUnloadConfirmPanel): Turn around and call -_webView:runBeforeUnloadConfirmPanelWithMessage:initiatedByFrame:completionHandler: (if applicable).
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::runBeforeUnloadConfirmPanel): Modified to take a SecurityOriginData object
+        and pass it to API::UIClient::runBeforeUnloadConfirmPanel().
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in: Add SecurityOriginData argument to message RunBeforeUnloadConfirmPanel.
+        Also pass the message for the panel as the last argument so as to make the order of arguments to message
+        RunBeforeUnloadConfirmPanel more closely match the order of arguments passed to other JavaScript dialog
+        messages (e.g. RunJavaScriptAlert) for consistency.
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::runBeforeUnloadConfirmPanel): Include the SecurityOriginData object for the
+        frame in message RunBeforeUnloadConfirmPanel.
+
 2017-05-30  Alex Christensen  <achristensen@webkit.org>
 
         Update libwebrtc configuration

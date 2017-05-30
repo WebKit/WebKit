@@ -1,3 +1,33 @@
+2017-05-30  Daniel Bates  <dabates@apple.com>
+
+        [WK2] Add runBeforeUnloadConfirmPanel WKUIDelegate SPI; support onbeforeunload confirm panel in MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=172603
+        <rdar://problem/32471306>
+
+        Reviewed by Brady Eidson.
+
+        Implement the -_webView:runBeforeUnloadConfirmPanelWithMessage:initiatedByFrame:completionHandler: delegate
+        method in MiniBrowser to show a confirm panel as to whether to allow the unloading of the page when
+        unloading is initiated for a page that registered a onbeforeunload handler.
+
+        Modify TestWebKitAPI/Tests/WebKit2Cocoa/ModalAlerts.mm to test that the -_webView:runBeforeUnloadConfirmPanelWithMessage:initiatedByFrame:completionHandler:
+        is called. Also fix style nit; pass YES instead of true to avoid implicit conversion from bool to BOOL
+        when invoking the completion handler in -_webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:.
+
+        Until we fix <https://bugs.webkit.org/show_bug.cgi?id=172614> the unit test in TestWebKitAPI/Tests/WebKit2Cocoa/ModalAlerts.mm
+        for -_webView:runBeforeUnloadConfirmPanelWithMessage:initiatedByFrame:completionHandler: is only run on Mac
+        as we do not have the infrastructure to simulate a click/tap on iOS and a click/tap on the page that
+        registered an onbeforeunload handler is required to show a confirm panel when the page will be unloaded.
+
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController _webView:runBeforeUnloadConfirmPanelWithMessage:initiatedByFrame:completionHandler:]):
+        * TestWebKitAPI/Tests/WebKit2/modal-alerts-in-new-about-blank-window.html:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/ModalAlerts.mm:
+        (sawDialog):
+        (-[ModalAlertsUIDelegate webView:createWebViewWithConfiguration:forNavigationAction:windowFeatures:]):
+        (-[ModalAlertsUIDelegate webView:runJavaScriptConfirmPanelWithMessage:initiatedByFrame:completionHandler:]):
+        (-[ModalAlertsUIDelegate _webView:runBeforeUnloadConfirmPanelWithMessage:initiatedByFrame:completionHandler:]):
+
 2017-05-30  Alex Christensen  <achristensen@webkit.org>
 
         Update libwebrtc configuration

@@ -707,11 +707,11 @@ static uint32_t convertSystemLayoutDirection(NSUserInterfaceLayoutDirection dire
 
 - (void)setUIDelegate:(id<WKUIDelegate>)UIDelegate
 {
+    _uiDelegate->setDelegate(UIDelegate);
 #if ENABLE(CONTEXT_MENUS)
     _page->setContextMenuClient(_uiDelegate->createContextMenuClient());
 #endif
     _page->setUIClient(_uiDelegate->createUIClient());
-    _uiDelegate->setDelegate(UIDelegate);
 }
 
 - (id <_WKIconLoadingDelegate>)_iconLoadingDelegate
