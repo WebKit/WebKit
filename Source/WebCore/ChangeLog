@@ -1,5 +1,36 @@
 2017-05-30  Zan Dobersek  <zdobersek@igalia.com>
 
+        [GCrypt] RSAES-PKCS1-v1_5 support
+        https://bugs.webkit.org/show_bug.cgi?id=171219
+
+        Reviewed by Michael Catanzaro.
+
+        Add RSAES-PKCS1-v1_5 support for configurations that use libgcrypt.
+
+        The encryption operation embeds the plain-text data into a data s-expression,
+        specifying PKCS#1 as the padding method of choice. That's passed to the
+        gcry_pk_encrypt() call together with the specified key. The returned enc-val
+        expression contains the 'a' MPI from which the data is extracted and returned.
+
+        The decryption operation goes in reverse -- the cipher-text data is embedded
+        into an enc-val s-expression that again also specifies PKCS#1 as the padding
+        method. The s-expression is passed to gcry_pk_decrypt() together with the
+        specified key. The returned data s-expression contains the decrypted text
+        inside the 'value' parameter, so the data is extracted from that and returned
+        to the caller.
+
+        No new tests -- the revelant tests are passing and are unskipped, apart from
+        the ones using PKCS#8 and SPKI formats.
+
+        * crypto/gcrypt/CryptoAlgorithmRSAES_PKCS1_v1_5GCrypt.cpp:
+        (WebCore::mpiData):
+        (WebCore::gcryptEncrypt):
+        (WebCore::gcryptDecrypt):
+        (WebCore::CryptoAlgorithmRSAES_PKCS1_v1_5::platformEncrypt):
+        (WebCore::CryptoAlgorithmRSAES_PKCS1_v1_5::platformDecrypt):
+
+2017-05-30  Zan Dobersek  <zdobersek@igalia.com>
+
         [GCrypt] RSASSA-PKCS1-v1_5 support
         https://bugs.webkit.org/show_bug.cgi?id=171220
 
