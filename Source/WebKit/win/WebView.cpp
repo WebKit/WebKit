@@ -2890,6 +2890,8 @@ HRESULT WebView::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject)
         *ppvObject = static_cast<IWebViewPrivate3*>(this);
     else if (IsEqualGUID(riid, IID_IWebViewPrivate4))
         *ppvObject = static_cast<IWebViewPrivate4*>(this);
+    else if (IsEqualGUID(riid, IID_IWebViewPrivate5))
+        *ppvObject = static_cast<IWebViewPrivate5*>(this);
     else if (IsEqualGUID(riid, IID_IWebIBActions))
         *ppvObject = static_cast<IWebIBActions*>(this);
     else if (IsEqualGUID(riid, IID_IWebViewCSS))
@@ -7831,5 +7833,12 @@ HRESULT WebView::setVisibilityState(WebPageVisibilityState visibilityState)
     if (visibilityState == WebPageVisibilityStatePrerender)
         m_page->setIsPrerender();
 
+    return S_OK;
+}
+
+HRESULT WebView::exitFullscreenIfNeeded()
+{
+    if (fullScreenController() && fullScreenController()->isFullScreen())
+        fullScreenController()->close();
     return S_OK;
 }

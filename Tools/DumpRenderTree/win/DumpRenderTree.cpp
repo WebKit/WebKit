@@ -1013,6 +1013,9 @@ static void resetWebViewToConsistentStateBeforeTesting()
     COMPtr<IWebFramePrivate> framePrivate;
     if (SUCCEEDED(frame->QueryInterface(&framePrivate)))
         framePrivate->clearOpener();
+
+    COMPtr<IWebViewPrivate5> webViewPrivate5(Query, webView);
+    webViewPrivate5->exitFullscreenIfNeeded();
 }
 
 static void sizeWebViewForCurrentTest()

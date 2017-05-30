@@ -348,3 +348,9 @@ interface IWebViewPrivate4 : IWebViewPrivate3
 {
     HRESULT setVisibilityState([in] WebPageVisibilityState);
 }
+
+[uuid(05375C57-A03B-463A-A5D9-0A9F6A61C779)]
+interface IWebViewPrivate5 : IWebViewPrivate4
+{
+    HRESULT exitFullscreenIfNeeded();
+}

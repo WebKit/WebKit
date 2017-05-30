@@ -1,3 +1,12 @@
+2017-05-30  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] fast/shadow-dom/fullscreen-in-slot-fullscreenElement.html is flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=172709
+
+        Reviewed by Brent Fulgham.
+
+        * platform/win/TestExpectations:
+
 2017-05-30  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK] Test cases for typehead in form menu lists should start from known state

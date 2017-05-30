@@ -3994,7 +3994,6 @@ http/tests/websocket/tests/hybi/inspector/client-close.html [ Skip ]
 http/tests/websocket/tests/hybi/inspector/send-and-receive.html [ Skip ]
 http/tests/websocket/tests/hybi/inspector/server-close.html [ Skip ]
 # Unexpected flakiness tracked in webkit.org/b/172437.
-fast/shadow-dom/fullscreen-in-slot-fullscreenElement.html [ Failure Pass ]
 imported/w3c/web-platform-tests/fetch/api/cors/cors-cookies.any.worker.html [ Failure Pass ]
 imported/w3c/web-platform-tests/fetch/api/credentials/cookies.any.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-area-element/area-shape.html [ Failure Pass ]

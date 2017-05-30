@@ -1,3 +1,15 @@
+2017-05-30  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] fast/shadow-dom/fullscreen-in-slot-fullscreenElement.html is flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=172709
+
+        Reviewed by Brent Fulgham.
+
+        Exit fullscreen mode after a fullscreen test.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (resetWebViewToConsistentStateBeforeTesting):
+
 2017-05-30  Antti Koivisto  <antti@apple.com>
 
         ASSERTION FAILED: !needsLayout() in com.apple.WebCore: WebCore::FrameView::paintContents in fast/events/tabindex-focus-blur-all.html on WK1
