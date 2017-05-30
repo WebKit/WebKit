@@ -173,6 +173,8 @@ function testSyntaxError(script, message) {
     testSyntaxError(`var O = { async *asyncGeneratorMethod() {} };`);
     testSyntaxError(`var O = { async asyncGeneratorMethod*() {} };`);
 
+    testSyntaxError(`var O = { async function() {} };`);
+
     testSyntaxError(`var asyncFn = async function(x = await 1) { return x; }`);
     testSyntaxError(`async function f(x = await 1) { return x; }`);
     testSyntaxError(`var f = async(x = await 1) => x;`);
@@ -251,6 +253,8 @@ function testSyntaxError(script, message) {
     testSyntaxError(`"use strict"; var O = { *async asyncGeneratorMethod() {} };`);
     testSyntaxError(`"use strict"; var O = { async *asyncGeneratorMethod() {} };`);
     testSyntaxError(`"use strict"; var O = { async asyncGeneratorMethod*() {} };`);
+
+    testSyntaxError(`"use strict"; var O = { async function() {} };`);
 
     testSyntaxError(`"use strict"; var asyncFn = async function(x = await 1) { return x; }`);
     testSyntaxError(`"use strict"; async function f(x = await 1) { return x; }`);

@@ -3808,6 +3808,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parsePropertyMeth
     unsigned methodStart = tokenStart();
     ParserFunctionInfo<TreeBuilder> methodInfo;
     methodInfo.name = methodName;
+    semanticFailIfTrue(isAsyncMethod && *methodName == m_vm->propertyNames->functionKeyword, "Cannot declare an async method named 'function'");
     SourceParseMode parseMode = isGenerator ? SourceParseMode::GeneratorWrapperMethodMode : isAsyncMethod ? SourceParseMode::AsyncMethodMode : SourceParseMode::MethodMode;
     failIfFalse((parseFunctionInfo(context, FunctionNameRequirements::Unnamed, parseMode, false, ConstructorKind::None, SuperBinding::Needed, methodStart, methodInfo, FunctionDefinitionType::Method)), "Cannot parse this method");
     return context.createMethodDefinition(methodLocation, methodInfo);
