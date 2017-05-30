@@ -1,3 +1,16 @@
+2017-05-30  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: images dragged from Inspector to Desktop are named "Unknown.png"
+        https://bugs.webkit.org/show_bug.cgi?id=141515
+        <rdar://problem/9251308>
+
+        Reviewed by Wenson Hsieh.
+
+        * UserInterface/Views/ImageResourceContentView.js:
+        (WebInspector.ImageResourceContentView.prototype.contentAvailable):
+        Set a non-standard "filename" attribute to provide a suggested filename
+        for this <img> containing data: or blob: content.
+
 2017-05-30  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [GTK] Web Inspector: Add DOM breakpoint image for GTK+

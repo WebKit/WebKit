@@ -1,3 +1,23 @@
+2017-05-30  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: images dragged from Inspector to Desktop are named "Unknown.png"
+        https://bugs.webkit.org/show_bug.cgi?id=141515
+        <rdar://problem/9251308>
+
+        Reviewed by Wenson Hsieh.
+
+        In Web Inspector these images are <img src="..."> with data: or blob:
+        content. In these cases we have the image data but the URL does not
+        provide a useful name. In fact the name "Unknown.png" comes from
+        -[NSURLResponse suggestedFilename] for this URL / content.
+
+        To start, improve this situation for drags in Web Inspector pages.
+        If the image element being dragged has a filename attribute use that
+        as the suggested filename for the drag.
+
+        * WebProcess/WebCoreSupport/mac/WebDragClientMac.mm:
+        (WebKit::WebDragClient::declareAndWriteDragImage):
+
 2017-05-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         Only include DataDetectorsUI headers in iOS

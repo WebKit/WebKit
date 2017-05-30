@@ -52,6 +52,7 @@ WebInspector.ImageResourceContentView = class ImageResourceContentView extends W
         this._imageElement = document.createElement("img");
         this._imageElement.addEventListener("load", function() { URL.revokeObjectURL(objectURL); });
         this._imageElement.src = objectURL;
+        this._imageElement.setAttribute("filename", this.resource.urlComponents.lastPathComponent || "");
 
         this.element.appendChild(this._imageElement);
     }

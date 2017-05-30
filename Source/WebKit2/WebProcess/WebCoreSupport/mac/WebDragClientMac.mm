@@ -173,7 +173,15 @@ void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Eleme
         memcpy(archiveSharedMemoryBuffer->data(), archiveBuffer->data(), archiveSize);
         archiveSharedMemoryBuffer->createHandle(archiveHandle, SharedMemory::Protection::ReadOnly);
     }
-    m_page->send(Messages::WebPageProxy::SetPromisedDataForImage(pasteboardName, imageHandle, imageSize, String([response suggestedFilename]), extension, title, String([[response URL] absoluteString]), userVisibleString((NSURL *)url), archiveHandle, archiveSize));
+
+    String filename = String([response suggestedFilename]);
+    if (m_page->isInspectorPage()) {
+        String downloadFilename = ResourceResponseBase::sanitizeSuggestedFilename(element.attributeWithoutSynchronization(HTMLNames::filenameAttr));
+        if (!downloadFilename.isEmpty())
+            filename = downloadFilename;
+    }
+
+    m_page->send(Messages::WebPageProxy::SetPromisedDataForImage(pasteboardName, imageHandle, imageSize, filename, extension, title, String([[response URL] absoluteString]), userVisibleString((NSURL *)url), archiveHandle, archiveSize));
 }
 
 } // namespace WebKit

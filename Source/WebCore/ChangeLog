@@ -1,3 +1,13 @@
+2017-05-30  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: images dragged from Inspector to Desktop are named "Unknown.png"
+        https://bugs.webkit.org/show_bug.cgi?id=141515
+        <rdar://problem/9251308>
+
+        Reviewed by Wenson Hsieh.
+
+        * html/HTMLAttributeNames.in:
+
 2017-05-30  Youenn Fablet  <youenn@apple.com>
 
         Add support for Certificate and IceCandidatePair stats
