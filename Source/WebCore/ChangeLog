@@ -1,3 +1,12 @@
+2017-05-30  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, add some comments to HKDF/PBKDF2 Mac implementations
+
+        * crypto/mac/CryptoAlgorithmHKDFMac.cpp:
+        (WebCore::CryptoAlgorithmHKDF::platformDeriveBits):
+        * crypto/mac/CryptoAlgorithmPBKDF2Mac.cpp:
+        (WebCore::CryptoAlgorithmPBKDF2::platformDeriveBits):
+
 2017-05-30  Jeremy Jones  <jeremyj@apple.com>
 
         m_resourceSelectionTaskQueue tasks should be cleared when player is destroyed to prevent invalid state.

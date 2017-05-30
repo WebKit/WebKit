@@ -63,6 +63,7 @@ void CryptoAlgorithmPBKDF2::platformDeriveBits(std::unique_ptr<CryptoAlgorithmPa
         auto& rawKey = downcast<CryptoKeyRaw>(baseKey.get());
 
         Vector<uint8_t> result(length / 8);
+        // <rdar://problem/32439955> Currently, CCKeyDerivationPBKDF bails out when an empty password/salt is provided.
         if (CCKeyDerivationPBKDF(kCCPBKDF2, reinterpret_cast<const char *>(rawKey.key().data()), rawKey.key().size(), pbkdf2Parameters.saltVector().data(), pbkdf2Parameters.saltVector().size(), commonCryptoHMACAlgorithm(pbkdf2Parameters.hashIdentifier), pbkdf2Parameters.iterations, result.data(), length / 8)) {
             // We should only dereference callbacks after being back to the Document/Worker threads.
             context.postTask([exceptionCallback = WTFMove(exceptionCallback), callback = WTFMove(callback)](ScriptExecutionContext& context) {
