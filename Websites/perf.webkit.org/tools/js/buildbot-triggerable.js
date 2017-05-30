@@ -74,7 +74,9 @@ class BuildbotTriggerable {
                 const nextRequest = this._nextRequestInGroup(group, updates);
                 if (!validRequests.has(nextRequest))
                     continue;
-                const promise = this._scheduleRequestIfSlaveIsAvailable(nextRequest, group.requests, group.syncer, group.slaveName);
+                const promise = this._scheduleRequestIfSlaveIsAvailable(nextRequest, group.requests,
+                    nextRequest.isBuild() ? group.buildSyncer : group.testSyncer,
+                    nextRequest.isBuild() ? group.buildSlaveName : group.testSlaveName);
                 if (promise)
                     promistList.push(promise);
             }
@@ -141,11 +143,18 @@ class BuildbotTriggerable {
                     associatedRequests.add(request);
 
                     const info = buildReqeustsByGroup.get(request.testGroupId());
-                    assert(!info.syncer || info.syncer == syncer);
-                    info.syncer = syncer;
-                    if (entry.slaveName()) {
-                        assert(!info.slaveName || info.slaveName == entry.slaveName());
-                        info.slaveName = entry.slaveName();
+                    if (request.isBuild()) {
+                        assert(!info.buildSyncer || info.buildSyncer == buildSyncer);
+                        if (entry.slaveName()) {
+                            assert(!info.buildSlaveName || info.buildSlaveName == entry.slaveName());
+                            info.buildSlaveName = entry.slaveName();
+                        }
+                    } else {
+                        assert(!info.testSyncer || info.testSyncer == testSyncer);
+                        if (entry.slaveName()) {
+                            assert(!info.testSlaveName || info.testSlaveName == entry.slaveName());
+                            info.testSlaveName = entry.slaveName();
+                        }
                     }
 
                     const newStatus = entry.buildRequestStatusIfUpdateIsNeeded(request);

@@ -464,6 +464,23 @@ describe('sync-buildbot', function () {
             assert.deepEqual(requests[6].data, {'test': 'some-test', 'wk': '191622', 'build-request-id': '3', 'forcescheduler': 'force-ab-tests',
                 'roots': JSON.stringify([{url: firstRoot.url()}])});
             return MockRemoteAPI.waitForRequest();
+        }).then(() => {
+            assert.equal(requests.length, 10);
+            assertAndResolveRequest(requests[7], 'GET', '/json/builders/some%20tester/pendingBuilds', [
+                MockData.pendingBuild({builder: 'some tester', buildRequestId: 3}),
+            ]);
+            assertAndResolveRequest(requests[8], 'GET', '/json/builders/some%20builder/pendingBuilds', []);
+            assertAndResolveRequest(requests[9], 'GET', '/json/builders/other%20builder/pendingBuilds', []);
+            return MockRemoteAPI.waitForRequest();
+        }).then(() => {
+            assert.equal(requests.length, 13);
+            assertAndResolveRequest(requests[10], 'GET', '/json/builders/some%20tester/builds/?select=-1&select=-2', {});
+            assertAndResolveRequest(requests[11], 'GET', '/json/builders/some%20builder/builds/?select=-1&select=-2', {
+                [-1]: MockData.finishedBuild({builder: 'some builder', buildRequestId: 1}),
+                [-2]: MockData.finishedBuild({builder: 'some builder', buildRequestId: 2}),
+            });
+            assertAndResolveRequest(requests[12], 'GET', '/json/builders/other%20builder/builds/?select=-1&select=-2', {});
+            return syncPromise;
         });
     });
 

@@ -1,3 +1,23 @@
+2017-05-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        sync-builedbot.js fails to schedule the second request to test with a patch
+        https://bugs.webkit.org/show_bug.cgi?id=172701
+
+        Reviewed by Antti Koivisto.
+
+        The bug was caused by an assertion failure in BuildbotTriggerable's _pullBuildbotOnAllSyncers failing to
+        take into account that for a test group with a patch could be associated with two syncers, one to build
+        a patch and another to run tests. Fixed the bug by differentiating the two types of syncers by buildSyncer
+        and testSyncer per test group.
+
+        * server-tests/tools-sync-buildbot-integration-tests.js: Extended a test case so that it would hit the
+        assertion without the fix.
+
+        * tools/js/buildbot-triggerable.js:
+        (BuildbotTriggerable.prototype.syncOnce): Use the right kind of the syncer to schedule a build or a test.
+        (BuildbotTriggerable.prototype._pullBuildbotOnAllSyncers): Associate a given syncer based on the kind of
+        the build request it processed, and assert accordingly.
+
 2017-05-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         Fix UI glitches with a custom analysis test group with a patch
