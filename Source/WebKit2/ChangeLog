@@ -1,3 +1,13 @@
+2017-05-30  Zan Dobersek  <zdobersek@igalia.com>
+
+        Invalidate the LayerTreeHost when destroying the DrawingAreaWPE object.
+
+        Rubber-stamped by Carlos Garcia Campos.
+
+        * WebProcess/WebPage/wpe/DrawingAreaWPE.cpp:
+        (WebKit::DrawingAreaWPE::~DrawingAreaWPE): Invalidate the LayerTreeHost
+        object, properly deconstructing the graphics pipeline.
+
 2017-05-29  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK] Remove unneeded forward declaration
