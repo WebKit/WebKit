@@ -1,3 +1,11 @@
+2017-05-30  Sam Weinig  <sam@webkit.org>
+
+        Update test result after r217585.
+
+        * bindings/scripts/test/JS/JSTestNamedDeleterWithIndexedGetter.cpp:
+        (WebCore::JSTestNamedDeleterWithIndexedGetter::deleteProperty):
+        (WebCore::JSTestNamedDeleterWithIndexedGetter::deletePropertyByIndex):
+
 2017-05-30  Dan Bernstein  <mitz@apple.com>
 
         Fixed the build after r217588.

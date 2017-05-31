@@ -186,7 +186,7 @@ bool JSTestNamedDeleterWithIndexedGetter::deleteProperty(JSCell* cell, ExecState
     auto& thisObject = *jsCast<JSTestNamedDeleterWithIndexedGetter*>(cell);
     auto& impl = thisObject.wrapped();
     if (auto index = parseIndex(propertyName))
-        return !impl.isSupportedPropertyIndex(index.value()) ? true : false;
+        return !impl.isSupportedPropertyIndex(index.value());
     if (isVisibleNamedProperty<false>(*state, thisObject, propertyName)) {
         return impl.deleteNamedProperty(propertyNameToString(propertyName));
     }
@@ -197,7 +197,7 @@ bool JSTestNamedDeleterWithIndexedGetter::deletePropertyByIndex(JSCell* cell, Ex
 {
     auto& thisObject = *jsCast<JSTestNamedDeleterWithIndexedGetter*>(cell);
     auto& impl = thisObject.wrapped();
-    return !impl.isSupportedPropertyIndex(index) ? true : false;
+    return !impl.isSupportedPropertyIndex(index);
 }
 
 EncodedJSValue jsTestNamedDeleterWithIndexedGetterConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
