@@ -114,7 +114,7 @@ public:
     bool layoutPending() const;
     bool isInLayout() const { return m_layoutPhase != OutsideLayout; }
     bool isInRenderTreeLayout() const { return m_layoutPhase == InRenderTreeLayout; }
-    WEBCORE_EXPORT bool inPaintableState() { return m_layoutPhase != InRenderTreeLayout && m_layoutPhase != InViewSizeAdjust && m_layoutPhase != InPostLayout; }
+    bool inPaintableState() { return m_layoutPhase != InRenderTreeLayout && m_layoutPhase != InViewSizeAdjust && m_layoutPhase != InPostLayout; }
 
     RenderElement* layoutRoot() const { return m_layoutRoot; }
     void clearLayoutRoot() { m_layoutRoot = nullptr; }
