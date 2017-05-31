@@ -1,5 +1,15 @@
 2017-05-31  Claudio Saavedra  <csaavedra@igalia.com>
 
+        [WPE] CSS tests expectations cleanup
+
+        Unreviewed gardening.
+
+        * platform/wpe/TestExpectations: Remove a bunch of css 2.1 and 3
+        tests that are actually passing and a recently removed css tests
+        directory.
+
+2017-05-31  Claudio Saavedra  <csaavedra@igalia.com>
+
         [GTK][WPE] Mark js/cached-window-properties test as slow
 
         Unreviewed gardening.
