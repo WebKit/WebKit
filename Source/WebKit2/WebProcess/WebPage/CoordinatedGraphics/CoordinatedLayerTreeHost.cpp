@@ -129,10 +129,13 @@ void CoordinatedLayerTreeHost::forceRepaint()
 
 bool CoordinatedLayerTreeHost::forceRepaintAsync(uint64_t callbackID)
 {
-    // We expect the UI process to not require a new repaint until the previous one has finished.
-    ASSERT(!m_forceRepaintAsyncCallbackID);
-    m_forceRepaintAsyncCallbackID = callbackID;
     scheduleLayerFlush();
+
+    // We want a clean repaint, meaning that if we're currently waiting for the renderer
+    // to finish an update, we'll have to schedule another flush when it's done.
+    ASSERT(!m_forceRepaintAsync.callbackID);
+    m_forceRepaintAsync.callbackID = callbackID;
+    m_forceRepaintAsync.needsFreshFlush = m_scheduledWhileWaitingForRenderer;
     return true;
 }
 
@@ -153,6 +156,22 @@ void CoordinatedLayerTreeHost::renderNextFrame()
     m_isWaitingForRenderer = false;
     bool scheduledWhileWaitingForRenderer = std::exchange(m_scheduledWhileWaitingForRenderer, false);
     m_coordinator.renderNextFrame();
+
+    if (m_forceRepaintAsync.callbackID) {
+        // If the asynchronous force-repaint needs a separate fresh flush, it was due to
+        // the force-repaint request being registered while CoordinatedLayerTreeHost was
+        // waiting for the renderer to finish an update.
+        ASSERT(!m_forceRepaintAsync.needsFreshFlush || scheduledWhileWaitingForRenderer);
+
+        // Execute the callback if another layer flush and the subsequent state update
+        // aren't needed. If they are, the callback will be executed when this function
+        // is called after the next update.
+        if (!m_forceRepaintAsync.needsFreshFlush) {
+            m_webPage.send(Messages::WebPageProxy::VoidCallback(m_forceRepaintAsync.callbackID));
+            m_forceRepaintAsync = { };
+        } else
+            m_forceRepaintAsync.needsFreshFlush = false;
+    }
 
     if (scheduledWhileWaitingForRenderer || m_layerFlushTimer.isActive()) {
         m_layerFlushTimer.stop();
@@ -177,12 +196,12 @@ void CoordinatedLayerTreeHost::layerFlushTimerFired()
     if (!m_isValid || !m_coordinator.rootCompositingLayer())
         return;
 
-    bool didSync = m_coordinator.flushPendingLayerChanges();
+    // If a force-repaint callback was registered, we should force a 'frame sync' that
+    // will guarantee us a call to renderNextFrame() once the update is complete.
+    if (m_forceRepaintAsync.callbackID)
+        m_coordinator.forceFrameSync();
 
-    if (m_forceRepaintAsyncCallbackID) {
-        m_webPage.send(Messages::WebPageProxy::VoidCallback(m_forceRepaintAsyncCallbackID));
-        m_forceRepaintAsyncCallbackID = 0;
-    }
+    bool didSync = m_coordinator.flushPendingLayerChanges();
 
     if (m_notifyAfterScheduledLayerFlush && didSync) {
         m_webPage.drawingArea()->layerHostDidFlushLayers();

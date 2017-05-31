@@ -84,7 +84,10 @@ private:
     CompositingCoordinator m_coordinator;
     bool m_isWaitingForRenderer { true };
     bool m_scheduledWhileWaitingForRenderer { false };
-    uint64_t m_forceRepaintAsyncCallbackID { 0 };
+    struct {
+        uint64_t callbackID { 0 };
+        bool needsFreshFlush { false };
+    } m_forceRepaintAsync;
     RunLoop::Timer<CoordinatedLayerTreeHost> m_layerFlushTimer;
 };
 

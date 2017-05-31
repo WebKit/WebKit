@@ -1,3 +1,39 @@
+2017-05-31  Zan Dobersek  <zdobersek@igalia.com>
+
+        CoordinatedLayerTreeHost: properly support async force repaints
+        https://bugs.webkit.org/show_bug.cgi?id=172444
+
+        Reviewed by Carlos Garcia Campos.
+
+        Before these changes the force-repaint callbacks were executed once
+        the next layer flush was performed. This is not appropriate since
+        with the threaded compositor this was done even before the flushed
+        state was handled on the rendering thread.
+
+        Instead, the callback should be invoked once the first following
+        flushed state is rendered through the compositor and the update
+        finish is reported back to CoordinatedLayerTreeHost through invoking
+        the renderNextFrame() method.
+
+        If the force-repaint callback is registered while a state update is
+        already being processed by the renderer (i.e. the threaded compositor),
+        the callback is invoked only after the following flush, which is
+        executed when renderNextFrame() is called for the current state update.
+
+        * WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.h:
+        Add the forceFrameSync() method that forces the following state flush
+        to produce a state update that will be handled by the compositor.
+        This ensures that the compositor informs the CoordinatedLayerTreeHost
+        once this state update is done, invoking renderNextFrame() which would
+        handle the force-repaint callback.
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+        (WebKit::CoordinatedLayerTreeHost::forceRepaintAsync):
+        (WebKit::CoordinatedLayerTreeHost::renderNextFrame):
+        (WebKit::CoordinatedLayerTreeHost::layerFlushTimerFired):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.h:
+        * WebProcess/WebPage/CoordinatedGraphics/ThreadedCoordinatedLayerTreeHost.h:
+        Remove the forceRepaintAsync() override that returned false.
+
 2017-05-31  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix copy-paste error added in r217209.

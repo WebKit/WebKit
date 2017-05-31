@@ -64,7 +64,6 @@ private:
     void invalidate() override;
 
     void forceRepaint() override;
-    bool forceRepaintAsync(uint64_t callbackID) override { return false; }
 
     void setIsDiscardable(bool) override;
 

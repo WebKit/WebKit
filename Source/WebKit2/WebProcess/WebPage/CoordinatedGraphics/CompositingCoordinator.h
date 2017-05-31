@@ -83,6 +83,8 @@ public:
     WebCore::GraphicsLayer* rootCompositingLayer() const { return m_rootCompositingLayer; }
     WebCore::CoordinatedGraphicsLayer* mainContentsLayer();
 
+    void forceFrameSync() { m_shouldSyncFrame = true; }
+
     bool flushPendingLayerChanges();
     WebCore::CoordinatedGraphicsState& state() { return m_state; }
 
