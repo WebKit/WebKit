@@ -51,6 +51,7 @@ RealtimeOutgoingAudioSource::RealtimeOutgoingAudioSource(Ref<RealtimeMediaSource
     , m_sampleConverter(AudioSampleDataSource::create(LibWebRTCAudioFormat::sampleRate * 2))
 {
     m_audioSource->addObserver(*this);
+    initializeConverter();
 }
 
 bool RealtimeOutgoingAudioSource::setSource(Ref<RealtimeMediaSource>&& newSource)
@@ -59,10 +60,15 @@ bool RealtimeOutgoingAudioSource::setSource(Ref<RealtimeMediaSource>&& newSource
     m_audioSource = WTFMove(newSource);
     m_audioSource->addObserver(*this);
 
+    initializeConverter();
+    return true;
+}
+
+void RealtimeOutgoingAudioSource::initializeConverter()
+{
     m_muted = m_audioSource->muted();
     m_enabled = m_audioSource->enabled();
     m_sampleConverter->setMuted(m_muted || !m_enabled);
-    return true;
 }
 
 void RealtimeOutgoingAudioSource::stop()

@@ -1,0 +1,90 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Testing basic video exchange from offerer to receiver</title>
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <video id="localVideo" autoplay playsInline width="320" height="240"></video>
+        <video id="video" autoplay playsInline width="320" height="240"></video>
+        <canvas id="canvas1" width="320" height="240"></canvas>
+        <canvas id="canvas2" width="320" height="240"></canvas>
+        <canvas id="canvas3" width="320" height="240"></canvas>
+        <script src ="routines.js"></script>
+        <script>
+function isVideoBlack(id)
+{
+    var canvas = document.getElementById(id);
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    imageData = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height);
+    data = imageData.data;
+    for (var cptr = 0; cptr < canvas.width * canvas.height; ++cptr) {
+        // Approximatively black pixels.
+        if (data[4 * cptr] > 10 || data[4 * cptr + 1] > 10 || data[4 * cptr + 2] > 10)
+            return false;
+    }
+    return true;
+}
+
+function pollVideoBlackCheck(expected, id, resolve)
+{
+    if (isVideoBlack(id) === expected) {
+        resolve();
+        return;
+    }
+
+    setTimeout(() => pollVideoBlackCheck(expected, id, resolve), 50);
+}
+
+function checkVideoBlack(expected, id)
+{
+    return new Promise((resolve, reject) => {
+        pollVideoBlackCheck(expected, id, resolve);
+        setTimeout(() => reject("checkVideoBlack timed out for " + id + " expected " + expected), 5000);
+    });
+}
+
+var track;
+var remoteTrack;
+promise_test((test) => {
+    if (window.testRunner)
+        testRunner.setUserMediaPermission(true);
+
+    return navigator.mediaDevices.getUserMedia({video: {width: 320, height: 240, facingMode: "environment"}}).then((localStream) => {
+        track = localStream.getVideoTracks()[0];
+        track.enabled = false;
+        localVideo.srcObject = localStream;
+        return new Promise((resolve, reject) => {
+            createConnections((firstConnection) => {
+                firstConnection.addTrack(track, localStream);
+            }, (secondConnection) => {
+                secondConnection.ontrack = (trackEvent) => {
+                    remoteTrack = trackEvent.track;
+                    resolve(trackEvent.streams[0]); 
+                };
+            });
+            setTimeout(() => reject("Test timed out"), 5000);
+        });
+    }).then((remoteStream) => {
+        video.srcObject = remoteStream;
+        return video.play();
+    });
+}, "Setting video exchange");
+
+promise_test((test) => {
+    return checkVideoBlack(true, "canvas1");
+}, "Track is enabled, video should be black");
+
+promise_test((test) => {
+    track.enabled = true;
+    return checkVideoBlack(false, "canvas2");
+}, "Track is enabled, video should not be black");
+
+        </script>
+    </body>
+</html>

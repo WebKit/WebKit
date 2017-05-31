@@ -48,7 +48,7 @@ RealtimeOutgoingVideoSource::RealtimeOutgoingVideoSource(Ref<RealtimeMediaSource
     , m_blackFrameTimer(*this, &RealtimeOutgoingVideoSource::sendOneBlackFrame)
 {
     m_videoSource->addObserver(*this);
-    setSizeFromSource();
+    initializeFromSource();
 }
 
 bool RealtimeOutgoingVideoSource::setSource(Ref<RealtimeMediaSource>&& newSource)
@@ -65,9 +65,7 @@ bool RealtimeOutgoingVideoSource::setSource(Ref<RealtimeMediaSource>&& newSource
     m_videoSource = WTFMove(newSource);
     m_videoSource->addObserver(*this);
 
-    setSizeFromSource();
-    m_muted = m_videoSource->muted();
-    m_enabled = m_videoSource->enabled();
+    initializeFromSource();
 
     return true;
 }
@@ -79,18 +77,23 @@ void RealtimeOutgoingVideoSource::stop()
     m_isStopped = true;
 }
 
+void RealtimeOutgoingVideoSource::updateBlackFramesSending()
+{
+    if (!m_muted && m_enabled && m_blackFrameTimer.isActive()) {
+        m_blackFrameTimer.stop();
+        return;
+    }
+
+    sendBlackFramesIfNeeded();
+}
+
 void RealtimeOutgoingVideoSource::sourceMutedChanged()
 {
     ASSERT(m_muted != m_videoSource->muted());
 
     m_muted = m_videoSource->muted();
 
-    if (m_muted && m_sinks.size() && m_enabled) {
-        sendBlackFrames();
-        return;
-    }
-    if (m_blackFrameTimer.isActive())
-        m_blackFrameTimer.stop();
+    updateBlackFramesSending();
 }
 
 void RealtimeOutgoingVideoSource::sourceEnabledChanged()
@@ -99,19 +102,19 @@ void RealtimeOutgoingVideoSource::sourceEnabledChanged()
 
     m_enabled = m_videoSource->enabled();
 
-    if (!m_enabled && m_sinks.size() && !m_muted) {
-        sendBlackFrames();
-        return;
-    }
-    if (m_blackFrameTimer.isActive())
-        m_blackFrameTimer.stop();
+    updateBlackFramesSending();
 }
 
-void RealtimeOutgoingVideoSource::setSizeFromSource()
+void RealtimeOutgoingVideoSource::initializeFromSource()
 {
     const auto& settings = m_videoSource->settings();
     m_width = settings.width();
     m_height = settings.height();
+
+    m_muted = m_videoSource->muted();
+    m_enabled = m_videoSource->enabled();
+
+    sendBlackFramesIfNeeded();
 }
 
 bool RealtimeOutgoingVideoSource::GetStats(Stats*)
@@ -128,15 +131,36 @@ void RealtimeOutgoingVideoSource::AddOrUpdateSink(rtc::VideoSinkInterface<webrtc
 
     if (!m_sinks.contains(sink))
         m_sinks.append(sink);
+
+    callOnMainThread([protectedThis = makeRef(*this)]() {
+        protectedThis->sendBlackFramesIfNeeded();
+    });
 }
 
 void RealtimeOutgoingVideoSource::RemoveSink(rtc::VideoSinkInterface<webrtc::VideoFrame>* sink)
 {
     m_sinks.removeFirst(sink);
+
+    if (m_sinks.size())
+        return;
+
+    callOnMainThread([protectedThis = makeRef(*this)]() {
+        if (protectedThis->m_blackFrameTimer.isActive())
+            protectedThis->m_blackFrameTimer.stop();
+    });
 }
 
-void RealtimeOutgoingVideoSource::sendBlackFrames()
+void RealtimeOutgoingVideoSource::sendBlackFramesIfNeeded()
 {
+    if (m_blackFrameTimer.isActive())
+        return;
+
+    if (!m_sinks.size())
+        return;
+
+    if (!m_muted && m_enabled)
+        return;
+
     if (!m_blackFrame) {
         auto width = m_width;
         auto height = m_height;

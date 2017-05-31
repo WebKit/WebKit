@@ -60,9 +60,10 @@ private:
     RealtimeOutgoingVideoSource(Ref<RealtimeMediaSource>&&);
 
     void sendFrame(rtc::scoped_refptr<webrtc::VideoFrameBuffer>&&);
-    void sendBlackFrames();
+    void sendBlackFramesIfNeeded();
     void sendOneBlackFrame();
-    void setSizeFromSource();
+    void initializeFromSource();
+    void updateBlackFramesSending();
 
     // Notifier API
     void RegisterObserver(webrtc::ObserverInterface*) final { }
@@ -84,7 +85,7 @@ private:
     // RealtimeMediaSource::Observer API
     void sourceMutedChanged() final;
     void sourceEnabledChanged() final;
-    void sourceSettingsChanged() final { setSizeFromSource(); }
+    void sourceSettingsChanged() final { initializeFromSource(); }
     void videoSampleAvailable(MediaSample&) final;
 
     Vector<rtc::VideoSinkInterface<webrtc::VideoFrame>*> m_sinks;

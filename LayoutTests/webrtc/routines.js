@@ -145,3 +145,15 @@ function waitForVideoSize(video, width, height, count)
         return waitForVideoSize(video, width, height, count);
     });
 }
+
+async function doHumAnalysis(stream, expected)
+{
+    var context = new webkitAudioContext();
+    for (var cptr = 0; cptr < 10; cptr++) {
+        var results = await analyseAudio(stream, 200, context);
+        if (results.heardHum === expected)
+            return true;
+    }
+    await context.close();
+    return false;
+}

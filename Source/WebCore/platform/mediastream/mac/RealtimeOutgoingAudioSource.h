@@ -73,6 +73,8 @@ private:
 
     void pullAudioData();
 
+    void initializeConverter();
+
     Vector<webrtc::AudioTrackSinkInterface*> m_sinks;
     Ref<RealtimeMediaSource> m_audioSource;
     Ref<AudioSampleDataSource> m_sampleConverter;
