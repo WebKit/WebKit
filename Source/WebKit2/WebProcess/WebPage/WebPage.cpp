@@ -3182,7 +3182,7 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 
 #if ENABLE(WEB_RTC)
     RuntimeEnabledFeatures::sharedFeatures().setPeerConnectionEnabled(store.getBoolValueForKey(WebPreferencesKey::peerConnectionEnabledKey()));
-    RuntimeEnabledFeatures::sharedFeatures().setWebRTCLegacyAPIEnabled(store.getBoolValueForKey(WebPreferencesKey::webRTCLegacyAPIEnabledKey()));
+    RuntimeEnabledFeatures::sharedFeatures().setWebRTCLegacyAPIEnabled(!store.getBoolValueForKey(WebPreferencesKey::webRTCLegacyAPIDisabledKey()));
 #endif
 
 #if ENABLE(SERVICE_CONTROLS)

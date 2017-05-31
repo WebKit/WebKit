@@ -1,3 +1,23 @@
+2017-05-31  Youenn Fablet  <youenn@apple.com>
+
+        Make WebRTC legacy API switch an experimental feature
+        https://bugs.webkit.org/show_bug.cgi?id=172760
+
+        Reviewed by Eric Carlson.
+
+        This patch adds an experimental feature to disable WebRTC legacy API.
+        We keep the runtime flag as "enable WebRTC legacy API" to minimize the changes and as it is clearer in the code.
+
+        * Shared/WebPreferencesDefinitions.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetWebRTCLegacyAPIEnabled):
+        (WKPreferencesGetWebRTCLegacyAPIEnabled):
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences _webRTCLegacyAPIEnabled]):
+        (-[WKPreferences _setWebRTCLegacyAPIEnabled:]):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2017-05-31  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r217603.
