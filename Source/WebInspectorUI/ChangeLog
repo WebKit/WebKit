@@ -1,3 +1,12 @@
+2017-05-31  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [GTK] Web Inspector: BackForwardArrows.svg is not shown
+        https://bugs.webkit.org/show_bug.cgi?id=172741
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UserInterface/Images/gtk/BackForwardArrows.svg: Renamed id names to match with Apple's images.
+
 2017-05-30  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: images dragged from Inspector to Desktop are named "Unknown.png"
