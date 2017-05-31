@@ -1,3 +1,25 @@
+2017-05-31  Simon Fraser  <simon.fraser@apple.com>
+
+        Get <chrono> out of StdLibExtras.h
+        https://bugs.webkit.org/show_bug.cgi?id=172744
+
+        Reviewed by Saam Barati.
+
+        Only bring in <chrono> and namespace std::literals::chrono_literals when necessary.
+
+        * fileapi/FileReader.cpp:
+        * inspector/InspectorOverlay.cpp:
+        * loader/CrossOriginPreflightResultCache.cpp:
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::freshnessLifetime):
+        * page/ResourceUsageThread.cpp:
+        (WebCore::ResourceUsageThread::threadBody):
+        * page/cocoa/MemoryReleaseCocoa.mm:
+        (WebCore::jettisonExpensiveObjectsOnTopLevelNavigation):
+        * platform/network/CacheValidation.cpp:
+        (WebCore::computeFreshnessLifetimeForHTTPFamily):
+        * platform/network/CacheValidation.h:
+
 2017-05-31  Emilio Cobos Álvarez  <ecobos@igalia.com>
 
         Use the rare data's RenderStyle for display: contents.

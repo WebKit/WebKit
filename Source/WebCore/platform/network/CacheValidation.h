@@ -23,11 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CacheValidation_h
-#define CacheValidation_h
+#pragma once
 
 #include "PlatformExportMacros.h"
 #include "SessionID.h"
+#include <chrono>
 #include <wtf/Optional.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -77,5 +77,3 @@ WEBCORE_EXPORT bool isStatusCodeCacheableByDefault(int statusCode);
 WEBCORE_EXPORT bool isStatusCodePotentiallyCacheable(int statusCode);
 
 }
-
-#endif

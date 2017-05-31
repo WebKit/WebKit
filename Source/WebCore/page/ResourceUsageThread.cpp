@@ -110,6 +110,8 @@ void ResourceUsageThread::threadCallback(void* resourceUsageThread)
 
 NO_RETURN void ResourceUsageThread::threadBody()
 {
+    using namespace std::literals::chrono_literals;
+
     while (true) {
         // Only do work if we have observers.
         waitUntilObservers();

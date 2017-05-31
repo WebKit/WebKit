@@ -50,6 +50,8 @@
 #include <notify.h>
 #endif
 
+using namespace std::literals::chrono_literals;
+
 namespace WebKit {
 namespace NetworkCache {
 

@@ -1,3 +1,14 @@
+2017-05-31  Simon Fraser  <simon.fraser@apple.com>
+
+        Get <chrono> out of StdLibExtras.h
+        https://bugs.webkit.org/show_bug.cgi?id=172744
+
+        Reviewed by Saam Barati.
+
+        We hates std::chrono. Don't include it everywhere to discourage use.
+
+        * wtf/StdLibExtras.h:
+
 2017-05-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         Only include DataDetectorsUI headers in iOS
