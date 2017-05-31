@@ -1,3 +1,14 @@
+2017-05-30  Frederic Wang  <fwang@igalia.com>
+
+        Include ScrollingTreeScrollingNode properties in ScrollingTreeFrameScrollingNode::dumpProperties
+        https://bugs.webkit.org/show_bug.cgi?id=172287
+
+        Reviewed by Simon Fraser.
+
+        Update iOS expectation to include the new node properties.
+
+        * scrollingcoordinator/ios/ui-scrolling-tree-expected.txt: Update expectation.
+
 2017-05-30  Tim Horton  <timothy_horton@apple.com>
 
         Keyboard autocorrections do not apply with an active selection (but keyboard acts like they did)

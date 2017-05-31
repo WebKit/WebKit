@@ -1,3 +1,15 @@
+2017-05-30  Frederic Wang  <fwang@igalia.com>
+
+        Include ScrollingTreeScrollingNode properties in ScrollingTreeFrameScrollingNode::dumpProperties
+        https://bugs.webkit.org/show_bug.cgi?id=172287
+
+        Reviewed by Simon Fraser.
+
+        No new tests, only changes in dumped tree.
+
+        * page/scrolling/ScrollingTreeFrameScrollingNode.cpp:
+        (WebCore::ScrollingTreeFrameScrollingNode::dumpProperties): Print properties of the parent class.
+
 2017-05-30  Sam Weinig  <sam@webkit.org>
 
         Update test result after r217585.
