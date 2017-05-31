@@ -220,6 +220,28 @@ function createSampleBuildRequest(platform, test)
         'commitSet': commitSet, 'status': 'pending', 'platform': platform, 'test': test});
 }
 
+function createSampleBuildRequestWithPatch(platform, test, order)
+{
+    assert(platform instanceof Platform);
+    assert(!test || test instanceof Test);
+
+    const webkit197463 = CommitLog.ensureSingleton('111127', {'id': '111127', 'time': 1456955807334, 'repository': MockModels.webkit, 'revision': '197463'});
+    const shared111237 = CommitLog.ensureSingleton('111237', {'id': '111237', 'time': 1456931874000, 'repository': MockModels.sharedRepository, 'revision': '80229'});
+    const ios13A452 = CommitLog.ensureSingleton('88930', {'id': '88930', 'time': 0, 'repository': MockModels.ios, 'revision': '13A452'});
+
+    const patch = new UploadedFile(453, {'createdAt': new Date('2017-05-01T19:16:53Z'), 'filename': 'patch.dat', 'author': 'some user',
+        size: 534637, sha256: '169463c8125e07c577110fe144ecd63942eb9472d438fc0014f474245e5df8a1'});
+
+    const root = new UploadedFile(456, {'createdAt': new Date('2017-05-01T21:03:27Z'), 'filename': 'root.dat', 'author': 'some user',
+        size: 16452234, sha256: '03eed7a8494ab8794c44b7d4308e55448fc56f4d6c175809ba968f78f656d58d'});
+
+    const commitSet = CommitSet.ensureSingleton('53246456', {customRoots: [root], revisionItems: [{commit: webkit197463, patch}, {commit: shared111237}, {commit: ios13A452}]});
+
+    return BuildRequest.ensureSingleton(`6345645376-${order}`, {'triggerable': MockModels.triggerable,
+        repositoryGroup: MockModels.svnRepositoryGroup,
+        'commitSet': commitSet, 'status': 'pending', 'platform': platform, 'test': test, 'order': order});
+}
+
 function samplePendingBuild(buildRequestId, buildTime, slaveName)
 {
     return {
@@ -899,32 +921,106 @@ describe('BuildbotSyncer', () => {
 
     describe('_propertiesForBuildRequest', () => {
         it('should include all properties specified in a given configuration', () => {
-            let syncers = BuildbotSyncer._loadConfig(RemoteAPI, sampleiOSConfig());
-            let properties = syncers[0]._propertiesForBuildRequest(createSampleBuildRequest(MockModels.iphone, MockModels.speedometer));
+            const syncers = BuildbotSyncer._loadConfig(RemoteAPI, sampleiOSConfig());
+            const request = createSampleBuildRequest(MockModels.iphone, MockModels.speedometer);
+            const properties = syncers[0]._propertiesForBuildRequest(request, [request]);
             assert.deepEqual(Object.keys(properties).sort(), ['build_request_id', 'desired_image', 'forcescheduler', 'opensource', 'test_name']);
         });
 
         it('should preserve non-parametric property values', () => {
-            let syncers = BuildbotSyncer._loadConfig(RemoteAPI, sampleiOSConfig());
-            let properties = syncers[0]._propertiesForBuildRequest(createSampleBuildRequest(MockModels.iphone, MockModels.speedometer));
+            const syncers = BuildbotSyncer._loadConfig(RemoteAPI, sampleiOSConfig());
+            let request = createSampleBuildRequest(MockModels.iphone, MockModels.speedometer);
+            let properties = syncers[0]._propertiesForBuildRequest(request, [request]);
             assert.equal(properties['test_name'], 'speedometer');
             assert.equal(properties['forcescheduler'], 'ABTest-iPhone-RunBenchmark-Tests-ForceScheduler');
 
-            properties = syncers[1]._propertiesForBuildRequest(createSampleBuildRequest(MockModels.ipad, MockModels.jetstream));
+            request = createSampleBuildRequest(MockModels.ipad, MockModels.jetstream);
+            properties = syncers[1]._propertiesForBuildRequest(request, [request]);
             assert.equal(properties['test_name'], 'jetstream');
             assert.equal(properties['forcescheduler'], 'ABTest-iPad-RunBenchmark-Tests-ForceScheduler');
         });
 
         it('should resolve "root"', () => {
-            let syncers = BuildbotSyncer._loadConfig(RemoteAPI, sampleiOSConfig());
-            let properties = syncers[0]._propertiesForBuildRequest(createSampleBuildRequest(MockModels.iphone, MockModels.speedometer));
+            const syncers = BuildbotSyncer._loadConfig(RemoteAPI, sampleiOSConfig());
+            const request = createSampleBuildRequest(MockModels.iphone, MockModels.speedometer);
+            const properties = syncers[0]._propertiesForBuildRequest(request, [request]);
             assert.equal(properties['desired_image'], '13A452');
         });
 
+        it('should resolve "revision"', () => {
+            const syncers = BuildbotSyncer._loadConfig(RemoteAPI, sampleiOSConfig());
+            const request = createSampleBuildRequest(MockModels.iphone, MockModels.speedometer);
+            const properties = syncers[0]._propertiesForBuildRequest(request, [request]);
+            assert.equal(properties['opensource'], '197463');
+        });
+
+        it('should resolve "patch"', () => {
+            const config = sampleiOSConfig();
+            config.repositoryGroups['ios-svn-webkit'] = {
+                'repositories': {'WebKit': {'acceptsPatch': true}, 'Shared': {}, 'iOS': {}},
+                'testProperties': {
+                    'os': {'revision': 'iOS'},
+                    'webkit': {'revision': 'WebKit'},
+                    'shared': {'revision': 'Shared'},
+                    'roots': {'roots': {}},
+                },
+                'buildProperties': {
+                    'webkit': {'revision': 'WebKit'},
+                    'webkit-patch': {'patch': 'WebKit'},
+                    'shared': {'revision': 'Shared'},
+                },
+                'acceptsRoots': true,
+            };
+            const syncers = BuildbotSyncer._loadConfig(RemoteAPI, config);
+            const request = createSampleBuildRequestWithPatch(MockModels.iphone, null, -1);
+            const properties = syncers[2]._propertiesForBuildRequest(request, [request]);
+            assert.equal(properties['webkit'], '197463');
+            assert.equal(properties['webkit-patch'], 'http://build.webkit.org/api/uploaded-file/453');
+        });
+
+        it('should resolve "ifBuilt"', () => {
+            const config = sampleiOSConfig();
+            config.repositoryGroups['ios-svn-webkit'] = {
+                'repositories': {'WebKit': {}, 'Shared': {}, 'iOS': {}},
+                'testProperties': {
+                    'os': {'revision': 'iOS'},
+                    'webkit': {'revision': 'WebKit'},
+                    'shared': {'revision': 'Shared'},
+                    'roots': {'roots': {}},
+                    'test-custom-build': {'ifBuilt': ''},
+                    'has-built-patch': {'ifBuilt': 'true'},
+                },
+                'acceptsRoots': true,
+            };
+            const syncers = BuildbotSyncer._loadConfig(RemoteAPI, config);
+            const requestToBuild = createSampleBuildRequestWithPatch(MockModels.iphone, null, -1);
+            const requestToTest = createSampleBuildRequestWithPatch(MockModels.iphone, MockModels.speedometer, 0);
+            const otherRequestToTest = createSampleBuildRequest(MockModels.iphone, MockModels.speedometer);
+    
+            let properties = syncers[0]._propertiesForBuildRequest(requestToTest, [requestToTest]);
+            assert.equal(properties['webkit'], '197463');
+            assert.equal(properties['roots'], '[{"url":"http://build.webkit.org/api/uploaded-file/456"}]');
+            assert.equal(properties['test-custom-build'], undefined);
+            assert.equal(properties['has-built-patch'], undefined);
+
+            properties = syncers[0]._propertiesForBuildRequest(requestToTest, [requestToBuild, requestToTest]);
+            assert.equal(properties['webkit'], '197463');
+            assert.equal(properties['roots'], '[{"url":"http://build.webkit.org/api/uploaded-file/456"}]');
+            assert.equal(properties['test-custom-build'], '');
+            assert.equal(properties['has-built-patch'], 'true');
+
+            properties = syncers[0]._propertiesForBuildRequest(otherRequestToTest, [requestToBuild, otherRequestToTest, requestToTest]);
+            assert.equal(properties['webkit'], '197463');
+            assert.equal(properties['roots'], undefined);
+            assert.equal(properties['test-custom-build'], undefined);
+            assert.equal(properties['has-built-patch'], undefined);
+
+        });
+
         it('should set the property for the build request id', () => {
-            let syncers = BuildbotSyncer._loadConfig(RemoteAPI, sampleiOSConfig());
-            let request = createSampleBuildRequest(MockModels.iphone, MockModels.speedometer);
-            let properties = syncers[0]._propertiesForBuildRequest(request);
+            const syncers = BuildbotSyncer._loadConfig(RemoteAPI, sampleiOSConfig());
+            const request = createSampleBuildRequest(MockModels.iphone, MockModels.speedometer);
+            const properties = syncers[0]._propertiesForBuildRequest(request, [request]);
             assert.equal(properties['build_request_id'], request.id());
         });
     });
@@ -1197,7 +1293,8 @@ describe('BuildbotSyncer', () => {
             let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, sampleiOSConfig())[0];
 
             const waitForRequest = MockRemoteAPI.waitForRequest();
-            syncer.scheduleRequest(createSampleBuildRequest(MockModels.iphone, MockModels.speedometer), 'some-slave');
+            const request = createSampleBuildRequest(MockModels.iphone, MockModels.speedometer);
+            syncer.scheduleRequest(request, [request], 'some-slave');
             return waitForRequest.then(() => {
                 assert.equal(requests.length, 1);
                 assert.equal(requests[0].url, '/builders/ABTest-iPhone-RunBenchmark-Tests/force');
@@ -1233,7 +1330,8 @@ describe('BuildbotSyncer', () => {
             let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, smallConfiguration())[0];
 
             return pullBuildbotWithAssertion(syncer, [], {}).then(() => {
-                syncer.scheduleRequestInGroupIfAvailable(createSampleBuildRequest(MockModels.somePlatform, MockModels.someTest));
+                const request = createSampleBuildRequest(MockModels.somePlatform, MockModels.someTest);
+                syncer.scheduleRequestInGroupIfAvailable(request, [request]);
                 assert.equal(requests.length, 1);
                 assert.equal(requests[0].url, '/builders/some%20builder/force');
                 assert.equal(requests[0].method, 'POST');
@@ -1245,7 +1343,8 @@ describe('BuildbotSyncer', () => {
             let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, smallConfiguration())[0];
 
             return pullBuildbotWithAssertion(syncer, [], {[-1]: smallFinishedBuild()}).then(() => {
-                syncer.scheduleRequestInGroupIfAvailable(createSampleBuildRequest(MockModels.somePlatform, MockModels.someTest));
+                const request = createSampleBuildRequest(MockModels.somePlatform, MockModels.someTest);
+                syncer.scheduleRequestInGroupIfAvailable(request, [request]);
                 assert.equal(requests.length, 1);
                 assert.equal(requests[0].url, '/builders/some%20builder/force');
                 assert.equal(requests[0].method, 'POST');
@@ -1266,7 +1365,8 @@ describe('BuildbotSyncer', () => {
             let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, sampleiOSConfig())[0];
 
             return pullBuildbotWithAssertion(syncer, [], {}).then(() => {
-                syncer.scheduleRequestInGroupIfAvailable(createSampleBuildRequest(MockModels.iphone, MockModels.speedometer));
+                const request = createSampleBuildRequest(MockModels.iphone, MockModels.speedometer);
+                syncer.scheduleRequestInGroupIfAvailable(request, [request], null);
                 assert.equal(requests.length, 1);
                 assert.equal(requests[0].url, '/builders/ABTest-iPhone-RunBenchmark-Tests/force');
                 assert.equal(requests[0].method, 'POST');
@@ -1277,7 +1377,8 @@ describe('BuildbotSyncer', () => {
             let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, sampleiOSConfig())[1];
 
             pullBuildbotWithAssertion(syncer, [], {[-1]: sampleFinishedBuild()}).then(() => {
-                syncer.scheduleRequestInGroupIfAvailable(createSampleBuildRequest(MockModels.ipad, MockModels.speedometer));
+                const request = createSampleBuildRequest(MockModels.ipad, MockModels.speedometer);
+                syncer.scheduleRequestInGroupIfAvailable(request, [request], null);
                 assert.equal(requests.length, 1);
                 assert.equal(requests[0].url, '/builders/ABTest-iPad-RunBenchmark-Tests/force');
                 assert.equal(requests[0].method, 'POST');
@@ -1288,7 +1389,8 @@ describe('BuildbotSyncer', () => {
             let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, sampleiOSConfig())[1];
 
             pullBuildbotWithAssertion(syncer, [samplePendingBuild()], {}).then(() => {
-                syncer.scheduleRequestInGroupIfAvailable(createSampleBuildRequest(MockModels.ipad, MockModels.speedometer));
+                const request = createSampleBuildRequest(MockModels.ipad, MockModels.speedometer);
+                syncer.scheduleRequestInGroupIfAvailable(request, [request], null);
                 assert.equal(requests.length, 0);
             });
         });
@@ -1297,7 +1399,8 @@ describe('BuildbotSyncer', () => {
             let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, sampleiOSConfig())[1];
 
             return pullBuildbotWithAssertion(syncer, [samplePendingBuild(1, 1, 'another-slave')], {}).then(() => {
-                syncer.scheduleRequestInGroupIfAvailable(createSampleBuildRequest(MockModels.ipad, MockModels.speedometer));
+                const request = createSampleBuildRequest(MockModels.ipad, MockModels.speedometer);
+                syncer.scheduleRequestInGroupIfAvailable(request, [request], null);
                 assert.equal(requests.length, 1);
             });
         });
@@ -1306,7 +1409,8 @@ describe('BuildbotSyncer', () => {
             let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, sampleiOSConfig())[1];
 
             return pullBuildbotWithAssertion(syncer, [], {[-1]: sampleInProgressBuild()}).then(() => {
-                syncer.scheduleRequestInGroupIfAvailable(createSampleBuildRequest(MockModels.ipad, MockModels.speedometer));
+                const request = createSampleBuildRequest(MockModels.ipad, MockModels.speedometer);
+                syncer.scheduleRequestInGroupIfAvailable(request, [request], null);
                 assert.equal(requests.length, 1);
             });
         });
@@ -1315,7 +1419,8 @@ describe('BuildbotSyncer', () => {
             let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, sampleiOSConfig())[1];
 
             return pullBuildbotWithAssertion(syncer, [], {[-1]: sampleInProgressBuild('other-slave')}).then(() => {
-                syncer.scheduleRequestInGroupIfAvailable(createSampleBuildRequest(MockModels.ipad, MockModels.speedometer));
+                const request = createSampleBuildRequest(MockModels.ipad, MockModels.speedometer);
+                syncer.scheduleRequestInGroupIfAvailable(request, [request], null);
                 assert.equal(requests.length, 1);
             });
         });
@@ -1324,7 +1429,8 @@ describe('BuildbotSyncer', () => {
             let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, sampleiOSConfig())[0];
 
             return pullBuildbotWithAssertion(syncer, [], {}).then(() => {
-                syncer.scheduleRequestInGroupIfAvailable(createSampleBuildRequest(MockModels.ipad, MockModels.speedometer));
+                const request = createSampleBuildRequest(MockModels.ipad, MockModels.speedometer);
+                syncer.scheduleRequestInGroupIfAvailable(request, [request], null);
                 assert.equal(requests.length, 0);
             });
         });
@@ -1333,11 +1439,14 @@ describe('BuildbotSyncer', () => {
             let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, sampleiOSConfig())[1];
 
             pullBuildbotWithAssertion(syncer, [], {}).then(() => {
-                syncer.scheduleRequest(createSampleBuildRequest(MockModels.ipad, MockModels.speedometer), 'ABTest-iPad-0');
-                syncer.scheduleRequest(createSampleBuildRequest(MockModels.ipad, MockModels.speedometer), 'ABTest-iPad-1');
+                let request = createSampleBuildRequest(MockModels.ipad, MockModels.speedometer);
+                syncer.scheduleRequest(request, [request], 'ABTest-iPad-0');
+                request = createSampleBuildRequest(MockModels.ipad, MockModels.speedometer);
+                syncer.scheduleRequest(request, [request], 'ABTest-iPad-1');
             }).then(() => {
                 assert.equal(requests.length, 2);
-                syncer.scheduleRequestInGroupIfAvailable(createSampleBuildRequest(MockModels.ipad, MockModels.speedometer));
+                const request = createSampleBuildRequest(MockModels.ipad, MockModels.speedometer);
+                syncer.scheduleRequestInGroupIfAvailable(request, [request], null);
             }).then(() => {
                 assert.equal(requests.length, 2);
                 done();
@@ -1348,9 +1457,11 @@ describe('BuildbotSyncer', () => {
             let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, sampleiOSConfig())[1];
 
             return pullBuildbotWithAssertion(syncer, [], {}).then(() => {
-                syncer.scheduleRequest(createSampleBuildRequest(MockModels.ipad, MockModels.speedometer), 'ABTest-iPad-0');
+                let request = createSampleBuildRequest(MockModels.ipad, MockModels.speedometer);
+                syncer.scheduleRequest(request, [request], 'ABTest-iPad-0');
                 assert.equal(requests.length, 1);
-                syncer.scheduleRequestInGroupIfAvailable(createSampleBuildRequest(MockModels.ipad, MockModels.speedometer), 'ABTest-iPad-1');
+                request = createSampleBuildRequest(MockModels.ipad, MockModels.speedometer)
+                syncer.scheduleRequestInGroupIfAvailable(request, [request], 'ABTest-iPad-1');
                 assert.equal(requests.length, 2);
             });
         });
@@ -1359,9 +1470,11 @@ describe('BuildbotSyncer', () => {
             let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, smallConfiguration())[0];
 
             return pullBuildbotWithAssertion(syncer, [], {}).then(() => {
-                syncer.scheduleRequest(createSampleBuildRequest(MockModels.somePlatform, MockModels.someTest), null);
+                let request = createSampleBuildRequest(MockModels.somePlatform, MockModels.someTest);
+                syncer.scheduleRequest(request, [request], null);
                 assert.equal(requests.length, 1);
-                syncer.scheduleRequestInGroupIfAvailable(createSampleBuildRequest(MockModels.somePlatform, MockModels.someTest));
+                request = createSampleBuildRequest(MockModels.somePlatform, MockModels.someTest);
+                syncer.scheduleRequestInGroupIfAvailable(request, [request], null);
                 assert.equal(requests.length, 1);
             });
         });

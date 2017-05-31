@@ -101,10 +101,10 @@ class BuildbotSyncer {
         return this._configurations.some((config) => config.platform == request.platform() && config.test == request.test());
     }
 
-    scheduleRequest(newRequest, slaveName)
+    scheduleRequest(newRequest, requestsInGroup, slaveName)
     {
         assert(!this._slavesWithNewRequests.has(slaveName));
-        let properties = this._propertiesForBuildRequest(newRequest);
+        let properties = this._propertiesForBuildRequest(newRequest, requestsInGroup);
 
         assert.equal(!this._slavePropertyName, !slaveName);
         if (this._slavePropertyName)
@@ -114,7 +114,7 @@ class BuildbotSyncer {
         return this._remote.postFormUrlencodedData(this.pathForForceBuild(), properties);
     }
 
-    scheduleRequestInGroupIfAvailable(newRequest, slaveName)
+    scheduleRequestInGroupIfAvailable(newRequest, requestsInGroup, slaveName)
     {
         assert(newRequest instanceof BuildRequest);
 
@@ -140,18 +140,18 @@ class BuildbotSyncer {
         if (!this._slaveList || hasPendingBuildsWithoutSlaveNameSpecified) {
             if (usedSlaves.size || this._slavesWithNewRequests.size)
                 return null;
-            return this.scheduleRequest(newRequest, null);
+            return this.scheduleRequest(newRequest, requestsInGroup, null);
         }
 
         if (slaveName) {
             if (!usedSlaves.has(slaveName) && !this._slavesWithNewRequests.has(slaveName))
-                return this.scheduleRequest(newRequest, slaveName);
+                return this.scheduleRequest(newRequest, requestsInGroup, slaveName);
             return null;
         }
 
         for (let slaveName of this._slaveList) {
             if (!usedSlaves.has(slaveName) && !this._slavesWithNewRequests.has(slaveName))
-                return this.scheduleRequest(newRequest, slaveName);
+                return this.scheduleRequest(newRequest, requestsInGroup, slaveName);
         }
 
         return null;
@@ -212,9 +212,10 @@ class BuildbotSyncer {
     url() { return this._remote.url(`/builders/${escape(this._builderName)}/`); }
     urlForBuildNumber(number) { return this._remote.url(`/builders/${escape(this._builderName)}/builds/${number}`); }
 
-    _propertiesForBuildRequest(buildRequest)
+    _propertiesForBuildRequest(buildRequest, requestsInGroup)
     {
         assert(buildRequest instanceof BuildRequest);
+        assert(requestsInGroup[0] instanceof BuildRequest);
 
         const commitSet = buildRequest.commitSet();
         assert(commitSet instanceof CommitSet);
@@ -259,6 +260,14 @@ class BuildbotSyncer {
                     continue;
                 value = JSON.stringify(rootFiles.map((file) => ({url: file.url()})));
                 break;
+            case 'conditional':
+                switch (value.condition) {
+                case 'built':
+                    if (!requestsInGroup.some((otherRequest) => otherRequest.isBuild() && otherRequest.commitSet() == buildRequest.commitSet()))
+                        continue;
+                    break;
+                }
+                value = value.value;
             }
             properties[propertyName] = value;
         }
@@ -413,6 +422,8 @@ class BuildbotSyncer {
                 assert(group.acceptsRoots, `Repository group "${name}" specifies roots in a property but it does not accept roots`);
                 specifiesRoots = true;
                 return {type};
+            case 'ifBuilt':
+                return {type: 'conditional', condition: 'built', value};
             }
             return null;
         });

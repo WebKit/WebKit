@@ -49,7 +49,8 @@ var MockModels = {
             });
             MockModels.svnRepositoryGroup = new TriggerableRepositoryGroup(32, {
                 name: 'ios-svn-webkit',
-                repositories: [{repository: MockModels.ios}, {repository: MockModels.webkit}, {repository: MockModels.sharedRepository}]
+                repositories: [{repository: MockModels.ios}, {repository: MockModels.webkit, acceptsPatch: true}, {repository: MockModels.sharedRepository}],
+                acceptsCustomRoots: true,
             });
             MockModels.gitRepositoryGroup = new TriggerableRepositoryGroup(33, {
                 name: 'ios-git-webkit',

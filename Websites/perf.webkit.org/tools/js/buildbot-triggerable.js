@@ -199,22 +199,22 @@ class BuildbotTriggerable {
         const isFirstRequest = nextRequest == requestsInGroup[0] || !nextRequest.order();
         if (!isFirstRequest) {
             if (syncer)
-                return this._scheduleRequestWithLog(syncer, nextRequest, slaveName);
+                return this._scheduleRequestWithLog(syncer, nextRequest, requestsInGroup, slaveName);
             this._logger.error(`Could not identify the syncer for ${nextRequest.id()}.`);
         }
 
         // Pick a new syncer for the first test.
         for (const syncer of this._syncers) {
-            const promise = this._scheduleRequestWithLog(syncer, nextRequest, null);
+            const promise = this._scheduleRequestWithLog(syncer, nextRequest, requestsInGroup, null);
             if (promise)
                 return promise;
         }
         return null;
     }
 
-    _scheduleRequestWithLog(syncer, request, slaveName)
+    _scheduleRequestWithLog(syncer, request, requestsInGroup, slaveName)
     {
-        const promise = syncer.scheduleRequestInGroupIfAvailable(request, slaveName);
+        const promise = syncer.scheduleRequestInGroupIfAvailable(request, requestsInGroup, slaveName);
         if (!promise)
             return promise;
         this._logger.log(`Scheduling build request ${request.id()}${slaveName ? ' on ' + slaveName : ''} in ${syncer.builderName()}`);
