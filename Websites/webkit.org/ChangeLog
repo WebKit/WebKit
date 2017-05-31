@@ -1,3 +1,13 @@
+2017-05-31  Jon Davis  <jond@apple.com>
+
+        Reduce Safari Technology Preview Release Notes posts shown on homepage
+        https://bugs.webkit.org/show_bug.cgi?id=172364
+
+        Reviewed by Daniel Bates.
+
+        * wp-content/themes/webkit/functions.php: Load some extra posts.
+        * wp-content/themes/webkit/widgets/post.php: Show STP blog posts when it is the current featured post.
+
 2017-05-18  Jon Davis  <jond@apple.com>
 
         Add an Accessibility icon to webkit.org

@@ -22,13 +22,22 @@ class WebKitPostTileWidget extends WP_Widget {
     }
 
     public function widget( array $args, array $options ) {
-        
         $Query = $this->load($options);
         
         // Get the next post, if available	
         if ( ! $Query->have_posts() ) return;
+
         // Queue the post data
         $Query->the_post();
+
+        $featured = ( 'on' == $options['featured'] );
+        if ( ! $featured ) {
+            // Prevent Safari Technology Preview release note posts from showing up when not a featured post.
+            while ( in_category('safari-technology-preview') && $Query->have_posts() ) {
+                $Query->the_post();
+                continue;
+            }
+        }
 
         if ( ! empty($args) )
             extract($args, EXTR_SKIP);
@@ -40,11 +49,8 @@ class WebKitPostTileWidget extends WP_Widget {
         $image = '';
         if ( $post_thumbnail_id = get_post_thumbnail_id() ) {
             $post_thumbnail_url = wp_get_attachment_url( $post_thumbnail_id );
-            // $image = " style=\"background-image: url('" . $post_thumbnail_url . "')\"";
             $image = " data-url=\"" . $post_thumbnail_url . "\"";
         }
-        
-        $featured = ( 'on' == $options['featured'] );
         
         $classes = array('tile');
         if ( $featured ) {
@@ -90,7 +96,6 @@ class WebKitPostTileWidget extends WP_Widget {
             <input type="checkbox" name="<?php echo $this->get_field_name('featured'); ?>" id="<?php echo $this->get_field_id('featured'); ?>" class="widefat" value="on" <?php echo ( 'on' == $options['featured'] ) ? 'checked' : ''; ?>>
             <?php _e('Featured'); ?></label>
 		</p>
-        
 		<?php
     }
 
