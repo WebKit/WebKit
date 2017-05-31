@@ -2273,35 +2273,50 @@ Seconds WebPage::eventThrottlingDelay() const
 
 void WebPage::syncApplyAutocorrection(const String& correction, const String& originalText, bool& correctionApplied)
 {
-    RefPtr<Range> range;
     correctionApplied = false;
+
     Frame& frame = m_page->focusController().focusedOrMainFrame();
-    if (!frame.selection().isCaret())
+    if (!frame.selection().isCaretOrRange())
         return;
-    VisiblePosition position = frame.selection().selection().start();
-    
-    range = wordRangeFromPosition(position);
-    String textForRange = plainTextReplacingNoBreakSpace(range.get());
-    if (textForRange != originalText) {
-        for (size_t i = 0; i < originalText.length(); ++i)
-            position = position.previous();
-        if (position.isNull())
-            position = startOfDocument(static_cast<Node*>(frame.document()->documentElement()));
-        range = Range::create(*frame.document(), position, frame.selection().selection().start());
-        if (range)
-            textForRange = (range) ? plainTextReplacingNoBreakSpace(range.get()) : emptyString();
-        unsigned loopCount = 0;
-        const unsigned maxPositionsAttempts = 10;
-        while (textForRange.length() && textForRange.length() > originalText.length() && loopCount < maxPositionsAttempts) {
-            position = position.next();
-            if (position.isNotNull() && position >= frame.selection().selection().start())
-                range = nullptr;
-            else
-                range = Range::create(*frame.document(), position, frame.selection().selection().start());
-            textForRange = (range) ? plainTextReplacingNoBreakSpace(range.get()) : emptyString();
-            loopCount++;
+
+    RefPtr<Range> range;
+    String textForRange;
+
+    if (frame.selection().isCaret()) {
+        VisiblePosition position = frame.selection().selection().start();
+        range = wordRangeFromPosition(position);
+        textForRange = plainTextReplacingNoBreakSpace(range.get());
+        if (textForRange != originalText) {
+            // Search for the original text before the selection caret.
+            for (size_t i = 0; i < originalText.length(); ++i)
+                position = position.previous();
+            if (position.isNull())
+                position = startOfDocument(static_cast<Node*>(frame.document()->documentElement()));
+            range = Range::create(*frame.document(), position, frame.selection().selection().start());
+            if (range)
+                textForRange = (range) ? plainTextReplacingNoBreakSpace(range.get()) : emptyString();
+            unsigned loopCount = 0;
+            const unsigned maxPositionsAttempts = 10;
+            while (textForRange.length() && textForRange.length() > originalText.length() && loopCount < maxPositionsAttempts) {
+                position = position.next();
+                if (position.isNotNull() && position >= frame.selection().selection().start())
+                    range = nullptr;
+                else
+                    range = Range::create(*frame.document(), position, frame.selection().selection().start());
+                textForRange = (range) ? plainTextReplacingNoBreakSpace(range.get()) : emptyString();
+                loopCount++;
+            }
         }
+    } else {
+        // Range selection.
+        range = frame.selection().toNormalizedRange();
+        if (!range) {
+            correctionApplied = false;
+            return;
+        }
+        textForRange = plainTextReplacingNoBreakSpace(range.get());
     }
+
     if (textForRange != originalText) {
         correctionApplied = false;
         return;

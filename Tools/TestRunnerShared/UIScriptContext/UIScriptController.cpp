@@ -318,6 +318,10 @@ void UIScriptController::keyboardAccessoryBarPrevious()
 {
 }
 
+void UIScriptController::applyAutocorrection(JSStringRef, JSStringRef, JSValueRef)
+{
+}
+
 double UIScriptController::zoomScale() const
 {
     return 1;

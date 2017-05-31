@@ -92,6 +92,8 @@ public:
 
     void keyboardAccessoryBarNext();
     void keyboardAccessoryBarPrevious();
+
+    void applyAutocorrection(JSStringRef newString, JSStringRef oldString, JSValueRef callback);
     
     void dismissFormAccessoryView();
     void selectFormAccessoryPickerRow(long);

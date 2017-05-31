@@ -203,6 +203,10 @@ void UIScriptController::keyboardAccessoryBarPrevious()
 {
 }
 
+void UIScriptController::applyAutocorrection(JSStringRef, JSStringRef, JSValueRef)
+{
+}
+
 double UIScriptController::minimumZoomScale() const
 {
     return gWebScrollView.minimumZoomScale;

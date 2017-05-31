@@ -477,6 +477,18 @@ void UIScriptController::keyboardAccessoryBarPrevious()
     [webView keyboardAccessoryBarPrevious];
 }
 
+void UIScriptController::applyAutocorrection(JSStringRef newString, JSStringRef oldString, JSValueRef callback)
+{
+    unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
+
+    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
+    [webView applyAutocorrection:toWTFString(toWK(newString)) toString:toWTFString(toWK(oldString)) withCompletionHandler:^ {
+        if (!m_context)
+            return;
+        m_context->asyncTaskComplete(callbackID);
+    }];
+}
+
 double UIScriptController::minimumZoomScale() const
 {
     TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();

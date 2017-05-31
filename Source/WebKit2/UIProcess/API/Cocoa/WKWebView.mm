@@ -5270,6 +5270,13 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     [_contentView accessoryTab:NO];
 }
 
+- (void)applyAutocorrection:(NSString *)newString toString:(NSString *)oldString withCompletionHandler:(void (^)())completionHandler
+{
+    [_contentView applyAutocorrection:newString toString:oldString withCompletionHandler:[capturedCompletionHandler = makeBlockPtr(completionHandler)] (UIWKAutocorrectionRects *rects) {
+        capturedCompletionHandler();
+    }];
+}
+
 - (void)dismissFormAccessoryView
 {
     [_contentView accessoryDone];

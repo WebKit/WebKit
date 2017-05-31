@@ -1,3 +1,21 @@
+2017-05-30  Tim Horton  <timothy_horton@apple.com>
+
+        Keyboard autocorrections do not apply with an active selection (but keyboard acts like they did)
+        https://bugs.webkit.org/show_bug.cgi?id=172735
+        <rdar://problem/32015977>
+
+        Reviewed by Enrica Casucci.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView applyAutocorrection:toString:withCompletionHandler:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        Expose applyAutocorrection on the WKTesting category for use from UIScriptController.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::syncApplyAutocorrection):
+        If there is a range selection and it precisely matches the autocorrection's "before"
+        string, allow the autocorrection to take place.
+
 2017-05-30  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: images dragged from Inspector to Desktop are named "Unknown.png"

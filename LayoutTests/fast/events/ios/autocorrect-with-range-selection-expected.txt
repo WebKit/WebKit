@@ -1,0 +1,4 @@
+To
+To manually test, type 'Ti' into the contenteditable, select it, then tap the autocorrection in the keyboard. The 'Ti' should be autocorrected.
+
+

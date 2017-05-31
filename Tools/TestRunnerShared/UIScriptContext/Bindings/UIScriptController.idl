@@ -191,6 +191,8 @@ interface UIScriptController {
     void keyboardAccessoryBarNext();
     void keyboardAccessoryBarPrevious();
 
+    void applyAutocorrection(DOMString newString, DOMString oldString, object callback);
+
     // Returned object is a dictionary with the passed in string as a key for returned object
     object contentsOfUserInterfaceItem(DOMString interfaceItem);
 

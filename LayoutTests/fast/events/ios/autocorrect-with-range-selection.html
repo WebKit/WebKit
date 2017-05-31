@@ -1,0 +1,36 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function runTest()
+        {
+            if (!window.testRunner || !testRunner.runUIScript)
+                return;
+
+            var inputEl = document.getElementById("editable");
+            window.getSelection().setBaseAndExtent(inputEl, 0, inputEl, 2);
+
+            testRunner.runUIScript(`(function() {
+                uiController.applyAutocorrection("To", "Ti", function() {
+                    uiController.uiScriptComplete();
+                });
+            })();`, function () {
+                testRunner.notifyDone()
+            });
+        }
+    </script>
+</head>
+
+<body onload="runTest()">
+    <div contenteditable id="editable">Ti</div>
+    <p>To manually test, type 'Ti' into the contenteditable, select it, then tap the autocorrection in the keyboard. The 'Ti' should be autocorrected.</p>
+    <code><div id="output"></div></code>
+</body>
+
+</html>
