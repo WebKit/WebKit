@@ -103,6 +103,9 @@ WebInspector.Setting.Event = {
 };
 
 WebInspector.settings = {
+    autoLogProtocolMessages: new WebInspector.Setting("auto-collect-protocol-messages", false),
+    autoLogTimeStats: new WebInspector.Setting("auto-collect-time-stats", false),
+    enableUncaughtExceptionReporter: new WebInspector.Setting("enable-uncaught-exception-reporter", true),
     enableLineWrapping: new WebInspector.Setting("enable-line-wrapping", false),
     indentUnit: new WebInspector.Setting("indent-unit", 4),
     tabSize: new WebInspector.Setting("tab-size", 4),

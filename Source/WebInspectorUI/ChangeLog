@@ -1,3 +1,46 @@
+2017-05-31  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Add Debug view to Settings tab for debug settings and experimental features
+        https://bugs.webkit.org/show_bug.cgi?id=172477
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Base/Setting.js:
+        Add three new settings:
+         - autoLogProtocolMessages
+         - autoLogTimeStats
+         - enableUncaughtExceptionReporter
+
+        * UserInterface/Debug/Bootstrap.js:
+        (WebInspector.runBootstrapOperations):
+        Update toolbar item state when editor in Settings tab is changed.
+
+        * UserInterface/Debug/UncaughtExceptionReporter.js:
+        (handleUncaughtExceptionRecord):
+        Return if the setting controlling the uncaught exception reporter is disabled.
+
+        * UserInterface/Protocol/InspectorBackend.js:
+        (InspectorBackendClass):
+        (InspectorBackendClass.prototype.set dumpInspectorProtocolMessages):
+        (InspectorBackendClass.prototype.get dumpInspectorProtocolMessages):
+        (InspectorBackendClass.prototype.set dumpInspectorTimeStats):
+        (InspectorBackendClass.prototype.get dumpInspectorTimeStats):
+        Replace member variables and private Setting objects with items on WebInspector.settings.
+
+        * UserInterface/Main.html:
+        * UserInterface/Views/GeneralSettingsView.js: Removed.
+        Consolidated into SettingsTabContentView.
+
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WebInspector.SettingsTabContentView):
+        (WebInspector.SettingsTabContentView.prototype.initialLayout):
+        (WebInspector.SettingsTabContentView.prototype._createGeneralSettingsView):
+        (WebInspector.SettingsTabContentView.prototype._createDebugSettingsView):
+        (WebInspector.SettingsTabContentView.prototype._updateDebugSettingsViewVisibility):
+
+        * UserInterface/Views/SettingsView.js:
+        (WebInspector.SettingsView.prototype.addGroupWithCustomSetting):
+
 2017-05-31  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [GTK] Web Inspector: BackForwardArrows.svg is not shown

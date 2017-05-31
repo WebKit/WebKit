@@ -37,13 +37,16 @@ WebInspector.runBootstrapOperations = function() {
         window.location.reload();
     });
 
-    let toolTip = "Enable dump inspector messages to console";
-    let activatedToolTip = "Disable dump inspector messages to console";
+    const toolTip = WebInspector.unlocalizedString("Enable dump inspector messages to console");
+    const activatedToolTip = WebInspector.unlocalizedString("Disable dump inspector messages to console");
     let debugInspectorToolbarButton = new WebInspector.ActivateButtonToolbarItem("debug-inspector", toolTip, activatedToolTip, null, "Images/Console.svg");
     debugInspectorToolbarButton.activated = InspectorBackend.dumpInspectorProtocolMessages;
     WebInspector.toolbar.addToolbarItem(debugInspectorToolbarButton, WebInspector.Toolbar.Section.CenterRight);
     debugInspectorToolbarButton.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, () => {
         InspectorBackend.dumpInspectorProtocolMessages = !InspectorBackend.dumpInspectorProtocolMessages;
+        debugInspectorToolbarButton.activated = InspectorBackend.dumpInspectorProtocolMessages;
+    });
+    WebInspector.settings.autoLogProtocolMessages.addEventListener(WebInspector.Setting.Event.Changed, () => {
         debugInspectorToolbarButton.activated = InspectorBackend.dumpInspectorProtocolMessages;
     });
 

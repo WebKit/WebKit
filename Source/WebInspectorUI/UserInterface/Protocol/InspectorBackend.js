@@ -40,11 +40,10 @@ InspectorBackendClass = class InspectorBackendClass
         this._defaultTracer = new WebInspector.LoggingProtocolTracer;
         this._activeTracers = [this._defaultTracer];
 
-        this._dumpInspectorTimeStats = false;
         this._workerSupportedDomains = [];
 
-        let setting = WebInspector.autoLogProtocolMessagesSetting = new WebInspector.Setting("auto-collect-protocol-messages", false);
-        setting.addEventListener(WebInspector.Setting.Event.Changed, this._startOrStopAutomaticTracing.bind(this));
+        WebInspector.settings.autoLogProtocolMessages.addEventListener(WebInspector.Setting.Event.Changed, this._startOrStopAutomaticTracing, this);
+        WebInspector.settings.autoLogTimeStats.addEventListener(WebInspector.Setting.Event.Changed, this._startOrStopAutomaticTracing, this);
         this._startOrStopAutomaticTracing();
 
         this.currentDispatchState = {
@@ -64,20 +63,19 @@ InspectorBackendClass = class InspectorBackendClass
     set dumpInspectorProtocolMessages(value)
     {
         // Implicitly cause automatic logging to start if it's allowed.
-        let setting = WebInspector.autoLogProtocolMessagesSetting;
-        setting.value = value;
+        WebInspector.settings.autoLogProtocolMessages.value = value;
 
         this._defaultTracer.dumpMessagesToConsole = value;
     }
 
     get dumpInspectorProtocolMessages()
     {
-        return WebInspector.autoLogProtocolMessagesSetting.value;
+        return WebInspector.settings.autoLogProtocolMessages.value;
     }
 
     set dumpInspectorTimeStats(value)
     {
-        this._dumpInspectorTimeStats = !!value;
+        WebInspector.settings.autoLogTimeStats.value = value;
 
         if (!this.dumpInspectorProtocolMessages)
             this.dumpInspectorProtocolMessages = true;
@@ -87,7 +85,7 @@ InspectorBackendClass = class InspectorBackendClass
 
     get dumpInspectorTimeStats()
     {
-        return this._dumpInspectorTimeStats;
+        return WebInspector.settings.autoLogTimeStats.value;
     }
 
     set customTracer(tracer)

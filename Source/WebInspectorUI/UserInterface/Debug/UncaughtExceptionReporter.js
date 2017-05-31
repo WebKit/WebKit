@@ -72,6 +72,9 @@ function handleUncaughtException(event) {
 }
 
 function handleUncaughtExceptionRecord(exceptionRecord) {
+    if (!WebInspector.settings.enableUncaughtExceptionReporter.value)
+        return;
+
     if (!window.__uncaughtExceptions)
         window.__uncaughtExceptions = [];
 

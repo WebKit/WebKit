@@ -49,8 +49,7 @@ WebInspector.SettingsView = class SettingsView extends WebInspector.View
     addGroupWithCustomSetting(title, editorType, options)
     {
         let settingsGroup = this.addGroup(title);
-        let customSetting = settingsGroup.addCustomSetting(editorType, options);
-        return [settingsGroup, customSetting];
+        return settingsGroup.addCustomSetting(editorType, options);
     }
 
     addGroup(title)
