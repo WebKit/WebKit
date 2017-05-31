@@ -1,3 +1,23 @@
+2017-05-31  Emilio Cobos Álvarez  <ecobos@igalia.com>
+
+        Use the rare data's RenderStyle for display: contents.
+        https://bugs.webkit.org/show_bug.cgi?id=172721
+
+        Reviewed by Antti Koivisto.
+
+        No new tests, no behavior change.
+
+        * dom/Element.cpp:
+        (WebCore::Element::hasDisplayContents):
+        (WebCore::Element::storeDisplayContentsStyle):
+        * dom/Element.h:
+        * dom/ElementRareData.h:
+        (WebCore::ElementRareData::ElementRareData):
+        * style/RenderTreeUpdater.cpp:
+        (WebCore::RenderTreeUpdater::updateElementRenderer):
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::TreeResolver::resolveComposedTree):
+
 2017-05-31  Per Arne Vollan  <pvollan@apple.com>
 
         LayoutTest media/video-orientation.html is failing

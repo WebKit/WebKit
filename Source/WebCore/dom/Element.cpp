@@ -1468,14 +1468,17 @@ WebAnimationVector Element::getAnimations()
 
 bool Element::hasDisplayContents() const
 {
-    return hasRareData() && elementRareData()->hasDisplayContents();
+    if (renderer() || !hasRareData())
+        return false;
+    const RenderStyle* style = elementRareData()->computedStyle();
+    return style && style->display() == CONTENTS;
 }
 
-void Element::setHasDisplayContents(bool value)
+void Element::storeDisplayContentsStyle(std::unique_ptr<RenderStyle> style)
 {
-    if (hasDisplayContents() == value)
-        return;
-    ensureElementRareData().setHasDisplayContents(value);
+    ASSERT(style && style->display() == CONTENTS);
+    ASSERT(!renderer());
+    ensureElementRareData().setComputedStyle(WTFMove(style));
 }
 
 // Returns true is the given attribute is an event handler.

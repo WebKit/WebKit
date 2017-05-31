@@ -544,7 +544,7 @@ public:
     void invalidateStyleAndRenderersForSubtree();
 
     bool hasDisplayContents() const;
-    void setHasDisplayContents(bool);
+    void storeDisplayContentsStyle(std::unique_ptr<RenderStyle>);
 
     using ContainerNode::setAttributeEventListener;
     void setAttributeEventListener(const AtomicString& eventType, const QualifiedName& attributeName, const AtomicString& value);
