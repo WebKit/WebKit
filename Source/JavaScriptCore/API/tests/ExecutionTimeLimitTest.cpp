@@ -30,17 +30,9 @@
 #include "JSContextRefPrivate.h"
 #include "JavaScript.h"
 #include "Options.h"
-
 #include <chrono>
-#include <wtf/Atomics.h>
-#include <wtf/Condition.h>
 #include <wtf/CurrentTime.h>
-#include <wtf/Lock.h>
 #include <wtf/text/StringBuilder.h>
-
-#if HAVE(MACH_EXCEPTIONS)
-#include <dispatch/dispatch.h>
-#endif
 
 using namespace std::chrono;
 using JSC::Options;
@@ -84,15 +76,6 @@ static bool extendTerminateCallback(JSContextRef ctx, void*)
     }
     return true;
 }
-
-#if HAVE(MACH_EXCEPTIONS)
-bool dispatchTerminateCallbackCalled = false;
-static bool dispatchTermitateCallback(JSContextRef, void*)
-{
-    dispatchTerminateCallbackCalled = true;
-    return true;
-}
-#endif
 
 struct TierOptions {
     const char* tier;
@@ -381,65 +364,6 @@ int testExecutionTimeLimit()
                 failed = true;
             }
         }
-
-#if HAVE(MACH_EXCEPTIONS)
-        /* Test script timeout from dispatch queue: */
-        timeLimit = (100 + tierAdjustmentMillis) / 1000.0;
-        JSContextGroupSetExecutionTimeLimit(contextGroup, timeLimit, dispatchTermitateCallback, 0);
-        {
-            unsigned timeAfterWatchdogShouldHaveFired = 300 + tierAdjustmentMillis;
-
-            StringBuilder scriptBuilder;
-            scriptBuilder.appendLiteral("function foo() { var startTime = currentCPUTime(); while (true) { for (var i = 0; i < 1000; i++); if (currentCPUTime() - startTime > ");
-            scriptBuilder.appendNumber(timeAfterWatchdogShouldHaveFired / 1000.0);
-            scriptBuilder.appendLiteral(") break; } } foo();");
-
-            JSStringRef script = JSStringCreateWithUTF8CString(scriptBuilder.toString().utf8().data());
-            exception = nullptr;
-            dispatchTerminateCallbackCalled = false;
-
-            // We have to do this since blocks can only capture things as const.
-            JSGlobalContextRef& contextRef = context;
-            JSStringRef& scriptRef = script;
-            JSValueRef& exceptionRef = exception;
-
-            Lock syncLock;
-            Lock& syncLockRef = syncLock;
-            Condition synchronize;
-            Condition& synchronizeRef = synchronize;
-            bool didSynchronize = false;
-            bool& didSynchronizeRef = didSynchronize;
-
-            std::chrono::microseconds startTime;
-            std::chrono::microseconds endTime;
-
-            std::chrono::microseconds& startTimeRef = startTime;
-            std::chrono::microseconds& endTimeRef = endTime;
-
-            dispatch_group_t group = dispatch_group_create();
-            dispatch_group_async(group, dispatch_get_global_queue(0, 0), ^{
-                startTimeRef = currentCPUTime();
-                JSEvaluateScript(contextRef, scriptRef, nullptr, nullptr, 1, &exceptionRef);
-                endTimeRef = currentCPUTime();
-                auto locker = WTF::holdLock(syncLockRef);
-                didSynchronizeRef = true;
-                synchronizeRef.notifyAll();
-            });
-
-            auto locker = holdLock(syncLock);
-            synchronize.wait(syncLock, [&] { return didSynchronize; });
-
-            if (((endTime - startTime) < milliseconds(timeAfterWatchdogShouldHaveFired)) && dispatchTerminateCallbackCalled)
-                printf("PASS: %s script on dispatch queue timed out as expected.\n", tierOptions.tier);
-            else {
-                if ((endTime - startTime) >= milliseconds(timeAfterWatchdogShouldHaveFired))
-                    printf("FAIL: %s script on dispatch queue did not time out as expected.\n", tierOptions.tier);
-                if (!shouldTerminateCallbackWasCalled)
-                    printf("FAIL: %s script on dispatch queue timeout callback was not called.\n", tierOptions.tier);
-                failed = true;
-            }
-        }
-#endif
 
         JSGlobalContextRelease(context);
 

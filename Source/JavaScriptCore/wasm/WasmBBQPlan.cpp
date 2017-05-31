@@ -242,7 +242,7 @@ void BBQPlan::compileFunctions(CompilationEffort effort)
         ASSERT(validateFunction(functionStart, functionLength, signature, m_moduleInformation.get()));
 
         m_unlinkedWasmToWasmCalls[functionIndex] = Vector<UnlinkedWasmToWasmCall>();
-        TierUpCount* tierUp = Options::useBBQTierUpChecks() ? &m_tierUpCounts[functionIndex] : nullptr;
+        TierUpCount* tierUp = &m_tierUpCounts[functionIndex];
         auto parseAndCompileResult = parseAndCompile(m_compilationContexts[functionIndex], functionStart, functionLength, signature, m_unlinkedWasmToWasmCalls[functionIndex], m_moduleInformation.get(), m_mode, CompilationMode::BBQMode, functionIndex, tierUp);
 
         if (UNLIKELY(!parseAndCompileResult)) {

@@ -54,6 +54,7 @@ public:
         : m_origin(origin)
         , m_bound(end)
     {
+        checkConsistency();
     }
 
     void* origin() const

@@ -1,3 +1,21 @@
+2017-05-31  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r217611 and r217631.
+        https://bugs.webkit.org/show_bug.cgi?id=172785
+
+        "caused wasm-hashset-many.html to become flaky." (Requested by
+        keith_miller on #webkit).
+
+        Reverted changesets:
+
+        "Reland r216808, underlying lldb bug has been fixed."
+        https://bugs.webkit.org/show_bug.cgi?id=172759
+        http://trac.webkit.org/changeset/217611
+
+        "Use dispatch queues for mach exceptions"
+        https://bugs.webkit.org/show_bug.cgi?id=172775
+        http://trac.webkit.org/changeset/217631
+
 2017-05-31  Oleksandr Skachkov  <gskachkov@gmail.com>
 
         Rolling out: Prevent async methods named 'function'

@@ -36,7 +36,7 @@ namespace WTF {
 void initializeThreadMessages();
 
 class ThreadMessageData;
-using ThreadMessage = ScopedLambda<void(PlatformRegisters&)>;
+using ThreadMessage = ScopedLambda<void(siginfo_t*, ucontext_t*)>;
 
 enum class MessageStatus {
     MessageRan,
@@ -51,13 +51,9 @@ WTF_EXPORT_PRIVATE MessageStatus sendMessageScoped(Thread&, const ThreadMessage&
 template<typename Functor>
 MessageStatus sendMessage(Thread& targetThread, const Functor& func)
 {
-    auto lambda = scopedLambdaRef<void(PlatformRegisters&)>(func);
+    auto lambda = scopedLambdaRef<void(siginfo_t*, ucontext_t*)>(func);
     return sendMessageScoped(targetThread, lambda);
 }
-
-#if HAVE(MACH_EXCEPTIONS)
-void deliverMessagesUsingMach();
-#endif
 
 } // namespace WTF
 
