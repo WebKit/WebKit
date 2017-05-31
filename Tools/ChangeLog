@@ -1,3 +1,19 @@
+2017-05-31  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK][WPE] run-javascriptcore-tests should use the jhbuild
+        https://bugs.webkit.org/show_bug.cgi?id=172757
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        When needed, add the jhbuild wrapper at the beginning of the array
+        that will be invoked to execute the run-jsc-stress-test or testapi
+        commands.
+
+        * Scripts/run-javascriptcore-tests:
+        (runJSCStressTests):
+        * Scripts/webkitdirs.pm:
+        (shouldUseJhbuild):
+
 2017-05-31  Simon Fraser  <simon.fraser@apple.com>
 
         Get <chrono> out of StdLibExtras.h

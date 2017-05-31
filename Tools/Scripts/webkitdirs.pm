@@ -1900,6 +1900,11 @@ sub wrapperPrefixIfNeeded()
     return ();
 }
 
+sub shouldUseJhbuild()
+{
+    return ((isGtk() or isWPE()) and -e getJhbuildPath());
+}
+
 sub cmakeCachePath()
 {
     return File::Spec->catdir(baseProductDir(), configuration(), "CMakeCache.txt");
