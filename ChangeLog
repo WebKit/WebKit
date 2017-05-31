@@ -1,3 +1,14 @@
+2017-05-31  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Consider enabling -Wno-expansion-to-defined for gcc 7
+        https://bugs.webkit.org/show_bug.cgi?id=167643
+
+        Reviewed by Žan Doberšek.
+
+        * Source/cmake/OptionsCommon.cmake: Pass -Wno-expansion-to-defined to
+        GCC, the flag is supported all the way back to version 4.9, which is
+        the oldest we support
+
 2017-05-26  Don Olmstead  <don.olmstead@am.sony.com>
 
         [CMake] Wrap CODE_GENERATOR_PREPROCESSOR_EXECUTABLE on Windows hosts
