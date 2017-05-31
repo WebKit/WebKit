@@ -39,6 +39,7 @@ extern "C" {
 #include <signal.h>
 
 #if HAVE(MACH_EXCEPTIONS)
+#include <dispatch/dispatch.h>
 #include <mach/mach.h>
 #include <mach/thread_act.h>
 #endif
@@ -78,31 +79,38 @@ static void startMachExceptionHandlerThread()
         if (mach_port_insert_right(mach_task_self(), exceptionPort, exceptionPort, MACH_MSG_TYPE_MAKE_SEND) != KERN_SUCCESS)
             CRASH();
 
-        // FIXME: This should use a dispatch queue.
-        // See: https://bugs.webkit.org/show_bug.cgi?id=172003
-        (void)Thread::create(
-            "WTF Mach Exception Thread", [] () {
-                union Message {
-                    mach_msg_header_t header;
-                    char data[maxMessageSize];
-                };
-                Message messageHeaderIn;
-                Message messageHeaderOut;
+        // It's not clear that this needs to be the high priority queue but it should be rare and it might be
+        // handling exceptions from high priority threads. Anyway, our handlers should be very fast anyway so it's
+        // probably not the end of the world if we handle a low priority exception on a high priority queue.
+        dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
+        dispatch_source_t source = dispatch_source_create(DISPATCH_SOURCE_TYPE_MACH_RECV, exceptionPort, 0, queue);
+        RELEASE_ASSERT_WITH_MESSAGE(source, "We need to ensure our source was created.");
 
-                while (true) {
-                    kern_return_t messageResult = mach_msg(&messageHeaderIn.header, MACH_RCV_MSG, 0, maxMessageSize, exceptionPort, MACH_MSG_TIMEOUT_NONE, MACH_PORT_NULL);
-                    if (messageResult == KERN_SUCCESS) {
-                        if (!mach_exc_server(&messageHeaderIn.header, &messageHeaderOut.header))
-                            CRASH();
+        // We should never cancel our handler since it's a permanent thing so we don't add a cancel handler.
+        dispatch_source_set_event_handler(source, ^{
+            // the leaks tool will get mad at us if we don't pretend to watch the source.
+            UNUSED_PARAM(source);
+            union Message {
+                mach_msg_header_t header;
+                char data[maxMessageSize];
+            };
+            Message messageHeaderIn;
+            Message messageHeaderOut;
 
-                        messageResult = mach_msg(&messageHeaderOut.header, MACH_SEND_MSG, messageHeaderOut.header.msgh_size, 0, messageHeaderOut.header.msgh_local_port, 0, MACH_PORT_NULL);
-                        RELEASE_ASSERT(messageResult == KERN_SUCCESS);
-                    } else {
-                        dataLogLn("Failed to receive mach message due to ", mach_error_string(messageResult));
-                        RELEASE_ASSERT_NOT_REACHED();
-                    }
-                }
-        }).leakRef();
+            kern_return_t messageResult = mach_msg(&messageHeaderIn.header, MACH_RCV_MSG, 0, maxMessageSize, exceptionPort, MACH_MSG_TIMEOUT_NONE, MACH_PORT_NULL);
+            if (messageResult == KERN_SUCCESS) {
+                if (!mach_exc_server(&messageHeaderIn.header, &messageHeaderOut.header))
+                    CRASH();
+
+                messageResult = mach_msg(&messageHeaderOut.header, MACH_SEND_MSG, messageHeaderOut.header.msgh_size, 0, messageHeaderOut.header.msgh_local_port, 0, MACH_PORT_NULL);
+                RELEASE_ASSERT(messageResult == KERN_SUCCESS);
+            } else {
+                dataLogLn("Failed to receive mach message due to ", mach_error_string(messageResult));
+                RELEASE_ASSERT_NOT_REACHED();
+            }
+        });
+
+        dispatch_resume(source);
     });
 }
 

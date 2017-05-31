@@ -1,5 +1,23 @@
 2017-05-31  Keith Miller  <keith_miller@apple.com>
 
+        Use dispatch queues for mach exceptions
+        https://bugs.webkit.org/show_bug.cgi?id=172775
+
+        Reviewed by Geoffrey Garen.
+
+        This patch adds support for using a dispatch queue to handle our
+        mach exceptions. We use a high priority concurrent dispatch queue
+        to handle our mach exceptions. We don't know the priority of the
+        thread whose exception we are handling so the most conservative
+        answer is to respond with a high priority. These events are both
+        rare and usually quite fast so it is likely not a significant cost
+        when the thread with an exception has a low priority.
+
+        * wtf/threads/Signals.cpp:
+        (WTF::startMachExceptionHandlerThread):
+
+2017-05-31  Keith Miller  <keith_miller@apple.com>
+
         Reland r216808, underlying lldb bug has been fixed.
         https://bugs.webkit.org/show_bug.cgi?id=172759
 
