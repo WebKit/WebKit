@@ -1,5 +1,16 @@
 # These are the layout test expectations for the GTK port of WebKit.
 #
+#
+# If you get different test results than the bots for some tests
+# even when using the internal JHBuild, then you can re-try using a
+# chroot of the same distro and version the bots use (see below).
+# If doing that fixes the issue, it means we need to identify the library
+# that is causing the difference on the results, and add it to the JHBuild.
+#
+# The bots of WebKitGTK+ running layout tests (Release Test, Debug Test, Release Wayland Tests)
+# are currently running on Debian 9 (Stretch) x86_64.
+#
+#
 # See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
 #
 # Never add any tests to this file without opening a bug on bugzilla.webkit.org.

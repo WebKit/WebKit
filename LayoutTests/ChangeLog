@@ -1,3 +1,16 @@
+2017-05-31  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Upgrade the WebKitGTK+ bots to Debian 9
+
+        This commit only adds a comment that it will be useful to mark
+        the point where they where upgraded, so if there is some
+        performance change on perf.webkit.org it can be pointed to this.
+
+        Unreviewed.
+
+        * platform/gtk/TestExpectations: Add a note regarding which
+        distribution and version is running on the bots.
+
 2017-05-31  Claudio Saavedra  <csaavedra@igalia.com>
 
         [WPE] WebGL expectations cleanup
