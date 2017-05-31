@@ -1,3 +1,31 @@
+2017-05-31  Frederic Wang  <fwang@igalia.com>
+
+        ScrollingStateScrollingNode::ChangedProperty::NumScrollingStateNodeBits is wrongly set
+        https://bugs.webkit.org/show_bug.cgi?id=172349
+
+        Reviewed by Simon Fraser.
+
+        ScrollingStateScrollingNode::ChangedProperty::NumScrollingStateNodeBits was introduced in
+        r133022 so that ScrollingStateFrameScrollingNode and ScrollingStateOverflowScrollingNode
+        know the number of bits use for properties in their parent class.
+
+        In r172649, r210560, r185762 and r183702 new properties were added to
+        ScrollingStateScrollingNode but NumScrollingStateNodeBits was not increased accordingly. This
+        means that there are potential conflicts between these new properties and those of derived
+        classes ScrollingStateFrameScrollingNode and ScrollingStateOverflowScrollingNode. It is not
+        clear how to write a test case reproducing such conflict, though.
+
+        No new tests, this is a coding mistake but its effect is unclear.
+
+        * page/scrolling/ScrollingStateNode.cpp:
+        (WebCore::ScrollingStateNode::setPropertyChanged): Use hasChangedProperty and cast to
+        64-bits integer before shifting.
+        * page/scrolling/ScrollingStateNode.h: Add a comment to make clear NumStateNodeBits must
+        remain at the last position. Ensure we have enough bits available.
+        (WebCore::ScrollingStateNode::hasChangedProperty): Cast to 64-bits integer before shifting.
+        * page/scrolling/ScrollingStateScrollingNode.h: Fix position of NumScrollingStateNodeBits and
+        also add a similar comment.
+
 2017-05-31  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r217603.

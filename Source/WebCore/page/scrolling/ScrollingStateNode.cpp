@@ -65,10 +65,10 @@ ScrollingStateNode::~ScrollingStateNode()
 
 void ScrollingStateNode::setPropertyChanged(unsigned propertyBit)
 {
-    if (m_changedProperties & (1 << propertyBit))
+    if (hasChangedProperty(propertyBit))
         return;
 
-    m_changedProperties |= (1 << propertyBit);
+    m_changedProperties |= (static_cast<ChangedProperties>(1) << propertyBit);
     m_scrollingStateTree.setHasChangedProperties();
 }
 

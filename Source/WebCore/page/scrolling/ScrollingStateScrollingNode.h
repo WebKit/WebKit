@@ -46,7 +46,6 @@ public:
         ScrollOrigin,
         ScrollableAreaParams,
         RequestedScrollPosition,
-        NumScrollingStateNodeBits,
 #if ENABLE(CSS_SCROLL_SNAP)
         HorizontalSnapOffsets,
         VerticalSnapOffsets,
@@ -56,6 +55,7 @@ public:
         CurrentVerticalSnapOffsetIndex,
 #endif
         ExpectsWheelEventTestTrigger,
+        NumScrollingStateNodeBits // This must remain at the last position.
     };
 
     const FloatSize& scrollableAreaSize() const { return m_scrollableAreaSize; }

@@ -29,6 +29,7 @@
 
 #include "GraphicsLayer.h"
 #include "ScrollingCoordinator.h"
+#include <stdint.h>
 #include <wtf/RefCounted.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/Vector.h>
@@ -202,12 +203,12 @@ public:
 
     enum {
         ScrollLayer = 0,
-        NumStateNodeBits = 1
+        NumStateNodeBits // This must remain at the last position.
     };
-    typedef unsigned ChangedProperties;
+    typedef uint64_t ChangedProperties;
 
     bool hasChangedProperties() const { return m_changedProperties; }
-    bool hasChangedProperty(unsigned propertyBit) const { return m_changedProperties & (1 << propertyBit); }
+    bool hasChangedProperty(unsigned propertyBit) const { return m_changedProperties & (static_cast<ChangedProperties>(1) << propertyBit); }
     void resetChangedProperties() { m_changedProperties = 0; }
     void setPropertyChanged(unsigned propertyBit);
 
