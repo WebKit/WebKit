@@ -1988,3 +1988,5 @@ webkit.org/b/171605 imported/w3c/web-platform-tests/webrtc/datachannel-emptystri
 webkit.org/b/171605 imported/w3c/web-platform-tests/webrtc/promises-call.html [ Pass Failure ]
 
 webkit.org/b/172f21 imported/w3c/web-platform-tests/webrtc/getstats.html [ Pass Failure ]
+
+webkit.org/b/172772 [ Release ] http/tests/cache/cancel-during-revalidation-succeeded.html [ Skip ]
