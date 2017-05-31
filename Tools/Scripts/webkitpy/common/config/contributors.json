@@ -2780,10 +2780,11 @@
       "emails" : [
          "jiewen_tan@apple.com"
       ],
+      "expertise" : "WebCrypto API",
       "nicks" : [
          "Jiewen"
       ],
-      "status" : "committer"
+      "status" : "reviewer"
    },
    "Jing Zhao" : {
       "emails" : [
