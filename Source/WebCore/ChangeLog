@@ -1,3 +1,16 @@
+2017-05-30  Zalan Bujtas  <zalan@apple.com>
+
+        ASSERTION FAILED: m_layoutPhase == InPostLayerPositionsUpdatedAfterLayout || m_layoutPhase == OutsideLayout
+        https://bugs.webkit.org/show_bug.cgi?id=171501
+        <rdar://problem/31977453>
+
+        Reviewed by Simon Fraser.
+
+        We should be able to paint as long as the tree is clean and we are in paintable state.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::paintContents):
+
 2017-05-30  Sam Weinig  <sam@webkit.org>
 
         Revert accidentally checked in change.
