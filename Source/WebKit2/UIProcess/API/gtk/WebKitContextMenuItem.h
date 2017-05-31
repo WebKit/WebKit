@@ -82,7 +82,7 @@ webkit_context_menu_item_new_with_submenu                 (const gchar          
 WEBKIT_API WebKitContextMenuItem *
 webkit_context_menu_item_new_separator                    (void);
 
-WEBKIT_DEPRECATED_FOR(webkit_context_menu_item_get_gactionwebkit_context_menu_item_get_gaction) GtkAction *
+WEBKIT_DEPRECATED_FOR(webkit_context_menu_item_get_gaction) GtkAction *
 webkit_context_menu_item_get_action                       (WebKitContextMenuItem  *item);
 
 WEBKIT_API GAction *

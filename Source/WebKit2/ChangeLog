@@ -1,3 +1,11 @@
+2017-05-31  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix copy-paste error added in r217209.
+
+        It seems I pasted twice.
+
+        * UIProcess/API/gtk/WebKitContextMenuItem.h:
+
 2017-05-30  Tim Horton  <timothy_horton@apple.com>
 
         Keyboard autocorrections do not apply with an active selection (but keyboard acts like they did)
