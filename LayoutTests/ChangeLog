@@ -1,3 +1,18 @@
+2017-05-31  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        Move css-shapes-1 test suite to WPT
+        https://bugs.webkit.org/show_bug.cgi?id=172537
+
+        Reviewed by Youenn Fablet.
+
+        Updated the paths in TestExpectations files.
+        Marked spec-examples/shape-outside-018.html as flaky.
+
+        * TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/win/TestExpectations:
+
 2017-05-30  Frederic Wang  <fwang@igalia.com>
 
         Include ScrollingTreeScrollingNode properties in ScrollingTreeFrameScrollingNode::dumpProperties

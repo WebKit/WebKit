@@ -1085,8 +1085,9 @@ webkit.org/b/172056 fast/text/multiglyph-characters.html [ Failure ]
 fast/text/letterpress-different.html [ ImageOnlyFailure ]
 
 # CSS Shapes tests
-webkit.org/b/163706 imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-010.html [ Skip ]
-webkit.org/b/163706 imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-024.html [ Skip ]
+webkit.org/b/163706 imported/w3c/web-platform-tests/css/css-shapes-1/shape-outside/shape-image/shape-image-010.html [ Skip ]
+webkit.org/b/163706 imported/w3c/web-platform-tests/css/css-shapes-1/shape-outside/shape-image/shape-image-024.html [ Skip ]
+webkit.org/b/172537 imported/w3c/web-platform-tests/css/css-shapes-1/spec-examples/shape-outside-018.html [ Pass Failure ]
 imported/blink/http/tests/security/shape-image-cors-disallow-origin.html [ ImageOnlyFailure ]
 imported/blink/http/tests/security/shape-image-cors-port.html [ ImageOnlyFailure ]
 webkit.org/b/163887 svg/as-image/svg-image-with-data-uri-use-data-uri.svg [ Pass Crash ]

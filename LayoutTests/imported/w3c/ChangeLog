@@ -1,3 +1,503 @@
+2017-05-31  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        Move css-shapes-1 test suite to WPT
+        https://bugs.webkit.org/show_bug.cgi?id=172537
+
+        Reviewed by Youenn Fablet.
+
+        This is the last suite that we have in csswg-test.
+        This patch moves it to the new path in WPT and gets rid of the csswg-test directory.
+        It also updates the tests with the last changes upstream.
+
+        * csswg-test/CONTRIBUTING.md: Removed.
+        * csswg-test/LICENSE: Removed.
+        * csswg-test/LICENSE.md: Removed.
+        * csswg-test/README.md: Removed.
+        * csswg-test/build-css-testsuites.sh: Removed.
+        * csswg-test/config.default.json: Removed.
+        * csswg-test/css-shapes-1/shape-outside/shape-box/w3c-import.log: Removed.
+        * csswg-test/css-shapes-1/shape-outside/shape-image/gradients/w3c-import.log: Removed.
+        * csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-013.html: Removed.
+        * csswg-test/css-shapes-1/shape-outside/shape-image/support/w3c-import.log: Removed.
+        * csswg-test/css-shapes-1/shape-outside/shape-image/w3c-import.log: Removed.
+        * csswg-test/css-shapes-1/shape-outside/supported-shapes/circle/w3c-import.log: Removed.
+        * csswg-test/css-shapes-1/shape-outside/supported-shapes/ellipse/w3c-import.log: Removed.
+        * csswg-test/css-shapes-1/shape-outside/supported-shapes/inset/w3c-import.log: Removed.
+        * csswg-test/css-shapes-1/shape-outside/supported-shapes/polygon/w3c-import.log: Removed.
+        * csswg-test/css-shapes-1/shape-outside/values/shape-image-threshold-002-expected.txt: Removed.
+        * csswg-test/css-shapes-1/shape-outside/values/shape-margin-004-expected.txt: Removed.
+        * csswg-test/css-shapes-1/shape-outside/values/shape-outside-circle-003-expected.txt: Removed.
+        * csswg-test/css-shapes-1/shape-outside/values/shape-outside-circle-007-expected.txt: Removed.
+        * csswg-test/css-shapes-1/shape-outside/values/shape-outside-circle-008-expected.txt: Removed.
+        * csswg-test/css-shapes-1/shape-outside/values/shape-outside-ellipse-003-expected.txt: Removed.
+        * csswg-test/css-shapes-1/shape-outside/values/shape-outside-ellipse-007-expected.txt: Removed.
+        * csswg-test/css-shapes-1/shape-outside/values/shape-outside-ellipse-008-expected.txt: Removed.
+        * csswg-test/css-shapes-1/shape-outside/values/shape-outside-inset-005-expected.txt: Removed.
+        * csswg-test/css-shapes-1/shape-outside/values/shape-outside-inset-007-expected.txt: Removed.
+        * csswg-test/css-shapes-1/shape-outside/values/shape-outside-polygon-003-expected.txt: Removed.
+        * csswg-test/css-shapes-1/shape-outside/values/w3c-import.log: Removed.
+        * csswg-test/css-shapes-1/spec-examples/w3c-import.log: Removed.
+        * csswg-test/css-shapes-1/support/w3c-import.log: Removed.
+        * csswg-test/css-shapes-1/w3c-import.log: Removed.
+        * csswg-test/lint: Removed.
+        * csswg-test/lint.whitelist: Removed.
+        * csswg-test/manifest: Removed.
+        * csswg-test/requirements.txt: Removed.
+        * csswg-test/serve: Removed.
+        * csswg-test/serve.py: Removed.
+        * csswg-test/w3c-import.log: Removed.
+        * resources/import-expectations.json:
+        * resources/resource-files.json:
+        * web-platform-tests/css/css-shapes-1/shape-outside-invalid-001-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside-invalid-001-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside-invalid-001.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside-invalid-001.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside-invalid-circle-000-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside-invalid-circle-000-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside-invalid-circle-000.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside-invalid-circle-000.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside-invalid-circle-001-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside-invalid-circle-001-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside-invalid-circle-001.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside-invalid-circle-001.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside-invalid-circle-002-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside-invalid-circle-002-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside-invalid-circle-002.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside-invalid-circle-002.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside-invalid-circle-003-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside-invalid-circle-003-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside-invalid-circle-003.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside-invalid-circle-003.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside-invalid-ellipse-001-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside-invalid-ellipse-001-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside-invalid-ellipse-001.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside-invalid-ellipse-001.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside-invalid-ellipse-002-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside-invalid-ellipse-002-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside-invalid-ellipse-002.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside-invalid-ellipse-002.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside-invalid-ellipse-003-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside-invalid-ellipse-003-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside-invalid-ellipse-003.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside-invalid-ellipse-003.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside-invalid-ellipse-004-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside-invalid-ellipse-004-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside-invalid-ellipse-004.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside-invalid-ellipse-004.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside-invalid-ellipse-005-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside-invalid-ellipse-005-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside-invalid-ellipse-005.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside-invalid-ellipse-005.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside-invalid-ellipse-006-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside-invalid-ellipse-006-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside-invalid-ellipse-006.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside-invalid-ellipse-006.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside-invalid-inset-001-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside-invalid-inset-001-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside-invalid-inset-001.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside-invalid-inset-001.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside-invalid-inset-002-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside-invalid-inset-002-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside-invalid-inset-002.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside-invalid-inset-002.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside-invalid-inset-003-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside-invalid-inset-003-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside-invalid-inset-003.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside-invalid-inset-003.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside-invalid-inset-004-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside-invalid-inset-004-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside-invalid-inset-004.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside-invalid-inset-004.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-box/shape-outside-box-002-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-box/shape-outside-box-002-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-box/shape-outside-box-002.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-box/shape-outside-box-002.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-box/shape-outside-box-003-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-box/shape-outside-box-003-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-box/shape-outside-box-003.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-box/shape-outside-box-003.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-box/shape-outside-box-004-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-box/shape-outside-box-004-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-box/shape-outside-box-004.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-box/shape-outside-box-004.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-box/shape-outside-box-006-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-box/shape-outside-box-006-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-box/shape-outside-box-006.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-box/shape-outside-box-006.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-box/shape-outside-box-007-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-box/shape-outside-box-007-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-box/shape-outside-box-007.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-box/shape-outside-box-007.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-box/shape-outside-box-008-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-box/shape-outside-box-008-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-box/shape-outside-box-008.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-box/shape-outside-box-008.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-box/w3c-import.log: Added.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/gradients/shape-outside-linear-gradient-001-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/gradients/shape-outside-linear-gradient-001-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/gradients/shape-outside-linear-gradient-001.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/gradients/shape-outside-linear-gradient-001.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/gradients/shape-outside-linear-gradient-002-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/gradients/shape-outside-linear-gradient-002-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/gradients/shape-outside-linear-gradient-002.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/gradients/shape-outside-linear-gradient-002.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/gradients/shape-outside-linear-gradient-003-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/gradients/shape-outside-linear-gradient-003-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/gradients/shape-outside-linear-gradient-003.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/gradients/shape-outside-linear-gradient-003.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/gradients/shape-outside-linear-gradient-004-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/gradients/shape-outside-linear-gradient-004-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/gradients/shape-outside-linear-gradient-004.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/gradients/shape-outside-linear-gradient-004.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/gradients/shape-outside-radial-gradient-001-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/gradients/shape-outside-radial-gradient-001-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/gradients/shape-outside-radial-gradient-001.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/gradients/shape-outside-radial-gradient-001.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/gradients/shape-outside-radial-gradient-002-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/gradients/shape-outside-radial-gradient-002-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/gradients/shape-outside-radial-gradient-002.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/gradients/shape-outside-radial-gradient-002.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/gradients/shape-outside-radial-gradient-003-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/gradients/shape-outside-radial-gradient-003-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/gradients/shape-outside-radial-gradient-003.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/gradients/shape-outside-radial-gradient-003.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/gradients/shape-outside-radial-gradient-004-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/gradients/shape-outside-radial-gradient-004-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/gradients/shape-outside-radial-gradient-004.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/gradients/shape-outside-radial-gradient-004.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/gradients/w3c-import.log: Added.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/shape-image-000-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-000-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/shape-image-000.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-000.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/shape-image-001-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-001-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/shape-image-001.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-001.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/shape-image-002-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-002-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/shape-image-002.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-002.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/shape-image-003-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-003-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/shape-image-003.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-003.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/shape-image-004-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-004-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/shape-image-004.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-004.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/shape-image-005-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-005-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/shape-image-005.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-005.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/shape-image-006-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-006-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/shape-image-006.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-006.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/shape-image-007-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-007-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/shape-image-007.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-007.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/shape-image-008-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-008-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/shape-image-008.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-008.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/shape-image-009-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-009-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/shape-image-009.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-009.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/shape-image-010-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-010-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/shape-image-010.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-010.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/shape-image-011-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-011-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/shape-image-011.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-011.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/shape-image-012-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-012-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/shape-image-012.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-012.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/shape-image-013-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-013-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/shape-image-013.html: Added.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/shape-image-014-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-014-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/shape-image-014.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-014.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/shape-image-015-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-015-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/shape-image-015.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-015.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/shape-image-016-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-016-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/shape-image-016.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-016.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/shape-image-017-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-017-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/shape-image-017.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-017.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/shape-image-018-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-018-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/shape-image-018.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-018.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/shape-image-019-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-019-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/shape-image-019.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-019.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/shape-image-020-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-020-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/shape-image-020.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-020.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/shape-image-021-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-021-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/shape-image-021.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-021.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/shape-image-022-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-022-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/shape-image-022.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-022.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/shape-image-023-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-023-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/shape-image-023.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-023.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/shape-image-024-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-024-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/shape-image-024.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-024.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/shape-image-025-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-025-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/shape-image-025.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-025.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/support/animated.gif: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/support/animated.gif.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/support/left-half-rectangle-20.png: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/support/left-half-rectangle-20.png.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/support/left-half-rectangle-20.svg: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/support/left-half-rectangle-20.svg.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/support/left-half-rectangle-50.png: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/support/left-half-rectangle-50.png.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/support/left-half-rectangle-50.svg: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/support/left-half-rectangle-50.svg.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/support/left-half-rectangle-70.png: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/support/left-half-rectangle-70.png.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/support/left-half-rectangle-70.svg: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/support/left-half-rectangle-70.svg.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/support/left-half-rectangle.jpg: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/support/left-half-rectangle.jpg.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/support/left-half-rectangle.png: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/support/left-half-rectangle.png.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/support/left-half-rectangle.svg: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/support/left-half-rectangle.svg.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/support/right-half-rectangle-20.png: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/support/right-half-rectangle-20.png.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/support/right-half-rectangle-50.png: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/support/right-half-rectangle-50.png.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/support/right-half-rectangle-70.png: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/support/right-half-rectangle-70.png.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/support/right-half-rectangle-70.svg: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/support/right-half-rectangle-70.svg.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/support/right-half-rectangle.gif: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/support/right-half-rectangle.gif.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/support/right-half-rectangle.jpg: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/support/right-half-rectangle.jpg.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/support/right-half-rectangle.png: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/support/right-half-rectangle.png.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/support/right-half-rectangle.svg: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/support/right-half-rectangle.svg.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/support/w3c-import.log: Added.
+        * web-platform-tests/css/css-shapes-1/shape-outside/shape-image/w3c-import.log: Added.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-013-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-013-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-013.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-013.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-014-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-014-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-014.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-014.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-015-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-015-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-015.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-015.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-016-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-016-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-016.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-016.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-017-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-017-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-017.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-017.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-018-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-018-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-018.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-018.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-019-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-019-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-019.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-019.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-020-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-020-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-020.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-020.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-021-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-021-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-021.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-021.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-022-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-022-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-022.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-022.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-024-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-024-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-024.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-024.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-025-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-025-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-025.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-025.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-026-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-026-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-026.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-026.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-027-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-027-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-027.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-027.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-028-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-028-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-028.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-028.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-029-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-029-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-029.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-029.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-030-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-030-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-030.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-030.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-031-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-031-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-031.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-031.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/circle/w3c-import.log: Added.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-013-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-013-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-013.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-013.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-014-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-014-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-014.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-014.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-015-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-015-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-015.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-015.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-016-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-016-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-016.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-016.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-017-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-017-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-017.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-017.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-018-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-018-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-018.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-018.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-019-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-019-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-019.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-019.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-020-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-020-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-020.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-020.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-021-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-021-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-021.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-021.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-022-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-022-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-022.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-022.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-023-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-023-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-023.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-023.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-024-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-024-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-024.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-024.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-025-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-025-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-025.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-025.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-030-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-030-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-030.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-030.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-031-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-031-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-031.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-031.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/ellipse/w3c-import.log: Added.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/inset/shape-outside-inset-010-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/inset/shape-outside-inset-010-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/inset/shape-outside-inset-010.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/inset/shape-outside-inset-010.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/inset/shape-outside-inset-011-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/inset/shape-outside-inset-011-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/inset/shape-outside-inset-011.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/inset/shape-outside-inset-011.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/inset/shape-outside-inset-012-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/inset/shape-outside-inset-012-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/inset/shape-outside-inset-012.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/inset/shape-outside-inset-012.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/inset/shape-outside-inset-013-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/inset/shape-outside-inset-013-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/inset/shape-outside-inset-013.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/inset/shape-outside-inset-013.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/inset/shape-outside-inset-014-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/inset/shape-outside-inset-014-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/inset/shape-outside-inset-014.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/inset/shape-outside-inset-014.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/inset/shape-outside-inset-015-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/inset/shape-outside-inset-015-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/inset/shape-outside-inset-015.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/inset/shape-outside-inset-015.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/inset/w3c-import.log: Added.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/polygon/shape-outside-polygon-007-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/polygon/shape-outside-polygon-007-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/polygon/shape-outside-polygon-007.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/polygon/shape-outside-polygon-007.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/polygon/shape-outside-polygon-008-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/polygon/shape-outside-polygon-008-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/polygon/shape-outside-polygon-008.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/polygon/shape-outside-polygon-008.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/polygon/shape-outside-polygon-009-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/polygon/shape-outside-polygon-009-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/polygon/shape-outside-polygon-009.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/polygon/shape-outside-polygon-009.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/polygon/shape-outside-polygon-010-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/polygon/shape-outside-polygon-010-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/polygon/shape-outside-polygon-010.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/polygon/shape-outside-polygon-010.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/polygon/shape-outside-polygon-011-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/polygon/shape-outside-polygon-011-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/polygon/shape-outside-polygon-011.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/polygon/shape-outside-polygon-011.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/polygon/shape-outside-polygon-012-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/polygon/shape-outside-polygon-012-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/polygon/shape-outside-polygon-012.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/polygon/shape-outside-polygon-012.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/polygon/shape-outside-polygon-013-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/polygon/shape-outside-polygon-013-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/polygon/shape-outside-polygon-013.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/polygon/shape-outside-polygon-013.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/polygon/shape-outside-polygon-014-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/polygon/shape-outside-polygon-014-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/polygon/shape-outside-polygon-014.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/polygon/shape-outside-polygon-014.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/polygon/shape-outside-polygon-015-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/polygon/shape-outside-polygon-015-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/polygon/shape-outside-polygon-015.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/polygon/shape-outside-polygon-015.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/polygon/shape-outside-polygon-016-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/polygon/shape-outside-polygon-016-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/polygon/shape-outside-polygon-016.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/polygon/shape-outside-polygon-016.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/polygon/shape-outside-polygon-017-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/polygon/shape-outside-polygon-017-expected.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/polygon/shape-outside-polygon-017.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/polygon/shape-outside-polygon-017.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/polygon/w3c-import.log: Added.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/support/rounded-rectangle.js: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/support/rounded-rectangle.js.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/support/subpixel-utils.js: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/support/subpixel-utils.js.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/support/test-utils.js: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/support/test-utils.js.
+        * web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/support/w3c-import.log: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/support/w3c-import.log.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-image-threshold-000-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-image-threshold-000-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-image-threshold-000.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-image-threshold-000.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-image-threshold-001-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-image-threshold-001-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-image-threshold-001.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-image-threshold-001.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-image-threshold-002-expected.txt: Added.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-image-threshold-002.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-image-threshold-002.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-image-threshold-003-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-image-threshold-003-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-image-threshold-003.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-image-threshold-003.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-margin-000-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-margin-000-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-margin-000.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-margin-000.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-margin-001-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-margin-001-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-margin-001.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-margin-001.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-margin-002-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-margin-002-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-margin-002.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-margin-002.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-margin-003-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-margin-003-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-margin-003.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-margin-003.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-margin-004-expected.txt: Added.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-margin-004.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-margin-004.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-margin-005-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-margin-005-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-margin-005.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-margin-005.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-box-000-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-box-000-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-box-000.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-box-000.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-circle-000-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-circle-000-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-circle-000.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-circle-000.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-circle-001-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-circle-001-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-circle-001.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-circle-001.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-circle-002-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-circle-002-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-circle-002.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-circle-002.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-circle-003-expected.txt: Added.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-circle-003.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-circle-003.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-circle-004-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-circle-004-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-circle-004.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-circle-004.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-circle-005-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-circle-005-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-circle-005.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-circle-005.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-circle-006-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-circle-006-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-circle-006.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-circle-006.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-circle-007-expected.txt: Added.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-circle-007.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-circle-007.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-circle-008-expected.txt: Added.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-circle-008.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-circle-008.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-circle-009-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-circle-009-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-circle-009.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-circle-009.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-circle-010-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-circle-010-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-circle-010.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-circle-010.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-circle-011-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-circle-011-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-circle-011.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-circle-011.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-computed-shape-000-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-computed-shape-000-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-computed-shape-000.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-computed-shape-000.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-computed-shape-001-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-computed-shape-001-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-computed-shape-001.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-computed-shape-001.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-ellipse-000-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-ellipse-000-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-ellipse-000.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-ellipse-000.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-ellipse-001-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-ellipse-001-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-ellipse-001.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-ellipse-001.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-ellipse-002-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-ellipse-002-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-ellipse-002.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-ellipse-002.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-ellipse-003-expected.txt: Added.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-ellipse-003.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-ellipse-003.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-ellipse-004-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-ellipse-004-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-ellipse-004.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-ellipse-004.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-ellipse-005-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-ellipse-005-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-ellipse-005.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-ellipse-005.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-ellipse-006-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-ellipse-006-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-ellipse-006.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-ellipse-006.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-ellipse-007-expected.txt: Added.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-ellipse-007.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-ellipse-007.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-ellipse-008-expected.txt: Added.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-ellipse-008.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-ellipse-008.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-ellipse-009-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-ellipse-009-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-ellipse-009.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-ellipse-009.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-ellipse-010-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-ellipse-010-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-ellipse-010.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-ellipse-010.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-ellipse-011-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-ellipse-011-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-ellipse-011.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-ellipse-011.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-inset-000-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-inset-000-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-inset-000.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-inset-000.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-inset-001-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-inset-001-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-inset-001.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-inset-001.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-inset-002-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-inset-002-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-inset-002.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-inset-002.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-inset-003-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-inset-003-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-inset-003.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-inset-003.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-inset-004-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-inset-004-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-inset-004.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-inset-004.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-inset-005-expected.txt: Added.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-inset-005.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-inset-005.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-inset-006-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-inset-006-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-inset-006.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-inset-006.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-inset-007-expected.txt: Added.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-inset-007.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-inset-007.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-inset-008-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-inset-008-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-inset-008.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-inset-008.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-inset-009-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-inset-009-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-inset-009.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-inset-009.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-polygon-000-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-polygon-000-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-polygon-000.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-polygon-000.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-polygon-001-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-polygon-001-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-polygon-001.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-polygon-001.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-polygon-002-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-polygon-002-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-polygon-002.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-polygon-002.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-polygon-003-expected.txt: Added.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-polygon-003.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-polygon-003.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-polygon-004-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-polygon-004-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-polygon-004.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-polygon-004.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-polygon-005-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-polygon-005-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-polygon-005.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-polygon-005.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-polygon-006-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-polygon-006-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-polygon-006.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-polygon-006.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-shape-arguments-000-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-shape-arguments-000-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-shape-arguments-000.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-shape-arguments-000.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-shape-arguments-001-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-shape-arguments-001-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-shape-arguments-001.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-shape-arguments-001.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-shape-box-pair-000-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-shape-box-pair-000-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-shape-box-pair-000.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-shape-box-pair-000.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-shape-inherit-000-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-shape-inherit-000-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-shape-inherit-000.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-shape-inherit-000.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-shape-initial-000-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-shape-initial-000-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-shape-initial-000.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-shape-initial-000.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-shape-none-000-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-shape-none-000-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-shape-none-000.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-shape-none-000.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-shape-notation-000-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-shape-notation-000-expected.txt.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-shape-notation-000.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-shape-notation-000.html.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/support/parsing-utils.js: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/support/parsing-utils.js.
+        (testComputedStyle):
+        (testShapeMarginComputedStyle):
+        (testShapeThresholdComputedStyle):
+        (buildPositionTests):
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/support/w3c-import.log: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/test-plan/w3c-import.log.
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/w3c-import.log: Added.
+        * web-platform-tests/css/css-shapes-1/spec-examples/shape-outside-001-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/spec-examples/shape-outside-001-expected.html.
+        * web-platform-tests/css/css-shapes-1/spec-examples/shape-outside-001.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/spec-examples/shape-outside-001.html.
+        * web-platform-tests/css/css-shapes-1/spec-examples/shape-outside-002-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/spec-examples/shape-outside-002-expected.html.
+        * web-platform-tests/css/css-shapes-1/spec-examples/shape-outside-002.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/spec-examples/shape-outside-002.html.
+        * web-platform-tests/css/css-shapes-1/spec-examples/shape-outside-003-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/spec-examples/shape-outside-003-expected.html.
+        * web-platform-tests/css/css-shapes-1/spec-examples/shape-outside-003.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/spec-examples/shape-outside-003.html.
+        * web-platform-tests/css/css-shapes-1/spec-examples/shape-outside-004-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/spec-examples/shape-outside-004-expected.html.
+        * web-platform-tests/css/css-shapes-1/spec-examples/shape-outside-004.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/spec-examples/shape-outside-004.html.
+        * web-platform-tests/css/css-shapes-1/spec-examples/shape-outside-005-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/spec-examples/shape-outside-005-expected.html.
+        * web-platform-tests/css/css-shapes-1/spec-examples/shape-outside-005.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/spec-examples/shape-outside-005.html.
+        * web-platform-tests/css/css-shapes-1/spec-examples/shape-outside-006-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/spec-examples/shape-outside-006-expected.html.
+        * web-platform-tests/css/css-shapes-1/spec-examples/shape-outside-006.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/spec-examples/shape-outside-006.html.
+        * web-platform-tests/css/css-shapes-1/spec-examples/shape-outside-007-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/spec-examples/shape-outside-007-expected.html.
+        * web-platform-tests/css/css-shapes-1/spec-examples/shape-outside-007.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/spec-examples/shape-outside-007.html.
+        * web-platform-tests/css/css-shapes-1/spec-examples/shape-outside-008-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/spec-examples/shape-outside-008-expected.html.
+        * web-platform-tests/css/css-shapes-1/spec-examples/shape-outside-008.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/spec-examples/shape-outside-008.html.
+        * web-platform-tests/css/css-shapes-1/spec-examples/shape-outside-010-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/spec-examples/shape-outside-010-expected.txt.
+        * web-platform-tests/css/css-shapes-1/spec-examples/shape-outside-010.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/spec-examples/shape-outside-010.html.
+        * web-platform-tests/css/css-shapes-1/spec-examples/shape-outside-011-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/spec-examples/shape-outside-011-expected.txt.
+        * web-platform-tests/css/css-shapes-1/spec-examples/shape-outside-011.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/spec-examples/shape-outside-011.html.
+        * web-platform-tests/css/css-shapes-1/spec-examples/shape-outside-012-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/spec-examples/shape-outside-012-expected.txt.
+        * web-platform-tests/css/css-shapes-1/spec-examples/shape-outside-012.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/spec-examples/shape-outside-012.html.
+        * web-platform-tests/css/css-shapes-1/spec-examples/shape-outside-013-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/spec-examples/shape-outside-013-expected.txt.
+        * web-platform-tests/css/css-shapes-1/spec-examples/shape-outside-013.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/spec-examples/shape-outside-013.html.
+        * web-platform-tests/css/css-shapes-1/spec-examples/shape-outside-014-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/spec-examples/shape-outside-014-expected.txt.
+        * web-platform-tests/css/css-shapes-1/spec-examples/shape-outside-014.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/spec-examples/shape-outside-014.html.
+        * web-platform-tests/css/css-shapes-1/spec-examples/shape-outside-015-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/spec-examples/shape-outside-015-expected.txt.
+        * web-platform-tests/css/css-shapes-1/spec-examples/shape-outside-015.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/spec-examples/shape-outside-015.html.
+        * web-platform-tests/css/css-shapes-1/spec-examples/shape-outside-016-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/spec-examples/shape-outside-016-expected.txt.
+        * web-platform-tests/css/css-shapes-1/spec-examples/shape-outside-016.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/spec-examples/shape-outside-016.html.
+        * web-platform-tests/css/css-shapes-1/spec-examples/shape-outside-017-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/spec-examples/shape-outside-017-expected.txt.
+        * web-platform-tests/css/css-shapes-1/spec-examples/shape-outside-017.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/spec-examples/shape-outside-017.html.
+        * web-platform-tests/css/css-shapes-1/spec-examples/shape-outside-018-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/spec-examples/shape-outside-018-expected.txt.
+        * web-platform-tests/css/css-shapes-1/spec-examples/shape-outside-018.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/spec-examples/shape-outside-018.html.
+        * web-platform-tests/css/css-shapes-1/spec-examples/shape-outside-019-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/spec-examples/shape-outside-019-expected.txt.
+        * web-platform-tests/css/css-shapes-1/spec-examples/shape-outside-019.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/spec-examples/shape-outside-019.html.
+        * web-platform-tests/css/css-shapes-1/spec-examples/support/circle-no-shadow.png: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/spec-examples/support/circle-no-shadow.png.
+        * web-platform-tests/css/css-shapes-1/spec-examples/support/circle-shadow.png: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/spec-examples/support/circle-shadow.png.
+        * web-platform-tests/css/css-shapes-1/spec-examples/support/rounded-triangle.svg: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/spec-examples/support/rounded-triangle.svg.
+        * web-platform-tests/css/css-shapes-1/spec-examples/support/spec-example-utils.js: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/spec-examples/support/spec-example-utils.js.
+        * web-platform-tests/css/css-shapes-1/spec-examples/support/w3c-import.log: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/spec-examples/support/w3c-import.log.
+        * web-platform-tests/css/css-shapes-1/spec-examples/w3c-import.log: Added.
+        * web-platform-tests/css/css-shapes-1/support/1x1-green.png: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/support/1x1-green.png.
+        * web-platform-tests/css/css-shapes-1/support/1x1-lime.png: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/support/1x1-lime.png.
+        * web-platform-tests/css/css-shapes-1/support/1x1-maroon.png: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/support/1x1-maroon.png.
+        * web-platform-tests/css/css-shapes-1/support/1x1-navy.png: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/support/1x1-navy.png.
+        * web-platform-tests/css/css-shapes-1/support/1x1-red.png: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/support/1x1-red.png.
+        * web-platform-tests/css/css-shapes-1/support/1x1-white.png: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/support/1x1-white.png.
+        * web-platform-tests/css/css-shapes-1/support/60x60-gg-rr.png: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/support/60x60-gg-rr.png.
+        * web-platform-tests/css/css-shapes-1/support/60x60-green.png: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/support/60x60-green.png.
+        * web-platform-tests/css/css-shapes-1/support/60x60-red.png: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/support/60x60-red.png.
+        * web-platform-tests/css/css-shapes-1/support/README: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/support/README.
+        * web-platform-tests/css/css-shapes-1/support/a-green.css: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/support/a-green.css.
+        * web-platform-tests/css/css-shapes-1/support/b-green.css: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/support/b-green.css.
+        * web-platform-tests/css/css-shapes-1/support/c-red.css: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/support/c-red.css.
+        * web-platform-tests/css/css-shapes-1/support/cat.png: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/support/cat.png.
+        * web-platform-tests/css/css-shapes-1/support/pattern-grg-rgr-grg.png: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/support/pattern-grg-rgr-grg.png.
+        * web-platform-tests/css/css-shapes-1/support/pattern-grg-rrg-rgg.png: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/support/pattern-grg-rrg-rgg.png.
+        * web-platform-tests/css/css-shapes-1/support/pattern-rgr-grg-rgr.png: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/support/pattern-rgr-grg-rgr.png.
+        * web-platform-tests/css/css-shapes-1/support/pattern-tr.png: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/support/pattern-tr.png.
+        * web-platform-tests/css/css-shapes-1/support/square-purple.png: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/support/square-purple.png.
+        * web-platform-tests/css/css-shapes-1/support/square-teal.png: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/support/square-teal.png.
+        * web-platform-tests/css/css-shapes-1/support/square-white.png: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/support/square-white.png.
+        * web-platform-tests/css/css-shapes-1/support/swatch-blue.png: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/support/swatch-blue.png.
+        * web-platform-tests/css/css-shapes-1/support/swatch-green.png: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/support/swatch-green.png.
+        * web-platform-tests/css/css-shapes-1/support/swatch-lime.png: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/support/swatch-lime.png.
+        * web-platform-tests/css/css-shapes-1/support/swatch-orange.png: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/support/swatch-orange.png.
+        * web-platform-tests/css/css-shapes-1/support/swatch-red.png: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/support/swatch-red.png.
+        * web-platform-tests/css/css-shapes-1/support/swatch-white.png: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/support/swatch-white.png.
+        * web-platform-tests/css/css-shapes-1/support/swatch-yellow.png: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/support/swatch-yellow.png.
+        * web-platform-tests/css/css-shapes-1/support/test-bl.png: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/support/test-bl.png.
+        * web-platform-tests/css/css-shapes-1/support/test-br.png: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/support/test-br.png.
+        * web-platform-tests/css/css-shapes-1/support/test-outer.png: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/support/test-outer.png.
+        * web-platform-tests/css/css-shapes-1/support/test-tl.png: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/support/test-tl.png.
+        * web-platform-tests/css/css-shapes-1/support/test-tr.png: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/support/test-tr.png.
+        * web-platform-tests/css/css-shapes-1/support/w3c-import.log: Added.
+        * web-platform-tests/css/css-shapes-1/test-plan/index-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/test-plan/index-expected.txt.
+        * web-platform-tests/css/css-shapes-1/test-plan/index.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/test-plan/index.html.
+        * web-platform-tests/css/css-shapes-1/test-plan/w3c-import.log: Renamed from LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/values/support/w3c-import.log.
+        * web-platform-tests/css/css-shapes-1/w3c-import.log: Added.
+
 2017-05-30  Javier Fernandez  <jfernandez@igalia.com>
 
         [css-align] Import W3C web platform tests for the CSS Box Alignment feature

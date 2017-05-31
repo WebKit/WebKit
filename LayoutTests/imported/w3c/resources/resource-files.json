@@ -25,6 +25,7 @@
         "web-platform-tests/XMLHttpRequest/xmlhttprequest-sync-not-hang-scriptloader-subframe.html",
         "web-platform-tests/css/css-grid-1/grid-items/ref-filled-green-100px-square-image.html",
         "web-platform-tests/css/css-grid-1/test-plan/index.html",
+        "web-platform-tests/css/css-shapes-1/test-plan/index.html",
         "web-platform-tests/cssom-view/iframe.html",
         "web-platform-tests/dom/events/EventListener-incumbent-global-subframe-1.sub.html",
         "web-platform-tests/dom/events/EventListener-incumbent-global-subframe-2.sub.html",

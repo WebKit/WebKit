@@ -1,7 +1,0 @@
-
-FAIL -0.5 - inline - invalid assert_equals: expected (object) null but got (string) ""
-FAIL -100 - inline - invalid assert_equals: expected (object) null but got (string) ""
-FAIL nonNumber - inline - invalid assert_equals: expected (object) null but got (string) ""
-FAIL 3/4 - inline - invalid assert_equals: expected (object) null but got (string) ""
-FAIL 20% - inline - invalid assert_equals: expected (object) null but got (string) ""
-
