@@ -26,9 +26,11 @@
 #pragma once
 
 #include <wtf/Platform.h>
+#include <wtf/StdLibExtras.h>
 
 #if OS(DARWIN)
 #include <mach/thread_act.h>
+#include <signal.h>
 #elif OS(WINDOWS)
 #include <windows.h>
 #else
@@ -55,6 +57,11 @@ typedef arm_thread_state64_t PlatformRegisters;
 #error Unknown Architecture
 #endif
 
+inline PlatformRegisters& registersFromUContext(ucontext_t* ucontext)
+{
+    return ucontext->uc_mcontext->__ss;
+}
+
 #elif OS(WINDOWS)
 
 using PlatformRegisters = CONTEXT;
@@ -64,6 +71,11 @@ using PlatformRegisters = CONTEXT;
 struct PlatformRegisters {
     mcontext_t machineContext;
 };
+
+inline PlatformRegisters& registersFromUContext(ucontext_t* ucontext)
+{
+    return *bitwise_cast<PlatformRegisters*>(&ucontext->uc_mcontext);
+}
 
 #else
 

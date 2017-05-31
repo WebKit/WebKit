@@ -1,3 +1,14 @@
+2017-05-31  Keith Miller  <keith_miller@apple.com>
+
+        Reland r216808, underlying lldb bug has been fixed.
+        https://bugs.webkit.org/show_bug.cgi?id=172759
+
+        Unreviewed, relanding old patch. See: rdar://problem/31183352
+
+        * TestWebKitAPI/Tests/WTF/ThreadMessages.cpp:
+        (runThreadMessageTest):
+        (TEST):
+
 2017-05-31  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r217603.

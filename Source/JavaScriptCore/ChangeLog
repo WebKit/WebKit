@@ -1,5 +1,39 @@
 2017-05-31  Keith Miller  <keith_miller@apple.com>
 
+        Reland r216808, underlying lldb bug has been fixed.
+        https://bugs.webkit.org/show_bug.cgi?id=172759
+
+
+        Unreviewed, relanding old patch. See: rdar://problem/31183352
+
+        * API/tests/ExecutionTimeLimitTest.cpp:
+        (dispatchTermitateCallback):
+        (testExecutionTimeLimit):
+        * runtime/JSLock.cpp:
+        (JSC::JSLock::didAcquireLock):
+        * runtime/Options.cpp:
+        (JSC::overrideDefaults):
+        (JSC::Options::initialize):
+        * runtime/Options.h:
+        * runtime/VMTraps.cpp:
+        (JSC::SignalContext::SignalContext):
+        (JSC::SignalContext::adjustPCToPointToTrappingInstruction):
+        (JSC::installSignalHandler):
+        (JSC::VMTraps::SignalSender::send):
+        * tools/SigillCrashAnalyzer.cpp:
+        (JSC::SignalContext::SignalContext):
+        (JSC::SignalContext::dump):
+        (JSC::installCrashHandler):
+        * wasm/WasmBBQPlan.cpp:
+        (JSC::Wasm::BBQPlan::compileFunctions):
+        * wasm/WasmFaultSignalHandler.cpp:
+        (JSC::Wasm::trapHandler):
+        (JSC::Wasm::enableFastMemory):
+        * wasm/WasmMachineThreads.cpp:
+        (JSC::Wasm::resetInstructionCacheOnAllThreads):
+
+2017-05-31  Keith Miller  <keith_miller@apple.com>
+
         Fix leak in PromiseDeferredTimer
         https://bugs.webkit.org/show_bug.cgi?id=172755
 
