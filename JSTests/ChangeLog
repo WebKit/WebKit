@@ -1,3 +1,12 @@
+2017-05-31  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Skip flaky JSC test stress/test-finally.js
+        https://bugs.webkit.org/show_bug.cgi?id=168587
+
+        Unreviewed test gardening.
+
+        * stress/test-finally.js:
+
 2017-05-30  Oleksandr Skachkov  <gskachkov@gmail.com>
 
         Prevent async methods named 'function' in Object literal
