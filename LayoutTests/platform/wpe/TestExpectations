@@ -124,12 +124,10 @@ Bug(WPE) loader/stateobjects/pushstate-size.html [ Skip ]
 # webgl/1.0.2:
 #  Failing
 Bug(WPE) webgl/1.0.2/conformance/canvas/buffer-offscreen-test.html [ Failure ]
-Bug(WPE) webgl/1.0.2/conformance/canvas/canvas-test.html [ Failure ]
 Bug(WPE) webgl/1.0.2/conformance/canvas/drawingbuffer-test.html [ Failure ]
 Bug(WPE) webgl/1.0.2/conformance/context/context-attribute-preserve-drawing-buffer.html [ Failure ]
 Bug(WPE) webgl/1.0.2/conformance/context/premultiplyalpha-test.html [ Failure ]
 Bug(WPE) webgl/1.0.2/conformance/extensions/oes-vertex-array-object.html [ Failure ]
-Bug(WPE) webgl/1.0.2/conformance/textures/gl-teximage.html [ Failure ]
 #  Timing out
 Bug(WPE) webgl/1.0.2/conformance/context/context-creation-and-destruction.html [ Timeout ]
 Bug(WPE) webgl/1.0.2/conformance/extensions/oes-texture-float-with-video.html [ Timeout ]
@@ -145,8 +143,6 @@ webkit.org/b/169917 webgl/1.0.2/conformance/uniforms/gl-uniform-arrays.html [ Sl
 #  Failing:
 Bug(WPE) webgl/1.0.3/conformance/attribs/gl-bindAttribLocation-aliasing.html [ Failure ]
 Bug(WPE) webgl/1.0.3/conformance/attribs/gl-bindAttribLocation-matrix.html [ Failure ]
-Bug(WPE) webgl/1.0.3/conformance/context/context-creation.html [ Failure ]
-Bug(WPE) webgl/1.0.3/conformance/context/context-eviction-with-garbage-collection.html [ Failure ]
 Bug(WPE) webgl/1.0.3/conformance/extensions/oes-texture-half-float-with-canvas.html [ Failure ]
 Bug(WPE) webgl/1.0.3/conformance/extensions/oes-texture-half-float-with-image-data.html [ Failure ]
 Bug(WPE) webgl/1.0.3/conformance/extensions/oes-texture-half-float-with-image.html [ Failure ]
@@ -167,18 +163,16 @@ Bug(WPE) webgl/1.0.3/conformance/glsl/bugs [ Skip ]
 Bug(WPE) webgl/webgl-border.html [ ImageOnlyFailure ]
 Bug(WPE) webgl/webgl-box-shadow.html [ ImageOnlyFailure ]
 # Unknown
-Bug(WPE) webgl/1.0.2/conformance/extensions/oes-texture-float-with-image.html [ Failure ]
-Bug(WPE) webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-image-rgb565.html [ Failure ]
-Bug(WPE) webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-image-rgba4444.html [ Failure ]
-Bug(WPE) webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-image-rgba5551.html [ Failure ]
-Bug(WPE) webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-image.html [ Failure ]
-Bug(WPE) webgl/1.0.2/conformance/textures/tex-image-with-format-and-type.html [ Failure ]
 Bug(WPE) webgl/many-contexts-access-after-loss.html [ Failure ]
 Bug(WPE) webgl/many-contexts.html [ Failure ]
 Bug(WPE) webgl/max-active-contexts-console-warning.html [ Failure ]
 Bug(WPE) webgl/max-active-contexts-gc.html [ Failure ]
 Bug(WPE) webgl/max-active-contexts-oldest-context-lost.html [ Failure ]
 webkit.org/b/169917 webgl/max-active-contexts-webglcontextlost-prevent-default.html [ Timeout ]
+# Slow
+webkit.org/b/169917 webgl/1.0.2/conformance/glsl/misc/shader-uniform-packing-restrictions.html [ Slow ]
+webkit.org/b/169917 webgl/1.0.2/conformance/glsl/misc/shader-with-non-reserved-words.html [ Slow ]
+webkit.org/b/169917 webgl/1.0.3/conformance/rendering/many-draw-calls.html [ Slow ]
 
 # WebGL2
 Bug(WPE) webgl/webgl-vertex-array-object-defined.html [ Failure ]

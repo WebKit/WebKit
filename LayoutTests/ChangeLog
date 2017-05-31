@@ -1,3 +1,12 @@
+2017-05-31  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [WPE] WebGL expectations cleanup
+
+        Unreviewed gardening.
+
+        * platform/wpe/TestExpectations: Remove webgl tests that are
+        consistently passing. Also mark a few known slow tests as such.
+
 2017-05-31  Manuel Rego Casasnovas  <rego@igalia.com>
 
         Move css-shapes-1 test suite to WPT
