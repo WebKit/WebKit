@@ -1,5 +1,16 @@
 2017-05-31  Ryan Haddad  <ryanhaddad@apple.com>
 
+        EWS bots should reboot themselves more frequently
+        https://bugs.webkit.org/show_bug.cgi?id=172402
+
+        Reviewed by Alexey Proskuryakov.
+
+        Instead of rebooting once a day, EWS bots will reboot after running 10 iterations.
+
+        * EWSTools/start-queue-mac.sh: Remove the restriction placed on the time that the bot will perform a reboot.
+
+2017-05-31  Ryan Haddad  <ryanhaddad@apple.com>
+
         Reallocate hardware for iOS bots.
         https://bugs.webkit.org/show_bug.cgi?id=172657
 

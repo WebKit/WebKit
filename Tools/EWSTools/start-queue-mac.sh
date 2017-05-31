@@ -52,46 +52,40 @@ if [ "$QUEUE_NAME" == "ios-ews" ]; then
     (cd $WEBKIT_HOME; sudo ./Tools/Scripts/configure-xcode-for-ios-development)
 fi
 
-# We reboot every night between 1 and 6 to reduce the likelihood of unexpected reboots while people are looking into things.
-TIME_TO_REBOOT=$(( $(date +%s) + 3600 * 12))
-
-while [ $TIME_TO_REBOOT -gt $(date +%s) ] || [ $(date +%H) -lt 1 ] || [ $(date +%H) -ge 6 ]; do
-    # Delete log files older than 30 days, move aside the main $QUEUE_NAME-ews.log file to prevent it from growing extra large.
-    cd $LOGS_DIR
-    find . -mtime +30 -delete
-    if [ -s $QUEUE_NAME.log ]; then
-        filesize=$(stat -f%z "$QUEUE_NAME.log")  # filesize in bytes.
-        if [ $filesize -ge 100000 ]; then
-            mv -f $QUEUE_NAME.log ${QUEUE_NAME}_$(date +%Y-%m-%d_%H-%m).log
-        fi
+# Delete log files older than 30 days, move aside the main $QUEUE_NAME-ews.log file to prevent it from growing extra large.
+cd $LOGS_DIR
+find . -mtime +30 -delete
+if [ -s $QUEUE_NAME.log ]; then
+    filesize=$(stat -f%z "$QUEUE_NAME.log")  # filesize in bytes.
+    if [ $filesize -ge 100000 ]; then
+        mv -f $QUEUE_NAME.log ${QUEUE_NAME}_$(date +%Y-%m-%d_%H-%m).log
     fi
-    cd $WEBKIT_HOME
-    
-    # Delete WebKitBuild to force a clean build
-    rm -rf $WEBKIT_HOME/WebKitBuild
-    
-    # This somewhat quirky sequence of steps seems to clear up all the broken
-    # git situations we've gotten ourself into in the past.
-    git clean -f # Remove any left-over layout test results, added files, etc.
-    git rebase --abort # If we got killed during a git rebase, we need to clean up.
-    git fetch origin # Avoid updating the working copy to a stale revision.
-    git checkout origin/master -f
-    git branch -D master
-    git checkout origin/master -b master
+fi
+cd $WEBKIT_HOME
 
-    # Most queues auto-update as part of their normal operation, but updating
-    # here makes sure that we get the latest version of the master process.
-    ./Tools/Scripts/update-webkit
+# Delete WebKitBuild to force a clean build
+rm -rf $WEBKIT_HOME/WebKitBuild
 
-    # test-webkitpy has code to remove orphaned .pyc files, so we
-    # run it before running webkit-patch to avoid stale .pyc files
-    # preventing webkit-patch from launching.
-    ./Tools/Scripts/test-webkitpy
+# This somewhat quirky sequence of steps seems to clear up all the broken
+# git situations we've gotten ourself into in the past.
+git clean -f # Remove any left-over layout test results, added files, etc.
+git rebase --abort # If we got killed during a git rebase, we need to clean up.
+git fetch origin # Avoid updating the working copy to a stale revision.
+git checkout origin/master -f
+git branch -D master
+git checkout origin/master -b master
 
-    # We use --exit-after-iteration to pick up any changes to webkit-patch, including
-    # changes to the contributors.json file.
-    ./Tools/Scripts/webkit-patch $QUEUE_NAME --bot-id=$BOT_ID --no-confirm --exit-after-iteration $RESET_AFTER_ITERATION $QUEUE_PARAMS
+# Most queues auto-update as part of their normal operation, but updating
+# here makes sure that we get the latest version of the master process.
+./Tools/Scripts/update-webkit
 
-done
+# test-webkitpy has code to remove orphaned .pyc files, so we
+# run it before running webkit-patch to avoid stale .pyc files
+# preventing webkit-patch from launching.
+./Tools/Scripts/test-webkitpy
+
+# We use --exit-after-iteration to pick up any changes to webkit-patch, including
+# changes to the contributors.json file.
+./Tools/Scripts/webkit-patch $QUEUE_NAME --bot-id=$BOT_ID --no-confirm --exit-after-iteration $RESET_AFTER_ITERATION $QUEUE_PARAMS
 
 osascript -e 'tell app "System Events" to restart'
