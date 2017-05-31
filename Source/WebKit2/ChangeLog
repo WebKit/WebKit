@@ -1,3 +1,17 @@
+2017-05-31  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Fix bad assertion in BackgroundProcessResponsivenessTimer::scheduleNextResponsivenessCheck()
+        https://bugs.webkit.org/show_bug.cgi?id=172763
+
+        Reviewed by Zalan Bujtas.
+
+        Fix bad assertion in BackgroundProcessResponsivenessTimer::scheduleNextResponsivenessCheck().
+        It gets hit when a process becomes unresponsive. The reason is that RunLoop::Timer::isActive()
+        still returns true while the timerFired() callback is called.
+
+        * UIProcess/BackgroundProcessResponsivenessTimer.cpp:
+        (WebKit::BackgroundProcessResponsivenessTimer::scheduleNextResponsivenessCheck):
+
 2017-05-31  Youenn Fablet  <youenn@apple.com>
 
         Make WebRTC legacy API switch an experimental feature
