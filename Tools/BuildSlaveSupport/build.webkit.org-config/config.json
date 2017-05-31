@@ -42,12 +42,12 @@
                     { "name": "bot698", "platform": "mac-sierra" },
                     { "name": "bot699", "platform": "mac-sierra" },
 
-                    { "name": "bot407", "platform": "ios-10" },
+                    { "name": "bot673", "platform": "ios-10" },
                     { "name": "bot197", "platform": "ios-simulator-10" },
-                    { "name": "bot329", "platform": "ios-simulator-10" },
-                    { "name": "bot402", "platform": "ios-simulator-10" },
-                    { "name": "bot403", "platform": "ios-simulator-10" },
-                    { "name": "bot404", "platform": "ios-simulator-10" },
+                    { "name": "bot626", "platform": "ios-simulator-10" },
+                    { "name": "bot618", "platform": "ios-simulator-10" },
+                    { "name": "bot620", "platform": "ios-simulator-10" },
+                    { "name": "bot621", "platform": "ios-simulator-10" },
                     { "name": "bot215", "platform": "ios-simulator-10" },
                     { "name": "bot216", "platform": "ios-simulator-10" },
                     { "name": "bot217", "platform": "ios-simulator-10" },
@@ -211,19 +211,19 @@
                     {
                       "name": "Apple iOS 10 Release (Build)", "type": "Build", "builddir": "ios-10-release",
                       "platform": "ios-10", "configuration": "release", "architectures": ["armv7s", "arm64"],
-                      "slavenames": ["bot407"]
+                      "slavenames": ["bot673"]
                     },
                     {
                       "name": "Apple iOS 10 Simulator Release (Build)", "type": "Build", "builddir": "ios-simulator-10-release",
                       "platform": "ios-simulator-10", "configuration": "release", "architectures": ["x86_64"],
                       "triggers": ["ios-simulator-10-release-tests-wk1", "ios-simulator-10-release-tests-wk2"],
-                      "slavenames": ["bot402", "bot403"]
+                      "slavenames": ["bot618", "bot620"]
                     },
                     {
                       "name": "Apple iOS 10 Simulator Debug (Build)", "type": "Build", "builddir": "ios-simulator-10-debug",
                       "platform": "ios-simulator-10", "configuration": "debug", "architectures": ["x86_64"],
                       "triggers": ["ios-simulator-10-debug-tests-wk1", "ios-simulator-10-debug-tests-wk2"],
-                      "slavenames": ["bot329", "bot404"]
+                      "slavenames": ["bot626", "bot621"]
                     },
                     {
                       "name": "Apple iOS 10 Simulator Release WK1 (Tests)", "type": "TestWebKit1AllButJSC", "builddir": "ios-simulator-10-release-tests-wk1",

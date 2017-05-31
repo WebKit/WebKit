@@ -1,3 +1,12 @@
+2017-05-31  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Reallocate hardware for iOS bots.
+        https://bugs.webkit.org/show_bug.cgi?id=172657
+
+        Reviewed by Alexey Proskuryakov.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2017-05-31  Andy Estes  <aestes@apple.com>
 
         Rename ENABLE_APPLE_PAY_DELEGATE to ENABLE_APPLE_PAY_SESSION_V3 and bump the supported version number
