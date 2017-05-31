@@ -41,6 +41,7 @@ function testSyntaxError(script, message) {
     testSyntax(`var O = { async ['meth' + 'od']() { await 1; } };`);
     testSyntax(`var O = { async 'method'() { await 1; } };`);
     testSyntax(`var O = { async 0() { await 1; } };`);
+    testSyntax(`var O = { async function() {} };`);
     testSyntax(`class C { async method() { await 1; } };`);
     testSyntax(`class C { async ['meth' + 'od']() { await 1; } };`);
     testSyntax(`class C { async 'method'() { await 1; } };`);
@@ -53,6 +54,14 @@ function testSyntaxError(script, message) {
     testSyntax(`class C {}; class C2 extends C { async ['function']() {} }`);
     testSyntax(`class C { static async ['function']() {} }`);
     testSyntax(`class C {}; class C2 extends C { static async ['function']() {} }`);
+    testSyntax(`class C { async function() {} }`);
+    testSyntax(`class C {}; class C2 extends C { async function() {} }`);
+    testSyntax(`class C { static async function() {} }`);
+    testSyntax(`class C {}; class C2 extends C { static async function() {} }`);
+    testSyntax(`class C { async 'function'() {} }`);
+    testSyntax(`class C {}; class C2 extends C { async 'function'() {} }`);
+    testSyntax(`class C { static async 'function'() {} }`);
+    testSyntax(`class C {}; class C2 extends C { static async 'function'() {} }`);
 })();
 
 (function testTopLevelAsyncAwaitSyntaxStrictMode() {
@@ -77,6 +86,16 @@ function testSyntaxError(script, message) {
     testSyntax(`"use strict"; class C {}; class C2 extends C { async ['function']() {} }`);
     testSyntax(`"use strict"; class C { static async ['function']() {} }`);
     testSyntax(`"use strict"; class C {}; class C2 extends C { static async ['function']() {} }`);
+    testSyntax(`"use strict"; class C { async function() {} }`);
+    testSyntax(`"use strict"; class C {}; class C2 extends C { async function() {} }`);
+    testSyntax(`"use strict"; class C { async function() {} }`);
+    testSyntax(`"use strict"; class C {}; class C2 extends C { async function() {} }`);
+    testSyntax(`"use strict"; class C { static async function() {} }`);
+    testSyntax(`"use strict"; class C {}; class C2 extends C { static async function() {} }`);
+    testSyntax(`"use strict"; class C { async 'function'() {} }`);
+    testSyntax(`"use strict"; class C {}; class C2 extends C { async 'function'() {} }`);
+    testSyntax(`"use strict"; class C { static async 'function'() {} }`);
+    testSyntax(`"use strict"; class C {}; class C2 extends C { static async 'function'() {} }`);
 })();
 
 (function testNestedAsyncAwaitSyntax() {
@@ -173,8 +192,6 @@ function testSyntaxError(script, message) {
     testSyntaxError(`var O = { async *asyncGeneratorMethod() {} };`);
     testSyntaxError(`var O = { async asyncGeneratorMethod*() {} };`);
 
-    testSyntaxError(`var O = { async function() {} };`);
-
     testSyntaxError(`var asyncFn = async function(x = await 1) { return x; }`);
     testSyntaxError(`async function f(x = await 1) { return x; }`);
     testSyntaxError(`var f = async(x = await 1) => x;`);
@@ -189,14 +206,6 @@ function testSyntaxError(script, message) {
     testSyntaxError(`class C {}; class C2 extends C { async constructor() {} }`);
     testSyntaxError(`class C { static async prototype() {} }`);
     testSyntaxError(`class C {}; class C2 extends C { static async prototype() {} }`);
-    testSyntaxError(`class C { async function() {} }`);
-    testSyntaxError(`class C {}; class C2 extends C { async function() {} }`);
-    testSyntaxError(`class C { static async function() {} }`);
-    testSyntaxError(`class C {}; class C2 extends C { static async function() {} }`);
-    testSyntaxError(`class C { async 'function'() {} }`);
-    testSyntaxError(`class C {}; class C2 extends C { async 'function'() {} }`);
-    testSyntaxError(`class C { static async 'function'() {} }`);
-    testSyntaxError(`class C {}; class C2 extends C { static async 'function'() {} }`);
 
     testSyntaxError(`var f = async() => ((async(x = await 1) => x)();`);
 
@@ -254,7 +263,7 @@ function testSyntaxError(script, message) {
     testSyntaxError(`"use strict"; var O = { async *asyncGeneratorMethod() {} };`);
     testSyntaxError(`"use strict"; var O = { async asyncGeneratorMethod*() {} };`);
 
-    testSyntaxError(`"use strict"; var O = { async function() {} };`);
+    testSyntax(`"use strict"; var O = { async function() {} };`);
 
     testSyntaxError(`"use strict"; var asyncFn = async function(x = await 1) { return x; }`);
     testSyntaxError(`"use strict"; async function f(x = await 1) { return x; }`);
@@ -270,17 +279,6 @@ function testSyntaxError(script, message) {
     testSyntaxError(`"use strict"; class C {}; class C2 extends C { async constructor() {} }`);
     testSyntaxError(`"use strict"; class C { static async prototype() {} }`);
     testSyntaxError(`"use strict"; class C {}; class C2 extends C { static async prototype() {} }`);
-    testSyntaxError(`"use strict"; class C { async function() {} }`);
-    testSyntaxError(`"use strict"; class C {}; class C2 extends C { async function() {} }`);
-    testSyntaxError(`"use strict"; class C { async function() {} }`);
-    testSyntaxError(`"use strict"; class C {}; class C2 extends C { async function() {} }`);
-    testSyntaxError(`"use strict"; class C { static async function() {} }`);
-    testSyntaxError(`"use strict"; class C {}; class C2 extends C { static async function() {} }`);
-    testSyntaxError(`"use strict"; class C { async 'function'() {} }`);
-    testSyntaxError(`"use strict"; class C {}; class C2 extends C { async 'function'() {} }`);
-    testSyntaxError(`"use strict"; class C { static async 'function'() {} }`);
-    testSyntaxError(`"use strict"; class C {}; class C2 extends C { static async 'function'() {} }`);
-
 
     testSyntaxError(`"use strict"; var f = async() => ((async(x = await 1) => x)();`);
 

@@ -1,3 +1,17 @@
+2017-05-31  Oleksandr Skachkov  <gskachkov@gmail.com>
+
+        Rolling out: Prevent async methods named 'function'
+        https://bugs.webkit.org/show_bug.cgi?id=172776
+
+        Reviewed by Mark Lam.
+
+        * stress/async-await-syntax.js:
+        (testTopLevelAsyncAwaitSyntaxSloppyMode.testSyntax):
+        (testTopLevelAsyncAwaitSyntaxSloppyMode):
+        (prototype.testTopLevelAsyncAwaitSyntaxStrictMode.testSyntax):
+        (prototype.testTopLevelAsyncAwaitSyntaxStrictMode):
+        (testTopLevelAsyncAwaitSyntaxSloppyMode.testSyntaxError):
+
 2017-05-31  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skip flaky JSC test stress/test-finally.js

@@ -1,3 +1,19 @@
+2017-05-31  Oleksandr Skachkov  <gskachkov@gmail.com>
+
+        Rolling out: Prevent async methods named 'function'
+        https://bugs.webkit.org/show_bug.cgi?id=172776
+
+        Reviewed by Mark Lam.
+
+        Rolling out https://bugs.webkit.org/show_bug.cgi?id=172660 r217578, 
+        https://bugs.webkit.org/show_bug.cgi?id=172598  r217478
+        PR to spec was closed, so changes need to roll out. See
+        https://github.com/tc39/ecma262/pull/884#issuecomment-305212494 
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseClass):
+        (JSC::Parser<LexerType>::parsePropertyMethod):
+
 2017-05-31  Andy Estes  <aestes@apple.com>
 
         Rename ENABLE_APPLE_PAY_DELEGATE to ENABLE_APPLE_PAY_SESSION_V3 and bump the supported version number
