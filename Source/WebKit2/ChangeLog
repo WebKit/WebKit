@@ -1,3 +1,14 @@
+2017-05-31  Andy Estes  <aestes@apple.com>
+
+        Rename ENABLE_APPLE_PAY_DELEGATE to ENABLE_APPLE_PAY_SESSION_V3 and bump the supported version number
+        https://bugs.webkit.org/show_bug.cgi?id=172366
+
+        Reviewed by Daniel Bates.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * WebProcess/ApplePay/WebPaymentCoordinator.cpp:
+        (WebKit::WebPaymentCoordinator::supportsVersion):
+
 2017-05-31  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Fix bad assertion in BackgroundProcessResponsivenessTimer::scheduleNextResponsivenessCheck()

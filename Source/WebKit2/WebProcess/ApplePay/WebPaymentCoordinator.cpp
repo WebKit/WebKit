@@ -55,10 +55,13 @@ bool WebPaymentCoordinator::supportsVersion(unsigned version)
 {
     ASSERT(version > 0);
 
-    if (version <= 2)
-        return true;
+#if !ENABLE(APPLE_PAY_SESSION_V3)
+    static const unsigned currentVersion = 2;
+#else
+    static const unsigned currentVersion = 3;
+#endif
 
-    return false;
+    return version <= currentVersion;
 }
 
 bool WebPaymentCoordinator::canMakePayments()

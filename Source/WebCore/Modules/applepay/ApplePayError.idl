@@ -24,7 +24,7 @@
  */
 
 [
-    Conditional=APPLE_PAY_DELEGATE,
+    Conditional=APPLE_PAY_SESSION_V3,
 ] enum ApplePayErrorCode {
     "unknown",
     "shippingContactInvalid",
@@ -33,7 +33,7 @@
 };
 
 [
-    Conditional=APPLE_PAY_DELEGATE,
+    Conditional=APPLE_PAY_SESSION_V3,
 ] enum ApplePayErrorContactField {
     "phoneNumber",
     "emailAddress",
@@ -49,7 +49,7 @@
 
 [
     Constructor(ApplePayErrorCode errorCode, optional ApplePayErrorContactField contactField, optional DOMString message = ""),
-    Conditional=APPLE_PAY_DELEGATE,
+    Conditional=APPLE_PAY_SESSION_V3,
 ] interface ApplePayError {
     attribute ApplePayErrorCode code;
     attribute ApplePayErrorContactField? contactField;
