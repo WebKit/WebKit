@@ -1534,6 +1534,7 @@ set(WebCore_SOURCES
     dom/PromiseRejectionEvent.cpp
     dom/PseudoElement.cpp
     dom/QualifiedName.cpp
+    dom/QualifiedNameCache.cpp
     dom/RadioButtonGroups.cpp
     dom/Range.cpp
     dom/RejectedPromiseTracker.cpp

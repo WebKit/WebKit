@@ -29,6 +29,7 @@
 
 #include "CachedResourceRequestInitiators.h"
 #include "EventNames.h"
+#include "QualifiedNameCache.h"
 #include "TextCodecICU.h"
 #include "ThreadTimers.h"
 #include <wtf/MainThread.h>
@@ -52,6 +53,7 @@ ThreadGlobalData::ThreadGlobalData()
     : m_cachedResourceRequestInitiators(std::make_unique<CachedResourceRequestInitiators>())
     , m_eventNames(EventNames::create())
     , m_threadTimers(std::make_unique<ThreadTimers>())
+    , m_qualifiedNameCache(std::make_unique<QualifiedNameCache>())
 #ifndef NDEBUG
     , m_isMainThread(isMainThread())
 #endif
@@ -82,6 +84,7 @@ void ThreadGlobalData::destroy()
 
     m_eventNames = nullptr;
     m_threadTimers = nullptr;
+    m_qualifiedNameCache = nullptr;
 }
 
 #if USE(WEB_THREAD)

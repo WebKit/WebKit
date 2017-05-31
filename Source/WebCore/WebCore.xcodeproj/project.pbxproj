@@ -3431,6 +3431,8 @@
 		83C1D434178D5AB500141E68 /* SVGPathSegLinetoVerticalRel.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C1D422178D5AB400141E68 /* SVGPathSegLinetoVerticalRel.h */; };
 		83C1D435178D5AB500141E68 /* SVGPathSegMovetoAbs.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C1D423178D5AB400141E68 /* SVGPathSegMovetoAbs.h */; };
 		83C1D436178D5AB500141E68 /* SVGPathSegMovetoRel.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C1D424178D5AB400141E68 /* SVGPathSegMovetoRel.h */; };
+		83C1F5931EDF69D300410D27 /* QualifiedNameCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83C1F5911EDF69D300410D27 /* QualifiedNameCache.cpp */; };
+		83C1F5941EDF69D300410D27 /* QualifiedNameCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C1F5921EDF69D300410D27 /* QualifiedNameCache.h */; };
 		83C45B8C1DC2B667008871BA /* ValidationBubbleMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83C45B8B1DC2B663008871BA /* ValidationBubbleMac.mm */; };
 		83C45B8E1DC2B68A008871BA /* ValidationBubble.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C45B8D1DC2B67C008871BA /* ValidationBubble.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		83C5795D1DA5C301006FACA8 /* ScrollToOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 8350C3E71DA59B6200356446 /* ScrollToOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -11535,6 +11537,8 @@
 		83C1D422178D5AB400141E68 /* SVGPathSegLinetoVerticalRel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGPathSegLinetoVerticalRel.h; sourceTree = "<group>"; };
 		83C1D423178D5AB400141E68 /* SVGPathSegMovetoAbs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGPathSegMovetoAbs.h; sourceTree = "<group>"; };
 		83C1D424178D5AB400141E68 /* SVGPathSegMovetoRel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGPathSegMovetoRel.h; sourceTree = "<group>"; };
+		83C1F5911EDF69D300410D27 /* QualifiedNameCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QualifiedNameCache.cpp; sourceTree = "<group>"; };
+		83C1F5921EDF69D300410D27 /* QualifiedNameCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QualifiedNameCache.h; sourceTree = "<group>"; };
 		83C45B8B1DC2B663008871BA /* ValidationBubbleMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ValidationBubbleMac.mm; sourceTree = "<group>"; };
 		83C45B8D1DC2B67C008871BA /* ValidationBubble.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ValidationBubble.h; sourceTree = "<group>"; };
 		83D26D3C1AFDCC50001B3873 /* ChildNode.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = ChildNode.idl; sourceTree = "<group>"; };
@@ -25906,6 +25910,8 @@
 				FF945ECA161F7F3600971BC8 /* PseudoElement.h */,
 				550A0BC7085F6039007353D6 /* QualifiedName.cpp */,
 				550A0BC8085F6039007353D6 /* QualifiedName.h */,
+				83C1F5911EDF69D300410D27 /* QualifiedNameCache.cpp */,
+				83C1F5921EDF69D300410D27 /* QualifiedNameCache.h */,
 				93F925420F7EF5B8007E37C9 /* RadioButtonGroups.cpp */,
 				93F925410F7EF5B8007E37C9 /* RadioButtonGroups.h */,
 				F523D30302DE4476018635CA /* Range.cpp */,
@@ -29717,6 +29723,7 @@
 				B2227A440D00BF220071B782 /* SVGMarkerElement.h in Headers */,
 				B2227A470D00BF220071B782 /* SVGMaskElement.h in Headers */,
 				0806E57A12893045007CED32 /* SVGMatrix.h in Headers */,
+				83C1F5941EDF69D300410D27 /* QualifiedNameCache.h in Headers */,
 				08CA3D4412894A3800FFF260 /* SVGMatrixTearOff.h in Headers */,
 				7CE58D5C1DD7EC9C00128552 /* SVGMatrixValue.h in Headers */,
 				B2227A4B0D00BF220071B782 /* SVGMetadataElement.h in Headers */,
@@ -31780,6 +31787,7 @@
 				FDA15EA712B03EE1003A583A /* JSAudioDestinationNode.cpp in Sources */,
 				FDA15EAD12B03EE1003A583A /* JSAudioListener.cpp in Sources */,
 				FDA15EAF12B03EE1003A583A /* JSAudioNode.cpp in Sources */,
+				83C1F5931EDF69D300410D27 /* QualifiedNameCache.cpp in Sources */,
 				FDA15EB312B03EE1003A583A /* JSAudioParam.cpp in Sources */,
 				FDA15EB512B03EE1003A583A /* JSAudioProcessingEvent.cpp in Sources */,
 				BE8EF042171C8FF9009B48C3 /* JSAudioTrack.cpp in Sources */,
