@@ -109,8 +109,10 @@ void PromiseDeferredTimer::addPendingPromise(JSPromiseDeferred* ticket, Vector<S
         dependencies.append(Strong<JSCell>(*m_vm, ticket));
         result.iterator->value = WTFMove(dependencies);
     } else {
+        // We need to make sure we move dependencies into a non-reference type so we actually destruct it.
+        Vector<Strong<JSCell>> deps = WTFMove(dependencies);
         dataLogLnIf(verbose, "Adding new dependencies for promise: ", RawPointer(ticket));
-        result.iterator->value.appendVector(dependencies);
+        result.iterator->value.appendVector(deps);
     }
 
 #ifndef NDEBUG

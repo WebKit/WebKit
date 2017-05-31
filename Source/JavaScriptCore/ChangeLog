@@ -1,3 +1,19 @@
+2017-05-31  Keith Miller  <keith_miller@apple.com>
+
+        Fix leak in PromiseDeferredTimer
+        https://bugs.webkit.org/show_bug.cgi?id=172755
+
+        Reviewed by JF Bastien.
+
+        We were not properly freeing the list of dependencies if we were already tracking the promise before.
+        This is because addPendingPromise takes the list of dependencies as an rvalue-reference. In the case
+        where we were already tracking the promise we append the provided dependency list to the existing list.
+        Since we never bound or rvalue-ref to a non-temporary value we never destructed the Vector, leaking its
+        contents.
+
+        * runtime/PromiseDeferredTimer.cpp:
+        (JSC::PromiseDeferredTimer::addPendingPromise):
+
 2017-05-30  Oleksandr Skachkov  <gskachkov@gmail.com>
 
         Prevent async methods named 'function' in Object literal
