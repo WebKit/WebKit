@@ -3437,9 +3437,9 @@
         var elapsedTest = new Date() - beforeTest;
         if (result == "retry") {
           // some tests uses this magical mechanism to wait for support files to load
-          // we will give this test 500 attempts (5000ms) before aborting
+          // we will give this test 1000 attempts (10000ms) before aborting
           retry += 1;
-          if (retry < 500) {
+          if (retry < 1000) {
             setTimeout(update, delay);
             return;
           }

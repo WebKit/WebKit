@@ -1,3 +1,16 @@
+2017-05-31  Chris Dumez  <cdumez@apple.com>
+
+        Flaky Test: http/tests/misc/acid3.html
+        https://bugs.webkit.org/show_bug.cgi?id=165734
+        <rdar://problem/32249821>
+
+        Reviewed by Simon Fraser.
+
+        Increase internal test timeout from 5 seconds to 10 seconds to reduce
+        flakiness.
+
+        * http/tests/misc/acid3.html:
+
 2017-05-31  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skip http/tests/cache/cancel-during-revalidation-succeeded.html on ios-wk2.
