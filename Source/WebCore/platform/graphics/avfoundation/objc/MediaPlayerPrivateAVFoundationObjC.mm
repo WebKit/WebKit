@@ -1933,8 +1933,14 @@ void MediaPlayerPrivateAVFoundationObjC::tracksChanged()
 #if !HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP)
         hasCaptions = [[m_avAsset.get() tracksWithMediaType:AVMediaTypeClosedCaption] count];
 #endif
-
-        presentationSizeDidChange(firstEnabledVideoTrack ? FloatSize(CGSizeApplyAffineTransform([firstEnabledVideoTrack naturalSize], [firstEnabledVideoTrack preferredTransform])) : FloatSize());
+        auto size = firstEnabledVideoTrack ? FloatSize(CGSizeApplyAffineTransform([firstEnabledVideoTrack naturalSize], [firstEnabledVideoTrack preferredTransform])) : FloatSize();
+        // For videos with rotation tag set, the transformation above might return a CGSize instance with negative width or height.
+        // See https://bugs.webkit.org/show_bug.cgi?id=172648.
+        if (size.width() < 0)
+            size.setWidth(-size.width());
+        if (size.height() < 0)
+            size.setHeight(-size.height());
+        presentationSizeDidChange(size);
     } else {
         bool hasVideo = false;
         bool hasAudio = false;

@@ -1,3 +1,19 @@
+2017-05-31  Per Arne Vollan  <pvollan@apple.com>
+
+        LayoutTest media/video-orientation.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=172648
+        <rdar://problem/31322425>
+
+        Reviewed by Eric Carlson.
+
+        For videos with rotation tag set, the transform AVAssetTrack.preferredTransform applied to
+        AVAssetTrack.naturalSize might return a CGSize instance with negative width or height.
+
+        Covered by existing tests.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::tracksChanged):
+
 2017-05-30  Frederic Wang  <fwang@igalia.com>
 
         Include ScrollingTreeScrollingNode properties in ScrollingTreeFrameScrollingNode::dumpProperties
