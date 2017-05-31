@@ -395,8 +395,6 @@ static inline bool shouldCacheSchemeIndefinitely(StringView scheme)
 
 std::chrono::microseconds CachedResource::freshnessLifetime(const ResourceResponse& response) const
 {
-    using namespace std::literals::chrono_literals;
-
     if (!response.url().protocolIsInHTTPFamily()) {
         StringView protocol = response.url().protocol();
         if (!shouldCacheSchemeIndefinitely(protocol)) {

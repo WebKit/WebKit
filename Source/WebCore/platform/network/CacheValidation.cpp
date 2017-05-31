@@ -38,8 +38,6 @@
 
 namespace WebCore {
 
-using namespace std::literals::chrono_literals;
-
 // These response headers are not copied from a revalidated response to the
 // cached response headers. For compatibility, this list is based on Chromium's
 // net/http/http_response_headers.cc.
@@ -115,7 +113,6 @@ std::chrono::microseconds computeCurrentAge(const ResourceResponse& response, st
 std::chrono::microseconds computeFreshnessLifetimeForHTTPFamily(const ResourceResponse& response, std::chrono::system_clock::time_point responseTime)
 {
     using namespace std::chrono;
-
     ASSERT(response.url().protocolIsInHTTPFamily());
 
     // Freshness Lifetime:

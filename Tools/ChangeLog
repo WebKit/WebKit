@@ -1,3 +1,15 @@
+2017-05-31  Matt Lewis  <jlewis3@apple.com>
+
+        Unreviewed, rolling out r217603.
+
+        This patch broke the internal builds.
+
+        Reverted changeset:
+
+        "Get <chrono> out of StdLibExtras.h"
+        https://bugs.webkit.org/show_bug.cgi?id=172744
+        http://trac.webkit.org/changeset/217603
+
 2017-05-31  Brent Fulgham  <bfulgham@apple.com>
 
         Make ResourceLoadStatistics testing more reliable

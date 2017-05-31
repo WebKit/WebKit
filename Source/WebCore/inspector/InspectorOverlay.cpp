@@ -63,7 +63,6 @@
 #include <inspector/InspectorValues.h>
 
 using namespace Inspector;
-using namespace std::literals::chrono_literals;
 
 namespace WebCore {
 

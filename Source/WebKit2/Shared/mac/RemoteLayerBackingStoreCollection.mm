@@ -30,8 +30,6 @@
 #import "RemoteLayerBackingStore.h"
 #import "RemoteLayerTreeContext.h"
 
-using namespace std::literals::chrono_literals;
-
 const std::chrono::seconds volatileBackingStoreAgeThreshold = 1s;
 const std::chrono::milliseconds volatileSecondaryBackingStoreAgeThreshold = 200ms;
 const Seconds volatilityTimerInterval = 200_ms;

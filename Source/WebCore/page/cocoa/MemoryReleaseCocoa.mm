@@ -66,8 +66,6 @@ void platformReleaseMemory(Critical)
 void jettisonExpensiveObjectsOnTopLevelNavigation()
 {
 #if PLATFORM(IOS)
-    using namespace std::literals::chrono_literals;
-
     // Protect against doing excessive jettisoning during repeated navigations.
     const auto minimumTimeSinceNavigation = 2s;
 

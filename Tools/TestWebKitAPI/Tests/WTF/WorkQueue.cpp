@@ -35,8 +35,6 @@
 
 namespace TestWebKitAPI {
 
-using namespace std::literals::chrono_literals;
-
 static const char* simpleTestLabel = "simpleTest";
 static const char* longTestLabel = "longTest";
 static const char* thirdTestLabel = "thirdTest";

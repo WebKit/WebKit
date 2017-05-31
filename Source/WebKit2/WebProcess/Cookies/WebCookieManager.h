@@ -23,14 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef WebCookieManager_h
+#define WebCookieManager_h
 
 #include "HTTPCookieAcceptPolicy.h"
 #include "MessageReceiver.h"
 #include "NetworkProcessSupplement.h"
 #include "WebProcessSupplement.h"
 #include <WebCore/SessionID.h>
-#include <chrono>
 #include <stdint.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
@@ -91,3 +91,5 @@ private:
 };
 
 } // namespace WebKit
+
+#endif // WebCookieManager_h
