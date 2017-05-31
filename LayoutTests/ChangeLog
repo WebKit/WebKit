@@ -1,3 +1,12 @@
+2017-05-31  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Mark fast/css/target-fragment-match.html as flaky on iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=168239
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations:
+
 2017-05-31  Youenn Fablet  <youenn@apple.com>
 
         PeerConnection should respect tracks that are muted at the time they are added
