@@ -1,3 +1,19 @@
+2017-05-31  Brent Fulgham  <bfulgham@apple.com>
+
+        Make ResourceLoadStatistics testing more reliable
+        https://bugs.webkit.org/show_bug.cgi?id=172730
+        <rdar://problem/32028373>
+
+        Reviewed by Andy Estes.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::notifyPageStatisticsAndDataRecordsProcessed): Add a convenience method to notify the
+        WebProcess when the UIProcess has finished processing the load statistics data.
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::processStatisticsAndDataRecords): Notify clients (if they requested) when
+        statistics have been processed.
+
 2017-05-31  Simon Fraser  <simon.fraser@apple.com>
 
         Get <chrono> out of StdLibExtras.h

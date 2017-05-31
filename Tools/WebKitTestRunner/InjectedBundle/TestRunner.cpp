@@ -46,6 +46,7 @@
 #include <WebKit/WKBundleScriptWorld.h>
 #include <WebKit/WKData.h>
 #include <WebKit/WKPagePrivate.h>
+#include <WebKit/WKResourceLoadStatisticsManager.h>
 #include <WebKit/WKRetainPtr.h>
 #include <WebKit/WKSerializedScriptValue.h>
 #include <WebKit/WebKit2_C.h>
@@ -1430,6 +1431,7 @@ void TestRunner::setStatisticsNotifyPagesWhenDataRecordsWereScanned(bool value)
     WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("StatisticsNotifyPagesWhenDataRecordsWereScanned"));
     WKRetainPtr<WKBooleanRef> messageBody(AdoptWK, WKBooleanCreate(value));
     WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
+    WKResourceLoadStatisticsManagerSetNotifyPagesWhenDataRecordsWereScanned(value);
 }
 
 void TestRunner::setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(bool value)

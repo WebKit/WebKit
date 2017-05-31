@@ -322,7 +322,13 @@ void WebProcessProxy::topPrivatelyControlledDomainsWithWebiteData(OptionSet<Webs
         });
     }
 }
-
+    
+void WebProcessProxy::notifyPageStatisticsAndDataRecordsProcessed()
+{
+    for (auto& page : globalPageMap())
+        page.value->postMessageToInjectedBundle("WebsiteDataScanForTopPrivatelyControlledDomainsFinished", nullptr);
+}
+    
 Ref<WebPageProxy> WebProcessProxy::createWebPage(PageClient& pageClient, Ref<API::PageConfiguration>&& pageConfiguration)
 {
     uint64_t pageID = generatePageID();

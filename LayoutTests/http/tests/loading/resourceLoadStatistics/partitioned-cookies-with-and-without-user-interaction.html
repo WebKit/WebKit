@@ -21,6 +21,7 @@
         if (!enable) {
             testRunner.statisticsResetToConsistentState();
         }
+        testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(enable);
         internals.setResourceLoadStatisticsEnabled(enable);
         testRunner.setCookieStoragePartitioningEnabled(enable);
     }

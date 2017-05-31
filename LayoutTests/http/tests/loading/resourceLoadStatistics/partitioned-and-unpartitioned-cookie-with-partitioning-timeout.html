@@ -18,9 +18,9 @@
     const subPathToGetCookies = "/get-cookies.php?name1=" + firstPartyCookieName + "&name2=" + thirdPartyCookieName;
 
     function setEnableFeature(enable) {
-        if (!enable) {
+        if (!enable)
             testRunner.statisticsResetToConsistentState();
-        }
+        testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(enable);
         internals.setResourceLoadStatisticsEnabled(enable);
         testRunner.setCookieStoragePartitioningEnabled(enable);
     }

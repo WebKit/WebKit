@@ -139,7 +139,13 @@ void WebResourceLoadStatisticsStore::processStatisticsAndDataRecords()
             });
         }
         removeDataRecords();
-
+        
+        if (notifyPages) {
+            RunLoop::main().dispatch([] () mutable {
+                WebProcessProxy::notifyPageStatisticsAndDataRecordsProcessed();
+            });
+        }
+            
         writeStoreToDisk();
     });
 }

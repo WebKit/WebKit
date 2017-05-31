@@ -1,3 +1,17 @@
+2017-05-31  Brent Fulgham  <bfulgham@apple.com>
+
+        Make ResourceLoadStatistics testing more reliable
+        https://bugs.webkit.org/show_bug.cgi?id=172730
+        <rdar://problem/32028373>
+
+        Reviewed by Andy Estes.
+
+        When we tell the UIProcess (WebKitTestRunner) to notify the system about statistics update notifications,
+        we also need to tell the WebProcess to do so, too, or else the test system doesn't get messages.
+
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setStatisticsNotifyPagesWhenDataRecordsWereScanned):
+
 2017-05-31  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK][WPE] run-javascriptcore-tests should use the jhbuild

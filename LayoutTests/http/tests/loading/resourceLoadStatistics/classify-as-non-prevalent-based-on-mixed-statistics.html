@@ -12,7 +12,20 @@
     const topFrameOrigin1 = "http://127.0.0.2:8000/temp";
     const topFrameOrigin2 = "http://127.0.0.3:8000/temp";
     const topFrameOrigin3 = "http://127.0.0.4:8000/temp";
+
+    function completeTest() {
+        if (testRunner.isStatisticsPrevalentResource(statisticsUrl))
+            testFailed("Host classified as prevalent resource.");
+        else
+            testPassed("Host did not get classified as prevalent resource.");
+
+        testRunner.statisticsResetToConsistentState();
+        testRunner.notifyDone();
+    }
+
     function runTestRunnerTest() {
+        testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(true);
+
         testRunner.setStatisticsPrevalentResource(statisticsUrl, false);
         if (testRunner.isStatisticsPrevalentResource(statisticsUrl))
             testFailed("Host did not get set as non-prevalent resource.");
@@ -21,15 +34,9 @@
         testRunner.setStatisticsSubresourceUnderTopFrameOrigin(statisticsUrl, topFrameOrigin2);
         testRunner.setStatisticsSubresourceUniqueRedirectTo(statisticsUrl, topFrameOrigin3);
 
+        testRunner.installStatisticsDidScanDataRecordsCallback(completeTest);
+
         testRunner.statisticsFireDataModificationHandler();
-
-        if (testRunner.isStatisticsPrevalentResource(statisticsUrl))
-            testFailed("Host classified as prevalent resource.");
-        else
-            testPassed("Host did not get classified as prevalent resource.");
-
-        testRunner.statisticsResetToConsistentState();
-        testRunner.notifyDone();
     }
 
     if (document.location.host === hostUnderTest && window.testRunner && window.internals) {

@@ -143,6 +143,7 @@ public:
     void deleteWebsiteDataForOrigins(WebCore::SessionID, OptionSet<WebsiteDataType>, const Vector<WebCore::SecurityOriginData>&, Function<void()> completionHandler);
     static void deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPersistentDataStores(OptionSet<WebsiteDataType>, Vector<String>&& topPrivatelyControlledDomains, bool shouldNotifyPages, std::function<void(Vector<String>)> completionHandler);
     static void topPrivatelyControlledDomainsWithWebiteData(OptionSet<WebsiteDataType> dataTypes, bool shouldNotifyPage, std::function<void(HashSet<String>&&)> completionHandler);
+    static void notifyPageStatisticsAndDataRecordsProcessed();
 
     void enableSuddenTermination();
     void disableSuddenTermination();
