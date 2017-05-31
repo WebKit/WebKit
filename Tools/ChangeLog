@@ -1,3 +1,14 @@
+2017-05-31  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK] MiniBrowser's browser_window_get_or_create_web_view_for_automation never creates new windows
+        https://bugs.webkit.org/show_bug.cgi?id=172770
+
+        Reviewed by Michael Catanzaro.
+
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (browser_window_get_or_create_web_view_for_automation): Removed stray semicolon
+        which caused the body of the if-clause to be accidentally empty.
+
 2017-05-31  Keith Miller  <keith_miller@apple.com>
 
         Reland r216808, underlying lldb bug has been fixed.
