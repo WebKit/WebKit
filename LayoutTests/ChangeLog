@@ -1,5 +1,14 @@
 2017-05-31  Claudio Saavedra  <csaavedra@igalia.com>
 
+        [WPE] More CSS test expectations cleanup
+
+        Unreviewed gardening.
+
+        * platform/wpe/TestExpectations: remove more assorted css tests
+        that are actually passing.
+
+2017-05-31  Claudio Saavedra  <csaavedra@igalia.com>
+
         [WPE] CSS tests expectations cleanup
 
         Unreviewed gardening.
