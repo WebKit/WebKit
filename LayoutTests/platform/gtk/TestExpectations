@@ -2279,7 +2279,7 @@ webkit.org/b/132266 js/slow-stress/emscripten-memops.html [ Timeout Pass ]
 
 webkit.org/b/133148 accessibility/content-editable-set-inner-text-generates-axvalue-notification.html [ Timeout ]
 
-webkit.org/b/133151 js/cached-window-properties.html [ Timeout Crash Pass ]
+webkit.org/b/133151 js/cached-window-properties.html [ Slow ]
 
 webkit.org/b/133808 media/video-trackmenu-selection.html [ Timeout ]
 

@@ -416,5 +416,6 @@ Bug(WPE) css3/font-variant-synthesis-jdaggett.html [ ImageOnlyFailure ]
 Bug(WPE) css3/unicode-bidi-isolate-aharon-failing.html [ ImageOnlyFailure ]
 Bug(WPE) css3/zoom-coords.xhtml [ Failure ]
 
+webkit.org/b/133151 js/cached-window-properties.html [ Slow ]
 webkit.org/b/119264 transitions/created-while-suspended.html [ Pass Slow ]
 webkit.org/b/159754 workers/bomb.html [ Slow ]

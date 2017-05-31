@@ -1,3 +1,12 @@
+2017-05-31  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GTK][WPE] Mark js/cached-window-properties test as slow
+
+        Unreviewed gardening.
+        * platform/gtk/TestExpectations: Test was marked as flaky; but
+        it's just slow.
+        * platform/wpe/TestExpectations: Mark as slow.
+
 2017-05-31  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Upgrade the WebKitGTK+ bots to Debian 9
