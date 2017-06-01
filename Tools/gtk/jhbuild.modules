@@ -448,12 +448,17 @@
     <dependencies>
       <dep package="libffi"/>
     </dependencies>
-    <branch module="releases/wayland-1.8.1.tar.xz"
-            version="1.8.1"
+    <branch module="releases/wayland-1.12.0.tar.xz"
+            version="1.12.0"
             repo="wayland.freedesktop.org"
-            hash="sha256:f17c938d1c24fd0a10f650a623a2775d329db3168b5732e498b08388ec776fc8"
-            md5sum="6e877877c3e04cfb865cfcd0733c9ab1">
-    </branch>
+            hash="sha256:d6b4135cba0188abcb7275513c72dede751d6194f6edc5b82183a3ba8b821ab1"/>
+  </autotools>
+
+  <autotools id="wayland-protocols">
+    <branch module="releases/wayland-protocols-1.7.tar.xz"
+            version="1.7"
+	    repo="wayland.freedesktop.org"
+	    hash="sha256:635f2a937d318f1fecb97b54074ca211486e38af943868dd0fa82ea38d091c1f"/>
   </autotools>
 
   <autotools id="weston" autogenargs="--enable-x11-compositor --disable-rpi-compositor --disable-fbdev-compositor --disable-setuid-install --disable-ivi-shell --disable-weston-launch --with-cairo=gl">
@@ -464,12 +469,13 @@
       <dep package="xserver"/>
       <dep package="cairo"/>
       <dep package="libinput"/>
+      <dep package="wayland-protocols"/>
     </dependencies>
-    <branch module="releases/weston-1.8.0.tar.xz"
-            version="1.8.0"
+    <branch module="releases/weston-1.12.0.tar.xz"
+            version="1.12.0"
             repo="wayland.freedesktop.org"
-            hash="sha256:8963e69f328e815cec42c58046c4af721476c7541bb7d9edc71740fada5ad312"
-            md5sum="24cb8a7ed0535b4fc3642643988dab36">
+            hash="sha256:ac7ac2a32e3b9f50131fccded5d2326bd36b2226712d90b61999118a09af5033">
+      <patch file="weston-libweston-include-weston-egl-ext.h-in-drm-x11-and-wa.patch" strip="1"/>
     </branch>
   </autotools>
 
@@ -634,15 +640,13 @@
   </autotools>
 
   <!-- libinput is only included because the version of libinput shipped with Debian Jessie
-    os too old for building Weston 1.8. This may be removed after Debian Strech is released -->
+    os too old for building Weston. This may be removed after Debian Strech is released -->
   <autotools id="libinput" autogen-sh="configure"  autogenargs="--disable-libwacom --disable-tests --disable-documentation">
     <pkg-config>libinput.pc</pkg-config>
-    <branch module="software/libinput/libinput-1.2.4.tar.xz"
-            version="1.2.4"
+    <branch module="software/libinput/libinput-1.6.3.tar.xz"
+            version="1.6.3"
             repo="freedesktop.org"
-            hash="sha256:aee3650ad2a864ab9a10e7e63df543cc2b475f6bf3974751037a2df325dabbb1"
-            md5sum="1cbaa34f04a336f2703906d564e0a37a">
-    </branch>
+            hash="sha256:74da2798728e79c3aedfffa268d8fe811c3766ca3708309c0dc45502be137da1"/>
   </autotools>
 
 </moduleset>

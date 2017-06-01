@@ -1,3 +1,13 @@
+2017-06-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Bump wayland and weston in jhbuild
+        https://bugs.webkit.org/show_bug.cgi?id=171921
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * gtk/jhbuild.modules:
+        * gtk/patches/weston-libweston-include-weston-egl-ext.h-in-drm-x11-and-wa.patch: Added.
+
 2017-06-01  Andy Estes  <aestes@apple.com>
 
         REGRESSION (r217626): ENABLE_APPLE_PAY_SESSION_V3 was disabled by mistake
