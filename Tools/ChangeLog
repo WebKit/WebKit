@@ -1,3 +1,22 @@
+2017-06-01  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Do not send 0 or -1 as a pid to kill_process
+        https://bugs.webkit.org/show_bug.cgi?id=172818
+
+        Reviewed by Darin Adler.
+
+        Sending a signal to process 0 will result in all processes in the group receiving 
+        the signal. Sending a signal to process -1 will result in all non-system processes
+        receiving the signal. Both Executive.kill_process and Executive.check_running_pid
+        should consider these cases
+
+        * Scripts/webkitpy/common/system/executive.py:
+        (Executive.kill_process): Throw exception if pid is undefined, 0 or negative.
+        (Executive.check_running_pid): An undefined pid, pid 0 or a negative pid will
+        never be running, although os.kill may succeed.
+        * Scripts/webkitpy/port/simulator_process.py:
+        (SimulatorProcess.stop): Do not kill process if it is undefined.
+
 2017-05-31  Alexey Proskuryakov  <ap@apple.com>
 
         JSC EWS bot does not run on WTF only patches
