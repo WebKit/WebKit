@@ -1,5 +1,16 @@
 <script>
-    if (window.testRunner)
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
         testRunner.dumpAsText();
-    window.location="resources/missing-data.webarchive";
+    }
+
+    onload = function() {
+        frame = document.createElement("iframe");
+        frame.src = "resources/missing-data.webarchive";
+        frame.onload = function() {
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+        document.body.appendChild(frame);
+    }
 </script>

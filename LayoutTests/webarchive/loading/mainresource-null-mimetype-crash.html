@@ -2,8 +2,16 @@
 <script>
     if (window.testRunner) {
         testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
-    
-    window.location="resources/mainresource-null-mimetype.webarchive";
+    onload = function() {
+        frame = document.createElement("iframe");
+        frame.src = "resources/mainresource-null-mimetype.webarchive";
+        frame.onload = function() {
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+        document.body.appendChild(frame);
+    }
 </script>
 </html>

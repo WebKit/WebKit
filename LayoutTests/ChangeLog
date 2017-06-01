@@ -1,3 +1,19 @@
+2017-06-01  Chris Dumez  <cdumez@apple.com>
+
+        webarchive/loading/mainresource-null-mimetype-crash.html / webarchive/loading/missing-data.html are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=172823
+
+        Reviewed by Alexey Proskuryakov.
+
+        Rewrite webarchive/loading/mainresource-null-mimetype-crash.html / webarchive/loading/missing-data.html
+        to address flakiness. We now navigate a subframe instead of the main frame. We also mark the test as
+        asynchronous and wait for the subframe to finish loading before calling testRunner.notifyDone().
+
+        * platform/mac/webarchive/loading/mainresource-null-mimetype-crash-expected.txt:
+        * webarchive/loading/mainresource-null-mimetype-crash.html:
+        * webarchive/loading/missing-data-expected.txt:
+        * webarchive/loading/missing-data.html:
+
 2017-06-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Bump GTK+ and its dependencies in jhbuild
