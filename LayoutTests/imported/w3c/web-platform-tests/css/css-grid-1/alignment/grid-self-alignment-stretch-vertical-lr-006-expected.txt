@@ -1,0 +1,20 @@
+X XX X
+XX X
+X XXX
+X
+XX XXX
+X XX X
+XX X
+X XXX
+X
+XX XXX
+
+FAIL .grid 1 assert_equals: 
+<div class="grid">
+  <div data-offset-x="0" data-offset-y="0" data-expected-width="60" data-expected-height="90" class="firstRowFirstColumn">X XX X</div>
+  <div data-offset-x="0" data-offset-y="100" data-expected-width="130" data-expected-height="40" class="firstRowSecondColumn">XX X<br>X XXX<br>X<br>XX XXX</div>
+  <div data-offset-x="150" data-offset-y="0" data-expected-width="60" data-expected-height="10" class="secondRowFirstColumn">X XX X</div>
+  <div data-offset-x="150" data-offset-y="100" data-expected-width="90" data-expected-height="130" class="secondRowSecondColumn">XX X<br>X XXX<br>X<br>XX XXX</div>
+</div>
+height expected 90 but got 100
+

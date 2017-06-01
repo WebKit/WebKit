@@ -5,7 +5,7 @@ PASS 'grid' with: grid-template-areas: ".";
 PASS 'grid' with: grid-template-areas: "lower UPPER 10 -minus _low 1-st ©copy_right line¶"; 
 PASS 'grid' with: grid-template-areas: "a b"; 
 PASS 'grid' with: grid-template-areas: "a b" "c d"; 
-PASS 'grid' with: grid-template-areas: "a     b"     "c     d"; 
+PASS 'grid' with: grid-template-areas: "a   b"   "c   d"; 
 PASS 'grid' with: grid-template-areas: "a b""c d"; 
 PASS 'grid' with: grid-template-areas: "a b"	"c d"; 
 PASS 'grid' with: grid-template-areas: "a b"
