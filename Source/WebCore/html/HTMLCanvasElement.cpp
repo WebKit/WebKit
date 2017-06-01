@@ -611,36 +611,6 @@ ExceptionOr<Ref<MediaStream>> HTMLCanvasElement::captureStream(ScriptExecutionCo
 }
 #endif
 
-FloatRect HTMLCanvasElement::convertLogicalToDevice(const FloatRect& logicalRect) const
-{
-    FloatRect deviceRect(logicalRect);
-
-    float x = floorf(deviceRect.x());
-    float y = floorf(deviceRect.y());
-    float w = ceilf(deviceRect.maxX() - x);
-    float h = ceilf(deviceRect.maxY() - y);
-    deviceRect.setX(x);
-    deviceRect.setY(y);
-    deviceRect.setWidth(w);
-    deviceRect.setHeight(h);
-
-    return deviceRect;
-}
-
-FloatSize HTMLCanvasElement::convertLogicalToDevice(const FloatSize& logicalSize) const
-{
-    float width = ceilf(logicalSize.width());
-    float height = ceilf(logicalSize.height());
-    return FloatSize(width, height);
-}
-
-FloatSize HTMLCanvasElement::convertDeviceToLogical(const FloatSize& deviceSize) const
-{
-    float width = ceilf(deviceSize.width());
-    float height = ceilf(deviceSize.height());
-    return FloatSize(width, height);
-}
-
 SecurityOrigin* HTMLCanvasElement::securityOrigin() const
 {
     return &document().securityOrigin();
@@ -735,12 +705,8 @@ void HTMLCanvasElement::createImageBuffer() const
     m_hasCreatedImageBuffer = true;
     m_didClearImageBuffer = true;
 
-    FloatSize logicalSize = size();
-    FloatSize deviceSize = convertLogicalToDevice(logicalSize);
-    if (!deviceSize.isExpressibleAsIntSize())
-        return;
-
-    if (deviceSize.width() * deviceSize.height() > maxCanvasArea) {
+    // Perform multiplication as floating point to avoid overflow
+    if (float(width()) * height() > maxCanvasArea) {
         StringBuilder stringBuilder;
         stringBuilder.appendLiteral("Canvas area exceeds the maximum limit (width * height > ");
         stringBuilder.appendNumber(maxCanvasArea);
@@ -760,11 +726,10 @@ void HTMLCanvasElement::createImageBuffer() const
         return;
     }
 
-    IntSize bufferSize(deviceSize.width(), deviceSize.height());
-    if (!bufferSize.width() || !bufferSize.height())
+    if (!width() || !height())
         return;
 
-    RenderingMode renderingMode = shouldAccelerate(bufferSize) ? Accelerated : Unaccelerated;
+    RenderingMode renderingMode = shouldAccelerate(size()) ? Accelerated : Unaccelerated;
 
     setImageBuffer(ImageBuffer::create(size(), renderingMode));
     if (!m_imageBuffer)
@@ -846,13 +811,7 @@ void HTMLCanvasElement::clearCopiedImage()
 AffineTransform HTMLCanvasElement::baseTransform() const
 {
     ASSERT(m_hasCreatedImageBuffer);
-    FloatSize unscaledSize = size();
-    FloatSize deviceSize = convertLogicalToDevice(unscaledSize);
-    IntSize size(deviceSize.width(), deviceSize.height());
-    AffineTransform transform;
-    if (size.width() && size.height())
-        transform.scaleNonUniform(size.width() / unscaledSize.width(), size.height() / unscaledSize.height());
-    return m_imageBuffer->baseTransform() * transform;
+    return m_imageBuffer->baseTransform();
 }
 
 }

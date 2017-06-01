@@ -1,3 +1,23 @@
+2017-06-01  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Get rid of more HIGH_DPI_CANVAS leftovers
+        https://bugs.webkit.org/show_bug.cgi?id=172751
+
+        Reviewed by Simon Fraser.
+
+        Get rid of HTMLCanvasElement::convertLogicalToDevice() and
+        HTMLCanvasElement::convertDeviceToLogical() that are no longer needed,
+        as canvas doesn't use device scale factor anymore.
+
+        No new tests needed.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::createImageBuffer): Use integer width()
+        and height() instead of floating-point temporary deviceSize variable.
+        (WebCore::HTMLCanvasElement::baseTransform): Return unmodified
+        baseTransform of underlying ImageBuffer.
+        * html/HTMLCanvasElement.h: Removed declarations of unused methods.
+
 2017-05-31  Brent Fulgham  <bfulgham@apple.com>
 
         Avoid iterator invalidation bug in WebCore::defaultPortForProtocol
