@@ -1,3 +1,9 @@
+2017-06-01  Miguel Gomez  <magomez@igalia.com>
+
+        Unreviewed GTK+ gardening. Update expectations of several tests failing after r217651.
+
+        * platform/gtk/TestExpectations:
+
 2017-06-01  Antoine Quint  <graouts@apple.com>
 
         Remove media/modern-media-controls/ios-inline-media-controls/ios-inline-media-controls-audio-background.html
