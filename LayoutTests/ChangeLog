@@ -1,3 +1,12 @@
+2017-06-01  Matt Lewis  <jlewis3@apple.com>
+
+        Fixed typo in test expectations.
+        https://bugs.webkit.org/show_bug.cgi?id=172054
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2017-06-01  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline webarchive/loading/mainresource-null-mimetype-crash.html after r217680.
