@@ -1,3 +1,17 @@
+2017-06-01  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rolling out r217660.
+
+        This should not have landed given that the new assertion is
+        hit on debug EWS bots
+
+        Reverted changeset:
+
+        "Make sure we don't access WebCore::defaultPortForProtocol
+        from non-main thread"
+        https://bugs.webkit.org/show_bug.cgi?id=172797
+        http://trac.webkit.org/changeset/217660
+
 2017-06-01  Brent Fulgham  <bfulgham@apple.com>
 
         Make sure we don't access WebCore::defaultPortForProtocol from non-main thread
