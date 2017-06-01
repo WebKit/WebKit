@@ -1,3 +1,32 @@
+2017-06-01  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Cherry-pick r216459. rdar://problem/32119857
+
+    2017-05-08  Mark Lam  <mark.lam@apple.com>
+
+            op_throw_static_error's use of its first operand should be reflected in DFG BytecodeUseDef as well.
+            https://bugs.webkit.org/show_bug.cgi?id=171786
+            <rdar://problem/32051023>
+
+            Reviewed by Saam Barati.
+
+            * bytecode/BytecodeDumper.cpp:
+            (JSC::BytecodeDumper<Block>::dumpBytecode):
+            - Fix BytecodeDumper to dump op_throw_static_error correctly.  Previously,
+              it was expecting op1 to always be a constant.  r206870 changed it to take a
+              variable string as well.
+
+            * bytecode/BytecodeUseDef.h:
+            (JSC::computeUsesForBytecodeOffset):
+            - Fix the bug.
+
+            * dfg/DFGByteCodeParser.cpp:
+            (JSC::DFG::ByteCodeParser::parseBlock):
+            - Move the Phantom of op1 after the ThrowStaticError node, because technically,
+              the ThrowStaticError represents op_throw_static_error, and op_throw_static_error
+              uses op1.  In practice, this probably doesn't matter, but let's have the code
+              accurately communicate the behavior we're expecting.
+
 2017-05-25  Saam Barati  <sbarati@apple.com>
 
         Cherry-pick r217438. rdar://problem/32385704

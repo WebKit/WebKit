@@ -1672,10 +1672,10 @@ void CodeBlock::dumpBytecode(
             break;
         }
         case op_throw_static_error: {
-            int k0 = (++it)->u.operand;
+            int r0 = (++it)->u.operand;
             ErrorType k1 = static_cast<ErrorType>((++it)->u.unsignedValue);
             printLocationAndOp(out, exec, location, it, "throw_static_error");
-            out.printf("%s, ", constantName(k0).data());
+            out.printf("%s, ", registerName(r0).data());
             out.print(k1);
             break;
         }
