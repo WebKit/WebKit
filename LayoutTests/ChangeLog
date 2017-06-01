@@ -1,3 +1,15 @@
+2017-06-01  Antoine Quint  <graouts@apple.com>
+
+        Rebaseline media/modern-media-controls/audio/audio-controls-metrics.html
+        https://bugs.webkit.org/show_bug.cgi?id=172715
+
+        Reviewed by Antoine Quint.
+
+        We update the expectations for <audio> metrics to match the latest implementation.
+
+        * media/modern-media-controls/audio/audio-controls-metrics-expected.txt:
+        * media/modern-media-controls/audio/audio-controls-metrics.html:
+
 2017-06-01  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, rebaseline test results according to the error message change
