@@ -222,13 +222,6 @@ CallType WebAssemblyModuleConstructor::getCallData(JSCell*, CallData& callData)
     return CallType::Host;
 }
 
-void WebAssemblyModuleConstructor::visitChildren(JSCell* cell, SlotVisitor& visitor)
-{
-    auto* thisObject = jsCast<WebAssemblyModuleConstructor*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    Base::visitChildren(thisObject, visitor);
-}
-
 } // namespace JSC
 
 #endif // ENABLE(WEBASSEMBLY)

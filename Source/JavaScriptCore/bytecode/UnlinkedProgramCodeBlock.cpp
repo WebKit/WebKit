@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2013, 2015-2016 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2012-2017 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,13 +32,6 @@
 namespace JSC {
 
 const ClassInfo UnlinkedProgramCodeBlock::s_info = { "UnlinkedProgramCodeBlock", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(UnlinkedProgramCodeBlock) };
-
-void UnlinkedProgramCodeBlock::visitChildren(JSCell* cell, SlotVisitor& visitor)
-{
-    UnlinkedProgramCodeBlock* thisObject = jsCast<UnlinkedProgramCodeBlock*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    Base::visitChildren(thisObject, visitor);
-}
 
 void UnlinkedProgramCodeBlock::destroy(JSCell* cell)
 {

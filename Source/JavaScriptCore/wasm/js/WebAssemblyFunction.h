@@ -60,9 +60,6 @@ public:
 
     static ptrdiff_t offsetOfWasmEntrypointLoadLocation() { return OBJECT_OFFSETOF(WebAssemblyFunction, m_wasmFunction) + Wasm::CallableFunction::offsetOfWasmEntrypointLoadLocation(); }
 
-protected:
-    static void visitChildren(JSCell*, SlotVisitor&);
-
 private:
     WebAssemblyFunction(VM&, JSGlobalObject*, Structure*, Wasm::Callee& jsEntrypoint, Wasm::WasmEntrypointLoadLocation, Wasm::SignatureIndex);
 

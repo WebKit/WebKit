@@ -195,13 +195,6 @@ WebAssemblyFunction::WebAssemblyFunction(VM& vm, JSGlobalObject* globalObject, S
     , m_wasmFunction(Wasm::CallableFunction(signatureIndex, wasmEntrypoint))
 { }
 
-void WebAssemblyFunction::visitChildren(JSCell* cell, SlotVisitor& visitor)
-{
-    WebAssemblyFunction* thisObject = jsCast<WebAssemblyFunction*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    Base::visitChildren(thisObject, visitor);
-}
-
 } // namespace JSC
 
 #endif // ENABLE(WEBASSEMBLY)

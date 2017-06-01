@@ -1,3 +1,33 @@
+2017-05-31  Mark Lam  <mark.lam@apple.com>
+
+        Remove overrides of visitChildren() that do not add any functionality.
+        https://bugs.webkit.org/show_bug.cgi?id=172789
+        <rdar://problem/32500865>
+
+        Reviewed by Andreas Kling.
+
+        * bytecode/UnlinkedModuleProgramCodeBlock.cpp:
+        (JSC::UnlinkedModuleProgramCodeBlock::visitChildren): Deleted.
+        * bytecode/UnlinkedModuleProgramCodeBlock.h:
+        * bytecode/UnlinkedProgramCodeBlock.cpp:
+        (JSC::UnlinkedProgramCodeBlock::visitChildren): Deleted.
+        * bytecode/UnlinkedProgramCodeBlock.h:
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::WebAssemblyFunction::visitChildren): Deleted.
+        * wasm/js/WebAssemblyFunction.h:
+        * wasm/js/WebAssemblyInstanceConstructor.cpp:
+        (JSC::WebAssemblyInstanceConstructor::visitChildren): Deleted.
+        * wasm/js/WebAssemblyInstanceConstructor.h:
+        * wasm/js/WebAssemblyMemoryConstructor.cpp:
+        (JSC::WebAssemblyMemoryConstructor::visitChildren): Deleted.
+        * wasm/js/WebAssemblyMemoryConstructor.h:
+        * wasm/js/WebAssemblyModuleConstructor.cpp:
+        (JSC::WebAssemblyModuleConstructor::visitChildren): Deleted.
+        * wasm/js/WebAssemblyModuleConstructor.h:
+        * wasm/js/WebAssemblyTableConstructor.cpp:
+        (JSC::WebAssemblyTableConstructor::visitChildren): Deleted.
+        * wasm/js/WebAssemblyTableConstructor.h:
+
 2017-05-31  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r217611 and r217631.

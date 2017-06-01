@@ -101,13 +101,6 @@ void JSDOMWindowBase::finishCreation(VM& vm, JSDOMWindowShell* shell)
         setNeedsSiteSpecificQuirks(true);
 }
 
-void JSDOMWindowBase::visitChildren(JSCell* cell, SlotVisitor& visitor)
-{
-    JSDOMWindowBase* thisObject = jsCast<JSDOMWindowBase*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    Base::visitChildren(thisObject, visitor);
-}
-
 void JSDOMWindowBase::destroy(JSCell* cell)
 {
     static_cast<JSDOMWindowBase*>(cell)->JSDOMWindowBase::~JSDOMWindowBase();

@@ -1,3 +1,17 @@
+2017-05-31  Mark Lam  <mark.lam@apple.com>
+
+        Remove overrides of visitChildren() that do not add any functionality.
+        https://bugs.webkit.org/show_bug.cgi?id=172789
+        <rdar://problem/32500865>
+
+        Reviewed by Andreas Kling.
+
+        No new tests needed.  Just deleting unneeded code.
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::visitChildren): Deleted.
+        * bindings/js/JSDOMWindowBase.h:
+
 2017-05-31  Don Olmstead  <don.olmstead@am.sony.com>
 
         [WebCore] Update AXObjectCache::startOrEndCharacterOffsetForRange signature for !HAVE(ACCESSIBILITY)

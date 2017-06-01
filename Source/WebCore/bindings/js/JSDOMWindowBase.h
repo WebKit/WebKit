@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reseved.
+ *  Copyright (C) 2003-2017 Apple Inc. All rights reseved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -70,7 +70,6 @@ namespace WebCore {
         JSDOMWindowShell* shell() const;
 
         static void fireFrameClearedWatchpointsForWindow(DOMWindow*);
-        static void visitChildren(JSC::JSCell*, JSC::SlotVisitor&);
 
     protected:
         JSC::WatchpointSet m_windowCloseWatchpoints;

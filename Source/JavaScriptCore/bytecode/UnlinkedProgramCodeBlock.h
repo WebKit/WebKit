@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2012-2017 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,8 +48,6 @@ public:
 
     void setLexicalDeclarations(const VariableEnvironment& environment) { m_lexicalDeclarations = environment; }
     const VariableEnvironment& lexicalDeclarations() const { return m_lexicalDeclarations; }
-
-    static void visitChildren(JSCell*, SlotVisitor&);
 
 private:
     UnlinkedProgramCodeBlock(VM* vm, Structure* structure, const ExecutableInfo& info, DebuggerMode debuggerMode)
