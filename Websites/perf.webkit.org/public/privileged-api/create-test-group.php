@@ -87,23 +87,37 @@ function main()
         $task_id = $db->insert_row('analysis_tasks', 'task', array('name' => $task_name, 'author' => $author));
 
     $configuration_list = array();
-    $needs_to_build = FALSE;
+    $repository_group_with_builds = array();
     foreach ($commit_sets as $commit_list) {
         $commit_set_id = $db->insert_row('commit_sets', 'commitset', array());
+        $need_to_build = FALSE;
         foreach ($commit_list['set'] as $commit_row) {
             $commit_row['set'] = $commit_set_id;
-            $needs_to_build = $needs_to_build || $commit_row['patch_file'];
+            $need_to_build = $need_to_build || $commit_row['patch_file'];
             $db->insert_row('commit_set_items', 'commitset', $commit_row, 'commit');
         }
-        array_push($configuration_list, array('commit_set' => $commit_set_id, 'repository_group' => $commit_list['repository_group']));
+        $repository_group = $commit_list['repository_group'];
+        if ($need_to_build)
+            $repository_group_with_builds[$repository_group] = TRUE;
+        array_push($configuration_list, array('commit_set' => $commit_set_id, 'repository_group' => $repository_group));
+    }
+
+    $build_count = 0;
+    foreach ($configuration_list as &$config_item) {
+        if (array_get($repository_group_with_builds, $config_item['repository_group'])) {
+            $config_item['need_to_build'] = TRUE;
+            $build_count++;
+        }
     }
 
     $group_id = $db->insert_row('analysis_test_groups', 'testgroup',
         array('task' => $task_id, 'name' => $name, 'author' => $author));
 
-    if ($needs_to_build) {
-        $order = -count($configuration_list);
+    if ($build_count) {
+        $order = -$build_count;
         foreach ($configuration_list as $config) {
+            if (!array_get($config, 'need_to_build'))
+                continue;
             assert($order < 0);
             $db->insert_row('build_requests', 'request', array(
                 'triggerable' => $triggerable_id,
