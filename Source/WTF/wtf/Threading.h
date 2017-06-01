@@ -138,6 +138,10 @@ public:
 
 #if USE(PTHREADS)
     LocklessBag<ThreadMessageData*>& threadMessages() { return m_threadMessages; }
+
+#if OS(DARWIN)
+    mach_port_t machThread() { return m_platformThread; }
+#endif
 #endif
 
 protected:

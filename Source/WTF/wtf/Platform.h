@@ -669,6 +669,10 @@
 #define HAVE_READLINE 1
 #define HAVE_SYS_TIMEB_H 1
 
+#if __has_include(<mach/mach_exc.defs>) && !(PLATFORM(WATCHOS) || PLATFORM(APPLETV))
+#define HAVE_MACH_EXCEPTIONS 1
+#endif
+
 #if !PLATFORM(GTK)
 #define USE_ACCELERATE 1
 #endif

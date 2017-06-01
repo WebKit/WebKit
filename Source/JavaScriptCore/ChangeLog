@@ -1,3 +1,36 @@
+2017-06-01  Keith Miller  <keith_miller@apple.com>
+
+        Undo rollout in r217638 with bug fix
+        https://bugs.webkit.org/show_bug.cgi?id=172824
+
+        Unreviewed, reland patch with unused set_state code removed.
+
+        * API/tests/ExecutionTimeLimitTest.cpp:
+        (dispatchTermitateCallback):
+        (testExecutionTimeLimit):
+        * runtime/JSLock.cpp:
+        (JSC::JSLock::didAcquireLock):
+        * runtime/Options.cpp:
+        (JSC::overrideDefaults):
+        (JSC::Options::initialize):
+        * runtime/Options.h:
+        * runtime/VMTraps.cpp:
+        (JSC::SignalContext::SignalContext):
+        (JSC::SignalContext::adjustPCToPointToTrappingInstruction):
+        (JSC::installSignalHandler):
+        (JSC::VMTraps::SignalSender::send):
+        * tools/SigillCrashAnalyzer.cpp:
+        (JSC::SignalContext::SignalContext):
+        (JSC::SignalContext::dump):
+        (JSC::installCrashHandler):
+        * wasm/WasmBBQPlan.cpp:
+        (JSC::Wasm::BBQPlan::compileFunctions):
+        * wasm/WasmFaultSignalHandler.cpp:
+        (JSC::Wasm::trapHandler):
+        (JSC::Wasm::enableFastMemory):
+        * wasm/WasmMachineThreads.cpp:
+        (JSC::Wasm::resetInstructionCacheOnAllThreads):
+
 2017-06-01  Guillaume Emont  <guijemont@igalia.com>
 
         [JSC][MIPS] SamplingProfiler::timerLoop() sleeps for 4000+ seconds

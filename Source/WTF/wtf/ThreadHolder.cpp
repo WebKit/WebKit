@@ -34,12 +34,17 @@
 
 #include "Threading.h"
 
+#include <wtf/threads/Signals.h>
+
 namespace WTF {
 
 ThreadSpecificKey ThreadHolder::m_key = InvalidThreadSpecificKey;
 
 ThreadHolder::~ThreadHolder()
 {
+#if HAVE(MACH_EXCEPTIONS)
+    unregisterThreadForMachExceptionHandling(&m_thread.get());
+#endif
     m_thread->didExit();
 }
 

@@ -1,3 +1,14 @@
+2017-06-01  Keith Miller  <keith_miller@apple.com>
+
+        Undo rollout in r217638 with bug fix
+        https://bugs.webkit.org/show_bug.cgi?id=172824
+
+        Unreviewed, reland patch with unused set_state code removed.
+
+        * TestWebKitAPI/Tests/WTF/ThreadMessages.cpp:
+        (runThreadMessageTest):
+        (TEST):
+
 2017-06-01  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Do not send 0 or -1 as a pid to kill_process

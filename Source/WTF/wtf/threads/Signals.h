@@ -29,6 +29,7 @@
 
 #include <signal.h>
 #include <wtf/Function.h>
+#include <wtf/PlatformRegisters.h>
 
 namespace WTF {
 
@@ -79,7 +80,11 @@ enum class SignalAction {
     ForceDefault
 };
 
-using SignalHandler = Function<SignalAction(int, siginfo_t*, void*)>;
+struct SigInfo {
+    void* faultingAddress { 0 };
+};
+
+using SignalHandler = Function<SignalAction(Signal, SigInfo&, PlatformRegisters&)>;
 
 // Call this method whenever you want to install a signal handler. It's ok to call this function lazily.
 // Note: Your signal handler will be called every time the handler for the desired signal is called.
@@ -87,9 +92,25 @@ using SignalHandler = Function<SignalAction(int, siginfo_t*, void*)>;
 // This function is currently a one way street i.e. once installed, a signal handler cannot be uninstalled.
 WTF_EXPORT_PRIVATE void installSignalHandler(Signal, SignalHandler&&);
 
+
+#if HAVE(MACH_EXCEPTIONS)
+class Thread;
+void registerThreadForMachExceptionHandling(Thread*);
+void unregisterThreadForMachExceptionHandling(Thread*);
+
+void handleSignalsWithMach();
+#endif // HAVE(MACH_EXCEPTIONS)
+
 } // namespace WTF
 
+#if HAVE(MACH_EXCEPTIONS)
+using WTF::registerThreadForMachExceptionHandling;
+using WTF::unregisterThreadForMachExceptionHandling;
+using WTF::handleSignalsWithMach;
+#endif // HAVE(MACH_EXCEPTIONS)
+
 using WTF::Signal;
+using WTF::SigInfo;
 using WTF::toSystemSignal;
 using WTF::fromSystemSignal;
 using WTF::SignalAction;

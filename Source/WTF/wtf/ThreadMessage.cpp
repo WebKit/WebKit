@@ -36,6 +36,9 @@
 #include <wtf/Locker.h>
 #include <wtf/threads/Signals.h>
 
+#if HAVE(MACH_EXCEPTIONS)
+#include <mach/thread_act.h>
+#endif
 
 namespace WTF {
 
@@ -83,12 +86,12 @@ void initializeThreadMessages()
 }
 
 SUPPRESS_ASAN
-MessageStatus sendMessageScoped(Thread& thread, const ThreadMessage& message)
+static MessageStatus sendMessageUsingSignal(Thread& thread, const ThreadMessage& message)
 {
     constexpr Signal signal = Signal::Usr;
     static std::once_flag once;
     std::call_once(once, [] {
-        installSignalHandler(signal, [] (int, siginfo_t* info, void* uap) {
+        installSignalHandler(signal, [] (Signal, SigInfo&, PlatformRegisters& registers) {
             Thread* thread = Thread::currentMayBeNull();
 
             if (!thread) {
@@ -98,7 +101,7 @@ MessageStatus sendMessageScoped(Thread& thread, const ThreadMessage& message)
 
             // Node should be deleted in the sender thread. Deleting Nodes in signal handler causes dead lock.
             thread->threadMessages().consumeAllWithNode([&] (ThreadMessageData* data, Node* node) {
-                data->message(info, static_cast<ucontext_t*>(uap));
+                data->message(registers);
                 // By setting ran variable, (1) the sender acknowledges the completion and
                 // (2) gets the Node to be deleted.
                 data->ran.store(node);
@@ -155,6 +158,43 @@ MessageStatus sendMessageScoped(Thread& thread, const ThreadMessage& message)
     }
     RELEASE_ASSERT_NOT_REACHED();
 }
+
+#if HAVE(MACH_EXCEPTIONS)
+static MessageStatus sendMessageUsingMach(Thread& thread, const ThreadMessage& message)
+{
+    static StaticLock messageLock;
+    auto lockholder = holdLock(messageLock);
+
+    auto result = thread.suspend();
+    if (!result)
+        return MessageStatus::ThreadExited;
+
+    PlatformRegisters registers;
+    thread.getRegisters(registers);
+
+    message(registers);
+
+    thread.resume();
+    return MessageStatus::MessageRan;
+}
+
+static bool useMach = false;
+void deliverMessagesUsingMach()
+{
+    useMach = true;
+}
+
+#endif // HAVE(MACH_EXCEPTIONS)
+
+MessageStatus sendMessageScoped(Thread& thread, const ThreadMessage& message)
+{
+#if HAVE(MACH_EXCEPTIONS)
+    if (useMach)
+        return sendMessageUsingMach(thread, message);
+#endif
+    return sendMessageUsingSignal(thread, message);
+}
+
 
 } // namespace WTF
 

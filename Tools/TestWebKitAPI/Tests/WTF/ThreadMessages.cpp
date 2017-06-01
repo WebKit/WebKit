@@ -50,7 +50,7 @@ static void runThreadMessageTest(unsigned numSenders, unsigned numMessages)
     for (unsigned senderID = 0; senderID < numSenders; ++senderID) {
         senderThreads[senderID] = Thread::create("ThreadMessage sender", [senderID, numMessages, receiverThread, &messagesRun, &handlersRun] () {
             for (unsigned i = 0; i < numMessages; ++i) {
-                auto result = sendMessage(*receiverThread.get(), [senderID, &handlersRun] (siginfo_t*, ucontext_t*) {
+                auto result = sendMessage(*receiverThread.get(), [senderID, &handlersRun] (PlatformRegisters&) {
                     handlersRun[senderID]++;
                 });
                 EXPECT_TRUE(result == WTF::MessageStatus::MessageRan);
@@ -95,7 +95,7 @@ public:
 TEST(ThreadMessage, SignalsWorkOnExit)
 {
     static bool handlerRan = false;
-    installSignalHandler(Signal::Usr, [] (int, siginfo_t*, void*) -> SignalAction {
+    installSignalHandler(Signal::Usr, [] (Signal, SigInfo&, PlatformRegisters&) -> SignalAction {
         dataLogLn("here");
         handlerRan = true;
         return SignalAction::Handled;
