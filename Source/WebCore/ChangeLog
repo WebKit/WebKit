@@ -1,3 +1,18 @@
+2017-06-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove the redundant selectionOnly argument from RenderLayer::paintForegroundForFragments()
+        https://bugs.webkit.org/show_bug.cgi?id=172835
+
+        Reviewed by Zalan Bujtas.
+
+        The 'selectionOnly' state is already encoded in localPaintingInfo.paintBehavior so there's
+        no need to pass it separately.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayerContents):
+        (WebCore::RenderLayer::paintForegroundForFragments):
+        * rendering/RenderLayer.h:
+
 2017-06-01  Yoshiaki Jitsukawa  <Yoshiaki.Jitsukawa@sony.com>
 
         Fix compilation errors in LocalizedStrings.cpp on platform not USE(CF) nor USE(GLIB)
