@@ -690,4 +690,6 @@ webkit.org/b/172034 [ Sierra Release ] webrtc/closing-peerconnection.html [ Pass
 
 webkit.org/b/171061 webrtc/datachannel/filter-ice-candidate.html [ Pass Timeout ]
 
-webkit.org/b/172f21 imported/w3c/web-platform-tests/webrtc/getstats.html [ Pass Failure ]
+webkit.org/b/172521 imported/w3c/web-platform-tests/webrtc/getstats.html [ Pass Failure ]
+
+webkit.org/b/172054 loader/stateobjects/replacestate-size-iframe.html [ Pass Timeout ]
