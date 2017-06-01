@@ -1,3 +1,16 @@
+2017-06-01  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Update plugin process sandbox profile for flash plugin on HBONow
+        https://bugs.webkit.org/show_bug.cgi?id=172820
+        <rdar://problem/32513297>
+
+        Reviewed by Brent Fulgham.
+
+        Relax the IOKit whitelist to silence sandbox violations by Flash plugin on
+        HBONow.
+
+        * PluginProcess/mac/com.apple.WebKit.plugin-common.sb.in:
+
 2017-06-01  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Upstream support for JCB as a supported payment network
