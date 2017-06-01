@@ -1,3 +1,18 @@
+2017-06-01  Yoshiaki Jitsukawa  <Yoshiaki.Jitsukawa@sony.com>
+
+        Fix compilation errors in LocalizedStrings.cpp on platform not USE(CF) nor USE(GLIB)
+        https://bugs.webkit.org/show_bug.cgi?id=172796
+
+        Reviewed by Alex Christensen.
+
+        No new tests needed. Fixing compilation errors.
+
+        * platform/LocalizedStrings.cpp:
+        (WebCore::contextMenuItemTagLookUpInDictionary):
+        (WebCore::imageTitle):
+        (WebCore::validationMessageRangeUnderflowText):
+        (WebCore::validationMessageRangeOverflowText):
+
 2017-06-01  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r217647.

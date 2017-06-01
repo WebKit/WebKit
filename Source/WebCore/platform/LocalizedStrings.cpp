@@ -237,7 +237,7 @@ String contextMenuItemTagLookUpInDictionary(const String& selectedString)
 #elif USE(GLIB)
     return formatLocalizedString(WEB_UI_STRING("Look Up “%s”", "Look Up context menu item with selected word"), truncatedStringForLookupMenuItem(selectedString).utf8().data());
 #else
-    return String::fromUTF8("Look Up “<selection>”", "Look Up context menu item with selected word").replace("<selection>", truncatedStringForLookupMenuItem(selectedString));
+    return WEB_UI_STRING("Look Up “<selection>”", "Look Up context menu item with selected word").replace("<selection>", truncatedStringForLookupMenuItem(selectedString));
 #endif
 }
 
@@ -674,7 +674,7 @@ String imageTitle(const String& filename, const IntSize& size)
 #elif USE(GLIB)
     return formatLocalizedString(WEB_UI_STRING("%s %d×%d pixels", "window title for a standalone image (uses multiplication symbol, not x)"), filename.utf8().data(), size.width(), size.height());
 #else
-    return formatLocalizedString(String::fromUTF8("<filename> %d×%d pixels", "window title for a standalone image (uses multiplication symbol, not x)"), size.width(), size.height()).replace("<filename>", filename);
+    return formatLocalizedString(WEB_UI_STRING("<filename> %d×%d pixels", "window title for a standalone image (uses multiplication symbol, not x)"), size.width(), size.height()).replace("<filename>", filename);
 #endif
 }
 
@@ -881,7 +881,7 @@ String validationMessageRangeUnderflowText(const String& minimum)
     return formatLocalizedString(WEB_UI_STRING("Value must be greater than or equal to %s", "Validation message for input form controls with value lower than allowed minimum"), minimum.utf8().data());
 #else
     UNUSED_PARAM(minimum);
-    return String::fromUTF8("range underflow", "Validation message for input form controls with value lower than allowed minimum");
+    return WEB_UI_STRING("range underflow", "Validation message for input form controls with value lower than allowed minimum");
 #endif
 }
 
@@ -893,7 +893,7 @@ String validationMessageRangeOverflowText(const String& maximum)
     return formatLocalizedString(WEB_UI_STRING("Value must be less than or equal to %s", "Validation message for input form controls with value higher than allowed maximum"), maximum.utf8().data());
 #else
     UNUSED_PARAM(maximum);
-    return String::fromUTF8("range overflow", "Validation message for input form controls with value higher than allowed maximum");
+    return WEB_UI_STRING("range overflow", "Validation message for input form controls with value higher than allowed maximum");
 #endif
 }
 
