@@ -1,5 +1,22 @@
 2017-06-01  Simon Fraser  <simon.fraser@apple.com>
 
+        REGRESSION (r217296): Dragging a video only shows controls during drag event
+        https://bugs.webkit.org/show_bug.cgi?id=172837
+        rdar://problem/32434661
+
+        Reviewed by Zalan Bujtas.
+
+        r217296 changed RenderVideo::paintReplaced() from checking paintBehavior() flags on the FrameView
+        to paintInfo.paintBehavior flags. However, RenderLayer was stripping the PaintBehaviorFlattenCompositingLayers
+        flag from the paintInfo.paintBehavior flags, so fix that.
+
+        Not easily testable.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayerContents):
+
+2017-06-01  Simon Fraser  <simon.fraser@apple.com>
+
         Remove the redundant selectionOnly argument from RenderLayer::paintForegroundForFragments()
         https://bugs.webkit.org/show_bug.cgi?id=172835
 

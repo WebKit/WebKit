@@ -4384,6 +4384,9 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
         else if (localPaintFlags & PaintLayerPaintingRootBackgroundOnly)
             paintBehavior |= PaintBehaviorRootBackgroundOnly;
 
+        if (paintingInfo.paintBehavior & PaintBehaviorFlattenCompositingLayers)
+            paintBehavior |= PaintBehaviorFlattenCompositingLayers;
+            
         if (paintingInfo.paintBehavior & PaintBehaviorSnapshotting)
             paintBehavior |= PaintBehaviorSnapshotting;
 
