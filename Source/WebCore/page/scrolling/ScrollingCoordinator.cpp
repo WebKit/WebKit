@@ -345,12 +345,18 @@ SynchronousScrollingReasons ScrollingCoordinator::synchronousScrollingReasons(co
 
 void ScrollingCoordinator::updateSynchronousScrollingReasons(FrameView& frameView)
 {
-    // FIXME: Once we support async scrolling of iframes, we'll have to track the synchronous scrolling
-    // reasons per frame (maybe on scrolling tree nodes).
-    if (!frameView.frame().isMainFrame())
-        return;
-
+    ASSERT(coordinatesScrollingForFrameView(frameView));
     setSynchronousScrollingReasons(frameView, synchronousScrollingReasons(frameView));
+}
+
+void ScrollingCoordinator::updateSynchronousScrollingReasonsForAllFrames()
+{
+    for (Frame* frame = &m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        if (FrameView* frameView = frame->view()) {
+            if (coordinatesScrollingForFrameView(*frameView))
+                updateSynchronousScrollingReasons(*frameView);
+        }
+    }
 }
 
 void ScrollingCoordinator::setForceSynchronousScrollLayerPositionUpdates(bool forceSynchronousScrollLayerPositionUpdates)
@@ -359,8 +365,7 @@ void ScrollingCoordinator::setForceSynchronousScrollLayerPositionUpdates(bool fo
         return;
 
     m_forceSynchronousScrollLayerPositionUpdates = forceSynchronousScrollLayerPositionUpdates;
-    if (FrameView* frameView = m_page->mainFrame().view())
-        updateSynchronousScrollingReasons(*frameView);
+    updateSynchronousScrollingReasonsForAllFrames();
 }
 
 bool ScrollingCoordinator::shouldUpdateScrollLayerPositionSynchronously(const FrameView& frameView) const
@@ -374,9 +379,7 @@ bool ScrollingCoordinator::shouldUpdateScrollLayerPositionSynchronously(const Fr
 #if ENABLE(WEB_REPLAY)
 void ScrollingCoordinator::replaySessionStateDidChange()
 {
-    // FIXME: Once we support async scrolling of iframes, this should go through all subframes.
-    if (FrameView* frameView = m_page->mainFrame().view())
-        updateSynchronousScrollingReasons(*frameView);
+    updateSynchronousScrollingReasonsForAllFrames();
 }
 #endif
 

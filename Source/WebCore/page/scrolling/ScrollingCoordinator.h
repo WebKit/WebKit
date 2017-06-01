@@ -238,6 +238,7 @@ private:
 
     virtual bool hasVisibleSlowRepaintViewportConstrainedObjects(const FrameView&) const;
     void updateSynchronousScrollingReasons(FrameView&);
+    void updateSynchronousScrollingReasonsForAllFrames();
 
     EventTrackingRegions absoluteEventTrackingRegionsForFrame(const Frame&) const;
     

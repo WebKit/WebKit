@@ -1,3 +1,30 @@
+2017-06-01  Frederic Wang  <fwang@igalia.com>
+
+        ScrollingCoordinator::updateSynchronousScrollingReasons should consider non-main frames
+        https://bugs.webkit.org/show_bug.cgi?id=172806
+
+        Reviewed by Simon Fraser.
+
+        Currently, the scrolling coordinator does not manage scrolling of frames other than the main
+        one (bugs 171667 and 149264) and so ScrollingCoordinator::updateSynchronousScrollingReasons
+        is only relevant for the main frame. This commit refactors a bit ScrollingCoordinator so that
+        updateSynchronousScrollingReasons is considered for all the frames whose scrolling is
+        coordinated by the ScrollingCoordinator so non-main frames will be considered in the future.
+
+        No new tests, behavior is unchanged for now.
+
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::updateSynchronousScrollingReasons): Add an ASSERT to ensure
+        that this function is only called for frame whose scrolling is coordinated by this class.
+        (WebCore::ScrollingCoordinator::updateSynchronousScrollingReasonsForAllFrames): Introduce a
+        new function to update synchronous scrolling for subframes whose scrolling is coordinated by
+        this class.
+        (WebCore::ScrollingCoordinator::setForceSynchronousScrollLayerPositionUpdates): Update
+        synchronous scrolling reason for non-main frames too.
+        (WebCore::ScrollingCoordinator::replaySessionStateDidChange): Update synchronous scrolling
+        reason for non-main frames too.
+        * page/scrolling/ScrollingCoordinator.h: Define updateSynchronousScrollingReasonsForAllFrames
+
 2017-06-01  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Upstream support for JCB as a supported payment network
