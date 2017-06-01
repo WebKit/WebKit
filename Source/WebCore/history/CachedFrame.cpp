@@ -120,6 +120,7 @@ void CachedFrameBase::restore()
         m_document->page()->chrome().client().needTouchEvents(true);
 #endif
 
+    frame.view()->didRestoreFromPageCache();
 }
 
 CachedFrame::CachedFrame(Frame& frame)
