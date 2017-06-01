@@ -1,3 +1,16 @@
+2017-05-31  Don Olmstead  <don.olmstead@am.sony.com>
+
+        [WebCore] Update AXObjectCache::startOrEndCharacterOffsetForRange signature for !HAVE(ACCESSIBILITY)
+        https://bugs.webkit.org/show_bug.cgi?id=172769
+
+        Reviewed by Yusuke Suzuki.
+
+        No new tests. No change in behavior.
+
+        * accessibility/AXObjectCache.h:
+        (WebCore::AXObjectCache::startOrEndCharacterOffsetForRange):
+        * platform/Curl.cmake: Added.
+
 2017-05-31  Mark Lam  <mark.lam@apple.com>
 
         CodeGeneratorJS's InstanceNeedsVisitChildren should not return true just because a class is / extends EventTarget.
