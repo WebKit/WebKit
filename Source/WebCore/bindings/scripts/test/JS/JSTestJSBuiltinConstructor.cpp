@@ -229,12 +229,5 @@ EncodedJSValue JSC_HOST_CALL jsTestJSBuiltinConstructorPrototypeFunctionTestCust
     return IDLOperation<JSTestJSBuiltinConstructor>::call<jsTestJSBuiltinConstructorPrototypeFunctionTestCustomFunctionBody>(*state, "testCustomFunction");
 }
 
-void JSTestJSBuiltinConstructor::visitChildren(JSCell* cell, SlotVisitor& visitor)
-{
-    auto* thisObject = jsCast<JSTestJSBuiltinConstructor*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    Base::visitChildren(thisObject, visitor);
-}
-
 
 }

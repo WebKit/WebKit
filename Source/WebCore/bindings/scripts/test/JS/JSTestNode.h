@@ -48,8 +48,6 @@ public:
 
     static JSC::JSValue getConstructor(JSC::VM&, const JSC::JSGlobalObject*);
     static JSC::JSObject* serialize(JSC::ExecState*, JSTestNode* thisObject, JSC::ThrowScope&);
-    static void visitChildren(JSCell*, JSC::SlotVisitor&);
-
     TestNode& wrapped() const
     {
         return static_cast<TestNode&>(Base::wrapped());

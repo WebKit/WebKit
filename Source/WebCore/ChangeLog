@@ -1,3 +1,40 @@
+2017-05-31  Mark Lam  <mark.lam@apple.com>
+
+        CodeGeneratorJS's InstanceNeedsVisitChildren should not return true just because a class is / extends EventTarget.
+        https://bugs.webkit.org/show_bug.cgi?id=172782
+        <rdar://problem/32498266>
+
+        Reviewed by Chris Dumez.
+
+        No new tests needed.  This change is covered by existing binding tests.
+
+        InstanceNeedsVisitChildren should also not check the IsJSBuiltinConstructor
+        condition, which is not used to emit any additional code in the visitChildren
+        override.
+
+        The other conditions for generating visitChildren() are adequate if the class
+        needs to override visitChildren.  Currently, we're generating some visitChildren()
+        methods that only call its Base::visitChildren().  Removing the "is / extends
+        EventTarget" conditions removes those unneeded visitChildren overrides.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (InstanceNeedsVisitChildren):
+        * bindings/scripts/test/JS/JSTestClassWithJSBuiltinConstructor.cpp:
+        (WebCore::JSTestClassWithJSBuiltinConstructor::visitChildren): Deleted.
+        * bindings/scripts/test/JS/JSTestClassWithJSBuiltinConstructor.h:
+        * bindings/scripts/test/JS/JSTestDOMJIT.cpp:
+        (WebCore::JSTestDOMJIT::visitChildren): Deleted.
+        * bindings/scripts/test/JS/JSTestDOMJIT.h:
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        (WebCore::JSTestEventTarget::visitChildren): Deleted.
+        * bindings/scripts/test/JS/JSTestEventTarget.h:
+        * bindings/scripts/test/JS/JSTestJSBuiltinConstructor.cpp:
+        (WebCore::JSTestJSBuiltinConstructor::visitChildren): Deleted.
+        * bindings/scripts/test/JS/JSTestJSBuiltinConstructor.h:
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        (WebCore::JSTestNode::visitChildren): Deleted.
+        * bindings/scripts/test/JS/JSTestNode.h:
+
 2017-05-31  Chris Dumez  <cdumez@apple.com>
 
         Make QualifiedName cache per thread

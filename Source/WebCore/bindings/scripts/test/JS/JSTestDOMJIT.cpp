@@ -1286,12 +1286,5 @@ JSC::EncodedJSValue JIT_OPERATION unsafeJsTestDOMJITPrototypeFunctionGetElements
     return JSValue::encode(toJS<IDLInterface<NodeList>>(*state, *castedThis->globalObject(), impl.getElementsByName(WTFMove(elementName))));
 }
 
-void JSTestDOMJIT::visitChildren(JSCell* cell, SlotVisitor& visitor)
-{
-    auto* thisObject = jsCast<JSTestDOMJIT*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    Base::visitChildren(thisObject, visitor);
-}
-
 
 }

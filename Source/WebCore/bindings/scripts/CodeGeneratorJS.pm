@@ -1358,10 +1358,7 @@ sub InstanceNeedsVisitChildren
     }
 
     return 1 if $interface->extendedAttributes->{JSCustomMarkFunction};
-    return 1 if $codeGenerator->InheritsInterface($interface, "EventTarget");
-    return 1 if $interface->type->name eq "EventTarget";
     return 1 if $interface->extendedAttributes->{ReportExtraMemoryCost};
-    return 1 if IsJSBuiltinConstructor($interface);
     return 0;
 }
 

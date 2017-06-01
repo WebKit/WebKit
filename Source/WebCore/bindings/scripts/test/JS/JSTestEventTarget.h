@@ -52,8 +52,6 @@ public:
 
     static void getOwnPropertyNames(JSC::JSObject*, JSC::ExecState*, JSC::PropertyNameArray&, JSC::EnumerationMode = JSC::EnumerationMode());
     static JSC::JSValue getConstructor(JSC::VM&, const JSC::JSGlobalObject*);
-    static void visitChildren(JSCell*, JSC::SlotVisitor&);
-
     TestEventTarget& wrapped() const
     {
         return static_cast<TestEventTarget&>(Base::wrapped());

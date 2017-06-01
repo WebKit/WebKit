@@ -48,8 +48,6 @@ public:
     }
 
     static JSC::JSValue getConstructor(JSC::VM&, const JSC::JSGlobalObject*);
-    static void visitChildren(JSCell*, JSC::SlotVisitor&);
-
     TestDOMJIT& wrapped() const
     {
         return static_cast<TestDOMJIT&>(Base::wrapped());

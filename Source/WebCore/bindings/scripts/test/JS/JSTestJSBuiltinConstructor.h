@@ -46,8 +46,6 @@ public:
     }
 
     static JSC::JSValue getConstructor(JSC::VM&, const JSC::JSGlobalObject*);
-    static void visitChildren(JSCell*, JSC::SlotVisitor&);
-
 
     // Custom attributes
     JSC::JSValue testAttributeCustom(JSC::ExecState&) const;

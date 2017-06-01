@@ -49,8 +49,6 @@ public:
     }
 
     static JSC::JSValue getConstructor(JSC::VM&, const JSC::JSGlobalObject*);
-    static void visitChildren(JSCell*, JSC::SlotVisitor&);
-
 protected:
     JSTestClassWithJSBuiltinConstructor(JSC::Structure*, JSDOMGlobalObject&, Ref<TestClassWithJSBuiltinConstructor>&&);
 
