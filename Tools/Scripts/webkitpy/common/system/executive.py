@@ -185,6 +185,13 @@ class Executive(object):
         return [script_path]
 
     def kill_process(self, pid):
+        # Killing a process with a pid of 0 or a negative pid is a valid command, but
+        # will kill all processes in this process' group (if 0) or all non-system processes
+        # (if -1) (kill(2)). Throw an exception if this is the behavior requested, this
+        # class is not designed to provide this functionality.
+        if pid is None or pid <= 0:
+            raise RuntimeError('Cannot kill process with invalid pid of {}'.format(pid))
+
         """Attempts to kill the given pid.
         Will fail silently if pid does not exist or insufficient permisssions."""
         if sys.platform.startswith('win32'):
@@ -267,6 +274,10 @@ class Executive(object):
         return result
 
     def check_running_pid(self, pid):
+        # An undefined process or a negative process are never running.
+        if pid is None or pid <= 0:
+            return False
+
         """Return True if pid is alive, otherwise return False."""
         if sys.platform.startswith('win'):
             return self._win32_check_running_pid(pid)

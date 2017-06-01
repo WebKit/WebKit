@@ -120,6 +120,6 @@ class SimulatorProcess(ServerProcess):
         self._proc = SimulatorProcess.Popen(self._pid, stdin, stdout, stderr, self._target_host)
 
     def stop(self, timeout_secs=3.0):
-        if self._proc:
+        if self._proc and self._proc.pid:
             self._target_host.executive.kill_process(self._proc.pid)
         return super(SimulatorProcess, self).stop(timeout_secs)
