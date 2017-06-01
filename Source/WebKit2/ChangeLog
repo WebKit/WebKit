@@ -1,3 +1,14 @@
+2017-06-01  Andy Estes  <aestes@apple.com>
+
+        [Cocoa] Upstream support for JCB as a supported payment network
+        https://bugs.webkit.org/show_bug.cgi?id=172819
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm:
+        (WebKit::toSupportedNetwork):
+        (WebKit::toAdditionalSupportedNetwork): Deleted.
+
 2017-05-31  Andy Estes  <aestes@apple.com>
 
         [Cocoa] "administrativeArea" contact field maps to the wrong CNPostalAddress key when creating NSErrors

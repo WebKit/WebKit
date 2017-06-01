@@ -53,6 +53,7 @@ SOFT_LINK_CONSTANT(PassKit, PKPaymentNetworkAmex, NSString *);
 SOFT_LINK_CONSTANT(PassKit, PKPaymentNetworkChinaUnionPay, NSString *);
 SOFT_LINK_CONSTANT(PassKit, PKPaymentNetworkDiscover, NSString *);
 SOFT_LINK_CONSTANT(PassKit, PKPaymentNetworkInterac, NSString *);
+SOFT_LINK_CONSTANT(PassKit, PKPaymentNetworkJCB, NSString *);
 SOFT_LINK_CONSTANT(PassKit, PKPaymentNetworkMasterCard, NSString *);
 SOFT_LINK_CONSTANT(PassKit, PKPaymentNetworkPrivateLabel, NSString *);
 SOFT_LINK_CONSTANT(PassKit, PKPaymentNetworkVisa, NSString *);
@@ -416,15 +417,6 @@ static PKMerchantCapability toPKMerchantCapabilities(const WebCore::PaymentReque
     return result;
 }
 
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebPaymentCoordinatorProxyCocoaAdditions.mm>)
-#import <WebKitAdditions/WebPaymentCoordinatorProxyCocoaAdditions.mm>
-#else
-static inline NSString *toAdditionalSupportedNetwork(const String&)
-{
-    return nullptr;
-}
-#endif
-
 static NSString *toSupportedNetwork(const String& supportedNetwork)
 {
     if (supportedNetwork == "amex")
@@ -435,6 +427,8 @@ static NSString *toSupportedNetwork(const String& supportedNetwork)
         return getPKPaymentNetworkDiscover();
     if (supportedNetwork == "interac")
         return getPKPaymentNetworkInterac();
+    if (supportedNetwork == "jcb")
+        return getPKPaymentNetworkJCB();
     if (supportedNetwork == "masterCard")
         return getPKPaymentNetworkMasterCard();
     if (supportedNetwork == "privateLabel")
@@ -442,7 +436,7 @@ static NSString *toSupportedNetwork(const String& supportedNetwork)
     if (supportedNetwork == "visa")
         return getPKPaymentNetworkVisa();
 
-    return toAdditionalSupportedNetwork(supportedNetwork);
+    return nil;
 }
 
 static RetainPtr<NSArray> toSupportedNetworks(const Vector<String>& supportedNetworks)
