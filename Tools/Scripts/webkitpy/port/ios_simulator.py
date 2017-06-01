@@ -248,13 +248,6 @@ class IOSSimulatorPort(IOSPort):
     def clean_up_test_run(self):
         super(IOSSimulatorPort, self).clean_up_test_run()
         _log.debug("clean_up_test_run")
-        fifos = [path for path in os.listdir('/tmp') if re.search('org.webkit.(DumpRenderTree|WebKitTestRunner).*_(IN|OUT|ERROR)', path)]
-        for fifo in fifos:
-            try:
-                os.remove(os.path.join('/tmp', fifo))
-            except OSError:
-                _log.warning('Unable to remove ' + fifo)
-                pass
 
         if not self._using_dedicated_simulators():
             return

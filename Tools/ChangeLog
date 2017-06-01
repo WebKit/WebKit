@@ -1,3 +1,14 @@
+2017-06-01  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Remove unneeded simulator teardown
+        https://bugs.webkit.org/show_bug.cgi?id=171891
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/webkitpy/port/ios_simulator.py:
+        (IOSSimulatorPort.clean_up_test_run): Remove FIFO deletion since TCP is used
+        for communication between Python and WebKitTestRunner/DumpRenderTree.
+
 2017-06-01  Keith Miller  <keith_miller@apple.com>
 
         Undo rollout in r217638 with bug fix
