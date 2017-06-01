@@ -147,8 +147,10 @@ void ResourceLoadObserver::logFrameNavigation(const Frame& frame, const Frame& t
     if (targetPrimaryDomain == mainFramePrimaryDomain || targetPrimaryDomain == sourcePrimaryDomain)
         return;
     
+    auto mainFrameOrigin = SecurityOrigin::create(mainFrameURL);
+    
     ASSERT(m_queue);
-    m_queue->dispatch([this, isMainFrame, isRedirect, sourcePrimaryDomain = sourcePrimaryDomain.isolatedCopy(), mainFramePrimaryDomain = mainFramePrimaryDomain.isolatedCopy(), targetURL = CrossThreadCopier<URL>::copy(targetURL), mainFrameURL = CrossThreadCopier<URL>::copy(mainFrameURL), targetPrimaryDomain = targetPrimaryDomain.isolatedCopy()] () {
+    m_queue->dispatch([this, isMainFrame, isRedirect, sourcePrimaryDomain = sourcePrimaryDomain.isolatedCopy(), mainFramePrimaryDomain = mainFramePrimaryDomain.isolatedCopy(), targetURL = CrossThreadCopier<URL>::copy(targetURL), mainFrameOrigin = mainFrameOrigin->isolatedCopy(), targetPrimaryDomain = targetPrimaryDomain.isolatedCopy()] () {
         
         auto targetOrigin = SecurityOrigin::create(targetURL);
         bool shouldFireDataModificationHandler = false;
@@ -166,7 +168,6 @@ void ResourceLoadObserver::logFrameNavigation(const Frame& frame, const Frame& t
         else {
             targetStatistics.subframeHasBeenLoadedBefore = true;
 
-            auto mainFrameOrigin = SecurityOrigin::create(mainFrameURL);
             auto subframeUnderTopFrameOriginsResult = targetStatistics.subframeUnderTopFrameOrigins.add(mainFramePrimaryDomain);
             if (subframeUnderTopFrameOriginsResult.isNewEntry)
                 shouldFireDataModificationHandler = true;
@@ -243,8 +244,10 @@ void ResourceLoadObserver::logSubresourceLoading(const Frame* frame, const Resou
     if (targetPrimaryDomain == mainFramePrimaryDomain || (isRedirect && targetPrimaryDomain == sourcePrimaryDomain))
         return;
     
+    auto mainFrameOrigin = SecurityOrigin::create(mainFrameURL);
+    
     ASSERT(m_queue);
-    m_queue->dispatch([this, isRedirect, sourcePrimaryDomain = sourcePrimaryDomain.isolatedCopy(), mainFramePrimaryDomain = mainFramePrimaryDomain.isolatedCopy(), targetPrimaryDomain = targetPrimaryDomain.isolatedCopy(), mainFrameURL = mainFrameURL.isolatedCopy()] () {
+    m_queue->dispatch([this, isRedirect, sourcePrimaryDomain = sourcePrimaryDomain.isolatedCopy(), mainFramePrimaryDomain = mainFramePrimaryDomain.isolatedCopy(), targetPrimaryDomain = targetPrimaryDomain.isolatedCopy(), mainFrameOrigin = mainFrameOrigin->isolatedCopy()] () {
         
         bool shouldFireDataModificationHandler = false;
         
@@ -255,7 +258,6 @@ void ResourceLoadObserver::logSubresourceLoading(const Frame* frame, const Resou
         // Always fire if we have previously removed data records for this domain
         shouldFireDataModificationHandler = targetStatistics.dataRecordsRemoved > 0;
 
-        auto mainFrameOrigin = SecurityOrigin::create(mainFrameURL);
         auto subresourceUnderTopFrameOriginsResult = targetStatistics.subresourceUnderTopFrameOrigins.add(mainFramePrimaryDomain);
         if (subresourceUnderTopFrameOriginsResult.isNewEntry)
             shouldFireDataModificationHandler = true;
@@ -321,8 +323,10 @@ void ResourceLoadObserver::logWebSocketLoading(const Frame* frame, const URL& ta
     if (targetPrimaryDomain == mainFramePrimaryDomain)
         return;
 
+    auto mainFrameOrigin = SecurityOrigin::create(mainFrameURL);
+    
     ASSERT(m_queue);
-    m_queue->dispatch([this, targetPrimaryDomain = targetPrimaryDomain.isolatedCopy(), mainFramePrimaryDomain = mainFramePrimaryDomain.isolatedCopy(), mainFrameURL = mainFrameURL.isolatedCopy()] () {
+    m_queue->dispatch([this, targetPrimaryDomain = targetPrimaryDomain.isolatedCopy(), mainFramePrimaryDomain = mainFramePrimaryDomain.isolatedCopy(), mainFrameOrigin = mainFrameOrigin->isolatedCopy()] () {
         
         bool shouldFireDataModificationHandler = false;
         
@@ -333,7 +337,6 @@ void ResourceLoadObserver::logWebSocketLoading(const Frame* frame, const URL& ta
         // Always fire if we have previously removed data records for this domain
         shouldFireDataModificationHandler = targetStatistics.dataRecordsRemoved > 0;
         
-        auto mainFrameOrigin = SecurityOrigin::create(mainFrameURL);
         auto subresourceUnderTopFrameOriginsResult = targetStatistics.subresourceUnderTopFrameOrigins.add(mainFramePrimaryDomain);
         if (subresourceUnderTopFrameOriginsResult.isNewEntry)
             shouldFireDataModificationHandler = true;
