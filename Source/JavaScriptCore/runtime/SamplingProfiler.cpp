@@ -325,7 +325,7 @@ void SamplingProfiler::timerLoop()
         // with some system process such as a scheduled context switch.
         // http://plv.colorado.edu/papers/mytkowicz-pldi10.pdf
         double randomSignedNumber = (m_weakRandom.get() * 2.0) - 1.0; // A random number between [-1, 1).
-        std::chrono::microseconds randomFluctuation = std::chrono::microseconds(static_cast<uint64_t>(randomSignedNumber * static_cast<double>(m_timingInterval.count()) * 0.20l));
+        std::chrono::microseconds randomFluctuation = std::chrono::microseconds(static_cast<int64_t>(randomSignedNumber * static_cast<double>(m_timingInterval.count()) * 0.20l));
         std::this_thread::sleep_for(m_timingInterval - std::min(m_timingInterval, stackTraceProcessingTime) + randomFluctuation);
     }
 }

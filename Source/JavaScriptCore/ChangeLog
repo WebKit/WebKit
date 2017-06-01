@@ -1,3 +1,17 @@
+2017-06-01  Guillaume Emont  <guijemont@igalia.com>
+
+        [JSC][MIPS] SamplingProfiler::timerLoop() sleeps for 4000+ seconds
+        https://bugs.webkit.org/show_bug.cgi?id=172800
+
+        Reviewed by Saam Barati.
+
+        This fixes a static_cast<uint64_t> by making it a cast to int64_t
+        instead, which looks like the original intent. This fixes the
+        sampling-profiler tests in JSTests/stress.
+
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::timerLoop):
+
 2017-06-01  Tomas Popela  <tpopela@redhat.com>, Mark Lam  <mark.lam@apple.com>
 
         RELEASE_ASSERT_NOT_REACHED() in InferredType::kindForFlags() on Big-Endians
