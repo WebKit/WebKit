@@ -35,6 +35,7 @@
 #include <unicode/uidna.h>
 #include <wtf/HashMap.h>
 #include <wtf/HexNumber.h>
+#include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/UUID.h>
@@ -563,6 +564,7 @@ void clearDefaultPortForProtocolMapForTesting()
 
 std::optional<uint16_t> defaultPortForProtocol(StringView protocol)
 {
+    ASSERT(isMainThread());
     const auto& defaultPortForProtocolMap = defaultPortForProtocolMapForTesting();
     auto iterator = defaultPortForProtocolMap.find(protocol.toStringWithoutCopying());
     if (iterator != defaultPortForProtocolMap.end())
