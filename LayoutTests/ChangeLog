@@ -1,3 +1,17 @@
+2017-06-01  Antoine Quint  <graouts@apple.com>
+
+        Rebaseline two media/modern-media-controls/macos-fullscreen-media-controls tests
+        https://bugs.webkit.org/show_bug.cgi?id=172810
+
+        Reviewed by Antoine Quint.
+
+        We need to rebaseline a couple of tests to account for the width change for the left button container in fullscreen.
+
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-drag-is-prevented-over-button-expected.txt:
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-drag-is-prevented-over-button.html:
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-drag-expected.txt:
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-drag.html:
+
 2017-06-01  Miguel Gomez  <magomez@igalia.com>
 
         Unreviewed GTK+ gardening. Update expectations of several tests failing after r217651.

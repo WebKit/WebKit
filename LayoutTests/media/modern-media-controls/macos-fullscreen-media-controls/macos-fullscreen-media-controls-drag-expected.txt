@@ -4,7 +4,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS !!mediaControls.querySelector('.buttons-container.left') became true
-PASS mediaControls.querySelector('.buttons-container.left').style.width became "116px"
+PASS mediaControls.querySelector('.buttons-container.left').style.width became "118px"
 PASS mediaControls.querySelector('.controls-bar').style.transform is "translate(-50px, -100px)"
 PASS successfullyParsed is true
 
