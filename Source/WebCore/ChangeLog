@@ -1,5 +1,18 @@
 2017-06-01  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, rolling out r217647.
+
+        No longer needed after r217682
+
+        Reverted changeset:
+
+        "Avoid iterator invalidation bug in
+        WebCore::defaultPortForProtocol"
+        https://bugs.webkit.org/show_bug.cgi?id=172786
+        http://trac.webkit.org/changeset/217647
+
+2017-06-01  Chris Dumez  <cdumez@apple.com>
+
         Make WebCore::defaultPortForProtocol() thread-safe
         https://bugs.webkit.org/show_bug.cgi?id=172797
 
