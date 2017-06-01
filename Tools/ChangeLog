@@ -1,3 +1,12 @@
+2017-06-01  Andy Estes  <aestes@apple.com>
+
+        REGRESSION (r217626): ENABLE_APPLE_PAY_SESSION_V3 was disabled by mistake
+        https://bugs.webkit.org/show_bug.cgi?id=172828
+
+        Reviewed by Beth Dakin.
+
+        * TestWebKitAPI/Configurations/FeatureDefines.xcconfig:
+
 2017-06-01  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Remove unneeded simulator teardown
