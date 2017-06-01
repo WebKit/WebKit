@@ -262,7 +262,6 @@ void WebPreferences::initializeDefaultSettings()
     CFDictionaryAddValue(defaults, CFSTR(WebGrammarCheckingEnabledPreferenceKey), kCFBooleanFalse);
     CFDictionaryAddValue(defaults, CFSTR(AllowContinuousSpellCheckingPreferenceKey), kCFBooleanTrue);
     CFDictionaryAddValue(defaults, CFSTR(WebKitUsesPageCachePreferenceKey), kCFBooleanTrue);
-    CFDictionaryAddValue(defaults, CFSTR(WebKitAllowsPageCacheWithWindowOpenerKey), kCFBooleanFalse);
     CFDictionaryAddValue(defaults, CFSTR(WebKitLocalStorageDatabasePathPreferenceKey), CFSTR(""));
 
     RetainPtr<CFStringRef> cacheModelRef = adoptCF(CFStringCreateWithFormat(0, 0, CFSTR("%d"), WebCacheModelDocumentViewer));
@@ -1602,20 +1601,6 @@ HRESULT WebPreferences::experimentalNotificationsEnabled(_Out_ BOOL* enabled)
     if (!enabled)
         return E_POINTER;
     *enabled = boolValueForKey(WebKitExperimentalNotificationsEnabledPreferenceKey);
-    return S_OK;
-}
-
-HRESULT WebPreferences::setAllowsPageCacheWithWindowOpener(BOOL value)
-{
-    setBoolValue(WebKitAllowsPageCacheWithWindowOpenerKey, value);
-    return S_OK;
-}
-
-HRESULT WebPreferences::allowsPageCacheWithWindowOpener(_Out_ BOOL* enabled)
-{
-    if (!enabled)
-        return E_POINTER;
-    *enabled = boolValueForKey(WebKitAllowsPageCacheWithWindowOpenerKey);
     return S_OK;
 }
 

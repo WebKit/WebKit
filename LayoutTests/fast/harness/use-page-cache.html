@@ -28,7 +28,6 @@ function test()
         testRunner.waitUntilDone();
         testRunner.setCanOpenWindows();
         testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
-        testRunner.overridePreference("WebKitAllowsPageCacheWithWindowOpenerKey", 1);
     }
     log("open page-1");
     window.open("resources/cached-page-1.html");

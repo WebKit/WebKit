@@ -811,7 +811,6 @@ static void resetWebPreferencesToConsistentValues(IWebPreferences* preferences)
     preferences->setPlugInsEnabled(TRUE);
     preferences->setTextAreasAreResizable(TRUE);
     preferences->setUsesPageCache(FALSE);
-    prefsPrivate->setAllowsPageCacheWithWindowOpener(FALSE);
 
     preferences->setPrivateBrowsingEnabled(FALSE);
     prefsPrivate->setAuthorAndUserStylesEnabled(TRUE);
