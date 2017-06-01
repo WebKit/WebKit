@@ -8,7 +8,7 @@ layer at (0,0) size 800x600
           text run at (205,30) width 4: " "
         RenderText {#text} at (414,30) size 4x17
           text run at (414,30) width 4: " "
-        RenderButton {INPUT} at (420,26) size 58x26 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+        RenderButton {INPUT} at (420,26) size 58x26 [color=#2E3436] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
           RenderBlock (anonymous) at (8,4) size 42x17
             RenderText at (0,0) size 42x17
               text run at (0,0) width 42: "Reset"

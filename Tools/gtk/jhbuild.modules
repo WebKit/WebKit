@@ -17,9 +17,7 @@
       <dep package="gtk+"/>
       <dep package="glib"/>
       <dep package="glib-networking"/>
-      <dep package="gnome-icon-theme"/>
-      <dep package="gnome-icon-theme-symbolic"/>
-      <dep package="gnome-themes-standard"/>
+      <dep package="adwaita-icon-theme"/>
       <dep package="gtk-doc"/>
       <dep package="icu"/>
       <dep package="libsoup"/>
@@ -30,6 +28,7 @@
       <dep package="gst-plugins-bad"/>
       <dep package="gst-libav"/>
       <dep package="openwebrtc"/>
+      <dep package="pango"/>
       <dep package="llvm"/>
       <dep package="shared-mime-info"/>
       <dep package="libgpg-error"/>
@@ -164,9 +163,9 @@
     <dependencies>
       <dep package="glib"/>
     </dependencies>
-    <branch module="/pub/GNOME/sources/gdk-pixbuf/2.30/gdk-pixbuf-2.30.8.tar.xz" version="2.30.8"
+    <branch module="/pub/GNOME/sources/gdk-pixbuf/2.36/gdk-pixbuf-2.36.6.tar.xz" version="2.36.6"
             repo="ftp.gnome.org"
-            hash="sha256:4853830616113db4435837992c0aebd94cbb993c44dc55063cee7f72a7bef8be"/>
+            hash="sha256:455eb90c09ed1b71f95f3ebfe1c904c206727e0eeb34fc94e5aaf944663a820c"/>
   </autotools>
 
   <autotools id="librsvg" autogen-sh="configure"
@@ -179,12 +178,9 @@
       <dep package="glib"/>
       <dep package="cairo"/>
     </dependencies>
-    <branch module="/pub/GNOME/sources/librsvg/2.36/librsvg-2.36.1.tar.xz" version="2.36.1"
+    <branch module="/pub/GNOME/sources/librsvg/2.40/librsvg-2.40.16.tar.xz" version="2.40.16"
             repo="ftp.gnome.org"
-            hash="sha256:786b95e1a091375c5ef2997a21c69ff24d7077afeff18197355f54d9dcbcd8c5"
-            md5sum="89d483f30a7c77245b7ee02faaea5a5a">
-        <patch file="librsvg-2.36.1-bump-up-config.guess-to-support-aarch64.patch" strip="1"/>
-    </branch>
+            hash="sha256:d48bcf6b03fa98f07df10332fb49d8c010786ddca6ab34cbba217684f533ff2e"/>
   </autotools>
 
   <autotools id="gtk+" autogen-sh="configure"
@@ -204,11 +200,9 @@
       <dep package="gdk-pixbuf"/>
       <dep package="pango"/>
     </dependencies>
-    <branch module="/pub/GNOME/sources/gtk+/3.16/gtk+-3.16.4.tar.xz" version="3.16.4"
+    <branch module="/pub/GNOME/sources/gtk+/3.22/gtk+-3.22.11.tar.xz" version="3.22.11"
             repo="ftp.gnome.org"
-            hash="sha256:1ee5dbd7a4cb81a91eaa1b7ae64ba5a3eab6a3c0a764155583ab96524590fc8e">
-      <patch file="gtk+-configure-fix-detecting-CUPS-2.x.patch" strip="1"/>
-    </branch>
+            hash="sha256:db440670cb6f3c098b076df3735fbc4e69359bd605385e87c90ee48344a804ca"/>
   </autotools>
 
   <autotools id="glib"
@@ -282,37 +276,14 @@
     </branch>
   </autotools>
 
-  <autotools id="gnome-icon-theme" autogen-sh="configure">
-    <dependencies>
-      <dep package="gtk+"/>
-    </dependencies>
-    <branch module="pub/GNOME/sources/gnome-icon-theme/3.2/gnome-icon-theme-3.2.1.tar.xz" version="3.2.1"
-            repo="ftp.gnome.org"
-            hash="sha256:a7f0a8b17e91ac338fdbc01ac59a8738e9c1e201de492c070d43aacf291a8959"
-            md5sum="40be1e5a6eae11181311a6fc432cf892">
-    </branch>
-  </autotools>
-
-  <autotools id="gnome-icon-theme-symbolic" supports-non-srcdir-builds="no" autogen-sh="configure">
-    <dependencies>
-      <dep package="gtk+"/>
-    </dependencies>
-    <branch module="pub/GNOME/sources/gnome-icon-theme-symbolic/3.2/gnome-icon-theme-symbolic-3.2.1.tar.xz" version="3.2.1"
-            repo="ftp.gnome.org"
-            hash="sha256:a558af2f87f761f00421f49c1addd2149b70228158e09327fa861219ac1a63cb"
-            md5sum="94137d3c256f2cc80298a9bef15d68c4">
-    </branch>
-  </autotools>
-
-  <autotools id="gnome-themes-standard" autogen-sh="configure">
+  <autotools id="adwaita-icon-theme" autogen-sh="configure">
     <dependencies>
       <dep package="gtk+"/>
       <dep package="librsvg"/>
     </dependencies>
-    <branch module="pub/GNOME/sources/gnome-themes-standard/3.6/gnome-themes-standard-3.6.0.tar.xz" version="3.6.0"
+    <branch module="pub/GNOME/sources/adwaita-icon-theme/3.24/adwaita-icon-theme-3.24.0.tar.xz" version="3.24.0"
             repo="ftp.gnome.org"
-            hash="sha256:d832fd38f7659f470df5ddc52131a59f989c75f3a70f8b3a514f89d90d4f43ec">
-    </branch>
+            hash="sha256:ccf79ff3bd340254737ce4d28b87f0ccee4b3358cd3cd5cd11dc7b42f41b272a"/>
   </autotools>
 
   <autotools id="atk"
@@ -627,16 +598,20 @@
   <!-- Dependencies listed below this point are not thought to affect test results, and are only
        included because they themselves depend on other dependencies built by jhbuild. -->
 
-  <autotools id="pango" autogen-sh="configure"
-             autogenargs="--enable-cairo">
+  <autotools id="pango"
+	     autogen-sh="configure"
+	     autogenargs="--with-cairo --disable-introspection">
+    <branch module="pub/GNOME/sources/pango/1.40/pango-1.40.5.tar.xz" version="1.40.5"
+	    repo="ftp.gnome.org"
+	    hash="sha256:24748140456c42360b07b2c77a1a2e1216d07c056632079557cd4e815b9d01c9"/>
     <dependencies>
+      <dep package="glib"/>
       <dep package="cairo"/>
-      <dep package="fontconfig"/>
+      <if condition-unset="macos">
+        <dep package="harfbuzz"/>
+        <dep package="fontconfig"/>
+      </if>
     </dependencies>
-    <branch module="/pub/GNOME/sources/pango/1.36/pango-1.36.8.tar.xz" version="1.36.8"
-            repo="ftp.gnome.org"
-            hash="sha256:18dbb51b8ae12bae0ab7a958e7cf3317c9acfc8a1e1103ec2f147164a0fc2d07">
-    </branch>
   </autotools>
 
   <!-- libinput is only included because the version of libinput shipped with Debian Jessie
