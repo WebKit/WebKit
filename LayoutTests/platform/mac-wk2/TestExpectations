@@ -693,3 +693,5 @@ webkit.org/b/171061 webrtc/datachannel/filter-ice-candidate.html [ Pass Timeout 
 webkit.org/b/172521 imported/w3c/web-platform-tests/webrtc/getstats.html [ Pass Failure ]
 
 webkit.org/b/172054 [ Sierra Debug ] loader/stateobjects/replacestate-size-iframe.html [ Pass Timeout ]
+
+webkit.org/b/172454 [ Debug ] http/tests/navigation/statistics.html [ Pass Failure ]
