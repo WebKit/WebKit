@@ -46,7 +46,7 @@ class CheckPatchRelevance(AbstractStep):
     jsc_paths = [
         "JSTests/",
         "Source/JavaScriptCore/",
-        "Source/WTF/"
+        "Source/WTF/",
         "Source/bmalloc/",
         "Makefile",
         "Makefile.shared",
