@@ -7,7 +7,7 @@ PASS String.prototype.toString.call(undefined) threw exception TypeError: Type e
 PASS String.prototype.valueOf.call(undefined) threw exception TypeError: Type error.
 PASS String.prototype.charAt.call(undefined, 0) threw exception TypeError: Type error.
 PASS String.prototype.charCodeAt.call(undefined, 0) threw exception TypeError: Type error.
-PASS String.prototype.concat.call(undefined, 'five') threw exception TypeError: Type error.
+PASS String.prototype.concat.call(undefined, 'five') threw exception TypeError: String.prototype.concat requires that |this| not be null or undefined.
 PASS String.prototype.indexOf.call(undefined, '2') threw exception TypeError: Type error.
 PASS String.prototype.lastIndexOf.call(undefined, '2') threw exception TypeError: Type error.
 PASS String.prototype.match.call(undefined, /2+/) threw exception TypeError: String.prototype.match requires that |this| not be null or undefined.
