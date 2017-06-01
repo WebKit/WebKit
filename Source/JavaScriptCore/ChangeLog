@@ -1,3 +1,29 @@
+2017-05-31  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Implement String.prototype.concat in JS builtins
+        https://bugs.webkit.org/show_bug.cgi?id=172798
+
+        Reviewed by Sam Weinig.
+
+        Since we have highly effective + operation for strings,
+        implementing String.prototype.concat in JS simplifies the
+        implementation and improves performance by using speculated
+        types.
+
+        Added microbenchmarks show performance improvement.
+
+        string-concat-long-convert     1063.2787+-12.9101    ^    109.0855+-2.8083        ^ definitely 9.7472x faster
+        string-concat-convert          1111.1366+-12.2363    ^     99.3402+-1.9874        ^ definitely 11.1852x faster
+        string-concat                   131.7377+-3.8359     ^     54.3949+-0.9580        ^ definitely 2.4219x faster
+        string-concat-long               79.4726+-1.9644     ^     64.6301+-1.4941        ^ definitely 1.2297x faster
+
+        * builtins/StringPrototype.js:
+        (globalPrivate.stringConcatSlowPath):
+        (concat):
+        * runtime/StringPrototype.cpp:
+        (JSC::StringPrototype::finishCreation):
+        (JSC::stringProtoFuncConcat): Deleted.
+
 2017-05-31  Mark Lam  <mark.lam@apple.com>
 
         Remove overrides of visitChildren() that do not add any functionality.

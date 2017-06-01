@@ -63,7 +63,6 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncToString(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncCharAt(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncCharCodeAt(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncCodePointAt(ExecState*);
-EncodedJSValue JSC_HOST_CALL stringProtoFuncConcat(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncIndexOf(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncLastIndexOf(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncReplaceUsingRegExp(ExecState*);
@@ -95,6 +94,7 @@ const ClassInfo StringPrototype::s_info = { "String", &StringObject::s_info, &st
 
 /* Source for StringConstructor.lut.h
 @begin stringPrototypeTable
+    concat    JSBuiltin    DontEnum|Function 1
     match     JSBuiltin    DontEnum|Function 1
     padStart  JSBuiltin    DontEnum|Function 1
     padEnd    JSBuiltin    DontEnum|Function 1
@@ -134,7 +134,6 @@ void StringPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject, JSStr
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION("charAt", stringProtoFuncCharAt, DontEnum, 1, CharAtIntrinsic);
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION("charCodeAt", stringProtoFuncCharCodeAt, DontEnum, 1, CharCodeAtIntrinsic);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("codePointAt", stringProtoFuncCodePointAt, DontEnum, 1);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("concat", stringProtoFuncConcat, DontEnum, 1);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("indexOf", stringProtoFuncIndexOf, DontEnum, 1);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("lastIndexOf", stringProtoFuncLastIndexOf, DontEnum, 1);
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().replaceUsingRegExpPrivateName(), stringProtoFuncReplaceUsingRegExp, DontEnum, 2, StringPrototypeReplaceRegExpIntrinsic);
@@ -992,25 +991,6 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncCodePointAt(ExecState* exec)
     if (doublePosition >= 0 && doublePosition < length)
         return JSValue::encode(jsNumber(codePointAt(string, static_cast<unsigned>(doublePosition), length)));
     return JSValue::encode(jsUndefined());
-}
-
-EncodedJSValue JSC_HOST_CALL stringProtoFuncConcat(ExecState* exec)
-{
-    VM& vm = exec->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    JSValue thisValue = exec->thisValue();
-    if (thisValue.isString() && exec->argumentCount() == 1) {
-        JSString* str = exec->uncheckedArgument(0).toString(exec);
-        RETURN_IF_EXCEPTION(scope, encodedJSValue());
-        scope.release();
-        return JSValue::encode(jsString(exec, asString(thisValue), str));
-    }
-
-    if (!checkObjectCoercible(thisValue))
-        return throwVMTypeError(exec, scope);
-    scope.release();
-    return JSValue::encode(jsStringFromArguments(exec, thisValue));
 }
 
 EncodedJSValue JSC_HOST_CALL stringProtoFuncIndexOf(ExecState* exec)

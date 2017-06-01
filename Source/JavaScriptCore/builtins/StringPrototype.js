@@ -306,6 +306,29 @@ function split(separator, limit)
 }
 
 @globalPrivate
+function stringConcatSlowPath()
+{
+    "use strict";
+
+    var result = @toString(this);
+    for (var i = 0, length = arguments.length; i < length; ++i)
+        result += @toString(arguments[i]);
+    return result;
+}
+
+function concat(arg /* ... */)
+{
+    "use strict";
+
+    if (this == null)
+        @throwTypeError("String.prototype.concat requires that |this| not be null or undefined");
+
+    if (@argumentCount() === 1)
+        return @toString(this) + @toString(arg);
+    return @tailCallForwardArguments(@stringConcatSlowPath, this);
+}
+
+@globalPrivate
 function createHTML(func, string, tag, attribute, value)
 {
     "use strict";
