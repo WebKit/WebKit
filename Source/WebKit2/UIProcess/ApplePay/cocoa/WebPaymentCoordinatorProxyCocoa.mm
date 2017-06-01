@@ -629,7 +629,7 @@ static RetainPtr<NSError> toNSError(const WebCore::PaymentError& error)
 
         case WebCore::PaymentError::ContactField::AdministrativeArea:
             pkContactField = getPKContactFieldPostalAddress();
-            postalAddressKey = getCNPostalAddressCityKey();
+            postalAddressKey = getCNPostalAddressStateKey();
             break;
 
         case WebCore::PaymentError::ContactField::Country:
