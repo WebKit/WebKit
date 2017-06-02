@@ -1,3 +1,17 @@
+2017-06-01  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r206386): Xactimate Website Crashes @ com.apple.WebKit: WebKit::NPRuntimeObjectMap::convertJSValueToNPVariant + 255
+        https://bugs.webkit.org/show_bug.cgi?id=172846
+        <rdar://problem/31093005>
+
+        Reviewed by Andreas Kling.
+
+        In NPJSObject::invoke(), return early if there was an exception when calling JSC::call().
+        Using the value returned by JSC::call() when an exception occurred is unsafe.
+
+        * WebProcess/Plugins/Netscape/NPJSObject.cpp:
+        (WebKit::NPJSObject::invoke):
+
 2017-06-01  Jon Lee  <jonlee@apple.com>
 
         Rename an experimental feature item
