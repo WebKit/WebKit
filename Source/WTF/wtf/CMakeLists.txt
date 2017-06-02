@@ -347,6 +347,9 @@ if (WIN32)
         ThreadSpecificWin.cpp
         ThreadingWin.cpp
     )
+    list(APPEND WTF_LIBRARIES
+        winmm
+    )
 else ()
     list(APPEND WTF_SOURCES
         OSAllocatorPosix.cpp

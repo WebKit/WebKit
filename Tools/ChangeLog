@@ -1,3 +1,13 @@
+2017-06-02  Stephan Szabo  <stephan.szabo@am.sony.com>
+
+        [JSCOnly] Build static jsc.exe on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=172833
+
+        Reviewed by Konstantin Tokarev.
+
+        * CMakeLists.txt:
+        * Scripts/build-jsc:
+
 2017-06-02  Zalan Bujtas  <zalan@apple.com>
 
         Disable ViewportSizeForViewportUnits tests on iOS.

@@ -16,10 +16,6 @@ list(APPEND WTF_SOURCES
     win/WorkQueueWin.cpp
 )
 
-list(APPEND WTF_LIBRARIES
-    winmm
-)
-
 if (${WTF_PLATFORM_WIN_CAIRO})
     list(APPEND WTF_LIBRARIES
         cflite
