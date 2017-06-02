@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TileController_h
-#define TileController_h
+#pragma once
 
 #include "FloatRect.h"
 #include "IntRect.h"
@@ -138,6 +137,8 @@ public:
     const TileGrid& tileGrid() const { return *m_tileGrid; }
 
     WEBCORE_EXPORT Vector<RefPtr<PlatformCALayer>> containerLayers();
+    
+    void logFilledVisibleFreshTile(unsigned blankPixelCount);
 
 private:
     TileGrid& tileGrid() { return *m_tileGrid; }
@@ -212,13 +213,12 @@ private:
 
     int m_marginSize { kDefaultTileSize };
 
+    Scrollability m_scrollability { HorizontallyScrollable | VerticallyScrollable };
+
     // m_marginTop and m_marginBottom are the height in pixels of the top and bottom margin tiles. The width
     // of those tiles will be equivalent to the width of the other tiles in the grid. m_marginRight and
     // m_marginLeft are the width in pixels of the right and left margin tiles, respectively. The height of
     // those tiles will be equivalent to the height of the other tiles in the grid.
-    
-    Scrollability m_scrollability { HorizontallyScrollable | VerticallyScrollable };
-    
     BoxExtent<bool> m_marginEdges;
     
     bool m_isInWindow { false };
@@ -240,4 +240,3 @@ private:
 
 } // namespace WebCore
 
-#endif // TileController_h

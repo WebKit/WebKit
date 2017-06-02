@@ -777,6 +777,11 @@ void TileController::removeUnparentedTilesNow()
 }
 #endif
 
+void TileController::logFilledVisibleFreshTile(unsigned blankPixelCount)
+{
+    owningGraphicsLayer()->platformCALayerLogFilledVisibleFreshTile(blankPixelCount);
+}
+
 } // namespace WebCore
 
 #endif

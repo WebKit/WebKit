@@ -47,6 +47,7 @@
 #include "Logging.h"
 #include "MainFrame.h"
 #include "Page.h"
+#include "PerformanceLoggingClient.h"
 #include "PluginViewBase.h"
 #include "ProgressTracker.h"
 #include "RenderFlowThread.h"
@@ -2693,6 +2694,12 @@ bool RenderLayerBacking::shouldTemporarilyRetainTileCohorts(const GraphicsLayer*
 bool RenderLayerBacking::useGiantTiles() const
 {
     return renderer().settings().useGiantTiles();
+}
+
+void RenderLayerBacking::logFilledVisibleFreshTile(unsigned blankPixelCount)
+{
+    if (PerformanceLoggingClient* loggingClient = renderer().page().performanceLoggingClient())
+        loggingClient->logScrollingEvent(PerformanceLoggingClient::ScrollingEvent::FilledTile, MonotonicTime::now(), blankPixelCount);
 }
 
 #ifndef NDEBUG

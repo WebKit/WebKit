@@ -230,6 +230,9 @@ messages -> WebPageProxy {
     LogDiagnosticMessageWithValue(String message, String description, double value, unsigned significantFigures, enum WebCore::ShouldSample shouldSample)
     LogDiagnosticMessageWithEnhancedPrivacy(String message, String description, enum WebCore::ShouldSample shouldSample)
 
+    # Performance logging
+    LogScrollingEvent(uint32_t eventType, MonotonicTime timestamp, uint64_t data)
+
     # Editor notifications
     EditorStateChanged(struct WebKit::EditorState editorState)
     CompositionWasCanceled()

@@ -44,6 +44,7 @@ class FrameLoaderClient;
 class InspectorClient;
 class LibWebRTCProvider;
 class PaymentCoordinatorClient;
+class PerformanceLoggingClient;
 class PlugInClient;
 class PluginInfoProvider;
 class ProgressTrackerClient;
@@ -81,6 +82,7 @@ public:
     std::unique_ptr<ValidationMessageClient> validationMessageClient;
     FrameLoaderClient* loaderClientForMainFrame { nullptr };
     std::unique_ptr<DiagnosticLoggingClient> diagnosticLoggingClient;
+    std::unique_ptr<PerformanceLoggingClient> performanceLoggingClient;
     std::unique_ptr<WebGLStateTracker> webGLStateTracker;
 
     RefPtr<ApplicationCacheStorage> applicationCacheStorage;

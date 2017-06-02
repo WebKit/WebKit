@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TileGrid_h
-#define TileGrid_h
+#pragma once
 
 #include "IntPointHash.h"
 #include "IntRect.h"
@@ -178,4 +177,4 @@ private:
 };
 
 }
-#endif
+

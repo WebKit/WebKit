@@ -65,6 +65,8 @@ public:
 
     virtual bool isUsingDisplayListDrawing(PlatformCALayer*) const { return false; }
 
+    virtual void platformCALayerLogFilledVisibleFreshTile(unsigned /* blankPixelCount */) { }
+
 protected:
     virtual ~PlatformCALayerClient() {}
 };

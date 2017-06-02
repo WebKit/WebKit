@@ -1,3 +1,31 @@
+2017-06-02  Simon Fraser  <simon.fraser@apple.com>
+
+        All scroll peformance logging should happen in the UI process
+        https://bugs.webkit.org/show_bug.cgi?id=172874
+        rdar://problem/24474830
+
+        Reviewed by Tim Horton.
+
+        Printing to stdout from the WebProcess doesn't show up anywhere in non-development builds,
+        so we have to log from the UI process.
+
+        Achieve this by adding a PerformanceLoggingClient to Page which forwards messages to
+        WebPageProxy, which prints them with the same format they had before. Some plumbing through
+        PlatformCALayerClient and GraphicsLayerClient is required to get messages from TileControllers
+        through to something that can get to Page.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::logScrollingEvent):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebPerformanceLoggingClient.cpp: Added.
+        (WebKit::WebPerformanceLoggingClient::WebPerformanceLoggingClient):
+        (WebKit::WebPerformanceLoggingClient::logScrollingEvent):
+        * WebProcess/WebCoreSupport/WebPerformanceLoggingClient.h: Added.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_cpuLimit):
+
 2017-06-02  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r206386): Xactimate Website Crashes @ com.apple.WebKit: WebKit::NPRuntimeObjectMap::convertJSValueToNPVariant + 255

@@ -86,6 +86,8 @@
 		0F5947A8187B517600437857 /* RemoteScrollingCoordinatorMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5947A6187B517600437857 /* RemoteScrollingCoordinatorMessages.h */; };
 		0F5E200318E77051003EC3E5 /* PlatformCAAnimationRemote.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F5E200118E77051003EC3E5 /* PlatformCAAnimationRemote.mm */; };
 		0F5E200418E77051003EC3E5 /* PlatformCAAnimationRemote.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5E200218E77051003EC3E5 /* PlatformCAAnimationRemote.h */; };
+		0F850FE61ED7C39F00FB77A7 /* WebPerformanceLoggingClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F850FE41ED7C39F00FB77A7 /* WebPerformanceLoggingClient.cpp */; };
+		0F850FE71ED7C39F00FB77A7 /* WebPerformanceLoggingClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F850FE51ED7C39F00FB77A7 /* WebPerformanceLoggingClient.h */; };
 		0F931C1C18C5711900DBA7C3 /* ScrollingTreeOverflowScrollingNodeIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F931C1A18C5711900DBA7C3 /* ScrollingTreeOverflowScrollingNodeIOS.h */; };
 		0F931C1D18C5711900DBA7C3 /* ScrollingTreeOverflowScrollingNodeIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F931C1B18C5711900DBA7C3 /* ScrollingTreeOverflowScrollingNodeIOS.mm */; };
 		0FB659231208B4DB0044816C /* DrawingAreaInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FB659221208B4DB0044816C /* DrawingAreaInfo.h */; };
@@ -2240,6 +2242,8 @@
 		0F5E200218E77051003EC3E5 /* PlatformCAAnimationRemote.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformCAAnimationRemote.h; sourceTree = "<group>"; };
 		0F707C771A1FEE8300DA7A45 /* RemoteLayerTreeScrollingPerformanceData.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteLayerTreeScrollingPerformanceData.mm; sourceTree = "<group>"; };
 		0F707C791A1FEEA300DA7A45 /* RemoteLayerTreeScrollingPerformanceData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteLayerTreeScrollingPerformanceData.h; sourceTree = "<group>"; };
+		0F850FE41ED7C39F00FB77A7 /* WebPerformanceLoggingClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPerformanceLoggingClient.cpp; sourceTree = "<group>"; };
+		0F850FE51ED7C39F00FB77A7 /* WebPerformanceLoggingClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPerformanceLoggingClient.h; sourceTree = "<group>"; };
 		0F931C1A18C5711900DBA7C3 /* ScrollingTreeOverflowScrollingNodeIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScrollingTreeOverflowScrollingNodeIOS.h; path = Scrolling/ios/ScrollingTreeOverflowScrollingNodeIOS.h; sourceTree = "<group>"; };
 		0F931C1B18C5711900DBA7C3 /* ScrollingTreeOverflowScrollingNodeIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ScrollingTreeOverflowScrollingNodeIOS.mm; path = Scrolling/ios/ScrollingTreeOverflowScrollingNodeIOS.mm; sourceTree = "<group>"; };
 		0FB659221208B4DB0044816C /* DrawingAreaInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DrawingAreaInfo.h; sourceTree = "<group>"; };
@@ -6592,6 +6596,8 @@
 				31099968146C71F50029DEB9 /* WebNotificationClient.h */,
 				512127C11908239A00DAF35C /* WebPasteboardOverrides.cpp */,
 				512127C21908239A00DAF35C /* WebPasteboardOverrides.h */,
+				0F850FE41ED7C39F00FB77A7 /* WebPerformanceLoggingClient.cpp */,
+				0F850FE51ED7C39F00FB77A7 /* WebPerformanceLoggingClient.h */,
 				1A3E736011CC2659007BD539 /* WebPlatformStrategies.cpp */,
 				1A3E735F11CC2659007BD539 /* WebPlatformStrategies.h */,
 				31D5929C166E05FF00E6BF02 /* WebPlugInClient.cpp */,
@@ -8603,6 +8609,7 @@
 				1AA9BAE1184FFAC7003B6BC6 /* WeakObjCPtr.h in Headers */,
 				CEDA12E3152CD1B300D9E08D /* WebAlternativeTextClient.h in Headers */,
 				9955A6EC1C7980C200EB6A93 /* WebAutomationSession.h in Headers */,
+				0F850FE71ED7C39F00FB77A7 /* WebPerformanceLoggingClient.h in Headers */,
 				99C3AE2D1DADA6AD00AF5C16 /* WebAutomationSessionMacros.h in Headers */,
 				1C0A19581C90068F00FE0EBB /* WebAutomationSessionMessages.h in Headers */,
 				1C0A19471C8FF1A800FE0EBB /* WebAutomationSessionProxy.h in Headers */,
@@ -10288,6 +10295,7 @@
 				BC9BA5041697C45300E44616 /* WebKit2Initialize.cpp in Sources */,
 				51FB08FF1639DE1A00EC324A /* WebLoaderStrategy.cpp in Sources */,
 				CD003A5219D49B5D005ABCE0 /* WebMediaKeyStorageManager.cpp in Sources */,
+				0F850FE61ED7C39F00FB77A7 /* WebPerformanceLoggingClient.cpp in Sources */,
 				C98C48A51B6FD4C300145103 /* WebMediaSessionFocusManager.cpp in Sources */,
 				C9C1833B1B74026A007036A7 /* WebMediaSessionFocusManagerClient.cpp in Sources */,
 				C9CD43971B4B001900239E33 /* WebMediaSessionMetadata.cpp in Sources */,

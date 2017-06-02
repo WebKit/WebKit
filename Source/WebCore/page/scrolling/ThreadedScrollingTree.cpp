@@ -105,6 +105,20 @@ void ThreadedScrollingTree::scrollingTreeNodeDidScroll(ScrollingNodeID nodeID, c
     });
 }
 
+void ThreadedScrollingTree::reportSynchronousScrollingReasonsChanged(MonotonicTime timestamp, SynchronousScrollingReasons reasons)
+{
+    RunLoop::main().dispatch([scrollingCoordinator = m_scrollingCoordinator, timestamp, reasons] {
+        scrollingCoordinator->reportSynchronousScrollingReasonsChanged(timestamp, reasons);
+    });
+}
+
+void ThreadedScrollingTree::reportExposedUnfilledArea(MonotonicTime timestamp, unsigned unfilledArea)
+{
+    RunLoop::main().dispatch([scrollingCoordinator = m_scrollingCoordinator, timestamp, unfilledArea] {
+        scrollingCoordinator->reportExposedUnfilledArea(timestamp, unfilledArea);
+    });
+}
+
 void ThreadedScrollingTree::currentSnapPointIndicesDidChange(ScrollingNodeID nodeID, unsigned horizontal, unsigned vertical)
 {
     if (!m_scrollingCoordinator)

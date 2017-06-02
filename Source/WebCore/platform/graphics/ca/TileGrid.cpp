@@ -739,7 +739,7 @@ void TileGrid::platformCALayerPaintContents(PlatformCALayer* platformCALayer, Gr
         visiblePart.intersect(m_controller.visibleRect());
 
         if (repaintCount == 1 && !visiblePart.isEmpty())
-            WTFLogAlways("SCROLLING: Filled visible fresh tile. Time: %f Unfilled Pixels: %u\n", WTF::monotonicallyIncreasingTime(), blankPixelCount());
+            m_controller.logFilledVisibleFreshTile(blankPixelCount());
     }
 }
 

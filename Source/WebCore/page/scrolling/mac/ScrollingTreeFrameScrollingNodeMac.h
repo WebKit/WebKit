@@ -93,7 +93,7 @@ private:
     FloatSize viewportSize() const override;
 #endif
 
-    void logExposedUnfilledArea();
+    unsigned exposedUnfilledArea() const;
 
     ScrollController m_scrollController;
 

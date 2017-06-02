@@ -109,6 +109,7 @@ class PageConfiguration;
 class PageConsoleClient;
 class PageDebuggable;
 class PageGroup;
+class PerformanceLoggingClient;
 class PerformanceMonitor;
 class PlugInClient;
 class PluginData;
@@ -369,6 +370,8 @@ public:
     WEBCORE_EXPORT unsigned pageCount() const;
 
     WEBCORE_EXPORT DiagnosticLoggingClient& diagnosticLoggingClient() const;
+
+    PerformanceLoggingClient* performanceLoggingClient() const { return m_performanceLoggingClient.get(); }
 
     // Notifications when the Page starts and stops being presented via a native window.
     WEBCORE_EXPORT void setActivityState(ActivityState::Flags);
@@ -669,6 +672,8 @@ private:
     PlugInClient* m_plugInClient;
     std::unique_ptr<ValidationMessageClient> m_validationMessageClient;
     std::unique_ptr<DiagnosticLoggingClient> m_diagnosticLoggingClient;
+    std::unique_ptr<PerformanceLoggingClient> m_performanceLoggingClient;
+    
     std::unique_ptr<WebGLStateTracker> m_webGLStateTracker;
 
     UniqueRef<LibWebRTCProvider> m_libWebRTCProvider;

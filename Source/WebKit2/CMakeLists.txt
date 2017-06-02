@@ -554,6 +554,7 @@ set(WebKit2_SOURCES
     WebProcess/WebCoreSupport/WebGeolocationClient.cpp
     WebProcess/WebCoreSupport/WebInspectorClient.cpp
     WebProcess/WebCoreSupport/WebNotificationClient.cpp
+    WebProcess/WebCoreSupport/WebPerformanceLoggingClient.cpp
     WebProcess/WebCoreSupport/WebPlatformStrategies.cpp
     WebProcess/WebCoreSupport/WebPlugInClient.cpp
     WebProcess/WebCoreSupport/WebPopupMenu.cpp

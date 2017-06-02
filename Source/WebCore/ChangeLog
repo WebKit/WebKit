@@ -1,3 +1,66 @@
+2017-06-02  Simon Fraser  <simon.fraser@apple.com>
+
+        All scroll peformance logging should happen in the UI process
+        https://bugs.webkit.org/show_bug.cgi?id=172874
+        rdar://problem/24474830
+
+        Reviewed by Tim Horton.
+
+        Printing to stdout from the WebProcess doesn't show up anywhere in non-development builds,
+        so we have to log from the UI process.
+
+        Achieve this by adding a PerformanceLoggingClient to Page which forwards messages to
+        WebPageProxy, which prints them with the same format they had before. Some plumbing through
+        PlatformCALayerClient and GraphicsLayerClient is required to get messages from TileControllers
+        through to something that can get to Page.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        (WebCore::Page::~Page):
+        * page/Page.h:
+        (WebCore::Page::performanceLoggingClient):
+        * page/PageConfiguration.cpp:
+        * page/PageConfiguration.h:
+        * page/PerformanceLoggingClient.cpp: Added.
+        (WebCore::PerformanceLoggingClient::synchronousScrollingReasonsAsString):
+        * page/PerformanceLoggingClient.h: Added.
+        (WebCore::PerformanceLoggingClient::~PerformanceLoggingClient):
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::reportExposedUnfilledArea):
+        (WebCore::AsyncScrollingCoordinator::reportSynchronousScrollingReasonsChanged):
+        * page/scrolling/AsyncScrollingCoordinator.h:
+        * page/scrolling/ScrollingTree.h:
+        (WebCore::ScrollingTree::reportSynchronousScrollingReasonsChanged):
+        (WebCore::ScrollingTree::reportExposedUnfilledArea):
+        * page/scrolling/ThreadedScrollingTree.cpp:
+        (WebCore::ThreadedScrollingTree::reportSynchronousScrollingReasonsChanged):
+        (WebCore::ThreadedScrollingTree::reportExposedUnfilledArea):
+        * page/scrolling/ThreadedScrollingTree.h:
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.h:
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::commitStateBeforeChildren):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::setScrollPosition):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::exposedUnfilledArea):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::logExposedUnfilledArea): Deleted.
+        (WebCore::logThreadedScrollingMode): Deleted.
+        * platform/graphics/GraphicsLayerClient.h:
+        (WebCore::GraphicsLayerClient::logFilledVisibleFreshTile):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::platformCALayerLogFilledVisibleFreshTile):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        * platform/graphics/ca/PlatformCALayerClient.h:
+        (WebCore::PlatformCALayerClient::platformCALayerLogFilledVisibleFreshTile):
+        * platform/graphics/ca/TileController.cpp:
+        (WebCore::TileController::logFilledVisibleFreshTile):
+        * platform/graphics/ca/TileController.h:
+        * platform/graphics/ca/TileGrid.cpp:
+        (WebCore::TileGrid::platformCALayerPaintContents):
+        * platform/graphics/ca/TileGrid.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::logFilledVisibleFreshTile):
+        * rendering/RenderLayerBacking.h:
+
 2017-06-02  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream iOS] Cleanup video muting/unmuting when tab visibility changes

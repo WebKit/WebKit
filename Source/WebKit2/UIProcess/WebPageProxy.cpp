@@ -124,6 +124,7 @@
 #include <WebCore/JSDOMExceptionHandling.h>
 #include <WebCore/LengthBox.h>
 #include <WebCore/MIMETypeRegistry.h>
+#include <WebCore/PerformanceLoggingClient.h>
 #include <WebCore/PublicSuffix.h>
 #include <WebCore/RenderEmbeddedObject.h>
 #include <WebCore/SerializedCryptoKeyWrap.h>
@@ -5209,6 +5210,26 @@ void WebPageProxy::logDiagnosticMessageWithEnhancedPrivacy(const String& message
         return;
 
     m_diagnosticLoggingClient->logDiagnosticMessageWithEnhancedPrivacy(this, message, description);
+}
+
+void WebPageProxy::logScrollingEvent(uint32_t eventType, MonotonicTime timestamp, uint64_t data)
+{
+    PerformanceLoggingClient::ScrollingEvent event = static_cast<PerformanceLoggingClient::ScrollingEvent>(eventType);
+
+    switch (event) {
+    case PerformanceLoggingClient::ScrollingEvent::ExposedTilelessArea:
+        WTFLogAlways("SCROLLING: Exposed tileless area. Time: %f Unfilled Pixels: %llu\n", timestamp.secondsSinceEpoch().value(), (unsigned long long)data);
+        break;
+    case PerformanceLoggingClient::ScrollingEvent::FilledTile:
+        WTFLogAlways("SCROLLING: Filled visible fresh tile. Time: %f Unfilled Pixels: %llu\n", timestamp.secondsSinceEpoch().value(), (unsigned long long)data);
+        break;
+    case PerformanceLoggingClient::ScrollingEvent::SwitchedScrollingMode:
+        if (data)
+            WTFLogAlways("SCROLLING: Switching to main-thread scrolling mode. Time: %f Reason(s): %s\n", timestamp.secondsSinceEpoch().value(), PerformanceLoggingClient::synchronousScrollingReasonsAsString(data).utf8().data());
+        else
+            WTFLogAlways("SCROLLING: Switching to threaded scrolling mode. Time: %f\n", timestamp.secondsSinceEpoch().value());
+        break;
+    }
 }
 
 void WebPageProxy::rectForCharacterRangeCallback(const IntRect& rect, const EditingRange& actualRange, uint64_t callbackID)

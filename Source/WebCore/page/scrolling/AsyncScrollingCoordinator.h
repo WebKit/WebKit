@@ -65,6 +65,9 @@ public:
 
     WEBCORE_EXPORT void updateExpectsWheelEventTestTriggerWithFrameView(const FrameView&) override;
 
+    void reportExposedUnfilledArea(MonotonicTime, unsigned unfilledArea);
+    void reportSynchronousScrollingReasonsChanged(MonotonicTime, SynchronousScrollingReasons);
+
 protected:
     WEBCORE_EXPORT AsyncScrollingCoordinator(Page*);
 

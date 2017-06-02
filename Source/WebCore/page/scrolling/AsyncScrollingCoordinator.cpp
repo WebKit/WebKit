@@ -37,6 +37,7 @@
 #include "Logging.h"
 #include "MainFrame.h"
 #include "Page.h"
+#include "PerformanceLoggingClient.h"
 #include "ScrollAnimator.h"
 #include "ScrollingConstraints.h"
 #include "ScrollingStateFixedNode.h"
@@ -694,7 +695,19 @@ void AsyncScrollingCoordinator::updateScrollSnapPropertiesWithFrameView(const Fr
     }
 }
 #endif
-    
+
+void AsyncScrollingCoordinator::reportExposedUnfilledArea(MonotonicTime timestamp, unsigned unfilledArea)
+{
+    if (m_page && m_page->performanceLoggingClient())
+        m_page->performanceLoggingClient()->logScrollingEvent(PerformanceLoggingClient::ScrollingEvent::ExposedTilelessArea, timestamp, unfilledArea);
+}
+
+void AsyncScrollingCoordinator::reportSynchronousScrollingReasonsChanged(MonotonicTime timestamp, SynchronousScrollingReasons reasons)
+{
+    if (m_page && m_page->performanceLoggingClient())
+        m_page->performanceLoggingClient()->logScrollingEvent(PerformanceLoggingClient::ScrollingEvent::SwitchedScrollingMode, timestamp, reasons);
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(ASYNC_SCROLLING)

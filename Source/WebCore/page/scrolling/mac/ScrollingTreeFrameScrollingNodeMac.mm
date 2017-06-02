@@ -44,12 +44,9 @@
 #import <QuartzCore/QuartzCore.h>
 #import <wtf/CurrentTime.h>
 #import <wtf/Deque.h>
-#import <wtf/text/StringBuilder.h>
 #import <wtf/text/CString.h>
 
 namespace WebCore {
-
-static void logThreadedScrollingMode(unsigned synchronousScrollingReasons);
 
 Ref<ScrollingTreeFrameScrollingNode> ScrollingTreeFrameScrollingNodeMac::create(ScrollingTree& scrollingTree, ScrollingNodeID nodeID)
 {
@@ -149,10 +146,8 @@ void ScrollingTreeFrameScrollingNodeMac::commitStateBeforeChildren(const Scrolli
         logScrollingMode = true;
     }
 
-    if (logScrollingMode) {
-        if (scrollingTree().scrollingPerformanceLoggingEnabled())
-            logThreadedScrollingMode(synchronousScrollingReasons());
-    }
+    if (logScrollingMode && scrollingTree().scrollingPerformanceLoggingEnabled())
+        scrollingTree().reportSynchronousScrollingReasonsChanged(MonotonicTime::now(), synchronousScrollingReasons());
 
 #if ENABLE(CSS_SCROLL_SNAP)
     if (scrollingStateNode.hasChangedProperty(ScrollingStateFrameScrollingNode::HorizontalSnapOffsets) || scrollingStateNode.hasChangedProperty(ScrollingStateFrameScrollingNode::HorizontalSnapOffsetRanges))
@@ -389,8 +384,13 @@ void ScrollingTreeFrameScrollingNodeMac::setScrollPosition(const FloatPoint& scr
 
     ScrollingTreeFrameScrollingNode::setScrollPosition(roundedPosition);
 
-    if (scrollingTree().scrollingPerformanceLoggingEnabled())
-        logExposedUnfilledArea();
+    if (scrollingTree().scrollingPerformanceLoggingEnabled()) {
+        unsigned unfilledArea = exposedUnfilledArea();
+        if (unfilledArea || m_lastScrollHadUnfilledPixels)
+            scrollingTree().reportExposedUnfilledArea(MonotonicTime::now(), unfilledArea);
+
+        m_lastScrollHadUnfilledPixels = unfilledArea;
+    }
 }
 
 void ScrollingTreeFrameScrollingNodeMac::setScrollPositionWithoutContentEdgeConstraints(const FloatPoint& scrollPosition)
@@ -529,7 +529,7 @@ void ScrollingTreeFrameScrollingNodeMac::updateMainFramePinState(const FloatPoin
     scrollingTree().setMainFramePinState(pinnedToTheLeft, pinnedToTheRight, pinnedToTheTop, pinnedToTheBottom);
 }
 
-void ScrollingTreeFrameScrollingNodeMac::logExposedUnfilledArea()
+unsigned ScrollingTreeFrameScrollingNodeMac::exposedUnfilledArea() const
 {
     Region paintedVisibleTiles;
 
@@ -555,36 +555,7 @@ void ScrollingTreeFrameScrollingNodeMac::logExposedUnfilledArea()
 
     FloatPoint scrollPosition = this->scrollPosition();
     FloatRect viewPortRect(FloatPoint(), scrollableAreaSize());
-    unsigned unfilledArea = TileController::blankPixelCountForTiles(tiles, viewPortRect, IntPoint(-scrollPosition.x(), -scrollPosition.y()));
-
-    if (unfilledArea || m_lastScrollHadUnfilledPixels)
-        WTFLogAlways("SCROLLING: Exposed tileless area. Time: %f Unfilled Pixels: %u\n", WTF::monotonicallyIncreasingTime(), unfilledArea);
-
-    m_lastScrollHadUnfilledPixels = unfilledArea;
-}
-
-static void logThreadedScrollingMode(unsigned synchronousScrollingReasons)
-{
-    if (synchronousScrollingReasons) {
-        StringBuilder reasonsDescription;
-
-        if (synchronousScrollingReasons & ScrollingCoordinator::ForcedOnMainThread)
-            reasonsDescription.appendLiteral("forced,");
-        if (synchronousScrollingReasons & ScrollingCoordinator::HasSlowRepaintObjects)
-            reasonsDescription.appendLiteral("slow-repaint objects,");
-        if (synchronousScrollingReasons & ScrollingCoordinator::HasViewportConstrainedObjectsWithoutSupportingFixedLayers)
-            reasonsDescription.appendLiteral("viewport-constrained objects,");
-        if (synchronousScrollingReasons & ScrollingCoordinator::HasNonLayerViewportConstrainedObjects)
-            reasonsDescription.appendLiteral("non-layer viewport-constrained objects,");
-        if (synchronousScrollingReasons & ScrollingCoordinator::IsImageDocument)
-            reasonsDescription.appendLiteral("image document,");
-
-        // Strip the trailing comma.
-        String reasonsDescriptionTrimmed = reasonsDescription.toString().left(reasonsDescription.length() - 1);
-
-        WTFLogAlways("SCROLLING: Switching to main-thread scrolling mode. Time: %f Reason(s): %s\n", WTF::monotonicallyIncreasingTime(), reasonsDescriptionTrimmed.ascii().data());
-    } else
-        WTFLogAlways("SCROLLING: Switching to threaded scrolling mode. Time: %f\n", WTF::monotonicallyIncreasingTime());
+    return TileController::blankPixelCountForTiles(tiles, viewPortRect, IntPoint(-scrollPosition.x(), -scrollPosition.y()));
 }
 
 #if ENABLE(CSS_SCROLL_SNAP)

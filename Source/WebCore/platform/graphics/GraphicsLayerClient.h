@@ -129,6 +129,8 @@ public:
 
     virtual bool needsIOSDumpRenderTreeMainFrameRenderViewLayerIsAlwaysOpaqueHack(const GraphicsLayer&) const { return false; }
 
+    virtual void logFilledVisibleFreshTile(unsigned) { };
+
 #ifndef NDEBUG
     // RenderLayerBacking overrides this to verify that it is not
     // currently painting contents. An ASSERT fails, if it is.

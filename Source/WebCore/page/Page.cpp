@@ -70,6 +70,7 @@
 #include "PageDebuggable.h"
 #include "PageGroup.h"
 #include "PageOverlayController.h"
+#include "PerformanceLoggingClient.h"
 #include "PerformanceMonitor.h"
 #include "PlatformMediaSessionManager.h"
 #include "PlugInClient.h"
@@ -210,6 +211,7 @@ Page::Page(PageConfiguration&& pageConfiguration)
     , m_plugInClient(pageConfiguration.plugInClient)
     , m_validationMessageClient(WTFMove(pageConfiguration.validationMessageClient))
     , m_diagnosticLoggingClient(WTFMove(pageConfiguration.diagnosticLoggingClient))
+    , m_performanceLoggingClient(WTFMove(pageConfiguration.performanceLoggingClient))
     , m_webGLStateTracker(WTFMove(pageConfiguration.webGLStateTracker))
     , m_libWebRTCProvider(WTFMove(pageConfiguration.libWebRTCProvider))
     , m_openedByDOM(false)
@@ -307,6 +309,7 @@ Page::~Page()
 
     m_validationMessageClient = nullptr;
     m_diagnosticLoggingClient = nullptr;
+    m_performanceLoggingClient = nullptr;
     m_mainFrame->setView(nullptr);
     setGroupName(String());
     allPages->remove(this);

@@ -66,6 +66,9 @@ protected:
     void removeTestDeferralForReason(WheelEventTestTrigger::ScrollableAreaIdentifier, WheelEventTestTrigger::DeferTestTriggerReason) override;
 #endif
 
+    void reportExposedUnfilledArea(MonotonicTime, unsigned unfilledArea) override;
+    void reportSynchronousScrollingReasonsChanged(MonotonicTime, SynchronousScrollingReasons) override;
+
 private:
     bool isThreadedScrollingTree() const override { return true; }
 

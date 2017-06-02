@@ -93,6 +93,9 @@ public:
 
     WEBCORE_EXPORT virtual void currentSnapPointIndicesDidChange(ScrollingNodeID, unsigned horizontal, unsigned vertical) = 0;
 
+    WEBCORE_EXPORT virtual void reportSynchronousScrollingReasonsChanged(MonotonicTime, SynchronousScrollingReasons) { }
+    WEBCORE_EXPORT virtual void reportExposedUnfilledArea(MonotonicTime, unsigned /* unfilledArea */) { }
+
     FloatPoint mainFrameScrollPosition();
     
 #if PLATFORM(IOS)

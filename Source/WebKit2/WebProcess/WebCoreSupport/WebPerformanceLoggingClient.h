@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,38 +20,27 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "PageConfiguration.h"
+#pragma once
 
-#include "ApplicationCacheStorage.h"
-#include "BackForwardClient.h"
-#include "DatabaseProvider.h"
-#include "DiagnosticLoggingClient.h"
-#include "EditorClient.h"
-#include "LibWebRTCProvider.h"
-#include "PerformanceLoggingClient.h"
-#include "PluginInfoProvider.h"
-#include "SocketProvider.h"
-#include "StorageNamespaceProvider.h"
-#include "UserContentController.h"
-#include "ValidationMessageClient.h"
-#include "VisitedLinkStore.h"
-#include "WebGLStateTracker.h"
+#include <WebCore/PerformanceLoggingClient.h>
+#include <wtf/Forward.h>
 
-namespace WebCore {
+namespace WebKit {
 
-PageConfiguration::PageConfiguration(UniqueRef<EditorClient>&& editorClient, Ref<SocketProvider>&& socketProvider, UniqueRef<LibWebRTCProvider>&& libWebRTCProvider)
-    : editorClient(WTFMove(editorClient))
-    , socketProvider(WTFMove(socketProvider))
-    , libWebRTCProvider(WTFMove(libWebRTCProvider))
-{
-}
+class WebPage;
 
-PageConfiguration::~PageConfiguration()
-{
-}
+class WebPerformanceLoggingClient : public WebCore::PerformanceLoggingClient {
+public:
+    WebPerformanceLoggingClient(WebPage&);
+    virtual ~WebPerformanceLoggingClient() = default;
+
+private:
+    void logScrollingEvent(ScrollingEvent, MonotonicTime, uint64_t) override;
+
+    WebPage& m_page;
+};
 
 }

@@ -216,6 +216,7 @@ public:
     bool shouldAggressivelyRetainTiles(const GraphicsLayer*) const override;
     bool shouldTemporarilyRetainTileCohorts(const GraphicsLayer*) const override;
     bool useGiantTiles() const override;
+    void logFilledVisibleFreshTile(unsigned) override;
     bool needsPixelAligment() const override { return !m_isMainFrameRenderViewLayer; }
 
     LayoutSize subpixelOffsetFromRenderer() const { return m_subpixelOffsetFromRenderer; }

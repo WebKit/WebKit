@@ -1620,6 +1620,11 @@ bool GraphicsLayerCA::platformCALayerUseGiantTiles() const
     return client().useGiantTiles();
 }
 
+void GraphicsLayerCA::platformCALayerLogFilledVisibleFreshTile(unsigned blankPixelCount)
+{
+    client().logFilledVisibleFreshTile(blankPixelCount);
+}
+
 static PlatformCALayer::LayerType layerTypeForCustomBackdropAppearance(GraphicsLayer::CustomAppearance appearance)
 {
     return appearance == GraphicsLayer::LightBackdropAppearance ? PlatformCALayer::LayerTypeLightSystemBackdropLayer : PlatformCALayer::LayerTypeDarkSystemBackdropLayer;
