@@ -1,3 +1,13 @@
+2017-06-01  Andreas Kling  <akling@apple.com>
+
+        [Mac] Remove backing store for layers that are outside the viewport
+        https://bugs.webkit.org/show_bug.cgi?id=170082
+        <rdar://problem/31245009>
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.h:
+
 2017-06-01  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r206386): Xactimate Website Crashes @ com.apple.WebKit: WebKit::NPRuntimeObjectMap::convertJSValueToNPVariant + 255

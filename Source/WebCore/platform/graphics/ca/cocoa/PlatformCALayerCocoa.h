@@ -197,6 +197,7 @@ private:
     std::unique_ptr<FloatRoundedRect> m_shapeRoundedRect;
     bool m_wantsDeepColorBackingStore { false };
     bool m_supportsSubpixelAntialiasedText { false };
+    bool m_backingStoreAttached { true };
 };
 
 } // namespace WebCore

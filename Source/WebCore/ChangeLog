@@ -1,3 +1,49 @@
+2017-06-01  Andreas Kling  <akling@apple.com>
+
+        [Mac] Remove backing store for layers that are outside the viewport
+        https://bugs.webkit.org/show_bug.cgi?id=170082
+        <rdar://problem/31245009>
+
+        Reviewed by Simon Fraser.
+
+        Implement the backingStoreAttached flag in PlatformCALayerCocoa. This means that
+        compositing layers outside the tiling coverage rect will no longer have backing
+        stores, saving large amounts of memory.
+
+        Also added a canDetachBackingStore flag that is set to false for scroll control
+        layers, to avoid complicating coverage rect computations.
+
+        Test: compositing/backing-store-attachment-1.html
+
+        * page/Frame.h:
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::GraphicsLayer):
+        (WebCore::GraphicsLayer::dumpProperties):
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::backingStoreAttached):
+        (WebCore::GraphicsLayer::setCanDetachBackingStore):
+        (WebCore::GraphicsLayer::canDetachBackingStore):
+        * platform/graphics/GraphicsLayerClient.h:
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::backingStoreAttached):
+        (WebCore::GraphicsLayerCA::setNeedsDisplay):
+        (WebCore::GraphicsLayerCA::updateCoverage):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        * platform/graphics/ca/PlatformCALayer.h:
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.h:
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+        (PlatformCALayerCocoa::setBackingStoreAttached):
+        (PlatformCALayerCocoa::backingStoreAttached):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateOverflowControlsLayers):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::layerTreeAsText):
+        (WebCore::RenderLayerCompositor::updateOverflowControlsLayers):
+        * testing/Internals.cpp:
+        (WebCore::toLayerTreeFlags):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2017-06-01  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r217691.

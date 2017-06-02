@@ -294,6 +294,7 @@ public:
         LAYER_TREE_INCLUDES_PAINTING_PHASES = 8,
         LAYER_TREE_INCLUDES_CONTENT_LAYERS = 16,
         LAYER_TREE_INCLUDES_ACCELERATES_DRAWING = 32,
+        LAYER_TREE_INCLUDES_BACKING_STORE_ATTACHED = 64,
     };
     ExceptionOr<String> layerTreeAsText(Document&, unsigned short flags) const;
     ExceptionOr<uint64_t> layerIDForElement(Element&);

@@ -635,14 +635,21 @@ void PlatformCALayerCocoa::setUserInteractionEnabled(bool)
 {
 }
 
-void PlatformCALayerCocoa::setBackingStoreAttached(bool)
+void PlatformCALayerCocoa::setBackingStoreAttached(bool attached)
 {
-    // We could throw away backing store here with setContents:nil.
+    if (attached == m_backingStoreAttached)
+        return;
+    m_backingStoreAttached = attached;
+
+    if (attached)
+        setNeedsDisplay();
+    else
+        setContents(nullptr);
 }
 
 bool PlatformCALayerCocoa::backingStoreAttached() const
 {
-    return true;
+    return m_backingStoreAttached;
 }
 
 bool PlatformCALayerCocoa::geometryFlipped() const

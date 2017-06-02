@@ -107,6 +107,7 @@ enum {
     LayerTreeFlagsIncludePaintingPhases = 1 << 4,
     LayerTreeFlagsIncludeContentLayers = 1 << 5,
     LayerTreeFlagsIncludeAcceleratesDrawing = 1 << 6,
+    LayerTreeFlagsIncludeBackingStoreAttached = 1 << 7,
 };
 typedef unsigned LayerTreeFlags;
 

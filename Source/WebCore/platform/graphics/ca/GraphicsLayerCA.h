@@ -258,6 +258,8 @@ private:
 
     bool isRunningTransformAnimation() const;
 
+    WEBCORE_EXPORT bool backingStoreAttached() const override;
+
     bool animationIsRunning(const String& animationName) const
     {
         return m_runningAnimations.find(animationName) != m_runningAnimations.end();

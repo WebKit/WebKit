@@ -863,9 +863,17 @@ void GraphicsLayerCA::setBlendMode(BlendMode blendMode)
 }
 #endif
 
+bool GraphicsLayerCA::backingStoreAttached() const
+{
+    return m_layer->backingStoreAttached();
+}
+
 void GraphicsLayerCA::setNeedsDisplay()
 {
     if (!drawsContent())
+        return;
+
+    if (!backingStoreAttached())
         return;
 
     m_needsFullRepaint = true;
@@ -2277,11 +2285,12 @@ void GraphicsLayerCA::updateCoverage()
         backing->setCoverageRect(m_coverageRect);
     }
 
-    m_layer->setBackingStoreAttached(m_intersectsCoverageRect);
-    if (m_layerClones) {
-        LayerMap::const_iterator end = m_layerClones->end();
-        for (LayerMap::const_iterator it = m_layerClones->begin(); it != end; ++it)
-            it->value->setBackingStoreAttached(m_intersectsCoverageRect);
+    if (canDetachBackingStore()) {
+        m_layer->setBackingStoreAttached(m_intersectsCoverageRect);
+        if (m_layerClones) {
+            for (auto& it : *m_layerClones)
+                it.value->setBackingStoreAttached(m_intersectsCoverageRect);
+        }
     }
 
     m_sizeAtLastCoverageRectUpdate = m_size;
@@ -4123,7 +4132,7 @@ double GraphicsLayerCA::backingStoreMemoryEstimate() const
     if (TiledBacking* tiledBacking = this->tiledBacking())
         return tiledBacking->retainedTileBackingStoreMemory();
 
-    if (!m_layer->backingContributesToMemoryEstimate())
+    if (!backingStoreAttached())
         return 0;
 
     return m_layer->backingStoreBytesPerPixel() * size().width() * m_layer->contentsScale() * size().height() * m_layer->contentsScale();

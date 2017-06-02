@@ -546,6 +546,11 @@ public:
     // Return an estimate of the backing store memory cost (in bytes). May be incorrect for tiled layers.
     WEBCORE_EXPORT virtual double backingStoreMemoryEstimate() const;
 
+    virtual bool backingStoreAttached() const { return true; }
+
+    void setCanDetachBackingStore(bool b) { m_canDetachBackingStore = b; }
+    bool canDetachBackingStore() const { return m_canDetachBackingStore; }
+
     virtual TiledBacking* tiledBacking() const { return 0; }
 
     void resetTrackedRepaints();
@@ -649,6 +654,7 @@ protected:
     bool m_isMaskLayer : 1;
     bool m_isTrackingDisplayListReplay : 1;
     bool m_userInteractionEnabled : 1;
+    bool m_canDetachBackingStore : 1;
     
     GraphicsLayerPaintingPhase m_paintingPhase;
     CompositingCoordinatesOrientation m_contentsOrientation; // affects orientation of layer contents

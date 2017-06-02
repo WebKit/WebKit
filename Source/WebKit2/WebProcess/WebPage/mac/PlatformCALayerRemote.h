@@ -101,7 +101,6 @@ public:
 
     void setBackingStoreAttached(bool) override;
     bool backingStoreAttached() const override;
-    bool backingContributesToMemoryEstimate() const override { return backingStoreAttached(); }
 
     bool geometryFlipped() const override;
     void setGeometryFlipped(bool) override;
