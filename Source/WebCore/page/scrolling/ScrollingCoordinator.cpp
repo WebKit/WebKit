@@ -91,7 +91,7 @@ bool ScrollingCoordinator::coordinatesScrollingForFrameView(const FrameView& fra
     if (!frameView.frame().isMainFrame() && !m_page->settings().scrollingTreeIncludesFrames())
         return false;
 
-    RenderView* renderView = m_page->mainFrame().contentRenderer();
+    RenderView* renderView = frameView.frame().contentRenderer();
     if (!renderView)
         return false;
     return renderView->usesCompositing();

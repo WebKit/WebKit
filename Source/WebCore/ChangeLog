@@ -1,3 +1,27 @@
+2017-06-02  Frederic Wang  <fwang@igalia.com>
+
+        [Mac] Include frames in the scrolling tree when ScrollingTreeIncludesFrames=true
+        https://bugs.webkit.org/show_bug.cgi?id=172825
+
+        Reviewed by Simon Fraser.
+
+        This commit generalizes RenderLayerCompositor/ScrollingCoordinator so that it handles the
+        case of non-main frames. When ScrollingTreeIncludesFrames=true, all the frames will appear
+        in the scrolling tree on Mac WK2.
+
+        Test: fast/scrolling/scrolling-tree-includes-frame.html
+
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::coordinatesScrollingForFrameView): Do not to restrict to the
+        main frame.
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateBacking): Do not to restrict to the main frame.
+        (WebCore::RenderLayerCompositor::useCoordinatedScrollingForLayer): Make this function a class
+        member so it can call hasCoordinatedScrolling and no longer needs a RenderView parameter.
+        (WebCore::RenderLayerCompositor::updateScrollCoordinatedStatus): Do not to restrict to the
+        main frame.
+        * rendering/RenderLayerCompositor.h: Introduce useCoordinatedScrollingForLayer.
+
 2017-06-02  Don Olmstead  <don.olmstead@am.sony.com>
 
         [WebCore] DragImageRef should correspond to USE(CAIRO)

@@ -460,6 +460,7 @@ private:
 
     // True if the FrameView uses a ScrollingCoordinator.
     bool hasCoordinatedScrolling() const;
+    bool useCoordinatedScrollingForLayer(const RenderLayer&) const;
 
     bool isAsyncScrollableStickyLayer(const RenderLayer&, const RenderLayer** enclosingAcceleratedOverflowLayer = nullptr) const;
     bool isViewportConstrainedFixedOrStickyLayer(const RenderLayer&) const;

@@ -1003,8 +1003,7 @@ bool RenderLayerCompositor::updateBacking(RenderLayer& layer, CompositingChangeR
 
             layer.ensureBacking();
 
-            // At this time, the ScrollingCoordinator only supports the top-level frame.
-            if (layer.isRootLayer() && isMainFrameCompositor()) {
+            if (layer.isRootLayer() && useCoordinatedScrollingForLayer(layer)) {
                 updateScrollCoordinatedStatus(layer);
                 if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())
                     scrollingCoordinator->frameViewRootLayerDidChange(m_renderView.frameView());
@@ -2731,9 +2730,9 @@ bool RenderLayerCompositor::isViewportConstrainedFixedOrStickyLayer(const Render
     return true;
 }
 
-static bool useCoordinatedScrollingForLayer(RenderView& view, const RenderLayer& layer)
+bool RenderLayerCompositor::useCoordinatedScrollingForLayer(const RenderLayer& layer) const
 {
-    if (layer.isRootLayer() && view.frameView().frame().isMainFrame())
+    if (layer.isRootLayer() && hasCoordinatedScrolling())
         return true;
 
     return layer.usesAcceleratedScrolling();
@@ -3660,7 +3659,7 @@ void RenderLayerCompositor::updateScrollCoordinatedStatus(RenderLayer& layer)
     if (isViewportConstrainedFixedOrStickyLayer(layer))
         coordinationRoles |= ViewportConstrained;
 
-    if (useCoordinatedScrollingForLayer(m_renderView, layer))
+    if (useCoordinatedScrollingForLayer(layer))
         coordinationRoles |= Scrolling;
 
     if (coordinationRoles) {
