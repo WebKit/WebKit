@@ -1,5 +1,42 @@
 2017-06-02  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Attributes table in Node Details Sidebar should have editable keys and values
+        https://bugs.webkit.org/show_bug.cgi?id=167076
+        <rdar://problem/30033629>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/DOMNodeDetailsSidebarPanel.js:
+        (WebInspector.DOMNodeDetailsSidebarPanel.prototype._refreshAttributes):
+        (WebInspector.DOMNodeDetailsSidebarPanel.prototype._attributeNodeValueChanged):
+        (WebInspector.DOMNodeDetailsSidebarPanel.prototype._createAttributesDataGrid): Deleted.
+        Rework creation of the attributes DataGrid so that it is only created once and cleared for
+        new content. Nodes in the DataGrid are now EditableDataGridNode instances so that attribute
+        names and values can be changed from within the sidebar. The DataGrid is also sorted based
+        on attribute name, to make finding attributes easier.
+
+        * UserInterface/Views/DataGrid.css:
+        (.data-grid tr.editable .cell-content > input):
+        (body:not(.window-inactive, .window-docked-inactive) .data-grid:matches(:focus, .force-focus) tr.editable.selected .cell-content > input):
+
+        * UserInterface/Views/DetailsSection.css:
+        (.details-section > .content .data-grid tr:not(.editable) td.value-column):
+        (.details-section > .content .data-grid tr:not(.editable) td.value-column > div):
+        (.details-section > .content .data-grid td.value-column): Deleted.
+        (.details-section > .content .data-grid td.value-column > div): Deleted.
+
+        * UserInterface/Main.html:
+        * UserInterface/Views/EditableDataGridNode.js: Added.
+        (WebInspector.EditableDataGridNode):
+        (WebInspector.EditableDataGridNode.prototype.get element):
+        (WebInspector.EditableDataGridNode.prototype.createCellContent):
+        (WebInspector.EditableDataGridNode.prototype._handleKeyPress):
+        (WebInspector.EditableDataGridNode.prototype._handleBlur):
+        (WebInspector.EditableDataGridNode.prototype._notifyInputElementValueChanged):
+        Special type of DataGridNode that wraps the content of each cell in an <input>.
+
+2017-06-02  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Existing query in Search tab doesn't perform search on reload
         https://bugs.webkit.org/show_bug.cgi?id=172663
 

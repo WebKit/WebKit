@@ -415,3 +415,17 @@ body[dir=rtl] .data-grid :matches(th, td):first-child {
         border-width: 0.5px;
     }
 }
+
+.data-grid tr.editable .cell-content > input {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background: none;
+    border: none;
+    outline: none;
+}
+
+body:not(.window-inactive, .window-docked-inactive) .data-grid:matches(:focus, .force-focus) tr.editable.selected .cell-content > input {
+    color: white;
+}

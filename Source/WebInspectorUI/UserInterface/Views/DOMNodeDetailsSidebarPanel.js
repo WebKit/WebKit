@@ -161,7 +161,33 @@ WebInspector.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel exten
 
     _refreshAttributes()
     {
-        this._attributesDataGridRow.dataGrid = this._createAttributesDataGrid();
+        let domNode = this.domNode;
+        if (!domNode || !domNode.hasAttributes()) {
+            // Remove the DataGrid to show the placeholder text.
+            this._attributesDataGridRow.dataGrid = null;
+            return;
+        }
+
+        let dataGrid = this._attributesDataGridRow.dataGrid;
+        if (!dataGrid) {
+            const columns = {
+                name: {title: WebInspector.UIString("Name"), width: "30%"},
+                value: {title: WebInspector.UIString("Value")},
+            };
+            dataGrid = this._attributesDataGridRow.dataGrid = new WebInspector.DataGrid(columns);
+        }
+
+        dataGrid.removeChildren();
+
+        let attributes = domNode.attributes();
+        attributes.sort((a, b) => a.name.localeCompare(b.name));
+        for (let attribute of attributes) {
+            let dataGridNode = new WebInspector.EditableDataGridNode(attribute);
+            dataGridNode.addEventListener(WebInspector.EditableDataGridNode.Event.ValueChanged, this._attributeNodeValueChanged, this);
+            dataGrid.appendChild(dataGridNode);
+        }
+
+        dataGrid.updateLayoutIfNeeded();
     }
 
     _refreshProperties()
@@ -712,6 +738,19 @@ WebInspector.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel exten
         this._refreshAccessibility();
     }
 
+    _attributeNodeValueChanged(event)
+    {
+        let change = event.data;
+        let data = event.target.data;
+
+        if (change.columnIdentifier === "name") {
+            this.domNode.removeAttribute(data[change.columnIdentifier], (error) => {
+                this.domNode.setAttribute(change.value, `${change.value}="${data.value}"`);
+            });
+        } else if (change.columnIdentifier === "value")
+            this.domNode.setAttributeValue(data.name, change.value);
+    }
+
     _characterDataModified(event)
     {
         if (event.data.node !== this.domNode)
@@ -769,26 +808,6 @@ WebInspector.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel exten
         }
         console.error("Unknown DOM custom element state: ", state);
         return null;
-    }
-
-    _createAttributesDataGrid()
-    {
-        var domNode = this.domNode;
-        if (!domNode || !domNode.hasAttributes())
-            return null;
-
-        var columns = {name: {title: WebInspector.UIString("Name"), width: "30%"}, value: {title: WebInspector.UIString("Value")}};
-        var dataGrid = new WebInspector.DataGrid(columns);
-
-        var attributes = domNode.attributes();
-        for (var i = 0; i < attributes.length; ++i) {
-            var attribute = attributes[i];
-
-            var node = new WebInspector.DataGridNode({name: attribute.name, value: attribute.value || ""}, false);
-            dataGrid.appendChild(node);
-        }
-
-        return dataGrid;
     }
 };
 

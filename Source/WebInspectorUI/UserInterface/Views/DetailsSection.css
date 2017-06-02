@@ -307,7 +307,7 @@ body[dir=rtl] .details-section > .content > .group > .row.simple > .value .go-to
     border-bottom: none;
 }
 
-.details-section > .content .data-grid td.value-column {
+.details-section > .content .data-grid tr:not(.editable) td.value-column {
     height: auto;
     line-height: initial;
     white-space: normal;
@@ -315,7 +315,7 @@ body[dir=rtl] .details-section > .content > .group > .row.simple > .value .go-to
     padding-bottom: 4px;
 }
 
-.details-section > .content .data-grid td.value-column > div {
+.details-section > .content .data-grid tr:not(.editable) td.value-column > div {
     white-space: normal;
     word-break: break-all;
 }
