@@ -39,6 +39,11 @@ PASS [Worker] Object.getOwnPropertyDescriptor(global, 'Crypto').hasOwnProperty('
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'Crypto').hasOwnProperty('set') is false
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'Crypto').enumerable is false
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'Crypto').configurable is true
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'CryptoKey').value is CryptoKey
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'CryptoKey').hasOwnProperty('get') is false
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'CryptoKey').hasOwnProperty('set') is false
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'CryptoKey').enumerable is false
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'CryptoKey').configurable is true
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'DOMException').value is DOMException
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'DOMException').hasOwnProperty('get') is false
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'DOMException').hasOwnProperty('set') is false
@@ -279,6 +284,11 @@ PASS [Worker] Object.getOwnPropertyDescriptor(global, 'String').hasOwnProperty('
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'String').hasOwnProperty('set') is false
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'String').enumerable is false
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'String').configurable is true
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'SubtleCrypto').value is SubtleCrypto
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'SubtleCrypto').hasOwnProperty('get') is false
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'SubtleCrypto').hasOwnProperty('set') is false
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'SubtleCrypto').enumerable is false
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'SubtleCrypto').configurable is true
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'Symbol').value is Symbol
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'Symbol').hasOwnProperty('get') is false
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'Symbol').hasOwnProperty('set') is false

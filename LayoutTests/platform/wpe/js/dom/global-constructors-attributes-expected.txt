@@ -293,6 +293,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'Crypto').hasOwnProperty('get') is 
 PASS Object.getOwnPropertyDescriptor(global, 'Crypto').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'Crypto').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'Crypto').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'CryptoKey').value is CryptoKey
+PASS Object.getOwnPropertyDescriptor(global, 'CryptoKey').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'CryptoKey').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'CryptoKey').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'CryptoKey').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'CustomElementRegistry').value is CustomElementRegistry
 PASS Object.getOwnPropertyDescriptor(global, 'CustomElementRegistry').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'CustomElementRegistry').hasOwnProperty('set') is false
@@ -2023,6 +2028,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'StyleSheetList').hasOwnProperty('g
 PASS Object.getOwnPropertyDescriptor(global, 'StyleSheetList').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'StyleSheetList').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'StyleSheetList').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'SubtleCrypto').value is SubtleCrypto
+PASS Object.getOwnPropertyDescriptor(global, 'SubtleCrypto').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'SubtleCrypto').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'SubtleCrypto').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'SubtleCrypto').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'Symbol').value is Symbol
 PASS Object.getOwnPropertyDescriptor(global, 'Symbol').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'Symbol').hasOwnProperty('set') is false

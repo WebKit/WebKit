@@ -1,3 +1,11 @@
+2017-06-02  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed WPE gardening.
+
+        * platform/wpe/TestExpectations: Add a few test failure expectations.
+        * platform/wpe/js/dom/global-constructors-attributes-dedicated-worker-expected.txt: Rebaseline.
+        * platform/wpe/js/dom/global-constructors-attributes-expected.txt: Ditto.
+
 2017-06-02  Javier Fernandez  <jfernandez@igalia.com>
 
         [css-grid] Logical margin incorrectly applied during the tracks sizing algorithm of auto tracks

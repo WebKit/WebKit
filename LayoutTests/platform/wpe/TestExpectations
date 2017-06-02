@@ -37,6 +37,7 @@ Bug(WPE) animations/font-variations/font-variation-settings-unlike.html [ Failur
 # Unknown
 Bug(WPE) animations/fill-forwards-auto-height.html [ ImageOnlyFailure Pass ]
 Bug(WPE) animations/negative-delay.html [ Failure ]
+webkit.org/b/120839 animations/cross-fade-background-image.html [ ImageOnlyFailure ]
 
 webkit.org/b/111612 animations/animation-delay-changed.html [ Failure Pass ]
 
@@ -48,6 +49,7 @@ Bug(WPE) canvas/philip/tests/2d.drawImage.animated.poster.html [ Failure ]
 Bug(WPE) canvas/philip/tests/2d.drawImage.broken.html [ Failure ]
 Bug(WPE) canvas/philip/tests/2d.drawImage.outsidesource.html [ Failure ]
 Bug(WPE) canvas/philip/tests/2d.missingargs.html [ Failure ]
+Bug(WPE) canvas/philip/tests/2d.pattern.animated.gif.html [ Failure ]
 Bug(WPE) canvas/philip/tests/2d.text.draw.baseline.bottom.html [ Failure ]
 Bug(WPE) canvas/philip/tests/2d.text.draw.baseline.hanging.html [ Failure ]
 Bug(WPE) canvas/philip/tests/2d.text.draw.baseline.ideographic.html [ Failure ]
@@ -550,3 +552,6 @@ webkit.org/b/133122 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_key
 webkit.org/b/133122 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/test_hkdf.https.html [ Failure ]
 webkit.org/b/133122 imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/aes_cbc.worker.html [ Failure ]
 webkit.org/b/133122 imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/test_aes_cbc.https.html [ Failure ]
+
+# ENABLE_CSS_COMPOSITING
+Bug(WPE) transitions/blendmode-transitions.html [ Failure ]
