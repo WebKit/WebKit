@@ -831,21 +831,6 @@ void WebSocketChannel::sendFrame(WebSocketFrame::OpCode opCode, const char* data
     m_handle->sendData(frameData.data(), frameData.size(), WTFMove(completionHandler));
 }
 
-ResourceRequest WebSocketChannel::clientHandshakeRequest() const
-{
-    return m_handshake->clientHandshakeRequest();
-}
-
-const ResourceResponse& WebSocketChannel::serverHandshakeResponse() const
-{
-    return m_handshake->serverHandshakeResponse();
-}
-
-WebSocketHandshake::Mode WebSocketChannel::handshakeMode() const
-{
-    return m_handshake->mode();
-}
-
 }  // namespace WebCore
 
 #endif  // ENABLE(WEB_SOCKETS)

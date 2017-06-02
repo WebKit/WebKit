@@ -29,26 +29,35 @@ WebInspector.FrameResourceManager = class FrameResourceManager extends WebInspec
     {
         super();
 
+        if (window.PageAgent)
+            PageAgent.enable();
+        if (window.NetworkAgent)
+            NetworkAgent.enable();
+
+        WebInspector.notifications.addEventListener(WebInspector.Notification.ExtraDomainsActivated, this._extraDomainsActivated, this);
+
+        this.initialize();
+    }
+
+    // Public
+
+    initialize()
+    {
+        var oldMainFrame = this._mainFrame;
+
         this._frameIdentifierMap = new Map;
         this._mainFrame = null;
         this._resourceRequestIdentifierMap = new Map;
         this._orphanedResources = new Map;
         this._webSocketIdentifierToURL = new Map;
 
+        if (this._mainFrame !== oldMainFrame)
+            this._mainFrameDidChange(oldMainFrame);
+
         this._waitingForMainFrameResourceTreePayload = true;
-
-        if (window.PageAgent) {
-            PageAgent.enable();
+        if (window.PageAgent)
             PageAgent.getResourceTree(this._processMainFrameResourceTreePayload.bind(this));
-        }
-
-        if (window.NetworkAgent)
-            NetworkAgent.enable();
-
-        WebInspector.notifications.addEventListener(WebInspector.Notification.ExtraDomainsActivated, this._extraDomainsActivated, this);
     }
-
-    // Public
 
     get mainFrame()
     {
@@ -237,13 +246,12 @@ WebInspector.FrameResourceManager = class FrameResourceManager extends WebInspec
         resource.readyState = WebInspector.WebSocketResource.ReadyState.Open;
 
         let elapsedTime = WebInspector.timelineManager.computeElapsedTime(timestamp);
+        resource.markAsFinished(elapsedTime);
 
         // FIXME: <webkit.org/b/169166> Web Inspector: WebSockets: Implement timing information
         let responseTiming = response.timing || null;
 
         resource.updateForResponse(resource.url, resource.mimeType, resource.type, response.headers, response.status, response.statusText, elapsedTime, responseTiming);
-
-        resource.markAsFinished(elapsedTime);
     }
 
     webSocketFrameReceived(requestId, timestamp, response)

@@ -95,9 +95,9 @@ WebInspector.WebSocketResource.Event = {
 };
 
 WebInspector.WebSocketResource.ReadyState = {
-    Closed: Symbol("closed"),
-    Connecting: Symbol("connecting"),
-    Open: Symbol("open"),
+    Closed: Symbol("web-socket-ready-state-closed"),
+    Connecting: Symbol("web-socket-ready-state-connecting"),
+    Open: Symbol("web-socket-ready-state-open"),
 };
 
 WebInspector.WebSocketResource.OpCodes = {

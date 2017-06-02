@@ -39,8 +39,6 @@
 #include "URL.h"
 #include "WebSocketChannelClient.h"
 #include <wtf/Deque.h>
-#include <wtf/HashSet.h>
-#include <wtf/Lock.h>
 
 namespace JSC {
 class ArrayBuffer;
@@ -64,9 +62,6 @@ public:
     static ExceptionOr<Ref<WebSocket>> create(ScriptExecutionContext&, const String& url, const Vector<String>& protocols);
     virtual ~WebSocket();
 
-    static HashSet<WebSocket*>& allActiveWebSockets(const LockHolder&);
-    static StaticLock& allActiveWebSocketsMutex();
-
     enum State {
         CONNECTING = 0,
         OPEN = 1,
@@ -85,8 +80,6 @@ public:
 
     ExceptionOr<void> close(std::optional<unsigned short> code, const String& reason);
 
-    RefPtr<ThreadableWebSocketChannel> channel() const;
-
     const URL& url() const;
     State readyState() const;
     unsigned bufferedAmount() const;
@@ -96,8 +89,6 @@ public:
 
     String binaryType() const;
     ExceptionOr<void> setBinaryType(const String&);
-
-    ScriptExecutionContext* scriptExecutionContext() const final;
 
     using RefCounted::ref;
     using RefCounted::deref;
@@ -117,6 +108,7 @@ private:
     const char* activeDOMObjectName() const final;
 
     EventTargetInterface eventTargetInterface() const final;
+    ScriptExecutionContext* scriptExecutionContext() const final;
 
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }

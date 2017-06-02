@@ -60,8 +60,6 @@
 #include "SubresourceLoader.h"
 #include "ThreadableLoaderClient.h"
 #include "URL.h"
-#include "WebSocket.h"
-#include "WebSocketChannel.h"
 #include "WebSocketFrame.h"
 #include <inspector/ContentSearchUtilities.h>
 #include <inspector/IdentifiersFactory.h>
@@ -69,7 +67,6 @@
 #include <inspector/InspectorValues.h>
 #include <inspector/ScriptCallStack.h>
 #include <inspector/ScriptCallStackFactory.h>
-#include <wtf/Lock.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Stopwatch.h>
 #include <wtf/text/StringBuilder.h>
@@ -658,31 +655,6 @@ void InspectorNetworkAgent::enable()
 {
     m_enabled = true;
     m_instrumentingAgents.setInspectorNetworkAgent(this);
-
-    LockHolder lock(WebSocket::allActiveWebSocketsMutex());
-
-    for (WebSocket* webSocket : WebSocket::allActiveWebSockets(lock)) {
-        if (!is<Document>(webSocket->scriptExecutionContext()) || !is<WebSocketChannel>(webSocket->channel().get()))
-            continue;
-
-        Document* document = downcast<Document>(webSocket->scriptExecutionContext());
-        if (document->page() != &m_pageAgent->page())
-            continue;
-
-        WebSocketChannel* channel = downcast<WebSocketChannel>(webSocket->channel().get());
-        if (!channel)
-            continue;
-
-        unsigned identifier = channel->identifier();
-        didCreateWebSocket(identifier, webSocket->url());
-        willSendWebSocketHandshakeRequest(identifier, channel->clientHandshakeRequest());
-
-        if (channel->handshakeMode() == WebSocketHandshake::Connected)
-            didReceiveWebSocketHandshakeResponse(identifier, channel->serverHandshakeResponse());
-
-        if (webSocket->readyState() == WebSocket::CLOSED)
-            didCloseWebSocket(identifier);
-    }
 }
 
 void InspectorNetworkAgent::disable(ErrorString&)

@@ -58,7 +58,6 @@
 #include <runtime/ArrayBuffer.h>
 #include <runtime/ArrayBufferView.h>
 #include <wtf/HashSet.h>
-#include <wtf/NeverDestroyed.h>
 #include <wtf/RunLoop.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
@@ -152,19 +151,10 @@ WebSocket::WebSocket(ScriptExecutionContext& context)
     , m_extensions(emptyString())
     , m_resumeTimer(*this, &WebSocket::resumeTimerFired)
 {
-    LockHolder lock(allActiveWebSocketsMutex());
-
-    allActiveWebSockets(lock).add(this);
 }
 
 WebSocket::~WebSocket()
 {
-    {
-        LockHolder lock(allActiveWebSocketsMutex());
-
-        allActiveWebSockets(lock).remove(this);
-    }
-
     if (m_channel)
         m_channel->disconnect();
 }
@@ -192,18 +182,6 @@ ExceptionOr<Ref<WebSocket>> WebSocket::create(ScriptExecutionContext& context, c
 ExceptionOr<Ref<WebSocket>> WebSocket::create(ScriptExecutionContext& context, const String& url, const String& protocol)
 {
     return create(context, url, Vector<String> { 1, protocol });
-}
-
-HashSet<WebSocket*>& WebSocket::allActiveWebSockets(const LockHolder&)
-{
-    static NeverDestroyed<HashSet<WebSocket*>> activeWebSockets;
-    return activeWebSockets;
-}
-
-StaticLock& WebSocket::allActiveWebSocketsMutex()
-{
-    static StaticLock mutex;
-    return mutex;
 }
 
 ExceptionOr<void> WebSocket::connect(const String& url)
@@ -427,11 +405,6 @@ ExceptionOr<void> WebSocket::close(std::optional<unsigned short> optionalCode, c
     if (m_channel)
         m_channel->close(code, reason);
     return { };
-}
-
-RefPtr<ThreadableWebSocketChannel> WebSocket::channel() const
-{
-    return m_channel;
 }
 
 const URL& WebSocket::url() const

@@ -53,8 +53,6 @@ public:
     static Ref<ThreadableWebSocketChannel> create(ScriptExecutionContext&, WebSocketChannelClient&, SocketProvider&);
     ThreadableWebSocketChannel() { }
 
-    virtual bool isWebSocketChannel() const { return false; }
-
     enum SendResult {
         SendSuccess,
         SendFail
