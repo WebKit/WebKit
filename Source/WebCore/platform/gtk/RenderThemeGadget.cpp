@@ -60,8 +60,6 @@ static GRefPtr<GtkStyleContext> createStyleContext(GtkWidgetPath* path, GtkStyle
     GRefPtr<GtkStyleContext> context = adoptGRef(gtk_style_context_new());
     gtk_style_context_set_path(context.get(), path);
     gtk_style_context_set_parent(context.get(), parent);
-    // Unfortunately, we have to explicitly set the state again here for it to take effect.
-    gtk_style_context_set_state(context.get(), gtk_widget_path_iter_get_state(path, -1));
     return context;
 }
 
@@ -72,7 +70,6 @@ static void appendElementToPath(GtkWidgetPath* path, const RenderThemeGadget::In
     gtk_widget_path_iter_set_object_name(path, -1, info.name);
     for (const auto* className : info.classList)
         gtk_widget_path_iter_add_class(path, -1, className);
-    gtk_widget_path_iter_set_state(path, -1, static_cast<GtkStateFlags>(gtk_widget_path_iter_get_state(path, -1) | info.state));
 }
 
 RenderThemeGadget::RenderThemeGadget(const RenderThemeGadget::Info& info, RenderThemeGadget* parent, const Vector<RenderThemeGadget::Info> siblings, unsigned position)
@@ -144,6 +141,16 @@ double RenderThemeGadget::opacity() const
     double returnValue;
     gtk_style_context_get(m_context.get(), gtk_style_context_get_state(m_context.get()), "opacity", &returnValue, nullptr);
     return returnValue;
+}
+
+GtkStateFlags RenderThemeGadget::state() const
+{
+    return gtk_style_context_get_state(m_context.get());
+}
+
+void RenderThemeGadget::setState(GtkStateFlags state)
+{
+    gtk_style_context_set_state(m_context.get(), state);
 }
 
 IntSize RenderThemeGadget::minimumSize() const

@@ -1,3 +1,89 @@
+2017-06-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Cache RenderThemeGadget hierarchies for rendering themed elements with GTK+ 3.20+
+        https://bugs.webkit.org/show_bug.cgi?id=162673
+
+        Reviewed by Michael Catanzaro.
+
+        Because of the way the new theming system works in GTK+ >= 3.20 we are currently creating a gadget hierarchy
+        every time we need to render a styled element or get layout information about it. That's happening on every
+        repaint, and it's specially problematic for overlay scrollbar indicators that fade in/out when shown/hidden. We
+        need to cache the gadgets and simply apply the state before every paint or layout query. When using GtkWidgetPath,
+        calling gtk_style_context_save() breaks the gadget hierarchy, and style classes need to be set when building the
+        GtkWidgetPath. That means we can't cache RenderThemeGadgets, call save, apply style classes and state, and then
+        call restore. We need to cache gadget hierarchies with fixed style classes. Fortunately, setting the state does
+        work, so we don't need to also cache a different hierarchy for every possible state. For example, for the
+        particular case of scrollbars we would cache VerticalScrollbarRight, VerticalScrollbarLeft, HorizontalScrollbar,
+        VerticalScrollIndicatorRight, VerticalScrollIndicatorLeft and HorizontalScrollIndicator. In practice, we will
+        only have 4 of those at the same time in the cache.
+        This patch adds RenderThemeWidget to represent a hierarchy of gadgets with fixed style classes that can be
+        cached and reused to render or query style of those "widgets". It also simplifies the RenderThemeGtk and
+        ScrollbarThemeGtk code by removing a lot of duplicated code to build the gadget hierarchies.
+
+        * PlatformGTK.cmake:
+        * platform/gtk/RenderThemeGadget.cpp:
+        (WebCore::createStyleContext):
+        (WebCore::appendElementToPath):
+        (WebCore::RenderThemeGadget::state):
+        (WebCore::RenderThemeGadget::setState):
+        * platform/gtk/RenderThemeGadget.h:
+        * platform/gtk/RenderThemeWidget.cpp: Added.
+        (WebCore::widgetMap):
+        (WebCore::RenderThemeWidget::getOrCreate):
+        (WebCore::RenderThemeWidget::clearCache):
+        (WebCore::RenderThemeWidget::~RenderThemeWidget):
+        (WebCore::RenderThemeScrollbar::RenderThemeScrollbar):
+        (WebCore::RenderThemeScrollbar::stepper):
+        (WebCore::RenderThemeToggleButton::RenderThemeToggleButton):
+        (WebCore::RenderThemeButton::RenderThemeButton):
+        (WebCore::RenderThemeComboBox::RenderThemeComboBox):
+        (WebCore::RenderThemeEntry::RenderThemeEntry):
+        (WebCore::RenderThemeSearchEntry::RenderThemeSearchEntry):
+        (WebCore::RenderThemeSpinButton::RenderThemeSpinButton):
+        (WebCore::RenderThemeSlider::RenderThemeSlider):
+        (WebCore::RenderThemeProgressBar::RenderThemeProgressBar):
+        (WebCore::RenderThemeListView::RenderThemeListView):
+        (WebCore::RenderThemeIcon::RenderThemeIcon):
+        * platform/gtk/RenderThemeWidget.h: Added.
+        (WebCore::RenderThemeEntry::entry):
+        (WebCore::RenderThemeEntry::selection):
+        * platform/gtk/ScrollbarThemeGtk.cpp:
+        (WebCore::ScrollbarThemeGtk::themeChanged):
+        (WebCore::ScrollbarThemeGtk::updateThemeProperties):
+        (WebCore::widgetTypeForScrollbar):
+        (WebCore::contentsRectangle):
+        (WebCore::ScrollbarThemeGtk::trackRect):
+        (WebCore::ScrollbarThemeGtk::backButtonRect):
+        (WebCore::ScrollbarThemeGtk::forwardButtonRect):
+        (WebCore::ScrollbarThemeGtk::paint):
+        (WebCore::ScrollbarThemeGtk::scrollbarThickness):
+        (WebCore::ScrollbarThemeGtk::minimumThumbLength):
+        * rendering/RenderThemeGtk.cpp:
+        (WebCore::createStyleContext):
+        (WebCore::setToggleSize):
+        (WebCore::paintToggle):
+        (WebCore::RenderThemeGtk::paintButton):
+        (WebCore::menuListColor):
+        (WebCore::RenderThemeGtk::popupInternalPaddingBox):
+        (WebCore::RenderThemeGtk::paintMenuList):
+        (WebCore::RenderThemeGtk::adjustTextFieldStyle):
+        (WebCore::RenderThemeGtk::paintTextField):
+        (WebCore::adjustSearchFieldIconStyle):
+        (WebCore::paintSearchFieldIcon):
+        (WebCore::RenderThemeGtk::paintSliderTrack):
+        (WebCore::RenderThemeGtk::adjustSliderThumbSize):
+        (WebCore::RenderThemeGtk::paintSliderThumb):
+        (WebCore::RenderThemeGtk::progressBarRectForBounds):
+        (WebCore::RenderThemeGtk::paintProgressBar):
+        (WebCore::RenderThemeGtk::adjustInnerSpinButtonStyle):
+        (WebCore::RenderThemeGtk::paintInnerSpinButton):
+        (WebCore::styleColor):
+        (WebCore::RenderThemeGtk::platformActiveSelectionBackgroundColor):
+        (WebCore::RenderThemeGtk::platformInactiveSelectionBackgroundColor):
+        (WebCore::RenderThemeGtk::platformActiveSelectionForegroundColor):
+        (WebCore::RenderThemeGtk::platformInactiveSelectionForegroundColor):
+        (WebCore::RenderThemeGtk::paintMediaButton):
+
 2017-06-01  Andreas Kling  <akling@apple.com>
 
         [Mac] Remove backing store for layers that are outside the viewport
