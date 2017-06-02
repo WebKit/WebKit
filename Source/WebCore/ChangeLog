@@ -1,3 +1,14 @@
+2017-06-02  Don Olmstead  <don.olmstead@am.sony.com>
+
+        [WebCore] DragImageRef should correspond to USE(CAIRO)
+        https://bugs.webkit.org/show_bug.cgi?id=172863
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        No new tests. No change in behavior.
+
+        * platform/DragImage.h:
+
 2017-06-02  Frederic Wang  <fwang@igalia.com>
 
         [Mac] Use compositing for frames when ScrollingTreeIncludesFrames=true
