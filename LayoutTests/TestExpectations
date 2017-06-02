@@ -284,10 +284,11 @@ webkit.org/b/136754 css3/flexbox/csswg/ttwf-reftest-flex-wrap.html [ ImageOnlyFa
 # grid layout tests
 webkit.org/b/165062 fast/css-grid-layout/grid-baseline.html [ ImageOnlyFailure ]
 webkit.org/b/165062 fast/css-grid-layout/grid-baseline-margins.html [ ImageOnlyFailure ]
-webkit.org/b/172590 imported/w3c/web-platform-tests/css/css-grid-1/abspos/orthogonal-positioned-grid-items-013.html [ ImageOnlyFailure ]
-webkit.org/b/172590 imported/w3c/web-platform-tests/css/css-grid-1/abspos/orthogonal-positioned-grid-items-017.html [ ImageOnlyFailure ]
 webkit.org/b/149891 imported/w3c/web-platform-tests/css/css-grid-1/grid-layout-properties.html [ Failure ]
 webkit.org/b/169271 imported/w3c/web-platform-tests/css/css-grid-1/grid-items/grid-items-sizing-alignment-001.html [ ImageOnlyFailure ]
+webkit.org/b/172836 imported/w3c/web-platform-tests/css/css-grid-1/alignment/grid-self-alignment-stretch-014.html [ Failure ]
+webkit.org/b/172836 imported/w3c/web-platform-tests/css/css-grid-1/alignment/grid-self-alignment-stretch-vertical-rl-014.html [ Failure ]
+webkit.org/b/172836 imported/w3c/web-platform-tests/css/css-grid-1/alignment/grid-self-alignment-stretch-vertical-lr-014.html [ Failure ]
 
 # selectors4
 webkit.org/b/64861 imported/w3c/web-platform-tests/css/selectors4/selectors-dir-selector-ltr-001.html [ ImageOnlyFailure ]

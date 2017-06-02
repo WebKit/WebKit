@@ -1,3 +1,16 @@
+2017-06-02  Javier Fernandez  <jfernandez@igalia.com>
+
+        [css-grid] Margin wrong applied when stretching an orthogonal item in fixed size track
+        https://bugs.webkit.org/show_bug.cgi?id=172590
+
+        Reviewed by Sergio Villar Senin.
+
+        All the test cases of these tests pass with this change, so updating their expectations accordingly.
+
+        * web-platform-tests/css/css-grid-1/alignment/grid-self-alignment-stretch-006-expected.txt:
+        * web-platform-tests/css/css-grid-1/alignment/grid-self-alignment-stretch-vertical-lr-006-expected.txt:
+        * web-platform-tests/css/css-grid-1/alignment/grid-self-alignment-stretch-vertical-rl-006-expected.txt:
+
 2017-06-01  Javier Fernandez  <jfernandez@igalia.com>
 
         [css-grid] Update W3C web platform tests for the CSS Grid Layout feature

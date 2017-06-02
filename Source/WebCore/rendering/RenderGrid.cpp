@@ -1135,10 +1135,9 @@ static LayoutUnit computeOverflowAlignmentOffset(OverflowAlignment overflow, Lay
     return 0;
 }
 
-// FIXME: This logic is shared by RenderFlexibleBox, so it should be moved to RenderBox.
-LayoutUnit RenderGrid::marginLogicalHeightForChild(const RenderBox& child) const
+LayoutUnit RenderGrid::marginLogicalSizeForChild(GridTrackSizingDirection direction, const RenderBox& child) const
 {
-    return isHorizontalWritingMode() ? child.verticalMarginExtent() : child.horizontalMarginExtent();
+    return flowAwareDirectionForChild(child, direction) == ForColumns ? child.marginLogicalWidth() : child.marginLogicalHeight();
 }
 
 LayoutUnit RenderGrid::computeMarginLogicalSizeForChild(GridTrackSizingDirection direction, const RenderBox& child) const
@@ -1161,7 +1160,8 @@ LayoutUnit RenderGrid::availableAlignmentSpaceForChildBeforeStretching(LayoutUni
     // Because we want to avoid multiple layouts, stretching logic might be performed before
     // children are laid out, so we can't use the child cached values. Hence, we need to
     // compute margins in order to determine the available height before stretching.
-    return gridAreaBreadthForChild - (child.needsLayout() ? computeMarginLogicalSizeForChild(ForRows, child) : marginLogicalHeightForChild(child));
+    GridTrackSizingDirection childBlockFlowDirection = flowAwareDirectionForChild(child, ForRows);
+    return gridAreaBreadthForChild - (child.needsLayout() ? computeMarginLogicalSizeForChild(childBlockFlowDirection, child) : marginLogicalSizeForChild(childBlockFlowDirection, child));
 }
 
 StyleSelfAlignmentData RenderGrid::alignSelfForChild(const RenderBox& child) const

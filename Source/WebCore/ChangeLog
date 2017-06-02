@@ -1,3 +1,26 @@
+2017-06-02  Javier Fernandez  <jfernandez@igalia.com>
+
+        [css-grid] Margin wrong applied when stretching an orthogonal item in fixed size track
+        https://bugs.webkit.org/show_bug.cgi?id=172590
+
+        Reviewed by Sergio Villar Senin.
+
+        We need to consider orthogonality when using the item's logical margin to
+        compute the available space for stretching.
+
+        The issue this patch fixes is only reproducible when the grid layout logic
+        is executed several times, since probably the item doesn't need to be
+        laid out again. In such cases, we just get the cached logical margins
+        but we were not taking orthogonality into account.
+
+        Test: fast/css-grid-layout/grid-item-stretching-must-not-depend-on-previous-layouts.html
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::layoutBlock):
+        (WebCore::RenderGrid::marginLogicalSizeForChild):
+        (WebCore::RenderGrid::availableAlignmentSpaceForChildBeforeStretching):
+        * rendering/RenderGrid.h:
+
 2017-06-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Cache RenderThemeGadget hierarchies for rendering themed elements with GTK+ 3.20+

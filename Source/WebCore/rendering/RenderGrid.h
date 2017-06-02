@@ -130,7 +130,7 @@ private:
     void applyStretchAlignmentToTracksIfNeeded(GridTrackSizingDirection);
 
     void paintChildren(PaintInfo& forSelf, const LayoutPoint& paintOffset, PaintInfo& forChild, bool usePrintRect) override;
-    LayoutUnit marginLogicalHeightForChild(const RenderBox&) const;
+    LayoutUnit marginLogicalSizeForChild(GridTrackSizingDirection, const RenderBox&) const;
     LayoutUnit computeMarginLogicalSizeForChild(GridTrackSizingDirection, const RenderBox&) const;
     LayoutUnit availableAlignmentSpaceForChildBeforeStretching(LayoutUnit gridAreaBreadthForChild, const RenderBox&) const;
     StyleSelfAlignmentData justifySelfForChild(const RenderBox&) const;
