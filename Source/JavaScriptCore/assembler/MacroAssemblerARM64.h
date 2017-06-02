@@ -911,7 +911,7 @@ public:
 
     void xor32(Address src, RegisterID dest)
     {
-        load32(src, getCachedDataTemptRegisterIDAndInvalidate());
+        load32(src, getCachedDataTempRegisterIDAndInvalidate());
         xor32(dataTempRegister, dest);
     }
 
@@ -1000,7 +1000,7 @@ public:
     
     void xor64(Address src, RegisterID dest)
     {
-        load64(src, getCachedDataTemptRegisterIDAndInvalidate());
+        load64(src, getCachedDataTempRegisterIDAndInvalidate());
         xor64(dataTempRegister, dest);
     }
 

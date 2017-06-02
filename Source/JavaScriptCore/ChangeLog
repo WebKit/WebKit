@@ -1,3 +1,11 @@
+2017-06-02  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, attempt to fix the iOS build after r217711.
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::xor32):
+        (JSC::MacroAssemblerARM64::xor64):
+
 2017-06-01  Filip Pizlo  <fpizlo@apple.com>
 
         GC should use scrambled free-lists
