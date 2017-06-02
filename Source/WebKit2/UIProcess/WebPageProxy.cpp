@@ -5560,6 +5560,7 @@ WebPageCreationParameters WebPageProxy::creationParameters()
     parameters.mayStartMediaWhenInWindow = m_mayStartMediaWhenInWindow;
     parameters.minimumLayoutSize = m_minimumLayoutSize;
     parameters.autoSizingShouldExpandToViewHeight = m_autoSizingShouldExpandToViewHeight;
+    parameters.viewportSizeForCSSViewportUnits = m_viewportSizeForCSSViewportUnits;
     parameters.scrollPinningBehavior = m_scrollPinningBehavior;
     if (m_scrollbarOverlayStyle)
         parameters.scrollbarOverlayStyle = m_scrollbarOverlayStyle.value();
@@ -6082,6 +6083,19 @@ void WebPageProxy::setAutoSizingShouldExpandToViewHeight(bool shouldExpand)
         return;
 
     m_process->send(Messages::WebPage::SetAutoSizingShouldExpandToViewHeight(shouldExpand), m_pageID);
+}
+
+void WebPageProxy::setViewportSizeForCSSViewportUnits(const IntSize& viewportSize)
+{
+    if (m_viewportSizeForCSSViewportUnits && *m_viewportSizeForCSSViewportUnits == viewportSize)
+        return;
+
+    m_viewportSizeForCSSViewportUnits = viewportSize;
+
+    if (!isValid())
+        return;
+
+    m_process->send(Messages::WebPage::SetViewportSizeForCSSViewportUnits(viewportSize), m_pageID);
 }
 
 #if USE(AUTOMATIC_TEXT_REPLACEMENT)

@@ -1,3 +1,37 @@
+2017-06-02  Zalan Bujtas  <zalan@apple.com>
+
+        Allow clients to override viewport size for CSS viewport units.
+        https://bugs.webkit.org/show_bug.cgi?id=172838
+        <rdar://problem/32523441>
+
+        Reviewed by Tim Horton.
+
+        This enables auto-sizing clients to ensure that styles relative to the viewport are
+        resolved to a set value (presumably the size of the container) as opposed to the preferred
+        document size (which is set as the FrameView size).
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _viewportSizeForCSSViewportUnits]):
+        (-[WKWebView _setViewportSizeForCSSViewportUnits:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters):
+        (WebKit::WebPageProxy::setViewportSizeForCSSViewportUnits):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::viewportSizeForCSSViewportUnits):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::transitionToCommittedForNewPage):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_cpuLimit):
+        (WebKit::WebPage::setViewportSizeForCSSViewportUnits):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::viewportSizeForCSSViewportUnits):
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2017-06-02  Simon Fraser  <simon.fraser@apple.com>
 
         Get <chrono> out of StdLibExtras.h

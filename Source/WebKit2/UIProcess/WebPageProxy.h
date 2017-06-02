@@ -1003,6 +1003,9 @@ public:
     bool autoSizingShouldExpandToViewHeight() const { return m_autoSizingShouldExpandToViewHeight; }
     void setAutoSizingShouldExpandToViewHeight(bool);
 
+    void setViewportSizeForCSSViewportUnits(const WebCore::IntSize&);
+    WebCore::IntSize viewportSizeForCSSViewportUnits() const { return m_viewportSizeForCSSViewportUnits.value_or(WebCore::IntSize()); }
+
     void didReceiveAuthenticationChallengeProxy(uint64_t frameID, Ref<AuthenticationChallengeProxy>&&);
 
     int64_t spellDocumentTag();
@@ -1899,6 +1902,7 @@ private:
     bool m_suppressVisibilityUpdates;
     bool m_autoSizingShouldExpandToViewHeight;
     WebCore::IntSize m_minimumLayoutSize;
+    std::optional<WebCore::IntSize> m_viewportSizeForCSSViewportUnits;
 
     // Visual viewports
     WebCore::LayoutSize m_baseLayoutViewportSize;

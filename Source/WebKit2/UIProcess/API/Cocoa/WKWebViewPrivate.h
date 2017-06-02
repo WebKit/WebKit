@@ -144,6 +144,8 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 // For use with _layoutMode = _WKLayoutModeFixedSize:
 @property (nonatomic, setter=_setFixedLayoutSize:) CGSize _fixedLayoutSize;
 
+@property (nonatomic, setter=_setViewportSizeForCSSViewportUnits:) CGSize _viewportSizeForCSSViewportUnits WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 @property (nonatomic, setter=_setViewScale:) CGFloat _viewScale;
 
 #if TARGET_OS_IPHONE

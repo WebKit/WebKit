@@ -1365,6 +1365,8 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
             m_frame->coreFrame()->view()->setAutoSizeFixedMinimumHeight(webPage->size().height());
     }
 
+    if (auto viewportSizeForViewportUnits = webPage->viewportSizeForCSSViewportUnits())
+        m_frame->coreFrame()->view()->setViewportSizeForCSSViewportUnits(*viewportSizeForViewportUnits);
     m_frame->coreFrame()->view()->setProhibitsScrolling(shouldDisableScrolling);
     m_frame->coreFrame()->view()->setVisualUpdatesAllowedByClient(!webPage->shouldExtendIncrementalRenderingSuppression());
 #if PLATFORM(COCOA)

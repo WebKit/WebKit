@@ -65,6 +65,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << mayStartMediaWhenInWindow;
     encoder << minimumLayoutSize;
     encoder << autoSizingShouldExpandToViewHeight;
+    encoder << viewportSizeForCSSViewportUnits;
     encoder.encodeEnum(scrollPinningBehavior);
     encoder << scrollbarOverlayStyle;
     encoder << backgroundExtendsBeyondPage;
@@ -176,6 +177,8 @@ bool WebPageCreationParameters::decode(IPC::Decoder& decoder, WebPageCreationPar
     if (!decoder.decode(parameters.minimumLayoutSize))
         return false;
     if (!decoder.decode(parameters.autoSizingShouldExpandToViewHeight))
+        return false;
+    if (!decoder.decode(parameters.viewportSizeForCSSViewportUnits))
         return false;
     if (!decoder.decodeEnum(parameters.scrollPinningBehavior))
         return false;

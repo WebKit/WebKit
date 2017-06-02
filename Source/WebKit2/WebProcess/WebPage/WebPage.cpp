@@ -484,6 +484,7 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
 
     setMinimumLayoutSize(parameters.minimumLayoutSize);
     setAutoSizingShouldExpandToViewHeight(parameters.autoSizingShouldExpandToViewHeight);
+    setViewportSizeForCSSViewportUnits(parameters.viewportSizeForCSSViewportUnits);
     
     setScrollPinningBehavior(parameters.scrollPinningBehavior);
     if (parameters.scrollbarOverlayStyle)
@@ -5207,6 +5208,16 @@ void WebPage::setAutoSizingShouldExpandToViewHeight(bool shouldExpand)
     m_autoSizingShouldExpandToViewHeight = shouldExpand;
 
     corePage()->mainFrame().view()->setAutoSizeFixedMinimumHeight(shouldExpand ? m_viewSize.height() : 0);
+}
+
+void WebPage::setViewportSizeForCSSViewportUnits(std::optional<WebCore::IntSize> viewportSize)
+{
+    if (m_viewportSizeForCSSViewportUnits == viewportSize)
+        return;
+
+    m_viewportSizeForCSSViewportUnits = viewportSize;
+    if (m_viewportSizeForCSSViewportUnits)
+        corePage()->mainFrame().view()->setViewportSizeForCSSViewportUnits(*m_viewportSizeForCSSViewportUnits);
 }
 
 bool WebPage::isSmartInsertDeleteEnabled()

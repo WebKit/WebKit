@@ -879,6 +879,9 @@ public:
     void setAutoSizingShouldExpandToViewHeight(bool shouldExpand);
     bool autoSizingShouldExpandToViewHeight() { return m_autoSizingShouldExpandToViewHeight; }
 
+    void setViewportSizeForCSSViewportUnits(std::optional<WebCore::IntSize>);
+    std::optional<WebCore::IntSize> viewportSizeForCSSViewportUnits() const { return m_viewportSizeForCSSViewportUnits; }
+
     bool canShowMIMEType(const String& MIMEType) const;
 
     void addTextCheckingRequest(uint64_t requestID, Ref<WebCore::TextCheckingRequest>&&);
@@ -1456,6 +1459,7 @@ private:
 
     WebCore::IntSize m_minimumLayoutSize;
     bool m_autoSizingShouldExpandToViewHeight { false };
+    std::optional<WebCore::IntSize> m_viewportSizeForCSSViewportUnits;
 
     bool m_userIsInteracting { false };
     bool m_isAssistingNodeDueToUserInteraction { false };

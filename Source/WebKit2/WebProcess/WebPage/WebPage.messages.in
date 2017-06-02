@@ -399,6 +399,8 @@ messages -> WebPage LegacyReceiver {
     SetMinimumLayoutSize(WebCore::IntSize minimumLayoutSize)
     SetAutoSizingShouldExpandToViewHeight(bool shouldExpand)
 
+    SetViewportSizeForCSSViewportUnits(std::optional<WebCore::IntSize> viewportSize)
+
 #if PLATFORM(COCOA)
     HandleAlternativeTextUIResult(String result)
 #endif

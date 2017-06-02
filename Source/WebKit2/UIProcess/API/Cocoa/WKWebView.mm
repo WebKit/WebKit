@@ -1047,6 +1047,20 @@ static WKErrorCode callbackErrorCode(WebKit::CallbackBase::Error error)
 #endif // PLATFORM(IOS)
 }
 
+- (CGSize)_viewportSizeForCSSViewportUnits
+{
+    return _page->viewportSizeForCSSViewportUnits();
+}
+
+- (void)_setViewportSizeForCSSViewportUnits:(CGSize)viewportSize
+{
+    auto viewportSizeForViewportUnits = WebCore::IntSize(viewportSize);
+    if (viewportSizeForViewportUnits.isEmpty())
+        [NSException raise:NSInvalidArgumentException format:@"Viewport size should not be empty"];
+
+    _page->setViewportSizeForCSSViewportUnits(viewportSizeForViewportUnits);
+}
+
 #pragma mark iOS-specific methods
 
 #if PLATFORM(IOS)
