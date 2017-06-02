@@ -1,3 +1,24 @@
+2017-06-02  Chris Dumez  <cdumez@apple.com>
+
+        Crash under OrientationNotifier::Observer::setNotifier()
+        https://bugs.webkit.org/show_bug.cgi?id=172847
+        <rdar://problem/32519127>
+
+        Reviewed by Youenn Fablet.
+
+        Update OrientationNotifier::Observer::setNotifier() to unregister itself from
+        its current notifier if it already has one. This is needed because
+        Internals::setCameraMediaStreamTrackOrientation() may be used to override the
+        notifier of an observer. If we override the notifier without unregistering
+        the observer from its previous notifier, then the previous notifier will not
+        get notified when the observer gets destroyed.
+
+        No new tests, already covered by webrtc/video-rotation.html that is currently
+        failing on some bots.
+
+        * platform/OrientationNotifer.h:
+        (WebCore::OrientationNotifier::Observer::setNotifier):
+
 2017-06-02  Javier Fernandez  <jfernandez@igalia.com>
 
         [css-grid] Logical margin incorrectly applied during the tracks sizing algorithm of auto tracks

@@ -38,7 +38,7 @@ public:
     public:
         virtual ~Observer();
         virtual void orientationChanged(int orientation) = 0;
-        void setNotifier(OrientationNotifier* notifier) { m_notifier = notifier; }
+        void setNotifier(OrientationNotifier*);
 
     private:
         OrientationNotifier* m_notifier { nullptr };
@@ -63,6 +63,18 @@ inline OrientationNotifier::Observer::~Observer()
 {
     if (m_notifier)
         m_notifier->removeObserver(*this);
+}
+
+void OrientationNotifier::Observer::setNotifier(OrientationNotifier* notifier)
+{
+    if (m_notifier == notifier)
+        return;
+
+    if (m_notifier && notifier)
+        m_notifier->removeObserver(*this);
+
+    ASSERT(!m_notifier || !notifier);
+    m_notifier = notifier;
 }
 
 inline void OrientationNotifier::orientationChanged(int orientation)
