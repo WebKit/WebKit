@@ -66,10 +66,11 @@ class Results {
     
     reportError(message, url, lineNumber)
     {
-        for (let subResult of Results.subResults)
-            this[subResult].reportResult(Stats.error);
-        if (isInBrowser)
-            this._benchmark.cells.message.innerHTML = url + ":" + lineNumber + ": " + message;
+        if (isInBrowser) {
+            this._benchmark.cells.message.classList.remove('running');
+            this._benchmark.cells.message.classList.add('failed');
+        } else
+            print("Failed running benchmark");
     }
 }
 

@@ -91,7 +91,6 @@ p {
     background-color: transparent;
     border: 5px solid #E7B135;
     font-size: 2.4rem;
-    line-height: 5.4rem;
     font-weight: 600;
     text-transform: uppercase;
     color: #E7B135;
@@ -157,6 +156,22 @@ p {
 
 .test .running {
     color: #ffffff;
+}
+
+#status {
+    line-height: 5.4rem;
+}
+
+.failed {
+    color: #ff5744;
+}
+
+#status.failed {
+    font-size: 1.5rem;
+}
+
+.test .failed:before {
+    content: '\2716';
 }
 
 .test .running:before {
@@ -249,6 +264,10 @@ p {
     border-left: 0 solid transparent;
 }
 
+#magic {
+    opacity: 0;
+}
+
 @keyframes fade-in {
   0%   { opacity: 0; }
   100% { opacity: 1; }
@@ -284,10 +303,35 @@ p {
     .start {
         width: 100%;
     }
-
     .test {
         flex: none;
-
         width: 100%;
+    }
+    #status {
+        line-height: 4.3rem;
+    }
+    .start {
+        font-size: 2.1rem;
+    }
+    #status.failed {
+        font-size: 1.4rem;
+    }
+    p {
+        font-size: 1.6rem;
+    }
+}
+
+@media only screen and (max-width: 320px) {
+    #status {
+        line-height: 3.8rem;
+    }
+    .start {
+        font-size: 1.9rem;
+    }
+    #status.failed {
+        font-size: 1.1rem;
+    }
+    p {
+        font-size: 1.4rem;
     }
 }

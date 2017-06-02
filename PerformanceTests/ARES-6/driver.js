@@ -34,7 +34,6 @@ class Driver {
         this._magicCell = magicCell;
         this._summary = new Stats(summaryCell, "summary");
         this._key = key;
-        this._hadErrors = false;
         if (isInBrowser)
             window[key] = this;
     }
@@ -83,10 +82,16 @@ class Driver {
     
     reportError(...args)
     {
+        if (isInBrowser)
+            console.log("Error encountered: ", ...args);
+
         this._benchmarks.get(this._benchmark).reportError(...args);
-        this._recomputeSummary();
-        this._hadErrors = true;
-        this._iterate();
+
+        if (isInBrowser) {
+            this._statusCell.innerHTML = "Test failure \u2014 error in console";
+            this._statusCell.classList.add("failed");
+        } else
+            print("Test failure");
     }
     
     _recomputeSummary()
@@ -137,11 +142,10 @@ class Driver {
         if (!this._benchmark) {
             if (!this._numIterations) {
                 if (isInBrowser) {
-                    this._statusCell.innerHTML =
-                        (this._hadErrors ? "Failures encountered!" : "Restart");
+                    this._statusCell.innerHTML = "Restart";
                     this.readyTrigger();
                 } else
-                    print(this._hadErrors ? "Failures encountered!" : "Success! Benchmark is now finished.");
+                    print("Success! Benchmark is now finished.");
                 return;
             }
             this._numIterations--;
@@ -165,7 +169,7 @@ class Driver {
                 magicFrame.contentDocument.open();
                 magicFrame.contentDocument.write(
                     `<!DOCTYPE html><head><title>benchmark payload</title></head><body><script>` +
-                    `window.onerror = top.${this._key}.reportError;\n` +
+                    `window.onerror = top.${this._key}.reportError.bind(top.${this._key});\n` +
                     `function reportResult()\n` +
                     `{\n` +
                     `    var driver = top.${this._key};\n` +

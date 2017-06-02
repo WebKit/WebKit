@@ -1,3 +1,39 @@
+2017-06-01  Saam Barati  <sbarati@apple.com>
+
+        Ensure a good experience for ARES-6 error reporting
+        https://bugs.webkit.org/show_bug.cgi?id=171699
+
+        Reviewed by Filip Pizlo and Jon Davis.
+
+        This patch fixes a bug where we would silently fail running ARES-6. The bug
+        was that we were calling reportError with the wrong |this| value.
+        I also cleaned up a bit of the code around error reporting. We
+        now indicate which test failed, and update the status to reflect
+        that a failure happened.
+        
+        This patch also modifies the CSS a bit to work better on smaller
+        screened devices. The CSS prevents the status from having a line
+        break both when an error is reported and when we're running the 
+        benchmark.
+
+        * ARES-6/driver.js:
+        (Driver):
+        (Driver.prototype.reportError):
+        * ARES-6/results.js:
+        (Results.prototype.reportError):
+        (Results):
+        * ARES-6/styles.css:
+        (.start):
+        (#status):
+        (.failed):
+        (#status.failed):
+        (.test .failed:before):
+        (#magic):
+        (@media only screen and (max-width: 784px)):
+        (.test):
+        (p):
+        (@media only screen and (max-width: 320px)):
+
 2017-05-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r217118): Speedometer 2.0: Flight.js test is broken
