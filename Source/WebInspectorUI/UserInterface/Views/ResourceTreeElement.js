@@ -177,10 +177,12 @@ WebInspector.ResourceTreeElement = class ResourceTreeElement extends WebInspecto
 
         if (this._resource.finished || this._resource.failed) {
             // Remove the spinner.
-            this.status = "";
+            if (this.status && this.status[WebInspector.ResourceTreeElement.SpinnerSymbol])
+                this.status = "";
         } else {
             let spinner = new WebInspector.IndeterminateProgressSpinner;
             this.status = spinner.element;
+            this.status[WebInspector.ResourceTreeElement.SpinnerSymbol] = true;
         }
     }
 
@@ -206,3 +208,5 @@ WebInspector.ResourceTreeElement = class ResourceTreeElement extends WebInspecto
 
 WebInspector.ResourceTreeElement.ResourceIconStyleClassName = "resource-icon";
 WebInspector.ResourceTreeElement.FailedStyleClassName = "failed";
+
+WebInspector.ResourceTreeElement.SpinnerSymbol = Symbol("spinner");

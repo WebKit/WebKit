@@ -1,3 +1,30 @@
+2017-06-01  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Web Sockets: Unable to inspect a WebSocket that receives >50 messages per second
+        https://bugs.webkit.org/show_bug.cgi?id=171904
+        <rdar://problem/32095863>
+
+        Reviewed by Matt Baker.
+
+        Every size increase of a resource causes a sidebar item to be re-attached to the DOM. Sending or
+        receiving a WebSocket message causes a size increase. When size increase happens too frequently,
+        the go-to arrow starts to flicker and becomes unclickable. This patch makes sure a sidebar item gets
+        re-attached only when its position (index) changes.
+
+        * UserInterface/Views/NetworkSidebarPanel.js:
+        Add the go-to arrow and close buttons when treeElement.status is a spinner element.
+
+        (WebInspector.NetworkSidebarPanel.prototype.treeElementAddedOrChanged):
+        * UserInterface/Views/ResourceTreeElement.js:
+        (WebInspector.ResourceTreeElement.prototype._updateStatus):
+        Setting status to "" removes the go-to arrow and close buttons in the Network tab.
+        Only set status to "" to remove the spinner.
+
+        * UserInterface/Views/TimelineDataGrid.js:
+        (WebInspector.TimelineDataGrid.prototype._refreshDirtyDataGridNodes):
+        * UserInterface/Views/TreeOutline.js:
+        (WebInspector.TreeOutline.prototype.reattachIfIndexChanged): Added.
+
 2017-05-31  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Add Debug view to Settings tab for debug settings and experimental features

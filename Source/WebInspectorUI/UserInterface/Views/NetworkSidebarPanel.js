@@ -157,7 +157,7 @@ WebInspector.NetworkSidebarPanel = class NetworkSidebarPanel extends WebInspecto
 
     treeElementAddedOrChanged(treeElement)
     {
-        if (treeElement.status || !treeElement.treeOutline)
+        if (treeElement.status && treeElement.status[WebInspector.NetworkSidebarPanel.TreeElementStatusButtonSymbol] || !treeElement.treeOutline)
             return;
 
         var fragment = document.createDocumentFragment();
@@ -173,6 +173,7 @@ WebInspector.NetworkSidebarPanel = class NetworkSidebarPanel extends WebInspecto
         fragment.appendChild(goToButton.element);
 
         treeElement.status = fragment;
+        treeElement.status[WebInspector.NetworkSidebarPanel.TreeElementStatusButtonSymbol] = true;
     }
 
     // Private
@@ -230,5 +231,6 @@ WebInspector.NetworkSidebarPanel = class NetworkSidebarPanel extends WebInspecto
 
 WebInspector.NetworkSidebarPanel.ResourceTypeSymbol = Symbol("resource-type");
 WebInspector.NetworkSidebarPanel.TreeElementSymbol = Symbol("tree-element");
+WebInspector.NetworkSidebarPanel.TreeElementStatusButtonSymbol = Symbol("tree-element-status-button");
 
 WebInspector.NetworkSidebarPanel.ShowingNetworkGridContentViewCookieKey = "network-sidebar-panel-showing-network-grid-content-view";

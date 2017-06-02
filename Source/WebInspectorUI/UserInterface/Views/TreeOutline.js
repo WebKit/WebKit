@@ -346,6 +346,23 @@ WebInspector.TreeOutline = class TreeOutline extends WebInspector.Object
         this.children = [];
     }
 
+    reattachIfIndexChanged(treeElement, insertionIndex)
+    {
+        if (this.children[insertionIndex] === treeElement)
+            return;
+
+        let wasSelected = treeElement.selected;
+
+        console.assert(!treeElement.parent || treeElement.parent === this);
+        if (treeElement.parent === this)
+            this.removeChild(treeElement);
+
+        this.insertChild(treeElement, insertionIndex);
+
+        if (wasSelected)
+            treeElement.select();
+    }
+
     _rememberTreeElement(element)
     {
         if (!this._knownTreeElements[element.identifier])
