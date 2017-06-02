@@ -56,9 +56,9 @@ JSWebAssemblyCodeBlockSubspace::~JSWebAssemblyCodeBlockSubspace()
 {
 }
 
-FreeList JSWebAssemblyCodeBlockSubspace::finishSweep(MarkedBlock::Handle& handle, MarkedBlock::Handle::SweepMode sweepMode)
+void JSWebAssemblyCodeBlockSubspace::finishSweep(MarkedBlock::Handle& handle, FreeList* freeList)
 {
-    return handle.finishSweepKnowingSubspace(sweepMode, DestroyFunc());
+    handle.finishSweepKnowingSubspace(freeList, DestroyFunc());
 }
 
 void JSWebAssemblyCodeBlockSubspace::destroy(VM& vm, JSCell* cell)

@@ -34,7 +34,7 @@ public:
     JS_EXPORT_PRIVATE JSDestructibleObjectSubspace(CString name, Heap&);
     JS_EXPORT_PRIVATE virtual ~JSDestructibleObjectSubspace();
     
-    FreeList finishSweep(MarkedBlock::Handle&, MarkedBlock::Handle::SweepMode) override;
+    void finishSweep(MarkedBlock::Handle&, FreeList*) override;
     void destroy(VM&, JSCell*) override;
 };
 

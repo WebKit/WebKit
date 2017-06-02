@@ -77,9 +77,9 @@ Subspace::~Subspace()
 {
 }
 
-FreeList Subspace::finishSweep(MarkedBlock::Handle& block, MarkedBlock::Handle::SweepMode sweepMode)
+void Subspace::finishSweep(MarkedBlock::Handle& block, FreeList* freeList)
 {
-    return block.finishSweepKnowingSubspace(sweepMode, DestroyFunc());
+    block.finishSweepKnowingSubspace(freeList, DestroyFunc());
 }
 
 void Subspace::destroy(VM& vm, JSCell* cell)

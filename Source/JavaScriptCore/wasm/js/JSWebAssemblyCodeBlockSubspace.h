@@ -36,7 +36,7 @@ public:
     JSWebAssemblyCodeBlockSubspace(CString name, Heap&);
     virtual ~JSWebAssemblyCodeBlockSubspace();
     
-    FreeList finishSweep(MarkedBlock::Handle&, MarkedBlock::Handle::SweepMode) override;
+    void finishSweep(MarkedBlock::Handle&, FreeList*) override;
     void destroy(VM&, JSCell*) override;
 };
 

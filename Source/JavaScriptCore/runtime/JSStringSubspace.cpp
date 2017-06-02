@@ -52,9 +52,9 @@ JSStringSubspace::~JSStringSubspace()
 {
 }
 
-FreeList JSStringSubspace::finishSweep(MarkedBlock::Handle& handle, MarkedBlock::Handle::SweepMode sweepMode)
+void JSStringSubspace::finishSweep(MarkedBlock::Handle& handle, FreeList* freeList)
 {
-    return handle.finishSweepKnowingSubspace(sweepMode, DestroyFunc());
+    handle.finishSweepKnowingSubspace(freeList, DestroyFunc());
 }
 
 void JSStringSubspace::destroy(VM& vm, JSCell* cell)

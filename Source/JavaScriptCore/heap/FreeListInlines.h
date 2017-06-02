@@ -23,43 +23,47 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "JSDestructibleObjectSubspace.h"
+#pragma once
 
-#include "MarkedBlockInlines.h"
-#include "JSCInlines.h"
-#include "SubspaceInlines.h"
+#include "FreeList.h"
+#include "MarkedBlock.h"
 
 namespace JSC {
 
-namespace {
-
-struct DestroyFunc {
-    ALWAYS_INLINE void operator()(VM&, JSCell* cell) const
-    {
-        static_cast<JSDestructibleObject*>(cell)->classInfo()->methodTable.destroy(cell);
+template<typename Func>
+HeapCell* FreeList::allocate(const Func& slowPath)
+{
+    unsigned remaining = m_remaining;
+    if (remaining) {
+        unsigned cellSize = m_cellSize;
+        remaining -= cellSize;
+        m_remaining = remaining;
+        return bitwise_cast<HeapCell*>(m_payloadEnd - remaining - cellSize);
     }
-};
-
-} // anonymous namespace
-
-JSDestructibleObjectSubspace::JSDestructibleObjectSubspace(CString name, Heap& heap)
-    : Subspace(name, heap, AllocatorAttributes(NeedsDestruction, HeapCell::JSCell))
-{
+    
+    FreeCell* result = head();
+    if (UNLIKELY(!result))
+        return slowPath();
+    
+    m_scrambledHead = result->scrambledNext;
+    return bitwise_cast<HeapCell*>(result);
 }
 
-JSDestructibleObjectSubspace::~JSDestructibleObjectSubspace()
+template<typename Func>
+void FreeList::forEach(const Func& func) const
 {
-}
-
-void JSDestructibleObjectSubspace::finishSweep(MarkedBlock::Handle& handle, FreeList* freeList)
-{
-    handle.finishSweepKnowingSubspace(freeList, DestroyFunc());
-}
-
-void JSDestructibleObjectSubspace::destroy(VM& vm, JSCell* cell)
-{
-    DestroyFunc()(vm, cell);
+    if (m_remaining) {
+        for (unsigned remaining = m_remaining; remaining; remaining -= m_cellSize)
+            func(bitwise_cast<HeapCell*>(m_payloadEnd - remaining));
+    } else {
+        for (FreeCell* cell = head(); cell;) {
+            // We can use this to overwrite free objects before destroying the free list. So, we need
+            // to get next before proceeding further.
+            FreeCell* next = cell->next(m_secret);
+            func(bitwise_cast<HeapCell*>(cell));
+            cell = next;
+        }
+    }
 }
 
 } // namespace JSC

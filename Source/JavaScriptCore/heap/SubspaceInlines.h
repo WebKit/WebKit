@@ -26,7 +26,7 @@
 #pragma once
 
 #include "JSCell.h"
-#include "MarkedAllocator.h"
+#include "MarkedAllocatorInlines.h"
 #include "MarkedBlock.h"
 #include "MarkedSpace.h"
 #include "Subspace.h"

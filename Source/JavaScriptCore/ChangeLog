@@ -1,3 +1,110 @@
+2017-06-01  Filip Pizlo  <fpizlo@apple.com>
+
+        GC should use scrambled free-lists
+        https://bugs.webkit.org/show_bug.cgi?id=172793
+
+        Reviewed by Mark Lam.
+        
+        Previously, our bump'n'pop allocator would use a conventional linked-list for the free-list.
+        The linked-list would be threaded through free memory, as is the usual convention.
+        
+        This scrambles the next pointers of that free-list. It also scrambles the head pointer, because
+        this leads to a more natural fast-path structure and saves one register on ARM64.
+        
+        The secret with which pointers are scrambled is per-allocator. Allocators choose a new secret
+        every time they do a sweep-to-pop.
+        
+        This doesn't change the behavior of the bump part of bump'n'pop, but it does refactor the code
+        quite a bit. Previously, there were four copies of the allocator fast path: two in
+        MarkedAllocatorInlines.h, one in MarkedAllocator.cpp, and one in AssemblyHelpers.h. The JIT one
+        was obviously different-looking, but the other three were almost identical. This moves all of
+        that logic into FreeList. There are now just two copies of the allocator: FreeListInlines.h and
+        AssemblyHelpers.h.
+        
+        This appears to be just as fast as our previously allocator.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * heap/FreeList.cpp:
+        (JSC::FreeList::FreeList):
+        (JSC::FreeList::~FreeList):
+        (JSC::FreeList::clear):
+        (JSC::FreeList::initializeList):
+        (JSC::FreeList::initializeBump):
+        (JSC::FreeList::contains):
+        (JSC::FreeList::dump):
+        * heap/FreeList.h:
+        (JSC::FreeList::allocationWillFail):
+        (JSC::FreeList::originalSize):
+        (JSC::FreeList::addressOfList):
+        (JSC::FreeList::offsetOfBlock):
+        (JSC::FreeList::offsetOfList):
+        (JSC::FreeList::offsetOfIndex):
+        (JSC::FreeList::offsetOfPayloadEnd):
+        (JSC::FreeList::offsetOfRemaining):
+        (JSC::FreeList::offsetOfOriginalSize):
+        (JSC::FreeList::FreeList): Deleted.
+        (JSC::FreeList::list): Deleted.
+        (JSC::FreeList::bump): Deleted.
+        (JSC::FreeList::operator==): Deleted.
+        (JSC::FreeList::operator!=): Deleted.
+        (JSC::FreeList::operator bool): Deleted.
+        * heap/FreeListInlines.h: Added.
+        (JSC::FreeList::addFreeCell):
+        (JSC::FreeList::allocate):
+        (JSC::FreeList::forEach):
+        (JSC::FreeList::toOffset):
+        (JSC::FreeList::fromOffset):
+        * heap/IncrementalSweeper.cpp:
+        (JSC::IncrementalSweeper::sweepNextBlock):
+        * heap/MarkedAllocator.cpp:
+        (JSC::MarkedAllocator::MarkedAllocator):
+        (JSC::MarkedAllocator::didConsumeFreeList):
+        (JSC::MarkedAllocator::tryAllocateWithoutCollecting):
+        (JSC::MarkedAllocator::tryAllocateIn):
+        (JSC::MarkedAllocator::allocateSlowCaseImpl):
+        (JSC::MarkedAllocator::stopAllocating):
+        (JSC::MarkedAllocator::prepareForAllocation):
+        (JSC::MarkedAllocator::resumeAllocating):
+        (JSC::MarkedAllocator::sweep):
+        (JSC::MarkedAllocator::setFreeList): Deleted.
+        * heap/MarkedAllocator.h:
+        (JSC::MarkedAllocator::freeList):
+        (JSC::MarkedAllocator::isFreeListedCell): Deleted.
+        * heap/MarkedAllocatorInlines.h:
+        (JSC::MarkedAllocator::isFreeListedCell):
+        (JSC::MarkedAllocator::tryAllocate):
+        (JSC::MarkedAllocator::allocate):
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::Handle::stopAllocating):
+        (JSC::MarkedBlock::Handle::lastChanceToFinalize):
+        (JSC::MarkedBlock::Handle::resumeAllocating):
+        (JSC::MarkedBlock::Handle::zap):
+        (JSC::MarkedBlock::Handle::sweep):
+        (JSC::MarkedBlock::Handle::isFreeListedCell):
+        (JSC::MarkedBlock::Handle::forEachFreeCell): Deleted.
+        * heap/MarkedBlock.h:
+        * heap/MarkedBlockInlines.h:
+        (JSC::MarkedBlock::Handle::specializedSweep):
+        (JSC::MarkedBlock::Handle::finishSweepKnowingSubspace):
+        (JSC::MarkedBlock::Handle::isFreeListedCell): Deleted.
+        * heap/Subspace.cpp:
+        (JSC::Subspace::finishSweep):
+        * heap/Subspace.h:
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::emitAllocateWithNonNullAllocator):
+        * runtime/JSDestructibleObjectSubspace.cpp:
+        (JSC::JSDestructibleObjectSubspace::finishSweep):
+        * runtime/JSDestructibleObjectSubspace.h:
+        * runtime/JSSegmentedVariableObjectSubspace.cpp:
+        (JSC::JSSegmentedVariableObjectSubspace::finishSweep):
+        * runtime/JSSegmentedVariableObjectSubspace.h:
+        * runtime/JSStringSubspace.cpp:
+        (JSC::JSStringSubspace::finishSweep):
+        * runtime/JSStringSubspace.h:
+        * wasm/js/JSWebAssemblyCodeBlockSubspace.cpp:
+        (JSC::JSWebAssemblyCodeBlockSubspace::finishSweep):
+        * wasm/js/JSWebAssemblyCodeBlockSubspace.h:
+
 2017-06-02  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Use @globalPrivate for concatSlowPath

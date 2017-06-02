@@ -643,6 +643,10 @@ public:
         xor32(imm, srcDest);
     }
 
+    void xorPtr(Address src, RegisterID dest)
+    {
+        xor32(src, dest);
+    }
 
     void loadPtr(ImplicitAddress address, RegisterID dest)
     {
@@ -949,6 +953,11 @@ public:
     }
 
     void xorPtr(RegisterID src, RegisterID dest)
+    {
+        xor64(src, dest);
+    }
+    
+    void xorPtr(Address src, RegisterID dest)
     {
         xor64(src, dest);
     }

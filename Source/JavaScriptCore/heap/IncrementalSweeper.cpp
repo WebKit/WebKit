@@ -87,7 +87,7 @@ bool IncrementalSweeper::sweepNextBlock()
     
     if (block) {
         DeferGCForAWhile deferGC(m_vm->heap);
-        block->sweep();
+        block->sweep(nullptr);
         m_vm->heap.objectSpace().freeOrShrinkBlock(block);
         return true;
     }

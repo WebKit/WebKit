@@ -25,68 +25,79 @@
 
 #pragma once
 
+#include <wtf/Noncopyable.h>
 #include <wtf/PrintStream.h>
 
 namespace JSC {
 
+class HeapCell;
+
 struct FreeCell {
-    FreeCell* next;
+    static uintptr_t scramble(FreeCell* cell, uintptr_t secret)
+    {
+        return bitwise_cast<uintptr_t>(cell) ^ secret;
+    }
+    
+    static FreeCell* descramble(uintptr_t cell, uintptr_t secret)
+    {
+        return bitwise_cast<FreeCell*>(cell ^ secret);
+    }
+    
+    void setNext(FreeCell* next, uintptr_t secret)
+    {
+        scrambledNext = scramble(next, secret);
+    }
+    
+    FreeCell* next(uintptr_t secret) const
+    {
+        return descramble(scrambledNext, secret);
+    }
+    
+    uintptr_t scrambledNext;
 };
-        
-// This representation of a FreeList is convenient for the MarkedAllocator.
 
-struct FreeList {
-    FreeCell* head { nullptr };
-    char* payloadEnd { nullptr };
-    unsigned remaining { 0 };
-    unsigned originalSize { 0 };
+class FreeList {
+    WTF_MAKE_NONCOPYABLE(FreeList);
     
-    FreeList()
-    {
-    }
+public:
+    FreeList(unsigned cellSize);
+    ~FreeList();
     
-    static FreeList list(FreeCell* head, unsigned bytes)
-    {
-        FreeList result;
-        result.head = head;
-        result.remaining = 0;
-        result.originalSize = bytes;
-        return result;
-    }
+    void clear();
     
-    static FreeList bump(char* payloadEnd, unsigned remaining)
-    {
-        FreeList result;
-        result.payloadEnd = payloadEnd;
-        result.remaining = remaining;
-        result.originalSize = remaining;
-        return result;
-    }
+    void initializeList(FreeCell* head, uintptr_t secret, unsigned bytes);
+    void initializeBump(char* payloadEnd, unsigned remaining);
     
-    bool operator==(const FreeList& other) const
-    {
-        return head == other.head
-            && payloadEnd == other.payloadEnd
-            && remaining == other.remaining
-            && originalSize == other.originalSize;
-    }
-    
-    bool operator!=(const FreeList& other) const
-    {
-        return !(*this == other);
-    }
-    
-    explicit operator bool() const
-    {
-        return *this != FreeList();
-    }
-
-    bool contains(const void* target) const;
-
-    bool allocationWillFail() const { return !head && !remaining; }
+    bool allocationWillFail() const { return !head() && !m_remaining; }
     bool allocationWillSucceed() const { return !allocationWillFail(); }
     
+    template<typename Func>
+    HeapCell* allocate(const Func& slowPath);
+    
+    bool contains(HeapCell*) const;
+    
+    template<typename Func>
+    void forEach(const Func&) const;
+    
+    unsigned originalSize() const { return m_originalSize; }
+
+    static ptrdiff_t offsetOfScrambledHead() { return OBJECT_OFFSETOF(FreeList, m_scrambledHead); }
+    static ptrdiff_t offsetOfSecret() { return OBJECT_OFFSETOF(FreeList, m_secret); }
+    static ptrdiff_t offsetOfPayloadEnd() { return OBJECT_OFFSETOF(FreeList, m_payloadEnd); }
+    static ptrdiff_t offsetOfRemaining() { return OBJECT_OFFSETOF(FreeList, m_remaining); }
+    static ptrdiff_t offsetOfOriginalSize() { return OBJECT_OFFSETOF(FreeList, m_originalSize); }
+    
     void dump(PrintStream&) const;
+    
+private:
+    FreeCell* head() const { return FreeCell::descramble(m_scrambledHead, m_secret); }
+    
+    uintptr_t m_scrambledHead { 0 };
+    uintptr_t m_secret { 0 };
+    char* m_payloadEnd { nullptr };
+    unsigned m_remaining { 0 };
+    unsigned m_originalSize { 0 };
+    unsigned m_cellSize { 0 };
 };
 
 } // namespace JSC

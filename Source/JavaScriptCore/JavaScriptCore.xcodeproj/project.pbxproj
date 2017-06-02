@@ -501,6 +501,7 @@
 		0F64B2791A7957B2006E4E66 /* CallEdge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F64B2771A7957B2006E4E66 /* CallEdge.cpp */; };
 		0F64B27A1A7957B2006E4E66 /* CallEdge.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F64B2781A7957B2006E4E66 /* CallEdge.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F64EAF31C4ECD0600621E9B /* AirArgInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F64EAF21C4ECD0600621E9B /* AirArgInlines.h */; };
+		0F6585E11EE0805A0095176D /* FreeListInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F6585E01EE080570095176D /* FreeListInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F660E371E0517B90031462C /* MarkingConstraint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F660E331E0517B70031462C /* MarkingConstraint.cpp */; };
 		0F660E381E0517BB0031462C /* MarkingConstraint.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F660E341E0517B70031462C /* MarkingConstraint.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F660E391E0517BF0031462C /* MarkingConstraintSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F660E351E0517B70031462C /* MarkingConstraintSet.cpp */; };
@@ -3077,6 +3078,7 @@
 		0F64B2771A7957B2006E4E66 /* CallEdge.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CallEdge.cpp; sourceTree = "<group>"; };
 		0F64B2781A7957B2006E4E66 /* CallEdge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallEdge.h; sourceTree = "<group>"; };
 		0F64EAF21C4ECD0600621E9B /* AirArgInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirArgInlines.h; path = b3/air/AirArgInlines.h; sourceTree = "<group>"; };
+		0F6585E01EE080570095176D /* FreeListInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FreeListInlines.h; sourceTree = "<group>"; };
 		0F660E331E0517B70031462C /* MarkingConstraint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MarkingConstraint.cpp; sourceTree = "<group>"; };
 		0F660E341E0517B70031462C /* MarkingConstraint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MarkingConstraint.h; sourceTree = "<group>"; };
 		0F660E351E0517B70031462C /* MarkingConstraintSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MarkingConstraintSet.cpp; sourceTree = "<group>"; };
@@ -6019,6 +6021,7 @@
 				2A83638418D7D0EE0000EBCC /* EdenGCActivityCallback.h */,
 				0F5513A71D5A68CB00C32BD8 /* FreeList.cpp */,
 				0F5513A51D5A682A00C32BD8 /* FreeList.h */,
+				0F6585E01EE080570095176D /* FreeListInlines.h */,
 				2A83638718D7D0FE0000EBCC /* FullGCActivityCallback.cpp */,
 				2A83638818D7D0FE0000EBCC /* FullGCActivityCallback.h */,
 				2AACE63A18CA5A0300ED0191 /* GCActivityCallback.cpp */,
@@ -8661,6 +8664,7 @@
 				0F235BEE17178E7300690C7F /* DFGOSRExitPreparation.h in Headers */,
 				0F2C63B71E6343ED00C13839 /* B3AtomicValue.h in Headers */,
 				0F6237981AE45CA700D402EA /* DFGPhantomInsertionPhase.h in Headers */,
+				0F6585E11EE0805A0095176D /* FreeListInlines.h in Headers */,
 				0FFFC95C14EF90AF00C72532 /* DFGPhase.h in Headers */,
 				37C738D21EDB56E4003F2B0B /* ParseInt.h in Headers */,
 				0F2B9CEB19D0BA7D00B1D1B5 /* DFGPhiChildren.h in Headers */,

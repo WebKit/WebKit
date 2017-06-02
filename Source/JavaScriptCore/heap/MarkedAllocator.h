@@ -156,7 +156,7 @@ public:
     void* tryAllocate(GCDeferralContext* = nullptr);
     Heap* heap() { return m_heap; }
 
-    bool isFreeListedCell(const void* target) const { return m_freeList.contains(target); }
+    bool isFreeListedCell(const void* target) const;
 
     template<typename Functor> void forEachBlock(const Functor&);
     template<typename Functor> void forEachNotEmptyBlock(const Functor&);
@@ -209,6 +209,8 @@ public:
     Subspace* subspace() const { return m_subspace; }
     MarkedSpace& markedSpace() const;
     
+    const FreeList& freeList() const { return m_freeList; }
+    
     void dump(PrintStream&) const;
     void dumpBits(PrintStream& = WTF::dataFile());
     
@@ -226,8 +228,6 @@ private:
     void* tryAllocateIn(MarkedBlock::Handle*);
     void* allocateIn(MarkedBlock::Handle*);
     ALWAYS_INLINE void doTestCollectionsIfNeeded(GCDeferralContext*);
-    
-    void setFreeList(const FreeList&);
     
     FreeList m_freeList;
     

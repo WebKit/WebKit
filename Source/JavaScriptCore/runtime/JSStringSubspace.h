@@ -34,7 +34,7 @@ public:
     JS_EXPORT_PRIVATE JSStringSubspace(CString name, Heap&);
     JS_EXPORT_PRIVATE virtual ~JSStringSubspace();
     
-    FreeList finishSweep(MarkedBlock::Handle&, MarkedBlock::Handle::SweepMode) override;
+    void finishSweep(MarkedBlock::Handle&, FreeList*) override;
     void destroy(VM&, JSCell*) override;
 };
 

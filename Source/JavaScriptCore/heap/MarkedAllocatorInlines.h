@@ -25,44 +25,30 @@
 
 #pragma once
 
+#include "FreeListInlines.h"
 #include "MarkedAllocator.h"
 
 namespace JSC {
 
+inline bool MarkedAllocator::isFreeListedCell(const void* target) const
+{
+    return m_freeList.contains(bitwise_cast<HeapCell*>(target));
+}
+
 ALWAYS_INLINE void* MarkedAllocator::tryAllocate(GCDeferralContext* deferralContext)
 {
-    unsigned remaining = m_freeList.remaining;
-    if (remaining) {
-        unsigned cellSize = m_cellSize;
-        remaining -= cellSize;
-        m_freeList.remaining = remaining;
-        return m_freeList.payloadEnd - remaining - cellSize;
-    }
-    
-    FreeCell* head = m_freeList.head;
-    if (UNLIKELY(!head))
-        return tryAllocateSlowCase(deferralContext);
-    
-    m_freeList.head = head->next;
-    return head;
+    return m_freeList.allocate(
+        [&] () -> HeapCell* {
+            return static_cast<HeapCell*>(tryAllocateSlowCase(deferralContext));
+        });
 }
 
 ALWAYS_INLINE void* MarkedAllocator::allocate(GCDeferralContext* deferralContext)
 {
-    unsigned remaining = m_freeList.remaining;
-    if (remaining) {
-        unsigned cellSize = m_cellSize;
-        remaining -= cellSize;
-        m_freeList.remaining = remaining;
-        return m_freeList.payloadEnd - remaining - cellSize;
-    }
-    
-    FreeCell* head = m_freeList.head;
-    if (UNLIKELY(!head))
-        return allocateSlowCase(deferralContext);
-    
-    m_freeList.head = head->next;
-    return head;
+    return m_freeList.allocate(
+        [&] () -> HeapCell* {
+            return static_cast<HeapCell*>(allocateSlowCase(deferralContext));
+        });
 }
 
 template <typename Functor> inline void MarkedAllocator::forEachBlock(const Functor& functor)

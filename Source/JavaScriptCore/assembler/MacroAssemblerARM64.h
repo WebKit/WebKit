@@ -909,6 +909,12 @@ public:
         xor32(dest, src, dest);
     }
 
+    void xor32(Address src, RegisterID dest)
+    {
+        load32(src, getCachedDataTemptRegisterIDAndInvalidate());
+        xor32(dataTempRegister, dest);
+    }
+
     void xor32(RegisterID op1, RegisterID op2, RegisterID dest)
     {
         m_assembler.eor<32>(dest, op1, op2);
@@ -990,6 +996,12 @@ public:
             signExtend32ToPtr(imm, getCachedDataTempRegisterIDAndInvalidate());
             m_assembler.eor<64>(dest, src, dataTempRegister);
         }
+    }
+    
+    void xor64(Address src, RegisterID dest)
+    {
+        load64(src, getCachedDataTemptRegisterIDAndInvalidate());
+        xor64(dataTempRegister, dest);
     }
 
     void not32(RegisterID src, RegisterID dest)
