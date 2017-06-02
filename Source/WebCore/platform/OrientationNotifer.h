@@ -65,7 +65,7 @@ inline OrientationNotifier::Observer::~Observer()
         m_notifier->removeObserver(*this);
 }
 
-void OrientationNotifier::Observer::setNotifier(OrientationNotifier* notifier)
+inline void OrientationNotifier::Observer::setNotifier(OrientationNotifier* notifier)
 {
     if (m_notifier == notifier)
         return;

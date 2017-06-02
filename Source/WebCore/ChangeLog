@@ -1,5 +1,12 @@
 2017-06-02  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, fix linking errors on iOS after r217712.
+
+        * platform/OrientationNotifer.h:
+        (WebCore::OrientationNotifier::Observer::setNotifier):
+
+2017-06-02  Chris Dumez  <cdumez@apple.com>
+
         Crash under OrientationNotifier::Observer::setNotifier()
         https://bugs.webkit.org/show_bug.cgi?id=172847
         <rdar://problem/32519127>
