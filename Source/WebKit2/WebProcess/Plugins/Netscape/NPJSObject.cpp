@@ -318,6 +318,11 @@ bool NPJSObject::invoke(ExecState* exec, JSGlobalObject* globalObject, JSValue f
 
     // Convert and return the result of the function call.
     m_objectMap->convertJSValueToNPVariant(exec, value, *result);
+
+    if (UNLIKELY(scope.exception())) {
+        scope.clearException();
+        return false;
+    }
     
     return true;
 }

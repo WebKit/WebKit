@@ -1,3 +1,17 @@
+2017-06-02  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r206386): Xactimate Website Crashes @ com.apple.WebKit: WebKit::NPRuntimeObjectMap::convertJSValueToNPVariant + 255
+        https://bugs.webkit.org/show_bug.cgi?id=172846
+        <rdar://problem/31093005>
+
+        Reviewed by Mark Lam.
+
+        Follow-up to r217695 to deal with exceptions potentially thrown by
+        NPRuntimeObjectMap::convertJSValueToNPVariant() as well.
+
+        * WebProcess/Plugins/Netscape/NPJSObject.cpp:
+        (WebKit::NPJSObject::invoke):
+
 2017-06-02  Jeremy Jones  <jeremyj@apple.com>
 
         Add abilility to specify presentingApplicationPID for a WebProcessPool.
