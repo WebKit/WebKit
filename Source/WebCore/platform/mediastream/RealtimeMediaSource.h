@@ -120,7 +120,7 @@ public:
     public:
         virtual ~VideoCaptureFactory() = default;
         virtual CaptureSourceOrError createVideoCaptureSource(const String& videoDeviceID, const MediaConstraints*) = 0;
-        virtual void setVisibility(bool) { }
+        virtual void setVideoCaptureMutedForPageVisibility(bool) { }
 
     protected:
         VideoCaptureFactory() = default;

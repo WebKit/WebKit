@@ -1603,7 +1603,7 @@ private:
     void clearScriptedAnimationController();
     RefPtr<ScriptedAnimationController> m_scriptedAnimationController;
 
-    void notifyVisibilityChangedToMediaCapture();
+    void notifyMediaCaptureOfVisibilityChanged();
 
 #if ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS)
     std::unique_ptr<DeviceMotionClient> m_deviceMotionClient;
@@ -1770,6 +1770,7 @@ private:
     HashSet<HTMLMediaElement*> m_mediaStreamStateChangeElements;
     String m_idHashSalt;
     bool m_hasHadActiveMediaStreamTrack { false };
+    bool m_videoCaptureMutedForVisibilityChange { false };
 #endif
 
 #ifndef NDEBUG

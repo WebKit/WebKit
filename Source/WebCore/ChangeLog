@@ -1,3 +1,36 @@
+2017-06-02  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream iOS] Cleanup video muting/unmuting when tab visibility changes
+        https://bugs.webkit.org/show_bug.cgi?id=172858
+
+        Reviewed by Youenn Fablet.
+
+        Test: platform/ios/mediastream/video-muted-in-background-tab.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::visibilityStateChanged): Call notifyMediaCaptureOfVisibilityChanged.
+        (WebCore::Document::notifyMediaCaptureOfVisibilityChanged): Renamed from notifyVisibilityChangedToMediaCapture.
+        Set m_videoCaptureMutedForVisibilityChange when capture is muted because the document is hidden,
+        and clear it when visibility changes when capture is disabled. Don't unmute when the document
+        becomes visible unless this m_videoCaptureMutedForVisibilityChange is still true.
+        (WebCore::Document::notifyVisibilityChangedToMediaCapture): Deleted.
+        * dom/Document.h:
+
+        * platform/mediastream/RealtimeMediaSource.h:
+        * platform/mediastream/RealtimeMediaSourceCenter.cpp:
+        (WebCore::RealtimeMediaSourceCenter::setVideoCaptureMutedForPageVisibility): Renamed from
+        setVisibility.
+        (WebCore::RealtimeMediaSourceCenter::setVisibility): Deleted.
+        * platform/mediastream/RealtimeMediaSourceCenter.h:
+
+        * platform/mediastream/mac/AVVideoCaptureSource.mm:
+        (WebCore::AVVideoCaptureSourceFactory::setVideoCaptureMutedForPageVisibility): Ditto.
+        (WebCore::AVVideoCaptureSourceFactory::setVisibility): Deleted.
+
+        * platform/mock/MockRealtimeVideoSource.cpp:
+        (WebCore::MockRealtimeVideoSourceFactory::setVideoCaptureMutedForPageVisibility): Ditto.
+        (WebCore::MockRealtimeVideoSourceFactory::setVisibility): Deleted.
+
 2017-06-02  Frederic Wang  <fwang@igalia.com>
 
         [Mac] Include frames in the scrolling tree when ScrollingTreeIncludesFrames=true

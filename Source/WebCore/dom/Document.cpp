@@ -1547,7 +1547,7 @@ void Document::visibilityStateChanged()
     for (auto* client : m_visibilityStateCallbackClients)
         client->visibilityStateChanged();
 
-    notifyVisibilityChangedToMediaCapture();
+    notifyMediaCaptureOfVisibilityChanged();
 }
 
 auto Document::visibilityState() const -> VisibilityState
@@ -7005,10 +7005,19 @@ void Document::orientationChanged(int orientation)
     m_orientationNotifier.orientationChanged(orientation);
 }
 
-void Document::notifyVisibilityChangedToMediaCapture()
+void Document::notifyMediaCaptureOfVisibilityChanged()
 {
 #if ENABLE(MEDIA_STREAM)
-    RealtimeMediaSourceCenter::singleton().setVisibility(!hidden());
+    if (!page() || page()->isMediaCaptureMuted()) {
+        m_videoCaptureMutedForVisibilityChange = false;
+        return;
+    }
+
+    if (!hidden() && !m_videoCaptureMutedForVisibilityChange)
+        return;
+
+    m_videoCaptureMutedForVisibilityChange = hidden();
+    RealtimeMediaSourceCenter::singleton().setVideoCaptureMutedForPageVisibility(m_videoCaptureMutedForVisibilityChange);
 #endif
 }
 

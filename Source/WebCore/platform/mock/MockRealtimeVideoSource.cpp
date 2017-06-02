@@ -63,10 +63,10 @@ public:
     }
 #if PLATFORM(IOS)
 private:
-    void setVisibility(bool isVisible)
+    void setVideoCaptureMutedForPageVisibility(bool shouldMute)
     {
         if (activeSource())
-            activeSource()->setMuted(!isVisible);
+            activeSource()->setMuted(shouldMute);
     }
 #endif
 };

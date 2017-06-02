@@ -1,3 +1,13 @@
+2017-06-02  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream iOS] Cleanup video muting/unmuting when tab visibility changes
+        https://bugs.webkit.org/show_bug.cgi?id=172858
+
+        Reviewed by Youenn Fablet.
+
+        * platform/ios/mediastream/video-muted-in-background-tab-expected.txt: Added.
+        * platform/ios/mediastream/video-muted-in-background-tab.html: Added.
+
 2017-06-02  Matt Lewis  <jlewis3@apple.com>
 
         Moved test expectation for http/tests/preload/viewport/meta-viewport-link-headers.php to correct file.
