@@ -1,3 +1,32 @@
+2017-06-02  Gwang Yoon Hwang  <yoon@igalia.com>
+
+        REGRESSION(r217214): [Coordinated Graphics] UpdateAtlas didn't released while resetting testrunner
+        https://bugs.webkit.org/show_bug.cgi?id=172746
+
+        Reviewed by Žan Doberšek.
+
+        After clearing update atlases in CompositingCoordinator, we should
+        release update atlases at the compositing thread, too.
+
+        We cannot remove update atlases from the CoordinatedGraphicsScene
+        without regard to update scheduling, since previously committed scene
+        states can try to use already released update atlases.
+        To prevent this timing problem, releasing update atlases should be done
+        with a update scheduler.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.cpp:
+        (WebKit::CoordinatedGraphicsScene::syncRemoteContent):
+        (WebKit::CoordinatedGraphicsScene::appendUpdate):
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.h:
+        Use WTF::Function instead of std::function
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        (WebKit::ThreadedCompositor::updateSceneState):
+        (WebKit::ThreadedCompositor::releaseUpdateAtlases):
+        * WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.cpp:
+        (WebKit::ThreadedCompositor::flushPendingLayerChanges):
+        Release UpdateAtlases at the end of compositing states update, too.
+        (WebKit::CompositingCoordinator::clearUpdateAtlases):
+
 2017-06-01  Andreas Kling  <akling@apple.com>
 
         [Mac] Remove backing store for layers that are outside the viewport

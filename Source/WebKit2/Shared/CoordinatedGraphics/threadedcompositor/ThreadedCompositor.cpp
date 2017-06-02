@@ -236,8 +236,7 @@ void ThreadedCompositor::sceneUpdateFinished()
 void ThreadedCompositor::updateSceneState(const CoordinatedGraphicsState& state)
 {
     ASSERT(isMainThread());
-    RefPtr<CoordinatedGraphicsScene> scene = m_scene;
-    m_scene->appendUpdate([this, scene, state] {
+    m_scene->appendUpdate([this, scene = makeRef(*m_scene), state] {
         scene->commitSceneState(state);
 
         m_clientRendersNextFrame.store(true);
@@ -257,9 +256,10 @@ void ThreadedCompositor::updateSceneState(const CoordinatedGraphicsState& state)
 void ThreadedCompositor::releaseUpdateAtlases(Vector<uint32_t>&& atlasesToRemove)
 {
     ASSERT(isMainThread());
-    m_compositingRunLoop->performTask([scene = makeRef(*m_scene), atlasesToRemove = WTFMove(atlasesToRemove)] {
+    m_scene->appendUpdate([scene = makeRef(*m_scene), atlasesToRemove = WTFMove(atlasesToRemove)] {
         scene->releaseUpdateAtlases(atlasesToRemove);
     });
+    m_compositingRunLoop->scheduleUpdate();
 }
 
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)

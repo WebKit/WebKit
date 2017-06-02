@@ -580,7 +580,7 @@ void CoordinatedGraphicsScene::syncRemoteContent()
     // We enqueue messages and execute them during paint, as they require an active GL context.
     ensureRootLayer();
 
-    Vector<std::function<void()>> renderQueue;
+    Vector<Function<void()>> renderQueue;
     bool calledOnMainThread = WTF::isMainThread();
     if (!calledOnMainThread)
         m_renderQueueMutex.lock();
@@ -641,7 +641,7 @@ void CoordinatedGraphicsScene::detach()
     m_renderQueue.clear();
 }
 
-void CoordinatedGraphicsScene::appendUpdate(std::function<void()>&& function)
+void CoordinatedGraphicsScene::appendUpdate(Function<void()>&& function)
 {
     if (!m_isActive)
         return;
