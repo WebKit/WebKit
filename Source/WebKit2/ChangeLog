@@ -1,3 +1,12 @@
+2017-06-02  Dan Bernstein  <mitz@apple.com>
+
+        [Xcode] Header postprocessing should be based on the target OS version rather than the builder OS version
+        https://bugs.webkit.org/show_bug.cgi?id=172860
+
+        Reviewed by Anders Carlsson.
+
+        * Configurations/WebKit.xcconfig: Use TARGET_MAC_OS_X_VERSION_MAJOR
+
 2017-06-02  Gwang Yoon Hwang  <yoon@igalia.com>
 
         REGRESSION(r217214): [Coordinated Graphics] UpdateAtlas didn't released while resetting testrunner
