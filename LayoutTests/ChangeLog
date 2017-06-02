@@ -1,3 +1,12 @@
+2017-06-02  Matt Lewis  <jlewis3@apple.com>
+
+        Marked fast/images/slower-decoding-than-animation-image.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=172666
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2017-06-02  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed WPE gardening.

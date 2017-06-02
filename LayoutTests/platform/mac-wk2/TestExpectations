@@ -695,3 +695,5 @@ webkit.org/b/172521 imported/w3c/web-platform-tests/webrtc/getstats.html [ Pass 
 webkit.org/b/172054 [ Sierra Debug ] loader/stateobjects/replacestate-size-iframe.html [ Pass Timeout ]
 
 webkit.org/b/172454 [ Debug ] http/tests/navigation/statistics.html [ Pass Failure ]
+
+webkit.org/b/172666 [ Debug ] fast/images/slower-decoding-than-animation-image.html [ Pass Failure ]
