@@ -68,6 +68,7 @@ Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::createWithWebsiteDataSto
     configuration->m_indexedDBDatabaseDirectory = WebKit::WebProcessPool::legacyPlatformDefaultIndexedDBDatabaseDirectory();
     configuration->m_localStorageDirectory = legacyConfiguration.localStorageDirectory;
     configuration->m_mediaKeysStorageDirectory = legacyConfiguration.mediaKeysStorageDirectory;
+    configuration->m_resourceLoadStatisticsDirectory = legacyConfiguration.resourceLoadStatisticsDirectory;
     configuration->m_webSQLDatabaseDirectory = legacyConfiguration.webSQLDatabaseDirectory;
 
     return configuration;
@@ -82,6 +83,7 @@ ProcessPoolConfiguration::ProcessPoolConfiguration()
     , m_localStorageDirectory(WebsiteDataStore::defaultLocalStorageDirectory())
     , m_webSQLDatabaseDirectory(WebsiteDataStore::defaultWebSQLDatabaseDirectory())
     , m_mediaKeysStorageDirectory(WebsiteDataStore::defaultMediaKeysStorageDirectory())
+    , m_resourceLoadStatisticsDirectory(WebsiteDataStore::defaultResourceLoadStatisticsDirectory())
     , m_javaScriptConfigurationDirectory(WebsiteDataStore::defaultJavaScriptConfigurationDirectory())
 {
 }
@@ -107,6 +109,7 @@ Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::copy()
     copy->m_injectedBundlePath = this->m_injectedBundlePath;
     copy->m_localStorageDirectory = this->m_localStorageDirectory;
     copy->m_mediaKeysStorageDirectory = this->m_mediaKeysStorageDirectory;
+    copy->m_resourceLoadStatisticsDirectory = this->m_resourceLoadStatisticsDirectory;
     copy->m_javaScriptConfigurationDirectory = this->m_javaScriptConfigurationDirectory;
     copy->m_webSQLDatabaseDirectory = this->m_webSQLDatabaseDirectory;
     copy->m_cachePartitionedURLSchemes = this->m_cachePartitionedURLSchemes;

@@ -87,6 +87,9 @@ public:
     const WTF::String& mediaKeysStorageDirectory() const { return m_mediaKeysStorageDirectory; }
     void setMediaKeysStorageDirectory(const WTF::String& mediaKeysStorageDirectory) { m_mediaKeysStorageDirectory = mediaKeysStorageDirectory; }
 
+    const WTF::String& resourceLoadStatisticsDirectory() const { return m_resourceLoadStatisticsDirectory; }
+    void setResourceLoadStatisticsDirectory(const WTF::String& resourceLoadStatisticsDirectory) { m_resourceLoadStatisticsDirectory = resourceLoadStatisticsDirectory; }
+
     const WTF::String& javaScriptConfigurationDirectory() const { return m_javaScriptConfigurationDirectory; }
     void setJavaScriptConfigurationDirectory(const WTF::String& javaScriptConfigurationDirectory) { m_javaScriptConfigurationDirectory = javaScriptConfigurationDirectory; }
 

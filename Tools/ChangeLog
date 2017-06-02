@@ -1,3 +1,17 @@
+2017-06-02  Chris Dumez  <cdumez@apple.com>
+
+        ResourceLoadStatistics are not using unique paths during test runs
+        https://bugs.webkit.org/show_bug.cgi?id=172861
+        <rdar://problem/32442251>
+
+        Reviewed by Darin Adler.
+
+        Make sure WebKitTestRunner sets a temporary path for saving resource
+        load statistics.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::generateContextConfiguration):
+
 2017-06-02  Brady Eidson  <beidson@apple.com>
 
         Prevent scheme handlers from handling all built-in URL schemes.

@@ -199,11 +199,9 @@ static WebsiteDataStore::Configuration legacyWebsiteDataStoreConfiguration(API::
     configuration.applicationCacheFlatFileSubdirectoryName = processPoolConfiguration.applicationCacheFlatFileSubdirectoryName();
     configuration.mediaCacheDirectory = processPoolConfiguration.mediaCacheDirectory();
     configuration.mediaKeysStorageDirectory = processPoolConfiguration.mediaKeysStorageDirectory();
+    configuration.resourceLoadStatisticsDirectory = processPoolConfiguration.resourceLoadStatisticsDirectory();
     configuration.networkCacheDirectory = processPoolConfiguration.diskCacheDirectory();
     configuration.javaScriptConfigurationDirectory = processPoolConfiguration.javaScriptConfigurationDirectory();
-
-    // This is needed to support legacy WK2 clients, which did not have resource load statistics.
-    configuration.resourceLoadStatisticsDirectory = API::WebsiteDataStore::defaultResourceLoadStatisticsDirectory();
 
     return configuration;
 }

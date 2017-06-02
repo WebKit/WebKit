@@ -118,6 +118,16 @@ void WKContextConfigurationSetMediaKeysStorageDirectory(WKContextConfigurationRe
     toImpl(configuration)->setMediaKeysStorageDirectory(toImpl(mediaKeysStorageDirectory)->string());
 }
 
+WKStringRef WKContextConfigurationCopyResourceLoadStatisticsDirectory(WKContextConfigurationRef configuration)
+{
+    return toCopiedAPI(toImpl(configuration)->resourceLoadStatisticsDirectory());
+}
+
+void WKContextConfigurationSetResourceLoadStatisticsDirectory(WKContextConfigurationRef configuration, WKStringRef resourceLoadStatisticsDirectory)
+{
+    toImpl(configuration)->setResourceLoadStatisticsDirectory(toImpl(resourceLoadStatisticsDirectory)->string());
+}
+
 bool WKContextConfigurationFullySynchronousModeIsAllowedForTesting(WKContextConfigurationRef configuration)
 {
     return toImpl(configuration)->fullySynchronousModeIsAllowedForTesting();
