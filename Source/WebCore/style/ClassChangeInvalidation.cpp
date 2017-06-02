@@ -28,6 +28,7 @@
 
 #include "DocumentRuleSets.h"
 #include "ElementChildIterator.h"
+#include "HTMLSlotElement.h"
 #include "ShadowRoot.h"
 #include "SpaceSplitString.h"
 #include "StyleInvalidator.h"
@@ -138,6 +139,9 @@ void ClassChangeInvalidation::invalidateStyle(const SpaceSplitString& oldClasses
         return;
 
     if (shadowRoot && ruleSets.authorStyle().hasShadowPseudoElementRules())
+        mayAffectShadowTree = true;
+
+    if (is<HTMLSlotElement>(m_element) && !ruleSets.authorStyle().slottedPseudoElementRules().isEmpty())
         mayAffectShadowTree = true;
 
     if (mayAffectShadowTree) {

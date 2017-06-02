@@ -28,6 +28,7 @@
 
 #include "DocumentRuleSets.h"
 #include "ElementChildIterator.h"
+#include "HTMLSlotElement.h"
 #include "ShadowRoot.h"
 #include "StyleResolver.h"
 #include "StyleScope.h"
@@ -81,6 +82,9 @@ void IdChangeInvalidation::invalidateStyle(const AtomicString& changedId)
         return;
 
     if (m_element.shadowRoot() && ruleSets.authorStyle().hasShadowPseudoElementRules())
+        mayAffectShadowTree = true;
+
+    if (is<HTMLSlotElement>(m_element) && !ruleSets.authorStyle().slottedPseudoElementRules().isEmpty())
         mayAffectShadowTree = true;
 
     if (mayAffectShadowTree) {

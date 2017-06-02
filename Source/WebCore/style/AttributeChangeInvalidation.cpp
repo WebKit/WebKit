@@ -28,6 +28,7 @@
 
 #include "DocumentRuleSets.h"
 #include "ElementIterator.h"
+#include "HTMLSlotElement.h"
 #include "ShadowRoot.h"
 #include "StyleInvalidator.h"
 #include "StyleResolver.h"
@@ -95,6 +96,9 @@ void AttributeChangeInvalidation::invalidateStyle(const QualifiedName& attribute
     }
 
     if (m_element.shadowRoot() && ruleSets.authorStyle().hasShadowPseudoElementRules())
+        mayAffectShadowTree = true;
+
+    if (is<HTMLSlotElement>(m_element) && !ruleSets.authorStyle().slottedPseudoElementRules().isEmpty())
         mayAffectShadowTree = true;
 
     if (mayAffectShadowTree) {

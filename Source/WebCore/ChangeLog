@@ -1,3 +1,22 @@
+2017-06-02  Emilio Cobos Álvarez  <ecobos@igalia.com>
+
+        Invalidate the shadow subtree style when slotted pseudo rules are present.
+        https://bugs.webkit.org/show_bug.cgi?id=172822
+
+        Reviewed by Antti Koivisto.
+
+        No new tests, this is tested by
+        fast/shadow-dom/css-scoping-slot-with-id.html, once we don't force an
+        Inherit style change for slots. I could add some more tests for stuff
+        with descendant combinators and similar I guess, though.
+
+        * style/AttributeChangeInvalidation.cpp:
+        (WebCore::Style::AttributeChangeInvalidation::invalidateStyle):
+        * style/ClassChangeInvalidation.cpp:
+        (WebCore::Style::ClassChangeInvalidation::invalidateStyle):
+        * style/IdChangeInvalidation.cpp:
+        (WebCore::Style::IdChangeInvalidation::invalidateStyle):
+
 2017-06-02  Miguel Gomez  <magomez@igalia.com>
 
         [GTK+][WPE] Allow TextureMapperShaderProgram to perform colorspace conversions with the source texture pixels
