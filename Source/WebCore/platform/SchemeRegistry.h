@@ -42,7 +42,8 @@ public:
     static const URLSchemesMap& localSchemes();
 
     WEBCORE_EXPORT static bool shouldTreatURLSchemeAsLocal(const String&);
-
+    WEBCORE_EXPORT static bool isBuiltinScheme(const String&);
+    
     // Secure schemes do not trigger mixed content warnings. For example,
     // https and data are secure schemes because they cannot be corrupted by
     // active network attackers.

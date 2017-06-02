@@ -99,9 +99,9 @@
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/SQLiteDatabaseTracker.h>
+#import <WebCore/SchemeRegistry.h>
 #import <WebCore/Settings.h>
 #import <WebCore/TextStream.h>
-#import <WebCore/URLParser.h>
 #import <WebCore/ValidationBubble.h>
 #import <WebCore/ViewportArguments.h>
 #import <WebCore/WritingMode.h>
@@ -3644,7 +3644,7 @@ WEBCORE_COMMAND(yankAndSelect)
 
 + (BOOL)handlesURLScheme:(NSString *)urlScheme
 {
-    return WebCore::URLParser::isSpecialScheme(urlScheme);
+    return WebCore::SchemeRegistry::isBuiltinScheme(urlScheme);
 }
 
 @end

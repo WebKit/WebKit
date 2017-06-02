@@ -1,3 +1,35 @@
+2017-06-02  Brady Eidson  <beidson@apple.com>
+
+        Prevent scheme handlers from handling all built-in URL schemes.
+        <rdar://problem/32404790> and https://bugs.webkit.org/show_bug.cgi?id=172869
+
+        Reviewed by Andy Estes.
+
+        Covered by API test.
+
+        This patch refactors SchemeRegistry to keep a base, constant set of each of the special
+        URL schemes that WebKit knows about by default.
+        
+        It then exposes that list through a new method to support WK2 API.
+
+        * platform/SchemeRegistry.cpp:
+        (WebCore::allBuiltinSchemes):
+        (WebCore::builtinLocalURLSchemes):
+        (WebCore::localURLSchemes):
+        (WebCore::builtinSecureSchemes):
+        (WebCore::secureSchemes):
+        (WebCore::builtinSchemesWithUniqueOrigins):
+        (WebCore::schemesWithUniqueOrigins):
+        (WebCore::builtinEmptyDocumentSchemes):
+        (WebCore::emptyDocumentSchemes):
+        (WebCore::builtinCanDisplayOnlyIfCanRequestSchemes):
+        (WebCore::canDisplayOnlyIfCanRequestSchemes):
+        (WebCore::SchemeRegistry::removeURLSchemeRegisteredAsLocal):
+        (WebCore::builtinCORSEnabledSchemes):
+        (WebCore::CORSEnabledSchemes):
+        (WebCore::SchemeRegistry::isBuiltinScheme):
+        * platform/SchemeRegistry.h:
+
 2017-06-02  Simon Fraser  <simon.fraser@apple.com>
 
         All scroll peformance logging should happen in the UI process

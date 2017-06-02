@@ -25,20 +25,80 @@
  */
 #include "config.h"
 #include "SchemeRegistry.h"
+
+#include "URLParser.h"
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 
+#if ENABLE(CONTENT_FILTERING)
+#include "ContentFilter.h"
+#endif
+#if USE(QUICK_LOOK)
+#include "QuickLook.h"
+#endif
+
 namespace WebCore {
+
+static const URLSchemesMap& builtinLocalURLSchemes();
+static const Vector<String>& builtinSecureSchemes();
+static const Vector<String>& builtinSchemesWithUniqueOrigins();
+static const Vector<String>& builtinEmptyDocumentSchemes();
+static const Vector<String>& builtinCanDisplayOnlyIfCanRequestSchemes();
+static const Vector<String>& builtinCORSEnabledSchemes();
+
+static const URLSchemesMap& allBuiltinSchemes()
+{
+    static NeverDestroyed<URLSchemesMap> schemes;
+    if (schemes.get().isEmpty()) {
+        for (const auto& scheme : builtinLocalURLSchemes())
+            schemes.get().add(scheme);
+        for (const auto& scheme : builtinSecureSchemes())
+            schemes.get().add(scheme);
+        for (const auto& scheme : builtinSchemesWithUniqueOrigins())
+            schemes.get().add(scheme);
+        for (const auto& scheme : builtinEmptyDocumentSchemes())
+            schemes.get().add(scheme);
+        for (const auto& scheme : builtinCanDisplayOnlyIfCanRequestSchemes())
+            schemes.get().add(scheme);
+        for (const auto& scheme : builtinCORSEnabledSchemes())
+            schemes.get().add(scheme);
+
+        // Other misc schemes that the SchemeRegistry doesn't know about.
+        schemes.get().add("webkit-fake-url");
+#if PLATFORM(MAC)
+        schemes.get().add("safari-extension");
+#endif
+#if USE(QUICK_LOOK)
+        schemes.get().add(QLPreviewProtocol());
+#endif
+#if ENABLE(CONTENT_FILTERING)
+        schemes.get().add(ContentFilter::urlScheme());
+#endif
+    }
+
+    return schemes;
+}
+
+const URLSchemesMap& builtinLocalURLSchemes()
+{
+    static NeverDestroyed<URLSchemesMap> schemes;
+    if (schemes.get().isEmpty()) {
+        schemes.get().add("file");
+#if PLATFORM(COCOA)
+        schemes.get().add("applewebdata");
+#endif
+    }
+
+    return schemes;
+}
 
 static URLSchemesMap& localURLSchemes()
 {
     static NeverDestroyed<URLSchemesMap> localSchemes;
 
     if (localSchemes.get().isEmpty()) {
-        localSchemes.get().add("file");
-#if PLATFORM(COCOA)
-        localSchemes.get().add("applewebdata");
-#endif
+        for (const auto& scheme : builtinLocalURLSchemes())
+            localSchemes.get().add(scheme);
     }
 
     return localSchemes;
@@ -50,21 +110,48 @@ static URLSchemesMap& displayIsolatedURLSchemes()
     return displayIsolatedSchemes;
 }
 
+const Vector<String>& builtinSecureSchemes()
+{
+    static NeverDestroyed<Vector<String>> schemes;
+    if (schemes.get().isEmpty()) {
+        schemes.get().append("https");
+        schemes.get().append("about");
+        schemes.get().append("data");
+        schemes.get().append("wss");
+#if PLATFORM(GTK) || PLATFORM(WPE)
+        schemes.get().append("resource");
+#endif
+        schemes.get().shrinkToFit();
+    }
+
+    return schemes;
+}
+
 static URLSchemesMap& secureSchemes()
 {
     static NeverDestroyed<URLSchemesMap> secureSchemes;
 
     if (secureSchemes.get().isEmpty()) {
-        secureSchemes.get().add("https");
-        secureSchemes.get().add("about");
-        secureSchemes.get().add("data");
-        secureSchemes.get().add("wss");
-#if PLATFORM(GTK) || PLATFORM(WPE)
-        secureSchemes.get().add("resource");
-#endif
+        for (const auto& scheme : builtinSecureSchemes())
+            secureSchemes.get().add(scheme);
     }
 
     return secureSchemes;
+}
+
+const Vector<String>& builtinSchemesWithUniqueOrigins()
+{
+    static NeverDestroyed<Vector<String>> schemes;
+    if (schemes.get().isEmpty()) {
+        schemes.get().append("about");
+        schemes.get().append("javascript");
+        // This is a willful violation of HTML5.
+        // See https://bugs.webkit.org/show_bug.cgi?id=11885
+        schemes.get().append("data");
+        schemes.get().shrinkToFit();
+    }
+
+    return schemes;
 }
 
 static URLSchemesMap& schemesWithUniqueOrigins()
@@ -72,22 +159,32 @@ static URLSchemesMap& schemesWithUniqueOrigins()
     static NeverDestroyed<URLSchemesMap> schemesWithUniqueOrigins;
 
     if (schemesWithUniqueOrigins.get().isEmpty()) {
-        schemesWithUniqueOrigins.get().add("about");
-        schemesWithUniqueOrigins.get().add("javascript");
-        // This is a willful violation of HTML5.
-        // See https://bugs.webkit.org/show_bug.cgi?id=11885
-        schemesWithUniqueOrigins.get().add("data");
+        for (const auto& scheme : builtinSchemesWithUniqueOrigins())
+            schemesWithUniqueOrigins.get().add(scheme);
     }
 
     return schemesWithUniqueOrigins;
+}
+
+const Vector<String>& builtinEmptyDocumentSchemes()
+{
+    static NeverDestroyed<Vector<String>> schemes;
+    if (schemes.get().isEmpty()) {
+        schemes.get().append("about");
+        schemes.get().shrinkToFit();
+    }
+
+    return schemes;
 }
 
 static URLSchemesMap& emptyDocumentSchemes()
 {
     static NeverDestroyed<URLSchemesMap> emptyDocumentSchemes;
 
-    if (emptyDocumentSchemes.get().isEmpty())
-        emptyDocumentSchemes.get().add("about");
+    if (emptyDocumentSchemes.get().isEmpty()) {
+        for (const auto& scheme : builtinEmptyDocumentSchemes())
+            emptyDocumentSchemes.get().add(scheme);
+    }
 
     return emptyDocumentSchemes;
 }
@@ -98,12 +195,24 @@ static HashSet<String, ASCIICaseInsensitiveHash>& schemesForbiddenFromDomainRela
     return schemes;
 }
 
+const Vector<String>& builtinCanDisplayOnlyIfCanRequestSchemes()
+{
+    static NeverDestroyed<Vector<String>> schemes;
+    if (schemes.get().isEmpty()) {
+        schemes.get().append("blob");
+        schemes.get().shrinkToFit();
+    }
+
+    return schemes;
+}
+
 static URLSchemesMap& canDisplayOnlyIfCanRequestSchemes()
 {
     static NeverDestroyed<URLSchemesMap> canDisplayOnlyIfCanRequestSchemes;
 
     if (canDisplayOnlyIfCanRequestSchemes.get().isEmpty()) {
-        canDisplayOnlyIfCanRequestSchemes.get().add("blob");
+        for (const auto& scheme : builtinCanDisplayOnlyIfCanRequestSchemes())
+            canDisplayOnlyIfCanRequestSchemes.get().add(scheme);
     }
 
     return canDisplayOnlyIfCanRequestSchemes;
@@ -122,12 +231,9 @@ void SchemeRegistry::registerURLSchemeAsLocal(const String& scheme)
 
 void SchemeRegistry::removeURLSchemeRegisteredAsLocal(const String& scheme)
 {
-    if (equalLettersIgnoringASCIICase(scheme, "file"))
+    if (builtinLocalURLSchemes().contains(scheme))
         return;
-#if PLATFORM(COCOA)
-    if (equalLettersIgnoringASCIICase(scheme, "applewebdata"))
-        return;
-#endif
+
     localURLSchemes().remove(scheme);
 }
 
@@ -148,14 +254,26 @@ static URLSchemesMap& schemesAllowingDatabaseAccessInPrivateBrowsing()
     return schemesAllowingDatabaseAccessInPrivateBrowsing;
 }
 
+const Vector<String>& builtinCORSEnabledSchemes()
+{
+    static NeverDestroyed<Vector<String>> schemes;
+    if (schemes.get().isEmpty()) {
+        schemes.get().append("http");
+        schemes.get().append("https");
+        schemes.get().shrinkToFit();
+    }
+
+    return schemes;
+}
+
 static URLSchemesMap& CORSEnabledSchemes()
 {
     // FIXME: http://bugs.webkit.org/show_bug.cgi?id=77160
     static NeverDestroyed<URLSchemesMap> CORSEnabledSchemes;
 
     if (CORSEnabledSchemes.get().isEmpty()) {
-        CORSEnabledSchemes.get().add("http");
-        CORSEnabledSchemes.get().add("https");
+        for (const auto& scheme : builtinCORSEnabledSchemes())
+            CORSEnabledSchemes.get().add(scheme);
     }
 
     return CORSEnabledSchemes;
@@ -361,6 +479,11 @@ bool SchemeRegistry::isUserExtensionScheme(const String& scheme)
         return true;
 #endif
     return false;
+}
+
+bool SchemeRegistry::isBuiltinScheme(const String& scheme)
+{
+    return allBuiltinSchemes().contains(scheme) || URLParser::isSpecialScheme(scheme);
 }
 
 } // namespace WebCore

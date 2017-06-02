@@ -147,5 +147,49 @@ TEST(URLSchemeHandler, NoMIMEType)
     EXPECT_TRUE([[handler.get().stoppedURLs objectAtIndex:0] isEqual:[NSURL URLWithString:@"testing:main"]]);
 }
 
+static NSString *schemes[] = {
+    @"about",
+    @"applewebdata",
+    @"blob",
+    @"data",
+    @"file",
+    @"ftp",
+    @"gopher",
+    @"http",
+    @"https",
+    @"javascript",
+    @"webkit-fake-url",
+    @"ws",
+    @"wss",
+#if PLATFORM(MAC)
+    @"safari-extension",
+#endif
+#if ENABLE(CONTENT_FILTERING)
+    @"x-apple-content-filter",
+#endif
+#if USE(QUICK_LOOK)
+    @"x-apple-ql-id",
+#endif
+};
+
+TEST(URLSchemeHandler, BuiltinSchemes)
+{
+    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    RetainPtr<SchemeHandler> handler = adoptNS([[SchemeHandler alloc] initWithData:nil mimeType:nil]);
+
+    for (NSString *scheme : schemes) {
+        EXPECT_TRUE([WKWebView handlesURLScheme:scheme]);
+
+        bool exceptionRaised = false;
+        @try {
+            [configuration setURLSchemeHandler:handler.get() forURLScheme:scheme];
+        } @catch (NSException *exception) {
+            EXPECT_WK_STREQ(NSInvalidArgumentException, exception.name);
+            exceptionRaised = true;
+        }
+        EXPECT_TRUE(exceptionRaised);
+    }
+}
+
 
 #endif

@@ -1,3 +1,12 @@
+2017-06-02  Brady Eidson  <beidson@apple.com>
+
+        Prevent scheme handlers from handling all built-in URL schemes.
+        <rdar://problem/32404790> and https://bugs.webkit.org/show_bug.cgi?id=172869
+
+        Reviewed by Andy Estes.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/WKURLSchemeHandler-1.mm:
+
 2017-06-02  Stephan Szabo  <stephan.szabo@am.sony.com>
 
         [JSCOnly] Build static jsc.exe on Windows
