@@ -1,3 +1,18 @@
+2017-06-02  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Should see active Web Sockets when opening Web Inspector
+        https://bugs.webkit.org/show_bug.cgi?id=172312
+
+        Reviewed by Joseph Pecoraro.
+
+        Test that WebSockets created before the inspector loads are also tracked.
+
+        * http/tests/websocket/tests/hybi/inspector/before-load-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/inspector/before-load.html: Added.
+        * http/tests/websocket/tests/hybi/inspector/before-load_wsh.py: Added.
+        (web_socket_do_extra_handshake):
+        (web_socket_transfer_data):
+
 2017-06-02  Matt Lewis  <jlewis3@apple.com>
 
         Marked fast/images/slower-decoding-than-animation-image.html as flaky.
