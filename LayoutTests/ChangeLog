@@ -1,5 +1,17 @@
 2017-06-02  Javier Fernandez  <jfernandez@igalia.com>
 
+        [css-grid] Logical margin incorrectly applied during the tracks sizing algorithm of auto tracks
+        https://bugs.webkit.org/show_bug.cgi?id=172836
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Test to verify different cases of auto-sized tracks and orthogonal items with margins.
+
+        * fast/css-grid-layout/grid-track-sizing-with-margins-and-orthogonal-flows-expected.txt: Added.
+        * fast/css-grid-layout/grid-track-sizing-with-margins-and-orthogonal-flows.html: Added.
+
+2017-06-02  Javier Fernandez  <jfernandez@igalia.com>
+
         [css-grid] Margin wrong applied when stretching an orthogonal item in fixed size track
         https://bugs.webkit.org/show_bug.cgi?id=172590
 

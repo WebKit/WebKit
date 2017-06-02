@@ -749,7 +749,8 @@ LayoutUnit GridTrackSizingAlgorithmStrategy::minContentForChild(RenderBox& child
 
         // FIXME: It's unclear if we should return the intrinsic width or the preferred width.
         // See http://lists.w3.org/Archives/Public/www-style/2013Jan/0245.html
-        return child.minPreferredLogicalWidth() + marginIntrinsicLogicalWidthForChild(renderGrid(), child);
+        LayoutUnit marginLogicalWidth = child.needsLayout() ? computeMarginLogicalSizeForChild(childInlineDirection, *renderGrid(), child) : child.marginLogicalWidth();
+        return child.minPreferredLogicalWidth() + marginLogicalWidth;
     }
 
     if (updateOverrideContainingBlockContentSizeForChild(child, childInlineDirection))
@@ -768,7 +769,8 @@ LayoutUnit GridTrackSizingAlgorithmStrategy::maxContentForChild(RenderBox& child
 
         // FIXME: It's unclear if we should return the intrinsic width or the preferred width.
         // See http://lists.w3.org/Archives/Public/www-style/2013Jan/0245.html
-        return child.maxPreferredLogicalWidth() + marginIntrinsicLogicalWidthForChild(renderGrid(), child);
+        LayoutUnit marginLogicalWidth = child.needsLayout() ? computeMarginLogicalSizeForChild(childInlineDirection, *renderGrid(), child) : child.marginLogicalWidth();
+        return child.maxPreferredLogicalWidth() + marginLogicalWidth;
     }
 
     if (updateOverrideContainingBlockContentSizeForChild(child, childInlineDirection))
