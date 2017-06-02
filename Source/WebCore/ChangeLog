@@ -1,3 +1,36 @@
+2017-06-02  Miguel Gomez  <magomez@igalia.com>
+
+        [GTK+][WPE] Allow TextureMapperShaderProgram to perform colorspace conversions with the source texture pixels
+        https://bugs.webkit.org/show_bug.cgi?id=172749
+
+        Reviewed by Žan Doberšek.
+
+        Currently TextureMapperGL is only able to paint properly textures that are in RGBA format. There are
+        situations where we will want it to be able to handle other formats (for example BGRA for gstreamer-gl).
+        To make this possible without having to perform the color conversion in the CPU, we add a new color
+        conversion matrix to TextureMapperShaderProgram. This matrix will perform the color space conversion
+        in the GPU, just after sampling the source texture.
+
+        Also, add a new flag to TextureMapperGL to indicate that a color conversion is required to handle a
+        texture. This flag will be set to the TextureMapperPlatformLayerBuffers as required, and TextureMapperGL
+        will set the appropriate color space matrix to the shader. Initially only the flag for BGRA->RGBA conversion
+        is defined, but support for new transformations can be added as needed.
+
+        VideoTextureCopierGStreamer also uses the TextureMapperShaderProgram to perform texture sampling, but for
+        the moment it just sets an identity matrix because when using gstreamer-gl, the format of the video frames
+        is RGBA. This will be changed soon to use BGRA.
+
+        No new tests.
+
+        * platform/graphics/gstreamer/VideoTextureCopierGStreamer.cpp:
+        (WebCore::VideoTextureCopierGStreamer::copyVideoTextureToPlatformTexture):
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        (WebCore::colorSpaceMatrixForFlags):
+        (WebCore::TextureMapperGL::drawTexturedQuadWithProgram):
+        * platform/graphics/texmap/TextureMapperGL.h:
+        * platform/graphics/texmap/TextureMapperShaderProgram.cpp:
+        * platform/graphics/texmap/TextureMapperShaderProgram.h:
+
 2017-06-02  Javier Fernandez  <jfernandez@igalia.com>
 
         [css-grid] Margin wrong applied when stretching an orthogonal item in fixed size track

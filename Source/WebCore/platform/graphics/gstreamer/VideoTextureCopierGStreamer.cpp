@@ -170,6 +170,7 @@ bool VideoTextureCopierGStreamer::copyVideoTextureToPlatformTexture(Platform3DOb
     m_shaderProgram->setMatrix(m_shaderProgram->modelViewMatrixLocation(), m_modelViewMatrix);
     m_shaderProgram->setMatrix(m_shaderProgram->projectionMatrixLocation(), m_projectionMatrix);
     m_shaderProgram->setMatrix(m_shaderProgram->textureSpaceMatrixLocation(), m_textureSpaceMatrix);
+    m_shaderProgram->setMatrix(m_shaderProgram->textureColorSpaceMatrixLocation(), TransformationMatrix());
 
     // Perform the copy.
     m_context3D->enableVertexAttribArray(m_shaderProgram->vertexLocation());

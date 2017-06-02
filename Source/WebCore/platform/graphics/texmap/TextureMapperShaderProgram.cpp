@@ -144,6 +144,7 @@ static const char* fragmentTemplate =
     STRINGIFY(
         precision TextureSpaceMatrixPrecision float;
         uniform mat4 u_textureSpaceMatrix;
+        uniform mat4 u_textureColorSpaceMatrix;
         precision mediump float;
         uniform SamplerType s_sampler;
         uniform sampler2D s_contentTexture;
@@ -173,7 +174,7 @@ static const char* fragmentTemplate =
 
         void applyManualRepeat(inout vec2 pos) { pos = fract(pos); }
 
-        void applyTexture(inout vec4 color, vec2 texCoord) { color = SamplerFunction(s_sampler, texCoord); }
+        void applyTexture(inout vec4 color, vec2 texCoord) { color = u_textureColorSpaceMatrix * SamplerFunction(s_sampler, texCoord); }
         void applyOpacity(inout vec4 color) { color *= u_opacity; }
         void applyAntialiasing(inout vec4 color) { color *= antialias(); }
 

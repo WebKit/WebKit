@@ -50,7 +50,8 @@ public:
         ShouldAntialias = 0x08,
         ShouldRotateTexture90 = 0x10,
         ShouldRotateTexture180 = 0x20,
-        ShouldRotateTexture270 = 0x40
+        ShouldRotateTexture270 = 0x40,
+        ShouldConvertTextureBGRAToRGBA = 0x80
     };
 
     typedef int Flags;
