@@ -1,3 +1,18 @@
+2017-06-01  Youenn Fablet  <youenn@apple.com>
+
+        LibWebRTC might crash with frames having a null width or height
+        https://bugs.webkit.org/show_bug.cgi?id=172842
+        <rdar://problem/32514813>
+
+        Reviewed by Jon Lee.
+
+        Do not send black frames in case the video width or height is zero.
+        Also ensure that even if a null buffer is returned by the pool, no crash might actually happen.
+
+        * platform/mediastream/mac/RealtimeOutgoingVideoSource.cpp:
+        (WebCore::RealtimeOutgoingVideoSource::sendBlackFramesIfNeeded):
+        (WebCore::RealtimeOutgoingVideoSource::videoSampleAvailable):
+
 2017-06-01  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Should see active Web Sockets when opening Web Inspector

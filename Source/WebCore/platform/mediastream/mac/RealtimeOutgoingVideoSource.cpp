@@ -161,12 +161,20 @@ void RealtimeOutgoingVideoSource::sendBlackFramesIfNeeded()
     if (!m_muted && m_enabled)
         return;
 
+    if (!m_width || !m_height)
+        return;
+
     if (!m_blackFrame) {
         auto width = m_width;
         auto height = m_height;
         if (m_shouldApplyRotation && (m_currentRotation == webrtc::kVideoRotation_0 || m_currentRotation == webrtc::kVideoRotation_90))
             std::swap(width, height);
         auto frame = m_bufferPool.CreateBuffer(width, height);
+        ASSERT(frame);
+        if (!frame) {
+            RELEASE_LOG(WebRTC, "RealtimeOutgoingVideoSource::sendBlackFramesIfNeeded unable to send black frames");
+            return;
+        }
         frame->SetToBlack();
         m_blackFrame = WTFMove(frame);
     }
@@ -235,7 +243,15 @@ void RealtimeOutgoingVideoSource::videoSampleAvailable(MediaSample& sample)
     CVPixelBufferLockBaseAddress(pixelBuffer, 0);
     auto* source = reinterpret_cast<uint8_t*>(CVPixelBufferGetBaseAddressOfPlane(pixelBuffer, 0));
 
+    ASSERT(m_width);
+    ASSERT(m_height);
+
     auto newBuffer = m_bufferPool.CreateBuffer(m_width, m_height);
+    ASSERT(newBuffer);
+    if (!newBuffer) {
+        RELEASE_LOG(WebRTC, "RealtimeOutgoingVideoSource::videoSampleAvailable unable to allocate buffer for conversion to YUV");
+        return;
+    }
     if (pixelFormatType == kCVPixelFormatType_32BGRA)
         webrtc::ConvertToI420(webrtc::kARGB, source, 0, 0, m_width, m_height, 0, webrtc::kVideoRotation_0, newBuffer);
     else {
