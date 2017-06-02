@@ -1,5 +1,14 @@
 2017-06-02  Zalan Bujtas  <zalan@apple.com>
 
+        Disable ViewportSizeForViewportUnits tests on iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=172872
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebKit2/ViewportSizeForViewportUnits.mm:
+
+2017-06-02  Zalan Bujtas  <zalan@apple.com>
+
         Allow clients to override viewport size for CSS viewport units.
         https://bugs.webkit.org/show_bug.cgi?id=172838
         <rdar://problem/32523441>
