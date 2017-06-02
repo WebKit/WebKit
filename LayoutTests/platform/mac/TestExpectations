@@ -1543,3 +1543,6 @@ webkit.org/b/171886 imported/w3c/web-platform-tests/streams/readable-byte-stream
 webkit.org/b/172469 [ ElCapitan ] imported/w3c/web-platform-tests/WebCryptoAPI/import_export/test_rsa_importKey.https.html [ Timeout ]
 
 webkit.org/b/172720 [ Sierra+ ] js/intl-datetimeformat.html [ Failure ]
+
+# This test tests a feature that only exists on iOS.
+webkit.org/b/172737 fast/text/accessibility-bold-system-font-2.html [ ImageOnlyFailure ]

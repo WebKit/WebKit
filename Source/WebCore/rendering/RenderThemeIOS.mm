@@ -1210,6 +1210,21 @@ FontCascadeDescription& RenderThemeIOS::cachedSystemFontDescription(CSSValueID v
     }
 }
 
+static inline FontSelectionValue cssWeightOfSystemFont(CTFontRef font)
+{
+    RetainPtr<CFDictionaryRef> traits = adoptCF(CTFontCopyTraits(font));
+    CFNumberRef resultRef = (CFNumberRef)CFDictionaryGetValue(traits.get(), kCTFontWeightTrait);
+    float result = 0;
+    CFNumberGetValue(resultRef, kCFNumberFloatType, &result);
+    // These numbers were experimentally gathered from weights of the system font.
+    static float weightThresholds[] = { -0.6, -0.365, -0.115, 0.130, 0.235, 0.350, 0.5, 0.7 };
+    for (unsigned i = 0; i < WTF_ARRAY_LENGTH(weightThresholds); ++i) {
+        if (result < weightThresholds[i])
+            return FontSelectionValue((static_cast<int>(i) + 1) * 100);
+    }
+    return FontSelectionValue(900);
+}
+
 void RenderThemeIOS::updateCachedSystemFontDescription(CSSValueID valueID, FontCascadeDescription& fontDescription) const
 {
     RetainPtr<CTFontDescriptorRef> fontDescriptor;
@@ -1217,79 +1232,79 @@ void RenderThemeIOS::updateCachedSystemFontDescription(CSSValueID valueID, FontC
     switch (valueID) {
     case CSSValueAppleSystemHeadline:
         textStyle = kCTUIFontTextStyleHeadline;
-        fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, contentSizeCategory(), 0));
+        fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, contentSizeCategory(), nullptr));
         break;
     case CSSValueAppleSystemBody:
         textStyle = kCTUIFontTextStyleBody;
-        fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, contentSizeCategory(), 0));
+        fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, contentSizeCategory(), nullptr));
         break;
 #if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
     case CSSValueAppleSystemTitle0:
         textStyle = kCTUIFontTextStyleTitle0;
-        fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, contentSizeCategory(), 0));
+        fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, contentSizeCategory(), nullptr));
         break;
 #endif
     case CSSValueAppleSystemTitle1:
         textStyle = kCTUIFontTextStyleTitle1;
-        fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, contentSizeCategory(), 0));
+        fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, contentSizeCategory(), nullptr));
         break;
     case CSSValueAppleSystemTitle2:
         textStyle = kCTUIFontTextStyleTitle2;
-        fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, contentSizeCategory(), 0));
+        fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, contentSizeCategory(), nullptr));
         break;
     case CSSValueAppleSystemTitle3:
         textStyle = kCTUIFontTextStyleTitle3;
-        fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, contentSizeCategory(), 0));
+        fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, contentSizeCategory(), nullptr));
         break;
 #if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
     case CSSValueAppleSystemTitle4:
         textStyle = kCTUIFontTextStyleTitle4;
-        fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, contentSizeCategory(), 0));
+        fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, contentSizeCategory(), nullptr));
         break;
 #endif
     case CSSValueAppleSystemSubheadline:
         textStyle = kCTUIFontTextStyleSubhead;
-        fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, contentSizeCategory(), 0));
+        fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, contentSizeCategory(), nullptr));
         break;
     case CSSValueAppleSystemFootnote:
         textStyle = kCTUIFontTextStyleFootnote;
-        fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, contentSizeCategory(), 0));
+        fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, contentSizeCategory(), nullptr));
         break;
     case CSSValueAppleSystemCaption1:
         textStyle = kCTUIFontTextStyleCaption1;
-        fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, contentSizeCategory(), 0));
+        fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, contentSizeCategory(), nullptr));
         break;
     case CSSValueAppleSystemCaption2:
         textStyle = kCTUIFontTextStyleCaption2;
-        fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, contentSizeCategory(), 0));
+        fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, contentSizeCategory(), nullptr));
         break;
 
     // Short version.
     case CSSValueAppleSystemShortHeadline:
         textStyle = kCTUIFontTextStyleShortHeadline;
-        fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, contentSizeCategory(), 0));
+        fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, contentSizeCategory(), nullptr));
         break;
     case CSSValueAppleSystemShortBody:
         textStyle = kCTUIFontTextStyleShortBody;
-        fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, contentSizeCategory(), 0));
+        fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, contentSizeCategory(), nullptr));
         break;
     case CSSValueAppleSystemShortSubheadline:
         textStyle = kCTUIFontTextStyleShortSubhead;
-        fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, contentSizeCategory(), 0));
+        fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, contentSizeCategory(), nullptr));
         break;
     case CSSValueAppleSystemShortFootnote:
         textStyle = kCTUIFontTextStyleShortFootnote;
-        fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, contentSizeCategory(), 0));
+        fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, contentSizeCategory(), nullptr));
         break;
     case CSSValueAppleSystemShortCaption1:
         textStyle = kCTUIFontTextStyleShortCaption1;
-        fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, contentSizeCategory(), 0));
+        fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, contentSizeCategory(), nullptr));
         break;
 
     // Tall version.
     case CSSValueAppleSystemTallBody:
         textStyle = kCTUIFontTextStyleTallBody;
-        fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, contentSizeCategory(), 0));
+        fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, contentSizeCategory(), nullptr));
         break;
 
     default:
@@ -1302,8 +1317,7 @@ void RenderThemeIOS::updateCachedSystemFontDescription(CSSValueID valueID, FontC
     fontDescription.setIsAbsoluteSize(true);
     fontDescription.setOneFamily(textStyle);
     fontDescription.setSpecifiedSize(CTFontGetSize(font.get()));
-    auto capabilities = capabilitiesForFontDescriptor(adoptCF(CTFontCopyFontDescriptor(font.get())).get());
-    fontDescription.setWeight(capabilities.weight.minimum);
+    fontDescription.setWeight(cssWeightOfSystemFont(font.get()));
     fontDescription.setItalic(normalItalicValue());
 }
 

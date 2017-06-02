@@ -95,6 +95,7 @@ public:
     ExceptionOr<void> setUserInterfaceDirectionPolicy(const String&);
     ExceptionOr<String> systemLayoutDirection();
     ExceptionOr<void> setSystemLayoutDirection(const String&);
+    ExceptionOr<void> setShouldMockBoldSystemFontForAccessibility(bool);
     
     static void setAllowsAnySSLCertificate(bool);
 
@@ -191,6 +192,8 @@ private:
         bool m_cssGridLayoutEnabled;
         bool m_webGL2Enabled;
         bool m_webGPUEnabled;
+        
+        bool m_shouldMockBoldSystemFontForAccessibility;
     };
 
     Page* m_page;

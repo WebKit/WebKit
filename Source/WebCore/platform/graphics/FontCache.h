@@ -226,6 +226,9 @@ public:
 #endif
 
     std::unique_ptr<FontPlatformData> createFontPlatformDataForTesting(const FontDescription&, const AtomicString& family);
+    
+    bool shouldMockBoldSystemFontForAccessibility() const { return m_shouldMockBoldSystemFontForAccessibility; }
+    void setShouldMockBoldSystemFontForAccessibility(bool shouldMockBoldSystemFontForAccessibility) { m_shouldMockBoldSystemFontForAccessibility = shouldMockBoldSystemFontForAccessibility; }
 
 private:
     FontCache();
@@ -246,6 +249,8 @@ private:
     static const AtomicString& platformAlternateFamilyName(const AtomicString&);
 
     Timer m_purgeTimer;
+    
+    bool m_shouldMockBoldSystemFontForAccessibility { false };
 
 #if PLATFORM(COCOA)
     friend class ComplexTextController;

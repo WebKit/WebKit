@@ -30,12 +30,14 @@
 #include "CaptionUserPreferences.h"
 #include "Document.h"
 #include "ExceptionCode.h"
+#include "FontCache.h"
 #include "FrameView.h"
 #include "Language.h"
 #include "LocaleToScriptMapping.h"
 #include "MainFrame.h"
 #include "Page.h"
 #include "PageGroup.h"
+#include "RenderTheme.h"
 #include "RuntimeEnabledFeatures.h"
 #include "Settings.h"
 #include "Supplementable.h"
@@ -108,6 +110,7 @@ InternalSettings::Backup::Backup(Settings& settings)
 #if ENABLE(WEBGPU)
     , m_webGPUEnabled(RuntimeEnabledFeatures::sharedFeatures().webGPUEnabled())
 #endif
+    , m_shouldMockBoldSystemFontForAccessibility(RenderTheme::singleton().shouldMockBoldSystemFontForAccessibility())
 {
 }
 
@@ -185,6 +188,8 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
     settings.setForcedDisplayIsMonochromeAccessibilityValue(m_forcedDisplayIsMonochromeAccessibilityValue);
     settings.setForcedPrefersReducedMotionAccessibilityValue(m_forcedPrefersReducedMotionAccessibilityValue);
     Settings::setAllowsAnySSLCertificate(false);
+    RenderTheme::singleton().setShouldMockBoldSystemFontForAccessibility(m_shouldMockBoldSystemFontForAccessibility);
+    FontCache::singleton().setShouldMockBoldSystemFontForAccessibility(m_shouldMockBoldSystemFontForAccessibility);
 
 #if ENABLE(INDEXED_DATABASE_IN_WORKERS)
     RuntimeEnabledFeatures::sharedFeatures().setIndexedDBWorkersEnabled(m_indexedDBWorkersEnabled);
@@ -674,6 +679,15 @@ ExceptionOr<void> InternalSettings::setInlineMediaPlaybackRequiresPlaysInlineAtt
     if (!m_page)
         return Exception { INVALID_ACCESS_ERR };
     settings().setInlineMediaPlaybackRequiresPlaysInlineAttribute(requires);
+    return { };
+}
+
+ExceptionOr<void> InternalSettings::setShouldMockBoldSystemFontForAccessibility(bool requires)
+{
+    if (!m_page)
+        return Exception { INVALID_ACCESS_ERR };
+    RenderTheme::singleton().setShouldMockBoldSystemFontForAccessibility(requires);
+    FontCache::singleton().setShouldMockBoldSystemFontForAccessibility(requires);
     return { };
 }
 

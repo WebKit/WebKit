@@ -63,7 +63,7 @@ public:
 
     // This function is to be implemented in your platform-specific theme implementation to hand back the
     // appropriate platform theme.
-    static RenderTheme& singleton();
+    WEBCORE_EXPORT static RenderTheme& singleton();
 
     virtual void purgeCaches() { }
 
@@ -252,6 +252,9 @@ public:
 
     enum class InnerSpinButtonLayout { Vertical, HorizontalUpLeft, HorizontalUpRight };
     virtual InnerSpinButtonLayout innerSpinButtonLayout(const RenderObject&) const { return InnerSpinButtonLayout::Vertical; }
+
+    virtual bool shouldMockBoldSystemFontForAccessibility() const { return false; }
+    virtual void setShouldMockBoldSystemFontForAccessibility(bool) { }
 
 protected:
     virtual FontCascadeDescription& cachedSystemFontDescription(CSSValueID systemFontID) const;
