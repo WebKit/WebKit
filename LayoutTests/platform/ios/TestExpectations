@@ -2886,6 +2886,4 @@ webkit.org/b/172547 http/tests/xmlhttprequest/xmlhttprequest-50ms-download-dispa
 webkit.org/b/172610 media/ios/autoplay-only-in-main-document.html [ Skip ]
 webkit.org/b/172672 fast/events/before-unload-returnValue.html [ Skip ]
 
-webkit.org/b/172518 http/tests/preload/viewport/meta-viewport-link-headers.php [ Pass Failure ]
-
 webkit.org/b/168239 [ Release ] fast/css/target-fragment-match.html [ Pass Failure ]
