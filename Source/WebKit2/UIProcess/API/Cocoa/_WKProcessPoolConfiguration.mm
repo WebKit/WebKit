@@ -218,6 +218,16 @@
     _processPoolConfiguration->setShouldCaptureAudioInUIProcess(shouldCaptureAudioInUIProcess);
 }
 
+- (void)setPresentingApplicationPID:(pid_t)presentingApplicationPID
+{
+    _processPoolConfiguration->setPresentingApplicationPID(presentingApplicationPID);
+}
+
+- (pid_t)presentingApplicationPID
+{
+    return _processPoolConfiguration->presentingApplicationPID();
+}
+
 #if PLATFORM(IOS)
 - (NSString *)CTDataConnectionServiceType
 {

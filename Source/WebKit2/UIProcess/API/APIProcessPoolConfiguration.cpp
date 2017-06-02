@@ -123,6 +123,7 @@ Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::copy()
 #if PLATFORM(IOS)
     copy->m_ctDataConnectionServiceType = this->m_ctDataConnectionServiceType;
 #endif
+    copy->m_presentingApplicationPID = this->m_presentingApplicationPID;
     
     return copy;
 }

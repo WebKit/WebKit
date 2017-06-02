@@ -131,6 +131,9 @@ public:
     void setCTDataConnectionServiceType(const WTF::String& ctDataConnectionServiceType) { m_ctDataConnectionServiceType = ctDataConnectionServiceType; }
 #endif
 
+    pid_t presentingApplicationPID() const { return m_presentingApplicationPID; }
+    void setPresentingApplicationPID(pid_t pid) { m_presentingApplicationPID = pid; }
+
 private:
     bool m_shouldHaveLegacyDataStore { false };
 
@@ -162,6 +165,7 @@ private:
     bool m_alwaysRunsAtBackgroundPriority { false };
     bool m_shouldTakeUIBackgroundAssertion { true };
     bool m_shouldCaptureAudioInUIProcess { false };
+    pid_t m_presentingApplicationPID { getpid() };
 #if PLATFORM(IOS)
     WTF::String m_ctDataConnectionServiceType;
 #endif
