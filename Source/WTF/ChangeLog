@@ -1,3 +1,14 @@
+2017-06-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Get <chrono> out of StdLibExtras.h
+        https://bugs.webkit.org/show_bug.cgi?id=172744
+
+        Reviewed by Zalan Bujtas.
+
+        We hates std::chrono. Don't include it everywhere to discourage use.
+
+        * wtf/StdLibExtras.h:
+
 2017-06-02  Filip Pizlo  <fpizlo@apple.com>
 
         Atomics.load and Atomics.store need to be fully fenced

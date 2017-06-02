@@ -1,3 +1,12 @@
+2017-06-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Get <chrono> out of StdLibExtras.h
+        https://bugs.webkit.org/show_bug.cgi?id=172744
+
+        Reviewed by Zalan Bujtas.
+
+        * TestWebKitAPI/Tests/WTF/WorkQueue.cpp:
+
 2017-06-02  Zan Dobersek  <zdobersek@igalia.com>
 
         [WPE] Enable SUBTLE_CRYPTO

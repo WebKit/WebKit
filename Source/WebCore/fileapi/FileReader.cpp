@@ -43,6 +43,8 @@
 
 namespace WebCore {
 
+using namespace std::literals::chrono_literals;
+
 // Fire the progress event at least every 50ms.
 static const auto progressNotificationInterval = 50ms;
 

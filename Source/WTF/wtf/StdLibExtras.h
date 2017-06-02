@@ -27,7 +27,6 @@
 #ifndef WTF_StdLibExtras_h
 #define WTF_StdLibExtras_h
 
-#include <chrono>
 #include <cstring>
 #include <memory>
 #include <type_traits>
@@ -542,10 +541,5 @@ using WTF::mergeDeduplicatedSorted;
 using WTF::roundUpToMultipleOf;
 using WTF::safeCast;
 using WTF::tryBinarySearch;
-
-#if !COMPILER(CLANG) || __cplusplus >= 201400L
-// We normally don't want to bring in entire std namespaces, but literals are an exception.
-using namespace std::literals::chrono_literals;
-#endif
 
 #endif // WTF_StdLibExtras_h

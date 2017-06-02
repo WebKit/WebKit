@@ -934,6 +934,8 @@ void Storage::clear(const String& type, std::chrono::system_clock::time_point mo
 static double computeRecordWorth(FileTimes times)
 {
     using namespace std::chrono;
+    using namespace std::literals::chrono_literals;
+
     auto age = system_clock::now() - times.creation;
     // File modification time is updated manually on cache read. We don't use access time since OS may update it automatically.
     auto accessAge = times.modification - times.creation;

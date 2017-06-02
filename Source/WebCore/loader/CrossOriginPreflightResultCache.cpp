@@ -33,9 +33,10 @@
 #include "ResourceResponse.h"
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
+
+using namespace std::literals::chrono_literals;
 
 // These values are at the discretion of the user agent.
 static const auto defaultPreflightCacheTimeout = 5s;

@@ -46,6 +46,7 @@ namespace WebKit {
 namespace NetworkCache {
 
 using namespace WebCore;
+using namespace std::literals::chrono_literals;
 
 static const Seconds preloadedEntryLifetime { 10_s };
 
