@@ -1,3 +1,15 @@
+2017-06-02  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WPE] Enable SUBTLE_CRYPTO
+        https://bugs.webkit.org/show_bug.cgi?id=172756
+
+        Reviewed by Michael Catanzaro.
+
+        * Scripts/webkitperl/FeatureList.pm: Set ENABLE_SUBTLE_CRYPTO to 1 for WPE.
+        * wpe/jhbuild.modules: Add libgpg-error and libgcrypt dependencies.
+        * wpe/patches/libgcrypt-use-only-dev-urandom-for-testing.patch: Added. Prevents
+        exhausting entropy when running the crypto layout tests.
+
 2017-06-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Bump GTK+ and its dependencies in jhbuild
