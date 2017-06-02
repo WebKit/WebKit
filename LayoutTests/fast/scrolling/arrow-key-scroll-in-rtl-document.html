@@ -43,7 +43,9 @@
                 eventSender.keyDown("leftArrow");
                 eventSender.keyDown("leftArrow");
                 eventSender.keyDown("leftArrow");
-                eventSender.callAfterScrollingCompletes(checkForScroll);
+                setTimeout(function() {
+                    eventSender.callAfterScrollingCompletes(checkForScroll);
+                }, 0);
             }
         }
         

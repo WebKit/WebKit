@@ -1,3 +1,18 @@
+2017-06-02  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION: LayoutTest fast/scrolling/arrow-key-scroll-in-rtl-document.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=161549
+        <rdar://problem/28213429>
+
+        Reviewed by Simon Fraser.
+
+        * fast/scrolling/arrow-key-scroll-in-rtl-document.html:
+        Call eventSender.callAfterScrollingCompletes() in the next event loop iteration to
+        address the flakiness.
+
+        * platform/mac-wk2/TestExpectations:
+        Unskip test.
+
 2017-06-02  Frederic Wang  <fwang@igalia.com>
 
         [Mac] Include frames in the scrolling tree when ScrollingTreeIncludesFrames=true
