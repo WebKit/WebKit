@@ -1,5 +1,25 @@
 2017-06-02  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Existing query in Search tab doesn't perform search on reload
+        https://bugs.webkit.org/show_bug.cgi?id=172663
+
+        Reviewed by Timothy Hatcher.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+        * UserInterface/Views/SearchSidebarPanel.css:
+        (.sidebar > .panel.navigation.search.changed > .banner):
+        (.sidebar > .panel.navigation.search.changed > .banner > a):
+        (.sidebar > .panel.navigation.search.changed > :matches(.content, .empty-content-placeholder)):
+
+        * UserInterface/Views/SearchSidebarPanel.js:
+        (WebInspector.SearchSidebarPanel.prototype.performSearch.resourcesCallback):
+        (WebInspector.SearchSidebarPanel.prototype._mainResourceDidChange):
+        (WebInspector.SearchSidebarPanel.prototype._contentChanged):
+        Listen for any "resource added" event, and show the content changed banner when one occurs.
+
+2017-06-02  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Should see active Web Sockets when opening Web Inspector
         https://bugs.webkit.org/show_bug.cgi?id=172312
 

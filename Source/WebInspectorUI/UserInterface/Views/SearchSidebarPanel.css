@@ -56,3 +56,25 @@ body[dir=rtl] .sidebar > .panel.navigation.search .item.source-code-match {
     direction: ltr;
     text-align: right;
 }
+
+.sidebar > .panel.navigation.search.changed > .banner {
+    position: absolute;
+    top: calc(var(--navigation-bar-height) - 1px);
+    right: 0;
+    left: 0;
+    padding: 6px;
+    text-align: center;
+    font-size: 11px;
+    background-color: hsl(50, 100%, 94%);
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.sidebar > .panel.navigation.search.changed > .banner > a {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.sidebar > .panel.navigation.search.changed > :matches(.content, .empty-content-placeholder) {
+    top: calc(var(--navigation-bar-height) + 40px - 1px);
+}

@@ -85,6 +85,10 @@ WebInspector.SearchSidebarPanel = class SearchSidebarPanel extends WebInspector.
 
         this.hideEmptyContentPlaceholder();
 
+        this.element.classList.remove("changed");
+        if (this._changedBanner)
+            this._changedBanner.remove();
+
         searchQuery = searchQuery.trim();
         if (!searchQuery.length)
             return;
@@ -174,6 +178,12 @@ WebInspector.SearchSidebarPanel = class SearchSidebarPanel extends WebInspector.
                 // COMPATIBILITY (iOS 9): Page.searchInResources did not have the optional requestId parameter.
                 PageAgent.searchInResource(searchResult.frameId, searchResult.url, searchQuery, isCaseSensitive, isRegex, searchResult.requestId, resourceCallback.bind(this, searchResult.frameId, searchResult.url));
             }
+
+            let promises = [
+                WebInspector.Frame.awaitEvent(WebInspector.Frame.Event.ResourceWasAdded),
+                WebInspector.Target.awaitEvent(WebInspector.Target.Event.ResourceAdded)
+            ];
+            Promise.race(promises).then(this._contentChanged.bind(this));
         }
 
         function searchScripts(scriptsToSearch)
@@ -345,8 +355,10 @@ WebInspector.SearchSidebarPanel = class SearchSidebarPanel extends WebInspector.
         this.contentTreeOutline.removeChildren();
         this.contentBrowser.contentViewContainer.closeAllContentViews();
 
-        if (this.visible)
-            this.focusSearchField();
+        if (this.visible) {
+            const performSearch = true;
+            this.focusSearchField(performSearch);
+        }
     }
 
     _treeSelectionDidChange(event)
@@ -394,5 +406,25 @@ WebInspector.SearchSidebarPanel = class SearchSidebarPanel extends WebInspector.
                 ignoreSearchTab: true,
             });
         }
+    }
+
+    _contentChanged(event)
+    {
+        this.element.classList.add("changed");
+
+        if (!this._changedBanner) {
+            this._changedBanner = document.createElement("div");
+            this._changedBanner.classList.add("banner");
+            this._changedBanner.append(WebInspector.UIString("The page's content has changed"), document.createElement("br"));
+
+            let performSearchLink = this._changedBanner.appendChild(document.createElement("a"));
+            performSearchLink.textContent = WebInspector.UIString("Search Again");
+            performSearchLink.addEventListener("click", () => {
+                const performSearch = true;
+                this.focusSearchField(performSearch);
+            });
+        }
+
+        this.element.appendChild(this._changedBanner);
     }
 };
