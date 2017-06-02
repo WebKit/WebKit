@@ -654,6 +654,7 @@ function sort(comparator)
     return array;
 }
 
+@globalPrivate
 function concatSlowPath()
 {
     "use strict";

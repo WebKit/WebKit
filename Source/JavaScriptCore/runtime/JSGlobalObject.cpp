@@ -744,7 +744,6 @@ putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Construct
     JSFunction* privateFuncIsArraySlow = JSFunction::create(vm, this, 0, String(), arrayConstructorPrivateFuncIsArraySlow);
     JSFunction* privateFuncConcatMemcpy = JSFunction::create(vm, this, 0, String(), arrayProtoPrivateFuncConcatMemcpy);
     JSFunction* privateFuncAppendMemcpy = JSFunction::create(vm, this, 0, String(), arrayProtoPrivateFuncAppendMemcpy);
-    JSFunction* privateFuncConcatSlowPath = JSFunction::createBuiltinFunction(vm, arrayPrototypeConcatSlowPathCodeGenerator(vm), this);
 
     JSObject* regExpProtoFlagsGetterObject = getGetterById(exec, m_regExpPrototype.get(), vm.propertyNames->flags);
     catchScope.assertNoException();
@@ -815,7 +814,6 @@ putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Construct
         GlobalPropertyInfo(vm.propertyNames->builtinNames().isArrayConstructorPrivateName(), privateFuncIsArrayConstructor, DontEnum | DontDelete | ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->builtinNames().concatMemcpyPrivateName(), privateFuncConcatMemcpy, DontEnum | DontDelete | ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->builtinNames().appendMemcpyPrivateName(), privateFuncAppendMemcpy, DontEnum | DontDelete | ReadOnly),
-        GlobalPropertyInfo(vm.propertyNames->builtinNames().concatSlowPathPrivateName(), privateFuncConcatSlowPath, DontEnum | DontDelete | ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->builtinNames().MapIteratorPrivateName(), JSFunction::create(vm, this, 1, String(), privateFuncMapIterator), DontEnum | DontDelete | ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->builtinNames().mapIteratorNextPrivateName(), JSFunction::create(vm, this, 0, String(), privateFuncMapIteratorNext), DontEnum | DontDelete | ReadOnly),
 
