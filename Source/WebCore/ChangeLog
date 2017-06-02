@@ -1,3 +1,22 @@
+2017-06-02  Frederic Wang  <fwang@igalia.com>
+
+        [Mac] Use compositing for frames when ScrollingTreeIncludesFrames=true
+        https://bugs.webkit.org/show_bug.cgi?id=172851
+
+        Reviewed by Simon Fraser.
+
+        When fast frame scrolling is supported on mac (bug 171667), scrollable frames will require
+        special composited layer. This commit enables that on mac but only when
+        ScrollingTreeIncludesFrames=true, so that the default behavior is unchanged.
+
+        Test: compositing/iframes/compositing-for-scrollable-iframe.html
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::requiresCompositingForScrollableFrame): Do not enable frame
+        compositing when ScrollingTreeIncludesFrames=false.
+        Rename ScrollableInnerFrameTrigger to ScrollableNonMainFrameTrigger.
+        * page/ChromeClient.h: Rename ScrollableInnerFrameTrigger.
+
 2017-06-02  Simon Fraser  <simon.fraser@apple.com>
 
         Get <chrono> out of StdLibExtras.h

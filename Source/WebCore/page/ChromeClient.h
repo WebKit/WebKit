@@ -318,7 +318,7 @@ public:
         CanvasTrigger = 1 << 3,
         AnimationTrigger = 1 << 4,
         FilterTrigger = 1 << 5,
-        ScrollableInnerFrameTrigger = 1 << 6,
+        ScrollableNonMainFrameTrigger = 1 << 6,
         AnimatedOpacityTrigger = 1 << 7,
         AllTriggers = 0xFFFFFFFF
     };

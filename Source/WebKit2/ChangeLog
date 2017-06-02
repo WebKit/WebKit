@@ -1,3 +1,18 @@
+2017-06-02  Frederic Wang  <fwang@igalia.com>
+
+        [Mac] Use compositing for frames when ScrollingTreeIncludesFrames=true
+        https://bugs.webkit.org/show_bug.cgi?id=172851
+
+        Reviewed by Simon Fraser.
+
+        When fast frame scrolling is supported on mac (bug 171667), scrollable frames will require
+        special composited layer. This commit enables that on mac but only when
+        ScrollingTreeIncludesFrames=true, so that the default behavior is unchanged.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.h: Make scrollable inner frame trigger
+        compositing on Mac by default. This is ignored on mac when ScrollingTreeIncludesFrames=false.
+        Rename ScrollableInnerFrameTrigger to ScrollableNonMainFrameTrigger.
+
 2017-06-02  Zalan Bujtas  <zalan@apple.com>
 
         Allow clients to override viewport size for CSS viewport units.

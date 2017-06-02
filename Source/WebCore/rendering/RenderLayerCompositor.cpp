@@ -2469,7 +2469,12 @@ bool RenderLayerCompositor::requiresCompositingForScrollableFrame() const
     if (isMainFrameCompositor())
         return false;
 
-    if (!(m_compositingTriggers & ChromeClient::ScrollableInnerFrameTrigger))
+#if PLATFORM(MAC)
+    if (!m_renderView.settings().scrollingTreeIncludesFrames())
+        return false;
+#endif
+
+    if (!(m_compositingTriggers & ChromeClient::ScrollableNonMainFrameTrigger))
         return false;
 
     // Need this done first to determine overflow.

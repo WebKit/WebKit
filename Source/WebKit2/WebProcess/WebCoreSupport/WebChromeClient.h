@@ -225,6 +225,9 @@ private:
             VideoTrigger |
             PluginTrigger|
             CanvasTrigger |
+#if PLATFORM(MAC)
+            ScrollableNonMainFrameTrigger |
+#endif
 #if PLATFORM(IOS)
             AnimatedOpacityTrigger | // Allow opacity animations to trigger compositing mode for iPhone: <rdar://problem/7830677>
 #endif
