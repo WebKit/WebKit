@@ -1,3 +1,15 @@
+2017-06-02  Filip Pizlo  <fpizlo@apple.com>
+
+        Atomics.load and Atomics.store need to be fully fenced
+        https://bugs.webkit.org/show_bug.cgi?id=172844
+
+        Reviewed by Keith Miller.
+        
+        Update documentation to say that the canonical way to do fully fenced loads and stores is
+        AtomicXchgAdd(0, ptr) and AtomicXchg(value, ptr), respectively.
+
+        * docs/b3/intermediate-representation.html:
+
 2017-05-31  Jon Davis  <jond@apple.com>
 
         Reduce Safari Technology Preview Release Notes posts shown on homepage

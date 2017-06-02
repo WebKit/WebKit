@@ -3027,7 +3027,7 @@ private:
             result = sanitizeResult(atomicValue);
             break;
         case AtomicsLoad:
-            atomicValue = loadFromIntTypedArray(pointer, type);
+            atomicValue = m_out.atomicXchgAdd(m_out.int32Zero, pointer, width);
             result = sanitizeResult(atomicValue);
             break;
         case AtomicsOr:
@@ -3035,7 +3035,7 @@ private:
             result = sanitizeResult(atomicValue);
             break;
         case AtomicsStore:
-            atomicValue = m_out.store(args[0], pointer, storeType(type));
+            atomicValue = m_out.atomicXchg(args[0], pointer, width);
             result = args[0];
             break;
         case AtomicsSub:

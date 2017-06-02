@@ -242,7 +242,7 @@ struct LoadFunc {
     template<typename T>
     JSValue operator()(T* ptr, const double*) const
     {
-        return jsNumber(WTF::atomicLoad(ptr));
+        return jsNumber(WTF::atomicLoadFullyFenced(ptr));
     }
 };
 
@@ -264,7 +264,7 @@ struct StoreFunc {
     {
         double valueAsInt = args[0];
         T valueAsT = static_cast<T>(toInt32(valueAsInt));
-        WTF::atomicStore(ptr, valueAsT);
+        WTF::atomicStoreFullyFenced(ptr, valueAsT);
         return jsNumber(valueAsInt);
     }
 };

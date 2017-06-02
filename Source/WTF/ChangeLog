@@ -1,3 +1,19 @@
+2017-06-02  Filip Pizlo  <fpizlo@apple.com>
+
+        Atomics.load and Atomics.store need to be fully fenced
+        https://bugs.webkit.org/show_bug.cgi?id=172844
+
+        Reviewed by Keith Miller.
+        
+        Add loadFullyFenced and storeFullyFenced to Atomic<>.
+
+        * wtf/Atomics.h:
+        (WTF::Atomic::loadFullyFenced):
+        (WTF::Atomic::storeRelaxed):
+        (WTF::Atomic::storeFullyFenced):
+        (WTF::atomicLoadFullyFenced):
+        (WTF::atomicStoreFullyFenced):
+
 2017-06-01  Keith Miller  <keith_miller@apple.com>
 
         Undo rollout in r217638 with bug fix

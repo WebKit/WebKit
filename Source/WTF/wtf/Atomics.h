@@ -61,8 +61,25 @@ struct Atomic {
     ALWAYS_INLINE T load(std::memory_order order = std::memory_order_seq_cst) const { return value.load(order); }
     
     ALWAYS_INLINE T loadRelaxed() const { return load(std::memory_order_relaxed); }
-
+    
+    // This is a load that simultaneously does a full fence - neither loads nor stores will move
+    // above or below it.
+    ALWAYS_INLINE T loadFullyFenced() const
+    {
+        Atomic<T>* ptr = const_cast<Atomic<T>*>(this);
+        return ptr->exchangeAdd(T());
+    }
+    
     ALWAYS_INLINE void store(T desired, std::memory_order order = std::memory_order_seq_cst) { value.store(desired, order); }
+    
+    ALWAYS_INLINE void storeRelaxed(T desired) { store(desired, std::memory_order_relaxed); }
+
+    // This is a store that simultaneously does a full fence - neither loads nor stores will move
+    // above or below it.
+    ALWAYS_INLINE void storeFullyFenced(T desired)
+    {
+        exchange(desired);
+    }
 
     ALWAYS_INLINE bool compareExchangeWeak(T expected, T desired, std::memory_order order = std::memory_order_seq_cst)
     {
@@ -81,6 +98,8 @@ struct Atomic {
         return value.compare_exchange_weak(expectedOrActual, desired, order_success, order_failure);
     }
 
+    // WARNING: This does not have strong fencing guarantees when it fails. For example, stores could
+    // sink below it in that case.
     ALWAYS_INLINE T compareExchangeStrong(T expected, T desired, std::memory_order order = std::memory_order_seq_cst)
     {
         T expectedOrActual = expected;
@@ -147,9 +166,21 @@ inline T atomicLoad(T* location, std::memory_order order = std::memory_order_seq
 }
 
 template<typename T>
+inline T atomicLoadFullyFenced(T* location)
+{
+    return bitwise_cast<Atomic<T>*>(location)->loadFullyFenced();
+}
+
+template<typename T>
 inline void atomicStore(T* location, T newValue, std::memory_order order = std::memory_order_seq_cst)
 {
     bitwise_cast<Atomic<T>*>(location)->store(newValue, order);
+}
+
+template<typename T>
+inline void atomicStoreFullyFenced(T* location, T newValue)
+{
+    bitwise_cast<Atomic<T>*>(location)->storeFullyFenced(newValue);
 }
 
 template<typename T>
