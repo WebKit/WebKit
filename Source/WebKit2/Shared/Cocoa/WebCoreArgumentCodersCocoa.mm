@@ -248,6 +248,7 @@ void ArgumentCoder<PaymentRequest>::encode(Encoder& encoder, const PaymentReques
     encoder << request.lineItems();
     encoder << request.total();
     encoder << request.applicationData();
+    encoder << request.supportedCountries();
 }
 
 bool ArgumentCoder<PaymentRequest>::decode(Decoder& decoder, PaymentRequest& request)
@@ -316,6 +317,11 @@ bool ArgumentCoder<PaymentRequest>::decode(Decoder& decoder, PaymentRequest& req
     if (!decoder.decode(applicationData))
         return false;
     request.setApplicationData(applicationData);
+
+    Vector<String> supportedCountries;
+    if (!decoder.decode(supportedCountries))
+        return false;
+    request.setSupportedCountries(WTFMove(supportedCountries));
 
     return true;
 }

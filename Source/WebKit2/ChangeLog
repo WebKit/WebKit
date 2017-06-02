@@ -1,3 +1,18 @@
+2017-06-02  Andy Estes  <aestes@apple.com>
+
+        [Cocoa] Add a "supportedCountries" property to ApplePayPaymentRequest
+        https://bugs.webkit.org/show_bug.cgi?id=172832
+        <rdar://problem/30735544>
+
+        Reviewed by Alex Christensen.
+
+        * Shared/Cocoa/WebCoreArgumentCodersCocoa.mm:
+        (IPC::ArgumentCoder<PaymentRequest>::encode):
+        (IPC::ArgumentCoder<PaymentRequest>::decode):
+        * UIProcess/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm:
+        (WebKit::toNSSet):
+        (WebKit::toPKPaymentRequest):
+
 2017-06-02  Dan Bernstein  <mitz@apple.com>
 
         [Xcode] Header postprocessing should be based on the target OS version rather than the builder OS version

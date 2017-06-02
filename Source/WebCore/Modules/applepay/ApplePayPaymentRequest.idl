@@ -71,4 +71,5 @@
     sequence<ApplePayShippingMethod> shippingMethods;
 
     DOMString applicationData;
+    [Conditional=APPLE_PAY_SESSION_V3] sequence<DOMString> supportedCountries;
 };

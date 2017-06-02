@@ -128,6 +128,9 @@ public:
     const String& applicationData() const { return m_applicationData; }
     void setApplicationData(const String& applicationData) { m_applicationData = applicationData; }
 
+    const Vector<String>& supportedCountries() const { return m_supportedCountries; }
+    void setSupportedCountries(Vector<String>&& supportedCountries) { m_supportedCountries = WTFMove(supportedCountries); }
+
 private:
     String m_countryCode;
     String m_currencyCode;
@@ -148,6 +151,7 @@ private:
     LineItem m_total;
 
     String m_applicationData;
+    Vector<String> m_supportedCountries;
 };
 
 struct PaymentError {

@@ -58,6 +58,7 @@ struct ApplePayPaymentRequest {
     std::optional<Vector<ApplePayLineItem>> lineItems;
 
     String applicationData;
+    Vector<String> supportedCountries;
 };
 
 }

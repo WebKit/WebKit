@@ -69,6 +69,12 @@ ExceptionOr<void> PaymentRequestValidator::validate(const PaymentRequest& paymen
     if (validatedShippingMethods.hasException())
         return validatedShippingMethods.releaseException();
 
+    for (auto& countryCode : paymentRequest.supportedCountries()) {
+        auto validatedCountryCode = validateCountryCode(countryCode);
+        if (validatedCountryCode.hasException())
+            return validatedCountryCode.releaseException();
+    }
+
     return { };
 }
 

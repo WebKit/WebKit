@@ -476,6 +476,20 @@ static RetainPtr<PKShippingMethod> toPKShippingMethod(const WebCore::PaymentRequ
 
     return result;
 }
+    
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
+static RetainPtr<NSSet> toNSSet(const Vector<String>& strings)
+{
+    if (strings.isEmpty())
+        return nil;
+
+    auto mutableSet = adoptNS([[NSMutableSet alloc] initWithCapacity:strings.size()]);
+    for (auto& string : strings)
+        [mutableSet addObject:string];
+
+    return WTFMove(mutableSet);
+}
+#endif
 
 RetainPtr<PKPaymentRequest> toPKPaymentRequest(WebPageProxy& webPageProxy, const WebCore::URL& originatingURL, const Vector<WebCore::URL>& linkIconURLs, const WebCore::PaymentRequest& paymentRequest)
 {
@@ -531,6 +545,10 @@ RetainPtr<PKPaymentRequest> toPKPaymentRequest(WebPageProxy& webPageProxy, const
         auto applicationData = adoptNS([[NSData alloc] initWithBase64EncodedString:paymentRequest.applicationData() options:0]);
         [result setApplicationData:applicationData.get()];
     }
+
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
+    [result setSupportedCountries:toNSSet(paymentRequest.supportedCountries()).get()];
+#endif
 
     // FIXME: Instead of using respondsToSelector, this should use a proper #if version check.
     auto& configuration = webPageProxy.process().processPool().configuration();

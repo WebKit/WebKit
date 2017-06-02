@@ -369,6 +369,9 @@ static ExceptionOr<PaymentRequest> convertAndValidate(unsigned version, ApplePay
 
     result.setApplicationData(paymentRequest.applicationData);
 
+    if (version >= 3)
+        result.setSupportedCountries(WTFMove(paymentRequest.supportedCountries));
+
     // FIXME: Merge this validation into the validation we are doing above.
     auto validatedPaymentRequest = PaymentRequestValidator::validate(result);
     if (validatedPaymentRequest.hasException())

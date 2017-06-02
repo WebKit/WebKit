@@ -24,6 +24,7 @@ fast/media/mq-prefers-reduced-motion-live-update.html [ Pass ]
 
 [ Sierra+ ] http/tests/ssl/applepay/ [ Pass ]
 http/tests/ssl/applepay/ApplePayError.html [ Skip ]
+http/tests/ssl/applepay/ApplePaySessionV3.html [ Skip ]
 
 fast/visual-viewport/rubberbanding-viewport-rects.html [ Pass ]
 fast/visual-viewport/rubberbanding-viewport-rects-header-footer.html  [ Pass ]
