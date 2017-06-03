@@ -1458,6 +1458,7 @@ set(WebCore_SOURCES
     dom/DOMError.cpp
     dom/DOMImplementation.cpp
     dom/DOMNamedFlowCollection.cpp
+    dom/DOMPointReadOnly.cpp
     dom/DOMRectList.cpp
     dom/DOMStringList.cpp
     dom/DataTransfer.cpp

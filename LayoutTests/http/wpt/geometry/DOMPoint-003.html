@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html><head>
+    <title>Geometry Interfaces: DOMPointReadOnly.matrixTransform</title>
+    <link href="mailto:simon.fraser@apple.com" rel="author" title="Simon Fraser">
+    <link href="https://drafts.fxtf.org/geometry-1/#DOMPoint" rel="help">
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+    <p>Test DOMPoint and DOMPointReadOnly interfaces</p>
+    <div id="log"></div>
+    <script>
+        function getMatrixTransform(matrix, point) {
+            var x = point.x * matrix.m11 + point.y * matrix.m21 + point.z * matrix.m31 + point.w * matrix.m41;
+            var y = point.x * matrix.m12 + point.y * matrix.m22 + point.z * matrix.m32 + point.w * matrix.m42;
+            var z = point.x * matrix.m13 + point.y * matrix.m23 + point.z * matrix.m33 + point.w * matrix.m43;
+            var w = point.x * matrix.m14 + point.y * matrix.m24 + point.z * matrix.m34 + point.w * matrix.m44;
+            return new DOMPoint(x, y, z, w)
+        }
+        test(function() {
+            var point = new DOMPoint(5, 4);
+            var matrix = new DOMMatrix();
+            matrix.setMatrixValue('perspective(400px) translate3d(123px, 456px, 120px)');
+            var result = point.matrixTransform(matrix);
+            var expected = getMatrixTransform(matrix, point);
+            checkDOMPoint(result, expected);
+        },'test DOMPoint matrixTransform with 3d matrix');
+
+        test(function() {
+            var point = DOMPointReadOnly.fromPoint({x:1, y:2, z:3, w:0.00234});
+            var matrix = new DOMMatrix();
+            matrix.setMatrixValue('perspective(400px) translate3d(123px, 456px, 120px)');
+            var result = point.matrixTransform(matrix);
+            var expected = getMatrixTransform(matrix, point);
+            checkDOMPoint(result, expected);
+        },'test DOMPoint matrixTransform with perspective point');
+
+        function checkDOMPoint(p, exp) {
+            assert_equals(p.x, exp.x, "x is not matched");
+            assert_equals(p.y, exp.y, "y is not matched");
+            assert_equals(p.z, exp.z, "z is not matched");
+            assert_equals(p.w, exp.w, "w is not matched");
+        }
+    </script>
+</body></html>

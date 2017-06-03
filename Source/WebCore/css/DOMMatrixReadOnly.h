@@ -108,6 +108,8 @@ public:
 
     ExceptionOr<String> toString() const;
 
+    const TransformationMatrix& transformationMatrix() const { return m_matrix; }
+
 protected:
     DOMMatrixReadOnly() = default;
     DOMMatrixReadOnly(const TransformationMatrix&, Is2D);

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TransformationMatrix_h
-#define TransformationMatrix_h
+#pragma once
 
 #include "FloatPoint.h"
 #include "FloatPoint3D.h"
@@ -135,6 +134,7 @@ public:
 
     // This form preserves the double math from input to output.
     void map(double x, double y, double& x2, double& y2) const { multVecMatrix(x, y, x2, y2); }
+    void map4ComponentPoint(double& x, double& y, double& z, double& w) const;
 
     // Maps a 3D point through the transform, returning a 3D point.
     FloatPoint3D mapPoint(const FloatPoint3D&) const;
@@ -427,5 +427,3 @@ private:
 WEBCORE_EXPORT TextStream& operator<<(TextStream&, const TransformationMatrix&);
 
 } // namespace WebCore
-
-#endif // TransformationMatrix_h

@@ -28,7 +28,7 @@ PASS DOMMatrix rotateFromVectorSelf number of required arguments
 PASS DOMMatrix rotateAxisAngleSelf number of required arguments 
 PASS DOMMatrix skewXSelf number of required arguments 
 PASS DOMMatrix skewYSelf number of required arguments 
-FAIL DOMPointReadOnly matrixTransform number of required arguments undefined is not an object (evaluating 'self[interf].prototype[member].length')
+PASS DOMPointReadOnly matrixTransform number of required arguments 
 PASS DOMMatrixReadOnly multiply number of required arguments 
 PASS DOMMatrix multiplySelf number of required arguments 
 PASS DOMMatrix preMultiplySelf number of required arguments 

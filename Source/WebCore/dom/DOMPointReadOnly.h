@@ -31,10 +31,14 @@
 #pragma once
 
 #include "DOMPointInit.h"
+#include "ExceptionOr.h"
 #include "ScriptWrappable.h"
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
+
+struct DOMMatrixInit;
+class DOMPoint;
 
 class DOMPointReadOnly : public ScriptWrappable, public RefCounted<DOMPointReadOnly> {
     WTF_MAKE_FAST_ALLOCATED;
@@ -47,6 +51,8 @@ public:
     double y() const { return m_y; }
     double z() const { return m_z; }
     double w() const { return m_w; }
+
+    ExceptionOr<Ref<DOMPoint>> matrixTransform(DOMMatrixInit&&) const;
 
 protected:
     DOMPointReadOnly(double x, double y, double z, double w)

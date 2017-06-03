@@ -1,3 +1,15 @@
+2017-06-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Implement DOMPointReadOnly.matrixTransform()
+        https://bugs.webkit.org/show_bug.cgi?id=172896
+
+        Reviewed by Chris Dumez.
+
+        New baselines.
+
+        * web-platform-tests/css/geometry-1/DOMPoint-002-expected.txt:
+        * web-platform-tests/css/geometry-1/historical-expected.txt:
+
 2017-06-03  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Script modules should be able to import data urls

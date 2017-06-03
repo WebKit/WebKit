@@ -1,3 +1,27 @@
+2017-06-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Implement DOMPointReadOnly.matrixTransform()
+        https://bugs.webkit.org/show_bug.cgi?id=172896
+
+        Reviewed by Chris Dumez.
+
+        DOMPointReadOnly.matrixTransform() creates the matrix or throws, then uses
+        a new function in TransformationMatrix to map x,y,z,w through the matrix.
+
+        Test: http/wpt/geometry/DOMPoint-003.html
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/DOMMatrixReadOnly.h:
+        (WebCore::DOMMatrixReadOnly::transformationMatrix):
+        * dom/DOMPointReadOnly.cpp: Copied from Source/WebCore/dom/DOMPointReadOnly.idl.
+        (WebCore::DOMPointReadOnly::matrixTransform):
+        * dom/DOMPointReadOnly.h:
+        * dom/DOMPointReadOnly.idl:
+        * platform/graphics/transforms/TransformationMatrix.cpp:
+        (WebCore::TransformationMatrix::map4ComponentPoint):
+        * platform/graphics/transforms/TransformationMatrix.h:
+
 2017-06-03  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Cleanup arguments to preparePlatformFont() and fontWithFamily() in FontCacheCoreText.cpp

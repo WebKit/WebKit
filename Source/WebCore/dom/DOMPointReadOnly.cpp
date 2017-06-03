@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2014 Adobe Systems Incorporated. All rights reserved.
- * Copyright (C) 2016 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2017 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,23 +27,30 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// The DOMPointInit constructor exists in https://www.w3.org/TR/geometry-1/ but is removed in https://drafts.fxtf.org/geometry/
-[
-    Constructor(DOMPointInit point),
-    Constructor(optional unrestricted double x = 0, optional unrestricted double y = 0,
-        optional unrestricted double z = 0, optional unrestricted double w = 1),
-    Exposed=(Window,Worker),
-    ImplementationLacksVTable
-]
-interface DOMPointReadOnly {
-    [NewObject] static DOMPointReadOnly fromPoint(optional DOMPointInit other);
+#include "config.h"
+#include "DOMPointReadOnly.h"
 
-    readonly attribute unrestricted double x;
-    readonly attribute unrestricted double y;
-    readonly attribute unrestricted double z;
-    readonly attribute unrestricted double w;
+#include "DOMMatrixReadOnly.h"
+#include "DOMPoint.h"
 
-    [MayThrowException] DOMPoint matrixTransform(optional DOMMatrixInit matrix);
+namespace WebCore {
+    
+ExceptionOr<Ref<DOMPoint>> DOMPointReadOnly::matrixTransform(DOMMatrixInit&& matrixInit) const
+{
+    auto matrixOrException = DOMMatrixReadOnly::fromMatrix(WTFMove(matrixInit));
+    if (matrixOrException.hasException())
+        return matrixOrException.releaseException();
 
-    serializer = { attribute };
-};
+    auto matrix = matrixOrException.releaseReturnValue();
+    
+    double x = this->x();
+    double y = this->y();
+    double z = this->z();
+    double w = this->w();
+    matrix->transformationMatrix().map4ComponentPoint(x, y, z, w);
+    
+    return { DOMPoint::create(x, y, z, w) };
+}
+
+} // namespace WebCore
+
