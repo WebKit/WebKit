@@ -1,3 +1,17 @@
+2017-06-03  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GCrypt] Fix PK verification for ECDSA
+        https://bugs.webkit.org/show_bug.cgi?id=172857
+
+        Reviewed by Michael Catanzaro.
+
+        No new tests -- covered by existing tests.
+
+        * crypto/gcrypt/CryptoAlgorithmECDSAGCrypt.cpp:
+        (WebCore::gcryptVerify): Return `true` if the verification succeeded or `false`
+        in any other case, avoiding spilling information about the exact cause of
+        verification failure.
+
 2017-06-02  Zalan Bujtas  <zalan@apple.com>
 
         Cleanup FrameView::autoSizeIfEnabled.

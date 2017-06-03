@@ -222,15 +222,11 @@ static std::optional<bool> gcryptVerify(gcry_sexp_t keySexp, const Vector<uint8_
         }
     }
 
-    // Perform the PK verification. We report success if there's no error returned, failure
-    // if the returned error is GPG_ERR_BAD_SIGNATURE, or an OperationError otherwise.
+    // Perform the PK verification. We report success if there's no error returned, or
+    // a failure in any other case. OperationError should not be returned at this point,
+    // avoiding spilling information about the exact cause of verification failure.
     error = gcry_pk_verify(signatureSexp, dataSexp, keySexp);
-    if (error != GPG_ERR_NO_ERROR && gcry_err_code(error) != GPG_ERR_BAD_SIGNATURE) {
-        PAL::GCrypt::logError(error);
-        return std::nullopt;
-    }
-
-    return error == GPG_ERR_NO_ERROR;
+    return { error == GPG_ERR_NO_ERROR };
 }
 
 void CryptoAlgorithmECDSA::platformSign(std::unique_ptr<CryptoAlgorithmParameters>&& parameters, Ref<CryptoKey>&& key, Vector<uint8_t>&& data, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
