@@ -1,3 +1,17 @@
+2017-06-02  Zalan Bujtas  <zalan@apple.com>
+
+        Cleanup FrameView::autoSizeIfEnabled.
+        https://bugs.webkit.org/show_bug.cgi?id=172889
+        <rdar://problem/32550783>
+
+        Reviewed by Tim Horton.
+
+        This patch ensures that we always have a clean tree (and a valid and current document size) when
+        setting m_autoSizeContentSize. 
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::autoSizeIfEnabled):
+
 2017-06-02  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION(r216212): RenderReplaced::paint() should not save and restore the context unless it has to

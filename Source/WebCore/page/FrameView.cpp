@@ -3655,33 +3655,28 @@ void FrameView::autoSizeIfEnabled()
     if (m_inAutoSize)
         return;
 
-    LOG(Layout, "FrameView %p autoSizeIfEnabled", this);
-
-    SetForScope<bool> changeInAutoSize(m_inAutoSize, true);
-
-    Document* document = frame().document();
+    auto* document = frame().document();
     if (!document)
         return;
 
-    RenderView* documentView = document->renderView();
-    Element* documentElement = document->documentElement();
-    if (!documentView || !documentElement)
+    auto* renderView = document->renderView();
+    if (!renderView)
         return;
 
+    LOG(Layout, "FrameView %p autoSizeIfEnabled", this);
+    SetForScope<bool> changeInAutoSize(m_inAutoSize, true);
     if (m_layoutRoot)
         convertSubtreeLayoutToFullLayout();
     // Start from the minimum size and allow it to grow.
     resize(m_minAutoSize.width(), m_minAutoSize.height());
-
     IntSize size = frameRect().size();
-
     // Do the resizing twice. The first time is basically a rough calculation using the preferred width
     // which may result in a height change during the second iteration.
     for (int i = 0; i < 2; i++) {
         // Update various sizes including contentsSize, scrollHeight, etc.
         document->updateLayoutIgnorePendingStylesheets();
-        int width = documentView->minPreferredLogicalWidth();
-        int height = documentView->documentRect().height();
+        int width = renderView->minPreferredLogicalWidth();
+        int height = renderView->documentRect().height();
         IntSize newSize(width, height);
 
         // Check to see if a scrollbar is needed for a given dimension and
@@ -3740,18 +3735,16 @@ void FrameView::autoSizeIfEnabled()
         setHorizontalScrollbarLock(false);
         setScrollbarModes(horizonalScrollbarMode, verticalScrollbarMode, true, true);
     }
-
-    // All the resizing above may have invalidated style (for example if viewport units are being used).
-    document->updateStyleIfNeeded();
-
-    m_autoSizeContentSize = contentsSize();
-
     if (m_autoSizeFixedMinimumHeight) {
-        resize(m_autoSizeContentSize.width(), std::max(m_autoSizeFixedMinimumHeight, m_autoSizeContentSize.height()));
-        document->updateLayoutIgnorePendingStylesheets();
+        auto contentsSize = this->contentsSize();
+        resize(contentsSize.width(), std::max(m_autoSizeFixedMinimumHeight, contentsSize.height()));
     }
-
+    // All the resizing above may have invalidated style (for example if viewport units are being used).
+    document->updateLayoutIgnorePendingStylesheets();
+    m_autoSizeContentSize = contentsSize();
     m_didRunAutosize = true;
+    ASSERT(!needsLayout());
+    // FIXME: Now that autoSizeIfEnabled() actually returns clean, we don't need to call it from layout() anymore (see webkit.org/b/172890).
 }
 
 void FrameView::setAutoSizeFixedMinimumHeight(int fixedMinimumHeight)
