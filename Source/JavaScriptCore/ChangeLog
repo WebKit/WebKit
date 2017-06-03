@@ -1,3 +1,10 @@
+2017-06-03  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [ARM] Unreviewed buildfix after r217711.
+
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::xor32):
+
 2017-06-02  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         ASSERTION FAILED: "We should only declare a function as a lexically scoped variable in scopes where var declarations aren't allowed. ..." for function redeclaration with async function module export

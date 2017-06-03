@@ -358,6 +358,12 @@ public:
         m_assembler.eors(dest, op1, op2);
     }
 
+    void xor32(Address src, RegisterID dest)
+    {
+        load32(src, ARMRegisters::S1);
+        xor32(ARMRegisters::S1, dest);
+    }
+
     void xor32(TrustedImm32 imm, RegisterID dest)
     {
         if (imm.m_value == -1)
