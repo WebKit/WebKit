@@ -159,11 +159,13 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     SetLayoutNeededForbiddenScope scope(this);
 #endif
 
-    GraphicsContextStateSaver savedGraphicsContext(paintInfo.context());
+    GraphicsContextStateSaver savedGraphicsContext(paintInfo.context(), false);
     if (element() && element()->parentOrShadowHostElement()) {
         auto* parentContainer = element()->parentOrShadowHostElement();
-        if (draggedContentContainsReplacedElement(document().markers().markersFor(parentContainer, DocumentMarker::DraggedContent), *element()))
+        if (draggedContentContainsReplacedElement(document().markers().markersFor(parentContainer, DocumentMarker::DraggedContent), *element())) {
+            savedGraphicsContext.save();
             paintInfo.context().setAlpha(0.25);
+        }
     }
 
     LayoutPoint adjustedPaintOffset = paintOffset + location();

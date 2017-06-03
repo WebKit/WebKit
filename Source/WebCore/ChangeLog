@@ -1,3 +1,25 @@
+2017-06-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION(r216212): RenderReplaced::paint() should not save and restore the context unless it has to
+        https://bugs.webkit.org/show_bug.cgi?id=172883
+        <rdar://problem/32548614>
+
+        Reviewed by Tim Horton.
+
+        After implementing dragged content fading, RenderReplace::paint is now always guarded by unnecessary calls to
+        GraphicsContext::save and GraphicsContext::restore, even when there is no dragged content being rendered. To
+        address this, we initialize our GraphicsContextStateSaver with saveAndRestore = false, indicating that we don't
+        want to immediately try and save the context.
+
+        If we are in a dragged content range, we will then call GraphicsContextStateSaver::save, which saves the
+        graphics context and also causes the GraphicsContextStateSaver to eventually try and restore() when it is
+        destroyed. Otherwise, in the common codepath where the renderer is not in a dragged content range, the
+        constructor and destructor of GraphicsContextStateSaver will be no-ops with respect to saving and restoring the
+        graphics context.
+
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::paint):
+
 2017-06-02  Myles C. Maxfield  <mmaxfield@apple.com>
 
         REGRESSION(r213464): [iOS] Fonts get too bold when the "Bold Text" accessibility setting is enabled
