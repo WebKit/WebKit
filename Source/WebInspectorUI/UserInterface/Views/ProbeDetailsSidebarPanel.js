@@ -30,15 +30,8 @@ WebInspector.ProbeDetailsSidebarPanel = class ProbeDetailsSidebarPanel extends W
     {
         super("probe", WebInspector.UIString("Probes"), WebInspector.UIString("Probes"));
 
-        WebInspector.probeManager.addEventListener(WebInspector.ProbeManager.Event.ProbeSetAdded, this._probeSetAdded, this);
-        WebInspector.probeManager.addEventListener(WebInspector.ProbeManager.Event.ProbeSetRemoved, this._probeSetRemoved, this);
-
         this._probeSetSections = new Map;
         this._inspectedProbeSets = [];
-
-        // Initialize sidebar sections for probe sets that already exist.
-        for (var probeSet of WebInspector.probeManager.probeSets)
-            this._probeSetAdded(probeSet);
     }
 
     // Public
@@ -92,6 +85,18 @@ WebInspector.ProbeDetailsSidebarPanel = class ProbeDetailsSidebarPanel extends W
     }
 
     // Protected
+
+    initialLayout()
+    {
+        super.initialLayout();
+
+        WebInspector.probeManager.addEventListener(WebInspector.ProbeManager.Event.ProbeSetAdded, this._probeSetAdded, this);
+        WebInspector.probeManager.addEventListener(WebInspector.ProbeManager.Event.ProbeSetRemoved, this._probeSetRemoved, this);
+
+        // Initialize sidebar sections for probe sets that already exist.
+        for (var probeSet of WebInspector.probeManager.probeSets)
+            this._probeSetAdded(probeSet);
+    }
 
     sizeDidChange()
     {

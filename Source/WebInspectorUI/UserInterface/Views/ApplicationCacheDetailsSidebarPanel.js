@@ -32,26 +32,6 @@ WebInspector.ApplicationCacheDetailsSidebarPanel = class ApplicationCacheDetails
         this.element.classList.add("application-cache");
 
         this._applicationCacheFrame = null;
-
-        this._locationManifestURLRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Manifest URL"));
-        this._locationFrameURLRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Frame URL"));
-
-        this._locationGroup = new WebInspector.DetailsSectionGroup([this._locationManifestURLRow, this._locationFrameURLRow]);
-
-        this._locationSection = new WebInspector.DetailsSection("application-cache-location", WebInspector.UIString("Location"), [this._locationGroup]);
-
-        this._onlineRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Online"));
-        this._statusRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Status"));
-
-        this._statusGroup = new WebInspector.DetailsSectionGroup([this._onlineRow, this._statusRow]);
-
-        this._statusSection = new WebInspector.DetailsSection("application-cache-status", WebInspector.UIString("Status"), [this._statusGroup]);
-
-        this.contentView.element.appendChild(this._locationSection.element);
-        this.contentView.element.appendChild(this._statusSection.element);
-
-        WebInspector.applicationCacheManager.addEventListener(WebInspector.ApplicationCacheManager.Event.NetworkStateUpdated, this._networkStateUpdated, this);
-        WebInspector.applicationCacheManager.addEventListener(WebInspector.ApplicationCacheManager.Event.FrameManifestStatusChanged, this._frameManifestStatusChanged, this);
     }
 
     // Public
@@ -94,8 +74,33 @@ WebInspector.ApplicationCacheDetailsSidebarPanel = class ApplicationCacheDetails
 
     // Protected
 
+    initialLayout()
+    {
+        super.initialLayout();
+
+        this._locationManifestURLRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Manifest URL"));
+        this._locationFrameURLRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Frame URL"));
+
+        let locationGroup = new WebInspector.DetailsSectionGroup([this._locationManifestURLRow, this._locationFrameURLRow]);
+        let locationSection = new WebInspector.DetailsSection("application-cache-location", WebInspector.UIString("Location"), [locationGroup]);
+
+        this._onlineRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Online"));
+        this._statusRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Status"));
+
+        let statusGroup = new WebInspector.DetailsSectionGroup([this._onlineRow, this._statusRow]);
+        let statusSection = new WebInspector.DetailsSection("application-cache-status", WebInspector.UIString("Status"), [statusGroup]);
+
+        this.contentView.element.appendChild(locationSection.element);
+        this.contentView.element.appendChild(statusSection.element);
+
+        WebInspector.applicationCacheManager.addEventListener(WebInspector.ApplicationCacheManager.Event.NetworkStateUpdated, this._networkStateUpdated, this);
+        WebInspector.applicationCacheManager.addEventListener(WebInspector.ApplicationCacheManager.Event.FrameManifestStatusChanged, this._frameManifestStatusChanged, this);
+    }
+
     layout()
     {
+        super.layout();
+
         if (!this.applicationCacheFrame)
             return;
 

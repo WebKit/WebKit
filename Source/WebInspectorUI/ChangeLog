@@ -1,5 +1,38 @@
 2017-06-02  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Use initialLayout for DetailsSidebarPanel classes
+        https://bugs.webkit.org/show_bug.cgi?id=172381
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/ApplicationCacheDetailsSidebarPanel.js:
+        (WebInspector.ApplicationCacheDetailsSidebarPanel):
+        (WebInspector.ApplicationCacheDetailsSidebarPanel.prototype.initialLayout): Added.
+        (WebInspector.ApplicationCacheDetailsSidebarPanel.prototype.layout):
+        * UserInterface/Views/DOMNodeDetailsSidebarPanel.js:
+        (WebInspector.DOMNodeDetailsSidebarPanel):
+        (WebInspector.DOMNodeDetailsSidebarPanel.prototype.initialLayout): Added.
+        (WebInspector.DOMNodeDetailsSidebarPanel.prototype.layout):
+        * UserInterface/Views/IndexedDatabaseDetailsSidebarPanel.js:
+        (WebInspector.IndexedDatabaseDetailsSidebarPanel):
+        (WebInspector.IndexedDatabaseDetailsSidebarPanel.prototype.initialLayout): Added.
+        (WebInspector.IndexedDatabaseDetailsSidebarPanel.prototype.layout):
+        * UserInterface/Views/LayerTreeDetailsSidebarPanel.js:
+        (WebInspector.LayerTreeDetailsSidebarPanel):
+        (WebInspector.LayerTreeDetailsSidebarPanel.prototype.initialLayout): Added.
+        (WebInspector.LayerTreeDetailsSidebarPanel.prototype.layout):
+        * UserInterface/Views/ProbeDetailsSidebarPanel.js:
+        (WebInspector.ProbeDetailsSidebarPanel):
+        (WebInspector.ProbeDetailsSidebarPanel.prototype.initialLayout): Added.
+        * UserInterface/Views/ResourceDetailsSidebarPanel.js:
+        (WebInspector.ResourceDetailsSidebarPanel):
+        (WebInspector.ResourceDetailsSidebarPanel.prototype.set resource):
+        (WebInspector.ResourceDetailsSidebarPanel.prototype.initialLayout): Added.
+        (WebInspector.ResourceDetailsSidebarPanel.prototype.layout):
+        (WebInspector.ResourceDetailsSidebarPanel.prototype._applyResourceEventListeners):
+
+2017-06-02  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: The CodeMirror instance in the ConsolePrompt does't need to be refreshed each time it is shown
         https://bugs.webkit.org/show_bug.cgi?id=172608
 

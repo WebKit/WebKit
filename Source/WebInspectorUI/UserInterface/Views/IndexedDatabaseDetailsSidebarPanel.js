@@ -34,29 +34,6 @@ WebInspector.IndexedDatabaseDetailsSidebarPanel = class IndexedDatabaseDetailsSi
         this._database = null;
         this._objectStore = null;
         this._index = null;
-
-        this._databaseNameRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Name"));
-        this._databaseVersionRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Version"));
-        this._databaseSecurityOriginRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Security Origin"));
-        this._databaseGroup = new WebInspector.DetailsSectionGroup([this._databaseNameRow, this._databaseVersionRow, this._databaseSecurityOriginRow]);
-        this._databaseSection = new WebInspector.DetailsSection("indexed-database-database", WebInspector.UIString("Database"), [this._databaseGroup]);
-
-        this._objectStoreNameRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Name"));
-        this._objectStoreKeyPathRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Key Path"));
-        this._objectStoreAutoIncrementRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Auto Increment"));
-        this._objectStoreGroup = new WebInspector.DetailsSectionGroup([this._objectStoreNameRow, this._objectStoreKeyPathRow, this._objectStoreAutoIncrementRow]);
-        this._objectStoreSection = new WebInspector.DetailsSection("indexed-database-object-store", WebInspector.UIString("Object Store"), [this._objectStoreGroup]);
-
-        this._indexNameRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Name"));
-        this._indexKeyPathRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Key Path"));
-        this._indexUniqueRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Unique"));
-        this._indexMultiEntryRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Multi-Entry"));
-        this._indexGroup = new WebInspector.DetailsSectionGroup([this._indexNameRow, this._indexKeyPathRow, this._indexUniqueRow, this._indexMultiEntryRow]);
-        this._indexSection = new WebInspector.DetailsSection("indexed-database-index", WebInspector.UIString("Index"), [this._indexGroup]);
-
-        this.contentView.element.appendChild(this._databaseSection.element);
-        this.contentView.element.appendChild(this._objectStoreSection.element);
-        this.contentView.element.appendChild(this._indexSection.element);
     }
 
     // Public
@@ -93,8 +70,38 @@ WebInspector.IndexedDatabaseDetailsSidebarPanel = class IndexedDatabaseDetailsSi
 
     // Protected
 
+    initialLayout()
+    {
+        super.initialLayout();
+
+        this._databaseNameRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Name"));
+        this._databaseVersionRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Version"));
+        this._databaseSecurityOriginRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Security Origin"));
+        let databaseGroup = new WebInspector.DetailsSectionGroup([this._databaseNameRow, this._databaseVersionRow, this._databaseSecurityOriginRow]);
+        this._databaseSection = new WebInspector.DetailsSection("indexed-database-database", WebInspector.UIString("Database"), [databaseGroup]);
+
+        this._objectStoreNameRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Name"));
+        this._objectStoreKeyPathRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Key Path"));
+        this._objectStoreAutoIncrementRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Auto Increment"));
+        let objectStoreGroup = new WebInspector.DetailsSectionGroup([this._objectStoreNameRow, this._objectStoreKeyPathRow, this._objectStoreAutoIncrementRow]);
+        this._objectStoreSection = new WebInspector.DetailsSection("indexed-database-object-store", WebInspector.UIString("Object Store"), [objectStoreGroup]);
+
+        this._indexNameRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Name"));
+        this._indexKeyPathRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Key Path"));
+        this._indexUniqueRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Unique"));
+        this._indexMultiEntryRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Multi-Entry"));
+        let indexGroup = new WebInspector.DetailsSectionGroup([this._indexNameRow, this._indexKeyPathRow, this._indexUniqueRow, this._indexMultiEntryRow]);
+        this._indexSection = new WebInspector.DetailsSection("indexed-database-index", WebInspector.UIString("Index"), [indexGroup]);
+
+        this.contentView.element.appendChild(this._databaseSection.element);
+        this.contentView.element.appendChild(this._objectStoreSection.element);
+        this.contentView.element.appendChild(this._indexSection.element);
+    }
+
     layout()
     {
+        super.layout();
+
         if (!this._database)
             this._databaseSection.element.hidden = true;
         else {

@@ -32,12 +32,6 @@ WebInspector.LayerTreeDetailsSidebarPanel = class LayerTreeDetailsSidebarPanel e
         this._dataGridNodesByLayerId = new Map;
 
         this.element.classList.add("layer-tree");
-
-        WebInspector.showShadowDOMSetting.addEventListener(WebInspector.Setting.Event.Changed, this._showShadowDOMSettingChanged, this);
-
-        this._buildLayerInfoSection();
-        this._buildDataGridSection();
-        this._buildBottomBar();
     }
 
     // DetailsSidebarPanel Overrides.
@@ -67,8 +61,21 @@ WebInspector.LayerTreeDetailsSidebarPanel = class LayerTreeDetailsSidebarPanel e
 
     // Protected
 
+    initialLayout()
+    {
+        super.initialLayout();
+
+        WebInspector.showShadowDOMSetting.addEventListener(WebInspector.Setting.Event.Changed, this._showShadowDOMSettingChanged, this);
+
+        this._buildLayerInfoSection();
+        this._buildDataGridSection();
+        this._buildBottomBar();
+    }
+
     layout()
     {
+        super.layout();
+
         if (!this.domNode)
             return;
 

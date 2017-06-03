@@ -32,6 +32,83 @@ WebInspector.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel ext
         this.element.classList.add("resource");
 
         this._resource = null;
+    }
+
+    // Public
+
+    inspect(objects)
+    {
+        // Convert to a single item array if needed.
+        if (!(objects instanceof Array))
+            objects = [objects];
+
+        var resourceToInspect = null;
+
+        // Iterate over the objects to find a WebInspector.Resource to inspect.
+        for (let object of objects) {
+            if (object instanceof WebInspector.Resource) {
+                resourceToInspect = object;
+                break;
+            }
+
+            if (object instanceof WebInspector.Frame) {
+                resourceToInspect = object.mainResource;
+                break;
+            }
+
+            // FIXME: <https://webkit.org/b/164427> Web Inspector: WorkerTarget's mainResource should be a Resource not a Script
+            // If that was the case, then we could just have WorkerTreeElement contain the Resource and not a Script.
+            if (object instanceof WebInspector.Script && object.isMainResource() && object.resource) {
+                resourceToInspect = object.resource;
+                break;
+            }
+        }
+
+        this.resource = resourceToInspect;
+
+        return !!this._resource;
+    }
+
+    get resource()
+    {
+        return this._resource;
+    }
+
+    set resource(resource)
+    {
+        if (resource === this._resource)
+            return;
+
+        if (this._resource) {
+            this._resource.removeEventListener(WebInspector.Resource.Event.URLDidChange, this._refreshURL, this);
+            this._resource.removeEventListener(WebInspector.Resource.Event.MIMETypeDidChange, this._refreshMIMEType, this);
+            this._resource.removeEventListener(WebInspector.Resource.Event.TypeDidChange, this._refreshResourceType, this);
+            this._resource.removeEventListener(WebInspector.Resource.Event.LoadingDidFail, this._refreshErrorReason, this);
+            this._resource.removeEventListener(WebInspector.Resource.Event.RequestHeadersDidChange, this._refreshRequestHeaders, this);
+            this._resource.removeEventListener(WebInspector.Resource.Event.ResponseReceived, this._refreshRequestAndResponse, this);
+            this._resource.removeEventListener(WebInspector.Resource.Event.CacheStatusDidChange, this._refreshRequestAndResponse, this);
+            this._resource.removeEventListener(WebInspector.Resource.Event.SizeDidChange, this._refreshDecodedSize, this);
+            this._resource.removeEventListener(WebInspector.Resource.Event.TransferSizeDidChange, this._refreshTransferSize, this);
+            this._resource.removeEventListener(WebInspector.Resource.Event.InitiatedResourcesDidChange, this._refreshRelatedResourcesSection, this);
+        }
+
+        this._resource = resource;
+
+        if (this._resource) {
+            if (this.parentSidebar)
+                this._applyResourceEventListeners();
+            else
+                this._needsToApplyResourceEventListeners = true;
+        }
+
+        this.needsLayout();
+    }
+
+    // Protected
+
+    initialLayout()
+    {
+        super.initialLayout();
 
         this._typeMIMETypeRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("MIME Type"));
         this._typeResourceTypeRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Resource Type"));
@@ -115,88 +192,18 @@ WebInspector.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel ext
         this.contentView.element.appendChild(this._requestAndResponseSection.element);
         this.contentView.element.appendChild(this._requestHeadersSection.element);
         this.contentView.element.appendChild(this._responseHeadersSection.element);
-    }
 
-    // Public
+        if (this._needsToApplyResourceEventListeners) {
+            this._applyResourceEventListeners();
 
-    inspect(objects)
-    {
-        // Convert to a single item array if needed.
-        if (!(objects instanceof Array))
-            objects = [objects];
-
-        var resourceToInspect = null;
-
-        // Iterate over the objects to find a WebInspector.Resource to inspect.
-        for (let object of objects) {
-            if (object instanceof WebInspector.Resource) {
-                resourceToInspect = object;
-                break;
-            }
-
-            if (object instanceof WebInspector.Frame) {
-                resourceToInspect = object.mainResource;
-                break;
-            }
-
-            // FIXME: <https://webkit.org/b/164427> Web Inspector: WorkerTarget's mainResource should be a Resource not a Script
-            // If that was the case, then we could just have WorkerTreeElement contain the Resource and not a Script.
-            if (object instanceof WebInspector.Script && object.isMainResource() && object.resource) {
-                resourceToInspect = object.resource;
-                break;
-            }
+            this._needsToApplyResourceEventListeners = false;
         }
-
-        this.resource = resourceToInspect;
-
-        return !!this._resource;
     }
-
-    get resource()
-    {
-        return this._resource;
-    }
-
-    set resource(resource)
-    {
-        if (resource === this._resource)
-            return;
-
-        if (this._resource) {
-            this._resource.removeEventListener(WebInspector.Resource.Event.URLDidChange, this._refreshURL, this);
-            this._resource.removeEventListener(WebInspector.Resource.Event.MIMETypeDidChange, this._refreshMIMEType, this);
-            this._resource.removeEventListener(WebInspector.Resource.Event.TypeDidChange, this._refreshResourceType, this);
-            this._resource.removeEventListener(WebInspector.Resource.Event.LoadingDidFail, this._refreshErrorReason, this);
-            this._resource.removeEventListener(WebInspector.Resource.Event.RequestHeadersDidChange, this._refreshRequestHeaders, this);
-            this._resource.removeEventListener(WebInspector.Resource.Event.ResponseReceived, this._refreshRequestAndResponse, this);
-            this._resource.removeEventListener(WebInspector.Resource.Event.CacheStatusDidChange, this._refreshRequestAndResponse, this);
-            this._resource.removeEventListener(WebInspector.Resource.Event.SizeDidChange, this._refreshDecodedSize, this);
-            this._resource.removeEventListener(WebInspector.Resource.Event.TransferSizeDidChange, this._refreshTransferSize, this);
-            this._resource.removeEventListener(WebInspector.Resource.Event.InitiatedResourcesDidChange, this._refreshRelatedResourcesSection, this);
-        }
-
-        this._resource = resource;
-
-        if (this._resource) {
-            this._resource.addEventListener(WebInspector.Resource.Event.URLDidChange, this._refreshURL, this);
-            this._resource.addEventListener(WebInspector.Resource.Event.MIMETypeDidChange, this._refreshMIMEType, this);
-            this._resource.addEventListener(WebInspector.Resource.Event.TypeDidChange, this._refreshResourceType, this);
-            this._resource.addEventListener(WebInspector.Resource.Event.LoadingDidFail, this._refreshErrorReason, this);
-            this._resource.addEventListener(WebInspector.Resource.Event.RequestHeadersDidChange, this._refreshRequestHeaders, this);
-            this._resource.addEventListener(WebInspector.Resource.Event.ResponseReceived, this._refreshRequestAndResponse, this);
-            this._resource.addEventListener(WebInspector.Resource.Event.CacheStatusDidChange, this._refreshRequestAndResponse, this);
-            this._resource.addEventListener(WebInspector.Resource.Event.SizeDidChange, this._refreshDecodedSize, this);
-            this._resource.addEventListener(WebInspector.Resource.Event.TransferSizeDidChange, this._refreshTransferSize, this);
-            this._resource.addEventListener(WebInspector.Resource.Event.InitiatedResourcesDidChange, this._refreshRelatedResourcesSection, this);
-        }
-
-        this.needsLayout();
-    }
-
-    // Protected
 
     layout()
     {
+        super.layout();
+
         if (!this._resource)
             return;
 
@@ -599,5 +606,19 @@ WebInspector.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel ext
         rows.push(dataRow);
 
         this._requestDataSection.groups = [new WebInspector.DetailsSectionGroup(rows)];
+    }
+
+    _applyResourceEventListeners()
+    {
+        this._resource.addEventListener(WebInspector.Resource.Event.URLDidChange, this._refreshURL, this);
+        this._resource.addEventListener(WebInspector.Resource.Event.MIMETypeDidChange, this._refreshMIMEType, this);
+        this._resource.addEventListener(WebInspector.Resource.Event.TypeDidChange, this._refreshResourceType, this);
+        this._resource.addEventListener(WebInspector.Resource.Event.LoadingDidFail, this._refreshErrorReason, this);
+        this._resource.addEventListener(WebInspector.Resource.Event.RequestHeadersDidChange, this._refreshRequestHeaders, this);
+        this._resource.addEventListener(WebInspector.Resource.Event.ResponseReceived, this._refreshRequestAndResponse, this);
+        this._resource.addEventListener(WebInspector.Resource.Event.CacheStatusDidChange, this._refreshRequestAndResponse, this);
+        this._resource.addEventListener(WebInspector.Resource.Event.SizeDidChange, this._refreshDecodedSize, this);
+        this._resource.addEventListener(WebInspector.Resource.Event.TransferSizeDidChange, this._refreshTransferSize, this);
+        this._resource.addEventListener(WebInspector.Resource.Event.InitiatedResourcesDidChange, this._refreshRelatedResourcesSection, this);
     }
 };
