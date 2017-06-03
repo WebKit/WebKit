@@ -1,3 +1,16 @@
+2017-06-03  Jonathan Bedard  <jbedard@apple.com>
+
+        Move css3/flexbox/image-percent-max-height.html failure expectation.
+        https://bugs.webkit.org/show_bug.cgi?id=126898
+
+        Unreviewed test gardening
+
+        css3/flexbox/image-percent-max-height.html fails on iOS-simulator,
+        but passes on device.
+
+        * platform/ios-simulator/TestExpectations:
+        * platform/ios/TestExpectations:
+
 2017-06-03  Chris Dumez  <cdumez@apple.com>
 
         http/tests/cache/disk-cache/shattered-deduplication.html is flaky

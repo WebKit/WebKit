@@ -2345,9 +2345,6 @@ http/tests/navigation/page-cache-pending-image-load-cache-partition.html [ Skip 
 http/tests/security/mixedContent/websocket/insecure-websocket-in-iframe.html [ Skip ]
 http/tests/security/mixedContent/websocket/insecure-websocket-in-main-frame.html [ Skip ]
 
-# -webkit-flex off-by-one px
-webkit.org/b/126898 css3/flexbox/image-percent-max-height.html [ ImageOnlyFailure ]
-
 webkit.org/b/149128 fast/text/control-characters [ ImageOnlyFailure ]
 
 webkit.org/b/148806 imported/w3c/css/css-multicol-1/multicol-rule-002.xht [ ImageOnlyFailure ]
