@@ -1,3 +1,20 @@
+2017-06-03  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Script modules should be able to import data urls
+        https://bugs.webkit.org/show_bug.cgi?id=171594
+
+        Reviewed by Youenn Fablet.
+
+        * http/tests/security/script-with-dataurl-expected.txt:
+        * http/tests/security/script-with-dataurl.html:
+        Now, the spec is changed and errors from data: scripts should not be muted.
+        https://github.com/whatwg/html/issues/1778
+
+        * js/dom/classic-script-with-data-url-expected.txt: Added.
+        * js/dom/classic-script-with-data-url.html: Added.
+        * js/dom/modules/module-script-with-data-url-expected.txt: Added.
+        * js/dom/modules/module-script-with-data-url.html: Added.
+
 2017-06-03  Jonathan Bedard  <jbedard@apple.com>
 
         Move css3/flexbox/image-percent-max-height.html failure expectation.

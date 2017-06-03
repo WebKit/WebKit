@@ -53,6 +53,7 @@ CachedResourceHandle<CachedScript> CachedScriptFetcher::requestScriptWithCache(D
     bool hasKnownNonce = document.contentSecurityPolicy()->allowScriptWithNonce(m_nonce, m_isInUserAgentShadowTree);
     ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
     options.contentSecurityPolicyImposition = hasKnownNonce ? ContentSecurityPolicyImposition::SkipPolicyCheck : ContentSecurityPolicyImposition::DoPolicyCheck;
+    options.sameOriginDataURLFlag = SameOriginDataURLFlag::Set;
 
     CachedResourceRequest request(ResourceRequest(sourceURL), options);
     request.setAsPotentiallyCrossOrigin(crossOriginMode, document);

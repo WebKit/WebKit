@@ -35,9 +35,9 @@ function test2()
 {
     var script = document.createElement("script");
     script.crossOrigin = "";
-    script.src = "data:text/script, throw 'FAIL: my error is too rich!'";
-    script.onload = () => { log("FAIL: loaded script in cors mode"); done(); }
-    script.onerror = () => { log("PASS: did not load script in cors mode"); done(); }
+    script.src = "data:text/script, throw 'PASS: my error is rich';";
+    script.onload = () => { log("PASS: loaded script in cors mode"); done(); }
+    script.onerror = () => { log("FAIL: did not load script in cors mode"); done(); }
     document.body.appendChild(script);
 }
 

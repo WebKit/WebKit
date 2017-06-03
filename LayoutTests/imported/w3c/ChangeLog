@@ -1,3 +1,14 @@
+2017-06-03  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Script modules should be able to import data urls
+        https://bugs.webkit.org/show_bug.cgi?id=171594
+
+        Reviewed by Youenn Fablet.
+
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/data-url-expected.txt:
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/compile-error-data-url-expected.txt:
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/runtime-error-data-url-expected.txt:
+
 2017-06-02  Javier Fernandez  <jfernandez@igalia.com>
 
         [css-grid] Margin wrong applied when stretching an orthogonal item in fixed size track

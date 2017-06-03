@@ -1,3 +1,19 @@
+2017-06-03  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Script modules should be able to import data urls
+        https://bugs.webkit.org/show_bug.cgi?id=171594
+
+        Reviewed by Youenn Fablet.
+
+        Tests: js/dom/classic-script-with-data-url.html
+               js/dom/modules/module-script-with-data-url.html
+
+        Script tag resources should have SameOriginDataURLFlag::Set to load data URLs
+        since script tags should treat data URLs as same origin.
+
+        * bindings/js/CachedScriptFetcher.cpp:
+        (WebCore::CachedScriptFetcher::requestScriptWithCache):
+
 2017-06-03  Simon Fraser  <simon.fraser@apple.com>
 
         Sort the project file.
