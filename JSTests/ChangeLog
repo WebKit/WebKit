@@ -1,3 +1,20 @@
+2017-06-02  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        ES2015 modules - Export default function hoisting
+        https://bugs.webkit.org/show_bug.cgi?id=170174
+
+        Reviewed by Saam Barati.
+
+        This issue itself is solved by fixing function declaration hoisting rules.
+        This patch just adds the specific test to modules tests to ensure the bug
+        is fixed.
+
+        * modules/export-default-function-hoisting.js: Added.
+        * modules/export-default-function-hoisting/cappuccino.js: Added.
+        (import.drinkCocoa.from.string_appeared_here.export.default.drinkCappuccino):
+        * modules/export-default-function-hoisting/cocoa.js: Added.
+        (export.default.drinkCocoa):
+
 2017-06-01  Oleksandr Skachkov  <gskachkov@gmail.com>
 
         Class Proxy can't be extended
