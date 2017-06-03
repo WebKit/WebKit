@@ -73,7 +73,7 @@ WebInspector.SearchTabContentView = class SearchTabContentView extends WebInspec
         if (!(representedObject instanceof WebInspector.Resource) && !(representedObject instanceof WebInspector.Script) && !(representedObject instanceof WebInspector.DOMTree))
             return false;
 
-        return !!this._navigationSidebarPanel.contentTreeOutline.getCachedTreeElement(representedObject);
+        return !!this.navigationSidebarPanel.contentTreeOutline.getCachedTreeElement(representedObject);
     }
 
     focusSearchField()

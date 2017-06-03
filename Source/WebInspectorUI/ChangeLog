@@ -1,5 +1,30 @@
 2017-06-02  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Don't create NavigationSidebarPanel classes until they are needed by a Tab
+        https://bugs.webkit.org/show_bug.cgi?id=172621
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/ContentBrowserTabContentView.js:
+        (WebInspector.ContentBrowserTabContentView):
+        (WebInspector.ContentBrowserTabContentView.prototype.shown):
+        * UserInterface/Views/TabContentView.js:
+        (WebInspector.TabContentView):
+        (WebInspector.TabContentView.prototype.get navigationSidebarPanel):
+
+        * UserInterface/Views/NetworkTabContentView.js:
+        (WebInspector.NetworkTabContentView.prototype.canShowRepresentedObject):
+        * UserInterface/Views/SearchTabContentView.js:
+        (WebInspector.SearchTabContentView.prototype.canShowRepresentedObject):
+        Use public getter for navigationSidebarPanel.
+
+        * UserInterface/Views/ResourceSidebarPanel.js:
+        (WebInspector.ResourceSidebarPanel):
+        (WebInspector.ResourceSidebarPanel.prototype.initialLayout): Added.
+        Load information about the current frame once the sidebar panel is displayed.
+
+2017-06-02  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Use initialLayout for DetailsSidebarPanel classes
         https://bugs.webkit.org/show_bug.cgi?id=172381
 

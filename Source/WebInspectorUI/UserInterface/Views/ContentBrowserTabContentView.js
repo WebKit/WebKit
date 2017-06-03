@@ -25,7 +25,7 @@
 
 WebInspector.ContentBrowserTabContentView = class ContentBrowserTabContentView extends WebInspector.TabContentView
 {
-    constructor(identifier, styleClassNames, tabBarItem, navigationSidebarPanelClass, detailsSidebarPanelConstructors, disableBackForward)
+    constructor(identifier, styleClassNames, tabBarItem, navigationSidebarPanelConstructor, detailsSidebarPanelConstructors, disableBackForward)
     {
         if (typeof styleClassNames === "string")
             styleClassNames = [styleClassNames];
@@ -33,9 +33,8 @@ WebInspector.ContentBrowserTabContentView = class ContentBrowserTabContentView e
         styleClassNames.push("content-browser");
 
         var contentBrowser = new WebInspector.ContentBrowser(null, null, disableBackForward);
-        var navigationSidebarPanel = navigationSidebarPanelClass ? new navigationSidebarPanelClass(contentBrowser) : null;
 
-        super(identifier, styleClassNames, tabBarItem, navigationSidebarPanel, detailsSidebarPanelConstructors);
+        super(identifier, styleClassNames, tabBarItem, navigationSidebarPanelConstructor, detailsSidebarPanelConstructors);
 
         this._contentBrowser = contentBrowser;
         this._contentBrowser.delegate = this;
@@ -49,7 +48,7 @@ WebInspector.ContentBrowserTabContentView = class ContentBrowserTabContentView e
         // Explicitly update the path for the navigation bar to prevent it from showing up as blank.
         this._contentBrowser.updateHierarchicalPathForCurrentContentView();
 
-        if (navigationSidebarPanel) {
+        if (navigationSidebarPanelConstructor) {
             let showToolTip = WebInspector.UIString("Show the navigation sidebar (%s)").format(WebInspector.navigationSidebarKeyboardShortcut.displayName);
             let hideToolTip = WebInspector.UIString("Hide the navigation sidebar (%s)").format(WebInspector.navigationSidebarKeyboardShortcut.displayName);
             let image = WebInspector.resolvedLayoutDirection() == WebInspector.LayoutDirection.RTL ? "Images/ToggleRightSidebar.svg" : "Images/ToggleLeftSidebar.svg";
@@ -60,8 +59,6 @@ WebInspector.ContentBrowserTabContentView = class ContentBrowserTabContentView e
 
             this._contentBrowser.navigationBar.insertNavigationItem(this._showNavigationSidebarItem, 0);
             this._contentBrowser.navigationBar.insertNavigationItem(new WebInspector.DividerNavigationItem, 1);
-
-            navigationSidebarPanel.contentBrowser = this._contentBrowser;
 
             WebInspector.navigationSidebar.addEventListener(WebInspector.Sidebar.Event.CollapsedStateDidChange, this._navigationSidebarCollapsedStateDidChange, this);
         }
@@ -99,8 +96,13 @@ WebInspector.ContentBrowserTabContentView = class ContentBrowserTabContentView e
 
         this._contentBrowser.shown();
 
-        if (this.navigationSidebarPanel && !this._contentBrowser.currentContentView)
-            this.navigationSidebarPanel.showDefaultContentView();
+        if (this.navigationSidebarPanel) {
+            if (!this.navigationSidebarPanel.contentBrowser)
+                this.navigationSidebarPanel.contentBrowser = this._contentBrowser;
+
+            if (!this._contentBrowser.currentContentView)
+                this.navigationSidebarPanel.showDefaultContentView();
+        }
     }
 
     hidden()

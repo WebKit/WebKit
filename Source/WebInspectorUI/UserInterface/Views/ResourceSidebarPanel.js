@@ -76,9 +76,6 @@ WebInspector.ResourceSidebarPanel = class ResourceSidebarPanel extends WebInspec
             this.contentTreeOutline.disclosureButtons = false;
             WebInspector.SourceCode.addEventListener(WebInspector.SourceCode.Event.SourceMapAdded, () => { this.contentTreeOutline.disclosureButtons = true; }, this);
         }
-
-        if (WebInspector.frameResourceManager.mainFrame)
-            this._mainFrameMainResourceDidChange(WebInspector.frameResourceManager.mainFrame);
     }
 
     // Public
@@ -191,6 +188,14 @@ WebInspector.ResourceSidebarPanel = class ResourceSidebarPanel extends WebInspec
     }
 
     // Protected
+
+    initialLayout()
+    {
+        super.initialLayout();
+
+        if (WebInspector.frameResourceManager.mainFrame)
+            this._mainFrameMainResourceDidChange(WebInspector.frameResourceManager.mainFrame);
+    }
 
     hasCustomFilters()
     {
