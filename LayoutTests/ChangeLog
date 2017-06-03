@@ -1,3 +1,28 @@
+2017-06-03  Chris Dumez  <cdumez@apple.com>
+
+        http/tests/cache/disk-cache/shattered-deduplication.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=172868
+        <rdar://problem/31249379>
+
+        Reviewed by Antti Koivisto.
+
+        http/tests/cache/disk-cache/shattered-deduplication.html was flaky due to PDF banner
+        fade-in / fade-out animation.
+
+        <rdar://problem/31249379> is fixed for me with the proposed changes.
+
+        * http/tests/cache/disk-cache/shattered-deduplication-expected.html:
+        - Wait 1 second before calling notifyDone() to give the PDF as much time to render as
+        the test page.
+        - Reduce frame height to 30 to not have to worry about the PDF tool banner being visible
+          or not (as it fades in and out). 30 is still enough to see the color and confirm the
+          test is passing.
+
+        * http/tests/cache/disk-cache/shattered-deduplication.html:
+        - Reduce frame height to 30 to not have to worry about the PDF tool banner being visible
+          or not (as it fades in and out). 30 is still enough to see the color and confirm the
+          test is passing.
+
 2017-06-02  Myles C. Maxfield  <mmaxfield@apple.com>
 
         REGRESSION(r213464): [iOS] Fonts get too bold when the "Bold Text" accessibility setting is enabled
