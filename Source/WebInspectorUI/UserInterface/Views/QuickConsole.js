@@ -53,8 +53,6 @@ WebInspector.QuickConsole = class QuickConsole extends WebInspector.View
         // would be for CodeMirror's event handler to pass if it doesn't do anything.
         this.prompt.escapeKeyHandlerWhenEmpty = function() { WebInspector.toggleSplitConsole(); };
 
-        this.prompt.shown();
-
         this._navigationBar = new WebInspector.QuickConsoleNavigationBar;
         this.addSubview(this._navigationBar);
 

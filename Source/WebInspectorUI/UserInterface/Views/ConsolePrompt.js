@@ -115,11 +115,6 @@ WebInspector.ConsolePrompt = class ConsolePrompt extends WebInspector.View
         this._codeMirror.focus();
     }
 
-    shown()
-    {
-        this._codeMirror.refresh();
-    }
-
     updateCompletions(completions, implicitSuffix)
     {
         this._completionController.updateCompletions(completions, implicitSuffix);

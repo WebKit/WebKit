@@ -41,14 +41,6 @@ WebInspector.DatabaseContentView = class DatabaseContentView extends WebInspecto
 
     // Public
 
-    shown()
-    {
-        super.shown();
-
-        // FIXME: remove once <https://webkit.org/b/150741> is fixed.
-        this._prompt.shown();
-    }
-
     saveToCookie(cookie)
     {
         cookie.type = WebInspector.ContentViewCookieType.Database;
