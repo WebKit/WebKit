@@ -23,7 +23,7 @@
 import logging
 import unittest
 
-from webkitpy.common.system.outputcapture import OutputCapture
+from webkitpy.common.system.outputcapture import OutputCapture, OutputCaptureScope
 
 
 _log = logging.getLogger(__name__)
@@ -57,3 +57,19 @@ class OutputCaptureTest(unittest.TestCase):
         self.output.set_log_level(logging.WARN)
         self.log_all_levels()
         self.assertLogged('ERROR\nCRITICAL\nWARN\nERROR\nCRITICAL\n')
+
+    def test_output_capture_scope(self):
+        scope = OutputCaptureScope()
+        with scope:
+            print 'STRING 1'
+        self.assertEqual(('STRING 1\n', '', ''), scope.captured_output)
+
+        with scope:
+            print 'STRING 2'
+        self.assertEqual(('STRING 2\n', '', ''), scope.captured_output)
+
+    def test_output_capture_scope_from_output_capture(self):
+        scope = OutputCaptureScope(self.output)
+        with scope:
+            self.log_all_levels()
+        self.assertEqual(('', '', 'INFO\nWARN\nERROR\nCRITICAL\n'), scope.captured_output)

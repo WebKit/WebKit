@@ -1,3 +1,22 @@
+2017-06-03  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Add contextmanager to disable logging for a block
+        https://bugs.webkit.org/show_bug.cgi?id=172876
+
+        Reviewed by Daniel Bates.
+
+        Add a context manager which will use an OutputCapture object to capture logging
+        in a block and hold it in a variable.
+
+        * Scripts/webkitpy/common/system/outputcapture.py:
+        (OutputCaptureScope):
+        (OutputCaptureScope.__init__): Construct with OutputCapture object.
+        (OutputCaptureScope.__enter__): Begin capturing output. 
+        (OutputCaptureScope.__exit__): Restore output and save captured output to a variable.
+        output and retain the resulting log.
+        * Scripts/webkitpy/common/system/outputcapture_unittest.py:
+        (OutputCaptureTest.test_output_capture_scope): Added.
+
 2017-06-02  Zalan Bujtas  <zalan@apple.com>
 
         Cleanup FrameView::autoSizeIfEnabled.

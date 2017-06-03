@@ -107,6 +107,19 @@ class OutputCapture(object):
         return return_value
 
 
+class OutputCaptureScope(object):
+
+    def __init__(self, output_capture=OutputCapture()):
+        self._output_capture = output_capture
+        self.captured_output = (None, None, None)
+
+    def __enter__(self):
+        self._output_capture.capture_output()
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.captured_output = self._output_capture.restore_output()
+
+
 class OutputCaptureTestCaseBase(unittest.TestCase):
     maxDiff = None
 
