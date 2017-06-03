@@ -1,3 +1,19 @@
+2017-06-02  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        ASSERTION FAILED: "We should only declare a function as a lexically scoped variable in scopes where var declarations aren't allowed. ..." for function redeclaration with async function module export
+        https://bugs.webkit.org/show_bug.cgi?id=168844
+
+        Reviewed by Saam Barati.
+
+        As the same to the exported function declaration, we should set statementDepth = 1 for exported async function declaration.
+
+        * parser/Parser.cpp:
+        (JSC::DepthManager::DepthManager):
+        (JSC::Parser<LexerType>::parseExportDeclaration):
+        * parser/Parser.h:
+        (JSC::Parser::DepthManager::DepthManager): Deleted.
+        (JSC::Parser::DepthManager::~DepthManager): Deleted.
+
 2017-06-02  Keith Miller  <keith_miller@apple.com>
 
         Defer installing mach breakpoint handler until watchdog is actually called

@@ -1808,23 +1808,6 @@ private:
     RefPtr<ModuleScopeData> m_moduleScopeData;
     DebuggerParseData* m_debuggerParseData;
     CallOrApplyDepthScope* m_callOrApplyDepthScope { nullptr };
-
-    struct DepthManager {
-        DepthManager(int* depth)
-        : m_originalDepth(*depth)
-        , m_depth(depth)
-        {
-        }
-        
-        ~DepthManager()
-        {
-            *m_depth = m_originalDepth;
-        }
-        
-    private:
-        int m_originalDepth;
-        int* m_depth;
-    };
 };
 
 

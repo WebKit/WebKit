@@ -1,5 +1,16 @@
 2017-06-02  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        ASSERTION FAILED: "We should only declare a function as a lexically scoped variable in scopes where var declarations aren't allowed. ..." for function redeclaration with async function module export
+        https://bugs.webkit.org/show_bug.cgi?id=168844
+
+        Reviewed by Saam Barati.
+
+        * modules/async-function-export.js: Added.
+        (f):
+        (export.async.f):
+
+2017-06-02  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         ES2015 modules - Export default function hoisting
         https://bugs.webkit.org/show_bug.cgi?id=170174
 
