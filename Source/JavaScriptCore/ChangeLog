@@ -1,3 +1,18 @@
+2017-06-02  Keith Miller  <keith_miller@apple.com>
+
+        Defer installing mach breakpoint handler until watchdog is actually called
+        https://bugs.webkit.org/show_bug.cgi?id=172885
+
+        Reviewed by Saam Barati.
+
+        Eagerly installing the mach breakpoint handler causes issues with Xcode GUI debugging.
+        This hides the issue, so it won't occur as often.
+
+        * runtime/VMTraps.cpp:
+        (JSC::VMTraps::SignalSender::send):
+        (JSC::VMTraps::VMTraps): Deleted.
+        * runtime/VMTraps.h:
+
 2017-06-02  Filip Pizlo  <fpizlo@apple.com>
 
         Atomics.load and Atomics.store need to be fully fenced

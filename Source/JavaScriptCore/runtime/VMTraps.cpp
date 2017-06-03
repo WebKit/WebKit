@@ -338,18 +338,6 @@ void VMTraps::invalidateCodeBlocksOnStack(Locker<Lock>&, ExecState* topCallFrame
 
 #endif // ENABLE(SIGNAL_BASED_VM_TRAPS)
 
-VMTraps::VMTraps()
-{
-#if ENABLE(SIGNAL_BASED_VM_TRAPS)
-    if (!Options::usePollingTraps()) {
-        static std::once_flag once;
-        std::call_once(once, [] {
-            installSignalHandler();
-        });
-    }
-#endif
-}
-
 void VMTraps::willDestroyVM()
 {
     m_isShuttingDown = true;
@@ -394,6 +382,11 @@ void VMTraps::SignalSender::willDestroyVM()
 
 void VMTraps::SignalSender::send()
 {
+    static std::once_flag once;
+    std::call_once(once, [] {
+        installSignalHandler();
+    });
+
     while (true) {
         // We need a nested scope so that we'll release the lock before we sleep below.
         {

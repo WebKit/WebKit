@@ -86,7 +86,6 @@ public:
         BitField m_mask;
     };
 
-    VMTraps();
     ~VMTraps()
     {
 #if ENABLE(SIGNAL_BASED_VM_TRAPS)
