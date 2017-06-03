@@ -1,3 +1,26 @@
+2017-06-03  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Cleanup arguments to preparePlatformFont() and fontWithFamily() in FontCacheCoreText.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=172886
+
+        Reviewed by Simon Fraser.
+
+        The number of arguments is getting out of control.
+
+        No new tests because there is no behavior change.
+
+        * platform/graphics/FontCache.h:
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::preparePlatformFont):
+        (WebCore::fontWithFamily):
+        (WebCore::FontCache::createFontPlatformData):
+        (WebCore::FontCache::systemFallbackForCharacters):
+        * platform/graphics/mac/FontCacheMac.mm:
+        (WebCore::platformFontWithFamilySpecialCase):
+        * platform/graphics/mac/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData):
+        * platform/spi/cocoa/CoreTextSPI.h:
+
 2017-06-03  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Script modules should be able to import data urls

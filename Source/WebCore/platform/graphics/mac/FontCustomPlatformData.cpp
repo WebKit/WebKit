@@ -40,7 +40,7 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription&
     FontOrientation orientation = fontDescription.orientation();
     FontWidthVariant widthVariant = fontDescription.widthVariant();
     RetainPtr<CTFontRef> font = adoptCF(CTFontCreateWithFontDescriptor(m_fontDescriptor.get(), size, nullptr));
-    font = preparePlatformFont(font.get(), fontDescription.textRenderingMode(), &fontFaceFeatures, &fontFaceVariantSettings, fontFaceCapabilities, fontDescription.featureSettings(), fontDescription.variantSettings(), fontDescription.fontSelectionRequest(), fontDescription.variationSettings(), fontDescription.opticalSizing(), fontDescription.computedSize(), fontDescription.fontStyleAxis());
+    font = preparePlatformFont(font.get(), fontDescription, &fontFaceFeatures, &fontFaceVariantSettings, fontFaceCapabilities, fontDescription.computedSize());
     ASSERT(font);
     return FontPlatformData(font.get(), size, bold, italic, orientation, widthVariant, fontDescription.textRenderingMode());
 }
