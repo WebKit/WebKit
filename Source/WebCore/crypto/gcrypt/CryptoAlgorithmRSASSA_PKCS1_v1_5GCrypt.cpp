@@ -32,75 +32,11 @@
 #include "CryptoAlgorithmRsaSsaParamsDeprecated.h"
 #include "CryptoKeyRSA.h"
 #include "ExceptionCode.h"
+#include "GCryptUtilities.h"
 #include "NotImplemented.h"
 #include "ScriptExecutionContext.h"
-#include <pal/crypto/CryptoDigest.h>
-#include <pal/crypto/gcrypt/Handle.h>
-#include <pal/crypto/gcrypt/Utilities.h>
 
 namespace WebCore {
-
-static std::optional<PAL::CryptoDigest::Algorithm> hashCryptoDigestAlgorithm(CryptoAlgorithmIdentifier identifier)
-{
-    switch (identifier) {
-    case CryptoAlgorithmIdentifier::SHA_1:
-        return PAL::CryptoDigest::Algorithm::SHA_1;
-    case CryptoAlgorithmIdentifier::SHA_224:
-        return PAL::CryptoDigest::Algorithm::SHA_224;
-    case CryptoAlgorithmIdentifier::SHA_256:
-        return PAL::CryptoDigest::Algorithm::SHA_256;
-    case CryptoAlgorithmIdentifier::SHA_384:
-        return PAL::CryptoDigest::Algorithm::SHA_384;
-    case CryptoAlgorithmIdentifier::SHA_512:
-        return PAL::CryptoDigest::Algorithm::SHA_512;
-    default:
-        return std::nullopt;
-    }
-}
-
-static std::optional<const char*> hashAlgorithmName(CryptoAlgorithmIdentifier identifier)
-{
-    switch (identifier) {
-    case CryptoAlgorithmIdentifier::SHA_1:
-        return "sha1";
-    case CryptoAlgorithmIdentifier::SHA_224:
-        return "sha224";
-    case CryptoAlgorithmIdentifier::SHA_256:
-        return "sha256";
-    case CryptoAlgorithmIdentifier::SHA_384:
-        return "sha384";
-    case CryptoAlgorithmIdentifier::SHA_512:
-        return "sha512";
-    default:
-        return std::nullopt;
-    }
-}
-
-static std::optional<Vector<uint8_t>> mpiData(gcry_sexp_t paramSexp)
-{
-    // Retrieve the MPI value stored in the s-expression: (name mpi-data)
-    PAL::GCrypt::Handle<gcry_mpi_t> paramMPI(gcry_sexp_nth_mpi(paramSexp, 1, GCRYMPI_FMT_USG));
-    if (!paramMPI)
-        return std::nullopt;
-
-    // Query the data length first to properly prepare the buffer.
-    size_t dataLength = 0;
-    gcry_error_t error = gcry_mpi_print(GCRYMPI_FMT_USG, nullptr, 0, &dataLength, paramMPI);
-    if (error != GPG_ERR_NO_ERROR) {
-        PAL::GCrypt::logError(error);
-        return std::nullopt;
-    }
-
-    // Finally, copy the MPI data into a properly-sized buffer.
-    Vector<uint8_t> output(dataLength);
-    error = gcry_mpi_print(GCRYMPI_FMT_USG, output.data(), output.size(), nullptr, paramMPI);
-    if (error != GPG_ERR_NO_ERROR) {
-        PAL::GCrypt::logError(error);
-        return std::nullopt;
-    }
-
-    return output;
-}
 
 static std::optional<Vector<uint8_t>> gcryptSign(gcry_sexp_t keySexp, const Vector<uint8_t>& data, CryptoAlgorithmIdentifier hashAlgorithmIdentifier)
 {

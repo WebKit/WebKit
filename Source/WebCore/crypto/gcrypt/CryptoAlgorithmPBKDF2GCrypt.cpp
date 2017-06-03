@@ -33,39 +33,22 @@
 #include "CryptoAlgorithmPbkdf2Params.h"
 #include "CryptoKeyRaw.h"
 #include "ExceptionCode.h"
+#include "GCryptUtilities.h"
 #include "ScriptExecutionContext.h"
-#include <pal/crypto/gcrypt/Utilities.h>
 
 namespace WebCore {
 
 static std::optional<Vector<uint8_t>> gcryptDeriveBits(const Vector<uint8_t>& keyData, const Vector<uint8_t>& saltData, CryptoAlgorithmIdentifier hashIdentifier, size_t iterations, size_t length)
 {
-    int hashAlgorithm;
-    switch (hashIdentifier) {
-    case CryptoAlgorithmIdentifier::SHA_1:
-        hashAlgorithm = GCRY_MD_SHA1;
-        break;
-    case CryptoAlgorithmIdentifier::SHA_224:
-        hashAlgorithm = GCRY_MD_SHA224;
-        break;
-    case CryptoAlgorithmIdentifier::SHA_256:
-        hashAlgorithm = GCRY_MD_SHA256;
-        break;
-    case CryptoAlgorithmIdentifier::SHA_384:
-        hashAlgorithm = GCRY_MD_SHA384;
-        break;
-    case CryptoAlgorithmIdentifier::SHA_512:
-        hashAlgorithm = GCRY_MD_SHA512;
-        break;
-    default:
+    auto hashAlgorithm = digestAlgorithm(hashIdentifier);
+    if (!hashAlgorithm)
         return std::nullopt;
-    }
 
     // Length, in bits, is a multiple of 8, as guaranteed by CryptoAlgorithmPBKDF2::deriveBits().
     ASSERT(!(length % 8));
 
     Vector<uint8_t> result(length / 8);
-    gcry_error_t error = gcry_kdf_derive(keyData.data(), keyData.size(), GCRY_KDF_PBKDF2, hashAlgorithm, saltData.data(), saltData.size(), iterations, result.size(), result.data());
+    gcry_error_t error = gcry_kdf_derive(keyData.data(), keyData.size(), GCRY_KDF_PBKDF2, *hashAlgorithm, saltData.data(), saltData.size(), iterations, result.size(), result.data());
     if (error != GPG_ERR_NO_ERROR) {
         PAL::GCrypt::logError(error);
         return std::nullopt;

@@ -30,38 +30,11 @@
 
 #include "CryptoKeyRSA.h"
 #include "ExceptionCode.h"
+#include "GCryptUtilities.h"
 #include "NotImplemented.h"
 #include "ScriptExecutionContext.h"
-#include <pal/crypto/gcrypt/Handle.h>
-#include <pal/crypto/gcrypt/Utilities.h>
 
 namespace WebCore {
-
-static std::optional<Vector<uint8_t>> mpiData(gcry_sexp_t paramSexp)
-{
-    // Retrieve the MPI value stored in the s-expression: (name mpi-data)
-    PAL::GCrypt::Handle<gcry_mpi_t> paramMPI(gcry_sexp_nth_mpi(paramSexp, 1, GCRYMPI_FMT_USG));
-    if (!paramMPI)
-        return std::nullopt;
-
-    // Query the data length first to properly prepare the buffer.
-    size_t dataLength = 0;
-    gcry_error_t error = gcry_mpi_print(GCRYMPI_FMT_USG, nullptr, 0, &dataLength, paramMPI);
-    if (error != GPG_ERR_NO_ERROR) {
-        PAL::GCrypt::logError(error);
-        return std::nullopt;
-    }
-
-    // Finally, copy the MPI data into a properly-sized buffer.
-    Vector<uint8_t> output(dataLength);
-    error = gcry_mpi_print(GCRYMPI_FMT_USG, output.data(), output.size(), nullptr, paramMPI);
-    if (error != GPG_ERR_NO_ERROR) {
-        PAL::GCrypt::logError(error);
-        return std::nullopt;
-    }
-
-    return output;
-}
 
 static std::optional<Vector<uint8_t>> gcryptEncrypt(gcry_sexp_t keySexp, Vector<uint8_t>&& plainText)
 {

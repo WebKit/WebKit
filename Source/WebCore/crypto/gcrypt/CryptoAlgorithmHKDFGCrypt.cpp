@@ -33,9 +33,8 @@
 #include "CryptoAlgorithmHkdfParams.h"
 #include "CryptoKeyRaw.h"
 #include "ExceptionCode.h"
+#include "GCryptUtilities.h"
 #include "ScriptExecutionContext.h"
-#include <pal/crypto/gcrypt/Handle.h>
-#include <pal/crypto/gcrypt/Utilities.h>
 
 namespace WebCore {
 
@@ -43,31 +42,13 @@ namespace WebCore {
 // We should switch to the libgcrypt-provided implementation once it's available.
 // https://bugs.webkit.org/show_bug.cgi?id=171536
 
-static std::optional<int> macAlgorithmForHashFunction(CryptoAlgorithmIdentifier identifier)
-{
-    switch (identifier) {
-    case CryptoAlgorithmIdentifier::SHA_1:
-        return GCRY_MAC_HMAC_SHA1;
-    case CryptoAlgorithmIdentifier::SHA_224:
-        return GCRY_MAC_HMAC_SHA224;
-    case CryptoAlgorithmIdentifier::SHA_256:
-        return GCRY_MAC_HMAC_SHA256;
-    case CryptoAlgorithmIdentifier::SHA_384:
-        return GCRY_MAC_HMAC_SHA384;
-    case CryptoAlgorithmIdentifier::SHA_512:
-        return GCRY_MAC_HMAC_SHA512;
-    default:
-        return std::nullopt;
-    }
-}
-
 static std::optional<Vector<uint8_t>> gcryptDeriveBits(const Vector<uint8_t>& key, const Vector<uint8_t>& salt, const Vector<uint8_t>& info, size_t lengthInBytes, CryptoAlgorithmIdentifier identifier)
 {
     // libgcrypt doesn't provide HKDF support, so we have to implement
     // the functionality ourselves as specified in RFC5869.
     // https://www.ietf.org/rfc/rfc5869.txt
 
-    auto macAlgorithm = macAlgorithmForHashFunction(identifier);
+    auto macAlgorithm = hmacAlgorithm(identifier);
     if (!macAlgorithm)
         return std::nullopt;
 

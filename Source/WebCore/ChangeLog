@@ -1,5 +1,41 @@
 2017-06-03  Zan Dobersek  <zdobersek@igalia.com>
 
+        [GCrypt] Gather SUBTLE_CRYPTO utility functions in a single header
+        https://bugs.webkit.org/show_bug.cgi?id=172870
+
+        Reviewed by Jiewen Tan.
+
+        Gather the helper functions used across different source files
+        for libgcrypt-backed SUBTLE_CRYPTO implementations in a single
+        header file.
+
+        * crypto/gcrypt/CryptoAlgorithmECDSAGCrypt.cpp:
+        (WebCore::hashCryptoDigestAlgorithm): Deleted.
+        (WebCore::hashAlgorithmName): Deleted.
+        (WebCore::mpiData): Deleted.
+        * crypto/gcrypt/CryptoAlgorithmHKDFGCrypt.cpp:
+        (WebCore::gcryptDeriveBits):
+        (WebCore::macAlgorithmForHashFunction): Deleted.
+        * crypto/gcrypt/CryptoAlgorithmPBKDF2GCrypt.cpp:
+        (WebCore::gcryptDeriveBits):
+        * crypto/gcrypt/CryptoAlgorithmRSAES_PKCS1_v1_5GCrypt.cpp:
+        (WebCore::mpiData): Deleted.
+        * crypto/gcrypt/CryptoAlgorithmRSASSA_PKCS1_v1_5GCrypt.cpp:
+        (WebCore::hashCryptoDigestAlgorithm): Deleted.
+        (WebCore::hashAlgorithmName): Deleted.
+        (WebCore::mpiData): Deleted.
+        * crypto/gcrypt/CryptoAlgorithmRSA_OAEPGCrypt.cpp:
+        (WebCore::hashAlgorithmName): Deleted.
+        (WebCore::mpiData): Deleted.
+        * crypto/gcrypt/GCryptUtilities.h: Added.
+        (WebCore::hashAlgorithmName):
+        (WebCore::hmacAlgorithm):
+        (WebCore::digestAlgorithm):
+        (WebCore::hashCryptoDigestAlgorithm):
+        (WebCore::mpiData):
+
+2017-06-03  Zan Dobersek  <zdobersek@igalia.com>
+
         [GCrypt] Fix PK verification for ECDSA
         https://bugs.webkit.org/show_bug.cgi?id=172857
 
