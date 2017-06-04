@@ -1,3 +1,17 @@
+2017-06-04  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Fix build of Windows-specific code with ICU 59.1
+        https://bugs.webkit.org/show_bug.cgi?id=172729
+
+        Reviewed by Darin Adler.
+
+        Fix conversions from WTF::String to wchar_t* and vice versa.
+        No new tests needed.
+
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.cpp:
+        (WebCore::mimeTypeCache):
+        (WebCore::MediaPlayerPrivateMediaFoundation::startCreateMediaSource):
+
 2017-06-04  Chris Dumez  <cdumez@apple.com>
 
         Implement DOMMatrixReadOnly.transformPoint()

@@ -96,6 +96,7 @@
 
 #if OS(WINDOWS)
 #include <direct.h>
+#include <wtf/text/win/WCharStringExtras.h>
 #else
 #include <unistd.h>
 #endif
@@ -1567,8 +1568,7 @@ static std::optional<DirectoryName> currentWorkingDirectory()
     // https://msdn.microsoft.com/en-us/library/windows/desktop/ff381407.aspx
     auto buffer = std::make_unique<wchar_t[]>(bufferLength);
     DWORD lengthNotIncludingNull = ::GetCurrentDirectoryW(bufferLength, buffer.get());
-    static_assert(sizeof(wchar_t) == sizeof(UChar), "In Windows, both are UTF-16LE");
-    String directoryString = String(reinterpret_cast<UChar*>(buffer.get()));
+    String directoryString = nullTerminatedWCharToString(buffer.get());
     // We don't support network path like \\host\share\<path name>.
     if (directoryString.startsWith("\\\\"))
         return std::nullopt;
@@ -1745,9 +1745,7 @@ static bool fetchModuleFromLocalFileSystem(const String& fileName, Vector<char>&
     // https://msdn.microsoft.com/en-us/library/windows/desktop/aa365247.aspx#maxpath
     // Use long UNC to pass the long path name to the Windows APIs.
     String longUNCPathName = WTF::makeString("\\\\?\\", fileName);
-    static_assert(sizeof(wchar_t) == sizeof(UChar), "In Windows, both are UTF-16LE");
-    auto utf16Vector = longUNCPathName.charactersWithNullTermination();
-    FILE* f = _wfopen(reinterpret_cast<wchar_t*>(utf16Vector.data()), L"rb");
+    FILE* f = _wfopen(stringToNullTerminatedWChar(longUNCPathName).data(), L"rb");
 #else
     FILE* f = fopen(fileName.utf8().data(), "r");
 #endif

@@ -1,3 +1,16 @@
+2017-06-04  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Fix build of Windows-specific code with ICU 59.1
+        https://bugs.webkit.org/show_bug.cgi?id=172729
+
+        Reviewed by Darin Adler.
+
+        * wtf/text/win/WCharStringExtras.h: Added new header file wuth helper
+        functions for conversion between WTF::String and wchart_t*.
+        (WTF::stringToNullTerminatedWChar):
+        (WTF::wcharToString):
+        (WTF::nullTerminatedWCharToString):
+
 2017-06-02  Stephan Szabo  <stephan.szabo@am.sony.com>
 
         [JSCOnly] Build static jsc.exe on Windows

@@ -32,6 +32,7 @@
 #include "URL.h"
 #include "PluginPackage.h"
 #include <wtf/WindowsExtras.h>
+#include <wtf/text/win/WCharStringExtras.h>
 
 namespace WebCore {
 
@@ -62,7 +63,7 @@ static inline void addPluginPathsFromRegistry(HKEY rootKey, HashSet<String>& pat
         if (result != ERROR_SUCCESS || type != REG_SZ)
             continue;
 
-        paths.add(String(pathStr, pathStrSize / sizeof(WCHAR) - 1));
+        paths.add(wcharToString(pathStr, pathStrSize / sizeof(WCHAR) - 1));
     }
 
     RegCloseKey(key);
@@ -83,7 +84,7 @@ void PluginDatabase::getPluginPathsInDirectories(HashSet<String>& paths) const
     for (Vector<String>::const_iterator it = m_pluginDirectories.begin(); it != end; ++it) {
         String pattern = *it + "\\*";
 
-        hFind = FindFirstFileW(pattern.charactersWithNullTermination().data(), &findFileData);
+        hFind = FindFirstFileW(stringToNullTerminatedWChar(pattern).data(), &findFileData);
 
         if (hFind == INVALID_HANDLE_VALUE)
             continue;
@@ -92,7 +93,7 @@ void PluginDatabase::getPluginPathsInDirectories(HashSet<String>& paths) const
             if (findFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
                 continue;
 
-            String filename = String(findFileData.cFileName, wcslen(findFileData.cFileName));
+            String filename = wcharToString(findFileData.cFileName, wcslen(findFileData.cFileName));
             if ((!filename.startsWith("np", false) || !filename.endsWith("dll", false)) &&
                 (!equalLettersIgnoringASCIICase(filename, "plugin.dll") || !it->endsWith("Shockwave 10", false)))
                 continue;
@@ -179,11 +180,11 @@ static inline void addMozillaPluginDirectories(Vector<String>& directories)
             if (result != ERROR_SUCCESS)
                 break;
 
-            String extensionsPath = String(name, nameLen) + "\\Extensions";
+            String extensionsPath = wcharToString(name, nameLen) + "\\Extensions";
             HKEY extensionsKey;
 
             // Try opening the key
-            result = RegOpenKeyEx(key, extensionsPath.charactersWithNullTermination().data(), 0, KEY_READ, &extensionsKey);
+            result = RegOpenKeyEx(key, stringToNullTerminatedWChar(extensionsPath).data(), 0, KEY_READ, &extensionsKey);
 
             if (result == ERROR_SUCCESS) {
                 // Now get the plugins directory
@@ -194,7 +195,7 @@ static inline void addMozillaPluginDirectories(Vector<String>& directories)
                 result = RegQueryValueEx(extensionsKey, TEXT("Plugins"), 0, &type, (LPBYTE)&pluginsDirectoryStr, &pluginsDirectorySize);
 
                 if (result == ERROR_SUCCESS && type == REG_SZ)
-                    directories.append(String(pluginsDirectoryStr, pluginsDirectorySize / sizeof(WCHAR) - 1));
+                    directories.append(wcharToString(pluginsDirectoryStr, pluginsDirectorySize / sizeof(WCHAR) - 1));
 
                 RegCloseKey(extensionsKey);
             }
@@ -211,7 +212,7 @@ static inline void addWindowsMediaPlayerPluginDirectory(Vector<String>& director
     DWORD pluginDirectorySize = ::ExpandEnvironmentStringsW(TEXT("%SYSTEMDRIVE%\\PFiles\\Plugins"), pluginDirectoryStr, WTF_ARRAY_LENGTH(pluginDirectoryStr));
 
     if (pluginDirectorySize > 0 && pluginDirectorySize <= WTF_ARRAY_LENGTH(pluginDirectoryStr))
-        directories.append(String(pluginDirectoryStr, pluginDirectorySize - 1));
+        directories.append(wcharToString(pluginDirectoryStr, pluginDirectorySize - 1));
 
     DWORD type;
     WCHAR installationDirectoryStr[_MAX_PATH];
@@ -220,7 +221,7 @@ static inline void addWindowsMediaPlayerPluginDirectory(Vector<String>& director
     HRESULT result = getRegistryValue(HKEY_LOCAL_MACHINE, L"Software\\Microsoft\\MediaPlayer", L"Installation Directory", &type, &installationDirectoryStr, &installationDirectorySize);
 
     if (result == ERROR_SUCCESS && type == REG_SZ)
-        directories.append(String(installationDirectoryStr, installationDirectorySize / sizeof(WCHAR) - 1));
+        directories.append(wcharToString(installationDirectoryStr, installationDirectorySize / sizeof(WCHAR) - 1));
 }
 
 static inline void addAdobeAcrobatPluginDirectory(Vector<String>& directories)
@@ -244,10 +245,10 @@ static inline void addAdobeAcrobatPluginDirectory(Vector<String>& directories)
         if (result != ERROR_SUCCESS)
             break;
 
-        Vector<int> acrobatVersion = parseVersionString(String(name, nameLen));
+        Vector<int> acrobatVersion = parseVersionString(wcharToString(name, nameLen));
         if (compareVersions(acrobatVersion, latestAcrobatVersion)) {
             latestAcrobatVersion = acrobatVersion;
-            latestAcrobatVersionString = String(name, nameLen);
+            latestAcrobatVersionString = wcharToString(name, nameLen);
         }
     }
 
@@ -257,10 +258,10 @@ static inline void addAdobeAcrobatPluginDirectory(Vector<String>& directories)
         DWORD acrobatInstallPathSize = sizeof(acrobatInstallPathStr);
 
         String acrobatPluginKeyPath = "Software\\Adobe\\Acrobat Reader\\" + latestAcrobatVersionString + "\\InstallPath";
-        result = getRegistryValue(HKEY_LOCAL_MACHINE, acrobatPluginKeyPath.charactersWithNullTermination().data(), 0, &type, acrobatInstallPathStr, &acrobatInstallPathSize);
+        result = getRegistryValue(HKEY_LOCAL_MACHINE, stringToNullTerminatedWChar(acrobatPluginKeyPath).data(), 0, &type, acrobatInstallPathStr, &acrobatInstallPathSize);
 
         if (result == ERROR_SUCCESS) {
-            String acrobatPluginDirectory = String(acrobatInstallPathStr, acrobatInstallPathSize / sizeof(WCHAR) - 1) + "\\browser";
+            String acrobatPluginDirectory = wcharToString(acrobatInstallPathStr, acrobatInstallPathSize / sizeof(WCHAR) - 1) + "\\browser";
             directories.append(acrobatPluginDirectory);
         }
     }
@@ -289,10 +290,10 @@ static inline void addJavaPluginDirectory(Vector<String>& directories)
         if (result != ERROR_SUCCESS)
             break;
 
-        Vector<int> javaVersion = parseVersionString(String(name, nameLen));
+        Vector<int> javaVersion = parseVersionString(wcharToString(name, nameLen));
         if (compareVersions(javaVersion, latestJavaVersion)) {
             latestJavaVersion = javaVersion;
-            latestJavaVersionString = String(name, nameLen);
+            latestJavaVersionString = wcharToString(name, nameLen);
         }
     }
 
@@ -304,12 +305,12 @@ static inline void addJavaPluginDirectory(Vector<String>& directories)
         DWORD useNewPluginSize;
 
         String javaPluginKeyPath = "Software\\JavaSoft\\Java Plug-in\\" + latestJavaVersionString;
-        result = getRegistryValue(HKEY_LOCAL_MACHINE, javaPluginKeyPath.charactersWithNullTermination().data(), L"UseNewJavaPlugin", &type, &useNewPluginValue, &useNewPluginSize);
+        result = getRegistryValue(HKEY_LOCAL_MACHINE, stringToNullTerminatedWChar(javaPluginKeyPath).data(), L"UseNewJavaPlugin", &type, &useNewPluginValue, &useNewPluginSize);
 
         if (result == ERROR_SUCCESS && useNewPluginValue == 1) {
-            result = getRegistryValue(HKEY_LOCAL_MACHINE, javaPluginKeyPath.charactersWithNullTermination().data(), L"JavaHome", &type, javaInstallPathStr, &javaInstallPathSize);
+            result = getRegistryValue(HKEY_LOCAL_MACHINE, stringToNullTerminatedWChar(javaPluginKeyPath).data(), L"JavaHome", &type, javaInstallPathStr, &javaInstallPathSize);
             if (result == ERROR_SUCCESS) {
-                String javaPluginDirectory = String(javaInstallPathStr, javaInstallPathSize / sizeof(WCHAR) - 1) + "\\bin\\new_plugin";
+                String javaPluginDirectory = wcharToString(javaInstallPathStr, javaInstallPathSize / sizeof(WCHAR) - 1) + "\\bin\\new_plugin";
                 directories.append(javaPluginDirectory);
             }
         }
@@ -335,7 +336,7 @@ static inline String safariPluginsDirectory()
         if (!PathRemoveFileSpec(moduleFileNameStr))
             goto exit;
 
-        pluginsDirectory = String(moduleFileNameStr) + "\\Plugins";
+        pluginsDirectory = nullTerminatedWCharToString(moduleFileNameStr) + "\\Plugins";
     }
 exit:
     return pluginsDirectory;
@@ -351,10 +352,10 @@ static inline void addMacromediaPluginDirectories(Vector<String>& directories)
     WCHAR macromediaDirectoryStr[MAX_PATH];
 
     PathCombine(macromediaDirectoryStr, systemDirectoryStr, TEXT("macromed\\Flash"));
-    directories.append(macromediaDirectoryStr);
+    directories.append(nullTerminatedWCharToString(macromediaDirectoryStr));
 
     PathCombine(macromediaDirectoryStr, systemDirectoryStr, TEXT("macromed\\Shockwave 10"));
-    directories.append(macromediaDirectoryStr);
+    directories.append(nullTerminatedWCharToString(macromediaDirectoryStr));
 }
 
 Vector<String> PluginDatabase::defaultPluginDirectories()
