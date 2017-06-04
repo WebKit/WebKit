@@ -91,7 +91,7 @@ Element* AccessibilitySVGElement::childElementWithMatchingLanguage(ChildrenType&
     Vector<String> childLanguageCodes;
     Vector<Element*> elements;
     for (auto& child : children) {
-        String lang = child.attributeWithoutSynchronization(SVGNames::langAttr);
+        auto& lang = child.attributeWithoutSynchronization(SVGNames::langAttr);
         childLanguageCodes.append(lang);
         elements.append(&child);
 
@@ -139,7 +139,7 @@ String AccessibilitySVGElement::accessibilityDescription() const
         return titleChild->textContent();
 
     if (is<SVGAElement>(element())) {
-        String xlinkTitle = element()->attributeWithoutSynchronization(XLinkNames::titleAttr);
+        auto& xlinkTitle = element()->attributeWithoutSynchronization(XLinkNames::titleAttr);
         if (!xlinkTitle.isEmpty())
             return xlinkTitle;
     }

@@ -814,7 +814,7 @@ TextDirection HTMLElement::directionality(Node** strongDirectionalityTextNode) c
 
         // Skip elements with valid dir attribute
         if (is<Element>(*node)) {
-            AtomicString dirAttributeValue = downcast<Element>(*node).attributeWithoutSynchronization(dirAttr);
+            auto& dirAttributeValue = downcast<Element>(*node).attributeWithoutSynchronization(dirAttr);
             if (isLTROrRTLIgnoringCase(dirAttributeValue) || equalLettersIgnoringASCIICase(dirAttributeValue, "auto")) {
                 node = NodeTraversal::nextSkippingChildren(*node, this);
                 continue;
@@ -1059,7 +1059,7 @@ void HTMLElement::setAutocapitalize(const AtomicString& value)
 
 bool HTMLElement::shouldAutocorrect() const
 {
-    auto autocorrectValue = attributeWithoutSynchronization(HTMLNames::autocorrectAttr);
+    auto& autocorrectValue = attributeWithoutSynchronization(HTMLNames::autocorrectAttr);
     // Unrecognized values fall back to "on".
     return !equalLettersIgnoringASCIICase(autocorrectValue, "off");
 }

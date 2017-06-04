@@ -507,10 +507,9 @@ void HTMLInputElement::updateType()
         setAttributeWithoutSynchronization(valueAttr, m_valueIfDirty);
         m_valueIfDirty = String();
     }
-    if (!didStoreValue && willStoreValue) {
-        AtomicString valueString = attributeWithoutSynchronization(valueAttr);
-        m_valueIfDirty = sanitizeValue(valueString);
-    } else
+    if (!didStoreValue && willStoreValue)
+        m_valueIfDirty = sanitizeValue(attributeWithoutSynchronization(valueAttr));
+    else
         updateValueIfNeeded();
 
     setFormControlValueMatchesRenderer(false);

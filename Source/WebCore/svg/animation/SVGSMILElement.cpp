@@ -176,12 +176,12 @@ void SVGSMILElement::buildPendingResource()
     }
 
     String id;
-    String href = getAttribute(XLinkNames::hrefAttr);
     Element* target;
+    auto& href = getAttribute(XLinkNames::hrefAttr);
     if (href.isEmpty())
-        target = is<Element>(parentNode()) ? downcast<Element>(parentNode()) : nullptr;
+        target = parentElement();
     else
-        target = SVGURIReference::targetElementFromIRIString(href, document(), &id);
+        target = SVGURIReference::targetElementFromIRIString(href.string(), document(), &id);
     SVGElement* svgTarget = is<SVGElement>(target) ? downcast<SVGElement>(target) : nullptr;
 
     if (svgTarget && !svgTarget->isConnected())

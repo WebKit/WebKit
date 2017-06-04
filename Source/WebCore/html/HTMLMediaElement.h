@@ -184,7 +184,6 @@ public:
 // error state
     WEBCORE_EXPORT MediaError* error() const;
 
-    void setSrc(const String&);
     const URL& currentSrc() const { return m_currentSrc; }
 
     const MediaProvider& srcObject() const { return m_mediaProvider; }
@@ -411,8 +410,8 @@ public:
 
     MediaControls* mediaControls() const;
 
-    void sourceWasRemoved(HTMLSourceElement*);
-    void sourceWasAdded(HTMLSourceElement*);
+    void sourceWasRemoved(HTMLSourceElement&);
+    void sourceWasAdded(HTMLSourceElement&);
 
     void privateBrowsingStateDidChange() override;
 

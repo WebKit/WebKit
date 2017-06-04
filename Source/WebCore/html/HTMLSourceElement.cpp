@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,12 +29,14 @@
 #include "Event.h"
 #include "EventNames.h"
 #include "HTMLDocument.h"
-#if ENABLE(VIDEO)
-#include "HTMLMediaElement.h"
-#endif
 #include "HTMLNames.h"
 #include "HTMLPictureElement.h"
 #include "Logging.h"
+#include "MediaList.h"
+
+#if ENABLE(VIDEO)
+#include "HTMLMediaElement.h"
+#endif
 
 namespace WebCore {
 
@@ -64,11 +66,10 @@ Ref<HTMLSourceElement> HTMLSourceElement::create(Document& document)
 Node::InsertionNotificationRequest HTMLSourceElement::insertedInto(ContainerNode& insertionPoint)
 {
     HTMLElement::insertedInto(insertionPoint);
-    Element* parent = parentElement();
-    if (parent) {
+    if (auto* parent = parentElement()) {
 #if ENABLE(VIDEO)
         if (is<HTMLMediaElement>(*parent))
-            downcast<HTMLMediaElement>(*parent).sourceWasAdded(this);
+            downcast<HTMLMediaElement>(*parent).sourceWasAdded(*this);
         else
 #endif
         if (is<HTMLPictureElement>(*parent))
@@ -85,38 +86,13 @@ void HTMLSourceElement::removedFrom(ContainerNode& removalRoot)
     if (parent) {
 #if ENABLE(VIDEO)
         if (is<HTMLMediaElement>(*parent))
-            downcast<HTMLMediaElement>(*parent).sourceWasRemoved(this);
+            downcast<HTMLMediaElement>(*parent).sourceWasRemoved(*this);
         else
 #endif
         if (is<HTMLPictureElement>(*parent))
             downcast<HTMLPictureElement>(*parent).sourcesChanged();
     }
     HTMLElement::removedFrom(removalRoot);
-}
-
-void HTMLSourceElement::setSrc(const String& url)
-{
-    setAttributeWithoutSynchronization(srcAttr, url);
-}
-
-String HTMLSourceElement::media() const
-{
-    return attributeWithoutSynchronization(mediaAttr);
-}
-
-void HTMLSourceElement::setMedia(const String& media)
-{
-    setAttributeWithoutSynchronization(mediaAttr, media);
-}
-
-String HTMLSourceElement::type() const
-{
-    return attributeWithoutSynchronization(typeAttr);
-}
-
-void HTMLSourceElement::setType(const String& type)
-{
-    setAttributeWithoutSynchronization(typeAttr, type);
 }
 
 void HTMLSourceElement::scheduleErrorEvent()
@@ -181,12 +157,23 @@ void HTMLSourceElement::parseAttribute(const QualifiedName& name, const AtomicSt
     HTMLElement::parseAttribute(name, value);
     if (name == srcsetAttr || name == sizesAttr || name == mediaAttr || name == typeAttr) {
         if (name == mediaAttr)
-            m_mediaQuerySet = MediaQuerySet::create(value);
+            m_cachedParsedMediaAttribute = std::nullopt;
         auto* parent = parentNode();
         if (is<HTMLPictureElement>(parent))
             downcast<HTMLPictureElement>(*parent).sourcesChanged();
     }
 }
 
+const MediaQuerySet* HTMLSourceElement::parsedMediaAttribute() const
+{
+    if (!m_cachedParsedMediaAttribute) {
+        RefPtr<const MediaQuerySet> parsedAttribute;
+        auto& value = attributeWithoutSynchronization(mediaAttr);
+        if (!value.isNull())
+            parsedAttribute = MediaQuerySet::create(value);
+        m_cachedParsedMediaAttribute = WTFMove(parsedAttribute);
+    }
+    return m_cachedParsedMediaAttribute.value().get();
 }
 
+}

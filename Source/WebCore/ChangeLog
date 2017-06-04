@@ -1,3 +1,109 @@
+2017-06-03  Darin Adler  <darin@apple.com>
+
+        Streamline handling of attributes, using references as much as possible
+        https://bugs.webkit.org/show_bug.cgi?id=172899
+
+        Reviewed by Chris Dumez.
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::valueForRange): Use reference to value of
+        attribute instead of copy to avoid reference count churn.
+        (WebCore::AccessibilityNodeObject::maxValueForRange): Ditto.
+        (WebCore::AccessibilityNodeObject::minValueForRange): Ditto.
+        * accessibility/AccessibilitySVGElement.cpp:
+        (WebCore::AccessibilitySVGElement::childElementWithMatchingLanguage): Ditto.
+        (WebCore::AccessibilitySVGElement::accessibilityDescription): Ditto.
+        * css/PropertySetCSSStyleDeclaration.cpp:
+        (WebCore::StyleAttributeMutationScope::StyleAttributeMutationScope): Ditto.
+
+        * editing/cocoa/DataDetection.mm:
+        (WebCore::DataDetection::shouldCancelDefaultAction): Use the
+        equalLettersIgnoringASCIICase function instead of using
+        both equalIgnoringASCIICase and convertToASCIILowercase.
+
+        * html/HTMLAudioElement.cpp:
+        (WebCore::HTMLAudioElement::HTMLAudioElement): Marked this inline since we
+        want it inlined the one place it's used.
+        (WebCore::HTMLAudioElement::create): Use auto and named the local variable
+        just element.
+        (WebCore::HTMLAudioElement::createForJSConstructor): Call create rather than
+        repeating the code from create. Use setAttributeWithoutSynchronization directly
+        rather than calling helper functions. Removed unneeded null check;
+        setAttributeWithoutSynchronization handles null by removing the attribute.
+        * html/HTMLAudioElement.h: Changed src argument of createForJSConstructor to
+        take AtomicString since that is what we need for an attribute value.
+        * html/HTMLAudioElement.idl: Use [AtomicString] for src argument.
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::directionality): Use reference to value of
+        attribute instead of copy to avoid reference count churn.
+        (WebCore::HTMLElement::shouldAutocorrect): Ditto.
+
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::bestFitSourceFromPictureElement): Call the new
+        parsedMediaAttribute instead of the old mediaQuerySet function. Other than the
+        name, the only change is that the result is now a const pointer.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::updateType): Removed unnecessary local variable,
+        resulting in code that is slightly cleaner and possibly eliminating reference
+        count chrun.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::setSrc): Deleted.
+        (WebCore::HTMLMediaElement::selectNextSourceChild): Use parsedMediaAttribute and
+        removed rendudant direct check of whether mediaAttr is present. Changed logging to
+        get the media attribute directly rather than with a helper function. Changed type
+        to get the type attribute directly rather than with a helper function.
+        (WebCore::HTMLMediaElement::sourceWasAdded): Take a reference rather than a pointer.
+        (WebCore::HTMLMediaElement::sourceWasRemoved): Ditto.
+        (WebCore::HTMLMediaElement::doesHaveAttribute): Use reference to value of
+        attribute instead of copy to avoid reference count churn.
+        * html/HTMLMediaElement.h: Updated for the above.
+
+        * html/HTMLSourceElement.cpp:
+        (WebCore::HTMLSourceElement::insertedInto): Pass reference instead of pointer.
+        (WebCore::HTMLSourceElement::removedFrom): Ditto.
+        (WebCore::HTMLSourceElement::setSrc): Deleted.
+        (WebCore::HTMLSourceElement::media): Deleted.
+        (WebCore::HTMLSourceElement::setMedia): Deleted.
+        (WebCore::HTMLSourceElement::type): Deleted.
+        (WebCore::HTMLSourceElement::setType): Deleted.
+        (WebCore::HTMLSourceElement::parseAttribute): Clear out m_cachedParsedMediaAttribute.
+        This makes the parsing be lazy. The old code would parse the attribute value to make
+        a MediaQuerySet here, but we do it in parsedMediaAttribute now.
+        (WebCore::HTMLSourceElement::parsedMediaAttribute): Added. Creates a MediaQuerySet
+        if needed, and returns it or null.
+        * html/HTMLSourceElement.h: Removed include of MediaList.h. Removed unneeded media,
+        type, setSrc, setMedia, and setType functions. Replaced the mediaQuerySet function
+        with the parsedMediaAttribute, which returns a const pointer rather than non-const,
+        and is also non-inline because it lazily creates the MediaQuerySet as needed. Replaced
+        m_mediaQuerySet with m_cachedParsedMediaAttribute.
+        * html/HTMLSourceElement.idl: Use [Reflect] for both type and media.
+
+        * html/MediaDocument.cpp: Modernize the MediaDocumentParser constructor.
+        (WebCore::MediaDocumentParser::createDocumentStructure): Instead of setSrc, use
+        setAttributeWithoutSynchronization for the src attribute just as we do for all the
+        other attributes of the newly created video element.
+
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::wirelessVideoPlaybackDisabled): Use reference to
+        value of attribute instead of copy to avoid reference count churn.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::defaultSubstituteDataForURL): Ditto.
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::getAttachmentProgress): Ditto.
+        * rendering/RenderThemeMac.mm:
+        (WebCore::AttachmentLayout::layOutSubtitle): Ditto.
+        (WebCore::RenderThemeMac::paintAttachment): Ditto.
+        * svg/SVGHKernElement.cpp:
+        (WebCore::SVGHKernElement::buildHorizontalKerningPair): Ditto.
+        * svg/SVGVKernElement.cpp:
+        (WebCore::SVGVKernElement::buildVerticalKerningPair): Ditto.
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::buildPendingResource): Ditto. Also use parentElement
+        instead of writing out code that does exactly what it does.
+
 2017-06-03  Sam Weinig  <sam@webkit.org>
 
         Can't use Object.defineProperty() to add an item to a DOMStringMap or Storage

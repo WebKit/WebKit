@@ -168,7 +168,7 @@ ImageCandidate HTMLImageElement::bestFitSourceFromPictureElement()
 
         auto* documentElement = document().documentElement();
         MediaQueryEvaluator evaluator { document().printing() ? "print" : "screen", document(), documentElement ? documentElement->computedStyle() : nullptr };
-        auto* queries = source.mediaQuerySet();
+        auto* queries = source.parsedMediaAttribute();
         auto evaluation = !queries || evaluator.evaluate(*queries, picture->viewportDependentResults());
         if (picture->hasViewportDependentResults())
             document().addViewportDependentPicture(*picture);

@@ -861,7 +861,7 @@ float AccessibilityNodeObject::valueForRange() const
 
     // In ARIA 1.1, the implicit value for aria-valuenow on a spin button is 0.
     // For other roles, it is half way between aria-valuemin and aria-valuemax.
-    auto value = getAttribute(aria_valuenowAttr);
+    auto& value = getAttribute(aria_valuenowAttr);
     if (!value.isEmpty())
         return value.toFloat();
 
@@ -879,7 +879,7 @@ float AccessibilityNodeObject::maxValueForRange() const
     if (!isRangeControl())
         return 0.0f;
 
-    auto value = getAttribute(aria_valuemaxAttr);
+    auto& value = getAttribute(aria_valuemaxAttr);
     if (!value.isEmpty())
         return value.toFloat();
 
@@ -899,7 +899,7 @@ float AccessibilityNodeObject::minValueForRange() const
     if (!isRangeControl())
         return 0.0f;
 
-    auto value = getAttribute(aria_valueminAttr);
+    auto& value = getAttribute(aria_valueminAttr);
     if (!value.isEmpty())
         return value.toFloat();
 

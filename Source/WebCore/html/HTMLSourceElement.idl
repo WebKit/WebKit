@@ -25,8 +25,8 @@
 
 interface HTMLSourceElement : HTMLElement {
     [Reflect, URL] attribute USVString src;
-    attribute DOMString type;
+    [Reflect] attribute DOMString type;
     [Reflect] attribute USVString srcset;
     [Reflect] attribute DOMString sizes;
-    attribute DOMString media;
+    [Reflect] attribute DOMString media;
 };

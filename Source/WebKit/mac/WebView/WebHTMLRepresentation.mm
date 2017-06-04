@@ -516,14 +516,17 @@ static NSString *matchLabelsAgainstString(NSArray *labels, const String& stringT
     return nil;
 }
 
-static NSString* matchLabelsAgainstElement(NSArray* labels, Element* element)
+static NSString *matchLabelsAgainstElement(NSArray *labels, Element* element)
 {
+    if (!element)
+        return nil;
+
     // Match against the name element, then against the id element if no match is found for the name element.
     // See 7538330 for one popular site that benefits from the id element check.
-    String resultFromNameAttribute = matchLabelsAgainstString(labels, element->attributeWithoutSynchronization(nameAttr));
-    if (!resultFromNameAttribute.isEmpty())
+    auto resultFromNameAttribute = matchLabelsAgainstString(labels, element->attributeWithoutSynchronization(nameAttr));
+    if (resultFromNameAttribute.length)
         return resultFromNameAttribute;
-    
+
     return matchLabelsAgainstString(labels, element->attributeWithoutSynchronization(idAttr));
 }
 

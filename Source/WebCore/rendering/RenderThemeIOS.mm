@@ -1599,7 +1599,7 @@ void AttachmentInfo::buildSingleLine(const String& text, CTFontRef font, UIColor
 
 static BOOL getAttachmentProgress(const RenderAttachment& attachment, float& progress)
 {
-    String progressString = attachment.attachmentElement().attributeWithoutSynchronization(progressAttr);
+    auto& progressString = attachment.attachmentElement().attributeWithoutSynchronization(progressAttr);
     if (progressString.isEmpty())
         return NO;
     bool validProgress;

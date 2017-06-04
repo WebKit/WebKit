@@ -204,10 +204,10 @@ bool DataDetection::shouldCancelDefaultAction(Element& element)
 #else
     if (!is<HTMLAnchorElement>(element))
         return false;
-    if (!equalIgnoringASCIICase(element.attributeWithoutSynchronization(x_apple_data_detectorsAttr), "true"))
+    if (!equalLettersIgnoringASCIICase(element.attributeWithoutSynchronization(x_apple_data_detectorsAttr), "true"))
         return false;
-    String type = element.getAttribute(x_apple_data_detectors_typeAttr).convertToASCIILowercase();
-    if (type == "misc" || type == "calendar-event" || type == "telephone")
+    auto& type = element.attributeWithoutSynchronization(x_apple_data_detectors_typeAttr);
+    if (equalLettersIgnoringASCIICase(type, "misc") || equalLettersIgnoringASCIICase(type, "calendar-event") || equalLettersIgnoringASCIICase(type, "telephone"))
         return true;
     return false;
 #endif

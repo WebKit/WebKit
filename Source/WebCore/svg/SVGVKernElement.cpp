@@ -42,10 +42,10 @@ Ref<SVGVKernElement> SVGVKernElement::create(const QualifiedName& tagName, Docum
 
 bool SVGVKernElement::buildVerticalKerningPair(SVGKerningPair& kerningPair) const
 {
-    String u1 = attributeWithoutSynchronization(SVGNames::u1Attr);
-    String g1 = attributeWithoutSynchronization(SVGNames::g1Attr);
-    String u2 = attributeWithoutSynchronization(SVGNames::u2Attr);
-    String g2 = attributeWithoutSynchronization(SVGNames::g2Attr);
+    auto& u1 = attributeWithoutSynchronization(SVGNames::u1Attr);
+    auto& g1 = attributeWithoutSynchronization(SVGNames::g1Attr);
+    auto& u2 = attributeWithoutSynchronization(SVGNames::u2Attr);
+    auto& g2 = attributeWithoutSynchronization(SVGNames::g2Attr);
     if ((u1.isEmpty() && g1.isEmpty()) || (u2.isEmpty() && g2.isEmpty()))
         return false;
 
