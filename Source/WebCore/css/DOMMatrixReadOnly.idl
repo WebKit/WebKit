@@ -31,8 +31,8 @@
     ImplementationLacksVTable
 ] interface DOMMatrixReadOnly {
     [MayThrowException, NewObject] static DOMMatrixReadOnly fromMatrix(optional DOMMatrixInit other);
-    // [NewObject] static DOMMatrixReadOnly fromFloat32Array(Float32Array array32); // FIXME: Implement this.
-    // [NewObject] static DOMMatrixReadOnly fromFloat64Array(Float64Array array64); // FIXME: Implement this.
+    [MayThrowException, NewObject] static DOMMatrixReadOnly fromFloat32Array(Float32Array array32);
+    [MayThrowException, NewObject] static DOMMatrixReadOnly fromFloat64Array(Float64Array array64);
 
     // These attributes are simple aliases for certain elements of the 4x4 matrix
     readonly attribute unrestricted double a; // Alias for m11.
@@ -93,8 +93,8 @@
     [NewObject] DOMMatrix inverse();
 
     // [NewObject] DOMPoint transformPoint(optional DOMPointInit point); // FIXME: Implement this.
-    // [NewObject] Float32Array toFloat32Array(); // FIXME: Implement this.
-    // [NewObject] Float64Array toFloat64Array(); // FIXME: Implement this.
+    [MayThrowException] Float32Array toFloat32Array();
+    [MayThrowException] Float64Array toFloat64Array();
 
     [MayThrowException] DOMString toString(); // FIXME: Should be stringifier; once it is supported.
     serializer = { attribute };

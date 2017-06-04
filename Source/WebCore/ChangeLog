@@ -1,3 +1,29 @@
+2017-06-03  Chris Dumez  <cdumez@apple.com>
+
+        Implement DOMMatrix's fromFloat32Array / fromFloat64Array & toFloat32Array / toFloat64Array
+        https://bugs.webkit.org/show_bug.cgi?id=172898
+
+        Reviewed by Sam Weinig.
+
+        Implement DOMMatrix's fromFloat32Array / fromFloat64Array & toFloat32Array / toFloat64Array
+        as per:
+        - https://drafts.fxtf.org/geometry/#dommatrixreadonly
+
+        Test: http/wpt/geometry/DOMMatrix-from-to-typed-arrays.html
+
+        * css/DOMMatrix.cpp:
+        (WebCore::DOMMatrix::fromFloat32Array):
+        (WebCore::DOMMatrix::fromFloat64Array):
+        * css/DOMMatrix.h:
+        * css/DOMMatrix.idl:
+        * css/DOMMatrixReadOnly.cpp:
+        (WebCore::DOMMatrixReadOnly::fromFloat32Array):
+        (WebCore::DOMMatrixReadOnly::fromFloat64Array):
+        (WebCore::DOMMatrixReadOnly::toFloat32Array):
+        (WebCore::DOMMatrixReadOnly::toFloat64Array):
+        * css/DOMMatrixReadOnly.h:
+        * css/DOMMatrixReadOnly.idl:
+
 2017-06-03  Simon Fraser  <simon.fraser@apple.com>
 
         Implement DOMPointReadOnly.matrixTransform()

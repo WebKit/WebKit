@@ -1,3 +1,15 @@
+2017-06-03  Chris Dumez  <cdumez@apple.com>
+
+        Implement DOMMatrix's fromFloat32Array / fromFloat64Array & toFloat32Array / toFloat64Array
+        https://bugs.webkit.org/show_bug.cgi?id=172898
+
+        Reviewed by Sam Weinig.
+
+        Add layout test coverage.
+
+        * http/wpt/geometry/DOMMatrix-from-to-typed-arrays-expected.txt: Added.
+        * http/wpt/geometry/DOMMatrix-from-to-typed-arrays.html: Added.
+
 2017-06-03  Simon Fraser  <simon.fraser@apple.com>
 
         Implement DOMPointReadOnly.matrixTransform()

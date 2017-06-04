@@ -1,3 +1,14 @@
+2017-06-03  Chris Dumez  <cdumez@apple.com>
+
+        Implement DOMMatrix's fromFloat32Array / fromFloat64Array & toFloat32Array / toFloat64Array
+        https://bugs.webkit.org/show_bug.cgi?id=172898
+
+        Reviewed by Sam Weinig.
+
+        Rebaseline web-platform-test now that more checks are passing.
+
+        * web-platform-tests/css/geometry-1/DOMMatrix-newobject-expected.txt:
+
 2017-06-03  Simon Fraser  <simon.fraser@apple.com>
 
         Implement DOMPointReadOnly.matrixTransform()

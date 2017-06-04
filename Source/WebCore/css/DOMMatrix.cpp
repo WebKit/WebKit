@@ -43,6 +43,40 @@ ExceptionOr<Ref<DOMMatrix>> DOMMatrix::fromMatrix(DOMMatrixInit&& init)
     return fromMatrixHelper<DOMMatrix>(WTFMove(init));
 }
 
+ExceptionOr<Ref<DOMMatrix>> DOMMatrix::fromFloat32Array(Ref<Float32Array>&& array32)
+{
+    if (array32->length() == 6)
+        return DOMMatrix::create(TransformationMatrix(array32->item(0), array32->item(1), array32->item(2), array32->item(3), array32->item(4), array32->item(5)), Is2D::Yes);
+
+    if (array32->length() == 16) {
+        return DOMMatrix::create(TransformationMatrix(
+            array32->item(0), array32->item(1), array32->item(2), array32->item(3),
+            array32->item(4), array32->item(5), array32->item(6), array32->item(7),
+            array32->item(8), array32->item(9), array32->item(10), array32->item(11),
+            array32->item(12), array32->item(13), array32->item(14), array32->item(15)
+        ), Is2D::No);
+    }
+
+    return Exception { TypeError };
+}
+
+ExceptionOr<Ref<DOMMatrix>> DOMMatrix::fromFloat64Array(Ref<Float64Array>&& array64)
+{
+    if (array64->length() == 6)
+        return DOMMatrix::create(TransformationMatrix(array64->item(0), array64->item(1), array64->item(2), array64->item(3), array64->item(4), array64->item(5)), Is2D::Yes);
+
+    if (array64->length() == 16) {
+        return DOMMatrix::create(TransformationMatrix(
+            array64->item(0), array64->item(1), array64->item(2), array64->item(3),
+            array64->item(4), array64->item(5), array64->item(6), array64->item(7),
+            array64->item(8), array64->item(9), array64->item(10), array64->item(11),
+            array64->item(12), array64->item(13), array64->item(14), array64->item(15)
+        ), Is2D::No);
+    }
+
+    return Exception { TypeError };
+}
+
 // https://drafts.fxtf.org/geometry/#dom-dommatrix-multiplyself
 ExceptionOr<Ref<DOMMatrix>> DOMMatrix::multiplySelf(DOMMatrixInit&& other)
 {

@@ -12,8 +12,8 @@ PASS DOMMatrix flipX
 PASS DOMMatrix flipY 
 PASS DOMMatrix inverse 
 FAIL DOMMatrix transformPoint matrix[method] is not a function. (In 'matrix[method]()', 'matrix[method]' is undefined)
-FAIL DOMMatrix toFloat32Array matrix[method] is not a function. (In 'matrix[method]()', 'matrix[method]' is undefined)
-FAIL DOMMatrix toFloat64Array matrix[method] is not a function. (In 'matrix[method]()', 'matrix[method]' is undefined)
+PASS DOMMatrix toFloat32Array 
+PASS DOMMatrix toFloat64Array 
 PASS DOMMatrixReadOnly translate 
 PASS DOMMatrixReadOnly scale 
 PASS DOMMatrixReadOnly scale3d 
@@ -27,6 +27,6 @@ PASS DOMMatrixReadOnly flipX
 PASS DOMMatrixReadOnly flipY 
 PASS DOMMatrixReadOnly inverse 
 FAIL DOMMatrixReadOnly transformPoint matrix[method] is not a function. (In 'matrix[method]()', 'matrix[method]' is undefined)
-FAIL DOMMatrixReadOnly toFloat32Array matrix[method] is not a function. (In 'matrix[method]()', 'matrix[method]' is undefined)
-FAIL DOMMatrixReadOnly toFloat64Array matrix[method] is not a function. (In 'matrix[method]()', 'matrix[method]' is undefined)
+PASS DOMMatrixReadOnly toFloat32Array 
+PASS DOMMatrixReadOnly toFloat64Array 
 

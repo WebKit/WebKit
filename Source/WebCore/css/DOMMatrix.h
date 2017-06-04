@@ -52,6 +52,9 @@ public:
 
     static ExceptionOr<Ref<DOMMatrix>> fromMatrix(DOMMatrixInit&&);
 
+    static ExceptionOr<Ref<DOMMatrix>> fromFloat32Array(Ref<Float32Array>&&);
+    static ExceptionOr<Ref<DOMMatrix>> fromFloat64Array(Ref<Float64Array>&&);
+
     ExceptionOr<Ref<DOMMatrix>> multiplySelf(DOMMatrixInit&& other);
     ExceptionOr<Ref<DOMMatrix>> preMultiplySelf(DOMMatrixInit&& other);
     Ref<DOMMatrix> translateSelf(double tx = 0, double ty = 0, double tz = 0);
