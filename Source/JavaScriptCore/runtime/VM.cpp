@@ -129,10 +129,6 @@
 #include "RegExp.h"
 #endif
 
-#if USE(CF)
-#include <CoreFoundation/CoreFoundation.h>
-#endif
-
 using namespace WTF;
 
 namespace JSC {
@@ -153,12 +149,8 @@ static bool enableAssembler(ExecutableAllocator& executableAllocator)
         return false;
     }
 
-#if USE(CF) || OS(UNIX)
     char* canUseJITString = getenv("JavaScriptCoreUseJIT");
     return !canUseJITString || atoi(canUseJITString);
-#else
-    return true;
-#endif
 }
 #endif // ENABLE(!ASSEMBLER)
 

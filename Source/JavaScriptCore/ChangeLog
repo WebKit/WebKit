@@ -1,5 +1,21 @@
 2017-06-04  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [JSC] Drop unnecessary USE(CF) guard for getenv
+        https://bugs.webkit.org/show_bug.cgi?id=172903
+
+        Reviewed by Sam Weinig.
+
+        getenv is not related to USE(CF) and OS(UNIX). It seems that this
+        ifdef only hits in WinCairo, but WinCairo can use getenv.
+        Moreover, in VM::VM, we already use getenv without any ifdef guard.
+
+        This patch just drops it.
+
+        * runtime/VM.cpp:
+        (JSC::enableAssembler):
+
+2017-06-04  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [JSC] Drop OS(DARWIN) for uintptr_t type conflict
         https://bugs.webkit.org/show_bug.cgi?id=172904
 
