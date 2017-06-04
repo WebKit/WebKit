@@ -38,12 +38,11 @@ namespace JSC { namespace DFG {
 // a constant index, argument, or identifier) from a Node*.
 struct OpInfo {
     OpInfo() : m_value(0) { }
-    explicit OpInfo(int32_t value) : m_value(static_cast<uint64_t>(value)) { }
-    explicit OpInfo(uint32_t value) : m_value(static_cast<uint64_t>(value)) { }
-    explicit OpInfo(uint64_t value) : m_value(static_cast<uint64_t>(value)) { }
-#if OS(DARWIN)
-    explicit OpInfo(uintptr_t value) : m_value(static_cast<uint64_t>(value)) { }
-#endif
+    template<
+        typename IntegralType,
+        typename Constraint = typename std::enable_if<(std::is_integral<IntegralType>::value || std::is_enum<IntegralType>::value) && sizeof(IntegralType) <= sizeof(uint64_t)>::type>
+    explicit OpInfo(IntegralType value)
+        : m_value(static_cast<uint64_t>(value)) { }
     explicit OpInfo(RegisteredStructure structure) : m_value(static_cast<uint64_t>(bitwise_cast<uintptr_t>(structure))) { }
 
 

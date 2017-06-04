@@ -1,3 +1,19 @@
+2017-06-04  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Drop OS(DARWIN) for uintptr_t type conflict
+        https://bugs.webkit.org/show_bug.cgi?id=172904
+
+        Reviewed by Sam Weinig.
+
+        In non-Darwin environment, uintptr_t may have the same type
+        to uint64_t. We avoided the compile error by using OS(DARWIN).
+        But, since it depends on cstdint implementaion rather than OS, it is flaky.
+        Instead, we just use template parameter IntegralType.
+        And we describe the type constraint in a SFINAE manner.
+
+        * dfg/DFGOpInfo.h:
+        (JSC::DFG::OpInfo::OpInfo):
+
 2017-06-03  Csaba Osztrogonác  <ossy@webkit.org>
 
         [ARM] Unreviewed buildfix after r217711.
