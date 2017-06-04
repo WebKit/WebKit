@@ -341,20 +341,17 @@ MediaProducer::MediaStateFlags MediaStream::mediaState() const
     if (!m_isActive)
         return state;
 
-    if (m_private->hasAudio()) {
-        state |= HasAudioOrVideo;
-        if (m_private->hasCaptureAudioSource()) {
-            if (m_private->muted())
+    for (const auto& track : m_trackSet.values()) {
+        if (!track->isCaptureTrack() || track->ended())
+            continue;
+
+        if (track->source().type() == RealtimeMediaSource::Type::Audio) {
+            if (track->muted())
                 state |= HasMutedAudioCaptureDevice;
             else if (m_isProducingData && m_private->isProducingData())
                 state |= HasActiveAudioCaptureDevice;
-        }
-    }
-
-    if (m_private->hasVideo()) {
-        state |= HasAudioOrVideo;
-        if (m_private->hasCaptureVideoSource()) {
-            if (m_private->muted())
+        } else {
+            if (track->muted())
                 state |= HasMutedVideoCaptureDevice;
             else if (m_isProducingData && m_private->isProducingData())
                 state |= HasActiveVideoCaptureDevice;
@@ -377,9 +374,9 @@ void MediaStream::statusDidChange()
 
 void MediaStream::characteristicsChanged()
 {
-    bool muted = m_private->muted();
-    if (m_isMuted != muted) {
-        m_isMuted = muted;
+    MediaStateFlags state = mediaState();
+    if (m_state != state) {
+        m_state = state;
         statusDidChange();
     }
 }

@@ -137,6 +137,7 @@ void MediaStreamPrivate::addTrack(RefPtr<MediaStreamTrackPrivate>&& track, Notif
     }
 
     updateActiveState(notifyClientOption);
+    characteristicsChanged();
 }
 
 void MediaStreamPrivate::removeTrack(MediaStreamTrackPrivate& track, NotifyClientOption notifyClientOption)
@@ -152,6 +153,7 @@ void MediaStreamPrivate::removeTrack(MediaStreamTrackPrivate& track, NotifyClien
     }
 
     updateActiveState(NotifyClientOption::Notify);
+    characteristicsChanged();
 }
 
 void MediaStreamPrivate::startProducingData()

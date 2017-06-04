@@ -84,7 +84,7 @@ public:
     RefPtr<MediaStream> clone();
 
     bool active() const { return m_isActive; }
-    bool muted() const { return m_isMuted; }
+    bool muted() const { return m_private->muted(); }
 
     MediaStreamPrivate& privateStream() { return m_private.get(); }
 
@@ -175,8 +175,9 @@ private:
     Vector<Observer*> m_observers;
     std::unique_ptr<PlatformMediaSession> m_mediaSession;
 
+    MediaStateFlags m_state { IsNotPlaying };
+
     bool m_isActive { false };
-    bool m_isMuted { true };
     bool m_isProducingData { false };
     bool m_isWaitingUntilMediaCanStart { false };
 };

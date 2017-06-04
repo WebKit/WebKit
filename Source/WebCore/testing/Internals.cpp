@@ -4088,6 +4088,11 @@ void Internals::delayMediaStreamTrackSamples(MediaStreamTrack& track, float dela
     track.source().delaySamples(delay);
 }
 
+void Internals::setMediaStreamTrackMuted(MediaStreamTrack& track, bool muted)
+{
+    track.source().setMuted(muted);
+}
+
 #endif
 
 } // namespace WebCore
