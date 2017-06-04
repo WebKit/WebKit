@@ -3,3 +3,6 @@
 # See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
 #
 
+fast/events/offsetX-offsetY.html [ Timeout ]
+
+compositing/regions/composited-content-fixed-region-scrolled.html [ Skip ]

@@ -1,3 +1,17 @@
+2017-06-04  Jonathan Bedard  <jbedard@apple.com>
+
+        Unreviewed test gardening
+
+        Gardening test expectations for layout tests on iOS device. Moving
+        expectations for tests which fail on Simulator but pass on device.
+
+        * platform/ios-simulator-wk1/TestExpectations:
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+        * platform/ios-wk1/TestExpectations:
+        * platform/ios-wk2/TestExpectations:
+        * platform/ios/TestExpectations:
+
 2017-06-04  Chris Dumez  <cdumez@apple.com>
 
         Implement DOMMatrixReadOnly.transformPoint()
