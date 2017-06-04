@@ -1,3 +1,13 @@
+2017-06-04  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK+ gardening. Add a few test failure expectations, linking them to
+        existing bugs. Update or add GTK+-specific baselines for three tests.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/accessibility/disabled-controls-not-focusable-expected.txt: Added.
+        * platform/gtk/compositing/backing-store-attachment-1-expected.txt: Added.
+        * platform/gtk/css1/box_properties/acid_test-expected.txt:
+
 2017-06-03  Chris Dumez  <cdumez@apple.com>
 
         Implement DOMMatrix's fromFloat32Array / fromFloat64Array & toFloat32Array / toFloat64Array
