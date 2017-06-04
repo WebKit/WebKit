@@ -1,3 +1,15 @@
+2017-06-04  Chris Dumez  <cdumez@apple.com>
+
+        Implement DOMMatrixReadOnly.transformPoint()
+        https://bugs.webkit.org/show_bug.cgi?id=172900
+
+        Reviewed by Simon Fraser.
+
+        * imported/blink/fast/dom/geometry-interfaces-dom-matrix-transformPoint-expected.txt: Added.
+        * imported/blink/fast/dom/geometry-interfaces-dom-matrix-transformPoint.html: Added.
+        * imported/blink/fast/dom/resources/geometry-interfaces-test-helpers.js: Added.
+        Import test coverage from Blink.
+
 2017-06-04  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK+ gardening. Add a few test failure expectations, linking them to

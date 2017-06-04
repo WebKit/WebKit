@@ -92,7 +92,7 @@
     [NewObject] DOMMatrix flipY();
     [NewObject] DOMMatrix inverse();
 
-    // [NewObject] DOMPoint transformPoint(optional DOMPointInit point); // FIXME: Implement this.
+    [NewObject] DOMPoint transformPoint(optional DOMPointInit point);
     [MayThrowException] Float32Array toFloat32Array();
     [MayThrowException] Float64Array toFloat64Array();
 

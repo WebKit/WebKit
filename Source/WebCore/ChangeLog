@@ -1,3 +1,21 @@
+2017-06-04  Chris Dumez  <cdumez@apple.com>
+
+        Implement DOMMatrixReadOnly.transformPoint()
+        https://bugs.webkit.org/show_bug.cgi?id=172900
+
+        Reviewed by Simon Fraser.
+
+        Implement DOMMatrixReadOnly.transformPoint():
+        - https://drafts.fxtf.org/geometry/#dommatrixreadonly
+        - https://drafts.fxtf.org/geometry/#dom-dommatrixreadonly-transformpoint
+
+        Test: imported/blink/fast/dom/geometry-interfaces-dom-matrix-transformPoint.html
+
+        * css/DOMMatrixReadOnly.cpp:
+        (WebCore::DOMMatrixReadOnly::transformPoint):
+        * css/DOMMatrixReadOnly.h:
+        * css/DOMMatrixReadOnly.idl:
+
 2017-06-04  Zan Dobersek  <zdobersek@igalia.com>
 
         [GCrypt] Improve comments in AES, PBKDF2, RSA-SSA algorithm implementations

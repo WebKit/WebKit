@@ -39,6 +39,8 @@
 namespace WebCore {
 
 class DOMMatrix;
+class DOMPoint;
+struct DOMPointInit;
 
 class DOMMatrixReadOnly : public ScriptWrappable, public RefCounted<DOMMatrixReadOnly> {
     WTF_MAKE_FAST_ALLOCATED;
@@ -110,6 +112,8 @@ public:
     Ref<DOMMatrix> skewX(double sx = 0); // Angle is in degrees.
     Ref<DOMMatrix> skewY(double sy = 0); // Angle is in degrees.
     Ref<DOMMatrix> inverse() const;
+
+    Ref<DOMPoint> transformPoint(DOMPointInit&&);
 
     ExceptionOr<Ref<Float32Array>> toFloat32Array() const;
     ExceptionOr<Ref<Float64Array>> toFloat64Array() const;

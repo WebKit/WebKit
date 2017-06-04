@@ -29,6 +29,7 @@
 #include "CSSParser.h"
 #include "CSSToLengthConversionData.h"
 #include "DOMMatrix.h"
+#include "DOMPoint.h"
 #include "ExceptionCode.h"
 #include "StyleProperties.h"
 #include "TransformFunctions.h"
@@ -283,6 +284,13 @@ Ref<DOMMatrix> DOMMatrixReadOnly::inverse() const
 {
     auto matrix = cloneAsDOMMatrix();
     return matrix->invertSelf();
+}
+
+// https://drafts.fxtf.org/geometry/#dom-dommatrixreadonly-transformpoint
+Ref<DOMPoint> DOMMatrixReadOnly::transformPoint(DOMPointInit&& pointInit)
+{
+    m_matrix.map4ComponentPoint(pointInit.x, pointInit.y, pointInit.z, pointInit.w);
+    return DOMPoint::create(pointInit.x, pointInit.y, pointInit.z, pointInit.w);
 }
 
 ExceptionOr<Ref<Float32Array>> DOMMatrixReadOnly::toFloat32Array() const
