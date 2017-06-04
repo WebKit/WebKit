@@ -37,7 +37,7 @@ namespace WebCore {
 
 // Functions
 
-JSC::EncodedJSValue JSC_HOST_CALL jsTestNamedDeleterWithIdentifierPrototypeFunctionRemove(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestNamedDeleterWithIdentifierPrototypeFunctionNamedDeleter(JSC::ExecState*);
 
 // Attributes
 
@@ -91,7 +91,7 @@ template<> const ClassInfo JSTestNamedDeleterWithIdentifierConstructor::s_info =
 static const HashTableValue JSTestNamedDeleterWithIdentifierPrototypeTableValues[] =
 {
     { "constructor", DontEnum, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestNamedDeleterWithIdentifierConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestNamedDeleterWithIdentifierConstructor) } },
-    { "remove", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestNamedDeleterWithIdentifierPrototypeFunctionRemove), (intptr_t) (1) } },
+    { "namedDeleter", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestNamedDeleterWithIdentifierPrototypeFunctionNamedDeleter), (intptr_t) (1) } },
 };
 
 const ClassInfo JSTestNamedDeleterWithIdentifierPrototype::s_info = { "TestNamedDeleterWithIdentifierPrototype", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedDeleterWithIdentifierPrototype) };
@@ -186,7 +186,7 @@ bool JSTestNamedDeleterWithIdentifier::deleteProperty(JSCell* cell, ExecState* s
     auto& thisObject = *jsCast<JSTestNamedDeleterWithIdentifier*>(cell);
     auto& impl = thisObject.wrapped();
     if (isVisibleNamedProperty<false>(*state, thisObject, propertyName)) {
-        impl.remove(propertyNameToString(propertyName));
+        impl.namedDeleter(propertyNameToString(propertyName));
         return true;
     }
     return Base::deleteProperty(cell, state, propertyName);
@@ -198,7 +198,7 @@ bool JSTestNamedDeleterWithIdentifier::deletePropertyByIndex(JSCell* cell, ExecS
     auto& impl = thisObject.wrapped();
     auto propertyName = Identifier::from(state, index);
     if (isVisibleNamedProperty<false>(*state, thisObject, propertyName)) {
-        impl.remove(propertyNameToString(propertyName));
+        impl.namedDeleter(propertyNameToString(propertyName));
         return true;
     }
     return Base::deletePropertyByIndex(cell, state, index);
@@ -232,7 +232,7 @@ bool setJSTestNamedDeleterWithIdentifierConstructor(ExecState* state, EncodedJSV
     return prototype->putDirect(state->vm(), state->propertyNames().constructor, JSValue::decode(encodedValue));
 }
 
-static inline JSC::EncodedJSValue jsTestNamedDeleterWithIdentifierPrototypeFunctionRemoveBody(JSC::ExecState* state, typename IDLOperation<JSTestNamedDeleterWithIdentifier>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestNamedDeleterWithIdentifierPrototypeFunctionNamedDeleterBody(JSC::ExecState* state, typename IDLOperation<JSTestNamedDeleterWithIdentifier>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
@@ -241,13 +241,13 @@ static inline JSC::EncodedJSValue jsTestNamedDeleterWithIdentifierPrototypeFunct
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
     auto name = convert<IDLDOMString>(*state, state->uncheckedArgument(0));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    impl.remove(WTFMove(name));
+    impl.namedDeleter(WTFMove(name));
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestNamedDeleterWithIdentifierPrototypeFunctionRemove(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestNamedDeleterWithIdentifierPrototypeFunctionNamedDeleter(ExecState* state)
 {
-    return IDLOperation<JSTestNamedDeleterWithIdentifier>::call<jsTestNamedDeleterWithIdentifierPrototypeFunctionRemoveBody>(*state, "remove");
+    return IDLOperation<JSTestNamedDeleterWithIdentifier>::call<jsTestNamedDeleterWithIdentifierPrototypeFunctionNamedDeleterBody>(*state, "namedDeleter");
 }
 
 bool JSTestNamedDeleterWithIdentifierOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)

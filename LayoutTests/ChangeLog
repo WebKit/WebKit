@@ -1,3 +1,22 @@
+2017-06-03  Sam Weinig  <sam@webkit.org>
+
+        Can't use Object.defineProperty() to add an item to a DOMStringMap or Storage
+        https://bugs.webkit.org/show_bug.cgi?id=172687
+
+        Reviewed by Darin Adler.
+
+        * js/dom/legacy-platform-object-defineOwnProperty-expected.txt: Added.
+        * js/dom/legacy-platform-object-defineOwnProperty.html: Added.
+        New tests for Object.defineProperty on Storage and DOMStringMap.
+
+        * js/dom/named-property-deleter.html:
+        Fix test which was deleting the wrong property. This doesn't change the result,
+        but is now actually testing the thing it meant to.
+
+        * storage/domstorage/localstorage/delete-defineproperty-removal-expected.txt:
+        * storage/domstorage/localstorage/delete-defineproperty-removal.html:
+        Convert to testharness.js and show that the results are now correct.
+
 2017-06-04  Simon Fraser  <simon.fraser@apple.com>
 
         Object bounding box wrong for some paths

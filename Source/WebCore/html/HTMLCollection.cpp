@@ -179,6 +179,19 @@ const Vector<AtomicString>& HTMLCollection::supportedPropertyNames()
     return m_namedElementCache->propertyNames();
 }
 
+bool HTMLCollection::isSupportedPropertyName(const String& name)
+{
+    updateNamedElementCache();
+    ASSERT(m_namedElementCache);
+    
+    if (m_namedElementCache->findElementsWithId(name))
+        return true;
+    if (m_namedElementCache->findElementsWithName(name))
+        return true;
+
+    return false;
+}
+
 void HTMLCollection::updateNamedElementCache() const
 {
     if (hasNamedElementCache())

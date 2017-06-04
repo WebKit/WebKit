@@ -1,32 +1,6 @@
-localStorage.clear()
-Object.getOwnPropertyNames(localStorage) is ()
 
-Object.defineProperty(localStorage, '1', {value: 'present'})
-Object.getOwnPropertyNames(localStorage) is (1)
-localStorage.getItem('1') is null
-
-delete localStorage[1]
-Object.getOwnPropertyNames(localStorage) is (1)
-
-Object.defineProperty(localStorage, '2', {value: 'present',  configurable: true})
-Object.getOwnPropertyNames(localStorage) is (1,2)
-localStorage.getItem('2') is null
-
-delete localStorage[2]
-Object.getOwnPropertyNames(localStorage) is (1)
-
-Object.defineProperty(localStorage, 'Test', {value: 'present',  configurable: true})
-Object.getOwnPropertyNames(localStorage) is (1,Test)
-localStorage.getItem('Test') is null
-
-delete localStorage['Test']
-Object.getOwnPropertyNames(localStorage) is (1)
-
-Object.defineProperty(localStorage, 'Test1', {value: 'present'})
-Object.getOwnPropertyNames(localStorage) is (1,Test1)
-localStorage.getItem('Test1') is null
-
-delete localStorage['Test1']
-Object.getOwnPropertyNames(localStorage) is (1,Test1)
-
+PASS Object.getOwnPropertyNames(localStorage) on an empty local storage should return an empty array. 
+PASS Object.defineProperty can be used to add items to localStorage. 
+PASS Operator delete can be used to remove items from localStorage. 
+PASS The configurable modifier does effect the result when used in adding properties to localStorage with Object.defineProperty. 
 

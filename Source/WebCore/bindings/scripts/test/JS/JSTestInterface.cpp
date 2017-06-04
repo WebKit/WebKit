@@ -407,25 +407,29 @@ void JSTestInterface::destroy(JSC::JSCell* cell)
     thisObject->JSTestInterface::~JSTestInterface();
 }
 
-bool JSTestInterface::put(JSCell* cell, ExecState* state, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
+bool JSTestInterface::put(JSCell* cell, ExecState* state, PropertyName propertyName, JSValue value, PutPropertySlot& putPropertySlot)
 {
     auto* thisObject = jsCast<JSTestInterface*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
+
     bool putResult = false;
-    if (thisObject->putDelegate(state, propertyName, value, slot, putResult))
+    if (thisObject->putDelegate(state, propertyName, value, putPropertySlot, putResult))
         return putResult;
-    return Base::put(thisObject, state, propertyName, value, slot);
+
+    return Base::put(thisObject, state, propertyName, value, putPropertySlot);
 }
 
 bool JSTestInterface::putByIndex(JSCell* cell, ExecState* state, unsigned index, JSValue value, bool shouldThrow)
 {
     auto* thisObject = jsCast<JSTestInterface*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
+
     Identifier propertyName = Identifier::from(state, index);
     PutPropertySlot slot(thisObject, shouldThrow);
     bool putResult = false;
     if (thisObject->putDelegate(state, propertyName, value, slot, putResult))
         return putResult;
+
     return Base::putByIndex(cell, state, index, value, shouldThrow);
 }
 

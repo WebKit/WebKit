@@ -60,34 +60,4 @@ void JSStorage::getOwnPropertyNames(JSObject* object, ExecState* state, Property
     Base::getOwnPropertyNames(&thisObject, state, propertyNames, mode);
 }
 
-bool JSStorage::putDelegate(ExecState* state, PropertyName propertyName, JSValue value, PutPropertySlot&, bool& putResult)
-{
-    VM& vm = state->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    if (propertyName.isSymbol())
-        return false;
-
-    // Only perform the custom put if the object doesn't have a native property by this name.
-    // Since hasProperty() would end up calling canGetItemsForName() and be fooled, we need to check
-    // the native property slots manually.
-    PropertySlot slot { this, PropertySlot::InternalMethodType::GetOwnProperty };
-
-    JSValue prototype = this->getPrototypeDirect();
-    if (prototype.isObject() && asObject(prototype)->getPropertySlot(state, propertyName, slot))
-        return false;
-
-    auto stringValue = convert<IDLDOMString>(*state, value);
-    RETURN_IF_EXCEPTION(scope, true);
-
-    auto setItemResult = wrapped().setItem(propertyNameToString(propertyName), stringValue);
-    if (setItemResult.hasException()) {
-        propagateException(*state, scope, setItemResult.releaseException());
-        return true;
-    }
-
-    putResult = true;
-    return true;
-}
-
 } // namespace WebCore

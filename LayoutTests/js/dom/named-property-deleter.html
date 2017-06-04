@@ -36,7 +36,7 @@
         let element = document.createElement("div");
 
         DOMStringMap.prototype["customProperty"] = 'prototype-value';
-        assert_true(delete element["customProperty"], "");
+        assert_true(delete element.dataset["customProperty"], "");
         assert_equals(DOMStringMap.prototype["customProperty"], 'prototype-value');
     }, "Test that deleting a property that does not exist in the map, but does on the prototype, will return true and not remove the property from the prototype ([OverrideBuiltins] specified).");
 

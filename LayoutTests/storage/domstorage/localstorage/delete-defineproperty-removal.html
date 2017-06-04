@@ -1,60 +1,34 @@
-<pre id='console'></pre>
+<head>
+    <script src="../../../resources/testharness.js"></script>
+    <script src="../../../resources/testharnessreport.js"></script>
+</head>
+<body>
 <script>
-function runTest() {
-    function log(msg)
-    {
-        document.getElementById('console').append(msg + '\n');
-    }
+    localStorage.clear();
 
-    function logAndEval(str)
-    {
-        log(str);
-        eval(str);
-    }
+    test(() => {
+        assert_array_equals(Object.getOwnPropertyNames(localStorage), []);
+    }, "Object.getOwnPropertyNames(localStorage) on an empty local storage should return an empty array.");
 
-    if (window.testRunner)
-       testRunner.dumpAsText();
+    test(() => {
+        Object.defineProperty(localStorage, '1', {value: 'present'});
+        assert_equals(localStorage.getItem('1'), 'present');
+        assert_array_equals(Object.getOwnPropertyNames(localStorage), ['1']);
+    }, "Object.defineProperty can be used to add items to localStorage.");
 
-    if (!window.localStorage) {
-        log("window.localStorage DOES NOT exist");
-        return;
-    }
+    test(() => {
+        assert_equals(delete localStorage[1], true);
+        assert_array_equals(Object.getOwnPropertyNames(localStorage), []);
+    }, "Operator delete can be used to remove items from localStorage.");
 
-    logAndEval("localStorage.clear()");
-    log("Object.getOwnPropertyNames(localStorage) is (" + Object.getOwnPropertyNames(localStorage) + ")\n");
-    
-    logAndEval("Object.defineProperty(localStorage, '1', {value: 'present'})");
-    log("Object.getOwnPropertyNames(localStorage) is (" + Object.getOwnPropertyNames(localStorage) + ")");
-    // FIXME: This is incorrect. It should return 'present'. See https://webkit.org/b/172687.
-    log("localStorage.getItem('1') is " + localStorage.getItem('1') + "\n");
-    
-    logAndEval("delete localStorage[1]");
-    log("Object.getOwnPropertyNames(localStorage) is (" + Object.getOwnPropertyNames(localStorage) + ")\n");
-    
-    logAndEval("Object.defineProperty(localStorage, '2', {value: 'present',  configurable: true})");
-    log("Object.getOwnPropertyNames(localStorage) is (" + Object.getOwnPropertyNames(localStorage) + ")");
-    // FIXME: This is incorrect. It should return 'present'. See https://webkit.org/b/172687.
-    log("localStorage.getItem('2') is " + localStorage.getItem('2') + "\n");
-    
-    logAndEval("delete localStorage[2]");
-    log("Object.getOwnPropertyNames(localStorage) is (" + Object.getOwnPropertyNames(localStorage) + ")\n");
+    test(() => {
+        Object.defineProperty(localStorage, '2', {value: 'present', configurable: false});
+        assert_equals(localStorage.getItem('2'), 'present');
+        assert_array_equals(Object.getOwnPropertyNames(localStorage), ['2']);
+        
+        assert_equals(delete localStorage[2], true);
+        assert_array_equals(Object.getOwnPropertyNames(localStorage), []);
+    }, "The configurable modifier does effect the result when used in adding properties to localStorage with Object.defineProperty.");
 
-    logAndEval("Object.defineProperty(localStorage, 'Test', {value: 'present',  configurable: true})");
-    log("Object.getOwnPropertyNames(localStorage) is (" + Object.getOwnPropertyNames(localStorage) + ")");
-    // FIXME: This is incorrect. It should return 'present'. See https://webkit.org/b/172687.
-    log("localStorage.getItem('Test') is " + localStorage.getItem('Test') + "\n");
-  
-    logAndEval("delete localStorage['Test']");
-    log("Object.getOwnPropertyNames(localStorage) is (" + Object.getOwnPropertyNames(localStorage) + ")\n");
-
-    logAndEval("Object.defineProperty(localStorage, 'Test1', {value: 'present'})");
-    log("Object.getOwnPropertyNames(localStorage) is (" + Object.getOwnPropertyNames(localStorage) + ")");
-    // FIXME: This is incorrect. It should return 'present'. See https://webkit.org/b/172687.
-    log("localStorage.getItem('Test1') is " + localStorage.getItem('Test1') + "\n");
-  
-    logAndEval("delete localStorage['Test1']");
-    log("Object.getOwnPropertyNames(localStorage) is (" + Object.getOwnPropertyNames(localStorage) + ")\n");
-}
 </script>
-<body onload="runTest();">
 </body>

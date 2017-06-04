@@ -20,8 +20,8 @@
 
 [
     CustomCall,
+    CustomGetOwnPropertySlotAndDescriptor,
     CustomNamedSetter,
-    JSCustomGetOwnPropertySlotAndDescriptor,
 ] interface HTMLEmbedElement : HTMLElement {
     [Reflect] attribute DOMString align;
     [Reflect] attribute DOMString height;

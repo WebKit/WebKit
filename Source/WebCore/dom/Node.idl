@@ -20,12 +20,12 @@
 
 [
     CustomIsReachable,
+    CustomPushEventHandlerScope,
     CustomToJSObject,
     DOMJIT,
     ExportMacro=WEBCORE_EXPORT,
     JSCustomHeader,
     JSCustomMarkFunction,
-    JSCustomPushEventHandlerScope,
 ] interface Node : EventTarget {
     const unsigned short ELEMENT_NODE = 1;
     const unsigned short ATTRIBUTE_NODE = 2;

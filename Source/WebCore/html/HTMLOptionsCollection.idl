@@ -19,13 +19,12 @@
  */
 
 [
-    CustomIndexedSetter,
     ExportToWrappedFunction,
     GenerateIsReachable=ImplOwnerNodeRoot,
     JSGenerateToNativeObject,
 ] interface HTMLOptionsCollection : HTMLCollection {
     [CEReactions, SetterMayThrowException] attribute unsigned long length;
-    // [CEReactions] setter void (unsigned long index, HTMLOptionElement? option);
+    [CEReactions] setter void (unsigned long index, HTMLOptionElement? option);
     [CEReactions, MayThrowException] void add((HTMLOptionElement or HTMLOptGroupElement) element, optional (HTMLElement or long)? before = null);
     [CEReactions] void remove(long index);
 

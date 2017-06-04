@@ -20,10 +20,10 @@
 
 [
     CustomEnumerateProperty,
+    CustomGetOwnPropertySlotAndDescriptor,
     CustomNamedSetter,
     ExportMacro=WEBCORE_EXPORT,
     GenerateIsReachable,
-    JSCustomGetOwnPropertySlotAndDescriptor,
     JSCustomHeader,
     JSCustomMarkFunction,
     SkipVTableValidation,

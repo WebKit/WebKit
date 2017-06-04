@@ -1,3 +1,249 @@
+2017-06-03  Sam Weinig  <sam@webkit.org>
+
+        Can't use Object.defineProperty() to add an item to a DOMStringMap or Storage
+        https://bugs.webkit.org/show_bug.cgi?id=172687
+
+        Reviewed by Darin Adler.
+
+        - Adds support for generating the defineOwnProperty ClassInfo method table hook
+          to add support for Object.defineProperty(). The implementation follows WebIDL
+          section 3.9.3 [[DefineOwnProperty]].
+          (https://heycam.github.io/webidl/#legacy-platform-object-defineownproperty)
+        - Adds support for generating named setters in addition to the already supported
+          indexed setters as much of the required work was needed to make defineOwnProperty
+          work for those properties. This patch does not aim to follow WebIDL faithfully,
+          but rather to generate as close to the custom code as possible. A follow up 
+          change will attempt to match WebIDL more closely (which will also require changes
+          to [[GetOwnPropertySlot]]).
+        - Removes the need for custom bindings in DOMStringMap, HTMLOptionsCollection and
+          HTMLSelectElement. Gets us one function away from supporting Storage.
+        - Tidies up generated headers a bit by grouping all the ClassInfo method table hooks
+          together.
+        - Removes support for CustomIndexedSetter, which is no longer used.
+
+        Test: js/dom/legacy-platform-object-defineOwnProperty.html
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        Removed now unneeded custom bindings.
+
+        * bindings/js/JSDOMStringMapCustom.cpp: Removed.
+        * bindings/js/JSHTMLOptionsCollectionCustom.cpp: Removed.
+        * bindings/js/JSHTMLSelectElementCustom.cpp: Removed.
+        * bindings/js/JSHTMLSelectElementCustom.h: Removed.
+        * bindings/js/JSStorageCustom.cpp:
+        (WebCore::JSStorage::putDelegate): Deleted.
+        Remove more code that is now generated.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateIndexedGetter):
+        - Add missing check for indexed setter operation when determining if the property should be ReadOnly.
+        - Add support for custom implementation name, matching GenerateNamedGetter.
+        - Convert to taking an outputArray and indent to allow more flexibility going forward.
+
+        (GenerateNamedGetter):
+        - Add missing check for named setter operation when determining if the property should be ReadOnly.
+        - Convert to taking an outputArray and indent to allow more flexibility going forward.
+
+        (GenerateGetOwnPropertySlotBody):
+        - Convert to taking an outputArray and indent to allow more flexibility going forward.
+        - Take over responsibility for checking and bailing if CustomGetOwnPropertySlot is set.
+
+        (GenerateGetOwnPropertySlotBodyByIndex):
+        - Convert to taking an outputArray and indent to allow more flexibility going forward.
+        - Take over responsibility for checking and bailing if CustomGetOwnPropertySlotByIndex is set.
+
+        (GenerateGetOwnPropertyNames):
+        - Convert to taking an outputArray and indent to allow more flexibility going forward.
+        - Take over responsibility for checking and bailing if CustomEnumerateProperty is set.
+
+        (GenerateInvokeIndexedPropertySetter):
+        Added. Implements the 'invoke an indexed property setter' algorithm (https://heycam.github.io/webidl/#invoke-indexed-setter)
+
+        (GenerateInvokeNamedPropertySetter):
+        Added. Implements the 'invoke a named property setter' algorithm (https://heycam.github.io/webidl/#invoke-named-setter)
+
+        (GeneratePut):
+        (GeneratePutByIndex):
+        - Convert to taking an outputArray and indent to allow more flexibility going forward.
+        - Take over responsibility for checking and bailing if CustomPut is set.
+        - Adds support for CEReactions.
+        - Adopts GenerateInvokeIndexedPropertySetter and GenerateInvokeNamedPropertySetter to
+          simplify code.
+        - Removes support for CustomIndexedSetter, which is no longer used.
+        - Replaces use direct checking of OverrideBuiltins with check if any interface it inherits
+          has it, which is how it is specified to work.
+
+        (GenerateIsUnforgeablePropertyName):
+        Added. Helper subroutine to generate a function that compares a property name
+        agains all the property names defined as Unforgeable on the interface. Used by
+        GenerateDefineOwnProperty.
+
+        (GenerateDefineOwnProperty):
+        Added. Implements section 3.9.3 [[DefineOwnProperty]] (https://heycam.github.io/webidl/#legacy-platform-object-defineownproperty)
+        Adds support for CEReactions.
+
+        (GenerateDeletePropertyCommon):
+        Switch from getting OverrideBuiltins directly off the interface to using InheritsExtendedAttribute.
+
+        (GenerateNamedDeleterDefinition):
+        Switch signature to match peer generators.
+
+        (InstanceOverridesGetOwnPropertySlot):
+        Update for rename of JSCustomGetOwnPropertySlotAndDescriptor to CustomGetOwnPropertySlotAndDescriptor.
+
+        (InstanceOverridesGetOwnPropertySlotByIndex):
+        Added. Like InstanceOverridesGetOwnPropertySlot, but checks for the new CustomGetOwnPropertySlotByIndex 
+        rather than CustomGetOwnPropertySlot.
+
+        (InstanceOverridesGetOwnPropertyNames):
+        Added. Moves complex predicate out of line.
+
+        (InstanceOverridesPut):
+        Removes now unused CustomIndexedSetter, and adds CustomPutFunction, which used to be checked separately.
+
+        (InstanceOverridesDefineOwnProperty):
+        Added.
+
+        (GenerateHeader):
+        - Moves more structure flags together.
+        - Simplifies predicates and moves the ClassInfo method table hooks together.
+
+        (GenerateImplementation):
+        - Moves the ClassInfo method table hooks together
+        - Adds call to GenerateDefineOwnProperty.
+
+        (GenerateLegacyCallerDefinitions):
+        Simplify bail condition to match other generators.
+
+        (GeneratePrototypeDeclaration):
+        Update for new extended attribute names.
+
+        (InstanceOverridesCall): 
+        Renamed from IsCallable for consistency.
+        
+        (HasComplexGetOwnProperty): 
+        Deleted. Unused.
+        
+        (InstanceOverridesPutImplementation): 
+        Deleted. Unused.
+        
+        (InstanceOverridesPutDeclaration): 
+        Deleted. Unused.
+        
+        (IsCallable): 
+        Renamed, for consistency, to InstanceOverridesCall .
+
+        * bindings/scripts/IDLAttributes.json:
+        Renames a few of the extended attributes to remove the JS prefix. This time
+        around I only did the ones in the area I was working, but we should probably
+        remove most of the rest.
+    
+        * css/CSSStyleDeclaration.idl:
+        Update for JSCustomGetOwnPropertySlotAndDescriptor -> CustomGetOwnPropertySlotAndDescriptor rename.
+
+        * dom/DOMStringMap.idl:
+        Remove CustomNamedSetter and add uncomment out the setter.
+
+        * dom/DatasetDOMStringMap.cpp:
+        (WebCore::DatasetDOMStringMap::setNamedItem):
+        (WebCore::DatasetDOMStringMap::setItem): Deleted.
+        * dom/DatasetDOMStringMap.h:
+        Rename setItem to setNamedItem, which is what the generator expects.
+
+        * dom/Node.idl:
+        Update for JSCustomPushEventHandlerScope -> CustomPushEventHandlerScope rename.
+
+        * html/HTMLAppletElement.idl:
+        * html/HTMLEmbedElement.idl:
+        * html/HTMLObjectElement.idl:
+        Update for JSCustomGetOwnPropertySlotAndDescriptor -> CustomGetOwnPropertySlotAndDescriptor rename.
+
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::isSupportedPropertyName):
+        * html/HTMLCollection.h:
+        Add isSupportedPropertyName function which is used by the bindings and is now needed.
+
+        * html/HTMLElement.idl:
+        Update for JSCustomPushEventHandlerScope -> CustomPushEventHandlerScope rename.
+
+        * html/HTMLOptionsCollection.h:
+        (WebCore::HTMLOptionsCollection::setItem):
+        Add setItem() implementation which just forwards to the select element. Also, add 
+        a type alias to make the implementations of item and namedItem less verbose.
+
+        * html/HTMLOptionsCollection.idl:
+        Remove CustomIndexedSetter and uncomment the setter.
+
+        * html/HTMLSelectElement.idl:
+        Remove CustomIndexedSetter and uncomment the setter. Also, reformat
+        to match the WHATWG spec.
+
+        * page/DOMWindow.idl:
+        Update for JSCustomDefineOwnProperty -> CustomDefineOwnProperty rename. Add 
+        CustomGetOwnPropertySlotByIndex which is now needed to remove some unsound
+        assumptions the generator was making.
+
+        * page/Location.idl:
+        Update for removal of JS prefix from a bunch of extended attributes.
+
+        * page/UserMessageHandlersNamespace.idl:
+        Update for JSCustomGetOwnPropertySlotAndDescriptor -> CustomGetOwnPropertySlotAndDescriptor rename.
+
+        * storage/Storage.idl:
+        Remove CustomNamedSetter and uncomment the setter.
+
+        * bindings/scripts/test/JS/JSInterfaceName.h:
+        * bindings/scripts/test/JS/JSTestEventTarget.h:
+        * bindings/scripts/test/JS/JSTestIndexedSetterNoIdentifier.cpp: Added.
+        * bindings/scripts/test/JS/JSTestIndexedSetterNoIdentifier.h: Added.
+        * bindings/scripts/test/JS/JSTestIndexedSetterThrowingException.cpp: Added.
+        * bindings/scripts/test/JS/JSTestIndexedSetterThrowingException.h: Added.
+        * bindings/scripts/test/JS/JSTestIndexedSetterWithIdentifier.cpp: Added.
+        * bindings/scripts/test/JS/JSTestIndexedSetterWithIdentifier.h: Added.
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterNoIdentifier.cpp: Added.
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterNoIdentifier.h: Added.
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterThrowingException.cpp: Added.
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterThrowingException.h: Added.
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterWithIdentifier.cpp: Added.
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterWithIdentifier.h: Added.
+        * bindings/scripts/test/JS/JSTestNamedDeleterNoIdentifier.h:
+        * bindings/scripts/test/JS/JSTestNamedDeleterThrowingException.h:
+        * bindings/scripts/test/JS/JSTestNamedDeleterWithIdentifier.cpp:
+        * bindings/scripts/test/JS/JSTestNamedDeleterWithIdentifier.h:
+        * bindings/scripts/test/JS/JSTestNamedDeleterWithIndexedGetter.h:
+        * bindings/scripts/test/JS/JSTestNamedSetterNoIdentifier.cpp: Added.
+        * bindings/scripts/test/JS/JSTestNamedSetterNoIdentifier.h: Added.
+        * bindings/scripts/test/JS/JSTestNamedSetterThrowingException.cpp: Added.
+        * bindings/scripts/test/JS/JSTestNamedSetterThrowingException.h: Added.
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIdentifier.cpp: Added.
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIdentifier.h: Added.
+        * bindings/scripts/test/JS/JSTestNamedSetterWithOverrideBuiltins.cpp: Added.
+        * bindings/scripts/test/JS/JSTestNamedSetterWithOverrideBuiltins.h: Added.
+        * bindings/scripts/test/JS/JSTestNamedSetterWithUnforgableProperties.cpp: Added.
+        * bindings/scripts/test/JS/JSTestNamedSetterWithUnforgableProperties.h: Added.
+        * bindings/scripts/test/JS/JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins.cpp: Added.
+        * bindings/scripts/test/JS/JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins.h: Added.
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/JS/JSTestOverrideBuiltins.h:
+        * bindings/scripts/test/TestIndexedSetterNoIdentifier.idl: Added.
+        * bindings/scripts/test/TestIndexedSetterThrowingException.idl: Added.
+        * bindings/scripts/test/TestIndexedSetterWithIdentifier.idl: Added.
+        * bindings/scripts/test/TestNamedAndIndexedSetterNoIdentifier.idl: Added.
+        * bindings/scripts/test/TestNamedAndIndexedSetterThrowingException.idl: Added.
+        * bindings/scripts/test/TestNamedAndIndexedSetterWithIdentifier.idl: Added.
+        * bindings/scripts/test/TestNamedDeleterWithIdentifier.idl:
+        * bindings/scripts/test/TestNamedSetterNoIdentifier.idl: Added.
+        * bindings/scripts/test/TestNamedSetterThrowingException.idl: Added.
+        * bindings/scripts/test/TestNamedSetterWithIdentifier.idl: Added.
+        * bindings/scripts/test/TestNamedSetterWithOverrideBuiltins.idl: Added.
+        * bindings/scripts/test/TestNamedSetterWithUnforgableProperties.idl: Added.
+        * bindings/scripts/test/TestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins.idl: Added.
+        Added new tests and updated some results.
+
 2017-06-04  Simon Fraser  <simon.fraser@apple.com>
 
         Object bounding box wrong for some paths

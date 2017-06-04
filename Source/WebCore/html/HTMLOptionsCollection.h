@@ -31,6 +31,8 @@ namespace WebCore {
 
 class HTMLOptionsCollection final : public CachedHTMLCollection<HTMLOptionsCollection, CollectionTypeTraits<SelectOptions>::traversalType> {
 public:
+    using Base = CachedHTMLCollection<HTMLOptionsCollection, CollectionTypeTraits<SelectOptions>::traversalType>;
+
     static Ref<HTMLOptionsCollection> create(HTMLSelectElement&, CollectionType);
 
     HTMLSelectElement& selectElement() { return downcast<HTMLSelectElement>(ownerNode()); }
@@ -38,7 +40,9 @@ public:
 
     HTMLOptionElement* item(unsigned offset) const final;
     HTMLOptionElement* namedItem(const AtomicString& name) const final;
-
+    
+    ExceptionOr<void> setItem(unsigned index, HTMLOptionElement*);
+    
     using OptionOrOptGroupElement = Variant<RefPtr<HTMLOptionElement>, RefPtr<HTMLOptGroupElement>>;
     using HTMLElementOrInt = Variant<RefPtr<HTMLElement>, int>;
     WEBCORE_EXPORT ExceptionOr<void> add(const OptionOrOptGroupElement&, const std::optional<HTMLElementOrInt>& before);
@@ -58,12 +62,17 @@ private:
 
 inline HTMLOptionElement* HTMLOptionsCollection::item(unsigned offset) const
 {
-    return downcast<HTMLOptionElement>(CachedHTMLCollection<HTMLOptionsCollection, CollectionTypeTraits<SelectOptions>::traversalType>::item(offset));
+    return downcast<HTMLOptionElement>(Base::item(offset));
 }
 
 inline HTMLOptionElement* HTMLOptionsCollection::namedItem(const AtomicString& name) const
 {
-    return downcast<HTMLOptionElement>(CachedHTMLCollection<HTMLOptionsCollection, CollectionTypeTraits<SelectOptions>::traversalType>::namedItem(name));
+    return downcast<HTMLOptionElement>(Base::namedItem(name));
+}
+
+inline ExceptionOr<void> HTMLOptionsCollection::setItem(unsigned index, HTMLOptionElement* optionElement)
+{
+    return selectElement().setItem(index, optionElement);
 }
 
 inline bool HTMLOptionsCollection::elementMatches(Element& element) const

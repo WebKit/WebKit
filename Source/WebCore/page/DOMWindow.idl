@@ -28,9 +28,11 @@ typedef USVString CSSOMString;
 
 [
     CheckSecurity,
+    CustomDefineOwnProperty,
     CustomDeleteProperty,
     CustomEnumerateProperty,
     CustomGetOwnPropertySlot,
+    CustomGetOwnPropertySlotByIndex,
     CustomGetPrototype,
     CustomPreventExtensions,
     CustomProxyToJSObject,
@@ -41,7 +43,6 @@ typedef USVString CSSOMString;
     InterfaceName=Window,
     IsImmutablePrototypeExoticObject,
     IsImmutablePrototypeExoticObjectOnPrototype,
-    JSCustomDefineOwnProperty,
     JSCustomMarkFunction,
     JSCustomToNativeObject,
     JSLegacyParent=JSDOMWindowBase,

@@ -80,6 +80,12 @@
         "CustomConstructor": {
             "contextsAllowed": ["interface"]
         },
+        "CustomDefineOwnProperty": {
+            "contextsAllowed": ["interface"]
+        },
+        "CustomDefineOwnPropertyOnPrototype": {
+            "contextsAllowed": ["interface"]
+        },
         "CustomDeleteProperty": {
             "contextsAllowed": ["interface"]
         },
@@ -87,6 +93,12 @@
             "contextsAllowed": ["interface"]
         },
         "CustomGetOwnPropertySlot": {
+            "contextsAllowed": ["interface"]
+        },
+        "CustomGetOwnPropertySlotByIndex": {
+            "contextsAllowed": ["interface"]
+        },
+        "CustomGetOwnPropertySlotAndDescriptor": {
             "contextsAllowed": ["interface"]
         },
         "CustomGetPrototype": {
@@ -104,6 +116,9 @@
         "CustomNamedGetter": {
             "contextsAllowed": ["interface"]
         },
+        "CustomNamedGetterOnPrototype": {
+            "contextsAllowed": ["interface"]
+        },
         "CustomNamedSetter": {
             "contextsAllowed": ["interface"]
         },
@@ -111,6 +126,9 @@
             "contextsAllowed": ["interface"]
         },
         "CustomProxyToJSObject": {
+            "contextsAllowed": ["interface"]
+        },
+        "CustomPushEventHandlerScope": {
             "contextsAllowed": ["interface"]
         },
         "CustomPutFunction": {
@@ -222,28 +240,13 @@
         "JSBuiltinConstructor": {
             "contextsAllowed": ["interface"]
         },
-        "JSCustomDefineOwnProperty": {
-            "contextsAllowed": ["interface"]
-        },
-        "JSCustomDefineOwnPropertyOnPrototype": {
-            "contextsAllowed": ["interface"]
-        },
         "JSCustomFinalize": {
-            "contextsAllowed": ["interface"]
-        },
-        "JSCustomGetOwnPropertySlotAndDescriptor": {
             "contextsAllowed": ["interface"]
         },
         "JSCustomHeader": {
             "contextsAllowed": ["interface"]
         },
         "JSCustomMarkFunction": {
-            "contextsAllowed": ["interface"]
-        },
-        "JSCustomNamedGetterOnPrototype": {
-            "contextsAllowed": ["interface"]
-        },
-        "JSCustomPushEventHandlerScope": {
             "contextsAllowed": ["interface"]
         },
         "JSCustomToNativeObject": {

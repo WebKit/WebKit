@@ -20,8 +20,8 @@
 
 [
     CustomConstructor(),
+    CustomPushEventHandlerScope,
     ExportMacro=WEBCORE_EXPORT,
-    JSCustomPushEventHandlerScope,
     JSGenerateToNativeObject,
 ] interface HTMLElement : Element {
     // Metadata attributes.

@@ -39,6 +39,7 @@ public:
     static JSC::JSObject* createPrototype(JSC::VM&, JSDOMGlobalObject&);
     static JSC::JSObject* prototype(JSC::VM&, JSDOMGlobalObject&);
     static InterfaceName* toWrapped(JSC::VM&, JSC::JSValue);
+    static size_t estimatedSize(JSCell*);
     static void destroy(JSC::JSCell*);
 
     DECLARE_INFO;
@@ -51,7 +52,6 @@ public:
     static JSC::JSValue getConstructor(JSC::VM&, const JSC::JSGlobalObject*);
     static void visitChildren(JSCell*, JSC::SlotVisitor&);
 
-    static size_t estimatedSize(JSCell*);
 protected:
     JSInterfaceName(JSC::Structure*, JSDOMGlobalObject&, Ref<InterfaceName>&&);
 

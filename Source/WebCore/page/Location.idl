@@ -28,18 +28,18 @@
 
 [
     CheckSecurity,
+    CustomDefineOwnProperty,
+    CustomDefineOwnPropertyOnPrototype,
     CustomDeleteProperty,
     CustomEnumerateProperty,
+    CustomGetOwnPropertySlotAndDescriptor,
     CustomGetPrototype,
+    CustomNamedGetterOnPrototype,
     CustomNamedSetter,
     CustomPreventExtensions,
     CustomToStringName,
     GenerateIsReachable=ImplFrame,
     IsImmutablePrototypeExoticObject,
-    JSCustomDefineOwnProperty,
-    JSCustomDefineOwnPropertyOnPrototype,
-    JSCustomGetOwnPropertySlotAndDescriptor,
-    JSCustomNamedGetterOnPrototype,
     Unforgeable,
 ] interface Location {
     [SetterCallWith=ActiveWindow&FirstWindow, DoNotCheckSecurityOnSetter] stringifier attribute USVString href;

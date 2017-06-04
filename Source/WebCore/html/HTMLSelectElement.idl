@@ -19,35 +19,31 @@
  */
 
 [
-    CustomIndexedSetter,
     ExportMacro=WEBCORE_EXPORT,
     JSGenerateToNativeObject,
 ] interface HTMLSelectElement : HTMLElement {
-    [Reflect] attribute boolean autofocus;
-    [Reflect] attribute boolean disabled;
+    [CEReactions] attribute DOMString autocomplete;
+    [CEReactions, Reflect] attribute boolean autofocus;
+    [CEReactions, Reflect] attribute boolean disabled;
     readonly attribute HTMLFormElement? form;
-    attribute boolean multiple;
-    [Reflect] attribute DOMString name;
-    [Reflect] attribute boolean required;
-
-    attribute unsigned long size;
+    [CEReactions] attribute boolean multiple;
+    [CEReactions, Reflect] attribute DOMString name;
+    [CEReactions, Reflect] attribute boolean required;
+    [CEReactions] attribute unsigned long size;
 
     readonly attribute DOMString type;
 
-    readonly attribute HTMLOptionsCollection options;
+    /* [SameObject] */ readonly attribute HTMLOptionsCollection options;
     [CEReactions, SetterMayThrowException] attribute unsigned long length;
-
-    getter HTMLOptionElement? item(unsigned long index);
+    getter HTMLOptionElement? item(unsigned long index); // FIXME: The spec has this returning Element?.
     HTMLOptionElement? namedItem(DOMString name);
-
     [CEReactions, MayThrowException] void add((HTMLOptionElement or HTMLOptGroupElement) element, optional (HTMLElement or long)? before = null);
-
-    [MayThrowException] void remove(); // ChildNode overload
+    [CEReactions, MayThrowException] void remove(); // ChildNode overload
     [CEReactions] void remove(long index);
+    [CEReactions] setter void (unsigned long index, HTMLOptionElement? option);
 
-    readonly attribute HTMLCollection selectedOptions;
+    /* [SameObject] */ readonly attribute HTMLCollection selectedOptions;
     attribute long selectedIndex;
-
     attribute DOMString value;
 
     readonly attribute boolean willValidate;
@@ -58,6 +54,4 @@
     void setCustomValidity(DOMString error);
 
     readonly attribute NodeList labels;
-
-    attribute DOMString autocomplete;
 };

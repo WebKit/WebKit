@@ -24,7 +24,7 @@
  */
 
 [
-    JSCustomGetOwnPropertySlotAndDescriptor,
-    Conditional=USER_MESSAGE_HANDLERS
+    Conditional=USER_MESSAGE_HANDLERS,
+    CustomGetOwnPropertySlotAndDescriptor,
 ] interface UserMessageHandlersNamespace {
 };

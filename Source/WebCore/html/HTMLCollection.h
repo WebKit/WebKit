@@ -38,7 +38,7 @@ public:
     const Vector<Element*>* findElementsWithId(const AtomicString& id) const;
     const Vector<Element*>* findElementsWithName(const AtomicString& name) const;
     const Vector<AtomicString>& propertyNames() const { return m_propertyNames; }
-
+    
     void appendToIdCache(const AtomicString& id, Element&);
     void appendToNameCache(const AtomicString& name, Element&);
     void didPopulate();
@@ -69,6 +69,7 @@ public:
     Element* item(unsigned index) const override = 0; // Tighten return type from NodeList::item().
     virtual Element* namedItem(const AtomicString& name) const = 0;
     const Vector<AtomicString>& supportedPropertyNames();
+    bool isSupportedPropertyName(const String& name);
 
     // Non-DOM API
     Vector<Ref<Element>> namedItems(const AtomicString& name) const;

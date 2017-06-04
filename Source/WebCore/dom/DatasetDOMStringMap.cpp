@@ -217,7 +217,7 @@ String DatasetDOMStringMap::namedItem(const AtomicString& name) const
     return item(name).value_or(String { });
 }
 
-ExceptionOr<void> DatasetDOMStringMap::setItem(const String& name, const String& value)
+ExceptionOr<void> DatasetDOMStringMap::setNamedItem(const String& name, const String& value)
 {
     if (!isValidPropertyName(name))
         return Exception { SYNTAX_ERR };
