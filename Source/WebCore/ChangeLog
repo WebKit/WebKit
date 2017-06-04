@@ -1,3 +1,29 @@
+2017-06-04  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GCrypt] Improve comments in AES, PBKDF2, RSA-SSA algorithm implementations
+        https://bugs.webkit.org/show_bug.cgi?id=172894
+
+        Reviewed by Michael Catanzaro.
+
+        Add or improve code comments in libgcrypt implementations for the AES_CBC,
+        AES_GCM, AES_KW, PBKDF2 and RSA-SSA algorithms.
+
+        * crypto/gcrypt/CryptoAlgorithmAES_CBCGCrypt.cpp: Add generic comments that
+        describe each operation that's performed.
+        (WebCore::gcryptEncrypt):
+        (WebCore::gcryptDecrypt):
+        * crypto/gcrypt/CryptoAlgorithmAES_GCMGCrypt.cpp: Ditto.
+        (WebCore::gcryptEncrypt):
+        (WebCore::gcryptDecrypt):
+        * crypto/gcrypt/CryptoAlgorithmAES_KWGCrypt.cpp: Ditto.
+        (WebCore::gcryptWrapKey):
+        (WebCore::gcryptUnwrapKey):
+        * crypto/gcrypt/CryptoAlgorithmPBKDF2GCrypt.cpp: Ditto.
+        (WebCore::gcryptDeriveBits):
+        * crypto/gcrypt/CryptoAlgorithmRSASSA_PKCS1_v1_5GCrypt.cpp:
+        (WebCore::gcryptVerify): Align the verification results comment with the
+        one that's used in the ECDSA implementation.
+
 2017-06-03  Chris Dumez  <cdumez@apple.com>
 
         Implement DOMMatrix's fromFloat32Array / fromFloat64Array & toFloat32Array / toFloat64Array

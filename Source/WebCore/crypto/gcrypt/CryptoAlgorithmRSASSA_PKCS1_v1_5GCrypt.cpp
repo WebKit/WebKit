@@ -131,7 +131,8 @@ static std::optional<bool> gcryptVerify(gcry_sexp_t keySexp, const Vector<uint8_
     }
 
     // Perform the PK verification. We report success if there's no error returned, or
-    // a failure in any other case. OperationError should not be returned at this point.
+    // a failure in any other case. OperationError should not be returned at this point,
+    // avoiding spilling information about the exact cause of verification failure.
     error = gcry_pk_verify(signatureSexp, dataSexp, keySexp);
     return { error == GPG_ERR_NO_ERROR };
 }

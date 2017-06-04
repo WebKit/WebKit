@@ -43,10 +43,12 @@ namespace WebCore {
 
 static std::optional<Vector<uint8_t>> gcryptEncrypt(const Vector<uint8_t>& key, const Vector<uint8_t>& iv, Vector<uint8_t>&& plainText, const Vector<uint8_t>& additionalData, uint8_t tagLength)
 {
+    // Determine the AES algorithm for the given key size.
     auto algorithm = PAL::GCrypt::aesAlgorithmForKeySize(key.size() * 8);
     if (!algorithm)
         return std::nullopt;
 
+    // Create a new GCrypt cipher object for the AES algorithm and the GCM cipher mode.
     PAL::GCrypt::Handle<gcry_cipher_hd_t> handle;
     gcry_error_t error = gcry_cipher_open(&handle, *algorithm, GCRY_CIPHER_MODE_GCM, GCRY_CIPHER_SECURE);
     if (error != GPG_ERR_NO_ERROR) {
@@ -54,18 +56,21 @@ static std::optional<Vector<uint8_t>> gcryptEncrypt(const Vector<uint8_t>& key, 
         return std::nullopt;
     }
 
+    // Use the given key for this cipher object.
     error = gcry_cipher_setkey(handle, key.data(), key.size());
     if (error != GPG_ERR_NO_ERROR) {
         PAL::GCrypt::logError(error);
         return std::nullopt;
     }
 
+    // Use the given IV for this cipher object.
     error = gcry_cipher_setiv(handle, iv.data(), iv.size());
     if (error != GPG_ERR_NO_ERROR) {
         PAL::GCrypt::logError(error);
         return std::nullopt;
     }
 
+    // Use the given additonal data, if any, as the authentication data for this cipher object.
     if (!additionalData.isEmpty()) {
         error = gcry_cipher_authenticate(handle, additionalData.data(), additionalData.size());
         if (error != GPG_ERR_NO_ERROR) {
@@ -74,12 +79,14 @@ static std::optional<Vector<uint8_t>> gcryptEncrypt(const Vector<uint8_t>& key, 
         }
     }
 
+    // Finalize the cipher object before performing the encryption.
     error = gcry_cipher_final(handle);
     if (error != GPG_ERR_NO_ERROR) {
         PAL::GCrypt::logError(error);
         return std::nullopt;
     }
 
+    // Perform the encryption and retrieve the encrypted output.
     Vector<uint8_t> output(plainText.size());
     error = gcry_cipher_encrypt(handle, output.data(), output.size(), plainText.data(), plainText.size());
     if (error != GPG_ERR_NO_ERROR) {
@@ -87,6 +94,7 @@ static std::optional<Vector<uint8_t>> gcryptEncrypt(const Vector<uint8_t>& key, 
         return std::nullopt;
     }
 
+    // If tag length was specified, retrieve the tag data and append it to the output vector.
     if (tagLength) {
         Vector<uint8_t> tag(tagLength);
         error = gcry_cipher_gettag(handle, tag.data(), tag.size());
@@ -103,10 +111,12 @@ static std::optional<Vector<uint8_t>> gcryptEncrypt(const Vector<uint8_t>& key, 
 
 static std::optional<Vector<uint8_t>> gcryptDecrypt(const Vector<uint8_t>& key, const Vector<uint8_t>& iv, Vector<uint8_t>&& cipherText, const Vector<uint8_t>& additionalData, uint8_t tagLength)
 {
+    // Determine the AES algorithm for the given key size.
     auto algorithm = PAL::GCrypt::aesAlgorithmForKeySize(key.size() * 8);
     if (!algorithm)
         return std::nullopt;
 
+    // Create a new GCrypt cipher object for the AES algorithm and the GCM cipher mode.
     PAL::GCrypt::Handle<gcry_cipher_hd_t> handle;
     gcry_error_t error = gcry_cipher_open(&handle, *algorithm, GCRY_CIPHER_MODE_GCM, 0);
     if (error != GPG_ERR_NO_ERROR) {
@@ -114,18 +124,21 @@ static std::optional<Vector<uint8_t>> gcryptDecrypt(const Vector<uint8_t>& key, 
         return std::nullopt;
     }
 
+    // Use the given key for this cipher object.
     error = gcry_cipher_setkey(handle, key.data(), key.size());
     if (error != GPG_ERR_NO_ERROR) {
         PAL::GCrypt::logError(error);
         return std::nullopt;
     }
 
+    // Use the given IV for this cipher object.
     error = gcry_cipher_setiv(handle, iv.data(), iv.size());
     if (error != GPG_ERR_NO_ERROR) {
         PAL::GCrypt::logError(error);
         return std::nullopt;
     }
 
+    // Use the given additonal data, if any, as the authentication data for this cipher object.
     if (!additionalData.isEmpty()) {
         error = gcry_cipher_authenticate(handle, additionalData.data(), additionalData.size());
         if (error != GPG_ERR_NO_ERROR) {
@@ -134,12 +147,14 @@ static std::optional<Vector<uint8_t>> gcryptDecrypt(const Vector<uint8_t>& key, 
         }
     }
 
+    // Finalize the cipher object before performing the encryption.
     error = gcry_cipher_final(handle);
     if (error != GPG_ERR_NO_ERROR) {
         PAL::GCrypt::logError(error);
         return std::nullopt;
     }
 
+    // Account for the specified tag length when performing the decryption and retrieving the decrypted output.
     size_t cipherLength = cipherText.size() - tagLength;
     Vector<uint8_t> output(cipherLength);
     error = gcry_cipher_decrypt(handle, output.data(), output.size(), cipherText.data(), cipherLength);
@@ -148,6 +163,9 @@ static std::optional<Vector<uint8_t>> gcryptDecrypt(const Vector<uint8_t>& key, 
         return std::nullopt;
     }
 
+    // If tag length was indeed specified, retrieve the tag data and compare it securely to the tag data that
+    // is in the passed-in cipher text Vector, bailing if there is a mismatch and returning the decrypted
+    // plaintext otherwise.
     if (tagLength) {
         Vector<uint8_t> tag(tagLength);
         error = gcry_cipher_gettag(handle, tag.data(), tagLength);
