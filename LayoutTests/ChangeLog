@@ -1,3 +1,93 @@
+2017-06-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Object bounding box wrong for some paths
+        https://bugs.webkit.org/show_bug.cgi?id=172866
+
+        Reviewed by Tim Horton.
+
+        So many new baselines.
+
+        * platform/ios/svg/W3C-SVG-1.1-SE/paths-dom-02-f-expected.txt:
+        * platform/ios/svg/W3C-SVG-1.1/animate-elem-06-t-expected.txt:
+        * platform/ios/svg/W3C-SVG-1.1/animate-elem-08-t-expected.txt:
+        * platform/ios/svg/W3C-SVG-1.1/animate-elem-83-t-expected.txt:
+        * platform/ios/svg/W3C-SVG-1.1/filters-example-01-b-expected.txt:
+        * platform/ios/svg/W3C-SVG-1.1/metadata-example-01-b-expected.txt:
+        * platform/ios/svg/W3C-SVG-1.1/paths-data-01-t-expected.txt:
+        * platform/ios/svg/W3C-SVG-1.1/paths-data-02-t-expected.txt:
+        * platform/ios/svg/W3C-SVG-1.1/paths-data-03-f-expected.txt:
+        * platform/ios/svg/W3C-SVG-1.1/paths-data-12-t-expected.txt:
+        * platform/ios/svg/W3C-SVG-1.1/text-path-01-b-expected.txt:
+        * platform/ios/svg/batik/text/longTextOnPath-expected.txt:
+        * platform/ios/svg/batik/text/smallFonts-expected.txt:
+        * platform/ios/svg/batik/text/textAnchor-expected.txt:
+        * platform/ios/svg/batik/text/textDecoration-expected.txt:
+        * platform/ios/svg/batik/text/textEffect-expected.txt:
+        * platform/ios/svg/batik/text/textEffect2-expected.txt:
+        * platform/ios/svg/batik/text/textEffect3-expected.txt:
+        * platform/ios/svg/batik/text/textFeatures-expected.txt:
+        * platform/ios/svg/batik/text/textGlyphOrientationHorizontal-expected.txt:
+        * platform/ios/svg/batik/text/textLayout-expected.txt:
+        * platform/ios/svg/batik/text/textLayout2-expected.txt:
+        * platform/ios/svg/batik/text/textLength-expected.txt:
+        * platform/ios/svg/batik/text/textOnPath-expected.txt:
+        * platform/ios/svg/batik/text/textOnPathSpaces-expected.txt:
+        * platform/ios/svg/batik/text/textPosition-expected.txt:
+        * platform/ios/svg/batik/text/textPosition2-expected.txt:
+        * platform/ios/svg/batik/text/textProperties-expected.txt:
+        * platform/ios/svg/batik/text/textProperties2-expected.txt:
+        * platform/ios/svg/batik/text/textStyles-expected.txt:
+        * platform/ios/svg/batik/text/verticalText-expected.txt:
+        * platform/ios/svg/batik/text/verticalTextOnPath-expected.txt:
+        * platform/ios/svg/custom/broken-internal-references-expected.txt:
+        * platform/ios/svg/custom/path-textPath-simulation-expected.txt:
+        * platform/ios/svg/custom/relative-sized-use-on-symbol-expected.txt:
+        * platform/ios/svg/custom/relative-sized-use-without-attributes-on-symbol-expected.txt:
+        * platform/ios/svg/custom/second-inline-text-expected.txt:
+        * platform/ios/svg/text/text-path-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/paths-dom-02-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-06-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-07-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-08-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-83-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/filters-example-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/metadata-example-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/paths-data-01-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/paths-data-02-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/paths-data-03-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/paths-data-12-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-path-01-b-expected.txt:
+        * platform/mac/svg/batik/filters/filterRegions-expected.txt:
+        * platform/mac/svg/batik/paints/patternPreserveAspectRatioA-expected.txt:
+        * platform/mac/svg/batik/paints/patternRegionA-expected.txt:
+        * platform/mac/svg/batik/paints/patternRegions-expected.txt:
+        * platform/mac/svg/batik/text/smallFonts-expected.txt:
+        * platform/mac/svg/batik/text/textAnchor-expected.txt:
+        * platform/mac/svg/batik/text/textEffect2-expected.txt:
+        * platform/mac/svg/batik/text/textEffect3-expected.txt:
+        * platform/mac/svg/batik/text/textFeatures-expected.txt:
+        * platform/mac/svg/batik/text/textGlyphOrientationHorizontal-expected.txt:
+        * platform/mac/svg/batik/text/textLayout-expected.txt:
+        * platform/mac/svg/batik/text/textLayout2-expected.txt:
+        * platform/mac/svg/batik/text/textOnPathSpaces-expected.txt:
+        * platform/mac/svg/batik/text/textPosition2-expected.txt:
+        * platform/mac/svg/batik/text/textProperties-expected.txt:
+        * platform/mac/svg/batik/text/textProperties2-expected.txt:
+        * platform/mac/svg/batik/text/textStyles-expected.txt:
+        * platform/mac/svg/custom/animate-path-morphing-expected.txt:
+        * platform/mac/svg/custom/broken-internal-references-expected.txt:
+        * platform/mac/svg/custom/path-textPath-simulation-expected.txt:
+        * platform/mac/svg/custom/relative-sized-use-on-symbol-expected.txt:
+        * platform/mac/svg/custom/relative-sized-use-without-attributes-on-symbol-expected.txt:
+        * platform/mac/svg/custom/second-inline-text-expected.txt:
+        * platform/mac/svg/dom/SVGPathSegList-segment-modification-expected.txt:
+        * platform/mac/svg/hixie/perf/001-expected.txt:
+        * platform/mac/svg/hixie/perf/002-expected.txt:
+        * platform/mac/svg/text/text-path-01-b-expected.txt:
+        * platform/mac/svg/zoom/page/zoom-svg-through-object-with-override-size-expected.txt:
+        * svg/custom/control-points-for-S-and-T-expected.txt:
+        * svg/custom/use-nested-transform-expected.txt:
+
 2017-06-04  Jonathan Bedard  <jbedard@apple.com>
 
         Unreviewed test gardening

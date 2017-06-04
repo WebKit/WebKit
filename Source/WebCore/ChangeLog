@@ -1,3 +1,18 @@
+2017-06-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Object bounding box wrong for some paths
+        https://bugs.webkit.org/show_bug.cgi?id=172866
+
+        Reviewed by Tim Horton.
+        
+        RenderSVGShape::calculateObjectBoundingBox() should use boundingRect()
+        rather than fastBoundingRect(), because the latter includes control points.
+
+        Covered by existing tests.
+
+        * rendering/svg/RenderSVGShape.cpp:
+        (WebCore::RenderSVGShape::calculateObjectBoundingBox):
+
 2017-06-04  Konstantin Tokarev  <annulen@yandex.ru>
 
         Fix build of Windows-specific code with ICU 59.1

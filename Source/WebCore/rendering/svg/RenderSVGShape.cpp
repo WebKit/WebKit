@@ -397,7 +397,7 @@ FloatRect RenderSVGShape::markerRect(float strokeWidth) const
 
 FloatRect RenderSVGShape::calculateObjectBoundingBox() const
 {
-    return path().fastBoundingRect();
+    return path().boundingRect();
 }
 
 FloatRect RenderSVGShape::calculateStrokeBoundingBox() const
