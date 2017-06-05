@@ -1,3 +1,11 @@
+2017-06-05  Saam Barati  <sbarati@apple.com>
+
+        Update index.html to include ARES-6.
+
+        Rubber stamped by Ryosuke Niwa.
+
+        * index.html:
+
 2017-06-01  Saam Barati  <sbarati@apple.com>
 
         Ensure a good experience for ARES-6 error reporting
