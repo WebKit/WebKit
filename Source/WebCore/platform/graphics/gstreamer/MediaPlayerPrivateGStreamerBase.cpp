@@ -650,7 +650,7 @@ void MediaPlayerPrivateGStreamerBase::muteChangedCallback(MediaPlayerPrivateGStr
 
 void MediaPlayerPrivateGStreamerBase::acceleratedRenderingStateChanged()
 {
-    m_renderingCanBeAccelerated = m_player && m_player->client().mediaPlayerAcceleratedCompositingEnabled() && m_player->client().mediaPlayerRenderingCanBeAccelerated(m_player);
+    m_renderingCanBeAccelerated = m_player && m_player->client().mediaPlayerAcceleratedCompositingEnabled();
 }
 
 #if USE(TEXTURE_MAPPER_GL)

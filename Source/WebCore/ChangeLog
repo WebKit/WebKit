@@ -1,3 +1,25 @@
+2017-06-05  Miguel Gomez  <magomez@igalia.com>
+
+        [GTK][WPE] Fix the condition to decide whether the MediaPlayer can be rendered accelerated
+        https://bugs.webkit.org/show_bug.cgi?id=172852
+
+        Reviewed by Michael Catanzaro.
+
+        Before this change, in order to determine whether the MediaPlayer rendering could be accelerated we
+        needed the player to have a renderer or it would return false. The renderer was needed in order to
+        access the RenderLayerCompositor and check whether the chrome would be overwriting the accelerated
+        compositing setting. But we don't have that option in WebKitGTK+ or WPE, so we can just check the
+        accelerated compositing setting directly.
+
+        Another problems with the approach before this change is that accelerated rendering was being disabled
+        when the video element was not visible, as there's no video renderer. Due to this, cases where the video
+        is painted through an accelerated canvas or webgl would not be using hardware accelerated copies.
+
+        Covered by existent tests.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::acceleratedRenderingStateChanged):
+
 2017-06-04  Simon Fraser  <simon.fraser@apple.com>
 
         Percentages are calculated wrong in SVG transform CSS property
