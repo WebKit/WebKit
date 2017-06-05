@@ -235,18 +235,7 @@ MediaPlayerPrivateGStreamerBase::~MediaPlayerPrivateGStreamerBase()
 #endif
     m_notifier.cancelPendingNotifications();
 
-#if USE(TEXTURE_MAPPER_GL)
-#if USE(GSTREAMER_GL)
-    bool shouldCancelRepaint = !m_renderingCanBeAccelerated;
-#else
-    bool shouldCancelRepaint = true;
-#endif
-    if (shouldCancelRepaint) {
-        m_drawTimer.stop();
-        LockHolder locker(m_drawMutex);
-        m_drawCondition.notifyOne();
-    }
-#endif // USE(TEXTURE_MAPPER_GL)
+    cancelRepaint();
 
     if (m_videoSink) {
         g_signal_handlers_disconnect_matched(m_videoSink.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
@@ -795,6 +784,27 @@ void MediaPlayerPrivateGStreamerBase::repaintCallback(MediaPlayerPrivateGStreame
     player->triggerRepaint(sample);
 }
 
+void MediaPlayerPrivateGStreamerBase::cancelRepaint()
+{
+#if USE(TEXTURE_MAPPER_GL)
+#if USE(GSTREAMER_GL)
+    bool shouldCancelRepaint = !m_renderingCanBeAccelerated;
+#else
+    bool shouldCancelRepaint = true;
+#endif
+    if (shouldCancelRepaint) {
+        m_drawTimer.stop();
+        LockHolder locker(m_drawMutex);
+        m_drawCondition.notifyOne();
+    }
+#endif // USE(TEXTURE_MAPPER_GL)
+}
+
+void MediaPlayerPrivateGStreamerBase::repaintCancelledCallback(MediaPlayerPrivateGStreamerBase* player)
+{
+    player->cancelRepaint();
+}
+
 #if USE(GSTREAMER_GL)
 GstFlowReturn MediaPlayerPrivateGStreamerBase::newSampleCallback(GstElement* sink, MediaPlayerPrivateGStreamerBase* player)
 {
@@ -1025,6 +1035,7 @@ GstElement* MediaPlayerPrivateGStreamerBase::createVideoSink()
         m_usingFallbackVideoSink = true;
         m_videoSink = webkitVideoSinkNew();
         g_signal_connect_swapped(m_videoSink.get(), "repaint-requested", G_CALLBACK(repaintCallback), this);
+        g_signal_connect_swapped(m_videoSink.get(), "repaint-cancelled", G_CALLBACK(repaintCancelledCallback), this);
     }
 
     GstElement* videoSink = nullptr;

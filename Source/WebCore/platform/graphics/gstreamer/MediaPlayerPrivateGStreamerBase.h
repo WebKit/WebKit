@@ -169,8 +169,10 @@ protected:
 
     void triggerRepaint(GstSample*);
     void repaint();
+    void cancelRepaint();
 
     static void repaintCallback(MediaPlayerPrivateGStreamerBase*, GstSample*);
+    static void repaintCancelledCallback(MediaPlayerPrivateGStreamerBase*);
 
     void notifyPlayerOfVolumeChange();
     void notifyPlayerOfMute();

@@ -1,5 +1,33 @@
 2017-06-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GStreamer] Deadlock in MediaPlayerPrivateGStreamer::changePipelineState, web process often locks up on seeking in a youtube video that has already fully buffered
+        https://bugs.webkit.org/show_bug.cgi?id=170003
+
+        Reviewed by Michael Catanzaro.
+
+        When video sink is requested to render a frame, the GstBaseSink preroll mutex is taken. Then WebKit media player
+        schedules a repaint in the main thread, taking the draw mutex and waiting on draw condition. It can happen that
+        before the repaint is done in the main thread, a pause is requested in the main thread, causing a change state
+        from PLAYING to PAUSE. When the change state reaches the video sink gst_base_sink_change_state() tries to get
+        the preroll mutex. This causes a deadlock because the main thread is waiting to get the preroll mutex, but the
+        other thread is waiting for the main thread to do the repaint. GStreamer handles this case by calling unlock()
+        on the video sink before trying to get the preroll mutex, but the media player doesn't cancel the pending
+        repaint when using coordinated graphics. This patch adds a new signal to WebKitVideoSink "repaint-cancelled" to
+        notify the media player to cancel the pending prepaint.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::cancelRepaint): Release the draw mutex and notify the condition.
+        (WebCore::MediaPlayerPrivateGStreamerBase::repaintCancelledCallback): Call cancelRepaint().
+        (WebCore::MediaPlayerPrivateGStreamerBase::createVideoSink): Connect to WebKitVideoSink::repaint-cancelled.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+        * platform/graphics/gstreamer/VideoSinkGStreamer.cpp:
+        (webkitVideoSinkRepaintCancelled): Emit WebKitVideoSink::repaint-cancelled.
+        (webkitVideoSinkUnlock): Call webkitVideoSinkRepaintCancelled().
+        (webkitVideoSinkStop): Ditto.
+        (webkit_video_sink_class_init): Add WebKitVideoSink::repaint-cancelled signal.
+
+2017-06-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GStreamer] Cleanup ifdefs in MediaPlayerPrivateGStreamerBase
         https://bugs.webkit.org/show_bug.cgi?id=172918
 
