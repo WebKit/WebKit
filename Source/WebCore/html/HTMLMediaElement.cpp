@@ -606,19 +606,6 @@ static bool needsAutoplayPlayPauseEventsQuirk(const Document& document)
     return loader && loader->allowsAutoplayQuirks();
 }
 
-static bool needsPlaybackControlsManagerQuirk(Page& page)
-{
-    if (!page.settings().needsSiteSpecificQuirks())
-        return false;
-
-    auto* document = page.mainFrame().document();
-    if (!document)
-        return false;
-
-    String host = document->url().host();
-    return equalLettersIgnoringASCIICase(host, "netflix.com") || host.endsWithIgnoringASCIICase(".netflix.com");
-}
-
 HTMLMediaElement* HTMLMediaElement::bestMediaElementForShowingPlaybackControlsManager(MediaElementSession::PlaybackControlsPurpose purpose)
 {
     auto allSessions = PlatformMediaSessionManager::sharedManager().currentSessionsMatching([] (const PlatformMediaSession& session) {
@@ -643,15 +630,7 @@ HTMLMediaElement* HTMLMediaElement::bestMediaElementForShowingPlaybackControlsMa
     if (!strongestSessionCandidate.isVisibleInViewportOrFullscreen && !strongestSessionCandidate.isPlayingAudio && atLeastOneNonCandidateMayBeConfusedForMainContent)
         return nullptr;
 
-    HTMLMediaElement* strongestElementCandidate = &strongestSessionCandidate.session->element();
-    if (strongestElementCandidate) {
-        if (Page* page = strongestElementCandidate->document().page()) {
-            if (needsPlaybackControlsManagerQuirk(*page))
-                return nullptr;
-        }
-    }
-
-    return strongestElementCandidate;
+    return &strongestSessionCandidate.session->element();
 }
 
 void HTMLMediaElement::registerWithDocument(Document& document)

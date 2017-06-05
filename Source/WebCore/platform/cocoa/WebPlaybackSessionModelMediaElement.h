@@ -89,6 +89,7 @@ public:
     String externalPlaybackLocalizedDeviceName() const final;
     bool wirelessVideoPlaybackDisabled() const final;
     bool isMuted() const final;
+    bool allowsTouchBarScrubbing() const final;
 
 protected:
     WEBCORE_EXPORT WebPlaybackSessionModelMediaElement();

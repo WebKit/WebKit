@@ -1,3 +1,24 @@
+2017-06-05  Beth Dakin  <bdakin@apple.com>
+
+        Modify Netflix controlsManager quirk to prevent only scrubbing
+        https://bugs.webkit.org/show_bug.cgi?id=172881
+        -and corresponding-
+        rdar://problem/32228660
+
+        Reviewed by Andy Estes.
+
+        Plumbing for allowsTouchBarScrubbing. See WebCore ChangeLog for more details.
+
+        * UIProcess/Cocoa/WebPlaybackSessionManagerProxy.h:
+        * UIProcess/Cocoa/WebPlaybackSessionManagerProxy.messages.in:
+        * UIProcess/Cocoa/WebPlaybackSessionManagerProxy.mm:
+        (WebKit::WebPlaybackSessionModelContext::setAllowsTouchBarScrubbing):
+        (WebKit::WebPlaybackSessionManagerProxy::setAllowsTouchBarScrubbing):
+        * WebProcess/cocoa/WebPlaybackSessionManager.h:
+        * WebProcess/cocoa/WebPlaybackSessionManager.mm:
+        (WebKit::WebPlaybackSessionInterfaceContext::allowsTouchBarScrubbingChanged):
+        (WebKit::WebPlaybackSessionManager::allowsTouchBarScrubbingChanged):
+
 2017-06-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK+ build with OpenGL disabled after r217779.

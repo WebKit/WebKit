@@ -1,3 +1,49 @@
+2017-06-05  Beth Dakin  <bdakin@apple.com>
+
+        Modify Netflix controlsManager quirk to prevent only scrubbing
+        https://bugs.webkit.org/show_bug.cgi?id=172881
+        -and corresponding-
+        rdar://problem/32228660
+
+        Reviewed by Andy Estes.
+
+        Instead of preventing Netflix from getting a controlsManager at all, this patch 
+        ONLY prevents touch bar scrubbing from working. This means that Netflix will now 
+        get controls in the TouchBar, it means that the play/pause and PiP buttons will be 
+        functional, and it means that the timeline will accurately represent the current 
+        time, BUT users will not be able to use the timeline to scrub the video. This also 
+        allows Netflix to work with other MediaRemote clients such as AirPods.
+
+        Remove the quirk code from here, since this is no longer the right place to test 
+        if the MediaElement is hosted at Netflix.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::bestMediaElementForShowingPlaybackControlsManager):
+        (WebCore::needsPlaybackControlsManagerQuirk): Deleted.
+
+        Pass around a new bool allowsTouchBarScrubbing.
+        * platform/cocoa/WebPlaybackSessionModel.h:
+        (WebCore::WebPlaybackSessionModelClient::allowsTouchBarScrubbingChanged):
+        * platform/cocoa/WebPlaybackSessionModelMediaElement.h:
+
+        Here’s where we check if we need quirky behavior.
+        * platform/cocoa/WebPlaybackSessionModelMediaElement.mm:
+        (WebCore::WebPlaybackSessionModelMediaElement::updateForEventName):
+        (WebCore::WebPlaybackSessionModelMediaElement::allowsTouchBarScrubbing):
+
+        Return the bool we have plumbed through tracking whether the current site 
+        allowsTouchBarScrubbing from the existing delegate method 
+        canBeginTouchBarScrubbing. We will always return NO for video elements on Netflix, 
+        and this will prevent users from be able to scrub with the TouchBar on Netflix.
+        * platform/mac/WebPlaybackControlsManager.h:
+        * platform/mac/WebPlaybackControlsManager.mm:
+        (-[WebPlaybackControlsManager canBeginTouchBarScrubbing]):
+
+        More plumbing.
+        * platform/mac/WebPlaybackSessionInterfaceMac.h:
+        * platform/mac/WebPlaybackSessionInterfaceMac.mm:
+        (WebCore::WebPlaybackSessionInterfaceMac::allowsTouchBarScrubbingChanged):
+        (WebCore::WebPlaybackSessionInterfaceMac::setPlayBackControlsManager):
+
 2017-06-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GStreamer] Deadlock in MediaPlayerPrivateGStreamer::changePipelineState, web process often locks up on seeking in a youtube video that has already fully buffered

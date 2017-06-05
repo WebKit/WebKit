@@ -51,6 +51,7 @@ WEBCORE_EXPORT
     RetainPtr<AVTouchBarMediaSelectionOption> _currentLegibleTouchBarMediaSelectionOption;
     float _rate;
     BOOL _canTogglePlayback;
+    BOOL _allowsTouchBarScrubbing;
 
     RefPtr<WebCore::WebPlaybackSessionInterfaceMac> _webPlaybackSessionInterfaceMac;
 }
@@ -68,6 +69,7 @@ WEBCORE_EXPORT
 @property BOOL allowsPictureInPicturePlayback;
 @property (getter=isPictureInPictureActive) BOOL pictureInPictureActive;
 @property BOOL canTogglePictureInPicture;
+@property BOOL allowsTouchBarScrubbing;
 
 - (AVTouchBarMediaSelectionOption *)currentAudioTouchBarMediaSelectionOption;
 - (void)setCurrentAudioTouchBarMediaSelectionOption:(AVTouchBarMediaSelectionOption *)option;

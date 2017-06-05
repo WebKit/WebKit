@@ -84,6 +84,7 @@ public:
     void setExternalPlayback(bool, WebPlaybackSessionModel::ExternalPlaybackTargetType, const String&);
     void setWirelessVideoPlaybackDisabled(bool);
     void setMuted(bool);
+    void setAllowsTouchBarScrubbing(bool);
 
 private:
     friend class WebVideoFullscreenModelContext;
@@ -128,6 +129,7 @@ private:
     String externalPlaybackLocalizedDeviceName() const final { return m_externalPlaybackLocalizedDeviceName; }
     bool wirelessVideoPlaybackDisabled() const final { return m_wirelessVideoPlaybackDisabled; }
     bool isMuted() const final { return m_muted; }
+    bool allowsTouchBarScrubbing() const final { return m_allowsTouchBarScrubbing; }
 
     WebPlaybackSessionManagerProxy* m_manager;
     uint64_t m_contextId;
@@ -151,6 +153,7 @@ private:
     String m_externalPlaybackLocalizedDeviceName;
     bool m_wirelessVideoPlaybackDisabled { false };
     bool m_muted { false };
+    bool m_allowsTouchBarScrubbing { true };
 };
 
 class WebPlaybackSessionManagerProxy : public RefCounted<WebPlaybackSessionManagerProxy>, private IPC::MessageReceiver {
@@ -197,6 +200,7 @@ private:
     void setRate(uint64_t contextId, bool isPlaying, double rate);
     void handleControlledElementIDResponse(uint64_t, String) const;
     void setMuted(uint64_t contextId, bool muted);
+    void setAllowsTouchBarScrubbing(uint64_t contextId, bool allowsTouchBarScrubbing);
 
     // Messages to WebPlaybackSessionManager
     void play(uint64_t contextId);

@@ -88,6 +88,7 @@ private:
     void externalPlaybackChanged(bool enabled, WebCore::WebPlaybackSessionModel::ExternalPlaybackTargetType, const String& localizedDeviceName) final;
     void wirelessVideoPlaybackDisabledChanged(bool) final;
     void mutedChanged(bool) final;
+    void allowsTouchBarScrubbingChanged(bool) final;
 
     WebPlaybackSessionInterfaceContext(WebPlaybackSessionManager&, uint64_t contextId);
 
@@ -137,6 +138,7 @@ protected:
     void externalPlaybackChanged(uint64_t contextId, bool enabled, WebCore::WebPlaybackSessionModel::ExternalPlaybackTargetType, String localizedDeviceName);
     void wirelessVideoPlaybackDisabledChanged(uint64_t contextId, bool);
     void mutedChanged(uint64_t contextId, bool);
+    void allowsTouchBarScrubbingChanged(uint64_t contextId, bool);
 
     // Messages from WebPlaybackSessionManagerProxy
     void play(uint64_t contextId);

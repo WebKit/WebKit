@@ -186,6 +186,15 @@ void WebPlaybackSessionInterfaceMac::externalPlaybackChanged(bool enabled, WebPl
 #endif
 }
 
+void WebPlaybackSessionInterfaceMac::allowsTouchBarScrubbingChanged(bool allowsTouchBarScrubbing)
+{
+#if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
+    [playBackControlsManager() setAllowsTouchBarScrubbing:allowsTouchBarScrubbing];
+#else
+    UNUSED_PARAM(allowsTouchBarScrubbing);
+#endif
+}
+
 void WebPlaybackSessionInterfaceMac::invalidate()
 {
     if (!m_playbackSessionModel)
@@ -228,6 +237,7 @@ void WebPlaybackSessionInterfaceMac::setPlayBackControlsManager(WebPlaybackContr
     manager.playing = m_playbackSessionModel->isPlaying();
     [manager setAudioMediaSelectionOptions:m_playbackSessionModel->audioMediaSelectionOptions() withSelectedIndex:static_cast<NSUInteger>(m_playbackSessionModel->audioMediaSelectedIndex())];
     [manager setLegibleMediaSelectionOptions:m_playbackSessionModel->legibleMediaSelectionOptions() withSelectedIndex:static_cast<NSUInteger>(m_playbackSessionModel->legibleMediaSelectedIndex())];
+    manager.allowsTouchBarScrubbing = m_playbackSessionModel->allowsTouchBarScrubbing();
 }
 
 void WebPlaybackSessionInterfaceMac::updatePlaybackControlsManagerTiming(double currentTime, double anchorTime, double playbackRate, bool isPlaying)

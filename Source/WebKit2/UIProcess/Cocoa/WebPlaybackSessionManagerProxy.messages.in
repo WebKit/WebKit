@@ -39,6 +39,7 @@ messages -> WebPlaybackSessionManagerProxy {
     SetMuted(uint64_t contextId, bool muted);
     SetUpPlaybackControlsManagerWithID(uint64_t contextId)
     ClearPlaybackControlsManager()
+    SetAllowsTouchBarScrubbing(uint64_t contextId, bool allowsTouchBarScrubbing)
 
     HandleControlledElementIDResponse(uint64_t contextId, String id)
 }

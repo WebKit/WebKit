@@ -35,10 +35,12 @@
 #import "HTMLElement.h"
 #import "HTMLMediaElement.h"
 #import "Logging.h"
+#import "MainFrame.h"
 #import "MediaControlsHost.h"
 #import "MediaSelectionOption.h"
 #import "Page.h"
 #import "PageGroup.h"
+#import "Settings.h"
 #import "SoftLinking.h"
 #import "TextTrackList.h"
 #import "TimeRanges.h"
@@ -169,6 +171,11 @@ void WebPlaybackSessionModelMediaElement::updateForEventName(const WTF::AtomicSt
         || eventName == eventNames().volumechangeEvent) {
         for (auto client : m_clients)
             client->mutedChanged(isMuted());
+    }
+    
+    if (all) {
+        for (auto client : m_clients)
+            client->allowsTouchBarScrubbingChanged(allowsTouchBarScrubbing());
     }
 }
 void WebPlaybackSessionModelMediaElement::addClient(WebPlaybackSessionModelClient& client)
@@ -504,6 +511,26 @@ bool WebPlaybackSessionModelMediaElement::wirelessVideoPlaybackDisabled() const
 bool WebPlaybackSessionModelMediaElement::isMuted() const
 {
     return m_mediaElement ? m_mediaElement->muted() : false;
+}
+
+bool WebPlaybackSessionModelMediaElement::allowsTouchBarScrubbing() const
+{
+    if (!m_mediaElement)
+        return false;
+        
+    Page* page = m_mediaElement->document().page();
+    if (!page)
+        return false;
+        
+    auto* document = page->mainFrame().document();
+    if (!document)
+        return false;
+        
+    if (!page->settings().needsSiteSpecificQuirks())
+        return true;
+        
+    String host = document->url().host();
+    return !(equalLettersIgnoringASCIICase(host, "netflix.com") || host.endsWithIgnoringASCIICase(".netflix.com"));
 }
 
 }

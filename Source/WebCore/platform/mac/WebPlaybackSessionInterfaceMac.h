@@ -62,6 +62,7 @@ public:
     WEBCORE_EXPORT void audioMediaSelectionIndexChanged(uint64_t) final;
     WEBCORE_EXPORT void legibleMediaSelectionIndexChanged(uint64_t) final;
     WEBCORE_EXPORT void externalPlaybackChanged(bool /* enabled */, WebPlaybackSessionModel::ExternalPlaybackTargetType, const String& /* localizedDeviceName */) final;
+    WEBCORE_EXPORT void allowsTouchBarScrubbingChanged(bool allowsTouchBarScrubbing) final;
 
     WEBCORE_EXPORT void invalidate();
     WEBCORE_EXPORT void ensureControlsManager();
