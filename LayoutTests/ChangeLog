@@ -1,3 +1,15 @@
+2017-06-05  Antoine Quint  <graouts@apple.com>
+
+        Rebaseline media/modern-media-controls/audio/audio-controls-metrics.html
+        https://bugs.webkit.org/show_bug.cgi?id=172915
+
+        Reviewed by Antoine Quint.
+
+        The default height of <audio> elements is now 31pt.
+
+        * media/modern-media-controls/audio/audio-controls-metrics-expected.txt:
+        * media/modern-media-controls/audio/audio-controls-metrics.html:
+
 2017-06-04  Simon Fraser  <simon.fraser@apple.com>
 
         Percentages are calculated wrong in SVG transform CSS property
