@@ -23,6 +23,7 @@ PASS: Node className should be 'Window'.
 PASS: Node identifier should match.
 PASS: Node size should match.
 PASS: Node internal state should match.
+PASS: Node isObjectType state should match.
 PASS: Node gcRoot state should match.
 PASS: Node retainedSize should at least be the size.
 

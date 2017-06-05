@@ -25,7 +25,7 @@
 
 WebInspector.HeapSnapshotNodeProxy = class HeapSnapshotNodeProxy
 {
-    constructor(snapshotObjectId, identifier, className, size, retainedSize, internal, gcRoot, dead, dominatorNodeIdentifier, hasChildren)
+    constructor(snapshotObjectId, identifier, className, size, retainedSize, internal, isObjectType, gcRoot, dead, dominatorNodeIdentifier, hasChildren)
     {
         this._proxyObjectId = snapshotObjectId;
 
@@ -34,6 +34,7 @@ WebInspector.HeapSnapshotNodeProxy = class HeapSnapshotNodeProxy
         this.size = size;
         this.retainedSize = retainedSize;
         this.internal = internal;
+        this.isObjectType = isObjectType;
         this.gcRoot = gcRoot;
         this.dead = dead;
         this.dominatorNodeIdentifier = dominatorNodeIdentifier;
@@ -44,8 +45,8 @@ WebInspector.HeapSnapshotNodeProxy = class HeapSnapshotNodeProxy
 
     static deserialize(objectId, serializedNode)
     {
-        let {id, className, size, retainedSize, internal, gcRoot, dead, dominatorNodeIdentifier, hasChildren} = serializedNode;
-        return new WebInspector.HeapSnapshotNodeProxy(objectId, id, className, size, retainedSize, internal, gcRoot, dead, dominatorNodeIdentifier, hasChildren);
+        let {id, className, size, retainedSize, internal, isObjectType, gcRoot, dead, dominatorNodeIdentifier, hasChildren} = serializedNode;
+        return new WebInspector.HeapSnapshotNodeProxy(objectId, id, className, size, retainedSize, internal, isObjectType, gcRoot, dead, dominatorNodeIdentifier, hasChildren);
     }
 
     // Proxied

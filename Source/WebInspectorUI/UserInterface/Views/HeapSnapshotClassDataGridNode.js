@@ -60,10 +60,11 @@ WebInspector.HeapSnapshotClassDataGridNode = class HeapSnapshotClassDataGridNode
             return Number.bytesToString(this._data.size);
 
         if (columnIdentifier === "className") {
-            let {className} = this._data;
+            const internal = false;
+            let {className, isObjectSubcategory} = this._data;
             let fragment = document.createDocumentFragment();
             let iconElement = fragment.appendChild(document.createElement("img"));
-            iconElement.classList.add("icon", WebInspector.HeapSnapshotClusterContentView.iconStyleClassNameForClassName(className));
+            iconElement.classList.add("icon", WebInspector.HeapSnapshotClusterContentView.iconStyleClassNameForClassName(className, internal, isObjectSubcategory));
             let nameElement = fragment.appendChild(document.createElement("span"));
             nameElement.classList.add("class-name");
             nameElement.textContent = className;

@@ -30,12 +30,16 @@
  */
 
 // nodes
-// [<0:id>, <1:size>, <2:classNameTableIndex>, <3:internal>]
+// [<0:id>, <1:size>, <2:classNameTableIndex>, <3:flags>]
 const nodeFieldCount = 4;
 const nodeIdOffset = 0;
 const nodeSizeOffset = 1;
 const nodeClassNameOffset = 2;
-const nodeInternalOffset = 3;
+const nodeFlagsOffset = 3;
+
+// node flags
+const internalFlagsMask = (1 << 0);
+const objectTypeMask = (1 << 1);
 
 // edges
 // [<0:fromId>, <1:toId>, <2:typeTableIndex>, <3:edgeDataIndexOrEdgeNameIndex>]
@@ -50,6 +54,10 @@ const rootNodeIndex = 0;
 const rootNodeOrdinal = 0;
 const rootNodeIdentifier = 0;
 
+// Version Differences:
+//   - In Version 1, node[3] now named <flags> was the value 0 or 1 indicating not-internal or internal.
+//   - In Version 2, this became a bitmask so multiple flags could be included without modifying the size.
+//
 // Terminology:
 //   - `nodeIndex` is an index into the `nodes` list.
 //   - `nodeOrdinal` is the order of the node in the `nodes` list. (nodeIndex / nodeFieldCount).
@@ -83,7 +91,7 @@ HeapSnapshot = class HeapSnapshot
         snapshotDataString = null;
 
         let {version, nodes, nodeClassNames, edges, edgeTypes, edgeNames} = json;
-        console.assert(version === 1, "Expect JavaScriptCore Heap Snapshot version 1");
+        console.assert(version === 1 || version === 2, "Expect JavaScriptCore Heap Snapshot version 1 or 2");
 
         this._nodes = nodes;
         this._nodeCount = nodes.length / nodeFieldCount;
@@ -160,18 +168,20 @@ HeapSnapshot = class HeapSnapshot
             let className = nodeClassNamesTable[classNameTableIndex];
             let size = nodes[nodeIndex + nodeSizeOffset];
             let retainedSize = nodeOrdinalToRetainedSizes[nodeOrdinal];
-            let internal = nodes[nodeIndex + nodeInternalOffset] ? true : false;
+            let flags = nodes[nodeIndex + nodeFlagsOffset];
             let dead = nodeOrdinalIsDead[nodeOrdinal] ? true : false;
 
             let category = categories[className];
             if (!category)
-                category = categories[className] = {className, size: 0, retainedSize: 0, count: 0, internalCount: 0, deadCount: 0};
+                category = categories[className] = {className, size: 0, retainedSize: 0, count: 0, internalCount: 0, deadCount: 0, objectCount: 0};
 
             category.size += size;
             category.retainedSize += retainedSize;
             category.count += 1;
-            if (internal)
+            if (flags & internalFlagsMask)
                 category.internalCount += 1;
+            if (flags & objectTypeMask)
+                category.objectCount += 1;
             if (dead)
                 category.deadCount += 1;
             else
@@ -413,6 +423,7 @@ HeapSnapshot = class HeapSnapshot
         let nodeOrdinal = nodeIndex / nodeFieldCount;
         let edgeIndex = this._nodeOrdinalToFirstOutgoingEdge[nodeOrdinal];
         let hasChildren = this._edges[edgeIndex + edgeFromIdOffset] === nodeIdentifier;
+        let nodeFlags = this._nodes[nodeIndex + nodeFlagsOffset];
 
         let dominatorNodeOrdinal = this._nodeOrdinalToDominatorNodeOrdinal[nodeOrdinal];
         let dominatorNodeIndex = dominatorNodeOrdinal * nodeFieldCount;
@@ -423,7 +434,8 @@ HeapSnapshot = class HeapSnapshot
             className: this._nodeClassNamesTable[this._nodes[nodeIndex + nodeClassNameOffset]],
             size: this._nodes[nodeIndex + nodeSizeOffset],
             retainedSize: this._nodeOrdinalToRetainedSizes[nodeOrdinal],
-            internal: this._nodes[nodeIndex + nodeInternalOffset] ? true : false,
+            internal: nodeFlags & internalFlagsMask ? true : false,
+            isObjectType: nodeFlags & objectTypeMask ? true : false,
             gcRoot: this._nodeOrdinalIsGCRoot[nodeOrdinal] ? true : false,
             dead: this._nodeOrdinalIsDead[nodeOrdinal] ? true : false,
             dominatorNodeIdentifier,
@@ -750,7 +762,7 @@ HeapSnapshot = class HeapSnapshot
             for (let incomingEdgeIndex = incomingEdgeIndexEnd - 1; incomingEdgeIndex >= incomingEdgeIndexStart; --incomingEdgeIndex) {
                 let fromNodeOrdinal = this._incomingNodes[incomingEdgeIndex];
                 let fromNodeIndex = fromNodeOrdinal * nodeFieldCount;
-                let fromNodeIsInternal = this._nodes[fromNodeIndex + nodeInternalOffset];
+                let fromNodeIsInternal = this._nodes[fromNodeIndex + nodeFlagsOffset] & internalFlagsMask;
                 if (fromNodeIsInternal)
                     continue;
 
