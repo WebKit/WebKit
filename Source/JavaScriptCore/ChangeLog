@@ -1,3 +1,12 @@
+2017-06-05  Saam Barati  <sbarati@apple.com>
+
+        Update JSC's features.json
+        https://bugs.webkit.org/show_bug.cgi?id=172942
+
+        Rubber stamped by Mark Lam.
+
+        * features.json:
+
 2017-06-04  Konstantin Tokarev  <annulen@yandex.ru>
 
         Fix build of Windows-specific code with ICU 59.1
