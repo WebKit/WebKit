@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.setCanOpenWindows();
+    testRunner.setPopupBlockingEnabled(false);
+    testRunner.setCloseRemainingWindowsWhenComplete(true);
+    testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+    testRunner.waitUntilDone();
+}
+</script>
+</head>
+<body>
+<p>This page opens an about:blank window and navigates it to a victim page such that the about:blank page
+is put into the page cache. Once the victim page is loaded it tries to navigate to a <code>javascript</code>
+URL. Ensure that popup-blocking is disabled when running this test by hand. This test PASSED if no JavaScript
+alert dialogs are shown. Otherwise, it FAILED.</p>
+<script>
+function testClickAnchorElement(aDocument)
+{
+    var link = aDocument.createElement("a");
+    link.href = "javascript:alert('FAIL clicked HTML anchor element.')";
+    link.click();
+}
+
+function testClickLinkElement(aDocument)
+{
+    var link = aDocument.createElement("link");
+    link.href = "javascript:alert('FAIL clicked HTML link element.')";
+    link.click();
+}
+
+function testSubmitForm(aDocument)
+{
+    var form = aDocument.createElement("form");
+    form.action = "javascript:alert('FAIL submitted form.')";
+    form.submit();
+}
+
+function createClickEvent(aDocument)
+{
+    var mouseEventInitDict = {
+        bubbles: true,
+        cancelable: false,
+        view: aDocument.defaultView,
+        detail: 1,
+        screenX: 10,
+        screenY: 10,
+        clientX: 10,
+        clientY: 10,
+        ctrlKey: false,
+        shiftKey: false,
+        altKey: false,
+        metaKey: false,
+        button: 1,
+        relatedTarget: null
+    };
+    return new MouseEvent("click", mouseEventInitDict)
+}
+
+function testClickSVGAnchorElement(aDocument)
+{
+    var link = aDocument.createElementNS("http://www.w3.org/2000/svg", "svg:a");
+    link.setAttributeNS("http://www.w3.org/1999/xlink", "xlink:href", "javascript:alert('FAIL clicked SVG anchor element.')");
+    link.dispatchEvent(createClickEvent(aDocument));
+}
+
+function testClickMathElement(aDocument)
+{
+    var link = aDocument.createElementNS("http://www.w3.org/1998/Math/MathML", "math");
+    link.setAttribute("href", "javascript:alert('FAIL clicked Math element.')");
+    link.dispatchEvent(createClickEvent(aDocument));
+}
+
+function runTests()
+{
+    var childWindow = window.open("about:blank", "one");
+    var childDocument = childWindow.document;
+
+    var link = childDocument.createElement("a");
+    link.href = "http://localhost:8000/security/resources/innocent-victim.html";
+    link.click(); // Navigate window; moves about:blank into the page cache.
+
+    function checkDidNavigate()
+    {
+        try {
+            childWindow.location.href.toString;
+        } catch (e) {
+            // Victim page did load.
+            clearInterval(intervalID);
+
+            testClickAnchorElement(childDocument);
+            testClickLinkElement(childDocument);
+            testClickSVGAnchorElement(childDocument);
+            testClickMathElement(childDocument);
+            testSubmitForm(childDocument);
+
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+    }
+    var intervalID = window.setInterval(checkDidNavigate, 0);
+}
+runTests();
+</script>
+</body>
+</html>

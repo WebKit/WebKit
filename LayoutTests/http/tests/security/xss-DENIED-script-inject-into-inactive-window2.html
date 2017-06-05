@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.setCanOpenWindows();
+    testRunner.setPopupBlockingEnabled(false);
+    testRunner.setCloseRemainingWindowsWhenComplete(true);
+    testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+    testRunner.waitUntilDone();
+}
+</script>
+</head>
+<body>
+<p id="description">This tests that a &lt;script&gt; added to an inactive document window does not execute. The test FAILED if you see &quot;XSS&quot; on this page. Popup blocking must be disabled to run this test by hand.</p>
+<script>
+// Idea: Open a new window and have it navigate its opener to the victim site while holding a reference to the opener document.
+var openerDocument;
+var intervalId;
+if (document.location.search.indexOf("?actually-attack") !== -1) {
+    document.getElementById("description").textContent = 'Check the original window. The test FAILED if you see "XSS" on the page. Otherwise, it PASSED.';
+
+    // Case: New window
+    openerDocument = window.opener.document;
+
+    // Navigate same frame to victim.
+    var link = openerDocument.createElement("a");
+    link.target = "_self";
+    link.href = "http://localhost:8000/security/resources/innocent-victim.html";
+    link.click();
+
+    intervalId = window.setInterval(checkDidLoadVictim, 100);
+} else {
+    // Case: Initial load
+    var link = document.createElement("a");
+    link.target = "_blank";
+    link.href = "?actually-attack";
+    link.click(); // Open a new window.
+}
+
+function checkDidLoadVictim()
+{
+    try {
+        openerDocument.location.href
+    } catch (e) {
+        // Victim loaded.
+        window.clearInterval(intervalId);
+
+        // Run code in victim.
+        var scriptToRunInVictim = openerDocument.createElement("script");
+        scriptToRunInVictim.textContent = "document.writeln('XSS')";
+        openerDocument.body.appendChild(scriptToRunInVictim);
+        if (window.testRunner)
+            window.setTimeout(function () { window.testRunner.notifyDone(); }, 500);
+    }
+}
+</script>
+</body>
+</html>
