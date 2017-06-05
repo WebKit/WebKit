@@ -1,3 +1,11 @@
+2017-06-05  Dan Bernstein  <mitz@apple.com>
+
+        Tried to fix the build when targrting macOS 10.12 using the macOS 10.13 developer beta SDK.
+
+        * WebView/WebView.mm:
+        (-[WebView updateMediaTouchBar]):
+        * WebView/WebViewData.h:
+
 2017-06-03  Darin Adler  <darin@apple.com>
 
         Streamline handling of attributes, using references as much as possible

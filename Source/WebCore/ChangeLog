@@ -1,3 +1,9 @@
+2017-06-05  Dan Bernstein  <mitz@apple.com>
+
+        Tried to fix the build when targrting macOS 10.12 using the macOS 10.13 developer beta SDK.
+
+        * platform/spi/cocoa/AVKitSPI.h:
+
 2017-06-05  Konstantin Tokarev  <annulen@yandex.ru>
 
         Unreviewed, fix missing semicolon in r217795

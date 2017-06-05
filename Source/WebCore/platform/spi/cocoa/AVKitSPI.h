@@ -153,15 +153,10 @@ NS_ASSUME_NONNULL_END
 
 #if PLATFORM(MAC) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
 
-#if __MAC_OS_X_VERSION_MAX_ALLOWED < 101300
 OBJC_CLASS AVFunctionBarPlaybackControlsProvider;
 OBJC_CLASS AVFunctionBarScrubber;
 OBJC_CLASS AVFunctionBarMediaSelectionOption;
-typedef AVFunctionBarMediaSelectionOption AVTouchBarMediaSelectionOption;
-typedef AVFunctionBarPlaybackControlsProvider AVTouchBarPlaybackControlsProvider;
-typedef AVFunctionBarScrubber AVTouchBarScrubber;
-#define AVTouchBarPlaybackControlsControlling AVFunctionBarPlaybackControlsControlling
-#else
+#if __MAC_OS_X_VERSION_MAX_ALLOWED >= 101300
 OBJC_CLASS AVTouchBarPlaybackControlsProvider;
 OBJC_CLASS AVTouchBarScrubber;
 OBJC_CLASS AVTouchBarMediaSelectionOption;
@@ -176,11 +171,11 @@ OBJC_CLASS AVTouchBarMediaSelectionOption;
 #import <AVKit/AVFunctionBarScrubber.h>
 #endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
 
-#elif __MAC_OS_X_VERSION_MAX_ALLOWED < 101300
+#else
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol AVFunctionBarPlaybackControlsControlling <NSObject>
+__attribute__((availability(macosx,obsoleted=10.13))) @protocol AVFunctionBarPlaybackControlsControlling <NSObject>;
 @property (readonly) NSTimeInterval contentDuration;
 @property (readonly, nullable) AVValueTiming *timing;
 @property (readonly, getter=isSeeking) BOOL seeking;
@@ -190,22 +185,18 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readonly) BOOL hasEnabledVideo;
 @end
 
-@interface AVFunctionBarPlaybackControlsProvider : NSResponder
+__attribute__((availability(macosx,obsoleted=10.13))) @interface AVFunctionBarPlaybackControlsProvider : NSResponder
 @property (strong, readonly, nullable) NSTouchBar *touchBar;
-@property (assign, nullable) id<AVFunctionBarPlaybackControlsControlling> playbackControlsController;
-@end
-
-@interface AVFunctionBarScrubber : NSView
 @property (assign, nullable) id<AVFunctionBarPlaybackControlsControlling> playbackControlsController;
 @end
 
 @class AVThumbnail;
 
-NS_ASSUME_NONNULL_END
+__attribute__((availability(macosx,obsoleted=10.13))) @interface AVFunctionBarScrubber : NSView
+@property (assign, nullable) id<AVFunctionBarPlaybackControlsControlling> playbackControlsController;
+@end
 
-#else
-
-NS_ASSUME_NONNULL_BEGIN
+#if __MAC_OS_X_VERSION_MAX_ALLOWED >= 101300
 
 @protocol AVTouchBarPlaybackControlsControlling <NSObject>
 @property (readonly) NSTimeInterval contentDuration;
@@ -232,6 +223,8 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @class AVThumbnail;
+
+#endif
 
 NS_ASSUME_NONNULL_END
 
