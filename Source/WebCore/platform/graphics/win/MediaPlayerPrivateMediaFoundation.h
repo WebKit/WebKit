@@ -120,6 +120,9 @@ private:
     HashSet<MediaPlayerListener*> m_listeners;
     Lock m_mutexListeners;
 
+    FloatSize m_cachedNaturalSize;
+    mutable Lock m_cachedNaturalSizeLock;
+
     WeakPtrFactory<MediaPlayerPrivateMediaFoundation> m_weakPtrFactory;
     COMPtr<IMFMediaSession> m_mediaSession;
     COMPtr<IMFSourceResolver> m_sourceResolver;
@@ -157,6 +160,7 @@ private:
 
     void addListener(MediaPlayerListener*);
     void removeListener(MediaPlayerListener*);
+    void setNaturalSize(const FloatSize&);
     void notifyDeleted();
 
     static LRESULT CALLBACK VideoViewWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);

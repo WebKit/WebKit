@@ -1,3 +1,23 @@
+2017-06-05  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Fix MediaPlayerPrivateMediaFoundation::naturalSize
+        https://bugs.webkit.org/show_bug.cgi?id=172908
+
+        Reviewed by Alex Christensen.
+
+        MediaPlayerPrivateMediaFoundation::naturalSize should return size of
+        video frame corrected by PAR, not size of video element.
+
+        No new tests needed.
+
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.cpp:
+        (WebCore::MediaPlayerPrivateMediaFoundation::load):
+        (WebCore::MediaPlayerPrivateMediaFoundation::naturalSize):
+        (WebCore::MediaPlayerPrivateMediaFoundation::setNaturalSize):
+        (WebCore::calculateNaturalSize):
+        (WebCore::MediaPlayerPrivateMediaFoundation::CustomVideoPresenter::setMediaType):
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.h:
+
 2017-06-05  Zalan Bujtas  <zalan@apple.com>
 
         Destroy the associated renderer subtree when display: contents node is deleted.
