@@ -34,8 +34,6 @@ enum DrawingAreaType {
     DrawingAreaTypeTiledCoreAnimation,
 #endif
     DrawingAreaTypeRemoteLayerTree,
-#elif PLATFORM(WPE)
-    DrawingAreaTypeWPE
 #else
     DrawingAreaTypeImpl
 #endif

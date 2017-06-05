@@ -182,10 +182,14 @@ void ThreadedCompositor::updateViewport()
 
 void ThreadedCompositor::forceRepaint()
 {
+    // FIXME: Enable this for WPE once it's possible to do these forced updates
+    // in a way that doesn't starve out the underlying graphics buffers.
+#if PLATFORM(GTK)
     m_compositingRunLoop->performTaskSync([this, protectedThis = makeRef(*this)] {
         SetForScope<bool> change(m_inForceRepaint, true);
         renderLayerTree();
     });
+#endif
 }
 
 void ThreadedCompositor::renderLayerTree()

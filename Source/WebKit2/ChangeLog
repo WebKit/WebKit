@@ -1,3 +1,30 @@
+2017-06-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WPE] Use AcceleratedDrawingArea instead of its fork
+        https://bugs.webkit.org/show_bug.cgi?id=172496
+
+        Reviewed by Žan Doberšek.
+
+        WPE uses its own drawing area implementation, which is actually a fork of AcceleratedDrawingArea, but simplified
+        for the case of compositing being always forced. AcceleratedDrawingArea already handles the case of compositing
+        being forced, so now that WPE is upstream we could simply use AcceleratedDrawingArea instead.
+
+        * PlatformWPE.cmake:
+        * Shared/DrawingAreaInfo.h: Remove DrawingAreaTypeWPE type.
+        * UIProcess/API/wpe/DrawingAreaProxyWPE.cpp: Removed.
+        * UIProcess/API/wpe/DrawingAreaProxyWPE.h: Removed.
+        * UIProcess/API/wpe/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::createDrawingAreaProxy): Create an AcceleratedDrawingAreaProxy.
+        * WebProcess/WebPage/AcceleratedDrawingArea.cpp:
+        (WebKit::AcceleratedDrawingArea::mainFrameContentSizeChanged): Moved from DrawingAreaImpl since it actually
+        belongs here.
+        * WebProcess/WebPage/DrawingArea.cpp:
+        (WebKit::DrawingArea::create): Create an AcceleratedDrawingArea for WPE port.
+        * WebProcess/WebPage/DrawingAreaImpl.cpp: Remove mainFrameContentSizeChanged() that doesn't belong here.
+        * WebProcess/WebPage/DrawingAreaImpl.h:
+        * WebProcess/WebPage/wpe/DrawingAreaWPE.cpp: Removed.
+        * WebProcess/WebPage/wpe/DrawingAreaWPE.h: Removed.
+
 2017-06-03  Simon Fraser  <simon.fraser@apple.com>
 
         Sort the project file.
