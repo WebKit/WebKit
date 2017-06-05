@@ -1,5 +1,12 @@
 2017-06-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Fix GTK+ build with OpenGL disabled after r217779.
+
+        * WebProcess/WebPage/AcceleratedDrawingArea.cpp:
+        (WebKit::AcceleratedDrawingArea::mainFrameContentSizeChanged):
+
+2017-06-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [WPE] Use AcceleratedDrawingArea instead of its fork
         https://bugs.webkit.org/show_bug.cgi?id=172496
 
