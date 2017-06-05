@@ -30,6 +30,7 @@
 #include "GraphicsTypes3D.h"
 
 #include "AudioTrackPrivate.h"
+#include "ContentType.h"
 #include "LegacyCDMSession.h"
 #include "InbandTextTrackPrivate.h"
 #include "IntRect.h"
@@ -114,6 +115,7 @@ struct MediaEngineSupportParameters {
     URL url;
     bool isMediaSource { false };
     bool isMediaStream { false };
+    Vector<ContentType> contentTypesRequiringHardwareSupport;
 };
 
 extern const PlatformMedia NoPlatformMedia;
@@ -273,6 +275,7 @@ public:
 #endif
 
     virtual bool mediaPlayerShouldDisableSleep() const { return false; }
+    virtual const Vector<ContentType>& mediaContentTypesRequiringHardwareSupport() const;
 };
 
 class MediaPlayerSupportsTypeClient {
@@ -586,6 +589,8 @@ public:
     const String& contentMIMEType() const { return m_contentMIMEType; }
     const String& contentTypeCodecs() const { return m_contentTypeCodecs; }
     bool contentMIMETypeWasInferredFromExtension() const { return m_contentMIMETypeWasInferredFromExtension; }
+
+    const Vector<ContentType>& mediaContentTypesRequiringHardwareSupport() const;
 
 private:
     MediaPlayer(MediaPlayerClient&);

@@ -137,6 +137,7 @@ private:
     BOOL _needsStorageAccessFromFileURLsQuirk;
 
     NSString *_overrideContentSecurityPolicy;
+    NSString *_mediaContentTypesRequiringHardwareSupport;
 }
 
 - (instancetype)init
@@ -330,6 +331,7 @@ private:
     configuration->_overrideContentSecurityPolicy = self->_overrideContentSecurityPolicy;
 
     configuration->_urlSchemeHandlers.set(adoptNS([self._urlSchemeHandlers mutableCopyWithZone:zone]));
+    configuration->_mediaContentTypesRequiringHardwareSupport = self._mediaContentTypesRequiringHardwareSupport;
 
     return configuration;
 }
@@ -814,6 +816,16 @@ static NSString *defaultApplicationNameForUserAgent()
 - (void)_setOverrideContentSecurityPolicy:(NSString *)overrideContentSecurityPolicy
 {
     _overrideContentSecurityPolicy = overrideContentSecurityPolicy;
+}
+
+- (NSString *)_mediaContentTypesRequiringHardwareSupport
+{
+    return _mediaContentTypesRequiringHardwareSupport;
+}
+
+- (void)_setMediaContentTypesRequiringHardwareSupport:(NSString *)mediaContentTypesRequiringHardwareSupport
+{
+    _mediaContentTypesRequiringHardwareSupport = mediaContentTypesRequiringHardwareSupport;
 }
 
 @end

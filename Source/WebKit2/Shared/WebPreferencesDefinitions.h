@@ -401,6 +401,7 @@
     FOR_EACH_WEBKIT_FONT_FAMILY_PREFERENCE(macro) \
     macro(DefaultTextEncodingName, defaultTextEncodingName, String, String, defaultTextEncodingNameForSystemLanguage(), "", "") \
     macro(FTPDirectoryTemplatePath, ftpDirectoryTemplatePath, String, String, "", "", "") \
+    macro(MediaContentTypesRequiringHardwareSupport, mediaContentTypesRequiringHardwareSupport, String, String, "", "", "") \
     \
 
 #define FOR_EACH_WEBKIT_STRING_PREFERENCE_NOT_IN_WEBCORE(macro) \

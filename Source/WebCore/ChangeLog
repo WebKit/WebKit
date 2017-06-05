@@ -1,3 +1,36 @@
+2017-06-05  Jer Noble  <jer.noble@apple.com>
+
+        Allow clients to specify a list of codecs which should require hardware decode support.
+        https://bugs.webkit.org/show_bug.cgi?id=172787
+
+        Reviewed by Alex Christensen.
+
+        Add a new setting, checked by HTMLMediaElement, which allows MediaPlayerPrivate implementation
+        to require that the specified codecs have hardware support. This requirement will be supported
+        in the normal media loading path and the MSE path on Cocoa ports.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaCodecsRequiringHardwareSupport):
+        * html/HTMLMediaElement.h:
+        * page/Settings.cpp:
+        (WebCore::Settings::setMediaCodecsRequiringHardwareSupport):
+        * page/Settings.h:
+        (WebCore::Settings::mediaCodecsRequiringHardwareSupport):
+        * platform/cocoa/VideoToolboxSoftLink.cpp:
+        * platform/cocoa/VideoToolboxSoftLink.h:
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaPlayerClient::mediaCodecsRequiringHardwareSupport):
+        * platform/graphics/avfoundation/objc/AVAssetTrackUtilities.h: Added.
+        * platform/graphics/avfoundation/objc/AVAssetTrackUtilities.mm: Added.
+        (WebCore::assetTrackMeetsHardwareDecodeRequirements):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::checkPlayability):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::assetStatus):
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (WebCore::SourceBufferPrivateAVFObjC::didParseStreamDataAsAsset):
+
 2017-06-05  Dan Bernstein  <mitz@apple.com>
 
         Tried to fix the build when targrting macOS 10.12 using the macOS 10.13 developer beta SDK.

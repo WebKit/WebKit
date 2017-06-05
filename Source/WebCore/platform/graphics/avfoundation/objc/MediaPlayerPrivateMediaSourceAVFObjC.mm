@@ -948,6 +948,11 @@ void MediaPlayerPrivateMediaSourceAVFObjC::keyNeeded(Uint8Array* initData)
 }
 #endif
 
+const Vector<ContentType>& MediaPlayerPrivateMediaSourceAVFObjC::mediaContentTypesRequiringHardwareSupport() const
+{
+    return m_player->mediaContentTypesRequiringHardwareSupport();
+}
+
 void MediaPlayerPrivateMediaSourceAVFObjC::setReadyState(MediaPlayer::ReadyState readyState)
 {
     if (m_readyState == readyState)

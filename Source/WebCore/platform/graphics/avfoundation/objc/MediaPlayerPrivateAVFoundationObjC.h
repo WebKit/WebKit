@@ -424,6 +424,7 @@ private:
     bool m_cachedCanPlayFastForward;
     bool m_cachedCanPlayFastReverse;
     bool m_muted { false };
+    mutable std::optional<bool> m_tracksArePlayable;
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     mutable bool m_allowsWirelessVideoPlayback;
     bool m_shouldPlayToPlaybackTarget { false };

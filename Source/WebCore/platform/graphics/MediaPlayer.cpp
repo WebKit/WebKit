@@ -161,6 +161,12 @@ public:
     bool hasSingleSecurityOrigin() const override { return true; }
 };
 
+const Vector<ContentType>& MediaPlayerClient::mediaContentTypesRequiringHardwareSupport() const
+{
+    static NeverDestroyed<Vector<ContentType>> contentTypes;
+    return contentTypes;
+}
+
 static MediaPlayerClient& nullMediaPlayerClient()
 {
     static NeverDestroyed<MediaPlayerClient> client;
@@ -1462,6 +1468,11 @@ void MediaPlayer::setShouldDisableSleep(bool flag)
 bool MediaPlayer::shouldDisableSleep() const
 {
     return client().mediaPlayerShouldDisableSleep();
+}
+
+const Vector<ContentType>& MediaPlayer::mediaContentTypesRequiringHardwareSupport() const
+{
+    return client().mediaContentTypesRequiringHardwareSupport();
 }
 
 }

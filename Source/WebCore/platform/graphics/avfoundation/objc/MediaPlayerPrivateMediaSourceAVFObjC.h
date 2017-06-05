@@ -117,6 +117,8 @@ public:
     void keyNeeded(Uint8Array*);
 #endif
 
+    const Vector<ContentType>& mediaContentTypesRequiringHardwareSupport() const;
+
     WeakPtr<MediaPlayerPrivateMediaSourceAVFObjC> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
 
 private:

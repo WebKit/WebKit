@@ -1770,3 +1770,14 @@ bool WKPreferencesGetMediaUserGestureInheritsFromDocument(WKPreferencesRef prefe
 {
     return toImpl(preferencesRef)->mediaUserGestureInheritsFromDocument();
 }
+
+void WKPreferencesSetMediaContentTypesRequiringHardwareSupport(WKPreferencesRef preferencesRef, WKStringRef codecs)
+{
+    toImpl(preferencesRef)->setMediaContentTypesRequiringHardwareSupport(toWTFString(codecs));
+}
+
+WKStringRef WKPreferencesCopyMediaContentTypesRequiringHardwareSupport(WKPreferencesRef preferencesRef)
+{
+    return toCopiedAPI(toImpl(preferencesRef)->mediaContentTypesRequiringHardwareSupport());
+}
+

@@ -4291,6 +4291,8 @@ URL HTMLMediaElement::selectNextSourceChild(ContentType* contentType, String* ke
 #if ENABLE(MEDIA_STREAM)
             parameters.isMediaStream = mediaURL.protocolIs(mediaStreamBlobProtocol);
 #endif
+            parameters.contentTypesRequiringHardwareSupport = mediaContentTypesRequiringHardwareSupport();
+
             if (!MediaPlayer::supportsType(parameters, this))
                 goto CheckAgain;
         }
@@ -6626,6 +6628,11 @@ void HTMLMediaElement::mediaPlayerEngineFailedToLoad() const
 double HTMLMediaElement::mediaPlayerRequestedPlaybackRate() const
 {
     return potentiallyPlaying() ? requestedPlaybackRate() : 0;
+}
+
+const Vector<ContentType>& HTMLMediaElement::mediaContentTypesRequiringHardwareSupport() const
+{
+    return document().settings().mediaContentTypesRequiringHardwareSupport();
 }
 
 #if USE(GSTREAMER)

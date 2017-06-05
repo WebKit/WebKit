@@ -27,6 +27,7 @@
 #pragma once
 
 #include "ClipboardAccessPolicy.h"
+#include "ContentType.h"
 #include "EditingBehaviorTypes.h"
 #include "IntSize.h"
 #include "SecurityOrigin.h"
@@ -325,6 +326,10 @@ public:
     WEBCORE_EXPORT static void setAllowsAnySSLCertificate(bool);
     static bool allowsAnySSLCertificate();
 
+    WEBCORE_EXPORT void setMediaContentTypesRequiringHardwareSupport(const Vector<ContentType>&);
+    WEBCORE_EXPORT void setMediaContentTypesRequiringHardwareSupport(const String&);
+    const Vector<ContentType>& mediaContentTypesRequiringHardwareSupport() const { return m_mediaContentTypesRequiringHardwareSupport; }
+
 private:
     explicit Settings(Page*);
 
@@ -424,6 +429,8 @@ private:
     static bool gLowPowerVideoAudioBufferSizeEnabled;
     static bool gResourceLoadStatisticsEnabledEnabled;
     static bool gAllowsAnySSLCertificate;
+
+    Vector<ContentType> m_mediaContentTypesRequiringHardwareSupport;
 };
 
 inline bool Settings::isPostLoadCPUUsageMeasurementEnabled()

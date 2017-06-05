@@ -1,3 +1,28 @@
+2017-06-05  Jer Noble  <jer.noble@apple.com>
+
+        Allow clients to specify a list of codecs which should require hardware decode support.
+        https://bugs.webkit.org/show_bug.cgi?id=172787
+
+        Reviewed by Alex Christensen.
+
+        Add a WKWebPageConfiguration (and associated WebPreferences and WKPreferencesRef) properties
+        allowing clients to require specified codecs have hardware decode support. Also open up the
+        sandbox on Cocoa ports to services required to check for hardware decode availability.
+
+        * Shared/WebPreferencesDefinitions.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetMediaCodecsRequiringHardwareSupport):
+        (WKPreferencesCopyMediaCodecsRequiringHardwareSupport):
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration copyWithZone:]):
+        (-[WKWebViewConfiguration _mediaCodecsRequiringHardwareSupport]):
+        (-[WKWebViewConfiguration _setMediaCodecsRequiringHardwareSupport:]):
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2017-06-05  Beth Dakin  <bdakin@apple.com>
 
         Modify Netflix controlsManager quirk to prevent only scrubbing

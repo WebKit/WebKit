@@ -28,6 +28,7 @@
 
 #if ENABLE(MEDIA_SOURCE) && USE(AVFOUNDATION)
 
+#import "AVAssetTrackUtilities.h"
 #import "AVFoundationSPI.h"
 #import "AudioTrackPrivateMediaSourceAVFObjC.h"
 #import "CDMSessionAVContentKeySession.h"
@@ -430,6 +431,16 @@ SourceBufferPrivateAVFObjC::~SourceBufferPrivateAVFObjC()
 void SourceBufferPrivateAVFObjC::didParseStreamDataAsAsset(AVAsset* asset)
 {
     LOG(MediaSource, "SourceBufferPrivateAVFObjC::didParseStreamDataAsAsset(%p)", this);
+
+    if (!m_mediaSource)
+        return;
+
+    for (AVAssetTrack *track in [asset tracks]) {
+        if (!assetTrackMeetsHardwareDecodeRequirements(track, m_mediaSource->player()->mediaContentTypesRequiringHardwareSupport())) {
+            m_parsingSucceeded = false;
+            return;
+        }
+    }
 
     m_asset = asset;
 

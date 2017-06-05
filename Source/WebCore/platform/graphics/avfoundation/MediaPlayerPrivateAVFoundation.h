@@ -296,6 +296,7 @@ protected:
     const String& assetURL() const { return m_assetURL; }
 
     MediaPlayer* player() { return m_player; }
+    const MediaPlayer* player() const { return m_player; }
 
     String engineDescription() const override { return "AVFoundation"; }
     long platformErrorCode() const override { return assetErrorCode(); }

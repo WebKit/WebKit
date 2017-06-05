@@ -789,4 +789,15 @@ bool Settings::allowsAnySSLCertificate()
     return gAllowsAnySSLCertificate;
 }
 
+void Settings::setMediaContentTypesRequiringHardwareSupport(const String& contentTypes)
+{
+    m_mediaContentTypesRequiringHardwareSupport = contentTypes.split(":").map(ContentType::create);
+}
+
+void Settings::setMediaContentTypesRequiringHardwareSupport(const Vector<ContentType>& contentTypes)
+{
+    m_mediaContentTypesRequiringHardwareSupport = contentTypes;
+}
+
+
 } // namespace WebCore

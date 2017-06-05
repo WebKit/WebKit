@@ -370,6 +370,13 @@ public:
         split(separator, false, result);
     }
 
+    Vector<String> split(const String& separator) const
+    {
+        Vector<String> result;
+        split(separator, false, result);
+        return result;
+    }
+
     WTF_EXPORT_STRING_API int toIntStrict(bool* ok = nullptr, int base = 10) const;
     WTF_EXPORT_STRING_API unsigned toUIntStrict(bool* ok = nullptr, int base = 10) const;
     WTF_EXPORT_STRING_API int64_t toInt64Strict(bool* ok = nullptr, int base = 10) const;
