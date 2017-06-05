@@ -1,3 +1,19 @@
+2017-06-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Percentages are calculated wrong in SVG transform CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=172901
+
+        Reviewed by Zalan Bujtas.
+        
+        The code added in r217236 was just fetching viewBox(), but that can be empty.
+        SVGLengthContext::determineViewport() does the correct thing to get
+        the appropriate viewport.
+
+        Test: svg/transforms/percent-transform-values-viewbox.html
+
+        * svg/SVGGraphicsElement.cpp:
+        (WebCore::SVGGraphicsElement::animatedLocalTransform):
+
 2017-06-04  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Page capture state not reported correctly

@@ -88,12 +88,12 @@ AffineTransform SVGGraphicsElement::animatedLocalTransform() const
             break;
         case TransformBox::BorderBox:
             // For SVG elements without an associated CSS layout box, the used value for border-box is view-box.
-        case TransformBox::ViewBox:
-            if (auto *viewportElement = nearestViewportElement()) {
-                if (is<SVGSVGElement>(*viewportElement))
-                    boundingBox = downcast<SVGSVGElement>(*viewportElement).viewBox();
-            }
+        case TransformBox::ViewBox: {
+            FloatSize viewportSize;
+            SVGLengthContext(this).determineViewport(viewportSize);
+            boundingBox.setSize(viewportSize);
             break;
+            }
         }
         
         // Note: objectBoundingBox is an emptyRect for elements like pattern or clipPath.

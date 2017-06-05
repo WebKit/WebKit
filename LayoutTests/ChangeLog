@@ -1,3 +1,18 @@
+2017-06-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Percentages are calculated wrong in SVG transform CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=172901
+
+        Reviewed by Zalan Bujtas.
+
+        * svg/transforms/percent-transform-values-viewbox-expected.html: Added.
+        * svg/transforms/percent-transform-values-viewbox.html: Added.
+        * svg/transforms/transform-origin-css-property-expected.xhtml:
+        * svg/transforms/transform-origin-css-property.xhtml: Make this test a bit less
+        annoying to maintain by applying the transforms relative to the fill-box, which means all
+        the transform origins are no longer offset by the box position. Other tests exercise
+        view-box relative transform origins.
+
 2017-06-04  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Page capture state not reported correctly

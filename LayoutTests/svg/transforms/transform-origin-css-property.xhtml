@@ -30,13 +30,13 @@
     function addTransformOriginRect(x, y, s)
     {
        var rect = document.createElementNS(svgNS, "rect");
-       var transformOrigin = (typeof(s) == "string") ? s :  (x + s[0]) + "px " + (y + s[1]) + "px";
+       var transformOrigin = (typeof(s) == "string") ? s :  s[0] + "px " + s[1] + "px";
        rect.setAttribute("id", "transformOriginRect");
        rect.setAttribute("x", x);
        rect.setAttribute("y", y);
        rect.setAttribute("width", 30);
        rect.setAttribute("height", 30);
-       rect.setAttribute("style", "transform-box: view-box; transform-origin: " + transformOrigin + ";");
+       rect.setAttribute("style", "transform-box: fill-box; transform-origin: " + transformOrigin + ";");
        document.getElementById("svgRoot").appendChild(rect);
     }
 
