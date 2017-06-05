@@ -1,3 +1,11 @@
+2017-06-05  Dan Bernstein  <mitz@apple.com>
+
+        Tried to fix the build when targrting macOS 10.12 using the macOS 10.13 developer beta SDK.
+
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::mediaPlaybackControlsView):
+
 2017-06-05  Jer Noble  <jer.noble@apple.com>
 
         Allow clients to specify a list of codecs which should require hardware decode support.

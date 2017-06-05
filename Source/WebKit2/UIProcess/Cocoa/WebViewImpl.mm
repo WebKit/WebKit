@@ -919,7 +919,11 @@ NSCandidateListTouchBarItem *WebViewImpl::candidateListTouchBarItem() const
 }
 
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
 AVTouchBarScrubber *WebViewImpl::mediaPlaybackControlsView() const
+#else
+AVFunctionBarScrubber *WebViewImpl::mediaPlaybackControlsView() const
+#endif
 {
     if (m_page->hasActiveVideoForControlsManager())
         return m_mediaPlaybackControlsView.get();

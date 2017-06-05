@@ -37,7 +37,13 @@ struct MediaSelectionOption;
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
 
 WEBCORE_EXPORT
-@interface WebPlaybackControlsManager : NSObject <AVTouchBarPlaybackControlsControlling> {
+@interface WebPlaybackControlsManager : NSObject
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+    <AVTouchBarPlaybackControlsControlling>
+#else
+    <AVFunctionBarPlaybackControlsControlling>
+#endif
+{
 @private
     NSTimeInterval _contentDuration;
     RetainPtr<AVValueTiming> _timing;
