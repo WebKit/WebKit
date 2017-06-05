@@ -483,9 +483,13 @@ void UIScriptController::applyAutocorrection(JSStringRef newString, JSStringRef 
 
     TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
     [webView applyAutocorrection:toWTFString(toWK(newString)) toString:toWTFString(toWK(oldString)) withCompletionHandler:^ {
-        if (!m_context)
-            return;
-        m_context->asyncTaskComplete(callbackID);
+        // applyAutocorrection can call its completion handler synchronously,
+        // which makes UIScriptController unhappy (see bug 172884).
+        dispatch_async(dispatch_get_main_queue(), ^ {
+            if (!m_context)
+                return;
+            m_context->asyncTaskComplete(callbackID);
+        });
     }];
 }
 
