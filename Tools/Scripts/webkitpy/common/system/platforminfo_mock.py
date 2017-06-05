@@ -36,6 +36,9 @@ class MockPlatformInfo(object):
     def is_mac(self):
         return self.os_name == 'mac'
 
+    def is_ios(self):
+        return self.os_name == 'ios'
+
     def is_linux(self):
         return self.os_name == 'linux'
 

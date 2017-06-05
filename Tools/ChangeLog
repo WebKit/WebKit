@@ -1,3 +1,17 @@
+2017-06-05  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Add iOS to platform
+        https://bugs.webkit.org/show_bug.cgi?id=172931
+
+        Reviewed by Daniel Bates.
+
+        * Scripts/webkitpy/common/system/platforminfo.py:
+        PlatformInfo.__init__): Use platform_module.release() as the os_version for iOS device.
+        (PlatformInfo.is_ios): Added.
+        (PlatformInfo._determine_os_name): A platform name of 'ios' means that the os name is 'ios'.
+        * Scripts/webkitpy/common/system/platforminfo_mock.py:
+        (MockPlatformInfo.is_ios): Added.
+
 2017-06-05  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [WPE][JHBuild] Switch github repository from git:// to https://
