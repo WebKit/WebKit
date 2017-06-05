@@ -1,3 +1,23 @@
+2017-06-05  Zalan Bujtas  <zalan@apple.com>
+
+        Destroy the associated renderer subtree when display: contents node is deleted.
+        https://bugs.webkit.org/show_bug.cgi?id=172920
+        <rdar://problem/32446045>
+
+        Reviewed by Antti Koivisto.
+
+        Since display: contents node does not create a renderer, we need to explicitly check
+        and distinguish it from the display: none case.
+
+        Covered by existing tests.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::destroyRenderTreeIfNeeded):
+        * dom/Node.cpp:
+        (WebCore::Node::~Node): Promote ASSERT(!renderer()) to ASSERT_WITH_SECURITY_IMPLICATION.
+        * dom/Text.cpp:
+        (WebCore::Text::~Text): Redundant assert. Text is a Node.
+
 2017-06-05  Beth Dakin  <bdakin@apple.com>
 
         Modify Netflix controlsManager quirk to prevent only scrubbing

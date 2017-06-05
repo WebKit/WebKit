@@ -54,7 +54,6 @@ Ref<Text> Text::createEditingText(Document& document, const String& data)
 
 Text::~Text()
 {
-    ASSERT(!renderer());
 }
 
 ExceptionOr<Ref<Text>> Text::splitText(unsigned offset)

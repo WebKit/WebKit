@@ -286,7 +286,7 @@ Node::~Node()
     liveNodeSet.remove(this);
 #endif
 
-    ASSERT(!renderer());
+    ASSERT_WITH_SECURITY_IMPLICATION(!renderer());
     ASSERT(!parentNode());
     ASSERT(!m_previous);
     ASSERT(!m_next);

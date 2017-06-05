@@ -53,6 +53,7 @@
 #include "RenderTreeUpdater.h"
 #include "RenderWidget.h"
 #include "RootInlineBox.h"
+#include "RuntimeEnabledFeatures.h"
 #include "SVGDocumentExtensions.h"
 #include "SVGElement.h"
 #include "SVGNames.h"
@@ -105,12 +106,11 @@ void ContainerNode::removeDetachedChildren()
 
 static inline void destroyRenderTreeIfNeeded(Node& child)
 {
-    bool childIsHTMLSlotElement = false;
-    childIsHTMLSlotElement = is<HTMLSlotElement>(child);
-    // FIXME: Get rid of the named flow test.
     bool isElement = is<Element>(child);
-    if (!child.renderer() && !childIsHTMLSlotElement
-        && !(isElement && downcast<Element>(child).isNamedFlowContentElement()))
+    auto hasDisplayContents = isElement && downcast<Element>(child).hasDisplayContents();
+    auto isNamedFlowElement = isElement && downcast<Element>(child).isNamedFlowContentElement();
+    // FIXME: Get rid of the named flow test.
+    if (!child.renderer() && !hasDisplayContents && !isNamedFlowElement)
         return;
     if (isElement)
         RenderTreeUpdater::tearDownRenderers(downcast<Element>(child));
