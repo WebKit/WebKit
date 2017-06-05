@@ -1,5 +1,55 @@
 2017-06-05  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Rebaseline tests for Windows after r217772.
+        https://bugs.webkit.org/show_bug.cgi?id=172866
+
+        Unreviewed test gardening.
+
+        * platform/win/svg/W3C-SVG-1.1-SE/paths-dom-02-f-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1/animate-elem-06-t-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1/animate-elem-07-t-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1/animate-elem-08-t-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1/animate-elem-83-t-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1/filters-example-01-b-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1/paths-data-01-t-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1/paths-data-02-t-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1/paths-data-12-t-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1/text-path-01-b-expected.txt:
+        * platform/win/svg/batik/filters/feTile-expected.txt:
+        * platform/win/svg/batik/filters/filterRegions-expected.txt:
+        * platform/win/svg/batik/masking/maskRegions-expected.txt:
+        * platform/win/svg/batik/paints/gradientLimit-expected.txt:
+        * platform/win/svg/batik/paints/patternPreserveAspectRatioA-expected.txt:
+        * platform/win/svg/batik/paints/patternRegionA-expected.txt:
+        * platform/win/svg/batik/paints/patternRegions-expected.txt:
+        * platform/win/svg/batik/paints/patternRegions-positioned-objects-expected.txt: Added.
+        * platform/win/svg/batik/text/longTextOnPath-expected.txt: Added.
+        * platform/win/svg/batik/text/smallFonts-expected.txt:
+        * platform/win/svg/batik/text/textAnchor-expected.txt:
+        * platform/win/svg/batik/text/textDecoration-expected.txt:
+        * platform/win/svg/batik/text/textEffect-expected.txt:
+        * platform/win/svg/batik/text/textEffect2-expected.txt:
+        * platform/win/svg/batik/text/textEffect3-expected.txt:
+        * platform/win/svg/batik/text/textFeatures-expected.txt:
+        * platform/win/svg/batik/text/textGlyphOrientationHorizontal-expected.txt:
+        * platform/win/svg/batik/text/textLayout-expected.txt:
+        * platform/win/svg/batik/text/textLayout2-expected.txt:
+        * platform/win/svg/batik/text/textLength-expected.txt:
+        * platform/win/svg/batik/text/textOnPathSpaces-expected.txt:
+        * platform/win/svg/batik/text/textPosition-expected.txt:
+        * platform/win/svg/batik/text/textProperties-expected.txt:
+        * platform/win/svg/batik/text/textProperties2-expected.txt:
+        * platform/win/svg/batik/text/textStyles-expected.txt:
+        * platform/win/svg/custom/broken-internal-references-expected.txt:
+        * platform/win/svg/custom/path-textPath-simulation-expected.txt:
+        * platform/win/svg/dom/SVGPathSegList-segment-modification-expected.txt:
+        * platform/win/svg/hixie/perf/001-expected.txt:
+        * platform/win/svg/hixie/perf/002-expected.txt:
+        * platform/win/svg/text/text-path-01-b-expected.txt:
+        * platform/win/svg/zoom/page/zoom-svg-through-object-with-override-size-expected.txt:
+
+2017-06-05  Ryan Haddad  <ryanhaddad@apple.com>
+
         Remove debug-only flag for flaky test http/tests/navigation/statistics.html.
         https://bugs.webkit.org/show_bug.cgi?id=172454
 
