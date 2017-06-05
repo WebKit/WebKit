@@ -95,6 +95,7 @@ RefPtr<BitmapTexture> BitmapTexturePool::createTexture(const BitmapTexture::Flag
 #if USE(TEXTURE_MAPPER_GL)
     return BitmapTextureGL::create(*m_context3D, flags);
 #else
+    UNUSED_PARAM(flags);
     return nullptr;
 #endif
 }

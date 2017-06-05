@@ -1,3 +1,10 @@
+2017-06-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix compile warning when building GTK+ port without OpenGL.
+
+        * platform/graphics/texmap/BitmapTexturePool.cpp:
+        (WebCore::BitmapTexturePool::createTexture):
+
 2017-06-05  Miguel Gomez  <magomez@igalia.com>
 
         [GTK][WPE] Do not force video sample's buffer release when the platformLayerProxy is inactive
