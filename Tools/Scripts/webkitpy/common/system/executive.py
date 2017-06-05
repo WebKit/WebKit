@@ -37,8 +37,8 @@ import subprocess
 import sys
 import time
 
+from webkitpy.common.system.abstractexecutive import AbstractExecutive
 from webkitpy.common.system.outputtee import Tee
-from webkitpy.common.system.filesystem import FileSystem
 
 
 _log = logging.getLogger(__name__)
@@ -80,7 +80,7 @@ class ScriptError(Exception):
         return os.path.basename(command_path)
 
 
-class Executive(object):
+class Executive(AbstractExecutive):
     PIPE = subprocess.PIPE
     STDOUT = subprocess.STDOUT
 
@@ -156,33 +156,6 @@ class Executive(object):
         except (ValueError, TypeError):
             pass
         return multiprocessing.cpu_count()
-
-    @staticmethod
-    def interpreter_for_script(script_path, fs=None):
-        fs = fs or FileSystem()
-        lines = fs.read_text_file(script_path).splitlines()
-        if not len(lines):
-            return None
-        first_line = lines[0]
-        if not first_line.startswith('#!'):
-            return None
-        if first_line.find('python') > -1:
-            return sys.executable
-        if first_line.find('perl') > -1:
-            return 'perl'
-        if first_line.find('ruby') > -1:
-            return 'ruby'
-        return None
-
-    @staticmethod
-    def shell_command_for_script(script_path, fs=None):
-        fs = fs or FileSystem()
-        # Win32 does not support shebang. We need to detect the interpreter ourself.
-        if sys.platform.startswith('win'):
-            interpreter = Executive.interpreter_for_script(script_path, fs)
-            if interpreter:
-                return [interpreter, script_path]
-        return [script_path]
 
     def kill_process(self, pid):
         # Killing a process with a pid of 0 or a negative pid is a valid command, but
@@ -323,25 +296,6 @@ class Executive(object):
 
         return sorted(running_pids)
 
-    def wait_newest(self, process_name_filter=None):
-        if not process_name_filter:
-            process_name_filter = lambda process_name: True
-
-        running_pids = self.running_pids(process_name_filter)
-        if not running_pids:
-            return
-        pid = running_pids[-1]
-
-        while self.check_running_pid(pid):
-            time.sleep(0.25)
-
-    def wait_limited(self, pid, limit_in_seconds=None, check_frequency_in_seconds=None):
-        seconds_left = limit_in_seconds or 10
-        sleep_length = check_frequency_in_seconds or 1
-        while seconds_left > 0 and self.check_running_pid(pid):
-            seconds_left -= sleep_length
-            time.sleep(sleep_length)
-
     def _windows_image_name(self, process_name):
         name, extension = os.path.splitext(process_name)
         if not extension:
@@ -384,17 +338,6 @@ class Executive(object):
         # We should log in exit_code == 1
         self.run_command(command, error_handler=self.ignore_error)
 
-    # Error handlers do not need to be static methods once all callers are
-    # updated to use an Executive object.
-
-    @staticmethod
-    def default_error_handler(error):
-        raise error
-
-    @staticmethod
-    def ignore_error(error):
-        pass
-
     def _compute_stdin(self, input):
         """Returns (stdin, string_to_communicate)"""
         # FIXME: We should be returning /dev/null for stdin
@@ -413,19 +356,6 @@ class Executive(object):
         if isinstance(input, unicode):
             input = input.encode(self._child_process_encoding())
         return (self.PIPE, input)
-
-    def command_for_printing(self, args):
-        """Returns a print-ready string representing command args.
-        The string should be copy/paste ready for execution in a shell."""
-        args = self._stringify_args(args)
-        escaped_args = []
-        for arg in args:
-            if isinstance(arg, unicode):
-                # Escape any non-ascii characters for easy copy/paste
-                arg = arg.encode("unicode_escape")
-            # FIXME: Do we need to fix quotes here?
-            escaped_args.append(arg)
-        return " ".join(escaped_args)
 
     # FIXME: run_and_throw_if_fail should be merged into this method.
     def run_command(self,

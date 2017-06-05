@@ -1,3 +1,48 @@
+2017-06-05  Daniel Bates  <dabates@apple.com>
+
+        webkitpy: Abstract Executive class
+        https://bugs.webkit.org/show_bug.cgi?id=172928
+        <rdar://problem/32569531>
+
+        Reviewed by Ryosuke Niwa.
+
+        Adds an AbstractExecutive class and makes Executive extend AbstractExecutive.
+        This will make it straightforward to create additional derived classes that
+        adhere to the same interface, say for iOS on-device testing.
+
+        * Scripts/webkitpy/common/system/abstractexecutive.py: Added.
+        (AbstractExecutive):
+        (AbstractExecutive.run_and_throw_if_fail):
+        (AbstractExecutive.cpu_count):
+        (AbstractExecutive.interpreter_for_script):
+        (AbstractExecutive.shell_command_for_script):
+        (AbstractExecutive.kill_process):
+        (AbstractExecutive.check_running_pid):
+        (AbstractExecutive.running_pids):
+        (AbstractExecutive.wait_newest):
+        (AbstractExecutive.wait_limited):
+        (AbstractExecutive.interrupt):
+        (AbstractExecutive.default_error_handler):
+        (AbstractExecutive.ignore_error):
+        (AbstractExecutive._stringify_args):
+        (AbstractExecutive.command_for_printing):
+        (AbstractExecutive.run_command):
+        (AbstractExecutive.popen):
+        (AbstractExecutive.run_in_parallel):
+        * Scripts/webkitpy/common/system/executive.py:
+        (Executive):
+        (Executive.cpu_count):
+        (Executive.running_pids):
+        (Executive.kill_all):
+        (Executive._compute_stdin):
+        (Executive.interpreter_for_script): Deleted.
+        (Executive.shell_command_for_script): Deleted.
+        (Executive.wait_newest): Deleted.
+        (Executive.wait_limited): Deleted.
+        (Executive.default_error_handler): Deleted.
+        (Executive.ignore_error): Deleted.
+        (Executive.command_for_printing): Deleted.
+
 2017-06-05  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Add iOS to platform
