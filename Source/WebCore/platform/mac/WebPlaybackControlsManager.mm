@@ -338,15 +338,14 @@ static RetainPtr<NSMutableArray> mediaSelectionOptions(const Vector<MediaSelecti
     return NO;
 }
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
-
 - (void)togglePictureInPicture
 {
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
     if (_webPlaybackSessionInterfaceMac && _webPlaybackSessionInterfaceMac->webPlaybackSessionModel())
         _webPlaybackSessionInterfaceMac->webPlaybackSessionModel()->togglePictureInPicture();
+#endif
 }
 
-#endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
 
 #pragma clang diagnostic pop
 
