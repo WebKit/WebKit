@@ -1559,7 +1559,7 @@ static FloatSize calculateNaturalSize(IMFMediaType* mediaType)
     UINT32 pixelAspectRatioDenominator = 0;
     hr = MFGetAttributeRatio(mediaType, MF_MT_PIXEL_ASPECT_RATIO, &pixelAspectRatioNumerator, &pixelAspectRatioDenominator);
     if (SUCCEEDED(hr) && pixelAspectRatioNumerator && pixelAspectRatioDenominator)
-        return FloatSize(float(width) * pixelAspectRatioNumerator / pixelAspectRatioDenominator, height)
+        return FloatSize(float(width) * pixelAspectRatioNumerator / pixelAspectRatioDenominator, height);
 
     return FloatSize();
 }

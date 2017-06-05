@@ -1,3 +1,10 @@
+2017-06-05  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Unreviewed, fix missing semicolon in r217795
+
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.cpp:
+        (WebCore::calculateNaturalSize):
+
 2017-06-05  Jer Noble  <jer.noble@apple.com>
 
         Allow clients to specify a list of codecs which should require hardware decode support.
