@@ -1,5 +1,26 @@
 2017-06-05  Miguel Gomez  <magomez@igalia.com>
 
+        [GTK][WPE] Do not force video sample's buffer release when the platformLayerProxy is inactive
+        https://bugs.webkit.org/show_bug.cgi?id=172916
+
+        Reviewed by Carlos Garcia Campos.
+
+        When MediaPlayerPrivateGStreamerBase's plarformLayerProxy was inactive, a copy of the video sample
+        was being done (without the buffer) and set, causing the sample's buffer to get freed. This was done
+        to avoid stalling the gstreamer pipeline in situations where the video was set to display:none, as the
+        platformLayerProxy would keep all the available buffers. But this can't happen nowadays as setting
+        the video to display:none invalidates the proxy, causing it to release the references to the
+        gstreamer buffers it's using. Also, the current code is causing a crash when using gstreamer-gl and
+        the video is hidden but its contents are being painted through webgl or an accelerated canvas. So,
+        remove this sample copy as it's not necessary anymore.
+
+        Covered by existent tests.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::pushTextureToCompositor):
+
+2017-06-05  Miguel Gomez  <magomez@igalia.com>
+
         [GTK][WPE] Fix the condition to decide whether the MediaPlayer can be rendered accelerated
         https://bugs.webkit.org/show_bug.cgi?id=172852
 
