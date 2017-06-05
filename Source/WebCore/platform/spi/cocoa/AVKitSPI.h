@@ -160,6 +160,8 @@ OBJC_CLASS AVFunctionBarMediaSelectionOption;
 OBJC_CLASS AVTouchBarPlaybackControlsProvider;
 OBJC_CLASS AVTouchBarScrubber;
 OBJC_CLASS AVTouchBarMediaSelectionOption;
+#else
+typedef AVFunctionBarMediaSelectionOption AVTouchBarMediaSelectionOption;
 #endif
 
 #if USE(APPLE_INTERNAL_SDK)
