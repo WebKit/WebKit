@@ -1,5 +1,29 @@
 2017-06-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GStreamer] Cleanup ifdefs in MediaPlayerPrivateGStreamerBase
+        https://bugs.webkit.org/show_bug.cgi?id=172918
+
+        Reviewed by Michael Catanzaro.
+
+        The code in MediaPlayerPrivateGStreamerBase is quite difficult to follow with all the ifdefs for the
+        possibilities when rendering. Some of them are even dead code now that all ports using GStreamer are using also
+        coordinated graphics.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::MediaPlayerPrivateGStreamerBase):
+        (WebCore::MediaPlayerPrivateGStreamerBase::~MediaPlayerPrivateGStreamerBase):
+        (WebCore::MediaPlayerPrivateGStreamerBase::pushTextureToCompositor):
+        (WebCore::MediaPlayerPrivateGStreamerBase::repaint):
+        (WebCore::MediaPlayerPrivateGStreamerBase::triggerRepaint):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+        * platform/graphics/gstreamer/VideoSinkGStreamer.cpp:
+        (VideoRenderRequestScheduler::VideoRenderRequestScheduler):
+        (VideoRenderRequestScheduler::stop):
+        (VideoRenderRequestScheduler::requestRender):
+        (webkitVideoSinkRequestRender):
+
+2017-06-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Fix compile warning when building GTK+ port without OpenGL.
 
         * platform/graphics/texmap/BitmapTexturePool.cpp:

@@ -69,7 +69,7 @@ static GRefPtr<GstSample> webkitVideoSinkRequestRender(WebKitVideoSink*, GstBuff
 class VideoRenderRequestScheduler {
 public:
     VideoRenderRequestScheduler()
-#if !USE(COORDINATED_GRAPHICS_THREADED)
+#if !USE(TEXTURE_MAPPER_GL)
         : m_timer(RunLoop::main(), this, &VideoRenderRequestScheduler::render)
 #endif
     {
@@ -86,7 +86,7 @@ public:
         LockHolder locker(m_sampleMutex);
         m_sample = nullptr;
         m_unlocked = true;
-#if !USE(COORDINATED_GRAPHICS_THREADED)
+#if !USE(TEXTURE_MAPPER_GL)
         m_timer.stop();
         m_dataCondition.notifyOne();
 #endif
@@ -108,7 +108,7 @@ public:
         if (!m_sample)
             return false;
 
-#if USE(COORDINATED_GRAPHICS_THREADED)
+#if USE(TEXTURE_MAPPER_GL)
         auto sample = WTFMove(m_sample);
         locker.unlockEarly();
         if (LIKELY(GST_IS_SAMPLE(sample.get())))
@@ -123,7 +123,7 @@ public:
 
 private:
 
-#if !USE(COORDINATED_GRAPHICS_THREADED)
+#if !USE(TEXTURE_MAPPER_GL)
     void render()
     {
         LockHolder locker(m_sampleMutex);
@@ -138,7 +138,7 @@ private:
     Lock m_sampleMutex;
     GRefPtr<GstSample> m_sample;
 
-#if !USE(COORDINATED_GRAPHICS_THREADED)
+#if !USE(TEXTURE_MAPPER_GL)
     RunLoop::Timer<VideoRenderRequestScheduler> m_timer;
     Condition m_dataCondition;
     GRefPtr<WebKitVideoSink> m_sink;
@@ -198,7 +198,6 @@ static GRefPtr<GstSample> webkitVideoSinkRequestRender(WebKitVideoSink* sink, Gs
     if (format == GST_VIDEO_FORMAT_UNKNOWN)
         return nullptr;
 
-#if !(USE(TEXTURE_MAPPER_GL) && !USE(COORDINATED_GRAPHICS))
     // Cairo's ARGB has pre-multiplied alpha while GStreamer's doesn't.
     // Here we convert to Cairo's ARGB.
     if (format == GST_VIDEO_FORMAT_ARGB || format == GST_VIDEO_FORMAT_BGRA) {
@@ -258,7 +257,6 @@ static GRefPtr<GstSample> webkitVideoSinkRequestRender(WebKitVideoSink* sink, Gs
         sample = adoptGRef(gst_sample_new(newBuffer, priv->currentCaps, nullptr, nullptr));
         gst_buffer_unref(newBuffer);
     }
-#endif
 
     return sample;
 }
