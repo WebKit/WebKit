@@ -4,12 +4,11 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS airplayButton.element.localName is "button"
-PASS airplayButton.element.classList.contains("icon") is true
 PASS airplayButton.element.classList.contains("airplay") is true
 PASS airplayButton.iconName is Icons.Airplay
-PASS airplayButton.element.style.webkitMaskImage.includes("macOS/airplay@") became true
-PASS macOSFullscreenAirplayButton.element.style.webkitMaskImage.includes("macOS/airplay-fullscreen@") became true
-PASS iOSAirplayButton.element.style.webkitMaskImage.includes("iOS/airplay@") became true
+PASS airplayButton.image.element.style.webkitMaskImage.includes("macOS/Airplay.svg") became true
+PASS macOSFullscreenAirplayButton.image.element.style.webkitMaskImage.includes("macOS/Airplay-fullscreen.svg") became true
+PASS iOSAirplayButton.image.element.style.webkitMaskImage.includes("iOS/Airplay.svg") became true
 PASS successfullyParsed is true
 
 TEST COMPLETE

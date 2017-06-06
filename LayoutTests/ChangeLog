@@ -1,5 +1,22 @@
 2017-06-06  Antoine Quint  <graouts@apple.com>
 
+        Rebaseline and enable media/modern-media-controls/airplay-button
+        https://bugs.webkit.org/show_bug.cgi?id=172975
+        <rdar://problem/32588422>
+
+        Reviewed by Eric Carlson.
+
+        * media/modern-media-controls/airplay-button/airplay-button-expected.txt:
+        * media/modern-media-controls/airplay-button/airplay-button-on.html: Remove some unnecessary
+        code, the path to the icon directory is provided directly by media-controls-loader.js.
+        * media/modern-media-controls/airplay-button/airplay-button.html: Remove the test for the "icon"
+        CSS class since buttons no longer carry this class. We also update the assumptions to use SVG
+        assets.
+        * platform/ios-simulator/TestExpectations:
+        * platform/mac/TestExpectations:
+
+2017-06-06  Antoine Quint  <graouts@apple.com>
+
         Update modern media controls testing utilities
         https://bugs.webkit.org/show_bug.cgi?id=172976
         <rdar://problem/32588432>

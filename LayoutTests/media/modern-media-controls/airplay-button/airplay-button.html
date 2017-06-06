@@ -12,16 +12,15 @@ description("Testing the <code>AirplayButton</code> class.");
 const airplayButton = new AirplayButton({ layoutTraits: LayoutTraits.macOS });
 
 shouldBeEqualToString("airplayButton.element.localName", "button");
-shouldBeTrue('airplayButton.element.classList.contains("icon")');
 shouldBeTrue('airplayButton.element.classList.contains("airplay")');
 shouldBe("airplayButton.iconName", "Icons.Airplay");
 
 const macOSFullscreenAirplayButton = new AirplayButton({ layoutTraits: LayoutTraits.macOS | LayoutTraits.Fullscreen });
 const iOSAirplayButton = new AirplayButton({ layoutTraits: LayoutTraits.iOS });
 
-shouldBecomeEqual('airplayButton.element.style.webkitMaskImage.includes("macOS/airplay@")', "true", () => {
-    shouldBecomeEqual('macOSFullscreenAirplayButton.element.style.webkitMaskImage.includes("macOS/airplay-fullscreen@")', "true", () => {
-        shouldBecomeEqual('iOSAirplayButton.element.style.webkitMaskImage.includes("iOS/airplay@")', "true", finishJSTest);
+shouldBecomeEqual('airplayButton.image.element.style.webkitMaskImage.includes("macOS/Airplay.svg")', "true", () => {
+    shouldBecomeEqual('macOSFullscreenAirplayButton.image.element.style.webkitMaskImage.includes("macOS/Airplay-fullscreen.svg")', "true", () => {
+        shouldBecomeEqual('iOSAirplayButton.image.element.style.webkitMaskImage.includes("iOS/Airplay.svg")', "true", finishJSTest);
     });
 });
 
