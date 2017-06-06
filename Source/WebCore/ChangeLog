@@ -1,3 +1,17 @@
+2017-06-06  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK][Wayland] Do not pass value of $DISPLAY to wl_display_connect()
+        https://bugs.webkit.org/show_bug.cgi?id=172993
+
+        Reviewed by Žan Doberšek.
+
+        No new tests needed.
+
+        * platform/graphics/wayland/PlatformDisplayWayland.cpp:
+        (WebCore::PlatformDisplayWayland::create): Instead of using the "DISPLAY" environment variable (meant for X11),
+        pass a null pointer to "wl_display_connect()". This function checks the value of the "WAYLAND_DISPLAY" environment
+        variable itself and therefore we do not need to pass it ourselves.
+
 2017-06-06  Antoine Quint  <graouts@apple.com>
 
         Rebaseline and enable media/modern-media-controls/airplay-support

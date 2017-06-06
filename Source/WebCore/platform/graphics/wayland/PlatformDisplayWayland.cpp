@@ -52,7 +52,7 @@ const struct wl_registry_listener PlatformDisplayWayland::s_registryListener = {
 
 std::unique_ptr<PlatformDisplay> PlatformDisplayWayland::create()
 {
-    struct wl_display* display = wl_display_connect(getenv("DISPLAY"));
+    struct wl_display* display = wl_display_connect(nullptr);
     if (!display)
         return nullptr;
 
