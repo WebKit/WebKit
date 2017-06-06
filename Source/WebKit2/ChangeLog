@@ -1,3 +1,11 @@
+2017-06-05  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Revert r217405, this headerpad increase is no longer needed.
+
+        Rubber-stamped by Dan Bernstein.
+
+        * Configurations/BaseXPCService.xcconfig:
+
 2017-06-05  Dan Bernstein  <mitz@apple.com>
 
         Tried to fix the build when targrting macOS 10.12 using the macOS 10.13 developer beta SDK.
