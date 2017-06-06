@@ -1,3 +1,16 @@
+2017-06-06  Jonathan Bedard  <jbedard@apple.com>
+
+        Move storage/websql/alter-to-info-table.html failure expectation.
+        https://bugs.webkit.org/show_bug.cgi?id=156718
+
+        Unreviewed test gardening
+
+        storage/websql/alter-to-info-table.html fails on iOS-simulator,
+        but passes on device.
+
+        * platform/ios-simulator/TestExpectations:
+        * platform/ios/TestExpectations:
+
 2017-06-06  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark media/fullscreen-api-enabled-media-with-presentation-mode.html is failing.

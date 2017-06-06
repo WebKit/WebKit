@@ -2693,8 +2693,6 @@ http/tests/dom/document-contentType.html [ Failure ]
 # rdar://problem/26477897
 imported/w3c/web-platform-tests/dom/nodes/Document-contentType/contentType/contenttype_mimeheader_01.html [ Failure ]
 
-webkit.org/b/156718 storage/websql/alter-to-info-table.html [ Failure ]
-
 css3/font-variant-petite-caps-synthesis.html [ ImageOnlyFailure ]
 css3/font-variant-small-caps-synthesis.html [ ImageOnlyFailure ]
 

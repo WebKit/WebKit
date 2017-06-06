@@ -64,3 +64,5 @@ webkit.org/b/166062 media/modern-media-controls/airplay-support [ Skip ]
 webkit.org/b/166062 media/modern-media-controls/audio/audio-controls-buttons.html [ Skip ]
 
 webkit.org/b/172965 media/track/track-cue-overlap-snap-to-lines-not-set.html [ Failure ]
+
+webkit.org/b/156718 storage/websql/alter-to-info-table.html [ Failure ]
