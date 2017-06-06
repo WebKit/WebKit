@@ -30,20 +30,29 @@
 }
 
 :host(audio) {
-    width: 200px;
-    min-width: 200px !important;
-    min-height: 50px !important;
+    width: 250px;
+    height: var(--inline-controls-bar-height);
+    min-width: 44px !important;
+    min-height: var(--inline-controls-bar-height) !important;
 }
 
 * {
-    --inline-controls-bar-height: 50px;
-    --inline-compact-controls-bar-height: 25px;
+    /* This constant needs to stay in sync with the InsideMargin JS constant. */
+    --inline-controls-inside-margin: 6px;
     --fullscreen-controls-bar-height: 75px;
+    --primary-glyph-color: rgba(255, 255, 255, 0.75);
+    --secondary-glyph-color: rgba(255, 255, 255, 0.55);
+}
+
+:host(audio), * {
+    /* This constant needs to stay in sync with the BottomControlsBarHeight JS constant. */
+    --inline-controls-bar-height: 31px;
 }
 
 /* We need to use relative positioning due to webkit.org/b/163603 */
 .media-controls-container {
     position: relative;
+    will-change: z-index;
 }
 
 .media-controls-container,
@@ -72,10 +81,26 @@
     white-space: nowrap;
     text-align: initial;
     cursor: default;
+    transform-origin: 0 0;
 }
 
 :host(:-webkit-animating-full-screen-transition) .media-controls {
     display: none;
+}
+
+.media-controls > * {
+    transition: opacity 0.1s linear;
+}
+
+.media-controls.shows-tracks-panel > .controls-bar,
+.media-controls.shows-tracks-panel > button {
+    pointer-events: none;
+}
+
+.media-controls.faded > *:not(.placard) {
+    opacity: 0;
+    pointer-events: none;
+    transition-duration: 0.25s;
 }
 
 .media-controls > .controls-bar {
@@ -85,6 +110,12 @@
 .media-controls.fade-in {
     animation-name: fade-in;
     animation-duration: 350ms;
+}
+
+.media-controls .time-label,
+.media-controls .status-label {
+    color: var(--secondary-glyph-color);
+    mix-blend-mode: plus-lighter;
 }
 
 @keyframes fade-in {

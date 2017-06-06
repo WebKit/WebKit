@@ -40,27 +40,10 @@
     height: var(--fullscreen-controls-bar-height);
 }
 
-.media-controls.mac.fullscreen > .controls-bar > .background-tint > div {
-    border-radius: 8px;
-}
-
 /* Volume slider */
-
-.media-controls.mac.fullscreen .volume.slider {
-    left: 31px;
-    top: 19px;
-}
 
 .media-controls.mac.fullscreen:not(.uses-ltr-user-interface-layout-direction) .volume.slider {
     transform: scaleX(-1);
-}
-
-.media-controls.mac.fullscreen button.volume-down {
-    top: 18px;
-}
-
-.media-controls.mac.fullscreen button.volume-up {
-    top: 17px;
 }
 
 /* Button containers */
@@ -69,24 +52,15 @@
     height: 44px;
 }
 
+.media-controls.mac.fullscreen .buttons-container.left {
+    top: 16px;
+    height: 16px;
+}
+
 .media-controls.mac.fullscreen .buttons-container.center {
     left: 50%;
-    top: 0;
+    top: 3px;
     transform: translateX(-50%);
-}
-
-/* Buttons placement for center container */
-
-.media-controls.mac.fullscreen button.rewind {
-    top: 17px;
-}
-
-.media-controls.mac.fullscreen button.play-pause {
-    top: 12px;
-}
-
-.media-controls.mac.fullscreen button.forward {
-    top: 17px;
 }
 
 /* Make right container flush to the right */
@@ -106,15 +80,10 @@
 .media-controls.mac.fullscreen .time-control {
     position: absolute;
     left: 10px;
-    top: 48px;
-}
-
-.media-controls.mac.fullscreen .time-label {
-    font-size: 12px;
-}
-
-.media-controls.mac.fullscreen .scrubber {
-    top: -3px;
+    top: 49px;
+    height: 16px;
+    display: flex;
+    align-items: center;
 }
 
 /* Status Label */
@@ -124,5 +93,6 @@
     left: 0;
     right: 0;
     bottom: 13px;
+    font-size: 14px;
     text-align: center;
 }

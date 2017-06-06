@@ -26,7 +26,7 @@
 class ButtonsContainer extends LayoutNode
 {
 
-    constructor({ buttons = [], leftMargin = 24, rightMargin = 24, buttonMargin = 24, cssClassName = "" } = {})
+    constructor({ buttons = [], leftMargin = 16, rightMargin = 16, buttonMargin = 16, cssClassName = "" } = {})
     {
         super(`<div class="buttons-container ${cssClassName}"></div>`);
 

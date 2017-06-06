@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class IOSInlineMediaControls extends MediaControls
+class IOSInlineMediaControls extends InlineMediaControls
 {
 
     constructor(options = {})
@@ -32,35 +32,42 @@ class IOSInlineMediaControls extends MediaControls
 
         super(options);
 
-        this._inlineLayoutSupport = new InlineLayoutSupport(this, [this.airplayButton, this.pipButton, this.skipBackButton, this.fullscreenButton]);
-
         this.element.classList.add("ios");
-        this.element.classList.add("inline");
-
-        this.leftContainer = new ButtonsContainer({
-            buttons: [this.playPauseButton, this.skipBackButton],
-            cssClassName: "left"
-        });
-
-        this.rightContainer = new ButtonsContainer({
-            buttons: [this.airplayButton, this.pipButton, this.fullscreenButton],
-            cssClassName: "right"
-        });
-
-        this.layoutTraitsDidChange();
-
-        this.controlsBar.children = [this.leftContainer, this.rightContainer];
 
         this._pinchGestureRecognizer = new PinchGestureRecognizer(this.element, this);
+    }
+
+    // Public
+
+    get showsStartButton()
+    {
+        return super.showsStartButton;
+    }
+
+    set showsStartButton(flag)
+    {
+        super.showsStartButton = flag;
+
+        if (!flag)
+            delete this._tapGestureRecognizer;
+        else if (!this._tapGestureRecognizer)
+            this._tapGestureRecognizer = new TapGestureRecognizer(this.element, this);
     }
 
     // Protected
 
     gestureRecognizerStateDidChange(recognizer)
     {
-        if (this._pinchGestureRecognizer !== recognizer)
-            return;
+        if (recognizer === this._pinchGestureRecognizer)
+            this._pinchGestureRecognizerStateDidChange(recognizer);
+        else if (recognizer === this._tapGestureRecognizer)
+            this._tapGestureRecognizerStateDidChange(recognizer);
+    }
 
+    // Private
+
+    _pinchGestureRecognizerStateDidChange(recognizer)
+    {
         if (recognizer.state !== GestureRecognizer.States.Ended && recognizer.state !== GestureRecognizer.States.Changed)
             return;
 
@@ -68,28 +75,11 @@ class IOSInlineMediaControls extends MediaControls
             this.delegate.iOSInlineMediaControlsRecognizedPinchInGesture();
     }
 
-    // Protected
-
-    layout()
+    _tapGestureRecognizerStateDidChange(recognizer)
     {
-        super.layout();
-
-        if (this.controlsBar && this.controlsBar.visible)
-            this.controlsBar.children = this._inlineLayoutSupport.childrenAfterPerformingLayout();
-    }
-
-    layoutTraitsDidChange()
-    {
-        if (!this.leftContainer || !this.rightContainer)
-            return;
-
-        const margin = (this.layoutTraits & LayoutTraits.TightPadding) ? 12 : 24;
-        this.leftContainer.leftMargin = margin;
-        this.leftContainer.rightMargin = margin;
-        this.leftContainer.buttonMargin = margin;
-        this.rightContainer.leftMargin = margin;
-        this.rightContainer.rightMargin = margin;
-        this.rightContainer.buttonMargin = margin;
+        console.assert(this.showsStartButton);
+        if (recognizer.state === GestureRecognizer.States.Recognized && this.delegate && typeof this.delegate.iOSInlineMediaControlsRecognizedTapGesture === "function")
+            this.delegate.iOSInlineMediaControlsRecognizedTapGesture();
     }
 
 }

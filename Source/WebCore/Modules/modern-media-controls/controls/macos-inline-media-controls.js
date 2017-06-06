@@ -23,101 +23,61 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class MacOSInlineMediaControls extends MacOSMediaControls
+const MinimumHeightToShowVolumeSlider = 136;
+
+class MacOSInlineMediaControls extends InlineMediaControls
 {
 
-    constructor(options)
+    constructor(options = {})
     {
+        options.layoutTraits = LayoutTraits.macOS;
+
         super(options);
 
-        this._inlineLayoutSupport = new InlineLayoutSupport(this, [this.airplayButton, this.pipButton, this.tracksButton, this.muteButton, this.skipBackButton, this.fullscreenButton]);
+        this.element.classList.add("mac");
 
-        this.element.classList.add("inline");
+        this._backgroundClickDelegateNotifier = new BackgroundClickDelegateNotifier(this);
 
-        this.leftContainer = new ButtonsContainer({
-            buttons: [this.playPauseButton, this.skipBackButton],
-            cssClassName: "left"
-        });
-
-        this.rightContainer = new ButtonsContainer({
-            buttons: [this.muteButton, this.airplayButton, this.pipButton, this.tracksButton, this.fullscreenButton],
-            cssClassName: "right"
-        });
-
-        this.layoutTraitsDidChange();
-
-        this._backgroundTint = new BackgroundTint;
+        this.volumeSlider = new Slider("volume");
+        this.volumeSlider.width = 60;
 
         this._volumeSliderContainer = new LayoutNode(`<div class="volume-slider-container"></div>`);
         this._volumeSliderContainer.children = [new BackgroundTint, this.volumeSlider];
-        this._volumeSliderContainer.visible = false;
-        this.volumeSlider.width = 60;
 
         // Wire up events to display the volume slider.
         this.muteButton.element.addEventListener("mouseenter", this);
         this.muteButton.element.addEventListener("mouseleave", this);
         this._volumeSliderContainer.element.addEventListener("mouseleave", this);
-
-        this.controlsBar.children = [this._backgroundTint, this.leftContainer, this.rightContainer, this._volumeSliderContainer];
     }
 
-    // Public
+    // Protected
 
     layout()
     {
         super.layout();
 
-        if (!this.controlsBar || !this.controlsBar.visible)
+        if (!this._volumeSliderContainer)
             return;
 
-        const children = this._inlineLayoutSupport.childrenAfterPerformingLayout();
-        // Add the background tint as the first child.
-        children.unshift(this._backgroundTint);
-        children.push(this._volumeSliderContainer);
-        this.controlsBar.children = children;
-
         this._volumeSliderContainer.x = this.rightContainer.x + this.muteButton.x;
+        this._volumeSliderContainer.y = this.bottomControlsBar.y - BottomControlsBarHeight - InsideMargin;
     }
 
-    // Protected
+    get preferredMuteButtonStyle()
+    {
+        return (this.height >= MinimumHeightToShowVolumeSlider) ? Button.Styles.Bar : super.preferredMuteButtonStyle;
+    }
 
     handleEvent(event)
     {
-        if (event.type === "mouseenter" && event.currentTarget === this.muteButton.element)
-            this._volumeSliderContainer.visible = true;
-        else if (event.type === "mouseleave" && (event.currentTarget === this.muteButton.element || event.currentTarget === this._volumeSliderContainer.element))
-            this._volumeSliderContainer.visible = this._volumeSliderContainer.element.contains(event.relatedTarget);
-        else
+        if (event.type === "mouseenter" && event.currentTarget === this.muteButton.element) {
+            if (this.muteButton.style === Button.Styles.Bar)
+                this.addChild(this._volumeSliderContainer);
+        } else if (event.type === "mouseleave" && (event.currentTarget === this.muteButton.element || event.currentTarget === this._volumeSliderContainer.element)) {
+            if (!this._volumeSliderContainer.element.contains(event.relatedTarget))
+                this._volumeSliderContainer.remove();
+        } else
             super.handleEvent(event);
-    }
-
-    layoutTraitsDidChange()
-    {
-        if (!this.leftContainer || !this.rightContainer)
-            return;
-
-        const layoutTraits = this.layoutTraits;
-        if (layoutTraits & LayoutTraits.Compact) {
-            this.leftContainer.leftMargin = 8;
-            this.leftContainer.rightMargin = 12;
-            this.leftContainer.buttonMargin = 12;
-            this.rightContainer.leftMargin = 12;
-            this.rightContainer.rightMargin = 8;
-            this.rightContainer.buttonMargin = 12;
-        } else {
-            this.leftContainer.leftMargin = 24;
-            this.leftContainer.rightMargin = 24;
-            this.leftContainer.buttonMargin = 24;
-            this.rightContainer.leftMargin = 24;
-            this.rightContainer.rightMargin = 24;
-            this.rightContainer.buttonMargin = 24;
-        }
-
-        this.leftContainer.buttons.forEach(button => button.layoutTraitsDidChange());
-        this.rightContainer.buttons.forEach(button => button.layoutTraitsDidChange());
-        this.timeControl.scrubber.layoutTraitsDidChange();
-
-        this.element.classList.toggle("compact", layoutTraits & LayoutTraits.Compact);
     }
 
 }

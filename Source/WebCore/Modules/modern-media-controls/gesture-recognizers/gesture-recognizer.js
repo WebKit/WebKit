@@ -167,8 +167,8 @@ class GestureRecognizer
         if (event.currentTarget !== this._target)
             return;
 
-        window.addEventListener(GestureRecognizer.Events.GestureChange, this, true);
-        window.addEventListener(GestureRecognizer.Events.GestureEnd, this, true);
+        this._target.addEventListener(GestureRecognizer.Events.GestureChange, this, true);
+        this._target.addEventListener(GestureRecognizer.Events.GestureEnd, this, true);
         this.enterPossibleState();
     }
 
@@ -289,8 +289,8 @@ class GestureRecognizer
     {
         window.removeEventListener(GestureRecognizer.Events.TouchMove, this, true);
         window.removeEventListener(GestureRecognizer.Events.TouchEnd, this, true);
-        window.removeEventListener(GestureRecognizer.Events.GestureChange, this, true);
-        window.removeEventListener(GestureRecognizer.Events.GestureEnd, this, true);
+        this._target.removeEventListener(GestureRecognizer.Events.GestureChange, this, true);
+        this._target.removeEventListener(GestureRecognizer.Events.GestureEnd, this, true);
     }
 
     _updateTargetTouches(event)

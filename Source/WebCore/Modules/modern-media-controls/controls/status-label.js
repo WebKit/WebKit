@@ -34,7 +34,8 @@ class StatusLabel extends LayoutItem
         });
 
         this._text = "";
-        this._enabled = false;
+        this.minimumWidth = 120;
+        this.idealMinimumWidth = this.minimumWidth;
     }
 
     // Public
@@ -58,18 +59,7 @@ class StatusLabel extends LayoutItem
 
     get enabled()
     {
-        return this._enabled;
-    }
-
-    set enabled(enabled)
-    {
-        if (enabled === this._enabled)
-            return;
-
-        this._enabled = enabled;
-
-        if (this.layoutDelegate)
-            this.layoutDelegate.needsLayout = true;
+        return this._text !== "";
     }
 
     // Protected

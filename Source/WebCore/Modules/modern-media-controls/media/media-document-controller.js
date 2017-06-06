@@ -60,7 +60,7 @@ class MediaDocumentController
             media.classList.add(this.mediaController.isAudio ? "audio" : "video");
             media.classList.add(window.navigator.platform === "MacIntel" ? "mac" : window.navigator.platform);
 
-            if (this.mediaController.isAudio)
+            if (this.mediaController.isAudio || (media.videoWidth && media.videoHeight))
                 this._mediaDocumentHasSize();
             else
                 this.mediaController.shadowRoot.addEventListener("resize", this);

@@ -26,4 +26,13 @@
 .buttons-container {
     position: absolute;
     height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+/* Increase the touch region for buttons in containers on iOS */
+.ios .buttons-container button {
+    padding: 8px;
+    transform: translate(-8px, -8px);
+    box-sizing: content-box;
 }

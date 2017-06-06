@@ -23,8 +23,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-const AudioTightPaddingMaxWidth = 400;
-
 class MediaController
 {
 
@@ -33,6 +31,8 @@ class MediaController
         this.shadowRoot = shadowRoot;
         this.media = media;
         this.host = host;
+
+        this.hasPlayed = false;
 
         this.container = shadowRoot.appendChild(document.createElement("div"));
         this.container.className = "media-controls-container";
@@ -65,29 +65,31 @@ class MediaController
         if (this.media instanceof HTMLAudioElement)
             return true;
 
+        if (!this.host.isInMediaDocument && this.media instanceof HTMLVideoElement)
+            return false;
+
         if (this.media.readyState < HTMLMediaElement.HAVE_METADATA)
             return false;
 
-        const isLiveBroadcast = this.media.duration === Number.POSITIVE_INFINITY;
-        const hasVideoTracks = this.media.videoWidth != 0;
-        return !isLiveBroadcast && !hasVideoTracks;
+        return !this.media.videoTracks.length;
+    }
+
+    get isYouTubeEmbedWithTitle()
+    {
+        const url = new URL(this.media.ownerDocument.defaultView.location.href);
+        return url.href.includes("youtube.com/embed/") && url.searchParams.get("showinfo") !== "0";
+    }
+
+    get isFullscreen()
+    {
+        return this.media.webkitSupportsPresentationMode ? this.media.webkitPresentationMode === "fullscreen" : this.media.webkitDisplayingFullscreen;
     }
 
     get layoutTraits()
     {
         let traits = window.navigator.platform === "MacIntel" ? LayoutTraits.macOS : LayoutTraits.iOS;
-        if (this.media.webkitSupportsPresentationMode) {
-            if (this.media.webkitPresentationMode === "fullscreen")
-                return traits | LayoutTraits.Fullscreen;
-        } else if (this.media.webkitDisplayingFullscreen)
+        if (this.isFullscreen)
             return traits | LayoutTraits.Fullscreen;
-
-        if (traits & LayoutTraits.macOS)
-            return traits | LayoutTraits.Compact;
-
-        if (this.isAudio && this._controlsWidth() <= AudioTightPaddingMaxWidth)
-            return traits | LayoutTraits.TightPadding;
-
         return traits;
     }
 
@@ -112,7 +114,7 @@ class MediaController
         this.controls.usesLTRUserInterfaceLayoutDirection = flag;
     }
 
-    controlsBarFadedStateDidChange()
+    mediaControlsFadedStateDidChange()
     {
         this._updateTextTracksClassList();
     }
@@ -122,6 +124,18 @@ class MediaController
         // Toggle playback when clicking on the video but not on any controls on macOS.
         if (this.media.controls)
             this.togglePlayback();
+    }
+
+    iOSInlineMediaControlsRecognizedTapGesture()
+    {
+        // Initiate playback when tapping anywhere over the video when showsStartButton is true.
+        if (this.media.controls)
+            this.media.play();
+    }
+
+    iOSInlineMediaControlsRecognizedPinchInGesture()
+    {
+        this.media.webkitEnterFullscreen();
     }
 
     handleEvent(event)
@@ -147,7 +161,6 @@ class MediaController
         const previousControls = this.controls;
         const ControlsClass = this._controlsClassForLayoutTraits(layoutTraits);
         if (previousControls && previousControls.constructor === ControlsClass) {
-            this.controls.layoutTraits = layoutTraits;
             this._updateTextTracksClassList();
             this._updateControlsSize();
             return;
@@ -164,7 +177,7 @@ class MediaController
         this.controls.delegate = this;
 
         if (this.shadowRoot.host && this.shadowRoot.host.dataset.autoHideDelay)
-            this.controls.controlsBar.autoHideDelay = this.shadowRoot.host.dataset.autoHideDelay;
+            this.controls.bottomControlsBar.autoHideDelay = this.shadowRoot.host.dataset.autoHideDelay;
 
         if (previousControls) {
             this.controls.fadeIn();
@@ -173,13 +186,14 @@ class MediaController
         } else
             this.container.appendChild(this.controls.element);
 
-        this.controls.layoutTraits = layoutTraits;
         this._updateTextTracksClassList();
         this._updateControlsSize();
 
-        this._supportingObjects = [AirplaySupport, ControlsVisibilitySupport, FullscreenSupport, MuteSupport, PiPSupport, PlacardSupport, PlaybackSupport, ScrubbingSupport, SeekBackwardSupport, SeekForwardSupport, SkipBackSupport, StartSupport, StatusSupport, TimeLabelsSupport, TracksSupport, VolumeSupport, VolumeDownSupport, VolumeUpSupport].map(SupportClass => {
+        this._supportingObjects = [AirplaySupport, AudioSupport, ControlsVisibilitySupport, FullscreenSupport, MuteSupport, PiPSupport, PlacardSupport, PlaybackSupport, ScrubbingSupport, SeekBackwardSupport, SeekForwardSupport, SkipBackSupport, SkipForwardSupport, StartSupport, StatusSupport, TimeControlSupport, TracksSupport, VolumeSupport, VolumeDownSupport, VolumeUpSupport].map(SupportClass => {
             return new SupportClass(this);
         }, this);
+
+        this.controls.shouldUseSingleBarLayout = this.controls instanceof InlineMediaControls && this.isYouTubeEmbedWithTitle;
     }
 
     _updateControlsSize()
@@ -218,8 +232,7 @@ class MediaController
         if (layoutTraits & LayoutTraits.Fullscreen)
             return;
 
-        this.host.textTrackContainer.classList.toggle("visible-controls-bar", !this.controls.controlsBar.faded);
-        this.host.textTrackContainer.classList.toggle("compact-controls-bar", !!(layoutTraits & LayoutTraits.Compact));
+        this.host.textTrackContainer.classList.toggle("visible-controls-bar", !this.controls.faded);
     }
 
 }

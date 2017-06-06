@@ -39,8 +39,8 @@ class Placard extends LayoutItem
         this._container = this.addChild(new LayoutNode(`<div class="container"></div>`));
         
         if (iconName) {
-            this._iconButton = new IconButton(this);
-            this._iconButton.iconName = iconName;
+            this._icon = new Button(this);
+            this._icon.iconName = iconName;
         }
 
         if (!!title)
@@ -63,8 +63,8 @@ class Placard extends LayoutItem
 
         const children = [];
 
-        if (this._iconButton && this.width >= this.minDimensionToDisplayIcon && this.height >= this.minDimensionToDisplayIcon)
-            children.push(this._iconButton);
+        if (this._icon && this.width >= this.minDimensionToDisplayIcon && this.height >= this.minDimensionToDisplayIcon)
+            children.push(this._icon);
 
         if (this._titleNode && this.height >= MinHeightToDisplayTitle)
             children.push(this._titleNode);

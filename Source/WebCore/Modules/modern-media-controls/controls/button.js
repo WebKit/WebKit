@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,12 +26,25 @@
 class Button extends LayoutItem
 {
 
-    constructor(layoutDelegate)
+    constructor({ layoutDelegate = null, cssClassName = "", iconName = "" } = {})
     {
         super({
             element: "<button />",
             layoutDelegate
         });
+
+        if (!!cssClassName)
+            this.element.classList.add(cssClassName);
+
+        this.style = Button.Styles.Bar;
+        this.image = this.addChild(new LayoutNode(`<picture></picture>`));
+
+        this._scaleFactor = 1;
+        this._imageSource = null;
+        this._iconName = "";
+
+        if (!!iconName)
+            this.iconName = iconName;
 
         this._enabled = true;
 
@@ -58,11 +71,74 @@ class Button extends LayoutItem
             this.layoutDelegate.layout();
     }
 
+    get iconName()
+    {
+        return this._iconName;
+    }
+
+    set iconName(iconName)
+    {
+        if (this._iconName === iconName)
+            return;
+
+        this._loadImage(iconName);
+        this.element.setAttribute("aria-label", iconName.label);
+    }
+
+    get on()
+    {
+        return this.element.classList.contains("on");
+    }
+
+    set on(flag) {
+        this.element.classList.toggle("on", flag);
+    }
+
+    get style()
+    {
+        return this._style;
+    }
+
+    set style(style)
+    {
+        if (style === this._style)
+            return;
+
+        this.element.classList.remove(this._style);
+        this.element.classList.add(style);
+
+        this._style = style;
+
+        if (style === Button.Styles.Bar && this.children.length == 2)
+            this.children[0].remove();
+        else if (this.children.length == 1)
+            this.addChild(new BackgroundTint, 0);
+    }
+
+    get scaleFactor()
+    {
+        return this._scaleFactor;
+    }
+
+    set scaleFactor(scaleFactor)
+    {
+        if (this._scaleFactor === scaleFactor)
+            return;
+
+        this._scaleFactor = scaleFactor;
+        this._updateImageMetrics();
+    }
+
     // Protected
 
     handleEvent(event)
     {
-        if (event.type === "click" && event.currentTarget === this.element)
+        if (event.target === this._imageSource) {
+            if (event.type === "load")
+                this._imageSourceDidLoad();
+            else if (event.type === "error")
+                console.error(`Button failed to load, iconName = ${this._iconName.name}, layoutTraits = ${this.layoutTraits}, src = ${this._imageSource.src}`);
+        } else if (event.type === "click" && event.currentTarget === this.element)
             this._notifyDelegateOfActivation();
     }
 
@@ -70,6 +146,13 @@ class Button extends LayoutItem
     {
         if (this._tapGestureRecognizer === recognizer && recognizer.state === GestureRecognizer.States.Recognized)
             this._notifyDelegateOfActivation();
+    }
+
+    commit()
+    {
+        super.commit();
+
+        this.image.element.style.webkitMaskImage = `url(${this._imageSource.src})`;
     }
 
     // Private
@@ -80,4 +163,64 @@ class Button extends LayoutItem
             this.uiDelegate.buttonWasPressed(this);
     }
 
+    _loadImage(iconName)
+    {
+        if (this._imageSource)
+            this._imageSource.removeEventListener("load", this);
+
+        this._imageSource = iconService.imageForIconAndLayoutTraits(iconName, this.layoutTraits);
+
+        this._iconName = iconName;
+
+        if (this._imageSource.complete)
+            this._updateImage();
+        else {
+            this._imageSource.addEventListener("load", this);
+            this._imageSource.addEventListener("error", this);
+        }
+    }
+
+    _imageSourceDidLoad()
+    {
+        this._imageSource.removeEventListener("load", this);
+        this._updateImage();
+    }
+
+    _updateImage()
+    {
+        this.needsLayout = true;
+
+        this._updateImageMetrics();
+    }
+
+    _updateImageMetrics()
+    {
+        let width = this._imageSource.width * this._scaleFactor;
+        let height = this._imageSource.height * this._scaleFactor;
+
+        if (this._iconName.type === "png") {
+            width /= window.devicePixelRatio;
+            height /= window.devicePixelRatio;
+        }
+
+        if (this.image.width === width && this.image.height === height)
+            return;
+
+        this.image.width = width;
+        this.image.height = height;
+
+        this.width = width;
+        this.height = height;
+
+        if (this.layoutDelegate)
+            this.layoutDelegate.needsLayout = true;
+    }
+
 }
+
+Button.Styles = {
+    Bar: "bar",
+    Corner: "corner",
+    Center: "center",
+    SmallCenter: "small-center"
+};

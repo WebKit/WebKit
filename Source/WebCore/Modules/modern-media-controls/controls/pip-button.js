@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class PiPButton extends IconButton
+class PiPButton extends Button
 {
 
     constructor(layoutDelegate)

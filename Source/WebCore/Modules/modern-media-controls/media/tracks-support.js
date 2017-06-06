@@ -126,7 +126,7 @@ class TracksSupport extends MediaControllerSupport
 
     syncControl()
     {
-        this.control.enabled = this._canPickAudioTracks() || this._canPickTextTracks();
+        this.control.enabled = (this.mediaController.layoutTraits & LayoutTraits.macOS) && (this._canPickAudioTracks() || this._canPickTextTracks());
     }
 
     // Private

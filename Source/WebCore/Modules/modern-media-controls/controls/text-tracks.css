@@ -25,7 +25,7 @@
 
 video::-webkit-media-text-track-container {
     overflow: hidden;
-    padding-bottom: 5px;
+    padding-bottom: 0;
     z-index: 0;
 
     text-align: center;
@@ -45,11 +45,7 @@ video::-webkit-media-text-track-container {
 }
 
 video::-webkit-media-text-track-container.visible-controls-bar {
-    height: calc(100% - var(--inline-controls-bar-height));
-}
-
-video::-webkit-media-text-track-container.visible-controls-bar.compact-controls-bar {
-    height: calc(100% - var(--inline-compact-controls-bar-height));
+    height: calc(100% - var(--inline-controls-bar-height) - var(--inline-controls-inside-margin));
 }
 
 video::cue {

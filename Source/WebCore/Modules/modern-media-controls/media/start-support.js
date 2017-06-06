@@ -26,12 +26,14 @@
 class StartSupport extends MediaControllerSupport
 {
 
-    // Protected
-
-    get control()
+    constructor(mediaController)
     {
-        return this.mediaController.controls.startButton;
+        super(mediaController);
+
+        this.mediaController.controls.showsStartButton = this._shouldShowStartButton();
     }
+
+    // Protected
 
     get mediaEvents()
     {
@@ -46,14 +48,11 @@ class StartSupport extends MediaControllerSupport
     handleEvent(event)
     {
         if (event.type === "play")
-            this._hasPlayed = true;
+            this.mediaController.hasPlayed = true;
+
+        this.mediaController.controls.showsStartButton = this._shouldShowStartButton();
 
         super.handleEvent(event);
-    }
-
-    syncControl()
-    {
-        this.mediaController.controls.showsStartButton = this._shouldShowStartButton();
     }
 
     // Private
@@ -66,7 +65,7 @@ class StartSupport extends MediaControllerSupport
         if (host && host.shouldForceControlsDisplay)
             return true;
 
-        if (this._hasPlayed || media.played.length)
+        if (this.mediaController.hasPlayed || media.played.length)
             return false;
 
         if (!media.paused)
@@ -78,7 +77,7 @@ class StartSupport extends MediaControllerSupport
         if (media instanceof HTMLAudioElement)
             return false;
 
-        if (media.webkitDisplayingFullscreen)
+        if (this.mediaController.isFullscreen)
             return false;
 
         if (media.error)

@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-const SkipBackSeconds = 30;
+const SkipBackSeconds = 15;
 
 class SkipBackSupport extends MediaControllerSupport
 {

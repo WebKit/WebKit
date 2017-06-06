@@ -26,9 +26,9 @@
 const ButtonMarginForThreeButtonsOrLess = 24;
 const ButtonMarginForFourButtons = 16;
 const ButtonMarginForFiveButtons = 12;
-const FullscreenTimeControlWidth = 457;
+const FullscreenTimeControlWidth = 448;
 
-class MacOSFullscreenMediaControls extends MacOSMediaControls
+class MacOSFullscreenMediaControls extends MediaControls
 {
 
     constructor(options = {})
@@ -37,6 +37,7 @@ class MacOSFullscreenMediaControls extends MacOSMediaControls
 
         super(options);
 
+        this.element.classList.add("mac");
         this.element.classList.add("fullscreen");
 
         // Set up fullscreen-specific buttons.
@@ -46,6 +47,7 @@ class MacOSFullscreenMediaControls extends MacOSMediaControls
         this.forwardButton = new ForwardButton(this);
         this.fullscreenButton.isFullscreen = true;
 
+        this.volumeSlider = new Slider("volume");
         this.volumeSlider.width = 60;
 
         this._leftContainer = new ButtonsContainer({
@@ -71,16 +73,20 @@ class MacOSFullscreenMediaControls extends MacOSMediaControls
             rightMargin: 12
         });
 
-        this.controlsBar.children = [new BackgroundTint, this._leftContainer, this._centerContainer, this._rightContainer];
+        this.bottomControlsBar.children = [this._leftContainer, this._centerContainer, this._rightContainer];
 
-        this.controlsBar.element.addEventListener("mousedown", this);
+        this.children = [this.bottomControlsBar];
+
+        this.bottomControlsBar.element.addEventListener("mousedown", this);
+
+        this._backgroundClickDelegateNotifier = new BackgroundClickDelegateNotifier(this);
     }
 
     // Protected
 
     handleEvent(event)
     {
-        if (event.type === "mousedown" && event.currentTarget === this.controlsBar.element)
+        if (event.type === "mousedown" && event.currentTarget === this.bottomControlsBar.element)
             this._handleMousedown(event);
         else if (event.type === "mousemove" && event.currentTarget === this.element)
             this._handleMousemove(event);
@@ -111,12 +117,12 @@ class MacOSFullscreenMediaControls extends MacOSMediaControls
         this._centerContainer.layout();
         this._rightContainer.layout();
 
-        if (this.statusLabel.enabled && this.statusLabel.parent !== this.controlsBar) {
+        if (this.statusLabel.enabled && this.statusLabel.parent !== this.bottomControlsBar) {
             this.timeControl.remove();
-            this.controlsBar.addChild(this.statusLabel);
-        } else if (!this.statusLabel.enabled && this.timeControl.parent !== this.controlsBar) {
+            this.bottomControlsBar.addChild(this.statusLabel);
+        } else if (!this.statusLabel.enabled && this.timeControl.parent !== this.bottomControlsBar) {
             this.statusLabel.remove();
-            this.controlsBar.addChild(this.timeControl);
+            this.bottomControlsBar.addChild(this.timeControl);
             this.timeControl.width = FullscreenTimeControlWidth;
         }
     }
@@ -126,7 +132,7 @@ class MacOSFullscreenMediaControls extends MacOSMediaControls
     _handleMousedown(event)
     {
         // We don't allow dragging when the interaction is initiated on an interactive element. 
-        if (event.target.localName === "button" || event.target.localName === "input")
+        if (event.target.localName === "button" || event.target.parentNode.localName === "button" || event.target.localName === "input")
             return;
 
         event.preventDefault();
@@ -144,9 +150,9 @@ class MacOSFullscreenMediaControls extends MacOSMediaControls
 
         const currentDragPoint = this._pointForEvent(event);
 
-        this.controlsBar.translation = new DOMPoint(
-            this.controlsBar.translation.x + currentDragPoint.x - this._lastDragPoint.x,
-            this.controlsBar.translation.y + currentDragPoint.y - this._lastDragPoint.y
+        this.bottomControlsBar.translation = new DOMPoint(
+            this.bottomControlsBar.translation.x + currentDragPoint.x - this._lastDragPoint.x,
+            this.bottomControlsBar.translation.y + currentDragPoint.y - this._lastDragPoint.y
         );
 
         this._lastDragPoint = currentDragPoint;

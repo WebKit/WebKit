@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class FullscreenButton extends IconButton
+class FullscreenButton extends Button
 {
 
     constructor(layoutDelegate)

@@ -26,14 +26,6 @@
 class FullscreenSupport extends MediaControllerSupport
 {
 
-    constructor(mediaController)
-    {
-        super(mediaController);
-
-        if (mediaController.controls instanceof IOSInlineMediaControls)
-            mediaController.controls.delegate = this;
-    }
-
     // Protected
 
     get control()
@@ -54,23 +46,18 @@ class FullscreenSupport extends MediaControllerSupport
     buttonWasPressed(control)
     {
         const media = this.mediaController.media;
-        if (media.webkitDisplayingFullscreen)
+        if (this.mediaController.isFullscreen)
             media.webkitExitFullscreen();
         else
             media.webkitEnterFullscreen();
-    }
-
-    iOSInlineMediaControlsRecognizedPinchInGesture()
-    {
-        this.mediaController.media.webkitEnterFullscreen();
     }
 
     syncControl()
     {
         const control = this.control;
         const media = this.mediaController.media;
-        control.enabled = !this.mediaController.isAudio && media.webkitSupportsFullscreen;
-        control.isFullScreen = media.webkitDisplayingFullscreen;
+        control.enabled = !this.mediaController.isAudio && (media.readyState < HTMLMediaElement.HAVE_METADATA || media.webkitSupportsFullscreen);
+        control.isFullScreen = this.mediaController.isFullscreen;
     }
 
 }

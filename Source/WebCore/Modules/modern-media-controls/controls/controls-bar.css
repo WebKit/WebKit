@@ -25,12 +25,5 @@
 
 .controls-bar {
     position: absolute;
-    transition: opacity 0.1s linear;
     direction: ltr;
-}
-
-.controls-bar.faded {
-    opacity: 0;
-    pointer-events: none;
-    transition-duration: 0.25s;
 }

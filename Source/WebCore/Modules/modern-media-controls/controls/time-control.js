@@ -23,12 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-const MinimumScrubberWidthDefault = 168;
-const MinimumScrubberWidthCompact = 124;
-const ElapsedTimeLabelLeftMargin = -2;
-const ElapsedTimeLabelWidth = 40;
-const RemainingTimeLabelWidth = 49;
-const AdditionalTimeLabelWidthOverAnHour = 22;
+const TenMinutes = 10 * 60;
+const OneHour = 6 * TenMinutes;
+const TenHours = 10 * OneHour;
+const MinimumScrubberWidth = 120;
 const ScrubberMargin = 5;
 
 class TimeControl extends LayoutItem
@@ -41,34 +39,66 @@ class TimeControl extends LayoutItem
             layoutDelegate
         });
 
-        this._useSixDigitsForTimeLabels = false;
+        this.elapsedTimeLabel = new TimeLabel(TimeLabel.Types.Elapsed);
+        this.scrubber = new Slider("scrubber");
+        this.remainingTimeLabel = new TimeLabel(TimeLabel.Types.Remaining);
 
-        this.elapsedTimeLabel = new TimeLabel(this);
-        this.scrubber = new Scrubber(layoutDelegate);
-        this.remainingTimeLabel = new TimeLabel(this);
+        this.activityIndicator = new LayoutNode(`<div class="activity-indicator"></div>`);
+        this.activityIndicator.width = 14;
+        this.activityIndicator.height = 14;
+        for (let segmentClassName of ["n", "ne", "e", "se", "s", "sw", "w", "nw"])
+            this.activityIndicator.element.appendChild(document.createElement("div")).className = segmentClassName;
 
-        this.children = [this.elapsedTimeLabel, this.scrubber, this.remainingTimeLabel];
+        this._duration = 0;
+        this._currentTime = 0;
+        this._loading = false;
     }
 
     // Public
 
-    get useSixDigitsForTimeLabels()
+    set duration(duration)
     {
-        return this._useSixDigitsForTimeLabels;
-    }
-
-    set useSixDigitsForTimeLabels(flag)
-    {
-        if (this._useSixDigitsForTimeLabels === flag)
+        if (this._duration === duration)
             return;
 
-        this._useSixDigitsForTimeLabels = flag;
-        this.layout();
+        this._duration = duration;
+        this.needsLayout = true;
     }
 
-    get isSufficientlyWide()
+    set currentTime(currentTime)
     {
-        return this.scrubber.width >= ((this.layoutTraits & LayoutTraits.Compact) ? MinimumScrubberWidthCompact : MinimumScrubberWidthDefault);
+        if (this._currentTime === currentTime)
+            return;
+
+        this._currentTime = currentTime;
+        this.needsLayout = true;
+    }
+
+    get loading()
+    {
+        return this._loading;
+    }
+
+    set loading(flag)
+    {
+        if (this._loading === flag)
+            return;
+
+        this._loading = flag;
+        this.scrubber.disabled = flag;
+        this.needsLayout = true;
+    }
+
+    get minimumWidth()
+    {
+        this._performIdealLayout();
+        return MinimumScrubberWidth + ScrubberMargin + this.remainingTimeLabel.width;
+    }
+
+    get idealMinimumWidth()
+    {
+        this._performIdealLayout();
+        return this.elapsedTimeLabel.width + ScrubberMargin + MinimumScrubberWidth + ScrubberMargin + this.remainingTimeLabel.width;
     }
 
     // Protected
@@ -76,20 +106,60 @@ class TimeControl extends LayoutItem
     layout()
     {
         super.layout();
+        this._performIdealLayout();
 
-        const extraWidth = this._useSixDigitsForTimeLabels ? AdditionalTimeLabelWidthOverAnHour : 0;
-        const elapsedTimeLabelWidth = ElapsedTimeLabelWidth + extraWidth;
-        const remainingTimeLabelWidth = RemainingTimeLabelWidth + extraWidth;
+        if (this._loading)
+            return;
 
-        this.elapsedTimeLabel.x = ElapsedTimeLabelLeftMargin;
-        this.elapsedTimeLabel.width = elapsedTimeLabelWidth;
-        this.scrubber.x = this.elapsedTimeLabel.x + elapsedTimeLabelWidth + ScrubberMargin;
-        this.scrubber.width = this.width - elapsedTimeLabelWidth - ScrubberMargin - remainingTimeLabelWidth;
+        if (this.scrubber.width >= MinimumScrubberWidth) {
+            this.elapsedTimeLabel.visible = true;
+            return;
+        }
+
+        // We drop the elapsed time label if width is constrained and we can't guarantee
+        // the scrubber minimum size otherwise.
+        this.scrubber.x = 0;
+        this.scrubber.width = this.width - ScrubberMargin - this.remainingTimeLabel.width;
         this.remainingTimeLabel.x = this.scrubber.x + this.scrubber.width + ScrubberMargin;
+        this.elapsedTimeLabel.visible = false;
+    }
+
+    // Private
+
+    _performIdealLayout()
+    {
+        if (this._loading)
+            this.remainingTimeLabel.setValueWithNumberOfDigits(NaN, 4);
+        else {
+            const shouldShowZeroDurations = isNaN(this._duration) || this._duration === Number.POSITIVE_INFINITY;
+
+            let numberOfDigitsForTimeLabels;
+            if (this._duration < TenMinutes)
+                numberOfDigitsForTimeLabels = 3;
+            else if (shouldShowZeroDurations || this._duration < OneHour)
+                numberOfDigitsForTimeLabels = 4;
+            else if (this._duration < TenHours)
+                numberOfDigitsForTimeLabels = 5;
+            else
+                numberOfDigitsForTimeLabels = 6;
+
+            this.elapsedTimeLabel.setValueWithNumberOfDigits(shouldShowZeroDurations ? 0 : this._currentTime, numberOfDigitsForTimeLabels);
+            this.remainingTimeLabel.setValueWithNumberOfDigits(shouldShowZeroDurations ? 0 : (this._currentTime - this._duration), numberOfDigitsForTimeLabels);
+        }
+
+        if (this._duration)
+            this.scrubber.value = this._currentTime / this._duration;
+
+        this.scrubber.x = (this._loading ? this.activityIndicator.width : this.elapsedTimeLabel.width) + ScrubberMargin;
+        this.scrubber.width = this.width - this.scrubber.x - ScrubberMargin - this.remainingTimeLabel.width;
+        this.remainingTimeLabel.x = this.scrubber.x + this.scrubber.width + ScrubberMargin;
+
+        this.children = [this._loading ? this.activityIndicator : this.elapsedTimeLabel, this.scrubber, this.remainingTimeLabel];
     }
 
     updateScrubberLabel()
     {
         this.scrubber.inputAccessibleLabel = this.elapsedTimeLabel.value;
     }
+
 }

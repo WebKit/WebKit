@@ -24,30 +24,32 @@
  */
 
 const Icons = {
-    Airplay         : { name: "airplay", label: UIString("AirPlay") },
-    AirplayPlacard  : { name: "airplay-placard", label: UIString("AirPlay") },
-    EnterFullscreen : { name: "enter-fullscreen", label: UIString("Enter Full Screen") },
-    EnterPiP        : { name: "pip-in", label: UIString("Enter Picture in Picture") },
-    ExitFullscreen  : { name: "exit-fullscreen", label: UIString("Exit Full Screen") },
-    Forward         : { name: "forward", label: UIString("Forward") },
-    InvalidPlacard  : { name: "invalid-placard", label: UIString("Invalid") },
-    Pause           : { name: "pause", label: UIString("Pause") },
-    PiPPlacard      : { name: "pip-placard", label: UIString("Picture in Picture") },
-    Play            : { name: "play", label: UIString("Play") },
-    Rewind          : { name: "rewind", label: UIString("Rewind") },
-    ScaleToFill     : { name: "scale-to-fill", label: UIString("Scale to Fill") },
-    ScaleToFit      : { name: "scale-to-fit", label: UIString("Scale to Fit") },
-    SkipBack        : { name: "interval-skip-back", label: UIString("Skip Back 30 seconds") },
-    Start           : { name: "start", label: UIString("Start") },
-    Tracks          : { name: "media-selection", label: UIString("Media Selection") },
-    Volume          : { name: "volume", label: UIString("Mute") },
-    VolumeDown      : { name: "volume-down", label: UIString("Volume Down") },
-    VolumeMuted     : {name: "volume-mute", label: UIString("Unmute") },
-    VolumeUp        : { name: "volume-up", label: UIString("Volume Up") }
+    Airplay         : { name: "Airplay", type: "svg", label: UIString("AirPlay") },
+    AirplayPlacard  : { name: "airplay-placard", type: "png", label: UIString("AirPlay") },
+    EnterFullscreen : { name: "EnterFullscreen", type: "svg", label: UIString("Enter Full Screen") },
+    EnterPiP        : { name: "PipIn", type: "svg", label: UIString("Enter Picture in Picture") },
+    ExitFullscreen  : { name: "ExitFullscreen", type: "svg", label: UIString("Exit Full Screen") },
+    Forward         : { name: "Forward", type: "svg", label: UIString("Forward") },
+    InvalidPlacard  : { name: "invalid-placard", type: "png", label: UIString("Invalid") },
+    Pause           : { name: "Pause", type: "svg", label: UIString("Pause") },
+    PiPPlacard      : { name: "pip-placard", type: "png", label: UIString("Picture in Picture") },
+    Play            : { name: "Play", type: "svg", label: UIString("Play") },
+    Rewind          : { name: "Rewind", type: "svg", label: UIString("Rewind") },
+    SkipBack        : { name: "SkipBack15", type: "svg", label: UIString("Skip Back 15 seconds") },
+    SkipForward     : { name: "SkipForward15", type: "svg", label: UIString("Skip Forward 15 seconds") },
+    Tracks          : { name: "MediaSelector", type: "svg", label: UIString("Media Selection") },
+    Volume          : { name: "VolumeHi", type: "svg", label: UIString("Mute") },
+    VolumeDown      : { name: "VolumeLo", type: "svg", label: UIString("Volume Down") },
+    VolumeMuted     : { name: "Mute", type: "svg", label: UIString("Unmute") },
+    VolumeUp        : { name: "VolumeHi", type: "svg", label: UIString("Volume Up") }
 };
 
-const IconsWithFullscreenVariants = [Icons.Airplay.name, Icons.Tracks.name, Icons.Pause.name, Icons.EnterPiP.name, Icons.Play.name, Icons.VolumeDown.name, Icons.VolumeUp.name];
-const IconsWithCompactVariants = [Icons.Play.name, Icons.Pause.name, Icons.SkipBack.name, Icons.Volume.name, Icons.VolumeMuted.name, Icons.Airplay.name, Icons.EnterPiP.name, Icons.Tracks.name, Icons.EnterFullscreen.name];
+const MimeTypes = {
+    "png": "image/png",
+    "svg": "image/svg+xml"
+};
+
+const IconsWithFullscreenVariants = [Icons.Airplay, Icons.Tracks, Icons.EnterPiP];
 
 const iconService = new class IconService {
 
@@ -58,10 +60,10 @@ const iconService = new class IconService {
 
     // Public
 
-    imageForIconNameAndLayoutTraits(iconName, layoutTraits)
+    imageForIconAndLayoutTraits(icon, layoutTraits)
     {
-        const [fileName, platform] = this._fileNameAndPlatformForIconNameAndLayoutTraits(iconName, layoutTraits);
-        const path = `${platform}/${fileName}.png`;
+        const [fileName, platform] = this._fileNameAndPlatformForIconAndLayoutTraits(icon, layoutTraits);
+        const path = `${platform}/${fileName}.${icon.type}`;
 
         let image = this.images[path];
         if (image)
@@ -70,7 +72,7 @@ const iconService = new class IconService {
         image = this.images[path] = new Image;
 
         if (this.mediaControlsHost)
-            image.src = "data:image/png;base64," + this.mediaControlsHost.base64StringForIconNameAndType(fileName, "png");
+            image.src = `data:${MimeTypes[icon.type]};base64,${this.mediaControlsHost.base64StringForIconNameAndType(fileName, icon.type)}`;
         else
             image.src = `${this.directoryPath}/${path}`;
 
@@ -79,7 +81,7 @@ const iconService = new class IconService {
 
     // Private
 
-    _fileNameAndPlatformForIconNameAndLayoutTraits(iconName, layoutTraits)
+    _fileNameAndPlatformForIconAndLayoutTraits(icon, layoutTraits)
     {
         let platform;
         if (layoutTraits & LayoutTraits.macOS)
@@ -89,14 +91,13 @@ const iconService = new class IconService {
         else
             throw "Could not identify icon's platform from layout traits.";
 
-        if (layoutTraits & LayoutTraits.macOS) {
-            if (layoutTraits & LayoutTraits.Fullscreen && IconsWithFullscreenVariants.includes(iconName))
-                iconName += "-fullscreen";
-            else if (layoutTraits & LayoutTraits.Compact && IconsWithCompactVariants.includes(iconName))
-                iconName += "-compact";
-        }
+        let iconName = icon.name;
+        if (layoutTraits & LayoutTraits.macOS && layoutTraits & LayoutTraits.Fullscreen && IconsWithFullscreenVariants.includes(icon))
+            iconName += "-fullscreen";
 
-        const fileName = `${iconName}@${window.devicePixelRatio}x`;
+        let fileName = iconName;
+        if (icon.type === "png")
+            fileName = `${iconName}@${window.devicePixelRatio}x`;
 
         return [fileName, platform];
     }

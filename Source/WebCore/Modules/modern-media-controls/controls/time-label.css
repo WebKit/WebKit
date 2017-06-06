@@ -27,7 +27,9 @@
     position: absolute;
 
     font-family: -apple-system-monospaced-numbers;
-    font-size: 14px;
+    font-size: 12px;
 
     text-align: right;
+
+    font-feature-settings: "case";
 }

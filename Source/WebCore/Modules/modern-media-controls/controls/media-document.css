@@ -26,6 +26,7 @@
 :host(.media-document) {
     visibility: hidden !important;
     max-width: 100% !important;
+    max-height: 100% !important;
     min-height: 50px !important;
 }
 
@@ -37,7 +38,7 @@
 
 :host(.media-document.audio.mac) {
     width: 650px !important;
-    min-height: 25px !important;
+    min-height: var(--inline-controls-bar-height) !important;
 }
 
 :host(.media-document.audio.ipad) {

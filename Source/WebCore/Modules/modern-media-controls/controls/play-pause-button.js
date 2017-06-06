@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class PlayPauseButton extends IconButton
+class PlayPauseButton extends Button
 {
 
     constructor(layoutDelegate)
@@ -33,6 +33,9 @@ class PlayPauseButton extends IconButton
             iconName: Icons.Play,
             layoutDelegate
         });
+
+        if (this.layoutTraits & LayoutTraits.macOS && this.layoutTraits & LayoutTraits.Fullscreen)
+            this.scaleFactor = 2;
     }
 
     // Public
@@ -48,6 +51,14 @@ class PlayPauseButton extends IconButton
             return;
 
         this.iconName = flag ? Icons.Pause : Icons.Play;
+    }
+
+    // Protected
+
+    commit()
+    {
+        super.commit();
+        this.element.classList.toggle("paused", !this.playing);
     }
 
 }

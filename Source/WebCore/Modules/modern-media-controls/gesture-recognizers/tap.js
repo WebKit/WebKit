@@ -40,8 +40,6 @@ class TapGestureRecognizer extends GestureRecognizer
 
     touchesMoved(event)
     {
-        event.preventDefault();
-
         const touchLocation = super.locationInElement();
         const distance = Math.sqrt(Math.pow(this._startPoint.x - touchLocation.x, 2) + Math.pow(this._startPoint.y - touchLocation.y, 2));
         if (distance > MOVE_TOLERANCE)

@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class SeekButton extends IconButton
+class SeekButton extends Button
 {
 
     constructor(options)

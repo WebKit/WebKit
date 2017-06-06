@@ -259,7 +259,10 @@ class LayoutNode
             style.height = `${this._height}px`;
             break;
         case "visible":
-            style.display = this._visible ? "inherit" : "none";
+            if (this._visible)
+                style.removeProperty("display");
+            else
+                style.display = "none";
             break;
         }
     }

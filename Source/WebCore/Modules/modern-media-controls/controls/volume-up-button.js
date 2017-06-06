@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class VolumeUpButton extends IconButton
+class VolumeUpButton extends Button
 {
 
     constructor(layoutDelegate)

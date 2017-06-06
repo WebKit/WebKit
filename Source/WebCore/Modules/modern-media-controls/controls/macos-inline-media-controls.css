@@ -1,116 +1,34 @@
-/*
- * Copyright (C) 2016 Apple Inc. All Rights Reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- *
- * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
- * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
- * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
- * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-
-/* Controls bar */
-
-.media-controls.mac.inline > .controls-bar {
-    left: 0;
-    bottom: 0;
-    width: 100%;
-    height: var(--inline-controls-bar-height);
-}
-
-.media-controls.mac.inline > .controls-bar > * {
-    position: absolute;
-}
-
-/* Start button blur */
-
-.media-controls.mac.inline > button.start > div {
-    -webkit-backdrop-filter: saturate(180%) blur(20px);
-}
-
-/* Controls placement */
-
-.media-controls.mac.inline > .controls-bar button {
-    height: 100% !important;
-}
-
-.media-controls.mac.inline button.play-pause {
-    -webkit-mask-position-y: 12px;
-}
-
-.media-controls.mac.inline button.skip-back {
-    -webkit-mask-position-y: 10px;
-}
-
-.media-controls.mac.inline .scrubber.slider {
-    top: 13px;
-}
-
-.media-controls.mac.inline button.mute {
-    -webkit-mask-position-y: 10px;
-}
-
-.media-controls.mac.inline button.airplay {
-    -webkit-mask-position-y: 13px;
-}
-
-.media-controls.mac.inline button.pip {
-    -webkit-mask-position-y: 13px;
-}
-
-.media-controls.mac.inline button.tracks {
-    -webkit-mask-position-y: 15px;
-}
-
-.media-controls.mac.inline button.fullscreen {
-    -webkit-mask-position-y: 13px;
-}
-
-/* Labels */
-
-.media-controls.mac.inline .time-label,
-.media-controls.mac.inline .status-label {
-    top: 14.5px;
-}
 
 /* Volume slider */
 
 .media-controls.mac.inline .volume-slider-container {
     position: absolute;
-
-    bottom: 50px;
-    width: 81px;
+    bottom: calc(var(--inline-controls-bar-height) + var(--inline-controls-inside-margin));
+    width: 94px;
     height: 31px;
-    transform: rotate(-90deg) translate(25px, -25px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    --volume-slider-transform: rotate(-90deg) translate(26px, -30px);
+    transform: var(--volume-slider-transform);
+}
+
+.media-controls.mac.inline.audio .volume-slider-container {
+    transform: var(--volume-slider-transform) translateY(-8px);
 }
 
 .media-controls.mac.inline .volume-slider-container > .background-tint {
     top: 0;
-    left: 1px;
+    left: var(--inline-controls-inside-margin);
     right: 0;
-    bottom: 0px;
+    bottom: 0;
     width: auto;
 }
 
 .media-controls.mac.inline .volume-slider-container > .background-tint > div {
-    border-radius: 0 4px 4px 0;
+    border-radius: 8px;
 }
 
-.media-controls.mac.inline .volume.slider {
-    left: 11px;
-    top: 10px;
+.media-controls.mac.inline .volume-slider-container > .slider {
+    margin-left: 6px;
 }

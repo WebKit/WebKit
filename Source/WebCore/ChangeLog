@@ -1,3 +1,519 @@
+2017-06-05  Antoine Quint  <graouts@apple.com>
+
+        Update media controls to match latest design specs
+        https://bugs.webkit.org/show_bug.cgi?id=172932
+
+        Reviewed by Dean Jackson.
+
+        The media controls specs have changed and we now implement them. The main controls bar now
+        appears to be floating, with a rounded corners and a margin around it. Some of the controls
+        it used to contain now may appear outside of it. Specifically, the fullscreen and
+        picture-in-picture buttons now are displayed in a dedicated controls bar in the top-left
+        corner and the mute button, on iOS (where we don't support changing the volume when inline),
+        is displayed in the top right corner.
+
+        Another small UI improvement is that we display an activity indicator when we are waiting
+        for data to initiate or resume playback instead of showing the elapsed time label. We also
+        make displaying the scrubber more important than displaying other controls, except for the
+        play/pause button, when width becomes scarce. Finally, we no longer use a speci layer type
+        for the controls bar backgrounds, we now use the same "backdrop-filter" and tint overlay
+        on both macOS and iOS.
+
+        Since this work had previously been done through WebKitAdditions, we remove the specific
+        build phase code that we added for this purpose and are now only ever looking for media
+        controls code in the WebCore source tree.
+
+        * Modules/modern-media-controls/controls/activity-indicator.css: Added.
+        (.activity-indicator):
+        (.activity-indicator > div):
+        (.activity-indicator > .ne):
+        (.activity-indicator > .e):
+        (.activity-indicator > .se):
+        (.activity-indicator > .s):
+        (.activity-indicator > .sw):
+        (.activity-indicator > .w):
+        (.activity-indicator > .nw):
+        (@keyframes activity-indicator-pulse):
+        (to):
+        * Modules/modern-media-controls/controls/airplay-button.js:
+        * Modules/modern-media-controls/controls/auto-hide-controller.js: Added.
+        (AutoHideController):
+        (AutoHideController.prototype.get fadesWhileIdle):
+        (AutoHideController.prototype.set fadesWhileIdle):
+        (AutoHideController.prototype.handleEvent):
+        (AutoHideController.prototype.gestureRecognizerStateDidChange):
+        (AutoHideController.prototype.mediaControlsFadedStateDidChange):
+        (AutoHideController.prototype.mediaControlsBecameInvisible):
+        (AutoHideController.prototype._cancelNonEnforcedAutoHideTimer):
+        (AutoHideController.prototype._cancelAutoHideTimer):
+        (AutoHideController.prototype._resetAutoHideTimer):
+        (AutoHideController.prototype._autoHideTimerFired):
+        * Modules/modern-media-controls/controls/background-click-delegate-notifier.js: Added.
+        (BackgroundClickDelegateNotifier):
+        (BackgroundClickDelegateNotifier.prototype.handleEvent):
+        * Modules/modern-media-controls/controls/background-tint.css:
+        (.background-tint,):
+        (.background-tint > .blur):
+        (.background-tint > .tint):
+        * Modules/modern-media-controls/controls/button.css:
+        (button):
+        (button > picture):
+        (button.skip-back > picture,):
+        (button.on > picture):
+        (button:active > picture):
+        (button.corner):
+        (button.center,):
+        (button.center):
+        (button.small-center):
+        (button.center > .background-tint,):
+        (button.center > picture,):
+        (button.center:active > picture,):
+        * Modules/modern-media-controls/controls/button.js:
+        (Button.prototype.get iconName):
+        (Button.prototype.set iconName):
+        (Button.prototype.get on):
+        (Button.prototype.set on):
+        (Button.prototype.get style):
+        (Button.prototype.set style):
+        (Button.prototype.get scaleFactor):
+        (Button.prototype.set scaleFactor):
+        (Button.prototype.handleEvent):
+        (Button.prototype.commit):
+        (Button.prototype._loadImage):
+        (Button.prototype._imageSourceDidLoad):
+        (Button.prototype._updateImage):
+        (Button.prototype._updateImageMetrics):
+        (Button):
+        * Modules/modern-media-controls/controls/buttons-container.css:
+        (.buttons-container):
+        (.ios .buttons-container button):
+        * Modules/modern-media-controls/controls/buttons-container.js:
+        * Modules/modern-media-controls/controls/controls-bar.css:
+        (.controls-bar):
+        (.controls-bar.faded): Deleted.
+        * Modules/modern-media-controls/controls/controls-bar.js:
+        (ControlsBar.prototype.get children):
+        (ControlsBar.prototype.set children):
+        (ControlsBar.prototype.commitProperty):
+        (ControlsBar.prototype.get userInteractionEnabled): Deleted.
+        (ControlsBar.prototype.set userInteractionEnabled): Deleted.
+        (ControlsBar.prototype.get fadesWhileIdle): Deleted.
+        (ControlsBar.prototype.set fadesWhileIdle): Deleted.
+        (ControlsBar.prototype.get visible): Deleted.
+        (ControlsBar.prototype.set visible): Deleted.
+        (ControlsBar.prototype.get faded): Deleted.
+        (ControlsBar.prototype.set faded): Deleted.
+        (ControlsBar.prototype.handleEvent): Deleted.
+        (ControlsBar.prototype.gestureRecognizerStateDidChange): Deleted.
+        (ControlsBar.prototype._cancelNonEnforcedAutoHideTimer): Deleted.
+        (ControlsBar.prototype._cancelAutoHideTimer): Deleted.
+        (ControlsBar.prototype._resetAutoHideTimer): Deleted.
+        (ControlsBar.prototype._autoHideTimerFired): Deleted.
+        * Modules/modern-media-controls/controls/fullscreen-button.js:
+        * Modules/modern-media-controls/controls/icon-button.css: Removed.
+        * Modules/modern-media-controls/controls/icon-button.js: Removed.
+        * Modules/modern-media-controls/controls/icon-service.js:
+        (const.iconService.new.IconService.prototype.imageForIconAndLayoutTraits):
+        (const.iconService.new.IconService.prototype._fileNameAndPlatformForIconAndLayoutTraits):
+        (const.iconService.new.IconService):
+        (const.iconService.new.IconService.prototype.imageForIconNameAndLayoutTraits): Deleted.
+        (const.iconService.new.IconService.prototype._fileNameAndPlatformForIconNameAndLayoutTraits): Deleted.
+        * Modules/modern-media-controls/controls/inline-layout-support.js: Removed.
+        * Modules/modern-media-controls/controls/inline-media-controls.css: Added.
+        (.media-controls.inline > .controls-bar):
+        (.media-controls.inline > .controls-bar.top-left):
+        (.media-controls.inline.audio > .controls-bar):
+        (.media-controls.inline > .controls-bar > *):
+        (.media-controls.inline > button.mute):
+        (.media-controls.inline > button.play-pause.corner):
+        (.media-controls.inline.audio > button.play-pause.corner):
+        (.media-controls.inline > .controls-bar button):
+        (.media-controls.inline button.start.center > picture,):
+        (.media-controls.inline button.start.small-center > picture,):
+        (.media-controls.inline .time-control,):
+        * Modules/modern-media-controls/controls/inline-media-controls.js: Added.
+        (InlineMediaControls):
+        (InlineMediaControls.prototype.set shouldUseAudioLayout):
+        (InlineMediaControls.prototype.set shouldUseSingleBarLayout):
+        (InlineMediaControls.prototype.get showsStartButton):
+        (InlineMediaControls.prototype.set showsStartButton):
+        (InlineMediaControls.prototype.showPlacard):
+        (InlineMediaControls.prototype.hidePlacard):
+        (InlineMediaControls.prototype.layout):
+        (InlineMediaControls.prototype.commitProperty):
+        (InlineMediaControls.prototype.get preferredMuteButtonStyle):
+        (InlineMediaControls.prototype._topLeftContainerButtons):
+        (InlineMediaControls.prototype._leftContainerButtons):
+        (InlineMediaControls.prototype._rightContainerButtons):
+        (InlineMediaControls.prototype._droppableButtons):
+        * Modules/modern-media-controls/controls/ios-inline-media-controls.css: Removed.
+        * Modules/modern-media-controls/controls/ios-inline-media-controls.js:
+        (IOSInlineMediaControls.prototype.get showsStartButton):
+        (IOSInlineMediaControls.prototype.set showsStartButton):
+        (IOSInlineMediaControls.prototype.gestureRecognizerStateDidChange):
+        (IOSInlineMediaControls.prototype._pinchGestureRecognizerStateDidChange):
+        (IOSInlineMediaControls.prototype._tapGestureRecognizerStateDidChange):
+        (IOSInlineMediaControls):
+        (IOSInlineMediaControls.prototype.layout): Deleted.
+        (IOSInlineMediaControls.prototype.layoutTraitsDidChange): Deleted.
+        * Modules/modern-media-controls/controls/layout-item.js:
+        * Modules/modern-media-controls/controls/layout-node.js:
+        (LayoutNode.prototype.commitProperty):
+        * Modules/modern-media-controls/controls/macos-compact-inline-media-controls.css: Removed.
+        * Modules/modern-media-controls/controls/macos-fullscreen-media-controls.css:
+        (.media-controls.mac.fullscreen .buttons-container.left):
+        (.media-controls.mac.fullscreen .buttons-container.center):
+        (.media-controls.mac.fullscreen .time-control):
+        (.media-controls.mac.fullscreen > .controls-bar .status-label):
+        (.media-controls.mac.fullscreen > .controls-bar > .background-tint > div): Deleted.
+        (.media-controls.mac.fullscreen .volume.slider): Deleted.
+        (.media-controls.mac.fullscreen button.volume-down): Deleted.
+        (.media-controls.mac.fullscreen button.volume-up): Deleted.
+        (.media-controls.mac.fullscreen button.rewind): Deleted.
+        (.media-controls.mac.fullscreen button.play-pause): Deleted.
+        (.media-controls.mac.fullscreen button.forward): Deleted.
+        (.media-controls.mac.fullscreen .time-label): Deleted.
+        (.media-controls.mac.fullscreen .scrubber): Deleted.
+        * Modules/modern-media-controls/controls/macos-fullscreen-media-controls.js:
+        (MacOSFullscreenMediaControls.prototype.handleEvent):
+        (MacOSFullscreenMediaControls.prototype.layout):
+        (MacOSFullscreenMediaControls.prototype._handleMousedown):
+        (MacOSFullscreenMediaControls.prototype._handleMousemove):
+        * Modules/modern-media-controls/controls/macos-inline-media-controls.css:
+        (.media-controls.mac.inline .volume-slider-container):
+        (.media-controls.mac.inline.audio .volume-slider-container):
+        (.media-controls.mac.inline .volume-slider-container > .background-tint):
+        (.media-controls.mac.inline .volume-slider-container > .background-tint > div):
+        (.media-controls.mac.inline .volume-slider-container > .slider):
+        (.media-controls.mac.inline > .controls-bar): Deleted.
+        (.media-controls.mac.inline > .controls-bar > *): Deleted.
+        (.media-controls.mac.inline > button.start > div): Deleted.
+        (.media-controls.mac.inline > .controls-bar button): Deleted.
+        (.media-controls.mac.inline button.play-pause): Deleted.
+        (.media-controls.mac.inline button.skip-back): Deleted.
+        (.media-controls.mac.inline .scrubber.slider): Deleted.
+        (.media-controls.mac.inline button.mute): Deleted.
+        (.media-controls.mac.inline button.airplay): Deleted.
+        (.media-controls.mac.inline button.pip): Deleted.
+        (.media-controls.mac.inline button.tracks): Deleted.
+        (.media-controls.mac.inline button.fullscreen): Deleted.
+        (.media-controls.mac.inline .time-label,): Deleted.
+        (.media-controls.mac.inline .volume.slider): Deleted.
+        * Modules/modern-media-controls/controls/macos-inline-media-controls.js:
+        (MacOSInlineMediaControls.prototype.layout):
+        (MacOSInlineMediaControls.prototype.get preferredMuteButtonStyle):
+        (MacOSInlineMediaControls.prototype.handleEvent):
+        (MacOSInlineMediaControls.prototype.layoutTraitsDidChange): Deleted.
+        * Modules/modern-media-controls/controls/macos-media-controls.js: Removed.
+        * Modules/modern-media-controls/controls/media-controls.css:
+        (:host(audio)):
+        (*):
+        (:host(audio), *):
+        (.media-controls-container):
+        (.media-controls):
+        (.media-controls > *):
+        (.media-controls.shows-tracks-panel > .controls-bar,):
+        (.media-controls.faded > *:not(.placard)):
+        (.media-controls .time-label,):
+        * Modules/modern-media-controls/controls/media-controls.js:
+        (MediaControls.prototype.get visible):
+        (MediaControls.prototype.set visible):
+        (MediaControls.prototype.get faded):
+        (MediaControls.prototype.set faded):
+        (MediaControls.prototype.showTracksPanel):
+        (MediaControls.prototype.hideTracksPanel):
+        (MediaControls.prototype.isPointInControls):
+        (MediaControls.prototype.handleEvent):
+        (MediaControls.prototype.commitProperty):
+        (MediaControls.prototype.get layoutTraits): Deleted.
+        (MediaControls.prototype.set layoutTraits): Deleted.
+        (MediaControls.prototype.get showsStartButton): Deleted.
+        (MediaControls.prototype.set showsStartButton): Deleted.
+        (MediaControls.prototype.get placard): Deleted.
+        (MediaControls.prototype.get showsPlacard): Deleted.
+        (MediaControls.prototype.showPlacard): Deleted.
+        (MediaControls.prototype.hidePlacard): Deleted.
+        (MediaControls.prototype.controlsBarVisibilityDidChange): Deleted.
+        (MediaControls.prototype.controlsBarFadedStateDidChange): Deleted.
+        (MediaControls.prototype.layoutTraitsDidChange): Deleted.
+        (MediaControls.prototype.layout): Deleted.
+        (MediaControls.prototype._invalidateChildren): Deleted.
+        * Modules/modern-media-controls/controls/media-document.css:
+        (:host(.media-document)):
+        (:host(.media-document.audio.mac)):
+        * Modules/modern-media-controls/controls/mute-button.js:
+        * Modules/modern-media-controls/controls/pip-button.js:
+        * Modules/modern-media-controls/controls/placard.css:
+        (.placard):
+        (.placard .container):
+        (.placard button):
+        (.placard button > picture):
+        (.placard .icon): Deleted.
+        * Modules/modern-media-controls/controls/placard.js:
+        (Placard.):
+        (Placard.prototype.layout):
+        * Modules/modern-media-controls/controls/play-pause-button.js:
+        (PlayPauseButton):
+        (PlayPauseButton.prototype.commit):
+        * Modules/modern-media-controls/controls/scheduler.js:
+        (const.scheduler.new.prototype.scheduleLayout):
+        (const.scheduler.new.prototype.unscheduleLayout):
+        (const.scheduler.new.prototype._requestFrameIfNeeded):
+        (const.scheduler.new.prototype._frameDidFire):
+        (const.scheduler.new.prototype._layout):
+        * Modules/modern-media-controls/controls/scrubber.js: Removed.
+        * Modules/modern-media-controls/controls/seek-button.js:
+        * Modules/modern-media-controls/controls/skip-back-button.js:
+        * Modules/modern-media-controls/controls/skip-forward-button.js: Added.
+        (SkipForwardButton):
+        * Modules/modern-media-controls/controls/slider.css:
+        (.slider):
+        (.slider > .custom-slider,):
+        (.slider > .custom-slider):
+        (.slider > .custom-slider > *):
+        (.slider > .custom-slider > .fill):
+        (.slider > .custom-slider > .track):
+        (.slider > .custom-slider > .primary):
+        (.slider > .custom-slider > .secondary):
+        (.slider > .custom-slider > .knob):
+        (.slider > input):
+        (.slider > input::-webkit-slider-thumb):
+        (.slider.disabled > input,):
+        (.ios .slider > input):
+        (.ios .slider > input::-webkit-slider-runnable-track):
+        (.ios .slider > input::-webkit-slider-thumb):
+        (.slider > canvas,): Deleted.
+        (.slider > canvas): Deleted.
+        * Modules/modern-media-controls/controls/slider.js:
+        (Slider.prototype.set inputAccessibleLabel):
+        (Slider.prototype.get disabled):
+        (Slider.prototype.set disabled):
+        (Slider.prototype.get secondaryValue):
+        (Slider.prototype.set secondaryValue):
+        (Slider.prototype._formatTime):
+        (Slider.prototype.commitProperty):
+        (Slider.prototype.commit):
+        (Slider.prototype.draw): Deleted.
+        (addRoundedRect): Deleted.
+        * Modules/modern-media-controls/controls/start-button.css: Removed.
+        * Modules/modern-media-controls/controls/start-button.js: Removed.
+        * Modules/modern-media-controls/controls/status-label.css:
+        (.status-label):
+        * Modules/modern-media-controls/controls/status-label.js:
+        (StatusLabel.prototype.get enabled):
+        (StatusLabel.prototype.set enabled): Deleted.
+        * Modules/modern-media-controls/controls/text-tracks.css:
+        (video::-webkit-media-text-track-container):
+        (video::-webkit-media-text-track-container.visible-controls-bar):
+        (video::-webkit-media-text-track-container.visible-controls-bar.compact-controls-bar): Deleted.
+        * Modules/modern-media-controls/controls/time-control.js:
+        (TimeControl.prototype.set duration):
+        (TimeControl.prototype.set currentTime):
+        (TimeControl.prototype.get loading):
+        (TimeControl.prototype.set loading):
+        (TimeControl.prototype.get minimumWidth):
+        (TimeControl.prototype.get idealMinimumWidth):
+        (TimeControl.prototype.layout):
+        (TimeControl.prototype._performIdealLayout):
+        (TimeControl.prototype.get useSixDigitsForTimeLabels): Deleted.
+        (TimeControl.prototype.set useSixDigitsForTimeLabels): Deleted.
+        (TimeControl.prototype.get isSufficientlyWide): Deleted.
+        * Modules/modern-media-controls/controls/time-label.css:
+        (.time-label):
+        * Modules/modern-media-controls/controls/time-label.js:
+        (TimeLabel.prototype.setValueWithNumberOfDigits):
+        (TimeLabel.prototype.commitProperty):
+        (TimeLabel.prototype._formattedTime):
+        (doubleDigits):
+        (TimeLabel.prototype.set value): Deleted.
+        * Modules/modern-media-controls/controls/tracks-button.js:
+        * Modules/modern-media-controls/controls/tracks-panel.css:
+        (.tracks-panel > .scrollable-container):
+        (.tracks-panel section):
+        (.tracks-panel section > h3):
+        (.tracks-panel > .background-tint > div,): Deleted.
+        * Modules/modern-media-controls/controls/volume-down-button.js:
+        * Modules/modern-media-controls/controls/volume-slider.css: Removed.
+        * Modules/modern-media-controls/controls/volume-slider.js: Removed.
+        * Modules/modern-media-controls/controls/volume-up-button.js:
+        * Modules/modern-media-controls/gesture-recognizers/gesture-recognizer.js:
+        (GestureRecognizer.prototype.gestureBegan):
+        (GestureRecognizer.prototype._removeTrackingListeners):
+        * Modules/modern-media-controls/gesture-recognizers/tap.js:
+        (TapGestureRecognizer.prototype.touchesMoved):
+        * Modules/modern-media-controls/images/iOS/Airplay.svg: Added.
+        * Modules/modern-media-controls/images/iOS/EnterFullscreen.svg: Added.
+        * Modules/modern-media-controls/images/iOS/MediaSelector.svg: Added.
+        * Modules/modern-media-controls/images/iOS/MiniPipIn.svg: Added.
+        * Modules/modern-media-controls/images/iOS/Mute.svg: Added.
+        * Modules/modern-media-controls/images/iOS/Pause.svg: Added.
+        * Modules/modern-media-controls/images/iOS/PipIn.svg: Added.
+        * Modules/modern-media-controls/images/iOS/Play.svg: Added.
+        * Modules/modern-media-controls/images/iOS/SkipBack15.svg: Added.
+        * Modules/modern-media-controls/images/iOS/SkipForward15.svg: Added.
+        * Modules/modern-media-controls/images/iOS/VolumeHi.svg: Added.
+        * Modules/modern-media-controls/images/iOS/airplay@1x.png: Removed.
+        * Modules/modern-media-controls/images/iOS/airplay@2x.png: Removed.
+        * Modules/modern-media-controls/images/iOS/enter-fullscreen@1x.png: Removed.
+        * Modules/modern-media-controls/images/iOS/enter-fullscreen@2x.png: Removed.
+        * Modules/modern-media-controls/images/iOS/enter-fullscreen@3x.png: Removed.
+        * Modules/modern-media-controls/images/iOS/interval-skip-back@1x.png: Removed.
+        * Modules/modern-media-controls/images/iOS/interval-skip-back@2x.png: Removed.
+        * Modules/modern-media-controls/images/iOS/interval-skip-back@3x.png: Removed.
+        * Modules/modern-media-controls/images/iOS/pause@1x.png: Removed.
+        * Modules/modern-media-controls/images/iOS/pause@2x.png: Removed.
+        * Modules/modern-media-controls/images/iOS/pause@3x.png: Removed.
+        * Modules/modern-media-controls/images/iOS/pip-in@1x.png: Removed.
+        * Modules/modern-media-controls/images/iOS/pip-in@2x.png: Removed.
+        * Modules/modern-media-controls/images/iOS/pip-in@3x.png: Removed.
+        * Modules/modern-media-controls/images/iOS/play@1x.png: Removed.
+        * Modules/modern-media-controls/images/iOS/play@2x.png: Removed.
+        * Modules/modern-media-controls/images/iOS/play@3x.png: Removed.
+        * Modules/modern-media-controls/images/iOS/slider-thumb@2x.png: Removed.
+        * Modules/modern-media-controls/images/iOS/start@1x.png: Removed.
+        * Modules/modern-media-controls/images/iOS/start@2x.png: Removed.
+        * Modules/modern-media-controls/images/iOS/start@3x.png: Removed.
+        * Modules/modern-media-controls/images/macOS/Airplay-fullscreen.svg: Added.
+        * Modules/modern-media-controls/images/macOS/Airplay.svg: Added.
+        * Modules/modern-media-controls/images/macOS/EnterFullscreen.svg: Added.
+        * Modules/modern-media-controls/images/macOS/ExitFullscreen.svg: Added.
+        * Modules/modern-media-controls/images/macOS/Forward.svg: Added.
+        * Modules/modern-media-controls/images/macOS/MediaSelector-fullscreen.svg: Added.
+        * Modules/modern-media-controls/images/macOS/MediaSelector.svg: Added.
+        * Modules/modern-media-controls/images/macOS/Mute.svg: Added.
+        * Modules/modern-media-controls/images/macOS/Pause.svg: Added.
+        * Modules/modern-media-controls/images/macOS/PipIn-fullscreen.svg: Added.
+        * Modules/modern-media-controls/images/macOS/PipIn.svg: Added.
+        * Modules/modern-media-controls/images/macOS/Play.svg: Added.
+        * Modules/modern-media-controls/images/macOS/Rewind.svg: Added.
+        * Modules/modern-media-controls/images/macOS/SkipBack15.svg: Added.
+        * Modules/modern-media-controls/images/macOS/SkipForward15.svg: Added.
+        * Modules/modern-media-controls/images/macOS/VolumeHi.svg: Added.
+        * Modules/modern-media-controls/images/macOS/VolumeLo.svg: Added.
+        * Modules/modern-media-controls/images/macOS/airplay-compact@1x.png: Removed.
+        * Modules/modern-media-controls/images/macOS/airplay-compact@2x.png: Removed.
+        * Modules/modern-media-controls/images/macOS/airplay-fullscreen@1x.png: Removed.
+        * Modules/modern-media-controls/images/macOS/airplay-fullscreen@2x.png: Removed.
+        * Modules/modern-media-controls/images/macOS/airplay@1x.png: Removed.
+        * Modules/modern-media-controls/images/macOS/airplay@2x.png: Removed.
+        * Modules/modern-media-controls/images/macOS/enter-fullscreen-compact@1x.png: Removed.
+        * Modules/modern-media-controls/images/macOS/enter-fullscreen-compact@2x.png: Removed.
+        * Modules/modern-media-controls/images/macOS/enter-fullscreen@1x.png: Removed.
+        * Modules/modern-media-controls/images/macOS/enter-fullscreen@2x.png: Removed.
+        * Modules/modern-media-controls/images/macOS/exit-fullscreen@1x.png: Removed.
+        * Modules/modern-media-controls/images/macOS/exit-fullscreen@2x.png: Removed.
+        * Modules/modern-media-controls/images/macOS/forward@1x.png: Removed.
+        * Modules/modern-media-controls/images/macOS/forward@2x.png: Removed.
+        * Modules/modern-media-controls/images/macOS/interval-skip-back-compact@1x.png: Removed.
+        * Modules/modern-media-controls/images/macOS/interval-skip-back-compact@2x.png: Removed.
+        * Modules/modern-media-controls/images/macOS/interval-skip-back@1x.png: Removed.
+        * Modules/modern-media-controls/images/macOS/interval-skip-back@2x.png: Removed.
+        * Modules/modern-media-controls/images/macOS/media-selection-compact@1x.png: Removed.
+        * Modules/modern-media-controls/images/macOS/media-selection-compact@2x.png: Removed.
+        * Modules/modern-media-controls/images/macOS/media-selection-fullscreen@1x.png: Removed.
+        * Modules/modern-media-controls/images/macOS/media-selection-fullscreen@2x.png: Removed.
+        * Modules/modern-media-controls/images/macOS/media-selection@1x.png: Removed.
+        * Modules/modern-media-controls/images/macOS/media-selection@2x.png: Removed.
+        * Modules/modern-media-controls/images/macOS/pause-compact@1x.png: Removed.
+        * Modules/modern-media-controls/images/macOS/pause-compact@2x.png: Removed.
+        * Modules/modern-media-controls/images/macOS/pause-fullscreen@1x.png: Removed.
+        * Modules/modern-media-controls/images/macOS/pause-fullscreen@2x.png: Removed.
+        * Modules/modern-media-controls/images/macOS/pause@1x.png: Removed.
+        * Modules/modern-media-controls/images/macOS/pause@2x.png: Removed.
+        * Modules/modern-media-controls/images/macOS/pip-in-compact@1x.png: Removed.
+        * Modules/modern-media-controls/images/macOS/pip-in-compact@2x.png: Removed.
+        * Modules/modern-media-controls/images/macOS/pip-in-fullscreen@1x.png: Removed.
+        * Modules/modern-media-controls/images/macOS/pip-in-fullscreen@2x.png: Removed.
+        * Modules/modern-media-controls/images/macOS/pip-in@1x.png: Removed.
+        * Modules/modern-media-controls/images/macOS/pip-in@2x.png: Removed.
+        * Modules/modern-media-controls/images/macOS/play-compact@1x.png: Removed.
+        * Modules/modern-media-controls/images/macOS/play-compact@2x.png: Removed.
+        * Modules/modern-media-controls/images/macOS/play-fullscreen@1x.png: Removed.
+        * Modules/modern-media-controls/images/macOS/play-fullscreen@2x.png: Removed.
+        * Modules/modern-media-controls/images/macOS/play@1x.png: Removed.
+        * Modules/modern-media-controls/images/macOS/play@2x.png: Removed.
+        * Modules/modern-media-controls/images/macOS/rewind@1x.png: Removed.
+        * Modules/modern-media-controls/images/macOS/rewind@2x.png: Removed.
+        * Modules/modern-media-controls/images/macOS/scale-to-fill@1x.png: Removed.
+        * Modules/modern-media-controls/images/macOS/scale-to-fill@2x.png: Removed.
+        * Modules/modern-media-controls/images/macOS/scale-to-fit@1x.png: Removed.
+        * Modules/modern-media-controls/images/macOS/scale-to-fit@2x.png: Removed.
+        * Modules/modern-media-controls/images/macOS/start@1x.png: Removed.
+        * Modules/modern-media-controls/images/macOS/start@2x.png: Removed.
+        * Modules/modern-media-controls/images/macOS/volume-compact@1x.png: Removed.
+        * Modules/modern-media-controls/images/macOS/volume-compact@2x.png: Removed.
+        * Modules/modern-media-controls/images/macOS/volume-down-fullscreen@1x.png: Removed.
+        * Modules/modern-media-controls/images/macOS/volume-down-fullscreen@2x.png: Removed.
+        * Modules/modern-media-controls/images/macOS/volume-mute-compact@1x.png: Removed.
+        * Modules/modern-media-controls/images/macOS/volume-mute-compact@2x.png: Removed.
+        * Modules/modern-media-controls/images/macOS/volume-mute@1x.png: Removed.
+        * Modules/modern-media-controls/images/macOS/volume-mute@2x.png: Removed.
+        * Modules/modern-media-controls/images/macOS/volume-up-fullscreen@1x.png: Removed.
+        * Modules/modern-media-controls/images/macOS/volume-up-fullscreen@2x.png: Removed.
+        * Modules/modern-media-controls/images/macOS/volume@1x.png: Removed.
+        * Modules/modern-media-controls/images/macOS/volume@2x.png: Removed.
+        * Modules/modern-media-controls/js-files:
+        * Modules/modern-media-controls/main.js:
+        (UIString):
+        (formatTimeByUnit):
+        * Modules/modern-media-controls/media/audio-support.js: Added.
+        (AudioSupport.prototype.get control):
+        (AudioSupport.prototype.get mediaEvents):
+        (AudioSupport.prototype.get tracksToMonitor):
+        (AudioSupport.prototype.syncControl):
+        (AudioSupport):
+        * Modules/modern-media-controls/media/controls-visibility-support.js:
+        (ControlsVisibilitySupport.prototype._updateControls):
+        (ControlsVisibilitySupport):
+        * Modules/modern-media-controls/media/fullscreen-support.js:
+        (FullscreenSupport.prototype.buttonWasPressed):
+        (FullscreenSupport.prototype.syncControl):
+        (FullscreenSupport):
+        (FullscreenSupport.prototype.iOSInlineMediaControlsRecognizedPinchInGesture): Deleted.
+        * Modules/modern-media-controls/media/media-controller.js:
+        (MediaController):
+        (MediaController.prototype.get isAudio):
+        (MediaController.prototype.get isYouTubeEmbedWithTitle):
+        (MediaController.prototype.get isFullscreen):
+        (MediaController.prototype.get layoutTraits):
+        (MediaController.prototype.iOSInlineMediaControlsRecognizedTapGesture):
+        (MediaController.prototype.iOSInlineMediaControlsRecognizedPinchInGesture):
+        (MediaController.prototype._updateControlsIfNeeded):
+        (MediaController.prototype._updateTextTracksClassList):
+        (MediaController.prototype.controlsBarFadedStateDidChange): Deleted.
+        * Modules/modern-media-controls/media/media-document-controller.js:
+        (MediaDocumentController.prototype._mediaDocumentHasMetadata):
+        * Modules/modern-media-controls/media/placard-support.js:
+        (PlacardSupport.prototype._updatePlacard):
+        (PlacardSupport):
+        * Modules/modern-media-controls/media/scrubbing-support.js:
+        (ScrubbingSupport.prototype.get mediaEvents):
+        (ScrubbingSupport.prototype.syncControl):
+        (ScrubbingSupport):
+        * Modules/modern-media-controls/media/skip-back-support.js:
+        * Modules/modern-media-controls/media/skip-forward-support.js: Added.
+        (SkipForwardSupport.prototype.get control):
+        (SkipForwardSupport.prototype.get mediaEvents):
+        (SkipForwardSupport.prototype.buttonWasPressed):
+        (SkipForwardSupport.prototype.syncControl):
+        (SkipForwardSupport):
+        * Modules/modern-media-controls/media/start-support.js:
+        (StartSupport):
+        (StartSupport.prototype.handleEvent):
+        (StartSupport.prototype._shouldShowStartButton):
+        (StartSupport.prototype.get control): Deleted.
+        (StartSupport.prototype.syncControl): Deleted.
+        * Modules/modern-media-controls/media/status-support.js:
+        (StatusSupport.prototype.get mediaEvents):
+        (StatusSupport.prototype.syncControl):
+        (StatusSupport):
+        * Modules/modern-media-controls/media/time-control-support.js: Renamed from Source/WebCore/Modules/modern-media-controls/media/time-labels-support.js.
+        (TimeControlSupport.prototype.syncControl):
+        (TimeControlSupport):
+        * Modules/modern-media-controls/media/tracks-support.js:
+        (TracksSupport.prototype.syncControl):
+        * WebCore.xcodeproj/project.pbxproj:
+
 2017-06-05  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Refactor -[WebItemProviderPasteboard valuesForPasteboardType:inItemSet:] to check readable types

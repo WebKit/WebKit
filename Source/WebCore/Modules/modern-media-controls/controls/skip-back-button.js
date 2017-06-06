@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class SkipBackButton extends IconButton
+class SkipBackButton extends Button
 {
 
     constructor(layoutDelegate)

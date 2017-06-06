@@ -64,13 +64,12 @@ class ControlsVisibilitySupport extends MediaControllerSupport
     {
         const media = this.mediaController.media;
         const host = this.mediaController.host;
-        const shouldShowControls = !!(media.controls || (host && host.shouldForceControlsDisplay) || media.webkitDisplayingFullscreen);
+        const shouldShowControls = !!(media.controls || (host && host.shouldForceControlsDisplay) || this.mediaController.isFullscreen);
         const isVideo = media instanceof HTMLVideoElement && media.videoTracks.length > 0;
 
         const controls = this.mediaController.controls;
-        controls.startButton.visible = shouldShowControls;
-        controls.controlsBar.visible = shouldShowControls;
-        controls.controlsBar.fadesWhileIdle = isVideo ? !media.paused : false;
+        controls.visible = shouldShowControls;
+        controls.autoHideController.fadesWhileIdle = isVideo ? !media.paused : false;
     }
 
 }

@@ -35,7 +35,7 @@ class ScrubbingSupport extends MediaControllerSupport
 
     get mediaEvents()
     {
-        return ["timeupdate", "progress"];
+        return ["progress"];
     }
 
     controlValueWillStartChanging(control)
@@ -72,8 +72,7 @@ class ScrubbingSupport extends MediaControllerSupport
         for (let i = 0, count = media.buffered.length; i < count; ++i)
             buffered = Math.max(media.buffered.end(i), buffered);
 
-        this.control.buffered = buffered / media.duration;
-        this.control.value = media.currentTime / media.duration;
+        this.control.secondaryValue = buffered / media.duration;
     }
 
 }

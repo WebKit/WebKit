@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class TracksButton extends IconButton
+class TracksButton extends Button
 {
 
     constructor(layoutDelegate)

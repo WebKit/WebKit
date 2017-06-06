@@ -1,3 +1,16 @@
+2017-06-05  Antoine Quint  <graouts@apple.com>
+
+        Update media controls to match latest design specs
+        https://bugs.webkit.org/show_bug.cgi?id=172932
+
+        Reviewed by Dean Jackson.
+
+        Update test expectations to make a few of the tests we had already rebaselined pass.
+
+        * TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2017-06-05  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline fast/mediacapturefromelement/CanvasCaptureMediaStream-2d-events.html and update TestExpectations.

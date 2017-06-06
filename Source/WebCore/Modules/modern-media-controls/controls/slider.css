@@ -24,24 +24,100 @@
  */
 
 .slider {
+    position: relative;
+}
+
+.slider > .custom-slider,
+.slider > input {
+    position: absolute;
+    left: 0;
+    width: 100%;
+}
+
+.slider > .custom-slider {
+    pointer-events: none;
+    top: 5.5px;
+    height: 5px;
+}
+
+.slider > .custom-slider > * {
     position: absolute;
 }
 
-.slider > canvas,
-.slider > input {
-    position: absolute;
+.slider > .custom-slider > .fill {
     top: 0;
+    height: 100%;
+    border-radius: 4.5px;
+    mix-blend-mode: plus-lighter;
+}
+
+.slider > .custom-slider > .track {
     left: 0;
     width: 100%;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.slider > .custom-slider > .primary {
+    left: 0;
+    background-color: rgba(255, 255, 255, 0.35);
+}
+
+.slider > .custom-slider > .secondary {
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+.slider > .custom-slider > .knob {
+    top: -2px;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background-color: white;
+    transform: translateX(-50%);
+}
+
+.slider > input {
+    top: 0;
+    margin: 0;
+    height: 100%;
+    background-color: transparent;
+    -webkit-appearance: none !important;
+}
+
+.slider > input::-webkit-slider-thumb {
+    width: 9px;
+    height: 100%;
+    border: none;
+    box-shadow: none;
+    background-color: transparent;
+    -webkit-appearance: none !important;
+}
+
+/* When disabled, we only want to show the track and turn off interaction. */
+
+.slider.disabled > input,
+.slider.disabled > .custom-slider > .primary,
+.slider.disabled > .custom-slider > .secondary,
+.slider.disabled > .custom-slider > .knob {
+    display: none;
+}
+
+/* Increase the touch region for the thumb on iOS */
+
+.ios .slider > input {
+    /* We need to extend the slider to ensure the padded thumb is
+       tracking along the same width as the custom slider rendering. */
+    width: calc(100% + 16px);
+    height: calc(100% + 10px);
+    transform: translate(-8px, -5px);
+}
+
+.ios .slider > input::-webkit-slider-runnable-track {
+    /* We need to force the height to be 100% as on some pages the height would
+       be 0 otherwise, see <rdar://problem/31769830>. */
     height: 100%;
 }
 
-.slider > canvas {
-    pointer-events: none;
-}
-
-.slider > input {
-    margin: 0;
-    background-color: transparent;
-    -webkit-appearance: none !important;
+.ios .slider > input::-webkit-slider-thumb {
+    padding: 0 8px;
+    box-sizing: content-box;
 }

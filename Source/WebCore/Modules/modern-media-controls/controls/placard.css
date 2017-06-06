@@ -32,29 +32,26 @@
 
     background-color: black;
     color: rgb(164, 164, 164);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .placard .container {
-    position: absolute;
-    left: 50%;
-    top: 50%;
     max-width: 402px;
     width: 100%;
-
-    transform: translate(-50%, -50%);
 }
 
-.placard .icon {
+.placard button {
     position: relative;
-    left: 50%;
-    -webkit-mask-repeat: no-repeat;
-    background-color: rgb(164, 164, 164) !important;
-
+    margin: auto;
     margin-bottom: 10px;
-
-    transform: translateX(-50%);
-
     pointer-events: none;
+}
+
+.placard button > picture {
+    background-color: rgb(164, 164, 164) !important;
 }
 
 .placard .title,

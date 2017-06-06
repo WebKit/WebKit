@@ -28,9 +28,8 @@
     display: inline-block;
 }
 
-.tracks-panel > .background-tint > div,
 .tracks-panel > .scrollable-container {
-    border-radius: 7px;
+    border-radius: 8px;
 }
 
 .tracks-panel > .scrollable-container {
@@ -50,7 +49,7 @@
 }
 
 .tracks-panel section {
-    border-top: 2px solid rgba(255, 255, 255, 0.45);
+    border-top: 2px solid var(--secondary-glyph-color);
     will-change: transform;
 }
 
@@ -59,7 +58,7 @@
 }
 
 .tracks-panel section > h3 {
-    color: rgba(255, 255, 255, 0.6);
+    color: var(--primary-glyph-color);
     mix-blend-mode: plus-lighter;
     padding: 5px 20px 1px 21px;
     margin: 0;
