@@ -1,3 +1,20 @@
+2017-06-06  Saam Barati  <sbarati@apple.com>
+
+        Make sure we restore SP when doing calls that could be to JS
+        https://bugs.webkit.org/show_bug.cgi?id=172946
+        <rdar://problem/32579026>
+
+        Reviewed by JF Bastien.
+
+        I was worried that there was a bug where we'd call JS, JS would tail call,
+        and we'd end up with a bogus SP. However, this bug does not exist since wasm
+        always calls to JS through a stub, and the stub treats SP as a callee save.
+        
+        I wrote a test for this, and also made a note that this is the needed ABI.
+
+        * wasm/WasmBinding.cpp:
+        (JSC::Wasm::wasmToJs):
+
 2017-06-06  Keith Miller  <keith_miller@apple.com>
 
         OMG tier up checks should be a patchpoint

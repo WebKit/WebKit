@@ -1,3 +1,17 @@
+2017-06-06  Saam Barati  <sbarati@apple.com>
+
+        Make sure we restore SP when doing calls that could be to JS
+        https://bugs.webkit.org/show_bug.cgi?id=172946
+        <rdar://problem/32579026>
+
+        Reviewed by JF Bastien.
+
+        * wasm/function-tests/many-args-tail-call-sp-restored.js: Added.
+        (import.Builder.from.string_appeared_here.import.as.assert.from.string_appeared_here.f1):
+        (import.Builder.from.string_appeared_here.import.as.assert.from.string_appeared_here.end):
+        (import.Builder.from.string_appeared_here.import.as.assert.from.string_appeared_here.f2):
+        (import.Builder.from.string_appeared_here.import.as.assert.from.string_appeared_here.let.instance.new.WebAssembly.Instance.new.WebAssembly.Module.builder.WebAssembly):
+
 2017-06-06  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed rollout r217807. Caused a test to crash.

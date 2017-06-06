@@ -60,6 +60,9 @@ MacroAssemblerCodeRef wasmToJs(VM* vm, Bag<CallLinkInfo>& callLinkInfos, Signatu
     unsigned argCount = signature.argumentCount();
     JIT jit;
 
+    // Note: WasmB3IRGenerator assumes that this stub treats SP as a callee save.
+    // If we ever change this, we will also need to change WasmB3IRGenerator.
+
     // Below, we assume that the JS calling convention is always on the stack.
     ASSERT(!jsCC.m_gprArgs.size());
     ASSERT(!jsCC.m_fprArgs.size());
