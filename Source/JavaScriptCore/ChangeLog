@@ -1,3 +1,10 @@
+2017-06-06  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, fix 32-bit build.
+
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_unreachable):
+
 2017-06-06  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed rollout r217807. Caused a test to crash.
