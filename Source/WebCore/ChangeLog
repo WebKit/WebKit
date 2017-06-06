@@ -1,3 +1,23 @@
+2017-06-06  Zalan Bujtas  <zalan@apple.com>
+
+        Safari doesn't load newest The Order of the Stick comic.
+        https://bugs.webkit.org/show_bug.cgi?id=172949
+        <rdar://problem/32389730>
+
+        Reviewed by Antti Koivisto.
+
+        As part of the table layout, RenderTableSection::layoutRows calls the RenderTableCell's layout() directly
+        (skipping the RenderTableRow parent). If during this call the RenderTableCell (or any of its descendant) marks the ancestor
+        chain dirty, this dirty flag on the RenderTableRows will never be cleared and we'll end up early returning from RenderTableSection::paint.
+        For certain type of float objects, we need to invalidate the line layout path during layout (and we mark the ancestors dirty).
+        This patch takes a conservative approach and marks the ancestors dirty only when the renderer is not dirty yet, but
+        as part of webkit.org/b/172947 we should revisit and validate whether the setNeedsLayout() is required at all.
+
+        Test: fast/table/floating-table-sibling-is-invisible.html
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::invalidateLineLayoutPath):
+
 2017-06-06  Emilio Cobos Álvarez  <ecobos@igalia.com>
 
         [css-conditional] The one-string version of CSS.supports should be wrapped in implied parentheses.

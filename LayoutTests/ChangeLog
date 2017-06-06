@@ -1,3 +1,14 @@
+2017-06-06  Zalan Bujtas  <zalan@apple.com>
+
+        Safari doesn't load newest The Order of the Stick comic.
+        https://bugs.webkit.org/show_bug.cgi?id=172949
+        <rdar://problem/32389730>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/table/floating-table-sibling-is-invisible-expected.html: Added.
+        * fast/table/floating-table-sibling-is-invisible.html: Added.
+
 2017-06-06  Emilio Cobos Álvarez  <ecobos@igalia.com>
 
         [css-conditional] The one-string version of CSS.supports should be wrapped in implied parentheses.
