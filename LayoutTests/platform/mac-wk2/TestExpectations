@@ -643,8 +643,6 @@ webkit.org/b/170410 fast/images/animated-gif-webkit-transform.html [ Pass Failur
 
 compositing/tiling/non-visible-window-tile-coverage.html [ Pass ]
 
-webkit.org/b/170907 [ Debug ] imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf.worker.html [ Pass Failure Timeout ]
-
 webkit.org/b/170629 [ Sierra Debug ] memory/memory-pressure-simulation.html [ Pass Failure ]
 
 webkit.org/b/170484 swipe/main-frame-pinning-requirement.html [ Pass Failure ]
