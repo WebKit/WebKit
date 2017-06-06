@@ -4184,7 +4184,7 @@ void WebPageProxy::setMuted(WebCore::MediaProducer::MutedStateFlags state)
 
 #if ENABLE(MEDIA_STREAM)
     if (!(state & WebCore::MediaProducer::CaptureDevicesAreMuted))
-        UserMediaProcessManager::singleton().willEnableMediaStreamInPage(*this);
+        UserMediaProcessManager::singleton().muteCaptureMediaStreamsExceptIn(*this);
 #endif
 
     m_process->send(Messages::WebPage::SetMuted(state), m_pageID);

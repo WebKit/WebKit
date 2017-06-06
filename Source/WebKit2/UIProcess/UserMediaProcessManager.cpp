@@ -109,14 +109,13 @@ void UserMediaProcessManager::removeUserMediaPermissionRequestManagerProxy(UserM
     }
 }
 
-void UserMediaProcessManager::willEnableMediaStreamInPage(WebPageProxy& pageStartingCapture)
+void UserMediaProcessManager::muteCaptureMediaStreamsExceptIn(WebPageProxy& pageStartingCapture)
 {
 #if PLATFORM(COCOA)
     for (auto& state : stateMap()) {
         for (auto& manager : state.value->managers()) {
             if (&manager->page() == &pageStartingCapture)
                 continue;
-
             manager->page().setMuted(WebCore::MediaProducer::CaptureDevicesAreMuted);
         }
     }
@@ -132,7 +131,7 @@ void UserMediaProcessManager::willCreateMediaStream(UserMediaPermissionRequestMa
 
     ASSERT(stateMap().contains(&processStartingCapture));
 
-    willEnableMediaStreamInPage(proxy.page());
+    proxy.page().activateMediaStreamCaptureInPage();
 
     auto& state = processState(processStartingCapture);
     size_t extensionCount = 0;

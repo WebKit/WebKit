@@ -209,6 +209,14 @@ void UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame(
         auto topLevelOrigin = API::SecurityOrigin::create(topLevelDocumentOrigin.get());
         auto request = createRequest(userMediaID, frameID, WTFMove(userMediaDocumentOrigin), WTFMove(topLevelDocumentOrigin), WTFMove(audioDeviceUIDs), WTFMove(videoDeviceUIDs), WTFMove(deviceIdentifierHashSalt));
 
+        if (m_page.preferences().mockCaptureDevicesEnabled() && !m_page.preferences().mockCaptureDevicesPromptEnabled()) {
+            // FIXME: https://bugs.webkit.org/show_bug.cgi?id=172989
+            // We should probably only allow this if page is already actively capturing or page is visible.
+            // If page is hidden and not capturing, we should wait for page to be visible before allowing the request.
+            request->allow(request->audioDeviceUIDs().isEmpty() ? String() : request->audioDeviceUIDs()[0], request->videoDeviceUIDs().isEmpty() ? String() : request->videoDeviceUIDs()[0]);
+            return;
+        }
+
         if (!m_page.uiClient().decidePolicyForUserMediaPermissionRequest(m_page, *m_page.process().webFrame(frameID), WTFMove(userMediaOrigin), WTFMove(topLevelOrigin), request.get()))
             userMediaAccessWasDenied(userMediaID, UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::UserMediaDisabled);
     };

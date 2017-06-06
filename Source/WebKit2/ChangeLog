@@ -1,3 +1,30 @@
+2017-06-06  Youenn Fablet  <youenn@apple.com>
+
+        Add an option to disable getUserMedia prompt in case of mock capture sources
+        https://bugs.webkit.org/show_bug.cgi?id=172981
+        <rdar://problem/32580325>
+
+        Reviewed by Eric Carlson.
+
+        Adding mockCaptureDevicesPromptEnabled option.
+        Allowing any getUserMedia request if mock is on and prompt is off.
+
+        Renaming UserMediaProcessManager::willEnableMediaStreamInPage to muteCaptureMediaStreamsExceptIn.
+        This eases reading the code.
+        Making sure that a page for which a new getUserMedia MediaStream will be created is capture-unmuted.
+
+        * Shared/WebPreferencesDefinitions.h:
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame):
+        * UIProcess/UserMediaProcessManager.cpp:
+        (WebKit::UserMediaProcessManager::muteCaptureMediaStreamsExceptIn):
+        (WebKit::UserMediaProcessManager::willCreateMediaStream):
+        * UIProcess/UserMediaProcessManager.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setMuted):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::activateMediaStreamCaptureInPage):
+
 2017-06-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [WPE] Enable remote inspector

@@ -505,6 +505,9 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (void)setMockCaptureDevicesEnabled:(BOOL)flag;
 - (BOOL)mockCaptureDevicesEnabled;
 
+- (void)setMockCaptureDevicesPromptEnabled:(BOOL)flag;
+- (BOOL)mockCaptureDevicesPromptEnabled;
+
 - (void)setEnumeratingAllNetworkInterfacesEnabled:(BOOL)flag;
 - (BOOL)enumeratingAllNetworkInterfacesEnabled;
 

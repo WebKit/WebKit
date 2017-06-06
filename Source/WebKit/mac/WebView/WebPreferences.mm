@@ -618,6 +618,7 @@ public:
 #endif
 #if ENABLE(MEDIA_STREAM)
         [NSNumber numberWithBool:NO], WebKitMockCaptureDevicesEnabledPreferenceKey,
+        [NSNumber numberWithBool:YES], WebKitMockCaptureDevicesPromptEnabledPreferenceKey,
         [NSNumber numberWithBool:YES], WebKitMediaCaptureRequiresSecureConnectionPreferenceKey,
 #endif
         [NSNumber numberWithBool:YES], WebKitShadowDOMEnabledPreferenceKey,
@@ -2881,6 +2882,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setMockCaptureDevicesEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitMockCaptureDevicesEnabledPreferenceKey];
+}
+
+- (BOOL)mockCaptureDevicesPromptEnabled
+{
+    return [self _boolValueForKey:WebKitMockCaptureDevicesPromptEnabledPreferenceKey];
+}
+
+- (void)setMockCaptureDevicesPromptEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitMockCaptureDevicesPromptEnabledPreferenceKey];
 }
 
 - (BOOL)enumeratingAllNetworkInterfacesEnabled

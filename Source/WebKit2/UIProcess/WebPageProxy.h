@@ -470,6 +470,8 @@ public:
     void setEditable(bool);
     bool isEditable() const { return m_isEditable; }
 
+    void activateMediaStreamCaptureInPage() { setMuted(m_mutedState & ~WebCore::MediaProducer::CaptureDevicesAreMuted); }
+
 #if PLATFORM(IOS)
     void executeEditCommand(const String& commandName, std::function<void (CallbackBase::Error)>);
     double displayedContentScale() const { return m_lastVisibleContentRectUpdate.scale(); }
