@@ -843,11 +843,8 @@ static void enableExperimentalFeatures(WebPreferences* preferences)
     // FIXME: SpringTimingFunction
     [preferences setGamepadsEnabled:YES];
     [preferences setLinkPreloadEnabled:YES];
-    [preferences setModernMediaControlsEnabled:YES];
     // FIXME: InputEvents
-    [preferences setResourceTimingEnabled:YES];
     [preferences setSubtleCryptoEnabled:YES];
-    [preferences setUserTimingEnabled:YES];
     [preferences setWebAnimationsEnabled:YES];
     [preferences setWebGL2Enabled:YES];
     [preferences setWebGPUEnabled:YES];
@@ -961,6 +958,10 @@ static void resetWebPreferencesToConsistentValues()
     [preferences setMediaDevicesEnabled:YES];
 
     [preferences setLargeImageAsyncDecodingEnabled:NO];
+
+    [preferences setModernMediaControlsEnabled:YES];
+    [preferences setResourceTimingEnabled:YES];
+    [preferences setUserTimingEnabled:YES];
 
     [WebPreferences _clearNetworkLoaderSession];
     [WebPreferences _setCurrentNetworkLoaderSessionCookieAcceptPolicy:NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain];

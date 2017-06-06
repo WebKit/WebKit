@@ -416,8 +416,8 @@
     {
         "name": "Performance Observer",
         "status": {
-            "status": "In Development",
-            "enabled-by-default": false
+            "status": "Supported",
+            "enabled-by-default": true
         },
         "url": "https://w3c.github.io/performance-timeline/",
         "keywords": ["performance", "performance observer", "performance timeline"],
@@ -456,8 +456,8 @@
     {
         "name": "Resource Timing Level 2",
         "status": {
-            "status": "In Development",
-            "enabled-by-default": false
+            "status": "Supported",
+            "enabled-by-default": true
         },
         "url": "https://w3c.github.io/resource-timing/",
         "webkit-url": "https://webkit.org/b/61138",
@@ -508,8 +508,8 @@
     {
         "name": "User Timing Level 2",
         "status": {
-            "status": "In Development",
-            "enabled-by-default": false
+            "status": "Supported",
+            "enabled-by-default": true
         },
         "url": "https://w3c.github.io/user-timing/",
         "keywords": ["performance", "usertiming", "user timing"],

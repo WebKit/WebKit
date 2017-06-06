@@ -1,3 +1,20 @@
+2017-06-06  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Move Resource Timing / User Timing from experimental features into main preferences
+        https://bugs.webkit.org/show_bug.cgi?id=172950
+
+        Reviewed by Darin Adler.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (enableExperimentalFeatures):
+        (resetWebPreferencesToConsistentValues):
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (enableExperimentalFeatures):
+        (resetWebPreferencesToConsistentValues):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetPreferencesToConsistentValues):
+        Move out no longer experimental features to the main list.
+
 2017-06-06  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [WPE] Add an install-dependencies script
