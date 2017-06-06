@@ -395,7 +395,7 @@ bool UIDelegate::UIClient::runOpenPanel(WebPageProxy*, WebFrameProxy* webFramePr
 
         Vector<String> filenames;
         for (NSURL *url in URLs)
-            filenames.append(url.fileSystemRepresentation);
+            filenames.append(url.path);
 
         resultListener->chooseFiles(filenames);
     }];

@@ -529,6 +529,7 @@
 		A16F66BA1C40EB4F00BD4D24 /* ContentFiltering.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = A16F66B91C40EA2000BD4D24 /* ContentFiltering.html */; };
 		A17991881E1C994E00A505ED /* SharedBuffer.mm in Sources */ = {isa = PBXBuildFile; fileRef = A17991861E1C994E00A505ED /* SharedBuffer.mm */; };
 		A179918B1E1CA24100A505ED /* SharedBufferTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A17991891E1CA24100A505ED /* SharedBufferTest.cpp */; };
+		A180C0FA1EE67DF000468F47 /* RunOpenPanel.mm in Sources */ = {isa = PBXBuildFile; fileRef = A180C0F91EE67DF000468F47 /* RunOpenPanel.mm */; };
 		A1C4FB731BACD1CA003742D0 /* pages.pages in Copy Resources */ = {isa = PBXBuildFile; fileRef = A1C4FB721BACD1B7003742D0 /* pages.pages */; };
 		A1DF74321C41B65800A2F4D0 /* AlwaysRevalidatedURLSchemes.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1DF74301C41B65800A2F4D0 /* AlwaysRevalidatedURLSchemes.mm */; };
 		A57A34F216AF6B2B00C2501F /* PageVisibilityStateWithWindowChanges.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = A57A34F116AF69E200C2501F /* PageVisibilityStateWithWindowChanges.html */; };
@@ -1363,6 +1364,7 @@
 		A17991861E1C994E00A505ED /* SharedBuffer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SharedBuffer.mm; sourceTree = "<group>"; };
 		A17991891E1CA24100A505ED /* SharedBufferTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedBufferTest.cpp; sourceTree = "<group>"; };
 		A179918A1E1CA24100A505ED /* SharedBufferTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedBufferTest.h; sourceTree = "<group>"; };
+		A180C0F91EE67DF000468F47 /* RunOpenPanel.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RunOpenPanel.mm; sourceTree = "<group>"; };
 		A18AA8CC1C3FA218009B2B97 /* ContentFiltering.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContentFiltering.h; sourceTree = "<group>"; };
 		A1A4FE5D18DD3DB700B5EA8A /* Download.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Download.mm; sourceTree = "<group>"; };
 		A1C4FB6C1BACCE50003742D0 /* QuickLook.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = QuickLook.mm; sourceTree = "<group>"; };
@@ -1783,6 +1785,7 @@
 				A12DDBFC1E836FF100CF6CAE /* RenderedImageWithOptionsPlugIn.mm */,
 				A12DDC011E8374F500CF6CAE /* RenderedImageWithOptionsProtocol.h */,
 				CD9E292B1C90A71F000BB800 /* RequiresUserActionForPlayback.mm */,
+				A180C0F91EE67DF000468F47 /* RunOpenPanel.mm */,
 				37BCA61B1B596BA9002012CA /* ShouldOpenExternalURLsInNewWindowActions.mm */,
 				2D9A53AE1B31FA8D0074D5AA /* ShrinkToFit.mm */,
 				2DFF7B6C1DA487AF00814614 /* SnapshotStore.mm */,
@@ -3087,6 +3090,7 @@
 				CE3524F91B1441C40028A7C5 /* TextFieldDidBeginAndEndEditing.cpp in Sources */,
 				7CCE7EDD1A411A9200447C4C /* TimeRanges.cpp in Sources */,
 				0F4FFA9E1ED3AA8500F7111F /* SnapshotViaRenderInContext.mm in Sources */,
+				A180C0FA1EE67DF000468F47 /* RunOpenPanel.mm in Sources */,
 				7CCE7ED31A411A7E00447C4C /* TypingStyleCrash.mm in Sources */,
 				7CCE7EDE1A411A9200447C4C /* URL.cpp in Sources */,
 				7CCE7EB01A411A4400447C4C /* URLExtras.mm in Sources */,
