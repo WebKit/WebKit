@@ -99,6 +99,10 @@ function testWebGL2() {
     return canvas.getContext("webgl2");
 }
 
+function testWebGPU() {
+    return window.WebGPURenderingContext;
+}
+
 function testWebRTC() {
     return window.RTCPeerConnection;
 }
@@ -130,6 +134,7 @@ window.addEventListener("load", function () {
         <div class="test" id="VariationFonts"><p>Variation Fonts</p></div>
         <div class="test" id="WebAnimations"><p>Web Animations</p></div>
         <div class="test" id="WebGL2"><p>WebGL 2.0</p></div>
+        <div class="test" id="WebGPU"><p>WebGPU</p></div>
         <div class="test" id="WebRTC"><p>WebRTC</p></div>
     </div>
 </body>
