@@ -40,6 +40,7 @@ from webkitpy.common.net.networktransaction import NetworkTransaction
 from webkitpy.common.net.regressionwindow import RegressionWindow
 from webkitpy.common.system.logutils import get_logger
 from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup
+from webkitpy.thirdparty.autoinstalled.mechanize import Browser
 
 
 _log = get_logger(__file__)
@@ -51,9 +52,7 @@ class Builder(object):
         self._buildbot = buildbot
         self._builds_cache = {}
         self._revision_to_build_number = None
-        from webkitpy.thirdparty.autoinstalled.mechanize import Browser
-        self._browser = Browser()
-        self._browser.set_handle_robots(False)  # The builder pages are excluded by robots.txt
+        self._browser = None
 
     def name(self):
         return self._name
@@ -131,6 +130,11 @@ class Builder(object):
                 return form.find_control("username")
             except Exception, e:
                 return False
+
+        if not self._browser:
+            self._browser = Browser()
+            self._browser.set_handle_robots(False)  # The builder pages are excluded by robots.txt
+
         # ignore false positives for missing Browser methods - pylint: disable=E1102
         self._browser.open(self.url())
         self._browser.select_form(predicate=predicate)
