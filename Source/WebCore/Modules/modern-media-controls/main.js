@@ -39,9 +39,7 @@ function UIString(string)
     let localizedStrings = {};
     try {
         localizedStrings = UIStrings;
-    } catch (error) {
-        console.error("Could not find localized strings");
-    }
+    } catch (error) {}
 
     if (localizedStrings[string])
         return localizedStrings[string];

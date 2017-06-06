@@ -1,3 +1,16 @@
+2017-06-06  Antoine Quint  <graouts@apple.com>
+
+        Update modern media controls testing utilities
+        https://bugs.webkit.org/show_bug.cgi?id=172976
+        <rdar://problem/32588432>
+
+        Reviewed by Eric Carlson.
+
+        Update the list of CSS files to load to match the current list of
+        existing CSS files in the modern-media-controls module.
+
+        * media/modern-media-controls/resources/media-controls-loader.js:
+
 2017-06-05  Antoine Quint  <graouts@apple.com>
 
         Update media controls to match latest design specs

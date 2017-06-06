@@ -1,3 +1,19 @@
+2017-06-06  Antoine Quint  <graouts@apple.com>
+
+        Update modern media controls testing utilities
+        https://bugs.webkit.org/show_bug.cgi?id=172976
+        <rdar://problem/32588432>
+
+        Reviewed by Eric Carlson.
+
+        Stop logging an error when we're not able to load UI Strings since UI strings
+        are not defined in the majority of modern-media-controls tests as we load the
+        code directly from the modern-media-controls module and can't reach into the
+        English.lproj directory, nor is it necessary.
+
+        * Modules/modern-media-controls/main.js:
+        (UIString):
+
 2017-06-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GStreamer] Use the same draw timer and mutex when AC disabled or building without OpenGL
