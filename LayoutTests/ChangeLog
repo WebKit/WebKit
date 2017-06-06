@@ -1,3 +1,12 @@
+2017-06-06  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Mark media/fullscreen-api-enabled-media-with-presentation-mode.html is failing.
+        https://bugs.webkit.org/show_bug.cgi?id=172998
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2017-06-06  Zalan Bujtas  <zalan@apple.com>
 
         Safari doesn't load newest The Order of the Stick comic.
