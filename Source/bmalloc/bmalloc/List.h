@@ -30,6 +30,13 @@ namespace bmalloc {
 
 template<typename T>
 struct ListNode {
+    ListNode() = default;
+    ListNode(ListNode<T>* prev, ListNode<T>* next)
+        : prev(prev)
+        , next(next)
+    {
+    }
+
     ListNode<T>* prev { nullptr };
     ListNode<T>* next { nullptr };
 };
@@ -39,6 +46,12 @@ class List {
     static_assert(std::is_trivially_destructible<T>::value, "List must have a trivial destructor.");
 
     struct iterator {
+        iterator() = default;
+        iterator(ListNode<T>* node)
+            : m_node(node)
+        {
+        }
+
         T* operator*() { return static_cast<T*>(m_node); }
         T* operator->() { return static_cast<T*>(m_node); }
 

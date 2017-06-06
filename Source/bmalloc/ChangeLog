@@ -1,3 +1,29 @@
+2017-06-06  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        struct does not accept initializer-form if member has initializers in GCC 4.9
+        https://bugs.webkit.org/show_bug.cgi?id=172974
+
+        Reviewed by Carlos Garcia Campos.
+
+        struct cannot accept initializer-form constructor (like, `ListNode<T> t { ... }`) if
+        the member of the struct has a default initializer.
+        Here is a simple snippet.
+
+        template<typename T>
+        struct Pair {
+            T* prev { nullptr };
+            T* next { nullptr };
+        };
+
+        Pair<int> pair { nullptr, nullptr };  // compile erorr in GCC 4.9.
+
+        Instead, we define a default constructor (to invoke default initializers) and a constructor
+        to accept the above initialization.
+
+        * bmalloc/List.h:
+        (bmalloc::ListNode::ListNode):
+        (bmalloc::List::iterator::iterator):
+
 2017-06-06  Geoffrey Garen  <ggaren@apple.com>
 
         Try to fix the GTK build.
