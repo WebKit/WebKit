@@ -50,7 +50,7 @@ class List {
             return *this;
         }
         
-        ListNode<T>* m_node;
+        ListNode<T>* m_node { };
     };
 
 public:

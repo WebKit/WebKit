@@ -1,3 +1,11 @@
+2017-06-05  Geoffrey Garen  <ggaren@apple.com>
+
+        Try to fix the GTK build.
+
+        Unreviewed.
+
+        * bmalloc/List.h:
+
 2017-06-02  Geoffrey Garen  <ggaren@apple.com>
 
         bmalloc: Small and large objects should share memory
