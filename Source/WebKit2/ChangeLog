@@ -1,3 +1,13 @@
+2017-06-06  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WPE] Don't disable Web security preference by default
+        https://bugs.webkit.org/show_bug.cgi?id=172964
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UIProcess/API/wpe/WPEView.cpp:
+        (WKWPE::View::View): Don't disable Web security by default.
+
 2017-06-05  Chris Dumez  <cdumez@apple.com>
 
         ASSERTION FAILED: RunLoop::isMain() in com.apple.WebKit: IPC::Connection::sendSyncMessage + 128
