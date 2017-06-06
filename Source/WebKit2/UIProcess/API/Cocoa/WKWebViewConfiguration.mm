@@ -200,6 +200,8 @@ private:
     _allowsBlockSelection = [[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitDebugAllowBlockSelection"];
 #endif
 
+    _mediaContentTypesRequiringHardwareSupport = @"video/mp4;codecs=hvc1:video/mp4;codecs=hev1";
+
     return self;
 }
 

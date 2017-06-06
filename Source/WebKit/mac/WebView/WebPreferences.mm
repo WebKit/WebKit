@@ -671,6 +671,7 @@ public:
         @NO, WebKitResourceTimingEnabledPreferenceKey,
         @NO, WebKitCredentialManagementEnabledPreferenceKey,
         @NO, WebKitMediaUserGestureInheritsFromDocument,
+        @"video/mp4;codecs=hvc1:video/mp4;codecs=hev1", WebKitMediaContentTypesRequiringHardwareSupportPreferenceKey,
         nil];
 
 #if !PLATFORM(IOS)
@@ -3096,6 +3097,15 @@ static NSString *classIBCreatorID = nil;
 }
 #endif
 
+- (NSString *)mediaContentTypesRequiringHardwareSupport
+{
+    return [self _stringValueForKey:WebKitMediaContentTypesRequiringHardwareSupportPreferenceKey];
+}
+
+- (void)setMediaContentTypesRequiringHardwareSupport:(NSString *)value
+{
+    [self _setStringValue:value forKey:WebKitMediaContentTypesRequiringHardwareSupportPreferenceKey];
+}
 @end
 
 @implementation WebPreferences (WebInternal)

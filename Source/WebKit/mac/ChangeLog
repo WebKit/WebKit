@@ -1,3 +1,21 @@
+2017-06-06  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Set defaults for mediaContentTypesRequiringHardwareSupport setting
+        https://bugs.webkit.org/show_bug.cgi?id=173008
+
+        Reviewed by Eric Carlson.
+
+        Add a private preference (with default) for the mediaContentTypesRequiringHardwareSupport WebCore setting.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences mediaUserGestureInheritsFromDocument]):
+        (-[WebPreferences setMediaUserGestureInheritsFromDocument:]):
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
 2017-06-06  Youenn Fablet  <youenn@apple.com>
 
         Add an option to disable getUserMedia prompt in case of mock capture sources

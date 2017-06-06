@@ -566,4 +566,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 @property (nonatomic) BOOL quickLookDocumentSavingEnabled;
 #endif
 
+@property (nonatomic) NSString *mediaContentTypesRequiringHardwareSupport;
+
 @end
