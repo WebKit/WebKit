@@ -1,5 +1,18 @@
 2017-06-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [WPE] Enable remote inspector
+        https://bugs.webkit.org/show_bug.cgi?id=172971
+
+        Reviewed by Žan Doberšek.
+
+        Initialize the remote inpector if needed.
+
+        * UIProcess/wpe/WebProcessPoolWPE.cpp:
+        (WebKit::initializeRemoteInspectorServer):
+        (WebKit::WebProcessPool::platformInitialize):
+
+2017-06-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GLIB] Make remote inspector DBus protocol common to all glib based ports
         https://bugs.webkit.org/show_bug.cgi?id=172970
 

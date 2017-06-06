@@ -35,6 +35,7 @@
 #include "WebInspectorServer.h"
 #include "WebProcessCreationParameters.h"
 #include "WebProcessMessages.h"
+#include <JavaScriptCore/RemoteInspectorServer.h>
 #include <WebCore/FileSystem.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/SchemeRegistry.h>
@@ -42,6 +43,41 @@
 #include <wtf/glib/GUniquePtr.h>
 
 namespace WebKit {
+
+#if ENABLE(REMOTE_INSPECTOR)
+static bool initializeRemoteInspectorServer(const char* address)
+{
+    if (Inspector::RemoteInspectorServer::singleton().isRunning())
+        return true;
+
+    if (!address[0])
+        return false;
+
+    GUniquePtr<char> inspectorAddress(g_strdup(address));
+    char* portPtr = g_strrstr(inspectorAddress.get(), ":");
+    if (!portPtr)
+        return false;
+
+    *portPtr = '\0';
+    portPtr++;
+    guint64 port = g_ascii_strtoull(portPtr, nullptr, 10);
+    if (!port)
+        return false;
+
+    return Inspector::RemoteInspectorServer::singleton().start(inspectorAddress.get(), port);
+}
+#endif
+
+void WebProcessPool::platformInitialize()
+{
+#if ENABLE(REMOTE_INSPECTOR)
+    if (const char* address = g_getenv("WEBKIT_INSPECTOR_SERVER")) {
+        if (!initializeRemoteInspectorServer(address))
+            g_unsetenv("WEBKIT_INSPECTOR_SERVER");
+    }
+#endif
+    m_websiteDataStore->websiteDataStore().registerSharedResourceLoadObserver();
+}
 
 WTF::String WebProcessPool::legacyPlatformDefaultApplicationCacheDirectory()
 {
@@ -53,11 +89,6 @@ WTF::String WebProcessPool::legacyPlatformDefaultMediaCacheDirectory()
 {
     GUniquePtr<gchar> cacheDirectory(g_build_filename(g_get_user_cache_dir(), "wpe", "mediacache", nullptr));
     return WebCore::stringFromFileSystemRepresentation(cacheDirectory.get());
-}
-
-void WebProcessPool::platformInitialize()
-{
-    m_websiteDataStore->websiteDataStore().registerSharedResourceLoadObserver();
 }
 
 void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& parameters)

@@ -29,16 +29,31 @@
 #if ENABLE(REMOTE_INSPECTOR)
 
 #include <gio/gio.h>
+#include <mutex>
 #include <wtf/SHA1.h>
 
 #if PLATFORM(GTK)
 #define INSPECTOR_BACKEND_COMMANDS_PATH "/org/webkitgtk/inspector/UserInterface/Protocol/InspectorBackendCommands.js"
+#elif PLATFORM(WPE)
+#define INSPECTOR_BACKEND_COMMANDS_PATH "/org/wpe/inspector/UserInterface/Protocol/InspectorBackendCommands.js"
 #endif
 
 namespace Inspector {
 
 GRefPtr<GBytes> backendCommands()
 {
+#if PLATFORM(WPE)
+    static std::once_flag flag;
+    std::call_once(flag, [] {
+        GModule* resourcesModule = g_module_open("libWPEWebInspectorResources.so", G_MODULE_BIND_LAZY);
+        if (!resourcesModule) {
+            WTFLogAlways("Error loading libWPEWebInspectorResources.so: %s", g_module_error());
+            return;
+        }
+
+        g_module_make_resident(resourcesModule);
+    });
+#endif
     GRefPtr<GBytes> bytes = adoptGRef(g_resources_lookup_data(INSPECTOR_BACKEND_COMMANDS_PATH, G_RESOURCE_LOOKUP_FLAGS_NONE, nullptr));
     ASSERT(bytes);
     return bytes;

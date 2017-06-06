@@ -1,5 +1,19 @@
 2017-06-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [WPE] Enable remote inspector
+        https://bugs.webkit.org/show_bug.cgi?id=172971
+
+        Reviewed by Žan Doberšek.
+
+        We can just build the current glib remote inspector, without adding a frontend implementation and using a
+        WebKitGTK+ browser as frontend for now.
+
+        * PlatformWPE.cmake: Add remote inspector files to compilation.
+        * inspector/remote/glib/RemoteInspectorUtils.cpp:
+        (Inspector::backendCommands): Load the inspector resources library.
+
+2017-06-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GLIB] Make remote inspector DBus protocol common to all glib based ports
         https://bugs.webkit.org/show_bug.cgi?id=172970
 

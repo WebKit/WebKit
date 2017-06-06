@@ -6,6 +6,20 @@ list(APPEND JavaScriptCore_INCLUDE_DIRECTORIES
     ${WTF_DIR}
 )
 
+list(APPEND JavaScriptCore_SOURCES
+    API/JSRemoteInspector.cpp
+
+    inspector/remote/RemoteAutomationTarget.cpp
+    inspector/remote/RemoteControllableTarget.cpp
+    inspector/remote/RemoteInspectionTarget.cpp
+    inspector/remote/RemoteInspector.cpp
+
+    inspector/remote/glib/RemoteConnectionToTargetGlib.cpp
+    inspector/remote/glib/RemoteInspectorGlib.cpp
+    inspector/remote/glib/RemoteInspectorServer.cpp
+    inspector/remote/glib/RemoteInspectorUtils.cpp
+)
+
 set(WPE_INSTALLED_JAVASCRIPTCORE_HEADERS
     API/JSBase.h
     API/JSContextRef.h
