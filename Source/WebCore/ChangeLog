@@ -1,3 +1,18 @@
+2017-06-06  Isaac Devine  <isaac@devinesystems.co.nz>
+
+        Allow FileReader to open files multiple times
+
+        If multiple file readers open files they are prevented by default due to
+        Windows' file locking.
+
+        Allow FileReader to open multiple files for reading at the same time on wincairo
+        https://bugs.webkit.org/show_bug.cgi?id=172632
+
+        Reviewed by Darin Adler.
+
+        * platform/win/FileSystemWin.cpp:
+        (WebCore::openFile): Use the appropriate sharing options to allow multiple opens
+
 2017-06-06  Beth Dakin  <bdakin@apple.com>
 
         Netflix seeking quirk should also apply to Now Playing, and should always use the 
