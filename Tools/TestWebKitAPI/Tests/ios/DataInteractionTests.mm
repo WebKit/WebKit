@@ -519,6 +519,40 @@ TEST(DataInteractionTests, ExternalSourceImageAndHTMLToUploadArea)
     EXPECT_WK_STREQ("image/jpeg, text/html, text/html", outputValue.UTF8String);
 }
 
+TEST(DataInteractionTests, ExternalSourceHTMLToContentEditable)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView synchronouslyLoadTestPageNamed:@"autofocus-contenteditable"];
+    [webView stringByEvaluatingJavaScript:@"getSelection().removeAllRanges()"];
+
+    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    auto itemProvider = adoptNS([[UIItemProvider alloc] init]);
+    NSData *htmlData = [@"<h1>This is a test</h1>" dataUsingEncoding:NSUTF8StringEncoding];
+    [itemProvider registerDataRepresentationForTypeIdentifier:(NSString *)kUTTypeHTML withData:htmlData];
+    [dataInteractionSimulator setExternalItemProviders:@[ itemProvider.get() ]];
+    [dataInteractionSimulator runFrom:CGPointMake(300, 400) to:CGPointMake(100, 300)];
+
+    NSString *textContent = [webView stringByEvaluatingJavaScript:@"editor.textContent"];
+    EXPECT_WK_STREQ("This is a test", textContent.UTF8String);
+    EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"!!editor.querySelector('h1')"].boolValue);
+}
+
+TEST(DataInteractionTests, ExternalSourceAttributedStringToContentEditable)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView synchronouslyLoadTestPageNamed:@"autofocus-contenteditable"];
+    [webView stringByEvaluatingJavaScript:@"getSelection().removeAllRanges()"];
+
+    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    NSDictionary *textAttributes = @{ NSFontAttributeName: [UIFont boldSystemFontOfSize:20] };
+    NSAttributedString *richText = [[NSAttributedString alloc] initWithString:@"This is a test" attributes:textAttributes];
+    auto itemProvider = adoptNS([[UIItemProvider alloc] initWithObject:richText]);
+    [dataInteractionSimulator setExternalItemProviders:@[ itemProvider.get() ]];
+    [dataInteractionSimulator runFrom:CGPointMake(300, 400) to:CGPointMake(100, 300)];
+
+    EXPECT_WK_STREQ("This is a test", [webView stringByEvaluatingJavaScript:@"editor.textContent"].UTF8String);
+}
+
 TEST(DataInteractionTests, ExternalSourceMultipleURLsToContentEditable)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);

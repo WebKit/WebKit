@@ -119,6 +119,9 @@ String PlatformPasteboard::stringForType(const String& type)
         if ([value isKindOfClass:[NSURL class]])
             return [(NSURL *)value absoluteString];
 
+        if ([value isKindOfClass:[NSAttributedString class]])
+            return [(NSAttributedString *)value string];
+
         if ([value isKindOfClass:[NSString class]])
             return (NSString *)value;
     }
@@ -392,10 +395,16 @@ String PlatformPasteboard::readString(int index, const String& type)
 
     id value = [pasteboardItem objectAtIndex:0];
     
-    if (type == String(kUTTypeText) || type == String(kUTTypePlainText)) {
+    if (type == String(kUTTypePlainText) || type == String(kUTTypeHTML)) {
         ASSERT([value isKindOfClass:[NSString class]]);
+        return [value isKindOfClass:[NSString class]] ? value : nil;
+    }
+    if (type == String(kUTTypeText)) {
+        ASSERT([value isKindOfClass:[NSString class]] || [value isKindOfClass:[NSAttributedString class]]);
         if ([value isKindOfClass:[NSString class]])
-            return String(value);
+            return value;
+        if ([value isKindOfClass:[NSAttributedString class]])
+            return [(NSAttributedString *)value string];
     } else if (type == String(kUTTypeURL)) {
         ASSERT([value isKindOfClass:[NSURL class]]);
         if ([value isKindOfClass:[NSURL class]])

@@ -1,3 +1,57 @@
+2017-06-05  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Refactor -[WebItemProviderPasteboard valuesForPasteboardType:inItemSet:] to check readable types
+        https://bugs.webkit.org/show_bug.cgi?id=172891
+        <rdar://problem/32204540>
+
+        Reviewed by Darin Adler.
+
+        Tweaks some logic in PlatformPasteboardIOS and WebItemProviderPasteboard to correctly construct objects in
+        -valuesForPasteboardType:inItemSet:. Previously, we have a hard-coded map of UTI type to Class in the form of
+        static helpers titled is{RichText, String, URL, Image, Color}Type in WebItemProviderPasteboard. We would use
+        these functions to determine whether an NSAttributedString, NSString, NSURL, UIImage or UIColor should be
+        constructed using the loaded item provider data. This is incorrect for some UTIs, such as public.html, which
+        cannot actually be used to construct an NSAttributedString -- this caused -valuesForPasteboardType:inItemSet: to
+        always return nil when attempting to create an object corresponding to public.html.
+
+        To fix this, we refactor -valuesForPasteboardType:inItemSet: to instead iterate through UIItemProviderReading-
+        conformant classes in search for a class that can be created for the given UTI type. If no such class exists, we
+        then fall back to custom WebKit handling of the dropped UTI type, which so far only includes reading an NSString
+        with public.plain-text if the UTI is public.html (i.e. reading the HTML source from loaded item provider data).
+
+        Covered by 2 new API tests:
+        DataInteractionTests.ExternalSourceHTMLToContentEditable
+        DataInteractionTests.ExternalSourceAttributedStringToContentEditable
+
+        * platform/ios/PlatformPasteboardIOS.mm:
+        (WebCore::PlatformPasteboard::stringForType):
+        (WebCore::PlatformPasteboard::readString):
+
+        In some cases, -[WebItemProviderPasteboard valuesForPasteboardType:inItemSet:] may now return an
+        NSAttributedString when an NSString was previously created. This adjusts for that possibility by returning just
+        the plain text, -[NSAttributedString string], if the read object was an NSAttributedString.
+
+        * platform/ios/WebItemProviderPasteboard.mm:
+        (allLoadableClasses):
+        (classForTypeIdentifier):
+        (-[WebItemProviderPasteboard valuesForPasteboardType:inItemSet:]):
+
+        See description above for more details.
+
+        (isRichTextType): Deleted.
+        (isStringType): Deleted.
+        (isURLType): Deleted.
+        (isColorType): Deleted.
+        (isImageType): Deleted.
+
+        Removes these heuristics that attempt to "guess" the best UIItemProviderReading class to try and load for a
+        given UTI type.
+
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::draggedContentRangesBetweenOffsets):
+
+        Adds a nil check to fix a debug assertion hit when running DataInteractionTests.
+
 2017-06-05  Dan Bernstein  <mitz@apple.com>
 
         Build fix for macOS 10.12

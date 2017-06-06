@@ -51,34 +51,6 @@ SOFT_LINK_CLASS(UIKit, UIItemProvider)
 typedef void(^ItemProviderDataLoadCompletionHandler)(NSData *, NSError *);
 typedef NSDictionary<NSString *, NSURL *> TypeToFileURLMap;
 
-#define MATCHES_UTI_TYPE(type, suffix) [type isEqualToString:(__bridge NSString *)kUTType ## suffix]
-#define MATCHES_UIKIT_TYPE(type, suffix) [type isEqualToString:@"com.apple.uikit. ## suffix ##"]
-
-static BOOL isRichTextType(NSString *type)
-{
-    return MATCHES_UTI_TYPE(type, RTF) || MATCHES_UTI_TYPE(type, RTFD) || MATCHES_UTI_TYPE(type, HTML);
-}
-
-static BOOL isStringType(NSString *type)
-{
-    return MATCHES_UTI_TYPE(type, Text) || MATCHES_UTI_TYPE(type, UTF8PlainText) || MATCHES_UTI_TYPE(type, UTF16PlainText) || MATCHES_UTI_TYPE(type, PlainText);
-}
-
-static BOOL isURLType(NSString *type)
-{
-    return MATCHES_UTI_TYPE(type, URL);
-}
-
-static BOOL isColorType(NSString *type)
-{
-    return MATCHES_UIKIT_TYPE(type, color);
-}
-
-static BOOL isImageType(NSString *type)
-{
-    return MATCHES_UTI_TYPE(type, PNG) || MATCHES_UTI_TYPE(type, JPEG) || MATCHES_UTI_TYPE(type, GIF) || MATCHES_UIKIT_TYPE(type, image);
-}
-
 @interface WebItemProviderRegistrationInfo ()
 {
     RetainPtr<id <UIItemProviderWriting>> _representingObject;
@@ -341,22 +313,28 @@ static BOOL isImageType(NSString *type)
     return values.autorelease();
 }
 
-static Class classForTypeIdentifier(NSString *typeIdentifier)
+static NSArray<Class<UIItemProviderReading>> *allLoadableClasses()
 {
-    if (isColorType(typeIdentifier))
-        return [getUIColorClass() class];
+    return @[ [getUIColorClass() class], [getUIImageClass() class], [NSURL class], [NSString class], [NSAttributedString class] ];
+}
 
-    if (isImageType(typeIdentifier))
-        return [getUIImageClass() class];
+static Class classForTypeIdentifier(NSString *typeIdentifier, NSString *&outTypeIdentifierToLoad)
+{
+    outTypeIdentifierToLoad = typeIdentifier;
 
-    if (isURLType(typeIdentifier))
-        return [NSURL class];
+    // First, try to load a platform UIItemProviderReading-conformant object as-is.
+    for (Class<UIItemProviderReading> loadableClass in allLoadableClasses()) {
+        if ([[loadableClass readableTypeIdentifiersForItemProvider] containsObject:(NSString *)typeIdentifier])
+            return loadableClass;
+    }
 
-    if (isRichTextType(typeIdentifier))
-        return [NSAttributedString class];
-
-    if (isStringType(typeIdentifier))
+    // If we were unable to load any object, check if the given type identifier is still something
+    // WebKit knows how to handle.
+    if ([typeIdentifier isEqualToString:(NSString *)kUTTypeHTML]) {
+        // Load kUTTypeHTML as a plain text HTML string.
+        outTypeIdentifierToLoad = (NSString *)kUTTypePlainText;
         return [NSString class];
+    }
 
     return nil;
 }
@@ -370,16 +348,17 @@ static Class classForTypeIdentifier(NSString *typeIdentifier)
         if (!provider)
             return;
 
-        Class readableClass = classForTypeIdentifier(pasteboardType);
+        NSString *typeIdentifierToLoad;
+        Class readableClass = classForTypeIdentifier(pasteboardType, typeIdentifierToLoad);
         if (!readableClass)
             return;
 
-        id <UIItemProviderReading> readObject = nil;
-        if (NSData *preloadedData = [retainedSelf _preLoadedDataConformingToType:pasteboardType forItemProviderAtIndex:index])
-            readObject = [[readableClass alloc] initWithItemProviderData:preloadedData typeIdentifier:pasteboardType error:nil];
+        NSData *preloadedData = [retainedSelf _preLoadedDataConformingToType:pasteboardType forItemProviderAtIndex:index];
+        if (!preloadedData)
+            return;
 
-        if (readObject)
-            [values addObject:readObject];
+        if (auto readObject = adoptNS([[readableClass alloc] initWithItemProviderData:preloadedData typeIdentifier:(NSString *)typeIdentifierToLoad error:nil]))
+            [values addObject:readObject.get()];
     }];
 
     return values.autorelease();

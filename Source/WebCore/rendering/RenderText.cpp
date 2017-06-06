@@ -1068,6 +1068,9 @@ bool RenderText::containsOnlyWhitespace(unsigned from, unsigned len) const
 
 Vector<std::pair<unsigned, unsigned>> RenderText::draggedContentRangesBetweenOffsets(unsigned startOffset, unsigned endOffset) const
 {
+    if (!textNode())
+        return { };
+
     auto markers = document().markers().markersFor(textNode(), DocumentMarker::DraggedContent);
     if (markers.isEmpty())
         return { };
