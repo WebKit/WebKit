@@ -56,6 +56,7 @@ fast/css/sticky/sticky-writing-mode-horizontal-bt.html [ ImageOnlyFailure ]
 # The modern-media-controls tests are disabled due to past flakiness and some major code changes.
 # As a result, a host of tests need to be updated and being turned on selectively here.
 media/modern-media-controls/airplay-button [ Pass ]
+media/modern-media-controls/airplay-placard [ Pass ]
 media/modern-media-controls/audio/audio-controls-styles.html [ Pass ]
 media/modern-media-controls/audio/audio-controls-metrics.html [ Pass ]
 

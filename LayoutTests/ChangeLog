@@ -1,5 +1,18 @@
 2017-06-06  Antoine Quint  <graouts@apple.com>
 
+        Rebaseline and enable media/modern-media-controls/airplay-placard
+        https://bugs.webkit.org/show_bug.cgi?id=172977
+        <rdar://problem/32588681>
+
+        Reviewed by Eric Carlson.
+
+        These two tests work fine as-is, we just need to enable them.
+
+        * platform/ios-simulator/TestExpectations:
+        * platform/mac/TestExpectations:
+
+2017-06-06  Antoine Quint  <graouts@apple.com>
+
         Rebaseline and enable media/modern-media-controls/airplay-button
         https://bugs.webkit.org/show_bug.cgi?id=172975
         <rdar://problem/32588422>
