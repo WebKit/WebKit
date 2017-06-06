@@ -5280,6 +5280,11 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         return hr;
     RuntimeEnabledFeatures::sharedFeatures().setLinkPreloadEnabled(!!enabled);
 
+    hr = prefsPrivate->mediaPreloadingEnabled(&enabled);
+    if (FAILED(hr))
+        return hr;
+    RuntimeEnabledFeatures::sharedFeatures().setMediaPreloadingEnabled(!!enabled);
+
     hr = preferences->privateBrowsingEnabled(&enabled);
     if (FAILED(hr))
         return hr;

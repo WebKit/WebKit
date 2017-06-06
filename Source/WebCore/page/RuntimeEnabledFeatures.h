@@ -49,6 +49,9 @@ public:
     void setLinkPreloadEnabled(bool isEnabled) { m_isLinkPreloadEnabled = isEnabled; }
     bool linkPreloadEnabled() const { return m_isLinkPreloadEnabled; }
 
+    void setMediaPreloadingEnabled(bool isEnabled) { m_isMediaPreloadingEnabled = isEnabled; }
+    bool mediaPreloadingEnabled() const { return m_isMediaPreloadingEnabled; }
+
     void setResourceTimingEnabled(bool isEnabled) { m_isResourceTimingEnabled = isEnabled; }
     bool resourceTimingEnabled() const { return m_isResourceTimingEnabled; }
 
@@ -206,6 +209,7 @@ private:
 
     bool m_areModernMediaControlsEnabled { false };
     bool m_isLinkPreloadEnabled { false };
+    bool m_isMediaPreloadingEnabled { false };
     bool m_isResourceTimingEnabled { false };
     bool m_isUserTimingEnabled { false };
     bool m_isInteractiveFormValidationEnabled { false };

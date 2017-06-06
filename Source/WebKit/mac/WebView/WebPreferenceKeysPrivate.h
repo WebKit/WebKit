@@ -182,6 +182,7 @@
 #define WebKitPeerConnectionEnabledPreferenceKey @"WebKitPeerConnectionEnabled"
 #define WebKitWebRTCLegacyAPIEnabledPreferenceKey @"WebKitWebRTCLegacyAPIEnabled"
 #define WebKitLinkPreloadEnabledPreferenceKey @"WebKitLinkPreloadEnabled"
+#define WebKitMediaPreloadingEnabledPreferenceKey @"WebKitMediaPreloadingEnabled"
 #define WebKitCredentialManagementEnabledPreferenceKey @"WebKitCredentialManagementEnabled"
 #define WebKitMediaUserGestureInheritsFromDocument @"WebKitMediaUserGestureInheritsFromDocument"
 

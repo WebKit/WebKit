@@ -2815,6 +2815,16 @@ static NSString *classIBCreatorID = nil;
     [self _setBoolValue:flag forKey:WebKitLinkPreloadEnabledPreferenceKey];
 }
 
+- (BOOL)mediaPreloadingEnabled
+{
+    return [self _boolValueForKey:WebKitMediaPreloadingEnabledPreferenceKey];
+}
+
+- (void)setMediaPreloadingEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitMediaPreloadingEnabledPreferenceKey];
+}
+
 - (void)setMetaRefreshEnabled:(BOOL)enabled
 {
     [self setHTTPEquivEnabled:enabled];

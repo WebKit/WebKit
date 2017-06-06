@@ -774,6 +774,7 @@ static void enableExperimentalFeatures(IWebPreferences* preferences)
     // FIXME: SpringTimingFunction
     // FIXME: Gamepads
     prefsPrivate4->setLinkPreloadEnabled(TRUE);
+    prefsPrivate4->setMediaPreloadingEnabled(TRUE);
     // FIXME: ModernMediaControls
     // FIXME: InputEvents
     // FIXME: SubtleCrypto

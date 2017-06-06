@@ -270,6 +270,8 @@ springTimingFunctionEnabled initial=false
 
 treatIPAddressAsDomain initial=false
 
+mediaPreloadingEnabled initial=false
+
 # Runtime-enabled features
 visualViewportEnabled initial=false, setNeedsStyleRecalcInAllFrames=1
 

@@ -1,3 +1,26 @@
+2017-06-06  Yoav Weiss  <yoav@yoav.ws>
+
+        [preload] Conditional support for media preloading and align media `as` values.
+        https://bugs.webkit.org/show_bug.cgi?id=172501
+
+        Reviewed by Dean Jackson.
+
+        As discussed at https://bugs.webkit.org/show_bug.cgi?id=171720#c11 media preloading may not work
+        since the backend may not reuse such resources properly.
+        This patch makes support for media preloading conditional on a setting, in order to avoid double downloads in these cases.
+        It also aligns the media `as` values to the spec, and splitting them into "video" and "audio".
+
+        No new tests but related tests were modified to remove media preloading tests as the setting is off by default.
+
+        * loader/LinkLoader.cpp:
+        (WebCore::LinkLoader::resourceTypeFromAsAttribute): Make handling of MediaResource conditional on setting. Align `as` values to spec.
+        (WebCore::createLinkPreloadResourceClient): Make handling of MediaResource conditional on setting.
+        (WebCore::LinkLoader::isSupportedType): Make handling of MediaResource conditional on setting.
+        * page/RuntimeEnabledFeatures.h: Added a media preloading preference.
+        (WebCore::RuntimeEnabledFeatures::setMediaPreloadingEnabled):
+        (WebCore::RuntimeEnabledFeatures::mediaPreloadingEnabled):
+        * page/Settings.in: Added a media preloading preference.
+
 2017-06-06  Don Olmstead  <don.olmstead@am.sony.com>
 
         [WebCore] Enable REQUEST_ANIMATION_FRAME_TIMER for all ports

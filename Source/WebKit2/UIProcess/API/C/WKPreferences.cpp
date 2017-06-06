@@ -1731,6 +1731,16 @@ bool WKPreferencesGetLinkPreloadEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->linkPreloadEnabled();
 }
 
+void WKPreferencesSetMediaPreloadingEnabled(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setMediaPreloadingEnabled(flag);
+}
+
+bool WKPreferencesGetMediaPreloadingEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->mediaPreloadingEnabled();
+}
+
 void WKPreferencesSetLargeImageAsyncDecodingEnabled(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setLargeImageAsyncDecodingEnabled(flag);

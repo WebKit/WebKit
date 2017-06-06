@@ -493,6 +493,9 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (void)setGamepadsEnabled:(BOOL)flag;
 - (BOOL)gamepadsEnabled;
 
+- (void)setMediaPreloadingEnabled:(BOOL)flag;
+- (BOOL)mediaPreloadingEnabled;
+
 - (void)setMediaKeysStorageDirectory:(NSString *)directory;
 - (NSString *)mediaKeysStorageDirectory;
 

@@ -486,6 +486,10 @@ WK_EXPORT void WKPreferencesSetLinkPreloadEnabled(WKPreferencesRef, bool flag);
 WK_EXPORT bool WKPreferencesGetLinkPreloadEnabled(WKPreferencesRef);
 
 // Defaults to false
+WK_EXPORT void WKPreferencesSetMediaPreloadingEnabled(WKPreferencesRef, bool flag);
+WK_EXPORT bool WKPreferencesGetMediaPreloadingEnabled(WKPreferencesRef);
+
+// Defaults to false
 WK_EXPORT void WKPreferencesSetCredentialManagementEnabled(WKPreferencesRef, bool flag);
 WK_EXPORT bool WKPreferencesGetCredentialManagementEnabled(WKPreferencesRef);
 

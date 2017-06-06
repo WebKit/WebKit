@@ -4,8 +4,8 @@ header("LiNk:<http://127.0.0.1:8000/resources/dummy.css>; rel=preload; as=style"
 header("Link: <http://127.0.0.1:8000/resources/square100.png>;rel=preload;as=image", false);
 header("Link: <http://127.0.0.1:8000/resources/square100.png?background>;rel=preload;as=image", false);
 header("Link: <http://127.0.0.1:8000/resources/Ahem.woff>; rel=preload; as=font; crossorigin", false);
-header("Link: <http://127.0.0.1:8000/resources/test.mp4>; rel=preload; as=media", false);
-header("Link: <http://127.0.0.1:8000/resources/test.oga>; rel=preload; as=media", false);
+header("Link: <http://127.0.0.1:8000/resources/test.mp4>; rel=preload; as=video", false);
+header("Link: <http://127.0.0.1:8000/resources/test.oga>; rel=preload; as=audio", false);
 header("link: <http://127.0.0.1:8000/security/resources/captions.vtt>; rel=preload; as=track", false);
 header("Link: <http://127.0.0.1:8000/resources/dummy.xml?foobar>; rel=preload; as=foobar", false);
 header("Link: <http://127.0.0.1:8000/resources/dummy.xml>; crossorigin; rel=preload", false);

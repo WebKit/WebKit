@@ -121,7 +121,7 @@ std::optional<CachedResource::Type> LinkLoader::resourceTypeFromAsAttribute(cons
         return CachedResource::Script;
     if (equalLettersIgnoringASCIICase(as, "style"))
         return CachedResource::CSSStyleSheet;
-    if (equalLettersIgnoringASCIICase(as, "media"))
+    if (RuntimeEnabledFeatures::sharedFeatures().mediaPreloadingEnabled() && (equalLettersIgnoringASCIICase(as, "video") || equalLettersIgnoringASCIICase(as, "audio")))
         return CachedResource::MediaResource;
     if (equalLettersIgnoringASCIICase(as, "font"))
         return CachedResource::FontResource;
@@ -144,6 +144,9 @@ static std::unique_ptr<LinkPreloadResourceClient> createLinkPreloadResourceClien
     case CachedResource::FontResource:
         return LinkPreloadFontResourceClient::create(loader, static_cast<CachedFont&>(resource));
     case CachedResource::MediaResource:
+        if (!RuntimeEnabledFeatures::sharedFeatures().mediaPreloadingEnabled())
+            ASSERT_NOT_REACHED();
+        [[clang::fallthrough]];
 #if ENABLE(VIDEO_TRACK)
     case CachedResource::TextTrackResource:
 #endif
@@ -181,7 +184,10 @@ bool LinkLoader::isSupportedType(CachedResource::Type resourceType, const String
     case CachedResource::FontResource:
         return MIMETypeRegistry::isSupportedFontMIMEType(mimeType);
     case CachedResource::MediaResource:
+        if (!RuntimeEnabledFeatures::sharedFeatures().mediaPreloadingEnabled())
+            ASSERT_NOT_REACHED();
         return MIMETypeRegistry::isSupportedMediaMIMEType(mimeType);
+
 #if ENABLE(VIDEO_TRACK)
     case CachedResource::TextTrackResource:
         return MIMETypeRegistry::isSupportedTextTrackMIMEType(mimeType);

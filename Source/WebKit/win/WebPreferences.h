@@ -251,6 +251,8 @@ public:
     virtual HRESULT STDMETHODCALLTYPE setResourceTimingEnabled(BOOL);
     virtual HRESULT STDMETHODCALLTYPE linkPreloadEnabled(_Out_ BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setLinkPreloadEnabled(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE mediaPreloadingEnabled(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setMediaPreloadingEnabled(BOOL);
     virtual HRESULT STDMETHODCALLTYPE clearNetworkLoaderSession();
     virtual HRESULT STDMETHODCALLTYPE switchNetworkLoaderToNewTestingSession();
 
