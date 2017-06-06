@@ -25,6 +25,11 @@
         "keywords": ["es7", "ecmascript"]
     },
     {
+        "name": "ESNext",
+        "url": "https://github.com/tc39/ecma262",
+        "keywords": ["esnext", "ecmascript"]
+    },
+    {
         "name": "Internationalization API",
         "status": {
             "status": "Supported"
