@@ -74,6 +74,6 @@ class WPEPort(Port):
     def _path_to_image_diff(self):
         return self._built_executables_path('ImageDiff')
 
-    def _get_crash_log(self, name, pid, stdout, stderr, newer_than):
+    def _get_crash_log(self, name, pid, stdout, stderr, newer_than, target_host=None):
         name = "WPEWebProcess" if name == "WebProcess" else name
         return GDBCrashLogGenerator(name, pid, newer_than, self._filesystem, self._path_to_driver).generate_crash_log(stdout, stderr)

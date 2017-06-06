@@ -1364,7 +1364,7 @@ class Port(object):
     def path_to_crash_logs(self):
         raise NotImplementedError
 
-    def _get_crash_log(self, name, pid, stdout, stderr, newer_than):
+    def _get_crash_log(self, name, pid, stdout, stderr, newer_than, target_host=None):
         name_str = name or '<unknown process name>'
         pid_str = str(pid or '<unknown>')
         stdout_lines = (stdout or '<empty>').decode('utf8', 'replace').splitlines()

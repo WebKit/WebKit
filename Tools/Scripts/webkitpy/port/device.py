@@ -63,6 +63,11 @@ class Device(object):
 
         self.listening_socket = None
 
+    def symbolicate_crash_log_if_needed(self, path):
+        if hasattr(self.platform_device, 'symbolicate_crash_log_if_needed'):
+            return self.platform_device.symbolicate_crash_log_if_needed(path)
+        return self.filesystem.read_text_file(path)
+
     @property
     def executive(self):
         return self.platform_device.executive

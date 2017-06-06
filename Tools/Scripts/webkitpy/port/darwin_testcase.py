@@ -137,9 +137,5 @@ class DarwinTest(port_testcase.PortTestCase):
         OutputCapture().assert_outputs(self, port.sample_process, args=['test', 42])
 
     def test_get_crash_log(self):
-        # Darwin crash logs are tested elsewhere, so here we just make sure we don't crash.
-        def fake_time_cb():
-            times = [0, 20, 40]
-            return lambda: times.pop(0)
         port = self.make_port(port_name=self.port_name)
         port._get_crash_log('DumpRenderTree', 1234, None, None, time.time(), wait_for_log=False)

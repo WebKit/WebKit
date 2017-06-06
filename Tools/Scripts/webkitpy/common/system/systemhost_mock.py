@@ -54,3 +54,6 @@ class MockSystemHost(object):
 
     def make_file_lock(self, path):
         return MockFileLock(path)
+
+    def symbolicate_crash_log_if_needed(self, path):
+        return self.filesystem.read_text_file(path)

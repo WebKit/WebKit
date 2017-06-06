@@ -20,6 +20,8 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import time
+
 from webkitpy.port.ios_device import IOSDevicePort
 from webkitpy.port import ios_testcase
 
@@ -37,10 +39,17 @@ class IOSDeviceTest(ios_testcase.IOSTest):
     def test_operating_system(self):
         self.assertEqual('ios-device', self.make_port().operating_system())
 
-    # FIXME: Update tests when <rdar://problem/30497991> is completed.
     def test_crashlog_path(self):
-        pass
+        port = self.make_port()
+        with self.assertRaises(RuntimeError):
+            port.path_to_crash_logs()
 
+    def test_get_crash_log(self):
+        port = self.make_port(port_name=self.port_name)
+        with self.assertRaises(RuntimeError):
+            port._get_crash_log('DumpRenderTree', 1234, None, None, time.time(), wait_for_log=False)
+
+    # FIXME: Update tests when <rdar://problem/30497991> is completed.
     def test_spindump(self):
         pass
 

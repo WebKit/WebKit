@@ -54,6 +54,7 @@ class ApplePort(Port):
     # overridden in subclasses
     VERSION_FALLBACK_ORDER = []
     ARCHITECTURES = []
+    _crash_logs_to_skip_for_host = {}
 
     @classmethod
     def determine_full_port_name(cls, host, options, port_name):
@@ -91,6 +92,9 @@ class ApplePort(Port):
         allowed_port_names = self.VERSION_FALLBACK_ORDER + [self.operating_system() + "-future"]
         port_name = port_name.replace('-wk2', '')
         self._version = self._strip_port_name_prefix(port_name)
+
+    def setup_test_run(self, device_class=None):
+        self._crash_logs_to_skip_for_host[self.host] = self.host.filesystem.files_under(self.path_to_crash_logs())
 
     def default_timeout_ms(self):
         if self.get_option('guard_malloc'):

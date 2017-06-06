@@ -34,7 +34,8 @@ from webkitpy.port.win import WinPort
 
 
 def make_mock_crash_report_darwin(process_name, pid):
-    return """Process:         {process_name} [{pid}]
+    return """Crash log may not start with Process line
+Process:         {process_name} [{pid}]
 Path:            /Volumes/Data/slave/snowleopard-intel-release-tests/build/WebKitBuild/Release/{process_name}
 Identifier:      {process_name}
 Version:         ??? (???)

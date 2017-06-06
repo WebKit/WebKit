@@ -1,3 +1,78 @@
+2017-06-06  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Process crash-logs for iOS devices
+        https://bugs.webkit.org/show_bug.cgi?id=171976
+        <rdar://problem/32134551>
+
+        Reviewed by David Kilzer.
+
+        When running layout tests on an iOS device, crash logs should be processed.
+        Implement crash log searching and parsing for iOS devices.
+
+        * Scripts/webkitpy/common/system/crashlogs.py:
+        (CrashLogs): Moved process regular expression for Darwin to class variable.
+        (CrashLogs.__init__): Accept optional list of crash logs to ignore.
+        (CrashLogs.find_newest_log): Add iOS as a potential platform.
+        (CrashLogs.find_all_logs): Ditto.
+        (CrashLogs._parse_darwin_crash_log): Share code for parsing of Darwin crash logs.
+        Do not assume that a Darwin crash log starts with the process.
+        (CrashLogs._find_newest_log_darwin): Remove .app in process name for iOS, use
+        shared code for parsing Darwin crash logs.
+        (CrashLogs._find_newest_log_darwin.is_crash_log): Skip crash logs passed into this
+        object so that crash logs already on the system before testing are not parsed.
+        (CrashLogs._find_newest_log_win.is_crash_log): Ditto.
+        (CrashLogs._find_all_logs_darwin.is_crash_log): Ditto.
+        (CrashLogs._find_all_logs_darwin): Use shared code for parsing Darwin crash logs.
+        * Scripts/webkitpy/common/system/crashlogs_unittest.py:
+        (make_mock_crash_report_darwin): Crash logs may not have their process on the first line.
+        * Scripts/webkitpy/common/system/systemhost.py:
+        (SystemHost.symbolicate_crash_log_if_needed): The symbolicated crash log for most
+        systems is just the crashlog, use this behavior by default.
+        * Scripts/webkitpy/common/system/systemhost_mock.py:
+        (MockSystemHost.symbolicate_crash_log_if_needed): The symbolicated crash log for most
+        systems is just the crashlog, use this behavior by default.
+        * Scripts/webkitpy/port/apple.py:
+        (ApplePort): Add a dictionary mapping hosts to a list of crash logs to be skipped.
+        (ApplePort.setup_test_run): Set the list of crash logs to be skipped to the crash logs on
+        the system before testing begins
+        * Scripts/webkitpy/port/base.py:
+        (Port._get_crash_log): Pass optional target host when getting crash logs.
+        * Scripts/webkitpy/port/darwin.py:
+        (DarwinPort._look_for_all_crash_logs_in_log_dir): Pass list of crash logs to be skipped to
+        CrashLogs object.
+        (DarwinPort._get_crash_log): Pass optional target host when getting crash logs, pass list of crash
+        logs to be skipped to CrashLogs object.
+        * Scripts/webkitpy/port/darwin_testcase.py:
+        (DarwinTest.test_get_crash_log): Removed unused local function.
+        (DarwinTest.test_get_crash_log.fake_time_cb): Deleted.
+        * Scripts/webkitpy/port/device.py:
+        (Device.symbolicate_crash_log_if_needed): If the platform device has a function with this
+        name, call it. Otherwise, assume the default behavior and read the file at the provided path.
+        * Scripts/webkitpy/port/driver.py:
+        (Driver._get_crash_log): Pass optional target host when getting crash logs.
+        * Scripts/webkitpy/port/gtk.py:
+        (GtkPort._get_crash_log): Pass optional target host when getting crash logs.
+        * Scripts/webkitpy/port/ios.py: Ditto.
+        (IOSPort.setup_test_run): Each device is treated as an independent host. Set the list of crash logs
+        to be skipped for each host.
+        * Scripts/webkitpy/port/ios_device.py:
+        (IOSDevicePort.path_to_crash_logs): Consult apple_additions for the path to crash logs.
+        (IOSDevicePort._look_for_all_crash_logs_in_log_dir): Search every connected device for
+        crash logs and pass list of crash logs to ignore to each instance of CrashLogs.
+        (IOSDevicePort._get_crash_log): Search the specified target host for a crash log if a target
+        host is specified. Else, search all connected devices for the specified crash-log.
+        (IOSDevicePort.look_for_new_crash_logs): Deleted.
+        * Scripts/webkitpy/port/ios_device_unittest.py:
+        (IOSDeviceTest.test_crashlog_path): Without apple_additions, an exception should be raised.
+        (IOSDeviceTest.test_get_crash_log): Ditto.
+        * Scripts/webkitpy/port/simulator_process.py:
+        (SimulatorProcess.process_name): Check the provided bundle for the process name.
+        * Scripts/webkitpy/port/win.py:
+        (WinPort._get_crash_log): Pass optional target host when getting crash logs, pass list of crash
+        logs to be skipped to CrashLogs object.
+        * Scripts/webkitpy/port/wpe.py:
+        (WPEPort._get_crash_log): Pass optional target host when getting crash logs.
+
 2017-06-06  David Kilzer  <ddkilzer@apple.com>
 
         Move WTF_ATTRIBUTE_PRINTF() from implementation to declaration

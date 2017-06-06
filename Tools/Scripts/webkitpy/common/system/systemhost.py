@@ -46,3 +46,6 @@ class SystemHost(object):
 
     def make_file_lock(self, path):
         return file_lock.FileLock(path)
+
+    def symbolicate_crash_log_if_needed(self, path):
+        return self.filesystem.read_text_file(path)

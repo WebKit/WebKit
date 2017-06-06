@@ -241,7 +241,7 @@ class Driver(object):
             crashed_pid=self._crashed_pid, crash_log=crash_log, pid=pid)
 
     def _get_crash_log(self, stdout, stderr, newer_than):
-        return self._port._get_crash_log(self._crashed_process_name, self._crashed_pid, stdout, stderr, newer_than)
+        return self._port._get_crash_log(self._crashed_process_name, self._crashed_pid, stdout, stderr, newer_than, target_host=self._target_host)
 
     def _command_wrapper(self):
         # Hook for injecting valgrind or other runtime instrumentation, used by e.g. tools/valgrind/valgrind_tests.py.

@@ -27,46 +27,62 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import codecs
 import datetime
+import logging
 import re
+
+
+_log = logging.getLogger(__name__)
 
 
 class CrashLogs(object):
 
     GLOBAL_PID_REGEX = re.compile(r'\s+Global\s+PID:\s+\[(?P<pid>\d+)\]')
     EXIT_PROCESS_PID_REGEX = re.compile(r'Exit process \d+:(?P<pid>\w+), code')
+    DARWIN_PROCESS_REGEX = re.compile(r'^Process:\s+(?P<process_name>.*) \[(?P<pid>\d+)\]$')
 
-    def __init__(self, host, crash_log_directory):
+    def __init__(self, host, crash_log_directory, crash_logs_to_skip=[]):
         self._host = host
         self._crash_log_directory = crash_log_directory
+        self._crash_logs_to_skip = crash_logs_to_skip
 
     def find_newest_log(self, process_name, pid=None, include_errors=False, newer_than=None):
-        if self._host.platform.is_mac():
+        if self._host.platform.is_mac() or self._host.platform.is_ios():
             return self._find_newest_log_darwin(process_name, pid, include_errors, newer_than)
         elif self._host.platform.is_win():
             return self._find_newest_log_win(process_name, pid, include_errors, newer_than)
         return None
 
     def find_all_logs(self, include_errors=False, newer_than=None):
-        if self._host.platform.is_mac():
+        if self._host.platform.is_mac() or self._host.platform.is_ios():
             return self._find_all_logs_darwin(include_errors, newer_than)
         return None
 
+    def _parse_darwin_crash_log(self, path):
+        contents = self._host.symbolicate_crash_log_if_needed(path)
+        if not contents:
+            return (None, None, None)
+        for line in contents.splitlines():
+            match = CrashLogs.DARWIN_PROCESS_REGEX.match(line)
+            if match:
+                return (match.group('process_name'), int(match.group('pid')), contents)
+        return (None, None, contents)
+
     def _find_newest_log_darwin(self, process_name, pid, include_errors, newer_than):
         def is_crash_log(fs, dirpath, basename):
-            return basename.startswith(process_name + "_") and basename.endswith(".crash")
+            if self._crash_logs_to_skip and fs.join(dirpath, basename) in self._crash_logs_to_skip:
+                return False
+            return (basename.startswith(process_name + '_') and (basename.endswith('.crash')) or
+                    (process_name in basename  and basename.endswith('.ips')))
 
         logs = self._host.filesystem.files_under(self._crash_log_directory, file_filter=is_crash_log)
-        first_line_regex = re.compile(r'^Process:\s+(?P<process_name>.*) \[(?P<pid>\d+)\]$')
         errors = ''
         for path in reversed(sorted(logs)):
             try:
                 if not newer_than or self._host.filesystem.mtime(path) > newer_than:
-                    f = self._host.filesystem.read_text_file(path)
-                    match = first_line_regex.match(f[0:f.find('\n')])
-                    if match and match.group('process_name') == process_name and (pid is None or int(match.group('pid')) == pid):
-                        return errors + f
+                    parsed_name, parsed_pid, log_contents = self._parse_darwin_crash_log(path)
+                    if parsed_name == process_name and (pid is None or parsed_pid == pid):
+                        return errors + log_contents
             except IOError, e:
                 if include_errors:
                     errors += "ERROR: Failed to read '%s': %s\n" % (path, str(e))
@@ -80,6 +96,8 @@ class CrashLogs(object):
 
     def _find_newest_log_win(self, process_name, pid, include_errors, newer_than):
         def is_crash_log(fs, dirpath, basename):
+            if self._crash_logs_to_skip and fs.join(dirpath, basename) in self._crash_logs_to_skip:
+                return False
             return basename.startswith("CrashLog")
 
         logs = self._host.filesystem.files_under(self._crash_log_directory, file_filter=is_crash_log)
@@ -117,18 +135,22 @@ class CrashLogs(object):
 
     def _find_all_logs_darwin(self, include_errors, newer_than):
         def is_crash_log(fs, dirpath, basename):
-            return basename.endswith(".crash")
+            if self._crash_logs_to_skip and fs.join(dirpath, basename) in self._crash_logs_to_skip:
+                return False
+            return basename.endswith('.crash') or basename.endswith('.ips')
 
         logs = self._host.filesystem.files_under(self._crash_log_directory, file_filter=is_crash_log)
-        first_line_regex = re.compile(r'^Process:\s+(?P<process_name>.*) \[(?P<pid>\d+)\]$')
         errors = ''
         crash_logs = {}
         for path in reversed(sorted(logs)):
             try:
                 if not newer_than or self._host.filesystem.mtime(path) > newer_than:
                     result_name = "Unknown"
-                    pid = 0
-                    log_contents = self._host.filesystem.read_text_file(path)
+                    parsed_name, parsed_pid, log_contents = self._parse_darwin_crash_log(path)
+                    if not log_contents:
+                        _log.warn('No data in crash log at {}'.format(path))
+                        continue
+
                     # Verify timestamp from log contents
                     crash_time = self.get_timestamp_from_log(log_contents)
                     if crash_time is not None and newer_than is not None:
@@ -136,11 +158,8 @@ class CrashLogs(object):
                         if crash_time < start_time:
                             continue
 
-                    match = first_line_regex.match(log_contents[0:log_contents.find('\n')])
-                    if match:
-                        process_name = match.group('process_name')
-                        pid = str(match.group('pid'))
-                        result_name = process_name + "-" + pid
+                    if parsed_name:
+                        result_name = parsed_name + "-" + str(parsed_pid)
 
                     while result_name in crash_logs:
                         result_name = result_name + "-1"

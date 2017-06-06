@@ -220,7 +220,7 @@ class GtkPort(Port):
     def check_sys_deps(self, needs_http):
         return super(GtkPort, self).check_sys_deps(needs_http) and self._driver_class().check_driver(self)
 
-    def _get_crash_log(self, name, pid, stdout, stderr, newer_than):
+    def _get_crash_log(self, name, pid, stdout, stderr, newer_than, target_host=None):
         name = "WebKitWebProcess" if name == "WebProcess" else name
         return GDBCrashLogGenerator(name, pid, newer_than, self._filesystem, self._path_to_driver).generate_crash_log(stdout, stderr)
 
