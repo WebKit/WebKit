@@ -46,7 +46,7 @@ namespace Sizes {
     static const size_t alignment = 8;
     static const size_t alignmentMask = alignment - 1ul;
 
-    static const size_t chunkSize = 2 * MB;
+    static const size_t chunkSize = 1 * MB;
     static const size_t chunkMask = ~(chunkSize - 1ul);
 
     static const size_t smallLineSize = 256;

@@ -34,6 +34,9 @@ namespace bmalloc {
 
 class LargeMap {
 public:
+    LargeRange* begin() { return m_free.begin(); }
+    LargeRange* end() { return m_free.end(); }
+
     void add(const LargeRange&);
     LargeRange remove(size_t alignment, size_t);
     Vector<LargeRange>& ranges() { return m_free; }

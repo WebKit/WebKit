@@ -70,7 +70,7 @@ public:
     size_t largeSize(std::lock_guard<StaticMutex>&, void*);
     void shrinkLarge(std::lock_guard<StaticMutex>&, const Range&, size_t);
 
-    void scavenge(std::unique_lock<StaticMutex>&);
+    void scavenge(std::lock_guard<StaticMutex>&);
 
     size_t memoryFootprint();
     double percentAvailableMemoryInUse();
@@ -100,8 +100,10 @@ private:
         size_t sizeClass, BumpAllocator&, BumpRangeCache&);
 
     SmallPage* allocateSmallPage(std::lock_guard<StaticMutex>&, size_t sizeClass);
-
     void deallocateSmallLine(std::lock_guard<StaticMutex>&, Object);
+
+    void allocateSmallChunk(std::lock_guard<StaticMutex>&, size_t pageClass);
+    void deallocateSmallChunk(Chunk*, size_t pageClass);
 
     void mergeLarge(BeginTag*&, EndTag*&, Range&);
     void mergeLargeLeft(EndTag*&, BeginTag*&, Range&, bool& inVMHeap);
@@ -113,8 +115,6 @@ private:
     void scheduleScavengerIfUnderMemoryPressure(size_t);
     
     void concurrentScavenge();
-    void scavengeSmallPages(std::unique_lock<StaticMutex>&);
-    void scavengeLargeObjects(std::unique_lock<StaticMutex>&);
     
 #if BPLATFORM(IOS)
     void updateMemoryInUseParameters();
@@ -124,8 +124,9 @@ private:
     Vector<LineMetadata> m_smallLineMetadata;
     std::array<size_t, sizeClassCount> m_pageClasses;
 
-    std::array<List<SmallPage>, sizeClassCount> m_smallPagesWithFreeLines;
-    std::array<List<SmallPage>, pageClassCount> m_smallPages;
+    std::array<List<SmallPage>, sizeClassCount> m_freeLines;
+    std::array<List<Chunk>, pageClassCount> m_freePages;
+    std::array<List<Chunk>, pageClassCount> m_chunkCache;
 
     Map<void*, size_t, LargeObjectHash> m_largeAllocated;
     LargeMap m_largeFree;

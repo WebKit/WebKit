@@ -35,11 +35,15 @@
 
 namespace bmalloc {
 
-class Chunk {
+class Chunk : public ListNode<Chunk> {
 public:
     static Chunk* get(void*);
 
-    Chunk(std::lock_guard<StaticMutex>&);
+    Chunk(size_t pageSize);
+    
+    void ref() { ++m_refCount; }
+    void deref() { BASSERT(m_refCount); --m_refCount; }
+    unsigned refCount() { return m_refCount; }
 
     size_t offset(void*);
 
@@ -50,10 +54,15 @@ public:
     char* bytes() { return reinterpret_cast<char*>(this); }
     SmallLine* lines() { return &m_lines[0]; }
     SmallPage* pages() { return &m_pages[0]; }
+    
+    List<SmallPage>& freePages() { return m_freePages; }
 
 private:
-    std::array<SmallLine, chunkSize / smallLineSize> m_lines;
-    std::array<SmallPage, chunkSize / smallPageSize> m_pages;
+    size_t m_refCount { };
+    List<SmallPage> m_freePages { };
+
+    std::array<SmallLine, chunkSize / smallLineSize> m_lines { };
+    std::array<SmallPage, chunkSize / smallPageSize> m_pages { };
 };
 
 struct ChunkHash {
@@ -64,8 +73,26 @@ struct ChunkHash {
     }
 };
 
-inline Chunk::Chunk(std::lock_guard<StaticMutex>&)
+template<typename Function> void forEachPage(Chunk* chunk, size_t pageSize, Function function)
 {
+    // We align to at least the page size so we can service aligned allocations
+    // at equal and smaller powers of two, and also so we can vmDeallocatePhysicalPages().
+    size_t metadataSize = roundUpToMultipleOfNonPowerOfTwo(pageSize, sizeof(Chunk));
+
+    Object begin(chunk, metadataSize);
+    Object end(chunk, chunkSize);
+
+    for (auto it = begin; it + pageSize <= end; it = it + pageSize)
+        function(it.page());
+}
+
+inline Chunk::Chunk(size_t pageSize)
+{
+    size_t smallPageCount = pageSize / smallPageSize;
+    forEachPage(this, pageSize, [&](SmallPage* page) {
+        for (size_t i = 0; i < smallPageCount; ++i)
+            page[i].setSlide(i);
+    });
 }
 
 inline Chunk* Chunk::get(void* address)

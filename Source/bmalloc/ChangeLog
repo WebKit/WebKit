@@ -1,3 +1,135 @@
+2017-06-02  Geoffrey Garen  <ggaren@apple.com>
+
+        bmalloc: Small and large objects should share memory
+        https://bugs.webkit.org/show_bug.cgi?id=172880
+        <rdar://problem/31494732>
+
+        Reviewed by Sam Weinig.
+
+        This reduces our high water mark memory usage on JetStream on macOS
+        by 10%-20%. It also has the nice side effect that we can free small
+        object metadata after returning from a high water mark.
+
+        No change in throughput.
+
+        Our old algorithm allocated small object chunks and large objects in
+        segregated virtual memory and never recycled addresses between them.
+        This provided a slight security benefit because we could apply guard
+        pages between the segregated ranges and we would never reuse the same
+        virtual address for object and metadata memory.
+
+        Our new algorithm allocates small object chunks from the large object
+        allocator. This naturally recycles memory between small chunks and large
+        objects, and between small chunks of different page classes. This allows
+        us to shift memory between allocation types as a program moves between
+        different phases of allocation, and to delete small object chunk metadata
+        when a program shrinks back from a high water mark.
+
+        Two intuitions I had about memory use turned out to be backwards in
+        this context:
+
+        (1) I thought that this optimization would work because it allowed you to
+        allocate and free a 4MB object and then reuse that large allocation to
+        service small allocations. In practice, the common benefit seems to be
+        the opposite: After you allocate and free many small objects, you can
+        stitch them together to allocate a large object without growing the heap.
+
+        (2) I thought that it would be more memory-efficient to allocate
+        fine-grained pages from the large object allocator. In practice, giving
+        the large object allocator too many arbitrarily-sized ranges to manage
+        leads to fragmentation. Meanwhile, segregated fit is a powerful memory
+        optimization. So, it's best to return small object memory to the large
+        allocator only when a whole small object chunk is free.
+
+        * bmalloc/Chunk.h:
+        (bmalloc::Chunk::ref):
+        (bmalloc::Chunk::deref):
+        (bmalloc::Chunk::refCount):
+        (bmalloc::Chunk::freePages): We keep a free list per chunk and refcount
+        each chunk so we can notice when a chunk becomes empty, and return it
+        to the large allocator.
+
+        (bmalloc::forEachPage): A new helper function for iterating the pages
+        in a Chunk.
+
+        (bmalloc::Chunk::Chunk): Use forEachPage instead of manual iteration.
+        Use { } initialization because we don't get zero-initialized by the OS
+        anymore.
+
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::Heap):
+        (bmalloc::Heap::concurrentScavenge):
+        (bmalloc::Heap::scavenge): Don't bother unlocking while scavenging. I
+        wasn't able to show it to be a consistent speedup. A more promising
+        approach, if we find a motivating example, is for the scavenger to give
+        up and return early if any other client is waiting on the lock.
+
+        (bmalloc::Heap::allocateSmallChunk): New helper function for allocating
+        a small chunk. It allocates through the large allocator to facilitate
+        sharing. We still allocate a chunk at a time instead of a page at a time.
+        Surprisingly, more precise page-at-a-time allocation is worse for memory
+        use because of fragmentation. Segregated fit is a powerful optimization.
+
+        (bmalloc::Heap::deallocateSmallChunk): New helper function for deallocating
+        a small chunk.
+
+        (bmalloc::Heap::allocateSmallPage): Updated for new APIs.
+
+        (bmalloc::Heap::deallocateSmallLine):  Updated for new APIs. Note that
+        we cache one free chunk per page class. This avoids churn in the large
+        allocator when you free(malloc(X)).
+
+        (bmalloc::Heap::allocateSmallBumpRangesByMetadata):
+        (bmalloc::Heap::allocateSmallBumpRangesByObject):
+        (bmalloc::Heap::tryAllocateLarge):
+        (bmalloc::Heap::scavengeSmallPages): Deleted.
+        (bmalloc::Heap::scavengeLargeObjects): Deleted.
+        * bmalloc/Heap.h:
+
+        * bmalloc/LargeMap.h:
+        (bmalloc::LargeMap::begin):
+        (bmalloc::LargeMap::end): Added iteration helpers for scavenging.
+
+        * bmalloc/LargeRange.h:
+        (bmalloc::LargeRange::physicalSize): Added a comment about something
+        that I confused myself about in this patch.
+
+        * bmalloc/List.h:
+        (bmalloc::List::iterator::operator*):
+        (bmalloc::List::iterator::operator->):
+        (bmalloc::List::iterator::operator!=):
+        (bmalloc::List::iterator::operator++):
+        (bmalloc::List::begin):
+        (bmalloc::List::end):
+        (bmalloc::List::pushFront):
+        (bmalloc::List::remove):
+        (bmalloc::ListNode::ListNode): Deleted. Added iteration helpers for
+        scavenging. Changed the default state of a Node to null pointers instead
+        of self pointers to distinguish the null node from the empty node for
+        easier debugging.
+
+        * bmalloc/Sizes.h: Changed the chunk size to 1MB to increase the chances
+        of a chunk becoming free and recyclable.
+
+        * bmalloc/SmallPage.h:
+        (bmalloc::SmallPage::hasPhysicalPages):
+        (bmalloc::SmallPage::setHasPhysicalPages): Track physical state by page
+        instead of implicitly by which list a page is in. It's simpler not
+        to have to move chunks and pages between physical vs virtual lists.
+
+        (bmalloc::SmallPage::SmallPage): Deleted.
+
+        * bmalloc/VMHeap.cpp:
+        (bmalloc::VMHeap::tryAllocateLargeChunk):
+        (bmalloc::VMHeap::allocateSmallChunk): Deleted.
+        * bmalloc/VMHeap.h:
+        (bmalloc::VMHeap::allocateSmallPage): Deleted.
+        (bmalloc::VMHeap::deallocateSmallPage): Deleted. Small chunk allocation
+        just forwards to the large allocator now.
+
+        * bmalloc/bmalloc.h:
+        (bmalloc::api::scavenge):
+
 2017-05-28  Dan Bernstein  <mitz@apple.com>
 
         [Xcode] ALWAYS_SEARCH_USER_PATHS is set to YES

@@ -29,7 +29,7 @@
 
 namespace bmalloc {
 
-LargeRange VMHeap::tryAllocateLargeChunk(std::lock_guard<StaticMutex>&, size_t alignment, size_t size)
+LargeRange VMHeap::tryAllocateLargeChunk(size_t alignment, size_t size)
 {
     // We allocate VM in aligned multiples to increase the chances that
     // the OS will provide contiguous ranges that we can merge.
@@ -54,48 +54,6 @@ LargeRange VMHeap::tryAllocateLargeChunk(std::lock_guard<StaticMutex>&, size_t a
 #endif
 
     return LargeRange(chunk->bytes(), size, 0);
-}
-
-void VMHeap::allocateSmallChunk(std::lock_guard<StaticMutex>& lock, size_t pageClass)
-{
-    size_t pageSize = bmalloc::pageSize(pageClass);
-    size_t smallPageCount = pageSize / smallPageSize;
-
-    void* memory = vmAllocate(chunkSize, chunkSize);
-    Chunk* chunk = static_cast<Chunk*>(memory);
-
-    // We align to our page size in order to honor OS APIs and in order to
-    // guarantee that we can service aligned allocation requests at equal
-    // and smaller powers of two.
-    size_t vmPageSize = roundUpToMultipleOf(bmalloc::vmPageSize(), pageSize);
-    size_t metadataSize = roundUpToMultipleOfNonPowerOfTwo(vmPageSize, sizeof(Chunk));
-
-    Object begin(chunk, metadataSize);
-    Object end(chunk, chunkSize);
-
-    // Establish guard pages before writing to Chunk memory to work around
-    // an edge case in the Darwin VM system (<rdar://problem/25910098>).
-    vmRevokePermissions(begin.address(), vmPageSize);
-    vmRevokePermissions(end.address() - vmPageSize, vmPageSize);
-    
-    begin = begin + vmPageSize;
-    end = end - vmPageSize;
-    BASSERT(begin <= end && end.offset() - begin.offset() >= pageSize);
-
-    new (chunk) Chunk(lock);
-
-#if BOS(DARWIN)
-    m_zone.addRange(Range(begin.address(), end.address() - begin.address()));
-#endif
-
-    for (Object it = begin; it + pageSize <= end; it = it + pageSize) {
-        SmallPage* page = it.page();
-
-        for (size_t i = 0; i < smallPageCount; ++i)
-            page[i].setSlide(i);
-
-        m_smallPages[pageClass].push(page);
-    }
 }
 
 } // namespace bmalloc

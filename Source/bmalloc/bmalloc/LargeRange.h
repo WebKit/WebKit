@@ -51,6 +51,8 @@ public:
     {
     }
 
+    // Returns a lower bound on physical size. Ranges that span non-physical
+    // fragments only remember the physical size of the first fragment.
     size_t physicalSize() const { return m_physicalSize; }
     void setPhysicalSize(size_t physicalSize) { m_physicalSize = physicalSize; }
 

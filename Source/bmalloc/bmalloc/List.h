@@ -30,28 +30,47 @@ namespace bmalloc {
 
 template<typename T>
 struct ListNode {
-    ListNode()
-        : prev(this)
-        , next(this)
-    {
-    }
-
-    ListNode<T>* prev;
-    ListNode<T>* next;
+    ListNode<T>* prev { nullptr };
+    ListNode<T>* next { nullptr };
 };
 
 template<typename T>
 class List {
     static_assert(std::is_trivially_destructible<T>::value, "List must have a trivial destructor.");
+
+    struct iterator {
+        T* operator*() { return static_cast<T*>(m_node); }
+        T* operator->() { return static_cast<T*>(m_node); }
+
+        bool operator!=(const iterator& other) { return m_node != other.m_node; }
+
+        iterator& operator++()
+        {
+            m_node = m_node->next;
+            return *this;
+        }
+        
+        ListNode<T>* m_node;
+    };
+
 public:
     bool isEmpty() { return m_root.next == &m_root; }
 
     T* head() { return static_cast<T*>(m_root.next); }
     T* tail() { return static_cast<T*>(m_root.prev); }
+    
+    iterator begin() { return iterator { m_root.next }; }
+    iterator end() { return iterator { &m_root }; }
 
     void push(T* node)
     {
         ListNode<T>* it = tail();
+        insertAfter(it, node);
+    }
+
+    void pushFront(T* node)
+    {
+        ListNode<T>* it = &m_root;
         insertAfter(it, node);
     }
 
@@ -89,12 +108,12 @@ public:
         next->prev = prev;
         prev->next = next;
         
-        node->prev = node;
-        node->next = node;
+        node->prev = nullptr;
+        node->next = nullptr;
     }
 
 private:
-    ListNode<T> m_root;
+    ListNode<T> m_root { &m_root, &m_root };
 };
 
 } // namespace bmalloc
