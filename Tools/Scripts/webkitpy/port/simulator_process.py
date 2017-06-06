@@ -76,6 +76,9 @@ class SimulatorProcess(ServerProcess):
 
         self._bundle_id = port_obj.app_identifier_from_bundle(cmd[0])
 
+    def process_name(self):
+        return self._port.app_executable_from_bundle(self._cmd[0])
+
     @staticmethod
     def _accept_connection_create_file(server, type):
         connection, address = server.accept()

@@ -77,9 +77,6 @@ class ServerProcess(object):
         # FIXME: there should be a way to get win32 vs. cygwin from platforminfo.
         self._use_win32_apis = sys.platform.startswith('win')
 
-    def name(self):
-        return self._name
-
     def pid(self):
         return self._pid
 
@@ -123,7 +120,7 @@ class ServerProcess(object):
             env=self._env,
             universal_newlines=self._universal_newlines)
         self._pid = self._proc.pid
-        self._port.find_system_pid(self.name(), self._pid)
+        self._port.find_system_pid(self.process_name(), self._pid)
         if not self._use_win32_apis:
             self._set_file_nonblocking(self._proc.stdout)
             self._set_file_nonblocking(self._proc.stderr)
@@ -345,7 +342,7 @@ class ServerProcess(object):
 
         # Only bother to check for leaks or stderr if the process is still running.
         if self.poll() is None:
-            self._port.check_for_leaks(self.name(), self.pid())
+            self._port.check_for_leaks(self.process_name(), self.pid())
 
         now = time.time()
         if self._proc.stdin:

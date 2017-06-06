@@ -238,10 +238,16 @@ class DarwinPort(ApplePort):
             return fallback
 
     @memoized
-    def app_identifier_from_bundle(self, app_bundle):
+    def _plist_data_from_bundle(self, app_bundle, entry):
         plist_path = self._filesystem.join(app_bundle, 'Info.plist')
         if not self._filesystem.exists(plist_path):
             plist_path = self._filesystem.join(app_bundle, 'Contents', 'Info.plist')
         if not self._filesystem.exists(plist_path):
             return None
-        return self._executive.run_command(['/usr/libexec/PlistBuddy', '-c', 'Print CFBundleIdentifier', plist_path]).rstrip()
+        return self._executive.run_command(['/usr/libexec/PlistBuddy', '-c', 'Print {}'.format(entry), plist_path]).rstrip()
+
+    def app_identifier_from_bundle(self, app_bundle):
+        return self._plist_data_from_bundle(app_bundle, 'CFBundleIdentifier')
+
+    def app_executable_from_bundle(self, app_bundle):
+        return self._plist_data_from_bundle(app_bundle, 'CFBundleExecutable')

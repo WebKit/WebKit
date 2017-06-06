@@ -1,3 +1,29 @@
+2017-06-06  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Return correct process names from SimulatorProcess
+        https://bugs.webkit.org/show_bug.cgi?id=172940
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/webkitpy/port/darwin.py:
+        (DarwinPort.plist_data_from_bundle): Share plist access code for accessing different plist entries.
+        (DarwinPort.app_identifier_from_bundle): Use plist_data_from_bundle.
+        (DarwinPort.app_executable_from_bundle): Access name of app executable from provided app bundle.
+        * Scripts/webkitpy/port/driver.py:
+        (Driver.has_crashed): Use _server_process.process_name() instead of _server_process.name() since
+        _server_process.name() will not return the correct process name for iOS.
+        (Driver._check_for_driver_crash_or_unresponsiveness): Ditto.
+        (Driver._read_block): Ditto.
+        * Scripts/webkitpy/port/driver_unittest.py:
+        (DriverTest.test_check_for_driver_crash.FakeServerProcess.process_name): Update since Driver uses
+        process_name() instead of name().
+        * Scripts/webkitpy/port/server_process.py:
+        (ServerProcess._start): Use process_name() instead of name().
+        (ServerProcess.stop): Ditto.
+        (ServerProcess.name): Deleted.
+        * Scripts/webkitpy/port/simulator_process.py:
+        (SimulatorProcess.process_name): Check the provided bundle for the process name.
+
 2017-06-06  Dean Johnson  <dean_johnson@apple.com>
 
         test-webkitpy: stop forking unsafely from within a spawned process

@@ -200,7 +200,7 @@ class DriverTest(unittest.TestCase):
             def pid(self):
                 return 1234
 
-            def name(self):
+            def process_name(self):
                 return 'FakeServerProcess'
 
             def has_crashed(self):

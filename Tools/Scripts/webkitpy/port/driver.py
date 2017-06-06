@@ -312,7 +312,7 @@ class Driver(object):
         if self._crashed_process_name:
             return True
         if self._server_process.has_crashed():
-            self._crashed_process_name = self._server_process.name()
+            self._crashed_process_name = self._server_process.process_name()
             self._crashed_pid = self._server_process.pid()
             return True
         return False
@@ -453,7 +453,7 @@ class Driver(object):
     def _check_for_driver_crash_or_unresponsiveness(self, error_line):
         crashed_check = error_line.rstrip('\r\n')
         if crashed_check == "#CRASHED":
-            self._crashed_process_name = self._server_process.name()
+            self._crashed_process_name = self._server_process.process_name()
             self._crashed_pid = self._server_process.pid()
             return True
         elif error_line.startswith("#CRASHED - "):
@@ -607,7 +607,7 @@ class Driver(object):
                     self.error_from_test += err_line
 
         if asan_violation_detected and not self._crashed_process_name:
-            self._crashed_process_name = self._server_process.name()
+            self._crashed_process_name = self._server_process.process_name()
             self._crashed_pid = self._server_process.pid()
 
         block.decode_content()
