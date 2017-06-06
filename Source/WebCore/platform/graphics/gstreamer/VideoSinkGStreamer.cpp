@@ -69,13 +69,6 @@ static GRefPtr<GstSample> webkitVideoSinkRequestRender(WebKitVideoSink*, GstBuff
 
 class VideoRenderRequestScheduler {
 public:
-    VideoRenderRequestScheduler()
-#if !USE(TEXTURE_MAPPER_GL)
-        : m_timer(RunLoop::main(), this, &VideoRenderRequestScheduler::render)
-#endif
-    {
-    }
-
     void start()
     {
         LockHolder locker(m_sampleMutex);
@@ -87,10 +80,6 @@ public:
         LockHolder locker(m_sampleMutex);
         m_sample = nullptr;
         m_unlocked = true;
-#if !USE(TEXTURE_MAPPER_GL)
-        m_timer.stop();
-        m_dataCondition.notifyOne();
-#endif
     }
 
     void drain()
@@ -109,41 +98,17 @@ public:
         if (!m_sample)
             return false;
 
-#if USE(TEXTURE_MAPPER_GL)
         auto sample = WTFMove(m_sample);
         locker.unlockEarly();
         if (LIKELY(GST_IS_SAMPLE(sample.get())))
             webkitVideoSinkRepaintRequested(sink, sample.get());
-#else
-        m_sink = sink;
-        m_timer.startOneShot(0_s);
-        m_dataCondition.wait(m_sampleMutex);
-#endif
+
         return true;
     }
 
 private:
-
-#if !USE(TEXTURE_MAPPER_GL)
-    void render()
-    {
-        LockHolder locker(m_sampleMutex);
-        GRefPtr<GstSample> sample = WTFMove(m_sample);
-        GRefPtr<WebKitVideoSink> sink = WTFMove(m_sink);
-        if (sample && !m_unlocked && LIKELY(GST_IS_SAMPLE(sample.get())))
-            webkitVideoSinkRepaintRequested(sink.get(), sample.get());
-        m_dataCondition.notifyOne();
-    }
-#endif
-
     Lock m_sampleMutex;
     GRefPtr<GstSample> m_sample;
-
-#if !USE(TEXTURE_MAPPER_GL)
-    RunLoop::Timer<VideoRenderRequestScheduler> m_timer;
-    Condition m_dataCondition;
-    GRefPtr<WebKitVideoSink> m_sink;
-#endif
 
     // If this is true all processing should finish ASAP
     // This is necessary because there could be a race between

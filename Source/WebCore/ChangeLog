@@ -1,3 +1,29 @@
+2017-06-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GStreamer] Use the same draw timer and mutex when AC disabled or building without OpenGL
+        https://bugs.webkit.org/show_bug.cgi?id=172923
+
+        Reviewed by Michael Catanzaro.
+
+        We have two different paths to do the same. When building without OpenGL, the VideoRenderRequestScheduler has
+        its own timer and we need to add ifdefs to handle that. But when building with OpenGL we still support
+        non-accelerated rendering that does the same than the VideoRenderRequestScheduler timer, but using the media
+        player timer instead. We can simplify the code and remove more ifdefs by using the media player timer and mutex
+        in all cases for non-accelerated rendering.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::MediaPlayerPrivateGStreamerBase):
+        (WebCore::MediaPlayerPrivateGStreamerBase::repaint):
+        (WebCore::MediaPlayerPrivateGStreamerBase::triggerRepaint):
+        (WebCore::MediaPlayerPrivateGStreamerBase::cancelRepaint):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+        * platform/graphics/gstreamer/VideoSinkGStreamer.cpp:
+        (VideoRenderRequestScheduler::start):
+        (VideoRenderRequestScheduler::stop):
+        (VideoRenderRequestScheduler::requestRender):
+        (VideoRenderRequestScheduler::VideoRenderRequestScheduler): Deleted.
+        (VideoRenderRequestScheduler::render): Deleted.
+
 2017-06-05  Antoine Quint  <graouts@apple.com>
 
         Update media controls to match latest design specs

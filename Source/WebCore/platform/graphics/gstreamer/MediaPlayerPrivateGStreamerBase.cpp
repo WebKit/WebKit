@@ -220,9 +220,9 @@ MediaPlayerPrivateGStreamerBase::MediaPlayerPrivateGStreamerBase(MediaPlayer* pl
     , m_fpsSink(nullptr)
     , m_readyState(MediaPlayer::HaveNothing)
     , m_networkState(MediaPlayer::Empty)
+    , m_drawTimer(RunLoop::main(), this, &MediaPlayerPrivateGStreamerBase::repaint)
 #if USE(TEXTURE_MAPPER_GL)
     , m_platformLayerProxy(adoptRef(new TextureMapperPlatformLayerProxy()))
-    , m_drawTimer(RunLoop::main(), this, &MediaPlayerPrivateGStreamerBase::repaint)
 #endif
 {
     g_mutex_init(&m_sampleMutex);
@@ -729,7 +729,6 @@ void MediaPlayerPrivateGStreamerBase::repaint()
 
     m_player->repaint();
 
-#if USE(TEXTURE_MAPPER_GL)
 #if USE(GSTREAMER_GL)
     bool shouldNotifyDraw = !m_renderingCanBeAccelerated;
 #else
@@ -739,7 +738,6 @@ void MediaPlayerPrivateGStreamerBase::repaint()
         LockHolder lock(m_drawMutex);
         m_drawCondition.notifyOne();
     }
-#endif // USE(TEXTURE_MAPPER_GL)
 }
 
 void MediaPlayerPrivateGStreamerBase::triggerRepaint(GstSample* sample)
@@ -756,9 +754,6 @@ void MediaPlayerPrivateGStreamerBase::triggerRepaint(GstSample* sample)
         m_notifier.notify(MainThreadNotification::SizeChanged, [this] { m_player->sizeChanged(); });
     }
 
-#if !USE(TEXTURE_MAPPER_GL)
-    repaint();
-#else
     if (!m_renderingCanBeAccelerated) {
         LockHolder locker(m_drawMutex);
         m_drawTimer.startOneShot(0_s);
@@ -766,6 +761,7 @@ void MediaPlayerPrivateGStreamerBase::triggerRepaint(GstSample* sample)
         return;
     }
 
+#if USE(TEXTURE_MAPPER_GL)
 #if USE(GSTREAMER_GL)
     pushTextureToCompositor();
 #else
@@ -776,7 +772,7 @@ void MediaPlayerPrivateGStreamerBase::triggerRepaint(GstSample* sample)
         m_drawCondition.wait(m_drawMutex);
     }
 #endif
-#endif // !USE(TEXTURE_MAPPER_GL)
+#endif // USE(TEXTURE_MAPPER_GL)
 }
 
 void MediaPlayerPrivateGStreamerBase::repaintCallback(MediaPlayerPrivateGStreamerBase* player, GstSample* sample)
@@ -786,7 +782,6 @@ void MediaPlayerPrivateGStreamerBase::repaintCallback(MediaPlayerPrivateGStreame
 
 void MediaPlayerPrivateGStreamerBase::cancelRepaint()
 {
-#if USE(TEXTURE_MAPPER_GL)
 #if USE(GSTREAMER_GL)
     bool shouldCancelRepaint = !m_renderingCanBeAccelerated;
 #else
@@ -797,7 +792,6 @@ void MediaPlayerPrivateGStreamerBase::cancelRepaint()
         LockHolder locker(m_drawMutex);
         m_drawCondition.notifyOne();
     }
-#endif // USE(TEXTURE_MAPPER_GL)
 }
 
 void MediaPlayerPrivateGStreamerBase::repaintCancelledCallback(MediaPlayerPrivateGStreamerBase* player)

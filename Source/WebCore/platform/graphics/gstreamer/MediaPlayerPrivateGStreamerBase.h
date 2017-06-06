@@ -208,12 +208,13 @@ protected:
     bool m_usingFallbackVideoSink { false };
     bool m_renderingCanBeAccelerated { false };
 
-#if USE(TEXTURE_MAPPER_GL)
-    RefPtr<GraphicsContext3D> m_context3D;
-    RefPtr<TextureMapperPlatformLayerProxy> m_platformLayerProxy;
     Condition m_drawCondition;
     Lock m_drawMutex;
     RunLoop::Timer<MediaPlayerPrivateGStreamerBase> m_drawTimer;
+
+#if USE(TEXTURE_MAPPER_GL)
+    RefPtr<GraphicsContext3D> m_context3D;
+    RefPtr<TextureMapperPlatformLayerProxy> m_platformLayerProxy;
 #endif
 
 #if USE(GSTREAMER_GL)
