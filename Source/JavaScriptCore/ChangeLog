@@ -1,5 +1,20 @@
 2017-06-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GLIB] Make remote inspector DBus protocol common to all glib based ports
+        https://bugs.webkit.org/show_bug.cgi?id=172970
+
+        Reviewed by Žan Doberšek.
+
+        We are currently using "webkitgtk" in the names of DBus interfaces and object paths inside an ifdef with the
+        idea that other ports could use their own names. However, the protocol is the same, so we could use the same
+        names and make all glib based ports compatible to each other. This way we could use the GTK+ MiniBrowser to
+        debug WPE, without having to implement the frontend part in WPE yet.
+
+        * inspector/remote/glib/RemoteInspectorGlib.cpp: Use webkit instead of webkitgtk and reomve platform idfeds.
+        * inspector/remote/glib/RemoteInspectorServer.cpp: Ditto.
+
+2017-06-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Web Process deadlock when closing the remote inspector frontend
         https://bugs.webkit.org/show_bug.cgi?id=172973
 

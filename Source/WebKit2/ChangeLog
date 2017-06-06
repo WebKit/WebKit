@@ -1,3 +1,14 @@
+2017-06-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GLIB] Make remote inspector DBus protocol common to all glib based ports
+        https://bugs.webkit.org/show_bug.cgi?id=172970
+
+        Reviewed by Žan Doberšek.
+
+        Use webkit instead of webkitgtk and reomve platform idfeds.
+
+        * UIProcess/glib/RemoteInspectorClient.cpp:
+
 2017-06-06  Zan Dobersek  <zdobersek@igalia.com>
 
         [WPE] Don't disable Web security preference by default

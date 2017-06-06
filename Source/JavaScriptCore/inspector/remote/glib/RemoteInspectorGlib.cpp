@@ -36,12 +36,10 @@
 #include <wtf/RunLoop.h>
 #include <wtf/glib/GUniquePtr.h>
 
-#if PLATFORM(GTK)
-#define REMOTE_INSPECTOR_DBUS_INTERFACE "org.webkitgtk.RemoteInspector"
-#define REMOTE_INSPECTOR_DBUS_OBJECT_PATH "/org/webkitgtk/RemoteInspector"
-#define INSPECTOR_DBUS_INTERFACE "org.webkitgtk.Inspector"
-#define INSPECTOR_DBUS_OBJECT_PATH "/org/webkitgtk/Inspector"
-#endif
+#define REMOTE_INSPECTOR_DBUS_INTERFACE "org.webkit.RemoteInspector"
+#define REMOTE_INSPECTOR_DBUS_OBJECT_PATH "/org/webkit/RemoteInspector"
+#define INSPECTOR_DBUS_INTERFACE "org.webkit.Inspector"
+#define INSPECTOR_DBUS_OBJECT_PATH "/org/webkit/Inspector"
 
 namespace Inspector {
 

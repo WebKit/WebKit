@@ -34,12 +34,10 @@
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/Base64.h>
 
-#if PLATFORM(GTK)
-#define REMOTE_INSPECTOR_CLIENT_DBUS_INTERFACE "org.webkitgtk.RemoteInspectorClient"
-#define REMOTE_INSPECTOR_CLIENT_OBJECT_PATH "/org/webkitgtk/RemoteInspectorClient"
-#define INSPECTOR_DBUS_INTERFACE "org.webkitgtk.Inspector"
-#define INSPECTOR_DBUS_OBJECT_PATH "/org/webkitgtk/Inspector"
-#endif
+#define REMOTE_INSPECTOR_CLIENT_DBUS_INTERFACE "org.webkit.RemoteInspectorClient"
+#define REMOTE_INSPECTOR_CLIENT_OBJECT_PATH "/org/webkit/RemoteInspectorClient"
+#define INSPECTOR_DBUS_INTERFACE "org.webkit.Inspector"
+#define INSPECTOR_DBUS_OBJECT_PATH "/org/webkit/Inspector"
 
 namespace WebKit {
 
