@@ -57,10 +57,10 @@ fast/css/sticky/sticky-writing-mode-horizontal-bt.html [ ImageOnlyFailure ]
 # As a result, a host of tests need to be updated and being turned on selectively here.
 media/modern-media-controls/airplay-button [ Pass ]
 media/modern-media-controls/airplay-placard [ Pass ]
-media/modern-media-controls/audio/audio-controls-styles.html [ Pass ]
-media/modern-media-controls/audio/audio-controls-metrics.html [ Pass ]
+media/modern-media-controls/audio [ Pass ]
 
 # AirPlay cannot be tested on iOS
 webkit.org/b/166062 media/modern-media-controls/airplay-support [ Skip ]
+webkit.org/b/166062 media/modern-media-controls/audio/audio-controls-buttons.html [ Skip ]
 
 webkit.org/b/172965 media/track/track-cue-overlap-snap-to-lines-not-set.html [ Failure ]

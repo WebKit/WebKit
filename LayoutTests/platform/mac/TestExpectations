@@ -1552,7 +1552,10 @@ webkit.org/b/172737 fast/text/accessibility-bold-system-font-2.html [ ImageOnlyF
 media/modern-media-controls/airplay-button [ Pass ]
 media/modern-media-controls/airplay-placard [ Pass ]
 media/modern-media-controls/airplay-support [ Pass ]
-media/modern-media-controls/audio/audio-controls-metrics.html [ Pass ]
+media/modern-media-controls/audio [ Pass ]
 media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-drag-is-prevented-over-button.html [ Pass ]
 media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-drag.html [ Pass ]
 media/modern-media-controls/volume-up-support [ Pass ]
+
+# These tests are iOS-specific
+media/modern-media-controls/audio/audio-controls-styles.html [ Skip ]

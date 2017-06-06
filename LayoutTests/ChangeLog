@@ -1,5 +1,20 @@
 2017-06-06  Antoine Quint  <graouts@apple.com>
 
+        Rebaseline and enable media/modern-media-controls/audio
+        https://bugs.webkit.org/show_bug.cgi?id=172996
+        <rdar://problem/32590725>
+
+        Reviewed by Eric Carlson.
+
+        The new controls design switches the AirPlay and mute button order around.
+
+        * media/modern-media-controls/audio/audio-controls-buttons-expected.txt:
+        * media/modern-media-controls/audio/audio-controls-buttons.html:
+        * platform/ios-simulator/TestExpectations:
+        * platform/mac/TestExpectations:
+
+2017-06-06  Antoine Quint  <graouts@apple.com>
+
         Rebaseline and enable media/modern-media-controls/airplay-support
         https://bugs.webkit.org/show_bug.cgi?id=172980
         <rdar://problem/32589074>
