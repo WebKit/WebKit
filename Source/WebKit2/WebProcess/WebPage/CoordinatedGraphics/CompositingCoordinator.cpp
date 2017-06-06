@@ -157,11 +157,6 @@ double CompositingCoordinator::timestamp() const
 
 void CompositingCoordinator::syncDisplayState()
 {
-#if !USE(REQUEST_ANIMATION_FRAME_TIMER) && !USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-    // Make sure that any previously registered animation callbacks are being executed before we flush the layers.
-    m_lastAnimationServiceTime = timestamp();
-    m_page->mainFrame().view()->serviceScriptedAnimations();
-#endif
     m_page->mainFrame().view()->updateLayoutAndStyleIfNeededRecursive();
 }
 

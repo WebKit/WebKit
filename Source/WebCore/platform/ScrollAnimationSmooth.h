@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScrollAnimationSmooth_h
-#define ScrollAnimationSmooth_h
+#pragma once
 
 #include "ScrollAnimation.h"
 
@@ -55,9 +54,6 @@ private:
     void stop() override;
     void updateVisibleLengths() override;
     void setCurrentPosition(const FloatPoint&) override;
-#if !USE(REQUEST_ANIMATION_FRAME_TIMER)
-    void serviceAnimation() override;
-#endif
 
     struct PerAxisData {
         PerAxisData() = delete;
@@ -96,12 +92,8 @@ private:
     bool updatePerAxisData(PerAxisData&, ScrollGranularity, float delta, float minScrollPosition, float maxScrollPosition);
     bool animateScroll(PerAxisData&, MonotonicTime currentTime);
 
-#if USE(REQUEST_ANIMATION_FRAME_TIMER)
     void requestAnimationTimerFired();
     void startNextTimer(Seconds delay);
-#else
-    void startNextTimer();
-#endif
     void animationTimerFired();
     bool animationTimerActive() const;
 
@@ -111,15 +103,9 @@ private:
     PerAxisData m_verticalData;
 
     MonotonicTime m_startTime;
-#if USE(REQUEST_ANIMATION_FRAME_TIMER)
     Timer m_animationTimer;
-#else
-    bool m_animationActive { false };
-#endif
-
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(SMOOTH_SCROLLING)
-#endif // ScrollAnimationSmooth_h

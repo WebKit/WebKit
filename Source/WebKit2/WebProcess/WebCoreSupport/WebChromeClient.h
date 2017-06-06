@@ -189,10 +189,6 @@ private:
     void setCursorHiddenUntilMouseMoves(bool) final;
 #endif
 
-#if !USE(REQUEST_ANIMATION_FRAME_TIMER)
-    void scheduleAnimation() final;
-#endif
-    
 #if ENABLE(POINTER_LOCK)
     bool requestPointerLock() final;
     void requestPointerUnlock() final;

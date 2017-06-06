@@ -806,17 +806,6 @@ RefPtr<Icon> WebChromeClient::createIconForFiles(const Vector<String>& filenames
 
 #endif
 
-#if !USE(REQUEST_ANIMATION_FRAME_TIMER)
-
-void WebChromeClient::scheduleAnimation()
-{
-#if USE(COORDINATED_GRAPHICS)
-    m_page.drawingArea()->layerTreeHost()->scheduleAnimation();
-#endif
-}
-
-#endif
-
 void WebChromeClient::didAssociateFormControls(const Vector<RefPtr<Element>>& elements)
 {
     return m_page.injectedBundleFormClient().didAssociateFormControls(&m_page, elements);

@@ -185,10 +185,6 @@ public:
     virtual void setCursorHiddenUntilMouseMoves(bool) = 0;
 #endif
 
-#if !USE(REQUEST_ANIMATION_FRAME_TIMER)
-    virtual void scheduleAnimation() = 0;
-#endif
-
     virtual FloatSize screenSize() const { return const_cast<ChromeClient&>(*this).windowRect().size(); }
     virtual FloatSize availableScreenSize() const { return const_cast<ChromeClient&>(*this).windowRect().size(); }
 

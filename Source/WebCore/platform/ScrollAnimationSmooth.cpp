@@ -45,11 +45,7 @@ ScrollAnimationSmooth::ScrollAnimationSmooth(ScrollableArea& scrollableArea, con
     , m_notifyPositionChangedFunction(WTFMove(notifyPositionChangedFunction))
     , m_horizontalData(position.x(), scrollableArea.visibleWidth())
     , m_verticalData(position.y(), scrollableArea.visibleHeight())
-#if USE(REQUEST_ANIMATION_FRAME_TIMER)
     , m_animationTimer(*this, &ScrollAnimationSmooth::animationTimerFired)
-#else
-    , m_animationActive(false)
-#endif
 {
 }
 
@@ -74,11 +70,7 @@ bool ScrollAnimationSmooth::scroll(ScrollbarOrientation orientation, ScrollGranu
 
 void ScrollAnimationSmooth::stop()
 {
-#if USE(REQUEST_ANIMATION_FRAME_TIMER)
     m_animationTimer.stop();
-#else
-    m_animationActive = false;
-#endif
 }
 
 void ScrollAnimationSmooth::updateVisibleLengths()
@@ -93,14 +85,6 @@ void ScrollAnimationSmooth::setCurrentPosition(const FloatPoint& position)
     m_horizontalData = PerAxisData(position.x(), m_horizontalData.visibleLength);
     m_verticalData = PerAxisData(position.y(), m_verticalData.visibleLength);
 }
-
-#if !USE(REQUEST_ANIMATION_FRAME_TIMER)
-void ScrollAnimationSmooth::serviceAnimation()
-{
-    if (m_animationActive)
-        animationTimerFired();
-}
-#endif
 
 ScrollAnimationSmooth::~ScrollAnimationSmooth()
 {
@@ -410,37 +394,19 @@ void ScrollAnimationSmooth::animationTimerFired()
         continueAnimation = true;
 
     if (continueAnimation)
-#if USE(REQUEST_ANIMATION_FRAME_TIMER)
         startNextTimer(std::max(minimumTimerInterval, deltaToNextFrame));
-#else
-        startNextTimer();
-    else
-        m_animationActive = false;
-#endif
 
     m_notifyPositionChangedFunction(FloatPoint(m_horizontalData.currentPosition, m_verticalData.currentPosition));
 }
 
-#if USE(REQUEST_ANIMATION_FRAME_TIMER)
 void ScrollAnimationSmooth::startNextTimer(Seconds delay)
 {
     m_animationTimer.startOneShot(delay);
 }
-#else
-void ScrollAnimationSmooth::startNextTimer()
-{
-    if (m_scrollableArea.scheduleAnimation())
-        m_animationActive = true;
-}
-#endif
 
 bool ScrollAnimationSmooth::animationTimerActive() const
 {
-#if USE(REQUEST_ANIMATION_FRAME_TIMER)
     return m_animationTimer.isActive();
-#else
-    return m_animationActive;
-#endif
 }
 
 } // namespace WebCore

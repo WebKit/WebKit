@@ -1,3 +1,36 @@
+2017-06-06  Don Olmstead  <don.olmstead@am.sony.com>
+
+        [WebCore] Enable REQUEST_ANIMATION_FRAME_TIMER for all ports
+        https://bugs.webkit.org/show_bug.cgi?id=172780
+
+        Reviewed by Alex Christensen.
+
+        No new tests. No change in behavior.
+
+        * dom/ScriptedAnimationController.cpp:
+        (WebCore::ScriptedAnimationController::ScriptedAnimationController):
+        (WebCore::ScriptedAnimationController::addThrottlingReason):
+        (WebCore::ScriptedAnimationController::removeThrottlingReason):
+        (WebCore::ScriptedAnimationController::isThrottled):
+        (WebCore::ScriptedAnimationController::interval):
+        (WebCore::ScriptedAnimationController::scheduleAnimation):
+        (WebCore::ScriptedAnimationController::displayRefreshFired):
+        * dom/ScriptedAnimationController.h:
+        * loader/EmptyClients.h:
+        * page/Chrome.cpp:
+        (WebCore::Chrome::scheduleAnimation): Deleted.
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        * platform/Curl.cmake: Added.
+        * platform/ScrollAnimationSmooth.cpp:
+        (WebCore::ScrollAnimationSmooth::ScrollAnimationSmooth):
+        (WebCore::ScrollAnimationSmooth::stop):
+        (WebCore::ScrollAnimationSmooth::animationTimerFired):
+        (WebCore::ScrollAnimationSmooth::startNextTimer):
+        (WebCore::ScrollAnimationSmooth::animationTimerActive):
+        (WebCore::ScrollAnimationSmooth::serviceAnimation): Deleted.
+        * platform/ScrollAnimationSmooth.h:
+
 2017-06-06  Darin Adler  <darin@apple.com>
 
         Cut down use of WTF_ARRAY_LENGTH

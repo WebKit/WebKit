@@ -1,3 +1,16 @@
+2017-06-06  Don Olmstead  <don.olmstead@am.sony.com>
+
+        [WebCore] Enable REQUEST_ANIMATION_FRAME_TIMER for all ports
+        https://bugs.webkit.org/show_bug.cgi?id=172780
+
+        Reviewed by Alex Christensen.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::scheduleAnimation): Deleted.
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.cpp:
+        (WebKit::CompositingCoordinator::syncDisplayState):
+
 2017-06-06  Beth Dakin  <bdakin@apple.com>
 
         Netflix seeking quirk should also apply to Now Playing, and should always use the 

@@ -112,10 +112,6 @@ class EmptyChromeClient : public ChromeClient {
     void resetUpdateAtlasForTesting() final { }
 #endif
 
-#if !USE(REQUEST_ANIMATION_FRAME_TIMER)
-    void scheduleAnimation() final { }
-#endif
-
     IntPoint screenToRootView(const IntPoint& p) const final { return p; }
     IntRect rootViewToScreen(const IntRect& r) const final { return r; }
 
