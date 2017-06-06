@@ -1,3 +1,12 @@
+2017-06-06  Matt Lewis  <jlewis3@apple.com>
+
+        Marked workers/bomb.html as flaky on iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=167757
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2017-06-06  Darin Adler  <darin@apple.com>
 
         Update to slightly stricter rules for custom element names from more recent standard draft

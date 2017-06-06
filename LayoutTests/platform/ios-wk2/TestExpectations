@@ -1985,3 +1985,5 @@ webkit.org/b/172454 http/tests/navigation/statistics.html [ Pass Failure ]
 webkit.org/b/171895 webrtc/audio-replace-track.html [ Pass Failure ]
 
 webkit.org/b/170870 webrtc/captureCanvas-webrtc.html [ Pass Timeout ]
+
+webkit.org/b/167757 [ Release ] workers/bomb.html [ Pass Timeout ]
