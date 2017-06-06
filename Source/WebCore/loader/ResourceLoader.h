@@ -34,6 +34,7 @@
 #include "ResourceLoaderTypes.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
+#include <functional>
 #include <wtf/Forward.h>
 
 #if ENABLE(CONTENT_EXTENSIONS)

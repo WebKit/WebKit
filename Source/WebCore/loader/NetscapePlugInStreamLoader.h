@@ -29,6 +29,7 @@
 #pragma once
 
 #include "ResourceLoader.h"
+#include <functional>
 #include <wtf/Forward.h>
 
 namespace WebCore {

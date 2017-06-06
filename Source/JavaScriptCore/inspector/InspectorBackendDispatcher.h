@@ -28,6 +28,7 @@
 
 #include "InspectorFrontendRouter.h"
 #include "InspectorProtocolTypes.h"
+#include <functional>
 #include <wtf/DeprecatedOptional.h>
 #include <wtf/Optional.h>
 #include <wtf/RefCounted.h>

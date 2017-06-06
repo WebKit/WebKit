@@ -23,6 +23,7 @@
 #include "CSSParserMode.h"
 #include "CachePolicy.h"
 #include "URL.h"
+#include <functional>
 #include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/RefCounted.h>

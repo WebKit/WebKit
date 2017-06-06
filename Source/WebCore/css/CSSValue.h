@@ -22,6 +22,7 @@
 
 #include "ExceptionOr.h"
 #include "URLHash.h"
+#include <functional>
 #include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/RefCounted.h>

@@ -1,3 +1,15 @@
+2017-06-06  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Add missing <functional> includes
+        https://bugs.webkit.org/show_bug.cgi?id=173017
+
+        Patch by Thiago Macieira <thiago.macieira@intel.com>
+        Reviewed by Yusuke Suzuki.
+
+        This patch fixes compilation with GCC 7.
+
+        * inspector/InspectorBackendDispatcher.h:
+
 2017-06-06  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, fix 32-bit build.
