@@ -1,3 +1,19 @@
+2017-06-05  Chris Dumez  <cdumez@apple.com>
+
+        ASSERTION FAILED: RunLoop::isMain() in com.apple.WebKit: IPC::Connection::sendSyncMessage + 128
+        https://bugs.webkit.org/show_bug.cgi?id=172943
+        <rdar://problem/31288058>
+
+        Reviewed by Alexey Proskuryakov.
+
+        In Connection::sendMessage(), make sure we only ever transform asynchronous messages into synchronous
+        ones if sendMessage() is called on the main thread. This is necessary because we no longer support
+        sending synchronous messages from a background thread since r205125.
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::sendMessage):
+        (IPC::Connection::sendSyncMessage):
+
 2017-06-05  Joseph Pecoraro  <pecoraro@apple.com>
 
         Revert r217405, this headerpad increase is no longer needed.

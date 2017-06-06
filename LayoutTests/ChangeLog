@@ -1,3 +1,16 @@
+2017-06-05  Chris Dumez  <cdumez@apple.com>
+
+        ASSERTION FAILED: RunLoop::isMain() in com.apple.WebKit: IPC::Connection::sendSyncMessage + 128
+        https://bugs.webkit.org/show_bug.cgi?id=172943
+        <rdar://problem/31288058>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add better test coverage.
+
+        * storage/domstorage/sessionstorage/set-item-synchronous-keydown-expected.txt: Added.
+        * storage/domstorage/sessionstorage/set-item-synchronous-keydown.html: Added.
+
 2017-06-05  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Improve ES6 Class instances in Heap Snapshot instances view
