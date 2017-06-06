@@ -1,3 +1,13 @@
+2017-06-06  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK+ gardening.
+
+        * platform/gtk/TestExpectations: Clean up the Web Crypto API test expectations.
+        Unskip the crypto/subtle/, crypto/workers/subtle/ and
+        imported/w3c/web-platform-tests/WebCryptoAPI/ directories and add expectations
+        that skip the remaining failing layout tests, instead of skipping those
+        directories and maintaining expectations for the passing tests.
+
 2017-06-06  Jonathan Bedard  <jbedard@apple.com>
 
         Move storage/websql/alter-to-info-table.html failure expectation.
