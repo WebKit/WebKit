@@ -305,8 +305,8 @@ static void disableComponentsOnce()
         {'imdc', 'pdf ', 'appl', 0, 0},  
     };
 
-    for (size_t i = 0; i < WTF_ARRAY_LENGTH(componentsToDisable); ++i) 
-        wkQTMovieDisableComponent(componentsToDisable[i]);
+    for (auto& component : componentsToDisable)
+        wkQTMovieDisableComponent(component);
 }
 
 void MediaPlayerPrivateQTKit::createQTMovie(NSURL *url, NSDictionary *movieAttributes)

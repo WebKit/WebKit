@@ -126,6 +126,7 @@ String LocaleMac::formatDateTime(const DateComponents& dateComponents, FormatTyp
 #endif
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
+
 const Vector<String>& LocaleMac::monthLabels()
 {
     if (!m_monthLabels.isEmpty())
@@ -137,8 +138,8 @@ const Vector<String>& LocaleMac::monthLabels()
             m_monthLabels.append(String([array objectAtIndex:i]));
         return m_monthLabels;
     }
-    for (unsigned i = 0; i < WTF_ARRAY_LENGTH(WTF::monthFullName); ++i)
-        m_monthLabels.append(WTF::monthFullName[i]);
+    for (auto& name : WTF::monthFullName)
+        m_monthLabels.append(name);
     return m_monthLabels;
 }
 
@@ -231,8 +232,8 @@ const Vector<String>& LocaleMac::shortMonthLabels()
             m_shortMonthLabels.append([array objectAtIndex:i]);
         return m_shortMonthLabels;
     }
-    for (unsigned i = 0; i < WTF_ARRAY_LENGTH(WTF::monthName); ++i)
-        m_shortMonthLabels.append(WTF::monthName[i]);
+    for (auto& name : WTF::monthName)
+        m_shortMonthLabels.append(name);
     return m_shortMonthLabels;
 }
 
@@ -276,6 +277,7 @@ const Vector<String>& LocaleMac::timeAMPMLabels()
     m_timeAMPMLabels.append([formatter.get() PMSymbol]);
     return m_timeAMPMLabels;
 }
+
 #endif
 
 void LocaleMac::initializeLocaleData()

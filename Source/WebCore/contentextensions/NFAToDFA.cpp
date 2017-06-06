@@ -271,33 +271,6 @@ struct NodeIdSetToUniqueNodeIdSetTranslator {
     }
 };
 
-class SetTransitions {
-public:
-    NodeIdSet& operator[](unsigned index)
-    {
-        ASSERT(index < size());
-        return m_targets[index];
-    }
-
-    unsigned size() const
-    {
-        return WTF_ARRAY_LENGTH(m_targets);
-    }
-
-    NodeIdSet* begin()
-    {
-        return m_targets;
-    }
-
-    NodeIdSet* end()
-    {
-        return m_targets + size();
-    }
-
-private:
-    NodeIdSet m_targets[128];
-};
-
 struct DataConverterWithEpsilonClosure {
     const NFANodeClosures& nfaNodeclosures;
 

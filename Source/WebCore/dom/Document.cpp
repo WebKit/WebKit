@@ -616,11 +616,11 @@ Document::~Document()
     if (hasRareData())
         clearRareData();
 
-    ASSERT(!m_listsInvalidatedAtDocument.size());
-    ASSERT(!m_collectionsInvalidatedAtDocument.size());
+    ASSERT(m_listsInvalidatedAtDocument.isEmpty());
+    ASSERT(m_collectionsInvalidatedAtDocument.isEmpty());
 
-    for (unsigned i = 0; i < WTF_ARRAY_LENGTH(m_nodeListAndCollectionCounts); ++i)
-        ASSERT(!m_nodeListAndCollectionCounts[i]);
+    for (unsigned count : m_nodeListAndCollectionCounts)
+        ASSERT_UNUSED(count, !count);
 }
 
 void Document::removedLastRef()

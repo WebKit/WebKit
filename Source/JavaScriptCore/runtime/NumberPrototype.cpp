@@ -362,7 +362,7 @@ static char* toStringWithRadix(RadixBuffer& buffer, double originalNumber, unsig
 static String toStringWithRadix(int32_t number, unsigned radix)
 {
     LChar buf[1 + 32]; // Worst case is radix == 2, which gives us 32 digits + sign.
-    LChar* end = buf + WTF_ARRAY_LENGTH(buf);
+    LChar* end = std::end(buf);
     LChar* p = end;
 
     bool negative = false;

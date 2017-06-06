@@ -1,3 +1,16 @@
+2017-06-06  Darin Adler  <darin@apple.com>
+
+        Cut down use of WTF_ARRAY_LENGTH
+        https://bugs.webkit.org/show_bug.cgi?id=172997
+
+        Reviewed by Chris Dumez.
+
+        * parser/Lexer.cpp:
+        (JSC::singleEscape): Use WTF_ARRAY_LENGTH instead of ARRAY_SIZE.
+
+        * runtime/NumberPrototype.cpp:
+        (JSC::toStringWithRadix): Use std::end instead of WTF_ARRAY_LENGTH.
+
 2017-06-06  Konstantin Tokarev  <annulen@yandex.ru>
 
         Add missing <functional> includes

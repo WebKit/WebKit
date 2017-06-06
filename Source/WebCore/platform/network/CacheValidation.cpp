@@ -43,7 +43,7 @@ using namespace std::literals::chrono_literals;
 // These response headers are not copied from a revalidated response to the
 // cached response headers. For compatibility, this list is based on Chromium's
 // net/http/http_response_headers.cc.
-const char* const headersToIgnoreAfterRevalidation[] = {
+static const char* const headersToIgnoreAfterRevalidation[] = {
     "allow",
     "connection",
     "etag",
@@ -62,7 +62,7 @@ const char* const headersToIgnoreAfterRevalidation[] = {
 // Some header prefixes mean "Don't copy this header from a 304 response.".
 // Rather than listing all the relevant headers, we can consolidate them into
 // this list, also grabbed from Chromium's net/http/http_response_headers.cc.
-const char* const headerPrefixesToIgnoreAfterRevalidation[] = {
+static const char* const headerPrefixesToIgnoreAfterRevalidation[] = {
     "content-",
     "x-content-",
     "x-webkit-"
@@ -74,8 +74,10 @@ static inline bool shouldUpdateHeaderAfterRevalidation(const String& header)
         if (equalIgnoringASCIICase(header, headerToIgnore))
             return false;
     }
-    for (size_t i = 0; i < WTF_ARRAY_LENGTH(headerPrefixesToIgnoreAfterRevalidation); i++) {
-        if (header.startsWith(headerPrefixesToIgnoreAfterRevalidation[i], false))
+    for (auto& prefixToIgnore : headerPrefixesToIgnoreAfterRevalidation) {
+        // FIXME: Would be more efficient if we added an overload of
+        // startsWithIgnoringASCIICase that takes a const char*.
+        if (header.startsWithIgnoringASCIICase(prefixToIgnore))
             return false;
     }
     return true;

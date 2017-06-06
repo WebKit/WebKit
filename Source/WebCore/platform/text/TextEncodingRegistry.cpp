@@ -176,22 +176,19 @@ static void addToTextCodecMap(const char* name, NewTextCodecFunction function, c
 
 static void pruneBlacklistedCodecs()
 {
-    for (size_t i = 0; i < WTF_ARRAY_LENGTH(textEncodingNameBlacklist); ++i) {
-        const char* atomicName = textEncodingNameMap->get(textEncodingNameBlacklist[i]);
+    for (auto& nameFromBlacklist : textEncodingNameBlacklist) {
+        auto* atomicName = textEncodingNameMap->get(nameFromBlacklist);
         if (!atomicName)
             continue;
 
         Vector<const char*> names;
-        TextEncodingNameMap::const_iterator it = textEncodingNameMap->begin();
-        TextEncodingNameMap::const_iterator end = textEncodingNameMap->end();
-        for (; it != end; ++it) {
-            if (it->value == atomicName)
-                names.append(it->key);
+        for (auto& entry : *textEncodingNameMap) {
+            if (entry.value == atomicName)
+                names.append(entry.key);
         }
 
-        size_t length = names.size();
-        for (size_t j = 0; j < length; ++j)
-            textEncodingNameMap->remove(names[j]);
+        for (auto* name : names)
+            textEncodingNameMap->remove(name);
 
         textCodecMap->remove(atomicName);
     }

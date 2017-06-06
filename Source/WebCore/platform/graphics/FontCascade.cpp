@@ -476,7 +476,7 @@ GlyphData FontCascade::glyphDataForCharacter(UChar32 c, bool mirror, FontVariant
     return m_fonts->glyphDataForCharacter(c, m_fontDescription, variant);
 }
 
-static const char* fontFamiliesWithInvalidCharWidth[] = {
+static const char* const fontFamiliesWithInvalidCharWidth[] = {
     "American Typewriter",
     "Arial Hebrew",
     "Chalkboard",
@@ -524,22 +524,20 @@ bool FontCascade::hasValidAverageCharWidth() const
     if (family.isEmpty())
         return false;
 
-#if PLATFORM(MAC) || PLATFORM(IOS)
-    // Internal fonts on OS X and iOS also have an invalid entry in the table for avgCharWidth.
+#if PLATFORM(COCOA)
+    // Internal fonts on macOS and iOS also have an invalid entry in the table for avgCharWidth.
     if (primaryFontIsSystemFont())
         return false;
 #endif
 
-    static HashSet<AtomicString>* fontFamiliesWithInvalidCharWidthMap = 0;
+    static NeverDestroyed<const HashSet<AtomicString>> fontFamiliesWithInvalidCharWidthMap = [] {
+        HashSet<AtomicString> map;
+        for (auto* family : fontFamiliesWithInvalidCharWidth)
+            map.add(family);
+        return map;
+    }();
 
-    if (!fontFamiliesWithInvalidCharWidthMap) {
-        fontFamiliesWithInvalidCharWidthMap = new HashSet<AtomicString>;
-
-        for (size_t i = 0; i < WTF_ARRAY_LENGTH(fontFamiliesWithInvalidCharWidth); ++i)
-            fontFamiliesWithInvalidCharWidthMap->add(AtomicString(fontFamiliesWithInvalidCharWidth[i]));
-    }
-
-    return !fontFamiliesWithInvalidCharWidthMap->contains(family);
+    return !fontFamiliesWithInvalidCharWidthMap.get().contains(family);
 }
 
 bool FontCascade::fastAverageCharWidthIfAvailable(float& width) const

@@ -2111,7 +2111,7 @@ template<typename UnsignedIntegerType>
 void URLParser::appendNumberToASCIIBuffer(UnsignedIntegerType number)
 {
     LChar buf[sizeof(UnsignedIntegerType) * 3 + 1];
-    LChar* end = buf + WTF_ARRAY_LENGTH(buf);
+    LChar* end = std::end(buf);
     LChar* p = end;
     do {
         *--p = (number % 10) + '0';

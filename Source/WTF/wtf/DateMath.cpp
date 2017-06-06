@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Google Inc. All rights reserved.
  * Copyright (C) 2007-2009 Torch Mobile, Inc.
  * Copyright (C) 2010 &yet, LLC. (nate@andyet.net)
@@ -102,9 +102,13 @@
 #include <sys/timeb.h>
 #endif
 
-using namespace WTF;
-
 namespace WTF {
+
+// FIXME: Should this function go into StringCommon.h or some other header?
+template<unsigned length> inline bool startsWithLettersIgnoringASCIICase(const char* string, const char (&lowercaseLetters)[length])
+{
+    return equalLettersIgnoringASCIICase(string, lowercaseLetters, length - 1);
+}
 
 /* Constants */
 
@@ -574,17 +578,17 @@ static const struct KnownZone {
 #endif
         char tzName[4];
     int tzOffset;
-} known_zones[] = {
-    { "UT", 0 },
-    { "GMT", 0 },
-    { "EST", -300 },
-    { "EDT", -240 },
-    { "CST", -360 },
-    { "CDT", -300 },
-    { "MST", -420 },
-    { "MDT", -360 },
-    { "PST", -480 },
-    { "PDT", -420 }
+} knownZones[] = {
+    { "ut", 0 },
+    { "gmt", 0 },
+    { "est", -300 },
+    { "edt", -240 },
+    { "cst", -360 },
+    { "cdt", -300 },
+    { "mst", -420 },
+    { "mdt", -360 },
+    { "pst", -480 },
+    { "pdt", -420 }
 };
 
 inline static void skipSpacesAndComments(const char*& s)
@@ -1028,14 +1032,14 @@ double parseDateFromNullTerminatedCharacters(const char* dateString, bool& haveT
 
             skipSpacesAndComments(dateString);
 
-            if (strncasecmp(dateString, "AM", 2) == 0) {
+            if (startsWithLettersIgnoringASCIICase(dateString, "am")) {
                 if (hour > 12)
                     return std::numeric_limits<double>::quiet_NaN();
                 if (hour == 12)
                     hour = 0;
                 dateString += 2;
                 skipSpacesAndComments(dateString);
-            } else if (strncasecmp(dateString, "PM", 2) == 0) {
+            } else if (startsWithLettersIgnoringASCIICase(dateString, "pm")) {
                 if (hour > 12)
                     return std::numeric_limits<double>::quiet_NaN();
                 if (hour != 12)
@@ -1059,7 +1063,7 @@ double parseDateFromNullTerminatedCharacters(const char* dateString, bool& haveT
     // Don't fail if the time zone is missing. 
     // Some websites omit the time zone (4275206).
     if (*dateString) {
-        if (strncasecmp(dateString, "GMT", 3) == 0 || strncasecmp(dateString, "UTC", 3) == 0) {
+        if (startsWithLettersIgnoringASCIICase(dateString, "gmt") || startsWithLettersIgnoringASCIICase(dateString, "utc")) {
             dateString += 3;
             haveTZ = true;
         }
@@ -1090,10 +1094,13 @@ double parseDateFromNullTerminatedCharacters(const char* dateString, bool& haveT
             }
             haveTZ = true;
         } else {
-            for (size_t i = 0; i < WTF_ARRAY_LENGTH(known_zones); ++i) {
-                if (0 == strncasecmp(dateString, known_zones[i].tzName, strlen(known_zones[i].tzName))) {
-                    offset = known_zones[i].tzOffset;
-                    dateString += strlen(known_zones[i].tzName);
+            for (auto& knownZone : knownZones) {
+                // Since the passed-in length is used for both strings, the following checks that
+                // dateString has the time zone name as a prefix, not that it is equal.
+                auto length = strlen(knownZone.tzName);
+                if (equalLettersIgnoringASCIICase(dateString, knownZone.tzName, length)) {
+                    offset = knownZone.tzOffset;
+                    dateString += length;
                     haveTZ = true;
                     break;
                 }

@@ -1273,20 +1273,10 @@ bool portAllowed(const URL& url)
         6669, // Alternate IRC [Apple addition]
         invalidPortNumber, // Used to block all invalid port numbers
     };
-    const unsigned short* const blockedPortListEnd = blockedPortList + WTF_ARRAY_LENGTH(blockedPortList);
-
-#ifndef NDEBUG
-    // The port list must be sorted for binary_search to work.
-    static bool checkedPortList = false;
-    if (!checkedPortList) {
-        for (const unsigned short* p = blockedPortList; p != blockedPortListEnd - 1; ++p)
-            ASSERT(*p < *(p + 1));
-        checkedPortList = true;
-    }
-#endif
 
     // If the port is not in the blocked port list, allow it.
-    if (!std::binary_search(blockedPortList, blockedPortListEnd, port.value()))
+    ASSERT(std::is_sorted(std::begin(blockedPortList), std::end(blockedPortList)));
+    if (!std::binary_search(std::begin(blockedPortList), std::end(blockedPortList), port.value()))
         return true;
 
     // Allow ports 21 and 22 for FTP URLs, as Mozilla does.
