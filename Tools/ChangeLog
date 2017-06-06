@@ -1,3 +1,16 @@
+2017-06-06  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [WPE] Add an install-dependencies script
+        https://bugs.webkit.org/show_bug.cgi?id=172948
+
+        Reviewed by Žan Doberšek.
+
+        It is based on the gtk/install-dependencies script.
+        Includes support for Debian based distrubutions, Fedora and Arch.
+        It has been tested on a minimal Debian 9 chroot.
+
+        * wpe/install-dependencies: Added.
+
 2017-06-05  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Refactor -[WebItemProviderPasteboard valuesForPasteboardType:inItemSet:] to check readable types
