@@ -35,8 +35,10 @@
 #include "JSWebAssemblyInstance.h"
 #include "JSWebAssemblyRuntimeError.h"
 #include "LinkBuffer.h"
+#include "ScratchRegisterAllocator.h"
 #include "WasmContext.h"
 #include "WasmExceptionType.h"
+#include "WasmOMGPlan.h"
 
 namespace JSC { namespace Wasm {
 
@@ -101,6 +103,27 @@ MacroAssemblerCodeRef throwStackOverflowFromWasmThunkGenerator(const AbstractLoc
     LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID);
     linkBuffer.link(jumpToExceptionHandler, CodeLocationLabel(Thunks::singleton().stub(locker, throwExceptionFromWasmThunkGenerator).code()));
     return FINALIZE_CODE(linkBuffer, ("Throw stack overflow from Wasm"));
+}
+
+MacroAssemblerCodeRef triggerOMGTierUpThunkGenerator(const AbstractLocker&)
+{
+    // We expect that the user has already put the function index into GPRInfo::argumentGPR1
+    CCallHelpers jit;
+
+    const unsigned extraPaddingBytes = 0;
+    RegisterSet registersToSpill = RegisterSet::allRegisters();
+    registersToSpill.exclude(RegisterSet::registersToNotSaveForCCall());
+    unsigned numberOfStackBytesUsedForRegisterPreservation = ScratchRegisterAllocator::preserveRegistersToStackForCall(jit, registersToSpill, extraPaddingBytes);
+
+    jit.loadWasmContext(GPRInfo::argumentGPR0);
+    jit.move(MacroAssembler::TrustedImmPtr(reinterpret_cast<void*>(runOMGPlanForIndex)), GPRInfo::argumentGPR2);
+    jit.call(GPRInfo::argumentGPR2);
+
+    ScratchRegisterAllocator::restoreRegistersFromStackForCall(jit, registersToSpill, RegisterSet(), numberOfStackBytesUsedForRegisterPreservation, extraPaddingBytes);
+
+    jit.ret();
+    LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID);
+    return FINALIZE_CODE(linkBuffer, ("Trigger OMG tier up"));
 }
 
 static Thunks* thunks;

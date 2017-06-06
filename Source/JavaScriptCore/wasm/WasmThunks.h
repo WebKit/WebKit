@@ -33,6 +33,7 @@ namespace JSC { namespace Wasm {
 
 MacroAssemblerCodeRef throwExceptionFromWasmThunkGenerator(const AbstractLocker&);
 MacroAssemblerCodeRef throwStackOverflowFromWasmThunkGenerator(const AbstractLocker&);
+MacroAssemblerCodeRef triggerOMGTierUpThunkGenerator(const AbstractLocker&);
 
 typedef MacroAssemblerCodeRef (*ThunkGenerator)(const AbstractLocker&);
 

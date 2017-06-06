@@ -1,3 +1,22 @@
+2017-06-05  Keith Miller  <keith_miller@apple.com>
+
+        OMG tier up checks should be a patchpoint
+        https://bugs.webkit.org/show_bug.cgi?id=172944
+
+        Reviewed by Saam Barati.
+
+        Tier up checks in BBQ should be done as a patchpoint rather than individual B3 opcodes.
+        In order to reduce code generated out of line in each function. We generate a single stub
+        that pushes all the callee-saves. This looks like a 5-10% compile time speedup.
+
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::B3IRGenerator):
+        (JSC::Wasm::B3IRGenerator::emitTierUpCheck):
+        (JSC::Wasm::B3IRGenerator::addLoop):
+        * wasm/WasmThunks.cpp:
+        (JSC::Wasm::triggerOMGTierUpThunkGenerator):
+        * wasm/WasmThunks.h:
+
 2017-06-05  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove unused VM members

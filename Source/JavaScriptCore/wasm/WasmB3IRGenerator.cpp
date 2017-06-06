@@ -51,6 +51,7 @@
 #include "JSWebAssemblyInstance.h"
 #include "JSWebAssemblyModule.h"
 #include "JSWebAssemblyRuntimeError.h"
+#include "ScratchRegisterAllocator.h"
 #include "VirtualRegister.h"
 #include "WasmCallingConvention.h"
 #include "WasmContext.h"
@@ -230,7 +231,7 @@ public:
 private:
     void emitExceptionCheck(CCallHelpers&, ExceptionType);
 
-    BasicBlock* emitTierUpCheck(BasicBlock* entry, uint32_t decrementCount, Origin);
+    void emitTierUpCheck(uint32_t decrementCount, Origin);
 
     ExpressionType emitCheckAndPreparePointer(ExpressionType pointer, uint32_t offset, uint32_t sizeOfOp);
     B3::Kind memoryKind(B3::Opcode memoryOp);
@@ -428,7 +429,7 @@ B3IRGenerator::B3IRGenerator(const ModuleInformation& info, Procedure& procedure
         });
     }
 
-    m_currentBlock = emitTierUpCheck(m_currentBlock, TierUpCount::functionEntryDecrement(), Origin());
+    emitTierUpCheck(TierUpCount::functionEntryDecrement(), Origin());
 }
 
 void B3IRGenerator::restoreWebAssemblyGlobalState(const MemoryInformation& memory, Value* instance, Procedure& proc, BasicBlock* block)
@@ -874,48 +875,63 @@ B3IRGenerator::ExpressionType B3IRGenerator::addConstant(Type type, uint64_t val
     return constant(toB3Type(type), value);
 }
 
-BasicBlock* B3IRGenerator::emitTierUpCheck(BasicBlock* entry, uint32_t decrementCount, Origin origin)
+void B3IRGenerator::emitTierUpCheck(uint32_t decrementCount, Origin origin)
 {
     if (!m_tierUp)
-        return entry;
-
-    // FIXME: Make this a patchpoint.
-    BasicBlock* continuation = m_proc.addBlock();
+        return;
 
     ASSERT(m_tierUp);
     Value* countDownLocation = constant(pointerType(), reinterpret_cast<uint64_t>(m_tierUp), origin);
-    Value* oldCountDown = entry->appendNew<MemoryValue>(m_proc, Load, Int32, origin, countDownLocation);
-    Value* newCountDown = entry->appendNew<Value>(m_proc, Sub, origin, oldCountDown, constant(Int32, decrementCount, origin));
-    entry->appendNew<MemoryValue>(m_proc, Store, origin, newCountDown, countDownLocation);
+    Value* oldCountDown = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int32, origin, countDownLocation);
+    Value* newCountDown = m_currentBlock->appendNew<Value>(m_proc, Sub, origin, oldCountDown, constant(Int32, decrementCount, origin));
+    m_currentBlock->appendNew<MemoryValue>(m_proc, Store, origin, newCountDown, countDownLocation);
 
-    Value* underFlowed = entry->appendNew<Value>(m_proc, Above, origin, newCountDown, oldCountDown);
+    PatchpointValue* patch = m_currentBlock->appendNew<PatchpointValue>(m_proc, B3::Void, origin);
+    Effects effects = Effects::none();
+    // FIXME: we should have a more precise heap range for the tier up count.
+    effects.reads = B3::HeapRange::top();
+    effects.writes = B3::HeapRange::top();
+    patch->effects = effects;
 
-    {
-        BasicBlock* tierUp = m_proc.addBlock();
-        entry->appendNew<Value>(m_proc, B3::Branch, origin, underFlowed);
-        entry->setSuccessors(FrequentedBlock(tierUp, FrequencyClass::Rare), FrequentedBlock(continuation));
+    patch->append(newCountDown, ValueRep::SomeRegister);
+    patch->append(oldCountDown, ValueRep::SomeRegister);
+    patch->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+        MacroAssembler::Jump tierUp = jit.branch32(MacroAssembler::Above, params[0].gpr(), params[1].gpr());
+        MacroAssembler::Label tierUpResume = jit.label();
 
-        tierUp->appendNew<CCallValue>(m_proc, B3::Void, origin, Effects::forCall(),
-            constant(pointerType(), reinterpret_cast<uint64_t>(runOMGPlanForIndex), origin),
-            materializeWasmContext(tierUp),
-            constant(Int32, m_functionIndex, origin));
+        params.addLatePath([=] (CCallHelpers& jit) {
+            tierUp.link(&jit);
 
-        tierUp->appendNewControlValue(m_proc, Jump, origin, continuation);
-    }
+            const unsigned extraPaddingBytes = 0;
+            RegisterSet registersToSpill = RegisterSet();
+            registersToSpill.add(GPRInfo::argumentGPR1);
+            unsigned numberOfStackBytesUsedForRegisterPreservation = ScratchRegisterAllocator::preserveRegistersToStackForCall(jit, registersToSpill, extraPaddingBytes);
 
-    return continuation;
+            jit.move(MacroAssembler::TrustedImm32(m_functionIndex), GPRInfo::argumentGPR1);
+            MacroAssembler::Call call = jit.nearCall();
+
+            ScratchRegisterAllocator::restoreRegistersFromStackForCall(jit, registersToSpill, RegisterSet(), numberOfStackBytesUsedForRegisterPreservation, extraPaddingBytes);
+            jit.jump(tierUpResume);
+
+            jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
+                MacroAssembler::repatchNearCall(linkBuffer.locationOfNearCall(call), CodeLocationLabel(Thunks::singleton().stub(triggerOMGTierUpThunkGenerator).code()));
+
+            });
+        });
+    });
 }
 
 B3IRGenerator::ControlData B3IRGenerator::addLoop(Type signature)
 {
-    BasicBlock* branchTarget = m_proc.addBlock();
+    BasicBlock* body = m_proc.addBlock();
     BasicBlock* continuation = m_proc.addBlock();
-    BasicBlock* body = emitTierUpCheck(branchTarget, TierUpCount::loopDecrement(), origin());
 
     m_currentBlock->appendNewControlValue(m_proc, Jump, origin(), body);
 
     m_currentBlock = body;
-    return ControlData(m_proc, origin(), signature, BlockType::Loop, continuation, branchTarget);
+    emitTierUpCheck(TierUpCount::loopDecrement(), origin());
+
+    return ControlData(m_proc, origin(), signature, BlockType::Loop, continuation, body);
 }
 
 B3IRGenerator::ControlData B3IRGenerator::addTopLevel(Type signature)
