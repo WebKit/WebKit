@@ -1,3 +1,23 @@
+2017-06-06  David Kilzer  <ddkilzer@apple.com>
+
+        Move WTF_ATTRIBUTE_PRINTF() from implementation to declaration
+        <https://webkit.org/b/172804>
+
+        Reviewed by Darin Adler.
+
+        WTF_ATTRIBUTE_PRINTF() only works outside the current
+        compilation unit if it's on the declaration, not the
+        implementation, of a function or class method.
+
+        * DumpRenderTree/TestNetscapePlugIn/PluginObject.cpp:
+        * DumpRenderTree/TestNetscapePlugIn/PluginObject.h:
+        * DumpRenderTree/TestNetscapePlugIn/PluginTest.cpp:
+        * DumpRenderTree/TestNetscapePlugIn/PluginTest.h:
+        - Move WTF_ATTRIBUTE_PRINTF() macro to declaration.
+        * DumpRenderTree/TestNetscapePlugIn/main.cpp:
+        - Remove redundant CRASH() macro definition.  Use the one from
+          <wtf/Assertions.h> instead.
+
 2017-06-06  Joseph Pecoraro  <pecoraro@apple.com>
 
         Move Resource Timing / User Timing from experimental features into main preferences

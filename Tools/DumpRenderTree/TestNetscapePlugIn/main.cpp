@@ -41,18 +41,6 @@ extern "C" void GlobalToLocal(Point*);
 
 using namespace std;
 
-#if defined(__GNUC__)
-#define CRASH() do { \
-    *(int *)(uintptr_t)0xbbadbeef = 0; \
-    __builtin_trap(); /* More reliable, but doesn't say BBADBEEF. */ \
-} while (false)
-#else
-#define CRASH() do { \
-    *(int *)(uintptr_t)0xbbadbeef = 0; \
-    ((void(*)())0)(); /* More reliable, but doesn't say BBADBEEF */ \
-} while (false)
-#endif
-
 static bool getEntryPointsWasCalled;
 static bool initializeWasCalled;
 

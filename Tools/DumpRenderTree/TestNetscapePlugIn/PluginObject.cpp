@@ -37,7 +37,6 @@
 #include <string.h>
 #include <wtf/Platform.h>
 #include <wtf/ExportMacros.h>
-#include <wtf/Assertions.h>
 
 // Helper function which takes in the plugin window object for logging to the console object.
 static void pluginLogWithWindowObject(NPObject* windowObject, NPP instance, const char* message)
@@ -64,7 +63,6 @@ static void pluginLogWithWindowObject(NPObject* windowObject, NPP instance, cons
     browser->releaseobject(consoleObject);
 }
 
-WTF_ATTRIBUTE_PRINTF(2, 0)
 void pluginLogWithArguments(NPP instance, const char* format, va_list args)
 {
     const size_t messageBufferSize = 2048;
@@ -85,7 +83,6 @@ void pluginLogWithArguments(NPP instance, const char* format, va_list args)
 }
 
 // Helper function to log to the console object.
-WTF_ATTRIBUTE_PRINTF(2, 3)
 void pluginLog(NPP instance, const char* format, ...)
 {
     va_list args;

@@ -30,6 +30,7 @@
 #include <assert.h>
 #include <map>
 #include <string>
+#include <wtf/Assertions.h>
 
 // Helper classes for implementing has_member
 typedef char (&no_tag)[1];
@@ -101,7 +102,7 @@ public:
 
     bool executeScript(const NPString*, NPVariant* result);
     void executeScript(const char*);
-    void log(const char* format, ...);
+    void log(const char* format, ...) WTF_ATTRIBUTE_PRINTF(2, 3);
 
     void registerNPShutdownFunction(void (*)());
 

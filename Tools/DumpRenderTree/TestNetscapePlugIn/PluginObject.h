@@ -28,6 +28,7 @@
 
 #include <WebKit/npfunctions.h>
 #include <stdarg.h>
+#include <wtf/Assertions.h>
 
 class PluginTest;
 
@@ -76,8 +77,8 @@ extern NPClass *getPluginClass(void);
 extern void handleCallback(PluginObject* object, const char *url, NPReason reason, void *notifyData);
 extern void notifyStream(PluginObject* object, const char *url, const char *headers);
 extern void testNPRuntime(NPP npp);
-extern void pluginLog(NPP instance, const char* format, ...);
-extern void pluginLogWithArguments(NPP instance, const char* format, va_list args);
+extern void pluginLog(NPP instance, const char* format, ...) WTF_ATTRIBUTE_PRINTF(2, 3);
+extern void pluginLogWithArguments(NPP instance, const char* format, va_list args) WTF_ATTRIBUTE_PRINTF(2, 0);
 extern bool testDocumentOpen(NPP npp);
 extern bool testWindowOpen(NPP npp);
 
