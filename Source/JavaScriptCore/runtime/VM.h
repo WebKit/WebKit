@@ -314,8 +314,6 @@ public:
     Strong<Structure> customGetterSetterStructure;
     Strong<Structure> scopedArgumentsTableStructure;
     Strong<Structure> apiWrapperStructure;
-    Strong<Structure> JSScopeStructure;
-    Strong<Structure> executableStructure;
     Strong<Structure> nativeExecutableStructure;
     Strong<Structure> evalExecutableStructure;
     Strong<Structure> programExecutableStructure;
@@ -355,10 +353,7 @@ public:
     Strong<Structure> functionCodeBlockStructure;
     Strong<Structure> hashMapBucketSetStructure;
     Strong<Structure> hashMapBucketMapStructure;
-    Strong<Structure> hashMapImplSetStructure;
-    Strong<Structure> hashMapImplMapStructure;
 
-    Strong<JSCell> iterationTerminator;
     Strong<JSCell> emptyPropertyNameEnumerator;
 
     std::unique_ptr<PromiseDeferredTimer> promiseDeferredTimer;
@@ -524,9 +519,6 @@ public:
 
     void* lastStackTop() { return m_lastStackTop; }
     void setLastStackTop(void*);
-
-    const ClassInfo* const jsArrayClassInfo;
-    const ClassInfo* const jsFinalObjectClassInfo;
 
     JSValue hostCallReturnValue;
     unsigned varargsLength;

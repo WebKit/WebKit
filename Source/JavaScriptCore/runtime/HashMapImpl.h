@@ -285,18 +285,6 @@ class HashMapImpl : public JSNonFinalObject {
     using Base = JSNonFinalObject;
     using HashMapBufferType = HashMapBuffer<HashMapBucketType>;
 
-    template <typename T = HashMapBucketType>
-    static typename std::enable_if<std::is_same<T, HashMapBucket<HashMapBucketDataKey>>::value, Structure*>::type selectStructure(VM& vm)
-    {
-        return vm.hashMapImplSetStructure.get();
-    }
-
-    template <typename T = HashMapBucketType>
-    static typename std::enable_if<std::is_same<T, HashMapBucket<HashMapBucketDataKeyValue>>::value, Structure*>::type selectStructure(VM& vm)
-    {
-        return vm.hashMapImplMapStructure.get();
-    }
-
 public:
     using BucketType = HashMapBucketType;
 
