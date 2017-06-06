@@ -1,3 +1,18 @@
+2017-06-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Web Process deadlock when closing the remote inspector frontend
+        https://bugs.webkit.org/show_bug.cgi?id=172973
+
+        Reviewed by Žan Doberšek.
+
+        We are taking the remote inspector mutex twice. First close message is received, and receivedCloseMessage()
+        takes the mutex. Then RemoteConnectionToTarget::close() is called that, when connected, calls
+        PageDebuggable::disconnect() that ends up calling RemoteInspector::updateTarget() that also takes the remote
+        inspector mutex. We should release the mutex before calling RemoteConnectionToTarget::close().
+
+        * inspector/remote/glib/RemoteInspectorGlib.cpp:
+        (Inspector::RemoteInspector::receivedCloseMessage):
+
 2017-06-05  Saam Barati  <sbarati@apple.com>
 
         Try to fix features.json by adding an ESNext section.
