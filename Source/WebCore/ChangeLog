@@ -1,3 +1,15 @@
+2017-06-06  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Fix compilation with !ENABLE(SVG_FONTS)
+        https://bugs.webkit.org/show_bug.cgi?id=172731
+
+        Reviewed by Darin Adler.
+
+        No new tests needed.
+
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::load):
+
 2017-06-06  Zalan Bujtas  <zalan@apple.com>
 
         Safari doesn't load newest The Order of the Stick comic.

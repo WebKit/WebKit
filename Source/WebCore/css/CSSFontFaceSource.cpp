@@ -137,6 +137,7 @@ void CSSFontFaceSource::load(CSSFontSelector* fontSelector)
         fontSelector->beginLoadingFontSoon(*m_font);
     } else {
         bool success = false;
+#if ENABLE(SVG_FONTS)
         if (m_svgFontFaceElement) {
             if (is<SVGFontElement>(m_svgFontFaceElement->parentNode())) {
                 ASSERT(!m_inDocumentCustomPlatformData);
@@ -148,7 +149,9 @@ void CSSFontFaceSource::load(CSSFontSelector* fontSelector)
                     success = static_cast<bool>(m_inDocumentCustomPlatformData);
                 }
             }
-        } else if (m_immediateSource) {
+        } else
+#endif
+        if (m_immediateSource) {
             ASSERT(!m_immediateFontCustomPlatformData);
             bool wrapping;
             RefPtr<SharedBuffer> buffer = SharedBuffer::create(static_cast<const char*>(m_immediateSource->baseAddress()), m_immediateSource->byteLength());
