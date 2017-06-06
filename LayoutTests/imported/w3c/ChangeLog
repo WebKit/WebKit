@@ -1,3 +1,12 @@
+2017-06-06  Darin Adler  <darin@apple.com>
+
+        Update to slightly stricter rules for custom element names from more recent standard draft
+        https://bugs.webkit.org/show_bug.cgi?id=173019
+
+        Reviewed by Ryosuke Niwa.
+
+        * web-platform-tests/html/semantics/interfaces-expected.txt: Expect more PASS.
+
 2017-06-04  Chris Dumez  <cdumez@apple.com>
 
         Implement DOMMatrixReadOnly.transformPoint()

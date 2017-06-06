@@ -1,3 +1,13 @@
+2017-06-06  Darin Adler  <darin@apple.com>
+
+        Update to slightly stricter rules for custom element names from more recent standard draft
+        https://bugs.webkit.org/show_bug.cgi?id=173019
+
+        Reviewed by Ryosuke Niwa.
+
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/semantics/interfaces-expected.txt: Expect more PASS.
+        * platform/ios/imported/w3c/web-platform-tests/html/semantics/interfaces-expected.txt: Ditto.
+
 2017-06-06  Yoav Weiss  <yoav@yoav.ws>
 
         [preload] Conditional support for media preloading and align media `as` values.

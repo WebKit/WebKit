@@ -57,18 +57,23 @@ static JSObject* getCustomElementCallback(ExecState& state, JSObject& prototype,
 static bool validateCustomElementNameAndThrowIfNeeded(ExecState& state, const AtomicString& name)
 {
     auto scope = DECLARE_THROW_SCOPE(state.vm());
-
     switch (Document::validateCustomElementName(name)) {
     case CustomElementNameValidationStatus::Valid:
         return true;
-    case CustomElementNameValidationStatus::ConflictsWithBuiltinNames:
-        throwSyntaxError(&state, scope, ASCIILiteral("Custom element name cannot be same as one of the builtin elements"));
+    case CustomElementNameValidationStatus::FirstCharacterIsNotLowercaseASCIILetter:
+        throwSyntaxError(&state, scope, ASCIILiteral("Custom element name must have a lowercase ASCII letter as its first character"));
         return false;
-    case CustomElementNameValidationStatus::NoHyphen:
+    case CustomElementNameValidationStatus::ContainsUppercaseASCIILetter:
+        throwSyntaxError(&state, scope, ASCIILiteral("Custom element name cannot contain an uppercase ASCII letter"));
+        return false;
+    case CustomElementNameValidationStatus::ContainsNoHyphen:
         throwSyntaxError(&state, scope, ASCIILiteral("Custom element name must contain a hyphen"));
         return false;
-    case CustomElementNameValidationStatus::ContainsUpperCase:
-        throwSyntaxError(&state, scope, ASCIILiteral("Custom element name cannot contain an upper case letter"));
+    case CustomElementNameValidationStatus::ContainsDisallowedCharacter:
+        throwSyntaxError(&state, scope, ASCIILiteral("Custom element name contains a character that is not allowed"));
+        return false;
+    case CustomElementNameValidationStatus::ConflictsWithStandardElementName:
+        throwSyntaxError(&state, scope, ASCIILiteral("Custom element name cannot be same as one of the standard elements"));
         return false;
     }
     ASSERT_NOT_REACHED();

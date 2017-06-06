@@ -1,3 +1,26 @@
+2017-06-06  Darin Adler  <darin@apple.com>
+
+        Update to slightly stricter rules for custom element names from more recent standard draft
+        https://bugs.webkit.org/show_bug.cgi?id=173019
+
+        Reviewed by Ryosuke Niwa.
+
+        * bindings/js/JSCustomElementRegistryCustom.cpp:
+        (WebCore::validateCustomElementNameAndThrowIfNeeded): Add more error strings for various error cases.
+
+        * dom/Document.cpp:
+        (WebCore::isPotentialCustomElementNameCharacter): Added. Implements the PCENChar production
+        from the standard by listing all the ranges exactly as they appear in the standard.
+        (WebCore::Document::validateCustomElementName): Added a check that the first character is
+        a lowercase ASCII letter. Added a check that all characters are potential custom element
+        name characters.
+
+        * dom/Document.h: Update the CustomElementNameValidationStatus with new values for
+        the various new error cases.  Not sure that validateCustomElementName really belongs
+        in the Document class in the first place. Also seems that the error strings could be
+        in validateCustomElementName rather than in a separate bindings function, obviating
+        the need for the enum.
+
 2017-06-06  Yoav Weiss  <yoav@yoav.ws>
 
         [preload] Conditional support for media preloading and align media `as` values.
