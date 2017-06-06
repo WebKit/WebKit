@@ -1,3 +1,11 @@
+2017-06-05  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed GTK expectations gardening
+
+        Mark a few tests as crashing.
+
+        * platform/gtk/TestExpectations:
+
 2017-06-05  Chris Dumez  <cdumez@apple.com>
 
         ASSERTION FAILED: RunLoop::isMain() in com.apple.WebKit: IPC::Connection::sendSyncMessage + 128

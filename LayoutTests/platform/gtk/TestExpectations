@@ -1564,6 +1564,14 @@ webkit.org/b/169811 fast/mediastream/captureStream/canvas3d.html [ Crash Timeout
 
 webkit.org/b/172281 accessibility/insert-children-assert.html [ Crash ]
 
+webkit.org/b/172951 editing/execCommand/crash-replacing-list-by-list.html [ Crash ]
+webkit.org/b/172951 editing/inserting/insert-table-in-paragraph-crash.html [ Crash ]
+webkit.org/b/172952 fast/frames/sandboxed-iframe-navigation-top-denied.html [ Crash ]
+
+webkit.org/b/172954 fast/mediacapturefromelement/CanvasCaptureMediaStream-2d-events.html [ Crash Failure Pass ]
+
+webkit.org/b/172955 media/video-preload.html [ Crash Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////
