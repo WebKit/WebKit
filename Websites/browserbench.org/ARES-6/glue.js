@@ -38,6 +38,15 @@ function reportResult(...args) {
     driver.reportResult(...args);
 }
 
+{
+    const title = "ARES-6 1.0";
+    if (isInBrowser) {
+        document.title = title;
+    } else {
+        print(title);
+    }
+}
+
 driver.addBenchmark(AirBenchmarkRunner);
 driver.addBenchmark(BasicBenchmarkRunner);
 driver.addBenchmark(BabylonBenchmarkRunner);

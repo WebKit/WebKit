@@ -1,3 +1,13 @@
+2017-06-06  Saam Barati  <sbarati@apple.com>
+
+        Add a version number to ARES-6
+        https://bugs.webkit.org/show_bug.cgi?id=172962
+
+        Reviewed by Yusuke Suzuki.
+
+        * ARES-6/glue.js:
+        (driver.reportResult):
+
 2017-06-01  Saam Barati  <sbarati@apple.com>
 
         Ensure a good experience for ARES-6 error reporting
