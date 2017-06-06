@@ -1,3 +1,15 @@
+2017-06-06  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r217812.
+
+        This change caused test failures on arm64.
+
+        Reverted changeset:
+
+        "OMG tier up checks should be a patchpoint"
+        https://bugs.webkit.org/show_bug.cgi?id=172944
+        http://trac.webkit.org/changeset/217812
+
 2017-06-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [WPE] Enable remote inspector
