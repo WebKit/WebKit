@@ -92,12 +92,12 @@ struct FrameState {
     Vector<String> documentState;
     std::optional<Vector<uint8_t>> stateObjectData;
 
-    int64_t documentSequenceNumber;
-    int64_t itemSequenceNumber;
+    int64_t documentSequenceNumber { 0 };
+    int64_t itemSequenceNumber { 0 };
 
     WebCore::IntPoint scrollPosition;
-    bool shouldRestoreScrollPosition;
-    float pageScaleFactor;
+    bool shouldRestoreScrollPosition { true };
+    float pageScaleFactor { 0 };
 
     std::optional<HTTPBody> httpBody;
 
@@ -107,7 +107,7 @@ struct FrameState {
     WebCore::IntRect unobscuredContentRect;
     WebCore::FloatSize minimumLayoutSizeInScrollViewCoordinates;
     WebCore::IntSize contentSize;
-    bool scaleIsInitial = false;
+    bool scaleIsInitial { false };
 #endif
 
     Vector<FrameState> children;

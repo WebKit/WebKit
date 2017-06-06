@@ -1,3 +1,26 @@
+2017-06-06  Chris Dumez  <cdumez@apple.com>
+
+        RELEASE_ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values)) hit in convertEnumerationToJS<WebCore::History::ScrollRestoration>()
+        https://bugs.webkit.org/show_bug.cgi?id=173033
+        <rdar://problem/32591099>
+
+        Reviewed by Simon Fraser.
+
+        History::scrollRestoration() was returning a bad value because HistoryItem::m_shouldRestoreScrollPosition
+        was initialized from FrameState::shouldRestoreScrollPosition member, which was not initialized when
+        restored from the legacy session restore API.
+
+        Tests: WebKit2.RestoreSessionStateContainingScrollRestoration* API tests.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateEnumerationImplementationContent):
+        Drop the RELEASE_ASSERT that was added to debug this and use the regular debug ASSERT.
+
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::setShouldRestoreScrollPosition):
+        Make sure we notify that the HistoryItem has changed when setShouldRestoreScrollPosition()
+        is called.
+
 2017-06-06  Darin Adler  <darin@apple.com>
 
         Update to slightly stricter rules for custom element names from more recent standard draft

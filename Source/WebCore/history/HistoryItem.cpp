@@ -271,6 +271,7 @@ bool HistoryItem::shouldRestoreScrollPosition() const
 void HistoryItem::setShouldRestoreScrollPosition(bool shouldRestore)
 {
     m_shouldRestoreScrollPosition = shouldRestore;
+    notifyHistoryItemChanged(this);
 }
 
 float HistoryItem::pageScaleFactor() const
