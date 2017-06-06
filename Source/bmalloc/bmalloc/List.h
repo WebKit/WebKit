@@ -54,6 +54,8 @@ class List {
     };
 
 public:
+    List() { }
+
     bool isEmpty() { return m_root.next == &m_root; }
 
     T* head() { return static_cast<T*>(m_root.next); }

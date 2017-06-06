@@ -1,3 +1,12 @@
+2017-06-06  Geoffrey Garen  <ggaren@apple.com>
+
+        Try to fix the GTK build.
+
+        Unreviewed.
+
+        * bmalloc/List.h:
+        (bmalloc::List::List):
+
 2017-06-05  Geoffrey Garen  <ggaren@apple.com>
 
         Try to fix the GTK build.
