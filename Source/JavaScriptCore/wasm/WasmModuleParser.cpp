@@ -534,7 +534,7 @@ auto ModuleParser::parseInitExpr(uint8_t& opcode, uint64_t& bitsOrImportNumber, 
     }
 
     default:
-        WASM_PARSER_FAIL_IF(false, "unknown init_expr opcode ", opcode);
+        WASM_PARSER_FAIL_IF(true, "unknown init_expr opcode ", opcode);
     }
 
     uint8_t endOpcode;

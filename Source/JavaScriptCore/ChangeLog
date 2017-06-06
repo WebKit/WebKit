@@ -1,3 +1,17 @@
+2017-06-05  Saam Barati  <sbarati@apple.com>
+
+        We don't properly parse init_expr when the opcode is an unexpected opcode
+        https://bugs.webkit.org/show_bug.cgi?id=172945
+
+        Reviewed by JF Bastien.
+
+        The bug is a simple typo. It should use the constant
+        `true` instead of `false` when invoking the WASM_PARSER_FAIL_IF
+        macro. This failure is already caught by spec tests that fail
+        on arm64 devices.
+
+        * wasm/WasmModuleParser.cpp:
+
 2017-06-05  Keith Miller  <keith_miller@apple.com>
 
         OMG tier up checks should be a patchpoint
