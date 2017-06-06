@@ -1551,6 +1551,7 @@ webkit.org/b/172737 fast/text/accessibility-bold-system-font-2.html [ ImageOnlyF
 # As a result, a host of tests need to be updated and being turned on selectively here.
 media/modern-media-controls/airplay-button [ Pass ]
 media/modern-media-controls/airplay-placard [ Pass ]
+media/modern-media-controls/airplay-support [ Pass ]
 media/modern-media-controls/audio/audio-controls-metrics.html [ Pass ]
 media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-drag-is-prevented-over-button.html [ Pass ]
 media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-drag.html [ Pass ]

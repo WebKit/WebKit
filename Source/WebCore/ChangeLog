@@ -1,5 +1,18 @@
 2017-06-06  Antoine Quint  <graouts@apple.com>
 
+        Rebaseline and enable media/modern-media-controls/airplay-support
+        https://bugs.webkit.org/show_bug.cgi?id=172980
+
+        Reviewed by Eric Carlson.
+
+        Fixing a small issue in the modern media controls code which would yield
+        an error when manually creating a MediaController without a MediaControlsHost.
+
+        * Modules/modern-media-controls/media/media-controller.js:
+        (MediaController.prototype.get isAudio):
+
+2017-06-06  Antoine Quint  <graouts@apple.com>
+
         Update modern media controls testing utilities
         https://bugs.webkit.org/show_bug.cgi?id=172976
         <rdar://problem/32588432>

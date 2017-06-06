@@ -65,7 +65,7 @@ class MediaController
         if (this.media instanceof HTMLAudioElement)
             return true;
 
-        if (!this.host.isInMediaDocument && this.media instanceof HTMLVideoElement)
+        if (this.host && !this.host.isInMediaDocument && this.media instanceof HTMLVideoElement)
             return false;
 
         if (this.media.readyState < HTMLMediaElement.HAVE_METADATA)

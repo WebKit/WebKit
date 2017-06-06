@@ -60,4 +60,7 @@ media/modern-media-controls/airplay-placard [ Pass ]
 media/modern-media-controls/audio/audio-controls-styles.html [ Pass ]
 media/modern-media-controls/audio/audio-controls-metrics.html [ Pass ]
 
+# AirPlay cannot be tested on iOS
+webkit.org/b/166062 media/modern-media-controls/airplay-support [ Skip ]
+
 webkit.org/b/172965 media/track/track-cue-overlap-snap-to-lines-not-set.html [ Failure ]
