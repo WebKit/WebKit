@@ -36,8 +36,6 @@ namespace JSC {
 class HeapProfiler;
 class HeapSnapshot;
 class JSCell;
-class JSObject;
-class VM;
 
 struct HeapSnapshotNode {
     HeapSnapshotNode(JSCell* cell, unsigned identifier)

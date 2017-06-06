@@ -526,23 +526,19 @@ String JSObject::toStringName(const JSObject* object, ExecState*)
 String JSObject::calculatedClassName(JSObject* object)
 {
     String prototypeFunctionName;
-    auto structure = object->structure();
-    auto globalObject = structure->globalObject();
+    auto globalObject = object->globalObject();
     VM& vm = globalObject->vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
-    // Get the display name of obj.__proto__.constructor.
-    MethodTable::GetPrototypeFunctionPtr defaultGetPrototype = JSObject::getPrototype;
-    if (structure->classInfo()->methodTable.getPrototype == defaultGetPrototype) {
-        JSValue protoValue = object->getPrototypeDirect();
-        if (protoValue.isObject()) {
-            JSObject* protoObject = jsCast<JSObject*>(protoValue);
-            ExecState* exec = globalObject->globalExec();
-            PropertyName constructor(exec->propertyNames().constructor);
-            PropertySlot slot(protoValue, PropertySlot::InternalMethodType::VMInquiry);
-            if (protoObject->getPropertySlot(exec, constructor, slot)) {
-                if (slot.isValue()) {
-                    if (JSObject* ctorObject = jsDynamicCast<JSObject*>(vm, slot.getValue(exec, constructor))) {
+    ExecState* exec = globalObject->globalExec();
+    PropertySlot slot(object->getPrototypeDirect(), PropertySlot::InternalMethodType::VMInquiry);
+    PropertyName constructor(exec->propertyNames().constructor);
+    if (object->getPropertySlot(exec, constructor, slot)) {
+        if (slot.isValue()) {
+            JSValue constructorValue = slot.getValue(exec, constructor);
+            if (constructorValue.isCell()) {
+                if (JSCell* constructorCell = constructorValue.asCell()) {
+                    if (JSObject* ctorObject = constructorCell->getObject()) {
                         if (JSFunction* constructorFunction = jsDynamicCast<JSFunction*>(vm, ctorObject))
                             prototypeFunctionName = constructorFunction->calculatedDisplayName(vm);
                         else if (InternalFunction* constructorFunction = jsDynamicCast<InternalFunction*>(vm, ctorObject))
@@ -552,7 +548,6 @@ String JSObject::calculatedClassName(JSObject* object)
             }
         }
     }
-
     ASSERT(!scope.exception() || prototypeFunctionName.isNull());
     if (UNLIKELY(scope.exception()))
         scope.clearException();

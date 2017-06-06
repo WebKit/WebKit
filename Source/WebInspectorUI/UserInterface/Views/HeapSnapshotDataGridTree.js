@@ -216,8 +216,7 @@ WebInspector.HeapSnapshotInstancesDataGridTree = class HeapSnapshotInstancesData
     populateTopLevel()
     {
         // Populate the first level with the different non-internal classes.
-        for (let [className, {size, retainedSize, count, internalCount, deadCount, objectCount}] of this.heapSnapshot.categories) {
-            console.assert(count > 0);
+        for (let [className, {size, retainedSize, count, internalCount, deadCount}] of this.heapSnapshot.categories) {
             if (count === internalCount)
                 continue;
 
@@ -226,11 +225,7 @@ WebInspector.HeapSnapshotInstancesDataGridTree = class HeapSnapshotInstancesData
             if (!liveCount)
                 continue;
 
-            // If over half of the objects with this class name are Object sub-types, treat this as an Object category.
-            // This can happen if the page has a JavaScript Class with the same name as a native class.
-            let isObjectSubcategory = (objectCount / count) > 0.5;
-
-            this.appendChild(new WebInspector.HeapSnapshotClassDataGridNode({className, size, retainedSize, isObjectSubcategory, count: liveCount}, this));
+            this.appendChild(new WebInspector.HeapSnapshotClassDataGridNode({className, size, retainedSize, count: liveCount}, this));
         }
 
         this.didPopulate();

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
 #include "config.h"
@@ -37,7 +37,7 @@
 #include <wtf/text/StringBuilder.h>
 
 namespace JSC {
-
+    
 unsigned HeapSnapshotBuilder::nextAvailableObjectIdentifier = 1;
 unsigned HeapSnapshotBuilder::getNextObjectIdentifier() { return nextAvailableObjectIdentifier++; }
 void HeapSnapshotBuilder::resetNextAvailableObjectIdentifier() { HeapSnapshotBuilder::nextAvailableObjectIdentifier = 1; }
@@ -54,7 +54,7 @@ HeapSnapshotBuilder::~HeapSnapshotBuilder()
 void HeapSnapshotBuilder::buildSnapshot()
 {
     PreventCollectionScope preventCollectionScope(m_profiler.vm().heap);
-
+    
     m_snapshot = std::make_unique<HeapSnapshot>(m_profiler.mostRecentSnapshot());
     {
         m_profiler.setActiveSnapshotBuilder(this);
@@ -135,10 +135,10 @@ bool HeapSnapshotBuilder::hasExistingNodeForCell(JSCell* cell)
 // Heap Snapshot JSON Format:
 //
 //   {
-//      "version": 2,
+//      "version": 1.0,
 //      "nodes": [
-//          <nodeId>, <sizeInBytes>, <nodeClassNameIndex>, <flags>,
-//          <nodeId>, <sizeInBytes>, <nodeClassNameIndex>, <flags>,
+//          <nodeId>, <sizeInBytes>, <nodeClassNameIndex>, <internal>,
+//          <nodeId>, <sizeInBytes>, <nodeClassNameIndex>, <internal>,
 //          ...
 //      ],
 //      "nodeClassNames": [
@@ -162,10 +162,8 @@ bool HeapSnapshotBuilder::hasExistingNodeForCell(JSCell* cell)
 //     <nodeClassNameIndex>
 //       - index into the "nodeClassNames" list.
 //
-//     <flags>
-//       - 0b0000 - no flags
-//       - 0b0001 - internal instance
-//       - 0b0010 - Object subclassification
+//     <internal>
+//       - 0 = false, 1 = true.
 //
 //     <edgeTypeIndex>
 //       - index into the "edgeTypes" list.
@@ -174,11 +172,6 @@ bool HeapSnapshotBuilder::hasExistingNodeForCell(JSCell* cell)
 //       - for Internal edges this should be ignored (0).
 //       - for Index edges this is the index value.
 //       - for Property or Variable edges this is an index into the "edgeNames" list.
-
-typedef enum {
-    Internal      = 1 << 0,
-    ObjectSubtype = 1 << 1,
-} NodeFlags;
 
 static uint8_t edgeTypeToNumber(EdgeType type)
 {
@@ -230,38 +223,20 @@ String HeapSnapshotBuilder::json(std::function<bool (const HeapSnapshotNode&)> a
         if (!allowNodeCallback(node))
             return;
 
-        unsigned flags = 0;
-
         allowedNodeIdentifiers.set(node.cell, node.identifier);
 
-        const char* className = node.cell->classInfo(vm)->className;
-        if (node.cell->isObject() && !strcmp(className, JSObject::info()->className)) {
-            flags |= ObjectSubtype;
-
-            // Skip calculating a class name if this object has a `constructor` own property.
-            // These cases are typically F.prototype objects and we want to treat these as
-            // "Object" in snapshots and not get the name of what the prototype's parent.
-            JSObject* object = jsCast<JSObject*>(node.cell);
-            if (JSGlobalObject* globalObject = object->structure(vm)->globalObject()) {
-                ExecState* exec = globalObject->globalExec();
-                PropertySlot slot(object, PropertySlot::InternalMethodType::VMInquiry);
-                if (!object->getOwnPropertySlot(object, exec, vm.propertyNames->constructor, slot))
-                    className = JSObject::calculatedClassName(object).utf8().data();
-            }
-        }
-
-        auto result = classNameIndexes.add(className, nextClassNameIndex);
+        auto result = classNameIndexes.add(node.cell->classInfo(vm)->className, nextClassNameIndex);
         if (result.isNewEntry)
             nextClassNameIndex++;
         unsigned classNameIndex = result.iterator->value;
 
+        bool isInternal = false;
         if (!node.cell->isString()) {
             Structure* structure = node.cell->structure(vm);
-            if (!structure || !structure->globalObject())
-                flags |= Internal;
+            isInternal = !structure || !structure->globalObject();
         }
 
-        // <nodeId>, <sizeInBytes>, <className>, <flags>
+        // <nodeId>, <sizeInBytes>, <className>, <optionalInternalBoolean>
         json.append(',');
         json.appendNumber(node.identifier);
         json.append(',');
@@ -269,7 +244,7 @@ String HeapSnapshotBuilder::json(std::function<bool (const HeapSnapshotNode&)> a
         json.append(',');
         json.appendNumber(classNameIndex);
         json.append(',');
-        json.appendNumber(flags);
+        json.append(isInternal ? '1' : '0');
     };
 
     bool firstEdge = true;
@@ -308,7 +283,7 @@ String HeapSnapshotBuilder::json(std::function<bool (const HeapSnapshotNode&)> a
     json.append('{');
 
     // version
-    json.appendLiteral("\"version\":2");
+    json.appendLiteral("\"version\":1");
 
     // nodes
     json.append(',');

@@ -1,3 +1,15 @@
+2017-06-06  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed rollout r217807. Caused a test to crash.
+
+        * heap/HeapSnapshotBuilder.cpp:
+        (JSC::HeapSnapshotBuilder::buildSnapshot):
+        (JSC::HeapSnapshotBuilder::json):
+        (): Deleted.
+        * heap/HeapSnapshotBuilder.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::calculatedClassName):
+
 2017-06-06  Filip Pizlo  <fpizlo@apple.com>
 
         index out of bound in bytecodebasicblock

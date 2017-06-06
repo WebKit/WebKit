@@ -3,10 +3,6 @@ load("./driver/driver.js");
 function wrapper()
 {
 
-function A() { };
-function B() { };
-function C() { };
-
 var theA = new A;
 var theB = new B;
 var theC = new C;
@@ -18,8 +14,9 @@ secondHierarchyTest = Object.create(theC);
 
 var secondB = Object.create(theB);
 
-B.prototype.__proto__ = A.prototype;
-C.prototype.__proto__ = A.prototype;
+function A() { };
+function B() { }; B.prototype.__proto__ = A.prototype;
+function C() { }; C.prototype.__proto__ = A.prototype;
 
 }
 wrapper();

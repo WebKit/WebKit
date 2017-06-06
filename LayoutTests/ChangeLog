@@ -1,3 +1,10 @@
+2017-06-06  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed rollout r217807. Caused a test to crash.
+
+        * inspector/unit-tests/heap-snapshot-expected.txt:
+        * inspector/unit-tests/heap-snapshot.html:
+
 2017-06-06  Antoine Quint  <graouts@apple.com>
 
         Rebaseline and enable media/modern-media-controls/audio

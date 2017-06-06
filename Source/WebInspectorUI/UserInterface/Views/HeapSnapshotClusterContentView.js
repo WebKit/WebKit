@@ -58,12 +58,10 @@ WebInspector.HeapSnapshotClusterContentView = class HeapSnapshotClusterContentVi
 
     // Static
 
-    static iconStyleClassNameForClassName(className, internal, isObjectType)
+    static iconStyleClassNameForClassName(className, internal)
     {
         if (internal)
             return "native";
-        if (isObjectType)
-            return "object";
 
         switch (className) {
         case "Object":

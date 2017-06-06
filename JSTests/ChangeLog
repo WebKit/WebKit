@@ -1,3 +1,20 @@
+2017-06-06  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed rollout r217807. Caused a test to crash.
+
+        * heapProfiler/class-names.js: Removed.
+        * heapProfiler/driver/driver.js:
+        (CheapHeapSnapshotNode):
+        (CheapHeapSnapshot):
+        (createCheapHeapSnapshot):
+        (HeapSnapshot):
+        (createHeapSnapshot):
+        * typeProfiler/inheritance.js:
+        (wrapper.A):
+        (wrapper.B):
+        (wrapper.C):
+        (wrapper):
+
 2017-06-06  Filip Pizlo  <fpizlo@apple.com>
 
         index out of bound in bytecodebasicblock
