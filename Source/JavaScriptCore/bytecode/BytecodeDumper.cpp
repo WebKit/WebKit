@@ -1568,6 +1568,10 @@ void BytecodeDumper<Block>::dumpBytecode(PrintStream& out, const typename Block:
         out.printf("%s, %d", registerName(condition).data(), line);
         break;
     }
+    case op_unreachable: {
+        printLocationAndOp(out, location, it, "unreachable");
+        break;
+    }
     case op_end: {
         int r0 = (++it)->u.operand;
         printLocationOpAndRegisterOperand(out, location, it, "end", r0);

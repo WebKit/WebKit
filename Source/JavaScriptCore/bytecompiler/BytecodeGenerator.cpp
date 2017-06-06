@@ -144,6 +144,13 @@ ParserError BytecodeGenerator::generate()
     bool callingClassConstructor = constructorKind() != ConstructorKind::None && !isConstructor();
     if (!callingClassConstructor)
         m_scopeNode->emitBytecode(*this);
+    else {
+        // At this point we would have emitted an unconditional throw followed by some nonsense that's
+        // just an artifact of how this generator is structured. That code never runs, but it confuses
+        // bytecode analyses because it constitutes an unterminated basic block. So, we terminate the
+        // basic block the strongest way possible.
+        emitUnreachable();
+    }
 
     m_staticPropertyAnalyzer.kill();
 
@@ -2952,6 +2959,11 @@ RegisterID* BytecodeGenerator::emitAssert(RegisterID* condition, int line)
     instructions().append(condition->index());
     instructions().append(line);
     return condition;
+}
+
+void BytecodeGenerator::emitUnreachable()
+{
+    emitOpcode(op_unreachable);
 }
 
 RegisterID* BytecodeGenerator::emitGetArgument(RegisterID* dst, int32_t index)

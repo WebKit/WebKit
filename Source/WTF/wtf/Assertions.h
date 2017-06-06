@@ -456,6 +456,8 @@ WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH void WTFCrashWithSecurityImplication()
 #pragma clang diagnostic ignored "-Wmissing-noreturn"
 static inline void UNREACHABLE_FOR_PLATFORM()
 {
+    // This *MUST* be a release assert. We use it in places where it's better to crash than to keep
+    // going.
     RELEASE_ASSERT_NOT_REACHED();
 }
 #pragma clang diagnostic pop

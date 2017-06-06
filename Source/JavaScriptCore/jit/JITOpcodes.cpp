@@ -558,6 +558,12 @@ void JIT::emit_op_assert(Instruction* currentInstruction)
     slowPathCall.call();
 }
 
+void JIT::emit_op_unreachable(Instruction* currentInstruction)
+{
+    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_unreachable);
+    slowPathCall.call();
+}
+
 void JIT::emit_op_create_lexical_environment(Instruction* currentInstruction)
 {
     JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_create_lexical_environment);

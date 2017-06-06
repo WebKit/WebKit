@@ -175,6 +175,7 @@ inline bool isTerminal(OpcodeID opcodeID)
     switch (opcodeID) {
     case op_ret:
     case op_end:
+    case op_unreachable:
         return true;
     default:
         return false;

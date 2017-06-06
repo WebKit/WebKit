@@ -250,6 +250,7 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, Instruc
     case op_resolve_scope:
     case op_resolve_scope_for_hoisting_func_decl_in_eval:
     case op_new_regexp:
+    case op_unreachable:
         return CanCompileAndInline;
 
     case op_switch_string: // Don't inline because we don't want to copy string tables in the concurrent JIT.

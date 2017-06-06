@@ -685,6 +685,7 @@ namespace JSC {
         RegisterID* emitPutByIndex(RegisterID* base, unsigned index, RegisterID* value);
 
         RegisterID* emitAssert(RegisterID* condition, int line);
+        void emitUnreachable();
 
         void emitPutGetterById(RegisterID* base, const Identifier& property, unsigned propertyDescriptorOptions, RegisterID* getter);
         void emitPutSetterById(RegisterID* base, const Identifier& property, unsigned propertyDescriptorOptions, RegisterID* setter);

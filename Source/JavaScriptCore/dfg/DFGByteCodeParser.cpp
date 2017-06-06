@@ -5803,6 +5803,12 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             }
             NEXT_OPCODE(op_log_shadow_chicken_tail);
         }
+            
+        case op_unreachable: {
+            flushForTerminal();
+            addToGraph(Unreachable);
+            LAST_OPCODE(op_unreachable);
+        }
 
         default:
             // Parse failed! This should not happen because the capabilities checker

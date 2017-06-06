@@ -1,3 +1,13 @@
+2017-06-06  Filip Pizlo  <fpizlo@apple.com>
+
+        index out of bound in bytecodebasicblock
+        https://bugs.webkit.org/show_bug.cgi?id=172963
+
+        Reviewed by Saam Barati and Mark Lam.
+
+        * wtf/Assertions.h:
+        (UNREACHABLE_FOR_PLATFORM):
+
 2017-06-05  Jer Noble  <jer.noble@apple.com>
 
         Allow clients to specify a list of codecs which should require hardware decode support.

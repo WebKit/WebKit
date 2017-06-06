@@ -10197,6 +10197,10 @@ private:
         // after that opcode. You don't have to also prove to AI that your opcode does not return.
         // Hence, there is nothing to do here but emit code that will crash, so that we catch
         // cases where you said Unreachable but you lied.
+        //
+        // It's also also worth noting that some clients emit this opcode because they're not 100% sure
+        // if the code is unreachable, but they would really prefer if we crashed rather than kept going
+        // if it did turn out to be reachable. Hence, this needs to deterministically crash.
         
         crash();
     }

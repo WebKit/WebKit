@@ -1,3 +1,46 @@
+2017-06-06  Filip Pizlo  <fpizlo@apple.com>
+
+        index out of bound in bytecodebasicblock
+        https://bugs.webkit.org/show_bug.cgi?id=172963
+
+        Reviewed by Saam Barati and Mark Lam.
+        
+        We were leaving an unterminated basic block when generating CodeForCall for a class
+        constructor. This was mostly benign since that unterminated block was not reachable, but it
+        does cause an ASSERT.
+        
+        This fixes the issue by appending op_unreachable to that block. I added op_unreachable because
+        this really is the cleanest and most idiomatic way to solve this problem, so even though it
+        makes the change bigger it's probabably worth it.
+
+        * bytecode/BytecodeDumper.cpp:
+        (JSC::BytecodeDumper<Block>::dumpBytecode):
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/Opcode.h:
+        (JSC::isTerminal):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::generate):
+        (JSC::BytecodeGenerator::emitUnreachable):
+        * bytecompiler/BytecodeGenerator.h:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileUnreachable):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_unreachable):
+        * llint/LowLevelInterpreter.asm:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.h:
+
 2017-06-06  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r217812.

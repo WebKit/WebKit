@@ -789,6 +789,13 @@ SLOW_PATH_DECL(slow_path_assert)
     END();
 }
 
+SLOW_PATH_DECL(slow_path_unreachable)
+{
+    BEGIN();
+    UNREACHABLE_FOR_PLATFORM();
+    END();
+}
+
 SLOW_PATH_DECL(slow_path_create_lexical_environment)
 {
     BEGIN();

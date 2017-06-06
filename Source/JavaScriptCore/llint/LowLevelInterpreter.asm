@@ -1721,6 +1721,12 @@ _llint_op_assert:
     dispatch(3)
 
 
+_llint_op_unreachable:
+    traceExecution()
+    callOpcodeSlowPath(_slow_path_unreachable)
+    dispatch(1)
+
+
 _llint_op_yield:
     notSupported()
 
