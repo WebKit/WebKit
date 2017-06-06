@@ -7095,9 +7095,18 @@ void HTMLMediaElement::didReceiveRemoteControlCommand(PlatformMediaSession::Remo
     }
 }
 
+static bool needsSeekingSupportQuirk(Document& document)
+{
+    if (!document.settings().needsSiteSpecificQuirks())
+        return false;
+            
+    String host = document.topDocument().url().host();
+    return equalLettersIgnoringASCIICase(host, "netflix.com") || host.endsWithIgnoringASCIICase(".netflix.com");
+}
+
 bool HTMLMediaElement::supportsSeeking() const 
 {
-    return !isLiveStream();
+    return !needsSeekingSupportQuirk(document()) && !isLiveStream();
 }
 
 bool HTMLMediaElement::shouldOverrideBackgroundPlaybackRestriction(PlatformMediaSession::InterruptionType type) const

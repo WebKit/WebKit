@@ -78,7 +78,6 @@ public:
     virtual String externalPlaybackLocalizedDeviceName() const = 0;
     virtual bool wirelessVideoPlaybackDisabled() const = 0;
     virtual bool isMuted() const = 0;
-    virtual bool allowsTouchBarScrubbing() const = 0;
 };
 
 class WebPlaybackSessionModelClient {
@@ -98,7 +97,6 @@ public:
     virtual void externalPlaybackChanged(bool /* enabled */, WebPlaybackSessionModel::ExternalPlaybackTargetType, const String& /* localizedDeviceName */) { }
     virtual void wirelessVideoPlaybackDisabledChanged(bool) { }
     virtual void mutedChanged(bool) { }
-    virtual void allowsTouchBarScrubbingChanged(bool) { }
 };
 
 }

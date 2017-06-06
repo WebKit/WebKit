@@ -251,13 +251,6 @@ void WebPlaybackSessionModelContext::setMuted(bool muted)
         client->mutedChanged(muted);
 }
 
-void WebPlaybackSessionModelContext::setAllowsTouchBarScrubbing(bool allowsTouchBarScrubbing)
-{
-    m_allowsTouchBarScrubbing = allowsTouchBarScrubbing;
-    for (auto* client : m_clients)
-        client->allowsTouchBarScrubbingChanged(allowsTouchBarScrubbing);
-}
-
 #pragma mark - WebPlaybackSessionManagerProxy
 
 RefPtr<WebPlaybackSessionManagerProxy> WebPlaybackSessionManagerProxy::create(WebPageProxy& page)
@@ -437,11 +430,6 @@ void WebPlaybackSessionManagerProxy::setWirelessVideoPlaybackDisabled(uint64_t c
 void WebPlaybackSessionManagerProxy::setMuted(uint64_t contextId, bool muted)
 {
     ensureModel(contextId).setMuted(muted);
-}
-
-void WebPlaybackSessionManagerProxy::setAllowsTouchBarScrubbing(uint64_t contextId, bool allowsTouchBarScrubbing)
-{
-    ensureModel(contextId).setAllowsTouchBarScrubbing(allowsTouchBarScrubbing);
 }
 
 void WebPlaybackSessionManagerProxy::setDuration(uint64_t contextId, double duration)

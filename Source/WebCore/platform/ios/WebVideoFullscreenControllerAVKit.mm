@@ -166,7 +166,6 @@ private:
     bool wirelessVideoPlaybackDisabled() const override;
     void togglePictureInPicture() override { }
     void toggleMuted() override;
-    bool allowsTouchBarScrubbing() const override { return false; }
 
     // WebPlaybackSessionModelClient
     void durationChanged(double) override;

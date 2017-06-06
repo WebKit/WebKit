@@ -56,7 +56,6 @@ SOFT_LINK_CLASS_OPTIONAL(AVKit, AVFunctionBarMediaSelectionOption)
 @synthesize allowsPictureInPicturePlayback;
 @synthesize pictureInPictureActive;
 @synthesize canTogglePictureInPicture;
-@synthesize allowsTouchBarScrubbing=_allowsTouchBarScrubbing;
 
 - (void)dealloc
 {
@@ -117,11 +116,11 @@ SOFT_LINK_CLASS_OPTIONAL(AVKit, AVFunctionBarMediaSelectionOption)
 
 - (BOOL)canBeginTouchBarScrubbing
 {
-    // At this time, _allowsTouchBarScrubbing is always YES except for Netflix, which requires a quirk to
-    // disable scrubbing. It's not ideal to return YES for all other media. The intent of the API is that
-    // we return NO when the media is being scrubbed via the on-screen scrubber. But we can only possibly
-    // get the right answer for media that uses the default controls.
-    return _allowsTouchBarScrubbing;
+    // At this time, we return YES for all media that is not a live stream and media that is not Netflix. (A Netflix
+    // quirk means we pretend Netflix is a live stream for Touch Bar.) It's not ideal to return YES all the time for
+    // other media. The intent of the API is that we return NO when the media is being scrubbed via the on-screen scrubber.
+    // But we can only possibly get the right answer for media that uses the default controls.
+    return std::isfinite(_contentDuration);;
 }
 
 - (void)beginTouchBarScrubbing

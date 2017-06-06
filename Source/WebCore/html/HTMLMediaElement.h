@@ -518,6 +518,8 @@ public:
     bool hasMediaStreamSrcObject() const { return !!m_mediaStreamSrcObject; }
 #endif
 
+    bool supportsSeeking() const override;
+
 protected:
     HTMLMediaElement(const QualifiedName&, Document&, bool createdByParser);
     virtual ~HTMLMediaElement();
@@ -817,7 +819,6 @@ private:
     double mediaSessionCurrentTime() const override { return currentTime(); }
     bool canReceiveRemoteControlCommands() const override { return true; }
     void didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType, const PlatformMediaSession::RemoteCommandArgument*) override;
-    bool supportsSeeking() const override;
     bool shouldOverrideBackgroundPlaybackRestriction(PlatformMediaSession::InterruptionType) const override;
     bool shouldOverrideBackgroundLoadingRestriction() const override;
     bool canProduceAudio() const final;

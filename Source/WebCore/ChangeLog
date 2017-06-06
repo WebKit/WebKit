@@ -1,3 +1,61 @@
+2017-06-06  Beth Dakin  <bdakin@apple.com>
+
+        Netflix seeking quirk should also apply to Now Playing, and should always use the 
+        livestream UI
+        https://bugs.webkit.org/show_bug.cgi?id=173030
+        -and corresponding-
+        rdar://problem/32228660
+
+        Reviewed by Darin Adler.
+
+        This patch rolls out much of https://trac.webkit.org/changeset/217791/webkit in 
+        favor of an approach that can be used to apply the quirk to Now Playing in 
+        addition to Touch Bar. This patch also changes the UI in both Touch Bar and Now 
+        Playing to match live stream UI, which means there is no playhead. This hopefully 
+        makes it less confusing that taps on the timeline will have no effect. 
+
+        supportsSeeking() should return false for Netflix. That function needs to be 
+        public now.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::needsSeekingSupportQuirk):
+        (WebCore::HTMLMediaElement::supportsSeeking):
+        * html/HTMLMediaElement.h:
+
+        Here is where we get the desired result in Now Playing. Make sure the 
+        currentSession supportsSeeking() before relying on the time and duration info for 
+        the sake of Now Playing. 
+        * platform/audio/mac/MediaSessionManagerMac.mm:
+        (WebCore::MediaSessionManagerMac::updateNowPlayingInfo):
+
+        We can roll out allowsTouchBarScrubbing() and rely on supportsSeeking().
+        * platform/cocoa/WebPlaybackSessionModel.h:
+        (WebCore::WebPlaybackSessionModelClient::mutedChanged):
+        (WebCore::WebPlaybackSessionModelClient::allowsTouchBarScrubbingChanged): Deleted.
+        * platform/cocoa/WebPlaybackSessionModelMediaElement.h:
+        * platform/cocoa/WebPlaybackSessionModelMediaElement.mm:
+        (WebCore::WebPlaybackSessionModelMediaElement::updateForEventName):
+
+        And here is where we get the desired result for Touch Bar. Make sure the the media 
+        element supportsSeeking() before relying on the duration. 
+        (WebCore::WebPlaybackSessionModelMediaElement::duration):
+
+        We can roll out allowsTouchBarScrubbing() and rely on supportsSeeking().
+        (WebCore::WebPlaybackSessionModelMediaElement::allowsTouchBarScrubbing): Deleted.
+        * platform/ios/WebVideoFullscreenControllerAVKit.mm:
+        * platform/mac/WebPlaybackControlsManager.h:
+
+        Currently the Touch Bar live stream UI lets you seek, which results in broken 
+        behavior on real live streams and on Netflix. Prevent that by preventing scrubbing 
+        for NaN and infinite durations.
+        * platform/mac/WebPlaybackControlsManager.mm:
+        (-[WebPlaybackControlsManager canBeginTouchBarScrubbing]):
+
+        We can roll out allowsTouchBarScrubbing() and rely on supportsSeeking().
+        * platform/mac/WebPlaybackSessionInterfaceMac.h:
+        * platform/mac/WebPlaybackSessionInterfaceMac.mm:
+        (WebCore::WebPlaybackSessionInterfaceMac::setPlayBackControlsManager):
+        (WebCore::WebPlaybackSessionInterfaceMac::allowsTouchBarScrubbingChanged): Deleted.
+
 2017-06-06  Konstantin Tokarev  <annulen@yandex.ru>
 
         Add missing <functional> includes

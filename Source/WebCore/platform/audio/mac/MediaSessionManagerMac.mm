@@ -155,7 +155,7 @@ void MediaSessionManagerMac::updateNowPlayingInfo()
     });
 
     String title = currentSession->title();
-    double duration = currentSession->duration();
+    double duration = currentSession->supportsSeeking() ? currentSession->duration() : MediaPlayer::invalidTime();
     double rate = currentSession->state() == PlatformMediaSession::Playing ? 1 : 0;
     auto info = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 4, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
@@ -174,7 +174,7 @@ void MediaSessionManagerMac::updateNowPlayingInfo()
     CFDictionarySetValue(info.get(), kMRMediaRemoteNowPlayingInfoPlaybackRate, cfRate);
 
     double currentTime = currentSession->currentTime();
-    if (std::isfinite(currentTime) && currentTime != MediaPlayer::invalidTime()) {
+    if (std::isfinite(currentTime) && currentTime != MediaPlayer::invalidTime() && currentSession->supportsSeeking()) {
         auto cfCurrentTime = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberDoubleType, &currentTime));
         CFDictionarySetValue(info.get(), kMRMediaRemoteNowPlayingInfoElapsedTime, cfCurrentTime.get());
         m_lastUpdatedNowPlayingElapsedTime = currentTime;
