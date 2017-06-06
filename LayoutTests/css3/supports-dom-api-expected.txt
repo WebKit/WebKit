@@ -3,8 +3,20 @@ Test window.CSS.supports()
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+PASS CSS.supports("display: none") is true
 PASS CSS.supports("(display: none)") is true
+PASS CSS.supports("  display: none ") is true
 PASS CSS.supports("(display: deadbeef)") is false
+PASS CSS.supports("display: deadbeef") is false
+PASS CSS.supports("(display: none) and ((display: block) or (display: inline))") is true
+PASS CSS.supports("(not (display: deadbeef)) and (display: block)") is true
+PASS CSS.supports("top: -webkit-calc(80% - 20px)") is true
+PASS CSS.supports("background-color: rgb(0, 128, 0)") is true
+PASS CSS.supports("background: url('/blah')") is true
+PASS CSS.supports("background: invalid('/blah')") is false
+PASS CSS.supports("display: none;") is false
+PASS CSS.supports("display: none; garbage") is false
+PASS CSS.supports("  display: none ; garbage ") is false
 PASS CSS.supports("not (display: deadbeef)") is true
 PASS CSS.supports("not (display: none)") is false
 PASS CSS.supports("not (not (display: none))") is true
@@ -27,6 +39,7 @@ PASS CSS.supports("(display: none)or(-webkit-transition: all 1s)") is true
 PASS CSS.supports("(display: none) or(-webkit-transition: all 1s    )") is true
 PASS CSS.supports("(((((((display: none)))))))") is true
 PASS CSS.supports("(!important)") is false
+PASS CSS.supports("!important") is false
 PASS CSS.supports("not not not not (display: none)") is false
 PASS CSS.supports("(top: -webkit-calc(80% - 20px))") is true
 PASS CSS.supports("(background-color: rgb(0, 128, 0))") is true

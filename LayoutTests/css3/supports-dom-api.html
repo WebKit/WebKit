@@ -7,8 +7,21 @@
 <script>
     description("Test window.CSS.supports()");
 
+    shouldBeTrue('CSS.supports("display: none")');
     shouldBeTrue('CSS.supports("(display: none)")');
+    shouldBeTrue('CSS.supports("  display: none ")');
     shouldBeFalse('CSS.supports("(display: deadbeef)")');
+
+    shouldBeFalse('CSS.supports("display: deadbeef")');
+    shouldBeTrue('CSS.supports("(display: none) and ((display: block) or (display: inline))")');
+    shouldBeTrue('CSS.supports("(not (display: deadbeef)) and (display: block)")');
+    shouldBeTrue('CSS.supports("top: -webkit-calc(80% - 20px)")');
+    shouldBeTrue('CSS.supports("background-color: rgb(0, 128, 0)")');
+    shouldBeTrue('CSS.supports("background: url(\'/blah\')")');
+    shouldBeFalse('CSS.supports("background: invalid(\'/blah\')")');
+    shouldBeFalse('CSS.supports("display: none;")');
+    shouldBeFalse('CSS.supports("display: none; garbage")');
+    shouldBeFalse('CSS.supports("  display: none ; garbage ")');
 
     // Negation
     shouldBeTrue('CSS.supports("not (display: deadbeef)")');
@@ -43,6 +56,7 @@
     shouldBeTrue('CSS.supports("(display: none) or(-webkit-transition: all 1s    )")');
     shouldBeTrue('CSS.supports("(((((((display: none)))))))")');
     shouldBeFalse('CSS.supports("(!important)")');
+    shouldBeFalse('CSS.supports("!important")');
     shouldBeFalse('CSS.supports("not not not not (display: none)")');
 
     // Functions.

@@ -146,7 +146,7 @@ RefPtr<StyleRuleKeyframe> CSSParser::parseKeyframeRule(const String& string)
 bool CSSParser::parseSupportsCondition(const String& condition)
 {
     CSSParserImpl parser(m_context, condition);
-    return CSSSupportsParser::supportsCondition(parser.tokenizer()->tokenRange(), parser) == CSSSupportsParser::Supported;
+    return CSSSupportsParser::supportsCondition(parser.tokenizer()->tokenRange(), parser, CSSSupportsParser::ForWindowCSS) == CSSSupportsParser::Supported;
 }
 
 Color CSSParser::parseColor(const String& string, bool strict)

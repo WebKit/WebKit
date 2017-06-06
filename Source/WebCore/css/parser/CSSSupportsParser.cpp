@@ -34,12 +34,19 @@
 
 namespace WebCore {
 
-CSSSupportsParser::SupportsResult CSSSupportsParser::supportsCondition(CSSParserTokenRange range, CSSParserImpl& parser)
+CSSSupportsParser::SupportsResult CSSSupportsParser::supportsCondition(CSSParserTokenRange range, CSSParserImpl& parser, SupportsParsingMode mode)
 {
     // FIXME: The spec allows leading whitespace in @supports but not CSS.supports,
     // but major browser vendors allow it in CSS.supports also.
     range.consumeWhitespace();
-    return CSSSupportsParser(parser).consumeCondition(range);
+    CSSSupportsParser supportsParser(parser);
+    auto result = supportsParser.consumeCondition(range);
+    if (mode != ForWindowCSS || result != Invalid)
+        return result;
+    // window.CSS.supports requires parsing as-if the condition was wrapped in
+    // parenthesis. The only productions that wouldn't have parsed above are the
+    // declaration condition or the general enclosed productions.
+    return supportsParser.consumeDeclarationConditionOrGeneralEnclosed(range);
 }
 
 enum ClauseType { Unresolved, Conjunction, Disjunction };
@@ -105,6 +112,16 @@ CSSSupportsParser::SupportsResult CSSSupportsParser::consumeNegation(CSSParserTo
     return result ? Unsupported : Supported;
 }
 
+CSSSupportsParser::SupportsResult CSSSupportsParser::consumeDeclarationConditionOrGeneralEnclosed(CSSParserTokenRange& range)
+{
+    if (range.peek().type() == FunctionToken) {
+        range.consumeComponentValue();
+        return Unsupported;
+    }
+
+    return range.peek().type() == IdentToken && m_parser.supportsDeclaration(range) ? Supported : Unsupported;
+}
+
 CSSSupportsParser::SupportsResult CSSSupportsParser::consumeConditionInParenthesis(CSSParserTokenRange& range, CSSParserTokenType startTokenType)
 {
     if (startTokenType == IdentToken && range.peek().type() != LeftParenthesisToken)
@@ -115,13 +132,7 @@ CSSSupportsParser::SupportsResult CSSSupportsParser::consumeConditionInParenthes
     SupportsResult result = consumeCondition(innerRange);
     if (result != Invalid)
         return result;
-    
-    if (innerRange.peek().type() == FunctionToken) {
-        innerRange.consumeComponentValue();
-        return Unsupported;
-    }
-
-    return innerRange.peek().type() == IdentToken && m_parser.supportsDeclaration(innerRange) ? Supported : Unsupported;
+    return consumeDeclarationConditionOrGeneralEnclosed(innerRange);
 }
 
 } // namespace WebCore

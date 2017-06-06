@@ -1,3 +1,13 @@
+2017-06-06  Emilio Cobos Álvarez  <ecobos@igalia.com>
+
+        [css-conditional] The one-string version of CSS.supports should be wrapped in implied parentheses.
+        https://bugs.webkit.org/show_bug.cgi?id=172906
+
+        Reviewed by Darin Adler.
+
+        * css3/supports-dom-api-expected.txt:
+        * css3/supports-dom-api.html: Added test
+
 2017-06-06  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed rollout r217807. Caused a test to crash.

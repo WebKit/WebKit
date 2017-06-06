@@ -44,7 +44,12 @@ public:
         Invalid
     };
 
-    static SupportsResult supportsCondition(CSSParserTokenRange, CSSParserImpl&);
+    enum SupportsParsingMode {
+        ForAtRule,
+        ForWindowCSS,
+    };
+
+    static SupportsResult supportsCondition(CSSParserTokenRange, CSSParserImpl&, SupportsParsingMode);
 
 private:
     CSSSupportsParser(CSSParserImpl& parser)
@@ -52,6 +57,7 @@ private:
 
     SupportsResult consumeCondition(CSSParserTokenRange);
     SupportsResult consumeNegation(CSSParserTokenRange);
+    SupportsResult consumeDeclarationConditionOrGeneralEnclosed(CSSParserTokenRange&);
 
     SupportsResult consumeConditionInParenthesis(CSSParserTokenRange&, CSSParserTokenType);
 
