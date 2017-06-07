@@ -1812,11 +1812,6 @@ inline AXObjectCache* Document::existingAXObjectCache() const
 
 // These functions are here because they require the Document class definition and we want to inline them.
 
-inline bool Node::isDocumentNode() const
-{
-    return this == &document();
-}
-
 inline ScriptExecutionContext* Node::scriptExecutionContext() const
 {
     return &document().contextDocument();

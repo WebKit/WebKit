@@ -1,3 +1,17 @@
+2017-06-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Use a dedicated node flag to identify a Document node
+        https://bugs.webkit.org/show_bug.cgi?id=173037
+
+        Reviewed by Chris Dumez.
+
+        Use a Node flag to identify a Document node instead of checking this == document() which loads TreeScope.
+
+        * dom/Document.h:
+        (WebCore::Node::isDocumentNode): Deleted.
+        * dom/Node.h:
+        (WebCore::Node::isDocumentNode):
+
 2017-06-06  Dan Bernstein  <mitz@apple.com>
 
         Fixed building with the macOS 10.13 Apple Internal SDK when targeting macOS 10.12.
