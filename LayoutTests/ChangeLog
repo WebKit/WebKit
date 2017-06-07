@@ -1,5 +1,33 @@
 2017-06-07  Antoine Quint  <graouts@apple.com>
 
+        Rebaseline and enable media/modern-media-controls/controls-visibility-support
+        https://bugs.webkit.org/show_bug.cgi?id=173060
+        <rdar://problem/32616840>
+
+        Reviewed by Eric Carlson.
+
+        We only check the "visible" property on the MediaControls instance which is the only thing being
+        set by this class now. We also fix entering fullscreen by not using a <button> element which has
+        some default styles set by the Button class. Finally, we make some videoTracks.length assertions
+        asynchronous to avoid timing issues.
+
+        * media/modern-media-controls/controls-visibility-support/controls-visibility-support-controls-off-audio-expected.txt:
+        * media/modern-media-controls/controls-visibility-support/controls-visibility-support-controls-off-audio.html:
+        * media/modern-media-controls/controls-visibility-support/controls-visibility-support-controls-off-expected.txt:
+        * media/modern-media-controls/controls-visibility-support/controls-visibility-support-controls-off.html:
+        * media/modern-media-controls/controls-visibility-support/controls-visibility-support-controls-on-audio-expected.txt:
+        * media/modern-media-controls/controls-visibility-support/controls-visibility-support-controls-on-audio.html:
+        * media/modern-media-controls/controls-visibility-support/controls-visibility-support-controls-on-expected.txt:
+        * media/modern-media-controls/controls-visibility-support/controls-visibility-support-controls-on.html:
+        * media/modern-media-controls/controls-visibility-support/controls-visibility-support-controls-toggle-expected.txt:
+        * media/modern-media-controls/controls-visibility-support/controls-visibility-support-controls-toggle.html:
+        * media/modern-media-controls/controls-visibility-support/controls-visibility-support-fullscreen-on-parent-element-expected.txt:
+        * media/modern-media-controls/controls-visibility-support/controls-visibility-support-fullscreen-on-parent-element.html:
+        * media/modern-media-controls/controls-visibility-support/controls-visibility-support-fullscreen-on-video-expected.txt:
+        * media/modern-media-controls/controls-visibility-support/controls-visibility-support-fullscreen-on-video.html:
+
+2017-06-07  Antoine Quint  <graouts@apple.com>
+
         Rebaseline and enable media/modern-media-controls/buttons-container
         https://bugs.webkit.org/show_bug.cgi?id=173059
         <rdar://problem/32616156>

@@ -16,13 +16,13 @@ const mediaController = createControls(shadowRoot, media, null);
 media.addEventListener("loadedmetadata", function() {
     debug("");
     debug("Media has loaded metadata");
-    shouldBe("media.videoTracks.length", "1");
-    shouldBeTrue("mediaController.controls.controlsBar.visible");
-    shouldBeTrue("mediaController.controls.startButton.visible");
-    debug("");
-    shadowRoot.host.remove();
-    media.remove();
-    finishJSTest();
+    shouldBecomeEqual("media.videoTracks.length", "1", () => {
+        shouldBeTrue("mediaController.controls.visible");
+        debug("");
+        shadowRoot.host.remove();
+        media.remove();
+        finishJSTest();
+    });
 });
 
 </script>

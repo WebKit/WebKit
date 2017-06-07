@@ -18,15 +18,13 @@ new MutationObserver(() => {
     numberOfMutations++;
 
     if (numberOfMutations === 1) {
-        shouldBeFalse("mediaController.controls.controlsBar.visible");
-        shouldBeFalse("mediaController.controls.startButton.visible");
+        shouldBeFalse("mediaController.controls.visible");
 
         debug("");
         debug("Turning controls back on");
         media.controls = true;
     } else {
-        shouldBeTrue("mediaController.controls.controlsBar.visible");
-        shouldBeTrue("mediaController.controls.startButton.visible");
+        shouldBeTrue("mediaController.controls.visible");
 
         debug("");
         shadowRoot.host.remove();
@@ -38,13 +36,13 @@ new MutationObserver(() => {
 media.addEventListener("loadedmetadata", function() {
     debug("");
     debug("Media has loaded metadata");
-    shouldBe("media.videoTracks.length", "1");
-    shouldBeTrue("mediaController.controls.controlsBar.visible");
-    shouldBeTrue("mediaController.controls.startButton.visible");
+    shouldBecomeEqual("media.videoTracks.length", "1", () => {
+        shouldBeTrue("mediaController.controls.visible");
 
-    debug("");
-    debug("Turning controls off");
-    media.controls = false;
+        debug("");
+        debug("Turning controls off");
+        media.controls = false;
+    });
 });
 
 </script>

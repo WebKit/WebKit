@@ -14,14 +14,12 @@ const media = document.querySelector("audio");
 const mediaController = createControls(shadowRoot, media, null);
 
 debug("Media has not begun loading yet");
-shouldBeTrue("mediaController.controls.controlsBar.visible");
-shouldBeTrue("mediaController.controls.startButton.visible");
+shouldBeTrue("mediaController.controls.visible");
 
 media.addEventListener("loadedmetadata", function() {
     debug("");
     debug("Media has loaded metadata");
-    shouldBeTrue("mediaController.controls.controlsBar.visible");
-    shouldBeTrue("mediaController.controls.startButton.visible");
+    shouldBeTrue("mediaController.controls.visible");
     debug("");
     shadowRoot.host.remove();
     media.remove();

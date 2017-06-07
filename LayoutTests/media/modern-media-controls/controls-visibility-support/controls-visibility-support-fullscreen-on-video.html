@@ -17,14 +17,16 @@ const mediaController = createControls(container, media, null);
 media.addEventListener("play", () => {
     media.addEventListener("webkitfullscreenchange", () => {
         shouldBeTrue("media.webkitDisplayingFullscreen");
-        shouldBeTrue("mediaController.controls.controlsBar.visible");
+        shouldBeTrue("mediaController.controls.visible");
         button.remove();
         container.remove();
         media.remove();
         finishJSTest();
     });
 
-    const button = document.body.appendChild(document.createElement("button"));
+    const button = document.body.appendChild(document.createElement("div"));
+    button.setAttribute("style", "position: absolute; left: 0; top: 0;");
+    button.innerText = "Enter fullscreen";
     button.addEventListener("click", () => media.webkitEnterFullscreen());
     pressOnElement(button);
 });
