@@ -1,3 +1,34 @@
+2017-06-07  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK+ and WPE gardening.
+
+        Add platform-specific test baselines for layout tests where the
+        libgcrypt-based implementation passes more tests than the generic
+        baselines expect. The WPE test expectations for these tests are
+        also cleaned up a bit, and the tests are marked as slow to give
+        them more time to properly execute.
+
+        * platform/gtk/TestExpectations: Skip two imported W3C Web Crypto API tests that rely in SPKI and PKCS#8 imports.
+        * platform/wpe/TestExpectations: Ditto.
+        * platform/wpe/crypto: Added.
+        * platform/wpe/crypto/subtle: Added.
+        * platform/wpe/crypto/subtle/rsa-generate-key-malformed-parameters-expected.txt: Added.
+        * platform/wpe/crypto/subtle/rsa-import-key-malformed-parameters-expected.txt: Added.
+        * platform/wpe/imported: Added.
+        * platform/wpe/imported/w3c: Added.
+        * platform/wpe/imported/w3c/web-platform-tests: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf.worker-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/test_hkdf.https-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures.worker-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_RSA-PSS.worker-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-PSS.worker-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_failures.https-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_failures_RSA-PSS.https-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_successes_RSA-PSS.https-expected.txt: Added.
+
 2017-06-07  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] PutForwards is not implemented to spec as illustrated by the WPT WebIDL/ecmascript-binding/put-forwards.html
