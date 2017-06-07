@@ -113,6 +113,10 @@ RegisterSet RegisterSet::calleeSaveRegisters()
 #elif CPU(X86_64)
     result.set(X86Registers::ebx);
     result.set(X86Registers::ebp);
+#if OS(WINDOWS)
+    result.set(X86Registers::edi);
+    result.set(X86Registers::esi);
+#endif
     result.set(X86Registers::r12);
     result.set(X86Registers::r13);
     result.set(X86Registers::r14);
