@@ -171,7 +171,6 @@ input[type=submit] {
     border: 0;
 }
 
-
 .admin-bar a[name] {
     top: calc(-32px - 3rem);
 }
@@ -1406,14 +1405,6 @@ article,
     content: "";
     background: url('images/menu-down.svg') no-repeat 50%;
     background-size: 2rem;
-    width: 2rem;
-    height: 2rem;
-    position: absolute;
-    right: 0;
-    top: 0.5rem;
-    -webkit-transition: transform 0.3s ease-out;
-    -moz-transition: transform 0.3s ease-out;
-    transition: transform 0.3s ease-out;
 }
 
 .feature.opened .feature-header:after {
@@ -1937,6 +1928,7 @@ header .menu-item { /* add bottom dimension to main menu items */
     footer nav li {
         padding: 0 3rem 3rem 0;
     }
+    
 }
 
 @media only screen and (max-width: 690px) {
@@ -2043,37 +2035,6 @@ header .menu-item { /* add bottom dimension to main menu items */
     header nav .main-menu.label-toggle {
         margin-top: 2rem;
         margin-bottom: 2rem;
-    }
-
-    .feature-filters {
-        height: 6rem;
-        overflow: hidden;
-    }
-
-    .feature-filters.opened {
-        height: auto;
-    }
-
-    .feature-filters:after {
-        display: inline-block;
-        content: "";
-        background: url('images/menu-down.svg') no-repeat 50%;
-        background-size: 2rem;
-        width: 2rem;
-        height: 2rem;
-        position: absolute;
-        right: 1rem;
-        top: 2rem;
-        -webkit-transition: transform 0.3s ease-out;
-        -moz-transition: transform 0.3s ease-out;
-        transition: transform 0.3s ease-out;
-        perspective: 600;
-    }
-
-    .feature-filters.opened:after {
-        -webkit-transform: rotateX(-180deg);
-        -moz-transform: rotateX(-180deg);
-        transform: rotateX(-180deg);
     }
 
     #wpadminbar {

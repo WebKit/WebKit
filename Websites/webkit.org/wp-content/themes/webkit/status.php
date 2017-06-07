@@ -34,114 +34,293 @@ var loadWebCoreFeatures = xhrPromise(new URL("/repository/webkit/trunk/Source/We
 </script>
 
 <style>
-.page {
-    display: -webkit-flex;
-    display: flex;
-    -webkit-flex-wrap: wrap;
-    flex-wrap: wrap;
-    -webkit-justify-content: space-between;
-    justify-content: space-between;
-    box-sizing: border-box;
-    width: 100%;
-}
 
 .page h1 {
     font-size: 4.2rem;
     font-weight: 200;
     line-height: 6rem;
     color: black;
-    text-align: left;
     margin: 3rem auto;
     width: 100%;
+    text-align: center;
 }
 
 .page h1 a {
     color: #444444;
-}
+}    
 
-.page h2 {
-    font-weight: 200;
-    font-size: 3rem;
-}
-
-.page h3 {
-    font-weight: 400;
-    font-size: 2.5rem;
-}
-
-.page p {
+.feature-filters {
+    background-color: #ffffff;
+    width: 100vw;
+    left: 50%;
+    position: relative;
+    transform: translate(-50vw, 0);
+    box-sizing: border-box;
     margin-bottom: 3rem;
+    border: 1px solid #DDDDDD;
+    border-left: none;
+    border-right: none;
 }
 
-#feature-list {
+.feature-filters form {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+input[type=text].search-input {
+    margin-bottom: 1rem;
+    width: 100%;
+    flex: 1;
+}
+
+.feature-filters li {
     display: inline-block;
-    width: 66%;
-    word-wrap: break-word;
 }
 
-/* Hide the internal links on search since they are unlikely to work. */
-#search:required:valid + *  .internal-reference {
+.feature-status label,
+.feature-filters label {
+    display: table-cell;
+    padding: 0.5rem 1rem;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 3px;
+    cursor: pointer;
+    float: right;
+    line-height: 1;
+    font-size: 1.6rem;
+}
+
+.status-filters label {
+    margin-left: 1rem;
+}
+
+.status-filters {
+    list-style: none;
+    display: inline-block;
+    text-align: right;
+    flex: 2;
+    flex-grow: 1;
+}
+
+.filter-toggle:checked + .filter-status {
+    color: #ffffff;
+}
+
+.filter-status,
+.feature-status {
+    color: #999999;
+    border-color: #999999;
+}
+
+.feature-status a {
+    color: inherit;
+}
+
+.filter-status,
+.status-marker {
+    border-color: #999999;
+}
+.filter-toggle:checked + .filter-status {
+    background-color: #999999;
+}
+
+.supported {
+    color: #339900;
+    border-color: #339900;
+}
+
+.filter-toggle:checked + .supported {
+    background-color: #339900;
+}
+
+.supported-in-preview {
+    color: #66149f;
+    border-color: #66149f;
+}
+
+.filter-toggle:checked + .supported-in-preview {
+    background-color: #66149f;
+}
+
+.in-development {
+    color: #f46c0e;
+    border-color: #f46c0e;
+}
+.filter-toggle:checked + .in-development {
+    background-color: #f46c0e;
+}
+
+.no-active-development {
+    color: #5858D6;
+    border-color: #5858D6;
+}
+
+.filter-toggle:checked + .no-active-development {
+    background-color: #5858D6;
+}
+
+.partially-supported  {
+    color: #548c8c;
+    border-color: #548c8c;
+}
+
+.filter-toggle:checked + .partially-supported {
+    background-color: #548c8c;
+}
+
+.prototyping {
+    color: #007AFF;
+    border-color: #007AFF;
+}
+
+.filter-toggle:checked + .prototyping {
+    background-color: #007AFF;
+}
+
+.under-consideration {
+    color: #c27870;
+    border-color: #c27870;
+}
+
+.filter-toggle:checked + .under-consideration {
+    background-color: #c27870;
+}
+
+.feature.is-hidden {
     display: none;
+}
+
+.features {
+    max-width: 920px;
+    margin: 0 auto 3rem;
+    border-bottom: 1px solid #e4e4e4;
+    
+} 
+
+.feature-count {
+    max-width: 920px;
+    margin: 0 auto 3rem;
+    
+    text-align: right;
+    color: #999;
+}
+
+.feature-count p {
+    margin: 0;
+}
+
+.feature {
+    border-color: transparent;
+    border-width: 1px;
+    border-style: solid;
+    border-top-color: #e4e4e4;
+    padding: 0.5rem;
+    line-height: 1.618;
+    -webkit-transition: background-color 0.3s ease-out;
+    transition: background-color 0.3s ease-out;
 }
 
 .feature-header {
-    display: -webkit-flex;
+    font-weight: 400;
+    font-size: 2.5rem;
     display: flex;
-    -webkit-flex-direction: row;
-    flex-direction: row;
-}
-.feature-header > h3:first-of-type {
-    -webkit-flex-grow: 1;
-    flex-grow: 1;
-    margin: 0;
 }
 
-ul.features {
-    padding: 0;
+.feature-header h3 {
+    flex: 1;
+    flex-grow: 2;
+    padding-right: 1rem;
+    box-sizing: border-box;
 }
 
-.features .feature {
+.feature-header h3 a { 
+    padding-right: 1rem;
+}
+
+.feature-header .feature-status {
+    flex: 2;
+    text-align: right;
+    font-size: 2rem;
+}
+
+.feature-container.status-marker {
+    border-left-width: 3px;
+    border-left-style: solid;
+    padding: 0.5rem 0 0.5rem 1rem;
+}
+
+.feature-header a[name] {
+    color: #444444;
+}
+
+.feature-header .internal-reference {
+    display: inline-block;
+    font-size: 1.6rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.feature-header .internal-reference a {
+    color: #999999;
+}
+
+.feature-header:after {
     position: relative;
-    display: block;
-    background-color: #f9f9f9;
-    border: 1px solid #dddddd;
-    border-radius: 3px;
-    padding: 1em;
-    margin: 1em 0 !important;
-    max-height: intrinsic;
-    min-height: 3rem;
-    overflow-y: hidden;
-    cursor: pointer;
-    -webkit-transition: background-color 0.3s ease-in;
-    -moz-transition: background-color 0.3s ease-in;
-    transition: background-color 0.3s ease-in;
+    width: 2rem;
+    height: 2rem;
+    right: 0;
+    top: 0.5rem;
+    margin-left: 1rem;
+    -webkit-transition: transform 0.3s ease-out;
+    -moz-transition: transform 0.3s ease-out;
+    transition: transform 0.3s ease-out;
 }
 
-.features .feature:hover {
-    background-color: white;
+.feature-details {
+    display: none;
+    width: 50%;
 }
 
 .feature.opened {
-    background-color: white;
-    max-height: 120rem;
+    background: #ffffff;
+    border-left-color: #e4e4e4;
+    border-right-color: #e4e4e4;
 }
 
-.feature-description + *,
-.feature-description .feature-desc,
-.feature-description .comment {
-    display: none;
-    margin: 0;
-}
-
-.feature.opened .feature-description + *,
-.feature.opened .feature-desc,
-.feature.opened .feature-description .comment {
+.feature.opened .feature-details {
     display: block;
-    margin-bottom: 3rem;
 }
 
-.feature.opened .feature-description + *:last-child {
+.feature h4 {
+    color: #999999;
+    font-weight: 600;
+    margin-top: 1rem;
     margin-bottom: 0;
+}
+
+.feature .moreinfo {
+    list-style: none;
+    display: flex;
+    width: 100%;
+}
+
+.feature .moreinfo li {
+    flex-grow: 1;
+}
+
+.feature .moreinfo .contact {
+    text-align: right;
+}
+
+.feature .feature-desc {
+    color: #444444;
+}
+
+.feature .comment {
+    color: #666666;
+    font-style: italic;
 }
 
 .sub-features {
@@ -151,181 +330,87 @@ ul.features {
 
 .sub-features ul {
     list-style: none;
-    display: inline-block;
     padding: 0;
     margin: 0;
 }
 
 .sub-features li {
-    display: inline;
+    display: inline-block;
+    white-space: nowrap;
 }
 
 .sub-features li:after {
     content: ", ";
+    white-space: pre;
 }
 
 .sub-features li:last-child:after {
     content: "";
 }
 
-.feature-header {
-    position: relative;
-    padding-right: 3rem;
+@media only screen and (max-width: 1000px) {
+    .feature-details {
+        width: 100%;
+    }
 }
 
-.feature-header h3 .internal-reference a {
-    color: #999999;
-    text-decoration: none;
-    padding-left: 0.5em;
-}
+@media only screen and (max-width: 508px) {
+    #feature-filters,
+    #feature-list {
+        width: 100%;
+    }
+    
+    #feature-filters {
+        padding-left: 2rem;
+        padding-right: 2rem;
+    }
 
-.feature-header h3 a {
-    color: #444;
-}
+    .feature-header h3 {
+        font-size: 2rem;
+        padding-right: 0.5rem;
+    }
 
-.feature-header h3 .internal-reference a:hover {
-    color: inherit;
-    text-decoration: underline;
-}
-
-.feature.is-hidden {
-    display: none;
-}
-
-ul.feature-details {
-    margin: 0;
-}
-.feature-statusItem {
-    margin-right: 0.5em;
-}
-
-.feature-status {
-    font-size: 2rem;
-    display: inline-block;
-    position: relative;
-    min-width: 5em;
-    text-align: right;
-}
-
-.feature-status,
-.feature-status a {
-    color: #999999;
-}
-
-.feature .status-marker {
-    width: 0;
-    height: 0;
-    position: absolute;
-    top: 0;
-    left: 0;
-    border-style: solid;
-    border-width: 20px 20px 0 0;
-    border-color: transparent transparent transparent transparent;
-}
-
-#status-filters .supported,
-.feature-status.supported,
-.feature-status.supported a {
-    color: #339900;
-}
-
-.status-marker.supported {
-    border-color: #339900 transparent transparent transparent;
-}
-
-#status-filters .in-development,
-.feature-status.in-development,
-.feature-status.in-development a {
-    color: #f46c0e;
-}
-
-.status-marker.in-development {
-    border-color: #f46c0e transparent transparent transparent;
-}
-
-#status-filters .no-active-development,
-.feature-status.no-active-development,
-.feature-status.no-active-development a {
-    color: #5858D6;
-}
-
-.status-marker.no-active-development {
-    border-color: #5858D6 transparent transparent transparent;
-}
-
-#status-filters .partial-support,
-.feature-status.partial-support,
-.feature-status.partial-support a {
-    color: #548c8c;
-}
-
-.status-marker.partial-support {
-    border-color: #548c8c transparent transparent transparent;
-}
-
-#status-filters .prototyping,
-.feature-status.prototyping,
-.feature-status.prototyping a {
-    color: #007AFF;
-}
-
-.status-marker.prototyping {
-    border-color: #007AFF transparent transparent transparent;
-}
-
-
-#status-filters .under-consideration,
-.feature-status.under-consideration,
-.feature-status.under-consideration a {
-    color: #cc9d00;
-}
-
-.status-marker.under-consideration {
-    border-color: #FFC500 transparent transparent transparent;
-}
-
-.feature-status.removed,
-.feature-status.removed a {
-    color: #999999;
-}
-
-.status-marker.removed {
-    border-color: #999999 transparent transparent transparent;
-}
-
-.feature-filters {
-    position: relative;
-    top: 0;
-    display: inline-block;
-
-    width: -webkit-calc(33.33% - 3rem);
-    width: -moz-calc(33.33% - 3rem);
-    width: calc(33.33% - 3rem);
-    margin-right: 3rem;
-    font-size: 2rem;
-}
-
-#search {
-    font-size: 2rem;
-    padding: 1rem;
-    border-radius: 3px;
-    border: 1px solid #cccccc;
-    width: 100%;
-    margin-top: 1.5rem;
-    box-sizing: border-box;
-}
-
-.feature-filters ul {
-    margin-top: 3rem;
-}
-
-.feature-filters ul li {
-    margin-bottom: 1rem;
-}
-
-.feature-filters label > input {
-    position: relative;
-    top: -3px;
+    .feature-status {
+        font-size: 1.6rem;
+        margin-top: 0.4rem;
+        float: left;
+    }
+    
+    .feature-header:after {
+        width: 1rem;
+        height: 1rem;
+        background-size: 1rem;
+        top: 1rem;
+    }
+    
+    .feature h3 {
+        font-size: 2rem;
+        padding-top: 4rem;
+    }
+    
+    .feature-header .feature-status {
+        font-size: 1.6rem;
+        position: absolute;
+        text-align: left;
+    }
+    
+    .feature .moreinfo {
+        flex-wrap: wrap;
+    }
+    
+    .feature .moreinfo .contact {
+        text-align: left;
+    }
+    
+    .status-filters {
+        text-align: left;
+        flex-basis: 100%;
+    }
+    
+    .status-filters label {
+        margin-left: 0;
+        margin-right: 1rem;
+    }
 }
 
 h3 a[name], .admin-bar h3 a[name] {
@@ -335,48 +420,26 @@ h3 a[name], .admin-bar h3 a[name] {
     visibility: visible;
 }
 
-@media only screen and (max-width: 508px) {
-    #feature-filters,
-    #feature-list {
-        width: 100%;
-    }
-
-    #feature-filters {
-        border: 1px solid #dddddd;
-        border-radius: 3px;
-        background: #f6f6f6;
-        padding: 1rem;
-        box-sizing: border-box;
-        margin-right: 0;
-        margin-bottom: 3rem;
-    }
-
-    .feature-header h3 {
-        font-size: 2rem;
-    }
-
-    .feature-status {
-        font-size: 1.6rem;
-        margin-top: 0.4rem;
-    }
-}
 
 </style>
 	<?php if (have_posts()) : while (have_posts()) : the_post(); ?>
-
+        
+        <div id="content">
         <div class="page feature-status-page" id="post-<?php the_ID(); ?>">
-            <?php echo str_repeat('&nbsp;', 200);?>
 			<h1><a href="<?php echo get_permalink() ?>" rel="bookmark" title="Permanent Link: <?php the_title(); ?>"><?php the_title(); ?></a></h1>
-            <form id="feature-filters" class="feature-filters">
-                <h2>Filters</h2>
-                <input type="text" id="search" placeholder="Search filter&hellip;" title="Filter the feature list." required>
-                <ul id="status-filters">
-                </ul>
-
-            </form>
+            
+            <div class="feature-filters">
+                <form id="feature-filters" class="page-width">
+                    <input type="text" id="search" class="search-input" placeholder="Search features&hellip;" title="Filter the feature list." required>
+                    <ul id="status-filters" class="status-filters"></ul>
+                </form>
+            </div>
 
             <div id="feature-list">
-            <h2>Features</h2>
+                <div class="feature-count">
+                    <p><span id="feature-count"></span> <span id="feature-pluralize">features</span></p>
+                </div>
+                
             </div>
 
             <template id="success-template">
@@ -388,6 +451,7 @@ h3 a[name], .admin-bar h3 a[name] {
                 <p>Error: unable to load the features list (<span id="error-message"></span>).</p>
                 <p>If this is not resolved soon, please contact <a href="https://twitter.com/webkit">@webkit</a> on Twitter or the <a href="https://lists.webkit.org/mailman/listinfo/webkit-help">webkit-help</a> mailing list.</p>
             </template>
+        </div>
         </div>
 
 	<?php //comments_template(); ?>
@@ -402,7 +466,19 @@ h3 a[name], .admin-bar h3 a[name] {
 <script>
 function initializeStatusPage() {
 
-    function sortAlphabetically(array) {
+    const statusOrder = [
+        'under consideration',
+        'prototyping',
+        'in development',
+        'supported in preview',
+        'partially supported',
+        'supported',
+        'removed',
+        'not considering'
+    ];
+
+    function sortAlphabetically(array)
+    {
         array.sort(function(a, b){
             var aName = a.name.toLowerCase();
             var bName = b.name.toLowerCase();
@@ -420,15 +496,21 @@ function initializeStatusPage() {
         });
     }
 
-    function createFeatureView(featureObject) {
+    function createFeatureView(featureObject)
+    {
+                
         function createLinkWithHeading(elementName, heading, linkText, linkUrl) {
             var container = document.createElement(elementName);
             if (heading) {
-                container.textContent = heading + ": ";
+                var h4 = document.createElement('h4');
+                h4.textContent = heading;
+                container.appendChild(h4);
             }
             var link = document.createElement("a");
             link.textContent = linkText;
             link.href = linkUrl;
+            if (linkText == linkUrl)
+                link.textContent = link.hostname + "…";
             container.appendChild(link);
             return container;
         }
@@ -453,7 +535,7 @@ function initializeStatusPage() {
 
         container.className = "feature";
 
-        var slug = featureObject.name.toLowerCase().replace(/ /g, '-');
+        var slug = canonicalizeIdentifier(featureObject.name);
         if ("features" in featureObject) {
             container.setAttribute("id", "specification-" + slug);
         } else {
@@ -464,16 +546,12 @@ function initializeStatusPage() {
             container.className += " opened";
         }
 
-        var cornerStatus = document.createElement('div');
-        cornerStatus.className = "status-marker ";
-        container.appendChild(cornerStatus);
-
-        var descriptionContainer = document.createElement('div');
-        descriptionContainer.className = "feature-description";
+        var featureContainer = document.createElement('div');
+        featureContainer.className = "feature-container status-marker";
 
         var featureHeaderContainer = document.createElement('div');
         featureHeaderContainer.className = "feature-header";
-        descriptionContainer.appendChild(featureHeaderContainer);
+        featureContainer.appendChild(featureHeaderContainer);
 
         var titleElement = document.createElement("h3");
         var anchorLinkElement = document.createElement("a");
@@ -485,7 +563,7 @@ function initializeStatusPage() {
         // Add sub-feature here
         if (hasSpecificationObject) {
             var specification = featureObject.specification;
-            var specSpan = createLinkWithHeading("span", null, specification.name, "#specification-" + specification.name.toLowerCase().replace(/ /g, '-'));
+            var specSpan = createLinkWithHeading("h4", null, specification.name, "#specification-" + specification.name.toLowerCase().replace(/ /g, '-'));
             specSpan.className = "internal-reference";
             titleElement.appendChild(specSpan);
         }
@@ -493,44 +571,66 @@ function initializeStatusPage() {
         featureHeaderContainer.appendChild(titleElement);
 
         if ("status" in featureObject) {
-            var statusContainer = document.createElement("span");
-            cornerStatus.className += statusClassName = featureObject.status.status.toLowerCase().replace(/ /g, '-');
+            var statusContainer = document.createElement("div");
+            var statusClassName = canonicalizeIdentifier(featureObject.status.status);
+            featureContainer.className += " " + statusClassName;
             statusContainer.className = "feature-status " + statusClassName;
+            var statusLabel = document.createElement("label");
+
             if ("webkit-url" in featureObject) {
                 var statusLink = document.createElement("a");
                 statusLink.href = featureObject["webkit-url"];
                 statusLink.textContent = featureObject.status.status;
-                statusContainer.appendChild(statusLink);
+                statusLabel.appendChild(statusLink);
             } else {
-                statusContainer.textContent = featureObject.status.status;
+                statusLabel.textContent = featureObject.status.status;
             }
 
+            statusContainer.appendChild(statusLabel);
             featureHeaderContainer.appendChild(statusContainer);
         }
+        
+        var featureDetails = document.createElement('div');
+        featureDetails.className = 'feature-details';
 
         if ("description" in featureObject) {
-            var testDescription = document.createElement('p');
-            testDescription.className = "feature-desc";
-            testDescription.innerHTML = featureObject.description;
-            descriptionContainer.appendChild(testDescription);
+            var textDescription = document.createElement('p');
+            textDescription.className = "feature-desc";
+            textDescription.innerHTML = featureObject.description;
+            featureDetails.appendChild(textDescription);
         }
 
         if ("comment" in featureObject) {
-            if ("description" in featureObject) {
-                var hr = document.createElement("hr");
-                hr.className = 'comment';
-                descriptionContainer.appendChild(hr);
-            }
             var comment = document.createElement('p');
             comment.className = 'comment';
             comment.innerHTML = featureObject.comment;
-            descriptionContainer.appendChild(comment);
+            featureDetails.appendChild(comment);
         }
 
-        container.appendChild(descriptionContainer);
+        if ("features" in featureObject && featureObject.features.length) {
+            var internalLinkContainer = document.createElement("div");
+            internalLinkContainer.className = "internal-reference sub-features";
+            var internalHeading = document.createElement("h4");
+            internalHeading.textContent = "Includes";
+            internalLinkContainer.appendChild(internalHeading);
+
+            var list = document.createElement("ul");
+            for (var feature of featureObject.features) {
+                var link = document.createElement("a");
+                link.textContent = feature.name;
+                link.href = "#feature-" + canonicalizeIdentifier(feature.name);
+
+                var li = document.createElement("li");
+                li.appendChild(link);
+                list.appendChild(li);
+            }
+            internalLinkContainer.appendChild(list);
+            featureDetails.appendChild(internalLinkContainer);
+        }
 
         if (hasDocumentationLink || hasReferenceLink || hasContactObject) {
             var moreInfoList = document.createElement("ul");
+            moreInfoList.className = 'moreinfo';
             if (hasDocumentationLink) {
                 var url = featureObject["documentation-url"];
                 moreInfoList.appendChild(createLinkWithHeading("li", "Documentation", url, url));
@@ -541,16 +641,13 @@ function initializeStatusPage() {
                 moreInfoList.appendChild(createLinkWithHeading("li", "Reference", url, url));
             }
 
-            if (hasSpecificationObject) {
-                var specification = featureObject.specification;
-                var li = createLinkWithHeading("li", "Parent feature", specification.name, "#specification-" + specification.name.toLowerCase().replace(/ /g, '-'));
-                li.className = "internal-reference";
-                moreInfoList.appendChild(li);
-            }
-
             if (hasContactObject) {
                 var li = document.createElement("li");
-                li.textContent = "Contact: ";
+                li.className = "contact";
+                var contactHeading = document.createElement("h4");
+                contactHeading.textContent = "Contact";
+                li.appendChild(contactHeading);
+
                 if (featureObject.contact.twitter) {
                     li.appendChild(createLinkWithHeading("span", null, featureObject.contact.twitter, makeTwitterLink(featureObject.contact.twitter)));
                 }
@@ -567,40 +664,31 @@ function initializeStatusPage() {
                 moreInfoList.appendChild(li);
             }
 
-            container.appendChild(moreInfoList);
+            featureDetails.appendChild(moreInfoList);
         }
 
-        if ("features" in featureObject && featureObject.features.length) {
-            var internalLinkContainer = document.createElement("div");
-            internalLinkContainer.className = "internal-reference sub-features";
-            internalLinkContainer.textContent = "Includes: "
-            // internalLinkContainer.appendChild(trackedFeatures);
-
-            var list = document.createElement("ul");
-            for (var feature of featureObject.features) {
-                var link = document.createElement("a");
-                link.textContent = feature.name;
-                link.href = "#feature-" + feature.name.toLowerCase().replace(/ /g, '-');
-
-                var li = document.createElement("li");
-                li.appendChild(link);
-                list.appendChild(li);
-            }
-            internalLinkContainer.appendChild(list);
-            container.appendChild(internalLinkContainer);
-        }
+        featureContainer.appendChild(featureDetails);
+        container.appendChild(featureContainer);
 
         return container;
     }
+    
+    function canonicalizeIdentifier(identifier)
+    {
+        return identifier.toLocaleLowerCase().replace(/ /g, '-');
+    }
+    
 
-    function renderFeaturesAndSpecifications(featureLikeObjects) {
+    function renderFeaturesAndSpecifications(featureLikeObjects) 
+    {
         var featureContainer = document.getElementById('features-container');
         for (var featureLikeObject of featureLikeObjects) {
             featureContainer.appendChild(createFeatureView(featureLikeObject));
         }
     }
 
-    function initSearch(featuresArray) {
+    function initSearch(featuresArray) 
+    {
         var filtersForm = document.getElementById('feature-filters');
         var statusContainer = document.getElementById('status-filters');
         var inputField = document.getElementById('search');
@@ -616,34 +704,48 @@ function initializeStatusPage() {
 
                 if (!statusFilters[featureStatusKey])
                     statusFilters[featureStatusKey] = feature.status.status;
+                
+                if (statusOrder.indexOf(featureStatusKey) == -1)
+                    window.console.log('Status ' + featureStatusKey + ' is not one of the predefined status keys ', statusOrder);
 
             }
         });
 
-        var statusLength = statusFilters.length;
+        for (var key of statusOrder) {
+            if (statusFilters[key] == undefined)
+                continue;
 
-        for (var key in statusFilters) {
-            var status = statusFilters[key];
+            var statusLabel = statusFilters[key];
+            var statusId = canonicalizeIdentifier(statusLabel);
             var entry = document.createElement("li");
             var label = document.createElement("label");
             var input = document.createElement("input");
+            
             input.setAttribute('type','checkbox');
             input.setAttribute('value', key);
-            input.addEventListener('change', search);
+            input.setAttribute('id', 'toggle-' + statusId);
+            input.className = 'filter-toggle';
+            input.addEventListener('change', function() { updateSearch(featuresArray); });
+            
+            
+            label.className = "filter-status " + statusId;
+            label.setAttribute('for', 'toggle-' + statusId);
             label.appendChild(input);
-            label.className = status.toLocaleLowerCase().replace(/ /g, '-');
-            label.appendChild(document.createTextNode(" " + status));
+            label.appendChild(document.createTextNode(" " + statusLabel));
+
             entry.appendChild(label);
+
             statusContainer.appendChild(entry);
         }
-
+        
         filtersForm.addEventListener('click', function (e) {
             if ( filtersForm.className.indexOf('opened') !== -1 ) {
                 filtersForm.className = filtersForm.className.replace(' opened','');
             } else filtersForm.className += " opened";
         });
 
-        inputField.addEventListener('input', search);
+        inputField.addEventListener('input', function() { updateSearch(featuresArray); });
+        
 
         var inputs = [].slice.call(filtersForm.getElementsByTagName('input'));
         inputs.forEach(function (input,i) {
@@ -652,7 +754,8 @@ function initializeStatusPage() {
             });
         });
 
-        function search(ev) {
+        function search(ev)
+        {
             var searchTerm = inputField.value.trim().toLowerCase();
             var activeStatusFilters = [];
             var checkboxes = [].slice.call(statusContainer.getElementsByTagName('input'));
@@ -665,21 +768,57 @@ function initializeStatusPage() {
         }
     }
 
-    function searchFeatures(featuresArray, searchTerm, statusFilters) {
-        featuresArray.forEach(function(feature) {
-            var visible = isSearchMatch(feature, searchTerm) && isStatusFiltered(feature, statusFilters);
-
-            if (visible && !feature.visible) {
-                feature.el.className = 'feature';
-            } else if (!visible && feature.visible) {
-                feature.el.className = 'feature is-hidden';
-            }
-
-            feature.visible = visible;
+    function getValuesOfCheckedItems(items)
+    {
+        var checkedValues = [];
+        items.forEach(function(item,i) {
+            if (item.checked)
+                checkedValues.push(item.value);
         });
+        
+        return checkedValues;
     }
 
-    function isSearchMatch(feature, searchTerm) {
+    function updateSearch(properties)
+    {
+        var inputField = document.getElementById('search');
+        var statusContainer = document.getElementById('status-filters');
+
+        var searchTerm = inputField.value.trim().toLowerCase();
+        var activeStatusFilters = getValuesOfCheckedItems([].slice.call(statusContainer.querySelectorAll('.filter-toggle')));
+
+        var numVisible = searchFeatures(properties, searchTerm, activeStatusFilters);
+        document.getElementById('feature-pluralize').textContent = numVisible == 1 ? 'feature' : 'features';
+        document.getElementById('feature-count').textContent = numVisible;
+        
+        updateURL(searchTerm, activeStatusFilters);
+    }
+    
+    function searchFeatures(features, searchTerm, statusFilters)
+    {
+        var visibleCount = 0;
+        features.forEach(function(featureObject) {
+            var matchesStatusSearch = isStatusFiltered(featureObject, statusFilters);
+            
+            var visible = isSearchMatch(featureObject, searchTerm) && matchesStatusSearch;
+            if (visible && !featureObject.visible)
+                featureObject.el.className = 'feature';
+            else if (!visible && featureObject.visible)
+                featureObject.el.className = 'feature is-hidden';
+            
+            if (visible) {
+                // filterValues(featureObject, searchTerm);
+                ++visibleCount;
+            }
+
+            featureObject.visible = visible;
+        });
+        
+        return visibleCount;
+    }
+
+    function isSearchMatch(feature, searchTerm)
+    {
         if (feature.name.toLowerCase().indexOf(searchTerm) !== -1)
             return true;
         if ("keywords" in feature) {
@@ -691,7 +830,8 @@ function initializeStatusPage() {
         return false;
     }
 
-    function isStatusFiltered(feature, activeFilters) {
+    function isStatusFiltered(feature, activeFilters)
+    {
         if (activeFilters.length == 0)
             return true;
         if (feature.status === undefined)
@@ -701,8 +841,25 @@ function initializeStatusPage() {
 
         return false;
     }
+    
+    function filterValues(featureObject, searchTerm, statusFilters)
+    {
+        for (var valueObj of featureObject.values) {
+            if (!valueObj.el)
+                continue;
 
-    function displayFeatures(results) {
+            var visible = false;
+            visible = valueObj.value.toLowerCase().indexOf(searchTerm) !== -1;
+
+            if (visible)
+                valueObj.el.classList.remove('hidden');
+            else
+                valueObj.el.classList.add('hidden');
+        }
+    }
+
+    function displayFeatures(results)
+    {
         var mainContent = document.getElementById("feature-list");
         var successSubtree = document.importNode(document.getElementById("success-template").content, true);
         mainContent.appendChild(successSubtree);
@@ -725,9 +882,16 @@ function initializeStatusPage() {
         var featuresByName = {};
         for (var feature of allFeatures) {
             if ('specification' in feature) {
-                var specificationObject = specificationsByName[feature.specification];
-                specificationObject.features.push(feature);
-                feature.specification = specificationObject;
+                var featureSpecification = feature.specification;
+                var specificationObject = specificationsByName[featureSpecification];
+                if (specificationObject != undefined) {
+                    specificationObject.features.push(feature);
+                    feature.specification = specificationObject;
+                } else {
+                    feature.specification = {
+                        name: featureSpecification
+                    };
+                }
             }
             feature.isSpecification = false;
             featuresByName[feature.name] = feature;
@@ -736,8 +900,12 @@ function initializeStatusPage() {
         var everythingToShow = allFeatures.concat(allSpecifications);
 
         sortAlphabetically(everythingToShow);
+        
         renderFeaturesAndSpecifications(everythingToShow);
+        
         initSearch(everythingToShow);
+        
+        updateSearch(everythingToShow);
 
         if (window.location.hash) {
             var hash = window.location.hash;
@@ -746,7 +914,8 @@ function initializeStatusPage() {
         }
     }
 
-    function displayError(error) {
+    function displayError(error)
+    {
         var mainContent = document.getElementById("feature-list");
         var successSubtree = document.importNode(document.getElementById("error-template").content, true);
 
@@ -762,6 +931,30 @@ function initializeStatusPage() {
 
         mainContent.appendChild(successSubtree);
     }
+    
+    function updateURL(searchTerm, activeStatusFilters)
+    {
+        var searchString = '';
+        
+        function appendDelimiter()
+        {
+            searchString += searchString.length ? '&' : '?';
+        }
+        
+        if (searchTerm.length > 0) {
+            appendDelimiter();
+            searchString += 'search=' + encodeURIComponent(searchTerm);
+        }
+        
+        if (activeStatusFilters.length) {
+            appendDelimiter();
+            searchString += 'status=' + activeStatusFilters.join(',');
+        }
+
+        var current = window.location.href;
+        window.location.href = current.replace(/#(.*)$/, '') + '#' + searchString;
+    }
+    
 
     Promise.all([loadJavaScriptCoreFeatures, loadWebCoreFeatures]).then(displayFeatures).catch(displayError);
 }
