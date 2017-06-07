@@ -376,6 +376,7 @@ if (ENABLE_SUBTLE_CRYPTO)
         crypto/gcrypt/CryptoAlgorithmRSAES_PKCS1_v1_5GCrypt.cpp
         crypto/gcrypt/CryptoAlgorithmRSASSA_PKCS1_v1_5GCrypt.cpp
         crypto/gcrypt/CryptoAlgorithmRSA_OAEPGCrypt.cpp
+        crypto/gcrypt/CryptoAlgorithmRSA_PSSGCrypt.cpp
         crypto/gcrypt/CryptoAlgorithmRegistryGCrypt.cpp
         crypto/gcrypt/CryptoKeyECGCrypt.cpp
         crypto/gcrypt/CryptoKeyRSAGCrypt.cpp

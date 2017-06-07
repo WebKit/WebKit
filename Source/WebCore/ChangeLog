@@ -1,3 +1,40 @@
+2017-06-07  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GCrypt] RSA-PSS support
+        https://bugs.webkit.org/show_bug.cgi?id=172856
+
+        Reviewed by Jiewen Tan.
+
+        Implement RSA-PSS support for Web Crypto API in ports that use libgcrypt.
+
+        For the signing operation, the digest algorithm is determined and used to
+        compute the hash of the passed-in data. The given salt length and hash results
+        are embedded into a data s-expression, specifying PSS as the preferred type of
+        padding. This s-expression and the provided key are then passed to the
+        gcry_pk_sign() call which computes the signature. The MPI data of this signature
+        is retrieved and its size validated before being passed to the success callback.
+
+        For the verification operation, the hash of the passed-in data is computed as
+        before, embedding it into a data s-expression along with the specified salt
+        length. The passed-in signature data is embedded into a sig-val s-expression.
+        The two s-expressions are passed to the gcry_pk_verify() call along with the
+        key. If the returned error code for this operation is GPG_ERR_NO_ERROR the
+        verification is deemed successful, while in case of any other error code (which
+        might indicate a verification failure or an operation error) we simply signal
+        that the verification step failed (and not that it possibly errored out).
+
+        No new tests -- covered by existing tests.
+
+        * PlatformGTK.cmake: Add the new build targets.
+        * PlatformWPE.cmake: Ditto.
+        * crypto/gcrypt/CryptoAlgorithmRSA_PSSGCrypt.cpp: Added.
+        (WebCore::gcryptSign):
+        (WebCore::gcryptVerify):
+        (WebCore::CryptoAlgorithmRSA_PSS::platformSign):
+        (WebCore::CryptoAlgorithmRSA_PSS::platformVerify):
+        * crypto/gcrypt/CryptoAlgorithmRegistryGCrypt.cpp:
+        (WebCore::CryptoAlgorithmRegistry::platformRegisterAlgorithms): Register the RSA-PSS algorithm.
+
 2017-06-07  Ryosuke Niwa  <rniwa@webkit.org>
 
         Merge TreeScopeAdopter into TreeScope

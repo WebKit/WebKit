@@ -41,6 +41,7 @@
 #include "CryptoAlgorithmRSAES_PKCS1_v1_5.h"
 #include "CryptoAlgorithmRSASSA_PKCS1_v1_5.h"
 #include "CryptoAlgorithmRSA_OAEP.h"
+#include "CryptoAlgorithmRSA_PSS.h"
 #include "CryptoAlgorithmSHA1.h"
 #include "CryptoAlgorithmSHA224.h"
 #include "CryptoAlgorithmSHA256.h"
@@ -64,6 +65,7 @@ void CryptoAlgorithmRegistry::platformRegisterAlgorithms()
     registerAlgorithm<CryptoAlgorithmRSAES_PKCS1_v1_5>();
     registerAlgorithm<CryptoAlgorithmRSASSA_PKCS1_v1_5>();
     registerAlgorithm<CryptoAlgorithmRSA_OAEP>();
+    registerAlgorithm<CryptoAlgorithmRSA_PSS>();
     registerAlgorithm<CryptoAlgorithmSHA1>();
     registerAlgorithm<CryptoAlgorithmSHA224>();
     registerAlgorithm<CryptoAlgorithmSHA256>();

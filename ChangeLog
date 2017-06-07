@@ -1,3 +1,15 @@
+2017-06-07  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GCrypt] RSA-PSS support
+        https://bugs.webkit.org/show_bug.cgi?id=172856
+
+        Reviewed by Jiewen Tan.
+
+        * Source/cmake/OptionsGTK.cmake: Set and expose the USE_GCRYPT preprocessor macro when
+        SUBTLE_CRYPTO is enabled.
+        * Source/cmake/OptionsWPE.cmake: Match the GTK+ port in demanding at least version 1.7.0
+        of libgcrypt. Also set and expose the USE_GCRYPT preprocessor macro.
+
 2017-06-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [WPE] Enable remote inspector

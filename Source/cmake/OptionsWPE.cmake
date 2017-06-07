@@ -112,6 +112,13 @@ if (ENABLE_ACCELERATED_2D_CANVAS)
     find_package(CairoGL 1.10.2 REQUIRED COMPONENTS cairo-egl)
 endif ()
 
+if (ENABLE_SUBTLE_CRYPTO)
+    if (LIBGCRYPT_VERSION VERSION_LESS 1.7.0)
+        message(FATAL_ERROR "libgcrypt 1.7.0 is required to enable Web Crypto API support.")
+    endif ()
+    SET_AND_EXPOSE_TO_BUILD(USE_GCRYPT TRUE)
+endif ()
+
 add_definitions(-DBUILDING_WPE__=1)
 add_definitions(-DDATA_DIR="${CMAKE_INSTALL_DATADIR}")
 
