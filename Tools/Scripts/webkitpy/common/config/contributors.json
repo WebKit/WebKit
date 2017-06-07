@@ -1137,6 +1137,14 @@
       ],
       "status" : "committer"
    },
+   "Charlie Turner" : {
+      "emails" : [
+         "cturner@igalia.com"
+      ],
+      "nicks" : [
+         "cturner"
+      ]
+   },
    "Chelsea Pugh" : {
       "emails" : [
          "cpugh@apple.com"
@@ -3451,10 +3459,10 @@
          "annulen@yandex.ru",
          "ktokarev@smartlabs.tv"
       ],
+      "expertise" : "CMake build system, Perl scripts",
       "nicks" : [
          "annulen"
       ],
-      "expertise" : "CMake build system, Perl scripts",
       "status" : "reviewer"
    },
    "Kristof Kosztyo" : {
