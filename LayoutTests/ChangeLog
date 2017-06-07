@@ -1,5 +1,30 @@
 2017-06-07  Zan Dobersek  <zdobersek@igalia.com>
 
+        Unreviewed GTK+ gardening.
+
+        Add test baselines that expect RSA-PSS and HKDF tests running successfully.
+        Also mark tests under imported/w3c/web-platform-tests/WebCryptoAPI as slow,
+        giving them enough time to run properly and avoid timeouts.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/crypto: Added.
+        * platform/gtk/crypto/subtle: Added.
+        * platform/gtk/crypto/subtle/rsa-generate-key-malformed-parameters-expected.txt: Added.
+        * platform/gtk/crypto/subtle/rsa-import-key-malformed-parameters-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf.worker-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/test_hkdf.https-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures.worker-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_RSA-PSS.worker-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-PSS.worker-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_failures.https-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_failures_RSA-PSS.https-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_successes_RSA-PSS.https-expected.txt: Added.
+
+2017-06-07  Zan Dobersek  <zdobersek@igalia.com>
+
         [GCrypt] RSA-PSS support
         https://bugs.webkit.org/show_bug.cgi?id=172856
 

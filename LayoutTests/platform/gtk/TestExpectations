@@ -854,13 +854,12 @@ webkit.org/b/133320 crypto/webkitSubtle/hmac-import-jwk.html [ Pass ]
 webkit.org/b/133320 crypto/webkitSubtle/hmac-sign-verify-empty-key.html [ Pass ]
 webkit.org/b/133320 crypto/webkitSubtle/hmac-sign-verify.html [ Pass ]
 
-# These are the imported web-platform-tests covering crytpo sections we haven't implemented yet.
-webkit.org/b/133122 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf.worker.html [ Failure ]
-webkit.org/b/172594 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/test_hkdf.https.html [ Failure ]
+# These are the imported web-platform-tests covering crypto sections we haven't implemented yet.
+imported/w3c/web-platform-tests/WebCryptoAPI/ [ Slow ]
 webkit.org/b/133122 imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/aes_cbc.worker.html [ Failure ]
-webkit.org/b/172594 imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/test_aes_ctr.https.html [ Failure ]
 webkit.org/b/133122 imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/aes_ctr.worker.html [ Failure ]
 webkit.org/b/133122 imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/rsa.worker.html [ Failure ]
+webkit.org/b/172594 imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/test_aes_ctr.https.html [ Failure ]
 webkit.org/b/172594 imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/test_aes_cbc.https.html [ Failure ]
 webkit.org/b/172594 imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/test_rsa_oaep.https.html [ Failure ]
 webkit.org/b/169272 imported/w3c/web-platform-tests/WebCryptoAPI/import_export/ec_importKey.worker.html [ Failure ]
@@ -873,6 +872,8 @@ webkit.org/b/133122 imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/rsa
 webkit.org/b/172594 imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/test_ecdsa.https.html [ Failure ]
 webkit.org/b/172594 imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/test_rsa_pkcs.https.html [ Failure ]
 webkit.org/b/172594 imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/test_rsa_pss.https.html [ Failure ]
+# This test times out, potentially because of the numerous key generations (>1000) that are performed.
+webkit.org/b/133122 imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes.worker.html [ Failure ]
 
 # GTK does not implement setAutomaticLinkDetectionEnabled
 editing/inserting/typing-space-to-trigger-smart-link.html [ Skip ]
