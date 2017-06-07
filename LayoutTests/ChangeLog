@@ -1,3 +1,17 @@
+2017-06-07  Daniel Bates  <dabates@apple.com>
+
+        Fetching Blob URLs with XHR gives null content-type and content-length
+        https://bugs.webkit.org/show_bug.cgi?id=137647
+        <rdar://problem/18215114>
+
+        Reviewed by Darin Adler.
+
+        Add a test to ensure that we do not regress the computed Content-Type and Content-Length
+        for a blob URL fetched using XHR.
+
+        * fast/xmlhttprequest/xmlhttprequest-blob-url-has-valid-response-type-and-size-expected.txt: Added.
+        * fast/xmlhttprequest/xmlhttprequest-blob-url-has-valid-response-type-and-size.html: Added.
+
 2017-06-07  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK+ and WPE gardening.
