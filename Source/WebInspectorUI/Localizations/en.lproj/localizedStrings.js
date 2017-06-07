@@ -112,6 +112,7 @@ localizedStrings["Author Stylesheet"] = "Author Stylesheet";
 localizedStrings["Auto Increment"] = "Auto Increment";
 localizedStrings["Automatically continue after evaluating"] = "Automatically continue after evaluating";
 localizedStrings["Automatically insert newline"] = "Automatically insert newline";
+localizedStrings["Available Style Sheets"] = "Available Style Sheets";
 localizedStrings["Average Time"] = "Average Time";
 localizedStrings["Back (%s)"] = "Back (%s)";
 localizedStrings["Background"] = "Background";

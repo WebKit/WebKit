@@ -1,3 +1,25 @@
+2017-06-07  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Allow user to choose stylesheet when creating new rules
+        https://bugs.webkit.org/show_bug.cgi?id=172487
+
+        Reviewed by Joseph Pecoraro.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Models/DOMNodeStyles.js:
+        (WebInspector.DOMNodeStyles.prototype.addRule.inspectorStyleSheetAvailable):
+        (WebInspector.DOMNodeStyles.prototype.addRule):
+        * UserInterface/Views/CSSStyleDetailsSidebarPanel.js:
+        (WebInspector.CSSStyleDetailsSidebarPanel.prototype.initialLayout):
+        (WebInspector.CSSStyleDetailsSidebarPanel.prototype._newRuleButtonContextMenu):
+        * UserInterface/Views/RulesStyleDetailsPanel.js:
+        (WebInspector.RulesStyleDetailsPanel.prototype.newRuleButtonClicked):
+        (WebInspector.RulesStyleDetailsPanel.prototype.newRuleButtonContextMenu):
+        * UserInterface/Views/VisualStyleSelectorSection.js:
+        (WebInspector.VisualStyleSelectorSection):
+        (WebInspector.VisualStyleSelectorSection.prototype._addNewRuleContextMenu):
+        (WebInspector.VisualStyleSelectorSection.prototype._addNewRule): Renamed _addNewRuleClick.
+
 2017-06-06  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed rollout r217807. Caused a test to crash.

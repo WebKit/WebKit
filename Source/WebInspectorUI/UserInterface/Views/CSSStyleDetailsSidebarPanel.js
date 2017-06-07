@@ -170,6 +170,7 @@ WebInspector.CSSStyleDetailsSidebarPanel = class CSSStyleDetailsSidebarPanel ext
         let newRuleButton = optionsContainer.createChild("img", "new-rule");
         newRuleButton.title = WebInspector.UIString("Add new rule");
         newRuleButton.addEventListener("click", this._newRuleButtonClicked.bind(this));
+        newRuleButton.addEventListener("contextmenu", this._newRuleButtonContextMenu.bind(this));
 
         this._filterBar = new WebInspector.FilterBar;
         this._filterBar.placeholder = WebInspector.UIString("Filter Styles");
@@ -320,6 +321,12 @@ WebInspector.CSSStyleDetailsSidebarPanel = class CSSStyleDetailsSidebarPanel ext
     {
         if (this._selectedPanel && typeof this._selectedPanel.newRuleButtonClicked === "function")
             this._selectedPanel.newRuleButtonClicked();
+    }
+
+    _newRuleButtonContextMenu(event)
+    {
+        if (this._selectedPanel && typeof this._selectedPanel.newRuleButtonContextMenu === "function")
+            this._selectedPanel.newRuleButtonContextMenu(event);
     }
 
     _classToggleButtonClicked(event)
