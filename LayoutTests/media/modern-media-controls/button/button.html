@@ -51,6 +51,7 @@ pressOnElement(button.element, () => {
         shouldBeEqualToString("style.borderWidth", "0px");
         shouldBeEqualToString("style.webkitAppearance", "none");
 
+        button.element.remove();
         finishJSTest();
     });
 });

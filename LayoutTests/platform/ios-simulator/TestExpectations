@@ -59,10 +59,15 @@ media/modern-media-controls/airplay-button [ Pass ]
 media/modern-media-controls/airplay-placard [ Pass ]
 media/modern-media-controls/audio [ Pass ]
 media/modern-media-controls/background-tint [ Pass ]
+media/modern-media-controls/button [ Pass ]
 
 # AirPlay cannot be tested on iOS
 webkit.org/b/166062 media/modern-media-controls/airplay-support [ Skip ]
 webkit.org/b/166062 media/modern-media-controls/audio/audio-controls-buttons.html [ Skip ]
+
+# These tests use touch events and don't work in OpenSource
+media/modern-media-controls/button/button.html [ Skip ]
+media/modern-media-controls/button/button-active-state.html [ Skip ]
 
 webkit.org/b/172965 media/track/track-cue-overlap-snap-to-lines-not-set.html [ Failure ]
 

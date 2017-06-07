@@ -3,19 +3,18 @@
 <body>
 <script type="text/javascript">
 
-description("Testing an <code>IconButton</code> has a white background-color when pressed.");
+description("Testing an <code>Button</code> has a scale transform when pressed.");
 
 window.jsTestIsAsync = true;
 
-const iconButton = new IconButton({ layoutDelegate: { layoutTraits: LayoutTraits.macOS } });
-iconButton.iconName = Icons.Pause;
-document.body.appendChild(iconButton.element);
+const button = new Button({ layoutDelegate: { layoutTraits: LayoutTraits.macOS } });
+button.iconName = Icons.Pause;
+document.body.appendChild(button.element);
 
 let x, y;
 
-function checkBackgroundColor()
-{
-    shouldBeEqualToString("window.getComputedStyle(iconButton.element).backgroundColor", "rgb(255, 255, 255)")
+button.image.element.addEventListener("transitionend", event => {
+    shouldBeEqualToString("window.getComputedStyle(button.image.element).transform", "matrix(0.89, 0, 0, 0.89, 0, 0)");
     if ("createTouch" in document) {
         testRunner.runUIScript(`
             uiController.liftUpAtPoint(${x}, ${y}, 1, function() {
@@ -25,11 +24,11 @@ function checkBackgroundColor()
         eventSender.mouseUp();
         finishJSTest();
     }
-}
+});
 
 scheduler.frameDidFire = function()
 {
-    const bounds = iconButton.element.getBoundingClientRect();
+    const bounds = button.element.getBoundingClientRect();
     if (bounds.height === 0)
         return;
 
@@ -42,11 +41,10 @@ scheduler.frameDidFire = function()
             testRunner.runUIScript(`
                 uiController.touchDownAtPoint(${x}, ${y}, 1, function() {
                     uiController.uiScriptComplete("Done");
-                })`, checkBackgroundColor);
+                })`);
         } else {
             eventSender.mouseMoveTo(x, y);
             eventSender.mouseDown();
-            checkBackgroundColor();
         }
     } else
         debug("This test is designed to run in DRT.");
