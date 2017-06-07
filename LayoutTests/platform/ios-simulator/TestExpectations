@@ -58,6 +58,7 @@ fast/css/sticky/sticky-writing-mode-horizontal-bt.html [ ImageOnlyFailure ]
 media/modern-media-controls/airplay-button [ Pass ]
 media/modern-media-controls/airplay-placard [ Pass ]
 media/modern-media-controls/audio [ Pass ]
+media/modern-media-controls/background-tint [ Pass ]
 
 # AirPlay cannot be tested on iOS
 webkit.org/b/166062 media/modern-media-controls/airplay-support [ Skip ]

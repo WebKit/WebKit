@@ -1,3 +1,19 @@
+2017-06-07  Antoine Quint  <graouts@apple.com>
+
+        Rebaseline and enable media/modern-media-controls/background-tint
+        https://bugs.webkit.org/show_bug.cgi?id=173056
+        <rdar://problem/32614607>
+
+        Reviewed by Eric Carlson.
+
+        Update the background-color and filter properties for backdrops to match
+        the latest implementation and specs.
+
+        * media/modern-media-controls/background-tint/background-tint-expected.txt:
+        * media/modern-media-controls/background-tint/background-tint.html:
+        * platform/ios-simulator/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2017-06-07  Alejandro G. Castro  <alex@igalia.com>
 
         Unreviewed GTK expectations gardening
