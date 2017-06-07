@@ -1,5 +1,19 @@
 2017-06-07  Per Arne Vollan  <pvollan@apple.com>
 
+        Support removal of authentication data through the Website data store API.
+        https://bugs.webkit.org/show_bug.cgi?id=171217
+
+        Reviewed by Brady Eidson.
+
+        Add support to remove and fetch credential data through the Website data store API.
+
+        Test: http/tests/loading/basic-auth-remove-credentials.html
+
+        * platform/network/CredentialStorage.h:
+        (WebCore::CredentialStorage::originsWithCredentials):
+
+2017-06-07  Per Arne Vollan  <pvollan@apple.com>
+
         AudioSourceProviderAVFObjC::m_tap member access is not thread safe.
         https://bugs.webkit.org/show_bug.cgi?id=172263
 

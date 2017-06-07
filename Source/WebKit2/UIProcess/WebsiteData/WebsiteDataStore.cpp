@@ -252,6 +252,12 @@ void WebsiteDataStore::fetchData(OptionSet<WebsiteDataType> dataTypes, OptionSet
             }
 #endif
 
+            for (auto& origin : websiteData.originsWithCredentials) {
+                auto& record = m_websiteDataRecords.add(origin, WebsiteDataRecord { }).iterator->value;
+                
+                record.addOriginWithCredential(origin);
+            }
+
             callIfNeeded();
         }
 
@@ -550,6 +556,9 @@ static ProcessAccessType computeNetworkProcessAccessTypeForDataRemoval(OptionSet
     if (dataTypes.contains(WebsiteDataType::HSTSCache))
         processAccessType = std::max(processAccessType, ProcessAccessType::Launch);
 
+    if (dataTypes.contains(WebsiteDataType::Credentials))
+        processAccessType = std::max(processAccessType, ProcessAccessType::Launch);
+
     return processAccessType;
 }
 
@@ -560,6 +569,9 @@ static ProcessAccessType computeWebProcessAccessTypeForDataRemoval(OptionSet<Web
     ProcessAccessType processAccessType = ProcessAccessType::None;
 
     if (dataTypes.contains(WebsiteDataType::MemoryCache))
+        processAccessType = std::max(processAccessType, ProcessAccessType::OnlyIfLaunched);
+
+    if (dataTypes.contains(WebsiteDataType::Credentials))
         processAccessType = std::max(processAccessType, ProcessAccessType::OnlyIfLaunched);
 
     return processAccessType;

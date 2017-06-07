@@ -1,3 +1,40 @@
+2017-06-07  Per Arne Vollan  <pvollan@apple.com>
+
+        Support removal of authentication data through the Website data store API.
+        https://bugs.webkit.org/show_bug.cgi?id=171217
+        <rdar://problem/29522573>
+
+        Reviewed by Brady Eidson.
+
+        Add support to remove and fetch credential data through the Website data store API.
+        Credential data is removed and fetched from both the network process and web process.
+        Authentication data stored in the keychain will not be cleared.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::fetchWebsiteData):
+        (WebKit::NetworkProcess::deleteWebsiteData):
+        * Shared/WebsiteData/WebsiteData.cpp:
+        (WebKit::WebsiteData::encode):
+        (WebKit::WebsiteData::decode):
+        * Shared/WebsiteData/WebsiteData.h:
+        * Shared/WebsiteData/WebsiteDataType.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataRecord.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataRecord.mm:
+        (dataTypesToString):
+        * UIProcess/API/Cocoa/WKWebsiteDataRecordInternal.h:
+        (WebKit::toWebsiteDataType):
+        (WebKit::toWKWebsiteDataTypes):
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (+[WKWebsiteDataStore allWebsiteDataTypes]):
+        * UIProcess/WebsiteData/WebsiteDataRecord.cpp:
+        (WebKit::WebsiteDataRecord::addOriginWithCredential):
+        * UIProcess/WebsiteData/WebsiteDataRecord.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::fetchData):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::fetchWebsiteData):
+        (WebKit::WebProcess::deleteWebsiteData):
+
 2017-06-06  Dan Bernstein  <mitz@apple.com>
 
         Fixed building with the macOS 10.13 Apple Internal SDK when targeting macOS 10.12.

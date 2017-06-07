@@ -57,6 +57,8 @@ public:
     WEBCORE_EXPORT bool set(const String&, const Credential&, const URL&); // Returns true if the URL corresponds to a known protection space, so credentials could be updated.
     WEBCORE_EXPORT Credential get(const String&, const URL&);
 
+    const HashSet<String>& originsWithCredentials() const { return m_originsWithCredentials; }
+
 private:
     HashMap<std::pair<String /* partitionName */, ProtectionSpace>, Credential> m_protectionSpaceToCredentialMap;
     HashSet<String> m_originsWithCredentials;

@@ -643,6 +643,7 @@ enum {
     DidRemoveSwipeSnapshotCallbackID,
     StatisticsDidModifyDataRecordsCallbackID,
     StatisticsDidScanDataRecordsCallbackID,
+    DidRemoveAllSessionCredentialsCallbackID,
     FirstUIScriptCallbackID = 100
 };
 
@@ -1636,6 +1637,21 @@ void TestRunner::setOpenPanelFiles(JSValueRef filesValue)
 
     static auto messageName = adoptWK(WKStringCreateWithUTF8CString("SetOpenPanelFileURLs"));
     WKBundlePagePostMessage(page, messageName.get(), fileURLs.get());
+}
+
+void TestRunner::removeAllSessionCredentials(JSValueRef callback)
+{
+    cacheTestRunnerCallback(DidRemoveAllSessionCredentialsCallbackID, callback);
+    
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("RemoveAllSessionCredentials"));
+    WKRetainPtr<WKBooleanRef> messageBody(AdoptWK, WKBooleanCreate(true));
+    
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
+}
+
+void TestRunner::callDidRemoveAllSessionCredentialsCallback()
+{
+    callTestRunnerCallback(DidRemoveAllSessionCredentialsCallbackID);
 }
 
 } // namespace WTR

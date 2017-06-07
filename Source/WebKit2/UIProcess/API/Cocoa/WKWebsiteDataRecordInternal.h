@@ -70,7 +70,8 @@ static inline std::optional<WebsiteDataType> toWebsiteDataType(NSString *website
 #endif
     if ([websiteDataType isEqualToString:_WKWebsiteDataTypeResourceLoadStatistics])
         return WebsiteDataType::WebsiteDataTypeResourceLoadStatistics;
-
+    if ([websiteDataType isEqualToString:_WKWebsiteDataTypeCredentials])
+        return WebsiteDataType::Credentials;
     return std::nullopt;
 }
 
@@ -118,6 +119,8 @@ static inline RetainPtr<NSSet> toWKWebsiteDataTypes(OptionSet<WebKit::WebsiteDat
 #endif
     if (websiteDataTypes.contains(WebsiteDataType::WebsiteDataTypeResourceLoadStatistics))
         [wkWebsiteDataTypes addObject:_WKWebsiteDataTypeResourceLoadStatistics];
+    if (websiteDataTypes.contains(WebsiteDataType::Credentials))
+        [wkWebsiteDataTypes addObject:_WKWebsiteDataTypeCredentials];
 
     return wkWebsiteDataTypes;
 }

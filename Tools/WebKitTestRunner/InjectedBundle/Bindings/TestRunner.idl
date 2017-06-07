@@ -280,4 +280,6 @@ interface TestRunner {
     void setWebRTCLegacyAPIEnabled(boolean value);
 
     void terminateNetworkProcess();
+
+    void removeAllSessionCredentials(object callback);
 };

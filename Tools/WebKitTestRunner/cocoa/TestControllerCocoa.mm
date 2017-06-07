@@ -41,6 +41,7 @@
 #import <WebKit/WKWebViewConfiguration.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/WKWebsiteDataRecordPrivate.h>
 #import <WebKit/WKWebsiteDataStoreRef.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKUserContentExtensionStore.h>
@@ -198,6 +199,16 @@ unsigned TestController::imageCountInGeneralPasteboard() const
         return 0;
     
     return imagesArray.count;
+}
+
+void TestController::removeAllSessionCredentials()
+{
+#if WK_API_ENABLED
+    auto types = adoptNS([[NSSet alloc] initWithObjects:_WKWebsiteDataTypeCredentials, nil]);
+    [globalWebViewConfiguration.websiteDataStore removeDataOfTypes:types.get() modifiedSince:[NSDate distantPast] completionHandler:^() {
+        m_currentInvocation->didRemoveAllSessionCredentials();
+    }];
+#endif
 }
 
 } // namespace WTR

@@ -47,6 +47,7 @@ enum class WebsiteDataType {
     MediaDeviceIdentifier = 1 << 12,
 #endif
     WebsiteDataTypeResourceLoadStatistics = 1 << 13,
+    Credentials = 1 << 14,
 };
 
 };

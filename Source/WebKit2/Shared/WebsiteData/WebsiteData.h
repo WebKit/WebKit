@@ -56,6 +56,8 @@ struct WebsiteData {
     HashSet<String> hostNamesWithPluginData;
 #endif
 
+    HashSet<String> originsWithCredentials;
+
     void encode(IPC::Encoder&) const;
     static bool decode(IPC::Decoder&, WebsiteData&);
 };

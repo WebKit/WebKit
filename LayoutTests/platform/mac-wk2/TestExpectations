@@ -29,6 +29,8 @@ http/tests/ssl/applepay/ApplePaySessionV3.html [ Skip ]
 fast/visual-viewport/rubberbanding-viewport-rects.html [ Pass ]
 fast/visual-viewport/rubberbanding-viewport-rects-header-footer.html  [ Pass ]
 
+http/tests/loading/basic-auth-remove-credentials.html [ Pass ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific directories.
 #//////////////////////////////////////////////////////////////////////////////////////////

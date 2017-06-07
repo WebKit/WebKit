@@ -240,6 +240,11 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
         return;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "CallDidRemoveAllSessionCredentialsCallback")) {
+        m_testRunner->callDidRemoveAllSessionCredentialsCallback();
+        return;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "NotifyDownloadDone")) {
         m_testRunner->notifyDone();
         return;

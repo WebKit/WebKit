@@ -53,6 +53,7 @@ struct WebsiteDataRecord {
 #if ENABLE(NETSCAPE_PLUGIN_API)
     void addPluginDataHostName(const String& hostName);
 #endif
+    void addOriginWithCredential(const String&);
 
     String displayName;
     OptionSet<WebsiteDataType> types;
@@ -68,7 +69,8 @@ struct WebsiteDataRecord {
 #if ENABLE(NETSCAPE_PLUGIN_API)
     HashSet<String> pluginDataHostNames;
 #endif
-    
+    HashSet<String> originsWithCredentials;
+
     bool matchesTopPrivatelyControlledDomain(const String&) const;
     String topPrivatelyControlledDomain();
 };

@@ -96,6 +96,7 @@ fast/media/mq-inverted-colors-live-update.html [ Skip ]
 fast/media/mq-inverted-colors-live-update-in-subframes.html [ Skip ]
 fast/media/mq-monochrome-live-update.html [ Skip ]
 fast/media/mq-prefers-reduced-motion-live-update.html [ Skip ]
+http/tests/loading/basic-auth-remove-credentials.html [ Skip ]
 
 # ApplePay is only available on iOS (greater than iOS 10) and macOS (greater than macOS 10.12) and only for WebKit2.
 http/tests/ssl/applepay/ [ Skip ]

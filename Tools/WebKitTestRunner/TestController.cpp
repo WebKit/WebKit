@@ -2331,6 +2331,10 @@ unsigned TestController::imageCountInGeneralPasteboard() const
     return 0;
 }
 
+void TestController::removeAllSessionCredentials()
+{
+}
+
 #endif
 
 } // namespace WTR
