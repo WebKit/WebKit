@@ -83,7 +83,6 @@ class Node : public EventTarget {
 
     friend class Document;
     friend class TreeScope;
-    friend class TreeScopeAdopter;
 public:
     enum NodeType {
         ELEMENT_NODE = 1,
@@ -632,7 +631,7 @@ protected:
     };
     Node(Document&, ConstructionType);
 
-    virtual void didMoveToNewDocument(Document& oldDocument);
+    virtual void didMoveToNewDocument(Document& oldDocument, Document& newDocument);
     
     virtual void addSubresourceAttributeURLs(ListHashSet<URL>&) const { }
 

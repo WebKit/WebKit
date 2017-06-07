@@ -27,6 +27,7 @@
 #include "config.h"
 #include "TreeScope.h"
 
+#include "Attr.h"
 #include "DOMWindow.h"
 #include "ElementIterator.h"
 #include "FocusController.h"
@@ -38,12 +39,12 @@
 #include "HTMLMapElement.h"
 #include "HitTestResult.h"
 #include "IdTargetObserverRegistry.h"
+#include "NodeRareData.h"
 #include "Page.h"
 #include "PointerLockController.h"
 #include "RenderView.h"
 #include "RuntimeEnabledFeatures.h"
 #include "ShadowRoot.h"
-#include "TreeScopeAdopter.h"
 #include <wtf/text/CString.h>
 
 namespace WebCore {
@@ -371,9 +372,95 @@ void TreeScope::adoptIfNeeded(Node& node)
 {
     ASSERT(!node.isDocumentNode());
     ASSERT(!node.m_deletionHasBegun);
-    TreeScopeAdopter adopter(node, *this);
-    if (adopter.needsScopeChange())
-        adopter.execute();
+    TreeScope& treeScopeOfNode = node.treeScope();
+    if (this != &treeScopeOfNode)
+        moveTreeToNewScope(node, treeScopeOfNode, *this);
+}
+
+void TreeScope::moveTreeToNewScope(Node& root, TreeScope& oldScope, TreeScope& newScope)
+{
+    ASSERT(&oldScope != &newScope);
+    ASSERT_WITH_SECURITY_IMPLICATION(&root.treeScope() == &oldScope);
+
+    // If an element is moved from a document and then eventually back again the collection cache for
+    // that element may contain stale data as changes made to it will have updated the DOMTreeVersion
+    // of the document it was moved to. By increasing the DOMTreeVersion of the donating document here
+    // we ensure that the collection cache will be invalidated as needed when the element is moved back.
+    Document& oldDocument = oldScope.documentScope();
+    Document& newDocument = newScope.documentScope();
+    bool willMoveToNewDocument = &oldDocument != &newDocument;
+    if (willMoveToNewDocument) {
+        oldDocument.incrementReferencingNodeCount();
+        oldDocument.incDOMTreeVersion();
+    }
+
+    for (Node* node = &root; node; node = NodeTraversal::next(*node, &root)) {
+        ASSERT(!node->isTreeScope());
+        ASSERT(&node->treeScope() == &oldScope);
+        node->setTreeScope(newScope);
+
+        if (willMoveToNewDocument)
+            moveNodeToNewDocument(*node, oldDocument, newDocument);
+        else if (node->hasRareData()) {
+            if (auto* nodeLists = node->rareData()->nodeLists())
+                nodeLists->adoptTreeScope();
+        }
+
+        if (!is<Element>(*node))
+            continue;
+
+        if (node->hasSyntheticAttrChildNodes()) {
+            for (auto& attr : downcast<Element>(*node).attrNodeList())
+                moveTreeToNewScope(*attr, oldScope, newScope);
+        }
+
+        if (auto* shadow = node->shadowRoot()) {
+            ASSERT_WITH_SECURITY_IMPLICATION(&shadow->document() == &oldDocument);
+            shadow->setParentTreeScope(newScope);
+            if (willMoveToNewDocument)
+                moveShadowTreeToNewDocument(*shadow, oldDocument, newDocument);
+        }
+    }
+
+    if (willMoveToNewDocument)
+        oldDocument.decrementReferencingNodeCount();
+}
+
+#if !ASSERT_DISABLED || ENABLE(SECURITY_ASSERTIONS)
+static bool didMoveToNewDocumentWasCalled = false;
+static Document* oldDocumentDidMoveToNewDocumentWasCalledWith = nullptr;
+
+void TreeScope::ensureDidMoveToNewDocumentWasCalled(Document& oldDocument)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(!didMoveToNewDocumentWasCalled);
+    ASSERT_WITH_SECURITY_IMPLICATION(&oldDocument == oldDocumentDidMoveToNewDocumentWasCalledWith);
+    didMoveToNewDocumentWasCalled = true;
+}
+#endif
+
+void TreeScope::moveNodeToNewDocument(Node& node, Document& oldDocument, Document& newDocument)
+{
+    ASSERT(!node.isConnected() || &oldDocument != &newDocument);
+
+    newDocument.incrementReferencingNodeCount();
+    oldDocument.decrementReferencingNodeCount();
+
+#if !ASSERT_DISABLED || ENABLE(SECURITY_ASSERTIONS)
+    didMoveToNewDocumentWasCalled = false;
+    oldDocumentDidMoveToNewDocumentWasCalledWith = &oldDocument;
+#endif
+
+    node.didMoveToNewDocument(oldDocument, newDocument);
+    ASSERT_WITH_SECURITY_IMPLICATION(didMoveToNewDocumentWasCalled);
+}
+
+void TreeScope::moveShadowTreeToNewDocument(ShadowRoot& shadowRoot, Document& oldDocument, Document& newDocument)
+{
+    for (Node* node = &shadowRoot; node; node = NodeTraversal::next(*node, &shadowRoot)) {
+        moveNodeToNewDocument(*node, oldDocument, newDocument);
+        if (auto* shadow = node->shadowRoot())
+            moveShadowTreeToNewDocument(*shadow, oldDocument, newDocument);
+    }
 }
 
 static Element* focusedFrameOwnerElement(Frame* focusedFrame, Frame* currentFrame)

@@ -58,7 +58,7 @@ private:
     bool haveLoadedRequiredResources() final;
 
     bool selfHasRelativeLengths() const final { return true; }
-    void didMoveToNewDocument(Document& oldDocument) final;
+    void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGImageElement)
         DECLARE_ANIMATED_LENGTH(X, x)

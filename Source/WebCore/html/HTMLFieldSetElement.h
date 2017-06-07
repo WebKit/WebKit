@@ -58,7 +58,7 @@ private:
     void disabledAttributeChanged() final;
     void disabledStateChanged() final;
     void childrenChanged(const ChildChange&) final;
-    void didMoveToNewDocument(Document& oldDocument) final;
+    void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;
 
     bool matchesValidPseudoClass() const final;
     bool matchesInvalidPseudoClass() const final;

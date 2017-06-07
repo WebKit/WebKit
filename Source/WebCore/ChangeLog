@@ -1,3 +1,85 @@
+2017-06-07  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Merge TreeScopeAdopter into TreeScope
+        https://bugs.webkit.org/show_bug.cgi?id=173040
+
+        Reviewed by Antti Koivisto.
+
+        Merged TreeScopeAdopter into TreeScope since it's used by TreeScope::adoptIfNeeded.
+
+        Most of code changes are for didMoveToNewDocument taking the new document as an argument,
+        which is used by ShadowRoot::didMoveToNewDocument to update its document scope.
+
+        No new tests since there should be no behavioral change.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Element.cpp:
+        (WebCore::Element::didMoveToNewDocument):
+        * dom/Element.h:
+        * dom/Node.cpp:
+        (WebCore::Node::didMoveToNewDocument): Moved the code to moves the node lists and node iterators here
+        from TreeScopeAdopter::moveNodeToNewDocument.
+        * dom/Node.h:
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::didMoveToNewDocument): Moved the code to update the document scope here
+        from TreeScopeAdopter::moveNodeToNewDocument.
+        * dom/ShadowRoot.h:
+        * dom/TreeScope.cpp:
+        (WebCore::TreeScope::adoptIfNeeded):
+        (WebCore::TreeScope::moveTreeToNewScope): Moved from TreeScopeAdopter. Now takes the old tree scope and
+        the new tree scope as arguments (they used to be members of TreeScopeAdopter). Also merged updateTreeScope
+        into this function.
+        (WebCore::TreeScope::ensureDidMoveToNewDocumentWasCalled): Moved from TreeScopeAdopter.
+        (WebCore::TreeScope::moveNodeToNewDocument): Ditto. The code to adopt node lists and node iterators have
+        been moved to Node::didMoveToNewDocument.
+        (WebCore::TreeScope::moveShadowTreeToNewDocument): Moved from TreeScopeAdopter.
+        * dom/TreeScope.h:
+        (WebCore::TreeScope::ensureDidMoveToNewDocumentWasCalled):
+        * dom/TreeScopeAdopter.cpp: Removed.
+        * dom/TreeScopeAdopter.h: Removed.
+        * html/HTMLFieldSetElement.cpp:
+        (WebCore::HTMLFieldSetElement::didMoveToNewDocument):
+        * html/HTMLFieldSetElement.h:
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::didMoveToNewDocument):
+        * html/HTMLFormControlElement.h:
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::didMoveToNewDocument):
+        * html/HTMLFormElement.h:
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::didMoveToNewDocument):
+        * html/HTMLImageElement.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::didMoveToNewDocument): Grouped related function calls on new/old documents.
+        * html/HTMLInputElement.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::didMoveToNewDocument):
+        * html/HTMLMediaElement.h:
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::didMoveToNewDocument):
+        * html/HTMLObjectElement.h:
+        * html/HTMLPictureElement.cpp:
+        (WebCore::HTMLPictureElement::didMoveToNewDocument):
+        * html/HTMLPictureElement.h:
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::didMoveToNewDocument):
+        * html/HTMLPlugInImageElement.h:
+        * html/HTMLTemplateElement.cpp:
+        (WebCore::HTMLTemplateElement::didMoveToNewDocument):
+        * html/HTMLTemplateElement.h:
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::didMoveToNewDocument):
+        * html/HTMLVideoElement.h:
+        * html/ImageDocument.cpp:
+        (WebCore::ImageDocumentElement::didMoveToNewDocument):
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::didMoveToNewDocument):
+        * svg/SVGImageElement.h:
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::didMoveToNewDocument):
+        * svg/SVGSVGElement.h:
+
 2017-06-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Use a dedicated node flag to identify a Document node

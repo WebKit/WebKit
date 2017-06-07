@@ -97,7 +97,7 @@ public:
 protected:
     HTMLImageElement(const QualifiedName&, Document&, HTMLFormElement* = 0);
 
-    void didMoveToNewDocument(Document& oldDocument) override;
+    void didMoveToNewDocument(Document& oldDocument, Document& newDocument) override;
 
 private:
     void parseAttribute(const QualifiedName&, const AtomicString&) override;

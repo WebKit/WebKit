@@ -250,10 +250,10 @@ void HTMLFormControlElement::didAttachRenderers()
     }
 }
 
-void HTMLFormControlElement::didMoveToNewDocument(Document& oldDocument)
+void HTMLFormControlElement::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
 {
     FormAssociatedElement::didMoveToNewDocument(oldDocument);
-    HTMLElement::didMoveToNewDocument(oldDocument);
+    HTMLElement::didMoveToNewDocument(oldDocument, newDocument);
 }
 
 static void addInvalidElementToAncestorFromInsertionPoint(const HTMLFormControlElement& element, ContainerNode* insertionPoint)

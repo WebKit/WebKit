@@ -360,11 +360,11 @@ void HTMLVideoElement::setWebkitWirelessVideoPlaybackDisabled(bool disabled)
 }
 #endif
 
-void HTMLVideoElement::didMoveToNewDocument(Document& oldDocument)
+void HTMLVideoElement::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
 {
     if (m_imageLoader)
         m_imageLoader->elementDidMoveToNewDocument();
-    HTMLMediaElement::didMoveToNewDocument(oldDocument);
+    HTMLMediaElement::didMoveToNewDocument(oldDocument, newDocument);
 }
 
 #if ENABLE(MEDIA_STATISTICS)

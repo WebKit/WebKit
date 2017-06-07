@@ -68,7 +68,6 @@
 #include "TemplateContentDocumentFragment.h"
 #include "TextEvent.h"
 #include "TouchEvent.h"
-#include "TreeScopeAdopter.h"
 #include "WheelEvent.h"
 #include "XMLNSNames.h"
 #include "XMLNames.h"
@@ -1925,14 +1924,22 @@ EventTargetInterface Node::eventTargetInterface() const
     return NodeEventTargetInterfaceType;
 }
 
-void Node::didMoveToNewDocument(Document& oldDocument)
+void Node::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
 {
-    TreeScopeAdopter::ensureDidMoveToNewDocumentWasCalled(oldDocument);
+    ASSERT_WITH_SECURITY_IMPLICATION(&document() == &newDocument);
+    TreeScope::ensureDidMoveToNewDocumentWasCalled(oldDocument);
+
+    if (hasRareData()) {
+        if (auto* nodeLists = rareData()->nodeLists())
+            nodeLists->adoptDocument(oldDocument, newDocument);
+    }
+
+    oldDocument.moveNodeIteratorsToNewDocument(*this, newDocument);
 
     if (auto* eventTargetData = this->eventTargetData()) {
         if (!eventTargetData->eventListenerMap.isEmpty()) {
             for (auto& type : eventTargetData->eventListenerMap.eventTypes())
-                document().addListenerTypeIfNeeded(type);
+                newDocument.addListenerTypeIfNeeded(type);
         }
     }
 
@@ -1944,7 +1951,7 @@ void Node::didMoveToNewDocument(Document& oldDocument)
     unsigned numWheelEventHandlers = eventListeners(eventNames().mousewheelEvent).size() + eventListeners(eventNames().wheelEvent).size();
     for (unsigned i = 0; i < numWheelEventHandlers; ++i) {
         oldDocument.didRemoveWheelEventHandler(*this);
-        document().didAddWheelEventHandler(*this);
+        newDocument.didAddWheelEventHandler(*this);
     }
 
     unsigned numTouchEventListeners = 0;
@@ -1953,11 +1960,11 @@ void Node::didMoveToNewDocument(Document& oldDocument)
 
     for (unsigned i = 0; i < numTouchEventListeners; ++i) {
         oldDocument.didRemoveTouchEventHandler(*this);
-        document().didAddTouchEventHandler(*this);
+        newDocument.didAddTouchEventHandler(*this);
 
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS)
         oldDocument.removeTouchEventListener(*this);
-        document().addTouchEventListener(*this);
+        newDocument.addTouchEventListener(*this);
 #endif
     }
 
@@ -1968,18 +1975,18 @@ void Node::didMoveToNewDocument(Document& oldDocument)
 
     for (unsigned i = 0; i < numGestureEventListeners; ++i) {
         oldDocument.removeTouchEventHandler(*this);
-        document().addTouchEventHandler(*this);
+        newDocument.addTouchEventHandler(*this);
     }
 #endif
 
     if (auto* registry = mutationObserverRegistry()) {
         for (auto& registration : *registry)
-            document().addMutationObserverTypes(registration->mutationTypes());
+            newDocument.addMutationObserverTypes(registration->mutationTypes());
     }
 
     if (auto* transientRegistry = transientMutationObserverRegistry()) {
         for (auto& registration : *transientRegistry)
-            document().addMutationObserverTypes(registration->mutationTypes());
+            newDocument.addMutationObserverTypes(registration->mutationTypes());
     }
 
 #if !ASSERT_DISABLED || ENABLE(SECURITY_ASSERTIONS)

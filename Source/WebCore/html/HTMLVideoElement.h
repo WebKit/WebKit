@@ -107,7 +107,7 @@ private:
 
     bool hasAvailableVideoFrame() const;
     void updateDisplayState() final;
-    void didMoveToNewDocument(Document& oldDocument) final;
+    void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;
     void setDisplayMode(DisplayMode) final;
 
     PlatformMediaSession::MediaType presentationType() const final { return PlatformMediaSession::Video; }

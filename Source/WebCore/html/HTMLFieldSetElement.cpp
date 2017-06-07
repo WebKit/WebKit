@@ -122,12 +122,13 @@ void HTMLFieldSetElement::childrenChanged(const ChildChange& change)
         updateFromControlElementsAncestorDisabledStateUnder(*legend, true);
 }
 
-void HTMLFieldSetElement::didMoveToNewDocument(Document& oldDocument)
+void HTMLFieldSetElement::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
 {
-    HTMLFormControlElement::didMoveToNewDocument(oldDocument);
+    ASSERT_WITH_SECURITY_IMPLICATION(&document() == &newDocument);
+    HTMLFormControlElement::didMoveToNewDocument(oldDocument, newDocument);
     if (m_hasDisabledAttribute) {
         oldDocument.removeDisabledFieldsetElement();
-        document().addDisabledFieldsetElement();
+        newDocument.addDisabledFieldsetElement();
     }
 }
 

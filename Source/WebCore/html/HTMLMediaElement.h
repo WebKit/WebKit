@@ -532,7 +532,7 @@ protected:
     void willDetachRenderers() override;
     void didDetachRenderers() override;
 
-    void didMoveToNewDocument(Document& oldDocument) override;
+    void didMoveToNewDocument(Document& oldDocument, Document& newDocument) override;
 
     enum DisplayMode { Unknown, None, Poster, PosterWaitingForVideo, Video };
     DisplayMode displayMode() const { return m_displayMode; }

@@ -859,14 +859,14 @@ void HTMLFormElement::resumeFromDocumentSuspension()
     resetAssociatedFormControlElements();
 }
 
-void HTMLFormElement::didMoveToNewDocument(Document& oldDocument)
+void HTMLFormElement::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
 {
     if (!shouldAutocomplete()) {
         oldDocument.unregisterForDocumentSuspensionCallbacks(this);
         document().registerForDocumentSuspensionCallbacks(this);
     }
 
-    HTMLElement::didMoveToNewDocument(oldDocument);
+    HTMLElement::didMoveToNewDocument(oldDocument, newDocument);
 }
 
 bool HTMLFormElement::shouldAutocomplete() const

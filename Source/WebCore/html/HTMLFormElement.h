@@ -147,7 +147,7 @@ private:
 
     void resumeFromDocumentSuspension() final;
 
-    void didMoveToNewDocument(Document& oldDocument) final;
+    void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;
 
     void copyNonAttributePropertiesFromElement(const Element&) final;
 

@@ -81,7 +81,7 @@ ShadowRoot::~ShadowRoot()
     willBeDeletedFrom(document());
 
     // We must remove all of our children first before the TreeScope destructor
-    // runs so we don't go through TreeScopeAdopter for each child with a
+    // runs so we don't go through TreeScope::adoptIfNeeded for each child with a
     // destructed tree scope in each descendant.
     removeDetachedChildren();
 }
@@ -102,15 +102,17 @@ void ShadowRoot::removedFrom(ContainerNode& insertionPoint)
         document().didRemoveInDocumentShadowRoot(*this);
 }
 
-void ShadowRoot::didMoveToNewDocument(Document& oldDocument)
+void ShadowRoot::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
 {
-    ASSERT(&document() != &oldDocument);
-    ASSERT(&m_styleScope->document() == &oldDocument);
+    ASSERT_WITH_SECURITY_IMPLICATION(&document() == &oldDocument || &document() == &newDocument);
+    setDocumentScope(newDocument);
+    ASSERT_WITH_SECURITY_IMPLICATION(&document() == &newDocument);
+    ASSERT_WITH_SECURITY_IMPLICATION(&m_styleScope->document() == &oldDocument);
 
     // Style scopes are document specific.
     m_styleScope = std::make_unique<Style::Scope>(*this);
 
-    DocumentFragment::didMoveToNewDocument(oldDocument);
+    DocumentFragment::didMoveToNewDocument(oldDocument, newDocument);
 }
 
 Style::Scope& ShadowRoot::styleScope()

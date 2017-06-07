@@ -48,7 +48,7 @@ private:
     HTMLTemplateElement(const QualifiedName&, Document&);
 
     Ref<Node> cloneNodeInternal(Document&, CloningOperation) final;
-    void didMoveToNewDocument(Document& oldDocument) final;
+    void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;
 
     mutable RefPtr<TemplateContentDocumentFragment> m_content;
 };

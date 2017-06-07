@@ -1567,7 +1567,6 @@ set(WebCore_SOURCES
     dom/TransitionEvent.cpp
     dom/Traversal.cpp
     dom/TreeScope.cpp
-    dom/TreeScopeAdopter.cpp
     dom/TreeWalker.cpp
     dom/UIEvent.cpp
     dom/UIEventWithKeyState.cpp

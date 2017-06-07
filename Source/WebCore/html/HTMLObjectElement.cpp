@@ -495,10 +495,10 @@ void HTMLObjectElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) cons
         addSubresourceURL(urls, document().completeURL(useMap));
 }
 
-void HTMLObjectElement::didMoveToNewDocument(Document& oldDocument)
+void HTMLObjectElement::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
 {
     FormAssociatedElement::didMoveToNewDocument(oldDocument);
-    HTMLPlugInImageElement::didMoveToNewDocument(oldDocument);
+    HTMLPlugInImageElement::didMoveToNewDocument(oldDocument, newDocument);
 }
 
 bool HTMLObjectElement::appendFormData(FormDataList& encoding, bool)

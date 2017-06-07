@@ -82,12 +82,13 @@ Ref<Node> HTMLTemplateElement::cloneNodeInternal(Document& targetDocument, Cloni
     return clone.releaseNonNull();
 }
 
-void HTMLTemplateElement::didMoveToNewDocument(Document& oldDocument)
+void HTMLTemplateElement::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
 {
-    HTMLElement::didMoveToNewDocument(oldDocument);
+    HTMLElement::didMoveToNewDocument(oldDocument, newDocument);
     if (!m_content)
         return;
-    document().ensureTemplateDocument().adoptIfNeeded(*m_content);
+    ASSERT_WITH_SECURITY_IMPLICATION(&document() == &newDocument);
+    newDocument.ensureTemplateDocument().adoptIfNeeded(*m_content);
 }
 
 } // namespace WebCore

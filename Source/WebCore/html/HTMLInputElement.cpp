@@ -1521,31 +1521,26 @@ void HTMLInputElement::removedFrom(ContainerNode& insertionPoint)
 #endif
 }
 
-void HTMLInputElement::didMoveToNewDocument(Document& oldDocument)
+void HTMLInputElement::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
 {
     if (imageLoader())
         imageLoader()->elementDidMoveToNewDocument();
 
-    bool needsSuspensionCallback = this->needsSuspensionCallback();
     // Always unregister for cache callbacks when leaving a document, even if we would otherwise like to be registered
-    if (needsSuspensionCallback)
+    if (needsSuspensionCallback()) {
         oldDocument.unregisterForDocumentSuspensionCallbacks(this);
+        newDocument.registerForDocumentSuspensionCallbacks(this);
+    }
     if (isRadioButton())
         oldDocument.formController().radioButtonGroups().removeButton(this);
 #if ENABLE(TOUCH_EVENTS)
-    if (m_hasTouchEventHandler)
+    if (m_hasTouchEventHandler) {
         oldDocument.didRemoveEventTargetNode(*this);
+        newDocument.didAddTouchEventHandler(*this);
+    }
 #endif
 
-    if (needsSuspensionCallback)
-        document().registerForDocumentSuspensionCallbacks(this);
-
-#if ENABLE(TOUCH_EVENTS)
-    if (m_hasTouchEventHandler)
-        document().didAddTouchEventHandler(*this);
-#endif
-
-    HTMLTextFormControlElement::didMoveToNewDocument(oldDocument);
+    HTMLTextFormControlElement::didMoveToNewDocument(oldDocument, newDocument);
 }
 
 void HTMLInputElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const

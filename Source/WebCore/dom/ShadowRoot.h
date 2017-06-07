@@ -96,7 +96,7 @@ private:
 
     Node::InsertionNotificationRequest insertedInto(ContainerNode& insertionPoint) override;
     void removedFrom(ContainerNode& insertionPoint) override;
-    void didMoveToNewDocument(Document& oldDocument) override;
+    void didMoveToNewDocument(Document& oldDocument, Document& newDocument) override;
 
     bool m_resetStyleInheritance { false };
     ShadowRootMode m_type { ShadowRootMode::UserAgent };

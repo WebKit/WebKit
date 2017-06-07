@@ -545,10 +545,10 @@ void HTMLImageElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
     addSubresourceURL(urls, document().completeURL(attributeWithoutSynchronization(usemapAttr)));
 }
 
-void HTMLImageElement::didMoveToNewDocument(Document& oldDocument)
+void HTMLImageElement::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
 {
     m_imageLoader.elementDidMoveToNewDocument();
-    HTMLElement::didMoveToNewDocument(oldDocument);
+    HTMLElement::didMoveToNewDocument(oldDocument, newDocument);
 }
 
 bool HTMLImageElement::isServerMap() const

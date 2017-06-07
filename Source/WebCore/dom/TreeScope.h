@@ -45,7 +45,6 @@ class ShadowRoot;
 
 class TreeScope {
     friend class Document;
-    friend class TreeScopeAdopter;
 
 public:
     TreeScope* parentTreeScope() const { return m_parentTreeScope; }
@@ -99,6 +98,11 @@ public:
 
     // Used by the basic DOM mutation methods (e.g., appendChild()).
     void adoptIfNeeded(Node&);
+#if !ASSERT_DISABLED || ENABLE(SECURITY_ASSERTIONS)
+    static void ensureDidMoveToNewDocumentWasCalled(Document& oldDocument);
+#else
+    static void ensureDidMoveToNewDocumentWasCalled(Document&) { }
+#endif
 
     ContainerNode& rootNode() const { return m_rootNode; }
 
@@ -118,6 +122,10 @@ protected:
     Node* nodeFromPoint(const LayoutPoint& clientPoint, LayoutPoint* localPoint);
 
 private:
+    void moveTreeToNewScope(Node&, TreeScope& oldScope, TreeScope& newScope);
+    void moveNodeToNewDocument(Node&, Document& oldDocument, Document& newDocument);
+    void moveShadowTreeToNewDocument(ShadowRoot&, Document& oldDocument, Document& newDocument);
+
     ContainerNode& m_rootNode;
     std::reference_wrapper<Document> m_documentScope;
     TreeScope* m_parentTreeScope;

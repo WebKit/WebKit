@@ -212,10 +212,10 @@ void SVGImageElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
     addSubresourceURL(urls, document().completeURL(href()));
 }
 
-void SVGImageElement::didMoveToNewDocument(Document& oldDocument)
+void SVGImageElement::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
 {
     m_imageLoader.elementDidMoveToNewDocument();
-    SVGGraphicsElement::didMoveToNewDocument(oldDocument);
+    SVGGraphicsElement::didMoveToNewDocument(oldDocument, newDocument);
 }
 
 }

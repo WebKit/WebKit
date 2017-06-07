@@ -348,7 +348,7 @@ private:
     InsertionNotificationRequest insertedInto(ContainerNode&) final;
     void finishedInsertingSubtree() final;
     void removedFrom(ContainerNode&) final;
-    void didMoveToNewDocument(Document& oldDocument) final;
+    void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;
 
     bool hasCustomFocusLogic() const final;
     bool isKeyboardFocusable(KeyboardEvent&) const final;

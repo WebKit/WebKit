@@ -1530,9 +1530,10 @@ void Element::parserDidSetAttributes()
 {
 }
 
-void Element::didMoveToNewDocument(Document& oldDocument)
+void Element::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
 {
-    Node::didMoveToNewDocument(oldDocument);
+    ASSERT_WITH_SECURITY_IMPLICATION(&document() == &newDocument);
+    Node::didMoveToNewDocument(oldDocument, newDocument);
 
     if (oldDocument.inQuirksMode() != document().inQuirksMode()) {
         // ElementData::m_classNames or ElementData::m_idForStyleResolution need to be updated with the right case.
@@ -1543,7 +1544,7 @@ void Element::didMoveToNewDocument(Document& oldDocument)
     }
 
     if (UNLIKELY(isDefinedCustomElement()))
-        CustomElementReactionQueue::enqueueAdoptedCallbackIfNeeded(*this, oldDocument, document());
+        CustomElementReactionQueue::enqueueAdoptedCallbackIfNeeded(*this, oldDocument, newDocument);
 }
 
 bool Element::hasAttributes() const

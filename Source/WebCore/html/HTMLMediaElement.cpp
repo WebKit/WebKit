@@ -712,18 +712,18 @@ void HTMLMediaElement::unregisterWithDocument(Document& document)
 
 }
 
-void HTMLMediaElement::didMoveToNewDocument(Document& oldDocument)
+void HTMLMediaElement::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
 {
+    ASSERT_WITH_SECURITY_IMPLICATION(&document() == &newDocument);
     if (m_shouldDelayLoadEvent) {
         oldDocument.decrementLoadEventDelayCount();
-        document().incrementLoadEventDelayCount();
+        newDocument.incrementLoadEventDelayCount();
     }
 
     unregisterWithDocument(oldDocument);
+    registerWithDocument(newDocument);
 
-    registerWithDocument(document());
-
-    HTMLElement::didMoveToNewDocument(oldDocument);
+    HTMLElement::didMoveToNewDocument(oldDocument, newDocument);
     updateShouldAutoplay();
 }
 
