@@ -1,3 +1,37 @@
+2017-06-07  Daniel Bates  <dabates@apple.com>
+
+        Teach run-webkit-tests how to run HTTPS Web Platform Tests
+        https://bugs.webkit.org/show_bug.cgi?id=172930
+        <rdar://problem/32570201>
+
+        Reviewed by Youenn Fablet.
+
+        Some web platform tests need to be run from an HTTPS server in order to exercise functionality
+        that is conditioned on the page being delivered over a secure protocol. One example of such
+        a test is LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/secure_context/crypto-subtle-secure-context-available.https.sub.html.
+
+        Ideally we should look to use wptrunner to run Web Platform Tests. For now, modify run-webkit-tests
+        to access web platform tests from an HTTPS server when the filename of the test contains ".https.".
+        This makes run-webkit-test match the behavior of wptrunner: <https://github.com/w3c/web-platform-tests/blob/7ce469d1c46dd45aacfe1b408bf2ad36a630e089/tools/manifest/item.py#L42>.
+
+        * Scripts/webkitpy/layout_tests/servers/web_platform_test_server.py:
+        (https_base_url): Parses the Web Platform Tests JSON configuration and returns the base URL
+        to the Web Platform Tests HTTPS server.
+        * Scripts/webkitpy/port/base.py:
+        (Port.to.web_platform_test_server_https_base_url): Turns around and calls https_base_url().
+        * Scripts/webkitpy/port/driver.py:
+        (Driver.__init__): Caches the base URL to the Web Platform Tests HTTPS server. Also rename
+        instance variables web_platform_test_server_doc_root, web_platform_test_server_base_url to
+        _web_platform_test_server_doc_root and _web_platform_test_server_base_url, respectively to
+        indicate that they should be considered private instance variables.
+        (Driver.is_web_platform_test): Update code for renamed instance variables.
+        (Driver):
+        (Driver._web_platform_test_base_url_for_test): Returns the URL to access the specified test.
+        (Driver.test_to_uri): Modified to use Driver._web_platform_test_base_url_for_test() to
+        determine the base URL to use to access the test.
+        (Driver.uri_to_test): Added logic to compute the filesystem local test name from a Web
+        Platform Tests HTTPS URL. Also updated code for renamed instance variables.
+
 2017-06-07  Per Arne Vollan  <pvollan@apple.com>
 
         Support removal of authentication data through the Website data store API.
