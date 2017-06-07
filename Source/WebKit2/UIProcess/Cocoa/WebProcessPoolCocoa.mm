@@ -303,14 +303,6 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
     if (parameters.recordReplayCacheLocation.isEmpty())
         parameters.recordReplayCacheLocation = parameters.diskCacheDirectory;
 #endif
-#if ENABLE(WEB_RTC)
-    bool webRTCEnabled = m_defaultPageGroup->preferences().peerConnectionEnabled();
-    if ([defaults objectForKey:@"ExperimentalPeerConnectionEnabled"])
-        webRTCEnabled = [defaults boolForKey:@"ExperimentalPeerConnectionEnabled"];
-
-    if (webRTCEnabled)
-        SandboxExtension::createHandleForGenericExtension("com.apple.webkit.webrtc", parameters.webRTCNetworkingHandle);
-#endif
 }
 
 void WebProcessPool::platformInvalidateContext()

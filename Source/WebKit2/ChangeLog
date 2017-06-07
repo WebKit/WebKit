@@ -1,3 +1,28 @@
+2017-06-06  Brent Fulgham  <bfulgham@apple.com>
+
+        [WK2][Cocoa] Allow network process to bind addresses without webrtc extension
+        https://bugs.webkit.org/show_bug.cgi?id=173032
+        <rdar://problem/32597426>
+
+        Reviewed by Youenn Fablet.
+
+        Remove the unnecessary WebRTC sandbox extension handle and conditional sandbox rules, since we've
+        decided that all WebKit clients should be able to use the WebRTC protocol.
+
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode): Remove unused sandbox extension from serialization.
+        (WebKit::NetworkProcessCreationParameters::decode): Ditto.
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcessCocoa): We no longer send the sandbox extension,
+        so don't attempt to consume it.
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in: Remove check for 'com.apple.webkit.webrtc'
+        extension. Make rules conditional on building with WEB_RTC feature enabled.
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb: Remove check for 'com.apple.webkit.webrtc'
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess): Do not create unnecessary sandbox extension
+        handle.
+
 2017-06-06  Tim Horton  <timothy_horton@apple.com>
 
         Crash trying to drag the entire text of a long book out of Mail compose view

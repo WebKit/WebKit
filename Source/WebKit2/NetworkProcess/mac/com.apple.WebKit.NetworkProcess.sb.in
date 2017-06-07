@@ -273,9 +273,9 @@
         (set! allow orig-allow))))
 
 ;; FIXME should be removed when <rdar://problem/30498072> is fixed.
-(with-filter (extension "com.apple.webkit.webrtc")
-    (allow network*
-        (local udp)
-        (remote udp)
-        (local tcp)
-        (remote tcp)))
+(allow network*
+    (local udp)
+    (remote udp)
+    (local tcp)
+    (remote tcp))
+

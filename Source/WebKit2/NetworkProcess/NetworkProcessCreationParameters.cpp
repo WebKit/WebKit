@@ -100,9 +100,6 @@ void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << recordReplayMode;
     encoder << recordReplayCacheLocation;
 #endif
-#if ENABLE(WEB_RTC)
-    encoder << webRTCNetworkingHandle;
-#endif
 }
 
 bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProcessCreationParameters& result)
@@ -206,11 +203,6 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
     if (!decoder.decode(result.recordReplayMode))
         return false;
     if (!decoder.decode(result.recordReplayCacheLocation))
-        return false;
-#endif
-
-#if ENABLE(WEB_RTC)
-    if (!decoder.decode(result.webRTCNetworkingHandle))
         return false;
 #endif
 

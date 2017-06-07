@@ -77,12 +77,11 @@
        (vnode-type SYMLINK))
 
 ;; FIXME should be removed when <rdar://problem/30498072> is fixed.
-(with-filter (extension "com.apple.webkit.webrtc")
-    (allow network*
-        (local udp)
-        (remote udp)
-        (local tcp)
-        (remote tcp)))
+(allow network*
+    (local udp)
+    (remote udp)
+    (local tcp)
+    (remote tcp))
 
 ;; Various services required by system frameworks
 (allow mach-lookup
