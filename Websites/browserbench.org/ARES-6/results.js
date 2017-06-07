@@ -59,7 +59,7 @@ class Results {
 
         this.firstIteration.add(times[0]);
         let steadyTimes = times.slice(1).sort((a, b) => b - a); // Sort in reverse order.
-        this.averageWorstCase.add((times[0] + times[1] + times[2] + times[3]) / 4);
+        this.averageWorstCase.add((steadyTimes[0] + steadyTimes[1] + steadyTimes[2] + steadyTimes[3]) / 4);
         this.steadyState.add(steadyTimes.reduce((previous, current) => previous + current) / steadyTimes.length);
         this.reportDone();
     }

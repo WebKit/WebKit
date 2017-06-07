@@ -1,3 +1,19 @@
+2017-06-07  Saam Barati  <sbarati@apple.com>
+
+        ARES-6 incorrectly measures Worst 4 Iterations
+        https://bugs.webkit.org/show_bug.cgi?id=172960
+
+        Reviewed by Mark Lam.
+
+        Version 1.0 of ARES-6 was accidentally measuring the first
+        4 iterations, instead of the worst 4. This patch fixes the
+        bug and bumps the version to 1.0.1.
+
+        * ARES-6/glue.js:
+        (driver.reportResult):
+        * ARES-6/results.js:
+        (Results.prototype.reportResult):
+
 2017-06-06  Saam Barati  <sbarati@apple.com>
 
         Add a version number to ARES-6

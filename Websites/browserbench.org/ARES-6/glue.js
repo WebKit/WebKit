@@ -39,7 +39,7 @@ function reportResult(...args) {
 }
 
 {
-    const title = "ARES-6 1.0";
+    const title = "ARES-6 1.0.1";
     if (isInBrowser) {
         document.title = title;
     } else {
