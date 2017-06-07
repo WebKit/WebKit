@@ -704,7 +704,10 @@ SLOW_PATH_DECL(slow_path_has_structure_property)
     JSPropertyNameEnumerator* enumerator = jsCast<JSPropertyNameEnumerator*>(OP(4).jsValue().asCell());
     if (base->structure(vm)->id() == enumerator->cachedStructureID())
         RETURN(jsBoolean(true));
-    RETURN(jsBoolean(base->hasPropertyGeneric(exec, asString(property.asCell())->toIdentifier(exec), PropertySlot::InternalMethodType::GetOwnProperty)));
+    JSString* string = asString(property);
+    auto propertyName = string->toIdentifier(exec);
+    CHECK_EXCEPTION();
+    RETURN(jsBoolean(base->hasPropertyGeneric(exec, propertyName, PropertySlot::InternalMethodType::GetOwnProperty)));
 }
 
 SLOW_PATH_DECL(slow_path_has_generic_property)
@@ -713,14 +716,10 @@ SLOW_PATH_DECL(slow_path_has_generic_property)
     JSObject* base = OP(2).jsValue().toObject(exec);
     CHECK_EXCEPTION();
     JSValue property = OP(3).jsValue();
-    bool result;
-    if (property.isString())
-        result = base->hasPropertyGeneric(exec, asString(property.asCell())->toIdentifier(exec), PropertySlot::InternalMethodType::GetOwnProperty);
-    else {
-        ASSERT(property.isUInt32());
-        result = base->hasPropertyGeneric(exec, property.asUInt32(), PropertySlot::InternalMethodType::GetOwnProperty);
-    }
-    RETURN(jsBoolean(result));
+    JSString* string = asString(property);
+    auto propertyName = string->toIdentifier(exec);
+    CHECK_EXCEPTION();
+    RETURN(jsBoolean(base->hasPropertyGeneric(exec, propertyName, PropertySlot::InternalMethodType::GetOwnProperty)));
 }
 
 SLOW_PATH_DECL(slow_path_get_direct_pname)
@@ -728,8 +727,10 @@ SLOW_PATH_DECL(slow_path_get_direct_pname)
     BEGIN();
     JSValue baseValue = OP_C(2).jsValue();
     JSValue property = OP(3).jsValue();
-    ASSERT(property.isString());
-    RETURN(baseValue.get(exec, asString(property)->toIdentifier(exec)));
+    JSString* string = asString(property);
+    auto propertyName = string->toIdentifier(exec);
+    CHECK_EXCEPTION();
+    RETURN(baseValue.get(exec, propertyName));
 }
 
 SLOW_PATH_DECL(slow_path_get_property_enumerator)

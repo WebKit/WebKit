@@ -1,3 +1,15 @@
+2017-06-07  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] has_generic_property never accepts non-String
+        https://bugs.webkit.org/show_bug.cgi?id=173057
+
+        Reviewed by Darin Adler.
+
+        We never pass non-String value to has_generic_property bytecode.
+
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+
 2017-06-06  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][x86-64] Some callee saved registers aren't preserved
