@@ -1,5 +1,22 @@
 2017-06-07  Mark Lam  <mark.lam@apple.com>
 
+        Restrict the regress-173035.js test to only run on Darwin x86-64.
+        https://bugs.webkit.org/show_bug.cgi?id=173075
+
+        Reviewed by Saam Barati.
+
+        This is because the 32-bit x86 build will fail to mmap the 0x3f900000 bytes that
+        this test will require to succeed.  Here's an example of this failure:
+        https://build.webkit.org/builders/Apple%20Sierra%2032-bit%20JSC%20%28BuildAndTest%29/builds/866/steps/webkit-32bit-jsc-test/logs/stdio
+
+        Since the issue is due to allocation of a very large amount of memory, the test
+        will probably fail on iOS and other platforms as well.  Hence, we should just
+        skip this test for any platforms that is not Darwin x86-64.
+
+        * stress/regress-173035.js:
+
+2017-06-07  Mark Lam  <mark.lam@apple.com>
+
         ASSERTION failure: !masqueradesAsUndefinedWatchpointIsStillValid() || !isKnownCell(operand.node())
         https://bugs.webkit.org/show_bug.cgi?id=168587
 
