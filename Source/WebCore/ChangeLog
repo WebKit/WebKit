@@ -1,3 +1,15 @@
+2017-06-07  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Use a dedicated node flag to identify a Document node
+        https://bugs.webkit.org/show_bug.cgi?id=173037
+
+        Reviewed by Chris Dumez.
+
+        Address Antti's review comment. We don't need a new Node flg.
+
+        * dom/Node.h:
+        (WebCore::Node::isDocumentNode):
+
 2017-06-07  Jon Davis  <jond@apple.com>
 
         Update feature status for features Supported In Preview

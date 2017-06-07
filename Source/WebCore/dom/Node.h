@@ -222,7 +222,7 @@ public:
     virtual bool isImageControlsButtonElement() const { return false; }
 #endif
 
-    bool isDocumentNode() const { return getFlag(IsDocumentNodeFlag); }
+    bool isDocumentNode() const { return getFlag(IsContainerFlag) && !getFlag(IsElementFlag) && !getFlag(IsDocumentFragmentFlag); }
     bool isTreeScope() const;
     bool isDocumentFragment() const { return getFlag(IsDocumentFragmentFlag); }
     bool isShadowRoot() const { return isDocumentFragment() && isTreeScope(); }
@@ -573,7 +573,7 @@ protected:
         IsStyledElementFlag = 1 << 3,
         IsHTMLFlag = 1 << 4,
         IsSVGFlag = 1 << 5,
-        IsDocumentNodeFlag = 1 << 6,
+        // One free bit left.
         ChildNeedsStyleRecalcFlag = 1 << 7,
         IsConnectedFlag = 1 << 8,
         IsLinkFlag = 1 << 9,
@@ -625,7 +625,7 @@ protected:
         CreateStyledElement = CreateElement | IsStyledElementFlag, 
         CreateHTMLElement = CreateStyledElement | IsHTMLFlag,
         CreateSVGElement = CreateStyledElement | IsSVGFlag | HasCustomStyleResolveCallbacksFlag,
-        CreateDocument = CreateContainer | IsDocumentNodeFlag | IsConnectedFlag,
+        CreateDocument = CreateContainer | IsConnectedFlag,
         CreateEditingText = CreateText | IsEditingTextOrUndefinedCustomElementFlag,
         CreateMathMLElement = CreateStyledElement | IsMathMLFlag
     };
