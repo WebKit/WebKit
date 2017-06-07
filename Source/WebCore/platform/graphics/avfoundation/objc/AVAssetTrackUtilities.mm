@@ -29,6 +29,7 @@
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
 
 #import "FourCC.h"
+#import "IOPSLibSPI.h"
 #import <AVFoundation/AVAssetTrack.h>
 
 #import "CoreMediaSoftLink.h"
@@ -36,8 +37,31 @@
 
 namespace WebCore {
 
+static bool systemHasBattery()
+{
+    RetainPtr<CFTypeRef> powerSourcesInfo = adoptCF(IOPSCopyPowerSourcesInfo());
+    if (!powerSourcesInfo)
+        return false;
+    RetainPtr<CFArrayRef> powerSourcesList = adoptCF(IOPSCopyPowerSourcesList(powerSourcesInfo.get()));
+    if (!powerSourcesList)
+        return false;
+    for (CFIndex i = 0, count = CFArrayGetCount(powerSourcesList.get()); i < count; ++i) {
+        CFDictionaryRef description = IOPSGetPowerSourceDescription(powerSourcesInfo.get(), CFArrayGetValueAtIndex(powerSourcesList.get(), i));
+        CFTypeRef value = CFDictionaryGetValue(description, CFSTR(kIOPSTypeKey));
+        if (!value || CFEqual(value, CFSTR(kIOPSInternalBatteryType)))
+            return true;
+    }
+    return false;
+}
+
 bool assetTrackMeetsHardwareDecodeRequirements(AVAssetTrack *track, const Vector<ContentType>& contentTypesRequiringHardwareDecode)
 {
+    static bool hasBattery = systemHasBattery();
+
+    // If the system is exclusively wall-powered, do not require hardware support.
+    if (!hasBattery)
+        return true;
+
     // If we can't determine whether a codec has hardware support or not, default to true.
     if (!canLoad_VideoToolbox_VTIsHardwareDecodeSupported())
         return true;
