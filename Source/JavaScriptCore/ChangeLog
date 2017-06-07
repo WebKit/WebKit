@@ -1,3 +1,44 @@
+2017-06-07  Saam Barati  <sbarati@apple.com>
+
+        Assertion failure in com.apple.WebKit.WebContent.Development in com.apple.JavaScriptCore: JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranchNullOrUndefined + 141
+        https://bugs.webkit.org/show_bug.cgi?id=172673
+        <rdar://problem/32250144>
+
+        Reviewed by Mark Lam.
+
+        This patch simply removes this assertion. It's faulty because it
+        races with the main thread when doing concurrent compilation.
+        
+        Consider a program with:
+        - a FrozenValue over an object O and Structure S1. S1 starts off as dfgWatchable() being true.
+        - Structure S2
+        
+        The DFG IR is like so:
+          a: JSConstant(O) // FrozenValue {O, S1}
+          b: CheckStructure(@a, S2)
+          c: ToThis(@a)
+          d: CheckEq(@c, nullConstant)
+          Branch(@d)
+        
+        The AbstractValue for @a will start off as having a finite structure because S1 is dfgWatchable().
+        When running AI, we'll notice that node @b will OSR exit, so nodes after
+        @b are unreachable. Later in the compilation, S1 is no longer dfgWatchable().
+        Now, when running AI, @a will have Top for its structure set. No longer will
+        we think @b exits.
+        
+        The DFG backend asserts that under such a situation, we should have simplified
+        the CheckEq to false. However, this is a racy thing to assert, since the
+        transition from dfgWatchable() to !dfgWatchable() can happen right before we
+        enter the backend. Hence, this assertion is not valid.
+        
+        (Note, the generated code for the above program will never actually execute.
+        Since we noticed S1 as dfgWatchable(), we make the compilation dependent on
+        S1 not transitioning. S1 transitions, so we won't actually run the code that
+        gets compiled.)
+
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranchNullOrUndefined):
+
 2017-06-07  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] has_generic_property never accepts non-String
