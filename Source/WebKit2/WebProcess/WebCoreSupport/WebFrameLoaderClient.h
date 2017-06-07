@@ -84,7 +84,8 @@ private:
 #if ENABLE(DATA_DETECTION)
     void dispatchDidFinishDataDetection(NSArray *detectionResults) final;
 #endif
-    
+    void dispatchDidChangeMainDocument() final;
+
     void dispatchDidDispatchOnloadEvents() final;
     void dispatchDidReceiveServerRedirectForProvisionalLoad() final;
     void dispatchDidChangeProvisionalURL() final;

@@ -1,3 +1,18 @@
+2017-06-07  Youenn Fablet  <youenn@apple.com>
+
+        getUserMedia is prompting too often
+        https://bugs.webkit.org/show_bug.cgi?id=172859
+        <rdar://problem/32589950>
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/getUserMedia-grant-persistency-expected.txt: Added.
+        * fast/mediastream/getUserMedia-grant-persistency-reload-expected.txt: Added.
+        * fast/mediastream/getUserMedia-grant-persistency-reload.html: Added.
+        * fast/mediastream/getUserMedia-grant-persistency.html: Added.
+        * http/tests/media/media-stream/get-user-media-prompt-expected.txt:
+        * http/tests/media/media-stream/get-user-media-prompt.html: Last gum does not need a prompt anymore.
+
 2017-06-07  Daniel Bates  <dabates@apple.com>
 
         Fetching Blob URLs with XHR gives null content-type and content-length

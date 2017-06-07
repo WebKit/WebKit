@@ -1,3 +1,19 @@
+2017-06-07  Youenn Fablet  <youenn@apple.com>
+
+        getUserMedia is prompting too often
+        https://bugs.webkit.org/show_bug.cgi?id=172859
+        <rdar://problem/32589950>
+
+        Reviewed by Eric Carlson.
+
+        Tests: fast/mediastream/getUserMedia-grant-persistency-reload.html
+               fast/mediastream/getUserMedia-grant-persistency.html
+
+        * loader/FrameLoaderClient.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::setDocument): Allows notifying of change of main frame document.
+        UIProcess will use that to remove unneeded previously granted gum permission.
+
 2017-06-07  Chris Dumez  <cdumez@apple.com>
 
         Align <col span>/<colgroup span> limits with the latest HTML specification

@@ -336,6 +336,15 @@ void WebFrameLoaderClient::dispatchDidChangeLocationWithinPage()
     webPage->send(Messages::WebPageProxy::DidSameDocumentNavigationForFrame(m_frame->frameID(), navigationID, SameDocumentNavigationAnchorNavigation, m_frame->coreFrame()->document()->url().string(), UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
 }
 
+void WebFrameLoaderClient::dispatchDidChangeMainDocument()
+{
+    WebPage* webPage = m_frame->page();
+    if (!webPage)
+        return;
+
+    webPage->send(Messages::WebPageProxy::DidChangeMainDocument(m_frame->frameID()));
+}
+
 void WebFrameLoaderClient::dispatchDidPushStateWithinPage()
 {
     WebPage* webPage = m_frame->page();

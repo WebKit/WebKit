@@ -3522,6 +3522,15 @@ void WebPageProxy::didSameDocumentNavigationForFrame(uint64_t frameID, uint64_t 
         m_pageClient.didSameDocumentNavigationForMainFrame(navigationType);
 }
 
+void WebPageProxy::didChangeMainDocument(uint64_t frameID)
+{
+#if ENABLE(MEDIA_STREAM)
+    userMediaPermissionRequestManager().removeGrantedAccess(frameID);
+#else
+    UNUSED_PARAM(frameID);
+#endif
+}
+
 void WebPageProxy::didReceiveTitleForFrame(uint64_t frameID, const String& title, const UserData& userData)
 {
     PageClientProtector protector(m_pageClient);

@@ -1,0 +1,2 @@
+In case of reload, getUserMedia should not be allowed based on previous getUserMedia calls but only according client logic
+PASS

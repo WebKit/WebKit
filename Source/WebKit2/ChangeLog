@@ -1,3 +1,44 @@
+2017-06-07  Youenn Fablet  <youenn@apple.com>
+
+        getUserMedia is prompting too often
+        https://bugs.webkit.org/show_bug.cgi?id=172859
+        <rdar://problem/32589950>
+
+        Reviewed by Eric Carlson.
+
+        Introduce a storage of granted requests to skip prompting when needed.
+        This is a partial implementation as granted requests should not happen for background tabs.
+        This will be covered in a follow-up patch.
+        Covered by manual tests.
+
+        A granted request keeps its mainFrameID.
+        Whenever the document of the main frame changes, the granted requests for that mainFrameID will be removed.
+        This handles the case of navigating, reloading... while still supporting the case of granting getUserMedia after in page navigation.
+
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::createRequest):
+        (WebKit::UserMediaPermissionRequestManagerProxy::userMediaAccessWasGranted):
+        (WebKit::UserMediaPermissionRequestManagerProxy::removeGrantedAccess):
+        (WebKit::UserMediaPermissionRequestManagerProxy::searchForGrantedRequest):
+        (WebKit::UserMediaPermissionRequestManagerProxy::grantAccess):
+        (WebKit::UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame):
+        * UIProcess/UserMediaPermissionRequestManagerProxy.h:
+        * UIProcess/UserMediaPermissionRequestProxy.cpp:
+        (WebKit::UserMediaPermissionRequestProxy::UserMediaPermissionRequestProxy):
+        * UIProcess/UserMediaPermissionRequestProxy.h:
+        (WebKit::UserMediaPermissionRequestProxy::create):
+        (WebKit::UserMediaPermissionRequestProxy::mainFrameID):
+        (WebKit::UserMediaPermissionRequestProxy::frameID):
+        (WebKit::UserMediaPermissionRequestProxy::userMediaDocumentSecurityOrigin):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didChangeMainDocument):
+        (WebKit::WebPageProxy::backForwardGoToItem):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidChangeMainDocument):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+
 2017-06-07  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] additionalReadAccessAllowedURLs should be consumed before loading the injected bundle
