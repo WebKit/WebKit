@@ -1,3 +1,25 @@
+2017-06-06  Tim Horton  <timothy_horton@apple.com>
+
+        Crash trying to drag the entire text of a long book out of Mail compose view
+        https://bugs.webkit.org/show_bug.cgi?id=173042
+        <rdar://problem/32382059>
+
+        Reviewed by Simon Fraser.
+
+        Creating a TextIndicator that is hundreds of thousands of pixels tall
+        is not a good idea. We introduced TextIndicatorOptionDoNotClipToVisibleRect
+        so that (for example) an image that overhangs the edge of the page would
+        contain the entire image, instead of just the visible fragment.
+        Instead, rename this option to ExpandClipBeyondVisibleRect, and make it
+        not unclip *entirely*, but expand the clip significantly (50% in each direction)
+        beyond the bounds of the current visible rect. Also, make use of exposed
+        area information for this clipping; otherwise, clients with very large views
+        inside scrollable areas (like Mail) would still try to create large TextIndicators.
+
+        * page/TextIndicator.cpp:
+        (WebCore::initializeIndicator):
+        * page/TextIndicator.h:
+
 2017-06-06  Chris Dumez  <cdumez@apple.com>
 
         RELEASE_ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values)) hit in convertEnumerationToJS<WebCore::History::ScrollRestoration>()

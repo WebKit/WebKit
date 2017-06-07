@@ -272,34 +272,42 @@ static bool initializeIndicator(TextIndicatorData& data, Frame& frame, const Ran
     else if (data.options & TextIndicatorOptionUseSelectionRectForSizing)
         getSelectionRectsForRange(textRects, range);
 #endif
-    else {
-        if (data.options & TextIndicatorOptionDoNotClipToVisibleRect)
-            frame.selection().getTextRectangles(textRects, textRectHeight);
-        else
-            frame.selection().getClippedVisibleTextRectangles(textRects, textRectHeight);
-    }
+    else
+        frame.selection().getTextRectangles(textRects, textRectHeight);
 
-    if (textRects.isEmpty()) {
-        RenderView* renderView = frame.contentRenderer();
-        if (!renderView)
-            return false;
-        FloatRect boundingRect = range.absoluteBoundingRect();
-        if (data.options & TextIndicatorOptionDoNotClipToVisibleRect)
-            textRects.append(boundingRect);
-        else {
-            // Clip to the visible rect, just like getClippedVisibleTextRectangles does.
-            // FIXME: We really want to clip to the unobscured rect in both cases, I think.
-            // (this seems to work on Mac, but maybe not iOS?)
-            FloatRect visibleContentRect = frame.view()->visibleContentRect(ScrollableArea::LegacyIOSDocumentVisibleRect);
-            textRects.append(intersection(visibleContentRect, boundingRect));
-        }
+    if (textRects.isEmpty())
+        textRects.append(range.absoluteBoundingRect());
+
+    auto frameView = frame.view();
+
+    // Use the exposedContentRect/viewExposedRect instead of visibleContentRect to avoid creating a huge indicator for a large view inside a scroll view.
+    IntRect contentsClipRect;
+#if PLATFORM(IOS)
+    contentsClipRect = enclosingIntRect(frameView->exposedContentRect());
+#else
+    if (auto viewExposedRect = frameView->viewExposedRect())
+        contentsClipRect = frameView->viewToContents(enclosingIntRect(*viewExposedRect));
+    else
+        contentsClipRect = frameView->visibleContentRect();
+#endif
+
+    if (data.options & TextIndicatorOptionExpandClipBeyondVisibleRect) {
+        contentsClipRect.inflateX(contentsClipRect.width() / 2);
+        contentsClipRect.inflateY(contentsClipRect.height() / 2);
     }
 
     FloatRect textBoundingRectInRootViewCoordinates;
     FloatRect textBoundingRectInDocumentCoordinates;
+    Vector<FloatRect> clippedTextRectsInDocumentCoordinates;
     Vector<FloatRect> textRectsInRootViewCoordinates;
     for (const FloatRect& textRect : textRects) {
-        FloatRect textRectInDocumentCoordinatesIncludingMargin = textRect;
+        FloatRect clippedTextRect = intersection(textRect, contentsClipRect);
+        if (clippedTextRect.isEmpty())
+            continue;
+
+        clippedTextRectsInDocumentCoordinates.append(clippedTextRect);
+
+        FloatRect textRectInDocumentCoordinatesIncludingMargin = clippedTextRect;
         textRectInDocumentCoordinatesIncludingMargin.inflateX(margin.width());
         textRectInDocumentCoordinatesIncludingMargin.inflateY(margin.height());
         textBoundingRectInDocumentCoordinates.unite(textRectInDocumentCoordinatesIncludingMargin);
@@ -321,7 +329,7 @@ static bool initializeIndicator(TextIndicatorData& data, Frame& frame, const Ran
     data.textBoundingRectInRootViewCoordinates = textBoundingRectInRootViewCoordinates;
     data.textRectsInBoundingRectCoordinates = textRectsInBoundingRectCoordinates;
 
-    return takeSnapshots(data, frame, enclosingIntRect(textBoundingRectInDocumentCoordinates), textRects);
+    return takeSnapshots(data, frame, enclosingIntRect(textBoundingRectInDocumentCoordinates), clippedTextRectsInDocumentCoordinates);
 }
 
 } // namespace WebCore

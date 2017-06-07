@@ -1,3 +1,16 @@
+2017-06-06  Tim Horton  <timothy_horton@apple.com>
+
+        Crash trying to drag the entire text of a long book out of Mail compose view
+        https://bugs.webkit.org/show_bug.cgi?id=173042
+        <rdar://problem/32382059>
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/WebPage/ios/FindControllerIOS.mm:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::didConcludeEditDataInteraction):
+        Adapt to the new name.
+
 2017-06-06  Chris Dumez  <cdumez@apple.com>
 
         RELEASE_ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values)) hit in convertEnumerationToJS<WebCore::History::ScrollRestoration>()

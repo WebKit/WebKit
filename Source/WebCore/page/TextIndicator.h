@@ -78,8 +78,8 @@ enum TextIndicatorOption : uint16_t {
     TextIndicatorOptionIncludeMarginIfRangeMatchesSelection = 1 << 6,
 
     // By default, TextIndicator clips the indicated rects to the visible content rect.
-    // If this option is set, do not clip the indicated rects.
-    TextIndicatorOptionDoNotClipToVisibleRect = 1 << 7,
+    // If this option is set, expand the clip rect outward so that slightly offscreen content will be included.
+    TextIndicatorOptionExpandClipBeyondVisibleRect = 1 << 7,
 
     // Include an additional snapshot of everything in view, with the exception of nodes within the currently selected range.
     TextIndicatorOptionIncludeSnapshotOfAllVisibleContentWithoutSelection = 1 << 8,
