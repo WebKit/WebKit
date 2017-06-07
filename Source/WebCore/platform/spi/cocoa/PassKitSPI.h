@@ -43,6 +43,13 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+#if __MAC_OS_X_VERSION_MAX_ALLOWED >= 101300
+@class PKPaymentAuthorizationResult;
+@class PKPaymentRequestPaymentMethodUpdate;
+@class PKPaymentRequestShippingMethodUpdate;
+@class PKPaymentRequestShippingContactUpdate;
+#endif
+
 typedef NS_OPTIONS(NSUInteger, PKAddressField) {
     PKAddressFieldNone = 0UL,
     PKAddressFieldPostalAddress = 1UL << 0,

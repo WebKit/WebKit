@@ -153,9 +153,11 @@ static WebCore::PaymentRequest::ShippingMethod toShippingMethod(PKShippingMethod
     return result;
 }
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 110000)
+
 - (void)paymentAuthorizationViewController:(PKPaymentAuthorizationViewController *)controller didAuthorizePayment:(PKPayment *)payment handler:(void (^)(PKPaymentAuthorizationResult *result))completion
 {
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
     if (!_webPaymentCoordinatorProxy) {
         completion(adoptNS([allocPKPaymentAuthorizationResultInstance() initWithStatus:PKPaymentAuthorizationStatusFailure errors:@[ ]]).get());
         return;
@@ -165,10 +167,12 @@ static WebCore::PaymentRequest::ShippingMethod toShippingMethod(PKShippingMethod
     _paymentAuthorizedCompletion = completion;
 
     _webPaymentCoordinatorProxy->didAuthorizePayment(WebCore::Payment(payment));
+#endif
 }
 
 - (void)paymentAuthorizationViewController:(PKPaymentAuthorizationViewController *)controller didSelectPaymentMethod:(PKPaymentMethod *)paymentMethod handler:(void (^)(PKPaymentRequestPaymentMethodUpdate *update))completion
 {
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
     if (!_webPaymentCoordinatorProxy) {
         completion(adoptNS([allocPKPaymentRequestPaymentMethodUpdateInstance() initWithPaymentSummaryItems:@[ ]]).get());
         return;
@@ -177,9 +181,11 @@ static WebCore::PaymentRequest::ShippingMethod toShippingMethod(PKShippingMethod
     ASSERT(!_didSelectPaymentMethodCompletion);
     _didSelectPaymentMethodCompletion = completion;
     _webPaymentCoordinatorProxy->didSelectPaymentMethod(WebCore::PaymentMethod(paymentMethod));
+#endif
 }
 
 - (void)paymentAuthorizationViewController:(PKPaymentAuthorizationViewController *)controller didSelectShippingMethod:(PKShippingMethod *)shippingMethod handler:(void (^)(PKPaymentRequestShippingMethodUpdate *update))completion {
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
     if (!_webPaymentCoordinatorProxy) {
         completion(adoptNS([allocPKPaymentRequestShippingMethodUpdateInstance() initWithPaymentSummaryItems:@[ ]]).get());
         return;
@@ -188,10 +194,12 @@ static WebCore::PaymentRequest::ShippingMethod toShippingMethod(PKShippingMethod
     ASSERT(!_didSelectShippingMethodCompletion);
     _didSelectShippingMethodCompletion = completion;
     _webPaymentCoordinatorProxy->didSelectShippingMethod(toShippingMethod(shippingMethod));
+#endif
 }
 
 - (void)paymentAuthorizationViewController:(PKPaymentAuthorizationViewController *)controller didSelectShippingContact:(PKContact *)contact handler:(void (^)(PKPaymentRequestShippingContactUpdate *update))completion
 {
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
     if (!_webPaymentCoordinatorProxy) {
         completion(adoptNS([allocPKPaymentRequestShippingContactUpdateInstance() initWithErrors:@[ ] paymentSummaryItems:@[ ] shippingMethods:@[ ]]).get());
         return;
@@ -200,8 +208,13 @@ static WebCore::PaymentRequest::ShippingMethod toShippingMethod(PKShippingMethod
     ASSERT(!_didSelectShippingContactCompletion);
     _didSelectShippingContactCompletion = completion;
     _webPaymentCoordinatorProxy->didSelectShippingContact(WebCore::PaymentContact(contact));
+#endif
 }
-#else
+
+#endif
+
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 110000)
+
 - (void)paymentAuthorizationViewController:(PKPaymentAuthorizationViewController *)controller didAuthorizePayment:(PKPayment *)payment completion:(void (^)(PKPaymentAuthorizationStatus))completion
 {
     if (!_webPaymentCoordinatorProxy) {
@@ -251,6 +264,7 @@ static WebCore::PaymentRequest::ShippingMethod toShippingMethod(PKShippingMethod
     _didSelectShippingContactCompletion = completion;
     _webPaymentCoordinatorProxy->didSelectShippingContact(WebCore::PaymentContact(contact));
 }
+
 #endif
 
 - (void)paymentAuthorizationViewControllerDidFinish:(PKPaymentAuthorizationViewController *)controller

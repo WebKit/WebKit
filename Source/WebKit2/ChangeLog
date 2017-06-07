@@ -1,3 +1,13 @@
+2017-06-06  Dan Bernstein  <mitz@apple.com>
+
+        Fixed building with the macOS 10.13 Apple Internal SDK when targeting macOS 10.12.
+
+        * UIProcess/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm:
+        (-[WKPaymentAuthorizationViewControllerDelegate paymentAuthorizationViewController:didAuthorizePayment:handler:]):
+        (-[WKPaymentAuthorizationViewControllerDelegate paymentAuthorizationViewController:didSelectPaymentMethod:handler:]):
+        (-[WKPaymentAuthorizationViewControllerDelegate paymentAuthorizationViewController:didSelectShippingMethod:handler:]):
+        (-[WKPaymentAuthorizationViewControllerDelegate paymentAuthorizationViewController:didSelectShippingContact:handler:]):
+
 2017-06-06  Brent Fulgham  <bfulgham@apple.com>
 
         [WK2][Cocoa] Allow network process to bind addresses without webrtc extension
