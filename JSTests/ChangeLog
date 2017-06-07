@@ -1,3 +1,14 @@
+2017-06-07  Mark Lam  <mark.lam@apple.com>
+
+        ASSERTION failure: !masqueradesAsUndefinedWatchpointIsStillValid() || !isKnownCell(operand.node())
+        https://bugs.webkit.org/show_bug.cgi?id=168587
+
+        Not reviewed.
+
+        Unskipping the test because the issue has been fixed in https://bugs.webkit.org/show_bug.cgi?id=172673.
+
+        * stress/test-finally.js:
+
 2017-06-06  Mark Lam  <mark.lam@apple.com>
 
         Contiguous storage butterfly length should not exceed MAX_STORAGE_VECTOR_LENGTH.
