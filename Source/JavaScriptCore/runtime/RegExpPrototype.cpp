@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003, 2007-2008, 2016 Apple Inc. All Rights Reserved.
+ *  Copyright (C) 2003-2017 Apple Inc. All Rights Reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -679,7 +679,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncSplitFast(ExecState* exec)
     genericSplit(
         vm, regexp, input, inputSize, position, matchPosition, regExpIsSticky, regExpIsUnicode,
         [&] () -> SplitControl {
-            if (resultLength + dryRunCount >= MAX_STORAGE_VECTOR_LENGTH)
+            if (resultLength + dryRunCount > MAX_STORAGE_VECTOR_LENGTH)
                 return AbortSplit;
             return ContinueSplit;
         },
@@ -690,7 +690,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncSplitFast(ExecState* exec)
             return ContinueSplit;
         });
     
-    if (resultLength + dryRunCount >= MAX_STORAGE_VECTOR_LENGTH) {
+    if (resultLength + dryRunCount > MAX_STORAGE_VECTOR_LENGTH) {
         throwOutOfMemoryError(exec, scope);
         return encodedJSValue();
     }

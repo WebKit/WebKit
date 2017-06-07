@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003, 2007-2008, 2012, 2016 Apple Inc. All Rights Reserved.
+ *  Copyright (C) 2003-2017 Apple Inc. All Rights Reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -204,7 +204,7 @@ JSValue collectMatches(VM& vm, ExecState* exec, JSString* string, const String& 
             unsigned matchCount = 0;
             MatchResult savedResult = result;
             do {
-                if (array->length() + matchCount >= MAX_STORAGE_VECTOR_LENGTH) {
+                if (array->length() + matchCount > MAX_STORAGE_VECTOR_LENGTH) {
                     throwOutOfMemoryError(exec, scope);
                     return jsUndefined();
                 }

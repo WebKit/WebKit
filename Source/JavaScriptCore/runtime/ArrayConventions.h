@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003, 2007, 2008, 2009, 2012, 2016 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2017 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -68,6 +68,9 @@ namespace JSC {
 #define MAX_STORAGE_VECTOR_INDEX (MAX_STORAGE_VECTOR_LENGTH - 1)
 // 0xFFFFFFFF is a bit weird -- is not an array index even though it's an integer.
 #define MAX_ARRAY_INDEX 0xFFFFFFFEU
+
+static_assert(MIN_SPARSE_ARRAY_INDEX <= MAX_STORAGE_VECTOR_INDEX, "MIN_SPARSE_ARRAY_INDEX must be less than or equal to MAX_STORAGE_VECTOR_INDEX");
+static_assert(MAX_STORAGE_VECTOR_INDEX <= MAX_ARRAY_INDEX, "MAX_STORAGE_VECTOR_INDEX must be less than or equal to MAX_ARRAY_INDEX");
 
 // The value BASE_XXX_VECTOR_LEN is the maximum number of vector elements we'll allocate
 // for an array that was created with a sepcified length (e.g. a = new Array(123))

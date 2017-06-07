@@ -1,3 +1,27 @@
+2017-06-06  Mark Lam  <mark.lam@apple.com>
+
+        Contiguous storage butterfly length should not exceed MAX_STORAGE_VECTOR_LENGTH.
+        https://bugs.webkit.org/show_bug.cgi?id=173035
+        <rdar://problem/32554593>
+
+        Reviewed by Geoffrey Garen and Filip Pizlo.
+
+        Also added and fixed up some assertions.
+
+        * runtime/ArrayConventions.h:
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::setLength):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::createInitialIndexedStorage):
+        (JSC::JSObject::ensureLengthSlow):
+        (JSC::JSObject::reallocateAndShrinkButterfly):
+        * runtime/JSObject.h:
+        (JSC::JSObject::ensureLength):
+        * runtime/RegExpObject.cpp:
+        (JSC::collectMatches):
+        * runtime/RegExpPrototype.cpp:
+        (JSC::regExpProtoFuncSplitFast):
+
 2017-06-06  Saam Barati  <sbarati@apple.com>
 
         Make sure we restore SP when doing calls that could be to JS
