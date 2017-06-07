@@ -254,6 +254,10 @@ OBJC_CLASS NSTextAlternatives;
 
 - (void)_documentScaleChanged;
 - (BOOL)_fetchCustomFixedPositionLayoutRect:(NSRect*)rect;
+#if ENABLE(ORIENTATION_EVENTS)
+- (void)_setDeviceOrientation:(NSUInteger)orientation;
+- (NSUInteger)_deviceOrientation;
+#endif
 #endif
 
 #if ENABLE(DATA_INTERACTION) && defined(__cplusplus)

@@ -248,6 +248,9 @@ private:
     BOOL closed;
 #if PLATFORM(IOS)
     BOOL closing;
+#if ENABLE(ORIENTATION_EVENTS)
+    NSUInteger deviceOrientation;
+#endif
 #endif
     BOOL shouldCloseWithWindow;
     BOOL mainFrameDocumentReady;

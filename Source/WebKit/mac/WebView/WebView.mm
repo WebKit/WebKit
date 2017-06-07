@@ -1521,6 +1521,9 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_wakWindowScreenScaleChanged:) name:WAKWindowScreenScaleDidChangeNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_wakWindowVisibilityChanged:) name:WAKWindowVisibilityDidChangeNotification object:nil];
     _private->_fixedPositionContent = [[WebFixedPositionContent alloc] initWithWebView:self];
+#if ENABLE(ORIENTATION_EVENTS)
+    _private->deviceOrientation = [[self _UIKitDelegateForwarder] deviceOrientation];
+#endif
 #endif
 
     if ([[NSUserDefaults standardUserDefaults] objectForKey:WebSmartInsertDeleteEnabled])
@@ -4187,6 +4190,18 @@ static inline IMP getMethod(id o, SEL s)
 {
     return _private->closing;
 }
+
+#if ENABLE(ORIENTATION_EVENTS)
+- (void)_setDeviceOrientation:(NSUInteger)orientation
+{
+    _private->deviceOrientation = orientation;
+}
+
+- (NSUInteger)_deviceOrientation
+{
+    return _private->deviceOrientation;
+}
+#endif
 
 + (NSArray *)_productivityDocumentMIMETypes
 {

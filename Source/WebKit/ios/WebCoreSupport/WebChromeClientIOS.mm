@@ -361,12 +361,10 @@ RefPtr<Icon> WebChromeClientIOS::createIconForFiles(const Vector<String>& filena
 }
 
 #if ENABLE(ORIENTATION_EVENTS)
-
 int WebChromeClientIOS::deviceOrientation() const
 {
-    return [[webView() _UIKitDelegateForwarder] deviceOrientation];
+    return [webView() _deviceOrientation];
 }
-
 #endif
 
 #endif // PLATFORM(IOS)
