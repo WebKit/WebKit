@@ -22,10 +22,8 @@
 
 #pragma once
 
-#include "CSSAnimationController.h"
 #include "LengthFunctions.h"
 #include "RenderObject.h"
-#include "StyleInheritedData.h"
 
 namespace WebCore {
 

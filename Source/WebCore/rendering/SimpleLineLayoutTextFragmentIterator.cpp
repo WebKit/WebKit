@@ -26,6 +26,7 @@
 #include "config.h"
 #include "SimpleLineLayoutTextFragmentIterator.h"
 
+#include "FontCascade.h"
 #include "Hyphenation.h"
 #include "RenderBlockFlow.h"
 #include "RenderChildIterator.h"

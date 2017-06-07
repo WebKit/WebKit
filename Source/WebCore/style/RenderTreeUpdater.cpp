@@ -27,6 +27,7 @@
 #include "RenderTreeUpdater.h"
 
 #include "AXObjectCache.h"
+#include "CSSAnimationController.h"
 #include "ComposedTreeAncestorIterator.h"
 #include "ComposedTreeIterator.h"
 #include "Document.h"

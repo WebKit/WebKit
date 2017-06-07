@@ -29,6 +29,8 @@
 
 namespace WebCore {
 
+class RenderText;
+
 template <typename T>
 class RenderIterator {
 public:

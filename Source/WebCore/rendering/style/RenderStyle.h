@@ -129,8 +129,8 @@ private:
     enum CreateDefaultStyleTag { CreateDefaultStyle };
 
 public:
-    RenderStyle(RenderStyle&&) = default;
-    RenderStyle& operator=(RenderStyle&&) = default;
+    RenderStyle(RenderStyle&&);
+    RenderStyle& operator=(RenderStyle&&);
     ~RenderStyle();
 
     RenderStyle replace(RenderStyle&&) WARN_UNUSED_RETURN;

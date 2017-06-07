@@ -26,6 +26,7 @@
 #include "RenderElement.h"
 
 #include "AXObjectCache.h"
+#include "CSSAnimationController.h"
 #include "ContentData.h"
 #include "CursorList.h"
 #include "ElementChildIterator.h"

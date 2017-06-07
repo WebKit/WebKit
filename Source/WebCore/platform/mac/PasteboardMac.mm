@@ -48,6 +48,7 @@
 #import "Text.h"
 #import "URL.h"
 #import "WebCoreNSStringExtras.h"
+#import "WebCoreSystemInterface.h"
 #import "WebNSAttributedStringExtras.h"
 #import "markup.h"
 #import <wtf/RetainPtr.h>

@@ -32,6 +32,7 @@
 #include "CSSFontSelector.h"
 #include "ConstantPropertyMap.h"
 #include "Document.h"
+#include "FontCascade.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "HTMLIFrameElement.h"

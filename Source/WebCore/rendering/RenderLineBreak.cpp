@@ -23,6 +23,7 @@
 #include "RenderLineBreak.h"
 
 #include "Document.h"
+#include "FontMetrics.h"
 #include "HTMLElement.h"
 #include "HTMLWBRElement.h"
 #include "InlineElementBox.h"

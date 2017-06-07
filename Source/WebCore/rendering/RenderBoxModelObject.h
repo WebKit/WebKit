@@ -23,6 +23,7 @@
 
 #pragma once
 
+#include "FontBaseline.h"
 #include "LayoutRect.h"
 #include "RenderLayerModelObject.h"
 

@@ -127,6 +127,9 @@ RenderStyle RenderStyle::createStyleInheritingFromPseudoStyle(const RenderStyle&
     return style;
 }
 
+RenderStyle::RenderStyle(RenderStyle&&) = default;
+RenderStyle& RenderStyle::operator=(RenderStyle&&) = default;
+
 RenderStyle::RenderStyle(CreateDefaultStyleTag)
     : m_boxData(StyleBoxData::create())
     , m_visualData(StyleVisualData::create())

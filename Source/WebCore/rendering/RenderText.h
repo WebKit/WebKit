@@ -31,6 +31,7 @@
 
 namespace WebCore {
 
+class Font;
 class InlineTextBox;
 struct GlyphOverflow;
 

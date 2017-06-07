@@ -26,6 +26,7 @@
 #include "QuotesData.h"
 #include "RenderTextFragment.h"
 #include "RenderView.h"
+#include <wtf/unicode/CharacterNames.h>
 
 using namespace WTF::Unicode;
 

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "SimpleLineLayoutPagination.h"
 
+#include "FontCascade.h"
 #include "RenderBlockFlow.h"
 #include "SimpleLineLayout.h"
 #include "SimpleLineLayoutFunctions.h"

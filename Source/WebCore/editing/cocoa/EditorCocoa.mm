@@ -36,6 +36,7 @@
 #import "Editing.h"
 #import "EditingStyle.h"
 #import "EditorClient.h"
+#import "FontCascade.h"
 #import "Frame.h"
 #import "FrameSelection.h"
 #import "HTMLConverter.h"

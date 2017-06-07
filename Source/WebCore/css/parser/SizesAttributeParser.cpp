@@ -33,6 +33,7 @@
 #include "CSSPrimitiveValue.h"
 #include "CSSToLengthConversionData.h"
 #include "CSSTokenizer.h"
+#include "FontCascade.h"
 #include "MediaQueryEvaluator.h"
 #include "RenderView.h"
 #include "SizesCalcParser.h"

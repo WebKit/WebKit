@@ -1,3 +1,36 @@
+2017-06-07  Jer Noble  <jer.noble@apple.com>
+
+        Clean-up: RenderElement.h includes headers it doesn't use
+        https://bugs.webkit.org/show_bug.cgi?id=173046
+
+        Reviewed by Andy Estes.
+
+        Remove a couple of unneeded includes from RenderElement.h, and then clean up all the
+        follow-on compile errors that causes. Mostly, these errors are fixed by including the
+        correct headers at the point of use; otherwise, they're solved by forward-declaring types
+        and in one case by moving default constructors implementation to the cpp file from the header.
+
+        * css/parser/SizesAttributeParser.cpp:
+        * editing/cocoa/EditorCocoa.mm:
+        * platform/mac/PasteboardMac.mm:
+        * rendering/InlineIterator.h:
+        (WebCore::embedCharFromDirection):
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderElement.cpp:
+        * rendering/RenderElement.h:
+        * rendering/RenderIterator.h:
+        * rendering/RenderLineBreak.cpp:
+        * rendering/RenderQuote.cpp:
+        * rendering/RenderText.h:
+        * rendering/SimpleLineLayoutPagination.cpp:
+        * rendering/SimpleLineLayoutTextFragmentIterator.cpp:
+        * rendering/TextAutoSizing.cpp:
+        * rendering/style/RenderStyle.cpp:
+        * rendering/style/RenderStyle.h:
+        * style/RenderTreeUpdater.cpp:
+        * style/StyleResolveForDocument.cpp:
+        * style/StyleTreeResolver.cpp:
+
 2017-06-07  Youenn Fablet  <youenn@apple.com>
 
         Add WebRTC stats logging
