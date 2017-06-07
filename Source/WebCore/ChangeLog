@@ -1,3 +1,24 @@
+2017-06-07  Per Arne Vollan  <pvollan@apple.com>
+
+        AudioSourceProviderAVFObjC::m_tap member access is not thread safe.
+        https://bugs.webkit.org/show_bug.cgi?id=172263
+
+        Reviewed by Darin Adler.
+
+        It it possible that the main thread will modify the m_tap member by calling
+        AudioSourceProviderAVFObjC::destroyMix(), while m_tap is being read on a secondary
+        thread under AudioSourceProviderAVFObjC::processCallback(). Instead of accessing
+        the m_tap member on the secondary thread, we can use the same MTAudioProcessingTapRef
+        provided by MediaToolbox in the callback. We assume the tap ref is retained by
+        MediaToolbox, so it should be safe to use even if the the m_tap member is set to null.
+
+        Covered by existing tests.
+
+        * platform/graphics/avfoundation/AudioSourceProviderAVFObjC.h:
+        * platform/graphics/avfoundation/AudioSourceProviderAVFObjC.mm:
+        (WebCore::AudioSourceProviderAVFObjC::processCallback):
+        (WebCore::AudioSourceProviderAVFObjC::process):
+
 2017-06-07  Zan Dobersek  <zdobersek@igalia.com>
 
         [GCrypt] RSA-PSS support

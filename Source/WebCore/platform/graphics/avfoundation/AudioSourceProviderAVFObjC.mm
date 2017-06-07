@@ -287,7 +287,7 @@ void AudioSourceProviderAVFObjC::processCallback(MTAudioProcessingTapRef tap, CM
     std::lock_guard<Lock> lock(tapStorage->mutex);
 
     if (tapStorage->_this)
-        tapStorage->_this->process(numberFrames, flags, bufferListInOut, numberFramesOut, flagsOut);
+        tapStorage->_this->process(tap, numberFrames, flags, bufferListInOut, numberFramesOut, flagsOut);
 }
 
 void AudioSourceProviderAVFObjC::init(void* clientInfo, void** tapStorageOut)
@@ -357,17 +357,13 @@ void AudioSourceProviderAVFObjC::unprepare()
     m_list = nullptr;
 }
 
-void AudioSourceProviderAVFObjC::process(CMItemCount numberOfFrames, MTAudioProcessingTapFlags flags, AudioBufferList* bufferListInOut, CMItemCount* numberFramesOut, MTAudioProcessingTapFlags* flagsOut)
+void AudioSourceProviderAVFObjC::process(MTAudioProcessingTapRef tap, CMItemCount numberOfFrames, MTAudioProcessingTapFlags flags, AudioBufferList* bufferListInOut, CMItemCount* numberFramesOut, MTAudioProcessingTapFlags* flagsOut)
 {
     UNUSED_PARAM(flags);
     
-    RetainPtr<MTAudioProcessingTapRef> tap = m_tap;
-    if (!tap)
-        return;
-
     CMItemCount itemCount = 0;
     CMTimeRange rangeOut;
-    OSStatus status = MTAudioProcessingTapGetSourceAudio(tap.get(), numberOfFrames, bufferListInOut, flagsOut, &rangeOut, &itemCount);
+    OSStatus status = MTAudioProcessingTapGetSourceAudio(tap, numberOfFrames, bufferListInOut, flagsOut, &rangeOut, &itemCount);
     if (status != noErr || !itemCount)
         return;
 
