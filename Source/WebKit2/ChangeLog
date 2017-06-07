@@ -1,3 +1,13 @@
+2017-06-07  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] additionalReadAccessAllowedURLs should be consumed before loading the injected bundle
+        https://bugs.webkit.org/show_bug.cgi?id=173078
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess): Changed the order.
+
 2017-06-07  Per Arne Vollan  <pvollan@apple.com>
 
         Support removal of authentication data through the Website data store API.

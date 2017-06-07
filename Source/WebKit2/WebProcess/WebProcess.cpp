@@ -291,11 +291,11 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
         memoryPressureHandler.install();
     }
 
-    if (!parameters.injectedBundlePath.isEmpty())
-        m_injectedBundle = InjectedBundle::create(parameters, transformHandlesToObjects(parameters.initializationUserData.object()).get());
-
     for (size_t i = 0, size = parameters.additionalSandboxExtensionHandles.size(); i < size; ++i)
         SandboxExtension::consumePermanently(parameters.additionalSandboxExtensionHandles[i]);
+
+    if (!parameters.injectedBundlePath.isEmpty())
+        m_injectedBundle = InjectedBundle::create(parameters, transformHandlesToObjects(parameters.initializationUserData.object()).get());
 
     for (auto& supplement : m_supplements.values())
         supplement->initialize(parameters);
