@@ -1,3 +1,21 @@
+2017-06-07  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] PutForwards is not implemented to spec as illustrated by the WPT WebIDL/ecmascript-binding/put-forwards.html
+        https://bugs.webkit.org/show_bug.cgi?id=172956
+
+        Reviewed by Chris Dumez.
+
+        Implements step 3.5.9 of https://heycam.github.io/webidl/#dfn-attribute-setter.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateAttributeSetterDefinition):
+        Implement [PutForwards] to spec, which involves using JSC get/set rather than calling
+        directly into the implementation.
+
+        * bindings/scripts/test/JS/JSTestCEReactions.cpp:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        Update test results.
+
 2017-06-07  Jer Noble  <jer.noble@apple.com>
 
         Clean-up: RenderElement.h includes headers it doesn't use

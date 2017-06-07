@@ -4760,11 +4760,17 @@ static inline bool setJSTestObjPutForwardsAttributeSetter(ExecState& state, JSTe
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    Ref<TestNode> forwardedImpl = thisObject.wrapped().putForwardsAttribute();
-    auto& impl = forwardedImpl.get();
-    auto nativeValue = convert<IDLDOMString>(state, value);
+    auto id = Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("putForwardsAttribute"), strlen("putForwardsAttribute"));
+    auto valueToForwardTo = thisObject.get(&state, id);
     RETURN_IF_EXCEPTION(throwScope, false);
-    impl.setName(WTFMove(nativeValue));
+    if (UNLIKELY(!valueToForwardTo.isObject())) {
+        throwTypeError(&state, throwScope);
+        return false;
+    }
+    auto forwardId = Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("name"), strlen("name"));
+    PutPropertySlot slot(valueToForwardTo, false);
+    asObject(valueToForwardTo)->methodTable(state.vm())->put(asObject(valueToForwardTo), &state, forwardId, value, slot);
+    RETURN_IF_EXCEPTION(throwScope, false);
     return true;
 }
 
@@ -4791,13 +4797,17 @@ static inline bool setJSTestObjPutForwardsNullableAttributeSetter(ExecState& sta
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    RefPtr<TestNode> forwardedImpl = thisObject.wrapped().putForwardsNullableAttribute();
-    if (!forwardedImpl)
-        return false;
-    auto& impl = *forwardedImpl;
-    auto nativeValue = convert<IDLDOMString>(state, value);
+    auto id = Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("putForwardsNullableAttribute"), strlen("putForwardsNullableAttribute"));
+    auto valueToForwardTo = thisObject.get(&state, id);
     RETURN_IF_EXCEPTION(throwScope, false);
-    impl.setName(WTFMove(nativeValue));
+    if (UNLIKELY(!valueToForwardTo.isObject())) {
+        throwTypeError(&state, throwScope);
+        return false;
+    }
+    auto forwardId = Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("name"), strlen("name"));
+    PutPropertySlot slot(valueToForwardTo, false);
+    asObject(valueToForwardTo)->methodTable(state.vm())->put(asObject(valueToForwardTo), &state, forwardId, value, slot);
+    RETURN_IF_EXCEPTION(throwScope, false);
     return true;
 }
 

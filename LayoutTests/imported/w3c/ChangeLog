@@ -1,3 +1,14 @@
+2017-06-05  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] PutForwards is not implemented to spec as illustrated by the WPT WebIDL/ecmascript-binding/put-forwards.html
+        https://bugs.webkit.org/show_bug.cgi?id=172956
+
+        Reviewed by Chris Dumez.
+
+        Update results to show we now implement [PutForwards] correctly.
+
+        * web-platform-tests/WebIDL/ecmascript-binding/put-forwards-expected.txt:
+
 2017-06-06  Darin Adler  <darin@apple.com>
 
         Update to slightly stricter rules for custom element names from more recent standard draft

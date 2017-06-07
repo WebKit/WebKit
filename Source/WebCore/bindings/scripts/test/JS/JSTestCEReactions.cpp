@@ -262,12 +262,17 @@ static inline bool setJSTestCEReactionsStringifierAttributeSetter(ExecState& sta
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    CustomElementReactionStack customElementReactionStack;
-    Ref<TestCEReactionsStringifier> forwardedImpl = thisObject.wrapped().stringifierAttribute();
-    auto& impl = forwardedImpl.get();
-    auto nativeValue = convert<IDLDOMString>(state, value);
+    auto id = Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("stringifierAttribute"), strlen("stringifierAttribute"));
+    auto valueToForwardTo = thisObject.get(&state, id);
     RETURN_IF_EXCEPTION(throwScope, false);
-    impl.setValue(WTFMove(nativeValue));
+    if (UNLIKELY(!valueToForwardTo.isObject())) {
+        throwTypeError(&state, throwScope);
+        return false;
+    }
+    auto forwardId = Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("value"), strlen("value"));
+    PutPropertySlot slot(valueToForwardTo, false);
+    asObject(valueToForwardTo)->methodTable(state.vm())->put(asObject(valueToForwardTo), &state, forwardId, value, slot);
+    RETURN_IF_EXCEPTION(throwScope, false);
     return true;
 }
 

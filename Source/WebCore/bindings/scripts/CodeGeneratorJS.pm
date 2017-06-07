@@ -4573,35 +4573,36 @@ sub GenerateAttributeSetterDefinition
         } else {
             push(@implContent, "    return thisObject.putDirect(state.vm(), Identifier::fromString(&state, \"$name\"), value);\n");
         }
+    } elsif ($attribute->extendedAttributes->{PutForwards}) {
+        assert("[PutForwards] is not compatible with static attributes") if $attribute->isStatic;
+        
+        # 3.5.9.1. Let Q be ? Get(O, id).
+        my $id = $attribute->name;
+        push(@implContent, "    auto id = Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>(\"${id}\"), strlen(\"${id}\"));\n");
+        push(@implContent, "    auto valueToForwardTo = thisObject.get(&state, id);\n");
+        push(@implContent, "    RETURN_IF_EXCEPTION(throwScope, false);\n");
+        
+        # 3.5.9.2. If Type(Q) is not Object, then throw a TypeError.
+        push(@implContent, "    if (UNLIKELY(!valueToForwardTo.isObject())) {\n");
+        push(@implContent, "        throwTypeError(&state, throwScope);\n");
+        push(@implContent, "        return false;\n");
+        push(@implContent, "    }\n");
+        
+        # 3.5.9.3. Let forwardId be the identifier argument of the [PutForwards] extended attribute.
+        my $forwardId = $attribute->extendedAttributes->{PutForwards};
+        push(@implContent, "    auto forwardId = Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>(\"${forwardId}\"), strlen(\"${forwardId}\"));\n");
+        
+        # 3.5.9.4. Perform ? Set(Q, forwardId, V).
+        # FIXME: What should the second value to the PutPropertySlot be?
+        # (https://github.com/heycam/webidl/issues/368)
+        push(@implContent, "    PutPropertySlot slot(valueToForwardTo, false);\n");
+        push(@implContent, "    asObject(valueToForwardTo)->methodTable(state.vm())->put(asObject(valueToForwardTo), &state, forwardId, value, slot);\n");
+        push(@implContent, "    RETURN_IF_EXCEPTION(throwScope, false);\n");
+        
+        push(@implContent, "    return true;\n");
     } else {
-        if (!$attribute->isStatic) {
-            my $putForwards = $attribute->extendedAttributes->{PutForwards};
-            if ($putForwards) {
-                my $implGetterFunctionName = $codeGenerator->WK_lcfirst($attribute->extendedAttributes->{ImplementedAs} || $name);
-                my $forwardedAttribute = $codeGenerator->GetAttributeFromInterface($interface, $type->name, $putForwards);
-
-                if ($forwardedAttribute->extendedAttributes->{CEReactions}) {
-                    push(@implContent, "    CustomElementReactionStack customElementReactionStack;\n");
-                    AddToImplIncludes("CustomElementReactionQueue.h", $conditional);
-                }
-
-                if ($type->isNullable) {
-                    push(@implContent, "    RefPtr<" . $type->name . "> forwardedImpl = thisObject.wrapped().${implGetterFunctionName}();\n");
-                    push(@implContent, "    if (!forwardedImpl)\n");
-                    push(@implContent, "        return false;\n");
-                    push(@implContent, "    auto& impl = *forwardedImpl;\n");
-                } else {
-                    # Attribute is not nullable, the implementation is expected to return a reference.
-                    push(@implContent, "    Ref<" . $type->name . "> forwardedImpl = thisObject.wrapped().${implGetterFunctionName}();\n");
-                    push(@implContent, "    auto& impl = forwardedImpl.get();\n");
-                }
-                $attribute = $forwardedAttribute;
-                $type = $attribute->type;
-            } else {
-                push(@implContent, "    auto& impl = thisObject.wrapped();\n");
-            }
-        }
-
+        push(@implContent, "    auto& impl = thisObject.wrapped();\n") if !$attribute->isStatic;
+       
         if ($codeGenerator->IsEnumType($type)) {
             # As per section 3.5.6 of https://heycam.github.io/webidl/#dfn-attribute-setter, enumerations do not use
             # the standard conversion, but rather silently fail on invalid enumeration values.

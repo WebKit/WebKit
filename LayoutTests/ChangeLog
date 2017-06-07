@@ -1,3 +1,14 @@
+2017-06-07  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] PutForwards is not implemented to spec as illustrated by the WPT WebIDL/ecmascript-binding/put-forwards.html
+        https://bugs.webkit.org/show_bug.cgi?id=172956
+
+        Reviewed by Chris Dumez.
+
+        * http/tests/security/xss-DENIED-contentWindow-eval-expected.txt:
+        Update results to show that we now throw a type error, because the action now requires
+        an explicit get of the location object, which does not work in the context.
+
 2017-06-07  Antoine Quint  <graouts@apple.com>
 
         Rebaseline and enable media/modern-media-controls/controls-visibility-support
