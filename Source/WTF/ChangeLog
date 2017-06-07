@@ -1,3 +1,17 @@
+2017-06-06  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rolling out r214974.
+
+        Causes some tabs to start using a huge amount of CPU after 8
+        minutes in the background
+
+        Reverted changeset:
+
+        "Make inactive web processes behave as though under memory
+        pressure."
+        https://bugs.webkit.org/show_bug.cgi?id=170042
+        http://trac.webkit.org/changeset/214974
+
 2017-06-06  Don Olmstead  <don.olmstead@am.sony.com>
 
         [WebCore] Enable REQUEST_ANIMATION_FRAME_TIMER for all ports

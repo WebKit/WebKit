@@ -65,7 +65,7 @@ private:
     Timer m_postBackgroundingMemoryUsageTimer;
 
     Timer m_processMayBecomeInactiveTimer;
-    bool m_processMayBecomeInactive { false };
+    bool m_processMayBecomeInactive { true };
 };
 
 }
