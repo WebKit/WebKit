@@ -1,3 +1,12 @@
+2017-06-07  Alejandro G. Castro  <alex@igalia.com>
+
+        Unreviewed GTK expectations gardening
+
+        Mark the mediacapturefromelement tests as skipped, we need canvas
+        captureStreams support.
+
+        * platform/gtk/TestExpectations:
+
 2017-06-07  Antoine Quint  <graouts@apple.com>
 
         [mac-wk1] LayoutTest media/modern-media-controls/airplay-button/airplay-button.html is a flaky timeout

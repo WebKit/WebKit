@@ -686,6 +686,9 @@ webkit.org/b/161956 fast/mediastream/MediaStream-video-element-displays-buffer.h
 webkit.org/b/168773 fast/mediastream/MediaStream-MediaElement-setObject-null.html [ Failure ]
 webkit.org/b/172269 fast/mediastream/media-devices-enumerate-devices.html [ Failure ]
 
+# Canvas captureStream support is not implemented
+webkit.org/b/169811 fast/mediacapturefromelement [ Skip ]
+
 # Proximity Events is not supported.
 webkit.org/b/99060 proximity [ Failure ]
 webkit.org/b/99060 proximity/event-after-navigation.html [ Timeout ]
@@ -1371,8 +1374,6 @@ webkit.org/b/167576 imported/w3c/IndexedDB-private-browsing/idbcursor_iterating.
 webkit.org/b/167576 imported/w3c/IndexedDB-private-browsing/idbcursor_iterating_index.html [ Crash Timeout ]
 webkit.org/b/167576 storage/indexeddb/modern/index-3-private.html [ Crash ]
 
-webkit.org/b/169811 fast/mediacapturefromelement/CanvasCaptureMediaStream-capture-out-of-DOM-element.html [ Crash ]
-webkit.org/b/169811 fast/mediacapturefromelement/CanvasCaptureMediaStream-webgl-events.html [ Crash ]
 webkit.org/b/169811 fast/mediastream/captureStream/canvas2d-heavy-drawing.html [ Crash ]
 webkit.org/b/169811 fast/mediastream/captureStream/canvas2d.html [ Crash ]
 webkit.org/b/169811 fast/mediastream/captureStream/canvas3d.html [ Crash Timeout ]
@@ -1382,8 +1383,6 @@ webkit.org/b/172281 accessibility/insert-children-assert.html [ Crash ]
 webkit.org/b/172951 editing/execCommand/crash-replacing-list-by-list.html [ Crash ]
 webkit.org/b/172951 editing/inserting/insert-table-in-paragraph-crash.html [ Crash ]
 webkit.org/b/172952 fast/frames/sandboxed-iframe-navigation-top-denied.html [ Crash ]
-
-webkit.org/b/172954 fast/mediacapturefromelement/CanvasCaptureMediaStream-2d-events.html [ Crash Failure Pass ]
 
 webkit.org/b/172955 media/video-preload.html [ Crash Pass ]
 
