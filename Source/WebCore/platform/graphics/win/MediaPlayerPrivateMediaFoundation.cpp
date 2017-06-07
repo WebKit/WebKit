@@ -158,10 +158,10 @@ void MediaPlayerPrivateMediaFoundation::getSupportedTypes(HashSet<String, ASCIIC
 
 MediaPlayer::SupportsType MediaPlayerPrivateMediaFoundation::supportsType(const MediaEngineSupportParameters& parameters)
 {
-    if (parameters.type.isNull() || parameters.type.isEmpty())
+    if (parameters.type.isEmpty())
         return MediaPlayer::IsNotSupported;
 
-    if (mimeTypeCache().contains(parameters.type))
+    if (mimeTypeCache().contains(parameters.type.containerType()))
         return MediaPlayer::IsSupported;
 
     return MediaPlayer::IsNotSupported;

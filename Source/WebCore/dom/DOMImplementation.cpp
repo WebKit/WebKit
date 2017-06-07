@@ -195,7 +195,7 @@ Ref<Document> DOMImplementation::createDocument(const String& type, Frame* frame
     // Key system is not applicable here.
     DOMImplementationSupportsTypeClient client(frame && frame->settings().needsSiteSpecificQuirks(), url.host());
     MediaEngineSupportParameters parameters;
-    parameters.type = type;
+    parameters.type = ContentType(type);
     parameters.url = url;
     if (MediaPlayer::supportsType(parameters, &client))
         return MediaDocument::create(frame, url);

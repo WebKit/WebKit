@@ -858,22 +858,24 @@ MediaPlayer::SupportsType MediaPlayerPrivateGStreamerMSE::supportsType(const Med
     if (!parameters.isMediaSource)
         return result;
 
+    auto containerType = parameters.type.containerType();
     // Disable VPX/Opus on MSE for now, mp4/avc1 seems way more reliable currently.
-    if (parameters.type.endsWith("webm"))
+    if (containerType.endsWith("webm"))
         return result;
 
     // YouTube TV provides empty types for some videos and we want to be selected as best media engine for them.
-    if (parameters.type.isEmpty()) {
+    if (containerType.isEmpty()) {
         result = MediaPlayer::MayBeSupported;
         return result;
     }
 
     // Spec says we should not return "probably" if the codecs string is empty.
-    if (mimeTypeCache().contains(parameters.type)) {
-        if (parameters.codecs.isEmpty())
+    if (mimeTypeCache().contains(containerType)) {
+        String codecs = parameters.type.parameter(ContentType::codecsParameter());
+        if (codecs.isEmpty())
             result = MediaPlayer::MayBeSupported;
         else
-            result = supportsCodecs(parameters.codecs) ? MediaPlayer::IsSupported : MediaPlayer::IsNotSupported;
+            result = supportsCodecs(codecs) ? MediaPlayer::IsSupported : MediaPlayer::IsNotSupported;
     }
 
     return extendedSupportsType(parameters, result);

@@ -82,7 +82,7 @@ bool CDMPrivateMediaSourceAVFObjC::supportsKeySystemAndMimeType(const String& ke
 
     MediaEngineSupportParameters parameters;
     parameters.isMediaSource = true;
-    parameters.type = mimeType;
+    parameters.type = ContentType(mimeType);
 
     return MediaPlayerPrivateMediaSourceAVFObjC::supportsType(parameters) != MediaPlayer::IsNotSupported;
 }
@@ -95,7 +95,7 @@ bool CDMPrivateMediaSourceAVFObjC::supportsMIMEType(const String& mimeType)
 
     MediaEngineSupportParameters parameters;
     parameters.isMediaSource = true;
-    parameters.type = mimeType;
+    parameters.type = ContentType(mimeType);
 
     return MediaPlayerPrivateMediaSourceAVFObjC::supportsType(parameters) != MediaPlayer::IsNotSupported;
 }

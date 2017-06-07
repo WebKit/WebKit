@@ -369,7 +369,12 @@ public:
     {
         split(separator, false, result);
     }
-
+    Vector<String> split(UChar separator) const
+    {
+        Vector<String> result;
+        split(separator, false, result);
+        return result;
+    }
     Vector<String> split(const String& separator) const
     {
         Vector<String> result;

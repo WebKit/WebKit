@@ -1,3 +1,65 @@
+2017-06-07  Jer Noble  <jer.noble@apple.com>
+
+        Refactoring: MediaEngineSupportParameters should take a ContentType rather than separate type & codecs strings
+        https://bugs.webkit.org/show_bug.cgi?id=173038
+
+        Reviewed by Eric Carlson.
+
+        * Modules/encryptedmedia/CDM.cpp:
+        (WebCore::CDM::getSupportedCapabilitiesForAudioVideoType):
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::addSourceBuffer):
+        (WebCore::MediaSource::isTypeSupported):
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createDocument):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::canPlayType):
+        (WebCore::HTMLMediaElement::selectNextSourceChild):
+        * platform/ContentType.cpp:
+        (WebCore::ContentType::codecsParameter):
+        (WebCore::ContentType::profilesParameter):
+        (WebCore::ContentType::containerType):
+        (WebCore::simplifyWhitespace):
+        (WebCore::ContentType::codecs):
+        (WebCore::ContentType::profiles):
+        (WebCore::ContentType::type): Deleted.
+        * platform/ContentType.h:
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::bestMediaEngineForSupportParameters):
+        (WebCore::MediaPlayer::load):
+        (WebCore::MediaPlayer::nextBestMediaEngine):
+        (WebCore::MediaPlayer::loadWithNextMediaEngine):
+        (WebCore::MediaPlayer::supportsType):
+        (WebCore::MediaPlayer::networkStateChanged):
+        (WebCore::codecs): Deleted.
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaPlayer::contentMIMEType):
+        (WebCore::MediaPlayer::contentTypeCodecs):
+        * platform/graphics/avfoundation/CDMPrivateMediaSourceAVFObjC.mm:
+        (WebCore::CDMPrivateMediaSourceAVFObjC::supportsKeySystemAndMimeType):
+        (WebCore::CDMPrivateMediaSourceAVFObjC::supportsMIMEType):
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundationCF::supportsType):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::supportsType):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::supportsType):
+        * platform/graphics/avfoundation/objc/MediaSourcePrivateAVFObjC.mm:
+        (WebCore::MediaSourcePrivateAVFObjC::addSourceBuffer):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::supportsType):
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerMSE::supportsType):
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivateQTKit::supportsType):
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.cpp:
+        (WebCore::MediaPlayerPrivateMediaFoundation::supportsType):
+        * platform/mock/mediasource/MockMediaPlayerMediaSource.cpp:
+        (WebCore::MockMediaPlayerMediaSource::supportsType):
+        * platform/mock/mediasource/MockMediaSourcePrivate.cpp:
+        (WebCore::MockMediaSourcePrivate::addSourceBuffer):
+
 2017-06-07  Ryosuke Niwa  <rniwa@webkit.org>
 
         Use a dedicated node flag to identify a Document node

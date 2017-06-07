@@ -27,6 +27,7 @@
 #ifndef ContentType_h
 #define ContentType_h
 
+#include <wtf/HashMap.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -37,9 +38,13 @@ public:
     explicit ContentType(const String& type);
     ContentType() = default;
 
+    static const String& codecsParameter();
+    static const String& profilesParameter();
+
     String parameter(const String& parameterName) const;
-    String type() const;
+    String containerType() const;
     Vector<String> codecs() const;
+    Vector<String> profiles() const;
     const String& raw() const { return m_type; }
     bool isEmpty() const { return m_type.isEmpty(); }
 private:

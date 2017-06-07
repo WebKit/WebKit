@@ -110,8 +110,7 @@ struct MediaEngineSupportParameters {
 
     MediaEngineSupportParameters() { }
 
-    String type;
-    String codecs;
+    ContentType type;
     URL url;
     bool isMediaSource { false };
     bool isMediaStream { false };
@@ -586,8 +585,8 @@ public:
     void setShouldDisableSleep(bool);
     bool shouldDisableSleep() const;
 
-    const String& contentMIMEType() const { return m_contentMIMEType; }
-    const String& contentTypeCodecs() const { return m_contentTypeCodecs; }
+    String contentMIMEType() const { return m_contentType.containerType(); }
+    String contentTypeCodecs() const { return m_contentType.parameter(ContentType::codecsParameter()); }
     bool contentMIMETypeWasInferredFromExtension() const { return m_contentMIMETypeWasInferredFromExtension; }
 
     const Vector<ContentType>& mediaContentTypesRequiringHardwareSupport() const;
@@ -604,8 +603,7 @@ private:
     std::unique_ptr<MediaPlayerPrivateInterface> m_private;
     const MediaPlayerFactory* m_currentMediaEngine;
     URL m_url;
-    String m_contentMIMEType;
-    String m_contentTypeCodecs;
+    ContentType m_contentType;
     String m_keySystem;
     IntSize m_size;
     Preload m_preload;
