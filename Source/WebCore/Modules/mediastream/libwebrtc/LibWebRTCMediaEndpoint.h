@@ -31,6 +31,7 @@
 #include "RTCRtpReceiver.h"
 #include "RealtimeOutgoingAudioSource.h"
 #include "RealtimeOutgoingVideoSource.h"
+#include <Timer.h>
 
 #include <webrtc/api/jsep.h>
 #include <webrtc/api/peerconnectioninterface.h>
@@ -56,7 +57,7 @@ class LibWebRTCPeerConnectionBackend;
 class MediaStreamTrack;
 class RTCSessionDescription;
 
-class LibWebRTCMediaEndpoint : public ThreadSafeRefCounted<LibWebRTCMediaEndpoint>, private webrtc::PeerConnectionObserver {
+class LibWebRTCMediaEndpoint : public ThreadSafeRefCounted<LibWebRTCMediaEndpoint>, private webrtc::PeerConnectionObserver, private webrtc::RTCStatsCollectorCallback {
 public:
     static Ref<LibWebRTCMediaEndpoint> create(LibWebRTCPeerConnectionBackend& peerConnection, LibWebRTCProvider& client) { return adoptRef(*new LibWebRTCMediaEndpoint(peerConnection, client)); }
     virtual ~LibWebRTCMediaEndpoint() { }
@@ -109,6 +110,11 @@ private:
     void addRemoteTrack(rtc::scoped_refptr<webrtc::RtpReceiverInterface>&&, const std::vector<rtc::scoped_refptr<webrtc::MediaStreamInterface>>&);
     void removeRemoteStream(webrtc::MediaStreamInterface&);
     void addDataChannel(rtc::scoped_refptr<webrtc::DataChannelInterface>&&);
+
+    void OnStatsDelivered(const rtc::scoped_refptr<const webrtc::RTCStatsReport>&) final;
+    void gatherStatsForLogging();
+    void startLoggingStats();
+    void stopLoggingStats();
 
     MediaStream& mediaStreamFromRTCStream(webrtc::MediaStreamInterface&);
 
@@ -182,6 +188,8 @@ private:
     HashMap<RTCRtpSender*, rtc::scoped_refptr<webrtc::RtpSenderInterface>> m_senders;
 
     bool m_isInitiator { false };
+    Timer m_statsLogTimer;
+    int64_t m_statsTimestamp { 0 };
 };
 
 } // namespace WebCore

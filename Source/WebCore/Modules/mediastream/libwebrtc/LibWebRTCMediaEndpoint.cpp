@@ -33,6 +33,7 @@
 #include "LibWebRTCDataChannelHandler.h"
 #include "LibWebRTCPeerConnectionBackend.h"
 #include "LibWebRTCProvider.h"
+#include "Logging.h"
 #include "MediaStreamEvent.h"
 #include "NotImplemented.h"
 #include "PlatformStrategies.h"
@@ -63,6 +64,7 @@ LibWebRTCMediaEndpoint::LibWebRTCMediaEndpoint(LibWebRTCPeerConnectionBackend& p
     , m_createSessionDescriptionObserver(*this)
     , m_setLocalSessionDescriptionObserver(*this)
     , m_setRemoteSessionDescriptionObserver(*this)
+    , m_statsLogTimer(*this, &LibWebRTCMediaEndpoint::gatherStatsForLogging)
 {
     ASSERT(m_backend);
     ASSERT(client.factory());
@@ -161,6 +163,8 @@ void LibWebRTCMediaEndpoint::doSetRemoteDescription(RTCSessionDescription& descr
         return;
     }
     m_backend->SetRemoteDescription(&m_setRemoteSessionDescriptionObserver, sessionDescription.release());
+
+    startLoggingStats();
 }
 
 void LibWebRTCMediaEndpoint::addTrack(RTCRtpSender& sender, MediaStreamTrack& track, const Vector<String>& mediaStreamIds)
@@ -722,6 +726,8 @@ void LibWebRTCMediaEndpoint::OnDataChannel(rtc::scoped_refptr<webrtc::DataChanne
 
 void LibWebRTCMediaEndpoint::stop()
 {
+    stopLoggingStats();
+
     ASSERT(m_backend);
     m_backend->Close();
     m_backend = nullptr;
@@ -981,6 +987,47 @@ RTCRtpParameters LibWebRTCMediaEndpoint::getRTCRtpSenderParameters(RTCRtpSender&
     if (!rtcSender)
         return { };
     return fillRtpParameters(rtcSender->GetParameters());
+}
+
+void LibWebRTCMediaEndpoint::gatherStatsForLogging()
+{
+    m_backend->GetStats(this);
+}
+
+void LibWebRTCMediaEndpoint::OnStatsDelivered(const rtc::scoped_refptr<const webrtc::RTCStatsReport>& report)
+{
+    if (!m_statsTimestamp)
+        m_statsTimestamp = report->timestamp_us();
+    else if (m_statsLogTimer.repeatInterval() == 1_s && (report->timestamp_us() - m_statsTimestamp) > 30000000) {
+        callOnMainThread([protectedThis = makeRef(*this)] {
+            protectedThis->m_statsLogTimer.augmentRepeatInterval(4_s);
+        });
+    }
+
+#if !RELEASE_LOG_DISABLED
+    // Log stats once every second for the 30 seconds, then drop to once every 5 seconds.
+    for (auto iterator = report->begin(); iterator != report->end(); ++iterator) {
+        if (iterator->type() == webrtc::RTCCodecStats::kType)
+            continue;
+        RELEASE_LOG(WebRTC, "WebRTC stats for %p: %s", this, iterator->ToString().c_str());
+    }
+#else
+    UNUSED_PARAM(report);
+#endif
+}
+
+void LibWebRTCMediaEndpoint::startLoggingStats()
+{
+#if !RELEASE_LOG_DISABLED
+    if (m_statsLogTimer.isActive())
+        m_statsLogTimer.stop();
+    m_statsLogTimer.startRepeating(1_s);
+#endif
+}
+
+void LibWebRTCMediaEndpoint::stopLoggingStats()
+{
+    m_statsLogTimer.stop();
 }
 
 } // namespace WebCore

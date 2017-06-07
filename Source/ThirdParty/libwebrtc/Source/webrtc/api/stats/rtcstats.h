@@ -75,7 +75,7 @@ class RTCStats {
 
   // Creates a human readable string representation of the stats object, listing
   // all of its members (names and values).
-  std::string ToString() const;
+  WEBRTC_DYLIB_EXPORT std::string ToString() const;
 
   // Downcasts the stats object to an |RTCStats| subclass |T|. DCHECKs that the
   // object is of type |T|.

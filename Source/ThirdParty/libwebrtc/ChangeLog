@@ -1,3 +1,12 @@
+2017-06-07  Youenn Fablet  <youenn@apple.com>
+
+        Add WebRTC stats logging
+        https://bugs.webkit.org/show_bug.cgi?id=173045
+
+        Reviewed by Eric Carlson.
+
+        * Source/webrtc/api/stats/rtcstats.h: Exporting RTCStats ToString.
+
 2017-05-28  Dan Bernstein  <mitz@apple.com>
 
         [Xcode] ALWAYS_SEARCH_USER_PATHS is set to YES
