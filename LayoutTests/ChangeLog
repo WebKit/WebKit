@@ -1,3 +1,12 @@
+2017-06-07  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Remove TestExpectation for fast/backgrounds/background-repeat-x-y-parse.html.
+        https://bugs.webkit.org/show_bug.cgi?id=167428
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+
 2017-06-07  Per Arne Vollan  <pvollan@apple.com>
 
         Support removal of authentication data through the Website data store API.
