@@ -43,7 +43,7 @@
     {
         "name": "WebAssembly",
         "status": {
-            "status": "Supported"
+            "status": "Supported in Preview"
         },
         "url": "http://webassembly.github.io",
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=146064",
@@ -94,22 +94,6 @@
         "documentation-url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions",
         "description": "Arrow functions are a new type of function expression in ES6 that lexically binds this, new.target, arguments, and super.",
         "specification": "ES6"
-    },
-    {
-        "name": "async/await",
-        "status": {
-            "status": "Supported",
-            "enabled-by-default": true
-        },
-        "url": "https://tc39.github.io/ecma262/#sec-async-function-definitions",
-        "documentation-url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function",
-        "description": "Async functions are a way to mix generators with promises to allow writing asynchronous code that looks synchronous.",
-        "specification": "ES7",
-        "contact": {
-            "name": "Saam Barati",
-            "twitter": "@saambarati",
-            "email": "sbarati@apple.com"
-        }
     },
     {
         "name": "Block Scoping",
@@ -397,6 +381,22 @@
         "contact": {
             "name": "Yusuke Suzuki",
             "email": "utatane.tea@gmail.com"
+        }
+    },
+    {
+        "name": "async/await",
+        "status": {
+            "status": "Supported",
+            "enabled-by-default": true
+        },
+        "url": "https://tc39.github.io/ecma262/#sec-async-function-definitions",
+        "documentation-url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function",
+        "description": "Async functions are a way to mix generators with promises to allow writing asynchronous code that looks synchronous.",
+        "specification": "ES7",
+        "contact": {
+            "name": "Saam Barati",
+            "twitter": "@saambarati",
+            "email": "sbarati@apple.com"
         }
     },
     {

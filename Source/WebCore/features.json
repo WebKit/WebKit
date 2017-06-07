@@ -233,7 +233,7 @@
     {
         "name": "Content Security Policy Level 3",
         "status": {
-            "status": "Partial Support",
+            "status": "Partially Supported",
             "enabled-by-default": true
         },
         "url": "https://w3c.github.io/webappsec-csp/",
@@ -383,7 +383,7 @@
     {
         "name": "Media Capture and Streams",
         "status": {
-            "status": "In Development"
+            "status": "Supported In Preview"
         },
         "url": "https://w3c.github.io/mediacapture-main/",
         "keywords": ["mediastream", "getusermedia"],
@@ -416,7 +416,7 @@
     {
         "name": "Performance Observer",
         "status": {
-            "status": "Supported",
+            "status": "Supported In Preview",
             "enabled-by-default": true
         },
         "url": "https://w3c.github.io/performance-timeline/",
@@ -456,7 +456,7 @@
     {
         "name": "Resource Timing Level 2",
         "status": {
-            "status": "Supported",
+            "status": "Supported In Preview",
             "enabled-by-default": true
         },
         "url": "https://w3c.github.io/resource-timing/",
@@ -508,7 +508,7 @@
     {
         "name": "User Timing Level 2",
         "status": {
-            "status": "Supported",
+            "status": "Supported in Preview",
             "enabled-by-default": true
         },
         "url": "https://w3c.github.io/user-timing/",
@@ -580,7 +580,7 @@
     {
         "name": "Web Cryptography API",
         "status": {
-            "status": "In Development",
+            "status": "Supported In Preview",
             "enabled-by-default": true
         },
         "url": "http://www.w3.org/TR/WebCryptoAPI/",
@@ -607,7 +607,7 @@
     {
         "name": "WebGL 2",
         "status": {
-            "status": "In Development",
+            "status": "Supported In Preview",
             "enabled-by-default": true
         },
         "url": "https://www.khronos.org/registry/webgl/specs/latest/2.0/",
@@ -617,7 +617,7 @@
     {
         "name": "WebRTC",
         "status": {
-            "status": "In Development"
+            "status": "Supported In Preview"
         },
         "url": "http://www.w3.org/TR/webrtc/",
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=124288",

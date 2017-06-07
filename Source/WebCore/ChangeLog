@@ -1,3 +1,14 @@
+2017-06-07  Jon Davis  <jond@apple.com>
+
+        Update feature status for features Supported In Preview
+        https://bugs.webkit.org/show_bug.cgi?id=173071
+
+        Reviewed by Darin Adler.
+
+        Updated WebAssembly.
+
+        * features.json:
+
 2017-06-07  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] PutForwards is not implemented to spec as illustrated by the WPT WebIDL/ecmascript-binding/put-forwards.html
