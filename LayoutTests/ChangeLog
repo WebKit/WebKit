@@ -1,5 +1,20 @@
 2017-06-07  Antoine Quint  <graouts@apple.com>
 
+        Rebaseline and enable media/modern-media-controls/buttons-container
+        https://bugs.webkit.org/show_bug.cgi?id=173059
+        <rdar://problem/32616156>
+
+        Reviewed by Eric Carlson.
+
+        The only change is the default margin for a ButtonsContainer.
+
+        * media/modern-media-controls/buttons-container/buttons-container-constructor-expected.txt:
+        * media/modern-media-controls/buttons-container/buttons-container-constructor.html:
+        * platform/ios-simulator/TestExpectations:
+        * platform/mac/TestExpectations:
+
+2017-06-07  Antoine Quint  <graouts@apple.com>
+
         Rebaseline and enable media/modern-media-controls/button
         https://bugs.webkit.org/show_bug.cgi?id=173058
         <rdar://problem/32615846>

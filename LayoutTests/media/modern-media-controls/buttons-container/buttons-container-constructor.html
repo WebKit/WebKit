@@ -8,9 +8,9 @@ description("Testing the <code>ButtonsContainer</code> constructor.");
 const defaultContainer = new ButtonsContainer;
 shouldBeEqualToString("defaultContainer.element.localName", "div");
 shouldBeEqualToString("defaultContainer.element.className.trim()", "buttons-container");
-shouldBe("defaultContainer.buttonMargin", "24");
-shouldBe("defaultContainer.leftMargin", "24");
-shouldBe("defaultContainer.rightMargin", "24");
+shouldBe("defaultContainer.buttonMargin", "16");
+shouldBe("defaultContainer.leftMargin", "16");
+shouldBe("defaultContainer.rightMargin", "16");
 shouldBe("defaultContainer.buttons", "[]");
 
 const buttons = [new Button, new Button];
