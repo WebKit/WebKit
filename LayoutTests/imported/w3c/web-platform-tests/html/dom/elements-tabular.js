@@ -17,7 +17,7 @@ var tabularElements = {
     align: "string",
   },
   colgroup: {
-    span: {type: "limited unsigned long with fallback", defaultVal: 1},
+    span: {type: "clamped unsigned long", defaultVal: 1, min: 1, max: 1000},
 
     // Obsolete
     align: "string",
@@ -28,7 +28,7 @@ var tabularElements = {
   },
   col: {
     // Conforming
-    span: {type: "limited unsigned long with fallback", defaultVal: 1},
+    span: {type: "clamped unsigned long", defaultVal: 1, min: 1, max: 1000},
 
     // Obsolete
     align: "string",

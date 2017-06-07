@@ -1,3 +1,33 @@
+2017-06-07  Chris Dumez  <cdumez@apple.com>
+
+        Align <col span>/<colgroup span> limits with the latest HTML specification
+        https://bugs.webkit.org/show_bug.cgi?id=173049
+
+        Reviewed by Daniel Bates.
+
+        Align <col span>/<colgroup span> limits with the latest HTML specification after:
+        - https://github.com/whatwg/html/issues/2705
+        - https://github.com/whatwg/html/pull/2734
+
+        In particular, col / colspan's span attribute is now clamped to the [1, 1000] range.
+
+        Test: imported/w3c/web-platform-tests/html/semantics/tabular-data/processing-model-1/col-span-limits.html
+
+        [1] https://html.spec.whatwg.org/#dom-colgroup-span
+        [2] https://html.spec.whatwg.org/#clamped-to-the-range
+        [3] https://github.com/whatwg/html/pull/2734/files
+
+        * html/HTMLTableColElement.cpp:
+        (WebCore::HTMLTableColElement::parseAttribute):
+        As per [1][2], the span attribute should be clamped to the range [1, 1000] with a default value of 1 (on getting).
+
+        (WebCore::HTMLTableColElement::setSpan):
+        As per [2], on setting, we should behave the same as setting a regular reflected unsigned integer when an attribute
+        is clamped to a range. Therefore, we now call limitToOnlyHTMLNonNegative() instead of
+        limitToOnlyHTMLNonNegativeNumbersGreaterThanZero(). We used to call limitToOnlyHTMLNonNegativeNumbersGreaterThanZero()
+        because the value used to be limited to only non-negative numbers greater than zero with fallback before [3]. Without
+        this change, "col.span = 0" would set the content attribute to 1 instead of 0, which would be wrong.
+
 2017-06-07  Jer Noble  <jer.noble@apple.com>
 
         Exempt exclusively wall-powered devices from hardware codec requirement

@@ -1116,11 +1116,17 @@ PASS colgroup.span: setAttribute() to -Infinity
 PASS colgroup.span: setAttribute() to "\0" 
 PASS colgroup.span: setAttribute() to object "2" 
 PASS colgroup.span: setAttribute() to object "3" 
+PASS colgroup.span: setAttribute() to 1000 
+PASS colgroup.span: setAttribute() to 1001 
 PASS colgroup.span: IDL set to 0 
 PASS colgroup.span: IDL set to 1 
+PASS colgroup.span: IDL set to 257 
 PASS colgroup.span: IDL set to 2147483647 
+PASS colgroup.span: IDL set to "-0" 
 PASS colgroup.span: IDL set to 2147483648 
 PASS colgroup.span: IDL set to 4294967295 
+PASS colgroup.span: IDL set to 1000 
+PASS colgroup.span: IDL set to 1001 
 PASS colgroup.align: typeof IDL attribute 
 PASS colgroup.align: IDL get with DOM attribute unset 
 PASS colgroup.align: setAttribute() to "" 
@@ -1582,11 +1588,17 @@ PASS col.span: setAttribute() to -Infinity
 PASS col.span: setAttribute() to "\0" 
 PASS col.span: setAttribute() to object "2" 
 PASS col.span: setAttribute() to object "3" 
+PASS col.span: setAttribute() to 1000 
+PASS col.span: setAttribute() to 1001 
 PASS col.span: IDL set to 0 
 PASS col.span: IDL set to 1 
+PASS col.span: IDL set to 257 
 PASS col.span: IDL set to 2147483647 
+PASS col.span: IDL set to "-0" 
 PASS col.span: IDL set to 2147483648 
 PASS col.span: IDL set to 4294967295 
+PASS col.span: IDL set to 1000 
+PASS col.span: IDL set to 1001 
 PASS col.align: typeof IDL attribute 
 PASS col.align: IDL get with DOM attribute unset 
 PASS col.align: setAttribute() to "" 

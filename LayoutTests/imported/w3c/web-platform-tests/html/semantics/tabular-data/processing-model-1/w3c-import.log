@@ -14,5 +14,6 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/tabular-data/processing-model-1/col-span-limits.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/tabular-data/processing-model-1/contains.json
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/tabular-data/processing-model-1/span-limits.html
