@@ -1,3 +1,13 @@
+2017-06-07  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] additionalReadAccessAllowedURLs doesn’t preserve non-Latin1 paths
+        https://bugs.webkit.org/show_bug.cgi?id=173086
+
+        Reviewed by Andy Estes.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/AdditionalReadAccessAllowedURLs.mm:
+        (TEST):
+
 2017-06-07  Alexey Proskuryakov  <ap@apple.com>
 
         Add High Sierra support to WebKit tools

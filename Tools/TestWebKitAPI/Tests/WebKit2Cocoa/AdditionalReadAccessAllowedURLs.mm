@@ -56,6 +56,10 @@ TEST(WebKit2, AdditionalReadAccessAllowedURLs)
     }
     EXPECT_TRUE(exceptionRaised);
 
+    NSURL *fileURLWithNonLatin1Path = [NSURL fileURLWithPath:@"/这是中文"];
+    processPoolConfiguration.additionalReadAccessAllowedURLs = @[ fileURLWithNonLatin1Path ];
+    EXPECT_TRUE([processPoolConfiguration.additionalReadAccessAllowedURLs.firstObject isEqual:fileURLWithNonLatin1Path]);
+
     char temporaryDirectory[PATH_MAX];
     confstr(_CS_DARWIN_USER_TEMP_DIR, temporaryDirectory, sizeof(temporaryDirectory));
 

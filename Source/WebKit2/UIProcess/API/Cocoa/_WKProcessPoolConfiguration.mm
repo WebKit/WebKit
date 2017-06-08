@@ -110,14 +110,14 @@
 
     NSMutableArray *urls = [NSMutableArray arrayWithCapacity:paths.size()];
     for (const auto& path : paths)
-        [urls addObject:[NSURL fileURLWithPath:path]];
+        [urls addObject:[NSURL fileURLWithFileSystemRepresentation:path.data() isDirectory:NO relativeToURL:nil]];
 
     return urls;
 }
 
 - (void)setAdditionalReadAccessAllowedURLs:(NSArray<NSURL *> *)additionalReadAccessAllowedURLs
 {
-    Vector<String> paths;
+    Vector<CString> paths;
     paths.reserveInitialCapacity(additionalReadAccessAllowedURLs.count);
     for (NSURL *url in additionalReadAccessAllowedURLs) {
         if (!url.isFileURL)
