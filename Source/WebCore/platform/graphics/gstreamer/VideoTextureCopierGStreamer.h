@@ -32,10 +32,16 @@ class ImageOrientation;
 
 class VideoTextureCopierGStreamer {
 public:
-    VideoTextureCopierGStreamer();
+    enum class ColorConversion {
+        ConvertBGRAToRGBA,
+        ConvertARGBToRGBA
+    };
+
+    VideoTextureCopierGStreamer(ColorConversion);
     ~VideoTextureCopierGStreamer();
 
     bool copyVideoTextureToPlatformTexture(Platform3DObject inputTexture, IntSize& frameSize, Platform3DObject outputTexture, GC3Denum outputTarget, GC3Dint level, GC3Denum internalFormat, GC3Denum format, GC3Denum type, bool flipY, ImageOrientation& sourceOrientation);
+    void updateColorConversionMatrix(ColorConversion);
     void updateTextureSpaceMatrix();
     void updateTransformationMatrix();
     Platform3DObject resultTexture() { return m_resultTexture; }
@@ -51,6 +57,7 @@ private:
     TransformationMatrix m_modelViewMatrix;
     TransformationMatrix m_projectionMatrix;
     TransformationMatrix m_textureSpaceMatrix;
+    TransformationMatrix m_colorConversionMatrix;
     Platform3DObject m_resultTexture { 0 };
 };
 

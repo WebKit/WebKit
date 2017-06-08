@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-VideoTextureCopierGStreamer::VideoTextureCopierGStreamer()
+VideoTextureCopierGStreamer::VideoTextureCopierGStreamer(ColorConversion colorConversion)
 {
     GLContext* previousContext = GLContext::current();
     ASSERT(previousContext);
@@ -48,6 +48,7 @@ VideoTextureCopierGStreamer::VideoTextureCopierGStreamer()
     m_context3D->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, m_vbo);
     m_context3D->bufferData(GraphicsContext3D::ARRAY_BUFFER, sizeof(GC3Dfloat) * 8, vertices, GraphicsContext3D::STATIC_DRAW);
 
+    updateColorConversionMatrix(colorConversion);
     updateTextureSpaceMatrix();
 
     previousContext->makeContextCurrent();
@@ -66,6 +67,20 @@ VideoTextureCopierGStreamer::~VideoTextureCopierGStreamer()
     m_context3D = nullptr;
 
     previousContext->makeContextCurrent();
+}
+
+void VideoTextureCopierGStreamer::updateColorConversionMatrix(ColorConversion colorConversion)
+{
+    switch (colorConversion) {
+    case ColorConversion::ConvertBGRAToRGBA:
+        m_colorConversionMatrix.setMatrix(0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
+        break;
+    case ColorConversion::ConvertARGBToRGBA:
+        m_colorConversionMatrix.setMatrix(0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0);
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
 }
 
 void VideoTextureCopierGStreamer::updateTextureSpaceMatrix()
@@ -170,7 +185,7 @@ bool VideoTextureCopierGStreamer::copyVideoTextureToPlatformTexture(Platform3DOb
     m_shaderProgram->setMatrix(m_shaderProgram->modelViewMatrixLocation(), m_modelViewMatrix);
     m_shaderProgram->setMatrix(m_shaderProgram->projectionMatrixLocation(), m_projectionMatrix);
     m_shaderProgram->setMatrix(m_shaderProgram->textureSpaceMatrixLocation(), m_textureSpaceMatrix);
-    m_shaderProgram->setMatrix(m_shaderProgram->textureColorSpaceMatrixLocation(), TransformationMatrix());
+    m_shaderProgram->setMatrix(m_shaderProgram->textureColorSpaceMatrixLocation(), m_colorConversionMatrix);
 
     // Perform the copy.
     m_context3D->enableVertexAttribArray(m_shaderProgram->vertexLocation());

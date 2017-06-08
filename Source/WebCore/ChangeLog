@@ -1,3 +1,38 @@
+2017-06-08  Miguel Gomez  <magomez@igalia.com>
+
+        [GTK][WPE][GSTREAMER_GL] Change the colorspace used by the video frames provided by GStreamer
+        https://bugs.webkit.org/show_bug.cgi?id=173050
+
+        Reviewed by Žan Doberšek.
+
+        We are currently requesting RGBA as the color format of the video frames to gstreamer. This is a problem
+        because when those frames are rendered with the CPU, the R and B components are swapped as cairo expects
+        ARGB and GStreamer delivers ABGR.
+
+        In order to fix this without performing color conversions on the CPU, what we do is change the format
+        used by GStreamer for the video frames. We do that taking into account the endianness used. So with
+        little endian we will use BGRx or BGRA and with big endian xRGB or ARGB. Thanks to this, when downloading
+        the frames to the CPU they will automatically be turned into the ARGB expected by cairo. Also, when
+        rendering the frames using OpenGL, we indicate that the color space needs to be converted to the RGBA
+        expected by the destination texture (but this color conversion is performed by the GPU so there's no
+        penalty).
+
+        Covered by existent tests.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::GstVideoFrameHolder::GstVideoFrameHolder):
+        (WebCore::MediaPlayerPrivateGStreamerBase::copyVideoTextureToPlatformTexture):
+        (WebCore::MediaPlayerPrivateGStreamerBase::nativeImageForCurrentTime):
+        (WebCore::MediaPlayerPrivateGStreamerBase::createVideoSinkGL):
+        * platform/graphics/gstreamer/VideoTextureCopierGStreamer.cpp:
+        (WebCore::VideoTextureCopierGStreamer::VideoTextureCopierGStreamer):
+        (WebCore::VideoTextureCopierGStreamer::updateColorConversionMatrix):
+        (WebCore::VideoTextureCopierGStreamer::copyVideoTextureToPlatformTexture):
+        * platform/graphics/gstreamer/VideoTextureCopierGStreamer.h:
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        (WebCore::colorSpaceMatrixForFlags):
+        * platform/graphics/texmap/TextureMapperGL.h:
+
 2017-06-07  Ryosuke Niwa  <rniwa@webkit.org>
 
         IsInShadowTreeFlag does not get updated for a non-container node

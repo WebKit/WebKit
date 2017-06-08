@@ -415,6 +415,8 @@ static TransformationMatrix colorSpaceMatrixForFlags(TextureMapperGL::Flags flag
     TransformationMatrix matrix;
     if (flags & TextureMapperGL::ShouldConvertTextureBGRAToRGBA)
         matrix.setMatrix(0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
+    else if (flags & TextureMapperGL::ShouldConvertTextureARGBToRGBA)
+        matrix.setMatrix(0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0);
 
     return matrix;
 }
