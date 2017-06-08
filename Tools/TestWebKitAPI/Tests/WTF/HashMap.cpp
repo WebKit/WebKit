@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -295,9 +296,10 @@ TEST(WTF_HashMap, UniquePtrKey_TakeUsingRawPointer)
 
 TEST(WTF_HashMap, RefPtrKey_Add)
 {
+    DerivedRefLogger a("a");
+
     HashMap<RefPtr<RefLogger>, int> map;
 
-    DerivedRefLogger a("a");
     RefPtr<RefLogger> ptr(&a);
     map.add(ptr, 0);
 
@@ -306,9 +308,10 @@ TEST(WTF_HashMap, RefPtrKey_Add)
 
 TEST(WTF_HashMap, RefPtrKey_AddUsingRelease)
 {
+    DerivedRefLogger a("a");
+
     HashMap<RefPtr<RefLogger>, int> map;
 
-    DerivedRefLogger a("a");
     RefPtr<RefLogger> ptr(&a);
     map.add(WTFMove(ptr), 0);
 
@@ -317,9 +320,10 @@ TEST(WTF_HashMap, RefPtrKey_AddUsingRelease)
 
 TEST(WTF_HashMap, RefPtrKey_AddUsingMove)
 {
+    DerivedRefLogger a("a");
+
     HashMap<RefPtr<RefLogger>, int> map;
 
-    DerivedRefLogger a("a");
     RefPtr<RefLogger> ptr(&a);
     map.add(WTFMove(ptr), 0);
 
@@ -328,9 +332,10 @@ TEST(WTF_HashMap, RefPtrKey_AddUsingMove)
 
 TEST(WTF_HashMap, RefPtrKey_AddUsingRaw)
 {
+    DerivedRefLogger a("a");
+
     HashMap<RefPtr<RefLogger>, int> map;
 
-    DerivedRefLogger a("a");
     RefPtr<RefLogger> ptr(&a);
     map.add(ptr.get(), 0);
 
@@ -339,9 +344,9 @@ TEST(WTF_HashMap, RefPtrKey_AddUsingRaw)
 
 TEST(WTF_HashMap, RefPtrKey_AddKeyAlreadyPresent)
 {
-    HashMap<RefPtr<RefLogger>, int> map;
-
     DerivedRefLogger a("a");
+
+    HashMap<RefPtr<RefLogger>, int> map;
 
     {
         RefPtr<RefLogger> ptr(&a);
@@ -361,9 +366,9 @@ TEST(WTF_HashMap, RefPtrKey_AddKeyAlreadyPresent)
 
 TEST(WTF_HashMap, RefPtrKey_AddUsingReleaseKeyAlreadyPresent)
 {
-    HashMap<RefPtr<RefLogger>, int> map;
-
     DerivedRefLogger a("a");
+
+    HashMap<RefPtr<RefLogger>, int> map;
 
     {
         RefPtr<RefLogger> ptr(&a);
@@ -383,9 +388,9 @@ TEST(WTF_HashMap, RefPtrKey_AddUsingReleaseKeyAlreadyPresent)
 
 TEST(WTF_HashMap, RefPtrKey_AddUsingMoveKeyAlreadyPresent)
 {
-    HashMap<RefPtr<RefLogger>, int> map;
-
     DerivedRefLogger a("a");
+
+    HashMap<RefPtr<RefLogger>, int> map;
 
     {
         RefPtr<RefLogger> ptr(&a);
@@ -405,9 +410,10 @@ TEST(WTF_HashMap, RefPtrKey_AddUsingMoveKeyAlreadyPresent)
 
 TEST(WTF_HashMap, RefPtrKey_Set)
 {
+    DerivedRefLogger a("a");
+
     HashMap<RefPtr<RefLogger>, int> map;
 
-    DerivedRefLogger a("a");
     RefPtr<RefLogger> ptr(&a);
     map.set(ptr, 0);
 
@@ -416,9 +422,10 @@ TEST(WTF_HashMap, RefPtrKey_Set)
 
 TEST(WTF_HashMap, RefPtrKey_SetUsingRelease)
 {
+    DerivedRefLogger a("a");
+
     HashMap<RefPtr<RefLogger>, int> map;
 
-    DerivedRefLogger a("a");
     RefPtr<RefLogger> ptr(&a);
     map.set(WTFMove(ptr), 0);
 
@@ -428,9 +435,10 @@ TEST(WTF_HashMap, RefPtrKey_SetUsingRelease)
 
 TEST(WTF_HashMap, RefPtrKey_SetUsingMove)
 {
+    DerivedRefLogger a("a");
+
     HashMap<RefPtr<RefLogger>, int> map;
 
-    DerivedRefLogger a("a");
     RefPtr<RefLogger> ptr(&a);
     map.set(WTFMove(ptr), 0);
 
@@ -439,9 +447,10 @@ TEST(WTF_HashMap, RefPtrKey_SetUsingMove)
 
 TEST(WTF_HashMap, RefPtrKey_SetUsingRaw)
 {
+    DerivedRefLogger a("a");
+
     HashMap<RefPtr<RefLogger>, int> map;
 
-    DerivedRefLogger a("a");
     RefPtr<RefLogger> ptr(&a);
     map.set(ptr.get(), 0);
 
@@ -450,9 +459,9 @@ TEST(WTF_HashMap, RefPtrKey_SetUsingRaw)
 
 TEST(WTF_HashMap, RefPtrKey_SetKeyAlreadyPresent)
 {
-    HashMap<RefPtr<RefLogger>, int> map;
-
     DerivedRefLogger a("a");
+
+    HashMap<RefPtr<RefLogger>, int> map;
 
     RefPtr<RefLogger> ptr(&a);
     map.set(ptr, 0);
@@ -471,9 +480,9 @@ TEST(WTF_HashMap, RefPtrKey_SetKeyAlreadyPresent)
 
 TEST(WTF_HashMap, RefPtrKey_SetUsingReleaseKeyAlreadyPresent)
 {
-    HashMap<RefPtr<RefLogger>, int> map;
-
     DerivedRefLogger a("a");
+
+    HashMap<RefPtr<RefLogger>, int> map;
 
     RefPtr<RefLogger> ptr(&a);
     map.set(ptr, 0);
@@ -492,9 +501,9 @@ TEST(WTF_HashMap, RefPtrKey_SetUsingReleaseKeyAlreadyPresent)
 
 TEST(WTF_HashMap, RefPtrKey_SetUsingMoveKeyAlreadyPresent)
 {
-    HashMap<RefPtr<RefLogger>, int> map;
-
     DerivedRefLogger a("a");
+
+    HashMap<RefPtr<RefLogger>, int> map;
 
     RefPtr<RefLogger> ptr(&a);
     map.set(ptr, 0);
@@ -560,17 +569,15 @@ TEST(WTF_HashMap, Ensure_UniquePointer)
 
 TEST(WTF_HashMap, Ensure_RefPtr)
 {
+    DerivedRefLogger a("a");
+
     HashMap<unsigned, RefPtr<RefLogger>> map;
 
-    {
-        DerivedRefLogger a("a");
+    map.ensure(1, [&] { return RefPtr<RefLogger>(&a); });
+    EXPECT_STREQ("ref(a) ", takeLogStr().c_str());
 
-        map.ensure(1, [&] { return RefPtr<RefLogger>(&a); });
-        EXPECT_STREQ("ref(a) ", takeLogStr().c_str());
-
-        map.ensure(1, [&] { return RefPtr<RefLogger>(&a); });
-        EXPECT_STREQ("", takeLogStr().c_str());
-    }
+    map.ensure(1, [&] { return RefPtr<RefLogger>(&a); });
+    EXPECT_STREQ("", takeLogStr().c_str());
 }
 
 class ObjectWithRefLogger {
@@ -705,9 +712,10 @@ TEST(WTF_HashMap, RefPtrNotZeroedBeforeDeref)
 TEST(WTF_HashMap, Ref_Key)
 {
     {
+        RefLogger a("a");
+
         HashMap<Ref<RefLogger>, int> map;
 
-        RefLogger a("a");
         Ref<RefLogger> ref(a);
         map.add(WTFMove(ref), 1);
     }
@@ -715,9 +723,10 @@ TEST(WTF_HashMap, Ref_Key)
     ASSERT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 
     {
+        RefLogger a("a");
+
         HashMap<Ref<RefLogger>, int> map;
 
-        RefLogger a("a");
         Ref<RefLogger> ref(a);
         map.set(WTFMove(ref), 1);
     }
@@ -725,9 +734,10 @@ TEST(WTF_HashMap, Ref_Key)
     ASSERT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 
     {
+        RefLogger a("a");
+
         HashMap<Ref<RefLogger>, int> map;
 
-        RefLogger a("a");
         Ref<RefLogger> refA(a);
         map.add(WTFMove(refA), 1);
 
@@ -738,9 +748,10 @@ TEST(WTF_HashMap, Ref_Key)
     ASSERT_STREQ("ref(a) ref(a) deref(a) deref(a) ", takeLogStr().c_str());
 
     {
+        RefLogger a("a");
+
         HashMap<Ref<RefLogger>, int> map;
 
-        RefLogger a("a");
         Ref<RefLogger> ref(a);
         map.ensure(WTFMove(ref), []() { 
             return 1; 
@@ -750,9 +761,10 @@ TEST(WTF_HashMap, Ref_Key)
     ASSERT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 
     {
+        RefLogger a("a");
+
         HashMap<Ref<RefLogger>, int> map;
 
-        RefLogger a("a");
         Ref<RefLogger> ref(a);
         map.add(WTFMove(ref), 1);
         
@@ -766,9 +778,10 @@ TEST(WTF_HashMap, Ref_Key)
     ASSERT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 
     {
+        RefLogger a("a");
+
         HashMap<Ref<RefLogger>, int> map;
 
-        RefLogger a("a");
         Ref<RefLogger> ref(a);
         map.add(WTFMove(ref), 1);
 
@@ -778,9 +791,10 @@ TEST(WTF_HashMap, Ref_Key)
     ASSERT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 
     {
+        RefLogger a("a");
+
         HashMap<Ref<RefLogger>, int> map;
 
-        RefLogger a("a");
         Ref<RefLogger> ref(a);
         map.add(WTFMove(ref), 1);
 
@@ -793,6 +807,7 @@ TEST(WTF_HashMap, Ref_Key)
     {
         HashMap<Ref<RefLogger>, int> map;
         for (int i = 0; i < 64; ++i) {
+            // FIXME: All of these RefLogger objects leak. No big deal for a test I guess.
             Ref<RefLogger> ref = adoptRef(*new RefLogger("a"));
             auto* pointer = ref.ptr();
             map.add(WTFMove(ref), i + 1);
@@ -806,9 +821,10 @@ TEST(WTF_HashMap, Ref_Key)
 TEST(WTF_HashMap, Ref_Value)
 {
     {
+        RefLogger a("a");
+
         HashMap<int, Ref<RefLogger>> map;
 
-        RefLogger a("a");
         Ref<RefLogger> ref(a);
         map.add(1, WTFMove(ref));
     }
@@ -816,9 +832,10 @@ TEST(WTF_HashMap, Ref_Value)
     ASSERT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 
     {
+        RefLogger a("a");
+
         HashMap<int, Ref<RefLogger>> map;
 
-        RefLogger a("a");
         Ref<RefLogger> ref(a);
         map.set(1, WTFMove(ref));
     }
@@ -826,13 +843,14 @@ TEST(WTF_HashMap, Ref_Value)
     ASSERT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 
     {
+        RefLogger a("a");
+        RefLogger b("b");
+
         HashMap<int, Ref<RefLogger>> map;
 
-        RefLogger a("a");
         Ref<RefLogger> refA(a);
         map.add(1, WTFMove(refA));
 
-        RefLogger b("b");
         Ref<RefLogger> refB(b);
         map.set(1, WTFMove(refB));
     }
@@ -840,9 +858,10 @@ TEST(WTF_HashMap, Ref_Value)
     ASSERT_STREQ("ref(a) ref(b) deref(a) deref(b) ", takeLogStr().c_str());
 
     {
+        RefLogger a("a");
+
         HashMap<int, Ref<RefLogger>> map;
 
-        RefLogger a("a");
         Ref<RefLogger> ref(a);
         map.add(1, WTFMove(ref));
         
@@ -860,9 +879,10 @@ TEST(WTF_HashMap, Ref_Value)
     }
 
     {
+        RefLogger a("a");
+
         HashMap<int, Ref<RefLogger>> map;
 
-        RefLogger a("a");
         Ref<RefLogger> ref(a);
         map.add(1, WTFMove(ref));
         
@@ -881,9 +901,10 @@ TEST(WTF_HashMap, Ref_Value)
     }
 
     {
+        RefLogger a("a");
+
         HashMap<int, Ref<RefLogger>> map;
 
-        RefLogger a("a");
         Ref<RefLogger> ref(a);
         map.add(1, WTFMove(ref));
         map.remove(1);
@@ -892,9 +913,10 @@ TEST(WTF_HashMap, Ref_Value)
     ASSERT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 
     {
+        RefLogger a("a");
+
         HashMap<int, Ref<RefLogger>> map;
 
-        RefLogger a("a");
         map.ensure(1, [&]() mutable {
             Ref<RefLogger> ref(a);
             return ref; 
@@ -906,6 +928,7 @@ TEST(WTF_HashMap, Ref_Value)
     {
         HashMap<int, Ref<RefLogger>> map;
         for (int i = 0; i < 64; ++i) {
+            // FIXME: All of these RefLogger objects leak. No big deal for a test I guess.
             Ref<RefLogger> ref = adoptRef(*new RefLogger("a"));
             map.add(i + 1, WTFMove(ref));
             ASSERT_TRUE(map.contains(i + 1));

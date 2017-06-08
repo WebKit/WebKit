@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
  * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,7 +34,7 @@
 #include <wtf/text/StringHash.h>
 
 namespace TestWebKitAPI {
-    
+
 typedef WTF::HashCountedSet<int> IntHashCountedSet;
 
 TEST(WTF_HashCountedSet, HashTableIteratorComparison)
@@ -43,7 +43,7 @@ TEST(WTF_HashCountedSet, HashTableIteratorComparison)
     hashCountedSet.add(1);
     ASSERT_TRUE(hashCountedSet.begin() != hashCountedSet.end());
     ASSERT_FALSE(hashCountedSet.begin() == hashCountedSet.end());
-    
+
     IntHashCountedSet::const_iterator begin = hashCountedSet.begin();
     ASSERT_TRUE(begin == hashCountedSet.begin());
     ASSERT_TRUE(hashCountedSet.begin() == begin);
@@ -74,9 +74,9 @@ TEST(WTF_HashCountedSet, DoubleHashCollisions)
     const double clobberKey = 6;
     const double zeroKey = 0;
     const double negativeZeroKey = -zeroKey;
-    
+
     DoubleHashCountedSet hashCountedSet;
-    
+
     hashCountedSet.add(clobberKey);
 
     ASSERT_EQ(hashCountedSet.count(clobberKey), 1u);
@@ -85,7 +85,7 @@ TEST(WTF_HashCountedSet, DoubleHashCollisions)
 
     hashCountedSet.add(zeroKey);
     hashCountedSet.add(negativeZeroKey);
-    
+
     ASSERT_EQ(bucketForKey(clobberKey), bucketForKey(negativeZeroKey));
     ASSERT_EQ(hashCountedSet.count(clobberKey), 1u);
     ASSERT_EQ(hashCountedSet.count(zeroKey), 1u);
@@ -94,7 +94,7 @@ TEST(WTF_HashCountedSet, DoubleHashCollisions)
     hashCountedSet.add(clobberKey);
     hashCountedSet.add(zeroKey);
     hashCountedSet.add(negativeZeroKey);
-    
+
     ASSERT_EQ(hashCountedSet.count(clobberKey), 2u);
     ASSERT_EQ(hashCountedSet.count(zeroKey), 2u);
     ASSERT_EQ(hashCountedSet.count(negativeZeroKey), 2u);
@@ -102,7 +102,7 @@ TEST(WTF_HashCountedSet, DoubleHashCollisions)
     hashCountedSet.add(clobberKey, 12);
     hashCountedSet.add(zeroKey, 15);
     hashCountedSet.add(negativeZeroKey, 17);
-    
+
     ASSERT_EQ(hashCountedSet.count(clobberKey), 14u);
     ASSERT_EQ(hashCountedSet.count(zeroKey), 17u);
     ASSERT_EQ(hashCountedSet.count(negativeZeroKey), 19u);
@@ -116,27 +116,27 @@ TEST(WTF_HashCountedSet, DoubleHashCollisionsInitialCount)
     const double clobberKey = 6;
     const double zeroKey = 0;
     const double negativeZeroKey = -zeroKey;
-    
+
     DoubleHashCountedSet hashCountedSet;
-    
+
     hashCountedSet.add(clobberKey, 5);
-    
+
     ASSERT_EQ(hashCountedSet.count(clobberKey), 5u);
     ASSERT_EQ(hashCountedSet.count(zeroKey), 0u);
     ASSERT_EQ(hashCountedSet.count(negativeZeroKey), 0u);
-    
+
     hashCountedSet.add(zeroKey, 22);
     hashCountedSet.add(negativeZeroKey, 0);
-    
+
     ASSERT_EQ(bucketForKey(clobberKey), bucketForKey(negativeZeroKey));
     ASSERT_EQ(hashCountedSet.count(clobberKey), 5u);
     ASSERT_EQ(hashCountedSet.count(zeroKey), 22u);
     ASSERT_EQ(hashCountedSet.count(negativeZeroKey), 0u);
-    
+
     hashCountedSet.add(clobberKey);
     hashCountedSet.add(zeroKey);
     hashCountedSet.add(negativeZeroKey);
-    
+
     ASSERT_EQ(hashCountedSet.count(clobberKey), 6u);
     ASSERT_EQ(hashCountedSet.count(zeroKey), 23u);
     ASSERT_EQ(hashCountedSet.count(negativeZeroKey), 1u);
@@ -146,21 +146,21 @@ TEST(WTF_HashCountedSet, DoubleHashCollisionsInitialCount)
 TEST(WTF_HashCountedSet, MoveOnlyKeys)
 {
     HashCountedSet<MoveOnly> moveOnlyKeys;
-    
+
     for (size_t i = 0; i < 100; ++i) {
         MoveOnly moveOnly(i + 1);
         moveOnlyKeys.add(WTFMove(moveOnly));
     }
-    
+
     for (size_t i = 0; i < 100; ++i) {
         auto it = moveOnlyKeys.find(MoveOnly(i + 1));
         ASSERT_FALSE(it == moveOnlyKeys.end());
         ASSERT_EQ(it->value, 1u);
     }
-    
+
     for (size_t i = 0; i < 100; ++i)
         ASSERT_FALSE(moveOnlyKeys.add(MoveOnly(i + 1)).isNewEntry);
-    
+
     for (size_t i = 0; i < 100; ++i)
         ASSERT_FALSE(moveOnlyKeys.remove(MoveOnly(i + 1)));
 
@@ -173,24 +173,24 @@ TEST(WTF_HashCountedSet, MoveOnlyKeys)
 TEST(WTF_HashCountedSet, MoveOnlyKeysInitialCount)
 {
     HashCountedSet<MoveOnly> moveOnlyKeys;
-    
+
     for (size_t i = 0; i < 100; ++i) {
         MoveOnly moveOnly(i + 1);
         moveOnlyKeys.add(WTFMove(moveOnly), i + 1);
     }
-    
+
     for (size_t i = 0; i < 100; ++i) {
         auto it = moveOnlyKeys.find(MoveOnly(i + 1));
         ASSERT_FALSE(it == moveOnlyKeys.end());
         ASSERT_EQ(it->value, i + 1);
     }
-    
+
     for (size_t i = 0; i < 100; ++i)
         ASSERT_FALSE(moveOnlyKeys.add(MoveOnly(i + 1)).isNewEntry);
-    
+
     for (size_t i = 0; i < 100; ++i)
         ASSERT_EQ(moveOnlyKeys.count(MoveOnly(i + 1)), i + 2);
-    
+
     for (size_t i = 0; i < 100; ++i)
         ASSERT_FALSE(moveOnlyKeys.remove(MoveOnly(i + 1)));
 
@@ -209,9 +209,9 @@ TEST(WTF_HashCountedSet, InitializerList)
         "four",
         "four",
     };
-    
+
     EXPECT_EQ(4u, hashCountedSet.size());
-    
+
     EXPECT_EQ(hashCountedSet.count("one"), 1u);
     EXPECT_EQ(hashCountedSet.count("two"), 1u);
     EXPECT_EQ(hashCountedSet.count("three"), 1u);
@@ -226,9 +226,9 @@ TEST(WTF_HashCountedSet, InitializerListInitialCount)
         { String("three"), 3u },
         { String("four"), 4u },
     };
-    
+
     EXPECT_EQ(4u, hashCountedSet.size());
-    
+
     EXPECT_EQ(hashCountedSet.count("one"), 1u);
     EXPECT_EQ(hashCountedSet.count("two"), 2u);
     EXPECT_EQ(hashCountedSet.count("three"), 3u);
@@ -238,17 +238,17 @@ TEST(WTF_HashCountedSet, InitializerListInitialCount)
 TEST(WTF_HashCountedSet, UniquePtrKey)
 {
     ConstructorDestructorCounter::TestingScope scope;
-    
+
     HashCountedSet<std::unique_ptr<ConstructorDestructorCounter>> hashCountedSet;
-    
+
     auto uniquePtr = std::make_unique<ConstructorDestructorCounter>();
     hashCountedSet.add(WTFMove(uniquePtr));
-    
+
     EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
     EXPECT_EQ(0u, ConstructorDestructorCounter::destructionCount);
-    
+
     hashCountedSet.clear();
-    
+
     EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
     EXPECT_EQ(1u, ConstructorDestructorCounter::destructionCount);
 }
@@ -256,17 +256,17 @@ TEST(WTF_HashCountedSet, UniquePtrKey)
 TEST(WTF_HashCountedSet, UniquePtrKeyInitialCount)
 {
     ConstructorDestructorCounter::TestingScope scope;
-    
+
     HashCountedSet<std::unique_ptr<ConstructorDestructorCounter>> hashCountedSet;
-    
+
     auto uniquePtr = std::make_unique<ConstructorDestructorCounter>();
     hashCountedSet.add(WTFMove(uniquePtr), 12);
-    
+
     EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
     EXPECT_EQ(0u, ConstructorDestructorCounter::destructionCount);
-    
+
     hashCountedSet.clear();
-    
+
     EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
     EXPECT_EQ(1u, ConstructorDestructorCounter::destructionCount);
 }
@@ -275,33 +275,33 @@ TEST(WTF_HashCountedSet, UniquePtrKey_CustomDeleter)
 {
     ConstructorDestructorCounter::TestingScope constructorDestructorCounterScope;
     DeleterCounter<ConstructorDestructorCounter>::TestingScope deleterCounterScope;
-    
+
     HashCountedSet<std::unique_ptr<ConstructorDestructorCounter, DeleterCounter<ConstructorDestructorCounter>>> hashCountedSet;
-    
+
     std::unique_ptr<ConstructorDestructorCounter, DeleterCounter<ConstructorDestructorCounter>> uniquePtr(new ConstructorDestructorCounter(), DeleterCounter<ConstructorDestructorCounter>());
     hashCountedSet.add(WTFMove(uniquePtr));
-    
+
     EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
     EXPECT_EQ(0u, ConstructorDestructorCounter::destructionCount);
-    
+
     EXPECT_EQ(0u, DeleterCounter<ConstructorDestructorCounter>::deleterCount());
-    
+
     hashCountedSet.clear();
-    
+
     EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
     EXPECT_EQ(1u, ConstructorDestructorCounter::destructionCount);
-    
+
     EXPECT_EQ(1u, DeleterCounter<ConstructorDestructorCounter>::deleterCount());
 }
 
 TEST(WTF_HashCountedSet, UniquePtrKey_FindUsingRawPointer)
 {
     HashCountedSet<std::unique_ptr<int>> hashCountedSet;
-    
+
     auto uniquePtr = std::make_unique<int>(5);
     int* ptr = uniquePtr.get();
     hashCountedSet.add(WTFMove(uniquePtr));
-    
+
     auto it = hashCountedSet.find(ptr);
     ASSERT_TRUE(it != hashCountedSet.end());
     EXPECT_EQ(ptr, it->key.get());
@@ -311,22 +311,22 @@ TEST(WTF_HashCountedSet, UniquePtrKey_FindUsingRawPointer)
 TEST(WTF_HashCountedSet, UniquePtrKey_ContainsUsingRawPointer)
 {
     HashCountedSet<std::unique_ptr<int>> hashCountedSet;
-    
+
     auto uniquePtr = std::make_unique<int>(5);
     int* ptr = uniquePtr.get();
     hashCountedSet.add(WTFMove(uniquePtr));
-    
+
     EXPECT_EQ(true, hashCountedSet.contains(ptr));
 }
 
 TEST(WTF_HashCountedSet, UniquePtrKey_GetUsingRawPointer)
 {
     HashCountedSet<std::unique_ptr<int>> hashCountedSet;
-    
+
     auto uniquePtr = std::make_unique<int>(5);
     int* ptr = uniquePtr.get();
     hashCountedSet.add(WTFMove(uniquePtr));
-    
+
     int value = hashCountedSet.count(ptr);
     EXPECT_EQ(1, value);
 }
@@ -334,31 +334,32 @@ TEST(WTF_HashCountedSet, UniquePtrKey_GetUsingRawPointer)
 TEST(WTF_HashCountedSet, UniquePtrKey_RemoveUsingRawPointer)
 {
     ConstructorDestructorCounter::TestingScope scope;
-    
+
     HashCountedSet<std::unique_ptr<ConstructorDestructorCounter>> hashCountedSet;
-    
+
     auto uniquePtr = std::make_unique<ConstructorDestructorCounter>();
     ConstructorDestructorCounter* ptr = uniquePtr.get();
     hashCountedSet.add(WTFMove(uniquePtr));
-    
+
     EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
     EXPECT_EQ(0u, ConstructorDestructorCounter::destructionCount);
-    
+
     bool result = hashCountedSet.remove(ptr);
     EXPECT_EQ(true, result);
-    
+
     EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
     EXPECT_EQ(1u, ConstructorDestructorCounter::destructionCount);
 }
 
 TEST(WTF_HashCountedSet, RefPtrKey_Add)
 {
-    HashCountedSet<RefPtr<RefLogger>> hashCountedSet;
-    
     DerivedRefLogger a("a");
+
+    HashCountedSet<RefPtr<RefLogger>> hashCountedSet;
+
     RefPtr<RefLogger> ptr(&a);
     hashCountedSet.add(ptr);
-    
+
     ASSERT_STREQ("ref(a) ref(a) ", takeLogStr().c_str());
     EXPECT_EQ(1U, hashCountedSet.count(ptr));
     EXPECT_EQ(1U, hashCountedSet.count(ptr.get()));
@@ -366,34 +367,37 @@ TEST(WTF_HashCountedSet, RefPtrKey_Add)
 
 TEST(WTF_HashCountedSet, RefPtrKey_AddUsingRelease)
 {
-    HashCountedSet<RefPtr<RefLogger>> hashCountedSet;
-    
     DerivedRefLogger a("a");
+
+    HashCountedSet<RefPtr<RefLogger>> hashCountedSet;
+
     RefPtr<RefLogger> ptr(&a);
     hashCountedSet.add(WTFMove(ptr));
-    
+
     EXPECT_STREQ("ref(a) ", takeLogStr().c_str());
 }
 
 TEST(WTF_HashCountedSet, RefPtrKey_AddUsingMove)
 {
-    HashCountedSet<RefPtr<RefLogger>> hashCountedSet;
-    
     DerivedRefLogger a("a");
+
+    HashCountedSet<RefPtr<RefLogger>> hashCountedSet;
+
     RefPtr<RefLogger> ptr(&a);
     hashCountedSet.add(WTFMove(ptr));
-    
+
     EXPECT_STREQ("ref(a) ", takeLogStr().c_str());
 }
 
 TEST(WTF_HashCountedSet, RefPtrKey_AddUsingRaw)
 {
-    HashCountedSet<RefPtr<RefLogger>> hashCountedSet;
-    
     DerivedRefLogger a("a");
+
+    HashCountedSet<RefPtr<RefLogger>> hashCountedSet;
+
     RefPtr<RefLogger> ptr(&a);
     hashCountedSet.add(ptr.get());
-    
+
     EXPECT_STREQ("ref(a) ref(a) ", takeLogStr().c_str());
     EXPECT_EQ(1U, hashCountedSet.count(ptr));
     EXPECT_EQ(1U, hashCountedSet.count(ptr.get()));
@@ -401,68 +405,68 @@ TEST(WTF_HashCountedSet, RefPtrKey_AddUsingRaw)
 
 TEST(WTF_HashCountedSet, RefPtrKey_AddKeyAlreadyPresent)
 {
-    HashCountedSet<RefPtr<RefLogger>> hashCountedSet;
-    
     DerivedRefLogger a("a");
-    
+
+    HashCountedSet<RefPtr<RefLogger>> hashCountedSet;
+
     {
         RefPtr<RefLogger> ptr(&a);
         hashCountedSet.add(ptr);
     }
-    
+
     EXPECT_STREQ("ref(a) ref(a) deref(a) ", takeLogStr().c_str());
-    
+
     {
         RefPtr<RefLogger> ptr2(&a);
         auto addResult = hashCountedSet.add(ptr2);
         EXPECT_FALSE(addResult.isNewEntry);
     }
-    
+
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 }
 
 TEST(WTF_HashCountedSet, RefPtrKey_AddUsingReleaseKeyAlreadyPresent)
 {
-    HashCountedSet<RefPtr<RefLogger>> hashCountedSet;
-    
     DerivedRefLogger a("a");
-    
+
+    HashCountedSet<RefPtr<RefLogger>> hashCountedSet;
+
     {
         RefPtr<RefLogger> ptr(&a);
         hashCountedSet.add(ptr);
     }
-    
+
     EXPECT_STREQ("ref(a) ref(a) deref(a) ", takeLogStr().c_str());
-    
+
     {
         RefPtr<RefLogger> ptr2(&a);
         auto addResult = hashCountedSet.add(WTFMove(ptr2));
         EXPECT_FALSE(addResult.isNewEntry);
     }
-    
+
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 }
 
 TEST(WTF_HashCountedSet, RefPtrKey_AddUsingMoveKeyAlreadyPresent)
 {
-    HashCountedSet<RefPtr<RefLogger>> hashCountedSet;
-    
     DerivedRefLogger a("a");
-    
+
+    HashCountedSet<RefPtr<RefLogger>> hashCountedSet;
+
     {
         RefPtr<RefLogger> ptr(&a);
         hashCountedSet.add(ptr);
     }
-    
+
     EXPECT_STREQ("ref(a) ref(a) deref(a) ", takeLogStr().c_str());
-    
+
     {
         RefPtr<RefLogger> ptr2(&a);
         auto addResult = hashCountedSet.add(WTFMove(ptr2));
         EXPECT_FALSE(addResult.isNewEntry);
     }
-    
+
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 }
-    
+
 } // namespace TestWebKitAPI

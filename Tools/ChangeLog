@@ -1,3 +1,15 @@
+2017-06-08  Darin Adler  <darin@apple.com>
+
+        WTF tests have incorrect RefLogger lifetimes making it impossible to test with Address Sanitizer
+        https://bugs.webkit.org/show_bug.cgi?id=173106
+
+        Reviewed by Sam Weinig.
+
+        * TestWebKitAPI/Tests/WTF/HashCountedSet.cpp: Define RefLogger objects first, so they are
+        destroyed last.
+        * TestWebKitAPI/Tests/WTF/HashMap.cpp: Ditto.
+        * TestWebKitAPI/Tests/WTF/HashSet.cpp: Ditto.
+
 2017-06-07  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] additionalReadAccessAllowedURLs doesn’t preserve non-Latin1 paths

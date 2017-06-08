@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -353,9 +353,10 @@ TEST(WTF_HashSet, UniquePtrNotZeroedBeforeDestructor)
 TEST(WTF_HashSet, Ref)
 {
     {
+        RefLogger a("a");
+
         HashSet<Ref<RefLogger>> set;
 
-        RefLogger a("a");
         Ref<RefLogger> ref(a);
         set.add(WTFMove(ref));
     }
@@ -363,9 +364,10 @@ TEST(WTF_HashSet, Ref)
     ASSERT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 
     {
+        RefLogger a("a");
+
         HashSet<Ref<RefLogger>> set;
 
-        RefLogger a("a");
         Ref<RefLogger> ref(a);
         set.add(ref.copyRef());
     }
@@ -373,9 +375,10 @@ TEST(WTF_HashSet, Ref)
     ASSERT_STREQ("ref(a) ref(a) deref(a) deref(a) ", takeLogStr().c_str());
 
     {
+        RefLogger a("a");
+
         HashSet<Ref<RefLogger>> set;
 
-        RefLogger a("a");
         Ref<RefLogger> ref(a);
         set.add(WTFMove(ref));
         set.remove(&a);
@@ -384,9 +387,10 @@ TEST(WTF_HashSet, Ref)
     ASSERT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 
     {
+        RefLogger a("a");
+
         HashSet<Ref<RefLogger>> set;
 
-        RefLogger a("a");
         Ref<RefLogger> ref(a);
         set.add(WTFMove(ref));
 
@@ -398,9 +402,10 @@ TEST(WTF_HashSet, Ref)
     ASSERT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 
     {
+        RefLogger a("a");
+
         HashSet<Ref<RefLogger>> set;
 
-        RefLogger a("a");
         Ref<RefLogger> ref(a);
         set.add(WTFMove(ref));
 
@@ -418,9 +423,10 @@ TEST(WTF_HashSet, Ref)
     }
 
     {
+        RefLogger a("a");
+
         HashSet<Ref<RefLogger>> set;
 
-        RefLogger a("a");
         Ref<RefLogger> ref(a);
         set.add(WTFMove(ref));
         
@@ -432,6 +438,7 @@ TEST(WTF_HashSet, Ref)
     {
         HashSet<Ref<RefLogger>> set;
         for (int i = 0; i < 64; ++i) {
+            // FIXME: All of these RefLogger objects leak. No big deal for a test I guess.
             Ref<RefLogger> ref = adoptRef(*new RefLogger("a"));
             auto* pointer = ref.ptr();
             set.add(WTFMove(ref));
