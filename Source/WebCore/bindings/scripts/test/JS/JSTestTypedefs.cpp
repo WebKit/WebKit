@@ -333,7 +333,7 @@ bool setJSTestTypedefsSerializedScriptValue(ExecState* state, EncodedJSValue thi
     return IDLAttribute<JSTestTypedefs>::set<setJSTestTypedefsSerializedScriptValueSetter>(*state, thisValue, encodedValue, "serializedScriptValue");
 }
 
-static inline JSValue jsTestTypedefsConstructorTestSubObjGetter(ExecState& state, JSTestTypedefs& thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestTypedefsConstructorTestSubObjGetter(ExecState& state, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
@@ -342,7 +342,7 @@ static inline JSValue jsTestTypedefsConstructorTestSubObjGetter(ExecState& state
 
 EncodedJSValue jsTestTypedefsConstructorTestSubObj(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    return IDLAttribute<JSTestTypedefs>::get<jsTestTypedefsConstructorTestSubObjGetter>(*state, thisValue, "TestSubObj");
+    return IDLAttribute<JSTestTypedefs>::getStatic<jsTestTypedefsConstructorTestSubObjGetter>(*state, thisValue, "TestSubObj");
 }
 
 static inline JSValue jsTestTypedefsAttributeWithClampGetter(ExecState& state, JSTestTypedefs& thisObject, ThrowScope& throwScope)

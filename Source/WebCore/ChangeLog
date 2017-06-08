@@ -1,3 +1,61 @@
+2017-06-07  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Split up attribute generation to match operation generation
+        https://bugs.webkit.org/show_bug.cgi?id=173072
+
+        Reviewed by Chris Dumez.
+
+        * bindings/js/JSDOMAttribute.h:
+        (WebCore::IDLAttribute::setStatic):
+        (WebCore::IDLAttribute::getStatic):
+        Add static variants of get/set matching the one in IDLOperation.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GetFullyQualifiedImplementationCallName):
+        Factor out duplicate code to compute the qualified name for a function call.
+
+        (AddAdditionalArgumentsForImplementationCall):
+        Factor out duplicate code to compute the some standard arguments for a function
+        call. We may want to merge this with GenerateCallWith.
+
+        (GenerateHeader):
+        Update for new signature of HasCustom... subroutines.
+        
+        (GenerateImplementation):
+        Pass @implContent to more helper generators to continue propagating the idiom.
+
+        (GenerateAttributeGetterBodyDefinition):
+        (GenerateAttributeGetterTrampolineDefinition):
+        (GenerateAttributeGetterDefinition):
+        (GenerateAttributeSetterBodyDefinition):
+        (GenerateAttributeSetterTrampolineDefinition):
+        (GenerateAttributeSetterDefinition):
+        Split attribute getter and setter generation up by having separate subroutines 
+        to generate the trampoline and body. Also, make all attributes, even static ones
+        use a trampoline to simplify the code. Static attributes got through a no-op 
+        trampoline, that gets compiled away. Also adopt GetFullyQualifiedImplementationCallName
+        and AddAdditionalArgumentsForImplementationCall to reduce duplication.
+
+        (GenerateOperationBodyDefinition):
+        (GenerateOperationDefinition):
+        Adopt $outputArray idiom and adopt GetFullyQualifiedImplementationCallName
+        and AddAdditionalArgumentsForImplementationCall to reduce duplication
+
+        (GenerateParametersCheck):
+        Adopt GetFullyQualifiedImplementationCallName and AddAdditionalArgumentsForImplementationCall 
+        to reduce duplication.
+
+        (HasCustomGetter):
+        (HasCustomSetter):
+        (HasCustomMethod):
+        Convert HasCustom... subroutines to take an IDLAttribute rather than the extended
+        attributes, matching other predicates
+
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        Update test results.
+
 2017-06-07  Youenn Fablet  <youenn@apple.com>
 
         RTCTrackEvent.track should be found in RTCTrackEvent.streams[0]

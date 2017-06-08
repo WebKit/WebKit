@@ -2110,43 +2110,48 @@ EncodedJSValue jsTestObjReadOnlyTestObjAttr(ExecState* state, EncodedJSValue thi
     return IDLAttribute<JSTestObj>::get<jsTestObjReadOnlyTestObjAttrGetter>(*state, thisValue, "readOnlyTestObjAttr");
 }
 
-static inline JSValue jsTestObjConstructorStaticReadOnlyLongAttrGetter(ExecState& state)
+static inline JSValue jsTestObjConstructorStaticReadOnlyLongAttrGetter(ExecState& state, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     JSValue result = toJS<IDLLong>(TestObj::staticReadOnlyLongAttr());
     return result;
 }
 
-EncodedJSValue jsTestObjConstructorStaticReadOnlyLongAttr(ExecState* state, EncodedJSValue, PropertyName)
+EncodedJSValue jsTestObjConstructorStaticReadOnlyLongAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    return JSValue::encode(jsTestObjConstructorStaticReadOnlyLongAttrGetter(*state));
+    return IDLAttribute<JSTestObj>::getStatic<jsTestObjConstructorStaticReadOnlyLongAttrGetter>(*state, thisValue, "staticReadOnlyLongAttr");
 }
 
-static inline JSValue jsTestObjConstructorStaticStringAttrGetter(ExecState& state)
+static inline JSValue jsTestObjConstructorStaticStringAttrGetter(ExecState& state, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     JSValue result = toJS<IDLDOMString>(state, TestObj::staticStringAttr());
     return result;
 }
 
-EncodedJSValue jsTestObjConstructorStaticStringAttr(ExecState* state, EncodedJSValue, PropertyName)
+EncodedJSValue jsTestObjConstructorStaticStringAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    return JSValue::encode(jsTestObjConstructorStaticStringAttrGetter(*state));
+    return IDLAttribute<JSTestObj>::getStatic<jsTestObjConstructorStaticStringAttrGetter>(*state, thisValue, "staticStringAttr");
 }
 
-bool setJSTestObjConstructorStaticStringAttr(ExecState* statePointer, EncodedJSValue, EncodedJSValue encodedValue)
+static inline bool setJSTestObjConstructorStaticStringAttrSetter(ExecState& state, JSValue value, ThrowScope& throwScope)
 {
-    ASSERT(statePointer);
-    auto& state = *statePointer;
     UNUSED_PARAM(state);
-    auto value = JSValue::decode(encodedValue);
+    UNUSED_PARAM(throwScope);
     auto nativeValue = convert<IDLDOMString>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
     TestObj::setStaticStringAttr(WTFMove(nativeValue));
     return true;
 }
 
-static inline JSValue jsTestObjConstructorTestSubObjGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
+bool setJSTestObjConstructorStaticStringAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+{
+    return IDLAttribute<JSTestObj>::setStatic<setJSTestObjConstructorStaticStringAttrSetter>(*state, thisValue, encodedValue, "staticStringAttr");
+}
+
+static inline JSValue jsTestObjConstructorTestSubObjGetter(ExecState& state, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
@@ -2155,7 +2160,7 @@ static inline JSValue jsTestObjConstructorTestSubObjGetter(ExecState& state, JST
 
 EncodedJSValue jsTestObjConstructorTestSubObj(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    return IDLAttribute<JSTestObj>::get<jsTestObjConstructorTestSubObjGetter>(*state, thisValue, "TestSubObj");
+    return IDLAttribute<JSTestObj>::getStatic<jsTestObjConstructorTestSubObjGetter>(*state, thisValue, "TestSubObj");
 }
 
 static inline JSValue jsTestObjTestSubObjEnabledBySettingConstructorGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
@@ -2180,7 +2185,7 @@ static inline bool setJSTestObjTestSubObjEnabledBySettingConstructorSetter(ExecS
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state, "TestSubObjEnabledBySetting"), value);
+    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("TestSubObjEnabledBySetting"), strlen("TestSubObjEnabledBySetting")), value);
 }
 
 bool setJSTestObjTestSubObjEnabledBySettingConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -4164,7 +4169,7 @@ static inline bool setJSTestObjConditionalAttr4ConstructorSetter(ExecState& stat
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state, "conditionalAttr4"), value);
+    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("conditionalAttr4"), strlen("conditionalAttr4")), value);
 }
 
 bool setJSTestObjConditionalAttr4Constructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -4195,7 +4200,7 @@ static inline bool setJSTestObjConditionalAttr5ConstructorSetter(ExecState& stat
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state, "conditionalAttr5"), value);
+    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("conditionalAttr5"), strlen("conditionalAttr5")), value);
 }
 
 bool setJSTestObjConditionalAttr5Constructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -4226,7 +4231,7 @@ static inline bool setJSTestObjConditionalAttr6ConstructorSetter(ExecState& stat
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     // Shadowing a built-in constructor.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state, "conditionalAttr6"), value);
+    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("conditionalAttr6"), strlen("conditionalAttr6")), value);
 }
 
 bool setJSTestObjConditionalAttr6Constructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
@@ -4481,7 +4486,7 @@ static inline bool setJSTestObjReplaceableAttributeSetter(ExecState& state, JSTe
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     // Shadowing a built-in property.
-    return thisObject.putDirect(state.vm(), Identifier::fromString(&state, "replaceableAttribute"), value);
+    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("replaceableAttribute"), strlen("replaceableAttribute")), value);
 }
 
 bool setJSTestObjReplaceableAttribute(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)

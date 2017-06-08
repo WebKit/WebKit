@@ -467,46 +467,51 @@ bool setJSTestInterfaceConstructor(ExecState* state, EncodedJSValue thisValue, E
 }
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
-static inline JSValue jsTestInterfaceConstructorImplementsStaticReadOnlyAttrGetter(ExecState& state)
+static inline JSValue jsTestInterfaceConstructorImplementsStaticReadOnlyAttrGetter(ExecState& state, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     JSValue result = toJS<IDLLong>(TestInterface::implementsStaticReadOnlyAttr());
     return result;
 }
 
-EncodedJSValue jsTestInterfaceConstructorImplementsStaticReadOnlyAttr(ExecState* state, EncodedJSValue, PropertyName)
+EncodedJSValue jsTestInterfaceConstructorImplementsStaticReadOnlyAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    return JSValue::encode(jsTestInterfaceConstructorImplementsStaticReadOnlyAttrGetter(*state));
+    return IDLAttribute<JSTestInterface>::getStatic<jsTestInterfaceConstructorImplementsStaticReadOnlyAttrGetter>(*state, thisValue, "implementsStaticReadOnlyAttr");
 }
 
 #endif
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
-static inline JSValue jsTestInterfaceConstructorImplementsStaticAttrGetter(ExecState& state)
+static inline JSValue jsTestInterfaceConstructorImplementsStaticAttrGetter(ExecState& state, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     JSValue result = toJS<IDLDOMString>(state, TestInterface::implementsStaticAttr());
     return result;
 }
 
-EncodedJSValue jsTestInterfaceConstructorImplementsStaticAttr(ExecState* state, EncodedJSValue, PropertyName)
+EncodedJSValue jsTestInterfaceConstructorImplementsStaticAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    return JSValue::encode(jsTestInterfaceConstructorImplementsStaticAttrGetter(*state));
+    return IDLAttribute<JSTestInterface>::getStatic<jsTestInterfaceConstructorImplementsStaticAttrGetter>(*state, thisValue, "implementsStaticAttr");
 }
 
 #endif
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
-bool setJSTestInterfaceConstructorImplementsStaticAttr(ExecState* statePointer, EncodedJSValue, EncodedJSValue encodedValue)
+static inline bool setJSTestInterfaceConstructorImplementsStaticAttrSetter(ExecState& state, JSValue value, ThrowScope& throwScope)
 {
-    ASSERT(statePointer);
-    auto& state = *statePointer;
     UNUSED_PARAM(state);
-    auto value = JSValue::decode(encodedValue);
+    UNUSED_PARAM(throwScope);
     auto nativeValue = convert<IDLDOMString>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
     TestInterface::setImplementsStaticAttr(WTFMove(nativeValue));
     return true;
+}
+
+bool setJSTestInterfaceConstructorImplementsStaticAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+{
+    return IDLAttribute<JSTestInterface>::setStatic<setJSTestInterfaceConstructorImplementsStaticAttrSetter>(*state, thisValue, encodedValue, "implementsStaticAttr");
 }
 
 #endif
@@ -632,46 +637,51 @@ bool setJSTestInterfaceImplementsNode(ExecState* state, EncodedJSValue thisValue
 #endif
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
-static inline JSValue jsTestInterfaceConstructorSupplementalStaticReadOnlyAttrGetter(ExecState& state)
+static inline JSValue jsTestInterfaceConstructorSupplementalStaticReadOnlyAttrGetter(ExecState& state, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     JSValue result = toJS<IDLLong>(WebCore::TestSupplemental::supplementalStaticReadOnlyAttr());
     return result;
 }
 
-EncodedJSValue jsTestInterfaceConstructorSupplementalStaticReadOnlyAttr(ExecState* state, EncodedJSValue, PropertyName)
+EncodedJSValue jsTestInterfaceConstructorSupplementalStaticReadOnlyAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    return JSValue::encode(jsTestInterfaceConstructorSupplementalStaticReadOnlyAttrGetter(*state));
+    return IDLAttribute<JSTestInterface>::getStatic<jsTestInterfaceConstructorSupplementalStaticReadOnlyAttrGetter>(*state, thisValue, "supplementalStaticReadOnlyAttr");
 }
 
 #endif
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
-static inline JSValue jsTestInterfaceConstructorSupplementalStaticAttrGetter(ExecState& state)
+static inline JSValue jsTestInterfaceConstructorSupplementalStaticAttrGetter(ExecState& state, ThrowScope& throwScope)
 {
+    UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     JSValue result = toJS<IDLDOMString>(state, WebCore::TestSupplemental::supplementalStaticAttr());
     return result;
 }
 
-EncodedJSValue jsTestInterfaceConstructorSupplementalStaticAttr(ExecState* state, EncodedJSValue, PropertyName)
+EncodedJSValue jsTestInterfaceConstructorSupplementalStaticAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    return JSValue::encode(jsTestInterfaceConstructorSupplementalStaticAttrGetter(*state));
+    return IDLAttribute<JSTestInterface>::getStatic<jsTestInterfaceConstructorSupplementalStaticAttrGetter>(*state, thisValue, "supplementalStaticAttr");
 }
 
 #endif
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
-bool setJSTestInterfaceConstructorSupplementalStaticAttr(ExecState* statePointer, EncodedJSValue, EncodedJSValue encodedValue)
+static inline bool setJSTestInterfaceConstructorSupplementalStaticAttrSetter(ExecState& state, JSValue value, ThrowScope& throwScope)
 {
-    ASSERT(statePointer);
-    auto& state = *statePointer;
     UNUSED_PARAM(state);
-    auto value = JSValue::decode(encodedValue);
+    UNUSED_PARAM(throwScope);
     auto nativeValue = convert<IDLDOMString>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
     WebCore::TestSupplemental::setSupplementalStaticAttr(WTFMove(nativeValue));
     return true;
+}
+
+bool setJSTestInterfaceConstructorSupplementalStaticAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+{
+    return IDLAttribute<JSTestInterface>::setStatic<setJSTestInterfaceConstructorSupplementalStaticAttrSetter>(*state, thisValue, encodedValue, "supplementalStaticAttr");
 }
 
 #endif

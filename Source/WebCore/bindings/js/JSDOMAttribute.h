@@ -32,8 +32,10 @@ template<typename JSClass>
 class IDLAttribute {
 public:
     using Setter = bool(JSC::ExecState&, JSClass&, JSC::JSValue, JSC::ThrowScope&);
+    using StaticSetter = bool(JSC::ExecState&, JSC::JSValue, JSC::ThrowScope&);
     using Getter = JSC::JSValue(JSC::ExecState&, JSClass&, JSC::ThrowScope&);
-
+    using StaticGetter = JSC::JSValue(JSC::ExecState&, JSC::ThrowScope&);
+    
     static JSClass* cast(JSC::ExecState&, JSC::EncodedJSValue);
 
     template<Setter setter, CastedThisErrorBehavior shouldThrow = CastedThisErrorBehavior::Throw>
@@ -47,7 +49,15 @@ public:
 
         return setter(state, *thisObject, JSC::JSValue::decode(encodedValue), throwScope);
     }
-
+    
+    template<StaticSetter setter, CastedThisErrorBehavior shouldThrow = CastedThisErrorBehavior::Throw>
+    static bool setStatic(JSC::ExecState& state, JSC::EncodedJSValue, JSC::EncodedJSValue encodedValue, const char*)
+    {
+        auto throwScope = DECLARE_THROW_SCOPE(state.vm());
+        
+        return setter(state, JSC::JSValue::decode(encodedValue), throwScope);
+    }
+    
     template<Getter getter, CastedThisErrorBehavior shouldThrow = CastedThisErrorBehavior::Throw>
     static JSC::EncodedJSValue get(JSC::ExecState& state, JSC::EncodedJSValue thisValue, const char* attributeName)
     {
@@ -63,6 +73,14 @@ public:
         }
 
         return JSC::JSValue::encode(getter(state, *thisObject, throwScope));
+    }
+    
+    template<StaticGetter getter, CastedThisErrorBehavior shouldThrow = CastedThisErrorBehavior::Throw>
+    static JSC::EncodedJSValue getStatic(JSC::ExecState& state, JSC::EncodedJSValue, const char*)
+    {
+        auto throwScope = DECLARE_THROW_SCOPE(state.vm());
+        
+        return JSC::JSValue::encode(getter(state, throwScope));
     }
 };
 
