@@ -1,3 +1,15 @@
+2017-06-07  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Crash inside WebKit::PluginView::getAuthenticationInfo
+        https://bugs.webkit.org/show_bug.cgi?id=173083
+
+        Reviewed by Chris Dumez.
+
+        Added a null pointer check. The content document may have went away by the time we get there from IPC.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::getAuthenticationInfo):
+
 2017-06-07  Youenn Fablet  <youenn@apple.com>
 
         getUserMedia is prompting too often

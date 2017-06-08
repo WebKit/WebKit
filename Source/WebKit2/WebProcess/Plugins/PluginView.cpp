@@ -1594,7 +1594,11 @@ void PluginView::setCookiesForURL(const String& urlString, const String& cookieS
 
 bool PluginView::getAuthenticationInfo(const ProtectionSpace& protectionSpace, String& username, String& password)
 {
-    String partitionName = m_pluginElement->contentDocument()->topDocument().securityOrigin().domainForCachePartition();
+    RefPtr<Document> contentDocument = m_pluginElement->contentDocument();
+    if (!contentDocument)
+        return false;
+
+    String partitionName = contentDocument->topDocument().securityOrigin().domainForCachePartition();
     Credential credential = CredentialStorage::defaultCredentialStorage().get(partitionName, protectionSpace);
     if (credential.isEmpty())
         credential = CredentialStorage::defaultCredentialStorage().getFromPersistentStorage(protectionSpace);
