@@ -159,7 +159,7 @@ private:
 
 class SpeculativeLoadManager::PendingFrameLoad : public RefCounted<PendingFrameLoad> {
 public:
-    static Ref<PendingFrameLoad> create(Storage& storage, const Key& mainResourceKey, std::function<void()>&& loadCompletionHandler)
+    static Ref<PendingFrameLoad> create(Storage& storage, const Key& mainResourceKey, WTF::Function<void()>&& loadCompletionHandler)
     {
         return adoptRef(*new PendingFrameLoad(storage, mainResourceKey, WTFMove(loadCompletionHandler)));
     }
@@ -203,7 +203,7 @@ public:
     }
 
 private:
-    PendingFrameLoad(Storage& storage, const Key& mainResourceKey, std::function<void()>&& loadCompletionHandler)
+    PendingFrameLoad(Storage& storage, const Key& mainResourceKey, WTF::Function<void()>&& loadCompletionHandler)
         : m_storage(storage)
         , m_mainResourceKey(mainResourceKey)
         , m_loadCompletionHandler(WTFMove(loadCompletionHandler))
@@ -238,7 +238,7 @@ private:
     Storage& m_storage;
     Key m_mainResourceKey;
     Vector<std::unique_ptr<SubresourceLoad>> m_subresourceLoads;
-    std::function<void()> m_loadCompletionHandler;
+    WTF::Function<void()> m_loadCompletionHandler;
     HysteresisActivity m_loadHysteresisActivity;
     std::unique_ptr<SubresourcesEntry> m_existingEntry;
     bool m_didFinishLoad { false };
@@ -377,14 +377,14 @@ void SpeculativeLoadManager::registerLoad(const GlobalFrameID& frameID, const Re
         ASSERT(!m_pendingFrameLoads.contains(frameID));
 
         // Start tracking loads in this frame.
-        RefPtr<PendingFrameLoad> pendingFrameLoad = PendingFrameLoad::create(m_storage, resourceKey, [this, frameID] {
+        auto pendingFrameLoad = PendingFrameLoad::create(m_storage, resourceKey, [this, frameID] {
             bool wasRemoved = m_pendingFrameLoads.remove(frameID);
             ASSERT_UNUSED(wasRemoved, wasRemoved);
         });
-        m_pendingFrameLoads.add(frameID, pendingFrameLoad);
+        m_pendingFrameLoads.add(frameID, pendingFrameLoad.copyRef());
 
         // Retrieve the subresources entry if it exists to start speculative revalidation and to update it.
-        retrieveSubresourcesEntry(resourceKey, [this, frameID, pendingFrameLoad](std::unique_ptr<SubresourcesEntry> entry) {
+        retrieveSubresourcesEntry(resourceKey, [this, frameID, pendingFrameLoad = WTFMove(pendingFrameLoad)](std::unique_ptr<SubresourcesEntry> entry) {
             if (entry)
                 startSpeculativeRevalidation(frameID, *entry);
 
@@ -565,7 +565,7 @@ void SpeculativeLoadManager::startSpeculativeRevalidation(const GlobalFrameID& f
     }
 }
 
-void SpeculativeLoadManager::retrieveSubresourcesEntry(const Key& storageKey, std::function<void (std::unique_ptr<SubresourcesEntry>)>&& completionHandler)
+void SpeculativeLoadManager::retrieveSubresourcesEntry(const Key& storageKey, WTF::Function<void (std::unique_ptr<SubresourcesEntry>)>&& completionHandler)
 {
     ASSERT(storageKey.type() == "Resource");
     auto subresourcesStorageKey = makeSubresourcesKey(storageKey, m_storage.salt());

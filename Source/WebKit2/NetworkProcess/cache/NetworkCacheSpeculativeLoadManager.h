@@ -64,7 +64,7 @@ private:
     void retrieveEntryFromStorage(const SubresourceInfo&, RetrieveCompletionHandler&&);
     void revalidateSubresource(const SubresourceInfo&, std::unique_ptr<Entry>, const GlobalFrameID&);
     bool satisfyPendingRequests(const Key&, Entry*);
-    void retrieveSubresourcesEntry(const Key& storageKey, std::function<void (std::unique_ptr<SubresourcesEntry>)>&&);
+    void retrieveSubresourcesEntry(const Key& storageKey, WTF::Function<void (std::unique_ptr<SubresourcesEntry>)>&&);
     void startSpeculativeRevalidation(const GlobalFrameID&, SubresourcesEntry&);
 
     static bool canUsePreloadedEntry(const PreloadedEntry&, const WebCore::ResourceRequest& actualRequest);
