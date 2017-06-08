@@ -1,5 +1,5 @@
 # Copyright (C) 2011 Google Inc. All rights reserved.
-# Copyright (c) 2015-2017 Apple Inc. All rights reserved.
+# Copyright (c) 2015, 2016 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -166,9 +166,8 @@ class Driver(object):
         else:
             self._profiler = None
 
-        self._web_platform_test_server_doc_root = self._port.web_platform_test_server_doc_root()
-        self._web_platform_test_server_base_url = self._port.web_platform_test_server_base_url()
-        self._web_platform_test_server_https_base_url = self._port.web_platform_test_server_https_base_url()
+        self.web_platform_test_server_doc_root = self._port.web_platform_test_server_doc_root()
+        self.web_platform_test_server_base_url = self._port.web_platform_test_server_base_url()
 
     def __del__(self):
         self.stop()
@@ -265,20 +264,14 @@ class Driver(object):
         return test_name.startswith(self.WEBKIT_SPECIFIC_WEB_PLATFORM_TEST_SUBDIR)
 
     def is_web_platform_test(self, test_name):
-        return test_name.startswith(self._web_platform_test_server_doc_root)
-
-    def _web_platform_test_base_url_for_test(self, test_name):
-        needs_https_server = '.https.' in test_name
-        if needs_https_server:
-            return self._web_platform_test_server_https_base_url
-        return self._web_platform_test_server_base_url
+        return test_name.startswith(self.web_platform_test_server_doc_root)
 
     def test_to_uri(self, test_name):
         """Convert a test name to a URI."""
         if self.is_web_platform_test(test_name):
-            return self._web_platform_test_base_url_for_test(test_name) + test_name[len(self._web_platform_test_server_doc_root):]
+            return self.web_platform_test_server_base_url + test_name[len(self.web_platform_test_server_doc_root):]
         if self.is_webkit_specific_web_platform_test(test_name):
-            return self._web_platform_test_base_url_for_test(test_name) + self.WEBKIT_WEB_PLATFORM_TEST_SERVER_ROUTE + test_name[len(self.WEBKIT_SPECIFIC_WEB_PLATFORM_TEST_SUBDIR):]
+            return self.web_platform_test_server_base_url + self.WEBKIT_WEB_PLATFORM_TEST_SERVER_ROUTE + test_name[len(self.WEBKIT_SPECIFIC_WEB_PLATFORM_TEST_SUBDIR):]
 
         if not self.is_http_test(test_name):
             return path.abspath_to_uri(self._port.host.platform, self._port.abspath_for_test(test_name))
@@ -303,14 +296,10 @@ class Driver(object):
             if not prefix.endswith('/'):
                 prefix += '/'
             return uri[len(prefix):]
-        if uri.startswith(self._web_platform_test_server_base_url + self.WEBKIT_WEB_PLATFORM_TEST_SERVER_ROUTE):
-            return uri.replace(self._web_platform_test_server_base_url + self.WEBKIT_WEB_PLATFORM_TEST_SERVER_ROUTE, self.WEBKIT_SPECIFIC_WEB_PLATFORM_TEST_SUBDIR)
-        if uri.startswith(self._web_platform_test_server_base_url):
-            return uri.replace(self._web_platform_test_server_base_url, self._web_platform_test_server_doc_root)
-        if uri.startswith(self._web_platform_test_server_https_base_url + self.WEBKIT_WEB_PLATFORM_TEST_SERVER_ROUTE):
-            return uri.replace(self._web_platform_test_server_https_base_url + self.WEBKIT_WEB_PLATFORM_TEST_SERVER_ROUTE, self.WEBKIT_SPECIFIC_WEB_PLATFORM_TEST_SUBDIR)
-        if uri.startswith(self._web_platform_test_server_https_base_url):
-            return uri.replace(self._web_platform_test_server_https_base_url, self._web_platform_test_server_doc_root)
+        if uri.startswith(self.web_platform_test_server_base_url + self.WEBKIT_WEB_PLATFORM_TEST_SERVER_ROUTE):
+            return uri.replace(self.web_platform_test_server_base_url + self.WEBKIT_WEB_PLATFORM_TEST_SERVER_ROUTE, self.WEBKIT_SPECIFIC_WEB_PLATFORM_TEST_SUBDIR)
+        if uri.startswith(self.web_platform_test_server_base_url):
+            return uri.replace(self.web_platform_test_server_base_url, self.web_platform_test_server_doc_root)
         if uri.startswith("http://"):
             return uri.replace('http://127.0.0.1:8000/', self.HTTP_DIR)
         if uri.startswith("https://"):

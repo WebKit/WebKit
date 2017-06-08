@@ -55,16 +55,6 @@ def base_url(port_obj):
     return "http://" + config["host"] + ":" + str(ports["http"][0]) + "/"
 
 
-def https_base_url(port_obj):
-    config = wpt_config_json(port_obj)
-    if not config:
-        # This should only be hit by webkitpy unit tests
-        _log.debug("No WPT config file found")
-        return "http://localhost:9443/"
-    ports = config["ports"]
-    return "https://" + config["host"] + ":" + str(ports["https"][0]) + "/"
-
-
 def is_wpt_server_running(port_obj):
     config = wpt_config_json(port_obj)
     if not config:
