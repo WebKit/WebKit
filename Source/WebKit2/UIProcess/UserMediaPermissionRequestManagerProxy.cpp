@@ -127,6 +127,9 @@ void UserMediaPermissionRequestManagerProxy::userMediaAccessWasDenied(uint64_t u
     if (!request)
         return;
 
+    if (reason == UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::PermissionDenied)
+        m_deniedRequests.append(DeniedRequest { request->mainFrameID(), request->userMediaDocumentSecurityOrigin(), request->topLevelDocumentSecurityOrigin(), request->requiresAudio(), request->requiresVideo() });
+
     denyRequest(userMediaID, reason, emptyString());
 }
 
@@ -170,6 +173,7 @@ void UserMediaPermissionRequestManagerProxy::resetAccess(uint64_t frameID)
         return grantedRequest->mainFrameID() == frameID;
     });
     m_pregrantedRequests.clear();
+    m_deniedRequests.clear();
 }
 
 const UserMediaPermissionRequestProxy* UserMediaPermissionRequestManagerProxy::searchForGrantedRequest(uint64_t frameID, const WebCore::SecurityOrigin& userMediaDocumentOrigin, const WebCore::SecurityOrigin& topLevelDocumentOrigin, bool needsAudio, bool needsVideo) const
@@ -199,6 +203,23 @@ const UserMediaPermissionRequestProxy* UserMediaPermissionRequestManagerProxy::s
         return grantedRequest.ptr();
     }
     return nullptr;
+}
+
+bool UserMediaPermissionRequestManagerProxy::wasRequestDenied(uint64_t mainFrameID, const WebCore::SecurityOrigin& userMediaDocumentOrigin, const WebCore::SecurityOrigin& topLevelDocumentOrigin, bool needsAudio, bool needsVideo)
+{
+    for (const auto& deniedRequest : m_deniedRequests) {
+        if (!deniedRequest.userMediaDocumentOrigin->isSameSchemeHostPort(userMediaDocumentOrigin))
+            continue;
+        if (!deniedRequest.topLevelDocumentOrigin->isSameSchemeHostPort(topLevelDocumentOrigin))
+            continue;
+        if (deniedRequest.mainFrameID != mainFrameID)
+            continue;
+        if (deniedRequest.isAudioDenied && needsAudio)
+            return true;
+        if (deniedRequest.isVideoDenied && needsVideo)
+            return true;
+    }
+    return false;
 }
 
 void UserMediaPermissionRequestManagerProxy::grantAccess(uint64_t userMediaID, const String& audioDeviceUID, const String& videoDeviceUID, const String& deviceIdentifierHashSalt)
@@ -252,6 +273,11 @@ void UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame(
 
         if (videoDeviceUIDs.isEmpty() && audioDeviceUIDs.isEmpty()) {
             denyRequest(userMediaID, UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::NoConstraints, emptyString());
+            return;
+        }
+
+        if (wasRequestDenied(m_page.mainFrame()->frameID(), userMediaDocumentOrigin.get(), topLevelDocumentOrigin.get(), !audioDeviceUIDs.isEmpty(), !videoDeviceUIDs.isEmpty())) {
+            denyRequest(userMediaID, UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::PermissionDenied, emptyString());
             return;
         }
 

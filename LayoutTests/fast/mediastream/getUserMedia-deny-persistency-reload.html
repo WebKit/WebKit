@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+function test() {
+    if (window.localStorage.getItem("gum-after-reload") == null) {
+        window.localStorage.setItem("gum-after-reload", "true")
+        if (window.testRunner)
+            testRunner.setUserMediaPermission(false);
+        navigator.mediaDevices.getUserMedia({audio:true, video:true}).then(() => {
+            result.innerHTML = "FAIL";
+            if (window.testRunner)
+                testRunner.notifyDone();
+        },() => {
+            if (window.testRunner)
+                testRunner.setUserMediaPermission(true);
+            internals.forceReload(true);
+        });
+    } else {
+        window.localStorage.clear();
+        navigator.mediaDevices.getUserMedia({audio:true, video:true}).then(() => {
+            result.innerHTML = "PASS";
+            if (window.testRunner)
+               testRunner.notifyDone();
+        }, () => {
+            result.innerHTML = "FAIL";
+            if (window.testRunner)
+                testRunner.notifyDone();
+        });
+    };
+}
+</script>
+</head>
+<body onload="setTimeout(test, 0);">
+    <div>In case of reload, getUserMedia deny state should be reset</div>
+    <div id="result"></div>
+</body>
+</html>
+
+

@@ -70,6 +70,7 @@ private:
     void grantAccess(uint64_t userMediaID, const String& audioDeviceUID, const String& videoDeviceUID, const String& deviceIdentifierHashSalt);
 
     const UserMediaPermissionRequestProxy* searchForGrantedRequest(uint64_t frameID, const WebCore::SecurityOrigin& userMediaDocumentOrigin, const WebCore::SecurityOrigin& topLevelDocumentOrigin, bool needsAudio, bool needsVideo) const;
+    bool wasRequestDenied(uint64_t mainFrameID, const WebCore::SecurityOrigin& userMediaDocumentOrigin, const WebCore::SecurityOrigin& topLevelDocumentOrigin, bool needsAudio, bool needsVideo);
 #endif
     void getUserMediaPermissionInfo(uint64_t userMediaID, uint64_t frameID, UserMediaPermissionCheckProxy::CompletionHandler&&, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin);
 
@@ -85,6 +86,15 @@ private:
 
     Vector<Ref<UserMediaPermissionRequestProxy>> m_pregrantedRequests;
     Vector<Ref<UserMediaPermissionRequestProxy>> m_grantedRequests;
+
+    struct DeniedRequest {
+        uint64_t mainFrameID;
+        Ref<WebCore::SecurityOrigin> userMediaDocumentOrigin;
+        Ref<WebCore::SecurityOrigin> topLevelDocumentOrigin;
+        bool isAudioDenied { false };
+        bool isVideoDenied { false };
+    };
+    Vector<DeniedRequest> m_deniedRequests;
 };
 
 } // namespace WebKit

@@ -1,3 +1,22 @@
+2017-06-08  Youenn Fablet  <youenn@apple.com>
+
+        getUserMedia should not be prompted again if user denied access
+        https://bugs.webkit.org/show_bug.cgi?id=173104
+
+        Reviewed by Geoff Garen.
+
+        Store denied requests to be able to replay them.
+        If mic is denied, user might be prompted for camera, not for mic and camera.
+        Same principle applies to the case of denied camera.
+        Clearing the stored denied requests when reloading/navigating away.
+
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::userMediaAccessWasDenied):
+        (WebKit::UserMediaPermissionRequestManagerProxy::resetAccess):
+        (WebKit::UserMediaPermissionRequestManagerProxy::isRequestDenied):
+        (WebKit::UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame):
+        * UIProcess/UserMediaPermissionRequestManagerProxy.h:
+
 2017-06-08  Jer Noble  <jer.noble@apple.com>
 
         Clients of the WK2 C-API don't have their mediaContentTypesRequiringHardwareSupport setting initialized correctly.
