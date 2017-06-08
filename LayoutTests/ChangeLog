@@ -1,3 +1,16 @@
+2017-06-08  Marcos Chavarría Teijeiro  <chavarria1991@gmail.com>
+
+        Modify security test to avoid spacing differences.
+        https://bugs.webkit.org/show_bug.cgi?id=141709
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * http/tests/security/XFrameOptions/x-frame-options-deny-multiple-clients-expected.txt:
+        * http/tests/security/XFrameOptions/x-frame-options-deny-multiple-clients.html:
+        * http/tests/security/cross-frame-access-callback-explicit-domain-ALLOW-expected.txt:
+        * http/tests/security/cross-frame-access-callback-explicit-domain-ALLOW.html:
+        * platform/gtk/TestExpectations:
+
 2017-06-08  Youenn Fablet  <youenn@apple.com>
 
         getUserMedia request should not be allowed for background tabs unless the tab is already capturing
