@@ -1,3 +1,20 @@
+2017-06-08  Tim Horton  <timothy_horton@apple.com>
+
+        Add a borderless mode to <attachment>, and make it respect its layout size
+        https://bugs.webkit.org/show_bug.cgi?id=173079
+        <rdar://problem/32491584>
+
+        Reviewed by Simon Fraser.
+
+        * TestExpectations:
+        * platform/ios/TestExpectations:
+        * fast/attachment/attachment-borderless-expected-mismatch.html: Added.
+        * fast/attachment/attachment-borderless.html: Added.
+        * fast/attachment/attachment-respects-css-size-expected-mismatch.html: Added.
+        * fast/attachment/attachment-respects-css-size.html: Added.
+        Add mismatch tests ensuring that CSS width/height and borderless-attachment
+        have *some* kind of impact on rendering.
+
 2017-06-08  Marcos Chavarría Teijeiro  <chavarria1991@gmail.com>
 
         Modify security test to avoid spacing differences.

@@ -81,6 +81,7 @@ fast/attachment/attachment-subtitle-resize.html
 
 # This test only makes sense on iOS
 fast/attachment/attachment-wrapping-action.html
+fast/attachment/attachment-borderless.html
 editing/selection/character-granularity-selected-range-after-dismissing-selection.html [ Skip ]
 editing/selection/character-granularity-select-text-with-click-handler.html [ Skip ]
 editing/selection/caret-after-tap-in-editable-selection.html [ Skip ]

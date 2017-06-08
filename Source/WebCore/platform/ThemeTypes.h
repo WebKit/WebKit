@@ -53,7 +53,7 @@ enum ControlPart {
 #endif
     TextAreaPart,
 #if ENABLE(ATTACHMENT_ELEMENT)
-    AttachmentPart,
+    AttachmentPart, BorderlessAttachmentPart,
 #endif
     CapsLockIndicatorPart
 };

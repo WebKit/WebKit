@@ -816,6 +816,7 @@ image-controls-button
 textarea
 #if defined(ENABLE_ATTACHMENT_ELEMENT) && ENABLE_ATTACHMENT_ELEMENT
 attachment
+borderless-attachment
 #endif
 caps-lock-indicator
 

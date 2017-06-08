@@ -607,6 +607,9 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ControlPart e)
     case AttachmentPart:
         m_value.valueID = CSSValueAttachment;
         break;
+    case BorderlessAttachmentPart:
+        m_value.valueID = CSSValueBorderlessAttachment;
+        break;
 #endif
 #if ENABLE(SERVICE_CONTROLS)
     case ImageControlsButtonPart:

@@ -70,6 +70,13 @@ int RenderAttachment::baselinePosition(FontBaseline, bool, LineDirectionMode, Li
     return theme().attachmentBaseline(*this);
 }
 
+bool RenderAttachment::shouldDrawBorder() const
+{
+    if (style().appearance() == BorderlessAttachmentPart)
+        return false;
+    return m_shouldDrawBorder;
+}
+
 } // namespace WebCore
 
 #endif

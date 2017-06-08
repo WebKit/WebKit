@@ -39,7 +39,7 @@ public:
     HTMLAttachmentElement& attachmentElement() const;
 
     void setShouldDrawBorder(bool drawBorder) { m_shouldDrawBorder = drawBorder; }
-    bool shouldDrawBorder() const { return m_shouldDrawBorder; }
+    bool shouldDrawBorder() const;
 
     void invalidate();
 

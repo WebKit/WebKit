@@ -1661,7 +1661,7 @@ static RetainPtr<UIImage> iconForAttachment(const RenderAttachment& attachment, 
 
 AttachmentInfo::AttachmentInfo(const RenderAttachment& attachment)
 {
-    attachmentRect = FloatRect(0, 0, attachmentSize.width, attachmentSize.height);
+    attachmentRect = FloatRect(0, 0, attachment.width().toFloat(), attachment.height().toFloat());
 
     hasProgress = getAttachmentProgress(attachment, progress);
 

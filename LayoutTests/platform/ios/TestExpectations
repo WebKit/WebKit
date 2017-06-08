@@ -2674,6 +2674,7 @@ media/W3C/audio/canPlayType/canPlayType_supported_but_no_codecs_parameter_1.html
 media/video-seek-to-current-time.html [ Failure ]
 
 fast/attachment/attachment-wrapping-action.html [ Pass ]
+fast/attachment/attachment-borderless.html [ Pass ]
 
 fast/events/page-visibility-iframe-move-test.html [ Skip ]
 
