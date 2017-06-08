@@ -108,7 +108,7 @@ PASS CSSStyleRule interface object name
 PASS CSSStyleRule interface: existence and properties of interface prototype object 
 PASS CSSStyleRule interface: existence and properties of interface prototype object's "constructor" property 
 PASS CSSStyleRule interface: attribute selectorText 
-FAIL CSSStyleRule interface: attribute style assert_equals: setter must be function for PutForwards, Replaceable, or non-readonly attributes expected "function" but got "undefined"
+PASS CSSStyleRule interface: attribute style 
 PASS CSSStyleRule interface: style_element.sheet.cssRules[0] must inherit property "selectorText" with the proper type (0) 
 PASS CSSStyleRule interface: style_element.sheet.cssRules[0] must inherit property "style" with the proper type (1) 
 PASS CSSRule interface: style_element.sheet.cssRules[0] must inherit property "STYLE_RULE" with the proper type (0) 
@@ -151,7 +151,7 @@ PASS CSSPageRule interface object name
 FAIL CSSPageRule interface: existence and properties of interface prototype object assert_own_property: should inherit from CSSGroupingRule, but self has no such property expected property "CSSGroupingRule" missing
 PASS CSSPageRule interface: existence and properties of interface prototype object's "constructor" property 
 PASS CSSPageRule interface: attribute selectorText 
-FAIL CSSPageRule interface: attribute style assert_equals: setter must be function for PutForwards, Replaceable, or non-readonly attributes expected "function" but got "undefined"
+PASS CSSPageRule interface: attribute style 
 FAIL CSSMarginRule interface: existence and properties of interface object assert_own_property: self does not have own property "CSSMarginRule" expected property "CSSMarginRule" missing
 FAIL CSSMarginRule interface object length assert_own_property: self does not have own property "CSSMarginRule" expected property "CSSMarginRule" missing
 FAIL CSSMarginRule interface object name assert_own_property: self does not have own property "CSSMarginRule" expected property "CSSMarginRule" missing

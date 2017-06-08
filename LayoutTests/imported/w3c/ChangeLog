@@ -1,5 +1,25 @@
 2017-06-07  Chris Dumez  <cdumez@apple.com>
 
+        CSSStyleRule.style / CSSPageRule.style / CSSKeyframeRule.style should be settable
+        https://bugs.webkit.org/show_bug.cgi?id=164537
+        <rdar://problem/29181773>
+
+        Reviewed by Sam Weinig.
+
+        * web-platform-tests/cssom/CSSKeyframeRule-expected.txt:
+        * web-platform-tests/cssom/CSSKeyframeRule.html:
+        * web-platform-tests/cssom/CSSStyleRule-expected.txt:
+        * web-platform-tests/cssom/CSSStyleRule.html:
+        Re-sync web-platform tests after:
+        - https://github.com/w3c/web-platform-tests/pull/6181
+        - https://github.com/w3c/web-platform-tests/pull/6184
+        This extends test coverage.
+
+        * web-platform-tests/cssom/interfaces-expected.txt:
+        Rebaseline now that more checks are passing.
+
+2017-06-07  Chris Dumez  <cdumez@apple.com>
+
         Align <col span>/<colgroup span> limits with the latest HTML specification
         https://bugs.webkit.org/show_bug.cgi?id=173049
 

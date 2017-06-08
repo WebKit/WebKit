@@ -7,4 +7,5 @@ PASS Values of CSSRule attributes
 PASS Existence, writability and type of CSSStyleRule attributes 
 PASS Values of CSSStyleRule attributes 
 PASS Mutability of CSSStyleRule's style attribute 
+PASS CSSStyleRule's style has [PutForwards] 
 

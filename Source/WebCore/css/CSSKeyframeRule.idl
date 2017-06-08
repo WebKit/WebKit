@@ -30,7 +30,7 @@
 interface CSSKeyframeRule : CSSRule {
 
     attribute DOMString keyText;
-    readonly attribute CSSStyleDeclaration style;
+    [PutForwards=cssText] readonly attribute CSSStyleDeclaration style;
 
 };
 

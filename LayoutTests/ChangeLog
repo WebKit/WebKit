@@ -1,3 +1,17 @@
+2017-06-07  Chris Dumez  <cdumez@apple.com>
+
+        CSSStyleRule.style / CSSPageRule.style / CSSKeyframeRule.style should be settable
+        https://bugs.webkit.org/show_bug.cgi?id=164537
+        <rdar://problem/29181773>
+
+        Reviewed by Sam Weinig.
+
+        Add better test coverage for CSSPageRule. This test is being upstreamed via:
+        - https://github.com/w3c/web-platform-tests/pull/6183
+
+        * http/wpt/cssom/CSSPageRule-expected.txt: Added.
+        * http/wpt/cssom/CSSPageRule.html: Added.
+
 2017-06-07  Youenn Fablet  <youenn@apple.com>
 
         RTCTrackEvent.track should be found in RTCTrackEvent.streams[0]

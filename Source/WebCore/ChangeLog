@@ -1,3 +1,27 @@
+2017-06-07  Chris Dumez  <cdumez@apple.com>
+
+        CSSStyleRule.style / CSSPageRule.style / CSSKeyframeRule.style should be settable
+        https://bugs.webkit.org/show_bug.cgi?id=164537
+        <rdar://problem/29181773>
+
+        Reviewed by Sam Weinig.
+
+        CSSStyleRule.style / CSSPageRule.style / CSSKeyframeRule.style should be settable
+        as per:
+        - https://drafts.csswg.org/cssom/#the-cssstylerule-interface
+        - https://drafts.csswg.org/cssom/#the-csspagerule-interface
+        - https://drafts.csswg.org/css-animations/#interface-csskeyframerule
+
+        Tests:
+        http/wpt/cssom/CSSPageRule.html
+        imported/w3c/web-platform-tests/cssom/CSSKeyframeRule.html
+        imported/w3c/web-platform-tests/cssom/CSSStyleRule.html
+        imported/w3c/web-platform-tests/cssom/interfaces.html
+
+        * css/CSSKeyframeRule.idl:
+        * css/CSSPageRule.idl:
+        * css/CSSStyleRule.idl:
+
 2017-06-07  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Split up attribute generation to match operation generation
