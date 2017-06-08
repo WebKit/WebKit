@@ -26,33 +26,26 @@ debug("Setting macOS inline layout traits and setting play icon");
 layoutDelegate.layoutTraits = LayoutTraits.macOS;
 button.iconName = Icons.Pause;
 
-let numberOfFrames = 0;
+shouldBecomeEqual('button.image.element.style.webkitMaskImage.includes("macOS/Pause.svg")', "true", () => {
+    shouldBeEqualToString("button.element.style.width", "11px");
+    shouldBeEqualToString("button.element.style.height", "13px");
+    shouldBeEqualToString("button.image.element.style.width", "11px");
+    shouldBeEqualToString("button.image.element.style.height", "13px");
+    shouldBeEqualToString("button.element.getAttribute('aria-label')", `${Icons.Pause.label}`);
+    debug("");
+    debug("Setting start icon");
+    button.iconName = Icons.Rewind;
 
-scheduler.frameDidFire = function()
-{
-    numberOfFrames++;
-
-    if (numberOfFrames === 1) {
-        shouldBeTrue('button.image.element.style.webkitMaskImage.includes("macOS/Pause.svg")');
-        shouldBeEqualToString("button.element.style.width", "11px");
-        shouldBeEqualToString("button.element.style.height", "13px");
-        shouldBeEqualToString("button.image.element.style.width", "11px");
-        shouldBeEqualToString("button.image.element.style.height", "13px");
-        shouldBeEqualToString("button.element.getAttribute('aria-label')", `${Icons.Pause.label}`);
-        debug("");
-        debug("Setting start icon");
-        button.iconName = Icons.Rewind;
-    } else if (numberOfFrames === 2) {
-        shouldBeTrue('button.image.element.style.webkitMaskImage.includes("macOS/Rewind.svg")');
+    shouldBecomeEqual('button.image.element.style.webkitMaskImage.includes("macOS/Rewind.svg")', "true", () => {
         shouldBeEqualToString("button.element.style.width", "24px");
         shouldBeEqualToString("button.element.style.height", "16px");
         shouldBeEqualToString("button.image.element.style.width", "24px");
         shouldBeEqualToString("button.image.element.style.height", "16px");
         shouldBeEqualToString("button.element.getAttribute('aria-label')", `${Icons.Rewind.label}`);
 
-        finishMediaControlsTest();
-    } 
-};
+        finishJSTest();
+    });
+});
 
 </script>
 <script src="../../../resources/js-test-post.js"></script>

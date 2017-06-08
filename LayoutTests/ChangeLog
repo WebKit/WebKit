@@ -1,3 +1,15 @@
+2017-06-08  Antoine Quint  <graouts@apple.com>
+
+        Layout Test media/modern-media-controls/button/button-icon-name.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=173099
+
+        Reviewed by Dean Jackson.
+
+        Rewrite the test to use asynchronous assertions, the number of frames running is immaterial to this test.
+
+        * media/modern-media-controls/button/button-icon-name-expected.txt:
+        * media/modern-media-controls/button/button-icon-name.html:
+
 2017-06-08  Tim Horton  <timothy_horton@apple.com>
 
         Add a borderless mode to <attachment>, and make it respect its layout size
