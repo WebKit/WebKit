@@ -471,6 +471,7 @@ public:
     bool isEditable() const { return m_isEditable; }
 
     void activateMediaStreamCaptureInPage() { setMuted(m_mutedState & ~WebCore::MediaProducer::CaptureDevicesAreMuted); }
+    bool isMediaStreamCaptureMuted() const { return m_mutedState & WebCore::MediaProducer::CaptureDevicesAreMuted; }
 
 #if PLATFORM(IOS)
     void executeEditCommand(const String& commandName, std::function<void (CallbackBase::Error)>);
@@ -1607,6 +1608,8 @@ private:
 
     void handleMessage(IPC::Connection&, const String& messageName, const UserData& messageBody);
     void handleSynchronousMessage(IPC::Connection&, const String& messageName, const UserData& messageBody, UserData& returnUserData);
+
+    void viewIsBecomingVisible();
 
     PageClient& m_pageClient;
     Ref<API::PageConfiguration> m_configuration;

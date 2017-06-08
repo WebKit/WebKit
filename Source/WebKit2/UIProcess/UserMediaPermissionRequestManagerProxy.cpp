@@ -164,15 +164,19 @@ void UserMediaPermissionRequestManagerProxy::userMediaAccessWasGranted(uint64_t 
 }
 
 #if ENABLE(MEDIA_STREAM)
-void UserMediaPermissionRequestManagerProxy::removeGrantedAccess(uint64_t frameID)
+void UserMediaPermissionRequestManagerProxy::resetAccess(uint64_t frameID)
 {
     m_grantedRequests.removeAllMatching([frameID](const auto& grantedRequest) {
         return grantedRequest->mainFrameID() == frameID;
     });
+    m_pregrantedRequests.clear();
 }
 
 const UserMediaPermissionRequestProxy* UserMediaPermissionRequestManagerProxy::searchForGrantedRequest(uint64_t frameID, const WebCore::SecurityOrigin& userMediaDocumentOrigin, const WebCore::SecurityOrigin& topLevelDocumentOrigin, bool needsAudio, bool needsVideo) const
 {
+    if (m_page.isMediaStreamCaptureMuted())
+        return nullptr;
+
     bool checkForAudio = needsAudio;
     bool checkForVideo = needsVideo;
     for (const auto& grantedRequest : m_grantedRequests) {
@@ -221,6 +225,11 @@ void UserMediaPermissionRequestManagerProxy::scheduleNextRejection()
         m_rejectionTimer.startOneShot(Seconds(mimimumDelayBeforeReplying + randomNumber()));
 }
 
+static inline void allowRequest(UserMediaPermissionRequestProxy& request)
+{
+    request.allow(request.audioDeviceUIDs().isEmpty() ? String() : request.audioDeviceUIDs()[0], request.videoDeviceUIDs().isEmpty() ? String() : request.videoDeviceUIDs()[0]);
+}
+
 void UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame(uint64_t userMediaID, uint64_t frameID, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, const WebCore::MediaConstraints& audioConstraints, const WebCore::MediaConstraints& videoConstraints)
 {
 #if ENABLE(MEDIA_STREAM)
@@ -248,9 +257,12 @@ void UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame(
 
         auto* grantedRequest = searchForGrantedRequest(frameID, userMediaDocumentOrigin.get(), topLevelDocumentOrigin.get(), !audioDeviceUIDs.isEmpty(), !videoDeviceUIDs.isEmpty());
         if (grantedRequest) {
+            if (m_page.isViewVisible())
             // We select the first available devices, but the current client API allows client to select which device to pick.
             // FIXME: Remove the possiblity for the client to do the device selection.
-            grantAccess(userMediaID, audioDeviceUIDs.isEmpty() ? String() : audioDeviceUIDs[0], videoDeviceUIDs.isEmpty() ? String() : videoDeviceUIDs[0], grantedRequest->deviceIdentifierHashSalt());
+                grantAccess(userMediaID, audioDeviceUIDs.isEmpty() ? String() : audioDeviceUIDs[0], videoDeviceUIDs.isEmpty() ? String() : videoDeviceUIDs[0], grantedRequest->deviceIdentifierHashSalt());
+            else
+                m_pregrantedRequests.append(createRequest(userMediaID, m_page.mainFrame()->frameID(), frameID, WTFMove(userMediaDocumentOrigin), WTFMove(topLevelDocumentOrigin), WTFMove(audioDeviceUIDs), WTFMove(videoDeviceUIDs), String(grantedRequest->deviceIdentifierHashSalt())));
             return;
         }
         auto userMediaOrigin = API::SecurityOrigin::create(userMediaDocumentOrigin.get());
@@ -259,10 +271,7 @@ void UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame(
         auto request = createRequest(userMediaID, m_page.mainFrame()->frameID(), frameID, WTFMove(userMediaDocumentOrigin), WTFMove(topLevelDocumentOrigin), WTFMove(audioDeviceUIDs), WTFMove(videoDeviceUIDs), WTFMove(deviceIdentifierHashSalt));
 
         if (m_page.preferences().mockCaptureDevicesEnabled() && !m_page.preferences().mockCaptureDevicesPromptEnabled()) {
-            // FIXME: https://bugs.webkit.org/show_bug.cgi?id=172989
-            // We should probably only allow this if page is already actively capturing or page is visible.
-            // If page is hidden and not capturing, we should wait for page to be visible before allowing the request.
-            request->allow(request->audioDeviceUIDs().isEmpty() ? String() : request->audioDeviceUIDs()[0], request->videoDeviceUIDs().isEmpty() ? String() : request->videoDeviceUIDs()[0]);
+            allowRequest(request);
             return;
         }
 
@@ -365,6 +374,13 @@ void UserMediaPermissionRequestManagerProxy::endedCaptureSession()
 #if ENABLE(MEDIA_STREAM)
     UserMediaProcessManager::singleton().endedCaptureSession(*this);
 #endif
+}
+
+void UserMediaPermissionRequestManagerProxy::processPregrantedRequests()
+{
+    for (auto& request : m_pregrantedRequests)
+        allowRequest(request.get());
+    m_pregrantedRequests.clear();
 }
 
 } // namespace WebKit

@@ -7,6 +7,7 @@
     <body>
         <div id="navigateToSamePage"></div>
         <script>
+
 promise_test((test) => {
     if (window.testRunner)
         testRunner.setUserMediaPermission(true);
@@ -32,25 +33,6 @@ promise_test((test) => {
 promise_test((test) => {
     if (window.testRunner)
         testRunner.setUserMediaPermission(true);
-    return navigator.mediaDevices.getUserMedia({audio:true, video:true}).then((stream) => {
-        if (window.testRunner)
-            testRunner.setUserMediaPermission(false);
-        return navigator.mediaDevices.getUserMedia({audio:true, video:true});
-    }).then(() => {
-        if (window.internals)
-            internals.setPageMuted("capturedevices");
-        return navigator.mediaDevices.getUserMedia({audio:true, video:true});
-    }).then(() => {
-        if (!window.internals)
-            return;
-        assert_true(internals.pageMediaState().includes("HasActiveVideoCaptureDevice"), "Check active video");
-        assert_true(internals.pageMediaState().includes("HasActiveAudioCaptureDevice"), "Check active audio");
-    });
-}, "Testing same page getUserMedia grant persistency in case page capture is in muted state");
-
-promise_test((test) => {
-    if (window.testRunner)
-        testRunner.setUserMediaPermission(true);
     return navigator.mediaDevices.getUserMedia({audio:false, video:true}).then((stream) => {
         if (window.testRunner)
             testRunner.setUserMediaPermission(false);
@@ -70,13 +52,13 @@ promise_test((test) => {
         if (window.testRunner)
             testRunner.setUserMediaPermission(false);
         isPageVisible = false;
-        if (window.internals)
-            internals.setPageVisibility(false);
+        if (window.testRunner)
+            testRunner.setPageVisibility("hidden");
         setTimeout(() => {
             isPageVisible = true;
-            if (window.internals)
-                internals.setPageVisibility(true);
-        }, 100);
+            if (window.testRunner)
+                testRunner.setPageVisibility();
+        }, 1000);
         return navigator.mediaDevices.getUserMedia({audio:false, video:true});
     }).then(() => {
         assert_true(isPageVisible, "Resolving getUserMedia promise should wait for page to be visible");

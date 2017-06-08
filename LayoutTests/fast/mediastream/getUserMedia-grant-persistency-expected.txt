@@ -1,6 +1,5 @@
 
 PASS Testing same page getUserMedia grant persistency 
-PASS Testing same page getUserMedia grant persistency in case page capture is in muted state 
 PASS Testing same page getUserMedia grant persistency after in page navigation 
 FAIL Testing same page getUserMedia grant persistency with visibility assert_true: Resolving getUserMedia promise should wait for page to be visible expected true got false
 

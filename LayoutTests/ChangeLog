@@ -1,3 +1,15 @@
+2017-06-08  Youenn Fablet  <youenn@apple.com>
+
+        getUserMedia request should not be allowed for background tabs unless the tab is already capturing
+        https://bugs.webkit.org/show_bug.cgi?id=172989
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/getUserMedia-grant-persistency-expected.txt:
+        * fast/mediastream/getUserMedia-grant-persistency.html: Using testRunner.setPageVisibility so that UIProcess is made aware of the change.
+        Removing test about capture muted page since there is no API for setting a page as muted right now.
+        This test should be readded later on.
+
 2017-06-08  Charlie Turner  <cturner@igalia.com>
 
         [GTK] Test gardening

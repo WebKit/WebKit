@@ -1520,6 +1520,9 @@ void WebPageProxy::dispatchActivityStateChange()
     updateActivityState(m_potentiallyChangedActivityStateFlags);
     ActivityState::Flags changed = m_activityState ^ previousActivityState;
 
+    if ((m_potentiallyChangedActivityStateFlags & ActivityState::IsVisible) && isViewVisible())
+        viewIsBecomingVisible();
+
     bool isNowInWindow = (changed & ActivityState::IsInWindow) && isInWindow();
     // We always want to wait for the Web process to reply if we've been in-window before and are coming back in-window.
     if (m_viewWasEverInWindow && isNowInWindow) {
@@ -3515,9 +3518,16 @@ void WebPageProxy::didSameDocumentNavigationForFrame(uint64_t frameID, uint64_t 
 void WebPageProxy::didChangeMainDocument(uint64_t frameID)
 {
 #if ENABLE(MEDIA_STREAM)
-    userMediaPermissionRequestManager().removeGrantedAccess(frameID);
+    userMediaPermissionRequestManager().resetAccess(frameID);
 #else
     UNUSED_PARAM(frameID);
+#endif
+}
+
+void WebPageProxy::viewIsBecomingVisible()
+{
+#if ENABLE(MEDIA_STREAM)
+    userMediaPermissionRequestManager().processPregrantedRequests();
 #endif
 }
 

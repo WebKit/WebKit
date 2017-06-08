@@ -1,3 +1,31 @@
+2017-06-08  Youenn Fablet  <youenn@apple.com>
+
+        getUserMedia request should not be allowed for background tabs unless the tab is already capturing
+        https://bugs.webkit.org/show_bug.cgi?id=172989
+
+        Reviewed by Eric Carlson.
+
+        Covered by updated test and manual testing.
+
+        In case a getUserMedia can be granted, we check for visbility of the view.
+        If the view is visible, the getUserMedia request is allowed and promise is resolved.
+        Otherwise we store the pregranted request and will allow it when the view gets visible.
+        Pregranted requests will be cleared if the document of the view is changed.
+
+        Pregranted requests will not be used when capture page is muted.
+        In that case, a prompt will appear.
+
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::removeGrantedAccess):
+        (WebKit::allowRequest):
+        (WebKit::UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame):
+        (WebKit::UserMediaPermissionRequestManagerProxy::processPregrantedRequests):
+        * UIProcess/UserMediaPermissionRequestManagerProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::dispatchActivityStateChange):
+        (WebKit::WebPageProxy::viewIsBecomingVisible):
+        * UIProcess/WebPageProxy.h:
+
 2017-06-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [WPE] Enable resource usage

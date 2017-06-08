@@ -47,7 +47,8 @@ public:
 
     void requestUserMediaPermissionForFrame(uint64_t userMediaID, uint64_t frameID, Ref<WebCore::SecurityOrigin>&&  userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, const WebCore::MediaConstraints& audioConstraints, const WebCore::MediaConstraints& videoConstraints);
 
-    void removeGrantedAccess(uint64_t mainFrameID);
+    void resetAccess(uint64_t mainFrameID);
+    void processPregrantedRequests();
 
     void userMediaAccessWasGranted(uint64_t, const String& audioDeviceUID, const String& videoDeviceUID);
     void userMediaAccessWasDenied(uint64_t, UserMediaPermissionRequestProxy::UserMediaAccessDenialReason);
@@ -82,6 +83,7 @@ private:
     WebCore::Timer m_rejectionTimer;
     Vector<uint64_t> m_pendingRejections;
 
+    Vector<Ref<UserMediaPermissionRequestProxy>> m_pregrantedRequests;
     Vector<Ref<UserMediaPermissionRequestProxy>> m_grantedRequests;
 };
 
