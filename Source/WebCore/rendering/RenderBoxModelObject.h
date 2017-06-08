@@ -298,6 +298,8 @@ public:
     enum ScaleByEffectiveZoomOrNot { ScaleByEffectiveZoom, DoNotScaleByEffectiveZoom };
     LayoutSize calculateImageIntrinsicDimensions(StyleImage*, const LayoutSize& scaledPositioningAreaSize, ScaleByEffectiveZoomOrNot) const;
 
+    RenderBlock* containingBlockForAutoHeightDetection(Length logicalHeight) const;
+
 private:
     LayoutUnit computedCSSPadding(const Length&) const;
     
@@ -325,8 +327,6 @@ private:
         float thickness, float drawThickness, BoxSide, const RenderStyle&,
         Color, EBorderStyle, BackgroundBleedAvoidance, bool includeLogicalLeftEdge, bool includeLogicalRightEdge);
     void paintMaskForTextFillBox(ImageBuffer*, const IntRect&, InlineFlowBox*, const LayoutRect&);
-    
-    RenderBlock* containingBlockForAutoHeightDetection(Length logicalHeight) const;
 };
 
 } // namespace WebCore

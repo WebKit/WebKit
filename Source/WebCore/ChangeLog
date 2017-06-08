@@ -1,3 +1,33 @@
+2017-06-07  Dave Hyatt  <hyatt@apple.com>
+
+        Laili restaurant menu page does not display full menu
+        https://bugs.webkit.org/show_bug.cgi?id=173062
+        rdar://problem/32436486
+
+        Reviewed by Simon Fraser.
+
+        Percentage heights inside auto containing blocks were handled correctly by
+        hasReplacedLogicalHeight, which checked hasAutoHeightOrContainingBlockWithAutoHeight
+        properly. min-max-height were not handled properly though and need to do the same check.
+        
+        There is also now a quirk for iBooks to preserve the old behavior, since they depend
+        on the old behavior to constrain the height of images to a page.
+
+        Test: fast/replaced/max-height-percent-inside-auto-block.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::replacedMinMaxLogicalHeightComputesAsNone):
+        Add a new helper that resolves min and max logical height values to none for
+        replaced elements with percentage min/max heights inside auto containing blocks.
+
+        (WebCore::RenderBox::computeReplacedLogicalHeightRespectingMinMaxHeight):
+        Change the min/max-height constraint function for replaced elements to call the
+        new helper function.
+
+        * rendering/RenderBox.h:
+        * rendering/RenderBoxModelObject.h:
+        Move a function from private to protected so that RenderBox can access it.
+
 2017-06-08  Tim Horton  <timothy_horton@apple.com>
 
         Add a borderless mode to <attachment>, and make it respect its layout size
