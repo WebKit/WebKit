@@ -1,3 +1,23 @@
+2017-06-08  Charlie Turner  <cturner@igalia.com>
+
+        [GTK] Test gardening
+        https://bugs.webkit.org/show_bug.cgi?id=173093
+
+        Unreviewed GTK gardening.
+
+        r147201 added a crash expectation for the following test, but did so in a manner
+        that failed linter checks:
+
+        LayoutTests/platform/gtk/TestExpectations:1302 More specific entry for
+           http/tests/security/XFrameOptions/x-frame-options-deny-multiple-clients.html on line
+           LayoutTests/platform/gtk/TestExpectations:992 overrides line LayoutTests/platform/gtk/TestExpectations:1302.
+           http/tests/security/XFrameOptions/x-frame-options-deny-multiple-clients.html
+
+        Furthermore, this test no longer crashes in Debug builds, it fails due to whitespace
+        oddities that are addressed by webkit.org/b/141709 (unreviewed)
+
+        * platform/gtk/TestExpectations:
+
 2017-06-08  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         MediaTime class has rounding issues in different platforms
