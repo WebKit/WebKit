@@ -34,6 +34,10 @@ OBJC_CLASS AVAssetTrack;
 
 namespace WebCore {
 
+struct FourCC;
+
+bool codecsMeetHardwareDecodeRequirements(const Vector<FourCC>&, const Vector<ContentType>& contentTypesRequiringHardwareDecode);
+bool contentTypeMeetsHardwareDecodeRequirements(const ContentType&, const Vector<ContentType>& contentTypesRequiringHardwareDecode);
 bool assetTrackMeetsHardwareDecodeRequirements(AVAssetTrack *, const Vector<ContentType>& contentTypesRequiringHardwareDecode);
 
 }

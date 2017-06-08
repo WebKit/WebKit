@@ -1109,6 +1109,7 @@ String HTMLMediaElement::canPlayType(const String& mimeType) const
     MediaEngineSupportParameters parameters;
     ContentType contentType(mimeType);
     parameters.type = contentType;
+    parameters.contentTypesRequiringHardwareSupport = mediaContentTypesRequiringHardwareSupport();
     MediaPlayer::SupportsType support = MediaPlayer::supportsType(parameters, this);
     String canPlay;
 

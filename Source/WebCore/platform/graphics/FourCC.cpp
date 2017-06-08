@@ -36,7 +36,7 @@ std::optional<FourCC> FourCC::fromString(const String& stringValue)
 
     const char* data = asciiValue.data();
     ASSERT(asciiValue.data());
-    uint32_t value = data[3] << 24 | data[2] << 16 | data[1] << 8 | data[0];
+    uint32_t value = data[0] << 24 | data[1] << 16 | data[2] << 8 | data[3];
     return FourCC(value);
 }
 

@@ -1,3 +1,30 @@
+2017-06-08  Jer Noble  <jer.noble@apple.com>
+
+        Take the mediaContentTypesRequiringHardwareSupport Setting into account when answering HTMLMediaElement::canPlayType()
+        https://bugs.webkit.org/show_bug.cgi?id=173092
+
+        Reviewed by Eric Carlson.
+
+        Pass the value of mediaContentTypesRequiringHardwareSupport into the MediaPlayer when querying canPlayType().
+        Then, use the existing code in AVAssetTrackUtilities to know whether to bail out early from the codec check.
+
+        Drive-by fix: FourCC was converting String -> FourCC in reverse.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::canPlayType):
+        * platform/graphics/FourCC.cpp:
+        (WebCore::FourCC::fromString):
+        * platform/graphics/avfoundation/objc/AVAssetTrackUtilities.h:
+        * platform/graphics/avfoundation/objc/AVAssetTrackUtilities.mm:
+        (WebCore::contentTypesToCodecs):
+        (WebCore::codecsMeetHardwareDecodeRequirements):
+        (WebCore::contentTypeMeetsHardwareDecodeRequirements):
+        (WebCore::assetTrackMeetsHardwareDecodeRequirements):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::supportsType):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::supportsType):
+
 2017-06-08  Chris Dumez  <cdumez@apple.com>
 
         ASSERTION FAILED: !m_isolatedWorld->isNormal() || m_wrapper || !m_jsFunction on webrtc/ephemeral-certificates-and-cnames.html

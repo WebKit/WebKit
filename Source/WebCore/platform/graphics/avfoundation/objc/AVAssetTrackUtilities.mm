@@ -54,7 +54,27 @@ static bool systemHasBattery()
     return false;
 }
 
-bool assetTrackMeetsHardwareDecodeRequirements(AVAssetTrack *track, const Vector<ContentType>& contentTypesRequiringHardwareDecode)
+static Vector<FourCC> contentTypesToCodecs(const Vector<ContentType>& contentTypes)
+{
+    Vector<FourCC> codecs;
+    for (auto& contentType : contentTypes) {
+        auto codecStrings = contentType.codecs();
+        for (auto& codecString : codecStrings) {
+            // https://tools.ietf.org/html/rfc6381
+            // Within a 'codecs' parameter value, "." is reserved as a hierarchy delimiter
+            auto firstPeriod = codecString.find('.');
+            if (firstPeriod != notFound)
+                codecString.truncate(firstPeriod);
+
+            auto codecIdentifier = FourCC::fromString(codecString.left(4));
+            if (codecIdentifier)
+                codecs.append(codecIdentifier.value());
+        }
+    }
+    return codecs;
+}
+
+bool codecsMeetHardwareDecodeRequirements(const Vector<FourCC>& codecs, const Vector<ContentType>& contentTypesRequiringHardwareDecode)
 {
     static bool hasBattery = systemHasBattery();
 
@@ -69,30 +89,32 @@ bool assetTrackMeetsHardwareDecodeRequirements(AVAssetTrack *track, const Vector
     if (contentTypesRequiringHardwareDecode.isEmpty())
         return true;
 
-    Vector<FourCC> hardwareCodecs;
-    for (auto& contentType : contentTypesRequiringHardwareDecode) {
-        auto codecStrings = contentType.codecs();
-        for (auto& codecString : codecStrings) {
-            auto codecIdentifier = FourCC::fromString(codecString);
-            if (codecIdentifier)
-                hardwareCodecs.append(codecIdentifier.value());
-        }
-    }
+    Vector<FourCC> hardwareCodecs = contentTypesToCodecs(contentTypesRequiringHardwareDecode);
 
-    for (NSUInteger i = 0, count = track.formatDescriptions.count; i < count; ++i) {
-        CMFormatDescriptionRef description = (CMFormatDescriptionRef)track.formatDescriptions[i];
-        if (CMFormatDescriptionGetMediaType(description) != kCMMediaType_Video)
-            continue;
-
-        CMVideoCodecType codec = CMFormatDescriptionGetMediaSubType(description);
-        if (!hardwareCodecs.contains(FourCC(codec)))
-            continue;
-
-        if (!VTIsHardwareDecodeSupported(codec))
+    for (auto& codec : codecs) {
+        if (hardwareCodecs.contains(codec) && !VTIsHardwareDecodeSupported(codec.value))
             return false;
     }
     return true;
 }
+
+bool contentTypeMeetsHardwareDecodeRequirements(const ContentType& contentType, const Vector<ContentType>& contentTypesRequiringHardwareDecode)
+{
+    Vector<FourCC> codecs = contentTypesToCodecs({ contentType });
+    return codecsMeetHardwareDecodeRequirements(codecs, contentTypesRequiringHardwareDecode);
+}
+
+bool assetTrackMeetsHardwareDecodeRequirements(AVAssetTrack *track, const Vector<ContentType>& contentTypesRequiringHardwareDecode)
+{
+    Vector<FourCC> codecs;
+    for (NSUInteger i = 0, count = track.formatDescriptions.count; i < count; ++i) {
+        CMFormatDescriptionRef description = (CMFormatDescriptionRef)track.formatDescriptions[i];
+        if (CMFormatDescriptionGetMediaType(description) == kCMMediaType_Video)
+            codecs.append(FourCC(CMFormatDescriptionGetMediaSubType(description)));
+    }
+    return codecsMeetHardwareDecodeRequirements(codecs, contentTypesRequiringHardwareDecode);
+}
+
 
 }
 
