@@ -638,8 +638,6 @@ webkit.org/b/169640 imported/w3c/web-platform-tests/html/webappapis/scripting/ev
 
 webkit.org/b/170203 fast/images/animated-image-different-dest-size.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/170410 fast/images/animated-gif-webkit-transform.html [ Pass Failure ]
-
 # Media loading via network cache requires Sierra or newer.
 [ ElCapitan ] http/tests/cache/disk-cache/disk-cache-media-small.html [ Failure ]
 

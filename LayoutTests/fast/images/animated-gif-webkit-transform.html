@@ -54,8 +54,9 @@ function translateImagesRight() {
 }
 
 function runTest() {
-  shouldBeFalse("isFirstImagePaused()");
-  shouldBecomeEqual("isSecondImagePaused()", "true", translateImagesLeft);
+  shouldBecomeEqual("isFirstImagePaused()", "false", function() {
+      shouldBecomeEqual("isSecondImagePaused()", "true", translateImagesLeft);
+  });
 }
 
 </script>
