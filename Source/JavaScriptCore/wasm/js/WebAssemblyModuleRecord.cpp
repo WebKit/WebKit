@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -73,7 +73,7 @@ void WebAssemblyModuleRecord::finishCreation(ExecState* exec, VM& vm, const Wasm
     Base::finishCreation(exec, vm);
     ASSERT(inherits(vm, info()));
     for (const auto& exp : moduleInformation.exports) {
-        Identifier field = Identifier::fromString(&vm, exp.field);
+        Identifier field = Identifier::fromString(&vm, String::fromUTF8(exp.field));
         addExportEntry(ExportEntry::createLocal(field, field));
     }
 }
@@ -98,8 +98,6 @@ void WebAssemblyModuleRecord::link(ExecState* exec, JSWebAssemblyModule* module,
 
     SymbolTable* exportSymbolTable = module->exportSymbolTable();
     unsigned functionImportCount = codeBlock->functionImportCount();
-
-    // FIXME wire up the imports. https://bugs.webkit.org/show_bug.cgi?id=165118
 
     // Let exports be a list of (string, JS value) pairs that is mapped from each external value e in instance.exports as follows:
     JSModuleEnvironment* moduleEnvironment = JSModuleEnvironment::create(vm, globalObject, nullptr, exportSymbolTable, JSValue(), this);
@@ -179,7 +177,7 @@ void WebAssemblyModuleRecord::link(ExecState* exec, JSWebAssemblyModule* module,
         bool shouldThrowReadOnlyError = false;
         bool ignoreReadOnlyErrors = true;
         bool putResult = false;
-        symbolTablePutTouchWatchpointSet(moduleEnvironment, exec, Identifier::fromString(&vm, exp.field), exportedValue, shouldThrowReadOnlyError, ignoreReadOnlyErrors, putResult);
+        symbolTablePutTouchWatchpointSet(moduleEnvironment, exec, Identifier::fromString(&vm, String::fromUTF8(exp.field)), exportedValue, shouldThrowReadOnlyError, ignoreReadOnlyErrors, putResult);
         RELEASE_ASSERT(putResult);
     }
 

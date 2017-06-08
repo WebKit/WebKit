@@ -185,7 +185,7 @@ for ( let imp of [undefined, null, {}, () => {}, "number", new Number(4)]) {
     bin.trim();
 
     const module = new WebAssembly.Module(bin.get());
-    assert.throws(() => new WebAssembly.Instance(module, { imp: { global: imp } }), WebAssembly.LinkError, "imported global must be a number (evaluating 'new WebAssembly.Instance(module, { imp: { global: imp } })')");
+    assert.throws(() => new WebAssembly.Instance(module, { imp: { global: imp } }), WebAssembly.LinkError, "imported global imp:global must be a number (evaluating 'new WebAssembly.Instance(module, { imp: { global: imp } })')");
 }
 
 {
@@ -208,5 +208,5 @@ for ( let imp of [undefined, null, {}, () => {}, "number", new Number(4)]) {
         .Function().End()
         .Global().GetGlobal("i64", 0, "immutable").End();
     const module = new WebAssembly.Module(builder.WebAssembly().get());
-    assert.throws(() => new WebAssembly.Instance(module, { imp: { global: undefined } }), WebAssembly.LinkError, "imported global cannot be an i64 (evaluating 'new WebAssembly.Instance(module, { imp: { global: undefined } })')");
+    assert.throws(() => new WebAssembly.Instance(module, { imp: { global: undefined } }), WebAssembly.LinkError, "imported global imp:global cannot be an i64 (evaluating 'new WebAssembly.Instance(module, { imp: { global: undefined } })')");
 }

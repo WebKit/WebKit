@@ -45,7 +45,7 @@ function exportImport(type) {
             .Code().End();
         let module = new WebAssembly.Module(builder.WebAssembly().get());
         // This should not type check.
-        assert.throws(() => new WebAssembly.Instance(module, {imp: {f: instance.exports.func}}), WebAssembly.LinkError, "imported function's signature doesn't match the provided WebAssembly function's signature");
+        assert.throws(() => new WebAssembly.Instance(module, {imp: {f: instance.exports.func}}), WebAssembly.LinkError, "imported function imp:f signature doesn't match the provided WebAssembly function's signature");
     }
 
 }

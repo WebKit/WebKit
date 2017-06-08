@@ -62,7 +62,7 @@ const makeImportee = signature => {
         for (let i = 1; i <= signature.params.length; ++i) {
             const badParamSignature = { params: signature.params.slice(i, signature.params.length), ret: signature.ret };
             const importer = makeImporter(badParamSignature);
-            assert.throws(() => new WebAssembly.Instance(importer, importee), WebAssembly.LinkError, `imported function's signature doesn't match the provided WebAssembly function's signature (evaluating 'new WebAssembly.Instance(importer, importee)')`);
+            assert.throws(() => new WebAssembly.Instance(importer, importee), WebAssembly.LinkError, `imported function exports:${importName} signature doesn't match the provided WebAssembly function's signature (evaluating 'new WebAssembly.Instance(importer, importee)')`);
         }
     }
 })();
@@ -73,7 +73,7 @@ const makeImportee = signature => {
         for (let i = 1; i < signature.params.length; ++i) {
             const badParamSignature = { params: signature.params.slice(0, i), ret: signature.ret };
             const importer = makeImporter(badParamSignature);
-            assert.throws(() => new WebAssembly.Instance(importer, importee), WebAssembly.LinkError, `imported function's signature doesn't match the provided WebAssembly function's signature (evaluating 'new WebAssembly.Instance(importer, importee)')`);
+            assert.throws(() => new WebAssembly.Instance(importer, importee), WebAssembly.LinkError, `imported function exports:${importName} signature doesn't match the provided WebAssembly function's signature (evaluating 'new WebAssembly.Instance(importer, importee)')`);
         }
     }
 })();
@@ -87,7 +87,7 @@ const makeImportee = signature => {
                 badParams[signatureIndex] = swapTypeNonVoid(badParams[signatureIndex], typeIndex);
                 const badParamSignature = { params: badParams, ret: signature.ret };
                 const importer = makeImporter(badParamSignature);
-                assert.throws(() => new WebAssembly.Instance(importer, importee), WebAssembly.LinkError, `imported function's signature doesn't match the provided WebAssembly function's signature (evaluating 'new WebAssembly.Instance(importer, importee)')`);
+                assert.throws(() => new WebAssembly.Instance(importer, importee), WebAssembly.LinkError, `imported function exports:${importName} signature doesn't match the provided WebAssembly function's signature (evaluating 'new WebAssembly.Instance(importer, importee)')`);
             }
         }
     }
@@ -99,7 +99,7 @@ const makeImportee = signature => {
         for (let typeIndex = 1; typeIndex < types.length; ++typeIndex) {
             const badParamSignature = { params: signature.params, ret: swapType(signature.ret, typeIndex) };
             const importer = makeImporter(badParamSignature);
-            assert.throws(() => new WebAssembly.Instance(importer, importee), WebAssembly.LinkError, `imported function's signature doesn't match the provided WebAssembly function's signature (evaluating 'new WebAssembly.Instance(importer, importee)')`);
+            assert.throws(() => new WebAssembly.Instance(importer, importee), WebAssembly.LinkError, `imported function exports:${importName} signature doesn't match the provided WebAssembly function's signature (evaluating 'new WebAssembly.Instance(importer, importee)')`);
         }
     }
 })();

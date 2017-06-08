@@ -103,7 +103,7 @@ assert.eq(WebAssembly.instantiate.length, 1);
         try {
             let {module, instance} = await WebAssembly.instantiate(bin, {imp: {memory: 20}});
         } catch(e) {
-            assert.eq(e.message, "Memory import is not an instance of WebAssembly.Memory");
+            assert.eq(e.message, "Memory import imp:memory is not an instance of WebAssembly.Memory");
         }
     }
 
@@ -131,7 +131,7 @@ assert.eq(WebAssembly.instantiate.length, 1);
             const module = new WebAssembly.Module(bin);
             let instance = await WebAssembly.instantiate(bin, {imp: {memory: 20}});
         } catch(e) {
-            assert.eq(e.message, "Memory import is not an instance of WebAssembly.Memory");
+            assert.eq(e.message, "Memory import imp:memory is not an instance of WebAssembly.Memory");
         }
     }
 
