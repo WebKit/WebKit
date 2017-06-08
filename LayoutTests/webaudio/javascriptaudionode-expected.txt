@@ -8,6 +8,7 @@ PASS Successfully created ScriptProcessorNode with numberOfInputChannels = 2 and
 PASS Successfully created ScriptProcessorNode with numberOfInputChannels = 0 and numberOfOutputChannels = 1.
 PASS Successfully created ScriptProcessorNode with numberOfInputChannels = 0 and numberOfOutputChannels = 2.
 PASS Exception was thrown for illegal bufferSize.
+PASS Successfully created ScriptProcessorNode with bufferSize = 0.
 PASS Successfully created ScriptProcessorNode with bufferSize = 256.
 PASS Successfully created ScriptProcessorNode with bufferSize = 512.
 PASS Successfully created ScriptProcessorNode with bufferSize = 1024.

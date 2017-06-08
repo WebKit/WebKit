@@ -1,3 +1,13 @@
+2017-06-07  Jer Noble  <jer.noble@apple.com>
+
+        [Web Audio] createScriptProcessor throws IndexSizeError for valid arguments
+        https://bugs.webkit.org/show_bug.cgi?id=173022
+
+        Reviewed by Sam Weinig.
+
+        * webaudio/javascriptaudionode-expected.txt:
+        * webaudio/javascriptaudionode.html:
+
 2017-06-07  Chris Dumez  <cdumez@apple.com>
 
         CSSStyleRule.style / CSSPageRule.style / CSSKeyframeRule.style should be settable

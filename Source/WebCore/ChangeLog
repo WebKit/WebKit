@@ -1,3 +1,22 @@
+2017-06-07  Jer Noble  <jer.noble@apple.com>
+
+        [Web Audio] createScriptProcessor throws IndexSizeError for valid arguments
+        https://bugs.webkit.org/show_bug.cgi?id=173022
+
+        Reviewed by Sam Weinig.
+
+        Updated test: webaudio/javascriptaudionode.html
+
+        The Web Audio spec (<https://webaudio.github.io/web-audio-api/>, 06 June 2017) defines a default behavior when
+        clients pass in a value of 0 for bufferSize to the createScriptProcessor() method.
+
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::createScriptProcessor):
+        * Modules/webaudio/AudioContext.idl:
+        * Modules/webaudio/ScriptProcessorNode.cpp:
+        (WebCore::ScriptProcessorNode::create):
+        * Modules/webaudio/ScriptProcessorNode.h:
+
 2017-06-07  Chris Dumez  <cdumez@apple.com>
 
         CSSStyleRule.style / CSSPageRule.style / CSSKeyframeRule.style should be settable

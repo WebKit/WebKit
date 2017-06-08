@@ -123,6 +123,7 @@ function runTest() {
         testPassed("Exception was thrown for illegal bufferSize.");
     }
 
+    doBufferSizeTest(0);
     doBufferSizeTest(256);
     doBufferSizeTest(512);
     doBufferSizeTest(1024);
