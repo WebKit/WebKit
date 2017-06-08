@@ -1248,10 +1248,9 @@ Node& Node::getRootNode(const GetRootNodeOptions& options) const
 
 Node::InsertionNotificationRequest Node::insertedInto(ContainerNode& insertionPoint)
 {
-    ASSERT(insertionPoint.isConnected() || isContainerNode());
     if (insertionPoint.isConnected())
         setFlag(IsConnectedFlag);
-    if (parentOrShadowHostNode()->isInShadowTree())
+    if (insertionPoint.isInShadowTree())
         setFlag(IsInShadowTreeFlag);
 
     invalidateStyle(Style::Validity::SubtreeAndRenderersInvalid);
@@ -1261,7 +1260,6 @@ Node::InsertionNotificationRequest Node::insertedInto(ContainerNode& insertionPo
 
 void Node::removedFrom(ContainerNode& insertionPoint)
 {
-    ASSERT(insertionPoint.isConnected() || isContainerNode());
     if (insertionPoint.isConnected())
         clearFlag(IsConnectedFlag);
     if (isInShadowTree() && !treeScope().rootNode().isShadowRoot())

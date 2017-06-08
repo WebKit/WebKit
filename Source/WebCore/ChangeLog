@@ -1,3 +1,33 @@
+2017-06-07  Ryosuke Niwa  <rniwa@webkit.org>
+
+        IsInShadowTreeFlag does not get updated for a non-container node
+        https://bugs.webkit.org/show_bug.cgi?id=173084
+
+        Reviewed by Antti Koivisto.
+
+        insertedInto and removedFrom were only called on ContainerNode nodes when they're not connected to a document.
+        As a result IsInShadowTreeFlag could have gotten out-of-date when a node was inserted or removed from a shadow root
+        which is not connected to a document.
+
+        Fixed this inconsistency by always falling insertedInto and removedFrom on all nodes.
+
+        * dom/ContainerNodeAlgorithms.cpp:
+        (WebCore::notifyNodeInsertedIntoDocument): Merged notifyDescendantInsertedIntoDocument. Now takes a Node instead
+        of a ContainerNode.
+        (WebCore::notifyNodeInsertedIntoTree): Merged notifyDescendantInsertedIntoTree. Now takes a Node instead of
+        a ContainerNode.
+        (WebCore::notifyChildNodeInserted): Always call notifyNodeInsertedIntoTree on an inserted node.
+        (WebCore::notifyNodeRemovedFromDocument): Now takes a Node instead of a ContainerNode.
+        (WebCore::notifyNodeRemovedFromTree): Ditto.
+        (WebCore::notifyChildNodeRemoved): Always call notifyNodeRemovedFromTree on an inserted node.
+        (WebCore::addChildNodesToDeletionQueue): Directly call adoptIfNeeded on document() since onwerDocument() only returns
+        nullptr on a Document node but this function is never called on a root node and Document can only be a root node.
+        Also assert that a node not put into the deletion queue is no longer in a document or a shadow tree.
+
+        * dom/Node.cpp:
+        (WebCore::Node::insertedInto): Removed the assertion that's no longer true.
+        (WebCore::Node::removedFrom): Ditto.
+
 2017-06-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [WPE] Enable resource usage
