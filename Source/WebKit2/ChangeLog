@@ -1,3 +1,16 @@
+2017-06-08  Jer Noble  <jer.noble@apple.com>
+
+        [WK2] mediaContentTypesRequiringHardwareSupport setting not being propogated
+        https://bugs.webkit.org/show_bug.cgi?id=173090
+
+        Reviewed by Eric Carlson.
+
+        Passing a NSString* into the WebPreferencesStore::Value constructor would rather cast the NSString*
+        into a bool than a const String&. So explicitly cast the NSString* into a String before passing.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+
 2017-06-08  Youenn Fablet  <youenn@apple.com>
 
         getUserMedia request should not be allowed for background tabs unless the tab is already capturing
