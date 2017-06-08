@@ -89,6 +89,14 @@ View::View(struct wpe_view_backend* backend, const API::PageConfiguration& baseC
         [](void* data, struct wpe_input_keyboard_event* event)
         {
             auto& view = *reinterpret_cast<View*>(data);
+            if (event->pressed
+                && event->modifiers & wpe_input_keyboard_modifier_control
+                && event->modifiers & wpe_input_keyboard_modifier_shift
+                && event->keyCode == 'G') {
+                auto& preferences = view.page().preferences();
+                preferences.setResourceUsageOverlayVisible(!preferences.resourceUsageOverlayVisible());
+                return;
+            }
             view.page().handleKeyboardEvent(WebKit::NativeWebKeyboardEvent(event));
         },
         // handle_pointer_event

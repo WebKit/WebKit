@@ -1,5 +1,17 @@
 2017-06-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [WPE] Enable resource usage
+        https://bugs.webkit.org/show_bug.cgi?id=173054
+
+        Reviewed by Žan Doberšek.
+
+        Enable/disable the resources overlay with CTRL + Shift + G.
+
+        * UIProcess/API/wpe/WPEView.cpp:
+        (WKWPE::m_compositingManagerProxy):
+
+2017-06-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Remove legacy INSPECTOR_SERVER implementation
         https://bugs.webkit.org/show_bug.cgi?id=172966
 
