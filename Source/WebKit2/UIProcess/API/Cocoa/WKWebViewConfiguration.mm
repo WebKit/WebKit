@@ -40,6 +40,7 @@
 #import "_WKVisitedLinkStore.h"
 #import "_WKWebsiteDataStoreInternal.h"
 #import <WebCore/RuntimeApplicationChecks.h>
+#import <WebCore/Settings.h>
 #import <WebCore/URLParser.h>
 #import <wtf/RetainPtr.h>
 
@@ -200,7 +201,7 @@ private:
     _allowsBlockSelection = [[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitDebugAllowBlockSelection"];
 #endif
 
-    _mediaContentTypesRequiringHardwareSupport = @"video/mp4;codecs=hvc1:video/mp4;codecs=hev1";
+    _mediaContentTypesRequiringHardwareSupport = Settings::defaultMediaContentTypesRequiringHardwareSupport();
 
     return self;
 }

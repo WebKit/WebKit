@@ -1,5 +1,20 @@
 2017-06-08  Jer Noble  <jer.noble@apple.com>
 
+        Clients of the WK2 C-API don't have their mediaContentTypesRequiringHardwareSupport setting initialized correctly.
+        https://bugs.webkit.org/show_bug.cgi?id=173091
+
+        Reviewed by Eric Carlson.
+
+        Add a new default setting value, defined separately in Settings and SettingsCocoa.
+
+        * page/Settings.cpp:
+        (WebCore::Settings::defaultMediaContentTypesRequiringHardwareSupport):
+        * page/Settings.h:
+        * page/cocoa/SettingsCocoa.mm:
+        (WebCore::Settings::defaultMediaContentTypesRequiringHardwareSupport):
+
+2017-06-08  Jer Noble  <jer.noble@apple.com>
+
         Take the mediaContentTypesRequiringHardwareSupport Setting into account when answering HTMLMediaElement::canPlayType()
         https://bugs.webkit.org/show_bug.cgi?id=173092
 

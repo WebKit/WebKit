@@ -326,6 +326,7 @@ public:
     WEBCORE_EXPORT static void setAllowsAnySSLCertificate(bool);
     static bool allowsAnySSLCertificate();
 
+    WEBCORE_EXPORT static const String& defaultMediaContentTypesRequiringHardwareSupport();
     WEBCORE_EXPORT void setMediaContentTypesRequiringHardwareSupport(const Vector<ContentType>&);
     WEBCORE_EXPORT void setMediaContentTypesRequiringHardwareSupport(const String&);
     const Vector<ContentType>& mediaContentTypesRequiringHardwareSupport() const { return m_mediaContentTypesRequiringHardwareSupport; }

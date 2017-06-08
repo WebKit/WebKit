@@ -671,7 +671,7 @@ public:
         @NO, WebKitResourceTimingEnabledPreferenceKey,
         @NO, WebKitCredentialManagementEnabledPreferenceKey,
         @NO, WebKitMediaUserGestureInheritsFromDocument,
-        @"video/mp4;codecs=hvc1:video/mp4;codecs=hev1", WebKitMediaContentTypesRequiringHardwareSupportPreferenceKey,
+        (NSString *)Settings::defaultMediaContentTypesRequiringHardwareSupport(), WebKitMediaContentTypesRequiringHardwareSupportPreferenceKey,
         nil];
 
 #if !PLATFORM(IOS)

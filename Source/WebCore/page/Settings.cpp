@@ -789,6 +789,13 @@ bool Settings::allowsAnySSLCertificate()
     return gAllowsAnySSLCertificate;
 }
 
+#if !PLATFORM(COCOA)
+const String& Settings::defaultMediaContentTypesRequiringHardwareSupport()
+{
+    return emptyString();
+}
+#endif
+
 void Settings::setMediaContentTypesRequiringHardwareSupport(const String& contentTypes)
 {
     m_mediaContentTypesRequiringHardwareSupport = contentTypes.split(":").map(ContentType::create);
