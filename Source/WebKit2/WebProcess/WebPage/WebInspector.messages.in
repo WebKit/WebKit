@@ -41,9 +41,4 @@ messages -> WebInspector {
     StopElementSelection()
 
     SendMessageToBackend(String message)
-
-#if ENABLE(INSPECTOR_SERVER)
-    RemoteFrontendConnected()
-    RemoteFrontendDisconnected()
-#endif
 }

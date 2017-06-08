@@ -55,9 +55,6 @@ WebInspector.LayoutDirection = {
 
 WebInspector.loaded = function()
 {
-    // Initialize WebSocket to communication.
-    this._initializeWebSocketIfNeeded();
-
     this.debuggableType = InspectorFrontendHost.debuggableType() === "web" ? WebInspector.DebuggableType.Web : WebInspector.DebuggableType.JavaScript;
     this.hasExtraDomains = false;
 
@@ -1651,27 +1648,6 @@ WebInspector._tabBrowserSelectedTabContentViewDidChange = function(event)
 
     if (!this.isShowingSplitConsole())
         this.quickConsole.consoleLogVisibilityChanged(this.isShowingConsoleTab());
-};
-
-WebInspector._initializeWebSocketIfNeeded = function()
-{
-    if (!InspectorFrontendHost.initializeWebSocket)
-        return;
-
-    var queryParams = parseLocationQueryParameters();
-
-    if ("ws" in queryParams)
-        var url = "ws://" + queryParams.ws;
-    else if ("page" in queryParams) {
-        var page = queryParams.page;
-        var host = "host" in queryParams ? queryParams.host : window.location.host;
-        var url = "ws://" + host + "/devtools/page/" + page;
-    }
-
-    if (!url)
-        return;
-
-    InspectorFrontendHost.initializeWebSocket(url);
 };
 
 WebInspector._updateSplitConsoleHeight = function(height)

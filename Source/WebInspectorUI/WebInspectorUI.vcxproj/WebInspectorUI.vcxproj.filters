@@ -588,9 +588,6 @@
     <None Include="..\UserInterface\InspectorFrontendAPI.js">
       <Filter>UserInterface</Filter>
     </None>
-    <None Include="..\UserInterface\InspectorFrontendHostStub.js">
-      <Filter>UserInterface</Filter>
-    </None>
     <None Include="..\UserInterface\InspectorObserver.js">
       <Filter>UserInterface</Filter>
     </None>

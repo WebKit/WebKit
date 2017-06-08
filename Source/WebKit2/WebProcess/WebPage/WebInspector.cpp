@@ -286,30 +286,7 @@ void WebInspector::sendMessageToBackend(const String& message)
 
 void WebInspector::sendMessageToFrontend(const String& message)
 {
-#if ENABLE(INSPECTOR_SERVER)
-    if (m_remoteFrontendConnected)
-        WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorProxy::SendMessageToRemoteFrontend(message), m_page->pageID());
-    else
-#endif
-        m_frontendConnection->send(Messages::WebInspectorUI::SendMessageToFrontend(message), 0);
+    m_frontendConnection->send(Messages::WebInspectorUI::SendMessageToFrontend(message), 0);
 }
-
-#if ENABLE(INSPECTOR_SERVER)
-void WebInspector::remoteFrontendConnected()
-{
-    if (m_page->corePage()) {
-        m_remoteFrontendConnected = true;
-        m_page->corePage()->inspectorController().connectFrontend(this);
-    }
-}
-
-void WebInspector::remoteFrontendDisconnected()
-{
-    m_remoteFrontendConnected = false;
-
-    if (m_page->corePage())
-        m_page->corePage()->inspectorController().disconnectFrontend(this);
-}
-#endif
 
 } // namespace WebKit

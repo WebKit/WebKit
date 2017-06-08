@@ -47,7 +47,6 @@ extern "C" {
     M(IconDatabase) \
     M(IDB) \
     M(IndexedDB) \
-    M(InspectorServer) \
     M(IPC) \
     M(KeyHandling) \
     M(Layers) \

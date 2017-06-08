@@ -32,7 +32,6 @@
 #include "Logging.h"
 #include "NetworkProcessMessages.h"
 #include "WebCookieManagerProxy.h"
-#include "WebInspectorServer.h"
 #include "WebProcessCreationParameters.h"
 #include "WebProcessMessages.h"
 #include <JavaScriptCore/RemoteInspectorServer.h>

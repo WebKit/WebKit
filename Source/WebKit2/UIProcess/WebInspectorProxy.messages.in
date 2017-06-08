@@ -44,8 +44,4 @@ messages -> WebInspectorProxy {
     SetAttachedWindowWidth(unsigned width)
 
     StartWindowDrag()
-
-#if ENABLE(INSPECTOR_SERVER)
-    SendMessageToRemoteFrontend(String message)
-#endif
 }

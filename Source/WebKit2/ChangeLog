@@ -1,3 +1,37 @@
+2017-06-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Remove legacy INSPECTOR_SERVER implementation
+        https://bugs.webkit.org/show_bug.cgi?id=172966
+
+        Reviewed by Žan Doberšek.
+
+        * CMakeLists.txt:
+        * Platform/Logging.h:
+        * PlatformWPE.cmake:
+        * UIProcess/InspectorServer/HTTPRequest.cpp: Removed.
+        * UIProcess/InspectorServer/HTTPRequest.h: Removed.
+        * UIProcess/InspectorServer/WebInspectorServer.cpp: Removed.
+        * UIProcess/InspectorServer/WebInspectorServer.h: Removed.
+        * UIProcess/InspectorServer/WebSocketServer.cpp: Removed.
+        * UIProcess/InspectorServer/WebSocketServer.h: Removed.
+        * UIProcess/InspectorServer/WebSocketServerClient.h: Removed.
+        * UIProcess/InspectorServer/WebSocketServerConnection.cpp: Removed.
+        * UIProcess/InspectorServer/WebSocketServerConnection.h: Removed.
+        * UIProcess/InspectorServer/front-end/inspectorPageIndex.html: Removed.
+        * UIProcess/InspectorServer/soup/WebSocketServerSoup.cpp: Removed.
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::invalidate):
+        * UIProcess/WebInspectorProxy.h:
+        * UIProcess/WebInspectorProxy.messages.in:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::initializeWebPage):
+        (WebKit::WebPageProxy::preferencesDidChange):
+        * UIProcess/wpe/WebProcessPoolWPE.cpp:
+        * WebProcess/WebPage/WebInspector.cpp:
+        (WebKit::WebInspector::sendMessageToFrontend):
+        * WebProcess/WebPage/WebInspector.h:
+        * WebProcess/WebPage/WebInspector.messages.in:
+
 2017-06-07  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] additionalReadAccessAllowedURLs doesn’t preserve non-Latin-1 paths
