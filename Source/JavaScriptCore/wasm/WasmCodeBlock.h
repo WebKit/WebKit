@@ -83,7 +83,10 @@ public:
     {
         RELEASE_ASSERT(functionIndexSpace >= functionImportCount());
         unsigned calleeIndex = functionIndexSpace - functionImportCount();
-        return *m_jsCallees[calleeIndex].get();
+
+        auto callee = m_jsCallees.get(calleeIndex);
+        RELEASE_ASSERT(callee);
+        return *callee;
     }
     Callee& wasmEntrypointCalleeFromFunctionIndexSpace(unsigned functionIndexSpace)
     {
@@ -119,7 +122,7 @@ private:
     MemoryMode m_mode;
     Vector<RefPtr<Callee>> m_callees;
     Vector<RefPtr<Callee>> m_optimizedCallees;
-    Vector<RefPtr<Callee>> m_jsCallees;
+    HashMap<uint32_t, RefPtr<Callee>, typename DefaultHash<uint32_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_jsCallees;
     Vector<void*> m_wasmIndirectCallEntryPoints;
     Vector<TierUpCount> m_tierUpCounts;
     Vector<Vector<UnlinkedWasmToWasmCall>> m_wasmToWasmCallsites;

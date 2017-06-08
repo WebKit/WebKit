@@ -1,3 +1,43 @@
+2017-06-08  Keith Miller  <keith_miller@apple.com>
+
+        WebAssembly: We should only create wrappers for functions that can be exported
+        https://bugs.webkit.org/show_bug.cgi?id=173088
+
+        Reviewed by Saam Barati.
+
+        Remove a bunch of old tests that are actually duplicates of the spec-tests and rely
+        on the old testWasmModuleFunctions api, which has been removed.
+
+        * wasm/function-tests/copysign.js: Removed.
+        * wasm/function-tests/ctz.js: Removed.
+        * wasm/function-tests/drop.js: Removed.
+        * wasm/function-tests/dumb-eq-if-then-else.js: Removed.
+        * wasm/function-tests/dumb-less-than-fallthrough.js: Removed.
+        * wasm/function-tests/dumb-less-than-ite.js: Removed.
+        * wasm/function-tests/eqz.js: Removed.
+        * wasm/function-tests/i32-trunc-s-f32.js: Removed.
+        * wasm/function-tests/i32-trunc-s-f64.js: Removed.
+        * wasm/function-tests/i32-trunc-u-f32.js: Removed.
+        * wasm/function-tests/i32-trunc-u-f64.js: Removed.
+        * wasm/function-tests/i64-trunc-s-f32.js: Removed.
+        * wasm/function-tests/i64-trunc-s-f64.js: Removed.
+        * wasm/function-tests/i64-trunc-u-f32.js: Removed.
+        * wasm/function-tests/i64-trunc-u-f64.js: Removed.
+        * wasm/function-tests/if-then-else-fallthrough.js: Removed.
+        * wasm/function-tests/if-then-fallthrough.js: Removed.
+        * wasm/function-tests/int-to-floating-point.js: Removed.
+        * wasm/function-tests/loop-mult.js:
+        * wasm/function-tests/loop-sum.js:
+        * wasm/function-tests/max.js: Removed.
+        * wasm/function-tests/min.js: Removed.
+        * wasm/function-tests/nearest.js: Removed.
+        * wasm/function-tests/nop.js: Removed.
+        * wasm/function-tests/popcnt.js: Removed.
+        * wasm/function-tests/ret5.js:
+        * wasm/function-tests/select.js: Removed.
+        * wasm/function-tests/tee-local.js: Removed.
+        * wasm/function-tests/trunc.js: Removed.
+
 2017-06-07  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: test imports and exports with 16-bit characters

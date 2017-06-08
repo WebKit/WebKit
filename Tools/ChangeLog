@@ -1,3 +1,14 @@
+2017-06-08  Keith Miller  <keith_miller@apple.com>
+
+        WebAssembly: We should only create wrappers for functions that can be exported
+        https://bugs.webkit.org/show_bug.cgi?id=173088
+
+        Reviewed by Saam Barati.
+
+        Add quick mode for wasm tests.
+
+        * Scripts/run-jsc-stress-tests:
+
 2017-06-08  Darin Adler  <darin@apple.com>
 
         WTF tests have incorrect RefLogger lifetimes making it impossible to test with Address Sanitizer

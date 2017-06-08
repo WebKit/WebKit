@@ -269,12 +269,9 @@ struct Entrypoint {
     RegisterAtOffsetList calleeSaveRegisters;
 };
 
-struct WasmInternalFunction {
-    CodeLocationDataLabelPtr wasmCalleeMoveLocation;
-    CodeLocationDataLabelPtr jsToWasmCalleeMoveLocation;
-
-    Entrypoint wasmEntrypoint;
-    Entrypoint jsToWasmEntrypoint;
+struct InternalFunction {
+    CodeLocationDataLabelPtr calleeMoveLocation;
+    Entrypoint entrypoint;
 };
 
 struct WasmExitStubs {

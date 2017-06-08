@@ -1,3 +1,43 @@
+2017-06-08  Keith Miller  <keith_miller@apple.com>
+
+        WebAssembly: We should only create wrappers for functions that can be exported
+        https://bugs.webkit.org/show_bug.cgi?id=173088
+
+        Reviewed by Saam Barati.
+
+        This patch makes it so we only create wrappers for WebAssembly functions that
+        can actually be exported. It appears to be a ~2.5% speedup on WasmBench compile times.
+
+        This patch also removes most of the old testWasmModuleFunctions api from the jsc CLI.
+        Most of the tests were duplicates of ones in the spec-tests directory. The others I
+        have converted to use the normal API.
+
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (valueWithTypeOfWasmValue): Deleted.
+        (box): Deleted.
+        (callWasmFunction): Deleted.
+        (functionTestWasmModuleFunctions): Deleted.
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::B3IRGenerator):
+        (JSC::Wasm::createJSToWasmWrapper):
+        (JSC::Wasm::parseAndCompile):
+        * wasm/WasmB3IRGenerator.h:
+        * wasm/WasmBBQPlan.cpp:
+        (JSC::Wasm::BBQPlan::prepare):
+        (JSC::Wasm::BBQPlan::compileFunctions):
+        (JSC::Wasm::BBQPlan::complete):
+        * wasm/WasmBBQPlan.h:
+        * wasm/WasmBBQPlanInlines.h:
+        (JSC::Wasm::BBQPlan::initializeCallees):
+        * wasm/WasmCodeBlock.cpp:
+        (JSC::Wasm::CodeBlock::CodeBlock):
+        * wasm/WasmCodeBlock.h:
+        (JSC::Wasm::CodeBlock::jsEntrypointCalleeFromFunctionIndexSpace):
+        * wasm/WasmFormat.h:
+        * wasm/WasmOMGPlan.cpp:
+        (JSC::Wasm::OMGPlan::work):
+
 2017-06-07  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: test imports and exports with 16-bit characters

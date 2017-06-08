@@ -38,14 +38,17 @@ void BBQPlan::initializeCallees(const Functor& callback)
 {
     ASSERT(!failed());
     for (unsigned internalFunctionIndex = 0; internalFunctionIndex < m_wasmInternalFunctions.size(); ++internalFunctionIndex) {
-        WasmInternalFunction* function = m_wasmInternalFunctions[internalFunctionIndex].get();
 
-        Ref<Wasm::Callee> jsEntrypointCallee = Wasm::Callee::create(WTFMove(function->jsToWasmEntrypoint));
-        MacroAssembler::repatchPointer(function->jsToWasmCalleeMoveLocation, CalleeBits::boxWasm(jsEntrypointCallee.ptr()));
+        RefPtr<Wasm::Callee> jsEntrypointCallee;
+        if (auto jsToWasmFunction = m_jsToWasmInternalFunctions.get(internalFunctionIndex)) {
+            jsEntrypointCallee = Wasm::Callee::create(WTFMove(jsToWasmFunction->entrypoint));
+            MacroAssembler::repatchPointer(jsToWasmFunction->calleeMoveLocation, CalleeBits::boxWasm(jsEntrypointCallee.get()));
+        }
 
+        InternalFunction* function = m_wasmInternalFunctions[internalFunctionIndex].get();
         size_t functionIndexSpace = internalFunctionIndex + m_moduleInformation->importFunctionCount();
-        Ref<Wasm::Callee> wasmEntrypointCallee = Wasm::Callee::create(WTFMove(function->wasmEntrypoint), functionIndexSpace, m_moduleInformation->nameSection.get(functionIndexSpace));
-        MacroAssembler::repatchPointer(function->wasmCalleeMoveLocation, CalleeBits::boxWasm(wasmEntrypointCallee.ptr()));
+        Ref<Wasm::Callee> wasmEntrypointCallee = Wasm::Callee::create(WTFMove(function->entrypoint), functionIndexSpace, m_moduleInformation->nameSection.get(functionIndexSpace));
+        MacroAssembler::repatchPointer(function->calleeMoveLocation, CalleeBits::boxWasm(wasmEntrypointCallee.ptr()));
 
         callback(internalFunctionIndex, WTFMove(jsEntrypointCallee), WTFMove(wasmEntrypointCallee));
     }

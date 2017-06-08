@@ -50,12 +50,14 @@ CodeBlock::CodeBlock(MemoryMode mode, ModuleInformation& moduleInformation)
 
         // FIXME: we should eventually collect the BBQ code.
         m_callees.resize(m_calleeCount);
-        m_jsCallees.resize(m_calleeCount);
         m_optimizedCallees.resize(m_calleeCount);
         m_wasmIndirectCallEntryPoints.resize(m_calleeCount);
 
-        m_plan->initializeCallees([&] (unsigned calleeIndex, Ref<Wasm::Callee>&& jsEntrypointCallee, Ref<Wasm::Callee>&& wasmEntrypointCallee) {
-            m_jsCallees[calleeIndex] = WTFMove(jsEntrypointCallee);
+        m_plan->initializeCallees([&] (unsigned calleeIndex, RefPtr<Wasm::Callee>&& jsEntrypointCallee, Ref<Wasm::Callee>&& wasmEntrypointCallee) {
+            if (jsEntrypointCallee) {
+                auto result = m_jsCallees.set(calleeIndex, WTFMove(jsEntrypointCallee));
+                ASSERT_UNUSED(result, result.isNewEntry);
+            }
             m_callees[calleeIndex] = WTFMove(wasmEntrypointCallee);
             m_wasmIndirectCallEntryPoints[calleeIndex] = m_callees[calleeIndex]->entrypoint();
         });

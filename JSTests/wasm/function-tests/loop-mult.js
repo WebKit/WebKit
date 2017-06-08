@@ -1,10 +1,14 @@
 import Builder from '../Builder.js'
+import * as assert from '../assert.js'
 
 const b = new Builder();
 b.Type().End()
     .Function().End()
+    .Export()
+        .Function("loop")
+    .End()
     .Code()
-    .Function({ params: ["i32"], ret: "i32" }, ["i32"])
+    .Function("loop", { params: ["i32"], ret: "i32" }, ["i32"])
     .I32Const(0)
     .SetLocal(1)
     .Loop("void")
@@ -27,11 +31,13 @@ b.Type().End()
     .GetLocal(1)
     .Return()
     .End()
+    .End()
 
-const bin = b.WebAssembly()
-bin.trim();
-testWasmModuleFunctions(bin.get(), 1, [[{type: "i32", value: 0 }, [{ type: "i32", value: 0 }]],
-                                       [{type: "i32", value: 1 }, [{ type: "i32", value: 1 }]],
-                                       [{type: "i32", value: 3 }, [{ type: "i32", value: 2 }]],
-                                       [{type: "i32", value: 5050 }, [{ type: "i32", value: 100 }]]
-                                      ]);
+const bin = b.WebAssembly().get();
+const module = new WebAssembly.Module(bin);
+const instance = new WebAssembly.Instance(module);
+
+assert.eq(0, instance.exports.loop(0));
+assert.eq(1, instance.exports.loop(1));
+assert.eq(3, instance.exports.loop(2));
+assert.eq(5050, instance.exports.loop(100));

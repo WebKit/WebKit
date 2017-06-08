@@ -139,7 +139,9 @@ private:
     
     Bag<CallLinkInfo> m_callLinkInfos;
     Vector<MacroAssemblerCodeRef> m_wasmToWasmExitStubs;
-    Vector<std::unique_ptr<WasmInternalFunction>> m_wasmInternalFunctions;
+    Vector<std::unique_ptr<InternalFunction>> m_wasmInternalFunctions;
+    HashSet<uint32_t, typename DefaultHash<uint32_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_exportedFunctionIndices;
+    HashMap<uint32_t, std::unique_ptr<InternalFunction>, typename DefaultHash<uint32_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_jsToWasmInternalFunctions;
     Vector<CompilationContext> m_compilationContexts;
     Vector<TierUpCount> m_tierUpCounts;
 

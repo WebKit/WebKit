@@ -74,12 +74,9 @@
 #include "SuperSampler.h"
 #include "TestRunnerUtils.h"
 #include "TypeProfilerLog.h"
-#include "WasmBBQPlanInlines.h"
-#include "WasmCallee.h"
 #include "WasmContext.h"
 #include "WasmFaultSignalHandler.h"
 #include "WasmMemory.h"
-#include "WasmWorklist.h"
 #include <locale.h>
 #include <math.h>
 #include <stdio.h>
@@ -1133,7 +1130,6 @@ static EncodedJSValue JSC_HOST_CALL functionAsyncTestStart(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionAsyncTestPassed(ExecState*);
 
 #if ENABLE(WEBASSEMBLY)
-static EncodedJSValue JSC_HOST_CALL functionTestWasmModuleFunctions(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionWebAssemblyMemoryMode(ExecState*);
 #endif
 
@@ -1409,7 +1405,6 @@ protected:
         addFunction(vm, "asyncTestPassed", functionAsyncTestPassed, 1);
 
 #if ENABLE(WEBASSEMBLY)
-        addFunction(vm, "testWasmModuleFunctions", functionTestWasmModuleFunctions, 0);
         addFunction(vm, "WebAssemblyMemoryMode", functionWebAssemblyMemoryMode, 1);
 #endif
 
@@ -3136,181 +3131,6 @@ EncodedJSValue JSC_HOST_CALL functionAsyncTestPassed(ExecState*)
 }
 
 #if ENABLE(WEBASSEMBLY)
-
-static CString valueWithTypeOfWasmValue(ExecState* exec, VM& vm, JSValue value, JSValue wasmValue)
-{
-    JSString* type = asString(wasmValue.get(exec, makeIdentifier(vm, "type")));
-
-    const String& typeString = type->value(exec);
-    if (typeString == "i64" || typeString == "i32")
-        return toCString(typeString, " ", RawPointer(bitwise_cast<void*>(value)));
-    if (typeString == "f32")
-        return toCString(typeString, " hex: ", RawPointer(bitwise_cast<void*>(value)), ", float: ", bitwise_cast<float>(static_cast<uint32_t>(JSValue::encode(value))));
-    return toCString(typeString, " hex: ", RawPointer(bitwise_cast<void*>(value)), ", double: ", bitwise_cast<double>(value));
-}
-
-static JSValue box(ExecState* exec, VM& vm, JSValue wasmValue)
-{
-    auto scope = DECLARE_CATCH_SCOPE(vm);
-
-    JSString* type = asString(wasmValue.get(exec, makeIdentifier(vm, "type")));
-    scope.assertNoException();
-    JSValue value = wasmValue.get(exec, makeIdentifier(vm, "value"));
-    scope.assertNoException();
-
-    auto unboxString = [&] (const char* hexFormat, const char* decFormat, auto& result) {
-        if (!value.isString())
-            return false;
-
-        const char* str = toCString(asString(value)->value(exec)).data();
-        int scanResult;
-        int length = std::strlen(str);
-        if ((length > 2 && (str[0] == '0' && str[1] == 'x'))
-            || (length > 3 && (str[0] == '-' && str[1] == '0' && str[2] == 'x')))
-#if COMPILER(CLANG)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wformat-nonliteral"
-#endif
-            scanResult = sscanf(str, hexFormat, &result);
-        else
-            scanResult = sscanf(str, decFormat, &result);
-#if COMPILER(CLANG)
-#pragma clang diagnostic pop
-#endif
-        RELEASE_ASSERT(scanResult != EOF);
-        return true;
-    };
-
-    const String& typeString = type->value(exec);
-    if (typeString == "i64") {
-        int64_t result;
-        if (!unboxString("%llx", "%lld", result))
-            CRASH();
-        return JSValue::decode(result);
-    }
-
-    if (typeString == "i32") {
-        int32_t result;
-        if (!unboxString("%x", "%d", result))
-            result = value.asInt32();
-        return JSValue::decode(static_cast<uint32_t>(result));
-    }
-
-    if (typeString == "f32") {
-        float result;
-        if (!unboxString("%a", "%f", result))
-            result = value.toFloat(exec);
-        return JSValue::decode(bitwise_cast<uint32_t>(result));
-    }
-
-    RELEASE_ASSERT(typeString == "f64");
-    double result;
-    if (!unboxString("%la", "%lf", result))
-        result = value.asNumber();
-    return JSValue::decode(bitwise_cast<uint64_t>(result));
-}
-
-// FIXME: https://bugs.webkit.org/show_bug.cgi?id=168582.
-static JSValue callWasmFunction(VM* vm, JSGlobalObject* globalObject, Wasm::Callee* wasmCallee, const ArgList& boxedArgs)
-{
-    JSValue firstArgument;
-    int argCount = 1;
-    JSValue* remainingArgs = nullptr;
-    if (boxedArgs.size()) {
-        remainingArgs = boxedArgs.data();
-        firstArgument = *remainingArgs;
-        remainingArgs++;
-        argCount = boxedArgs.size();
-    }
-
-    ProtoCallFrame protoCallFrame;
-    protoCallFrame.init(nullptr, globalObject->globalExec()->jsCallee(), firstArgument, argCount, remainingArgs);
-
-    return JSValue::decode(vmEntryToWasm(wasmCallee->entrypoint(), vm, &protoCallFrame));
-}
-
-// testWasmModule(JSArrayBufferView source, number functionCount, ...[[WasmValue, [WasmValue]]]) where the ith copy of [[result, [args]]] is a list
-// of arguments to be passed to the ith wasm function as well as the expected result. WasmValue is an object with "type" and "value" properties.
-static EncodedJSValue JSC_HOST_CALL functionTestWasmModuleFunctions(ExecState* exec)
-{
-    VM& vm = exec->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    if (!Options::useWebAssembly())
-        return throwVMTypeError(exec, scope, ASCIILiteral("testWasmModule should only be called if the useWebAssembly option is set"));
-
-    JSArrayBufferView* source = jsCast<JSArrayBufferView*>(exec->argument(0));
-    uint32_t functionCount = exec->argument(1).toUInt32(exec);
-
-    if (exec->argumentCount() != functionCount + 2)
-        CRASH();
-
-    Ref<Wasm::BBQPlan> plan = adoptRef(*new Wasm::BBQPlan(nullptr, static_cast<uint8_t*>(source->vector()), source->length(), Wasm::BBQPlan::FullCompile, Wasm::Plan::dontFinalize()));
-    Wasm::ensureWorklist().enqueue(plan.copyRef());
-    Wasm::ensureWorklist().completePlanSynchronously(plan.get());
-    if (plan->failed()) {
-        dataLogLn("failed to parse module: ", plan->errorMessage());
-        CRASH();
-    }
-
-    if (plan->internalFunctionCount() != functionCount)
-        CRASH();
-
-    Vector<Ref<Wasm::Callee>> jsEntrypointCallees;
-    Vector<Ref<Wasm::Callee>> wasmEntrypointCallees;
-    {
-        unsigned lastIndex = UINT_MAX;
-        plan->initializeCallees(
-            [&] (unsigned calleeIndex, Ref<Wasm::Callee>&& jsEntrypointCallee, Ref<Wasm::Callee>&& wasmEntrypointCallee) {
-                RELEASE_ASSERT(!calleeIndex || (calleeIndex - 1 == lastIndex));
-                jsEntrypointCallees.append(WTFMove(jsEntrypointCallee));
-                wasmEntrypointCallees.append(WTFMove(wasmEntrypointCallee));
-                lastIndex = calleeIndex;
-            });
-    }
-    Ref<Wasm::ModuleInformation> moduleInformation = plan->takeModuleInformation();
-    RELEASE_ASSERT(!moduleInformation->memory);
-
-    for (uint32_t i = 0; i < functionCount; ++i) {
-        JSArray* testCases = jsCast<JSArray*>(exec->argument(i + 2));
-        for (unsigned testIndex = 0; testIndex < testCases->length(); ++testIndex) {
-            JSArray* test = jsCast<JSArray*>(testCases->getIndexQuickly(testIndex));
-            JSObject* result = jsCast<JSObject*>(test->getIndexQuickly(0));
-            JSArray* arguments = jsCast<JSArray*>(test->getIndexQuickly(1));
-
-            MarkedArgumentBuffer boxedArgs;
-            if (!Wasm::useFastTLSForContext()) {
-                // When not using fast TLS, the code we emit expects Wasm::Context*
-                // as the first argument. These tests that this API supports don't ever
-                // use a Context. So this is just a hack to get it to not barf.
-                // We really need to remove this API.
-                boxedArgs.append(jsNumber(0xbadbeef));
-            }
-            for (unsigned argIndex = 0; argIndex < arguments->length(); ++argIndex)
-                boxedArgs.append(box(exec, vm, arguments->getIndexQuickly(argIndex)));
-
-            JSValue callResult;
-            {
-                auto scope = DECLARE_THROW_SCOPE(vm);
-                callResult = callWasmFunction(&vm, exec->lexicalGlobalObject(), jsEntrypointCallees[i].ptr(), boxedArgs);
-                RETURN_IF_EXCEPTION(scope, { });
-            }
-            JSValue expected = box(exec, vm, result);
-            if (callResult != expected) {
-                dataLog("Arguments: ");
-                CommaPrinter comma(", ");
-                for (unsigned argIndex = 0; argIndex < arguments->length(); ++argIndex)
-                    dataLog(comma, valueWithTypeOfWasmValue(exec, vm, boxedArgs.at(argIndex), arguments->getIndexQuickly(argIndex)));
-                dataLogLn();
-
-                WTFReportAssertionFailure(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, toCString(" (callResult == ", valueWithTypeOfWasmValue(exec, vm, callResult, result), ", expected == ", valueWithTypeOfWasmValue(exec, vm, expected, result), ")").data());
-                CRASH();
-            }
-        }
-    }
-
-    return encodedJSUndefined();
-}
 
 static EncodedJSValue JSC_HOST_CALL functionWebAssemblyMemoryMode(ExecState* exec)
 {

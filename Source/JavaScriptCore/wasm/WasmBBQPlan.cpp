@@ -178,6 +178,22 @@ void BBQPlan::prepare()
         m_wasmToWasmExitStubs.uncheckedAppend(wasmToWasm(importFunctionIndex));
     }
 
+    const uint32_t importFunctionCount = m_moduleInformation->importFunctionCount();
+    for (const auto& exp : m_moduleInformation->exports) {
+        if (exp.kindIndex >= importFunctionCount)
+            m_exportedFunctionIndices.add(exp.kindIndex - importFunctionCount);
+    }
+
+    for (const auto& element : m_moduleInformation->elements) {
+        for (const uint32_t elementIndex : element.functionIndices) {
+            if (elementIndex >= importFunctionCount)
+                m_exportedFunctionIndices.add(elementIndex - importFunctionCount);
+        }
+    }
+
+    if (m_moduleInformation->startFunctionIndexSpace && m_moduleInformation->startFunctionIndexSpace >= importFunctionCount)
+        m_exportedFunctionIndices.add(*m_moduleInformation->startFunctionIndexSpace - importFunctionCount);
+
     moveToState(State::Prepared);
 }
 
@@ -256,6 +272,13 @@ void BBQPlan::compileFunctions(CompilationEffort effort)
         }
 
         m_wasmInternalFunctions[functionIndex] = WTFMove(*parseAndCompileResult);
+
+        if (m_exportedFunctionIndices.contains(functionIndex)) {
+            auto locker = holdLock(m_lock);
+            auto result = m_jsToWasmInternalFunctions.add(functionIndex, createJSToWasmWrapper(m_compilationContexts[functionIndex], signature, &m_unlinkedWasmToWasmCalls[functionIndex], m_moduleInformation.get(), m_mode, functionIndex));
+            ASSERT_UNUSED(result, result.isNewEntry);
+        }
+
         bytesCompiled += functionLength;
     }
 }
@@ -271,14 +294,14 @@ void BBQPlan::complete(const AbstractLocker& locker)
             SignatureIndex signatureIndex = m_moduleInformation->internalFunctionSignatureIndices[functionIndex];
             {
                 LinkBuffer linkBuffer(*context.wasmEntrypointJIT, nullptr);
-                m_wasmInternalFunctions[functionIndex]->wasmEntrypoint.compilation = std::make_unique<B3::Compilation>(
+                m_wasmInternalFunctions[functionIndex]->entrypoint.compilation = std::make_unique<B3::Compilation>(
                     FINALIZE_CODE(linkBuffer, ("WebAssembly function[%i] %s", functionIndex, SignatureInformation::get(signatureIndex).toString().ascii().data())),
                     WTFMove(context.wasmEntrypointByproducts));
             }
 
-            {
+            if (auto jsToWasmInternalFunction = m_jsToWasmInternalFunctions.get(functionIndex)) {
                 LinkBuffer linkBuffer(*context.jsEntrypointJIT, nullptr);
-                m_wasmInternalFunctions[functionIndex]->jsToWasmEntrypoint.compilation = std::make_unique<B3::Compilation>(
+                jsToWasmInternalFunction->entrypoint.compilation = std::make_unique<B3::Compilation>(
                     FINALIZE_CODE(linkBuffer, ("JavaScript->WebAssembly entrypoint[%i] %s", functionIndex, SignatureInformation::get(signatureIndex).toString().ascii().data())),
                     WTFMove(context.jsEntrypointByproducts));
             }
@@ -291,7 +314,7 @@ void BBQPlan::complete(const AbstractLocker& locker)
                     // FIXME imports could have been linked in B3, instead of generating a patchpoint. This condition should be replaced by a RELEASE_ASSERT. https://bugs.webkit.org/show_bug.cgi?id=166462
                     executableAddress = m_wasmToWasmExitStubs.at(call.functionIndexSpace).code().executableAddress();
                 } else
-                    executableAddress = m_wasmInternalFunctions.at(call.functionIndexSpace - m_moduleInformation->importFunctionCount())->wasmEntrypoint.compilation->code().executableAddress();
+                    executableAddress = m_wasmInternalFunctions.at(call.functionIndexSpace - m_moduleInformation->importFunctionCount())->entrypoint.compilation->code().executableAddress();
                 MacroAssembler::repatchNearCall(call.callLocation, CodeLocationLabel(executableAddress));
             }
         }
