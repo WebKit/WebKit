@@ -154,24 +154,25 @@ class DarwinPort(ApplePort):
     def sample_process(self, name, pid, target_host=None):
         host = target_host or self.host
         tempdir = host.filesystem.mkdtemp()
-        exit_status = host.executive.run_command([
-            "/usr/bin/sudo",
-            "-n",
-            "/usr/sbin/spindump",
+        command = [
+            '/usr/sbin/spindump',
             pid,
             10,
             10,
-            "-file",
+            '-file',
             DarwinPort.spindump_file_path(host, name, pid, str(tempdir)),
-        ], return_exit_code=True)
+        ]
+        if self.host.platform.is_mac():
+            command = ['/usr/bin/sudo', '-n'] + command
+        exit_status = host.executive.run_command(command, return_exit_code=True)
         if exit_status:
             try:
                 host.executive.run_command([
-                    "/usr/bin/sample",
+                    '/usr/bin/sample',
                     pid,
                     10,
                     10,
-                    "-file",
+                    '-file',
                     DarwinPort.sample_file_path(host, name, pid, str(tempdir)),
                 ])
                 host.filesystem.move_to_base_host(DarwinPort.sample_file_path(host, name, pid, str(tempdir)),

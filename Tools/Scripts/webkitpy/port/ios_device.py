@@ -95,12 +95,6 @@ class IOSDevicePort(IOSPort):
     def check_for_leaks(self, process_name, process_pid):
         pass
 
-    def look_for_new_samples(self, unresponsive_processes, start_time):
-        return {}
-
-    def sample_process(self, name, pid, target_host=None):
-        pass
-
     # Despite their names, these flags do not actually get passed all the way down to webkit-build.
     def _build_driver_flags(self):
         return ['--sdk', self.SDK] + (['ARCHS=%s' % self.architecture()] if self.architecture() else [])

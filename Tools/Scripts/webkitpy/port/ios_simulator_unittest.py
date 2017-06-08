@@ -30,7 +30,8 @@ from webkitpy.common.system.executive_mock import MockExecutive2, ScriptError
 
 
 class IOSSimulatorTest(ios_testcase.IOSTest):
-    os_name = 'ios-simulator'
+    # FIXME: https://bugs.webkit.org/show_bug.cgi?id=173107
+    os_name = 'mac'
     os_version = ''
     port_name = 'ios-simulator'
     port_maker = IOSSimulatorPort

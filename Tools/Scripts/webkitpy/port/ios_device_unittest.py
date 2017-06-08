@@ -22,12 +22,14 @@
 
 import time
 
+from webkitpy.common.system.outputcapture import OutputCapture
+from webkitpy.common.system.executive_mock import MockExecutive2, ScriptError
 from webkitpy.port.ios_device import IOSDevicePort
 from webkitpy.port import ios_testcase
 
 
 class IOSDeviceTest(ios_testcase.IOSTest):
-    os_name = 'ios-device'
+    os_name = 'ios'
     os_version = ''
     port_name = 'ios-device'
     port_maker = IOSDevicePort
@@ -44,17 +46,44 @@ class IOSDeviceTest(ios_testcase.IOSTest):
         with self.assertRaises(RuntimeError):
             port.path_to_crash_logs()
 
+    def test_spindump(self):
+        def logging_run_command(args):
+            print args
+
+        port = self.make_port()
+        port.host.filesystem.files['/__im_tmp/tmp_0_/test-42-spindump.txt'] = 'Spindump file'
+        port.host.executive = MockExecutive2(run_command_fn=logging_run_command)
+        expected_stdout = "['/usr/sbin/spindump', 42, 10, 10, '-file', '/__im_tmp/tmp_0_/test-42-spindump.txt']\n"
+        OutputCapture().assert_outputs(self, port.sample_process, args=['test', 42], expected_stdout=expected_stdout)
+        self.assertEqual(port.host.filesystem.files['/mock-build/layout-test-results/test-42-spindump.txt'], 'Spindump file')
+        self.assertIsNone(port.host.filesystem.files['/__im_tmp/tmp_0_/test-42-spindump.txt'])
+
+    def test_sample_process(self):
+        def logging_run_command(args):
+            if args[0] == '/usr/sbin/spindump':
+                return 1
+            print args
+            return 0
+
+        port = self.make_port()
+        port.host.filesystem.files['/__im_tmp/tmp_0_/test-42-sample.txt'] = 'Sample file'
+        port.host.executive = MockExecutive2(run_command_fn=logging_run_command)
+        expected_stdout = "['/usr/bin/sample', 42, 10, 10, '-file', '/__im_tmp/tmp_0_/test-42-sample.txt']\n"
+        OutputCapture().assert_outputs(self, port.sample_process, args=['test', 42], expected_stdout=expected_stdout)
+        self.assertEqual(port.host.filesystem.files['/mock-build/layout-test-results/test-42-sample.txt'], 'Sample file')
+        self.assertIsNone(port.host.filesystem.files['/__im_tmp/tmp_0_/test-42-sample.txt'])
+
+    def test_sample_process_exception(self):
+        def throwing_run_command(args):
+            if args[0] == '/usr/sbin/spindump':
+                return 1
+            raise ScriptError('MOCK script error')
+
+        port = self.make_port()
+        port.host.executive = MockExecutive2(run_command_fn=throwing_run_command)
+        OutputCapture().assert_outputs(self, port.sample_process, args=['test', 42])
+
     def test_get_crash_log(self):
         port = self.make_port(port_name=self.port_name)
         with self.assertRaises(RuntimeError):
             port._get_crash_log('DumpRenderTree', 1234, None, None, time.time(), wait_for_log=False)
-
-    # FIXME: Update tests when <rdar://problem/30497991> is completed.
-    def test_spindump(self):
-        pass
-
-    def test_sample_process(self):
-        pass
-
-    def test_sample_process_exception(self):
-        pass
