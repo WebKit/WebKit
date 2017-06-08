@@ -1,3 +1,22 @@
+2017-06-08  Filip Pizlo  <fpizlo@apple.com>
+
+        REGRESSION: js/dom/prototype-chain-caching-with-impure-get-own-property-slot-traps-5.html has a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=161156
+
+        Reviewed by Saam Barati.
+        
+        Since LLInt does not register impure property watchpoints for self property accesses, it
+        shouldn't try to cache accesses that require a watchpoint.
+        
+        This manifested as a flaky failure because the test would fire the watchpoint after we had
+        usually already tiered up. Without concurrent JIT, we would have always tiered up before
+        getting to the bad case. With concurrent JIT, we would sometimes not tier up by that time. This
+        also adds a test that deterministically failed in LLInt without this change; it does so by just
+        running a lot shorter.
+
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+
 2017-06-08  Keith Miller  <keith_miller@apple.com>
 
         WebAssembly: We should only create wrappers for functions that can be exported

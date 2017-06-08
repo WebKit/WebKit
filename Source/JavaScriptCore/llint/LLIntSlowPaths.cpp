@@ -673,7 +673,8 @@ LLINT_SLOW_PATH_DECL(slow_path_get_by_id)
             // Prevent the prototype cache from ever happening.
             pc[7].u.operand = 0;
         
-            if (structure->propertyAccessesAreCacheable()) {
+            if (structure->propertyAccessesAreCacheable()
+                && !structure->needImpurePropertyWatchpoint()) {
                 vm.heap.writeBarrier(codeBlock);
                 
                 ConcurrentJSLocker locker(codeBlock->m_lock);
