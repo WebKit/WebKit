@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <functional>
+#include <wtf/Function.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Optional.h>
@@ -121,7 +121,7 @@ public:
     {
     }
 
-    Timer(std::function<void ()> function)
+    Timer(WTF::Function<void ()>&& function)
         : m_function(WTFMove(function))
     {
     }
@@ -132,7 +132,7 @@ private:
         m_function();
     }
     
-    std::function<void ()> m_function;
+    WTF::Function<void ()> m_function;
 };
 
 inline bool TimerBase::isActive() const
@@ -154,7 +154,7 @@ public:
     {
     }
 
-    DeferrableOneShotTimer(std::function<void ()> function, Seconds delay)
+    DeferrableOneShotTimer(WTF::Function<void ()>&& function, Seconds delay)
         : m_function(WTFMove(function))
         , m_delay(delay)
         , m_shouldRestartWhenTimerFires(false)
@@ -194,7 +194,7 @@ private:
         m_function();
     }
 
-    std::function<void ()> m_function;
+    WTF::Function<void ()> m_function;
 
     Seconds m_delay;
     bool m_shouldRestartWhenTimerFires;

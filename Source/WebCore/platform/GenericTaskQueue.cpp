@@ -47,7 +47,7 @@ void TaskDispatcher<Timer>::postTask(Function<void()>&& function)
 Timer& TaskDispatcher<Timer>::sharedTimer()
 {
     ASSERT(isMainThread());
-    static NeverDestroyed<Timer> timer(TaskDispatcher<Timer>::sharedTimerFired);
+    static NeverDestroyed<Timer> timer([] { TaskDispatcher<Timer>::sharedTimerFired(); });
     return timer.get();
 }
 

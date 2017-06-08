@@ -1,3 +1,19 @@
+2017-06-08  Chris Dumez  <cdumez@apple.com>
+
+        Update Timer to take a WTF::Function instead of a std::function
+        https://bugs.webkit.org/show_bug.cgi?id=173113
+
+        Reviewed by Brady Eidson.
+
+        Update Timer to take a WTF::Function instead of a std::function as we prefer
+        to use WTF::Function in WebKit.
+
+        * platform/GenericTaskQueue.cpp:
+        (WebCore::TaskDispatcher<Timer>::sharedTimer):
+        * platform/Timer.h:
+        (WebCore::Timer::Timer):
+        (WebCore::DeferrableOneShotTimer::DeferrableOneShotTimer):
+
 2017-06-08  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [WebRTC] enableMockMediaEndpoint() is only used for the OpenWebRTC backend.
