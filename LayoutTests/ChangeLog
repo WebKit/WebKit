@@ -1,3 +1,18 @@
+2017-06-08  Antoine Quint  <graouts@apple.com>
+
+        [iOS] Buttons in top-left and bottom media controls bar are positioned too high
+        https://bugs.webkit.org/show_bug.cgi?id=173111
+        <rdar://problem/32650615>
+
+        Reviewed by Jon Lee.
+
+        Add a test that checks that the appropriate styles as set in buttons-container.css
+        are applied to a button in a buttons container on iOS.
+
+        * media/modern-media-controls/ios-inline-media-controls/ios-inline-media-controls-button-padding-expected.txt: Added.
+        * media/modern-media-controls/ios-inline-media-controls/ios-inline-media-controls-button-padding.html: Added.
+        * platform/ios-simulator/TestExpectations:
+
 2017-06-08  Youenn Fablet  <youenn@apple.com>
 
         getUserMedia should not be prompted again if user denied access

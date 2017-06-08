@@ -77,6 +77,9 @@ media/modern-media-controls/button/button-active-state.html [ Skip ]
 media/modern-media-controls/controls-visibility-support/controls-visibility-support-fullscreen-on-parent-element.html [ Skip ]
 media/modern-media-controls/controls-visibility-support/controls-visibility-support-fullscreen-on-video.html [ Skip ]
 
+# These tests specifically test iOS-only media controls features
+media/modern-media-controls/ios-inline-media-controls/ios-inline-media-controls-button-padding.html [ Pass ]
+
 webkit.org/b/172965 media/track/track-cue-overlap-snap-to-lines-not-set.html [ Failure ]
 
 webkit.org/b/156718 storage/websql/alter-to-info-table.html [ Failure ]
