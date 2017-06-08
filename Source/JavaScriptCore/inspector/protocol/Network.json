@@ -193,6 +193,17 @@
                 { "name": "status", "type": "number", "description": "HTTP response status code." }
             ],
             "description": "Loads a resource in the context of a frame on the inspected page without cross origin checks."
+        },
+        {
+            "name": "resolveWebSocket",
+            "description": "Resolves JavaScript WebSocket object for given request id.",
+            "parameters": [
+                { "name": "requestId", "$ref": "RequestId", "description": "Identifier of the WebSocket resource to resolve." },
+                { "name": "objectGroup", "type": "string", "optional": true, "description": "Symbolic group name that can be used to release multiple objects." }
+            ],
+            "returns": [
+                { "name": "object", "$ref": "Runtime.RemoteObject", "description": "JavaScript object wrapper for given node." }
+            ]
         }
     ],
     "events": [

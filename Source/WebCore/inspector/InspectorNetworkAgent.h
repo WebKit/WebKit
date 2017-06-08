@@ -40,6 +40,7 @@
 
 namespace Inspector {
 class InspectorObject;
+class InjectedScriptManager;
 }
 
 namespace WebCore {
@@ -58,6 +59,7 @@ class ResourceResponse;
 class URL;
 
 #if ENABLE(WEB_SOCKETS)
+class WebSocket;
 struct WebSocketFrame;
 #endif
 
@@ -112,9 +114,16 @@ public:
     void getResponseBody(ErrorString&, const String& requestId, String* content, bool* base64Encoded) override;
     void setResourceCachingDisabled(ErrorString&, bool disabled) override;
     void loadResource(ErrorString&, const String& frameId, const String& url, Ref<LoadResourceCallback>&&) override;
+#if ENABLE(WEB_SOCKETS)
+    void resolveWebSocket(ErrorString&, const String& requestId, const String* const objectGroup, RefPtr<Inspector::Protocol::Runtime::RemoteObject>&) override;
+#endif
 
 private:
     void enable();
+
+#if ENABLE(WEB_SOCKETS)
+    WebSocket* webSocketForRequestId(const String& requestId);
+#endif
 
     Ref<Inspector::Protocol::Network::ResourceTiming> buildObjectForTiming(const NetworkLoadMetrics&, ResourceLoader&);
     Ref<Inspector::Protocol::Network::Metrics> buildObjectForMetrics(const NetworkLoadMetrics&);
@@ -125,6 +134,7 @@ private:
 
     std::unique_ptr<Inspector::NetworkFrontendDispatcher> m_frontendDispatcher;
     RefPtr<Inspector::NetworkBackendDispatcher> m_backendDispatcher;
+    Inspector::InjectedScriptManager& m_injectedScriptManager;
     InspectorPageAgent* m_pageAgent { nullptr };
 
     // FIXME: InspectorNetworkAgent should not be aware of style recalculation.

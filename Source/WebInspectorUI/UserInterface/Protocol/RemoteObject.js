@@ -138,6 +138,18 @@ WebInspector.RemoteObject = class RemoteObject
         });
     }
 
+    static resolveWebSocket(webSocketResource, objectGroup, callback)
+    {
+        console.assert(typeof callback === "function");
+
+        NetworkAgent.resolveWebSocket(webSocketResource.requestIdentifier, objectGroup, (error, object) => {
+            if (error || !object)
+                callback(null);
+            else
+                callback(WebInspector.RemoteObject.fromPayload(object, webSocketResource.target));
+        });
+    }
+
     static type(remoteObject)
     {
         if (remoteObject === null)

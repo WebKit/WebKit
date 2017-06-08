@@ -1,5 +1,20 @@
 2017-06-07  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Add ContextMenu item to log WebSocket object to console
+        https://bugs.webkit.org/show_bug.cgi?id=172878
+
+        Reviewed by Joseph Pecoraro.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+        * UserInterface/Protocol/RemoteObject.js:
+        (WebInspector.RemoteObject.resolveWebSocket):
+
+        * UserInterface/Views/ResourceTreeElement.js:
+        (WebInspector.ResourceTreeElement.prototype.populateContextMenu):
+
+2017-06-07  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Allow user to choose stylesheet when creating new rules
         https://bugs.webkit.org/show_bug.cgi?id=172487
 
