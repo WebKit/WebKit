@@ -1,5 +1,19 @@
 2017-06-08  Antoine Quint  <graouts@apple.com>
 
+        Rebaseline and enable media/modern-media-controls/fullscreen-button
+        https://bugs.webkit.org/show_bug.cgi?id=173101
+
+        Reviewed by Dean Jackson.
+
+        Update the test to check an SVG asset now that we use those.
+
+        * media/modern-media-controls/fullscreen-button/fullscreen-button-expected.txt:
+        * media/modern-media-controls/fullscreen-button/fullscreen-button.html:
+        * platform/ios-simulator/TestExpectations:
+        * platform/mac/TestExpectations:
+
+2017-06-08  Antoine Quint  <graouts@apple.com>
+
         Rebaseline and enable media/modern-media-controls/forward-button
         https://bugs.webkit.org/show_bug.cgi?id=173100
 

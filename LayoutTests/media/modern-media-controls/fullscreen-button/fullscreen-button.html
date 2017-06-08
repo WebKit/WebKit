@@ -11,7 +11,6 @@ description("Testing the <code>FullscreenButton</code> class.");
 const enterFullscreenButton = new FullscreenButton({ layoutTraits: LayoutTraits.macOS });
 
 shouldBeEqualToString("enterFullscreenButton.element.localName", "button");
-shouldBeTrue('enterFullscreenButton.element.classList.contains("icon")');
 shouldBeTrue('enterFullscreenButton.element.classList.contains("fullscreen")');
 shouldBe("enterFullscreenButton.iconName", "Icons.EnterFullscreen");
 
@@ -25,9 +24,9 @@ scheduler.frameDidFire = function()
     if ([enterFullscreenButton, iOSEnterFullscreenButton, exitFullscreenButton].some(button => button.width == 0))
         return;
 
-    shouldBeTrue('enterFullscreenButton.element.style.webkitMaskImage.includes("macOS/enter-fullscreen@")');
-    shouldBeTrue('iOSEnterFullscreenButton.element.style.webkitMaskImage.includes("iOS/enter-fullscreen@")');
-    shouldBeTrue('exitFullscreenButton.element.style.webkitMaskImage.includes("macOS/exit-fullscreen@")');
+    shouldBeTrue('enterFullscreenButton.image.element.style.webkitMaskImage.includes("macOS/EnterFullscreen.svg")');
+    shouldBeTrue('iOSEnterFullscreenButton.image.element.style.webkitMaskImage.includes("iOS/EnterFullscreen.svg")');
+    shouldBeTrue('exitFullscreenButton.image.element.style.webkitMaskImage.includes("macOS/ExitFullscreen.svg")');
     finishMediaControlsTest();
 };
 

@@ -4,13 +4,12 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS enterFullscreenButton.element.localName is "button"
-PASS enterFullscreenButton.element.classList.contains("icon") is true
 PASS enterFullscreenButton.element.classList.contains("fullscreen") is true
 PASS enterFullscreenButton.iconName is Icons.EnterFullscreen
 PASS exitFullscreenButton.iconName is Icons.ExitFullscreen
-PASS enterFullscreenButton.element.style.webkitMaskImage.includes("macOS/enter-fullscreen@") is true
-PASS iOSEnterFullscreenButton.element.style.webkitMaskImage.includes("iOS/enter-fullscreen@") is true
-PASS exitFullscreenButton.element.style.webkitMaskImage.includes("macOS/exit-fullscreen@") is true
+PASS enterFullscreenButton.image.element.style.webkitMaskImage.includes("macOS/EnterFullscreen.svg") is true
+PASS iOSEnterFullscreenButton.image.element.style.webkitMaskImage.includes("iOS/EnterFullscreen.svg") is true
+PASS exitFullscreenButton.image.element.style.webkitMaskImage.includes("macOS/ExitFullscreen.svg") is true
 PASS successfullyParsed is true
 
 TEST COMPLETE
