@@ -1,3 +1,29 @@
+2017-06-07  Geoffrey Garen  <ggaren@apple.com>
+
+        bmalloc: memory APIs don't need to be heap members
+        https://bugs.webkit.org/show_bug.cgi?id=173076
+
+        Reviewed by Sam Weinig.
+
+        Asking the OS about memory use is unrelated to the state of bmalloc's
+        heap, so it's a better separation of concerns if related code is not 
+        part of the heap.
+
+        * bmalloc/AvailableMemory.cpp:
+        (bmalloc::memoryStatus):
+        * bmalloc/AvailableMemory.h:
+        (bmalloc::MemoryStatus::MemoryStatus):
+        (bmalloc::isUnderMemoryPressure):
+        (bmalloc::memoryFootprint):
+        (bmalloc::percentAvailableMemoryInUse):
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::Heap):
+        (bmalloc::Heap::updateMemoryInUseParameters): Deleted.
+        * bmalloc/Heap.h:
+        (bmalloc::Heap::isUnderMemoryPressure): Deleted.
+        (bmalloc::Heap::memoryFootprint): Deleted.
+        (bmalloc::Heap::percentAvailableMemoryInUse): Deleted.
+
 2017-06-06  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         struct does not accept initializer-form if member has initializers in GCC 4.9

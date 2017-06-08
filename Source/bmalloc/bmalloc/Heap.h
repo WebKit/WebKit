@@ -72,10 +72,6 @@ public:
 
     void scavenge(std::lock_guard<StaticMutex>&);
 
-    size_t memoryFootprint();
-    double percentAvailableMemoryInUse();
-    bool isUnderMemoryPressure();
-    
 #if BOS(DARWIN)
     void setScavengerThreadQOSClass(qos_class_t overrideClass) { m_requestedScavengerThreadQOSClass = overrideClass; }
 #endif
@@ -116,10 +112,6 @@ private:
     
     void concurrentScavenge();
     
-#if BPLATFORM(IOS)
-    void updateMemoryInUseParameters();
-#endif
-
     size_t m_vmPageSizePhysical;
     Vector<LineMetadata> m_smallLineMetadata;
     std::array<size_t, sizeClassCount> m_pageClasses;
@@ -140,12 +132,6 @@ private:
 
     Environment m_environment;
     DebugHeap* m_debugHeap;
-
-#if BPLATFORM(IOS)
-    size_t m_maxAvailableMemory;
-    size_t m_memoryFootprint;
-    double m_percentAvailableMemoryInUse;
-#endif
 
     VMHeap m_vmHeap;
 
@@ -170,31 +156,6 @@ inline void Heap::derefSmallLine(std::lock_guard<StaticMutex>& lock, Object obje
         return;
     deallocateSmallLine(lock, object);
 }
-
-inline bool Heap::isUnderMemoryPressure()
-{
-#if BPLATFORM(IOS)
-    return percentAvailableMemoryInUse() > memoryPressureThreshold;
-#else
-    return false;
-#endif
-}
-    
-#if BPLATFORM(IOS)
-inline size_t Heap::memoryFootprint()
-{
-    updateMemoryInUseParameters();
-
-    return m_memoryFootprint;
-}
-
-inline double Heap::percentAvailableMemoryInUse()
-{
-    updateMemoryInUseParameters();
-
-    return m_percentAvailableMemoryInUse;
-}
-#endif
 
 } // namespace bmalloc
 

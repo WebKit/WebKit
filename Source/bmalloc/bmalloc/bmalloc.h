@@ -94,12 +94,12 @@ inline size_t availableMemory()
 #if BPLATFORM(IOS)
 inline size_t memoryFootprint()
 {
-    return PerProcess<Heap>::get()->memoryFootprint();
+    return bmalloc::memoryFootprint();
 }
 
 inline double percentAvailableMemoryInUse()
 {
-    return PerProcess<Heap>::get()->percentAvailableMemoryInUse();
+    return bmalloc::percentAvailableMemoryInUse();
 }
 #endif
 

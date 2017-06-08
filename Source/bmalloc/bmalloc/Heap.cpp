@@ -25,9 +25,7 @@
 
 #include "Heap.h"
 
-#if BPLATFORM(IOS)
 #include "AvailableMemory.h"
-#endif
 #include "BumpAllocator.h"
 #include "Chunk.h"
 #include "DebugHeap.h"
@@ -36,24 +34,12 @@
 #include "SmallPage.h"
 #include <thread>
 
-#if BOS(DARWIN)
-#include "bmalloc.h"
-#if BPLATFORM(IOS)
-#import <mach/host_info.h>
-#import <mach/mach.h>
-#import <mach/mach_error.h>
-#endif
-#endif
-
 namespace bmalloc {
 
 Heap::Heap(std::lock_guard<StaticMutex>&)
     : m_vmPageSizePhysical(vmPageSizePhysical())
     , m_scavenger(*this, &Heap::concurrentScavenge)
     , m_debugHeap(nullptr)
-#if BPLATFORM(IOS)
-    , m_maxAvailableMemory(availableMemory())
-#endif
 {
     RELEASE_BASSERT(vmPageSizePhysical() >= smallPageSize);
     RELEASE_BASSERT(vmPageSize() >= vmPageSizePhysical());
@@ -131,22 +117,6 @@ void Heap::initializePageMetadata()
     for (size_t i = 0; i < sizeClassCount; ++i)
         m_pageClasses[i] = (computePageSize(i) - 1) / smallPageSize;
 }
-
-#if BPLATFORM(IOS)
-void Heap::updateMemoryInUseParameters()
-{
-    task_vm_info_data_t vmInfo;
-    mach_msg_type_number_t vmSize = TASK_VM_INFO_COUNT;
-    
-    if (KERN_SUCCESS != task_info(mach_task_self(), TASK_VM_INFO, (task_info_t)(&vmInfo), &vmSize))
-        m_memoryFootprint = 0;
-    else
-        m_memoryFootprint = static_cast<size_t>(vmInfo.phys_footprint);
-
-    double percentInUse = static_cast<double>(m_memoryFootprint) / static_cast<double>(m_maxAvailableMemory);
-    m_percentAvailableMemoryInUse = std::min(percentInUse, 1.0);
-}
-#endif
 
 void Heap::concurrentScavenge()
 {
