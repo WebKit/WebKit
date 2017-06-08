@@ -635,7 +635,7 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::supportsAcceleratedRendering() const
 
 void MediaPlayerPrivateMediaSourceAVFObjC::acceleratedRenderingStateChanged()
 {
-    if (!m_hasBeenAskedToPaintGL && m_player->visible() && m_player->client().mediaPlayerRenderingCanBeAccelerated(m_player)) {
+    if (!m_hasBeenAskedToPaintGL && m_player->client().mediaPlayerRenderingCanBeAccelerated(m_player)) {
         destroyDecompressionSession();
         ensureLayer();
     } else {

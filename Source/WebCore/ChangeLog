@@ -1,5 +1,18 @@
 2017-06-08  Jer Noble  <jer.noble@apple.com>
 
+        YouTube audio stutters when page changes visibility.
+        https://bugs.webkit.org/show_bug.cgi?id=173102
+
+        Reviewed by Eric Carlson.
+
+        Don't change renderers when the visibility changes; only use the decompression session
+        when we were explicitly asked to paint into an accelerated surface.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::acceleratedRenderingStateChanged):
+
+2017-06-08  Jer Noble  <jer.noble@apple.com>
+
         Clients of the WK2 C-API don't have their mediaContentTypesRequiringHardwareSupport setting initialized correctly.
         https://bugs.webkit.org/show_bug.cgi?id=173091
 
