@@ -53,8 +53,10 @@
 
 - (void)ensureWrapperMap
 {
-    if (!toJS([self JSGlobalContextRef])->lexicalGlobalObject()->wrapperMap())
-        [[JSWrapperMap alloc] initWithGlobalContextRef:[self JSGlobalContextRef]];
+    if (!toJS([self JSGlobalContextRef])->lexicalGlobalObject()->wrapperMap()) {
+        // The map will be retained by the GlobalObject in initialization.
+        [[[JSWrapperMap alloc] initWithGlobalContextRef:[self JSGlobalContextRef]] release];
+    }
 }
 
 - (instancetype)init
