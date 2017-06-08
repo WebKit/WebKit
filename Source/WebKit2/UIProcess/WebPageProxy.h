@@ -1658,7 +1658,7 @@ private:
     String m_customTextEncodingName;
     String m_overrideContentSecurityPolicy;
 
-    bool m_treatsSHA1CertificatesAsInsecure;
+    bool m_treatsSHA1CertificatesAsInsecure { true };
 
     RefPtr<WebInspectorProxy> m_inspector;
 
@@ -1666,19 +1666,21 @@ private:
     RefPtr<WebFullScreenManagerProxy> m_fullScreenManager;
     std::unique_ptr<API::FullscreenClient> m_fullscreenClient;
 #endif
+
 #if (PLATFORM(IOS) && HAVE(AVKIT)) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     RefPtr<WebPlaybackSessionManagerProxy> m_playbackSessionManager;
     RefPtr<WebVideoFullscreenManagerProxy> m_videoFullscreenManager;
 #endif
+
 #if PLATFORM(IOS)
     VisibleContentRectUpdateInfo m_lastVisibleContentRectUpdate;
-    bool m_hasReceivedLayerTreeTransactionAfterDidCommitLoad { true };
     uint64_t m_firstLayerTreeTransactionIdAfterDidCommitLoad { 0 };
     int32_t m_deviceOrientation { 0 };
-    bool m_dynamicViewportSizeUpdateWaitingForTarget { false };
-    bool m_dynamicViewportSizeUpdateWaitingForLayerTreeCommit { false };
     uint64_t m_dynamicViewportSizeUpdateLayerTreeTransactionID { 0 };
     uint64_t m_currentDynamicViewportSizeUpdateID { 0 };
+    bool m_hasReceivedLayerTreeTransactionAfterDidCommitLoad { true };
+    bool m_dynamicViewportSizeUpdateWaitingForTarget { false };
+    bool m_dynamicViewportSizeUpdateWaitingForLayerTreeCommit { false };
     bool m_hasNetworkRequestsOnSuspended { false };
     bool m_isKeyboardAnimatingIn { false };
     bool m_isScrollingOrZooming { false };
@@ -1712,70 +1714,70 @@ private:
     std::unique_ptr<UserMediaPermissionRequestManagerProxy> m_userMediaPermissionRequestManager;
 #endif
 
-    WebCore::ActivityState::Flags m_activityState;
-    bool m_viewWasEverInWindow;
+    WebCore::ActivityState::Flags m_activityState { WebCore::ActivityState::NoFlags };
+    bool m_viewWasEverInWindow { false };
 #if PLATFORM(IOS)
     bool m_allowsMediaDocumentInlinePlayback { false };
-    bool m_alwaysRunsAtForegroundPriority;
+    bool m_alwaysRunsAtForegroundPriority { false };
     ProcessThrottler::ForegroundActivityToken m_activityToken;
 #endif
-    bool m_initialCapitalizationEnabled;
+    bool m_initialCapitalizationEnabled { false };
     std::optional<double> m_cpuLimit;
     Ref<WebBackForwardList> m_backForwardList;
         
-    bool m_maintainsInactiveSelection;
+    bool m_maintainsInactiveSelection { false };
 
-    bool m_waitsForPaintAfterViewDidMoveToWindow;
+    bool m_waitsForPaintAfterViewDidMoveToWindow { false };
     bool m_shouldSkipWaitingForPaintAfterNextViewDidMoveToWindow { false };
 
     String m_toolTip;
 
     EditorState m_editorState;
-    bool m_isEditable;
+    bool m_isEditable { false };
 
-    double m_textZoomFactor;
-    double m_pageZoomFactor;
-    double m_pageScaleFactor;
-    double m_pluginZoomFactor;
-    double m_pluginScaleFactor;
+    double m_textZoomFactor { 1 };
+    double m_pageZoomFactor { 1 };
+    double m_pageScaleFactor { 1 };
+    double m_pluginZoomFactor { 1 };
+    double m_pluginScaleFactor { 1 };
     double m_viewScaleFactor { 1 };
-    float m_intrinsicDeviceScaleFactor;
-    float m_customDeviceScaleFactor;
-    float m_topContentInset;
+    float m_intrinsicDeviceScaleFactor { 1 };
+    float m_customDeviceScaleFactor { 0 };
+    float m_topContentInset { 0 };
 
-    LayerHostingMode m_layerHostingMode;
+    LayerHostingMode m_layerHostingMode { LayerHostingMode::InProcess };
 
-    bool m_drawsBackground;
+    bool m_drawsBackground { true };
 
     WebCore::Color m_underlayColor;
     WebCore::Color m_pageExtendedBackgroundColor;
 
-    bool m_useFixedLayout;
+    bool m_useFixedLayout { false };
     WebCore::IntSize m_fixedLayoutSize;
 
     WebCore::LayoutMilestones m_observedLayoutMilestones { 0 };
 
-    bool m_suppressScrollbarAnimations;
+    bool m_suppressScrollbarAnimations { false };
 
-    WebCore::Pagination::Mode m_paginationMode;
-    bool m_paginationBehavesLikeColumns;
-    double m_pageLength;
-    double m_gapBetweenPages;
-    bool m_paginationLineGridEnabled;
+    WebCore::Pagination::Mode m_paginationMode { WebCore::Pagination::Unpaginated };
+    bool m_paginationBehavesLikeColumns { false };
+    double m_pageLength { 0 };
+    double m_gapBetweenPages { 0 };
+    bool m_paginationLineGridEnabled { false };
         
     // If the process backing the web page is alive and kicking.
-    bool m_isValid;
+    bool m_isValid { true };
 
     // Whether WebPageProxy::close() has been called on this page.
-    bool m_isClosed;
+    bool m_isClosed { false };
 
     // Whether it can run modal child web pages.
-    bool m_canRunModal;
+    bool m_canRunModal { false };
 
     bool m_needsToFinishInitializingWebPageAfterProcessLaunch { false };
 
-    bool m_isInPrintingMode;
-    bool m_isPerformingDOMPrintOperation;
+    bool m_isInPrintingMode { false };
+    bool m_isPerformingDOMPrintOperation { false };
 
     RefPtr<Messages::WebPageProxy::DecidePolicyForNavigationAction::DelayedReply> m_navigationActionPolicyReply;
     uint64_t m_newNavigationID { 0 };
@@ -1791,7 +1793,7 @@ private:
     Deque<NativeWebGestureEvent> m_gestureEventQueue;
 #endif
 
-    bool m_processingMouseMoveEvent;
+    bool m_processingMouseMoveEvent { false };
     std::unique_ptr<NativeWebMouseEvent> m_nextMouseMoveEvent;
     std::unique_ptr<NativeWebMouseEvent> m_currentlyProcessedMouseDownEvent;
 
@@ -1833,85 +1835,84 @@ private:
 
     const uint64_t m_pageID;
 
-
     // FIXME: Don't keep a separate sessionID - Rely on the WebsiteDataStore
     const WebCore::SessionID m_sessionID;
 
-    bool m_isPageSuspended;
-    bool m_addsVisitedLinks;
+    bool m_isPageSuspended { false };
+    bool m_addsVisitedLinks { true };
 
     bool m_controlledByAutomation { false };
 
 #if ENABLE(REMOTE_INSPECTOR)
-    bool m_allowsRemoteInspection;
+    bool m_allowsRemoteInspection { true };
     String m_remoteInspectionNameOverride;
 #endif
 
 #if PLATFORM(COCOA)
-    bool m_isSmartInsertDeleteEnabled;
+    bool m_isSmartInsertDeleteEnabled { false };
 #endif
 
 #if PLATFORM(GTK)
     String m_accessibilityPlugID;
-    WebCore::Color m_backgroundColor;
+    WebCore::Color m_backgroundColor { WebCore::Color::white };
 #endif
 
-    int64_t m_spellDocumentTag;
-    bool m_hasSpellDocumentTag;
-    unsigned m_pendingLearnOrIgnoreWordMessageCount;
+    int64_t m_spellDocumentTag { 0 }; // FIXME: use std::optional<>.
+    bool m_hasSpellDocumentTag { false }; 
+    unsigned m_pendingLearnOrIgnoreWordMessageCount { 0 };
 
-    bool m_mainFrameHasCustomContentProvider;
+    bool m_mainFrameHasCustomContentProvider { false };
 
 #if ENABLE(DRAG_SUPPORT)
     // Current drag destination details are delivered as an asynchronous response,
     // so we preserve them to be used when the next dragging delegate call is made.
-    WebCore::DragOperation m_currentDragOperation;
-    bool m_currentDragIsOverFileInput;
-    unsigned m_currentDragNumberOfFilesToBeAccepted;
+    WebCore::DragOperation m_currentDragOperation { WebCore::DragOperationNone };
+    bool m_currentDragIsOverFileInput { false };
+    unsigned m_currentDragNumberOfFilesToBeAccepted { 0 };
     WebCore::IntRect m_currentDragCaretRect;
 #endif
 
     PageLoadState m_pageLoadState;
     
-    bool m_delegatesScrolling;
+    bool m_delegatesScrolling { false };
 
-    bool m_mainFrameHasHorizontalScrollbar;
-    bool m_mainFrameHasVerticalScrollbar;
+    bool m_mainFrameHasHorizontalScrollbar { false };
+    bool m_mainFrameHasVerticalScrollbar { false };
 
     // Whether horizontal wheel events can be handled directly for swiping purposes.
-    bool m_canShortCircuitHorizontalWheelEvents;
+    bool m_canShortCircuitHorizontalWheelEvents { true };
 
-    bool m_mainFrameIsPinnedToLeftSide;
-    bool m_mainFrameIsPinnedToRightSide;
-    bool m_mainFrameIsPinnedToTopSide;
-    bool m_mainFrameIsPinnedToBottomSide;
+    bool m_mainFrameIsPinnedToLeftSide { true };
+    bool m_mainFrameIsPinnedToRightSide { true };
+    bool m_mainFrameIsPinnedToTopSide { true };
+    bool m_mainFrameIsPinnedToBottomSide { true };
 
-    bool m_shouldUseImplicitRubberBandControl;
-    bool m_rubberBandsAtLeft;
-    bool m_rubberBandsAtRight;
-    bool m_rubberBandsAtTop;
-    bool m_rubberBandsAtBottom;
+    bool m_shouldUseImplicitRubberBandControl { false };
+    bool m_rubberBandsAtLeft { true };
+    bool m_rubberBandsAtRight { true };
+    bool m_rubberBandsAtTop { true };
+    bool m_rubberBandsAtBottom { true };
         
-    bool m_enableVerticalRubberBanding;
-    bool m_enableHorizontalRubberBanding;
+    bool m_enableVerticalRubberBanding { true };
+    bool m_enableHorizontalRubberBanding { true };
 
-    bool m_backgroundExtendsBeyondPage;
+    bool m_backgroundExtendsBeyondPage { false };
 
-    bool m_shouldRecordNavigationSnapshots;
-    bool m_isShowingNavigationGestureSnapshot;
+    bool m_shouldRecordNavigationSnapshots { false };
+    bool m_isShowingNavigationGestureSnapshot { false };
 
     bool m_mainFramePluginHandlesPageScaleGesture { false };
 
-    unsigned m_pageCount;
+    unsigned m_pageCount { 0 };
 
     WebCore::IntRect m_visibleScrollerThumbRect;
 
-    uint64_t m_renderTreeSize;
-    uint64_t m_sessionRestorationRenderTreeSize;
-    bool m_hitRenderTreeSizeThreshold;
+    uint64_t m_renderTreeSize { 0 };
+    uint64_t m_sessionRestorationRenderTreeSize { 0 };
+    bool m_hitRenderTreeSizeThreshold { false };
 
-    bool m_suppressVisibilityUpdates;
-    bool m_autoSizingShouldExpandToViewHeight;
+    bool m_suppressVisibilityUpdates { false };
+    bool m_autoSizingShouldExpandToViewHeight { false };
     WebCore::IntSize m_minimumLayoutSize;
     std::optional<WebCore::IntSize> m_viewportSizeForCSSViewportUnits;
 
@@ -1920,12 +1921,12 @@ private:
     WebCore::LayoutPoint m_minStableLayoutViewportOrigin;
     WebCore::LayoutPoint m_maxStableLayoutViewportOrigin;
 
-    float m_mediaVolume;
+    float m_mediaVolume { 1 };
     WebCore::MediaProducer::MutedStateFlags m_mutedState { WebCore::MediaProducer::NoneMuted };
-    bool m_mayStartMediaWhenInWindow;
+    bool m_mayStartMediaWhenInWindow { true };
     bool m_mediaCaptureEnabled { true };
 
-    bool m_waitingForDidUpdateActivityState;
+    bool m_waitingForDidUpdateActivityState { false };
 
     bool m_shouldScaleViewToFitDocument { false };
     bool m_suppressAutomaticNavigationSnapshotting { false };
@@ -1935,21 +1936,21 @@ private:
     std::unique_ptr<WebCore::RunLoopObserver> m_activityStateChangeDispatcher;
 
     std::unique_ptr<RemoteLayerTreeScrollingPerformanceData> m_scrollingPerformanceData;
-    bool m_scrollPerformanceDataCollectionEnabled;
+    bool m_scrollPerformanceDataCollectionEnabled { false };
 #endif
     UserObservablePageCounter::Token m_pageIsUserObservableCount;
     ProcessSuppressionDisabledToken m_preventProcessSuppressionCount;
     HiddenPageThrottlingAutoIncreasesCounter::Token m_hiddenPageDOMTimerThrottlingAutoIncreasesCount;
     VisibleWebPageToken m_visiblePageToken;
         
-    WebCore::ScrollPinningBehavior m_scrollPinningBehavior;
+    WebCore::ScrollPinningBehavior m_scrollPinningBehavior { WebCore::DoNotPin };
     std::optional<WebCore::ScrollbarOverlayStyle> m_scrollbarOverlayStyle;
 
-    uint64_t m_navigationID;
+    uint64_t m_navigationID { 0 };
 
     WebPreferencesStore::ValueMap m_configurationPreferenceValues;
-    WebCore::ActivityState::Flags m_potentiallyChangedActivityStateFlags;
-    bool m_activityStateChangeWantsSynchronousReply;
+    WebCore::ActivityState::Flags m_potentiallyChangedActivityStateFlags { WebCore::ActivityState::NoFlags };
+    bool m_activityStateChangeWantsSynchronousReply { false };
     Vector<uint64_t> m_nextActivityStateChangeCallbacks;
 
     WebCore::MediaProducer::MediaStateFlags m_mediaState { WebCore::MediaProducer::IsNotPlaying };

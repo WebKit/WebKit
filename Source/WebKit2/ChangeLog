@@ -1,3 +1,16 @@
+2017-06-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Use initializers in WebPageProxy
+        https://bugs.webkit.org/show_bug.cgi?id=173073
+
+        Reviewed by Tim Horton.
+
+        Initialize the member variables the modern way.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        * UIProcess/WebPageProxy.h:
+
 2017-06-08  Jeremy Jones  <jeremyj@apple.com>
 
         Implement additional AVPlayerController interfaces for minTime and maxTime.
