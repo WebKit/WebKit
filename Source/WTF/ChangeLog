@@ -1,3 +1,27 @@
+2017-06-08  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        MediaTime class has rounding issues in different platforms
+        https://bugs.webkit.org/show_bug.cgi?id=172640
+
+        Reviewed by Jer Noble.
+
+        The way a timescale is set when creating a MediaTime from a double
+        can create rounding issues in different platforms because in some
+        rounding is made and in others, it truncates. This way we ensure a
+        common behavior.
+
+        Dumping MediaTimes is also confusing and by the output you don't
+        know if it's containing a double or a fraction. Now, if it
+        contains a double, it only prints the double because printing the
+        fraction is misleading (it currently prints the double read as an
+        integer) and if it contains a fraction it shows the fraction and
+        its double representation separated by an = instead of a ,.
+
+        * wtf/MediaTime.cpp:
+        (WTF::MediaTime::createWithDouble): When creating MediaTime from
+        double, we round instead of leaving it to the cast operation.
+        (WTF::MediaTime::dump):
+
 2017-06-07  Jer Noble  <jer.noble@apple.com>
 
         Refactoring: MediaEngineSupportParameters should take a ContentType rather than separate type & codecs strings

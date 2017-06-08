@@ -1,3 +1,19 @@
+2017-06-08  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        MediaTime class has rounding issues in different platforms
+        https://bugs.webkit.org/show_bug.cgi?id=172640
+
+        Reviewed by Jer Noble.
+
+        Update expectations because the MediaTime printing changed, but
+        results are the same.
+
+        * media/media-source/media-source-overlapping-append-expected.txt:
+        * media/media-source/media-source-overlapping-decodetime-expected.txt:
+        * media/media-source/media-source-seek-back-expected.txt:
+        * media/media-source/media-source-sequence-timestamps-expected.txt:
+        * media/media-source/media-source-timeoffset-expected.txt:
+
 2017-06-07  Alexey Proskuryakov  <ap@apple.com>
 
         Add High Sierra support to WebKit tools
