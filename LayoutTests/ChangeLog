@@ -1,3 +1,12 @@
+2017-06-07  Alexey Proskuryakov  <ap@apple.com>
+
+        Add High Sierra support to WebKit tools
+        https://bugs.webkit.org/show_bug.cgi?id=173080
+
+        Rubber-stamped by Daniel Bates.
+
+        * platform/mac-sierra: Added an empty directory to avoid breaking scripts.
+
 2017-06-07  Jer Noble  <jer.noble@apple.com>
 
         [Web Audio] createScriptProcessor throws IndexSizeError for valid arguments

@@ -1,3 +1,28 @@
+2017-06-07  Alexey Proskuryakov  <ap@apple.com>
+
+        Add High Sierra support to WebKit tools
+        https://bugs.webkit.org/show_bug.cgi?id=173080
+
+        Rubber-stamped by Daniel Bates.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/HighSierra.png: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/HighSierra@2x.png: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Dashboard.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Styles/Main.css:
+        Added dashboard support.
+
+        * BuildSlaveSupport/build.webkit.org-config/wkbuild.py:
+        * BuildSlaveSupport/build.webkit.org-config/wkbuild_unittest.py:
+        Trigger the right build queues on check-in.
+
+        * Scripts/webkitpy/common/system/platforminfo.py:
+        * Scripts/webkitpy/common/system/platforminfo_unittest.py:
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        * Scripts/webkitpy/port/mac.py:
+        * Scripts/webkitpy/port/mac_unittest.py:
+        * TestResultServer/static-dashboards/flakiness_dashboard.js:
+        Added cases for Sierra, and updated tests for new baseline search paths.
+
 2017-06-07  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r217902.
