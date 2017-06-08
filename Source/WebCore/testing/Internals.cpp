@@ -477,7 +477,7 @@ Internals::Internals(Document& document)
 #endif
 
 #if ENABLE(WEB_RTC)
-#if PLATFORM(GTK)
+#if USE(OPENWEBRTC)
     enableMockMediaEndpoint();
 #endif
 #if USE(LIBWEBRTC)
@@ -1264,13 +1264,12 @@ void Internals::enableMockSpeechSynthesizer()
 
 #if ENABLE(WEB_RTC)
 
+#if USE(OPENWEBRTC)
 void Internals::enableMockMediaEndpoint()
 {
-    if (!LibWebRTCProvider::webRTCAvailable())
-        return;
-
     MediaEndpoint::create = MockMediaEndpoint::create;
 }
+#endif
 
 void Internals::emulateRTCPeerConnectionPlatformEvent(RTCPeerConnection& connection, const String& action)
 {
