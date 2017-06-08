@@ -76,7 +76,7 @@ public:
     WEBCORE_EXPORT void currentTimeChanged(double currentTime, double anchorTime) override;
     WEBCORE_EXPORT void bufferedTimeChanged(double) override;
     WEBCORE_EXPORT void rateChanged(bool isPlaying, float playbackRate) override;
-    WEBCORE_EXPORT void seekableRangesChanged(const TimeRanges&) override;
+    WEBCORE_EXPORT void seekableRangesChanged(const TimeRanges&, double lastModifiedTime, double liveUpdateInterval) override;
     WEBCORE_EXPORT void canPlayFastReverseChanged(bool) override;
     WEBCORE_EXPORT void audioMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& options, uint64_t selectedIndex) override;
     WEBCORE_EXPORT void legibleMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& options, uint64_t selectedIndex) override;

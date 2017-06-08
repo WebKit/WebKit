@@ -142,6 +142,8 @@ public:
     virtual double minTimeSeekable() const { return 0; }
     virtual MediaTime minMediaTimeSeekable() const { return MediaTime::createWithDouble(minTimeSeekable()); }
     virtual std::unique_ptr<PlatformTimeRanges> buffered() const = 0;
+    virtual double seekableTimeRangesLastModifiedTime() const { return 0; }
+    virtual double liveUpdateInterval() const { return 0; }
 
     virtual unsigned long long totalBytes() const { return 0; }
     virtual bool didLoadingProgress() const = 0;

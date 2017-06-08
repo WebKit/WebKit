@@ -148,6 +148,9 @@ public:
     double minTimeSeekable() const override { return 0; }
     std::unique_ptr<PlatformTimeRanges> buffered() const override { return std::make_unique<PlatformTimeRanges>(); }
 
+    double seekableTimeRangesLastModifiedTime() const override { return 0; }
+    double liveUpdateInterval() const override { return 0; }
+
     unsigned long long totalBytes() const override { return 0; }
     bool didLoadingProgress() const override { return false; }
 
@@ -812,6 +815,16 @@ MediaTime MediaPlayer::maxTimeSeekable()
 MediaTime MediaPlayer::minTimeSeekable()
 {
     return m_private->minMediaTimeSeekable();
+}
+
+double MediaPlayer::seekableTimeRangesLastModifiedTime()
+{
+    return m_private->seekableTimeRangesLastModifiedTime();
+}
+
+double MediaPlayer::liveUpdateInterval()
+{
+    return m_private->liveUpdateInterval();
 }
 
 bool MediaPlayer::didLoadingProgress()

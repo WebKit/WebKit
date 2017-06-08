@@ -63,6 +63,8 @@ SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CoreMedia, CMTimeRangeGetEnd, CMTime, (CM
 #define CMTimeRangeGetEnd softLink_CoreMedia_CMTimeRangeGetEnd
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CoreMedia, CMTimeRangeMake, CMTimeRange, (CMTime start, CMTime duration), (start, duration))
 #define CMTimeRangeMake softLink_CoreMedia_CMTimeRangeMake
+SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CoreMedia, CMTimeRangeEqual, Boolean, (CMTimeRange range1, CMTimeRange range2), (range1, range2))
+#define CMTimeRangeEqual softLink_CoreMedia_CMTimeRangeEqual
 
 SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, CoreMedia, kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms, CFStringRef)
 #define kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms get_CoreMedia_kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms()
@@ -110,6 +112,8 @@ SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, CoreMedia, kCMTimeZero, CMTime)
 #define kCMTimeZero get_CoreMedia_kCMTimeZero()
 SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, CoreMedia, kCMTimePositiveInfinity, CMTime)
 #define kCMTimePositiveInfinity get_CoreMedia_kCMTimePositiveInfinity()
+SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, CoreMedia, kCMTimeRangeInvalid, CMTimeRange);
+#define kCMTimeRangeInvalid get_CoreMedia_kCMTimeRangeInvalid()
 
 #if PLATFORM(COCOA)
 

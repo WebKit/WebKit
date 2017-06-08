@@ -79,7 +79,7 @@ private:
     void bufferedTimeChanged(double) final;
     void playbackStartedTimeChanged(double playbackStartedTime) final;
     void rateChanged(bool isPlaying, float playbackRate) final;
-    void seekableRangesChanged(const WebCore::TimeRanges&) final;
+    void seekableRangesChanged(const WebCore::TimeRanges&, double lastModifiedTime, double liveUpdateInterval) final;
     void canPlayFastReverseChanged(bool value) final;
     void audioMediaSelectionOptionsChanged(const Vector<WebCore::MediaSelectionOption>& options, uint64_t selectedIndex) final;
     void legibleMediaSelectionOptionsChanged(const Vector<WebCore::MediaSelectionOption>& options, uint64_t selectedIndex) final;
@@ -128,7 +128,7 @@ protected:
     void bufferedTimeChanged(uint64_t contextId, double bufferedTime);
     void playbackStartedTimeChanged(uint64_t contextId, double playbackStartedTime);
     void rateChanged(uint64_t contextId, bool isPlaying, float playbackRate);
-    void seekableRangesChanged(uint64_t contextId, const WebCore::TimeRanges&);
+    void seekableRangesChanged(uint64_t contextId, const WebCore::TimeRanges&, double lastModifiedTime, double liveUpdateInterval);
     void canPlayFastReverseChanged(uint64_t contextId, bool value);
     void audioMediaSelectionOptionsChanged(uint64_t contextId, const Vector<WebCore::MediaSelectionOption>& options, uint64_t selectedIndex);
     void legibleMediaSelectionOptionsChanged(uint64_t contextId, const Vector<WebCore::MediaSelectionOption>& options, uint64_t selectedIndex);

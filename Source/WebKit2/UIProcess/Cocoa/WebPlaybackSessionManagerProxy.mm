@@ -180,11 +180,13 @@ void WebPlaybackSessionModelContext::setRate(bool isPlaying, float playbackRate)
         client->rateChanged(isPlaying, playbackRate);
 }
 
-void WebPlaybackSessionModelContext::setSeekableRanges(WebCore::TimeRanges& seekableRanges)
+void WebPlaybackSessionModelContext::setSeekableRanges(WebCore::TimeRanges& seekableRanges, double lastModifiedTime, double liveUpdateInterval)
 {
     m_seekableRanges = seekableRanges;
+    m_seekableTimeRangesLastModifiedTime = lastModifiedTime;
+    m_liveUpdateInterval = liveUpdateInterval;
     for (auto* client : m_clients)
-        client->seekableRangesChanged(seekableRanges);
+        client->seekableRangesChanged(seekableRanges, lastModifiedTime, liveUpdateInterval);
 }
 
 void WebPlaybackSessionModelContext::setCanPlayFastReverse(bool canPlayFastReverse)
@@ -376,7 +378,7 @@ void WebPlaybackSessionManagerProxy::setBufferedTime(uint64_t contextId, double 
     ensureModel(contextId).setBufferedTime(bufferedTime);
 }
 
-void WebPlaybackSessionManagerProxy::setSeekableRangesVector(uint64_t contextId, Vector<std::pair<double, double>> ranges)
+void WebPlaybackSessionManagerProxy::setSeekableRangesVector(uint64_t contextId, Vector<std::pair<double, double>> ranges, double lastModifiedTime, double liveUpdateInterval)
 {
     Ref<TimeRanges> timeRanges = TimeRanges::create();
     for (const auto& range : ranges) {
@@ -386,7 +388,7 @@ void WebPlaybackSessionManagerProxy::setSeekableRangesVector(uint64_t contextId,
         timeRanges->add(range.first, range.second);
     }
 
-    ensureModel(contextId).setSeekableRanges(timeRanges);
+    ensureModel(contextId).setSeekableRanges(timeRanges, lastModifiedTime, liveUpdateInterval);
 }
 
 void WebPlaybackSessionManagerProxy::setCanPlayFastReverse(uint64_t contextId, bool value)

@@ -32,6 +32,7 @@
 
 #import <AVFoundation/AVAssetCache_Private.h>
 #import <AVFoundation/AVOutputContext.h>
+#import <AVFoundation/AVPlayerItem_Private.h>
 #import <AVFoundation/AVPlayerLayer_Private.h>
 #import <AVFoundation/AVPlayer_Private.h>
 
@@ -46,6 +47,16 @@
 #else
 
 #import <AVFoundation/AVPlayer.h>
+
+
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 110000)
+NS_ASSUME_NONNULL_BEGIN
+@interface AVPlayerItem ()
+@property (nonatomic, readonly) NSTimeInterval seekableTimeRangesLastModifiedTime NS_AVAILABLE(10_13, 11_0);
+@property (nonatomic, readonly) NSTimeInterval liveUpdateInterval;
+@end
+NS_ASSUME_NONNULL_END
+#endif // (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 110000)
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
 

@@ -389,6 +389,9 @@ public:
     MediaTime minTimeSeekable();
     MediaTime maxTimeSeekable();
 
+    double seekableTimeRangesLastModifiedTime();
+    double liveUpdateInterval();
+
     bool didLoadingProgress();
 
     double volume() const;

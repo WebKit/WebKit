@@ -75,7 +75,7 @@ public:
     void setBufferedTime(double);
     void setPlaybackStartedTime(double);
     void setRate(bool isPlaying, float playbackRate);
-    void setSeekableRanges(WebCore::TimeRanges&);
+    void setSeekableRanges(WebCore::TimeRanges&, double lastModifiedTime, double liveUpdateInterval);
     void setCanPlayFastReverse(bool);
     void setAudioMediaSelectionOptions(const Vector<WebCore::MediaSelectionOption>& options, uint64_t index);
     void setLegibleMediaSelectionOptions(const Vector<WebCore::MediaSelectionOption>& options, uint64_t index);
@@ -118,6 +118,8 @@ private:
     bool isScrubbing() const final { return m_isScrubbing; }
     float playbackRate() const final { return m_playbackRate; }
     Ref<WebCore::TimeRanges> seekableRanges() const final { return m_seekableRanges.copyRef(); }
+    double seekableTimeRangesLastModifiedTime() const final { return m_seekableTimeRangesLastModifiedTime; }
+    double liveUpdateInterval() const { return m_liveUpdateInterval; }
     bool canPlayFastReverse() const final { return m_canPlayFastReverse; }
     Vector<WebCore::MediaSelectionOption> audioMediaSelectionOptions() const final { return m_audioMediaSelectionOptions; }
     uint64_t audioMediaSelectedIndex() const final { return m_audioMediaSelectedIndex; }
@@ -141,6 +143,8 @@ private:
     bool m_isScrubbing { false };
     float m_playbackRate { 0 };
     Ref<WebCore::TimeRanges> m_seekableRanges { WebCore::TimeRanges::create() };
+    double m_seekableTimeRangesLastModifiedTime { 0 };
+    double m_liveUpdateInterval { 0 };
     bool m_canPlayFastReverse { false };
     Vector<WebCore::MediaSelectionOption> m_audioMediaSelectionOptions;
     uint64_t m_audioMediaSelectedIndex { 0 };
@@ -184,7 +188,7 @@ private:
     void resetMediaState(uint64_t contextId);
     void setCurrentTime(uint64_t contextId, double currentTime, double hostTime);
     void setBufferedTime(uint64_t contextId, double bufferedTime);
-    void setSeekableRangesVector(uint64_t contextId, Vector<std::pair<double, double>> ranges);
+    void setSeekableRangesVector(uint64_t contextId, Vector<std::pair<double, double>> ranges, double lastModifiedTime, double liveUpdateInterval);
     void setCanPlayFastReverse(uint64_t contextId, bool value);
     void setAudioMediaSelectionOptions(uint64_t contextId, Vector<WebCore::MediaSelectionOption> options, uint64_t selectedIndex);
     void setLegibleMediaSelectionOptions(uint64_t contextId, Vector<WebCore::MediaSelectionOption> options, uint64_t selectedIndex);

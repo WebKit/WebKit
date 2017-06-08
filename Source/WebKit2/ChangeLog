@@ -1,3 +1,25 @@
+2017-06-08  Jeremy Jones  <jeremyj@apple.com>
+
+        Implement additional AVPlayerController interfaces for minTime and maxTime.
+        https://bugs.webkit.org/show_bug.cgi?id=172396
+        rdar://problem/30737452
+
+        Reviewed by Jer Noble.
+
+        Add support for new HLS UI in AVKit.
+
+        Plumb seekableTimeRangesLastModifiedTime and liveUpdateInterval across process boundaries.
+
+        * UIProcess/Cocoa/WebPlaybackSessionManagerProxy.h:
+        * UIProcess/Cocoa/WebPlaybackSessionManagerProxy.messages.in:
+        * UIProcess/Cocoa/WebPlaybackSessionManagerProxy.mm:
+        (WebKit::WebPlaybackSessionModelContext::setSeekableRanges):
+        (WebKit::WebPlaybackSessionManagerProxy::setSeekableRangesVector):
+        * WebProcess/cocoa/WebPlaybackSessionManager.h:
+        * WebProcess/cocoa/WebPlaybackSessionManager.mm:
+        (WebKit::WebPlaybackSessionInterfaceContext::seekableRangesChanged):
+        (WebKit::WebPlaybackSessionManager::seekableRangesChanged):
+
 2017-06-08  Chris Dumez  <cdumez@apple.com>
 
         Use WTF::Function more in SpeculativeLoadManager

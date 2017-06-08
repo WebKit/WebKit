@@ -25,7 +25,7 @@ messages -> WebPlaybackSessionManagerProxy {
     ResetMediaState(uint64_t contextId)
     SetCurrentTime(uint64_t contextId, double currentTime, double hostTime)
     SetBufferedTime(uint64_t contextId, double bufferedTime)
-    SetSeekableRangesVector(uint64_t contextId, Vector<std::pair<double, double>> ranges)
+    SetSeekableRangesVector(uint64_t contextId, Vector<std::pair<double, double>> ranges, double lastModifiedTime, double liveUpdateInterval)
     SetCanPlayFastReverse(uint64_t contextId, bool value)
     SetAudioMediaSelectionOptions(uint64_t contextId, Vector<WebCore::MediaSelectionOption> options, uint64_t selectedIndex)
     SetLegibleMediaSelectionOptions(uint64_t contextId, Vector<WebCore::MediaSelectionOption> options, uint64_t selectedIndex)

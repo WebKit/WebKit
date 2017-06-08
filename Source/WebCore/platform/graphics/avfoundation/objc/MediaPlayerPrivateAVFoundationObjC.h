@@ -209,6 +209,9 @@ private:
     MediaPlayerPrivateAVFoundation::AssetStatus assetStatus() const override;
     long assetErrorCode() const override;
 
+    double seekableTimeRangesLastModifiedTime() const override;
+    double liveUpdateInterval() const override;
+
     void checkPlayability() override;
     void setRateDouble(double) override;
     double rate() const override;

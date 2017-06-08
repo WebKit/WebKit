@@ -130,7 +130,7 @@ static RetainPtr<NSMutableArray> timeRangesToArray(const TimeRanges& timeRanges)
 }
 #endif
 
-void WebPlaybackSessionInterfaceMac::seekableRangesChanged(const TimeRanges& timeRanges)
+void WebPlaybackSessionInterfaceMac::seekableRangesChanged(const TimeRanges& timeRanges, double, double)
 {
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
     [playBackControlsManager() setSeekableTimeRanges:timeRangesToArray(timeRanges).get()];

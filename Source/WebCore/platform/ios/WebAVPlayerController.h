@@ -87,6 +87,15 @@ class WebPlaybackSessionInterfaceAVKit;
 @property BOOL allowsExternalPlayback;
 @property (getter=isPictureInPicturePossible) BOOL pictureInPicturePossible;
 @property (getter=isPictureInPictureInterrupted) BOOL pictureInPictureInterrupted;
+
+@property NSTimeInterval seekableTimeRangesLastModifiedTime;
+@property NSTimeInterval liveUpdateInterval;
+
+@property (NS_NONATOMIC_IOSONLY, retain, readwrite) AVValueTiming *minTiming;
+@property (NS_NONATOMIC_IOSONLY, retain, readwrite) AVValueTiming *maxTiming;
+
+- (void)resetMediaState;
+
 @end
 
 #endif

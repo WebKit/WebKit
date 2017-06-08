@@ -60,7 +60,7 @@ WebPlaybackSessionInterfaceAVKit::WebPlaybackSessionInterfaceAVKit(WebPlaybackSe
     currentTimeChanged(model.currentTime(), [[NSProcessInfo processInfo] systemUptime]);
     bufferedTimeChanged(model.bufferedTime());
     rateChanged(model.isPlaying(), model.playbackRate());
-    seekableRangesChanged(model.seekableRanges());
+    seekableRangesChanged(model.seekableRanges(), model.seekableTimeRangesLastModifiedTime(), model.liveUpdateInterval());
     canPlayFastReverseChanged(model.canPlayFastReverse());
     audioMediaSelectionOptionsChanged(model.audioMediaSelectionOptions(), model.audioMediaSelectedIndex());
     legibleMediaSelectionOptionsChanged(model.legibleMediaSelectionOptions(), model.legibleMediaSelectedIndex());
@@ -78,33 +78,7 @@ WebPlaybackSessionInterfaceAVKit::~WebPlaybackSessionInterfaceAVKit()
 
 void WebPlaybackSessionInterfaceAVKit::resetMediaState()
 {
-    WebAVPlayerController* playerController = m_playerController.get();
-
-    playerController.contentDuration = 0;
-    playerController.maxTime = 0;
-    playerController.contentDurationWithinEndTimes = 0;
-    playerController.loadedTimeRanges = @[];
-
-    playerController.canPlay = NO;
-    playerController.canPause = NO;
-    playerController.canTogglePlayback = NO;
-    playerController.hasEnabledAudio = NO;
-    playerController.canSeek = NO;
-    playerController.minTime = 0;
-    playerController.status = AVPlayerControllerStatusUnknown;
-
-    playerController.timing = nil;
-    playerController.rate = 0;
-
-    playerController.seekableTimeRanges = [NSMutableArray array];
-
-    playerController.canScanBackward = NO;
-
-    playerController.audioMediaSelectionOptions = nil;
-    playerController.currentAudioMediaSelectionOption = nil;
-
-    playerController.legibleMediaSelectionOptions = nil;
-    playerController.currentLegibleMediaSelectionOption = nil;
+    [m_playerController resetMediaState];
 }
 
 void WebPlaybackSessionInterfaceAVKit::durationChanged(double duration)
@@ -152,7 +126,7 @@ void WebPlaybackSessionInterfaceAVKit::rateChanged(bool isPlaying, float playbac
     [m_playerController setRate:isPlaying ? playbackRate : 0.];
 }
 
-void WebPlaybackSessionInterfaceAVKit::seekableRangesChanged(const TimeRanges& timeRanges)
+void WebPlaybackSessionInterfaceAVKit::seekableRangesChanged(const TimeRanges& timeRanges, double lastModifiedTime, double liveUpdateInterval)
 {
     RetainPtr<NSMutableArray> seekableRanges = adoptNS([[NSMutableArray alloc] init]);
 
@@ -165,6 +139,8 @@ void WebPlaybackSessionInterfaceAVKit::seekableRangesChanged(const TimeRanges& t
     }
 
     [m_playerController setSeekableTimeRanges:seekableRanges.get()];
+    [m_playerController setSeekableTimeRangesLastModifiedTime: lastModifiedTime];
+    [m_playerController setLiveUpdateInterval:liveUpdateInterval];
 }
 
 void WebPlaybackSessionInterfaceAVKit::canPlayFastReverseChanged(bool canPlayFastReverse)

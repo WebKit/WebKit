@@ -1,3 +1,73 @@
+2017-06-08  Jeremy Jones  <jeremyj@apple.com>
+
+        Implement additional AVPlayerController interfaces for minTime and maxTime.
+        https://bugs.webkit.org/show_bug.cgi?id=172396
+        rdar://problem/30737452
+
+        Reviewed by Jer Noble.
+
+        No new tests because no change to DOM.
+
+        Add support for new HLS UI in AVKit.
+
+        This adds new properties (seekableTimeRangesLastModifiedTime, liveUpdateInterval, minTiming, maxTiming) to WebAVPlayerController.
+        Plumb these properties from AVPlayer up to AVKit.
+
+        Switch WebPlaybackSessionModelMediaElement from updating seekableRangesChanged using timeupdate event to using progress event.
+
+        Enable progress events on iOS.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        (WebCore::HTMLMediaElement::loadResource):
+        (WebCore::HTMLMediaElement::seekableTimeRangesLastModifiedTime):
+        (WebCore::HTMLMediaElement::liveUpdateInterval):
+        * html/HTMLMediaElement.h:
+        * platform/cf/CoreMediaSoftLink.cpp:
+        * platform/cf/CoreMediaSoftLink.h:
+        * platform/cocoa/WebPlaybackSessionModel.h:
+        (WebCore::WebPlaybackSessionModelClient::seekableRangesChanged):
+        * platform/cocoa/WebPlaybackSessionModelMediaElement.h:
+        * platform/cocoa/WebPlaybackSessionModelMediaElement.mm:
+        (WebCore::WebPlaybackSessionModelMediaElement::updateForEventName):
+        (WebCore::WebPlaybackSessionModelMediaElement::observedEventNames):
+        (WebCore::WebPlaybackSessionModelMediaElement::seekableTimeRangesLastModifiedTime):
+        (WebCore::WebPlaybackSessionModelMediaElement::liveUpdateInterval):
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::seekableTimeRangesLastModifiedTime):
+        (WebCore::MediaPlayer::liveUpdateInterval):
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::seekableTimeRangesLastModifiedTime):
+        (WebCore::MediaPlayerPrivateInterface::liveUpdateInterval):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::seekableTimeRangesLastModifiedTime):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::liveUpdateInterval):
+        * platform/ios/WebAVPlayerController.h:
+        * platform/ios/WebAVPlayerController.mm:
+        (-[WebAVPlayerController init]):
+        (-[WebAVPlayerController dealloc]):
+        (-[WebAVPlayerController observeValueForKeyPath:ofObject:change:context:]):
+        (-[WebAVPlayerController updateMinMaxTiming]):
+        (-[WebAVPlayerController hasSeekableLiveStreamingContent]):
+        (+[WebAVPlayerController keyPathsForValuesAffectingHasSeekableLiveStreamingContent]):
+        (-[WebAVPlayerController resetMediaState]):
+        * platform/ios/WebPlaybackSessionInterfaceAVKit.h:
+        * platform/ios/WebPlaybackSessionInterfaceAVKit.mm:
+        (WebCore::WebPlaybackSessionInterfaceAVKit::WebPlaybackSessionInterfaceAVKit):
+        (WebCore::WebPlaybackSessionInterfaceAVKit::resetMediaState):
+        (WebCore::WebPlaybackSessionInterfaceAVKit::seekableRangesChanged):
+        * platform/ios/WebVideoFullscreenControllerAVKit.mm:
+        (WebVideoFullscreenControllerContext::seekableRangesChanged):
+        (WebVideoFullscreenControllerContext::seekableTimeRangesLastModifiedTime):
+        (WebVideoFullscreenControllerContext::liveUpdateInterval):
+        * platform/mac/WebPlaybackSessionInterfaceMac.h:
+        * platform/mac/WebPlaybackSessionInterfaceMac.mm:
+        (WebCore::WebPlaybackSessionInterfaceMac::seekableRangesChanged):
+        * platform/spi/cocoa/AVKitSPI.h:
+        * platform/spi/mac/AVFoundationSPI.h:
+
 2017-06-07  Dave Hyatt  <hyatt@apple.com>
 
         Laili restaurant menu page does not display full menu

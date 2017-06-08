@@ -56,7 +56,7 @@ public:
     WEBCORE_EXPORT void durationChanged(double) final;
     WEBCORE_EXPORT void currentTimeChanged(double /*currentTime*/, double /*anchorTime*/) final;
     WEBCORE_EXPORT void rateChanged(bool /*isPlaying*/, float /*playbackRate*/) final;
-    WEBCORE_EXPORT void seekableRangesChanged(const TimeRanges&) final;
+    WEBCORE_EXPORT void seekableRangesChanged(const TimeRanges&, double /*lastModifiedTime*/, double /*liveUpdateInterval*/) final;
     WEBCORE_EXPORT void audioMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& /*options*/, uint64_t /*selectedIndex*/) final;
     WEBCORE_EXPORT void legibleMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& /*options*/, uint64_t /*selectedIndex*/) final;
     WEBCORE_EXPORT void audioMediaSelectionIndexChanged(uint64_t) final;
