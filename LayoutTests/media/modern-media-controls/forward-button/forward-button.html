@@ -11,11 +11,10 @@ description("Testing the <code>ForwardButton</code> class.");
 const forwardButton = new ForwardButton({ layoutTraits: LayoutTraits.macOS });
 
 shouldBeEqualToString("forwardButton.element.localName", "button");
-shouldBeTrue('forwardButton.element.classList.contains("icon")');
 shouldBeTrue('forwardButton.element.classList.contains("forward")');
 shouldBe("forwardButton.iconName", "Icons.Forward");
 
-shouldBecomeEqual('forwardButton.element.style.webkitMaskImage.includes("macOS/forward@")', "true", finishMediaControlsTest);
+shouldBecomeEqual('forwardButton.image.element.style.webkitMaskImage.includes("macOS/Forward.svg")', "true", finishMediaControlsTest);
 
 </script>
 <script src="../../../resources/js-test-post.js"></script>
