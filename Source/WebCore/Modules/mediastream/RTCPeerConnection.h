@@ -147,6 +147,9 @@ public:
 
     void clearController() { m_controller = nullptr; }
 
+    // ActiveDOMObject.
+    bool hasPendingActivity() const final;
+
 private:
     RTCPeerConnection(ScriptExecutionContext&);
 

@@ -430,8 +430,12 @@ const char* RTCPeerConnection::activeDOMObjectName() const
 
 bool RTCPeerConnection::canSuspendForDocumentSuspension() const
 {
-    // FIXME: We should try and do better here.
-    return false;
+    return !hasPendingActivity();
+}
+
+bool RTCPeerConnection::hasPendingActivity() const
+{
+    return !m_isStopped;
 }
 
 void RTCPeerConnection::addTransceiver(Ref<RTCRtpTransceiver>&& transceiver)

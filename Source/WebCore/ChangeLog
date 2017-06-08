@@ -1,3 +1,26 @@
+2017-06-08  Chris Dumez  <cdumez@apple.com>
+
+        ASSERTION FAILED: !m_isolatedWorld->isNormal() || m_wrapper || !m_jsFunction on webrtc/ephemeral-certificates-and-cnames.html
+        https://bugs.webkit.org/show_bug.cgi?id=173039
+        <rdar://problem/32600412>
+
+        Reviewed by Youenn Fablet.
+
+        RTCPeerConnection was an ActiveDOMObject but failed to override ActiveDOMObject::hasPendingActivity()
+        to make sure its JS wrapper stays alive as long as it needs to. In this patch, we override
+        ActiveDOMObject::hasPendingActivity() and have it return true if !m_isStopped. I believe this is
+        the right thing to do to keep the wrapper alive as long as the connection is not closed.
+        RTCPeerConnection::close() closes the connection and then posts a task to call
+        RTCPeerConnection::doStop(), setting m_isStopped to true.
+
+        No new tests, already covered by webrtc/ephemeral-certificates-and-cnames.html which
+        was a flaky crash.
+
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::canSuspendForDocumentSuspension):
+        (WebCore::RTCPeerConnection::hasPendingActivity):
+        * Modules/mediastream/RTCPeerConnection.h:
+
 2017-06-08  Miguel Gomez  <magomez@igalia.com>
 
         [GTK][WPE][GSTREAMER_GL] Change the colorspace used by the video frames provided by GStreamer
