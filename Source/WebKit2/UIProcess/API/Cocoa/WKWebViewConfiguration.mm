@@ -137,7 +137,7 @@ private:
 #endif
     BOOL _needsStorageAccessFromFileURLsQuirk;
 
-    NSString *_overrideContentSecurityPolicy;
+    RetainPtr<NSString> _overrideContentSecurityPolicy;
     RetainPtr<NSString> _mediaContentTypesRequiringHardwareSupport;
 }
 
@@ -331,10 +331,10 @@ private:
     configuration->_applePayEnabled = self->_applePayEnabled;
 #endif
     configuration->_needsStorageAccessFromFileURLsQuirk = self->_needsStorageAccessFromFileURLsQuirk;
-    configuration->_overrideContentSecurityPolicy = self->_overrideContentSecurityPolicy;
+    configuration->_overrideContentSecurityPolicy = adoptNS([self->_overrideContentSecurityPolicy copyWithZone:zone]);
 
     configuration->_urlSchemeHandlers.set(adoptNS([self._urlSchemeHandlers mutableCopyWithZone:zone]));
-    configuration->_mediaContentTypesRequiringHardwareSupport = self._mediaContentTypesRequiringHardwareSupport;
+    configuration->_mediaContentTypesRequiringHardwareSupport = adoptNS([self._mediaContentTypesRequiringHardwareSupport copyWithZone:zone]);
 
     return configuration;
 }
@@ -813,12 +813,12 @@ static NSString *defaultApplicationNameForUserAgent()
 
 - (NSString *)_overrideContentSecurityPolicy
 {
-    return _overrideContentSecurityPolicy;
+    return _overrideContentSecurityPolicy.get();
 }
 
 - (void)_setOverrideContentSecurityPolicy:(NSString *)overrideContentSecurityPolicy
 {
-    _overrideContentSecurityPolicy = overrideContentSecurityPolicy;
+    _overrideContentSecurityPolicy = adoptNS([overrideContentSecurityPolicy copy]);
 }
 
 - (NSString *)_mediaContentTypesRequiringHardwareSupport
@@ -828,7 +828,7 @@ static NSString *defaultApplicationNameForUserAgent()
 
 - (void)_setMediaContentTypesRequiringHardwareSupport:(NSString *)mediaContentTypesRequiringHardwareSupport
 {
-    _mediaContentTypesRequiringHardwareSupport = mediaContentTypesRequiringHardwareSupport;
+    _mediaContentTypesRequiringHardwareSupport = adoptNS([mediaContentTypesRequiringHardwareSupport copy]);
 }
 
 @end

@@ -1,3 +1,20 @@
+2017-06-09  Jer Noble  <jer.noble@apple.com>
+
+        Crash in -[WKWebView _initializeWithConfiguration:]
+        https://bugs.webkit.org/show_bug.cgi?id=173126
+        <rdar://problem/32664993>
+
+        Reviewed by Darin Adler.
+
+        Follow up to previous fix; when setting NSString properties, store a copy of
+        the string rather than the NSString itself.
+
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration copyWithZone:]):
+        (-[WKWebViewConfiguration _overrideContentSecurityPolicy]):
+        (-[WKWebViewConfiguration _setOverrideContentSecurityPolicy:]):
+        (-[WKWebViewConfiguration _setMediaContentTypesRequiringHardwareSupport:]):
+
 2017-06-09  Chris Dumez  <cdumez@apple.com>
 
         Use WTF::Function instead of std::function in StorageManager
