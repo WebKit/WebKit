@@ -1,3 +1,15 @@
+2017-06-09  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG] Add verboseDFGOSRExit
+        https://bugs.webkit.org/show_bug.cgi?id=173156
+
+        Reviewed by Saam Barati.
+
+        This patch adds verboseDFGOSRExit which is similar to verboseFTLOSRExit.
+
+        * dfg/DFGOSRExitCompiler.cpp:
+        * runtime/Options.h:
+
 2017-06-09  Guillaume Emont  <guijemont@igalia.com>
 
         [JSC][MIPS] Add MacroAssemblerMIPS::xor32(Address, RegisterID) implementation
