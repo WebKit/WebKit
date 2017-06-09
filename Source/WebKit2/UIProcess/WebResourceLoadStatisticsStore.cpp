@@ -180,17 +180,17 @@ void WebResourceLoadStatisticsStore::registerSharedResourceLoadObserver()
     
     ResourceLoadObserver::sharedObserver().setStatisticsStore(m_resourceLoadStatisticsStore.copyRef());
     ResourceLoadObserver::sharedObserver().setStatisticsQueue(m_statisticsQueue.copyRef());
-    m_resourceLoadStatisticsStore->setNotificationCallback([this] {
+    m_resourceLoadStatisticsStore->setNotificationCallback([this, protectedThis = makeRef(*this)] {
         if (m_resourceLoadStatisticsStore->isEmpty())
             return;
         processStatisticsAndDataRecords();
     });
-    m_resourceLoadStatisticsStore->setWritePersistentStoreCallback([this]() {
-        m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this)] {
+    m_resourceLoadStatisticsStore->setWritePersistentStoreCallback([this, protectedThis = makeRef(*this)]() mutable {
+        m_statisticsQueue->dispatch([this, protectedThis = WTFMove(protectedThis)] {
             writeStoreToDisk();
         });
     });
-    m_resourceLoadStatisticsStore->setGrandfatherExistingWebsiteDataCallback([this]() {
+    m_resourceLoadStatisticsStore->setGrandfatherExistingWebsiteDataCallback([this, protectedThis = makeRef(*this)]() {
         grandfatherExistingWebsiteData();
     });
 #if PLATFORM(COCOA)

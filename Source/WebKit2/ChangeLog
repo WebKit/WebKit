@@ -1,5 +1,16 @@
 2017-06-09  Chris Dumez  <cdumez@apple.com>
 
+        Make sure we protect |this| in lambdas in WebResourceLoadStatisticsStore::registerSharedResourceLoadObserver()
+        https://bugs.webkit.org/show_bug.cgi?id=173174
+        <rdar://problem/32598919>
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::registerSharedResourceLoadObserver):
+
+2017-06-09  Chris Dumez  <cdumez@apple.com>
+
         Avoid some ref counting churn in WebResourceLoadStatisticsStore
         https://bugs.webkit.org/show_bug.cgi?id=173168
 
