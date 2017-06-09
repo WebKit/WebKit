@@ -45,7 +45,6 @@ using namespace WebKit;
  */
 
 struct _WebKitFormSubmissionRequestPrivate {
-    RefPtr<API::Dictionary> webValues;
     RefPtr<WebFormSubmissionListenerProxy> listener;
     GRefPtr<GHashTable> values;
     bool handledRequest;
@@ -70,11 +69,15 @@ static void webkit_form_submission_request_class_init(WebKitFormSubmissionReques
     objectClass->dispose = webkitFormSubmissionRequestDispose;
 }
 
-WebKitFormSubmissionRequest* webkitFormSubmissionRequestCreate(API::Dictionary* values, WebFormSubmissionListenerProxy* listener)
+WebKitFormSubmissionRequest* webkitFormSubmissionRequestCreate(const Vector<std::pair<String, String>>& values, Ref<WebFormSubmissionListenerProxy>&& listener)
 {
-    WebKitFormSubmissionRequest* request = WEBKIT_FORM_SUBMISSION_REQUEST(g_object_new(WEBKIT_TYPE_FORM_SUBMISSION_REQUEST, NULL));
-    request->priv->webValues = values;
-    request->priv->listener = listener;
+    WebKitFormSubmissionRequest* request = WEBKIT_FORM_SUBMISSION_REQUEST(g_object_new(WEBKIT_TYPE_FORM_SUBMISSION_REQUEST, nullptr));
+    if (values.size()) {
+        request->priv->values = adoptGRef(g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free));
+        for (const auto& pair : values)
+            g_hash_table_insert(request->priv->values.get(), g_strdup(pair.first.utf8().data()), g_strdup(pair.second.utf8().data()));
+    }
+    request->priv->listener = WTFMove(listener);
     return request;
 }
 
@@ -90,24 +93,7 @@ WebKitFormSubmissionRequest* webkitFormSubmissionRequestCreate(API::Dictionary* 
  */
 GHashTable* webkit_form_submission_request_get_text_fields(WebKitFormSubmissionRequest* request)
 {
-    g_return_val_if_fail(WEBKIT_IS_FORM_SUBMISSION_REQUEST(request), 0);
-
-    if (request->priv->values)
-        return request->priv->values.get();
-
-    if (!request->priv->webValues->size())
-        return nullptr;
-
-    request->priv->values = adoptGRef(g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free));
-
-    const API::Dictionary::MapType& map = request->priv->webValues->map();
-    API::Dictionary::MapType::const_iterator end = map.end();
-    for (API::Dictionary::MapType::const_iterator it = map.begin(); it != end; ++it) {
-        API::String* value = static_cast<API::String*>(it->value.get());
-        g_hash_table_insert(request->priv->values.get(), g_strdup(it->key.utf8().data()), g_strdup(value->string().utf8().data()));
-    }
-
-    request->priv->webValues = nullptr;
+    g_return_val_if_fail(WEBKIT_IS_FORM_SUBMISSION_REQUEST(request), nullptr);
 
     return request->priv->values.get();
 }

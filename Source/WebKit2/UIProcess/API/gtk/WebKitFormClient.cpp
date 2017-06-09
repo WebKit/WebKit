@@ -20,7 +20,7 @@
 #include "config.h"
 #include "WebKitFormClient.h"
 
-#include "APIDictionary.h"
+#include "APIFormClient.h"
 #include "WebFormSubmissionListenerProxy.h"
 #include "WebKitFormSubmissionRequestPrivate.h"
 #include "WebKitPrivate.h"
@@ -30,21 +30,25 @@
 
 using namespace WebKit;
 
-static void willSubmitForm(WKPageRef, WKFrameRef, WKFrameRef, WKDictionaryRef values, WKTypeRef /* userData */, WKFormSubmissionListenerRef listener, const void* clientInfo)
-{
-    GRefPtr<WebKitFormSubmissionRequest> request = adoptGRef(webkitFormSubmissionRequestCreate(toImpl(values), toImpl(listener)));
-    webkitWebViewSubmitFormRequest(WEBKIT_WEB_VIEW(clientInfo), request.get());
-}
+class FormClient final : public API::FormClient {
+public:
+    explicit FormClient(WebKitWebView* webView)
+        : m_webView(webView)
+    {
+    }
+
+private:
+    void willSubmitForm(WebPageProxy&, WebFrameProxy&, WebFrameProxy&, const Vector<std::pair<String, String>>& values, API::Object*, Ref<WebFormSubmissionListenerProxy>&& listener) override
+    {
+        GRefPtr<WebKitFormSubmissionRequest> request = adoptGRef(webkitFormSubmissionRequestCreate(values, WTFMove(listener)));
+        webkitWebViewSubmitFormRequest(m_webView, request.get());
+    }
+
+    WebKitWebView* m_webView;
+};
 
 void attachFormClientToView(WebKitWebView* webView)
 {
-    WKPageFormClientV0 wkFormClient = {
-        {
-            0, // version
-            webView, // clientInfo
-        },
-        willSubmitForm
-    };
-    WKPageRef wkPage = toAPI(webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView)));
-    WKPageSetPageFormClient(wkPage, &wkFormClient.base);
+    auto* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView));
+    page->setFormClient(std::make_unique<FormClient>(webView));
 }

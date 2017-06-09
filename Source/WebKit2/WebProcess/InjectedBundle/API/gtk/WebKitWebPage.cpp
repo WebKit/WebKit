@@ -341,9 +341,9 @@ private:
     WebKitWebPage* m_webPage;
 };
 
-class FormClient final : public API::InjectedBundle::FormClient {
+class PageFormClient final : public API::InjectedBundle::FormClient {
 public:
-    explicit FormClient(WebKitWebPage* webPage)
+    explicit PageFormClient(WebKitWebPage* webPage)
         : m_webPage(webPage)
     {
     }
@@ -595,7 +595,7 @@ WebKitWebPage* webkitWebPageCreate(WebPage* webPage)
 
     webPage->setInjectedBundleContextMenuClient(std::make_unique<PageContextMenuClient>(page));
     webPage->setInjectedBundleUIClient(std::make_unique<PageUIClient>(page));
-    webPage->setInjectedBundleFormClient(std::make_unique<FormClient>(page));
+    webPage->setInjectedBundleFormClient(std::make_unique<PageFormClient>(page));
 
     return page;
 }

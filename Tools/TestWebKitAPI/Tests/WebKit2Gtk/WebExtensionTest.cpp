@@ -262,7 +262,13 @@ static void formControlsAssociatedCallback(WebKitWebPage* webPage, GPtrArray* fo
     for (int i = 0; i < formElements->len; ++i) {
         g_assert(WEBKIT_DOM_IS_ELEMENT(g_ptr_array_index(formElements, i)));
         auto domElement = WEBKIT_DOM_ELEMENT(g_ptr_array_index(formElements, i));
-        g_string_append(formIdsBuilder, webkit_dom_element_get_id(domElement));
+        GUniquePtr<char> elementID(webkit_dom_element_get_id(domElement));
+        if (elementID)
+            g_string_append(formIdsBuilder, elementID.get());
+    }
+    if (!formIdsBuilder->len) {
+        g_string_free(formIdsBuilder, TRUE);
+        return;
     }
     GUniquePtr<char> formIds(g_string_free(formIdsBuilder, FALSE));
     gpointer data = g_object_get_data(G_OBJECT(extension), "dbus-connection");

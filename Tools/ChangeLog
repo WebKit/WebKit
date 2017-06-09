@@ -1,3 +1,17 @@
+2017-06-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Use API::FormClient instead of the C API in WebKitFormClient
+        https://bugs.webkit.org/show_bug.cgi?id=173098
+
+        Reviewed by Žan Doberšek.
+
+        Fix memory leak and runtime warning when running /webkit2/WebKitWebView/submit-form. The web extension is
+        assuming that all tests containing forms define ids for the form elements like
+        /webkit2/WebKitWebExtension/form-controls-associated-signal does.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/WebExtensionTest.cpp:
+        (formControlsAssociatedCallback):
+
 2017-06-08  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Run sample/spindump on iOS devices

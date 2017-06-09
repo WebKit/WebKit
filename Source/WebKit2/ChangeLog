@@ -1,5 +1,22 @@
 2017-06-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Use API::FormClient instead of the C API in WebKitFormClient
+        https://bugs.webkit.org/show_bug.cgi?id=173098
+
+        Reviewed by Žan Doberšek.
+
+        * UIProcess/API/gtk/WebKitFormClient.cpp:
+        (attachFormClientToView):
+        (willSubmitForm): Deleted.
+        * UIProcess/API/gtk/WebKitFormSubmissionRequest.cpp:
+        (webkitFormSubmissionRequestCreate):
+        (webkit_form_submission_request_get_text_fields):
+        * UIProcess/API/gtk/WebKitFormSubmissionRequestPrivate.h:
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebPage.cpp:
+        (webkitWebPageCreate):
+
+2017-06-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Use API::Findclient instead of the C API in WebKitFindController
         https://bugs.webkit.org/show_bug.cgi?id=173095
 

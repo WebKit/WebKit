@@ -17,12 +17,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef WebKitFormSubmissionRequestPrivate_h
-#define WebKitFormSubmissionRequestPrivate_h
+#pragma once
 
 #include "WebKitFormSubmissionRequest.h"
 #include "WebKitPrivate.h"
 
-WebKitFormSubmissionRequest* webkitFormSubmissionRequestCreate(API::Dictionary* values, WebKit::WebFormSubmissionListenerProxy*);
-
-#endif // WebKitFormSubmissionRequestPrivate_h
+WebKitFormSubmissionRequest* webkitFormSubmissionRequestCreate(const Vector<std::pair<String, String>>&, Ref<WebKit::WebFormSubmissionListenerProxy>&&);
