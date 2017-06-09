@@ -1,3 +1,16 @@
+2017-06-09  Chris Dumez  <cdumez@apple.com>
+
+        CSS transitions added while page is not visible do not start when the page becomes visible
+        https://bugs.webkit.org/show_bug.cgi?id=173166
+        <rdar://problem/32250351>
+
+        Reviewed by Darin Adler.
+
+        Add layout test coverage.
+
+        * fast/animation/css-animation-resuming-when-visible-expected.txt: Added.
+        * fast/animation/css-animation-resuming-when-visible.html: Added.
+
 2017-06-09  Eric Carlson  <eric.carlson@apple.com>
 
         fast/mediastream/MediaStream-page-muted.html times out and asserts

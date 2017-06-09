@@ -53,9 +53,9 @@ public:
     void pauseAnimation(double timeOffset) override;
     void endAnimation() override;
 
-    bool animate(CompositeAnimation*, RenderElement*, const RenderStyle* currentStyle, const RenderStyle* targetStyle, std::unique_ptr<RenderStyle>& animatedStyle, bool& didBlendStyle) override;
+    bool animate(CompositeAnimation&, RenderElement*, const RenderStyle* currentStyle, const RenderStyle& targetStyle, std::unique_ptr<RenderStyle>& animatedStyle, bool& didBlendStyle) override;
     void getAnimatedStyle(std::unique_ptr<RenderStyle>& animatedStyle) override;
-    void reset(const RenderStyle* to);
+    void reset(const RenderStyle& to, CompositeAnimation&);
 
     bool computeExtentOfTransformAnimation(LayoutRect&) const override;
 

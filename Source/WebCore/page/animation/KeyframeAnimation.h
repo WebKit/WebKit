@@ -44,7 +44,7 @@ public:
         return adoptRef(*new KeyframeAnimation(animation, renderer, compositeAnimation, unanimatedStyle));
     }
 
-    bool animate(CompositeAnimation*, RenderElement*, const RenderStyle* currentStyle, const RenderStyle* targetStyle, std::unique_ptr<RenderStyle>& animatedStyle, bool& didBlendStyle) override;
+    bool animate(CompositeAnimation&, RenderElement*, const RenderStyle* currentStyle, const RenderStyle& targetStyle, std::unique_ptr<RenderStyle>& animatedStyle, bool& didBlendStyle) override;
     void getAnimatedStyle(std::unique_ptr<RenderStyle>&) override;
 
     bool computeExtentOfTransformAnimation(LayoutRect&) const override;

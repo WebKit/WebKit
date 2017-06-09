@@ -61,7 +61,7 @@ bool ImplicitAnimation::shouldSendEventForListener(Document::ListenerType inList
     return m_object->document().hasListenerType(inListenerType);
 }
 
-bool ImplicitAnimation::animate(CompositeAnimation*, RenderElement*, const RenderStyle*, const RenderStyle* targetStyle, std::unique_ptr<RenderStyle>& animatedStyle, bool& didBlendStyle)
+bool ImplicitAnimation::animate(CompositeAnimation& compositeAnimation, RenderElement*, const RenderStyle*, const RenderStyle& targetStyle, std::unique_ptr<RenderStyle>& animatedStyle, bool& didBlendStyle)
 {
     // If we get this far and the animation is done, it means we are cleaning up a just finished animation.
     // So just return. Everything is already all cleaned up.
@@ -72,12 +72,12 @@ bool ImplicitAnimation::animate(CompositeAnimation*, RenderElement*, const Rende
 
     // Reset to start the transition if we are new
     if (isNew())
-        reset(targetStyle);
+        reset(targetStyle, compositeAnimation);
 
     // Run a cycle of animation.
     // We know we will need a new render style, so make one if needed
     if (!animatedStyle)
-        animatedStyle = RenderStyle::clonePtr(*targetStyle);
+        animatedStyle = RenderStyle::clonePtr(targetStyle);
 
     CSSPropertyAnimation::blendProperties(this, m_animatingProperty, animatedStyle.get(), m_fromStyle.get(), m_toStyle.get(), progress());
     // FIXME: we also need to detect cases where we have to software animate for other reasons,
@@ -199,19 +199,18 @@ bool ImplicitAnimation::sendTransitionEvent(const AtomicString& eventType, doubl
     return false; // Didn't dispatch an event
 }
 
-void ImplicitAnimation::reset(const RenderStyle* to)
+void ImplicitAnimation::reset(const RenderStyle& to, CompositeAnimation& compositeAnimation)
 {
-    ASSERT(to);
     ASSERT(m_fromStyle);
 
-    m_toStyle = RenderStyle::clonePtr(*to);
+    m_toStyle = RenderStyle::clonePtr(to);
 
     if (m_object && m_object->element())
         Style::loadPendingResources(*m_toStyle, m_object->element()->document(), m_object->element());
 
     // Restart the transition
     if (m_fromStyle && m_toStyle)
-        updateStateMachine(AnimationStateInput::RestartAnimation, -1);
+        updateStateMachine(compositeAnimation.isSuspended() ? AnimationStateInput::PlayStatePaused : AnimationStateInput::RestartAnimation, -1);
         
     // set the transform animation list
     validateTransformFunctionList();

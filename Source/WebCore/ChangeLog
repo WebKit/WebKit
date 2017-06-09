@@ -1,3 +1,36 @@
+2017-06-09  Chris Dumez  <cdumez@apple.com>
+
+        CSS transitions added while page is not visible do not start when the page becomes visible
+        https://bugs.webkit.org/show_bug.cgi?id=173166
+        <rdar://problem/32250351>
+
+        Reviewed by Darin Adler.
+
+        CSS transitions added while page is not visible would not start when the page becomes
+        visible. The issue was that when CompositeAnimation::updateTransitions() was called
+        while the page is hidden (and animations are therefore suspended), it would not
+        populate m_transations with ImplicitAnimation objects. We would therefore have later
+        no transitions to resume when the page becomes visible later on. This patch updates
+        CompositeAnimation::updateTransitions() to properly populate m_transitions and instead
+        pause the ImplicitAnimation it creates if animations are currently suspended. This
+        behavior is more consistent with the one of CompositeAnimation::updateKeyframeAnimations().
+
+        I also needed to update ImplicitAnimation::animate() to not restart a paused animation
+        if the animation is currently paused. This is similar to what is done in
+        KeyframeAnimation::animate(). Without this, the paused ImplicitAnimation we add to
+        m_transition would incorrectly get unpaused while the page is still hidden and the
+        animations are still supposed to be suspended. This issue was showing when running the
+        test I am adding in this patch.
+
+        Test: fast/animation/css-animation-resuming-when-visible.html
+
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimation::updateTransitions):
+        * page/animation/ImplicitAnimation.cpp:
+        (WebCore::ImplicitAnimation::animate):
+        (WebCore::ImplicitAnimation::reset):
+        * page/animation/ImplicitAnimation.h:
+
 2017-06-09  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, Use FALLTHROUGH
