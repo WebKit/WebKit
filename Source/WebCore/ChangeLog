@@ -1,3 +1,23 @@
+2017-06-06 Konstantin Tokarev  <annulen@yandex.ru>
+
+        [MediaFoundation] Volume controls of different media elements should be independent
+        https://bugs.webkit.org/show_bug.cgi?id=172967
+
+        Based on patch by Vitaly Slobodin <vitaliy.slobodin@gmail.com>
+        Reviewed by Alex Christensen.
+
+        IMFSimpleAudioVolume interface controls master volume of the
+        application. We should use IMFAudioStreamVolume interface instead.
+
+        No new tests needed.
+
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.cpp:
+        (WebCore::MediaPlayerPrivateMediaFoundation::MediaPlayerPrivateMediaFoundation):
+        (WebCore::MediaPlayerPrivateMediaFoundation::setAllChannelVolumes):
+        (WebCore::MediaPlayerPrivateMediaFoundation::setVolume):
+        (WebCore::MediaPlayerPrivateMediaFoundation::setMuted):
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.h:
+
 2017-06-09  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Image should clear its ImageObserver* when CachedImage releases the last reference to its RefCounted<ImageObserver>
