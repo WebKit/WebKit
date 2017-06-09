@@ -825,6 +825,7 @@ private:
     bool shouldOverrideBackgroundLoadingRestriction() const override;
     bool canProduceAudio() const final;
     bool processingUserGestureForMedia() const final;
+    bool isSuspended() const final;
 
     void pageMutedStateDidChange() override;
 

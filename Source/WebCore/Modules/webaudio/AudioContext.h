@@ -319,6 +319,7 @@ private:
     bool shouldOverrideBackgroundPlaybackRestriction(PlatformMediaSession::InterruptionType) const override { return false; }
     String sourceApplicationIdentifier() const override;
     bool canProduceAudio() const final { return true; }
+    bool isSuspended() const final;
     bool processingUserGestureForMedia() const final;
 
     void visibilityStateChanged() final;

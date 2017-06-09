@@ -7025,6 +7025,11 @@ bool HTMLMediaElement::canProduceAudio() const
     return m_player && m_readyState >= HAVE_METADATA && hasAudio();
 }
 
+bool HTMLMediaElement::isSuspended() const
+{
+    return document().activeDOMObjectsAreSuspended() || document().activeDOMObjectsAreStopped();
+}
+
 #if ENABLE(MEDIA_SOURCE)
 size_t HTMLMediaElement::maximumSourceBufferSize(const SourceBuffer& buffer) const
 {

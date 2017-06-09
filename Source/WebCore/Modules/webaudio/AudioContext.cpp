@@ -374,6 +374,11 @@ bool AudioContext::processingUserGestureForMedia() const
     return document() ? document()->processingUserGestureForMedia() : false;
 }
 
+bool AudioContext::isSuspended() const
+{
+    return !document() || document()->activeDOMObjectsAreSuspended() || document()->activeDOMObjectsAreStopped();
+}
+
 void AudioContext::visibilityStateChanged()
 {
     // Do not suspend if audio is audible.

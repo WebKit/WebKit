@@ -1,3 +1,25 @@
+2017-06-09  Jer Noble  <jer.noble@apple.com>
+
+        Media elements are allowed to continue to load media data after navigation
+        https://bugs.webkit.org/show_bug.cgi?id=173179
+
+        Reviewed by Eric Carlson.
+
+        Deny media sessions the ability to load media data when suspended.  
+
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::isSuspended):
+        * Modules/webaudio/AudioContext.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::isSuspended):
+        * html/HTMLMediaElement.h:
+        * platform/audio/PlatformMediaSession.cpp:
+        (WebCore::PlatformMediaSession::isSuspended):
+        * platform/audio/PlatformMediaSession.h:
+        (WebCore::PlatformMediaSessionClient::isSuspended):
+        * platform/audio/PlatformMediaSessionManager.cpp:
+        (WebCore::PlatformMediaSessionManager::sessionCanLoadMedia):
+
 2017-06-09  Daniel Bates  <dabates@apple.com>
 
         CSP: Apply img-src directive to favicon loads

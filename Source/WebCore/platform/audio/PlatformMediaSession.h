@@ -144,6 +144,7 @@ public:
     DisplayType displayType() const;
 
     bool isHidden() const;
+    bool isSuspended() const;
 
     bool shouldOverrideBackgroundLoadingRestriction() const;
 
@@ -218,6 +219,7 @@ public:
     virtual void setShouldBufferData(bool) { }
     virtual bool elementIsHidden() const { return false; }
     virtual bool canProduceAudio() const { return false; }
+    virtual bool isSuspended() const { return false; };
 
     virtual bool shouldOverrideBackgroundPlaybackRestriction(PlatformMediaSession::InterruptionType) const = 0;
     virtual bool shouldOverrideBackgroundLoadingRestriction() const { return false; }
