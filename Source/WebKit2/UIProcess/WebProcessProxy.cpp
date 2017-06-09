@@ -211,6 +211,9 @@ WebPageProxy* WebProcessProxy::webPage(uint64_t pageID)
 
 void WebProcessProxy::deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPersistentDataStores(OptionSet<WebsiteDataType> dataTypes, Vector<String>&& topPrivatelyControlledDomains, bool shouldNotifyPage, Function<void(Vector<String>)>&& completionHandler)
 {
+    // We expect this to be called on the main thread so we get the default website data store.
+    ASSERT(isMainThread());
+    
     struct CallbackAggregator : ThreadSafeRefCounted<CallbackAggregator> {
         explicit CallbackAggregator(Function<void(Vector<String>)>&& completionHandler)
             : completionHandler(WTFMove(completionHandler))
@@ -254,19 +257,24 @@ void WebProcessProxy::deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPers
             continue;
         visitedSessionIDs.add(dataStore.sessionID());
         callbackAggregator->addPendingCallback();
-        dataStore.removeDataForTopPrivatelyControlledDomains(dataTypes, { }, WTFMove(topPrivatelyControlledDomains), [callbackAggregator, shouldNotifyPage, page](auto domainsWithDeletedWebsiteData) {
+        dataStore.removeDataForTopPrivatelyControlledDomains(dataTypes, { }, WTFMove(topPrivatelyControlledDomains), [callbackAggregator, shouldNotifyPage, page](Vector<String>&& domainsWithDeletedWebsiteData) {
+            // When completing the task, we should be getting called on the main thread.
+            ASSERT(isMainThread());
+            
             if (shouldNotifyPage)
                 page.value->postMessageToInjectedBundle("WebsiteDataDeletionForTopPrivatelyOwnedDomainsFinished", nullptr);
-            WTF::RunLoop::main().dispatch([callbackAggregator, domainsWithDeletedWebsiteData] {
-                callbackAggregator->addDomainsWithDeletedWebsiteData(domainsWithDeletedWebsiteData);
-                callbackAggregator->removePendingCallback();
-            });
+            
+            callbackAggregator->addDomainsWithDeletedWebsiteData(WTFMove(domainsWithDeletedWebsiteData));
+            callbackAggregator->removePendingCallback();
         });
     }
 }
 
-void WebProcessProxy::topPrivatelyControlledDomainsWithWebiteData(OptionSet<WebsiteDataType> dataTypes, bool shouldNotifyPage, Function<void(HashSet<String>&&)> completionHandler)
+void WebProcessProxy::topPrivatelyControlledDomainsWithWebiteData(OptionSet<WebsiteDataType> dataTypes, bool shouldNotifyPage, Function<void(HashSet<String>&&)>&& completionHandler)
 {
+    // We expect this to be called on the main thread so we get the default website data store.
+    ASSERT(isMainThread());
+    
     struct CallbackAggregator : ThreadSafeRefCounted<CallbackAggregator> {
         explicit CallbackAggregator(Function<void(HashSet<String>&&)>&& completionHandler)
             : completionHandler(WTFMove(completionHandler))
@@ -312,13 +320,14 @@ void WebProcessProxy::topPrivatelyControlledDomainsWithWebiteData(OptionSet<Webs
         visitedSessionIDs.add(dataStore.sessionID());
         callbackAggregator->addPendingCallback();
         dataStore.topPrivatelyControlledDomainsWithWebsiteData(dataTypes, { }, [callbackAggregator, shouldNotifyPage, page](HashSet<String>&& domainsWithDataRecords) {
+            // When completing the task, we should be getting called on the main thread.
+            ASSERT(isMainThread());
+            
             if (shouldNotifyPage)
                 page.value->postMessageToInjectedBundle("WebsiteDataScanForTopPrivatelyControlledDomainsFinished", nullptr);
             
-            WTF::RunLoop::main().dispatch([callbackAggregator, domainsWithDataRecords = WTFMove(domainsWithDataRecords)]() mutable {
-                callbackAggregator->addDomainsWithDeletedWebsiteData(WTFMove(domainsWithDataRecords));
-                callbackAggregator->removePendingCallback();
-            });
+            callbackAggregator->addDomainsWithDeletedWebsiteData(WTFMove(domainsWithDataRecords));
+            callbackAggregator->removePendingCallback();
         });
     }
 }
@@ -867,7 +876,7 @@ void WebProcessProxy::windowServerConnectionStateChanged()
         page->activityStateDidChange(ActivityState::IsVisuallyIdle);
 }
 
-void WebProcessProxy::fetchWebsiteData(SessionID sessionID, OptionSet<WebsiteDataType> dataTypes, Function<void (WebsiteData)> completionHandler)
+void WebProcessProxy::fetchWebsiteData(SessionID sessionID, OptionSet<WebsiteDataType> dataTypes, Function<void(WebsiteData)>&& completionHandler)
 {
     ASSERT(canSendMessage());
 
@@ -885,7 +894,7 @@ void WebProcessProxy::fetchWebsiteData(SessionID sessionID, OptionSet<WebsiteDat
     });
 }
 
-void WebProcessProxy::deleteWebsiteData(SessionID sessionID, OptionSet<WebsiteDataType> dataTypes, std::chrono::system_clock::time_point modifiedSince, Function<void ()> completionHandler)
+void WebProcessProxy::deleteWebsiteData(SessionID sessionID, OptionSet<WebsiteDataType> dataTypes, std::chrono::system_clock::time_point modifiedSince, Function<void()>&& completionHandler)
 {
     ASSERT(canSendMessage());
 
@@ -898,7 +907,7 @@ void WebProcessProxy::deleteWebsiteData(SessionID sessionID, OptionSet<WebsiteDa
     });
 }
 
-void WebProcessProxy::deleteWebsiteDataForOrigins(SessionID sessionID, OptionSet<WebsiteDataType> dataTypes, const Vector<WebCore::SecurityOriginData>& origins, Function<void()> completionHandler)
+void WebProcessProxy::deleteWebsiteDataForOrigins(SessionID sessionID, OptionSet<WebsiteDataType> dataTypes, const Vector<WebCore::SecurityOriginData>& origins, Function<void()>&& completionHandler)
 {
     ASSERT(canSendMessage());
 

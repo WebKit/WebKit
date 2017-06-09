@@ -1,3 +1,34 @@
+2017-06-09  Brent Fulgham  <bfulgham@apple.com>
+
+        Use Function rather than std::function for thread safety in WebsiteDataStore
+        https://bugs.webkit.org/show_bug.cgi?id=173172
+
+        Reviewed by Chris Dumez.
+        <rdar://problem/32679311>
+
+        Remove a few more instances of std::function in the WebsiteDataStore, and WTFMove completion handler to
+        avoid unnecessary copies.
+
+        * Shared/WebsiteData/WebsiteDataType.h: Remove redundant WebsiteDataType from name.
+        * UIProcess/API/Cocoa/WKWebsiteDataRecordInternal.h:
+        (WebKit::toWebsiteDataType): Update for revised name.
+        (WebKit::toWKWebsiteDataTypes): Ditto.
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPersistentDataStores): ASSERT that
+        this function, as well as its completion handler, are getting called from the main thread.
+        (WebKit::WebProcessProxy::topPrivatelyControlledDomainsWithWebiteData): Ditto.
+        (WebKit::WebProcessProxy::fetchWebsiteData): Move the completionHandler.
+        (WebKit::WebProcessProxy::deleteWebsiteData): Ditto.
+        (WebKit::WebProcessProxy::deleteWebsiteDataForOrigins): Ditto.
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::fetchData): Switch to Function, and move completion handler.
+        (WebKit::WebsiteDataStore::fetchDataForTopPrivatelyControlledDomains): Ditto.
+        (WebKit::WebsiteDataStore::topPrivatelyControlledDomainsWithWebsiteData): Ditto.
+        (WebKit::WebsiteDataStore::removeData): Ditto.
+        (WebKit::WebsiteDataStore::removeDataForTopPrivatelyControlledDomains): Ditto.
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2017-06-09  Chris Dumez  <cdumez@apple.com>
 
         Make sure we protect |this| in lambdas in WebResourceLoadStatisticsStore::registerSharedResourceLoadObserver()
