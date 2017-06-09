@@ -60,7 +60,6 @@ static void releaseNoncriticalMemory()
     RenderTheme::singleton().purgeCaches();
 
     FontCache::singleton().purgeInactiveFontData();
-    FontDescription::invalidateCaches();
 
     clearWidthCaches();
 

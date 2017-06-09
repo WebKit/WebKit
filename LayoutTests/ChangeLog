@@ -1,3 +1,11 @@
+2017-06-09  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Cherry-pick r218009. rdar://problem/32677465
+
+    2017-06-09  Matthew Hanson  <matthew_hanson@apple.com>
+
+            Revert r217955. rdar://problem/21125708
+
 2017-06-09  Claudio Saavedra  <csaavedra@igalia.com>
 
         [WPE] Unskip passing userscripts tests

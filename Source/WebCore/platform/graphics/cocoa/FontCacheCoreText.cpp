@@ -720,16 +720,7 @@ static void fontCacheRegisteredFontsChangedNotificationCallback(CFNotificationCe
 
 void FontCache::platformInit()
 {
-    CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), this, &fontCacheRegisteredFontsChangedNotificationCallback, kCTFontManagerRegisteredFontsChangedNotification, nullptr, CFNotificationSuspensionBehaviorDeliverImmediately);
-
-#if PLATFORM(MAC)
-    CFNotificationCenterRef center = CFNotificationCenterGetLocalCenter();
-    const CFStringRef notificationName = kCFLocaleCurrentLocaleDidChangeNotification;
-#else
-    CFNotificationCenterRef center = CFNotificationCenterGetDarwinNotifyCenter();
-    const CFStringRef notificationName = CFSTR("com.apple.language.changed");
-#endif
-    CFNotificationCenterAddObserver(center, this, &fontCacheRegisteredFontsChangedNotificationCallback, notificationName, nullptr, CFNotificationSuspensionBehaviorDeliverImmediately);
+    CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), this, fontCacheRegisteredFontsChangedNotificationCallback, kCTFontManagerRegisteredFontsChangedNotification, 0, CFNotificationSuspensionBehaviorDeliverImmediately);
 }
 
 Vector<String> FontCache::systemFontFamilies()
@@ -1175,8 +1166,6 @@ static void invalidateFontCache()
         });
         return;
     }
-
-    FontDescription::invalidateCaches();
 
     FontDatabase::singleton().clear();
 
