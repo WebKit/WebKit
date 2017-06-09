@@ -1,4 +1,5 @@
 CONSOLE MESSAGE: <link rel=preload> must have a valid `as` value
+CONSOLE MESSAGE: <link rel=preload> must have a valid `as` value
 
 
 --------
@@ -12,6 +13,7 @@ PASS internals.isPreloaded('../resources/test.mp4'); is true
 PASS internals.isPreloaded('../resources/test.oga'); is true
 PASS internals.isPreloaded('../security/resources/captions.vtt'); is true
 PASS internals.isPreloaded('../resources/dummy.xml?badvalue'); is false
+PASS internals.isPreloaded('../resources/dummy.xml?empty'); is false
 PASS internals.isPreloaded('../resources/dummy.xml'); is true
 PASS successfullyParsed is true
 

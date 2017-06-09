@@ -219,6 +219,28 @@ String HTMLLinkElement::crossOrigin() const
     return parseCORSSettingsAttribute(attributeWithoutSynchronization(crossoriginAttr));
 }
 
+void HTMLLinkElement::setAs(const AtomicString& value)
+{
+    setAttributeWithoutSynchronization(asAttr, value);
+}
+
+String HTMLLinkElement::as() const
+{
+    String as = attributeWithoutSynchronization(asAttr);
+    if (equalLettersIgnoringASCIICase(as, "fetch")
+        || equalLettersIgnoringASCIICase(as, "image")
+        || equalLettersIgnoringASCIICase(as, "script")
+        || equalLettersIgnoringASCIICase(as, "style")
+        || equalLettersIgnoringASCIICase(as, "video")
+        || equalLettersIgnoringASCIICase(as, "audio")
+        || equalLettersIgnoringASCIICase(as, "font")
+#if ENABLE(VIDEO_TRACK)
+        || equalLettersIgnoringASCIICase(as, "track"))
+#endif
+        return as;
+    return String();
+}
+
 void HTMLLinkElement::process()
 {
     if (!isConnected()) {

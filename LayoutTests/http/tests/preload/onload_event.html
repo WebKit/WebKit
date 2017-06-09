@@ -19,6 +19,7 @@
     var xsltErrored = false;
     var noTypeLoaded = false;
     var emptyTypeLoaded = false;
+    var fetchLoaded = false;
     var counter = 0;
     function count() {
         ++window.counter;
@@ -30,10 +31,11 @@
 <link rel=preload href="../resources/Ahem.woff" as=font crossorigin onload="count(); fontLoaded = true;" onerror="count()">
 <link rel=preload href="../resources/test.ogv" as=video onload="count(); mediaLoaded = true;" onerror="count()">
 <link rel=preload href="../security/resources/captions.vtt" as=track onload="count(); trackLoaded = true;" onerror="count();">
-<link rel=preload href="../resources/dummy.xml" as=foobarxmlthing onload="count(); gibberishLoaded = true;" onerror="count(); gibberishErrored = true;">
+<link rel=preload href="../resources/dummy.xml?foobarxmlthing" as=foobarxmlthing onload="count(); gibberishLoaded = true;" onerror="count(); gibberishErrored = true;">
 <link rel=preload href="../resources/dummy.xslt" as=xslt onload="count(); xsltLoaded = true;" onerror="count(); xsltErrored = true;">
 <link rel=preload href="../resources/dummy.xml" onload="count(); noTypeLoaded = true;" onerror="count()">
 <link rel=preload href="../resources/dummy.xml?empty" as onload="count(); emptyTypeLoaded = true;" onerror="count()">
+<link rel=preload href="../resources/dummy.xml?fetch" as=fetch onload="count(); fetchLoaded = true;" onerror="count()">
 <script>
     function test() {
         shouldBeTrue("styleLoaded");
@@ -43,11 +45,12 @@
         shouldBeTrue("mediaLoaded");
         shouldBeTrue("trackLoaded");
         shouldBeFalse("gibberishLoaded");
-        shouldBeTrue("gibberishErrored");
+        shouldBeFalse("gibberishErrored");
         shouldBeFalse("xsltLoaded");
-        shouldBeTrue("xsltErrored");
-        shouldBeTrue("noTypeLoaded");
-        shouldBeTrue("emptyTypeLoaded");
+        shouldBeFalse("xsltErrored");
+        shouldBeFalse("noTypeLoaded");
+        shouldBeFalse("emptyTypeLoaded");
+        shouldBeTrue("fetchLoaded");
         if (window.testRunner)
             testRunner.notifyDone();
     }
@@ -70,7 +73,7 @@
     xhr2.send();
     addEventListener("load", function(){
         setInterval(function() {
-            if (window.counter >= 10)
+            if (window.counter >= 7)
                 test();
         }, 100);
     });

@@ -1,3 +1,28 @@
+2017-06-08  Yoav Weiss  <yoav@yoav.ws>
+
+        [preload] Mandatory `as` value and related spec alignments
+        https://bugs.webkit.org/show_bug.cgi?id=173047
+
+        Reviewed by Dean Jackson.
+
+        Fix tests and expectations to this patch's changes: `as` is mandatory and "fetch" replaces the previous empty `as` value,
+        onerror no longer fires for invalid `as` values, and the IDL for `as` reflects only valid values, to enable feature detection.
+
+        * http/tests/fetch/redirectmode-and-preload.html:
+        * http/tests/preload/download_resources-expected.txt:
+        * http/tests/preload/download_resources.html:
+        * http/tests/preload/download_resources_from_header_iframe-expected.txt:
+        * http/tests/preload/onerror_event-expected.txt:
+        * http/tests/preload/onerror_event.html:
+        * http/tests/preload/onload_event-expected.txt:
+        * http/tests/preload/onload_event.html:
+        * http/tests/preload/preloadscanner_download_resources.html:
+        * http/tests/preload/resources/download_resources_from_header.php:
+        * http/tests/preload/resources/nph-invalid_resources_from_header.pl:
+        * http/tests/preload/single_download_preload.html:
+        * http/tests/preload/single_download_preload_headers.php:
+        * imported/w3c/web-platform-tests/html/dom/reflection-metadata-expected.txt: PProgressions related to correct reflection.
+
 2017-06-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Crash inside InsertNodeBeforeCommand via InsertParagraphSeparatorCommand

@@ -11,6 +11,7 @@
     var fontFailed = false;
     var trackFailed = false;
     var gibrishFailed = false;
+    var fetchFailed = false;
     var noTypeFailed = false;
     var counter = 0;
     function count() {
@@ -23,6 +24,7 @@
 <link rel=preload href="../non-existent/Ahem.ttf" as=font crossorigin onerror="count();fontFailed = true;" onload="count();">
 <link rel=preload href="../non-existent/security/captions.vtt" as=track onerror="count();trackFailed = true;" onload="count();">
 <link rel=preload href="../non-existent/dummy.xml" as=foobarxmlthing onerror="count();gibrishFailed = true;" onload="count();">
+<link rel=preload href="http://127.0.0.1:9999/non-existent/dummy.xml?fetch" as=fetch onerror="count();fetchFailed = true;" onload="count();">
 <link rel=preload href="http://127.0.0.1:9999/non-existent/dummy.xml" onerror="count();noTypeFailed = true;" onload="count();">
 <script>
     document.write('<script src="../non-existent/dummy.js"></scr' + 'ipt>' +
@@ -48,12 +50,13 @@
         assert_true(imageFailed);
         assert_true(fontFailed);
         assert_true(trackFailed);
-        assert_true(gibrishFailed);
-        assert_true(noTypeFailed);
+        assert_false(gibrishFailed);
+        assert_true(fetchFailed);
+        assert_false(noTypeFailed);
         t.done();
     };
     setInterval(t.step_func(function() {
-        if (window.counter >= 7)
+        if (window.counter >= 6)
             test();
     }, 100));
 </script>

@@ -1,3 +1,34 @@
+2017-06-08  Yoav Weiss  <yoav@yoav.ws>
+
+        [preload] Mandatory `as` value and related spec alignments
+        https://bugs.webkit.org/show_bug.cgi?id=173047
+
+        Reviewed by Dean Jackson.
+
+        Align preload's implementation according to latest spec changes: `as` is mandatory and "fetch" replaces the previous empty `as` value,
+        onerror no longer fires for invalid `as` values, and the IDL for `as` reflects only valid values, to enable feature detection.
+
+        Related standard discussions:
+        https://github.com/w3c/preload/issues/80
+        https://github.com/whatwg/fetch/pull/547
+        https://github.com/whatwg/fetch/pull/549
+        https://github.com/whatwg/html/pull/2588
+
+        No new tests but modified existing ones as well as their expectations.
+
+        * html/HTMLLinkElement.cpp: Add "enumerated attribute" reflection methods to `as`.
+        (WebCore::HTMLLinkElement::setAs):
+        (WebCore::HTMLLinkElement::as):
+        * html/HTMLLinkElement.h:
+        * html/HTMLLinkElement.idl:
+        * loader/LinkLoader.cpp:
+        (WebCore::LinkLoader::loadLinksFromHeader): preloadIfNeeded signature change.
+        (WebCore::LinkLoader::resourceTypeFromAsAttribute): Replace the empty value by "fetch".
+        (WebCore::LinkLoader::preloadIfNeeded): Change the signature, as a LinkLoaderClient is no longer needed, since we don't fire error
+        events from inside the function.
+        (WebCore::LinkLoader::loadLink): preloadIfNeeded signature change.
+        * loader/LinkLoader.h: preloadIfNeeded signature change.
+
 2017-06-08  Chris Dumez  <cdumez@apple.com>
 
         [iOS] LowPowerModeNotifier notifies client on non-main thread

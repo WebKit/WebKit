@@ -7,7 +7,8 @@ header("Link: <../resources/test.mp4>; rel=preload; as=video", false);
 header("Link: <../resources/test.oga>; rel=preload; as=audio", false);
 header("link: <../security/resources/captions.vtt>; rel=preload; as=track", false);
 header("Link: <../resources/dummy.xml?badvalue>; rel=preload; as=foobar", false);
-header("Link: <../resources/dummy.xml>; rel=preload", false);
+header("Link: <../resources/dummy.xml?empty>; rel=preload", false);
+header("Link: <../resources/dummy.xml>; rel=preload;as=fetch", false);
 ?>
 <!DOCTYPE html>
 <script src="/js-test-resources/js-test.js"></script>
@@ -20,5 +21,6 @@ header("Link: <../resources/dummy.xml>; rel=preload", false);
     shouldBeTrue("internals.isPreloaded('../resources/test.oga');");
     shouldBeTrue("internals.isPreloaded('../security/resources/captions.vtt');");
     shouldBeFalse("internals.isPreloaded('../resources/dummy.xml?badvalue');");
+    shouldBeFalse("internals.isPreloaded('../resources/dummy.xml?empty');");
     shouldBeTrue("internals.isPreloaded('../resources/dummy.xml');");
 </script>

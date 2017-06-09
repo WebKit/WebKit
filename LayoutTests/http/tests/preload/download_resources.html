@@ -11,7 +11,8 @@
 <link rel=preload href="../resources/test.mp4" as=video>
 <link rel=preload href="../security/resources/captions.vtt" as=track>
 <link rel=preload href="../resources/dummy.xml?badvalue" as=foobarxmlthing>
-<link rel=preload href="../resources/dummy.xml">
+<link rel=preload href="../resources/dummy.xml?empty">
+<link rel=preload href="../resources/dummy.xml" as=fetch>
 <script src="http://127.0.0.1:8000/resources/slow-script.pl?delay=400"></script>
 <script>
     assert_true(internals.isPreloaded("../resources/dummy.js"));
@@ -23,6 +24,7 @@
     assert_true(internals.isPreloaded("../security/resources/captions.vtt"));
 
     assert_false(internals.isPreloaded("../resources/dummy.xml?badvalue"));
+    assert_false(internals.isPreloaded("../resources/dummy.xml?empty"));
     assert_true(internals.isPreloaded("../resources/dummy.xml"));
     document.write('<script src="../resources/dummy.js"></scr' + 'ipt>' +
                    '<link rel=stylesheet href="../resources/dummy.css">' +

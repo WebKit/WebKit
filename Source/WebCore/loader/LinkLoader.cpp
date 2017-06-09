@@ -107,13 +107,13 @@ void LinkLoader::loadLinksFromHeader(const String& headerValue, const URL& baseU
         // Sanity check to avoid re-entrancy here.
         if (equalIgnoringFragmentIdentifier(url, baseURL))
             continue;
-        preloadIfNeeded(relAttribute, url, document, header.as(), header.media(), header.mimeType(), header.crossOrigin(), nullptr, nullptr);
+        preloadIfNeeded(relAttribute, url, document, header.as(), header.media(), header.mimeType(), header.crossOrigin(), nullptr);
     }
 }
 
 std::optional<CachedResource::Type> LinkLoader::resourceTypeFromAsAttribute(const String& as)
 {
-    if (as.isEmpty())
+    if (equalLettersIgnoringASCIICase(as, "fetch"))
         return CachedResource::RawResource;
     if (equalLettersIgnoringASCIICase(as, "image"))
         return CachedResource::ImageResource;
@@ -200,7 +200,7 @@ bool LinkLoader::isSupportedType(CachedResource::Type resourceType, const String
     return false;
 }
 
-std::unique_ptr<LinkPreloadResourceClient> LinkLoader::preloadIfNeeded(const LinkRelAttribute& relAttribute, const URL& href, Document& document, const String& as, const String& media, const String& mimeType, const String& crossOriginMode, LinkLoader* loader, LinkLoaderClient* client)
+std::unique_ptr<LinkPreloadResourceClient> LinkLoader::preloadIfNeeded(const LinkRelAttribute& relAttribute, const URL& href, Document& document, const String& as, const String& media, const String& mimeType, const String& crossOriginMode, LinkLoader* loader)
 {
     if (!document.loader() || !relAttribute.isLinkPreload)
         return nullptr;
@@ -213,8 +213,6 @@ std::unique_ptr<LinkPreloadResourceClient> LinkLoader::preloadIfNeeded(const Lin
     auto type = LinkLoader::resourceTypeFromAsAttribute(as);
     if (!type) {
         document.addConsoleMessage(MessageSource::Other, MessageLevel::Error, String("<link rel=preload> must have a valid `as` value"));
-        if (client)
-            client->linkLoadingErrored();
         return nullptr;
     }
     if (!MediaQueryEvaluator::mediaAttributeMatches(document, media))
@@ -252,7 +250,7 @@ bool LinkLoader::loadLink(const LinkRelAttribute& relAttribute, const URL& href,
     }
 
     if (m_client.shouldLoadLink()) {
-        auto resourceClient = preloadIfNeeded(relAttribute, href, document, as, media, mimeType, crossOrigin, this, &m_client);
+        auto resourceClient = preloadIfNeeded(relAttribute, href, document, as, media, mimeType, crossOrigin, this);
         if (resourceClient)
             m_preloadResourceClient = WTFMove(resourceClient);
         else if (m_preloadResourceClient)

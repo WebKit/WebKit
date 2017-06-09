@@ -8,7 +8,7 @@ header("Link: <http://127.0.0.1:8000/resources/test.mp4>; rel=preload; as=video"
 header("Link: <http://127.0.0.1:8000/resources/test.oga>; rel=preload; as=audio", false);
 header("link: <http://127.0.0.1:8000/security/resources/captions.vtt>; rel=preload; as=track", false);
 header("Link: <http://127.0.0.1:8000/resources/dummy.xml?foobar>; rel=preload; as=foobar", false);
-header("Link: <http://127.0.0.1:8000/resources/dummy.xml>; crossorigin; rel=preload", false);
+header("Link: <http://127.0.0.1:8000/resources/dummy.xml>; as=fetch; crossorigin; rel=preload", false);
 ?>
 <!DOCTYPE html>
 <script src="/js-test-resources/testharness.js"></script>
