@@ -1,3 +1,15 @@
+2017-06-09  Daewoong Jang  <daewoong.jang@navercorp.com>
+
+        [cURL] Remove a call to Windows API
+        https://bugs.webkit.org/show_bug.cgi?id=172079
+
+        Reviewed by Yusuke Suzuki.
+
+        * platform/network/curl/CurlDownload.cpp:
+        (WebCore::CurlDownload::moveFileToDestination):
+        * platform/win/FileSystemWin.cpp:
+        (WebCore::moveFile):
+
 2017-06-09  Miguel Gomez  <magomez@igalia.com>
 
         [GTK][WPE] Fix alpha premultiplying when using cairo to draw the video frames

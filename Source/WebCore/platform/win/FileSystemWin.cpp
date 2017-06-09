@@ -177,6 +177,13 @@ bool deleteEmptyDirectory(const String& path)
     return !!RemoveDirectoryW(filename.charactersWithNullTermination().data());
 }
 
+bool moveFile(const String& oldPath, const String& newPath)
+{
+    String oldFilename = oldPath;
+    String newFilename = newPath;
+    return !!::MoveFileEx(oldFilename.charactersWithNullTermination().data(), newFilename.charactersWithNullTermination().data(), MOVEFILE_COPY_ALLOWED | MOVEFILE_REPLACE_EXISTING);
+}
+
 String pathByAppendingComponent(const String& path, const String& component)
 {
     Vector<UChar> buffer(MAX_PATH);
