@@ -1,3 +1,24 @@
+2017-06-09  Miguel Gomez  <magomez@igalia.com>
+
+        [GTK][WPE] Fix alpha premultiplying when using cairo to draw the video frames
+        https://bugs.webkit.org/show_bug.cgi?id=173097
+
+        Reviewed by Carlos Garcia Campos.
+
+        We need to premultiply alpha when creating a cairo surface from a GStreamer video frame, if the frame
+        has an alpha component. Currently this is wrongly done in VideoSinkGStreamer, as it assumes that every
+        frame is going to be rendered with cairo, which is not the case when using accelerated compositing.
+        The premultiply must happen inside ImageGStreamerCairo, which is where we know that the frame is
+        going to be rendered with cairo, and where the premultiply can be performed when gstreamer-gl is
+        enabled as well.
+
+        Covered by existent tests.
+
+        * platform/graphics/gstreamer/ImageGStreamerCairo.cpp:
+        (ImageGStreamer::ImageGStreamer):
+        * platform/graphics/gstreamer/VideoSinkGStreamer.cpp:
+        (webkitVideoSinkRequestRender):
+
 2017-06-09  Zan Dobersek  <zdobersek@igalia.com>
 
         [WPE] Enable ENCRYPTED_MEDIA for build-webkit builds

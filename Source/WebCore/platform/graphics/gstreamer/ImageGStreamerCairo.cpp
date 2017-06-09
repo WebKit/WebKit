@@ -48,7 +48,11 @@ ImageGStreamer::ImageGStreamer(GstSample* sample)
         return;
 
     unsigned char* bufferData = reinterpret_cast<unsigned char*>(GST_VIDEO_FRAME_PLANE_DATA(&m_videoFrame, 0));
+    int stride = GST_VIDEO_FRAME_PLANE_STRIDE(&m_videoFrame, 0);
+    int width = GST_VIDEO_FRAME_WIDTH(&m_videoFrame);
+    int height = GST_VIDEO_FRAME_HEIGHT(&m_videoFrame);
 
+    RefPtr<cairo_surface_t> surface;
     cairo_format_t cairoFormat;
 #if G_BYTE_ORDER == G_LITTLE_ENDIAN
     cairoFormat = (GST_VIDEO_FRAME_FORMAT(&m_videoFrame) == GST_VIDEO_FORMAT_BGRA) ? CAIRO_FORMAT_ARGB32 : CAIRO_FORMAT_RGB24;
@@ -56,11 +60,43 @@ ImageGStreamer::ImageGStreamer(GstSample* sample)
     cairoFormat = (GST_VIDEO_FRAME_FORMAT(&m_videoFrame) == GST_VIDEO_FORMAT_ARGB) ? CAIRO_FORMAT_ARGB32 : CAIRO_FORMAT_RGB24;
 #endif
 
-    int stride = GST_VIDEO_FRAME_PLANE_STRIDE(&m_videoFrame, 0);
-    int width = GST_VIDEO_FRAME_WIDTH(&m_videoFrame);
-    int height = GST_VIDEO_FRAME_HEIGHT(&m_videoFrame);
+    // GStreamer doesn't use premultiplied alpha, but cairo does. So if the video format has an alpha component
+    // we need to premultiply it before passing the data to cairo. This needs to be both using gstreamer-gl and not
+    // using it.
+    //
+    // This method could be called several times for the same buffer, for example if we are rendering the video frames
+    // in several non accelerated canvases. Due to this, we cannot modify the buffer, so we need to create a copy.
+    if (cairoFormat == CAIRO_FORMAT_ARGB32) {
+        unsigned char* surfaceData = static_cast<unsigned char*>(fastMalloc(height * stride));
+        unsigned char* surfacePixel = surfaceData;
 
-    RefPtr<cairo_surface_t> surface = adoptRef(cairo_image_surface_create_for_data(bufferData, cairoFormat, width, height, stride));
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+#if G_BYTE_ORDER == G_LITTLE_ENDIAN
+                // Video frames use BGRA in little endian.
+                unsigned short alpha = bufferData[3];
+                surfacePixel[0] = (bufferData[0] * alpha + 128) / 255;
+                surfacePixel[1] = (bufferData[1] * alpha + 128) / 255;
+                surfacePixel[2] = (bufferData[2] * alpha + 128) / 255;
+                surfacePixel[3] = alpha;
+#else
+                // Video frames use ARGB in big endian.
+                unsigned short alpha = bufferData[0];
+                surfacePixel[0] = alpha;
+                surfacePixel[1] = (bufferData[1] * alpha + 128) / 255;
+                surfacePixel[2] = (bufferData[2] * alpha + 128) / 255;
+                surfacePixel[3] = (bufferData[3] * alpha + 128) / 255;
+#endif
+                bufferData += 4;
+                surfacePixel += 4;
+            }
+        }
+        surface = adoptRef(cairo_image_surface_create_for_data(surfaceData, cairoFormat, width, height, stride));
+        static cairo_user_data_key_t s_surfaceDataKey;
+        cairo_surface_set_user_data(surface.get(), &s_surfaceDataKey, surfaceData, [](void* data) { fastFree(data); });
+    } else
+        surface = adoptRef(cairo_image_surface_create_for_data(bufferData, cairoFormat, width, height, stride));
+
     ASSERT(cairo_surface_status(surface.get()) == CAIRO_STATUS_SUCCESS);
     m_image = BitmapImage::create(WTFMove(surface));
 

@@ -169,66 +169,6 @@ static GRefPtr<GstSample> webkitVideoSinkRequestRender(WebKitVideoSink* sink, Gs
     if (format == GST_VIDEO_FORMAT_UNKNOWN)
         return nullptr;
 
-    // Cairo's ARGB has pre-multiplied alpha while GStreamer's doesn't.
-    // Here we convert to Cairo's ARGB.
-    if (format == GST_VIDEO_FORMAT_ARGB || format == GST_VIDEO_FORMAT_BGRA) {
-        // Because GstBaseSink::render() only owns the buffer reference in the
-        // method scope we can't use gst_buffer_make_writable() here. Also
-        // The buffer content should not be changed here because the same buffer
-        // could be passed multiple times to this method (in theory).
-
-        GstBuffer* newBuffer = WebCore::createGstBuffer(buffer);
-
-        // Check if allocation failed.
-        if (UNLIKELY(!newBuffer))
-            return nullptr;
-
-        // We don't use Color::premultipliedARGBFromColor() here because
-        // one function call per video pixel is just too expensive:
-        // For 720p/PAL for example this means 1280*720*25=23040000
-        // function calls per second!
-        GstVideoFrame sourceFrame;
-        GstVideoFrame destinationFrame;
-
-        if (!gst_video_frame_map(&sourceFrame, &priv->info, buffer, GST_MAP_READ)) {
-            gst_buffer_unref(newBuffer);
-            return nullptr;
-        }
-        if (!gst_video_frame_map(&destinationFrame, &priv->info, newBuffer, GST_MAP_WRITE)) {
-            gst_video_frame_unmap(&sourceFrame);
-            gst_buffer_unref(newBuffer);
-            return nullptr;
-        }
-
-        const guint8* source = static_cast<guint8*>(GST_VIDEO_FRAME_PLANE_DATA(&sourceFrame, 0));
-        guint8* destination = static_cast<guint8*>(GST_VIDEO_FRAME_PLANE_DATA(&destinationFrame, 0));
-
-        for (int x = 0; x < GST_VIDEO_FRAME_HEIGHT(&sourceFrame); x++) {
-            for (int y = 0; y < GST_VIDEO_FRAME_WIDTH(&sourceFrame); y++) {
-#if G_BYTE_ORDER == G_LITTLE_ENDIAN
-                unsigned short alpha = source[3];
-                destination[0] = (source[0] * alpha + 128) / 255;
-                destination[1] = (source[1] * alpha + 128) / 255;
-                destination[2] = (source[2] * alpha + 128) / 255;
-                destination[3] = alpha;
-#else
-                unsigned short alpha = source[0];
-                destination[0] = alpha;
-                destination[1] = (source[1] * alpha + 128) / 255;
-                destination[2] = (source[2] * alpha + 128) / 255;
-                destination[3] = (source[3] * alpha + 128) / 255;
-#endif
-                source += 4;
-                destination += 4;
-            }
-        }
-
-        gst_video_frame_unmap(&sourceFrame);
-        gst_video_frame_unmap(&destinationFrame);
-        sample = adoptGRef(gst_sample_new(newBuffer, priv->currentCaps, nullptr, nullptr));
-        gst_buffer_unref(newBuffer);
-    }
-
     return sample;
 }
 
