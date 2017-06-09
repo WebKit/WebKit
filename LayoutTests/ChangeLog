@@ -1,3 +1,12 @@
+2017-06-09  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Add a result file for js/dom/prototype-chain-caching-with-impure-get-own-property-slot-traps-5-short.html.
+        https://bugs.webkit.org/show_bug.cgi?id=161156
+
+        Unreviewed test gardening.
+
+        * js/dom/prototype-chain-caching-with-impure-get-own-property-slot-traps-5-short-expected.txt: Added.
+
 2017-06-09  Matthew Hanson  <matthew_hanson@apple.com>
 
         Revert r217955. rdar://problem/21125708
