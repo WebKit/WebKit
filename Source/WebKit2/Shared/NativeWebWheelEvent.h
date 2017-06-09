@@ -51,6 +51,7 @@ public:
 #elif PLATFORM(GTK)
     NativeWebWheelEvent(const NativeWebWheelEvent&);
     NativeWebWheelEvent(GdkEvent*);
+    NativeWebWheelEvent(GdkEvent*, WebWheelEvent::Phase, WebWheelEvent::Phase momentumPhase);
 #elif PLATFORM(WPE)
     NativeWebWheelEvent(struct wpe_input_axis_event*, float deviceScaleFactor);
 #endif

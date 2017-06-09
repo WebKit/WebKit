@@ -1557,6 +1557,7 @@ private:
 
     void processNextQueuedWheelEvent();
     void sendWheelEvent(const WebWheelEvent&);
+    bool shouldProcessWheelEventNow(const WebWheelEvent&) const;
 
 #if ENABLE(TOUCH_EVENTS)
     void updateTouchEventTracking(const WebTouchEvent&);

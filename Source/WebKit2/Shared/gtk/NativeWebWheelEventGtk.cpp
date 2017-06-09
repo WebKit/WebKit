@@ -37,8 +37,14 @@ NativeWebWheelEvent::NativeWebWheelEvent(GdkEvent* event)
 {
 }
 
+NativeWebWheelEvent::NativeWebWheelEvent(GdkEvent* event, WebWheelEvent::Phase phase, WebWheelEvent::Phase momentumPhase)
+    : WebWheelEvent(WebEventFactory::createWebWheelEvent(event, phase, momentumPhase))
+    , m_nativeEvent(gdk_event_copy(event))
+{
+}
+
 NativeWebWheelEvent::NativeWebWheelEvent(const NativeWebWheelEvent& event)
-    : WebWheelEvent(WebEventFactory::createWebWheelEvent(event.nativeEvent()))
+    : WebWheelEvent(WebEventFactory::createWebWheelEvent(event.nativeEvent(), event.phase(), event.momentumPhase()))
     , m_nativeEvent(gdk_event_copy(event.nativeEvent()))
 {
 }

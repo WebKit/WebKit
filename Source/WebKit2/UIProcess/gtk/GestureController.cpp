@@ -41,6 +41,7 @@ namespace WebKit {
 
 GestureController::GestureController(WebPageProxy& page)
     : m_dragGesture(page)
+    , m_swipeGesture(page)
     , m_zoomGesture(page)
 {
 }
@@ -49,13 +50,14 @@ bool GestureController::handleEvent(const GdkEvent* event)
 {
     bool wasProcessingGestures = isProcessingGestures();
     m_dragGesture.handleEvent(event);
+    m_swipeGesture.handleEvent(event);
     m_zoomGesture.handleEvent(event);
     return event->type == GDK_TOUCH_END ? wasProcessingGestures : isProcessingGestures();
 }
 
 bool GestureController::isProcessingGestures() const
 {
-    return m_dragGesture.isActive() || m_zoomGesture.isActive();
+    return m_dragGesture.isActive() || m_swipeGesture.isActive() || m_zoomGesture.isActive();
 }
 
 GestureController::Gesture::Gesture(GtkGesture* gesture, WebPageProxy& page)
@@ -75,20 +77,40 @@ void GestureController::Gesture::handleEvent(const GdkEvent* event)
     gtk_event_controller_handle_event(GTK_EVENT_CONTROLLER(m_gesture.get()), event);
 }
 
-void GestureController::DragGesture::handleDrag(const GdkEvent* event, double x, double y)
+static GUniquePtr<GdkEvent> createScrollEvent(const GdkEvent* event, double x, double y, double deltaX, double deltaY, gboolean isStop)
 {
-    ASSERT(m_inDrag);
     GUniquePtr<GdkEvent> scrollEvent(gdk_event_new(GDK_SCROLL));
     scrollEvent->scroll.time = event->touch.time;
-    scrollEvent->scroll.x = m_start.x();
-    scrollEvent->scroll.y = m_start.y();
+    scrollEvent->scroll.x = x;
+    scrollEvent->scroll.y = y;
     scrollEvent->scroll.x_root = event->touch.x_root;
     scrollEvent->scroll.y_root = event->touch.y_root;
     scrollEvent->scroll.direction = GDK_SCROLL_SMOOTH;
-    scrollEvent->scroll.delta_x = (m_offset.x() - x) / Scrollbar::pixelsPerLineStep();
-    scrollEvent->scroll.delta_y = (m_offset.y() - y) / Scrollbar::pixelsPerLineStep();
+    scrollEvent->scroll.delta_x = deltaX;
+    scrollEvent->scroll.delta_y = deltaY;
     scrollEvent->scroll.state = event->touch.state;
-    m_page.handleWheelEvent(NativeWebWheelEvent(scrollEvent.get()));
+#if GTK_CHECK_VERSION(3, 20, 0)
+    scrollEvent->scroll.is_stop = isStop;
+#endif
+    return scrollEvent;
+}
+
+void GestureController::DragGesture::startDrag(const GdkEvent* event)
+{
+    ASSERT(!m_inDrag);
+    GUniquePtr<GdkEvent> scrollEvent = createScrollEvent(event, m_start.x(), m_start.y(), 0, 0, FALSE);
+    m_page.handleWheelEvent(NativeWebWheelEvent(scrollEvent.get(), WebWheelEvent::Phase::PhaseBegan, WebWheelEvent::Phase::PhaseNone));
+}
+
+void GestureController::DragGesture::handleDrag(const GdkEvent* event, double x, double y)
+{
+    ASSERT(m_inDrag);
+    GUniquePtr<GdkEvent> scrollEvent = createScrollEvent(event,
+        m_start.x(), m_start.y(),
+        (m_offset.x() - x) / Scrollbar::pixelsPerLineStep(),
+        (m_offset.y() - y) / Scrollbar::pixelsPerLineStep(),
+        FALSE);
+    m_page.handleWheelEvent(NativeWebWheelEvent(scrollEvent.get(), WebWheelEvent::Phase::PhaseChanged, WebWheelEvent::Phase::PhaseNone));
 }
 
 void GestureController::DragGesture::handleTap(const GdkEvent* event)
@@ -128,6 +150,7 @@ void GestureController::DragGesture::begin(DragGesture* dragGesture, double x, d
     unsigned delay;
     g_object_get(gtk_widget_get_settings(widget), "gtk-long-press-time", &delay, nullptr);
     dragGesture->m_longPressTimeout.startOneShot(1_ms * delay);
+    dragGesture->startDrag(gtk_gesture_get_last_event(gesture, sequence));
 }
 
 void GestureController::DragGesture::update(DragGesture* dragGesture, double x, double y, GtkGesture* gesture)
@@ -149,11 +172,14 @@ void GestureController::DragGesture::update(DragGesture* dragGesture, double x, 
 void GestureController::DragGesture::end(DragGesture* dragGesture, GdkEventSequence* sequence, GtkGesture* gesture)
 {
     dragGesture->m_longPressTimeout.stop();
+    if (!gtk_gesture_handles_sequence(gesture, sequence)) {
+        gtk_gesture_set_state(gesture, GTK_EVENT_SEQUENCE_DENIED);
+        return;
+    }
     if (!dragGesture->m_inDrag) {
         dragGesture->handleTap(gtk_gesture_get_last_event(gesture, sequence));
         gtk_gesture_set_state(gesture, GTK_EVENT_SEQUENCE_DENIED);
-    } else if (!gtk_gesture_handles_sequence(gesture, sequence))
-        gtk_gesture_set_state(gesture, GTK_EVENT_SEQUENCE_DENIED);
+    }
 }
 
 void GestureController::DragGesture::longPressFired()
@@ -170,6 +196,30 @@ GestureController::DragGesture::DragGesture(WebPageProxy& page)
     g_signal_connect_swapped(m_gesture.get(), "drag-begin", G_CALLBACK(begin), this);
     g_signal_connect_swapped(m_gesture.get(), "drag-update", G_CALLBACK(update), this);
     g_signal_connect_swapped(m_gesture.get(), "end", G_CALLBACK(end), this);
+}
+
+void GestureController::SwipeGesture::startMomentumScroll(const GdkEvent* event, double velocityX, double velocityY)
+{
+    GUniquePtr<GdkEvent> scrollEvent = createScrollEvent(event, event->touch.x, event->touch.y, velocityX, velocityY, TRUE);
+    m_page.handleWheelEvent(NativeWebWheelEvent(scrollEvent.get(), WebWheelEvent::Phase::PhaseNone, WebWheelEvent::Phase::PhaseBegan));
+}
+
+void GestureController::SwipeGesture::swipe(SwipeGesture* swipeGesture, double velocityX, double velocityY, GtkGesture* gesture)
+{
+    GdkEventSequence* sequence = gtk_gesture_single_get_current_sequence(GTK_GESTURE_SINGLE(gesture));
+    if (!gtk_gesture_handles_sequence(gesture, sequence))
+        return;
+
+    gtk_gesture_set_sequence_state(gesture, sequence, GTK_EVENT_SEQUENCE_CLAIMED);
+
+    swipeGesture->startMomentumScroll(gtk_gesture_get_last_event(gesture, sequence), velocityX, velocityY);
+}
+
+GestureController::SwipeGesture::SwipeGesture(WebPageProxy& page)
+    : Gesture(gtk_gesture_swipe_new(page.viewWidget()), page)
+{
+    gtk_gesture_single_set_touch_only(GTK_GESTURE_SINGLE(m_gesture.get()), TRUE);
+    g_signal_connect_swapped(m_gesture.get(), "swipe", G_CALLBACK(swipe), this);
 }
 
 IntPoint GestureController::ZoomGesture::center() const

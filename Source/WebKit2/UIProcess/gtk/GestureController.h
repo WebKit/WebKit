@@ -67,6 +67,8 @@ private:
         DragGesture(WebPageProxy&);
 
     private:
+        // Notify that a drag started, allowing to stop kinetic deceleration.
+        void startDrag(const GdkEvent*);
         void handleDrag(const GdkEvent*, double x, double y);
         void handleTap(const GdkEvent*);
         void longPressFired();
@@ -80,6 +82,16 @@ private:
         RunLoop::Timer<DragGesture> m_longPressTimeout;
         GRefPtr<GtkGesture> m_longPress;
         bool m_inDrag;
+    };
+
+    class SwipeGesture final : public Gesture {
+    public:
+        SwipeGesture(WebPageProxy&);
+
+    private:
+        void startMomentumScroll(const GdkEvent*, double velocityX, double velocityY);
+
+        static void swipe(SwipeGesture*, double velocityX, double velocityY, GtkGesture*);
     };
 
     class ZoomGesture final : public Gesture {
@@ -101,6 +113,7 @@ private:
     };
 
     DragGesture m_dragGesture;
+    SwipeGesture m_swipeGesture;
     ZoomGesture m_zoomGesture;
 };
 

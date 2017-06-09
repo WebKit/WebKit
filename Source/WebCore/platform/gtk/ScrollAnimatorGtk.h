@@ -46,9 +46,11 @@ public:
 private:
 #if ENABLE(SMOOTH_SCROLLING)
     bool scroll(ScrollbarOrientation, ScrollGranularity, float step, float multiplier) override;
+#endif
     void scrollToOffsetWithoutAnimation(const FloatPoint&) override;
     void willEndLiveResize() override;
-#endif
+
+    bool handleWheelEvent(const PlatformWheelEvent&) override;
 
     void didAddVerticalScrollbar(Scrollbar*) override;
     void didAddHorizontalScrollbar(Scrollbar*) override;
@@ -63,16 +65,22 @@ private:
     void notifyContentAreaScrolled(const FloatSize& delta) override;
     void lockOverlayScrollbarStateToHidden(bool) override;
 
+    void updatePosition(FloatPoint&&);
+
     void overlayScrollbarAnimationTimerFired();
     void showOverlayScrollbars();
     void hideOverlayScrollbars();
     void updateOverlayScrollbarsOpacity();
 
+    FloatPoint computeVelocity();
+
 #if ENABLE(SMOOTH_SCROLLING)
     void ensureSmoothScrollingAnimation();
 
-    std::unique_ptr<ScrollAnimation> m_animation;
+    std::unique_ptr<ScrollAnimation> m_smoothAnimation;
 #endif
+    std::unique_ptr<ScrollAnimation> m_kineticAnimation;
+    Vector<PlatformWheelEvent> m_scrollHistory;
     Scrollbar* m_horizontalOverlayScrollbar { nullptr };
     Scrollbar* m_verticalOverlayScrollbar { nullptr };
     bool m_overlayScrollbarsLocked { false };

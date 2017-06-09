@@ -145,6 +145,27 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(const GdkEvent* event, int cu
 
 WebWheelEvent WebEventFactory::createWebWheelEvent(const GdkEvent* event)
 {
+#ifndef GTK_API_VERSION_2
+#if GTK_CHECK_VERSION(3, 20, 0)
+    WebWheelEvent::Phase phase = gdk_event_is_scroll_stop_event(event) ?
+        WebWheelEvent::Phase::PhaseEnded :
+        WebWheelEvent::Phase::PhaseChanged;
+#else
+    double deltaX, deltaY;
+    gdk_event_get_scroll_deltas(event, &deltaX, &deltaY);
+    WebWheelEvent::Phase phase = event->scroll.direction == GDK_SCROLL_SMOOTH && !deltaX && !deltaY ?
+        WebWheelEvent::Phase::PhaseEnded :
+        WebWheelEvent::Phase::PhaseChanged;
+#endif
+#else
+    WebWheelEvent::Phase phase = WebWheelEvent::Phase::PhaseChanged;
+#endif // GTK_API_VERSION_2
+
+    return createWebWheelEvent(event, phase, WebWheelEvent::Phase::PhaseNone);
+}
+
+WebWheelEvent WebEventFactory::createWebWheelEvent(const GdkEvent* event, WebWheelEvent::Phase phase, WebWheelEvent::Phase momentumPhase)
+{
     double x, y, xRoot, yRoot;
     gdk_event_get_coords(event, &x, &y);
     gdk_event_get_root_coords(event, &xRoot, &yRoot);
@@ -181,13 +202,15 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(const GdkEvent* event)
     FloatSize delta(wheelTicks.width() * step, wheelTicks.height() * step);
 
     return WebWheelEvent(WebEvent::Wheel,
-                         IntPoint(x, y),
-                         IntPoint(xRoot, yRoot),
-                         delta,
-                         wheelTicks,
-                         WebWheelEvent::ScrollByPixelWheelEvent,
-                         modifiersForEvent(event),
-                         gdk_event_get_time(event));
+        IntPoint(x, y),
+        IntPoint(xRoot, yRoot),
+        delta,
+        wheelTicks,
+        phase,
+        momentumPhase,
+        WebWheelEvent::ScrollByPixelWheelEvent,
+        modifiersForEvent(event),
+        gdk_event_get_time(event));
 }
 
 WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(const GdkEvent* event, const WebCore::CompositionResults& compositionResults, Vector<String>&& commands)

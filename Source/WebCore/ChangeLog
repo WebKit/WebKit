@@ -1,3 +1,56 @@
+2017-06-09  Adrien Plazas  <aplazas@igalia.com>
+
+        [GTK] Add kinetic scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=155750
+
+        Reviewed by Carlos Garcia Campos.
+
+        Patch by Adrien Plazas and Yusuke Suzuki.
+
+        Add the ScrollAnimationKinetic scrolling animation allowing to perform momentum scrolling; it is based on GTK+'s
+        GtkKineticScrolling type.
+
+        Add the notion of phase, momentum phase and swipe velocity to PlatformWheelEvent.
+
+        Depending on whether the scrolling ended normally or triggered a swipe, the scroll animator will either compute
+        the swipe velocity from the previous scrolling events or use the one from the swipe gesture to initiate the
+        momentum scrolling.
+
+        * PlatformGTK.cmake:
+        * platform/PlatformWheelEvent.h:
+        (WebCore::PlatformWheelEvent::setHasPreciseScrollingDeltas):
+        (WebCore::PlatformWheelEvent::phase):
+        (WebCore::PlatformWheelEvent::momentumPhase):
+        (WebCore::PlatformWheelEvent::isTransitioningToMomentumScroll):
+        * platform/ScrollAnimation.h:
+        (WebCore::ScrollAnimation::scroll):
+        (WebCore::ScrollAnimation::updateVisibleLengths):
+        (WebCore::ScrollAnimation::setCurrentPosition):
+        * platform/ScrollAnimationKinetic.cpp: Added.
+        (WebCore::ScrollAnimationKinetic::PerAxisData::PerAxisData):
+        (WebCore::ScrollAnimationKinetic::PerAxisData::animateScroll):
+        (WebCore::ScrollAnimationKinetic::ScrollAnimationKinetic):
+        (WebCore::ScrollAnimationKinetic::~ScrollAnimationKinetic):
+        (WebCore::ScrollAnimationKinetic::stop):
+        (WebCore::ScrollAnimationKinetic::start):
+        (WebCore::ScrollAnimationKinetic::animationTimerFired):
+        * platform/ScrollAnimationKinetic.h: Copied from Source/WebCore/platform/ScrollAnimation.h.
+        * platform/gtk/PlatformWheelEventGtk.cpp:
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent):
+        (WebCore::PlatformWheelEvent::swipeVelocity):
+        * platform/gtk/ScrollAnimatorGtk.cpp:
+        (WebCore::ScrollAnimatorGtk::ScrollAnimatorGtk):
+        (WebCore::ScrollAnimatorGtk::ensureSmoothScrollingAnimation):
+        (WebCore::ScrollAnimatorGtk::scroll):
+        (WebCore::ScrollAnimatorGtk::scrollToOffsetWithoutAnimation):
+        (WebCore::ScrollAnimatorGtk::computeVelocity):
+        (WebCore::ScrollAnimatorGtk::handleWheelEvent):
+        (WebCore::ScrollAnimatorGtk::willEndLiveResize):
+        (WebCore::ScrollAnimatorGtk::updatePosition):
+        (WebCore::ScrollAnimatorGtk::didAddVerticalScrollbar):
+        (WebCore::ScrollAnimatorGtk::didAddHorizontalScrollbar):
+        * platform/gtk/ScrollAnimatorGtk.h:
+
 2017-06-09  Zan Dobersek  <zdobersek@igalia.com>
 
         [GCrypt] ECDSA signing results can be smaller than the EC key size

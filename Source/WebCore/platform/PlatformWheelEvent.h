@@ -48,7 +48,7 @@ enum PlatformWheelEventGranularity : uint8_t {
     ScrollByPixelWheelEvent,
 };
 
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || PLATFORM(GTK)
 
 enum PlatformWheelEventPhase : uint8_t {
     PlatformWheelEventPhaseNone = 0,
@@ -117,13 +117,12 @@ public:
 
 #if PLATFORM(GTK)
     explicit PlatformWheelEvent(GdkEventScroll*);
+    FloatPoint swipeVelocity() const;
 #endif
 
 #if PLATFORM(COCOA)
     bool hasPreciseScrollingDeltas() const { return m_hasPreciseScrollingDeltas; }
     void setHasPreciseScrollingDeltas(bool hasPreciseScrollingDeltas) { m_hasPreciseScrollingDeltas = hasPreciseScrollingDeltas; }
-    PlatformWheelEventPhase phase() const { return m_phase; }
-    PlatformWheelEventPhase momentumPhase() const { return m_momentumPhase; }
     unsigned scrollCount() const { return m_scrollCount; }
     float unacceleratedScrollingDeltaX() const { return m_unacceleratedScrollingDeltaX; }
     float unacceleratedScrollingDeltaY() const { return m_unacceleratedScrollingDeltaY; }
@@ -131,10 +130,15 @@ public:
     bool shouldConsiderLatching() const;
     bool shouldResetLatching() const;
     bool isEndOfMomentumScroll() const;
-    bool isEndOfNonMomentumScroll() const;
-    bool isTransitioningToMomentumScroll() const;
 #else
     bool useLatchedEventElement() const { return false; }
+#endif
+
+#if PLATFORM(COCOA) || PLATFORM(GTK)
+    PlatformWheelEventPhase phase() const { return m_phase; }
+    PlatformWheelEventPhase momentumPhase() const { return m_momentumPhase; }
+    bool isEndOfNonMomentumScroll() const;
+    bool isTransitioningToMomentumScroll() const;
 #endif
 
 #if PLATFORM(WIN)
@@ -155,10 +159,12 @@ protected:
     // Scrolling velocity in pixels per second.
     FloatSize m_scrollingVelocity;
 
-#if PLATFORM(COCOA)
-    bool m_hasPreciseScrollingDeltas { false };
+#if PLATFORM(COCOA) || PLATFORM(GTK)
     PlatformWheelEventPhase m_phase { PlatformWheelEventPhaseNone };
     PlatformWheelEventPhase m_momentumPhase { PlatformWheelEventPhaseNone };
+#endif
+#if PLATFORM(COCOA)
+    bool m_hasPreciseScrollingDeltas { false };
     unsigned m_scrollCount { 0 };
     float m_unacceleratedScrollingDeltaX { 0 };
     float m_unacceleratedScrollingDeltaY { 0 };
@@ -191,6 +197,10 @@ inline bool PlatformWheelEvent::isEndOfMomentumScroll() const
     return m_phase == PlatformWheelEventPhaseNone && m_momentumPhase == PlatformWheelEventPhaseEnded;
 }
 
+#endif
+
+#if PLATFORM(COCOA) || PLATFORM(GTK)
+
 inline bool PlatformWheelEvent::isEndOfNonMomentumScroll() const
 {
     return m_phase == PlatformWheelEventPhaseEnded && m_momentumPhase == PlatformWheelEventPhaseNone;
@@ -200,7 +210,6 @@ inline bool PlatformWheelEvent::isTransitioningToMomentumScroll() const
 {
     return m_phase == PlatformWheelEventPhaseNone && m_momentumPhase == PlatformWheelEventPhaseBegan;
 }
-
 #endif
 
 } // namespace WebCore

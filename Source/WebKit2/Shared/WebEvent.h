@@ -183,7 +183,7 @@ public:
         ScrollByPixelWheelEvent
     };
 
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || PLATFORM(GTK)
     enum Phase {
         PhaseNone        = 0,
         PhaseBegan       = 1 << 0,
@@ -200,6 +200,8 @@ public:
     WebWheelEvent(Type, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, const WebCore::FloatSize& delta, const WebCore::FloatSize& wheelTicks, Granularity, Modifiers, double timestamp);
 #if PLATFORM(COCOA)
     WebWheelEvent(Type, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, const WebCore::FloatSize& delta, const WebCore::FloatSize& wheelTicks, Granularity, bool directionInvertedFromDevice, Phase, Phase momentumPhase, bool hasPreciseScrollingDeltas, uint32_t scrollCount, const WebCore::FloatSize& unacceleratedScrollingDelta, Modifiers, double timestamp);
+#elif PLATFORM(GTK)
+    WebWheelEvent(Type, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, const WebCore::FloatSize& delta, const WebCore::FloatSize& wheelTicks, Phase, Phase momentumPhase, Granularity, Modifiers, double timestamp);
 #endif
 
     const WebCore::IntPoint position() const { return m_position; }
@@ -208,9 +210,11 @@ public:
     const WebCore::FloatSize wheelTicks() const { return m_wheelTicks; }
     Granularity granularity() const { return static_cast<Granularity>(m_granularity); }
     bool directionInvertedFromDevice() const { return m_directionInvertedFromDevice; }
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || PLATFORM(GTK)
     Phase phase() const { return static_cast<Phase>(m_phase); }
     Phase momentumPhase() const { return static_cast<Phase>(m_momentumPhase); }
+#endif
+#if PLATFORM(COCOA)
     bool hasPreciseScrollingDeltas() const { return m_hasPreciseScrollingDeltas; }
     uint32_t scrollCount() const { return m_scrollCount; }
     const WebCore::FloatSize& unacceleratedScrollingDelta() const { return m_unacceleratedScrollingDelta; }
@@ -228,9 +232,11 @@ private:
     WebCore::FloatSize m_wheelTicks;
     uint32_t m_granularity; // Granularity
     bool m_directionInvertedFromDevice;
+#if PLATFORM(COCOA) || PLATFORM(GTK)
+    uint32_t m_phase { Phase::PhaseNone };
+    uint32_t m_momentumPhase { Phase::PhaseNone };
+#endif
 #if PLATFORM(COCOA)
-    uint32_t m_phase; // Phase
-    uint32_t m_momentumPhase; // Phase
     bool m_hasPreciseScrollingDeltas;
     uint32_t m_scrollCount;
     WebCore::FloatSize m_unacceleratedScrollingDelta;

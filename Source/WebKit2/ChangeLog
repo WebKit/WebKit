@@ -1,3 +1,51 @@
+2017-06-09  Adrien Plazas  <aplazas@igalia.com>
+
+        [GTK] Add kinetic scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=155750
+
+        Reviewed by Carlos Garcia Campos.
+
+        Patch by Adrien Plazas and Yusuke Suzuki.
+
+        Add the notion of phase and momentum phase to WebWheelEvent.
+
+        Make WebWheelEvent manage the 'is_stop' attribute of GdkEventScroll to create the corresponding WebWheelEvent
+        with the correct phases and deltas.
+
+        Make GestureController manage swipes to create the corresponding WebWheelEvent with the correct phases and
+        deltas.
+
+        * Shared/NativeWebWheelEvent.h:
+        * Shared/WebEvent.h:
+        * Shared/WebEventConversion.cpp:
+        (WebKit::WebKit2PlatformWheelEvent::WebKit2PlatformWheelEvent):
+        * Shared/WebWheelEvent.cpp:
+        (WebKit::WebWheelEvent::WebWheelEvent):
+        (WebKit::WebWheelEvent::encode):
+        (WebKit::WebWheelEvent::decode):
+        * Shared/gtk/NativeWebWheelEventGtk.cpp:
+        (WebKit::NativeWebWheelEvent::NativeWebWheelEvent):
+        * Shared/gtk/WebEventFactory.cpp:
+        (WebKit::WebEventFactory::createWebWheelEvent):
+        * Shared/gtk/WebEventFactory.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::handleWheelEvent):
+        (WebKit::WebPageProxy::shouldProcessWheelEventNow):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/gtk/GestureController.cpp:
+        (WebKit::GestureController::GestureController):
+        (WebKit::GestureController::handleEvent):
+        (WebKit::GestureController::isProcessingGestures):
+        (WebKit::createScrollEvent):
+        (WebKit::GestureController::DragGesture::startDrag):
+        (WebKit::GestureController::DragGesture::handleDrag):
+        (WebKit::GestureController::DragGesture::begin):
+        (WebKit::GestureController::DragGesture::end):
+        (WebKit::GestureController::SwipeGesture::startMomentumScroll):
+        (WebKit::GestureController::SwipeGesture::swipe):
+        (WebKit::GestureController::SwipeGesture::SwipeGesture):
+        * UIProcess/gtk/GestureController.h:
+
 2017-06-09  Jer Noble  <jer.noble@apple.com>
 
         Crash in -[WKWebView _initializeWithConfiguration:]

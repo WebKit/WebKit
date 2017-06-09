@@ -23,34 +23,58 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScrollAnimation_h
-#define ScrollAnimation_h
+#pragma once
 
-#include "ScrollTypes.h"
+#include "FloatPoint.h"
+#include "ScrollAnimation.h"
+#include "Timer.h"
+
+#include <wtf/Optional.h>
 
 namespace WebCore {
 
-class FloatPoint;
 class ScrollableArea;
 
-class ScrollAnimation {
+class ScrollAnimationKinetic final: public ScrollAnimation {
+private:
+    class PerAxisData {
+    public:
+        PerAxisData(double lower, double upper, double initialPosition, double initialVelocity);
+
+        double position() { return m_position; }
+
+        bool animateScroll(Seconds timeDelta);
+
+    private:
+        double m_lower { 0 };
+        double m_upper { 0 };
+
+        double m_coef1 { 0 };
+        double m_coef2 { 0 };
+
+        Seconds m_elapsedTime;
+        double m_position { 0 };
+        double m_velocity { 0 };
+    };
+
 public:
-    virtual ~ScrollAnimation() { };
-    virtual bool scroll(ScrollbarOrientation, ScrollGranularity, float /* step */, float /* multiplier */) { return true; };
-    virtual void stop() = 0;
-    virtual void updateVisibleLengths() { };
-    virtual void setCurrentPosition(const FloatPoint&) { };
-    virtual void serviceAnimation() { };
+    ScrollAnimationKinetic(ScrollableArea&, std::function<void(FloatPoint&&)>&& notifyPositionChangedFunction);
+    virtual ~ScrollAnimationKinetic();
 
-protected:
-    ScrollAnimation(ScrollableArea& scrollableArea)
-        : m_scrollableArea(scrollableArea)
-    {
-    }
+    void start(const FloatPoint& initialPosition, const FloatPoint& velocity, bool mayHScroll, bool mayVScroll);
 
-    ScrollableArea& m_scrollableArea;
+private:
+    void stop() override;
+    void animationTimerFired();
+
+    std::function<void(FloatPoint&&)> m_notifyPositionChangedFunction;
+
+    std::optional<PerAxisData> m_horizontalData;
+    std::optional<PerAxisData> m_verticalData;
+
+    MonotonicTime m_startTime;
+    Timer m_animationTimer;
+    FloatPoint m_position;
 };
 
 } // namespace WebCore
-
-#endif // ScrollAnimation_h

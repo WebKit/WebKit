@@ -31,6 +31,7 @@
 #include "config.h"
 #include "ScrollAnimatorGtk.h"
 
+#include "ScrollAnimationKinetic.h"
 #include "ScrollAnimationSmooth.h"
 #include "ScrollableArea.h"
 #include "ScrollbarTheme.h"
@@ -40,6 +41,7 @@ namespace WebCore {
 
 static const Seconds overflowScrollbarsAnimationDuration { 1_s };
 static const Seconds overflowScrollbarsAnimationHideDelay { 2_s };
+static const Seconds scrollCaptureThreshold { 150_ms };
 
 std::unique_ptr<ScrollAnimator> ScrollAnimator::create(ScrollableArea& scrollableArea)
 {
@@ -50,6 +52,14 @@ ScrollAnimatorGtk::ScrollAnimatorGtk(ScrollableArea& scrollableArea)
     : ScrollAnimator(scrollableArea)
     , m_overlayScrollbarAnimationTimer(*this, &ScrollAnimatorGtk::overlayScrollbarAnimationTimerFired)
 {
+    m_kineticAnimation = std::make_unique<ScrollAnimationKinetic>(m_scrollableArea, [this](FloatPoint&& position) {
+#if ENABLE(SMOOTH_SCROLLING)
+        if (m_smoothAnimation)
+            m_smoothAnimation->setCurrentPosition(position);
+#endif
+        updatePosition(WTFMove(position));
+    });
+
 #if ENABLE(SMOOTH_SCROLLING)
     if (scrollableArea.scrollAnimatorEnabled())
         ensureSmoothScrollingAnimation();
@@ -63,48 +73,108 @@ ScrollAnimatorGtk::~ScrollAnimatorGtk()
 #if ENABLE(SMOOTH_SCROLLING)
 void ScrollAnimatorGtk::ensureSmoothScrollingAnimation()
 {
-    if (m_animation)
+    if (m_smoothAnimation)
         return;
 
-    m_animation = std::make_unique<ScrollAnimationSmooth>(m_scrollableArea, m_currentPosition, [this](FloatPoint&& position) {
-        FloatSize delta = position - m_currentPosition;
-        m_currentPosition = WTFMove(position);
-        notifyPositionChanged(delta);
+    m_smoothAnimation = std::make_unique<ScrollAnimationSmooth>(m_scrollableArea, m_currentPosition, [this](FloatPoint&& position) {
+        updatePosition(WTFMove(position));
     });
 }
+#endif
 
+#if ENABLE(SMOOTH_SCROLLING)
 bool ScrollAnimatorGtk::scroll(ScrollbarOrientation orientation, ScrollGranularity granularity, float step, float multiplier)
 {
     if (!m_scrollableArea.scrollAnimatorEnabled() || granularity == ScrollByPrecisePixel)
         return ScrollAnimator::scroll(orientation, granularity, step, multiplier);
 
     ensureSmoothScrollingAnimation();
-    return m_animation->scroll(orientation, granularity, step, multiplier);
+    return m_smoothAnimation->scroll(orientation, granularity, step, multiplier);
 }
+#endif
 
 void ScrollAnimatorGtk::scrollToOffsetWithoutAnimation(const FloatPoint& offset)
 {
     FloatPoint position = ScrollableArea::scrollPositionFromOffset(offset, toFloatSize(m_scrollableArea.scrollOrigin()));
-    if (m_animation)
-        m_animation->setCurrentPosition(position);
+    m_kineticAnimation->stop();
+    m_scrollHistory.clear();
 
-    FloatSize delta = position - m_currentPosition;
-    m_currentPosition = position;
-    notifyPositionChanged(delta);
+#if ENABLE(SMOOTH_SCROLLING)
+    if (m_smoothAnimation)
+        m_smoothAnimation->setCurrentPosition(position);
+#endif
+
+    updatePosition(WTFMove(position));
+}
+
+FloatPoint ScrollAnimatorGtk::computeVelocity()
+{
+    if (m_scrollHistory.isEmpty())
+        return { };
+
+    double first = m_scrollHistory[0].timestamp();
+    double last = m_scrollHistory.rbegin()->timestamp();
+
+    if (last == first)
+        return { };
+
+    FloatPoint accumDelta;
+    for (const auto& scrollEvent : m_scrollHistory)
+        accumDelta += FloatPoint(scrollEvent.deltaX(), scrollEvent.deltaY());
+
+    m_scrollHistory.clear();
+
+    return FloatPoint(accumDelta.x() * -1000 / (last - first), accumDelta.y() * -1000 / (last - first));
+}
+
+bool ScrollAnimatorGtk::handleWheelEvent(const PlatformWheelEvent& event)
+{
+    m_kineticAnimation->stop();
+
+    m_scrollHistory.removeAllMatching([&event] (PlatformWheelEvent& otherEvent) -> bool {
+        return Seconds::fromMilliseconds(event.timestamp() - otherEvent.timestamp()) > scrollCaptureThreshold;
+    });
+
+    if (event.isEndOfNonMomentumScroll()) {
+        // We don't need to add the event to the history as its delta will be (0, 0).
+        static_cast<ScrollAnimationKinetic*>(m_kineticAnimation.get())->start(m_currentPosition, computeVelocity(), m_scrollableArea.horizontalScrollbar(), m_scrollableArea.verticalScrollbar());
+        return true;
+    }
+    if (event.isTransitioningToMomentumScroll()) {
+        m_scrollHistory.clear();
+        static_cast<ScrollAnimationKinetic*>(m_kineticAnimation.get())->start(m_currentPosition, event.swipeVelocity(), m_scrollableArea.horizontalScrollbar(), m_scrollableArea.verticalScrollbar());
+        return true;
+    }
+
+    m_scrollHistory.append(event);
+
+    return ScrollAnimator::handleWheelEvent(event);
 }
 
 void ScrollAnimatorGtk::willEndLiveResize()
 {
-    if (m_animation)
-        m_animation->updateVisibleLengths();
-}
+    m_kineticAnimation->updateVisibleLengths();
+
+#if ENABLE(SMOOTH_SCROLLING)
+    if (m_smoothAnimation)
+        m_smoothAnimation->updateVisibleLengths();
 #endif
+}
+
+void ScrollAnimatorGtk::updatePosition(FloatPoint&& position)
+{
+    FloatSize delta = position - m_currentPosition;
+    m_currentPosition = WTFMove(position);
+    notifyPositionChanged(delta);
+}
 
 void ScrollAnimatorGtk::didAddVerticalScrollbar(Scrollbar* scrollbar)
 {
+    m_kineticAnimation->updateVisibleLengths();
+
 #if ENABLE(SMOOTH_SCROLLING)
-    if (m_animation)
-        m_animation->updateVisibleLengths();
+    if (m_smoothAnimation)
+        m_smoothAnimation->updateVisibleLengths();
 #endif
     if (!scrollbar->isOverlayScrollbar())
         return;
@@ -117,9 +187,11 @@ void ScrollAnimatorGtk::didAddVerticalScrollbar(Scrollbar* scrollbar)
 
 void ScrollAnimatorGtk::didAddHorizontalScrollbar(Scrollbar* scrollbar)
 {
+    m_kineticAnimation->updateVisibleLengths();
+
 #if ENABLE(SMOOTH_SCROLLING)
-    if (m_animation)
-        m_animation->updateVisibleLengths();
+    if (m_smoothAnimation)
+        m_smoothAnimation->updateVisibleLengths();
 #endif
     if (!scrollbar->isOverlayScrollbar())
         return;

@@ -28,6 +28,7 @@
 #include "config.h"
 #include "PlatformWheelEvent.h"
 
+#include "FloatPoint.h"
 #include "PlatformKeyboardEvent.h"
 #include "Scrollbar.h"
 #include <gdk/gdk.h>
@@ -85,6 +86,20 @@ PlatformWheelEvent::PlatformWheelEvent(GdkEventScroll* event)
     m_wheelTicksX = m_deltaX;
     m_wheelTicksY = m_deltaY;
 
+#ifndef GTK_API_VERSION_2
+#if GTK_CHECK_VERSION(3, 20, 0)
+    m_phase = event->is_stop ?
+        PlatformWheelEventPhaseEnded :
+        PlatformWheelEventPhaseChanged;
+#else
+    m_phase = event->direction == GDK_SCROLL_SMOOTH && !m_deltaX && !m_deltaY ?
+        PlatformWheelEventPhaseEnded :
+        PlatformWheelEventPhaseChanged;
+#endif
+#else
+    m_phase = PlatformWheelEventPhaseChanged;
+#endif // GTK_API_VERSION_2
+
     m_position = IntPoint(static_cast<int>(event->x), static_cast<int>(event->y));
     m_globalPosition = IntPoint(static_cast<int>(event->x_root), static_cast<int>(event->y_root));
     m_granularity = ScrollByPixelWheelEvent;
@@ -93,6 +108,12 @@ PlatformWheelEvent::PlatformWheelEvent(GdkEventScroll* event)
     // FIXME: retrieve the user setting for the number of lines to scroll on each wheel event
     m_deltaX *= static_cast<float>(Scrollbar::pixelsPerLineStep());
     m_deltaY *= static_cast<float>(Scrollbar::pixelsPerLineStep());
+}
+
+FloatPoint PlatformWheelEvent::swipeVelocity() const
+{
+    // The swiping velocity is stored in the deltas of the event declaring it.
+    return isTransitioningToMomentumScroll() ? FloatPoint(m_wheelTicksX, m_wheelTicksY) : FloatPoint();
 }
 
 }
