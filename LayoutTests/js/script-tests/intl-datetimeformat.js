@@ -1,4 +1,4 @@
-//@ skip
+//@ skip if $hostOS == "windows"
 description("This test checks the behavior of Intl.DateTimeFormat as described in the ECMAScript Internationalization API Specification (ECMA-402 2.0).");
 
 // 12.1 The Intl.DateTimeFormat Constructor
@@ -461,7 +461,7 @@ shouldBe("Intl.DateTimeFormat('en').resolvedOptions().timeZoneName", "undefined"
 shouldBe("Intl.DateTimeFormat('en', { minute:'2-digit', hour:'numeric', timeZoneName:'short' }).resolvedOptions().timeZoneName", "'short'");
 shouldBe("Intl.DateTimeFormat('en', { minute:'2-digit', hour:'numeric', timeZoneName:'short', timeZone: 'UTC' }).format(0)", "'12:00 AM GMT'");
 shouldBe("Intl.DateTimeFormat('pt-BR', { minute:'2-digit', hour:'numeric', timeZoneName:'long' }).resolvedOptions().timeZoneName", "'long'");
-shouldBe("Intl.DateTimeFormat('pt-BR', { minute:'2-digit', hour:'numeric', timeZoneName:'long', timeZone: 'UTC' }).format(0)", "'00:00 GMT'")
+shouldBeTrue("['00:00 GMT','00:00 Horário do Meridiano de Greenwich'].includes(Intl.DateTimeFormat('pt-BR', { minute:'2-digit', hour:'numeric', timeZoneName:'long', timeZone: 'UTC' }).format(0))");
 
 let localesSample = [
   "ar", "ar-SA", "be", "ca", "cs", "da", "de", "de-CH", "en", "en-AU", "en-GB",
@@ -578,7 +578,7 @@ shouldBe(`JSON.stringify(
   Intl.DateTimeFormat('en-US', {
     hour: "numeric", minute: "numeric", second: "numeric",
     year: "numeric", month: "long", day: "numeric", weekday: "long",
-    timeZoneName: "long", era: "long", timeZone: "UTC"
+    timeZoneName: "short", era: "long", timeZone: "UTC"
   }).formatToParts(0)
 )`, `JSON.stringify([
   {"type":"weekday","value":"Thursday"},

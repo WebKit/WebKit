@@ -377,7 +377,7 @@ PASS Intl.DateTimeFormat('en').resolvedOptions().timeZoneName is undefined
 PASS Intl.DateTimeFormat('en', { minute:'2-digit', hour:'numeric', timeZoneName:'short' }).resolvedOptions().timeZoneName is 'short'
 PASS Intl.DateTimeFormat('en', { minute:'2-digit', hour:'numeric', timeZoneName:'short', timeZone: 'UTC' }).format(0) is '12:00 AM GMT'
 PASS Intl.DateTimeFormat('pt-BR', { minute:'2-digit', hour:'numeric', timeZoneName:'long' }).resolvedOptions().timeZoneName is 'long'
-PASS Intl.DateTimeFormat('pt-BR', { minute:'2-digit', hour:'numeric', timeZoneName:'long', timeZone: 'UTC' }).format(0) is '00:00 GMT'
+PASS ['00:00 GMT','00:00 Horário do Meridiano de Greenwich'].includes(Intl.DateTimeFormat('pt-BR', { minute:'2-digit', hour:'numeric', timeZoneName:'long', timeZone: 'UTC' }).format(0)) is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("ar", options).resolvedOptions();
@@ -2555,7 +2555,7 @@ PASS JSON.stringify(
   Intl.DateTimeFormat('en-US', {
     hour: "numeric", minute: "numeric", second: "numeric",
     year: "numeric", month: "long", day: "numeric", weekday: "long",
-    timeZoneName: "long", era: "long", timeZone: "UTC"
+    timeZoneName: "short", era: "long", timeZone: "UTC"
   }).formatToParts(0)
 ) is JSON.stringify([
   {"type":"weekday","value":"Thursday"},
