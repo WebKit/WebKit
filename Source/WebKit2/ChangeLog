@@ -1,3 +1,14 @@
+2017-06-09  Claudio Saavedra  <csaavedra@igalia.com>
+
+        struct does not accept initializer-form if member has initializers in GCC 4.9
+
+        Unreviewed speculative build fix.
+
+        Remove the default initializers for DeniedRequest struct,
+        since it's only initialized in one place, to keep gcc 4.9
+        happy.
+        * UIProcess/UserMediaPermissionRequestManagerProxy.h:
+
 2017-06-09  Adrien Plazas  <aplazas@igalia.com>
 
         [GTK] Add kinetic scrolling

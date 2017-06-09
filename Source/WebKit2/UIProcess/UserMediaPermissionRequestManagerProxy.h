@@ -91,8 +91,8 @@ private:
         uint64_t mainFrameID;
         Ref<WebCore::SecurityOrigin> userMediaDocumentOrigin;
         Ref<WebCore::SecurityOrigin> topLevelDocumentOrigin;
-        bool isAudioDenied { false };
-        bool isVideoDenied { false };
+        bool isAudioDenied;
+        bool isVideoDenied;
     };
     Vector<DeniedRequest> m_deniedRequests;
 };
