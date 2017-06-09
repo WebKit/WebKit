@@ -100,11 +100,11 @@ void WorkQueue::platformInvalidate()
     dispatch_release(m_dispatchQueue);
 }
 
-void WorkQueue::concurrentApply(size_t iterations, const std::function<void(size_t index)>& function)
+void WorkQueue::concurrentApply(size_t iterations, WTF::Function<void(size_t index)>&& function)
 {
-    dispatch_apply(iterations, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(size_t index) {
+    dispatch_apply(iterations, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), BlockPtr<void(size_t index)>::fromCallable([function = WTFMove(function)](size_t index) {
         function(index);
-    });
+    }).get());
 }
 
 }

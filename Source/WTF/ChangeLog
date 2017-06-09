@@ -1,3 +1,17 @@
+2017-06-09  Chris Dumez  <cdumez@apple.com>
+
+        Update WorkQueue::concurrentApply() to take a WTF::Function instead of an std::function
+        https://bugs.webkit.org/show_bug.cgi?id=173165
+
+        Reviewed by Saam Barati.
+
+        Update WorkQueue::concurrentApply() to take a WTF::Function instead of an std::function
+        as std::function has issues with regards to thread safety.
+
+        * wtf/WorkQueue.h:
+        * wtf/cocoa/WorkQueueCocoa.cpp:
+        (WTF::WorkQueue::concurrentApply):
+
 2017-06-08  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         MediaTime class has rounding issues in different platforms

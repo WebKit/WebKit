@@ -69,7 +69,7 @@ public:
     WTF_EXPORT_PRIVATE void dispatch(Function<void()>&&) override;
     WTF_EXPORT_PRIVATE void dispatchAfter(Seconds, Function<void()>&&);
 
-    WTF_EXPORT_PRIVATE static void concurrentApply(size_t iterations, const std::function<void(size_t index)>&);
+    WTF_EXPORT_PRIVATE static void concurrentApply(size_t iterations, WTF::Function<void(size_t index)>&&);
 
 #if USE(COCOA_EVENT_LOOP)
     dispatch_queue_t dispatchQueue() const { return m_dispatchQueue; }
