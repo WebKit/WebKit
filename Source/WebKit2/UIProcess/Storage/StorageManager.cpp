@@ -531,7 +531,7 @@ void StorageManager::processDidCloseConnection(WebProcessProxy&, IPC::Connection
     });
 }
 
-void StorageManager::getSessionStorageOrigins(std::function<void(HashSet<WebCore::SecurityOriginData>&&)>&& completionHandler)
+void StorageManager::getSessionStorageOrigins(Function<void(HashSet<WebCore::SecurityOriginData>&&)>&& completionHandler)
 {
     m_queue->dispatch([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)]() mutable {
         HashSet<SecurityOriginData> origins;
@@ -547,7 +547,7 @@ void StorageManager::getSessionStorageOrigins(std::function<void(HashSet<WebCore
     });
 }
 
-void StorageManager::deleteSessionStorageOrigins(std::function<void()>&& completionHandler)
+void StorageManager::deleteSessionStorageOrigins(Function<void()>&& completionHandler)
 {
     m_queue->dispatch([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)]() mutable {
         for (auto& sessionStorageNamespace : m_sessionStorageNamespaces.values())
@@ -557,7 +557,7 @@ void StorageManager::deleteSessionStorageOrigins(std::function<void()>&& complet
     });
 }
 
-void StorageManager::deleteSessionStorageEntriesForOrigins(const Vector<WebCore::SecurityOriginData>& origins, std::function<void()>&& completionHandler)
+void StorageManager::deleteSessionStorageEntriesForOrigins(const Vector<WebCore::SecurityOriginData>& origins, Function<void()>&& completionHandler)
 {
     Vector<WebCore::SecurityOriginData> copiedOrigins;
     copiedOrigins.reserveInitialCapacity(origins.size());
@@ -575,7 +575,7 @@ void StorageManager::deleteSessionStorageEntriesForOrigins(const Vector<WebCore:
     });
 }
 
-void StorageManager::getLocalStorageOrigins(std::function<void(HashSet<WebCore::SecurityOriginData>&&)>&& completionHandler)
+void StorageManager::getLocalStorageOrigins(Function<void(HashSet<WebCore::SecurityOriginData>&&)>&& completionHandler)
 {
     m_queue->dispatch([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)]() mutable {
         HashSet<SecurityOriginData> origins;
@@ -594,7 +594,7 @@ void StorageManager::getLocalStorageOrigins(std::function<void(HashSet<WebCore::
     });
 }
 
-void StorageManager::getLocalStorageOriginDetails(std::function<void (Vector<LocalStorageDatabaseTracker::OriginDetails>)>&& completionHandler)
+void StorageManager::getLocalStorageOriginDetails(Function<void (Vector<LocalStorageDatabaseTracker::OriginDetails>)>&& completionHandler)
 {
     m_queue->dispatch([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)]() mutable {
         auto originDetails = m_localStorageDatabaseTracker->originDetails();
@@ -618,7 +618,7 @@ void StorageManager::deleteLocalStorageEntriesForOrigin(SecurityOriginData&& sec
     });
 }
 
-void StorageManager::deleteLocalStorageOriginsModifiedSince(std::chrono::system_clock::time_point time, std::function<void()>&& completionHandler)
+void StorageManager::deleteLocalStorageOriginsModifiedSince(std::chrono::system_clock::time_point time, Function<void()>&& completionHandler)
 {
     m_queue->dispatch([this, protectedThis = makeRef(*this), time, completionHandler = WTFMove(completionHandler)]() mutable {
         auto deletedOrigins = m_localStorageDatabaseTracker->deleteDatabasesModifiedSince(time);
@@ -635,7 +635,7 @@ void StorageManager::deleteLocalStorageOriginsModifiedSince(std::chrono::system_
     });
 }
 
-void StorageManager::deleteLocalStorageEntriesForOrigins(const Vector<WebCore::SecurityOriginData>& origins, std::function<void()>&& completionHandler)
+void StorageManager::deleteLocalStorageEntriesForOrigins(const Vector<WebCore::SecurityOriginData>& origins, Function<void()>&& completionHandler)
 {
     Vector<SecurityOriginData> copiedOrigins;
     copiedOrigins.reserveInitialCapacity(origins.size());

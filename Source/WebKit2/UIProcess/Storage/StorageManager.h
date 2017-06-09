@@ -31,6 +31,7 @@
 #include <WebCore/SecurityOriginHash.h>
 #include <chrono>
 #include <wtf/Forward.h>
+#include <wtf/Function.h>
 #include <wtf/HashSet.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/StringHash.h>
@@ -58,17 +59,17 @@ public:
     void processDidCloseConnection(WebProcessProxy&, IPC::Connection&);
     void applicationWillTerminate();
 
-    void getSessionStorageOrigins(std::function<void(HashSet<WebCore::SecurityOriginData>&&)>&& completionHandler);
-    void deleteSessionStorageOrigins(std::function<void()>&& completionHandler);
-    void deleteSessionStorageEntriesForOrigins(const Vector<WebCore::SecurityOriginData>&, std::function<void()>&& completionHandler);
+    void getSessionStorageOrigins(Function<void(HashSet<WebCore::SecurityOriginData>&&)>&& completionHandler);
+    void deleteSessionStorageOrigins(Function<void()>&& completionHandler);
+    void deleteSessionStorageEntriesForOrigins(const Vector<WebCore::SecurityOriginData>&, Function<void()>&& completionHandler);
 
-    void getLocalStorageOrigins(std::function<void(HashSet<WebCore::SecurityOriginData>&&)>&& completionHandler);
+    void getLocalStorageOrigins(Function<void(HashSet<WebCore::SecurityOriginData>&&)>&& completionHandler);
     void deleteLocalStorageEntriesForOrigin(WebCore::SecurityOriginData&&);
 
-    void deleteLocalStorageOriginsModifiedSince(std::chrono::system_clock::time_point, std::function<void()>&& completionHandler);
-    void deleteLocalStorageEntriesForOrigins(const Vector<WebCore::SecurityOriginData>&, std::function<void()>&& completionHandler);
+    void deleteLocalStorageOriginsModifiedSince(std::chrono::system_clock::time_point, Function<void()>&& completionHandler);
+    void deleteLocalStorageEntriesForOrigins(const Vector<WebCore::SecurityOriginData>&, Function<void()>&& completionHandler);
 
-    void getLocalStorageOriginDetails(std::function<void(Vector<LocalStorageDatabaseTracker::OriginDetails>)>&& completionHandler);
+    void getLocalStorageOriginDetails(Function<void(Vector<LocalStorageDatabaseTracker::OriginDetails>)>&& completionHandler);
 
 private:
     explicit StorageManager(const String& localStorageDirectory);
