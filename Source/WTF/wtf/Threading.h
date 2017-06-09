@@ -41,6 +41,7 @@
 #include <wtf/Assertions.h>
 #include <wtf/Atomics.h>
 #include <wtf/Expected.h>
+#include <wtf/Function.h>
 #include <wtf/Locker.h>
 #include <wtf/LocklessBag.h>
 #include <wtf/Noncopyable.h>
@@ -73,7 +74,7 @@ public:
 
     // Returns nullptr if thread creation failed.
     // The thread name must be a literal since on some platforms it's passed in to the thread.
-    WTF_EXPORT_PRIVATE static RefPtr<Thread> create(const char* threadName, std::function<void()>);
+    WTF_EXPORT_PRIVATE static RefPtr<Thread> create(const char* threadName, Function<void()>&&);
     WTF_EXPORT_PRIVATE static RefPtr<Thread> create(ThreadFunction entryPoint, void* data, const char* name);
 
     // Returns Thread object.

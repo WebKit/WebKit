@@ -1,3 +1,13 @@
+2017-06-09  Chris Dumez  <cdumez@apple.com>
+
+        Update Thread::create() to take in a WTF::Function instead of a std::function
+        https://bugs.webkit.org/show_bug.cgi?id=173175
+
+        Reviewed by Mark Lam.
+
+        * API/tests/CompareAndSwapTest.cpp:
+        (testCompareAndSwap):
+
 2017-06-09  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DFG] Add verboseDFGOSRExit

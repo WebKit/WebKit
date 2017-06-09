@@ -48,7 +48,7 @@ struct NewThreadContext {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     const char* name;
-    std::function<void()> entryPoint;
+    Function<void()> entryPoint;
     Mutex creationMutex;
 };
 
@@ -99,7 +99,7 @@ static void threadEntryPoint(void* contextData)
     entryPoint();
 }
 
-RefPtr<Thread> Thread::create(const char* name, std::function<void()> entryPoint)
+RefPtr<Thread> Thread::create(const char* name, Function<void()>&& entryPoint)
 {
     NewThreadContext* context = new NewThreadContext { name, WTFMove(entryPoint), { } };
 

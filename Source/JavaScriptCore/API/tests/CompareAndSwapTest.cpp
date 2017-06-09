@@ -106,8 +106,7 @@ void testCompareAndSwap()
         data[i].bitmap = &bitmap;
         data[i].id = i;
         data[i].numThreads = numThreads;
-        std::function<void()> threadFunc = std::bind(setBitThreadFunc, &data[i]);
-        threads[i] = Thread::create("setBitThreadFunc", threadFunc);
+        threads[i] = Thread::create("setBitThreadFunc", std::bind(setBitThreadFunc, &data[i]));
     }
 
     printf("Waiting for %d threads to join\n", numThreads);

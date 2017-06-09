@@ -1,5 +1,22 @@
 2017-06-09  Chris Dumez  <cdumez@apple.com>
 
+        Update Thread::create() to take in a WTF::Function instead of a std::function
+        https://bugs.webkit.org/show_bug.cgi?id=173175
+
+        Reviewed by Mark Lam.
+
+        Update Thread::create() to take in a WTF::Function instead of a std::function. Unlike
+        std::function, WTF:Function is not copyable and does not make implicit copies of captured
+        variables. Doing captures such as [string = string.isolatedCopy()] when passing an
+        std::function to another thread has lead to bugs in the past due to implicit copying of
+        the captured string.
+
+        * wtf/Threading.cpp:
+        (WTF::Thread::create):
+        * wtf/Threading.h:
+
+2017-06-09  Chris Dumez  <cdumez@apple.com>
+
         Update WorkQueue::concurrentApply() to take a WTF::Function instead of an std::function
         https://bugs.webkit.org/show_bug.cgi?id=173165
 
