@@ -1,3 +1,10 @@
+2017-06-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix unused parameter warning after r217955.
+
+        * platform/graphics/FontFamilySpecificationNull.h:
+        (WebCore::FontFamilySpecificationNull::fontRanges):
+
 2017-06-08  Yoav Weiss  <yoav@yoav.ws>
 
         [preload] Mandatory `as` value and related spec alignments

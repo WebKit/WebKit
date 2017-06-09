@@ -33,7 +33,7 @@ class FontFamilySpecificationNull {
 public:
     FontFamilySpecificationNull() = delete;
     
-    FontRanges fontRanges(const FontDescription& fontDescription) const
+    FontRanges fontRanges(const FontDescription&) const
     {
         ASSERT_NOT_REACHED();
         return FontRanges();
