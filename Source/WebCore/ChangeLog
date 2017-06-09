@@ -1,3 +1,24 @@
+2017-06-09  Frederic Wang  <fwang@igalia.com>
+
+        Add flag allow-popups-to-escape-sandbox to iframe sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=158875
+
+        Reviewed by Chris Dumez.
+
+        This patch adds support for the iframe@allow-popups-to-escape-sandbox attribute.
+        This allows to pass more W3C Web Platform tests.
+
+        Tests: imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_popups_escaping-1.html
+               imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_popups_escaping-2.html
+
+        * dom/SecurityContext.cpp: Add allow-popups-to-escape-sandbox flag.
+        (WebCore::SecurityContext::isSupportedSandboxPolicy):
+        (WebCore::SecurityContext::parseSandboxPolicy):
+        * dom/SecurityContext.h: Ditto.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::continueLoadAfterNewWindowPolicy): Do not force sandbox flags when we have allow-popups-to-escape-sandbox.
+        (WebCore::createWindow): Ditto.
+
 2017-06-09  Jer Noble  <jer.noble@apple.com>
 
         [iOS] Video occasionally mixes with other system audio instead of interrupting

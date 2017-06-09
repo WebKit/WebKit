@@ -1,3 +1,16 @@
+2017-06-09  Frederic Wang  <fwang@igalia.com>
+
+        Add flag allow-popups-to-escape-sandbox to iframe sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=158875
+
+        Reviewed by Chris Dumez.
+
+        Update expected results for iframe popup escaping tests.
+
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_popups_escaping-1-expected.txt: This test passes.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_popups_escaping-2-expected.txt: This test passes.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_popups_escaping-3-expected.txt: Remove error message from text expectation.
+
 2017-06-09  Zan Dobersek  <zdobersek@igalia.com>
 
         [WPE] Enable ENCRYPTED_MEDIA for build-webkit builds

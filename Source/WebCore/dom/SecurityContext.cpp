@@ -86,7 +86,7 @@ void SecurityContext::enforceSandboxFlags(SandboxFlags mask)
 bool SecurityContext::isSupportedSandboxPolicy(StringView policy)
 {
     static const char* const supportedPolicies[] = {
-        "allow-forms", "allow-same-origin", "allow-scripts", "allow-top-navigation", "allow-pointer-lock", "allow-popups"
+        "allow-forms", "allow-same-origin", "allow-scripts", "allow-top-navigation", "allow-pointer-lock", "allow-popups", "allow-popups-to-escape-sandbox"
     };
 
     for (auto* supportedPolicy : supportedPolicies) {
@@ -130,6 +130,8 @@ SandboxFlags SecurityContext::parseSandboxPolicy(const String& policy, String& i
             flags &= ~SandboxPopups;
         else if (equalLettersIgnoringASCIICase(sandboxToken, "allow-pointer-lock"))
             flags &= ~SandboxPointerLock;
+        else if (equalLettersIgnoringASCIICase(sandboxToken, "allow-popups-to-escape-sandbox"))
+            flags &= ~SandboxPropagatesToAuxiliaryBrowsingContexts;
         else {
             if (numberOfTokenErrors)
                 tokenErrors.appendLiteral(", '");

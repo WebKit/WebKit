@@ -3160,7 +3160,9 @@ void FrameLoader::continueLoadAfterNewWindowPolicy(const ResourceRequest& reques
     if (!mainFrame)
         return;
 
-    mainFrame->loader().forceSandboxFlags(frame->loader().effectiveSandboxFlags());
+    SandboxFlags sandboxFlags = frame->loader().effectiveSandboxFlags();
+    if (sandboxFlags & SandboxPropagatesToAuxiliaryBrowsingContexts)
+        mainFrame->loader().forceSandboxFlags(sandboxFlags);
 
     if (!equalIgnoringASCIICase(frameName, "_blank"))
         mainFrame->tree().setName(frameName);
@@ -3704,7 +3706,8 @@ RefPtr<Frame> createWindow(Frame& openerFrame, Frame& lookupFrame, const FrameLo
 
     RefPtr<Frame> frame = &page->mainFrame();
 
-    frame->loader().forceSandboxFlags(openerFrame.document()->sandboxFlags());
+    if (isDocumentSandboxed(openerFrame, SandboxPropagatesToAuxiliaryBrowsingContexts))
+        frame->loader().forceSandboxFlags(openerFrame.document()->sandboxFlags());
 
     if (!equalIgnoringASCIICase(request.frameName(), "_blank"))
         frame->tree().setName(request.frameName());
