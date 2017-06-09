@@ -1,3 +1,13 @@
+2017-06-09  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] Video occasionally mixes with other system audio instead of interrupting
+        https://bugs.webkit.org/show_bug.cgi?id=173127
+
+        Reviewed by Eric Carlson.
+
+        * platform/mac/media/audio-session-category-video-track-change-expected.txt: Added.
+        * platform/mac/media/audio-session-category-video-track-change.html: Added.
+
 2017-06-09  Chris Dumez  <cdumez@apple.com>
 
         CSS transitions added while page is not visible do not start when the page becomes visible

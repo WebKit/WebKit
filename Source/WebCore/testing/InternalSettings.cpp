@@ -111,6 +111,9 @@ InternalSettings::Backup::Backup(Settings& settings)
     , m_webGPUEnabled(RuntimeEnabledFeatures::sharedFeatures().webGPUEnabled())
 #endif
     , m_shouldMockBoldSystemFontForAccessibility(RenderTheme::singleton().shouldMockBoldSystemFontForAccessibility())
+#if USE(AUDIO_SESSION)
+    , m_shouldManageAudioSessionCategory(Settings::shouldManageAudioSessionCategory())
+#endif
 {
 }
 
@@ -200,6 +203,10 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
 #endif
 #if ENABLE(WEBGPU)
     RuntimeEnabledFeatures::sharedFeatures().setWebGPUEnabled(m_webGPUEnabled);
+#endif
+
+#if USE(AUDIO_SESSION)
+    Settings::setShouldManageAudioSessionCategory(m_shouldManageAudioSessionCategory);
 #endif
 }
 
@@ -802,6 +809,16 @@ ExceptionOr<void> InternalSettings::setDeferredCSSParserEnabled(bool enabled)
         return Exception { INVALID_ACCESS_ERR };
     settings().setDeferredCSSParserEnabled(enabled);
     return { };
+}
+
+ExceptionOr<void> InternalSettings::setShouldManageAudioSessionCategory(bool should)
+{
+#if USE(AUDIO_SESSION)
+    Settings::setShouldManageAudioSessionCategory(should);
+    return { };
+#else
+    return Exception { INVALID_ACCESS_ERR };
+#endif
 }
 
 static InternalSettings::ForcedAccessibilityValue settingsToInternalSettingsValue(Settings::ForcedAccessibilityValue value)

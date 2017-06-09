@@ -56,6 +56,7 @@ public:
     AudioSessionPrivate(bool mutedState)
         : lastMutedState(mutedState) { }
     bool lastMutedState;
+    AudioSession::CategoryType category { AudioSession::None };
 };
 
 AudioSession::AudioSession()
@@ -69,13 +70,12 @@ AudioSession::~AudioSession()
 
 AudioSession::CategoryType AudioSession::category() const
 {
-    notImplemented();
-    return None;
+    return m_private->category;
 }
 
-void AudioSession::setCategory(CategoryType)
+void AudioSession::setCategory(CategoryType category)
 {
-    notImplemented();
+    m_private->category = category;
 }
 
 AudioSession::CategoryType AudioSession::categoryOverride() const

@@ -1,3 +1,39 @@
+2017-06-09  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] Video occasionally mixes with other system audio instead of interrupting
+        https://bugs.webkit.org/show_bug.cgi?id=173127
+
+        Reviewed by Eric Carlson.
+
+        Tests: platform/mac/audio-session-category-video-track-change.html
+
+        When an HTMLMediaElement's tracks change their enabled state, make sure to update
+        the PlatformMediaElement, for canProduceAudio() may have changed. 
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaPlayerCharacteristicChanged):
+        * platform/audio/cocoa/MediaSessionManagerCocoa.cpp:
+        (PlatformMediaSessionManager::updateSessionState):
+
+        The rest of the changes in this revision are to allow the above to be testable.
+
+        * page/Settings.cpp:
+        * page/Settings.h:
+        * platform/audio/AudioSession.h:
+        * platform/audio/mac/AudioSessionMac.cpp:
+        (WebCore::AudioSession::category):
+        (WebCore::AudioSession::setCategory):
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::Backup::Backup):
+        (WebCore::InternalSettings::Backup::restoreTo):
+        (WebCore::InternalSettings::setShouldManageAudioSessionCategory):
+        * testing/InternalSettings.h:
+        * testing/InternalSettings.idl:
+        * testing/Internals.cpp:
+        (WebCore::Internals::audioSessionCategory):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2017-06-09  Chris Dumez  <cdumez@apple.com>
 
         CSS transitions added while page is not visible do not start when the page becomes visible

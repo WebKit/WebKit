@@ -113,8 +113,8 @@ bool Settings::gAllowsAnySSLCertificate = false;
 bool Settings::gNetworkDataUsageTrackingEnabled = false;
 bool Settings::gAVKitEnabled = false;
 bool Settings::gShouldOptOutOfNetworkStateObservation = false;
-bool Settings::gManageAudioSession = false;
 #endif
+bool Settings::gManageAudioSession = false;
 
 // NOTEs
 //  1) EditingMacBehavior comprises Tiger, Leopard, SnowLeopard and iOS builds, as well as QtWebKit when built on Mac;

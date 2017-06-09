@@ -96,6 +96,7 @@ public:
     ExceptionOr<String> systemLayoutDirection();
     ExceptionOr<void> setSystemLayoutDirection(const String&);
     ExceptionOr<void> setShouldMockBoldSystemFontForAccessibility(bool);
+    ExceptionOr<void> setShouldManageAudioSessionCategory(bool);
     
     static void setAllowsAnySSLCertificate(bool);
 
@@ -194,6 +195,9 @@ private:
         bool m_webGPUEnabled;
         
         bool m_shouldMockBoldSystemFontForAccessibility;
+#if USE(AUDIO_SESSION)
+        bool m_shouldManageAudioSessionCategory;
+#endif
     };
 
     Page* m_page;

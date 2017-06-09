@@ -4770,6 +4770,8 @@ void HTMLMediaElement::mediaPlayerCharacteristicChanged(MediaPlayer*)
     m_hasEverHadAudio |= hasAudio();
     m_hasEverHadVideo |= hasVideo();
 
+    m_mediaSession->canProduceAudioChanged();
+
     endProcessingMediaPlayerCallback();
 }
 

@@ -101,5 +101,7 @@ enum ForcedAccessibilityValue { "system", "on", "off" };
     attribute ForcedAccessibilityValue forcedColorsAreInvertedAccessibilityValue;
     attribute ForcedAccessibilityValue forcedDisplayIsMonochromeAccessibilityValue;
     attribute ForcedAccessibilityValue forcedPrefersReducedMotionAccessibilityValue;
+
+    [MayThrowException] void setShouldManageAudioSessionCategory(boolean should);
 };
 

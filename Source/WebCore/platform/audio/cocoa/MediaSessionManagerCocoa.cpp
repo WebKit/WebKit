@@ -57,16 +57,15 @@ void PlatformMediaSessionManager::updateSessionState()
         AudioSession::sharedSession().setPreferredBufferSize(bufferSize);
     }
 
-#if PLATFORM(IOS)
     if (!Settings::shouldManageAudioSessionCategory())
         return;
 
-    bool hasAudioMediaType = false;
+    bool hasWebAudioType = false;
     bool hasAudibleAudioOrVideoMediaType = false;
-    bool hasAudioCapture = anyOfSessions([this, &hasAudioMediaType, &hasAudibleAudioOrVideoMediaType] (PlatformMediaSession& session, size_t) mutable {
+    bool hasAudioCapture = anyOfSessions([this, &hasWebAudioType, &hasAudibleAudioOrVideoMediaType] (PlatformMediaSession& session, size_t) mutable {
         auto type = session.mediaType();
-        if (type == PlatformMediaSession::VideoAudio || type == PlatformMediaSession::Audio || type == PlatformMediaSession::WebAudio)
-            hasAudioMediaType = true;
+        if (type == PlatformMediaSession::WebAudio)
+            hasWebAudioType = true;
         if ((type == PlatformMediaSession::VideoAudio || type == PlatformMediaSession::Audio) && session.canProduceAudio())
             hasAudibleAudioOrVideoMediaType = true;
         return (type == PlatformMediaSession::MediaStreamCapturingAudio);
@@ -76,11 +75,10 @@ void PlatformMediaSessionManager::updateSessionState()
         AudioSession::sharedSession().setCategory(AudioSession::PlayAndRecord);
     else if (hasAudibleAudioOrVideoMediaType)
         AudioSession::sharedSession().setCategory(AudioSession::MediaPlayback);
-    else if (hasAudioMediaType)
+    else if (hasWebAudioType)
         AudioSession::sharedSession().setCategory(AudioSession::AmbientSound);
     else
         AudioSession::sharedSession().setCategory(AudioSession::None);
-#endif
 }
 
 #endif // USE(AUDIO_SESSION)

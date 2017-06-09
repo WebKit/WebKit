@@ -589,6 +589,8 @@ public:
     void removeMediaStreamTrack(MediaStream&, MediaStreamTrack&);
 #endif
 
+    String audioSessionCategory() const;
+
 private:
     explicit Internals(Document&);
     Document* contextDocument() const;

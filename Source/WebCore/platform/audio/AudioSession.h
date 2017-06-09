@@ -54,7 +54,7 @@ public:
         AudioProcessing,
     };
     WEBCORE_EXPORT void setCategory(CategoryType);
-    CategoryType category() const;
+    WEBCORE_EXPORT CategoryType category() const;
 
     void setCategoryOverride(CategoryType);
     CategoryType categoryOverride() const;

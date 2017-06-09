@@ -291,7 +291,9 @@ public:
 
     static void setShouldOptOutOfNetworkStateObservation(bool flag) { gShouldOptOutOfNetworkStateObservation = flag; }
     static bool shouldOptOutOfNetworkStateObservation() { return gShouldOptOutOfNetworkStateObservation; }
+#endif
 
+#if USE(AUDIO_SESSION)
     static void setShouldManageAudioSessionCategory(bool flag) { gManageAudioSession = flag; }
     static bool shouldManageAudioSessionCategory() { return gManageAudioSession; }
 #endif
@@ -409,8 +411,8 @@ private:
     static bool gNetworkDataUsageTrackingEnabled;
     WEBCORE_EXPORT static bool gAVKitEnabled;
     WEBCORE_EXPORT static bool gShouldOptOutOfNetworkStateObservation;
-    WEBCORE_EXPORT static bool gManageAudioSession;
 #endif
+    WEBCORE_EXPORT static bool gManageAudioSession;
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     String m_mediaKeysStorageDirectory;
