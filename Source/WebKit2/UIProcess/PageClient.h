@@ -144,13 +144,6 @@ public:
     virtual void didFailProvisionalLoadForMainFrame() { };
     virtual void didCommitLoadForMainFrame(const String& mimeType, bool useCustomContentProvider) = 0;
 
-#if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
-    virtual void pageDidRequestScroll(const WebCore::IntPoint&) = 0;
-    virtual void didRenderFrame(const WebCore::IntSize& contentsSize, const WebCore::IntRect& coveredRect) = 0;
-    virtual void pageTransitionViewportReady() = 0;
-    virtual void didFindZoomableArea(const WebCore::IntPoint&, const WebCore::IntRect&) = 0;
-#endif
-
     virtual void handleDownloadRequest(DownloadProxy*) = 0;
 
     virtual bool handleRunOpenPanel(WebPageProxy*, WebFrameProxy*, API::OpenPanelParameters*, WebOpenPanelResultListenerProxy*) { return false; }
