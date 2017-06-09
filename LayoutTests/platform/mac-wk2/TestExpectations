@@ -636,8 +636,6 @@ webkit.org/b/169760 imported/w3c/web-platform-tests/IndexedDB/fire-success-event
 
 webkit.org/b/169640 imported/w3c/web-platform-tests/html/webappapis/scripting/events/event-handler-javascript.html [ Failure ]
 
-webkit.org/b/170203 fast/images/animated-image-different-dest-size.html [ Pass ImageOnlyFailure ]
-
 # Media loading via network cache requires Sierra or newer.
 [ ElCapitan ] http/tests/cache/disk-cache/disk-cache-media-small.html [ Failure ]
 

@@ -21,9 +21,16 @@
                     context.drawImage(image, 0, 0, 100, 100, 0, 0, canvas.width, canvas.height);
                     newCanvasIds.push(String.fromCharCode(canvasId.charCodeAt() + 1))
                 }
-                setTimeout(() => {
-                    resolve(newCanvasIds);
-                }, 40);
+
+                if (window.internals) {
+                    image.addEventListener("webkitImageFrameReady", function() {
+                        resolve(newCanvasIds);
+                    }, false);
+                } else {
+                    setTimeout(() => {
+                        resolve(newCanvasIds);
+                    }, 40);
+                }
             });
         }
 
@@ -37,12 +44,13 @@
             return promise;
         }
 
-        function loadImage(src, canvasIds, frameCount) {
+        function loadImage(image, src, canvasIds, frameCount) {
             return new Promise((resolve) => {
-                let image = new Image;
                 image.onload = (() => {
-                    if (window.internals)
+                    if (window.internals) {
                         internals.setImageFrameDecodingDuration(image, 0.030);
+                        internals.settings.setWebkitImageReadyEventEnabled(true);
+                    }
                     drawImage(image, canvasIds, frameCount).then(resolve);
                 });
                 image.src = src;
@@ -55,10 +63,14 @@
 
             if (window.testRunner)
                 testRunner.waitUntilDone();
-                
-            var promise = loadImage("resources/animated-red-green-blue.gif", ['1', 'a'], 3);
+
+            var image = new Image;
+            document.body.appendChild(image);
+
+            var promise = loadImage(image, "resources/animated-red-green-blue.gif", ['1', 'a'], 3);
 
             promise.then(() => {
+                image.remove();
                 if (window.testRunner)
                     testRunner.notifyDone();
             });
