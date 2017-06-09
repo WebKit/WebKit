@@ -1,3 +1,18 @@
+2017-06-09  Chris Dumez  <cdumez@apple.com>
+
+        Avoid some ref counting churn in WebResourceLoadStatisticsStore
+        https://bugs.webkit.org/show_bug.cgi?id=173168
+
+        Reviewed by Brent Fulgham.
+
+        Move the protectedThis around instead of ref'ing it every time we capture it
+        in a lambda. Also add a missing protectedThis in WebResourceLoadStatisticsStore::removeDataRecords()
+        which likely fixes crashes.
+
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::removeDataRecords):
+        (WebKit::WebResourceLoadStatisticsStore::grandfatherExistingWebsiteData):
+
 2017-06-09  Sam Weinig  <sam@webkit.org>
 
         Add SubresourceIntegrity as an experimental feature
