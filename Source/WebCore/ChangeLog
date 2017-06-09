@@ -1,3 +1,98 @@
+2017-06-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Expand system-ui to include every item in the Core Text cascade list
+        https://bugs.webkit.org/show_bug.cgi?id=173043
+        <rdar://problem/21125708>
+
+        Reviewed by Simon Fraser.
+
+        The concept of the system font on Cocoa platforms represents the entire Core Text cascade list.
+        However, previously, WebKit only represented system-ui by pulling out the first item in the Core
+        Text cascade list. Instead, we should make all text rendered with "system-ui" match what the
+        platform would natively render.
+
+        Previously, we walked through the strings in the font-family property and looked them up one by
+        one. However, now we want to abstract this idea of a font family to possibly hold a
+        CTFontDescriptorRef instead of a string. This way, we expand a font-family list of ["fontA",
+        "system-ui", "fontB"] to ["fontA", ... a bunch of CTFontDescriptorRefs ..., "FontB"]. We can
+        then modify the consumer of this object to have two codepaths: the old string-based codepath,
+        and a new, platform-specific codepath which simply embeds the CTFontDesriptorRefs inside a Font
+        object.
+
+        We don't want to simply pull out the family name from each item in the Core Text fallback list
+        because that is a lossy translation. There is more information in these font descriptors which
+        cannot be represented by CSS. Therefore, we must keep the descriptors alive and add the new
+        codepath for them.
+
+        We also don't want to run the CSS font matching algorithm on each member of the Core Text
+        fallback list because it may yield different results from Core Text's font matching algorithm.
+        Our goal is to draw text as closely as possible to the system APIs. If we ran it, we may find
+        a font which is closer to the requested traits, but it would look out of place on the system.
+
+        Tests: fast/text/system-font-fallback-emoji.html
+               fast/text/system-font-fallback.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/MemoryRelease.cpp:
+        (WebCore::releaseNoncriticalMemory):
+        * platform/graphics/FontCascadeFonts.cpp:
+        (WebCore::realizeNextFallback): The consumer of our new data type. Now uses WTF::visit().
+        (WebCore::FontCascadeFonts::realizeFallbackRangesAt): Now that the number of items to test
+        against the current character is larger than the number of strings in the font-family list,
+        we need to update the existing code to use the correct value.
+        * platform/graphics/FontDescription.cpp: Default implementation for non-Cocoa ports.
+        (WebCore::FontDescription::invalidateCaches):
+        (WebCore::FontCascadeDescription::effectiveFamilyCount):
+        (WebCore::FontCascadeDescription::effectiveFamilyAt):
+        * platform/graphics/FontDescription.h: Our new data type is a Variant of AtomicString and a
+        platform-specific class. Cocoa uses a class that holds a CTFontDescriptorRef and other ports
+        use an empty non-constructable class.
+        * platform/graphics/FontFamilySpecificationNull.h: Added. The empty non-constructable
+        class.
+        (WebCore::FontFamilySpecificationNull::fontRanges):
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::FontCache::platformInit): Changing the system language will change the system font
+        fallback list, so we need to listen to this notification. This also matters for
+        FontCache::systemFallbackForCharacters(), so we should build off the same callback we are
+        already using for font installation.
+        (WebCore::invalidateFontCache):
+        * platform/graphics/cocoa/FontDescriptionCocoa.cpp: Added. The platform-specific creation of
+        our CTFontDescriptorRefs. We hold them cached in a SystemFontDatabase.
+        (WebCore::SystemFontDatabase::CoreTextCascadeListParameters::CoreTextCascadeListParameters):
+        (WebCore::SystemFontDatabase::CoreTextCascadeListParameters::isHashTableDeletedValue):
+        (WebCore::SystemFontDatabase::CoreTextCascadeListParameters::operator==):
+        (WebCore::SystemFontDatabase::CoreTextCascadeListParameters::hash):
+        (WebCore::SystemFontDatabase::singleton):
+        (WebCore::SystemFontDatabase::systemFontCascadeList):
+        (WebCore::SystemFontDatabase::clear):
+        (WebCore::SystemFontDatabase::SystemFontDatabase):
+        (WebCore::SystemFontDatabase::applyWeightAndItalics):
+        (WebCore::SystemFontDatabase::computeCascadeList):
+        (WebCore::SystemFontDatabase::CoreTextCascadeListParametersHash::hash):
+        (WebCore::SystemFontDatabase::CoreTextCascadeListParametersHash::equal):
+        (WebCore::isSystemFontString):
+        (WebCore::systemFontParameters):
+        (WebCore::FontDescription::invalidateCaches):
+        (WebCore::FontCascadeDescription::effectiveFamilyCount): We don't store the result of this
+        because it would probably be a bad idea to increase the size of every single FontCascade just
+        in case it might ask for the system font. Most fonts never mention system-ui. Because it's so
+        rare, we can just recalculate the result of this as necessary. This shouldn't be slow because
+        the results are cached.
+        (WebCore::FontCascadeDescription::effectiveFamilyAt):
+        * platform/graphics/cocoa/FontFamilySpecificationCoreText.cpp: Added.
+        (WebCore::FontFamilySpecificationCoreText::fontRanges): Create a FontRanges from a
+        CTFontDescriptorRef.
+        * platform/graphics/cocoa/FontFamilySpecificationCoreText.h: Added.
+        (WebCore::FontFamilySpecificationCoreText::FontFamilySpecificationCoreText):
+        * platform/graphics/ios/FontCacheIOS.mm: Delete the old handling for system-ui.
+        (WebCore::platformFontWithFamilySpecialCase):
+        (WebCore::baseSystemFontDescriptor): Deleted.
+        (WebCore::systemFontModificationAttributes): Deleted.
+        (WebCore::systemFontDescriptor): Deleted.
+        * platform/graphics/mac/FontCacheMac.mm: Ditto.
+        (WebCore::platformFontWithFamilySpecialCase):
+        (WebCore::toNSFontWeight): Deleted.
+
 2017-06-08  Chris Dumez  <cdumez@apple.com>
 
         Update Timer to take a WTF::Function instead of a std::function

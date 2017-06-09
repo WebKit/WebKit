@@ -1,3 +1,49 @@
+2017-06-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Expand system-ui to include every item in the Core Text cascade list
+        https://bugs.webkit.org/show_bug.cgi?id=173043
+        <rdar://problem/21125708>
+
+        Reviewed by Simon Fraser.
+
+        Rebaseline tests which use non-English text in form controls
+
+        * fast/text/system-font-fallback-emoji-expected.txt: Added.
+        * fast/text/system-font-fallback-emoji.html: Added.
+        * fast/text/system-font-fallback-expected.html: Added.
+        * fast/text/system-font-fallback.html: Added.
+        * platform/mac-elcapitan/fast/forms/listbox-bidi-align-expected.png: Added.
+        * platform/mac-elcapitan/fast/forms/listbox-bidi-align-expected.txt:
+        * platform/mac-elcapitan/fast/forms/search-rtl-expected.png: Added.
+        * platform/mac-elcapitan/fast/forms/search-rtl-expected.txt:
+        * platform/mac-elcapitan/fast/forms/searchfield-heights-expected.png: Added.
+        * platform/mac-elcapitan/fast/forms/searchfield-heights-expected.txt:
+        * platform/mac-elcapitan/fast/forms/visual-hebrew-text-field-expected.txt:
+        * platform/mac-elcapitan/fast/text/drawBidiText-expected.png: Added.
+        * platform/mac-elcapitan/fast/text/drawBidiText-expected.txt:
+        * platform/mac-elcapitan/fast/text/international/pop-up-button-text-alignment-and-direction-expected.png: Added.
+        * platform/mac-elcapitan/fast/text/international/pop-up-button-text-alignment-and-direction-expected.txt:
+        * platform/mac/TestExpectations:
+        * platform/mac/fast/css/rtl-ordering-expected.png:
+        * platform/mac/fast/css/rtl-ordering-expected.txt:
+        * platform/mac/fast/forms/listbox-bidi-align-expected.png:
+        * platform/mac/fast/forms/listbox-bidi-align-expected.txt:
+        * platform/mac/fast/forms/listbox-hit-test-zoomed-expected.png:
+        * platform/mac/fast/forms/listbox-hit-test-zoomed-expected.txt:
+        * platform/mac/fast/forms/search-rtl-expected.png:
+        * platform/mac/fast/forms/search-rtl-expected.txt:
+        * platform/mac/fast/forms/searchfield-heights-expected.txt:
+        * platform/mac/fast/forms/select-visual-hebrew-expected.png:
+        * platform/mac/fast/forms/select-visual-hebrew-expected.txt:
+        * platform/mac/fast/forms/visual-hebrew-text-field-expected.png:
+        * platform/mac/fast/forms/visual-hebrew-text-field-expected.txt:
+        * platform/mac/fast/text/drawBidiText-expected.png:
+        * platform/mac/fast/text/drawBidiText-expected.txt:
+        * platform/mac/fast/text/international/pop-up-button-text-alignment-and-direction-expected.png:
+        * platform/mac/fast/text/international/pop-up-button-text-alignment-and-direction-expected.txt:
+        * platform/mac/fast/text/updateNewFont-expected.png:
+        * platform/mac/fast/text/updateNewFont-expected.txt:
+
 2017-06-08  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION: fast/images/animated-gif-webkit-transform.html is flaky
