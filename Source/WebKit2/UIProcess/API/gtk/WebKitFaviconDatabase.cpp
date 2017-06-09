@@ -21,7 +21,6 @@
 #include "WebKitFaviconDatabase.h"
 
 #include "WebKitFaviconDatabasePrivate.h"
-#include "WebKitMarshal.h"
 #include "WebKitPrivate.h"
 #include <WebCore/FileSystem.h>
 #include <WebCore/Image.h>
@@ -104,16 +103,15 @@ static void webkit_favicon_database_class_init(WebKitFaviconDatabaseClass* favic
      * #WebKitWebView it's easier to use the #WebKitWebView:favicon
      * property. See webkit_web_view_get_favicon() for more details.
      */
-    signals[FAVICON_CHANGED] =
-        g_signal_new(
-            "favicon-changed",
-            G_TYPE_FROM_CLASS(faviconDatabaseClass),
-            G_SIGNAL_RUN_LAST,
-            0, 0, 0,
-            webkit_marshal_VOID__STRING_STRING,
-            G_TYPE_NONE, 2,
-            G_TYPE_STRING,
-            G_TYPE_STRING);
+    signals[FAVICON_CHANGED] = g_signal_new(
+        "favicon-changed",
+        G_TYPE_FROM_CLASS(faviconDatabaseClass),
+        G_SIGNAL_RUN_LAST,
+        0, nullptr, nullptr,
+        g_cclosure_marshal_generic,
+        G_TYPE_NONE, 2,
+        G_TYPE_STRING,
+        G_TYPE_STRING);
 }
 
 struct GetFaviconSurfaceAsyncData {

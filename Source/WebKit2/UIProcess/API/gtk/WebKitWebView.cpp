@@ -45,7 +45,6 @@
 #include "WebKitInstallMissingMediaPluginsPermissionRequestPrivate.h"
 #include "WebKitJavascriptResultPrivate.h"
 #include "WebKitLoaderClient.h"
-#include "WebKitMarshal.h"
 #include "WebKitNotificationPrivate.h"
 #include "WebKitPolicyClient.h"
 #include "WebKitPrintOperationPrivate.h"
@@ -1346,15 +1345,15 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * Returns: %TRUE to stop other handlers from being invoked for the event.
      *    %FALSE to propagate the event further.
      */
-    signals[SCRIPT_DIALOG] =
-        g_signal_new("script-dialog",
-                     G_TYPE_FROM_CLASS(webViewClass),
-                     G_SIGNAL_RUN_LAST,
-                     G_STRUCT_OFFSET(WebKitWebViewClass, script_dialog),
-                     g_signal_accumulator_true_handled, 0,
-                     webkit_marshal_BOOLEAN__BOXED,
-                     G_TYPE_BOOLEAN, 1,
-                     WEBKIT_TYPE_SCRIPT_DIALOG | G_SIGNAL_TYPE_STATIC_SCOPE);
+    signals[SCRIPT_DIALOG] = g_signal_new(
+        "script-dialog",
+        G_TYPE_FROM_CLASS(webViewClass),
+        G_SIGNAL_RUN_LAST,
+        G_STRUCT_OFFSET(WebKitWebViewClass, script_dialog),
+        g_signal_accumulator_true_handled, nullptr,
+        g_cclosure_marshal_generic,
+        G_TYPE_BOOLEAN, 1,
+        WEBKIT_TYPE_SCRIPT_DIALOG | G_SIGNAL_TYPE_STATIC_SCOPE);
 
     /**
      * WebKitWebView::decide-policy:
@@ -1406,16 +1405,16 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      *   %FALSE to propagate the event further.
      *
      */
-    signals[DECIDE_POLICY] =
-        g_signal_new("decide-policy",
-                     G_TYPE_FROM_CLASS(webViewClass),
-                     G_SIGNAL_RUN_LAST,
-                     G_STRUCT_OFFSET(WebKitWebViewClass, decide_policy),
-                     g_signal_accumulator_true_handled, 0 /* accumulator data */,
-                     webkit_marshal_BOOLEAN__OBJECT_ENUM,
-                     G_TYPE_BOOLEAN, 2, /* number of parameters */
-                     WEBKIT_TYPE_POLICY_DECISION,
-                     WEBKIT_TYPE_POLICY_DECISION_TYPE);
+    signals[DECIDE_POLICY] = g_signal_new(
+        "decide-policy",
+        G_TYPE_FROM_CLASS(webViewClass),
+        G_SIGNAL_RUN_LAST,
+        G_STRUCT_OFFSET(WebKitWebViewClass, decide_policy),
+        g_signal_accumulator_true_handled, nullptr /* accumulator data */,
+        g_cclosure_marshal_generic,
+        G_TYPE_BOOLEAN, 2, /* number of parameters */
+        WEBKIT_TYPE_POLICY_DECISION,
+        WEBKIT_TYPE_POLICY_DECISION_TYPE);
 
     /**
      * WebKitWebView::permission-request:
@@ -1473,15 +1472,15 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      *   %FALSE to propagate the event further.
      *
      */
-    signals[PERMISSION_REQUEST] =
-        g_signal_new("permission-request",
-                     G_TYPE_FROM_CLASS(webViewClass),
-                     G_SIGNAL_RUN_LAST,
-                     G_STRUCT_OFFSET(WebKitWebViewClass, permission_request),
-                     g_signal_accumulator_true_handled, 0 /* accumulator data */,
-                     webkit_marshal_BOOLEAN__OBJECT,
-                     G_TYPE_BOOLEAN, 1, /* number of parameters */
-                     WEBKIT_TYPE_PERMISSION_REQUEST);
+    signals[PERMISSION_REQUEST] = g_signal_new(
+        "permission-request",
+        G_TYPE_FROM_CLASS(webViewClass),
+        G_SIGNAL_RUN_LAST,
+        G_STRUCT_OFFSET(WebKitWebViewClass, permission_request),
+        g_signal_accumulator_true_handled, nullptr /* accumulator data */,
+        g_cclosure_marshal_generic,
+        G_TYPE_BOOLEAN, 1, /* number of parameters */
+        WEBKIT_TYPE_PERMISSION_REQUEST);
     /**
      * WebKitWebView::mouse-target-changed:
      * @web_view: the #WebKitWebView on which the signal is emitted
@@ -1497,16 +1496,17 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * The signal is emitted again when the mouse is moved out of the
      * current element with a new @hit_test_result.
      */
-     signals[MOUSE_TARGET_CHANGED] =
-         g_signal_new("mouse-target-changed",
-                      G_TYPE_FROM_CLASS(webViewClass),
-                      G_SIGNAL_RUN_LAST,
-                      G_STRUCT_OFFSET(WebKitWebViewClass, mouse_target_changed),
-                      0, 0,
-                      webkit_marshal_VOID__OBJECT_UINT,
-                      G_TYPE_NONE, 2,
-                      WEBKIT_TYPE_HIT_TEST_RESULT,
-                      G_TYPE_UINT);
+    signals[MOUSE_TARGET_CHANGED] = g_signal_new(
+        "mouse-target-changed",
+        G_TYPE_FROM_CLASS(webViewClass),
+        G_SIGNAL_RUN_LAST,
+        G_STRUCT_OFFSET(WebKitWebViewClass, mouse_target_changed),
+        nullptr, nullptr,
+        g_cclosure_marshal_generic,
+        G_TYPE_NONE, 2,
+        WEBKIT_TYPE_HIT_TEST_RESULT,
+        G_TYPE_UINT);
+
     /**
      * WebKitWebView::print:
      * @web_view: the #WebKitWebView on which the signal is emitted
@@ -1525,15 +1525,15 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * Returns: %TRUE to stop other handlers from being invoked for the event.
      *    %FALSE to propagate the event further.
      */
-    signals[PRINT] =
-        g_signal_new("print",
-                     G_TYPE_FROM_CLASS(webViewClass),
-                     G_SIGNAL_RUN_LAST,
-                     G_STRUCT_OFFSET(WebKitWebViewClass, print),
-                     g_signal_accumulator_true_handled, 0,
-                     webkit_marshal_BOOLEAN__OBJECT,
-                     G_TYPE_BOOLEAN, 1,
-                     WEBKIT_TYPE_PRINT_OPERATION);
+    signals[PRINT] = g_signal_new(
+        "print",
+        G_TYPE_FROM_CLASS(webViewClass),
+        G_SIGNAL_RUN_LAST,
+        G_STRUCT_OFFSET(WebKitWebViewClass, print),
+        g_signal_accumulator_true_handled, nullptr,
+        g_cclosure_marshal_generic,
+        G_TYPE_BOOLEAN, 1,
+        WEBKIT_TYPE_PRINT_OPERATION);
 
     /**
      * WebKitWebView::resource-load-started:
@@ -1546,15 +1546,15 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * You can monitor the load operation by connecting to the different signals
      * of @resource.
      */
-    signals[RESOURCE_LOAD_STARTED] =
-        g_signal_new("resource-load-started",
-                     G_TYPE_FROM_CLASS(webViewClass),
-                     G_SIGNAL_RUN_LAST,
-                     G_STRUCT_OFFSET(WebKitWebViewClass, resource_load_started),
-                     0, 0,
-                     webkit_marshal_VOID__OBJECT_OBJECT,
-                     G_TYPE_NONE, 2,
-                     WEBKIT_TYPE_WEB_RESOURCE,
+    signals[RESOURCE_LOAD_STARTED] = g_signal_new(
+        "resource-load-started",
+        G_TYPE_FROM_CLASS(webViewClass),
+        G_SIGNAL_RUN_LAST,
+        G_STRUCT_OFFSET(WebKitWebViewClass, resource_load_started),
+        nullptr, nullptr,
+        g_cclosure_marshal_generic,
+        G_TYPE_NONE, 2,
+        WEBKIT_TYPE_WEB_RESOURCE,
                      WEBKIT_TYPE_URI_REQUEST);
 
     /**
@@ -1573,14 +1573,14 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * Returns: %TRUE to stop other handlers from being invoked for the event.
      *    %FALSE to continue emission of the event.
      */
-    signals[ENTER_FULLSCREEN] =
-        g_signal_new("enter-fullscreen",
-                     G_TYPE_FROM_CLASS(webViewClass),
-                     G_SIGNAL_RUN_LAST,
-                     G_STRUCT_OFFSET(WebKitWebViewClass, enter_fullscreen),
-                     g_signal_accumulator_true_handled, 0,
-                     webkit_marshal_BOOLEAN__VOID,
-                     G_TYPE_BOOLEAN, 0);
+    signals[ENTER_FULLSCREEN] = g_signal_new(
+        "enter-fullscreen",
+        G_TYPE_FROM_CLASS(webViewClass),
+        G_SIGNAL_RUN_LAST,
+        G_STRUCT_OFFSET(WebKitWebViewClass, enter_fullscreen),
+        g_signal_accumulator_true_handled, nullptr,
+        g_cclosure_marshal_generic,
+        G_TYPE_BOOLEAN, 0);
 
     /**
      * WebKitWebView::leave-fullscreen:
@@ -1594,14 +1594,15 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * Returns: %TRUE to stop other handlers from being invoked for the event.
      *    %FALSE to continue emission of the event.
      */
-    signals[LEAVE_FULLSCREEN] =
-        g_signal_new("leave-fullscreen",
-                     G_TYPE_FROM_CLASS(webViewClass),
-                     G_SIGNAL_RUN_LAST,
-                     G_STRUCT_OFFSET(WebKitWebViewClass, leave_fullscreen),
-                     g_signal_accumulator_true_handled, 0,
-                     webkit_marshal_BOOLEAN__VOID,
-                     G_TYPE_BOOLEAN, 0);
+    signals[LEAVE_FULLSCREEN] = g_signal_new(
+        "leave-fullscreen",
+        G_TYPE_FROM_CLASS(webViewClass),
+        G_SIGNAL_RUN_LAST,
+        G_STRUCT_OFFSET(WebKitWebViewClass, leave_fullscreen),
+        g_signal_accumulator_true_handled, nullptr,
+        g_cclosure_marshal_generic,
+        G_TYPE_BOOLEAN, 0);
+
      /**
      * WebKitWebView::run-file-chooser:
      * @web_view: the #WebKitWebView on which the signal is emitted
@@ -1623,15 +1624,15 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      *   %FALSE to propagate the event further.
      *
      */
-    signals[RUN_FILE_CHOOSER] =
-        g_signal_new("run-file-chooser",
-                     G_TYPE_FROM_CLASS(webViewClass),
-                     G_SIGNAL_RUN_LAST,
-                     G_STRUCT_OFFSET(WebKitWebViewClass, run_file_chooser),
-                     g_signal_accumulator_true_handled, 0 /* accumulator data */,
-                     webkit_marshal_BOOLEAN__OBJECT,
-                     G_TYPE_BOOLEAN, 1, /* number of parameters */
-                     WEBKIT_TYPE_FILE_CHOOSER_REQUEST);
+    signals[RUN_FILE_CHOOSER] = g_signal_new(
+        "run-file-chooser",
+        G_TYPE_FROM_CLASS(webViewClass),
+        G_SIGNAL_RUN_LAST,
+        G_STRUCT_OFFSET(WebKitWebViewClass, run_file_chooser),
+        g_signal_accumulator_true_handled, nullptr /* accumulator data */,
+        g_cclosure_marshal_generic,
+        G_TYPE_BOOLEAN, 1, /* number of parameters */
+        WEBKIT_TYPE_FILE_CHOOSER_REQUEST);
 
     /**
      * WebKitWebView::context-menu:
@@ -1693,17 +1694,17 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * Returns: %TRUE to stop other handlers from being invoked for the event.
      *    %FALSE to propagate the event further.
      */
-    signals[CONTEXT_MENU] =
-        g_signal_new("context-menu",
-                     G_TYPE_FROM_CLASS(webViewClass),
-                     G_SIGNAL_RUN_LAST,
-                     G_STRUCT_OFFSET(WebKitWebViewClass, context_menu),
-                     g_signal_accumulator_true_handled, 0,
-                     webkit_marshal_BOOLEAN__OBJECT_BOXED_OBJECT,
-                     G_TYPE_BOOLEAN, 3,
-                     WEBKIT_TYPE_CONTEXT_MENU,
-                     GDK_TYPE_EVENT | G_SIGNAL_TYPE_STATIC_SCOPE,
-                     WEBKIT_TYPE_HIT_TEST_RESULT);
+    signals[CONTEXT_MENU] = g_signal_new(
+        "context-menu",
+        G_TYPE_FROM_CLASS(webViewClass),
+        G_SIGNAL_RUN_LAST,
+        G_STRUCT_OFFSET(WebKitWebViewClass, context_menu),
+        g_signal_accumulator_true_handled, nullptr,
+        g_cclosure_marshal_generic,
+        G_TYPE_BOOLEAN, 3,
+        WEBKIT_TYPE_CONTEXT_MENU,
+        GDK_TYPE_EVENT | G_SIGNAL_TYPE_STATIC_SCOPE,
+        WEBKIT_TYPE_HIT_TEST_RESULT);
 
     /**
      * WebKitWebView::context-menu-dismissed:
@@ -1786,9 +1787,8 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
         G_TYPE_FROM_CLASS(webViewClass),
         G_SIGNAL_RUN_LAST,
         G_STRUCT_OFFSET(WebKitWebViewClass, web_process_crashed),
-        g_signal_accumulator_true_handled,
-        0,
-        webkit_marshal_BOOLEAN__VOID,
+        g_signal_accumulator_true_handled, nullptr,
+        g_cclosure_marshal_generic,
         G_TYPE_BOOLEAN, 0);
 
     /**
@@ -1814,15 +1814,15 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      *
      * Since: 2.2
      */
-    signals[AUTHENTICATE] =
-        g_signal_new("authenticate",
-            G_TYPE_FROM_CLASS(webViewClass),
-            G_SIGNAL_RUN_LAST,
-            G_STRUCT_OFFSET(WebKitWebViewClass, authenticate),
-            g_signal_accumulator_true_handled, 0 /* accumulator data */,
-            webkit_marshal_BOOLEAN__OBJECT,
-            G_TYPE_BOOLEAN, 1, /* number of parameters */
-            WEBKIT_TYPE_AUTHENTICATION_REQUEST);
+    signals[AUTHENTICATE] = g_signal_new(
+        "authenticate",
+        G_TYPE_FROM_CLASS(webViewClass),
+        G_SIGNAL_RUN_LAST,
+        G_STRUCT_OFFSET(WebKitWebViewClass, authenticate),
+        g_signal_accumulator_true_handled, nullptr /* accumulator data */,
+        g_cclosure_marshal_generic,
+        G_TYPE_BOOLEAN, 1, /* number of parameters */
+        WEBKIT_TYPE_AUTHENTICATION_REQUEST);
 
     /**
      * WebKitWebView::show-notification:
@@ -1840,15 +1840,15 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      *
      * Since: 2.8
      */
-    signals[SHOW_NOTIFICATION] =
-        g_signal_new("show-notification",
-            G_TYPE_FROM_CLASS(gObjectClass),
-            G_SIGNAL_RUN_LAST,
-            G_STRUCT_OFFSET(WebKitWebViewClass, show_notification),
-            g_signal_accumulator_true_handled, nullptr /* accumulator data */,
-            webkit_marshal_BOOLEAN__OBJECT,
-            G_TYPE_BOOLEAN, 1,
-            WEBKIT_TYPE_NOTIFICATION);
+    signals[SHOW_NOTIFICATION] = g_signal_new(
+        "show-notification",
+        G_TYPE_FROM_CLASS(gObjectClass),
+        G_SIGNAL_RUN_LAST,
+        G_STRUCT_OFFSET(WebKitWebViewClass, show_notification),
+        g_signal_accumulator_true_handled, nullptr /* accumulator data */,
+        g_cclosure_marshal_generic,
+        G_TYPE_BOOLEAN, 1,
+        WEBKIT_TYPE_NOTIFICATION);
 
      /**
       * WebKitWebView::run-color-chooser:
@@ -1874,15 +1874,15 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
       *
       * Since: 2.8
       */
-    signals[RUN_COLOR_CHOOSER] =
-        g_signal_new("run-color-chooser",
-            G_TYPE_FROM_CLASS(webViewClass),
-            G_SIGNAL_RUN_LAST,
-            G_STRUCT_OFFSET(WebKitWebViewClass, run_color_chooser),
-            g_signal_accumulator_true_handled, nullptr,
-            webkit_marshal_BOOLEAN__OBJECT,
-            G_TYPE_BOOLEAN, 1,
-            WEBKIT_TYPE_COLOR_CHOOSER_REQUEST);
+    signals[RUN_COLOR_CHOOSER] = g_signal_new(
+        "run-color-chooser",
+        G_TYPE_FROM_CLASS(webViewClass),
+        G_SIGNAL_RUN_LAST,
+        G_STRUCT_OFFSET(WebKitWebViewClass, run_color_chooser),
+        g_signal_accumulator_true_handled, nullptr,
+        g_cclosure_marshal_generic,
+        G_TYPE_BOOLEAN, 1,
+        WEBKIT_TYPE_COLOR_CHOOSER_REQUEST);
 }
 
 static void webkitWebViewCancelAuthenticationRequest(WebKitWebView* webView)

@@ -21,7 +21,6 @@
 #include "WebKitWebInspector.h"
 
 #include "WebInspectorProxy.h"
-#include "WebKitMarshal.h"
 #include "WebKitWebInspectorPrivate.h"
 #include <glib/gi18n-lib.h>
 #include <wtf/glib/GRefPtr.h>
@@ -176,14 +175,14 @@ static void webkit_web_inspector_class_init(WebKitWebInspectorClass* findClass)
      * Returns: %TRUE to stop other handlers from being invoked for the event.
      *    %FALSE to propagate the event further.
      */
-    signals[OPEN_WINDOW] =
-        g_signal_new("open-window",
-                     G_TYPE_FROM_CLASS(gObjectClass),
-                     G_SIGNAL_RUN_LAST,
-                     0,
-                     g_signal_accumulator_true_handled, 0,
-                     webkit_marshal_BOOLEAN__VOID,
-                     G_TYPE_BOOLEAN, 0);
+    signals[OPEN_WINDOW] = g_signal_new(
+        "open-window",
+        G_TYPE_FROM_CLASS(gObjectClass),
+        G_SIGNAL_RUN_LAST,
+        0,
+        g_signal_accumulator_true_handled, nullptr,
+        g_cclosure_marshal_generic,
+        G_TYPE_BOOLEAN, 0);
 
     /**
      * WebKitWebInspector::bring-to-front:
@@ -204,14 +203,14 @@ static void webkit_web_inspector_class_init(WebKitWebInspectorClass* findClass)
      * Returns: %TRUE to stop other handlers from being invoked for the event.
      *    %FALSE to propagate the event further.
      */
-    signals[BRING_TO_FRONT] =
-        g_signal_new("bring-to-front",
-                     G_TYPE_FROM_CLASS(gObjectClass),
-                     G_SIGNAL_RUN_LAST,
-                     0,
-                     g_signal_accumulator_true_handled, 0,
-                     webkit_marshal_BOOLEAN__VOID,
-                     G_TYPE_BOOLEAN, 0);
+    signals[BRING_TO_FRONT] = g_signal_new(
+        "bring-to-front",
+        G_TYPE_FROM_CLASS(gObjectClass),
+        G_SIGNAL_RUN_LAST,
+        0,
+        g_signal_accumulator_true_handled, nullptr,
+        g_cclosure_marshal_generic,
+        G_TYPE_BOOLEAN, 0);
 
     /**
      * WebKitWebInspector::closed:
@@ -246,14 +245,14 @@ static void webkit_web_inspector_class_init(WebKitWebInspectorClass* findClass)
      * Returns: %TRUE to stop other handlers from being invoked for the event.
      *    %FALSE to propagate the event further.
      */
-    signals[ATTACH] =
-        g_signal_new("attach",
-                     G_TYPE_FROM_CLASS(gObjectClass),
-                     G_SIGNAL_RUN_LAST,
-                     0,
-                     g_signal_accumulator_true_handled, 0,
-                     webkit_marshal_BOOLEAN__VOID,
-                     G_TYPE_BOOLEAN, 0);
+    signals[ATTACH] = g_signal_new(
+        "attach",
+        G_TYPE_FROM_CLASS(gObjectClass),
+        G_SIGNAL_RUN_LAST,
+        0,
+        g_signal_accumulator_true_handled, nullptr,
+        g_cclosure_marshal_generic,
+        G_TYPE_BOOLEAN, 0);
 
     /**
      * WebKitWebInspector::detach:
@@ -272,14 +271,14 @@ static void webkit_web_inspector_class_init(WebKitWebInspectorClass* findClass)
      * Returns: %TRUE to stop other handlers from being invoked for the event.
      *    %FALSE to propagate the event further.
      */
-    signals[DETACH] =
-        g_signal_new("detach",
-                     G_TYPE_FROM_CLASS(gObjectClass),
-                     G_SIGNAL_RUN_LAST,
-                     0,
-                     g_signal_accumulator_true_handled, 0,
-                     webkit_marshal_BOOLEAN__VOID,
-                     G_TYPE_BOOLEAN, 0);
+    signals[DETACH] = g_signal_new(
+        "detach",
+        G_TYPE_FROM_CLASS(gObjectClass),
+        G_SIGNAL_RUN_LAST,
+        0,
+        g_signal_accumulator_true_handled, nullptr,
+        g_cclosure_marshal_generic,
+        G_TYPE_BOOLEAN, 0);
 }
 
 static bool openWindow(WKInspectorRef, const void* clientInfo)

@@ -33,7 +33,6 @@
 #include "WebKitDOMDocumentPrivate.h"
 #include "WebKitDOMElementPrivate.h"
 #include "WebKitFramePrivate.h"
-#include "WebKitMarshal.h"
 #include "WebKitPrivate.h"
 #include "WebKitScriptWorldPrivate.h"
 #include "WebKitURIRequestPrivate.h"
@@ -441,8 +440,8 @@ static void webkit_web_page_class_init(WebKitWebPageClass* klass)
         G_TYPE_FROM_CLASS(klass),
         G_SIGNAL_RUN_LAST,
         0,
-        g_signal_accumulator_true_handled, 0,
-        webkit_marshal_BOOLEAN__OBJECT_OBJECT,
+        g_signal_accumulator_true_handled, nullptr,
+        g_cclosure_marshal_generic,
         G_TYPE_BOOLEAN, 2,
         WEBKIT_TYPE_URI_REQUEST,
         WEBKIT_TYPE_URI_RESPONSE);
@@ -471,8 +470,8 @@ static void webkit_web_page_class_init(WebKitWebPageClass* klass)
         G_TYPE_FROM_CLASS(klass),
         G_SIGNAL_RUN_LAST,
         0,
-        g_signal_accumulator_true_handled, 0,
-        webkit_marshal_BOOLEAN__OBJECT_OBJECT,
+        g_signal_accumulator_true_handled, nullptr,
+        g_cclosure_marshal_generic,
         G_TYPE_BOOLEAN, 2,
         WEBKIT_TYPE_CONTEXT_MENU,
         WEBKIT_TYPE_WEB_HIT_TEST_RESULT);

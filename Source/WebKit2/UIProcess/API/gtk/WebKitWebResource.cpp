@@ -22,7 +22,6 @@
 
 #include "APIData.h"
 #include "WebFrameProxy.h"
-#include "WebKitMarshal.h"
 #include "WebKitURIRequest.h"
 #include "WebKitWebResourcePrivate.h"
 #include <glib/gi18n-lib.h>
@@ -138,15 +137,15 @@ static void webkit_web_resource_class_init(WebKitWebResourceClass* resourceClass
      * @redirected_response parameter containing the response
      * received by the server for the initial request.
      */
-    signals[SENT_REQUEST] =
-        g_signal_new("sent-request",
-                     G_TYPE_FROM_CLASS(objectClass),
-                     G_SIGNAL_RUN_LAST,
-                     0, 0, 0,
-                     webkit_marshal_VOID__OBJECT_OBJECT,
-                     G_TYPE_NONE, 2,
-                     WEBKIT_TYPE_URI_REQUEST,
-                     WEBKIT_TYPE_URI_RESPONSE);
+    signals[SENT_REQUEST] = g_signal_new(
+        "sent-request",
+        G_TYPE_FROM_CLASS(objectClass),
+        G_SIGNAL_RUN_LAST,
+        0, nullptr, nullptr,
+        g_cclosure_marshal_generic,
+        G_TYPE_NONE, 2,
+        WEBKIT_TYPE_URI_REQUEST,
+        WEBKIT_TYPE_URI_RESPONSE);
 
     /**
      * WebKitWebResource::received-data:
@@ -157,14 +156,14 @@ static void webkit_web_resource_class_init(WebKitWebResourceClass* resourceClass
      * every time new data has been received. It's
      * useful to know the progress of the resource load operation.
      */
-    signals[RECEIVED_DATA] =
-        g_signal_new("received-data",
-                     G_TYPE_FROM_CLASS(objectClass),
-                     G_SIGNAL_RUN_LAST,
-                     0, 0, 0,
-                     webkit_marshal_VOID__UINT64,
-                     G_TYPE_NONE, 1,
-                     G_TYPE_UINT64);
+    signals[RECEIVED_DATA] = g_signal_new(
+        "received-data",
+        G_TYPE_FROM_CLASS(objectClass),
+        G_SIGNAL_RUN_LAST,
+        0, nullptr, nullptr,
+        g_cclosure_marshal_generic,
+        G_TYPE_NONE, 1,
+        G_TYPE_UINT64);
 
     /**
      * WebKitWebResource::finished:

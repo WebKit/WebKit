@@ -524,7 +524,6 @@ list(APPEND WebKit2_DERIVED_SOURCES
     ${DERIVED_SOURCES_WEBKIT2GTK_DIR}/WebKit2ResourcesGResourceBundle.c
 
     ${DERIVED_SOURCES_WEBKIT2GTK_API_DIR}/WebKitEnumTypes.cpp
-    ${DERIVED_SOURCES_WEBKIT2GTK_API_DIR}/WebKitMarshal.cpp
 )
 
 if (ENABLE_WAYLAND_TARGET)
@@ -981,19 +980,6 @@ list(APPEND WebKit2_LIBRARIES
 endif ()
 
 ADD_WHOLE_ARCHIVE_TO_LIBRARIES(WebKit2_LIBRARIES)
-
-set(WebKit2_MARSHAL_LIST ${WEBKIT2_DIR}/UIProcess/API/gtk/webkit2marshal.list)
-add_custom_command(
-    OUTPUT ${DERIVED_SOURCES_WEBKIT2GTK_API_DIR}/WebKitMarshal.cpp
-           ${DERIVED_SOURCES_WEBKIT2GTK_API_DIR}/WebKitMarshal.h
-    MAIN_DEPENDENCY ${WebKit2_MARSHAL_LIST}
-
-    COMMAND echo extern \"C\" { > ${DERIVED_SOURCES_WEBKIT2GTK_API_DIR}/WebKitMarshal.cpp
-    COMMAND glib-genmarshal --prefix=webkit_marshal ${WebKit2_MARSHAL_LIST} --body >> ${DERIVED_SOURCES_WEBKIT2GTK_API_DIR}/WebKitMarshal.cpp
-    COMMAND echo } >> ${DERIVED_SOURCES_WEBKIT2GTK_API_DIR}/WebKitMarshal.cpp
-
-    COMMAND glib-genmarshal --prefix=webkit_marshal ${WebKit2_MARSHAL_LIST} --header > ${DERIVED_SOURCES_WEBKIT2GTK_API_DIR}/WebKitMarshal.h
-    VERBATIM)
 
 # To generate WebKitEnumTypes.h we want to use all installed headers, except WebKitEnumTypes.h itself.
 set(WebKit2GTK_ENUM_GENERATION_HEADERS ${WebKit2GTK_INSTALLED_HEADERS})

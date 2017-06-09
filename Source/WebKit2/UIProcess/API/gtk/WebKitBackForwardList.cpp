@@ -22,7 +22,6 @@
 
 #include "APIArray.h"
 #include "WebKitBackForwardListPrivate.h"
-#include "WebKitMarshal.h"
 #include "WebKitPrivate.h"
 #include <wtf/glib/GRefPtr.h>
 
@@ -80,15 +79,15 @@ static void webkit_back_forward_list_class_init(WebKitBackForwardListClass* list
      * %NULL when only the current item is updated. Items are only removed
      * when the list is cleared or the maximum items limit is reached.
      */
-    signals[CHANGED] =
-        g_signal_new("changed",
-                     G_TYPE_FROM_CLASS(listClass),
-                     G_SIGNAL_RUN_LAST,
-                     0, 0, 0,
-                     webkit_marshal_VOID__OBJECT_POINTER,
-                     G_TYPE_NONE, 2,
-                     WEBKIT_TYPE_BACK_FORWARD_LIST_ITEM,
-                     G_TYPE_POINTER);
+    signals[CHANGED] = g_signal_new(
+        "changed",
+        G_TYPE_FROM_CLASS(listClass),
+        G_SIGNAL_RUN_LAST,
+        0, nullptr, nullptr,
+        g_cclosure_marshal_generic,
+        G_TYPE_NONE, 2,
+        WEBKIT_TYPE_BACK_FORWARD_LIST_ITEM,
+        G_TYPE_POINTER);
 }
 
 static WebKitBackForwardListItem* webkitBackForwardListGetOrCreateItem(WebKitBackForwardList* list, WebBackForwardListItem* webListItem)

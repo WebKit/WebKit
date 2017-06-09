@@ -1,3 +1,29 @@
+2017-06-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Get rid of custom marshallers of signals
+        https://bugs.webkit.org/show_bug.cgi?id=173094
+
+        Reviewed by Žan Doberšek.
+
+        Use g_cclosure_marshal_generic instead.
+
+        * PlatformGTK.cmake:
+        * UIProcess/API/gtk/WebKitBackForwardList.cpp:
+        * UIProcess/API/gtk/WebKitDownload.cpp:
+        (webkit_download_class_init):
+        * UIProcess/API/gtk/WebKitFaviconDatabase.cpp:
+        (webkit_favicon_database_class_init):
+        * UIProcess/API/gtk/WebKitWebInspector.cpp:
+        (webkit_web_inspector_class_init):
+        * UIProcess/API/gtk/WebKitWebResource.cpp:
+        (webkit_web_resource_class_init):
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkit_web_view_class_init):
+        * UIProcess/API/gtk/webkit2marshal.list: Removed.
+        * WebProcess/InjectedBundle/API/gtk/WebKitScriptWorld.cpp:
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebPage.cpp:
+        (webkit_web_page_class_init):
+
 2017-06-08  Simon Fraser  <simon.fraser@apple.com>
 
         Crash under -[WKWebView _updateVisibleContentRects]

@@ -20,7 +20,6 @@
 #include "config.h"
 #include "WebKitScriptWorld.h"
 
-#include "WebKitMarshal.h"
 #include "WebKitPrivate.h"
 #include "WebKitScriptWorldPrivate.h"
 #include <wtf/HashMap.h>
@@ -77,8 +76,8 @@ static void webkit_script_world_class_init(WebKitScriptWorldClass* klass)
         "window-object-cleared",
         G_TYPE_FROM_CLASS(klass),
         G_SIGNAL_RUN_LAST,
-        0, 0, 0,
-        webkit_marshal_VOID__OBJECT_OBJECT,
+        0, nullptr, nullptr,
+        g_cclosure_marshal_generic,
         G_TYPE_NONE, 2,
         WEBKIT_TYPE_WEB_PAGE,
         WEBKIT_TYPE_FRAME);
