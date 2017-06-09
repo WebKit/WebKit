@@ -1,3 +1,16 @@
+2017-06-09  Sam Weinig  <sam@webkit.org>
+
+        Add SubresourceIntegrity as an experimental feature
+        https://bugs.webkit.org/show_bug.cgi?id=173164
+
+        Reviewed by Darin Adler.
+
+        * Shared/WebPreferencesDefinitions.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        Add SubresourceIntegrity to the list of experimental features. Also, sort the experimental features
+        as requested by the comment above it.
+
 2017-06-09  Chris Dumez  <cdumez@apple.com>
 
         Make sure |this| is protected in lambda capture in WebResourceLoadStatisticsStore::grandfatherExistingWebsiteData()
