@@ -1,3 +1,15 @@
+2017-06-09  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Drop OS(DARWIN) for VM_TAG_FOR_WEBASSEMBLY_MEMORY
+        https://bugs.webkit.org/show_bug.cgi?id=173147
+
+        Reviewed by JF Bastien.
+
+        Because this value becomes -1 in non-Darwin environments.
+        Thus, we do not need to use OS(DARWIN) here.
+
+        * wasm/WasmMemory.cpp:
+
 2017-06-09  Daewoong Jang  <daewoong.jang@navercorp.com>
 
         Reduce compiler warnings
