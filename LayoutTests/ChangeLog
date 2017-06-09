@@ -1,3 +1,12 @@
+2017-06-09  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GStreamer][EME] Remove the legacy code that was not even official and is deprecated
+        https://bugs.webkit.org/show_bug.cgi?id=173096
+
+        Reviewed by Žan Doberšek.
+
+        * platform/gtk/TestExpectations: Mark legacy tests as deprecated
+
 2017-06-09  Aaron Chu  <aaron_chu@apple.com>
 
         AX: Media Controls: Missing labels for the Time Labels.

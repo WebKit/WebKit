@@ -197,7 +197,7 @@ bool gstRegistryHasElementForMediaType(GList* elementFactories, const char* caps
     return result;
 }
 
-#if GST_CHECK_VERSION(1, 5, 3) && (ENABLE(LEGACY_ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA))
+#if GST_CHECK_VERSION(1, 5, 3) && ENABLE(ENCRYPTED_MEDIA)
 GstElement* createGstDecryptor(const gchar* protectionSystem)
 {
     GstElement* decryptor = nullptr;

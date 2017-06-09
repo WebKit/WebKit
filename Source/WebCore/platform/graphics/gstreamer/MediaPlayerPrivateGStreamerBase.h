@@ -117,15 +117,6 @@ public:
 #endif
 #endif
 
-#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-    void needKey(RefPtr<Uint8Array>);
-    void setCDMSession(CDMSession*) override;
-    void keyAdded() override;
-    virtual void dispatchDecryptionKey(GstBuffer*);
-    void handleProtectionEvent(GstEvent*);
-    void receivedGenerateKeyRequest(const String&);
-#endif
-
     static bool supportsKeySystem(const String& keySystem, const String& mimeType);
     static MediaPlayer::SupportsType extendedSupportsType(const MediaEngineSupportParameters&, MediaPlayer::SupportsType);
 
@@ -224,14 +215,6 @@ protected:
 #endif
 
     ImageOrientation m_videoSourceOrientation;
-#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-    std::unique_ptr<CDMSession> createSession(const String&, CDMSessionClient*) override;
-    CDMSession* m_cdmSession { nullptr };
-    Lock m_protectionMutex;
-    Condition m_protectionCondition;
-    String m_lastGenerateKeyRequestKeySystemUuid;
-    HashSet<uint32_t> m_handledProtectionEvents;
-#endif
 };
 
 }

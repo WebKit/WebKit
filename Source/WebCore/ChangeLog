@@ -1,3 +1,54 @@
+2017-06-09  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GStreamer][EME] Remove the legacy code that was not even official and is deprecated
+        https://bugs.webkit.org/show_bug.cgi?id=173096
+
+        Reviewed by Žan Doberšek.
+
+        We are removing the LEGACY_ENCRYPTED_MEDIA code that we was not
+        official, is deprecated and we are not planning to support it
+        anymore in any way.
+
+        This also helps implementing current ENCRYPTED_MEDIA in a cleaner
+        way.
+
+        * platform/GStreamer.cmake:
+        * platform/graphics/gstreamer/GStreamerUtilities.cpp:
+        * platform/graphics/gstreamer/GStreamerUtilities.h:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::handleMessage):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::registerWebKitGStreamerElements):
+        (WebCore::MediaPlayerPrivateGStreamerBase::~MediaPlayerPrivateGStreamerBase):
+        (WebCore::MediaPlayerPrivateGStreamerBase::handleSyncMessage):
+        (WebCore::extractEventsAndSystemsFromMessage): Deleted.
+        (WebCore::MediaPlayerPrivateGStreamerBase::needKey): Deleted.
+        (WebCore::MediaPlayerPrivateGStreamerBase::setCDMSession): Deleted.
+        (WebCore::MediaPlayerPrivateGStreamerBase::keyAdded): Deleted.
+        (WebCore::MediaPlayerPrivateGStreamerBase::handleProtectionEvent): Deleted.
+        (WebCore::MediaPlayerPrivateGStreamerBase::receivedGenerateKeyRequest): Deleted.
+        (WebCore::keySystemIdToUuid): Deleted.
+        (WebCore::MediaPlayerPrivateGStreamerBase::createSession): Deleted.
+        (WebCore::MediaPlayerPrivateGStreamerBase::dispatchDecryptionKey): Deleted.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+        * platform/graphics/gstreamer/eme/WebKitClearKeyDecryptorGStreamer.cpp:
+        * platform/graphics/gstreamer/eme/WebKitClearKeyDecryptorGStreamer.h:
+        * platform/graphics/gstreamer/eme/WebKitCommonEncryptionDecryptorGStreamer.cpp:
+        * platform/graphics/gstreamer/eme/WebKitCommonEncryptionDecryptorGStreamer.h:
+        * platform/graphics/gstreamer/mse/AppendPipeline.cpp:
+        (WebCore::AppendPipeline::AppendPipeline):
+        (WebCore::AppendPipeline::parseDemuxerSrcPadCaps):
+        (WebCore::AppendPipeline::connectDemuxerSrcPadToAppsinkFromAnyThread):
+        (WebCore::AppendPipeline::disconnectDemuxerSrcPadFromAppsinkFromAnyThread):
+        (WebCore::appendPipelineElementMessageCallback): Deleted.
+        (WebCore::AppendPipeline::dispatchPendingDecryptionKey): Deleted.
+        (WebCore::AppendPipeline::dispatchDecryptionKey): Deleted.
+        (WebCore::AppendPipeline::handleElementMessage): Deleted.
+        * platform/graphics/gstreamer/mse/AppendPipeline.h:
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerMSE::dispatchDecryptionKey): Deleted.
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.h:
+
 2017-06-09  Aaron Chu  <aaron_chu@apple.com>
 
         AX: Media Controls: Missing labels for the Time Labels.
