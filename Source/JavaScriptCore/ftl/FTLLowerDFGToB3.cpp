@@ -84,12 +84,8 @@
 #include "VirtualRegister.h"
 #include "Watchdog.h"
 #include <atomic>
-#if !OS(WINDOWS)
-#include <dlfcn.h>
-#endif
 #include <unordered_set>
 #include <wtf/Box.h>
-#include <wtf/ProcessID.h>
 
 namespace JSC { namespace FTL {
 

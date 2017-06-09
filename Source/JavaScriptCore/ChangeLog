@@ -1,5 +1,17 @@
 2017-06-09  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [JSC] FTL does not require dlfcn
+        https://bugs.webkit.org/show_bug.cgi?id=173143
+
+        Reviewed by Darin Adler.
+
+        We no longer use LLVM library. Thus, dlfcn.h is not necessary.
+        Also, ProcessID is not used in FTLLowerDFGToB3.cpp.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+
+2017-06-09  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [DFG] Add --verboseDFGFailure
         https://bugs.webkit.org/show_bug.cgi?id=173155
 
