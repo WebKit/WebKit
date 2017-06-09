@@ -187,6 +187,7 @@ typedef const char* optionString;
     v(bool, reportTotalCompileTimes, false, Normal, nullptr) \
     v(bool, verboseExitProfile, false, Normal, nullptr) \
     v(bool, verboseCFA, false, Normal, nullptr) \
+    v(bool, verboseDFGFailure, false, Normal, nullptr) \
     v(bool, verboseFTLToJSThunk, false, Normal, nullptr) \
     v(bool, verboseFTLFailure, false, Normal, nullptr) \
     v(bool, alwaysComputeHash, false, Normal, nullptr) \

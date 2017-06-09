@@ -431,6 +431,7 @@ static void recomputeDependentOptions()
         || Options::reportFTLCompileTimes()
         || Options::reportDFGPhaseTimes()
         || Options::verboseCFA()
+        || Options::verboseDFGFailure()
         || Options::verboseFTLFailure())
         Options::alwaysComputeHash() = true;
     

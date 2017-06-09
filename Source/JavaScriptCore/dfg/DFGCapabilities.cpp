@@ -92,10 +92,15 @@ bool canUseOSRExitFuzzing(CodeBlock* codeBlock)
     return codeBlock->ownerScriptExecutable()->canUseOSRExitFuzzing();
 }
 
+static bool verboseCapabilities()
+{
+    return verboseCompilationEnabled() || Options::verboseDFGFailure();
+}
+
 inline void debugFail(CodeBlock* codeBlock, OpcodeID opcodeID, CapabilityLevel result)
 {
-    if (Options::verboseCompilation() && !canCompile(result))
-        dataLog("Cannot compile code block ", *codeBlock, " because of opcode ", opcodeNames[opcodeID], "\n");
+    if (verboseCapabilities() && !canCompile(result))
+        dataLog("DFG rejecting opcode in ", *codeBlock, " because of opcode ", opcodeNames[opcodeID], "\n");
 }
 
 CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, Instruction* pc)

@@ -1,5 +1,21 @@
 2017-06-09  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [DFG] Add --verboseDFGFailure
+        https://bugs.webkit.org/show_bug.cgi?id=173155
+
+        Reviewed by Sam Weinig.
+
+        Similar to verboseFTLFailure, JSC should have verboseDFGFailure flag to show DFG failures quickly.
+
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::verboseCapabilities):
+        (JSC::DFG::debugFail):
+        * runtime/Options.cpp:
+        (JSC::recomputeDependentOptions):
+        * runtime/Options.h:
+
+2017-06-09  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [JSC] Drop OS(DARWIN) for VM_TAG_FOR_WEBASSEMBLY_MEMORY
         https://bugs.webkit.org/show_bug.cgi?id=173147
 
