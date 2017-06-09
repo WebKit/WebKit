@@ -1,5 +1,16 @@
 2017-06-09  Claudio Saavedra  <csaavedra@igalia.com>
 
+        [GTK] Add baseline for media/media-fullscreen-inline-expected.html
+
+        Unreviewed gardening.
+
+        mediaElement.webkitSupportsPresentationMode is only present with
+        VIDEO_PRESENTATION_MODE enabled, and this option is only enabled
+        for Cocoa builds. Add a baseline without this property.
+        * platform/gtk/media/media-fullscreen-inline-expected.txt: Added.
+
+2017-06-09  Claudio Saavedra  <csaavedra@igalia.com>
+
         [WPE] Unskip passing userscripts tests
 
         Unreviewed gardening.
