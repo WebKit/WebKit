@@ -1,3 +1,16 @@
+2017-06-09  Guillaume Emont  <guijemont@igalia.com>
+
+        [JSC][MIPS] Add MacroAssemblerMIPS::xor32(Address, RegisterID) implementation
+        https://bugs.webkit.org/show_bug.cgi?id=173170
+
+        Reviewed by Yusuke Suzuki.
+
+        MIPS does not build since r217711 because it is missing this
+        implementation. This patch fixes the build.
+
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::xor32):
+
 2017-06-09  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] FTL does not require dlfcn

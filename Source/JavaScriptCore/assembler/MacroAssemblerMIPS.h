@@ -649,6 +649,12 @@ public:
         m_assembler.xorInsn(dest, op1, op2);
     }
 
+    void xor32(Address src, RegisterID dest)
+    {
+        load32(src, dataTempRegister);
+        xor32(dataTempRegister, dest);
+    }
+
     void xor32(TrustedImm32 imm, RegisterID dest)
     {
         if (imm.m_value == -1) {
