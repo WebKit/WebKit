@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: line 272: Unhandled Promise Rejection: TypeError: undefined is not an object (evaluating 'contentitem.audio')
+
+FAIL Encrypted Media Extensions: setMediaKeys to multiple video elements with Clear Key undefined is not an object (evaluating 'contentitem.audio')
+
+

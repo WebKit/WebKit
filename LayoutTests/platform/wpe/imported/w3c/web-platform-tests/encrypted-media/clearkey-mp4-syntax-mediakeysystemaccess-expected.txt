@@ -1,0 +1,4 @@
+
+PASS org.w3.clearkey test requestMediaKeySystemAccess() exceptions. 
+FAIL org.w3.clearkey test MediaKeySystemAccess attribute syntax. assert_true: initDataType not supported expected true got false
+

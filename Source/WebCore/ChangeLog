@@ -1,3 +1,16 @@
+2017-06-09  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WPE] Enable ENCRYPTED_MEDIA for build-webkit builds
+        https://bugs.webkit.org/show_bug.cgi?id=173103
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * Modules/encryptedmedia/CDM.cpp:
+        (WebCore::CDM::getSupportedCapabilitiesForAudioVideoType):
+        Pass the ParsedContentType's mime type string to the explicit ContentType
+        constructor and assign that to the MediaEngineSupportParameters' type
+        member.
+
 2017-06-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Move TreeScope::adoptIfNeeded to Node and rename it to setTreeScopeRecursively

@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 272: Unhandled Promise Rejection: TypeError: undefined is not an object (evaluating 'contentitem.audio')
+
+FAIL Encrypted Media Extensions: Events with Clear Key undefined is not an object (evaluating 'contentitem.audio')
+

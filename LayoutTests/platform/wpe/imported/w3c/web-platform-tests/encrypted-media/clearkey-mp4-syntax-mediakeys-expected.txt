@@ -1,0 +1,5 @@
+
+FAIL org.w3.clearkey test MediaKeys attribute syntax assert_true: initDataType should be supported expected true got false
+FAIL org.w3.clearkey test MediaKeys setServerCertificate() exceptions. assert_true: initDataType not supported expected true got false
+FAIL org.w3.clearkey test MediaKeys setServerCertificate() syntax with non-empty certificate. assert_true: initDataType not supported expected true got false
+

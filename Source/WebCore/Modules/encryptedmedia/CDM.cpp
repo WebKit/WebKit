@@ -488,7 +488,7 @@ std::optional<Vector<MediaKeySystemMediaCapability>> CDM::getSupportedCapabiliti
         //       combination of container, media types, robustness and local accumulated configuration in combination
         //       with restrictions:
         MediaEngineSupportParameters parameters;
-        parameters.type = contentType;
+        parameters.type = ContentType(contentType.mimeType());
         if (!MediaPlayer::supportsType(parameters, nullptr)) {
             // Try with Media Source:
             parameters.isMediaSource = true;

@@ -215,7 +215,7 @@ my @features = (
       define => "ENABLE_DOWNLOAD_ATTRIBUTE", default => isGtk(), value => \$downloadAttributeSupport },
 
     { option => "encrypted-media", desc => "Toggle EME V3 support",
-      define => "ENABLE_ENCRYPTED_MEDIA", default => 0, value => \$encryptedMediaSupport },
+      define => "ENABLE_ENCRYPTED_MEDIA", default => isWPE(), value => \$encryptedMediaSupport },
 
     { option => "fetch-api", desc => "Toggle Fetch API support",
       define => "ENABLE_FETCH_API", default => 1, value => \$fetchAPISupport },

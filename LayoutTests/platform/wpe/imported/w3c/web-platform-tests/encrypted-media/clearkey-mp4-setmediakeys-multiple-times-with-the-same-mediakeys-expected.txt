@@ -1,0 +1,3 @@
+
+FAIL org.w3.clearkey, setmediakeys multiple times with the same mediakeys assert_unreached: NotSupportedError (DOM Exception 9): The operation is not supported. Reached unreachable code
+
