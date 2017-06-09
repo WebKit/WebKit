@@ -30,6 +30,7 @@
 
 #import "Logging.h"
 #import <Foundation/NSProcessInfo.h>
+#import <wtf/MainThread.h>
 
 @interface WebLowPowerModeObserver : NSObject
 @property (nonatomic) WebCore::LowPowerModeNotifier* notifier;
@@ -60,7 +61,10 @@
 - (void)_didReceiveLowPowerModeChange
 {
     _isLowPowerModeEnabled = [NSProcessInfo processInfo].lowPowerModeEnabled;
-    notifyLowPowerModeChanged(_notifier, _isLowPowerModeEnabled);
+    // We need to make sure we notify the client on the main thread.
+    callOnMainThread([notifier = _notifier, isLowPowerModeEnabled = _isLowPowerModeEnabled] {
+        notifyLowPowerModeChanged(notifier, isLowPowerModeEnabled);
+    });
 }
 
 @end

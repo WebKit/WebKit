@@ -1,3 +1,17 @@
+2017-06-08  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] LowPowerModeNotifier notifies client on non-main thread
+        https://bugs.webkit.org/show_bug.cgi?id=173115
+        <rdar://problem/32644703>
+
+        Reviewed by Ryosuke Niwa.
+
+        Update iOS's implementation of the LowPowerModeNotifier to make sure
+        we notify the client of low power mode changes on the main thread.
+
+        * platform/ios/LowPowerModeNotifierIOS.mm:
+        (-[WebLowPowerModeObserver _didReceiveLowPowerModeChange]):
+
 2017-06-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Crash inside InsertNodeBeforeCommand via InsertParagraphSeparatorCommand
