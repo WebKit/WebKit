@@ -1,3 +1,22 @@
+2017-06-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        The tree scope of an Attr node inside a shadow tree does not updated upon detach.
+        https://bugs.webkit.org/show_bug.cgi?id=173122
+
+        Reviewed by Chris Dumez.
+
+        The crash was caused by the tree scope of an Attr detached from an element inside a shadow root
+        not getting updated.
+
+        Test: fast/dom/detaching-attr-node-in-shadow-tree-crash.html
+
+        * dom/Attr.cpp:
+        (WebCore::Attr::~Attr): Added assertions.
+        (WebCore::Attr::detachFromElementWithValue): Fixed the bug by adopting Attr to Document.
+        (WebCore::Attr::attachToElement): Moved the adoptIfNeeded call here from attachAttributeNodeIfNeeded.
+        * dom/Element.cpp:
+        (WebCore::Element::attachAttributeNodeIfNeeded):
+
 2017-06-08  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Expand system-ui to include every item in the Core Text cascade list

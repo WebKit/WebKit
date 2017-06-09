@@ -2128,7 +2128,6 @@ void Element::attachAttributeNodeIfNeeded(Attr& attrNode)
     NoEventDispatchAssertion assertNoEventDispatch;
 
     attrNode.attachToElement(*this);
-    treeScope().adoptIfNeeded(attrNode);
     ensureAttrNodeListForElement(*this).append(&attrNode);
 }
 

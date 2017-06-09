@@ -65,6 +65,8 @@ Ref<Attr> Attr::create(Document& document, const QualifiedName& name, const Atom
 
 Attr::~Attr()
 {
+    ASSERT_WITH_SECURITY_IMPLICATION(!isInShadowTree());
+    ASSERT_WITH_SECURITY_IMPLICATION(treeScope().rootNode().isDocumentNode());
 }
 
 ExceptionOr<void> Attr::setPrefix(const AtomicString& prefix)
@@ -133,6 +135,7 @@ void Attr::detachFromElementWithValue(const AtomicString& value)
     ASSERT(m_standaloneValue.isNull());
     m_standaloneValue = value;
     m_element = nullptr;
+    document().adoptIfNeeded(*this);
 }
 
 void Attr::attachToElement(Element& element)
@@ -140,6 +143,7 @@ void Attr::attachToElement(Element& element)
     ASSERT(!m_element);
     m_element = &element;
     m_standaloneValue = nullAtom;
+    element.treeScope().adoptIfNeeded(*this);
 }
 
 }
