@@ -1,3 +1,16 @@
+2017-06-09  Daniel Bates  <dabates@apple.com>
+
+        CSP: Apply img-src directive to favicon loads
+        https://bugs.webkit.org/show_bug.cgi?id=172733
+        <rdar://problem/32082654>
+
+        Reviewed by Brady Eidson.
+
+        Return 0 seconds for the maximum buffering time for favicons (no change in behavior).
+
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::maximumBufferingTime):
+
 2017-06-09  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS DnD] Add a hook to perform two-step drops in editable content

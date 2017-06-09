@@ -41,7 +41,7 @@ CachedRawResource::CachedRawResource(CachedResourceRequest&& request, Type type,
     , m_identifier(0)
     , m_allowEncodedDataReplacement(true)
 {
-    ASSERT(isMainOrMediaOrRawResource());
+    ASSERT(isMainOrMediaOrFaviconOrRawResource());
 }
 
 std::optional<SharedBufferDataView> CachedRawResource::calculateIncrementalDataChunk(const SharedBuffer* data) const

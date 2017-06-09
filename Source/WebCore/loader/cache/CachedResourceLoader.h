@@ -79,6 +79,7 @@ public:
     CachedResourceHandle<CachedScript> requestScript(CachedResourceRequest&&);
     CachedResourceHandle<CachedFont> requestFont(CachedResourceRequest&&, bool isSVG);
     CachedResourceHandle<CachedRawResource> requestMedia(CachedResourceRequest&&);
+    CachedResourceHandle<CachedRawResource> requestFavicon(CachedResourceRequest&&);
     CachedResourceHandle<CachedRawResource> requestRawResource(CachedResourceRequest&&);
     CachedResourceHandle<CachedRawResource> requestMainResource(CachedResourceRequest&&);
     CachedResourceHandle<CachedSVGDocument> requestSVGDocument(CachedResourceRequest&&);

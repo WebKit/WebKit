@@ -252,10 +252,12 @@ webarchive/doctype.html
 webarchive/archive-empty-frame-source.html
 
 # WebKitTestRunner needs testRunner.setIconDatabaseEnabled
-webarchive/test-link-rel-icon.html
-http/tests/misc/favicon-loads-with-images-disabled.html
-http/tests/misc/favicon-loads-with-icon-loading-override.html
-http/tests/misc/link-rel-icon-beforeload.html
+webkit.org/b/115809 webarchive/test-link-rel-icon.html
+webkit.org/b/115809 http/tests/misc/favicon-loads-with-images-disabled.html
+webkit.org/b/115809 http/tests/misc/favicon-loads-with-icon-loading-override.html
+webkit.org/b/115809 http/tests/misc/link-rel-icon-beforeload.html
+webkit.org/b/115809 http/tests/security/contentSecurityPolicy/allow-favicon.html
+webkit.org/b/115809 http/tests/security/contentSecurityPolicy/block-favicon.html
 
 # WebKitTestRunner should dump text/plain content as text
 http/tests/incremental/slow-utf8-text.pl

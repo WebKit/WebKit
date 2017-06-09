@@ -1,3 +1,61 @@
+2017-06-09  Daniel Bates  <dabates@apple.com>
+
+        CSP: Apply img-src directive to favicon loads
+        https://bugs.webkit.org/show_bug.cgi?id=172733
+        <rdar://problem/32082654>
+
+        Reviewed by Brady Eidson.
+
+        Differentiate favicon requests from raw resources requests so that we can apply the Content
+        Security Policy to favicon requests.
+
+        Tests: http/tests/security/contentSecurityPolicy/allow-favicon.html
+               http/tests/security/contentSecurityPolicy/block-favicon.html
+
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::cachedResourceContent): Keep our current behavior and treat a
+        favicon resource analogous to a raw resource.
+        (WebCore::InspectorPageAgent::cachedResourceType): Ditto.
+        * loader/LinkLoader.cpp:
+        (WebCore::createLinkPreloadResourceClient): Now that we differentiate between a favicon
+        and a raw resource we add favicons to the list of unsupported <link as="..."> types. This
+        makes the list of handled request destination types more closely match the list of valid types
+        documented in <https://fetch.spec.whatwg.org/#concept-request-destination> (24 May 2017).
+        * loader/ResourceLoadInfo.cpp:
+        (WebCore::toResourceType): Keep our current behavior and treat a favicon resource analogous
+        to a raw resource.
+        * loader/SubresourceLoader.cpp:
+        (WebCore::logResourceLoaded): Ditto.
+        * loader/cache/CachedRawResource.cpp:
+        (WebCore::CachedRawResource::CachedRawResource): Update for renaming.
+        * loader/cache/CachedRawResource.h:
+        (isType): Ditto.
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::defaultPriorityForResourceType): Keep our current behavior and treat
+        a favicon resource analogous to a raw resource.
+        * loader/cache/CachedResource.h:
+        (WebCore::CachedResource::isMainOrMediaOrFaviconOrRawResource): Renamed; formerly named isMainOrMediaOrRawResource.
+        Also return true if the this resource is a favicon.
+        (WebCore::CachedResource::ignoreForRequestCount): Keep our current behavior and treat a
+        favicon resource analogous to a raw resource.
+        (WebCore::CachedResource::isMainOrMediaOrRawResource): Deleted; renamed to isMainOrMediaOrFaviconOrRawResource.
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::createResource): Keep our current behavior and treat a favicon resource analogous
+        to a raw resource.
+        (WebCore::CachedResourceLoader::requestFavicon): Added.
+        (WebCore::contentTypeFromResourceType): Keep our current behavior and treat a favicon
+        resource analogous to a raw resource.
+        (WebCore::CachedResourceLoader::checkInsecureContent): Ditto.
+        (WebCore::CachedResourceLoader::allowedByContentSecurityPolicy): Check if the favicon is
+        allowed by the CSP of the page.
+        (WebCore::CachedResourceLoader::determineRevalidationPolicy): Update for renaming.
+        * loader/cache/CachedResourceLoader.h:
+        * loader/icon/IconLoader.cpp:
+        (WebCore::IconLoader::startLoading): Substitute call CachedResourceLoader::requestFavicon() for CachedResourceLoader::requestRawResource()
+        and remove comment about ContentSecurityPolicyImposition::DoPolicyCheck being a placeholder. This is no longer the
+        case. This resource request option is now meaningful as we want to apply the CSP of the page with respect to the
+        request for the favicon.
+
 2017-06-09  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS DnD] Add a hook to perform two-step drops in editable content

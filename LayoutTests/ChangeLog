@@ -1,3 +1,19 @@
+2017-06-09  Daniel Bates  <dabates@apple.com>
+
+        CSP: Apply img-src directive to favicon loads
+        https://bugs.webkit.org/show_bug.cgi?id=172733
+        <rdar://problem/32082654>
+
+        Reviewed by Brady Eidson.
+
+        Adds tests to ensure the CSP policy is applied to favicon loads.
+
+        * http/tests/security/contentSecurityPolicy/allow-favicon-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/allow-favicon.html: Added.
+        * http/tests/security/contentSecurityPolicy/block-favicon-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/block-favicon.html: Added.
+        * platform/wk2/TestExpectations: Skip the tests until we fix <https://bugs.webkit.org/show_bug.cgi?id=115809>.
+
 2017-06-09  Ryan Haddad  <ryanhaddad@apple.com>
 
         Add a result file for js/dom/prototype-chain-caching-with-impure-get-own-property-slot-traps-5-short.html.

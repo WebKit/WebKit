@@ -83,13 +83,12 @@ void IconLoader::startLoading()
     auto resourceRequestURL = resourceRequest.url();
 #endif
 
-    // ContentSecurityPolicyImposition::DoPolicyCheck is a placeholder value. It does not affect the request since Content Security Policy does not apply to raw resources.
     CachedResourceRequest request(WTFMove(resourceRequest), ResourceLoaderOptions(SendCallbacks, SniffContent, BufferData, DoNotAllowStoredCredentials, ClientCredentialPolicy::CannotAskClientForCredentials, FetchOptions::Credentials::Omit, DoSecurityCheck, FetchOptions::Mode::NoCors, DoNotIncludeCertificateInfo, ContentSecurityPolicyImposition::DoPolicyCheck, DefersLoadingPolicy::AllowDefersLoading, CachingPolicy::AllowCaching));
 
     request.setInitiator(cachedResourceRequestInitiators().icon);
 
     auto* frame = m_frame ? m_frame : m_documentLoader->frame();
-    m_resource = frame->document()->cachedResourceLoader().requestRawResource(WTFMove(request));
+    m_resource = frame->document()->cachedResourceLoader().requestFavicon(WTFMove(request));
     if (m_resource)
         m_resource->addClient(*this);
     else

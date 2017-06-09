@@ -98,5 +98,5 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::CachedRawResource)
-    static bool isType(const WebCore::CachedResource& resource) { return resource.isMainOrMediaOrRawResource(); }
+    static bool isType(const WebCore::CachedResource& resource) { return resource.isMainOrMediaOrFaviconOrRawResource(); }
 SPECIALIZE_TYPE_TRAITS_END()
