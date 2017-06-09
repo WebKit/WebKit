@@ -41,7 +41,8 @@ InputViewUpdateDeferrer::InputViewUpdateDeferrer()
 
 InputViewUpdateDeferrer::~InputViewUpdateDeferrer()
 {
-    [[UIPeripheralHost sharedInstance] _endIgnoringReloadInputViews];
+    if ([[UIPeripheralHost sharedInstance] _endIgnoringReloadInputViews])
+        [[UIPeripheralHost sharedInstance] forceReloadInputViews];
 }
     
 }

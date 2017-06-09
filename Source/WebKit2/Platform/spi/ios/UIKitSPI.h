@@ -885,7 +885,8 @@ typedef enum {
 
 @interface UIPeripheralHost (IPI)
 - (void)_beginIgnoringReloadInputViews;
-- (void)_endIgnoringReloadInputViews;
+- (int)_endIgnoringReloadInputViews;
+- (void)forceReloadInputViews;
 @end
 
 @interface UIResponder ()

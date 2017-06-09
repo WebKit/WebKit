@@ -1,3 +1,21 @@
+2017-06-09  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r213584): WeChat app can not switch to next text field
+        https://bugs.webkit.org/show_bug.cgi?id=173183
+        <rdar://problem/32323478>
+
+        Reviewed by Wenson Hsieh.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/ios/InputViewUpdateDeferrer.mm:
+        (WebKit::InputViewUpdateDeferrer::~InputViewUpdateDeferrer):
+        It turns out that _endIgnoringReloadInputViews doesn't actually perform
+        the update if there was one ignored. It does, however, return whether
+        there was a change ignored, and we can force an update.
+
+        This remains untestable without sizable additional API test infrastructure
+        for the same reasons as the original patch.
+
 2017-06-09  Chris Dumez  <cdumez@apple.com>
 
         Make sure we protect |this| in lambdas in WebResourceLoadStatisticsStore::registerSharedResourceLoadObserver()
