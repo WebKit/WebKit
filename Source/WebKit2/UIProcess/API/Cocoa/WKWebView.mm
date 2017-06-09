@@ -316,6 +316,11 @@ WKWebView* fromWebPageProxy(WebKit::WebPageProxy& page)
     return [self initWithFrame:frame configuration:adoptNS([[WKWebViewConfiguration alloc] init]).get()];
 }
 
+- (BOOL)_isValid
+{
+    return _page && _page->isValid();
+}
+
 #if PLATFORM(IOS)
 static int32_t deviceOrientationForUIInterfaceOrientation(UIInterfaceOrientation orientation)
 {
@@ -2353,6 +2358,8 @@ static WebCore::FloatSize activeMinimumLayoutSize(WKWebView *webView, const CGRe
     auto retainedSelf = retainPtr(self);
     [CATransaction addCommitHandler:[retainedSelf] {
         WKWebView *webView = retainedSelf.get();
+        if (![webView _isValid])
+            return;
         [webView _updateVisibleContentRects];
         webView->_hasScheduledVisibleRectUpdate = NO;
     } forPhase:kCATransactionPhasePreCommit];
@@ -2377,6 +2384,8 @@ static WebCore::FloatSize activeMinimumLayoutSize(WKWebView *webView, const CGRe
 
     dispatch_async(dispatch_get_main_queue(), [retainedSelf = retainPtr(self)] {
         WKWebView *webView = retainedSelf.get();
+        if (![webView _isValid])
+            return;
         [webView _addUpdateVisibleContentRectPreCommitHandler];
     });
 }
@@ -3788,12 +3797,15 @@ WEBCORE_COMMAND(yankAndSelect)
 
 - (pid_t)_webProcessIdentifier
 {
-    return _page->isValid() ? _page->processIdentifier() : 0;
+    if (![self _isValid])
+        return 0;
+
+    return _page->processIdentifier();
 }
 
 - (void)_killWebContentProcess
 {
-    if (!_page->isValid())
+    if (![self _isValid])
         return;
 
     _page->process().terminate();
