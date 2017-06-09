@@ -99,10 +99,54 @@ static bool shouldTreatAsUniqueOrigin(const URL& url)
     return false;
 }
 
+static bool isLoopbackIPAddress(const URL& url)
+{
+    ASSERT(url.isValid());
+    auto host = url.host();
+    if (host == "[::1]")
+        return true;
+
+    // Check to see if it's a valid IPv4 address that has the form 127.*.*.*.
+    if (!host.startsWith("127."))
+        return false;
+    size_t dotsFound = 0;
+    for (size_t i = 0; i < host.length(); ++i) {
+        if (host[i] == '.') {
+            dotsFound++;
+            continue;
+        }
+        if (!isASCIIDigit(host[i]))
+            return false;
+    }
+    return dotsFound == 3;
+}
+
+// https://w3c.github.io/webappsec-secure-contexts/#is-origin-trustworthy (Editor's Draft, 17 November 2016)
+static bool shouldTreatAsPotentionallyTrustworthy(const URL& url)
+{
+    if (!url.isValid())
+        return false;
+
+    if (SchemeRegistry::shouldTreatURLSchemeAsSecure(url.protocol().toStringWithoutCopying()))
+        return true;
+
+    if (isLoopbackIPAddress(url))
+        return true;
+
+    // FIXME: Ensure that localhost resolves to the loopback address.
+    if (equalLettersIgnoringASCIICase(url.host(), "localhost"))
+        return true;
+
+    if (SchemeRegistry::shouldTreatURLSchemeAsLocal(url.protocol().toStringWithoutCopying()))
+        return true;
+
+    return false;
+}
+
 SecurityOrigin::SecurityOrigin(const URL& url)
-    : m_protocol(url.protocol().isNull() ? emptyString() : url.protocol().toString().convertToASCIILowercase())
-    , m_host(url.host().isNull() ? emptyString() : url.host().convertToASCIILowercase())
-    , m_port(url.port())
+    : m_protocol { url.protocol().isNull() ? emptyString() : url.protocol().toString().convertToASCIILowercase() }
+    , m_host { url.host().isNull() ? emptyString() : url.host().convertToASCIILowercase() }
+    , m_port { url.port() }
 {
     // document.domain starts as m_host, but can be set by the DOM.
     m_domain = m_host;
@@ -115,29 +159,33 @@ SecurityOrigin::SecurityOrigin(const URL& url)
 
     if (m_canLoadLocalResources)
         m_filePath = url.fileSystemPath(); // In case enforceFilePathSeparation() is called.
+
+    m_isPotentionallyTrustworthy = shouldTreatAsPotentionallyTrustworthy(url);
 }
 
 SecurityOrigin::SecurityOrigin()
-    : m_protocol(emptyString())
-    , m_host(emptyString())
-    , m_domain(emptyString())
-    , m_isUnique(true)
+    : m_protocol { emptyString() }
+    , m_host { emptyString() }
+    , m_domain { emptyString() }
+    , m_isUnique { true }
+    , m_isPotentionallyTrustworthy { true }
 {
 }
 
 SecurityOrigin::SecurityOrigin(const SecurityOrigin* other)
-    : m_protocol(other->m_protocol.isolatedCopy())
-    , m_host(other->m_host.isolatedCopy())
-    , m_domain(other->m_domain.isolatedCopy())
-    , m_filePath(other->m_filePath.isolatedCopy())
-    , m_port(other->m_port)
-    , m_isUnique(other->m_isUnique)
-    , m_universalAccess(other->m_universalAccess)
-    , m_domainWasSetInDOM(other->m_domainWasSetInDOM)
-    , m_canLoadLocalResources(other->m_canLoadLocalResources)
-    , m_storageBlockingPolicy(other->m_storageBlockingPolicy)
-    , m_enforceFilePathSeparation(other->m_enforceFilePathSeparation)
-    , m_needsStorageAccessFromFileURLsQuirk(other->m_needsStorageAccessFromFileURLsQuirk)
+    : m_protocol { other->m_protocol.isolatedCopy() }
+    , m_host { other->m_host.isolatedCopy() }
+    , m_domain { other->m_domain.isolatedCopy() }
+    , m_filePath { other->m_filePath.isolatedCopy() }
+    , m_port { other->m_port }
+    , m_isUnique { other->m_isUnique }
+    , m_universalAccess { other->m_universalAccess }
+    , m_domainWasSetInDOM { other->m_domainWasSetInDOM }
+    , m_canLoadLocalResources { other->m_canLoadLocalResources }
+    , m_storageBlockingPolicy { other->m_storageBlockingPolicy }
+    , m_enforceFilePathSeparation { other->m_enforceFilePathSeparation }
+    , m_needsStorageAccessFromFileURLsQuirk { other->m_needsStorageAccessFromFileURLsQuirk }
+    , m_isPotentionallyTrustworthy { other->m_isPotentionallyTrustworthy }
 {
 }
 

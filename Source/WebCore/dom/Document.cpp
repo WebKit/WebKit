@@ -5321,6 +5321,18 @@ bool Document::isContextThread() const
     return isMainThread();
 }
 
+bool Document::isSecureContext() const
+{
+    ASSERT(m_frame);
+    if (!securityOrigin().isPotentionallyTrustworthy())
+        return false;
+    for (Frame* frame = m_frame->tree().parent(); frame; frame = frame->tree().parent()) {
+        if (!frame->document()->securityOrigin().isPotentionallyTrustworthy())
+            return false;
+    }
+    return true;
+}
+
 void Document::updateURLForPushOrReplaceState(const URL& url)
 {
     Frame* f = frame();

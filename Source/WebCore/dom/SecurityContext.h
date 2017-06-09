@@ -85,6 +85,10 @@ public:
     bool isStrictMixedContentMode() const { return m_isStrictMixedContentMode; }
     void setStrictMixedContentMode(bool strictMixedContentMode) { m_isStrictMixedContentMode = strictMixedContentMode; }
 
+    // This method implements the "Is the environment settings object settings a secure context?" algorithm from
+    // the Secure Context spec: https://w3c.github.io/webappsec-secure-contexts/#settings-object (Editor's Draft, 17 November 2016)
+    virtual bool isSecureContext() const = 0;
+
 protected:
     SecurityContext();
     virtual ~SecurityContext();

@@ -4,6 +4,46 @@
         https://bugs.webkit.org/show_bug.cgi?id=158121
         <rdar://problem/26012994>
 
+        Reviewed by Alex Christensen.
+
+        Part 2
+
+        Implements the Secure Contexts spec., <https://w3c.github.io/webappsec-secure-contexts/> (Editor's
+        Draft, 17 November 2016) except for the allow-secure-context sandbox flag and restrictions on window.opener
+        as the former is at risk of being dropped from the specification and the latter is being discussed in
+        <https://github.com/w3c/webappsec-secure-contexts/issues/42>. We are not making use of the Secure
+        Contexts functionality at the moment. We will make use of it in a subsequent commit.
+
+        * dom/Document.cpp:
+        (WebCore::Document::isSecureContext): Added,
+        * dom/Document.h:
+        * dom/ScriptExecutionContext.h:
+        (WebCore::ScriptExecutionContext::isSecureContext): Deleted; moved to class SecurityContext.
+        * dom/SecurityContext.h:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::isSecureContext): Added.
+        * page/DOMWindow.h:
+        * page/SecurityOrigin.cpp:
+        (WebCore::isLoopbackIPAddress): Convenience function to determine whether the host portion
+        of the specified URL is a valid loopback address.
+        (WebCore::shouldTreatAsPotentionallyTrustworthy): Implements the "Is origin potentially trustworthy?"
+        algorithm from the Secure Context specification.
+        (WebCore::SecurityOrigin::SecurityOrigin): Compute whether this origin is potentially trustworthy.
+        Also, use C++ brace initialization syntax in member initialization list.
+        * page/SecurityOrigin.h:
+        (WebCore::SecurityOrigin::isPotentionallyTrustworthy): Added.
+        * page/WindowOrWorkerGlobalScope.idl: Expose attribute isSecureContext. Fix style nit; remove
+        period from a comment that is not meant to be a complete sentence.
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::isSecureContext): Added.
+        * workers/WorkerGlobalScope.h:
+
+2017-06-09  Daniel Bates  <dabates@apple.com>
+
+        Implement W3C Secure Contexts Draft Specification
+        https://bugs.webkit.org/show_bug.cgi?id=158121
+        <rdar://problem/26012994>
+
         Reviewed by Chris Dumez.
 
         Part 1

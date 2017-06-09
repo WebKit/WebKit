@@ -1740,6 +1740,14 @@ void DOMWindow::cancelAnimationFrame(int id)
     document->cancelAnimationFrame(id);
 }
 
+bool DOMWindow::isSecureContext() const
+{
+    auto* document = this->document();
+    if (!document)
+        return false;
+    return document->isSecureContext();
+}
+
 static void didAddStorageEventListener(DOMWindow& window)
 {
     // Creating these WebCore::Storage objects informs the system that we'd like to receive

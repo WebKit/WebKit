@@ -122,6 +122,11 @@ void WorkerGlobalScope::removeAllEventListeners()
 #endif
 }
 
+bool WorkerGlobalScope::isSecureContext() const
+{
+    return securityOrigin() && securityOrigin()->isPotentionallyTrustworthy();
+}
+
 void WorkerGlobalScope::applyContentSecurityPolicyResponseHeaders(const ContentSecurityPolicyResponseHeaders& contentSecurityPolicyResponseHeaders)
 {
     contentSecurityPolicy()->didReceiveHeaders(contentSecurityPolicyResponseHeaders);

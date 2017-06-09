@@ -88,6 +88,7 @@ public:
     void clearInterval(int timeoutId);
 
     bool isContextThread() const final;
+    bool isSecureContext() const final;
 
     WorkerNavigator* optionalNavigator() const { return m_navigator.get(); }
     WorkerLocation* optionalLocation() const { return m_location.get(); }

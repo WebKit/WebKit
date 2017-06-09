@@ -247,6 +247,9 @@ public:
     int webkitRequestAnimationFrame(Ref<RequestAnimationFrameCallback>&&);
     void cancelAnimationFrame(int id);
 
+    // Secure Contexts
+    bool isSecureContext() const;
+
     // Events
     // EventTarget API
     bool addEventListener(const AtomicString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) final;

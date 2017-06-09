@@ -30,7 +30,7 @@
 ] interface WindowOrWorkerGlobalScope {
     [Replaceable] readonly attribute USVString origin;
 
-    // Timers.
+    // Timers
     [Custom] long setTimeout(any handler, optional long timeout = 0);
     void clearTimeout(optional long handle = 0);
     [Custom] long setInterval(any handler, optional long timeout = 0);
@@ -39,4 +39,7 @@
     // Base64 utility methods.
     [MayThrowException] DOMString atob(DOMString string);
     [MayThrowException] DOMString btoa(DOMString string);
+
+    // Secure Contexts
+    readonly attribute boolean isSecureContext;
 };
