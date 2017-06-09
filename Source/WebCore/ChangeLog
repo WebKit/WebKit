@@ -1,3 +1,28 @@
+2017-06-09  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GCrypt] ECDSA signing results can be smaller than the EC key size
+        https://bugs.webkit.org/show_bug.cgi?id=171535
+
+        Reviewed by Jiewen Tan.
+
+        The libgcrypt-based implementation of the ECDSA signing operation does not
+        properly address the resulting `r` and `s` integers that do not potentially
+        match the EC key in terms of size.
+
+        To address that, the retrieved MPI data for both integers is handled depending
+        on the size of said data. Strictly requiring an amount of bytes that matches
+        the key data size N, we simply take the last N bytes if the MPI data is equal
+        or larger than N in size. If smaller, we first append enough zero bytes to the
+        output Vector object before attaching the MPI data in whole so that the amount
+        of appended bytes matches N.
+
+        No new tests -- covers an implementation detail that is not trivial to test,
+        but can rely sufficiently on existing tests.
+
+        * crypto/gcrypt/CryptoAlgorithmECDSAGCrypt.cpp:
+        (WebCore::extractECDSASignatureInteger):
+        (WebCore::gcryptSign):
+
 2017-06-09  Daewoong Jang  <daewoong.jang@navercorp.com>
 
         Reduce compiler warnings

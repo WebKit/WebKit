@@ -39,6 +39,31 @@
 
 namespace WebCore {
 
+static bool extractECDSASignatureInteger(Vector<uint8_t>& signature, gcry_sexp_t signatureSexp, const char* integerName, size_t keySizeInBytes)
+{
+    // Retrieve byte data of the specified integer.
+    PAL::GCrypt::Handle<gcry_sexp_t> integerSexp(gcry_sexp_find_token(signatureSexp, integerName, 0));
+    if (!integerSexp)
+        return false;
+
+    auto integerData = mpiData(integerSexp);
+    if (!integerData)
+        return false;
+
+    size_t dataSize = integerData->size();
+    if (dataSize >= keySizeInBytes) {
+        // Append the last `keySizeInBytes` bytes of the data Vector, if available.
+        signature.append(&integerData->at(dataSize - keySizeInBytes), keySizeInBytes);
+    } else {
+        // If not, prefix the binary data with zero bytes.
+        for (size_t paddingSize = keySizeInBytes - dataSize; paddingSize > 0; --paddingSize)
+            signature.uncheckedAppend(0x00);
+        signature.appendVector(*integerData);
+    }
+
+    return true;
+}
+
 static std::optional<Vector<uint8_t>> gcryptSign(gcry_sexp_t keySexp, const Vector<uint8_t>& data, CryptoAlgorithmIdentifier hashAlgorithmIdentifier, size_t keySizeInBytes)
 {
     // Perform digest operation with the specified algorithm on the given data.
@@ -84,32 +109,13 @@ static std::optional<Vector<uint8_t>> gcryptSign(gcry_sexp_t keySexp, const Vect
     }
 
     // Retrieve MPI data of the resulting r and s integers. They are concatenated into
-    // a single buffer after checking that the data length matches the key size.
-    // FIXME: But r and s integers can still be valid even if they're of shorter size.
-    // https://bugs.webkit.org/show_bug.cgi?id=171535
+    // a single buffer, properly accounting for integers that don't match the key in size.
     Vector<uint8_t> signature;
-    {
-        PAL::GCrypt::Handle<gcry_sexp_t> rSexp(gcry_sexp_find_token(signatureSexp, "r", 0));
-        if (!rSexp)
-            return std::nullopt;
+    signature.reserveInitialCapacity(keySizeInBytes * 2);
 
-        auto rData = mpiData(rSexp);
-        if (!rData || rData->size() != keySizeInBytes)
-            return std::nullopt;
-
-        signature.appendVector(*rData);
-    }
-    {
-        PAL::GCrypt::Handle<gcry_sexp_t> sSexp(gcry_sexp_find_token(signatureSexp, "s", 0));
-        if (!sSexp)
-            return std::nullopt;
-
-        auto sData = mpiData(sSexp);
-        if (!sData || sData->size() != keySizeInBytes)
-            return std::nullopt;
-
-        signature.appendVector(*sData);
-    }
+    if (!extractECDSASignatureInteger(signature, signatureSexp, "r", keySizeInBytes)
+        || !extractECDSASignatureInteger(signature, signatureSexp, "s", keySizeInBytes))
+        return std::nullopt;
 
     return signature;
 }
