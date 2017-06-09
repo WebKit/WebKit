@@ -170,7 +170,7 @@ private:
     void clearCachedCredentials();
 
     // FIXME: This should take a session ID so we can identify which disk cache to delete.
-    void clearDiskCache(std::chrono::system_clock::time_point modifiedSince, std::function<void ()> completionHandler);
+    void clearDiskCache(std::chrono::system_clock::time_point modifiedSince, Function<void ()>&& completionHandler);
 
     void downloadRequest(WebCore::SessionID, DownloadID, const WebCore::ResourceRequest&, const String& suggestedFilename);
     void resumeDownload(WebCore::SessionID, DownloadID, const IPC::DataReference& resumeData, const String& path, const SandboxExtension::Handle&);

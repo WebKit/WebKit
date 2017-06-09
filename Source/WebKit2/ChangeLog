@@ -1,3 +1,30 @@
+2017-06-09  Chris Dumez  <cdumez@apple.com>
+
+        Use WTF::Function instead of std::function in NetworkProcess code
+        https://bugs.webkit.org/show_bug.cgi?id=173182
+
+        Reviewed by Alex Christensen.
+
+        Use WTF::Function instead of std::function in NetworkProcess code to avoid
+        unnecessary copying.
+
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/cache/NetworkCacheIOChannel.h:
+        * NetworkProcess/cache/NetworkCacheIOChannelCocoa.mm:
+        (WebKit::NetworkCache::IOChannel::read):
+        (WebKit::NetworkCache::IOChannel::write):
+        * NetworkProcess/cache/NetworkCacheIOChannelSoup.cpp:
+        (WebKit::NetworkCache::IOChannel::read):
+        (WebKit::NetworkCache::IOChannel::readSyncInThread):
+        (WebKit::NetworkCache::IOChannel::write):
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.h:
+        * NetworkProcess/cache/NetworkCacheStatistics.h:
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::clearNSURLCache):
+        (WebKit::NetworkProcess::clearDiskCache):
+        * NetworkProcess/soup/NetworkProcessSoup.cpp:
+        (WebKit::NetworkProcess::clearDiskCache):
+
 2017-06-09  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (r213584): WeChat app can not switch to next text field

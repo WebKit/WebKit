@@ -44,7 +44,7 @@ namespace NetworkCache {
 class SpeculativeLoad final : public NetworkLoadClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    typedef std::function<void (std::unique_ptr<NetworkCache::Entry>)> RevalidationCompletionHandler;
+    typedef Function<void (std::unique_ptr<NetworkCache::Entry>)> RevalidationCompletionHandler;
     SpeculativeLoad(const GlobalFrameID&, const WebCore::ResourceRequest&, std::unique_ptr<NetworkCache::Entry>, RevalidationCompletionHandler&&);
 
     virtual ~SpeculativeLoad();

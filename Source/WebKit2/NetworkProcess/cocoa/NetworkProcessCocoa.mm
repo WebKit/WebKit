@@ -40,6 +40,7 @@
 #import <WebCore/SecurityOrigin.h>
 #import <WebCore/SecurityOriginData.h>
 #import <WebKitSystemInterface.h>
+#import <wtf/BlockPtr.h>
 
 namespace WebKit {
 
@@ -167,36 +168,36 @@ void NetworkProcess::clearHSTSCache(WebCore::NetworkStorageSession& session, std
     _CFNetworkResetHSTSHostsSinceDate(session.platformSession(), (__bridge CFDateRef)date);
 }
 
-static void clearNSURLCache(dispatch_group_t group, std::chrono::system_clock::time_point modifiedSince, const std::function<void ()>& completionHandler)
+static void clearNSURLCache(dispatch_group_t group, std::chrono::system_clock::time_point modifiedSince, Function<void ()>&& completionHandler)
 {
-    dispatch_group_async(group, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [modifiedSince, completionHandler] {
+    dispatch_group_async(group, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), BlockPtr<void()>::fromCallable([modifiedSince, completionHandler = WTFMove(completionHandler)] () mutable {
         NSURLCache *cache = [NSURLCache sharedURLCache];
 
         NSTimeInterval timeInterval = std::chrono::duration_cast<std::chrono::duration<double>>(modifiedSince.time_since_epoch()).count();
         NSDate *date = [NSDate dateWithTimeIntervalSince1970:timeInterval];
         [cache removeCachedResponsesSinceDate:date];
 
-        dispatch_async(dispatch_get_main_queue(), [completionHandler] {
+        dispatch_async(dispatch_get_main_queue(), BlockPtr<void()>::fromCallable([completionHandler = WTFMove(completionHandler)] {
             completionHandler();
-        });
-    });
+        }).get());
+    }).get());
 }
 
-void NetworkProcess::clearDiskCache(std::chrono::system_clock::time_point modifiedSince, std::function<void ()> completionHandler)
+void NetworkProcess::clearDiskCache(std::chrono::system_clock::time_point modifiedSince, Function<void ()>&& completionHandler)
 {
     if (!m_clearCacheDispatchGroup)
         m_clearCacheDispatchGroup = dispatch_group_create();
 
 #if ENABLE(NETWORK_CACHE)
     auto group = m_clearCacheDispatchGroup;
-    dispatch_group_async(group, dispatch_get_main_queue(), [group, modifiedSince, completionHandler] {
-        NetworkCache::singleton().clear(modifiedSince, [group, modifiedSince, completionHandler] {
+    dispatch_group_async(group, dispatch_get_main_queue(), BlockPtr<void()>::fromCallable([group, modifiedSince, completionHandler = WTFMove(completionHandler)] () mutable {
+        NetworkCache::singleton().clear(modifiedSince, [group, modifiedSince, completionHandler = WTFMove(completionHandler)] () mutable {
             // FIXME: Probably not necessary.
-            clearNSURLCache(group, modifiedSince, completionHandler);
+            clearNSURLCache(group, modifiedSince, WTFMove(completionHandler));
         });
-    });
+    }).get());
 #else
-    clearNSURLCache(m_clearCacheDispatchGroup, modifiedSince, completionHandler);
+    clearNSURLCache(m_clearCacheDispatchGroup, modifiedSince, WTFMove(completionHandler));
 #endif
 }
 

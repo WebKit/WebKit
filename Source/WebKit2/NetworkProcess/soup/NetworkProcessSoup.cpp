@@ -156,7 +156,7 @@ void NetworkProcess::clearCacheForAllOrigins(uint32_t cachesToClear)
     clearDiskCache(std::chrono::system_clock::time_point::min(), [] { });
 }
 
-void NetworkProcess::clearDiskCache(std::chrono::system_clock::time_point modifiedSince, std::function<void ()> completionHandler)
+void NetworkProcess::clearDiskCache(std::chrono::system_clock::time_point modifiedSince, Function<void ()>&& completionHandler)
 {
     NetworkCache::singleton().clear(modifiedSince, WTFMove(completionHandler));
 }

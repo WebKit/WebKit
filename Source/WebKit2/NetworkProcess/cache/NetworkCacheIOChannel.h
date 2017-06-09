@@ -29,7 +29,7 @@
 #if ENABLE(NETWORK_CACHE)
 
 #include "NetworkCacheData.h"
-#include <functional>
+#include <wtf/Function.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/WorkQueue.h>
 #include <wtf/text/WTFString.h>
@@ -48,8 +48,8 @@ public:
 
     // Using nullptr as queue submits the result to the main queue.
     // FIXME: We should add WorkQueue::main() instead.
-    void read(size_t offset, size_t, WorkQueue*, std::function<void (Data&, int error)>);
-    void write(size_t offset, const Data&, WorkQueue*, std::function<void (int error)>);
+    void read(size_t offset, size_t, WorkQueue*, Function<void (Data&, int error)>&&);
+    void write(size_t offset, const Data&, WorkQueue*, Function<void (int error)>&&);
 
     const String& path() const { return m_path; }
     Type type() const { return m_type; }
@@ -62,7 +62,7 @@ private:
     IOChannel(const String& filePath, IOChannel::Type);
 
 #if USE(SOUP)
-    void readSyncInThread(size_t offset, size_t, WorkQueue*, std::function<void (Data&, int error)>);
+    void readSyncInThread(size_t offset, size_t, WorkQueue*, Function<void (Data&, int error)>&&);
 #endif
 
     String m_path;

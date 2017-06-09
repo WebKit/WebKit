@@ -33,6 +33,7 @@
 #include <mach/vm_param.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
+#include <wtf/BlockPtr.h>
 #include <wtf/text/CString.h>
 
 namespace WebKit {
@@ -92,12 +93,12 @@ Ref<IOChannel> IOChannel::open(const String& filePath, IOChannel::Type type)
     return adoptRef(*new IOChannel(filePath, type));
 }
 
-void IOChannel::read(size_t offset, size_t size, WorkQueue* queue, std::function<void (Data&, int error)> completionHandler)
+void IOChannel::read(size_t offset, size_t size, WorkQueue* queue, Function<void (Data&, int error)>&& completionHandler)
 {
     RefPtr<IOChannel> channel(this);
     bool didCallCompletionHandler = false;
     auto dispatchQueue = queue ? queue->dispatchQueue() : dispatch_get_main_queue();
-    dispatch_io_read(m_dispatchIO.get(), offset, size, dispatchQueue, [channel, completionHandler, didCallCompletionHandler](bool done, dispatch_data_t fileData, int error) mutable {
+    dispatch_io_read(m_dispatchIO.get(), offset, size, dispatchQueue, BlockPtr<void(bool, dispatch_data_t, int)>::fromCallable([channel, completionHandler = WTFMove(completionHandler), didCallCompletionHandler](bool done, dispatch_data_t fileData, int error) mutable {
         ASSERT_UNUSED(done, done || !didCallCompletionHandler);
         if (didCallCompletionHandler)
             return;
@@ -105,18 +106,18 @@ void IOChannel::read(size_t offset, size_t size, WorkQueue* queue, std::function
         Data data(fileDataPtr);
         completionHandler(data, error);
         didCallCompletionHandler = true;
-    });
+    }).get());
 }
 
-void IOChannel::write(size_t offset, const Data& data, WorkQueue* queue, std::function<void (int error)> completionHandler)
+void IOChannel::write(size_t offset, const Data& data, WorkQueue* queue, Function<void (int error)>&& completionHandler)
 {
     RefPtr<IOChannel> channel(this);
     auto dispatchData = data.dispatchData();
     auto dispatchQueue = queue ? queue->dispatchQueue() : dispatch_get_main_queue();
-    dispatch_io_write(m_dispatchIO.get(), offset, dispatchData, dispatchQueue, [channel, completionHandler](bool done, dispatch_data_t fileData, int error) {
+    dispatch_io_write(m_dispatchIO.get(), offset, dispatchData, dispatchQueue, BlockPtr<void(bool, dispatch_data_t, int)>::fromCallable([channel, completionHandler = WTFMove(completionHandler)](bool done, dispatch_data_t fileData, int error) {
         ASSERT_UNUSED(done, done);
         completionHandler(error);
-    });
+    }).get());
 }
 
 }
