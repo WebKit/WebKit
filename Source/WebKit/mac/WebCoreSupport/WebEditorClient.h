@@ -150,6 +150,8 @@ private:
     bool performsTwoStepPaste(WebCore::DocumentFragment*) final;
     int pasteboardChangeCount() final;
 #endif
+
+    bool performTwoStepDrop(WebCore::DocumentFragment&, WebCore::Range& destination, bool isMove) final;
     
     bool shouldEraseMarkersAfterChangeSelection(WebCore::TextCheckingType) const final;
     void ignoreWordInSpellDocument(const String&) final;

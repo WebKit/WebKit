@@ -1,3 +1,27 @@
+2017-06-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS DnD] Add a hook to perform two-step drops in editable content
+        https://bugs.webkit.org/show_bug.cgi?id=172992
+        <rdar://problem/32590174>
+
+        Reviewed by Tim Horton.
+
+        Adds 2 new API tests to cover using the injected editing bundle to override performTwoStepDrop.
+        Tests:  DataInteractionTests.InjectedBundleOverridePerformTwoStepDrop
+                DataInteractionTests.InjectedBundleAllowPerformTwoStepDrop
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/BundleEditingDelegatePlugIn.mm:
+        (-[BundleEditingDelegatePlugIn webProcessPlugIn:didCreateBrowserContextController:]):
+        (-[BundleEditingDelegatePlugIn _webProcessPlugInBrowserContextController:performTwoStepDrop:atDestination:isMove:]):
+
+        Allow the BundleOverridePerformTwoStepDrop bundle parameter to determine whether or not two-step drops should
+        be overridden. Currently, this is overridden to just return true.
+
+        * TestWebKitAPI/Tests/ios/DataInteractionTests.mm:
+        (TestWebKitAPI::TEST):
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::InjectedBundlePage):
+
 2017-06-09  Zan Dobersek  <zdobersek@igalia.com>
 
         [WPE] Enable ENCRYPTED_MEDIA for build-webkit builds

@@ -213,6 +213,8 @@ private:
     int pasteboardChangeCount() final { return 0; }
 #endif
 
+    bool performTwoStepDrop(DocumentFragment&, Range&, bool) final { return false; }
+
 #if PLATFORM(COCOA)
     NSString *userVisibleString(NSURL *) final { return nullptr; }
     void setInsertionPasteboard(const String&) final { };

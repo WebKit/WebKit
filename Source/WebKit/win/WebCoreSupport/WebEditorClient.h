@@ -111,6 +111,7 @@ private:
     void willSetInputMethodState() final;
     void setInputMethodState(bool) final;
     void requestCheckingOfString(WebCore::TextCheckingRequest&, const WebCore::VisibleSelection&) final { }
+    bool performTwoStepDrop(WebCore::DocumentFragment&, WebCore::Range&, bool) final { return false; }
 
     WebCore::TextCheckerClient* textChecker() final { return this; }
 

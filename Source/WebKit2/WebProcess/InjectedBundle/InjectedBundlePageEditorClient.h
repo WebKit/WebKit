@@ -37,6 +37,7 @@ template<> struct ClientTraits<WKBundlePageEditorClientBase> {
 
 namespace WebCore {
 class CSSStyleDeclaration;
+class DocumentFragment;
 class Node;
 class Range;
 }
@@ -65,6 +66,7 @@ private:
     void willWriteToPasteboard(WebPage&, WebCore::Range*) final;
     void getPasteboardDataForRange(WebPage&, WebCore::Range*, Vector<String>& pasteboardTypes, Vector<RefPtr<WebCore::SharedBuffer>>& pasteboardData) final;
     void didWriteToPasteboard(WebPage&) final;
+    bool performTwoStepDrop(WebPage&, WebCore::DocumentFragment&, WebCore::Range& destination, bool isMove) final;
 };
 
 } // namespace WebKit

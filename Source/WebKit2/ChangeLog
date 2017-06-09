@@ -1,3 +1,26 @@
+2017-06-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS DnD] Add a hook to perform two-step drops in editable content
+        https://bugs.webkit.org/show_bug.cgi?id=172992
+        <rdar://problem/32590174>
+
+        Reviewed by Tim Horton.
+
+        Add plumbing to support an injected bundle hook for overriding two-step drops. See WebCore ChangeLog.
+
+        * WebProcess/InjectedBundle/API/APIInjectedBundleEditorClient.h:
+        (API::InjectedBundle::EditorClient::performTwoStepDrop):
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInEditingDelegate.h:
+        * WebProcess/InjectedBundle/API/c/WKBundlePageEditorClient.h:
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+        (-[WKWebProcessPlugInBrowserContextController _setEditingDelegate:]):
+        * WebProcess/InjectedBundle/InjectedBundlePageEditorClient.cpp:
+        (WebKit::InjectedBundlePageEditorClient::performTwoStepDrop):
+        * WebProcess/InjectedBundle/InjectedBundlePageEditorClient.h:
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::performTwoStepDrop):
+        * WebProcess/WebCoreSupport/WebEditorClient.h:
+
 2017-06-09  Brent Fulgham  <bfulgham@apple.com>
 
         Use Function rather than std::function for thread safety in WebsiteDataStore

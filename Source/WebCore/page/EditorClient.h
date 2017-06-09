@@ -185,6 +185,8 @@ public:
     // Support for global selections, used on platforms like the X Window System that treat
     // selection as a type of clipboard.
     virtual bool supportsGlobalSelection() { return false; }
+
+    virtual bool performTwoStepDrop(DocumentFragment&, Range& destination, bool isMove) = 0;
 };
 
 }

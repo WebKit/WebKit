@@ -35,6 +35,7 @@
 #include "WKBundleAPICast.h"
 #include "WKString.h"
 #include "WebPage.h"
+#include <WebCore/DocumentFragment.h>
 #include <wtf/text/WTFString.h>
 
 using namespace WebCore;
@@ -170,6 +171,16 @@ void InjectedBundlePageEditorClient::getPasteboardDataForRange(WebPage& page, Ra
             pasteboardData.append(buffer);
         }
     }
+}
+
+bool InjectedBundlePageEditorClient::performTwoStepDrop(WebPage& page, DocumentFragment& fragment, Range& destination, bool isMove)
+{
+    if (!m_client.performTwoStepDrop)
+        return false;
+
+    auto rangeHandle = InjectedBundleRangeHandle::getOrCreate(&destination);
+    auto nodeHandle = InjectedBundleNodeHandle::getOrCreate(&fragment);
+    return m_client.performTwoStepDrop(toAPI(&page), toAPI(nodeHandle.get()), toAPI(rangeHandle.get()), isMove, m_client.base.clientInfo);
 }
 
 void InjectedBundlePageEditorClient::didWriteToPasteboard(WebPage& page)

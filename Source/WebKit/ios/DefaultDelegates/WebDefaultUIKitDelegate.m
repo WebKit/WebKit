@@ -27,6 +27,7 @@
 
 #import "WebDefaultUIKitDelegate.h"
 
+#import "DOMRange.h"
 #import "WebUIDelegate.h"
 
 static WebDefaultUIKitDelegate *sharedDelegate = nil;
@@ -258,6 +259,11 @@ static WebDefaultUIKitDelegate *sharedDelegate = nil;
 }
 
 - (BOOL)performsTwoStepPaste:(DOMDocumentFragment*)fragment
+{
+    return NO;
+}
+
+- (BOOL)performTwoStepDrop:(DOMDocumentFragment *)fragment atDestination:(DOMRange *)destination isMove:(BOOL)isMove
 {
     return NO;
 }

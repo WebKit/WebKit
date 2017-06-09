@@ -1,3 +1,19 @@
+2017-06-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS DnD] Add a hook to perform two-step drops in editable content
+        https://bugs.webkit.org/show_bug.cgi?id=172992
+        <rdar://problem/32590174>
+
+        Reviewed by Tim Horton.
+
+        Adds a new SPI to WebUIKitDelegate to allow WK1 clients to override default drop behavior. Returning YES from
+        -performTwoStepDrop:atDestination:isMove: will prevent content from being inserted on drop in WebKit; otherwise,
+        returning NO will continue with default WebKit behavior.
+
+        * WebCoreSupport/WebEditorClient.h:
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::performTwoStepDrop):
+
 2017-06-08  Jer Noble  <jer.noble@apple.com>
 
         Clients of the WK2 C-API don't have their mediaContentTypesRequiringHardwareSupport setting initialized correctly.

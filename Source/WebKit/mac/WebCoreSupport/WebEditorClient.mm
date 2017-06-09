@@ -923,6 +923,14 @@ bool WebEditorClient::performsTwoStepPaste(WebCore::DocumentFragment* fragment)
     return false;
 }
 
+bool WebEditorClient::performTwoStepDrop(DocumentFragment& fragment, Range& destination, bool isMove)
+{
+    if ([[m_webView _UIKitDelegateForwarder] respondsToSelector:@selector(performTwoStepDrop:atDestination:isMove:)])
+        return [[m_webView _UIKitDelegateForwarder] performTwoStepDrop:kit(&fragment) atDestination:kit(&destination) isMove:isMove];
+
+    return false;
+}
+
 int WebEditorClient::pasteboardChangeCount()
 {
     if ([[m_webView _UIKitDelegateForwarder] respondsToSelector:@selector(getPasteboardChangeCount)])
@@ -954,6 +962,11 @@ Vector<TextCheckingResult> WebEditorClient::checkTextOfParagraph(StringView stri
 #endif // PLATFORM(IOS)
 
 #if !PLATFORM(IOS)
+
+bool WebEditorClient::performTwoStepDrop(DocumentFragment&, Range&, bool)
+{
+    return false;
+}
 
 bool WebEditorClient::shouldEraseMarkersAfterChangeSelection(TextCheckingType type) const
 {

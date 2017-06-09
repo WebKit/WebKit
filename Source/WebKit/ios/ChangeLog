@@ -1,3 +1,17 @@
+2017-06-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS DnD] Add a hook to perform two-step drops in editable content
+        https://bugs.webkit.org/show_bug.cgi?id=172992
+        <rdar://problem/32590174>
+
+        Reviewed by Tim Horton.
+
+        Add an empty implementation of performTwoStepDrop for WebDefaultUIKitDelegate. See WebCore ChangeLogs.
+
+        * DefaultDelegates/WebDefaultUIKitDelegate.m:
+        (-[WebDefaultUIKitDelegate performTwoStepDrop:atDestination:isMove:]):
+        * WebView/WebUIKitDelegate.h:
+
 2017-06-07  Zalan Bujtas  <zalan@apple.com>
 
         [iOS WK1 WebThread] Do not call out to the main thread for device orientation.

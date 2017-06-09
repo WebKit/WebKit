@@ -168,6 +168,7 @@ private:
     int pasteboardChangeCount() final;
 #endif
 
+    bool performTwoStepDrop(WebCore::DocumentFragment&, WebCore::Range&, bool isMove) final;
     bool supportsGlobalSelection() final;
 
     WebPage* m_page;

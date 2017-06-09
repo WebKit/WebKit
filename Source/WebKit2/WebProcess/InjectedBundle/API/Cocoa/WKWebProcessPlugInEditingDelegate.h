@@ -28,6 +28,7 @@
 #if WK_API_ENABLED
 
 #import <WebKit/WKWebProcessPlugInBrowserContextController.h>
+#import <WebKit/WKWebProcessPlugInNodeHandle.h>
 #import <WebKit/WKWebProcessPlugInRangeHandle.h>
 
 #if TARGET_OS_IPHONE
@@ -59,6 +60,7 @@ WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA))
 - (void)_webProcessPlugInBrowserContextController:(WKWebProcessPlugInBrowserContextController *)controller willWriteRangeToPasteboard:(WKWebProcessPlugInRangeHandle *)range;
 - (NSDictionary<NSString *, NSData *> *)_webProcessPlugInBrowserContextController:(WKWebProcessPlugInBrowserContextController *)controller pasteboardDataForRange:(WKWebProcessPlugInRangeHandle *)range;
 - (void)_webProcessPlugInBrowserContextControllerDidWriteToPasteboard:(WKWebProcessPlugInBrowserContextController *)controller;
+- (BOOL)_webProcessPlugInBrowserContextController:(WKWebProcessPlugInBrowserContextController *)controller performTwoStepDrop:(WKWebProcessPlugInNodeHandle *)fragment atDestination:(WKWebProcessPlugInRangeHandle *)destination isMove:(BOOL)isMove;
 
 @end
 

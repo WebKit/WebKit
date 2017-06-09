@@ -29,8 +29,9 @@
 #import <WebKitLegacy/WAKAppKitStubs.h>
 #import <WebKitLegacy/WKContentObservation.h>
 
-@class DOMNode;
 @class DOMDocumentFragment;
+@class DOMNode;
+@class DOMRange;
 @class WAKView;
 @class WebDataSource;
 @class WebFrame;
@@ -118,6 +119,7 @@ typedef NS_ENUM(NSInteger, WebMediaCaptureType) {
 - (NSArray*)supportedPasteboardTypesForCurrentSelection;
 - (BOOL)hasRichlyEditableSelection;
 - (BOOL)performsTwoStepPaste:(DOMDocumentFragment*)fragment;
+- (BOOL)performTwoStepDrop:(DOMDocumentFragment *)fragment atDestination:(DOMRange *)destination isMove:(BOOL)isMove;
 - (NSInteger)getPasteboardChangeCount;
 - (CGPoint)interactionLocation;
 - (void)showPlaybackTargetPicker:(BOOL)hasVideo fromRect:(CGRect)elementRect;

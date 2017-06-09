@@ -372,7 +372,8 @@ InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
         didChangeSelection,
         0, /* willWriteToPasteboard */
         0, /* getPasteboardDataForRange */
-        0  /* didWriteToPasteboard */
+        0, /* didWriteToPasteboard */
+        0, /* performTwoStepDrop */
     };
     WKBundlePageSetEditorClient(m_page, &editorClient.base);
 

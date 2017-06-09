@@ -239,6 +239,11 @@ void WebEditorClient::getClientPasteboardDataForRange(Range* range, Vector<Strin
     m_page->injectedBundleEditorClient().getPasteboardDataForRange(*m_page, range, pasteboardTypes, pasteboardData);
 }
 
+bool WebEditorClient::performTwoStepDrop(DocumentFragment& fragment, Range& destination, bool isMove)
+{
+    return m_page->injectedBundleEditorClient().performTwoStepDrop(*m_page, fragment, destination, isMove);
+}
+
 void WebEditorClient::registerUndoStep(UndoStep& step)
 {
     // FIXME: Add assertion that the command being reapplied is the same command that is

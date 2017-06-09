@@ -37,6 +37,7 @@
 #import <UIKit/UIImage+UIItemProvider.h>
 #import <UIKit/UIItemProvider_Private.h>
 #import <WebKit/WKPreferencesPrivate.h>
+#import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 
@@ -709,6 +710,52 @@ TEST(DataInteractionTests, OverrideDataInteractionOperation)
     }];
     [dataInteractionSimulator runFrom:CGPointMake(300, 400) to:CGPointMake(100, 300)];
     TestWebKitAPI::Util::run(&finishedLoadingData);
+}
+
+TEST(DataInteractionTests, InjectedBundleOverridePerformTwoStepDrop)
+{
+    WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"BundleEditingDelegatePlugIn"];
+    [configuration.processPool _setObject:@YES forBundleParameter:@"BundleOverridePerformTwoStepDrop"];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration]);
+    [webView loadTestPageNamed:@"autofocus-contenteditable"];
+    [webView stringByEvaluatingJavaScript:@"getSelection().removeAllRanges()"];
+
+    auto simulatedItemProvider = adoptNS([[UIItemProvider alloc] init]);
+    [simulatedItemProvider registerDataRepresentationForTypeIdentifier:(NSString *)kUTTypeUTF8PlainText options:nil loadHandler:^NSProgress *(UIItemProviderDataLoadCompletionBlock completionBlock)
+    {
+        completionBlock([@"Hello world" dataUsingEncoding:NSUTF8StringEncoding], nil);
+        return [NSProgress discreteProgressWithTotalUnitCount:100];
+    }];
+
+    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    [dataInteractionSimulator setExternalItemProviders:@[ simulatedItemProvider.get() ]];
+    [dataInteractionSimulator runFrom:CGPointMake(300, 400) to:CGPointMake(100, 300)];
+
+    EXPECT_EQ(0UL, [webView stringByEvaluatingJavaScript:@"editor.textContent"].length);
+}
+
+TEST(DataInteractionTests, InjectedBundleAllowPerformTwoStepDrop)
+{
+    WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"BundleEditingDelegatePlugIn"];
+    [configuration.processPool _setObject:@NO forBundleParameter:@"BundleOverridePerformTwoStepDrop"];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration]);
+    [webView loadTestPageNamed:@"autofocus-contenteditable"];
+    [webView stringByEvaluatingJavaScript:@"getSelection().removeAllRanges()"];
+
+    auto simulatedItemProvider = adoptNS([[UIItemProvider alloc] init]);
+    [simulatedItemProvider registerDataRepresentationForTypeIdentifier:(NSString *)kUTTypeUTF8PlainText options:nil loadHandler:^NSProgress *(UIItemProviderDataLoadCompletionBlock completionBlock)
+    {
+        completionBlock([@"Hello world" dataUsingEncoding:NSUTF8StringEncoding], nil);
+        return [NSProgress discreteProgressWithTotalUnitCount:100];
+    }];
+
+    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    [dataInteractionSimulator setExternalItemProviders:@[ simulatedItemProvider.get() ]];
+    [dataInteractionSimulator runFrom:CGPointMake(300, 400) to:CGPointMake(100, 300)];
+
+    EXPECT_WK_STREQ("Hello world", [webView stringByEvaluatingJavaScript:@"editor.textContent"].UTF8String);
 }
 
 TEST(DataInteractionTests, AttachmentElementItemProviders)
