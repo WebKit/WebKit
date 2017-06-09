@@ -1,5 +1,18 @@
 2017-06-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Use API::Findclient instead of the C API in WebKitFindController
+        https://bugs.webkit.org/show_bug.cgi?id=173095
+
+        Reviewed by Žan Doberšek.
+
+        * UIProcess/API/gtk/WebKitFindController.cpp:
+        (getPage):
+        (webkitFindControllerDispose):
+        (webkitFindControllerConstructed):
+        (webkit_find_controller_class_init):
+
+2017-06-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Get rid of custom marshallers of signals
         https://bugs.webkit.org/show_bug.cgi?id=173094
 

@@ -20,6 +20,7 @@
 #include "config.h"
 #include "WebKitFindController.h"
 
+#include "APIFindClient.h"
 #include "WebKitEnumTypes.h"
 #include "WebKitPrivate.h"
 #include "WebKitWebView.h"
@@ -101,40 +102,51 @@ static inline WebKitFindOptions toWebKitFindOptions(uint32_t findOptions)
         | (findOptions & FindOptionsWrapAround ? WEBKIT_FIND_OPTIONS_WRAP_AROUND : 0));
 }
 
-static void didFindString(WKPageRef, WKStringRef, unsigned matchCount, const void* clientInfo)
-{
-    g_signal_emit(WEBKIT_FIND_CONTROLLER(clientInfo), signals[FOUND_TEXT], 0, matchCount);
-}
-
-static void didFailToFindString(WKPageRef, WKStringRef, const void* clientInfo)
-{
-    g_signal_emit(WEBKIT_FIND_CONTROLLER(clientInfo), signals[FAILED_TO_FIND_TEXT], 0);
-}
-
-static void didCountStringMatches(WKPageRef, WKStringRef, unsigned matchCount, const void* clientInfo)
-{
-    g_signal_emit(WEBKIT_FIND_CONTROLLER(clientInfo), signals[COUNTED_MATCHES], 0, matchCount);
-}
-
 static inline WebPageProxy* getPage(WebKitFindController* findController)
 {
     return webkitWebViewBaseGetPage(reinterpret_cast<WebKitWebViewBase*>(findController->priv->webView));
 }
 
-static void webkitFindControllerConstructed(GObject* object)
+class FindClient final : public API::FindClient {
+public:
+    explicit FindClient(WebKitFindController* findController)
+        : m_findController(findController)
+    {
+    }
+
+private:
+    void didCountStringMatches(WebPageProxy*, const String&, uint32_t matchCount) override
+    {
+        g_signal_emit(m_findController, signals[COUNTED_MATCHES], 0, matchCount);
+    }
+
+    void didFindString(WebPageProxy*, const String&, const Vector<IntRect>&, uint32_t matchCount, int32_t, bool /*didWrapAround*/) override
+    {
+        g_signal_emit(m_findController, signals[FOUND_TEXT], 0, matchCount);
+    }
+
+    void didFailToFindString(WebPageProxy*, const String&) override
+    {
+        g_signal_emit(m_findController, signals[FAILED_TO_FIND_TEXT], 0);
+    }
+
+    WebKitFindController* m_findController;
+};
+
+static void webkitFindControllerDispose(GObject* object)
 {
     WebKitFindController* findController = WEBKIT_FIND_CONTROLLER(object);
-    WKPageFindClientV0 wkFindClient = {
-        {
-            0, // version
-            findController, // clientInfo
-        },
-        didFindString,
-        didFailToFindString,
-        didCountStringMatches
-    };
+    getPage(findController)->setFindClient(nullptr);
 
-    WKPageSetPageFindClient(toAPI(getPage(findController)), &wkFindClient.base);
+    G_OBJECT_CLASS(webkit_find_controller_parent_class)->dispose(object);
+}
+
+static void webkitFindControllerConstructed(GObject* object)
+{
+    G_OBJECT_CLASS(webkit_find_controller_parent_class)->constructed(object);
+
+    WebKitFindController* findController = WEBKIT_FIND_CONTROLLER(object);
+    getPage(findController)->setFindClient(std::make_unique<FindClient>(findController));
 }
 
 static void webkitFindControllerGetProperty(GObject* object, guint propId, GValue* value, GParamSpec* paramSpec)
@@ -175,6 +187,7 @@ static void webkitFindControllerSetProperty(GObject* object, guint propId, const
 static void webkit_find_controller_class_init(WebKitFindControllerClass* findClass)
 {
     GObjectClass* gObjectClass = G_OBJECT_CLASS(findClass);
+    gObjectClass->dispose = webkitFindControllerDispose;
     gObjectClass->constructed = webkitFindControllerConstructed;
     gObjectClass->get_property = webkitFindControllerGetProperty;
     gObjectClass->set_property = webkitFindControllerSetProperty;
