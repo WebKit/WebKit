@@ -536,3 +536,12 @@ webkit.org/b/133122 imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/suc
 
 # ENABLE_CSS_COMPOSITING
 Bug(WPE) transitions/blendmode-transitions.html [ Failure ]
+
+# ENABLE_MEDIA_SOURCE
+media/media-source/ [ Pass ]
+webkit.org/b/168373 media/media-source/media-source-error-crash.html [ Timeout ]
+webkit.org/b/171726 media/media-source/media-source-init-segment-duration.html [ Failure ]
+webkit.org/b/172816 media/media-source/media-source-paint-to-canvas.html [ Timeout ]
+webkit.org/b/168373 media/media-source/media-source-resize.html [ Failure ]
+webkit.org/b/165394 media/media-source/media-source-seek-detach-crash.html [ Timeout ]
+webkit.org/b/168373 media/media-source/only-bcp47-language-tags-accepted-as-valid.html [ Timeout ]

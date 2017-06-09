@@ -1,3 +1,12 @@
+2017-06-09  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WPE] Enable MEDIA_SOURCE for build-webkit builds
+        https://bugs.webkit.org/show_bug.cgi?id=173136
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * Scripts/webkitperl/FeatureList.pm: Enable the MEDIA_SOURCE feature for WPE.
+
 2017-06-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Use API::FormClient instead of the C API in WebKitFormClient
