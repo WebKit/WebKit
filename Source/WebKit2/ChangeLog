@@ -1,3 +1,16 @@
+2017-06-09  Chris Dumez  <cdumez@apple.com>
+
+        Make sure |this| is protected in lambda capture in WebResourceLoadStatisticsStore::grandfatherExistingWebsiteData()
+        https://bugs.webkit.org/show_bug.cgi?id=173163
+
+        Reviewed by Brent Fulgham.
+
+        Make sure |this| is protected in lambda capture in WebResourceLoadStatisticsStore::grandfatherExistingWebsiteData()
+        or it may end up getting destroyed before the lambda executing and crash when calling m_statisticsQueue->dispatch().
+
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::grandfatherExistingWebsiteData):
+
 2017-06-09  Daewoong Jang  <daewoong.jang@navercorp.com>
 
         [CoordinatedGraphics] Remove unneeded interfaces in PageClient
