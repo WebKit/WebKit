@@ -396,8 +396,7 @@
             "contextsAllowed": ["interface", "dictionary", "enum", "attribute", "operation", "constant"],
             "standard": {
                 "url": "https://heycam.github.io/webidl/#SecureContext"
-            },
-            "unsupported": true
+            }
         },
         "SetterCallWith": {
             "contextsAllowed": ["attribute"],

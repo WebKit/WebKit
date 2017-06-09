@@ -119,6 +119,12 @@ enum TestConfidence { "high", "kinda-low" };
     [Conditional=TEST_FEATURE, EnabledBySetting=TestSetting] attribute DOMString enabledBySettingAttribute;
     [Conditional=TEST_FEATURE, EnabledBySetting=TestSetting] void enabledBySettingOperation(DOMString testParam);
 
+    // [SecureContext] attributes and operations; will not be exposed to a non-secure context.
+    // From <https://w3c.github.io/webappsec-secure-contexts/#integration-idl> (Editor's Draft, 17 November 2016)
+    [SecureContext] Promise<double> calculateSecretResult();
+    [SecureContext] boolean getSecretBoolean();
+    [Conditional=TEST_FEATURE, SecureContext, EnabledAtRuntime=TestFeature] boolean testFeatureGetSecretBoolean();
+
     // TypedArray attribute
     attribute Float32Array typedArrayAttr;
 

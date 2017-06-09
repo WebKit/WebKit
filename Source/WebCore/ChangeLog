@@ -1,3 +1,70 @@
+2017-06-09  Daniel Bates  <dabates@apple.com>
+
+        Implement W3C Secure Contexts Draft Specification
+        https://bugs.webkit.org/show_bug.cgi?id=158121
+        <rdar://problem/26012994>
+
+        Reviewed by Chris Dumez.
+
+        Part 1
+
+        Teach the bindings code generator to generate a runtime check for an interface, attribute or
+        function annotated with the extended attribute [SecureContext]. For now, the runtime check
+        (ScriptExecutionContext::isSecureContext()) always returns true. We will flesh out the
+        implementation of this runtime check in a subsequent commit.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (NeedsRuntimeCheck):
+        (GenerateRuntimeEnableConditionalString):
+        Generate a runtime check for an interface, attribute, or function that is annotated with
+        the extended attribute [SecureContext].
+
+        * bindings/scripts/IDLAttributes.json: Update JSON now that we support SecureContext.
+        * bindings/scripts/preprocess-idls.pl:
+        (GenerateConstructorAttributes): Add the SecureContext extended attribute to a constructor,
+        if applicable.
+
+        * bindings/scripts/test/JS/JSTestGenerateIsReachable.cpp:
+        (WebCore::JSTestGenerateIsReachablePrototype::finishCreation):
+        (WebCore::IDLAttribute<JSTestGenerateIsReachable>::cast):
+        (WebCore::jsTestGenerateIsReachableASecretAttributeGetter):
+        (WebCore::jsTestGenerateIsReachableASecretAttribute):
+        * bindings/scripts/test/JS/JSTestGlobalObject.cpp:
+        (WebCore::JSTestGlobalObject::finishCreation):
+        (WebCore::jsTestGlobalObjectInstanceFunctionCalculateSecretResultBody):
+        (WebCore::jsTestGlobalObjectInstanceFunctionCalculateSecretResult):
+        (WebCore::jsTestGlobalObjectInstanceFunctionGetSecretBooleanBody):
+        (WebCore::jsTestGlobalObjectInstanceFunctionGetSecretBoolean):
+        (WebCore::jsTestGlobalObjectInstanceFunctionTestFeatureGetSecretBooleanBody):
+        (WebCore::jsTestGlobalObjectInstanceFunctionTestFeatureGetSecretBoolean):
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        (WebCore::JSTestNodePrototype::finishCreation):
+        (WebCore::jsTestNodePrototypeFunctionCalculateSecretResultBody):
+        (WebCore::jsTestNodePrototypeFunctionCalculateSecretResult):
+        (WebCore::jsTestNodePrototypeFunctionGetSecretBooleanBody):
+        (WebCore::jsTestNodePrototypeFunctionGetSecretBoolean):
+        (WebCore::jsTestNodePrototypeFunctionTestFeatureGetSecretBooleanBody):
+        (WebCore::jsTestNodePrototypeFunctionTestFeatureGetSecretBoolean):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::JSTestObjPrototype::finishCreation):
+        (WebCore::jsTestObjPrototypeFunctionCalculateSecretResultBody):
+        (WebCore::jsTestObjPrototypeFunctionCalculateSecretResult):
+        (WebCore::jsTestObjPrototypeFunctionGetSecretBooleanBody):
+        (WebCore::jsTestObjPrototypeFunctionGetSecretBoolean):
+        (WebCore::jsTestObjPrototypeFunctionTestFeatureGetSecretBooleanBody):
+        (WebCore::jsTestObjPrototypeFunctionTestFeatureGetSecretBoolean):
+        Update expected results.
+
+        * bindings/scripts/test/TestGenerateIsReachable.idl:
+        * bindings/scripts/test/TestGlobalObject.idl:
+        * bindings/scripts/test/TestNode.idl:
+        * bindings/scripts/test/TestObj.idl:
+        Add test cases.
+
+        * dom/ScriptExecutionContext.h:
+        (WebCore::ScriptExecutionContext::isSecureContext): Added. For now, always returns true.
+        We will implement this function in a subsequent commit.
+
 2017-06-09  Jer Noble  <jer.noble@apple.com>
 
         Media elements are allowed to continue to load media data after navigation

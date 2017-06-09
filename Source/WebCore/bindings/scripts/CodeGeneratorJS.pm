@@ -1400,7 +1400,8 @@ sub NeedsRuntimeCheck
 {
     my $interface = shift;
     return $interface->extendedAttributes->{EnabledAtRuntime}
-        || $interface->extendedAttributes->{EnabledForWorld};
+        || $interface->extendedAttributes->{EnabledForWorld}
+        || $interface->extendedAttributes->{SecureContext};
 }
 
 sub NeedsSettingsCheckForPrototypeProperty
@@ -3350,8 +3351,11 @@ sub GenerateRuntimeEnableConditionalString
     my $context = shift;
 
     AddToImplIncludes("RuntimeEnabledFeatures.h");
+    AddToImplIncludes("ScriptExecutionContext.h");
 
     my @conjuncts;
+    push @conjuncts, "jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->isSecureContext()" if $context->extendedAttributes->{SecureContext};
+
     if ($context->extendedAttributes->{EnabledForWorld}) {
         assert("Must specify value for EnabledForWorld.") if $context->extendedAttributes->{EnabledForWorld} eq "VALUE_IS_MISSING";
         push @conjuncts, "worldForDOMObject(this)." . ToMethodName($context->extendedAttributes->{EnabledForWorld}) . "()";

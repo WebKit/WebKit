@@ -221,6 +221,8 @@ public:
 
     JSC::ExecState* execState();
 
+    virtual bool isSecureContext() const { return true; }
+
 protected:
     class AddConsoleMessageTask : public Task {
     public:
