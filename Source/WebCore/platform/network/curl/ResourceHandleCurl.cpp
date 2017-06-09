@@ -46,10 +46,10 @@ class WebCoreSynchronousLoader : public ResourceHandleClient {
 public:
     WebCoreSynchronousLoader();
 
-    virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&);
-    virtual void didReceiveData(ResourceHandle*, const char*, unsigned, int encodedDataLength);
-    virtual void didFinishLoading(ResourceHandle*);
-    virtual void didFail(ResourceHandle*, const ResourceError&);
+    void didReceiveResponse(ResourceHandle*, ResourceResponse&&) override;
+    void didReceiveData(ResourceHandle*, const char*, unsigned, int encodedDataLength) override;
+    void didFinishLoading(ResourceHandle*) override;
+    void didFail(ResourceHandle*, const ResourceError&) override;
 
     ResourceResponse resourceResponse() const { return m_response; }
     ResourceError resourceError() const { return m_error; }
@@ -65,9 +65,9 @@ WebCoreSynchronousLoader::WebCoreSynchronousLoader()
 {
 }
 
-void WebCoreSynchronousLoader::didReceiveResponse(ResourceHandle*, const ResourceResponse& response)
+void WebCoreSynchronousLoader::didReceiveResponse(ResourceHandle*, ResourceResponse&& response)
 {
-    m_response = response;
+    m_response = WTFMove(response);
 }
 
 void WebCoreSynchronousLoader::didReceiveData(ResourceHandle*, const char* data, unsigned length, int)
@@ -163,7 +163,7 @@ bool ResourceHandle::shouldUseCredentialStorage()
     return (!client() || client()->shouldUseCredentialStorage(this)) && firstRequest().url().protocolIsInHTTPFamily();
 }
 
-void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* context, const ResourceRequest& request, StoredCredentials storedCredentials, ResourceError& error, ResourceResponse& response, Vector<char>& data)
+void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* context, const ResourceRequest& request, StoredCredentials, ResourceError& error, ResourceResponse& response, Vector<char>& data)
 {
     WebCoreSynchronousLoader syncLoader;
     RefPtr<ResourceHandle> handle = adoptRef(new ResourceHandle(context, request, &syncLoader, true, false));

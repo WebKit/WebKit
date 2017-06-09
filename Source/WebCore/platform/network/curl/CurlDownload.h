@@ -80,7 +80,7 @@ private:
 class CurlDownloadListener {
 public:
     virtual void didReceiveResponse() { }
-    virtual void didReceiveDataOfLength(int size) { }
+    virtual void didReceiveDataOfLength(int) { }
     virtual void didFinish() { }
     virtual void didFail() { }
 };

@@ -1,3 +1,12 @@
+2017-06-09  Daewoong Jang  <daewoong.jang@navercorp.com>
+
+        Reduce compiler warnings
+        https://bugs.webkit.org/show_bug.cgi?id=172078
+
+        Reviewed by Yusuke Suzuki.
+
+        * runtime/IntlDateTimeFormat.h:
+
 2017-06-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         [Cocoa] JSWrapperMap leaks for all JSContexts

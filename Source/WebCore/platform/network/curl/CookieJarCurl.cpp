@@ -94,8 +94,6 @@ static void addMatchingCurlCookie(const char* cookie, const String& domain, cons
     String cookieDomain;
     readCurlCookieToken(cookie, cookieDomain);
 
-    bool subDomain = false;
-
     // HttpOnly cookie entries begin with "#HttpOnly_".
     if (cookieDomain.startsWith("#HttpOnly_")) {
         if (httponly)
@@ -332,12 +330,12 @@ void deleteCookie(const NetworkStorageSession&, const URL&, const String&)
     // FIXME: Not yet implemented
 }
 
-void getHostnamesWithCookies(const NetworkStorageSession&, HashSet<String>& hostnames)
+void getHostnamesWithCookies(const NetworkStorageSession&, HashSet<String>&)
 {
     // FIXME: Not yet implemented
 }
 
-void deleteCookiesForHostname(const NetworkStorageSession&, const String& hostname)
+void deleteCookiesForHostnames(const NetworkStorageSession&, const Vector<String>&)
 {
     // FIXME: Not yet implemented
 }

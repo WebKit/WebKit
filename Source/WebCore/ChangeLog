@@ -1,3 +1,27 @@
+2017-06-09  Daewoong Jang  <daewoong.jang@navercorp.com>
+
+        Reduce compiler warnings
+        https://bugs.webkit.org/show_bug.cgi?id=172078
+
+        Reviewed by Yusuke Suzuki.
+
+        * platform/network/curl/CookieJarCurl.cpp:
+        (WebCore::addMatchingCurlCookie):
+        (WebCore::getHostnamesWithCookies):
+        (WebCore::deleteCookiesForHostnames):
+        (WebCore::deleteCookiesForHostname): Deleted.
+        * platform/network/curl/CurlDownload.cpp:
+        (WebCore::CurlDownloadManager::downloadThread):
+        (WebCore::CurlDownload::didReceiveHeader):
+        * platform/network/curl/CurlDownload.h:
+        (WebCore::CurlDownloadListener::didReceiveDataOfLength):
+        * platform/network/curl/ResourceHandleCurl.cpp:
+        (WebCore::WebCoreSynchronousLoader::didReceiveResponse):
+        (WebCore::ResourceHandle::platformLoadResourceSynchronously):
+        * platform/network/curl/SocketStreamHandleImplCurl.cpp:
+        (WebCore::createCopy):
+        (WebCore::SocketStreamHandleImpl::readData):
+
 2017-06-09  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GStreamer][EME] Remove the legacy code that was not even official and is deprecated

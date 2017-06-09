@@ -31,9 +31,7 @@
 #include <unicode/udat.h>
 #include <unicode/uvernum.h>
 
-#if U_ICU_VERSION_MAJOR_NUM >= 55
-#define JSC_ICU_HAS_UFIELDPOSITER 1
-#endif
+#define JSC_ICU_HAS_UFIELDPOSITER (U_ICU_VERSION_MAJOR_NUM >= 55)
 
 namespace JSC {
 

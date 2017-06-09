@@ -49,7 +49,7 @@ static std::unique_ptr<char[]> createCopy(const char* data, int length)
     std::unique_ptr<char[]> copy(new char[length]);
     memcpy(copy.get(), data, length);
 
-    return WTFMove(copy);
+    return copy;
 }
 
 SocketStreamHandleImpl::SocketStreamHandleImpl(const URL& url, SocketStreamHandleClient& client)
@@ -103,7 +103,7 @@ bool SocketStreamHandleImpl::readData(CURL* curlHandle)
 
     CURLcode ret = curl_easy_recv(curlHandle, data.get(), bufferSize, &bytesRead);
 
-    if (ret == CURLE_OK && bytesRead >= 0) {
+    if (ret == CURLE_OK) {
         m_mutexReceive.lock();
         m_receiveData.append(SocketData { WTFMove(data), bytesRead });
         m_mutexReceive.unlock();
