@@ -120,14 +120,14 @@ private:
     class CachedImageObserver final : public RefCounted<CachedImageObserver>, public ImageObserver {
     public:
         static Ref<CachedImageObserver> create(CachedImage& image) { return adoptRef(*new CachedImageObserver(image)); }
-        void add(CachedImage& image) { m_cachedImages.append(&image); }
-        void remove(CachedImage& image) { m_cachedImages.removeFirst(&image); }
+        HashSet<CachedImage*>& cachedImages() { return m_cachedImages; }
+        const HashSet<CachedImage*>& cachedImages() const { return m_cachedImages; }
 
     private:
         explicit CachedImageObserver(CachedImage&);
 
         // ImageObserver API
-        URL sourceUrl() const override { return !m_cachedImages.isEmpty() ? m_cachedImages[0]->url() : URL(); }
+        URL sourceUrl() const override { return !m_cachedImages.isEmpty() ? (*m_cachedImages.begin())->url() : URL(); }
         void decodedSizeChanged(const Image&, long long delta) final;
         void didDraw(const Image&) final;
 
@@ -135,7 +135,7 @@ private:
         void imageFrameAvailable(const Image&, ImageAnimatingState, const IntRect* changeRect = nullptr) final;
         void changedInRect(const Image&, const IntRect*) final;
 
-        Vector<CachedImage*> m_cachedImages;
+        HashSet<CachedImage*> m_cachedImages;
     };
 
     void decodedSizeChanged(const Image&, long long delta);
