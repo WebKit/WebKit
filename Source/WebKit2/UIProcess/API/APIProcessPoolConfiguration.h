@@ -29,6 +29,7 @@
 #include "APIObject.h"
 #include "CacheModel.h"
 #include "WebsiteDataStore.h"
+#include <wtf/ProcessID.h>
 #include <wtf/Ref.h>
 #include <wtf/Vector.h>
 #include <wtf/text/CString.h>
@@ -169,7 +170,7 @@ private:
     bool m_alwaysRunsAtBackgroundPriority { false };
     bool m_shouldTakeUIBackgroundAssertion { true };
     bool m_shouldCaptureAudioInUIProcess { false };
-    pid_t m_presentingApplicationPID { getpid() };
+    pid_t m_presentingApplicationPID { getCurrentProcessID() };
 #if PLATFORM(IOS)
     WTF::String m_ctDataConnectionServiceType;
 #endif
