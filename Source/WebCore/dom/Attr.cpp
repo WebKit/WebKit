@@ -135,7 +135,7 @@ void Attr::detachFromElementWithValue(const AtomicString& value)
     ASSERT(m_standaloneValue.isNull());
     m_standaloneValue = value;
     m_element = nullptr;
-    document().adoptIfNeeded(*this);
+    setTreeScopeRecursively(document());
 }
 
 void Attr::attachToElement(Element& element)
@@ -143,7 +143,7 @@ void Attr::attachToElement(Element& element)
     ASSERT(!m_element);
     m_element = &element;
     m_standaloneValue = nullAtom;
-    element.treeScope().adoptIfNeeded(*this);
+    setTreeScopeRecursively(element.treeScope());
 }
 
 }

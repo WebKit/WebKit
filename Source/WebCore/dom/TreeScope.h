@@ -96,14 +96,6 @@ public:
     // quirks mode for historical compatibility reasons.
     Element* findAnchor(const String& name);
 
-    // Used by the basic DOM mutation methods (e.g., appendChild()).
-    void adoptIfNeeded(Node&);
-#if !ASSERT_DISABLED || ENABLE(SECURITY_ASSERTIONS)
-    static void ensureDidMoveToNewDocumentWasCalled(Document& oldDocument);
-#else
-    static void ensureDidMoveToNewDocumentWasCalled(Document&) { }
-#endif
-
     ContainerNode& rootNode() const { return m_rootNode; }
 
     IdTargetObserverRegistry& idTargetObserverRegistry() const { return *m_idTargetObserverRegistry.get(); }
@@ -122,9 +114,6 @@ protected:
     Node* nodeFromPoint(const LayoutPoint& clientPoint, LayoutPoint* localPoint);
 
 private:
-    void moveTreeToNewScope(Node&, TreeScope& oldScope, TreeScope& newScope);
-    void moveNodeToNewDocument(Node&, Document& oldDocument, Document& newDocument);
-    void moveShadowTreeToNewDocument(ShadowRoot&, Document& oldDocument, Document& newDocument);
 
     ContainerNode& m_rootNode;
     std::reference_wrapper<Document> m_documentScope;

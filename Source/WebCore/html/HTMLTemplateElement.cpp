@@ -88,7 +88,7 @@ void HTMLTemplateElement::didMoveToNewDocument(Document& oldDocument, Document& 
     if (!m_content)
         return;
     ASSERT_WITH_SECURITY_IMPLICATION(&document() == &newDocument);
-    newDocument.ensureTemplateDocument().adoptIfNeeded(*m_content);
+    m_content->setTreeScopeRecursively(newDocument.ensureTemplateDocument());
 }
 
 } // namespace WebCore

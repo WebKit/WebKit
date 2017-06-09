@@ -179,7 +179,7 @@ void addChildNodesToDeletionQueue(Node*& head, Node*& tail, ContainerNode& conta
             tail = node;
         } else {
             Ref<Node> protect(*node); // removedFromDocument may remove remove all references to this node.
-            container.document().adoptIfNeeded(*node);
+            node->setTreeScopeRecursively(container.document());
             if (node->isInTreeScope())
                 notifyChildNodeRemoved(container, *node);
             ASSERT_WITH_SECURITY_IMPLICATION(!node->isInTreeScope());

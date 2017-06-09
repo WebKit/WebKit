@@ -150,7 +150,7 @@ void ContainerNode::takeAllChildrenFrom(ContainerNode* oldParent)
     for (auto& child : children) {
         RELEASE_ASSERT(!child->parentNode() && &child->treeScope() == &treeScope());
         ASSERT(!ensurePreInsertionValidity(child, nullptr).hasException());
-        treeScope().adoptIfNeeded(child);
+        child->setTreeScopeRecursively(treeScope());
         parserAppendChild(child);
     }
 }
@@ -290,7 +290,7 @@ ExceptionOr<void> ContainerNode::insertBefore(Node& newChild, Node* refChild)
         {
             NoEventDispatchAssertion assertNoEventDispatch;
 
-            treeScope().adoptIfNeeded(child);
+            child->setTreeScopeRecursively(treeScope());
             insertBeforeCommon(next, child);
         }
 
@@ -466,7 +466,7 @@ ExceptionOr<void> ContainerNode::replaceChild(Node& newChild, Node& oldChild)
 
         {
             NoEventDispatchAssertion assertNoEventDispatch;
-            treeScope().adoptIfNeeded(child);
+            child->setTreeScopeRecursively(treeScope());
             if (refChild)
                 insertBeforeCommon(*refChild, child.get());
             else
@@ -587,7 +587,7 @@ void ContainerNode::removeBetween(Node* previousChild, Node* nextChild, Node& ol
     ASSERT(!oldChild.nextSibling());
     oldChild.setParentNode(nullptr);
 
-    document().adoptIfNeeded(oldChild);
+    oldChild.setTreeScopeRecursively(document());
 }
 
 void ContainerNode::parserRemoveChild(Node& oldChild)
@@ -641,7 +641,7 @@ void ContainerNode::replaceAllChildren(Ref<Node>&& node)
     ChildListMutationScope mutation(*this);
 
     // If node is not null, adopt node into parent's node document.
-    treeScope().adoptIfNeeded(node);
+    node->setTreeScopeRecursively(treeScope());
 
     // Remove all parent's children, in tree order.
     willRemoveChildren(*this);
@@ -756,7 +756,7 @@ ExceptionOr<void> ContainerNode::appendChildWithoutPreInsertionValidityCheck(Nod
         // Append child to the end of the list
         {
             NoEventDispatchAssertion assertNoEventDispatch;
-            treeScope().adoptIfNeeded(child);
+            child->setTreeScopeRecursively(treeScope());
             appendChildCommon(child);
         }
 
@@ -780,7 +780,7 @@ void ContainerNode::parserAppendChild(Node& newChild)
             document().adoptNode(newChild);
 
         appendChildCommon(newChild);
-        treeScope().adoptIfNeeded(newChild);
+        newChild.setTreeScopeRecursively(treeScope());
     }
 
     newChild.updateAncestorConnectedSubframeCountForInsertion();

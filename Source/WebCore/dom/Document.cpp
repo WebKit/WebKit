@@ -991,7 +991,7 @@ ExceptionOr<Ref<Node>> Document::adoptNode(Node& source)
         ASSERT_WITH_SECURITY_IMPLICATION(!source.parentNode());
     }
 
-    adoptIfNeeded(source);
+    source.setTreeScopeRecursively(*this);
 
     return Ref<Node> { source };
 }

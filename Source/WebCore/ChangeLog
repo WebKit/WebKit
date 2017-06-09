@@ -1,3 +1,68 @@
+2017-06-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Move TreeScope::adoptIfNeeded to Node and rename it to setTreeScopeRecursively
+        https://bugs.webkit.org/show_bug.cgi?id=173129
+
+        Reviewed by Antti Koivisto.
+
+        Renamed TreeScope::adoptIfNeeded to setTreeScopeRecursively and moved to Node.
+
+        The old name was really confusing because due to the existence of Document::adoptNode, a DOM API,
+        which removes the adopted node from its parent if there was one before adopting the node.
+        Most confusingly, this function called TreeScope::adoptIfNeeded.
+
+        Also inlined the tree scope check to avoid calling to moveTreeToNewScope when there is nothing to do.
+
+        This patch effectively reverts r104528.
+
+        No new tests. Existing tests cover this.
+
+        * dom/Attr.cpp:
+        (WebCore::Attr::detachFromElementWithValue):
+        (WebCore::Attr::attachToElement):
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::takeAllChildrenFrom):
+        (WebCore::ContainerNode::insertBefore):
+        (WebCore::ContainerNode::replaceChild):
+        (WebCore::ContainerNode::removeBetween):
+        (WebCore::ContainerNode::replaceAllChildren):
+        (WebCore::ContainerNode::appendChildWithoutPreInsertionValidityCheck):
+        (WebCore::ContainerNode::parserAppendChild):
+        * dom/ContainerNodeAlgorithms.cpp:
+        (WebCore::addChildNodesToDeletionQueue):
+        * dom/Document.cpp:
+        (WebCore::Document::adoptNode):
+        * dom/Element.cpp:
+        (WebCore::Element::ensureAttr):
+        * dom/Node.cpp:
+        (WebCore::DidMoveToNewDocumentAssertionScope): Added. The old assertion wasn't sufficient when
+        HTMLTemplateElement made a recursive call to setTreeScopeRecursively.
+        (WebCore::DidMoveToNewDocumentAssertionScope::DidMoveToNewDocumentAssertionScope):
+        (WebCore::DidMoveToNewDocumentAssertionScope::~DidMoveToNewDocumentAssertionScope):
+        (WebCore::DidMoveToNewDocumentAssertionScope::didRecieveCall):
+        (WebCore::moveNodeToNewDocument): Moved from TreeScope. Calls to incrementReferencingNodeCount
+        and decrementReferencingNodeCount to Node::didMoveToNewDocument. This function is now eliminated
+        in a release build.
+        (WebCore::moveShadowTreeToNewDocument): Moved from TreeScope.
+        (WebCore::Node::moveTreeToNewScope): Ditto.
+        (WebCore::Node::didMoveToNewDocument): See the description for moveNodeToNewDocument above.
+        * dom/Node.h:
+        (WebCore::Node::isParsingChildrenFinished): Moved to avoid having its own protected section.
+        (WebCore::Node::setIsParsingChildrenFinished): Ditto.
+        (WebCore::Node::clearIsParsingChildrenFinished): Ditto.
+        (WebCore::Node::setTreeScopeRecursively): Moved from TreeScope::adoptIfNeeded.
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::~ShadowRoot):
+        * dom/TreeScope.cpp:
+        (WebCore::TreeScope::adoptIfNeeded): Deleted.
+        (WebCore::TreeScope::moveTreeToNewScope): Deleted.
+        (WebCore::TreeScope::ensureDidMoveToNewDocumentWasCalled): Deleted.
+        (WebCore::TreeScope::moveNodeToNewDocument): Deleted.
+        (WebCore::TreeScope::moveShadowTreeToNewDocument): Deleted.
+        * dom/TreeScope.h:
+        * html/HTMLTemplateElement.cpp:
+        (WebCore::HTMLTemplateElement::didMoveToNewDocument):
+
 2017-06-09  Adrien Plazas  <aplazas@igalia.com>
 
         [GTK] Add kinetic scrolling

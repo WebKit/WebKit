@@ -81,7 +81,7 @@ ShadowRoot::~ShadowRoot()
     willBeDeletedFrom(document());
 
     // We must remove all of our children first before the TreeScope destructor
-    // runs so we don't go through TreeScope::adoptIfNeeded for each child with a
+    // runs so we don't go through Node::setTreeScopeRecursively for each child with a
     // destructed tree scope in each descendant.
     removeDetachedChildren();
 }
