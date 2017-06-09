@@ -124,7 +124,7 @@ static bool responseNeedsRevalidation(const ResourceResponse& response, std::chr
 class SpeculativeLoadManager::ExpiringEntry {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit ExpiringEntry(std::function<void()>&& expirationHandler)
+    explicit ExpiringEntry(WTF::Function<void()>&& expirationHandler)
         : m_lifetimeTimer(WTFMove(expirationHandler))
     {
         m_lifetimeTimer.startOneShot(preloadedEntryLifetime);
@@ -137,7 +137,7 @@ private:
 class SpeculativeLoadManager::PreloadedEntry : private ExpiringEntry {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    PreloadedEntry(std::unique_ptr<Entry> entry, std::optional<ResourceRequest>&& speculativeValidationRequest, std::function<void()>&& lifetimeReachedHandler)
+    PreloadedEntry(std::unique_ptr<Entry> entry, std::optional<ResourceRequest>&& speculativeValidationRequest, WTF::Function<void()>&& lifetimeReachedHandler)
         : ExpiringEntry(WTFMove(lifetimeReachedHandler))
         , m_entry(WTFMove(entry))
         , m_speculativeValidationRequest(WTFMove(speculativeValidationRequest))
