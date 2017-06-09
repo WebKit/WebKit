@@ -255,8 +255,11 @@ list(APPEND WebKit_SOURCES_WebCoreSupport
 
 if (CMAKE_SIZEOF_VOID_P EQUAL 8)
     enable_language(ASM_MASM)
-    list(APPEND WebKit_SOURCES
-        win/plugins/PaintHooks.asm
+    add_library(Asm STATIC
+        "win/plugins/PaintHooks.asm"
+    )
+    list(APPEND WebKit_LIBRARIES
+        PRIVATE Asm
     )
 endif ()
 
