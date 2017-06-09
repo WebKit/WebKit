@@ -73,6 +73,9 @@ WebInspector.DOMNode = class DOMNode extends WebInspector.Object
         this._enabledPseudoClasses = [];
 
         // FIXME: The logic around this._shadowRoots and this._children is very confusing.
+        // We eventually include shadow roots at the start of _children. However we might
+        // not have our actual children yet. So we try to defer initializing _children until
+        // we have both shadowRoots and child nodes.
         this._shadowRoots = [];
         if (payload.shadowRoots) {
             for (var i = 0; i < payload.shadowRoots.length; ++i) {
@@ -83,6 +86,11 @@ WebInspector.DOMNode = class DOMNode extends WebInspector.Object
             }
         }
 
+        if (payload.children)
+            this._setChildrenPayload(payload.children);
+        else if (this._shadowRoots.length && !this._childNodeCount)
+            this._children = this._shadowRoots.slice();
+
         if (this._nodeType === Node.ELEMENT_NODE)
             this._customElementState = payload.customElementState || WebInspector.DOMNode.CustomElementState.Builtin;
         else
@@ -92,11 +100,6 @@ WebInspector.DOMNode = class DOMNode extends WebInspector.Object
             this._templateContent = new WebInspector.DOMNode(this._domTreeManager, this.ownerDocument, false, payload.templateContent);
             this._templateContent.parentNode = this;
         }
-
-        if (payload.children)
-            this._setChildrenPayload(payload.children);
-        else if (!this._children && this._shadowRoots.length)
-            this._children = this._shadowRoots.slice();
 
         this._pseudoElements = new Map;
         if (payload.pseudoElements) {

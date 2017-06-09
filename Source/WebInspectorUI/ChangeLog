@@ -1,3 +1,19 @@
+2017-06-09  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Web inspector does not show non-shadow children of an element with a shadow root (e.g. <video>)
+        https://bugs.webkit.org/show_bug.cgi?id=173121
+        <rdar://problem/30948943>
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Models/DOMNode.js:
+        (WebInspector.DOMNode):
+        Only populate _children when we have both the shadowRoots and
+        actual children payloads. Backends always send shadowRoots but
+        only send children when requested. So if we have shadowRoots
+        but expect actual children, don't populate _children until we
+        request the child nodes.
+
 2017-06-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Remove legacy INSPECTOR_SERVER implementation

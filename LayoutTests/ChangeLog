@@ -1,3 +1,14 @@
+2017-06-09  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Web inspector does not show non-shadow children of an element with a shadow root (e.g. <video>)
+        https://bugs.webkit.org/show_bug.cgi?id=173121
+        <rdar://problem/30948943>
+
+        Reviewed by Matt Baker.
+
+        * inspector/dom/shadow-and-non-shadow-children-expected.txt: Added.
+        * inspector/dom/shadow-and-non-shadow-children.html: Added.
+
 2017-06-09  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         LayoutTest fast/images/animated-image-different-dest-size.html is a flaky failure
