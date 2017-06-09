@@ -146,7 +146,7 @@ static std::unique_ptr<LinkPreloadResourceClient> createLinkPreloadResourceClien
     case CachedResource::MediaResource:
         if (!RuntimeEnabledFeatures::sharedFeatures().mediaPreloadingEnabled())
             ASSERT_NOT_REACHED();
-        [[clang::fallthrough]];
+        FALLTHROUGH;
 #if ENABLE(VIDEO_TRACK)
     case CachedResource::TextTrackResource:
 #endif

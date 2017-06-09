@@ -1,3 +1,10 @@
+2017-06-09  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Unreviewed, Use FALLTHROUGH
+
+        * loader/LinkLoader.cpp:
+        (WebCore::createLinkPreloadResourceClient):
+
 2017-06-09  Eric Carlson  <eric.carlson@apple.com>
 
         fast/mediastream/MediaStream-page-muted.html times out and asserts
