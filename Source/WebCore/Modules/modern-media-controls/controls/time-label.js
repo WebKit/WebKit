@@ -69,6 +69,9 @@ class TimeLabel extends LayoutNode
     {
         if (propertyName === "value") {
             this.element.textContent = this._formattedTime();
+            const timeAsString = formatTimeToString(this.value);
+            const ariaLabel = (this._type === TimeLabel.Types.Remaining) ? UIString("Remaining") : UIString("Elapsed");
+            this.element.setAttribute("aria-label", `${ariaLabel}: ${timeAsString}`);
             if (this.parent instanceof TimeControl)
                 this.parent.updateScrubberLabel();
         }

@@ -66,3 +66,13 @@ function unitizeTime(value, unit)
 
     return `${value} ${returnedUnit}`;
 }
+
+function formatTimeToString(timeInSeconds)
+{
+    const time = formatTimeByUnit(timeInSeconds);
+    const timeStrings = [unitizeTime(time.minutes, "Minute"), unitizeTime(time.seconds, "Second")];
+    if (time.hours > 0)
+        timeStrings.unshift(unitizeTime(time.hours, "Hour"));
+
+    return timeStrings.join(" ");
+}

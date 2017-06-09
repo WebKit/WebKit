@@ -15,6 +15,7 @@ shouldBeEqualToString("timeLabel.element.localName", "div");
 shouldBeEqualToString("timeLabel.element.className", "time-label");
 
 timeLabel.value = 1;
+timeLabel.element.id = "elasped";
 
 const timeLabelWithNegativeValue = new TimeLabel;
 timeLabelWithNegativeValue.value = -61;
@@ -22,16 +23,26 @@ timeLabelWithNegativeValue.value = -61;
 const timeLabelWithHours = new TimeLabel;
 timeLabelWithHours.value = 3661;
 
+const remainingTimeLabel = new TimeLabel(TimeLabel.Types.Remaining);
+remainingTimeLabel.element.id = "remaining";
+
 let style;
+let elaspedLabel;
+let remainingLabel;
 scheduler.frameDidFire = function()
 {
     document.body.appendChild(timeLabel.element);
+    document.body.appendChild(remainingTimeLabel.element);
     style = window.getComputedStyle(timeLabel.element);
 
     shouldBeEqualToString("style.position", "absolute");
     shouldBeEqualToString("style.fontFamily", "-apple-system-monospaced-numbers");
     shouldBeEqualToString("style.fontSize", "14px");
 
+    elaspedLabel = accessibilityController.accessibleElementById('elasped').description.split(": ")[1];
+    remainingLabel = accessibilityController.accessibleElementById('remaining').description.split(": ")[1];
+    shouldBeEqualToString("elaspedLabel", "Elapsed");
+    shouldBeEqualToString("remainingLabel", "Remaining");
     timeLabel.element.remove();
 
     shouldBeEqualToString("timeLabel.element.textContent", "00:01");

@@ -1,3 +1,15 @@
+2017-06-09  Aaron Chu  <aaron_chu@apple.com>
+
+        AX: Media Controls: Missing labels for the Time Labels.
+        https://bugs.webkit.org/show_bug.cgi?id=171715
+        <rdar://problem/32009214>
+
+        Reviewed by Antoine Quint.
+
+        Modified existing test case to accommodate testing for time label description.
+
+        * media/modern-media-controls/time-label/time-label.html:
+
 2017-06-08  Yoav Weiss  <yoav@yoav.ws>
 
         [preload] Mandatory `as` value and related spec alignments

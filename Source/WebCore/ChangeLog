@@ -1,3 +1,21 @@
+2017-06-09  Aaron Chu  <aaron_chu@apple.com>
+
+        AX: Media Controls: Missing labels for the Time Labels.
+        https://bugs.webkit.org/show_bug.cgi?id=171715
+        <rdar://problem/32009214>
+
+        Reviewed by Antoine Quint.
+
+        Added aria-label to describe time labels in media controls.
+
+        * Modules/modern-media-controls/controls/slider.js:
+        (Slider.prototype.set inputAccessibleLabel):
+        (Slider.prototype._formatTime): Deleted.
+        * Modules/modern-media-controls/controls/time-label.js:
+        (TimeLabel.prototype.commitProperty):
+        * Modules/modern-media-controls/main.js:
+        (formatTimeToString):
+
 2017-06-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix unused parameter warning after r217955.

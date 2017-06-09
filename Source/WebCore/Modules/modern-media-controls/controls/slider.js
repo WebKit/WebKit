@@ -56,7 +56,7 @@ class Slider extends LayoutNode
 
     set inputAccessibleLabel(timeValue)
     {
-        this._input.element.setAttribute("aria-valuetext", this._formatTime(timeValue));
+        this._input.element.setAttribute("aria-valuetext", formatTimeToString(timeValue));
     }
 
     get disabled()
@@ -105,16 +105,6 @@ class Slider extends LayoutNode
     }
 
     // Protected
-
-    _formatTime(timeInSeconds)
-    {
-        const time = formatTimeByUnit(timeInSeconds);
-        const timeStrings = [unitizeTime(time.minutes, "Minute"), unitizeTime(time.seconds, "Second")];
-        if (time.hours > 0)
-            timeStrings.unshift(unitizeTime(time.hours, "Hour"));
-
-        return timeStrings.join(" ");
-    }
 
     handleEvent(event)
     {
