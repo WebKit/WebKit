@@ -1,3 +1,11 @@
+2017-06-09  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [WPE] Unskip passing userscripts tests
+
+        Unreviewed gardening.
+
+        * platform/wpe/TestExpectations:
+
 2017-06-09  Zan Dobersek  <zdobersek@igalia.com>
 
         [WPE] Enable ENCRYPTED_MEDIA for build-webkit builds
