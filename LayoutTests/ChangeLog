@@ -1,3 +1,23 @@
+2017-06-09  Charlie Turner  <cturner@igalia.com>
+
+        [GTK] Fix test linter reported errors
+        https://bugs.webkit.org/show_bug.cgi?id=173160
+
+        Unreviewed gardening.
+
+        webrtc/audio-peer-connection-webaudio.html failed ambiguity checks, it typically fails
+           in release and times out in debug, but it could have bother outcomes in both build
+           configurations, so removing the first instance seems like the right approach.
+           See: https://bugs.webkit.org/show_bug.cgi?id=169110
+        https://bugs.webkit.org/show_bug.cgi?id=131218 no longer crashing
+        https://bugs.webkit.org/show_bug.cgi?id=131216 no longer crashing
+        https://bugs.webkit.org/show_bug.cgi?id=119255 no longer flaky, stablized at r195130.
+
+        Linter is now quiet, aside from non-existent path errors,
+        which I think is tracked by https://bugs.webkit.org/show_bug.cgi?id=172471
+
+        * platform/gtk/TestExpectations:
+
 2017-06-09  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK] Add baseline for media/media-fullscreen-inline-expected.html

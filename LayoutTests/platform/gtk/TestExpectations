@@ -627,7 +627,6 @@ webrtc/datachannel [ Skip ]
 webrtc/no-port-zero-in-upd-candidates.html [ Timeout ]
 webrtc/video-disabled-black.html [ Failure ]
 webrtc/video.html [ Failure ]
-webrtc/audio-peer-connection-webaudio.html [ Failure ]
 webrtc/peer-connection-audio-mute.html [ Failure ]
 webrtc/peer-connection-audio-mute2.html [ Crash Failure ]
 webrtc/peer-connection-remote-audio-mute.html [ Failure ]
@@ -1308,9 +1307,6 @@ webkit.org/b/118423 http/tests/misc/iframe-reparenting-id-collision.html [ Crash
 
 webkit.org/b/118902 svg/animations/svgenum-animation-6.html [ Crash Pass ]
 
-# Crashing after the FTL merge
-webkit.org/b/119255 [ Debug ] fast/workers/stress-js-execution.html [ Crash Pass ]
-
 webkit.org/b/120200 [ Debug ] http/tests/security/XFrameOptions/x-frame-options-allowall.html [ Crash Pass ]
 
 Bug(GTK) plugins/document-open.html [ Crash Timeout ]
@@ -1318,15 +1314,6 @@ Bug(GTK) plugins/document-open.html [ Crash Timeout ]
 webkit.org/b/82020 plugins/netscape-dom-access-and-reload.html [ Failure Crash Pass ]
 
 webkit.org/b/131221 [ Debug ] fast/css/object-fit/object-fit-embed.html [ Crash ]
-
-webkit.org/b/131218 [ Debug ] fast/events/touch/multi-touch-inside-nested-iframes.html [ Crash ]
-webkit.org/b/131218 [ Debug ] fast/events/touch/multi-touch-inside-iframes.html [ Crash ]
-webkit.org/b/131218 [ Debug ] fast/events/touch/frame-hover-update.html [ Crash ]
-webkit.org/b/131218 [ Debug ] fast/events/touch/basic-multi-touch-events.html [ Crash ]
-
-webkit.org/b/131216 [ Debug ] http/tests/multipart/invalid-image-data.html [ Crash ]
-webkit.org/b/131216 [ Debug ] http/tests/multipart/multipart-html.php [ Crash ]
-webkit.org/b/131216 [ Debug ] http/tests/multipart/stop-crash.html [ Crash Pass ]
 
 webkit.org/b/131219 [ Debug ] http/tests/xmlhttprequest/access-control-repeated-failed-preflight-crash.html [ Crash ]
 
@@ -1815,8 +1802,6 @@ webkit.org/b/145170 fast/events/wheelevent-in-horizontal-scrollbar-in-rtl.html [
 webkit.org/b/145170 fast/events/wheelevent-in-vertical-scrollbar-in-rtl.html [ Failure Pass ]
 
 webkit.org/b/145258 media/video-controller-child-rate.html [ Failure Pass ]
-
-webkit.org/b/145261 fast/workers/stress-js-execution.html [ Failure Pass ]
 
 # Some tests will fail after the visual overflow patch, they will be fixed shortly.
 webkit.org/b/118665 fast/regions/counters/extract-ordered-lists-in-regions-explicit-counters-005.html [ ImageOnlyFailure Pass ]
