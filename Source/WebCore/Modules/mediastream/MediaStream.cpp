@@ -74,7 +74,7 @@ static inline MediaStreamTrackPrivateVector createTrackPrivateVector(const Media
 }
 
 MediaStream::MediaStream(ScriptExecutionContext& context, const MediaStreamTrackVector& tracks)
-    : ContextDestructionObserver(&context)
+    : ActiveDOMObject(&context)
     , m_private(MediaStreamPrivate::create(createTrackPrivateVector(tracks)))
     , m_activityEventTimer(*this, &MediaStream::activityEventTimerFired)
     , m_mediaSession(PlatformMediaSession::create(*this))
@@ -91,10 +91,11 @@ MediaStream::MediaStream(ScriptExecutionContext& context, const MediaStreamTrack
     m_private->addObserver(*this);
     MediaStreamRegistry::shared().registerStream(*this);
     document()->addAudioProducer(this);
+    suspendIfNeeded();
 }
 
 MediaStream::MediaStream(ScriptExecutionContext& context, Ref<MediaStreamPrivate>&& streamPrivate)
-    : ContextDestructionObserver(&context)
+    : ActiveDOMObject(&context)
     , m_private(WTFMove(streamPrivate))
     , m_activityEventTimer(*this, &MediaStream::activityEventTimerFired)
     , m_mediaSession(PlatformMediaSession::create(*this))
@@ -111,6 +112,7 @@ MediaStream::MediaStream(ScriptExecutionContext& context, Ref<MediaStreamPrivate
         m_trackSet.add(track->id(), WTFMove(track));
     }
     document()->addAudioProducer(this);
+    suspendIfNeeded();
 }
 
 MediaStream::~MediaStream()
@@ -184,11 +186,6 @@ MediaStreamTrackVector MediaStream::getTracks() const
     copyValuesToVector(m_trackSet, tracks);
 
     return tracks;
-}
-
-void MediaStream::contextDestroyed()
-{
-    ContextDestructionObserver::contextDestroyed();
 }
 
 void MediaStream::trackDidEnd()
@@ -507,6 +504,27 @@ bool MediaStream::canProduceAudio() const
 bool MediaStream::processingUserGestureForMedia() const
 {
     return document() ? document()->processingUserGestureForMedia() : false;
+}
+
+void MediaStream::stop()
+{
+    m_isActive = false;
+    endCaptureTracks();
+}
+
+const char* MediaStream::activeDOMObjectName() const
+{
+    return "MediaStream";
+}
+
+bool MediaStream::canSuspendForDocumentSuspension() const
+{
+    return !hasPendingActivity();
+}
+
+bool MediaStream::hasPendingActivity() const
+{
+    return m_isActive || !m_scheduledActivityEvents.isEmpty();
 }
 
 } // namespace WebCore

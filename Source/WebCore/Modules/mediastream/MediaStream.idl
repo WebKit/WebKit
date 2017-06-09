@@ -23,11 +23,13 @@
  */
 
 [
+    ActiveDOMObject,
     Conditional=MEDIA_STREAM,
     Constructor,
     Constructor(MediaStream stream),
     Constructor(sequence<MediaStreamTrack> tracks),
     ConstructorCallWith=ScriptExecutionContext,
+    ExportToWrappedFunction,
     PrivateIdentifier,
     PublicIdentifier
 ] interface MediaStream : EventTarget {

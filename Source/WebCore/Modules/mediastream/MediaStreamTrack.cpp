@@ -348,8 +348,12 @@ const char* MediaStreamTrack::activeDOMObjectName() const
 
 bool MediaStreamTrack::canSuspendForDocumentSuspension() const
 {
-    // FIXME: We should try and do better here.
-    return false;
+    return !hasPendingActivity();
+}
+
+bool MediaStreamTrack::hasPendingActivity() const
+{
+    return !m_ended;
 }
 
 AudioSourceProvider* MediaStreamTrack::audioSourceProvider()

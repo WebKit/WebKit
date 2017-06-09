@@ -195,6 +195,7 @@
 #endif
 
 #if ENABLE(MEDIA_STREAM)
+#include "MediaStream.h"
 #include "MockRealtimeMediaSourceCenter.h"
 #endif
 
@@ -4090,6 +4091,11 @@ void Internals::delayMediaStreamTrackSamples(MediaStreamTrack& track, float dela
 void Internals::setMediaStreamTrackMuted(MediaStreamTrack& track, bool muted)
 {
     track.source().setMuted(muted);
+}
+
+void Internals::removeMediaStreamTrack(MediaStream& stream, MediaStreamTrack& track)
+{
+    stream.internalRemoveTrack(track.id(), MediaStream::StreamModifier::Platform);
 }
 
 #endif

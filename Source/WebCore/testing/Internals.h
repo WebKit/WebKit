@@ -62,6 +62,7 @@ class InspectorStubFrontend;
 class InternalSettings;
 class MallocStatistics;
 class MediaSession;
+class MediaStream;
 class MediaStreamTrack;
 class MemoryInfo;
 class MockCDMFactory;
@@ -585,6 +586,7 @@ public:
     void grabNextMediaStreamTrackFrame(TrackFramePromise&&);
     void delayMediaStreamTrackSamples(MediaStreamTrack&, float);
     void setMediaStreamTrackMuted(MediaStreamTrack&, bool);
+    void removeMediaStreamTrack(MediaStream&, MediaStreamTrack&);
 #endif
 
 private:

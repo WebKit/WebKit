@@ -57,7 +57,7 @@ public:
     virtual bool isCanvas() const { return false; }
 
     const AtomicString& kind() const;
-    const String& id() const;
+    WEBCORE_EXPORT const String& id() const;
     const String& label() const;
 
     bool enabled() const;
@@ -120,6 +120,9 @@ public:
 
     using RefCounted::ref;
     using RefCounted::deref;
+
+    // ActiveDOMObject API.
+    bool hasPendingActivity() const final;
 
 protected:
     MediaStreamTrack(ScriptExecutionContext&, Ref<MediaStreamTrackPrivate>&&);

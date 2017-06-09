@@ -1,3 +1,14 @@
+2017-06-09  Eric Carlson  <eric.carlson@apple.com>
+
+        fast/mediastream/MediaStream-page-muted.html times out and asserts
+        https://bugs.webkit.org/show_bug.cgi?id=170355
+        <rdar://problem/31376041>
+
+        Reviewed by Chris Dumez.
+
+        * fast/mediastream/media-stream-wrapper-collected-expected.txt: Added.
+        * fast/mediastream/media-stream-wrapper-collected.html: Added.
+
 2017-06-09  Charlie Turner  <cturner@igalia.com>
 
         [GTK] Fix test linter reported errors

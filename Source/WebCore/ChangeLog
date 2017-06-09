@@ -1,3 +1,38 @@
+2017-06-09  Eric Carlson  <eric.carlson@apple.com>
+
+        fast/mediastream/MediaStream-page-muted.html times out and asserts
+        https://bugs.webkit.org/show_bug.cgi?id=170355
+        <rdar://problem/31376041>
+
+        MediaStream and MediaStreamTrack need to prevent JS wrapper collection while it is possible
+        to fire an event or event listeners won't be notified.
+
+        Reviewed by Chris Dumez.
+
+        Test: fast/mediastream/media-stream-wrapper-collected.html
+
+        * Modules/mediastream/MediaStream.cpp:
+        (WebCore::MediaStream::MediaStream): Initialize ActiveDOMObject.
+        (WebCore::MediaStream::stop): New.
+        (WebCore::MediaStream::activeDOMObjectName): Ditto.
+        (WebCore::MediaStream::canSuspendForDocumentSuspension): Ditto.
+        (WebCore::MediaStream::hasPendingActivity): Ditto, prevent collection if there
+        are registered event listeners.
+        (WebCore::MediaStream::contextDestroyed): Deleted.
+        * Modules/mediastream/MediaStream.h:
+        * Modules/mediastream/MediaStream.idl:
+
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        (WebCore::MediaStreamTrack::hasPendingActivity): Prevent collection if there
+        are registered event listeners.
+        * Modules/mediastream/MediaStreamTrack.h:
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::removeMediaStreamTrack): stream.removeTrack doesn't generate a 'removetrack'
+        event, so call private method that does.
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2017-06-09  Daewoong Jang  <daewoong.jang@navercorp.com>
 
         [cURL] Remove a call to Windows API
