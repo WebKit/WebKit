@@ -1,3 +1,16 @@
+2017-06-09  Jonathan Bedard  <jbedard@apple.com>
+
+        [ios-sim] Cleaning-up timeouts WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=173169
+
+        Unreviewed test gardening.
+
+        The intention of this change is to allow the iOS WK1 bots to finish their
+        test runs. Because these tests are being gardened based on the output of
+        bots, there will likely be follow-up fixes.
+
+        * platform/ios-wk1/TestExpectations: Skip tests timing out in iOS WK1.
+
 2017-06-09  Jer Noble  <jer.noble@apple.com>
 
         [iOS] Video occasionally mixes with other system audio instead of interrupting
