@@ -1,3 +1,16 @@
+2017-06-09  Jer Noble  <jer.noble@apple.com>
+
+        Crash in -[WKWebView _initializeWithConfiguration:]
+        https://bugs.webkit.org/show_bug.cgi?id=173126
+
+        Reviewed by Antti Koivisto.
+
+        Crash occurs when passing an autoreleased NSString into _setMediaContentTypesRequiringHardwareSupport.
+        The ivar should be a RetainPtr rather than a bare NSString *.
+
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration _mediaContentTypesRequiringHardwareSupport]):
+
 2017-06-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Use API::FormClient instead of the C API in WebKitFormClient

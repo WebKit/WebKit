@@ -138,7 +138,7 @@ private:
     BOOL _needsStorageAccessFromFileURLsQuirk;
 
     NSString *_overrideContentSecurityPolicy;
-    NSString *_mediaContentTypesRequiringHardwareSupport;
+    RetainPtr<NSString> _mediaContentTypesRequiringHardwareSupport;
 }
 
 - (instancetype)init
@@ -823,7 +823,7 @@ static NSString *defaultApplicationNameForUserAgent()
 
 - (NSString *)_mediaContentTypesRequiringHardwareSupport
 {
-    return _mediaContentTypesRequiringHardwareSupport;
+    return _mediaContentTypesRequiringHardwareSupport.get();
 }
 
 - (void)_setMediaContentTypesRequiringHardwareSupport:(NSString *)mediaContentTypesRequiringHardwareSupport
