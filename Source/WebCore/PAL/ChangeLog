@@ -1,3 +1,10 @@
+2017-06-08  Dean Jackson  <dino@apple.com>
+
+        Disable some features on this release branch.
+        <rdar://problem/32621736>
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2017-06-01  Andy Estes  <aestes@apple.com>
 
         REGRESSION (r217626): ENABLE_APPLE_PAY_SESSION_V3 was disabled by mistake

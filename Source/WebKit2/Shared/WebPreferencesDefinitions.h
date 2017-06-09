@@ -337,7 +337,7 @@
 // Our Xcode build system does not currently have any concept of DEVELOPER_MODE.
 // Cocoa ports must disable experimental features on release branches for now.
 #if ENABLE(DEVELOPER_MODE) || PLATFORM(COCOA)
-#define DEFAULT_EXPERIMENTAL_FEATURES_ENABLED true
+#define DEFAULT_EXPERIMENTAL_FEATURES_ENABLED false
 #else
 #define DEFAULT_EXPERIMENTAL_FEATURES_ENABLED false
 #endif
@@ -358,7 +358,6 @@
     macro(SubtleCryptoEnabled, subtleCryptoEnabled, Bool, bool, DEFAULT_EXPERIMENTAL_FEATURES_ENABLED, "SubtleCrypto", "Enable SubtleCrypto support") \
     macro(ViewportFitEnabled, viewportFitEnabled, Bool, bool, DEFAULT_EXPERIMENTAL_FEATURES_ENABLED, "Viewport Fit", "Enable viewport-fit viewport parameter") \
     macro(WebAnimationsEnabled, webAnimationsEnabled, Bool, bool, false, "Web Animations", "Web Animations prototype") \
-    macro(WebGL2Enabled, webGL2Enabled, Bool, bool, false, "WebGL 2.0", "WebGL 2 prototype") \
     macro(WebGPUEnabled, webGPUEnabled, Bool, bool, false, "WebGPU", "WebGPU prototype") \
     macro(DisplayContentsEnabled, displayContentsEnabled, Bool, bool, false, "display: contents", "Enable CSS display: contents support") \
     macro(WebRTCLegacyAPIDisabled, webRTCLegacyAPIDisabled, Bool, bool, false, "Remove Legacy WebRTC API", "Remove Legacy WebRTC API") \
