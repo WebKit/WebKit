@@ -1,3 +1,27 @@
+2017-06-10  Andy Estes  <aestes@apple.com>
+
+        [QuickLook] PreviewLoader needs to check if its ResourceLoader has reached the terminal state before calling didReceiveResponse() and friends
+        https://bugs.webkit.org/show_bug.cgi?id=173190
+        <rdar://problem/31360659>
+
+        Reviewed by Brady Eidson.
+
+        WebPreviewLoader's SubresourceLoader can reach a terminal state while data is loading from
+        QLPreviewConverter (the user can cancel, for instance). We can't call functions like
+        didReceiveResponse() in this state, because the loader no longer points to a CachedResource,
+        leading to null pointer dereferences.
+
+        Fix this in WebPreviewLoader by checking if the SubresourceLoader is in a terminal state
+        before calling didReceiveResponse(), didReceiveData(), didFinishLoading(), and didFail().
+
+        Fixes web process crashes in the QuickLook.CancelNavigationAfterResponse API test.
+
+        * loader/ios/PreviewLoader.mm:
+        (-[WebPreviewLoader _sendDidReceiveResponseIfNecessary]):
+        (-[WebPreviewLoader connection:didReceiveData:lengthReceived:]):
+        (-[WebPreviewLoader connectionDidFinishLoading:]):
+        (-[WebPreviewLoader connection:didFailWithError:]):
+
 2017-06-09  Chris Dumez  <cdumez@apple.com>
 
         Use WTF::Function instead of std::function in indexeddb code

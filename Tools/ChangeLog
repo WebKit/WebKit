@@ -1,3 +1,16 @@
+2017-06-10  Andy Estes  <aestes@apple.com>
+
+        [QuickLook] PreviewLoader needs to check if its ResourceLoader has reached the terminal state before calling didReceiveResponse() and friends
+        https://bugs.webkit.org/show_bug.cgi?id=173190
+        <rdar://problem/31360659>
+
+        Reviewed by Brady Eidson.
+        
+        Added a release assert that tries to create a proper test failure if the web process crashes.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/QuickLook.mm:
+        (-[QuickLookDecidePolicyDelegate _webViewWebProcessDidCrash:]):
+
 2017-06-09  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS DnD] Add a hook to perform two-step drops in editable content

@@ -107,6 +107,11 @@ TEST(QuickLook, NavigationDelegate)
     isDone = true;
 }
 
+- (void)_webViewWebProcessDidCrash:(WKWebView *)webView
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
 @end
 
 @interface QuickLookFrameLoadDelegate : NSObject <WebFrameLoadDelegate>
