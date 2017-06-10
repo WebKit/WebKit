@@ -1,5 +1,13 @@
 2017-06-10  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        Unreviewed, update test results
+        https://bugs.webkit.org/show_bug.cgi?id=173227
+
+        * microbenchmarks/string-prototype-search-observable-side-effects.js:
+        * test262.yaml:
+
+2017-06-10  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [JSC] Update RegExp.prototype.[@@search]] implementation according to the latest spec
         https://bugs.webkit.org/show_bug.cgi?id=173227
 

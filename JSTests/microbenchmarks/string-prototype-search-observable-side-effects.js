@@ -174,7 +174,7 @@ function assert(testedValue, msg) {
         assert(e.toString() == "TypeError: Builtin RegExp exec can only be called on a RegExp object",
             "Unexpected error message");
     }
-    assert(accesses == "getLastIndex,setLastIndex", "Property accesses do not match expectation");
+    assert(accesses == "getLastIndex", "Property accesses do not match expectation");
 })();
 
 // Any object with custom prototype overriding exec.
@@ -268,7 +268,7 @@ function assert(testedValue, msg) {
 
     assert(accesses == "", "unexpected call to overridden props");
     let result = "searchme".search(obj);
-    assert(accesses == "getLastIndex,setLastIndex,exec,setLastIndex", "Property accesses do not match expectation");
+    assert(accesses == "getLastIndex,exec,getLastIndex", "Property accesses do not match expectation");
     assert(result === 3, "Unexpected result");
 })();
 
@@ -374,6 +374,6 @@ function assert(testedValue, msg) {
 
     assert(accesses == "", "unexpected call to overridden props");
     let result = "searchme".search(proxy);
-    assert(accesses.toString() == "Symbol(Symbol.search),lastIndex,exec", "Proxy not able to observe some gets");
+    assert(accesses.toString() == "Symbol(Symbol.search),lastIndex,exec,lastIndex", "Proxy not able to observe some gets");
     assert(result === 3, "Unexpected result");
 })();
