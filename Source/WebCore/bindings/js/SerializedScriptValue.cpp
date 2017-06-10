@@ -230,20 +230,17 @@ enum class CryptoAlgorithmIdentifierTag {
     ECDH = 5,
     AES_CTR = 6,
     AES_CBC = 7,
-    AES_CMAC = 8,
-    AES_GCM = 9,
-    AES_CFB = 10,
-    AES_KW = 11,
-    HMAC = 12,
-    DH = 13,
-    SHA_1 = 14,
-    SHA_224 = 15,
-    SHA_256 = 16,
-    SHA_384 = 17,
-    SHA_512 = 18,
-    CONCAT = 19,
-    HKDF = 20,
-    PBKDF2 = 21,
+    AES_GCM = 8,
+    AES_CFB = 9,
+    AES_KW = 10,
+    HMAC = 11,
+    SHA_1 = 12,
+    SHA_224 = 13,
+    SHA_256 = 14,
+    SHA_384 = 15,
+    SHA_512 = 16,
+    HKDF = 17,
+    PBKDF2 = 18,
 };
 const uint8_t cryptoAlgorithmIdentifierTagMaximumValue = 21;
 
@@ -1137,9 +1134,6 @@ private:
         case CryptoAlgorithmIdentifier::AES_CBC:
             write(CryptoAlgorithmIdentifierTag::AES_CBC);
             break;
-        case CryptoAlgorithmIdentifier::AES_CMAC:
-            write(CryptoAlgorithmIdentifierTag::AES_CMAC);
-            break;
         case CryptoAlgorithmIdentifier::AES_GCM:
             write(CryptoAlgorithmIdentifierTag::AES_GCM);
             break;
@@ -1151,9 +1145,6 @@ private:
             break;
         case CryptoAlgorithmIdentifier::HMAC:
             write(CryptoAlgorithmIdentifierTag::HMAC);
-            break;
-        case CryptoAlgorithmIdentifier::DH:
-            write(CryptoAlgorithmIdentifierTag::DH);
             break;
         case CryptoAlgorithmIdentifier::SHA_1:
             write(CryptoAlgorithmIdentifierTag::SHA_1);
@@ -1169,9 +1160,6 @@ private:
             break;
         case CryptoAlgorithmIdentifier::SHA_512:
             write(CryptoAlgorithmIdentifierTag::SHA_512);
-            break;
-        case CryptoAlgorithmIdentifier::CONCAT:
-            write(CryptoAlgorithmIdentifierTag::CONCAT);
             break;
         case CryptoAlgorithmIdentifier::HKDF:
             write(CryptoAlgorithmIdentifierTag::HKDF);
@@ -2039,9 +2027,6 @@ private:
         case CryptoAlgorithmIdentifierTag::AES_CBC:
             result = CryptoAlgorithmIdentifier::AES_CBC;
             break;
-        case CryptoAlgorithmIdentifierTag::AES_CMAC:
-            result = CryptoAlgorithmIdentifier::AES_CMAC;
-            break;
         case CryptoAlgorithmIdentifierTag::AES_GCM:
             result = CryptoAlgorithmIdentifier::AES_GCM;
             break;
@@ -2053,9 +2038,6 @@ private:
             break;
         case CryptoAlgorithmIdentifierTag::HMAC:
             result = CryptoAlgorithmIdentifier::HMAC;
-            break;
-        case CryptoAlgorithmIdentifierTag::DH:
-            result = CryptoAlgorithmIdentifier::DH;
             break;
         case CryptoAlgorithmIdentifierTag::SHA_1:
             result = CryptoAlgorithmIdentifier::SHA_1;
@@ -2071,9 +2053,6 @@ private:
             break;
         case CryptoAlgorithmIdentifierTag::SHA_512:
             result = CryptoAlgorithmIdentifier::SHA_512;
-            break;
-        case CryptoAlgorithmIdentifierTag::CONCAT:
-            result = CryptoAlgorithmIdentifier::CONCAT;
             break;
         case CryptoAlgorithmIdentifierTag::HKDF:
             result = CryptoAlgorithmIdentifier::HKDF;

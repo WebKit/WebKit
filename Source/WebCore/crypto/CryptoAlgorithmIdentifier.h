@@ -38,18 +38,15 @@ enum class CryptoAlgorithmIdentifier {
     ECDH,
     AES_CTR,
     AES_CBC,
-    AES_CMAC,
     AES_GCM,
     AES_CFB,
     AES_KW,
     HMAC,
-    DH,
     SHA_1,
     SHA_224,
     SHA_256,
     SHA_384,
     SHA_512,
-    CONCAT,
     HKDF,
     PBKDF2
 };

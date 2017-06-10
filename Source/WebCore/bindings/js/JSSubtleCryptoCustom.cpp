@@ -205,7 +205,6 @@ static std::unique_ptr<CryptoAlgorithmParameters> normalizeCryptoAlgorithmParame
             }
             case CryptoAlgorithmIdentifier::AES_CTR:
             case CryptoAlgorithmIdentifier::AES_CBC:
-            case CryptoAlgorithmIdentifier::AES_CMAC:
             case CryptoAlgorithmIdentifier::AES_GCM:
             case CryptoAlgorithmIdentifier::AES_CFB:
             case CryptoAlgorithmIdentifier::AES_KW: {
@@ -287,7 +286,6 @@ static std::unique_ptr<CryptoAlgorithmParameters> normalizeCryptoAlgorithmParame
             }
             case CryptoAlgorithmIdentifier::AES_CTR:
             case CryptoAlgorithmIdentifier::AES_CBC:
-            case CryptoAlgorithmIdentifier::AES_CMAC:
             case CryptoAlgorithmIdentifier::AES_GCM:
             case CryptoAlgorithmIdentifier::AES_CFB:
             case CryptoAlgorithmIdentifier::AES_KW:
@@ -332,7 +330,6 @@ static std::unique_ptr<CryptoAlgorithmParameters> normalizeCryptoAlgorithmParame
             switch (*identifier) {
             case CryptoAlgorithmIdentifier::AES_CTR:
             case CryptoAlgorithmIdentifier::AES_CBC:
-            case CryptoAlgorithmIdentifier::AES_CMAC:
             case CryptoAlgorithmIdentifier::AES_GCM:
             case CryptoAlgorithmIdentifier::AES_CFB:
             case CryptoAlgorithmIdentifier::AES_KW: {
@@ -509,7 +506,6 @@ static void supportExportKeyThrow(ExecState& state, ThrowScope& scope, CryptoAlg
     case CryptoAlgorithmIdentifier::RSA_OAEP:
     case CryptoAlgorithmIdentifier::AES_CTR:
     case CryptoAlgorithmIdentifier::AES_CBC:
-    case CryptoAlgorithmIdentifier::AES_CMAC:
     case CryptoAlgorithmIdentifier::AES_GCM:
     case CryptoAlgorithmIdentifier::AES_CFB:
     case CryptoAlgorithmIdentifier::AES_KW:
