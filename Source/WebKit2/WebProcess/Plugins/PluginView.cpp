@@ -1594,7 +1594,7 @@ void PluginView::setCookiesForURL(const String& urlString, const String& cookieS
 
 bool PluginView::getAuthenticationInfo(const ProtectionSpace& protectionSpace, String& username, String& password)
 {
-    RefPtr<Document> contentDocument = m_pluginElement->contentDocument();
+    auto* contentDocument = m_pluginElement->contentDocument();
     if (!contentDocument)
         return false;
 
