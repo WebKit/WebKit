@@ -1,3 +1,16 @@
+2017-06-10  Dan Bernstein  <mitz@apple.com>
+
+        [macOS] REGRESSION: Link drag images blend into the background in Sierra and earlier
+        https://bugs.webkit.org/show_bug.cgi?id=172933
+        <rdar://problem/32580649>
+
+        Reviewed by Tim Horton.
+
+        * platform/mac/DragImageMac.mm:
+        (WebCore::createDragImageForLink): When targeting macOS Sierra and earlier, give the link
+          drag image a drop shadow that resembles the one that macOS High Sierra applies to drag
+          image layers.
+
 2017-06-10  Andy Estes  <aestes@apple.com>
 
         [QuickLook] PreviewLoader needs to check if its ResourceLoader has reached the terminal state before calling didReceiveResponse() and friends

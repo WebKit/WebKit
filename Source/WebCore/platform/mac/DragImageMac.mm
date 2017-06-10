@@ -154,15 +154,21 @@ RetainPtr<NSImage> createDragImageIconForCachedImageFilename(const String& filen
     return [[NSWorkspace sharedWorkspace] iconForFileType:extension];
 }
 
-
 const CGFloat linkImagePadding = 10;
 const CGFloat linkImageDomainBaselineToTitleBaseline = 18;
 const CGFloat linkImageCornerRadius = 5;
 const CGFloat linkImageMaximumWidth = 400;
 const CGFloat linkImageFontSize = 11;
 const CFIndex linkImageTitleMaximumLineCount = 2;
-const int linkImageDragCornerOutsetX = 6;
-const int linkImageDragCornerOutsetY = 10;
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+const int linkImageShadowRadius = 0;
+const int linkImageShadowOffsetY = 0;
+#else
+const int linkImageShadowRadius = 9;
+const int linkImageShadowOffsetY = -3;
+#endif
+const int linkImageDragCornerOutsetX = 6 - linkImageShadowRadius;
+const int linkImageDragCornerOutsetY = 10 - linkImageShadowRadius + linkImageShadowOffsetY;
 
 IntPoint dragOffsetForLinkDragImage(DragImageRef dragImage)
 {
@@ -287,11 +293,22 @@ DragImageRef createDragImageForLink(Element&, URL& url, const String& title, Tex
 {
     LinkImageLayout layout(url, title);
 
-    RetainPtr<NSImage> dragImage = adoptNS([[NSImage alloc] initWithSize:layout.boundingRect.size()]);
+    auto imageSize = layout.boundingRect.size();
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101300
+    imageSize.expand(2 * linkImageShadowRadius, 2 * linkImageShadowRadius - linkImageShadowOffsetY);
+#endif
+    RetainPtr<NSImage> dragImage = adoptNS([[NSImage alloc] initWithSize:imageSize]);
     [dragImage lockFocus];
 
     GraphicsContext context((CGContextRef)[NSGraphicsContext currentContext].graphicsPort);
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101300
+    context.translate(linkImageShadowRadius, linkImageShadowRadius - linkImageShadowOffsetY);
+    context.setShadow({ 0, linkImageShadowOffsetY }, linkImageShadowRadius, { 0.f, 0.f, 0.f, .25 });
+#endif
     context.fillRoundedRect(FloatRoundedRect(layout.boundingRect, FloatRoundedRect::Radii(linkImageCornerRadius)), Color::white);
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101300
+    context.clearShadow();
+#endif
 
     for (const auto& label : layout.labels) {
         GraphicsContextStateSaver saver(context);
