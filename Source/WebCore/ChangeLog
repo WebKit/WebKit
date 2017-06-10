@@ -1,3 +1,11 @@
+2017-06-09  Dan Bernstein  <mitz@apple.com>
+
+        Tried to fix the build when targrting macOS 10.12 using the macOS 10.13 developer beta SDK.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::seekableTimeRangesLastModifiedTime):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::liveUpdateInterval):
+
 2017-06-09  Yoav Weiss  <yoav@yoav.ws>
 
         [preload] Fix builds with ENABLE_VIDEO_TRACK set to false
@@ -27,7 +35,7 @@
 
 2017-06-09  Dan Bernstein  <mitz@apple.com>
 
-        Fixed building with the macOS 10.13 Apple Internal SDK when targeting macOS 10.12.
+        Tried to fix the build when targrting macOS 10.12 using the macOS 10.13 developer beta SDK.
 
         * platform/spi/mac/AVFoundationSPI.h:
 
