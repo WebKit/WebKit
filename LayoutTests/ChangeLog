@@ -1,3 +1,14 @@
+2017-06-09  Brady Eidson  <beidson@apple.com>
+
+        Crash when IndexedDB's getAll is used inside a Web Worker.
+        https://bugs.webkit.org/show_bug.cgi?id=172434
+
+        Reviewed by Andy Estes.
+
+        * storage/indexeddb/modern/resources/worker-getall.js: Added.
+        * storage/indexeddb/modern/worker-getall-expected.txt: Added.
+        * storage/indexeddb/modern/worker-getall.html: Added.
+
 2017-06-09  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark fast/mediastream/getUserMedia-grant-persistency3.html as flaky.

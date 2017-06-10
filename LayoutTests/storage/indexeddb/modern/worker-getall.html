@@ -1,0 +1,14 @@
+<script type="text/javascript">
+if (testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+var w = new Worker('resources/worker-getall.js');
+w.onmessage = function() {
+    if (testRunner)
+        testRunner.notifyDone();
+}
+
+</script>
+If this test completes without crashing, it passed.

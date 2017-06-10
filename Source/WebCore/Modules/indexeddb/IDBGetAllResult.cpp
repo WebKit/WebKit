@@ -42,24 +42,31 @@ template<typename T> void isolatedCopyOfVariant(const WTF::Variant<Vector<IDBKey
         targetVector.uncheckedAppend(element.isolatedCopy());
 }
 
+IDBGetAllResult::IDBGetAllResult(const IDBGetAllResult& that, IsolatedCopyTag)
+{
+    isolatedCopy(that, *this);
+}
+
 IDBGetAllResult IDBGetAllResult::isolatedCopy() const
 {
-    IDBGetAllResult result;
-    result.m_type = m_type;
+    return { *this, IsolatedCopy };
+}
 
-    if (WTF::holds_alternative<std::nullptr_t>(m_results))
-        return result;
+void IDBGetAllResult::isolatedCopy(const IDBGetAllResult& source, IDBGetAllResult& destination)
+{
+    destination.m_type = source.m_type;
 
-    switch (m_type) {
+    if (WTF::holds_alternative<std::nullptr_t>(source.m_results))
+        return;
+
+    switch (source.m_type) {
     case IndexedDB::GetAllType::Keys:
-        isolatedCopyOfVariant<IDBKeyData>(m_results, result.m_results);
+        isolatedCopyOfVariant<IDBKeyData>(source.m_results, destination.m_results);
         break;
     case IndexedDB::GetAllType::Values:
-        isolatedCopyOfVariant<IDBValue>(m_results, result.m_results);
+        isolatedCopyOfVariant<IDBValue>(source.m_results, destination.m_results);
         break;
     }
-
-    return result;
 }
 
 void IDBGetAllResult::addKey(IDBKeyData&& key)

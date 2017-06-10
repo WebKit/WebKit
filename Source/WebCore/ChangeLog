@@ -1,3 +1,20 @@
+2017-06-09  Brady Eidson  <beidson@apple.com>
+
+        Crash when IndexedDB's getAll is used inside a Web Worker.
+        https://bugs.webkit.org/show_bug.cgi?id=172434
+
+        Reviewed by Andy Estes.
+
+        Test: storage/indexeddb/modern/worker-getall.html
+
+        * Modules/indexeddb/IDBGetAllResult.cpp:
+        (WebCore::IDBGetAllResult::IDBGetAllResult): Add an isolated-copying constructor.
+        (WebCore::IDBGetAllResult::isolatedCopy):
+        * Modules/indexeddb/IDBGetAllResult.h:
+        
+        * Modules/indexeddb/shared/IDBResultData.cpp:
+        (WebCore::IDBResultData::isolatedCopy): Actually copy the IDBGetAllResult.
+
 2017-06-09  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed attempt to fix Mac build after r218039.

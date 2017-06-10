@@ -94,6 +94,8 @@ void IDBResultData::isolatedCopy(const IDBResultData& source, IDBResultData& des
         destination.m_resultKey = std::make_unique<IDBKeyData>(*source.m_resultKey, IDBKeyData::IsolatedCopy);
     if (source.m_getResult)
         destination.m_getResult = std::make_unique<IDBGetResult>(*source.m_getResult, IDBGetResult::IsolatedCopy);
+    if (source.m_getAllResult)
+        destination.m_getAllResult = std::make_unique<IDBGetAllResult>(*source.m_getAllResult, IDBGetAllResult::IsolatedCopy);
 }
 
 IDBResultData IDBResultData::error(const IDBResourceIdentifier& requestIdentifier, const IDBError& error)
