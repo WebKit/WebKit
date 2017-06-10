@@ -1,3 +1,21 @@
+2017-06-09  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Image should clear its ImageObserver* when CachedImage releases the last reference to its RefCounted<ImageObserver>
+        https://bugs.webkit.org/show_bug.cgi?id=173077
+
+        Reviewed by Simon Fraser.
+
+        Before dereferencing ImageObserver, CachedImage::clearImage() should check
+        whether it is the only object that holds a reference to this ImageObserver.
+        And if this is true, m_image have to clear its raw pointer to the deleted
+        ImageObserver by calling m_image->setImageObserver(nullptr).
+
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::setBodyDataFrom):
+        (WebCore::CachedImage::CachedImageObserver::CachedImageObserver):
+        (WebCore::CachedImage::clearImage):
+        * loader/cache/CachedImage.h:
+
 2017-06-09  Daniel Bates  <dabates@apple.com>
 
         Attempt to fix layout test failures following <https://trac.webkit.org/changeset/218028/webkit>

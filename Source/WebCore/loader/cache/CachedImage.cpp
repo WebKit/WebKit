@@ -101,7 +101,7 @@ void CachedImage::setBodyDataFrom(const CachedResource& resource)
     m_image = image.m_image;
     m_imageObserver = image.m_imageObserver;
     if (m_imageObserver)
-        m_imageObserver->add(*this);
+        m_imageObserver->cachedImages().add(this);
 
     if (m_image && is<SVGImage>(*m_image))
         m_svgImageCache = std::make_unique<SVGImageCache>(&downcast<SVGImage>(*m_image));
@@ -326,8 +326,7 @@ inline void CachedImage::createImage()
 
 CachedImage::CachedImageObserver::CachedImageObserver(CachedImage& image)
 {
-    m_cachedImages.reserveInitialCapacity(1);
-    m_cachedImages.append(&image);
+    m_cachedImages.add(&image);
 }
 
 void CachedImage::CachedImageObserver::decodedSizeChanged(const Image& image, long long delta)
@@ -367,10 +366,20 @@ void CachedImage::CachedImageObserver::changedInRect(const Image& image, const I
 
 inline void CachedImage::clearImage()
 {
+    if (!m_image)
+        return;
+
     if (m_imageObserver) {
-        m_imageObserver->remove(*this);
+        m_imageObserver->cachedImages().remove(this);
+
+        if (m_imageObserver->cachedImages().isEmpty()) {
+            ASSERT(m_imageObserver->hasOneRef());
+            m_image->setImageObserver(nullptr);
+        }
+
         m_imageObserver = nullptr;
     }
+
     m_image = nullptr;
 }
 
