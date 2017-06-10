@@ -1,3 +1,15 @@
+2017-06-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        IsInShadowTreeFlag does not get updated for a non-container node
+        https://bugs.webkit.org/show_bug.cgi?id=173084
+
+        Address Darin's review comment.
+
+        * dom/ContainerNodeAlgorithms.cpp:
+        (WebCore::notifyNodeInsertedIntoDocument):
+        (WebCore::notifyNodeInsertedIntoTree):
+        (WebCore::notifyNodeRemovedFromDocument):
+
 2017-06-09  Dan Bernstein  <mitz@apple.com>
 
         Fixed building with the macOS 10.13 Apple Internal SDK when targeting macOS 10.12.

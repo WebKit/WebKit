@@ -43,7 +43,7 @@ static void notifyNodeInsertedIntoDocument(ContainerNode& insertionPoint, Node& 
     if (!is<ContainerNode>(node))
         return;
 
-    ChildNodesLazySnapshot snapshot(node);
+    ChildNodesLazySnapshot snapshot(downcast<ContainerNode>(node));
     while (RefPtr<Node> child = snapshot.nextNode()) {
         // If we have been removed from the document during this loop, then
         // we don't want to tell the rest of our children that they've been
@@ -72,7 +72,7 @@ static void notifyNodeInsertedIntoTree(ContainerNode& insertionPoint, Node& node
     if (!is<ContainerNode>(node))
         return;
 
-    for (auto* child = node.firstChild(); child; child = child->nextSibling())
+    for (auto* child = downcast<ContainerNode>(node).firstChild(); child; child = child->nextSibling())
         notifyNodeInsertedIntoTree(insertionPoint, *child, postInsertionNotificationTargets);
 
     if (!is<Element>(node))
@@ -105,7 +105,7 @@ static void notifyNodeRemovedFromDocument(ContainerNode& insertionPoint, Node& n
     if (!is<ContainerNode>(node))
         return;
 
-    ChildNodesLazySnapshot snapshot(node);
+    ChildNodesLazySnapshot snapshot(downcast<ContainerNode>(node));
     while (RefPtr<Node> child = snapshot.nextNode()) {
         // If we have been added to the document during this loop, then we
         // don't want to tell the rest of our children that they've been
