@@ -1,3 +1,16 @@
+2017-06-09  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r218003.
+
+        This change caused assertion failures in existing LayoutTests.
+
+        Reverted changeset:
+
+        "Image should clear its ImageObserver* when CachedImage
+        releases the last reference to its RefCounted<ImageObserver>"
+        https://bugs.webkit.org/show_bug.cgi?id=173077
+        http://trac.webkit.org/changeset/218003
+
 2017-06-09  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebCrypto] Remove unsupported CryptoAlgorithmIdentifier
