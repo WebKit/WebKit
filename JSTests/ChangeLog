@@ -1,5 +1,12 @@
 2017-06-10  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        Unreviewed, update test results part 2
+        https://bugs.webkit.org/show_bug.cgi?id=173227
+
+        * test262.yaml:
+
+2017-06-10  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         Unreviewed, update test results
         https://bugs.webkit.org/show_bug.cgi?id=173227
 
