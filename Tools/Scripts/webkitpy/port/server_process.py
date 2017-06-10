@@ -316,7 +316,8 @@ class ServerProcess(object):
     # It might be cleaner to pass in the file descriptor to poll instead.
     def _read(self, deadline, fetch_bytes_from_buffers_callback):
         while True:
-            if self.has_crashed():
+            # Polling does not need to occur before bytes are fetched from the buffer.
+            if self._crashed:
                 return None
 
             if time.time() > deadline:
@@ -326,6 +327,9 @@ class ServerProcess(object):
             bytes = fetch_bytes_from_buffers_callback()
             if bytes is not None:
                 return bytes
+
+            if self.has_crashed():
+                return None
 
             if self._use_win32_apis:
                 self._wait_for_data_and_update_buffers_using_win32_apis(deadline)

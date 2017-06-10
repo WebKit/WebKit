@@ -1,3 +1,39 @@
+2017-06-10  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Reduce polling in ServerProcess
+        https://bugs.webkit.org/show_bug.cgi?id=173116
+
+        Reviewed by Ryosuke Niwa.
+
+        We should be smarter about polling. We do not need to poll every time a line is read from
+        stdout and stderr since lines are usually read from cached data. We should only poll
+        when extracting that cached data from stdout and stderr.
+
+        * Scripts/webkitpy/port/driver.py:
+        (Driver._read_block): Rely on output of the ServerProcess to detect a crash or a timeout
+        and on ServerProcess to poll the process if not data is available in stdout and stderr.
+        * Scripts/webkitpy/port/driver_unittest.py:
+        (DriverTest.test_read_block_crashed_process): Test that the Driver will handle a crashing
+        ServerProcess.
+        * Scripts/webkitpy/port/server_process.py:
+        (ServerProcess._read): Allow for data to be read from _output even if the process has
+        crashed. Only poll the process if data needs to be extracted from stdout or stderr. 
+        * Scripts/webkitpy/port/server_process_mock.py:
+        (MockServerProcess): Add number_of_times_polled.
+        (MockServerProcess.poll): Increment number_of_times_polled.
+        (MockServerProcess.has_crashed): Poll before returning crash state.
+        (MockServerProcess.read_stdout_line): MockServerProcess should return None if it has crashed,
+        just like a ServerProcess would.
+        (MockServerProcess.read_stdout): Ditto.
+        * Scripts/webkitpy/port/server_process_unittest.py:
+        (TestServerProcess.test_basic): Use stdin.readline() instead of time.sleep() to prevent the
+        process from ending before stdout and stderr are read. This is the reason this test was flakey.
+        (TestServerProcess):
+        (TestServerProcess.test_process_crashing): Test that when a process crashes, data can be read until
+        the processes is polled.
+        (TestServerProcess.test_process_crashing_no_data): Test that when a process which has not output any
+        data to stdout and stderr crashes, ServerProcess._read(...) polls the process to detect the crash.
+
 2017-06-10  Andy Estes  <aestes@apple.com>
 
         [QuickLook] PreviewLoader needs to check if its ResourceLoader has reached the terminal state before calling didReceiveResponse() and friends

@@ -552,7 +552,7 @@ class Driver(object):
         out_seen_eof = False
         asan_violation_detected = False
 
-        while not self.has_crashed():
+        while True:
             if out_seen_eof and (self.err_seen_eof or not wait_for_stderr_eof):
                 break
 
@@ -565,7 +565,8 @@ class Driver(object):
             else:
                 out_line, err_line = self._server_process.read_either_stdout_or_stderr_line(deadline)
 
-            if self._server_process.timed_out or self.has_crashed():
+            # ServerProcess returns None for time outs and crashes.
+            if out_line is None and err_line is None:
                 break
 
             if out_line:

@@ -99,7 +99,7 @@ class FakeServerProcess(server_process.ServerProcess):
 
 class TestServerProcess(unittest.TestCase):
     def test_basic(self):
-        cmd = [sys.executable, '-c', 'import sys; import time; time.sleep(0.02); print "stdout"; sys.stdout.flush(); print >>sys.stderr, "stderr"']
+        cmd = [sys.executable, '-c', 'import sys; print "stdout"; sys.stdout.flush(); print >>sys.stderr, "stderr"; sys.stdin.readline();']
         host = SystemHost()
         factory = PortFactory(host)
         port = factory.get()
@@ -118,15 +118,59 @@ class TestServerProcess(unittest.TestCase):
         line = proc.read_stdout_line(now - 1)
         self.assertEqual(line, None)
 
-        # FIXME: This part appears to be flaky. line should always be non-None.
-        # FIXME: https://bugs.webkit.org/show_bug.cgi?id=88280
         line = proc.read_stdout_line(now + 1.0)
-        if line:
-            self.assertEqual(line.strip(), "stdout")
+        self.assertEqual(line.strip(), "stdout")
 
         line = proc.read_stderr_line(now + 1.0)
-        if line:
-            self.assertEqual(line.strip(), "stderr")
+        self.assertEqual(line.strip(), "stderr")
+
+        proc.write('End\n')
+        proc.stop(0)
+
+    def test_process_crashing(self):
+        cmd = [sys.executable, '-c', 'import sys; print "stdout 1"; print "stdout 2"; print "stdout 3"; sys.stdout.flush(); sys.stdin.readline(); sys.exit(1);']
+        host = SystemHost()
+        factory = PortFactory(host)
+        port = factory.get()
+        now = time.time()
+        proc = server_process.ServerProcess(port, 'python', cmd)
+        proc.write('')
+
+        line = proc.read_stdout_line(now + 1.0)
+        self.assertEqual(line.strip(), 'stdout 1')
+
+        proc.write('End\n')
+        time.sleep(0.1)  # Give process a moment to close.
+
+        line = proc.read_stdout_line(now + 1.0)
+        self.assertEqual(line.strip(), 'stdout 2')
+
+        self.assertEqual(True, proc.has_crashed())
+
+        line = proc.read_stdout_line(now + 1.0)
+        self.assertEqual(line, None)
+
+        proc.stop(0)
+
+    def test_process_crashing_no_data(self):
+        cmd = [sys.executable, '-c',
+               'import sys; sys.stdin.readline(); sys.exit(1);']
+        host = SystemHost()
+        factory = PortFactory(host)
+        port = factory.get()
+        now = time.time()
+        proc = server_process.ServerProcess(port, 'python', cmd)
+        proc.write('')
+
+        self.assertEqual(False, proc.has_crashed())
+
+        proc.write('End\n')
+        time.sleep(0.1)  # Give process a moment to close.
+
+        line = proc.read_stdout_line(now + 1.0)
+        self.assertEqual(line, None)
+
+        self.assertEqual(True, proc.has_crashed())
 
         proc.stop(0)
 

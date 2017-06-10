@@ -37,17 +37,26 @@ class MockServerProcess(object):
         self.env = env
         self.started = False
         self.stopped = False
+        self.number_of_times_polled = 0
+
+    def poll(self):
+        self.number_of_times_polled += 1
 
     def write(self, bytes):
         self.writes.append(bytes)
 
     def has_crashed(self):
+        self.poll()
         return self.crashed
 
     def read_stdout_line(self, deadline):
+        if self.has_crashed():
+            return None
         return self.lines.pop(0) + "\n"
 
     def read_stdout(self, deadline, size):
+        if self.has_crashed():
+            return None
         first_line = self.lines[0]
         if size > len(first_line):
             self.lines.pop(0)

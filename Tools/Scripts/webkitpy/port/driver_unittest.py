@@ -142,6 +142,26 @@ class DriverTest(unittest.TestCase):
         self.assertEqual(content_block.content_type, 'my_type')
         self.assertEqual(content_block.encoding, 'none')
         self.assertEqual(content_block.content_hash, 'foobar')
+        # We should only poll once for each line.
+        self.assertEqual(driver._server_process.number_of_times_polled, 4)
+        driver._server_process = None
+
+    def test_read_block_crashed_process(self):
+        port = TestWebKitPort()
+        driver = Driver(port, 0, pixel_tests=False)
+        driver._server_process = MockServerProcess(
+            crashed=True,
+            lines=[
+                'ActualHash: foobar',
+                'Content-Type: my_type',
+                'Content-Transfer-Encoding: none',
+                '#EOF',
+            ])
+
+        content_block = driver._read_block(0, "")
+        self.assertEqual(content_block.content_type, None)
+        self.assertEqual(content_block.encoding, None)
+        self.assertEqual(content_block.content_hash, None)
         driver._server_process = None
 
     def test_read_binary_block(self):
