@@ -1,3 +1,17 @@
+2017-06-10  Dan Bernstein  <mitz@apple.com>
+
+        [Xcode] With Xcode 9 developer beta, everything rebuilds when switching between command-line and IDE
+        https://bugs.webkit.org/show_bug.cgi?id=173223
+
+        Reviewed by Sam Weinig.
+
+        The rebuilds were happening due to a difference in the compiler options that the IDE and
+        xcodebuild were specifying. Only the IDE was passing the -index-store-path option. To make
+        xcodebuild pass that option, too, set CLANG_INDEX_STORE_ENABLE to YES if it is unset, and
+        specify an appropriate path in CLANG_INDEX_STORE_PATH.
+
+        * Configurations/DebugRelease.xcconfig:
+
 2017-06-09  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS DnD] Add a hook to perform two-step drops in editable content
