@@ -32,6 +32,8 @@ WebInspector.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel ext
         this.element.classList.add("resource");
 
         this._resource = null;
+        this._needsToApplyResourceEventListeners = false;
+        this._needsToRemoveResourceEventListeners = false;
     }
 
     // Public
@@ -79,7 +81,7 @@ WebInspector.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel ext
         if (resource === this._resource)
             return;
 
-        if (this._resource) {
+        if (this._resource && this._needsToRemoveResourceEventListeners) {
             this._resource.removeEventListener(WebInspector.Resource.Event.URLDidChange, this._refreshURL, this);
             this._resource.removeEventListener(WebInspector.Resource.Event.MIMETypeDidChange, this._refreshMIMEType, this);
             this._resource.removeEventListener(WebInspector.Resource.Event.TypeDidChange, this._refreshResourceType, this);
@@ -90,6 +92,8 @@ WebInspector.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel ext
             this._resource.removeEventListener(WebInspector.Resource.Event.SizeDidChange, this._refreshDecodedSize, this);
             this._resource.removeEventListener(WebInspector.Resource.Event.TransferSizeDidChange, this._refreshTransferSize, this);
             this._resource.removeEventListener(WebInspector.Resource.Event.InitiatedResourcesDidChange, this._refreshRelatedResourcesSection, this);
+
+            this._needsToRemoveResourceEventListeners = false;
         }
 
         this._resource = resource;
@@ -620,5 +624,7 @@ WebInspector.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel ext
         this._resource.addEventListener(WebInspector.Resource.Event.SizeDidChange, this._refreshDecodedSize, this);
         this._resource.addEventListener(WebInspector.Resource.Event.TransferSizeDidChange, this._refreshTransferSize, this);
         this._resource.addEventListener(WebInspector.Resource.Event.InitiatedResourcesDidChange, this._refreshRelatedResourcesSection, this);
+
+        this._needsToRemoveResourceEventListeners = true;
     }
 };

@@ -1,3 +1,17 @@
+2017-06-10  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: REGRESSION(r217749): Event listeners are removed even if they haven't been added
+        https://bugs.webkit.org/show_bug.cgi?id=173185
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/ResourceDetailsSidebarPanel.js:
+        (WebInspector.ResourceDetailsSidebarPanel):
+        (WebInspector.ResourceDetailsSidebarPanel.prototype.set resource):
+        (WebInspector.ResourceDetailsSidebarPanel.prototype._applyResourceEventListeners):
+        Maintain a member variable flag such that event listeners are only removed if it is true.
+        It is only set to true once the event listeners are added.
+
 2017-06-09  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: REGRESSION(r217258): Misspelled variable names
