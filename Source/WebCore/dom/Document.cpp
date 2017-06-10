@@ -5323,7 +5323,8 @@ bool Document::isContextThread() const
 
 bool Document::isSecureContext() const
 {
-    ASSERT(m_frame);
+    if (!m_frame)
+        return true;
     if (!securityOrigin().isPotentionallyTrustworthy())
         return false;
     for (Frame* frame = m_frame->tree().parent(); frame; frame = frame->tree().parent()) {

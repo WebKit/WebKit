@@ -1,3 +1,18 @@
+2017-06-09  Daniel Bates  <dabates@apple.com>
+
+        Attempt to fix layout test failures following <https://trac.webkit.org/changeset/218028/webkit>
+        (https://bugs.webkit.org/show_bug.cgi?id=158121)
+        <rdar://problem/26012994>
+
+        For now, if we do not have a frame then consider the document a secure context. One way this can happen
+        is the page accesses a frame that was removed from the document as demonstrated by the test:
+        fast/dom/Window/property-access-on-cached-window-after-frame-removed.html. Treating a frameless
+        document as a secure context also matches Blink's implementation:
+        <https://chromium.googlesource.com/chromium/src/+/fc202b2b1174f5732f7b9e63a6c46fd01ac2be02/third_party/WebKit/Source/core/dom/Document.cpp#4079>.
+
+        * dom/Document.cpp:
+        (WebCore::Document::isSecureContext):
+
 2017-06-09  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r218003.
