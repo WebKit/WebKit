@@ -383,7 +383,7 @@ static uint64_t generateUniqueCallbackIdentifier()
     return ++currentID;
 }
 
-uint64_t UniqueIDBDatabase::storeCallbackOrFireError(ErrorCallback callback)
+uint64_t UniqueIDBDatabase::storeCallbackOrFireError(ErrorCallback&& callback)
 {
     if (m_hardClosedForUserDelete) {
         callback(IDBError::userDeleteError());
@@ -392,11 +392,11 @@ uint64_t UniqueIDBDatabase::storeCallbackOrFireError(ErrorCallback callback)
 
     uint64_t identifier = generateUniqueCallbackIdentifier();
     ASSERT(!m_errorCallbacks.contains(identifier));
-    m_errorCallbacks.add(identifier, callback);
+    m_errorCallbacks.add(identifier, WTFMove(callback));
     return identifier;
 }
 
-uint64_t UniqueIDBDatabase::storeCallbackOrFireError(KeyDataCallback callback)
+uint64_t UniqueIDBDatabase::storeCallbackOrFireError(KeyDataCallback&& callback)
 {
     if (m_hardClosedForUserDelete) {
         callback(IDBError::userDeleteError(), { });
@@ -405,11 +405,11 @@ uint64_t UniqueIDBDatabase::storeCallbackOrFireError(KeyDataCallback callback)
 
     uint64_t identifier = generateUniqueCallbackIdentifier();
     ASSERT(!m_keyDataCallbacks.contains(identifier));
-    m_keyDataCallbacks.add(identifier, callback);
+    m_keyDataCallbacks.add(identifier, WTFMove(callback));
     return identifier;
 }
 
-uint64_t UniqueIDBDatabase::storeCallbackOrFireError(GetResultCallback callback)
+uint64_t UniqueIDBDatabase::storeCallbackOrFireError(GetResultCallback&& callback)
 {
     if (m_hardClosedForUserDelete) {
         callback(IDBError::userDeleteError(), { });
@@ -418,11 +418,11 @@ uint64_t UniqueIDBDatabase::storeCallbackOrFireError(GetResultCallback callback)
 
     uint64_t identifier = generateUniqueCallbackIdentifier();
     ASSERT(!m_getResultCallbacks.contains(identifier));
-    m_getResultCallbacks.add(identifier, callback);
+    m_getResultCallbacks.add(identifier, WTFMove(callback));
     return identifier;
 }
 
-uint64_t UniqueIDBDatabase::storeCallbackOrFireError(GetAllResultsCallback callback)
+uint64_t UniqueIDBDatabase::storeCallbackOrFireError(GetAllResultsCallback&& callback)
 {
     if (m_hardClosedForUserDelete) {
         callback(IDBError::userDeleteError(), { });
@@ -431,11 +431,11 @@ uint64_t UniqueIDBDatabase::storeCallbackOrFireError(GetAllResultsCallback callb
 
     uint64_t identifier = generateUniqueCallbackIdentifier();
     ASSERT(!m_getAllResultsCallbacks.contains(identifier));
-    m_getAllResultsCallbacks.add(identifier, callback);
+    m_getAllResultsCallbacks.add(identifier, WTFMove(callback));
     return identifier;
 }
 
-uint64_t UniqueIDBDatabase::storeCallbackOrFireError(CountCallback callback)
+uint64_t UniqueIDBDatabase::storeCallbackOrFireError(CountCallback&& callback)
 {
     if (m_hardClosedForUserDelete) {
         callback(IDBError::userDeleteError(), 0);
@@ -444,7 +444,7 @@ uint64_t UniqueIDBDatabase::storeCallbackOrFireError(CountCallback callback)
 
     uint64_t identifier = generateUniqueCallbackIdentifier();
     ASSERT(!m_countCallbacks.contains(identifier));
-    m_countCallbacks.add(identifier, callback);
+    m_countCallbacks.add(identifier, WTFMove(callback));
     return identifier;
 }
 
@@ -616,7 +616,7 @@ void UniqueIDBDatabase::createObjectStore(UniqueIDBDatabaseTransaction& transact
     ASSERT(isMainThread());
     LOG(IndexedDB, "(main) UniqueIDBDatabase::createObjectStore");
 
-    uint64_t callbackID = storeCallbackOrFireError(callback);
+    uint64_t callbackID = storeCallbackOrFireError(WTFMove(callback));
     if (!callbackID)
         return;
 
@@ -651,7 +651,7 @@ void UniqueIDBDatabase::deleteObjectStore(UniqueIDBDatabaseTransaction& transact
     ASSERT(isMainThread());
     LOG(IndexedDB, "(main) UniqueIDBDatabase::deleteObjectStore");
 
-    uint64_t callbackID = storeCallbackOrFireError(callback);
+    uint64_t callbackID = storeCallbackOrFireError(WTFMove(callback));
     if (!callbackID)
         return;
 
@@ -692,7 +692,7 @@ void UniqueIDBDatabase::renameObjectStore(UniqueIDBDatabaseTransaction& transact
     ASSERT(isMainThread());
     LOG(IndexedDB, "(main) UniqueIDBDatabase::renameObjectStore");
 
-    uint64_t callbackID = storeCallbackOrFireError(callback);
+    uint64_t callbackID = storeCallbackOrFireError(WTFMove(callback));
     if (!callbackID)
         return;
 
@@ -733,7 +733,7 @@ void UniqueIDBDatabase::clearObjectStore(UniqueIDBDatabaseTransaction& transacti
     ASSERT(isMainThread());
     LOG(IndexedDB, "(main) UniqueIDBDatabase::clearObjectStore");
 
-    uint64_t callbackID = storeCallbackOrFireError(callback);
+    uint64_t callbackID = storeCallbackOrFireError(WTFMove(callback));
     if (!callbackID)
         return;
     postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::performClearObjectStore, callbackID, transaction.info().identifier(), objectStoreIdentifier));
@@ -764,7 +764,7 @@ void UniqueIDBDatabase::createIndex(UniqueIDBDatabaseTransaction& transaction, c
     ASSERT(isMainThread());
     LOG(IndexedDB, "(main) UniqueIDBDatabase::createIndex");
 
-    uint64_t callbackID = storeCallbackOrFireError(callback);
+    uint64_t callbackID = storeCallbackOrFireError(WTFMove(callback));
     if (!callbackID)
         return;
     postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::performCreateIndex, callbackID, transaction.info().identifier(), info));
@@ -801,7 +801,7 @@ void UniqueIDBDatabase::deleteIndex(UniqueIDBDatabaseTransaction& transaction, u
     ASSERT(isMainThread());
     LOG(IndexedDB, "(main) UniqueIDBDatabase::deleteIndex");
 
-    uint64_t callbackID = storeCallbackOrFireError(callback);
+    uint64_t callbackID = storeCallbackOrFireError(WTFMove(callback));
     if (!callbackID)
         return;
 
@@ -851,7 +851,7 @@ void UniqueIDBDatabase::renameIndex(UniqueIDBDatabaseTransaction& transaction, u
     ASSERT(isMainThread());
     LOG(IndexedDB, "(main) UniqueIDBDatabase::renameIndex");
 
-    uint64_t callbackID = storeCallbackOrFireError(callback);
+    uint64_t callbackID = storeCallbackOrFireError(WTFMove(callback));
     if (!callbackID)
         return;
 
@@ -905,7 +905,7 @@ void UniqueIDBDatabase::putOrAdd(const IDBRequestData& requestData, const IDBKey
     ASSERT(isMainThread());
     LOG(IndexedDB, "(main) UniqueIDBDatabase::putOrAdd");
 
-    uint64_t callbackID = storeCallbackOrFireError(callback);
+    uint64_t callbackID = storeCallbackOrFireError(WTFMove(callback));
     if (!callbackID)
         return;
     postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::performPutOrAdd, callbackID, requestData.transactionIdentifier(), requestData.objectStoreIdentifier(), keyData, value, overwriteMode));
@@ -1045,7 +1045,7 @@ void UniqueIDBDatabase::getRecord(const IDBRequestData& requestData, const IDBGe
     ASSERT(isMainThread());
     LOG(IndexedDB, "(main) UniqueIDBDatabase::getRecord");
 
-    uint64_t callbackID = storeCallbackOrFireError(callback);
+    uint64_t callbackID = storeCallbackOrFireError(WTFMove(callback));
     if (!callbackID)
         return;
 
@@ -1060,7 +1060,7 @@ void UniqueIDBDatabase::getAllRecords(const IDBRequestData& requestData, const I
     ASSERT(isMainThread());
     LOG(IndexedDB, "(main) UniqueIDBDatabase::getAllRecords");
 
-    uint64_t callbackID = storeCallbackOrFireError(callback);
+    uint64_t callbackID = storeCallbackOrFireError(WTFMove(callback));
     if (!callbackID)
         return;
 
@@ -1127,7 +1127,7 @@ void UniqueIDBDatabase::getCount(const IDBRequestData& requestData, const IDBKey
     ASSERT(isMainThread());
     LOG(IndexedDB, "(main) UniqueIDBDatabase::getCount");
 
-    uint64_t callbackID = storeCallbackOrFireError(callback);
+    uint64_t callbackID = storeCallbackOrFireError(WTFMove(callback));
     if (!callbackID)
         return;
     postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::performGetCount, callbackID, requestData.transactionIdentifier(), requestData.objectStoreIdentifier(), requestData.indexIdentifier(), range));
@@ -1160,7 +1160,7 @@ void UniqueIDBDatabase::deleteRecord(const IDBRequestData& requestData, const ID
     ASSERT(isMainThread());
     LOG(IndexedDB, "(main) UniqueIDBDatabase::deleteRecord");
 
-    uint64_t callbackID = storeCallbackOrFireError(callback);
+    uint64_t callbackID = storeCallbackOrFireError(WTFMove(callback));
     if (!callbackID)
         return;
     postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::performDeleteRecord, callbackID, requestData.transactionIdentifier(), requestData.objectStoreIdentifier(), keyRangeData));
@@ -1189,7 +1189,7 @@ void UniqueIDBDatabase::openCursor(const IDBRequestData& requestData, const IDBC
     ASSERT(isMainThread());
     LOG(IndexedDB, "(main) UniqueIDBDatabase::openCursor");
 
-    uint64_t callbackID = storeCallbackOrFireError(callback);
+    uint64_t callbackID = storeCallbackOrFireError(WTFMove(callback));
     if (!callbackID)
         return;
     postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::performOpenCursor, callbackID, requestData.transactionIdentifier(), info));
@@ -1219,7 +1219,7 @@ void UniqueIDBDatabase::iterateCursor(const IDBRequestData& requestData, const I
     ASSERT(isMainThread());
     LOG(IndexedDB, "(main) UniqueIDBDatabase::iterateCursor");
 
-    uint64_t callbackID = storeCallbackOrFireError(callback);
+    uint64_t callbackID = storeCallbackOrFireError(WTFMove(callback));
     if (!callbackID)
         return;
     postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::performIterateCursor, callbackID, requestData.transactionIdentifier(), requestData.cursorIdentifier(), data));
@@ -1283,7 +1283,7 @@ void UniqueIDBDatabase::commitTransaction(UniqueIDBDatabaseTransaction& transact
 
     ASSERT(&transaction.databaseConnection().database() == this);
 
-    uint64_t callbackID = storeCallbackOrFireError(callback);
+    uint64_t callbackID = storeCallbackOrFireError(WTFMove(callback));
     if (!callbackID)
         return;
 
@@ -1327,7 +1327,7 @@ void UniqueIDBDatabase::abortTransaction(UniqueIDBDatabaseTransaction& transacti
 
     ASSERT(&transaction.databaseConnection().database() == this);
 
-    uint64_t callbackID = storeCallbackOrFireError(callback);
+    uint64_t callbackID = storeCallbackOrFireError(WTFMove(callback));
     if (!callbackID)
         return;
 
@@ -1570,11 +1570,11 @@ void UniqueIDBDatabase::activateTransactionInBackingStore(UniqueIDBDatabaseTrans
     RefPtr<UniqueIDBDatabase> protectedThis(this);
     RefPtr<UniqueIDBDatabaseTransaction> refTransaction(&transaction);
 
-    auto callback = [protectedThis, refTransaction](const IDBError& error) {
+    ErrorCallback callback = [protectedThis, refTransaction](const IDBError& error) {
         refTransaction->didActivateInBackingStore(error);
     };
 
-    uint64_t callbackID = storeCallbackOrFireError(callback);
+    uint64_t callbackID = storeCallbackOrFireError(WTFMove(callback));
     if (!callbackID)
         return;
     postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::performActivateTransactionInBackingStore, callbackID, transaction.info()));

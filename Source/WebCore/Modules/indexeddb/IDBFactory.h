@@ -28,7 +28,7 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "ExceptionOr.h"
-#include <functional>
+#include <wtf/Function.h>
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -59,7 +59,7 @@ public:
 
     ExceptionOr<short> cmp(JSC::ExecState&, JSC::JSValue first, JSC::JSValue second);
 
-    WEBCORE_EXPORT void getAllDatabaseNames(const SecurityOrigin& mainFrameOrigin, const SecurityOrigin& openingOrigin, std::function<void (const Vector<String>&)>);
+    WEBCORE_EXPORT void getAllDatabaseNames(const SecurityOrigin& mainFrameOrigin, const SecurityOrigin& openingOrigin, WTF::Function<void (const Vector<String>&)>&&);
 
 private:
     explicit IDBFactory(IDBClient::IDBConnectionProxy&);

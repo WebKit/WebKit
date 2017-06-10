@@ -1,3 +1,48 @@
+2017-06-09  Chris Dumez  <cdumez@apple.com>
+
+        Use WTF::Function instead of std::function in indexeddb code
+        https://bugs.webkit.org/show_bug.cgi?id=173198
+
+        Reviewed by Sam Weinig.
+
+        Use WTF::Function instead of std::function in indexeddb code to avoid copying.
+
+        * Modules/indexeddb/IDBFactory.cpp:
+        (WebCore::IDBFactory::getAllDatabaseNames):
+        * Modules/indexeddb/IDBFactory.h:
+        * Modules/indexeddb/client/IDBConnectionProxy.cpp:
+        (WebCore::IDBClient::IDBConnectionProxy::getAllDatabaseNames):
+        * Modules/indexeddb/client/IDBConnectionProxy.h:
+        * Modules/indexeddb/client/IDBConnectionToServer.cpp:
+        (WebCore::IDBClient::IDBConnectionToServer::getAllDatabaseNames):
+        * Modules/indexeddb/client/IDBConnectionToServer.h:
+        * Modules/indexeddb/client/TransactionOperation.h:
+        (WebCore::IDBClient::TransactionOperation::doComplete):
+        * Modules/indexeddb/server/IDBServer.cpp:
+        (WebCore::IDBServer::IDBServer::closeAndDeleteDatabasesModifiedSince):
+        (WebCore::IDBServer::IDBServer::closeAndDeleteDatabasesForOrigins):
+        * Modules/indexeddb/server/IDBServer.h:
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::storeCallbackOrFireError):
+        (WebCore::IDBServer::UniqueIDBDatabase::createObjectStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::deleteObjectStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::renameObjectStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::clearObjectStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::createIndex):
+        (WebCore::IDBServer::UniqueIDBDatabase::deleteIndex):
+        (WebCore::IDBServer::UniqueIDBDatabase::renameIndex):
+        (WebCore::IDBServer::UniqueIDBDatabase::putOrAdd):
+        (WebCore::IDBServer::UniqueIDBDatabase::getRecord):
+        (WebCore::IDBServer::UniqueIDBDatabase::getAllRecords):
+        (WebCore::IDBServer::UniqueIDBDatabase::getCount):
+        (WebCore::IDBServer::UniqueIDBDatabase::deleteRecord):
+        (WebCore::IDBServer::UniqueIDBDatabase::openCursor):
+        (WebCore::IDBServer::UniqueIDBDatabase::iterateCursor):
+        (WebCore::IDBServer::UniqueIDBDatabase::commitTransaction):
+        (WebCore::IDBServer::UniqueIDBDatabase::abortTransaction):
+        (WebCore::IDBServer::UniqueIDBDatabase::activateTransactionInBackingStore):
+        * Modules/indexeddb/server/UniqueIDBDatabase.h:
+
 2017-06-09  Dan Bernstein  <mitz@apple.com>
 
         Tried to fix the build when targrting macOS 10.12 using the macOS 10.13 developer beta SDK.

@@ -536,7 +536,7 @@ static uint64_t generateDeleteCallbackID()
     return ++currentID;
 }
 
-void IDBServer::closeAndDeleteDatabasesModifiedSince(std::chrono::system_clock::time_point modificationTime, std::function<void ()> completionHandler)
+void IDBServer::closeAndDeleteDatabasesModifiedSince(std::chrono::system_clock::time_point modificationTime, Function<void ()>&& completionHandler)
 {
     uint64_t callbackID = generateDeleteCallbackID();
     auto addResult = m_deleteDatabaseCompletionHandlers.add(callbackID, WTFMove(completionHandler));
@@ -558,7 +558,7 @@ void IDBServer::closeAndDeleteDatabasesModifiedSince(std::chrono::system_clock::
     postDatabaseTask(createCrossThreadTask(*this, &IDBServer::performCloseAndDeleteDatabasesModifiedSince, modificationTime, callbackID));
 }
 
-void IDBServer::closeAndDeleteDatabasesForOrigins(const Vector<SecurityOriginData>& origins, std::function<void ()> completionHandler)
+void IDBServer::closeAndDeleteDatabasesForOrigins(const Vector<SecurityOriginData>& origins, Function<void ()>&& completionHandler)
 {
     uint64_t callbackID = generateDeleteCallbackID();
     auto addResult = m_deleteDatabaseCompletionHandlers.add(callbackID, WTFMove(completionHandler));

@@ -32,6 +32,7 @@
 #include "IDBResourceIdentifier.h"
 #include "IDBResultData.h"
 #include "IDBTransaction.h"
+#include <wtf/Function.h>
 #include <wtf/MainThread.h>
 #include <wtf/Threading.h>
 
@@ -95,7 +96,7 @@ public:
 
         // m_completeFunction might be holding the last ref to this TransactionOperation,
         // so we need to do this trick to null it out without first destroying it.
-        std::function<void (const IDBResultData&)> oldCompleteFunction;
+        WTF::Function<void (const IDBResultData&)> oldCompleteFunction;
         std::swap(m_completeFunction, oldCompleteFunction);
     }
 
@@ -123,8 +124,8 @@ protected:
     uint64_t m_indexIdentifier { 0 };
     std::unique_ptr<IDBResourceIdentifier> m_cursorIdentifier;
     IndexedDB::IndexRecordType m_indexRecordType;
-    std::function<void ()> m_performFunction;
-    std::function<void (const IDBResultData&)> m_completeFunction;
+    WTF::Function<void ()> m_performFunction;
+    WTF::Function<void (const IDBResultData&)> m_completeFunction;
 
 private:
     IDBResourceIdentifier transactionIdentifier() const { return m_transaction->info().identifier(); }

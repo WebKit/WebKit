@@ -30,9 +30,9 @@
 #include "IDBConnectionToServer.h"
 #include "IDBResourceIdentifier.h"
 #include "TransactionOperation.h"
-#include <functional>
 #include <wtf/CrossThreadQueue.h>
 #include <wtf/CrossThreadTask.h>
+#include <wtf/Function.h>
 #include <wtf/HashMap.h>
 #include <wtf/MainThread.h>
 #include <wtf/RefPtr.h>
@@ -114,7 +114,7 @@ public:
     void ref();
     void deref();
 
-    void getAllDatabaseNames(const SecurityOrigin& mainFrameOrigin, const SecurityOrigin& openingOrigin, std::function<void (const Vector<String>&)>);
+    void getAllDatabaseNames(const SecurityOrigin& mainFrameOrigin, const SecurityOrigin& openingOrigin, WTF::Function<void (const Vector<String>&)>&&);
 
     void registerDatabaseConnection(IDBDatabase&);
     void unregisterDatabaseConnection(IDBDatabase&);

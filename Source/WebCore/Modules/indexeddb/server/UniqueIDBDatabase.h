@@ -40,6 +40,7 @@
 #include <wtf/CrossThreadQueue.h>
 #include <wtf/CrossThreadTask.h>
 #include <wtf/Deque.h>
+#include <wtf/Function.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
 #include <wtf/ListHashSet.h>
@@ -68,11 +69,11 @@ namespace IDBServer {
 class IDBConnectionToClient;
 class IDBServer;
 
-typedef std::function<void(const IDBError&)> ErrorCallback;
-typedef std::function<void(const IDBError&, const IDBKeyData&)> KeyDataCallback;
-typedef std::function<void(const IDBError&, const IDBGetResult&)> GetResultCallback;
-typedef std::function<void(const IDBError&, const IDBGetAllResult&)> GetAllResultsCallback;
-typedef std::function<void(const IDBError&, uint64_t)> CountCallback;
+typedef Function<void(const IDBError&)> ErrorCallback;
+typedef Function<void(const IDBError&, const IDBKeyData&)> KeyDataCallback;
+typedef Function<void(const IDBError&, const IDBGetResult&)> GetResultCallback;
+typedef Function<void(const IDBError&, const IDBGetAllResult&)> GetAllResultsCallback;
+typedef Function<void(const IDBError&, uint64_t)> CountCallback;
 
 class UniqueIDBDatabase : public ThreadSafeRefCounted<UniqueIDBDatabase> {
 public:
@@ -192,11 +193,11 @@ private:
     void didPerformActivateTransactionInBackingStore(uint64_t callbackIdentifier, const IDBError&);
     void didPerformUnconditionalDeleteBackingStore();
 
-    uint64_t storeCallbackOrFireError(ErrorCallback);
-    uint64_t storeCallbackOrFireError(KeyDataCallback);
-    uint64_t storeCallbackOrFireError(GetAllResultsCallback);
-    uint64_t storeCallbackOrFireError(GetResultCallback);
-    uint64_t storeCallbackOrFireError(CountCallback);
+    uint64_t storeCallbackOrFireError(ErrorCallback&&);
+    uint64_t storeCallbackOrFireError(KeyDataCallback&&);
+    uint64_t storeCallbackOrFireError(GetAllResultsCallback&&);
+    uint64_t storeCallbackOrFireError(GetResultCallback&&);
+    uint64_t storeCallbackOrFireError(CountCallback&&);
 
     void performErrorCallback(uint64_t callbackIdentifier, const IDBError&);
     void performKeyDataCallback(uint64_t callbackIdentifier, const IDBError&, const IDBKeyData&);

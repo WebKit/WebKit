@@ -102,8 +102,8 @@ public:
 
     std::unique_ptr<IDBBackingStore> createBackingStore(const IDBDatabaseIdentifier&);
 
-    WEBCORE_EXPORT void closeAndDeleteDatabasesModifiedSince(std::chrono::system_clock::time_point, std::function<void ()> completionHandler);
-    WEBCORE_EXPORT void closeAndDeleteDatabasesForOrigins(const Vector<SecurityOriginData>&, std::function<void ()> completionHandler);
+    WEBCORE_EXPORT void closeAndDeleteDatabasesModifiedSince(std::chrono::system_clock::time_point, Function<void ()>&& completionHandler);
+    WEBCORE_EXPORT void closeAndDeleteDatabasesForOrigins(const Vector<SecurityOriginData>&, Function<void ()>&& completionHandler);
 
 private:
     IDBServer(IDBBackingStoreTemporaryFileHandler&);
@@ -136,7 +136,7 @@ private:
     HashMap<uint64_t, UniqueIDBDatabaseConnection*> m_databaseConnections;
     HashMap<IDBResourceIdentifier, UniqueIDBDatabaseTransaction*> m_transactions;
 
-    HashMap<uint64_t, std::function<void ()>> m_deleteDatabaseCompletionHandlers;
+    HashMap<uint64_t, Function<void ()>> m_deleteDatabaseCompletionHandlers;
 
     String m_databaseDirectoryPath;
     IDBBackingStoreTemporaryFileHandler& m_backingStoreTemporaryFileHandler;

@@ -134,9 +134,9 @@ ExceptionOr<short> IDBFactory::cmp(ExecState& execState, JSValue firstValue, JSV
     return first->compare(second.get());
 }
 
-void IDBFactory::getAllDatabaseNames(const SecurityOrigin& mainFrameOrigin, const SecurityOrigin& openingOrigin, std::function<void (const Vector<String>&)> callback)
+void IDBFactory::getAllDatabaseNames(const SecurityOrigin& mainFrameOrigin, const SecurityOrigin& openingOrigin, Function<void (const Vector<String>&)>&& callback)
 {
-    m_connectionProxy->getAllDatabaseNames(mainFrameOrigin, openingOrigin, callback);
+    m_connectionProxy->getAllDatabaseNames(mainFrameOrigin, openingOrigin, WTFMove(callback));
 }
 
 } // namespace WebCore
