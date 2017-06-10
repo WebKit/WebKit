@@ -233,10 +233,10 @@ String HTMLLinkElement::as() const
         || equalLettersIgnoringASCIICase(as, "style")
         || equalLettersIgnoringASCIICase(as, "video")
         || equalLettersIgnoringASCIICase(as, "audio")
-        || equalLettersIgnoringASCIICase(as, "font")
 #if ENABLE(VIDEO_TRACK)
-        || equalLettersIgnoringASCIICase(as, "track"))
+        || equalLettersIgnoringASCIICase(as, "track")
 #endif
+        || equalLettersIgnoringASCIICase(as, "font"))
         return as;
     return String();
 }

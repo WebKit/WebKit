@@ -1,3 +1,18 @@
+2017-06-09  Yoav Weiss  <yoav@yoav.ws>
+
+        [preload] Fix builds with ENABLE_VIDEO_TRACK set to false
+        https://bugs.webkit.org/show_bug.cgi?id=173221
+
+        Reviewed by Chris Dumez.
+
+        https://bugs.webkit.org/show_bug.cgi?id=173047 introduced a build error for builds with video track support disabled.
+        This fixes that build issue.
+
+        No new tests since there's no functional change.
+
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::as):
+
 2017-06-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         IsInShadowTreeFlag does not get updated for a non-container node
