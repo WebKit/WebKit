@@ -27,7 +27,7 @@
 #define DataURLDecoder_h
 
 
-#include <functional>
+#include <wtf/Function.h>
 #include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
@@ -49,7 +49,7 @@ struct Result {
     RefPtr<SharedBuffer> data;
 };
 
-using DecodeCompletionHandler = Function<void (std::optional<Result>)>;
+using DecodeCompletionHandler = WTF::Function<void (std::optional<Result>)>;
 struct ScheduleContext {
 #if HAVE(RUNLOOP_TIMER)
     SchedulePairHashSet scheduledPairs;

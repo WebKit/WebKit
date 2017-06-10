@@ -1,5 +1,13 @@
 2017-06-09  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed attempt to fix Mac build after r218039.
+
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::loadDataURL):
+        * platform/network/DataURLDecoder.h:
+
+2017-06-09  Chris Dumez  <cdumez@apple.com>
+
         Use WTF::Function instead of std::function in DataURLDecoder
         https://bugs.webkit.org/show_bug.cgi?id=173194
 
