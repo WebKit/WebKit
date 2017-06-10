@@ -47,7 +47,7 @@
 #else
 
 #import <AVFoundation/AVPlayer.h>
-
+#import <AVFoundation/AVPlayerItem.h>
 
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 110000)
 NS_ASSUME_NONNULL_BEGIN

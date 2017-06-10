@@ -1,3 +1,9 @@
+2017-06-09  Dan Bernstein  <mitz@apple.com>
+
+        Fixed building with the macOS 10.13 Apple Internal SDK when targeting macOS 10.12.
+
+        * platform/spi/mac/AVFoundationSPI.h:
+
 2017-06-09  Brady Eidson  <beidson@apple.com>
 
         Crash when IndexedDB's getAll is used inside a Web Worker.
