@@ -1,3 +1,14 @@
+2017-06-10  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Update RegExp.prototype.[@@search]] implementation according to the latest spec
+        https://bugs.webkit.org/show_bug.cgi?id=173227
+
+        Reviewed by Mark Lam.
+
+        Update the test.
+
+        * es6/Proxy_internal_get_calls_RegExp.prototype[Symbol.search].js:
+
 2017-06-08  Keith Miller  <keith_miller@apple.com>
 
         WebAssembly: We should only create wrappers for functions that can be exported

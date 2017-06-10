@@ -1,3 +1,18 @@
+2017-06-10  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Update RegExp.prototype.[@@search]] implementation according to the latest spec
+        https://bugs.webkit.org/show_bug.cgi?id=173227
+
+        Reviewed by Mark Lam.
+
+        The latest spec introduces slight change to RegExp.prototype.[@@search].
+        This patch applies this change. Basically, this change is done in the slow path of
+        the RegExp.prototype[@@search].
+        https://tc39.github.io/ecma262/#sec-regexp.prototype-@@search
+
+        * builtins/RegExpPrototype.js:
+        (search):
+
 2017-06-09  Chris Dumez  <cdumez@apple.com>
 
         Update Thread::create() to take in a WTF::Function instead of a std::function
