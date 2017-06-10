@@ -87,7 +87,7 @@
     content: image-set(url(../Images/DocumentFontLarge.png) 1x, url(../Images/DocumentFontLarge@2x.png) 2x);
 }
 
-.large .resource-icon.resource-type-stylesheet .icon {
+.large :matches(.resource-icon.resource-type-stylesheet, .stylesheet-icon) .icon {
     content: image-set(url(../Images/DocumentCSSLarge.png) 1x, url(../Images/DocumentCSSLarge@2x.png) 2x);
 }
 
