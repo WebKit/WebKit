@@ -47,6 +47,16 @@ static WorkQueue& decodeQueue()
 struct DecodeTask {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    DecodeTask(const String& urlString, StringView&& encodedData, bool isBase64, const ScheduleContext& scheduleContext, DecodeCompletionHandler&& completionHandler, Result&& result)
+        : urlString(urlString.isolatedCopy())
+        , encodedData(WTFMove(encodedData))
+        , isBase64(isBase64)
+        , scheduleContext(scheduleContext)
+        , completionHandler(WTFMove(completionHandler))
+        , result(WTFMove(result))
+    {
+    }
+
     const String urlString;
     const StringView encodedData;
     const bool isBase64;
@@ -134,14 +144,14 @@ static std::unique_ptr<DecodeTask> createDecodeTask(const URL& url, const Schedu
     bool isBase64 = header.endsWithIgnoringASCIICase(StringView(base64String));
     auto mediaType = (isBase64 ? header.substring(0, header.length() - strlen(base64String)) : header).toString();
 
-    return std::make_unique<DecodeTask>(DecodeTask {
-        urlString.isolatedCopy(),
+    return std::make_unique<DecodeTask>(
+        urlString,
         WTFMove(encodedData),
         isBase64,
         scheduleContext,
         WTFMove(completionHandler),
         parseMediaType(mediaType)
-    });
+    );
 }
 
 static void decodeBase64(DecodeTask& task)

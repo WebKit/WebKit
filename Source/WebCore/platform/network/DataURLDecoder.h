@@ -49,7 +49,7 @@ struct Result {
     RefPtr<SharedBuffer> data;
 };
 
-using DecodeCompletionHandler = std::function<void (std::optional<Result>)>;
+using DecodeCompletionHandler = Function<void (std::optional<Result>)>;
 struct ScheduleContext {
 #if HAVE(RUNLOOP_TIMER)
     SchedulePairHashSet scheduledPairs;

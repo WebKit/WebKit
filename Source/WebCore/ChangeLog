@@ -1,3 +1,17 @@
+2017-06-09  Chris Dumez  <cdumez@apple.com>
+
+        Use WTF::Function instead of std::function in DataURLDecoder
+        https://bugs.webkit.org/show_bug.cgi?id=173194
+
+        Reviewed by Sam Weinig.
+
+        Use WTF::Function instead of std::function in DataURLDecoder to avoid copying.
+
+        * platform/network/DataURLDecoder.cpp:
+        (WebCore::DataURLDecoder::DecodeTask::DecodeTask):
+        (WebCore::DataURLDecoder::createDecodeTask):
+        * platform/network/DataURLDecoder.h:
+
 2017-06-09  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Image should clear its ImageObserver* when CachedImage releases the last reference to its RefCounted<ImageObserver>
