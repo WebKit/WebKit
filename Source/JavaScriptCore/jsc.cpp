@@ -1563,7 +1563,7 @@ static std::optional<DirectoryName> currentWorkingDirectory()
     // https://msdn.microsoft.com/en-us/library/windows/desktop/ff381407.aspx
     auto buffer = std::make_unique<wchar_t[]>(bufferLength);
     DWORD lengthNotIncludingNull = ::GetCurrentDirectoryW(bufferLength, buffer.get());
-    String directoryString = nullTerminatedWCharToString(buffer.get());
+    String directoryString = wcharToString(buffer.get(), lengthNotIncludingNull);
     // We don't support network path like \\host\share\<path name>.
     if (directoryString.startsWith("\\\\"))
         return std::nullopt;
