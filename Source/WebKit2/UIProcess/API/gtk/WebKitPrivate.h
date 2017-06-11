@@ -30,7 +30,6 @@
 #include <WebKit/WKAPICast.h>
 #include <WebKit/WKDownload.h>
 #include <WebKit/WKFindOptions.h>
-#include <WebKit/WKFullScreenClientGtk.h>
 #include <WebKit/WKGeolocationManager.h>
 #include <WebKit/WKGeolocationPermissionRequest.h>
 #include <WebKit/WKGeolocationPosition.h>

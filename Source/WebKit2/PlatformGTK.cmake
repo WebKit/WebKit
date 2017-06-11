@@ -109,7 +109,6 @@ list(APPEND WebKit2_SOURCES
 
     UIProcess/API/C/cairo/WKIconDatabaseCairo.cpp
 
-    UIProcess/API/C/gtk/WKFullScreenClientGtk.cpp
     UIProcess/API/C/gtk/WKInspectorClientGtk.cpp
     UIProcess/API/C/gtk/WKTextCheckerGtk.cpp
     UIProcess/API/C/gtk/WKView.cpp
@@ -176,8 +175,6 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/gtk/WebKitFormSubmissionRequest.h
     UIProcess/API/gtk/WebKitFormSubmissionRequestPrivate.h
     UIProcess/API/gtk/WebKitForwardDeclarations.h
-    UIProcess/API/gtk/WebKitFullscreenClient.cpp
-    UIProcess/API/gtk/WebKitFullscreenClient.h
     UIProcess/API/gtk/WebKitGeolocationPermissionRequest.cpp
     UIProcess/API/gtk/WebKitGeolocationPermissionRequest.h
     UIProcess/API/gtk/WebKitGeolocationPermissionRequestPrivate.h
@@ -339,7 +336,6 @@ list(APPEND WebKit2_SOURCES
     UIProcess/gtk/WaylandCompositor.cpp
     UIProcess/gtk/WebColorPickerGtk.cpp
     UIProcess/gtk/WebContextMenuProxyGtk.cpp
-    UIProcess/gtk/WebFullScreenClientGtk.cpp
     UIProcess/gtk/WebInspectorClientGtk.cpp
     UIProcess/gtk/WebInspectorProxyGtk.cpp
     UIProcess/gtk/WebKitInspectorWindow.cpp

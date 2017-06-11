@@ -40,7 +40,6 @@
 #include "WebKitError.h"
 #include "WebKitFaviconDatabasePrivate.h"
 #include "WebKitFormClient.h"
-#include "WebKitFullscreenClient.h"
 #include "WebKitHitTestResultPrivate.h"
 #include "WebKitInstallMissingMediaPluginsPermissionRequestPrivate.h"
 #include "WebKitJavascriptResultPrivate.h"
@@ -692,7 +691,6 @@ static void webkitWebViewConstructed(GObject* object)
     attachLoaderClientToView(webView);
     attachUIClientToView(webView);
     attachPolicyClientToView(webView);
-    attachFullScreenClientToView(webView);
     attachContextMenuClientToView(webView);
     attachFormClientToView(webView);
 
@@ -2079,18 +2077,24 @@ void webkitWebViewRemoveLoadingWebResource(WebKitWebView* webView, uint64_t reso
     priv->loadingResourcesMap.remove(resourceIdentifier);
 }
 
-bool webkitWebViewEnterFullScreen(WebKitWebView* webView)
+void webkitWebViewEnterFullScreen(WebKitWebView* webView)
 {
+#if ENABLE(FULLSCREEN_API)
     gboolean returnValue;
     g_signal_emit(webView, signals[ENTER_FULLSCREEN], 0, &returnValue);
-    return !returnValue;
+    if (!returnValue)
+        webkitWebViewBaseEnterFullScreen(WEBKIT_WEB_VIEW_BASE(webView));
+#endif
 }
 
-bool webkitWebViewLeaveFullScreen(WebKitWebView* webView)
+void webkitWebViewExitFullScreen(WebKitWebView* webView)
 {
+#if ENABLE(FULLSCREEN_API)
     gboolean returnValue;
     g_signal_emit(webView, signals[LEAVE_FULLSCREEN], 0, &returnValue);
-    return !returnValue;
+    if (!returnValue)
+        webkitWebViewBaseExitFullScreen(WEBKIT_WEB_VIEW_BASE(webView));
+#endif
 }
 
 void webkitWebViewRunFileChooserRequest(WebKitWebView* webView, WebKitFileChooserRequest* request)
