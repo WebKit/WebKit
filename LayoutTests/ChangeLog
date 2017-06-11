@@ -1,5 +1,19 @@
 2017-06-09  Antoine Quint  <graouts@apple.com>
 
+        Rebaseline media/modern-media-controls/invalid-placard
+        https://bugs.webkit.org/show_bug.cgi?id=173201
+
+        Reviewed by Jon Lee.
+
+        The only required change was to update IconButton to Button since IconButton has been folded in its superclass Button.
+
+        * media/modern-media-controls/invalid-placard/invalid-placard-constrained-metrics-expected.txt:
+        * media/modern-media-controls/invalid-placard/invalid-placard-constrained-metrics.html:
+        * platform/ios-simulator/TestExpectations:
+        * platform/mac/TestExpectations:
+
+2017-06-09  Antoine Quint  <graouts@apple.com>
+
         Rebaseline media/modern-media-controls/icon-service
         https://bugs.webkit.org/show_bug.cgi?id=173200
 
