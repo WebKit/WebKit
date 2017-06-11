@@ -1,5 +1,19 @@
 2017-06-11  Antoine Quint  <graouts@apple.com>
 
+        Rebaseline media/modern-media-controls/scrubber
+        https://bugs.webkit.org/show_bug.cgi?id=173212
+
+        Reviewed by Jon Lee.
+
+        Remove a media/modern-media-controls/scrubber test that is no longer relevant now that there is no standalone scrubber class.
+
+        * media/modern-media-controls/scrubber/scrubber-expected.txt: Removed.
+        * media/modern-media-controls/scrubber/scrubber.html: Removed.
+        * platform/ios-simulator/TestExpectations:
+        * platform/mac/TestExpectations:
+
+2017-06-11  Antoine Quint  <graouts@apple.com>
+
         Enable media/modern-media-controls/scheduler
         https://bugs.webkit.org/show_bug.cgi?id=173211
 

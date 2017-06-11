@@ -1570,6 +1570,7 @@ media/modern-media-controls/placard [ Pass ]
 media/modern-media-controls/play-pause-button [ Pass ]
 media/modern-media-controls/rewind-button [ Pass ]
 media/modern-media-controls/scheduler [ Pass ]
+media/modern-media-controls/scrubber [ Pass ]
 media/modern-media-controls/volume-up-support [ Pass ]
 
 # These tests are iOS-specific

@@ -75,6 +75,7 @@ media/modern-media-controls/placard [ Pass ]
 media/modern-media-controls/play-pause-button [ Pass ]
 media/modern-media-controls/rewind-button [ Pass ]
 media/modern-media-controls/scheduler [ Pass ]
+media/modern-media-controls/scrubber [ Pass ]
 
 # AirPlay cannot be tested on iOS
 webkit.org/b/166062 media/modern-media-controls/airplay-support [ Skip ]
