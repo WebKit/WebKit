@@ -182,12 +182,6 @@ void webkit_cookie_manager_set_accept_policy(WebKitCookieManager* manager, WebKi
         processPool->supplement<WebCookieManagerProxy>()->setHTTPCookieAcceptPolicy(WebCore::SessionID::defaultSessionID(), toHTTPCookieAcceptPolicy(policy), [](CallbackBase::Error){});
 }
 
-static void webkitCookieManagerGetAcceptPolicyCallback(WKHTTPCookieAcceptPolicy policy, WKErrorRef, void* context)
-{
-    GRefPtr<GTask> task = adoptGRef(G_TASK(context));
-    g_task_return_int(task.get(), toWebKitCookieAcceptPolicy(toHTTPCookieAcceptPolicy(policy)));
-}
-
 /**
  * webkit_cookie_manager_get_accept_policy:
  * @cookie_manager: a #WebKitCookieManager
@@ -213,8 +207,9 @@ void webkit_cookie_manager_get_accept_policy(WebKitCookieManager* manager, GCanc
         return;
     }
 
-    processPools[0]->supplement<WebCookieManagerProxy>()->getHTTPCookieAcceptPolicy(WebCore::SessionID::defaultSessionID(), 
-        toGenericCallbackFunction<WKHTTPCookieAcceptPolicy, HTTPCookieAcceptPolicy>(task.leakRef(), webkitCookieManagerGetAcceptPolicyCallback));
+    processPools[0]->supplement<WebCookieManagerProxy>()->getHTTPCookieAcceptPolicy(WebCore::SessionID::defaultSessionID(), [task = WTFMove(task)](HTTPCookieAcceptPolicy policy, CallbackBase::Error) {
+        g_task_return_int(task.get(), toWebKitCookieAcceptPolicy(policy));
+    });
 }
 
 /**

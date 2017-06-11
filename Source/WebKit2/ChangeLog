@@ -1,3 +1,16 @@
+2017-06-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Use a lambda in webkit_cookie_manager_get_accept_policy instead of toGenericCallbackFunction
+        https://bugs.webkit.org/show_bug.cgi?id=173134
+
+        Reviewed by Žan Doberšek.
+
+        It's simpler and easier to read.
+
+        * UIProcess/API/gtk/WebKitCookieManager.cpp:
+        (webkit_cookie_manager_get_accept_policy):
+        (webkitCookieManagerGetAcceptPolicyCallback): Deleted.
+
 2017-06-10  Dan Bernstein  <mitz@apple.com>
 
         Reverted r218056 because it made the IDE reindex constantly.
