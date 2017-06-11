@@ -8,18 +8,17 @@ description("Testing the <code>iconService</code> singleton.");
 iconService.directoryPath = "../../../../Source/WebCore/Modules/modern-media-controls/images";
 
 debug("Checking path to images is computed according to traits");
-shouldBeTrue('iconService.imageForIconNameAndLayoutTraits(Icons.Pause.name, LayoutTraits.macOS).src.includes("macOS/pause@")');
-shouldBeTrue('iconService.imageForIconNameAndLayoutTraits(Icons.Pause.name, LayoutTraits.iOS).src.includes("iOS/pause@")');
-shouldBeTrue('iconService.imageForIconNameAndLayoutTraits(Icons.Pause.name, LayoutTraits.macOS | LayoutTraits.Fullscreen).src.includes("macOS/pause-fullscreen@")');
+shouldBeTrue('iconService.imageForIconAndLayoutTraits(Icons.Airplay, LayoutTraits.macOS).src.includes("macOS/Airplay.svg")');
+shouldBeTrue('iconService.imageForIconAndLayoutTraits(Icons.Airplay, LayoutTraits.iOS).src.includes("iOS/Airplay.svg")');
+shouldBeTrue('iconService.imageForIconAndLayoutTraits(Icons.Airplay, LayoutTraits.macOS | LayoutTraits.Fullscreen).src.includes("macOS/Airplay-fullscreen.svg")');
 
 debug("");
-debug("Checking fullscreen or compact layout traits are ignored on iOS");
-shouldBeTrue('iconService.imageForIconNameAndLayoutTraits(Icons.Pause.name, LayoutTraits.iOS | LayoutTraits.Fullscreen) === iconService.imageForIconNameAndLayoutTraits(Icons.Pause.name, LayoutTraits.iOS)');
-shouldBeTrue('iconService.imageForIconNameAndLayoutTraits(Icons.Pause.name, LayoutTraits.iOS | LayoutTraits.Compact) === iconService.imageForIconNameAndLayoutTraits(Icons.Pause.name, LayoutTraits.iOS)');
+debug("Checking fullscreen layout traits are ignored on iOS");
+shouldBeTrue('iconService.imageForIconAndLayoutTraits(Icons.Airplay, LayoutTraits.iOS | LayoutTraits.Fullscreen) === iconService.imageForIconAndLayoutTraits(Icons.Airplay, LayoutTraits.iOS)');
 
 debug("");
 debug("Checking requested images are cached");
-shouldBeTrue('iconService.imageForIconNameAndLayoutTraits(Icons.Pause.name, LayoutTraits.macOS) === iconService.imageForIconNameAndLayoutTraits(Icons.Pause.name, LayoutTraits.macOS)');
+shouldBeTrue('iconService.imageForIconAndLayoutTraits(Icons.Airplay, LayoutTraits.macOS) === iconService.imageForIconAndLayoutTraits(Icons.Airplay, LayoutTraits.macOS)');
 
 </script>
 <script src="../../../resources/js-test-post.js"></script>

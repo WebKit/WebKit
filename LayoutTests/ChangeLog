@@ -1,3 +1,18 @@
+2017-06-09  Antoine Quint  <graouts@apple.com>
+
+        Rebaseline media/modern-media-controls/icon-service
+        https://bugs.webkit.org/show_bug.cgi?id=173200
+
+        Reviewed by Jon Lee.
+
+        The method we were testing has changed name and the pause icon is no longer a good
+        test since it doesn't have a fullscreen variant, so we use the AirPlay icon instead.
+
+        * media/modern-media-controls/icon-service/icon-service-expected.txt:
+        * media/modern-media-controls/icon-service/icon-service.html:
+        * platform/ios-simulator/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2017-06-09  Brady Eidson  <beidson@apple.com>
 
         Crash when IndexedDB's getAll is used inside a Web Worker.
