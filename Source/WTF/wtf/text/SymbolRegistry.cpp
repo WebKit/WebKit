@@ -30,29 +30,32 @@ namespace WTF {
 
 SymbolRegistry::~SymbolRegistry()
 {
-    for (auto& key : m_table)
-        static_cast<SymbolImpl&>(*key.impl()).symbolRegistry() = nullptr;
+    for (auto& key : m_table) {
+        ASSERT(key.impl()->isSymbol());
+        static_cast<SymbolImpl*>(key.impl())->asRegisteredSymbolImpl()->clearSymbolRegistry();
+    }
 }
 
-Ref<SymbolImpl> SymbolRegistry::symbolForKey(const String& rep)
+Ref<RegisteredSymbolImpl> SymbolRegistry::symbolForKey(const String& rep)
 {
     auto addResult = m_table.add(SymbolRegistryKey(rep.impl()));
-    if (!addResult.isNewEntry)
-        return *static_cast<SymbolImpl*>(addResult.iterator->impl());
+    if (!addResult.isNewEntry) {
+        ASSERT(addResult.iterator->impl()->isSymbol());
+        return *static_cast<SymbolImpl*>(addResult.iterator->impl())->asRegisteredSymbolImpl();
+    }
 
-    auto symbol = SymbolImpl::create(*rep.impl());
-    symbol->symbolRegistry() = this;
+    auto symbol = RegisteredSymbolImpl::create(*rep.impl(), *this);
     *addResult.iterator = SymbolRegistryKey(&symbol.get());
     return symbol;
 }
 
-String SymbolRegistry::keyForSymbol(SymbolImpl& uid)
+String SymbolRegistry::keyForSymbol(RegisteredSymbolImpl& uid)
 {
     ASSERT(uid.symbolRegistry() == this);
     return uid.extractFoldedString();
 }
 
-void SymbolRegistry::remove(SymbolImpl& uid)
+void SymbolRegistry::remove(RegisteredSymbolImpl& uid)
 {
     ASSERT(uid.symbolRegistry() == this);
     auto iterator = m_table.find(SymbolRegistryKey(&uid));

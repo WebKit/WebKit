@@ -189,6 +189,7 @@ class StringImpl : private StringImplShape {
     friend class JSC::LLInt::Data;
     friend class JSC::LLIntOffsetsExtractor;
     friend class SymbolImpl;
+    friend class RegisteredSymbolImpl;
     
 private:
     enum BufferOwnership {

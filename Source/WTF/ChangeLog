@@ -1,3 +1,46 @@
+2017-06-10  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Add RegisteredSymbolImpl
+        https://bugs.webkit.org/show_bug.cgi?id=173230
+
+        Reviewed by Mark Lam.
+
+        Most symbols are not registered in SymbolRegistry. However, we currently always
+        allocate a pointer member to point to a SymbolRegistry, and this pointer is always null.
+        SymbolImpl is immutable, and it will never be registered with a SymbolRegistry
+        after it is created. Hence, this member is wasteful.
+
+        Instead, we add a new derived class RegisteredSymbolImpl, which will set a flag in
+        SymbolImpl to indicate that it is registered with a SymbolRegistry. The only way to
+        create a RegisteredSymbolImpl is via a factory method provided by the SymbolRegistry.
+        The factory method will pass the SymbolRegistry this pointer to the RegisteredSymbolImpl's
+        constructor for initializing the RegisteredSymbolImpl's m_symbolRegistry field.
+        By doing so,
+
+        1. We do not need to set m_symbolRegistry after creating a Symbol. It is clean.
+        2. We reduce the size of SymbolImpls that do not need to be registered.
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::~StringImpl):
+        * wtf/text/StringImpl.h:
+        * wtf/text/SymbolImpl.cpp:
+        (WTF::SymbolImpl::create):
+        (WTF::RegisteredSymbolImpl::create):
+        * wtf/text/SymbolImpl.h:
+        (WTF::SymbolImpl::hashForSymbol):
+        (WTF::SymbolImpl::isRegistered):
+        (WTF::SymbolImpl::SymbolImpl):
+        (WTF::RegisteredSymbolImpl::symbolRegistry):
+        (WTF::RegisteredSymbolImpl::clearSymbolRegistry):
+        (WTF::RegisteredSymbolImpl::RegisteredSymbolImpl):
+        (WTF::SymbolImpl::symbolRegistry):
+        * wtf/text/SymbolRegistry.cpp:
+        (WTF::SymbolRegistry::~SymbolRegistry):
+        (WTF::SymbolRegistry::symbolForKey):
+        (WTF::SymbolRegistry::keyForSymbol):
+        (WTF::SymbolRegistry::remove):
+        * wtf/text/SymbolRegistry.h:
+
 2017-06-10  Dan Bernstein  <mitz@apple.com>
 
         Reverted r218056 because it made the IDE reindex constantly.

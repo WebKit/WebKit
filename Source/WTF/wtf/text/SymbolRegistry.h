@@ -82,10 +82,10 @@ public:
     SymbolRegistry() = default;
     WTF_EXPORT_PRIVATE ~SymbolRegistry();
 
-    WTF_EXPORT_PRIVATE Ref<SymbolImpl> symbolForKey(const String&);
-    WTF_EXPORT_PRIVATE String keyForSymbol(SymbolImpl&);
+    WTF_EXPORT_PRIVATE Ref<RegisteredSymbolImpl> symbolForKey(const String&);
+    WTF_EXPORT_PRIVATE String keyForSymbol(RegisteredSymbolImpl&);
 
-    void remove(SymbolImpl&);
+    void remove(RegisteredSymbolImpl&);
 
 private:
     HashSet<SymbolRegistryKey> m_table;

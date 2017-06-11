@@ -1,3 +1,13 @@
+2017-06-10  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Add RegisteredSymbolImpl
+        https://bugs.webkit.org/show_bug.cgi?id=173230
+
+        Reviewed by Mark Lam.
+
+        * runtime/SymbolConstructor.cpp:
+        (JSC::symbolConstructorKeyFor):
+
 2017-06-10  Dan Bernstein  <mitz@apple.com>
 
         Reverted r218056 because it made the IDE reindex constantly.

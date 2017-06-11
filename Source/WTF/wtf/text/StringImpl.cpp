@@ -111,14 +111,15 @@ StringImpl::~StringImpl()
 
     STRING_STATS_REMOVE_STRING(*this);
 
-    if (isAtomic() && length() && !isSymbol())
-        AtomicStringImpl::remove(static_cast<AtomicStringImpl*>(this));
-
-    if (isSymbol()) {
+    if (isAtomic()) {
+        ASSERT(!isSymbol());
+        if (length())
+            AtomicStringImpl::remove(static_cast<AtomicStringImpl*>(this));
+    } else if (isSymbol()) {
         auto& symbol = static_cast<SymbolImpl&>(*this);
         auto* symbolRegistry = symbol.symbolRegistry();
         if (symbolRegistry)
-            symbolRegistry->remove(symbol);
+            symbolRegistry->remove(*symbol.asRegisteredSymbolImpl());
     }
 
     BufferOwnership ownership = bufferOwnership();
