@@ -19,7 +19,7 @@ node.visible = true
 
 Layout was performed
 PASS node.visible is true
-PASS node.element.style.display is "inherit"
+PASS node.element.style.display is ""
 
 node.visible = true
 PASS scheduler.hasScheduledLayoutCallbacks is false

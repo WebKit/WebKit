@@ -1,5 +1,19 @@
 2017-06-09  Antoine Quint  <graouts@apple.com>
 
+        Rebaseline media/modern-media-controls/layout-node
+        https://bugs.webkit.org/show_bug.cgi?id=173203
+
+        Reviewed by Jon Lee.
+
+         The "visible" property no longer sets "display: initial" when true, but rather removes the "display" property altogether.
+
+        * media/modern-media-controls/layout-node/visible-expected.txt:
+        * media/modern-media-controls/layout-node/visible.html:
+        * platform/ios-simulator/TestExpectations:
+        * platform/mac/TestExpectations:
+
+2017-06-09  Antoine Quint  <graouts@apple.com>
+
         Enable media/modern-media-controls/layout-item
         https://bugs.webkit.org/show_bug.cgi?id=173202
 
