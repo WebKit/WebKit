@@ -31,22 +31,13 @@
 #ifndef Threading_h
 #define Threading_h
 
-// FIXME: Not sure why there are so many includes here.
-// Is this intended to be convenience so that others don't have to include the individual files?
-// Nothing in this header depends on Assertions, Atomics, Locker, Noncopyable, ThreadSafeRefCounted, or ThreadingPrimitives.
-
-#include <functional>
 #include <mutex>
 #include <stdint.h>
-#include <wtf/Assertions.h>
 #include <wtf/Atomics.h>
 #include <wtf/Expected.h>
 #include <wtf/Function.h>
-#include <wtf/Locker.h>
 #include <wtf/LocklessBag.h>
-#include <wtf/Noncopyable.h>
 #include <wtf/PlatformRegisters.h>
-#include <wtf/PrintStream.h>
 #include <wtf/RefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/ThreadingPrimitives.h>

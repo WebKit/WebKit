@@ -25,7 +25,8 @@
 
 #pragma once
 
-#include "Atomics.h"
+#include <wtf/Atomics.h>
+#include <wtf/Noncopyable.h>
 
 namespace WTF {
 

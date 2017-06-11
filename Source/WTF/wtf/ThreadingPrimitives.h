@@ -31,7 +31,6 @@
 #ifndef ThreadingPrimitives_h
 #define ThreadingPrimitives_h
 
-#include <wtf/Assertions.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Locker.h>
 #include <wtf/Noncopyable.h>

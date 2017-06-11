@@ -1,3 +1,18 @@
+2017-06-11  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Drop unnecessary includes in Threading.h
+        https://bugs.webkit.org/show_bug.cgi?id=173167
+
+        Reviewed by Darin Adler.
+
+        Threading.h includes bunch of headers. But some of them are not necessary.
+        This patch cleans up it a bit.
+
+        * wtf/Assertions.cpp:
+        * wtf/LocklessBag.h:
+        * wtf/Threading.h:
+        * wtf/ThreadingPrimitives.h:
+
 2017-06-10  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] Add RegisteredSymbolImpl
