@@ -601,12 +601,6 @@ static gboolean webkitWebViewRunFileChooser(WebKitWebView* webView, WebKitFileCh
     return TRUE;
 }
 
-static void webkitWebViewHandleDownloadRequest(WebKitWebViewBase* webViewBase, DownloadProxy* downloadProxy)
-{
-    GRefPtr<WebKitDownload> download = webkitWebContextGetOrCreateDownload(downloadProxy);
-    webkitDownloadSetWebView(download.get(), WEBKIT_WEB_VIEW(webViewBase));
-}
-
 #if USE(LIBNOTIFY)
 static const char* gNotifyNotificationID = "wk-notify-notification";
 
@@ -694,8 +688,6 @@ static void webkitWebViewConstructed(GObject* object)
 
     // The related view is only valid during the construction.
     priv->relatedView = nullptr;
-
-    webkitWebViewBaseSetDownloadRequestHandler(WEBKIT_WEB_VIEW_BASE(webView), webkitWebViewHandleDownloadRequest);
 
     attachLoaderClientToView(webView);
     attachUIClientToView(webView);
@@ -2039,6 +2031,13 @@ void webkitWebViewMouseTargetChanged(WebKitWebView* webView, const WebHitTestRes
     priv->mouseTargetModifiers = modifiers;
     priv->mouseTargetHitTestResult = adoptGRef(webkitHitTestResultCreate(hitTestResult));
     g_signal_emit(webView, signals[MOUSE_TARGET_CHANGED], 0, priv->mouseTargetHitTestResult.get(), modifiers);
+}
+
+void webkitWebViewHandleDownloadRequest(WebKitWebView* webView, DownloadProxy* downloadProxy)
+{
+    ASSERT(downloadProxy);
+    GRefPtr<WebKitDownload> download = webkitWebContextGetOrCreateDownload(downloadProxy);
+    webkitDownloadSetWebView(download.get(), webView);
 }
 
 void webkitWebViewPrintFrame(WebKitWebView* webView, WebFrameProxy* frame)

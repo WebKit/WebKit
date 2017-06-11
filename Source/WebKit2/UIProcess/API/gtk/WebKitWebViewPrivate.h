@@ -48,6 +48,7 @@ bool webkitWebViewRunJavaScriptBeforeUnloadConfirm(WebKitWebView*, const CString
 void webkitWebViewMakePermissionRequest(WebKitWebView*, WebKitPermissionRequest*);
 void webkitWebViewMakePolicyDecision(WebKitWebView*, WebKitPolicyDecisionType, WebKitPolicyDecision*);
 void webkitWebViewMouseTargetChanged(WebKitWebView*, const WebKit::WebHitTestResultData&, unsigned modifiers);
+void webkitWebViewHandleDownloadRequest(WebKitWebView*, WebKit::DownloadProxy*);
 void webkitWebViewPrintFrame(WebKitWebView*, WebKit::WebFrameProxy*);
 void webkitWebViewResourceLoadStarted(WebKitWebView*, WebKit::WebFrameProxy*, uint64_t resourceIdentifier, WebKitURIRequest*);
 void webkitWebViewRunFileChooserRequest(WebKitWebView*, WebKitFileChooserRequest*);

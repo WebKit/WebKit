@@ -189,8 +189,6 @@ struct _WebKitWebViewBasePrivate {
     ActivityState::Flags activityStateFlagsToUpdate { 0 };
     RunLoop::Timer<WebKitWebViewBasePrivate> updateActivityStateTimer;
 
-    WebKitWebViewBaseDownloadRequestHandler downloadHandler { 0 };
-
 #if ENABLE(FULLSCREEN_API)
     bool fullScreenModeActive { false };
     WebFullScreenClientGtk fullScreenClient;
@@ -1443,17 +1441,6 @@ bool webkitWebViewBaseIsVisible(WebKitWebViewBase* webViewBase)
 bool webkitWebViewBaseIsInWindow(WebKitWebViewBase* webViewBase)
 {
     return webViewBase->priv->activityState & ActivityState::IsInWindow;
-}
-
-void webkitWebViewBaseSetDownloadRequestHandler(WebKitWebViewBase* webViewBase, WebKitWebViewBaseDownloadRequestHandler downloadHandler)
-{
-    webViewBase->priv->downloadHandler = downloadHandler;
-}
-
-void webkitWebViewBaseHandleDownloadRequest(WebKitWebViewBase* webViewBase, DownloadProxy* download)
-{
-    if (webViewBase->priv->downloadHandler)
-        webViewBase->priv->downloadHandler(webViewBase, download);
 }
 
 void webkitWebViewBaseSetInputMethodState(WebKitWebViewBase* webkitWebViewBase, bool enabled)

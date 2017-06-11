@@ -1,5 +1,25 @@
 2017-06-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Handle page download request in WebKitWebView directly
+        https://bugs.webkit.org/show_bug.cgi?id=173137
+
+        Reviewed by Žan Doberšek.
+
+        We don't need to pass through WebKitWebViewBase, since the base doesn't have an implementation.
+
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::handleDownloadRequest):
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewConstructed):
+        (webkitWebViewHandleDownloadRequest):
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseSetDownloadRequestHandler): Deleted.
+        (webkitWebViewBaseHandleDownloadRequest): Deleted.
+        * UIProcess/API/gtk/WebKitWebViewBasePrivate.h:
+        * UIProcess/API/gtk/WebKitWebViewPrivate.h:
+
+2017-06-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Use a lambda in webkit_cookie_manager_get_accept_policy instead of toGenericCallbackFunction
         https://bugs.webkit.org/show_bug.cgi?id=173134
 

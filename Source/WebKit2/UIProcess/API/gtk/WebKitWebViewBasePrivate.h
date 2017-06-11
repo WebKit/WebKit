@@ -63,10 +63,6 @@ bool webkitWebViewBaseIsFocused(WebKitWebViewBase*);
 bool webkitWebViewBaseIsVisible(WebKitWebViewBase*);
 bool webkitWebViewBaseIsInWindow(WebKitWebViewBase*);
 
-typedef void (*WebKitWebViewBaseDownloadRequestHandler) (WebKitWebViewBase*, WebKit::DownloadProxy*);
-void webkitWebViewBaseSetDownloadRequestHandler(WebKitWebViewBase*, WebKitWebViewBaseDownloadRequestHandler);
-void webkitWebViewBaseHandleDownloadRequest(WebKitWebViewBase*, WebKit::DownloadProxy*);
-
 void webkitWebViewBaseAddAuthenticationDialog(WebKitWebViewBase*, GtkWidget* authDialog);
 void webkitWebViewBaseCancelAuthenticationDialog(WebKitWebViewBase*);
 void webkitWebViewBaseAddWebInspector(WebKitWebViewBase*, GtkWidget* inspector, WebKit::AttachmentSide);
