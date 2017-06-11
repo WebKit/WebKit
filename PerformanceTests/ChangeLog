@@ -1,5 +1,11 @@
 2017-06-10  Dan Bernstein  <mitz@apple.com>
 
+        Reverted r218056 because it made the IDE reindex constantly.
+
+        * MediaTime/Configurations/DebugRelease.xcconfig:
+
+2017-06-10  Dan Bernstein  <mitz@apple.com>
+
         [Xcode] With Xcode 9 developer beta, everything rebuilds when switching between command-line and IDE
         https://bugs.webkit.org/show_bug.cgi?id=173223
 
