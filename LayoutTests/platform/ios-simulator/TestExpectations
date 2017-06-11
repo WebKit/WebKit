@@ -73,6 +73,7 @@ media/modern-media-controls/pip-button [ Pass ]
 media/modern-media-controls/pip-placard [ Pass ]
 media/modern-media-controls/placard [ Pass ]
 media/modern-media-controls/play-pause-button [ Pass ]
+media/modern-media-controls/rewind-button [ Pass ]
 
 # AirPlay cannot be tested on iOS
 webkit.org/b/166062 media/modern-media-controls/airplay-support [ Skip ]
