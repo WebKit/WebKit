@@ -11,7 +11,6 @@ description("Testing the <code>PlayPauseButton</code> class.");
 const playButton = new PlayPauseButton({ layoutTraits: LayoutTraits.macOS });
 
 shouldBeEqualToString("playButton.element.localName", "button");
-shouldBeTrue('playButton.element.classList.contains("icon")');
 shouldBeTrue('playButton.element.classList.contains("play-pause")');
 shouldBe("playButton.iconName", "Icons.Play");
 shouldBeFalse("playButton.playing");
@@ -30,16 +29,12 @@ fullscreenPauseButton.playing = true;
 const iOSPauseButton = new PlayPauseButton({ layoutTraits: LayoutTraits.iOS });
 iOSPauseButton.playing = true;
 
-shouldBecomeEqual('playButton.element.style.webkitMaskImage.includes("macOS/play@")', "true", () => {
-    shouldBecomeEqual('pauseButton.element.style.webkitMaskImage.includes("macOS/pause@")', "true", () => {
-        shouldBecomeEqual('iOSPlayButton.element.style.webkitMaskImage.includes("iOS/play@")', "true", () => {
-            shouldBecomeEqual('iOSPauseButton.element.style.webkitMaskImage.includes("iOS/pause@")', "true", () => {
-                shouldBecomeEqual('fullscreenPlayButton.element.style.webkitMaskImage.includes("macOS/play-fullscreen@")', "true", () => {
-                    shouldBecomeEqual('fullscreenPauseButton.element.style.webkitMaskImage.includes("macOS/pause-fullscreen@")', "true", () => {
-                        debug("");
-                        finishJSTest();
-                    });
-                });
+shouldBecomeEqual('playButton.image.element.style.webkitMaskImage.includes("macOS/Play.svg")', "true", () => {
+    shouldBecomeEqual('pauseButton.image.element.style.webkitMaskImage.includes("macOS/Pause.svg")', "true", () => {
+        shouldBecomeEqual('iOSPlayButton.image.element.style.webkitMaskImage.includes("iOS/Play.svg")', "true", () => {
+            shouldBecomeEqual('iOSPauseButton.image.element.style.webkitMaskImage.includes("iOS/Pause.svg")', "true", () => {
+                debug("");
+                finishJSTest();
             });
         });
         
