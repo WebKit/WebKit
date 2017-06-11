@@ -1,3 +1,15 @@
+2017-06-11  Antoine Quint  <graouts@apple.com>
+
+        Remove media/modern-media-controls/macos-media-controls
+        https://bugs.webkit.org/show_bug.cgi?id=173204
+
+        Reviewed by Jon Lee.
+
+        There no longer is a MacOSMediaControls class and this test no longer makes sense.
+
+        * media/modern-media-controls/macos-media-controls/macos-media-controls-expected.txt: Removed.
+        * media/modern-media-controls/macos-media-controls/macos-media-controls.html: Removed.
+
 2017-06-09  Antoine Quint  <graouts@apple.com>
 
         Rebaseline media/modern-media-controls/layout-node
