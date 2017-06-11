@@ -1566,6 +1566,7 @@ media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-med
 media/modern-media-controls/mute-button [ Pass ]
 media/modern-media-controls/pip-button [ Pass ]
 media/modern-media-controls/pip-placard [ Pass ]
+media/modern-media-controls/placard [ Pass ]
 media/modern-media-controls/volume-up-support [ Pass ]
 
 # These tests are iOS-specific

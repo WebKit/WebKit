@@ -1,5 +1,19 @@
 2017-06-11  Antoine Quint  <graouts@apple.com>
 
+        Rebaseline media/modern-media-controls/placard
+        https://bugs.webkit.org/show_bug.cgi?id=173208
+
+        Reviewed by Jon Lee.
+
+        IconButton is now simply Button.
+
+        * media/modern-media-controls/placard/placard-expected.txt:
+        * media/modern-media-controls/placard/placard.html:
+        * platform/ios-simulator/TestExpectations:
+        * platform/mac/TestExpectations:
+
+2017-06-11  Antoine Quint  <graouts@apple.com>
+
         Enable media/modern-media-controls/pip-placard tests
         https://bugs.webkit.org/show_bug.cgi?id=173207
 

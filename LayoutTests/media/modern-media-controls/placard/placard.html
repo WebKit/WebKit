@@ -19,7 +19,7 @@ shouldBe("placard.children.length", "1");
 shouldBeEqualToString("placard.children[0].element.localName", "div");
 shouldBeEqualToString("placard.children[0].element.className", "container");
 shouldBe("placard.children[0].children.length", "3");
-shouldBeTrue("placard.children[0].children[0] instanceof IconButton");
+shouldBeTrue("placard.children[0].children[0] instanceof Button");
 shouldBe("placard.children[0].children[0].iconName", "Icons.AirplayPlacard");
 shouldBeTrue("placard.children[0].children[1] instanceof LayoutNode");
 shouldBeEqualToString("placard.children[0].children[1].element.localName", "div");
@@ -53,7 +53,7 @@ debug("");
 debug("Placard with only an icon");
 const onlyIconPlacard = new Placard({ iconName: Icons.AirplayPlacard, layoutDelegate: { layoutTraits: LayoutTraits.macOS } });
 shouldBe("onlyIconPlacard.children[0].children.length", "1");
-shouldBeTrue("onlyIconPlacard.children[0].children[0] instanceof IconButton");
+shouldBeTrue("onlyIconPlacard.children[0].children[0] instanceof Button");
 
 </script>
 <script src="../../../resources/js-test-post.js"></script>

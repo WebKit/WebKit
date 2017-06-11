@@ -10,7 +10,7 @@ PASS placard.children.length is 1
 PASS placard.children[0].element.localName is "div"
 PASS placard.children[0].element.className is "container"
 PASS placard.children[0].children.length is 3
-PASS placard.children[0].children[0] instanceof IconButton is true
+PASS placard.children[0].children[0] instanceof Button is true
 PASS placard.children[0].children[0].iconName is Icons.AirplayPlacard
 PASS placard.children[0].children[1] instanceof LayoutNode is true
 PASS placard.children[0].children[1].element.localName is "div"
@@ -36,7 +36,7 @@ PASS onlyTitlePlacard.children[0].children[0].element.className is "title"
 
 Placard with only an icon
 PASS onlyIconPlacard.children[0].children.length is 1
-PASS onlyIconPlacard.children[0].children[0] instanceof IconButton is true
+PASS onlyIconPlacard.children[0].children[0] instanceof Button is true
 PASS successfullyParsed is true
 
 TEST COMPLETE
