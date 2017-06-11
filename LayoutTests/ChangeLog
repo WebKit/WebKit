@@ -1,5 +1,19 @@
 2017-06-11  Antoine Quint  <graouts@apple.com>
 
+        Rebaseline media/modern-media-controls/mute-button
+        https://bugs.webkit.org/show_bug.cgi?id=173205
+
+        Reviewed by Jon Lee.
+
+        We now use SVG assets, so let the test reflect that.
+
+        * media/modern-media-controls/mute-button/mute-button-expected.txt:
+        * media/modern-media-controls/mute-button/mute-button.html:
+        * platform/ios-simulator/TestExpectations:
+        * platform/mac/TestExpectations:
+
+2017-06-11  Antoine Quint  <graouts@apple.com>
+
         Remove media/modern-media-controls/macos-media-controls
         https://bugs.webkit.org/show_bug.cgi?id=173204
 
