@@ -1,3 +1,21 @@
+2017-06-11  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Shrink Structure size
+        https://bugs.webkit.org/show_bug.cgi?id=173239
+
+        Reviewed by Mark Lam.
+
+        We find that the size of our Structure is slightly enlarged due to paddings.
+        By changing the order of members, we can reduce the size from 120 to 112.
+        This is good because 120 and 112 are categorized into different size classes.
+        For 120, we allocate 128 bytes. And for 112, we allocate 112 bytes.
+        We now save 16 bytes per Structure for free.
+
+        * runtime/ConcurrentJSLock.h:
+        * runtime/Structure.cpp:
+        (JSC::Structure::Structure):
+        * runtime/Structure.h:
+
 2017-06-11  Konstantin Tokarev  <annulen@yandex.ru>
 
         Unreviewed, attempt to fix JSC tests on Win after r217771

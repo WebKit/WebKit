@@ -181,13 +181,13 @@ Structure::Structure(VM& vm, JSGlobalObject* globalObject, JSValue prototype, co
     : JSCell(vm, vm.structureStructure.get())
     , m_blob(vm.heap.structureIDTable().allocateID(this), indexingType, typeInfo)
     , m_outOfLineTypeFlags(typeInfo.outOfLineTypeFlags())
+    , m_inlineCapacity(inlineCapacity)
+    , m_bitField(0)
     , m_globalObject(vm, this, globalObject, WriteBarrier<JSGlobalObject>::MayBeNull)
     , m_prototype(vm, this, prototype)
     , m_classInfo(classInfo)
     , m_transitionWatchpointSet(IsWatched)
     , m_offset(invalidOffset)
-    , m_inlineCapacity(inlineCapacity)
-    , m_bitField(0)
 {
     setDictionaryKind(NoneDictionaryKind);
     setIsPinnedPropertyTable(false);
@@ -214,12 +214,12 @@ const ClassInfo Structure::s_info = { "Structure", nullptr, nullptr, nullptr, CR
 
 Structure::Structure(VM& vm)
     : JSCell(CreatingEarlyCell)
+    , m_inlineCapacity(0)
+    , m_bitField(0)
     , m_prototype(vm, this, jsNull())
     , m_classInfo(info())
     , m_transitionWatchpointSet(IsWatched)
     , m_offset(invalidOffset)
-    , m_inlineCapacity(0)
-    , m_bitField(0)
 {
     setDictionaryKind(NoneDictionaryKind);
     setIsPinnedPropertyTable(false);
@@ -245,12 +245,12 @@ Structure::Structure(VM& vm)
 
 Structure::Structure(VM& vm, Structure* previous, DeferredStructureTransitionWatchpointFire* deferred)
     : JSCell(vm, vm.structureStructure.get())
+    , m_inlineCapacity(previous->m_inlineCapacity)
+    , m_bitField(0)
     , m_prototype(vm, this, previous->storedPrototype())
     , m_classInfo(previous->m_classInfo)
     , m_transitionWatchpointSet(IsWatched)
     , m_offset(invalidOffset)
-    , m_inlineCapacity(previous->m_inlineCapacity)
-    , m_bitField(0)
 {
     setDictionaryKind(previous->dictionaryKind());
     setIsPinnedPropertyTable(previous->hasBeenFlattenedBefore());

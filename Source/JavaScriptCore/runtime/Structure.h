@@ -760,6 +760,12 @@ private:
     StructureIDBlob m_blob;
     TypeInfo::OutOfLineTypeFlags m_outOfLineTypeFlags;
 
+    uint8_t m_inlineCapacity;
+
+    ConcurrentJSLock m_lock;
+
+    uint32_t m_bitField;
+
     WriteBarrier<JSGlobalObject> m_globalObject;
     WriteBarrier<Unknown> m_prototype;
     mutable WriteBarrier<StructureChain> m_cachedPrototypeChain;
@@ -784,12 +790,6 @@ private:
 
     // m_offset does not account for anonymous slots
     PropertyOffset m_offset;
-
-    uint8_t m_inlineCapacity;
-    
-    ConcurrentJSLock m_lock;
-    
-    uint32_t m_bitField;
 };
 
 } // namespace JSC

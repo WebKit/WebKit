@@ -40,6 +40,8 @@ typedef NoLock ConcurrentJSLock;
 typedef NoLockLocker ConcurrentJSLockerImpl;
 #endif
 
+static_assert(sizeof(ConcurrentJSLock) == 1, "Regardless of status of concurrent JS flag, size of ConurrentJSLock is always one byte.");
+
 class ConcurrentJSLockerBase : public AbstractLocker {
     WTF_MAKE_NONCOPYABLE(ConcurrentJSLockerBase);
 public:
