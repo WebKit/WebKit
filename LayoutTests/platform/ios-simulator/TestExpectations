@@ -70,6 +70,7 @@ media/modern-media-controls/layout-item [ Pass ]
 media/modern-media-controls/layout-node [ Pass ]
 media/modern-media-controls/mute-button [ Pass ]
 media/modern-media-controls/pip-button [ Pass ]
+media/modern-media-controls/pip-placard [ Pass ]
 
 # AirPlay cannot be tested on iOS
 webkit.org/b/166062 media/modern-media-controls/airplay-support [ Skip ]
