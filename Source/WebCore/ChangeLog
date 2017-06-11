@@ -1,3 +1,23 @@
+2017-06-11  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r217870): Null deref under PageOverlayController::uninstallPageOverlay using find in page
+        https://bugs.webkit.org/show_bug.cgi?id=173196
+        <rdar://problem/32686871>
+
+        Reviewed by Simon Fraser.
+
+        * page/TextIndicator.cpp:
+        (WebCore::initializeIndicator):
+        * page/TextIndicator.h:
+        The change in r217870 had an expected but not thought-through side-effect
+        that you cannot create a TextIndicator for far-off-screen elements. This
+        is a problem for find-in-page, which uses TextIndicator to paint the yellow
+        highlight before scrolling it into view.
+
+        Bring back TextIndicatorOptionDoNotClipToVisibleRect and revert to it for
+        find in page, since it needs different behavior than something like
+        drag and drop, which always operates on content near the visible viewport.
+
 2017-06-10  Dan Bernstein  <mitz@apple.com>
 
         Reverted r218056 because it made the IDE reindex constantly.
