@@ -11,14 +11,13 @@ description("Testing the <code>PiPButton</code> class.");
 const pipButton = new PiPButton({ layoutTraits: LayoutTraits.macOS });
 
 shouldBeEqualToString("pipButton.element.localName", "button");
-shouldBeTrue('pipButton.element.classList.contains("icon")');
 shouldBeTrue('pipButton.element.classList.contains("pip")');
 shouldBe("pipButton.iconName", "Icons.EnterPiP");
 
 const iOSPiPButton = new PiPButton({ layoutTraits: LayoutTraits.iOS });
 
-shouldBecomeEqual('pipButton.element.style.webkitMaskImage.includes("macOS/pip-in@")', "true", () => {
-    shouldBecomeEqual('iOSPiPButton.element.style.webkitMaskImage.includes("iOS/pip-in@")', "true", () => {
+shouldBecomeEqual('pipButton.image.element.style.webkitMaskImage.includes("macOS/PipIn.svg")', "true", () => {
+    shouldBecomeEqual('iOSPiPButton.image.element.style.webkitMaskImage.includes("iOS/PipIn.svg")', "true", () => {
         debug("");
         finishJSTest();
     });

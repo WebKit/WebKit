@@ -1,5 +1,19 @@
 2017-06-11  Antoine Quint  <graouts@apple.com>
 
+        Rebaseline media/modern-media-controls/pip-button.
+        https://bugs.webkit.org/show_bug.cgi?id=173206
+
+        Reviewed by Jon Lee.
+
+        Use SVG assets.
+
+        * media/modern-media-controls/pip-button/pip-button-expected.txt:
+        * media/modern-media-controls/pip-button/pip-button.html:
+        * platform/ios-simulator/TestExpectations:
+        * platform/mac/TestExpectations:
+
+2017-06-11  Antoine Quint  <graouts@apple.com>
+
         Rebaseline media/modern-media-controls/mute-button
         https://bugs.webkit.org/show_bug.cgi?id=173205
 

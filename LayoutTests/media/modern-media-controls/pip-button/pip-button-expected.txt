@@ -4,11 +4,10 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS pipButton.element.localName is "button"
-PASS pipButton.element.classList.contains("icon") is true
 PASS pipButton.element.classList.contains("pip") is true
 PASS pipButton.iconName is Icons.EnterPiP
-PASS pipButton.element.style.webkitMaskImage.includes("macOS/pip-in@") became true
-PASS iOSPiPButton.element.style.webkitMaskImage.includes("iOS/pip-in@") became true
+PASS pipButton.image.element.style.webkitMaskImage.includes("macOS/PipIn.svg") became true
+PASS iOSPiPButton.image.element.style.webkitMaskImage.includes("iOS/PipIn.svg") became true
 
 PASS successfullyParsed is true
 
