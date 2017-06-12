@@ -1902,7 +1902,17 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     return (_page->editorState().isContentRichlyEditable) ? richTypes : plainTextTypes;
 }
 
-- (void)_lookup:(id)sender
+#define FORWARD_ACTION_TO_WKWEBVIEW(_action) \
+    - (void)_action:(id)sender \
+    { \
+        [_webView _action:sender]; \
+    }
+
+FOR_EACH_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
+
+#undef FORWARD_ACTION_TO_WKWEBVIEW
+
+- (void)_lookupForWebView:(id)sender
 {
     RetainPtr<WKContentView> view = self;
     _page->getSelectionContext([view](const String& selectedText, const String& textBefore, const String& textAfter, CallbackBase::Error error) {
@@ -1922,7 +1932,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     });
 }
 
-- (void)_share:(id)sender
+- (void)_shareForWebView:(id)sender
 {
     RetainPtr<WKContentView> view = self;
     _page->getSelectionOrContentsAsString([view](const String& string, CallbackBase::Error error) {
@@ -1940,7 +1950,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     });
 }
 
-- (void)_addShortcut:(id)sender
+- (void)_addShortcutForWebView:(id)sender
 {
     if (_textSelectionAssistant)
         [_textSelectionAssistant showTextServiceFor:[self selectedText] fromRect:_page->editorState().postLayoutData().selectionRects[0].rect()];
@@ -1968,7 +1978,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     _page->selectWordBackward();
 }
 
-- (void)_promptForReplace:(id)sender
+- (void)_promptForReplaceForWebView:(id)sender
 {
     const auto& wordAtSelection = _page->editorState().postLayoutData().wordAtSelection;
     if (wordAtSelection.isEmpty())
@@ -1977,17 +1987,17 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     [_textSelectionAssistant scheduleReplacementsForText:wordAtSelection];
 }
 
-- (void)_transliterateChinese:(id)sender
+- (void)_transliterateChineseForWebView:(id)sender
 {
     [_textSelectionAssistant scheduleChineseTransliterationForText:_page->editorState().postLayoutData().wordAtSelection];
 }
 
-- (void)_reanalyze:(id)sender
+- (void)_reanalyzeForWebView:(id)sender
 {
     [_textSelectionAssistant scheduleReanalysis];
 }
 
-- (void)replace:(id)sender
+- (void)replaceForWebView:(id)sender
 {
     [[UIKeyboardImpl sharedInstance] replaceText:sender];
 }
@@ -2030,7 +2040,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 
 - (BOOL)canPerformAction:(SEL)action withSender:(id)sender
 {
-    return NO;
+    return [_webView canPerformAction:action withSender:sender];
 }
 
 - (BOOL)canPerformActionForWebView:(SEL)action withSender:(id)sender
@@ -2166,35 +2176,35 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     [_textSelectionAssistant hideTextStyleOptions];
 }
 
-- (void)copy:(id)sender
+- (void)copyForWebView:(id)sender
 {
     _page->executeEditCommand(ASCIILiteral("copy"));
 }
 
-- (void)cut:(id)sender
+- (void)cutForWebView:(id)sender
 {
     _page->executeEditCommand(ASCIILiteral("cut"));
 }
 
-- (void)paste:(id)sender
+- (void)pasteForWebView:(id)sender
 {
     _page->executeEditCommand(ASCIILiteral("paste"));
 }
 
-- (void)select:(id)sender
+- (void)selectForWebView:(id)sender
 {
     [_textSelectionAssistant selectWord];
     // We cannot use selectWord command, because we want to be able to select the word even when it is the last in the paragraph.
     _page->extendSelection(WordGranularity);
 }
 
-- (void)selectAll:(id)sender
+- (void)selectAllForWebView:(id)sender
 {
     [_textSelectionAssistant selectAll:sender];
     _page->executeEditCommand(ASCIILiteral("selectAll"));
 }
 
-- (void)toggleBoldface:(id)sender
+- (void)toggleBoldfaceForWebView:(id)sender
 {
     if (!_page->editorState().isContentRichlyEditable)
         return;
@@ -2202,7 +2212,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     [self executeEditCommandWithCallback:@"toggleBold"];
 }
 
-- (void)toggleItalics:(id)sender
+- (void)toggleItalicsForWebView:(id)sender
 {
     if (!_page->editorState().isContentRichlyEditable)
         return;
@@ -2210,7 +2220,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     [self executeEditCommandWithCallback:@"toggleItalic"];
 }
 
-- (void)toggleUnderline:(id)sender
+- (void)toggleUnderlineForWebView:(id)sender
 {
     if (!_page->editorState().isContentRichlyEditable)
         return;
@@ -2218,7 +2228,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     [self executeEditCommandWithCallback:@"toggleUnderline"];
 }
 
-- (void)_showTextStyleOptions:(id)sender
+- (void)_showTextStyleOptionsForWebView:(id)sender
 {
     _showingTextStyleOptions = YES;
     [_textSelectionAssistant showTextStyleOptions];
@@ -2233,7 +2243,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
         [_webSelectionAssistant showDictionaryFor:text fromRect:presentationRect];
 }
 
-- (void)_define:(id)sender
+- (void)_defineForWebView:(id)sender
 {
     if ([[getMCProfileConnectionClass() sharedConnection] effectiveBoolValueForSetting:MCFeatureDefinitionLookupAllowed] == MCRestrictedBoolExplicitNo)
         return;
@@ -2829,7 +2839,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     return (_page->editorState().isContentEditable) ? editableKeyCommands : nonEditableKeyCommands;
 }
 
-- (void)_arrowKey:(id)sender
+- (void)_arrowKeyForWebView:(id)sender
 {
     UIKeyCommand* command = sender;
     [self handleKeyEvent:command._triggeringEvent];

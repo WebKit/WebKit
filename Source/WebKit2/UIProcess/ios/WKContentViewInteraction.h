@@ -89,6 +89,26 @@ typedef void (^UIWKKeyWebEventCompletionHandler)(::WebEvent *theEvent, BOOL wasH
 typedef BlockPtr<void(WebKit::InteractionInformationAtPosition)> InteractionInformationCallback;
 typedef std::pair<WebKit::InteractionInformationRequest, InteractionInformationCallback> InteractionInformationRequestAndCallback;
 
+#define FOR_EACH_WKCONTENTVIEW_ACTION(M) \
+    M(_addShortcut) \
+    M(_arrowKey) \
+    M(_define) \
+    M(_lookup) \
+    M(_promptForReplace) \
+    M(_reanalyze) \
+    M(_share) \
+    M(_showTextStyleOptions) \
+    M(_transliterateChinese) \
+    M(copy) \
+    M(cut) \
+    M(paste) \
+    M(replace) \
+    M(select) \
+    M(selectAll) \
+    M(toggleBoldface) \
+    M(toggleItalics) \
+    M(toggleUnderline)
+
 namespace WebKit {
 
 struct WKSelectionDrawingInfo {
@@ -236,16 +256,10 @@ struct WKAutoCorrectionData {
 - (BOOL)resignFirstResponderForWebView;
 - (BOOL)canPerformActionForWebView:(SEL)action withSender:(id)sender;
 
-- (void)_addShortcut:(id)sender;
-- (void)_arrowKey:(id)sender;
-- (void)_define:(id)sender;
-- (void)_lookup:(id)sender;
-- (void)_reanalyze:(id)sender;
-- (void)_share:(id)sender;
-- (void)_showTextStyleOptions:(id)sender;
-- (void)_promptForReplace:(id)sender;
-- (void)_transliterateChinese:(id)sender;
-- (void)replace:(id)sender;
+#define DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW(_action) \
+    - (void)_action ## ForWebView:(id)sender;
+FOR_EACH_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
+#undef DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW
 
 #if ENABLE(TOUCH_EVENTS)
 - (void)_webTouchEvent:(const WebKit::NativeWebTouchEvent&)touchEvent preventsNativeGestures:(BOOL)preventsDefault;

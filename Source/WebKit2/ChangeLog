@@ -1,3 +1,63 @@
+2017-06-12  Tim Horton  <timothy_horton@apple.com>
+
+        [iOS] Cmd-C doesn't copy text from WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=173277
+        <rdar://problem/32396742>
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _lookupForWebView:]):
+        (-[WKContentView _shareForWebView:]):
+        (-[WKContentView _addShortcutForWebView:]):
+        (-[WKContentView _promptForReplaceForWebView:]):
+        (-[WKContentView _transliterateChineseForWebView:]):
+        (-[WKContentView _reanalyzeForWebView:]):
+        (-[WKContentView replaceForWebView:]):
+        (-[WKContentView canPerformAction:withSender:]):
+        (-[WKContentView copyForWebView:]):
+        (-[WKContentView cutForWebView:]):
+        (-[WKContentView pasteForWebView:]):
+        (-[WKContentView selectForWebView:]):
+        (-[WKContentView selectAllForWebView:]):
+        (-[WKContentView toggleBoldfaceForWebView:]):
+        (-[WKContentView toggleItalicsForWebView:]):
+        (-[WKContentView toggleUnderlineForWebView:]):
+        (-[WKContentView _showTextStyleOptionsForWebView:]):
+        (-[WKContentView _defineForWebView:]):
+        (-[WKContentView _arrowKeyForWebView:]):
+        (-[WKContentView _lookup:]): Deleted.
+        (-[WKContentView _share:]): Deleted.
+        (-[WKContentView _addShortcut:]): Deleted.
+        (-[WKContentView _promptForReplace:]): Deleted.
+        (-[WKContentView _transliterateChinese:]): Deleted.
+        (-[WKContentView _reanalyze:]): Deleted.
+        (-[WKContentView replace:]): Deleted.
+        (-[WKContentView copy:]): Deleted.
+        (-[WKContentView cut:]): Deleted.
+        (-[WKContentView paste:]): Deleted.
+        (-[WKContentView select:]): Deleted.
+        (-[WKContentView selectAll:]): Deleted.
+        (-[WKContentView toggleBoldface:]): Deleted.
+        (-[WKContentView toggleItalics:]): Deleted.
+        (-[WKContentView toggleUnderline:]): Deleted.
+        (-[WKContentView _showTextStyleOptions:]): Deleted.
+        (-[WKContentView _define:]): Deleted.
+        (-[WKContentView _arrowKey:]): Deleted.
+        Similar to what r211897 did for canPerformAction, and other patches
+        have done for other selectors, forward methods for standard editing
+        commands from WKContentView up to WKWebView, and back down to WKContentView.
+
+        This is necessary because these are not treated as normal
+        responder-chain-respecting methods, so they do not bubble up the view tree.
+        
+        In 211897, WKContentView (who is usually first responder and thus receives
+        the actions) stopped claiming to be able to perform these actions, depending
+        on this non-existent bubbling behavior to keep them working.
+
 2017-06-12  Chris Dumez  <cdumez@apple.com>
 
         Null dereference under WebProcessPool::pageRemovedFromProcess()

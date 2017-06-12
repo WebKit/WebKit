@@ -121,6 +121,17 @@ struct PrintInfo;
 
 - (void)_didChangeAvoidsUnsafeArea:(BOOL)avoidsUnsafeArea;
 
+- (void)_addShortcut:(id)sender;
+- (void)_arrowKey:(id)sender;
+- (void)_define:(id)sender;
+- (void)_lookup:(id)sender;
+- (void)_reanalyze:(id)sender;
+- (void)_share:(id)sender;
+- (void)_showTextStyleOptions:(id)sender;
+- (void)_promptForReplace:(id)sender;
+- (void)_transliterateChinese:(id)sender;
+- (void)replace:(id)sender;
+
 @property (nonatomic, readonly) WKPasswordView *_passwordView;
 
 @property (nonatomic, readonly) BOOL _isBackground;
