@@ -60,17 +60,6 @@ RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea(WebPage& webPage, const W
     , m_remoteLayerTreeContext(std::make_unique<RemoteLayerTreeContext>(webPage))
     , m_rootLayer(GraphicsLayer::create(graphicsLayerFactory(), *this))
     , m_layerFlushTimer(*this, &RemoteLayerTreeDrawingArea::flushLayers)
-    , m_isFlushingSuspended(false)
-    , m_hasDeferredFlush(false)
-    , m_isThrottlingLayerFlushes(false)
-    , m_isLayerFlushThrottlingTemporarilyDisabledForInteraction(false)
-    , m_isInitialThrottledLayerFlush(false)
-    , m_waitingForBackingStoreSwap(false)
-    , m_hadFlushDeferredWhileWaitingForBackingStoreSwap(false)
-    , m_displayRefreshMonitorsToNotify(nullptr)
-    , m_currentTransactionID(0)
-    , m_contentLayer(nullptr)
-    , m_viewOverlayRootLayer(nullptr)
     , m_weakPtrFactory(this)
 {
     webPage.corePage()->settings().setForceCompositingMode(true);

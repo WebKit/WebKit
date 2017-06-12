@@ -51,9 +51,10 @@ public:
     virtual ~RemoteLayerTreeDrawingArea();
 
     uint64_t nextTransactionID() const { return m_currentTransactionID + 1; }
+    uint64_t lastCommittedTransactionID() const { return m_currentTransactionID; }
 
     WeakPtr<RemoteLayerTreeDrawingArea> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
-    
+
 private:
     // DrawingArea
     void setNeedsDisplay() override;
@@ -145,29 +146,29 @@ private:
     std::optional<WebCore::FloatRect> m_scrolledViewExposedRect;
 
     WebCore::Timer m_layerFlushTimer;
-    bool m_isFlushingSuspended;
-    bool m_hasDeferredFlush;
-    bool m_isThrottlingLayerFlushes;
-    bool m_isLayerFlushThrottlingTemporarilyDisabledForInteraction;
-    bool m_isInitialThrottledLayerFlush;
+    bool m_isFlushingSuspended { false };
+    bool m_hasDeferredFlush { false };
+    bool m_isThrottlingLayerFlushes { false };
+    bool m_isLayerFlushThrottlingTemporarilyDisabledForInteraction { false };
+    bool m_isInitialThrottledLayerFlush { false };
 
-    bool m_waitingForBackingStoreSwap;
-    bool m_hadFlushDeferredWhileWaitingForBackingStoreSwap;
+    bool m_waitingForBackingStoreSwap { false };
+    bool m_hadFlushDeferredWhileWaitingForBackingStoreSwap { false };
     bool m_nextFlushIsForImmediatePaint { false };
 
     dispatch_queue_t m_commitQueue;
     RefPtr<BackingStoreFlusher> m_pendingBackingStoreFlusher;
 
     HashSet<RemoteLayerTreeDisplayRefreshMonitor*> m_displayRefreshMonitors;
-    HashSet<RemoteLayerTreeDisplayRefreshMonitor*>* m_displayRefreshMonitorsToNotify;
+    HashSet<RemoteLayerTreeDisplayRefreshMonitor*>* m_displayRefreshMonitorsToNotify { nullptr };
 
-    uint64_t m_currentTransactionID;
+    uint64_t m_currentTransactionID { 0 };
     Vector<RemoteLayerTreeTransaction::TransactionCallbackID> m_pendingCallbackIDs;
 
     WebCore::LayoutMilestones m_pendingNewlyReachedLayoutMilestones { 0 };
 
-    WebCore::GraphicsLayer* m_contentLayer;
-    WebCore::GraphicsLayer* m_viewOverlayRootLayer;
+    WebCore::GraphicsLayer* m_contentLayer { nullptr };
+    WebCore::GraphicsLayer* m_viewOverlayRootLayer { nullptr };
     
     WeakPtrFactory<RemoteLayerTreeDrawingArea> m_weakPtrFactory;
 };
