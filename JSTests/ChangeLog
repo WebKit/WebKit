@@ -1,5 +1,11 @@
 2017-06-12  Saam Barati  <sbarati@apple.com>
 
+        Update test262 test expectation since r218082 makes new tests pass.
+
+        * test262.yaml:
+
+2017-06-12  Saam Barati  <sbarati@apple.com>
+
         We should not claim that SpecEmpty is filtered out of cell checks on 64 bit platforms
         https://bugs.webkit.org/show_bug.cgi?id=172957
         <rdar://problem/32602704>
