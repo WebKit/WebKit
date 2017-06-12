@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,42 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebIconDatabaseClient.h"
+#pragma once
 
-#include "WKAPICast.h"
-#include "WKSharedAPICast.h"
-#include "WebIconDatabase.h"
+#include <wtf/Forward.h>
 
 namespace WebKit {
-
-WebIconDatabaseClient::WebIconDatabaseClient(const WKIconDatabaseClientBase* wkClient)
-{
-    initialize(wkClient);
+class WebIconDatabase;
 }
 
-void WebIconDatabaseClient::didChangeIconForPageURL(WebIconDatabase& iconDatabase, const String& pageURL)
-{
-    if (!m_client.didChangeIconForPageURL)
-        return;
+namespace API {
 
-    m_client.didChangeIconForPageURL(toAPI(&iconDatabase), toAPI(API::URL::create(pageURL).ptr()), m_client.base.clientInfo);
-}
+class IconDatabaseClient {
+public:
+    virtual ~IconDatabaseClient() { }
 
-void WebIconDatabaseClient::didRemoveAllIcons(WebIconDatabase& iconDatabase)
-{
-    if (!m_client.didRemoveAllIcons)
-        return;
+    virtual void didChangeIconForPageURL(WebKit::WebIconDatabase&, const WTF::String&) { };
+    virtual void didRemoveAllIcons(WebKit::WebIconDatabase&) { };
+    virtual void iconDataReadyForPageURL(WebKit::WebIconDatabase&, const WTF::String&) { };
+};
 
-    m_client.didRemoveAllIcons(toAPI(&iconDatabase),  m_client.base.clientInfo);
-}
-
-void WebIconDatabaseClient::iconDataReadyForPageURL(WebIconDatabase& iconDatabase, const String& pageURL)
-{
-    if (!m_client.iconDataReadyForPageURL)
-        return;
-
-    m_client.iconDataReadyForPageURL(toAPI(&iconDatabase), toAPI(API::URL::create(pageURL).ptr()), m_client.base.clientInfo);
-}
-
-} // namespace WebKit
+} // namespace API

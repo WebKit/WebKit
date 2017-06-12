@@ -27,6 +27,7 @@
 #define WebIconDatabaseClient_h
 
 #include "APIClient.h"
+#include "APIIconDatabaseClient.h"
 #include "WKIconDatabase.h"
 
 namespace API {
@@ -40,11 +41,13 @@ namespace WebKit {
 
 class WebIconDatabase;
 
-class WebIconDatabaseClient : public API::Client<WKIconDatabaseClientBase> {
+class WebIconDatabaseClient : public API::IconDatabaseClient, API::Client<WKIconDatabaseClientBase> {
 public:
-    void didChangeIconForPageURL(WebIconDatabase*, API::URL*);
-    void didRemoveAllIcons(WebIconDatabase*);
-    void iconDataReadyForPageURL(WebIconDatabase*, API::URL*);
+    explicit WebIconDatabaseClient(const WKIconDatabaseClientBase*);
+
+    void didChangeIconForPageURL(WebIconDatabase&, const String&) override;
+    void didRemoveAllIcons(WebIconDatabase&) override;
+    void iconDataReadyForPageURL(WebIconDatabase&, const String&) override;
 };
 
 } // namespace WebKit

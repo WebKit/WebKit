@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebIconDatabase.h"
 
+#include "APIIconDatabaseClient.h"
 #include "Logging.h"
 #include "WebIconDatabaseMessages.h"
 #include "WebIconDatabaseProxyMessages.h"
@@ -53,6 +54,7 @@ WebIconDatabase::WebIconDatabase(WebProcessPool& processPool)
     , m_urlImportCompleted(false)
     , m_databaseCleanupDisabled(false)
     , m_shouldDerefWhenAppropriate(false)
+    , m_client(std::make_unique<API::IconDatabaseClient>())
 {
     m_processPool->addMessageReceiver(Messages::WebIconDatabase::messageReceiverName(), *this);
 }
@@ -233,9 +235,12 @@ void WebIconDatabase::close()
         m_iconDatabaseImpl->close();
 }
 
-void WebIconDatabase::initializeIconDatabaseClient(const WKIconDatabaseClientBase* client)
+void WebIconDatabase::setClient(std::unique_ptr<API::IconDatabaseClient> client)
 {
-    m_iconDatabaseClient.initialize(client);
+    if (!client)
+        m_client = std::make_unique<API::IconDatabaseClient>();
+    else
+        m_client = WTFMove(client);
 }
 
 // WebCore::IconDatabaseClient
@@ -252,12 +257,12 @@ void WebIconDatabase::didImportIconDataForPageURL(const String& pageURL)
 
 void WebIconDatabase::didChangeIconForPageURL(const String& pageURL)
 {
-    m_iconDatabaseClient.didChangeIconForPageURL(this, API::URL::create(pageURL).ptr());
+    m_client->didChangeIconForPageURL(*this, pageURL);
 }
 
 void WebIconDatabase::didRemoveAllIcons()
 {
-    m_iconDatabaseClient.didRemoveAllIcons(this);
+    m_client->didRemoveAllIcons(*this);
 }
 
 void WebIconDatabase::didFinishURLImport()
@@ -305,7 +310,7 @@ void WebIconDatabase::derefWhenAppropriate()
 
 void WebIconDatabase::notifyIconDataReadyForPageURL(const String& pageURL)
 {
-    m_iconDatabaseClient.iconDataReadyForPageURL(this, API::URL::create(pageURL).ptr());
+    m_client->iconDataReadyForPageURL(*this, pageURL);
     didChangeIconForPageURL(pageURL);
 }
 

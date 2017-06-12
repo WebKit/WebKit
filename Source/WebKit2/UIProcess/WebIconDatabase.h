@@ -35,6 +35,7 @@
 
 namespace API {
 class Data;
+class IconDatabaseClient;
 }
 
 namespace WebCore {
@@ -80,7 +81,7 @@ public:
     void checkIntegrityBeforeOpening();
     void close();
 
-    void initializeIconDatabaseClient(const WKIconDatabaseClientBase*);
+    void setClient(std::unique_ptr<API::IconDatabaseClient>);
 
     void setPrivateBrowsingEnabled(bool);
 
@@ -114,7 +115,7 @@ private:
     bool m_shouldDerefWhenAppropriate;
     HashMap<uint64_t, String> m_pendingLoadDecisionURLMap;
 
-    WebIconDatabaseClient m_iconDatabaseClient;
+    std::unique_ptr<API::IconDatabaseClient> m_client;
 };
 
 } // namespace WebKit

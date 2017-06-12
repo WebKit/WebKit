@@ -1,5 +1,36 @@
 2017-06-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Add API::IconDatabaseClient
+        https://bugs.webkit.org/show_bug.cgi?id=173145
+
+        Reviewed by Alex Christensen.
+
+        It will be used by GTK+ port instead of the C API.
+
+        * UIProcess/API/APIIconDatabaseClient.h:
+        (API::IconDatabaseClient::~IconDatabaseClient):
+        (API::IconDatabaseClient::didChangeIconForPageURL):
+        (API::IconDatabaseClient::didRemoveAllIcons):
+        (API::IconDatabaseClient::iconDataReadyForPageURL):
+        * UIProcess/API/C/WKIconDatabase.cpp:
+        (WKIconDatabaseSetIconDatabaseClient):
+        * UIProcess/WebIconDatabase.cpp:
+        (WebKit::WebIconDatabase::WebIconDatabase):
+        (WebKit::WebIconDatabase::setClient):
+        (WebKit::WebIconDatabase::didChangeIconForPageURL):
+        (WebKit::WebIconDatabase::didRemoveAllIcons):
+        (WebKit::WebIconDatabase::notifyIconDataReadyForPageURL):
+        * UIProcess/WebIconDatabase.h:
+        * UIProcess/WebIconDatabaseClient.cpp:
+        (WebKit::WebIconDatabaseClient::WebIconDatabaseClient):
+        (WebKit::WebIconDatabaseClient::didChangeIconForPageURL):
+        (WebKit::WebIconDatabaseClient::didRemoveAllIcons):
+        (WebKit::WebIconDatabaseClient::iconDataReadyForPageURL):
+        * UIProcess/WebIconDatabaseClient.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+
+2017-06-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Stop dismissing menus attached to the web view for every injected event
         https://bugs.webkit.org/show_bug.cgi?id=172708
 

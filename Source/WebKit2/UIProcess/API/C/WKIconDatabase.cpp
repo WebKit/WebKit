@@ -29,6 +29,7 @@
 #include "APIData.h"
 #include "WKAPICast.h"
 #include "WebIconDatabase.h"
+#include "WebIconDatabaseClient.h"
 
 using namespace WebKit;
 
@@ -39,7 +40,7 @@ WKTypeID WKIconDatabaseGetTypeID()
 
 void WKIconDatabaseSetIconDatabaseClient(WKIconDatabaseRef iconDatabaseRef, const WKIconDatabaseClientBase* wkClient)
 {
-    toImpl(iconDatabaseRef)->initializeIconDatabaseClient(wkClient);
+    toImpl(iconDatabaseRef)->setClient(std::make_unique<WebIconDatabaseClient>(wkClient));
 }
 
 void WKIconDatabaseRetainIconForURL(WKIconDatabaseRef iconDatabaseRef, WKURLRef pageURLRef)
