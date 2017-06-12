@@ -209,10 +209,10 @@ WebPageProxy* WebProcessProxy::webPage(uint64_t pageID)
     return globalPageMap().get(pageID);
 }
 
-void WebProcessProxy::deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPersistentDataStores(OptionSet<WebsiteDataType> dataTypes, Vector<String>&& topPrivatelyControlledDomains, bool shouldNotifyPage, std::function<void(Vector<String>)> completionHandler)
+void WebProcessProxy::deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPersistentDataStores(OptionSet<WebsiteDataType> dataTypes, Vector<String>&& topPrivatelyControlledDomains, bool shouldNotifyPage, Function<void(Vector<String>)>&& completionHandler)
 {
     struct CallbackAggregator : ThreadSafeRefCounted<CallbackAggregator> {
-        explicit CallbackAggregator(std::function<void(Vector<String>)> completionHandler)
+        explicit CallbackAggregator(Function<void(Vector<String>)>&& completionHandler)
             : completionHandler(WTFMove(completionHandler))
         {
         }
@@ -241,7 +241,7 @@ void WebProcessProxy::deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPers
         }
         
         unsigned pendingCallbacks = 0;
-        std::function<void(Vector<String>)> completionHandler;
+        Function<void(Vector<String>)> completionHandler;
         Vector<String> domainsWithDeletedWebsiteData;
     };
     

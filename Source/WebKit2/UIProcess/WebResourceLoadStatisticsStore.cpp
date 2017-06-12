@@ -119,11 +119,11 @@ void WebResourceLoadStatisticsStore::removeDataRecords()
 
     // Switch to the main thread to get the default website data store
     RunLoop::main().dispatch([prevalentResourceDomains = CrossThreadCopier<Vector<String>>::copy(prevalentResourceDomains), this, protectedThis = makeRef(*this)] () mutable {
-        WebProcessProxy::deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPersistentDataStores(dataTypesToRemove, WTFMove(prevalentResourceDomains), notifyPages, [this](Vector<String> domainsWithDeletedWebsiteData) mutable {
+        WebProcessProxy::deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPersistentDataStores(dataTypesToRemove, WTFMove(prevalentResourceDomains), notifyPages, [this, protectedThis = WTFMove(protectedThis)](Vector<String> domainsWithDeletedWebsiteData) mutable {
             // But always touch the ResourceLoadStatistics store on the worker queue.
-            m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), topDomains = CrossThreadCopier<Vector<String>>::copy(domainsWithDeletedWebsiteData)] () mutable {
-                this->coreStore().updateStatisticsForRemovedDataRecords(topDomains);
-                this->coreStore().dataRecordsWereRemoved();
+            m_statisticsQueue->dispatch([protectedThis = WTFMove(protectedThis), topDomains = CrossThreadCopier<Vector<String>>::copy(domainsWithDeletedWebsiteData)] () mutable {
+                protectedThis->coreStore().updateStatisticsForRemovedDataRecords(topDomains);
+                protectedThis->coreStore().dataRecordsWereRemoved();
             });
         });
     });
@@ -215,10 +215,10 @@ void WebResourceLoadStatisticsStore::grandfatherExistingWebsiteData()
     
     // Switch to the main thread to get the default website data store
     RunLoop::main().dispatch([this, protectedThis = makeRef(*this)] () mutable {
-        WebProcessProxy::topPrivatelyControlledDomainsWithWebiteData(dataTypesToRemove, notifyPages, [this, protectedThis = makeRef(*this)] (HashSet<String>&& topPrivatelyControlledDomainsWithWebsiteData) mutable {
+        WebProcessProxy::topPrivatelyControlledDomainsWithWebiteData(dataTypesToRemove, notifyPages, [this, protectedThis = WTFMove(protectedThis)] (HashSet<String>&& topPrivatelyControlledDomainsWithWebsiteData) mutable {
             // But always touch the ResourceLoadStatistics store on the worker queue
-            m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), topDomains = CrossThreadCopier<HashSet<String>>::copy(topPrivatelyControlledDomainsWithWebsiteData)] () mutable {
-                this->coreStore().handleFreshStartWithEmptyOrNoStore(WTFMove(topDomains));
+            m_statisticsQueue->dispatch([protectedThis = WTFMove(protectedThis), topDomains = CrossThreadCopier<HashSet<String>>::copy(topPrivatelyControlledDomainsWithWebsiteData)] () mutable {
+                protectedThis->coreStore().handleFreshStartWithEmptyOrNoStore(WTFMove(topDomains));
             });
         });
     });
