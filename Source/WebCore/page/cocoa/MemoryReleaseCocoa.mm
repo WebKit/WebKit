@@ -40,6 +40,8 @@
 
 extern "C" void _sqlite3_purgeEligiblePagerCacheMemory(void);
 
+static bool isSQLiteMemoryPressureHandlerRegisted { false };
+
 namespace WebCore {
 
 void platformReleaseMemory(Critical)
@@ -48,7 +50,8 @@ void platformReleaseMemory(Critical)
     GSFontPurgeFontCache();
 #endif
 
-    _sqlite3_purgeEligiblePagerCacheMemory();
+    if (isSQLiteMemoryPressureHandlerRegisted)
+        _sqlite3_purgeEligiblePagerCacheMemory();
 
     for (auto& pool : LayerPool::allLayerPools())
         pool->drain();
@@ -98,6 +101,11 @@ void registerMemoryReleaseNotifyCallbacks()
             GCController::singleton().garbageCollectNow();
         });
     });
+}
+
+void registerSQLiteMemoryPressureHandler()
+{
+    isSQLiteMemoryPressureHandlerRegisted = true;
 }
 
 } // namespace WebCore

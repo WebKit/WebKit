@@ -1,3 +1,22 @@
+2017-06-12  Chris Dumez  <cdumez@apple.com>
+
+        Call _sqlite3_purgeEligiblePagerCacheMemory() on memory pressure only if sqlite is initialized
+        https://bugs.webkit.org/show_bug.cgi?id=173264
+
+        Reviewed by Ryosuke Niwa.
+
+        Call _sqlite3_purgeEligiblePagerCacheMemory() on memory pressure only if sqlite is initialized.
+        Otherwise, not only is it no needed, it is also potentially unsafe.
+
+        * page/MemoryRelease.cpp:
+        (WebCore::registerSQLiteMemoryPressureHandler):
+        * page/MemoryRelease.h:
+        * page/cocoa/MemoryReleaseCocoa.mm:
+        (WebCore::platformReleaseMemory):
+        (WebCore::registerSQLiteMemoryPressureHandler):
+        * platform/sql/SQLiteDatabase.cpp:
+        (WebCore::initializeSQLiteIfNecessary):
+
 2017-06-12  Zan Dobersek  <zdobersek@igalia.com>
 
         [GCrypt] Use utility functions in CryptoKeyEC, CryptoKeyRSA

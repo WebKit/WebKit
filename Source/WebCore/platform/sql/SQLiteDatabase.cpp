@@ -29,6 +29,7 @@
 
 #include "DatabaseAuthorizer.h"
 #include "Logging.h"
+#include "MemoryRelease.h"
 #include "SQLiteFileSystem.h"
 #include "SQLiteStatement.h"
 #include <mutex>
@@ -66,6 +67,7 @@ static void initializeSQLiteIfNecessary()
 #endif
             CRASH();
         }
+        registerSQLiteMemoryPressureHandler();
     });
 }
 

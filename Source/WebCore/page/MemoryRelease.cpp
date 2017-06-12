@@ -190,6 +190,7 @@ void logMemoryStatisticsAtTimeOfDeath()
 void platformReleaseMemory(Critical) { }
 void jettisonExpensiveObjectsOnTopLevelNavigation() { }
 void registerMemoryReleaseNotifyCallbacks() { }
+void registerSQLiteMemoryPressureHandler() { }
 #endif
 
 } // namespace WebCore

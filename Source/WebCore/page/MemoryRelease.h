@@ -34,5 +34,6 @@ void platformReleaseMemory(Critical);
 void jettisonExpensiveObjectsOnTopLevelNavigation();
 WEBCORE_EXPORT void registerMemoryReleaseNotifyCallbacks();
 WEBCORE_EXPORT void logMemoryStatisticsAtTimeOfDeath();
+void registerSQLiteMemoryPressureHandler();
 
 } // namespace WebCore
