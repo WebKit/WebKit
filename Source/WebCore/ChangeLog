@@ -1,3 +1,15 @@
+2017-06-12  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream iOS] Set audio session mode and options when capturing
+        https://bugs.webkit.org/show_bug.cgi?id=173276
+        <rdar://problem/32059254>
+
+        Reviewed by Jer Noble.
+
+        * platform/audio/ios/AudioSessionIOS.mm:
+        (WebCore::AudioSession::setCategory): Set mode and options so the default output is to the speaker,
+        and so audio will be routed to bluetooth when appropriate.
+
 2017-06-12  Jeremy Jones  <jeremyj@apple.com>
 
         Remove watchdog timer from WebVideoFullscreenInterfaceAVKit
