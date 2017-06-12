@@ -1,3 +1,13 @@
+2017-06-12  Brent Fulgham  <bfulgham@apple.com>
+
+        [WK2][macOS] Alow iokit-get-properties for additional media features
+        https://bugs.webkit.org/show_bug.cgi?id=173082
+        <rdar://problem/32597547>
+
+        Reviewed by Alex Christensen.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2017-06-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Add API::IconDatabaseClient
