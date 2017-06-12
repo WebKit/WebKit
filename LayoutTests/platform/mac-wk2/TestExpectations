@@ -645,7 +645,7 @@ webkit.org/b/170629 [ Sierra Debug ] memory/memory-pressure-simulation.html [ Pa
 
 webkit.org/b/170484 swipe/main-frame-pinning-requirement.html [ Pass Failure ]
 
-webkit.org/b/170960 [ Sierra ] fast/mediastream/getUserMedia-webaudio.html [ Pass Timeout ]
+webkit.org/b/170960 fast/mediastream/getUserMedia-webaudio.html [ Pass Timeout ]
 
 webkit.org/b/170818 imported/w3c/web-platform-tests/webrtc/rtcpeerconnection/setRemoteDescription.html [ Pass Failure ]
 
