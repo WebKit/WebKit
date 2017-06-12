@@ -1,3 +1,15 @@
+2017-06-11  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        fast/text/variations/getComputedStyle.html does not need to be asynchronous
+        https://bugs.webkit.org/show_bug.cgi?id=173246
+        <rdar://problem/31393842>
+
+        Reviewed by Sam Weinig.
+
+        I dont know why I made it asynchronous in the first place.
+
+        * fast/text/variations/getComputedStyle.html:
+
 2017-06-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         didMoveToNewDocument doesn't get called on an Attr inside a shadow tree
