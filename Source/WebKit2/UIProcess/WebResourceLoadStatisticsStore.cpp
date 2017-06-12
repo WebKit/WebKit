@@ -185,8 +185,8 @@ void WebResourceLoadStatisticsStore::registerSharedResourceLoadObserver()
             return;
         processStatisticsAndDataRecords();
     });
-    m_resourceLoadStatisticsStore->setWritePersistentStoreCallback([this, protectedThis = makeRef(*this)]() mutable {
-        m_statisticsQueue->dispatch([this, protectedThis = WTFMove(protectedThis)] {
+    m_resourceLoadStatisticsStore->setWritePersistentStoreCallback([this, protectedThis = makeRef(*this)] {
+        m_statisticsQueue->dispatch([this, protectedThis = protectedThis.copyRef()] {
             writeStoreToDisk();
         });
     });
