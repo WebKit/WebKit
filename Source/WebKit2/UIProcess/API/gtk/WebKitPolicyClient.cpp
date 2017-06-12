@@ -23,7 +23,6 @@
 #include "APIPolicyClient.h"
 #include "WebKitNavigationPolicyDecisionPrivate.h"
 #include "WebKitResponsePolicyDecisionPrivate.h"
-#include "WebKitWebViewBasePrivate.h"
 #include "WebKitWebViewPrivate.h"
 #include "WebsitePolicies.h"
 #include <wtf/glib/GRefPtr.h>
@@ -62,6 +61,5 @@ private:
 
 void attachPolicyClientToView(WebKitWebView* webView)
 {
-    WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView));
-    page->setPolicyClient(std::make_unique<PolicyClient>(webView));
+    webkitWebViewGetPage(webView).setPolicyClient(std::make_unique<PolicyClient>(webView));
 }

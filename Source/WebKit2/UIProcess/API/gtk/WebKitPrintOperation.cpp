@@ -23,7 +23,7 @@
 #include "WebKitPrintCustomWidgetPrivate.h"
 #include "WebKitPrintOperationPrivate.h"
 #include "WebKitPrivate.h"
-#include "WebKitWebViewBasePrivate.h"
+#include "WebKitWebViewPrivate.h"
 #include "WebPageProxy.h"
 #include <WebCore/GtkUtilities.h>
 #include <WebCore/NotImplemented.h>
@@ -307,10 +307,8 @@ static WebKitPrintOperationResponse webkitPrintOperationRunDialog(WebKitPrintOpe
 static void drawPagesForPrintingCompleted(API::Error* wkPrintError, WebKitPrintOperation* printOperation)
 {
     // When running synchronously WebPageProxy::printFrame() calls endPrinting().
-    if (printOperation->priv->printMode == PrintInfo::PrintModeAsync && printOperation->priv->webView) {
-        WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(printOperation->priv->webView));
-        page->endPrinting();
-    }
+    if (printOperation->priv->printMode == PrintInfo::PrintModeAsync && printOperation->priv->webView)
+        webkitWebViewGetPage(printOperation->priv->webView).endPrinting();
 
     const WebCore::ResourceError& resourceError = wkPrintError ? wkPrintError->platformError() : WebCore::ResourceError();
     if (!resourceError.isNull()) {
@@ -324,9 +322,9 @@ static void drawPagesForPrintingCompleted(API::Error* wkPrintError, WebKitPrintO
 static void webkitPrintOperationPrintPagesForFrame(WebKitPrintOperation* printOperation, WebFrameProxy* webFrame, GtkPrintSettings* printSettings, GtkPageSetup* pageSetup)
 {
     PrintInfo printInfo(printSettings, pageSetup, printOperation->priv->printMode);
-    WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(printOperation->priv->webView));
+    auto& page = webkitWebViewGetPage(printOperation->priv->webView);
     g_object_ref(printOperation);
-    page->drawPagesForPrinting(webFrame, printInfo, PrintFinishedCallback::create([printOperation](API::Error* printError, CallbackBase::Error) {
+    page.drawPagesForPrinting(webFrame, printInfo, PrintFinishedCallback::create([printOperation](API::Error* printError, CallbackBase::Error) {
         drawPagesForPrintingCompleted(printError, adoptGRef(printOperation).get());
     }));
 }
@@ -466,8 +464,8 @@ WebKitPrintOperationResponse webkit_print_operation_run_dialog(WebKitPrintOperat
 {
     g_return_val_if_fail(WEBKIT_IS_PRINT_OPERATION(printOperation), WEBKIT_PRINT_OPERATION_RESPONSE_CANCEL);
 
-    WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(printOperation->priv->webView));
-    return webkitPrintOperationRunDialogForFrame(printOperation, parent, page->mainFrame());
+    auto& page = webkitWebViewGetPage(printOperation->priv->webView);
+    return webkitPrintOperationRunDialogForFrame(printOperation, parent, page.mainFrame());
 }
 
 /**
@@ -491,6 +489,6 @@ void webkit_print_operation_print(WebKitPrintOperation* printOperation)
     GRefPtr<GtkPrintSettings> printSettings = priv->printSettings ? priv->printSettings : adoptGRef(gtk_print_settings_new());
     GRefPtr<GtkPageSetup> pageSetup = priv->pageSetup ? priv->pageSetup : adoptGRef(gtk_page_setup_new());
 
-    WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(printOperation->priv->webView));
-    webkitPrintOperationPrintPagesForFrame(printOperation, page->mainFrame(), printSettings.get(), pageSetup.get());
+    auto& page = webkitWebViewGetPage(printOperation->priv->webView);
+    webkitPrintOperationPrintPagesForFrame(printOperation, page.mainFrame(), printSettings.get(), pageSetup.get());
 }

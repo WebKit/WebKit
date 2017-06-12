@@ -22,7 +22,6 @@
 
 #include "APIContextMenuClient.h"
 #include "WebContextMenuItem.h"
-#include "WebKitWebViewBasePrivate.h"
 #include "WebKitWebViewPrivate.h"
 
 using namespace WebKit;
@@ -57,7 +56,6 @@ private:
 
 void attachContextMenuClientToView(WebKitWebView* webView)
 {
-    WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView));
-    page->setContextMenuClient(std::make_unique<ContextMenuClient>(webView));
+    webkitWebViewGetPage(webView).setContextMenuClient(std::make_unique<ContextMenuClient>(webView));
 }
 

@@ -1,5 +1,46 @@
 2017-06-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Prefer to use private WebKitWebView API over WebKitWebViewBase
+        https://bugs.webkit.org/show_bug.cgi?id=173254
+
+        Reviewed by Žan Doberšek.
+
+        WebKitWebViewBase is specific to the GTK+ API, but WebKitWebView should be present in any glib-based API. Add
+        webkitWebViewCreatePage() and webkitWebViewGetPage() and use them when possible instead of the WebKitWebViewBase
+        ones.
+
+        * UIProcess/API/gtk/WebKitAutomationSession.cpp:
+        * UIProcess/API/gtk/WebKitContextMenuClient.cpp:
+        (attachContextMenuClientToView):
+        * UIProcess/API/gtk/WebKitFindController.cpp:
+        (getPage):
+        (webkitFindControllerDispose):
+        (webkitFindControllerConstructed):
+        (webKitFindControllerPerform):
+        (webkit_find_controller_search_finish):
+        * UIProcess/API/gtk/WebKitFormClient.cpp:
+        (attachFormClientToView):
+        * UIProcess/API/gtk/WebKitLoaderClient.cpp:
+        (attachLoaderClientToView):
+        * UIProcess/API/gtk/WebKitPolicyClient.cpp:
+        (attachPolicyClientToView):
+        * UIProcess/API/gtk/WebKitPrintOperation.cpp:
+        (drawPagesForPrintingCompleted):
+        (webkitPrintOperationPrintPagesForFrame):
+        (webkit_print_operation_run_dialog):
+        (webkit_print_operation_print):
+        * UIProcess/API/gtk/WebKitUIClient.cpp:
+        (attachUIClientToView):
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (webkitWebContextCreatePageForWebView):
+        (webkitWebContextWebViewDestroyed):
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewCreatePage):
+        (webkitWebViewGetPage):
+        * UIProcess/API/gtk/WebKitWebViewPrivate.h:
+
+2017-06-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] getPage() in WebKitWebView should return a reference instead of a pointer
         https://bugs.webkit.org/show_bug.cgi?id=173251
 

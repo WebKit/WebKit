@@ -49,7 +49,6 @@
 #include "WebKitURISchemeRequestPrivate.h"
 #include "WebKitUserContentManagerPrivate.h"
 #include "WebKitWebContextPrivate.h"
-#include "WebKitWebViewBasePrivate.h"
 #include "WebKitWebViewPrivate.h"
 #include "WebKitWebsiteDataManagerPrivate.h"
 #include "WebNotificationManagerProxy.h"
@@ -1601,8 +1600,6 @@ bool webkitWebContextIsLoadingCustomProtocol(WebKitWebContext* context, uint64_t
 
 void webkitWebContextCreatePageForWebView(WebKitWebContext* context, WebKitWebView* webView, WebKitUserContentManager* userContentManager, WebKitWebView* relatedView)
 {
-    WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(webView);
-
     // FIXME: icon database private mode is global, not per page, so while there are
     // pages in private mode we need to enable the private mode in the icon database.
     webkitWebContextEnableIconDatabasePrivateBrowsingIfNeeded(context, webView);
@@ -1610,7 +1607,7 @@ void webkitWebContextCreatePageForWebView(WebKitWebContext* context, WebKitWebVi
     auto pageConfiguration = API::PageConfiguration::create();
     pageConfiguration->setProcessPool(context->priv->processPool.get());
     pageConfiguration->setPreferences(webkitSettingsGetPreferences(webkit_web_view_get_settings(webView)));
-    pageConfiguration->setRelatedPage(relatedView ? webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(relatedView)) : nullptr);
+    pageConfiguration->setRelatedPage(relatedView ? &webkitWebViewGetPage(relatedView) : nullptr);
     pageConfiguration->setUserContentController(userContentManager ? webkitUserContentManagerGetUserContentControllerProxy(userContentManager) : nullptr);
     pageConfiguration->setControlledByAutomation(webkit_web_view_is_controlled_by_automation(webView));
 
@@ -1619,17 +1616,15 @@ void webkitWebContextCreatePageForWebView(WebKitWebContext* context, WebKitWebVi
         manager = context->priv->websiteDataManager.get();
     pageConfiguration->setWebsiteDataStore(&webkitWebsiteDataManagerGetDataStore(manager));
     pageConfiguration->setSessionID(pageConfiguration->websiteDataStore()->websiteDataStore().sessionID());
-    webkitWebViewBaseCreateWebPage(webViewBase, WTFMove(pageConfiguration));
+    webkitWebViewCreatePage(webView, WTFMove(pageConfiguration));
 
-    WebPageProxy* page = webkitWebViewBaseGetPage(webViewBase);
-    context->priv->webViews.set(page->pageID(), webView);
+    context->priv->webViews.set(webkit_web_view_get_page_id(webView), webView);
 }
 
 void webkitWebContextWebViewDestroyed(WebKitWebContext* context, WebKitWebView* webView)
 {
     webkitWebContextDisableIconDatabasePrivateBrowsingIfNeeded(context, webView);
-    WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView));
-    context->priv->webViews.remove(page->pageID());
+    context->priv->webViews.remove(webkit_web_view_get_page_id(webView));
 }
 
 WebKitWebView* webkitWebContextGetWebViewForPage(WebKitWebContext* context, WebPageProxy* page)

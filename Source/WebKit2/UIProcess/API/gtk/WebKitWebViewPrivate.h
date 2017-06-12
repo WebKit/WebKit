@@ -24,16 +24,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebKitWebViewPrivate_h
-#define WebKitWebViewPrivate_h
+#pragma once
 
+#include "APIPageConfiguration.h"
 #include "InstallMissingMediaPluginsPermissionRequest.h"
 #include "WebContextMenuItemData.h"
 #include "WebHitTestResultData.h"
 #include "WebImage.h"
+#include "WebKitPrivate.h"
 #include "WebKitWebView.h"
+#include "WebPageProxy.h"
 #include <wtf/text/CString.h>
 
+void webkitWebViewCreatePage(WebKitWebView*, Ref<API::PageConfiguration>&&);
+WebKit::WebPageProxy& webkitWebViewGetPage(WebKitWebView*);
 void webkitWebViewLoadChanged(WebKitWebView*, WebKitLoadEvent);
 void webkitWebViewLoadFailed(WebKitWebView*, WebKitLoadEvent, const char* failingURI, GError*);
 void webkitWebViewLoadFailedWithTLSErrors(WebKitWebView*, const char* failingURI, GError*, GTlsCertificateFlags, GTlsCertificate*);
@@ -68,5 +72,3 @@ void webkitWebViewIsPlayingAudioChanged(WebKitWebView*);
 void webkitWebViewSelectionDidChange(WebKitWebView*);
 void webkitWebViewRequestInstallMissingMediaPlugins(WebKitWebView*, WebKit::InstallMissingMediaPluginsPermissionRequest&);
 WebKitWebsiteDataManager* webkitWebViewGetWebsiteDataManager(WebKitWebView*);
-
-#endif // WebKitWebViewPrivate_h

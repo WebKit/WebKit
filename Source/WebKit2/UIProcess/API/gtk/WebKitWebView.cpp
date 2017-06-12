@@ -1894,6 +1894,16 @@ static void webkitWebViewCancelAuthenticationRequest(WebKitWebView* webView)
     webView->priv->authenticationRequest.clear();
 }
 
+void webkitWebViewCreatePage(WebKitWebView* webView, Ref<API::PageConfiguration>&& configuration)
+{
+    webkitWebViewBaseCreateWebPage(WEBKIT_WEB_VIEW_BASE(webView), WTFMove(configuration));
+}
+
+WebPageProxy& webkitWebViewGetPage(WebKitWebView* webView)
+{
+    return getPage(webView);
+}
+
 void webkitWebViewLoadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent)
 {
     WebKitWebViewPrivate* priv = webView->priv;

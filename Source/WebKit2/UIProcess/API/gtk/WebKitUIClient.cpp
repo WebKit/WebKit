@@ -28,7 +28,6 @@
 #include "WebKitPrivate.h"
 #include "WebKitURIRequestPrivate.h"
 #include "WebKitUserMediaPermissionRequestPrivate.h"
-#include "WebKitWebViewBasePrivate.h"
 #include "WebKitWebViewPrivate.h"
 #include "WebKitWindowPropertiesPrivate.h"
 #include "WebPageProxy.h"
@@ -217,7 +216,6 @@ private:
 
 void attachUIClientToView(WebKitWebView* webView)
 {
-    WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView));
-    page->setUIClient(std::make_unique<UIClient>(webView));
+    webkitWebViewGetPage(webView).setUIClient(std::make_unique<UIClient>(webView));
 }
 

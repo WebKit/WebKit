@@ -24,7 +24,6 @@
 #include "WebFormSubmissionListenerProxy.h"
 #include "WebKitFormSubmissionRequestPrivate.h"
 #include "WebKitPrivate.h"
-#include "WebKitWebViewBasePrivate.h"
 #include "WebKitWebViewPrivate.h"
 #include <wtf/glib/GRefPtr.h>
 
@@ -49,6 +48,5 @@ private:
 
 void attachFormClientToView(WebKitWebView* webView)
 {
-    auto* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView));
-    page->setFormClient(std::make_unique<FormClient>(webView));
+    webkitWebViewGetPage(webView).setFormClient(std::make_unique<FormClient>(webView));
 }

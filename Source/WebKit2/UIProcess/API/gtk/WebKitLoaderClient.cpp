@@ -25,7 +25,6 @@
 #include "WebKitBackForwardListPrivate.h"
 #include "WebKitPrivate.h"
 #include "WebKitURIResponsePrivate.h"
-#include "WebKitWebViewBasePrivate.h"
 #include "WebKitWebViewPrivate.h"
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
@@ -121,7 +120,6 @@ private:
 
 void attachLoaderClientToView(WebKitWebView* webView)
 {
-    WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView));
-    page->setLoaderClient(std::make_unique<LoaderClient>(webView));
+    webkitWebViewGetPage(webView).setLoaderClient(std::make_unique<LoaderClient>(webView));
 }
 
