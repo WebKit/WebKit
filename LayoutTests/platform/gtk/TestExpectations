@@ -684,6 +684,7 @@ webkit.org/b/160996 fast/mediastream/MediaStream-video-element-video-tracks-disa
 webkit.org/b/161956 fast/mediastream/MediaStream-video-element-displays-buffer.html [ Failure ]
 webkit.org/b/168773 fast/mediastream/MediaStream-MediaElement-setObject-null.html [ Failure ]
 webkit.org/b/172269 fast/mediastream/media-devices-enumerate-devices.html [ Failure ]
+webkit.org/b/173257 fast/mediastream/getUserMedia-grant-persistency3.html [ Pass Failure ]
 
 # Canvas captureStream support is not implemented
 webkit.org/b/169811 fast/mediacapturefromelement [ Skip ]

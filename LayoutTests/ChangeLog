@@ -1,3 +1,12 @@
+2017-06-12  Charlie Turner  <cturner@igalia.com>
+
+        Mark fast/mediastream/getUserMedia-grant-persistency3.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=173257
+
+        Unreviewed gardening.
+
+        * platform/gtk/TestExpectations:
+
 2017-06-11  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [iOS 11] fast/text/international/system-language/arabic-glyph-cache-fill-combine.html hardcodes the system UI Arabic font
