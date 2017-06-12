@@ -1,3 +1,25 @@
+2017-06-12  Jeremy Jones  <jeremyj@apple.com>
+
+        Remove watchdog timer from WebVideoFullscreenInterfaceAVKit
+        https://bugs.webkit.org/show_bug.cgi?id=173272
+        rdar://problem/32260378
+
+        Reviewed by Jer Noble.
+
+        No new tests because no effect on DOM.
+
+        WebVideoFullscreenInterfaceAVKit's watchdog attempts to clean-up fullscreen if the page becomes unresponsive.
+        However, it is just calling exitfullscreen(), which initiates the animation, but leaves the fullscreen window
+        in place and doesn't initiate cleanup. This leaves the browser in an unusable state since all events will still
+        be captured by the fullscren window.
+
+        This change uses the same method of hiding fullscreen window as switching tabs does. This will
+        hide the fullscreen winodw and controller, leaving the browser available for interaction, and the page
+        can take its time to properly cleanup the fullscreen window while hidden.
+
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (WebVideoFullscreenInterfaceAVKit::watchdogTimerFired):
+
 2017-06-12  Alex Christensen  <achristensen@webkit.org>
 
         Modernize UserScript.h
