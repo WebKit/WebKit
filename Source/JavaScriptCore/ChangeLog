@@ -1,5 +1,17 @@
 2017-06-11  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [WTF] Make ThreadMessage portable
+        https://bugs.webkit.org/show_bug.cgi?id=172073
+
+        Reviewed by Keith Miller.
+
+        * runtime/MachineContext.h:
+        (JSC::MachineContext::stackPointer):
+        * tools/CodeProfiling.cpp:
+        (JSC::profilingTimer):
+
+2017-06-11  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [JSC] Shrink Structure size
         https://bugs.webkit.org/show_bug.cgi?id=173239
 

@@ -179,9 +179,6 @@ void initializeThreading()
         wtfThreadData();
         initializeDates();
         Thread::initializePlatformThreading();
-#if USE(PTHREADS)
-        initializeThreadMessages();
-#endif
     });
 }
 

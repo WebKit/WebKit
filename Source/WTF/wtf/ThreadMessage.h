@@ -29,13 +29,8 @@
 #include <wtf/ScopedLambda.h>
 #include <wtf/Threading.h>
 
-#if USE(PTHREADS)
-
 namespace WTF {
 
-void initializeThreadMessages();
-
-class ThreadMessageData;
 using ThreadMessage = ScopedLambda<void(PlatformRegisters&)>;
 
 enum class MessageStatus {
@@ -55,12 +50,6 @@ MessageStatus sendMessage(Thread& targetThread, const Functor& func)
     return sendMessageScoped(targetThread, lambda);
 }
 
-#if HAVE(MACH_EXCEPTIONS)
-void deliverMessagesUsingMach();
-#endif
-
 } // namespace WTF
 
 using WTF::sendMessage;
-
-#endif // USE(PTHREADS)

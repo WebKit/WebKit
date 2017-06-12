@@ -74,7 +74,11 @@ struct PlatformRegisters {
 
 inline PlatformRegisters& registersFromUContext(ucontext_t* ucontext)
 {
+#if CPU(PPC)
+    return *bitwise_cast<PlatformRegisters*>(ucontext->uc_mcontext.uc_regs);
+#else
     return *bitwise_cast<PlatformRegisters*>(&ucontext->uc_mcontext);
+#endif
 }
 
 #else

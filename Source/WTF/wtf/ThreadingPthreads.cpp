@@ -145,11 +145,7 @@ void Thread::signalHandlerSuspendResume(int, siginfo_t*, void* ucontext)
     ASSERT_WITH_MESSAGE(!isOnAlternativeSignalStack(), "Using an alternative signal stack is not supported. Consider disabling the concurrent GC.");
 
 #if HAVE(MACHINE_CONTEXT)
-#if CPU(PPC)
-    thread->m_platformRegisters = PlatformRegisters { *userContext->uc_mcontext.uc_regs };
-#else
-    thread->m_platformRegisters = PlatformRegisters { userContext->uc_mcontext };
-#endif
+    thread->m_platformRegisters = registersFromUContext(userContext);
 #else
     thread->m_platformRegisters = PlatformRegisters { getApproximateStackPointer() };
 #endif
@@ -402,12 +398,16 @@ void Thread::resume()
 #endif
 }
 
-size_t Thread::getRegisters(PlatformRegisters& registers)
-{
-    std::unique_lock<std::mutex> locker(m_mutex);
 #if OS(DARWIN)
+struct ThreadStateMetadata {
+    unsigned userCount;
+    thread_state_flavor_t flavor;
+};
+
+static ThreadStateMetadata threadStateMetadata()
+{
 #if CPU(X86)
-    unsigned userCount = sizeof(registers) / sizeof(int);
+    unsigned userCount = sizeof(PlatformRegisters) / sizeof(int);
     thread_state_flavor_t flavor = i386_THREAD_STATE;
 #elif CPU(X86_64)
     unsigned userCount = x86_THREAD_STATE64_COUNT;
@@ -427,13 +427,21 @@ size_t Thread::getRegisters(PlatformRegisters& registers)
 #else
 #error Unknown Architecture
 #endif
+    return ThreadStateMetadata { userCount, flavor };
+}
+#endif // OS(DARWIN)
 
-    kern_return_t result = thread_get_state(m_platformThread, flavor, (thread_state_t)&registers, &userCount);
+size_t Thread::getRegisters(PlatformRegisters& registers)
+{
+    std::unique_lock<std::mutex> locker(m_mutex);
+#if OS(DARWIN)
+    auto metadata = threadStateMetadata();
+    kern_return_t result = thread_get_state(m_platformThread, metadata.flavor, (thread_state_t)&registers, &metadata.userCount);
     if (result != KERN_SUCCESS) {
         WTFReportFatalError(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, "JavaScript garbage collection failed because thread_get_state returned an error (%d). This is probably the result of running inside Rosetta, which is not supported.", result);
         CRASH();
     }
-    return userCount * sizeof(uintptr_t);
+    return metadata.userCount * sizeof(uintptr_t);
 #else
     ASSERT_WITH_MESSAGE(m_suspendCount, "We can get registers only if the thread is suspended.");
     registers = m_platformRegisters;

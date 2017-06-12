@@ -36,7 +36,6 @@
 #include <wtf/Atomics.h>
 #include <wtf/Expected.h>
 #include <wtf/Function.h>
-#include <wtf/LocklessBag.h>
 #include <wtf/PlatformRegisters.h>
 #include <wtf/RefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -128,12 +127,8 @@ public:
 
     static void initializePlatformThreading();
 
-#if USE(PTHREADS)
-    LocklessBag<ThreadMessageData*>& threadMessages() { return m_threadMessages; }
-
 #if OS(DARWIN)
     mach_port_t machThread() { return m_platformThread; }
-#endif
 #endif
 
 protected:
@@ -182,7 +177,6 @@ protected:
 #if USE(PTHREADS)
     pthread_t m_handle;
 
-    LocklessBag<ThreadMessageData*> m_threadMessages;
 #if OS(DARWIN)
     mach_port_t m_platformThread;
 #else

@@ -70,10 +70,10 @@ static void setProfileTimer(unsigned usec)
 #if HAVE(MACHINE_CONTEXT)
 static void profilingTimer(int, siginfo_t*, void* uap)
 {
-    mcontext_t context = static_cast<ucontext_t*>(uap)->uc_mcontext;
+    PlatformRegisters& platformRegisters = WTF::registersFromUContext(static_cast<ucontext_t*>(uap));
     CodeProfiling::sample(
-        MachineContext::instructionPointer(context),
-        reinterpret_cast<void**>(MachineContext::framePointer(context)));
+        MachineContext::instructionPointer(platformRegisters),
+        reinterpret_cast<void**>(MachineContext::framePointer(platformRegisters)));
 }
 #endif
 

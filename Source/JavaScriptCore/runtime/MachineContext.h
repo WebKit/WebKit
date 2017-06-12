@@ -33,11 +33,10 @@
 namespace JSC {
 namespace MachineContext {
 
-
-void*& stackPointer(PlatformRegisters&);
 void* stackPointer(const PlatformRegisters&);
 
 #if OS(WINDOWS) || HAVE(MACHINE_CONTEXT)
+void*& stackPointer(PlatformRegisters&);
 void*& framePointer(PlatformRegisters&);
 void* framePointer(const PlatformRegisters&);
 void*& instructionPointer(PlatformRegisters&);
@@ -64,6 +63,7 @@ void* llintInstructionPointer(const mcontext_t&);
 #endif // HAVE(MACHINE_CONTEXT)
 #endif // OS(WINDOWS) || HAVE(MACHINE_CONTEXT)
 
+#if OS(WINDOWS) || HAVE(MACHINE_CONTEXT)
 inline void*& stackPointer(PlatformRegisters& regs)
 {
 #if OS(DARWIN)
@@ -111,8 +111,6 @@ inline void*& stackPointer(PlatformRegisters& regs)
 
 #elif HAVE(MACHINE_CONTEXT)
     return stackPointer(regs.machineContext);
-#else
-    return regs.stackPointer;
 #endif
 }
 
@@ -120,7 +118,12 @@ inline void* stackPointer(const PlatformRegisters& regs)
 {
     return stackPointer(const_cast<PlatformRegisters&>(regs));
 }
-
+#else // not OS(WINDOWS) || HAVE(MACHINE_CONTEXT)
+inline void* stackPointer(const PlatformRegisters& regs)
+{
+    return regs.stackPointer;
+}
+#endif // OS(WINDOWS) || HAVE(MACHINE_CONTEXT)
 
 #if HAVE(MACHINE_CONTEXT)
 inline void*& stackPointer(mcontext_t& machineContext)

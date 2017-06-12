@@ -208,7 +208,6 @@ kern_return_t catch_mach_exception_raise_state(
 static bool useMach { false };
 void handleSignalsWithMach()
 {
-    deliverMessagesUsingMach();
     useMach = true;
 }
 
