@@ -1129,7 +1129,8 @@ template<typename CharacterType> template<bool shouldCreateIdentifier> JSTokenTy
         if (!entry)
             return IDENT;
         JSTokenType token = static_cast<JSTokenType>(entry->lexerValue());
-        return (token != RESERVED_IF_STRICT) || strictMode ? token : IDENT;
+        if ((token != RESERVED_IF_STRICT) || strictMode)
+            return bufferRequired ? UNEXPECTED_ESCAPE_ERRORTOK : token;
     }
 
     return IDENT;

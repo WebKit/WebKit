@@ -1,3 +1,19 @@
+2017-06-12  Oleksandr Skachkov  <gskachkov@gmail.com>
+
+        We incorrectly allow escaped characters in keyword tokens
+        https://bugs.webkit.org/show_bug.cgi?id=171310
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/destructuring-assignment-syntax.js:
+        * stress/error-messages-for-in-operator-should-not-crash.js:
+        (catch):
+        * stress/reserved-word-with-escape.js:
+        (testSyntaxError.String.raw.v):
+        (String.raw.SyntaxError.Cannot.use.the.keyword.string_appeared_here.as.a.name):
+        (testSyntaxError.String.raw.a):
+        * JSTests/ChakraCore/test/Basics/IdsWithEscapes.baseline-jsc:
+
 2017-06-09  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DFG] Add ArrayIndexOf intrinsic

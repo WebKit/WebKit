@@ -1,11 +1,30 @@
-// This test should not crash.
-
 let error = null;
 try {
-    // FIXME: We should not parse this as an "in" operation.
-    let r = "prop" i\u006E 20;
+    eval('let r = "prop" i\\u{006E} 20');
 } catch(e) {
     error = e;
 }
-if (error.message !== "20 is not an Object.")
+
+if (!error || error.message !== "Unexpected escaped characters in keyword tocken: 'i\\u{006E}'")
+    throw new Error("Bad");
+
+error = null;
+try {
+    eval('let r = "prop" i\\u006E 20');
+} catch(e) {
+    error = e;
+}
+
+if (!error || error.message !== "Unexpected escaped characters in keyword tocken: 'i\\u006E'")
+    throw new Error("Bad");
+
+// This test should not crash.
+error = null;
+try {
+    eval('let r = "prop" i\u006E 20');
+} catch(e) {
+    error = e;
+}
+
+if (!error || error.message !== "20 is not an Object. (evaluating \'\"prop\" in 20\')")
     throw new Error("Bad");
