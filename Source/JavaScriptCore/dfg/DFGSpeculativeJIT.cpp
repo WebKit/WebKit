@@ -7497,8 +7497,10 @@ void SpeculativeJIT::compileArrayIndexOf(Node* node)
             int32Result(indexGPR, node);
         };
 
+#if USE(JSVALUE32_64)
         GPRTemporary temp(this);
         GPRReg tempGPR = temp.gpr();
+#endif
 
         if (searchElementEdge.useKind() == Int32Use) {
             ASSERT(node->arrayMode().type() == Array::Int32);
@@ -7513,8 +7515,7 @@ void SpeculativeJIT::compileArrayIndexOf(Node* node)
 #endif
             emitLoop([&] () {
 #if USE(JSVALUE64)
-                m_jit.load64(CCallHelpers::Equal, MacroAssembler::BaseIndex(storageGPR, indexGPR, MacroAssembler::TimesEight), tempGPR);
-                auto found = m_jit.branch64(CCallHelpers::Equal, tempGPR, searchElementGPR);
+                auto found = m_jit.branch64(CCallHelpers::Equal, MacroAssembler::BaseIndex(storageGPR, indexGPR, MacroAssembler::TimesEight), searchElementGPR);
 #else
                 auto skip = m_jit.branch32(CCallHelpers::NotEqual, MacroAssembler::BaseIndex(storageGPR, indexGPR, MacroAssembler::TimesEight, TagOffset), TrustedImm32(JSValue::Int32Tag));
                 m_jit.load32(MacroAssembler::BaseIndex(storageGPR, indexGPR, MacroAssembler::TimesEight, PayloadOffset), tempGPR);
@@ -7531,8 +7532,7 @@ void SpeculativeJIT::compileArrayIndexOf(Node* node)
 
             emitLoop([&] () {
 #if USE(JSVALUE64)
-                m_jit.load64(CCallHelpers::Equal, MacroAssembler::BaseIndex(storageGPR, indexGPR, MacroAssembler::TimesEight), tempGPR);
-                auto found = m_jit.branch64(CCallHelpers::Equal, tempGPR, searchElementGPR);
+                auto found = m_jit.branch64(CCallHelpers::Equal, MacroAssembler::BaseIndex(storageGPR, indexGPR, MacroAssembler::TimesEight), searchElementGPR);
 #else
                 auto skip = m_jit.branch32(CCallHelpers::NotEqual, MacroAssembler::BaseIndex(storageGPR, indexGPR, MacroAssembler::TimesEight, TagOffset), TrustedImm32(JSValue::CellTag));
                 m_jit.load32(MacroAssembler::BaseIndex(storageGPR, indexGPR, MacroAssembler::TimesEight, PayloadOffset), tempGPR);
