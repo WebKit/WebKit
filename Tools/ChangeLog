@@ -1,3 +1,20 @@
+2017-06-12  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r217867): Legacy SessionHistoryEntryData format should not change
+        https://bugs.webkit.org/show_bug.cgi?id=173267
+        <rdar://problem/32701257>
+
+        Reviewed by Simon Fraser.
+
+        Restrict test to stop covering saving / restore of scrollRestoration via the legacy
+        SessionHistoryEntryData. Maintain coverage for the default value of scrollRestoration
+        though as this covers the crash that r217867 was fixing.
+
+        * TestWebKitAPI/Tests/WebKit2/RestoreSessionState.cpp:
+        (TestWebKitAPI::createSessionStateData):
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::createSessionStateDataContainingScrollRestoration): Deleted.
+
 2017-06-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Stop dismissing menus attached to the web view for every injected event

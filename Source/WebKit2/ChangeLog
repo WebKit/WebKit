@@ -1,3 +1,18 @@
+2017-06-12  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r217867): Legacy SessionHistoryEntryData format should not change
+        https://bugs.webkit.org/show_bug.cgi?id=173267
+        <rdar://problem/32701257>
+
+        Reviewed by Simon Fraser.
+
+        Revert changes to Legacy SessionHistoryEntryData format that were made in r217867,
+        as this apparently breaks compatiblity.
+
+        * UIProcess/mac/LegacySessionStateCoding.cpp:
+        (WebKit::encodeFrameStateNode):
+        (WebKit::decodeBackForwardTreeNode):
+
 2017-06-12  Brent Fulgham  <bfulgham@apple.com>
 
         [WK2][macOS] Alow iokit-get-properties for additional media features
