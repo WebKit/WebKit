@@ -123,9 +123,18 @@ void WebCoreDecompressionSession::enqueueSample(CMSampleBufferRef sampleBuffer, 
     if (!m_decompressionQueue)
         m_decompressionQueue = adoptOSObject(dispatch_queue_create("SourceBufferPrivateAVFObjC Decompression Queue", DISPATCH_QUEUE_SERIAL));
 
+    // CMBufferCallbacks contains 64-bit pointers that aren't 8-byte aligned. To suppress the linker
+    // warning about this, we prepend 4 bytes of padding when building for macOS.
+#if PLATFORM(MAC)
+    const size_t padSize = 4;
+#else
+    const size_t padSize = 0;
+#endif
+
     if (!m_producerQueue) {
         CMBufferQueueRef outQueue { nullptr };
-        CMBufferCallbacks callbacks {
+#pragma pack(push, 4)
+        struct { uint8_t pad[padSize]; CMBufferCallbacks callbacks; } callbacks { { }, {
             0,
             nullptr,
             &getDecodeTime,
@@ -135,8 +144,9 @@ void WebCoreDecompressionSession::enqueueSample(CMSampleBufferRef sampleBuffer, 
             &compareBuffers,
             nullptr,
             nullptr,
-        };
-        CMBufferQueueCreate(kCFAllocatorDefault, kMaximumCapacity, &callbacks, &outQueue);
+        } };
+#pragma pack(pop)
+        CMBufferQueueCreate(kCFAllocatorDefault, kMaximumCapacity, &callbacks.callbacks, &outQueue);
         m_producerQueue = adoptCF(outQueue);
 
         CMBufferQueueInstallTriggerWithIntegerThreshold(m_producerQueue.get(), maybeBecomeReadyForMoreMediaDataCallback, this, kCMBufferQueueTrigger_WhenBufferCountBecomesLessThan, kLowWaterMark, &m_didBecomeReadyTrigger);
@@ -144,7 +154,8 @@ void WebCoreDecompressionSession::enqueueSample(CMSampleBufferRef sampleBuffer, 
 
     if (!m_consumerQueue) {
         CMBufferQueueRef outQueue { nullptr };
-        CMBufferCallbacks callbacks {
+#pragma pack(push, 4)
+        struct { uint8_t pad[padSize]; CMBufferCallbacks callbacks; } callbacks { { }, {
             0,
             nullptr,
             &getDecodeTime,
@@ -154,8 +165,9 @@ void WebCoreDecompressionSession::enqueueSample(CMSampleBufferRef sampleBuffer, 
             &compareBuffers,
             nullptr,
             nullptr,
-        };
-        CMBufferQueueCreate(kCFAllocatorDefault, kMaximumCapacity, &callbacks, &outQueue);
+        } };
+#pragma pack(pop)
+        CMBufferQueueCreate(kCFAllocatorDefault, kMaximumCapacity, &callbacks.callbacks, &outQueue);
         m_consumerQueue = adoptCF(outQueue);
     }
 
