@@ -1,3 +1,32 @@
+2017-06-12  Jer Noble  <jer.noble@apple.com>
+
+        Seeking an MSE video will begin playing audio long before rendering video
+        https://bugs.webkit.org/show_bug.cgi?id=173269
+
+        Reviewed by Eric Carlson.
+
+        Add a notification listener which will be messaged when a to-be-displayed sample
+        is decoded to signal that the 'seeked' event should fire. Consolidate all the various
+        flush methods to funnel into a single flushVideo().
+
+        * platform/cf/CoreMediaSoftLink.cpp:
+        * platform/cf/CoreMediaSoftLink.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.h:
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.h:
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (-[WebBufferConsumedContext initWithParent:buffer:]):
+        (-[WebBufferConsumedContext dealloc]):
+        (-[WebBufferConsumedContext parent]):
+        (-[WebBufferConsumedContext buffer]):
+        (WebCore::bufferWasConsumedCallback):
+        (WebCore::SourceBufferPrivateAVFObjC::SourceBufferPrivateAVFObjC):
+        (WebCore::SourceBufferPrivateAVFObjC::~SourceBufferPrivateAVFObjC):
+        (WebCore::SourceBufferPrivateAVFObjC::flush):
+        (WebCore::SourceBufferPrivateAVFObjC::flushVideo):
+        (WebCore::SourceBufferPrivateAVFObjC::enqueueSample):
+        (WebCore::SourceBufferPrivateAVFObjC::bufferWasConsumed):
+        (WebCore::SourceBufferPrivateAVFObjC::willSeek):
+
 2017-06-12  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream iOS] Set audio session mode and options when capturing

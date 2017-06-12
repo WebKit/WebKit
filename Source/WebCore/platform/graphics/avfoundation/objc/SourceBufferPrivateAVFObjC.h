@@ -114,6 +114,8 @@ public:
     void setVideoLayer(AVSampleBufferDisplayLayer*);
     void setDecompressionSession(WebCoreDecompressionSession*);
 
+    void bufferWasConsumed();
+
 private:
     explicit SourceBufferPrivateAVFObjC(MediaSourcePrivateAVFObjC*);
 
@@ -136,7 +138,7 @@ private:
     void destroyParser();
     void destroyRenderers();
 
-    void flush(AVSampleBufferDisplayLayer *);
+    void flushVideo();
     void flush(AVSampleBufferAudioRenderer *);
 
     WeakPtr<SourceBufferPrivateAVFObjC> createWeakPtr() { return m_weakFactory.createWeakPtr(); }
