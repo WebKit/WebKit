@@ -1,3 +1,17 @@
+2017-06-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Stop dismissing menus attached to the web view for every injected event
+        https://bugs.webkit.org/show_bug.cgi?id=172708
+
+        Reviewed by Alex Christensen.
+
+        * editing/selection/5354455-1.html: No need to click on editable area to focus it, contextClick already focuses
+        it, we even have another test to ensure it. Those fast clicks were causing a double click in GTK+ port which
+        selected the whole line. We don't need to dismiss the context menu either, because contextClick() doesn't really
+        show the menu.
+        * fast/events/context-activated-by-key-event.html: Dismiss the context menu every time we show it.
+        * fast/events/mouse-click-events.html: Dimiss the context menu when testing right click events.
+
 2017-06-12  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark fast/mediastream/getUserMedia-webaudio.html as flaky on mac-wk2.

@@ -167,14 +167,6 @@ void EventSenderProxy::updateClickCountForButton(int button)
 void EventSenderProxy::dispatchEvent(GdkEvent* event)
 {
     ASSERT(m_testController->mainWebView());
-
-    // If we are sending an escape key to the WebView, this has the side-effect of dismissing
-    // any current popups anyway. Chances are that the test is doing this to dismiss the popup
-    // anyway. Not all tests properly dismiss popup menus, so we still need to do it manually
-    // if this isn't an escape key press.
-    if (event->type != GDK_KEY_PRESS || event->key.keyval != GDK_KEY_Escape)
-        m_testController->mainWebView()->dismissAllPopupMenus();
-
     gtk_main_do_event(event);
     gdk_event_free(event);
 }

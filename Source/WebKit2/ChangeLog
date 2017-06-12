@@ -1,3 +1,17 @@
+2017-06-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Stop dismissing menus attached to the web view for every injected event
+        https://bugs.webkit.org/show_bug.cgi?id=172708
+
+        Reviewed by Alex Christensen.
+
+        To actually simulate a right-click event we should also send the button release after the press, and let the page
+        handle the events in addition to sending the event to the context menu controller, like we do with normal
+        events. So, this is mostly the same as a real right-click event but without actually showing the menu.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::contextMenuAtPointInWindow):
+
 2017-06-12  Daewoong Jang  <daewoong.jang@navercorp.com>
 
         [CoordinatedGraphics] Behavior change of DrawingAreaImpl after r217779

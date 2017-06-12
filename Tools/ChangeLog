@@ -1,3 +1,19 @@
+2017-06-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Stop dismissing menus attached to the web view for every injected event
+        https://bugs.webkit.org/show_bug.cgi?id=172708
+
+        Reviewed by Alex Christensen.
+
+        It's a workaround we added in r184015 that has worked so far for the context menu, but doesn't really work now
+        that we also attach popup menus to the web view. We really need to be able to show a popup menu, and then send
+        events while the menu is open.
+
+        * WebKitTestRunner/InjectedBundle/EventSendingController.cpp:
+        (WTR::EventSendingController::contextClick): Use WKBundlePageCopyContextMenuAtPointInWindow() also in GTK+ port.
+        * WebKitTestRunner/gtk/EventSenderProxyGtk.cpp:
+        (WTR::EventSenderProxy::dispatchEvent): Stop calling PlatformWebView::dismissAllPopupMenus().
+
 2017-06-12  Miguel Gomez  <magomez@igalia.com>
 
         [GTK][WPE] Enable GStreamer GL on development builds
