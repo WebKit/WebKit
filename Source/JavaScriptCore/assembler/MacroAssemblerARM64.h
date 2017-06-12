@@ -2561,10 +2561,15 @@ public:
         return branch64(cond, memoryTempRegister, right);
     }
 
-    Jump branchPtr(RelationalCondition cond, BaseIndex left, RegisterID right)
+    Jump branch64(RelationalCondition cond, BaseIndex left, RegisterID right)
     {
         load64(left, getCachedMemoryTempRegisterIDAndInvalidate());
         return branch64(cond, memoryTempRegister, right);
+    }
+
+    Jump branchPtr(RelationalCondition cond, BaseIndex left, RegisterID right)
+    {
+        return branch64(cond, left, right);
     }
 
     Jump branch8(RelationalCondition cond, Address left, TrustedImm32 right)
