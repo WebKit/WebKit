@@ -465,10 +465,6 @@ WK_EXPORT bool WKPreferencesGetUserTimingEnabled(WKPreferencesRef);
 WK_EXPORT void WKPreferencesSetResourceTimingEnabled(WKPreferencesRef, bool flag);
 WK_EXPORT bool WKPreferencesGetResourceTimingEnabled(WKPreferencesRef);
 
-// Defaults to true
-WK_EXPORT void WKPreferencesSetSubtleCryptoEnabled(WKPreferencesRef, bool flag);
-WK_EXPORT bool WKPreferencesGetSubtleCryptoEnabled(WKPreferencesRef);
-
 // Defaults to true.
 WK_EXPORT void WKPreferencesSetLargeImageAsyncDecodingEnabled(WKPreferencesRef preferencesRef, bool flag);
 WK_EXPORT bool WKPreferencesGetLargeImageAsyncDecodingEnabled(WKPreferencesRef preferencesRef);

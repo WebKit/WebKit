@@ -3373,10 +3373,6 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
         updateThrottleState();
     }
 
-#if ENABLE(SUBTLE_CRYPTO)
-    RuntimeEnabledFeatures::sharedFeatures().setSubtleCryptoEnabled(store.getBoolValueForKey(WebPreferencesKey::subtleCryptoEnabledKey()));
-#endif
-
     settings.setSubresourceIntegrityEnabled(store.getBoolValueForKey(WebPreferencesKey::subresourceIntegrityEnabledKey()));
 
     platformPreferencesDidChange(store);

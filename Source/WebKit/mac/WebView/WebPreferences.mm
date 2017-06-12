@@ -652,9 +652,6 @@ public:
 #endif
 
         [NSNumber numberWithBool:YES], WebKitNeedsStorageAccessFromFileURLsQuirkKey,
-#if ENABLE(SUBTLE_CRYPTO)
-        [NSNumber numberWithBool:YES], WebKitSubtleCryptoEnabledPreferenceKey,
-#endif
 #if ENABLE(MEDIA_STREAM)
         [NSNumber numberWithBool:NO], WebKitMediaDevicesEnabledPreferenceKey,
         [NSNumber numberWithBool:YES], WebKitMediaStreamEnabledPreferenceKey,
@@ -2753,16 +2750,6 @@ static NSString *classIBCreatorID = nil;
 - (void)setMediaKeysStorageDirectory:(NSString *)directory
 {
     [self _setStringValue:directory forKey:WebKitMediaKeysStorageDirectoryKey];
-}
-
-- (BOOL)subtleCryptoEnabled
-{
-    return [self _boolValueForKey:WebKitSubtleCryptoEnabledPreferenceKey];
-}
-
-- (void)setSubtleCryptoEnabled:(BOOL)flag
-{
-    [self _setBoolValue:flag forKey:WebKitSubtleCryptoEnabledPreferenceKey];
 }
 
 - (BOOL)mediaDevicesEnabled

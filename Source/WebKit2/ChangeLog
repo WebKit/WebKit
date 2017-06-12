@@ -1,3 +1,21 @@
+2017-06-12  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebCrypto] Remove experimental feature flag of SubtleCrypto
+        https://bugs.webkit.org/show_bug.cgi?id=173197
+        <rdar://problem/32688148>
+
+        Reviewed by Brent Fulgham.
+
+        * Shared/WebPreferencesDefinitions.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetSubtleCryptoEnabled): Deleted.
+        (WKPreferencesGetSubtleCryptoEnabled): Deleted.
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::overrideBoolPreferenceForTestRunner):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2017-06-12  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS DnD] Allow the injected bundle to add client data when writing an image to the pasteboard

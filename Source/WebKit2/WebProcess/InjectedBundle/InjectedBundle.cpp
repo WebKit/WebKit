@@ -214,11 +214,6 @@ void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* page
         RuntimeEnabledFeatures::sharedFeatures().setEncryptedMediaAPIEnabled(enabled);
 #endif
 
-#if ENABLE(SUBTLE_CRYPTO)
-    if (preference == "WebKitSubtleCryptoEnabled")
-        RuntimeEnabledFeatures::sharedFeatures().setSubtleCryptoEnabled(enabled);
-#endif
-
 #if ENABLE(MEDIA_STREAM)
     if (preference == "WebKitMediaDevicesEnabled")
         RuntimeEnabledFeatures::sharedFeatures().setMediaDevicesEnabled(enabled);

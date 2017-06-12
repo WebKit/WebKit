@@ -159,9 +159,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (BOOL)isSpatialNavigationEnabled;
 - (void)setSpatialNavigationEnabled:(BOOL)flag;
 
-- (void)setSubtleCryptoEnabled:(BOOL)flag;
-- (BOOL)subtleCryptoEnabled;
-
 - (void)setMediaDevicesEnabled:(BOOL)flag;
 - (BOOL)mediaDevicesEnabled;
 

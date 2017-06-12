@@ -358,7 +358,6 @@
     macro(LinkPreloadEnabled, linkPreloadEnabled, Bool, bool, DEFAULT_EXPERIMENTAL_FEATURES_ENABLED, "Link Preload", "Link preload support") \
     macro(WebRTCLegacyAPIDisabled, webRTCLegacyAPIDisabled, Bool, bool, false, "Remove Legacy WebRTC API", "Remove Legacy WebRTC API") \
     macro(SubresourceIntegrityEnabled, subresourceIntegrityEnabled, Bool, bool, DEFAULT_EXPERIMENTAL_FEATURES_ENABLED, "SubresourceIntegrity", "Enable SubresourceIntegrity") \
-    macro(SubtleCryptoEnabled, subtleCryptoEnabled, Bool, bool, DEFAULT_EXPERIMENTAL_FEATURES_ENABLED, "SubtleCrypto", "Enable SubtleCrypto support") \
     macro(ViewportFitEnabled, viewportFitEnabled, Bool, bool, DEFAULT_EXPERIMENTAL_FEATURES_ENABLED, "Viewport Fit", "Enable viewport-fit viewport parameter") \
     macro(WebAnimationsEnabled, webAnimationsEnabled, Bool, bool, false, "Web Animations", "Web Animations prototype") \
     macro(WebGL2Enabled, webGL2Enabled, Bool, bool, false, "WebGL 2.0", "WebGL 2 prototype") \

@@ -845,7 +845,6 @@ static void enableExperimentalFeatures(WebPreferences* preferences)
     [preferences setLinkPreloadEnabled:YES];
     [preferences setMediaPreloadingEnabled:YES];
     // FIXME: InputEvents
-    [preferences setSubtleCryptoEnabled:YES];
     [preferences setWebAnimationsEnabled:YES];
     [preferences setWebGL2Enabled:YES];
     [preferences setWebGPUEnabled:YES];

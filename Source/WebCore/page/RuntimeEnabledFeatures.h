@@ -188,11 +188,6 @@ public:
     bool encryptedMediaAPIEnabled() const { return m_encryptedMediaAPIEnabled; }
 #endif
 
-#if ENABLE(SUBTLE_CRYPTO)
-    void setSubtleCryptoEnabled(bool isEnabled) { m_isSubtleCryptoEnabled = isEnabled; }
-    bool subtleCryptoEnabled() const { return m_isSubtleCryptoEnabled; }
-#endif
-
 #if ENABLE(VIDEO)
     bool audioEnabled() const;
 #endif
@@ -303,10 +298,6 @@ private:
 
 #if ENABLE(INTERSECTION_OBSERVER)
     bool m_intersectionObserverEnabled { false };
-#endif
-
-#if ENABLE(SUBTLE_CRYPTO)
-    bool m_isSubtleCryptoEnabled { true };
 #endif
 
     friend class WTF::NeverDestroyed<RuntimeEnabledFeatures>;
