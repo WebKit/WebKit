@@ -93,6 +93,7 @@ static BOOL isLookalikeCharacter(UChar32 charCode)
         case 0x05F4: /* HEBREW PUNCTUATION GERSHAYIM */
         case 0x0609: /* ARABIC-INDIC PER MILLE SIGN */
         case 0x060A: /* ARABIC-INDIC PER TEN THOUSAND SIGN */
+        case 0x0650: /* ARABIC KASRA */
         case 0x0660: /* ARABIC INDIC DIGIT ZERO */
         case 0x066A: /* ARABIC PERCENT SIGN */
         case 0x06D4: /* ARABIC FULL STOP */

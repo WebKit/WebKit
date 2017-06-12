@@ -1,3 +1,16 @@
+2017-06-12  Chris Dumez  <cdumez@apple.com>
+
+        Add Arabic Kasra to list of blacklisted characters when puny-decoding URL
+        https://bugs.webkit.org/show_bug.cgi?id=173283
+        <rdar://problem/32725659>
+
+        Reviewed by Brent Fulgham.
+
+        Add layout test coverage.
+
+        * fast/url/user-visible/arabic_kasra-expected.txt: Added.
+        * fast/url/user-visible/arabic_kasra.html: Added.
+
 2017-06-12  Aaron Chu  <aaron_chu@apple.com>
 
         AX: Video/Audio Player Controls missing group container.
