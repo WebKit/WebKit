@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2016 Igalia S.L.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -141,6 +142,45 @@ TEST_F(SecurityOriginTest, SecurityOriginFileBasedConstructors)
     EXPECT_TRUE(tempFileOrigin->canAccess(spaceContainingOrigin.get()));
     EXPECT_TRUE(tempFileOrigin->canAccess(bangContainingOrigin.get()));
     EXPECT_TRUE(tempFileOrigin->canAccess(quoteContainingOrigin.get()));
+}
+
+TEST_F(SecurityOriginTest, IsPotentiallyTrustworthy)
+{
+    // Potentially Trustworthy
+    EXPECT_TRUE(SecurityOrigin::create(URL(URL(), "file:///" + tempFilePath()))->isPotentionallyTrustworthy());
+    EXPECT_TRUE(SecurityOrigin::createFromString("blob:http://127.0.0.1/3D45F36F-C126-493A-A8AA-457FA495247B")->isPotentionallyTrustworthy());
+    EXPECT_TRUE(SecurityOrigin::createFromString("blob:http://localhost/3D45F36F-C126-493A-A8AA-457FA495247B")->isPotentionallyTrustworthy());
+    EXPECT_TRUE(SecurityOrigin::createFromString("blob:http://[::1]/3D45F36F-C126-493A-A8AA-457FA495247B")->isPotentionallyTrustworthy());
+    EXPECT_TRUE(SecurityOrigin::createFromString("blob:https://example.com/3D45F36F-C126-493A-A8AA-457FA495247B")->isPotentionallyTrustworthy());
+    EXPECT_TRUE(SecurityOrigin::createFromString("data:,a")->isPotentionallyTrustworthy());
+    EXPECT_TRUE(SecurityOrigin::createFromString("about:")->isPotentionallyTrustworthy());
+    EXPECT_TRUE(SecurityOrigin::createFromString("about:blank")->isPotentionallyTrustworthy());
+    EXPECT_TRUE(SecurityOrigin::createFromString("about:srcdoc")->isPotentionallyTrustworthy());
+    EXPECT_TRUE(SecurityOrigin::createFromString("wss://example.com")->isPotentionallyTrustworthy());
+    EXPECT_TRUE(SecurityOrigin::createFromString("https://example.com")->isPotentionallyTrustworthy());
+    EXPECT_TRUE(SecurityOrigin::createFromString("http://127.0.0.0")->isPotentionallyTrustworthy());
+    EXPECT_TRUE(SecurityOrigin::createFromString("http://127.0.0.1")->isPotentionallyTrustworthy());
+    EXPECT_TRUE(SecurityOrigin::createFromString("http://127.0.0.2")->isPotentionallyTrustworthy());
+    EXPECT_TRUE(SecurityOrigin::createFromString("http://127.0.1.1")->isPotentionallyTrustworthy());
+    EXPECT_TRUE(SecurityOrigin::createFromString("http://127.1.1.1")->isPotentionallyTrustworthy());
+    EXPECT_TRUE(SecurityOrigin::createFromString("http://localhost")->isPotentionallyTrustworthy());
+    EXPECT_TRUE(SecurityOrigin::createFromString("http://loCALhoST")->isPotentionallyTrustworthy());
+    EXPECT_TRUE(SecurityOrigin::createFromString("http://[::1]")->isPotentionallyTrustworthy());
+#if PLATFORM(COCOA)
+    EXPECT_TRUE(SecurityOrigin::createFromString("applewebdata:a")->isPotentionallyTrustworthy());
+#endif
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    EXPECT_TRUE(SecurityOrigin::createFromString("resource:a")->isPotentionallyTrustworthy());
+#endif
+
+    // Not Trustworthy
+    EXPECT_FALSE(SecurityOrigin::createFromString("http:/malformed")->isPotentionallyTrustworthy());
+    EXPECT_FALSE(SecurityOrigin::createFromString("http://example.com")->isPotentionallyTrustworthy());
+    EXPECT_FALSE(SecurityOrigin::createFromString("http://31.13.77.36")->isPotentionallyTrustworthy());
+    EXPECT_FALSE(SecurityOrigin::createFromString("http://[2a03:2880:f10d:83:face:b00c::25de]")->isPotentionallyTrustworthy());
+    EXPECT_FALSE(SecurityOrigin::createFromString("ws://example.com")->isPotentionallyTrustworthy());
+    EXPECT_FALSE(SecurityOrigin::createFromString("blob:http://example.com/3D45F36F-C126-493A-A8AA-457FA495247B")->isPotentionallyTrustworthy());
+    EXPECT_FALSE(SecurityOrigin::createFromString("dummy:a")->isPotentionallyTrustworthy());
 }
 
 } // namespace TestWebKitAPI
