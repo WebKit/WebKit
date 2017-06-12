@@ -1,3 +1,18 @@
+2017-06-11  Keith Miller  <keith_miller@apple.com>
+
+        TypedArray constructor with string shouldn't throw
+        https://bugs.webkit.org/show_bug.cgi?id=173181
+
+        Reviewed by JF Bastien.
+
+        Update tests to allow null buffers.
+
+        * fast/canvas/webgl/array-unit-tests-expected.txt:
+        * fast/canvas/webgl/array-unit-tests.html:
+        * fast/canvas/webgl/webgl-array-invalid-ranges-expected.txt:
+        * fast/canvas/webgl/webgl-array-invalid-ranges.html:
+        * webgl/1.0.2/resources/webgl_test_files/conformance/typedarrays/array-unit-tests.html:
+
 2017-06-11  Antoine Quint  <graouts@apple.com>
 
         Rebaseline media/modern-media-controls/scrubber

@@ -63,4 +63,7 @@ foo[Symbol.iterator] = iterator2;
 
 shouldBeTrue("testConstructor('(foo)', [1,2])");
 
+shouldBeTrue("testConstructor('(true)', [0])");
+shouldBeTrue("testConstructor('(`hi`)', [])");
+
 finishJSTest();

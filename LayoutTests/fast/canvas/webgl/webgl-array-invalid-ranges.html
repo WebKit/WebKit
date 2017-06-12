@@ -15,9 +15,9 @@ function testConstructionWithNullBuffer(type, name) {
     var array;
     try {
         array = new type(null, 0, 0);
-        testFailed("Construction of " + name + " with null buffer should throw exception");
+        testPassed("Construction of " + name + " with null buffer shouldn't throw exception");
     } catch (e) {
-        testPassed("Construction of " + name + " with null buffer threw exception");
+        testFailed("Construction of " + name + " with null buffer threw exception");
     }
 }
 

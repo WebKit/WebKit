@@ -23,9 +23,9 @@ PASS test Float32Array Subarray offset and length clamping
 PASS negativeTest Float32Array Subarray
 PASS test Float32Array SetBoundaryConditions
 PASS test Float32Array ConstructionBoundaryConditions
-PASS Construction of Float32Array with null buffer threw exception
-PASS Construction of Float32Array with (null buffer, 0) threw exception
-PASS Construction of Float32Array with (null buffer, 0, 0) threw exception
+PASS Construction of Float32Array with null buffer shouldn't throw exception
+PASS Construction of Float32Array with (null buffer, 0) shouldn't throw exception
+PASS Construction of Float32Array with (null buffer, 0, 0) shouldn't throw exception
 PASS Construction of Float32Array with exception-throwing array-like object didn't crash unexpectedly
 PASS Construction of Float32Array with out-of-range number of elements threw an exception
 PASS Construction of Float32Array with out-of-range offset threw an exception
@@ -79,9 +79,9 @@ PASS test Float64Array Subarray offset and length clamping
 PASS negativeTest Float64Array Subarray
 PASS test Float64Array SetBoundaryConditions
 PASS test Float64Array ConstructionBoundaryConditions
-PASS Construction of Float64Array with null buffer threw exception
-PASS Construction of Float64Array with (null buffer, 0) threw exception
-PASS Construction of Float64Array with (null buffer, 0, 0) threw exception
+PASS Construction of Float64Array with null buffer shouldn't throw exception
+PASS Construction of Float64Array with (null buffer, 0) shouldn't throw exception
+PASS Construction of Float64Array with (null buffer, 0, 0) shouldn't throw exception
 PASS Construction of Float64Array with exception-throwing array-like object didn't crash unexpectedly
 PASS Construction of Float64Array with out-of-range number of elements threw an exception
 PASS Construction of Float64Array with out-of-range offset threw an exception
@@ -136,9 +136,9 @@ PASS test Int8Array Subarray offset and length clamping
 PASS negativeTest Int8Array Subarray
 PASS test Int8Array SetBoundaryConditions
 PASS test Int8Array ConstructionBoundaryConditions
-PASS Construction of Int8Array with null buffer threw exception
-PASS Construction of Int8Array with (null buffer, 0) threw exception
-PASS Construction of Int8Array with (null buffer, 0, 0) threw exception
+PASS Construction of Int8Array with null buffer shouldn't throw exception
+PASS Construction of Int8Array with (null buffer, 0) shouldn't throw exception
+PASS Construction of Int8Array with (null buffer, 0, 0) shouldn't throw exception
 PASS Construction of Int8Array with exception-throwing array-like object didn't crash unexpectedly
 PASS Construction of Int8Array with out-of-range number of elements threw an exception
 PASS Construction of Int8Array with out-of-range offset threw an exception
@@ -188,9 +188,9 @@ PASS test Int16Array Subarray offset and length clamping
 PASS negativeTest Int16Array Subarray
 PASS test Int16Array SetBoundaryConditions
 PASS test Int16Array ConstructionBoundaryConditions
-PASS Construction of Int16Array with null buffer threw exception
-PASS Construction of Int16Array with (null buffer, 0) threw exception
-PASS Construction of Int16Array with (null buffer, 0, 0) threw exception
+PASS Construction of Int16Array with null buffer shouldn't throw exception
+PASS Construction of Int16Array with (null buffer, 0) shouldn't throw exception
+PASS Construction of Int16Array with (null buffer, 0, 0) shouldn't throw exception
 PASS Construction of Int16Array with exception-throwing array-like object didn't crash unexpectedly
 PASS Construction of Int16Array with out-of-range number of elements threw an exception
 PASS Construction of Int16Array with out-of-range offset threw an exception
@@ -245,9 +245,9 @@ PASS test Int32Array Subarray offset and length clamping
 PASS negativeTest Int32Array Subarray
 PASS test Int32Array SetBoundaryConditions
 PASS test Int32Array ConstructionBoundaryConditions
-PASS Construction of Int32Array with null buffer threw exception
-PASS Construction of Int32Array with (null buffer, 0) threw exception
-PASS Construction of Int32Array with (null buffer, 0, 0) threw exception
+PASS Construction of Int32Array with null buffer shouldn't throw exception
+PASS Construction of Int32Array with (null buffer, 0) shouldn't throw exception
+PASS Construction of Int32Array with (null buffer, 0, 0) shouldn't throw exception
 PASS Construction of Int32Array with exception-throwing array-like object didn't crash unexpectedly
 PASS Construction of Int32Array with out-of-range number of elements threw an exception
 PASS Construction of Int32Array with out-of-range offset threw an exception
@@ -302,9 +302,9 @@ PASS test Uint8Array Subarray offset and length clamping
 PASS negativeTest Uint8Array Subarray
 PASS test Uint8Array SetBoundaryConditions
 PASS test Uint8Array ConstructionBoundaryConditions
-PASS Construction of Uint8Array with null buffer threw exception
-PASS Construction of Uint8Array with (null buffer, 0) threw exception
-PASS Construction of Uint8Array with (null buffer, 0, 0) threw exception
+PASS Construction of Uint8Array with null buffer shouldn't throw exception
+PASS Construction of Uint8Array with (null buffer, 0) shouldn't throw exception
+PASS Construction of Uint8Array with (null buffer, 0, 0) shouldn't throw exception
 PASS Construction of Uint8Array with exception-throwing array-like object didn't crash unexpectedly
 PASS Construction of Uint8Array with out-of-range number of elements threw an exception
 PASS Construction of Uint8Array with out-of-range offset threw an exception
@@ -354,9 +354,9 @@ PASS test Uint8ClampedArray Subarray offset and length clamping
 PASS negativeTest Uint8ClampedArray Subarray
 PASS test Uint8ClampedArray SetBoundaryConditions
 PASS test Uint8ClampedArray ConstructionBoundaryConditions
-PASS Construction of Uint8ClampedArray with null buffer threw exception
-PASS Construction of Uint8ClampedArray with (null buffer, 0) threw exception
-PASS Construction of Uint8ClampedArray with (null buffer, 0, 0) threw exception
+PASS Construction of Uint8ClampedArray with null buffer shouldn't throw exception
+PASS Construction of Uint8ClampedArray with (null buffer, 0) shouldn't throw exception
+PASS Construction of Uint8ClampedArray with (null buffer, 0, 0) shouldn't throw exception
 PASS Construction of Uint8ClampedArray with exception-throwing array-like object didn't crash unexpectedly
 PASS Construction of Uint8ClampedArray with out-of-range number of elements threw an exception
 PASS Construction of Uint8ClampedArray with out-of-range offset threw an exception
@@ -406,9 +406,9 @@ PASS test Uint16Array Subarray offset and length clamping
 PASS negativeTest Uint16Array Subarray
 PASS test Uint16Array SetBoundaryConditions
 PASS test Uint16Array ConstructionBoundaryConditions
-PASS Construction of Uint16Array with null buffer threw exception
-PASS Construction of Uint16Array with (null buffer, 0) threw exception
-PASS Construction of Uint16Array with (null buffer, 0, 0) threw exception
+PASS Construction of Uint16Array with null buffer shouldn't throw exception
+PASS Construction of Uint16Array with (null buffer, 0) shouldn't throw exception
+PASS Construction of Uint16Array with (null buffer, 0, 0) shouldn't throw exception
 PASS Construction of Uint16Array with exception-throwing array-like object didn't crash unexpectedly
 PASS Construction of Uint16Array with out-of-range number of elements threw an exception
 PASS Construction of Uint16Array with out-of-range offset threw an exception
@@ -463,9 +463,9 @@ PASS test Uint32Array Subarray offset and length clamping
 PASS negativeTest Uint32Array Subarray
 PASS test Uint32Array SetBoundaryConditions
 PASS test Uint32Array ConstructionBoundaryConditions
-PASS Construction of Uint32Array with null buffer threw exception
-PASS Construction of Uint32Array with (null buffer, 0) threw exception
-PASS Construction of Uint32Array with (null buffer, 0, 0) threw exception
+PASS Construction of Uint32Array with null buffer shouldn't throw exception
+PASS Construction of Uint32Array with (null buffer, 0) shouldn't throw exception
+PASS Construction of Uint32Array with (null buffer, 0, 0) shouldn't throw exception
 PASS Construction of Uint32Array with exception-throwing array-like object didn't crash unexpectedly
 PASS Construction of Uint32Array with out-of-range number of elements threw an exception
 PASS Construction of Uint32Array with out-of-range offset threw an exception

@@ -1,3 +1,16 @@
+2017-06-11  Keith Miller  <keith_miller@apple.com>
+
+        TypedArray constructor with string shouldn't throw
+        https://bugs.webkit.org/show_bug.cgi?id=173181
+
+        Reviewed by JF Bastien.
+
+        We should be coercing primitive arguments to numbers in the various
+        TypedArray constructors.
+
+        * runtime/JSGenericTypedArrayViewConstructorInlines.h:
+        (JSC::constructGenericTypedArrayViewWithArguments):
+
 2017-06-11  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] Make ThreadMessage portable
