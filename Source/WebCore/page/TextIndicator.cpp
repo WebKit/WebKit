@@ -301,7 +301,11 @@ static bool initializeIndicator(TextIndicatorData& data, Frame& frame, const Ran
     Vector<FloatRect> clippedTextRectsInDocumentCoordinates;
     Vector<FloatRect> textRectsInRootViewCoordinates;
     for (const FloatRect& textRect : textRects) {
-        FloatRect clippedTextRect = intersection(textRect, contentsClipRect);
+        FloatRect clippedTextRect;
+        if (data.options & TextIndicatorOptionDoNotClipToVisibleRect)
+            clippedTextRect = textRect;
+        else
+            clippedTextRect = intersection(textRect, contentsClipRect);
         if (clippedTextRect.isEmpty())
             continue;
 

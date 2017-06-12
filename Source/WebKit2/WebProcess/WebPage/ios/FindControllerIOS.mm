@@ -50,7 +50,7 @@ const int cornerRadius = 3;
 const int totalHorizontalMargin = 2;
 const int totalVerticalMargin = 1;
 
-const TextIndicatorOptions findTextIndicatorOptions = TextIndicatorOptionTightlyFitContent | TextIndicatorOptionIncludeMarginIfRangeMatchesSelection | TextIndicatorOptionExpandClipBeyondVisibleRect;
+const TextIndicatorOptions findTextIndicatorOptions = TextIndicatorOptionTightlyFitContent | TextIndicatorOptionIncludeMarginIfRangeMatchesSelection | TextIndicatorOptionDoNotClipToVisibleRect;
 
 static Color highlightColor()
 {
@@ -93,8 +93,11 @@ bool FindController::updateFindIndicator(Frame& selectedFrame, bool isShowingOve
         m_webPage->mainFrame()->pageOverlayController().uninstallPageOverlay(*m_findIndicatorOverlay, PageOverlay::FadeMode::DoNotFade);
 
     RefPtr<TextIndicator> textIndicator = TextIndicator::createWithSelectionInFrame(selectedFrame, findTextIndicatorOptions, TextIndicatorPresentationTransition::None, FloatSize(totalHorizontalMargin, totalVerticalMargin));
-    if (!textIndicator)
+    if (!textIndicator) {
+        m_findIndicatorOverlay = nullptr;
+        m_isShowingFindIndicator = false;
         return false;
+    }
 
     m_findIndicatorOverlayClient = std::make_unique<FindIndicatorOverlayClientIOS>(selectedFrame, textIndicator.get());
     m_findIndicatorOverlay = PageOverlay::create(*m_findIndicatorOverlayClient, PageOverlay::OverlayType::Document);
