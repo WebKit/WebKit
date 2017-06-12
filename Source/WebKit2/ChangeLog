@@ -1,3 +1,13 @@
+2017-06-12  Daewoong Jang  <daewoong.jang@navercorp.com>
+
+        [CoordinatedGraphics] Behavior change of DrawingAreaImpl after r217779
+        https://bugs.webkit.org/show_bug.cgi?id=173153
+
+        Reviewed by Carlos Garcia Campos.
+
+        * WebProcess/WebPage/AcceleratedDrawingArea.cpp:
+        (WebKit::AcceleratedDrawingArea::mainFrameContentSizeChanged):
+
 2017-06-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Prefer to use private WebKitWebView API over WebKitWebViewBase

@@ -157,20 +157,14 @@ void AcceleratedDrawingArea::updatePreferences(const WebPreferencesStore& store)
 
 void AcceleratedDrawingArea::mainFrameContentSizeChanged(const IntSize& size)
 {
-    if (m_webPage.useFixedLayout()) {
-        if (m_layerTreeHost)
-            m_layerTreeHost->sizeDidChange(size);
-        else if (m_previousLayerTreeHost)
-            m_previousLayerTreeHost->sizeDidChange(size);
-    } else {
 #if USE(COORDINATED_GRAPHICS_THREADED)
-        if (m_layerTreeHost)
-            m_layerTreeHost->contentsSizeChanged(size);
-        else if (m_previousLayerTreeHost)
-            m_previousLayerTreeHost->contentsSizeChanged(size);
+    if (m_layerTreeHost)
+        m_layerTreeHost->contentsSizeChanged(size);
+    else if (m_previousLayerTreeHost)
+        m_previousLayerTreeHost->contentsSizeChanged(size);
+#else
+    UNUSED_PARAM(size);
 #endif
-    }
-    m_webPage.mainFrame()->pageOverlayController().didChangeDocumentSize();
 }
 
 void AcceleratedDrawingArea::layerHostDidFlushLayers()
