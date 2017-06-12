@@ -75,7 +75,7 @@ typedef NS_ENUM(NSInteger, DataInteractionPhase) {
 @property (nonatomic) BOOL allowsFocusToStartInputSession;
 @property (nonatomic) BOOL shouldEnsureUIApplication;
 @property (nonatomic) BlockPtr<BOOL(_WKActivatedElementInfo *)> showCustomActionSheetBlock;
-@property (nonatomic) BlockPtr<NSArray *(NSArray *)> convertItemProvidersBlock;
+@property (nonatomic) BlockPtr<NSArray *(UIItemProvider *, NSArray *, NSDictionary *)> convertItemProvidersBlock;
 @property (nonatomic, strong) NSArray *externalItemProviders;
 @property (nonatomic) BlockPtr<NSUInteger(NSUInteger, id)> overrideDataInteractionOperationBlock;
 @property (nonatomic) BlockPtr<void(BOOL, NSArray *)> dataInteractionOperationCompletionBlock;

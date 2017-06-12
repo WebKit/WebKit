@@ -45,6 +45,8 @@
 typedef void (^FileLoadCompletionBlock)(NSURL *, BOOL, NSError *);
 typedef void (^DataLoadCompletionBlock)(NSData *, NSError *);
 
+static NSString *InjectedBundlePasteboardDataType = @"org.webkit.data";
+
 static UIImage *testIconImage()
 {
     return [UIImage imageNamed:@"TestWebKitAPI.resources/icon.png"];
@@ -759,26 +761,39 @@ TEST(DataInteractionTests, InjectedBundleAllowPerformTwoStepDrop)
     EXPECT_WK_STREQ("Hello world", [webView stringByEvaluatingJavaScript:@"editor.textContent"].UTF8String);
 }
 
-TEST(DataInteractionTests, AttachmentElementItemProviders)
+TEST(DataInteractionTests, InjectedBundleImageElementData)
 {
-    RetainPtr<WKWebViewConfiguration> configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"BundleEditingDelegatePlugIn"];
+    WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"BundleEditingDelegatePlugIn"];
     [configuration _setAttachmentElementEnabled:YES];
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get()]);
-    [webView synchronouslyLoadTestPageNamed:@"attachment-element"];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration]);
+    [webView synchronouslyLoadTestPageNamed:@"image-and-contenteditable"];
 
-    NSString *injectedTypeIdentifier = @"org.webkit.data";
     __block RetainPtr<NSString> injectedString;
     auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
-    [dataInteractionSimulator setConvertItemProvidersBlock:^NSArray *(NSArray *originalItemProviders)
+    [dataInteractionSimulator setConvertItemProvidersBlock:^NSArray *(UIItemProvider *itemProvider, NSArray *, NSDictionary *data)
     {
-        for (UIItemProvider *provider in originalItemProviders) {
-            NSData *injectedData = [provider copyDataRepresentationForTypeIdentifier:injectedTypeIdentifier error:nil];
-            if (!injectedData.length)
-                continue;
-            injectedString = adoptNS([[NSString alloc] initWithData:injectedData encoding:NSUTF8StringEncoding]);
-            break;
-        }
-        return originalItemProviders;
+        injectedString = adoptNS([[NSString alloc] initWithData:data[InjectedBundlePasteboardDataType] encoding:NSUTF8StringEncoding]);
+        return @[ itemProvider ];
+    }];
+
+    [dataInteractionSimulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 250)];
+
+    EXPECT_WK_STREQ("hello", [injectedString UTF8String]);
+}
+
+TEST(DataInteractionTests, InjectedBundleAttachmentElementData)
+{
+    WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"BundleEditingDelegatePlugIn"];
+    [configuration _setAttachmentElementEnabled:YES];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration]);
+    [webView synchronouslyLoadTestPageNamed:@"attachment-element"];
+
+    __block RetainPtr<NSString> injectedString;
+    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    [dataInteractionSimulator setConvertItemProvidersBlock:^NSArray *(UIItemProvider *itemProvider, NSArray *, NSDictionary *data)
+    {
+        injectedString = adoptNS([[NSString alloc] initWithData:data[InjectedBundlePasteboardDataType] encoding:NSUTF8StringEncoding]);
+        return @[ itemProvider ];
     }];
 
     [dataInteractionSimulator runFrom:CGPointMake(50, 50) to:CGPointMake(50, 400)];

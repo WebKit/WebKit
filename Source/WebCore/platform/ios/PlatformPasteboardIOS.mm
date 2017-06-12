@@ -266,6 +266,12 @@ void PlatformPasteboard::writeObjectRepresentations(const PasteboardImage& paste
 #if ENABLE(DATA_INTERACTION)
     RetainPtr<WebItemProviderRegistrationInfoList> itemsToRegister = adoptNS([[WebItemProviderRegistrationInfoList alloc] init]);
 
+    auto& types = pasteboardImage.clientTypes;
+    auto& data = pasteboardImage.clientData;
+    ASSERT(types.size() == data.size());
+    for (size_t i = 0, size = types.size(); i < size; ++i)
+        [itemsToRegister addData:data[i]->createNSData().get() forType:types[i]];
+
     if (auto image = pasteboardImage.image) {
         NSString *mimeType = pasteboardImage.resourceMIMEType;
         if (UTTypeIsDeclared((CFStringRef)mimeType)) {

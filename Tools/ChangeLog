@@ -1,5 +1,24 @@
 2017-06-12  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        [iOS DnD] Allow the injected bundle to add client data when writing an image to the pasteboard
+        https://bugs.webkit.org/show_bug.cgi?id=173238
+        <rdar://problem/31943370>
+
+        Reviewed by Ryosuke Niwa and Tim Horton.
+
+        Add a new unit test to verify that data inserted by the injected bundle when beginning a drag on an image
+        element is plumbed across to the UI delegate. Also refactors injected bundle unit tests to use the new version
+        of adjustedDataInteractionItemProvidersForItemProvider: that takes representing objects and additional data.
+
+        * TestWebKitAPI/Tests/ios/DataInteractionTests.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/ios/DataInteractionSimulator.h:
+        * TestWebKitAPI/ios/DataInteractionSimulator.mm:
+        (-[DataInteractionSimulator _webView:adjustedDataInteractionItemProvidersForItemProvider:representingObjects:additionalData:]):
+        (-[DataInteractionSimulator _webView:adjustedDataInteractionItemProviders:]): Deleted.
+
+2017-06-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         WebItemProviderPasteboard should call its completion block immediately after a synchronous load
         https://bugs.webkit.org/show_bug.cgi?id=173225
         <rdar://problem/32713144>
