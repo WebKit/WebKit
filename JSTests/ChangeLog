@@ -1,3 +1,65 @@
+2017-06-09  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG] Add ArrayIndexOf intrinsic
+        https://bugs.webkit.org/show_bug.cgi?id=172421
+
+        Reviewed by Saam Barati.
+
+        * stress/array-indexof-array-prototype-change.js: Added.
+        (shouldBe):
+        (indexOfInt32):
+        * stress/array-indexof-have-a-bad-time-getter.js: Added.
+        (shouldBe):
+        (indexOfInt32):
+        * stress/array-indexof-have-a-bad-time.js: Added.
+        (shouldBe):
+        (indexOfInt32):
+        * stress/array-indexof-hole-with-prototype.js: Added.
+        (shouldBe):
+        (indexOf):
+        * stress/array-indexof-hole.js: Added.
+        (shouldBe):
+        (indexOf):
+        * stress/array-indexof-index.js: Added.
+        (shouldBe):
+        (indexOfInt32):
+        (indexOfDouble):
+        (indexOfString):
+        (indexOfObject):
+        (indexOfValue):
+        * stress/array-indexof-negative-index.js: Added.
+        (shouldBe):
+        (indexOfInt32):
+        (indexOfDouble):
+        (indexOfString):
+        (indexOfObject):
+        (indexOfValue):
+        * stress/array-indexof-non-int32-start-index.js: Added.
+        (shouldBe):
+        (indexOf):
+        (object.valueOf):
+        * stress/array-indexof-object-prototype-change.js: Added.
+        (shouldBe):
+        (indexOfInt32):
+        * stress/array-indexof-object.js: Added.
+        (shouldBe):
+        (indexOf):
+        * stress/array-indexof-original-array.js: Added.
+        (shouldBe):
+        (indexOfInt32):
+        * stress/array-indexof-string.js: Added.
+        (shouldBe):
+        (indexOf):
+        * stress/array-indexof-structure-change-convert.js: Added.
+        (shouldBe):
+        (indexOf):
+        * stress/array-indexof-structure-change.js: Added.
+        (shouldBe):
+        (indexOf):
+        * stress/array-indexof.js: Added.
+        (shouldBe):
+        (indexOf):
+
 2017-06-11  Keith Miller  <keith_miller@apple.com>
 
         TypedArray constructor with string shouldn't throw

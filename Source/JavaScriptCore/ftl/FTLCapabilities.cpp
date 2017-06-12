@@ -282,6 +282,7 @@ inline CapabilityLevel canCompile(Node* node)
     case CallDOM:
     case CallDOMGetter:
     case ArraySlice:
+    case ArrayIndexOf:
     case ParseInt:
     case AtomicsAdd:
     case AtomicsAnd:

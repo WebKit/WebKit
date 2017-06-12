@@ -1022,6 +1022,45 @@ private:
                 fixEdge<Int32Use>(m_graph.varArgChild(node, 2));
             break;
         }
+
+        case ArrayIndexOf: {
+            Edge& array = m_graph.varArgChild(node, 0);
+            Edge& storage = m_graph.varArgChild(node, node->numChildren() == 3 ? 2 : 3);
+            blessArrayOperation(array, Edge(), storage);
+            ASSERT_WITH_MESSAGE(storage.node(), "blessArrayOperation for ArrayIndexOf must set Butterfly for storage edge.");
+
+            fixEdge<KnownCellUse>(array);
+            if (node->numChildren() == 4)
+                fixEdge<Int32Use>(m_graph.varArgChild(node, 2));
+
+            Edge& searchElement = m_graph.varArgChild(node, 1);
+            // FIXME: We have a chance to constant-fold this node to -1 by
+            // emitting non number edge filters.
+            // https://bugs.webkit.org/show_bug.cgi?id=173176
+            switch (node->arrayMode().type()) {
+            case Array::Double: {
+                if (searchElement->shouldSpeculateNumber())
+                    fixEdge<DoubleRepUse>(searchElement);
+                break;
+            }
+            case Array::Int32: {
+                if (searchElement->shouldSpeculateInt32())
+                    fixEdge<Int32Use>(searchElement);
+                break;
+            }
+            case Array::Contiguous: {
+                if (searchElement->shouldSpeculateString())
+                    fixEdge<StringUse>(searchElement);
+                else if (searchElement->shouldSpeculateObject())
+                    fixEdge<ObjectUse>(searchElement);
+                break;
+            }
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+                break;
+            }
+            break;
+        }
             
         case RegExpExec:
         case RegExpTest: {

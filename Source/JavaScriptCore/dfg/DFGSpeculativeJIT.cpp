@@ -7442,6 +7442,181 @@ void SpeculativeJIT::compileArraySlice(Node* node)
     cellResult(resultGPR, node);
 }
 
+void SpeculativeJIT::compileArrayIndexOf(Node* node)
+{
+    ASSERT(node->op() == ArrayIndexOf);
+
+    StorageOperand storage(this, m_jit.graph().varArgChild(node, node->numChildren() == 3 ? 2 : 3));
+    GPRTemporary index(this);
+    GPRTemporary tempLength(this);
+
+    GPRReg storageGPR = storage.gpr();
+    GPRReg indexGPR = index.gpr();
+    GPRReg lengthGPR = tempLength.gpr();
+
+    m_jit.load32(MacroAssembler::Address(storageGPR, Butterfly::offsetOfPublicLength()), lengthGPR);
+
+    if (node->numChildren() == 4) {
+        SpeculateInt32Operand startIndex(this, m_jit.graph().varArgChild(node, 2));
+        GPRReg startIndexGPR = startIndex.gpr();
+        MacroAssembler::JumpList done;
+        auto isPositive = m_jit.branch32(MacroAssembler::GreaterThanOrEqual, startIndexGPR, TrustedImm32(0));
+        m_jit.move(lengthGPR, indexGPR);
+        done.append(m_jit.branchAdd32(MacroAssembler::PositiveOrZero, startIndexGPR, indexGPR));
+        m_jit.move(TrustedImm32(0), indexGPR);
+        done.append(m_jit.jump());
+
+        isPositive.link(&m_jit);
+        m_jit.move(startIndexGPR, indexGPR);
+        done.append(m_jit.branch32(MacroAssembler::BelowOrEqual, indexGPR, lengthGPR));
+        m_jit.move(lengthGPR, indexGPR);
+
+        done.link(&m_jit);
+    } else
+        m_jit.move(TrustedImm32(0), indexGPR);
+
+    Edge& searchElementEdge = m_jit.graph().varArgChild(node, 1);
+    switch (searchElementEdge.useKind()) {
+    case Int32Use:
+    case ObjectUse: {
+        auto emitLoop = [&] (auto emitCompare) {
+            m_jit.zeroExtend32ToPtr(lengthGPR, lengthGPR);
+            m_jit.zeroExtend32ToPtr(indexGPR, indexGPR);
+
+            auto loop = m_jit.label();
+            auto notFound = m_jit.branch32(CCallHelpers::Equal, indexGPR, lengthGPR);
+
+            auto found = emitCompare();
+
+            m_jit.add32(TrustedImm32(1), indexGPR);
+            m_jit.jump().linkTo(loop, &m_jit);
+
+            notFound.link(&m_jit);
+            m_jit.move(TrustedImm32(-1), indexGPR);
+            found.link(&m_jit);
+            int32Result(indexGPR, node);
+        };
+
+#if USE(JSVALUE32_64)
+        GPRTemporary temp(this);
+        GPRReg tempGPR = temp.gpr();
+#endif
+
+        if (searchElementEdge.useKind() == Int32Use) {
+            ASSERT(node->arrayMode().type() == Array::Int32);
+#if USE(JSVALUE64)
+            JSValueOperand searchElement(this, searchElementEdge, ManualOperandSpeculation);
+            JSValueRegs searchElementRegs = searchElement.jsValueRegs();
+            speculateInt32(searchElementEdge, searchElementRegs);
+            GPRReg searchElementGPR = searchElementRegs.payloadGPR();
+#else
+            SpeculateInt32Operand searchElement(this, searchElementEdge);
+            GPRReg searchElementGPR = searchElement.gpr();
+#endif
+            emitLoop([&] () {
+#if USE(JSVALUE64)
+                auto found = m_jit.branch64(CCallHelpers::Equal, MacroAssembler::BaseIndex(storageGPR, indexGPR, MacroAssembler::TimesEight), searchElementGPR);
+#else
+                auto skip = m_jit.branch32(CCallHelpers::NotEqual, MacroAssembler::BaseIndex(storageGPR, indexGPR, MacroAssembler::TimesEight, TagOffset), TrustedImm32(JSValue::Int32Tag));
+                m_jit.load32(MacroAssembler::BaseIndex(storageGPR, indexGPR, MacroAssembler::TimesEight, PayloadOffset), tempGPR);
+                auto found = m_jit.branch32(CCallHelpers::Equal, tempGPR, searchElementGPR);
+                skip.link(&m_jit);
+#endif
+                return found;
+            });
+        } else {
+            ASSERT(node->arrayMode().type() == Array::Contiguous);
+            SpeculateCellOperand searchElement(this, searchElementEdge);
+            GPRReg searchElementGPR = searchElement.gpr();
+            speculateObject(searchElementEdge, searchElementGPR);
+
+            emitLoop([&] () {
+#if USE(JSVALUE64)
+                auto found = m_jit.branch64(CCallHelpers::Equal, MacroAssembler::BaseIndex(storageGPR, indexGPR, MacroAssembler::TimesEight), searchElementGPR);
+#else
+                auto skip = m_jit.branch32(CCallHelpers::NotEqual, MacroAssembler::BaseIndex(storageGPR, indexGPR, MacroAssembler::TimesEight, TagOffset), TrustedImm32(JSValue::CellTag));
+                m_jit.load32(MacroAssembler::BaseIndex(storageGPR, indexGPR, MacroAssembler::TimesEight, PayloadOffset), tempGPR);
+                auto found = m_jit.branch32(CCallHelpers::Equal, tempGPR, searchElementGPR);
+                skip.link(&m_jit);
+#endif
+                return found;
+            });
+        }
+        break;
+    }
+
+    case DoubleRepUse: {
+        ASSERT(node->arrayMode().type() == Array::Double);
+        SpeculateDoubleOperand searchElement(this, searchElementEdge);
+        FPRTemporary tempDouble(this);
+
+        FPRReg searchElementFPR = searchElement.fpr();
+        FPRReg tempFPR = tempDouble.fpr();
+
+        m_jit.zeroExtend32ToPtr(lengthGPR, lengthGPR);
+        m_jit.zeroExtend32ToPtr(indexGPR, indexGPR);
+
+        auto loop = m_jit.label();
+        auto notFound = m_jit.branch32(CCallHelpers::Equal, indexGPR, lengthGPR);
+        m_jit.loadDouble(MacroAssembler::BaseIndex(storageGPR, indexGPR, MacroAssembler::TimesEight), tempFPR);
+        auto found = m_jit.branchDouble(CCallHelpers::DoubleEqual, tempFPR, searchElementFPR);
+        m_jit.add32(TrustedImm32(1), indexGPR);
+        m_jit.jump().linkTo(loop, &m_jit);
+
+        notFound.link(&m_jit);
+        m_jit.move(TrustedImm32(-1), indexGPR);
+        found.link(&m_jit);
+        int32Result(indexGPR, node);
+        break;
+    }
+
+    case StringUse: {
+        ASSERT(node->arrayMode().type() == Array::Contiguous);
+        SpeculateCellOperand searchElement(this, searchElementEdge);
+
+        GPRReg searchElementGPR = searchElement.gpr();
+
+        speculateString(searchElementEdge, searchElementGPR);
+
+        flushRegisters();
+
+        callOperation(operationArrayIndexOfString, lengthGPR, storageGPR, searchElementGPR, indexGPR);
+        m_jit.exceptionCheck();
+
+        int32Result(lengthGPR, node);
+        break;
+    }
+
+    case UntypedUse: {
+        JSValueOperand searchElement(this, searchElementEdge);
+
+        JSValueRegs searchElementRegs = searchElement.jsValueRegs();
+
+        flushRegisters();
+        switch (node->arrayMode().type()) {
+        case Array::Double:
+            callOperation(operationArrayIndexOfValueDouble, lengthGPR, storageGPR, searchElementRegs, indexGPR);
+            break;
+        case Array::Int32:
+        case Array::Contiguous:
+            callOperation(operationArrayIndexOfValueInt32OrContiguous, lengthGPR, storageGPR, searchElementRegs, indexGPR);
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
+        m_jit.exceptionCheck();
+
+        int32Result(lengthGPR, node);
+        break;
+    }
+
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
+    }
+}
+
 void SpeculativeJIT::compileNotifyWrite(Node* node)
 {
     WatchpointSet* set = node->watchpointSet();
@@ -8428,15 +8603,18 @@ void SpeculativeJIT::speculateCellOrOther(Edge edge)
     ok.link(&m_jit);
 }
 
+void SpeculativeJIT::speculateObject(Edge edge, GPRReg cell)
+{
+    DFG_TYPE_CHECK(JSValueSource::unboxedCell(cell), edge, SpecObject, m_jit.branchIfNotObject(cell));
+}
+
 void SpeculativeJIT::speculateObject(Edge edge)
 {
     if (!needsTypeCheck(edge, SpecObject))
         return;
     
     SpeculateCellOperand operand(this, edge);
-    GPRReg gpr = operand.gpr();
-    DFG_TYPE_CHECK(
-        JSValueSource::unboxedCell(gpr), edge, SpecObject, m_jit.branchIfNotObject(gpr));
+    speculateObject(edge, operand.gpr());
 }
 
 void SpeculativeJIT::speculateFunction(Edge edge)

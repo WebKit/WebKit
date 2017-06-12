@@ -3721,6 +3721,11 @@ void SpeculativeJIT::compile(Node* node)
         compileArraySlice(node);
         break;
     }
+
+    case ArrayIndexOf: {
+        compileArrayIndexOf(node);
+        break;
+    }
         
     case ArrayPop: {
         ASSERT(node->arrayMode().isJSArray());
@@ -6166,6 +6171,11 @@ void SpeculativeJIT::speculateAnyInt(Edge edge)
     
     GPRTemporary temp(this);
     convertAnyInt(edge, temp.gpr());
+}
+
+void SpeculativeJIT::speculateInt32(Edge edge, JSValueRegs regs)
+{
+    DFG_TYPE_CHECK(regs, edge, SpecInt32Only, m_jit.branchIfNotInt32(regs));
 }
 
 void SpeculativeJIT::speculateDoubleRepAnyInt(Edge edge)

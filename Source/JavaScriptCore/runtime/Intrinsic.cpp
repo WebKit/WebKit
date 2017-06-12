@@ -71,6 +71,8 @@ const char* intrinsicName(Intrinsic intrinsic)
         return "SinhIntrinsic";
     case TanhIntrinsic:
         return "TanhIntrinsic";
+    case ArrayIndexOfIntrinsic:
+        return "ArrayIndexOfIntrinsic";
     case ArrayPushIntrinsic:
         return "ArrayPushIntrinsic";
     case ArrayPopIntrinsic:

@@ -3583,6 +3583,11 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case ArrayIndexOf: {
+        compileArrayIndexOf(node);
+        break;
+    }
+
     case DFG::Jump: {
         jump(node->targetBlock());
         noResult(node);

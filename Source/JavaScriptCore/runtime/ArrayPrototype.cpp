@@ -105,7 +105,7 @@ void ArrayPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("every", arrayPrototypeEveryCodeGenerator, DontEnum);
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("forEach", arrayPrototypeForEachCodeGenerator, DontEnum);
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("some", arrayPrototypeSomeCodeGenerator, DontEnum);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("indexOf", arrayProtoFuncIndexOf, DontEnum, 1);
+    JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION("indexOf", arrayProtoFuncIndexOf, DontEnum, 1, ArrayIndexOfIntrinsic);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("lastIndexOf", arrayProtoFuncLastIndexOf, DontEnum, 1);
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("filter", arrayPrototypeFilterCodeGenerator, DontEnum);
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("reduce", arrayPrototypeReduceCodeGenerator, DontEnum);

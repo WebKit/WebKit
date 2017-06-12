@@ -2323,6 +2323,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, int resultOperand, Intrin
             InlineWatchpointSet& arrayPrototypeTransition = globalObject->arrayPrototype()->structure()->transitionWatchpointSet();
 
             // FIXME: We could easily relax the Array/Object.prototype transition as long as we OSR exitted if we saw a hole.
+            // https://bugs.webkit.org/show_bug.cgi?id=173171
             if (globalObject->arraySpeciesWatchpoint().state() == IsWatched
                 && globalObject->havingABadTimeWatchpoint()->isStillValid()
                 && arrayPrototypeTransition.isStillValid()
@@ -2378,6 +2379,72 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, int resultOperand, Intrin
 
         RELEASE_ASSERT_NOT_REACHED();
         return false;
+    }
+
+    case ArrayIndexOfIntrinsic: {
+        if (argumentCountIncludingThis < 2)
+            return false;
+
+        if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadIndexingType)
+            || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadConstantCache)
+            || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache)
+            || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
+            return false;
+
+        ArrayMode arrayMode = getArrayMode(m_currentInstruction[OPCODE_LENGTH(op_call) - 2].u.arrayProfile);
+        if (!arrayMode.isJSArray())
+            return false;
+
+        if (arrayMode.arrayClass() != Array::OriginalArray)
+            return false;
+
+        // We do not want to convert arrays into one type just to perform indexOf.
+        if (arrayMode.doesConversion())
+            return false;
+
+        switch (arrayMode.type()) {
+        case Array::Double:
+        case Array::Int32:
+        case Array::Contiguous: {
+            JSGlobalObject* globalObject = m_graph.globalObjectFor(currentNodeOrigin().semantic);
+
+            InlineWatchpointSet& objectPrototypeTransition = globalObject->objectPrototype()->structure()->transitionWatchpointSet();
+            InlineWatchpointSet& arrayPrototypeTransition = globalObject->arrayPrototype()->structure()->transitionWatchpointSet();
+
+            // FIXME: We could easily relax the Array/Object.prototype transition as long as we OSR exitted if we saw a hole.
+            // https://bugs.webkit.org/show_bug.cgi?id=173171
+            if (globalObject->havingABadTimeWatchpoint()->isStillValid()
+                && arrayPrototypeTransition.isStillValid()
+                && objectPrototypeTransition.isStillValid()
+                && globalObject->arrayPrototypeChainIsSane()) {
+
+                m_graph.watchpoints().addLazily(globalObject->havingABadTimeWatchpoint());
+                m_graph.watchpoints().addLazily(arrayPrototypeTransition);
+                m_graph.watchpoints().addLazily(objectPrototypeTransition);
+
+                insertChecks();
+
+                Node* array = get(virtualRegisterForArgument(0, registerOffset));
+                addVarArgChild(array);
+                addVarArgChild(get(virtualRegisterForArgument(1, registerOffset))); // Search element.
+                if (argumentCountIncludingThis >= 3)
+                    addVarArgChild(get(virtualRegisterForArgument(2, registerOffset))); // Start index.
+                addVarArgChild(nullptr);
+
+                Node* node = addToGraph(Node::VarArg, ArrayIndexOf, OpInfo(arrayMode.asWord()), OpInfo());
+                set(VirtualRegister(resultOperand), node);
+                return true;
+            }
+
+            return false;
+        }
+        default:
+            return false;
+        }
+
+        RELEASE_ASSERT_NOT_REACHED();
+        return false;
+
     }
         
     case ArrayPopIntrinsic: {

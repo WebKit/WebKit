@@ -262,6 +262,7 @@ namespace JSC { namespace DFG {
     macro(ArrayPush, NodeResultJS | NodeMustGenerate) \
     macro(ArrayPop, NodeResultJS | NodeMustGenerate) \
     macro(ArraySlice, NodeResultJS | NodeMustGenerate | NodeHasVarArgs) \
+    macro(ArrayIndexOf, NodeResultInt32 | NodeHasVarArgs) \
     \
     /* Optimizations for regular expression matching. */\
     macro(RegExpExec, NodeResultJS | NodeMustGenerate) \

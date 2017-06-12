@@ -205,6 +205,11 @@ void JIT_OPERATION operationLoadVarargs(ExecState*, int32_t firstElementDest, En
 
 int32_t JIT_OPERATION operationHasOwnProperty(ExecState*, JSObject*, EncodedJSValue);
 
+int32_t JIT_OPERATION operationArrayIndexOfString(ExecState*, Butterfly*, JSString*, int32_t);
+int32_t JIT_OPERATION operationArrayIndexOfValue(ExecState*, Butterfly*, EncodedJSValue, int32_t);
+int32_t JIT_OPERATION operationArrayIndexOfValueDouble(ExecState*, Butterfly*, EncodedJSValue, int32_t);
+int32_t JIT_OPERATION operationArrayIndexOfValueInt32OrContiguous(ExecState*, Butterfly*, EncodedJSValue, int32_t);
+
 JSCell* JIT_OPERATION operationSpreadFastArray(ExecState*, JSCell*);
 JSCell* JIT_OPERATION operationSpreadGeneric(ExecState*, JSCell*);
 JSCell* JIT_OPERATION operationNewArrayWithSpreadSlow(ExecState*, void*, uint32_t);

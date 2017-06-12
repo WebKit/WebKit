@@ -51,6 +51,7 @@ enum Intrinsic {
     ArrayPushIntrinsic,
     ArrayPopIntrinsic,
     ArraySliceIntrinsic,
+    ArrayIndexOfIntrinsic,
     CharCodeAtIntrinsic,
     CharAtIntrinsic,
     FromCharCodeIntrinsic,

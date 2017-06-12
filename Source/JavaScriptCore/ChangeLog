@@ -1,3 +1,73 @@
+2017-06-09  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG] Add ArrayIndexOf intrinsic
+        https://bugs.webkit.org/show_bug.cgi?id=172421
+
+        Reviewed by Saam Barati.
+
+        This patch introduces ArrayIndexOfInstrinsic for DFG and FTL optimizations.
+        We emit array check and go fast path if the array is Array::Int32, Array::Double
+        or Array::Continugous. In addition, for Array::Int32 and Array::Double case,
+        we have inlined fast paths.
+
+        With updated ARES-6 Babylon,
+
+        Before
+            firstIteration:     45.76 +- 3.87 ms
+            averageWorstCase:   24.41 +- 2.17 ms
+            steadyState:        8.01 +- 0.22 ms
+        After
+            firstIteration:     45.64 +- 4.23 ms
+            averageWorstCase:   23.03 +- 3.34 ms
+            steadyState:        7.33 +- 0.34 ms
+
+        In SixSpeed.
+                                         baseline                  patched
+
+            map-set-lookup.es5      734.4701+-10.4383    ^    102.0968+-2.6357        ^ definitely 7.1939x faster
+            map-set.es5              41.1396+-1.0558     ^     33.1916+-0.7986        ^ definitely 1.2395x faster
+            map-set-object.es5       62.8317+-1.2518     ^     45.6944+-0.8369        ^ definitely 1.3750x faster
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasArrayMode):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileArrayIndexOf):
+        (JSC::DFG::SpeculativeJIT::speculateObject):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::speculateInt32):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArrayIndexOf):
+        * jit/JITOperations.h:
+        * runtime/ArrayPrototype.cpp:
+        (JSC::ArrayPrototype::finishCreation):
+        * runtime/Intrinsic.cpp:
+        (JSC::intrinsicName):
+        * runtime/Intrinsic.h:
+
 2017-06-11  Keith Miller  <keith_miller@apple.com>
 
         TypedArray constructor with string shouldn't throw

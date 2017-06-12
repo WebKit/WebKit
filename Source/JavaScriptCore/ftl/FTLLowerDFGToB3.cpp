@@ -726,6 +726,9 @@ private:
         case ArraySlice:
             compileArraySlice();
             break;
+        case ArrayIndexOf:
+            compileArrayIndexOf();
+            break;
         case CreateActivation:
             compileCreateActivation();
             break;
@@ -4050,6 +4053,111 @@ private:
         mutatorFence();
         setJSValue(arrayResult.array);
     }
+
+    void compileArrayIndexOf()
+    {
+        LValue storage = lowStorage(m_node->numChildren() == 3 ? m_graph.varArgChild(m_node, 2) : m_graph.varArgChild(m_node, 3));
+        LValue length = m_out.load32(storage, m_heaps.Butterfly_publicLength);
+
+        LValue startIndex;
+        if (m_node->numChildren() == 4) {
+            startIndex = lowInt32(m_graph.varArgChild(m_node, 2));
+            startIndex = m_out.select(m_out.greaterThanOrEqual(startIndex, m_out.int32Zero),
+                m_out.select(m_out.above(startIndex, length), length, startIndex),
+                m_out.select(m_out.lessThan(m_out.add(length, startIndex), m_out.int32Zero), m_out.int32Zero, m_out.add(length, startIndex)));
+        } else
+            startIndex = m_out.int32Zero;
+
+        Edge& searchElementEdge = m_graph.varArgChild(m_node, 1);
+        switch (searchElementEdge.useKind()) {
+        case Int32Use:
+        case ObjectUse:
+        case DoubleRepUse: {
+            LBasicBlock loopHeader = m_out.newBlock();
+            LBasicBlock loopBody = m_out.newBlock();
+            LBasicBlock loopNext = m_out.newBlock();
+            LBasicBlock notFound = m_out.newBlock();
+            LBasicBlock continuation = m_out.newBlock();
+
+            LValue searchElement;
+            if (searchElementEdge.useKind() == Int32Use) {
+                ASSERT(m_node->arrayMode().type() == Array::Int32);
+                speculate(searchElementEdge);
+                searchElement = lowJSValue(searchElementEdge, ManualOperandSpeculation);
+            } else if (searchElementEdge.useKind() == ObjectUse) {
+                ASSERT(m_node->arrayMode().type() == Array::Contiguous);
+                searchElement = lowObject(searchElementEdge);
+            } else {
+                ASSERT(m_node->arrayMode().type() == Array::Double);
+                searchElement = lowDouble(searchElementEdge);
+            }
+
+            startIndex = m_out.zeroExtPtr(startIndex);
+            length = m_out.zeroExtPtr(length);
+
+            ValueFromBlock initialStartIndex = m_out.anchor(startIndex);
+            m_out.jump(loopHeader);
+
+            LBasicBlock lastNext = m_out.appendTo(loopHeader, loopBody);
+            LValue index = m_out.phi(pointerType(), initialStartIndex);
+            m_out.branch(m_out.notEqual(index, length), unsure(loopBody), unsure(notFound));
+
+            m_out.appendTo(loopBody, loopNext);
+            ValueFromBlock foundResult = m_out.anchor(index);
+            if (searchElementEdge.useKind() == Int32Use) {
+                // Empty value is ignored because of TagTypeNumber.
+                LValue value = m_out.load64(m_out.baseIndex(m_heaps.indexedInt32Properties, storage, index));
+                m_out.branch(m_out.equal(value, searchElement), unsure(continuation), unsure(loopNext));
+            } else if (searchElementEdge.useKind() == ObjectUse) {
+                // Empty value never matches against object pointers.
+                LValue value = m_out.load64(m_out.baseIndex(m_heaps.indexedContiguousProperties, storage, index));
+                m_out.branch(m_out.equal(value, searchElement), unsure(continuation), unsure(loopNext));
+            } else {
+                // Empty value is ignored because of NaN.
+                LValue value = m_out.loadDouble(m_out.baseIndex(m_heaps.indexedDoubleProperties, storage, index));
+                m_out.branch(m_out.doubleEqual(value, searchElement), unsure(continuation), unsure(loopNext));
+            }
+
+            m_out.appendTo(loopNext, notFound);
+            LValue nextIndex = m_out.add(index, m_out.intPtrOne);
+            m_out.addIncomingToPhi(index, m_out.anchor(nextIndex));
+            m_out.jump(loopHeader);
+
+            m_out.appendTo(notFound, continuation);
+            ValueFromBlock notFoundResult = m_out.anchor(m_out.constIntPtr(-1));
+            m_out.jump(continuation);
+
+            m_out.appendTo(continuation, lastNext);
+            setInt32(m_out.castToInt32(m_out.phi(pointerType(), notFoundResult, foundResult)));
+            break;
+        }
+
+        case StringUse:
+            ASSERT(m_node->arrayMode().type() == Array::Contiguous);
+            setInt32(vmCall(Int32, m_out.operation(operationArrayIndexOfString), m_callFrame, storage, lowString(searchElementEdge), startIndex));
+            break;
+
+        case UntypedUse:
+            switch (m_node->arrayMode().type()) {
+            case Array::Double:
+                setInt32(vmCall(Int32, m_out.operation(operationArrayIndexOfValueDouble), m_callFrame, storage, lowJSValue(searchElementEdge), startIndex));
+                break;
+            case Array::Int32:
+            case Array::Contiguous:
+                setInt32(vmCall(Int32, m_out.operation(operationArrayIndexOfValueInt32OrContiguous), m_callFrame, storage, lowJSValue(searchElementEdge), startIndex));
+                break;
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+                break;
+            }
+            break;
+
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
+    }
+
     
     void compileArrayPop()
     {

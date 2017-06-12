@@ -233,6 +233,8 @@ typedef int32_t (JIT_OPERATION *Z_JITOperation_EJZ)(ExecState*, EncodedJSValue, 
 typedef int32_t (JIT_OPERATION *Z_JITOperation_EJZZ)(ExecState*, EncodedJSValue, int32_t, int32_t);
 typedef int32_t (JIT_OPERATION *Z_JITOperation_EOI)(ExecState*, JSObject*, UniquedStringImpl*);
 typedef int32_t (JIT_OPERATION *Z_JITOperation_EOJ)(ExecState*, JSObject*, EncodedJSValue);
+typedef int32_t (JIT_OPERATION *Z_JITOperation_EBJssZ)(ExecState*, Butterfly*, JSString*, int32_t);
+typedef int32_t (JIT_OPERATION *Z_JITOperation_EBJZ)(ExecState*, Butterfly*, EncodedJSValue, int32_t);
 typedef size_t (JIT_OPERATION *S_JITOperation_EO)(ExecState*, JSObject*);
 typedef size_t (JIT_OPERATION *S_JITOperation_ECC)(ExecState*, JSCell*, JSCell*);
 typedef size_t (JIT_OPERATION *S_JITOperation_EGC)(ExecState*, JSGlobalObject*, JSCell*);

@@ -1708,6 +1708,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         forNode(node).set(m_graph, structureSet);
         break;
     }
+
+    case ArrayIndexOf: {
+        forNode(node).setType(SpecInt32Only);
+        break;
+    }
             
     case ArrayPop:
         clobberWorld(node->origin.semantic, clobberLimit);

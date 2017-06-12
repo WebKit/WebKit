@@ -762,7 +762,8 @@ private:
             setPrediction(SpecBoolean);
             break;
 
-        case GetRestLength: {
+        case GetRestLength:
+        case ArrayIndexOf: {
             setPrediction(SpecInt32Only);
             break;
         }

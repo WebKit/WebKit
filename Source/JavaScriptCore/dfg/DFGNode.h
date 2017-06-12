@@ -1818,6 +1818,7 @@ public:
         case ArrayifyToStructure:
         case ArrayPush:
         case ArrayPop:
+        case ArrayIndexOf:
         case HasIndexedProperty:
         case AtomicsAdd:
         case AtomicsAnd:

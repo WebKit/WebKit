@@ -1006,6 +1006,11 @@ public:
         m_jit.setupArgumentsWithExecState(obj, impl);
         return appendCallSetResult(operation, result);
     }
+    JITCompiler::Call callOperation(Z_JITOperation_EBJssZ operation, GPRReg result, GPRReg butterfly, GPRReg string, GPRReg index)
+    {
+        m_jit.setupArgumentsWithExecState(butterfly, string, index);
+        return appendCallSetResult(operation, result);
+    }
     JITCompiler::Call callOperation(P_JITOperation_ESt operation, GPRReg result, RegisteredStructure structure)
     {
         m_jit.setupArgumentsWithExecState(TrustedImmPtr(structure));
@@ -1887,6 +1892,11 @@ public:
         m_jit.setupArgumentsWithExecState(arg1, TrustedImm32(arg2));
         return appendCallSetResult(operation, result);
     }
+    JITCompiler::Call callOperation(Z_JITOperation_EBJZ operation, GPRReg result, GPRReg arg1, JSValueRegs arg2, GPRReg arg3)
+    {
+        m_jit.setupArgumentsWithExecState(arg1, arg2.payloadGPR(), arg3);
+        return appendCallSetResult(operation, result);
+    }
     JITCompiler::Call callOperation(V_JITOperation_EZJZZZ operation, unsigned arg1, GPRReg arg2, unsigned arg3, GPRReg arg4, unsigned arg5)
     {
         m_jit.setupArgumentsWithExecState(TrustedImm32(arg1), arg2, TrustedImm32(arg3), arg4, TrustedImm32(arg5));
@@ -2420,6 +2430,11 @@ public:
         m_jit.setupArgumentsWithExecState(EABI_32BIT_DUMMY_ARG arg1.payloadGPR(), arg1.tagGPR(), TrustedImm32(arg2));
         return appendCallSetResult(operation, result);
     }
+    JITCompiler::Call callOperation(Z_JITOperation_EBJZ operation, GPRReg result, GPRReg arg1, JSValueRegs arg2, GPRReg arg3)
+    {
+        m_jit.setupArgumentsWithExecState(arg1, arg2.payloadGPR(), arg2.tagGPR(), arg3);
+        return appendCallSetResult(operation, result);
+    }
     JITCompiler::Call callOperation(V_JITOperation_EZJZZZ operation, unsigned arg1, JSValueRegs arg2, unsigned arg3, GPRReg arg4, unsigned arg5)
     {
         m_jit.setupArgumentsWithExecState(TrustedImm32(arg1), arg2.payloadGPR(), arg2.tagGPR(), TrustedImm32(arg3), arg4, TrustedImm32(arg5));
@@ -2829,6 +2844,7 @@ public:
     void compileNewArrayWithSpread(Node*);
     void compileGetRestLength(Node*);
     void compileArraySlice(Node*);
+    void compileArrayIndexOf(Node*);
     void compileNotifyWrite(Node*);
     bool compileRegExpExec(Node*);
     void compileIsObjectOrNull(Node*);
@@ -2949,6 +2965,7 @@ public:
 #if USE(JSVALUE64)
     void convertAnyInt(Edge, GPRReg resultGPR);
     void speculateAnyInt(Edge);
+    void speculateInt32(Edge, JSValueRegs);
     void speculateDoubleRepAnyInt(Edge);
 #endif // USE(JSVALUE64)
     void speculateNumber(Edge);
@@ -2957,6 +2974,7 @@ public:
     void speculateBoolean(Edge);
     void speculateCell(Edge);
     void speculateCellOrOther(Edge);
+    void speculateObject(Edge, GPRReg cell);
     void speculateObject(Edge);
     void speculateArray(Edge, GPRReg cell);
     void speculateArray(Edge);

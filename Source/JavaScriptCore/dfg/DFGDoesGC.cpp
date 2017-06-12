@@ -320,6 +320,7 @@ bool doesGC(Graph& graph, Node* node)
     case CallDOMGetter:
     case CallDOM:
     case ArraySlice:
+    case ArrayIndexOf:
     case ParseInt: // We might resolve a rope even though we don't clobber anything.
         return true;
         
