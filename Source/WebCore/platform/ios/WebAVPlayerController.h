@@ -62,8 +62,8 @@ class WebPlaybackSessionInterfaceAVKit;
 @property BOOL hasEnabledAudio;
 @property BOOL hasEnabledVideo;
 @property BOOL hasVideo;
-@property NSTimeInterval minTime;
-@property NSTimeInterval maxTime;
+@property (readonly) NSTimeInterval minTime;
+@property (readonly) NSTimeInterval maxTime;
 @property NSTimeInterval contentDurationWithinEndTimes;
 @property (retain) NSArray *loadedTimeRanges;
 @property AVPlayerControllerStatus status;
@@ -95,7 +95,6 @@ class WebPlaybackSessionInterfaceAVKit;
 @property (NS_NONATOMIC_IOSONLY, retain, readwrite) AVValueTiming *maxTiming;
 
 - (void)resetMediaState;
-
 @end
 
 #endif

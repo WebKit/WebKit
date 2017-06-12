@@ -85,9 +85,7 @@ void WebPlaybackSessionInterfaceAVKit::durationChanged(double duration)
 {
     WebAVPlayerController* playerController = m_playerController.get();
 
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=127017 use correct values instead of duration for all these
     playerController.contentDuration = duration;
-    playerController.maxTime = duration;
     playerController.contentDurationWithinEndTimes = duration;
 
     // FIXME: we take this as an indication that playback is ready.
@@ -96,7 +94,6 @@ void WebPlaybackSessionInterfaceAVKit::durationChanged(double duration)
     playerController.canTogglePlayback = YES;
     playerController.hasEnabledAudio = YES;
     playerController.canSeek = YES;
-    playerController.minTime = 0;
     playerController.status = AVPlayerControllerStatusReadyToPlay;
 }
 

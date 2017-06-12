@@ -1,3 +1,25 @@
+2017-06-12  Jeremy Jones  <jeremyj@apple.com>
+
+        WebAVPlayerController minTime and maxTime should be calculated properties to provide correct values when streaming.
+        https://bugs.webkit.org/show_bug.cgi?id=173193
+        rdar://problem/32684807
+
+        Reviewed by Jer Noble.
+
+        No new tests because no affect on the DOM. This only affects properties consumed to AVKit.
+
+        -minTime and -maxTime should be calculated properties so they supply the exptected values to AVKit while streaming.
+
+        * platform/ios/WebAVPlayerController.h:
+        * platform/ios/WebAVPlayerController.mm:
+        (-[WebAVPlayerController maxTime]):
+        (+[WebAVPlayerController keyPathsForValuesAffectingMaxTime]):
+        (-[WebAVPlayerController minTime]):
+        (+[WebAVPlayerController keyPathsForValuesAffectingMinTime]):
+        (-[WebAVPlayerController resetMediaState]):
+        * platform/ios/WebPlaybackSessionInterfaceAVKit.mm:
+        (WebCore::WebPlaybackSessionInterfaceAVKit::durationChanged):
+
 2017-06-12  Chris Dumez  <cdumez@apple.com>
 
         Call _sqlite3_purgeEligiblePagerCacheMemory() on memory pressure only if sqlite is initialized

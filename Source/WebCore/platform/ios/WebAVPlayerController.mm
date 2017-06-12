@@ -197,6 +197,39 @@ static double WebAVPlayerControllerLiveStreamSeekableTimeRangeMinimumDuration = 
     return [NSSet setWithObjects:@"contentDuration", @"status", nil];
 }
 
+- (NSTimeInterval)maxTime
+{
+    NSTimeInterval maxTime = NAN;
+
+    NSTimeInterval duration = [self contentDuration];
+    if (!isnan(duration) && !isinf(duration))
+        maxTime = duration;
+    else if ([self hasSeekableLiveStreamingContent] && [self maxTiming])
+        maxTime = [[self maxTiming] currentValue];
+
+    return maxTime;
+}
+
++ (NSSet *)keyPathsForValuesAffectingMaxTime
+{
+    return [NSSet setWithObjects:@"contentDuration", @"hasSeekableLiveStreamingContent", @"maxTiming", nil];
+}
+
+- (NSTimeInterval)minTime
+{
+    NSTimeInterval minTime = 0.0;
+
+    if ([self hasSeekableLiveStreamingContent] && [self minTiming])
+        minTime = [[self minTiming] currentValue];
+
+    return minTime;
+}
+
++ (NSSet *)keyPathsForValuesAffectingMinTime
+{
+    return [NSSet setWithObjects:@"hasSeekableLiveStreamingContent", @"minTiming", nil];
+}
+
 - (void)skipBackwardThirtySeconds:(id)sender
 {
     UNUSED_PARAM(sender);
@@ -504,7 +537,6 @@ static double WebAVPlayerControllerLiveStreamSeekableTimeRangeMinimumDuration = 
     [self setMaxTiming:newMaxTiming];
 }
 
-
 - (BOOL)hasSeekableLiveStreamingContent
 {
     BOOL hasSeekableLiveStreamingContent = NO;
@@ -527,7 +559,6 @@ static double WebAVPlayerControllerLiveStreamSeekableTimeRangeMinimumDuration = 
 - (void)resetMediaState
 {
     self.contentDuration = 0;
-    self.maxTime = 0;
     self.contentDurationWithinEndTimes = 0;
     self.loadedTimeRanges = @[];
 
@@ -536,9 +567,10 @@ static double WebAVPlayerControllerLiveStreamSeekableTimeRangeMinimumDuration = 
     self.canTogglePlayback = NO;
     self.hasEnabledAudio = NO;
     self.canSeek = NO;
-    self.minTime = 0;
     self.status = AVPlayerControllerStatusUnknown;
 
+    self.minTiming = nil;
+    self.maxTiming = nil;
     self.timing = nil;
     self.rate = 0;
 
