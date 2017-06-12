@@ -182,10 +182,10 @@ static ProcessAccessType computeWebProcessAccessTypeForDataFetch(OptionSet<Websi
     return processAccessType;
 }
 
-void WebsiteDataStore::fetchData(OptionSet<WebsiteDataType> dataTypes, OptionSet<WebsiteDataFetchOption> fetchOptions, std::function<void (Vector<WebsiteDataRecord>)> completionHandler)
+void WebsiteDataStore::fetchData(OptionSet<WebsiteDataType> dataTypes, OptionSet<WebsiteDataFetchOption> fetchOptions, Function<void(Vector<WebsiteDataRecord>)>&& completionHandler)
 {
     struct CallbackAggregator final : ThreadSafeRefCounted<CallbackAggregator> {
-        explicit CallbackAggregator(OptionSet<WebsiteDataFetchOption> fetchOptions, std::function<void (Vector<WebsiteDataRecord>)> completionHandler)
+        explicit CallbackAggregator(OptionSet<WebsiteDataFetchOption> fetchOptions, Function<void(Vector<WebsiteDataRecord>)>&& completionHandler)
             : fetchOptions(fetchOptions)
             , completionHandler(WTFMove(completionHandler))
         {
@@ -281,7 +281,7 @@ void WebsiteDataStore::fetchData(OptionSet<WebsiteDataType> dataTypes, OptionSet
         const OptionSet<WebsiteDataFetchOption> fetchOptions;
 
         unsigned pendingCallbacks = 0;
-        std::function<void (Vector<WebsiteDataRecord>)> completionHandler;
+        Function<void(Vector<WebsiteDataRecord>)> completionHandler;
 
         HashMap<String, WebsiteDataRecord> m_websiteDataRecords;
     };
@@ -507,9 +507,9 @@ void WebsiteDataStore::fetchData(OptionSet<WebsiteDataType> dataTypes, OptionSet
     callbackAggregator->callIfNeeded();
 }
 
-void WebsiteDataStore::fetchDataForTopPrivatelyControlledDomains(OptionSet<WebsiteDataType> dataTypes, OptionSet<WebsiteDataFetchOption> fetchOptions, Vector<String>&& topPrivatelyControlledDomains, std::function<void(Vector<WebsiteDataRecord>&&, Vector<String>&&)> completionHandler)
+void WebsiteDataStore::fetchDataForTopPrivatelyControlledDomains(OptionSet<WebsiteDataType> dataTypes, OptionSet<WebsiteDataFetchOption> fetchOptions, Vector<String>&& topPrivatelyControlledDomains, Function<void(Vector<WebsiteDataRecord>&&, Vector<String>&&)>&& completionHandler)
 {
-    fetchData(dataTypes, fetchOptions, [topPrivatelyControlledDomains = WTFMove(topPrivatelyControlledDomains), completionHandler](auto&& existingDataRecords) {
+    fetchData(dataTypes, fetchOptions, [topPrivatelyControlledDomains = WTFMove(topPrivatelyControlledDomains), completionHandler = WTFMove(completionHandler)](auto&& existingDataRecords) {
         Vector<WebsiteDataRecord> matchingDataRecords;
         Vector<String> domainsWithMatchingDataRecords;
         for (auto&& dataRecord : existingDataRecords) {
@@ -525,15 +525,15 @@ void WebsiteDataStore::fetchDataForTopPrivatelyControlledDomains(OptionSet<Websi
     });
 }
     
-void WebsiteDataStore::topPrivatelyControlledDomainsWithWebsiteData(OptionSet<WebsiteDataType> dataTypes, OptionSet<WebsiteDataFetchOption> fetchOptions, std::function<void(HashSet<String>&&)> completionHandler)
+void WebsiteDataStore::topPrivatelyControlledDomainsWithWebsiteData(OptionSet<WebsiteDataType> dataTypes, OptionSet<WebsiteDataFetchOption> fetchOptions, Function<void(HashSet<String>&&)>&& completionHandler)
 {
-    fetchData(dataTypes, fetchOptions, [completionHandler, this](auto&& existingDataRecords) {
+    fetchData(dataTypes, fetchOptions, [completionHandler = WTFMove(completionHandler), this, protectedThis = makeRef(*this)](auto&& existingDataRecords) {
         HashSet<String> domainsWithDataRecords;
         for (auto&& dataRecord : existingDataRecords) {
             String domain = dataRecord.topPrivatelyControlledDomain();
             if (domain.isEmpty())
                 continue;
-            domainsWithDataRecords.add(domain);
+            domainsWithDataRecords.add(WTFMove(domain));
         }
         completionHandler(WTFMove(domainsWithDataRecords));
     });
@@ -577,10 +577,10 @@ static ProcessAccessType computeWebProcessAccessTypeForDataRemoval(OptionSet<Web
     return processAccessType;
 }
 
-void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, std::chrono::system_clock::time_point modifiedSince, std::function<void ()> completionHandler)
+void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, std::chrono::system_clock::time_point modifiedSince, Function<void()>&& completionHandler)
 {
     struct CallbackAggregator : ThreadSafeRefCounted<CallbackAggregator> {
-        explicit CallbackAggregator (std::function<void ()> completionHandler)
+        explicit CallbackAggregator(Function<void()>&& completionHandler)
             : completionHandler(WTFMove(completionHandler))
         {
         }
@@ -605,7 +605,7 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, std::chr
         }
 
         unsigned pendingCallbacks = 0;
-        std::function<void()> completionHandler;
+        Function<void()> completionHandler;
     };
 
     RefPtr<CallbackAggregator> callbackAggregator = adoptRef(new CallbackAggregator(WTFMove(completionHandler)));
@@ -800,14 +800,14 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, std::chr
     }
 #endif
 
-    if (dataTypes.contains(WebsiteDataType::WebsiteDataTypeResourceLoadStatistics))
+    if (dataTypes.contains(WebsiteDataType::ResourceLoadStatistics))
         WebCore::ResourceLoadObserver::sharedObserver().clearInMemoryAndPersistentStore(modifiedSince);
 
     // There's a chance that we don't have any pending callbacks. If so, we want to dispatch the completion handler right away.
     callbackAggregator->callIfNeeded();
 }
 
-void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Vector<WebsiteDataRecord>& dataRecords, std::function<void ()> completionHandler)
+void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Vector<WebsiteDataRecord>& dataRecords, Function<void()>&& completionHandler)
 {
     Vector<WebCore::SecurityOriginData> origins;
 
@@ -817,7 +817,7 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
     }
 
     struct CallbackAggregator : ThreadSafeRefCounted<CallbackAggregator> {
-        explicit CallbackAggregator (std::function<void ()> completionHandler)
+        explicit CallbackAggregator(Function<void()>&& completionHandler)
             : completionHandler(WTFMove(completionHandler))
         {
         }
@@ -842,7 +842,7 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
         }
 
         unsigned pendingCallbacks = 0;
-        std::function<void()> completionHandler;
+        Function<void()> completionHandler;
     };
 
     RefPtr<CallbackAggregator> callbackAggregator = adoptRef(new CallbackAggregator(WTFMove(completionHandler)));
@@ -1069,18 +1069,18 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
     }
 #endif
 
-    if (dataTypes.contains(WebsiteDataType::WebsiteDataTypeResourceLoadStatistics))
+    if (dataTypes.contains(WebsiteDataType::ResourceLoadStatistics))
         WebCore::ResourceLoadObserver::sharedObserver().clearInMemoryAndPersistentStore();
 
     // There's a chance that we don't have any pending callbacks. If so, we want to dispatch the completion handler right away.
     callbackAggregator->callIfNeeded();
 }
 
-void WebsiteDataStore::removeDataForTopPrivatelyControlledDomains(OptionSet<WebsiteDataType> dataTypes, OptionSet<WebsiteDataFetchOption> fetchOptions, Vector<String>&& topPrivatelyControlledDomains, std::function<void(Vector<String>)> completionHandler)
+void WebsiteDataStore::removeDataForTopPrivatelyControlledDomains(OptionSet<WebsiteDataType> dataTypes, OptionSet<WebsiteDataFetchOption> fetchOptions, Vector<String>&& topPrivatelyControlledDomains, Function<void(Vector<String>&&)>&& completionHandler)
 {
-    fetchDataForTopPrivatelyControlledDomains(dataTypes, fetchOptions, WTFMove(topPrivatelyControlledDomains), [dataTypes, completionHandler, this](auto websiteDataRecords, auto domainsWithDataRecords) {
-        this->removeData(dataTypes, websiteDataRecords, [domainsWithDataRecords, completionHandler]() {
-            completionHandler(domainsWithDataRecords);
+    fetchDataForTopPrivatelyControlledDomains(dataTypes, fetchOptions, WTFMove(topPrivatelyControlledDomains), [dataTypes, completionHandler = WTFMove(completionHandler), this, protectedThis = makeRef(*this)](Vector<WebsiteDataRecord>&& websiteDataRecords, Vector<String>&& domainsWithDataRecords) mutable {
+        this->removeData(dataTypes, websiteDataRecords, [domainsWithDataRecords = WTFMove(domainsWithDataRecords), completionHandler = WTFMove(completionHandler)]() mutable {
+            completionHandler(WTFMove(domainsWithDataRecords));
         });
     });
 }
