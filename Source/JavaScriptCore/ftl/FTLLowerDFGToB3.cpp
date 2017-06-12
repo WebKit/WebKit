@@ -1330,7 +1330,7 @@ private:
                 m_out.appendTo(convertBooleanFalseCase, continuation);
 
                 LValue valueIsNotBooleanFalse = m_out.notEqual(value, m_out.constInt64(ValueFalse));
-                FTL_TYPE_CHECK(jsValueValue(value), m_node->child1(), ~SpecCell, valueIsNotBooleanFalse);
+                FTL_TYPE_CHECK(jsValueValue(value), m_node->child1(), ~SpecCellCheck, valueIsNotBooleanFalse);
                 ValueFromBlock convertedFalse = m_out.anchor(m_out.constDouble(0));
                 m_out.jump(continuation);
 
@@ -9624,7 +9624,7 @@ private:
             
             m_out.appendTo(notNumberCase, continuation);
             
-            FTL_TYPE_CHECK(jsValueValue(value), edge, ~SpecCell, isCell(value));
+            FTL_TYPE_CHECK(jsValueValue(value), edge, ~SpecCellCheck, isCell(value));
             
             LValue specialResult = m_out.select(
                 m_out.equal(value, m_out.constInt64(JSValue::encode(jsBoolean(true)))),
@@ -10509,13 +10509,13 @@ private:
             unsure(leftCellCase), unsure(leftNotCellCase));
         
         LBasicBlock lastNext = m_out.appendTo(leftCellCase, leftNotCellCase);
-        speculateTruthyObject(leftChild, leftValue, SpecObject | (~SpecCell));
+        speculateTruthyObject(leftChild, leftValue, SpecObject | (~SpecCellCheck));
         ValueFromBlock cellResult = m_out.anchor(m_out.equal(rightCell, leftValue));
         m_out.jump(continuation);
         
         m_out.appendTo(leftNotCellCase, continuation);
         FTL_TYPE_CHECK(
-            jsValueValue(leftValue), leftChild, SpecOther | SpecCell, isNotOther(leftValue));
+            jsValueValue(leftValue), leftChild, SpecOther | SpecCellCheck, isNotOther(leftValue));
         ValueFromBlock notCellResult = m_out.anchor(m_out.booleanFalse);
         m_out.jump(continuation);
         
@@ -11285,14 +11285,14 @@ private:
             
             LBasicBlock lastNext = m_out.appendTo(cellCase, notCellCase);
             
-            FTL_TYPE_CHECK(jsValueValue(value), edge, (~SpecCell) | SpecString, isNotString(value));
+            FTL_TYPE_CHECK(jsValueValue(value), edge, (~SpecCellCheck) | SpecString, isNotString(value));
             LValue length = m_out.load32NonNegative(value, m_heaps.JSString_length);
             ValueFromBlock cellResult = m_out.anchor(m_out.notEqual(length, m_out.int32Zero));
             m_out.jump(continuation);
             
             m_out.appendTo(notCellCase, continuation);
             
-            FTL_TYPE_CHECK(jsValueValue(value), edge, SpecCell | SpecOther, isNotOther(value));
+            FTL_TYPE_CHECK(jsValueValue(value), edge, SpecCellCheck | SpecOther, isNotOther(value));
             ValueFromBlock notCellResult = m_out.anchor(m_out.booleanFalse);
             m_out.jump(continuation);
             m_out.appendTo(continuation, lastNext);
@@ -11435,7 +11435,7 @@ private:
             break;
         case CellCaseSpeculatesObject:
             FTL_TYPE_CHECK(
-                jsValueValue(value), edge, (~SpecCell) | SpecObject, isNotObject(value));
+                jsValueValue(value), edge, (~SpecCellCheck) | SpecObject, isNotObject(value));
             break;
         }
         
@@ -11480,7 +11480,7 @@ private:
             break;
         case SpeculateNullOrUndefined:
             FTL_TYPE_CHECK(
-                jsValueValue(value), edge, SpecCell | SpecOther, isNotOther(value));
+                jsValueValue(value), edge, SpecCellCheck | SpecOther, isNotOther(value));
             primitiveResult = m_out.booleanTrue;
             break;
         }
@@ -12544,11 +12544,11 @@ private:
         if (isValid(value)) {
             LValue uncheckedValue = value.value();
             FTL_TYPE_CHECK(
-                jsValueValue(uncheckedValue), edge, SpecCell, isNotCell(uncheckedValue));
+                jsValueValue(uncheckedValue), edge, SpecCellCheck, isNotCell(uncheckedValue));
             return uncheckedValue;
         }
         
-        DFG_ASSERT(m_graph, m_node, !(provenType(edge) & SpecCell));
+        DFG_ASSERT(m_graph, m_node, !(provenType(edge) & SpecCellCheck));
         terminate(Uncountable);
         return m_out.intPtrZero;
     }
@@ -12703,7 +12703,7 @@ private:
     LValue lowNotCell(Edge edge)
     {
         LValue result = lowJSValue(edge, ManualOperandSpeculation);
-        FTL_TYPE_CHECK(jsValueValue(result), edge, ~SpecCell, isCell(result));
+        FTL_TYPE_CHECK(jsValueValue(result), edge, ~SpecCellCheck, isCell(result));
         return result;
     }
     
@@ -12804,13 +12804,13 @@ private:
     
     LValue isCellOrMisc(LValue jsValue, SpeculatedType type = SpecFullTop)
     {
-        if (LValue proven = isProvenValue(type, SpecCell | SpecMisc))
+        if (LValue proven = isProvenValue(type, SpecCellCheck | SpecMisc))
             return proven;
         return m_out.testIsZero64(jsValue, m_tagTypeNumber);
     }
     LValue isNotCellOrMisc(LValue jsValue, SpeculatedType type = SpecFullTop)
     {
-        if (LValue proven = isProvenValue(type, ~(SpecCell | SpecMisc)))
+        if (LValue proven = isProvenValue(type, ~(SpecCellCheck | SpecMisc)))
             return proven;
         return m_out.testNonZero64(jsValue, m_tagTypeNumber);
     }
@@ -12911,14 +12911,14 @@ private:
     
     LValue isNotCell(LValue jsValue, SpeculatedType type = SpecFullTop)
     {
-        if (LValue proven = isProvenValue(type, ~SpecCell))
+        if (LValue proven = isProvenValue(type, ~SpecCellCheck))
             return proven;
         return m_out.testNonZero64(jsValue, m_tagMask);
     }
     
     LValue isCell(LValue jsValue, SpeculatedType type = SpecFullTop)
     {
-        if (LValue proven = isProvenValue(type, SpecCell))
+        if (LValue proven = isProvenValue(type, SpecCellCheck))
             return proven;
         return m_out.testIsZero64(jsValue, m_tagMask);
     }
@@ -13128,7 +13128,7 @@ private:
         m_out.branch(isCell(value, provenType(edge)), unsure(continuation), unsure(isNotCell));
 
         LBasicBlock lastNext = m_out.appendTo(isNotCell, continuation);
-        FTL_TYPE_CHECK(jsValueValue(value), edge, SpecCell | SpecOther, isNotOther(value));
+        FTL_TYPE_CHECK(jsValueValue(value), edge, SpecCellCheck | SpecOther, isNotOther(value));
         m_out.jump(continuation);
 
         m_out.appendTo(continuation, lastNext);
@@ -13362,14 +13362,14 @@ private:
         LBasicBlock lastNext = m_out.appendTo(cellCase, primitiveCase);
         
         FTL_TYPE_CHECK(
-            jsValueValue(value), edge, (~SpecCell) | SpecObject, isNotObject(value));
+            jsValueValue(value), edge, (~SpecCellCheck) | SpecObject, isNotObject(value));
         
         m_out.jump(continuation);
         
         m_out.appendTo(primitiveCase, continuation);
         
         FTL_TYPE_CHECK(
-            jsValueValue(value), edge, SpecCell | SpecOther, isNotOther(value));
+            jsValueValue(value), edge, SpecCellCheck | SpecOther, isNotOther(value));
         
         m_out.jump(continuation);
         
@@ -13444,7 +13444,7 @@ private:
     
     void speculateString(Edge edge, LValue cell)
     {
-        FTL_TYPE_CHECK(jsValueValue(cell), edge, SpecString | ~SpecCell, isNotString(cell));
+        FTL_TYPE_CHECK(jsValueValue(cell), edge, SpecString, isNotString(cell));
     }
     
     void speculateString(Edge edge)
@@ -13462,12 +13462,12 @@ private:
 
         LBasicBlock lastNext = m_out.appendTo(cellCase, notCellCase);
 
-        FTL_TYPE_CHECK(jsValueValue(value), edge, (~SpecCell) | SpecString, isNotString(value));
+        FTL_TYPE_CHECK(jsValueValue(value), edge, (~SpecCellCheck) | SpecString, isNotString(value));
 
         m_out.jump(continuation);
         m_out.appendTo(notCellCase, continuation);
 
-        FTL_TYPE_CHECK(jsValueValue(value), edge, SpecCell | SpecOther, isNotOther(value));
+        FTL_TYPE_CHECK(jsValueValue(value), edge, SpecCellCheck | SpecOther, isNotOther(value));
 
         m_out.jump(continuation);
         m_out.appendTo(continuation, lastNext);
@@ -13548,7 +13548,7 @@ private:
 
     void speculateSymbol(Edge edge, LValue cell)
     {
-        FTL_TYPE_CHECK(jsValueValue(cell), edge, SpecSymbol | ~SpecCell, isNotSymbol(cell));
+        FTL_TYPE_CHECK(jsValueValue(cell), edge, SpecSymbol, isNotSymbol(cell));
     }
 
     void speculateSymbol(Edge edge)

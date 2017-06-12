@@ -1,3 +1,16 @@
+2017-06-12  Saam Barati  <sbarati@apple.com>
+
+        We should not claim that SpecEmpty is filtered out of cell checks on 64 bit platforms
+        https://bugs.webkit.org/show_bug.cgi?id=172957
+        <rdar://problem/32602704>
+
+        Reviewed by Filip Pizlo.
+
+        * stress/spec-empty-flows-through-cell-checks.js: Added.
+        (A):
+        (B):
+        (i.catch):
+
 2017-06-12  Oleksandr Skachkov  <gskachkov@gmail.com>
 
         We incorrectly allow escaped characters in keyword tokens

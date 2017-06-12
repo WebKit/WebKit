@@ -29,7 +29,7 @@
 
 namespace JSC {
 
-inline bool isARMv7IDIVSupported()
+constexpr bool isARMv7IDIVSupported()
 {
 #if HAVE(ARM_IDIV_INSTRUCTIONS)
     return true;
@@ -38,7 +38,7 @@ inline bool isARMv7IDIVSupported()
 #endif
 }
 
-inline bool isARM64()
+constexpr bool isARM64()
 {
 #if CPU(ARM64)
     return true;
@@ -47,7 +47,7 @@ inline bool isARM64()
 #endif
 }
 
-inline bool isX86()
+constexpr bool isX86()
 {
 #if CPU(X86_64) || CPU(X86)
     return true;
@@ -56,7 +56,7 @@ inline bool isX86()
 #endif
 }
 
-inline bool isX86_64()
+constexpr bool isX86_64()
 {
 #if CPU(X86_64)
     return true;
@@ -65,7 +65,7 @@ inline bool isX86_64()
 #endif
 }
 
-inline bool is64Bit()
+constexpr bool is64Bit()
 {
 #if USE(JSVALUE64)
     return true;
@@ -74,12 +74,12 @@ inline bool is64Bit()
 #endif
 }
 
-inline bool is32Bit()
+constexpr bool is32Bit()
 {
     return !is64Bit();
 }
 
-inline bool isMIPS()
+constexpr bool isMIPS()
 {
 #if CPU(MIPS)
     return true;

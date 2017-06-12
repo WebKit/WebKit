@@ -51,6 +51,8 @@ namespace JSC { namespace DFG {
 
 #if USE(JSVALUE32_64)
 
+static_assert(SpecCellCheck == SpecCell, "This is strongly assumed in the 32-bit DFG backend.");
+
 bool SpeculativeJIT::fillJSValue(Edge edge, GPRReg& tagGPR, GPRReg& payloadGPR, FPRReg& fpr)
 {
     // FIXME: For double we could fill with a FPR.

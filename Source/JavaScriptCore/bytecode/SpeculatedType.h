@@ -28,6 +28,7 @@
 
 #pragma once
 
+#include "CPU.h"
 #include "JSCJSValue.h"
 #include "TypedArrayType.h"
 #include <wtf/PrintStream.h>
@@ -92,6 +93,11 @@ static const SpeculatedType SpecPrimitive          = SpecString | SpecSymbol | S
 static const SpeculatedType SpecEmpty              = 1ull << 34; // It's definitely an empty value marker.
 static const SpeculatedType SpecBytecodeTop        = SpecHeapTop | SpecEmpty; // It can be any of the above, except for SpecInt52Only and SpecDoubleImpureNaN. Corresponds to what could be found in a bytecode local.
 static const SpeculatedType SpecFullTop            = SpecBytecodeTop | SpecFullNumber; // It can be anything that bytecode could see plus exotic encodings of numbers.
+
+// SpecCellCheck is the type set representing the values that can flow through a cell check.
+// On 64-bit platforms, the empty value passes a cell check. Also, ~SpecCellCheck is the type
+// set that representing the values that flow through when testing that something is not a cell.
+static const SpeculatedType SpecCellCheck          = is64Bit() ? (SpecCell | SpecEmpty) : SpecCell;
 
 typedef bool (*SpeculatedTypeChecker)(SpeculatedType);
 

@@ -113,10 +113,11 @@ inline SpeculatedType typeFilterFor(UseKind useKind)
     case KnownBooleanUse:
         return SpecBoolean;
     case CellUse:
+        return SpecCellCheck;
     case KnownCellUse:
         return SpecCell;
     case CellOrOtherUse:
-        return SpecCell | SpecOther;
+        return SpecCellCheck | SpecOther;
     case ObjectUse:
         return SpecObject;
     case ArrayUse:
@@ -155,7 +156,7 @@ inline SpeculatedType typeFilterFor(UseKind useKind)
     case NotStringVarUse:
         return ~SpecStringVar;
     case NotCellUse:
-        return ~SpecCell;
+        return ~SpecCellCheck;
     case OtherUse:
         return SpecOther;
     case MiscUse:

@@ -1,3 +1,82 @@
+2017-06-12  Saam Barati  <sbarati@apple.com>
+
+        We should not claim that SpecEmpty is filtered out of cell checks on 64 bit platforms
+        https://bugs.webkit.org/show_bug.cgi?id=172957
+        <rdar://problem/32602704>
+
+        Reviewed by Filip Pizlo.
+
+        Consider this program:
+        ```
+        block#1:
+        n: GetClosureVar(..., |this|) // this will load empty JSValue()
+        SetLocal(Cell:@n, locFoo) // Cell check succeeds because JSValue() looks like a cell
+        Branch(#2, #3)
+        
+        Block#3:
+        x: GetLocal(locFoo)
+        y: CheckNotEmpty(@x)
+        ```
+        
+        If we claim that a cell check filters out the empty value, we will
+        incorrectly eliminate the CheckNotEmpty node @y. This patch fixes AI,
+        FTLLowerDFGToB3, and DFGSpeculativeJIT to no longer make this claim.
+        
+        On 64 bit platforms:
+        - Cell use kind *now allows* the empty value to pass through.
+        - CellOrOther use kind *now allows* for the empty value to pass through
+        - NotCell use kind *no longer allows* the empty value to pass through.
+
+        * assembler/CPU.h:
+        (JSC::isARMv7IDIVSupported):
+        (JSC::isARM64):
+        (JSC::isX86):
+        (JSC::isX86_64):
+        (JSC::is64Bit):
+        (JSC::is32Bit):
+        (JSC::isMIPS):
+        Make these functions constexpr so we can use them in static variable assignment.
+
+        * bytecode/SpeculatedType.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileValueToInt32):
+        (JSC::DFG::SpeculativeJIT::compileDoubleRep):
+        (JSC::DFG::SpeculativeJIT::compileLogicalNotStringOrOther):
+        (JSC::DFG::SpeculativeJIT::emitStringOrOtherBranch):
+        (JSC::DFG::SpeculativeJIT::speculateCell):
+        (JSC::DFG::SpeculativeJIT::speculateCellOrOther):
+        (JSC::DFG::SpeculativeJIT::speculateObjectOrOther):
+        (JSC::DFG::SpeculativeJIT::speculateString):
+        (JSC::DFG::SpeculativeJIT::speculateStringOrOther):
+        (JSC::DFG::SpeculativeJIT::speculateSymbol):
+        (JSC::DFG::SpeculativeJIT::speculateNotCell):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        (JSC::DFG::SpeculativeJIT::compileObjectToObjectOrOtherEquality):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleObjectToObjectOrOtherEquality):
+        (JSC::DFG::SpeculativeJIT::compileObjectOrOtherLogicalNot):
+        (JSC::DFG::SpeculativeJIT::emitObjectOrOtherBranch):
+        * dfg/DFGUseKind.h:
+        (JSC::DFG::typeFilterFor):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileDoubleRep):
+        (JSC::FTL::DFG::LowerDFGToB3::numberOrNotCellToInt32):
+        (JSC::FTL::DFG::LowerDFGToB3::compareEqObjectOrOtherToObject):
+        (JSC::FTL::DFG::LowerDFGToB3::boolify):
+        (JSC::FTL::DFG::LowerDFGToB3::equalNullOrUndefined):
+        (JSC::FTL::DFG::LowerDFGToB3::lowCell):
+        (JSC::FTL::DFG::LowerDFGToB3::lowNotCell):
+        (JSC::FTL::DFG::LowerDFGToB3::isCellOrMisc):
+        (JSC::FTL::DFG::LowerDFGToB3::isNotCellOrMisc):
+        (JSC::FTL::DFG::LowerDFGToB3::isNotCell):
+        (JSC::FTL::DFG::LowerDFGToB3::isCell):
+        (JSC::FTL::DFG::LowerDFGToB3::speculateCellOrOther):
+        (JSC::FTL::DFG::LowerDFGToB3::speculateObjectOrOther):
+        (JSC::FTL::DFG::LowerDFGToB3::speculateString):
+        (JSC::FTL::DFG::LowerDFGToB3::speculateStringOrOther):
+        (JSC::FTL::DFG::LowerDFGToB3::speculateSymbol):
+
 2017-06-12  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, suppress invalid register alloation validation assertion in 32 bit
