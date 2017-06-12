@@ -1,3 +1,17 @@
+2017-06-12  Alex Christensen  <achristensen@webkit.org>
+
+        Modernize UserScript.h
+        https://bugs.webkit.org/show_bug.cgi?id=173273
+
+        Reviewed by Tim Horton.
+
+        No change in behavior. Moved encoders to UserScript.h. Use more Rvalues.
+
+        * page/UserScript.h:
+        (WebCore::UserScript::UserScript):
+        (WebCore::UserScript::encode):
+        (WebCore::UserScript::decode):
+
 2017-06-12  Aaron Chu  <aaron_chu@apple.com>
 
         AX: Video/Audio Player Controls missing group container.

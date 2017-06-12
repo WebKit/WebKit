@@ -35,15 +35,12 @@ namespace WebCore {
 class UserScript {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    UserScript()
-        : m_injectionTime(InjectAtDocumentStart)
-        , m_injectedFrames(InjectInAllFrames)
-    {
-    }
+    UserScript() { }
+    ~UserScript() { }
 
-    UserScript(const String& source, const URL& url, Vector<String>&& whitelist, Vector<String>&& blacklist, UserScriptInjectionTime injectionTime, UserContentInjectedFrames injectedFrames)
-        : m_source(source)
-        , m_url(url)
+    UserScript(String&& source, URL&& url, Vector<String>&& whitelist, Vector<String>&& blacklist, UserScriptInjectionTime injectionTime, UserContentInjectedFrames injectedFrames)
+        : m_source(WTFMove(source))
+        , m_url(WTFMove(url))
         , m_whitelist(WTFMove(whitelist))
         , m_blacklist(WTFMove(blacklist))
         , m_injectionTime(injectionTime)
@@ -58,13 +55,58 @@ public:
     UserScriptInjectionTime injectionTime() const { return m_injectionTime; }
     UserContentInjectedFrames injectedFrames() const { return m_injectedFrames; }
 
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static bool decode(Decoder&, UserScript&);
+
 private:
     String m_source;
     URL m_url;
     Vector<String> m_whitelist;
     Vector<String> m_blacklist;
-    UserScriptInjectionTime m_injectionTime;
-    UserContentInjectedFrames m_injectedFrames;
+    UserScriptInjectionTime m_injectionTime { InjectAtDocumentStart };
+    UserContentInjectedFrames m_injectedFrames { InjectInAllFrames };
 };
+
+template<class Encoder>
+void UserScript::encode(Encoder& encoder) const
+{
+    encoder << m_source;
+    encoder << m_url;
+    encoder << m_whitelist;
+    encoder << m_blacklist;
+    encoder.encodeEnum(m_injectionTime);
+    encoder.encodeEnum(m_injectedFrames);
+}
+
+template<class Decoder>
+bool UserScript::decode(Decoder& decoder, UserScript& userScript)
+{
+    String source;
+    if (!decoder.decode(source))
+        return false;
+    
+    URL url;
+    if (!decoder.decode(url))
+        return false;
+    
+    Vector<String> whitelist;
+    if (!decoder.decode(whitelist))
+        return false;
+    
+    Vector<String> blacklist;
+    if (!decoder.decode(blacklist))
+        return false;
+    
+    UserScriptInjectionTime injectionTime;
+    if (!decoder.decodeEnum(injectionTime))
+        return false;
+    
+    UserContentInjectedFrames injectedFrames;
+    if (!decoder.decodeEnum(injectedFrames))
+        return false;
+    
+    userScript = { WTFMove(source), WTFMove(url), WTFMove(whitelist), WTFMove(blacklist), injectionTime, injectedFrames };
+    return true;
+}
 
 } // namespace WebCore

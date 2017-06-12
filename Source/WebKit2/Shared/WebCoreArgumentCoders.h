@@ -85,7 +85,6 @@ class StickyPositionViewportConstraints;
 class TextCheckingRequestData;
 class TransformationMatrix;
 class UserStyleSheet;
-class UserScript;
 class URL;
 struct CompositionUnderline;
 struct DictationAlternative;
@@ -474,11 +473,6 @@ template<> struct ArgumentCoder<WebCore::URL> {
 template<> struct ArgumentCoder<WebCore::UserStyleSheet> {
     static void encode(Encoder&, const WebCore::UserStyleSheet&);
     static bool decode(Decoder&, WebCore::UserStyleSheet&);
-};
-
-template<> struct ArgumentCoder<WebCore::UserScript> {
-    static void encode(Encoder&, const WebCore::UserScript&);
-    static bool decode(Decoder&, WebCore::UserScript&);
 };
 
 template<> struct ArgumentCoder<WebCore::ScrollableAreaParameters> {

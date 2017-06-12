@@ -1,3 +1,23 @@
+2017-06-12  Alex Christensen  <achristensen@webkit.org>
+
+        Modernize UserScript.h
+        https://bugs.webkit.org/show_bug.cgi?id=173273
+
+        Reviewed by Tim Horton.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<UserScript>::encode): Deleted.
+        (IPC::ArgumentCoder<UserScript>::decode): Deleted.
+        * Shared/WebCoreArgumentCoders.h:
+        * UIProcess/API/C/WKPageGroup.cpp:
+        (WKPageGroupAddUserScript):
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::addUserScript):
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::addUserScript):
+        * WebProcess/WebPage/WebPage.h:
+
 2017-06-12  Tim Horton  <timothy_horton@apple.com>
 
         [iOS] Cmd-C doesn't copy text from WKWebView

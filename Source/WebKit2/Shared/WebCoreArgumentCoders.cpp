@@ -67,7 +67,6 @@
 #include <WebCore/TimingFunction.h>
 #include <WebCore/TransformationMatrix.h>
 #include <WebCore/URL.h>
-#include <WebCore/UserScript.h>
 #include <WebCore/UserStyleSheet.h>
 #include <WebCore/ViewportArguments.h>
 #include <WebCore/WindowFeatures.h>
@@ -1736,46 +1735,6 @@ bool ArgumentCoder<MediaSessionMetadata>::decode(Decoder& decoder, MediaSessionM
     return true;
 }
 #endif
-
-void ArgumentCoder<UserScript>::encode(Encoder& encoder, const UserScript& userScript)
-{
-    encoder << userScript.source();
-    encoder << userScript.url();
-    encoder << userScript.whitelist();
-    encoder << userScript.blacklist();
-    encoder.encodeEnum(userScript.injectionTime());
-    encoder.encodeEnum(userScript.injectedFrames());
-}
-
-bool ArgumentCoder<UserScript>::decode(Decoder& decoder, UserScript& userScript)
-{
-    String source;
-    if (!decoder.decode(source))
-        return false;
-
-    URL url;
-    if (!decoder.decode(url))
-        return false;
-
-    Vector<String> whitelist;
-    if (!decoder.decode(whitelist))
-        return false;
-
-    Vector<String> blacklist;
-    if (!decoder.decode(blacklist))
-        return false;
-
-    UserScriptInjectionTime injectionTime;
-    if (!decoder.decodeEnum(injectionTime))
-        return false;
-
-    UserContentInjectedFrames injectedFrames;
-    if (!decoder.decodeEnum(injectedFrames))
-        return false;
-
-    userScript = UserScript(source, url, WTFMove(whitelist), WTFMove(blacklist), injectionTime, injectedFrames);
-    return true;
-}
 
 void ArgumentCoder<ScrollableAreaParameters>::encode(Encoder& encoder, const ScrollableAreaParameters& parameters)
 {
