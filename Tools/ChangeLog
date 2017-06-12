@@ -1,3 +1,19 @@
+2017-06-12  Jonathan Bedard  <jbedard@apple.com>
+
+        Return correct process names for iOS on-device testing
+        https://bugs.webkit.org/show_bug.cgi?id=173263
+
+        Reviewed by Alex Christensen.
+
+        When running tests on iOS devices, process names do not end with '.Development'
+        as they do on Mac and iOS simulator.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::webProcessName): Return correct process name without '.Development'
+        for iOS on-device testing.
+        (WTR::TestController::networkProcessName): Ditto.
+        (WTR::TestController::databaseProcessName): Ditto.
+
 2017-06-12  Chris Dumez  <cdumez@apple.com>
 
         Regression(r217867): Legacy SessionHistoryEntryData format should not change
