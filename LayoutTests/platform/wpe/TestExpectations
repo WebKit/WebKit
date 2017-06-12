@@ -41,8 +41,6 @@ webkit.org/b/120839 animations/cross-fade-background-image.html [ ImageOnlyFailu
 
 webkit.org/b/111612 animations/animation-delay-changed.html [ Failure Pass ]
 
-Bug(WPE) transforms/hittest-translated-content-off-to-infinity-and-back.html [ Failure ]
-
 Bug(WPE) canvas/philip/tests/2d.composite.operation.clear.html [ Failure ]
 Bug(WPE) canvas/philip/tests/2d.composite.operation.darker.html [ Failure ]
 Bug(WPE) canvas/philip/tests/2d.drawImage.animated.poster.html [ Failure ]

@@ -1,5 +1,12 @@
 2017-06-12  Claudio Saavedra  <csaavedra@igalia.com>
 
+        transforms/hittest-translated-content-off-to-infinity-and-back.html is passing
+
+        Ureviewed gardening.
+        * platform/wpe/TestExpectations: This started passing lately, remove.
+
+2017-06-12  Claudio Saavedra  <csaavedra@igalia.com>
+
         [WPE][GTK] Rebaseline js/dom/global-constructors-attributes.html
 
         Unreviewed gardening.
