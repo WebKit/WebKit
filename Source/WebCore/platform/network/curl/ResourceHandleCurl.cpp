@@ -39,50 +39,9 @@
 #include "ResourceHandleInternal.h"
 #include "ResourceHandleManager.h"
 #include "SSLHandle.h"
+#include "SynchronousLoaderClient.h"
 
 namespace WebCore {
-
-class WebCoreSynchronousLoader : public ResourceHandleClient {
-public:
-    WebCoreSynchronousLoader();
-
-    void didReceiveResponse(ResourceHandle*, ResourceResponse&&) override;
-    void didReceiveData(ResourceHandle*, const char*, unsigned, int encodedDataLength) override;
-    void didFinishLoading(ResourceHandle*) override;
-    void didFail(ResourceHandle*, const ResourceError&) override;
-
-    ResourceResponse resourceResponse() const { return m_response; }
-    ResourceError resourceError() const { return m_error; }
-    Vector<char> data() const { return m_data; }
-
-private:
-    ResourceResponse m_response;
-    ResourceError m_error;
-    Vector<char> m_data;
-};
-
-WebCoreSynchronousLoader::WebCoreSynchronousLoader()
-{
-}
-
-void WebCoreSynchronousLoader::didReceiveResponse(ResourceHandle*, ResourceResponse&& response)
-{
-    m_response = WTFMove(response);
-}
-
-void WebCoreSynchronousLoader::didReceiveData(ResourceHandle*, const char* data, unsigned length, int)
-{
-    m_data.append(data, length);
-}
-
-void WebCoreSynchronousLoader::didFinishLoading(ResourceHandle*)
-{
-}
-
-void WebCoreSynchronousLoader::didFail(ResourceHandle*, const ResourceError& error)
-{
-    m_error = error;
-}
 
 ResourceHandleInternal::~ResourceHandleInternal()
 {
@@ -165,16 +124,16 @@ bool ResourceHandle::shouldUseCredentialStorage()
 
 void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* context, const ResourceRequest& request, StoredCredentials, ResourceError& error, ResourceResponse& response, Vector<char>& data)
 {
-    WebCoreSynchronousLoader syncLoader;
-    RefPtr<ResourceHandle> handle = adoptRef(new ResourceHandle(context, request, &syncLoader, true, false));
+    SynchronousLoaderClient client;
+    RefPtr<ResourceHandle> handle = adoptRef(new ResourceHandle(context, request, &client, false, false));
 
     ResourceHandleManager* manager = ResourceHandleManager::sharedInstance();
 
     manager->dispatchSynchronousJob(handle.get());
 
-    error = syncLoader.resourceError();
-    data = syncLoader.data();
-    response = syncLoader.resourceResponse();
+    error = client.error();
+    data.swap(client.mutableData());
+    response = client.response();
 }
 
 void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChallenge& challenge)

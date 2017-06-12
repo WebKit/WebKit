@@ -42,6 +42,7 @@ list(APPEND WebCore_SOURCES
     platform/network/curl/ResourceHandleManager.cpp
     platform/network/curl/SSLHandle.cpp
     platform/network/curl/SocketStreamHandleImplCurl.cpp
+    platform/network/curl/SynchronousLoaderClientCurl.cpp
 
     platform/text/win/LocaleWin.cpp
 
