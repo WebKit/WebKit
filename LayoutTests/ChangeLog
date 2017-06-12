@@ -1,3 +1,12 @@
+2017-06-12  Matt Lewis  <jlewis3@apple.com>
+
+        Updated test expectations for fast/mediastream/getUserMedia-webaudio.html.
+        https://bugs.webkit.org/show_bug.cgi?id=170960
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2017-06-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Stop dismissing menus attached to the web view for every injected event
