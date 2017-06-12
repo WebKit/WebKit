@@ -95,7 +95,7 @@ public:
     {
         static const char introspectionXML[] =
             "<node>"
-            "  <interface name='org.webkitgtk.RemoteInspectorClient'>"
+            "  <interface name='org.webkit.RemoteInspectorClient'>"
             "    <method name='SetTargetList'>"
             "      <arg type='t' name='connectionID' direction='in'/>"
             "      <arg type='a(tsssb)' name='list' direction='in'/>"
@@ -110,7 +110,7 @@ public:
         static GDBusNodeInfo* introspectionData = nullptr;
         if (!introspectionData)
             introspectionData = g_dbus_node_info_new_for_xml(introspectionXML, nullptr);
-        g_dbus_connection_register_object(m_connection.get(), "/org/webkitgtk/RemoteInspectorClient", introspectionData->interfaces[0], &s_interfaceVTable, this, nullptr, nullptr);
+        g_dbus_connection_register_object(m_connection.get(), "/org/webkit/RemoteInspectorClient", introspectionData->interfaces[0], &s_interfaceVTable, this, nullptr, nullptr);
     }
 
     void setConnection(GRefPtr<GDBusConnection>&& connection)
@@ -153,7 +153,7 @@ public:
             messageBuilder.append(parameters);
         }
         messageBuilder.append('}');
-        g_dbus_connection_call(m_connection.get(), nullptr, "/org/webkitgtk/Inspector", "org.webkitgtk.Inspector",
+        g_dbus_connection_call(m_connection.get(), nullptr, "/org/webkit/Inspector", "org.webkit.Inspector",
             "SendMessageToBackend", g_variant_new("(tts)", m_connectionID, m_target.id, messageBuilder.toString().utf8().data()),
             nullptr, G_DBUS_CALL_FLAGS_NO_AUTO_START, -1, nullptr, nullptr, nullptr);
     }
@@ -180,7 +180,7 @@ public:
     WebKitAutomationSession* requestSession(const char* sessionID)
     {
         auto signalID = g_signal_connect(m_webContext.get(), "automation-started", G_CALLBACK(automationStartedCallback), this);
-        g_dbus_connection_call(m_connection.get(), nullptr, "/org/webkitgtk/Inspector", "org.webkitgtk.Inspector",
+        g_dbus_connection_call(m_connection.get(), nullptr, "/org/webkit/Inspector", "org.webkit.Inspector",
             "StartAutomationSession", g_variant_new("(s)", sessionID), nullptr, G_DBUS_CALL_FLAGS_NO_AUTO_START, -1, nullptr, nullptr, nullptr);
         auto timeoutID = g_timeout_add(1000, [](gpointer userData) -> gboolean {
             g_main_loop_quit(static_cast<GMainLoop*>(userData));
@@ -200,7 +200,7 @@ public:
         if (m_target.isPaired)
             return;
         g_assert(m_target.id);
-        g_dbus_connection_call(m_connection.get(), nullptr, "/org/webkitgtk/Inspector", "org.webkitgtk.Inspector",
+        g_dbus_connection_call(m_connection.get(), nullptr, "/org/webkit/Inspector", "org.webkit.Inspector",
             "Setup", g_variant_new("(tt)", m_connectionID, m_target.id), nullptr, G_DBUS_CALL_FLAGS_NO_AUTO_START, -1, nullptr, nullptr, nullptr);
         g_main_loop_run(m_mainLoop.get());
         g_assert(m_target.isPaired);

@@ -1,3 +1,11 @@
+2017-06-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+ test /webkit2/WebKitAutomationSession/request-session after r217831.
+
+        DBus interface and object path names were updated in r217831.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestAutomationSession.cpp:
+
 2017-06-10  Dan Bernstein  <mitz@apple.com>
 
         Reverted r218056 because it made the IDE reindex constantly.
