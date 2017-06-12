@@ -1,3 +1,15 @@
+2017-06-12  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [WPE][GTK] Rebaseline js/dom/global-constructors-attributes.html
+
+        Unreviewed gardening.
+
+        Needs to be updated in WPE due to enabling ENCRYPTED_MEDIA. GTK+
+        port was skipping this but it just needs an updated expectations.
+        * platform/gtk/TestExpectations: Unskip.
+        * platform/gtk/js/dom/global-constructors-attributes-expected.txt:
+        * platform/wpe/js/dom/global-constructors-attributes-expected.txt:
+
 2017-06-12  Charlie Turner  <cturner@igalia.com>
 
         Mark fast/mediastream/getUserMedia-grant-persistency3.html as flaky.
