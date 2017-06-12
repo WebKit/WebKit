@@ -80,6 +80,7 @@ my (
     $fullscreenAPISupport,
     $gamepadSupport,
     $geolocationSupport,
+    $gstreamerGLSupport,
     $hardwareConcurrencySupport,
     $highDPICanvasSupport,
     $icondatabaseSupport,
@@ -237,6 +238,9 @@ my @features = (
 
     { option => "geolocation", desc => "Toggle Geolocation support",
       define => "ENABLE_GEOLOCATION", default => (isAppleWebKit() || isIOSWebKit() || isGtk() || isWPE()), value => \$geolocationSupport },
+
+    { option => "gstreamer-gl", desc => "Toggle GStreamer GL support",
+      define => "USE_GSTREAMER_GL", default => (isGtk() || isWPE()), value => \$gstreamerGLSupport },
 
     { option => "high-dpi-canvas", desc => "Toggle High DPI Canvas support",
       define => "ENABLE_HIGH_DPI_CANVAS", default => (isAppleWebKit()), value => \$highDPICanvasSupport },

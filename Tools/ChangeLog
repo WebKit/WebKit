@@ -1,3 +1,14 @@
+2017-06-12  Miguel Gomez  <magomez@igalia.com>
+
+        [GTK][WPE] Enable GStreamer GL on development builds
+        https://bugs.webkit.org/show_bug.cgi?id=173248
+
+        Enable GStreamer GL for GTK and WPE.
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Scripts/webkitperl/FeatureList.pm:
+
 2017-06-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK+ test /webkit2/WebKitWebView/notification after r216641.
