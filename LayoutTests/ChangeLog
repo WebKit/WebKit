@@ -1,3 +1,15 @@
+2017-06-12  Antoine Quint  <graouts@apple.com>
+
+        Add tests for the SkipForwardButton class
+        https://bugs.webkit.org/show_bug.cgi?id=173214
+
+        Reviewed by Jon Lee.
+
+        * media/modern-media-controls/skip-forward-button/skip-forward-button-expected.txt: Added.
+        * media/modern-media-controls/skip-forward-button/skip-forward-button.html: Added.
+        * platform/ios-simulator/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2017-06-12  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Re-implement GetOwnPropertySlot[ByIndex] generation to more closely follow WebIDL
