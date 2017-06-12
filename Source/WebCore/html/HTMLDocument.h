@@ -53,11 +53,13 @@ public:
     WEBCORE_EXPORT void setLinkColor(const String&);
     WEBCORE_EXPORT const AtomicString& vlinkColor() const;
     WEBCORE_EXPORT void setVlinkColor(const String&);
-
+    
     WEBCORE_EXPORT void clear();
-
     WEBCORE_EXPORT void captureEvents();
     WEBCORE_EXPORT void releaseEvents();
+    
+    std::optional<Variant<RefPtr<DOMWindow>, RefPtr<Element>, RefPtr<HTMLCollection>>> namedItem(const AtomicString&);
+    Vector<AtomicString> supportedPropertyNames() const;
 
     Element* documentNamedItem(const AtomicStringImpl& name) const { return m_documentNamedItem.getElementByDocumentNamedItem(name, *this); }
     bool hasDocumentNamedItem(const AtomicStringImpl& name) const { return m_documentNamedItem.contains(name); }

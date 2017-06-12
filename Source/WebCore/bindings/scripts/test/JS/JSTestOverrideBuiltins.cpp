@@ -21,6 +21,7 @@
 #include "config.h"
 #include "JSTestOverrideBuiltins.h"
 
+#include "JSDOMAbstractOperations.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConstructorNotConstructable.h"
 #include "JSDOMConvert.h"
@@ -141,40 +142,48 @@ bool JSTestOverrideBuiltins::getOwnPropertySlot(JSObject* object, ExecState* sta
 {
     auto* thisObject = jsCast<JSTestOverrideBuiltins*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    if (thisObject->classInfo() == info() && !propertyName.isSymbol()) {
-        auto item = thisObject->wrapped().namedItem(propertyNameToAtomicString(propertyName));
-        if (!IDLInterface<Node>::isNullValue(item)) {
-            slot.setValue(thisObject, ReadOnly, toJS<IDLInterface<Node>>(*state, *thisObject->globalObject(), item));
-            return true;
-        }
-    }
-    if (Base::getOwnPropertySlot(thisObject, state, propertyName, slot))
+    using GetterIDLType = IDLInterface<Node>;
+    auto getterFunctor = [] (auto& thisObject, auto propertyName) -> std::optional<typename GetterIDLType::ImplementationType> {
+        auto result = thisObject.wrapped().namedItem(propertyNameToAtomicString(propertyName));
+        if (!GetterIDLType::isNullValue(result))
+            return typename GetterIDLType::ImplementationType { GetterIDLType::extractValueFromNullable(result) };
+        return std::nullopt;
+    };
+    if (auto namedProperty = accessVisibleNamedProperty<OverrideBuiltins::Yes>(*state, *thisObject, propertyName, getterFunctor)) {
+        auto value = toJS<IDLInterface<Node>>(*state, *thisObject->globalObject(), WTFMove(namedProperty.value()));
+        slot.setValue(thisObject, ReadOnly, value);
         return true;
-    return false;
+    }
+    return JSObject::getOwnPropertySlot(object, state, propertyName, slot);
 }
 
 bool JSTestOverrideBuiltins::getOwnPropertySlotByIndex(JSObject* object, ExecState* state, unsigned index, PropertySlot& slot)
 {
     auto* thisObject = jsCast<JSTestOverrideBuiltins*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    Identifier propertyName = Identifier::from(state, index);
-    if (thisObject->classInfo() == info()) {
-        auto item = thisObject->wrapped().namedItem(propertyNameToAtomicString(propertyName));
-        if (!IDLInterface<Node>::isNullValue(item)) {
-            slot.setValue(thisObject, ReadOnly, toJS<IDLInterface<Node>>(*state, *thisObject->globalObject(), item));
-            return true;
-        }
+    auto propertyName = Identifier::from(state, index);
+    using GetterIDLType = IDLInterface<Node>;
+    auto getterFunctor = [] (auto& thisObject, auto propertyName) -> std::optional<typename GetterIDLType::ImplementationType> {
+        auto result = thisObject.wrapped().namedItem(propertyNameToAtomicString(propertyName));
+        if (!GetterIDLType::isNullValue(result))
+            return typename GetterIDLType::ImplementationType { GetterIDLType::extractValueFromNullable(result) };
+        return std::nullopt;
+    };
+    if (auto namedProperty = accessVisibleNamedProperty<OverrideBuiltins::Yes>(*state, *thisObject, propertyName, getterFunctor)) {
+        auto value = toJS<IDLInterface<Node>>(*state, *thisObject->globalObject(), WTFMove(namedProperty.value()));
+        slot.setValue(thisObject, ReadOnly, value);
+        return true;
     }
-    return Base::getOwnPropertySlotByIndex(thisObject, state, index, slot);
+    return JSObject::getOwnPropertySlotByIndex(object, state, index, slot);
 }
 
 void JSTestOverrideBuiltins::getOwnPropertyNames(JSObject* object, ExecState* state, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
     auto* thisObject = jsCast<JSTestOverrideBuiltins*>(object);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
+    ASSERT_GC_OBJECT_INHERITS(object, info());
     for (auto& propertyName : thisObject->wrapped().supportedPropertyNames())
         propertyNames.add(Identifier::fromString(state, propertyName));
-    Base::getOwnPropertyNames(thisObject, state, propertyNames, mode);
+    JSObject::getOwnPropertyNames(object, state, propertyNames, mode);
 }
 
 template<> inline JSTestOverrideBuiltins* IDLOperation<JSTestOverrideBuiltins>::cast(ExecState& state)

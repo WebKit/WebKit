@@ -21,6 +21,7 @@
 #include "config.h"
 #include "JSTestEventTarget.h"
 
+#include "JSDOMAbstractOperations.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConstructorNotConstructable.h"
 #include "JSDOMConvert.h"
@@ -134,48 +135,66 @@ bool JSTestEventTarget::getOwnPropertySlot(JSObject* object, ExecState* state, P
 {
     auto* thisObject = jsCast<JSTestEventTarget*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    auto optionalIndex = parseIndex(propertyName);
-    if (optionalIndex && optionalIndex.value() < thisObject->wrapped().length()) {
-        auto index = optionalIndex.value();
-        slot.setValue(thisObject, ReadOnly, toJS<IDLInterface<Node>>(*state, *thisObject->globalObject(), thisObject->wrapped().item(index)));
-        return true;
-    }
-    if (Base::getOwnPropertySlot(thisObject, state, propertyName, slot))
-        return true;
-    JSValue proto = thisObject->getPrototypeDirect();
-    if (proto.isObject() && jsCast<JSObject*>(proto)->hasProperty(state, propertyName))
-        return false;
-
-    if (!optionalIndex && thisObject->classInfo() == info() && !propertyName.isSymbol()) {
-        auto item = thisObject->wrapped().namedItem(propertyNameToAtomicString(propertyName));
-        if (!IDLInterface<Node>::isNullValue(item)) {
-            slot.setValue(thisObject, ReadOnly, toJS<IDLInterface<Node>>(*state, *thisObject->globalObject(), item));
+    if (auto index = parseIndex(propertyName)) {
+        if (index.value() < thisObject->wrapped().length()) {
+            auto value = toJS<IDLInterface<Node>>(*state, *thisObject->globalObject(), thisObject->wrapped().item(index.value()));
+            slot.setValue(thisObject, ReadOnly, value);
             return true;
         }
+        return JSObject::getOwnPropertySlot(object, state, propertyName, slot);
     }
-    return false;
+    using GetterIDLType = IDLInterface<Node>;
+    auto getterFunctor = [] (auto& thisObject, auto propertyName) -> std::optional<typename GetterIDLType::ImplementationType> {
+        auto result = thisObject.wrapped().namedItem(propertyNameToAtomicString(propertyName));
+        if (!GetterIDLType::isNullValue(result))
+            return typename GetterIDLType::ImplementationType { GetterIDLType::extractValueFromNullable(result) };
+        return std::nullopt;
+    };
+    if (auto namedProperty = accessVisibleNamedProperty<OverrideBuiltins::No>(*state, *thisObject, propertyName, getterFunctor)) {
+        auto value = toJS<IDLInterface<Node>>(*state, *thisObject->globalObject(), WTFMove(namedProperty.value()));
+        slot.setValue(thisObject, ReadOnly, value);
+        return true;
+    }
+    return JSObject::getOwnPropertySlot(object, state, propertyName, slot);
 }
 
 bool JSTestEventTarget::getOwnPropertySlotByIndex(JSObject* object, ExecState* state, unsigned index, PropertySlot& slot)
 {
     auto* thisObject = jsCast<JSTestEventTarget*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    if (LIKELY(index < thisObject->wrapped().length())) {
-        slot.setValue(thisObject, ReadOnly, toJS<IDLInterface<Node>>(*state, *thisObject->globalObject(), thisObject->wrapped().item(index)));
+    if (LIKELY(index <= MAX_ARRAY_INDEX)) {
+        if (index < thisObject->wrapped().length()) {
+            auto value = toJS<IDLInterface<Node>>(*state, *thisObject->globalObject(), thisObject->wrapped().item(index));
+            slot.setValue(thisObject, ReadOnly, value);
+            return true;
+        }
+        return JSObject::getOwnPropertySlotByIndex(object, state, index, slot);
+    }
+    auto propertyName = Identifier::from(state, index);
+    using GetterIDLType = IDLInterface<Node>;
+    auto getterFunctor = [] (auto& thisObject, auto propertyName) -> std::optional<typename GetterIDLType::ImplementationType> {
+        auto result = thisObject.wrapped().namedItem(propertyNameToAtomicString(propertyName));
+        if (!GetterIDLType::isNullValue(result))
+            return typename GetterIDLType::ImplementationType { GetterIDLType::extractValueFromNullable(result) };
+        return std::nullopt;
+    };
+    if (auto namedProperty = accessVisibleNamedProperty<OverrideBuiltins::No>(*state, *thisObject, propertyName, getterFunctor)) {
+        auto value = toJS<IDLInterface<Node>>(*state, *thisObject->globalObject(), WTFMove(namedProperty.value()));
+        slot.setValue(thisObject, ReadOnly, value);
         return true;
     }
-    return Base::getOwnPropertySlotByIndex(thisObject, state, index, slot);
+    return JSObject::getOwnPropertySlotByIndex(object, state, index, slot);
 }
 
 void JSTestEventTarget::getOwnPropertyNames(JSObject* object, ExecState* state, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
     auto* thisObject = jsCast<JSTestEventTarget*>(object);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
+    ASSERT_GC_OBJECT_INHERITS(object, info());
     for (unsigned i = 0, count = thisObject->wrapped().length(); i < count; ++i)
         propertyNames.add(Identifier::from(state, i));
     for (auto& propertyName : thisObject->wrapped().supportedPropertyNames())
         propertyNames.add(Identifier::fromString(state, propertyName));
-    Base::getOwnPropertyNames(thisObject, state, propertyNames, mode);
+    JSObject::getOwnPropertyNames(object, state, propertyNames, mode);
 }
 
 template<> inline JSTestEventTarget* IDLOperation<JSTestEventTarget>::cast(ExecState& state)

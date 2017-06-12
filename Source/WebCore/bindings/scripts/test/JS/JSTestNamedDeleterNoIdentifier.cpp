@@ -135,54 +135,58 @@ bool JSTestNamedDeleterNoIdentifier::getOwnPropertySlot(JSObject* object, ExecSt
 {
     auto* thisObject = jsCast<JSTestNamedDeleterNoIdentifier*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    if (Base::getOwnPropertySlot(thisObject, state, propertyName, slot))
+    using GetterIDLType = IDLDOMString;
+    auto getterFunctor = [] (auto& thisObject, auto propertyName) -> std::optional<typename GetterIDLType::ImplementationType> {
+        auto result = thisObject.wrapped().namedItem(propertyNameToAtomicString(propertyName));
+        if (!GetterIDLType::isNullValue(result))
+            return typename GetterIDLType::ImplementationType { GetterIDLType::extractValueFromNullable(result) };
+        return std::nullopt;
+    };
+    if (auto namedProperty = accessVisibleNamedProperty<OverrideBuiltins::No>(*state, *thisObject, propertyName, getterFunctor)) {
+        auto value = toJS<IDLDOMString>(*state, WTFMove(namedProperty.value()));
+        slot.setValue(thisObject, ReadOnly, value);
         return true;
-    JSValue proto = thisObject->getPrototypeDirect();
-    if (proto.isObject() && jsCast<JSObject*>(proto)->hasProperty(state, propertyName))
-        return false;
-
-    if (thisObject->classInfo() == info() && !propertyName.isSymbol()) {
-        auto item = thisObject->wrapped().namedItem(propertyNameToAtomicString(propertyName));
-        if (!IDLDOMString::isNullValue(item)) {
-            slot.setValue(thisObject, ReadOnly, toJS<IDLDOMString>(*state, item));
-            return true;
-        }
     }
-    return false;
+    return JSObject::getOwnPropertySlot(object, state, propertyName, slot);
 }
 
 bool JSTestNamedDeleterNoIdentifier::getOwnPropertySlotByIndex(JSObject* object, ExecState* state, unsigned index, PropertySlot& slot)
 {
     auto* thisObject = jsCast<JSTestNamedDeleterNoIdentifier*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    Identifier propertyName = Identifier::from(state, index);
-    if (thisObject->classInfo() == info()) {
-        auto item = thisObject->wrapped().namedItem(propertyNameToAtomicString(propertyName));
-        if (!IDLDOMString::isNullValue(item)) {
-            slot.setValue(thisObject, ReadOnly, toJS<IDLDOMString>(*state, item));
-            return true;
-        }
+    auto propertyName = Identifier::from(state, index);
+    using GetterIDLType = IDLDOMString;
+    auto getterFunctor = [] (auto& thisObject, auto propertyName) -> std::optional<typename GetterIDLType::ImplementationType> {
+        auto result = thisObject.wrapped().namedItem(propertyNameToAtomicString(propertyName));
+        if (!GetterIDLType::isNullValue(result))
+            return typename GetterIDLType::ImplementationType { GetterIDLType::extractValueFromNullable(result) };
+        return std::nullopt;
+    };
+    if (auto namedProperty = accessVisibleNamedProperty<OverrideBuiltins::No>(*state, *thisObject, propertyName, getterFunctor)) {
+        auto value = toJS<IDLDOMString>(*state, WTFMove(namedProperty.value()));
+        slot.setValue(thisObject, ReadOnly, value);
+        return true;
     }
-    return Base::getOwnPropertySlotByIndex(thisObject, state, index, slot);
+    return JSObject::getOwnPropertySlotByIndex(object, state, index, slot);
 }
 
 void JSTestNamedDeleterNoIdentifier::getOwnPropertyNames(JSObject* object, ExecState* state, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
     auto* thisObject = jsCast<JSTestNamedDeleterNoIdentifier*>(object);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
+    ASSERT_GC_OBJECT_INHERITS(object, info());
     for (auto& propertyName : thisObject->wrapped().supportedPropertyNames())
         propertyNames.add(Identifier::fromString(state, propertyName));
-    Base::getOwnPropertyNames(thisObject, state, propertyNames, mode);
+    JSObject::getOwnPropertyNames(object, state, propertyNames, mode);
 }
 
 bool JSTestNamedDeleterNoIdentifier::deleteProperty(JSCell* cell, ExecState* state, PropertyName propertyName)
 {
     auto& thisObject = *jsCast<JSTestNamedDeleterNoIdentifier*>(cell);
     auto& impl = thisObject.wrapped();
-    if (isVisibleNamedProperty<false>(*state, thisObject, propertyName)) {
+    if (isVisibleNamedProperty<OverrideBuiltins::No>(*state, thisObject, propertyName)) {
         return impl.deleteNamedProperty(propertyNameToString(propertyName));
     }
-    return Base::deleteProperty(cell, state, propertyName);
+    return JSObject::deleteProperty(cell, state, propertyName);
 }
 
 bool JSTestNamedDeleterNoIdentifier::deletePropertyByIndex(JSCell* cell, ExecState* state, unsigned index)
@@ -190,10 +194,10 @@ bool JSTestNamedDeleterNoIdentifier::deletePropertyByIndex(JSCell* cell, ExecSta
     auto& thisObject = *jsCast<JSTestNamedDeleterNoIdentifier*>(cell);
     auto& impl = thisObject.wrapped();
     auto propertyName = Identifier::from(state, index);
-    if (isVisibleNamedProperty<false>(*state, thisObject, propertyName)) {
+    if (isVisibleNamedProperty<OverrideBuiltins::No>(*state, thisObject, propertyName)) {
         return impl.deleteNamedProperty(propertyNameToString(propertyName));
     }
-    return Base::deletePropertyByIndex(cell, state, index);
+    return JSObject::deletePropertyByIndex(cell, state, index);
 }
 
 EncodedJSValue jsTestNamedDeleterNoIdentifierConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)

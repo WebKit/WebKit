@@ -68,6 +68,6 @@ Numeric 12: undefined
 Numeric 13: undefined
 
 Conflicting image: single IMG(name)
-Conflicting image (custom property): single IMG(name)
-Conflicting iframe: single WINDOW
+Conflicting image (custom property): single OTHER
+Conflicting iframe: single OTHER
 

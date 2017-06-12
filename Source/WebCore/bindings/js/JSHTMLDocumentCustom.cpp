@@ -26,7 +26,7 @@
 #include "config.h"
 #include "JSHTMLDocument.h"
 
-#include "HTMLIFrameElement.h"
+#include "JSDOMAbstractOperations.h"
 #include "JSDOMWindowCustom.h"
 #include "JSHTMLCollection.h"
 #include "SegmentedString.h"
@@ -55,50 +55,28 @@ JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, HTMLDocument& do
 
 bool JSHTMLDocument::getOwnPropertySlot(JSObject* object, ExecState* state, PropertyName propertyName, PropertySlot& slot)
 {
-    auto& thisObject = *jsCast<JSHTMLDocument*>(object);
-    ASSERT_GC_OBJECT_INHERITS(object, info());
-
+    auto* thisObject = jsCast<JSHTMLDocument*>(object);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
+    
     if (propertyName == "open") {
-        if (Base::getOwnPropertySlot(&thisObject, state, propertyName, slot))
+        if (Base::getOwnPropertySlot(thisObject, state, propertyName, slot))
             return true;
-        slot.setCustom(&thisObject, ReadOnly | DontDelete | DontEnum, nonCachingStaticFunctionGetter<jsHTMLDocumentPrototypeFunctionOpen, 2>);
+        slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, nonCachingStaticFunctionGetter<jsHTMLDocumentPrototypeFunctionOpen, 2>);
         return true;
     }
 
-    JSValue value;
-    if (thisObject.nameGetter(state, propertyName, value)) {
-        slot.setValue(&thisObject, ReadOnly | DontDelete | DontEnum, value);
+    using GetterIDLType = IDLUnion<IDLInterface<DOMWindow>, IDLInterface<Element>, IDLInterface<HTMLCollection>>;
+    auto getterFunctor = [] (auto& thisObject, auto propertyName) -> std::optional<typename GetterIDLType::ImplementationType> {
+        auto result = thisObject.wrapped().namedItem(propertyNameToAtomicString(propertyName));
+        if (!GetterIDLType::isNullValue(result))
+            return typename GetterIDLType::ImplementationType { GetterIDLType::extractValueFromNullable(result) };
+        return std::nullopt;
+    };
+    if (auto namedProperty = accessVisibleNamedProperty<OverrideBuiltins::Yes>(*state, *thisObject, propertyName, getterFunctor)) {
+        slot.setValue(thisObject, ReadOnly, toJS<GetterIDLType>(*state, *thisObject->globalObject(), WTFMove(namedProperty.value())));
         return true;
     }
-
-    return Base::getOwnPropertySlot(&thisObject, state, propertyName, slot);
-}
-
-bool JSHTMLDocument::nameGetter(ExecState* state, PropertyName propertyName, JSValue& value)
-{
-    auto& document = wrapped();
-
-    auto* atomicPropertyName = propertyName.publicName();
-    if (!atomicPropertyName || !document.hasDocumentNamedItem(*atomicPropertyName))
-        return false;
-
-    if (UNLIKELY(document.documentNamedItemContainsMultipleElements(*atomicPropertyName))) {
-        auto collection = document.documentNamedItems(atomicPropertyName);
-        ASSERT(collection->length() > 1);
-        value = toJS(state, globalObject(), collection);
-        return true;
-    }
-
-    auto& element = *document.documentNamedItem(*atomicPropertyName);
-    if (UNLIKELY(is<HTMLIFrameElement>(element))) {
-        if (auto* frame = downcast<HTMLIFrameElement>(element).contentFrame()) {
-            value = toJS(state, frame);
-            return true;
-        }
-    }
-
-    value = toJS(state, globalObject(), element);
-    return true;
+    return JSObject::getOwnPropertySlot(object, state, propertyName, slot);
 }
 
 // Custom attributes

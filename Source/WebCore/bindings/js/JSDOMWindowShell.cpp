@@ -118,18 +118,14 @@ DOMWindow* JSDOMWindowShell::toWrapped(VM& vm, JSObject* value)
 // Conversion methods
 // ----
 
-JSValue toJS(ExecState* exec, Frame* frame)
+JSValue toJS(ExecState* exec, Frame& frame)
 {
-    if (!frame)
-        return jsNull();
-    return frame->script().windowShell(currentWorld(exec));
+    return frame.script().windowShell(currentWorld(exec));
 }
 
-JSDOMWindowShell* toJSDOMWindowShell(Frame* frame, DOMWrapperWorld& world)
+JSDOMWindowShell* toJSDOMWindowShell(Frame& frame, DOMWrapperWorld& world)
 {
-    if (!frame)
-        return 0;
-    return frame->script().windowShell(world);
+    return frame.script().windowShell(world);
 }
 
 } // namespace WebCore

@@ -20,7 +20,6 @@
 
 [
     CustomGetOwnPropertySlot,
-    CustomNamedGetter,
     CustomToJSObject,
     NewImpurePropertyFiresWatchpoints,
     OverrideBuiltins,
@@ -29,11 +28,12 @@
     void close();
     [CEReactions, Custom] void write(optional DOMString text);
     [CEReactions, Custom] void writeln(optional DOMString text);
-
+    
+    getter (DOMWindow or Element or HTMLCollection) (DOMString name);
+    
     [Custom, Replaceable] readonly attribute HTMLAllCollection all;
 
     void clear();
-
     void captureEvents();
     void releaseEvents();
 

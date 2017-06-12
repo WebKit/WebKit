@@ -1,3 +1,173 @@
+2017-06-12  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Re-implement GetOwnPropertySlot[ByIndex] generation to more closely follow WebIDL
+        https://bugs.webkit.org/show_bug.cgi?id=173229
+
+        Reviewed by Chris Dumez.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * CMakeLists.txt:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        Remove JSHTMLFrameSetElementCustom.cpp which is no longer needed.
+
+        * bindings/js/JSDOMAbstractOperations.h:
+        (WebCore::isVisibleNamedProperty):
+        Add OverrideBuiltins enum as requested by a previous review (and I forgot address) and adopt it
+        in isVisibleNamedProperty, switch to VMInquiry as we use elsewhere and add a missing FIXME.
+
+        (WebCore::accessVisibleNamedProperty):
+        Add variation of isVisibleNamedProperty that takes a functor and returns either the value the
+        functor returns, or std::nullopt. This allows getOwnPropertySlot to avoid doing two lookups for
+        property, once in the named property visibility algorithm and again when it needs the value.
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        * bindings/js/JSDOMWindowBase.h:
+        * bindings/js/JSDOMWindowShell.cpp:
+        * bindings/js/JSDOMWindowShell.h:
+        Standardize toJS functions to match generated code (have one that takes a reference, and does the
+        cast, and one that takes a pointer, does a null check and calls the one that takes a reference).
+        
+        * bindings/js/JSHTMLDocumentCustom.cpp:
+        (WebCore::JSHTMLDocument::getOwnPropertySlot):.
+        Update to use the implementation namedItem (which is also used by the generated getOwnPropertySlotByIndex)
+        and match the updated bindings rules. This cannot yet be generated due to the odd case of the 'open'
+        property requiring custom treatment. I tried removing this, but it cause tests to fail in a way that indicated
+        that accessing the lexical global object in the open implementation was not working correctly.
+
+        * bindings/js/JSHTMLFrameSetElementCustom.cpp: Removed.
+        Now generated.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateIndexedGetter):
+        Add description from the spec and change to return the computed values rather than
+        print them to the output array. This will be useful for some clients going forward,
+        who only want the attributes.
+
+        (GenerateNamedGetter):
+        Add description from the spec and change to return the computed values rather than
+        print them to the output array. This will be useful for some clients going forward,
+        who only want the attributes. Also greatly simplifies things as [CustomNamedGetter]s
+        are no longer needed/supported and the exception / null value checks are performed
+        elsewhere.
+
+        (GenerateNamedGetterLambda):
+        This generates a lambda functor for use in accessVisibleNamedProperty(...). It
+        handles calling the named getter implementation, and transforming the result into
+        an one that can be reasoned about by accessVisibleNamedProperty, specifically,
+        converting it from using IDL's notion of nullability to std::optional. 
+
+        (GenerateGetOwnPropertySlot):
+        (GenerateGetOwnPropertySlotByIndex):
+        Add spec annotations and use helper functions. 
+
+        (GenerateGetOwnPropertyNames):
+        Add FIXME about supporting non-contiguous indices (should that ever come up)
+        and use JSObject explicitly, rather than base, to get the default getOwnPropertyNames
+        implementation.
+
+        (GeneratePut):
+        Use JSObject explicitly, rather than base, to get the default put implementation.
+
+        (GeneratePutByIndex):
+        Use JSObject explicitly, rather than base, to get the default putByIndex implementation.
+
+        (GenerateDefineOwnProperty):
+        Use JSObject explicitly, rather than base, to get the default getOwnPropertySlot/defineOwnProperty
+        implementations.
+
+        (GenerateDeletePropertyCommon):
+        Adopt new OverrideBuiltins enum.
+
+        (GenerateDeletePropertyDefinition):
+        Use JSObject explicitly, rather than base, to get the default deleteProperty implementation.
+
+        (GenerateDeletePropertyByIndexDefinition):
+        Use JSObject explicitly, rather than base, to get the default deletePropertyByIndex implementation.
+
+        (InstanceOverridesGetOwnPropertySlot):
+        Remove [CustomNamedGetter] use.
+ 
+        (GenerateHeader):
+        Remove [CustomNamedGetter] use and merge InstanceOverridesGetOwnPropertySlotByIndex into
+        InstanceOverridesGetOwnPropertySlot. Specifying either [CustomGetOwnPropertySlot] or
+        [CustomGetOwnPropertySlotByIndex] will now declare both hooks.
+        
+        (GenerateImplementation):
+        Rename GenerateGetOwnPropertySlotBody/GenerateGetOwnPropertySlotByIndexBody to remove the 'Body',
+        and predicate their generation purely on InstanceOverridesGetOwnPropertySlot as noted for the 
+        reasons above.
+
+        (GenerateGetOwnPropertySlotBody): Deleted.
+        (GenerateGetOwnPropertySlotBodyByIndex): Deleted.
+        (InstanceOverridesGetOwnPropertySlotByIndex): Deleted.
+
+        * bindings/scripts/IDLAttributes.json:
+        Remove [CustomNamedGetter].
+
+        * dom/ExceptionOr.h:
+        (WebCore::ExceptionOr<ReturnType>::returnValue):
+        Add a function to peek at the return value
+
+        * html/HTMLDocument.h:
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::clear):
+        (WebCore::HTMLDocument::captureEvents):
+        (WebCore::HTMLDocument::releaseEvents):
+        Move clear up to be with the other obsolete no-op functions. Add spec annotations
+        to clear up any confusion about why they are no-ops.
+
+        (WebCore::HTMLDocument::namedItem):
+        Add implementation of namedItem based on the one that was in JSDOMHTMLDocumentCustom.cpp.
+
+        (WebCore::HTMLDocument::supportedPropertyNames):
+        Add stub version of supportedPropertyNames with the algorithm we need to implement.
+        I don't want to change behavior in this patch, and since we have not enumerated the
+        properties of document in the past, I left this unimplemented for now.
+
+        * html/HTMLDocument.idl:
+        Remove [CustomNamedGetter] and add named getter.
+
+        * html/HTMLFrameSetElement.h:
+        * html/HTMLFrameSetElement.cpp:
+        (WebCore::HTMLFrameSetElement::namedItem):
+        Add named getter based on the implementation in JSHTMLFrameSetElementCustom.cpp.
+
+        (WebCore::HTMLFrameSetElement::supportedPropertyNames):
+        As noted above, I don't want to change behavior with this change, so I have left this unimplemented
+        for now. However, we may not want to implement it at all, as this named getter is not specified and
+        at least Firefox does not support it.
+
+        * html/HTMLFrameSetElement.idl:
+        Remove [CustomNamedGetter] and add named getter.
+
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        * bindings/scripts/test/JS/JSTestIndexedSetterNoIdentifier.cpp:
+        * bindings/scripts/test/JS/JSTestIndexedSetterThrowingException.cpp:
+        * bindings/scripts/test/JS/JSTestIndexedSetterWithIdentifier.cpp:
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterNoIdentifier.cpp:
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterThrowingException.cpp:
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterWithIdentifier.cpp:
+        * bindings/scripts/test/JS/JSTestNamedDeleterNoIdentifier.cpp:
+        * bindings/scripts/test/JS/JSTestNamedDeleterThrowingException.cpp:
+        * bindings/scripts/test/JS/JSTestNamedDeleterWithIdentifier.cpp:
+        * bindings/scripts/test/JS/JSTestNamedDeleterWithIndexedGetter.cpp:
+        * bindings/scripts/test/JS/JSTestNamedSetterNoIdentifier.cpp:
+        * bindings/scripts/test/JS/JSTestNamedSetterThrowingException.cpp:
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIdentifier.cpp:
+        * bindings/scripts/test/JS/JSTestNamedSetterWithOverrideBuiltins.cpp:
+        * bindings/scripts/test/JS/JSTestNamedSetterWithUnforgableProperties.cpp:
+        * bindings/scripts/test/JS/JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins.cpp:
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestOverrideBuiltins.cpp:
+        Update test results.
+
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.cpp: Removed.
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.h: Removed.
+        * bindings/scripts/test/TestCustomNamedGetter.idl: Removed.
+        Remove test of [CustomNamedGetter] which no longer exists. 
+
 2017-06-12  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         WebItemProviderPasteboard should call its completion block immediately after a synchronous load

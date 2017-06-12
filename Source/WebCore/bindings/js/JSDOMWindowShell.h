@@ -34,44 +34,51 @@
 
 namespace WebCore {
 
-    class Frame;
+class Frame;
 
-    class JSDOMWindowShell : public JSC::JSProxy {
-        typedef JSC::JSProxy Base;
-    public:
-        static void destroy(JSCell*);
+// FIXME: Rename to JSDOMWindowProxy or JSWindowProxy to match HTML spec naming. (https://webkit.org/b/80733)
+class JSDOMWindowShell : public JSC::JSProxy {
+    typedef JSC::JSProxy Base;
+public:
+    static void destroy(JSCell*);
 
-        JSDOMWindow* window() const { return JSC::jsCast<JSDOMWindow*>(target()); }
-        void setWindow(JSC::VM&, JSDOMWindow*);
-        void setWindow(RefPtr<DOMWindow>&&);
+    JSDOMWindow* window() const { return JSC::jsCast<JSDOMWindow*>(target()); }
+    void setWindow(JSC::VM&, JSDOMWindow*);
+    void setWindow(RefPtr<DOMWindow>&&);
 
-        DECLARE_INFO;
+    DECLARE_INFO;
 
-        DOMWindow& wrapped() const;
-        static WEBCORE_EXPORT DOMWindow* toWrapped(JSC::VM&, JSC::JSObject*);
+    DOMWindow& wrapped() const;
+    static WEBCORE_EXPORT DOMWindow* toWrapped(JSC::VM&, JSC::JSObject*);
 
-        static JSDOMWindowShell* create(JSC::VM& vm, RefPtr<DOMWindow>&& window, JSC::Structure* structure, DOMWrapperWorld& world)
-        {
-            JSDOMWindowShell* shell = new (NotNull, JSC::allocateCell<JSDOMWindowShell>(vm.heap)) JSDOMWindowShell(vm, structure, world);
-            shell->finishCreation(vm, WTFMove(window));
-            return shell; 
-        }
+    static JSDOMWindowShell* create(JSC::VM& vm, RefPtr<DOMWindow>&& window, JSC::Structure* structure, DOMWrapperWorld& world)
+    {
+        JSDOMWindowShell* shell = new (NotNull, JSC::allocateCell<JSDOMWindowShell>(vm.heap)) JSDOMWindowShell(vm, structure, world);
+        shell->finishCreation(vm, WTFMove(window));
+        return shell;
+    }
 
-        static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSValue prototype) 
-        {
-            return JSC::Structure::create(vm, 0, prototype, JSC::TypeInfo(JSC::PureForwardingProxyType, StructureFlags), info());
-        }
+    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSValue prototype)
+    {
+        return JSC::Structure::create(vm, 0, prototype, JSC::TypeInfo(JSC::PureForwardingProxyType, StructureFlags), info());
+    }
 
-        DOMWrapperWorld& world() { return m_world; }
+    DOMWrapperWorld& world() { return m_world; }
 
-    protected:
-        JSDOMWindowShell(JSC::VM&, JSC::Structure*, DOMWrapperWorld&);
-        void finishCreation(JSC::VM&, RefPtr<DOMWindow>&&);
+protected:
+    JSDOMWindowShell(JSC::VM&, JSC::Structure*, DOMWrapperWorld&);
+    void finishCreation(JSC::VM&, RefPtr<DOMWindow>&&);
 
-        Ref<DOMWrapperWorld> m_world;
-    };
+    Ref<DOMWrapperWorld> m_world;
+};
 
-    JSC::JSValue toJS(JSC::ExecState*, Frame*);
-    JSDOMWindowShell* toJSDOMWindowShell(Frame*, DOMWrapperWorld&);
+// JSDOMWindowShell is a little odd in that it's not a traditional wrapper and has no back pointer. It
+// is however strongly owned by Frame (via its ScriptController), and therefore, to get the JSDOMWindowShell
+// a Frame is passed.
+JSC::JSValue toJS(JSC::ExecState*, Frame&);
+inline JSC::JSValue toJS(JSC::ExecState* state, Frame* frame) { return frame ? toJS(state, *frame) : JSC::jsNull(); }
+
+JSDOMWindowShell* toJSDOMWindowShell(Frame&, DOMWrapperWorld&);
+inline JSDOMWindowShell* toJSDOMWindowShell(Frame* frame, DOMWrapperWorld& world) { return frame ? toJSDOMWindowShell(*frame, world) : nullptr; }
 
 } // namespace WebCore

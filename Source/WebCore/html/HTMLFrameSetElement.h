@@ -45,6 +45,9 @@ public:
     const Length* colLengths() const { return m_colLengths.get(); }
 
     static HTMLFrameSetElement* findContaining(Element* descendant);
+    
+    Vector<AtomicString> supportedPropertyNames() const;
+    DOMWindow* namedItem(const AtomicString&);
 
 private:
     HTMLFrameSetElement(const QualifiedName&, Document&);

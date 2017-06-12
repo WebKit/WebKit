@@ -21,6 +21,7 @@
 #include "config.h"
 #include "JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins.h"
 
+#include "JSDOMAbstractOperations.h"
 #include "JSDOMAttribute.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConstructorNotConstructable.h"
@@ -158,40 +159,48 @@ bool JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins::getOwnPropert
 {
     auto* thisObject = jsCast<JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    if (thisObject->classInfo() == info() && !propertyName.isSymbol()) {
-        auto item = thisObject->wrapped().namedItem(propertyNameToAtomicString(propertyName));
-        if (!IDLDOMString::isNullValue(item)) {
-            slot.setValue(thisObject, 0, toJS<IDLDOMString>(*state, item));
-            return true;
-        }
-    }
-    if (Base::getOwnPropertySlot(thisObject, state, propertyName, slot))
+    using GetterIDLType = IDLDOMString;
+    auto getterFunctor = [] (auto& thisObject, auto propertyName) -> std::optional<typename GetterIDLType::ImplementationType> {
+        auto result = thisObject.wrapped().namedItem(propertyNameToAtomicString(propertyName));
+        if (!GetterIDLType::isNullValue(result))
+            return typename GetterIDLType::ImplementationType { GetterIDLType::extractValueFromNullable(result) };
+        return std::nullopt;
+    };
+    if (auto namedProperty = accessVisibleNamedProperty<OverrideBuiltins::Yes>(*state, *thisObject, propertyName, getterFunctor)) {
+        auto value = toJS<IDLDOMString>(*state, WTFMove(namedProperty.value()));
+        slot.setValue(thisObject, 0, value);
         return true;
-    return false;
+    }
+    return JSObject::getOwnPropertySlot(object, state, propertyName, slot);
 }
 
 bool JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins::getOwnPropertySlotByIndex(JSObject* object, ExecState* state, unsigned index, PropertySlot& slot)
 {
     auto* thisObject = jsCast<JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    Identifier propertyName = Identifier::from(state, index);
-    if (thisObject->classInfo() == info()) {
-        auto item = thisObject->wrapped().namedItem(propertyNameToAtomicString(propertyName));
-        if (!IDLDOMString::isNullValue(item)) {
-            slot.setValue(thisObject, 0, toJS<IDLDOMString>(*state, item));
-            return true;
-        }
+    auto propertyName = Identifier::from(state, index);
+    using GetterIDLType = IDLDOMString;
+    auto getterFunctor = [] (auto& thisObject, auto propertyName) -> std::optional<typename GetterIDLType::ImplementationType> {
+        auto result = thisObject.wrapped().namedItem(propertyNameToAtomicString(propertyName));
+        if (!GetterIDLType::isNullValue(result))
+            return typename GetterIDLType::ImplementationType { GetterIDLType::extractValueFromNullable(result) };
+        return std::nullopt;
+    };
+    if (auto namedProperty = accessVisibleNamedProperty<OverrideBuiltins::Yes>(*state, *thisObject, propertyName, getterFunctor)) {
+        auto value = toJS<IDLDOMString>(*state, WTFMove(namedProperty.value()));
+        slot.setValue(thisObject, 0, value);
+        return true;
     }
-    return Base::getOwnPropertySlotByIndex(thisObject, state, index, slot);
+    return JSObject::getOwnPropertySlotByIndex(object, state, index, slot);
 }
 
 void JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins::getOwnPropertyNames(JSObject* object, ExecState* state, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
     auto* thisObject = jsCast<JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins*>(object);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
+    ASSERT_GC_OBJECT_INHERITS(object, info());
     for (auto& propertyName : thisObject->wrapped().supportedPropertyNames())
         propertyNames.add(Identifier::fromString(state, propertyName));
-    Base::getOwnPropertyNames(thisObject, state, propertyNames, mode);
+    JSObject::getOwnPropertyNames(object, state, propertyNames, mode);
 }
 
 bool JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins::put(JSCell* cell, ExecState* state, PropertyName propertyName, JSValue value, PutPropertySlot& putPropertySlot)
@@ -207,7 +216,7 @@ bool JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins::put(JSCell* c
         return true;
     }
 
-    return Base::put(thisObject, state, propertyName, value, putPropertySlot);
+    return JSObject::put(thisObject, state, propertyName, value, putPropertySlot);
 }
 
 bool JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins::putByIndex(JSCell* cell, ExecState* state, unsigned index, JSValue value, bool)
@@ -215,7 +224,7 @@ bool JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins::putByIndex(JS
     auto* thisObject = jsCast<JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
-    Identifier propertyName = Identifier::from(state, index);
+    auto propertyName = Identifier::from(state, index);
     auto throwScope = DECLARE_THROW_SCOPE(state->vm());
     auto nativeValue = convert<IDLDOMString>(*state, value);
     RETURN_IF_EXCEPTION(throwScope, true);
@@ -247,7 +256,7 @@ static bool isUnforgeablePropertyName(PropertyName propertyName)
 
     PropertyDescriptor newPropertyDescriptor = propertyDescriptor;
     newPropertyDescriptor.setConfigurable(true);
-    return Base::defineOwnProperty(object, state, propertyName, newPropertyDescriptor, shouldThrow);
+    return JSObject::defineOwnProperty(object, state, propertyName, newPropertyDescriptor, shouldThrow);
 }
 
 template<> inline JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins* IDLAttribute<JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins>::cast(ExecState& state, EncodedJSValue thisValue)

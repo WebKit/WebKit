@@ -21,6 +21,7 @@
 #include "config.h"
 #include "JSTestNamedAndIndexedSetterNoIdentifier.h"
 
+#include "JSDOMAbstractOperations.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConstructorNotConstructable.h"
 #include "JSDOMConvert.h"
@@ -136,48 +137,66 @@ bool JSTestNamedAndIndexedSetterNoIdentifier::getOwnPropertySlot(JSObject* objec
 {
     auto* thisObject = jsCast<JSTestNamedAndIndexedSetterNoIdentifier*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    auto optionalIndex = parseIndex(propertyName);
-    if (optionalIndex && optionalIndex.value() < thisObject->wrapped().length()) {
-        auto index = optionalIndex.value();
-        slot.setValue(thisObject, 0, toJS<IDLDOMString>(*state, thisObject->wrapped().item(index)));
-        return true;
-    }
-    if (Base::getOwnPropertySlot(thisObject, state, propertyName, slot))
-        return true;
-    JSValue proto = thisObject->getPrototypeDirect();
-    if (proto.isObject() && jsCast<JSObject*>(proto)->hasProperty(state, propertyName))
-        return false;
-
-    if (!optionalIndex && thisObject->classInfo() == info() && !propertyName.isSymbol()) {
-        auto item = thisObject->wrapped().namedItem(propertyNameToAtomicString(propertyName));
-        if (!IDLDOMString::isNullValue(item)) {
-            slot.setValue(thisObject, 0, toJS<IDLDOMString>(*state, item));
+    if (auto index = parseIndex(propertyName)) {
+        if (index.value() < thisObject->wrapped().length()) {
+            auto value = toJS<IDLDOMString>(*state, thisObject->wrapped().item(index.value()));
+            slot.setValue(thisObject, 0, value);
             return true;
         }
+        return JSObject::getOwnPropertySlot(object, state, propertyName, slot);
     }
-    return false;
+    using GetterIDLType = IDLDOMString;
+    auto getterFunctor = [] (auto& thisObject, auto propertyName) -> std::optional<typename GetterIDLType::ImplementationType> {
+        auto result = thisObject.wrapped().namedItem(propertyNameToAtomicString(propertyName));
+        if (!GetterIDLType::isNullValue(result))
+            return typename GetterIDLType::ImplementationType { GetterIDLType::extractValueFromNullable(result) };
+        return std::nullopt;
+    };
+    if (auto namedProperty = accessVisibleNamedProperty<OverrideBuiltins::No>(*state, *thisObject, propertyName, getterFunctor)) {
+        auto value = toJS<IDLDOMString>(*state, WTFMove(namedProperty.value()));
+        slot.setValue(thisObject, 0, value);
+        return true;
+    }
+    return JSObject::getOwnPropertySlot(object, state, propertyName, slot);
 }
 
 bool JSTestNamedAndIndexedSetterNoIdentifier::getOwnPropertySlotByIndex(JSObject* object, ExecState* state, unsigned index, PropertySlot& slot)
 {
     auto* thisObject = jsCast<JSTestNamedAndIndexedSetterNoIdentifier*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    if (LIKELY(index < thisObject->wrapped().length())) {
-        slot.setValue(thisObject, 0, toJS<IDLDOMString>(*state, thisObject->wrapped().item(index)));
+    if (LIKELY(index <= MAX_ARRAY_INDEX)) {
+        if (index < thisObject->wrapped().length()) {
+            auto value = toJS<IDLDOMString>(*state, thisObject->wrapped().item(index));
+            slot.setValue(thisObject, 0, value);
+            return true;
+        }
+        return JSObject::getOwnPropertySlotByIndex(object, state, index, slot);
+    }
+    auto propertyName = Identifier::from(state, index);
+    using GetterIDLType = IDLDOMString;
+    auto getterFunctor = [] (auto& thisObject, auto propertyName) -> std::optional<typename GetterIDLType::ImplementationType> {
+        auto result = thisObject.wrapped().namedItem(propertyNameToAtomicString(propertyName));
+        if (!GetterIDLType::isNullValue(result))
+            return typename GetterIDLType::ImplementationType { GetterIDLType::extractValueFromNullable(result) };
+        return std::nullopt;
+    };
+    if (auto namedProperty = accessVisibleNamedProperty<OverrideBuiltins::No>(*state, *thisObject, propertyName, getterFunctor)) {
+        auto value = toJS<IDLDOMString>(*state, WTFMove(namedProperty.value()));
+        slot.setValue(thisObject, 0, value);
         return true;
     }
-    return Base::getOwnPropertySlotByIndex(thisObject, state, index, slot);
+    return JSObject::getOwnPropertySlotByIndex(object, state, index, slot);
 }
 
 void JSTestNamedAndIndexedSetterNoIdentifier::getOwnPropertyNames(JSObject* object, ExecState* state, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
     auto* thisObject = jsCast<JSTestNamedAndIndexedSetterNoIdentifier*>(object);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
+    ASSERT_GC_OBJECT_INHERITS(object, info());
     for (unsigned i = 0, count = thisObject->wrapped().length(); i < count; ++i)
         propertyNames.add(Identifier::from(state, i));
     for (auto& propertyName : thisObject->wrapped().supportedPropertyNames())
         propertyNames.add(Identifier::fromString(state, propertyName));
-    Base::getOwnPropertyNames(thisObject, state, propertyNames, mode);
+    JSObject::getOwnPropertyNames(object, state, propertyNames, mode);
 }
 
 bool JSTestNamedAndIndexedSetterNoIdentifier::put(JSCell* cell, ExecState* state, PropertyName propertyName, JSValue value, PutPropertySlot& putPropertySlot)
@@ -205,7 +224,7 @@ bool JSTestNamedAndIndexedSetterNoIdentifier::put(JSCell* cell, ExecState* state
         }
     }
 
-    return Base::put(thisObject, state, propertyName, value, putPropertySlot);
+    return JSObject::put(thisObject, state, propertyName, value, putPropertySlot);
 }
 
 bool JSTestNamedAndIndexedSetterNoIdentifier::putByIndex(JSCell* cell, ExecState* state, unsigned index, JSValue value, bool shouldThrow)
@@ -221,7 +240,7 @@ bool JSTestNamedAndIndexedSetterNoIdentifier::putByIndex(JSCell* cell, ExecState
         return true;
     }
 
-    Identifier propertyName = Identifier::from(state, index);
+    auto propertyName = Identifier::from(state, index);
     PropertySlot slot { thisObject, PropertySlot::InternalMethodType::VMInquiry };
     JSValue prototype = thisObject->getPrototypeDirect();
     if (!(prototype.isObject() && asObject(prototype)->getPropertySlot(state, propertyName, slot))) {
@@ -232,7 +251,7 @@ bool JSTestNamedAndIndexedSetterNoIdentifier::putByIndex(JSCell* cell, ExecState
         return true;
     }
 
-    return Base::putByIndex(cell, state, index, value, shouldThrow);
+    return JSObject::putByIndex(cell, state, index, value, shouldThrow);
 }
 
 bool JSTestNamedAndIndexedSetterNoIdentifier::defineOwnProperty(JSObject* object, ExecState* state, PropertyName propertyName, const PropertyDescriptor& propertyDescriptor, bool shouldThrow)
@@ -252,7 +271,7 @@ bool JSTestNamedAndIndexedSetterNoIdentifier::defineOwnProperty(JSObject* object
 
     if (!propertyName.isSymbol()) {
         PropertySlot slot { thisObject, PropertySlot::InternalMethodType::VMInquiry };
-        if (!Base::getOwnPropertySlot(thisObject, state, propertyName, slot)) {
+        if (!JSObject::getOwnPropertySlot(thisObject, state, propertyName, slot)) {
             if (!propertyDescriptor.isDataDescriptor())
                 return false;
             auto throwScope = DECLARE_THROW_SCOPE(state->vm());
@@ -265,7 +284,7 @@ bool JSTestNamedAndIndexedSetterNoIdentifier::defineOwnProperty(JSObject* object
 
     PropertyDescriptor newPropertyDescriptor = propertyDescriptor;
     newPropertyDescriptor.setConfigurable(true);
-    return Base::defineOwnProperty(object, state, propertyName, newPropertyDescriptor, shouldThrow);
+    return JSObject::defineOwnProperty(object, state, propertyName, newPropertyDescriptor, shouldThrow);
 }
 
 EncodedJSValue jsTestNamedAndIndexedSetterNoIdentifierConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)

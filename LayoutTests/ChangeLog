@@ -1,3 +1,24 @@
+2017-06-12  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Re-implement GetOwnPropertySlot[ByIndex] generation to more closely follow WebIDL
+        https://bugs.webkit.org/show_bug.cgi?id=173229
+
+        Reviewed by Chris Dumez.
+
+        * fast/dom/HTMLDocument/document-special-properties-expected.txt:
+        Update results. Named properties on HTMLDocument no longer override own properties, they 
+        only override properties from the prototype chain (as per the WebIDL specification for 
+        OverrideBuiltins). These results now also match Firefox.
+
+        * js/dom/dfg-prototype-chain-caching-with-impure-get-own-property-slot-traps-4.html:
+        * js/dom/dfg-prototype-chain-caching-with-impure-get-own-property-slot-traps-5.html:
+        * js/dom/prototype-chain-caching-with-impure-get-own-property-slot-traps-4.html:
+        * js/dom/prototype-chain-caching-with-impure-get-own-property-slot-traps-5-short.html:
+        * js/dom/prototype-chain-caching-with-impure-get-own-property-slot-traps-5.html:
+        Update tests to use a property on the prototype, rather than the instance, to test 
+        overriding the [GetOwnProperty] hook. This is needed now that HTMLDocument correctly
+        follows the OverrideBuiltins rules as explained above.
+
 2017-06-12  Saam Barati  <sbarati@apple.com>
 
         Unreviewed. Unmark test as flaky after fix in r217944. The test should now pass.

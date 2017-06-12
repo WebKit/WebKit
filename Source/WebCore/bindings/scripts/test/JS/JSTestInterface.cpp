@@ -416,7 +416,7 @@ bool JSTestInterface::put(JSCell* cell, ExecState* state, PropertyName propertyN
     if (thisObject->putDelegate(state, propertyName, value, putPropertySlot, putResult))
         return putResult;
 
-    return Base::put(thisObject, state, propertyName, value, putPropertySlot);
+    return JSObject::put(thisObject, state, propertyName, value, putPropertySlot);
 }
 
 bool JSTestInterface::putByIndex(JSCell* cell, ExecState* state, unsigned index, JSValue value, bool shouldThrow)
@@ -424,13 +424,13 @@ bool JSTestInterface::putByIndex(JSCell* cell, ExecState* state, unsigned index,
     auto* thisObject = jsCast<JSTestInterface*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
-    Identifier propertyName = Identifier::from(state, index);
+    auto propertyName = Identifier::from(state, index);
     PutPropertySlot slot(thisObject, shouldThrow);
     bool putResult = false;
     if (thisObject->putDelegate(state, propertyName, value, slot, putResult))
         return putResult;
 
-    return Base::putByIndex(cell, state, index, value, shouldThrow);
+    return JSObject::putByIndex(cell, state, index, value, shouldThrow);
 }
 
 template<> inline JSTestInterface* IDLAttribute<JSTestInterface>::cast(ExecState& state, EncodedJSValue thisValue)

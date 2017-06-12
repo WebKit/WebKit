@@ -136,35 +136,37 @@ bool JSTestIndexedSetterNoIdentifier::getOwnPropertySlot(JSObject* object, ExecS
 {
     auto* thisObject = jsCast<JSTestIndexedSetterNoIdentifier*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    auto optionalIndex = parseIndex(propertyName);
-    if (optionalIndex && optionalIndex.value() < thisObject->wrapped().length()) {
-        auto index = optionalIndex.value();
-        slot.setValue(thisObject, 0, toJS<IDLDOMString>(*state, thisObject->wrapped().item(index)));
-        return true;
+    if (auto index = parseIndex(propertyName)) {
+        if (index.value() < thisObject->wrapped().length()) {
+            auto value = toJS<IDLDOMString>(*state, thisObject->wrapped().item(index.value()));
+            slot.setValue(thisObject, 0, value);
+            return true;
+        }
     }
-    if (Base::getOwnPropertySlot(thisObject, state, propertyName, slot))
-        return true;
-    return false;
+    return JSObject::getOwnPropertySlot(object, state, propertyName, slot);
 }
 
 bool JSTestIndexedSetterNoIdentifier::getOwnPropertySlotByIndex(JSObject* object, ExecState* state, unsigned index, PropertySlot& slot)
 {
     auto* thisObject = jsCast<JSTestIndexedSetterNoIdentifier*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    if (LIKELY(index < thisObject->wrapped().length())) {
-        slot.setValue(thisObject, 0, toJS<IDLDOMString>(*state, thisObject->wrapped().item(index)));
-        return true;
+    if (LIKELY(index <= MAX_ARRAY_INDEX)) {
+        if (index < thisObject->wrapped().length()) {
+            auto value = toJS<IDLDOMString>(*state, thisObject->wrapped().item(index));
+            slot.setValue(thisObject, 0, value);
+            return true;
+        }
     }
-    return Base::getOwnPropertySlotByIndex(thisObject, state, index, slot);
+    return JSObject::getOwnPropertySlotByIndex(object, state, index, slot);
 }
 
 void JSTestIndexedSetterNoIdentifier::getOwnPropertyNames(JSObject* object, ExecState* state, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
     auto* thisObject = jsCast<JSTestIndexedSetterNoIdentifier*>(object);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
+    ASSERT_GC_OBJECT_INHERITS(object, info());
     for (unsigned i = 0, count = thisObject->wrapped().length(); i < count; ++i)
         propertyNames.add(Identifier::from(state, i));
-    Base::getOwnPropertyNames(thisObject, state, propertyNames, mode);
+    JSObject::getOwnPropertyNames(object, state, propertyNames, mode);
 }
 
 bool JSTestIndexedSetterNoIdentifier::put(JSCell* cell, ExecState* state, PropertyName propertyName, JSValue value, PutPropertySlot& putPropertySlot)
@@ -180,7 +182,7 @@ bool JSTestIndexedSetterNoIdentifier::put(JSCell* cell, ExecState* state, Proper
         return true;
     }
 
-    return Base::put(thisObject, state, propertyName, value, putPropertySlot);
+    return JSObject::put(thisObject, state, propertyName, value, putPropertySlot);
 }
 
 bool JSTestIndexedSetterNoIdentifier::putByIndex(JSCell* cell, ExecState* state, unsigned index, JSValue value, bool shouldThrow)
@@ -196,7 +198,7 @@ bool JSTestIndexedSetterNoIdentifier::putByIndex(JSCell* cell, ExecState* state,
         return true;
     }
 
-    return Base::putByIndex(cell, state, index, value, shouldThrow);
+    return JSObject::putByIndex(cell, state, index, value, shouldThrow);
 }
 
 bool JSTestIndexedSetterNoIdentifier::defineOwnProperty(JSObject* object, ExecState* state, PropertyName propertyName, const PropertyDescriptor& propertyDescriptor, bool shouldThrow)
@@ -216,7 +218,7 @@ bool JSTestIndexedSetterNoIdentifier::defineOwnProperty(JSObject* object, ExecSt
 
     PropertyDescriptor newPropertyDescriptor = propertyDescriptor;
     newPropertyDescriptor.setConfigurable(true);
-    return Base::defineOwnProperty(object, state, propertyName, newPropertyDescriptor, shouldThrow);
+    return JSObject::defineOwnProperty(object, state, propertyName, newPropertyDescriptor, shouldThrow);
 }
 
 EncodedJSValue jsTestIndexedSetterNoIdentifierConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)

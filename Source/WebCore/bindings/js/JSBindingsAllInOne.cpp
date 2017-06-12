@@ -71,7 +71,6 @@
 #include "JSHTMLDocumentCustom.cpp"
 #include "JSHTMLElementCustom.cpp"
 #include "JSHTMLEmbedElementCustom.cpp"
-#include "JSHTMLFrameSetElementCustom.cpp"
 #include "JSHTMLObjectElementCustom.cpp"
 #include "JSHTMLTemplateElementCustom.cpp"
 #include "JSHistoryCustom.cpp"

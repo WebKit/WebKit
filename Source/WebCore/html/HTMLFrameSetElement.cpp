@@ -33,6 +33,8 @@
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "HTMLBodyElement.h"
+#include "HTMLCollection.h"
+#include "HTMLFrameElement.h"
 #include "HTMLNames.h"
 #include "Length.h"
 #include "MouseEvent.h"
@@ -224,6 +226,24 @@ void HTMLFrameSetElement::removedFrom(ContainerNode& insertionPoint)
         if (Frame* frame = document().frame())
             frame->loader().client().dispatchDidBecomeFrameset(document().isFrameSet());
     }
+}
+
+DOMWindow* HTMLFrameSetElement::namedItem(const AtomicString& name)
+{
+    auto* frameElement = children()->namedItem(name);
+    if (!is<HTMLFrameElement>(frameElement))
+        return nullptr;
+
+    if (auto* document = downcast<HTMLFrameElement>(*frameElement).contentDocument())
+        return document->domWindow();
+    return nullptr;
+}
+
+Vector<AtomicString> HTMLFrameSetElement::supportedPropertyNames() const
+{
+    // NOTE: Left empty as no specification defines this named getter and we
+    //       have not historically exposed these named items for enumeration.
+    return { };
 }
 
 } // namespace WebCore

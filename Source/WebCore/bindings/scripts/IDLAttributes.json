@@ -113,9 +113,6 @@
         "CustomIsReachable": {
             "contextsAllowed": ["interface"]
         },
-        "CustomNamedGetter": {
-            "contextsAllowed": ["interface"]
-        },
         "CustomNamedGetterOnPrototype": {
             "contextsAllowed": ["interface"]
         },

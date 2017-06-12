@@ -247,30 +247,30 @@ JSDOMWindowShell* JSDOMWindowBase::shell() const
 
 // JSDOMGlobalObject* is ignored, accessing a window in any context will
 // use that DOMWindow's prototype chain.
-JSValue toJS(ExecState* exec, JSDOMGlobalObject*, DOMWindow& domWindow)
+JSValue toJS(ExecState* state, JSDOMGlobalObject*, DOMWindow& domWindow)
 {
-    return toJS(exec, domWindow);
+    return toJS(state, domWindow);
 }
 
-JSValue toJS(ExecState* exec, DOMWindow& domWindow)
+JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject*, Frame& frame)
 {
-    Frame* frame = domWindow.frame();
-    if (!frame)
-        return jsNull();
-    return frame->script().windowShell(currentWorld(exec));
+    return toJS(state, frame);
 }
 
-JSDOMWindow* toJSDOMWindow(Frame* frame, DOMWrapperWorld& world)
+JSValue toJS(ExecState* state, DOMWindow& domWindow)
 {
-    if (!frame)
-        return 0;
-    return frame->script().windowShell(world)->window();
+    return toJS(state, domWindow.frame());
+}
+
+JSDOMWindow* toJSDOMWindow(Frame& frame, DOMWrapperWorld& world)
+{
+    return frame.script().windowShell(world)->window();
 }
 
 JSDOMWindow* toJSDOMWindow(JSC::VM& vm, JSValue value)
 {
     if (!value.isObject())
-        return 0;
+        return nullptr;
 
     while (!value.isNull()) {
         JSObject* object = asObject(value);
@@ -281,7 +281,7 @@ JSDOMWindow* toJSDOMWindow(JSC::VM& vm, JSValue value)
             return jsCast<JSDOMWindowShell*>(object)->window();
         value = object->getPrototypeDirect();
     }
-    return 0;
+    return nullptr;
 }
 
 DOMWindow& incumbentDOMWindow(ExecState* exec)

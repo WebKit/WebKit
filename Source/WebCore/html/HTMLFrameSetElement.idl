@@ -18,9 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-[
-    CustomNamedGetter
-] interface HTMLFrameSetElement : HTMLElement {
+interface HTMLFrameSetElement : HTMLElement {
     [Reflect] attribute DOMString cols;
     [Reflect] attribute DOMString rows;
 
@@ -37,6 +35,10 @@
     [NotEnumerable, WindowEventHandler, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventHandler onwebkitwillrevealleft;
     [NotEnumerable, WindowEventHandler, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventHandler onwebkitwillrevealright;
     [NotEnumerable, WindowEventHandler, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventHandler onwebkitwillrevealtop;
+    
+    // Non-standard named getter
+    // FIXME: This is not in the standard, can we remove this?
+    getter DOMWindow (DOMString name);
 };
 
 HTMLFrameSetElement implements WindowEventHandlers;

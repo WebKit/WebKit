@@ -21,6 +21,7 @@
 #include "config.h"
 #include "JSTestNamedSetterWithUnforgableProperties.h"
 
+#include "JSDOMAbstractOperations.h"
 #include "JSDOMAttribute.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConstructorNotConstructable.h"
@@ -158,44 +159,48 @@ bool JSTestNamedSetterWithUnforgableProperties::getOwnPropertySlot(JSObject* obj
 {
     auto* thisObject = jsCast<JSTestNamedSetterWithUnforgableProperties*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    if (Base::getOwnPropertySlot(thisObject, state, propertyName, slot))
+    using GetterIDLType = IDLDOMString;
+    auto getterFunctor = [] (auto& thisObject, auto propertyName) -> std::optional<typename GetterIDLType::ImplementationType> {
+        auto result = thisObject.wrapped().namedItem(propertyNameToAtomicString(propertyName));
+        if (!GetterIDLType::isNullValue(result))
+            return typename GetterIDLType::ImplementationType { GetterIDLType::extractValueFromNullable(result) };
+        return std::nullopt;
+    };
+    if (auto namedProperty = accessVisibleNamedProperty<OverrideBuiltins::No>(*state, *thisObject, propertyName, getterFunctor)) {
+        auto value = toJS<IDLDOMString>(*state, WTFMove(namedProperty.value()));
+        slot.setValue(thisObject, 0, value);
         return true;
-    JSValue proto = thisObject->getPrototypeDirect();
-    if (proto.isObject() && jsCast<JSObject*>(proto)->hasProperty(state, propertyName))
-        return false;
-
-    if (thisObject->classInfo() == info() && !propertyName.isSymbol()) {
-        auto item = thisObject->wrapped().namedItem(propertyNameToAtomicString(propertyName));
-        if (!IDLDOMString::isNullValue(item)) {
-            slot.setValue(thisObject, 0, toJS<IDLDOMString>(*state, item));
-            return true;
-        }
     }
-    return false;
+    return JSObject::getOwnPropertySlot(object, state, propertyName, slot);
 }
 
 bool JSTestNamedSetterWithUnforgableProperties::getOwnPropertySlotByIndex(JSObject* object, ExecState* state, unsigned index, PropertySlot& slot)
 {
     auto* thisObject = jsCast<JSTestNamedSetterWithUnforgableProperties*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    Identifier propertyName = Identifier::from(state, index);
-    if (thisObject->classInfo() == info()) {
-        auto item = thisObject->wrapped().namedItem(propertyNameToAtomicString(propertyName));
-        if (!IDLDOMString::isNullValue(item)) {
-            slot.setValue(thisObject, 0, toJS<IDLDOMString>(*state, item));
-            return true;
-        }
+    auto propertyName = Identifier::from(state, index);
+    using GetterIDLType = IDLDOMString;
+    auto getterFunctor = [] (auto& thisObject, auto propertyName) -> std::optional<typename GetterIDLType::ImplementationType> {
+        auto result = thisObject.wrapped().namedItem(propertyNameToAtomicString(propertyName));
+        if (!GetterIDLType::isNullValue(result))
+            return typename GetterIDLType::ImplementationType { GetterIDLType::extractValueFromNullable(result) };
+        return std::nullopt;
+    };
+    if (auto namedProperty = accessVisibleNamedProperty<OverrideBuiltins::No>(*state, *thisObject, propertyName, getterFunctor)) {
+        auto value = toJS<IDLDOMString>(*state, WTFMove(namedProperty.value()));
+        slot.setValue(thisObject, 0, value);
+        return true;
     }
-    return Base::getOwnPropertySlotByIndex(thisObject, state, index, slot);
+    return JSObject::getOwnPropertySlotByIndex(object, state, index, slot);
 }
 
 void JSTestNamedSetterWithUnforgableProperties::getOwnPropertyNames(JSObject* object, ExecState* state, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
     auto* thisObject = jsCast<JSTestNamedSetterWithUnforgableProperties*>(object);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
+    ASSERT_GC_OBJECT_INHERITS(object, info());
     for (auto& propertyName : thisObject->wrapped().supportedPropertyNames())
         propertyNames.add(Identifier::fromString(state, propertyName));
-    Base::getOwnPropertyNames(thisObject, state, propertyNames, mode);
+    JSObject::getOwnPropertyNames(object, state, propertyNames, mode);
 }
 
 bool JSTestNamedSetterWithUnforgableProperties::put(JSCell* cell, ExecState* state, PropertyName propertyName, JSValue value, PutPropertySlot& putPropertySlot)
@@ -215,7 +220,7 @@ bool JSTestNamedSetterWithUnforgableProperties::put(JSCell* cell, ExecState* sta
         }
     }
 
-    return Base::put(thisObject, state, propertyName, value, putPropertySlot);
+    return JSObject::put(thisObject, state, propertyName, value, putPropertySlot);
 }
 
 bool JSTestNamedSetterWithUnforgableProperties::putByIndex(JSCell* cell, ExecState* state, unsigned index, JSValue value, bool shouldThrow)
@@ -223,7 +228,7 @@ bool JSTestNamedSetterWithUnforgableProperties::putByIndex(JSCell* cell, ExecSta
     auto* thisObject = jsCast<JSTestNamedSetterWithUnforgableProperties*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
-    Identifier propertyName = Identifier::from(state, index);
+    auto propertyName = Identifier::from(state, index);
     PropertySlot slot { thisObject, PropertySlot::InternalMethodType::VMInquiry };
     JSValue prototype = thisObject->getPrototypeDirect();
     if (!(prototype.isObject() && asObject(prototype)->getPropertySlot(state, propertyName, slot))) {
@@ -234,7 +239,7 @@ bool JSTestNamedSetterWithUnforgableProperties::putByIndex(JSCell* cell, ExecSta
         return true;
     }
 
-    return Base::putByIndex(cell, state, index, value, shouldThrow);
+    return JSObject::putByIndex(cell, state, index, value, shouldThrow);
 }
 
 bool JSTestNamedSetterWithUnforgableProperties::defineOwnProperty(JSObject* object, ExecState* state, PropertyName propertyName, const PropertyDescriptor& propertyDescriptor, bool shouldThrow)
@@ -250,7 +255,7 @@ static bool isUnforgeablePropertyName(PropertyName propertyName)
 
         if (!isUnforgeablePropertyName(propertyName)) {
             PropertySlot slot { thisObject, PropertySlot::InternalMethodType::VMInquiry };
-            if (!Base::getOwnPropertySlot(thisObject, state, propertyName, slot)) {
+            if (!JSObject::getOwnPropertySlot(thisObject, state, propertyName, slot)) {
                 if (!propertyDescriptor.isDataDescriptor())
                     return false;
                 auto throwScope = DECLARE_THROW_SCOPE(state->vm());
@@ -264,7 +269,7 @@ static bool isUnforgeablePropertyName(PropertyName propertyName)
 
     PropertyDescriptor newPropertyDescriptor = propertyDescriptor;
     newPropertyDescriptor.setConfigurable(true);
-    return Base::defineOwnProperty(object, state, propertyName, newPropertyDescriptor, shouldThrow);
+    return JSObject::defineOwnProperty(object, state, propertyName, newPropertyDescriptor, shouldThrow);
 }
 
 template<> inline JSTestNamedSetterWithUnforgableProperties* IDLAttribute<JSTestNamedSetterWithUnforgableProperties>::cast(ExecState& state, EncodedJSValue thisValue)
