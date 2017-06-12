@@ -1,3 +1,16 @@
+2017-06-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS DnD] Introduce hooks to override targeted drag previews when lifting and cancelling
+        https://bugs.webkit.org/show_bug.cgi?id=173240
+        <rdar://problem/31943370>
+
+        Reviewed by Ryosuke Niwa and Tim Horton.
+
+        Adds two new delegate hooks: _webView:previewForLiftingItem:session: and
+        _webView:previewForCancellingItem:withDefault:.
+
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+
 2017-06-12  Chris Dumez  <cdumez@apple.com>
 
         Regression(r217867): Legacy SessionHistoryEntryData format should not change
