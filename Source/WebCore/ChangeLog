@@ -1,3 +1,37 @@
+2017-06-12  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GCrypt] Use utility functions in CryptoKeyEC, CryptoKeyRSA
+        https://bugs.webkit.org/show_bug.cgi?id=173253
+
+        Reviewed by Michael Catanzaro.
+
+        Use the utility functions from the GCryptUtilities.h header instead
+        of writing the same code in both CryptoKeyEC and CryptoKeyRSA
+        implementations. The switches are straightforward, the only difference
+        is that the GCryptUtilities functions return a std::optional<> object,
+        meaning we have to address possibly invalid return value.
+
+        The mpiData() function is overloaded, making it possible to pass to it
+        either a gcry_sexp_t or gcry_mpi_t object. Additionally, mpiLength()
+        function is added, overloading again for gcry_sexp_t and gcry_mpi_t.
+        This function is used from mpiData() as well as in CryptoKeyRSA when
+        retrieving the RSA modulus length.
+
+        No new tests -- no changes in behavior.
+
+        * crypto/gcrypt/CryptoKeyECGCrypt.cpp:
+        (WebCore::CryptoKeyEC::platformExportRaw):
+        (WebCore::CryptoKeyEC::platformAddFieldElements):
+        (WebCore::extractMPIData): Deleted.
+        * crypto/gcrypt/CryptoKeyRSAGCrypt.cpp:
+        (WebCore::getRSAModulusLength):
+        (WebCore::getRSAKeyParameter):
+        (WebCore::CryptoKeyRSA::exportData):
+        (WebCore::getParameterMPIData): Deleted.
+        * crypto/gcrypt/GCryptUtilities.h:
+        (WebCore::mpiLength):
+        (WebCore::mpiData):
+
 2017-06-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         didMoveToNewDocument doesn't get called on an Attr inside a shadow tree

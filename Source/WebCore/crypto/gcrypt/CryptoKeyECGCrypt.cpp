@@ -29,6 +29,7 @@
 #if ENABLE(SUBTLE_CRYPTO)
 
 #include "CryptoKeyPair.h"
+#include "GCryptUtilities.h"
 #include "JsonWebKey.h"
 #include "NotImplemented.h"
 #include <pal/crypto/gcrypt/Handle.h>
@@ -88,25 +89,6 @@ static unsigned uncompressedFieldElementSizeForCurve(CryptoKeyEC::NamedCurve cur
     ASSERT_NOT_REACHED();
     return 0;
 }
-
-static Vector<uint8_t> extractMPIData(gcry_mpi_t mpi)
-{
-    size_t dataLength = 0;
-    gcry_error_t error = gcry_mpi_print(GCRYMPI_FMT_USG, nullptr, 0, &dataLength, mpi);
-    if (error != GPG_ERR_NO_ERROR) {
-        PAL::GCrypt::logError(error);
-        return { };
-    }
-
-    Vector<uint8_t> data(dataLength);
-    error = gcry_mpi_print(GCRYMPI_FMT_USG, data.data(), data.size(), nullptr, mpi);
-    if (error != GPG_ERR_NO_ERROR) {
-        PAL::GCrypt::logError(error);
-        return { };
-    }
-
-    return data;
-};
 
 CryptoKeyEC::~CryptoKeyEC()
 {
@@ -238,11 +220,11 @@ Vector<uint8_t> CryptoKeyEC::platformExportRaw() const
     if (!qMPI)
         return { };
 
-    Vector<uint8_t> q = extractMPIData(qMPI);
-    if (q.size() != uncompressedPointSizeForCurve(m_curve))
+    auto q = mpiData(qMPI);
+    if (!q || q->size() != uncompressedPointSizeForCurve(m_curve))
         return { };
 
-    return q;
+    return WTFMove(q.value());
 }
 
 void CryptoKeyEC::platformAddFieldElements(JsonWebKey& jwk) const
@@ -258,14 +240,14 @@ void CryptoKeyEC::platformAddFieldElements(JsonWebKey& jwk) const
 
     PAL::GCrypt::Handle<gcry_mpi_t> qMPI(gcry_mpi_ec_get_mpi("q", context, 0));
     if (qMPI) {
-        Vector<uint8_t> q = extractMPIData(qMPI);
-        if (q.size() == uncompressedPointSizeForCurve(m_curve)) {
+        auto q = mpiData(qMPI);
+        if (q && q->size() == uncompressedPointSizeForCurve(m_curve)) {
             Vector<uint8_t> a;
-            a.append(q.data() + 1, uncompressedFieldElementSize);
+            a.append(q->data() + 1, uncompressedFieldElementSize);
             jwk.x = base64URLEncode(a);
 
             Vector<uint8_t> b;
-            b.append(q.data() + 1 + uncompressedFieldElementSize, uncompressedFieldElementSize);
+            b.append(q->data() + 1 + uncompressedFieldElementSize, uncompressedFieldElementSize);
             jwk.y = base64URLEncode(b);
         }
     }
@@ -273,9 +255,9 @@ void CryptoKeyEC::platformAddFieldElements(JsonWebKey& jwk) const
     if (type() == Type::Private) {
         PAL::GCrypt::Handle<gcry_mpi_t> dMPI(gcry_mpi_ec_get_mpi("d", context, 0));
         if (dMPI) {
-            Vector<uint8_t> d = extractMPIData(dMPI);
-            if (d.size() == uncompressedFieldElementSize)
-                jwk.d = base64URLEncode(d);
+            auto d = mpiData(dMPI);
+            if (d && d->size() == uncompressedFieldElementSize)
+                jwk.d = base64URLEncode(*d);
         }
     }
 }

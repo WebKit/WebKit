@@ -105,14 +105,9 @@ static inline std::optional<PAL::CryptoDigest::Algorithm> hashCryptoDigestAlgori
     }
 }
 
-static inline std::optional<Vector<uint8_t>> mpiData(gcry_sexp_t paramSexp)
+static inline std::optional<size_t> mpiLength(gcry_mpi_t paramMPI)
 {
-    // Retrieve the MPI value stored in the s-expression: (name mpi-data)
-    PAL::GCrypt::Handle<gcry_mpi_t> paramMPI(gcry_sexp_nth_mpi(paramSexp, 1, GCRYMPI_FMT_USG));
-    if (!paramMPI)
-        return std::nullopt;
-
-    // Query the data length first to properly prepare the buffer.
+    // Retrieve the MPI length for the unsigned format.
     size_t dataLength = 0;
     gcry_error_t error = gcry_mpi_print(GCRYMPI_FMT_USG, nullptr, 0, &dataLength, paramMPI);
     if (error != GPG_ERR_NO_ERROR) {
@@ -120,15 +115,45 @@ static inline std::optional<Vector<uint8_t>> mpiData(gcry_sexp_t paramSexp)
         return std::nullopt;
     }
 
-    // Finally, copy the MPI data into a properly-sized buffer.
-    Vector<uint8_t> output(dataLength);
-    error = gcry_mpi_print(GCRYMPI_FMT_USG, output.data(), output.size(), nullptr, paramMPI);
+    return dataLength;
+}
+
+static inline std::optional<size_t> mpiLength(gcry_sexp_t paramSexp)
+{
+    // Retrieve the MPI value stored in the s-expression: (name mpi-data)
+    PAL::GCrypt::Handle<gcry_mpi_t> paramMPI(gcry_sexp_nth_mpi(paramSexp, 1, GCRYMPI_FMT_USG));
+    if (!paramMPI)
+        return std::nullopt;
+
+    return mpiLength(paramMPI);
+}
+
+static inline std::optional<Vector<uint8_t>> mpiData(gcry_mpi_t paramMPI)
+{
+    // Retrieve the MPI length.
+    auto length = mpiLength(paramMPI);
+    if (!length)
+        return std::nullopt;
+
+    // Copy the MPI data into a properly-sized buffer.
+    Vector<uint8_t> output(*length);
+    gcry_error_t error = gcry_mpi_print(GCRYMPI_FMT_USG, output.data(), output.size(), nullptr, paramMPI);
     if (error != GPG_ERR_NO_ERROR) {
         PAL::GCrypt::logError(error);
         return std::nullopt;
     }
 
     return output;
+}
+
+static inline std::optional<Vector<uint8_t>> mpiData(gcry_sexp_t paramSexp)
+{
+    // Retrieve the MPI value stored in the s-expression: (name mpi-data)
+    PAL::GCrypt::Handle<gcry_mpi_t> paramMPI(gcry_sexp_nth_mpi(paramSexp, 1, GCRYMPI_FMT_USG));
+    if (!paramMPI)
+        return std::nullopt;
+
+    return mpiData(paramMPI);
 }
 
 } // namespace WebCore

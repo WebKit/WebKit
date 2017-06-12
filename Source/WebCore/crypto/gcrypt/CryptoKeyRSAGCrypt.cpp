@@ -32,6 +32,7 @@
 #include "CryptoKeyDataRSAComponents.h"
 #include "CryptoKeyPair.h"
 #include "ExceptionCode.h"
+#include "GCryptUtilities.h"
 #include "NotImplemented.h"
 #include "ScriptExecutionContext.h"
 #include <pal/crypto/gcrypt/Handle.h>
@@ -39,63 +40,34 @@
 
 namespace WebCore {
 
-// Retrieve size of the public modulus N of the given RSA key, in bits.
-static size_t getRSAModulusLength(gcry_sexp_t sexp)
+static size_t getRSAModulusLength(gcry_sexp_t keySexp)
 {
-    // The s-expression is of roughly the following form:
-    // (private-key|public-key
-    //   (rsa
-    //     (n n-mpi)
-    //     (e e-mpi)
-    //     ...))
-    PAL::GCrypt::Handle<gcry_sexp_t> nSexp(gcry_sexp_find_token(sexp, "n", 0));
+    // Retrieve the s-expression token for the public modulus N of the given RSA key.
+    PAL::GCrypt::Handle<gcry_sexp_t> nSexp(gcry_sexp_find_token(keySexp, "n", 0));
     if (!nSexp)
         return 0;
 
-    PAL::GCrypt::Handle<gcry_mpi_t> nMPI(gcry_sexp_nth_mpi(nSexp, 1, GCRYMPI_FMT_USG));
-    if (!nMPI)
+    // Retrieve the MPI length for the corresponding s-expression token, in bits.
+    auto length = mpiLength(nSexp);
+    if (!length)
         return 0;
 
-    size_t dataLength = 0;
-    gcry_error_t error = gcry_mpi_print(GCRYMPI_FMT_USG, nullptr, 0, &dataLength, nMPI);
-    if (error != GPG_ERR_NO_ERROR) {
-        PAL::GCrypt::logError(error);
-        return 0;
-    }
-
-    return dataLength * 8;
+    return *length * 8;
 }
 
-static Vector<uint8_t> getParameterMPIData(gcry_mpi_t paramMPI)
+static Vector<uint8_t> getRSAKeyParameter(gcry_sexp_t keySexp, const char* name)
 {
-    size_t dataLength = 0;
-    gcry_error_t error = gcry_mpi_print(GCRYMPI_FMT_USG, nullptr, 0, &dataLength, paramMPI);
-    if (error != GPG_ERR_NO_ERROR) {
-        PAL::GCrypt::logError(error);
-        return { };
-    }
-
-    Vector<uint8_t> parameter(dataLength);
-    error = gcry_mpi_print(GCRYMPI_FMT_USG, parameter.data(), parameter.size(), nullptr, paramMPI);
-    if (error != GPG_ERR_NO_ERROR) {
-        PAL::GCrypt::logError(error);
-        return { };
-    }
-
-    return parameter;
-}
-
-static Vector<uint8_t> getRSAKeyParameter(gcry_sexp_t sexp, const char* name)
-{
-    PAL::GCrypt::Handle<gcry_sexp_t> paramSexp(gcry_sexp_find_token(sexp, name, 0));
+    // Retrieve the s-expression token for the specified parameter of the given RSA key.
+    PAL::GCrypt::Handle<gcry_sexp_t> paramSexp(gcry_sexp_find_token(keySexp, name, 0));
     if (!paramSexp)
         return { };
 
-    PAL::GCrypt::Handle<gcry_mpi_t> paramMPI(gcry_sexp_nth_mpi(paramSexp, 1, GCRYMPI_FMT_USG));
-    if (!paramMPI)
+    // Retrieve the MPI data for the corresponding s-expression token.
+    auto data = mpiData(paramSexp);
+    if (!data)
         return { };
 
-    return getParameterMPIData(paramMPI);
+    return WTFMove(data.value());
 }
 
 RefPtr<CryptoKeyRSA> CryptoKeyRSA::create(CryptoAlgorithmIdentifier identifier, CryptoAlgorithmIdentifier hash, bool hasHash, const CryptoKeyDataRSAComponents& keyData, bool extractable, CryptoKeyUsageBitmap usages)
@@ -331,8 +303,13 @@ std::unique_ptr<CryptoKeyData> CryptoKeyRSA::exportData() const
         if (!dMPI || !pMPI || !qMPI)
             return nullptr;
 
-        CryptoKeyDataRSAComponents::PrimeInfo firstPrimeInfo { getParameterMPIData(pMPI), { }, { } };
-        CryptoKeyDataRSAComponents::PrimeInfo secondPrimeInfo { getParameterMPIData(qMPI), { }, { } };
+        CryptoKeyDataRSAComponents::PrimeInfo firstPrimeInfo;
+        if (auto data = mpiData(pMPI))
+            firstPrimeInfo.primeFactor = WTFMove(data.value());
+
+        CryptoKeyDataRSAComponents::PrimeInfo secondPrimeInfo;
+        if (auto data = mpiData(qMPI))
+            secondPrimeInfo.primeFactor = WTFMove(data.value());
 
         // dp -- d mod (p - 1)
         {
@@ -340,7 +317,9 @@ std::unique_ptr<CryptoKeyData> CryptoKeyRSA::exportData() const
             PAL::GCrypt::Handle<gcry_mpi_t> pm1MPI(gcry_mpi_new(0));
             gcry_mpi_sub_ui(pm1MPI, pMPI, 1);
             gcry_mpi_mod(dpMPI, dMPI, pm1MPI);
-            firstPrimeInfo.factorCRTExponent = getParameterMPIData(dpMPI);
+
+            if (auto data = mpiData(dpMPI))
+                firstPrimeInfo.factorCRTExponent = WTFMove(data.value());
         }
 
         // dq -- d mod (q - 1)
@@ -349,18 +328,26 @@ std::unique_ptr<CryptoKeyData> CryptoKeyRSA::exportData() const
             PAL::GCrypt::Handle<gcry_mpi_t> qm1MPI(gcry_mpi_new(0));
             gcry_mpi_sub_ui(qm1MPI, qMPI, 1);
             gcry_mpi_mod(dqMPI, dMPI, qm1MPI);
-            secondPrimeInfo.factorCRTExponent = getParameterMPIData(dqMPI);
+
+            if (auto data = mpiData(dqMPI))
+                secondPrimeInfo.factorCRTExponent = WTFMove(data.value());
         }
 
         // qi -- q^(-1) mod p
         {
             PAL::GCrypt::Handle<gcry_mpi_t> qiMPI(gcry_mpi_new(0));
             gcry_mpi_invm(qiMPI, qMPI, pMPI);
-            secondPrimeInfo.factorCRTCoefficient = getParameterMPIData(qiMPI);
+
+            if (auto data = mpiData(qiMPI))
+                secondPrimeInfo.factorCRTCoefficient = WTFMove(data.value());
         }
 
-        return CryptoKeyDataRSAComponents::createPrivateWithAdditionalData(getRSAKeyParameter(m_platformKey, "n"),
-            getRSAKeyParameter(m_platformKey, "e"), getParameterMPIData(dMPI),
+        Vector<uint8_t> privateExponent;
+        if (auto data = mpiData(dMPI))
+            privateExponent = WTFMove(data.value());
+
+        return CryptoKeyDataRSAComponents::createPrivateWithAdditionalData(
+            getRSAKeyParameter(m_platformKey, "n"), getRSAKeyParameter(m_platformKey, "e"), WTFMove(privateExponent),
             WTFMove(firstPrimeInfo), WTFMove(secondPrimeInfo), Vector<CryptoKeyDataRSAComponents::PrimeInfo> { });
     }
     default:
