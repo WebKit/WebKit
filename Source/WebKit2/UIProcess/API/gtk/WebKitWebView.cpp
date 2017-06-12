@@ -220,9 +220,11 @@ static guint signals[LAST_SIGNAL] = { 0, };
 
 WEBKIT_DEFINE_TYPE(WebKitWebView, webkit_web_view, WEBKIT_TYPE_WEB_VIEW_BASE)
 
-static inline WebPageProxy* getPage(WebKitWebView* webView)
+static inline WebPageProxy& getPage(WebKitWebView* webView)
 {
-    return webkitWebViewBaseGetPage(reinterpret_cast<WebKitWebViewBase*>(webView));
+    auto* page = webkitWebViewBaseGetPage(reinterpret_cast<WebKitWebViewBase*>(webView));
+    ASSERT(page);
+    return *page;
 }
 
 static void webkitWebViewSetIsLoading(WebKitWebView* webView, bool isLoading)
@@ -253,7 +255,7 @@ private:
     }
     void didChangeIsLoading() override
     {
-        webkitWebViewSetIsLoading(m_webView, getPage(m_webView)->pageLoadState().isLoading());
+        webkitWebViewSetIsLoading(m_webView, getPage(m_webView).pageLoadState().isLoading());
         g_object_thaw_notify(G_OBJECT(m_webView));
     }
 
@@ -263,7 +265,7 @@ private:
     }
     void didChangeTitle() override
     {
-        m_webView->priv->title = getPage(m_webView)->pageLoadState().title().utf8();
+        m_webView->priv->title = getPage(m_webView).pageLoadState().title().utf8();
         g_object_notify(G_OBJECT(m_webView), "title");
         g_object_thaw_notify(G_OBJECT(m_webView));
     }
@@ -274,7 +276,7 @@ private:
     }
     void didChangeActiveURL() override
     {
-        m_webView->priv->activeURI = getPage(m_webView)->pageLoadState().activeURL().utf8();
+        m_webView->priv->activeURI = getPage(m_webView).pageLoadState().activeURL().utf8();
         g_object_notify(G_OBJECT(m_webView), "uri");
         g_object_thaw_notify(G_OBJECT(m_webView));
     }
@@ -331,7 +333,7 @@ static GtkWidget* webkitWebViewCreateJavaScriptDialog(WebKitWebView* webView, Gt
         GTK_DIALOG_DESTROY_WITH_PARENT, type, buttons, "%s", primaryText);
     if (secondaryText)
         gtk_message_dialog_format_secondary_text(GTK_MESSAGE_DIALOG(dialog), "%s", secondaryText);
-    GUniquePtr<char> title(g_strdup_printf("JavaScript - %s", getPage(webView)->pageLoadState().url().utf8().data()));
+    GUniquePtr<char> title(g_strdup_printf("JavaScript - %s", getPage(webView).pageLoadState().url().utf8().data()));
     gtk_window_set_title(GTK_WINDOW(dialog), title.get());
     if (buttons != GTK_BUTTONS_NONE)
         gtk_dialog_set_default_response(GTK_DIALOG(dialog), defaultResponse);
@@ -407,24 +409,21 @@ static gboolean webkitWebViewPermissionRequest(WebKitWebView*, WebKitPermissionR
 
 static void allowModalDialogsChanged(WebKitSettings* settings, GParamSpec*, WebKitWebView* webView)
 {
-    WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView));
-    if (!page)
-        return;
-    getPage(webView)->setCanRunModal(webkit_settings_get_allow_modal_dialogs(settings));
+    getPage(webView).setCanRunModal(webkit_settings_get_allow_modal_dialogs(settings));
 }
 
 static void zoomTextOnlyChanged(WebKitSettings* settings, GParamSpec*, WebKitWebView* webView)
 {
-    WebPageProxy* page = getPage(webView);
+    auto& page = getPage(webView);
     gboolean zoomTextOnly = webkit_settings_get_zoom_text_only(settings);
-    gdouble pageZoomLevel = zoomTextOnly ? 1 : page->textZoomFactor();
-    gdouble textZoomLevel = zoomTextOnly ? page->pageZoomFactor() : 1;
-    page->setPageAndTextZoomFactors(pageZoomLevel, textZoomLevel);
+    gdouble pageZoomLevel = zoomTextOnly ? 1 : page.textZoomFactor();
+    gdouble textZoomLevel = zoomTextOnly ? page.pageZoomFactor() : 1;
+    page.setPageAndTextZoomFactors(pageZoomLevel, textZoomLevel);
 }
 
 static void userAgentChanged(WebKitSettings* settings, GParamSpec*, WebKitWebView* webView)
 {
-    getPage(webView)->setCustomUserAgent(String::fromUTF8(webkit_settings_get_user_agent(settings)));
+    getPage(webView).setCustomUserAgent(String::fromUTF8(webkit_settings_get_user_agent(settings)));
 }
 
 static void webkitWebViewUpdateFavicon(WebKitWebView* webView, cairo_surface_t* favicon)
@@ -485,19 +484,27 @@ static void faviconChangedCallback(WebKitFaviconDatabase*, const char* pageURI, 
     webkitWebViewUpdateFaviconURI(webView, faviconURI);
 }
 
+static bool webkitWebViewIsConstructed(WebKitWebView* webView)
+{
+    // The loadObserver is set in webkitWebViewConstructed, right after the
+    // WebPageProxy is created, so we use it to check if the view has been
+    // constructed instead of adding a boolean member only for that.
+    return !!webView->priv->loadObserver;
+}
+
 static void webkitWebViewUpdateSettings(WebKitWebView* webView)
 {
     // The "settings" property is set on construction, and in that
     // case webkit_web_view_set_settings() will be called *before* the
     // WebPageProxy has been created so we should do an early return.
-    WebPageProxy* page = getPage(webView);
-    if (!page)
+    if (!webkitWebViewIsConstructed(webView))
         return;
 
+    auto& page = getPage(webView);
     WebKitSettings* settings = webView->priv->settings.get();
-    page->setPreferences(*webkitSettingsGetPreferences(settings));
-    page->setCanRunModal(webkit_settings_get_allow_modal_dialogs(settings));
-    page->setCustomUserAgent(String::fromUTF8(webkit_settings_get_user_agent(settings)));
+    page.setPreferences(*webkitSettingsGetPreferences(settings));
+    page.setCanRunModal(webkit_settings_get_allow_modal_dialogs(settings));
+    page.setCustomUserAgent(String::fromUTF8(webkit_settings_get_user_agent(settings)));
 
     g_signal_connect(settings, "notify::allow-modal-dialogs", G_CALLBACK(allowModalDialogsChanged), webView);
     g_signal_connect(settings, "notify::zoom-text-only", G_CALLBACK(zoomTextOnlyChanged), webView);
@@ -506,6 +513,9 @@ static void webkitWebViewUpdateSettings(WebKitWebView* webView)
 
 static void webkitWebViewDisconnectSettingsSignalHandlers(WebKitWebView* webView)
 {
+    if (!webkitWebViewIsConstructed(webView))
+        return;
+
     WebKitSettings* settings = webView->priv->settings.get();
     g_signal_handlers_disconnect_by_func(settings, reinterpret_cast<gpointer>(allowModalDialogsChanged), webView);
     g_signal_handlers_disconnect_by_func(settings, reinterpret_cast<gpointer>(zoomTextOnlyChanged), webView);
@@ -683,7 +693,7 @@ static void webkitWebViewConstructed(GObject* object)
     webkitWebContextCreatePageForWebView(priv->context.get(), webView, priv->userContentManager.get(), priv->relatedView);
 
     priv->loadObserver = std::make_unique<PageLoadStateObserver>(webView);
-    getPage(webView)->pageLoadState().addObserver(*priv->loadObserver);
+    getPage(webView).pageLoadState().addObserver(*priv->loadObserver);
 
     // The related view is only valid during the construction.
     priv->relatedView = nullptr;
@@ -698,7 +708,7 @@ static void webkitWebViewConstructed(GObject* object)
     // See https://bugs.webkit.org/show_bug.cgi?id=135412.
     webkitWebViewUpdateSettings(webView);
 
-    priv->backForwardList = adoptGRef(webkitBackForwardListCreate(&getPage(webView)->backForwardList()));
+    priv->backForwardList = adoptGRef(webkitBackForwardListCreate(&getPage(webView).backForwardList()));
     priv->windowProperties = adoptGRef(webkitWindowPropertiesCreate());
 }
 
@@ -801,7 +811,7 @@ static void webkitWebViewDispose(GObject* object)
     webkitWebViewDisconnectFaviconDatabaseSignalHandlers(webView);
 
     if (webView->priv->loadObserver) {
-        getPage(webView)->pageLoadState().removeObserver(*webView->priv->loadObserver);
+        getPage(webView).pageLoadState().removeObserver(*webView->priv->loadObserver);
         webView->priv->loadObserver.reset();
 
         // We notify the context here to ensure it's called only once. Ideally we should
@@ -1944,7 +1954,7 @@ WebPageProxy* webkitWebViewCreateNewPage(WebKitWebView* webView, const WindowFea
 
     webkitWindowPropertiesUpdateFromWebWindowFeatures(newWebView->priv->windowProperties.get(), windowFeatures);
 
-    RefPtr<WebPageProxy> newPage = getPage(newWebView);
+    RefPtr<WebPageProxy> newPage = &getPage(newWebView);
     return newPage.leakRef();
 }
 
@@ -2174,7 +2184,7 @@ void webkitWebViewSelectionDidChange(WebKitWebView* webView)
     if (!webView->priv->editorState)
         return;
 
-    webkitEditorStateChanged(webView->priv->editorState.get(), getPage(webView)->editorState());
+    webkitEditorStateChanged(webView->priv->editorState.get(), getPage(webView).editorState());
 }
 
 void webkitWebViewRequestInstallMissingMediaPlugins(WebKitWebView* webView, InstallMissingMediaPluginsPermissionRequest& request)
@@ -2404,7 +2414,7 @@ WebKitWebsiteDataManager* webkit_web_view_get_website_data_manager(WebKitWebView
 void webkit_web_view_try_close(WebKitWebView *webView)
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
-    if (getPage(webView)->tryClose())
+    if (getPage(webView).tryClose())
         webkitWebViewClosePage(webView);
 }
 
@@ -2423,7 +2433,7 @@ void webkit_web_view_load_uri(WebKitWebView* webView, const gchar* uri)
     g_return_if_fail(uri);
 
     GUniquePtr<SoupURI> soupURI(soup_uri_new(uri));
-    getPage(webView)->loadRequest(URL(soupURI.get()));
+    getPage(webView).loadRequest(URL(soupURI.get()));
 }
 
 /**
@@ -2447,7 +2457,7 @@ void webkit_web_view_load_html(WebKitWebView* webView, const gchar* content, con
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(content);
 
-    getPage(webView)->loadHTMLString(String::fromUTF8(content), String::fromUTF8(baseURI));
+    getPage(webView).loadHTMLString(String::fromUTF8(content), String::fromUTF8(baseURI));
 }
 
 /**
@@ -2469,7 +2479,7 @@ void webkit_web_view_load_alternate_html(WebKitWebView* webView, const gchar* co
     g_return_if_fail(content);
     g_return_if_fail(contentURI);
 
-    getPage(webView)->loadAlternateHTMLString(String::fromUTF8(content), String::fromUTF8(baseURI), String::fromUTF8(contentURI));
+    getPage(webView).loadAlternateHTMLString(String::fromUTF8(content), String::fromUTF8(baseURI), String::fromUTF8(contentURI));
 }
 
 /**
@@ -2486,7 +2496,7 @@ void webkit_web_view_load_plain_text(WebKitWebView* webView, const gchar* plainT
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(plainText);
 
-    getPage(webView)->loadPlainTextString(String::fromUTF8(plainText));
+    getPage(webView).loadPlainTextString(String::fromUTF8(plainText));
 }
 
 static void releaseGBytes(unsigned char*, const void* bytes)
@@ -2524,7 +2534,7 @@ void webkit_web_view_load_bytes(WebKitWebView* webView, GBytes* bytes, const cha
     g_bytes_ref(bytes);
 
     Ref<API::Data> data = API::Data::createWithoutCopying(static_cast<const unsigned char*>(bytesData), bytesDataSize, releaseGBytes, bytes);
-    getPage(webView)->loadData(data.ptr(), mimeType ? String::fromUTF8(mimeType) : String::fromUTF8("text/html"),
+    getPage(webView).loadData(data.ptr(), mimeType ? String::fromUTF8(mimeType) : String::fromUTF8("text/html"),
         encoding ? String::fromUTF8(encoding) : String::fromUTF8("UTF-8"), String::fromUTF8(baseURI));
 }
 
@@ -2544,7 +2554,7 @@ void webkit_web_view_load_request(WebKitWebView* webView, WebKitURIRequest* requ
 
     ResourceRequest resourceRequest;
     webkitURIRequestGetResourceRequest(request, resourceRequest);
-    getPage(webView)->loadRequest(resourceRequest);
+    getPage(webView).loadRequest(resourceRequest);
 }
 
 /**
@@ -2560,7 +2570,7 @@ guint64 webkit_web_view_get_page_id(WebKitWebView* webView)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
 
-    return getPage(webView)->pageID();
+    return getPage(webView).pageID();
 }
 
 /**
@@ -2591,7 +2601,7 @@ void webkit_web_view_reload(WebKitWebView* webView)
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
-    getPage(webView)->reload({ });
+    getPage(webView).reload({ });
 }
 
 /**
@@ -2605,7 +2615,7 @@ void webkit_web_view_reload_bypass_cache(WebKitWebView* webView)
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
-    getPage(webView)->reload(WebCore::ReloadOption::FromOrigin);
+    getPage(webView).reload(WebCore::ReloadOption::FromOrigin);
 }
 
 /**
@@ -2622,7 +2632,7 @@ void webkit_web_view_stop_loading(WebKitWebView* webView)
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
-    getPage(webView)->stopLoading();
+    getPage(webView).stopLoading();
 }
 
 /**
@@ -2663,7 +2673,7 @@ gboolean webkit_web_view_is_playing_audio(WebKitWebView* webView)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
 
-    return getPage(webView)->isPlayingAudio();
+    return getPage(webView).isPlayingAudio();
 }
 
 /**
@@ -2678,7 +2688,7 @@ void webkit_web_view_go_back(WebKitWebView* webView)
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
-    getPage(webView)->goBack();
+    getPage(webView).goBack();
 }
 
 /**
@@ -2693,7 +2703,7 @@ gboolean webkit_web_view_can_go_back(WebKitWebView* webView)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
 
-    return !!getPage(webView)->backForwardList().backItem();
+    return !!getPage(webView).backForwardList().backItem();
 }
 
 /**
@@ -2708,7 +2718,7 @@ void webkit_web_view_go_forward(WebKitWebView* webView)
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
-    getPage(webView)->goForward();
+    getPage(webView).goForward();
 }
 
 /**
@@ -2723,7 +2733,7 @@ gboolean webkit_web_view_can_go_forward(WebKitWebView* webView)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
 
-    return !!getPage(webView)->backForwardList().forwardItem();
+    return !!getPage(webView).backForwardList().forwardItem();
 }
 
 /**
@@ -2824,7 +2834,7 @@ const gchar* webkit_web_view_get_custom_charset(WebKitWebView* webView)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
 
-    String customTextEncoding = getPage(webView)->customTextEncodingName();
+    String customTextEncoding = getPage(webView).customTextEncodingName();
     if (customTextEncoding.isEmpty())
         return 0;
 
@@ -2847,7 +2857,7 @@ void webkit_web_view_set_custom_charset(WebKitWebView* webView, const gchar* cha
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
-    getPage(webView)->setCustomTextEncodingName(String::fromUTF8(charset));
+    getPage(webView).setCustomTextEncodingName(String::fromUTF8(charset));
 }
 
 /**
@@ -2864,7 +2874,7 @@ void webkit_web_view_set_custom_charset(WebKitWebView* webView, const gchar* cha
 gdouble webkit_web_view_get_estimated_load_progress(WebKitWebView* webView)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
-    return getPage(webView)->pageLoadState().estimatedProgress();
+    return getPage(webView).pageLoadState().estimatedProgress();
 }
 
 /**
@@ -2897,7 +2907,7 @@ void webkit_web_view_go_to_back_forward_list_item(WebKitWebView* webView, WebKit
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(WEBKIT_IS_BACK_FORWARD_LIST_ITEM(listItem));
 
-    getPage(webView)->goToBackForwardItem(webkitBackForwardListItemGetItem(listItem));
+    getPage(webView).goToBackForwardItem(webkitBackForwardListItemGetItem(listItem));
 }
 
 /**
@@ -2988,11 +2998,11 @@ void webkit_web_view_set_zoom_level(WebKitWebView* webView, gdouble zoomLevel)
     if (webkit_web_view_get_zoom_level(webView) == zoomLevel)
         return;
 
-    WebPageProxy* page = getPage(webView);
+    auto& page = getPage(webView);
     if (webkit_settings_get_zoom_text_only(webView->priv->settings.get()))
-        page->setTextZoomFactor(zoomLevel);
+        page.setTextZoomFactor(zoomLevel);
     else
-        page->setPageZoomFactor(zoomLevel);
+        page.setPageZoomFactor(zoomLevel);
     g_object_notify(G_OBJECT(webView), "zoom-level");
 }
 
@@ -3009,9 +3019,9 @@ gdouble webkit_web_view_get_zoom_level(WebKitWebView* webView)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 1);
 
-    WebPageProxy* page = getPage(webView);
+    auto& page = getPage(webView);
     gboolean zoomTextOnly = webkit_settings_get_zoom_text_only(webView->priv->settings.get());
-    return zoomTextOnly ? page->textZoomFactor() : page->pageZoomFactor();
+    return zoomTextOnly ? page.textZoomFactor() : page.pageZoomFactor();
 }
 
 /**
@@ -3033,7 +3043,7 @@ void webkit_web_view_can_execute_editing_command(WebKitWebView* webView, const c
     g_return_if_fail(command);
 
     GTask* task = g_task_new(webView, cancellable, callback, userData);
-    getPage(webView)->validateCommand(String::fromUTF8(command), [task](const String&, bool isEnabled, int32_t, WebKit::CallbackBase::Error) {
+    getPage(webView).validateCommand(String::fromUTF8(command), [task](const String&, bool isEnabled, int32_t, WebKit::CallbackBase::Error) {
         g_task_return_boolean(adoptGRef(task).get(), isEnabled);        
     });
 }
@@ -3070,7 +3080,7 @@ void webkit_web_view_execute_editing_command(WebKitWebView* webView, const char*
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(command);
 
-    getPage(webView)->executeEditCommand(String::fromUTF8(command));
+    getPage(webView).executeEditCommand(String::fromUTF8(command));
 }
 
 /**
@@ -3091,7 +3101,7 @@ void webkit_web_view_execute_editing_command_with_argument(WebKitWebView* webVie
     g_return_if_fail(command);
     g_return_if_fail(argument);
 
-    getPage(webView)->executeEditCommand(String::fromUTF8(command), String::fromUTF8(argument));
+    getPage(webView).executeEditCommand(String::fromUTF8(command), String::fromUTF8(argument));
 }
 
 /**
@@ -3184,7 +3194,7 @@ void webkit_web_view_run_javascript(WebKitWebView* webView, const gchar* script,
     g_return_if_fail(script);
 
     GTask* task = g_task_new(webView, cancellable, callback, userData);
-    getPage(webView)->runJavaScriptInMainFrame(String::fromUTF8(script), [task](API::SerializedScriptValue* serializedScriptValue, bool, const WebCore::ExceptionDetails& exceptionDetails, WebKit::CallbackBase::Error) {
+    getPage(webView).runJavaScriptInMainFrame(String::fromUTF8(script), [task](API::SerializedScriptValue* serializedScriptValue, bool, const WebCore::ExceptionDetails& exceptionDetails, WebKit::CallbackBase::Error) {
         webkitWebViewRunJavaScriptCallback(serializedScriptValue, exceptionDetails, adoptGRef(task).get());
     });
 }
@@ -3274,7 +3284,7 @@ static void resourcesStreamReadCallback(GObject* object, GAsyncResult* result, g
 
     WebKitWebView* webView = WEBKIT_WEB_VIEW(g_task_get_source_object(task.get()));
     gpointer outputStreamData = g_memory_output_stream_get_data(G_MEMORY_OUTPUT_STREAM(object));
-    getPage(webView)->runJavaScriptInMainFrame(String::fromUTF8(reinterpret_cast<const gchar*>(outputStreamData)),
+    getPage(webView).runJavaScriptInMainFrame(String::fromUTF8(reinterpret_cast<const gchar*>(outputStreamData)),
         [task](API::SerializedScriptValue* serializedScriptValue, bool, const WebCore::ExceptionDetails& exceptionDetails, WebKit::CallbackBase::Error) {
             webkitWebViewRunJavaScriptCallback(serializedScriptValue, exceptionDetails, task.get());
         });
@@ -3364,7 +3374,7 @@ WebKitWebInspector* webkit_web_view_get_inspector(WebKitWebView* webView)
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
 
     if (!webView->priv->inspector)
-        webView->priv->inspector = adoptGRef(webkitWebInspectorCreate(getPage(webView)->inspector()));
+        webView->priv->inspector = adoptGRef(webkitWebInspectorCreate(getPage(webView).inspector()));
 
     return webView->priv->inspector.get();
 }
@@ -3383,7 +3393,7 @@ gboolean webkit_web_view_can_show_mime_type(WebKitWebView* webView, const char* 
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
     g_return_val_if_fail(mimeType, FALSE);
 
-    return getPage(webView)->canShowMIMEType(String::fromUTF8(mimeType));
+    return getPage(webView).canShowMIMEType(String::fromUTF8(mimeType));
 }
 
 struct ViewSaveAsyncData {
@@ -3453,7 +3463,7 @@ void webkit_web_view_save(WebKitWebView* webView, WebKitSaveMode saveMode, GCanc
     GTask* task = g_task_new(webView, cancellable, callback, userData);
     g_task_set_source_tag(task, reinterpret_cast<gpointer>(webkit_web_view_save));
     g_task_set_task_data(task, createViewSaveAsyncData(), reinterpret_cast<GDestroyNotify>(destroyViewSaveAsyncData));
-    getPage(webView)->getContentsAsMHTMLData([task](API::Data* data, WebKit::CallbackBase::Error) {
+    getPage(webView).getContentsAsMHTMLData([task](API::Data* data, WebKit::CallbackBase::Error) {
         getContentsAsMHTMLDataCallback(data, task);
     });
 }
@@ -3518,7 +3528,7 @@ void webkit_web_view_save_to_file(WebKitWebView* webView, GFile* file, WebKitSav
     data->file = file;
     g_task_set_task_data(task, data, reinterpret_cast<GDestroyNotify>(destroyViewSaveAsyncData));
 
-    getPage(webView)->getContentsAsMHTMLData([task](API::Data* data, WebKit::CallbackBase::Error) {
+    getPage(webView).getContentsAsMHTMLData([task](API::Data* data, WebKit::CallbackBase::Error) {
         getContentsAsMHTMLDataCallback(data, task);
     });
 }
@@ -3556,7 +3566,7 @@ WebKitDownload* webkit_web_view_download_uri(WebKitWebView* webView, const char*
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), nullptr);
     g_return_val_if_fail(uri, nullptr);
 
-    GRefPtr<WebKitDownload> download = webkitWebContextStartDownload(webView->priv->context.get(), uri, getPage(webView));
+    GRefPtr<WebKitDownload> download = webkitWebContextStartDownload(webView->priv->context.get(), uri, &getPage(webView));
     return download.leakRef();
 }
 
@@ -3588,7 +3598,7 @@ gboolean webkit_web_view_get_tls_info(WebKitWebView* webView, GTlsCertificate** 
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
 
-    WebFrameProxy* mainFrame = getPage(webView)->mainFrame();
+    WebFrameProxy* mainFrame = getPage(webView).mainFrame();
     if (!mainFrame)
         return FALSE;
 
@@ -3676,7 +3686,7 @@ void webkit_web_view_get_snapshot(WebKitWebView* webView, WebKitSnapshotRegion r
     message.set(String::fromUTF8("TransparentBackground"), API::Boolean::create(options & WEBKIT_SNAPSHOT_OPTIONS_TRANSPARENT_BACKGROUND));
 
     webView->priv->snapshotResultsMap.set(callbackID, adoptGRef(g_task_new(webView, cancellable, callback, userData)));
-    getPage(webView)->postMessageToInjectedBundle(String::fromUTF8("GetSnapshot"), API::Dictionary::create(WTFMove(message)).ptr());
+    getPage(webView).postMessageToInjectedBundle(String::fromUTF8("GetSnapshot"), API::Dictionary::create(WTFMove(message)).ptr());
 }
 
 /**
@@ -3742,12 +3752,12 @@ void webkit_web_view_set_background_color(WebKitWebView* webView, const GdkRGBA*
     g_return_if_fail(rgba);
 
     Color color(*rgba);
-    WebPageProxy* page = getPage(webView);
-    if (page->backgroundColor() == color)
+    auto& page = getPage(webView);
+    if (page.backgroundColor() == color)
         return;
 
-    page->setBackgroundColor(color);
-    page->setDrawsBackground(color == Color::white);
+    page.setBackgroundColor(color);
+    page.setDrawsBackground(color == Color::white);
 }
 
 /**
@@ -3766,7 +3776,7 @@ void webkit_web_view_get_background_color(WebKitWebView* webView, GdkRGBA* rgba)
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(rgba);
 
-    *rgba = getPage(webView)->backgroundColor();
+    *rgba = getPage(webView).backgroundColor();
 }
 
 /*
@@ -3786,7 +3796,7 @@ gboolean webkit_web_view_is_editable(WebKitWebView* webView)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
 
-    return getPage(webView)->isEditable();
+    return getPage(webView).isEditable();
 }
 
 /**
@@ -3811,10 +3821,10 @@ void webkit_web_view_set_editable(WebKitWebView* webView, gboolean editable)
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
-    if (editable == getPage(webView)->isEditable())
+    if (editable == getPage(webView).isEditable())
         return;
 
-    getPage(webView)->setEditable(editable);
+    getPage(webView).setEditable(editable);
 
     g_object_notify(G_OBJECT(webView), "editable");
 }
@@ -3834,7 +3844,7 @@ WebKitEditorState* webkit_web_view_get_editor_state(WebKitWebView *webView)
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), nullptr);
 
     if (!webView->priv->editorState)
-        webView->priv->editorState = adoptGRef(webkitEditorStateCreate(getPage(webView)->editorState()));
+        webView->priv->editorState = adoptGRef(webkitEditorStateCreate(getPage(webView).editorState()));
 
     return webView->priv->editorState.get();
 }
@@ -3853,7 +3863,7 @@ WebKitWebViewSessionState* webkit_web_view_get_session_state(WebKitWebView* webV
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), nullptr);
 
-    SessionState sessionState = getPage(webView)->sessionState(nullptr);
+    SessionState sessionState = getPage(webView).sessionState(nullptr);
     return webkitWebViewSessionStateCreate(WTFMove(sessionState));
 }
 
@@ -3871,5 +3881,5 @@ void webkit_web_view_restore_session_state(WebKitWebView* webView, WebKitWebView
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(state);
 
-    getPage(webView)->restoreFromSessionState(webkitWebViewSessionStateGetSessionState(state), false);
+    getPage(webView).restoreFromSessionState(webkitWebViewSessionStateGetSessionState(state), false);
 }

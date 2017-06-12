@@ -1,5 +1,71 @@
 2017-06-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] getPage() in WebKitWebView should return a reference instead of a pointer
+        https://bugs.webkit.org/show_bug.cgi?id=173251
+
+        Reviewed by Žan Doberšek.
+
+        The WebPageProxy is created on WebKitWebView construction, so getPage() can only return nullptr if it's called
+        during construction. And that can only happen when construct properties are set. It's better to check that the
+        view has been constructed only in these particular cases and make getPage() return a reference.
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewCreateJavaScriptDialog):
+        (allowModalDialogsChanged): Settings signals are only connected after the page has been created, so we don't
+        need to check page is available here.
+        (zoomTextOnlyChanged):
+        (userAgentChanged):
+        (webkitWebViewIsConstructed): Helper method to check if the view has been constructed.
+        (webkitWebViewUpdateSettings): Return early if view hasn't been constructed.
+        (webkitWebViewDisconnectSettingsSignalHandlers): Ditto.
+        (webkitWebViewConstructed):
+        (webkitWebViewDispose):
+        (webkitWebViewCreateNewPage):
+        (webkitWebViewSelectionDidChange):
+        (webkit_web_view_try_close):
+        (webkit_web_view_load_uri):
+        (webkit_web_view_load_html):
+        (webkit_web_view_load_alternate_html):
+        (webkit_web_view_load_plain_text):
+        (webkit_web_view_load_bytes):
+        (webkit_web_view_load_request):
+        (webkit_web_view_get_page_id):
+        (webkit_web_view_reload):
+        (webkit_web_view_reload_bypass_cache):
+        (webkit_web_view_stop_loading):
+        (webkit_web_view_is_playing_audio):
+        (webkit_web_view_go_back):
+        (webkit_web_view_can_go_back):
+        (webkit_web_view_go_forward):
+        (webkit_web_view_can_go_forward):
+        (webkit_web_view_get_custom_charset):
+        (webkit_web_view_set_custom_charset):
+        (webkit_web_view_get_estimated_load_progress):
+        (webkit_web_view_go_to_back_forward_list_item):
+        (webkit_web_view_set_zoom_level):
+        (webkit_web_view_get_zoom_level):
+        (webkit_web_view_can_execute_editing_command):
+        (webkit_web_view_execute_editing_command):
+        (webkit_web_view_execute_editing_command_with_argument):
+        (webkit_web_view_run_javascript):
+        (resourcesStreamReadCallback):
+        (webkit_web_view_get_inspector):
+        (webkit_web_view_can_show_mime_type):
+        (webkit_web_view_save):
+        (webkit_web_view_save_to_file):
+        (webkit_web_view_download_uri):
+        (webkit_web_view_get_tls_info):
+        (webkit_web_view_get_snapshot):
+        (webkit_web_view_set_background_color):
+        (webkit_web_view_get_background_color):
+        (webkit_web_view_is_editable):
+        (webkit_web_view_set_editable):
+        (webkit_web_view_get_editor_state):
+        (webkit_web_view_get_session_state):
+        (webkit_web_view_restore_session_state):
+
+2017-06-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Move WebKit GType macros to WTF
         https://bugs.webkit.org/show_bug.cgi?id=173249
 
