@@ -974,7 +974,8 @@ void WebProcessPool::pageRemovedFromProcess(WebPageProxy& page)
             return;
 
         // The last user of this non-default SessionID is gone, so clean it up in the child processes.
-        networkProcess()->send(Messages::NetworkProcess::DestroySession(sessionID), 0);
+        if (networkProcess())
+            networkProcess()->send(Messages::NetworkProcess::DestroySession(sessionID), 0);
         page.process().send(Messages::WebProcess::DestroySession(sessionID), 0);
     }
 }

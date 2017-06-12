@@ -1,3 +1,18 @@
+2017-06-12  Chris Dumez  <cdumez@apple.com>
+
+        Null dereference under WebProcessPool::pageRemovedFromProcess()
+        https://bugs.webkit.org/show_bug.cgi?id=173271
+        <rdar://problem/32038814>
+
+        Reviewed by Ryosuke Niwa.
+
+        Null-check networkProcess() before dereferencing it in WebProcessPool::pageRemovedFromProcess().
+        This is the only place in this class where we failed to null check before dereferencing
+        networkProcess(). To my knowledge, there is no guarantee there is a network process.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::pageRemovedFromProcess):
+
 2017-06-12  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebCrypto] Remove experimental feature flag of SubtleCrypto
