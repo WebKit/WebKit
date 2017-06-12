@@ -1778,7 +1778,6 @@ private:
     HashSet<HTMLMediaElement*> m_mediaStreamStateChangeElements;
     String m_idHashSalt;
     bool m_hasHadActiveMediaStreamTrack { false };
-    bool m_videoCaptureMutedForVisibilityChange { false };
 #endif
 
 #ifndef NDEBUG

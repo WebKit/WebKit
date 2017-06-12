@@ -297,8 +297,10 @@ void MediaStream::startProducingData()
     m_isProducingData = true;
 
     m_mediaSession->canProduceAudioChanged();
-
     m_private->startProducingData();
+
+    if (document->page()->isMediaCaptureMuted())
+        m_private->setCaptureTracksMuted(true);
 }
 
 void MediaStream::stopProducingData()
@@ -336,23 +338,34 @@ MediaProducer::MediaStateFlags MediaStream::mediaState() const
 {
     MediaStateFlags state = IsNotPlaying;
 
-    if (!m_isActive)
+    if (!m_isActive || !document() || !document()->page())
         return state;
 
+    bool pageCaptureMuted = document()->page()->isMediaCaptureMuted();
     for (const auto& track : m_trackSet.values()) {
         if (!track->isCaptureTrack() || track->ended())
             continue;
 
         if (track->source().type() == RealtimeMediaSource::Type::Audio) {
-            if (track->muted())
+            if (track->source().interrupted() && !pageCaptureMuted)
+                state |= HasInterruptedAudioCaptureDevice;
+            else if (track->muted())
                 state |= HasMutedAudioCaptureDevice;
-            else if (m_isProducingData && m_private->isProducingData())
+            else if (m_isProducingData && m_private->isProducingData()) {
                 state |= HasActiveAudioCaptureDevice;
+                ASSERT(!track->source().interrupted());
+                ASSERT(!track->muted());
+            }
         } else {
-            if (track->muted())
+            if (track->source().interrupted() && !pageCaptureMuted)
+                state |= HasInterruptedVideoCaptureDevice;
+            else if (track->muted())
                 state |= HasMutedVideoCaptureDevice;
-            else if (m_isProducingData && m_private->isProducingData())
+            else if (m_isProducingData && m_private->isProducingData()) {
                 state |= HasActiveVideoCaptureDevice;
+                ASSERT(!track->source().interrupted());
+                ASSERT(!track->muted());
+            }
         }
     }
 

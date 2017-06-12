@@ -46,6 +46,8 @@ public:
         HasActiveVideoCaptureDevice = 1 << 12,
         HasMutedAudioCaptureDevice = 1 << 13,
         HasMutedVideoCaptureDevice = 1 << 14,
+        HasInterruptedAudioCaptureDevice = 1 << 15,
+        HasInterruptedVideoCaptureDevice = 1 << 15,
     };
     typedef unsigned MediaStateFlags;
 

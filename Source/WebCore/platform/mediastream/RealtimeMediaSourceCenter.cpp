@@ -334,9 +334,9 @@ void RealtimeMediaSourceCenter::validateRequestConstraints(ValidConstraintsHandl
     validHandler(WTFMove(audioSourceIds), WTFMove(videoSourceIds), WTFMove(deviceIdentifierHashSalt));
 }
 
-void RealtimeMediaSourceCenter::setVideoCaptureMutedForPageVisibility(bool shouldMute)
+void RealtimeMediaSourceCenter::setVideoCapturePageState(bool interrupted, bool pageMuted)
 {
-    videoFactory().setVideoCaptureMutedForPageVisibility(shouldMute);
+    videoFactory().setVideoCapturePageState(interrupted, pageMuted);
 }
 
 } // namespace WebCore

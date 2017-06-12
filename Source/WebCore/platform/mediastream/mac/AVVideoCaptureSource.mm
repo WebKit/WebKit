@@ -125,10 +125,10 @@ public:
 
 #if PLATFORM(IOS)
 private:
-    void setVideoCaptureMutedForPageVisibility(bool shouldMute)
+    void setVideoCapturePageState(bool interrupted, bool pageMuted)
     {
         if (activeSource())
-            activeSource()->setMuted(shouldMute);
+            activeSource()->setInterrupted(interrupted, pageMuted);
     }
 #endif
 };

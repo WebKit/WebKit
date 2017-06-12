@@ -120,7 +120,7 @@ public:
     public:
         virtual ~VideoCaptureFactory() = default;
         virtual CaptureSourceOrError createVideoCaptureSource(const String& videoDeviceID, const MediaConstraints*) = 0;
-        virtual void setVideoCaptureMutedForPageVisibility(bool) { }
+        virtual void setVideoCapturePageState(bool, bool) { }
 
     protected:
         VideoCaptureFactory() = default;
@@ -143,6 +143,9 @@ public:
 
     bool muted() const { return m_muted; }
     void setMuted(bool);
+
+    virtual bool interrupted() const { return m_interrupted; }
+    virtual void setInterrupted(bool, bool);
     
     bool enabled() const { return m_enabled; }
     void setEnabled(bool);
@@ -265,8 +268,8 @@ private:
 
     bool m_echoCancellation { false };
     bool m_pendingSettingsDidChangeNotification { false };
-    bool m_suppressNotifications { true };
     bool m_isProducingData { false };
+    bool m_interrupted { false };
 };
 
 struct CaptureSourceOrError {

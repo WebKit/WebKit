@@ -7082,16 +7082,10 @@ void Document::orientationChanged(int orientation)
 void Document::notifyMediaCaptureOfVisibilityChanged()
 {
 #if ENABLE(MEDIA_STREAM)
-    if (!page() || page()->isMediaCaptureMuted()) {
-        m_videoCaptureMutedForVisibilityChange = false;
-        return;
-    }
-
-    if (!hidden() && !m_videoCaptureMutedForVisibilityChange)
+    if (!page())
         return;
 
-    m_videoCaptureMutedForVisibilityChange = hidden();
-    RealtimeMediaSourceCenter::singleton().setVideoCaptureMutedForPageVisibility(m_videoCaptureMutedForVisibilityChange);
+    RealtimeMediaSourceCenter::singleton().setVideoCapturePageState(hidden(), page()->isMediaCaptureMuted());
 #endif
 }
 

@@ -57,7 +57,6 @@ RealtimeMediaSource::RealtimeMediaSource(const String& id, Type type, const Stri
     if (m_id.isEmpty())
         m_id = createCanonicalUUIDString();
     m_persistentID = m_id;
-    m_suppressNotifications = false;
 }
 
 void RealtimeMediaSource::addObserver(RealtimeMediaSource::Observer& observer)
@@ -75,12 +74,28 @@ void RealtimeMediaSource::removeObserver(RealtimeMediaSource::Observer& observer
         stop();
 }
 
+void RealtimeMediaSource::setInterrupted(bool interrupted, bool pageMuted)
+{
+    if (interrupted == m_interrupted)
+        return;
+
+    m_interrupted = interrupted;
+    if (!interrupted && pageMuted)
+        return;
+
+    setMuted(interrupted);
+}
+
 void RealtimeMediaSource::setMuted(bool muted)
 {
     if (muted)
         stop();
-    else
+    else {
+        if (interrupted())
+            return;
+
         start();
+    }
 
     notifyMutedChange(muted);
 }
@@ -116,7 +131,7 @@ void RealtimeMediaSource::settingsDidChange()
 {
     ASSERT(isMainThread());
 
-    if (m_pendingSettingsDidChangeNotification || m_suppressNotifications)
+    if (m_pendingSettingsDidChangeNotification)
         return;
 
     m_pendingSettingsDidChangeNotification = true;

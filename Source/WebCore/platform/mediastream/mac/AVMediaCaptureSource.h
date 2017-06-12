@@ -96,6 +96,8 @@ private:
 
     bool isCaptureSource() const final { return true; }
 
+    bool interrupted() const final;
+
     void initializeSettings();
     void initializeCapabilities();
 

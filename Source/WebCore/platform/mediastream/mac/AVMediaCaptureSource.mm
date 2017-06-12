@@ -188,6 +188,7 @@ void AVMediaCaptureSource::stopProducingData()
     if ([m_session isRunning])
         [m_session stopRunning];
 
+    m_interruption = InterruptionReason::None;
 #if PLATFORM(IOS)
     m_session = nullptr;
 #endif
@@ -264,7 +265,7 @@ void AVMediaCaptureSource::setupSession()
 void AVMediaCaptureSource::captureSessionIsRunningDidChange(bool state)
 {
     scheduleDeferredTask([this, state] {
-        if (state == m_isRunning)
+        if ((state == m_isRunning) && (state == !muted()))
             return;
 
         m_isRunning = state;
@@ -293,7 +294,7 @@ void AVMediaCaptureSource::captureSessionEndInterruption(RetainPtr<NSNotificatio
     InterruptionReason reason = m_interruption;
 
     m_interruption = InterruptionReason::None;
-    if (reason != InterruptionReason::VideoNotAllowedInSideBySide || m_isRunning)
+    if (reason != InterruptionReason::VideoNotAllowedInSideBySide || m_isRunning || !m_session)
         return;
 
     [m_session startRunning];
@@ -315,6 +316,14 @@ AudioSourceProvider* AVMediaCaptureSource::audioSourceProvider()
 {
     ASSERT_NOT_REACHED();
     return nullptr;
+}
+
+bool AVMediaCaptureSource::interrupted() const
+{
+    if (m_interruption != InterruptionReason::None)
+        return true;
+
+    return RealtimeMediaSource::interrupted();
 }
 
 NSArray<NSString*>* sessionKVOProperties()
