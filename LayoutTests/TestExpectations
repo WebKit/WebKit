@@ -109,6 +109,12 @@ fast/visual-viewport/rubberbanding-viewport-rects-header-footer.html  [ Skip ]
 # DataDetectors tests only make sense on Mac
 fast/events/do-not-drag-and-drop-data-detectors-link.html [ Skip ]
 
+# Shared Workers are unsupported
+imported/w3c/web-platform-tests/secure-contexts/basic-shared-worker.html [ Skip ]
+imported/w3c/web-platform-tests/secure-contexts/basic-shared-worker.https.html [ Skip ]
+imported/w3c/web-platform-tests/secure-contexts/shared-worker-insecure-first.https.html [ Skip ]
+imported/w3c/web-platform-tests/secure-contexts/shared-worker-secure-first.https.html [ Skip ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific tests.
 #//////////////////////////////////////////////////////////////////////////////////////////
@@ -1330,6 +1336,11 @@ webkit.org/b/172099 imported/w3c/web-platform-tests/FileAPI/url/url_xmlhttpreque
 # All modern-media-controls tests are disabled for the time being.
 http/tests/media/modern-media-controls [ Skip ]
 media/modern-media-controls [ Skip ]
+
+# Secure Contexts tests that timeout
+imported/w3c/web-platform-tests/secure-contexts/basic-dedicated-worker.html [ Skip ]
+imported/w3c/web-platform-tests/secure-contexts/basic-dedicated-worker.https.html [ Skip ]
+imported/w3c/web-platform-tests/secure-contexts/basic-popup-and-iframe-tests.https.html [ Skip ]
 
 ### END OF -disabled tests
 ########################################

@@ -256,7 +256,7 @@
     "web-platform-tests/remote-playback": "skip", 
     "web-platform-tests/resource-timing": "import", 
     "web-platform-tests/screen-orientation": "skip", 
-    "web-platform-tests/secure-contexts": "skip", 
+    "web-platform-tests/secure-contexts": "import", 
     "web-platform-tests/secure_context": "skip", 
     "web-platform-tests/selection": "skip", 
     "web-platform-tests/selectors": "skip", 

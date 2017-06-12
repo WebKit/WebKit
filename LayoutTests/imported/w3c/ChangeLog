@@ -1,3 +1,51 @@
+2017-06-12  Daniel Bates  <dabates@apple.com>
+
+        Implement W3C Secure Contexts Draft Specification
+        https://bugs.webkit.org/show_bug.cgi?id=158121
+        <rdar://problem/26012994>
+
+        Reviewed by Ryosuke Niwa.
+
+        Part 3
+
+        Import the Secure Contexts Web Platform Tests.
+
+        * resources/import-expectations.json:
+        * resources/resource-files.json:
+        * web-platform-tests/secure-contexts/basic-dedicated-worker.html: Added.
+        * web-platform-tests/secure-contexts/basic-dedicated-worker.https.html: Added.
+        * web-platform-tests/secure-contexts/basic-popup-and-iframe-tests-expected.txt: Added.
+        * web-platform-tests/secure-contexts/basic-popup-and-iframe-tests.html: Added.
+        * web-platform-tests/secure-contexts/basic-popup-and-iframe-tests.https-expected.txt: Added.
+        * web-platform-tests/secure-contexts/basic-popup-and-iframe-tests.https.html: Added.
+        * web-platform-tests/secure-contexts/basic-popup-and-iframe-tests.https.js: Added.
+        (LoadType):
+        (LoadTarget):
+        (LoadTarget.prototype.open):
+        (LoadTarget.prototype.close):
+        (LoadTarget.prototype.load_and_get_result_for):
+        (run_next_test.):
+        (run_next_test):
+        (begin):
+        * web-platform-tests/secure-contexts/basic-shared-worker.html: Added.
+        * web-platform-tests/secure-contexts/basic-shared-worker.https.html: Added.
+        * web-platform-tests/secure-contexts/postMessage-helper.html: Added.
+        * web-platform-tests/secure-contexts/postMessage-helper.https.html: Added.
+        * web-platform-tests/secure-contexts/server-locations.sub.js: Added.
+        * web-platform-tests/secure-contexts/shared-worker-insecure-first.https.html: Added.
+        * web-platform-tests/secure-contexts/shared-worker-secure-first.https.html: Added.
+        * web-platform-tests/secure-contexts/support/dedicated-worker-script.js: Added.
+        * web-platform-tests/secure-contexts/support/https-subframe-dedicated.html: Added.
+        * web-platform-tests/secure-contexts/support/https-subframe-shared.html: Added.
+        * web-platform-tests/secure-contexts/support/parent-dedicated-worker-script.js: Added.
+        (w.onmessage):
+        * web-platform-tests/secure-contexts/support/parent-shared-worker-script.js: Added.
+        (w.onmessage):
+        * web-platform-tests/secure-contexts/support/shared-worker-insecure-popup.html: Added.
+        * web-platform-tests/secure-contexts/support/shared-worker-script.js: Added.
+        * web-platform-tests/secure-contexts/support/w3c-import.log: Added.
+        * web-platform-tests/secure-contexts/w3c-import.log: Added.
+
 2017-06-12  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Re-implement GetOwnPropertySlot[ByIndex] generation to more closely follow WebIDL
