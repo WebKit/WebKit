@@ -1,5 +1,26 @@
 2017-06-12  Jer Noble  <jer.noble@apple.com>
 
+        Screen sleeps while doing WebRTC video
+        https://bugs.webkit.org/show_bug.cgi?id=173278
+
+        Reviewed by Eric Carlson.
+
+        HTMLMediaElement triggers changing the sleep disabler token when the media engine
+        says that its rate has changed; the MediaPlayerPrivateMediaStreamAVFObjC needs to
+        notify its client (the HTMLMediaElement) that the rate has changed when the stream
+        is played or paused.
+
+        Drive-by fix: Don't set a sleep disabler token (i.e., allow the system and display
+        to sleep) if the stream is strictly local-capture.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::shouldDisableSleep):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::play):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::pause):
+
+2017-06-12  Jer Noble  <jer.noble@apple.com>
+
         Seeking an MSE video will begin playing audio long before rendering video
         https://bugs.webkit.org/show_bug.cgi?id=173269
 

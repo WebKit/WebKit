@@ -636,6 +636,8 @@ void MediaPlayerPrivateMediaStreamAVFObjC::play()
 
     scheduleDeferredTask([this] {
         updateReadyState();
+        if (m_player)
+            m_player->rateChanged();
     });
 }
 
@@ -654,6 +656,11 @@ void MediaPlayerPrivateMediaStreamAVFObjC::pause()
 
     updateDisplayMode();
     flushRenderers();
+
+    scheduleDeferredTask([this] {
+        if (m_player)
+            m_player->rateChanged();
+    });
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::setVolume(float volume)

@@ -90,6 +90,7 @@
 #include "UserGestureIndicator.h"
 #include <limits>
 #include <runtime/Uint8Array.h>
+#include <wtf/Algorithms.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/MathExtras.h>
 #include <wtf/MemoryPressureHandler.h>
@@ -6353,6 +6354,14 @@ HTMLMediaElement::SleepType HTMLMediaElement::shouldDisableSleep() const
     // If the media is playing remotely, we can't know definitively whether it has audio or video tracks.
     if (m_isPlayingToWirelessTarget)
         return SleepType::System;
+#endif
+
+#if ENABLE(MEDIA_STREAM)
+    if (m_mediaStreamSrcObject) {
+        // Do not block system from sleeping if element is only rendering local (capture) sources.
+        if (WTF::allOf(m_mediaStreamSrcObject->getTracks(), [] (RefPtr<MediaStreamTrack>& track) { return track && track->isCaptureTrack(); }))
+            return SleepType::None;
+    }
 #endif
 
     if (!hasVideo() || !hasAudio())

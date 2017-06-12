@@ -526,6 +526,7 @@
 		C8F597CA2A57417FBAB92FD6 /* RandomDevice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RandomDevice.cpp; sourceTree = "<group>"; };
 		CD5497AA15857D0300B5BC30 /* MediaTime.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaTime.cpp; sourceTree = "<group>"; };
 		CD5497AB15857D0300B5BC30 /* MediaTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaTime.h; sourceTree = "<group>"; };
+		CD6D9FCD1EEF3AD4008B0671 /* Algorithms.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Algorithms.h; sourceTree = "<group>"; };
 		CE46516D19DB1FB4003ECA05 /* NSMapTableSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSMapTableSPI.h; sourceTree = "<group>"; };
 		CE73E02419DCB7AB00580D5C /* XPCSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XPCSPI.h; sourceTree = "<group>"; };
 		DCEE21FA1CEA7538000C2396 /* CFBundleSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CFBundleSPI.h; path = cf/CFBundleSPI.h; sourceTree = "<group>"; };
@@ -714,6 +715,7 @@
 				A8A47339151A825B004123FF /* threads */,
 				A8A47348151A825B004123FF /* unicode */,
 				A8A4725A151A825A004123FF /* ASCIICType.h */,
+				CD6D9FCD1EEF3AD4008B0671 /* Algorithms.h */,
 				A8A4725B151A825A004123FF /* Assertions.cpp */,
 				A8A4725C151A825A004123FF /* Assertions.h */,
 				A8A4725D151A825A004123FF /* Atomics.h */,
