@@ -45,6 +45,9 @@ function playbackTargetAvailabilityChangedAgain(event)
     shouldBe("mediaController.controls.rightContainer.children.length", "2");
     shouldBe("mediaController.controls.rightContainer.children[0]", "mediaController.controls.airplayButton");
     shouldBe("mediaController.controls.rightContainer.children[1]", "mediaController.controls.muteButton");
+    mediaController.controls.bottomControlsBar.element.setAttribute("id", "audio-controls");
+
+    shouldBeEqualToString("accessibilityController.accessibleElementById('audio-controls').description", "AXDescription: Audio Controls");
 
     debug("");
     shadowRoot.remove();

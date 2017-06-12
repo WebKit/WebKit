@@ -28,8 +28,7 @@ class ControlsBar extends LayoutNode
 
     constructor(cssClassName = "")
     {
-        super(`<div class="controls-bar ${cssClassName}"></div>`);
-
+        super(`<div role="group" class="controls-bar ${cssClassName}"></div>`);
         this._translation = new DOMPoint;
         this._backgroundTint = this.addChild(new BackgroundTint);
     }

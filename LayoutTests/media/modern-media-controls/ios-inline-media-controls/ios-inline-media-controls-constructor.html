@@ -33,6 +33,15 @@ shouldBe("mediaControls.controlsBar.children[1].leftMargin", "24");
 shouldBe("mediaControls.controlsBar.children[1].rightMargin", "24");
 shouldBe("mediaControls.controlsBar.children[1].buttonMargin", "24");
 
+mediaControls.bottomControlsBar.element.id = "groupping-label";
+document.body.appendChild(mediaControls.bottomControlsBar.element);
+
+mediaControls.shouldUseAudioLayout = false;
+shouldBeEqualToString("accessibilityController.accessibleElementById('groupping-label').description","AXDescription: Video Controls");
+
+mediaControls.shouldUseAudioLayout = true;
+shouldBeEqualToString("accessibilityController.accessibleElementById('groupping-label').description","AXDescription: Audio Controls");
+
 debug("");
 
 </script>

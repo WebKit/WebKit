@@ -41,6 +41,15 @@ shouldBe("mediaControls.controlsBar.children[3].children.slice(-1)", "[mediaCont
 shouldBeFalse("mediaControls.controlsBar.children[3].visible");
 shouldBe("mediaControls.volumeSlider.width", "60");
 
+mediaControls.bottomControlsBar.element.id = "groupping-label";
+document.body.appendChild(mediaControls.bottomControlsBar.element);
+
+mediaControls.shouldUseAudioLayout = false;
+shouldBeEqualToString("accessibilityController.accessibleElementById('groupping-label').description","AXDescription: Video Controls");
+
+mediaControls.shouldUseAudioLayout = true;
+shouldBeEqualToString("accessibilityController.accessibleElementById('groupping-label').description","AXDescription: Audio Controls");
+
 debug("");
 
 </script>

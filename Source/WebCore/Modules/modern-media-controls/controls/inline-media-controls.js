@@ -55,6 +55,7 @@ class InlineMediaControls extends MediaControls
         this._shouldUseAudioLayout = false;
         this._shouldUseSingleBarLayout = false;
         this.showsStartButton = false;
+        this._updateBottomControlsBarLabel();
     }
 
     // Public
@@ -67,6 +68,7 @@ class InlineMediaControls extends MediaControls
         this._shouldUseAudioLayout = flag;
         this.element.classList.toggle("audio", flag);
         this.needsLayout = true;
+        this._updateBottomControlsBarLabel();
     }
 
     set shouldUseSingleBarLayout(flag)
@@ -256,6 +258,10 @@ class InlineMediaControls extends MediaControls
 
     // Private
 
+    _updateBottomControlsBarLabel() {
+        this.bottomControlsBar.element.setAttribute("aria-label", this._shouldUseAudioLayout ? UIString("Audio Controls") : UIString("Video Controls"));
+    }
+    
     _topLeftContainerButtons()
     {
         if (this._shouldUseSingleBarLayout)

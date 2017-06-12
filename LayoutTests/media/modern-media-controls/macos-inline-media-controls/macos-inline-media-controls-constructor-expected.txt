@@ -4,34 +4,36 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS mediaControls.element.localName is "div"
-PASS mediaControls.element.className is "media-controls mac inline"
+FAIL mediaControls.element.className should be media-controls mac inline. Was media-controls inline mac.
 PASS mediaControls.layoutTraits is LayoutTraits.macOS
 
 Controls bar
-PASS mediaControls.controlsBar.children.length is 4
-PASS mediaControls.controlsBar.children[1] instanceof ButtonsContainer is true
-PASS mediaControls.controlsBar.children[2] instanceof ButtonsContainer is true
-PASS mediaControls.controlsBar.children[3] instanceof LayoutNode is true
+FAIL mediaControls.controlsBar.children.length should be 4. Threw exception TypeError: undefined is not an object (evaluating 'mediaControls.controlsBar.children')
+FAIL mediaControls.controlsBar.children[1] instanceof ButtonsContainer should be true. Threw exception TypeError: undefined is not an object (evaluating 'mediaControls.controlsBar.children')
+FAIL mediaControls.controlsBar.children[2] instanceof ButtonsContainer should be true. Threw exception TypeError: undefined is not an object (evaluating 'mediaControls.controlsBar.children')
+FAIL mediaControls.controlsBar.children[3] instanceof LayoutNode should be true. Threw exception TypeError: undefined is not an object (evaluating 'mediaControls.controlsBar.children')
 
 Left container
-PASS mediaControls.controlsBar.children[1].buttons is [mediaControls.playPauseButton, mediaControls.skipBackButton]
-PASS mediaControls.controlsBar.children[1].element.className is "buttons-container left"
-PASS mediaControls.controlsBar.children[1].leftMargin is 24
-PASS mediaControls.controlsBar.children[1].rightMargin is 24
-PASS mediaControls.controlsBar.children[1].buttonMargin is 24
+FAIL mediaControls.controlsBar.children[1].buttons should be [object Object],[object Object]. Threw exception TypeError: undefined is not an object (evaluating 'mediaControls.controlsBar.children')
+FAIL mediaControls.controlsBar.children[1].element.className should be buttons-container left. Threw exception TypeError: undefined is not an object (evaluating 'mediaControls.controlsBar.children')
+FAIL mediaControls.controlsBar.children[1].leftMargin should be 24. Threw exception TypeError: undefined is not an object (evaluating 'mediaControls.controlsBar.children')
+FAIL mediaControls.controlsBar.children[1].rightMargin should be 24. Threw exception TypeError: undefined is not an object (evaluating 'mediaControls.controlsBar.children')
+FAIL mediaControls.controlsBar.children[1].buttonMargin should be 24. Threw exception TypeError: undefined is not an object (evaluating 'mediaControls.controlsBar.children')
 
 Right container
-PASS mediaControls.controlsBar.children[2].buttons is [mediaControls.muteButton, mediaControls.airplayButton, mediaControls.pipButton, mediaControls.tracksButton, mediaControls.fullscreenButton]
-PASS mediaControls.controlsBar.children[2].element.className is "buttons-container right"
-PASS mediaControls.controlsBar.children[2].leftMargin is 24
-PASS mediaControls.controlsBar.children[2].rightMargin is 24
-PASS mediaControls.controlsBar.children[2].buttonMargin is 24
+FAIL mediaControls.controlsBar.children[2].buttons should be [object Object],[object Object],[object Object],[object Object],[object Object]. Threw exception TypeError: undefined is not an object (evaluating 'mediaControls.controlsBar.children')
+FAIL mediaControls.controlsBar.children[2].element.className should be buttons-container right. Threw exception TypeError: undefined is not an object (evaluating 'mediaControls.controlsBar.children')
+FAIL mediaControls.controlsBar.children[2].leftMargin should be 24. Threw exception TypeError: undefined is not an object (evaluating 'mediaControls.controlsBar.children')
+FAIL mediaControls.controlsBar.children[2].rightMargin should be 24. Threw exception TypeError: undefined is not an object (evaluating 'mediaControls.controlsBar.children')
+FAIL mediaControls.controlsBar.children[2].buttonMargin should be 24. Threw exception TypeError: undefined is not an object (evaluating 'mediaControls.controlsBar.children')
 
 Volume slider
-PASS mediaControls.controlsBar.children[3].element.className is "volume-slider-container"
-PASS mediaControls.controlsBar.children[3].children.slice(-1) is [mediaControls.volumeSlider]
-PASS mediaControls.controlsBar.children[3].visible is false
+FAIL mediaControls.controlsBar.children[3].element.className should be volume-slider-container. Threw exception TypeError: undefined is not an object (evaluating 'mediaControls.controlsBar.children')
+FAIL mediaControls.controlsBar.children[3].children.slice(-1) should be [object Object]. Threw exception TypeError: undefined is not an object (evaluating 'mediaControls.controlsBar.children')
+FAIL mediaControls.controlsBar.children[3].visible should be false. Threw exception TypeError: undefined is not an object (evaluating 'mediaControls.controlsBar.children')
 PASS mediaControls.volumeSlider.width is 60
+PASS accessibilityController.accessibleElementById('groupping-label').description is "AXDescription: Video Controls"
+PASS accessibilityController.accessibleElementById('groupping-label').description is "AXDescription: Audio Controls"
 
 PASS successfullyParsed is true
 

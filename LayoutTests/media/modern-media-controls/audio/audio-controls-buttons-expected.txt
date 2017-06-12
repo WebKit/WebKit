@@ -8,6 +8,7 @@ AirPlay routes became available.
 PASS mediaController.controls.rightContainer.children.length is 2
 PASS mediaController.controls.rightContainer.children[0] is mediaController.controls.airplayButton
 PASS mediaController.controls.rightContainer.children[1] is mediaController.controls.muteButton
+PASS accessibilityController.accessibleElementById('audio-controls').description is "AXDescription: Audio Controls"
 
 PASS successfullyParsed is true
 

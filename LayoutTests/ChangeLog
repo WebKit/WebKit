@@ -1,3 +1,20 @@
+2017-06-12  Aaron Chu  <aaron_chu@apple.com>
+
+        AX: Video/Audio Player Controls missing group container.
+        https://bugs.webkit.org/show_bug.cgi?id=171790
+        <rdar://problem/32008994>
+
+        Reviewed by Antoine Quint.
+
+        Modified existing test cases to accommodate testing for controls bar aria-label.
+
+        * media/modern-media-controls/audio/audio-controls-buttons-expected.txt:
+        * media/modern-media-controls/audio/audio-controls-buttons.html:
+        * media/modern-media-controls/ios-inline-media-controls/ios-inline-media-controls-constructor-expected.txt:
+        * media/modern-media-controls/ios-inline-media-controls/ios-inline-media-controls-constructor.html:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-constructor-expected.txt:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-constructor.html:
+
 2017-06-12  Jonathan Bedard  <jbedard@apple.com>
 
         Garden tests for on-device testing
