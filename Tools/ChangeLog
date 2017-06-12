@@ -1,3 +1,17 @@
+2017-06-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        WebItemProviderPasteboard should call its completion block immediately after a synchronous load
+        https://bugs.webkit.org/show_bug.cgi?id=173225
+        <rdar://problem/32713144>
+
+        Reviewed by Tim Horton.
+
+        Adds a new unit test to verify whether the completion block is called synchronously or asynchronously, in both
+        cases where the synchronous timeout is very large, and the synchronous timeout is not used (0).
+
+        * TestWebKitAPI/Tests/ios/DataInteractionTests.mm:
+        (TestWebKitAPI::TEST):
+
 2017-06-12  Jonathan Bedard  <jbedard@apple.com>
 
         Return correct process names for iOS on-device testing

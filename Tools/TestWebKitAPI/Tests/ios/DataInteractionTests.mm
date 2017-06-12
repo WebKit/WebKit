@@ -39,6 +39,7 @@
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
+#import <WebKit/WebItemProviderPasteboard.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 
 typedef void (^FileLoadCompletionBlock)(NSURL *, BOOL, NSError *);
@@ -846,6 +847,52 @@ TEST(DataInteractionTests, UnresponsivePageDoesNotHangUI)
 
     // The test passes if we can prepare for data interaction without timing out.
     [webView _simulatePrepareForDataInteractionSession:nil completion:^() { }];
+}
+
+TEST(DataInteractionTests, WebItemProviderPasteboardLoading)
+{
+    static NSString *fastString = @"This data loads quickly";
+    static NSString *slowString = @"This data loads slowly";
+
+    WebItemProviderPasteboard *pasteboard = [WebItemProviderPasteboard sharedInstance];
+    auto fastItem = adoptNS([[UIItemProvider alloc] init]);
+    [fastItem registerDataRepresentationForTypeIdentifier:(NSString *)kUTTypeUTF8PlainText options:nil loadHandler:^NSProgress *(UIItemProviderDataLoadCompletionBlock completionBlock)
+    {
+        completionBlock([fastString dataUsingEncoding:NSUTF8StringEncoding], nil);
+        return nil;
+    }];
+
+    auto slowItem = adoptNS([[UIItemProvider alloc] init]);
+    [slowItem registerDataRepresentationForTypeIdentifier:(NSString *)kUTTypeUTF8PlainText options:nil loadHandler:^NSProgress *(UIItemProviderDataLoadCompletionBlock completionBlock)
+    {
+        sleep(2);
+        completionBlock([slowString dataUsingEncoding:NSUTF8StringEncoding], nil);
+        return nil;
+    }];
+
+    __block bool hasRunFirstCompletionBlock = false;
+    pasteboard.itemProviders = @[ fastItem.get(), slowItem.get() ];
+    [pasteboard doAfterLoadingProvidedContentIntoFileURLs:^(NSArray<NSURL *> *urls) {
+        EXPECT_EQ(2UL, urls.count);
+        auto firstString = adoptNS([[NSString alloc] initWithContentsOfURL:urls[0] encoding:NSUTF8StringEncoding error:nil]);
+        auto secondString = adoptNS([[NSString alloc] initWithContentsOfURL:urls[1] encoding:NSUTF8StringEncoding error:nil]);
+        EXPECT_WK_STREQ(fastString, [firstString UTF8String]);
+        EXPECT_WK_STREQ(slowString, [secondString UTF8String]);
+        hasRunFirstCompletionBlock = true;
+    } synchronousTimeout:600];
+    EXPECT_TRUE(hasRunFirstCompletionBlock);
+
+    __block bool hasRunSecondCompletionBlock = false;
+    [pasteboard doAfterLoadingProvidedContentIntoFileURLs:^(NSArray<NSURL *> *urls) {
+        EXPECT_EQ(2UL, urls.count);
+        auto firstString = adoptNS([[NSString alloc] initWithContentsOfURL:urls[0] encoding:NSUTF8StringEncoding error:nil]);
+        auto secondString = adoptNS([[NSString alloc] initWithContentsOfURL:urls[1] encoding:NSUTF8StringEncoding error:nil]);
+        EXPECT_WK_STREQ(fastString, [firstString UTF8String]);
+        EXPECT_WK_STREQ(slowString, [secondString UTF8String]);
+        hasRunSecondCompletionBlock = true;
+    } synchronousTimeout:0];
+    EXPECT_FALSE(hasRunSecondCompletionBlock);
+    TestWebKitAPI::Util::run(&hasRunSecondCompletionBlock);
 }
 
 } // namespace TestWebKitAPI

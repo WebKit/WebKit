@@ -484,15 +484,19 @@ static NSURL *temporaryFileURLForDataInteractionContent(NSURL *url, NSString *su
     }
 
     RetainPtr<WebItemProviderPasteboard> retainedSelf = self;
-    dispatch_group_notify(fileLoadingGroup.get(), dispatch_get_main_queue(), [retainedSelf, fileLoadingGroup, typeToFileURLMaps, completionBlock = makeBlockPtr(action), changeCountBeforeLoading] {
+    auto itemLoadCompletion = [retainedSelf, synchronousFileLoadingGroup, fileLoadingGroup, typeToFileURLMaps, completionBlock = makeBlockPtr(action), changeCountBeforeLoading] {
         if (changeCountBeforeLoading == retainedSelf->_changeCount)
             retainedSelf->_typeToFileURLMaps = typeToFileURLMaps;
 
         completionBlock([retainedSelf fileURLsForDataInteraction]);
-    });
+    };
 
-    if (synchronousTimeout > 0)
-        dispatch_group_wait(synchronousFileLoadingGroup.get(), dispatch_time(DISPATCH_TIME_NOW, synchronousTimeout * NSEC_PER_SEC));
+    if (synchronousTimeout > 0 && !dispatch_group_wait(synchronousFileLoadingGroup.get(), dispatch_time(DISPATCH_TIME_NOW, synchronousTimeout * NSEC_PER_SEC))) {
+        itemLoadCompletion();
+        return;
+    }
+
+    dispatch_group_notify(fileLoadingGroup.get(), dispatch_get_main_queue(), itemLoadCompletion);
 }
 
 - (WebItemProviderRegistrationInfoList *)registrationInfoAtIndex:(NSUInteger)index

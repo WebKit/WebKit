@@ -1,3 +1,23 @@
+2017-06-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        WebItemProviderPasteboard should call its completion block immediately after a synchronous load
+        https://bugs.webkit.org/show_bug.cgi?id=173225
+        <rdar://problem/32713144>
+
+        Reviewed by Tim Horton.
+
+        Ensures that a completion block passed to doAfterLoadingProvidedContentIntoFileURLs:synchronousTimeout: will be
+        invoked immediately, if a synchronous timeout is specified and loading finishes before the synchronous timeout
+        is reached. To do this, we first factor out the completion logic into a new block. If the synchronous timeout
+        exists and dispatch_group_wait returns 0 (indicating that the dispatch group finished without hitting the
+        wait timeout) we simply invoke the block and return early; otherwise, we will register the completion block
+        using dispatch_group_notify.
+
+        Test: DataInteractionTests.WebItemProviderPasteboardLoading
+
+        * platform/ios/WebItemProviderPasteboard.mm:
+        (-[WebItemProviderPasteboard doAfterLoadingProvidedContentIntoFileURLs:synchronousTimeout:]):
+
 2017-06-12  Jeremy Jones  <jeremyj@apple.com>
 
         WebAVPlayerController minTime and maxTime should be calculated properties to provide correct values when streaming.
