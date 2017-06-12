@@ -1,3 +1,16 @@
+2017-06-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        didMoveToNewDocument doesn't get called on an Attr inside a shadow tree
+        https://bugs.webkit.org/show_bug.cgi?id=173133
+
+        Reviewed by Antti Koivisto.
+
+        Added a regression test for moving a shadow tree with an Attr node across a document.
+        The test hits an assertion in a debug build and fails in a release build without the fix.
+
+        * fast/dom/adopt-attr-with-shadow-tree-expected.txt: Added.
+        * fast/dom/adopt-attr-with-shadow-tree.html: Added.
+
 2017-06-11  Keith Miller  <keith_miller@apple.com>
 
         TypedArray constructor with string shouldn't throw

@@ -1,3 +1,32 @@
+2017-06-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        didMoveToNewDocument doesn't get called on an Attr inside a shadow tree
+        https://bugs.webkit.org/show_bug.cgi?id=173133
+
+        Reviewed by Antti Koivisto.
+
+        The bug was caused by moveShadowTreeToNewDocument never calling didMoveToNewDocument on Attr nodes.
+        Fixed the bug by using the same traversal code as moveTreeToNewScope in moveShadowTreeToNewDocument
+        by extracting the traversal code as a templatized traverseSubtreeToUpdateTreeScope.
+
+        Also removed the code to increment the DOM tree version in moveTreeToNewScope. This code was there
+        to invalidate the HTML collection caches which used to clear the cache whenever the DOM tree version
+        changed before r122621 (five years ago! by me). Since we now eagerly invalidate each node list and
+        HTML collection's caches via NodeListsNodeData::adoptTreeScope and NodeListsNodeData::adoptDocument.
+
+        Test: fast/dom/adopt-attr-with-shadow-tree.html
+
+        * dom/Node.cpp:
+        (WebCore::moveNodeToNewDocument): Assert that the node had been adopted to a new document.
+        (WebCore::traverseSubtreeToUpdateTreeScope): Extracted from moveTreeToNewScope.
+        (WebCore::moveShadowTreeToNewDocument): Use traverseSubtreeToUpdateTreeScope to adopt each node
+        to the new document.
+        (WebCore::Node::moveTreeToNewScope): See above.
+        * testing/Internals.cpp:
+        (WebCore::Internals::referencingNodeCount): Added. Used in the newly added regression test.
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2017-06-11  Dan Bernstein  <mitz@apple.com>
 
         [Mac] Unaligned pointers in static CMBufferCallbacks structs defined in WebCoreDecompressionSession.mm

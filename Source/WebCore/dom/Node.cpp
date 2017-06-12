@@ -1975,45 +1975,14 @@ static ALWAYS_INLINE void moveNodeToNewDocument(Node& node, Document& oldDocumen
     ASSERT(!node.isConnected() || &oldDocument != &newDocument);
     DidMoveToNewDocumentAssertionScope scope(node, oldDocument, newDocument);
     node.didMoveToNewDocument(oldDocument, newDocument);
+    ASSERT_WITH_SECURITY_IMPLICATION(&node.document() == &newDocument);
 }
 
-static void moveShadowTreeToNewDocument(ShadowRoot& shadowRoot, Document& oldDocument, Document& newDocument)
+template <typename MoveNodeFunction, typename MoveShadowRootFunction>
+static void traverseSubtreeToUpdateTreeScope(Node& root, MoveNodeFunction moveNode, MoveShadowRootFunction moveShadowRoot)
 {
-    for (Node* node = &shadowRoot; node; node = NodeTraversal::next(*node, &shadowRoot)) {
-        moveNodeToNewDocument(*node, oldDocument, newDocument);
-        if (auto* shadow = node->shadowRoot())
-            moveShadowTreeToNewDocument(*shadow, oldDocument, newDocument);
-    }
-}
-
-void Node::moveTreeToNewScope(Node& root, TreeScope& oldScope, TreeScope& newScope)
-{
-    ASSERT(&oldScope != &newScope);
-    ASSERT_WITH_SECURITY_IMPLICATION(&root.treeScope() == &oldScope);
-
-    // If an element is moved from a document and then eventually back again the collection cache for
-    // that element may contain stale data as changes made to it will have updated the DOMTreeVersion
-    // of the document it was moved to. By increasing the DOMTreeVersion of the donating document here
-    // we ensure that the collection cache will be invalidated as needed when the element is moved back.
-    Document& oldDocument = oldScope.documentScope();
-    Document& newDocument = newScope.documentScope();
-    bool shouldUpdateDocumentScope = &oldDocument != &newDocument;
-    if (shouldUpdateDocumentScope) {
-        oldDocument.incrementReferencingNodeCount();
-        oldDocument.incDOMTreeVersion();
-    }
-
     for (Node* node = &root; node; node = NodeTraversal::next(*node, &root)) {
-        ASSERT(!node->isTreeScope());
-        ASSERT(&node->treeScope() == &oldScope);
-        node->setTreeScope(newScope);
-
-        if (shouldUpdateDocumentScope)
-            moveNodeToNewDocument(*node, oldDocument, newDocument);
-        else if (node->hasRareData()) {
-            if (auto* nodeLists = node->rareData()->nodeLists())
-                nodeLists->adoptTreeScope();
-        }
+        moveNode(*node);
 
         if (!is<Element>(*node))
             continue;
@@ -2021,19 +1990,58 @@ void Node::moveTreeToNewScope(Node& root, TreeScope& oldScope, TreeScope& newSco
 
         if (element.hasSyntheticAttrChildNodes()) {
             for (auto& attr : element.attrNodeList())
-                moveTreeToNewScope(*attr, oldScope, newScope);
+                moveNode(*attr);
         }
 
-        if (auto* shadow = element.shadowRoot()) {
-            ASSERT_WITH_SECURITY_IMPLICATION(&shadow->document() == &oldDocument);
-            shadow->setParentTreeScope(newScope);
-            if (shouldUpdateDocumentScope)
-                moveShadowTreeToNewDocument(*shadow, oldDocument, newDocument);
-        }
+        if (auto* shadow = element.shadowRoot())
+            moveShadowRoot(*shadow);
     }
+}
 
-    if (shouldUpdateDocumentScope)
+static void moveShadowTreeToNewDocument(ShadowRoot& shadowRoot, Document& oldDocument, Document& newDocument)
+{
+    traverseSubtreeToUpdateTreeScope(shadowRoot, [&oldDocument, &newDocument](Node& node) {
+        moveNodeToNewDocument(node, oldDocument, newDocument);
+    }, [&oldDocument, &newDocument](ShadowRoot& innerShadowRoot) {
+        ASSERT_WITH_SECURITY_IMPLICATION(&innerShadowRoot.document() == &oldDocument);
+        moveShadowTreeToNewDocument(innerShadowRoot, oldDocument, newDocument);
+    });
+}
+
+void Node::moveTreeToNewScope(Node& root, TreeScope& oldScope, TreeScope& newScope)
+{
+    ASSERT(&oldScope != &newScope);
+    ASSERT_WITH_SECURITY_IMPLICATION(&root.treeScope() == &oldScope);
+
+    Document& oldDocument = oldScope.documentScope();
+    Document& newDocument = newScope.documentScope();
+    if (&oldDocument != &newDocument) {
+        oldDocument.incrementReferencingNodeCount();
+        traverseSubtreeToUpdateTreeScope(root, [&](Node& node) {
+            ASSERT(!node.isTreeScope());
+            ASSERT_WITH_SECURITY_IMPLICATION(&node.treeScope() == &oldScope);
+            ASSERT_WITH_SECURITY_IMPLICATION(&node.document() == &oldDocument);
+            node.setTreeScope(newScope);
+            moveNodeToNewDocument(node, oldDocument, newDocument);
+        }, [&](ShadowRoot& shadowRoot) {
+            ASSERT_WITH_SECURITY_IMPLICATION(&shadowRoot.document() == &oldDocument);
+            shadowRoot.setParentTreeScope(newScope);
+            moveShadowTreeToNewDocument(shadowRoot, oldDocument, newDocument);
+        });
         oldDocument.decrementReferencingNodeCount();
+    } else {
+        traverseSubtreeToUpdateTreeScope(root, [&](Node& node) {
+            ASSERT(!node.isTreeScope());
+            ASSERT_WITH_SECURITY_IMPLICATION(&node.treeScope() == &oldScope);
+            node.setTreeScope(newScope);
+            if (!node.hasRareData())
+                return;
+            if (auto* nodeLists = node.rareData()->nodeLists())
+                nodeLists->adoptTreeScope();
+        }, [&newScope](ShadowRoot& shadowRoot) {
+            shadowRoot.setParentTreeScope(newScope);
+        });
+    }
 }
 
 void Node::didMoveToNewDocument(Document& oldDocument, Document& newDocument)

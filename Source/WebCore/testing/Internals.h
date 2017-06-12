@@ -325,6 +325,7 @@ public:
 
     unsigned numberOfLiveNodes() const;
     unsigned numberOfLiveDocuments() const;
+    unsigned referencingNodeCount(const Document&) const;
 
     RefPtr<DOMWindow> openDummyInspectorFrontend(const String& url);
     void closeDummyInspectorFrontend();

@@ -2195,6 +2195,11 @@ unsigned Internals::numberOfLiveDocuments() const
     return Document::allDocuments().size();
 }
 
+unsigned Internals::referencingNodeCount(const Document& document) const
+{
+    return document.referencingNodeCount();
+}
+
 RefPtr<DOMWindow> Internals::openDummyInspectorFrontend(const String& url)
 {
     auto* inspectedPage = contextDocument()->frame()->page();
