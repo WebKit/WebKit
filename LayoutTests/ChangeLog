@@ -1,5 +1,19 @@
 2017-06-11  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [iOS 11] fast/text/international/system-language/arabic-glyph-cache-fill-combine.html hardcodes the system UI Arabic font
+        https://bugs.webkit.org/show_bug.cgi?id=173244
+        <rdar://problem/32659595>
+
+        Reviewed by Ryosuke Niwa.
+
+        iOS 11 changed this font, so we shouldn't hardcode it. Instead,
+        we can simply change this to an -expected-mismatch.html test to
+        specifically test against the ".notdef" glyph.
+
+        * fast/text/international/system-language/arabic-glyph-cache-fill-combine-expected-mismatch.html: Renamed from LayoutTests/fast/text/international/system-language/arabic-glyph-cache-fill-combine-expected.html.
+
+2017-06-11  Myles C. Maxfield  <mmaxfield@apple.com>
+
         fast/text/variations/getComputedStyle.html does not need to be asynchronous
         https://bugs.webkit.org/show_bug.cgi?id=173246
         <rdar://problem/31393842>

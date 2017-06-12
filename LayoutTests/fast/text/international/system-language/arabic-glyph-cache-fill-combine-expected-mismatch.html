@@ -5,6 +5,6 @@ This test hits a codepath where codepoints were being combined before they were 
 This character occurs just before combining marks in Unicode, and therefore was being erroneously combined. The test
 passes if the glyph is drawn in a font other than LastResort (if the test fails, the character looks like a box or like
 three horizontal lines).
-<div style="font: 50px 'Geeza Pro';">&#x64a;<div style="display: inline-block; width: 1px; height: 200px;"></div></div>
+<div style="font: 50px UICTFontTextStyleBody;">&#x2B616;<div style="display: inline-block; width: 1px; height: 200px;"></div></div>
 </body>
 </html>
