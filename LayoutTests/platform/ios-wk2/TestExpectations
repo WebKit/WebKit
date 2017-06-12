@@ -105,14 +105,6 @@ scrollbars/scrolling-by-page-ignoring-transparent-fixed-elements-on-keyboard-spa
 scrollbars/scrolling-by-page-on-keyboard-spacebar.html [ Failure ]
 scrollbars/scrollbars-on-positioned-content.html [ Failure ]
 
-# iOS doesn’t support dashboard.
-mathml/mathml-in-dashboard.html [ Failure ]
-svg/custom/embedded-svg-allowed-in-dashboard.xml [ Failure ]
-svg/custom/manually-parsed-embedded-svg-allowed-in-dashboard.html [ Failure ]
-svg/custom/manually-parsed-svg-allowed-in-dashboard.html [ Failure ]
-svg/custom/svg-allowed-in-dashboard-object.html [ Failure ]
-http/tests/xmlhttprequest/svg-created-by-xhr-allowed-in-dashboard.html [ Failure ]
-
 # SVG tests that time out (these require EventSender)
 svg/animations/animVal-basics.html
 svg/animations/animate-calcMode-spline-by.html
@@ -335,7 +327,6 @@ webarchive/doctype.html [ Failure ]
 
 # HTTP tests that fail:
 http/tests/appcache/load-from-appcache-defer-resume-crash.html [ Failure ]
-http/tests/cookies/js-get-and-set-http-only-cookie.html [ Failure ]
 http/tests/download/inherited-encoding-form-submission-result.html [ Failure ]
 http/tests/globalhistory/history-delegate-basic-refresh-redirect.html [ Failure ]
 http/tests/globalhistory/history-delegate-basic-visited-links.html [ Failure ]
@@ -358,8 +349,6 @@ http/tests/navigation/relativeanchor-frames.html [ Failure ]
 http/tests/navigation/reload-subframe-object.html [ Failure ]
 http/tests/navigation/success200-subframeload.html [ Failure ]
 http/tests/navigation/timerredirect-subframeload.html [ Failure ]
-http/tests/security/cross-origin-worker-indexeddb-allowed.html [ Failure ]
-http/tests/security/cross-origin-worker-indexeddb.html [ Failure ]
 http/tests/security/drag-drop-local-file.html [ Failure ]
 http/tests/security/drag-drop-same-unique-origin.html [ Failure ]
 http/tests/security/drag-over-remote-content-iframe.html [ Failure ]
@@ -540,7 +529,6 @@ fast/regions/hover-on-child-in-region-in-region.html [ Failure ]
 fast/regions/hover-on-child-in-region.html [ Failure ]
 fast/regions/hover-on-child-parent-different-regions.html [ Failure ]
 fast/regions/overflow/overflow-3dtransformed-region.html [ Failure ]
-fast/regions/repaint/fixed-in-named-flow-scroll.html [ Failure ]
 fast/regions/repaint/repaint-absolute-pushed-to-next-region.html [ Failure ]
 fast/replaced/image-map-2.html [ Failure ]
 fast/replaced/image-map-bug16782.html [ Failure ]
@@ -632,7 +620,6 @@ fast/layers/no-clipping-overflow-hidden-hardware-acceleration.html [ ImageOnlyFa
 fast/shadow-dom/focus-across-details-element.html [ Failure ]
 fast/shadow-dom/focus-navigation-across-slots.html [ Failure ]
 fast/shadow-dom/negative-tabindex-on-shadow-host.html [ Failure ]
-fast/sub-pixel/sub-pixel-composited-layers.html [ ImageOnlyFailure ]
 fast/text/word-space-between-inlines.html [ ImageOnlyFailure ]
 fast/css/beforeSelectorOnCodeElement.html [ Failure ]
 fast/css/css1_forward_compatible_parsing.html [ Failure ]
@@ -648,7 +635,6 @@ fast/forms/basic-buttons.html [ Failure ]
 fast/forms/basic-textareas-quirks.html [ Failure ]
 fast/forms/targeted-frame-submission.html [ Failure ]
 fast/frames/onlyCommentInIFrame.html [ Failure ]
-fast/hidpi/image-srcset-invalid-descriptor.html [ Failure ]
 fast/html/listing.html [ Failure ]
 fast/invalid/junk-data.xml [ Failure ]
 fast/invalid/missing-end-tag.xhtml [ Failure ]
@@ -871,7 +857,6 @@ loader/go-back-to-different-window-size.html [ Failure ]
 
 # CSS transform tests that fail:
 transforms/2d/transform-fixed-container.html [ Failure ]
-transforms/hittest-translated-content-off-to-infinity-and-back.html [ ImageOnlyFailure ]
 
 # Editing tests that fail:
 editing/caret/color-span-inside-editable-background.html [ ImageOnlyFailure ]
@@ -960,7 +945,6 @@ editing/inserting/insert-div-005.html [ Failure ]
 editing/inserting/insert-div-006.html [ Failure ]
 editing/inserting/insert-div-007.html [ Failure ]
 editing/inserting/insert-div-008.html [ Failure ]
-editing/inserting/insert-paragraph-selection-outside-contenteditable.html [ Failure ]
 editing/inserting/insert-space-in-empty-doc.html [ Failure ]
 editing/inserting/insert-tab-001.html [ Failure ]
 editing/inserting/insert-tab-002.html [ Failure ]

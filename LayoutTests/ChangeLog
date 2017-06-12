@@ -1,3 +1,22 @@
+2017-06-12  Jonathan Bedard  <jbedard@apple.com>
+
+        Garden tests for on-device testing
+
+        Unreviewed test gardening.
+
+        The tests gardened here have not been investigated. https://bugs.webkit.org/show_bug.cgi?id=173275
+        tracks the investigation of the tests marked as failing, crashing or skipped because they timeout
+        when running layout tests on-device in this revision.
+
+        * platform/ios-device/TestExpectations: Initial gardening of expectations for on-device testing.
+        * platform/ios-simulator-wk2/TestExpectations: Moved simulator specific expectations from platfrom/ios-wk2.
+        * platform/ios-simulator/TestExpectations: Moved simulator specific expectations from platfrom/ios.
+        * platform/ios-simulator/compositing: Removed.
+        * platform/ios-wk2/TestExpectations: Moved simulator specific expectation to platform/ios-simulator-wk2.
+        * platform/ios/TestExpectations: Moved simulator specific expectation to platform/ios.
+        * platform/ios/compositing/iframes/compositing-for-scrollable-iframe-expected.txt: Copied from
+        LayoutTests/platform/ios-simulator/compositing/iframes/compositing-for-scrollable-iframe-expected.txt.
+
 2017-06-12  Antoine Quint  <graouts@apple.com>
 
         Add tests for the SkipForwardButton class

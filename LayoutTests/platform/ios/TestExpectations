@@ -727,7 +727,6 @@ ietestcenter/css3/multicolumn/column-width-applies-to-009.htm [ ImageOnlyFailure
 ietestcenter/css3/multicolumn/column-width-applies-to-010.htm [ ImageOnlyFailure ]
 ietestcenter/css3/multicolumn/column-width-applies-to-012.htm [ ImageOnlyFailure ]
 ietestcenter/css3/multicolumn/column-width-applies-to-015.htm [ ImageOnlyFailure ]
-ietestcenter/css3/namespaces/syntax-021.xml [ ImageOnlyFailure ]
 ietestcenter/css3/valuesandunits/units-000.htm [ ImageOnlyFailure ]
 
 # Scrollbar tests that fail:
@@ -887,7 +886,6 @@ svg/filters/feImage-filterUnits-objectBoundingBox-primitiveUnits-objectBoundingB
 svg/filters/feImage-filterUnits-objectBoundingBox-primitiveUnits-userSpaceOnUse.svg [ Failure ]
 svg/filters/feImage-filterUnits-userSpaceOnUse-primitiveUnits-objectBoundingBox.svg [ Failure ]
 svg/filters/feImage-filterUnits-userSpaceOnUse-primitiveUnits-userSpaceOnUse.svg [ Failure ]
-svg/filters/filter-hidden-content.svg [ Failure ]
 svg/filters/filter-on-filter-for-text.svg [ Failure ]
 svg/filters/filter-on-tspan.svg [ Failure ]
 svg/filters/filter-width-update.svg [ Failure ]
@@ -1455,7 +1453,6 @@ fast/frames/calculate-relative.html [ Failure ]
 fast/frames/content-opacity-1.html [ Failure ]
 fast/frames/content-opacity-2.html [ Failure ]
 fast/frames/flattening/frameset-flattening-subframesets.html [ Failure ]
-fast/frames/flattening/scrolling-in-object.html [ ImageOnlyFailure ]
 fast/frames/frame-set-rotation-hit.html [ Failure ]
 fast/frames/frame-set-scaling-hit.html [ Failure ]
 fast/frames/hidpi-position-iframe-on-device-pixel.html [ ImageOnlyFailure ]
@@ -1465,7 +1462,6 @@ fast/frames/iframe-window-focus.html [ Failure ]
 fast/frames/invalid.html [ Failure ]
 fast/frames/paint-iframe-background.html [ Failure ]
 fast/frames/sandboxed-iframe-about-blank.html [ Failure ]
-fast/frames/sandboxed-iframe-close-top-noclose.html [ Failure ]
 fast/frames/sandboxed-iframe-navigation-allowed.html [ Failure ]
 fast/frames/valid.html [ Failure ]
 fast/gradients/background-clipped.html [ Failure ]
@@ -2471,7 +2467,6 @@ webkit.org/b/155095 fast/table/border-collapsing/table-ltr-rows-mixed-direction.
 fast/table/collapsed-border-with-odd-pixel-width.html [ ImageOnlyFailure ]
 
 # Uncategorized reftest failures, uncovered once we made reftests work. Needs triage.
-css3/font-variant-small-caps-synthesis-coverage.html [ ImageOnlyFailure ]
 fast/backgrounds/background-image-large-float-intrinsic-ratio.html [ ImageOnlyFailure ]
 fast/block/positioning/fixed-container-with-relative-parent.html [ ImageOnlyFailure ]
 fast/borders/border-image-fill-inline-no-border.html [ ImageOnlyFailure ]
@@ -2666,9 +2661,6 @@ media/video-initially-hidden-volume-slider-up.html [ Failure ]
 media/video-trackmenu-selection.html [ Failure ]
 media/video-volume.html [ Failure ]
 
-media/track/track-in-band-legacy-api.html [ Failure ]
-media/track/video-track-alternate-groups.html [ Failure ]
-
 media/W3C/audio/canPlayType/canPlayType_supported_but_no_codecs_parameter_1.html [ Failure ]
 
 media/video-seek-to-current-time.html [ Failure ]
@@ -2745,10 +2737,6 @@ fast/visual-viewport/zoomed-scroll-to-anchor-in-position-fixed.html [ Skip ]
 fast/visual-viewport/zoomed-scroll-into-view-fixed.html [ Skip ]
 fast/scrolling/scroll-to-anchor-zoomed-header.html [ Skip ]
 fast/visual-viewport/client-coordinates-relative-to-layout-viewport.html [ Skip ]
-
-# This test relies on Arial being used to draw Arabic. However, on iOS,
-# we explicitly disallow this because this font is too slow.
-fast/text/initial-advance-in-intermediate-run-complex.html [ ImageOnlyFailure ]
 
 # On iOS we do not visually highlight a programmatic selection
 fast/selectors/040.html

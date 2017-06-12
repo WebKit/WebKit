@@ -3,6 +3,9 @@
 # See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
 #
 
+css3/font-variant-small-caps-synthesis-coverage.html [ ImageOnlyFailure ]
+fast/frames/flattening/scrolling-in-object.html [ ImageOnlyFailure ]
+fast/frames/sandboxed-iframe-close-top-noclose.html [ Failure ]
 fast/multicol/flexbox-rows.html [ Skip ]
 workers/wasm-mem-post-message.html [ Failure ]
 
@@ -52,6 +55,14 @@ fast/css/sticky/sticky-top-margins.html [ ImageOnlyFailure ]
 fast/css/sticky/sticky-top-zoomed.html [ ImageOnlyFailure ]
 fast/css/sticky/sticky-top.html [ ImageOnlyFailure ]
 fast/css/sticky/sticky-writing-mode-horizontal-bt.html [ ImageOnlyFailure ]
+ietestcenter/css3/namespaces/syntax-021.xml [ ImageOnlyFailure ]
+
+media/track/track-in-band-legacy-api.html [ Failure ]
+media/track/video-track-alternate-groups.html [ Failure ]
+
+svg/filters/filter-hidden-content.svg [ Failure ]
+
+transforms/hittest-translated-content-off-to-infinity-and-back.html [ Pass ImageOnlyFailure ]
 
 # The modern-media-controls tests are disabled due to past flakiness and some major code changes.
 # As a result, a host of tests need to be updated and being turned on selectively here.
@@ -96,3 +107,7 @@ media/modern-media-controls/ios-inline-media-controls/ios-inline-media-controls-
 webkit.org/b/172965 media/track/track-cue-overlap-snap-to-lines-not-set.html [ Failure ]
 
 webkit.org/b/156718 storage/websql/alter-to-info-table.html [ Failure ]
+
+# This test relies on Arial being used to draw Arabic. However, on iOS,
+# we explicitly disallow this because this font is too slow.
+fast/text/initial-advance-in-intermediate-run-complex.html [ ImageOnlyFailure ]

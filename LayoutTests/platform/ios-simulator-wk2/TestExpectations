@@ -3,12 +3,27 @@
 # See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
 #
 
+editing/inserting/insert-paragraph-selection-outside-contenteditable.html [ Failure ]
 compositing/regions/composited-content-fixed-region-scrolled.html [ Failure ]
 fast/events/offsetX-offsetY.html [ Failure ]
+fast/hidpi/image-srcset-invalid-descriptor.html [ Failure ]
+fast/regions/repaint/fixed-in-named-flow-scroll.html [ Failure ]
+http/tests/cookies/js-get-and-set-http-only-cookie.html [ Failure ]
+http/tests/security/cross-origin-worker-indexeddb-allowed.html [ Failure ]
+http/tests/security/cross-origin-worker-indexeddb.html [ Failure ]
 
 fast/events/scroll-to-anchor-vertical-lr-writing-mode.html [ ImageOnlyFailure ]
 fast/events/scroll-to-anchor-vertical-writing-mode.html [ ImageOnlyFailure ]
+fast/sub-pixel/sub-pixel-composited-layers.html [ ImageOnlyFailure ]
 
 webkit.org/b/152439 compositing/overflow/dynamic-composited-scrolling-status.html [ Failure ]
 
 webkit.org/b/173178 [ Release ] svg/animations/svglength-element-removed-crash.svg [ Skip ]
+
+# iOS simulator doesn’t support dashboard.
+mathml/mathml-in-dashboard.html [ Failure ]
+svg/custom/embedded-svg-allowed-in-dashboard.xml [ Failure ]
+svg/custom/manually-parsed-embedded-svg-allowed-in-dashboard.html [ Failure ]
+svg/custom/manually-parsed-svg-allowed-in-dashboard.html [ Failure ]
+svg/custom/svg-allowed-in-dashboard-object.html [ Failure ]
+http/tests/xmlhttprequest/svg-created-by-xhr-allowed-in-dashboard.html [ Failure ]
