@@ -883,11 +883,6 @@ static void testWebViewNotification(NotificationWebViewTest* test, gconstpointer
     test->requestNotificationAndWaitUntilShown(title, body, tag);
     test->requestNotificationAndWaitUntilShown(title, body, tag);
     g_assert(test->m_event == NotificationWebViewTest::Shown);
-
-    // Notification should be closed when navigating to a different webpage.
-    test->loadURI(gServer->getURIForPath("/").data());
-    test->waitUntilLoadFinished();
-    g_assert(test->m_event == NotificationWebViewTest::Closed);
 }
 
 static void setInitialNotificationPermissionsAllowedCallback(WebKitWebContext* context, NotificationWebViewTest* test)
