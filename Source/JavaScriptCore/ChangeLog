@@ -1,3 +1,11 @@
+2017-06-12  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Unreviewed, build fix for ARM64
+        https://bugs.webkit.org/show_bug.cgi?id=172421
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileArrayIndexOf):
+
 2017-06-09  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DFG] Add ArrayIndexOf intrinsic
