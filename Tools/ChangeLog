@@ -1,3 +1,12 @@
+2017-06-12  Lucas Forschler  <lforschler@apple.com>
+
+        <rdar://problem/32683422>
+        Teach copy-webkitlibraries-to-product-directory script about updated libraries.
+
+        Reviewed by Conrad Schultz.
+
+        * Scripts/copy-webkitlibraries-to-product-directory:
+
 2017-06-12  Tim Horton  <timothy_horton@apple.com>
 
         [iOS] Cmd-C doesn't copy text from WKWebView

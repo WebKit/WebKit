@@ -1,3 +1,23 @@
+2017-06-09  Lucas Forschler  <lforschler@apple.com>
+
+        <rdar://problem/32683422>
+        
+        Update existing WebKitSystemInterface libraries.
+        Add macOS 10.13 libraries.
+        Remove macOS 10.10 libraries.
+        Remove iOS 10.9 libraries.
+        
+        Reviewed by Conrad Schultz.
+
+        * libWebKitSystemInterfaceElCapitan.a:
+        * libWebKitSystemInterfaceIOSDevice10.a:
+        * libWebKitSystemInterfaceIOSDevice9.a: Removed.
+        * libWebKitSystemInterfaceIOSSimulator10.a:
+        * libWebKitSystemInterfaceIOSSimulator9.a: Removed.
+        * libWebKitSystemInterfaceOSX10.12.a:
+        * libWebKitSystemInterfaceOSX10.13.a: Added.
+        * libWebKitSystemInterfaceYosemite.a: Removed.
+
 2017-04-11  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] WebKit unnecessarily soft-links CorePrediction
