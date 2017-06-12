@@ -1,3 +1,9 @@
+2017-06-12  Saam Barati  <sbarati@apple.com>
+
+        Unreviewed. Unmark test as flaky after fix in r217944. The test should now pass.
+
+        * platform/mac/TestExpectations:
+
 2017-06-12  Matt Lewis  <jlewis3@apple.com>
 
         Updated test expectations for fast/mediastream/getUserMedia-webaudio.html.
