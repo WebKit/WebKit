@@ -1,3 +1,14 @@
+2017-06-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Move WebKit GType macros to WTF
+        https://bugs.webkit.org/show_bug.cgi?id=173249
+
+        Reviewed by Žan Doberšek.
+
+        They can be used by glib-based ports and eventually by JavaScriptCore glib bindings too.
+
+        * wtf/glib/WTFGType.h: Copied from Source/WebKit2/UIProcess/API/gtk/WebKitPrivate.h.
+
 2017-06-11  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] Make ThreadMessage portable

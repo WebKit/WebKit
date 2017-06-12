@@ -1,3 +1,14 @@
+2017-06-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Move WebKit GType macros to WTF
+        https://bugs.webkit.org/show_bug.cgi?id=173249
+
+        Reviewed by Žan Doberšek.
+
+        Moving to a common place where they could be shared by all ports using a glib-based API.
+
+        * UIProcess/API/gtk/WebKitPrivate.h:
+
 2017-06-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Remove WKInspectorClientGtk
