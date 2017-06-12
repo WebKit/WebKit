@@ -25,33 +25,23 @@
 
 #pragma once
 
-#include "APIClient.h"
-#include "WKInspectorClientGtk.h"
 #include <wtf/text/WTFString.h>
-
-namespace API {
-class Object;
-
-template<> struct ClientTraits<WKInspectorClientGtkBase> {
-    typedef std::tuple<WKInspectorClientGtkV0> Versions;
-};
-}
 
 namespace WebKit {
 
 class WebInspectorProxy;
 
-class WebInspectorClientGtk : public API::Client<WKInspectorClientGtkBase> {
+class WebInspectorProxyClient {
 public:
-    bool openWindow(WebInspectorProxy*);
-    void didClose(WebInspectorProxy*);
-    bool bringToFront(WebInspectorProxy*);
-    void inspectedURLChanged(WebInspectorProxy*, const String& url);
-    bool attach(WebInspectorProxy*);
-    bool detach(WebInspectorProxy*);
-    void didChangeAttachedHeight(WebInspectorProxy*, unsigned height);
-    void didChangeAttachedWidth(WebInspectorProxy*, unsigned width);
-    void didChangeAttachAvailability(WebInspectorProxy*, bool available);
+    virtual bool openWindow(WebInspectorProxy&) = 0;
+    virtual void didClose(WebInspectorProxy&) = 0;
+    virtual bool bringToFront(WebInspectorProxy&) = 0;
+    virtual void inspectedURLChanged(WebInspectorProxy&, const String& url) = 0;
+    virtual bool attach(WebInspectorProxy&) = 0;
+    virtual bool detach(WebInspectorProxy&) = 0;
+    virtual void didChangeAttachedHeight(WebInspectorProxy&, unsigned height) = 0;
+    virtual void didChangeAttachedWidth(WebInspectorProxy&, unsigned width) = 0;
+    virtual void didChangeAttachAvailability(WebInspectorProxy&, bool available) = 0;
 };
 
 } // namespace WebKit

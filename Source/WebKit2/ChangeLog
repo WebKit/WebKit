@@ -1,3 +1,35 @@
+2017-06-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Remove WKInspectorClientGtk
+        https://bugs.webkit.org/show_bug.cgi?id=173142
+
+        Reviewed by Michael Catanzaro.
+
+        It's only used internally in GTk+ API, we can simplify it by using a C++ client instead.
+
+        * PlatformGTK.cmake:
+        * UIProcess/API/C/gtk/WKInspectorClientGtk.cpp: Removed.
+        * UIProcess/API/C/gtk/WKInspectorClientGtk.h: Removed.
+        * UIProcess/API/gtk/WebKitPrivate.h:
+        * UIProcess/API/gtk/WebKitWebInspector.cpp:
+        (_WebKitWebInspectorPrivate::~_WebKitWebInspectorPrivate):
+        (webkitWebInspectorCreate):
+        * UIProcess/WebInspectorProxy.cpp:
+        * UIProcess/WebInspectorProxy.h:
+        * UIProcess/gtk/WebInspectorClientGtk.cpp: Removed.
+        * UIProcess/gtk/WebInspectorProxyClient.h: Renamed from Source/WebKit2/UIProcess/gtk/WebInspectorClientGtk.h.
+        * UIProcess/gtk/WebInspectorProxyGtk.cpp:
+        (WebKit::WebInspectorProxy::setClient):
+        (WebKit::WebInspectorProxy::createInspectorWindow):
+        (WebKit::WebInspectorProxy::platformDidClose):
+        (WebKit::WebInspectorProxy::platformBringToFront):
+        (WebKit::WebInspectorProxy::platformInspectedURLChanged):
+        (WebKit::WebInspectorProxy::platformAttach):
+        (WebKit::WebInspectorProxy::platformDetach):
+        (WebKit::WebInspectorProxy::platformSetAttachedWindowHeight):
+        (WebKit::WebInspectorProxy::platformSetAttachedWindowWidth):
+        (WebKit::WebInspectorProxy::platformAttachAvailabilityChanged):
+
 2017-06-11  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (r217870): Null deref under PageOverlayController::uninstallPageOverlay using find in page

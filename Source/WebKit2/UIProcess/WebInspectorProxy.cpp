@@ -47,6 +47,10 @@
 #include <WebCore/NotImplemented.h>
 #include <wtf/NeverDestroyed.h>
 
+#if PLATFORM(GTK)
+#include "WebInspectorProxyClient.h"
+#endif
+
 using namespace WebCore;
 
 namespace WebKit {

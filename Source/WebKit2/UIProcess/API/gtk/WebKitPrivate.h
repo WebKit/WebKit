@@ -35,7 +35,6 @@
 #include <WebKit/WKGeolocationPosition.h>
 #include <WebKit/WKIconDatabase.h>
 #include <WebKit/WKInspector.h>
-#include <WebKit/WKInspectorClientGtk.h>
 #include <WebKit/WKRetainPtr.h>
 #include <WebKit/WKSerializedScriptValue.h>
 #include <WebKit/WKString.h>

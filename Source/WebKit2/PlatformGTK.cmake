@@ -109,7 +109,6 @@ list(APPEND WebKit2_SOURCES
 
     UIProcess/API/C/cairo/WKIconDatabaseCairo.cpp
 
-    UIProcess/API/C/gtk/WKInspectorClientGtk.cpp
     UIProcess/API/C/gtk/WKTextCheckerGtk.cpp
     UIProcess/API/C/gtk/WKView.cpp
 
@@ -336,7 +335,6 @@ list(APPEND WebKit2_SOURCES
     UIProcess/gtk/WaylandCompositor.cpp
     UIProcess/gtk/WebColorPickerGtk.cpp
     UIProcess/gtk/WebContextMenuProxyGtk.cpp
-    UIProcess/gtk/WebInspectorClientGtk.cpp
     UIProcess/gtk/WebInspectorProxyGtk.cpp
     UIProcess/gtk/WebKitInspectorWindow.cpp
     UIProcess/gtk/WebPageProxyGtk.cpp

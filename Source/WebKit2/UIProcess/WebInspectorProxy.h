@@ -49,10 +49,6 @@ OBJC_CLASS WKWebInspectorWKWebView;
 OBJC_CLASS WKWebViewConfiguration;
 #endif
 
-#if PLATFORM(GTK)
-#include "WebInspectorClientGtk.h"
-#endif
-
 namespace WebCore {
 class URL;
 }
@@ -60,6 +56,7 @@ class URL;
 namespace WebKit {
 
 class WebFrameProxy;
+class WebInspectorProxyClient;
 class WebPageProxy;
 class WebPreferences;
 
@@ -115,7 +112,7 @@ public:
 
 #if PLATFORM(GTK)
     GtkWidget* inspectorView() const { return m_inspectorView; };
-    void initializeInspectorClientGtk(const WKInspectorClientGtkBase*);
+    void setClient(std::unique_ptr<WebInspectorProxyClient>&&);
 #endif
 
     void showConsole();
@@ -242,7 +239,7 @@ private:
     RunLoop::Timer<WebInspectorProxy> m_closeTimer;
     String m_urlString;
 #elif PLATFORM(GTK)
-    WebInspectorClientGtk m_client;
+    std::unique_ptr<WebInspectorProxyClient> m_client;
     GtkWidget* m_inspectorView { nullptr };
     GtkWidget* m_inspectorWindow { nullptr };
     GtkWidget* m_headerBar { nullptr };
