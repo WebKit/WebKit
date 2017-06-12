@@ -7480,6 +7480,10 @@ void SpeculativeJIT::compileArrayIndexOf(Node* node)
     case Int32Use:
     case ObjectUse: {
         auto emitLoop = [&] (auto emitCompare) {
+#if ENABLE(DFG_REGISTER_ALLOCATION_VALIDATION)
+            m_jit.clearRegisterAllocationOffsets();
+#endif
+
             m_jit.zeroExtend32ToPtr(lengthGPR, lengthGPR);
             m_jit.zeroExtend32ToPtr(indexGPR, indexGPR);
 
