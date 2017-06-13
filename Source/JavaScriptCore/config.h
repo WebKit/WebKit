@@ -23,11 +23,7 @@
 #include "cmakeconfig.h"
 #endif
 
-#include <wtf/Platform.h>
-#include <wtf/ExportMacros.h>
-#if !defined(BUILDING_WTF)
 #include "JSExportMacros.h"
-#endif
 
 #ifdef __cplusplus
 #undef new
