@@ -111,14 +111,21 @@ function module(bytes, valid = true) {
     try {
         validated = WebAssembly.validate(buffer);
     } catch (e) {
-        throw new Error(`WebAssembly.validate throws: ${e}${e.stack}`);
+        throw new Error(`WebAssembly.validate throws ${typeof e}: ${e}${e.stack}`);
     }
 
     if (validated !== valid) {
         // Try to get a more precise error message from the WebAssembly.CompileError.
         let err = '';
-        try { new WebAssembly.Module(buffer) } catch(e) { err = e.toString() }
-        throw new Error(`WebAssembly.validate error: ${err}\n`);
+        try {
+            new WebAssembly.Module(buffer);
+        } catch (e) {
+            if (e instanceof WebAssembly.CompileError)
+                throw new WebAssembly.CompileError(`WebAssembly.validate error: ${e.toString()}${e.stack}\n`);
+            else
+                throw new Error(`WebAssembly.validate throws ${typeof e}: ${e}${e.stack}`);
+        }
+        throw new Error(`WebAssembly.validate was expected to fail, but didn't`);
     }
 
     let module;
@@ -126,7 +133,7 @@ function module(bytes, valid = true) {
         module = new WebAssembly.Module(buffer);
     } catch(e) {
         if (valid)
-            throw new Error('WebAssembly.Module ctor unexpectedly throws');
+            throw new Error('WebAssembly.Module ctor unexpectedly throws ${typeof e}: ${e}${e.stack}');
         throw e;
     }
 

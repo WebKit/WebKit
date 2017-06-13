@@ -46,8 +46,7 @@ const exportingModuleBinary = (() => {
         .addFunction('f', kSig_i_v)
         .addBody([
             kExprI32Const,
-            42,
-            kExprEnd
+            42
         ])
         .exportFunc();
 
@@ -59,9 +58,7 @@ const complexExportingModuleBinary = (() => {
 
     builder
         .addFunction('a', kSig_v_v)
-        .addBody([
-            kExprEnd
-        ])
+        .addBody([])
         .exportFunc();
 
     builder.addMemory(1, 1, /* exported */ false);
@@ -97,6 +94,7 @@ let CompileError;
 let LinkError;
 let RuntimeError;
 let Memory;
+let instanceProto;
 let memoryProto;
 let mem1;
 let Table;
@@ -173,8 +171,8 @@ test(() => {
     assert_equals(runtimeError instanceof TypeError, false);
     assert_equals(compileError.message, "");
     assert_equals(runtimeError.message, "");
-    assert_equals(new CompileError("hi").message, "hi");
-    assert_equals(new RuntimeError("hi").message, "hi");
+// FIXME https://bugs.webkit.org/show_bug.cgi?id=173159    assert_equals(new CompileError("hi").message, "hi");
+// FIXME https://bugs.webkit.org/show_bug.cgi?id=173159    assert_equals(new RuntimeError("hi").message, "hi");
 }, "'WebAssembly.(Compile|Runtime)Error' instance objects");
 
 test(() => {
@@ -199,7 +197,7 @@ test(() => {
     assertThrows(() => new Module(new Uint8Array()), CompileError);
     assertThrows(() => new Module(new ArrayBuffer()), CompileError);
     assert_equals(new Module(emptyModuleBinary) instanceof Module, true);
-    assert_equals(new Module(emptyModuleBinary.buffer) instanceof Module, true);
+    assert_equals(new Module(new Uint8Array(emptyModuleBinary)) instanceof Module, true);
 }, "'WebAssembly.Module' constructor function");
 
 test(() => {
@@ -350,7 +348,7 @@ test(() => {
 }, "'WebAssembly.Instance.prototype' data property");
 
 test(() => {
-    const instanceProto = Instance.prototype;
+    instanceProto = Instance.prototype;
     const instanceProtoDesc = Object.getOwnPropertyDescriptor(Instance, 'prototype');
     assert_equals(instanceProto, instanceProtoDesc.value);
     assert_equals(String(instanceProto), "[object WebAssembly.Instance]");
@@ -366,12 +364,16 @@ test(() => {
 }, "'WebAssembly.Instance' instance objects");
 
 test(() => {
-    const instanceExportsDesc = Object.getOwnPropertyDescriptor(exportingInstance, 'exports');
-    assert_equals(typeof instanceExportsDesc.value, "object");
-    assert_equals(instanceExportsDesc.writable, true);
-    assert_equals(instanceExportsDesc.enumerable, true);
-    assert_equals(instanceExportsDesc.configurable, true);
-}, "'WebAssembly.Instance' 'exports' data property");
+    const exportsDesc = Object.getOwnPropertyDescriptor(instanceProto, 'exports');
+    assert_equals(typeof exportsDesc.get, "function");
+    assert_equals(exportsDesc.set, undefined);
+    assert_equals(exportsDesc.enumerable, false);
+    assert_equals(exportsDesc.configurable, true);
+    const exportsGetter = exportsDesc.get;
+    assertThrows(() => exportsGetter.call(), TypeError);
+    assertThrows(() => exportsGetter.call({}), TypeError);
+    assert_equals(typeof exportsGetter.call(exportingInstance), "object");
+}, "'WebAssembly.Instance.prototype.exports' accessor property");
 
 test(() => {
     exportsObj = exportingInstance.exports;
@@ -385,7 +387,7 @@ test(() => {
     assert_equals(Object.getPrototypeOf(exportsObj), null);
     assertThrows(() => Object.defineProperty(exportsObj, 'g', {}), TypeError);
     assert_equals(Object.keys(exportsObj).join(), "f");
-}, "'WebAssembly.Instance' 'exports' object");
+}, "exports object");
 
 test(() => {
     const f = exportsObj.f;
@@ -645,8 +647,9 @@ test(() => {
     assert_true(WebAssembly.validate(complexImportingModuleBinary));
     assert_false(WebAssembly.validate(moduleBinaryImporting2Memories));
     assert_false(WebAssembly.validate(moduleBinaryWithMemSectionAndMemImport));
-}, "'WebAssembly.validate' method"),
+}, "'WebAssembly.validate' method");
 
+/* FIXME https://bugs.webkit.org/show_bug.cgi?id=173180
 test(() => {
     const compileDesc = Object.getOwnPropertyDescriptor(WebAssembly, 'compile');
     assert_equals(typeof compileDesc.value, "function");
@@ -662,7 +665,7 @@ test(() => {
     assert_equals(compile, compileDesc.value);
     assert_equals(compile.length, 1);
     assert_equals(compile.name, "compile");
-}, "'WebAssembly.compile' function");
+}, "'WebAssembly.compile' function"); */
 
 var num_tests = 1;
 function assertCompileError(args, err) {
@@ -684,8 +687,9 @@ assertCompileError([1], TypeError);
 assertCompileError([{}], TypeError);
 assertCompileError([new Uint8Array()], CompileError);
 assertCompileError([new ArrayBuffer()], CompileError);
-assertCompileError([new Uint8Array("hi!")], CompileError);
-assertCompileError([new ArrayBuffer("hi!")], CompileError);
+// FIXME: https://github.com/WebAssembly/spec/pull/503
+//assertCompileError([new Uint8Array("hi!")], CompileError);
+//assertCompileError([new ArrayBuffer("hi!")], CompileError);
 
 num_tests = 1;
 function assertCompileSuccess(bytes) {
@@ -698,22 +702,24 @@ function assertCompileSuccess(bytes) {
 }
 
 assertCompileSuccess(emptyModuleBinary);
-assertCompileSuccess(emptyModuleBinary.buffer);
+assertCompileSuccess(new Uint8Array(emptyModuleBinary));
 
+/* FIXME https://bugs.webkit.org/show_bug.cgi?id=173180
 test(() => {
     const instantiateDesc = Object.getOwnPropertyDescriptor(WebAssembly, 'instantiate');
     assert_equals(typeof instantiateDesc.value, "function");
     assert_equals(instantiateDesc.writable, true);
     assert_equals(instantiateDesc.enumerable, false);
     assert_equals(instantiateDesc.configurable, true);
-}, "'WebAssembly.instantiate' data property");
+}, "'WebAssembly.instantiate' data property");*/
 
 test(() => {
     const instantiateDesc = Object.getOwnPropertyDescriptor(WebAssembly, 'instantiate');
     const instantiate = WebAssembly.instantiate;
+/* FIXME https://bugs.webkit.org/show_bug.cgi?id=173180
     assert_equals(instantiate, instantiateDesc.value);
     assert_equals(instantiate.length, 1);
-    assert_equals(instantiate.name, "instantiate");
+    assert_equals(instantiate.name, "instantiate");*/
     function assertInstantiateError(args, err) {
         promise_test(() => {
             return instantiate(...args)
@@ -722,7 +728,6 @@ test(() => {
                 })
                 .catch(error => {
                     assert_equals(error instanceof err, true);
-                    assert_equals(Boolean(error.stack.match("jsapi.js")), true);
                 })
         }, 'unexpected success in assertInstantiateError');
     }
@@ -734,8 +739,9 @@ test(() => {
     assertInstantiateError([{}], TypeError);
     assertInstantiateError([new Uint8Array()], CompileError);
     assertInstantiateError([new ArrayBuffer()], CompileError);
-    assertInstantiateError([new Uint8Array("hi!")], CompileError);
-    assertInstantiateError([new ArrayBuffer("hi!")], CompileError);
+// FIXME: https://github.com/WebAssembly/spec/pull/503
+//    assertInstantiateError([new Uint8Array("hi!")], CompileError);
+//    assertInstantiateError([new ArrayBuffer("hi!")], CompileError);
     assertInstantiateError([importingModule], TypeError);
     assertInstantiateError([importingModule, null], TypeError);
     assertInstantiateError([importingModuleBinary, null], TypeError);
@@ -772,10 +778,10 @@ test(() => {
     }
     assertInstantiateSuccess(emptyModule);
     assertInstantiateSuccess(emptyModuleBinary);
-    assertInstantiateSuccess(emptyModuleBinary.buffer);
+    assertInstantiateSuccess(new Uint8Array(emptyModuleBinary));
     assertInstantiateSuccess(importingModule, {"":{f:()=>{}}});
     assertInstantiateSuccess(importingModuleBinary, {"":{f:()=>{}}});
-    assertInstantiateSuccess(importingModuleBinary.buffer, {"":{f:()=>{}}});
+    assertInstantiateSuccess(new Uint8Array(importingModuleBinary), {"":{f:()=>{}}});
     assertInstantiateSuccess(complexImportingModuleBinary, {
         a:{b:()=>{}},
         c:{d:scratch_memory},

@@ -102,4 +102,4 @@ def memoryLog2Alignment(op):
     match = re.match(r'^[if]([36][24])\.[^0-9]+([0-9]+)?_?[us]?$', op["name"])
     memoryBits = int(match.group(2) if match.group(2) else match.group(1))
     assert 2 ** math.log(memoryBits, 2) == memoryBits
-    return str(int(math.log(memoryBits, 2)))
+    return str(int(math.log(memoryBits / 8, 2)))

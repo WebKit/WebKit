@@ -44,7 +44,7 @@ static EncodedJSValue JSC_HOST_CALL webAssemblyTableProtoFuncSet(ExecState*);
 
 namespace JSC {
 
-const ClassInfo WebAssemblyTablePrototype::s_info = { "WebAssembly.Table.prototype", &Base::s_info, &prototypeTableWebAssemblyTable, nullptr, CREATE_METHOD_TABLE(WebAssemblyTablePrototype) };
+const ClassInfo WebAssemblyTablePrototype::s_info = { "WebAssembly.Table", &Base::s_info, &prototypeTableWebAssemblyTable, nullptr, CREATE_METHOD_TABLE(WebAssemblyTablePrototype) };
 
 /* Source for WebAssemblyTablePrototype.lut.h
  @begin prototypeTableWebAssemblyTable
@@ -85,12 +85,15 @@ static EncodedJSValue JSC_HOST_CALL webAssemblyTableProtoFuncGrow(ExecState* exe
     JSWebAssemblyTable* table = getTable(exec, vm, exec->thisValue());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
 
-    uint32_t index = toNonWrappingUint32(exec, exec->argument(0));
+    uint32_t delta = toNonWrappingUint32(exec, exec->argument(0));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    if (!table->grow(index))
-        return JSValue::encode(throwException(exec, throwScope, createTypeError(exec, ASCIILiteral("WebAssembly.Table.prototype.grow could not grow the table"))));
 
-    return JSValue::encode(jsUndefined());
+    uint32_t oldSize = table->size();
+
+    if (!table->grow(delta))
+        return JSValue::encode(throwException(exec, throwScope, createRangeError(exec, ASCIILiteral("WebAssembly.Table.prototype.grow could not grow the table"))));
+
+    return JSValue::encode(jsNumber(oldSize));
 }
 
 static EncodedJSValue JSC_HOST_CALL webAssemblyTableProtoFuncGet(ExecState* exec)

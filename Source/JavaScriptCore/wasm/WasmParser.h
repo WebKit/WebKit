@@ -154,7 +154,7 @@ ALWAYS_INLINE bool Parser<SuccessType>::consumeUTF8String(Name& result, size_t s
 
     const uint8_t* stringStart = source() + m_offset;
 
-    // We don't cache the UTF-16 characters since it seems likely the string is ascii.
+    // We don't cache the UTF-16 characters since it seems likely the string is ASCII.
     if (UNLIKELY(!charactersAreAllASCII(stringStart, stringLength))) {
         Vector<UChar, 1024> buffer(stringLength);
         UChar* bufferStart = buffer.data();

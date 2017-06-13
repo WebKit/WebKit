@@ -32,7 +32,7 @@ function testMems() {
             .Code()
                 .Function("foo", { params: [], ret: "i32" })
                     .I32Const(0)
-                    .I32Load8U(2, 0)
+                    .I32Load8U(0, 0)
                     .Return()
                 .End()
             .End();

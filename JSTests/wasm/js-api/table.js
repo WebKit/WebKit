@@ -13,7 +13,19 @@ import * as assert from '../assert.js';
         .End()
         .Code()
         .End();
-    assert.throws(() => new WebAssembly.Module(builder.WebAssembly().get()), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 34 / 41: Table section cannot exist if an Import has a table (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')");
+    assert.throws(() => new WebAssembly.Module(builder.WebAssembly().get()), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 34 / 41: Cannot have more than one Table for now");
+}
+
+{
+    const builder = new Builder()
+        .Type().End()
+        .Function().End()
+        .Table()
+            // Table count is zero.
+        .End()
+        .Code()
+        .End();
+    new WebAssembly.Module(builder.WebAssembly().get());
 }
 
 {
@@ -26,7 +38,7 @@ import * as assert from '../assert.js';
         .End()
         .Code()
         .End();
-    assert.throws(() => new WebAssembly.Module(builder.WebAssembly().get()), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 17 / 28: Table count of 2 is invalid, only 1 is allowed for now (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')");
+    assert.throws(() => new WebAssembly.Module(builder.WebAssembly().get()), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 17 / 28: Table count of 2 is invalid, at most 1 is allowed for now (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')");
 }
 
 {
@@ -74,7 +86,7 @@ import * as assert from '../assert.js';
         .End()
         .Code()
         .End();
-    assert.throws(() => new WebAssembly.Module(builder.WebAssembly().get()), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 23 / 26: can't export a non-existent Table (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')");
+    assert.throws(() => new WebAssembly.Module(builder.WebAssembly().get()), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 23 / 26: can't export Table 0 there are 0 Tables");
 }
 
 {
@@ -90,7 +102,7 @@ import * as assert from '../assert.js';
         .End()
         .Code()
         .End();
-    assert.throws(() => new WebAssembly.Module(builder.WebAssembly().get()), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 30 / 33: can't export Table 1 only zero-index Table is currently supported (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')");
+    assert.throws(() => new WebAssembly.Module(builder.WebAssembly().get()), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 30 / 33: can't export Table 1 there are 1 Tables");
 }
 
 function assertBadTable(tableDescription, message) {
@@ -174,7 +186,7 @@ function assertBadTableImport(tableDescription, message) {
         .Function().End()
         .Code()
         .End();
-    assert.throws(() => new WebAssembly.Module(builder.WebAssembly().get()), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 39 / 48: Table section cannot exist if an Import has a table (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')");
+    assert.throws(() => new WebAssembly.Module(builder.WebAssembly().get()), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 39 / 48: Cannot have more than one Table for now");
 }
 
 
@@ -203,20 +215,30 @@ function assertBadTableImport(tableDescription, message) {
     }
 }
 
+assert.throws(() => WebAssembly.Table.prototype.grow(undefined), TypeError, `expected |this| value to be an instance of WebAssembly.Table`);
+
 {
     {
         const table = new WebAssembly.Table({element: "anyfunc", initial: 20, maximum: 30});
-        table.grow(30);
-        assert.throws(() => table.grow(31), TypeError, "WebAssembly.Table.prototype.grow could not grow the table");
-        assert.throws(() => table.grow(29), TypeError, "WebAssembly.Table.prototype.grow could not grow the table");
+        assert.eq(20, table.grow(0));
+        assert.eq(20, table.length);
+        assert.eq(20, table.grow(1));
+        assert.eq(21, table.length);
+    }
+
+    {
+        const table = new WebAssembly.Table({element: "anyfunc", initial: 20, maximum: 30});
+        assert.eq(20, table.grow(10));
+        assert.eq(30, table.grow(0));
+        assert.throws(() => table.grow(1), RangeError, "WebAssembly.Table.prototype.grow could not grow the table");
     }
 
     {
         const table = new WebAssembly.Table({element: "anyfunc", initial: 20});
-        assert.throws(() => table.grow({valueOf() { return 19; }}), TypeError, "WebAssembly.Table.prototype.grow could not grow the table");
         let called = false;
-        table.grow({valueOf() { called = true; return 21; }});
+        table.grow({valueOf() { called = true; return 42; }});
         assert.truthy(called);
+        assert.eq(62, table.length);
     }
 
     {

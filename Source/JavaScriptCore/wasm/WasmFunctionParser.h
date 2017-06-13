@@ -221,7 +221,7 @@ auto FunctionParser<Context>::parseExpression() -> PartialResult
         ExpressionType pointer;
         ExpressionType result;
         WASM_PARSER_FAIL_IF(!parseVarUInt32(alignment), "can't get load alignment");
-        WASM_PARSER_FAIL_IF(alignment > memoryLog2Alignment(m_currentOpcode), "alignment cannot exceed load's natural alignment");
+        WASM_PARSER_FAIL_IF(alignment > memoryLog2Alignment(m_currentOpcode), "byte alignment ", 1ull << alignment, " exceeds load's natural alignment ", 1ull << memoryLog2Alignment(m_currentOpcode));
         WASM_PARSER_FAIL_IF(!parseVarUInt32(offset), "can't get load offset");
         WASM_TRY_POP_EXPRESSION_STACK_INTO(pointer, "load pointer");
         WASM_TRY_ADD_TO_CONTEXT(load(static_cast<LoadOpType>(m_currentOpcode), pointer, result, offset));
@@ -235,7 +235,7 @@ auto FunctionParser<Context>::parseExpression() -> PartialResult
         ExpressionType value;
         ExpressionType pointer;
         WASM_PARSER_FAIL_IF(!parseVarUInt32(alignment), "can't get store alignment");
-        WASM_PARSER_FAIL_IF(alignment > memoryLog2Alignment(m_currentOpcode), "alignment cannot exceed store's natural alignment");
+        WASM_PARSER_FAIL_IF(alignment > memoryLog2Alignment(m_currentOpcode), "byte alignment ", 1ull << alignment, " exceeds store's natural alignment ", 1ull << memoryLog2Alignment(m_currentOpcode));
         WASM_PARSER_FAIL_IF(!parseVarUInt32(offset), "can't get store offset");
         WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "store value");
         WASM_TRY_POP_EXPRESSION_STACK_INTO(pointer, "store pointer");

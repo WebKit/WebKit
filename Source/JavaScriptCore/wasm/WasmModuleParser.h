@@ -59,7 +59,8 @@ private:
     PartialResult WARN_UNUSED_RETURN parseInitExpr(uint8_t&, uint64_t&, Type& initExprType);
 
     Ref<ModuleInformation> m_info;
-    bool m_hasTable { false };
+    uint32_t m_memoryCount { 0 };
+    uint32_t m_tableCount { 0 };
 };
 
 } } // namespace JSC::Wasm

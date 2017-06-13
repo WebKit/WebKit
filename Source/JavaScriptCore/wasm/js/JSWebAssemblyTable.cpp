@@ -30,6 +30,7 @@
 
 #include "JSCInlines.h"
 #include "WasmFormat.h"
+#include <wtf/CheckedArithmetic.h>
 
 namespace JSC {
 
@@ -94,12 +95,15 @@ void JSWebAssemblyTable::visitChildren(JSCell* cell, SlotVisitor& visitor)
         visitor.append(thisObject->m_jsFunctions.get()[i]);
 }
 
-bool JSWebAssemblyTable::grow(uint32_t newSize)
+bool JSWebAssemblyTable::grow(uint32_t delta)
 {
-    if (newSize < m_size)
-        return false;
-    if (newSize == m_size)
+    if (delta == 0)
         return true;
+    Checked<uint32_t, RecordOverflow> newSizeChecked = m_size;
+    newSizeChecked += delta;
+    uint32_t newSize;
+    if (newSizeChecked.safeGet(newSize) == CheckedState::DidOverflow)
+        return false;
     if (maximum() && newSize > *maximum())
         return false;
     if (!isValidSize(newSize))

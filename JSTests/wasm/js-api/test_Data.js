@@ -52,7 +52,7 @@ const assertMemoryAllZero = memory => {
           .Segment([0xff]).Offset(0).End()
         .End();
     const bin = builder.WebAssembly().get();
-    assert.throws(() => new WebAssembly.Module(bin), WebAssembly.CompileError, `WebAssembly.Module doesn't parse at byte 13 / 20: Data section cannot exist without a Memory section or Import (evaluating 'new WebAssembly.Module(bin)')`);
+    assert.throws(() => new WebAssembly.Module(bin), WebAssembly.CompileError, `WebAssembly.Module doesn't parse at byte 15 / 20: 0th Data segment has index 0 which exceeds the number of Memories 0`);
 })();
 
 (function EmptyDataSectionWithoutMemory() {
@@ -62,7 +62,7 @@ const assertMemoryAllZero = memory => {
           .Segment([]).Offset(0).End()
         .End();
     const bin = builder.WebAssembly().get();
-    assert.throws(() => new WebAssembly.Module(bin), WebAssembly.CompileError, `WebAssembly.Module doesn't parse at byte 13 / 19: Data section cannot exist without a Memory section or Import (evaluating 'new WebAssembly.Module(bin)')`);
+    assert.throws(() => new WebAssembly.Module(bin), WebAssembly.CompileError, `WebAssembly.Module doesn't parse at byte 15 / 19: 0th Data segment has index 0 which exceeds the number of Memories 0`);
 })();
 
 (function DataSectionBiggerThanMemory() {
@@ -131,7 +131,7 @@ const assertMemoryAllZero = memory => {
     const bin = builder.WebAssembly().get();
     const module = new WebAssembly.Module(bin);
     const memory = new WebAssembly.Memory(emptyMemory);
-    const instance = new WebAssembly.Instance(module, { imp: { memory: memory } });
+    assert.throws(() => new WebAssembly.Instance(module, { imp: { memory: memory } }), WebAssembly.LinkError, `Invalid data segment initialization: segment of 0 bytes memory of 0 bytes, at offset 65536, segment writes outside of memory`);
     assertMemoryAllZero(memory);
 })();
 
@@ -148,7 +148,7 @@ const assertMemoryAllZero = memory => {
         .Code()
             .Function("foo", { params: [] })
                 .I32Const(offset)
-                .I32Load8U(2, 0)
+                .I32Load8U(0, 0)
                 .Call(0) // Calls func((i8.load(offset), align=2, offset=0). This should observe 0xff as set by the data section.
             .End()
         .End()

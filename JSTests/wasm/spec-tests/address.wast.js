@@ -16,3 +16,6 @@ assert_trap(() => call($1, "bad", [0]));
 
 // address.wast:34
 assert_trap(() => call($1, "bad", [1]));
+
+// address.wast:36
+assert_malformed("\x3c\x6d\x61\x6c\x66\x6f\x72\x6d\x65\x64\x20\x71\x75\x6f\x74\x65\x3e");

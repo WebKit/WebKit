@@ -18,7 +18,7 @@ import * as assert from '../assert.js';
             .End()
         .End();
 
-    assert.throws(() => new WebAssembly.Module(builder.WebAssembly().get()), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 22 / 41: Element section expects a Table to be present (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')");
+    assert.throws(() => new WebAssembly.Module(builder.WebAssembly().get()), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 24 / 41: Element section for Table 0 exceeds available Table 0");
 }
 
 {
@@ -41,7 +41,7 @@ import * as assert from '../assert.js';
             .End()
         .End();
 
-    assert.throws(() => new WebAssembly.Module(builder.WebAssembly().get()), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 30 / 47: Element section can only have one Table for now (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')");
+    assert.throws(() => new WebAssembly.Module(builder.WebAssembly().get()), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 30 / 47: Element section for Table 1 exceeds available Table 1");
 }
 
 {

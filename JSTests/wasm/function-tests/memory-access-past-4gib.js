@@ -85,7 +85,7 @@ for (let memoryDeclaration of [{ initial: initial }, { initial: initial, maximum
 
         builder = builder.End().Code();
 
-        const align = 3; // No need to be precise, it's just a hint.
+        const align = 0; // No need to be precise, it's just a hint.
         const constInstr = util.toJavaScriptName(WASM.constForValueType(info.valueType));
         const instr = util.toJavaScriptName(op.name);
         for (let offset of offsets)

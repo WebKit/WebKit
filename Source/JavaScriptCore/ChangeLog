@@ -1,3 +1,100 @@
+2017-06-13  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: import updated spec tests
+        https://bugs.webkit.org/show_bug.cgi?id=173287
+        <rdar://problem/32725975>
+
+        Reviewed by Saam Barati.
+
+        Import spec tests as of 31c641cc15f2aedbec2fa45a5185f68416df578b,
+        with a few modifications so things work.
+
+        Fix a bunch of bugs found through this process, and punt a few tests (which I
+        marked as blocked by this bug).
+
+        Fixes:
+
+        Fix load / store alignment: r216908 erroneously implemented it as bit alignment
+        instead of byte alignment. It was also missing memory-alignment.js despite it
+        being in the ChangeLog, so add it too. This allows spec-test/align.wast.js to
+        pass.
+
+        Tables can be imported or in a section. There can be only one, but sections can
+        be empty. An Elements section can exist if there's no Table, as long as it is
+        also empty.
+
+        Memories can be imported or in a section. There can be only one, but sections
+        can be empty. A Data section can exist if there's no Memory, as long as it is
+        also empty.
+
+        Prototypes: stringify without .prototype. in the string.
+
+        WebAssembly.Table.prototype.grow was plain wrong: it takes a delta parameter,
+        not a final size, and throws a RangeError on failure, not a TypeError.
+
+        Fix compile / instantiate so the reject the promise if given an argument of the
+        wrong type (instead of failing instantly).
+
+        Fix async on neuter test.
+
+        Element section shouldn't affect any Table if any of the elements are out of
+        bounds. We need to process it in two passes.
+
+        Segment section shouldn't affect any Data if any of the segments are out of
+        bounds. We need to process it in two passes.
+
+        Empty data segments are valid, but only when there is no memory. Their index
+        still gets validated, and has to be zero.
+
+        Punts:
+
+        Error messages with context, the test seems overly restrictive but this is
+        minor.
+
+        compile/instantiate/validate property descriptors.
+
+        UTF-8 bugs.
+
+        Temporarily disable NaN tests. We need to go back and implement the following
+        semantics: https://github.com/WebAssembly/spec/pull/414 This doesn't matter as
+        much as getting all the other tests passing.
+
+        Worth noting for NaNs: f64.no_fold_mul_one (also a NaN test) as well as
+        no_fold_promote_demote (an interesting corner case which we get wrong). mul by
+        one is (assert_return (invoke \"f64.no_fold_mul_one\" (i64.const
+        0x7ff4000000000000)) (i64.const 0x7ff8000000000000)) which means converting sNaN
+        to qNaN, and promote/demote is (assert_return (invoke \"no_fold_promote_demote\"
+        (i32.const 0x7fa00000)) (i32.const 0x7fc00000)) which is the same. I'm not sure
+        why they're not allowed.
+
+        * wasm/WasmB3IRGenerator.cpp:
+        * wasm/WasmFunctionParser.h:
+        * wasm/WasmModuleParser.cpp:
+        * wasm/WasmModuleParser.h:
+        * wasm/WasmParser.h:
+        (JSC::Wasm::Parser<SuccessType>::consumeUTF8String):
+        * wasm/generateWasm.py:
+        (memoryLog2Alignment):
+        * wasm/js/JSWebAssemblyTable.cpp:
+        (JSC::JSWebAssemblyTable::grow):
+        * wasm/js/JSWebAssemblyTable.h:
+        * wasm/js/WebAssemblyCompileErrorPrototype.cpp:
+        * wasm/js/WebAssemblyInstancePrototype.cpp:
+        * wasm/js/WebAssemblyLinkErrorPrototype.cpp:
+        * wasm/js/WebAssemblyMemoryPrototype.cpp:
+        * wasm/js/WebAssemblyModulePrototype.cpp:
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::evaluate):
+        * wasm/js/WebAssemblyPrototype.cpp:
+        (JSC::webAssemblyCompileFunc):
+        (JSC::resolve):
+        (JSC::instantiate):
+        (JSC::compileAndInstantiate):
+        (JSC::webAssemblyInstantiateFunc):
+        * wasm/js/WebAssemblyRuntimeErrorPrototype.cpp:
+        * wasm/js/WebAssemblyTablePrototype.cpp:
+        (JSC::webAssemblyTableProtoFuncGrow):
+
 2017-06-13  Michael Saboff  <msaboff@apple.com>
 
         DFG doesn't properly handle a property that is change to read only in a prototype

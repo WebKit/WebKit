@@ -252,9 +252,9 @@ auto ModuleParser::parseResizableLimits(uint32_t& initial, std::optional<uint32_
 
 auto ModuleParser::parseTableHelper(bool isImport) -> PartialResult
 {
-    WASM_PARSER_FAIL_IF(m_hasTable, "Table section cannot exist if an Import has a table");
+    WASM_PARSER_FAIL_IF(m_tableCount > 0, "Cannot have more than one Table for now");
 
-    m_hasTable = true;
+    ++m_tableCount;
 
     int8_t type;
     WASM_PARSER_FAIL_IF(!parseInt7(type), "can't parse Table type");
@@ -278,7 +278,10 @@ auto ModuleParser::parseTable() -> PartialResult
 {
     uint32_t count;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(count), "can't get Table's count");
-    WASM_PARSER_FAIL_IF(count != 1, "Table count of ", count, " is invalid, only 1 is allowed for now");
+    WASM_PARSER_FAIL_IF(count > 1, "Table count of ", count, " is invalid, at most 1 is allowed for now");
+
+    if (!count)
+        return { };
 
     bool isImport = false;
     PartialResult result = parseTableHelper(isImport);
@@ -290,7 +293,9 @@ auto ModuleParser::parseTable() -> PartialResult
 
 auto ModuleParser::parseMemoryHelper(bool isImport) -> PartialResult
 {
-    WASM_PARSER_FAIL_IF(!!m_info->memory, "Memory section cannot exist if an Import has a memory");
+    WASM_PARSER_FAIL_IF(m_memoryCount, "there can at most be one Memory section for now");
+
+    ++m_memoryCount;
 
     PageCount initialPageCount;
     PageCount maximumPageCount;
@@ -385,8 +390,7 @@ auto ModuleParser::parseExport() -> PartialResult
             break;
         }
         case ExternalKind::Table: {
-            WASM_PARSER_FAIL_IF(!m_hasTable, "can't export a non-existent Table");
-            WASM_PARSER_FAIL_IF(kindIndex, "can't export Table ", kindIndex, " only zero-index Table is currently supported");
+            WASM_PARSER_FAIL_IF(kindIndex >= m_tableCount, "can't export Table ", kindIndex, " there are ", m_tableCount, " Tables");
             break;
         }
         case ExternalKind::Memory: {
@@ -422,8 +426,6 @@ auto ModuleParser::parseStart() -> PartialResult
 
 auto ModuleParser::parseElement() -> PartialResult
 {
-    WASM_PARSER_FAIL_IF(!m_hasTable, "Element section expects a Table to be present");
-
     uint32_t elementCount;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(elementCount), "can't get Element section's count");
     WASM_PARSER_FAIL_IF(elementCount > maxTableEntries, "Element section's count is too big ", elementCount, " maximum ", maxTableEntries);
@@ -435,7 +437,7 @@ auto ModuleParser::parseElement() -> PartialResult
         uint32_t indexCount;
 
         WASM_PARSER_FAIL_IF(!parseVarUInt32(tableIndex), "can't get ", elementNum, "th Element table index");
-        WASM_PARSER_FAIL_IF(tableIndex, "Element section can only have one Table for now");
+        WASM_PARSER_FAIL_IF(tableIndex >= m_tableCount, "Element section for Table ", tableIndex, " exceeds available Table ", m_tableCount);
         Type initExprType;
         WASM_FAIL_IF_HELPER_FAILS(parseInitExpr(initOpcode, initExprBits, initExprType));
         WASM_PARSER_FAIL_IF(initExprType != I32, "Element init_expr must produce an i32");
@@ -556,19 +558,18 @@ auto ModuleParser::parseGlobalType(Global& global) -> PartialResult
 auto ModuleParser::parseData() -> PartialResult
 {
     uint32_t segmentCount;
-    WASM_PARSER_FAIL_IF(!m_info->memory, "Data section cannot exist without a Memory section or Import");
     WASM_PARSER_FAIL_IF(!parseVarUInt32(segmentCount), "can't get Data section's count");
     WASM_PARSER_FAIL_IF(segmentCount > maxDataSegments, "Data section's count is too big ", segmentCount, " maximum ", maxDataSegments);
     WASM_PARSER_FAIL_IF(!m_info->data.tryReserveCapacity(segmentCount), "can't allocate enough memory for Data section's ", segmentCount, " segments");
 
     for (uint32_t segmentNumber = 0; segmentNumber < segmentCount; ++segmentNumber) {
-        uint32_t index;
+        uint32_t memoryIndex;
         uint64_t initExprBits;
         uint8_t initOpcode;
         uint32_t dataByteLength;
 
-        WASM_PARSER_FAIL_IF(!parseVarUInt32(index), "can't get ", segmentNumber, "th Data segment's index");
-        WASM_PARSER_FAIL_IF(index, segmentNumber, "th Data segment has non-zero index ", index);
+        WASM_PARSER_FAIL_IF(!parseVarUInt32(memoryIndex), "can't get ", segmentNumber, "th Data segment's index");
+        WASM_PARSER_FAIL_IF(memoryIndex >= m_memoryCount, segmentNumber, "th Data segment has index ", memoryIndex, " which exceeds the number of Memories ", m_memoryCount);
         Type initExprType;
         WASM_FAIL_IF_HELPER_FAILS(parseInitExpr(initOpcode, initExprBits, initExprType));
         WASM_PARSER_FAIL_IF(initExprType != I32, segmentNumber, "th Data segment's init_expr must produce an i32");
