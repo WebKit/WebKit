@@ -17,30 +17,25 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef WebKitGeolocationProvider_h
-#define WebKitGeolocationProvider_h
+#pragma once
 
 #if ENABLE(GEOLOCATION)
 
-#include "WebKitPrivate.h"
 #include <WebCore/GeolocationProviderGeoclue.h>
 #include <WebCore/GeolocationProviderGeoclueClient.h>
-#include <wtf/Ref.h>
-#include <wtf/RefCounted.h>
 
 namespace WebKit {
+class WebGeolocationManagerProxy;
 
-class WebKitGeolocationProvider : public RefCounted<WebKitGeolocationProvider>, public WebCore::GeolocationProviderGeoclueClient {
+class WebKitGeolocationProvider final : public WebCore::GeolocationProviderGeoclueClient {
 public:
-    virtual ~WebKitGeolocationProvider();
-    static Ref<WebKitGeolocationProvider> create(WebGeolocationManagerProxy*);
+    explicit WebKitGeolocationProvider(WebGeolocationManagerProxy*);
+    ~WebKitGeolocationProvider();
 
     void startUpdating();
     void stopUpdating();
 
 private:
-    WebKitGeolocationProvider(WebGeolocationManagerProxy*);
-
     // GeolocationProviderGeoclueClient interface.
     void notifyPositionChanged(int, double, double, double, double, double) override;
     void notifyErrorOccurred(const char*) override;
@@ -53,4 +48,3 @@ private:
 
 #endif // ENABLE(GEOLOCATION)
 
-#endif // WebKitGeolocationProvider_h

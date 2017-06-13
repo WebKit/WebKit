@@ -165,7 +165,7 @@ struct _WebKitWebContextPrivate {
     URISchemeHandlerMap uriSchemeHandlers;
     URISchemeRequestMap uriSchemeRequests;
 #if ENABLE(GEOLOCATION)
-    RefPtr<WebKitGeolocationProvider> geolocationProvider;
+    std::unique_ptr<WebKitGeolocationProvider> geolocationProvider;
 #endif
     RefPtr<WebKitNotificationProvider> notificationProvider;
     GRefPtr<WebKitWebsiteDataManager> websiteDataManager;
@@ -322,7 +322,7 @@ static void webkitWebContextConstructed(GObject* object)
     attachCustomProtocolManagerClientToContext(webContext);
 
 #if ENABLE(GEOLOCATION)
-    priv->geolocationProvider = WebKitGeolocationProvider::create(priv->processPool->supplement<WebGeolocationManagerProxy>());
+    priv->geolocationProvider = std::make_unique<WebKitGeolocationProvider>(priv->processPool->supplement<WebGeolocationManagerProxy>());
 #endif
     priv->notificationProvider = WebKitNotificationProvider::create(priv->processPool->supplement<WebNotificationManagerProxy>(), webContext);
 #if ENABLE(REMOTE_INSPECTOR)

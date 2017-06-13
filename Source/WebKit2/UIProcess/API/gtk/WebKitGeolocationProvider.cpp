@@ -26,37 +26,39 @@
 #include "config.h"
 #include "WebKitGeolocationProvider.h"
 
+#if ENABLE(GEOLOCATION)
+
+#include "APIGeolocationProvider.h"
 #include "WebGeolocationManagerProxy.h"
 #include "WebGeolocationPosition.h"
 
-using namespace WebKit;
+namespace WebKit {
 
-#if ENABLE(GEOLOCATION)
+class GeolocationProvider : public API::GeolocationProvider {
+public:
+    explicit GeolocationProvider(WebKitGeolocationProvider& provider)
+        : m_provider(provider)
+    {
+    }
 
-static inline WebKitGeolocationProvider* toGeolocationProvider(const void* clientInfo)
-{
-    return static_cast<WebKitGeolocationProvider*>(const_cast<void*>(clientInfo));
-}
+private:
+    void startUpdating(WebGeolocationManagerProxy&) override
+    {
+        m_provider.startUpdating();
+    }
 
-static void startUpdatingCallback(WKGeolocationManagerRef, const void* clientInfo)
-{
-    toGeolocationProvider(clientInfo)->startUpdating();
-}
+    void stopUpdating(WebGeolocationManagerProxy&) override
+    {
+        m_provider.stopUpdating();
+    }
 
-static void stopUpdatingCallback(WKGeolocationManagerRef, const void* clientInfo)
-{
-    toGeolocationProvider(clientInfo)->stopUpdating();
-}
+    WebKitGeolocationProvider& m_provider;
+};
 
 WebKitGeolocationProvider::~WebKitGeolocationProvider()
 {
     m_provider.stopUpdating();
-    WKGeolocationManagerSetProvider(toAPI(m_geolocationManager.get()), nullptr);
-}
-
-Ref<WebKitGeolocationProvider> WebKitGeolocationProvider::create(WebGeolocationManagerProxy* geolocationManager)
-{
-    return adoptRef(*new WebKitGeolocationProvider(geolocationManager));
+    m_geolocationManager->setProvider(nullptr);
 }
 
 WebKitGeolocationProvider::WebKitGeolocationProvider(WebGeolocationManagerProxy* geolocationManager)
@@ -64,17 +66,7 @@ WebKitGeolocationProvider::WebKitGeolocationProvider(WebGeolocationManagerProxy*
     , m_provider(this)
 {
     ASSERT(geolocationManager);
-
-    WKGeolocationProviderV1 wkGeolocationProvider = {
-        {
-            1, // version
-            this, // clientInfo
-        },
-        startUpdatingCallback,
-        stopUpdatingCallback,
-        0 // setEnableHighAccuracy
-    };
-    WKGeolocationManagerSetProvider(toAPI(geolocationManager), &wkGeolocationProvider.base);
+    geolocationManager->setProvider(std::make_unique<GeolocationProvider>(*this));
 }
 
 void WebKitGeolocationProvider::startUpdating()
@@ -97,5 +89,7 @@ void WebKitGeolocationProvider::notifyErrorOccurred(const char* /* message */)
 {
     m_geolocationManager->providerDidFailToDeterminePosition();
 }
+
+} // namespace WebKit
 
 #endif // ENABLE(GEOLOCATION)

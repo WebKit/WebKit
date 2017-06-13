@@ -1,5 +1,32 @@
 2017-06-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Use API::GeolocationProvider in WebKitGeolocationProvider
+        https://bugs.webkit.org/show_bug.cgi?id=173151
+
+        Reviewed by Žan Doberšek.
+
+        Also cleanup a bit the WebKitGeolocationProvider implementation, it doesn't need to be refcounted.
+
+        * UIProcess/API/gtk/WebKitGeolocationProvider.cpp:
+        (WebKit::GeolocationProvider::GeolocationProvider):
+        (WebKit::WebKitGeolocationProvider::~WebKitGeolocationProvider):
+        (WebKit::WebKitGeolocationProvider::WebKitGeolocationProvider):
+        (toGeolocationProvider): Deleted.
+        (startUpdatingCallback): Deleted.
+        (stopUpdatingCallback): Deleted.
+        (WebKitGeolocationProvider::~WebKitGeolocationProvider): Deleted.
+        (WebKitGeolocationProvider::create): Deleted.
+        (WebKitGeolocationProvider::WebKitGeolocationProvider): Deleted.
+        (WebKitGeolocationProvider::startUpdating): Deleted.
+        (WebKitGeolocationProvider::stopUpdating): Deleted.
+        (WebKitGeolocationProvider::notifyPositionChanged): Deleted.
+        (WebKitGeolocationProvider::notifyErrorOccurred): Deleted.
+        * UIProcess/API/gtk/WebKitGeolocationProvider.h:
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (webkitWebContextConstructed):
+
+2017-06-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Use API::IconDatabaseClient in WebKitFaviconDatabase
         https://bugs.webkit.org/show_bug.cgi?id=173146
 
