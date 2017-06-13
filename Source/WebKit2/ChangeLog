@@ -1,5 +1,18 @@
 2017-06-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Use API::IconDatabaseClient in WebKitFaviconDatabase
+        https://bugs.webkit.org/show_bug.cgi?id=173146
+
+        Reviewed by Žan Doberšek.
+
+        * UIProcess/API/gtk/WebKitFaviconDatabase.cpp:
+        (_WebKitFaviconDatabasePrivate::~_WebKitFaviconDatabasePrivate):
+        (webkitFaviconDatabaseCreate):
+        (didChangeIconForPageURLCallback): Deleted.
+        (iconDataReadyForPageURLCallback): Deleted.
+
+2017-06-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Use API::InjectedBundle::PageLoaderClient in WebKitWebPage
         https://bugs.webkit.org/show_bug.cgi?id=173304
 
