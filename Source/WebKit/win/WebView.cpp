@@ -1038,9 +1038,10 @@ void WebView::sizeChanged(const IntSize& newSize)
     deleteBackingStore();
 
     if (Frame* coreFrame = core(topLevelFrame())) {
-        IntSize logicalSize = newSize;
+        FloatSize logicalSize = newSize;
         logicalSize.scale(1.0f / deviceScaleFactor());
-        coreFrame->view()->resize(logicalSize);
+        auto clientRect = enclosingIntRect(FloatRect(FloatPoint(), logicalSize));
+        coreFrame->view()->resize(clientRect.size());
     }
 
 #if USE(CA)
