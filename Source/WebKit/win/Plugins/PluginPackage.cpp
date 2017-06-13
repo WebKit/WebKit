@@ -76,7 +76,7 @@ void PluginPackage::freeLibraryTimerFired()
     ASSERT(m_module);
     // Do nothing if the module got loaded again meanwhile
     if (!m_loadCount) {
-        unloadModule(m_module);
+        ::FreeLibrary(m_module);
         m_module = 0;
     }
 }

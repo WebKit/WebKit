@@ -28,6 +28,7 @@
 #define PluginPackage_h
 
 #include "FileSystem.h"
+#include "PlatformModule.h"
 #include "PluginQuirkSet.h"
 #include "Timer.h"
 #if ENABLE(NETSCAPE_PLUGIN_API)

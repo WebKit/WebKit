@@ -424,11 +424,6 @@ bool hardLinkOrCopyFile(const String& source, const String& destination)
     return !!::CopyFile(source.charactersWithNullTermination().data(), destination.charactersWithNullTermination().data(), TRUE);
 }
 
-bool unloadModule(PlatformModule module)
-{
-    return ::FreeLibrary(module);
-}
-
 String localUserSpecificStorageDirectory()
 {
     return cachedStorageDirectory(CSIDL_LOCAL_APPDATA);

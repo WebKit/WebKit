@@ -380,15 +380,6 @@ bool moveFile(const String& oldPath, const String& newPath)
     return g_rename(oldFilename.get(), newFilename.get()) != -1;
 }
 
-bool unloadModule(PlatformModule module)
-{
-#if OS(WINDOWS)
-    return ::FreeLibrary(module);
-#else
-    return g_module_close(module);
-#endif
-}
-
 bool hardLinkOrCopyFile(const String& source, const String& destination)
 {
 #if OS(WINDOWS)

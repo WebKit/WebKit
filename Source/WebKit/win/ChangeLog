@@ -1,3 +1,16 @@
+2017-06-12  Daewoong Jang  <daewoong.jang@navercorp.com>
+
+        Remove WebCore::unloadModule and related data types
+        https://bugs.webkit.org/show_bug.cgi?id=173231
+
+        Reviewed by Darin Adler.
+
+        * Plugins/PlatformModule.h: Added.
+        (WebCore::PlatformModuleVersion::PlatformModuleVersion):
+        * Plugins/PluginPackage.cpp:
+        (WebCore::PluginPackage::freeLibraryTimerFired):
+        * Plugins/PluginPackage.h:
+
 2017-06-09  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS DnD] Add a hook to perform two-step drops in editable content

@@ -42,64 +42,24 @@
 #endif
 
 #if USE(CF)
-typedef struct __CFBundle* CFBundleRef;
 typedef const struct __CFData* CFDataRef;
 #endif
 
-#if OS(WINDOWS)
-// These are to avoid including <winbase.h> in a header for Chromium
+#if PLATFORM(WIN)
 typedef void *HANDLE;
-// Assuming STRICT
-typedef struct HINSTANCE__* HINSTANCE;
-typedef HINSTANCE HMODULE;
 #endif
 
 #if USE(GLIB)
 typedef struct _GFileIOStream GFileIOStream;
-typedef struct _GModule GModule;
 #endif
 
 namespace WebCore {
-
-// PlatformModule
-#if OS(WINDOWS)
-typedef HMODULE PlatformModule;
-#elif USE(GLIB)
-typedef GModule* PlatformModule;
-#elif USE(CF)
-typedef CFBundleRef PlatformModule;
-#else
-typedef void* PlatformModule;
-#endif
-
-// PlatformModuleVersion
-#if OS(WINDOWS)
-struct PlatformModuleVersion {
-    unsigned leastSig;
-    unsigned mostSig;
-
-    PlatformModuleVersion(unsigned)
-        : leastSig(0)
-        , mostSig(0)
-    {
-    }
-
-    PlatformModuleVersion(unsigned lsb, unsigned msb)
-        : leastSig(lsb)
-        , mostSig(msb)
-    {
-    }
-
-};
-#else
-typedef unsigned PlatformModuleVersion;
-#endif
 
 // PlatformFileHandle
 #if USE(GLIB) && !PLATFORM(WIN)
 typedef GFileIOStream* PlatformFileHandle;
 const PlatformFileHandle invalidPlatformFileHandle = 0;
-#elif OS(WINDOWS)
+#elif PLATFORM(WIN)
 typedef HANDLE PlatformFileHandle;
 // FIXME: -1 is INVALID_HANDLE_VALUE, defined in <winbase.h>. Chromium tries to
 // avoid using Windows headers in headers.  We'd rather move this into the .cpp.
@@ -184,9 +144,6 @@ bool hardLinkOrCopyFile(const String& source, const String& destination);
 bool lockFile(PlatformFileHandle, FileLockMode);
 bool unlockFile(PlatformFileHandle);
 #endif
-
-// Functions for working with loadable modules.
-bool unloadModule(PlatformModule);
 
 // Encode a string for use within a file name.
 WEBCORE_EXPORT String encodeForFileName(const String&);
