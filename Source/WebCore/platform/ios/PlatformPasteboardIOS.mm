@@ -256,7 +256,13 @@ void PlatformPasteboard::write(const PasteboardWebContent& content)
 
     RetainPtr<NSMutableDictionary> representations = adoptNS([[NSMutableDictionary alloc] init]);
     [representations addEntriesFromDictionary:richTextRepresentationsForPasteboardWebContent(content).autorelease()];
-    [representations setValue:content.dataInStringFormat forKey:(NSString *)kUTTypeText];
+
+    NSString *textAsString = content.dataInStringFormat;
+    [representations setValue:[textAsString dataUsingEncoding:NSUTF8StringEncoding] forKey:(NSString *)kUTTypeUTF8PlainText];
+    [representations setValue:[textAsString dataUsingEncoding:NSUTF16StringEncoding] forKey:(NSString *)kUTTypeUTF16PlainText];
+    // FIXME: We vend "public.text" here for backwards compatibility with pre-iOS 11 apps. In the future, we should stop vending this UTI,
+    // and instead set data for concrete plain text types. See <https://bugs.webkit.org/show_bug.cgi?id=173317>.
+    [representations setValue:textAsString forKey:(NSString *)kUTTypeText];
 
     [m_pasteboard setItems:@[representations.get()]];
 }
@@ -339,11 +345,18 @@ void PlatformPasteboard::write(const String& pasteboardType, const String& text)
 
     RetainPtr<NSDictionary> representations = adoptNS([[NSMutableDictionary alloc] init]);
 
+    NSString *textAsString = text;
     if (pasteboardType == String(kUTTypeURL)) {
         [representations setValue:adoptNS([[NSURL alloc] initWithString:text]).get() forKey:pasteboardType];
-        [representations setValue:text forKey:(NSString *)kUTTypeText];
+        [representations setValue:textAsString forKey:(NSString *)kUTTypeText];
     } else if (!pasteboardType.isNull())
-        [representations setValue:text forKey:pasteboardType];
+        [representations setValue:textAsString forKey:pasteboardType];
+
+    auto cfPasteboardType = pasteboardType.createCFString();
+    if (UTTypeConformsTo(cfPasteboardType.get(), kUTTypeText) || UTTypeConformsTo(cfPasteboardType.get(), kUTTypeURL)) {
+        [representations setValue:[textAsString dataUsingEncoding:NSUTF8StringEncoding] forKey:(NSString *)kUTTypeUTF8PlainText];
+        [representations setValue:[textAsString dataUsingEncoding:NSUTF16StringEncoding] forKey:(NSString *)kUTTypeUTF16PlainText];
+    }
     [m_pasteboard setItems:@[representations.get()]];
 }
 
