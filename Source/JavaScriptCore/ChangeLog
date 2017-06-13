@@ -1,3 +1,17 @@
+2017-06-13  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Debugger has unexpected effect on program correctness
+        https://bugs.webkit.org/show_bug.cgi?id=172683
+
+        Reviewed by Saam Barati.
+
+        * inspector/InjectedScriptSource.js:
+        (InjectedScript.RemoteObject.prototype._appendPropertyPreviews):
+        (InjectedScript.RemoteObject.prototype._isPreviewableObjectInternal):
+        (BasicCommandLineAPI):
+        Eliminate for..of use with Arrays from InjectedScriptSource as it can be observable.
+        We still use it for Set / Map iteration which we can eliminate when moving to builtins.
+
 2017-06-13  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: fix erroneous signature comment

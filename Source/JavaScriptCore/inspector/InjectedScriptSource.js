@@ -1066,7 +1066,9 @@ InjectedScript.RemoteObject.prototype = {
 
     _appendPropertyPreviews: function(object, preview, descriptors, internal, propertiesThreshold, firstLevelKeys, secondLevelKeys)
     {
-        for (var descriptor of descriptors) {
+        for (let i = 0; i < descriptors.length; ++i) {
+            let descriptor = descriptors[i];
+
             // Seen enough.
             if (propertiesThreshold.indexes < 0 || propertiesThreshold.properties < 0)
                 break;
@@ -1234,7 +1236,10 @@ InjectedScript.RemoteObject.prototype = {
 
     _isPreviewableObject: function(value, object)
     {
-        return this._isPreviewableObjectInternal(value, new Set([object]), 1);
+        let set = new Set;
+        set.add(object);
+
+        return this._isPreviewableObjectInternal(value, set, 1);
     },
 
     _isPreviewableObjectInternal: function(object, knownObjects, depth)
@@ -1276,10 +1281,11 @@ InjectedScript.RemoteObject.prototype = {
             return false;
 
         // Objects are simple if they have 3 or less simple properties.
-        var ownPropertyNames = Object.getOwnPropertyNames(object);
+        let ownPropertyNames = Object.getOwnPropertyNames(object);
         if (ownPropertyNames.length > 3)
             return false;
-        for (var propertyName of ownPropertyNames) {
+        for (let i = 0; i < ownPropertyNames.length; ++i) {
+            let propertyName = ownPropertyNames[i];
             if (!this._isPreviewableObjectInternal(object[propertyName], knownObjects, depth))
                 return false;
         }
@@ -1372,8 +1378,10 @@ function BasicCommandLineAPI(callFrame)
         this.__defineGetter__("$" + i, bind(injectedScript._savedResult, injectedScript, i));
 
     // Command Line API methods.
-    for (let method of BasicCommandLineAPI.methods)
+    for (let i = 0; i < BasicCommandLineAPI.methods.length; ++i) {
+        let method = BasicCommandLineAPI.methods[i];
         this[method.name] = method;
+    }
 }
 
 BasicCommandLineAPI.methods = [
@@ -1392,8 +1400,10 @@ BasicCommandLineAPI.methods = [
     },
 ];
 
-for (let method of BasicCommandLineAPI.methods)
+for (let i = 0; i < BasicCommandLineAPI.methods.length; ++i) {
+    let method = BasicCommandLineAPI.methods[i];
     method.toString = function() { return "function " + method.name + "() { [Command Line API] }"; };
+}
 
 return injectedScript;
 })

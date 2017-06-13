@@ -1,3 +1,13 @@
+2017-06-13  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Debugger has unexpected effect on program correctness
+        https://bugs.webkit.org/show_bug.cgi?id=172683
+
+        Reviewed by Saam Barati.
+
+        * inspector/injected-script/observable-expected.txt: Added.
+        * inspector/injected-script/observable.html: Added.
+
 2017-06-13  Matt Lewis  <jlewis3@apple.com>
 
         Updated test expectations for imported/w3c/web-platform-tests/dom/nodes/Document-constructor-svg.svg.
