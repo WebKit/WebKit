@@ -40,7 +40,7 @@
 
 extern "C" void _sqlite3_purgeEligiblePagerCacheMemory(void);
 
-static bool isSQLiteMemoryPressureHandlerRegisted { false };
+static bool isSQLiteMemoryPressureHandlerRegistered { false };
 
 namespace WebCore {
 
@@ -50,7 +50,7 @@ void platformReleaseMemory(Critical)
     GSFontPurgeFontCache();
 #endif
 
-    if (isSQLiteMemoryPressureHandlerRegisted)
+    if (isSQLiteMemoryPressureHandlerRegistered)
         _sqlite3_purgeEligiblePagerCacheMemory();
 
     for (auto& pool : LayerPool::allLayerPools())
@@ -105,7 +105,7 @@ void registerMemoryReleaseNotifyCallbacks()
 
 void registerSQLiteMemoryPressureHandler()
 {
-    isSQLiteMemoryPressureHandlerRegisted = true;
+    isSQLiteMemoryPressureHandlerRegistered = true;
 }
 
 } // namespace WebCore

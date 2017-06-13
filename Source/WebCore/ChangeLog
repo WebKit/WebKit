@@ -1,3 +1,11 @@
+2017-06-13  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, fix typo in variable introduced in r218108.
+
+        * page/cocoa/MemoryReleaseCocoa.mm:
+        (WebCore::platformReleaseMemory):
+        (WebCore::registerSQLiteMemoryPressureHandler):
+
 2017-06-13  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] Implement missing AtkRelation types
