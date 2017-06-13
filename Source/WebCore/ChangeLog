@@ -1,3 +1,12 @@
+2017-06-13  Jon Davis  <jond@apple.com>
+
+        Update Subresource Integrity status to Supported In Preview
+        https://bugs.webkit.org/show_bug.cgi?id=173324
+
+        Reviewed by Sam Weinig.
+
+        * features.json:
+
 2017-06-13  Antoine Quint  <graouts@apple.com>
 
         Add logging for layout tests when rAF callbacks get suspended and resumed
