@@ -1,3 +1,12 @@
+2017-06-13  Youenn Fablet  <youenn@apple.com>
+
+        Switch off Legacy WebRTC API flag by default
+        https://bugs.webkit.org/show_bug.cgi?id=173241
+
+        Reviewed by Sam Weinig.
+
+        * Shared/WebPreferencesDefinitions.h:
+
 2017-06-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Add API::GeolocationProvider
