@@ -120,4 +120,5 @@ WebInspector.settings = {
     stylesInsertNewline: new WebInspector.Setting("styles-insert-newline", true),
     stylesSelectOnFirstClick: new WebInspector.Setting("styles-select-on-first-click", true),
     showScopeChainOnPause: new WebInspector.Setting("show-scope-chain-sidebar", true),
+    showImageGrid: new WebInspector.Setting("show-image-grid", false),
 };

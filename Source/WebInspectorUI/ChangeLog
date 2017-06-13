@@ -1,3 +1,50 @@
+2017-06-12  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Add grid to images to clarify transparency and image size
+        https://bugs.webkit.org/show_bug.cgi?id=173184
+
+        Reviewed by Matt Baker.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+        * UserInterface/Base/Setting.js:
+        Add setting for controlling the image grid.
+
+        * UserInterface/Images/NavigationItemCheckers.svg: Added.
+
+        * UserInterface/Views/ImageResourceContentView.css:
+        (.content-view.resource.image):
+        (.content-view.resource.image img):
+        Replace the border spacing around the image with padding on the container.  This is required
+        because a border will extend the area that is effected by `background-image`, meaning that
+        the checkerboard would appear in that area as well, giving misleading information as to the
+        size of the image.
+
+        * UserInterface/Views/ImageResourceContentView.js:
+        (WebInspector.ImageResourceContentView):
+        (WebInspector.ImageResourceContentView.prototype.get navigationItems): Added.
+        (WebInspector.ImageResourceContentView.prototype.contentAvailable):
+        (WebInspector.ImageResourceContentView.prototype.shown): Added.
+        (WebInspector.ImageResourceContentView.prototype._toggleImageGrid): Added.
+        (WebInspector.ImageResourceContentView.prototype._showGridButtonClicked): Added.
+        (WebInspector.ImageResourceContentView.prototype.get imageElement): Deleted.
+        Apply the CSS class for showing the grid when the added navigation item is activated.
+
+        * UserInterface/Views/Main.css:
+        (img.show-grid):
+        Generates a checkerboard pattern via `background-image` using the following process:
+         - four `linear-gradients` are drawn, one in each corner
+         - each draws one half of a 20x20 square, specified by `background-size`
+         - they are then repositioned using `background-position` so that the two halfs align
+            +------+      \--2
+            |1 /\ 2|      |\ |
+            | /  \ |  =>  | \|
+            |/    \|  =>  4--\
+            |\    /|  =>      1--/
+            | \  / |  =>      | /|
+            |4 \/ 3|          |/ |
+            +------+          /--3
+
 2017-06-10  Dan Bernstein  <mitz@apple.com>
 
         Reverted r218056 because it made the IDE reindex constantly.
