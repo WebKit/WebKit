@@ -759,9 +759,9 @@ IntRect TextureMapperGL::clipBounds()
     return clipStack().current().scissorBox;
 }
 
-Ref<BitmapTexture> TextureMapperGL::createTexture()
+Ref<BitmapTexture> TextureMapperGL::createTexture(GC3Dint internalFormat)
 {
-    return BitmapTextureGL::create(*m_context3D);
+    return BitmapTextureGL::create(*m_context3D, internalFormat);
 }
 
 std::unique_ptr<TextureMapper> TextureMapper::platformCreateAccelerated()

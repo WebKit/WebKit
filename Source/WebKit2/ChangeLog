@@ -1,3 +1,16 @@
+2017-06-13  Gwang Yoon Hwang  <yoon@igalia.com>
+
+        [GStreamerGL] Release GstVideoFrame when there is a flush event from the pipeline
+        https://bugs.webkit.org/show_bug.cgi?id=172427
+
+        Reviewed by Žan Doberšek.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.cpp:
+        (WebKit::CoordinatedGraphicsScene::texmapGL):
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.h:
+        Provides current texmapGL to platform layer proxies to create and copy
+        bitmap textures.
+
 2017-06-13  Youenn Fablet  <youenn@apple.com>
 
         Switch off Legacy WebRTC API flag by default

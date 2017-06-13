@@ -1,3 +1,65 @@
+2017-06-13  Gwang Yoon Hwang  <yoon@igalia.com>
+
+        [GStreamerGL] Release GstVideoFrame when there is a flush event from the pipeline
+        https://bugs.webkit.org/show_bug.cgi?id=172427
+
+        Reviewed by Žan Doberšek.
+
+        Without GStreamerGL MediaPlayerPrivateGStreamer copies the video frame from
+        the decoder's buffer to the texture to display a video. So it makes possible
+        to release the GstSample when it got a flush start event to free the decoder's
+        buffer to the decoder without side-effects.
+
+        Unlike the traditional way to render video, GStreamer GL does not copy a
+        texture from the decoder to the texture mapper's buffer to draw video frame.
+        It uses same GstMemory with the gst pipeline to manage the texture to prevent
+        copy operations. So without releasing a layer buffer, there is no way to
+        return GstMemory to the buffer pool.
+
+        This patch releases current GstSample when the player got the flush start
+        event.  It destructs the platform layer buffer any time there is a flush start
+        event.
+
+        However, it is not enough to release the GstMemory. The platform layer proxy
+        should copy current buffer to show it to the compositor instead of a blank
+        frame. It prevents flickerings until getting a new frame after handling flush
+        events.
+
+        No new tests, there shouldn't be behavior changes
+
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::ImageBufferData::swapBuffersIfNeeded):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::pushTextureToCompositor):
+        (WebCore::MediaPlayerPrivateGStreamerBase::flushCurrentBuffer):
+        (WebCore::MediaPlayerPrivateGStreamerBase::createGLAppSink): Adds
+        handler for the flush event.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+        * platform/graphics/texmap/BitmapTextureGL.cpp:
+        (WebCore::BitmapTextureGL::BitmapTextureGL):
+        (WebCore::BitmapTextureGL::copyFromExternalTexture): Copies
+        a external texture to the managed texture.
+        * platform/graphics/texmap/BitmapTextureGL.h:
+        (WebCore::BitmapTextureGL::create):
+        To create the managed texture with specific format, this patch adds a
+        optional parameter for a texture format.
+        * platform/graphics/texmap/TextureMapper.h:
+        * platform/graphics/texmap/TextureMapperGC3DPlatformLayer.cpp:
+        (WebCore::TextureMapperGC3DPlatformLayer::swapBuffersIfNeeded):
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        (WebCore::TextureMapperGL::createTexture):
+        * platform/graphics/texmap/TextureMapperGL.h:
+        * platform/graphics/texmap/TextureMapperPlatformLayerBuffer.cpp:
+        (WebCore::TextureMapperPlatformLayerBuffer::TextureMapperPlatformLayerBuffer):
+        (WebCore::TextureMapperPlatformLayerBuffer::clone):
+        * platform/graphics/texmap/TextureMapperPlatformLayerBuffer.h:
+        * platform/graphics/texmap/TextureMapperPlatformLayerProxy.cpp:
+        (WebCore::TextureMapperPlatformLayerProxy::appendToUnusedBuffers): Added
+        to schedule releasing unused buffers in main thread.
+        (WebCore::TextureMapperPlatformLayerProxy::swapBuffer):
+        (WebCore::TextureMapperPlatformLayerProxy::dropCurrentBufferWhilePreservingTexture):
+        * platform/graphics/texmap/TextureMapperPlatformLayerProxy.h:
+
 2017-06-13  Youenn Fablet  <youenn@apple.com>
 
         Filter SDP from ICE candidates in case of local ICE candidate filtering

@@ -44,6 +44,7 @@
 
 namespace WebCore {
 
+class TextureMapperGL;
 class TextureMapperLayer;
 class TextureMapperPlatformLayerProxy;
 class TextureMapperPlatformLayerBuffer;
@@ -60,6 +61,7 @@ public:
     class Compositor {
     public:
         virtual void onNewBufferAvailable() = 0;
+        virtual TextureMapperGL* texmapGL() = 0;
     };
 
     TextureMapperPlatformLayerProxy();
@@ -77,10 +79,12 @@ public:
     void invalidate();
 
     void swapBuffer();
+    void dropCurrentBufferWhilePreservingTexture();
 
     bool scheduleUpdateOnCompositorThread(Function<void()>&&);
 
 private:
+    void appendToUnusedBuffers(std::unique_ptr<TextureMapperPlatformLayerBuffer>);
     void scheduleReleaseUnusedBuffers();
     void releaseUnusedBuffersTimerFired();
 
@@ -93,8 +97,8 @@ private:
     Lock m_lock;
 
     Vector<std::unique_ptr<TextureMapperPlatformLayerBuffer>> m_usedBuffers;
+    std::unique_ptr<RunLoop::Timer<TextureMapperPlatformLayerProxy>> m_releaseUnusedBuffersTimer;
 
-    RunLoop::Timer<TextureMapperPlatformLayerProxy> m_releaseUnusedBuffersTimer;
 #ifndef NDEBUG
     ThreadIdentifier m_compositorThreadID { 0 };
 #endif

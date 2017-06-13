@@ -168,6 +168,14 @@ void CoordinatedGraphicsScene::onNewBufferAvailable()
 {
     updateViewport();
 }
+
+TextureMapperGL* CoordinatedGraphicsScene::texmapGL()
+{
+    if (!m_textureMapper)
+        return nullptr;
+
+    return static_cast<TextureMapperGL*>(m_textureMapper.get());
+}
 #endif
 
 void CoordinatedGraphicsScene::setLayerRepaintCountIfNeeded(TextureMapperLayer* layer, const CoordinatedGraphicsLayerState& state)

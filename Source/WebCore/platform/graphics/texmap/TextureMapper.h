@@ -22,6 +22,7 @@
 
 #include "BitmapTexture.h"
 #include "Color.h"
+#include "GraphicsTypes3D.h"
 #include "IntRect.h"
 #include "IntSize.h"
 #include "TransformationMatrix.h"
@@ -78,6 +79,7 @@ public:
     virtual void endClip() = 0;
     virtual IntRect clipBounds() = 0;
     virtual Ref<BitmapTexture> createTexture() = 0;
+    virtual Ref<BitmapTexture> createTexture(GC3Dint internalFormat) = 0;
 
     virtual void beginPainting(PaintFlags = 0) { }
     virtual void endPainting() { }

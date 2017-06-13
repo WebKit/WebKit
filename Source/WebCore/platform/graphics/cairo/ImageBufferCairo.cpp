@@ -135,7 +135,7 @@ void ImageBufferData::swapBuffersIfNeeded()
     if (!m_compositorTexture) {
         createCompositorBuffer();
         LockHolder holder(m_platformLayerProxy->lock());
-        m_platformLayerProxy->pushNextBuffer(std::make_unique<TextureMapperPlatformLayerBuffer>(m_compositorTexture, m_size, TextureMapperGL::ShouldBlend));
+        m_platformLayerProxy->pushNextBuffer(std::make_unique<TextureMapperPlatformLayerBuffer>(m_compositorTexture, m_size, TextureMapperGL::ShouldBlend, GL_RGBA));
     }
 
     // It would be great if we could just swap the buffers here as we do with webgl, but that breaks the cases

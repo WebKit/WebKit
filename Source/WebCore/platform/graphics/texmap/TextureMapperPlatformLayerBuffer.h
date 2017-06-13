@@ -38,8 +38,8 @@ class TextureMapperPlatformLayerBuffer : public TextureMapperPlatformLayer {
     WTF_MAKE_NONCOPYABLE(TextureMapperPlatformLayerBuffer);
     WTF_MAKE_FAST_ALLOCATED();
 public:
-    TextureMapperPlatformLayerBuffer(RefPtr<BitmapTexture>&&);
-    TextureMapperPlatformLayerBuffer(GLuint textureID, const IntSize&, TextureMapperGL::Flags);
+    TextureMapperPlatformLayerBuffer(RefPtr<BitmapTexture>&&, TextureMapperGL::Flags = 0);
+    TextureMapperPlatformLayerBuffer(GLuint textureID, const IntSize&, TextureMapperGL::Flags, GC3Dint internalFormat);
 
     virtual ~TextureMapperPlatformLayerBuffer() = default;
 
@@ -63,6 +63,8 @@ public:
     void setUnmanagedBufferDataHolder(std::unique_ptr<UnmanagedBufferDataHolder> holder) { m_unmanagedBufferDataHolder = WTFMove(holder); }
     void setExtraFlags(TextureMapperGL::Flags flags) { m_extraFlags = flags; }
 
+    std::unique_ptr<TextureMapperPlatformLayerBuffer> clone(TextureMapperGL&);
+
 private:
 
     RefPtr<BitmapTexture> m_texture;
@@ -70,6 +72,7 @@ private:
 
     GLuint m_textureID;
     IntSize m_size;
+    GC3Dint m_internalFormat;
     TextureMapperGL::Flags m_extraFlags;
     bool m_hasManagedTexture;
     std::unique_ptr<UnmanagedBufferDataHolder> m_unmanagedBufferDataHolder;

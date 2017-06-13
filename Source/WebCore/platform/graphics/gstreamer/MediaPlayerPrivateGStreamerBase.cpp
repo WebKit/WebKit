@@ -588,7 +588,7 @@ void MediaPlayerPrivateGStreamerBase::pushTextureToCompositor()
     if (UNLIKELY(!frameHolder->isValid()))
         return;
 
-    std::unique_ptr<TextureMapperPlatformLayerBuffer> layerBuffer = std::make_unique<TextureMapperPlatformLayerBuffer>(frameHolder->textureID(), frameHolder->size(), frameHolder->flags());
+    std::unique_ptr<TextureMapperPlatformLayerBuffer> layerBuffer = std::make_unique<TextureMapperPlatformLayerBuffer>(frameHolder->textureID(), frameHolder->size(), frameHolder->flags(), GraphicsContext3D::RGBA);
     layerBuffer->setUnmanagedBufferDataHolder(WTFMove(frameHolder));
     m_platformLayerProxy->pushNextBuffer(WTFMove(layerBuffer));
 #else
@@ -704,7 +704,20 @@ GstFlowReturn MediaPlayerPrivateGStreamerBase::newPrerollCallback(GstElement* si
     player->triggerRepaint(sample.get());
     return GST_FLOW_OK;
 }
-#endif // USE(GSTREAMER_GL)
+
+void MediaPlayerPrivateGStreamerBase::flushCurrentBuffer()
+{
+    WTF::GMutexLocker<GMutex> lock(m_sampleMutex);
+    m_sample.clear();
+
+    {
+        LockHolder locker(m_platformLayerProxy->lock());
+
+        if (m_platformLayerProxy->isActive())
+            m_platformLayerProxy->dropCurrentBufferWhilePreservingTexture();
+    }
+}
+#endif
 
 void MediaPlayerPrivateGStreamerBase::setSize(const IntSize& size)
 {
@@ -855,6 +868,16 @@ GstElement* MediaPlayerPrivateGStreamerBase::createGLAppSink()
     g_object_set(appsink, "enable-last-sample", FALSE, "emit-signals", TRUE, "max-buffers", 1, nullptr);
     g_signal_connect(appsink, "new-sample", G_CALLBACK(newSampleCallback), this);
     g_signal_connect(appsink, "new-preroll", G_CALLBACK(newPrerollCallback), this);
+
+    GRefPtr<GstPad> pad = adoptGRef(gst_element_get_static_pad(appsink, "sink"));
+    gst_pad_add_probe (pad.get(), GST_PAD_PROBE_TYPE_EVENT_FLUSH, [] (GstPad*, GstPadProbeInfo* info,  gpointer userData) -> GstPadProbeReturn {
+        if (GST_EVENT_TYPE (GST_PAD_PROBE_INFO_EVENT (info)) != GST_EVENT_FLUSH_START)
+            return GST_PAD_PROBE_OK;
+
+        auto* player = static_cast<MediaPlayerPrivateGStreamerBase*>(userData);
+        player->flushCurrentBuffer();
+        return GST_PAD_PROBE_OK;
+    }, this, nullptr);
 
     return appsink;
 }
