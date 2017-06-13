@@ -54,9 +54,8 @@ CachedSVGFont::CachedSVGFont(CachedResourceRequest&& request, SessionID sessionI
 
 RefPtr<Font> CachedSVGFont::createFont(const FontDescription& fontDescription, const AtomicString& remoteURI, bool syntheticBold, bool syntheticItalic, const FontFeatureSettings& fontFaceFeatures, const FontVariantSettings& fontFaceVariantSettings, FontSelectionSpecifiedCapabilities fontFaceCapabilities)
 {
-    if (firstFontFace(remoteURI))
-        return CachedFont::createFont(fontDescription, remoteURI, syntheticBold, syntheticItalic, fontFaceFeatures, fontFaceVariantSettings, fontFaceCapabilities);
-    return nullptr;
+    ASSERT(firstFontFace(remoteURI));
+    return CachedFont::createFont(fontDescription, remoteURI, syntheticBold, syntheticItalic, fontFaceFeatures, fontFaceVariantSettings, fontFaceCapabilities);
 }
 
 FontPlatformData CachedSVGFont::platformDataFromCustomData(const FontDescription& fontDescription, bool bold, bool italic, const FontFeatureSettings& fontFaceFeatures, const FontVariantSettings& fontFaceVariantSettings, FontSelectionSpecifiedCapabilities fontFaceCapabilities)
@@ -86,7 +85,7 @@ bool CachedSVGFont::ensureCustomFontData(const AtomicString& remoteURI)
             m_externalSVGDocument = nullptr;
         if (m_externalSVGDocument)
             maybeInitializeExternalSVGFontElement(remoteURI);
-        if (!m_externalSVGFontElement)
+        if (!m_externalSVGFontElement || !firstFontFace(remoteURI))
             return false;
         if (auto convertedFont = convertSVGToOTFFont(*m_externalSVGFontElement))
             m_convertedFont = SharedBuffer::create(WTFMove(convertedFont.value()));

@@ -120,7 +120,7 @@ void CSSFontFaceSource::fontLoaded(CachedFont& loadedFont)
     if (m_face.webFontsShouldAlwaysFallBack())
         return;
 
-    if (m_font->errorOccurred())
+    if (m_font->errorOccurred() || !m_font->ensureCustomFontData(m_familyNameOrURI))
         setStatus(Status::Failure);
     else
         setStatus(Status::Success);
@@ -193,10 +193,13 @@ RefPtr<Font> CSSFontFaceSource::font(const FontDescription& fontDescription, boo
     }
 
     if (m_font) {
-        if (!m_font->ensureCustomFontData(m_familyNameOrURI))
-            return nullptr;
-
-        return m_font->createFont(fontDescription, m_familyNameOrURI, syntheticBold, syntheticItalic, fontFaceFeatures, fontFaceVariantSettings, fontFaceCapabilities);
+        auto success = m_font->ensureCustomFontData(m_familyNameOrURI);
+        ASSERT_UNUSED(success, success);
+            
+        ASSERT(status() == Status::Success);
+        auto result = m_font->createFont(fontDescription, m_familyNameOrURI, syntheticBold, syntheticItalic, fontFaceFeatures, fontFaceVariantSettings, fontFaceCapabilities);
+        ASSERT(result);
+        return result;
     }
 
     // In-Document SVG Fonts
