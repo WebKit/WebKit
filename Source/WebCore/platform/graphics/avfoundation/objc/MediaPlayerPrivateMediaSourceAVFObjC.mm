@@ -174,6 +174,9 @@ MediaPlayerPrivateMediaSourceAVFObjC::~MediaPlayerPrivateMediaSourceAVFObjC()
         [m_synchronizer removeTimeObserver:m_durationObserver.get()];
     flushPendingSizeChanges();
 
+    destroyLayer();
+    destroyDecompressionSession();
+
     m_seekTimer.stop();
 }
 
