@@ -1,3 +1,18 @@
+2017-06-13  Brent Fulgham  <bfulgham@apple.com>
+
+        [WK2][macOS] Allow AppleEvents in Citrix View Plugin
+        https://bugs.webkit.org/show_bug.cgi?id=173280
+        <rdar://problem/31913624>
+
+        Reviewed by Alexey Proskuryakov.
+
+        A slightly better fix: Allow AppleEvents for non-sandboxed plugins. This should
+        avoid inadvertently breaking custom plugins, etc.
+
+        * PluginProcess/mac/PluginProcessMac.mm:
+        (WebKit::PluginProcess::platformInitializeProcess): Switch check from a specific Citrix
+        test, to just allowing non-sandboxed plugins to use AppleEvents.
+
 2017-06-13  Chris Dumez  <cdumez@apple.com>
 
         Include PID in some UIProcess-side release logging that relates to a particular WebProcess
