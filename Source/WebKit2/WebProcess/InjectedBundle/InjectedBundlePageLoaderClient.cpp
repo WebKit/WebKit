@@ -359,6 +359,8 @@ String InjectedBundlePageLoaderClient::userAgentForURL(WebFrame& frame, const UR
     if (!m_client.userAgentForURL)
         return String();
     WKStringRef userAgent = m_client.userAgentForURL(toAPI(&frame), toAPI(API::URL::create(url).ptr()), m_client.base.clientInfo);
+    if (!userAgent)
+        return String();
     return toImpl(userAgent)->string();
 }
 

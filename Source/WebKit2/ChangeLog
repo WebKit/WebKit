@@ -1,3 +1,15 @@
+2017-06-13  Chris Dumez  <cdumez@apple.com>
+
+        Add API::InjectedBundle::PageLoaderClient
+        https://bugs.webkit.org/show_bug.cgi?id=173265
+
+        Reviewed by Alex Christensen.
+
+        Add missing null check that is causing crashes on iOS.
+
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.cpp:
+        (WebKit::InjectedBundlePageLoaderClient::userAgentForURL):
+
 2017-06-13  Brent Fulgham  <bfulgham@apple.com>
 
         [WK2][macOS] Allow AppleEvents in Citrix View Plugin
