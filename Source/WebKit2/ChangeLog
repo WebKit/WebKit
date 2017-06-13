@@ -1,5 +1,15 @@
 2017-06-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Fix return value of PageLoaderClient::shouldGoToBackForwardListItem after r218164.
+
+        It should return true as InjectedBundlePageLoaderClient does. This caused several timeouts in GTK+ unit tests
+        after r218171.
+
+        * WebProcess/InjectedBundle/API/APIInjectedBundlePageLoaderClient.h:
+        (API::InjectedBundle::PageLoaderClient::shouldGoToBackForwardListItem):
+
+2017-06-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Use API::GeolocationProvider in WebKitGeolocationProvider
         https://bugs.webkit.org/show_bug.cgi?id=173151
 
