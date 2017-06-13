@@ -1,3 +1,37 @@
+2017-06-13  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] Implement missing AtkRelation types
+        https://bugs.webkit.org/show_bug.cgi?id=155494
+
+        Reviewed by Darin Adler.
+
+        Add methods for getting the element(s) which reference a particular element via an
+        ARIA attribute. Then use those methods to identify and expose the expected reverse/
+        reciprocal AtkRelationType and targets. Also add ATK support for aria-owns.
+
+        Use SpaceSplitString in AccessibilityObject::elementsFromAttribute() so that unexpected
+        whitespace characters in an attribute's list of ids does not prevent the desired element
+        from being found.
+
+        Lastly, change the return type of AccessibilityObject::identifierAttribute() from a String
+        to a const AtomicString& for better efficiency.
+
+        Tests: accessibility/aria-owns.html
+               accessibility/gtk/relation-types.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::identifierAttribute):
+        (WebCore::AccessibilityObject::elementsFromAttribute):
+        (WebCore::AccessibilityObject::ariaElementsReferencedByAttribute):
+        (WebCore::AccessibilityObject::ariaControlsReferencingElements):
+        (WebCore::AccessibilityObject::ariaDescribedByReferencingElements):
+        (WebCore::AccessibilityObject::ariaFlowToReferencingElements):
+        (WebCore::AccessibilityObject::ariaLabelledByReferencingElements):
+        (WebCore::AccessibilityObject::ariaOwnsReferencingElements):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (setAtkRelationSetFromCoreObject):
+
 2017-06-13  Gwang Yoon Hwang  <yoon@igalia.com>
 
         [GStreamerGL] Release GstVideoFrame when there is a flush event from the pipeline

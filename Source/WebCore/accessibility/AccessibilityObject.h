@@ -663,10 +663,15 @@ public:
 
     virtual bool supportsARIAOwns() const { return false; }
     void ariaControlsElements(AccessibilityChildrenVector&) const;
+    void ariaControlsReferencingElements(AccessibilityChildrenVector&) const;
     void ariaDescribedByElements(AccessibilityChildrenVector&) const;
+    void ariaDescribedByReferencingElements(AccessibilityChildrenVector&) const;
     void ariaFlowToElements(AccessibilityChildrenVector&) const;
+    void ariaFlowToReferencingElements(AccessibilityChildrenVector&) const;
     void ariaLabelledByElements(AccessibilityChildrenVector&) const;
+    void ariaLabelledByReferencingElements(AccessibilityChildrenVector&) const;
     void ariaOwnsElements(AccessibilityChildrenVector&) const;
+    void ariaOwnsReferencingElements(AccessibilityChildrenVector&) const;
 
     virtual bool ariaHasPopup() const { return false; }
     String ariaPopupValue() const;
@@ -680,7 +685,7 @@ public:
     AccessibilitySortDirection sortDirection() const;
     virtual bool canvasHasFallbackContent() const { return false; }
     bool supportsRangeValue() const;
-    String identifierAttribute() const;
+    const AtomicString& identifierAttribute() const;
     void classList(Vector<String>&) const;
     virtual String roleDescription() const;
     AccessibilityARIACurrentState ariaCurrentState() const;
@@ -1140,6 +1145,7 @@ protected:
     bool dispatchTouchEvent();
 
     void ariaElementsFromAttribute(AccessibilityChildrenVector&, const QualifiedName&) const;
+    void ariaElementsReferencedByAttribute(AccessibilityChildrenVector&, const QualifiedName&) const;
 
 #if PLATFORM(GTK) && HAVE(ACCESSIBILITY)
     bool allowsTextRanges() const;

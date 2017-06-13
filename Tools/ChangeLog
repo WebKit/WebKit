@@ -1,3 +1,32 @@
+2017-06-13  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] Implement missing AtkRelation types
+        https://bugs.webkit.org/show_bug.cgi?id=155494
+
+        Reviewed by Darin Adler.
+
+        Add additional methods to test ARIA properties which are exposed via
+        AtkRelation. Implement ATK support for ariaOwnsElementAtIndex().
+
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        (WTR::AccessibilityUIElement::ariaLabelledByElementAtIndex):
+        (WTR::AccessibilityUIElement::ariaDescribedByElementAtIndex):
+        (WTR::AccessibilityUIElement::ariaOwnsReferencingElementAtIndex):
+        (WTR::AccessibilityUIElement::ariaFlowToReferencingElementAtIndex):
+        (WTR::AccessibilityUIElement::ariaControlsReferencingElementAtIndex):
+        (WTR::AccessibilityUIElement::ariaLabelledByReferencingElementAtIndex):
+        (WTR::AccessibilityUIElement::ariaDescribedByReferencingElementAtIndex):
+        * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityUIElement.idl:
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::ariaOwnsElementAtIndex):
+        (WTR::AccessibilityUIElement::ariaOwnsReferencingElementAtIndex):
+        (WTR::AccessibilityUIElement::ariaFlowToReferencingElementAtIndex):
+        (WTR::AccessibilityUIElement::ariaControlsReferencingElementAtIndex):
+        (WTR::AccessibilityUIElement::ariaLabelledByElementAtIndex):
+        (WTR::AccessibilityUIElement::ariaLabelledByReferencingElementAtIndex):
+        (WTR::AccessibilityUIElement::ariaDescribedByElementAtIndex):
+        (WTR::AccessibilityUIElement::ariaDescribedByReferencingElementAtIndex):
+
 2017-06-12  Daniel Bates  <dabates@apple.com>
 
         Add unit tests for SecurityOrigin::IsPotentiallyTrustworthy()

@@ -2585,7 +2585,7 @@ int AccessibilityObject::ariaPosInSet() const
     return getAttribute(aria_posinsetAttr).toInt();
 }
     
-String AccessibilityObject::identifierAttribute() const
+const AtomicString& AccessibilityObject::identifierAttribute() const
 {
     return getAttribute(idAttr);
 }
@@ -3166,13 +3166,14 @@ void AccessibilityObject::elementsFromAttribute(Vector<Element*>& elements, cons
 
     TreeScope& treeScope = node->treeScope();
 
-    String idList = getAttribute(attribute).string();
+    const AtomicString& idList = getAttribute(attribute);
     if (idList.isEmpty())
         return;
 
-    idList.replace('\n', ' ');
-    for (auto idName : StringView(idList).split(' ')) {
-        if (auto* idElement = treeScope.getElementById(idName))
+    auto spaceSplitString = SpaceSplitString(idList, false);
+    size_t length = spaceSplitString.size();
+    for (size_t i = 0; i < length; ++i) {
+        if (auto* idElement = treeScope.getElementById(spaceSplitString[i]))
             elements.append(idElement);
     }
 }
@@ -3286,9 +3287,34 @@ void AccessibilityObject::ariaElementsFromAttribute(AccessibilityChildrenVector&
     }
 }
 
+void AccessibilityObject::ariaElementsReferencedByAttribute(AccessibilityChildrenVector& elements, const QualifiedName& attribute) const
+{
+    auto id = identifierAttribute();
+    if (id.isEmpty())
+        return;
+
+    AXObjectCache* cache = axObjectCache();
+    if (!cache)
+        return;
+
+    for (auto& element : descendantsOfType<Element>(node()->treeScope().rootNode())) {
+        const AtomicString& idList = element.attributeWithoutSynchronization(attribute);
+        if (!SpaceSplitString(idList, false).contains(id))
+            continue;
+
+        if (AccessibilityObject* axObject = cache->getOrCreate(&element))
+            elements.append(axObject);
+    }
+}
+
 void AccessibilityObject::ariaControlsElements(AccessibilityChildrenVector& ariaControls) const
 {
     ariaElementsFromAttribute(ariaControls, aria_controlsAttr);
+}
+
+void AccessibilityObject::ariaControlsReferencingElements(AccessibilityChildrenVector& controllers) const
+{
+    ariaElementsReferencedByAttribute(controllers, aria_controlsAttr);
 }
 
 void AccessibilityObject::ariaDescribedByElements(AccessibilityChildrenVector& ariaDescribedBy) const
@@ -3296,9 +3322,19 @@ void AccessibilityObject::ariaDescribedByElements(AccessibilityChildrenVector& a
     ariaElementsFromAttribute(ariaDescribedBy, aria_describedbyAttr);
 }
 
+void AccessibilityObject::ariaDescribedByReferencingElements(AccessibilityChildrenVector& describers) const
+{
+    ariaElementsReferencedByAttribute(describers, aria_describedbyAttr);
+}
+
 void AccessibilityObject::ariaFlowToElements(AccessibilityChildrenVector& flowTo) const
 {
     ariaElementsFromAttribute(flowTo, aria_flowtoAttr);
+}
+
+void AccessibilityObject::ariaFlowToReferencingElements(AccessibilityChildrenVector& flowFrom) const
+{
+    ariaElementsReferencedByAttribute(flowFrom, aria_flowtoAttr);
 }
 
 void AccessibilityObject::ariaLabelledByElements(AccessibilityChildrenVector& ariaLabelledBy) const
@@ -3308,9 +3344,21 @@ void AccessibilityObject::ariaLabelledByElements(AccessibilityChildrenVector& ar
         ariaElementsFromAttribute(ariaLabelledBy, aria_labeledbyAttr);
 }
 
+void AccessibilityObject::ariaLabelledByReferencingElements(AccessibilityChildrenVector& labels) const
+{
+    ariaElementsReferencedByAttribute(labels, aria_labelledbyAttr);
+    if (!labels.size())
+        ariaElementsReferencedByAttribute(labels, aria_labeledbyAttr);
+}
+
 void AccessibilityObject::ariaOwnsElements(AccessibilityChildrenVector& axObjects) const
 {
     ariaElementsFromAttribute(axObjects, aria_ownsAttr);
+}
+
+void AccessibilityObject::ariaOwnsReferencingElements(AccessibilityChildrenVector& owners) const
+{
+    ariaElementsReferencedByAttribute(owners, aria_ownsAttr);
 }
 
 void AccessibilityObject::setIsIgnoredFromParentDataForChild(AccessibilityObject* child)

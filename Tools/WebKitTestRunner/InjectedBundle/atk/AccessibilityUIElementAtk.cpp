@@ -862,8 +862,12 @@ RefPtr<AccessibilityUIElement> AccessibilityUIElement::linkedUIElementAtIndex(un
 
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaOwnsElementAtIndex(unsigned index)
 {
-    // FIXME: implement
-    return nullptr;
+    return accessibilityElementAtIndex(m_element.get(), ATK_RELATION_NODE_PARENT_OF, index);
+}
+
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaOwnsReferencingElementAtIndex(unsigned index)
+{
+    return accessibilityElementAtIndex(m_element.get(), ATK_RELATION_NODE_CHILD_OF, index);
 }
 
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaFlowToElementAtIndex(unsigned index)
@@ -871,9 +875,39 @@ RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaFlowToElementAtIndex(
     return accessibilityElementAtIndex(m_element.get(), ATK_RELATION_FLOWS_TO, index);
 }
 
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaFlowToReferencingElementAtIndex(unsigned index)
+{
+    return accessibilityElementAtIndex(m_element.get(), ATK_RELATION_FLOWS_FROM, index);
+}
+
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaControlsElementAtIndex(unsigned index)
 {
     return accessibilityElementAtIndex(m_element.get(), ATK_RELATION_CONTROLLER_FOR, index);
+}
+
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaControlsReferencingElementAtIndex(unsigned index)
+{
+    return accessibilityElementAtIndex(m_element.get(), ATK_RELATION_CONTROLLED_BY, index);
+}
+
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaLabelledByElementAtIndex(unsigned index)
+{
+    return accessibilityElementAtIndex(m_element.get(), ATK_RELATION_LABELLED_BY, index);
+}
+
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaLabelledByReferencingElementAtIndex(unsigned index)
+{
+    return accessibilityElementAtIndex(m_element.get(), ATK_RELATION_LABEL_FOR, index);
+}
+
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaDescribedByElementAtIndex(unsigned index)
+{
+    return accessibilityElementAtIndex(m_element.get(), ATK_RELATION_DESCRIBED_BY, index);
+}
+
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaDescribedByReferencingElementAtIndex(unsigned index)
+{
+    return accessibilityElementAtIndex(m_element.get(), ATK_RELATION_DESCRIPTION_FOR, index);
 }
 
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::disclosedRowAtIndex(unsigned index)

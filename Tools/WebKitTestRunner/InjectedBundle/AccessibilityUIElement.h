@@ -194,6 +194,23 @@ public:
     RefPtr<AccessibilityUIElement> ariaOwnsElementAtIndex(unsigned);
     RefPtr<AccessibilityUIElement> ariaFlowToElementAtIndex(unsigned);
     RefPtr<AccessibilityUIElement> ariaControlsElementAtIndex(unsigned);
+#if PLATFORM(GTK)
+    RefPtr<AccessibilityUIElement> ariaLabelledByElementAtIndex(unsigned);
+    RefPtr<AccessibilityUIElement> ariaDescribedByElementAtIndex(unsigned);
+    RefPtr<AccessibilityUIElement> ariaOwnsReferencingElementAtIndex(unsigned);
+    RefPtr<AccessibilityUIElement> ariaFlowToReferencingElementAtIndex(unsigned);
+    RefPtr<AccessibilityUIElement> ariaControlsReferencingElementAtIndex(unsigned);
+    RefPtr<AccessibilityUIElement> ariaLabelledByReferencingElementAtIndex(unsigned);
+    RefPtr<AccessibilityUIElement> ariaDescribedByReferencingElementAtIndex(unsigned);
+#else
+    RefPtr<AccessibilityUIElement> ariaLabelledByElementAtIndex(unsigned) { return nullptr; }
+    RefPtr<AccessibilityUIElement> ariaDescribedByElementAtIndex(unsigned) { return nullptr; }
+    RefPtr<AccessibilityUIElement> ariaOwnsReferencingElementAtIndex(unsigned) { return nullptr; }
+    RefPtr<AccessibilityUIElement> ariaFlowToReferencingElementAtIndex(unsigned) { return nullptr; }
+    RefPtr<AccessibilityUIElement> ariaControlsReferencingElementAtIndex(unsigned) { return nullptr; }
+    RefPtr<AccessibilityUIElement> ariaLabelledByReferencingElementAtIndex(unsigned) { return nullptr; }
+    RefPtr<AccessibilityUIElement> ariaDescribedByReferencingElementAtIndex(unsigned) { return nullptr; }
+#endif
 
     // ARIA Drag and Drop
     bool ariaIsGrabbed() const;
