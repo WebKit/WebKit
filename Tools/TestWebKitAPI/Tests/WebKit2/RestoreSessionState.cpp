@@ -53,7 +53,7 @@ static void setPageLoaderClient(WKPageRef page)
     WKPageSetPageLoaderClient(page, &loaderClient.base);
 }
 
-static WKRetainPtr<WKDataRef> createSessionStateDataContainingScrollRestoration(WKContextRef context, std::function<void(WKPageRef)> apply)
+static WKRetainPtr<WKDataRef> createSessionStateData(WKContextRef context)
 {
     PlatformWebView webView(context);
     setPageLoaderClient(webView.page());
@@ -62,50 +62,8 @@ static WKRetainPtr<WKDataRef> createSessionStateDataContainingScrollRestoration(
     Util::run(&didFinishLoad);
     didFinishLoad = false;
 
-    apply(webView.page());
-
     auto sessionState = adoptWK(static_cast<WKSessionStateRef>(WKPageCopySessionState(webView.page(), reinterpret_cast<void*>(1), nullptr)));
     return adoptWK(WKSessionStateCopyData(sessionState.get()));
-}
-
-TEST(WebKit2, RestoreSessionStateContainingScrollRestorationManual)
-{
-    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
-
-    PlatformWebView webView(context.get());
-    setPageLoaderClient(webView.page());
-
-    WKRetainPtr<WKDataRef> data = createSessionStateDataContainingScrollRestoration(context.get(), [](WKPageRef page) {
-        EXPECT_JS_EQ(page, "history.scrollRestoration = 'manual'", "manual");
-    });
-    EXPECT_NOT_NULL(data);
-
-    auto sessionState = adoptWK(WKSessionStateCreateFromData(data.get()));
-    WKPageRestoreFromSessionState(webView.page(), sessionState.get());
-
-    Util::run(&didFinishLoad);
-
-    EXPECT_JS_EQ(webView.page(), "history.scrollRestoration", "manual");
-}
-
-TEST(WebKit2, RestoreSessionStateContainingScrollRestorationAuto)
-{
-    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
-
-    PlatformWebView webView(context.get());
-    setPageLoaderClient(webView.page());
-
-    WKRetainPtr<WKDataRef> data = createSessionStateDataContainingScrollRestoration(context.get(), [](WKPageRef page) {
-        EXPECT_JS_EQ(page, "history.scrollRestoration = 'auto'", "auto");
-    });
-    EXPECT_NOT_NULL(data);
-
-    auto sessionState = adoptWK(WKSessionStateCreateFromData(data.get()));
-    WKPageRestoreFromSessionState(webView.page(), sessionState.get());
-
-    Util::run(&didFinishLoad);
-
-    EXPECT_JS_EQ(webView.page(), "history.scrollRestoration", "auto");
 }
 
 TEST(WebKit2, RestoreSessionStateContainingScrollRestorationDefault)
@@ -115,8 +73,7 @@ TEST(WebKit2, RestoreSessionStateContainingScrollRestorationDefault)
     PlatformWebView webView(context.get());
     setPageLoaderClient(webView.page());
 
-    WKRetainPtr<WKDataRef> data = createSessionStateDataContainingScrollRestoration(context.get(), [](WKPageRef) {
-    });
+    WKRetainPtr<WKDataRef> data = createSessionStateData(context.get());
     EXPECT_NOT_NULL(data);
 
     auto sessionState = adoptWK(WKSessionStateCreateFromData(data.get()));

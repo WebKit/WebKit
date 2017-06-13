@@ -346,7 +346,6 @@ static void encodeFrameStateNode(HistoryEntryDataEncoder& encoder, const FrameSt
     encoder << frameState.scrollPosition.x();
     encoder << frameState.scrollPosition.y();
 
-    encoder << frameState.shouldRestoreScrollPosition;
     encoder << frameState.pageScaleFactor;
 
     encoder << !!frameState.stateObjectData;
@@ -929,7 +928,6 @@ static void decodeBackForwardTreeNode(HistoryEntryDataDecoder& decoder, FrameSta
 
     frameState.scrollPosition = WebCore::IntPoint(scrollPositionX, scrollPositionY);
 
-    decoder >> frameState.shouldRestoreScrollPosition;
     decoder >> frameState.pageScaleFactor;
 
     bool hasStateObject;
