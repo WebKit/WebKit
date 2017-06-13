@@ -1,3 +1,10 @@
+2017-06-13  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed JSC test gardening.
+
+        * stress/check-string-ident.js:
+        * stress/new-largeish-contiguous-array-with-size.js:
+
 2017-06-13  Michael Saboff  <msaboff@apple.com>
 
         DFG doesn't properly handle a property that is change to read only in a prototype

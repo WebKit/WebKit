@@ -1,3 +1,4 @@
+//@ skip
 //@ defaultNoEagerRun
 
 const o = { baz: 20 };
