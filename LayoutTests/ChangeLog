@@ -1,3 +1,13 @@
+2017-06-13  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [WPE] Ensure that fast/url/user-visible tests are skipped
+
+        Unreviewed gardening.
+
+        Tests under this directory are currently Mac specific, so skip the
+        directory altogether.
+        * platform/wpe/TestExpectations:
+
 2017-06-13  Youenn Fablet  <youenn@apple.com>
 
         Filter SDP from ICE candidates in case of local ICE candidate filtering

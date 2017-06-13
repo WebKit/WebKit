@@ -212,9 +212,8 @@ Bug(WPE) fast/shapes/shape-outside-floats/shape-outside-clip-path-selection.html
 Bug(WPE) fast/shapes/shape-outside-floats/shape-outside-floats-shape-margin-percent.html [ ImageOnlyFailure ]
 
 Bug(WPE) fast/url [ Pass ]
-Bug(WPE) fast/url/user-visible/cyrillic-NFD.html [ Failure ]
-Bug(WPE) fast/url/user-visible/rf.html [ Failure ]
-Bug(WPE) fast/url/user-visible/srb.html [ Failure ]
+# These are Mac specific for now.
+fast/url/user-visible [ Skip ]
 
 Bug(WPE) fast/viewport [ Pass ]
 Bug(WPE) fast/viewport/ios [ Failure ]
