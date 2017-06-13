@@ -1,3 +1,14 @@
+2017-06-13  Jer Noble  <jer.noble@apple.com>
+
+        Protect lifetime of media element during HTMLMediaElement::notifyAboutPlaying()
+        https://bugs.webkit.org/show_bug.cgi?id=173320
+        <rdar://problem/32590276>
+
+        Reviewed by Brent Fulgham.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::notifyAboutPlaying):
+
 2017-06-13  Youenn Fablet  <youenn@apple.com>
 
         getReceivers() should return transceivers that have only an active receiver

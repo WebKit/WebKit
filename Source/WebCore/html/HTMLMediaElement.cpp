@@ -1020,6 +1020,7 @@ void HTMLMediaElement::scheduleNotifyAboutPlaying()
 
 void HTMLMediaElement::notifyAboutPlaying()
 {
+    Ref<HTMLMediaElement> protectedThis(*this); // The 'playing' event can make arbitrary DOM mutations.
     m_playbackStartedTime = currentMediaTime().toDouble();
     dispatchEvent(Event::create(eventNames().playingEvent, false, true));
     resolvePendingPlayPromises();
