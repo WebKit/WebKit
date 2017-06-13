@@ -81,23 +81,17 @@ file Source/WebCore/Resources/urlIcon.png
 file Source/WebCore/platform/audio/resources/Composite.wav
 
 directory Tools/gtk
-directory Tools/ImageDiff
+exclude Tools/gtk/patches
+exclude Tools/gtk/jhbuild.modules
+exclude Tools/gtk/jhbuildrc
+exclude Tools/gtk/make-dist.py
+exclude Tools/gtk/ycm_extra_conf.py
+
 directory Tools/MiniBrowser
 directory Tools/TestWebKitAPI
 
-directory Tools/DumpRenderTree
-exclude Tools/DumpRenderTree/fonts
-
-directory Tools/WebKitTestRunner
-exclude Tools/WebKitTestRunner/fonts/
-
 file CMakeLists.txt
 file Tools/CMakeLists.txt
-file Tools/Scripts/VCSUtils.pm
-file Tools/Scripts/run-gtk-tests
-file Tools/Scripts/webkit-build-directory
-file Tools/Scripts/webkitdirs.pm
-file Tools/jhbuild/jhbuildutils.py
 
 directory ${CMAKE_BINARY_DIR}/Documentation/webkit2gtk-${WEBKITGTK_API_VERSION}/html Documentation/webkit2gtk-${WEBKITGTK_API_VERSION}/html
 directory ${CMAKE_BINARY_DIR}/Documentation/webkitdomgtk-${WEBKITGTK_API_VERSION}/html Documentation/webkitdomgtk-${WEBKITGTK_API_VERSION}/html
