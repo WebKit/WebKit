@@ -23,7 +23,6 @@
 #include "cmakeconfig.h"
 #endif
 
-#include <wtf/Platform.h>
 #include <wtf/ExportMacros.h>
 
 #ifdef __cplusplus

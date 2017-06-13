@@ -27,8 +27,7 @@
  * properly on all platforms and compilers that WebKit builds under.
  */
 
-#ifndef ExportMacros_h
-#define ExportMacros_h
+#pragma once
 
 #include <wtf/Platform.h>
 
@@ -118,5 +117,3 @@
 #define WTF_EXPORT_HIDDEN WTF_HIDDEN
 
 #define HIDDEN_INLINE WTF_EXPORT_HIDDEN inline
-
-#endif // ExportMacros_h
