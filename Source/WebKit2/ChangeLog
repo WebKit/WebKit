@@ -1,5 +1,37 @@
 2017-06-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Add API::GeolocationProvider
+        https://bugs.webkit.org/show_bug.cgi?id=173150
+
+        Reviewed by Alex Christensen.
+
+        It will be used by GTK+ port instead of the C API.
+
+        * UIProcess/API/APIGeolocationProvider.h: Added.
+        (API::GeolocationProvider::~GeolocationProvider):
+        (API::GeolocationProvider::startUpdating):
+        (API::GeolocationProvider::stopUpdating):
+        (API::GeolocationProvider::setEnableHighAccuracy):
+        * UIProcess/API/C/WKGeolocationManager.cpp:
+        (WKGeolocationManagerSetProvider):
+        * UIProcess/WebGeolocationManagerProxy.cpp:
+        (WebKit::WebGeolocationManagerProxy::WebGeolocationManagerProxy):
+        (WebKit::WebGeolocationManagerProxy::setProvider):
+        (WebKit::WebGeolocationManagerProxy::processPoolDestroyed):
+        (WebKit::WebGeolocationManagerProxy::startUpdating):
+        (WebKit::WebGeolocationManagerProxy::removeRequester):
+        (WebKit::WebGeolocationManagerProxy::setEnableHighAccuracy):
+        * UIProcess/WebGeolocationManagerProxy.h:
+        * UIProcess/WebGeolocationProvider.cpp:
+        (WebKit::WebGeolocationProvider::WebGeolocationProvider):
+        (WebKit::WebGeolocationProvider::startUpdating):
+        (WebKit::WebGeolocationProvider::stopUpdating):
+        (WebKit::WebGeolocationProvider::setEnableHighAccuracy):
+        * UIProcess/WebGeolocationProvider.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+
+2017-06-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Add API::InjectedBundle::PageLoaderClient
         https://bugs.webkit.org/show_bug.cgi?id=173265
 

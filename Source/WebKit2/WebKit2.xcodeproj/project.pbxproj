@@ -1218,6 +1218,7 @@
 		7A821F501E2F7A7500604577 /* APICustomProtocolManagerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A821F4F1E2F7A5C00604577 /* APICustomProtocolManagerClient.h */; };
 		7AAD175F1EA6AF99003B0894 /* WebResourceLoadStatisticsStoreCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7AAD175E1EA6AF37003B0894 /* WebResourceLoadStatisticsStoreCocoa.mm */; };
 		7AB6EA451EEAAE3800037B2B /* APIIconDatabaseClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AB6EA441EEAAE2300037B2B /* APIIconDatabaseClient.h */; };
+		7AB6EA471EEAB6B800037B2B /* APIGeolocationProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AB6EA461EEAB6B000037B2B /* APIGeolocationProvider.h */; };
 		7AF236201E79A3E400438A05 /* WebErrors.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AF2361E1E79A3B400438A05 /* WebErrors.cpp */; };
 		7AF236211E79A40800438A05 /* WebErrors.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AF2361F1E79A3D800438A05 /* WebErrors.h */; };
 		7AF236231E79A44400438A05 /* WebErrorsCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7AF236221E79A43100438A05 /* WebErrorsCocoa.mm */; };
@@ -3506,6 +3507,7 @@
 		7A9CD8C21C779AD600D9F6C7 /* WebResourceLoadStatisticsStore.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebResourceLoadStatisticsStore.messages.in; sourceTree = "<group>"; };
 		7AAD175E1EA6AF37003B0894 /* WebResourceLoadStatisticsStoreCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebResourceLoadStatisticsStoreCocoa.mm; sourceTree = "<group>"; };
 		7AB6EA441EEAAE2300037B2B /* APIIconDatabaseClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIIconDatabaseClient.h; sourceTree = "<group>"; };
+		7AB6EA461EEAB6B000037B2B /* APIGeolocationProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIGeolocationProvider.h; sourceTree = "<group>"; };
 		7AF2361E1E79A3B400438A05 /* WebErrors.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebErrors.cpp; sourceTree = "<group>"; };
 		7AF2361F1E79A3D800438A05 /* WebErrors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebErrors.h; sourceTree = "<group>"; };
 		7AF236221E79A43100438A05 /* WebErrorsCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebErrorsCocoa.mm; sourceTree = "<group>"; };
@@ -6883,6 +6885,7 @@
 				2DF9EEE31A781FB400B6CFBE /* APIFrameInfo.cpp */,
 				2DF9EEE41A781FB400B6CFBE /* APIFrameInfo.h */,
 				CD78E1161DB7DC0A0014A2DE /* APIFullscreenClient.h */,
+				7AB6EA461EEAB6B000037B2B /* APIGeolocationProvider.h */,
 				2DABA7751A82B42100EF0F1A /* APIHistoryClient.h */,
 				93A88B421BC8828C00ABA5C2 /* APIHitTestResult.cpp */,
 				93A88B431BC8828C00ABA5C2 /* APIHitTestResult.h */,
@@ -9051,6 +9054,7 @@
 				512F58FC12A88A5400629530 /* WKProtectionSpace.h in Headers */,
 				5272D4C91E735F0900EB4290 /* WKProtectionSpaceNS.h in Headers */,
 				518ACAEA12AEE6BB00B04B83 /* WKProtectionSpaceTypes.h in Headers */,
+				7AB6EA471EEAB6B800037B2B /* APIGeolocationProvider.h in Headers */,
 				1AD01BCD1905D54900C9C45F /* WKReloadFrameErrorRecoveryAttempter.h in Headers */,
 				1A9E329B1822E1CC00F5D04C /* WKRemoteObject.h in Headers */,
 				1A9E329F1822FEDD00F5D04C /* WKRemoteObjectCoder.h in Headers */,

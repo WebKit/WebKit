@@ -33,6 +33,7 @@
 #import "CompletionHandlerCallChecker.h"
 #import "GeolocationPermissionRequestProxy.h"
 #import "WKFrameInfoInternal.h"
+#import "WKGeolocationManager.h"
 #import "WKProcessPoolInternal.h"
 #import "WKUIDelegatePrivate.h"
 #import "WKWebView.h"
@@ -161,7 +162,7 @@ static void setEnableHighAccuracy(WKGeolocationManagerRef geolocationManager, bo
         stopUpdatingCallback,
         setEnableHighAccuracy
     };
-    _geolocationManager->initializeProvider(reinterpret_cast<WKGeolocationProviderBase*>(&providerCallback));
+    WKGeolocationManagerSetProvider(toAPI(_geolocationManager.get()), &providerCallback.base);
     _coreLocationProvider = wrapper(processPool)._coreLocationProvider ?: adoptNS(static_cast<id <_WKGeolocationCoreLocationProvider>>([[WKLegacyCoreLocationProvider alloc] init]));
     [_coreLocationProvider setListener:self];
     return self;

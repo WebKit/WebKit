@@ -31,28 +31,33 @@
 
 namespace WebKit {
 
-void WebGeolocationProvider::startUpdating(WebGeolocationManagerProxy* geolocationManager)
+WebGeolocationProvider::WebGeolocationProvider(const WKGeolocationProviderBase* provider)
+{
+    initialize(provider);
+}
+
+void WebGeolocationProvider::startUpdating(WebGeolocationManagerProxy& geolocationManager)
 {
     if (!m_client.startUpdating)
         return;
 
-    m_client.startUpdating(toAPI(geolocationManager), m_client.base.clientInfo);
+    m_client.startUpdating(toAPI(&geolocationManager), m_client.base.clientInfo);
 }
 
-void WebGeolocationProvider::stopUpdating(WebGeolocationManagerProxy* geolocationManager)
+void WebGeolocationProvider::stopUpdating(WebGeolocationManagerProxy& geolocationManager)
 {
     if (!m_client.stopUpdating)
         return;
 
-    m_client.stopUpdating(toAPI(geolocationManager), m_client.base.clientInfo);
+    m_client.stopUpdating(toAPI(&geolocationManager), m_client.base.clientInfo);
 }
 
-void WebGeolocationProvider::setEnableHighAccuracy(WebGeolocationManagerProxy* geolocationManager, bool enabled)
+void WebGeolocationProvider::setEnableHighAccuracy(WebGeolocationManagerProxy& geolocationManager, bool enabled)
 {
     if (!m_client.setEnableHighAccuracy)
         return;
 
-    m_client.setEnableHighAccuracy(toAPI(geolocationManager), enabled, m_client.base.clientInfo);
+    m_client.setEnableHighAccuracy(toAPI(&geolocationManager), enabled, m_client.base.clientInfo);
 }
 
 } // namespace WebKit

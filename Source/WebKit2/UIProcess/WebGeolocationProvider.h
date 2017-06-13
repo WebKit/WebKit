@@ -27,6 +27,7 @@
 #define WebGeolocationProvider_h
 
 #include "APIClient.h"
+#include "APIGeolocationProvider.h"
 #include "WKGeolocationManager.h"
 #include <wtf/Forward.h>
 
@@ -40,11 +41,13 @@ namespace WebKit {
 
 class WebGeolocationManagerProxy;
 
-class WebGeolocationProvider : public API::Client<WKGeolocationProviderBase> {
+class WebGeolocationProvider : public API::GeolocationProvider, API::Client<WKGeolocationProviderBase> {
 public:
-    void startUpdating(WebGeolocationManagerProxy*);
-    void stopUpdating(WebGeolocationManagerProxy*);
-    void setEnableHighAccuracy(WebGeolocationManagerProxy*, bool);
+    explicit WebGeolocationProvider(const WKGeolocationProviderBase*);
+
+    void startUpdating(WebGeolocationManagerProxy&) override;
+    void stopUpdating(WebGeolocationManagerProxy&) override;
+    void setEnableHighAccuracy(WebGeolocationManagerProxy&, bool) override;
 };
 
 } // namespace WebKit

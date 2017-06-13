@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,37 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WKGeolocationManager.h"
+#pragma once
 
-#include "WKAPICast.h"
-#include "WebGeolocationManagerProxy.h"
-#include "WebGeolocationPosition.h"
-#include "WebGeolocationProvider.h"
+#include <wtf/Forward.h>
 
-using namespace WebKit;
-
-WKTypeID WKGeolocationManagerGetTypeID()
-{
-    return toAPI(WebGeolocationManagerProxy::APIType);
+namespace WebKit {
+class WebGeolocationManagerProxy;
 }
 
-void WKGeolocationManagerSetProvider(WKGeolocationManagerRef geolocationManagerRef, const WKGeolocationProviderBase* wkProvider)
-{
-    toImpl(geolocationManagerRef)->setProvider(std::make_unique<WebGeolocationProvider>(wkProvider));
-}
+namespace API {
 
-void WKGeolocationManagerProviderDidChangePosition(WKGeolocationManagerRef geolocationManagerRef, WKGeolocationPositionRef positionRef)
-{
-    toImpl(geolocationManagerRef)->providerDidChangePosition(toImpl(positionRef));
-}
+class GeolocationProvider {
+public:
+    virtual ~GeolocationProvider() { }
 
-void WKGeolocationManagerProviderDidFailToDeterminePosition(WKGeolocationManagerRef geolocationManagerRef)
-{
-    toImpl(geolocationManagerRef)->providerDidFailToDeterminePosition();
-}
+    virtual void startUpdating(WebKit::WebGeolocationManagerProxy&) { };
+    virtual void stopUpdating(WebKit::WebGeolocationManagerProxy&) { };
+    virtual void setEnableHighAccuracy(WebKit::WebGeolocationManagerProxy&, bool) { };
+};
 
-void WKGeolocationManagerProviderDidFailToDeterminePositionWithErrorMessage(WKGeolocationManagerRef geolocationManagerRef, WKStringRef errorMessage)
-{
-    toImpl(geolocationManagerRef)->providerDidFailToDeterminePosition(toWTFString(errorMessage));
-}
+} // namespace API
