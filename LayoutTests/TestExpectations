@@ -1380,3 +1380,5 @@ webkit.org/b/172514 [ Debug ] imported/w3c/web-platform-tests/innerText/getter.h
 
 webkit.org/b/172827 webrtc/audio-peer-connection-webaudio.html [ Pass Failure ]
 webkit.org/b/172649 webrtc/peer-connection-audio-mute.html [ Pass Failure ]
+
+webkit.org/b/173333 imported/w3c/web-platform-tests/dom/nodes/Document-constructor-svg.svg [ Timeout ]
