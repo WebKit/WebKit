@@ -1214,14 +1214,14 @@ void WebProcessProxy::didExceedInactiveMemoryLimitWhileActive()
 
 void WebProcessProxy::didExceedActiveMemoryLimit()
 {
-    RELEASE_LOG_ERROR(PerformanceLogging, "%p - WebProcessProxy::didExceedActiveMemoryLimit() Terminating WebProcess that has exceeded the active memory limit", this);
+    RELEASE_LOG_ERROR(PerformanceLogging, "%p - WebProcessProxy::didExceedActiveMemoryLimit() Terminating WebProcess with pid %d that has exceeded the active memory limit", this, processIdentifier());
     logDiagnosticMessageForResourceLimitTermination(DiagnosticLoggingKeys::exceededActiveMemoryLimitKey());
     requestTermination(ProcessTerminationReason::ExceededMemoryLimit);
 }
 
 void WebProcessProxy::didExceedInactiveMemoryLimit()
 {
-    RELEASE_LOG_ERROR(PerformanceLogging, "%p - WebProcessProxy::didExceedInactiveMemoryLimit() Terminating WebProcess that has exceeded the inactive memory limit", this);
+    RELEASE_LOG_ERROR(PerformanceLogging, "%p - WebProcessProxy::didExceedInactiveMemoryLimit() Terminating WebProcess with pid %d that has exceeded the inactive memory limit", this, processIdentifier());
     logDiagnosticMessageForResourceLimitTermination(DiagnosticLoggingKeys::exceededInactiveMemoryLimitKey());
     requestTermination(ProcessTerminationReason::ExceededMemoryLimit);
 }
@@ -1230,12 +1230,12 @@ void WebProcessProxy::didExceedCPULimit()
 {
     for (auto& page : pages()) {
         if (page->isPlayingAudio()) {
-            RELEASE_LOG(PerformanceLogging, "%p - WebProcessProxy::didExceedCPULimit() WebProcess has exceeded the background CPU limit but we are not terminating it because there is audio playing", this);
+            RELEASE_LOG(PerformanceLogging, "%p - WebProcessProxy::didExceedCPULimit() WebProcess with pid %d has exceeded the background CPU limit but we are not terminating it because there is audio playing", this, processIdentifier());
             return;
         }
 
         if (page->hasActiveAudioStream() || page->hasActiveVideoStream()) {
-            RELEASE_LOG(PerformanceLogging, "%p - WebProcessProxy::didExceedCPULimit() WebProcess has exceeded the background CPU limit but we are not terminating it because it is capturing audio / video", this);
+            RELEASE_LOG(PerformanceLogging, "%p - WebProcessProxy::didExceedCPULimit() WebProcess with pid %d has exceeded the background CPU limit but we are not terminating it because it is capturing audio / video", this, processIdentifier());
             return;
         }
     }
@@ -1252,7 +1252,7 @@ void WebProcessProxy::didExceedCPULimit()
     if (hasVisiblePage)
         return;
 
-    RELEASE_LOG_ERROR(PerformanceLogging, "%p - WebProcessProxy::didExceedCPULimit() Terminating background WebProcess that has exceeded the background CPU limit", this);
+    RELEASE_LOG_ERROR(PerformanceLogging, "%p - WebProcessProxy::didExceedCPULimit() Terminating background WebProcess with pid %d that has exceeded the background CPU limit", this, processIdentifier());
     logDiagnosticMessageForResourceLimitTermination(DiagnosticLoggingKeys::exceededBackgroundCPULimitKey());
     requestTermination(ProcessTerminationReason::ExceededCPULimit);
 }
