@@ -1,3 +1,22 @@
+2017-06-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WTR] Crash in WebGeolocationManagerProxy::~WebGeolocationManagerProxy() when running several tests
+        https://bugs.webkit.org/show_bug.cgi?id=173315
+
+        Reviewed by Darin Adler.
+
+        This has started to happen after r218165, but I don't think it's a regression, but that r218165 revealed the bug
+        somehow in WTR. The problem is that GeolocationProviderMock keeps a pointer to the WKGeolocationManagerRef
+        returned by WKContextGetGeolocationManager. But in TestController::generatePageConfiguration() the context is
+        freed before the GeolocationProviderMock. When the GeolocationProviderMock is then destroyed, it calls
+        WKGeolocationManagerSetProvider(m_geolocationManager, 0); but the WKGeolocationManagerRef has already been
+        destroyed. GeolocationProviderMock should keep a reference to the WKContext to ensure the
+        WKGeolocationManagerRef is not destroyed.
+
+        * WebKitTestRunner/GeolocationProviderMock.cpp:
+        (WTR::GeolocationProviderMock::GeolocationProviderMock):
+        * WebKitTestRunner/GeolocationProviderMock.h:
+
 2017-06-13  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unable to paste text that was copied from a page into the universal search field

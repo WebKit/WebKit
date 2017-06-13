@@ -47,12 +47,13 @@ private:
     void sendPositionIfNeeded();
     void sendErrorIfNeeded();
 
+    WKRetainPtr<WKContextRef> m_context;
     WKGeolocationManagerRef m_geolocationManager;
-    bool m_isActive;
+    bool m_isActive { false };
 
     WKRetainPtr<WKGeolocationPositionRef> m_position;
 
-    bool m_hasError;
+    bool m_hasError { false };
     WKRetainPtr<WKStringRef> m_errorMessage;
 };
 

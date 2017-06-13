@@ -46,11 +46,9 @@ static void stopUpdatingCallback(WKGeolocationManagerRef geolocationManager, con
 }
 
 GeolocationProviderMock::GeolocationProviderMock(WKContextRef context)
-    : m_isActive(false)
-    , m_hasError(false)
+    : m_context(context)
+    , m_geolocationManager(WKContextGetGeolocationManager(context))
 {
-    m_geolocationManager = WKContextGetGeolocationManager(context);
-
     WKGeolocationProviderV1 providerCallback;
     memset(&providerCallback, 0, sizeof(WKGeolocationProviderV1));
     providerCallback.base.version = 1;
