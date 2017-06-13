@@ -1,3 +1,20 @@
+2017-06-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Use API::InjectedBundle::PageLoaderClient in WebKitWebPage
+        https://bugs.webkit.org/show_bug.cgi?id=173304
+
+        Reviewed by Alex Christensen.
+
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebPage.cpp:
+        (webkitWebPageCreate):
+        (getDocumentLoaderURL): Deleted.
+        (didStartProvisionalLoadForFrame): Deleted.
+        (didReceiveServerRedirectForProvisionalLoadForFrame): Deleted.
+        (didSameDocumentNavigationForFrame): Deleted.
+        (didCommitLoadForFrame): Deleted.
+        (didFinishDocumentLoadForFrame): Deleted.
+        (didClearWindowObjectForFrame): Deleted.
+
 2017-06-13  Gwang Yoon Hwang  <yoon@igalia.com>
 
         [GStreamerGL] Release GstVideoFrame when there is a flush event from the pipeline

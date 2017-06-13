@@ -130,15 +130,6 @@ static void webFrameDestroyed(WebFrame* webFrame)
     webFrameMap().remove(webFrame);
 }
 
-static CString getDocumentLoaderURL(DocumentLoader* documentLoader)
-{
-    ASSERT(documentLoader);
-    if (!documentLoader->unreachableURL().isEmpty())
-        return documentLoader->unreachableURL().string().utf8();
-
-    return documentLoader->url().string().utf8();
-}
-
 static void webkitWebPageSetURI(WebKitWebPage* webPage, const CString& uri)
 {
     if (webPage->priv->uri == uri)
@@ -154,51 +145,67 @@ static void webkitWebPageDidSendConsoleMessage(WebKitWebPage* webPage, MessageSo
     g_signal_emit(webPage, signals[CONSOLE_MESSAGE_SENT], 0, &consoleMessage);
 }
 
-static void didStartProvisionalLoadForFrame(WKBundlePageRef, WKBundleFrameRef frame, WKTypeRef*, const void *clientInfo)
-{
-    if (!WKBundleFrameIsMainFrame(frame))
-        return;
+class PageLoaderClient final : public API::InjectedBundle::PageLoaderClient {
+public:
+    explicit PageLoaderClient(WebKitWebPage* webPage)
+        : m_webPage(webPage)
+    {
+    }
 
-    webkitWebPageSetURI(WEBKIT_WEB_PAGE(clientInfo), getDocumentLoaderURL(toImpl(frame)->coreFrame()->loader().provisionalDocumentLoader()));
-}
+private:
+    static CString getDocumentLoaderURL(DocumentLoader* documentLoader)
+    {
+        ASSERT(documentLoader);
+        if (!documentLoader->unreachableURL().isEmpty())
+            return documentLoader->unreachableURL().string().utf8();
 
-static void didReceiveServerRedirectForProvisionalLoadForFrame(WKBundlePageRef, WKBundleFrameRef frame, WKTypeRef* /* userData */, const void *clientInfo)
-{
-    if (!WKBundleFrameIsMainFrame(frame))
-        return;
+        return documentLoader->url().string().utf8();
+    }
 
-    webkitWebPageSetURI(WEBKIT_WEB_PAGE(clientInfo), getDocumentLoaderURL(toImpl(frame)->coreFrame()->loader().provisionalDocumentLoader()));
-}
+    void didStartProvisionalLoadForFrame(WebPage&, WebFrame& frame, RefPtr<API::Object>&) override
+    {
+        if (!frame.isMainFrame())
+            return;
+        webkitWebPageSetURI(m_webPage, getDocumentLoaderURL(frame.coreFrame()->loader().provisionalDocumentLoader()));
+    }
 
-static void didSameDocumentNavigationForFrame(WKBundlePageRef, WKBundleFrameRef frame, WKSameDocumentNavigationType, WKTypeRef* /* userData */, const void *clientInfo)
-{
-    if (!WKBundleFrameIsMainFrame(frame))
-        return;
+    void didReceiveServerRedirectForProvisionalLoadForFrame(WebPage&, WebFrame& frame, RefPtr<API::Object>&) override
+    {
+        if (!frame.isMainFrame())
+            return;
+        webkitWebPageSetURI(m_webPage, getDocumentLoaderURL(frame.coreFrame()->loader().provisionalDocumentLoader()));
+    }
 
-    webkitWebPageSetURI(WEBKIT_WEB_PAGE(clientInfo), toImpl(frame)->coreFrame()->document()->url().string().utf8());
-}
+    void didSameDocumentNavigationForFrame(WebPage&, WebFrame& frame, SameDocumentNavigationType, RefPtr<API::Object>&) override
+    {
+        if (!frame.isMainFrame())
+            return;
+        webkitWebPageSetURI(m_webPage, frame.coreFrame()->document()->url().string().utf8());
+    }
 
-static void didCommitLoadForFrame(WKBundlePageRef, WKBundleFrameRef frame, WKTypeRef* /* userData */, const void* clientInfo)
-{
-    if (!WKBundleFrameIsMainFrame(frame))
-        return;
+    void didCommitLoadForFrame(WebPage&, WebFrame& frame, RefPtr<API::Object>&) override
+    {
+        if (!frame.isMainFrame())
+            return;
+        webkitWebPageSetURI(m_webPage, getDocumentLoaderURL(frame.coreFrame()->loader().documentLoader()));
+    }
 
-    webkitWebPageSetURI(WEBKIT_WEB_PAGE(clientInfo), getDocumentLoaderURL(toImpl(frame)->coreFrame()->loader().documentLoader()));
-}
+    void didFinishDocumentLoadForFrame(WebPage&, WebFrame& frame, RefPtr<API::Object>&) override
+    {
+        if (!frame.isMainFrame())
+            return;
+        g_signal_emit(m_webPage, signals[DOCUMENT_LOADED], 0);
+    }
 
-static void didFinishDocumentLoadForFrame(WKBundlePageRef, WKBundleFrameRef frame, WKTypeRef*, const void *clientInfo)
-{
-    if (!WKBundleFrameIsMainFrame(frame))
-        return;
+    void didClearWindowObjectForFrame(WebPage&, WebFrame& frame, DOMWrapperWorld& world) override
+    {
+        auto injectedWorld = InjectedBundleScriptWorld::getOrCreate(world);
+        if (auto* wkWorld = webkitScriptWorldGet(injectedWorld.ptr()))
+            webkitScriptWorldWindowObjectCleared(wkWorld, m_webPage, webkitFrameGetOrCreate(&frame));
+    }
 
-    g_signal_emit(WEBKIT_WEB_PAGE(clientInfo), signals[DOCUMENT_LOADED], 0);
-}
-
-static void didClearWindowObjectForFrame(WKBundlePageRef, WKBundleFrameRef frame, WKBundleScriptWorldRef wkWorld, const void* clientInfo)
-{
-    if (WebKitScriptWorld* world = webkitScriptWorldGet(toImpl(wkWorld)))
-        webkitScriptWorldWindowObjectCleared(world, WEBKIT_WEB_PAGE(clientInfo), webkitFrameGetOrCreate(toImpl(frame)));
-}
+    WebKitWebPage* m_webPage;
+};
 
 static void didInitiateLoadForResource(WKBundlePageRef page, WKBundleFrameRef frame, uint64_t identifier, WKURLRequestRef request, bool /* pageLoadIsProvisional */, const void*)
 {
@@ -535,48 +542,6 @@ WebKitWebPage* webkitWebPageCreate(WebPage* webPage)
     WebKitWebPage* page = WEBKIT_WEB_PAGE(g_object_new(WEBKIT_TYPE_WEB_PAGE, NULL));
     page->priv->webPage = webPage;
 
-    WKBundlePageLoaderClientV6 loaderClient = {
-        {
-            6, // version
-            page, // clientInfo
-        },
-        didStartProvisionalLoadForFrame,
-        didReceiveServerRedirectForProvisionalLoadForFrame,
-        0, // didFailProvisionalLoadWithErrorForFrame
-        didCommitLoadForFrame,
-        didFinishDocumentLoadForFrame,
-        0, // didFinishLoadForFrame
-        0, // didFailLoadWithErrorForFrame
-        didSameDocumentNavigationForFrame,
-        0, // didReceiveTitleForFrame
-        0, // didFirstLayoutForFrame
-        0, // didFirstVisuallyNonEmptyLayoutForFrame
-        0, // didRemoveFrameFromHierarchy,
-        0, // didDisplayInsecureContentForFrame
-        0, // didRunInsecureContentForFrame
-        didClearWindowObjectForFrame,
-        0, // didCancelClientRedirectForFrame
-        0, // willPerformClientRedirectForFrame
-        0, // didHandleOnloadEventsForFrame
-        0, // didLayoutForFrame
-        0, // didNewFirstVisuallyNonEmptyLayout
-        0, // didDetectXSSForFrame
-        0, // shouldGoToBackForwardListItem
-        0, // globalObjectIsAvailableForFrame
-        0, // willDisconnectDOMWindowExtensionFromGlobalObject
-        0, // didReconnectDOMWindowExtensionToGlobalObject
-        0, // willDestroyGlobalObjectForDOMWindowExtension
-        0, // didFinishProgress
-        0, // shouldForceUniversalAccessFromLocalURL
-        0, // didReceiveIntentForFrame_unavailable
-        0, // registerIntentServiceForFrame_unavailable
-        0, // didLayout
-        0, // featuresUsedInPage
-        0, // willLoadURLRequest
-        0, // willLoadDataRequest
-    };
-    WKBundlePageSetPageLoaderClient(toAPI(webPage), &loaderClient.base);
-
     WKBundlePageResourceLoadClientV1 resourceLoadClient = {
         {
             1, // version
@@ -593,6 +558,7 @@ WebKitWebPage* webkitWebPageCreate(WebPage* webPage)
     };
     WKBundlePageSetResourceLoadClient(toAPI(webPage), &resourceLoadClient.base);
 
+    webPage->setInjectedBundlePageLoaderClient(std::make_unique<PageLoaderClient>(page));
     webPage->setInjectedBundleContextMenuClient(std::make_unique<PageContextMenuClient>(page));
     webPage->setInjectedBundleUIClient(std::make_unique<PageUIClient>(page));
     webPage->setInjectedBundleFormClient(std::make_unique<PageFormClient>(page));
