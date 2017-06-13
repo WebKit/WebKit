@@ -727,6 +727,42 @@ static void testContextMenuDownloadActions(WebViewDownloadTest* test, gconstpoin
     g_file_delete(downloadFile.get(), nullptr, nullptr);
 }
 
+static void testBlobDownload(WebViewDownloadTest* test, gconstpointer)
+{
+    test->showInWindowAndWaitUntilMapped();
+
+    static const char* linkBlobHTML =
+        "<html><body>"
+        "<a id='downloadLink' style='position:absolute; left:1; top:1' download='foo.pdf'>Download Me</a>"
+        "<script>"
+        "  blob = new Blob(['Hello world'], {type: 'text/plain'});"
+        "  document.getElementById('downloadLink').href = window.URL.createObjectURL(blob);"
+        "</script>"
+        "</body></html>";
+    test->loadHtml(linkBlobHTML, kServer->getURIForPath("/").data());
+    test->waitUntilLoadFinished();
+
+    g_idle_add([](gpointer userData) -> gboolean {
+        auto* test = static_cast<WebViewDownloadTest*>(userData);
+        test->clickMouseButton(1, 1, 1);
+        return FALSE;
+    }, test);
+    test->waitUntilDownloadStarted();
+
+    g_assert(test->m_webView == webkit_download_get_web_view(test->m_download.get()));
+    test->waitUntilDownloadFinished();
+
+    GRefPtr<GFile> downloadFile = adoptGRef(g_file_new_for_uri(webkit_download_get_destination(test->m_download.get())));
+    GRefPtr<GFileInfo> downloadFileInfo = adoptGRef(g_file_query_info(downloadFile.get(), G_FILE_ATTRIBUTE_STANDARD_SIZE, static_cast<GFileQueryInfoFlags>(0), nullptr, nullptr));
+    GUniquePtr<char> downloadPath(g_file_get_path(downloadFile.get()));
+    GUniqueOutPtr<char> downloadContents;
+    gsize downloadContentsLength;
+    g_assert(g_file_get_contents(downloadPath.get(), &downloadContents.outPtr(), &downloadContentsLength, nullptr));
+    g_assert_cmpint(g_file_info_get_size(downloadFileInfo.get()), ==, downloadContentsLength);
+    g_assert_cmpstr(downloadContents.get(), ==, "Hello world");
+    g_file_delete(downloadFile.get(), nullptr, nullptr);
+}
+
 void beforeAll()
 {
     kServer = new WebKitTestServer();
@@ -743,6 +779,7 @@ void beforeAll()
     PolicyResponseDownloadTest::add("Downloads", "policy-decision-download-cancel", testPolicyResponseDownloadCancel);
     DownloadTest::add("Downloads", "mime-type", testDownloadMIMEType);
     WebViewDownloadTest::add("Downloads", "contex-menu-download-actions", testContextMenuDownloadActions);
+    WebViewDownloadTest::add("Downloads", "blob-download", testBlobDownload);
 }
 
 void afterAll()

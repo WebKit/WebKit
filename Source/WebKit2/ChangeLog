@@ -1,3 +1,25 @@
+2017-06-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Blob download doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=172442
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        GTK+ API uses URIs for download destination paths, and passes that URIs to the WebKit internals. But WebKit
+        expects download destination location to be a local path. This is not a problem for normal downloads, because
+        the soup backend handles the cases of download destination being a URI and a path. For blob downloads
+        NetworkDataTaskBlob is used, and it always expects the download destination to be a local path, failing in
+        FileSystem::openFile() when a URI is passed. We need to keep using local files internally and convert to URIs
+        only when exposing those paths to the API.
+
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        (WebKit::NetworkDataTaskSoup::download): Stop handling URIs here, we should always expect local files.
+        * UIProcess/API/gtk/WebKitDownload.cpp:
+        (webkitDownloadDecideDestinationWithSuggestedFilename): Convert destination URI to filanme before pasing it to DownloadClient.
+        (webkitDownloadDestinationCreated): Convert the destination path to a URI before passing it to WebKitDownload::created-destionation signal.
+        * UIProcess/API/gtk/WebKitDownloadClient.cpp:
+        * UIProcess/API/gtk/WebKitDownloadPrivate.h:
+
 2017-06-13  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unable to paste text that was copied from a page into the universal search field

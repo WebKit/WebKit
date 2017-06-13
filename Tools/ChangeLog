@@ -1,5 +1,18 @@
 2017-06-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Blob download doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=172442
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Add a unit test to check blob downloads.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestDownloads.cpp:
+        (testBlobDownload):
+        (beforeAll):
+
+2017-06-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Do not include WTR, DumpRendererTree and ImageDiff in tarballs
         https://bugs.webkit.org/show_bug.cgi?id=173316
 
