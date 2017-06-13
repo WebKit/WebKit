@@ -76,8 +76,7 @@ JSC::ExecState* mainWorldExecState(Frame* frame)
 {
     if (!frame)
         return nullptr;
-    JSDOMWindowShell* shell = frame->script().windowShell(mainThreadNormalWorld());
-    return shell->window()->globalExec();
+    return frame->script().windowProxy(mainThreadNormalWorld())->window()->globalExec();
 }
 
 JSC::ExecState* execStateFromNode(DOMWrapperWorld& world, Node* node)

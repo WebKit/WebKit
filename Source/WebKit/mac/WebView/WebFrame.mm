@@ -365,10 +365,10 @@ static NSURL *createUniqueWebDataURL();
 {
     ScriptController& scriptController = _private->coreFrame->script();
 
-    // Calling ScriptController::globalObject() would create a window shell, and dispatch corresponding callbacks, which may be premature
+    // Calling ScriptController::globalObject() would create a window proxy, and dispatch corresponding callbacks, which may be premature
     // if the script debugger is attached before a document is created.  These calls use the debuggerWorld(), we will need to pass a world
     // to be able to debug isolated worlds.
-    if (!scriptController.existingWindowShell(debuggerWorld()))
+    if (!scriptController.existingWindowProxy(debuggerWorld()))
         return;
 
     JSGlobalObject* globalObject = scriptController.globalObject(debuggerWorld());
@@ -2078,11 +2078,11 @@ static WebFrameLoadType toWebFrameLoadType(FrameLoadType frameLoadType)
     // Start off with some guess at a frame and a global object, we'll try to do better...!
     JSDOMWindow* anyWorldGlobalObject = _private->coreFrame->script().globalObject(mainThreadNormalWorld());
 
-    // The global object is probably a shell object? - if so, we know how to use this!
+    // The global object is probably a proxy object? - if so, we know how to use this!
     JSC::JSObject* globalObjectObj = toJS(globalObjectRef);
     JSC::VM& vm = *globalObjectObj->vm();
-    if (!strcmp(globalObjectObj->classInfo(vm)->className, "JSDOMWindowShell"))
-        anyWorldGlobalObject = static_cast<JSDOMWindowShell*>(globalObjectObj)->window();
+    if (!strcmp(globalObjectObj->classInfo(vm)->className, "JSDOMWindowProxy"))
+        anyWorldGlobalObject = static_cast<JSDOMWindowProxy*>(globalObjectObj)->window();
 
     // Get the frame frome the global object we've settled on.
     Frame* frame = anyWorldGlobalObject->wrapped().frame();

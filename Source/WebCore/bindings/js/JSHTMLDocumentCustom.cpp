@@ -116,7 +116,7 @@ JSValue JSHTMLDocument::open(ExecState& state)
     // For compatibility with other browsers, pass open calls with more than 2 parameters to the window.
     if (state.argumentCount() > 2) {
         if (auto* frame = wrapped().frame()) {
-            if (auto* wrapper = toJSDOMWindowShell(frame, currentWorld(&state))) {
+            if (auto* wrapper = toJSDOMWindowProxy(frame, currentWorld(&state))) {
                 auto function = wrapper->get(&state, Identifier::fromString(&state, "open"));
                 CallData callData;
                 auto callType = ::getCallData(function, callData);

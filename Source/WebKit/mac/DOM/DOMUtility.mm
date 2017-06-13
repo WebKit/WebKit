@@ -51,7 +51,7 @@
 #import <WebCore/JSCSSRuleList.h>
 #import <WebCore/JSCSSStyleDeclaration.h>
 #import <WebCore/JSDOMImplementation.h>
-#import <WebCore/JSDOMWindowShell.h>
+#import <WebCore/JSDOMWindowProxy.h>
 #import <WebCore/JSDeprecatedCSSOMCounter.h>
 #import <WebCore/JSDeprecatedCSSOMRGBColor.h>
 #import <WebCore/JSDeprecatedCSSOMRect.h>
@@ -85,7 +85,7 @@ static WebScriptObject *createDOMWrapper(JSC::JSObject& jsWrapper)
     WRAP(DeprecatedCSSOMValue)
     WRAP(DeprecatedCSSOMCounter)
     WRAP(DOMImplementation)
-    WRAP(DOMWindowShell)
+    WRAP(DOMWindowProxy)
     WRAP(Event)
     WRAP(HTMLOptionsCollection)
     WRAP(MediaList)

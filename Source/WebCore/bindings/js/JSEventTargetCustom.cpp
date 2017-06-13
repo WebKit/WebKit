@@ -31,7 +31,7 @@
 #include "EventTargetHeaders.h"
 #include "EventTargetInterfaces.h"
 #include "JSDOMWindow.h"
-#include "JSDOMWindowShell.h"
+#include "JSDOMWindowProxy.h"
 #include "JSEventListener.h"
 #include "JSWorkerGlobalScope.h"
 #include "WorkerGlobalScope.h"
@@ -62,7 +62,7 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, EventTarget& targ
 
 EventTarget* JSEventTarget::toWrapped(VM& vm, JSValue value)
 {
-    TRY_TO_UNWRAP_WITH_INTERFACE(DOMWindowShell)
+    TRY_TO_UNWRAP_WITH_INTERFACE(DOMWindowProxy)
     TRY_TO_UNWRAP_WITH_INTERFACE(DOMWindow)
     TRY_TO_UNWRAP_WITH_INTERFACE(WorkerGlobalScope)
     TRY_TO_UNWRAP_WITH_INTERFACE(EventTarget)

@@ -42,8 +42,8 @@ public:
     // Free as much memory held onto by this world as possible.
     WEBCORE_EXPORT void clearWrappers();
 
-    void didCreateWindowShell(ScriptController* scriptController) { m_scriptControllersWithWindowShells.add(scriptController); }
-    void didDestroyWindowShell(ScriptController* scriptController) { m_scriptControllersWithWindowShells.remove(scriptController); }
+    void didCreateWindowProxy(ScriptController* scriptController) { m_scriptControllersWithWindowProxies.add(scriptController); }
+    void didDestroyWindowProxy(ScriptController* scriptController) { m_scriptControllersWithWindowProxies.remove(scriptController); }
 
     void setShadowRootIsAlwaysOpen() { m_shadowRootIsAlwaysOpen = true; }
     bool shadowRootIsAlwaysOpen() const { return m_shadowRootIsAlwaysOpen; }
@@ -61,7 +61,7 @@ protected:
 
 private:
     JSC::VM& m_vm;
-    HashSet<ScriptController*> m_scriptControllersWithWindowShells;
+    HashSet<ScriptController*> m_scriptControllersWithWindowProxies;
     bool m_isNormal;
     bool m_shadowRootIsAlwaysOpen { false };
 };

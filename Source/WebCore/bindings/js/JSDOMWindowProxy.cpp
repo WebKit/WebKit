@@ -27,7 +27,7 @@
  */
 
 #include "config.h"
-#include "JSDOMWindowShell.h"
+#include "JSDOMWindowProxy.h"
 
 #include "CommonVM.h"
 #include "Frame.h"
@@ -43,27 +43,27 @@ using namespace JSC;
 
 namespace WebCore {
 
-const ClassInfo JSDOMWindowShell::s_info = { "JSDOMWindowShell", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSDOMWindowShell) };
+const ClassInfo JSDOMWindowProxy::s_info = { "JSDOMWindowProxy", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSDOMWindowProxy) };
 
-JSDOMWindowShell::JSDOMWindowShell(VM& vm, Structure* structure, DOMWrapperWorld& world)
+JSDOMWindowProxy::JSDOMWindowProxy(VM& vm, Structure* structure, DOMWrapperWorld& world)
     : Base(vm, structure)
     , m_world(world)
 {
 }
 
-void JSDOMWindowShell::finishCreation(VM& vm, RefPtr<DOMWindow>&& window)
+void JSDOMWindowProxy::finishCreation(VM& vm, RefPtr<DOMWindow>&& window)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
     setWindow(WTFMove(window));
 }
 
-void JSDOMWindowShell::destroy(JSCell* cell)
+void JSDOMWindowProxy::destroy(JSCell* cell)
 {
-    static_cast<JSDOMWindowShell*>(cell)->JSDOMWindowShell::~JSDOMWindowShell();
+    static_cast<JSDOMWindowProxy*>(cell)->JSDOMWindowProxy::~JSDOMWindowProxy();
 }
 
-void JSDOMWindowShell::setWindow(VM& vm, JSDOMWindow* window)
+void JSDOMWindowProxy::setWindow(VM& vm, JSDOMWindow* window)
 {
     ASSERT_ARG(window, window);
     setTarget(vm, window);
@@ -71,9 +71,9 @@ void JSDOMWindowShell::setWindow(VM& vm, JSDOMWindow* window)
     GCController::singleton().garbageCollectSoon();
 }
 
-void JSDOMWindowShell::setWindow(RefPtr<DOMWindow>&& domWindow)
+void JSDOMWindowProxy::setWindow(RefPtr<DOMWindow>&& domWindow)
 {
-    // Replacing JSDOMWindow via telling JSDOMWindowShell to use the same DOMWindow it already uses makes no sense,
+    // Replacing JSDOMWindow via telling JSDOMWindowProxy to use the same DOMWindow it already uses makes no sense,
     // so we'd better never try to.
     ASSERT(!window() || domWindow.get() != &window()->wrapped());
     // Explicitly protect the global object's prototype so it isn't collected
@@ -101,14 +101,14 @@ void JSDOMWindowShell::setWindow(RefPtr<DOMWindow>&& domWindow)
 // JSDOMWindow methods
 // ----
 
-DOMWindow& JSDOMWindowShell::wrapped() const
+DOMWindow& JSDOMWindowProxy::wrapped() const
 {
     return window()->wrapped();
 }
 
-DOMWindow* JSDOMWindowShell::toWrapped(VM& vm, JSObject* value)
+DOMWindow* JSDOMWindowProxy::toWrapped(VM& vm, JSObject* value)
 {
-    auto* wrapper = jsDynamicDowncast<JSDOMWindowShell*>(vm, value);
+    auto* wrapper = jsDynamicDowncast<JSDOMWindowProxy*>(vm, value);
     if (!wrapper)
         return nullptr;
     return &wrapper->window()->wrapped();
@@ -120,12 +120,12 @@ DOMWindow* JSDOMWindowShell::toWrapped(VM& vm, JSObject* value)
 
 JSValue toJS(ExecState* exec, Frame& frame)
 {
-    return frame.script().windowShell(currentWorld(exec));
+    return frame.script().windowProxy(currentWorld(exec));
 }
 
-JSDOMWindowShell* toJSDOMWindowShell(Frame& frame, DOMWrapperWorld& world)
+JSDOMWindowProxy* toJSDOMWindowProxy(Frame& frame, DOMWrapperWorld& world)
 {
-    return frame.script().windowShell(world);
+    return frame.script().windowProxy(world);
 }
 
 } // namespace WebCore

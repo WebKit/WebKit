@@ -55,7 +55,8 @@ public:
 protected:
     JSDOMWindowProperties(JSC::Structure* structure, JSC::JSGlobalObject& globalObject)
         : JSDOMObject(structure, globalObject)
-    { }
+    {
+    }
 };
 
 } // namespace WebCore

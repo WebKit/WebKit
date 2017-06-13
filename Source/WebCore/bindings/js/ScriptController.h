@@ -22,7 +22,7 @@
 #pragma once
 
 #include "FrameLoaderTypes.h"
-#include "JSDOMWindowShell.h"
+#include "JSDOMWindowProxy.h"
 #include <JavaScriptCore/JSBase.h>
 #include <heap/Strong.h>
 #include <wtf/Forward.h>
@@ -62,8 +62,6 @@ class URL;
 class Widget;
 struct ExceptionDetails;
 
-using RootObjectMap = HashMap<void*, Ref<JSC::Bindings::RootObject>>;
-
 enum ReasonForCallingCanExecuteScripts {
     AboutToExecuteScript,
     NotAboutToExecuteScript
@@ -72,7 +70,8 @@ enum ReasonForCallingCanExecuteScripts {
 class ScriptController {
     WTF_MAKE_FAST_ALLOCATED;
 
-    typedef HashMap<RefPtr<DOMWrapperWorld>, JSC::Strong<JSDOMWindowShell>> ShellMap;
+    using ProxyMap = HashMap<RefPtr<DOMWrapperWorld>, JSC::Strong<JSDOMWindowProxy>>;
+    using RootObjectMap = HashMap<void*, Ref<JSC::Bindings::RootObject>>;
 
 public:
     explicit ScriptController(Frame&);
@@ -80,24 +79,24 @@ public:
 
     WEBCORE_EXPORT static Ref<DOMWrapperWorld> createWorld();
 
-    JSDOMWindowShell& createWindowShell(DOMWrapperWorld&);
-    void destroyWindowShell(DOMWrapperWorld&);
+    JSDOMWindowProxy& createWindowProxy(DOMWrapperWorld&);
+    void destroyWindowProxy(DOMWrapperWorld&);
 
-    Vector<JSC::Strong<JSDOMWindowShell>> windowShells();
+    Vector<JSC::Strong<JSDOMWindowProxy>> windowProxies();
 
-    JSDOMWindowShell* windowShell(DOMWrapperWorld& world)
+    JSDOMWindowProxy* windowProxy(DOMWrapperWorld& world)
     {
-        ShellMap::iterator iter = m_windowShells.find(&world);
-        return (iter != m_windowShells.end()) ? iter->value.get() : initScript(world);
+        auto iter = m_windowProxies.find(&world);
+        return (iter != m_windowProxies.end()) ? iter->value.get() : initScript(world);
     }
-    JSDOMWindowShell* existingWindowShell(DOMWrapperWorld& world) const
+    JSDOMWindowProxy* existingWindowProxy(DOMWrapperWorld& world) const
     {
-        ShellMap::const_iterator iter = m_windowShells.find(&world);
-        return (iter != m_windowShells.end()) ? iter->value.get() : 0;
+        auto iter = m_windowProxies.find(&world);
+        return (iter != m_windowProxies.end()) ? iter->value.get() : 0;
     }
     JSDOMWindow* globalObject(DOMWrapperWorld& world)
     {
-        return windowShell(world)->window();
+        return windowProxy(world)->window();
     }
 
     static void getAllWorlds(Vector<Ref<DOMWrapperWorld>>&);
@@ -139,16 +138,16 @@ public:
     WEBCORE_EXPORT bool canExecuteScripts(ReasonForCallingCanExecuteScripts);
 
     // Debugger can be 0 to detach any existing Debugger.
-    void attachDebugger(JSC::Debugger*); // Attaches/detaches in all worlds/window shells.
-    void attachDebugger(JSDOMWindowShell*, JSC::Debugger*);
+    void attachDebugger(JSC::Debugger*); // Attaches/detaches in all worlds/window proxies.
+    void attachDebugger(JSDOMWindowProxy*, JSC::Debugger*);
 
     void setPaused(bool b) { m_paused = b; }
     bool isPaused() const { return m_paused; }
 
     const String* sourceURL() const { return m_sourceURL; } // 0 if we are not evaluating any script
 
-    void clearWindowShellsNotMatchingDOMWindow(DOMWindow*, bool goingIntoPageCache);
-    void setDOMWindowForWindowShell(DOMWindow*);
+    void clearWindowProxiesNotMatchingDOMWindow(DOMWindow*, bool goingIntoPageCache);
+    void setDOMWindowForWindowProxy(DOMWindow*);
     void updateDocument();
 
     void namedItemAdded(HTMLDocument*, const AtomicString&) { }
@@ -179,12 +178,12 @@ public:
 #endif
 
 private:
-    WEBCORE_EXPORT JSDOMWindowShell* initScript(DOMWrapperWorld&);
+    WEBCORE_EXPORT JSDOMWindowProxy* initScript(DOMWrapperWorld&);
     void setupModuleScriptHandlers(LoadableModuleScript&, JSC::JSInternalPromise&, DOMWrapperWorld&);
 
     void disconnectPlatformScriptObjects();
 
-    ShellMap m_windowShells;
+    ProxyMap m_windowProxies;
     Frame& m_frame;
     const String* m_sourceURL;
 

@@ -19,7 +19,7 @@
 #pragma once
 
 #include "JSDOMWindow.h"
-#include "JSDOMWindowShell.h"
+#include "JSDOMWindowProxy.h"
 
 namespace WebCore {
 

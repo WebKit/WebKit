@@ -1169,7 +1169,7 @@ set(WebCore_SOURCES
     bindings/js/JSDOMWindowBase.cpp
     bindings/js/JSDOMWindowCustom.cpp
     bindings/js/JSDOMWindowProperties.cpp
-    bindings/js/JSDOMWindowShell.cpp
+    bindings/js/JSDOMWindowProxy.cpp
     bindings/js/JSDOMWrapper.cpp
     bindings/js/JSDOMWrapperCache.cpp
     bindings/js/JSDocumentCustom.cpp

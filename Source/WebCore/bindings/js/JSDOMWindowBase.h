@@ -25,88 +25,88 @@
 
 namespace WebCore {
 
-    class DOMWindow;
-    class Frame;
-    class DOMWrapperWorld;
-    class JSDOMWindow;
-    class JSDOMWindowShell;
+class DOMWindow;
+class Frame;
+class DOMWrapperWorld;
+class JSDOMWindow;
+class JSDOMWindowProxy;
 
-    class JSDOMWindowBasePrivate;
+class JSDOMWindowBasePrivate;
 
-    class WEBCORE_EXPORT JSDOMWindowBase : public JSDOMGlobalObject {
-        typedef JSDOMGlobalObject Base;
-    protected:
-        JSDOMWindowBase(JSC::VM&, JSC::Structure*, RefPtr<DOMWindow>&&, JSDOMWindowShell*);
-        void finishCreation(JSC::VM&, JSDOMWindowShell*);
+class WEBCORE_EXPORT JSDOMWindowBase : public JSDOMGlobalObject {
+    typedef JSDOMGlobalObject Base;
+protected:
+    JSDOMWindowBase(JSC::VM&, JSC::Structure*, RefPtr<DOMWindow>&&, JSDOMWindowProxy*);
+    void finishCreation(JSC::VM&, JSDOMWindowProxy*);
 
-        static void destroy(JSCell*);
+    static void destroy(JSCell*);
 
-    public:
-        void updateDocument();
+public:
+    void updateDocument();
 
-        DOMWindow& wrapped() const { return *m_wrapped; }
-        ScriptExecutionContext* scriptExecutionContext() const;
+    DOMWindow& wrapped() const { return *m_wrapped; }
+    ScriptExecutionContext* scriptExecutionContext() const;
 
-        // Called just before removing this window from the JSDOMWindowShell.
-        void willRemoveFromWindowShell();
+    // Called just before removing this window from the JSDOMWindowProxy.
+    void willRemoveFromWindowProxy();
 
-        DECLARE_INFO;
+    DECLARE_INFO;
 
-        static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSValue prototype)
-        {
-            return JSC::Structure::create(vm, 0, prototype, JSC::TypeInfo(JSC::GlobalObjectType, StructureFlags), info());
-        }
+    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSValue prototype)
+    {
+        return JSC::Structure::create(vm, 0, prototype, JSC::TypeInfo(JSC::GlobalObjectType, StructureFlags), info());
+    }
 
-        static const JSC::GlobalObjectMethodTable s_globalObjectMethodTable;
+    static const JSC::GlobalObjectMethodTable s_globalObjectMethodTable;
 
-        static bool supportsRichSourceInfo(const JSC::JSGlobalObject*);
-        static bool shouldInterruptScript(const JSC::JSGlobalObject*);
-        static bool shouldInterruptScriptBeforeTimeout(const JSC::JSGlobalObject*);
-        static JSC::RuntimeFlags javaScriptRuntimeFlags(const JSC::JSGlobalObject*);
-        static void queueTaskToEventLoop(JSC::JSGlobalObject&, Ref<JSC::Microtask>&&);
-        
-        void printErrorMessage(const String&) const;
+    static bool supportsRichSourceInfo(const JSC::JSGlobalObject*);
+    static bool shouldInterruptScript(const JSC::JSGlobalObject*);
+    static bool shouldInterruptScriptBeforeTimeout(const JSC::JSGlobalObject*);
+    static JSC::RuntimeFlags javaScriptRuntimeFlags(const JSC::JSGlobalObject*);
+    static void queueTaskToEventLoop(JSC::JSGlobalObject&, Ref<JSC::Microtask>&&);
 
-        JSDOMWindowShell* shell() const;
+    void printErrorMessage(const String&) const;
 
-        static void fireFrameClearedWatchpointsForWindow(DOMWindow*);
+    JSDOMWindowProxy* proxy() const;
 
-    protected:
-        JSC::WatchpointSet m_windowCloseWatchpoints;
+    static void fireFrameClearedWatchpointsForWindow(DOMWindow*);
 
-    private:
-        static JSC::JSInternalPromise* moduleLoaderResolve(JSC::JSGlobalObject*, JSC::ExecState*, JSC::JSModuleLoader*, JSC::JSValue, JSC::JSValue, JSC::JSValue);
-        static JSC::JSInternalPromise* moduleLoaderFetch(JSC::JSGlobalObject*, JSC::ExecState*, JSC::JSModuleLoader*, JSC::JSValue, JSC::JSValue);
-        static JSC::JSValue moduleLoaderEvaluate(JSC::JSGlobalObject*, JSC::ExecState*, JSC::JSModuleLoader*, JSC::JSValue, JSC::JSValue, JSC::JSValue);
-        static JSC::JSInternalPromise* moduleLoaderImportModule(JSC::JSGlobalObject*, JSC::ExecState*, JSC::JSModuleLoader*, JSC::JSString*, const JSC::SourceOrigin&);
-        static void promiseRejectionTracker(JSC::JSGlobalObject*, JSC::ExecState*, JSC::JSPromise*, JSC::JSPromiseRejectionOperation);
+protected:
+    JSC::WatchpointSet m_windowCloseWatchpoints;
 
-        RefPtr<DOMWindow> m_wrapped;
-        JSDOMWindowShell* m_shell;
-    };
+private:
+    static JSC::JSInternalPromise* moduleLoaderResolve(JSC::JSGlobalObject*, JSC::ExecState*, JSC::JSModuleLoader*, JSC::JSValue, JSC::JSValue, JSC::JSValue);
+    static JSC::JSInternalPromise* moduleLoaderFetch(JSC::JSGlobalObject*, JSC::ExecState*, JSC::JSModuleLoader*, JSC::JSValue, JSC::JSValue);
+    static JSC::JSValue moduleLoaderEvaluate(JSC::JSGlobalObject*, JSC::ExecState*, JSC::JSModuleLoader*, JSC::JSValue, JSC::JSValue, JSC::JSValue);
+    static JSC::JSInternalPromise* moduleLoaderImportModule(JSC::JSGlobalObject*, JSC::ExecState*, JSC::JSModuleLoader*, JSC::JSString*, const JSC::SourceOrigin&);
+    static void promiseRejectionTracker(JSC::JSGlobalObject*, JSC::ExecState*, JSC::JSPromise*, JSC::JSPromiseRejectionOperation);
 
-    // The following return a JSDOMWindowShell or jsNull()
-    // JSDOMGlobalObject* is ignored, accessing a window in any context will use that DOMWindow's prototype chain.
-    WEBCORE_EXPORT JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, DOMWindow&);
-    inline JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, DOMWindow* window) { return window ? toJS(state, globalObject, *window) : JSC::jsNull(); }
-    JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, Frame&);
-    inline JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, Frame* frame) { return frame ? toJS(state, globalObject, *frame) : JSC::jsNull(); }
-    JSC::JSValue toJS(JSC::ExecState*, DOMWindow&);
-    inline JSC::JSValue toJS(JSC::ExecState* state, DOMWindow* window) { return window ? toJS(state, *window) : JSC::jsNull(); }
+    RefPtr<DOMWindow> m_wrapped;
+    JSDOMWindowProxy* m_proxy;
+};
 
-    // The following return a JSDOMWindow or nullptr.
-    JSDOMWindow* toJSDOMWindow(Frame&, DOMWrapperWorld&);
-    inline JSDOMWindow* toJSDOMWindow(Frame* frame, DOMWrapperWorld& world) { return frame ? toJSDOMWindow(*frame, world) : nullptr; }
-    WEBCORE_EXPORT JSDOMWindow* toJSDOMWindow(JSC::VM&, JSC::JSValue);
+// The following return a JSDOMWindowProxy or jsNull()
+// JSDOMGlobalObject* is ignored, accessing a window in any context will use that DOMWindow's prototype chain.
+WEBCORE_EXPORT JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, DOMWindow&);
+inline JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, DOMWindow* window) { return window ? toJS(state, globalObject, *window) : JSC::jsNull(); }
+JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, Frame&);
+inline JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, Frame* frame) { return frame ? toJS(state, globalObject, *frame) : JSC::jsNull(); }
+JSC::JSValue toJS(JSC::ExecState*, DOMWindow&);
+inline JSC::JSValue toJS(JSC::ExecState* state, DOMWindow* window) { return window ? toJS(state, *window) : JSC::jsNull(); }
 
-    // DOMWindow associated with global object of the "most-recently-entered author function or script
-    // on the stack, or the author function or script that originally scheduled the currently-running callback."
-    // (<https://html.spec.whatwg.org/multipage/webappapis.html#concept-incumbent-everything>, 27 April 2017)
-    // FIXME: Make this work for an "author function or script that originally scheduled the currently-running callback."
-    // See <https://bugs.webkit.org/show_bug.cgi?id=163412>.
-    DOMWindow& incumbentDOMWindow(JSC::ExecState*);
+// The following return a JSDOMWindow or nullptr.
+JSDOMWindow* toJSDOMWindow(Frame&, DOMWrapperWorld&);
+inline JSDOMWindow* toJSDOMWindow(Frame* frame, DOMWrapperWorld& world) { return frame ? toJSDOMWindow(*frame, world) : nullptr; }
+WEBCORE_EXPORT JSDOMWindow* toJSDOMWindow(JSC::VM&, JSC::JSValue);
 
-    DOMWindow& activeDOMWindow(JSC::ExecState*);
-    DOMWindow& firstDOMWindow(JSC::ExecState*);
+// DOMWindow associated with global object of the "most-recently-entered author function or script
+// on the stack, or the author function or script that originally scheduled the currently-running callback."
+// (<https://html.spec.whatwg.org/multipage/webappapis.html#concept-incumbent-everything>, 27 April 2017)
+// FIXME: Make this work for an "author function or script that originally scheduled the currently-running callback."
+// See <https://bugs.webkit.org/show_bug.cgi?id=163412>.
+DOMWindow& incumbentDOMWindow(JSC::ExecState*);
+
+DOMWindow& activeDOMWindow(JSC::ExecState*);
+DOMWindow& firstDOMWindow(JSC::ExecState*);
 
 } // namespace WebCore

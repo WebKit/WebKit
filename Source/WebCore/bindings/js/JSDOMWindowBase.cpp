@@ -77,22 +77,22 @@ const GlobalObjectMethodTable JSDOMWindowBase::s_globalObjectMethodTable = {
     &defaultLanguage
 };
 
-JSDOMWindowBase::JSDOMWindowBase(VM& vm, Structure* structure, RefPtr<DOMWindow>&& window, JSDOMWindowShell* shell)
-    : JSDOMGlobalObject(vm, structure, shell->world(), &s_globalObjectMethodTable)
+JSDOMWindowBase::JSDOMWindowBase(VM& vm, Structure* structure, RefPtr<DOMWindow>&& window, JSDOMWindowProxy* proxy)
+    : JSDOMGlobalObject(vm, structure, proxy->world(), &s_globalObjectMethodTable)
     , m_windowCloseWatchpoints((window && window->frame()) ? IsWatched : IsInvalidated)
     , m_wrapped(WTFMove(window))
-    , m_shell(shell)
+    , m_proxy(proxy)
 {
 }
 
-void JSDOMWindowBase::finishCreation(VM& vm, JSDOMWindowShell* shell)
+void JSDOMWindowBase::finishCreation(VM& vm, JSDOMWindowProxy* proxy)
 {
-    Base::finishCreation(vm, shell);
+    Base::finishCreation(vm, proxy);
     ASSERT(inherits(vm, info()));
 
     GlobalPropertyInfo staticGlobals[] = {
         GlobalPropertyInfo(vm.propertyNames->document, jsNull(), DontDelete | ReadOnly),
-        GlobalPropertyInfo(vm.propertyNames->window, m_shell, DontDelete | ReadOnly),
+        GlobalPropertyInfo(vm.propertyNames->window, m_proxy, DontDelete | ReadOnly),
     };
 
     addStaticGlobals(staticGlobals, WTF_ARRAY_LENGTH(staticGlobals));
@@ -235,14 +235,14 @@ void JSDOMWindowBase::queueTaskToEventLoop(JSGlobalObject& object, Ref<JSC::Micr
     MicrotaskQueue::mainThreadQueue().append(WTFMove(microtask));
 }
 
-void JSDOMWindowBase::willRemoveFromWindowShell()
+void JSDOMWindowBase::willRemoveFromWindowProxy()
 {
     setCurrentEvent(0);
 }
 
-JSDOMWindowShell* JSDOMWindowBase::shell() const
+JSDOMWindowProxy* JSDOMWindowBase::proxy() const
 {
-    return m_shell;
+    return m_proxy;
 }
 
 // JSDOMGlobalObject* is ignored, accessing a window in any context will
@@ -264,7 +264,7 @@ JSValue toJS(ExecState* state, DOMWindow& domWindow)
 
 JSDOMWindow* toJSDOMWindow(Frame& frame, DOMWrapperWorld& world)
 {
-    return frame.script().windowShell(world)->window();
+    return frame.script().windowProxy(world)->window();
 }
 
 JSDOMWindow* toJSDOMWindow(JSC::VM& vm, JSValue value)
@@ -277,8 +277,8 @@ JSDOMWindow* toJSDOMWindow(JSC::VM& vm, JSValue value)
         const ClassInfo* classInfo = object->classInfo(vm);
         if (classInfo == JSDOMWindow::info())
             return jsCast<JSDOMWindow*>(object);
-        if (classInfo == JSDOMWindowShell::info())
-            return jsCast<JSDOMWindowShell*>(object)->window();
+        if (classInfo == JSDOMWindowProxy::info())
+            return jsCast<JSDOMWindowProxy*>(object)->window();
         value = object->getPrototypeDirect();
     }
     return nullptr;

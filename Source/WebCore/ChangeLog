@@ -1,3 +1,134 @@
+2017-06-13  Sam Weinig  <sam@webkit.org>
+
+        Rename JSDOMWindowShell to JSDOMWindowProxy to match the HTML5 spec.
+        https://bugs.webkit.org/show_bug.cgi?id=80733
+
+        Reviewed by Chris Dumez.
+
+        Goodbye dear shell.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/DOMWrapperWorld.cpp:
+        (WebCore::DOMWrapperWorld::~DOMWrapperWorld):
+        (WebCore::DOMWrapperWorld::clearWrappers):
+        * bindings/js/DOMWrapperWorld.h:
+        (WebCore::DOMWrapperWorld::didCreateWindowProxy):
+        (WebCore::DOMWrapperWorld::didDestroyWindowProxy):
+        (WebCore::DOMWrapperWorld::didCreateWindowShell): Deleted.
+        (WebCore::DOMWrapperWorld::didDestroyWindowShell): Deleted.
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::JSDOMWindowBase):
+        (WebCore::JSDOMWindowBase::finishCreation):
+        (WebCore::JSDOMWindowBase::willRemoveFromWindowProxy):
+        (WebCore::JSDOMWindowBase::proxy):
+        (WebCore::toJSDOMWindow):
+        (WebCore::JSDOMWindowBase::willRemoveFromWindowShell): Deleted.
+        (WebCore::JSDOMWindowBase::shell): Deleted.
+        * bindings/js/JSDOMWindowBase.h:
+        (WebCore::toJS):
+        (WebCore::toJSDOMWindow):
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::toWrapped):
+        * bindings/js/JSDOMWindowCustom.h:
+        * bindings/js/JSDOMWindowProperties.h:
+        (WebCore::JSDOMWindowProperties::JSDOMWindowProperties):
+        * bindings/js/JSDOMWindowProxy.cpp: Copied from WebCore/bindings/js/JSDOMWindowShell.cpp.
+        (WebCore::JSDOMWindowProxy::JSDOMWindowProxy):
+        (WebCore::JSDOMWindowProxy::finishCreation):
+        (WebCore::JSDOMWindowProxy::destroy):
+        (WebCore::JSDOMWindowProxy::setWindow):
+        (WebCore::JSDOMWindowProxy::wrapped):
+        (WebCore::JSDOMWindowProxy::toWrapped):
+        (WebCore::toJS):
+        (WebCore::toJSDOMWindowProxy):
+        (WebCore::JSDOMWindowShell::JSDOMWindowShell): Deleted.
+        (WebCore::JSDOMWindowShell::finishCreation): Deleted.
+        (WebCore::JSDOMWindowShell::destroy): Deleted.
+        (WebCore::JSDOMWindowShell::setWindow): Deleted.
+        (WebCore::JSDOMWindowShell::wrapped): Deleted.
+        (WebCore::JSDOMWindowShell::toWrapped): Deleted.
+        (WebCore::toJSDOMWindowShell): Deleted.
+        * bindings/js/JSDOMWindowProxy.h: Copied from WebCore/bindings/js/JSDOMWindowShell.h.
+        (WebCore::JSDOMWindowProxy::create):
+        (WebCore::toJSDOMWindowProxy):
+        (WebCore::JSDOMWindowShell::window): Deleted.
+        (WebCore::JSDOMWindowShell::create): Deleted.
+        (WebCore::JSDOMWindowShell::createStructure): Deleted.
+        (WebCore::JSDOMWindowShell::world): Deleted.
+        (WebCore::toJSDOMWindowShell): Deleted.
+        * bindings/js/JSDOMWindowShell.cpp: Removed.
+        * bindings/js/JSDOMWindowShell.h: Removed.
+        * bindings/js/JSEventTargetCustom.cpp:
+        (WebCore::JSEventTarget::toWrapped):
+        * bindings/js/JSHTMLDocumentCustom.cpp:
+        (WebCore::JSHTMLDocument::open):
+        * bindings/js/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::execute):
+        * bindings/js/ScriptCachedFrameData.cpp:
+        (WebCore::ScriptCachedFrameData::ScriptCachedFrameData):
+        (WebCore::ScriptCachedFrameData::restore):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::collectGarbageAfterWindowProxyDestruction):
+        (WebCore::ScriptController::~ScriptController):
+        (WebCore::ScriptController::destroyWindowProxy):
+        (WebCore::ScriptController::createWindowProxy):
+        (WebCore::ScriptController::evaluateInWorld):
+        (WebCore::ScriptController::loadModuleScriptInWorld):
+        (WebCore::ScriptController::linkAndEvaluateModuleScriptInWorld):
+        (WebCore::ScriptController::evaluateModule):
+        (WebCore::ScriptController::windowProxies):
+        (WebCore::ScriptController::clearWindowProxiesNotMatchingDOMWindow):
+        (WebCore::ScriptController::setDOMWindowForWindowProxy):
+        (WebCore::ScriptController::initScript):
+        (WebCore::ScriptController::setupModuleScriptHandlers):
+        (WebCore::ScriptController::eventHandlerPosition):
+        (WebCore::ScriptController::enableEval):
+        (WebCore::ScriptController::disableEval):
+        (WebCore::ScriptController::canAccessFromCurrentOrigin):
+        (WebCore::ScriptController::attachDebugger):
+        (WebCore::ScriptController::updateDocument):
+        (WebCore::ScriptController::cacheableBindingRootObject):
+        (WebCore::ScriptController::bindingRootObject):
+        (WebCore::ScriptController::createRootObject):
+        (WebCore::ScriptController::collectIsolatedContexts):
+        (WebCore::ScriptController::windowScriptNPObject):
+        (WebCore::ScriptController::jsObjectForPluginElement):
+        (WebCore::ScriptController::cleanupScriptObjectsForPlugin):
+        (WebCore::ScriptController::clearScriptObjects):
+        (WebCore::ScriptController::executeIfJavaScriptURL):
+        (WebCore::collectGarbageAfterWindowShellDestruction): Deleted.
+        (WebCore::ScriptController::destroyWindowShell): Deleted.
+        (WebCore::ScriptController::createWindowShell): Deleted.
+        (WebCore::ScriptController::windowShells): Deleted.
+        (WebCore::ScriptController::clearWindowShellsNotMatchingDOMWindow): Deleted.
+        (WebCore::ScriptController::setDOMWindowForWindowShell): Deleted.
+        * bindings/js/ScriptController.h:
+        (WebCore::ScriptController::windowProxy):
+        (WebCore::ScriptController::existingWindowProxy):
+        (WebCore::ScriptController::globalObject):
+        (WebCore::ScriptController::windowShell): Deleted.
+        (WebCore::ScriptController::existingWindowShell): Deleted.
+        * bindings/js/ScriptControllerMac.mm:
+        (WebCore::ScriptController::windowScriptObject):
+        * bindings/js/ScriptState.cpp:
+        (WebCore::mainWorldExecState):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GenerateOverloadDispatcher):
+        (GenerateImplementation):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethodOverloadDispatcher):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::clear):
+        (WebCore::FrameLoader::dispatchDidClearWindowObjectInWorld):
+        * page/Frame.cpp:
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::didCreateWindowProxy):
+        (WebCore::ContentSecurityPolicy::didCreateWindowShell): Deleted.
+        * page/csp/ContentSecurityPolicy.h:
+
 2017-06-13  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, fix typo in variable introduced in r218108.

@@ -2001,10 +2001,10 @@ HRESULT WebFrame::stringByEvaluatingJavaScriptInScriptWorld(IWebScriptWorld* iWo
     // Start off with some guess at a frame and a global object, we'll try to do better...!
     JSDOMWindow* anyWorldGlobalObject = coreFrame->script().globalObject(mainThreadNormalWorld());
 
-    // The global object is probably a shell object? - if so, we know how to use this!
+    // The global object is probably a proxy object? - if so, we know how to use this!
     JSC::JSObject* globalObjectObj = toJS(globalObjectRef);
-    if (globalObjectObj->inherits(*globalObjectObj->vm(), JSDOMWindowShell::info()))
-        anyWorldGlobalObject = static_cast<JSDOMWindowShell*>(globalObjectObj)->window();
+    if (globalObjectObj->inherits(*globalObjectObj->vm(), JSDOMWindowProxy::info()))
+        anyWorldGlobalObject = static_cast<JSDOMWindowProxy*>(globalObjectObj)->window();
 
     // Get the frame frome the global object we've settled on.
     Frame* frame = anyWorldGlobalObject->wrapped().frame();

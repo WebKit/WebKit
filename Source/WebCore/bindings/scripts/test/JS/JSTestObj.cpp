@@ -38,7 +38,7 @@
 #include "JSDOMStringList.h"
 #include "JSDOMWindow.h"
 #include "JSDOMWindowBase.h"
-#include "JSDOMWindowShell.h"
+#include "JSDOMWindowProxy.h"
 #include "JSDOMWrapperCache.h"
 #include "JSDocument.h"
 #include "JSElement.h"
@@ -6726,7 +6726,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodOver
             return jsTestObjPrototypeFunctionOverloadedMethod6Body(state, castedThis, throwScope);
         if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(vm, JSTestObj::info()))
             return jsTestObjPrototypeFunctionOverloadedMethod8Body(state, castedThis, throwScope);
-        if (distinguishingArg.isObject() && (asObject(distinguishingArg)->inherits(vm, JSDOMWindowShell::info()) || asObject(distinguishingArg)->inherits(vm, JSDOMWindow::info())))
+        if (distinguishingArg.isObject() && (asObject(distinguishingArg)->inherits(vm, JSDOMWindowProxy::info()) || asObject(distinguishingArg)->inherits(vm, JSDOMWindow::info())))
             return jsTestObjPrototypeFunctionOverloadedMethod9Body(state, castedThis, throwScope);
         if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(vm, JSBlob::info()))
             return jsTestObjPrototypeFunctionOverloadedMethod13Body(state, castedThis, throwScope);

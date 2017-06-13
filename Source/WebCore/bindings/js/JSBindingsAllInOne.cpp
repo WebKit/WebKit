@@ -54,7 +54,7 @@
 #include "JSDOMWindowBase.cpp"
 #include "JSDOMWindowCustom.cpp"
 #include "JSDOMWindowProperties.cpp"
-#include "JSDOMWindowShell.cpp"
+#include "JSDOMWindowProxy.cpp"
 #include "JSDOMWrapper.cpp"
 #include "JSDOMWrapperCache.cpp"
 #include "JSDocumentCustom.cpp"

@@ -42,7 +42,7 @@
 #include "Frame.h"
 #include "HTMLParserIdioms.h"
 #include "InspectorInstrumentation.h"
-#include "JSDOMWindowShell.h"
+#include "JSDOMWindowProxy.h"
 #include "JSMainThreadExecState.h"
 #include "ParsingUtilities.h"
 #include "PingLoader.h"
@@ -148,13 +148,13 @@ bool ContentSecurityPolicy::allowRunningOrDisplayingInsecureContent(const URL& u
     return allow;
 }
 
-void ContentSecurityPolicy::didCreateWindowShell(JSDOMWindowShell& windowShell) const
+void ContentSecurityPolicy::didCreateWindowProxy(JSDOMWindowProxy& windowProxy) const
 {
-    JSDOMWindow* window = windowShell.window();
+    auto* window = windowProxy.window();
     ASSERT(window);
     ASSERT(window->scriptExecutionContext());
     ASSERT(window->scriptExecutionContext()->contentSecurityPolicy() == this);
-    if (!windowShell.world().isNormal()) {
+    if (!windowProxy.world().isNormal()) {
         window->setEvalEnabled(true);
         return;
     }

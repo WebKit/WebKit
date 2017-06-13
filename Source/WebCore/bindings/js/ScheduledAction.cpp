@@ -123,7 +123,7 @@ void ScheduledAction::execute(Document& document)
         return;
 
     if (m_function)
-        executeFunctionInContext(window, window->shell(), document);
+        executeFunctionInContext(window, window->proxy(), document);
     else
         frame->script().executeScriptInWorld(m_isolatedWorld, m_code);
 }

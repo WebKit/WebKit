@@ -709,7 +709,7 @@ HeapSnapshot = class HeapSnapshot
     {
         let className = this._nodeClassNamesTable[this._nodes[nodeIndex + nodeClassNameOffset]];
         return className === "Window"
-            || className === "JSDOMWindowShell"
+            || className === "JSDOMWindowProxy"
             || className === "GlobalObject";
     }
 

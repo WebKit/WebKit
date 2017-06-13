@@ -1,3 +1,18 @@
+2017-06-13  Sam Weinig  <sam@webkit.org>
+
+        Rename JSDOMWindowShell to JSDOMWindowProxy to match the HTML5 spec.
+        https://bugs.webkit.org/show_bug.cgi?id=80733
+
+        Reviewed by Chris Dumez.
+
+        * DOM/DOMUtility.mm:
+        (createDOMWrapper):
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::getWindowNPObject):
+        * WebView/WebFrame.mm:
+        (-[WebFrame _attachScriptDebugger]):
+        (-[WebFrame _stringByEvaluatingJavaScriptFromString:withGlobalObject:inScriptWorld:]):
+
 2017-06-12  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebCrypto] Remove experimental feature flag of SubtleCrypto
