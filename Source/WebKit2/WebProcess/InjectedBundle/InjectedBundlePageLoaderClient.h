@@ -27,9 +27,8 @@
 #define InjectedBundlePageLoaderClient_h
 
 #include "APIClient.h"
-#include "SameDocumentNavigationType.h"
+#include "APIInjectedBundlePageLoaderClient.h"
 #include "WKBundlePageLoaderClient.h"
-#include <WebCore/LayoutMilestones.h>
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
 
@@ -43,64 +42,53 @@ template<> struct ClientTraits<WKBundlePageLoaderClientBase> {
 };
 }
 
-namespace WebCore {
-class DOMWindowExtension;
-class DOMWrapperWorld;
-class ResourceError;
-class ResourceRequest;
-class ResourceResponse;
-class SharedBuffer;
-class URL;
-}
-
 namespace WebKit {
 
-class InjectedBundleBackForwardListItem;
-class WebPage;
-class WebFrame;
-
-class InjectedBundlePageLoaderClient : public API::Client<WKBundlePageLoaderClientBase> {
+class InjectedBundlePageLoaderClient : public API::Client<WKBundlePageLoaderClientBase>, public API::InjectedBundle::PageLoaderClient {
 public:
-    void willLoadURLRequest(WebPage*, const WebCore::ResourceRequest&, API::Object*);
-    void willLoadDataRequest(WebPage*, const WebCore::ResourceRequest&, WebCore::SharedBuffer*, const String&, const String&, const WebCore::URL&, API::Object*);
+    explicit InjectedBundlePageLoaderClient(const WKBundlePageLoaderClientBase*);
 
-    bool shouldGoToBackForwardListItem(WebPage*, InjectedBundleBackForwardListItem*, RefPtr<API::Object>& userData);
-    void didStartProvisionalLoadForFrame(WebPage*, WebFrame*, RefPtr<API::Object>& userData);
-    void didReceiveServerRedirectForProvisionalLoadForFrame(WebPage*, WebFrame*, RefPtr<API::Object>& userData);
-    void didFailProvisionalLoadWithErrorForFrame(WebPage*, WebFrame*, const WebCore::ResourceError&, RefPtr<API::Object>& userData);
-    void didCommitLoadForFrame(WebPage*, WebFrame*, RefPtr<API::Object>& userData);
-    void didFinishDocumentLoadForFrame(WebPage*, WebFrame*, RefPtr<API::Object>& userData);
-    void didFinishLoadForFrame(WebPage*, WebFrame*, RefPtr<API::Object>& userData);
-    void didFinishProgress(WebPage*);
-    void didFailLoadWithErrorForFrame(WebPage*, WebFrame*, const WebCore::ResourceError&, RefPtr<API::Object>& userData);
-    void didSameDocumentNavigationForFrame(WebPage*, WebFrame*, SameDocumentNavigationType, RefPtr<API::Object>& userData);
-    void didReceiveTitleForFrame(WebPage*, const String&, WebFrame*, RefPtr<API::Object>& userData);
-    void didRemoveFrameFromHierarchy(WebPage*, WebFrame*, RefPtr<API::Object>& userData);
-    void didDisplayInsecureContentForFrame(WebPage*, WebFrame*, RefPtr<API::Object>& userData);
-    void didRunInsecureContentForFrame(WebPage*, WebFrame*, RefPtr<API::Object>& userData);
-    void didDetectXSSForFrame(WebPage*, WebFrame*, RefPtr<API::Object>& userData);
+    void willLoadURLRequest(WebPage&, const WebCore::ResourceRequest&, API::Object*) override;
+    void willLoadDataRequest(WebPage&, const WebCore::ResourceRequest&, WebCore::SharedBuffer*, const WTF::String&, const WTF::String&, const WebCore::URL&, API::Object*) override;
 
-    void didFirstLayoutForFrame(WebPage*, WebFrame*, RefPtr<API::Object>& userData);
-    void didFirstVisuallyNonEmptyLayoutForFrame(WebPage*, WebFrame*, RefPtr<API::Object>& userData);
-    void didLayoutForFrame(WebPage*, WebFrame*);
-    void didReachLayoutMilestone(WebPage*, WebCore::LayoutMilestones, RefPtr<API::Object>& userData);
+    bool shouldGoToBackForwardListItem(WebPage&, InjectedBundleBackForwardListItem&, RefPtr<API::Object>&) override;
+    void didStartProvisionalLoadForFrame(WebPage&, WebFrame&, RefPtr<API::Object>&) override;
+    void didReceiveServerRedirectForProvisionalLoadForFrame(WebPage&, WebFrame&, RefPtr<API::Object>&) override;
+    void didFailProvisionalLoadWithErrorForFrame(WebPage&, WebFrame&, const WebCore::ResourceError&, RefPtr<API::Object>&) override;
+    void didCommitLoadForFrame(WebPage&, WebFrame&, RefPtr<API::Object>&) override;
+    void didFinishDocumentLoadForFrame(WebPage&, WebFrame&, RefPtr<API::Object>&) override;
+    void didFinishLoadForFrame(WebPage&, WebFrame&, RefPtr<API::Object>&) override;
+    void didFinishProgress(WebPage&) override;
+    void didFailLoadWithErrorForFrame(WebPage&, WebFrame&, const WebCore::ResourceError&, RefPtr<API::Object>&) override;
+    void didSameDocumentNavigationForFrame(WebPage&, WebFrame&, SameDocumentNavigationType, RefPtr<API::Object>&) override;
+    void didReceiveTitleForFrame(WebPage&, const WTF::String&, WebFrame&, RefPtr<API::Object>&) override;
+    void didRemoveFrameFromHierarchy(WebPage&, WebFrame&, RefPtr<API::Object>&) override;
+    void didDisplayInsecureContentForFrame(WebPage&, WebFrame&, RefPtr<API::Object>&) override;
+    void didRunInsecureContentForFrame(WebPage&, WebFrame&, RefPtr<API::Object>&) override;
+    void didDetectXSSForFrame(WebPage&, WebFrame&, RefPtr<API::Object>&) override;
 
-    void didClearWindowObjectForFrame(WebPage*, WebFrame*, WebCore::DOMWrapperWorld&);
-    void didCancelClientRedirectForFrame(WebPage*, WebFrame*);
-    void willPerformClientRedirectForFrame(WebPage*, WebFrame*, const String& url, double delay, double date);
-    void didHandleOnloadEventsForFrame(WebPage*, WebFrame*);
+    void didFirstLayoutForFrame(WebPage&, WebFrame&, RefPtr<API::Object>&) override;
+    void didFirstVisuallyNonEmptyLayoutForFrame(WebPage&, WebFrame&, RefPtr<API::Object>&) override;
+    void didLayoutForFrame(WebPage&, WebFrame&) override;
+    void didReachLayoutMilestone(WebPage&, WebCore::LayoutMilestones, RefPtr<API::Object>&) override;
 
-    void globalObjectIsAvailableForFrame(WebPage*, WebFrame*, WebCore::DOMWrapperWorld&);
-    void willDisconnectDOMWindowExtensionFromGlobalObject(WebPage*, WebCore::DOMWindowExtension*);
-    void didReconnectDOMWindowExtensionToGlobalObject(WebPage*, WebCore::DOMWindowExtension*);
-    void willDestroyGlobalObjectForDOMWindowExtension(WebPage*, WebCore::DOMWindowExtension*);
+    void didClearWindowObjectForFrame(WebPage&, WebFrame&, WebCore::DOMWrapperWorld&) override;
+    void didCancelClientRedirectForFrame(WebPage&, WebFrame&) override;
+    void willPerformClientRedirectForFrame(WebPage&, WebFrame&, const WTF::String&, double /*delay*/, double /*date*/) override;
+    void didHandleOnloadEventsForFrame(WebPage&, WebFrame&) override;
 
-    bool shouldForceUniversalAccessFromLocalURL(WebPage*, const String& url);
+    void globalObjectIsAvailableForFrame(WebPage&, WebFrame&, WebCore::DOMWrapperWorld&) override;
+    void willDisconnectDOMWindowExtensionFromGlobalObject(WebPage&, WebCore::DOMWindowExtension*) override;
+    void didReconnectDOMWindowExtensionToGlobalObject(WebPage&, WebCore::DOMWindowExtension*) override;
+    void willDestroyGlobalObjectForDOMWindowExtension(WebPage&, WebCore::DOMWindowExtension*) override;
 
-    void featuresUsedInPage(WebPage*, const Vector<String>&);
+    bool shouldForceUniversalAccessFromLocalURL(WebPage&, const WTF::String&) override;
 
-    void willDestroyFrame(WebPage*, WebFrame*);
-    API::String* userAgentForURL(WebFrame*, API::URL*) const;
+    void featuresUsedInPage(WebPage&, const Vector<WTF::String>&) override;
+
+    WTF::String userAgentForURL(WebFrame&, const WebCore::URL&) const override;
+
+    WebCore::LayoutMilestones layoutMilestones() const override;
 };
 
 } // namespace WebKit

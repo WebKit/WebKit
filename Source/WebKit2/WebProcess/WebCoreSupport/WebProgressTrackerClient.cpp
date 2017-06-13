@@ -73,7 +73,7 @@ void WebProgressTrackerClient::progressFinished(Frame& originatingProgressFrame)
     m_webPage.setMainFrameProgressCompleted(true);
 
     // Notify the bundle client.
-    m_webPage.injectedBundleLoaderClient().didFinishProgress(&m_webPage);
+    m_webPage.injectedBundleLoaderClient().didFinishProgress(m_webPage);
 
     m_webPage.send(Messages::WebPageProxy::DidFinishProgress());
 }

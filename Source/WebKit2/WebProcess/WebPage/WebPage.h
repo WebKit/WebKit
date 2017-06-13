@@ -28,12 +28,12 @@
 #include "APIInjectedBundleEditorClient.h"
 #include "APIInjectedBundleFormClient.h"
 #include "APIInjectedBundlePageContextMenuClient.h"
+#include "APIInjectedBundlePageLoaderClient.h"
 #include "APIInjectedBundlePageUIClient.h"
 #include "APIObject.h"
 #include "EditingRange.h"
 #include "InjectedBundlePageContextMenuClient.h"
 #include "InjectedBundlePageFullScreenClient.h"
-#include "InjectedBundlePageLoaderClient.h"
 #include "InjectedBundlePagePolicyClient.h"
 #include "InjectedBundlePageResourceLoadClient.h"
 #include "LayerTreeContext.h"
@@ -330,7 +330,7 @@ public:
 #endif
     void setInjectedBundleEditorClient(std::unique_ptr<API::InjectedBundle::EditorClient>);
     void setInjectedBundleFormClient(std::unique_ptr<API::InjectedBundle::FormClient>);
-    void initializeInjectedBundleLoaderClient(WKBundlePageLoaderClientBase*);
+    void setInjectedBundlePageLoaderClient(std::unique_ptr<API::InjectedBundle::PageLoaderClient>);
     void initializeInjectedBundlePolicyClient(WKBundlePagePolicyClientBase*);
     void initializeInjectedBundleResourceLoadClient(WKBundlePageResourceLoadClientBase*);
     void setInjectedBundleUIClient(std::unique_ptr<API::InjectedBundle::PageUIClient>);
@@ -343,7 +343,7 @@ public:
 #endif
     API::InjectedBundle::EditorClient& injectedBundleEditorClient() { return *m_editorClient.get(); }
     API::InjectedBundle::FormClient& injectedBundleFormClient() { return *m_formClient.get(); }
-    InjectedBundlePageLoaderClient& injectedBundleLoaderClient() { return m_loaderClient; }
+    API::InjectedBundle::PageLoaderClient& injectedBundleLoaderClient() { return *m_loaderClient; }
     InjectedBundlePagePolicyClient& injectedBundlePolicyClient() { return m_policyClient; }
     InjectedBundlePageResourceLoadClient& injectedBundleResourceLoadClient() { return m_resourceLoadClient; }
     API::InjectedBundle::PageUIClient& injectedBundleUIClient() { return *m_uiClient.get(); }
@@ -1382,7 +1382,7 @@ private:
 #endif
     std::unique_ptr<API::InjectedBundle::EditorClient> m_editorClient;
     std::unique_ptr<API::InjectedBundle::FormClient> m_formClient;
-    InjectedBundlePageLoaderClient m_loaderClient;
+    std::unique_ptr<API::InjectedBundle::PageLoaderClient> m_loaderClient;
     InjectedBundlePagePolicyClient m_policyClient;
     InjectedBundlePageResourceLoadClient m_resourceLoadClient;
     std::unique_ptr<API::InjectedBundle::PageUIClient> m_uiClient;

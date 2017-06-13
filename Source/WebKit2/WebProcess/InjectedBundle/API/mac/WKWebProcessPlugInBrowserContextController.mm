@@ -255,7 +255,7 @@ static void setUpPageLoaderClient(WKWebProcessPlugInBrowserContextController *co
     client.didLayoutForFrame = didLayoutForFrame;
     client.didLayout = didReachLayoutMilestone;
 
-    page.initializeInjectedBundleLoaderClient(&client.base);
+    WKBundlePageSetPageLoaderClient(toAPI(&page), &client.base);
 }
 
 static WKURLRequestRef willSendRequestForFrame(WKBundlePageRef, WKBundleFrameRef frame, uint64_t resourceIdentifier, WKURLRequestRef request, WKURLResponseRef redirectResponse, const void* clientInfo)
@@ -349,7 +349,7 @@ static void setUpResourceLoadClient(WKWebProcessPlugInBrowserContextController *
         setUpPageLoaderClient(self, *_page);
         setUpResourceLoadClient(self, *_page);
     } else {
-        _page->initializeInjectedBundleLoaderClient(nullptr);
+        WKBundlePageSetPageLoaderClient(toAPI(_page.get()), nullptr);
         _page->initializeInjectedBundleResourceLoadClient(nullptr);
     }
 }

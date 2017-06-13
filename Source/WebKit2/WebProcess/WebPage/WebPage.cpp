@@ -339,6 +339,7 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
 #endif
     , m_editorClient { std::make_unique<API::InjectedBundle::EditorClient>() }
     , m_formClient(std::make_unique<API::InjectedBundle::FormClient>())
+    , m_loaderClient(std::make_unique<API::InjectedBundle::PageLoaderClient>())
     , m_uiClient(std::make_unique<API::InjectedBundle::PageUIClient>())
     , m_findController(makeUniqueRef<FindController>(this))
     , m_userContentController(WebUserContentController::getOrCreate(parameters.userContentControllerID))
@@ -725,22 +726,19 @@ void WebPage::setInjectedBundleFormClient(std::unique_ptr<API::InjectedBundle::F
     m_formClient = WTFMove(formClient);
 }
 
-void WebPage::initializeInjectedBundleLoaderClient(WKBundlePageLoaderClientBase* client)
+void WebPage::setInjectedBundlePageLoaderClient(std::unique_ptr<API::InjectedBundle::PageLoaderClient> loaderClient)
 {
-    m_loaderClient.initialize(client);
+    if (!loaderClient) {
+        m_loaderClient = std::make_unique<API::InjectedBundle::PageLoaderClient>();
+        return;
+    }
+
+    m_loaderClient = WTFMove(loaderClient);
 
     // It would be nice to get rid of this code and transition all clients to using didLayout instead of
     // didFirstLayoutInFrame and didFirstVisuallyNonEmptyLayoutInFrame. In the meantime, this is required
     // for backwards compatibility.
-    LayoutMilestones milestones = 0;
-    if (client) {
-        if (m_loaderClient.client().didFirstLayoutForFrame)
-            milestones |= WebCore::DidFirstLayout;
-        if (m_loaderClient.client().didFirstVisuallyNonEmptyLayoutForFrame)
-            milestones |= WebCore::DidFirstVisuallyNonEmptyLayout;
-    }
-
-    if (milestones)
+    if (auto milestones = m_loaderClient->layoutMilestones())
         listenForLayoutMilestones(milestones);
 }
 
@@ -1150,7 +1148,7 @@ void WebPage::close()
 #endif
     m_editorClient = std::make_unique<API::InjectedBundle::EditorClient>();
     m_formClient = std::make_unique<API::InjectedBundle::FormClient>();
-    m_loaderClient.initialize(0);
+    m_loaderClient = std::make_unique<API::InjectedBundle::PageLoaderClient>();
     m_policyClient.initialize(0);
     m_resourceLoadClient.initialize(0);
     m_uiClient = std::make_unique<API::InjectedBundle::PageUIClient>();
@@ -1218,7 +1216,7 @@ void WebPage::loadRequest(const LoadParameters& loadParameters)
 
     // Let the InjectedBundle know we are about to start the load, passing the user data from the UIProcess
     // to all the client to set up any needed state.
-    m_loaderClient.willLoadURLRequest(this, loadParameters.request, WebProcess::singleton().transformHandlesToObjects(loadParameters.userData.object()).get());
+    m_loaderClient->willLoadURLRequest(*this, loadParameters.request, WebProcess::singleton().transformHandlesToObjects(loadParameters.userData.object()).get());
 
     platformDidReceiveLoadParameters(loadParameters);
 
@@ -1244,7 +1242,7 @@ void WebPage::loadDataImpl(uint64_t navigationID, Ref<SharedBuffer>&& sharedBuff
 
     // Let the InjectedBundle know we are about to start the load, passing the user data from the UIProcess
     // to all the client to set up any needed state.
-    m_loaderClient.willLoadDataRequest(this, request, const_cast<SharedBuffer*>(substituteData.content()), substituteData.mimeType(), substituteData.textEncoding(), substituteData.failingURL(), WebProcess::singleton().transformHandlesToObjects(userData.object()).get());
+    m_loaderClient->willLoadDataRequest(*this, request, const_cast<SharedBuffer*>(substituteData.content()), substituteData.mimeType(), substituteData.textEncoding(), substituteData.failingURL(), WebProcess::singleton().transformHandlesToObjects(userData.object()).get());
 
     // Initate the load in WebCore.
     m_mainFrame->coreFrame()->loader().load(FrameLoadRequest(m_mainFrame->coreFrame(), request, ShouldOpenExternalURLsPolicy::ShouldNotAllow, substituteData));
@@ -2786,10 +2784,10 @@ String WebPage::userAgent(const URL& webCoreURL) const
 
 String WebPage::userAgent(WebFrame* frame, const URL& webcoreURL) const
 {
-    if (frame && m_loaderClient.client().userAgentForURL) {
-        API::String* apiString = m_loaderClient.userAgentForURL(frame, API::URL::create(webcoreURL).ptr());
-        if (apiString)
-            return apiString->string();
+    if (frame) {
+        String userAgent = m_loaderClient->userAgentForURL(*frame, webcoreURL);
+        if (!userAgent.isEmpty())
+            return userAgent;
     }
 
     String userAgent = platformUserAgent(webcoreURL);
@@ -5598,7 +5596,7 @@ RefPtr<Range> WebPage::currentSelectionAsRange()
 void WebPage::reportUsedFeatures()
 {
     Vector<String> namedFeatures;
-    m_loaderClient.featuresUsedInPage(this, namedFeatures);
+    m_loaderClient->featuresUsedInPage(*this, namedFeatures);
 }
 
 void WebPage::updateWebsitePolicies(const WebsitePolicies& websitePolicies)
@@ -5828,7 +5826,7 @@ void WebPage::removeAllUserContent()
 void WebPage::dispatchDidReachLayoutMilestone(WebCore::LayoutMilestones milestones)
 {
     RefPtr<API::Object> userData;
-    injectedBundleLoaderClient().didReachLayoutMilestone(this, milestones, userData);
+    injectedBundleLoaderClient().didReachLayoutMilestone(*this, milestones, userData);
 
     // Clients should not set userData for this message, and it won't be passed through.
     ASSERT(!userData);

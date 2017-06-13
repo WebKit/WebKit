@@ -1207,6 +1207,7 @@
 		75A8D2C9187CCFAF00C39C9E /* WKWebsiteDataStore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 75A8D2C5187CCF9F00C39C9E /* WKWebsiteDataStore.mm */; };
 		75A8D2D6187D1C0E00C39C9E /* WKWebsiteDataStoreInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 75A8D2D4187D1C0100C39C9E /* WKWebsiteDataStoreInternal.h */; };
 		762B748D120BC75C00819339 /* WKPreferencesRefPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 762B7484120BBA2D00819339 /* WKPreferencesRefPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7A3ACE1B1EEEF79B00A864A4 /* APIInjectedBundlePageLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A3ACE1A1EEEF78C00A864A4 /* APIInjectedBundlePageLoaderClient.h */; };
 		7A772C8D1DDD4A25000F34F1 /* com.apple.WebKit.plugin-common.sb in Copy Plug-in Sandbox Profiles */ = {isa = PBXBuildFile; fileRef = 7A1506721DD56298001F4B58 /* com.apple.WebKit.plugin-common.sb */; };
 		7A791EFA1C7CFCF100C4C52B /* WebResourceLoadStatisticsStoreMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A791EF91C7CFB3700C4C52B /* WebResourceLoadStatisticsStoreMessageReceiver.cpp */; };
 		7A791EFB1C7CFD0100C4C52B /* WebResourceLoadStatisticsStoreMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A791EF81C7CFB1000C4C52B /* WebResourceLoadStatisticsStoreMessages.h */; };
@@ -3492,6 +3493,7 @@
 		762B7481120BBA0100819339 /* FontSmoothingLevel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontSmoothingLevel.h; sourceTree = "<group>"; };
 		762B7484120BBA2D00819339 /* WKPreferencesRefPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPreferencesRefPrivate.h; sourceTree = "<group>"; };
 		7A1506721DD56298001F4B58 /* com.apple.WebKit.plugin-common.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "com.apple.WebKit.plugin-common.sb"; sourceTree = "<group>"; };
+		7A3ACE1A1EEEF78C00A864A4 /* APIInjectedBundlePageLoaderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIInjectedBundlePageLoaderClient.h; sourceTree = "<group>"; };
 		7A5E39491D5BD8A700B4B7CE /* com.macromedia.Flash Player ESR.plugin.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "com.macromedia.Flash Player ESR.plugin.sb"; sourceTree = "<group>"; };
 		7A791EF81C7CFB1000C4C52B /* WebResourceLoadStatisticsStoreMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebResourceLoadStatisticsStoreMessages.h; sourceTree = "<group>"; };
 		7A791EF91C7CFB3700C4C52B /* WebResourceLoadStatisticsStoreMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebResourceLoadStatisticsStoreMessageReceiver.cpp; sourceTree = "<group>"; };
@@ -7243,6 +7245,7 @@
 				BC989D4516181691000D46D3 /* mac */,
 				377512301DF0DEE2008A351C /* APIInjectedBundleEditorClient.h */,
 				076E884F1A13CBC6005E90FC /* APIInjectedBundlePageContextMenuClient.h */,
+				7A3ACE1A1EEEF78C00A864A4 /* APIInjectedBundlePageLoaderClient.h */,
 			);
 			path = API;
 			sourceTree = "<group>";
@@ -8394,6 +8397,7 @@
 				0FDCD7F71D47E92A009F08BC /* LogInitialization.h in Headers */,
 				1A6D86C21DF75265007745E8 /* MachMessage.h in Headers */,
 				BCC56F791159957D001CCAF9 /* MachPort.h in Headers */,
+				7A3ACE1B1EEEF79B00A864A4 /* APIInjectedBundlePageLoaderClient.h in Headers */,
 				1A24B5F311F531E800C38269 /* MachUtilities.h in Headers */,
 				CE1A0BD51A48E6C60054EF74 /* ManagedConfigurationSPI.h in Headers */,
 				51933DEF1965EB31008AC3EA /* MenuUtilities.h in Headers */,

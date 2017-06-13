@@ -35,6 +35,7 @@
 #include "InjectedBundleNodeHandle.h"
 #include "InjectedBundlePageEditorClient.h"
 #include "InjectedBundlePageFormClient.h"
+#include "InjectedBundlePageLoaderClient.h"
 #include "InjectedBundlePageUIClient.h"
 #include "PageBanner.h"
 #include "WKAPICast.h"
@@ -94,7 +95,7 @@ void WKBundlePageSetFormClient(WKBundlePageRef pageRef, WKBundlePageFormClientBa
 
 void WKBundlePageSetPageLoaderClient(WKBundlePageRef pageRef, WKBundlePageLoaderClientBase* wkClient)
 {
-    toImpl(pageRef)->initializeInjectedBundleLoaderClient(wkClient);
+    toImpl(pageRef)->setInjectedBundlePageLoaderClient(std::make_unique<InjectedBundlePageLoaderClient>(wkClient));
 }
 
 void WKBundlePageSetResourceLoadClient(WKBundlePageRef pageRef, WKBundlePageResourceLoadClientBase* wkClient)

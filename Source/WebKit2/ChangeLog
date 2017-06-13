@@ -1,3 +1,128 @@
+2017-06-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Add API::InjectedBundle::PageLoaderClient
+        https://bugs.webkit.org/show_bug.cgi?id=173265
+
+        Reviewed by Alex Christensen.
+
+        It will be used by the GTK+ port instead of the C API.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/API/APIInjectedBundlePageLoaderClient.h: Added.
+        (API::InjectedBundle::PageLoaderClient::willLoadURLRequest):
+        (API::InjectedBundle::PageLoaderClient::willLoadDataRequest):
+        (API::InjectedBundle::PageLoaderClient::shouldGoToBackForwardListItem):
+        (API::InjectedBundle::PageLoaderClient::didStartProvisionalLoadForFrame):
+        (API::InjectedBundle::PageLoaderClient::didReceiveServerRedirectForProvisionalLoadForFrame):
+        (API::InjectedBundle::PageLoaderClient::didFailProvisionalLoadWithErrorForFrame):
+        (API::InjectedBundle::PageLoaderClient::didCommitLoadForFrame):
+        (API::InjectedBundle::PageLoaderClient::didFinishDocumentLoadForFrame):
+        (API::InjectedBundle::PageLoaderClient::didFinishLoadForFrame):
+        (API::InjectedBundle::PageLoaderClient::didFinishProgress):
+        (API::InjectedBundle::PageLoaderClient::didFailLoadWithErrorForFrame):
+        (API::InjectedBundle::PageLoaderClient::didSameDocumentNavigationForFrame):
+        (API::InjectedBundle::PageLoaderClient::didReceiveTitleForFrame):
+        (API::InjectedBundle::PageLoaderClient::didRemoveFrameFromHierarchy):
+        (API::InjectedBundle::PageLoaderClient::didDisplayInsecureContentForFrame):
+        (API::InjectedBundle::PageLoaderClient::didRunInsecureContentForFrame):
+        (API::InjectedBundle::PageLoaderClient::didDetectXSSForFrame):
+        (API::InjectedBundle::PageLoaderClient::didFirstLayoutForFrame):
+        (API::InjectedBundle::PageLoaderClient::didFirstVisuallyNonEmptyLayoutForFrame):
+        (API::InjectedBundle::PageLoaderClient::didLayoutForFrame):
+        (API::InjectedBundle::PageLoaderClient::didReachLayoutMilestone):
+        (API::InjectedBundle::PageLoaderClient::didClearWindowObjectForFrame):
+        (API::InjectedBundle::PageLoaderClient::didCancelClientRedirectForFrame):
+        (API::InjectedBundle::PageLoaderClient::willPerformClientRedirectForFrame):
+        (API::InjectedBundle::PageLoaderClient::didHandleOnloadEventsForFrame):
+        (API::InjectedBundle::PageLoaderClient::globalObjectIsAvailableForFrame):
+        (API::InjectedBundle::PageLoaderClient::willDisconnectDOMWindowExtensionFromGlobalObject):
+        (API::InjectedBundle::PageLoaderClient::didReconnectDOMWindowExtensionToGlobalObject):
+        (API::InjectedBundle::PageLoaderClient::willDestroyGlobalObjectForDOMWindowExtension):
+        (API::InjectedBundle::PageLoaderClient::shouldForceUniversalAccessFromLocalURL):
+        (API::InjectedBundle::PageLoaderClient::featuresUsedInPage):
+        (API::InjectedBundle::PageLoaderClient::willDestroyFrame):
+        (API::InjectedBundle::PageLoaderClient::userAgentForURL):
+        (API::InjectedBundle::PageLoaderClient::layoutMilestones):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageSetPageLoaderClient):
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.cpp:
+        (WebKit::InjectedBundlePageLoaderClient::InjectedBundlePageLoaderClient):
+        (WebKit::InjectedBundlePageLoaderClient::willLoadURLRequest):
+        (WebKit::InjectedBundlePageLoaderClient::willLoadDataRequest):
+        (WebKit::InjectedBundlePageLoaderClient::shouldGoToBackForwardListItem):
+        (WebKit::InjectedBundlePageLoaderClient::didStartProvisionalLoadForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::didReceiveServerRedirectForProvisionalLoadForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::didFailProvisionalLoadWithErrorForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::didCommitLoadForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::didFinishDocumentLoadForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::didFinishLoadForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::didFinishProgress):
+        (WebKit::InjectedBundlePageLoaderClient::didFailLoadWithErrorForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::didSameDocumentNavigationForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::didReceiveTitleForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::didRemoveFrameFromHierarchy):
+        (WebKit::InjectedBundlePageLoaderClient::didDisplayInsecureContentForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::didRunInsecureContentForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::didDetectXSSForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::didFirstLayoutForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::didFirstVisuallyNonEmptyLayoutForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::didLayoutForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::didReachLayoutMilestone):
+        (WebKit::InjectedBundlePageLoaderClient::didClearWindowObjectForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::didCancelClientRedirectForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::willPerformClientRedirectForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::didHandleOnloadEventsForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::globalObjectIsAvailableForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::willDisconnectDOMWindowExtensionFromGlobalObject):
+        (WebKit::InjectedBundlePageLoaderClient::didReconnectDOMWindowExtensionToGlobalObject):
+        (WebKit::InjectedBundlePageLoaderClient::willDestroyGlobalObjectForDOMWindowExtension):
+        (WebKit::InjectedBundlePageLoaderClient::shouldForceUniversalAccessFromLocalURL):
+        (WebKit::InjectedBundlePageLoaderClient::featuresUsedInPage):
+        (WebKit::InjectedBundlePageLoaderClient::userAgentForURL):
+        (WebKit::InjectedBundlePageLoaderClient::layoutMilestones):
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::detachedFromParent2):
+        (WebKit::WebFrameLoaderClient::dispatchDidDispatchOnloadEvents):
+        (WebKit::WebFrameLoaderClient::dispatchDidReceiveServerRedirectForProvisionalLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidCancelClientRedirect):
+        (WebKit::WebFrameLoaderClient::dispatchWillPerformClientRedirect):
+        (WebKit::WebFrameLoaderClient::dispatchDidChangeLocationWithinPage):
+        (WebKit::WebFrameLoaderClient::dispatchDidPushStateWithinPage):
+        (WebKit::WebFrameLoaderClient::dispatchDidReplaceStateWithinPage):
+        (WebKit::WebFrameLoaderClient::dispatchDidPopStateWithinPage):
+        (WebKit::WebFrameLoaderClient::dispatchDidStartProvisionalLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidReceiveTitle):
+        (WebKit::WebFrameLoaderClient::dispatchDidCommitLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidFailProvisionalLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidFailLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidFinishDocumentLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidFinishLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidReachLayoutMilestone):
+        (WebKit::WebFrameLoaderClient::dispatchDidLayout):
+        (WebKit::WebFrameLoaderClient::shouldGoToHistoryItem):
+        (WebKit::WebFrameLoaderClient::didDisplayInsecureContent):
+        (WebKit::WebFrameLoaderClient::didRunInsecureContent):
+        (WebKit::WebFrameLoaderClient::didDetectXSS):
+        (WebKit::WebFrameLoaderClient::dispatchDidClearWindowObjectInWorld):
+        (WebKit::WebFrameLoaderClient::dispatchGlobalObjectAvailable):
+        (WebKit::WebFrameLoaderClient::dispatchWillDisconnectDOMWindowExtensionFromGlobalObject):
+        (WebKit::WebFrameLoaderClient::dispatchDidReconnectDOMWindowExtensionToGlobalObject):
+        (WebKit::WebFrameLoaderClient::dispatchWillDestroyGlobalObjectForDOMWindowExtension):
+        (WebKit::WebFrameLoaderClient::shouldForceUniversalAccessFromLocalURL):
+        * WebProcess/WebCoreSupport/WebProgressTrackerClient.cpp:
+        (WebKit::WebProgressTrackerClient::progressFinished):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setInjectedBundlePageLoaderClient):
+        (WebKit::WebPage::close):
+        (WebKit::WebPage::loadRequest):
+        (WebKit::WebPage::loadDataImpl):
+        (WebKit::WebPage::userAgent):
+        (WebKit::WebPage::reportUsedFeatures):
+        (WebKit::WebPage::dispatchDidReachLayoutMilestone):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::injectedBundleLoaderClient):
+
 2017-06-12  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Peeking on an image could result in a preview at the wrong size
