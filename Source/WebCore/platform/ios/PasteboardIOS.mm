@@ -131,6 +131,8 @@ void Pasteboard::write(const PasteboardImage& pasteboardImage)
 
 void Pasteboard::writePlainText(const String& text, SmartReplaceOption)
 {
+    // FIXME: We vend "public.text" here for backwards compatibility with pre-iOS 11 apps. In the future, we should stop vending this UTI,
+    // and instead set data for concrete plain text types. See <https://bugs.webkit.org/show_bug.cgi?id=173317>.
     platformStrategies()->pasteboardStrategy()->writeToPasteboard(kUTTypeText, text, m_pasteboardName);
 }
 
