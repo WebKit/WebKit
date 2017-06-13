@@ -97,6 +97,22 @@ FontCascadeDescription::FontCascadeDescription()
 {
 }
 
+#if !PLATFORM(COCOA)
+void FontDescription::invalidateCaches()
+{
+}
+    
+unsigned FontCascadeDescription::effectiveFamilyCount() const
+{
+    return familyCount();
+}
+
+FontFamilySpecification FontCascadeDescription::effectiveFamilyAt(unsigned i) const
+{
+    return familyAt(i);
+}
+#endif
+
 FontSelectionValue FontCascadeDescription::lighterWeight(FontSelectionValue weight)
 {
     if (weight < FontSelectionValue(100))

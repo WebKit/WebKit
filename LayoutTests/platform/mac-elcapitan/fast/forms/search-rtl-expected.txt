@@ -41,12 +41,12 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,119) size 784x18
         RenderText {#text} at (0,0) size 37x18
           text run at (0,0) width 37: "PASS"
-layer at (32,47) size 130x13 scrollX 3 scrollWidth 134
+layer at (32,47) size 130x13 scrollX 4 scrollWidth 134
   RenderBlock {DIV} at (0,0) size 131x13
     RenderText {#text} at (-3,0) size 135x13
       text run at (-3,0) width 22 RTL: " \x{5D5}\x{5D6}\x{5D4}\x{5D5}"
-      text run at (18,0) width 20: "she"
-      text run at (37,0) width 44 RTL: " \x{5D5}\x{5D4}\x{5D9}\x{5D0} \x{5D6}\x{5D4} "
+      text run at (18,0) width 19: "she"
+      text run at (36,0) width 45 RTL: " \x{5D5}\x{5D4}\x{5D9}\x{5D0} \x{5D6}\x{5D4} "
       text run at (80,0) width 14: "he"
       text run at (93,0) width 38 RTL: "\x{5D4}\x{5D5}\x{5D0} \x{5D6}\x{5D4} "
 layer at (32,70) size 196x13
