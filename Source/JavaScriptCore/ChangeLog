@@ -1,3 +1,12 @@
+2017-06-13  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: fix erroneous signature comment
+        https://bugs.webkit.org/show_bug.cgi?id=173334
+
+        Reviewed by Keith Miller.
+
+        * wasm/WasmSignature.h:
+
 2017-06-13  Michael Saboff  <msaboff@apple.com>
 
         Refactor AbsenceOfSetter to AbsenceOfSetEffects
