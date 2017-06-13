@@ -1,7 +1,0 @@
-
-FAIL onauxclick is on the appropriate locations for GlobalEventHandlers assert_true: Window has an own property named "onauxclick" expected true got false
-FAIL The default value of onauxclick is always null assert_equals: The default value of the property is null for a Window instance expected (object) null but got (undefined) undefined
-FAIL The onauxclick content attribute must be compiled into the onauxclick property assert_equals: The onauxclick property must be a function expected "function" but got "undefined"
-FAIL The onauxclick content attribute must execute when an event is dispatched assert_true: Dispatching the event must run the code expected true got false
-PASS dispatching an auxclick event must trigger element.onauxclick 
-

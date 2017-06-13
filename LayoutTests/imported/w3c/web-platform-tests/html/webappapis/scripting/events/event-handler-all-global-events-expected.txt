@@ -1,0 +1,26 @@
+CONSOLE MESSAGE: line 60: Unhandled Promise Rejection: Unrecognised tokens, line 1 (tokens: '{"error": {')
+[
+    {
+        "type": "other",
+        "value": "{"
+    },
+    {
+        "type": "string",
+        "value": "\"error\""
+    },
+    {
+        "type": "other",
+        "value": ":"
+    },
+    {
+        "type": "whitespace",
+        "value": " "
+    },
+    {
+        "type": "other",
+        "value": "{"
+    }
+]
+
+FAIL GlobalEventHandlers Unrecognised tokens
+

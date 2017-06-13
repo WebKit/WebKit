@@ -20,6 +20,8 @@ webkit.org/b/152439 compositing/overflow/dynamic-composited-scrolling-status.htm
 
 webkit.org/b/173178 [ Release ] svg/animations/svglength-element-removed-crash.svg [ Skip ]
 
+imported/w3c/web-platform-tests/XMLHttpRequest/setrequestheader-content-type.htm [ Failure ]
+
 # iOS simulator doesn’t support dashboard.
 mathml/mathml-in-dashboard.html [ Failure ]
 svg/custom/embedded-svg-allowed-in-dashboard.xml [ Failure ]

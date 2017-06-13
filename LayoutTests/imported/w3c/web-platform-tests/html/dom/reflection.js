@@ -675,6 +675,10 @@ ReflectionTests.reflects = function(data, idlName, idlObj, domName, domObj) {
                 domTests.push(data.keywords[i].toUpperCase());
                 idlTests.push(data.keywords[i].toUpperCase());
             }
+            if (data.keywords[i] != data.keywords[i].replace(/k/g, "\u212A")) {
+                domTests.push(data.keywords[i].replace(/k/g, "\u212A"));
+                idlTests.push(data.keywords[i].replace(/k/g, "\u212A"));
+            }
         }
 
         // Per spec, the expected DOM values are the same as the value we set
@@ -821,6 +825,10 @@ ReflectionTests.reflects = function(data, idlName, idlObj, domName, domObj) {
     }
 };
 
+function toASCIILowerCase(str) {
+    return str.replace(/[A-Z]/g, function(m) { return m.toLowerCase(); });
+}
+
 /**
  * If we have an enumerated attribute limited to the array of values in
  * keywords, with nonCanon being a map of non-canonical values to their
@@ -831,7 +839,7 @@ ReflectionTests.reflects = function(data, idlName, idlObj, domName, domObj) {
 ReflectionTests.enumExpected = function(keywords, nonCanon, invalidVal, contentVal) {
     var ret = invalidVal;
     for (var i = 0; i < keywords.length; i++) {
-        if (String(contentVal).toLowerCase() == keywords[i].toLowerCase()) {
+        if (toASCIILowerCase(String(contentVal)) === toASCIILowerCase(keywords[i])) {
             ret = keywords[i];
             break;
         }

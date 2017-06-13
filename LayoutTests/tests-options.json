@@ -47,10 +47,19 @@
     "imported/w3c/web-platform-tests/IndexedDB/keypath_maxsize.htm": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/IndexedDB/large-nested-cloning.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/IndexedDB/large-requests-abort.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/IndexedDB/parallel-cursors-upgrade.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/IndexedDB/request-abort-ordering.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/IndexedDB/request-event-ordering.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/IndexedDB/writer-starvation.htm": [
@@ -945,6 +954,15 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/html/tools/html5lib_test_fragment.xml": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/image-decodes/image-decode-iframe.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/image-decodes/image-decode-path-changes.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/image-decodes/image-decode.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/media-source/SourceBuffer-abort-readyState.html": [

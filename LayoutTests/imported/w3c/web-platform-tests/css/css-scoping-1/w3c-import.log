@@ -21,6 +21,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping-1/css-scoping-shadow-assigned-node-with-rules.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping-1/css-scoping-shadow-host-functional-rule-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping-1/css-scoping-shadow-host-functional-rule.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping-1/css-scoping-shadow-host-namespace-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping-1/css-scoping-shadow-host-namespace.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping-1/css-scoping-shadow-host-rule-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping-1/css-scoping-shadow-host-rule.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping-1/css-scoping-shadow-host-with-before-after-expected.html

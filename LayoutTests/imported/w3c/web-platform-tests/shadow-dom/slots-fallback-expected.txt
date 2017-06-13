@@ -8,5 +8,5 @@ PASS Slots fallback: Mutation. Append fallback contents.
 PASS Slots fallback: Mutation. Remove fallback contents. 
 PASS Slots fallback: Mutation. Assign a node to a slot so that fallback contens are no longer used. 
 PASS Slots fallback: Mutation. Remove an assigned node from a slot so that fallback contens will be used. 
-PASS Slots fallback: Mutation.  Remove a slot which is a fallback content of another slot. 
+FAIL Slots fallback: Mutation.  Remove a slot which is a fallback content of another slot. assert_array_equals: fall back contents should be empty because s1 is not in a shadow tree. lengths differ, expected 0 got 1
 

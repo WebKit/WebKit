@@ -199,7 +199,15 @@ class TestEnvironment(object):
 
     def ensure_started(self):
         # Pause for a while to ensure that the server has a chance to start
-        time.sleep(2)
+        for _ in xrange(20):
+            failed = self.test_servers()
+            if not failed:
+                return
+            time.sleep(0.5)
+        raise EnvironmentError("Servers failed to start (scheme:port): %s" % ("%s:%s" for item in failed))
+
+    def test_servers(self):
+        failed = []
         for scheme, servers in self.servers.iteritems():
             for port, server in servers:
                 if self.test_server_port:
@@ -207,10 +215,9 @@ class TestEnvironment(object):
                     try:
                         s.connect((self.config["host"], port))
                     except socket.error:
-                        raise EnvironmentError(
-                            "%s server on port %d failed to start" % (scheme, port))
+                        failed.append((scheme, port))
                     finally:
                         s.close()
 
                 if not server.is_alive():
-                    raise EnvironmentError("%s server on port %d failed to start" % (scheme, port))
+                    failed.append((scheme, port))

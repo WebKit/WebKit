@@ -6,8 +6,6 @@ import tarfile
 import zipfile
 from io import BytesIO
 
-import requests
-
 logger = logging.getLogger(__name__)
 
 
@@ -107,6 +105,8 @@ class pwd(object):
 
 def get(url):
     """Issue GET request to a given URL and return the response."""
+    import requests
+
     logger.debug("GET %s" % url)
     resp = requests.get(url, stream=True)
     resp.raise_for_status()

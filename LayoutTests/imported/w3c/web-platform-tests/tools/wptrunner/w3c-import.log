@@ -16,9 +16,11 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/LICENSE
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/MANIFEST.in
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/OWNERS
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/README.rst
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/requirements.txt
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/requirements_chrome.txt
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/requirements_edge.txt
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/requirements_firefox.txt
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/requirements_sauce.txt
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/requirements_servo.txt

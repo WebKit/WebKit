@@ -83,6 +83,9 @@ is:
 ./wptrun product [tests]
 ```
 
+**On Windows**: for technical reasons the above will not work and you
+must instead run `python tools/wptrun.py products [tests]`.
+
 where `product` is currently `firefox` or `chrome` and `[tests]` is a
 list of paths to tests. This will attempt to automatically locate a
 browser instance and install required dependencies. The command is

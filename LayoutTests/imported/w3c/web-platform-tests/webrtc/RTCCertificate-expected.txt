@@ -1,0 +1,23 @@
+
+FAIL Constructing RTCPeerConnection with expired certificate should reject with InvalidAccessError RTCPeerConnection.generateCertificate is not a function. (In 'RTCPeerConnection.generateCertificate({
+      name: 'ECDSA',
+      namedCurve: 'P-256',
+      expires: 0
+    })', 'RTCPeerConnection.generateCertificate' is undefined)
+FAIL Calling setConfiguration with different set of certs should reject with InvalidModificationError RTCPeerConnection.generateCertificate is not a function. (In 'RTCPeerConnection.generateCertificate({
+      name: 'ECDSA',
+      namedCurve: 'P-256'
+    })', 'RTCPeerConnection.generateCertificate' is undefined)
+FAIL RTCCertificate should have at least one fingerprint RTCPeerConnection.generateCertificate is not a function. (In 'RTCPeerConnection.generateCertificate({
+      name: 'ECDSA',
+      namedCurve: 'P-256'
+    })', 'RTCPeerConnection.generateCertificate' is undefined)
+FAIL RTCPeerConnection({ certificates }) should generate offer SDP with fingerprint of provided certificate RTCPeerConnection.generateCertificate is not a function. (In 'RTCPeerConnection.generateCertificate({
+      name: 'ECDSA',
+      namedCurve: 'P-256'
+    })', 'RTCPeerConnection.generateCertificate' is undefined)
+FAIL RTCPeerConnection({ certificates }) should generate offer SDP with fingerprint of all provided certificates RTCPeerConnection.generateCertificate is not a function. (In 'RTCPeerConnection.generateCertificate({
+      name: 'ECDSA',
+      namedCurve: 'P-256'
+    })', 'RTCPeerConnection.generateCertificate' is undefined)
+

@@ -1,3 +1,326 @@
+2017-06-13  Youenn Fablet  <youenn@apple.com>
+
+        Refresh WPT tests up to cb7017e654fb4daddb9dee8d654c78b26e61fa9f
+        https://bugs.webkit.org/show_bug.cgi?id=173260
+
+        Reviewed by Alex Christensen.
+
+        * resources/TestRepositories:
+        * resources/import-expectations.json:
+        * resources/resource-files.json:
+        * web-platform-tests/FileAPI/BlobURL/support/file_test2.txt: Added.
+        * web-platform-tests/FileAPI/FileReader/support/file_test1.txt: Added.
+        * web-platform-tests/IndexedDB/large-nested-cloning-expected.txt: Added.
+        * web-platform-tests/IndexedDB/large-nested-cloning.html: Added.
+        * web-platform-tests/IndexedDB/large-requests-abort-expected.txt: Added.
+        * web-platform-tests/IndexedDB/large-requests-abort.html: Added.
+        * web-platform-tests/IndexedDB/request-event-ordering-expected.txt: Added.
+        * web-platform-tests/IndexedDB/request-event-ordering.html: Added.
+        * web-platform-tests/IndexedDB/support-promises.js:
+        * web-platform-tests/IndexedDB/w3c-import.log:
+        * web-platform-tests/README.md:
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_RSA-PSS.worker-expected.txt:
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-PSS.worker-expected.txt:
+        * web-platform-tests/WebCryptoAPI/generateKey/test_failures.https-expected.txt:
+        * web-platform-tests/WebCryptoAPI/generateKey/test_failures_RSA-PSS.https-expected.txt:
+        * web-platform-tests/WebCryptoAPI/generateKey/test_successes_RSA-PSS.https-expected.txt:
+        * web-platform-tests/WebCryptoAPI/import_export/rsa_importKey.worker-expected.txt:
+        * web-platform-tests/WebCryptoAPI/import_export/test_rsa_importKey.https-expected.txt:
+        * web-platform-tests/WebCryptoAPI/sign_verify/rsa_pkcs.worker-expected.txt:
+        * web-platform-tests/WebCryptoAPI/sign_verify/rsa_pss.worker-expected.txt:
+        * web-platform-tests/WebCryptoAPI/sign_verify/test_rsa_pkcs.https-expected.txt:
+        * web-platform-tests/WebCryptoAPI/sign_verify/test_rsa_pss.https-expected.txt:
+        * web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/test_wrapKey_unwrapKey.https-expected.txt:
+        * web-platform-tests/XMLHttpRequest/anonymous-mode-unsupported-expected.txt:
+        * web-platform-tests/XMLHttpRequest/open-after-setrequestheader-expected.txt:
+        * web-platform-tests/XMLHttpRequest/open-referer-expected.txt:
+        * web-platform-tests/XMLHttpRequest/open-url-redirected-worker-origin-expected.txt:
+        * web-platform-tests/XMLHttpRequest/resources/infinite-redirects.py:
+        (main):
+        * web-platform-tests/XMLHttpRequest/responsetype-expected.txt:
+        * web-platform-tests/XMLHttpRequest/send-accept-language-expected.txt:
+        * web-platform-tests/XMLHttpRequest/send-blob-with-no-mime-type-expected.txt:
+        * web-platform-tests/XMLHttpRequest/setrequestheader-allow-empty-value-expected.txt:
+        * web-platform-tests/XMLHttpRequest/setrequestheader-allow-whitespace-in-value-expected.txt:
+        * web-platform-tests/XMLHttpRequest/setrequestheader-case-insensitive-expected.txt:
+        * web-platform-tests/XMLHttpRequest/setrequestheader-content-type-expected.txt:
+        * web-platform-tests/XMLHttpRequest/setrequestheader-header-allowed-expected.txt:
+        * web-platform-tests/XMLHttpRequest/setrequestheader-header-forbidden-expected.txt:
+        * web-platform-tests/XMLHttpRequest/setrequestheader-open-setrequestheader-expected.txt:
+        * web-platform-tests/XMLHttpRequest/timeout-sync-expected.txt:
+        * web-platform-tests/check_stability.py:
+        (Browser.wptrunner_args):
+        (Chrome.wptrunner_args):
+        (main):
+        * web-platform-tests/ci_unittest.sh:
+        * web-platform-tests/css/css-scoping-1/css-scoping-shadow-host-namespace-expected.html: Added.
+        * web-platform-tests/css/css-scoping-1/css-scoping-shadow-host-namespace.html: Added.
+        * web-platform-tests/css/css-scoping-1/w3c-import.log:
+        * web-platform-tests/css/css-shapes-1/OWNERS: Added.
+        * web-platform-tests/css/selectors4/w3c-import.log:
+        * web-platform-tests/cssom/w3c-import.log:
+        * web-platform-tests/custom-elements/parser/parser-fallsback-to-unknown-element-expected.txt:
+        * web-platform-tests/dom/nodes/Document-constructor-svg-expected.txt: Added.
+        * web-platform-tests/dom/nodes/Document-constructor-svg.svg: Added.
+        * web-platform-tests/dom/nodes/Document-constructor-xml-expected.txt: Added.
+        * web-platform-tests/dom/nodes/Document-constructor-xml.xml: Copied from LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-constructor.html.
+        * web-platform-tests/dom/nodes/Document-constructor.html:
+        * web-platform-tests/dom/nodes/Document-contentType/contentType/contenttype_datauri_01-expected.txt:
+        * web-platform-tests/dom/nodes/Document-contentType/contentType/contenttype_datauri_02-expected.txt:
+        * web-platform-tests/dom/nodes/Element-matches-expected.txt:
+        * web-platform-tests/dom/nodes/Element-webkitMatchesSelector-expected.txt:
+        * web-platform-tests/dom/nodes/ParentNode-querySelector-All-content.html:
+        * web-platform-tests/dom/nodes/ParentNode-querySelector-All-content.xht:
+        * web-platform-tests/dom/nodes/ParentNode-querySelector-All-expected.txt:
+        * web-platform-tests/dom/nodes/ParentNode-querySelector-All-xht-expected.txt:
+        * web-platform-tests/dom/nodes/ParentNode-querySelector-All.js:
+        (setupSpecialElements):
+        * web-platform-tests/dom/nodes/getElementsByClassName-14-expected.txt:
+        * web-platform-tests/dom/nodes/getElementsByClassName-14.htm:
+        * web-platform-tests/dom/nodes/selectors.js:
+        * web-platform-tests/dom/nodes/w3c-import.log:
+        * web-platform-tests/encrypted-media/scripts/requestmediakeysystemaccess.js:
+        * web-platform-tests/fetch/api/basic/request-headers.any-expected.txt:
+        * web-platform-tests/fetch/api/basic/request-headers.any.worker-expected.txt:
+        * web-platform-tests/fetch/api/headers/headers-record-expected.txt:
+        * web-platform-tests/fetch/api/headers/headers-record.html:
+        * web-platform-tests/fetch/dangling-markup-mitigation.tentative-expected.txt: Added.
+        * web-platform-tests/fetch/dangling-markup-mitigation.tentative.html: Added.
+        * web-platform-tests/fetch/w3c-import.log:
+        * web-platform-tests/html/browsers/history/the-location-interface/location-origin-idna.sub.window.js: Added.
+        * web-platform-tests/html/browsers/history/the-location-interface/resources/post-your-origin.html: Added.
+        * web-platform-tests/html/browsers/history/the-location-interface/resources/w3c-import.log:
+        * web-platform-tests/html/browsers/history/the-location-interface/w3c-import.log:
+        * web-platform-tests/html/browsers/the-window-object/window-open-noopener-expected.txt:
+        * web-platform-tests/html/dom/documents/resource-metadata-management/document-lastModified-expected.txt:
+        * web-platform-tests/html/dom/elements-metadata.js:
+        * web-platform-tests/html/dom/elements-misc.js:
+        * web-platform-tests/html/dom/elements/elements-in-the-dom/historical-expected.txt:
+        * web-platform-tests/html/dom/elements/elements-in-the-dom/historical.html:
+        * web-platform-tests/html/dom/interfaces.worker-expected.txt:
+        * web-platform-tests/html/dom/reflection.js:
+        (ReflectionTests.reflects):
+        (ReflectionTests.enumExpected):
+        * web-platform-tests/html/semantics/document-metadata/the-meta-element/pragma-directives/attr-meta-http-equiv-refresh/not-in-shadow-tree-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/HTMLElement/HTMLTrackElement/srclang-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/TextTrack/language-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/ismap/img-ismap-coordinates-iframe-after.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/ismap/img-ismap-coordinates-iframe-before.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/ismap/img-ismap-coordinates-iframe-inside.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/ismap/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/resources/w3c-import.log.
+        * web-platform-tests/html/semantics/forms/the-input-element/valueMode-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-input-element/valueMode.html:
+        * web-platform-tests/html/semantics/forms/the-option-element/option-element-constructor-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-option-element/option-element-constructor.html:
+        * web-platform-tests/html/semantics/interactive-elements/contextmenu-historical-expected.txt: Added.
+        * web-platform-tests/html/semantics/interactive-elements/contextmenu-historical.html: Added.
+        * web-platform-tests/html/semantics/interactive-elements/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/fetch/w3c-import.log.
+        * web-platform-tests/html/semantics/interfaces.js:
+        * web-platform-tests/html/semantics/selectors/pseudo-classes/checked-expected.txt:
+        * web-platform-tests/html/semantics/selectors/pseudo-classes/checked.html:
+        * web-platform-tests/html/semantics/selectors/pseudo-classes/enabled-expected.txt:
+        * web-platform-tests/html/semantics/selectors/pseudo-classes/enabled.html:
+        * web-platform-tests/html/webappapis/scripting/events/event-handler-all-global-events-expected.txt: Added.
+        * web-platform-tests/html/webappapis/scripting/events/event-handler-all-global-events.html: Added.
+        * web-platform-tests/html/webappapis/scripting/events/event-handler-onauxclick-expected.txt: Removed.
+        * web-platform-tests/html/webappapis/scripting/events/event-handler-onauxclick.html: Removed.
+        * web-platform-tests/html/webappapis/scripting/events/inline-event-handler-ordering-expected.txt:
+        * web-platform-tests/html/webappapis/scripting/events/inline-event-handler-ordering.html:
+        * web-platform-tests/html/webappapis/scripting/events/invalid-uncompiled-raw-handler-compiled-late.html:
+        * web-platform-tests/html/webappapis/scripting/events/w3c-import.log:
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/window-onerror-parse-error-expected.txt:
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/window-onerror-runtime-error-expected.txt:
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/window-onerror-runtime-error-throw-expected.txt:
+        * web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/NavigatorID.worker-expected.txt:
+        * web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/navigator-pluginarray-expected.txt: Added.
+        * web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/navigator-pluginarray.html: Added.
+        * web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/w3c-import.log:
+        * web-platform-tests/lint.whitelist:
+        * web-platform-tests/resources/OWNERS: Added.
+        * web-platform-tests/resources/idlharness.js:
+        (IdlArray.prototype.assert_type_is):
+        (IdlInterface.prototype.test_self):
+        (IdlInterface.prototype.test_member_const):
+        (IdlInterface.prototype.test_member_attribute):
+        (IdlInterface.prototype.do_member_operation_asserts):
+        (IdlInterface.prototype.test_member_iterable):
+        (IdlInterface.prototype.test_member_stringifier):
+        (IdlInterface.prototype.do_interface_attribute_asserts):
+        * web-platform-tests/resources/test/README.md: Added.
+        * web-platform-tests/resources/test/config.test.json: Added.
+        * web-platform-tests/resources/test/conftest.py: Added.
+        (pytest_collect_file):
+        (pytest_configure):
+        (HTMLItem):
+        (HTMLItem.__init__):
+        (HTMLItem.reportinfo):
+        (HTMLItem.repr_failure):
+        (HTMLItem.runtest):
+        (HTMLItem._assert_sequence):
+        (HTMLItem._scrub_stack):
+        (HTMLItem._expand_status):
+        (HTMLItem._summarize_test):
+        (HTMLItem._summarize_status):
+        * web-platform-tests/resources/test/harness.html: Added.
+        * web-platform-tests/resources/test/tests/add_cleanup.html: Added.
+        * web-platform-tests/resources/test/tests/add_cleanup_err.html: Added.
+        * web-platform-tests/resources/test/tests/add_cleanup_err_multi.html: Added.
+        * web-platform-tests/resources/test/tests/api-tests-1.html: Added.
+        * web-platform-tests/resources/test/tests/api-tests-2.html: Added.
+        * web-platform-tests/resources/test/tests/api-tests-3.html: Added.
+        * web-platform-tests/resources/test/tests/generate-callback.html: Added.
+        * web-platform-tests/resources/test/tests/iframe-callback.html: Added.
+        * web-platform-tests/resources/test/tests/iframe-consolidate-errors.html: Added.
+        * web-platform-tests/resources/test/tests/iframe-consolidate-tests.html: Added.
+        * web-platform-tests/resources/test/tests/iframe-msg.html: Added.
+        * web-platform-tests/resources/test/tests/order.html: Added.
+        * web-platform-tests/resources/test/tests/promise-async.html: Added.
+        * web-platform-tests/resources/test/tests/promise.html: Added.
+        * web-platform-tests/resources/test/tests/single-page-test-fail.html: Added.
+        * web-platform-tests/resources/test/tests/single-page-test-no-assertions.html: Added.
+        * web-platform-tests/resources/test/tests/single-page-test-no-body.html: Added.
+        * web-platform-tests/resources/test/tests/single-page-test-pass.html: Added.
+        * web-platform-tests/resources/test/tests/uncaught-exception-handle.html: Added.
+        * web-platform-tests/resources/test/tests/uncaught-exception-ignore.html: Added.
+        * web-platform-tests/resources/test/tests/w3c-import.log: Added.
+        * web-platform-tests/resources/test/tests/worker-dedicated.html: Added.
+        * web-platform-tests/resources/test/tests/worker-error.js: Added.
+        * web-platform-tests/resources/test/tests/worker-service.html: Added.
+        * web-platform-tests/resources/test/tests/worker-shared.html: Added.
+        * web-platform-tests/resources/test/tests/worker.js: Added.
+        (test):
+        (async_test):
+        * web-platform-tests/resources/test/tox.ini: Added.
+        * web-platform-tests/resources/test/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/fetch/w3c-import.log.
+        * web-platform-tests/resources/test/wptserver.py: Added.
+        (WPTServer):
+        (WPTServer.__init__):
+        (WPTServer.start):
+        (WPTServer.stop):
+        (WPTServer.url):
+        * web-platform-tests/resources/testharness.js:
+        * web-platform-tests/resources/w3c-import.log:
+        * web-platform-tests/shadow-dom/slotchange-event-expected.txt:
+        * web-platform-tests/shadow-dom/slotchange-event.html:
+        * web-platform-tests/shadow-dom/slots-expected.txt:
+        * web-platform-tests/shadow-dom/slots-fallback-expected.txt:
+        * web-platform-tests/shadow-dom/slots-fallback-in-document-expected.txt:
+        * web-platform-tests/shadow-dom/slots-fallback-in-document.html:
+        * web-platform-tests/shadow-dom/slots-fallback.html:
+        * web-platform-tests/shadow-dom/slots.html:
+        * web-platform-tests/streams/piping/general-expected.txt:
+        * web-platform-tests/tools/OWNERS: Added.
+        * web-platform-tests/tools/browserutils/browser.py:
+        (Firefox.install):
+        (Firefox.find_certutil):
+        (Firefox.install_webdriver):
+        (Chrome.install_webdriver):
+        (Chrome.prepare_environment):
+        (Edge):
+        (Edge.install):
+        (Edge.find_webdriver):
+        (Edge.install_webdriver):
+        (Edge.version):
+        (Servo):
+        (Servo.install):
+        (Servo.find_binary):
+        (Servo.find_webdriver):
+        (Servo.install_webdriver):
+        (Servo.version):
+        * web-platform-tests/tools/browserutils/install.py: Added.
+        * web-platform-tests/tools/browserutils/requirements.txt: Added.
+        * web-platform-tests/tools/browserutils/utils.py:
+        (get):
+        * web-platform-tests/tools/browserutils/virtualenv.py:
+        (Virtualenv.create):
+        (Virtualenv.install):
+        * web-platform-tests/tools/browserutils/w3c-import.log:
+        * web-platform-tests/tools/runner/index.html:
+        * web-platform-tests/tools/runner/runner.css:
+        (#current_test):
+        (#current_test a):
+        (#current_test .match):
+        * web-platform-tests/tools/runner/runner.js:
+        (ManifestIterator.prototype.match_location):
+        (ManifestIterator.prototype.matches):
+        (VisualOutput.prototype.on_result):
+        (VisualOutput.prototype.steady_status):
+        (this.skip_button.onclick):
+        (Runner):
+        (Runner.prototype.run_next_test):
+        (Runner.prototype.display_current_test):
+        * web-platform-tests/tools/w3c-import.log:
+        * web-platform-tests/tools/wptrun.py:
+        (args_general):
+        (check_environ):
+        (args_edge):
+        (setup_edge):
+        (args_servo):
+        (setup_servo):
+        (setup_wptrunner):
+        (main):
+        * web-platform-tests/tools/wptrunner/OWNERS: Added.
+        * web-platform-tests/tools/wptrunner/requirements_edge.txt: Added.
+        * web-platform-tests/tools/wptrunner/tox.ini:
+        * web-platform-tests/tools/wptrunner/w3c-import.log:
+        * web-platform-tests/tools/wptrunner/wptrunner/browsers/edge.py:
+        (browser_kwargs):
+        * web-platform-tests/tools/wptrunner/wptrunner/environment.py:
+        (TestEnvironment.ensure_started):
+        (TestEnvironment):
+        (TestEnvironment.test_servers):
+        * web-platform-tests/tools/wptrunner/wptrunner/executors/executorservo.py:
+        (ServoTestharnessExecutor.__init__):
+        * web-platform-tests/update-built-tests.sh:
+        * web-platform-tests/url/interfaces.any-expected.txt:
+        * web-platform-tests/url/interfaces.any.js:
+        * web-platform-tests/url/interfaces.any.worker-expected.txt:
+        * web-platform-tests/url/toascii.json: Added.
+        * web-platform-tests/url/toascii.window.js: Added.
+        (async_test.t.string_appeared_here.request.send.request.responseType.string_appeared_here.request.onload.t.step_func_done):
+        (string_appeared_here.makeURL):
+        (runTests):
+        * web-platform-tests/url/w3c-import.log:
+        * web-platform-tests/webrtc/OWNERS:
+        * web-platform-tests/webrtc/RTCCertificate-expected.txt: Added.
+        * web-platform-tests/webrtc/RTCCertificate.html: Added.
+        * web-platform-tests/webrtc/RTCPeerConnection-addTransceiver-expected.txt: Added.
+        * web-platform-tests/webrtc/RTCPeerConnection-addTransceiver.html: Added.
+        * web-platform-tests/webrtc/RTCPeerConnection-constructor-expected.txt:
+        * web-platform-tests/webrtc/RTCPeerConnection-constructor.html:
+        * web-platform-tests/webrtc/RTCPeerConnection-createAnswer-expected.txt: Added.
+        * web-platform-tests/webrtc/RTCPeerConnection-createAnswer.html: Added.
+        * web-platform-tests/webrtc/RTCPeerConnection-createDataChannel-expected.txt:
+        * web-platform-tests/webrtc/RTCPeerConnection-createDataChannel.html:
+        * web-platform-tests/webrtc/RTCPeerConnection-createOffer-expected.txt: Added.
+        * web-platform-tests/webrtc/RTCPeerConnection-createOffer.html: Added.
+        * web-platform-tests/webrtc/RTCPeerConnection-generateCertificate-expected.txt: Added.
+        * web-platform-tests/webrtc/RTCPeerConnection-generateCertificate.html: Added.
+        * web-platform-tests/webrtc/RTCPeerConnection-getTransceivers-expected.txt: Added.
+        * web-platform-tests/webrtc/RTCPeerConnection-getTransceivers.html: Added.
+        * web-platform-tests/webrtc/RTCPeerConnection-helper.js: Added.
+        (countLine):
+        (countAudioLine):
+        (countVideoLine):
+        (countApplicationLine):
+        (similarMediaDescriptions):
+        (assert_is_session_description):
+        (assert_session_desc_equals):
+        (assert_session_desc_not_equals):
+        (generateOffer):
+        * web-platform-tests/webrtc/RTCPeerConnection-onnegotiationneeded-expected.txt: Added.
+        * web-platform-tests/webrtc/RTCPeerConnection-onnegotiationneeded.html: Added.
+        * web-platform-tests/webrtc/RTCPeerConnection-setLocalDescription-expected.txt: Added.
+        * web-platform-tests/webrtc/RTCPeerConnection-setLocalDescription.html: Added.
+        * web-platform-tests/webrtc/RTCPeerConnection-setRemoteDescription-expected.txt:
+        * web-platform-tests/webrtc/RTCPeerConnection-setRemoteDescription.html:
+        * web-platform-tests/webrtc/RTCPeerConnectionIceEvent-constructor-expected.txt:
+        * web-platform-tests/webrtc/RTCPeerConnectionIceEvent-constructor.html:
+        * web-platform-tests/webrtc/RTCSctpTransport-constructor-expected.txt: Added.
+        * web-platform-tests/webrtc/RTCSctpTransport-constructor.html: Added.
+        * web-platform-tests/webrtc/w3c-import.log:
+        * web-platform-tests/wptrun:
+
 2017-06-12  Daniel Bates  <dabates@apple.com>
 
         Implement W3C Secure Contexts Draft Specification

@@ -91,6 +91,16 @@
   }, "Option constructor treats undefined text and value correctly");
 
   test(() => {
+    const option = new Option("", "");
+
+    assert_false(option.hasChildNodes());
+    assert_true(option.hasAttribute("value"));
+
+    assert_equals(option.textContent, "");
+    assert_equals(option.value, "");
+  }, "Option constructor treats empty text and value correctly");
+
+  test(() => {
     const option = new Option("text", "value", 0, "");
 
     assert_false(option.hasAttribute("selected"));

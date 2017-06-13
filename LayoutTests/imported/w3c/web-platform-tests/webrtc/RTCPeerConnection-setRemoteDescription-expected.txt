@@ -1,6 +1,22 @@
 
-PASS Triggers ontrack when called with a remote description and the MSID of the stream is is parsed. 
-FAIL Malformed SDP description should be rejected with RTCError Can't find variable: RTCError
-PASS Invalid SDP type should be rejected with TypeError 
-FAIL SDP type that is invalid for current signaling state should be rejected with InvalidStateError Can't find variable: InvalidStateError
+Harness Error (TIMEOUT), message = null
+
+FAIL setRemoteDescription with valid offer should succeed assert_not_equals: Expect session description to be defined, but got undefined got disallowed value undefined
+FAIL Setting remote description multiple times with different offer should succeed assert_equals: Expect m=audio line to be present in generated SDP expected 1 but got 0
+PASS setRemoteDescription(offer) should never resolve if connection is closed in parallel 
+FAIL setRemoteDescription(offer) with invalid SDP should reject with RTCError assert_equals: Expect error detail field to set to sdp-syntax-error expected (string) "sdp-syntax-error" but got (undefined) undefined
+PASS setRemoteDescription with invalid type and invalid SDP should reject with TypeError 
+PASS setRemoteDescription() with invalid SDP and stable state should reject with InvalidStateError 
+PASS setRemoteDescription() with valid state and answer should succeed 
+FAIL Calling setRemoteDescription() again after one round of remote-offer/local-answer should succeed assert_equals: Expect m=audio line to be present in generated SDP expected 1 but got 0
+PASS Switching role from offerer to answerer after going back to stable state should succeed 
+PASS Calling setRemoteDescription(answer) from stable state should reject with InvalidStateError 
+PASS Calling setRemoteDescription(offer) from have-local-offer state should reject with InvalidStateError 
+PASS Calling setRemoteDescription(answer) from have-remote-offer state should reject with InvalidStateError 
+FAIL setRemoteDescription should trigger ontrack event when the MSID of the stream is is parsed. assert_own_property: Expect pc to have ontrack event handler attribute expected property "ontrack" missing
+PASS Test onsignalingstatechange event for setRemoteDescription with valid offer should succeed 
+TIMEOUT Test onsignalingstatechange event for Setting remote description multiple times with different offer should succeed Test timed out
+PASS Test onsignalingstatechange event for setRemoteDescription() with valid state and answer should succeed 
+TIMEOUT Test onsignalingstatechange event for Calling setRemoteDescription() again after one round of remote-offer/local-answer should succeed Test timed out
+PASS Test onsignalingstatechange event for Switching role from offerer to answerer after going back to stable state should succeed 
 

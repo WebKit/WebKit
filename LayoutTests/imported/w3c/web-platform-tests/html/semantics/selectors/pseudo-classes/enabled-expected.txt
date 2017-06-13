@@ -1,5 +1,5 @@
 
-FAIL ':enabled' elements that are not disabled assert_array_equals: lengths differ, expected 9 got 8
+PASS ':enabled' elements that are not disabled 
  button1 button2      
 
 

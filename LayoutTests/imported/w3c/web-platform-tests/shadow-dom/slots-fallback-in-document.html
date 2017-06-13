@@ -22,9 +22,8 @@ removeWhiteSpaceOnlyTextNodes(n1.test1);
 
 test(() => {
   assert_array_equals(n1.innerSlot.assignedNodes(), [n1.slot]);
-  assert_array_equals(n1.innerSlot.assignedNodes({ flatten: true }),
-                      [n1.fallback]);
-}, 'Slot fallback content in document tree should be counted in flattened ' +
+  assert_array_equals(n1.innerSlot.assignedNodes({ flatten: true }), [n1.slot]);
+}, 'Children of a slot in a document tree should not be counted in flattened ' +
    'assigned nodes.');
 </script>
 

@@ -16,5 +16,7 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/browserutils/__init__.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/browserutils/browser.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/browserutils/install.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/browserutils/requirements.txt
 /LayoutTests/imported/w3c/web-platform-tests/tools/browserutils/utils.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/browserutils/virtualenv.py

@@ -13,18 +13,18 @@ PASS value IDL attribute of input type checkbox without value attribute
 PASS value IDL attribute of input type checkbox with value attribute 
 PASS value IDL attribute of input type radio without value attribute 
 PASS value IDL attribute of input type radio with value attribute 
-PASS value IDL attribute of input type text without value attribute 
-PASS value IDL attribute of input type text with value attribute 
-PASS value IDL attribute of input type search without value attribute 
-PASS value IDL attribute of input type search with value attribute 
-PASS value IDL attribute of input type tel without value attribute 
-PASS value IDL attribute of input type tel with value attribute 
-PASS value IDL attribute of input type url without value attribute 
-PASS value IDL attribute of input type url with value attribute 
+FAIL value IDL attribute of input type text without value attribute assert_equals: expected "foo\0" but got "foo"
+FAIL value IDL attribute of input type text with value attribute assert_equals: expected "foo\0" but got "foo"
+FAIL value IDL attribute of input type search without value attribute assert_equals: expected "foo\0" but got "foo"
+FAIL value IDL attribute of input type search with value attribute assert_equals: expected "foo\0" but got "foo"
+FAIL value IDL attribute of input type tel without value attribute assert_equals: expected "foo\0" but got "foo"
+FAIL value IDL attribute of input type tel with value attribute assert_equals: expected "foo\0" but got "foo"
+FAIL value IDL attribute of input type url without value attribute assert_equals: expected "foo\0" but got "foo"
+FAIL value IDL attribute of input type url with value attribute assert_equals: expected "foo\0" but got "foo"
 PASS value IDL attribute of input type email without value attribute 
 PASS value IDL attribute of input type email with value attribute 
-PASS value IDL attribute of input type password without value attribute 
-PASS value IDL attribute of input type password with value attribute 
+FAIL value IDL attribute of input type password without value attribute assert_equals: expected "foo\0" but got "foo"
+FAIL value IDL attribute of input type password with value attribute assert_equals: expected "foo\0" but got "foo"
 PASS value IDL attribute of input type datetime-local without value attribute 
 PASS value IDL attribute of input type datetime-local with value attribute 
 PASS value IDL attribute of input type date without value attribute 

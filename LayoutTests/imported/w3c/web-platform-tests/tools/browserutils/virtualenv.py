@@ -21,7 +21,7 @@ class Virtualenv(object):
     def create(self):
         if os.path.exists(self.path):
             shutil.rmtree(self.path)
-        call(self.virtualenv, "--no-download", self.path)
+        call(self.virtualenv, self.path)
 
     @property
     def bin_path(self):
@@ -44,6 +44,9 @@ class Virtualenv(object):
         if not self.exists:
             self.create()
         self.activate()
+
+    def install(self, *requirements):
+        call(self.pip_path, "install", *requirements)
 
     def install_requirements(self, requirements_path):
         call(self.pip_path, "install", "-r", requirements_path)

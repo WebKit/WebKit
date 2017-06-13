@@ -1,3 +1,16 @@
+2017-06-13  Youenn Fablet  <youenn@apple.com>
+
+        Refresh WPT tests up to cb7017e654fb4daddb9dee8d654c78b26e61fa9f
+        https://bugs.webkit.org/show_bug.cgi?id=173260
+
+        Reviewed by Alex Christensen.
+
+        * TestExpectations:
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/test_wrapKey_unwrapKey.https-expected.txt: Added.
+        * platform/mac/imported/w3c/web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/NavigatorID.worker-expected.png: Added.
+        * tests-options.json:
+
 2017-06-13  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] Implement missing AtkRelation types

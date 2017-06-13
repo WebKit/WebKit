@@ -50,7 +50,6 @@ class ServoTestharnessExecutor(ProcessTestExecutor):
 
     def __init__(self, browser, server_config, timeout_multiplier=1, debug_info=None,
                  pause_after_test=False):
-        do_delayed_imports()
         ProcessTestExecutor.__init__(self, browser, server_config,
                                      timeout_multiplier=timeout_multiplier,
                                      debug_info=debug_info)

@@ -39,6 +39,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-URL.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-adoptNode.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-characterSet-normalization.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-constructor-svg.svg
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-constructor-xml.xml
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-constructor.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-createAttribute.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-createComment-createTextNode.js

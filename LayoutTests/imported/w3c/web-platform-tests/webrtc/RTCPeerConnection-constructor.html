@@ -113,21 +113,6 @@ for (const arg in testArgs) {
   }, expr);
 }
 
-promise_test(function() {
-  return RTCPeerConnection.generateCertificate({ name: "ECDSA", namedCurve: "P-256" })
-      .then(certificate => new RTCPeerConnection({ certificates: [certificate] }));
-}, 'new RTCPeerConnection({ certificates: [certificate] })');
-
-promise_test(function() {
-  return RTCPeerConnection.generateCertificate({ name: "ECDSA", namedCurve: "P-256", expires: 0 })
-      .then(certificate => {
-        assert_less_than_equal(certificate.expires, Date.now());
-        assert_throws('InvalidAccessError', function() {
-          new RTCPeerConnection({ certificates: [certificate] });
-        });
-      });
-}, 'new RTCPeerConnection({ certificates: [expiredCertificate] })');
-
 // The initial values of attributes of RTCPeerConnection.
 const initialState = {
   'localDescription': null,

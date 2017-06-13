@@ -22,7 +22,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/cssom/CSSStyleRule.html
 /LayoutTests/imported/w3c/web-platform-tests/cssom/CSSStyleSheet.html
 /LayoutTests/imported/w3c/web-platform-tests/cssom/MediaList.html
-/LayoutTests/imported/w3c/web-platform-tests/cssom/MediaList.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/cssom/OWNERS
 /LayoutTests/imported/w3c/web-platform-tests/cssom/StyleSheetList.html
 /LayoutTests/imported/w3c/web-platform-tests/cssom/computed-style-001.html

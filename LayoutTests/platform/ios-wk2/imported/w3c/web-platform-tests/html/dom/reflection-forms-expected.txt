@@ -2153,11 +2153,13 @@ FAIL input.inputMode: setAttribute() to "xkana" assert_equals: IDL get expected 
 FAIL input.inputMode: setAttribute() to "kana\0" assert_equals: IDL get expected (string) "" but got (undefined) undefined
 FAIL input.inputMode: setAttribute() to "ana" assert_equals: IDL get expected (string) "" but got (undefined) undefined
 FAIL input.inputMode: setAttribute() to "KANA" assert_equals: IDL get expected (string) "kana" but got (undefined) undefined
+FAIL input.inputMode: setAttribute() to "Kana" assert_equals: IDL get expected (string) "" but got (undefined) undefined
 FAIL input.inputMode: setAttribute() to "katakana" assert_equals: IDL get expected (string) "katakana" but got (undefined) undefined
 FAIL input.inputMode: setAttribute() to "xkatakana" assert_equals: IDL get expected (string) "" but got (undefined) undefined
 FAIL input.inputMode: setAttribute() to "katakana\0" assert_equals: IDL get expected (string) "" but got (undefined) undefined
 FAIL input.inputMode: setAttribute() to "atakana" assert_equals: IDL get expected (string) "" but got (undefined) undefined
 FAIL input.inputMode: setAttribute() to "KATAKANA" assert_equals: IDL get expected (string) "katakana" but got (undefined) undefined
+FAIL input.inputMode: setAttribute() to "KataKana" assert_equals: IDL get expected (string) "" but got (undefined) undefined
 FAIL input.inputMode: setAttribute() to "numeric" assert_equals: IDL get expected (string) "numeric" but got (undefined) undefined
 FAIL input.inputMode: setAttribute() to "xnumeric" assert_equals: IDL get expected (string) "" but got (undefined) undefined
 FAIL input.inputMode: setAttribute() to "numeric\0" assert_equals: IDL get expected (string) "" but got (undefined) undefined
@@ -2223,11 +2225,13 @@ FAIL input.inputMode: IDL set to "xkana" assert_equals: getAttribute() expected 
 FAIL input.inputMode: IDL set to "kana\0" assert_equals: getAttribute() expected "kana\0" but got "URL"
 FAIL input.inputMode: IDL set to "ana" assert_equals: getAttribute() expected "ana" but got "URL"
 FAIL input.inputMode: IDL set to "KANA" assert_equals: getAttribute() expected "KANA" but got "URL"
+FAIL input.inputMode: IDL set to "Kana" assert_equals: getAttribute() expected "Kana" but got "URL"
 FAIL input.inputMode: IDL set to "katakana" assert_equals: getAttribute() expected "katakana" but got "URL"
 FAIL input.inputMode: IDL set to "xkatakana" assert_equals: getAttribute() expected "xkatakana" but got "URL"
 FAIL input.inputMode: IDL set to "katakana\0" assert_equals: getAttribute() expected "katakana\0" but got "URL"
 FAIL input.inputMode: IDL set to "atakana" assert_equals: getAttribute() expected "atakana" but got "URL"
 FAIL input.inputMode: IDL set to "KATAKANA" assert_equals: getAttribute() expected "KATAKANA" but got "URL"
+FAIL input.inputMode: IDL set to "KataKana" assert_equals: getAttribute() expected "KataKana" but got "URL"
 FAIL input.inputMode: IDL set to "numeric" assert_equals: getAttribute() expected "numeric" but got "URL"
 FAIL input.inputMode: IDL set to "xnumeric" assert_equals: getAttribute() expected "xnumeric" but got "URL"
 FAIL input.inputMode: IDL set to "numeric\0" assert_equals: getAttribute() expected "numeric\0" but got "URL"
@@ -2769,6 +2773,7 @@ PASS input.type: setAttribute() to "xweek"
 PASS input.type: setAttribute() to "week\0" 
 PASS input.type: setAttribute() to "eek" 
 PASS input.type: setAttribute() to "WEEK" 
+PASS input.type: setAttribute() to "weeK" 
 PASS input.type: setAttribute() to "time" 
 PASS input.type: setAttribute() to "xtime" 
 PASS input.type: setAttribute() to "time\0" 
@@ -2799,6 +2804,7 @@ PASS input.type: setAttribute() to "xcheckbox"
 PASS input.type: setAttribute() to "checkbox\0" 
 PASS input.type: setAttribute() to "heckbox" 
 PASS input.type: setAttribute() to "CHECKBOX" 
+PASS input.type: setAttribute() to "checKbox" 
 PASS input.type: setAttribute() to "radio" 
 PASS input.type: setAttribute() to "xradio" 
 PASS input.type: setAttribute() to "radio\0" 
@@ -2899,6 +2905,7 @@ PASS input.type: IDL set to "xweek"
 PASS input.type: IDL set to "week\0" 
 PASS input.type: IDL set to "eek" 
 PASS input.type: IDL set to "WEEK" 
+PASS input.type: IDL set to "weeK" 
 PASS input.type: IDL set to "time" 
 PASS input.type: IDL set to "xtime" 
 PASS input.type: IDL set to "time\0" 
@@ -2929,6 +2936,7 @@ PASS input.type: IDL set to "xcheckbox"
 PASS input.type: IDL set to "checkbox\0" 
 PASS input.type: IDL set to "heckbox" 
 PASS input.type: IDL set to "CHECKBOX" 
+PASS input.type: IDL set to "checKbox" 
 PASS input.type: IDL set to "radio" 
 PASS input.type: IDL set to "xradio" 
 PASS input.type: IDL set to "radio\0" 
@@ -5513,11 +5521,13 @@ FAIL textarea.inputMode: setAttribute() to "xkana" assert_equals: IDL get expect
 FAIL textarea.inputMode: setAttribute() to "kana\0" assert_equals: IDL get expected (string) "" but got (undefined) undefined
 FAIL textarea.inputMode: setAttribute() to "ana" assert_equals: IDL get expected (string) "" but got (undefined) undefined
 FAIL textarea.inputMode: setAttribute() to "KANA" assert_equals: IDL get expected (string) "kana" but got (undefined) undefined
+FAIL textarea.inputMode: setAttribute() to "Kana" assert_equals: IDL get expected (string) "" but got (undefined) undefined
 FAIL textarea.inputMode: setAttribute() to "katakana" assert_equals: IDL get expected (string) "katakana" but got (undefined) undefined
 FAIL textarea.inputMode: setAttribute() to "xkatakana" assert_equals: IDL get expected (string) "" but got (undefined) undefined
 FAIL textarea.inputMode: setAttribute() to "katakana\0" assert_equals: IDL get expected (string) "" but got (undefined) undefined
 FAIL textarea.inputMode: setAttribute() to "atakana" assert_equals: IDL get expected (string) "" but got (undefined) undefined
 FAIL textarea.inputMode: setAttribute() to "KATAKANA" assert_equals: IDL get expected (string) "katakana" but got (undefined) undefined
+FAIL textarea.inputMode: setAttribute() to "KataKana" assert_equals: IDL get expected (string) "" but got (undefined) undefined
 FAIL textarea.inputMode: setAttribute() to "numeric" assert_equals: IDL get expected (string) "numeric" but got (undefined) undefined
 FAIL textarea.inputMode: setAttribute() to "xnumeric" assert_equals: IDL get expected (string) "" but got (undefined) undefined
 FAIL textarea.inputMode: setAttribute() to "numeric\0" assert_equals: IDL get expected (string) "" but got (undefined) undefined
@@ -5583,11 +5593,13 @@ FAIL textarea.inputMode: IDL set to "xkana" assert_equals: getAttribute() expect
 FAIL textarea.inputMode: IDL set to "kana\0" assert_equals: getAttribute() expected "kana\0" but got "URL"
 FAIL textarea.inputMode: IDL set to "ana" assert_equals: getAttribute() expected "ana" but got "URL"
 FAIL textarea.inputMode: IDL set to "KANA" assert_equals: getAttribute() expected "KANA" but got "URL"
+FAIL textarea.inputMode: IDL set to "Kana" assert_equals: getAttribute() expected "Kana" but got "URL"
 FAIL textarea.inputMode: IDL set to "katakana" assert_equals: getAttribute() expected "katakana" but got "URL"
 FAIL textarea.inputMode: IDL set to "xkatakana" assert_equals: getAttribute() expected "xkatakana" but got "URL"
 FAIL textarea.inputMode: IDL set to "katakana\0" assert_equals: getAttribute() expected "katakana\0" but got "URL"
 FAIL textarea.inputMode: IDL set to "atakana" assert_equals: getAttribute() expected "atakana" but got "URL"
 FAIL textarea.inputMode: IDL set to "KATAKANA" assert_equals: getAttribute() expected "KATAKANA" but got "URL"
+FAIL textarea.inputMode: IDL set to "KataKana" assert_equals: getAttribute() expected "KataKana" but got "URL"
 FAIL textarea.inputMode: IDL set to "numeric" assert_equals: getAttribute() expected "numeric" but got "URL"
 FAIL textarea.inputMode: IDL set to "xnumeric" assert_equals: getAttribute() expected "xnumeric" but got "URL"
 FAIL textarea.inputMode: IDL set to "numeric\0" assert_equals: getAttribute() expected "numeric\0" but got "URL"

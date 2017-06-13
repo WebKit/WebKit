@@ -2,6 +2,7 @@
 PASS URL interface: existence and properties of interface object 
 PASS URL interface object length 
 PASS URL interface object name 
+PASS URL interface: legacy window alias 
 PASS URL interface: existence and properties of interface prototype object 
 PASS URL interface: existence and properties of interface prototype object's "constructor" property 
 PASS URL interface: attribute href 

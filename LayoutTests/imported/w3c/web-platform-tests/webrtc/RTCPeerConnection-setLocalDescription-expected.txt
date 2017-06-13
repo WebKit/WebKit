@@ -1,0 +1,20 @@
+
+Harness Error (TIMEOUT), message = null
+
+FAIL setLocalDescription with type offer and null sdp should use lastOffer generated from createOffer promise_test: Unhandled rejection with value: object "OperationError (DOM Exception 34): Expect line: v="
+FAIL setLocalDescription() with offer not created by own createOffer() should reject with InvalidModificationError assert_throws: function "function () { throw e }" threw object "OperationError (DOM Exception 34): Failed to set local offer sdp: Failed to push down transport description: Local fingerprint does not match identity. Expected: sha-256 BC:76:7D:0D:41:8A:8C:0A:8D:90:1F:54:46:14:5A:6C:C4:7A:1F:7E:D8:33:9A:BA:1D:81:B2:4F:AE:F1:B8:39 Got: sha-256 11:FF:E1:B8:96:5C:F9:A6:AA:74:03:49:A6:FF:FC:18:8A:B8:40:45:3F:9C:70:81:BC:09:20:19:9D:9C:60:E7" that is not a DOMException InvalidModificationError: property "code" is equal to 34, expected 13
+FAIL Set created offer other than last offer should reject with InvalidModificationError assert_false: Expect both session descriptions to have different count of media lines expected false got true
+FAIL Creating and setting offer multiple times should succeed assert_not_equals: Expect session description to be defined, but got undefined got disallowed value undefined
+FAIL setLocalDescription(offer) should never resolve if connection is closed in parallel assert_unreached: Pending promise should never be resolved. Instead it is rejected with: InvalidStateError (DOM Exception 11): The object is in an invalid state. Reached unreachable code
+FAIL setLocalDescription() with valid answer should succeed assert_equals: Expect m=video line to be present in generated SDP expected 1 but got 0
+FAIL setLocalDescription() with type answer and null sdp should use lastAnswer generated from createAnswer assert_equals: Expect m=video line to be present in generated SDP expected 1 but got 0
+FAIL setLocalDescription() with answer not created by own createAnswer() should reject with InvalidModificationError assert_equals: Expect m=video line to be present in generated SDP expected 1 but got 0
+PASS Calling createOffer() and setLocalDescription() again after one round of local-offer/remote-answer should succeed 
+PASS Switching role from answerer to offerer after going back to stable state should succeed 
+PASS Calling setLocalDescription(answer) from stable state should reject with InvalidStateError 
+PASS Calling setLocalDescription(answer) from have-local-offer state should reject with InvalidStateError 
+PASS Test onsignalingstatechange event for Creating and setting offer multiple times should succeed 
+TIMEOUT Test onsignalingstatechange event for setLocalDescription() with valid answer should succeed Test timed out
+PASS Test onsignalingstatechange event for Calling createOffer() and setLocalDescription() again after one round of local-offer/remote-answer should succeed 
+PASS Test onsignalingstatechange event for Switching role from answerer to offerer after going back to stable state should succeed 
+

@@ -1,0 +1,5 @@
+
+FAIL addTransceiver('audio') should return an audio transceiver assert_own_property: expected property "addTransceiver" missing
+FAIL addTransceiver('video') should return a video transceiver assert_own_property: expected property "addTransceiver" missing
+FAIL addTransceiver() with string argument as invalid kind should throw TypeError assert_own_property: expected property "addTransceiver" missing
+

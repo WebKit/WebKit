@@ -83,7 +83,7 @@ PASS In-document Element.matches: Universal selector, matching all grandchildren
 PASS In-document Element.matches: Universal selector, matching all descendants of element with specified ID (with no refNodes): #universal * 
 PASS In-document Element.matches: Attribute presence selector, matching align attribute with value (with no refNodes): .attr-presence-div1[align] 
 PASS In-document Element.matches: Attribute presence selector, matching align attribute with empty value (with no refNodes): .attr-presence-div2[align] 
-PASS In-document Element.matches: Attribute presence selector, matching title attribute, case insensitivity (with no refNodes): #attr-presence [TiTlE] 
+PASS In-document Element.matches: Attribute presence selector, matching title attribute, case insensitivity (with no refNodes): #attr-presence [*|TiTlE] 
 PASS In-document Element.matches: Attribute presence selector, matching custom data-* attribute (with no refNodes): [data-attr-presence] 
 PASS In-document Element.matches: Attribute presence selector, matching attribute with non-ASCII characters (with no refNodes): ul[data-中文] 
 PASS In-document Element.matches: Attribute presence selector, matching option with selected attribute (with no refNodes): #attr-presence-select2 option[selected] 
@@ -251,7 +251,7 @@ PASS Detached Element.matches: Universal selector, matching all grandchildren of
 PASS Detached Element.matches: Universal selector, matching all descendants of element with specified ID (with no refNodes): #universal * 
 PASS Detached Element.matches: Attribute presence selector, matching align attribute with value (with no refNodes): .attr-presence-div1[align] 
 PASS Detached Element.matches: Attribute presence selector, matching align attribute with empty value (with no refNodes): .attr-presence-div2[align] 
-PASS Detached Element.matches: Attribute presence selector, matching title attribute, case insensitivity (with no refNodes): #attr-presence [TiTlE] 
+PASS Detached Element.matches: Attribute presence selector, matching title attribute, case insensitivity (with no refNodes): #attr-presence [*|TiTlE] 
 PASS Detached Element.matches: Attribute presence selector, matching custom data-* attribute (with no refNodes): [data-attr-presence] 
 PASS Detached Element.matches: Attribute presence selector, matching attribute with non-ASCII characters (with no refNodes): ul[data-中文] 
 PASS Detached Element.matches: Attribute presence selector, matching option with selected attribute (with no refNodes): #attr-presence-select2 option[selected] 
@@ -413,7 +413,7 @@ PASS Fragment Element.matches: Universal selector, matching all grandchildren of
 PASS Fragment Element.matches: Universal selector, matching all descendants of element with specified ID (with no refNodes): #universal * 
 PASS Fragment Element.matches: Attribute presence selector, matching align attribute with value (with no refNodes): .attr-presence-div1[align] 
 PASS Fragment Element.matches: Attribute presence selector, matching align attribute with empty value (with no refNodes): .attr-presence-div2[align] 
-PASS Fragment Element.matches: Attribute presence selector, matching title attribute, case insensitivity (with no refNodes): #attr-presence [TiTlE] 
+PASS Fragment Element.matches: Attribute presence selector, matching title attribute, case insensitivity (with no refNodes): #attr-presence [*|TiTlE] 
 PASS Fragment Element.matches: Attribute presence selector, matching custom data-* attribute (with no refNodes): [data-attr-presence] 
 PASS Fragment Element.matches: Attribute presence selector, matching attribute with non-ASCII characters (with no refNodes): ul[data-中文] 
 PASS Fragment Element.matches: Attribute presence selector, matching option with selected attribute (with no refNodes): #attr-presence-select2 option[selected] 

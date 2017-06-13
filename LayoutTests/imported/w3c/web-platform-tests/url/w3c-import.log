@@ -26,6 +26,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/url/historical.any.js
 /LayoutTests/imported/w3c/web-platform-tests/url/interfaces.any.js
 /LayoutTests/imported/w3c/web-platform-tests/url/setters_tests.json
+/LayoutTests/imported/w3c/web-platform-tests/url/toascii.json
+/LayoutTests/imported/w3c/web-platform-tests/url/toascii.window.js
 /LayoutTests/imported/w3c/web-platform-tests/url/url-constructor.html
 /LayoutTests/imported/w3c/web-platform-tests/url/url-origin.html
 /LayoutTests/imported/w3c/web-platform-tests/url/url-setters.html

@@ -295,6 +295,15 @@ webkit.org/b/165062 fast/css-grid-layout/grid-baseline-margins.html [ ImageOnlyF
 webkit.org/b/149891 imported/w3c/web-platform-tests/css/css-grid-1/grid-layout-properties.html [ Failure ]
 webkit.org/b/169271 imported/w3c/web-platform-tests/css/css-grid-1/grid-items/grid-items-sizing-alignment-001.html [ ImageOnlyFailure ]
 
+# Flaky tests at import time
+imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setLocalDescription.html [ Failure Pass ]
+imported/w3c/web-platform-tests/dom/nodes/Document-constructor-svg.svg [ Failure ]
+imported/w3c/web-platform-tests/css/css-scoping-1/css-scoping-shadow-host-namespace.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/IndexedDB/abort-in-initial-upgradeneeded.html [ Pass Failure ]
+imported/w3c/web-platform-tests/IndexedDB/clone-before-keypath-eval.html [ Pass Failure ]
+imported/w3c/web-platform-tests/IndexedDB/bindings-inject-key.html [ Pass Failure ]
+imported/w3c/web-platform-tests/fetch/dangling-markup-mitigation.tentative.html [ Pass Failure ]
+
 # selectors4
 webkit.org/b/64861 imported/w3c/web-platform-tests/css/selectors4/selectors-dir-selector-ltr-001.html [ ImageOnlyFailure ]
 webkit.org/b/64861 imported/w3c/web-platform-tests/css/selectors4/selectors-dir-selector-rtl-001.html [ ImageOnlyFailure ]
@@ -755,25 +764,6 @@ webrtc/video-rotation.html [ Pass Failure ]
 # libwebrtc backend doesn't generate a=bundle-only lines
 fast/mediastream/RTCPeerConnection-inspect-offer-bundlePolicy-bundle-only.html [ Failure ]
 
-
-# Need updating wptserve
-imported/w3c/web-platform-tests/XMLHttpRequest/setrequestheader-content-type.htm [ Skip ]
-imported/w3c/web-platform-tests/XMLHttpRequest/open-url-redirected-worker-origin.htm [ Skip ]
-imported/w3c/web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/NavigatorID.html [ Skip ]
-imported/w3c/web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/NavigatorID.worker.html [ Skip ]
-imported/w3c/web-platform-tests/XMLHttpRequest/anonymous-mode-unsupported.htm [ Skip ]
-imported/w3c/web-platform-tests/XMLHttpRequest/open-after-setrequestheader.htm [ Skip ]
-imported/w3c/web-platform-tests/XMLHttpRequest/open-referer.htm [ Skip ]
-imported/w3c/web-platform-tests/XMLHttpRequest/send-accept-language.htm [ Skip ]
-imported/w3c/web-platform-tests/XMLHttpRequest/setrequestheader-allow-empty-value.htm [ Skip ]
-imported/w3c/web-platform-tests/XMLHttpRequest/setrequestheader-allow-whitespace-in-value.htm [ Skip ]
-imported/w3c/web-platform-tests/XMLHttpRequest/setrequestheader-case-insensitive.htm [ Skip ]
-imported/w3c/web-platform-tests/XMLHttpRequest/setrequestheader-header-allowed.htm [ Skip ]
-imported/w3c/web-platform-tests/XMLHttpRequest/setrequestheader-header-forbidden.htm [ Skip ]
-imported/w3c/web-platform-tests/XMLHttpRequest/setrequestheader-open-setrequestheader.htm [ Skip ]
-imported/w3c/web-platform-tests/html/dom/interfaces.worker.html [ Skip ]
-imported/w3c/web-platform-tests/html/webappapis/scripting/events/event-handler-attributes-body-window.html [ Skip ]
-
 # Only iOS WK1 has testRunner.setPagePaused.
 fast/dom/timer-fire-after-page-pause.html [ Skip ]
 
@@ -1020,6 +1010,11 @@ workers/wasm-hashset.html [ Slow ]
 workers/wasm-long-compile-many.html [ Slow ]
 workers/wasm-long-compile.html [ Slow ]
 
+# Flaky WebCrypto API tests
+imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/test_wrapKey_unwrapKey.https.html [ Pass Failure ]
+imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.worker.html [ Pass Failure ]
+imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_successes_RSA-OAEP.https.html [ Pass Failure ]
+
 # WebCryptoAPI tests that take too long to complete
 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.worker.html [ Slow ]
 imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-OAEP.worker.html [ Skip ]
@@ -1138,6 +1133,7 @@ webkit.org/b/168175 imported/w3c/web-platform-tests/html/browsers/offline/browse
 webkit.org/b/168175 imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-a-element/a-download-click.html [ Timeout Pass Failure ]
 webkit.org/b/169264 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/persisted-user-state-restoration/scroll-restoration-navigation-samedoc.html [ Failure ]
 
+imported/w3c/web-platform-tests/XMLHttpRequest/open-url-redirected-worker-origin.htm [ Failure Pass  ]
 imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-synconmain.html [ Failure ]
 imported/w3c/web-platform-tests/cssom/MediaList.html [ Failure ]
 imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/007.html [ Failure ]

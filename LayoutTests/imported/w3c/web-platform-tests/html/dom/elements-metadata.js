@@ -14,7 +14,7 @@ var metadataElements = {
     relList: {type: "tokenlist", domAttrName: "rel"},
     as: {
       type: "enum",
-      keywords: ["", "audio", "document", "embed", "font", "image", "manifest", "object", "report", "script", "serviceworker", "sharedworker", "style", "track", "video", "worker", "xslt"],
+      keywords: ["fetch", "audio", "document", "embed", "font", "image", "manifest", "object", "report", "script", "serviceworker", "sharedworker", "style", "track", "video", "worker", "xslt"],
       defaultVal: "",
       invalidVal: ""
     },

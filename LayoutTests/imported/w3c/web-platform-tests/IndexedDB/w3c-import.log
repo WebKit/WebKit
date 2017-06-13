@@ -326,12 +326,15 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/keypath.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/keypath_invalid.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/keypath_maxsize.htm
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/large-nested-cloning.html
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/large-requests-abort.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/list_ordering.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/name-scopes.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/objectstore_keyorder.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/open-request-queue.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/parallel-cursors-upgrade.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/request-abort-ordering.html
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/request-event-ordering.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/request_bubble-and-capture.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/string-list-ordering.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/support-promises.js
