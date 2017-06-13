@@ -26,22 +26,6 @@
 #include "WebKitError.h"
 #include <gdk/gdk.h>
 
-unsigned wkEventModifiersToGdkModifiers(WKEventModifiers wkModifiers)
-{
-    unsigned modifiers = 0;
-    if (wkModifiers & kWKEventModifiersShiftKey)
-        modifiers |= GDK_SHIFT_MASK;
-    if (wkModifiers & kWKEventModifiersControlKey)
-        modifiers |= GDK_CONTROL_MASK;
-    if (wkModifiers & kWKEventModifiersAltKey)
-        modifiers |= GDK_MOD1_MASK;
-    if (wkModifiers & kWKEventModifiersMetaKey)
-        modifiers |= GDK_META_MASK;
-    if (wkModifiers & kWKEventModifiersCapsLockKey)
-        modifiers |= GDK_LOCK_MASK;
-    return modifiers;
-}
-
 unsigned toGdkModifiers(WebKit::WebEvent::Modifiers wkModifiers)
 {
     unsigned modifiers = 0;
@@ -89,22 +73,6 @@ unsigned toWebKitMouseButton(WebKit::WebMouseEvent::Button button)
     case WebKit::WebMouseEvent::Button::MiddleButton:
         return 2;
     case WebKit::WebMouseEvent::Button::RightButton:
-        return 3;
-    }
-    ASSERT_NOT_REACHED();
-    return 0;
-}
-
-unsigned wkEventMouseButtonToWebKitMouseButton(WKEventMouseButton wkButton)
-{
-    switch (wkButton) {
-    case kWKEventMouseButtonNoButton:
-        return 0;
-    case kWKEventMouseButtonLeftButton:
-        return 1;
-    case kWKEventMouseButtonMiddleButton:
-        return 2;
-    case kWKEventMouseButtonRightButton:
         return 3;
     }
     ASSERT_NOT_REACHED();

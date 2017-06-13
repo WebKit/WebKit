@@ -1,5 +1,14 @@
 2017-06-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Remove unused code from GTK+ WebKitPrivate.
+
+        * UIProcess/API/gtk/WebKitPrivate.cpp:
+        (wkEventModifiersToGdkModifiers): Deleted.
+        (wkEventMouseButtonToWebKitMouseButton): Deleted.
+        * UIProcess/API/gtk/WebKitPrivate.h:
+
+2017-06-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Fix return value of PageLoaderClient::shouldGoToBackForwardListItem after r218164.
 
         It should return true as InjectedBundlePageLoaderClient does. This caused several timeouts in GTK+ unit tests

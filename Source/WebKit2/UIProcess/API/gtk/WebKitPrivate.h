@@ -43,8 +43,6 @@
 #include <wtf/Assertions.h>
 #include <wtf/glib/WTFGType.h>
 
-unsigned wkEventModifiersToGdkModifiers(WKEventModifiers);
-unsigned wkEventMouseButtonToWebKitMouseButton(WKEventMouseButton);
 unsigned toGdkModifiers(WebKit::WebEvent::Modifiers);
 WebKitNavigationType toWebKitNavigationType(WebCore::NavigationType);
 unsigned toWebKitMouseButton(WebKit::WebMouseEvent::Button);
