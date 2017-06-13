@@ -203,8 +203,6 @@ TEST(WebKit2, WKHTTPCookieStoreWithoutProcessPool)
     }];
     TestWebKitAPI::Util::run(&finished);
     
-    // FIXME: Investigate why this doesn't work on iOS with the default persistent storage. rdar://problem/32260156
-#if !PLATFORM(IOS)
     finished = false;
     WKWebsiteDataStore *defaultStore = [WKWebsiteDataStore defaultDataStore];
     [defaultStore.httpCookieStore setCookie:cookie completionHandler:^ {
@@ -228,6 +226,5 @@ TEST(WebKit2, WKHTTPCookieStoreWithoutProcessPool)
         }];
     }];
     TestWebKitAPI::Util::run(&finished);
-#endif
 }
 #endif

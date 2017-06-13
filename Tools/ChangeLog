@@ -1,3 +1,14 @@
+2017-06-13  Alex Christensen  <achristensen@webkit.org>
+
+        Test persistent WKHTTPCookieStorages on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=173284
+        <rdar://problem/32260156>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/WKHTTPCookieStore.mm:
+        (TEST):
+
 2017-06-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Blob download doesn't work
