@@ -88,21 +88,21 @@ public:
         return absenceWithoutBarrier(object, uid, prototype);
     }
     
-    static ObjectPropertyCondition absenceOfSetterWithoutBarrier(
+    static ObjectPropertyCondition absenceOfSetEffectWithoutBarrier(
         JSObject* object, UniquedStringImpl* uid, JSObject* prototype)
     {
         ObjectPropertyCondition result;
         result.m_object = object;
-        result.m_condition = PropertyCondition::absenceOfSetterWithoutBarrier(uid, prototype);
+        result.m_condition = PropertyCondition::absenceOfSetEffectWithoutBarrier(uid, prototype);
         return result;
     }
     
-    static ObjectPropertyCondition absenceOfSetter(
+    static ObjectPropertyCondition absenceOfSetEffect(
         VM& vm, JSCell* owner, JSObject* object, UniquedStringImpl* uid, JSObject* prototype)
     {
         if (owner)
             vm.heap.writeBarrier(owner);
-        return absenceOfSetterWithoutBarrier(object, uid, prototype);
+        return absenceOfSetEffectWithoutBarrier(object, uid, prototype);
     }
     
     static ObjectPropertyCondition equivalenceWithoutBarrier(

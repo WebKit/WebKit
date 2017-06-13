@@ -206,8 +206,8 @@ ObjectPropertyCondition generateCondition(
             vm, owner, object, uid, object->structure()->storedPrototypeObject());
         break;
     }
-    case PropertyCondition::AbsenceOfSetter: {
-        result = ObjectPropertyCondition::absenceOfSetter(
+    case PropertyCondition::AbsenceOfSetEffect: {
+        result = ObjectPropertyCondition::absenceOfSetEffect(
             vm, owner, object, uid, object->structure()->storedPrototypeObject());
         break;
     }
@@ -333,7 +333,7 @@ ObjectPropertyConditionSet generateConditionsForPropertySetterMiss(
         vm, exec->lexicalGlobalObject(), headStructure, nullptr,
         [&] (Vector<ObjectPropertyCondition>& conditions, JSObject* object) -> bool {
             ObjectPropertyCondition result =
-                generateCondition(vm, owner, object, uid, PropertyCondition::AbsenceOfSetter);
+                generateCondition(vm, owner, object, uid, PropertyCondition::AbsenceOfSetEffect);
             if (!result)
                 return false;
             conditions.append(result);
@@ -413,7 +413,7 @@ ObjectPropertyConditionSet generateConditionsForPropertySetterMissConcurrently(
         vm, globalObject, headStructure, nullptr,
         [&] (Vector<ObjectPropertyCondition>& conditions, JSObject* object) -> bool {
             ObjectPropertyCondition result =
-                generateCondition(vm, nullptr, object, uid, PropertyCondition::AbsenceOfSetter);
+                generateCondition(vm, nullptr, object, uid, PropertyCondition::AbsenceOfSetEffect);
             if (!result)
                 return false;
             conditions.append(result);

@@ -47,7 +47,7 @@ void PropertyCondition::dumpInContext(PrintStream& out, DumpContext* context) co
         out.print(" at ", offset(), " with attributes ", attributes());
         return;
     case Absence:
-    case AbsenceOfSetter:
+    case AbsenceOfSetEffect:
         out.print(" with prototype ", inContext(JSValue(prototype()), context));
         return;
     case Equivalence:
@@ -124,7 +124,7 @@ bool PropertyCondition::isStillValidAssumingImpurePropertyWatchpoint(
         return true;
     }
     
-    case AbsenceOfSetter: {
+    case AbsenceOfSetEffect: {
         if (structure->isDictionary()) {
             if (verbose)
                 dataLog("Invalid because it's a dictionary.\n");
@@ -134,9 +134,6 @@ bool PropertyCondition::isStillValidAssumingImpurePropertyWatchpoint(
         unsigned currentAttributes;
         PropertyOffset currentOffset = structure->getConcurrently(uid(), currentAttributes);
         if (currentOffset != invalidOffset) {
-            // FIXME: Given the addition of the check for ReadOnly attributes, we should refactor
-            // instances of AbsenceOfSetter.
-            // https://bugs.webkit.org/show_bug.cgi?id=173322 - Refactor AbsenceOfSetter to something like AbsenceOfSetEffects
             if (currentAttributes & (ReadOnly | Accessor | CustomAccessor)) {
                 if (verbose) {
                     dataLog(
@@ -223,7 +220,7 @@ bool PropertyCondition::isStillValid(Structure* structure, JSObject* base) const
 
     // Currently we assume that an impure property can cause a property to appear, and can also
     // "shadow" an existing JS property on the same object. Hence it affects both presence and
-    // absence. It doesn't affect AbsenceOfSetter because impure properties aren't ever setters.
+    // absence. It doesn't affect AbsenceOfSetEffect because impure properties aren't ever setters.
     switch (m_kind) {
     case Absence:
         if (structure->typeInfo().getOwnPropertySlotIsImpure() || structure->typeInfo().getOwnPropertySlotIsImpureForPropertyAbsence())
@@ -354,7 +351,7 @@ void printInternal(PrintStream& out, JSC::PropertyCondition::Kind condition)
     case JSC::PropertyCondition::Absence:
         out.print("Absence");
         return;
-    case JSC::PropertyCondition::AbsenceOfSetter:
+    case JSC::PropertyCondition::AbsenceOfSetEffect:
         out.print("Absence");
         return;
     case JSC::PropertyCondition::Equivalence:

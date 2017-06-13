@@ -1,3 +1,32 @@
+2017-06-13  Michael Saboff  <msaboff@apple.com>
+
+        Refactor AbsenceOfSetter to AbsenceOfSetEffects
+        https://bugs.webkit.org/show_bug.cgi?id=173322
+
+        Reviewed by Filip Pizlo.
+
+        * bytecode/ObjectPropertyCondition.h:
+        (JSC::ObjectPropertyCondition::absenceOfSetEffectWithoutBarrier):
+        (JSC::ObjectPropertyCondition::absenceOfSetEffect):
+        (JSC::ObjectPropertyCondition::absenceOfSetterWithoutBarrier): Deleted.
+        (JSC::ObjectPropertyCondition::absenceOfSetter): Deleted.
+        * bytecode/ObjectPropertyConditionSet.cpp:
+        (JSC::generateConditionsForPropertySetterMiss):
+        (JSC::generateConditionsForPropertySetterMissConcurrently):
+        * bytecode/PropertyCondition.cpp:
+        (JSC::PropertyCondition::dumpInContext):
+        (JSC::PropertyCondition::isStillValidAssumingImpurePropertyWatchpoint):
+        (JSC::PropertyCondition::isStillValid):
+        (WTF::printInternal):
+        * bytecode/PropertyCondition.h:
+        (JSC::PropertyCondition::absenceOfSetEffectWithoutBarrier):
+        (JSC::PropertyCondition::absenceOfSetEffect):
+        (JSC::PropertyCondition::hasPrototype):
+        (JSC::PropertyCondition::hash):
+        (JSC::PropertyCondition::operator==):
+        (JSC::PropertyCondition::absenceOfSetterWithoutBarrier): Deleted.
+        (JSC::PropertyCondition::absenceOfSetter): Deleted.
+
 2017-06-13  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: import updated spec tests

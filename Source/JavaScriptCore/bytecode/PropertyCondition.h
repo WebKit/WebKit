@@ -37,7 +37,7 @@ public:
     enum Kind {
         Presence,
         Absence,
-        AbsenceOfSetter,
+        AbsenceOfSetEffect,
         Equivalence // An adaptive watchpoint on this will be a pair of watchpoints, and when the structure transitions, we will set the replacement watchpoint on the new structure.
     };
     
@@ -89,22 +89,22 @@ public:
         return absenceWithoutBarrier(uid, prototype);
     }
     
-    static PropertyCondition absenceOfSetterWithoutBarrier(
+    static PropertyCondition absenceOfSetEffectWithoutBarrier(
         UniquedStringImpl* uid, JSObject* prototype)
     {
         PropertyCondition result;
         result.m_uid = uid;
-        result.m_kind = AbsenceOfSetter;
+        result.m_kind = AbsenceOfSetEffect;
         result.u.absence.prototype = prototype;
         return result;
     }
     
-    static PropertyCondition absenceOfSetter(
+    static PropertyCondition absenceOfSetEffect(
         VM& vm, JSCell* owner, UniquedStringImpl* uid, JSObject* prototype)
     {
         if (owner)
             vm.heap.writeBarrier(owner);
-        return absenceOfSetterWithoutBarrier(uid, prototype);
+        return absenceOfSetEffectWithoutBarrier(uid, prototype);
     }
     
     static PropertyCondition equivalenceWithoutBarrier(
@@ -143,7 +143,7 @@ public:
         return u.presence.attributes;
     }
     
-    bool hasPrototype() const { return !!*this && (m_kind == Absence || m_kind == AbsenceOfSetter); }
+    bool hasPrototype() const { return !!*this && (m_kind == Absence || m_kind == AbsenceOfSetEffect); }
     JSObject* prototype() const
     {
         ASSERT(hasPrototype());
@@ -169,7 +169,7 @@ public:
             result ^= u.presence.attributes;
             break;
         case Absence:
-        case AbsenceOfSetter:
+        case AbsenceOfSetEffect:
             result ^= WTF::PtrHash<JSObject*>::hash(u.absence.prototype);
             break;
         case Equivalence:
@@ -190,7 +190,7 @@ public:
             return u.presence.offset == other.u.presence.offset
                 && u.presence.attributes == other.u.presence.attributes;
         case Absence:
-        case AbsenceOfSetter:
+        case AbsenceOfSetEffect:
             return u.absence.prototype == other.u.absence.prototype;
         case Equivalence:
             return u.equivalence.value == other.u.equivalence.value;
