@@ -743,19 +743,27 @@ void String::split(const String& separator, bool allowEmptyEntries, Vector<Strin
         result.append(substring(startPos));
 }
 
-void String::split(UChar separator, bool allowEmptyEntries, Vector<String>& result) const
+void String::split(UChar separator, bool allowEmptyEntries, SplitFunctor&& functor) const
 {
-    result.clear();
+    StringView view(*this);
 
     unsigned startPos = 0;
     size_t endPos;
     while ((endPos = find(separator, startPos)) != notFound) {
         if (allowEmptyEntries || startPos != endPos)
-            result.append(substring(startPos, endPos - startPos));
+            functor(view.substring(startPos, endPos - startPos));
         startPos = endPos + 1;
     }
     if (allowEmptyEntries || startPos != length())
-        result.append(substring(startPos));
+        functor(view.substring(startPos));
+}
+
+void String::split(UChar separator, bool allowEmptyEntries, Vector<String>& result) const
+{
+    result.clear();
+    split(separator, allowEmptyEntries, [&result](StringView item) {
+        result.append(item.toString());
+    });
 }
 
 CString String::ascii() const

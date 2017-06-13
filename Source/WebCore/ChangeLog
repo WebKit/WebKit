@@ -1,3 +1,28 @@
+2017-06-13  Youenn Fablet  <youenn@apple.com>
+
+        Filter SDP from ICE candidates in case of local ICE candidate filtering
+        https://bugs.webkit.org/show_bug.cgi?id=173120
+
+        Reviewed by Eric Carlson.
+
+        Covered by updated test.
+
+        Adding filtering of local description in getters and createOffer promise.
+
+        * Modules/mediastream/MediaEndpointSessionDescription.cpp:
+        (WebCore::MediaEndpointSessionDescription::toRTCSessionDescription):
+        * Modules/mediastream/PeerConnectionBackend.cpp:
+        (WebCore::PeerConnectionBackend::createOfferSucceeded):
+        (WebCore::filterICECandidate):
+        (WebCore::PeerConnectionBackend::filterSDP):
+        * Modules/mediastream/PeerConnectionBackend.h:
+        * Modules/mediastream/RTCSessionDescription.h:
+        (WebCore::RTCSessionDescription::setSdp):
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp:
+        (WebCore::LibWebRTCPeerConnectionBackend::currentLocalDescription):
+        (WebCore::LibWebRTCPeerConnectionBackend::pendingLocalDescription):
+        (WebCore::LibWebRTCPeerConnectionBackend::localDescription):
+
 2017-06-12  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [iOS] [macOS] Stop soft-linking Core Text function in iOS 11 and macOS High Sierra

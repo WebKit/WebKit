@@ -1,3 +1,13 @@
+2017-06-13  Youenn Fablet  <youenn@apple.com>
+
+        Filter SDP from ICE candidates in case of local ICE candidate filtering
+        https://bugs.webkit.org/show_bug.cgi?id=173120
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/datachannel/filter-ice-candidate.html: Minor clean-up and
+        adding assertions to ensure that ICE candidates are also filtered out.
+
 2017-06-12  Charlie Turner  <cturner@igalia.com>
 
         [GTK] skip fast/scrolling/scrolling-tree-includes-frame.html

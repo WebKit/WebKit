@@ -1,3 +1,17 @@
+2017-06-13  Youenn Fablet  <youenn@apple.com>
+
+        Filter SDP from ICE candidates in case of local ICE candidate filtering
+        https://bugs.webkit.org/show_bug.cgi?id=173120
+
+        Reviewed by Eric Carlson.
+
+        Adding split helper routine with functor parameter.
+
+        * wtf/text/WTFString.cpp:
+        (WTF::String::split):
+        * wtf/text/WTFString.h:
+        (WTF::String::contains):
+
 2017-06-13  Don Olmstead  <don.olmstead@sony.com>
 
         [WTF] Remove redundant includes in config.h

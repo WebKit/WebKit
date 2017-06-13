@@ -83,7 +83,7 @@ RefPtr<RTCSessionDescription> MediaEndpointSessionDescription::toRTCSessionDescr
     // that same instance but with an updated sdp. It is used for RTCPeerConnection's description
     // atributes (e.g. localDescription and pendingLocalDescription).
     if (m_rtcDescription) {
-        m_rtcDescription->setSdp(sdpString);
+        m_rtcDescription->setSdp(WTFMove(sdpString));
         return m_rtcDescription;
     }
 

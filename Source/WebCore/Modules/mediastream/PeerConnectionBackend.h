@@ -133,6 +133,8 @@ protected:
     void addIceCandidateSucceeded();
     void addIceCandidateFailed(Exception&&);
 
+    String filterSDP(String&&) const;
+
 private:
     virtual void doCreateOffer(RTCOfferOptions&&) = 0;
     virtual void doCreateAnswer(RTCAnswerOptions&&) = 0;

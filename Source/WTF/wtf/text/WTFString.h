@@ -25,6 +25,8 @@
 // This file would be called String.h, but that conflicts with <string.h>
 // on systems without case-sensitive file systems.
 
+#include <functional>
+
 #include <wtf/text/ASCIIFastPath.h>
 #include <wtf/text/IntegerToStringConversion.h>
 #include <wtf/text/StringImpl.h>
@@ -257,11 +259,11 @@ public:
         { return caseSensitive ? reverseFind(str, start) : reverseFindIgnoringCase(str, start); }
 
     WTF_EXPORT_STRING_API Vector<UChar> charactersWithNullTermination() const;
-    
+
     WTF_EXPORT_STRING_API UChar32 characterStartingAt(unsigned) const; // Ditto.
-    
+
     bool contains(UChar c) const { return find(c) != notFound; }
-    bool contains(const LChar* str, bool caseSensitive = true, unsigned startOffset = 0) const 
+    bool contains(const LChar* str, bool caseSensitive = true, unsigned startOffset = 0) const
         { return find(str, startOffset, caseSensitive) != notFound; }
     bool contains(const String& str) const
         { return find(str) != notFound; }
@@ -364,6 +366,9 @@ public:
     {
         split(separator, false, result);
     }
+
+    using SplitFunctor = std::function<void(const StringView&)>;
+    WTF_EXPORT_STRING_API void split(UChar separator, bool allowEmptyEntries, SplitFunctor&&) const;
     WTF_EXPORT_STRING_API void split(UChar separator, bool allowEmptyEntries, Vector<String>& result) const;
     void split(UChar separator, Vector<String>& result) const
     {
@@ -425,7 +430,7 @@ public:
 
 #ifdef __OBJC__
     WTF_EXPORT_STRING_API String(NSString *);
-    
+
     // This conversion converts the null string to an empty NSString rather than to nil.
     // Given Cocoa idioms, this is a more useful default. Clients that need to preserve the
     // null string can check isNull explicitly.
@@ -453,7 +458,7 @@ public:
     // Tries to convert the passed in string to UTF-8, but will fall back to Latin-1 if the string is not valid UTF-8.
     WTF_EXPORT_STRING_API static String fromUTF8WithLatin1Fallback(const LChar*, size_t);
     static String fromUTF8WithLatin1Fallback(const char* s, size_t length) { return fromUTF8WithLatin1Fallback(reinterpret_cast<const LChar*>(s), length); };
-    
+
     // Determines the writing direction using the Unicode Bidi Algorithm rules P2 and P3.
     UCharDirection defaultWritingDirection(bool* hasStrongDirectionality = nullptr) const
     {

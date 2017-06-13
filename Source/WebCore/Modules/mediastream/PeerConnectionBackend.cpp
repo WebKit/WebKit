@@ -62,7 +62,7 @@ void PeerConnectionBackend::createOfferSucceeded(String&& sdp)
         return;
 
     ASSERT(m_offerAnswerPromise);
-    m_offerAnswerPromise->resolve(RTCSessionDescription::create(RTCSdpType::Offer, WTFMove(sdp)));
+    m_offerAnswerPromise->resolve(RTCSessionDescription::create(RTCSdpType::Offer, filterSDP(WTFMove(sdp))));
     m_offerAnswerPromise = std::nullopt;
 }
 
@@ -92,7 +92,7 @@ void PeerConnectionBackend::createAnswerSucceeded(String&& sdp)
 {
     ASSERT(isMainThread());
     RELEASE_LOG(WebRTC, "Creating answer succeeded:\n%s\n", sdp.utf8().data());
-    
+
     if (m_peerConnection.isClosed())
         return;
 
@@ -301,34 +301,49 @@ void PeerConnectionBackend::disableICECandidateFiltering()
     m_pendingICECandidates.clear();
 }
 
-static inline String filterICECandidate(String&& sdp)
+static String filterICECandidate(String&& sdp)
 {
     ASSERT(!sdp.contains(" host "));
 
     if (!sdp.contains(" raddr "))
         return WTFMove(sdp);
 
-    Vector<String> items;
-    sdp.split(' ', items);
-
     bool skipNextItem = false;
     bool isFirst = true;
     StringBuilder filteredSDP;
-    for (auto& item : items) {
+    sdp.split(' ', false, [&](StringView item) {
         if (skipNextItem) {
             skipNextItem = false;
-            continue;
+            return;
         }
         if (item == "raddr" || item == "rport") {
             skipNextItem = true;
-            continue;
+            return;
         }
         if (isFirst)
             isFirst = false;
         else
             filteredSDP.append(" ");
         filteredSDP.append(item);
-    }
+    });
+    return filteredSDP.toString();
+}
+
+String PeerConnectionBackend::filterSDP(String&& sdp) const
+{
+    if (!m_shouldFilterICECandidates)
+        return sdp;
+
+    StringBuilder filteredSDP;
+    sdp.split('\n', false, [&filteredSDP](StringView line) {
+        if (!line.startsWith("a=candidate"))
+            filteredSDP.append(line);
+        else if (line.find(" host ", 11) == notFound)
+            filteredSDP.append(filterICECandidate(line.toString()));
+        else
+            return;
+        filteredSDP.append('\n');
+    });
     return filteredSDP.toString();
 }
 
@@ -340,7 +355,7 @@ void PeerConnectionBackend::newICECandidate(String&& sdp, String&& mid)
         fireICECandidateEvent(RTCIceCandidate::create(WTFMove(sdp), WTFMove(mid), 0));
         return;
     }
-    if (sdp.contains(" host ")) {
+    if (sdp.find(" host ", 0) != notFound) {
         m_pendingICECandidates.append(PendingICECandidate { WTFMove(sdp), WTFMove(mid)});
         return;
     }
@@ -379,9 +394,9 @@ void PeerConnectionBackend::markAsNeedingNegotiation()
 {
     if (m_negotiationNeeded)
         return;
-    
+
     m_negotiationNeeded = true;
-    
+
     if (m_peerConnection.signalingState() == RTCSignalingState::Stable)
         m_peerConnection.scheduleNegotiationNeededEvent();
 }
