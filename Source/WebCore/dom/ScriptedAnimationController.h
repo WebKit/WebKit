@@ -93,6 +93,7 @@ private:
     Document* m_document;
     CallbackId m_nextCallbackId { 0 };
     int m_suspendCount { 0 };
+    void logSuspendCount();
 
     void scheduleAnimation();
     void animationTimerFired();

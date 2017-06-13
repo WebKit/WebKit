@@ -265,6 +265,8 @@ void InternalSettings::resetToConsistentState()
     m_page->mainFrame().setPageAndTextZoomFactors(1, 1);
     m_page->setCanStartMedia(true);
 
+    settings().setShouldLogScritedAnimationControllerSuspensionChange(true);
+
     settings().setForcePendingWebGLPolicy(false);
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     settings().setAllowsAirPlayForMediaPlayback(false);
@@ -728,6 +730,16 @@ void InternalSettings::setWebGPUEnabled(bool enabled)
 #else
     UNUSED_PARAM(enabled);
 #endif
+}
+
+bool InternalSettings::shouldLogScritedAnimationControllerSuspensionChange()
+{
+    return settings().shouldLogScritedAnimationControllerSuspensionChange();
+}
+
+void InternalSettings::setShouldLogScritedAnimationControllerSuspensionChange(bool shouldLogScritedAnimationControllerSuspensionChange)
+{
+    settings().setShouldLogScritedAnimationControllerSuspensionChange(shouldLogScritedAnimationControllerSuspensionChange);
 }
 
 ExceptionOr<String> InternalSettings::userInterfaceDirectionPolicy()

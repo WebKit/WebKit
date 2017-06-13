@@ -111,6 +111,9 @@ public:
     ForcedAccessibilityValue forcedPrefersReducedMotionAccessibilityValue() const;
     void setForcedPrefersReducedMotionAccessibilityValue(ForcedAccessibilityValue);
 
+    bool shouldLogScritedAnimationControllerSuspensionChange();
+    void setShouldLogScritedAnimationControllerSuspensionChange(bool);
+
     // RuntimeEnabledFeatures.
     static void setIndexedDBWorkersEnabled(bool);
     static void setCSSGridLayoutEnabled(bool);

@@ -1,3 +1,27 @@
+2017-06-13  Antoine Quint  <graouts@apple.com>
+
+        Add logging for layout tests when rAF callbacks get suspended and resumed
+        https://bugs.webkit.org/show_bug.cgi?id=173326
+
+        Reviewed by Simon Fraser.
+
+        In order to help diagnose webkit.org/b/168409 we log the ScriptedAnimationController
+        suspend count when it changes and log the backtrace so that we may understand why it
+        fails to be set back to 0 when some modern-media-controls tests run.
+
+        * dom/ScriptedAnimationController.cpp:
+        (WebCore::ScriptedAnimationController::suspend):
+        (WebCore::ScriptedAnimationController::resume):
+        (WebCore::ScriptedAnimationController::logSuspendCount):
+        * dom/ScriptedAnimationController.h:
+        * page/Settings.in:
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::resetToConsistentState):
+        (WebCore::InternalSettings::shouldLogScritedAnimationControllerSuspensionChange):
+        (WebCore::InternalSettings::setShouldLogScritedAnimationControllerSuspensionChange):
+        * testing/InternalSettings.h:
+        * testing/InternalSettings.idl:
+
 2017-06-13  Jer Noble  <jer.noble@apple.com>
 
         Crash when MSE backed media element changes src/srcObject during PiP
