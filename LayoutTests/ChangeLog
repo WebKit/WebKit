@@ -1,5 +1,14 @@
 2017-06-13  Matt Lewis  <jlewis3@apple.com>
 
+        Updated test expectations for imported/w3c/web-platform-tests/dom/nodes/Document-constructor-svg.svg.
+        https://bugs.webkit.org/show_bug.cgi?id=173333
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+
+2017-06-13  Matt Lewis  <jlewis3@apple.com>
+
         Re-baselined imported/w3c/web-platform-tests/WebCryptoAPI/import_export/test_rsa_importKey.https.html and fixed text expectations.
         https://bugs.webkit.org/show_bug.cgi?id=173335
 

@@ -297,7 +297,6 @@ webkit.org/b/169271 imported/w3c/web-platform-tests/css/css-grid-1/grid-items/gr
 
 # Flaky tests at import time
 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setLocalDescription.html [ Failure Pass ]
-imported/w3c/web-platform-tests/dom/nodes/Document-constructor-svg.svg [ Failure ]
 imported/w3c/web-platform-tests/css/css-scoping-1/css-scoping-shadow-host-namespace.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/IndexedDB/abort-in-initial-upgradeneeded.html [ Pass Failure ]
 imported/w3c/web-platform-tests/IndexedDB/clone-before-keypath-eval.html [ Pass Failure ]
