@@ -30,7 +30,7 @@
 #include <WebCore/BString.h>
 #include <wtf/RetainPtr.h>
 
-class WebPreferences : public IWebPreferences, public IWebPreferencesPrivate4 {
+class WebPreferences : public IWebPreferences, public IWebPreferencesPrivate5 {
 public:
     static WebPreferences* createInstance();
 protected:
@@ -255,6 +255,10 @@ public:
     virtual HRESULT STDMETHODCALLTYPE setMediaPreloadingEnabled(BOOL);
     virtual HRESULT STDMETHODCALLTYPE clearNetworkLoaderSession();
     virtual HRESULT STDMETHODCALLTYPE switchNetworkLoaderToNewTestingSession();
+
+    // IWebPreferencesPrivate5
+    virtual HRESULT STDMETHODCALLTYPE isSecureContextAttributeEnabled(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setIsSecureContextAttributeEnabled(BOOL);
 
     // WebPreferences
 

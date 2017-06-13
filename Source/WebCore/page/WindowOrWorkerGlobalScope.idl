@@ -41,5 +41,5 @@
     [MayThrowException] DOMString btoa(DOMString string);
 
     // Secure Contexts
-    readonly attribute boolean isSecureContext;
+    [EnabledAtRuntime=IsSecureContextAttribute] readonly attribute boolean isSecureContext;
 };

@@ -202,3 +202,10 @@ interface IWebPreferencesPrivate4 : IWebPreferencesPrivate3
     HRESULT clearNetworkLoaderSession();
     HRESULT switchNetworkLoaderToNewTestingSession();
 }
+
+[uuid(9C4CBF53-19BC-46B3-831E-6A8B88200F20)]
+interface IWebPreferencesPrivate5 : IWebPreferencesPrivate4
+{
+    HRESULT isSecureContextAttributeEnabled([out, retval] BOOL*);
+    HRESULT setIsSecureContextAttributeEnabled([in] BOOL enabled);
+}

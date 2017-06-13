@@ -1,3 +1,30 @@
+2017-06-13  Daniel Bates  <dabates@apple.com>
+
+        Implement W3C Secure Contexts Draft Specification
+        https://bugs.webkit.org/show_bug.cgi?id=158121
+        <rdar://problem/26012994>
+
+        Reviewed by Brent Fulgham.
+
+        Part 4
+
+        Expose the isSecureContext attribute by default in DumpRenderTree and WebKitTestRunner.
+        Teach DumpRenderTree for Mac and WebKitTestRunner to parse the test option enableIsSecureContextAttribute
+        to toggle the runtime enabled feature flag isSecureContextAttributeEnabled.
+
+        * DumpRenderTree/TestOptions.h:
+        * DumpRenderTree/TestOptions.mm:
+        (TestOptions::TestOptions):
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (setWebPreferencesForTestOptions):
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (enableExperimentalFeatures):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetPreferencesToConsistentValues):
+        (WTR::updateTestOptionsFromTestHeader):
+        * WebKitTestRunner/TestOptions.h:
+        (WTR::TestOptions::hasSameInitializationOptions):
+
 2017-06-13  Alex Christensen  <achristensen@webkit.org>
 
         Test persistent WKHTTPCookieStorages on iOS

@@ -668,6 +668,7 @@ public:
         @NO, WebKitResourceTimingEnabledPreferenceKey,
         @NO, WebKitCredentialManagementEnabledPreferenceKey,
         @NO, WebKitMediaUserGestureInheritsFromDocument,
+        @NO, WebKitIsSecureContextAttributeEnabledPreferenceKey,
         (NSString *)Settings::defaultMediaContentTypesRequiringHardwareSupport(), WebKitMediaContentTypesRequiringHardwareSupportPreferenceKey,
         nil];
 
@@ -3103,6 +3104,17 @@ static NSString *classIBCreatorID = nil;
 {
     [self _setStringValue:value forKey:WebKitMediaContentTypesRequiringHardwareSupportPreferenceKey];
 }
+
+- (BOOL)isSecureContextAttributeEnabled
+{
+    return [self _boolValueForKey:WebKitIsSecureContextAttributeEnabledPreferenceKey];
+}
+
+- (void)setIsSecureContextAttributeEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitIsSecureContextAttributeEnabledPreferenceKey];
+}
+
 @end
 
 @implementation WebPreferences (WebInternal)

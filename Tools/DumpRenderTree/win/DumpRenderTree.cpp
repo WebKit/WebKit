@@ -768,19 +768,20 @@ static bool shouldEnableDeveloperExtras(const char* pathOrURL)
 
 static void enableExperimentalFeatures(IWebPreferences* preferences)
 {
-    COMPtr<IWebPreferencesPrivate4> prefsPrivate4(Query, preferences);    
+    COMPtr<IWebPreferencesPrivate5> prefsPrivate { Query, preferences };
 
     // FIXME: CSSGridLayout
     // FIXME: SpringTimingFunction
     // FIXME: Gamepads
-    prefsPrivate4->setLinkPreloadEnabled(TRUE);
-    prefsPrivate4->setMediaPreloadingEnabled(TRUE);
+    prefsPrivate->setLinkPreloadEnabled(TRUE);
+    prefsPrivate->setMediaPreloadingEnabled(TRUE);
     // FIXME: ModernMediaControls
     // FIXME: InputEvents
     // FIXME: SubtleCrypto
-    prefsPrivate4->setWebAnimationsEnabled(TRUE);
+    prefsPrivate->setWebAnimationsEnabled(TRUE);
     // FIXME: WebGL2
     // FIXME: WebRTC
+    prefsPrivate->setIsSecureContextAttributeEnabled(TRUE);
 }
 
 static void resetWebPreferencesToConsistentValues(IWebPreferences* preferences)

@@ -547,6 +547,9 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (void)setCredentialManagementEnabled:(BOOL)flag;
 - (BOOL)credentialManagementEnabled;
 
+- (void)setIsSecureContextAttributeEnabled:(BOOL)flag;
+- (BOOL)isSecureContextAttributeEnabled;
+
 @property (nonatomic) BOOL visualViewportEnabled;
 @property (nonatomic) BOOL largeImageAsyncDecodingEnabled;
 @property (nonatomic) BOOL animatedImageAsyncDecodingEnabled;
@@ -561,6 +564,7 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 @property (nonatomic) BOOL linkPreloadEnabled;
 @property (nonatomic) BOOL credentialManagementEnabled;
 @property (nonatomic) BOOL mediaUserGestureInheritsFromDocument;
+@property (nonatomic) BOOL isSecureContextAttributeEnabled;
 
 #if TARGET_OS_IPHONE
 @property (nonatomic) BOOL quickLookDocumentSavingEnabled;

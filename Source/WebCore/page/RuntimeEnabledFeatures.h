@@ -78,6 +78,9 @@ public:
     void setCredentialManagementEnabled(bool isEnabled) { m_isCredentialManagementEnabled = isEnabled; }
     bool credentialManagementEnabled() const { return m_isCredentialManagementEnabled; }
 
+    void setIsSecureContextAttributeEnabled(bool isEnabled) { m_isSecureContextAttributeEnabled = isEnabled; }
+    bool isSecureContextAttributeEnabled() const { return m_isSecureContextAttributeEnabled; }
+
 #if ENABLE(INDEXED_DATABASE_IN_WORKERS)
     void setIndexedDBWorkersEnabled(bool isEnabled) { m_isIndexedDBWorkersEnabled = isEnabled; }
     bool indexedDBWorkersEnabled() const { return m_isIndexedDBWorkersEnabled; }
@@ -209,6 +212,7 @@ private:
     bool m_isUserTimingEnabled { false };
     bool m_isInteractiveFormValidationEnabled { false };
     bool m_isCredentialManagementEnabled { false };
+    bool m_isSecureContextAttributeEnabled { false };
 
     bool m_isDisplayContentsEnabled { false };
     bool m_isShadowDOMEnabled { true };

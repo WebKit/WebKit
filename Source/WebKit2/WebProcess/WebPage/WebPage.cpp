@@ -3364,6 +3364,7 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     RuntimeEnabledFeatures::sharedFeatures().setLinkPreloadEnabled(store.getBoolValueForKey(WebPreferencesKey::linkPreloadEnabledKey()));
     RuntimeEnabledFeatures::sharedFeatures().setMediaPreloadingEnabled(store.getBoolValueForKey(WebPreferencesKey::mediaPreloadingEnabledKey()));
     RuntimeEnabledFeatures::sharedFeatures().setCredentialManagementEnabled(store.getBoolValueForKey(WebPreferencesKey::credentialManagementEnabledKey()));
+    RuntimeEnabledFeatures::sharedFeatures().setIsSecureContextAttributeEnabled(store.getBoolValueForKey(WebPreferencesKey::isSecureContextAttributeEnabledKey()));
 
     bool processSuppressionEnabled = store.getBoolValueForKey(WebPreferencesKey::pageVisibilityBasedProcessSuppressionEnabledKey());
     if (m_processSuppressionEnabled != processSuppressionEnabled) {

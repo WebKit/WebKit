@@ -1,3 +1,23 @@
+2017-06-13  Daniel Bates  <dabates@apple.com>
+
+        Implement W3C Secure Contexts Draft Specification
+        https://bugs.webkit.org/show_bug.cgi?id=158121
+        <rdar://problem/26012994>
+
+        Reviewed by Brent Fulgham.
+
+        Part 4
+
+        Adds a test to ensure that the global object property isSecureContext is not
+        exposed (is undefined) when the runtime enabled feature flag isSecureContextAttributeEnabled
+        is disabled.
+
+        * platform/win/TestExpectations: Skip the test as DumpRenderTree on Windows does not support
+        parsing of test options. See <https://bugs.webkit.org/show_bug.cgi?id=173281> for more details.
+        * security/isSecureContext-disabled-expected.txt: Added.
+        * security/isSecureContext-disabled.html: Added.
+        * security/resources/worker-isSecureContext-disabled.js: Added.
+
 2017-06-13  Youenn Fablet  <youenn@apple.com>
 
         getReceivers() should return transceivers that have only an active receiver

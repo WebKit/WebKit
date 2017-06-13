@@ -84,6 +84,10 @@ fast/css/text-overflow-ellipsis-strict.html [ Skip ]
 ################################################################################
 ##############    Missing Functionality Prevents Testing        ################
 ################################################################################
+
+# FIXME: Implement test options parsing (<!-- webkit-test-runner [ ... ] -->).
+webkit.org/b/173281 security/isSecureContext-disabled.html [ Skip ]
+
 # TODO HW filters not yet supported on Windows
 webkit.org/b/74716 css3/filters/effect-blur-hw.html [ Skip ]
 webkit.org/b/74716 css3/filters/effect-combined-hw.html [ Skip ]

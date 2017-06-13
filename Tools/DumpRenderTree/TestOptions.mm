@@ -92,6 +92,8 @@ TestOptions::TestOptions(NSURL *testURL, const TestCommand& command)
             this->enableDragDestinationActionLoad = parseBooleanTestHeaderValue(value);
         else if (key == "layerBackedWebView")
             this->layerBackedWebView = parseBooleanTestHeaderValue(value);
+        else if (key == "enableIsSecureContextAttribute")
+            this->enableIsSecureContextAttribute = parseBooleanTestHeaderValue(value);
         pairStart = pairEnd + 1;
     }
 }

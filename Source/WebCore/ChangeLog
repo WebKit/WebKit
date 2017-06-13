@@ -1,3 +1,23 @@
+2017-06-13  Daniel Bates  <dabates@apple.com>
+
+        Implement W3C Secure Contexts Draft Specification
+        https://bugs.webkit.org/show_bug.cgi?id=158121
+        <rdar://problem/26012994>
+
+        Reviewed by Brent Fulgham.
+
+        Part 4
+
+        Adds runtime enabled feature flag, isSecureContextAttributeEnabled, to toggle exposing
+        the global object property isSecureContext (defaults: true - expose the property).
+
+        Test: security/isSecureContext-disabled.html
+
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setIsSecureContextAttributeEnabled):
+        (WebCore::RuntimeEnabledFeatures::isSecureContextAttributeEnabled):
+        * page/WindowOrWorkerGlobalScope.idl:
+
 2017-06-13  Jer Noble  <jer.noble@apple.com>
 
         Protect lifetime of media element during HTMLMediaElement::notifyAboutPlaying()

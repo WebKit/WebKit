@@ -241,6 +241,7 @@
     macro(isArray) \
     macro(isEnabled) \
     macro(isPrototypeOf) \
+    macro(isSecureContext) \
     macro(isView) \
     macro(isWatchpoint) \
     macro(jettisonReason) \

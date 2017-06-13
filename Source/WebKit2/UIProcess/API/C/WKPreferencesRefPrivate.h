@@ -501,6 +501,10 @@ WK_EXPORT bool WKPreferencesGetMediaUserGestureInheritsFromDocument(WKPreference
 WK_EXPORT void WKPreferencesSetMediaContentTypesRequiringHardwareSupport(WKPreferencesRef, WKStringRef);
 WK_EXPORT WKStringRef WKPreferencesCopyMediaContentTypesRequiringHardwareSupport(WKPreferencesRef);
 
+// Defaults to false.
+WK_EXPORT void WKPreferencesSetIsSecureContextAttributeEnabled(WKPreferencesRef, bool flag);
+WK_EXPORT bool WKPreferencesGetIsSecureContextAttributeEnabled(WKPreferencesRef);
+
 #ifdef __cplusplus
 }
 #endif

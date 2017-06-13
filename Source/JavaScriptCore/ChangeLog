@@ -1,3 +1,18 @@
+2017-06-13  Daniel Bates  <dabates@apple.com>
+
+        Implement W3C Secure Contexts Draft Specification
+        https://bugs.webkit.org/show_bug.cgi?id=158121
+        <rdar://problem/26012994>
+
+        Reviewed by Brent Fulgham.
+
+        Part 4
+
+        Adds isSecureContext to the list of common identifiers as needed to support
+        toggling its exposure from a runtime enabled feature flag.
+
+        * runtime/CommonIdentifiers.h:
+
 2017-06-13  Don Olmstead  <don.olmstead@sony.com>
 
         [JSC] Remove redundant includes in config.h

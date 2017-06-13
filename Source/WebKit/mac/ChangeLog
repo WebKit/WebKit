@@ -1,3 +1,24 @@
+2017-06-13  Daniel Bates  <dabates@apple.com>
+
+        Implement W3C Secure Contexts Draft Specification
+        https://bugs.webkit.org/show_bug.cgi?id=158121
+        <rdar://problem/26012994>
+
+        Reviewed by Brent Fulgham.
+
+        Part 4
+
+        Adds a preference to toggle the runtime enabled feature flag isSecureContextAttributeEnabled.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences isSecureContextAttributeEnabled]):
+        (-[WebPreferences setIsSecureContextAttributeEnabled:]):
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
 2017-06-13  Sam Weinig  <sam@webkit.org>
 
         Rename JSDOMWindowShell to JSDOMWindowProxy to match the HTML5 spec.
