@@ -1581,3 +1581,5 @@ webkit.org/b/172255 imported/w3c/web-platform-tests/html/browsers/windows/browsi
 
 # This test is only valid on platforms which have multiple emoji fonts.
 webkit.org/b/173043 [ ElCapitan ] fast/text/system-font-fallback-emoji.html [ Failure ]
+
+webkit.org/b/173335 [ Sierra ] imported/w3c/web-platform-tests/WebCryptoAPI/import_export/test_rsa_importKey.https.html [ Failure ]
