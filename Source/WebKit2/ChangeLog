@@ -1,3 +1,16 @@
+2017-06-13  Brent Fulgham  <bfulgham@apple.com>
+
+        [WK2][macOS] Allow AppleEvents in Citrix View Plugin
+        https://bugs.webkit.org/show_bug.cgi?id=173280
+        <rdar://problem/31913624>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Allow the Citrix Viewer plugin to issue Apple Events.
+
+        * PluginProcess/mac/PluginProcessMac.mm:
+        (WebKit::PluginProcess::platformInitializeProcess): Allow AppleEvents for the Citrix Viewer plugin.
+
 2017-06-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Blob download doesn't work
