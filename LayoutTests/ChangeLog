@@ -1,3 +1,14 @@
+2017-06-12  Charlie Turner  <cturner@igalia.com>
+
+        [GTK] skip fast/scrolling/scrolling-tree-includes-frame.html
+        https://bugs.webkit.org/show_bug.cgi?id=173258
+
+        Unreviewed gardening.
+
+        GTK doesn't appear to use the scrolling tree, only WK2 Mac and iOS do. Skip it here.
+
+        * platform/gtk/TestExpectations:
+
 2017-06-12  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Expand system-ui to include every item in the Core Text cascade list
