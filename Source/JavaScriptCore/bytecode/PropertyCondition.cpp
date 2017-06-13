@@ -134,7 +134,10 @@ bool PropertyCondition::isStillValidAssumingImpurePropertyWatchpoint(
         unsigned currentAttributes;
         PropertyOffset currentOffset = structure->getConcurrently(uid(), currentAttributes);
         if (currentOffset != invalidOffset) {
-            if (currentAttributes & (Accessor | CustomAccessor)) {
+            // FIXME: Given the addition of the check for ReadOnly attributes, we should refactor
+            // instances of AbsenceOfSetter.
+            // https://bugs.webkit.org/show_bug.cgi?id=173322 - Refactor AbsenceOfSetter to something like AbsenceOfSetEffects
+            if (currentAttributes & (ReadOnly | Accessor | CustomAccessor)) {
                 if (verbose) {
                     dataLog(
                         "Invalid because we expected not to have a setter, but we have one at offset ",

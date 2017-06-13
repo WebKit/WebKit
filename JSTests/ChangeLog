@@ -1,3 +1,16 @@
+2017-06-13  Michael Saboff  <msaboff@apple.com>
+
+        DFG doesn't properly handle a property that is change to read only in a prototype
+        https://bugs.webkit.org/show_bug.cgi?id=173321
+
+        Reviewed by Filip Pizlo.
+
+        * ChakraCore.yaml: Renabled fieldopts/objtypespec-newobj-invalidation.1.js.
+        * stress/regress-173321.js: Added new regression test.
+        (shouldBe):
+        (SimpleObject):
+        (test):
+
 2017-06-12  Saam Barati  <sbarati@apple.com>
 
         Update test262 test expectation since r218082 makes new tests pass.
