@@ -1,5 +1,19 @@
 2017-06-12  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [iOS] [macOS] Stop soft-linking Core Text function in iOS 11 and macOS High Sierra
+        https://bugs.webkit.org/show_bug.cgi?id=173289
+
+        Reviewed by Lucas Forschler.
+
+        No new tests because there is no behavior change.
+
+        * platform/graphics/ios/FontCacheIOS.mm:
+        (WebCore::platformFontWithFamilySpecialCase):
+        * platform/graphics/mac/FontCacheMac.mm:
+        (WebCore::platformFontWithFamilySpecialCase):
+
+2017-06-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [Cocoa] Expand system-ui to include every item in the Core Text cascade list
         https://bugs.webkit.org/show_bug.cgi?id=173043
         <rdar://problem/21125708>
