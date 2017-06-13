@@ -28,7 +28,6 @@
     box-shadow: hsla(0, 0%, 0%, 0.5) 3px 3px 4px;
     outline: 1px solid hsl(0, 0%, 65%) !important;
     background-color: white;
-    -webkit-user-modify: read-write-plaintext-only;
     text-overflow: clip !important;
     padding-left: 2px;
     margin-left: -2px;

@@ -1,3 +1,23 @@
+2017-06-13  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Don't use -webkit-user-modify CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=173232
+
+        Reviewed by Devin Rousso.
+
+        Replace -webkit-user-modify CSS property with contentEditable HTML attribute.
+
+        * UserInterface/Views/Editing.css:
+        (.editing):
+        * UserInterface/Views/EditingSupport.js:
+        (cleanUpAfterEditing):
+        * UserInterface/Views/VisualStyleSelectorTreeItem.css:
+        (.item.visual-style-selector-item:not(.dom-element-icon).editable > .titles > .title):
+        * UserInterface/Views/VisualStyleSelectorTreeItem.js:
+        (WebInspector.VisualStyleSelectorTreeItem.prototype.ondeselect):
+        (WebInspector.VisualStyleSelectorTreeItem.prototype._handleMainTitleMouseDown):
+        (WebInspector.VisualStyleSelectorTreeItem.prototype._commitSelector):
+
 2017-06-13  Sam Weinig  <sam@webkit.org>
 
         Rename JSDOMWindowShell to JSDOMWindowProxy to match the HTML5 spec.

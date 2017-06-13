@@ -122,6 +122,7 @@ WebInspector.startEditing = function(element, config)
     var moveDirection = "";
 
     element.classList.add("editing");
+    element.contentEditable = "plaintext-only";
 
     var oldSpellCheck = element.hasAttribute("spellcheck") ? element.spellcheck : undefined;
     element.spellcheck = config.spellcheck;
@@ -149,6 +150,8 @@ WebInspector.startEditing = function(element, config)
         WebInspector.markBeingEdited(element, false);
 
         this.classList.remove("editing");
+        this.contentEditable = false;
+
         this.scrollTop = 0;
         this.scrollLeft = 0;
 

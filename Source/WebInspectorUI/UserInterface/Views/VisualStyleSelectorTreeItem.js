@@ -119,6 +119,7 @@ WebInspector.VisualStyleSelectorTreeItem = class VisualStyleSelectorTreeItem ext
     ondeselect()
     {
         this._listItemNode.classList.remove("editable");
+        this._mainTitleElement.contentEditable = false;
     }
 
     populateContextMenu(contextMenu, event)
@@ -239,6 +240,7 @@ WebInspector.VisualStyleSelectorTreeItem = class VisualStyleSelectorTreeItem ext
             return;
 
         this._listItemNode.classList.toggle("editable", this.selected);
+        this._mainTitleElement.contentEditable = this.selected ? "plaintext-only" : false;
     }
 
     _handleMainTitleKeyDown(event)
@@ -254,6 +256,7 @@ WebInspector.VisualStyleSelectorTreeItem = class VisualStyleSelectorTreeItem ext
     {
         this._hideDOMNodeHighlight();
         this._listItemNode.classList.remove("editable");
+        this._mainTitleElement.contentEditable = false;
         this._updateTitleTooltip();
 
         let value = this.selectorText;

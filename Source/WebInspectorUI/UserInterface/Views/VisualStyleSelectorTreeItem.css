@@ -119,7 +119,6 @@ body:not(.window-inactive, .window-docked-inactive) .item.visual-style-selector-
 .item.visual-style-selector-item:not(.dom-element-icon).editable > .titles > .title {
     cursor: text;
     -webkit-user-select: text;
-    -webkit-user-modify: read-write-plaintext-only;
 }
 
 .item.visual-style-selector-item:not(.dom-element-icon).editable > .titles > .title:focus {
