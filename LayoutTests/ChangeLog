@@ -1,5 +1,16 @@
 2017-06-13  Youenn Fablet  <youenn@apple.com>
 
+        getReceivers() should return transceivers that have only an active receiver
+        https://bugs.webkit.org/show_bug.cgi?id=173313
+
+        Reviewed by Alex Christensen.
+
+        * fast/mediastream/RTCPeerConnection-addTrack-reuse-sender-expected.txt:
+        * webrtc/video-receivers-expected.txt: Added.
+        * webrtc/video-receivers.html: Added.
+
+2017-06-13  Youenn Fablet  <youenn@apple.com>
+
         Refresh WPT tests up to cb7017e654fb4daddb9dee8d654c78b26e61fa9f
         https://bugs.webkit.org/show_bug.cgi?id=173260
 

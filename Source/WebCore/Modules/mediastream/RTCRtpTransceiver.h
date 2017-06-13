@@ -55,6 +55,7 @@ public:
 
     const String& directionString() const;
     RTCRtpTransceiverDirection direction() const { return m_direction; }
+    // FIXME: setDirection should trigger negotiation needed.
     void setDirection(RTCRtpTransceiverDirection direction) { m_direction = direction; }
 
     const String& provisionalMid() const { return m_provisionalMid; }

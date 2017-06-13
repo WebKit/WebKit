@@ -251,6 +251,11 @@ LibWebRTCPeerConnectionBackend::VideoReceiver LibWebRTCPeerConnectionBackend::vi
     }
     auto source = RealtimeIncomingVideoSource::create(nullptr, WTFMove(trackId));
     auto receiver = createReceiverForSource(*m_peerConnection.scriptExecutionContext(), source.copyRef());
+
+    auto transceiver = RTCRtpTransceiver::create(RTCRtpSender::create("video", { }, m_peerConnection), receiver.copyRef());
+    transceiver->disableSendingDirection();
+    m_peerConnection.addTransceiver(WTFMove(transceiver));
+
     return { WTFMove(receiver), WTFMove(source) };
 }
 
@@ -268,6 +273,11 @@ LibWebRTCPeerConnectionBackend::AudioReceiver LibWebRTCPeerConnectionBackend::au
     }
     auto source = RealtimeIncomingAudioSource::create(nullptr, WTFMove(trackId));
     auto receiver = createReceiverForSource(*m_peerConnection.scriptExecutionContext(), source.copyRef());
+
+    auto transceiver = RTCRtpTransceiver::create(RTCRtpSender::create("audio", { }, m_peerConnection), receiver.copyRef());
+    transceiver->disableSendingDirection();
+    m_peerConnection.addTransceiver(WTFMove(transceiver));
+
     return { WTFMove(receiver), WTFMove(source) };
 }
 
