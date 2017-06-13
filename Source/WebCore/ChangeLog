@@ -1,3 +1,10 @@
+2017-06-12  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed build fix; fix a misspelling in CoreMediaSoftLink.{h,cpp}.
+
+        * platform/cf/CoreMediaSoftLink.cpp:
+        * platform/cf/CoreMediaSoftLink.h:
+
 2017-06-12  Myles C. Maxfield  <mmaxfield@apple.com>
 
         @font-face rules with invalid primary fonts never download their secondary fonts
