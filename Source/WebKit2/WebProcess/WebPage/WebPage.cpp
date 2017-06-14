@@ -5609,7 +5609,16 @@ void WebPage::updateWebsitePolicies(const WebsitePolicies& websitePolicies)
     if (!documentLoader)
         return;
 
-    documentLoader->setAllowsAutoplayQuirks(websitePolicies.allowsAutoplayQuirks);
+    OptionSet<AutoplayQuirk> quirks;
+    auto allowedQuirks = websitePolicies.allowedAutoplayQuirks;
+
+    if (allowedQuirks.contains(WebsiteAutoplayQuirk::InheritedUserGestures))
+        quirks |= AutoplayQuirk::InheritedUserGestures;
+
+    if (allowedQuirks.contains(WebsiteAutoplayQuirk::SynthesizedPauseEvents))
+        quirks |= AutoplayQuirk::SynthesizedPauseEvents;
+
+    documentLoader->setAllowedAutoplayQuirks(quirks);
 
     switch (websitePolicies.autoplayPolicy) {
     case WebsiteAutoplayPolicy::Default:

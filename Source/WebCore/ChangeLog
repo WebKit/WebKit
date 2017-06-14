@@ -1,3 +1,25 @@
+2017-06-13  Matt Rajca  <mrajca@apple.com>
+
+        WebsitePolicies: let clients select specific autoplay quirks
+        https://bugs.webkit.org/show_bug.cgi?id=173343
+
+        Reviewed by Alex Christensen.
+
+        Tests: Updated API tests accordingly to use new values.
+
+        Replace the 'allowsAutoplayQuirks' bool with an OptionSet so clients can selectively
+        pick auto-play quirks.
+
+        * dom/Document.cpp:
+        (WebCore::Document::processingUserGestureForMedia):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::needsAutoplayPlayPauseEventsQuirk):
+        * loader/DocumentLoader.h:
+        (WebCore::DocumentLoader::allowedAutoplayQuirks):
+        (WebCore::DocumentLoader::setAllowedAutoplayQuirks):
+        (WebCore::DocumentLoader::allowsAutoplayQuirks): Deleted.
+        (WebCore::DocumentLoader::setAllowsAutoplayQuirks): Deleted.
+
 2017-06-13  Zalan Bujtas  <zalan@apple.com>
 
         Synchronous media query callbacks on nested frames could produced a detached FrameView.

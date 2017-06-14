@@ -6468,7 +6468,7 @@ bool Document::processingUserGestureForMedia() const
         return topDocument().hasHadUserInteraction();
 
     auto* loader = this->loader();
-    if (loader && loader->allowsAutoplayQuirks())
+    if (loader && loader->allowedAutoplayQuirks().contains(AutoplayQuirk::InheritedUserGestures))
         return topDocument().hasHadUserInteraction();
 
     return false;

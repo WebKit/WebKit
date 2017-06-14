@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/OptionSet.h>
+
 namespace WebKit {
 
 enum class WebsiteAutoplayPolicy {
@@ -34,10 +36,15 @@ enum class WebsiteAutoplayPolicy {
     Deny
 };
 
+enum class WebsiteAutoplayQuirk {
+    SynthesizedPauseEvents = 1 << 0,
+    InheritedUserGestures = 1 << 1,
+};
+
 struct WebsitePolicies {
 
     bool contentBlockersEnabled { true };
-    bool allowsAutoplayQuirks { false };
+    OptionSet<WebsiteAutoplayQuirk> allowedAutoplayQuirks;
     WebsiteAutoplayPolicy autoplayPolicy { WebsiteAutoplayPolicy::Default };
 
     template<class Encoder> void encode(Encoder&) const;
@@ -48,7 +55,7 @@ template<class Encoder> void WebsitePolicies::encode(Encoder& encoder) const
 {
     encoder << contentBlockersEnabled;
     encoder.encodeEnum(autoplayPolicy);
-    encoder << allowsAutoplayQuirks;
+    encoder << allowedAutoplayQuirks;
 }
 
 template<class Decoder> bool WebsitePolicies::decode(Decoder& decoder, WebsitePolicies& result)
@@ -57,7 +64,7 @@ template<class Decoder> bool WebsitePolicies::decode(Decoder& decoder, WebsitePo
         return false;
     if (!decoder.decodeEnum(result.autoplayPolicy))
         return false;
-    if (!decoder.decode(result.allowsAutoplayQuirks))
+    if (!decoder.decode(result.allowedAutoplayQuirks))
         return false;
     return true;
 }

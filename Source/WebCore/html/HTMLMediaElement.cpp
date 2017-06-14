@@ -599,7 +599,7 @@ static bool needsAutoplayPlayPauseEventsQuirk(const Document& document)
         return false;
 
     auto* loader = document.loader();
-    return loader && loader->allowsAutoplayQuirks();
+    return loader && loader->allowedAutoplayQuirks().contains(AutoplayQuirk::SynthesizedPauseEvents);
 }
 
 HTMLMediaElement* HTMLMediaElement::bestMediaElementForShowingPlaybackControlsManager(MediaElementSession::PlaybackControlsPurpose purpose)

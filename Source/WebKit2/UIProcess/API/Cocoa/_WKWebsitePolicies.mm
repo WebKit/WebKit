@@ -57,14 +57,31 @@
     return _websitePolicies->contentBlockersEnabled();
 }
 
-- (void)setAllowsAutoplayQuirks:(BOOL)allowsQuirks
+- (void)setAllowedAutoplayQuirks:(_WKWebsiteAutoplayQuirk)allowedQuirks
 {
-    _websitePolicies->setAllowsAutoplayQuirks(allowsQuirks);
+    OptionSet<WebKit::WebsiteAutoplayQuirk> quirks;
+
+    if (allowedQuirks & _WKWebsiteAutoplayQuirkInheritedUserGestures)
+        quirks |= WebKit::WebsiteAutoplayQuirk::InheritedUserGestures;
+
+    if (allowedQuirks & _WKWebsiteAutoplayQuirkSynthesizedPauseEvents)
+        quirks |= WebKit::WebsiteAutoplayQuirk::SynthesizedPauseEvents;
+
+    _websitePolicies->setAllowedAutoplayQuirks(quirks);
 }
 
-- (BOOL)allowsAutoplayQuirks
+- (_WKWebsiteAutoplayQuirk)allowedAutoplayQuirks
 {
-    return _websitePolicies->allowsAutoplayQuirks();
+    _WKWebsiteAutoplayQuirk quirks = 0;
+    auto allowedQuirks = _websitePolicies->allowedAutoplayQuirks();
+
+    if (allowedQuirks.contains(WebKit::WebsiteAutoplayQuirk::InheritedUserGestures))
+        quirks |= _WKWebsiteAutoplayQuirkInheritedUserGestures;
+
+    if (allowedQuirks.contains(WebKit::WebsiteAutoplayQuirk::SynthesizedPauseEvents))
+        quirks |= _WKWebsiteAutoplayQuirkSynthesizedPauseEvents;
+
+    return quirks;
 }
 
 - (void)setAutoplayPolicy:(_WKWebsiteAutoplayPolicy)policy

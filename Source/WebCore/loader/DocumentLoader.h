@@ -85,6 +85,11 @@ enum class AutoplayPolicy {
     Deny,
 };
 
+enum class AutoplayQuirk {
+    SynthesizedPauseEvents = 1 << 0,
+    InheritedUserGestures = 1 << 1,
+};
+
 class DocumentLoader : public RefCounted<DocumentLoader>, private CachedRawResourceClient {
     WTF_MAKE_FAST_ALLOCATED;
     friend class ContentFilter;
@@ -242,8 +247,8 @@ public:
     AutoplayPolicy autoplayPolicy() const { return m_autoplayPolicy; }
     void setAutoplayPolicy(AutoplayPolicy policy) { m_autoplayPolicy = policy; }
 
-    bool allowsAutoplayQuirks() const { return m_allowsAutoplayQuirks; }
-    void setAllowsAutoplayQuirks(bool allowsQuirks) { m_allowsAutoplayQuirks = allowsQuirks; }
+    OptionSet<AutoplayQuirk> allowedAutoplayQuirks() const { return m_allowedAutoplayQuirks; }
+    void setAllowedAutoplayQuirks(OptionSet<AutoplayQuirk> allowedQuirks) { m_allowedAutoplayQuirks = allowedQuirks; }
 
     void addSubresourceLoader(ResourceLoader*);
     void removeSubresourceLoader(ResourceLoader*);
@@ -475,7 +480,7 @@ private:
 #endif
     bool m_userContentExtensionsEnabled { true };
     AutoplayPolicy m_autoplayPolicy { AutoplayPolicy::Default };
-    bool m_allowsAutoplayQuirks { false };
+    OptionSet<AutoplayQuirk> m_allowedAutoplayQuirks;
 
 #ifndef NDEBUG
     bool m_hasEverBeenAttached { false };

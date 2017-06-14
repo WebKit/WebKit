@@ -52,14 +52,30 @@ bool WKWebsitePoliciesGetContentBlockersEnabled(WKWebsitePoliciesRef websitePoli
     return toImpl(websitePolicies)->contentBlockersEnabled();
 }
 
-void WKWebsitePoliciesSetAllowsAutoplayQuirks(WKWebsitePoliciesRef websitePolicies, bool allowsQuirks)
+void WKWebsitePoliciesSetAllowedAutoplayQuirks(WKWebsitePoliciesRef websitePolicies, WKWebsiteAutoplayQuirk allowedQuirks)
 {
-    toImpl(websitePolicies)->setAllowsAutoplayQuirks(allowsQuirks);
+    OptionSet<WebsiteAutoplayQuirk> quirks;
+    if (allowedQuirks & kWKWebsiteAutoplayQuirkInheritedUserGestures)
+        quirks |= WebsiteAutoplayQuirk::InheritedUserGestures;
+
+    if (allowedQuirks & kWKWebsiteAutoplayQuirkSynthesizedPauseEvents)
+        quirks |= WebsiteAutoplayQuirk::SynthesizedPauseEvents;
+
+    toImpl(websitePolicies)->setAllowedAutoplayQuirks(quirks);
 }
 
-bool WKWebsitePoliciesGetAllowsAutoplayQuirks(WKWebsitePoliciesRef websitePolicies)
+WKWebsiteAutoplayQuirk WKWebsitePoliciesGetAllowedAutoplayQuirks(WKWebsitePoliciesRef websitePolicies)
 {
-    return toImpl(websitePolicies)->allowsAutoplayQuirks();
+    WKWebsiteAutoplayQuirk quirks = 0;
+    auto allowedQuirks = toImpl(websitePolicies)->allowedAutoplayQuirks();
+
+    if (allowedQuirks.contains(WebsiteAutoplayQuirk::SynthesizedPauseEvents))
+        quirks |= kWKWebsiteAutoplayQuirkSynthesizedPauseEvents;
+
+    if (allowedQuirks.contains(WebsiteAutoplayQuirk::InheritedUserGestures))
+        quirks |= kWKWebsiteAutoplayQuirkInheritedUserGestures;
+
+    return quirks;
 }
 
 WKWebsiteAutoplayPolicy WKWebsitePoliciesGetAutoplayPolicy(WKWebsitePoliciesRef websitePolicies)

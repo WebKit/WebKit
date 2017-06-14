@@ -1,3 +1,34 @@
+2017-06-13  Matt Rajca  <mrajca@apple.com>
+
+        WebsitePolicies: let clients select specific autoplay quirks
+        https://bugs.webkit.org/show_bug.cgi?id=173343
+
+        Reviewed by Alex Christensen.
+        
+        Replace the 'allowsAutoplayQuirks' bool with an OptionSet so clients can selectively
+        pick auto-play quirks.
+
+        * Shared/WebsitePolicies.h:
+        (WebKit::WebsitePolicies::encode):
+        (WebKit::WebsitePolicies::decode):
+        * UIProcess/API/APIWebsitePolicies.h:
+        * UIProcess/API/C/WKWebsitePolicies.cpp:
+        (WKWebsitePoliciesSetAllowedAutoplayQuirks):
+        (WKWebsitePoliciesGetAllowedAutoplayQuirks):
+        (WKWebsitePoliciesSetAllowsAutoplayQuirks): Deleted.
+        (WKWebsitePoliciesGetAllowsAutoplayQuirks): Deleted.
+        * UIProcess/API/C/WKWebsitePolicies.h:
+        * UIProcess/API/Cocoa/_WKWebsitePolicies.h:
+        * UIProcess/API/Cocoa/_WKWebsitePolicies.mm:
+        (-[_WKWebsitePolicies setAllowedAutoplayQuirks:]):
+        (-[_WKWebsitePolicies allowedAutoplayQuirks]):
+        (-[_WKWebsitePolicies setAllowsAutoplayQuirks:]): Deleted.
+        (-[_WKWebsitePolicies allowsAutoplayQuirks]): Deleted.
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updateWebsitePolicies):
+
 2017-06-13  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add missing availability declarations to SPI in WKUIDelegatePrivate.h
