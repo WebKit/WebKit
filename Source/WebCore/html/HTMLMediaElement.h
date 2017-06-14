@@ -995,6 +995,7 @@ private:
     bool m_initiallyMuted : 1;
     bool m_paused : 1;
     bool m_seeking : 1;
+    bool m_seekRequested : 1;
 
     // data has not been loaded since sending a "stalled" event
     bool m_sentStalledEvent : 1;

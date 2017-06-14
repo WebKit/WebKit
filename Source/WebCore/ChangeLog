@@ -1,3 +1,23 @@
+2017-06-14  Jer Noble  <jer.noble@apple.com>
+
+        Flaky Test: media/media-source/media-source-unnecessary-seek-seeked.html
+        https://bugs.webkit.org/show_bug.cgi?id=173344
+
+        Reviewed by Eric Carlson.
+
+        Separate the concept of "the page has asked us to seek" from "we have asked the
+        media player to seek". When the media engine tells us its ready state has changed
+        after the page has requested a seek, but before the media element has asked its
+        player to perform the seek, we were previously firing a seeked event. Now we'll
+        check this new ivar and see that we aren't expecting a seek to finish yet.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        (WebCore::HTMLMediaElement::setReadyState):
+        (WebCore::HTMLMediaElement::finishSeek):
+        (WebCore::HTMLMediaElement::mediaPlayerTimeChanged):
+        * html/HTMLMediaElement.h:
+
 2017-06-14  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r218157.
