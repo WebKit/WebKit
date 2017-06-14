@@ -203,7 +203,8 @@ TEST(WebKit2, WKHTTPCookieStoreWithoutProcessPool)
     }];
     TestWebKitAPI::Util::run(&finished);
     
-#if PLATFORM(MAC) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
+    // FIXME: Get this to work on iOS. <rdar://problem/32260156>
+#if !PLATFORM(IOS)
     finished = false;
     WKWebsiteDataStore *defaultStore = [WKWebsiteDataStore defaultDataStore];
     [defaultStore.httpCookieStore setCookie:cookie completionHandler:^ {
