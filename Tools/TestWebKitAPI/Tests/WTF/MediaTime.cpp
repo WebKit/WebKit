@@ -193,17 +193,26 @@ TEST(WTF, MediaTime)
     EXPECT_EQ(-3.3, (-MediaTime::createWithDouble(3.3)).toDouble());
     EXPECT_EQ(3.3 * 2, (MediaTime::createWithDouble(3.3) * 2).toDouble());
 
+    EXPECT_EQ((MediaTime::createWithDouble(0.5)+MediaTime::createWithDouble(1e303)).toDouble(), 0.5f+1e303);
+    EXPECT_EQ((MediaTime::createWithDouble(0.5, 1U)+MediaTime::createWithDouble(1e303)).toDouble(), 0.5f+1e303);
+    EXPECT_EQ((MediaTime(1, 2)+MediaTime::createWithDouble(1e303)).toDouble(), 0.5f+1e303);
+    EXPECT_EQ((2*MediaTime::createWithDouble(1e303)).toDouble(), 2*1e303);
+
     // Floating Point and non-Floating Point math
     EXPECT_EQ(2.0, (MediaTime::createWithDouble(1.5) + MediaTime(1, 2)).toDouble());
     EXPECT_EQ(1.0, (MediaTime::createWithDouble(1.5) - MediaTime(1, 2)).toDouble());
 
     // Overflow Behavior
-    EXPECT_EQ(MediaTime::createWithFloat(pow(2.0f, 64.0f)), MediaTime::positiveInfiniteTime());
-    EXPECT_EQ(MediaTime::createWithFloat(-pow(2.0f, 64.0f)), MediaTime::negativeInfiniteTime());
+    EXPECT_EQ(MediaTime::createWithFloat(pow(2.0f, 64.0f), 1U), MediaTime::positiveInfiniteTime());
+    EXPECT_EQ(MediaTime::createWithFloat(-pow(2.0f, 64.0f), 1U), MediaTime::negativeInfiniteTime());
+    EXPECT_EQ(MediaTime::createWithFloat(pow(2.0f, 64.0f)).toFloat(), pow(2.0f, 64.0f));
+    EXPECT_EQ(MediaTime::createWithFloat(-pow(2.0f, 64.0f)).toFloat(), -pow(2.0f, 64.0f));
     EXPECT_EQ(MediaTime::createWithFloat(pow(2.0f, 63.0f), 2).timeScale(), 1U);
     EXPECT_EQ(MediaTime::createWithFloat(pow(2.0f, 63.0f), 3).timeScale(), 1U);
-    EXPECT_EQ(MediaTime::createWithDouble(pow(2.0, 64.0)), MediaTime::positiveInfiniteTime());
-    EXPECT_EQ(MediaTime::createWithDouble(-pow(2.0, 64.0)), MediaTime::negativeInfiniteTime());
+    EXPECT_EQ(MediaTime::createWithDouble(pow(2.0, 64.0), 1U), MediaTime::positiveInfiniteTime());
+    EXPECT_EQ(MediaTime::createWithDouble(-pow(2.0, 64.0), 1U), MediaTime::negativeInfiniteTime());
+    EXPECT_EQ(MediaTime::createWithDouble(pow(2.0f, 64.0f)).toDouble(), pow(2.0f, 64.0f));
+    EXPECT_EQ(MediaTime::createWithDouble(-pow(2.0f, 64.0f)).toDouble(), -pow(2.0f, 64.0f));
     EXPECT_EQ(MediaTime::createWithDouble(pow(2.0, 63.0), 2).timeScale(), 1U);
     EXPECT_EQ(MediaTime::createWithDouble(pow(2.0, 63.0), 3).timeScale(), 1U);
     EXPECT_EQ((MediaTime(numeric_limits<int64_t>::max(), 2) + MediaTime(numeric_limits<int64_t>::max(), 2)).timeScale(), 1U);
@@ -212,6 +221,10 @@ TEST(WTF, MediaTime)
     EXPECT_EQ(MediaTime(numeric_limits<int64_t>::min(), 1) + MediaTime(numeric_limits<int64_t>::min(), 1), MediaTime::negativeInfiniteTime());
     EXPECT_EQ(MediaTime(numeric_limits<int64_t>::min(), 1) - MediaTime(numeric_limits<int64_t>::max(), 1), MediaTime::negativeInfiniteTime());
     EXPECT_EQ(MediaTime(numeric_limits<int64_t>::max(), 1) - MediaTime(numeric_limits<int64_t>::min(), 1), MediaTime::positiveInfiniteTime());
+    EXPECT_EQ(MediaTime::createWithDouble(numeric_limits<double>::max()) + MediaTime::createWithDouble(numeric_limits<double>::max()), MediaTime::positiveInfiniteTime());
+    EXPECT_EQ(MediaTime::createWithDouble(numeric_limits<double>::lowest()) + MediaTime::createWithDouble(numeric_limits<double>::lowest()), MediaTime::negativeInfiniteTime());
+    EXPECT_EQ(MediaTime::createWithDouble(numeric_limits<double>::lowest()) - MediaTime::createWithDouble(numeric_limits<double>::max()), MediaTime::negativeInfiniteTime());
+    EXPECT_EQ(MediaTime::createWithDouble(numeric_limits<double>::max()) - MediaTime::createWithDouble(numeric_limits<double>::lowest()), MediaTime::positiveInfiniteTime());
 
     // Rounding
     EXPECT_EQ(MediaTime(1, 1).toTimeScale(2).timeValue(), 2);

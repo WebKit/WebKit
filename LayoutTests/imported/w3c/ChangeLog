@@ -1,3 +1,24 @@
+2017-06-14  Nael Ouedraogo  <nael.ouedraogo@crf.canon.fr>
+
+        MediaSource duration attribute should not be equal to Infinity when set to a value greater than 2^64
+        https://bugs.webkit.org/show_bug.cgi?id=171668
+
+        Reviewed by Jer Noble.
+
+        MediaSource duration attribute is a double represented in MediaSource by a MediaTime instance created with
+        MediaTime::CreateWithDouble(). This method implements an overflow control mechanism which sets MediaTime to
+        Infinity when the double value passed as argument is greater than 2^64.
+
+        This patch removes the overflow control mechanism when time value is represented as a double. This patch also
+        modifies the behavior of mathematical operations between a double MediaTime and rational MediaTime: the rational
+        MediaTime is converted to a double before applying the operation. Double MediaTime precision is the same as for
+        double. Overflow mechanisms still apply to the conversion of a double MediaTime to rational with setTimescale()
+        method. No behavior change for rational MediaTime.
+
+        Update test expectations.
+
+        * web-platform-tests/media-source/mediasource-duration-boundaryconditions-expected.txt:
+
 2017-06-13  Chris Dumez  <cdumez@apple.com>
 
         Event handlers should not be called in frameless documents
