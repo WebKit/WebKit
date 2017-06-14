@@ -930,9 +930,6 @@ static void setDefaultsToConsistentValuesForTesting()
     CFPreferencesSetAppValue(WebDatabaseDirectoryDefaultsKey, WebCore::pathByAppendingComponent(libraryPath, "Databases").createCFString().get(), appId.get());
     CFPreferencesSetAppValue(WebStorageDirectoryDefaultsKey, WebCore::pathByAppendingComponent(libraryPath, "LocalStorage").createCFString().get(), appId.get());
     CFPreferencesSetAppValue(WebKitLocalCacheDefaultsKey, WebCore::pathByAppendingComponent(libraryPath, "LocalCache").createCFString().get(), appId.get());
-
-    // Create separate cache for each DRT instance
-    setCacheFolder();
 #endif
 }
 
@@ -1468,6 +1465,9 @@ static void prepareConsistentTestingEnvironment(IWebPreferences* standardPrefere
     ASSERT(standardPreferences);
     ASSERT(standardPreferencesPrivate);
     standardPreferences->setAutosaves(FALSE);
+
+    auto newCache = adoptCF(CFURLCacheCreate(kCFAllocatorDefault, 1024 * 1024, 0, nullptr));
+    CFURLCacheSetSharedURLCache(newCache.get());
 
     COMPtr<IWebPreferencesPrivate4> prefsPrivate4(Query, standardPreferences);
     prefsPrivate4->switchNetworkLoaderToNewTestingSession();

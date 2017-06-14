@@ -1,3 +1,16 @@
+2017-06-14  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] DRT should not use disk cache.
+        https://bugs.webkit.org/show_bug.cgi?id=173361
+
+        Reviewed by Darin Adler.
+
+        Like on macOS/iOS, DRT on Windows should only use memory cache.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (setDefaultsToConsistentValuesForTesting):
+        (prepareConsistentTestingEnvironment):
+
 2017-06-14  Nael Ouedraogo  <nael.ouedraogo@crf.canon.fr>
 
         MediaSource duration attribute should not be equal to Infinity when set to a value greater than 2^64
