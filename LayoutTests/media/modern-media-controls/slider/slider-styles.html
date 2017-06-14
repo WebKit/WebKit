@@ -18,15 +18,15 @@ scheduler.frameDidFire = function()
     document.body.appendChild(slider.element);
 
     containerStyle = window.getComputedStyle(slider.element);
-    shouldBeEqualToString("containerStyle.position", "absolute");
+    shouldBeEqualToString("containerStyle.position", "relative");
 
-    canvasStyle = window.getComputedStyle(slider.children[0].element);
-    shouldBeEqualToString("canvasStyle.position", "absolute");
-    shouldBeEqualToString("canvasStyle.top", "0px");
-    shouldBeEqualToString("canvasStyle.left", "0px");
-    shouldBeEqualToString("canvasStyle.width", "200px");
-    shouldBeEqualToString("canvasStyle.height", "25px");
-    shouldBeEqualToString("canvasStyle.pointerEvents", "none");
+    containerStyle = window.getComputedStyle(slider.children[0].element);
+    shouldBeEqualToString("containerStyle.position", "absolute");
+    shouldBeEqualToString("containerStyle.top", "5.5px");
+    shouldBeEqualToString("containerStyle.left", "0px");
+    shouldBeEqualToString("containerStyle.width", "200px");
+    shouldBeEqualToString("containerStyle.height", "5px");
+    shouldBeEqualToString("containerStyle.pointerEvents", "none");
 
     inputStyle = window.getComputedStyle(slider.children[1].element);
     shouldBeEqualToString("inputStyle.position", "absolute");

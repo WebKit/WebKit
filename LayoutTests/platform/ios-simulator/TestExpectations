@@ -90,6 +90,7 @@ media/modern-media-controls/scheduler [ Pass ]
 media/modern-media-controls/scrubber [ Pass ]
 media/modern-media-controls/skip-back-button [ Pass ]
 media/modern-media-controls/skip-forward-button [ Pass ]
+media/modern-media-controls/slider [ Pass ]
 media/modern-media-controls/time-label [ Pass ]
 
 # AirPlay cannot be tested on iOS

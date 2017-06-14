@@ -11,14 +11,14 @@ const slider = new Slider;
 shouldBeEqualToString("slider.element.localName", "div");
 shouldBeEqualToString("slider.element.className.trim()", "slider");
 shouldBe("slider.children.length", "2");
-shouldBeEqualToString("slider.children[0].element.localName", "canvas");
+shouldBeEqualToString("slider.children[0].element.localName", "div");
 shouldBeEqualToString("slider.children[1].element.localName", "input");
 shouldBeEqualToString("slider.children[1].element.type", "range");
 shouldBeEqualToString("slider.children[1].element.min", "0");
 shouldBeEqualToString("slider.children[1].element.max", "1");
 shouldBeEqualToString("slider.children[1].element.step", "0.001");
 
-const sliderWithCSSClassName = new Slider({ cssClassName: "foo" });
+const sliderWithCSSClassName = new Slider("foo");
 shouldBeEqualToString("sliderWithCSSClassName.element.className", "slider foo");
 
 </script>
