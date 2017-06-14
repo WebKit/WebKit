@@ -89,6 +89,7 @@ media/modern-media-controls/rewind-button [ Pass ]
 media/modern-media-controls/scheduler [ Pass ]
 media/modern-media-controls/scrubber [ Pass ]
 media/modern-media-controls/skip-forward-button [ Pass ]
+media/modern-media-controls/time-label [ Pass ]
 
 # AirPlay cannot be tested on iOS
 webkit.org/b/166062 media/modern-media-controls/airplay-support [ Skip ]

@@ -14,14 +14,20 @@ shouldBe("timeLabel.value", "0");
 shouldBeEqualToString("timeLabel.element.localName", "div");
 shouldBeEqualToString("timeLabel.element.className", "time-label");
 
-timeLabel.value = 1;
 timeLabel.element.id = "elasped";
 
-const timeLabelWithNegativeValue = new TimeLabel;
-timeLabelWithNegativeValue.value = -61;
+const NaNTimeLabel = new TimeLabel;
+NaNTimeLabel.setValueWithNumberOfDigits(NaN, 4);
 
-const timeLabelWithHours = new TimeLabel;
-timeLabelWithHours.value = 3661;
+const digits = [3, 4, 5, 6];
+let elapsedTimeLabels = new Map;
+let remainingTimeLabels = new Map;
+for (let numberOfDigits of digits) {
+    elapsedTimeLabels[numberOfDigits] = new TimeLabel(TimeLabel.Types.Elapsed);
+    elapsedTimeLabels[numberOfDigits].setValueWithNumberOfDigits(1, numberOfDigits);
+    remainingTimeLabels[numberOfDigits] = new TimeLabel(TimeLabel.Types.Remaining);
+    remainingTimeLabels[numberOfDigits].setValueWithNumberOfDigits(1, numberOfDigits);
+}
 
 const remainingTimeLabel = new TimeLabel(TimeLabel.Types.Remaining);
 remainingTimeLabel.element.id = "remaining";
@@ -37,18 +43,28 @@ scheduler.frameDidFire = function()
 
     shouldBeEqualToString("style.position", "absolute");
     shouldBeEqualToString("style.fontFamily", "-apple-system-monospaced-numbers");
-    shouldBeEqualToString("style.fontSize", "14px");
+    shouldBeEqualToString("style.fontSize", "12px");
 
+    debug("");
+    debug(`NaNTimeLabel.element.textContent = ${NaNTimeLabel.element.textContent}`);
+
+    debug("");
     elaspedLabel = accessibilityController.accessibleElementById('elasped').description.split(": ")[1];
     remainingLabel = accessibilityController.accessibleElementById('remaining').description.split(": ")[1];
     shouldBeEqualToString("elaspedLabel", "Elapsed");
     shouldBeEqualToString("remainingLabel", "Remaining");
     timeLabel.element.remove();
+    remainingTimeLabel.element.remove();
 
-    shouldBeEqualToString("timeLabel.element.textContent", "00:01");
-    shouldBeEqualToString("timeLabelWithNegativeValue.element.textContent", "-01:01");
-    shouldBeEqualToString("timeLabelWithHours.element.textContent", "01:01:01");
+    for (numberOfDigits of digits) {
+        debug("");
+        debug(`elapsedTimeLabels[${numberOfDigits}].element.textContent = ${elapsedTimeLabels[numberOfDigits].element.textContent}`);
+        debug(`elapsedTimeLabels[${numberOfDigits}].width = ${elapsedTimeLabels[numberOfDigits].width}`);
+        debug(`remainingTimeLabels[${numberOfDigits}].element.textContent = ${remainingTimeLabels[numberOfDigits].element.textContent}`);
+        debug(`remainingTimeLabels[${numberOfDigits}].width = ${remainingTimeLabels[numberOfDigits].width}`);
+    }
 
+    debug("");
     finishMediaControlsTest();
 };
 
