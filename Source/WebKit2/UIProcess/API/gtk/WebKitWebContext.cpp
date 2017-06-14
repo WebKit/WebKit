@@ -23,6 +23,7 @@
 #include "APIAutomationClient.h"
 #include "APICustomProtocolManagerClient.h"
 #include "APIDownloadClient.h"
+#include "APIInjectedBundleClient.h"
 #include "APIPageConfiguration.h"
 #include "APIProcessPoolConfiguration.h"
 #include "APIString.h"
@@ -335,7 +336,7 @@ static void webkitWebContextDispose(GObject* object)
     WebKitWebContextPrivate* priv = WEBKIT_WEB_CONTEXT(object)->priv;
     if (!priv->clientsDetached) {
         priv->clientsDetached = true;
-        priv->processPool->initializeInjectedBundleClient(nullptr);
+        priv->processPool->setInjectedBundleClient(nullptr);
         priv->processPool->setDownloadClient(nullptr);
         priv->processPool->setLegacyCustomProtocolManagerClient(nullptr);
     }

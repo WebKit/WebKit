@@ -1,5 +1,37 @@
 2017-06-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Add API::InjectedBundleClient
+        https://bugs.webkit.org/show_bug.cgi?id=173350
+
+        Reviewed by Alex Christensen.
+
+        It will be used by the GTK+ port instead of the C API.
+
+        * UIProcess/API/APIInjectedBundleClient.h: Copied from Source/WebKit2/UIProcess/WebContextInjectedBundleClient.h.
+        (API::InjectedBundleClient::didReceiveMessageFromInjectedBundle):
+        (API::InjectedBundleClient::didReceiveSynchronousMessageFromInjectedBundle):
+        (API::InjectedBundleClient::getInjectedBundleInitializationUserData):
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextSetInjectedBundleClient):
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (webkitWebContextDispose):
+        * UIProcess/WebContextInjectedBundleClient.cpp:
+        (WebKit::WebContextInjectedBundleClient::WebContextInjectedBundleClient):
+        (WebKit::WebContextInjectedBundleClient::didReceiveMessageFromInjectedBundle):
+        (WebKit::WebContextInjectedBundleClient::didReceiveSynchronousMessageFromInjectedBundle):
+        (WebKit::WebContextInjectedBundleClient::getInjectedBundleInitializationUserData):
+        * UIProcess/WebContextInjectedBundleClient.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::WebProcessPool):
+        (WebKit::WebProcessPool::setInjectedBundleClient):
+        (WebKit::WebProcessPool::createNewWebProcess):
+        (WebKit::WebProcessPool::handleMessage):
+        (WebKit::WebProcessPool::handleSynchronousMessage):
+        * UIProcess/WebProcessPool.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+
+2017-06-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Add API::NotificationProvider
         https://bugs.webkit.org/show_bug.cgi?id=173309
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,30 +25,22 @@
 
 #pragma once
 
-#include "APIClient.h"
-#include "APIInjectedBundleClient.h"
-#include "WKContextInjectedBundleClient.h"
+#include "APIObject.h"
 #include <wtf/Forward.h>
 
-namespace API {
-class Object;
-
-template<> struct ClientTraits<WKContextInjectedBundleClientBase> {
-    typedef std::tuple<WKContextInjectedBundleClientV0, WKContextInjectedBundleClientV1> Versions;
-};
+namespace WebKit {
+class WebProcessPool;
 }
 
-namespace WebKit {
+namespace API {
 
-class WebProcessPool;
-
-class WebContextInjectedBundleClient : public API::InjectedBundleClient, public API::Client<WKContextInjectedBundleClientBase> {
+class InjectedBundleClient {
 public:
-    explicit WebContextInjectedBundleClient(const WKContextInjectedBundleClientBase*);
+    virtual ~InjectedBundleClient() = default;
 
-    void didReceiveMessageFromInjectedBundle(WebProcessPool&, const WTF::String&, API::Object*) override;
-    void didReceiveSynchronousMessageFromInjectedBundle(WebProcessPool&, const WTF::String&, API::Object*, RefPtr<API::Object>&) override;
-    RefPtr<API::Object> getInjectedBundleInitializationUserData(WebProcessPool&) override;
+    virtual void didReceiveMessageFromInjectedBundle(WebKit::WebProcessPool&, const WTF::String&, API::Object*) { }
+    virtual void didReceiveSynchronousMessageFromInjectedBundle(WebKit::WebProcessPool&, const WTF::String&, API::Object*, RefPtr<API::Object>&) { }
+    virtual RefPtr<API::Object> getInjectedBundleInitializationUserData(WebKit::WebProcessPool&) { return nullptr; }
 };
 
-} // namespace WebKit
+} // namespace API

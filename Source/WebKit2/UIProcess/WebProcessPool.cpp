@@ -31,6 +31,7 @@
 #include "APICustomProtocolManagerClient.h"
 #include "APIDownloadClient.h"
 #include "APIHTTPCookieStore.h"
+#include "APIInjectedBundleClient.h"
 #include "APILegacyContextHistoryClient.h"
 #include "APIPageConfiguration.h"
 #include "APIProcessPoolConfiguration.h"
@@ -217,6 +218,7 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     , m_haveInitialEmptyProcess(false)
     , m_processWithPageCache(0)
     , m_defaultPageGroup(WebPageGroup::createNonNull())
+    , m_injectedBundleClient(std::make_unique<API::InjectedBundleClient>())
     , m_automationClient(std::make_unique<API::AutomationClient>())
     , m_downloadClient(std::make_unique<API::DownloadClient>())
     , m_historyClient(std::make_unique<API::LegacyContextHistoryClient>())
@@ -330,9 +332,12 @@ void WebProcessPool::initializeClient(const WKContextClientBase* client)
     m_client.initialize(client);
 }
 
-void WebProcessPool::initializeInjectedBundleClient(const WKContextInjectedBundleClientBase* client)
+void WebProcessPool::setInjectedBundleClient(std::unique_ptr<API::InjectedBundleClient>&& client)
 {
-    m_injectedBundleClient.initialize(client);
+    if (!client)
+        m_injectedBundleClient = std::make_unique<API::InjectedBundleClient>();
+    else
+        m_injectedBundleClient = WTFMove(client);
 }
 
 void WebProcessPool::initializeConnectionClient(const WKContextConnectionClientBase* client)
@@ -756,7 +761,7 @@ WebProcessProxy& WebProcessPool::createNewWebProcess(WebsiteDataStore& websiteDa
     // Add any platform specific parameters
     platformInitializeWebProcess(parameters);
 
-    RefPtr<API::Object> injectedBundleInitializationUserData = m_injectedBundleClient.getInjectedBundleInitializationUserData(this);
+    RefPtr<API::Object> injectedBundleInitializationUserData = m_injectedBundleClient->getInjectedBundleInitializationUserData(*this);
     if (!injectedBundleInitializationUserData)
         injectedBundleInitializationUserData = m_injectedBundleInitializationUserData;
     parameters.initializationUserData = UserData(process->transformObjectsToHandles(injectedBundleInitializationUserData.get()));
@@ -1429,7 +1434,7 @@ void WebProcessPool::handleMessage(IPC::Connection& connection, const String& me
     auto* webProcessProxy = webProcessProxyFromConnection(connection, m_processes);
     if (!webProcessProxy)
         return;
-    m_injectedBundleClient.didReceiveMessageFromInjectedBundle(this, messageName, webProcessProxy->transformHandlesToObjects(messageBody.object()).get());
+    m_injectedBundleClient->didReceiveMessageFromInjectedBundle(*this, messageName, webProcessProxy->transformHandlesToObjects(messageBody.object()).get());
 }
 
 void WebProcessPool::handleSynchronousMessage(IPC::Connection& connection, const String& messageName, const UserData& messageBody, UserData& returnUserData)
@@ -1439,7 +1444,7 @@ void WebProcessPool::handleSynchronousMessage(IPC::Connection& connection, const
         return;
 
     RefPtr<API::Object> returnData;
-    m_injectedBundleClient.didReceiveSynchronousMessageFromInjectedBundle(this, messageName, webProcessProxy->transformHandlesToObjects(messageBody.object()).get(), returnData);
+    m_injectedBundleClient->didReceiveSynchronousMessageFromInjectedBundle(*this, messageName, webProcessProxy->transformHandlesToObjects(messageBody.object()).get(), returnData);
     returnUserData = UserData(webProcessProxy->transformObjectsToHandles(returnData.get()));
 }
 

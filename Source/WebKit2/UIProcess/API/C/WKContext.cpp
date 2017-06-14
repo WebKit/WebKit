@@ -39,6 +39,7 @@
 #include "WKContextConfigurationRef.h"
 #include "WKRetainPtr.h"
 #include "WebCertificateInfo.h"
+#include "WebContextInjectedBundleClient.h"
 #include "WebIconDatabase.h"
 #include "WebProcessPool.h"
 #include <wtf/RefPtr.h>
@@ -92,7 +93,7 @@ void WKContextSetClient(WKContextRef contextRef, const WKContextClientBase* wkCl
 
 void WKContextSetInjectedBundleClient(WKContextRef contextRef, const WKContextInjectedBundleClientBase* wkClient)
 {
-    toImpl(contextRef)->initializeInjectedBundleClient(wkClient);
+    toImpl(contextRef)->setInjectedBundleClient(std::make_unique<WebContextInjectedBundleClient>(wkClient));
 }
 
 void WKContextSetHistoryClient(WKContextRef contextRef, const WKContextHistoryClientBase* wkClient)

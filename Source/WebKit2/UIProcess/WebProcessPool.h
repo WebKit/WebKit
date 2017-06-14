@@ -42,7 +42,6 @@
 #include "VisitedLinkStore.h"
 #include "WebContextClient.h"
 #include "WebContextConnectionClient.h"
-#include "WebContextInjectedBundleClient.h"
 #include "WebProcessProxy.h"
 #include <WebCore/LinkHash.h>
 #include <WebCore/SessionID.h>
@@ -77,6 +76,7 @@ class AutomationClient;
 class CustomProtocolManagerClient;
 class DownloadClient;
 class HTTPCookieStore;
+class InjectedBundleClient;
 class LegacyContextHistoryClient;
 class PageConfiguration;
 }
@@ -140,7 +140,7 @@ public:
     bool dispatchSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&);
 
     void initializeClient(const WKContextClientBase*);
-    void initializeInjectedBundleClient(const WKContextInjectedBundleClientBase*);
+    void setInjectedBundleClient(std::unique_ptr<API::InjectedBundleClient>&&);
     void initializeConnectionClient(const WKContextConnectionClientBase*);
     void setHistoryClient(std::unique_ptr<API::LegacyContextHistoryClient>&&);
     void setDownloadClient(std::unique_ptr<API::DownloadClient>&&);
@@ -485,7 +485,7 @@ private:
     Ref<WebPageGroup> m_defaultPageGroup;
 
     RefPtr<API::Object> m_injectedBundleInitializationUserData;
-    WebContextInjectedBundleClient m_injectedBundleClient;
+    std::unique_ptr<API::InjectedBundleClient> m_injectedBundleClient;
 
     WebContextClient m_client;
     WebContextConnectionClient m_connectionClient;
