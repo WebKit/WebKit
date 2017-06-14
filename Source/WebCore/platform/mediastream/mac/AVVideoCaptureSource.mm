@@ -496,6 +496,7 @@ void AVVideoCaptureSource::orientationChanged(int orientation)
 
 void AVVideoCaptureSource::computeSampleRotation()
 {
+    bool frontCamera = [device() position] == AVCaptureDevicePositionFront;
     switch (m_sensorOrientation - m_deviceOrientation) {
     case 0:
         m_sampleRotation = MediaSample::VideoRotation::None;
@@ -505,11 +506,11 @@ void AVVideoCaptureSource::computeSampleRotation()
         m_sampleRotation = MediaSample::VideoRotation::UpsideDown;
         break;
     case 90:
-        m_sampleRotation = MediaSample::VideoRotation::Left;
+        m_sampleRotation = frontCamera ? MediaSample::VideoRotation::Left : MediaSample::VideoRotation::Right;
         break;
     case -90:
     case -270:
-        m_sampleRotation = MediaSample::VideoRotation::Right;
+        m_sampleRotation = frontCamera ? MediaSample::VideoRotation::Right : MediaSample::VideoRotation::Left;
         break;
     default:
         ASSERT_NOT_REACHED();

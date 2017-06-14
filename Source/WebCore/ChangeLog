@@ -1,3 +1,15 @@
+2017-06-14  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream iOS] Back camera view rendered upside down when in portrait mode
+        https://bugs.webkit.org/show_bug.cgi?id=173346
+        <rdar://problem/32713675>
+
+        Reviewed by Youenn Fablet.
+
+        * platform/mediastream/mac/AVVideoCaptureSource.mm:
+        (WebCore::AVVideoCaptureSource::computeSampleRotation): Use different rotations for front and
+        back cameras when device is in portrait orientation.
+
 2017-06-13  Chris Dumez  <cdumez@apple.com>
 
         Event handlers should not be called in frameless documents
