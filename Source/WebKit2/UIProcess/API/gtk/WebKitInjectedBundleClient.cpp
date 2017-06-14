@@ -20,6 +20,7 @@
 #include "config.h"
 #include "WebKitInjectedBundleClient.h"
 
+#include "APIInjectedBundleClient.h"
 #include "WebImage.h"
 #include "WebKitPrivate.h"
 #include "WebKitURIRequestPrivate.h"
@@ -32,113 +33,113 @@
 using namespace WebKit;
 using namespace WebCore;
 
-static void didReceiveWebViewMessageFromInjectedBundle(WebKitWebView* webView, const char* messageName, API::Dictionary& message)
-{
-    if (g_str_equal(messageName, "DidInitiateLoadForResource")) {
-        WebFrameProxy* frame = static_cast<WebFrameProxy*>(message.get(String::fromUTF8("Frame")));
-        API::UInt64* resourceIdentifier = static_cast<API::UInt64*>(message.get(String::fromUTF8("Identifier")));
-        API::URLRequest* webRequest = static_cast<API::URLRequest*>(message.get(String::fromUTF8("Request")));
-        GRefPtr<WebKitURIRequest> request = adoptGRef(webkitURIRequestCreateForResourceRequest(webRequest->resourceRequest()));
+class WebKitInjectedBundleClient final : public API::InjectedBundleClient {
+public:
+    explicit WebKitInjectedBundleClient(WebKitWebContext* webContext)
+        : m_webContext(webContext)
+    {
+    }
 
-        webkitWebViewResourceLoadStarted(webView, frame, resourceIdentifier->value(), request.get());
-    } else if (g_str_equal(messageName, "DidSendRequestForResource")) {
-        API::UInt64* resourceIdentifier = static_cast<API::UInt64*>(message.get(String::fromUTF8("Identifier")));
-        GRefPtr<WebKitWebResource> resource = webkitWebViewGetLoadingWebResource(webView, resourceIdentifier->value());
-        if (!resource)
-            return;
+private:
+    static void didReceiveWebViewMessageFromInjectedBundle(WebKitWebView* webView, const char* messageName, API::Dictionary& message)
+    {
+        if (g_str_equal(messageName, "DidInitiateLoadForResource")) {
+            WebFrameProxy* frame = static_cast<WebFrameProxy*>(message.get(String::fromUTF8("Frame")));
+            API::UInt64* resourceIdentifier = static_cast<API::UInt64*>(message.get(String::fromUTF8("Identifier")));
+            API::URLRequest* webRequest = static_cast<API::URLRequest*>(message.get(String::fromUTF8("Request")));
+            GRefPtr<WebKitURIRequest> request = adoptGRef(webkitURIRequestCreateForResourceRequest(webRequest->resourceRequest()));
 
-        API::URLRequest* webRequest = static_cast<API::URLRequest*>(message.get(String::fromUTF8("Request")));
-        GRefPtr<WebKitURIRequest> request = adoptGRef(webkitURIRequestCreateForResourceRequest(webRequest->resourceRequest()));
-        API::URLResponse* webRedirectResponse = static_cast<API::URLResponse*>(message.get(String::fromUTF8("RedirectResponse")));
-        GRefPtr<WebKitURIResponse> redirectResponse = webRedirectResponse ? adoptGRef(webkitURIResponseCreateForResourceResponse(webRedirectResponse->resourceResponse())) : 0;
+            webkitWebViewResourceLoadStarted(webView, frame, resourceIdentifier->value(), request.get());
+        } else if (g_str_equal(messageName, "DidSendRequestForResource")) {
+            API::UInt64* resourceIdentifier = static_cast<API::UInt64*>(message.get(String::fromUTF8("Identifier")));
+            GRefPtr<WebKitWebResource> resource = webkitWebViewGetLoadingWebResource(webView, resourceIdentifier->value());
+            if (!resource)
+                return;
 
-        webkitWebResourceSentRequest(resource.get(), request.get(), redirectResponse.get());
-    } else if (g_str_equal(messageName, "DidReceiveResponseForResource")) {
-        API::UInt64* resourceIdentifier = static_cast<API::UInt64*>(message.get(String::fromUTF8("Identifier")));
-        GRefPtr<WebKitWebResource> resource = webkitWebViewGetLoadingWebResource(webView, resourceIdentifier->value());
-        if (!resource)
-            return;
+            API::URLRequest* webRequest = static_cast<API::URLRequest*>(message.get(String::fromUTF8("Request")));
+            GRefPtr<WebKitURIRequest> request = adoptGRef(webkitURIRequestCreateForResourceRequest(webRequest->resourceRequest()));
+            API::URLResponse* webRedirectResponse = static_cast<API::URLResponse*>(message.get(String::fromUTF8("RedirectResponse")));
+            GRefPtr<WebKitURIResponse> redirectResponse = webRedirectResponse ? adoptGRef(webkitURIResponseCreateForResourceResponse(webRedirectResponse->resourceResponse())) : 0;
 
-        API::URLResponse* webResponse = static_cast<API::URLResponse*>(message.get(String::fromUTF8("Response")));
-        GRefPtr<WebKitURIResponse> response = adoptGRef(webkitURIResponseCreateForResourceResponse(webResponse->resourceResponse()));
+            webkitWebResourceSentRequest(resource.get(), request.get(), redirectResponse.get());
+        } else if (g_str_equal(messageName, "DidReceiveResponseForResource")) {
+            API::UInt64* resourceIdentifier = static_cast<API::UInt64*>(message.get(String::fromUTF8("Identifier")));
+            GRefPtr<WebKitWebResource> resource = webkitWebViewGetLoadingWebResource(webView, resourceIdentifier->value());
+            if (!resource)
+                return;
 
-        webkitWebResourceSetResponse(resource.get(), response.get());
-    } else if (g_str_equal(messageName, "DidReceiveContentLengthForResource")) {
-        API::UInt64* resourceIdentifier = static_cast<API::UInt64*>(message.get(String::fromUTF8("Identifier")));
-        GRefPtr<WebKitWebResource> resource = webkitWebViewGetLoadingWebResource(webView, resourceIdentifier->value());
-        if (!resource)
-            return;
+            API::URLResponse* webResponse = static_cast<API::URLResponse*>(message.get(String::fromUTF8("Response")));
+            GRefPtr<WebKitURIResponse> response = adoptGRef(webkitURIResponseCreateForResourceResponse(webResponse->resourceResponse()));
 
-        API::UInt64* contentLength = static_cast<API::UInt64*>(message.get(String::fromUTF8("ContentLength")));
-        webkitWebResourceNotifyProgress(resource.get(), contentLength->value());
-    } else if (g_str_equal(messageName, "DidFinishLoadForResource")) {
-        API::UInt64* resourceIdentifier = static_cast<API::UInt64*>(message.get(String::fromUTF8("Identifier")));
-        GRefPtr<WebKitWebResource> resource = webkitWebViewGetLoadingWebResource(webView, resourceIdentifier->value());
-        if (!resource)
-            return;
+            webkitWebResourceSetResponse(resource.get(), response.get());
+        } else if (g_str_equal(messageName, "DidReceiveContentLengthForResource")) {
+            API::UInt64* resourceIdentifier = static_cast<API::UInt64*>(message.get(String::fromUTF8("Identifier")));
+            GRefPtr<WebKitWebResource> resource = webkitWebViewGetLoadingWebResource(webView, resourceIdentifier->value());
+            if (!resource)
+                return;
 
-        webkitWebResourceFinished(resource.get());
-        webkitWebViewRemoveLoadingWebResource(webView, resourceIdentifier->value());
-    } else if (g_str_equal(messageName, "DidFailLoadForResource")) {
-        API::UInt64* resourceIdentifier = static_cast<API::UInt64*>(message.get(String::fromUTF8("Identifier")));
-        GRefPtr<WebKitWebResource> resource = webkitWebViewGetLoadingWebResource(webView, resourceIdentifier->value());
-        if (!resource)
-            return;
+            API::UInt64* contentLength = static_cast<API::UInt64*>(message.get(String::fromUTF8("ContentLength")));
+            webkitWebResourceNotifyProgress(resource.get(), contentLength->value());
+        } else if (g_str_equal(messageName, "DidFinishLoadForResource")) {
+            API::UInt64* resourceIdentifier = static_cast<API::UInt64*>(message.get(String::fromUTF8("Identifier")));
+            GRefPtr<WebKitWebResource> resource = webkitWebViewGetLoadingWebResource(webView, resourceIdentifier->value());
+            if (!resource)
+                return;
 
-        API::Error* webError = static_cast<API::Error*>(message.get(String::fromUTF8("Error")));
-        const ResourceError& platformError = webError->platformError();
-        GUniquePtr<GError> resourceError(g_error_new_literal(g_quark_from_string(platformError.domain().utf8().data()),
-            toWebKitError(platformError.errorCode()), platformError.localizedDescription().utf8().data()));
-        if (platformError.tlsErrors())
-            webkitWebResourceFailedWithTLSErrors(resource.get(), static_cast<GTlsCertificateFlags>(platformError.tlsErrors()), platformError.certificate());
-        else
-            webkitWebResourceFailed(resource.get(), resourceError.get());
+            webkitWebResourceFinished(resource.get());
+            webkitWebViewRemoveLoadingWebResource(webView, resourceIdentifier->value());
+        } else if (g_str_equal(messageName, "DidFailLoadForResource")) {
+            API::UInt64* resourceIdentifier = static_cast<API::UInt64*>(message.get(String::fromUTF8("Identifier")));
+            GRefPtr<WebKitWebResource> resource = webkitWebViewGetLoadingWebResource(webView, resourceIdentifier->value());
+            if (!resource)
+                return;
 
-        webkitWebViewRemoveLoadingWebResource(webView, resourceIdentifier->value());
-    } else if (g_str_equal(messageName, "DidGetSnapshot")) {
-        API::UInt64* callbackID = static_cast<API::UInt64*>(message.get("CallbackID"));
-        WebImage* image = static_cast<WebImage*>(message.get("Snapshot"));
-        webKitWebViewDidReceiveSnapshot(webView, callbackID->value(), image);
-    } else
-        ASSERT_NOT_REACHED();
-}
+            API::Error* webError = static_cast<API::Error*>(message.get(String::fromUTF8("Error")));
+            const ResourceError& platformError = webError->platformError();
+            GUniquePtr<GError> resourceError(g_error_new_literal(g_quark_from_string(platformError.domain().utf8().data()),
+                toWebKitError(platformError.errorCode()), platformError.localizedDescription().utf8().data()));
+            if (platformError.tlsErrors())
+                webkitWebResourceFailedWithTLSErrors(resource.get(), static_cast<GTlsCertificateFlags>(platformError.tlsErrors()), platformError.certificate());
+            else
+                webkitWebResourceFailed(resource.get(), resourceError.get());
 
-static void didReceiveMessageFromInjectedBundle(WKContextRef, WKStringRef messageName, WKTypeRef messageBody, const void* clientInfo)
-{
-    ASSERT(WKGetTypeID(messageBody) == WKDictionaryGetTypeID());
-    API::Dictionary& message = *toImpl(static_cast<WKDictionaryRef>(messageBody));
+            webkitWebViewRemoveLoadingWebResource(webView, resourceIdentifier->value());
+        } else if (g_str_equal(messageName, "DidGetSnapshot")) {
+            API::UInt64* callbackID = static_cast<API::UInt64*>(message.get("CallbackID"));
+            WebImage* image = static_cast<WebImage*>(message.get("Snapshot"));
+            webKitWebViewDidReceiveSnapshot(webView, callbackID->value(), image);
+        } else
+            ASSERT_NOT_REACHED();
+    }
 
-    CString messageNameCString = toImpl(messageName)->string().utf8();
-    const char* messageNameUTF8 = messageNameCString.data();
+    void didReceiveMessageFromInjectedBundle(WebProcessPool&, const String& messageName, API::Object* messageBody) override
+    {
+        ASSERT(messageBody->type() == API::Object::Type::Dictionary);
+        API::Dictionary& message = *static_cast<API::Dictionary*>(messageBody);
 
-    if (g_str_has_prefix(messageNameUTF8, "WebPage.")) {
-        WebPageProxy* page = static_cast<WebPageProxy*>(message.get(String::fromUTF8("Page")));
-        WebKitWebView* webView = webkitWebContextGetWebViewForPage(WEBKIT_WEB_CONTEXT(clientInfo), page);
-        if (!webView)
-            return;
+        CString messageNameUTF8 = messageName.utf8();
+        if (g_str_has_prefix(messageNameUTF8.data(), "WebPage.")) {
+            WebPageProxy* page = static_cast<WebPageProxy*>(message.get(String::fromUTF8("Page")));
+            WebKitWebView* webView = webkitWebContextGetWebViewForPage(m_webContext, page);
+            if (!webView)
+                return;
 
-        didReceiveWebViewMessageFromInjectedBundle(webView, messageNameUTF8 + strlen("WebPage."), message);
-    } else
-        ASSERT_NOT_REACHED();
-}
+            didReceiveWebViewMessageFromInjectedBundle(webView, messageNameUTF8.data() + strlen("WebPage."), message);
+        } else
+            ASSERT_NOT_REACHED();
+    }
 
-static WKTypeRef getInjectedBundleInitializationUserData(WKContextRef, const void* clientInfo)
-{
-    GRefPtr<GVariant> data = webkitWebContextInitializeWebExtensions(WEBKIT_WEB_CONTEXT(clientInfo));
-    GUniquePtr<gchar> dataString(g_variant_print(data.get(), TRUE));
-    return static_cast<WKTypeRef>(WKStringCreateWithUTF8CString(dataString.get()));
-}
+    RefPtr<API::Object> getInjectedBundleInitializationUserData(WebProcessPool&)
+    {
+        GRefPtr<GVariant> data = webkitWebContextInitializeWebExtensions(m_webContext);
+        GUniquePtr<gchar> dataString(g_variant_print(data.get(), TRUE));
+        return API::String::create(String::fromUTF8(dataString.get()));
+    }
+
+    WebKitWebContext* m_webContext;
+};
 
 void attachInjectedBundleClientToContext(WebKitWebContext* webContext)
 {
-    WKContextInjectedBundleClientV1 wkInjectedBundleClient = {
-        {
-            1, // version
-            webContext, // clientInfo
-        },
-        didReceiveMessageFromInjectedBundle,
-        0, // didReceiveSynchronousMessageFromInjectedBundle
-        getInjectedBundleInitializationUserData
-    };
-    WKContextSetInjectedBundleClient(toAPI(&webkitWebContextGetProcessPool(webContext)), &wkInjectedBundleClient.base);
+    webkitWebContextGetProcessPool(webContext).setInjectedBundleClient(std::make_unique<WebKitInjectedBundleClient>(webContext));
 }
