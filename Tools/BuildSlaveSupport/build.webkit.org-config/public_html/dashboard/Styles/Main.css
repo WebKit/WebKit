@@ -180,6 +180,16 @@ table.queue-grid tr.platform.ios-10 img.logo {
     content: -webkit-image-set(url(../Images/IOS10@2x.png) 2x, url(../Images/IOS10.png) 1x);
 }
 
+table.queue-grid tr.platform.ios-simulator-11 img.logo {
+    background: linear-gradient(155deg, #b1a8ed 16%,#aa3daa 50%);
+    content: -webkit-image-set(url(../Images/IOS11Simulator@2x.png) 2x, url(../Images/IOS11Simulator.png) 1x);
+}
+
+table.queue-grid tr.platform.ios-11 img.logo {
+    background: linear-gradient(155deg, #b1a8ed 16%,#aa3daa 50%);
+    content: -webkit-image-set(url(../Images/IOS11@2x.png) 2x, url(../Images/IOS11.png) 1x);
+}
+
 table.queue-grid tr.platform.mac-os-x-elcapitan img.logo {
     content: -webkit-image-set(url(../Images/ElCapitan@2x.png) 2x, url(../Images/ElCapitan.png) 1x);
 }

@@ -28,6 +28,8 @@ Dashboard = {
         macOSHighSierra: { name: "macos-highsierra", readableName: "macOS High Sierra", order: 7 },
         macOSSierra: { name: "macos-sierra", readableName: "macOS Sierra", order: 8 },
         MacOSXElCapitan: { name: "mac-os-x-elcapitan", readableName: "OS X El Capitan", order: 9 },
+        iOS11Simulator: { name: "ios-simulator-11", readableName: "iOS 11 Simulator", order: 20 },
+        iOS11Device: { name: "ios-11", readableName: "iOS 11", order: 25 },
         iOS10Simulator: { name: "ios-simulator-10", readableName: "iOS 10 Simulator", order: 30 },
         iOS10Device: { name: "ios-10", readableName: "iOS 10", order: 40 },
         Windows8: { name: "windows-8", readableName: "Windows 8", order: 50 },
