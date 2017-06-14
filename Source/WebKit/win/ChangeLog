@@ -1,3 +1,17 @@
+2017-06-14  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Link errors on tag WebKit-603.3.4
+        https://bugs.webkit.org/show_bug.cgi?id=173003
+
+        Reviewed by Brent Fulgham.
+
+        Remove the unused methods WebPreferences::allowsPageCacheWithWindowOpener and
+        WebPreferences::setAllowsPageCacheWithWindowOpener. They have already been removed
+        on trunk.
+ 
+        * Interfaces/IWebPreferencesPrivate.idl:
+        * WebPreferences.h:
+
 2017-06-01  Matthew Hanson  <matthew_hanson@apple.com>
 
         Cherry-pick r212173. rdar://problem/32080671
