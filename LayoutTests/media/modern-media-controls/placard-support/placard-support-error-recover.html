@@ -14,11 +14,12 @@ const media = document.querySelector("video");
 const mediaController = createControls(shadowRoot, media, null);
 
 media.addEventListener("error", () => {
-    shouldBeTrue("mediaController.controls.showsPlacard");
+    shouldBe("mediaController.controls.placard", "mediaController.controls.invalidPlacard");
     shouldBeTrue("mediaController.controls.children.includes(mediaController.controls.invalidPlacard)");
 
     media.addEventListener("loadstart", () => {
-        shouldBeFalse("mediaController.controls.showsPlacard");
+        shouldBeNull("mediaController.controls.placard");
+        shouldBeFalse("mediaController.controls.children.includes(mediaController.controls.invalidPlacard)");
         debug("");
         shadowRoot.host.remove();
         media.remove();

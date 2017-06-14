@@ -1567,6 +1567,7 @@ media/modern-media-controls/mute-support [ Pass ]
 media/modern-media-controls/pip-button [ Pass ]
 media/modern-media-controls/pip-placard [ Pass ]
 media/modern-media-controls/placard [ Pass ]
+media/modern-media-controls/placard-support [ Pass ]
 media/modern-media-controls/play-pause-button [ Pass ]
 media/modern-media-controls/rewind-button [ Pass ]
 media/modern-media-controls/scheduler [ Pass ]
@@ -1582,6 +1583,7 @@ media/modern-media-controls/volume-up-support [ Pass ]
 
 # These tests are iOS-specific
 media/modern-media-controls/audio/audio-controls-styles.html [ Skip ]
+media/modern-media-controls/placard-support/ipad [ Skip ]
 
 webkit.org/b/170907 [ Debug ] imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf.worker.html [ Pass Failure Timeout ]
 

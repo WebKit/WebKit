@@ -9,7 +9,7 @@ window.jsTestIsAsync = true;
 description("Testing that text selection is turned off for <code>PiPPlacard</code>.");
 
 const mediaControls = new MacOSInlineMediaControls({ width: 600, height: 300 });
-mediaControls.showPlacard(mediaControls.pipPlacard);
+mediaControls.placard = mediaControls.pipPlacard;
 document.body.appendChild(mediaControls.element);
 
 scheduler.frameDidFire = function()

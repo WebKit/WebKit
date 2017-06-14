@@ -1,3 +1,22 @@
+2017-06-13  Antoine Quint  <graouts@apple.com>
+
+        Rebaseline media/modern-media-controls/placard-support
+        https://bugs.webkit.org/show_bug.cgi?id=173340
+
+        Reviewed by Dean Jackson.
+
+        We make a source change to use a "placard" getter/setter to show or hide a placard, making it
+        more convenient to test whether a placard has been set.
+
+        * Modules/modern-media-controls/controls/inline-media-controls.js:
+        (InlineMediaControls.prototype.get placard):
+        (InlineMediaControls.prototype.set placard):
+        (InlineMediaControls.prototype.showPlacard): Deleted.
+        (InlineMediaControls.prototype.hidePlacard): Deleted.
+        * Modules/modern-media-controls/media/placard-support.js:
+        (PlacardSupport.prototype._updatePlacard):
+        (PlacardSupport):
+
 2017-06-11  Antoine Quint  <graouts@apple.com>
 
         Rebaseline media/modern-media-controls/fullscreen-support

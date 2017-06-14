@@ -52,16 +52,17 @@ class PlacardSupport extends MediaControllerSupport
             return;
 
         const controls = this.mediaController.controls;
-
         const media = this.mediaController.media;
+
+        let placard = null;
         if (media.webkitPresentationMode === "picture-in-picture")
-            controls.showPlacard(controls.pipPlacard);
+            placard = controls.pipPlacard;
         else if (media.webkitCurrentPlaybackTargetIsWireless)
-            controls.showPlacard(controls.airplayPlacard);
+            placard = controls.airplayPlacard;
         else if (media instanceof HTMLVideoElement && media.error !== null && media.played.length === 0)
-            controls.showPlacard(controls.invalidPlacard);
-        else
-            controls.hidePlacard();
+            placard = controls.invalidPlacard;
+
+        controls.placard = placard;
     }
 
 }

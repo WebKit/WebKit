@@ -14,7 +14,7 @@ const media = document.querySelector("video");
 const mediaController = createControls(shadowRoot, media, null);
 
 media.addEventListener("error", function() {
-    shouldBeTrue("mediaController.controls.showsPlacard");
+    shouldBe("mediaController.controls.placard", "mediaController.controls.invalidPlacard");
     shouldBeTrue("mediaController.controls.children.includes(mediaController.controls.invalidPlacard)");
     debug("");
     shadowRoot.host.remove();

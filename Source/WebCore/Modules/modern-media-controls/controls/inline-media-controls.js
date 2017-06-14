@@ -94,22 +94,17 @@ class InlineMediaControls extends MediaControls
         this.layout();
     }
 
-    showPlacard(placard)
+    get placard()
+    {
+        return this._placard;
+    }
+
+    set placard(placard)
     {
         if (this._placard === placard)
             return;
 
         this._placard = placard;
-        this.layout();
-    }
-
-    hidePlacard()
-    {
-        if (!this._placard)
-            return;
-
-        this._placard.remove();
-        this._placard = null;
         this.layout();
     }
 

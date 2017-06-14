@@ -1,5 +1,25 @@
 2017-06-13  Antoine Quint  <graouts@apple.com>
 
+        Rebaseline media/modern-media-controls/placard-support
+        https://bugs.webkit.org/show_bug.cgi?id=173340
+
+        Reviewed by Dean Jackson.
+
+        We update tests to use the new "placard" property rather than "showsPlacard" which this patch removes.
+
+        * media/modern-media-controls/placard-support/placard-support-airplay-expected.txt:
+        * media/modern-media-controls/placard-support/placard-support-airplay.html:
+        * media/modern-media-controls/placard-support/placard-support-error-expected.txt:
+        * media/modern-media-controls/placard-support/placard-support-error-recover-expected.txt:
+        * media/modern-media-controls/placard-support/placard-support-error-recover.html:
+        * media/modern-media-controls/placard-support/placard-support-error.html:
+        * media/modern-media-controls/placard-support/placard-support-pip-expected.txt:
+        * media/modern-media-controls/placard-support/placard-support-pip.html:
+        * platform/ios-simulator/TestExpectations:
+        * platform/mac/TestExpectations:
+
+2017-06-13  Antoine Quint  <graouts@apple.com>
+
         Rebaseline media/modern-media-controls/mute-support
         https://bugs.webkit.org/show_bug.cgi?id=173345
 
