@@ -28,7 +28,6 @@
 (deny mach-lookup (xpc-service-name-prefix ""))
 
 (import "common.sb")
-(import "removed-dev-nodes.sb")
 
 (allow file-read* file-write* (extension "com.apple.app-sandbox.read-write"))
 

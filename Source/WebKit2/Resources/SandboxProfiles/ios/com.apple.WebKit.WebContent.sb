@@ -28,7 +28,6 @@
 (deny mach-lookup (xpc-service-name-prefix ""))
 
 (import "UIKit-apps.sb")
-(import "removed-dev-nodes.sb")
 
 (uikit-app 'with-opengl 'with-location-services)
 
@@ -72,9 +71,6 @@
 (allow file-issue-extension (require-all
     (extension "com.apple.app-sandbox.read-write")
     (extension-class "com.apple.nsurlstorage.extension-cache")))
-
-;; Allow the OpenGL Profiler to attach.
-(instruments-support)    ; For <rdar://problem/7931952>
 
 ;; MediaAccessibility
 (mobile-preferences-read "com.apple.mediaaccessibility")

@@ -28,7 +28,6 @@
 (deny mach-lookup (xpc-service-name-prefix ""))
 
 (import "common.sb")
-(import "removed-dev-nodes.sb")
 
 (deny sysctl*)
 (allow sysctl-read

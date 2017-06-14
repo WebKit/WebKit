@@ -1,3 +1,19 @@
+2017-06-14  Brent Fulgham  <bfulgham@apple.com>
+
+        [WK2][iOS] Remove dead-code "import "removed-dev-nodes.sb” from sandboxes (173378)
+        https://bugs.webkit.org/show_bug.cgi?id=173378
+        <rdar://problem/32773230>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Clean up the sandboxes to remove a couple of dead functions (and imports):
+        1. Remove the import "removed-dev-nodes.sb" from the sandbox, since this file is now empty.
+        2. Also remove the call to "instruments-support" as this is a no-op function in modern iOS.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Databases.sb:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2017-06-14  Alex Christensen  <achristensen@webkit.org>
 
         Add SPI for immediate injection of user scripts
