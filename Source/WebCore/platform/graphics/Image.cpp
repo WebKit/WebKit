@@ -47,6 +47,7 @@ namespace WebCore {
 
 Image::Image(ImageObserver* observer)
     : m_imageObserver(observer)
+    , m_animationStartTimer(*this, &Image::startAnimation)
 {
 }
 
@@ -305,6 +306,13 @@ void Image::computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsic
 #endif
     intrinsicWidth = Length(intrinsicRatio.width(), Fixed);
     intrinsicHeight = Length(intrinsicRatio.height(), Fixed);
+}
+
+void Image::startAnimationAsynchronously()
+{
+    if (m_animationStartTimer.isActive())
+        return;
+    m_animationStartTimer.startOneShot(0_s);
 }
 
 void Image::dump(TextStream& ts) const

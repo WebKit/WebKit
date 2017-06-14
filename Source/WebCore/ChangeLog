@@ -1,3 +1,23 @@
+2017-06-14  Zalan Bujtas  <zalan@apple.com>
+
+        Crash in WebCore::RenderStyle::colorIncludingFallback.
+        https://bugs.webkit.org/show_bug.cgi?id=173347
+        <rdar://problem/32675317>
+
+        Reviewed by Chris Dumez.
+
+        Starting an SVG image animation synchronously might trigger recursive style recalc.
+        We should kick off the animation on a zero timer to reduce callstack complexity. 
+
+        Test: svg/as-image/svg-css-animation.html
+
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::didAddClient):
+        * platform/graphics/Image.cpp:
+        (WebCore::Image::Image):
+        (WebCore::Image::startAnimationAsynchronously):
+        * platform/graphics/Image.h:
+
 2017-06-14  Brady Eidson  <beidson@apple.com>
 
         WKIconLoadingDelegate never gets asked about the default favicon if touch/touch-precomposed icons are in the <head>

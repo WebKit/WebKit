@@ -29,12 +29,16 @@ onload = function() {
 
                 evalAndLog("document.body.appendChild(imageA)");
                 document.body.offsetWidth; // Force layout.
-                shouldBeTrue("internals.isImageAnimating(imageA)");
-                evalAndLog("document.body.appendChild(imageB)");
-                document.body.offsetWidth; // Force layout.
-                shouldBeTrue("internals.isImageAnimating(imageB)");
+                setTimeout(function() {
+                    shouldBeTrue("internals.isImageAnimating(imageA)");
 
-                finishJSTest();
+                    evalAndLog("document.body.appendChild(imageB)");
+                    document.body.offsetWidth; // Force layout.
+                    setTimeout(function() {
+                        shouldBeTrue("internals.isImageAnimating(imageB)");
+                        finishJSTest();
+                    }, 30);
+                }, 30);
             }, 30);
         }, 30);
     }, 30);

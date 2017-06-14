@@ -119,7 +119,7 @@ void CachedImage::didAddClient(CachedResourceClient& client)
         static_cast<CachedImageClient&>(client).imageChanged(this);
 
     if (m_image)
-        m_image->startAnimation();
+        m_image->startAnimationAsynchronously();
 
     CachedResource::didAddClient(client);
 }

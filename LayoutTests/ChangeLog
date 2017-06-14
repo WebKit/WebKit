@@ -1,3 +1,15 @@
+2017-06-14  Zalan Bujtas  <zalan@apple.com>
+
+        Crash in WebCore::RenderStyle::colorIncludingFallback.
+        https://bugs.webkit.org/show_bug.cgi?id=173347
+        <rdar://problem/32675317>
+
+        Reviewed by Chris Dumez.
+
+        * svg/animations/animated-svg-image-removed-from-document-paused.html: animations are not started synchronously anymore.
+        * svg/as-image/svg-css-animation-expected.txt: Added.
+        * svg/as-image/svg-css-animation.html: Added.
+
 2017-06-14  Matt Lewis  <jlewis3@apple.com>
 
         Fixed typo error for re-baselined editing/execCommand/strikethrough-uses-strike-tag.html.
