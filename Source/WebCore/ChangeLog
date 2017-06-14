@@ -1,3 +1,16 @@
+2017-06-14  Brady Eidson  <beidson@apple.com>
+
+        WKIconLoadingDelegate never gets asked about the default favicon if touch/touch-precomposed icons are in the <head>
+        <rdar://problem/32614328> and https://bugs.webkit.org/show_bug.cgi?id=173376
+
+        Reviewed by Alex Christensen.
+
+        Covered by new API test
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::startIconLoading): Previously we applied the default favicon if the set of LinkIcons was empty.
+          Now, apply the default favicon if the set of LinkIcons contains no explicit favicon.
+
 2017-06-14  Jer Noble  <jer.noble@apple.com>
 
         Flaky Test: media/media-source/media-source-unnecessary-seek-seeked.html

@@ -1657,7 +1657,15 @@ void DocumentLoader::startIconLoading()
 
     Vector<LinkIcon> icons = LinkIconCollector { *document }.iconsOfTypes({ LinkIconType::Favicon, LinkIconType::TouchIcon, LinkIconType::TouchPrecomposedIcon });
 
-    if (icons.isEmpty())
+    bool hasFavicon = false;
+    for (auto& icon : icons) {
+        if (icon.type == LinkIconType::Favicon) {
+            hasFavicon = true;
+            break;
+        }
+    }
+
+    if (!hasFavicon)
         icons.append({ m_frame->document()->completeURL(ASCIILiteral("/favicon.ico")), LinkIconType::Favicon, String(), std::nullopt });
 
     for (auto& icon : icons) {

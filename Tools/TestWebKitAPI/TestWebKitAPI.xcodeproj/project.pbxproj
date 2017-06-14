@@ -163,6 +163,7 @@
 		51A5877D1D1B49CD004BA9AF /* IndexedDBMultiProcess-3.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51A5877C1D1B3D8D004BA9AF /* IndexedDBMultiProcess-3.html */; };
 		51A587851D2739E3004BA9AF /* IndexedDBDatabaseProcessKill-1.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51A587821D272EB5004BA9AF /* IndexedDBDatabaseProcessKill-1.html */; };
 		51A587861D273AA9004BA9AF /* IndexedDBDatabaseProcessKill.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51A587841D272EF3004BA9AF /* IndexedDBDatabaseProcessKill.mm */; };
+		51AF23DF1EF1A3730072F281 /* IconLoadingDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51AF23DE1EF1A3720072F281 /* IconLoadingDelegate.mm */; };
 		51B1EE961C80FAEF0064FB98 /* IndexedDBPersistence-1.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51B1EE941C80FADD0064FB98 /* IndexedDBPersistence-1.html */; };
 		51B1EE971C80FAEF0064FB98 /* IndexedDBPersistence-2.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51B1EE951C80FADD0064FB98 /* IndexedDBPersistence-2.html */; };
 		51BCEE4E1C84F53B0042C82E /* IndexedDBMultiProcess-1.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51BCEE4C1C84F52C0042C82E /* IndexedDBMultiProcess-1.html */; };
@@ -1140,6 +1141,7 @@
 		51A5877C1D1B3D8D004BA9AF /* IndexedDBMultiProcess-3.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "IndexedDBMultiProcess-3.html"; sourceTree = "<group>"; };
 		51A587821D272EB5004BA9AF /* IndexedDBDatabaseProcessKill-1.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "IndexedDBDatabaseProcessKill-1.html"; sourceTree = "<group>"; };
 		51A587841D272EF3004BA9AF /* IndexedDBDatabaseProcessKill.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IndexedDBDatabaseProcessKill.mm; sourceTree = "<group>"; };
+		51AF23DE1EF1A3720072F281 /* IconLoadingDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IconLoadingDelegate.mm; sourceTree = "<group>"; };
 		51B1EE8D1C80F5880064FB98 /* IndexedDBPersistence.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IndexedDBPersistence.mm; sourceTree = "<group>"; };
 		51B1EE941C80FADD0064FB98 /* IndexedDBPersistence-1.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "IndexedDBPersistence-1.html"; sourceTree = "<group>"; };
 		51B1EE951C80FADD0064FB98 /* IndexedDBPersistence-2.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "IndexedDBPersistence-2.html"; sourceTree = "<group>"; };
@@ -1762,6 +1764,7 @@
 				3F1B52681D3D7129008D60C4 /* FullscreenLayoutConstraints.mm */,
 				CDE195B31CFE0ADE0053D256 /* FullscreenTopContentInset.mm */,
 				631EFFF51E7B5E8D00D2EBB8 /* Geolocation.mm */,
+				51AF23DE1EF1A3720072F281 /* IconLoadingDelegate.mm */,
 				510477751D298E03009747EB /* IDBDeleteRecovery.mm */,
 				5110FCEF1E01CBAA006F8D0B /* IDBIndexUpgradeToV2.mm */,
 				51A587841D272EF3004BA9AF /* IndexedDBDatabaseProcessKill.mm */,
@@ -3041,6 +3044,7 @@
 				7CCE7EC71A411A7E00447C4C /* PageVisibilityStateWithWindowChanges.mm in Sources */,
 				7CCE7F091A411AE600447C4C /* ParentFrame.cpp in Sources */,
 				7C83E0511D0A641800FEBCF3 /* ParsedContentRange.cpp in Sources */,
+				51AF23DF1EF1A3730072F281 /* IconLoadingDelegate.mm in Sources */,
 				7CCE7F0A1A411AE600447C4C /* PasteboardNotifications.mm in Sources */,
 				7C83E0531D0A643A00FEBCF3 /* PendingAPIRequestURL.cpp in Sources */,
 				7CCE7EAF1A411A3800447C4C /* PlatformUtilities.cpp in Sources */,

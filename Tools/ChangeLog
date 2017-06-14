@@ -1,3 +1,18 @@
+2017-06-14  Brady Eidson  <beidson@apple.com>
+
+        WKIconLoadingDelegate never gets asked about the default favicon if touch/touch-precomposed icons are in the <head>
+        <rdar://problem/32614328> and https://bugs.webkit.org/show_bug.cgi?id=173376
+
+        Reviewed by Alex Christensen.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/IconLoadingDelegate.mm: Added.
+        (-[IconLoadingDelegate webView:shouldLoadIconWithParameters:completionHandler:]):
+        (-[IconLoadingSchemeHandler initWithData:mimeType:]):
+        (-[IconLoadingSchemeHandler webView:startURLSchemeTask:]):
+        (-[IconLoadingSchemeHandler webView:stopURLSchemeTask:]):
+        (TEST):
+
 2017-06-14  Tim Horton  <timothy_horton@apple.com>
 
         WKContentViewEditingActions API test always fails
