@@ -235,7 +235,7 @@ void WebIconDatabase::close()
         m_iconDatabaseImpl->close();
 }
 
-void WebIconDatabase::setClient(std::unique_ptr<API::IconDatabaseClient> client)
+void WebIconDatabase::setClient(std::unique_ptr<API::IconDatabaseClient>&& client)
 {
     if (!client)
         m_client = std::make_unique<API::IconDatabaseClient>();

@@ -50,7 +50,7 @@ WebGeolocationManagerProxy::WebGeolocationManagerProxy(WebProcessPool* processPo
     WebContextSupplement::processPool()->addMessageReceiver(Messages::WebGeolocationManagerProxy::messageReceiverName(), *this);
 }
 
-void WebGeolocationManagerProxy::setProvider(std::unique_ptr<API::GeolocationProvider> provider)
+void WebGeolocationManagerProxy::setProvider(std::unique_ptr<API::GeolocationProvider>&& provider)
 {
     if (!provider)
         m_provider = std::make_unique<API::GeolocationProvider>();

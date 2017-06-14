@@ -142,9 +142,9 @@ public:
     void initializeClient(const WKContextClientBase*);
     void initializeInjectedBundleClient(const WKContextInjectedBundleClientBase*);
     void initializeConnectionClient(const WKContextConnectionClientBase*);
-    void setHistoryClient(std::unique_ptr<API::LegacyContextHistoryClient>);
-    void setDownloadClient(std::unique_ptr<API::DownloadClient>);
-    void setAutomationClient(std::unique_ptr<API::AutomationClient>);
+    void setHistoryClient(std::unique_ptr<API::LegacyContextHistoryClient>&&);
+    void setDownloadClient(std::unique_ptr<API::DownloadClient>&&);
+    void setAutomationClient(std::unique_ptr<API::AutomationClient>&&);
     void setLegacyCustomProtocolManagerClient(std::unique_ptr<API::CustomProtocolManagerClient>&&);
 
     void setMaximumNumberOfProcesses(unsigned); // Can only be called when there are no processes running.

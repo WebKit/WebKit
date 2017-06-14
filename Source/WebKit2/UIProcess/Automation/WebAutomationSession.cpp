@@ -63,7 +63,7 @@ WebAutomationSession::~WebAutomationSession()
         m_processPool->removeMessageReceiver(Messages::WebAutomationSession::messageReceiverName());
 }
 
-void WebAutomationSession::setClient(std::unique_ptr<API::AutomationSessionClient> client)
+void WebAutomationSession::setClient(std::unique_ptr<API::AutomationSessionClient>&& client)
 {
     m_client = WTFMove(client);
 }

@@ -326,14 +326,14 @@ public:
 
     // -- InjectedBundle methods
 #if ENABLE(CONTEXT_MENUS)
-    void setInjectedBundleContextMenuClient(std::unique_ptr<API::InjectedBundle::PageContextMenuClient>);
+    void setInjectedBundleContextMenuClient(std::unique_ptr<API::InjectedBundle::PageContextMenuClient>&&);
 #endif
-    void setInjectedBundleEditorClient(std::unique_ptr<API::InjectedBundle::EditorClient>);
-    void setInjectedBundleFormClient(std::unique_ptr<API::InjectedBundle::FormClient>);
-    void setInjectedBundlePageLoaderClient(std::unique_ptr<API::InjectedBundle::PageLoaderClient>);
+    void setInjectedBundleEditorClient(std::unique_ptr<API::InjectedBundle::EditorClient>&&);
+    void setInjectedBundleFormClient(std::unique_ptr<API::InjectedBundle::FormClient>&&);
+    void setInjectedBundlePageLoaderClient(std::unique_ptr<API::InjectedBundle::PageLoaderClient>&&);
     void initializeInjectedBundlePolicyClient(WKBundlePagePolicyClientBase*);
     void initializeInjectedBundleResourceLoadClient(WKBundlePageResourceLoadClientBase*);
-    void setInjectedBundleUIClient(std::unique_ptr<API::InjectedBundle::PageUIClient>);
+    void setInjectedBundleUIClient(std::unique_ptr<API::InjectedBundle::PageUIClient>&&);
 #if ENABLE(FULLSCREEN_API)
     void initializeInjectedBundleFullScreenClient(WKBundlePageFullScreenClientBase*);
 #endif

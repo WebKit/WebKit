@@ -334,7 +334,7 @@ public:
     WebFullScreenManagerProxy* fullScreenManager();
 
     API::FullscreenClient& fullscreenClient() const { return *m_fullscreenClient; }
-    void setFullscreenClient(std::unique_ptr<API::FullscreenClient>);
+    void setFullscreenClient(std::unique_ptr<API::FullscreenClient>&&);
 #endif
 #if (PLATFORM(IOS) && HAVE(AVKIT)) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     WebPlaybackSessionManagerProxy* playbackSessionManager();
@@ -348,27 +348,27 @@ public:
 
 #if ENABLE(CONTEXT_MENUS)
     API::ContextMenuClient& contextMenuClient() { return *m_contextMenuClient; }
-    void setContextMenuClient(std::unique_ptr<API::ContextMenuClient>);
+    void setContextMenuClient(std::unique_ptr<API::ContextMenuClient>&&);
 #endif
     API::FindClient& findClient() { return *m_findClient; }
-    void setFindClient(std::unique_ptr<API::FindClient>);
+    void setFindClient(std::unique_ptr<API::FindClient>&&);
     API::FindMatchesClient& findMatchesClient() { return *m_findMatchesClient; }
-    void setFindMatchesClient(std::unique_ptr<API::FindMatchesClient>);
+    void setFindMatchesClient(std::unique_ptr<API::FindMatchesClient>&&);
     API::DiagnosticLoggingClient& diagnosticLoggingClient() { return *m_diagnosticLoggingClient; }
-    void setDiagnosticLoggingClient(std::unique_ptr<API::DiagnosticLoggingClient>);
-    void setFormClient(std::unique_ptr<API::FormClient>);
-    void setNavigationClient(std::unique_ptr<API::NavigationClient>);
-    void setHistoryClient(std::unique_ptr<API::HistoryClient>);
-    void setLoaderClient(std::unique_ptr<API::LoaderClient>);
-    void setPolicyClient(std::unique_ptr<API::PolicyClient>);
+    void setDiagnosticLoggingClient(std::unique_ptr<API::DiagnosticLoggingClient>&&);
+    void setFormClient(std::unique_ptr<API::FormClient>&&);
+    void setNavigationClient(std::unique_ptr<API::NavigationClient>&&);
+    void setHistoryClient(std::unique_ptr<API::HistoryClient>&&);
+    void setLoaderClient(std::unique_ptr<API::LoaderClient>&&);
+    void setPolicyClient(std::unique_ptr<API::PolicyClient>&&);
     void setInjectedBundleClient(const WKPageInjectedBundleClientBase*);
     WebPageInjectedBundleClient* injectedBundleClient() { return m_injectedBundleClient.get(); }
 
     API::UIClient& uiClient() { return *m_uiClient; }
-    void setUIClient(std::unique_ptr<API::UIClient>);
+    void setUIClient(std::unique_ptr<API::UIClient>&&);
 
     API::IconLoadingClient& iconLoadingClient() { return *m_iconLoadingClient; }
-    void setIconLoadingClient(std::unique_ptr<API::IconLoadingClient>);
+    void setIconLoadingClient(std::unique_ptr<API::IconLoadingClient>&&);
 
     void initializeWebPage();
 

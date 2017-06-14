@@ -78,7 +78,7 @@ public:
     WebAutomationSession();
     ~WebAutomationSession();
 
-    void setClient(std::unique_ptr<API::AutomationSessionClient>);
+    void setClient(std::unique_ptr<API::AutomationSessionClient>&&);
 
     void setSessionIdentifier(const String& sessionIdentifier) { m_sessionIdentifier = sessionIdentifier; }
     String sessionIdentifier() const { return m_sessionIdentifier; }

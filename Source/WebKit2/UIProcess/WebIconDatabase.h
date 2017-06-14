@@ -81,7 +81,7 @@ public:
     void checkIntegrityBeforeOpening();
     void close();
 
-    void setClient(std::unique_ptr<API::IconDatabaseClient>);
+    void setClient(std::unique_ptr<API::IconDatabaseClient>&&);
 
     void setPrivateBrowsingEnabled(bool);
 

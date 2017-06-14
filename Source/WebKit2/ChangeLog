@@ -1,5 +1,54 @@
 2017-06-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        API clients should not be passed by value to the setters
+        https://bugs.webkit.org/show_bug.cgi?id=173266
+
+        Reviewed by Alex Christensen.
+
+        By using a rvalue reference we make it more explicit that the ownership is transferred and we avoid the
+        parameter construction.
+
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::setClient):
+        * UIProcess/Automation/WebAutomationSession.h:
+        * UIProcess/WebGeolocationManagerProxy.cpp:
+        (WebKit::WebGeolocationManagerProxy::setProvider):
+        * UIProcess/WebGeolocationManagerProxy.h:
+        * UIProcess/WebIconDatabase.cpp:
+        (WebKit::WebIconDatabase::setClient):
+        * UIProcess/WebIconDatabase.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::setHistoryClient):
+        (WebKit::WebPageProxy::setNavigationClient):
+        (WebKit::WebPageProxy::setLoaderClient):
+        (WebKit::WebPageProxy::setPolicyClient):
+        (WebKit::WebPageProxy::setFormClient):
+        (WebKit::WebPageProxy::setUIClient):
+        (WebKit::WebPageProxy::setIconLoadingClient):
+        (WebKit::WebPageProxy::setFindClient):
+        (WebKit::WebPageProxy::setFindMatchesClient):
+        (WebKit::WebPageProxy::setDiagnosticLoggingClient):
+        (WebKit::WebPageProxy::setContextMenuClient):
+        (WebKit::WebPageProxy::close):
+        (WebKit::WebPageProxy::setFullscreenClient):
+        (WebKit::WebPageProxy::getLoadDecisionForIcon):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::setHistoryClient):
+        (WebKit::WebProcessPool::setDownloadClient):
+        (WebKit::WebProcessPool::setAutomationClient):
+        * UIProcess/WebProcessPool.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setInjectedBundleContextMenuClient):
+        (WebKit::WebPage::setInjectedBundleEditorClient):
+        (WebKit::WebPage::setInjectedBundleFormClient):
+        (WebKit::WebPage::setInjectedBundlePageLoaderClient):
+        (WebKit::WebPage::setInjectedBundleUIClient):
+        * WebProcess/WebPage/WebPage.h:
+
+2017-06-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Use API::InjectedBundle::EditorClient in WebKitWebEditor
         https://bugs.webkit.org/show_bug.cgi?id=173355
 

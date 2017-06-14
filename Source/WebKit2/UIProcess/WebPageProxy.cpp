@@ -326,6 +326,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_configuration(WTFMove(configuration))
     , m_loaderClient(std::make_unique<API::LoaderClient>())
     , m_policyClient(std::make_unique<API::PolicyClient>())
+    , m_iconLoadingClient(std::make_unique<API::IconLoadingClient>())
     , m_formClient(std::make_unique<API::FormClient>())
     , m_uiClient(std::make_unique<API::UIClient>())
     , m_findClient(std::make_unique<API::FindClient>())
@@ -469,17 +470,17 @@ void WebPageProxy::setPreferences(WebPreferences& preferences)
     preferencesDidChange();
 }
     
-void WebPageProxy::setHistoryClient(std::unique_ptr<API::HistoryClient> historyClient)
+void WebPageProxy::setHistoryClient(std::unique_ptr<API::HistoryClient>&& historyClient)
 {
     m_historyClient = WTFMove(historyClient);
 }
 
-void WebPageProxy::setNavigationClient(std::unique_ptr<API::NavigationClient> navigationClient)
+void WebPageProxy::setNavigationClient(std::unique_ptr<API::NavigationClient>&& navigationClient)
 {
     m_navigationClient = WTFMove(navigationClient);
 }
 
-void WebPageProxy::setLoaderClient(std::unique_ptr<API::LoaderClient> loaderClient)
+void WebPageProxy::setLoaderClient(std::unique_ptr<API::LoaderClient>&& loaderClient)
 {
     if (!loaderClient) {
         m_loaderClient = std::make_unique<API::LoaderClient>();
@@ -489,7 +490,7 @@ void WebPageProxy::setLoaderClient(std::unique_ptr<API::LoaderClient> loaderClie
     m_loaderClient = WTFMove(loaderClient);
 }
 
-void WebPageProxy::setPolicyClient(std::unique_ptr<API::PolicyClient> policyClient)
+void WebPageProxy::setPolicyClient(std::unique_ptr<API::PolicyClient>&& policyClient)
 {
     if (!policyClient) {
         m_policyClient = std::make_unique<API::PolicyClient>();
@@ -499,7 +500,7 @@ void WebPageProxy::setPolicyClient(std::unique_ptr<API::PolicyClient> policyClie
     m_policyClient = WTFMove(policyClient);
 }
 
-void WebPageProxy::setFormClient(std::unique_ptr<API::FormClient> formClient)
+void WebPageProxy::setFormClient(std::unique_ptr<API::FormClient>&& formClient)
 {
     if (!formClient) {
         m_formClient = std::make_unique<API::FormClient>();
@@ -509,7 +510,7 @@ void WebPageProxy::setFormClient(std::unique_ptr<API::FormClient> formClient)
     m_formClient = WTFMove(formClient);
 }
 
-void WebPageProxy::setUIClient(std::unique_ptr<API::UIClient> uiClient)
+void WebPageProxy::setUIClient(std::unique_ptr<API::UIClient>&& uiClient)
 {
     if (!uiClient) {
         m_uiClient = std::make_unique<API::UIClient>();
@@ -525,7 +526,7 @@ void WebPageProxy::setUIClient(std::unique_ptr<API::UIClient> uiClient)
     setCanRunModal(m_uiClient->canRunModal());
 }
 
-void WebPageProxy::setIconLoadingClient(std::unique_ptr<API::IconLoadingClient> iconLoadingClient)
+void WebPageProxy::setIconLoadingClient(std::unique_ptr<API::IconLoadingClient>&& iconLoadingClient)
 {
     bool hasClient = iconLoadingClient.get();
     if (!iconLoadingClient)
@@ -539,7 +540,7 @@ void WebPageProxy::setIconLoadingClient(std::unique_ptr<API::IconLoadingClient> 
     m_process->send(Messages::WebPage::SetUseIconLoadingClient(hasClient), m_pageID);
 }
 
-void WebPageProxy::setFindClient(std::unique_ptr<API::FindClient> findClient)
+void WebPageProxy::setFindClient(std::unique_ptr<API::FindClient>&& findClient)
 {
     if (!findClient) {
         m_findClient = std::make_unique<API::FindClient>();
@@ -549,7 +550,7 @@ void WebPageProxy::setFindClient(std::unique_ptr<API::FindClient> findClient)
     m_findClient = WTFMove(findClient);
 }
 
-void WebPageProxy::setFindMatchesClient(std::unique_ptr<API::FindMatchesClient> findMatchesClient)
+void WebPageProxy::setFindMatchesClient(std::unique_ptr<API::FindMatchesClient>&& findMatchesClient)
 {
     if (!findMatchesClient) {
         m_findMatchesClient = std::make_unique<API::FindMatchesClient>();
@@ -559,7 +560,7 @@ void WebPageProxy::setFindMatchesClient(std::unique_ptr<API::FindMatchesClient> 
     m_findMatchesClient = WTFMove(findMatchesClient);
 }
 
-void WebPageProxy::setDiagnosticLoggingClient(std::unique_ptr<API::DiagnosticLoggingClient> diagnosticLoggingClient)
+void WebPageProxy::setDiagnosticLoggingClient(std::unique_ptr<API::DiagnosticLoggingClient>&& diagnosticLoggingClient)
 {
     if (!diagnosticLoggingClient) {
         m_diagnosticLoggingClient = std::make_unique<API::DiagnosticLoggingClient>();
@@ -570,7 +571,7 @@ void WebPageProxy::setDiagnosticLoggingClient(std::unique_ptr<API::DiagnosticLog
 }
 
 #if ENABLE(CONTEXT_MENUS)
-void WebPageProxy::setContextMenuClient(std::unique_ptr<API::ContextMenuClient> contextMenuClient)
+void WebPageProxy::setContextMenuClient(std::unique_ptr<API::ContextMenuClient>&& contextMenuClient)
 {
     if (!contextMenuClient) {
         m_contextMenuClient = std::make_unique<API::ContextMenuClient>();
@@ -758,6 +759,7 @@ void WebPageProxy::close()
     m_loaderClient = std::make_unique<API::LoaderClient>();
     m_navigationClient = nullptr;
     m_policyClient = std::make_unique<API::PolicyClient>();
+    m_iconLoadingClient = std::make_unique<API::IconLoadingClient>();
     m_formClient = std::make_unique<API::FormClient>();
     m_uiClient = std::make_unique<API::UIClient>();
     m_findClient = std::make_unique<API::FindClient>();
@@ -765,6 +767,9 @@ void WebPageProxy::close()
     m_diagnosticLoggingClient = std::make_unique<API::DiagnosticLoggingClient>();
 #if ENABLE(CONTEXT_MENUS)
     m_contextMenuClient = std::make_unique<API::ContextMenuClient>();
+#endif
+#if ENABLE(FULLSCREEN_API)
+    m_fullscreenClient = std::make_unique<API::FullscreenClient>();
 #endif
 
     m_webProcessLifetimeTracker.pageWasInvalidated();
@@ -4270,8 +4275,13 @@ WebFullScreenManagerProxy* WebPageProxy::fullScreenManager()
     return m_fullScreenManager.get();
 }
 
-void WebPageProxy::setFullscreenClient(std::unique_ptr<API::FullscreenClient> client)
+void WebPageProxy::setFullscreenClient(std::unique_ptr<API::FullscreenClient>&& client)
 {
+    if (!client) {
+        m_fullscreenClient = std::make_unique<API::FullscreenClient>();
+        return;
+    }
+
     m_fullscreenClient = WTFMove(client);
 }
 #endif
@@ -6741,9 +6751,6 @@ void WebPageProxy::didRestoreScrollPosition()
 
 void WebPageProxy::getLoadDecisionForIcon(const WebCore::LinkIcon& icon, uint64_t loadIdentifier)
 {
-    if (!m_iconLoadingClient)
-        return;
-
     m_iconLoadingClient->getLoadDecisionForIcon(icon, [this, protectedThis = RefPtr<WebPageProxy>(this), loadIdentifier](std::function<void (API::Data*, CallbackBase::Error)> callbackFunction) {
         if (!isValid()) {
             if (callbackFunction)

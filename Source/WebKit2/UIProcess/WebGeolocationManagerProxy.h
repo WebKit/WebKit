@@ -47,7 +47,7 @@ public:
 
     static Ref<WebGeolocationManagerProxy> create(WebProcessPool*);
 
-    void setProvider(std::unique_ptr<API::GeolocationProvider>);
+    void setProvider(std::unique_ptr<API::GeolocationProvider>&&);
 
     void providerDidChangePosition(WebGeolocationPosition*);
     void providerDidFailToDeterminePosition(const String& errorMessage = String());
