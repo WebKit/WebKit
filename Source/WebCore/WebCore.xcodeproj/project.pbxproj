@@ -991,9 +991,6 @@
 		1C0939EA1A13E12900B788E5 /* CachedSVGFont.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C0939E81A13E12900B788E5 /* CachedSVGFont.cpp */; };
 		1C0939EB1A13E12900B788E5 /* CachedSVGFont.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C0939E91A13E12900B788E5 /* CachedSVGFont.h */; };
 		1C09D0591E31C6A900725F18 /* libPAL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C09D0501E31C32900725F18 /* libPAL.a */; };
-		1C12AC2A1EE778AE0079E0A0 /* FontFamilySpecificationCoreText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C12AC281EE778AE0079E0A0 /* FontFamilySpecificationCoreText.cpp */; };
-		1C12AC2B1EE778AE0079E0A0 /* FontFamilySpecificationCoreText.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C12AC291EE778AE0079E0A0 /* FontFamilySpecificationCoreText.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		1C12AC2D1EE779950079E0A0 /* FontDescriptionCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C12AC2C1EE779950079E0A0 /* FontDescriptionCocoa.cpp */; };
 		1C18DA58181AF6A500C4EF22 /* TextPainter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C18DA56181AF6A500C4EF22 /* TextPainter.cpp */; };
 		1C18DA59181AF6A500C4EF22 /* TextPainter.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C18DA57181AF6A500C4EF22 /* TextPainter.h */; };
 		1C21E57C183ED1FF001C289D /* IOSurfacePool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C21E57A183ED1FF001C289D /* IOSurfacePool.cpp */; };
@@ -8519,9 +8516,6 @@
 		1C0939E81A13E12900B788E5 /* CachedSVGFont.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CachedSVGFont.cpp; sourceTree = "<group>"; };
 		1C0939E91A13E12900B788E5 /* CachedSVGFont.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedSVGFont.h; sourceTree = "<group>"; };
 		1C09D04B1E31C32800725F18 /* PAL.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = PAL.xcodeproj; path = PAL/PAL.xcodeproj; sourceTree = "<group>"; };
-		1C12AC281EE778AE0079E0A0 /* FontFamilySpecificationCoreText.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FontFamilySpecificationCoreText.cpp; sourceTree = "<group>"; };
-		1C12AC291EE778AE0079E0A0 /* FontFamilySpecificationCoreText.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FontFamilySpecificationCoreText.h; sourceTree = "<group>"; };
-		1C12AC2C1EE779950079E0A0 /* FontDescriptionCocoa.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FontDescriptionCocoa.cpp; sourceTree = "<group>"; };
 		1C18DA56181AF6A500C4EF22 /* TextPainter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextPainter.cpp; sourceTree = "<group>"; };
 		1C18DA57181AF6A500C4EF22 /* TextPainter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextPainter.h; sourceTree = "<group>"; };
 		1C21E57A183ED1FF001C289D /* IOSurfacePool.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IOSurfacePool.cpp; sourceTree = "<group>"; };
@@ -23503,9 +23497,6 @@
 				CD5D27751E8318E000D80A3D /* WebCoreDecompressionSession.mm */,
 				316BDB8A1E6E153000DE0D5A /* WebGPULayer.h */,
 				316BDB891E6E153000DE0D5A /* WebGPULayer.mm */,
-				1C12AC281EE778AE0079E0A0 /* FontFamilySpecificationCoreText.cpp */,
-				1C12AC291EE778AE0079E0A0 /* FontFamilySpecificationCoreText.h */,
-				1C12AC2C1EE779950079E0A0 /* FontDescriptionCocoa.cpp */,
 			);
 			path = cocoa;
 			sourceTree = "<group>";
@@ -26825,7 +26816,6 @@
 				262391361A648CEE007251A3 /* ContentExtensionsDebugging.h in Headers */,
 				51FB67DC1AE6B82F00D06C5A /* ContentExtensionStyleSheet.h in Headers */,
 				A149786F1ABAF33800CEF7E4 /* ContentFilter.h in Headers */,
-				1C12AC2B1EE778AE0079E0A0 /* FontFamilySpecificationCoreText.h in Headers */,
 				A14090FD1AA51E480091191A /* ContentFilterUnblockHandler.h in Headers */,
 				97C471DC12F925BD0086354B /* ContentSecurityPolicy.h in Headers */,
 				CE799FA41C6A503A0097B518 /* ContentSecurityPolicyDirective.h in Headers */,
@@ -31381,7 +31371,6 @@
 				4A6E9FC713C17D570046A7F8 /* FontTaggedSettings.cpp in Sources */,
 				1C3249111C6D6A3B007EDB32 /* FontVariantBuilder.cpp in Sources */,
 				4A0DA2FE129B241900AB61E1 /* FormAssociatedElement.cpp in Sources */,
-				1C12AC2A1EE778AE0079E0A0 /* FontFamilySpecificationCoreText.cpp in Sources */,
 				D05CED290A40BB2C00C5AF38 /* FormatBlockCommand.cpp in Sources */,
 				7CE6CBFD187F394900D46BF5 /* FormatConverter.cpp in Sources */,
 				F50664F7157F52DC00AC226F /* FormController.cpp in Sources */,
@@ -32606,7 +32595,6 @@
 				CDCA98EB18B2C8EB00C12FF9 /* LegacyCDMPrivateMediaPlayer.cpp in Sources */,
 				CDE8B5F01A69778B00B4B66A /* LegacyCDMSessionClearKey.cpp in Sources */,
 				E4C3B1FC0F0E4170009693F6 /* LegacyTileCache.mm in Sources */,
-				1C12AC2D1EE779950079E0A0 /* FontDescriptionCocoa.cpp in Sources */,
 				E4B65A5A132FAAF90070E7BE /* LegacyTileGrid.mm in Sources */,
 				E424A3A01330DF1E00CF6DC9 /* LegacyTileGridTile.mm in Sources */,
 				E4B65A5E132FADB60070E7BE /* LegacyTileLayer.mm in Sources */,

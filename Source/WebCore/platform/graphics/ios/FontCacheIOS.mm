@@ -80,6 +80,69 @@ Ref<Font> FontCache::lastResortFallbackFont(const FontDescription& fontDescripti
     return *fontForFamily(fontDescription, AtomicString(".PhoneFallback", AtomicString::ConstructFromLiteral));
 }
 
+static RetainPtr<CTFontDescriptorRef> baseSystemFontDescriptor(FontSelectionValue weight, bool bold, float size)
+{
+    CTFontUIFontType fontType = kCTFontUIFontSystem;
+    if (weight >= FontSelectionValue(350)) {
+        if (bold)
+            fontType = kCTFontUIFontEmphasizedSystem;
+    } else if (weight >= FontSelectionValue(250))
+        fontType = static_cast<CTFontUIFontType>(kCTFontUIFontSystemLight);
+    else if (weight >= FontSelectionValue(150))
+        fontType = static_cast<CTFontUIFontType>(kCTFontUIFontSystemThin);
+    else
+        fontType = static_cast<CTFontUIFontType>(kCTFontUIFontSystemUltraLight);
+    return adoptCF(CTFontDescriptorCreateForUIType(fontType, size, nullptr));
+}
+
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000
+static RetainPtr<NSDictionary> systemFontModificationAttributes(FontSelectionValue weight, bool italic)
+{
+    RetainPtr<NSMutableDictionary> traitsDictionary = adoptNS([[NSMutableDictionary alloc] init]);
+
+    float ctWeight = kCTFontWeightRegular;
+    if (weight < FontSelectionValue(150))
+        ctWeight = kCTFontWeightUltraLight;
+    else if (weight < FontSelectionValue(250))
+        ctWeight = kCTFontWeightThin;
+    else if (weight < FontSelectionValue(350))
+        ctWeight = kCTFontWeightLight;
+    else if (weight < FontSelectionValue(450))
+        ctWeight = kCTFontWeightRegular;
+    else if (weight < FontSelectionValue(550))
+        ctWeight = kCTFontWeightMedium;
+    else if (weight < FontSelectionValue(650))
+        ctWeight = kCTFontWeightSemibold;
+    else if (weight < FontSelectionValue(750))
+        ctWeight = kCTFontWeightBold;
+    else if (weight < FontSelectionValue(850))
+        ctWeight = kCTFontWeightHeavy;
+    else
+        ctWeight = kCTFontWeightBlack;
+    [traitsDictionary setObject:[NSNumber numberWithFloat:ctWeight] forKey:static_cast<NSString *>(kCTFontWeightTrait)];
+
+    [traitsDictionary setObject:@YES forKey:static_cast<NSString *>(kCTFontUIFontDesignTrait)];
+
+    if (italic)
+        [traitsDictionary setObject:[NSNumber numberWithInt:kCTFontItalicTrait] forKey:static_cast<NSString *>(kCTFontSymbolicTrait)];
+
+    return @{ static_cast<NSString *>(kCTFontTraitsAttribute) : traitsDictionary.get() };
+}
+#endif
+
+static RetainPtr<CTFontDescriptorRef> systemFontDescriptor(FontSelectionValue weight, bool bold, bool italic, float size)
+{
+    RetainPtr<CTFontDescriptorRef> fontDescriptor = baseSystemFontDescriptor(weight, bold, size);
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000
+    RetainPtr<NSDictionary> attributes = systemFontModificationAttributes(weight, italic);
+    return adoptCF(CTFontDescriptorCreateCopyWithAttributes(fontDescriptor.get(), static_cast<CFDictionaryRef>(attributes.get())));
+#else
+    if (italic)
+        return adoptCF(CTFontDescriptorCreateCopyWithSymbolicTraits(fontDescriptor.get(), kCTFontItalicTrait, kCTFontItalicTrait));
+    return fontDescriptor;
+#endif
+}
+
 RetainPtr<CTFontRef> platformFontWithFamilySpecialCase(const AtomicString& family, FontSelectionRequest request, float size)
 {
     if (family.startsWith("UICTFontTextStyle")) {
@@ -90,6 +153,10 @@ RetainPtr<CTFontRef> platformFontWithFamilySpecialCase(const AtomicString& famil
             fontDescriptor = adoptCF(CTFontDescriptorCreateCopyWithSymbolicTraits(fontDescriptor.get(), traits, traits));
 
         return adoptCF(CTFontCreateWithFontDescriptor(fontDescriptor.get(), size, nullptr));
+    }
+
+    if (equalLettersIgnoringASCIICase(family, "-webkit-system-font") || equalLettersIgnoringASCIICase(family, "-apple-system") || equalLettersIgnoringASCIICase(family, "-apple-system-font") || equalLettersIgnoringASCIICase(family, "system-ui")) {
+        return adoptCF(CTFontCreateWithFontDescriptor(systemFontDescriptor(request.weight, isFontWeightBold(request.weight), isItalic(request.slope), size).get(), size, nullptr));
     }
 
     if (equalLettersIgnoringASCIICase(family, "-apple-system-monospaced-numbers")) {

@@ -1,3 +1,16 @@
+2017-06-14  Matt Lewis  <jlewis3@apple.com>
+
+        Unreviewed, rolling out r218161.
+
+        Introduced bot API test failures and Layout Test Failures.
+
+        Reverted changeset:
+
+        "[Cocoa] Expand system-ui to include every item in the Core
+        Text cascade list"
+        https://bugs.webkit.org/show_bug.cgi?id=173043
+        http://trac.webkit.org/changeset/218161
+
 2017-06-14  Alex Christensen  <achristensen@webkit.org>
 
         Add SPI for immediate injection of user scripts

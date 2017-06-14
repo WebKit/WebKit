@@ -33,23 +33,8 @@
 #include <unicode/uscript.h>
 #include <wtf/MathExtras.h>
 #include <wtf/RefCountedArray.h>
-#include <wtf/Variant.h>
-
-#if PLATFORM(COCOA)
-#include "FontFamilySpecificationCoreText.h"
-#else
-#include "FontFamilySpecificationNull.h"
-#endif
 
 namespace WebCore {
-
-#if PLATFORM(COCOA)
-typedef FontFamilySpecificationCoreText FontFamilyPlatformSpecification;
-#else
-typedef FontFamilySpecificationNull FontFamilyPlatformSpecification;
-#endif
-
-typedef Variant<AtomicString, FontFamilyPlatformSpecification> FontFamilySpecification;
 
 using namespace WebKitFontFamilyNames;
 
@@ -147,8 +132,6 @@ public:
     void setOpticalSizing(FontOpticalSizing sizing) { m_opticalSizing = static_cast<unsigned>(sizing); }
     void setFontStyleAxis(FontStyleAxis axis) { m_fontStyleAxis = axis == FontStyleAxis::ital; }
 
-    static void invalidateCaches();
-
 private:
     // FIXME: Investigate moving these into their own object on the heap (to save memory).
     FontFeatureSettings m_featureSettings;
@@ -229,9 +212,6 @@ public:
     const AtomicString& firstFamily() const { return familyAt(0); }
     const AtomicString& familyAt(unsigned i) const { return m_families[i]; }
     const RefCountedArray<AtomicString>& families() const { return m_families; }
-    
-    unsigned effectiveFamilyCount() const;
-    FontFamilySpecification effectiveFamilyAt(unsigned) const;
 
     float specifiedSize() const { return m_specifiedSize; }
     bool isAbsoluteSize() const { return m_isAbsoluteSize; }

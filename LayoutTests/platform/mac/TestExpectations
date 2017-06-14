@@ -1591,6 +1591,3 @@ media/modern-media-controls/placard-support/ipad [ Skip ]
 webkit.org/b/170907 [ Debug ] imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf.worker.html [ Pass Failure Timeout ]
 
 webkit.org/b/172255 imported/w3c/web-platform-tests/html/browsers/windows/browsing-context.html [ Pass Failure ]
-
-# This test is only valid on platforms which have multiple emoji fonts.
-webkit.org/b/173043 [ ElCapitan ] fast/text/system-font-fallback-emoji.html [ Failure ]
