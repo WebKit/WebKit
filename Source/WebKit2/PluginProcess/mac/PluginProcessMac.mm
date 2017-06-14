@@ -607,7 +607,7 @@ void PluginProcess::platformInitializeProcess(const ChildProcessInitializationPa
     if (m_pluginBundleIdentifier == "com.oracle.java.JavaAppletPlugin")
         (new UserActivity("com.oracle.java.JavaAppletPlugin"))->start();
     
-    if (m_pluginBundleIdentifier == "com.citrix.citrixicaclientplugIn") {
+    if (!pluginHasSandboxProfile(m_pluginBundleIdentifier)) {
         // Allow Apple Events from Citrix plugin. This can be removed when <rdar://problem/14012823> is fixed.
         setenv("__APPLEEVENTSSERVICENAME", "com.apple.coreservices.appleevents", 1);
     }
