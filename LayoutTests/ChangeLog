@@ -1,5 +1,23 @@
 2017-06-13  Antoine Quint  <graouts@apple.com>
 
+        Rebaseline media/modern-media-controls/status-label
+        https://bugs.webkit.org/show_bug.cgi?id=173217
+
+        Reviewed by Dean Jackson.
+
+        There is no need for macOS and iOS-specific tests, they share the same styles.
+
+        * media/modern-media-controls/status-label/status-label-expected.txt:
+        * media/modern-media-controls/status-label/status-label-in-controls-expected.txt: Renamed from LayoutTests/media/modern-media-controls/status-label/status-label-macos-expected.txt.
+        * media/modern-media-controls/status-label/status-label-in-controls.html: Renamed from LayoutTests/media/modern-media-controls/status-label/status-label-macos.html.
+        * media/modern-media-controls/status-label/status-label-ios-expected.txt: Removed.
+        * media/modern-media-controls/status-label/status-label-ios.html: Removed.
+        * media/modern-media-controls/status-label/status-label.html:
+        * platform/ios-simulator/TestExpectations:
+        * platform/mac/TestExpectations:
+
+2017-06-13  Antoine Quint  <graouts@apple.com>
+
         Remove media/modern-media-controls/start-button
         https://bugs.webkit.org/show_bug.cgi?id=173216
 

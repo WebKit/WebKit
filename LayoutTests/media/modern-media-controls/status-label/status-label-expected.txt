@@ -18,7 +18,7 @@ PASS style.position is "absolute"
 PASS style.textOverflow is "ellipsis"
 PASS style.whiteSpace is "nowrap"
 PASS style.overflow is "hidden"
-PASS style.fontSize is "14px"
+PASS style.fontSize is "12px"
 
 PASS successfullyParsed is true
 

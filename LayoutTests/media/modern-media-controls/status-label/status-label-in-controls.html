@@ -6,7 +6,7 @@
 
 window.jsTestIsAsync = true;
 
-description("Testing <code>StatusText</code> properties when used in <code>MacOSInlineMediaControls</code>.");
+description("Testing <code>StatusLabel</code> properties when used inside <code>InlineMediaControls</code>.");
 
 const mediaControls = new MacOSInlineMediaControls({ width: 600, height: 300 });
 mediaControls.statusLabel.enabled = true;
@@ -18,9 +18,8 @@ let style;
 shouldBecomeEqual("document.body.contains(mediaControls.statusLabel.element)", "true", () => {
     style = getComputedStyle(mediaControls.statusLabel.element);
 
-    shouldBeEqualToString("style.top", "14.5px");
     shouldBeEqualToString("style.mixBlendMode", "plus-lighter");
-    shouldBeEqualToRGBAColor("style.color", "rgba(255, 255, 255, 0.45)");
+    shouldBeEqualToRGBAColor("style.color", "rgba(255, 255, 255, 0.54902)");
 
     mediaControls.element.remove();
     debug("");
