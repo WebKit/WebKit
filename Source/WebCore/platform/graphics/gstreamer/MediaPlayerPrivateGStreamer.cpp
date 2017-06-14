@@ -46,6 +46,7 @@
 #include <wtf/MediaTime.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/glib/GUniquePtr.h>
+#include <wtf/glib/RunLoopSourcePriority.h>
 #include <wtf/text/CString.h>
 
 #if ENABLE(VIDEO_TRACK)
@@ -2052,7 +2053,7 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin()
     }, this, nullptr);
 
     // Let also other listeners subscribe to (application) messages in this bus.
-    gst_bus_add_signal_watch(bus.get());
+    gst_bus_add_signal_watch_full(bus.get(), RunLoopSourcePriority::RunLoopDispatcher);
     g_signal_connect(bus.get(), "message", G_CALLBACK(busMessageCallback), this);
 
     g_object_set(m_pipeline.get(), "mute", m_player->muted(), nullptr);

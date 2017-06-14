@@ -1,3 +1,25 @@
+2017-06-14  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GStreamer] Align GstBus signal watch priorities with RunLoop dispatches
+        https://bugs.webkit.org/show_bug.cgi?id=173348
+
+        Reviewed by Carlos Garcia Campos.
+
+        When adding GstBus signal watches, use the gst_bus_add_signal_watch_full()
+        function to also specify the GLib priority that's used for the underlying
+        GSource object.
+
+        RunLoopSourcePriority::RunLoopDispatcher should be a good priority value
+        to use here, matching the RunLoop::dispatch() priority that's e.g. used
+        in the MainThreadNotifier class.
+
+        * platform/audio/gstreamer/AudioDestinationGStreamer.cpp:
+        (WebCore::AudioDestinationGStreamer::AudioDestinationGStreamer):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::createGSTPlayBin):
+        * platform/graphics/gstreamer/mse/AppendPipeline.cpp:
+        (WebCore::AppendPipeline::AppendPipeline):
+
 2017-06-14  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream iOS] Back camera view rendered upside down when in portrait mode

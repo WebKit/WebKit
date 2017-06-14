@@ -31,6 +31,7 @@
 #include <gst/audio/gstaudiobasesink.h>
 #include <gst/gst.h>
 #include <wtf/glib/GUniquePtr.h>
+#include <wtf/glib/RunLoopSourcePriority.h>
 
 namespace WebCore {
 
@@ -85,7 +86,7 @@ AudioDestinationGStreamer::AudioDestinationGStreamer(AudioIOCallback& callback, 
     m_pipeline = gst_pipeline_new("play");
     GRefPtr<GstBus> bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(m_pipeline)));
     ASSERT(bus);
-    gst_bus_add_signal_watch(bus.get());
+    gst_bus_add_signal_watch_full(bus.get(), RunLoopSourcePriority::RunLoopDispatcher);
     g_signal_connect(bus.get(), "message", G_CALLBACK(messageCallback), this);
 
     GstElement* webkitAudioSrc = reinterpret_cast<GstElement*>(g_object_new(WEBKIT_TYPE_WEB_AUDIO_SRC,
