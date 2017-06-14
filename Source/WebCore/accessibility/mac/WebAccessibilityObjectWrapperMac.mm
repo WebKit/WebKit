@@ -65,6 +65,7 @@
 #import "Page.h"
 #import "PluginDocument.h"
 #import "PluginViewBase.h"
+#import "RenderInline.h"
 #import "RenderTextControl.h"
 #import "RenderView.h"
 #import "RenderWidget.h"
@@ -190,6 +191,10 @@ using namespace HTMLNames;
 
 #ifndef NSAccessibilityDatetimeValueAttribute
 #define NSAccessibilityDatetimeValueAttribute @"AXDateTimeValue"
+#endif
+
+#ifndef NSAccessibilityInlineTextAttribute
+#define NSAccessibilityInlineTextAttribute @"AXInlineText"
 #endif
 
 #ifndef NSAccessibilityDropEffectsAttribute
@@ -3056,7 +3061,10 @@ static NSString* roleValueToNSString(AccessibilityRole value)
 
     if ([attributeName isEqualToString:NSAccessibilityDatetimeValueAttribute])
         return m_object->datetimeAttributeValue();
-
+    
+    if ([attributeName isEqualToString:NSAccessibilityInlineTextAttribute])
+        return @(m_object->renderer() && is<RenderInline>(m_object->renderer()));
+    
     // ARIA Live region attributes.
     if ([attributeName isEqualToString:NSAccessibilityARIALiveAttribute])
         return m_object->ariaLiveRegionStatus();
@@ -4269,3 +4277,4 @@ static void formatForDebugger(const VisiblePositionRange& range, char* buffer, u
 @end
 
 #endif // HAVE(ACCESSIBILITY)
+

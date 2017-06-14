@@ -1,3 +1,14 @@
+2017-06-13  Chris Fleizach  <cfleizach@apple.com>
+
+        AX[macOS]: Expose Inline property as an accessibility attribute
+        https://bugs.webkit.org/show_bug.cgi?id=173131
+        <rdar://problem/32667686>
+
+        Reviewed by Joanmarie Diggs.
+
+        * accessibility/mac/inline-text-attribute.html: Added.
+        * accessibility/mac/inline-text-attribute-expected.txt: Added.
+
 2017-06-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         Debugger has unexpected effect on program correctness

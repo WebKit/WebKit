@@ -1,3 +1,18 @@
+2017-06-13  Chris Fleizach  <cfleizach@apple.com>
+
+        AX[macOS]: Expose Inline property as an accessibility attribute
+        https://bugs.webkit.org/show_bug.cgi?id=173131
+        <rdar://problem/32667686>
+
+        Reviewed by Joanmarie Diggs.
+
+        Expose whether a renderer is inline so that VoiceOver can make better use of that data when deciding what to output.
+
+        Test: accessibility/mac/inline-text-attribute.html
+
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+
 2017-06-13  Jon Davis  <jond@apple.com>
 
         Update Subresource Integrity status to Supported In Preview
