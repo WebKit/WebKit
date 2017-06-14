@@ -109,7 +109,7 @@ unsigned toWebKitError(unsigned webCoreError)
         return WEBKIT_DOWNLOAD_ERROR_CANCELLED_BY_USER;
     case API::Error::Download::Destination:
         return WEBKIT_DOWNLOAD_ERROR_DESTINATION;
-    case API::Error::Print::General:
+    case API::Error::Print::Generic:
         return WEBKIT_PRINT_ERROR_GENERAL;
     case API::Error::Print::PrinterNotFound:
         return WEBKIT_PRINT_ERROR_PRINTER_NOT_FOUND;
@@ -153,7 +153,7 @@ unsigned toWebCoreError(unsigned webKitError)
     case WEBKIT_DOWNLOAD_ERROR_DESTINATION:
         return API::Error::Download::Destination;
     case WEBKIT_PRINT_ERROR_GENERAL:
-        return API::Error::Print::General;
+        return API::Error::Print::Generic;
     case WEBKIT_PRINT_ERROR_PRINTER_NOT_FOUND:
         return API::Error::Print::PrinterNotFound;
     case WEBKIT_PRINT_ERROR_INVALID_PAGE_RANGE:

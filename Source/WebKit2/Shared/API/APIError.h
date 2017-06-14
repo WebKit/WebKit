@@ -90,7 +90,7 @@ public:
 
 #if PLATFORM(GTK)
     enum Print {
-        General = 599,
+        Generic = 599,
         PrinterNotFound = 500,
         InvalidPageRange = 501
     };

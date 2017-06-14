@@ -36,7 +36,7 @@ namespace WebKit {
 
 ResourceError printError(const URL& failingURL, const String& localizedDescription)
 {
-    return ResourceError(API::Error::webKitPrintErrorDomain(), API::Error::Print::General, failingURL, localizedDescription);
+    return ResourceError(API::Error::webKitPrintErrorDomain(), API::Error::Print::Generic, failingURL, localizedDescription);
 }
 
 ResourceError printerNotFoundError(const URL& failingURL)

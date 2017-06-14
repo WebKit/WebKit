@@ -1,3 +1,17 @@
+2017-06-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+ build with GCC 4.9 after r218244.
+
+        It seems that GCC 4.9 gets confused by enum named General and value of Print enum named General too. This
+        renames the Print enum value as Generic.
+
+        * Shared/API/APIError.h:
+        * Shared/gtk/WebErrorsGtk.cpp:
+        (WebKit::printError):
+        * UIProcess/API/gtk/WebKitPrivate.cpp:
+        (toWebKitError):
+        (toWebCoreError):
+
 2017-06-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Do not mix C and C++ API error constants
