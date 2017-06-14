@@ -1,3 +1,15 @@
+2017-06-14  Claudio Saavedra  <csaavedra@igalia.com>
+
+        REGRESSION: 15 new jsc failures in WPE and GTK+
+        https://bugs.webkit.org/show_bug.cgi?id=173349
+
+        Reviewed by JF Bastien.
+
+        Recent changes to generateWasm.py are not accounted for from
+        CMake, which leads to WasmOps.h not being regenerated in partial
+        builds. Make generateWasm.py an additional dependency.
+        * CMakeLists.txt:
+
 2017-06-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         Debugger has unexpected effect on program correctness

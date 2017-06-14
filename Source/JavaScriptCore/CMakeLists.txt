@@ -1228,19 +1228,19 @@ endif ()
 
 # WebAssembly generator
 
-macro(GENERATE_PYTHON _generator _input _output)
+macro(GENERATE_PYTHON _generator _additional_deps _input _output)
     add_custom_command(
         OUTPUT ${_output}
         MAIN_DEPENDENCY ${_generator}
-        DEPENDS ${_input}
+        DEPENDS ${_input} ${_additional_deps}
         COMMAND ${PYTHON_EXECUTABLE} ${_generator} ${_input} ${_output}
         VERBATIM)
     list(APPEND JavaScriptCore_HEADERS ${_output})
     ADD_SOURCE_DEPENDENCIES(${_input} ${_output})
 endmacro()
-GENERATE_PYTHON(${CMAKE_CURRENT_SOURCE_DIR}/wasm/generateWasmOpsHeader.py ${CMAKE_CURRENT_SOURCE_DIR}/wasm/wasm.json ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/WasmOps.h)
-GENERATE_PYTHON(${CMAKE_CURRENT_SOURCE_DIR}/wasm/generateWasmValidateInlinesHeader.py ${CMAKE_CURRENT_SOURCE_DIR}/wasm/wasm.json ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/WasmValidateInlines.h)
-GENERATE_PYTHON(${CMAKE_CURRENT_SOURCE_DIR}/wasm/generateWasmB3IRGeneratorInlinesHeader.py ${CMAKE_CURRENT_SOURCE_DIR}/wasm/wasm.json ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/WasmB3IRGeneratorInlines.h)
+GENERATE_PYTHON(${CMAKE_CURRENT_SOURCE_DIR}/wasm/generateWasmOpsHeader.py ${CMAKE_CURRENT_SOURCE_DIR}/wasm/generateWasm.py ${CMAKE_CURRENT_SOURCE_DIR}/wasm/wasm.json ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/WasmOps.h)
+GENERATE_PYTHON(${CMAKE_CURRENT_SOURCE_DIR}/wasm/generateWasmValidateInlinesHeader.py ${CMAKE_CURRENT_SOURCE_DIR}/wasm/generateWasm.py ${CMAKE_CURRENT_SOURCE_DIR}/wasm/wasm.json ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/WasmValidateInlines.h)
+GENERATE_PYTHON(${CMAKE_CURRENT_SOURCE_DIR}/wasm/generateWasmB3IRGeneratorInlinesHeader.py ${CMAKE_CURRENT_SOURCE_DIR}/wasm/generateWasm.py ${CMAKE_CURRENT_SOURCE_DIR}/wasm/wasm.json ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/WasmB3IRGeneratorInlines.h)
 
 # LUT generator
 
