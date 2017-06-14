@@ -1,3 +1,25 @@
+2017-06-14  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r218263, r218265, and r218266.
+        https://bugs.webkit.org/show_bug.cgi?id=173383
+
+        "These revisions caused multiple API test to Time out on
+        macOS" (Requested by mlewis13 on #webkit).
+
+        Reverted changesets:
+
+        "Add API::InjectedBundle::Client"
+        https://bugs.webkit.org/show_bug.cgi?id=173357
+        http://trac.webkit.org/changeset/218263
+
+        "[GTK] Use API::InjectedBundle::Client in WebKitWebExtension"
+        https://bugs.webkit.org/show_bug.cgi?id=173358
+        http://trac.webkit.org/changeset/218265
+
+        "Add API::InjectedBundle::ResourceLoadClient"
+        https://bugs.webkit.org/show_bug.cgi?id=173362
+        http://trac.webkit.org/changeset/218266
+
 2017-06-14  Brent Fulgham  <bfulgham@apple.com>
 
         [WK2][iOS] Remove dead-code "import "removed-dev-nodes.sb” from sandboxes (173378)

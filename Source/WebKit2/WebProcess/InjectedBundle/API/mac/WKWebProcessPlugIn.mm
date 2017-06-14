@@ -80,7 +80,7 @@ static void setUpBundleClient(WKWebProcessPlugInController *plugInController, In
     bundleClient.didCreatePage = didCreatePage;
     bundleClient.willDestroyPage = willDestroyPage;
 
-    WKBundleSetClient(toAPI(&bundle), &bundleClient.base);
+    bundle.initializeClient(&bundleClient.base);
 }
 
 - (void)_setPrincipalClassInstance:(id <WKWebProcessPlugIn>)principalClassInstance

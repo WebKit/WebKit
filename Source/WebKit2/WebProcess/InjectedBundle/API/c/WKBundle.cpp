@@ -29,7 +29,6 @@
 #include "APIArray.h"
 #include "APIData.h"
 #include "InjectedBundle.h"
-#include "InjectedBundleClient.h"
 #include "InjectedBundleScriptWorld.h"
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
@@ -50,7 +49,7 @@ WKTypeID WKBundleGetTypeID()
 
 void WKBundleSetClient(WKBundleRef bundleRef, WKBundleClientBase *wkClient)
 {
-    toImpl(bundleRef)->setClient(std::make_unique<InjectedBundleClient>(wkClient));
+    toImpl(bundleRef)->initializeClient(wkClient);
 }
 
 void WKBundlePostMessage(WKBundleRef bundleRef, WKStringRef messageNameRef, WKTypeRef messageBodyRef)

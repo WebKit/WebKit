@@ -333,7 +333,7 @@ static void setUpResourceLoadClient(WKWebProcessPlugInBrowserContextController *
     client.didFinishLoadForResource = didFinishLoadForResource;
     client.didFailLoadForResource = didFailLoadForResource;
 
-    WKBundlePageSetResourceLoadClient(toAPI(&page), &client.base);
+    page.initializeInjectedBundleResourceLoadClient(&client.base);
 }
 
 - (id <WKWebProcessPlugInLoadDelegate>)loadDelegate
@@ -350,7 +350,7 @@ static void setUpResourceLoadClient(WKWebProcessPlugInBrowserContextController *
         setUpResourceLoadClient(self, *_page);
     } else {
         WKBundlePageSetPageLoaderClient(toAPI(_page.get()), nullptr);
-        WKBundlePageSetResourceLoadClient(toAPI(_page.get()), nullptr);
+        _page->initializeInjectedBundleResourceLoadClient(nullptr);
     }
 }
 

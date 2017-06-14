@@ -21,8 +21,9 @@
 #include "WebKitWebExtension.h"
 
 #include "APIDictionary.h"
-#include "APIInjectedBundleBundleClient.h"
 #include "APIString.h"
+#include "WKBundleAPICast.h"
+#include "WKBundlePage.h"
 #include "WebKitPrivate.h"
 #include "WebKitWebExtensionPrivate.h"
 #include "WebKitWebPagePrivate.h"
@@ -144,51 +145,67 @@ static void webkit_web_extension_class_init(WebKitWebExtensionClass* klass)
         WEBKIT_TYPE_WEB_PAGE);
 }
 
-class WebExtensionInjectedBundleClient final : public API::InjectedBundle::Client {
-public:
-    explicit WebExtensionInjectedBundleClient(WebKitWebExtension* extension)
-        : m_extension(extension)
-    {
-    }
+static void webkitWebExtensionPageCreated(WebKitWebExtension* extension, WebPage* page)
+{
+    GRefPtr<WebKitWebPage> webPage = adoptGRef(webkitWebPageCreate(page));
+    extension->priv->pages.add(page, webPage);
+    g_signal_emit(extension, signals[PAGE_CREATED], 0, webPage.get());
+}
 
-private:
-    void didCreatePage(InjectedBundle&, WebPage& page) override
-    {
-        GRefPtr<WebKitWebPage> webPage = adoptGRef(webkitWebPageCreate(&page));
-        m_extension->priv->pages.add(&page, webPage);
-        g_signal_emit(m_extension, signals[PAGE_CREATED], 0, webPage.get());
-    }
+static void webkitWebExtensionPageDestroy(WebKitWebExtension* extension, WebPage* page)
+{
+    extension->priv->pages.remove(page);
+}
 
-    void willDestroyPage(InjectedBundle&, WebPage& page) override
-    {
-        m_extension->priv->pages.remove(&page);
-    }
+static void webkitWebExtensionDidReceiveMessage(WebKitWebExtension*, const String& messageName, API::Dictionary& message)
+{
+    if (messageName == String::fromUTF8("PrefetchDNS")) {
+        API::String* hostname = static_cast<API::String*>(message.get(String::fromUTF8("Hostname")));
+        WebProcess::singleton().prefetchDNS(hostname->string());
+    } else
+        ASSERT_NOT_REACHED();
+}
 
-    void didReceiveMessage(InjectedBundle&, const String& messageName, API::Object* messageBody) override
-    {
-        ASSERT(messageBody->type() == API::Object::Type::Dictionary);
-        API::Dictionary& message = *static_cast<API::Dictionary*>(messageBody);
-        if (messageName == String::fromUTF8("PrefetchDNS")) {
-            API::String* hostname = static_cast<API::String*>(message.get(String::fromUTF8("Hostname")));
-            WebProcess::singleton().prefetchDNS(hostname->string());
-        } else
-            ASSERT_NOT_REACHED();
-    }
+static void didCreatePage(WKBundleRef, WKBundlePageRef page, const void* clientInfo)
+{
+    webkitWebExtensionPageCreated(WEBKIT_WEB_EXTENSION(clientInfo), toImpl(page));
+}
 
-    void didReceiveMessageToPage(InjectedBundle&, WebPage& page, const String& messageName, API::Object* messageBody) override
-    {
-        ASSERT(messageBody->type() == API::Object::Type::Dictionary);
-        if (auto* webPage = m_extension->priv->pages.get(&page))
-            webkitWebPageDidReceiveMessage(webPage, messageName, *static_cast<API::Dictionary*>(messageBody));
-    }
+static void willDestroyPage(WKBundleRef, WKBundlePageRef page, const void* clientInfo)
+{
+    webkitWebExtensionPageDestroy(WEBKIT_WEB_EXTENSION(clientInfo), toImpl(page));
+}
 
-    WebKitWebExtension* m_extension;
-};
+static void didReceiveMessage(WKBundleRef, WKStringRef name, WKTypeRef messageBody, const void* clientInfo)
+{
+    ASSERT(WKGetTypeID(messageBody) == WKDictionaryGetTypeID());
+    webkitWebExtensionDidReceiveMessage(WEBKIT_WEB_EXTENSION(clientInfo), toImpl(name)->string(), *toImpl(static_cast<WKDictionaryRef>(messageBody)));
+}
+
+static void didReceiveMessageToPage(WKBundleRef, WKBundlePageRef page, WKStringRef name, WKTypeRef messageBody, const void* clientInfo)
+{
+    ASSERT(WKGetTypeID(messageBody) == WKDictionaryGetTypeID());
+    if (WebKitWebPage* webPage = WEBKIT_WEB_EXTENSION(clientInfo)->priv->pages.get(toImpl(page)))
+        webkitWebPageDidReceiveMessage(webPage, toImpl(name)->string(), *toImpl(static_cast<WKDictionaryRef>(messageBody)));
+}
 
 WebKitWebExtension* webkitWebExtensionCreate(InjectedBundle* bundle)
 {
     WebKitWebExtension* extension = WEBKIT_WEB_EXTENSION(g_object_new(WEBKIT_TYPE_WEB_EXTENSION, NULL));
-    bundle->setClient(std::make_unique<WebExtensionInjectedBundleClient>(extension));
+
+    WKBundleClientV1 wkBundleClient = {
+        {
+            1, // version
+            extension, // clientInfo
+        },
+        didCreatePage,
+        willDestroyPage,
+        0, // didInitializePageGroup
+        didReceiveMessage,
+        didReceiveMessageToPage
+    };
+    WKBundleSetClient(toAPI(bundle), &wkBundleClient.base);
+
     return extension;
 }
 
