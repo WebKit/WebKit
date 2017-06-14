@@ -11,14 +11,13 @@ description("Testing the <code>SkipBackButton</code> class.");
 const skipBackButton = new SkipBackButton({ layoutTraits: LayoutTraits.macOS });
 
 shouldBeEqualToString("skipBackButton.element.localName", "button");
-shouldBeTrue('skipBackButton.element.classList.contains("icon")');
 shouldBeTrue('skipBackButton.element.classList.contains("skip-back")');
 shouldBe("skipBackButton.iconName", "Icons.SkipBack");
 
 const iOSSkipBackButton = new SkipBackButton({ layoutTraits: LayoutTraits.iOS });
 
-shouldBecomeEqual('skipBackButton.element.style.webkitMaskImage.includes("macOS/interval-skip-back@")', "true", () => {
-    shouldBecomeEqual('iOSSkipBackButton.element.style.webkitMaskImage.includes("iOS/interval-skip-back@")', "true", finishJSTest);
+shouldBecomeEqual('skipBackButton.image.element.style.webkitMaskImage.includes("macOS/SkipBack15.svg")', "true", () => {
+    shouldBecomeEqual('iOSSkipBackButton.image.element.style.webkitMaskImage.includes("iOS/SkipBack15.svg")', "true", finishJSTest);
 });
 
 </script>
