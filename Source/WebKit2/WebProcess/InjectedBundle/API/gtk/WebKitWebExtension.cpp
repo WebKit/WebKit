@@ -22,6 +22,7 @@
 
 #include "APIDictionary.h"
 #include "APIString.h"
+#include "WKBundle.h"
 #include "WKBundleAPICast.h"
 #include "WKBundlePage.h"
 #include "WebKitPrivate.h"

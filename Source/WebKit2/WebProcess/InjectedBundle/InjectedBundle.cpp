@@ -32,8 +32,6 @@
 #include "NotificationPermissionRequestManager.h"
 #include "SessionTracker.h"
 #include "UserData.h"
-#include "WKAPICast.h"
-#include "WKBundleAPICast.h"
 #include "WebConnectionToUIProcess.h"
 #include "WebCookieManager.h"
 #include "WebCoreArgumentCoders.h"
@@ -109,9 +107,12 @@ InjectedBundle::~InjectedBundle()
 {
 }
 
-void InjectedBundle::initializeClient(const WKBundleClientBase* client)
+void InjectedBundle::setClient(std::unique_ptr<API::InjectedBundle::Client>&& client)
 {
-    m_client.initialize(client);
+    if (!client)
+        m_client = std::make_unique<API::InjectedBundle::Client>();
+    else
+        m_client = WTFMove(client);
 }
 
 void InjectedBundle::postMessage(const String& messageName, API::Object* messageBody)
@@ -507,27 +508,27 @@ void InjectedBundle::reportException(JSContextRef context, JSValueRef exception)
 
 void InjectedBundle::didCreatePage(WebPage* page)
 {
-    m_client.didCreatePage(this, page);
+    m_client->didCreatePage(*this, *page);
 }
 
 void InjectedBundle::willDestroyPage(WebPage* page)
 {
-    m_client.willDestroyPage(this, page);
+    m_client->willDestroyPage(*this, *page);
 }
 
 void InjectedBundle::didInitializePageGroup(WebPageGroupProxy* pageGroup)
 {
-    m_client.didInitializePageGroup(this, pageGroup);
+    m_client->didInitializePageGroup(*this, *pageGroup);
 }
 
 void InjectedBundle::didReceiveMessage(const String& messageName, API::Object* messageBody)
 {
-    m_client.didReceiveMessage(this, messageName, messageBody);
+    m_client->didReceiveMessage(*this, messageName, messageBody);
 }
 
 void InjectedBundle::didReceiveMessageToPage(WebPage* page, const String& messageName, API::Object* messageBody)
 {
-    m_client.didReceiveMessageToPage(this, page, messageName, messageBody);
+    m_client->didReceiveMessageToPage(*this, *page, messageName, messageBody);
 }
 
 void InjectedBundle::setUserStyleSheetLocation(WebPageGroupProxy* pageGroup, const String& location)
