@@ -1,3 +1,17 @@
+2017-06-13  Chris Dumez  <cdumez@apple.com>
+
+        Event handlers should not be called in frameless documents
+        https://bugs.webkit.org/show_bug.cgi?id=173233
+
+        Reviewed by Sam Weinig.
+
+        Extend layout test coverage.
+
+        * fast/events/event-handler-detached-document-dispatchEvent-expected.txt: Added.
+        * fast/events/event-handler-detached-document-dispatchEvent.html: Added.
+        * fast/events/event-handler-detached-document-expected.txt: Added.
+        * fast/events/event-handler-detached-document.html: Added.
+
 2017-06-13  Antoine Quint  <graouts@apple.com>
 
         Rebaseline media/modern-media-controls/placard-support

@@ -1,3 +1,39 @@
+2017-06-13  Chris Dumez  <cdumez@apple.com>
+
+        Event handlers should not be called in frameless documents
+        https://bugs.webkit.org/show_bug.cgi?id=173233
+
+        Reviewed by Sam Weinig.
+
+        As per the HTML specification [1], for event handlers on elements, we should use the
+        element's document to check if scripting is disabled [2]. Scripting is considered to
+        be disabled if the document has no browsing context (i.e. a frame in WebKit terms).
+
+        In JSLazyEventListener::initializeJSFunction(), instead of using the element's
+        document to do the checks, we would use the script execution context. In most cases,
+        a node's document and its script execution context are the same so this is not an
+        issue. However, if the node's document is a document created via JS, its nodes'
+        script execution context will be the document's context document (i.e the one that
+        created the document, see implementation of Node::scriptExecutionContext()). In those
+        cases, using the wrong document is an issue because the document's context document
+        (aka script execution context) may allow scripting but we still do not want to call
+        the event handler because its document is frameless.
+
+        This impacts documents created by JS, using the following APIs:
+        - DOMParser.parseFromHTML
+        - new Document()
+        - DOMImplementation.createDocument / createHTMLDocument
+        - XHRs whose responseType is Document.
+
+        [1] https://html.spec.whatwg.org/multipage/webappapis.html#getting-the-current-value-of-the-event-handler (step 1.1.)
+        [2] https://html.spec.whatwg.org/multipage/webappapis.html#concept-n-noscript
+
+        Tests: fast/events/event-handler-detached-document-dispatchEvent.html
+               fast/events/event-handler-detached-document.html
+
+        * bindings/js/JSLazyEventListener.cpp:
+        (WebCore::JSLazyEventListener::initializeJSFunction):
+
 2017-06-13  Antoine Quint  <graouts@apple.com>
 
         Rebaseline media/modern-media-controls/placard-support
