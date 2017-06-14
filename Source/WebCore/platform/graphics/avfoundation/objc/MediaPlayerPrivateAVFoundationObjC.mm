@@ -746,7 +746,6 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayerLayer()
 
     m_videoLayer = adoptNS([[AVPlayerLayer alloc] init]);
     [m_videoLayer setPlayer:m_avPlayer.get()];
-    [m_videoLayer setBackgroundColor:cachedCGColor(Color::black)];
 
 #ifndef NDEBUG
     [m_videoLayer setName:@"MediaPlayerPrivate AVPlayerLayer"];
