@@ -1,5 +1,17 @@
 2017-06-13  Nikita Vasilyev  <nvasilyev@apple.com>
 
+        Web Inspector: Console: Message icons overlay source location
+        https://bugs.webkit.org/show_bug.cgi?id=173291
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/ConsoleMessageView.css:
+        (.console-message-location.call-frame):
+        This should be a safe change since a method name and a source link already have
+        max-width set to 20vw and 30vw respectively.
+
+2017-06-13  Nikita Vasilyev  <nvasilyev@apple.com>
+
         Web Inspector: Don't use -webkit-user-modify CSS property
         https://bugs.webkit.org/show_bug.cgi?id=173232
 
