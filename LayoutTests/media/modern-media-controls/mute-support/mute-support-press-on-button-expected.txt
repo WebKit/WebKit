@@ -5,13 +5,13 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS mediaController.controls.muteButton.muted is false
 
-Dispatching click event to the mute button
+Pressing the mute button
 
 volumechange event was dispatched
 PASS media.muted is true
 PASS mediaController.controls.muteButton.muted is true
 
-Dispatching click event to the mute button
+Pressing the mute button
 
 volumechange event was dispatched
 PASS media.muted is false

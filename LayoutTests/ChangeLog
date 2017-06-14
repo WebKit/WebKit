@@ -1,5 +1,17 @@
 2017-06-13  Antoine Quint  <graouts@apple.com>
 
+        Rebaseline media/modern-media-controls/mute-support
+        https://bugs.webkit.org/show_bug.cgi?id=173345
+
+        Reviewed by Dean Jackson.
+
+        * media/modern-media-controls/mute-support/mute-support-press-on-button-expected.txt: Renamed from LayoutTests/media/modern-media-controls/mute-support/mute-support-button-click-expected.txt.
+        * media/modern-media-controls/mute-support/mute-support-press-on-button.html: Renamed from LayoutTests/media/modern-media-controls/mute-support/mute-support-button-click.html.
+        * platform/ios-simulator/TestExpectations:
+        * platform/mac/TestExpectations:
+
+2017-06-13  Antoine Quint  <graouts@apple.com>
+
         Rebaseline media/modern-media-controls/tracks-button
         https://bugs.webkit.org/show_bug.cgi?id=173220
 
