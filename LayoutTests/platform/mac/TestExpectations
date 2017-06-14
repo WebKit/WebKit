@@ -1585,6 +1585,9 @@ media/modern-media-controls/volume-up-support [ Pass ]
 media/modern-media-controls/audio/audio-controls-styles.html [ Skip ]
 media/modern-media-controls/placard-support/ipad [ Skip ]
 
+# These tests use Picture-in-Picture which isn't supported on El Capitan.
+[ ElCapitan ] media/modern-media-controls/placard-support/placard-support-pip.html [ Skip ]
+
 webkit.org/b/170907 [ Debug ] imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf.worker.html [ Pass Failure Timeout ]
 
 webkit.org/b/172255 imported/w3c/web-platform-tests/html/browsers/windows/browsing-context.html [ Pass Failure ]

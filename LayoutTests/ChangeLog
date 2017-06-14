@@ -1,3 +1,12 @@
+2017-06-14  Antoine Quint  <graouts@apple.com>
+
+        Layout Test media/modern-media-controls/placard-support/placard-support-pip.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=173373
+
+        Reviewed by Antoine Quint.
+
+        * platform/mac/TestExpectations:
+
 2017-06-14  Matt Lewis  <jlewis3@apple.com>
 
         Rebaselined editing/execCommand/strikethrough-uses-strike-tag.html.
