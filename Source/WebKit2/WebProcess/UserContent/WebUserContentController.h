@@ -46,6 +46,7 @@ namespace WebKit {
 class InjectedBundleScriptWorld;
 class WebCompiledContentRuleListData;
 class WebUserMessageHandlerDescriptorProxy;
+enum class AddUserScriptImmediately;
 
 class WebUserContentController final : public WebCore::UserContentProvider, private IPC::MessageReceiver {
 public:
@@ -63,7 +64,7 @@ public:
     void removeAllUserContent();
 
     void addUserContentWorlds(const Vector<std::pair<uint64_t, String>>&);
-    void addUserScripts(const Vector<WebUserScriptData>&);
+    void addUserScripts(Vector<WebUserScriptData>&&, AddUserScriptImmediately);
     void addUserStyleSheets(const Vector<WebUserStyleSheetData>&);
     void addUserScriptMessageHandlers(const Vector<WebScriptMessageHandlerData>&);
 #if ENABLE(CONTENT_EXTENSIONS)
@@ -102,7 +103,7 @@ private:
     void removeAllContentRuleLists();
 #endif
 
-    void addUserScriptInternal(InjectedBundleScriptWorld&, uint64_t userScriptIdentifier, WebCore::UserScript&&);
+    void addUserScriptInternal(InjectedBundleScriptWorld&, uint64_t userScriptIdentifier, WebCore::UserScript&&, AddUserScriptImmediately);
     void removeUserScriptInternal(InjectedBundleScriptWorld&, uint64_t userScriptIdentifier);
     void addUserStyleSheetInternal(InjectedBundleScriptWorld&, uint64_t userStyleSheetIdentifier, WebCore::UserStyleSheet&&);
     void removeUserStyleSheetInternal(InjectedBundleScriptWorld&, uint64_t userStyleSheetIdentifier);

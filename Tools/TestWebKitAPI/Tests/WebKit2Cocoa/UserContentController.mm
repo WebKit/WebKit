@@ -140,6 +140,47 @@ TEST(WKUserContentController, ScriptMessageHandlerBasicPostIsolatedWorld)
     EXPECT_WK_STREQ(@"PASS", resultValue);
 }
 
+static void waitForMessage(const char* expectedMessage)
+{
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+    receivedScriptMessage = false;
+    EXPECT_STREQ(expectedMessage, [(NSString *)[lastScriptMessage body] UTF8String]);
+}
+
+TEST(WKUserContentController, AddUserScriptImmediately)
+{
+    RetainPtr<ScriptMessageHandler> handler = adoptNS([[ScriptMessageHandler alloc] init]);
+    RetainPtr<WKUserScript> startAllFrames = adoptNS([[WKUserScript alloc] initWithSource:@"window.webkit.messageHandlers.testHandler.postMessage('start all')" injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:NO]);
+    RetainPtr<WKUserScript> endMainFrameOnly = adoptNS([[WKUserScript alloc] initWithSource:@"window.webkit.messageHandlers.testHandler.postMessage('end main')" injectionTime:WKUserScriptInjectionTimeAtDocumentEnd forMainFrameOnly:YES]);
+    
+    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
+    
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    
+    RetainPtr<SimpleNavigationDelegate> delegate = adoptNS([[SimpleNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+    
+    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple-iframe" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    
+    isDoneWithNavigation = false;
+    [webView loadRequest:request];
+    TestWebKitAPI::Util::run(&isDoneWithNavigation);
+    
+    receivedScriptMessage = false;
+    [[configuration userContentController] _addUserScriptImmediately:startAllFrames.get()];
+    // simple-iframe.html has a main frame and one iframe.
+    waitForMessage("start all");
+    waitForMessage("start all");
+    [[configuration userContentController] _addUserScriptImmediately:endMainFrameOnly.get()];
+    waitForMessage("end main");
+    [webView reload];
+    waitForMessage("start all");
+    waitForMessage("end main");
+    // When reloading, an iframe doesn't exist before the document has started to load.
+    waitForMessage("start all");
+}
+
 TEST(WKUserContentController, ScriptMessageHandlerBasicRemove)
 {
     RetainPtr<ScriptMessageHandler> handler = adoptNS([[ScriptMessageHandler alloc] init]);

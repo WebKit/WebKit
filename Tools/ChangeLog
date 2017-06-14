@@ -1,3 +1,15 @@
+2017-06-14  Alex Christensen  <achristensen@webkit.org>
+
+        Add SPI for immediate injection of user scripts
+        https://bugs.webkit.org/show_bug.cgi?id=173342
+        <rdar://problem/29202285>
+
+        Reviewed by Brady Eidson.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/UserContentController.mm:
+        (waitForMessage):
+        (TEST):
+
 2017-06-14  Claudio Saavedra  <csaavedra@igalia.com>
 
         Add WPE to the flakiness dashboard

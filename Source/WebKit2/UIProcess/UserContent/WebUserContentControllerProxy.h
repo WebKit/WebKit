@@ -57,6 +57,7 @@ class WebProcessProxy;
 class WebScriptMessageHandler;
 struct FrameInfoData;
 struct WebPageCreationParameters;
+enum class AddUserScriptImmediately;
 
 class WebUserContentControllerProxy : public API::ObjectImpl<API::Object::Type::UserContentController>, private IPC::MessageReceiver {
 public:
@@ -73,7 +74,7 @@ public:
     void removeProcess(WebProcessProxy&);
 
     API::Array& userScripts() { return m_userScripts.get(); }
-    void addUserScript(API::UserScript&);
+    void addUserScript(API::UserScript&, AddUserScriptImmediately);
     void removeUserScript(API::UserScript&);
     void removeAllUserScripts(API::UserContentWorld&);
     void removeAllUserScripts();

@@ -21,6 +21,7 @@
 #include "WebKitUserContentManager.h"
 
 #include "APISerializedScriptValue.h"
+#include "AddUserScriptImmediately.h"
 #include "WebKitJavascriptResultPrivate.h"
 #include "WebKitPrivate.h"
 #include "WebKitUserContentManagerPrivate.h"
@@ -159,7 +160,7 @@ void webkit_user_content_manager_add_script(WebKitUserContentManager* manager, W
 {
     g_return_if_fail(WEBKIT_IS_USER_CONTENT_MANAGER(manager));
     g_return_if_fail(script);
-    manager->priv->userContentController->addUserScript(webkitUserScriptGetUserScript(script));
+    manager->priv->userContentController->addUserScript(webkitUserScriptGetUserScript(script), AddUserScriptImmediately::No);
 }
 
 /**
