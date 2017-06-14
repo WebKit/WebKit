@@ -1,3 +1,16 @@
+2017-06-14  Matt Lewis  <jlewis3@apple.com>
+
+        Unreviewed, rolling out r218157.
+
+        This patch caused multiple API failures on iOS Simulator.
+
+        Reverted changeset:
+
+        "@font-face rules with invalid primary fonts never download
+        their secondary fonts"
+        https://bugs.webkit.org/show_bug.cgi?id=173138
+        http://trac.webkit.org/changeset/218157
+
 2017-06-14  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r217997): mint.com header renders incorrectly when initially loaded
