@@ -1,3 +1,14 @@
+2017-06-14  Matt Lewis  <jlewis3@apple.com>
+
+        Fixed typo error for re-baselined editing/execCommand/strikethrough-uses-strike-tag.html.
+        https://bugs.webkit.org/show_bug.cgi?id=173375
+        
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/editing/execCommand/strikethrough-uses-strike-tag-expected.txt: Renamed from LayoutTests/platform/mac-wk1/editing/exeCommand/strikethrough-uses-strike-tag-expected.txt.
+        * platform/win/editing/execCommand/strikethrough-uses-strike-tag-expected.txt: Renamed from LayoutTests/platform/win/editing/exeCommand/strikethrough-uses-strike-tag-expected.txt.
+
 2017-06-14  Chris Dumez  <cdumez@apple.com>
 
         transitions/created-while-suspended.html is slow and flaky
