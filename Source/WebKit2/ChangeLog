@@ -1,5 +1,24 @@
 2017-06-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Use API::InjectedBundle::Client in WebKitWebExtension
+        https://bugs.webkit.org/show_bug.cgi?id=173358
+
+        Reviewed by Michael Catanzaro.
+
+        Instead of the C API.
+
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebExtension.cpp:
+        (webkitWebExtensionCreate):
+        (webkitWebExtensionPageCreated): Deleted.
+        (webkitWebExtensionPageDestroy): Deleted.
+        (webkitWebExtensionDidReceiveMessage): Deleted.
+        (didCreatePage): Deleted.
+        (willDestroyPage): Deleted.
+        (didReceiveMessage): Deleted.
+        (didReceiveMessageToPage): Deleted.
+
+2017-06-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Add API::InjectedBundle::Client
         https://bugs.webkit.org/show_bug.cgi?id=173357
 
