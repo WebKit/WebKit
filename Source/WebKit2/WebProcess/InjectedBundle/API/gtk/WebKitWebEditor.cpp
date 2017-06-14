@@ -23,7 +23,6 @@
 #include "WebKitPrivate.h"
 #include "WebKitWebEditorPrivate.h"
 #include "WebKitWebPagePrivate.h"
-#include "WKBundleAPICast.h"
 
 using namespace WebKit;
 using namespace WebCore;
@@ -75,35 +74,27 @@ static void webkit_web_editor_class_init(WebKitWebEditorClass* klass)
         G_TYPE_NONE, 0);
 }
 
-static void didChangeSelection(WKBundlePageRef, WKStringRef /* notificationName */, const void* clientInfo)
-{
-    g_signal_emit(WEBKIT_WEB_EDITOR(clientInfo), signals[SELECTION_CHANGED], 0);
-}
+class PageEditorClient final : public API::InjectedBundle::EditorClient {
+public:
+    explicit PageEditorClient(WebKitWebEditor* editor)
+        : m_editor(editor)
+    {
+    }
+
+private:
+    void didChangeSelection(WebPage&, StringImpl*) override
+    {
+        g_signal_emit(m_editor, signals[SELECTION_CHANGED], 0);
+    }
+
+    WebKitWebEditor* m_editor;
+};
 
 WebKitWebEditor* webkitWebEditorCreate(WebKitWebPage* webPage)
 {
     WebKitWebEditor* editor = WEBKIT_WEB_EDITOR(g_object_new(WEBKIT_TYPE_WEB_EDITOR, nullptr));
     editor->priv->webPage = webPage;
-
-    WKBundlePageEditorClientV0 editorClient = {
-        {
-            0, // version
-            editor, // clientInfo
-        },
-        nullptr, // shouldBeginEditing
-        nullptr, // shouldEndEditing
-        nullptr, // shouldInsertNode
-        nullptr, // shouldInsertText
-        nullptr, // shouldDeleteRange
-        nullptr, // shouldChangeSelectedRange
-        nullptr, // shouldApplyStyle
-        nullptr, // didBeginEditing
-        nullptr, // didEndEditing
-        nullptr, // didChange
-        didChangeSelection
-    };
-    WKBundlePageSetEditorClient(toAPI(webkitWebPageGetPage(webPage)), &editorClient.base);
-
+    webkitWebPageGetPage(webPage)->setInjectedBundleEditorClient(std::make_unique<PageEditorClient>(editor));
     return editor;
 }
 
