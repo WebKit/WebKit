@@ -1,3 +1,31 @@
+2017-06-14  Miguel Gomez  <magomez@igalia.com>
+
+        REGRESSION(r216901): ImageDecoders: rendering of large images is broken since r216901
+        https://bugs.webkit.org/show_bug.cgi?id=172502
+
+        Reviewed by Carlos Garcia Campos.
+
+        When using GTK and WPE image decoders, the decoded frames are stored inside a Vector of
+        ImageFrames inside the decoders. These ImageFrames have and ImageBackingStore with the
+        pixels. When a NativeImagePtr is requested, a cairo surface is created from the data
+        in those ImageBackingStores, but the data keeps being owned by the backing stores. Due
+        to this, if the decoder that created the image gets destroyed, the backing stores for
+        the decoded frames get destroyed as well, causing the cairo surfaces that were using
+        that data to contain garbage (and potentially cause a crash).
+
+        To fix this, we change ImageBackingStore so the pixels are stored in a SharedBuffer. The
+        buffer will be reffed everytime a cairo surface is created with it, and the cairo surfaces
+        will unref the buffer when they are destroyed. This way, the pixel data won't be freed
+        while there are cairo surfaces using it.
+
+        No new tests, no behaviour change.
+
+        * platform/graphics/ImageBackingStore.h:
+        (WebCore::ImageBackingStore::setSize):
+        (WebCore::ImageBackingStore::ImageBackingStore):
+        * platform/image-decoders/cairo/ImageBackingStoreCairo.cpp:
+        (WebCore::ImageBackingStore::image):
+
 2017-06-14  Zan Dobersek  <zdobersek@igalia.com>
 
         [GStreamer] Align GstBus signal watch priorities with RunLoop dispatches
