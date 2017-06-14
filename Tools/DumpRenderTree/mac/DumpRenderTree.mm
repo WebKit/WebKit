@@ -105,6 +105,7 @@
 #import "DumpRenderTreeBrowserView.h"
 #import "IOSLayoutTestCommunication.h"
 #import "UIKitSPI.h"
+#import "UIKitTestSPI.h"
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/CoreGraphicsSPI.h>
 #import <WebKit/WAKWindow.h>
@@ -1242,6 +1243,7 @@ void dumpRenderTree(int argc, const char *argv[])
 #if PLATFORM(IOS)
     setUpIOSLayoutTestCommunication();
     [UIApplication sharedApplication].idleTimerDisabled = YES;
+    [[UIScreen mainScreen] _setScale:2.0];
 #endif
 
     signal(SIGILL, &writeCrashedMessageOnFatalError);

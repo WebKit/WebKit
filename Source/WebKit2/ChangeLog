@@ -1,3 +1,13 @@
+2017-06-14  Jonathan Bedard  <jbedard@apple.com>
+
+        Configure screen scale for running layout tests on plus devices
+        https://bugs.webkit.org/show_bug.cgi?id=173319
+
+        Reviewed by Tim Horton.
+
+        * Platform/spi/ios/UIKitSPI.h: Both this and UIKitTestSPI.h define UIKeyboard. Use
+        a define guard to prevent re-definition.
+
 2017-06-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Use API::InjectedBundle::ResourceLoadClient in WebKitWebPage

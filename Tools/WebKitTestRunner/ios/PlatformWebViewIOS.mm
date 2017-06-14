@@ -28,7 +28,7 @@
 
 #import "TestController.h"
 #import "TestRunnerWKWebView.h"
-#import "UIKitSPI.h"
+#import "UIKitTestSPI.h"
 #import <WebCore/QuartzCoreSPI.h>
 #import <WebKit/WKImageCG.h>
 #import <WebKit/WKPreferencesPrivate.h>

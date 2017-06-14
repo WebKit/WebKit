@@ -27,7 +27,7 @@
 #import "HIDEventGenerator.h"
 
 #import "IOKitSPI.h"
-#import "UIKitSPI.h"
+#import "UIKitTestSPI.h"
 #import <WebCore/SoftLinking.h>
 #import <mach/mach_time.h>
 #import <wtf/Assertions.h>

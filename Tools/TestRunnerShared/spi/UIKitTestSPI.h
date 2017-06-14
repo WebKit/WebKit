@@ -38,6 +38,7 @@
 #import <UIKit/UIView_Private.h>
 #import <UIKit/UIWindow_Private.h>
 #import <UIKit/UIDevice_Private.h>
+#import <UIKit/UIScreen_Private.h>
 
 @interface UIKeyboardPredictionView : UIView
 + (UIKeyboardPredictionView *)activeInstance;
@@ -57,7 +58,14 @@
 - (uint32_t)_contextId;
 @end
 
+// FIXME: https://bugs.webkit.org/show_bug.cgi?id=173341
+#ifndef _WEBKIT_UIKITSPI_UIKEYBOARD
+#define _WEBKIT_UIKITSPI_UIKEYBOARD 1
 @interface UIKeyboard : UIView
+@end
+#endif
+
+@interface UIKeyboard ()
 + (void)removeAllDynamicDictionaries;
 @end
 
@@ -68,6 +76,10 @@
 @interface UIDevice ()
 - (void)setOrientation:(UIDeviceOrientation)orientation animated:(BOOL)animated;
  @end
+
+@interface UIScreen ()
+- (void)_setScale:(CGFloat)scale;
+@end
  
 #endif // USE(APPLE_INTERNAL_SDK)
 

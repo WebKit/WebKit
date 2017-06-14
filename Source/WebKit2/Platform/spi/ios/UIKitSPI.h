@@ -212,8 +212,12 @@ typedef enum {
 - (void)candidateListShouldBeDismissed:(id)candidateList;
 @end
 
+// FIXME: https://bugs.webkit.org/show_bug.cgi?id=173341
+#ifndef _WEBKIT_UIKITSPI_UIKEYBOARD
+#define _WEBKIT_UIKITSPI_UIKEYBOARD 1
 @interface UIKeyboard : UIView <UIKeyboardImplGeometryDelegate>
 @end
+#endif
 
 @interface UIKeyboard ()
 + (CGSize)defaultSizeForInterfaceOrientation:(UIInterfaceOrientation)orientation;
