@@ -38,7 +38,7 @@ scheduler.frameDidFire = function() {
     scheduler.frameDidFire = null;
 };
 
-media.addEventListener("webkitfullscreenchange", () => {
+media.addEventListener(media.webkitPresentationMode ? "webkitpresentationmodechanged" : "webkitfullscreenchange", () => {
     shouldBeTrue("media.webkitDisplayingFullscreen");
     container.remove();
     media.remove();

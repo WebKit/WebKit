@@ -1,3 +1,19 @@
+2017-06-11  Antoine Quint  <graouts@apple.com>
+
+        Rebaseline media/modern-media-controls/fullscreen-support
+        https://bugs.webkit.org/show_bug.cgi?id=173199
+
+        Reviewed by Simon Fraser.
+
+        Test: media/modern-media-controls/fullscreen-support/fullscreen-support-press.html
+
+        We no longer need to track the "error" event for FullscreenSupport since we don't actually
+        enable or disable the fullscreen button when an error happens, instead the media controls
+        code will simply not present it since we'll be showing a placard instead.
+
+        * Modules/modern-media-controls/media/fullscreen-support.js:
+        (FullscreenSupport.prototype.get mediaEvents):
+
 2017-06-13  Matt Rajca  <mrajca@apple.com>
 
         WebsitePolicies: let clients select specific autoplay quirks

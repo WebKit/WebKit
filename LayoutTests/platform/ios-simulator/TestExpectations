@@ -75,6 +75,7 @@ media/modern-media-controls/buttons-container [ Pass ]
 media/modern-media-controls/controls-visibility-support [ Pass ]
 media/modern-media-controls/forward-button [ Pass ]
 media/modern-media-controls/fullscreen-button [ Pass ]
+media/modern-media-controls/fullscreen-support [ Pass ]
 media/modern-media-controls/icon-service [ Pass ]
 media/modern-media-controls/invalid-placard [ Pass ]
 media/modern-media-controls/layout-item [ Pass ]
@@ -96,6 +97,7 @@ webkit.org/b/166062 media/modern-media-controls/audio/audio-controls-buttons.htm
 # These tests use touch events and don't work in OpenSource
 media/modern-media-controls/button/button.html [ Skip ]
 media/modern-media-controls/button/button-active-state.html [ Skip ]
+media/modern-media-controls/fullscreen-support/fullscreen-support-press.html [ Skip ]
 
 # These tests rely on fullscreen which do not use the WebKit media controls on iOS
 media/modern-media-controls/controls-visibility-support/controls-visibility-support-fullscreen-on-parent-element.html [ Skip ]

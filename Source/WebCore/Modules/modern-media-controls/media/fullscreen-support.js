@@ -35,7 +35,7 @@ class FullscreenSupport extends MediaControllerSupport
 
     get mediaEvents()
     {
-        return ["loadedmetadata", "error"];
+        return ["loadedmetadata"];
     }
 
     get tracksToMonitor()
