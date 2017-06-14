@@ -1,4 +1,4 @@
-# Copyright (C) 2014 Igalia S.L.  All rights reserved.
+# Copyright (C) 2014-2017 Igalia S.L.  All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -43,7 +43,14 @@ class WPEPort(Port):
             self.set_option_default('wrapper', ' '.join(self._jhbuild_wrapper))
 
     def default_timeout_ms(self):
-        return 6000
+        default_timeout = 15000
+        # Starting an application under Valgrind takes a lot longer than normal
+        # so increase the timeout (empirically 10x is enough to avoid timeouts).
+        multiplier = 10 if self.get_option("leaks") else 1
+        # Debug builds are slower (no compiler optimizations are used).
+        if self.get_option('configuration') == 'Debug':
+            multiplier *= 2
+        return multiplier * default_timeout
 
     def _built_executables_path(self, *path):
         return self._build_path(*(('bin',) + path))

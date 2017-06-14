@@ -1,4 +1,5 @@
 # Copyright (C) 2011 Google Inc. All rights reserved.
+# Copyright (C) 2017 Igalia S.L. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -10,7 +11,7 @@
 # copyright notice, this list of conditions and the following disclaimer
 # in the documentation and/or other materials provided with the
 # distribution.
-#    * Neither the name of Google Inc. nor the names of its
+#    * Neither the name of the copyright holder nor the names of its
 # contributors may be used to endorse or promote products derived from
 # this software without specific prior written permission.
 #
@@ -33,45 +34,28 @@ import unittest
 from webkitpy.common.system.executive_mock import MockExecutive
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.outputcapture import OutputCapture
-from webkitpy.port.gtk import GtkPort
+from webkitpy.port.wpe import WPEPort
 from webkitpy.port.pulseaudio_sanitizer_mock import PulseAudioSanitizerMock
 from webkitpy.port import port_testcase
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.mocktool import MockOptions
 
 
-class GtkPortTest(port_testcase.PortTestCase):
-    port_name = 'gtk'
-    port_maker = GtkPort
+class WPEPortTest(port_testcase.PortTestCase):
+    port_name = 'wpe'
+    port_maker = WPEPort
 
     # Additionally mocks out the PulseAudioSanitizer methods.
     def make_port(self, host=None, port_name=None, options=None, os_name=None, os_version=None, **kwargs):
-        port = super(GtkPortTest, self).make_port(host, port_name, options, os_name, os_version, **kwargs)
+        port = super(WPEPortTest, self).make_port(host, port_name, options, os_name, os_version, **kwargs)
         port._pulseaudio_sanitizer = PulseAudioSanitizerMock()
         return port
-
-    def test_default_baseline_search_path(self):
-        port = self.make_port()
-        self.assertEqual(port.default_baseline_search_path(), ['/mock-checkout/LayoutTests/platform/gtk',
-            '/mock-checkout/LayoutTests/platform/wk2'])
-
-    def test_port_specific_expectations_files(self):
-        port = self.make_port()
-        self.assertEqual(port.expectations_files(), ['/mock-checkout/LayoutTests/TestExpectations',
-            '/mock-checkout/LayoutTests/platform/wk2/TestExpectations',
-            '/mock-checkout/LayoutTests/platform/gtk/TestExpectations'])
-
-    def test_show_results_html_file(self):
-        port = self.make_port()
-        port._executive = MockExecutive(should_log=True)
-        expected_logs = "MOCK run_command: ['Tools/Scripts/run-minibrowser', '--release', '--gtk', 'file://test.html'], cwd=/mock-checkout\n"
-        OutputCapture().assert_outputs(self, port.show_results_html_file, ["test.html"], expected_logs=expected_logs)
 
     def test_default_timeout_ms(self):
         self.assertEqual(self.make_port(options=MockOptions(configuration='Release')).default_timeout_ms(), 15000)
         self.assertEqual(self.make_port(options=MockOptions(configuration='Debug')).default_timeout_ms(), 30000)
-        self.assertEqual(self.make_port(options=MockOptions(configuration='Release', leaks=True, wrapper="valgrind")).default_timeout_ms(), 150000)
-        self.assertEqual(self.make_port(options=MockOptions(configuration='Debug', leaks=True, wrapper="valgrind")).default_timeout_ms(), 300000)
+        self.assertEqual(self.make_port(options=MockOptions(configuration='Release', leaks=True)).default_timeout_ms(), 150000)
+        self.assertEqual(self.make_port(options=MockOptions(configuration='Debug', leaks=True)).default_timeout_ms(), 300000)
 
     def test_get_crash_log(self):
         # This function tested in linux_get_crash_log_unittest.py

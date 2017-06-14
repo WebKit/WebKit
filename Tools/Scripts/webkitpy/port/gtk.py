@@ -88,12 +88,14 @@ class GtkPort(Port):
         return XvfbDriver
 
     def default_timeout_ms(self):
+        default_timeout = 15000
         # Starting an application under Valgrind takes a lot longer than normal
         # so increase the timeout (empirically 10x is enough to avoid timeouts).
         multiplier = 10 if self.get_option("leaks") else 1
+        # Debug builds are slower (no compiler optimizations are used).
         if self.get_option('configuration') == 'Debug':
-            return multiplier * 12 * 1000
-        return multiplier * 6 * 1000
+            multiplier *= 2
+        return multiplier * default_timeout
 
     def driver_stop_timeout(self):
         if self.get_option("leaks"):
