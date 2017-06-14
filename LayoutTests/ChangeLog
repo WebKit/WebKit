@@ -1,5 +1,16 @@
 2017-06-14  Matt Lewis  <jlewis3@apple.com>
 
+        Rebaselined editing/execCommand/strikethrough-uses-strike-tag.html.
+        https://bugs.webkit.org/show_bug.cgi?id=173375
+        
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/editing/exeCommand/strikethrough-uses-strike-tag-expected.txt: Added.
+        * platform/win/editing/exeCommand/strikethrough-uses-strike-tag-expected.txt: Added.
+
+2017-06-14  Matt Lewis  <jlewis3@apple.com>
+
         Unreviewed, rolling out r218157.
 
         This patch caused multiple API failures on iOS Simulator.
