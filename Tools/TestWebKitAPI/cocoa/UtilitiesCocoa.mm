@@ -37,7 +37,7 @@ void run(bool* done)
 
 void sleep(double seconds)
 {
-    usleep(seconds * 1000000);
+    [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:seconds]];
 }
 
 } // namespace Util

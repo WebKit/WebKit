@@ -39,7 +39,6 @@ messages -> WebPageProxy {
 #endif // ENABLE(WEBGL)
     DidChangeViewportProperties(struct WebCore::ViewportAttributes attributes)
     DidReceiveEvent(uint32_t type, bool handled)
-    StopResponsivenessTimer()
 #if !PLATFORM(IOS)
     SetCursor(WebCore::Cursor cursor)
     SetCursorHiddenUntilMouseMoves(bool hiddenUntilMouseMoves)

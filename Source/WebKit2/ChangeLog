@@ -1,3 +1,39 @@
+2017-06-14  Chris Dumez  <cdumez@apple.com>
+
+        WebKit falsely reports that a web process is unresponsive if you close a page shortly after stopping a load
+        https://bugs.webkit.org/show_bug.cgi?id=173384
+        <rdar://problem/32723779>
+
+        Reviewed by Dan Bernstein.
+
+        WebKit falsely reports that a web process is unresponsive if you close a page shortly after stopping a load.
+        This is because WebPageProxy::stopLoad() starts the responsiveness timer and expects a StopResponsinessTimer
+        IPC from the WebProcess to stop the timer so we don't report the process as unresponsive. However, if
+        WebPageProxy::close() is called before the StopResponsinessTimer IPC has been received, the page will remove
+        itself from the message receiver map and we would no longer be able to receive the StopResponsinessTimer
+        IPC and stop the timer, even if the WebProcess sent it to the UIProcess.
+
+        To address the issue, we now send the IPC Message to the WebProcessProxy instead of the WebPageProxy, so we
+        can stop the responsiveness timer, even after the WebPageProxy has been called.
+
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::stopResponsivenessTimer):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.messages.in:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::SendStopResponsivenessTimer::~SendStopResponsivenessTimer):
+        (WebKit::WebPage::tryClose):
+        (WebKit::WebPage::loadRequest):
+        (WebKit::WebPage::loadDataImpl):
+        (WebKit::WebPage::stopLoading):
+        (WebKit::WebPage::reload):
+        (WebKit::WebPage::goForward):
+        (WebKit::WebPage::goBack):
+        (WebKit::WebPage::goToBackForwardItem):
+
 2017-06-14  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r218263, r218265, and r218266.

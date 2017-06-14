@@ -151,6 +151,8 @@ public:
 
     void requestTermination(ProcessTerminationReason);
 
+    void stopResponsivenessTimer();
+
     RefPtr<API::Object> transformHandlesToObjects(API::Object*);
     static RefPtr<API::Object> transformObjectsToHandles(API::Object*);
 

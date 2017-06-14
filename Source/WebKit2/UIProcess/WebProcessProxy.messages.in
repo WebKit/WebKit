@@ -49,6 +49,8 @@ messages -> WebProcessProxy LegacyReceiver {
     DidExceedInactiveMemoryLimit()
     DidExceedCPULimit()
 
+    StopResponsivenessTimer()
+
     RetainIconForPageURL(String pageURL)
     ReleaseIconForPageURL(String pageURL)
 

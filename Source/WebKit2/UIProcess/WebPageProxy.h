@@ -1440,7 +1440,6 @@ private:
     void setCursorHiddenUntilMouseMoves(bool);
 
     void didReceiveEvent(uint32_t opaqueType, bool handled);
-    void stopResponsivenessTimer();
 
     void voidCallback(uint64_t);
     void dataCallback(const IPC::DataReference&, uint64_t);

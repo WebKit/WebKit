@@ -939,6 +939,11 @@ void WebProcessProxy::requestTermination(ProcessTerminationReason reason)
         pages[i]->processDidTerminate(reason);
 }
 
+void WebProcessProxy::stopResponsivenessTimer()
+{
+    responsivenessTimer().stop();
+}
+
 void WebProcessProxy::enableSuddenTermination()
 {
     if (state() != State::Running)

@@ -4996,11 +4996,6 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
     }
 }
 
-void WebPageProxy::stopResponsivenessTimer()
-{
-    m_process->responsivenessTimer().stop();
-}
-
 void WebPageProxy::voidCallback(uint64_t callbackID)
 {
     auto callback = m_callbacks.take<VoidCallback>(callbackID);

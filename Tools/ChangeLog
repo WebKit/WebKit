@@ -1,3 +1,20 @@
+2017-06-14  Chris Dumez  <cdumez@apple.com>
+
+        WebKit falsely reports that a web process is unresponsive if you close a page shortly after stopping a load
+        https://bugs.webkit.org/show_bug.cgi?id=173384
+        <rdar://problem/32723779>
+
+        Reviewed by Dan Bernstein.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2/ResponsivenessTimer.cpp: Added.
+        Add API test coverage.
+
+        * TestWebKitAPI/cocoa/UtilitiesCocoa.mm:
+        (TestWebKitAPI::Util::sleep):
+        Update implementation of Util::sleep() so that we actually run the run loop.
+        Otherwise, we don't process events while sleeping.
+
 2017-06-14  Alex Christensen  <achristensen@webkit.org>
 
         Add SPI for immediate injection of user scripts

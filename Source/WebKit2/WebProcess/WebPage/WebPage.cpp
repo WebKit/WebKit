@@ -265,18 +265,10 @@ static const Seconds maximumLayerVolatilityTimerInterval { 2_s };
 
 class SendStopResponsivenessTimer {
 public:
-    SendStopResponsivenessTimer(WebPage* page)
-        : m_page(page)
-    {
-    }
-    
     ~SendStopResponsivenessTimer()
     {
-        m_page->send(Messages::WebPageProxy::StopResponsivenessTimer());
+        WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::StopResponsivenessTimer(), 0);
     }
-
-private:
-    WebPage* m_page;
 };
 
 class DeferredPageDestructor {
@@ -1177,10 +1169,10 @@ void WebPage::close()
 
 void WebPage::tryClose()
 {
-    SendStopResponsivenessTimer stopper(this);
+    SendStopResponsivenessTimer stopper;
 
     if (!corePage()->userInputBridge().tryClosePage()) {
-        send(Messages::WebPageProxy::StopResponsivenessTimer());
+        WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::StopResponsivenessTimer(), 0);
         return;
     }
 
@@ -1209,7 +1201,7 @@ void WebPage::platformDidReceiveLoadParameters(const LoadParameters& loadParamet
 
 void WebPage::loadRequest(const LoadParameters& loadParameters)
 {
-    SendStopResponsivenessTimer stopper(this);
+    SendStopResponsivenessTimer stopper;
 
     m_pendingNavigationID = loadParameters.navigationID;
 
@@ -1233,7 +1225,7 @@ void WebPage::loadRequest(const LoadParameters& loadParameters)
 
 void WebPage::loadDataImpl(uint64_t navigationID, Ref<SharedBuffer>&& sharedBuffer, const String& MIMEType, const String& encodingName, const URL& baseURL, const URL& unreachableURL, const UserData& userData)
 {
-    SendStopResponsivenessTimer stopper(this);
+    SendStopResponsivenessTimer stopper;
 
     m_pendingNavigationID = navigationID;
 
@@ -1317,7 +1309,7 @@ void WebPage::stopLoadingFrame(uint64_t frameID)
 
 void WebPage::stopLoading()
 {
-    SendStopResponsivenessTimer stopper(this);
+    SendStopResponsivenessTimer stopper;
 
     corePage()->userInputBridge().stopLoadingFrame(m_mainFrame->coreFrame());
 }
@@ -1334,7 +1326,7 @@ void WebPage::setDefersLoading(bool defersLoading)
 
 void WebPage::reload(uint64_t navigationID, uint32_t reloadOptions, const SandboxExtension::Handle& sandboxExtensionHandle)
 {
-    SendStopResponsivenessTimer stopper(this);
+    SendStopResponsivenessTimer stopper;
 
     ASSERT(!m_mainFrame->coreFrame()->loader().frameHasLoaded() || !m_pendingNavigationID);
     m_pendingNavigationID = navigationID;
@@ -1345,7 +1337,7 @@ void WebPage::reload(uint64_t navigationID, uint32_t reloadOptions, const Sandbo
 
 void WebPage::goForward(uint64_t navigationID, uint64_t backForwardItemID)
 {
-    SendStopResponsivenessTimer stopper(this);
+    SendStopResponsivenessTimer stopper;
 
     HistoryItem* item = WebBackForwardListProxy::itemForID(backForwardItemID);
     ASSERT(item);
@@ -1360,7 +1352,7 @@ void WebPage::goForward(uint64_t navigationID, uint64_t backForwardItemID)
 
 void WebPage::goBack(uint64_t navigationID, uint64_t backForwardItemID)
 {
-    SendStopResponsivenessTimer stopper(this);
+    SendStopResponsivenessTimer stopper;
 
     HistoryItem* item = WebBackForwardListProxy::itemForID(backForwardItemID);
     ASSERT(item);
@@ -1375,7 +1367,7 @@ void WebPage::goBack(uint64_t navigationID, uint64_t backForwardItemID)
 
 void WebPage::goToBackForwardItem(uint64_t navigationID, uint64_t backForwardItemID)
 {
-    SendStopResponsivenessTimer stopper(this);
+    SendStopResponsivenessTimer stopper;
 
     HistoryItem* item = WebBackForwardListProxy::itemForID(backForwardItemID);
     ASSERT(item);
