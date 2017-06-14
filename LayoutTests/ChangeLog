@@ -1,3 +1,11 @@
+2017-06-14  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [WPE] Rebaseline imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-requestmediakeysystemaccess.html
+
+        Unreviewed gardening.
+
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-requestmediakeysystemaccess-expected.txt:
+
 2017-06-14  Nael Ouedraogo  <nael.ouedraogo@crf.canon.fr>
 
         MediaSource duration attribute should not be equal to Infinity when set to a value greater than 2^64

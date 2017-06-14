@@ -20,7 +20,7 @@ PASS org.w3.clearkey, requestMediaKeySystemAccess: Extra dot in middle of Key Sy
 PASS org.w3.clearkey, requestMediaKeySystemAccess: Trailing dot in Key System name should result in NotSupportedError 
 PASS org.w3.clearkey, requestMediaKeySystemAccess: Key System name is case sensitive should result in NotSupportedError 
 PASS org.w3.clearkey, requestMediaKeySystemAccess: Empty supportedConfigurations should result in TypeError 
-FAIL Empty configuration promise_test: Unhandled rejection with value: object "NotSupportedError (DOM Exception 9): The operation is not supported."
+PASS org.w3.clearkey, requestMediaKeySystemAccess: Empty configuration should result in NotSupportedError 
 FAIL Basic supported configuration promise_test: Unhandled rejection with value: object "NotSupportedError (DOM Exception 9): The operation is not supported."
 FAIL Partially supported configuration promise_test: Unhandled rejection with value: object "NotSupportedError (DOM Exception 9): The operation is not supported."
 FAIL Supported audio codec promise_test: Unhandled rejection with value: object "NotSupportedError (DOM Exception 9): The operation is not supported."
