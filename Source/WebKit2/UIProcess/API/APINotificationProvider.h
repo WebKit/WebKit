@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,42 +23,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebNotificationProvider_h
-#define WebNotificationProvider_h
+#pragma once
 
-#include "APIClient.h"
-#include "APINotificationProvider.h"
-#include "WKNotificationProvider.h"
 #include <wtf/Forward.h>
+#include <wtf/HashMap.h>
 #include <wtf/Vector.h>
-
-namespace API {
-template<> struct ClientTraits<WKNotificationProviderBase> {
-    typedef std::tuple<WKNotificationProviderV0> Versions;
-};
-}
+#include <wtf/text/StringHash.h>
 
 namespace WebKit {
-
 class WebNotification;
 class WebNotificationManagerProxy;
 class WebPageProxy;
+}
 
-class WebNotificationProvider : public API::NotificationProvider, public API::Client<WKNotificationProviderBase> {
+namespace API {
+
+class NotificationProvider {
 public:
-    explicit WebNotificationProvider(const WKNotificationProviderBase*);
+    virtual ~NotificationProvider() = default;
 
-    void show(WebPageProxy&, WebNotification&) override;
-    void cancel(WebNotification&) override;
-    void didDestroyNotification(WebNotification&) override;
-    void clearNotifications(const Vector<uint64_t>& notificationIDs) override;
+    virtual void show(WebKit::WebPageProxy&, WebKit::WebNotification&) { }
+    virtual void cancel(WebKit::WebNotification&) { }
+    virtual void didDestroyNotification(WebKit::WebNotification&) { }
+    virtual void clearNotifications(const Vector<uint64_t>& /*notificationIDs*/) { }
 
-    void addNotificationManager(WebNotificationManagerProxy&) override;
-    void removeNotificationManager(WebNotificationManagerProxy&) override;
+    virtual void addNotificationManager(WebKit::WebNotificationManagerProxy&) { }
+    virtual void removeNotificationManager(WebKit::WebNotificationManagerProxy&) { }
 
-    HashMap<WTF::String, bool> notificationPermissions() override;
+    virtual HashMap<WTF::String, bool> notificationPermissions() { return HashMap<WTF::String, bool>(); };
 };
 
-} // namespace WebKit
-
-#endif // WebNotificationProvider_h
+} // namespace API

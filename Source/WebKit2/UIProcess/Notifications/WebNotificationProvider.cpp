@@ -37,28 +37,33 @@
 
 namespace WebKit {
 
-void WebNotificationProvider::show(WebPageProxy* page, WebNotification* notification)
+WebNotificationProvider::WebNotificationProvider(const WKNotificationProviderBase* provider)
+{
+    initialize(provider);
+}
+
+void WebNotificationProvider::show(WebPageProxy& page, WebNotification& notification)
 {
     if (!m_client.show)
         return;
-    
-    m_client.show(toAPI(page), toAPI(notification), m_client.base.clientInfo);
+
+    m_client.show(toAPI(&page), toAPI(&notification), m_client.base.clientInfo);
 }
 
-void WebNotificationProvider::cancel(WebNotification* notification)
+void WebNotificationProvider::cancel(WebNotification& notification)
 {
     if (!m_client.cancel)
         return;
-    
-    m_client.cancel(toAPI(notification), m_client.base.clientInfo);
+
+    m_client.cancel(toAPI(&notification), m_client.base.clientInfo);
 }
 
-void WebNotificationProvider::didDestroyNotification(WebNotification* notification)
+void WebNotificationProvider::didDestroyNotification(WebNotification& notification)
 {
     if (!m_client.didDestroyNotification)
         return;
-    
-    m_client.didDestroyNotification(toAPI(notification), m_client.base.clientInfo);
+
+    m_client.didDestroyNotification(toAPI(&notification), m_client.base.clientInfo);
 }
 
 void WebNotificationProvider::clearNotifications(const Vector<uint64_t>& notificationIDs)
@@ -75,28 +80,38 @@ void WebNotificationProvider::clearNotifications(const Vector<uint64_t>& notific
     m_client.clearNotifications(toAPI(API::Array::create(WTFMove(arrayIDs)).ptr()), m_client.base.clientInfo);
 }
 
-void WebNotificationProvider::addNotificationManager(WebNotificationManagerProxy* manager)
+void WebNotificationProvider::addNotificationManager(WebNotificationManagerProxy& manager)
 {
     if (!m_client.addNotificationManager)
         return;
-    
-    m_client.addNotificationManager(toAPI(manager), m_client.base.clientInfo);
+
+    m_client.addNotificationManager(toAPI(&manager), m_client.base.clientInfo);
 }
 
-void WebNotificationProvider::removeNotificationManager(WebNotificationManagerProxy* manager)
+void WebNotificationProvider::removeNotificationManager(WebNotificationManagerProxy& manager)
 {
     if (!m_client.removeNotificationManager)
         return;
-    
-    m_client.removeNotificationManager(toAPI(manager), m_client.base.clientInfo);
+
+    m_client.removeNotificationManager(toAPI(&manager), m_client.base.clientInfo);
 }
 
-RefPtr<API::Dictionary> WebNotificationProvider::notificationPermissions()
+HashMap<WTF::String, bool> WebNotificationProvider::notificationPermissions()
 {
+    HashMap<WTF::String, bool> permissions;
     if (!m_client.notificationPermissions)
-        return API::Dictionary::create();
+        return permissions;
 
-    return adoptRef(toImpl(m_client.notificationPermissions(m_client.base.clientInfo)));
+    RefPtr<API::Dictionary> knownPermissions = adoptRef(toImpl(m_client.notificationPermissions(m_client.base.clientInfo)));
+    if (!knownPermissions)
+        return permissions;
+
+    Ref<API::Array> knownOrigins = knownPermissions->keys();
+    for (size_t i = 0; i < knownOrigins->size(); ++i) {
+        API::String* origin = knownOrigins->at<API::String>(i);
+        permissions.set(origin->string(), knownPermissions->get<API::Boolean>(origin->string())->value());
+    }
+    return permissions;
 }
 
 } // namespace WebKit

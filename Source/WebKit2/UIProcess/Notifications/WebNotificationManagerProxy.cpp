@@ -27,7 +27,7 @@
 #include "WebNotificationManagerProxy.h"
 
 #include "APIArray.h"
-#include "APIDictionary.h"
+#include "APINotificationProvider.h"
 #include "APISecurityOrigin.h"
 #include "WebNotification.h"
 #include "WebNotificationManagerMessages.h"
@@ -57,20 +57,26 @@ Ref<WebNotificationManagerProxy> WebNotificationManagerProxy::create(WebProcessP
 
 WebNotificationManagerProxy::WebNotificationManagerProxy(WebProcessPool* processPool)
     : WebContextSupplement(processPool)
+    , m_provider(std::make_unique<API::NotificationProvider>())
 {
 }
 
-void WebNotificationManagerProxy::initializeProvider(const WKNotificationProviderBase* provider)
+void WebNotificationManagerProxy::setProvider(std::unique_ptr<API::NotificationProvider>&& provider)
 {
-    m_provider.initialize(provider);
-    m_provider.addNotificationManager(this);
+    if (!provider) {
+        m_provider = std::make_unique<API::NotificationProvider>();
+        return;
+    }
+
+    m_provider = WTFMove(provider);
+    m_provider->addNotificationManager(*this);
 }
 
 // WebContextSupplement
 
 void WebNotificationManagerProxy::processPoolDestroyed()
 {
-    m_provider.removeNotificationManager(this);
+    m_provider->removeNotificationManager(*this);
 }
 
 void WebNotificationManagerProxy::refWebContextSupplement()
@@ -83,19 +89,9 @@ void WebNotificationManagerProxy::derefWebContextSupplement()
     API::Object::deref();
 }
 
-void WebNotificationManagerProxy::populateCopyOfNotificationPermissions(HashMap<String, bool>& permissions)
+HashMap<String, bool> WebNotificationManagerProxy::notificationPermissions()
 {
-    RefPtr<API::Dictionary> knownPermissions = m_provider.notificationPermissions();
-
-    if (!knownPermissions)
-        return;
-
-    permissions.clear();
-    Ref<API::Array> knownOrigins = knownPermissions->keys();
-    for (size_t i = 0; i < knownOrigins->size(); ++i) {
-        API::String* origin = knownOrigins->at<API::String>(i);
-        permissions.set(origin->string(), knownPermissions->get<API::Boolean>(origin->string())->value());
-    }
+    return m_provider->notificationPermissions();
 }
 
 void WebNotificationManagerProxy::show(WebPageProxy* webPage, const String& title, const String& body, const String& iconURL, const String& tag, const String& lang, WebCore::NotificationDirection dir, const String& originString, uint64_t pageNotificationID)
@@ -105,13 +101,13 @@ void WebNotificationManagerProxy::show(WebPageProxy* webPage, const String& titl
     std::pair<uint64_t, uint64_t> notificationIDPair = std::make_pair(webPage->pageID(), pageNotificationID);
     m_globalNotificationMap.set(globalNotificationID, notificationIDPair);
     m_notifications.set(notificationIDPair, std::make_pair(globalNotificationID, notification));
-    m_provider.show(webPage, notification.get());
+    m_provider->show(*webPage, *notification);
 }
 
 void WebNotificationManagerProxy::cancel(WebPageProxy* webPage, uint64_t pageNotificationID)
 {
     if (WebNotification* notification = m_notifications.get(std::make_pair(webPage->pageID(), pageNotificationID)).second.get())
-        m_provider.cancel(notification);
+        m_provider->cancel(*notification);
 }
     
 void WebNotificationManagerProxy::didDestroyNotification(WebPageProxy* webPage, uint64_t pageNotificationID)
@@ -120,7 +116,7 @@ void WebNotificationManagerProxy::didDestroyNotification(WebPageProxy* webPage, 
     if (uint64_t globalNotificationID = globalIDNotificationPair.first) {
         WebNotification* notification = globalIDNotificationPair.second.get();
         m_globalNotificationMap.remove(globalNotificationID);
-        m_provider.didDestroyNotification(notification);
+        m_provider->didDestroyNotification(*notification);
     }
 }
 
@@ -166,7 +162,7 @@ void WebNotificationManagerProxy::clearNotifications(WebPageProxy* webPage, cons
         m_notifications.remove(pageNotification);
     }
 
-    m_provider.clearNotifications(globalNotificationIDs);
+    m_provider->clearNotifications(globalNotificationIDs);
 }
 
 void WebNotificationManagerProxy::providerDidShowNotification(uint64_t globalNotificationID)

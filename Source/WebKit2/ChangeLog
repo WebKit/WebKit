@@ -1,5 +1,47 @@
 2017-06-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Add API::NotificationProvider
+        https://bugs.webkit.org/show_bug.cgi?id=173309
+
+        Reviewed by Alex Christensen.
+
+        It will be used by the GTK+ port instead of the C API.
+
+        * UIProcess/API/APINotificationProvider.h: Copied from Source/WebKit2/UIProcess/Notifications/WebNotificationProvider.h.
+        (API::NotificationProvider::show):
+        (API::NotificationProvider::cancel):
+        (API::NotificationProvider::didDestroyNotification):
+        (API::NotificationProvider::clearNotifications):
+        (API::NotificationProvider::addNotificationManager):
+        (API::NotificationProvider::removeNotificationManager):
+        (API::NotificationProvider::notificationPermissions):
+        * UIProcess/API/C/WKNotificationManager.cpp:
+        (WKNotificationManagerSetProvider):
+        * UIProcess/Notifications/WebNotificationManagerProxy.cpp:
+        (WebKit::WebNotificationManagerProxy::WebNotificationManagerProxy):
+        (WebKit::WebNotificationManagerProxy::setProvider):
+        (WebKit::WebNotificationManagerProxy::processPoolDestroyed):
+        (WebKit::WebNotificationManagerProxy::notificationPermissions):
+        (WebKit::WebNotificationManagerProxy::show):
+        (WebKit::WebNotificationManagerProxy::cancel):
+        (WebKit::WebNotificationManagerProxy::didDestroyNotification):
+        (WebKit::WebNotificationManagerProxy::clearNotifications):
+        * UIProcess/Notifications/WebNotificationManagerProxy.h:
+        * UIProcess/Notifications/WebNotificationProvider.cpp:
+        (WebKit::WebNotificationProvider::WebNotificationProvider):
+        (WebKit::WebNotificationProvider::show):
+        (WebKit::WebNotificationProvider::cancel):
+        (WebKit::WebNotificationProvider::didDestroyNotification):
+        (WebKit::WebNotificationProvider::addNotificationManager):
+        (WebKit::WebNotificationProvider::removeNotificationManager):
+        (WebKit::WebNotificationProvider::notificationPermissions):
+        * UIProcess/Notifications/WebNotificationProvider.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::createNewWebProcess):
+        * WebKit2.xcodeproj/project.pbxproj:
+
+2017-06-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         API clients should not be passed by value to the setters
         https://bugs.webkit.org/show_bug.cgi?id=173266
 
