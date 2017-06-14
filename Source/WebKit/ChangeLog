@@ -1,3 +1,14 @@
+2017-06-14  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win64] Fails to build Asm.lib (PaintHooks.asm) since Bug 173132
+        https://bugs.webkit.org/show_bug.cgi?id=173308
+
+        Reviewed by Alex Christensen.
+
+        Use the same method to process asm file as well as JSC does (Bug 170833).
+
+        * PlatformWin.cmake: Use add_custom_command to assemble PaintHooks.asm.
+
 2017-06-09  Per Arne Vollan  <pvollan@apple.com>
 
         [Win64] Build error when compiling PaintHooks.asm.

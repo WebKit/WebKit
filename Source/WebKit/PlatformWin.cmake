@@ -254,13 +254,25 @@ list(APPEND WebKit_SOURCES_WebCoreSupport
 )
 
 if (CMAKE_SIZEOF_VOID_P EQUAL 8)
-    enable_language(ASM_MASM)
-    add_library(Asm STATIC
-        "win/plugins/PaintHooks.asm"
-    )
-    list(APPEND WebKit_LIBRARIES
-        PRIVATE Asm
-    )
+    if (MSVC)
+        set(MASM_EXECUTABLE ml64)
+        set(MASM_FLAGS /c /Fo)
+        add_custom_command(
+            OUTPUT ${DERIVED_SOURCES_WEBKIT_DIR}/PaintHooks.obj
+            MAIN_DEPENDENCY win/plugins/PaintHooks.asm
+            COMMAND ${MASM_EXECUTABLE} ${MASM_FLAGS}
+                ${DERIVED_SOURCES_WEBKIT_DIR}/PaintHooks.obj
+                ${CMAKE_CURRENT_SOURCE_DIR}/win/plugins/PaintHooks.asm
+            VERBATIM)
+        list(APPEND WebKit_SOURCES
+            ${DERIVED_SOURCES_WEBKIT_DIR}/PaintHooks.obj
+        )
+    else ()
+        enable_language(ASM_MASM)
+        list(APPEND WebKit_SOURCES
+            win/plugins/PaintHooks.asm
+        )
+    endif ()
 endif ()
 
 list(APPEND WebKit_SOURCES ${WebKit_INCLUDES} ${WebKit_SOURCES_Classes} ${WebKit_SOURCES_WebCoreSupport})
