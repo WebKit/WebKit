@@ -1517,8 +1517,13 @@ void FrameView::layout(bool allowSubtree)
 
     bool neededFullRepaint = m_needsFullRepaint;
 
-    if (!subtree && !downcast<RenderView>(*root).printing())
+    if (!subtree && !downcast<RenderView>(*root).printing()) {
         adjustViewSize();
+        // FIXME: Firing media query callbacks synchronously on nested frames could produced a detached FrameView here by
+        // navigating away from the current document (see webkit.org/b/173329).
+        if (hasOneRef())
+            return;
+    }
 
     m_layoutPhase = InPostLayout;
 
