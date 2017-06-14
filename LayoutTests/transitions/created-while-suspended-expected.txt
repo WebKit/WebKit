@@ -8,5 +8,5 @@ Transitions should be suspended: PASS
 *** Adding transition property and setting left to 100px. We should NOT see transition events.
 *** Resuming Animations/Transitions
 Transitions should not be suspended: PASS
-*** Test finished
+PASS: Transition ended on element with id: box
 
