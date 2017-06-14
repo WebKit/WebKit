@@ -11,14 +11,13 @@ description("Testing the <code>TracksButton</code> class.");
 const tracksButton = new TracksButton({ layoutTraits: LayoutTraits.macOS });
 
 shouldBeEqualToString("tracksButton.element.localName", "button");
-shouldBeTrue('tracksButton.element.classList.contains("icon")');
 shouldBeTrue('tracksButton.element.classList.contains("tracks")');
 shouldBe("tracksButton.iconName", "Icons.Tracks");
 
 const fullscreenTracksButton = new TracksButton({ layoutTraits: LayoutTraits.macOS | LayoutTraits.Fullscreen });
 
-shouldBecomeEqual('tracksButton.element.style.webkitMaskImage.includes("macOS/media-selection@")', "true", () => {
-    shouldBecomeEqual('fullscreenTracksButton.element.style.webkitMaskImage.includes("macOS/media-selection-fullscreen@")', "true", finishJSTest);
+shouldBecomeEqual('tracksButton.image.element.style.webkitMaskImage.includes("macOS/MediaSelector.svg")', "true", () => {
+    shouldBecomeEqual('fullscreenTracksButton.image.element.style.webkitMaskImage.includes("macOS/MediaSelector-fullscreen.svg")', "true", finishJSTest);
 });
 
 </script>

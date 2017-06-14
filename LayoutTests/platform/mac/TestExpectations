@@ -1576,6 +1576,7 @@ media/modern-media-controls/slider [ Pass ]
 media/modern-media-controls/status-label [ Pass ]
 media/modern-media-controls/time-control [ Pass ]
 media/modern-media-controls/time-label [ Pass ]
+media/modern-media-controls/tracks-button [ Pass ]
 media/modern-media-controls/volume-up-support [ Pass ]
 
 # These tests are iOS-specific
