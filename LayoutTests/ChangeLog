@@ -1,5 +1,19 @@
 2017-06-13  Antoine Quint  <graouts@apple.com>
 
+        Remove media/modern-media-controls/start-button
+        https://bugs.webkit.org/show_bug.cgi?id=173216
+
+        Reviewed by Dean Jackson.
+
+        The StartButton class was removed.
+
+        * media/modern-media-controls/start-button/start-button-expected.txt: Removed.
+        * media/modern-media-controls/start-button/start-button-styles-expected.txt: Removed.
+        * media/modern-media-controls/start-button/start-button-styles.html: Removed.
+        * media/modern-media-controls/start-button/start-button.html: Removed.
+
+2017-06-13  Antoine Quint  <graouts@apple.com>
+
         Rebaseline media/modern-media-controls/slider
         https://bugs.webkit.org/show_bug.cgi?id=173215
 
