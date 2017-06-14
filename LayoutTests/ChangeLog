@@ -1,5 +1,17 @@
 2017-06-14  Claudio Saavedra  <csaavedra@igalia.com>
 
+        [WPE] IndexedDB gardening
+
+        Unreviewed gardening.
+
+        Mark a few expected crashers. We don't use IndexedDB in workers,
+        storage/indexeddb/modern/worker-getall.html is expected to fail.
+        storage/indexeddb/modern/idbkey-array-equality.html is now passing.
+
+        * platform/wpe/TestExpectations:
+
+2017-06-14  Claudio Saavedra  <csaavedra@igalia.com>
+
         [WPE] Rebaseline imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-requestmediakeysystemaccess.html
 
         Unreviewed gardening.

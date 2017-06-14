@@ -176,6 +176,8 @@ Bug(WPE) imported/w3c/css [ Skip ]
 Bug(WPE) imported/w3c/web-platform-tests [ Skip ]
 
 Bug(WPE) imported/w3c/IndexedDB-private-browsing/idb_webworkers.html [ Failure ]
+webkit.org/b/167576 imported/w3c/IndexedDB-private-browsing/idbcursor_iterating.html [ Crash ]
+webkit.org/b/167576 imported/w3c/IndexedDB-private-browsing/idbcursor_iterating_index.html [ Crash ]
 
 Bug(WPE) fast/ [ Skip ]
 
@@ -307,8 +309,8 @@ Bug(WPE) fast/dom/beforeload [ Pass ]
 Bug(WPE) fast/dom/getElementsByClassName [ Pass ]
 Bug(WPE) fast/dom/nodesFromRect [ Pass ]
 
-Bug(WPE) storage/indexeddb/modern/idbkey-array-equality.html [ Crash ]
 Bug(WPE) storage/indexeddb/modern/index-3-private.html [ Crash ]
+Bug(WPE) storage/indexeddb/modern/worker-getall.html [ Timeout ]
 Bug(WPE) storage/domstorage/events/basic-body-attribute.html [ Failure ]
 Bug(WPE) storage/domstorage/localstorage/blocked-file-access.html [ Failure ]
 Bug(WPE) storage/domstorage/sessionstorage/blocked-file-access.html [ Failure ]
