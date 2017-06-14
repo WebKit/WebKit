@@ -1,3 +1,14 @@
+2017-06-13  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Fix linter warnings on the GTK Debug TestExpectation file and update some expectations for Debug.
+
+        Unreviewed test gardening.
+
+        * TestExpectations: Merge expectations for imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.worker.html
+        * platform/gtk/TestExpectations: Mark observed timeouts on Debug and fix linter warnings related to tests renamed or deleted.
+        * platform/gtk/imported/w3c/web-platform-tests/fetch/api/basic/request-headers-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/fetch/api/basic/request-headers-worker-expected.txt: Removed.
+
 2017-06-13  Zalan Bujtas  <zalan@apple.com>
 
         Synchronous media query callbacks on nested frames could produced a detached FrameView.
