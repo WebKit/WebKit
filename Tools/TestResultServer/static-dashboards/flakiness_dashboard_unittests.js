@@ -46,7 +46,7 @@ function resetGlobals()
     LOAD_BUILDBOT_DATA([{
         name: 'webkit.org',
         url: 'dummyurl',
-        tests: {'layout-tests': {'builders': ['Apple Lion Release WK2 (Tests)', 'Apple Lion Debug WK2 (Tests)', 'GTK Linux 64-bit Release (Tests)']}}
+        tests: {'layout-tests': {'builders': ['Apple Lion Release WK2 (Tests)', 'Apple Lion Debug WK2 (Tests)', 'GTK Linux 64-bit Release (Tests)', 'WPE Linux 64-bit Release (Tests)']}}
     }]);
  
     for (var group in LAYOUT_TESTS_BUILDER_GROUPS)
@@ -161,6 +161,7 @@ test('platformAndBuildType', 30, function() {
     runPlatformAndBuildTypeTest('GTK Linux 64-bit Debug (Tests)', 'GTK_LINUX_WK2', 'DEBUG');
     runPlatformAndBuildTypeTest('Windows 7 Release (Tests)', 'APPLE_WIN_WIN7', 'RELEASE');
     runPlatformAndBuildTypeTest('Windows XP Debug (Tests)', 'APPLE_WIN_XP', 'DEBUG');
+    runPlatformAndBuildTypeTest('WPE Linux 64-bit Release (Tests)', 'WPE_LINUX', 'RELEASE');
     
     // FIXME: Should WebKit2 be it's own platform?
     runPlatformAndBuildTypeTest('MountainLion Release (WebKit2 Tests)', 'APPLE_MAC_MOUNTAINLION_WK2', 'RELEASE');

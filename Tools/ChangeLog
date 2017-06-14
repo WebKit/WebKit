@@ -1,3 +1,16 @@
+2017-06-14  Claudio Saavedra  <csaavedra@igalia.com>
+
+        Add WPE to the flakiness dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=173365
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * TestResultServer/static-dashboards/builders.jsonp:
+        * TestResultServer/static-dashboards/flakiness_dashboard.js:
+        * TestResultServer/static-dashboards/flakiness_dashboard_unittests.js:
+        (resetGlobals):
+        * TestResultServer/static-dashboards/loader_unittests.js:
+
 2017-06-14  Brady Eidson  <beidson@apple.com>
 
         WKIconLoadingDelegate never gets asked about the default favicon if touch/touch-precomposed icons are in the <head>

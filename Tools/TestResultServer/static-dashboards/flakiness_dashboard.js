@@ -86,6 +86,12 @@ var PLATFORMS = {
     'WK2': {
         basePlatform: true,
         expectationsDirectory: 'wk2'
+    },
+    'WPE': {
+        expectationsDirectory: 'wpe',
+        subPlatforms: {
+            'LINUX': { fallbackPlatforms: ['WPE'] }
+        }
     }
 };
 
@@ -358,6 +364,8 @@ function determineBuilderPlatform(builderNameUpperCase)
         return determineWKPlatform(builderNameUpperCase, 'APPLE_IOS_SIMULATOR');
     if (string.contains(builderNameUpperCase, 'GTK LINUX'))
         return determineWKPlatform(builderNameUpperCase, 'GTK_LINUX');
+    if (string.contains(builderNameUpperCase, 'WPE LINUX'))
+        return determineWKPlatform(builderNameUpperCase, 'WPE_LINUX');
 }
 
 function platformAndBuildType(builderName)

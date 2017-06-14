@@ -52,7 +52,7 @@ test('loading steps', 1, function() {
 // and then 2 per builder (one for ok, one for deepEqual of tests).
 test('results files loading', 9, function() {
     resetGlobals();
-    var expectedLoadedBuilders =  ['Apple Lion Debug WK2 (Tests)', 'Apple Lion Release WK2 (Tests)', 'GTK Linux 64-bit Release (Tests)'];
+    var expectedLoadedBuilders =  ['Apple Lion Debug WK2 (Tests)', 'Apple Lion Release WK2 (Tests)', 'GTK Linux 64-bit Release (Tests)', 'WPE Linux 64-bit Release (Tests)'];
     var loadedBuilders = [];
     var resourceLoader = new loader.Loader();
     resourceLoader._loadNext = function() {
@@ -83,7 +83,7 @@ test('expectations files loading', 1, function() {
     resetGlobals();
     g_history.parseCrossDashboardParameters();
     var expectedLoadedPlatforms = ["gtk", "gtk-wk2",
-        "mac", "mac-lion", "mac-wk2", "mac-wk2", "win", "wk2"];
+        "mac", "mac-lion", "mac-wk2", "mac-wk2", "win", "wk2", "wpe"];
     var loadedPlatforms = [];
     var resourceLoader = new loader.Loader();
     resourceLoader._loadNext = function() {
