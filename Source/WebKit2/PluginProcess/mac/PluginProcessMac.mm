@@ -606,6 +606,11 @@ void PluginProcess::platformInitializeProcess(const ChildProcessInitializationPa
     // FIXME: Workaround for Java not liking its plugin process to be suppressed - <rdar://problem/14267843>
     if (m_pluginBundleIdentifier == "com.oracle.java.JavaAppletPlugin")
         (new UserActivity("com.oracle.java.JavaAppletPlugin"))->start();
+    
+    if (m_pluginBundleIdentifier == "com.citrix.citrixicaclientplugIn") {
+        // Allow Apple Events from Citrix plugin. This can be removed when <rdar://problem/14012823> is fixed.
+        setenv("__APPLEEVENTSSERVICENAME", "com.apple.coreservices.appleevents", 1);
+    }
 }
 
 void PluginProcess::initializeProcessName(const ChildProcessInitializationParameters& parameters)
