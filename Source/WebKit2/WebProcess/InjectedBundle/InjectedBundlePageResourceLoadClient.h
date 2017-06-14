@@ -27,9 +27,8 @@
 #define InjectedBundlePageResourceLoadClient_h
 
 #include "APIClient.h"
-#include "SameDocumentNavigationType.h"
+#include "APIInjectedBundlePageResourceLoadClient.h"
 #include "WKBundlePageResourceLoadClient.h"
-#include <wtf/Forward.h>
 
 namespace API {
 template<> struct ClientTraits<WKBundlePageResourceLoadClientBase> {
@@ -48,16 +47,18 @@ namespace WebKit {
 class WebPage;
 class WebFrame;
 
-class InjectedBundlePageResourceLoadClient : public API::Client<WKBundlePageResourceLoadClientBase> {
+class InjectedBundlePageResourceLoadClient : public API::InjectedBundle::ResourceLoadClient, public API::Client<WKBundlePageResourceLoadClientBase> {
 public:
-    void didInitiateLoadForResource(WebPage*, WebFrame*, uint64_t identifier, const WebCore::ResourceRequest&, bool pageIsProvisionallyLoading);
-    void willSendRequestForFrame(WebPage*, WebFrame*, uint64_t identifier, WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
-    void didReceiveResponseForResource(WebPage*, WebFrame*, uint64_t identifier, const WebCore::ResourceResponse&);
-    void didReceiveContentLengthForResource(WebPage*, WebFrame*, uint64_t identifier, uint64_t contentLength);
-    void didFinishLoadForResource(WebPage*, WebFrame*, uint64_t identifier);
-    void didFailLoadForResource(WebPage*, WebFrame*, uint64_t identifier, const WebCore::ResourceError&);
-    bool shouldCacheResponse(WebPage*, WebFrame*, uint64_t identifier);
-    bool shouldUseCredentialStorage(WebPage*, WebFrame*, uint64_t identifier);
+    explicit InjectedBundlePageResourceLoadClient(const WKBundlePageResourceLoadClientBase*);
+
+    void didInitiateLoadForResource(WebPage&, WebFrame&, uint64_t identifier, const WebCore::ResourceRequest&, bool /*pageIsProvisionallyLoading*/) override;
+    void willSendRequestForFrame(WebPage&, WebFrame&, uint64_t identifier, WebCore::ResourceRequest&, const WebCore::ResourceResponse&) override;
+    void didReceiveResponseForResource(WebPage&, WebFrame&, uint64_t identifier, const WebCore::ResourceResponse&) override;
+    void didReceiveContentLengthForResource(WebPage&, WebFrame&, uint64_t identifier, uint64_t contentLength) override;
+    void didFinishLoadForResource(WebPage&, WebFrame&, uint64_t identifier) override;
+    void didFailLoadForResource(WebPage&, WebFrame&, uint64_t identifier, const WebCore::ResourceError&) override;
+    bool shouldCacheResponse(WebPage&, WebFrame&, uint64_t identifier) override;
+    bool shouldUseCredentialStorage(WebPage&, WebFrame&, uint64_t identifier) override;
 };
 
 } // namespace WebKit
