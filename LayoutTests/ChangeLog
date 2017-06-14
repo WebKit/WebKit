@@ -1,3 +1,19 @@
+2017-06-14  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r217997): mint.com header renders incorrectly when initially loaded
+        https://bugs.webkit.org/show_bug.cgi?id=173302
+        <rdar://problem/32731747>
+
+        Reviewed by Darin Adler.
+
+        Add layout test coverage. We change the style of the animated element while the animation is paused,
+        and then we resume the animations.
+
+        * fast/animation/css-animation-resuming-when-visible-with-style-change-expected.txt: Added.
+        * fast/animation/css-animation-resuming-when-visible-with-style-change.html: Added.
+        * fast/animation/css-animation-resuming-when-visible-with-style-change2-expected.txt: Added.
+        * fast/animation/css-animation-resuming-when-visible-with-style-change2.html: Added.
+
 2017-06-14  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Update expectations for layout tests.

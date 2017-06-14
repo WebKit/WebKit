@@ -208,11 +208,11 @@ void ImplicitAnimation::reset(const RenderStyle& to, CompositeAnimation& composi
     if (m_object && m_object->element())
         Style::loadPendingResources(*m_toStyle, m_object->element()->document(), m_object->element());
 
-    // Restart the transition
-    if (m_fromStyle && m_toStyle)
-        updateStateMachine(compositeAnimation.isSuspended() ? AnimationStateInput::PlayStatePaused : AnimationStateInput::RestartAnimation, -1);
-        
-    // set the transform animation list
+    // Restart the transition.
+    if (m_fromStyle && m_toStyle && !compositeAnimation.isSuspended())
+        updateStateMachine(AnimationStateInput::RestartAnimation, -1);
+
+    // Set the transform animation list.
     validateTransformFunctionList();
     checkForMatchingFilterFunctionLists();
 #if ENABLE(FILTERS_LEVEL_2)

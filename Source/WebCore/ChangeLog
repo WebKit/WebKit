@@ -1,3 +1,31 @@
+2017-06-14  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r217997): mint.com header renders incorrectly when initially loaded
+        https://bugs.webkit.org/show_bug.cgi?id=173302
+        <rdar://problem/32731747>
+
+        Reviewed by Darin Adler.
+
+        r217997 updated ImplicitAnimation::reset() to not call updateStateMachine(AnimationStateInput::RestartAnimation)
+        if the compositeAnimation is suspended. If the compositeAnimation is suspended, we would call
+        updateStateMachine(AnimationStateInput::AnimationStateInput::PlayStatePaused), which was expected to be a no-op.
+        This was needed because otherwise, changing the style of the animated element would restart the animation
+        even though it was supposed to be suspended. One thing I did not realize is that calling
+        updateStateMachine(AnimationStateInput::AnimationStateInput::PlayStatePaused) on an animation that is already
+        in PausedNew state, will cause it to move to PausedWaitResponse state. This is an issue because upon resuming
+        we would call AnimationBase::updatePlayState(AnimPlayStatePlaying) which would return early because
+        AnimationBase::paused() would return false. To address the issue, we no longer call updateStateMachine(PlayStatePaused)
+        in ImplicitAnimation::reset() when the compositeAnimation is suspended, so that the animation stays in
+        PausedNew state until we resume. When we resume, AnimationBase::paused() returns false and we actually resume
+        the animation.
+
+        Tests:
+        fast/animation/css-animation-resuming-when-visible-with-style-change.html
+        fast/animation/css-animation-resuming-when-visible-with-style-change2.html
+
+        * page/animation/ImplicitAnimation.cpp:
+        (WebCore::ImplicitAnimation::reset):
+
 2017-06-14  Miguel Gomez  <magomez@igalia.com>
 
         REGRESSION(r216901): ImageDecoders: rendering of large images is broken since r216901
