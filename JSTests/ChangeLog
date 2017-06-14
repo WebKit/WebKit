@@ -1,3 +1,54 @@
+2017-06-14  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: remove empty test files
+        https://bugs.webkit.org/show_bug.cgi?id=173382
+
+        Reviewed by Saam Barati.
+
+        The following files:
+                JSTests/wasm/function-tests/call-indirect-params.js
+                JSTests/wasm/function-tests/call-indirect.js
+                JSTests/wasm/js-api/call-indirect-results.js
+        Were changed to empty files in https://trac.webkit.org/changeset/209771
+
+        They were testing call_indirect with the wrong semantics, before
+        we implemented tables. That change implemented tables and
+        therefore removed the erroneous tests.
+
+        We have a few tests for call_indirect which already do the right thing:
+                JSTests/wasm/function-tests/context-switch.js
+                JSTests/wasm/function-tests/exceptions.js
+                JSTests/wasm/function-tests/grow-memory-2.js
+                JSTests/wasm/function-tests/stack-overflow.js
+                JSTests/wasm/function-tests/table-basic-2.js
+                JSTests/wasm/function-tests/table-basic.js
+                JSTests/wasm/js-api/call-indirect.js
+                JSTests/wasm/js-api/table.js
+                JSTests/wasm/js-api/unique-signature.js
+                JSTests/wasm/js-api/wrapper-function.js
+
+        I also just imported the updated spec tests which, among other
+        things, test call_indirect:
+                core/br.wast
+                core/br_table.wast
+                core/call_indirect.wast
+                core/func.wast
+                core/func_ptrs.wast
+                core/imports.wast
+                core/left-to-right.wast
+                core/linking.wast
+                core/nop.wast
+                core/return.wast
+                core/typecheck.wast
+                core/unreachable.wast
+
+        So I think it's OK to just delete the tests which should just have
+        been deleted back when tables were added.
+
+        * wasm/function-tests/call-indirect-params.js: Removed.
+        * wasm/function-tests/call-indirect.js: Removed.
+        * wasm/js-api/call-indirect-results.js: Removed.
+
 2017-06-13  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: import updated spec tests
