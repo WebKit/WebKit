@@ -50,25 +50,30 @@ static UIView *recursiveFindWKContentView(UIView *view)
 
 TEST(WebKit2, WKContentViewEditingActions)
 {
+    [UIPasteboard generalPasteboard].items = @[];
+
     RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 
-    [webView synchronouslyLoadTestPageNamed:@"simple"];
+    [webView synchronouslyLoadTestPageNamed:@"rich-and-plain-text"];
+
+    [webView stringByEvaluatingJavaScript:@"selectPlainText()"];
 
     UIView *contentView = recursiveFindWKContentView(webView.get());
 
-    if ([contentView canPerformAction:@selector(selectAll:) withSender:nil])
-        [contentView selectAll:nil];
+    __block bool done = false;
+
     [webView _doAfterNextPresentationUpdate:^ {
         if ([contentView canPerformAction:@selector(copy:) withSender:nil])
             [contentView copy:nil];
+
+        [webView _doAfterNextPresentationUpdate:^ {
+            done = true;
+        }];
     }];
 
-    while (1) {
-        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]];
-        if ([[[UIPasteboard generalPasteboard] string] isEqualToString:@"Simple HTML file."])
-            break;
-        TestWebKitAPI::Util::sleep(0.01);
-    }
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_WK_STREQ("Hello world", [[UIPasteboard generalPasteboard] string]);
 }
 
 #endif

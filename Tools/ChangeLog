@@ -1,3 +1,19 @@
+2017-06-14  Tim Horton  <timothy_horton@apple.com>
+
+        WKContentViewEditingActions API test always fails
+        https://bugs.webkit.org/show_bug.cgi?id=173374
+
+        Reviewed by Wenson Hsieh.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/WKContentViewEditingActions.mm:
+        (TEST):
+        selectAll isn't working, because canPerformAction for selectAll returns NO
+        if selectionIsNone (which is true in the non-contenteditable case).
+        Instead, make use of r218180's test page, which knows how to select itself.
+        Also, reset the pasteboard at the beginning of the test to reduce confusion
+        (I landed the test broken because my simulator had the correct text
+        stuck in its pasteboard).
+
 2017-06-14  Jonathan Bedard  <jbedard@apple.com>
 
         Configure screen scale for running layout tests on plus devices
