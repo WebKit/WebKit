@@ -21,7 +21,6 @@
 #include "WebKitPrivate.h"
 
 #include "APIError.h"
-#include "WKErrorRef.h"
 #include "WebEvent.h"
 #include "WebKitError.h"
 #include <gdk/gdk.h>
@@ -86,23 +85,23 @@ unsigned toWebKitError(unsigned webCoreError)
         return WEBKIT_NETWORK_ERROR_CANCELLED;
     case API::Error::Network::FileDoesNotExist:
         return WEBKIT_NETWORK_ERROR_FILE_DOES_NOT_EXIST;
-    case kWKErrorCodeCannotShowMIMEType:
+    case API::Error::Policy::CannotShowMIMEType:
         return WEBKIT_POLICY_ERROR_CANNOT_SHOW_MIME_TYPE;
-    case kWKErrorCodeCannotShowURL:
+    case API::Error::Policy::CannotShowURL:
         return WEBKIT_POLICY_ERROR_CANNOT_SHOW_URI;
-    case kWKErrorCodeFrameLoadInterruptedByPolicyChange:
+    case API::Error::Policy::FrameLoadInterruptedByPolicyChange:
         return WEBKIT_POLICY_ERROR_FRAME_LOAD_INTERRUPTED_BY_POLICY_CHANGE;
-    case kWKErrorCodeCannotUseRestrictedPort:
+    case API::Error::Policy::CannotUseRestrictedPort:
         return WEBKIT_POLICY_ERROR_CANNOT_USE_RESTRICTED_PORT;
-    case kWKErrorCodeCannotFindPlugIn:
+    case API::Error::Plugin::CannotFindPlugIn:
         return WEBKIT_PLUGIN_ERROR_CANNOT_FIND_PLUGIN;
-    case kWKErrorCodeCannotLoadPlugIn:
+    case API::Error::Plugin::CannotLoadPlugIn:
         return WEBKIT_PLUGIN_ERROR_CANNOT_LOAD_PLUGIN;
-    case kWKErrorCodeJavaUnavailable:
+    case API::Error::Plugin::JavaUnavailable:
         return WEBKIT_PLUGIN_ERROR_JAVA_UNAVAILABLE;
-    case kWKErrorCodePlugInCancelledConnection:
+    case API::Error::Plugin::PlugInCancelledConnection:
         return WEBKIT_PLUGIN_ERROR_CONNECTION_CANCELLED;
-    case kWKErrorCodePlugInWillHandleLoad:
+    case API::Error::Plugin::PlugInWillHandleLoad:
         return WEBKIT_PLUGIN_ERROR_WILL_HANDLE_LOAD;
     case API::Error::Download::Transport:
         return WEBKIT_DOWNLOAD_ERROR_NETWORK;
@@ -130,23 +129,23 @@ unsigned toWebCoreError(unsigned webKitError)
     case WEBKIT_NETWORK_ERROR_FILE_DOES_NOT_EXIST:
         return API::Error::Network::FileDoesNotExist;
     case WEBKIT_POLICY_ERROR_CANNOT_SHOW_MIME_TYPE:
-        return kWKErrorCodeCannotShowMIMEType;
+        return API::Error::Policy::CannotShowMIMEType;
     case WEBKIT_POLICY_ERROR_CANNOT_SHOW_URI:
-        return kWKErrorCodeCannotShowURL;
+        return API::Error::Policy::CannotShowURL;
     case WEBKIT_POLICY_ERROR_FRAME_LOAD_INTERRUPTED_BY_POLICY_CHANGE:
-        return kWKErrorCodeFrameLoadInterruptedByPolicyChange;
+        return API::Error::Policy::FrameLoadInterruptedByPolicyChange;
     case WEBKIT_POLICY_ERROR_CANNOT_USE_RESTRICTED_PORT:
-        return kWKErrorCodeCannotUseRestrictedPort;
+        return API::Error::Policy::CannotUseRestrictedPort;
     case WEBKIT_PLUGIN_ERROR_CANNOT_FIND_PLUGIN:
-        return kWKErrorCodeCannotFindPlugIn;
+        return API::Error::Plugin::CannotFindPlugIn;
     case WEBKIT_PLUGIN_ERROR_CANNOT_LOAD_PLUGIN:
-        return kWKErrorCodeCannotLoadPlugIn;
+        return API::Error::Plugin::CannotLoadPlugIn;
     case WEBKIT_PLUGIN_ERROR_JAVA_UNAVAILABLE:
-        return kWKErrorCodeJavaUnavailable;
+        return API::Error::Plugin::JavaUnavailable;
     case WEBKIT_PLUGIN_ERROR_CONNECTION_CANCELLED:
-        return kWKErrorCodePlugInCancelledConnection;
+        return API::Error::Plugin::PlugInCancelledConnection;
     case WEBKIT_PLUGIN_ERROR_WILL_HANDLE_LOAD:
-        return kWKErrorCodePlugInWillHandleLoad;
+        return API::Error::Plugin::PlugInWillHandleLoad;
     case WEBKIT_DOWNLOAD_ERROR_NETWORK:
         return API::Error::Download::Transport;
     case WEBKIT_DOWNLOAD_ERROR_CANCELLED_BY_USER:

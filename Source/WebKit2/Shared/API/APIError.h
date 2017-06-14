@@ -48,20 +48,54 @@ public:
         return adoptRef(*new Error(error));
     }
 
+    enum General {
+        Internal = 300
+    };
     static const WTF::String& webKitErrorDomain();
-    enum Network { Cancelled = 302, FileDoesNotExist = 303 };
+
+    enum Network {
+        Cancelled = 302,
+        FileDoesNotExist = 303
+    };
     static const WTF::String& webKitNetworkErrorDomain();
+
+    enum Policy {
+        CannotShowMIMEType = 100,
+        CannotShowURL = 101,
+        FrameLoadInterruptedByPolicyChange = 102,
+        CannotUseRestrictedPort = 103,
+        FrameLoadBlockedByContentBlocker = 104,
+        FrameLoadBlockedByContentFilter = 105
+    };
     static const WTF::String& webKitPolicyErrorDomain();
+
+    enum Plugin {
+        CannotFindPlugIn = 200,
+        CannotLoadPlugIn = 201,
+        JavaUnavailable = 202,
+        PlugInCancelledConnection = 203,
+        PlugInWillHandleLoad = 204,
+        InsecurePlugInVersion = 205
+    };
     static const WTF::String& webKitPluginErrorDomain();
+
 #if USE(SOUP)
-    enum Download { Transport = 499, CancelledByUser = 400, Destination = 401 };
+    enum Download {
+        Transport = 499,
+        CancelledByUser = 400,
+        Destination = 401
+    };
     static const WTF::String& webKitDownloadErrorDomain();
 #endif
+
 #if PLATFORM(GTK)
-    enum Print { General = 599, PrinterNotFound = 500, InvalidPageRange = 501 };
+    enum Print {
+        General = 599,
+        PrinterNotFound = 500,
+        InvalidPageRange = 501
+    };
     static const WTF::String& webKitPrintErrorDomain();
 #endif
-
 
     const WTF::String& domain() const { return m_platformError.domain(); }
     int errorCode() const { return m_platformError.errorCode(); }

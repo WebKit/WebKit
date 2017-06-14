@@ -1,3 +1,27 @@
+2017-06-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Do not mix C and C++ API error constants
+        https://bugs.webkit.org/show_bug.cgi?id=173311
+
+        Reviewed by Alex Christensen.
+
+        In r214934 I added error constants to API::Error, but not for all errors exposed in the C API. Because of this
+        we are mixing both constants in WebErrors and in GTk+ WebKitPrivate.
+
+        * Shared/API/APIError.h:
+        * Shared/WebErrors.cpp:
+        (WebKit::blockedError):
+        (WebKit::blockedByContentBlockerError):
+        (WebKit::cannotShowURLError):
+        (WebKit::interruptedForPolicyChangeError):
+        (WebKit::blockedByContentFilterError):
+        (WebKit::cannotShowMIMETypeError):
+        (WebKit::pluginWillHandleLoadError):
+        (WebKit::internalError):
+        * UIProcess/API/gtk/WebKitPrivate.cpp:
+        (toWebKitError):
+        (toWebCoreError):
+
 2017-06-13  Matt Rajca  <mrajca@apple.com>
 
         WebsitePolicies: let clients select specific autoplay quirks
