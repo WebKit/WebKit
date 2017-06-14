@@ -1,3 +1,21 @@
+2017-06-13  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK][WPE] Use CMAKE_THREAD_LIBS_INIT in WTF platform CMake files
+        https://bugs.webkit.org/show_bug.cgi?id=173310
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        In the WTF platform CMake files for the GTK+ and WPE ports, use the
+        CMAKE_THREAD_LIBS_INIT variable to specify the threading library we
+        should be linking against. On some platforms this variable will be
+        empty because the given compiler will automatically handle the -pthread
+        compiler flag and sort out linking on its own.
+
+        The same approach is already used for the JSCOnly configuration.
+
+        * wtf/PlatformGTK.cmake:
+        * wtf/PlatformWPE.cmake:
+
 2017-06-13  Youenn Fablet  <youenn@apple.com>
 
         Filter SDP from ICE candidates in case of local ICE candidate filtering
